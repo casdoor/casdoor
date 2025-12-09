@@ -1,11 +1,16 @@
-swagger: "2.0"
-info: {}
+swagger: '2.0'
+info:
+  title: Casdoor RESTful API
+  description: Swagger Docs of Casdoor Backend API
+  version: 1.503.0
+  contact:
+    email: casbin@googlegroups.com
 basePath: /
 paths:
   /.well-known/{application}/jwks:
     get:
       tags:
-      - github.com/casdoor/casdoor/controllersRootController
+      - root
       operationId: RootController.GetJwksByApplication
       parameters:
       - in: path
@@ -14,17 +19,15 @@ paths:
         required: true
         type: string
       responses:
-        "200":
-          description: ""
+        '200':
+          description: ''
           schema:
             $ref: '#/definitions/jose.JSONWebKey'
   /.well-known/{application}/openid-configuration:
     get:
       tags:
-      - github.com/casdoor/casdoor/controllersRootController
-      description: |-
-        Get Oidc Discovery for specific application
-        <br>
+      - root
+      description: Get Oidc Discovery for specific application
       operationId: RootController.GetOidcDiscoveryByApplication
       parameters:
       - in: path
@@ -33,14 +36,14 @@ paths:
         required: true
         type: string
       responses:
-        "200":
-          description: ""
+        '200':
+          description: ''
           schema:
             $ref: '#/definitions/object.OidcDiscovery'
   /.well-known/{application}/webfinger:
     get:
       tags:
-      - github.com/casdoor/casdoor/controllersRootController
+      - root
       operationId: RootController.GetWebFingerByApplication
       parameters:
       - in: path
@@ -54,37 +57,35 @@ paths:
         required: true
         type: string
       responses:
-        "200":
-          description: ""
+        '200':
+          description: ''
           schema:
             $ref: '#/definitions/object.WebFinger'
   /.well-known/jwks:
     get:
       tags:
-      - github.com/casdoor/casdoor/controllersRootController
+      - root
       operationId: RootController.GetJwks
       responses:
-        "200":
-          description: ""
+        '200':
+          description: ''
           schema:
             $ref: '#/definitions/jose.JSONWebKey'
   /.well-known/openid-configuration:
     get:
       tags:
-      - github.com/casdoor/casdoor/controllersRootController
-      description: |-
-        Get Oidc Discovery
-        <br>
+      - root
+      description: Get Oidc Discovery
       operationId: RootController.GetOidcDiscovery
       responses:
-        "200":
-          description: ""
+        '200':
+          description: ''
           schema:
             $ref: '#/definitions/object.OidcDiscovery'
   /.well-known/webfinger:
     get:
       tags:
-      - github.com/casdoor/casdoor/controllersRootController
+      - root
       operationId: RootController.GetWebFinger
       parameters:
       - in: query
@@ -93,20 +94,18 @@ paths:
         required: true
         type: string
       responses:
-        "200":
-          description: ""
+        '200':
+          description: ''
           schema:
             $ref: '#/definitions/object.WebFinger'
   /api/Callback:
     post:
       tags:
       - api
-      description: |-
-        Get Login Error Counts
-        <br>
+      description: Get Login Error Counts
       operationId: ApiController.Callback
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/object.Userinfo'
@@ -114,9 +113,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        add adapter
-        <br>
+      description: add adapter
       operationId: ApiController.AddAdapter
       parameters:
       - in: body
@@ -126,7 +123,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Adapter'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -134,9 +131,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        add an application
-        <br>
+      description: add an application
       operationId: ApiController.AddApplication
       parameters:
       - in: body
@@ -146,7 +141,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Application'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -154,9 +149,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        add cert
-        <br>
+      description: add cert
       operationId: ApiController.AddCert
       parameters:
       - in: body
@@ -166,7 +159,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Cert'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -174,9 +167,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        add enforcer
-        <br>
+      description: add enforcer
       operationId: ApiController.AddEnforcer
       parameters:
       - in: body
@@ -186,17 +177,15 @@ paths:
         schema:
           $ref: '#/definitions/object'
       responses:
-        "200":
-          description: ""
+        '200':
+          description: ''
           schema:
             $ref: '#/definitions/object.Enforcer'
   /api/add-form:
     post:
       tags:
       - api
-      description: |-
-        add form
-        <br>
+      description: add form
       operationId: ApiController.AddForm
       parameters:
       - in: body
@@ -206,7 +195,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Form'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -214,9 +203,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        add group
-        <br>
+      description: add group
       operationId: ApiController.AddGroup
       parameters:
       - in: body
@@ -226,7 +213,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Group'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -234,9 +221,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        add invitation
-        <br>
+      description: add invitation
       operationId: ApiController.AddInvitation
       parameters:
       - in: body
@@ -246,7 +231,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Invitation'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -254,9 +239,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        add ldap
-        <br>
+      description: add ldap
       operationId: ApiController.AddLdap
       parameters:
       - in: body
@@ -266,7 +249,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Ldap'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -274,9 +257,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        add model
-        <br>
+      description: add model
       operationId: ApiController.AddModel
       parameters:
       - in: body
@@ -286,7 +267,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Model'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -294,9 +275,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        add order
-        <br>
+      description: add order
       operationId: ApiController.AddOrder
       parameters:
       - in: body
@@ -306,7 +285,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Order'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -314,9 +293,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        add organization
-        <br>
+      description: add organization
       operationId: ApiController.AddOrganization
       parameters:
       - in: body
@@ -326,7 +303,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Organization'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -334,9 +311,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        add payment
-        <br>
+      description: add payment
       operationId: ApiController.AddPayment
       parameters:
       - in: body
@@ -346,7 +321,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Payment'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -354,9 +329,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        add permission
-        <br>
+      description: add permission
       operationId: ApiController.AddPermission
       parameters:
       - in: body
@@ -366,7 +339,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Permission'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -374,9 +347,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        add plan
-        <br>
+      description: add plan
       operationId: ApiController.AddPlan
       parameters:
       - in: body
@@ -386,7 +357,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Plan'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -394,9 +365,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        add policy
-        <br>
+      description: add policy
       operationId: ApiController.AddPolicy
       parameters:
       - in: query
@@ -411,17 +380,15 @@ paths:
         schema:
           $ref: '#/definitions/xormadapter.CasbinRule'
       responses:
-        "200":
-          description: ""
+        '200':
+          description: ''
           schema:
             $ref: '#/definitions/Response'
   /api/add-pricing:
     post:
       tags:
       - api
-      description: |-
-        add pricing
-        <br>
+      description: add pricing
       operationId: ApiController.AddPricing
       parameters:
       - in: body
@@ -431,7 +398,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Pricing'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -439,9 +406,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        add product
-        <br>
+      description: add product
       operationId: ApiController.AddProduct
       parameters:
       - in: body
@@ -451,7 +416,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Product'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -459,9 +424,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        add provider
-        <br>
+      description: add provider
       operationId: ApiController.AddProvider
       parameters:
       - in: body
@@ -471,7 +434,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Provider'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -479,9 +442,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        add a record
-        <br>
+      description: add a record
       operationId: ApiController.AddRecord
       parameters:
       - in: body
@@ -491,7 +452,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Record'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -508,7 +469,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Resource'
       responses:
-        "200":
+        '200':
           description: Success or error
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -516,9 +477,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        add role
-        <br>
+      description: add role
       operationId: ApiController.AddRole
       parameters:
       - in: body
@@ -528,7 +487,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Role'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -536,9 +495,8 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        Add session for one user in one application. If there are other existing sessions, join the session into the list.
-        <br>
+      description: Add session for one user in one application. If there are other
+        existing sessions, join the session into the list.
       operationId: ApiController.AddSession
       parameters:
       - in: body
@@ -548,7 +506,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Session'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -556,9 +514,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        add subscription
-        <br>
+      description: add subscription
       operationId: ApiController.AddSubscription
       parameters:
       - in: body
@@ -568,7 +524,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Subscription'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -576,9 +532,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        add syncer
-        <br>
+      description: add syncer
       operationId: ApiController.AddSyncer
       parameters:
       - in: body
@@ -588,7 +542,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Syncer'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -596,9 +550,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        add token
-        <br>
+      description: add token
       operationId: ApiController.AddToken
       parameters:
       - in: body
@@ -608,7 +560,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Token'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -616,9 +568,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        add transaction
-        <br>
+      description: add transaction
       operationId: ApiController.AddTransaction
       parameters:
       - in: body
@@ -632,7 +582,7 @@ paths:
         description: 'Dry run mode: set to ''true'' or ''1'' to validate without committing'
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -640,9 +590,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        add user
-        <br>
+      description: add user
       operationId: ApiController.AddUser
       parameters:
       - in: body
@@ -652,7 +600,7 @@ paths:
         schema:
           $ref: '#/definitions/object.User'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -662,7 +610,7 @@ paths:
       - api
       operationId: ApiController.AddUserKeys
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/object.Userinfo'
@@ -670,9 +618,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        add webhook
-        <br>
+      description: add webhook
       operationId: ApiController.AddWebhook
       parameters:
       - in: body
@@ -682,7 +628,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Webhook'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -690,9 +636,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        Call Casbin BatchEnforce API
-        <br>
+      description: Call Casbin BatchEnforce API
       operationId: ApiController.BatchEnforce
       parameters:
       - in: body
@@ -716,7 +660,7 @@ paths:
         description: owner
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -724,9 +668,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        cancel an order
-        <br>
+      description: cancel an order
       operationId: ApiController.CancelOrder
       parameters:
       - in: query
@@ -735,7 +677,7 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -745,7 +687,7 @@ paths:
       - api
       operationId: ApiController.CheckUserPassword
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/object.Userinfo'
@@ -753,9 +695,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        delete adapter
-        <br>
+      description: delete adapter
       operationId: ApiController.DeleteAdapter
       parameters:
       - in: body
@@ -765,7 +705,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Adapter'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -773,9 +713,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        delete an application
-        <br>
+      description: delete an application
       operationId: ApiController.DeleteApplication
       parameters:
       - in: body
@@ -785,7 +723,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Application'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -793,9 +731,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        delete cert
-        <br>
+      description: delete cert
       operationId: ApiController.DeleteCert
       parameters:
       - in: body
@@ -805,7 +741,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Cert'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -813,9 +749,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        delete enforcer
-        <br>
+      description: delete enforcer
       operationId: ApiController.DeleteEnforcer
       parameters:
       - in: body
@@ -825,17 +759,15 @@ paths:
         schema:
           $ref: '#/definitions/object.Enforcer'
       responses:
-        "200":
-          description: ""
+        '200':
+          description: ''
           schema:
             $ref: '#/definitions/object.Enforcer'
   /api/delete-form:
     post:
       tags:
       - api
-      description: |-
-        delete form
-        <br>
+      description: delete form
       operationId: ApiController.DeleteForm
       parameters:
       - in: body
@@ -845,7 +777,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Form'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -853,9 +785,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        delete group
-        <br>
+      description: delete group
       operationId: ApiController.DeleteGroup
       parameters:
       - in: body
@@ -865,7 +795,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Group'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -873,9 +803,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        delete invitation
-        <br>
+      description: delete invitation
       operationId: ApiController.DeleteInvitation
       parameters:
       - in: body
@@ -885,7 +813,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Invitation'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -893,9 +821,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        delete ldap
-        <br>
+      description: delete ldap
       operationId: ApiController.DeleteLdap
       parameters:
       - in: body
@@ -905,7 +831,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Ldap'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -913,12 +839,10 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        : Delete MFA
-        <br>
+      description: ': Delete MFA'
       operationId: ApiController.DeleteMfa
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -926,9 +850,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        delete model
-        <br>
+      description: delete model
       operationId: ApiController.DeleteModel
       parameters:
       - in: body
@@ -938,7 +860,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Model'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -946,9 +868,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        delete order
-        <br>
+      description: delete order
       operationId: ApiController.DeleteOrder
       parameters:
       - in: body
@@ -958,7 +878,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Order'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -966,9 +886,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        delete organization
-        <br>
+      description: delete organization
       operationId: ApiController.DeleteOrganization
       parameters:
       - in: body
@@ -978,7 +896,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Organization'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -986,9 +904,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        delete payment
-        <br>
+      description: delete payment
       operationId: ApiController.DeletePayment
       parameters:
       - in: body
@@ -998,7 +914,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Payment'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -1006,9 +922,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        delete permission
-        <br>
+      description: delete permission
       operationId: ApiController.DeletePermission
       parameters:
       - in: body
@@ -1018,7 +932,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Permission'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -1026,9 +940,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        delete plan
-        <br>
+      description: delete plan
       operationId: ApiController.DeletePlan
       parameters:
       - in: body
@@ -1038,7 +950,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Plan'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -1046,9 +958,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        delete pricing
-        <br>
+      description: delete pricing
       operationId: ApiController.DeletePricing
       parameters:
       - in: body
@@ -1058,7 +968,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Pricing'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -1066,9 +976,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        delete product
-        <br>
+      description: delete product
       operationId: ApiController.DeleteProduct
       parameters:
       - in: body
@@ -1078,7 +986,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Product'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -1086,9 +994,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        delete provider
-        <br>
+      description: delete provider
       operationId: ApiController.DeleteProvider
       parameters:
       - in: body
@@ -1098,7 +1004,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Provider'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -1115,7 +1021,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Resource'
       responses:
-        "200":
+        '200':
           description: Success or error
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -1123,9 +1029,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        delete role
-        <br>
+      description: delete role
       operationId: ApiController.DeleteRole
       parameters:
       - in: body
@@ -1135,7 +1039,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Role'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -1143,9 +1047,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        Delete session for one user in one application.
-        <br>
+      description: Delete session for one user in one application.
       operationId: ApiController.DeleteSession
       parameters:
       - in: body
@@ -1155,7 +1057,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Session'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -1163,9 +1065,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        delete subscription
-        <br>
+      description: delete subscription
       operationId: ApiController.DeleteSubscription
       parameters:
       - in: body
@@ -1175,7 +1075,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Subscription'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -1183,9 +1083,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        delete syncer
-        <br>
+      description: delete syncer
       operationId: ApiController.DeleteSyncer
       parameters:
       - in: body
@@ -1195,7 +1093,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Syncer'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -1203,9 +1101,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        delete token
-        <br>
+      description: delete token
       operationId: ApiController.DeleteToken
       parameters:
       - in: body
@@ -1215,7 +1111,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Token'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -1223,9 +1119,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        delete transaction
-        <br>
+      description: delete transaction
       operationId: ApiController.DeleteTransaction
       parameters:
       - in: body
@@ -1235,7 +1129,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Transaction'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -1243,9 +1137,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        delete user
-        <br>
+      description: delete user
       operationId: ApiController.DeleteUser
       parameters:
       - in: body
@@ -1255,7 +1147,7 @@ paths:
         schema:
           $ref: '#/definitions/object.User'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -1263,9 +1155,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        delete webhook
-        <br>
+      description: delete webhook
       operationId: ApiController.DeleteWebhook
       parameters:
       - in: body
@@ -1275,7 +1165,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Webhook'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -1283,12 +1173,10 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        Endpoint for the device authorization flow
-        <br>
+      description: Endpoint for the device authorization flow
       operationId: ApiController.DeviceAuth
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/object.DeviceAuthResponse'
@@ -1296,9 +1184,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        Call Casbin Enforce API
-        <br>
+      description: Call Casbin Enforce API
       operationId: ApiController.Enforce
       parameters:
       - in: body
@@ -1326,7 +1212,7 @@ paths:
         description: owner
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -1334,9 +1220,7 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        FaceId Login Flow 1st stage
-        <br>
+      description: FaceId Login Flow 1st stage
       operationId: ApiController.FaceIDSigninBegin
       parameters:
       - in: query
@@ -1350,7 +1234,7 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -1358,12 +1242,10 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        get the details of the current account
-        <br>
+      description: get the details of the current account
       operationId: ApiController.GetAccount
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -1371,9 +1253,7 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        get adapter
-        <br>
+      description: get adapter
       operationId: ApiController.GetAdapter
       parameters:
       - in: query
@@ -1382,7 +1262,7 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/object.Adapter'
@@ -1390,9 +1270,7 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        get adapters
-        <br>
+      description: get adapters
       operationId: ApiController.GetAdapters
       parameters:
       - in: query
@@ -1401,7 +1279,7 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             type: array
@@ -1411,9 +1289,7 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        get application login
-        <br>
+      description: get application login
       operationId: ApiController.GetApplicationLogin
       parameters:
       - in: query
@@ -1442,7 +1318,7 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -1450,9 +1326,7 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        get the detail of an application
-        <br>
+      description: get the detail of an application
       operationId: ApiController.GetApplication
       parameters:
       - in: query
@@ -1461,7 +1335,7 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/object.Application'
@@ -1469,9 +1343,7 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        get all applications
-        <br>
+      description: get all applications
       operationId: ApiController.GetApplications
       parameters:
       - in: query
@@ -1480,7 +1352,7 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             type: array
@@ -1492,7 +1364,7 @@ paths:
       - api
       operationId: ApiController.GetCaptcha
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/object.Userinfo'
@@ -1500,9 +1372,7 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        Get Login Error Counts
-        <br>
+      description: Get Login Error Counts
       operationId: ApiController.GetCaptchaStatus
       parameters:
       - in: query
@@ -1511,7 +1381,7 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -1519,9 +1389,7 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        get cert
-        <br>
+      description: get cert
       operationId: ApiController.GetCert
       parameters:
       - in: query
@@ -1530,7 +1398,7 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/object.Cert'
@@ -1538,9 +1406,7 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        get certs
-        <br>
+      description: get certs
       operationId: ApiController.GetCerts
       parameters:
       - in: query
@@ -1549,7 +1415,7 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             type: array
@@ -1559,12 +1425,10 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        get information of dashboard
-        <br>
+      description: get information of dashboard
       operationId: ApiController.GetDashboard
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -1572,9 +1436,7 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        get default application
-        <br>
+      description: get default application
       operationId: ApiController.GetDefaultApplication
       parameters:
       - in: query
@@ -1583,7 +1445,7 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -1591,9 +1453,7 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        get email and phone by username
-        <br>
+      description: get email and phone by username
       operationId: ApiController.GetEmailAndPhone
       parameters:
       - in: formData
@@ -1607,7 +1467,7 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -1615,9 +1475,7 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        get enforcer
-        <br>
+      description: get enforcer
       operationId: ApiController.GetEnforcer
       parameters:
       - in: query
@@ -1626,17 +1484,15 @@ paths:
         required: true
         type: string
       responses:
-        "200":
-          description: ""
+        '200':
+          description: ''
           schema:
             $ref: '#/definitions/object.Enforcer'
   /api/get-enforcers:
     get:
       tags:
       - api
-      description: |-
-        get enforcers
-        <br>
+      description: get enforcers
       operationId: ApiController.GetEnforcers
       parameters:
       - in: query
@@ -1645,8 +1501,8 @@ paths:
         required: true
         type: string
       responses:
-        "200":
-          description: ""
+        '200':
+          description: ''
           schema:
             type: array
             items:
@@ -1655,9 +1511,8 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        get filtered policies with support for multiple filters via POST body
-        <br>
+      description: get filtered policies with support for multiple filters via POST
+        body
       operationId: ApiController.GetFilteredPolicies
       parameters:
       - in: query
@@ -1674,8 +1529,8 @@ paths:
           items:
             $ref: '#/definitions/object.Filter'
       responses:
-        "200":
-          description: ""
+        '200':
+          description: ''
           schema:
             type: array
             items:
@@ -1684,9 +1539,7 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        get form
-        <br>
+      description: get form
       operationId: ApiController.GetForm
       parameters:
       - in: query
@@ -1695,7 +1548,7 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/object.Form'
@@ -1703,9 +1556,7 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        get forms
-        <br>
+      description: get forms
       operationId: ApiController.GetForms
       parameters:
       - in: query
@@ -1714,7 +1565,7 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             type: array
@@ -1724,12 +1575,10 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        get global certs
-        <br>
+      description: get global certs
       operationId: ApiController.GetGlobalCerts
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             type: array
@@ -1739,12 +1588,10 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        get global forms
-        <br>
+      description: get global forms
       operationId: ApiController.GetGlobalForms
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             type: array
@@ -1754,12 +1601,10 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        get Global providers
-        <br>
+      description: get Global providers
       operationId: ApiController.GetGlobalProviders
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             type: array
@@ -1769,12 +1614,10 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        get global users
-        <br>
+      description: get global users
       operationId: ApiController.GetGlobalUsers
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             type: array
@@ -1784,9 +1627,7 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        get group
-        <br>
+      description: get group
       operationId: ApiController.GetGroup
       parameters:
       - in: query
@@ -1795,7 +1636,7 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/object.Group'
@@ -1803,9 +1644,7 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        get groups
-        <br>
+      description: get groups
       operationId: ApiController.GetGroups
       parameters:
       - in: query
@@ -1814,7 +1653,7 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             type: array
@@ -1824,9 +1663,7 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        get invitation
-        <br>
+      description: get invitation
       operationId: ApiController.GetInvitation
       parameters:
       - in: query
@@ -1835,7 +1672,7 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/object.Invitation'
@@ -1843,9 +1680,7 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        get invitation code information
-        <br>
+      description: get invitation code information
       operationId: ApiController.GetInvitationCodeInfo
       parameters:
       - in: query
@@ -1854,7 +1689,7 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/object.Invitation'
@@ -1862,9 +1697,7 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        get invitations
-        <br>
+      description: get invitations
       operationId: ApiController.GetInvitations
       parameters:
       - in: query
@@ -1873,7 +1706,7 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             type: array
@@ -1883,9 +1716,7 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        get ldap
-        <br>
+      description: get ldap
       operationId: ApiController.GetLdap
       parameters:
       - in: query
@@ -1894,7 +1725,7 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/object.Ldap'
@@ -1902,12 +1733,10 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        get ldap users
-        <br>
+      description: get ldap users
       operationId: ApiController.GetLdapser
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.LdapResp'
@@ -1915,9 +1744,7 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        get ldaps
-        <br>
+      description: get ldaps
       operationId: ApiController.GetLdaps
       parameters:
       - in: query
@@ -1925,7 +1752,7 @@ paths:
         description: owner
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             type: array
@@ -1935,9 +1762,7 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        get model
-        <br>
+      description: get model
       operationId: ApiController.GetModel
       parameters:
       - in: query
@@ -1946,7 +1771,7 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/object.Model'
@@ -1954,9 +1779,7 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        get models
-        <br>
+      description: get models
       operationId: ApiController.GetModels
       parameters:
       - in: query
@@ -1965,7 +1788,7 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             type: array
@@ -1975,9 +1798,7 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        get order
-        <br>
+      description: get order
       operationId: ApiController.GetOrder
       parameters:
       - in: query
@@ -1986,7 +1807,7 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/object.Order'
@@ -1994,9 +1815,7 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        get orders
-        <br>
+      description: get orders
       operationId: ApiController.GetOrders
       parameters:
       - in: query
@@ -2005,7 +1824,7 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             type: array
@@ -2015,9 +1834,7 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        get organization
-        <br>
+      description: get organization
       operationId: ApiController.GetOrganization
       parameters:
       - in: query
@@ -2026,7 +1843,7 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/object.Organization'
@@ -2034,9 +1851,7 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        get the detail of the organization's application
-        <br>
+      description: get the detail of the organization's application
       operationId: ApiController.GetOrganizationApplications
       parameters:
       - in: query
@@ -2045,7 +1860,7 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             type: array
@@ -2055,9 +1870,7 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        get all organization name and displayName
-        <br>
+      description: get all organization name and displayName
       operationId: ApiController.GetOrganizationNames
       parameters:
       - in: query
@@ -2066,7 +1879,7 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             type: array
@@ -2076,9 +1889,7 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        get organizations
-        <br>
+      description: get organizations
       operationId: ApiController.GetOrganizations
       parameters:
       - in: query
@@ -2087,7 +1898,7 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             type: array
@@ -2097,9 +1908,7 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        get payment
-        <br>
+      description: get payment
       operationId: ApiController.GetVerification
       parameters:
       - in: query
@@ -2108,7 +1917,7 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/object.Verification'
@@ -2116,9 +1925,7 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        get payments
-        <br>
+      description: get payments
       operationId: ApiController.GetVerifications
       parameters:
       - in: query
@@ -2127,7 +1934,7 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             type: array
@@ -2137,9 +1944,7 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        get permission
-        <br>
+      description: get permission
       operationId: ApiController.GetPermission
       parameters:
       - in: query
@@ -2148,7 +1953,7 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/object.Permission'
@@ -2156,9 +1961,7 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        get permissions
-        <br>
+      description: get permissions
       operationId: ApiController.GetPermissions
       parameters:
       - in: query
@@ -2167,7 +1970,7 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             type: array
@@ -2177,9 +1980,7 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        get permissions by role
-        <br>
+      description: get permissions by role
       operationId: ApiController.GetPermissionsByRole
       parameters:
       - in: query
@@ -2188,7 +1989,7 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             type: array
@@ -2198,12 +1999,10 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        get permissions by submitter
-        <br>
+      description: get permissions by submitter
       operationId: ApiController.GetPermissionsBySubmitter
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             type: array
@@ -2213,9 +2012,7 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        get plan
-        <br>
+      description: get plan
       operationId: ApiController.GetPlan
       parameters:
       - in: query
@@ -2228,7 +2025,7 @@ paths:
         description: Should include plan's option
         type: boolean
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/object.Plan'
@@ -2236,9 +2033,7 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        get plans
-        <br>
+      description: get plans
       operationId: ApiController.GetPlans
       parameters:
       - in: query
@@ -2247,7 +2042,7 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             type: array
@@ -2257,9 +2052,7 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        get policies
-        <br>
+      description: get policies
       operationId: ApiController.GetPolicies
       parameters:
       - in: query
@@ -2272,8 +2065,8 @@ paths:
         description: The adapter id
         type: string
       responses:
-        "200":
-          description: ""
+        '200':
+          description: ''
           schema:
             type: array
             items:
@@ -2282,9 +2075,7 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        get pricing
-        <br>
+      description: get pricing
       operationId: ApiController.GetPricing
       parameters:
       - in: query
@@ -2293,7 +2084,7 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/object.Pricing'
@@ -2301,9 +2092,7 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        get pricings
-        <br>
+      description: get pricings
       operationId: ApiController.GetPricings
       parameters:
       - in: query
@@ -2312,7 +2101,7 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             type: array
@@ -2322,9 +2111,7 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        get product
-        <br>
+      description: get product
       operationId: ApiController.GetProduct
       parameters:
       - in: query
@@ -2333,7 +2120,7 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/object.Product'
@@ -2341,9 +2128,7 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        get products
-        <br>
+      description: get products
       operationId: ApiController.GetProducts
       parameters:
       - in: query
@@ -2352,7 +2137,7 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             type: array
@@ -2362,12 +2147,10 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        get Prometheus Info
-        <br>
+      description: get Prometheus Info
       operationId: ApiController.GetPrometheusInfo
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/object.PrometheusInfo'
@@ -2375,9 +2158,7 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        get provider
-        <br>
+      description: get provider
       operationId: ApiController.GetProvider
       parameters:
       - in: query
@@ -2386,7 +2167,7 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/object.Provider'
@@ -2394,9 +2175,7 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        get providers
-        <br>
+      description: get providers
       operationId: ApiController.GetProviders
       parameters:
       - in: query
@@ -2405,7 +2184,7 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             type: array
@@ -2423,7 +2202,7 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -2431,9 +2210,7 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        get all records
-        <br>
+      description: get all records
       operationId: ApiController.GetRecords
       parameters:
       - in: query
@@ -2447,7 +2224,7 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/object.Record'
@@ -2455,9 +2232,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        get records by filter
-        <br>
+      description: get records by filter
       operationId: ApiController.GetRecordsByFilter
       parameters:
       - in: body
@@ -2468,7 +2243,7 @@ paths:
           type: string
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/object.Record'
@@ -2476,9 +2251,7 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        get resource
-        <br>
+      description: get resource
       operationId: ApiController.GetResource
       parameters:
       - in: query
@@ -2487,7 +2260,7 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/object.Resource'
@@ -2495,9 +2268,7 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        get resources
-        <br>
+      description: get resources
       operationId: ApiController.GetResources
       parameters:
       - in: query
@@ -2535,7 +2306,7 @@ paths:
         description: Sort Order
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             type: array
@@ -2545,9 +2316,7 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        get role
-        <br>
+      description: get role
       operationId: ApiController.GetRole
       parameters:
       - in: query
@@ -2556,7 +2325,7 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/object.Role'
@@ -2564,9 +2333,7 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        get roles
-        <br>
+      description: get roles
       operationId: ApiController.GetRoles
       parameters:
       - in: query
@@ -2575,7 +2342,7 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             type: array
@@ -2585,9 +2352,7 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        Get session for one user in one application.
-        <br>
+      description: Get session for one user in one application.
       operationId: ApiController.GetSingleSession
       parameters:
       - in: query
@@ -2597,7 +2362,7 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             type: array
@@ -2607,9 +2372,7 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        Get organization user sessions.
-        <br>
+      description: Get organization user sessions.
       operationId: ApiController.GetSessions
       parameters:
       - in: query
@@ -2618,7 +2381,7 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             type: array
@@ -2628,9 +2391,7 @@ paths:
     get:
       tags:
       - api
-      description: |2-
-
-        <br>
+      description: ''
       operationId: ApiController.GetSortedUsers
       parameters:
       - in: query
@@ -2649,7 +2410,7 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             type: array
@@ -2659,9 +2420,7 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        get subscription
-        <br>
+      description: get subscription
       operationId: ApiController.GetSubscription
       parameters:
       - in: query
@@ -2670,7 +2429,7 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/object.Subscription'
@@ -2678,9 +2437,7 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        get subscriptions
-        <br>
+      description: get subscriptions
       operationId: ApiController.GetSubscriptions
       parameters:
       - in: query
@@ -2689,7 +2446,7 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             type: array
@@ -2699,9 +2456,7 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        get syncer
-        <br>
+      description: get syncer
       operationId: ApiController.GetSyncer
       parameters:
       - in: query
@@ -2710,7 +2465,7 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/object.Syncer'
@@ -2718,9 +2473,7 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        get syncers
-        <br>
+      description: get syncers
       operationId: ApiController.GetSyncers
       parameters:
       - in: query
@@ -2729,7 +2482,7 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             type: array
@@ -2739,12 +2492,10 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        get system info like CPU and memory usage
-        <br>
+      description: get system info like CPU and memory usage
       operationId: ApiController.GetSystemInfo
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/util.SystemInfo'
@@ -2752,9 +2503,7 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        get token
-        <br>
+      description: get token
       operationId: ApiController.GetToken
       parameters:
       - in: query
@@ -2763,7 +2512,7 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/object.Token'
@@ -2771,9 +2520,7 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        get tokens
-        <br>
+      description: get tokens
       operationId: ApiController.GetTokens
       parameters:
       - in: query
@@ -2792,7 +2539,7 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             type: array
@@ -2802,9 +2549,7 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        get transaction
-        <br>
+      description: get transaction
       operationId: ApiController.GetTransaction
       parameters:
       - in: query
@@ -2813,7 +2558,7 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/object.Transaction'
@@ -2821,9 +2566,7 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        get transactions
-        <br>
+      description: get transactions
       operationId: ApiController.GetTransactions
       parameters:
       - in: query
@@ -2832,7 +2575,7 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             type: array
@@ -2842,9 +2585,7 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        get user
-        <br>
+      description: get user
       operationId: ApiController.GetUser
       parameters:
       - in: query
@@ -2868,7 +2609,7 @@ paths:
         description: The userId of the user
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/object.User'
@@ -2876,9 +2617,7 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        get the detail of the user's application
-        <br>
+      description: get the detail of the user's application
       operationId: ApiController.GetUserApplication
       parameters:
       - in: query
@@ -2887,7 +2626,7 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/object.Application'
@@ -2895,9 +2634,7 @@ paths:
     get:
       tags:
       - api
-      description: |2-
-
-        <br>
+      description: ''
       operationId: ApiController.GetUserCount
       parameters:
       - in: query
@@ -2912,15 +2649,13 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: '{int} int The count of filtered users for an organization'
   /api/get-user-orders:
     get:
       tags:
       - api
-      description: |-
-        get orders for a user
-        <br>
+      description: get orders for a user
       operationId: ApiController.GetUserOrders
       parameters:
       - in: query
@@ -2934,7 +2669,7 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             type: array
@@ -2944,9 +2679,7 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        get payments for a user
-        <br>
+      description: get payments for a user
       operationId: ApiController.GetUserVerifications
       parameters:
       - in: query
@@ -2965,7 +2698,7 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             type: array
@@ -2975,9 +2708,7 @@ paths:
     get:
       tags:
       - api
-      description: |2-
-
-        <br>
+      description: ''
       operationId: ApiController.GetUsers
       parameters:
       - in: query
@@ -2986,7 +2717,7 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             type: array
@@ -2996,12 +2727,10 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        get version info like Casdoor release version and commit ID
-        <br>
+      description: get version info like Casdoor release version and commit ID
       operationId: ApiController.GetVersionInfo
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/util.VersionInfo'
@@ -3009,9 +2738,7 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        get webhook
-        <br>
+      description: get webhook
       operationId: ApiController.GetWebhook
       parameters:
       - in: query
@@ -3021,7 +2748,7 @@ paths:
         type: string
         default: built-in/admin
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/object.Webhook'
@@ -3037,7 +2764,7 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -3045,9 +2772,7 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        get webhooks
-        <br>
+      description: get webhooks
       operationId: ApiController.GetWebhooks
       parameters:
       - in: query
@@ -3057,7 +2782,7 @@ paths:
         type: string
         default: built-in/admin
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             type: array
@@ -3069,12 +2794,10 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        check if the system is live
-        <br>
+      description: check if the system is live
       operationId: ApiController.Health
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -3082,9 +2805,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        invoice payment
-        <br>
+      description: invoice payment
       operationId: ApiController.InvoicePayment
       parameters:
       - in: query
@@ -3093,7 +2814,7 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -3101,9 +2822,8 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        Check if there are other different sessions for one user in one application.
-        <br>
+      description: Check if there are other different sessions for one user in one
+        application.
       operationId: ApiController.IsSessionDuplicated
       parameters:
       - in: query
@@ -3118,7 +2838,7 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             type: array
@@ -3128,9 +2848,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        login
-        <br>
+      description: login
       operationId: ApiController.Login
       parameters:
       - in: query
@@ -3175,7 +2893,7 @@ paths:
         schema:
           $ref: '#/definitions/controllers.AuthForm'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -3183,9 +2901,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        get OAuth access token
-        <br>
+      description: get OAuth access token
       operationId: ApiController.GetOAuthToken
       parameters:
       - in: query
@@ -3209,15 +2925,15 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/object.TokenWrapper'
-        "400":
+        '400':
           description: The Response object
           schema:
             $ref: '#/definitions/object.TokenError'
-        "401":
+        '401':
           description: The Response object
           schema:
             $ref: '#/definitions/object.TokenError'
@@ -3225,9 +2941,8 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        The introspection endpoint is an OAuth 2.0 endpoint that takes a
-        <br>
+      description: The introspection endpoint is an OAuth 2.0 endpoint that takes
+        a
       operationId: ApiController.IntrospectToken
       parameters:
       - in: formData
@@ -3241,15 +2956,15 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/object.IntrospectionResponse'
-        "400":
+        '400':
           description: The Response object
           schema:
             $ref: '#/definitions/object.TokenError'
-        "401":
+        '401':
           description: The Response object
           schema:
             $ref: '#/definitions/object.TokenError'
@@ -3257,9 +2972,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        refresh OAuth access token
-        <br>
+      description: refresh OAuth access token
       operationId: ApiController.RefreshToken
       parameters:
       - in: query
@@ -3287,15 +3000,15 @@ paths:
         description: OAuth client secret
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/object.TokenWrapper'
-        "400":
+        '400':
           description: The Response object
           schema:
             $ref: '#/definitions/object.TokenError'
-        "401":
+        '401':
           description: The Response object
           schema:
             $ref: '#/definitions/object.TokenError'
@@ -3303,9 +3016,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        logout the current user
-        <br>
+      description: logout the current user
       operationId: ApiController.Logout
       parameters:
       - in: query
@@ -3321,7 +3032,7 @@ paths:
         description: state
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -3329,23 +3040,19 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        get Prometheus metrics
-        <br>
+      description: get Prometheus metrics
       operationId: ApiController.GetMetrics
       responses:
-        "200":
+        '200':
           description: '{string} Prometheus metrics in text format'
   /api/mfa/setup/enable:
     post:
       tags:
       - api
-      description: |-
-        enable totp
-        <br>
+      description: enable totp
       operationId: ApiController.MfaSetupEnable
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -3353,12 +3060,10 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        setup MFA
-        <br>
+      description: setup MFA
       operationId: ApiController.MfaSetupInitiate
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -3366,12 +3071,10 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        setup verify totp
-        <br>
+      description: setup verify totp
       operationId: ApiController.MfaSetupVerify
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -3379,9 +3082,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        notify payment
-        <br>
+      description: notify payment
       operationId: ApiController.NotifyPayment
       parameters:
       - in: body
@@ -3391,7 +3092,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Payment'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -3399,9 +3100,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        pay an existing order
-        <br>
+      description: pay an existing order
       operationId: ApiController.PayOrder
       parameters:
       - in: query
@@ -3415,7 +3114,7 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -3423,9 +3122,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        place an order for a product
-        <br>
+      description: place an order for a product
       operationId: ApiController.PlaceOrder
       parameters:
       - in: query
@@ -3450,7 +3147,7 @@ paths:
         description: The username to place order for (admin only)
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/object.Order'
@@ -3458,9 +3155,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        Refresh all CLI engines
-        <br>
+      description: Refresh all CLI engines
       operationId: ApiController.RefreshEngines
       parameters:
       - in: query
@@ -3474,7 +3169,7 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -3482,9 +3177,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        remove policy
-        <br>
+      description: remove policy
       operationId: ApiController.RemovePolicy
       parameters:
       - in: query
@@ -3499,8 +3192,8 @@ paths:
         schema:
           $ref: '#/definitions/xormadapter.CasbinRule'
       responses:
-        "200":
-          description: ""
+        '200':
+          description: ''
           schema:
             $ref: '#/definitions/Response'
   /api/reset-email-or-phone:
@@ -3509,7 +3202,7 @@ paths:
       - api
       operationId: ApiController.ResetEmailOrPhone
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/object.Userinfo'
@@ -3517,12 +3210,10 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        Call Casbin CLI commands
-        <br>
+      description: Call Casbin CLI commands
       operationId: ApiController.RunCasbinCommand
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -3530,9 +3221,7 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        run syncer
-        <br>
+      description: run syncer
       operationId: ApiController.RunSyncer
       parameters:
       - in: body
@@ -3542,7 +3231,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Syncer'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -3550,9 +3239,8 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        This API is not for Casdoor frontend to call, it is for Casdoor SDKs.
-        <br>
+      description: This API is not for Casdoor frontend to call, it is for Casdoor
+        SDKs.
       operationId: ApiController.SendEmail
       parameters:
       - in: query
@@ -3572,7 +3260,7 @@ paths:
         schema:
           $ref: '#/definitions/controllers.EmailForm'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -3580,9 +3268,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        verify invitation
-        <br>
+      description: verify invitation
       operationId: ApiController.VerifyInvitation
       parameters:
       - in: query
@@ -3599,7 +3285,7 @@ paths:
           items:
             type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -3607,9 +3293,8 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        This API is not for Casdoor frontend to call, it is for Casdoor SDKs.
-        <br>
+      description: This API is not for Casdoor frontend to call, it is for Casdoor
+        SDKs.
       operationId: ApiController.SendNotification
       parameters:
       - in: body
@@ -3619,7 +3304,7 @@ paths:
         schema:
           $ref: '#/definitions/controllers.NotificationForm'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -3627,9 +3312,8 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        This API is not for Casdoor frontend to call, it is for Casdoor SDKs.
-        <br>
+      description: This API is not for Casdoor frontend to call, it is for Casdoor
+        SDKs.
       operationId: ApiController.SendSms
       parameters:
       - in: query
@@ -3649,7 +3333,7 @@ paths:
         schema:
           $ref: '#/definitions/controllers.SmsForm'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -3659,7 +3343,7 @@ paths:
       - api
       operationId: ApiController.SendVerificationCode
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/object.Userinfo'
@@ -3667,9 +3351,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        set password
-        <br>
+      description: set password
       operationId: ApiController.SetPassword
       parameters:
       - in: formData
@@ -3693,7 +3375,7 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -3701,12 +3383,10 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        : Set specific Mfa Preferred
-        <br>
+      description: ': Set specific Mfa Preferred'
       operationId: ApiController.SetPreferredMfa
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -3714,9 +3394,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        sign up a new user
-        <br>
+      description: sign up a new user
       operationId: ApiController.Signup
       parameters:
       - in: formData
@@ -3730,7 +3408,7 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -3738,24 +3416,20 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        logout the current user from all applications
-        <br>
+      description: logout the current user from all applications
       operationId: ApiController.SsoLogout
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
     post:
       tags:
       - api
-      description: |-
-        logout the current user from all applications
-        <br>
+      description: logout the current user from all applications
       operationId: ApiController.SsoLogout
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -3763,9 +3437,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        sync ldap users
-        <br>
+      description: sync ldap users
       operationId: ApiController.SyncLdapUsers
       parameters:
       - in: query
@@ -3774,7 +3446,7 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.LdapSyncResp'
@@ -3784,7 +3456,7 @@ paths:
       - api
       operationId: ApiController.Unlink
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/object.Userinfo'
@@ -3792,9 +3464,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        update adapter
-        <br>
+      description: update adapter
       operationId: ApiController.UpdateAdapter
       parameters:
       - in: query
@@ -3809,7 +3479,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Adapter'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -3817,9 +3487,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        update an application
-        <br>
+      description: update an application
       operationId: ApiController.UpdateApplication
       parameters:
       - in: query
@@ -3834,7 +3502,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Application'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -3842,9 +3510,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        update cert
-        <br>
+      description: update cert
       operationId: ApiController.UpdateCert
       parameters:
       - in: query
@@ -3859,7 +3525,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Cert'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -3867,9 +3533,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        update enforcer
-        <br>
+      description: update enforcer
       operationId: ApiController.UpdateEnforcer
       parameters:
       - in: query
@@ -3884,17 +3548,15 @@ paths:
         schema:
           $ref: '#/definitions/object'
       responses:
-        "200":
-          description: ""
+        '200':
+          description: ''
           schema:
             $ref: '#/definitions/object.Enforcer'
   /api/update-form:
     post:
       tags:
       - api
-      description: |-
-        update form
-        <br>
+      description: update form
       operationId: ApiController.UpdateForm
       parameters:
       - in: query
@@ -3909,7 +3571,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Form'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -3917,9 +3579,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        update group
-        <br>
+      description: update group
       operationId: ApiController.UpdateGroup
       parameters:
       - in: query
@@ -3934,7 +3594,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Group'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -3942,9 +3602,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        update invitation
-        <br>
+      description: update invitation
       operationId: ApiController.UpdateInvitation
       parameters:
       - in: query
@@ -3959,7 +3617,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Invitation'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -3967,9 +3625,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        update ldap
-        <br>
+      description: update ldap
       operationId: ApiController.UpdateLdap
       parameters:
       - in: body
@@ -3979,7 +3635,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Ldap'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -3987,9 +3643,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        update model
-        <br>
+      description: update model
       operationId: ApiController.UpdateModel
       parameters:
       - in: query
@@ -4004,7 +3658,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Model'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -4012,9 +3666,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        update order
-        <br>
+      description: update order
       operationId: ApiController.UpdateOrder
       parameters:
       - in: query
@@ -4029,7 +3681,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Order'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -4037,9 +3689,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        update organization
-        <br>
+      description: update organization
       operationId: ApiController.UpdateOrganization
       parameters:
       - in: query
@@ -4054,7 +3704,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Organization'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -4062,9 +3712,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        update payment
-        <br>
+      description: update payment
       operationId: ApiController.UpdatePayment
       parameters:
       - in: query
@@ -4079,7 +3727,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Payment'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -4087,9 +3735,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        update permission
-        <br>
+      description: update permission
       operationId: ApiController.UpdatePermission
       parameters:
       - in: query
@@ -4104,7 +3750,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Permission'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -4112,9 +3758,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        update plan
-        <br>
+      description: update plan
       operationId: ApiController.UpdatePlan
       parameters:
       - in: query
@@ -4129,7 +3773,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Plan'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -4137,9 +3781,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        update policy
-        <br>
+      description: update policy
       operationId: ApiController.UpdatePolicy
       parameters:
       - in: query
@@ -4156,17 +3798,15 @@ paths:
           items:
             $ref: '#/definitions/xormadapter.CasbinRule'
       responses:
-        "200":
-          description: ""
+        '200':
+          description: ''
           schema:
             $ref: '#/definitions/Response'
   /api/update-pricing:
     post:
       tags:
       - api
-      description: |-
-        update pricing
-        <br>
+      description: update pricing
       operationId: ApiController.UpdatePricing
       parameters:
       - in: query
@@ -4181,7 +3821,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Pricing'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -4189,9 +3829,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        update product
-        <br>
+      description: update product
       operationId: ApiController.UpdateProduct
       parameters:
       - in: query
@@ -4206,7 +3844,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Product'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -4214,9 +3852,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        update provider
-        <br>
+      description: update provider
       operationId: ApiController.UpdateProvider
       parameters:
       - in: query
@@ -4231,7 +3867,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Provider'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -4239,9 +3875,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        get resource
-        <br>
+      description: get resource
       operationId: ApiController.UpdateResource
       parameters:
       - in: query
@@ -4256,7 +3890,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Resource'
       responses:
-        "200":
+        '200':
           description: Success or error
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -4264,9 +3898,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        update role
-        <br>
+      description: update role
       operationId: ApiController.UpdateRole
       parameters:
       - in: query
@@ -4281,7 +3913,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Role'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -4289,9 +3921,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        Update session for one user in one application.
-        <br>
+      description: Update session for one user in one application.
       operationId: ApiController.UpdateSession
       parameters:
       - in: body
@@ -4301,7 +3931,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Session'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -4309,9 +3939,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        update subscription
-        <br>
+      description: update subscription
       operationId: ApiController.UpdateSubscription
       parameters:
       - in: query
@@ -4326,7 +3954,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Subscription'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -4334,9 +3962,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        update syncer
-        <br>
+      description: update syncer
       operationId: ApiController.UpdateSyncer
       parameters:
       - in: query
@@ -4351,7 +3977,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Syncer'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -4359,9 +3985,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        update token
-        <br>
+      description: update token
       operationId: ApiController.UpdateToken
       parameters:
       - in: query
@@ -4376,7 +4000,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Token'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -4384,9 +4008,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        update transaction
-        <br>
+      description: update transaction
       operationId: ApiController.UpdateTransaction
       parameters:
       - in: query
@@ -4401,7 +4023,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Transaction'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -4409,9 +4031,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        update user
-        <br>
+      description: update user
       operationId: ApiController.UpdateUser
       parameters:
       - in: query
@@ -4433,7 +4053,7 @@ paths:
         schema:
           $ref: '#/definitions/object.User'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -4441,9 +4061,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        update webhook
-        <br>
+      description: update webhook
       operationId: ApiController.UpdateWebhook
       parameters:
       - in: query
@@ -4459,7 +4077,7 @@ paths:
         schema:
           $ref: '#/definitions/object.Webhook'
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -4511,7 +4129,7 @@ paths:
         required: true
         type: file
       responses:
-        "200":
+        '200':
           description: FileUrl, objectKey
           schema:
             $ref: '#/definitions/object.Resource'
@@ -4519,12 +4137,10 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        return Laravel compatible user information according to OAuth 2.0
-        <br>
+      description: return Laravel compatible user information according to OAuth 2.0
       operationId: ApiController.UserInfo2
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.LaravelResponse'
@@ -4532,12 +4148,10 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        return user information according to OIDC standards
-        <br>
+      description: return user information according to OIDC standards
       operationId: ApiController.UserInfo
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/object.Userinfo'
@@ -4547,7 +4161,7 @@ paths:
       - api
       operationId: ApiController.VerifyCaptcha
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/object.Userinfo'
@@ -4557,7 +4171,7 @@ paths:
       - api
       operationId: ApiController.VerifyCode
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/object.Userinfo'
@@ -4565,9 +4179,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        verify user's real identity using ID Verification provider
-        <br>
+      description: verify user's real identity using ID Verification provider
       operationId: ApiController.VerifyIdentification
       parameters:
       - in: query
@@ -4584,7 +4196,7 @@ paths:
           if not provided)
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -4592,9 +4204,7 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        verify invitation
-        <br>
+      description: verify invitation
       operationId: ApiController.VerifyInvitation
       parameters:
       - in: query
@@ -4603,7 +4213,7 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -4611,9 +4221,7 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        WebAuthn Login Flow 1st stage
-        <br>
+      description: WebAuthn Login Flow 1st stage
       operationId: ApiController.WebAuthnSigninBegin
       parameters:
       - in: query
@@ -4627,7 +4235,7 @@ paths:
         required: true
         type: string
       responses:
-        "200":
+        '200':
           description: The CredentialAssertion object
           schema:
             $ref: '#/definitions/protocol.CredentialAssertion'
@@ -4635,9 +4243,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        WebAuthn Login Flow 2nd stage
-        <br>
+      description: WebAuthn Login Flow 2nd stage
       operationId: ApiController.WebAuthnSigninFinish
       parameters:
       - in: body
@@ -4647,7 +4253,7 @@ paths:
         schema:
           $ref: '#/definitions/protocol.CredentialAssertionResponse'
       responses:
-        "200":
+        '200':
           description: '"The Response object"'
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -4655,12 +4261,10 @@ paths:
     get:
       tags:
       - api
-      description: |-
-        WebAuthn Registration Flow 1st stage
-        <br>
+      description: WebAuthn Registration Flow 1st stage
       operationId: ApiController.WebAuthnSignupBegin
       responses:
-        "200":
+        '200':
           description: The CredentialCreationOptions object
           schema:
             $ref: '#/definitions/protocol.CredentialCreation'
@@ -4668,9 +4272,7 @@ paths:
     post:
       tags:
       - api
-      description: |-
-        WebAuthn Registration Flow 2nd stage
-        <br>
+      description: WebAuthn Registration Flow 2nd stage
       operationId: ApiController.WebAuthnSignupFinish
       parameters:
       - in: body
@@ -4680,7 +4282,7 @@ paths:
         schema:
           $ref: '#/definitions/protocol.CredentialCreationResponse'
       responses:
-        "200":
+        '200':
           description: '"The Response object"'
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -4690,7 +4292,7 @@ paths:
       - api
       operationId: ApiController.HandleOfficialAccountEvent
       responses:
-        "200":
+        '200':
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
@@ -7627,9 +7229,16 @@ definitions:
         type: string
 tags:
 - name: api
-  description: |
-    ApiController
+  description: 'ApiController
+
     controller for handlers under /api uri
-- description: |
-    RootController
+
+    '
+- description: 'RootController
+
     controller for handlers directly under / (root)
+
+    '
+schemes:
+- https
+- http

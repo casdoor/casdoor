@@ -1,14 +1,19 @@
 {
     "swagger": "2.0",
     "info": {
-        "contact": {}
+        "title": "Casdoor RESTful API",
+        "description": "Swagger Docs of Casdoor Backend API",
+        "version": "1.503.0",
+        "contact": {
+            "email": "casbin@googlegroups.com"
+        }
     },
     "basePath": "/",
     "paths": {
         "/.well-known/jwks": {
             "get": {
                 "tags": [
-                    "github.com/casdoor/casdoor/controllersRootController"
+                    "root"
                 ],
                 "operationId": "RootController.GetJwks",
                 "responses": {
@@ -24,9 +29,9 @@
         "/.well-known/openid-configuration": {
             "get": {
                 "tags": [
-                    "github.com/casdoor/casdoor/controllersRootController"
+                    "root"
                 ],
-                "description": "Get Oidc Discovery\n\u003cbr\u003e",
+                "description": "Get Oidc Discovery",
                 "operationId": "RootController.GetOidcDiscovery",
                 "responses": {
                     "200": {
@@ -41,7 +46,7 @@
         "/.well-known/webfinger": {
             "get": {
                 "tags": [
-                    "github.com/casdoor/casdoor/controllersRootController"
+                    "root"
                 ],
                 "operationId": "RootController.GetWebFinger",
                 "parameters": [
@@ -66,7 +71,7 @@
         "/.well-known/{application}/jwks": {
             "get": {
                 "tags": [
-                    "github.com/casdoor/casdoor/controllersRootController"
+                    "root"
                 ],
                 "operationId": "RootController.GetJwksByApplication",
                 "parameters": [
@@ -91,9 +96,9 @@
         "/.well-known/{application}/openid-configuration": {
             "get": {
                 "tags": [
-                    "github.com/casdoor/casdoor/controllersRootController"
+                    "root"
                 ],
-                "description": "Get Oidc Discovery for specific application\n\u003cbr\u003e",
+                "description": "Get Oidc Discovery for specific application",
                 "operationId": "RootController.GetOidcDiscoveryByApplication",
                 "parameters": [
                     {
@@ -117,7 +122,7 @@
         "/.well-known/{application}/webfinger": {
             "get": {
                 "tags": [
-                    "github.com/casdoor/casdoor/controllersRootController"
+                    "root"
                 ],
                 "operationId": "RootController.GetWebFingerByApplication",
                 "parameters": [
@@ -151,7 +156,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "Get Login Error Counts\n\u003cbr\u003e",
+                "description": "Get Login Error Counts",
                 "operationId": "ApiController.Callback",
                 "responses": {
                     "200": {
@@ -168,7 +173,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "add adapter\n\u003cbr\u003e",
+                "description": "add adapter",
                 "operationId": "ApiController.AddAdapter",
                 "parameters": [
                     {
@@ -196,7 +201,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "add an application\n\u003cbr\u003e",
+                "description": "add an application",
                 "operationId": "ApiController.AddApplication",
                 "parameters": [
                     {
@@ -224,7 +229,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "add cert\n\u003cbr\u003e",
+                "description": "add cert",
                 "operationId": "ApiController.AddCert",
                 "parameters": [
                     {
@@ -252,7 +257,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "add enforcer\n\u003cbr\u003e",
+                "description": "add enforcer",
                 "operationId": "ApiController.AddEnforcer",
                 "parameters": [
                     {
@@ -280,7 +285,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "add form\n\u003cbr\u003e",
+                "description": "add form",
                 "operationId": "ApiController.AddForm",
                 "parameters": [
                     {
@@ -308,7 +313,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "add group\n\u003cbr\u003e",
+                "description": "add group",
                 "operationId": "ApiController.AddGroup",
                 "parameters": [
                     {
@@ -336,7 +341,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "add invitation\n\u003cbr\u003e",
+                "description": "add invitation",
                 "operationId": "ApiController.AddInvitation",
                 "parameters": [
                     {
@@ -364,7 +369,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "add ldap\n\u003cbr\u003e",
+                "description": "add ldap",
                 "operationId": "ApiController.AddLdap",
                 "parameters": [
                     {
@@ -392,7 +397,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "add model\n\u003cbr\u003e",
+                "description": "add model",
                 "operationId": "ApiController.AddModel",
                 "parameters": [
                     {
@@ -420,7 +425,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "add order\n\u003cbr\u003e",
+                "description": "add order",
                 "operationId": "ApiController.AddOrder",
                 "parameters": [
                     {
@@ -448,7 +453,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "add organization\n\u003cbr\u003e",
+                "description": "add organization",
                 "operationId": "ApiController.AddOrganization",
                 "parameters": [
                     {
@@ -476,7 +481,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "add payment\n\u003cbr\u003e",
+                "description": "add payment",
                 "operationId": "ApiController.AddPayment",
                 "parameters": [
                     {
@@ -504,7 +509,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "add permission\n\u003cbr\u003e",
+                "description": "add permission",
                 "operationId": "ApiController.AddPermission",
                 "parameters": [
                     {
@@ -532,7 +537,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "add plan\n\u003cbr\u003e",
+                "description": "add plan",
                 "operationId": "ApiController.AddPlan",
                 "parameters": [
                     {
@@ -560,7 +565,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "add policy\n\u003cbr\u003e",
+                "description": "add policy",
                 "operationId": "ApiController.AddPolicy",
                 "parameters": [
                     {
@@ -595,7 +600,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "add pricing\n\u003cbr\u003e",
+                "description": "add pricing",
                 "operationId": "ApiController.AddPricing",
                 "parameters": [
                     {
@@ -623,7 +628,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "add product\n\u003cbr\u003e",
+                "description": "add product",
                 "operationId": "ApiController.AddProduct",
                 "parameters": [
                     {
@@ -651,7 +656,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "add provider\n\u003cbr\u003e",
+                "description": "add provider",
                 "operationId": "ApiController.AddProvider",
                 "parameters": [
                     {
@@ -679,7 +684,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "add a record\n\u003cbr\u003e",
+                "description": "add a record",
                 "operationId": "ApiController.AddRecord",
                 "parameters": [
                     {
@@ -734,7 +739,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "add role\n\u003cbr\u003e",
+                "description": "add role",
                 "operationId": "ApiController.AddRole",
                 "parameters": [
                     {
@@ -762,7 +767,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "Add session for one user in one application. If there are other existing sessions, join the session into the list.\n\u003cbr\u003e",
+                "description": "Add session for one user in one application. If there are other existing sessions, join the session into the list.",
                 "operationId": "ApiController.AddSession",
                 "parameters": [
                     {
@@ -790,7 +795,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "add subscription\n\u003cbr\u003e",
+                "description": "add subscription",
                 "operationId": "ApiController.AddSubscription",
                 "parameters": [
                     {
@@ -818,7 +823,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "add syncer\n\u003cbr\u003e",
+                "description": "add syncer",
                 "operationId": "ApiController.AddSyncer",
                 "parameters": [
                     {
@@ -846,7 +851,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "add token\n\u003cbr\u003e",
+                "description": "add token",
                 "operationId": "ApiController.AddToken",
                 "parameters": [
                     {
@@ -874,7 +879,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "add transaction\n\u003cbr\u003e",
+                "description": "add transaction",
                 "operationId": "ApiController.AddTransaction",
                 "parameters": [
                     {
@@ -908,7 +913,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "add user\n\u003cbr\u003e",
+                "description": "add user",
                 "operationId": "ApiController.AddUser",
                 "parameters": [
                     {
@@ -952,7 +957,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "add webhook\n\u003cbr\u003e",
+                "description": "add webhook",
                 "operationId": "ApiController.AddWebhook",
                 "parameters": [
                     {
@@ -980,7 +985,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "Call Casbin BatchEnforce API\n\u003cbr\u003e",
+                "description": "Call Casbin BatchEnforce API",
                 "operationId": "ApiController.BatchEnforce",
                 "parameters": [
                     {
@@ -1029,7 +1034,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "cancel an order\n\u003cbr\u003e",
+                "description": "cancel an order",
                 "operationId": "ApiController.CancelOrder",
                 "parameters": [
                     {
@@ -1071,7 +1076,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "delete adapter\n\u003cbr\u003e",
+                "description": "delete adapter",
                 "operationId": "ApiController.DeleteAdapter",
                 "parameters": [
                     {
@@ -1099,7 +1104,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "delete an application\n\u003cbr\u003e",
+                "description": "delete an application",
                 "operationId": "ApiController.DeleteApplication",
                 "parameters": [
                     {
@@ -1127,7 +1132,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "delete cert\n\u003cbr\u003e",
+                "description": "delete cert",
                 "operationId": "ApiController.DeleteCert",
                 "parameters": [
                     {
@@ -1155,7 +1160,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "delete enforcer\n\u003cbr\u003e",
+                "description": "delete enforcer",
                 "operationId": "ApiController.DeleteEnforcer",
                 "parameters": [
                     {
@@ -1183,7 +1188,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "delete form\n\u003cbr\u003e",
+                "description": "delete form",
                 "operationId": "ApiController.DeleteForm",
                 "parameters": [
                     {
@@ -1211,7 +1216,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "delete group\n\u003cbr\u003e",
+                "description": "delete group",
                 "operationId": "ApiController.DeleteGroup",
                 "parameters": [
                     {
@@ -1239,7 +1244,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "delete invitation\n\u003cbr\u003e",
+                "description": "delete invitation",
                 "operationId": "ApiController.DeleteInvitation",
                 "parameters": [
                     {
@@ -1267,7 +1272,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "delete ldap\n\u003cbr\u003e",
+                "description": "delete ldap",
                 "operationId": "ApiController.DeleteLdap",
                 "parameters": [
                     {
@@ -1295,7 +1300,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": ": Delete MFA\n\u003cbr\u003e",
+                "description": ": Delete MFA",
                 "operationId": "ApiController.DeleteMfa",
                 "responses": {
                     "200": {
@@ -1312,7 +1317,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "delete model\n\u003cbr\u003e",
+                "description": "delete model",
                 "operationId": "ApiController.DeleteModel",
                 "parameters": [
                     {
@@ -1340,7 +1345,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "delete order\n\u003cbr\u003e",
+                "description": "delete order",
                 "operationId": "ApiController.DeleteOrder",
                 "parameters": [
                     {
@@ -1368,7 +1373,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "delete organization\n\u003cbr\u003e",
+                "description": "delete organization",
                 "operationId": "ApiController.DeleteOrganization",
                 "parameters": [
                     {
@@ -1396,7 +1401,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "delete payment\n\u003cbr\u003e",
+                "description": "delete payment",
                 "operationId": "ApiController.DeletePayment",
                 "parameters": [
                     {
@@ -1424,7 +1429,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "delete permission\n\u003cbr\u003e",
+                "description": "delete permission",
                 "operationId": "ApiController.DeletePermission",
                 "parameters": [
                     {
@@ -1452,7 +1457,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "delete plan\n\u003cbr\u003e",
+                "description": "delete plan",
                 "operationId": "ApiController.DeletePlan",
                 "parameters": [
                     {
@@ -1480,7 +1485,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "delete pricing\n\u003cbr\u003e",
+                "description": "delete pricing",
                 "operationId": "ApiController.DeletePricing",
                 "parameters": [
                     {
@@ -1508,7 +1513,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "delete product\n\u003cbr\u003e",
+                "description": "delete product",
                 "operationId": "ApiController.DeleteProduct",
                 "parameters": [
                     {
@@ -1536,7 +1541,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "delete provider\n\u003cbr\u003e",
+                "description": "delete provider",
                 "operationId": "ApiController.DeleteProvider",
                 "parameters": [
                     {
@@ -1591,7 +1596,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "delete role\n\u003cbr\u003e",
+                "description": "delete role",
                 "operationId": "ApiController.DeleteRole",
                 "parameters": [
                     {
@@ -1619,7 +1624,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "Delete session for one user in one application.\n\u003cbr\u003e",
+                "description": "Delete session for one user in one application.",
                 "operationId": "ApiController.DeleteSession",
                 "parameters": [
                     {
@@ -1647,7 +1652,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "delete subscription\n\u003cbr\u003e",
+                "description": "delete subscription",
                 "operationId": "ApiController.DeleteSubscription",
                 "parameters": [
                     {
@@ -1675,7 +1680,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "delete syncer\n\u003cbr\u003e",
+                "description": "delete syncer",
                 "operationId": "ApiController.DeleteSyncer",
                 "parameters": [
                     {
@@ -1703,7 +1708,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "delete token\n\u003cbr\u003e",
+                "description": "delete token",
                 "operationId": "ApiController.DeleteToken",
                 "parameters": [
                     {
@@ -1731,7 +1736,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "delete transaction\n\u003cbr\u003e",
+                "description": "delete transaction",
                 "operationId": "ApiController.DeleteTransaction",
                 "parameters": [
                     {
@@ -1759,7 +1764,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "delete user\n\u003cbr\u003e",
+                "description": "delete user",
                 "operationId": "ApiController.DeleteUser",
                 "parameters": [
                     {
@@ -1787,7 +1792,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "delete webhook\n\u003cbr\u003e",
+                "description": "delete webhook",
                 "operationId": "ApiController.DeleteWebhook",
                 "parameters": [
                     {
@@ -1815,7 +1820,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "Endpoint for the device authorization flow\n\u003cbr\u003e",
+                "description": "Endpoint for the device authorization flow",
                 "operationId": "ApiController.DeviceAuth",
                 "responses": {
                     "200": {
@@ -1832,7 +1837,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "Call Casbin Enforce API\n\u003cbr\u003e",
+                "description": "Call Casbin Enforce API",
                 "operationId": "ApiController.Enforce",
                 "parameters": [
                     {
@@ -1887,7 +1892,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "FaceId Login Flow 1st stage\n\u003cbr\u003e",
+                "description": "FaceId Login Flow 1st stage",
                 "operationId": "ApiController.FaceIDSigninBegin",
                 "parameters": [
                     {
@@ -1920,7 +1925,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get the details of the current account\n\u003cbr\u003e",
+                "description": "get the details of the current account",
                 "operationId": "ApiController.GetAccount",
                 "responses": {
                     "200": {
@@ -1937,7 +1942,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get adapter\n\u003cbr\u003e",
+                "description": "get adapter",
                 "operationId": "ApiController.GetAdapter",
                 "parameters": [
                     {
@@ -1963,7 +1968,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get adapters\n\u003cbr\u003e",
+                "description": "get adapters",
                 "operationId": "ApiController.GetAdapters",
                 "parameters": [
                     {
@@ -1992,7 +1997,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get application login\n\u003cbr\u003e",
+                "description": "get application login",
                 "operationId": "ApiController.GetApplicationLogin",
                 "parameters": [
                     {
@@ -2046,7 +2051,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get the detail of an application\n\u003cbr\u003e",
+                "description": "get the detail of an application",
                 "operationId": "ApiController.GetApplication",
                 "parameters": [
                     {
@@ -2072,7 +2077,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get all applications\n\u003cbr\u003e",
+                "description": "get all applications",
                 "operationId": "ApiController.GetApplications",
                 "parameters": [
                     {
@@ -2117,7 +2122,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "Get Login Error Counts\n\u003cbr\u003e",
+                "description": "Get Login Error Counts",
                 "operationId": "ApiController.GetCaptchaStatus",
                 "parameters": [
                     {
@@ -2143,7 +2148,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get cert\n\u003cbr\u003e",
+                "description": "get cert",
                 "operationId": "ApiController.GetCert",
                 "parameters": [
                     {
@@ -2169,7 +2174,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get certs\n\u003cbr\u003e",
+                "description": "get certs",
                 "operationId": "ApiController.GetCerts",
                 "parameters": [
                     {
@@ -2198,7 +2203,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get information of dashboard\n\u003cbr\u003e",
+                "description": "get information of dashboard",
                 "operationId": "ApiController.GetDashboard",
                 "responses": {
                     "200": {
@@ -2215,7 +2220,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get default application\n\u003cbr\u003e",
+                "description": "get default application",
                 "operationId": "ApiController.GetDefaultApplication",
                 "parameters": [
                     {
@@ -2241,7 +2246,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get email and phone by username\n\u003cbr\u003e",
+                "description": "get email and phone by username",
                 "operationId": "ApiController.GetEmailAndPhone",
                 "parameters": [
                     {
@@ -2274,7 +2279,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get enforcer\n\u003cbr\u003e",
+                "description": "get enforcer",
                 "operationId": "ApiController.GetEnforcer",
                 "parameters": [
                     {
@@ -2300,7 +2305,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get enforcers\n\u003cbr\u003e",
+                "description": "get enforcers",
                 "operationId": "ApiController.GetEnforcers",
                 "parameters": [
                     {
@@ -2329,7 +2334,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get filtered policies with support for multiple filters via POST body\n\u003cbr\u003e",
+                "description": "get filtered policies with support for multiple filters via POST body",
                 "operationId": "ApiController.GetFilteredPolicies",
                 "parameters": [
                     {
@@ -2370,7 +2375,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get form\n\u003cbr\u003e",
+                "description": "get form",
                 "operationId": "ApiController.GetForm",
                 "parameters": [
                     {
@@ -2396,7 +2401,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get forms\n\u003cbr\u003e",
+                "description": "get forms",
                 "operationId": "ApiController.GetForms",
                 "parameters": [
                     {
@@ -2425,7 +2430,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get global certs\n\u003cbr\u003e",
+                "description": "get global certs",
                 "operationId": "ApiController.GetGlobalCerts",
                 "responses": {
                     "200": {
@@ -2445,7 +2450,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get global forms\n\u003cbr\u003e",
+                "description": "get global forms",
                 "operationId": "ApiController.GetGlobalForms",
                 "responses": {
                     "200": {
@@ -2465,7 +2470,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get Global providers\n\u003cbr\u003e",
+                "description": "get Global providers",
                 "operationId": "ApiController.GetGlobalProviders",
                 "responses": {
                     "200": {
@@ -2485,7 +2490,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get global users\n\u003cbr\u003e",
+                "description": "get global users",
                 "operationId": "ApiController.GetGlobalUsers",
                 "responses": {
                     "200": {
@@ -2505,7 +2510,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get group\n\u003cbr\u003e",
+                "description": "get group",
                 "operationId": "ApiController.GetGroup",
                 "parameters": [
                     {
@@ -2531,7 +2536,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get groups\n\u003cbr\u003e",
+                "description": "get groups",
                 "operationId": "ApiController.GetGroups",
                 "parameters": [
                     {
@@ -2560,7 +2565,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get invitation\n\u003cbr\u003e",
+                "description": "get invitation",
                 "operationId": "ApiController.GetInvitation",
                 "parameters": [
                     {
@@ -2586,7 +2591,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get invitation code information\n\u003cbr\u003e",
+                "description": "get invitation code information",
                 "operationId": "ApiController.GetInvitationCodeInfo",
                 "parameters": [
                     {
@@ -2612,7 +2617,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get invitations\n\u003cbr\u003e",
+                "description": "get invitations",
                 "operationId": "ApiController.GetInvitations",
                 "parameters": [
                     {
@@ -2641,7 +2646,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get ldap\n\u003cbr\u003e",
+                "description": "get ldap",
                 "operationId": "ApiController.GetLdap",
                 "parameters": [
                     {
@@ -2667,7 +2672,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get ldap users\n\u003cbr\u003e",
+                "description": "get ldap users",
                 "operationId": "ApiController.GetLdapser",
                 "responses": {
                     "200": {
@@ -2684,7 +2689,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get ldaps\n\u003cbr\u003e",
+                "description": "get ldaps",
                 "operationId": "ApiController.GetLdaps",
                 "parameters": [
                     {
@@ -2712,7 +2717,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get model\n\u003cbr\u003e",
+                "description": "get model",
                 "operationId": "ApiController.GetModel",
                 "parameters": [
                     {
@@ -2738,7 +2743,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get models\n\u003cbr\u003e",
+                "description": "get models",
                 "operationId": "ApiController.GetModels",
                 "parameters": [
                     {
@@ -2767,7 +2772,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get order\n\u003cbr\u003e",
+                "description": "get order",
                 "operationId": "ApiController.GetOrder",
                 "parameters": [
                     {
@@ -2793,7 +2798,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get orders\n\u003cbr\u003e",
+                "description": "get orders",
                 "operationId": "ApiController.GetOrders",
                 "parameters": [
                     {
@@ -2822,7 +2827,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get organization\n\u003cbr\u003e",
+                "description": "get organization",
                 "operationId": "ApiController.GetOrganization",
                 "parameters": [
                     {
@@ -2848,7 +2853,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get the detail of the organization's application\n\u003cbr\u003e",
+                "description": "get the detail of the organization's application",
                 "operationId": "ApiController.GetOrganizationApplications",
                 "parameters": [
                     {
@@ -2877,7 +2882,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get all organization name and displayName\n\u003cbr\u003e",
+                "description": "get all organization name and displayName",
                 "operationId": "ApiController.GetOrganizationNames",
                 "parameters": [
                     {
@@ -2906,7 +2911,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get organizations\n\u003cbr\u003e",
+                "description": "get organizations",
                 "operationId": "ApiController.GetOrganizations",
                 "parameters": [
                     {
@@ -2935,7 +2940,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get payment\n\u003cbr\u003e",
+                "description": "get payment",
                 "operationId": "ApiController.GetVerification",
                 "parameters": [
                     {
@@ -2961,7 +2966,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get payments\n\u003cbr\u003e",
+                "description": "get payments",
                 "operationId": "ApiController.GetVerifications",
                 "parameters": [
                     {
@@ -2990,7 +2995,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get permission\n\u003cbr\u003e",
+                "description": "get permission",
                 "operationId": "ApiController.GetPermission",
                 "parameters": [
                     {
@@ -3016,7 +3021,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get permissions\n\u003cbr\u003e",
+                "description": "get permissions",
                 "operationId": "ApiController.GetPermissions",
                 "parameters": [
                     {
@@ -3045,7 +3050,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get permissions by role\n\u003cbr\u003e",
+                "description": "get permissions by role",
                 "operationId": "ApiController.GetPermissionsByRole",
                 "parameters": [
                     {
@@ -3074,7 +3079,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get permissions by submitter\n\u003cbr\u003e",
+                "description": "get permissions by submitter",
                 "operationId": "ApiController.GetPermissionsBySubmitter",
                 "responses": {
                     "200": {
@@ -3094,7 +3099,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get plan\n\u003cbr\u003e",
+                "description": "get plan",
                 "operationId": "ApiController.GetPlan",
                 "parameters": [
                     {
@@ -3126,7 +3131,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get plans\n\u003cbr\u003e",
+                "description": "get plans",
                 "operationId": "ApiController.GetPlans",
                 "parameters": [
                     {
@@ -3155,7 +3160,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get policies\n\u003cbr\u003e",
+                "description": "get policies",
                 "operationId": "ApiController.GetPolicies",
                 "parameters": [
                     {
@@ -3190,7 +3195,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get pricing\n\u003cbr\u003e",
+                "description": "get pricing",
                 "operationId": "ApiController.GetPricing",
                 "parameters": [
                     {
@@ -3216,7 +3221,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get pricings\n\u003cbr\u003e",
+                "description": "get pricings",
                 "operationId": "ApiController.GetPricings",
                 "parameters": [
                     {
@@ -3245,7 +3250,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get product\n\u003cbr\u003e",
+                "description": "get product",
                 "operationId": "ApiController.GetProduct",
                 "parameters": [
                     {
@@ -3271,7 +3276,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get products\n\u003cbr\u003e",
+                "description": "get products",
                 "operationId": "ApiController.GetProducts",
                 "parameters": [
                     {
@@ -3300,7 +3305,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get Prometheus Info\n\u003cbr\u003e",
+                "description": "get Prometheus Info",
                 "operationId": "ApiController.GetPrometheusInfo",
                 "responses": {
                     "200": {
@@ -3317,7 +3322,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get provider\n\u003cbr\u003e",
+                "description": "get provider",
                 "operationId": "ApiController.GetProvider",
                 "parameters": [
                     {
@@ -3343,7 +3348,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get providers\n\u003cbr\u003e",
+                "description": "get providers",
                 "operationId": "ApiController.GetProviders",
                 "parameters": [
                     {
@@ -3397,7 +3402,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get all records\n\u003cbr\u003e",
+                "description": "get all records",
                 "operationId": "ApiController.GetRecords",
                 "parameters": [
                     {
@@ -3430,7 +3435,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get records by filter\n\u003cbr\u003e",
+                "description": "get records by filter",
                 "operationId": "ApiController.GetRecordsByFilter",
                 "parameters": [
                     {
@@ -3459,7 +3464,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get resource\n\u003cbr\u003e",
+                "description": "get resource",
                 "operationId": "ApiController.GetResource",
                 "parameters": [
                     {
@@ -3485,7 +3490,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get resources\n\u003cbr\u003e",
+                "description": "get resources",
                 "operationId": "ApiController.GetResources",
                 "parameters": [
                     {
@@ -3557,7 +3562,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get role\n\u003cbr\u003e",
+                "description": "get role",
                 "operationId": "ApiController.GetRole",
                 "parameters": [
                     {
@@ -3583,7 +3588,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get roles\n\u003cbr\u003e",
+                "description": "get roles",
                 "operationId": "ApiController.GetRoles",
                 "parameters": [
                     {
@@ -3612,7 +3617,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "Get session for one user in one application.\n\u003cbr\u003e",
+                "description": "Get session for one user in one application.",
                 "operationId": "ApiController.GetSingleSession",
                 "parameters": [
                     {
@@ -3641,7 +3646,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "Get organization user sessions.\n\u003cbr\u003e",
+                "description": "Get organization user sessions.",
                 "operationId": "ApiController.GetSessions",
                 "parameters": [
                     {
@@ -3670,7 +3675,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "\n\u003cbr\u003e",
+                "description": "",
                 "operationId": "ApiController.GetSortedUsers",
                 "parameters": [
                     {
@@ -3713,7 +3718,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get subscription\n\u003cbr\u003e",
+                "description": "get subscription",
                 "operationId": "ApiController.GetSubscription",
                 "parameters": [
                     {
@@ -3739,7 +3744,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get subscriptions\n\u003cbr\u003e",
+                "description": "get subscriptions",
                 "operationId": "ApiController.GetSubscriptions",
                 "parameters": [
                     {
@@ -3768,7 +3773,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get syncer\n\u003cbr\u003e",
+                "description": "get syncer",
                 "operationId": "ApiController.GetSyncer",
                 "parameters": [
                     {
@@ -3794,7 +3799,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get syncers\n\u003cbr\u003e",
+                "description": "get syncers",
                 "operationId": "ApiController.GetSyncers",
                 "parameters": [
                     {
@@ -3823,7 +3828,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get system info like CPU and memory usage\n\u003cbr\u003e",
+                "description": "get system info like CPU and memory usage",
                 "operationId": "ApiController.GetSystemInfo",
                 "responses": {
                     "200": {
@@ -3840,7 +3845,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get token\n\u003cbr\u003e",
+                "description": "get token",
                 "operationId": "ApiController.GetToken",
                 "parameters": [
                     {
@@ -3866,7 +3871,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get tokens\n\u003cbr\u003e",
+                "description": "get tokens",
                 "operationId": "ApiController.GetTokens",
                 "parameters": [
                     {
@@ -3909,7 +3914,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get transaction\n\u003cbr\u003e",
+                "description": "get transaction",
                 "operationId": "ApiController.GetTransaction",
                 "parameters": [
                     {
@@ -3935,7 +3940,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get transactions\n\u003cbr\u003e",
+                "description": "get transactions",
                 "operationId": "ApiController.GetTransactions",
                 "parameters": [
                     {
@@ -3964,7 +3969,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get user\n\u003cbr\u003e",
+                "description": "get user",
                 "operationId": "ApiController.GetUser",
                 "parameters": [
                     {
@@ -4013,7 +4018,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get the detail of the user's application\n\u003cbr\u003e",
+                "description": "get the detail of the user's application",
                 "operationId": "ApiController.GetUserApplication",
                 "parameters": [
                     {
@@ -4039,7 +4044,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "\n\u003cbr\u003e",
+                "description": "",
                 "operationId": "ApiController.GetUserCount",
                 "parameters": [
                     {
@@ -4069,7 +4074,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get orders for a user\n\u003cbr\u003e",
+                "description": "get orders for a user",
                 "operationId": "ApiController.GetUserOrders",
                 "parameters": [
                     {
@@ -4105,7 +4110,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get payments for a user\n\u003cbr\u003e",
+                "description": "get payments for a user",
                 "operationId": "ApiController.GetUserVerifications",
                 "parameters": [
                     {
@@ -4148,7 +4153,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "\n\u003cbr\u003e",
+                "description": "",
                 "operationId": "ApiController.GetUsers",
                 "parameters": [
                     {
@@ -4177,7 +4182,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get version info like Casdoor release version and commit ID\n\u003cbr\u003e",
+                "description": "get version info like Casdoor release version and commit ID",
                 "operationId": "ApiController.GetVersionInfo",
                 "responses": {
                     "200": {
@@ -4194,7 +4199,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get webhook\n\u003cbr\u003e",
+                "description": "get webhook",
                 "operationId": "ApiController.GetWebhook",
                 "parameters": [
                     {
@@ -4246,7 +4251,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get webhooks\n\u003cbr\u003e",
+                "description": "get webhooks",
                 "operationId": "ApiController.GetWebhooks",
                 "parameters": [
                     {
@@ -4281,7 +4286,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "check if the system is live\n\u003cbr\u003e",
+                "description": "check if the system is live",
                 "operationId": "ApiController.Health",
                 "responses": {
                     "200": {
@@ -4298,7 +4303,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "invoice payment\n\u003cbr\u003e",
+                "description": "invoice payment",
                 "operationId": "ApiController.InvoicePayment",
                 "parameters": [
                     {
@@ -4324,7 +4329,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "Check if there are other different sessions for one user in one application.\n\u003cbr\u003e",
+                "description": "Check if there are other different sessions for one user in one application.",
                 "operationId": "ApiController.IsSessionDuplicated",
                 "parameters": [
                     {
@@ -4360,7 +4365,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "login\n\u003cbr\u003e",
+                "description": "login",
                 "operationId": "ApiController.Login",
                 "parameters": [
                     {
@@ -4439,7 +4444,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get OAuth access token\n\u003cbr\u003e",
+                "description": "get OAuth access token",
                 "operationId": "ApiController.GetOAuthToken",
                 "parameters": [
                     {
@@ -4498,7 +4503,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "The introspection endpoint is an OAuth 2.0 endpoint that takes a\n\u003cbr\u003e",
+                "description": "The introspection endpoint is an OAuth 2.0 endpoint that takes a",
                 "operationId": "ApiController.IntrospectToken",
                 "parameters": [
                     {
@@ -4543,7 +4548,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "refresh OAuth access token\n\u003cbr\u003e",
+                "description": "refresh OAuth access token",
                 "operationId": "ApiController.RefreshToken",
                 "parameters": [
                     {
@@ -4608,7 +4613,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "logout the current user\n\u003cbr\u003e",
+                "description": "logout the current user",
                 "operationId": "ApiController.Logout",
                 "parameters": [
                     {
@@ -4645,7 +4650,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get Prometheus metrics\n\u003cbr\u003e",
+                "description": "get Prometheus metrics",
                 "operationId": "ApiController.GetMetrics",
                 "responses": {
                     "200": {
@@ -4659,7 +4664,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "enable totp\n\u003cbr\u003e",
+                "description": "enable totp",
                 "operationId": "ApiController.MfaSetupEnable",
                 "responses": {
                     "200": {
@@ -4676,7 +4681,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "setup MFA\n\u003cbr\u003e",
+                "description": "setup MFA",
                 "operationId": "ApiController.MfaSetupInitiate",
                 "responses": {
                     "200": {
@@ -4693,7 +4698,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "setup verify totp\n\u003cbr\u003e",
+                "description": "setup verify totp",
                 "operationId": "ApiController.MfaSetupVerify",
                 "responses": {
                     "200": {
@@ -4710,7 +4715,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "notify payment\n\u003cbr\u003e",
+                "description": "notify payment",
                 "operationId": "ApiController.NotifyPayment",
                 "parameters": [
                     {
@@ -4738,7 +4743,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "pay an existing order\n\u003cbr\u003e",
+                "description": "pay an existing order",
                 "operationId": "ApiController.PayOrder",
                 "parameters": [
                     {
@@ -4771,7 +4776,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "place an order for a product\n\u003cbr\u003e",
+                "description": "place an order for a product",
                 "operationId": "ApiController.PlaceOrder",
                 "parameters": [
                     {
@@ -4821,7 +4826,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "Refresh all CLI engines\n\u003cbr\u003e",
+                "description": "Refresh all CLI engines",
                 "operationId": "ApiController.RefreshEngines",
                 "parameters": [
                     {
@@ -4854,7 +4859,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "remove policy\n\u003cbr\u003e",
+                "description": "remove policy",
                 "operationId": "ApiController.RemovePolicy",
                 "parameters": [
                     {
@@ -4905,7 +4910,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "Call Casbin CLI commands\n\u003cbr\u003e",
+                "description": "Call Casbin CLI commands",
                 "operationId": "ApiController.RunCasbinCommand",
                 "responses": {
                     "200": {
@@ -4922,7 +4927,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "run syncer\n\u003cbr\u003e",
+                "description": "run syncer",
                 "operationId": "ApiController.RunSyncer",
                 "parameters": [
                     {
@@ -4950,7 +4955,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "This API is not for Casdoor frontend to call, it is for Casdoor SDKs.\n\u003cbr\u003e",
+                "description": "This API is not for Casdoor frontend to call, it is for Casdoor SDKs.",
                 "operationId": "ApiController.SendEmail",
                 "parameters": [
                     {
@@ -4992,7 +4997,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "verify invitation\n\u003cbr\u003e",
+                "description": "verify invitation",
                 "operationId": "ApiController.VerifyInvitation",
                 "parameters": [
                     {
@@ -5030,7 +5035,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "This API is not for Casdoor frontend to call, it is for Casdoor SDKs.\n\u003cbr\u003e",
+                "description": "This API is not for Casdoor frontend to call, it is for Casdoor SDKs.",
                 "operationId": "ApiController.SendNotification",
                 "parameters": [
                     {
@@ -5058,7 +5063,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "This API is not for Casdoor frontend to call, it is for Casdoor SDKs.\n\u003cbr\u003e",
+                "description": "This API is not for Casdoor frontend to call, it is for Casdoor SDKs.",
                 "operationId": "ApiController.SendSms",
                 "parameters": [
                     {
@@ -5116,7 +5121,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "set password\n\u003cbr\u003e",
+                "description": "set password",
                 "operationId": "ApiController.SetPassword",
                 "parameters": [
                     {
@@ -5163,7 +5168,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": ": Set specific Mfa Preferred\n\u003cbr\u003e",
+                "description": ": Set specific Mfa Preferred",
                 "operationId": "ApiController.SetPreferredMfa",
                 "responses": {
                     "200": {
@@ -5180,7 +5185,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "sign up a new user\n\u003cbr\u003e",
+                "description": "sign up a new user",
                 "operationId": "ApiController.Signup",
                 "parameters": [
                     {
@@ -5213,7 +5218,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "logout the current user from all applications\n\u003cbr\u003e",
+                "description": "logout the current user from all applications",
                 "operationId": "ApiController.SsoLogout",
                 "responses": {
                     "200": {
@@ -5228,7 +5233,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "logout the current user from all applications\n\u003cbr\u003e",
+                "description": "logout the current user from all applications",
                 "operationId": "ApiController.SsoLogout",
                 "responses": {
                     "200": {
@@ -5245,7 +5250,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "sync ldap users\n\u003cbr\u003e",
+                "description": "sync ldap users",
                 "operationId": "ApiController.SyncLdapUsers",
                 "parameters": [
                     {
@@ -5287,7 +5292,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "update adapter\n\u003cbr\u003e",
+                "description": "update adapter",
                 "operationId": "ApiController.UpdateAdapter",
                 "parameters": [
                     {
@@ -5322,7 +5327,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "update an application\n\u003cbr\u003e",
+                "description": "update an application",
                 "operationId": "ApiController.UpdateApplication",
                 "parameters": [
                     {
@@ -5357,7 +5362,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "update cert\n\u003cbr\u003e",
+                "description": "update cert",
                 "operationId": "ApiController.UpdateCert",
                 "parameters": [
                     {
@@ -5392,7 +5397,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "update enforcer\n\u003cbr\u003e",
+                "description": "update enforcer",
                 "operationId": "ApiController.UpdateEnforcer",
                 "parameters": [
                     {
@@ -5427,7 +5432,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "update form\n\u003cbr\u003e",
+                "description": "update form",
                 "operationId": "ApiController.UpdateForm",
                 "parameters": [
                     {
@@ -5462,7 +5467,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "update group\n\u003cbr\u003e",
+                "description": "update group",
                 "operationId": "ApiController.UpdateGroup",
                 "parameters": [
                     {
@@ -5497,7 +5502,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "update invitation\n\u003cbr\u003e",
+                "description": "update invitation",
                 "operationId": "ApiController.UpdateInvitation",
                 "parameters": [
                     {
@@ -5532,7 +5537,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "update ldap\n\u003cbr\u003e",
+                "description": "update ldap",
                 "operationId": "ApiController.UpdateLdap",
                 "parameters": [
                     {
@@ -5560,7 +5565,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "update model\n\u003cbr\u003e",
+                "description": "update model",
                 "operationId": "ApiController.UpdateModel",
                 "parameters": [
                     {
@@ -5595,7 +5600,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "update order\n\u003cbr\u003e",
+                "description": "update order",
                 "operationId": "ApiController.UpdateOrder",
                 "parameters": [
                     {
@@ -5630,7 +5635,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "update organization\n\u003cbr\u003e",
+                "description": "update organization",
                 "operationId": "ApiController.UpdateOrganization",
                 "parameters": [
                     {
@@ -5665,7 +5670,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "update payment\n\u003cbr\u003e",
+                "description": "update payment",
                 "operationId": "ApiController.UpdatePayment",
                 "parameters": [
                     {
@@ -5700,7 +5705,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "update permission\n\u003cbr\u003e",
+                "description": "update permission",
                 "operationId": "ApiController.UpdatePermission",
                 "parameters": [
                     {
@@ -5735,7 +5740,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "update plan\n\u003cbr\u003e",
+                "description": "update plan",
                 "operationId": "ApiController.UpdatePlan",
                 "parameters": [
                     {
@@ -5770,7 +5775,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "update policy\n\u003cbr\u003e",
+                "description": "update policy",
                 "operationId": "ApiController.UpdatePolicy",
                 "parameters": [
                     {
@@ -5808,7 +5813,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "update pricing\n\u003cbr\u003e",
+                "description": "update pricing",
                 "operationId": "ApiController.UpdatePricing",
                 "parameters": [
                     {
@@ -5843,7 +5848,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "update product\n\u003cbr\u003e",
+                "description": "update product",
                 "operationId": "ApiController.UpdateProduct",
                 "parameters": [
                     {
@@ -5878,7 +5883,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "update provider\n\u003cbr\u003e",
+                "description": "update provider",
                 "operationId": "ApiController.UpdateProvider",
                 "parameters": [
                     {
@@ -5913,7 +5918,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "get resource\n\u003cbr\u003e",
+                "description": "get resource",
                 "operationId": "ApiController.UpdateResource",
                 "parameters": [
                     {
@@ -5948,7 +5953,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "update role\n\u003cbr\u003e",
+                "description": "update role",
                 "operationId": "ApiController.UpdateRole",
                 "parameters": [
                     {
@@ -5983,7 +5988,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "Update session for one user in one application.\n\u003cbr\u003e",
+                "description": "Update session for one user in one application.",
                 "operationId": "ApiController.UpdateSession",
                 "parameters": [
                     {
@@ -6011,7 +6016,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "update subscription\n\u003cbr\u003e",
+                "description": "update subscription",
                 "operationId": "ApiController.UpdateSubscription",
                 "parameters": [
                     {
@@ -6046,7 +6051,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "update syncer\n\u003cbr\u003e",
+                "description": "update syncer",
                 "operationId": "ApiController.UpdateSyncer",
                 "parameters": [
                     {
@@ -6081,7 +6086,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "update token\n\u003cbr\u003e",
+                "description": "update token",
                 "operationId": "ApiController.UpdateToken",
                 "parameters": [
                     {
@@ -6116,7 +6121,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "update transaction\n\u003cbr\u003e",
+                "description": "update transaction",
                 "operationId": "ApiController.UpdateTransaction",
                 "parameters": [
                     {
@@ -6151,7 +6156,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "update user\n\u003cbr\u003e",
+                "description": "update user",
                 "operationId": "ApiController.UpdateUser",
                 "parameters": [
                     {
@@ -6197,7 +6202,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "update webhook\n\u003cbr\u003e",
+                "description": "update webhook",
                 "operationId": "ApiController.UpdateWebhook",
                 "parameters": [
                     {
@@ -6310,7 +6315,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "return Laravel compatible user information according to OAuth 2.0\n\u003cbr\u003e",
+                "description": "return Laravel compatible user information according to OAuth 2.0",
                 "operationId": "ApiController.UserInfo2",
                 "responses": {
                     "200": {
@@ -6327,7 +6332,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "return user information according to OIDC standards\n\u003cbr\u003e",
+                "description": "return user information according to OIDC standards",
                 "operationId": "ApiController.UserInfo",
                 "responses": {
                     "200": {
@@ -6376,7 +6381,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "verify user's real identity using ID Verification provider\n\u003cbr\u003e",
+                "description": "verify user's real identity using ID Verification provider",
                 "operationId": "ApiController.VerifyIdentification",
                 "parameters": [
                     {
@@ -6413,7 +6418,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "verify invitation\n\u003cbr\u003e",
+                "description": "verify invitation",
                 "operationId": "ApiController.VerifyInvitation",
                 "parameters": [
                     {
@@ -6439,7 +6444,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "WebAuthn Login Flow 1st stage\n\u003cbr\u003e",
+                "description": "WebAuthn Login Flow 1st stage",
                 "operationId": "ApiController.WebAuthnSigninBegin",
                 "parameters": [
                     {
@@ -6472,7 +6477,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "WebAuthn Login Flow 2nd stage\n\u003cbr\u003e",
+                "description": "WebAuthn Login Flow 2nd stage",
                 "operationId": "ApiController.WebAuthnSigninFinish",
                 "parameters": [
                     {
@@ -6500,7 +6505,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "WebAuthn Registration Flow 1st stage\n\u003cbr\u003e",
+                "description": "WebAuthn Registration Flow 1st stage",
                 "operationId": "ApiController.WebAuthnSignupBegin",
                 "responses": {
                     "200": {
@@ -6517,7 +6522,7 @@
                 "tags": [
                     "api"
                 ],
-                "description": "WebAuthn Registration Flow 2nd stage\n\u003cbr\u003e",
+                "description": "WebAuthn Registration Flow 2nd stage",
                 "operationId": "ApiController.WebAuthnSignupFinish",
                 "parameters": [
                     {
@@ -6562,7 +6567,7 @@
             "title": "cacheStruct",
             "type": "object"
         },
-        "217748.\u003cnil\u003e.string": {
+        "217748.<nil>.string": {
             "title": "string",
             "type": "object"
         },
@@ -10011,7 +10016,7 @@
             "type": "object",
             "properties": {
                 "aliases": {
-                    "$ref": "#/definitions/217748.\u003cnil\u003e.string"
+                    "$ref": "#/definitions/217748.<nil>.string"
                 },
                 "links": {
                     "type": "array",
@@ -10885,5 +10890,9 @@
         {
             "description": "RootController\ncontroller for handlers directly under / (root)\n"
         }
+    ],
+    "schemes": [
+        "https",
+        "http"
     ]
 }
