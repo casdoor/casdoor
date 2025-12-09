@@ -97,6 +97,14 @@ lint: ## Run golangci-lint
 	@echo "---lint---"
 	golangci-lint run --modules-download-mode=vendor ./...
 
+.PHONY: swagger
+swagger: ## Generate Swagger API documentation
+	@echo "Generating Swagger documentation..."
+	@$(GOBIN)/bee generate docs || (echo "Installing bee tool..." && go install github.com/beego/bee/v2@latest && $(GOBIN)/bee generate docs)
+	@echo "Fixing Swagger metadata and tags..."
+	@python3 scripts/fix_swagger.py
+	@echo "Swagger documentation updated successfully!"
+
 ##@ Deployment
 
 .PHONY: deploy

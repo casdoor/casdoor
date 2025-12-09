@@ -7207,26 +7207,6 @@ definitions:
   xormadapter.CasbinRule:
     title: CasbinRule
     type: object
-    properties:
-      Id:
-        type: integer
-        format: int64
-      Ptype:
-        type: string
-      V0:
-        type: string
-      V1:
-        type: string
-      V2:
-        type: string
-      V3:
-        type: string
-      V4:
-        type: string
-      V5:
-        type: string
-      tableName:
-        type: string
 tags:
 - name: api
   description: 'ApiController
