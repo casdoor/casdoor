@@ -14,7 +14,7 @@
 
 import React from "react";
 import {Link} from "react-router-dom";
-import {Button, Select, Tag, Tooltip, message, theme} from "antd";
+import {Button, Select, Space, Tag, Tooltip, message, notification, theme} from "antd";
 import {QuestionCircleTwoTone} from "@ant-design/icons";
 import {isMobile as isMobileDevice} from "react-device-detect";
 import "./i18n";
@@ -977,11 +977,52 @@ export function goToLinkSoftOrJumpSelf(ths, link) {
   ths.props.history.push(link);
 }
 
+let openAiAssistantCallback = null;
+
+export function setOpenAiAssistantCallback(callback) {
+  openAiAssistantCallback = callback;
+}
+
 export function showMessage(type, text) {
   if (type === "success") {
     message.success(text);
   } else if (type === "error") {
-    message.error(text);
+    const key = `error-${Date.now()}`;
+    const btn = (
+      <Space>
+        <Button
+          type="link"
+          size="small"
+          onClick={() => {
+            openLinkSafe("https://casdoor.org/help");
+          }}
+        >
+          {i18next.t("general:Help")}
+        </Button>
+        {Conf.AiAssistantUrl && openAiAssistantCallback ? (
+          <Button
+            type="primary"
+            size="small"
+            onClick={() => {
+              if (openAiAssistantCallback) {
+                openAiAssistantCallback();
+              }
+              notification.destroy(key);
+            }}
+          >
+            {i18next.t("general:Details")}
+          </Button>
+        ) : null}
+      </Space>
+    );
+
+    notification.error({
+      message: i18next.t("general:Login Error"),
+      description: text,
+      btn,
+      key,
+      duration: 10,
+    });
   } else if (type === "info") {
     message.info(text);
   }

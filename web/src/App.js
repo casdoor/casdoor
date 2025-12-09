@@ -134,6 +134,13 @@ class App extends Component {
     this.updateMenuKey();
     this.getAccount();
     this.getApplication();
+
+    // Set the AI assistant callback for error messages
+    Setting.setOpenAiAssistantCallback(() => {
+      this.setState({
+        isAiAssistantOpen: true,
+      });
+    });
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
