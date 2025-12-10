@@ -436,7 +436,8 @@ func (c *ApiController) Logout() {
 // SsoLogout
 // @Title SsoLogout
 // @Tag Login API
-// @Description logout the current user from all applications
+// @Description logout the current user from all applications or current session only
+// @Param   logoutAll   query    string  false     "Whether to logout from all sessions (default: true)"
 // @Success 200 {object} controllers.Response The Response object
 // @router /sso-logout [get,post]
 func (c *ApiController) SsoLogout() {
@@ -447,6 +448,11 @@ func (c *ApiController) SsoLogout() {
 		return
 	}
 
+	// Check if user wants to logout from all sessions or just current session
+	// Default is true for backward compatibility
+	logoutAll := c.Input().Get("logoutAll")
+	logoutAllSessions := logoutAll == "" || logoutAll == "true" || logoutAll == "1"
+
 	c.ClearUserSession()
 	c.ClearTokenSession()
 	owner, username, err := util.GetOwnerAndNameFromIdWithError(user)
@@ -454,41 +460,58 @@ func (c *ApiController) SsoLogout() {
 		c.ResponseError(err.Error())
 		return
 	}
-	_, err = object.DeleteSessionId(util.GetSessionId(owner, username, object.CasdoorApplication), c.Ctx.Input.CruSession.SessionID())
+
+	currentSessionId := c.Ctx.Input.CruSession.SessionID()
+	_, err = object.DeleteSessionId(util.GetSessionId(owner, username, object.CasdoorApplication), currentSessionId)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
 
-	// Get tokens before expiring them (for session-level logout notification)
-	tokens, err := object.GetTokensByUser(owner, username)
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
-	}
-
-	_, err = object.ExpireTokenByUser(owner, username)
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
-	}
-
-	sessions, err := object.GetUserSessions(owner, username)
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
-	}
-
+	var tokens []*object.Token
 	var sessionIds []string
-	for _, session := range sessions {
-		sessionIds = append(sessionIds, session.SessionId...)
-	}
-	object.DeleteBeegoSession(sessionIds)
 
-	_, err = object.DeleteAllUserSessions(owner, username)
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
+	if logoutAllSessions {
+		// Logout from all sessions: expire all tokens and delete all sessions
+		// Get tokens before expiring them (for session-level logout notification)
+		tokens, err = object.GetTokensByUser(owner, username)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		_, err = object.ExpireTokenByUser(owner, username)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		sessions, err := object.GetUserSessions(owner, username)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		for _, session := range sessions {
+			sessionIds = append(sessionIds, session.SessionId...)
+		}
+		object.DeleteBeegoSession(sessionIds)
+
+		_, err = object.DeleteAllUserSessions(owner, username)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		util.LogInfo(c.Ctx, "API: [%s] logged out from all applications", user)
+	} else {
+		// Logout from current session only
+		sessionIds = []string{currentSessionId}
+		
+		// Only delete the current session's Beego session
+		object.DeleteBeegoSession(sessionIds)
+
+		util.LogInfo(c.Ctx, "API: [%s] logged out from current session", user)
 	}
 
 	// Send SSO logout notifications to all notification providers in the user's signup application
@@ -506,8 +529,6 @@ func (c *ApiController) SsoLogout() {
 			return
 		}
 	}
-
-	util.LogInfo(c.Ctx, "API: [%s] logged out from all applications", user)
 
 	c.ResponseOk()
 }
