@@ -119,9 +119,9 @@ func CheckUserSignup(application *Application, organization *Organization, authF
 			if authForm.Name == "" {
 				return i18n.Translate(lang, "check:DisplayName cannot be blank")
 			} else if application.GetSignupItemRule("Display name") == "Real name" {
-				if !isValidRealName(authForm.Name) {
-					return i18n.Translate(lang, "check:DisplayName is not valid real name")
-				}
+				// if !isValidRealName(authForm.Name) {
+				//	return i18n.Translate(lang, "check:DisplayName is not valid real name")
+				// }
 			}
 		}
 	}
