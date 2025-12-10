@@ -253,7 +253,18 @@ class UserEditPage extends React.Component {
   }
 
   isSelf() {
-    return (this.state.user.id === this.props.account?.id);
+    if (!this.state.user || !this.props.account) {
+      return false;
+    }
+
+    // Compare by id if available
+    if (this.state.user.id && this.props.account.id) {
+      return this.state.user.id === this.props.account.id;
+    }
+
+    // Fallback to comparing by owner and name
+    return (this.state.user.owner === this.props.account.owner &&
+            this.state.user.name === this.props.account.name);
   }
 
   isSelfOrAdmin() {
