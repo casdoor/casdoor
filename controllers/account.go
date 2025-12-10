@@ -507,7 +507,7 @@ func (c *ApiController) SsoLogout() {
 	} else {
 		// Logout from current session only
 		sessionIds = []string{currentSessionId}
-		
+
 		// Only delete the current session's Beego session
 		object.DeleteBeegoSession(sessionIds)
 

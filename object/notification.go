@@ -61,7 +61,7 @@ type SsoLogoutNotification struct {
 	Event string `json:"event"`
 
 	// Session-level information for targeted logout
-	SessionIds       []string `json:"sessionIds"`       // List of session IDs being logged out
+	SessionIds        []string `json:"sessionIds"`        // List of session IDs being logged out
 	AccessTokenHashes []string `json:"accessTokenHashes"` // Hashes of access tokens being expired
 
 	// Authentication fields to prevent malicious logout requests
