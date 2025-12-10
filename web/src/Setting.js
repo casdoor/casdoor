@@ -304,6 +304,10 @@ export const OtherProviderInfo = {
       logo: `${StaticBaseUrl}/img/payment_lemonsqueezy.png`,
       url: "https://www.lemonsqueezy.com/",
     },
+    "Adyen": {
+      logo: `${StaticBaseUrl}/img/payment_adyen.png`,
+      url: "https://www.adyen.com/",
+    },
   },
   Captcha: {
     "Default": {
@@ -1340,6 +1344,7 @@ export function getProviderTypeOptions(category) {
       {id: "Paddle", name: "Paddle"},
       {id: "FastSpring", name: "FastSpring"},
       {id: "Lemon Squeezy", name: "Lemon Squeezy"},
+      {id: "Adyen", name: "Adyen"},
     ]);
   } else if (category === "Captcha") {
     return ([
