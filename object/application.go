@@ -771,6 +771,9 @@ func (application *Application) IsRedirectUriValid(redirectUri string) bool {
 	}
 
 	for _, targetUri := range application.RedirectUris {
+		if targetUri == "" {
+			continue
+		}
 		targetUriRegex := regexp.MustCompile(targetUri)
 		if targetUriRegex.MatchString(redirectUri) || strings.Contains(redirectUri, targetUri) {
 			return true
