@@ -15,6 +15,7 @@
 package object
 
 import (
+	"strings"
 	"testing"
 )
 
@@ -82,12 +83,11 @@ func TestSendSsoLogoutNotifications_WithDB(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			err := SendSsoLogoutNotifications(tt.user)
 			// Check if the error is the specific "wrong token count" error that we fixed
-			if err != nil && err.Error() != "" {
-				containsTokenError := false
-				if errStr := err.Error(); errStr != "" {
-					containsTokenError = (errStr == "wrong token count for ID" || 
-						errStr == "GetOwnerAndNameFromId() error, wrong token count for ID: app-built-in")
-				}
+			if err != nil {
+				errStr := err.Error()
+				// Check for the substring pattern that indicates the token count error
+				containsTokenError := strings.Contains(errStr, "wrong token count for ID") ||
+					strings.Contains(errStr, "GetOwnerAndNameFromId() error")
 				
 				if tt.expectTokenError && !containsTokenError {
 					t.Errorf("SendSsoLogoutNotifications() expected token count error, got: %v", err)
