@@ -56,11 +56,10 @@ func SendSsoLogoutNotifications(user *User) error {
 	}
 
 	// Get the user's signup application
-	application, err := GetApplication(user.SignupApplication)
+	application, err := GetApplicationByUser(user)
 	if err != nil {
 		return fmt.Errorf("failed to get signup application: %w", err)
 	}
-
 	if application == nil {
 		return fmt.Errorf("signup application not found: %s", user.SignupApplication)
 	}
