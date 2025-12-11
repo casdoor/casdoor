@@ -56,7 +56,9 @@ func SendSsoLogoutNotifications(user *User) error {
 	}
 
 	// Get the user's signup application
-	application, err := GetApplication(user.SignupApplication)
+	// Use GetApplicationByUser which properly handles SignupApplication field
+	// that may contain just the application name without owner prefix
+	application, err := GetApplicationByUser(user)
 	if err != nil {
 		return fmt.Errorf("failed to get signup application: %w", err)
 	}
