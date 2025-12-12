@@ -454,7 +454,7 @@ export const OtherProviderInfo = {
 export const UserFields = ["owner", "name", "password", "display_name", "id", "type", "email", "phone", "country_code",
   "is_admin", "homepage", "birthday", "gender", "password_type", "password_salt", "external_id", "avatar", "first_name", "last_name",
   "avatar_type", "permanent_avatar", "email_verified", "region", "location", "address",
-  "affiliation", "title", "id_card_type", "id_card", "bio", "tag", "language",
+  "affiliation", "title", "id_card_type", "id_card", "real_name", "is_verified", "bio", "tag", "language",
   "education", "score", "karma", "ranking", "balance", "currency", "is_default_avatar", "is_online",
   "is_forbidden", "is_deleted", "signup_application", "hash", "pre_hash", "access_key", "access_secret", "access_token",
   "created_ip", "last_signin_time", "last_signin_ip", "github", "google", "qq", "wechat", "facebook", "dingtalk",
@@ -470,6 +470,16 @@ export const UserFields = ["owner", "name", "password", "display_name", "id", "t
   "last_signin_wrong_time", "signin_wrong_times", "managedAccounts", "mfaAccounts", "need_update_password",
   "created_time", "updated_time", "deleted_time",
   "ip_whitelist"];
+
+export const GroupFields = ["owner", "name", "created_time", "updated_time", "display_name", "manager",
+  "contact_email", "type", "parent_id", "is_top_group", "is_enabled"];
+
+export const RoleFields = ["owner", "name", "created_time", "display_name", "description",
+  "users", "groups", "roles", "domains", "is_enabled"];
+
+export const PermissionFields = ["owner", "name", "created_time", "display_name", "description",
+  "users", "groups", "roles", "domains", "model", "adapter", "resource_type",
+  "resources", "actions", "effect", "is_enabled", "submitter", "approver", "approve_time", "state"];
 
 export const GetTranslatedUserItems = () => {
   return [
@@ -562,6 +572,54 @@ export function getUserColumns() {
       transField = transResult ? transResult : transField;
     }
     return `${transFieldItem ? transFieldItem.label : transField}#${field}`;
+  });
+}
+
+export function getGroupColumns() {
+  return GroupFields.map(field => {
+    let transField = field.toLowerCase().split("_").join(" ");
+    transField = transField.charAt(0).toUpperCase() + transField.slice(1);
+    transField = transField.replace("Id", "ID");
+    if (transField === "Owner") {
+      transField = "Organization";
+    }
+    const toTranslateList = ["general", "group"].map(ns => `${ns}:${transField}`);
+    const transResult = toTranslateList.map(item => i18next.t(item) === transField ? null : i18next.t(item))
+      .find(item => item !== null);
+    transField = transResult ? transResult : transField;
+    return `${transField}#${field}`;
+  });
+}
+
+export function getRoleColumns() {
+  return RoleFields.map(field => {
+    let transField = field.toLowerCase().split("_").join(" ");
+    transField = transField.charAt(0).toUpperCase() + transField.slice(1);
+    transField = transField.replace("Id", "ID");
+    if (transField === "Owner") {
+      transField = "Organization";
+    }
+    const toTranslateList = ["general", "role"].map(ns => `${ns}:${transField}`);
+    const transResult = toTranslateList.map(item => i18next.t(item) === transField ? null : i18next.t(item))
+      .find(item => item !== null);
+    transField = transResult ? transResult : transField;
+    return `${transField}#${field}`;
+  });
+}
+
+export function getPermissionColumns() {
+  return PermissionFields.map(field => {
+    let transField = field.toLowerCase().split("_").join(" ");
+    transField = transField.charAt(0).toUpperCase() + transField.slice(1);
+    transField = transField.replace("Id", "ID");
+    if (transField === "Owner") {
+      transField = "Organization";
+    }
+    const toTranslateList = ["general", "permission"].map(ns => `${ns}:${transField}`);
+    const transResult = toTranslateList.map(item => i18next.t(item) === transField ? null : i18next.t(item))
+      .find(item => item !== null);
+    transField = transResult ? transResult : transField;
+    return `${transField}#${field}`;
   });
 }
 
@@ -1328,6 +1386,11 @@ export function getProviderTypeOptions(category) {
   } else if (category === "MFA") {
     return ([
       {id: "RADIUS", name: "RADIUS"},
+    ]);
+  } else if (category === "ID Verification") {
+    return ([
+      {id: "Jumio", name: "Jumio"},
+      {id: "Alibaba Cloud", name: "Alibaba Cloud"},
     ]);
   } else {
     return [];

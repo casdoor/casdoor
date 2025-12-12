@@ -7,6 +7,7 @@ require (
 	github.com/NdoleStudio/lemonsqueezy-go v1.2.4
 	github.com/PaddleHQ/paddle-go-sdk v1.0.0
 	github.com/alexedwards/argon2id v0.0.0-20211130144151-3585854a6387
+	github.com/alibabacloud-go/cloudauth-20190307/v3 v3.9.2
 	github.com/alibabacloud-go/darabonba-openapi/v2 v2.1.4
 	github.com/alibabacloud-go/facebody-20191230/v5 v5.1.2
 	github.com/alibabacloud-go/openapi-util v0.1.0

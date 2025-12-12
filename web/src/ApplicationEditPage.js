@@ -500,7 +500,8 @@ class ApplicationEditPage extends React.Component {
           </Col>
           <Col span={22} >
             <Select virtual={false} disabled={this.state.application.tokenFormat !== "JWT-Custom"} mode="tags" showSearch style={{width: "100%"}} value={this.state.application.tokenFields} onChange={(value => {this.updateApplicationField("tokenFields", value);})}>
-              <Option key={"provider"} value={"provider"}>{"Provider"}</Option>)
+              <Option key={"signinMethod"} value={"signinMethod"}>{"SigninMethod"}</Option>
+              <Option key={"provider"} value={"provider"}>{"Provider"}</Option>
               {
                 [...Setting.getUserCommonFields(), "permissionNames"].map((item, index) => <Option key={index} value={item}>{item}</Option>)
               }
@@ -906,18 +907,32 @@ class ApplicationEditPage extends React.Component {
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:SAML attributes"), i18next.t("general:SAML attributes - Tooltip"))} :
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2}>
+            {Setting.getLabel(i18next.t("application:Disable SAML attributes"), i18next.t("application:Disable SAML attributes - Tooltip"))} :
           </Col>
-          <Col span={22} >
-            <SamlAttributeTable
-              title={i18next.t("general:SAML attributes")}
-              table={this.state.application.samlAttributes}
-              application={this.state.application}
-              onUpdateTable={(value) => {this.updateApplicationField("samlAttributes", value);}}
-            />
+          <Col span={1} >
+            <Switch checked={this.state.application.disableSamlAttributes} onChange={checked => {
+              this.updateApplicationField("disableSamlAttributes", checked);
+            }} />
           </Col>
         </Row>
+        {
+          !this.state.application.disableSamlAttributes ? (
+            <Row style={{marginTop: "20px"}} >
+              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                {Setting.getLabel(i18next.t("general:SAML attributes"), i18next.t("general:SAML attributes - Tooltip"))} :
+              </Col>
+              <Col span={22} >
+                <SamlAttributeTable
+                  title={i18next.t("general:SAML attributes")}
+                  table={this.state.application.samlAttributes}
+                  application={this.state.application}
+                  onUpdateTable={(value) => {this.updateApplicationField("samlAttributes", value);}}
+                />
+              </Col>
+            </Row>
+          ) : null
+        }
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("application:SAML metadata"), i18next.t("application:SAML metadata - Tooltip"))} :

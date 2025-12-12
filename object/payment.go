@@ -38,7 +38,6 @@ type Payment struct {
 	Tag                string  `xorm:"varchar(100)" json:"tag"`
 	Currency           string  `xorm:"varchar(100)" json:"currency"`
 	Price              float64 `json:"price"`
-	ReturnUrl          string  `xorm:"varchar(1000)" json:"returnUrl"`
 	IsRecharge         bool    `xorm:"bool" json:"isRecharge"`
 
 	// Payer Info
@@ -54,7 +53,8 @@ type Payment struct {
 	InvoiceRemark string `xorm:"varchar(100)" json:"invoiceRemark"`
 	InvoiceUrl    string `xorm:"varchar(255)" json:"invoiceUrl"`
 	// Order Info
-	OutOrderId string          `xorm:"varchar(100)" json:"outOrderId"`
+	Order      string          `xorm:"varchar(100)" json:"order"`      // Internal order name
+	OutOrderId string          `xorm:"varchar(100)" json:"outOrderId"` // External payment provider's order ID
 	PayUrl     string          `xorm:"varchar(2000)" json:"payUrl"`
 	SuccessUrl string          `xorm:"varchar(2000)" json:"successUrl"` // `successUrl` is redirected from `payUrl` after pay success
 	State      pp.PaymentState `xorm:"varchar(100)" json:"state"`
@@ -247,11 +247,15 @@ func NotifyPayment(body []byte, owner string, paymentName string) (*Payment, err
 		}
 
 		// Update order state based on payment status
-		order, err := GetOrderByPayment(owner, paymentName)
-		if err != nil {
-			return nil, err
-		}
-		if order != nil {
+		if payment.Order != "" {
+			order, err := getOrder(payment.Owner, payment.Order)
+			if err != nil {
+				return nil, err
+			}
+			if order == nil {
+				return nil, fmt.Errorf("the order: %s does not exist", payment.Order)
+			}
+
 			if payment.State == pp.PaymentStatePaid {
 				order.State = "Paid"
 				order.Message = "Payment successful"
@@ -269,6 +273,22 @@ func NotifyPayment(body []byte, owner string, paymentName string) (*Payment, err
 			_, err = UpdateOrder(order.GetId(), order)
 			if err != nil {
 				return nil, err
+			}
+
+			// Update product stock after order state is persisted
+			if payment.State == pp.PaymentStatePaid {
+				product, err := getProduct(payment.Owner, payment.ProductName)
+				if err != nil {
+					return nil, err
+				}
+				if product == nil {
+					return nil, fmt.Errorf("the product: %s does not exist", payment.ProductName)
+				}
+
+				err = UpdateProductStock(product)
+				if err != nil {
+					return nil, err
+				}
 			}
 		}
 	}

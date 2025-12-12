@@ -93,13 +93,8 @@ func generateLogoutSignature(clientSecret string, owner string, name string, non
 }
 
 // SendSsoLogoutNotifications sends logout notifications to all notification providers
-// configured in the user's signup application. The notification includes session-level
-// information and a signature for authentication.
-// Parameters:
-//   - user: The user being logged out
-//   - sessionIds: List of session IDs being logged out (can be nil for all sessions)
-//   - tokens: List of tokens being expired (can be nil if no tokens are being expired)
-func SendSsoLogoutNotifications(user *User, sessionIds []string, tokens []*Token) error {
+// configured in the user's signup application
+func SendSsoLogoutNotifications(user *User) error {
 	if user == nil {
 		return nil
 	}
@@ -110,7 +105,7 @@ func SendSsoLogoutNotifications(user *User, sessionIds []string, tokens []*Token
 	}
 
 	// Get the user's signup application
-	application, err := GetApplication(fmt.Sprintf("admin/%s", user.SignupApplication))
+	application, err := GetApplicationByUser(user)
 	if err != nil {
 		return fmt.Errorf("failed to get signup application: %w", err)
 	}
@@ -160,9 +155,9 @@ func SendSsoLogoutNotifications(user *User, sessionIds []string, tokens []*Token
 
 	notificationData, err := json.Marshal(notification)
 	if err != nil {
-		return fmt.Errorf("failed to marshal notification data: %w", err)
+		return fmt.Errorf("failed to marshal user data: %w", err)
 	}
-	content := string(notificationData)
+	content := string(userData)
 
 	// Send notifications to all notification providers in the signup application
 	for _, providerItem := range application.Providers {

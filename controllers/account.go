@@ -80,11 +80,6 @@ type LaravelResponse struct {
 // @Success 200 {object} controllers.Response The Response object
 // @router /signup [post]
 func (c *ApiController) Signup() {
-	if c.GetSessionUsername() != "" {
-		c.ResponseError(c.T("account:Please sign out first"), c.GetSessionUsername())
-		return
-	}
-
 	var authForm form.AuthForm
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &authForm)
 	if err != nil {

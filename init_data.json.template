@@ -6,7 +6,7 @@
       "displayName": "",
       "websiteUrl": "",
       "favicon": "",
-      "passwordType": "plain",
+      "passwordType": "bcrypt",
       "passwordSalt": "",
       "passwordOptions": [
         "AtLeast6"

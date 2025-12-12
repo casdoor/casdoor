@@ -242,3 +242,29 @@ export function removeUserFromGroup({owner, name, groupName}) {
     },
   }).then(res => res.json());
 }
+
+export function verifyIdentification(owner, name, provider) {
+  let url = `${Setting.ServerUrl}/api/verify-identification`;
+  const params = [];
+
+  if (owner && name) {
+    params.push(`owner=${owner}`);
+    params.push(`name=${name}`);
+  }
+
+  if (provider) {
+    params.push(`provider=${encodeURIComponent(provider)}`);
+  }
+
+  if (params.length > 0) {
+    url += `?${params.join("&")}`;
+  }
+
+  return fetch(url, {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}

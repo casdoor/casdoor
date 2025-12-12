@@ -22,6 +22,7 @@ import * as Setting from "./Setting";
 class OrderPayPage extends React.Component {
   constructor(props) {
     super(props);
+    const params = new URLSearchParams(window.location.search);
     this.state = {
       owner: props?.match?.params?.organizationName ?? props?.match?.params?.owner ?? null,
       orderName: props?.match?.params?.orderName ?? null,
@@ -29,6 +30,7 @@ class OrderPayPage extends React.Component {
       product: null,
       paymentEnv: "",
       isProcessingPayment: false,
+      isViewMode: params.get("view") === "true",
     };
   }
 
@@ -288,9 +290,11 @@ class OrderPayPage extends React.Component {
                   {this.getPrice(order)}
                 </span>
               </Descriptions.Item>
-              <Descriptions.Item label={i18next.t("product:Pay")} span={3}>
-                {this.renderPaymentMethods()}
-              </Descriptions.Item>
+              {!this.state.isViewMode && (
+                <Descriptions.Item label={i18next.t("product:Pay")} span={3}>
+                  {this.renderPaymentMethods()}
+                </Descriptions.Item>
+              )}
             </Descriptions>
           </div>
         </Spin>

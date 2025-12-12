@@ -154,15 +154,3 @@ func DeleteOrder(order *Order) (bool, error) {
 func (order *Order) GetId() string {
 	return fmt.Sprintf("%s/%s", order.Owner, order.Name)
 }
-
-func GetOrderByPayment(owner string, paymentName string) (*Order, error) {
-	order := &Order{}
-	existed, err := ormer.Engine.Where("owner = ? AND payment = ?", owner, paymentName).Get(order)
-	if err != nil {
-		return nil, err
-	}
-	if existed {
-		return order, nil
-	}
-	return nil, nil
-}

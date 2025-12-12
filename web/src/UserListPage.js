@@ -80,6 +80,8 @@ class UserListPage extends BaseListPage {
       affiliation: "Example Inc.",
       tag: "staff",
       region: "",
+      realName: "",
+      isVerified: false,
       isAdmin: (owner === "built-in"),
       IsForbidden: false,
       score: this.state.organization.initScore,
@@ -230,10 +232,10 @@ class UserListPage extends BaseListPage {
       <>
         <Upload {...props}>
           <Button icon={<UploadOutlined />} id="upload-button" size="small">
-            {i18next.t("user:Upload (.xlsx)")}
+            {i18next.t("general:Upload (.xlsx)")}
           </Button>
         </Upload>
-        <Modal title={i18next.t("user:Upload (.xlsx)")}
+        <Modal title={i18next.t("general:Upload (.xlsx)")}
           width={"100%"}
           closable={true}
           open={this.state.showUploadModal}
@@ -377,6 +379,26 @@ class UserListPage extends BaseListPage {
         width: "140px",
         sorter: true,
         ...this.getColumnSearchProps("affiliation"),
+      },
+      {
+        title: i18next.t("user:Real name"),
+        dataIndex: "realName",
+        key: "realName",
+        width: "120px",
+        sorter: true,
+        ...this.getColumnSearchProps("realName"),
+      },
+      {
+        title: i18next.t("user:Is verified"),
+        dataIndex: "isVerified",
+        key: "isVerified",
+        width: "120px",
+        sorter: true,
+        render: (text, record, index) => {
+          return (
+            <Switch checked={text} disabled={true} />
+          );
+        },
       },
       {
         title: i18next.t("user:Country/Region"),

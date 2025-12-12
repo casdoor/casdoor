@@ -777,3 +777,133 @@ func (c *ApiController) RemoveUserFromGroup() {
 
 	c.ResponseOk(affected)
 }
+
+// VerifyIdentification
+// @Title VerifyIdentification
+// @Tag User API
+// @Description verify user's real identity using ID Verification provider
+// @Param   owner     query    string  false  "The owner of the user (optional, defaults to logged-in user)"
+// @Param   name      query    string  false  "The name of the user (optional, defaults to logged-in user)"
+// @Param   provider  query    string  false  "The name of the ID Verification provider (optional, auto-selected if not provided)"
+// @Success 200 {object} controllers.Response The Response object
+// @router /verify-identification [post]
+func (c *ApiController) VerifyIdentification() {
+	owner := c.Input().Get("owner")
+	name := c.Input().Get("name")
+	providerName := c.Input().Get("provider")
+
+	// If user not specified, use logged-in user
+	if owner == "" || name == "" {
+		loggedInUser := c.GetSessionUsername()
+		if loggedInUser == "" {
+			c.ResponseError(c.T("general:Please login first"))
+			return
+		}
+		var err error
+		owner, name, err = util.GetOwnerAndNameFromIdWithError(loggedInUser)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+	} else {
+		// If user is specified, check if current user has permission to verify other users
+		// Only admins can verify other users
+		loggedInUser := c.GetSessionUsername()
+		if loggedInUser != util.GetId(owner, name) && !c.IsAdmin() {
+			c.ResponseError(c.T("auth:Unauthorized operation"))
+			return
+		}
+	}
+
+	user, err := object.GetUser(util.GetId(owner, name))
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	if user == nil {
+		c.ResponseError(fmt.Sprintf(c.T("general:The user: %s doesn't exist"), util.GetId(owner, name)))
+		return
+	}
+
+	if user.IdCard == "" || user.IdCardType == "" || user.RealName == "" {
+		c.ResponseError(c.T("user:ID card information and real name are required"))
+		return
+	}
+
+	if user.IsVerified {
+		c.ResponseError(c.T("user:User is already verified"))
+		return
+	}
+
+	var provider *object.Provider
+	// If provider not specified, find suitable IDV provider from user's application
+	if providerName == "" {
+		application, err := object.GetApplicationByUser(user)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		if application == nil {
+			c.ResponseError(c.T("user:No application found for user"))
+			return
+		}
+
+		// Find IDV provider from application
+		idvProvider, err := object.GetIdvProviderByApplication(util.GetId(application.Owner, application.Name), "false", c.GetAcceptLanguage())
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		if idvProvider == nil {
+			c.ResponseError(c.T("provider:No ID Verification provider configured"))
+			return
+		}
+		provider = idvProvider
+	} else {
+		provider, err = object.GetProvider(providerName)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		if provider == nil {
+			c.ResponseError(fmt.Sprintf(c.T("provider:The provider: %s does not exist"), providerName))
+			return
+		}
+
+		if provider.Category != "ID Verification" {
+			c.ResponseError(c.T("provider:Provider is not an ID Verification provider"))
+			return
+		}
+	}
+
+	idvProvider := object.GetIdvProviderFromProvider(provider)
+	if idvProvider == nil {
+		c.ResponseError(c.T("provider:Failed to initialize ID Verification provider"))
+		return
+	}
+
+	verified, err := idvProvider.VerifyIdentity(user.IdCardType, user.IdCard, user.RealName)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	if !verified {
+		c.ResponseError(c.T("user:Identity verification failed"))
+		return
+	}
+
+	// Set IsVerified to true upon successful verification
+	user.IsVerified = true
+	_, err = object.UpdateUser(user.GetId(), user, []string{"is_verified"}, false)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	c.ResponseOk(user.RealName)
+}

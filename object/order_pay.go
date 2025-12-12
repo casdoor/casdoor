@@ -31,6 +31,10 @@ func PlaceOrder(productId string, user *User, pricingName string, planName strin
 		return nil, fmt.Errorf("the product: %s does not exist", productId)
 	}
 
+	if !product.IsRecharge && product.Quantity <= 0 {
+		return nil, fmt.Errorf("the product: %s is out of stock", product.Name)
+	}
+
 	userBalanceCurrency := user.BalanceCurrency
 	if userBalanceCurrency == "" {
 		org, err := getOrganization("admin", user.Owner)
@@ -100,6 +104,10 @@ func PayOrder(providerName, host, paymentEnv string, order *Order) (payment *Pay
 	}
 	if product == nil {
 		return nil, nil, fmt.Errorf("the product: %s does not exist", productId)
+	}
+
+	if !product.IsRecharge && product.Quantity <= 0 {
+		return nil, nil, fmt.Errorf("the product: %s is out of stock", product.Name)
 	}
 
 	user, err := GetUser(util.GetId(order.Owner, order.User))
@@ -205,10 +213,10 @@ func PayOrder(providerName, host, paymentEnv string, order *Order) (payment *Pay
 		Tag:                product.Tag,
 		Currency:           order.Currency,
 		Price:              order.Price,
-		ReturnUrl:          product.ReturnUrl,
 		IsRecharge:         product.IsRecharge,
 
 		User:       user.Name,
+		Order:      order.Name,
 		PayUrl:     payResp.PayUrl,
 		SuccessUrl: returnUrl,
 		State:      pp.PaymentStateCreated,
@@ -294,9 +302,19 @@ func PayOrder(providerName, host, paymentEnv string, order *Order) (payment *Pay
 		order.Message = "Payment successful"
 		order.EndTime = util.GetCurrentTime()
 	}
+
+	// Update order state first to avoid inconsistency
 	_, err = UpdateOrder(order.GetId(), order)
 	if err != nil {
 		return nil, nil, err
+	}
+
+	// Update product stock after order state is persisted (for instant payment methods)
+	if provider.Type == "Dummy" || provider.Type == "Balance" {
+		err = UpdateProductStock(product)
+		if err != nil {
+			return nil, nil, err
+		}
 	}
 
 	return payment, payResp.AttachInfo, nil

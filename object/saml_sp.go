@@ -66,6 +66,16 @@ func ParseSamlResponse(samlResponse string, provider *Provider, host string) (*i
 		Email:       customUserInfo.Email,
 		AvatarUrl:   customUserInfo.AvatarUrl,
 	}
+
+	// Fallback: if Username is empty, use Email or NameID
+	if userInfo.Username == "" {
+		if userInfo.Email != "" {
+			userInfo.Username = userInfo.Email
+		} else if userInfo.Id != "" {
+			userInfo.Username = userInfo.Id
+		}
+	}
+
 	return userInfo, err
 }
 

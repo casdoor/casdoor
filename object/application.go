@@ -63,6 +63,7 @@ type SamlItem struct {
 type JwtItem struct {
 	Name  string `json:"name"`
 	Value string `json:"value"`
+	Type  string `json:"type"`
 }
 
 type Application struct {
@@ -91,6 +92,7 @@ type Application struct {
 	EnableSamlCompress    bool            `json:"enableSamlCompress"`
 	EnableSamlC14n10      bool            `json:"enableSamlC14n10"`
 	EnableSamlPostBinding bool            `json:"enableSamlPostBinding"`
+	DisableSamlAttributes bool            `json:"disableSamlAttributes"`
 	UseEmailAsSamlNameId  bool            `json:"useEmailAsSamlNameId"`
 	EnableWebAuthn        bool            `json:"enableWebAuthn"`
 	EnableLinkWithEmail   bool            `json:"enableLinkWithEmail"`
@@ -560,6 +562,7 @@ func GetMaskedApplication(application *Application, userId string) *Application 
 	application.EnableSamlCompress = false
 	application.EnableSamlC14n10 = false
 	application.EnableSamlPostBinding = false
+	application.DisableSamlAttributes = false
 	application.EnableWebAuthn = false
 	application.EnableLinkWithEmail = false
 	application.SamlReplyUrl = "***"
@@ -768,6 +771,9 @@ func (application *Application) IsRedirectUriValid(redirectUri string) bool {
 	}
 
 	for _, targetUri := range application.RedirectUris {
+		if targetUri == "" {
+			continue
+		}
 		targetUriRegex := regexp.MustCompile(targetUri)
 		if targetUriRegex.MatchString(redirectUri) || strings.Contains(redirectUri, targetUri) {
 			return true

@@ -276,7 +276,7 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 			Application: application.Name,
 			SessionId:   []string{c.Ctx.Input.CruSession.SessionID()},
 
-			ExclusiveSignin: true,
+			ExclusiveSignin: application.EnableExclusiveSignin,
 		})
 		if err != nil {
 			c.ResponseError(err.Error(), nil)
@@ -454,13 +454,6 @@ func (c *ApiController) Login() {
 	verificationType := ""
 
 	if authForm.Username != "" {
-		if authForm.Type == ResponseTypeLogin {
-			if c.GetSessionUsername() != "" {
-				c.ResponseError(c.T("account:Please sign out first"), c.GetSessionUsername())
-				return
-			}
-		}
-
 		var user *object.User
 		if authForm.SigninMethod == "Face ID" {
 			if user, err = object.GetUserByFields(authForm.Organization, authForm.Username); err != nil {
