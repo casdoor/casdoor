@@ -21,6 +21,17 @@ import (
 	"github.com/xorm-io/core"
 )
 
+type ProductInfo struct {
+	Name        string  `json:"name"`
+	DisplayName string  `json:"displayName"`
+	Image       string  `json:"image"`
+	Description string  `json:"description"`
+	Tag         string  `json:"tag"`
+	Price       float64 `json:"price"`
+	Currency    string  `json:"currency"`
+	IsRecharge  bool    `json:"isRecharge"`
+}
+
 type Order struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
@@ -28,8 +39,7 @@ type Order struct {
 	DisplayName string `xorm:"varchar(100)" json:"displayName"`
 
 	// Product Info
-	ProductName string   `xorm:"varchar(100)" json:"productName"`
-	Products    []string `xorm:"varchar(1000)" json:"products"` // Future support for multiple products per order. Using varchar(1000) for simple JSON array storage; can be refactored to separate table if needed
+	Products []ProductInfo `xorm:"varchar(2000)" json:"products"`
 
 	// Subscription Info (for subscription orders)
 	PricingName string `xorm:"varchar(100)" json:"pricingName"`

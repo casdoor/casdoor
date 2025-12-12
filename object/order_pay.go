@@ -61,14 +61,25 @@ func PlaceOrder(productId string, user *User, pricingName string, planName strin
 	}
 	price := ConvertCurrency(productPrice, productCurrency, userBalanceCurrency)
 
+	// Create ProductInfo with the actual price (including customPrice for recharge products)
+	productInfo := ProductInfo{
+		Name:        product.Name,
+		DisplayName: product.DisplayName,
+		Image:       product.Image,
+		Description: product.Description,
+		Tag:         product.Tag,
+		Price:       productPrice,
+		Currency:    productCurrency,
+		IsRecharge:  product.IsRecharge,
+	}
+
 	orderName := fmt.Sprintf("order_%v", util.GenerateTimeId())
 	order := &Order{
 		Owner:       product.Owner,
 		Name:        orderName,
 		CreatedTime: util.GetCurrentTime(),
 		DisplayName: fmt.Sprintf("Order for %s", product.DisplayName),
-		ProductName: product.Name,
-		Products:    []string{product.Name},
+		Products:    []ProductInfo{productInfo},
 		PricingName: pricingName,
 		PlanName:    planName,
 		User:        user.Name,
@@ -97,7 +108,13 @@ func PayOrder(providerName, host, paymentEnv string, order *Order) (payment *Pay
 		return nil, nil, fmt.Errorf("cannot pay for order: %s, current state is %s", order.GetId(), order.State)
 	}
 
-	productId := util.GetId(order.Owner, order.ProductName)
+	if len(order.Products) == 0 {
+		return nil, nil, fmt.Errorf("order has no products")
+	}
+
+	// Get the first product from the order (currently supporting single product per order)
+	productInfo := order.Products[0]
+	productId := util.GetId(order.Owner, productInfo.Name)
 	product, err := GetProduct(productId)
 	if err != nil {
 		return nil, nil, err
@@ -169,14 +186,14 @@ func PayOrder(providerName, host, paymentEnv string, order *Order) (payment *Pay
 
 	payReq := &pp.PayReq{
 		ProviderName:       providerName,
-		ProductName:        product.Name,
+		ProductName:        productInfo.Name,
 		PayerName:          payerName,
 		PayerId:            user.Id,
 		PayerEmail:         user.Email,
 		PaymentName:        paymentName,
-		ProductDisplayName: product.DisplayName,
-		ProductDescription: product.Description,
-		ProductImage:       product.Image,
+		ProductDisplayName: productInfo.DisplayName,
+		ProductDescription: productInfo.Description,
+		ProductImage:       productInfo.Image,
 		Price:              order.Price,
 		Currency:           order.Currency,
 		ReturnUrl:          returnUrl,
@@ -207,10 +224,10 @@ func PayOrder(providerName, host, paymentEnv string, order *Order) (payment *Pay
 		Provider: provider.Name,
 		Type:     provider.Type,
 
-		ProductName:        product.Name,
-		ProductDisplayName: product.DisplayName,
+		ProductName:        productInfo.Name,
+		ProductDisplayName: productInfo.DisplayName,
 		Detail:             product.Detail,
-		Tag:                product.Tag,
+		Tag:                productInfo.Tag,
 		Currency:           order.Currency,
 		Price:              order.Price,
 		IsRecharge:         product.IsRecharge,
@@ -249,7 +266,7 @@ func PayOrder(providerName, host, paymentEnv string, order *Order) (payment *Pay
 		transaction.Type = provider.Category
 		transaction.Subtype = provider.Type
 		transaction.Provider = provider.Name
-		transaction.Tag = product.Tag
+		transaction.Tag = productInfo.Tag
 		transaction.User = payment.User
 	}
 
