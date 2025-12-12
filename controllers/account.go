@@ -432,7 +432,7 @@ func (c *ApiController) Logout() {
 // @Title SsoLogout
 // @Tag Login API
 // @Description logout the current user from all applications or current session only
-// @Param   logoutAll   query    string  false     "Whether to logout from all sessions (default: true)"
+// @Param   logoutAll   query    string  false     "Whether to logout from all sessions. Accepted values: 'true', '1', or empty (default: true). Any other value means false."
 // @Success 200 {object} controllers.Response The Response object
 // @router /sso-logout [get,post]
 func (c *ApiController) SsoLogout() {
