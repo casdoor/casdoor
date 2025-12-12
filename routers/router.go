@@ -271,6 +271,13 @@ func initAPI() {
 	beego.Router("/api/add-webhook", &controllers.ApiController{}, "POST:AddWebhook")
 	beego.Router("/api/delete-webhook", &controllers.ApiController{}, "POST:DeleteWebhook")
 
+	beego.Router("/api/get-tickets", &controllers.ApiController{}, "GET:GetTickets")
+	beego.Router("/api/get-ticket", &controllers.ApiController{}, "GET:GetTicket")
+	beego.Router("/api/update-ticket", &controllers.ApiController{}, "POST:UpdateTicket")
+	beego.Router("/api/add-ticket", &controllers.ApiController{}, "POST:AddTicket")
+	beego.Router("/api/delete-ticket", &controllers.ApiController{}, "POST:DeleteTicket")
+	beego.Router("/api/add-ticket-message", &controllers.ApiController{}, "POST:AddTicketMessage")
+
 	beego.Router("/api/set-password", &controllers.ApiController{}, "POST:SetPassword")
 	beego.Router("/api/check-user-password", &controllers.ApiController{}, "POST:CheckUserPassword")
 	beego.Router("/api/get-email-and-phone", &controllers.ApiController{}, "GET:GetEmailAndPhone")
