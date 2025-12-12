@@ -47,10 +47,6 @@ class OrderPayPage extends React.Component {
   }
 
   componentDidMount() {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get("created") === "1") {
-      Setting.showMessage("success", i18next.t("general:Successfully added"));
-    }
     this.getOrder();
     this.getPaymentEnv();
   }
