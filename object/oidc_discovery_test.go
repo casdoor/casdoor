@@ -44,19 +44,6 @@ func TestGetOidcDiscovery(t *testing.T) {
 			t.Errorf("Expected grant type %s not found in GrantTypesSupported", expectedGT)
 		}
 	}
-
-	// Verify that refresh_token is specifically included (the main fix)
-	hasRefreshToken := false
-	for _, gt := range discovery.GrantTypesSupported {
-		if gt == "refresh_token" {
-			hasRefreshToken = true
-			break
-		}
-	}
-
-	if !hasRefreshToken {
-		t.Error("refresh_token grant type is missing from GrantTypesSupported")
-	}
 }
 
 func TestGetOidcDiscoveryByApplication(t *testing.T) {
@@ -66,16 +53,23 @@ func TestGetOidcDiscoveryByApplication(t *testing.T) {
 
 	discovery := GetOidcDiscovery(host, applicationName)
 
-	// Verify that refresh_token is included
-	hasRefreshToken := false
-	for _, gt := range discovery.GrantTypesSupported {
-		if gt == "refresh_token" {
-			hasRefreshToken = true
-			break
-		}
+	// Verify that all expected grant types are present (same as global configuration)
+	expectedGrantTypes := []string{
+		"authorization_code",
+		"password",
+		"client_credentials",
+		"refresh_token",
+		"urn:ietf:params:oauth:grant-type:device_code",
 	}
 
-	if !hasRefreshToken {
-		t.Error("refresh_token grant type is missing from application-specific GrantTypesSupported")
+	grantTypesMap := make(map[string]bool)
+	for _, gt := range discovery.GrantTypesSupported {
+		grantTypesMap[gt] = true
+	}
+
+	for _, expectedGT := range expectedGrantTypes {
+		if !grantTypesMap[expectedGT] {
+			t.Errorf("Expected grant type %s not found in application-specific GrantTypesSupported", expectedGT)
+		}
 	}
 }
