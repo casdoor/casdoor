@@ -140,7 +140,7 @@ func GetOidcDiscovery(host string, applicationName string) OidcDiscovery {
 		IntrospectionEndpoint:                  fmt.Sprintf("%s/api/login/oauth/introspect", originBackend),
 		ResponseTypesSupported:                 []string{"code", "token", "id_token", "code token", "code id_token", "token id_token", "code token id_token", "none"},
 		ResponseModesSupported:                 []string{"query", "fragment", "form_post"},
-		GrantTypesSupported:                    []string{"password", "authorization_code"},
+		GrantTypesSupported:                    []string{"authorization_code", "implicit", "password", "client_credentials", "refresh_token", "urn:ietf:params:oauth:grant-type:device_code"},
 		SubjectTypesSupported:                  []string{"public"},
 		IdTokenSigningAlgValuesSupported:       []string{"RS256", "RS512", "ES256", "ES384", "ES512"},
 		ScopesSupported:                        []string{"openid", "email", "profile", "address", "phone", "offline_access"},
