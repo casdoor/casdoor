@@ -110,7 +110,7 @@ func SendSsoLogoutNotifications(user *User, sessionIds []string, tokens []*Token
 	}
 
 	// Get the user's signup application
-	application, err := GetApplication(user.SignupApplication)
+	application, err := GetApplication(fmt.Sprintf("admin/%s", user.SignupApplication))
 	if err != nil {
 		return fmt.Errorf("failed to get signup application: %w", err)
 	}
