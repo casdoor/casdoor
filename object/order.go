@@ -39,6 +39,9 @@ type Order struct {
 	DisplayName string `xorm:"varchar(100)" json:"displayName"`
 
 	// Product Info
+	// Products are stored as JSON in varchar(2000) for simplicity and backward compatibility.
+	// This allows storing multiple products per order (future enhancement).
+	// For production systems with many products per order, consider using a separate join table.
 	Products []ProductInfo `xorm:"varchar(2000)" json:"products"`
 
 	// Subscription Info (for subscription orders)

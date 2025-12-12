@@ -112,7 +112,7 @@ func PayOrder(providerName, host, paymentEnv string, order *Order) (payment *Pay
 		return nil, nil, fmt.Errorf("order has no products")
 	}
 
-	// Get the first product from the order (currently supporting single product per order)
+	// For now, we process the first product. Future enhancement: support multiple products per order
 	productInfo := order.Products[0]
 	productId := util.GetId(order.Owner, productInfo.Name)
 	product, err := GetProduct(productId)
