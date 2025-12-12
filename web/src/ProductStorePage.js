@@ -106,7 +106,7 @@ class ProductStorePage extends React.Component {
             <div style={{marginTop: "auto", paddingTop: 8}}>
               {product.isRecharge ? (
                 <>
-                  {product.rechargeOptions && product.rechargeOptions.length > 0 ? (
+                  {product.rechargeOptions && product.rechargeOptions.length > 0 && (
                     <div style={{marginBottom: 8}}>
                       <Text type="secondary" style={{fontSize: "13px", display: "block", marginBottom: 4}}>
                         {i18next.t("product:Recharge options")}:
@@ -124,8 +124,8 @@ class ProductStorePage extends React.Component {
                         )}
                       </div>
                     </div>
-                  ) : null}
-                  {!product.disableCustomRecharge && (
+                  )}
+                  {product.disableCustomRecharge !== true && (
                     <div style={{marginBottom: 8}}>
                       <Text strong style={{fontSize: "16px", color: "#1890ff"}}>
                         {i18next.t("product:Custom amount available")}
