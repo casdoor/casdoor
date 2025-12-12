@@ -893,7 +893,19 @@
     "Test buy page..": "Test buy page..",
     "There is no payment channel for this product.": "There is no payment channel for this product.",
     "This product is currently not in sale.": "This product is currently not in sale.",
-    "WeChat Pay": "WeChat Pay"
+    "WeChat Pay": "WeChat Pay",
+    "Recharge options": "Recharge options",
+    "Recharge options - Tooltip": "Preset recharge amounts",
+    "Disable custom amount": "Disable custom amount",
+    "Disable custom amount - Tooltip": "Whether to disable custom recharge amounts",
+    "Select amount": "Select amount",
+    "Amount": "Amount",
+    "Custom amount available": "Custom amount available",
+    "Please add at least one recharge option when custom amount is disabled": "Please add at least one recharge option when custom amount is disabled",
+    "Enter preset amounts": "Enter preset amounts",
+    "This product is currently not purchasable (No options available)": "This product is currently not purchasable (No options available)",
+    "Order created successfully": "Order created successfully",
+    "Failed to create order": "Failed to create order"
   },
   "provider": {
     "Access key": "Access key",

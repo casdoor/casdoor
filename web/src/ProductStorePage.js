@@ -104,19 +104,57 @@ class ProductStorePage extends React.Component {
               </div>
             )}
             <div style={{marginTop: "auto", paddingTop: 8}}>
-              <div style={{marginBottom: 8}}>
-                <Text strong style={{fontSize: "28px", color: "#ff4d4f", fontWeight: 600}}>
-                  {Setting.getCurrencySymbol(product.currency)}{product.price}
-                </Text>
-                <Text type="secondary" style={{fontSize: "13px", marginLeft: 8}}>
-                  {Setting.getCurrencyWithFlag(product.currency)}
-                </Text>
-              </div>
-              <div>
-                <Text type="secondary" style={{fontSize: "13px"}}>
-                  {i18next.t("product:Sold")}: {product.sold}
-                </Text>
-              </div>
+              {product.isRecharge ? (
+                <>
+                  {product.rechargeOptions && product.rechargeOptions.length > 0 ? (
+                    <div style={{marginBottom: 8}}>
+                      <Text type="secondary" style={{fontSize: "13px", display: "block", marginBottom: 4}}>
+                        {i18next.t("product:Recharge options")}:
+                      </Text>
+                      <div style={{display: "flex", flexWrap: "wrap", gap: "4px"}}>
+                        {product.rechargeOptions.slice(0, 3).map((amount, index) => (
+                          <Tag key={index} color="blue" style={{fontSize: "14px", fontWeight: 600, margin: 0}}>
+                            {Setting.getCurrencySymbol(product.currency)}{amount}
+                          </Tag>
+                        ))}
+                        {product.rechargeOptions.length > 3 && (
+                          <Tag color="blue" style={{fontSize: "14px", fontWeight: 600, margin: 0}}>
+                            +{product.rechargeOptions.length - 3}
+                          </Tag>
+                        )}
+                      </div>
+                    </div>
+                  ) : null}
+                  {!product.disableCustomRecharge && (
+                    <div style={{marginBottom: 8}}>
+                      <Text strong style={{fontSize: "16px", color: "#1890ff"}}>
+                        {i18next.t("product:Custom amount available")}
+                      </Text>
+                    </div>
+                  )}
+                  <div>
+                    <Text type="secondary" style={{fontSize: "13px"}}>
+                      {Setting.getCurrencyWithFlag(product.currency)}
+                    </Text>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div style={{marginBottom: 8}}>
+                    <Text strong style={{fontSize: "28px", color: "#ff4d4f", fontWeight: 600}}>
+                      {Setting.getCurrencySymbol(product.currency)}{product.price}
+                    </Text>
+                    <Text type="secondary" style={{fontSize: "13px", marginLeft: 8}}>
+                      {Setting.getCurrencyWithFlag(product.currency)}
+                    </Text>
+                  </div>
+                  <div>
+                    <Text type="secondary" style={{fontSize: "13px"}}>
+                      {i18next.t("product:Sold")}: {product.sold}
+                    </Text>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </Card>
