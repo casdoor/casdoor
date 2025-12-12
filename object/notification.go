@@ -94,7 +94,7 @@ func generateLogoutSignature(clientSecret string, owner string, name string, non
 
 // SendSsoLogoutNotifications sends logout notifications to all notification providers
 // configured in the user's signup application
-func SendSsoLogoutNotifications(user *User) error {
+func SendSsoLogoutNotifications(user *User, sessionIds []string, tokens []*Token) error {
 	if user == nil {
 		return nil
 	}
@@ -138,7 +138,7 @@ func SendSsoLogoutNotifications(user *User) error {
 	)
 
 	// Prepare the notification data
-	notification := SsoLogoutNotification{
+	notificationObj := SsoLogoutNotification{
 		Owner:             user.Owner,
 		Name:              user.Name,
 		DisplayName:       user.DisplayName,
@@ -153,11 +153,11 @@ func SendSsoLogoutNotifications(user *User) error {
 		Signature:         signature,
 	}
 
-	notificationData, err := json.Marshal(notification)
+	notificationData, err := json.Marshal(notificationObj)
 	if err != nil {
 		return fmt.Errorf("failed to marshal user data: %w", err)
 	}
-	content := string(userData)
+	content := string(notificationData)
 
 	// Send notifications to all notification providers in the signup application
 	for _, providerItem := range application.Providers {
