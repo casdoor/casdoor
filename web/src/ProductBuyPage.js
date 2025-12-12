@@ -142,10 +142,11 @@ class ProductBuyPage extends React.Component {
       .then((res) => {
         if (res.status === "ok") {
           const order = res.data;
+          Setting.showMessage("success", i18next.t("product:Order created successfully"));
           // Redirect to order pay page
-          Setting.goToLink(`/orders/${order.owner}/${order.name}/pay?created=1`);
+          Setting.goToLink(`/orders/${order.owner}/${order.name}/pay`);
         } else {
-          Setting.showMessage("error", `${i18next.t("product:Payment failed")}: ${res.msg}`);
+          Setting.showMessage("error", `${i18next.t("product:Failed to create order")}: ${res.msg}`);
           this.setState({
             isPlacingOrder: false,
           });

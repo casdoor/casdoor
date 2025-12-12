@@ -228,7 +228,7 @@ func PayOrder(providerName, host, paymentEnv string, order *Order) (payment *Pay
 		Name:        payment.Name,
 		CreatedTime: util.GetCurrentTime(),
 		DisplayName: payment.DisplayName,
-		Application: owner,
+		Application: user.SignupApplication,
 		Domain:      "",
 		Amount:      payment.Price,
 		Currency:    order.Currency,
