@@ -20,6 +20,8 @@ import i18next from "i18next";
 
 const {Text, Title} = Typography;
 
+const MAX_DISPLAYED_RECHARGE_OPTIONS = 3;
+
 class ProductStorePage extends React.Component {
   constructor(props) {
     super(props);
@@ -112,14 +114,14 @@ class ProductStorePage extends React.Component {
                         {i18next.t("product:Recharge options")}:
                       </Text>
                       <div style={{display: "flex", flexWrap: "wrap", gap: "4px"}}>
-                        {product.rechargeOptions.slice(0, 3).map((amount, index) => (
+                        {product.rechargeOptions.slice(0, MAX_DISPLAYED_RECHARGE_OPTIONS).map((amount, index) => (
                           <Tag key={index} color="blue" style={{fontSize: "14px", fontWeight: 600, margin: 0}}>
                             {Setting.getCurrencySymbol(product.currency)}{amount}
                           </Tag>
                         ))}
-                        {product.rechargeOptions.length > 3 && (
+                        {product.rechargeOptions.length > MAX_DISPLAYED_RECHARGE_OPTIONS && (
                           <Tag color="blue" style={{fontSize: "14px", fontWeight: 600, margin: 0}}>
-                            +{product.rechargeOptions.length - 3}
+                            +{product.rechargeOptions.length - MAX_DISPLAYED_RECHARGE_OPTIONS}
                           </Tag>
                         )}
                       </div>
