@@ -34,3 +34,18 @@ export function deleteSession(session) {
     },
   }).then(res => res.json());
 }
+
+export function deleteSessionId(session, sessionId) {
+  const sessionData = {
+    ...session,
+    sessionId: [sessionId],
+  };
+  return fetch(`${Setting.ServerUrl}/api/delete-session-id`, {
+    method: "POST",
+    credentials: "include",
+    body: JSON.stringify(sessionData),
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}

@@ -140,6 +140,32 @@ func (c *ApiController) DeleteSession() {
 	c.ServeJSON()
 }
 
+// DeleteSessionId
+// @Title DeleteSessionId
+// @Tag Session API
+// @Description Delete a specific session ID for one user in one application.
+// @Param   body     body    object.Session  true        "The session object with the specific sessionId to delete"
+// @Success 200 {object} controllers.Response The Response object
+// @router /delete-session-id [post]
+func (c *ApiController) DeleteSessionId() {
+	var session object.Session
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, &session)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	if len(session.SessionId) == 0 {
+		c.ResponseError("sessionId is required")
+		return
+	}
+
+	// Delete the first sessionId in the array
+	sessionId := session.SessionId[0]
+	c.Data["json"] = wrapActionResponse(object.DeleteSessionId(util.GetSessionId(session.Owner, session.Name, session.Application), sessionId))
+	c.ServeJSON()
+}
+
 // IsSessionDuplicated
 // @Title IsSessionDuplicated
 // @Tag Session API
