@@ -141,6 +141,17 @@ func parseAllWords(category string) *I18nData {
 	return &data
 }
 
+func deepCopyI18nData(data *I18nData) *I18nData {
+	result := I18nData{}
+	for namespace, pairs := range *data {
+		result[namespace] = make(map[string]string)
+		for key, value := range pairs {
+			result[namespace][key] = value
+		}
+	}
+	return &result
+}
+
 func applyToOtherLanguage(category string, language string, newData *I18nData) {
 	oldData := readI18nFile(category, language)
 	println(oldData)
