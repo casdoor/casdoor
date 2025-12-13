@@ -141,10 +141,23 @@ func parseAllWords(category string) *I18nData {
 	return &data
 }
 
+func copyI18nData(data *I18nData) *I18nData {
+	dataCopy := I18nData{}
+	for namespace, pairs := range *data {
+		dataCopy[namespace] = make(map[string]string)
+		for key, value := range pairs {
+			dataCopy[namespace][key] = value
+		}
+	}
+	return &dataCopy
+}
+
 func applyToOtherLanguage(category string, language string, newData *I18nData) {
 	oldData := readI18nFile(category, language)
 	println(oldData)
 
-	applyData(newData, oldData)
-	writeI18nFile(category, language, newData)
+	// Create a copy of newData to avoid modifying the shared data across languages
+	dataCopy := copyI18nData(newData)
+	applyData(dataCopy, oldData)
+	writeI18nFile(category, language, dataCopy)
 }
