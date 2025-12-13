@@ -141,6 +141,9 @@ func parseAllWords(category string) *I18nData {
 	return &data
 }
 
+// deepCopyI18nData creates a deep copy of I18nData to prevent cross-contamination
+// between language files. Each language should start with fresh English defaults
+// rather than values that may have been modified by previously processed languages.
 func deepCopyI18nData(data *I18nData) *I18nData {
 	result := I18nData{}
 	for namespace, pairs := range *data {
