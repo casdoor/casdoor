@@ -239,7 +239,7 @@ func NotifyPayment(body []byte, owner string, paymentName string) (*Payment, err
 		}
 
 		if transaction != nil {
-			transaction.State = payment.State
+			transaction.State = string(payment.State)
 			_, err = UpdateTransaction(transaction.GetId(), transaction, "en")
 			if err != nil {
 				return nil, err
