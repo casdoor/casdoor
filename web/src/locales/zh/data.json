@@ -880,7 +880,19 @@
     "Test buy page..": "测试购买页面..",
     "There is no payment channel for this product.": "该商品没有付款方式。",
     "This product is currently not in sale.": "该商品目前未在售。",
-    "WeChat Pay": "微信支付"
+    "WeChat Pay": "微信支付",
+    "Recharge options": "充值选项",
+    "Recharge options - Tooltip": "预设充值金额",
+    "Disable custom amount": "禁用自定义金额",
+    "Disable custom amount - Tooltip": "是否禁用自定义充值金额",
+    "Select amount": "选择金额",
+    "Amount": "金额",
+    "Custom amount available": "可自定义金额",
+    "Please add at least one recharge option when custom amount is disabled": "当禁用自定义金额时，请至少添加一个充值选项",
+    "Enter preset amounts": "输入预设金额",
+    "This product is currently not purchasable (No options available)": "该产品当前无法购买（没有可用选项）",
+    "Order created successfully": "订单创建成功",
+    "Failed to create order": "创建订单失败"
   },
   "provider": {
     "Access key": "访问密钥",
