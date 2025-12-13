@@ -64,6 +64,9 @@ class MfaSetupPage extends React.Component {
   componentDidUpdate(prevProps, prevState, snapshot) {
     if (this.state.mfaType !== prevState.mfaType || this.state.current !== prevState.current) {
       if (this.state.current === 1) {
+        this.setState({
+          loading: true,
+        });
         this.initMfaProps();
       }
     }
@@ -273,22 +276,22 @@ class MfaSetupPage extends React.Component {
               <p style={{textAlign: "center", fontSize: "16px", marginTop: "10px"}}>{i18next.t("mfa:Each time you sign in to your Account, you'll need your password and a authentication code")}</p>
             </Col>
           </Row>
-          <Spin spinning={this.state.loading}>
-            <Steps current={this.state.current}
-              items={[
-                {title: i18next.t("mfa:Verify Password"), icon: <UserOutlined />},
-                {title: i18next.t("mfa:Verify Code"), icon: <KeyOutlined />},
-                {title: i18next.t("general:Enable"), icon: <CheckOutlined />},
-              ]}
-              style={{width: "90%", maxWidth: "500px", margin: "auto", marginTop: "50px",
-              }} >
-            </Steps>
-          </Spin>
+          <Steps current={this.state.current}
+            items={[
+              {title: i18next.t("mfa:Verify Password"), icon: <UserOutlined />},
+              {title: i18next.t("mfa:Verify Code"), icon: <KeyOutlined />},
+              {title: i18next.t("general:Enable"), icon: <CheckOutlined />},
+            ]}
+            style={{width: "90%", maxWidth: "500px", margin: "auto", marginTop: "50px",
+            }} >
+          </Steps>
         </Col>
         <Col span={24} style={{display: "flex", justifyContent: "center"}}>
-          <div style={{marginTop: "10px", textAlign: "center"}}>
-            {this.renderStep()}
-          </div>
+          <Spin spinning={this.state.loading}>
+            <div style={{marginTop: "10px", textAlign: "center"}}>
+              {this.renderStep()}
+            </div>
+          </Spin>
         </Col>
       </Row>
     );
