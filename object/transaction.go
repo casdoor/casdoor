@@ -144,6 +144,7 @@ func UpdateTransaction(id string, transaction *Transaction, lang string) (bool, 
 func AddTransaction(transaction *Transaction, lang string, dryRun bool) (bool, string, error) {
 	transactionId := strings.ReplaceAll(util.GenerateId(), "-", "")
 	transaction.Name = transactionId
+	transaction.DisplayName = transactionId
 
 	// In dry run mode, only validate without making changes
 	if dryRun {
@@ -167,6 +168,30 @@ func AddTransaction(transaction *Transaction, lang string, dryRun bool) (bool, s
 	}
 
 	return affected != 0, transactionId, nil
+}
+
+func AddInternalPaymentTransaction(transaction *Transaction, lang string) (bool, error) {
+	transactionId := strings.ReplaceAll(util.GenerateId(), "-", "")
+	transaction.Name = transactionId
+	transaction.DisplayName = transactionId
+
+	// Validate balance impact first
+	if err := validateBalanceForTransaction(transaction, transaction.Amount, lang); err != nil {
+		return false, err
+	}
+
+	affected, err := ormer.Engine.Insert(transaction)
+	if err != nil {
+		return false, err
+	}
+
+	if affected != 0 {
+		if err := updateBalanceForTransaction(transaction, transaction.Amount, lang); err != nil {
+			return false, err
+		}
+	}
+
+	return affected != 0, nil
 }
 
 func DeleteTransaction(transaction *Transaction, lang string) (bool, error) {
