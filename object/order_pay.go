@@ -210,7 +210,6 @@ func PayOrder(providerName, host, paymentEnv string, order *Order) (payment *Pay
 		ProductName:        product.Name,
 		ProductDisplayName: product.DisplayName,
 		Detail:             product.Detail,
-		Tag:                product.Tag,
 		Currency:           order.Currency,
 		Price:              order.Price,
 		IsRecharge:         product.IsRecharge,
@@ -227,54 +226,42 @@ func PayOrder(providerName, host, paymentEnv string, order *Order) (payment *Pay
 		Owner:       payment.Owner,
 		Name:        payment.Name,
 		CreatedTime: util.GetCurrentTime(),
-		DisplayName: payment.DisplayName,
 		Application: user.SignupApplication,
 		Domain:      "",
 		Amount:      payment.Price,
 		Currency:    order.Currency,
 		Payment:     payment.Name,
+		Type:        provider.Category,
+		Subtype:     provider.Type,
+		Provider:    provider.Name,
+		User:        payment.User,
+		Tag:         "User",
 		State:       pp.PaymentStateCreated,
 	}
 
+	var rechargeTransaction *Transaction
+
 	if product.IsRecharge {
-		transaction.Category = "Recharge"
-		transaction.Type = ""
-		transaction.Subtype = ""
-		transaction.Provider = ""
-		transaction.Tag = "User"
-		transaction.User = payment.User
-		transaction.State = pp.PaymentStatePaid
-	} else {
-		transaction.Category = ""
-		transaction.Type = provider.Category
-		transaction.Subtype = provider.Type
-		transaction.Provider = provider.Name
-		transaction.Tag = product.Tag
-		transaction.User = payment.User
+		rechargeTransaction = &Transaction{
+			Owner:       payment.Owner,
+			CreatedTime: util.GetCurrentTime(),
+			Application: owner,
+			Amount:      payment.Price,
+			Currency:    order.Currency,
+			Payment:     payment.Name,
+			Category:    "Recharge",
+			Tag:         "User",
+			User:        payment.User,
+			State:       pp.PaymentStateCreated,
+		}
 	}
 
-	if provider.Type == "Dummy" {
-		payment.State = pp.PaymentStatePaid
-		currency := payment.Currency
-		if currency == "" {
-			currency = "USD"
-		}
-		err = UpdateUserBalance(user.Owner, user.Name, payment.Price, currency, "en")
-		if err != nil {
-			return nil, nil, err
-		}
-	} else if provider.Type == "Balance" {
-		convertedPrice := ConvertCurrency(order.Price, order.Currency, user.BalanceCurrency)
-		if convertedPrice > user.Balance {
-			return nil, nil, fmt.Errorf("insufficient user balance")
-		}
-		transaction.Amount = -transaction.Amount
-		err = UpdateUserBalance(user.Owner, user.Name, -convertedPrice, user.BalanceCurrency, "en")
-		if err != nil {
-			return nil, nil, err
-		}
+	if provider.Type == "Dummy" || provider.Type == "Balance" {
 		payment.State = pp.PaymentStatePaid
 		transaction.State = pp.PaymentStatePaid
+		if product.IsRecharge {
+			rechargeTransaction.State = pp.PaymentStatePaid
+		}
 	}
 
 	affected, err := AddPayment(payment)
@@ -286,13 +273,23 @@ func PayOrder(providerName, host, paymentEnv string, order *Order) (payment *Pay
 		return nil, nil, fmt.Errorf("failed to add payment: %s", util.StructToJson(payment))
 	}
 
-	if product.IsRecharge || provider.Type == "Balance" {
-		affected, _, err = AddTransaction(transaction, "en", false)
+	if provider.Type == "Balance" {
+		affected, err = AddInternalPaymentTransaction(transaction, "en")
 		if err != nil {
 			return nil, nil, err
 		}
 		if !affected {
 			return nil, nil, fmt.Errorf("failed to add transaction: %s", util.StructToJson(transaction))
+		}
+
+		if product.IsRecharge {
+			affected, err := AddInternalPaymentTransaction(rechargeTransaction, "en")
+			if err != nil {
+				return nil, nil, err
+			}
+			if !affected {
+				return nil, nil, fmt.Errorf("failed to add recharge transaction: %s", util.StructToJson(rechargeTransaction))
+			}
 		}
 	}
 
