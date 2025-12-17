@@ -378,6 +378,7 @@ class LoginPage extends React.Component {
             this.onUpdateAccount(account);
 
             if (Setting.isPromptAnswered(account, application)) {
+              this.sendSilentSigninData("success", resp.data);
               Setting.goToLink(redirectUrl);
             } else {
               Setting.goToLinkSoft(ths, `/prompt/${application.name}?redirectUri=${oAuthParams.redirectUri}&code=${code}&state=${oAuthParams.state}`);
@@ -400,6 +401,7 @@ class LoginPage extends React.Component {
       } else {
         Setting.goToLink(redirectUrl);
         this.sendPopupData({type: "loginSuccess", data: {code: code, state: oAuthParams.state}}, oAuthParams.redirectUri);
+        this.sendSilentSigninData("success", resp.data);
       }
     }
   }
@@ -1179,9 +1181,9 @@ class LoginPage extends React.Component {
     );
   }
 
-  sendSilentSigninData(data) {
+  sendSilentSigninData(data, resp = null) {
     if (Setting.inIframe()) {
-      const message = {tag: "Casdoor", type: "SilentSignin", data: data};
+      const message = {tag: "Casdoor", type: "SilentSignin", data: data, resp: resp};
       window.parent.postMessage(message, "*");
     }
   }
