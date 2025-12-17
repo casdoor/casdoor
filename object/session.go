@@ -179,7 +179,7 @@ func DeleteSession(id, curSessionId string) (bool, error) {
 		}
 
 		if slices.Contains(session.SessionId, curSessionId) {
-			return false, fmt.Errorf("session:Session id %s is the current session and cannot be deleted", curSessionId)
+			return false, fmt.Errorf("session:session id %s is the current session and cannot be deleted", curSessionId)
 		}
 
 		DeleteBeegoSession(session.SessionId)
