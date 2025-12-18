@@ -24,8 +24,13 @@ export function getSessions(owner, page = "", pageSize = "", field = "", value =
   }).then(res => res.json());
 }
 
-export function deleteSession(session) {
-  return fetch(`${Setting.ServerUrl}/api/delete-session`, {
+export function deleteSession(session, sessionId = "") {
+  let url = `${Setting.ServerUrl}/api/delete-session`;
+  if (sessionId !== undefined && sessionId !== null && sessionId !== "") {
+    url += `?sessionId=${encodeURIComponent(sessionId)}`;
+  }
+
+  return fetch(url, {
     method: "POST",
     credentials: "include",
     body: JSON.stringify(session),
