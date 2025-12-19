@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//      http://www.apache.org/licenses/LICENSE-2.0
+//     http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -194,6 +194,6 @@ func handleAccountingRequest(w radius.ResponseWriter, r *radius.Request) {
 	case rfc2866.AcctStatusType_Value_AccountingOn, rfc2866.AcctStatusType_Value_AccountingOff:
 		// By default, no Accounting-On or Accounting-Off messages are sent (no acct-on-off).
 	default:
-		err = fmt.Errorf("unsupport statusType = %v", statusType)
+		err = fmt.Errorf("unsupported statusType = %v", statusType)
 	}
 }

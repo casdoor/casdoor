@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//      http://www.apache.org/licenses/LICENSE-2.0
+//     http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -394,7 +394,7 @@ func (c *ApiController) IntrospectToken() {
 	if application.TokenFormat == "JWT-Standard" {
 		jwtToken, err := object.ParseStandardJwtTokenByApplication(tokenValue, application)
 		if err != nil {
-			// and token revoked case. but we not implement
+			// and token revoked case. but we have not implemented
 			// TODO: 2022-03-03 add token revoked check, when we implemented the Token Revocation(rfc7009) Specs.
 			// refs: https://tools.ietf.org/html/rfc7009
 			respondWithInactiveToken()
@@ -418,7 +418,7 @@ func (c *ApiController) IntrospectToken() {
 	} else {
 		jwtToken, err := object.ParseJwtTokenByApplication(tokenValue, application)
 		if err != nil {
-			// and token revoked case. but we not implement
+			// and token revoked case. but we have not implemented
 			// TODO: 2022-03-03 add token revoked check, when we implemented the Token Revocation(rfc7009) Specs.
 			// refs: https://tools.ietf.org/html/rfc7009
 			respondWithInactiveToken()
