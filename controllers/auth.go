@@ -246,7 +246,7 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 		resp = wrapErrorResponse(fmt.Errorf("unknown response type: %s", form.Type))
 	}
 
-	// if user did not check auto signin
+	// For all successful logins, set the session expiration; if auto signin is not checked, cap it at 24 hours.
 	if resp.Status == "ok" {
 		expiredInHours := application.CookieExpireInHours
 
