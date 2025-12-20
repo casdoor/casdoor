@@ -63,7 +63,7 @@ func getUsername(ctx *context.Context) (username string) {
 		sessionData.ExpireTime < time.Now().Unix() {
 		err = ctx.Input.CruSession.Set("username", "")
 		if err != nil {
-			logs.Error("GetSessionData failed, error: %s", err)
+			logs.Error("Failed to clear expired session, error: %s", err)
 			return ""
 		}
 
