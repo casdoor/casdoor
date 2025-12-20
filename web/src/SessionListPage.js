@@ -86,7 +86,7 @@ class SessionListPage extends BaseListPage {
         sorter: true,
         render: (text, record, index) => {
           return text.map((item, index) =>
-            <Tag key={index}>{item}</Tag>
+            <Tag key={index} closable>{item}</Tag>
           );
         },
       },

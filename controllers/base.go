@@ -168,6 +168,7 @@ func (c *ApiController) GetSessionApplication() *object.Application {
 func (c *ApiController) ClearUserSession() {
 	c.SetSessionUsername("")
 	c.SetSessionData(nil)
+	_ = c.SessionRegenerateID()
 }
 
 func (c *ApiController) ClearTokenSession() {
@@ -243,9 +244,12 @@ func (c *ApiController) getMfaUserSession() string {
 	return userId.(string)
 }
 
-func (c *ApiController) setExpireForSession() {
+func (c *ApiController) setExpireForSession(cookieExpireInHours int64) {
 	timestamp := time.Now().Unix()
-	timestamp += 3600 * 24
+	if cookieExpireInHours == 0 {
+		cookieExpireInHours = 720
+	}
+	timestamp += 3600 * cookieExpireInHours
 	c.SetSessionData(&SessionData{
 		ExpireTime: timestamp,
 	})

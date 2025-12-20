@@ -19,7 +19,9 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"time"
 
+	"github.com/beego/beego/logs"
 	"github.com/casdoor/casdoor/object"
 
 	"github.com/beego/beego/context"
@@ -39,7 +41,35 @@ type ObjectWithOrg struct {
 	Organization string `json:"organization"`
 }
 
+type SessionData struct {
+	ExpireTime int64
+}
+
 func getUsername(ctx *context.Context) (username string) {
+	session := ctx.Input.Session("SessionData")
+	if session == nil {
+		return ""
+	}
+
+	sessionData := &SessionData{}
+	err := util.JsonToStruct(session.(string), sessionData)
+	if err != nil {
+		logs.Error("GetSessionData failed, error: %s", err)
+		return ""
+	}
+
+	if sessionData != nil &&
+		sessionData.ExpireTime != 0 &&
+		sessionData.ExpireTime < time.Now().Unix() {
+		err = ctx.Input.CruSession.Set("username", "")
+		if err != nil {
+			logs.Error("GetSessionData failed, error: %s", err)
+			return ""
+		}
+
+		return ""
+	}
+
 	username, ok := ctx.Input.Session("username").(string)
 	if !ok || username == "" {
 		username, _ = getUsernameByClientIdSecret(ctx)

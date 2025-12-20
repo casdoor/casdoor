@@ -95,8 +95,8 @@ const sideTemplate = `<style>
   }
 </style>
 <div class="left-model">
-  <span class="side-logo"> <img src="${Setting.StaticBaseUrl}/img/casdoor-logo_1185x256.png" alt="Casdoor" style="width: 120px"> 
-    <span>SSO</span> 
+  <span class="side-logo"> <img src="${Setting.StaticBaseUrl}/img/casdoor-logo_1185x256.png" alt="Casdoor" style="width: 120px">
+    <span>SSO</span>
   </span>
   <div class="img">
     <img src="${Setting.StaticBaseUrl}/img/casbin.svg" alt="Casdoor"/>
@@ -550,6 +550,16 @@ class ApplicationEditPage extends React.Component {
           <Col span={22} >
             <InputNumber style={{width: "150px"}} value={this.state.application.refreshExpireInHours} min={0.01} step={1} precision={2} addonAfter="Hours" onChange={value => {
               this.updateApplicationField("refreshExpireInHours", value);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("application:Cookie expire"), i18next.t("application:Cookie expire - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <InputNumber style={{width: "150px"}} value={this.state.application.cookieExpireInHours} min={1} step={1} addonAfter="Hours" onChange={value => {
+              this.updateApplicationField("cookieExpireInHours", value);
             }} />
           </Col>
         </Row>
