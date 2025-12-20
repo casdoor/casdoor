@@ -214,6 +214,8 @@ func initBuiltInApplication() {
 		TokenFields:   []string{},
 		ExpireInHours: 168,
 		FormOffset:    2,
+
+		CookieExpireInHours: 720,
 	}
 	_, err = AddApplication(application)
 	if err != nil {

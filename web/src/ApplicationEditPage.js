@@ -558,7 +558,7 @@ class ApplicationEditPage extends React.Component {
             {Setting.getLabel(i18next.t("application:Cookie expire"), i18next.t("application:Cookie expire - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <InputNumber style={{width: "150px"}} value={this.state.application.cookieExpireInHours} min={1} step={1} precision={0} addonAfter="Hours" onChange={value => {
+            <InputNumber style={{width: "150px"}} value={this.state.application.cookieExpireInHours || 720} min={1} step={1} precision={0} addonAfter="Hours" onChange={value => {
               this.updateApplicationField("cookieExpireInHours", value);
             }} />
           </Col>

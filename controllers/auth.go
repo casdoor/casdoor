@@ -249,7 +249,12 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 	// if user did not check auto signin
 	if resp.Status == "ok" {
 		expiredInHours := application.CookieExpireInHours
-		if !form.AutoSignin && application.CookieExpireInHours > 24 {
+
+		if expiredInHours == 0 {
+			expiredInHours = 720
+		}
+
+		if !form.AutoSignin && expiredInHours > 24 {
 			expiredInHours = 24
 		}
 		c.setExpireForSession(expiredInHours)
