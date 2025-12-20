@@ -22,6 +22,7 @@ import (
 	"time"
 
 	"github.com/beego/beego/logs"
+	"github.com/casdoor/casdoor/controllers"
 	"github.com/casdoor/casdoor/object"
 
 	"github.com/beego/beego/context"
@@ -41,17 +42,13 @@ type ObjectWithOrg struct {
 	Organization string `json:"organization"`
 }
 
-type SessionData struct {
-	ExpireTime int64
-}
-
 func getUsername(ctx *context.Context) (username string) {
 	session := ctx.Input.Session("SessionData")
 	if session == nil {
 		return ""
 	}
 
-	sessionData := &SessionData{}
+	sessionData := &controllers.SessionData{}
 	err := util.JsonToStruct(session.(string), sessionData)
 	if err != nil {
 		logs.Error("GetSessionData failed, error: %s", err)
@@ -66,7 +63,10 @@ func getUsername(ctx *context.Context) (username string) {
 			logs.Error("Failed to clear expired session, error: %s", err)
 			return ""
 		}
-
+		err = ctx.Input.CruSession.Delete("SessionData")
+		if err != nil {
+			logs.Error("Failed to clear expired session, error: %s", err)
+		}
 		return ""
 	}
 
