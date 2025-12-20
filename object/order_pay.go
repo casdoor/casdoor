@@ -236,7 +236,7 @@ func PayOrder(providerName, host, paymentEnv string, order *Order) (payment *Pay
 		Provider:    provider.Name,
 		User:        payment.User,
 		Tag:         "User",
-		State:       pp.PaymentStateCreated,
+		State:       string(pp.PaymentStateCreated),
 	}
 
 	var rechargeTransaction *Transaction
@@ -252,15 +252,15 @@ func PayOrder(providerName, host, paymentEnv string, order *Order) (payment *Pay
 			Category:    "Recharge",
 			Tag:         "User",
 			User:        payment.User,
-			State:       pp.PaymentStateCreated,
+			State:       string(pp.PaymentStateCreated),
 		}
 	}
 
 	if provider.Type == "Dummy" || provider.Type == "Balance" {
 		payment.State = pp.PaymentStatePaid
-		transaction.State = pp.PaymentStatePaid
+		transaction.State = string(pp.PaymentStatePaid)
 		if product.IsRecharge {
-			rechargeTransaction.State = pp.PaymentStatePaid
+			rechargeTransaction.State = string(pp.PaymentStatePaid)
 		}
 	}
 
