@@ -16,6 +16,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/beego/beego/utils/pagination"
 	"github.com/casdoor/casdoor/object"
@@ -136,7 +137,21 @@ func (c *ApiController) DeleteSession() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.DeleteSession(util.GetSessionId(session.Owner, session.Name, session.Application)))
+	curSessionId := c.Ctx.Input.CruSession.SessionID()
+
+	sessionId := c.Input().Get("sessionId")
+	if curSessionId == sessionId && sessionId != "" {
+		c.ResponseError(fmt.Sprintf(c.T("session:session id %s is the current session and cannot be deleted"), curSessionId))
+		return
+	}
+
+	if sessionId != "" {
+		c.Data["json"] = wrapActionResponse(object.DeleteSessionId(util.GetSessionId(session.Owner, session.Name, session.Application), sessionId))
+		c.ServeJSON()
+		return
+	}
+
+	c.Data["json"] = wrapActionResponse(object.DeleteSession(util.GetSessionId(session.Owner, session.Name, session.Application), curSessionId))
 	c.ServeJSON()
 }
 

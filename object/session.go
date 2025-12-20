@@ -16,6 +16,7 @@ package object
 
 import (
 	"fmt"
+	"slices"
 
 	"github.com/beego/beego"
 	"github.com/casdoor/casdoor/util"
@@ -165,7 +166,7 @@ func AddSession(session *Session) (bool, error) {
 	}
 }
 
-func DeleteSession(id string) (bool, error) {
+func DeleteSession(id, curSessionId string) (bool, error) {
 	owner, name, application := util.GetOwnerAndNameAndOtherFromId(id)
 	if owner == CasdoorOrganization && application == CasdoorApplication {
 		session, err := GetSingleSession(id)
@@ -173,9 +174,15 @@ func DeleteSession(id string) (bool, error) {
 			return false, err
 		}
 
-		if session != nil {
-			DeleteBeegoSession(session.SessionId)
+		if session == nil {
+			return false, fmt.Errorf("session is nil")
 		}
+
+		if slices.Contains(session.SessionId, curSessionId) {
+			return false, fmt.Errorf("session:session id %s is the current session and cannot be deleted", curSessionId)
+		}
+
+		DeleteBeegoSession(session.SessionId)
 	}
 
 	affected, err := ormer.Engine.ID(core.PK{owner, name, application}).Delete(&Session{})
@@ -211,7 +218,7 @@ func DeleteSessionId(id string, sessionId string) (bool, error) {
 
 	session.SessionId = util.DeleteVal(session.SessionId, sessionId)
 	if len(session.SessionId) == 0 {
-		return DeleteSession(id)
+		return DeleteSession(id, "")
 	} else {
 		return UpdateSession(id, session)
 	}
