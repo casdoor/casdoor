@@ -19,7 +19,10 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"time"
 
+	"github.com/beego/beego/logs"
+	"github.com/casdoor/casdoor/controllers"
 	"github.com/casdoor/casdoor/object"
 
 	"github.com/beego/beego/context"
@@ -40,6 +43,33 @@ type ObjectWithOrg struct {
 }
 
 func getUsername(ctx *context.Context) (username string) {
+	session := ctx.Input.Session("SessionData")
+	if session == nil {
+		return ""
+	}
+
+	sessionData := &controllers.SessionData{}
+	err := util.JsonToStruct(session.(string), sessionData)
+	if err != nil {
+		logs.Error("GetSessionData failed, error: %s", err)
+		return ""
+	}
+
+	if sessionData != nil &&
+		sessionData.ExpireTime != 0 &&
+		sessionData.ExpireTime < time.Now().Unix() {
+		err = ctx.Input.CruSession.Set("username", "")
+		if err != nil {
+			logs.Error("Failed to clear expired session, error: %s", err)
+			return ""
+		}
+		err = ctx.Input.CruSession.Delete("SessionData")
+		if err != nil {
+			logs.Error("Failed to clear expired session, error: %s", err)
+		}
+		return ""
+	}
+
 	username, ok := ctx.Input.Session("username").(string)
 	if !ok || username == "" {
 		username, _ = getUsernameByClientIdSecret(ctx)

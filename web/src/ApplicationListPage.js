@@ -74,6 +74,7 @@ class ApplicationListPage extends BaseListPage {
       tokenFields: [],
       expireInHours: 24 * 7,
       refreshExpireInHours: 24 * 7,
+      cookieExpireInHours: 24 * 30,
       formOffset: 2,
     };
   }
