@@ -41,12 +41,25 @@ func unmarshalJSON(value string, target interface{}) error {
 
 // Helper function to marshal data to JSON string
 func marshalToJSONString(data interface{}) string {
-	if data == nil || reflect.ValueOf(data).IsNil() {
+	if data == nil {
 		return ""
 	}
 	
-	// Check if it's a slice and if so, check if it's empty
 	v := reflect.ValueOf(data)
+	// Check if the value is valid and can be nil
+	if !v.IsValid() {
+		return ""
+	}
+	
+	// Check if it's a nillable type (pointer, slice, map, channel, function, interface) and is nil
+	switch v.Kind() {
+	case reflect.Ptr, reflect.Slice, reflect.Map, reflect.Chan, reflect.Func, reflect.Interface:
+		if v.IsNil() {
+			return ""
+		}
+	}
+	
+	// Check if it's a slice and if so, check if it's empty
 	if v.Kind() == reflect.Slice && v.Len() == 0 {
 		return ""
 	}
