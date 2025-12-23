@@ -31,6 +31,32 @@ type Credential struct {
 	Salt  string `json:"salt"`
 }
 
+// Helper function to unmarshal JSON string into a target interface
+func unmarshalJSON(value string, target interface{}) error {
+	if value == "" {
+		return nil
+	}
+	return json.Unmarshal([]byte(value), target)
+}
+
+// Helper function to marshal data to JSON string
+func marshalToJSONString(data interface{}) string {
+	if data == nil || reflect.ValueOf(data).IsNil() {
+		return ""
+	}
+	
+	// Check if it's a slice and if so, check if it's empty
+	v := reflect.ValueOf(data)
+	if v.Kind() == reflect.Slice && v.Len() == 0 {
+		return ""
+	}
+	
+	if jsonData, err := json.Marshal(data); err == nil {
+		return string(jsonData)
+	}
+	return ""
+}
+
 func (syncer *Syncer) getFullAvatarUrl(avatar string) string {
 	if syncer.AvatarBaseUrl == "" {
 		return avatar
@@ -232,36 +258,15 @@ func (syncer *Syncer) setUserByKeyValue(user *User, key string, value string) {
 	case "MfaRememberDeadline":
 		user.MfaRememberDeadline = value
 	case "WebauthnCredentials":
-		if value != "" {
-			if err := json.Unmarshal([]byte(value), &user.WebauthnCredentials); err != nil {
-				// If unmarshal fails, leave it empty
-				user.WebauthnCredentials = nil
-			}
-		}
+		_ = unmarshalJSON(value, &user.WebauthnCredentials)
 	case "FaceIds":
-		if value != "" {
-			if err := json.Unmarshal([]byte(value), &user.FaceIds); err != nil {
-				user.FaceIds = nil
-			}
-		}
+		_ = unmarshalJSON(value, &user.FaceIds)
 	case "ManagedAccounts":
-		if value != "" {
-			if err := json.Unmarshal([]byte(value), &user.ManagedAccounts); err != nil {
-				user.ManagedAccounts = nil
-			}
-		}
+		_ = unmarshalJSON(value, &user.ManagedAccounts)
 	case "MfaAccounts":
-		if value != "" {
-			if err := json.Unmarshal([]byte(value), &user.MfaAccounts); err != nil {
-				user.MfaAccounts = nil
-			}
-		}
+		_ = unmarshalJSON(value, &user.MfaAccounts)
 	case "MfaItems":
-		if value != "" {
-			if err := json.Unmarshal([]byte(value), &user.MfaItems); err != nil {
-				user.MfaItems = nil
-			}
-		}
+		_ = unmarshalJSON(value, &user.MfaItems)
 	}
 }
 
@@ -422,57 +427,11 @@ func (syncer *Syncer) getMapFromOriginalUser(user *OriginalUser) map[string]stri
 	m["NeedUpdatePassword"] = util.BoolToString(user.NeedUpdatePassword)
 	m["IpWhitelist"] = user.IpWhitelist
 	m["MfaRememberDeadline"] = user.MfaRememberDeadline
-
-	// Serialize complex types to JSON
-	if user.WebauthnCredentials != nil && len(user.WebauthnCredentials) > 0 {
-		if jsonData, err := json.Marshal(user.WebauthnCredentials); err == nil {
-			m["WebauthnCredentials"] = string(jsonData)
-		} else {
-			m["WebauthnCredentials"] = ""
-		}
-	} else {
-		m["WebauthnCredentials"] = ""
-	}
-
-	if user.FaceIds != nil && len(user.FaceIds) > 0 {
-		if jsonData, err := json.Marshal(user.FaceIds); err == nil {
-			m["FaceIds"] = string(jsonData)
-		} else {
-			m["FaceIds"] = ""
-		}
-	} else {
-		m["FaceIds"] = ""
-	}
-
-	if user.ManagedAccounts != nil && len(user.ManagedAccounts) > 0 {
-		if jsonData, err := json.Marshal(user.ManagedAccounts); err == nil {
-			m["ManagedAccounts"] = string(jsonData)
-		} else {
-			m["ManagedAccounts"] = ""
-		}
-	} else {
-		m["ManagedAccounts"] = ""
-	}
-
-	if user.MfaAccounts != nil && len(user.MfaAccounts) > 0 {
-		if jsonData, err := json.Marshal(user.MfaAccounts); err == nil {
-			m["MfaAccounts"] = string(jsonData)
-		} else {
-			m["MfaAccounts"] = ""
-		}
-	} else {
-		m["MfaAccounts"] = ""
-	}
-
-	if user.MfaItems != nil && len(user.MfaItems) > 0 {
-		if jsonData, err := json.Marshal(user.MfaItems); err == nil {
-			m["MfaItems"] = string(jsonData)
-		} else {
-			m["MfaItems"] = ""
-		}
-	} else {
-		m["MfaItems"] = ""
-	}
+	m["WebauthnCredentials"] = marshalToJSONString(user.WebauthnCredentials)
+	m["FaceIds"] = marshalToJSONString(user.FaceIds)
+	m["ManagedAccounts"] = marshalToJSONString(user.ManagedAccounts)
+	m["MfaAccounts"] = marshalToJSONString(user.MfaAccounts)
+	m["MfaItems"] = marshalToJSONString(user.MfaItems)
 
 	m2 := map[string]string{}
 	for _, tableColumn := range syncer.TableColumns {
