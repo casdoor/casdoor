@@ -44,13 +44,13 @@ func marshalToJSONString(data interface{}) string {
 	if data == nil {
 		return ""
 	}
-	
+
 	v := reflect.ValueOf(data)
 	// Check if the value is valid and can be nil
 	if !v.IsValid() {
 		return ""
 	}
-	
+
 	// Check if it's a nillable type (pointer, slice, map, channel, function, interface) and is nil
 	switch v.Kind() {
 	case reflect.Ptr, reflect.Slice, reflect.Map, reflect.Chan, reflect.Func, reflect.Interface:
@@ -58,13 +58,13 @@ func marshalToJSONString(data interface{}) string {
 			return ""
 		}
 	}
-	
+
 	// Check if it's a slice and if so, check if it's empty
 	// Return empty string for empty slices to indicate "no data" for syncer purposes
 	if v.Kind() == reflect.Slice && v.Len() == 0 {
 		return ""
 	}
-	
+
 	if jsonData, err := json.Marshal(data); err == nil {
 		return string(jsonData)
 	}
