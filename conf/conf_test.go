@@ -38,7 +38,7 @@ func TestGetConfString(t *testing.T) {
 	os.Setenv("appname", "casbin")
 	os.Setenv("key", "value")
 
-	err := beego.LoadAppConfig("ini", "app.conf")
+	err := web.LoadAppConfig("ini", "app.conf")
 	assert.Nil(t, err)
 
 	for _, scenery := range scenarios {
@@ -62,7 +62,7 @@ func TestGetConfInt(t *testing.T) {
 	// do some set up job
 	os.Setenv("httpport", "8001")
 
-	err := beego.LoadAppConfig("ini", "app.conf")
+	err := web.LoadAppConfig("ini", "app.conf")
 	assert.Nil(t, err)
 
 	for _, scenery := range scenarios {
@@ -83,7 +83,7 @@ func TestGetConfBool(t *testing.T) {
 		{"Should be return false", "copyrequestbody", true},
 	}
 
-	err := beego.LoadAppConfig("ini", "app.conf")
+	err := web.LoadAppConfig("ini", "app.conf")
 	assert.Nil(t, err)
 	for _, scenery := range scenarios {
 		t.Run(scenery.description, func(t *testing.T) {
@@ -102,7 +102,7 @@ func TestGetConfigQuota(t *testing.T) {
 		{"default", &Quota{-1, -1, -1, -1}},
 	}
 
-	err := beego.LoadAppConfig("ini", "app.conf")
+	err := web.LoadAppConfig("ini", "app.conf")
 	assert.Nil(t, err)
 	for _, scenery := range scenarios {
 		quota := GetConfigQuota()
@@ -118,7 +118,7 @@ func TestGetConfigLogs(t *testing.T) {
 		{"Default log config", `{"adapter":"file", "filename": "logs/casdoor.log", "maxdays":99999, "perm":"0770"}`},
 	}
 
-	err := beego.LoadAppConfig("ini", "app.conf")
+	err := web.LoadAppConfig("ini", "app.conf")
 	assert.Nil(t, err)
 	for _, scenery := range scenarios {
 		quota := GetConfigString("logConfig")
