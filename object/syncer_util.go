@@ -31,6 +31,46 @@ type Credential struct {
 	Salt  string `json:"salt"`
 }
 
+// Helper function to unmarshal JSON string into a target interface
+func unmarshalJSON(value string, target interface{}) error {
+	if value == "" {
+		return nil
+	}
+	return json.Unmarshal([]byte(value), target)
+}
+
+// Helper function to marshal data to JSON string
+func marshalToJSONString(data interface{}) string {
+	if data == nil {
+		return ""
+	}
+
+	v := reflect.ValueOf(data)
+	// Check if the value is valid and can be nil
+	if !v.IsValid() {
+		return ""
+	}
+
+	// Check if it's a nillable type (pointer, slice, map, channel, function, interface) and is nil
+	switch v.Kind() {
+	case reflect.Ptr, reflect.Slice, reflect.Map, reflect.Chan, reflect.Func, reflect.Interface:
+		if v.IsNil() {
+			return ""
+		}
+	}
+
+	// Check if it's a slice and if so, check if it's empty
+	// Return empty string for empty slices to indicate "no data" for syncer purposes
+	if v.Kind() == reflect.Slice && v.Len() == 0 {
+		return ""
+	}
+
+	if jsonData, err := json.Marshal(data); err == nil {
+		return string(jsonData)
+	}
+	return ""
+}
+
 func (syncer *Syncer) getFullAvatarUrl(avatar string) string {
 	if syncer.AvatarBaseUrl == "" {
 		return avatar
@@ -185,6 +225,62 @@ func (syncer *Syncer) setUserByKeyValue(user *User, key string, value string) {
 		user.MfaEmailEnabled = util.ParseBool(value)
 	case "RecoveryCodes":
 		user.RecoveryCodes = strings.Split(value, ",")
+	case "ExternalId":
+		user.ExternalId = value
+	case "PasswordType":
+		user.PasswordType = value
+	case "AvatarType":
+		user.AvatarType = value
+	case "CountryCode":
+		user.CountryCode = value
+	case "RealName":
+		user.RealName = value
+	case "IsVerified":
+		user.IsVerified = util.ParseBool(value)
+	case "MfaRadiusEnabled":
+		user.MfaRadiusEnabled = util.ParseBool(value)
+	case "MfaRadiusUsername":
+		user.MfaRadiusUsername = value
+	case "MfaRadiusProvider":
+		user.MfaRadiusProvider = value
+	case "MfaPushEnabled":
+		user.MfaPushEnabled = util.ParseBool(value)
+	case "MfaPushReceiver":
+		user.MfaPushReceiver = value
+	case "MfaPushProvider":
+		user.MfaPushProvider = value
+	case "Invitation":
+		user.Invitation = value
+	case "InvitationCode":
+		user.InvitationCode = value
+	case "Ldap":
+		user.Ldap = value
+	case "LastSigninTime":
+		user.LastSigninTime = value
+	case "LastSigninIp":
+		user.LastSigninIp = value
+	case "LastChangePasswordTime":
+		user.LastChangePasswordTime = value
+	case "LastSigninWrongTime":
+		user.LastSigninWrongTime = value
+	case "SigninWrongTimes":
+		user.SigninWrongTimes = util.ParseInt(value)
+	case "NeedUpdatePassword":
+		user.NeedUpdatePassword = util.ParseBool(value)
+	case "IpWhitelist":
+		user.IpWhitelist = value
+	case "MfaRememberDeadline":
+		user.MfaRememberDeadline = value
+	case "WebauthnCredentials":
+		_ = unmarshalJSON(value, &user.WebauthnCredentials)
+	case "FaceIds":
+		_ = unmarshalJSON(value, &user.FaceIds)
+	case "ManagedAccounts":
+		_ = unmarshalJSON(value, &user.ManagedAccounts)
+	case "MfaAccounts":
+		_ = unmarshalJSON(value, &user.MfaAccounts)
+	case "MfaItems":
+		_ = unmarshalJSON(value, &user.MfaItems)
 	}
 }
 
@@ -322,6 +418,34 @@ func (syncer *Syncer) getMapFromOriginalUser(user *OriginalUser) map[string]stri
 	m["MfaPhoneEnabled"] = util.BoolToString(user.MfaPhoneEnabled)
 	m["MfaEmailEnabled"] = util.BoolToString(user.MfaEmailEnabled)
 	m["RecoveryCodes"] = strings.Join(user.RecoveryCodes, ",")
+	m["ExternalId"] = user.ExternalId
+	m["PasswordType"] = user.PasswordType
+	m["AvatarType"] = user.AvatarType
+	m["CountryCode"] = user.CountryCode
+	m["RealName"] = user.RealName
+	m["IsVerified"] = util.BoolToString(user.IsVerified)
+	m["MfaRadiusEnabled"] = util.BoolToString(user.MfaRadiusEnabled)
+	m["MfaRadiusUsername"] = user.MfaRadiusUsername
+	m["MfaRadiusProvider"] = user.MfaRadiusProvider
+	m["MfaPushEnabled"] = util.BoolToString(user.MfaPushEnabled)
+	m["MfaPushReceiver"] = user.MfaPushReceiver
+	m["MfaPushProvider"] = user.MfaPushProvider
+	m["Invitation"] = user.Invitation
+	m["InvitationCode"] = user.InvitationCode
+	m["Ldap"] = user.Ldap
+	m["LastSigninTime"] = user.LastSigninTime
+	m["LastSigninIp"] = user.LastSigninIp
+	m["LastChangePasswordTime"] = user.LastChangePasswordTime
+	m["LastSigninWrongTime"] = user.LastSigninWrongTime
+	m["SigninWrongTimes"] = strconv.Itoa(user.SigninWrongTimes)
+	m["NeedUpdatePassword"] = util.BoolToString(user.NeedUpdatePassword)
+	m["IpWhitelist"] = user.IpWhitelist
+	m["MfaRememberDeadline"] = user.MfaRememberDeadline
+	m["WebauthnCredentials"] = marshalToJSONString(user.WebauthnCredentials)
+	m["FaceIds"] = marshalToJSONString(user.FaceIds)
+	m["ManagedAccounts"] = marshalToJSONString(user.ManagedAccounts)
+	m["MfaAccounts"] = marshalToJSONString(user.MfaAccounts)
+	m["MfaItems"] = marshalToJSONString(user.MfaItems)
 
 	m2 := map[string]string{}
 	for _, tableColumn := range syncer.TableColumns {
