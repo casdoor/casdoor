@@ -185,6 +185,83 @@ func (syncer *Syncer) setUserByKeyValue(user *User, key string, value string) {
 		user.MfaEmailEnabled = util.ParseBool(value)
 	case "RecoveryCodes":
 		user.RecoveryCodes = strings.Split(value, ",")
+	case "ExternalId":
+		user.ExternalId = value
+	case "PasswordType":
+		user.PasswordType = value
+	case "AvatarType":
+		user.AvatarType = value
+	case "CountryCode":
+		user.CountryCode = value
+	case "RealName":
+		user.RealName = value
+	case "IsVerified":
+		user.IsVerified = util.ParseBool(value)
+	case "MfaRadiusEnabled":
+		user.MfaRadiusEnabled = util.ParseBool(value)
+	case "MfaRadiusUsername":
+		user.MfaRadiusUsername = value
+	case "MfaRadiusProvider":
+		user.MfaRadiusProvider = value
+	case "MfaPushEnabled":
+		user.MfaPushEnabled = util.ParseBool(value)
+	case "MfaPushReceiver":
+		user.MfaPushReceiver = value
+	case "MfaPushProvider":
+		user.MfaPushProvider = value
+	case "Invitation":
+		user.Invitation = value
+	case "InvitationCode":
+		user.InvitationCode = value
+	case "Ldap":
+		user.Ldap = value
+	case "LastSigninTime":
+		user.LastSigninTime = value
+	case "LastSigninIp":
+		user.LastSigninIp = value
+	case "LastChangePasswordTime":
+		user.LastChangePasswordTime = value
+	case "LastSigninWrongTime":
+		user.LastSigninWrongTime = value
+	case "SigninWrongTimes":
+		user.SigninWrongTimes = util.ParseInt(value)
+	case "NeedUpdatePassword":
+		user.NeedUpdatePassword = util.ParseBool(value)
+	case "IpWhitelist":
+		user.IpWhitelist = value
+	case "MfaRememberDeadline":
+		user.MfaRememberDeadline = value
+	case "WebauthnCredentials":
+		if value != "" {
+			if err := json.Unmarshal([]byte(value), &user.WebauthnCredentials); err != nil {
+				// If unmarshal fails, leave it empty
+				user.WebauthnCredentials = nil
+			}
+		}
+	case "FaceIds":
+		if value != "" {
+			if err := json.Unmarshal([]byte(value), &user.FaceIds); err != nil {
+				user.FaceIds = nil
+			}
+		}
+	case "ManagedAccounts":
+		if value != "" {
+			if err := json.Unmarshal([]byte(value), &user.ManagedAccounts); err != nil {
+				user.ManagedAccounts = nil
+			}
+		}
+	case "MfaAccounts":
+		if value != "" {
+			if err := json.Unmarshal([]byte(value), &user.MfaAccounts); err != nil {
+				user.MfaAccounts = nil
+			}
+		}
+	case "MfaItems":
+		if value != "" {
+			if err := json.Unmarshal([]byte(value), &user.MfaItems); err != nil {
+				user.MfaItems = nil
+			}
+		}
 	}
 }
 
@@ -322,6 +399,80 @@ func (syncer *Syncer) getMapFromOriginalUser(user *OriginalUser) map[string]stri
 	m["MfaPhoneEnabled"] = util.BoolToString(user.MfaPhoneEnabled)
 	m["MfaEmailEnabled"] = util.BoolToString(user.MfaEmailEnabled)
 	m["RecoveryCodes"] = strings.Join(user.RecoveryCodes, ",")
+	m["ExternalId"] = user.ExternalId
+	m["PasswordType"] = user.PasswordType
+	m["AvatarType"] = user.AvatarType
+	m["CountryCode"] = user.CountryCode
+	m["RealName"] = user.RealName
+	m["IsVerified"] = util.BoolToString(user.IsVerified)
+	m["MfaRadiusEnabled"] = util.BoolToString(user.MfaRadiusEnabled)
+	m["MfaRadiusUsername"] = user.MfaRadiusUsername
+	m["MfaRadiusProvider"] = user.MfaRadiusProvider
+	m["MfaPushEnabled"] = util.BoolToString(user.MfaPushEnabled)
+	m["MfaPushReceiver"] = user.MfaPushReceiver
+	m["MfaPushProvider"] = user.MfaPushProvider
+	m["Invitation"] = user.Invitation
+	m["InvitationCode"] = user.InvitationCode
+	m["Ldap"] = user.Ldap
+	m["LastSigninTime"] = user.LastSigninTime
+	m["LastSigninIp"] = user.LastSigninIp
+	m["LastChangePasswordTime"] = user.LastChangePasswordTime
+	m["LastSigninWrongTime"] = user.LastSigninWrongTime
+	m["SigninWrongTimes"] = strconv.Itoa(user.SigninWrongTimes)
+	m["NeedUpdatePassword"] = util.BoolToString(user.NeedUpdatePassword)
+	m["IpWhitelist"] = user.IpWhitelist
+	m["MfaRememberDeadline"] = user.MfaRememberDeadline
+
+	// Serialize complex types to JSON
+	if user.WebauthnCredentials != nil && len(user.WebauthnCredentials) > 0 {
+		if jsonData, err := json.Marshal(user.WebauthnCredentials); err == nil {
+			m["WebauthnCredentials"] = string(jsonData)
+		} else {
+			m["WebauthnCredentials"] = ""
+		}
+	} else {
+		m["WebauthnCredentials"] = ""
+	}
+
+	if user.FaceIds != nil && len(user.FaceIds) > 0 {
+		if jsonData, err := json.Marshal(user.FaceIds); err == nil {
+			m["FaceIds"] = string(jsonData)
+		} else {
+			m["FaceIds"] = ""
+		}
+	} else {
+		m["FaceIds"] = ""
+	}
+
+	if user.ManagedAccounts != nil && len(user.ManagedAccounts) > 0 {
+		if jsonData, err := json.Marshal(user.ManagedAccounts); err == nil {
+			m["ManagedAccounts"] = string(jsonData)
+		} else {
+			m["ManagedAccounts"] = ""
+		}
+	} else {
+		m["ManagedAccounts"] = ""
+	}
+
+	if user.MfaAccounts != nil && len(user.MfaAccounts) > 0 {
+		if jsonData, err := json.Marshal(user.MfaAccounts); err == nil {
+			m["MfaAccounts"] = string(jsonData)
+		} else {
+			m["MfaAccounts"] = ""
+		}
+	} else {
+		m["MfaAccounts"] = ""
+	}
+
+	if user.MfaItems != nil && len(user.MfaItems) > 0 {
+		if jsonData, err := json.Marshal(user.MfaItems); err == nil {
+			m["MfaItems"] = string(jsonData)
+		} else {
+			m["MfaItems"] = ""
+		}
+	} else {
+		m["MfaItems"] = ""
+	}
 
 	m2 := map[string]string{}
 	for _, tableColumn := range syncer.TableColumns {
