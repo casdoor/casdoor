@@ -57,6 +57,10 @@ class OAuthWidget extends React.Component {
       return;
     }
 
+    if (!user.address || user.address.length === 0) {
+      return;
+    }
+
     const affiliationUrl = application.affiliationUrl.split("|")[1];
     const code = user.address[user.address.length - 1];
     UserBackend.getAffiliationOptions(affiliationUrl, code)
