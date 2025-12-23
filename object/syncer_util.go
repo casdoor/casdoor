@@ -60,6 +60,7 @@ func marshalToJSONString(data interface{}) string {
 	}
 	
 	// Check if it's a slice and if so, check if it's empty
+	// Return empty string for empty slices to indicate "no data" for syncer purposes
 	if v.Kind() == reflect.Slice && v.Len() == 0 {
 		return ""
 	}
