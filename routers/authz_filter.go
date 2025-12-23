@@ -43,9 +43,18 @@ type ObjectWithOrg struct {
 }
 
 func getUsername(ctx *context.Context) (username string) {
+	username, ok := ctx.Input.Session("username").(string)
+	if !ok || username == "" {
+		username, _ = getUsernameByClientIdSecret(ctx)
+	}
+
+	if username == "" {
+		username, _ = getUsernameByKeys(ctx)
+	}
+
 	session := ctx.Input.Session("SessionData")
 	if session == nil {
-		return ""
+		return
 	}
 
 	sessionData := &controllers.SessionData{}
@@ -55,8 +64,7 @@ func getUsername(ctx *context.Context) (username string) {
 		return ""
 	}
 
-	if sessionData != nil &&
-		sessionData.ExpireTime != 0 &&
+	if sessionData.ExpireTime != 0 &&
 		sessionData.ExpireTime < time.Now().Unix() {
 		err = ctx.Input.CruSession.Set("username", "")
 		if err != nil {
@@ -70,14 +78,6 @@ func getUsername(ctx *context.Context) (username string) {
 		return ""
 	}
 
-	username, ok := ctx.Input.Session("username").(string)
-	if !ok || username == "" {
-		username, _ = getUsernameByClientIdSecret(ctx)
-	}
-
-	if username == "" {
-		username, _ = getUsernameByKeys(ctx)
-	}
 	return
 }
 
