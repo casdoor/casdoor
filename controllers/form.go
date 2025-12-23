@@ -17,7 +17,7 @@ package controllers
 import (
 	"encoding/json"
 
-	"github.com/beego/beego/utils/pagination"
+	"github.com/beego/beego/v2/core/utils/pagination"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 )
@@ -46,13 +46,13 @@ func (c *ApiController) GetGlobalForms() {
 // @Success 200 {array} object.Form The Response object
 // @router /get-forms [get]
 func (c *ApiController) GetForms() {
-	owner := c.Input().Get("owner")
-	limit := c.Input().Get("pageSize")
-	page := c.Input().Get("p")
-	field := c.Input().Get("field")
-	value := c.Input().Get("value")
-	sortField := c.Input().Get("sortField")
-	sortOrder := c.Input().Get("sortOrder")
+	owner := c.Ctx.Input.Query("owner")
+	limit := c.Ctx.Input.Query("pageSize")
+	page := c.Ctx.Input.Query("p")
+	field := c.Ctx.Input.Query("field")
+	value := c.Ctx.Input.Query("value")
+	sortField := c.Ctx.Input.Query("sortField")
+	sortOrder := c.Ctx.Input.Query("sortOrder")
 
 	if limit == "" || page == "" {
 		forms, err := object.GetForms(owner)
@@ -70,7 +70,7 @@ func (c *ApiController) GetForms() {
 			return
 		}
 
-		paginator := pagination.SetPaginator(c.Ctx, limit, count)
+		paginator := pagination.NewPaginator(c.Ctx.Request, limit, count)
 		forms, err := object.GetPaginationForms(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
 		if err != nil {
 			c.ResponseError(err.Error())
@@ -88,7 +88,7 @@ func (c *ApiController) GetForms() {
 // @Success 200 {object} object.Form The Response object
 // @router /get-form [get]
 func (c *ApiController) GetForm() {
-	id := c.Input().Get("id")
+	id := c.Ctx.Input.Query("id")
 
 	form, err := object.GetForm(id)
 	if err != nil {
@@ -108,7 +108,7 @@ func (c *ApiController) GetForm() {
 // @Success 200 {object} controllers.Response The Response object
 // @router /update-form [post]
 func (c *ApiController) UpdateForm() {
-	id := c.Input().Get("id")
+	id := c.Ctx.Input.Query("id")
 
 	var form object.Form
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &form)

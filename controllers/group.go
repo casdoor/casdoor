@@ -17,7 +17,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/beego/beego/utils/pagination"
+	"github.com/beego/beego/v2/core/utils/pagination"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 )
@@ -30,14 +30,14 @@ import (
 // @Success 200 {array} object.Group The Response object
 // @router /get-groups [get]
 func (c *ApiController) GetGroups() {
-	owner := c.Input().Get("owner")
-	limit := c.Input().Get("pageSize")
-	page := c.Input().Get("p")
-	field := c.Input().Get("field")
-	value := c.Input().Get("value")
-	sortField := c.Input().Get("sortField")
-	sortOrder := c.Input().Get("sortOrder")
-	withTree := c.Input().Get("withTree")
+	owner := c.Ctx.Input.Query("owner")
+	limit := c.Ctx.Input.Query("pageSize")
+	page := c.Ctx.Input.Query("p")
+	field := c.Ctx.Input.Query("field")
+	value := c.Ctx.Input.Query("value")
+	sortField := c.Ctx.Input.Query("sortField")
+	sortOrder := c.Ctx.Input.Query("sortOrder")
+	withTree := c.Ctx.Input.Query("withTree")
 
 	if limit == "" || page == "" {
 		groups, err := object.GetGroups(owner)
@@ -66,7 +66,7 @@ func (c *ApiController) GetGroups() {
 			return
 		}
 
-		paginator := pagination.SetPaginator(c.Ctx, limit, count)
+		paginator := pagination.NewPaginator(c.Ctx.Request, limit, count)
 		groups, err := object.GetPaginationGroups(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
 		if err != nil {
 			c.ResponseError(err.Error())
@@ -109,7 +109,7 @@ func (c *ApiController) GetGroups() {
 // @Success 200 {object} object.Group The Response object
 // @router /get-group [get]
 func (c *ApiController) GetGroup() {
-	id := c.Input().Get("id")
+	id := c.Ctx.Input.Query("id")
 
 	group, err := object.GetGroup(id)
 	if err != nil {
@@ -135,7 +135,7 @@ func (c *ApiController) GetGroup() {
 // @Success 200 {object} controllers.Response The Response object
 // @router /update-group [post]
 func (c *ApiController) UpdateGroup() {
-	id := c.Input().Get("id")
+	id := c.Ctx.Input.Query("id")
 
 	var group object.Group
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &group)

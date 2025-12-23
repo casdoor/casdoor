@@ -17,7 +17,7 @@ package controllers
 import (
 	"encoding/json"
 
-	"github.com/beego/beego/utils/pagination"
+	"github.com/beego/beego/v2/core/utils/pagination"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 )
@@ -30,13 +30,13 @@ import (
 // @Success 200 {array} object.Plan The Response object
 // @router /get-plans [get]
 func (c *ApiController) GetPlans() {
-	owner := c.Input().Get("owner")
-	limit := c.Input().Get("pageSize")
-	page := c.Input().Get("p")
-	field := c.Input().Get("field")
-	value := c.Input().Get("value")
-	sortField := c.Input().Get("sortField")
-	sortOrder := c.Input().Get("sortOrder")
+	owner := c.Ctx.Input.Query("owner")
+	limit := c.Ctx.Input.Query("pageSize")
+	page := c.Ctx.Input.Query("p")
+	field := c.Ctx.Input.Query("field")
+	value := c.Ctx.Input.Query("value")
+	sortField := c.Ctx.Input.Query("sortField")
+	sortOrder := c.Ctx.Input.Query("sortOrder")
 
 	if limit == "" || page == "" {
 		plans, err := object.GetPlans(owner)
@@ -54,7 +54,7 @@ func (c *ApiController) GetPlans() {
 			return
 		}
 
-		paginator := pagination.SetPaginator(c.Ctx, limit, count)
+		paginator := pagination.NewPaginator(c.Ctx.Request, limit, count)
 		plan, err := object.GetPaginatedPlans(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
 		if err != nil {
 			c.ResponseError(err.Error())
@@ -74,8 +74,8 @@ func (c *ApiController) GetPlans() {
 // @Success 200 {object} object.Plan The Response object
 // @router /get-plan [get]
 func (c *ApiController) GetPlan() {
-	id := c.Input().Get("id")
-	includeOption := c.Input().Get("includeOption") == "true"
+	id := c.Ctx.Input.Query("id")
+	includeOption := c.Ctx.Input.Query("includeOption") == "true"
 
 	plan, err := object.GetPlan(id)
 	if err != nil {
@@ -107,7 +107,7 @@ func (c *ApiController) GetPlan() {
 // @Success 200 {object} controllers.Response The Response object
 // @router /update-plan [post]
 func (c *ApiController) UpdatePlan() {
-	id := c.Input().Get("id")
+	id := c.Ctx.Input.Query("id")
 	owner := util.GetOwnerFromId(id)
 	var plan object.Plan
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &plan)

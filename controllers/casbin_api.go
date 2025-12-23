@@ -34,11 +34,11 @@ import (
 // @Success 200 {object} controllers.Response The Response object
 // @router /enforce [post]
 func (c *ApiController) Enforce() {
-	permissionId := c.Input().Get("permissionId")
-	modelId := c.Input().Get("modelId")
-	resourceId := c.Input().Get("resourceId")
-	enforcerId := c.Input().Get("enforcerId")
-	owner := c.Input().Get("owner")
+	permissionId := c.Ctx.Input.Query("permissionId")
+	modelId := c.Ctx.Input.Query("modelId")
+	resourceId := c.Ctx.Input.Query("resourceId")
+	enforcerId := c.Ctx.Input.Query("enforcerId")
+	owner := c.Ctx.Input.Query("owner")
 
 	params := []string{permissionId, modelId, resourceId, enforcerId, owner}
 	nonEmpty := 0
@@ -180,10 +180,10 @@ func (c *ApiController) Enforce() {
 // @Success 200 {object} controllers.Response The Response object
 // @router /batch-enforce [post]
 func (c *ApiController) BatchEnforce() {
-	permissionId := c.Input().Get("permissionId")
-	modelId := c.Input().Get("modelId")
-	enforcerId := c.Input().Get("enforcerId")
-	owner := c.Input().Get("owner")
+	permissionId := c.Ctx.Input.Query("permissionId")
+	modelId := c.Ctx.Input.Query("modelId")
+	enforcerId := c.Ctx.Input.Query("enforcerId")
+	owner := c.Ctx.Input.Query("owner")
 
 	params := []string{permissionId, modelId, enforcerId, owner}
 	nonEmpty := 0
@@ -304,7 +304,7 @@ func (c *ApiController) BatchEnforce() {
 }
 
 func (c *ApiController) GetAllObjects() {
-	userId := c.Input().Get("userId")
+	userId := c.Ctx.Input.Query("userId")
 	if userId == "" {
 		userId = c.GetSessionUsername()
 		if userId == "" {
@@ -323,7 +323,7 @@ func (c *ApiController) GetAllObjects() {
 }
 
 func (c *ApiController) GetAllActions() {
-	userId := c.Input().Get("userId")
+	userId := c.Ctx.Input.Query("userId")
 	if userId == "" {
 		userId = c.GetSessionUsername()
 		if userId == "" {
@@ -342,7 +342,7 @@ func (c *ApiController) GetAllActions() {
 }
 
 func (c *ApiController) GetAllRoles() {
-	userId := c.Input().Get("userId")
+	userId := c.Ctx.Input.Query("userId")
 	if userId == "" {
 		userId = c.GetSessionUsername()
 		if userId == "" {

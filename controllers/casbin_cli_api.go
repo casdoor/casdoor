@@ -169,8 +169,8 @@ func (c *ApiController) RunCasbinCommand() {
 		return
 	}
 
-	language := c.Input().Get("language")
-	argString := c.Input().Get("args")
+	language := c.Ctx.Input.Query("language")
+	argString := c.Ctx.Input.Query("args")
 
 	if language == "" {
 		language = "go"
@@ -262,10 +262,10 @@ func (c *ApiController) RunCasbinCommand() {
 // @Param hash string The SHA-256 hash string
 // @Return error Returns error if validation fails, nil if successful
 func validateIdentifier(c *ApiController) error {
-	language := c.Input().Get("language")
-	args := c.Input().Get("args")
-	hash := c.Input().Get("m")
-	timestamp := c.Input().Get("t")
+	language := c.Ctx.Input.Query("language")
+	args := c.Ctx.Input.Query("args")
+	hash := c.Ctx.Input.Query("m")
+	timestamp := c.Ctx.Input.Query("t")
 
 	if hash == "" || timestamp == "" || language == "" || args == "" {
 		return fmt.Errorf("invalid identifier")

@@ -18,9 +18,9 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/beego/beego"
-	"github.com/beego/beego/logs"
-	_ "github.com/beego/beego/session/redis"
+	"github.com/beego/beego/v2/core/logs"
+	"github.com/beego/beego/v2/server/web"
+	_ "github.com/beego/beego/v2/server/web/session/redis"
 	"github.com/casdoor/casdoor/authz"
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/controllers"
@@ -62,35 +62,35 @@ func main() {
 	util.SafeGoroutine(func() { object.RunSyncUsersJob() })
 	util.SafeGoroutine(func() { controllers.InitCLIDownloader() })
 
-	// beego.DelStaticPath("/static")
-	// beego.SetStaticPath("/static", "web/build/static")
+	// web.DelStaticPath("/static")
+	// web.SetStaticPath("/static", "web/build/static")
 
-	beego.BConfig.WebConfig.DirectoryIndex = true
-	beego.SetStaticPath("/swagger", "swagger")
-	beego.SetStaticPath("/files", "files")
+	web.BConfig.WebConfig.DirectoryIndex = true
+	web.SetStaticPath("/swagger", "swagger")
+	web.SetStaticPath("/files", "files")
 	// https://studygolang.com/articles/2303
-	beego.InsertFilter("*", beego.BeforeRouter, routers.StaticFilter)
-	beego.InsertFilter("*", beego.BeforeRouter, routers.AutoSigninFilter)
-	beego.InsertFilter("*", beego.BeforeRouter, routers.CorsFilter)
-	beego.InsertFilter("*", beego.BeforeRouter, routers.TimeoutFilter)
-	beego.InsertFilter("*", beego.BeforeRouter, routers.ApiFilter)
-	beego.InsertFilter("*", beego.BeforeRouter, routers.PrometheusFilter)
-	beego.InsertFilter("*", beego.BeforeRouter, routers.RecordMessage)
-	beego.InsertFilter("*", beego.BeforeRouter, routers.FieldValidationFilter)
-	beego.InsertFilter("*", beego.AfterExec, routers.AfterRecordMessage, false)
+	web.InsertFilter("*", web.BeforeRouter, routers.StaticFilter)
+	web.InsertFilter("*", web.BeforeRouter, routers.AutoSigninFilter)
+	web.InsertFilter("*", web.BeforeRouter, routers.CorsFilter)
+	web.InsertFilter("*", web.BeforeRouter, routers.TimeoutFilter)
+	web.InsertFilter("*", web.BeforeRouter, routers.ApiFilter)
+	web.InsertFilter("*", web.BeforeRouter, routers.PrometheusFilter)
+	web.InsertFilter("*", web.BeforeRouter, routers.RecordMessage)
+	web.InsertFilter("*", web.BeforeRouter, routers.FieldValidationFilter)
+	web.InsertFilter("*", web.AfterExec, routers.AfterRecordMessage, web.WithReturnOnOutput(false))
 
-	beego.BConfig.WebConfig.Session.SessionOn = true
-	beego.BConfig.WebConfig.Session.SessionName = "casdoor_session_id"
+	web.BConfig.WebConfig.Session.SessionOn = true
+	web.BConfig.WebConfig.Session.SessionName = "casdoor_session_id"
 	if conf.GetConfigString("redisEndpoint") == "" {
-		beego.BConfig.WebConfig.Session.SessionProvider = "file"
-		beego.BConfig.WebConfig.Session.SessionProviderConfig = "./tmp"
+		web.BConfig.WebConfig.Session.SessionProvider = "file"
+		web.BConfig.WebConfig.Session.SessionProviderConfig = "./tmp"
 	} else {
-		beego.BConfig.WebConfig.Session.SessionProvider = "redis"
-		beego.BConfig.WebConfig.Session.SessionProviderConfig = conf.GetConfigString("redisEndpoint")
+		web.BConfig.WebConfig.Session.SessionProvider = "redis"
+		web.BConfig.WebConfig.Session.SessionProviderConfig = conf.GetConfigString("redisEndpoint")
 	}
-	beego.BConfig.WebConfig.Session.SessionCookieLifeTime = 3600 * 24 * 30
-	beego.BConfig.WebConfig.Session.SessionGCMaxLifetime = 3600 * 24 * 30
-	// beego.BConfig.WebConfig.Session.SessionCookieSameSite = http.SameSiteNoneMode
+	web.BConfig.WebConfig.Session.SessionCookieLifeTime = 3600 * 24 * 30
+	web.BConfig.WebConfig.Session.SessionGCMaxLifetime = 3600 * 24 * 30
+	// web.BConfig.WebConfig.Session.SessionCookieSameSite = http.SameSiteNoneMode
 
 	var logAdapter string
 	logConfigMap := make(map[string]interface{})
@@ -112,7 +112,7 @@ func main() {
 		panic(err)
 	}
 
-	port := beego.AppConfig.DefaultInt("httpport", 8000)
+	port := web.AppConfig.DefaultInt("httpport", 8000)
 	// logs.SetLevel(logs.LevelInformational)
 	logs.SetLogFuncCall(false)
 
@@ -125,5 +125,5 @@ func main() {
 	go radius.StartRadiusServer()
 	go object.ClearThroughputPerSecond()
 
-	beego.Run(fmt.Sprintf(":%v", port))
+	web.Run(fmt.Sprintf(":%v", port))
 }

@@ -33,8 +33,8 @@ import (
 // @Success 200 {object} controllers.Response The Response object
 // @router /faceid-signin-begin [get]
 func (c *ApiController) FaceIDSigninBegin() {
-	userOwner := c.Input().Get("owner")
-	userName := c.Input().Get("name")
+	userOwner := c.Ctx.Input.Query("owner")
+	userName := c.Ctx.Input.Query("name")
 
 	user, err := object.GetUserByFields(userOwner, userName)
 	if err != nil {

@@ -85,11 +85,12 @@ func (c *RootController) GetJwksByApplication() {
 // @Success 200 {object} object.WebFinger
 // @router /.well-known/webfinger [get]
 func (c *RootController) GetWebFinger() {
-	resource := c.Input().Get("resource")
+	resource := c.Ctx.Input.Query("resource")
 	rels := []string{}
 	host := c.Ctx.Request.Host
 
-	for key, value := range c.Input() {
+	inputs, _ := c.Input()
+	for key, value := range inputs {
 		if strings.HasPrefix(key, "rel") {
 			rels = append(rels, value...)
 		}
@@ -115,11 +116,12 @@ func (c *RootController) GetWebFinger() {
 // @router /.well-known/:application/webfinger [get]
 func (c *RootController) GetWebFingerByApplication() {
 	application := c.Ctx.Input.Param(":application")
-	resource := c.Input().Get("resource")
+	resource := c.Ctx.Input.Query("resource")
 	rels := []string{}
 	host := c.Ctx.Request.Host
 
-	for key, value := range c.Input() {
+	inputs, _ := c.Input()
+	for key, value := range inputs {
 		if strings.HasPrefix(key, "rel") {
 			rels = append(rels, value...)
 		}
