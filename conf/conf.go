@@ -78,6 +78,18 @@ func GetConfigDataSourceName() string {
 	return ReplaceDataSourceNameByDocker(dataSourceName)
 }
 
+func GetConfigReadDataSourceName() string {
+	dataSourceName := GetConfigString("readDataSourceName")
+	if dataSourceName == "" {
+		return ""
+	}
+	return ReplaceDataSourceNameByDocker(dataSourceName)
+}
+
+func GetConfigEnableTransactionPooling() bool {
+	return GetConfigBool("enableTransactionPooling")
+}
+
 func ReplaceDataSourceNameByDocker(dataSourceName string) string {
 	runningInDocker := os.Getenv("RUNNING_IN_DOCKER")
 	if runningInDocker == "true" {

@@ -23,7 +23,15 @@ import (
 )
 
 func GetSession(owner string, offset, limit int, field, value, sortField, sortOrder string) *xorm.Session {
-	session := ormer.Engine.Prepare()
+	// Use read engine for SELECT queries when available
+	// Don't use Prepare() in transaction pooling mode for compatibility
+	var session *xorm.Session
+	if ormer.IsTransactionPoolingEnabled() {
+		session = ormer.GetReadEngine().NewSession()
+	} else {
+		session = ormer.GetReadEngine().Prepare()
+	}
+
 	if offset != -1 && limit != -1 {
 		session.Limit(limit, offset)
 	}
@@ -47,7 +55,15 @@ func GetSession(owner string, offset, limit int, field, value, sortField, sortOr
 }
 
 func GetSessionForUser(owner string, offset, limit int, field, value, sortField, sortOrder string) *xorm.Session {
-	session := ormer.Engine.Prepare()
+	// Use read engine for SELECT queries when available
+	// Don't use Prepare() in transaction pooling mode for compatibility
+	var session *xorm.Session
+	if ormer.IsTransactionPoolingEnabled() {
+		session = ormer.GetReadEngine().NewSession()
+	} else {
+		session = ormer.GetReadEngine().Prepare()
+	}
+
 	if offset != -1 && limit != -1 {
 		session.Limit(limit, offset)
 	}
