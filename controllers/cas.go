@@ -41,8 +41,8 @@ func queryUnescape(service string) string {
 }
 
 func (c *RootController) CasValidate() {
-	ticket := c.Input().Get("ticket")
-	service := c.Input().Get("service")
+	ticket := c.Ctx.Input.Query("ticket")
+	service := c.Ctx.Input.Query("service")
 	c.Ctx.Output.Header("Content-Type", "text/html; charset=utf-8")
 	if service == "" || ticket == "" {
 		c.Ctx.Output.Body([]byte("no\n"))
@@ -60,8 +60,8 @@ func (c *RootController) CasValidate() {
 }
 
 func (c *RootController) CasServiceValidate() {
-	ticket := c.Input().Get("ticket")
-	format := c.Input().Get("format")
+	ticket := c.Ctx.Input.Query("ticket")
+	format := c.Ctx.Input.Query("format")
 	if !strings.HasPrefix(ticket, "ST") {
 		c.sendCasAuthenticationResponseErr(InvalidTicket, fmt.Sprintf("Ticket %s not recognized", ticket), format)
 	}
@@ -75,8 +75,8 @@ func (c *RootController) CasProxyValidate() {
 }
 
 func (c *RootController) CasP3ServiceValidate() {
-	ticket := c.Input().Get("ticket")
-	format := c.Input().Get("format")
+	ticket := c.Ctx.Input.Query("ticket")
+	format := c.Ctx.Input.Query("format")
 	if !strings.HasPrefix(ticket, "ST") {
 		c.sendCasAuthenticationResponseErr(InvalidTicket, fmt.Sprintf("Ticket %s not recognized", ticket), format)
 	}
@@ -84,10 +84,10 @@ func (c *RootController) CasP3ServiceValidate() {
 }
 
 func (c *RootController) CasP3ProxyValidate() {
-	ticket := c.Input().Get("ticket")
-	format := c.Input().Get("format")
-	service := c.Input().Get("service")
-	pgtUrl := c.Input().Get("pgtUrl")
+	ticket := c.Ctx.Input.Query("ticket")
+	format := c.Ctx.Input.Query("format")
+	service := c.Ctx.Input.Query("service")
+	pgtUrl := c.Ctx.Input.Query("pgtUrl")
 
 	serviceResponse := object.CasServiceResponse{
 		Xmlns: "http://www.yale.edu/tp/cas",
@@ -161,9 +161,9 @@ func (c *RootController) CasP3ProxyValidate() {
 }
 
 func (c *RootController) CasProxy() {
-	pgt := c.Input().Get("pgt")
-	targetService := c.Input().Get("targetService")
-	format := c.Input().Get("format")
+	pgt := c.Ctx.Input.Query("pgt")
+	targetService := c.Ctx.Input.Query("targetService")
+	format := c.Ctx.Input.Query("format")
 	if pgt == "" || targetService == "" {
 		c.sendCasProxyResponseErr(InvalidRequest, "pgt and targetService must exist", format)
 		return
@@ -200,7 +200,7 @@ func (c *RootController) CasProxy() {
 
 func (c *RootController) SamlValidate() {
 	c.Ctx.Output.Header("Content-Type", "text/xml; charset=utf-8")
-	target := c.Input().Get("TARGET")
+	target := c.Ctx.Input.Query("TARGET")
 	body := c.Ctx.Input.RequestBody
 	envelopRequest := struct {
 		XMLName xml.Name `xml:"Envelope"`

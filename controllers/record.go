@@ -19,7 +19,7 @@ import (
 
 	"github.com/casvisor/casvisor-go-sdk/casvisorsdk"
 
-	"github.com/beego/beego/utils/pagination"
+	"github.com/beego/beego/v2/core/utils/pagination"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 )
@@ -38,13 +38,13 @@ func (c *ApiController) GetRecords() {
 		return
 	}
 
-	limit := c.Input().Get("pageSize")
-	page := c.Input().Get("p")
-	field := c.Input().Get("field")
-	value := c.Input().Get("value")
-	sortField := c.Input().Get("sortField")
-	sortOrder := c.Input().Get("sortOrder")
-	organizationName := c.Input().Get("organizationName")
+	limit := c.Ctx.Input.Query("pageSize")
+	page := c.Ctx.Input.Query("p")
+	field := c.Ctx.Input.Query("field")
+	value := c.Ctx.Input.Query("value")
+	sortField := c.Ctx.Input.Query("sortField")
+	sortOrder := c.Ctx.Input.Query("sortOrder")
+	organizationName := c.Ctx.Input.Query("organizationName")
 
 	if limit == "" || page == "" {
 		records, err := object.GetRecords()
@@ -66,7 +66,7 @@ func (c *ApiController) GetRecords() {
 			return
 		}
 
-		paginator := pagination.SetPaginator(c.Ctx, limit, count)
+		paginator := pagination.NewPaginator(c.Ctx.Request, limit, count)
 		records, err := object.GetPaginationRecords(paginator.Offset(), limit, field, value, sortField, sortOrder, filterRecord)
 		if err != nil {
 			c.ResponseError(err.Error())

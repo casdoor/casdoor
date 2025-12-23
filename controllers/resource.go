@@ -24,7 +24,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/beego/beego/utils/pagination"
+	"github.com/beego/beego/v2/core/utils/pagination"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 )
@@ -44,14 +44,14 @@ import (
 // @Success		200 		{array} 	object.Resource 	The Response object
 // @router /get-resources [get]
 func (c *ApiController) GetResources() {
-	owner := c.Input().Get("owner")
-	user := c.Input().Get("user")
-	limit := c.Input().Get("pageSize")
-	page := c.Input().Get("p")
-	field := c.Input().Get("field")
-	value := c.Input().Get("value")
-	sortField := c.Input().Get("sortField")
-	sortOrder := c.Input().Get("sortOrder")
+	owner := c.Ctx.Input.Query("owner")
+	user := c.Ctx.Input.Query("user")
+	limit := c.Ctx.Input.Query("pageSize")
+	page := c.Ctx.Input.Query("p")
+	field := c.Ctx.Input.Query("field")
+	value := c.Ctx.Input.Query("value")
+	sortField := c.Ctx.Input.Query("sortField")
+	sortOrder := c.Ctx.Input.Query("sortOrder")
 
 	isOrgAdmin, ok := c.IsOrgAdmin()
 	if !ok {
@@ -93,7 +93,7 @@ func (c *ApiController) GetResources() {
 			return
 		}
 
-		paginator := pagination.SetPaginator(c.Ctx, limit, count)
+		paginator := pagination.NewPaginator(c.Ctx.Request, limit, count)
 		resources, err := object.GetPaginationResources(owner, user, paginator.Offset(), limit, field, value, sortField, sortOrder)
 		if err != nil {
 			c.ResponseError(err.Error())
@@ -112,7 +112,7 @@ func (c *ApiController) GetResources() {
 // @Success 	200			{object}	object.Resource		The Response object
 // @router /get-resource [get]
 func (c *ApiController) GetResource() {
-	id := c.Input().Get("id")
+	id := c.Ctx.Input.Query("id")
 
 	resource, err := object.GetResource(id)
 	if err != nil {
@@ -132,7 +132,7 @@ func (c *ApiController) GetResource() {
 // @Success 	200			{object}	controllers.Response					Success or error
 // @router /update-resource [post]
 func (c *ApiController) UpdateResource() {
-	id := c.Input().Get("id")
+	id := c.Ctx.Input.Query("id")
 
 	var resource object.Resource
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &resource)
@@ -178,9 +178,11 @@ func (c *ApiController) DeleteResource() {
 	}
 
 	if resource.Provider != "" {
-		c.Input().Set("provider", resource.Provider)
+		inputs, _ := c.Input()
+		inputs.Set("provider", resource.Provider)
 	}
-	c.Input().Set("fullFilePath", resource.Name)
+	inputs, _ := c.Input()
+	inputs.Set("fullFilePath", resource.Name)
 	provider, err := c.GetProviderFromContext("Storage")
 	if err != nil {
 		c.ResponseError(err.Error())
@@ -188,7 +190,7 @@ func (c *ApiController) DeleteResource() {
 	}
 	_, resource.Name = refineFullFilePath(resource.Name)
 
-	tag := c.Input().Get("tag")
+	tag := c.Ctx.Input.Query("tag")
 	if tag == "Direct" {
 		resource.Name = path.Join(provider.PathPrefix, resource.Name)
 	}
@@ -218,14 +220,14 @@ func (c *ApiController) DeleteResource() {
 // @Success   200             {object}  object.Resource  	FileUrl, objectKey
 // @router /upload-resource [post]
 func (c *ApiController) UploadResource() {
-	owner := c.Input().Get("owner")
-	username := c.Input().Get("user")
-	application := c.Input().Get("application")
-	tag := c.Input().Get("tag")
-	parent := c.Input().Get("parent")
-	fullFilePath := c.Input().Get("fullFilePath")
-	createdTime := c.Input().Get("createdTime")
-	description := c.Input().Get("description")
+	owner := c.Ctx.Input.Query("owner")
+	username := c.Ctx.Input.Query("user")
+	application := c.Ctx.Input.Query("application")
+	tag := c.Ctx.Input.Query("tag")
+	parent := c.Ctx.Input.Query("parent")
+	fullFilePath := c.Ctx.Input.Query("fullFilePath")
+	createdTime := c.Ctx.Input.Query("createdTime")
+	description := c.Ctx.Input.Query("description")
 
 	file, header, err := c.GetFile("file")
 	if err != nil {

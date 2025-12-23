@@ -106,7 +106,7 @@ func (c *ApiController) RequireSignedInUser() (*object.User, bool) {
 	}
 
 	if object.IsAppUser(userId) {
-		tmpUserId := c.Input().Get("userId")
+		tmpUserId := c.Ctx.Input.Query("userId")
 		if tmpUserId != "" {
 			userId = tmpUserId
 		}
@@ -172,7 +172,7 @@ func (c *ApiController) IsOrgAdmin() (bool, bool) {
 // IsMaskedEnabled ...
 func (c *ApiController) IsMaskedEnabled() (bool, bool) {
 	isMaskEnabled := true
-	withSecret := c.Input().Get("withSecret")
+	withSecret := c.Ctx.Input.Query("withSecret")
 	if withSecret == "1" {
 		isMaskEnabled = false
 
@@ -202,14 +202,14 @@ func refineFullFilePath(fullFilePath string) (string, string) {
 }
 
 func (c *ApiController) GetProviderFromContext(category string) (*object.Provider, error) {
-	providerName := c.Input().Get("provider")
+	providerName := c.Ctx.Input.Query("provider")
 	if providerName == "" {
-		field := c.Input().Get("field")
-		value := c.Input().Get("value")
+		field := c.Ctx.Input.Query("field")
+		value := c.Ctx.Input.Query("value")
 		if field == "provider" && value != "" {
 			providerName = value
 		} else {
-			fullFilePath := c.Input().Get("fullFilePath")
+			fullFilePath := c.Ctx.Input.Query("fullFilePath")
 			providerName, _ = refineFullFilePath(fullFilePath)
 		}
 	}

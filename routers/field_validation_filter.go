@@ -20,7 +20,7 @@ import (
 	"io"
 	"strings"
 
-	"github.com/beego/beego/context"
+	"github.com/beego/beego/v2/server/web/context"
 )
 
 var forbiddenChars = `/?:#&%=+;`

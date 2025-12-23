@@ -18,7 +18,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/beego/beego/utils/pagination"
+	"github.com/beego/beego/v2/core/utils/pagination"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 )
@@ -31,14 +31,14 @@ import (
 // @Success 200 {array} object.Syncer The Response object
 // @router /get-syncers [get]
 func (c *ApiController) GetSyncers() {
-	owner := c.Input().Get("owner")
-	limit := c.Input().Get("pageSize")
-	page := c.Input().Get("p")
-	field := c.Input().Get("field")
-	value := c.Input().Get("value")
-	sortField := c.Input().Get("sortField")
-	sortOrder := c.Input().Get("sortOrder")
-	organization := c.Input().Get("organization")
+	owner := c.Ctx.Input.Query("owner")
+	limit := c.Ctx.Input.Query("pageSize")
+	page := c.Ctx.Input.Query("p")
+	field := c.Ctx.Input.Query("field")
+	value := c.Ctx.Input.Query("value")
+	sortField := c.Ctx.Input.Query("sortField")
+	sortOrder := c.Ctx.Input.Query("sortOrder")
+	organization := c.Ctx.Input.Query("organization")
 
 	if limit == "" || page == "" {
 		syncers, err := object.GetMaskedSyncers(object.GetOrganizationSyncers(owner, organization))
@@ -56,7 +56,7 @@ func (c *ApiController) GetSyncers() {
 			return
 		}
 
-		paginator := pagination.SetPaginator(c.Ctx, limit, count)
+		paginator := pagination.NewPaginator(c.Ctx.Request, limit, count)
 		syncers, err := object.GetMaskedSyncers(object.GetPaginationSyncers(owner, organization, paginator.Offset(), limit, field, value, sortField, sortOrder))
 		if err != nil {
 			c.ResponseError(err.Error())
@@ -75,7 +75,7 @@ func (c *ApiController) GetSyncers() {
 // @Success 200 {object} object.Syncer The Response object
 // @router /get-syncer [get]
 func (c *ApiController) GetSyncer() {
-	id := c.Input().Get("id")
+	id := c.Ctx.Input.Query("id")
 
 	syncer, err := object.GetMaskedSyncer(object.GetSyncer(id))
 	if err != nil {
@@ -95,7 +95,7 @@ func (c *ApiController) GetSyncer() {
 // @Success 200 {object} controllers.Response The Response object
 // @router /update-syncer [post]
 func (c *ApiController) UpdateSyncer() {
-	id := c.Input().Get("id")
+	id := c.Ctx.Input.Query("id")
 
 	var syncer object.Syncer
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &syncer)
@@ -154,7 +154,7 @@ func (c *ApiController) DeleteSyncer() {
 // @Success 200 {object} controllers.Response The Response object
 // @router /run-syncer [get]
 func (c *ApiController) RunSyncer() {
-	id := c.Input().Get("id")
+	id := c.Ctx.Input.Query("id")
 	syncer, err := object.GetSyncer(id)
 	if err != nil {
 		c.ResponseError(err.Error())

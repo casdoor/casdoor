@@ -19,7 +19,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/beego/beego/utils/pagination"
+	"github.com/beego/beego/v2/core/utils/pagination"
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
@@ -32,12 +32,12 @@ import (
 // @Success 200 {array} object.User The Response object
 // @router /get-global-users [get]
 func (c *ApiController) GetGlobalUsers() {
-	limit := c.Input().Get("pageSize")
-	page := c.Input().Get("p")
-	field := c.Input().Get("field")
-	value := c.Input().Get("value")
-	sortField := c.Input().Get("sortField")
-	sortOrder := c.Input().Get("sortOrder")
+	limit := c.Ctx.Input.Query("pageSize")
+	page := c.Ctx.Input.Query("p")
+	field := c.Ctx.Input.Query("field")
+	value := c.Ctx.Input.Query("value")
+	sortField := c.Ctx.Input.Query("sortField")
+	sortOrder := c.Ctx.Input.Query("sortOrder")
 
 	if limit == "" || page == "" {
 		users, err := object.GetMaskedUsers(object.GetGlobalUsers())
@@ -55,7 +55,7 @@ func (c *ApiController) GetGlobalUsers() {
 			return
 		}
 
-		paginator := pagination.SetPaginator(c.Ctx, limit, count)
+		paginator := pagination.NewPaginator(c.Ctx.Request, limit, count)
 		users, err := object.GetPaginationGlobalUsers(paginator.Offset(), limit, field, value, sortField, sortOrder)
 		if err != nil {
 			c.ResponseError(err.Error())
@@ -80,14 +80,14 @@ func (c *ApiController) GetGlobalUsers() {
 // @Success 200 {array} object.User The Response object
 // @router /get-users [get]
 func (c *ApiController) GetUsers() {
-	owner := c.Input().Get("owner")
-	groupName := c.Input().Get("groupName")
-	limit := c.Input().Get("pageSize")
-	page := c.Input().Get("p")
-	field := c.Input().Get("field")
-	value := c.Input().Get("value")
-	sortField := c.Input().Get("sortField")
-	sortOrder := c.Input().Get("sortOrder")
+	owner := c.Ctx.Input.Query("owner")
+	groupName := c.Ctx.Input.Query("groupName")
+	limit := c.Ctx.Input.Query("pageSize")
+	page := c.Ctx.Input.Query("p")
+	field := c.Ctx.Input.Query("field")
+	value := c.Ctx.Input.Query("value")
+	sortField := c.Ctx.Input.Query("sortField")
+	sortOrder := c.Ctx.Input.Query("sortOrder")
 
 	if limit == "" || page == "" {
 		if groupName != "" {
@@ -115,7 +115,7 @@ func (c *ApiController) GetUsers() {
 			return
 		}
 
-		paginator := pagination.SetPaginator(c.Ctx, limit, count)
+		paginator := pagination.NewPaginator(c.Ctx.Request, limit, count)
 		users, err := object.GetPaginationUsers(owner, paginator.Offset(), limit, field, value, sortField, sortOrder, groupName)
 		if err != nil {
 			c.ResponseError(err.Error())
@@ -144,11 +144,11 @@ func (c *ApiController) GetUsers() {
 // @Success 200 {object} object.User The Response object
 // @router /get-user [get]
 func (c *ApiController) GetUser() {
-	id := c.Input().Get("id")
-	email := c.Input().Get("email")
-	phone := c.Input().Get("phone")
-	userId := c.Input().Get("userId")
-	owner := c.Input().Get("owner")
+	id := c.Ctx.Input.Query("id")
+	email := c.Ctx.Input.Query("email")
+	phone := c.Ctx.Input.Query("phone")
+	userId := c.Ctx.Input.Query("userId")
+	owner := c.Ctx.Input.Query("owner")
 	var err error
 	var userFromUserId *object.User
 	if userId != "" && owner != "" {
@@ -259,10 +259,10 @@ func (c *ApiController) GetUser() {
 // @Success 200 {object} controllers.Response The Response object
 // @router /update-user [post]
 func (c *ApiController) UpdateUser() {
-	id := c.Input().Get("id")
-	userId := c.Input().Get("userId")
-	owner := c.Input().Get("owner")
-	columnsStr := c.Input().Get("columns")
+	id := c.Ctx.Input.Query("id")
+	userId := c.Ctx.Input.Query("userId")
+	owner := c.Ctx.Input.Query("owner")
+	columnsStr := c.Ctx.Input.Query("columns")
 
 	var user object.User
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &user)
@@ -336,7 +336,7 @@ func (c *ApiController) UpdateUser() {
 	}
 
 	isAdmin := c.IsAdmin()
-	allowDisplayNameEmpty := c.Input().Get("allowEmpty") != ""
+	allowDisplayNameEmpty := c.Ctx.Input.Query("allowEmpty") != ""
 	if pass, err := object.CheckPermissionForUpdateUser(oldUser, &user, isAdmin, allowDisplayNameEmpty, c.GetAcceptLanguage()); !pass {
 		c.ResponseError(err)
 		return
@@ -690,9 +690,9 @@ func (c *ApiController) CheckUserPassword() {
 // @Success 200 {array} object.User The Response object
 // @router /get-sorted-users [get]
 func (c *ApiController) GetSortedUsers() {
-	owner := c.Input().Get("owner")
-	sorter := c.Input().Get("sorter")
-	limit := util.ParseInt(c.Input().Get("limit"))
+	owner := c.Ctx.Input.Query("owner")
+	sorter := c.Ctx.Input.Query("sorter")
+	limit := util.ParseInt(c.Ctx.Input.Query("limit"))
 
 	users, err := object.GetMaskedUsers(object.GetSortedUsers(owner, sorter, limit))
 	if err != nil {
@@ -712,8 +712,8 @@ func (c *ApiController) GetSortedUsers() {
 // @Success 200 {int} int The count of filtered users for an organization
 // @router /get-user-count [get]
 func (c *ApiController) GetUserCount() {
-	owner := c.Input().Get("owner")
-	isOnline := c.Input().Get("isOnline")
+	owner := c.Ctx.Input.Query("owner")
+	isOnline := c.Ctx.Input.Query("isOnline")
 
 	var count int64
 	var err error
@@ -788,9 +788,9 @@ func (c *ApiController) RemoveUserFromGroup() {
 // @Success 200 {object} controllers.Response The Response object
 // @router /verify-identification [post]
 func (c *ApiController) VerifyIdentification() {
-	owner := c.Input().Get("owner")
-	name := c.Input().Get("name")
-	providerName := c.Input().Get("provider")
+	owner := c.Ctx.Input.Query("owner")
+	name := c.Ctx.Input.Query("name")
+	providerName := c.Ctx.Input.Query("provider")
 
 	// If user not specified, use logged-in user
 	if owner == "" || name == "" {

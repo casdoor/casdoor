@@ -20,7 +20,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/beego/beego/utils/pagination"
+	"github.com/beego/beego/v2/core/utils/pagination"
 	"github.com/casdoor/casdoor/captcha"
 	"github.com/casdoor/casdoor/form"
 	"github.com/casdoor/casdoor/object"
@@ -49,14 +49,14 @@ func (c *ApiController) GetVerifications() {
 		return
 	}
 
-	limit := c.Input().Get("pageSize")
-	page := c.Input().Get("p")
-	field := c.Input().Get("field")
-	value := c.Input().Get("value")
-	sortField := c.Input().Get("sortField")
-	sortOrder := c.Input().Get("sortOrder")
+	limit := c.Ctx.Input.Query("pageSize")
+	page := c.Ctx.Input.Query("p")
+	field := c.Ctx.Input.Query("field")
+	value := c.Ctx.Input.Query("value")
+	sortField := c.Ctx.Input.Query("sortField")
+	sortOrder := c.Ctx.Input.Query("sortOrder")
 
-	owner := c.Input().Get("owner")
+	owner := c.Ctx.Input.Query("owner")
 	// For global admin with organizationName parameter, use it to filter
 	// For org admin, use their organization
 	if c.IsGlobalAdmin() && owner != "" {
@@ -79,7 +79,7 @@ func (c *ApiController) GetVerifications() {
 			return
 		}
 
-		paginator := pagination.SetPaginator(c.Ctx, limit, count)
+		paginator := pagination.NewPaginator(c.Ctx.Request, limit, count)
 		payments, err := object.GetPaginationVerifications(organization, paginator.Offset(), limit, field, value, sortField, sortOrder)
 		if err != nil {
 			c.ResponseError(err.Error())
@@ -100,8 +100,8 @@ func (c *ApiController) GetVerifications() {
 // @Success 200 {array} object.Verification The Response object
 // @router /get-user-payments [get]
 func (c *ApiController) GetUserVerifications() {
-	owner := c.Input().Get("owner")
-	user := c.Input().Get("user")
+	owner := c.Ctx.Input.Query("owner")
+	user := c.Ctx.Input.Query("user")
 
 	payments, err := object.GetUserVerifications(owner, user)
 	if err != nil {
@@ -120,7 +120,7 @@ func (c *ApiController) GetUserVerifications() {
 // @Success 200 {object} object.Verification The Response object
 // @router /get-payment [get]
 func (c *ApiController) GetVerification() {
-	id := c.Input().Get("id")
+	id := c.Ctx.Input.Query("id")
 
 	payment, err := object.GetVerification(id)
 	if err != nil {

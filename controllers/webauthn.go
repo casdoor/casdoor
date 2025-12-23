@@ -126,8 +126,8 @@ func (c *ApiController) WebAuthnSigninBegin() {
 		return
 	}
 
-	userOwner := c.Input().Get("owner")
-	userName := c.Input().Get("name")
+	userOwner := c.Ctx.Input.Query("owner")
+	userName := c.Ctx.Input.Query("name")
 
 	var options *protocol.CredentialAssertion
 	var sessionData *webauthn.SessionData
@@ -171,8 +171,8 @@ func (c *ApiController) WebAuthnSigninBegin() {
 // @Success 200 {object} controllers.Response "The Response object"
 // @router /webauthn/signin/finish [post]
 func (c *ApiController) WebAuthnSigninFinish() {
-	responseType := c.Input().Get("responseType")
-	clientId := c.Input().Get("clientId")
+	responseType := c.Ctx.Input.Query("responseType")
+	clientId := c.Ctx.Input.Query("clientId")
 	webauthnObj, err := object.GetWebAuthnObject(c.Ctx.Request.Host)
 	if err != nil {
 		c.ResponseError(err.Error())

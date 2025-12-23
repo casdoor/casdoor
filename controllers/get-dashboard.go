@@ -23,7 +23,7 @@ import "github.com/casdoor/casdoor/object"
 // @Success 200 {object} controllers.Response The Response object
 // @router /get-dashboard [get]
 func (c *ApiController) GetDashboard() {
-	owner := c.Input().Get("owner")
+	owner := c.Ctx.Input.Query("owner")
 
 	data, err := object.GetDashboard(owner)
 	if err != nil {

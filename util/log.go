@@ -20,8 +20,8 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/beego/beego/context"
-	"github.com/beego/beego/logs"
+	"github.com/beego/beego/v2/core/logs"
+	"github.com/beego/beego/v2/server/web/context"
 )
 
 func getIpInfo(clientIp string) string {
