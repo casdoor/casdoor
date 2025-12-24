@@ -311,6 +311,14 @@ func (c *ApiController) Signup() {
 	userId := user.GetId()
 	util.LogInfo(c.Ctx, "API: [%s] is signed up as new user", userId)
 
+	// Handle OAuth flow: if response type is "code", automatically sign in and return code
+	if authForm.Type == ResponseTypeCode && user.Type == "normal-user" {
+		resp := c.HandleLoggedIn(application, user, &authForm)
+		c.Data["json"] = resp
+		c.ServeJSON()
+		return
+	}
+
 	c.ResponseOk(userId)
 }
 

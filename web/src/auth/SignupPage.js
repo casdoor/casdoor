@@ -276,11 +276,48 @@ class SignupPage extends React.Component {
     const params = new URLSearchParams(window.location.search);
     values.plan = params.get("plan");
     values.pricing = params.get("pricing");
-    AuthBackend.signup(values)
+
+    const oAuthParams = Util.getOAuthGetParameters();
+    if (oAuthParams !== null) {
+      values.type = oAuthParams.responseType;
+    }
+
+    AuthBackend.signup(values, oAuthParams)
       .then((res) => {
         if (res.status === "ok") {
           // the user's id will be returned by `signup()`, if user signup by phone, the `username` in `values` is undefined.
           values.username = res.data.split("/")[1];
+
+          // Handle OAuth flow - if responseType is "code", redirect to OAuth callback
+          if (oAuthParams !== null && oAuthParams.responseType === "code") {
+            const code = res.data;
+            const concatChar = oAuthParams.redirectUri?.includes("?") ? "&" : "?";
+            const redirectUrl = `${oAuthParams.redirectUri}${concatChar}code=${code}&state=${oAuthParams.state}`;
+
+            if (Setting.hasPromptPage(application) && (!values.plan || !values.pricing)) {
+              AuthBackend.getAccount("")
+                .then((res) => {
+                  if (res.status === "ok") {
+                    const account = res.data;
+                    account.organization = res.data2;
+
+                    this.onUpdateAccount(account);
+                    if (Setting.isPromptAnswered(account, application)) {
+                      Setting.goToLink(redirectUrl);
+                    } else {
+                      Setting.goToLinkSoft(this, `/prompt/${application.name}?redirectUri=${oAuthParams.redirectUri}&code=${code}&state=${oAuthParams.state}`);
+                    }
+                  } else {
+                    Setting.showMessage("error", `${i18next.t("application:Failed to sign in")}: ${res.msg}`);
+                  }
+                });
+            } else {
+              Setting.goToLink(redirectUrl);
+            }
+            return;
+          }
+
+          // Non-OAuth flow - continue with existing behavior
           if (Setting.hasPromptPage(application) && (!values.plan || !values.pricing)) {
             AuthBackend.getAccount("")
               .then((res) => {
