@@ -90,6 +90,7 @@ type CustomUserInfo struct {
 	DisplayName string `mapstructure:"displayName"`
 	Email       string `mapstructure:"email"`
 	AvatarUrl   string `mapstructure:"avatarUrl"`
+	Phone       string `mapstructure:"phone"`
 }
 
 func (idp *CustomIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
@@ -153,6 +154,7 @@ func (idp *CustomIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error)
 		Username:    customUserinfo.Username,
 		DisplayName: customUserinfo.DisplayName,
 		Email:       customUserinfo.Email,
+		Phone:       customUserinfo.Phone,
 		AvatarUrl:   customUserinfo.AvatarUrl,
 	}
 	return userInfo, nil
