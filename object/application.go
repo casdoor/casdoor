@@ -794,6 +794,9 @@ func (application *Application) IsUriProtected(uri string) bool {
 	}
 
 	// Check if URI is explicitly marked as public (takes precedence)
+	// Note: Regex patterns are compiled on each check. This is acceptable for typical usage
+	// since this method is called during authentication flow, not on every request.
+	// Application configurations are expected to have a small number of patterns.
 	for _, publicUri := range application.PublicUris {
 		if publicUri == "" {
 			continue
@@ -832,6 +835,7 @@ func (application *Application) IsUriProtected(uri string) bool {
 	// If only PublicUris is configured and URI didn't match, it's protected
 	return true
 }
+
 
 func (application *Application) IsPasswordEnabled() bool {
 	if len(application.SigninMethods) == 0 {
