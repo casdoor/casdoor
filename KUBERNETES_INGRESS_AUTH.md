@@ -244,7 +244,7 @@ type: Opaque
 stringData:
   client-id: "your-client-id"
   client-secret: "your-client-secret"
-  cookie-secret: "your-random-32-char-string"  # Generate with: openssl rand -base64 32
+  cookie-secret: "your-random-32-char-string"  # Generate with: openssl rand -base64 32 | head -c 32 or openssl rand -hex 16
 ```
 
 Update the deployment to use environment variables:
@@ -531,7 +531,7 @@ spec:
     spec:
       containers:
       - name: casdoor
-        image: casbin/casdoor:latest
+        image: casbin/casdoor:v1.577.0  # Pin to specific version in production
         ports:
         - containerPort: 8000
         env:
