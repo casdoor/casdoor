@@ -285,14 +285,11 @@ class SignupPage extends React.Component {
     AuthBackend.signup(values, oAuthParams)
       .then((res) => {
         if (res.status === "ok") {
-          // the user's id will be returned by `signup()`, if user signup by phone, the `username` in `values` is undefined.
-          values.username = res.data.split("/")[1];
-
           // Handle OAuth flow - if responseType is "code", redirect to OAuth callback
           if (oAuthParams !== null && oAuthParams.responseType === "code") {
             const code = res.data;
             const concatChar = oAuthParams.redirectUri?.includes("?") ? "&" : "?";
-            const redirectUrl = `${oAuthParams.redirectUri}${concatChar}code=${code}&state=${oAuthParams.state}`;
+            const redirectUrl = `${oAuthParams.redirectUri}${concatChar}code=${encodeURIComponent(code)}&state=${encodeURIComponent(oAuthParams.state)}`;
 
             if (Setting.hasPromptPage(application) && (!values.plan || !values.pricing)) {
               AuthBackend.getAccount("")
@@ -305,7 +302,7 @@ class SignupPage extends React.Component {
                     if (Setting.isPromptAnswered(account, application)) {
                       Setting.goToLink(redirectUrl);
                     } else {
-                      Setting.goToLinkSoft(this, `/prompt/${application.name}?redirectUri=${oAuthParams.redirectUri}&code=${code}&state=${oAuthParams.state}`);
+                      Setting.goToLinkSoft(this, `/prompt/${application.name}?redirectUri=${encodeURIComponent(oAuthParams.redirectUri)}&code=${encodeURIComponent(code)}&state=${encodeURIComponent(oAuthParams.state)}`);
                     }
                   } else {
                     Setting.showMessage("error", `${i18next.t("application:Failed to sign in")}: ${res.msg}`);
@@ -318,6 +315,8 @@ class SignupPage extends React.Component {
           }
 
           // Non-OAuth flow - continue with existing behavior
+          // the user's id will be returned by `signup()`, if user signup by phone, the `username` in `values` is undefined.
+          values.username = res.data.split("/")[1];
           if (Setting.hasPromptPage(application) && (!values.plan || !values.pricing)) {
             AuthBackend.getAccount("")
               .then((res) => {
