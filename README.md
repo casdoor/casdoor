@@ -71,6 +71,10 @@ https://casdoor.org
 - By Docker: https://casdoor.org/docs/basic/try-with-docker
 - By Kubernetes Helm: https://casdoor.org/docs/basic/try-with-helm
 
+## Kubernetes Deployment & Authentication
+
+- **[Kubernetes Ingress-Nginx Authentication Guide](KUBERNETES_INGRESS_AUTH.md)** - Comprehensive guide for configuring authentication with ingress-nginx, including oauth2-proxy setup and security best practices
+
 ## How to connect to Casdoor?
 
 https://casdoor.org/docs/how-to-connect/overview

@@ -1,5 +1,7 @@
-# this is only an EXAMPLE of deploying casddor in kubernetes
-# please modify this file according to your requirements
+# This is an EXAMPLE of deploying Casdoor in Kubernetes
+# Please modify this file according to your requirements
+#
+# For detailed authentication setup with ingress-nginx, see KUBERNETES_INGRESS_AUTH.md
 apiVersion: v1
 kind: Service
 metadata:
@@ -9,10 +11,12 @@ metadata:
   labels:
     app: casdoor
 spec:
-  #EDIT IT: if you don't want to run casdoor in default namespace, please modify this filed
+  #EDIT IT: Change to ClusterIP if using Ingress, or LoadBalancer for external access
   type: NodePort
   ports:
     - port: 8000
+      targetPort: 8000
+      name: http
   selector:
     app: casdoor
 ---
@@ -48,9 +52,47 @@ spec:
           env:       
             - name: RUNNING_IN_DOCKER
               value: "true"
+          resources:
+            requests:
+              cpu: 200m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
       #if you want to deploy this in real prod env, consider the config map
       volumes:
         - name: conf
           hostPath:
             #EDIT IT: the mounted directory path in THE HOST
             path: /conf
+---
+# OPTIONAL: Ingress configuration for Casdoor
+# Uncomment and modify this section if you want to expose Casdoor via ingress-nginx
+#
+# apiVersion: networking.k8s.io/v1
+# kind: Ingress
+# metadata:
+#   name: casdoor-ingress
+#   #namespace: casdoor
+#   annotations:
+#     kubernetes.io/ingress.class: nginx
+#     # EDIT IT: Uncomment if using cert-manager for TLS
+#     # cert-manager.io/cluster-issuer: letsencrypt-prod
+#     nginx.ingress.kubernetes.io/proxy-body-size: "10m"
+# spec:
+#   # EDIT IT: Configure TLS/SSL
+#   # tls:
+#   # - hosts:
+#   #   - casdoor.example.com
+#   #   secretName: casdoor-tls
+#   rules:
+#   - host: casdoor.example.com  # EDIT IT: Change to your domain
+#     http:
+#       paths:
+#       - path: /
+#         pathType: Prefix
+#         backend:
+#           service:
+#             name: casdoor-svc
+#             port:
+#               number: 8000
