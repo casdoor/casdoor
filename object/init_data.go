@@ -214,6 +214,12 @@ func readInitDataFromFile(filePath string) (*InitData, error) {
 		if application.RedirectUris == nil {
 			application.RedirectUris = []string{}
 		}
+		if application.ProtectedUris == nil {
+			application.ProtectedUris = []string{}
+		}
+		if application.PublicUris == nil {
+			application.PublicUris = []string{}
+		}
 		if application.TokenFields == nil {
 			application.TokenFields = []string{}
 		}

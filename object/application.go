@@ -114,6 +114,8 @@ type Application struct {
 	ClientId                string     `xorm:"varchar(100)" json:"clientId"`
 	ClientSecret            string     `xorm:"varchar(100)" json:"clientSecret"`
 	RedirectUris            []string   `xorm:"varchar(1000)" json:"redirectUris"`
+	ProtectedUris           []string   `xorm:"varchar(1000)" json:"protectedUris"`
+	PublicUris              []string   `xorm:"varchar(1000)" json:"publicUris"`
 	ForcedRedirectOrigin    string     `xorm:"varchar(100)" json:"forcedRedirectOrigin"`
 	TokenFormat             string     `xorm:"varchar(100)" json:"tokenFormat"`
 	TokenSigningMethod      string     `xorm:"varchar(100)" json:"tokenSigningMethod"`
@@ -578,6 +580,8 @@ func GetMaskedApplication(application *Application, userId string) *Application 
 
 	application.GrantTypes = nil
 	application.RedirectUris = nil
+	application.ProtectedUris = nil
+	application.PublicUris = nil
 	application.TokenFormat = "***"
 	application.TokenFields = nil
 	application.ExpireInHours = -1
@@ -781,6 +785,52 @@ func (application *Application) IsRedirectUriValid(redirectUri string) bool {
 		}
 	}
 	return false
+}
+
+func (application *Application) IsUriProtected(uri string) bool {
+	// If no protection rules are configured, all URIs are protected by default (backward compatibility)
+	if len(application.ProtectedUris) == 0 && len(application.PublicUris) == 0 {
+		return true
+	}
+
+	// Check if URI is explicitly marked as public (takes precedence)
+	for _, publicUri := range application.PublicUris {
+		if publicUri == "" {
+			continue
+		}
+		// Try regex matching first
+		publicUriRegex, err := regexp.Compile(publicUri)
+		if err == nil && publicUriRegex.MatchString(uri) {
+			return false
+		}
+		// Fallback to exact string matching
+		if uri == publicUri {
+			return false
+		}
+	}
+
+	// If ProtectedUris is configured, check if URI matches any protected pattern
+	if len(application.ProtectedUris) > 0 {
+		for _, protectedUri := range application.ProtectedUris {
+			if protectedUri == "" {
+				continue
+			}
+			// Try regex matching first
+			protectedUriRegex, err := regexp.Compile(protectedUri)
+			if err == nil && protectedUriRegex.MatchString(uri) {
+				return true
+			}
+			// Fallback to exact string matching
+			if uri == protectedUri {
+				return true
+			}
+		}
+		// If ProtectedUris is configured but URI doesn't match, it's not protected
+		return false
+	}
+
+	// If only PublicUris is configured and URI didn't match, it's protected
+	return true
 }
 
 func (application *Application) IsPasswordEnabled() bool {

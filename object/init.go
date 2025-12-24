@@ -210,6 +210,8 @@ func initBuiltInApplication() {
 		},
 		Tags:          []string{},
 		RedirectUris:  []string{},
+		ProtectedUris: []string{},
+		PublicUris:    []string{},
 		TokenFormat:   "JWT",
 		TokenFields:   []string{},
 		ExpireInHours: 168,

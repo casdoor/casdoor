@@ -466,6 +466,30 @@ class ApplicationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("application:Protected URIs"), i18next.t("application:Protected URIs - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <UrlTable
+              title={i18next.t("application:Protected URIs")}
+              table={this.state.application.protectedUris}
+              onUpdateTable={(value) => {this.updateApplicationField("protectedUris", value);}}
+            />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("application:Public URIs"), i18next.t("application:Public URIs - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <UrlTable
+              title={i18next.t("application:Public URIs")}
+              table={this.state.application.publicUris}
+              onUpdateTable={(value) => {this.updateApplicationField("publicUris", value);}}
+            />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("application:Forced redirect origin"), i18next.t("general:Forced redirect origin - Tooltip"))} :
           </Col>
           <Col span={22} >
