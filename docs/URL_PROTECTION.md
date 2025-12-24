@@ -121,3 +121,18 @@ if app.IsUriProtected(uri) {
 - URL patterns are evaluated in the order: Public URIs first, then Protected URIs
 - Invalid regex patterns will fall back to exact string matching
 - Empty or blank patterns are ignored
+
+## Performance Considerations
+
+The `IsUriProtected` method compiles regex patterns on each call. This design choice was made because:
+
+1. **Dynamic Configuration**: Application settings can be updated at runtime without server restart
+2. **Typical Usage**: This method is called during the authentication flow (e.g., when a user tries to access a protected resource), not on every request
+3. **Small Pattern Sets**: Most applications have a small number of URL protection patterns (typically < 10)
+
+For high-traffic scenarios with many patterns, consider:
+- Keeping pattern lists small and specific
+- Using exact string matching where possible
+- Implementing pattern caching at the application integration layer if needed
+
+In practice, the performance impact is negligible for typical use cases.
