@@ -1255,6 +1255,7 @@ export function getProviderTypeOptions(category) {
         {id: "Tumblr", name: "Tumblr"},
         {id: "Twitch", name: "Twitch"},
         {id: "Twitter", name: "Twitter"},
+        {id: "Telegram", name: "Telegram"},
         {id: "Typetalk", name: "Typetalk"},
         {id: "Uber", name: "Uber"},
         {id: "VK", name: "VK"},
