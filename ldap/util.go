@@ -281,7 +281,7 @@ func GetFilteredUsers(m *ldap.Message) (filteredUsers []*object.User, code int) 
 			}
 			return filteredUsers, ldap.LDAPResultSuccess
 		}
-		if (m.Client.IsGlobalAdmin || m.Client.IsOrgAdmin) && org == m.Client.OrgName {
+		if m.Client.IsGlobalAdmin || (m.Client.IsOrgAdmin && org == m.Client.OrgName) {
 			filteredUsers, err = object.GetUsersWithFilter(org, buildSafeCondition(r.Filter()))
 			if err != nil {
 				panic(err)
@@ -349,7 +349,7 @@ func GetFilteredGroups(m *ldap.Message, baseDN string, filterStr string) ([]*obj
 			if err != nil {
 				panic(err)
 			}
-		} else if (m.Client.IsGlobalAdmin || m.Client.IsOrgAdmin) && org == m.Client.OrgName {
+		} else if m.Client.IsGlobalAdmin || (m.Client.IsOrgAdmin && org == m.Client.OrgName) {
 			groups, err = object.GetGroups(org)
 			if err != nil {
 				panic(err)
