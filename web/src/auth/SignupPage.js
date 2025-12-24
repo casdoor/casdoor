@@ -288,8 +288,10 @@ class SignupPage extends React.Component {
           // Handle OAuth flow - if responseType is "code", redirect to OAuth callback
           if (oAuthParams !== null && oAuthParams.responseType === "code") {
             const code = res.data;
-            const concatChar = oAuthParams.redirectUri?.includes("?") ? "&" : "?";
-            const redirectUrl = `${oAuthParams.redirectUri}${concatChar}code=${encodeURIComponent(code)}&state=${encodeURIComponent(oAuthParams.state)}`;
+            const redirectUri = oAuthParams.redirectUri || "";
+            const state = oAuthParams.state || "";
+            const concatChar = redirectUri.includes("?") ? "&" : "?";
+            const redirectUrl = `${redirectUri}${concatChar}code=${encodeURIComponent(code)}&state=${encodeURIComponent(state)}`;
 
             if (Setting.hasPromptPage(application) && (!values.plan || !values.pricing)) {
               AuthBackend.getAccount("")
@@ -302,7 +304,7 @@ class SignupPage extends React.Component {
                     if (Setting.isPromptAnswered(account, application)) {
                       Setting.goToLink(redirectUrl);
                     } else {
-                      Setting.goToLinkSoft(this, `/prompt/${application.name}?redirectUri=${encodeURIComponent(oAuthParams.redirectUri)}&code=${encodeURIComponent(code)}&state=${encodeURIComponent(oAuthParams.state)}`);
+                      Setting.goToLinkSoft(this, `/prompt/${application.name}?redirectUri=${encodeURIComponent(redirectUri)}&code=${encodeURIComponent(code)}&state=${encodeURIComponent(state)}`);
                     }
                   } else {
                     Setting.showMessage("error", `${i18next.t("application:Failed to sign in")}: ${res.msg}`);
