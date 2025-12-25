@@ -6314,7 +6314,7 @@ definitions:
         type: string
       originalToken:
         type: string
-      originalRefreshToken:
+      originalRefToken:
         type: string
       oura:
         type: string
