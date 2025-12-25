@@ -1251,6 +1251,7 @@ export function getProviderTypeOptions(category) {
         {id: "Spotify", name: "Spotify"},
         {id: "Strava", name: "Strava"},
         {id: "Stripe", name: "Stripe"},
+        {id: "Telegram", name: "Telegram"},
         {id: "TikTok", name: "TikTok"},
         {id: "Tumblr", name: "Tumblr"},
         {id: "Twitch", name: "Twitch"},
