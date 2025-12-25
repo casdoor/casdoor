@@ -111,6 +111,7 @@ type User struct {
 	AccessSecret      string   `xorm:"varchar(100)" json:"accessSecret"`
 	AccessToken       string   `xorm:"mediumtext" json:"accessToken"`
 	OriginalToken     string   `xorm:"mediumtext" json:"originalToken"`
+	OriginalRefreshToken string `xorm:"mediumtext" json:"originalRefreshToken"`
 
 	CreatedIp      string `xorm:"varchar(100)" json:"createdIp"`
 	LastSigninTime string `xorm:"varchar(100)" json:"lastSigninTime"`
@@ -672,6 +673,9 @@ func GetMaskedUser(user *User, isAdminOrSelf bool, errs ...error) (*User, error)
 		}
 		if user.OriginalToken != "" {
 			user.OriginalToken = "***"
+		}
+		if user.OriginalRefreshToken != "" {
+			user.OriginalRefreshToken = "***"
 		}
 	}
 
