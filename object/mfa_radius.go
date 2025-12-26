@@ -29,7 +29,7 @@ type RadiusMfa struct {
 	provider *Provider
 }
 
-func (mfa *RadiusMfa) Initiate(userId string) (*MfaProps, error) {
+func (mfa *RadiusMfa) Initiate(userId string, issuer string) (*MfaProps, error) {
 	mfaProps := MfaProps{
 		MfaType: mfa.MfaType,
 	}

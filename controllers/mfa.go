@@ -64,7 +64,14 @@ func (c *ApiController) MfaSetupInitiate() {
 		return
 	}
 
-	mfaProps, err := MfaUtil.Initiate(user.GetId())
+	issuer := ""
+	if organization != nil && organization.DisplayName != "" {
+		issuer = organization.DisplayName
+	} else if organization != nil && organization.DisplayName == "" {
+		issuer = organization.Name
+	}
+
+	mfaProps, err := MfaUtil.Initiate(user.GetId(), issuer)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
