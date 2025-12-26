@@ -15,6 +15,7 @@
 package controllers
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -345,7 +346,7 @@ func (c *ApiController) Logout() {
 			c.ResponseError(err.Error())
 			return
 		}
-		_, err = object.DeleteSessionId(util.GetSessionId(owner, username, object.CasdoorApplication), c.Ctx.Input.CruSession.SessionID())
+		_, err = object.DeleteSessionId(util.GetSessionId(owner, username, object.CasdoorApplication), c.Ctx.Input.CruSession.SessionID(context.Background()))
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
@@ -398,7 +399,7 @@ func (c *ApiController) Logout() {
 			return
 		}
 
-		_, err = object.DeleteSessionId(util.GetSessionId(owner, username, object.CasdoorApplication), c.Ctx.Input.CruSession.SessionID())
+		_, err = object.DeleteSessionId(util.GetSessionId(owner, username, object.CasdoorApplication), c.Ctx.Input.CruSession.SessionID(context.Background()))
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
@@ -445,7 +446,7 @@ func (c *ApiController) SsoLogout() {
 
 	// Check if user wants to logout from all sessions or just current session
 	// Default is true for backward compatibility
-	logoutAll := c.Input().Get("logoutAll")
+	logoutAll := c.Ctx.Input.Query("logoutAll")
 	logoutAllSessions := logoutAll == "" || logoutAll == "true" || logoutAll == "1"
 
 	c.ClearUserSession()
@@ -456,7 +457,7 @@ func (c *ApiController) SsoLogout() {
 		return
 	}
 
-	currentSessionId := c.Ctx.Input.CruSession.SessionID()
+	currentSessionId := c.Ctx.Input.CruSession.SessionID(context.Background())
 	_, err = object.DeleteSessionId(util.GetSessionId(owner, username, object.CasdoorApplication), currentSessionId)
 	if err != nil {
 		c.ResponseError(err.Error())
@@ -541,7 +542,7 @@ func (c *ApiController) GetAccount() {
 		return
 	}
 
-	managedAccounts := c.Input().Get("managedAccounts")
+	managedAccounts := c.Ctx.Input.Query("managedAccounts")
 	if managedAccounts == "1" {
 		user, err = object.ExtendManagedAccountsWithUser(user)
 		if err != nil {
@@ -659,8 +660,8 @@ func (c *ApiController) GetUserinfo2() {
 // @router /get-captcha [get]
 // @Success 200 {object} object.Userinfo The Response object
 func (c *ApiController) GetCaptcha() {
-	applicationId := c.Input().Get("applicationId")
-	isCurrentProvider := c.Input().Get("isCurrentProvider")
+	applicationId := c.Ctx.Input.Query("applicationId")
+	isCurrentProvider := c.Ctx.Input.Query("isCurrentProvider")
 
 	captchaProvider, err := object.GetCaptchaProviderByApplication(applicationId, isCurrentProvider, c.GetAcceptLanguage())
 	if err != nil {

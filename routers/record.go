@@ -17,7 +17,7 @@ package routers
 import (
 	"fmt"
 
-	"github.com/beego/beego/context"
+	"github.com/beego/beego/v2/server/web/context"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 	"github.com/casvisor/casvisor-go-sdk/casvisorsdk"

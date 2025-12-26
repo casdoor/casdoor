@@ -25,7 +25,7 @@ import (
 
 	"github.com/casvisor/casvisor-go-sdk/casvisorsdk"
 
-	"github.com/beego/beego"
+	"github.com/beego/beego/v2/server/web"
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/util"
 	xormadapter "github.com/casdoor/xorm-adapter/v3"
@@ -73,12 +73,12 @@ func GetExportFilePath() string {
 }
 
 func InitConfig() {
-	err := beego.LoadAppConfig("ini", "../conf/app.conf")
+	err := web.LoadAppConfig("ini", "../conf/app.conf")
 	if err != nil {
 		panic(err)
 	}
 
-	beego.BConfig.WebConfig.Session.SessionOn = true
+	web.BConfig.WebConfig.Session.SessionOn = true
 
 	InitAdapter()
 	CreateTables()

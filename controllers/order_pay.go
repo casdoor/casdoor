@@ -34,11 +34,11 @@ import (
 // @Success 200 {object} object.Order The Response object
 // @router /place-order [post]
 func (c *ApiController) PlaceOrder() {
-	productId := c.Input().Get("productId")
-	pricingName := c.Input().Get("pricingName")
-	planName := c.Input().Get("planName")
-	customPriceStr := c.Input().Get("customPrice")
-	paidUserName := c.Input().Get("userName")
+	productId := c.Ctx.Input.Query("productId")
+	pricingName := c.Ctx.Input.Query("pricingName")
+	planName := c.Ctx.Input.Query("planName")
+	customPriceStr := c.Ctx.Input.Query("customPrice")
+	paidUserName := c.Ctx.Input.Query("userName")
 
 	if productId == "" {
 		c.ResponseError(c.T("general:ProductId is required"))
@@ -107,10 +107,10 @@ func (c *ApiController) PlaceOrder() {
 // @Success 200 {object} controllers.Response The Response object
 // @router /pay-order [post]
 func (c *ApiController) PayOrder() {
-	id := c.Input().Get("id")
+	id := c.Ctx.Input.Query("id")
 	host := c.Ctx.Request.Host
-	providerName := c.Input().Get("providerName")
-	paymentEnv := c.Input().Get("paymentEnv")
+	providerName := c.Ctx.Input.Query("providerName")
+	paymentEnv := c.Ctx.Input.Query("paymentEnv")
 
 	order, err := object.GetOrder(id)
 	if err != nil {
@@ -146,7 +146,7 @@ func (c *ApiController) PayOrder() {
 // @Success 200 {object} controllers.Response The Response object
 // @router /cancel-order [post]
 func (c *ApiController) CancelOrder() {
-	id := c.Input().Get("id")
+	id := c.Ctx.Input.Query("id")
 	order, err := object.GetOrder(id)
 	if err != nil {
 		c.ResponseError(err.Error())

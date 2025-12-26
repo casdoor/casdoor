@@ -19,7 +19,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/beego/beego/utils/pagination"
+	"github.com/beego/beego/v2/core/utils/pagination"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 )
@@ -34,14 +34,14 @@ import (
 // @Success 200 {array} object.Token The Response object
 // @router /get-tokens [get]
 func (c *ApiController) GetTokens() {
-	owner := c.Input().Get("owner")
-	limit := c.Input().Get("pageSize")
-	page := c.Input().Get("p")
-	field := c.Input().Get("field")
-	value := c.Input().Get("value")
-	sortField := c.Input().Get("sortField")
-	sortOrder := c.Input().Get("sortOrder")
-	organization := c.Input().Get("organization")
+	owner := c.Ctx.Input.Query("owner")
+	limit := c.Ctx.Input.Query("pageSize")
+	page := c.Ctx.Input.Query("p")
+	field := c.Ctx.Input.Query("field")
+	value := c.Ctx.Input.Query("value")
+	sortField := c.Ctx.Input.Query("sortField")
+	sortOrder := c.Ctx.Input.Query("sortOrder")
+	organization := c.Ctx.Input.Query("organization")
 	if limit == "" || page == "" {
 		token, err := object.GetTokens(owner, organization)
 		if err != nil {
@@ -58,7 +58,7 @@ func (c *ApiController) GetTokens() {
 			return
 		}
 
-		paginator := pagination.SetPaginator(c.Ctx, limit, count)
+		paginator := pagination.NewPaginator(c.Ctx.Request, limit, count)
 		tokens, err := object.GetPaginationTokens(owner, organization, paginator.Offset(), limit, field, value, sortField, sortOrder)
 		if err != nil {
 			c.ResponseError(err.Error())
@@ -77,7 +77,7 @@ func (c *ApiController) GetTokens() {
 // @Success 200 {object} object.Token The Response object
 // @router /get-token [get]
 func (c *ApiController) GetToken() {
-	id := c.Input().Get("id")
+	id := c.Ctx.Input.Query("id")
 	token, err := object.GetToken(id)
 	if err != nil {
 		c.ResponseError(err.Error())
@@ -96,7 +96,7 @@ func (c *ApiController) GetToken() {
 // @Success 200 {object} controllers.Response The Response object
 // @router /update-token [post]
 func (c *ApiController) UpdateToken() {
-	id := c.Input().Get("id")
+	id := c.Ctx.Input.Query("id")
 
 	var token object.Token
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &token)
@@ -160,19 +160,19 @@ func (c *ApiController) DeleteToken() {
 // @Success 401 {object} object.TokenError The Response object
 // @router /login/oauth/access_token [post]
 func (c *ApiController) GetOAuthToken() {
-	clientId := c.Input().Get("client_id")
-	clientSecret := c.Input().Get("client_secret")
-	grantType := c.Input().Get("grant_type")
-	code := c.Input().Get("code")
-	verifier := c.Input().Get("code_verifier")
-	scope := c.Input().Get("scope")
-	nonce := c.Input().Get("nonce")
-	username := c.Input().Get("username")
-	password := c.Input().Get("password")
-	tag := c.Input().Get("tag")
-	avatar := c.Input().Get("avatar")
-	refreshToken := c.Input().Get("refresh_token")
-	deviceCode := c.Input().Get("device_code")
+	clientId := c.Ctx.Input.Query("client_id")
+	clientSecret := c.Ctx.Input.Query("client_secret")
+	grantType := c.Ctx.Input.Query("grant_type")
+	code := c.Ctx.Input.Query("code")
+	verifier := c.Ctx.Input.Query("code_verifier")
+	scope := c.Ctx.Input.Query("scope")
+	nonce := c.Ctx.Input.Query("nonce")
+	username := c.Ctx.Input.Query("username")
+	password := c.Ctx.Input.Query("password")
+	tag := c.Ctx.Input.Query("tag")
+	avatar := c.Ctx.Input.Query("avatar")
+	refreshToken := c.Ctx.Input.Query("refresh_token")
+	deviceCode := c.Ctx.Input.Query("device_code")
 
 	if clientId == "" && clientSecret == "" {
 		clientId, clientSecret, _ = c.Ctx.Request.BasicAuth()
@@ -288,11 +288,11 @@ func (c *ApiController) GetOAuthToken() {
 // @Success 401 {object} object.TokenError The Response object
 // @router /login/oauth/refresh_token [post]
 func (c *ApiController) RefreshToken() {
-	grantType := c.Input().Get("grant_type")
-	refreshToken := c.Input().Get("refresh_token")
-	scope := c.Input().Get("scope")
-	clientId := c.Input().Get("client_id")
-	clientSecret := c.Input().Get("client_secret")
+	grantType := c.Ctx.Input.Query("grant_type")
+	refreshToken := c.Ctx.Input.Query("refresh_token")
+	scope := c.Ctx.Input.Query("scope")
+	clientId := c.Ctx.Input.Query("client_id")
+	clientSecret := c.Ctx.Input.Query("client_secret")
 	host := c.Ctx.Request.Host
 
 	if clientId == "" {
@@ -342,11 +342,11 @@ func (c *ApiController) ResponseTokenError(errorMsg string) {
 // @Success 401 {object} object.TokenError The Response object
 // @router /login/oauth/introspect [post]
 func (c *ApiController) IntrospectToken() {
-	tokenValue := c.Input().Get("token")
+	tokenValue := c.Ctx.Input.Query("token")
 	clientId, clientSecret, ok := c.Ctx.Request.BasicAuth()
 	if !ok {
-		clientId = c.Input().Get("client_id")
-		clientSecret = c.Input().Get("client_secret")
+		clientId = c.Ctx.Input.Query("client_id")
+		clientSecret = c.Ctx.Input.Query("client_secret")
 		if clientId == "" || clientSecret == "" {
 			c.ResponseTokenError(object.InvalidRequest)
 			return
@@ -369,7 +369,7 @@ func (c *ApiController) IntrospectToken() {
 		c.ServeJSON()
 	}
 
-	tokenTypeHint := c.Input().Get("token_type_hint")
+	tokenTypeHint := c.Ctx.Input.Query("token_type_hint")
 	var token *object.Token
 	if tokenTypeHint != "" {
 		token, err = object.GetTokenByTokenValue(tokenValue, tokenTypeHint)

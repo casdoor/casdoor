@@ -15,11 +15,12 @@
 package controllers
 
 import (
+	"context"
 	"strings"
 	"time"
 
-	"github.com/beego/beego"
-	"github.com/beego/beego/logs"
+	"github.com/beego/beego/v2/core/logs"
+	"github.com/beego/beego/v2/server/web"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 )
@@ -27,7 +28,7 @@ import (
 // ApiController
 // controller for handlers under /api uri
 type ApiController struct {
-	beego.Controller
+	web.Controller
 }
 
 // RootController
@@ -237,7 +238,7 @@ func (c *ApiController) setMfaUserSession(userId string) {
 }
 
 func (c *ApiController) getMfaUserSession() string {
-	userId := c.Ctx.Input.CruSession.Get(object.MfaSessionUserId)
+	userId := c.Ctx.Input.CruSession.Get(context.Background(), object.MfaSessionUserId)
 	if userId == nil {
 		return ""
 	}

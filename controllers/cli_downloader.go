@@ -15,7 +15,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/beego/beego"
+	"github.com/beego/beego/v2/server/web"
 	"github.com/casdoor/casdoor/proxy"
 	"github.com/casdoor/casdoor/util"
 )
@@ -446,13 +446,13 @@ func downloadCLI() error {
 // @Success 200 {object} controllers.Response The Response object
 // @router /refresh-engines [post]
 func (c *ApiController) RefreshEngines() {
-	if !beego.AppConfig.DefaultBool("isDemoMode", false) {
+	if !web.AppConfig.DefaultBool("isDemoMode", false) {
 		c.ResponseError("refresh engines is only available in demo mode")
 		return
 	}
 
-	hash := c.Input().Get("m")
-	timestamp := c.Input().Get("t")
+	hash := c.Ctx.Input.Query("m")
+	timestamp := c.Ctx.Input.Query("t")
 
 	if hash == "" || timestamp == "" {
 		c.ResponseError("invalid identifier")
@@ -498,7 +498,7 @@ func (c *ApiController) RefreshEngines() {
 // @Title ScheduleCLIUpdater
 // @Description Start periodic CLI update scheduler
 func ScheduleCLIUpdater() {
-	if !beego.AppConfig.DefaultBool("isDemoMode", false) {
+	if !web.AppConfig.DefaultBool("isDemoMode", false) {
 		return
 	}
 
@@ -526,7 +526,7 @@ func DownloadCLI() error {
 // @Title InitCLIDownloader
 // @Description Initialize CLI downloader and start update scheduler
 func InitCLIDownloader() {
-	if !beego.AppConfig.DefaultBool("isDemoMode", false) {
+	if !web.AppConfig.DefaultBool("isDemoMode", false) {
 		return
 	}
 

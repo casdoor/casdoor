@@ -15,10 +15,11 @@
 package object
 
 import (
+	"context"
 	"fmt"
 	"slices"
 
-	"github.com/beego/beego"
+	"github.com/beego/beego/v2/server/web"
 	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/core"
 )
@@ -226,7 +227,7 @@ func DeleteSessionId(id string, sessionId string) (bool, error) {
 
 func DeleteBeegoSession(sessionIds []string) {
 	for _, sessionId := range sessionIds {
-		err := beego.GlobalSessions.GetProvider().SessionDestroy(sessionId)
+		err := web.GlobalSessions.GetProvider().SessionDestroy(context.Background(), sessionId)
 		if err != nil {
 			return
 		}

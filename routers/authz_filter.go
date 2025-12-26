@@ -15,17 +15,18 @@
 package routers
 
 import (
+	stdcontext "context"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"strings"
 	"time"
 
-	"github.com/beego/beego/logs"
+	"github.com/beego/beego/v2/core/logs"
 	"github.com/casdoor/casdoor/controllers"
 	"github.com/casdoor/casdoor/object"
 
-	"github.com/beego/beego/context"
+	"github.com/beego/beego/v2/server/web/context"
 	"github.com/casdoor/casdoor/authz"
 	"github.com/casdoor/casdoor/util"
 )
@@ -66,12 +67,12 @@ func getUsername(ctx *context.Context) (username string) {
 
 	if sessionData.ExpireTime != 0 &&
 		sessionData.ExpireTime < time.Now().Unix() {
-		err = ctx.Input.CruSession.Set("username", "")
+		err = ctx.Input.CruSession.Set(stdcontext.Background(), "username", "")
 		if err != nil {
 			logs.Error("Failed to clear expired session, error: %s", err)
 			return ""
 		}
-		err = ctx.Input.CruSession.Delete("SessionData")
+		err = ctx.Input.CruSession.Delete(stdcontext.Background(), "SessionData")
 		if err != nil {
 			logs.Error("Failed to clear expired session, error: %s", err)
 		}

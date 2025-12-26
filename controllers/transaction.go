@@ -17,7 +17,7 @@ package controllers
 import (
 	"encoding/json"
 
-	"github.com/beego/beego/utils/pagination"
+	"github.com/beego/beego/v2/core/utils/pagination"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 )
@@ -30,13 +30,13 @@ import (
 // @Success 200 {array} object.Transaction The Response object
 // @router /get-transactions [get]
 func (c *ApiController) GetTransactions() {
-	owner := c.Input().Get("owner")
-	limit := c.Input().Get("pageSize")
-	page := c.Input().Get("p")
-	field := c.Input().Get("field")
-	value := c.Input().Get("value")
-	sortField := c.Input().Get("sortField")
-	sortOrder := c.Input().Get("sortOrder")
+	owner := c.Ctx.Input.Query("owner")
+	limit := c.Ctx.Input.Query("pageSize")
+	page := c.Ctx.Input.Query("p")
+	field := c.Ctx.Input.Query("field")
+	value := c.Ctx.Input.Query("value")
+	sortField := c.Ctx.Input.Query("sortField")
+	sortOrder := c.Ctx.Input.Query("sortOrder")
 
 	if limit == "" || page == "" {
 		var transactions []*object.Transaction
@@ -86,7 +86,7 @@ func (c *ApiController) GetTransactions() {
 			return
 		}
 
-		paginator := pagination.SetPaginator(c.Ctx, limit, count)
+		paginator := pagination.NewPaginator(c.Ctx.Request, limit, count)
 		transactions, err := object.GetPaginationTransactions(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
 		if err != nil {
 			c.ResponseError(err.Error())
@@ -105,7 +105,7 @@ func (c *ApiController) GetTransactions() {
 // @Success 200 {object} object.Transaction The Response object
 // @router /get-transaction [get]
 func (c *ApiController) GetTransaction() {
-	id := c.Input().Get("id")
+	id := c.Ctx.Input.Query("id")
 
 	transaction, err := object.GetTransaction(id)
 	if err != nil {
@@ -146,7 +146,7 @@ func (c *ApiController) GetTransaction() {
 // @Success 200 {object} controllers.Response The Response object
 // @router /update-transaction [post]
 func (c *ApiController) UpdateTransaction() {
-	id := c.Input().Get("id")
+	id := c.Ctx.Input.Query("id")
 
 	var transaction object.Transaction
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &transaction)
@@ -175,7 +175,7 @@ func (c *ApiController) AddTransaction() {
 		return
 	}
 
-	dryRunParam := c.Input().Get("dryRun")
+	dryRunParam := c.Ctx.Input.Query("dryRun")
 	dryRun := dryRunParam != ""
 
 	affected, transactionId, err := object.AddTransaction(&transaction, c.GetAcceptLanguage(), dryRun)

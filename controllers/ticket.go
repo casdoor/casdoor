@@ -17,7 +17,7 @@ package controllers
 import (
 	"encoding/json"
 
-	"github.com/beego/beego/utils/pagination"
+	"github.com/beego/beego/v2/core/utils/pagination"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 )
@@ -30,13 +30,13 @@ import (
 // @Success 200 {array} object.Ticket The Response object
 // @router /get-tickets [get]
 func (c *ApiController) GetTickets() {
-	owner := c.Input().Get("owner")
-	limit := c.Input().Get("pageSize")
-	page := c.Input().Get("p")
-	field := c.Input().Get("field")
-	value := c.Input().Get("value")
-	sortField := c.Input().Get("sortField")
-	sortOrder := c.Input().Get("sortOrder")
+	owner := c.Ctx.Input.Query("owner")
+	limit := c.Ctx.Input.Query("pageSize")
+	page := c.Ctx.Input.Query("p")
+	field := c.Ctx.Input.Query("field")
+	value := c.Ctx.Input.Query("value")
+	sortField := c.Ctx.Input.Query("sortField")
+	sortOrder := c.Ctx.Input.Query("sortOrder")
 
 	user := c.getCurrentUser()
 	isAdmin := c.IsAdmin()
@@ -77,7 +77,7 @@ func (c *ApiController) GetTickets() {
 			return
 		}
 
-		paginator := pagination.SetPaginator(c.Ctx, limit, count)
+		paginator := pagination.NewPaginator(c.Ctx.Request, limit, count)
 
 		if isAdmin {
 			tickets, err = object.GetPaginationTickets(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
@@ -100,7 +100,7 @@ func (c *ApiController) GetTickets() {
 // @Success 200 {object} object.Ticket The Response object
 // @router /get-ticket [get]
 func (c *ApiController) GetTicket() {
-	id := c.Input().Get("id")
+	id := c.Ctx.Input.Query("id")
 
 	ticket, err := object.GetTicket(id)
 	if err != nil {
@@ -129,7 +129,7 @@ func (c *ApiController) GetTicket() {
 // @Success 200 {object} controllers.Response The Response object
 // @router /update-ticket [post]
 func (c *ApiController) UpdateTicket() {
-	id := c.Input().Get("id")
+	id := c.Ctx.Input.Query("id")
 
 	var ticket object.Ticket
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &ticket)
@@ -232,7 +232,7 @@ func (c *ApiController) DeleteTicket() {
 // @Success 200 {object} controllers.Response The Response object
 // @router /add-ticket-message [post]
 func (c *ApiController) AddTicketMessage() {
-	id := c.Input().Get("id")
+	id := c.Ctx.Input.Query("id")
 
 	var message object.TicketMessage
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &message)

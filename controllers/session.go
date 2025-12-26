@@ -15,10 +15,11 @@
 package controllers
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 
-	"github.com/beego/beego/utils/pagination"
+	"github.com/beego/beego/v2/core/utils/pagination"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 )
@@ -31,13 +32,13 @@ import (
 // @Success 200 {array} string The Response object
 // @router /get-sessions [get]
 func (c *ApiController) GetSessions() {
-	limit := c.Input().Get("pageSize")
-	page := c.Input().Get("p")
-	field := c.Input().Get("field")
-	value := c.Input().Get("value")
-	sortField := c.Input().Get("sortField")
-	sortOrder := c.Input().Get("sortOrder")
-	owner := c.Input().Get("owner")
+	limit := c.Ctx.Input.Query("pageSize")
+	page := c.Ctx.Input.Query("p")
+	field := c.Ctx.Input.Query("field")
+	value := c.Ctx.Input.Query("value")
+	sortField := c.Ctx.Input.Query("sortField")
+	sortOrder := c.Ctx.Input.Query("sortOrder")
+	owner := c.Ctx.Input.Query("owner")
 
 	if limit == "" || page == "" {
 		sessions, err := object.GetSessions(owner)
@@ -54,7 +55,7 @@ func (c *ApiController) GetSessions() {
 			c.ResponseError(err.Error())
 			return
 		}
-		paginator := pagination.SetPaginator(c.Ctx, limit, count)
+		paginator := pagination.NewPaginator(c.Ctx.Request, limit, count)
 		sessions, err := object.GetPaginationSessions(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
 		if err != nil {
 			c.ResponseError(err.Error())
@@ -73,7 +74,7 @@ func (c *ApiController) GetSessions() {
 // @Success 200 {array} string The Response object
 // @router /get-session [get]
 func (c *ApiController) GetSingleSession() {
-	id := c.Input().Get("sessionPkId")
+	id := c.Ctx.Input.Query("sessionPkId")
 
 	session, err := object.GetSingleSession(id)
 	if err != nil {
@@ -137,9 +138,9 @@ func (c *ApiController) DeleteSession() {
 		return
 	}
 
-	curSessionId := c.Ctx.Input.CruSession.SessionID()
+	curSessionId := c.Ctx.Input.CruSession.SessionID(context.Background())
 
-	sessionId := c.Input().Get("sessionId")
+	sessionId := c.Ctx.Input.Query("sessionId")
 	if curSessionId == sessionId && sessionId != "" {
 		c.ResponseError(fmt.Sprintf(c.T("session:session id %s is the current session and cannot be deleted"), curSessionId))
 		return
@@ -164,8 +165,8 @@ func (c *ApiController) DeleteSession() {
 // @Success 200 {array} string The Response object
 // @router /is-session-duplicated [get]
 func (c *ApiController) IsSessionDuplicated() {
-	id := c.Input().Get("sessionPkId")
-	sessionId := c.Input().Get("sessionId")
+	id := c.Ctx.Input.Query("sessionPkId")
+	sessionId := c.Ctx.Input.Query("sessionId")
 
 	isUserSessionDuplicated, err := object.IsSessionDuplicated(id, sessionId)
 	if err != nil {

@@ -17,7 +17,7 @@ package controllers
 import (
 	"encoding/json"
 
-	"github.com/beego/beego/utils/pagination"
+	"github.com/beego/beego/v2/core/utils/pagination"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 )
@@ -30,13 +30,13 @@ import (
 // @Success 200 {array} object.Order The Response object
 // @router /get-orders [get]
 func (c *ApiController) GetOrders() {
-	owner := c.Input().Get("owner")
-	limit := c.Input().Get("pageSize")
-	page := c.Input().Get("p")
-	field := c.Input().Get("field")
-	value := c.Input().Get("value")
-	sortField := c.Input().Get("sortField")
-	sortOrder := c.Input().Get("sortOrder")
+	owner := c.Ctx.Input.Query("owner")
+	limit := c.Ctx.Input.Query("pageSize")
+	page := c.Ctx.Input.Query("p")
+	field := c.Ctx.Input.Query("field")
+	value := c.Ctx.Input.Query("value")
+	sortField := c.Ctx.Input.Query("sortField")
+	sortOrder := c.Ctx.Input.Query("sortOrder")
 
 	if limit == "" || page == "" {
 		orders, err := object.GetOrders(owner)
@@ -54,7 +54,7 @@ func (c *ApiController) GetOrders() {
 			return
 		}
 
-		paginator := pagination.SetPaginator(c.Ctx, limit, count)
+		paginator := pagination.NewPaginator(c.Ctx.Request, limit, count)
 		orders, err := object.GetPaginationOrders(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
 		if err != nil {
 			c.ResponseError(err.Error())
@@ -74,8 +74,8 @@ func (c *ApiController) GetOrders() {
 // @Success 200 {array} object.Order The Response object
 // @router /get-user-orders [get]
 func (c *ApiController) GetUserOrders() {
-	owner := c.Input().Get("owner")
-	user := c.Input().Get("user")
+	owner := c.Ctx.Input.Query("owner")
+	user := c.Ctx.Input.Query("user")
 
 	orders, err := object.GetUserOrders(owner, user)
 	if err != nil {
@@ -94,7 +94,7 @@ func (c *ApiController) GetUserOrders() {
 // @Success 200 {object} object.Order The Response object
 // @router /get-order [get]
 func (c *ApiController) GetOrder() {
-	id := c.Input().Get("id")
+	id := c.Ctx.Input.Query("id")
 
 	order, err := object.GetOrder(id)
 	if err != nil {
@@ -114,7 +114,7 @@ func (c *ApiController) GetOrder() {
 // @Success 200 {object} controllers.Response The Response object
 // @router /update-order [post]
 func (c *ApiController) UpdateOrder() {
-	id := c.Input().Get("id")
+	id := c.Ctx.Input.Query("id")
 
 	var order object.Order
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &order)
