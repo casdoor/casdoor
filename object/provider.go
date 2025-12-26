@@ -420,7 +420,9 @@ func GetCaptchaProviderByApplication(applicationId, isCurrentProvider, lang stri
 			continue
 		}
 		if provider.Provider.Category == "Captcha" {
-			// If the Rule is "None", don't return the provider (treat it as if no CAPTCHA is configured)
+			// For CAPTCHA providers, "None" means disabled (don't show CAPTCHA at all)
+			// This is different from SMS/Email providers where "None" is treated as "All"
+			// CAPTCHA Rule options are: "None" (disabled), "Dynamic", "Always", "Internet-Only"
 			if provider.Rule == "None" || provider.Rule == "" {
 				return nil, nil
 			}
