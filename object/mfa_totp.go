@@ -33,12 +33,11 @@ type TotpMfa struct {
 	digits     otp.Digits
 }
 
-func (mfa *TotpMfa) Initiate(userId string) (*MfaProps, error) {
-	//issuer := beego.AppConfig.String("appname")
-	//if issuer == "" {
-	//	issuer = "casdoor"
-	//}
-	issuer := "Casdoor"
+func (mfa *TotpMfa) Initiate(userId string, issuer string) (*MfaProps, error) {
+	// Use the provided issuer (application display name), or fall back to "Casdoor" if not provided
+	if issuer == "" {
+		issuer = "Casdoor"
+	}
 
 	key, err := totp.Generate(totp.GenerateOpts{
 		Issuer:      issuer,
