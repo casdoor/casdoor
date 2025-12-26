@@ -420,6 +420,10 @@ func GetCaptchaProviderByApplication(applicationId, isCurrentProvider, lang stri
 			continue
 		}
 		if provider.Provider.Category == "Captcha" {
+			// If the Rule is "None", don't return the provider (treat it as if no CAPTCHA is configured)
+			if provider.Rule == "None" || provider.Rule == "" {
+				return nil, nil
+			}
 			return GetCaptchaProviderByOwnerName(util.GetId(provider.Provider.Owner, provider.Provider.Name), lang)
 		}
 	}
