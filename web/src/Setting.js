@@ -455,7 +455,7 @@ export const OtherProviderInfo = {
   },
   "ID Verification": {
     "Jumio": {
-      logo: `${StaticBaseUrl}/img/social_default.png`,
+      logo: `${StaticBaseUrl}/img/social_jumio.png`,
       url: "https://www.jumio.com/",
     },
     "Alibaba Cloud": {
