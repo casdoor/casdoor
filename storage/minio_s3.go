@@ -15,7 +15,7 @@
 package storage
 
 import (
-	awss3 "github.com/aws/aws-sdk-go/service/s3"
+	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 	"github.com/casdoor/oss"
 	"github.com/casdoor/oss/s3"
 )
@@ -28,7 +28,7 @@ func NewMinIOS3StorageProvider(clientId string, clientSecret string, region stri
 		Bucket:           bucket,
 		Endpoint:         endpoint,
 		S3Endpoint:       endpoint,
-		ACL:              awss3.BucketCannedACLPublicRead,
+		ACL:              string(types.BucketCannedACLPublicRead),
 		S3ForcePathStyle: true,
 	})
 
