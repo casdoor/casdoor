@@ -453,6 +453,16 @@ export const OtherProviderInfo = {
       url: "",
     },
   },
+  "ID Verification": {
+    "Jumio": {
+      logo: `${StaticBaseUrl}/img/social_jumio.png`,
+      url: "https://www.jumio.com/",
+    },
+    "Alibaba Cloud": {
+      logo: `${StaticBaseUrl}/img/social_aliyun.png`,
+      url: "https://www.aliyun.com/product/idverification",
+    },
+  },
 };
 
 export const UserFields = ["owner", "name", "password", "display_name", "id", "type", "email", "phone", "country_code",
