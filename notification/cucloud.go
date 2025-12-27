@@ -15,8 +15,8 @@
 package notification
 
 import (
-	"github.com/casdoor/notify"
-	"github.com/casdoor/notify/service/cucloud"
+	notify "github.com/casdoor/notify2"
+	"github.com/casdoor/notify2/service/cucloud"
 )
 
 func NewCucloudProvider(accessKey, secretKey, topicName, messageTitle, cloudRegionCode, accountId, notifyType string) (notify.Notifier, error) {

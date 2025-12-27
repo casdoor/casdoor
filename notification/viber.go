@@ -15,8 +15,8 @@
 package notification
 
 import (
-	"github.com/casdoor/notify"
-	"github.com/casdoor/notify/service/viber"
+	notify "github.com/casdoor/notify2"
+	"github.com/casdoor/notify2/service/viber"
 )
 
 func NewViberProvider(senderName string, appKey string, webhookURL string, receiverId string) (notify.Notifier, error) {

@@ -16,8 +16,8 @@ package notification
 
 import (
 	"github.com/casdoor/casdoor/proxy"
-	"github.com/casdoor/notify"
-	"github.com/casdoor/notify/service/twitter"
+	notify "github.com/casdoor/notify2"
+	"github.com/casdoor/notify2/service/twitter"
 )
 
 func NewTwitterProvider(consumerKey string, consumerSecret string, accessToken string, accessTokenSecret string, twitterId string) (*notify.Notify, error) {
