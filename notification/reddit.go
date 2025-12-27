@@ -15,8 +15,8 @@
 package notification
 
 import (
-	"github.com/casdoor/notify"
-	"github.com/casdoor/notify/service/reddit"
+	notify "github.com/casdoor/notify2"
+	"github.com/casdoor/notify2/service/reddit"
 )
 
 func NewRedditProvider(clientId string, clientSecret string, username string, password string, recipient string) (notify.Notifier, error) {

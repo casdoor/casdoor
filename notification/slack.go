@@ -15,8 +15,8 @@
 package notification
 
 import (
-	"github.com/casdoor/notify"
-	"github.com/casdoor/notify/service/slack"
+	notify "github.com/casdoor/notify2"
+	"github.com/casdoor/notify2/service/slack"
 )
 
 func NewSlackProvider(apiToken string, channelID string) (*notify.Notify, error) {

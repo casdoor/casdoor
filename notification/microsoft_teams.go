@@ -15,8 +15,8 @@
 package notification
 
 import (
-	"github.com/casdoor/notify"
-	"github.com/casdoor/notify/service/msteams"
+	notify "github.com/casdoor/notify2"
+	"github.com/casdoor/notify2/service/msteams"
 )
 
 func NewMicrosoftTeamsProvider(webhookURL string) (notify.Notifier, error) {

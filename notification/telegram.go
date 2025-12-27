@@ -18,8 +18,8 @@ import (
 	"strconv"
 
 	"github.com/casdoor/casdoor/proxy"
-	"github.com/casdoor/notify"
-	"github.com/casdoor/notify/service/telegram"
+	notify "github.com/casdoor/notify2"
+	"github.com/casdoor/notify2/service/telegram"
 	api "github.com/go-telegram-bot-api/telegram-bot-api"
 )
 

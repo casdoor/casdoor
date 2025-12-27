@@ -15,8 +15,8 @@
 package notification
 
 import (
-	"github.com/casdoor/notify"
-	"github.com/casdoor/notify/service/dingding"
+	notify "github.com/casdoor/notify2"
+	"github.com/casdoor/notify2/service/dingding"
 )
 
 func NewDingTalkProvider(token string, secret string) (notify.Notifier, error) {
