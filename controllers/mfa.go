@@ -64,7 +64,19 @@ func (c *ApiController) MfaSetupInitiate() {
 		return
 	}
 
-	mfaProps, err := MfaUtil.Initiate(user.GetId())
+	// Get the application to use its display name as the TOTP issuer
+	application, err := object.GetApplicationByUser(user)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	issuer := ""
+	if application != nil && application.DisplayName != "" {
+		issuer = application.DisplayName
+	}
+
+	mfaProps, err := MfaUtil.Initiate(user.GetId(), issuer)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

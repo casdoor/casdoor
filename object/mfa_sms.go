@@ -24,7 +24,7 @@ type SmsMfa struct {
 	*MfaProps
 }
 
-func (mfa *SmsMfa) Initiate(userId string) (*MfaProps, error) {
+func (mfa *SmsMfa) Initiate(userId string, issuer string) (*MfaProps, error) {
 	mfaProps := MfaProps{
 		MfaType: mfa.MfaType,
 	}

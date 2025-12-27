@@ -32,7 +32,7 @@ type MfaProps struct {
 }
 
 type MfaInterface interface {
-	Initiate(userId string) (*MfaProps, error)
+	Initiate(userId string, issuer string) (*MfaProps, error)
 	SetupVerify(passcode string) error
 	Enable(user *User) error
 	Verify(passcode string) error
