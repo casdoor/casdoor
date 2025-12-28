@@ -16,11 +16,13 @@ package object
 
 import (
 	"bytes"
+	"context"
 	"crypto/md5"
 	"fmt"
 	"io"
 	"net/http"
 	"strings"
+	"time"
 )
 
 func hasGravatar(client *http.Client, email string) (bool, error) {
@@ -35,15 +37,20 @@ func hasGravatar(client *http.Client, email string) (bool, error) {
 	// Create Gravatar URL with d=404 parameter
 	gravatarURL := fmt.Sprintf("https://www.gravatar.com/avatar/%s?d=404", hashedEmail)
 
+	// Create context with 5 second timeout
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
 	// Send a request to Gravatar
-	req, err := http.NewRequest("GET", gravatarURL, nil)
+	req, err := http.NewRequestWithContext(ctx, "GET", gravatarURL, nil)
 	if err != nil {
 		return false, err
 	}
 
 	resp, err := client.Do(req)
 	if err != nil {
-		return false, err
+		fmt.Printf("hasGravatar() error: %v\n", err)
+		return false, nil
 	}
 	defer resp.Body.Close()
 
