@@ -366,6 +366,22 @@ func extendApplicationWithSigninMethods(application *Application) (err error) {
 	return
 }
 
+func extendApplicationWithSignupItems(application *Application) (err error) {
+	if len(application.SignupItems) == 0 {
+		application.SignupItems = []*SignupItem{
+			{Name: "ID", Visible: false, Required: true, Prompted: false, Rule: "Random"},
+			{Name: "Username", Visible: true, Required: true, Prompted: false, Rule: "None"},
+			{Name: "Display name", Visible: true, Required: true, Prompted: false, Rule: "None"},
+			{Name: "Password", Visible: true, Required: true, Prompted: false, Rule: "None"},
+			{Name: "Confirm password", Visible: true, Required: true, Prompted: false, Rule: "None"},
+			{Name: "Email", Visible: true, Required: true, Prompted: false, Rule: "None"},
+			{Name: "Phone", Visible: true, Required: true, Prompted: false, Rule: "None"},
+			{Name: "Agreement", Visible: true, Required: true, Prompted: false, Rule: "None"},
+		}
+	}
+	return
+}
+
 func getApplication(owner string, name string) (*Application, error) {
 	if owner == "" || name == "" {
 		return nil, nil
@@ -727,6 +743,22 @@ func AddApplication(application *Application) (bool, error) {
 
 	if app != nil {
 		return false, nil
+	}
+
+	// Initialize default values for required fields to prevent UI errors
+	err = extendApplicationWithSignupItems(application)
+	if err != nil {
+		return false, err
+	}
+
+	err = extendApplicationWithSigninItems(application)
+	if err != nil {
+		return false, err
+	}
+
+	err = extendApplicationWithSigninMethods(application)
+	if err != nil {
+		return false, err
 	}
 
 	for _, providerItem := range application.Providers {
