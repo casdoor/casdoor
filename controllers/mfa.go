@@ -67,7 +67,7 @@ func (c *ApiController) MfaSetupInitiate() {
 	issuer := ""
 	if organization != nil && organization.DisplayName != "" {
 		issuer = organization.DisplayName
-	} else if organization != nil && organization.DisplayName == "" {
+	} else if organization != nil {
 		issuer = organization.Name
 	}
 
