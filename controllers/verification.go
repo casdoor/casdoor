@@ -566,7 +566,16 @@ func (c *ApiController) VerifyCode() {
 // @router /verify-reset-token [post]
 // @Success 200 {object} object.Userinfo The Response object
 func (c *ApiController) VerifyResetToken() {
-	token := c.Ctx.Request.Form.Get("token")
+	var body struct {
+		Token string `json:"token"`
+	}
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, &body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	token := body.Token
 	if token == "" {
 		c.ResponseError(c.T("general:Missing parameter"))
 		return

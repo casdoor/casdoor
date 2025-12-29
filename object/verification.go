@@ -130,9 +130,12 @@ func SendVerificationCodeToEmail(organization *Organization, user *User, provide
 			// Replace %link with the magic link URL
 			content = strings.Replace(provider.Content, "%link", magicLinkURL, -1)
 			// Extract and replace the content within <reset-link> tags
-			linkContent := string(ResetLinkReg.FindSubmatch([]byte(provider.Content))[1])
-			linkHTML := fmt.Sprintf("<a href=\"%s\">%s</a>", magicLinkURL, linkContent)
-			content = ResetLinkReg.ReplaceAllString(content, linkHTML)
+			submatches := ResetLinkReg.FindSubmatch([]byte(provider.Content))
+			if submatches != nil && len(submatches) > 1 {
+				linkContent := string(submatches[1])
+				linkHTML := fmt.Sprintf("<a href=\"%s\">%s</a>", magicLinkURL, linkContent)
+				content = ResetLinkReg.ReplaceAllString(content, linkHTML)
+			}
 			// Replace %s with the code in case it's also in the template
 			content = strings.Replace(content, "%s", code, 1)
 
@@ -374,8 +377,13 @@ func DisableVerificationToken(token string) error {
 	record.Code = token
 
 	has, err := ormer.Engine.Desc("time").Where("is_used = false").Get(record)
-	if err != nil || !has {
+	if err != nil {
 		return err
+	}
+
+	if !has {
+		// Record not found, which is acceptable - may have already been disabled
+		return nil
 	}
 
 	record.IsUsed = true

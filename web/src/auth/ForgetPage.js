@@ -60,7 +60,7 @@ class ForgetPage extends React.Component {
         Setting.showMessage("error", i18next.t("forget:Unknown forget type") + ": " + this.state.type);
       }
     } else if (this.state.token) {
-      // If token is present, verify it automatically
+      // If token is present and application is loaded, verify it automatically
       this.verifyToken();
     }
   }

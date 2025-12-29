@@ -221,12 +221,10 @@ export function verifyCode(values) {
 }
 
 export function verifyResetToken(token) {
-  const formData = new FormData();
-  formData.append("token", token);
   return fetch(`${Setting.ServerUrl}/api/verify-reset-token`, {
     method: "POST",
     credentials: "include",
-    body: formData,
+    body: JSON.stringify({token: token}),
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
