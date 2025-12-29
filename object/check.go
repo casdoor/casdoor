@@ -777,31 +777,7 @@ func CheckToEnableCaptcha(application *Application, organization, username strin
 			continue
 		}
 
-		if providerItem.Rule == "Internet-Only" {
-			if util.IsInternetIp(clientIp) {
-				return true, nil
-			}
-		}
-
-		if providerItem.Rule == "Dynamic" {
-			user, err := GetUserByFields(organization, username)
-			if err != nil {
-				return false, err
-			}
-
-			if user != nil {
-				failedSigninLimit, _, err := GetFailedSigninConfigByUser(user)
-				if err != nil {
-					return false, err
-				}
-
-				return user.SigninWrongTimes >= failedSigninLimit, nil
-			}
-
-			return false, nil
-		}
-
-		return providerItem.Rule == "Always", nil
+		return shouldShowCaptchaByRule(providerItem, organization, username, clientIp)
 	}
 
 	return false, nil
