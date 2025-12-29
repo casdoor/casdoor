@@ -22,7 +22,7 @@ import {CaptchaModal} from "./modal/CaptchaModal";
 
 const {Search} = Input;
 
-export const SendCodeInput = ({value, disabled, captchaValue, useInlineCaptcha, textBefore, onChange, onButtonClickArgs, application, method, countryCode, refreshCaptcha}) => {
+export const SendCodeInput = ({value, disabled, captchaValue, useInlineCaptcha, textBefore, onChange, onButtonClickArgs, application, method, countryCode, refreshCaptcha, username, organization}) => {
   const [visible, setVisible] = React.useState(false);
   const [buttonLeftTime, setButtonLeftTime] = React.useState(0);
   const [buttonLoading, setButtonLoading] = React.useState(false);
@@ -111,6 +111,8 @@ export const SendCodeInput = ({value, disabled, captchaValue, useInlineCaptcha, 
             onOk={handleOk}
             onCancel={handleCancel}
             isCurrentProvider={false}
+            organization={organization || application.organization}
+            username={username || ""}
           />
         )
       }

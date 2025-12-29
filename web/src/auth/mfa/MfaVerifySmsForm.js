@@ -108,6 +108,8 @@ export const MfaVerifySmsForm = ({mfaProps, application, onFinish, method, user}
           method={method}
           onButtonClickArgs={[mfaProps.secret || dest, isEmail() ? "email" : "phone", Setting.getApplicationName(application)]}
           application={application}
+          username={user?.name}
+          organization={application.organization}
         />
       </Form.Item>
       <Form.Item

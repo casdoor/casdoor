@@ -580,6 +580,7 @@ class SignupPage extends React.Component {
                   method={"signup"}
                   onButtonClickArgs={[this.state.email, "email", Setting.getApplicationName(application)]}
                   application={application}
+                  organization={application.organization}
                 />
               </Form.Item>
             }
@@ -663,6 +664,7 @@ class SignupPage extends React.Component {
                   onButtonClickArgs={[this.state.phone, "phone", Setting.getApplicationName(application)]}
                   application={application}
                   countryCode={this.form.current?.getFieldValue("countryCode")}
+                  organization={application.organization}
                 />
               </Form.Item>
             }

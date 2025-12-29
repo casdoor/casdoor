@@ -369,6 +369,8 @@ class ForgetPage extends React.Component {
               method={"forget"}
               onButtonClickArgs={[this.state.dest, this.state.verifyType, Setting.getApplicationName(this.getApplicationObj()), this.state.name]}
               application={application}
+              username={this.state.name}
+              organization={application.organization}
             />
           </Form.Item>
           <br />

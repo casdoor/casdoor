@@ -99,6 +99,7 @@ export const ResetModal = (props) => {
               method={"reset"}
               onButtonClickArgs={[dest, destType, Setting.getApplicationName(application)]}
               application={application}
+              organization={application.organization}
             />
           </Row>
         </Col>
