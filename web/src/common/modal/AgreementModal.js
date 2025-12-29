@@ -57,7 +57,7 @@ function getTermsOfUseContent(url) {
 }
 
 export function isAgreementRequired(application) {
-  if (application) {
+  if (application && application.signupItems) {
     const agreementItem = application.signupItems.find(item => item.name === "Agreement");
     if (!agreementItem || agreementItem.rule === "None" || !agreementItem.rule) {
       return false;
@@ -70,9 +70,13 @@ export function isAgreementRequired(application) {
 }
 
 function initDefaultValue(application) {
+  if (!application || !application.signupItems) {
+    return false;
+  }
+
   const agreementItem = application.signupItems.find(item => item.name === "Agreement");
 
-  return isAgreementRequired(application) && agreementItem.rule === "Signin (Default True)";
+  return isAgreementRequired(application) && agreementItem && agreementItem.rule === "Signin (Default True)";
 }
 
 export function renderAgreementFormItem(application, required, layout, ths) {

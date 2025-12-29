@@ -156,7 +156,7 @@ class PromptPage extends React.Component {
           }
           {
             (application === null || this.state.user === null) ? null : (
-              application?.signupItems.filter(signupItem => Setting.isSignupItemPrompted(signupItem)).map((signupItem, index) => {
+              application?.signupItems?.filter(signupItem => Setting.isSignupItemPrompted(signupItem)).map((signupItem, index) => {
                 if (signupItem.name !== "Country/Region") {
                   return null;
                 }
