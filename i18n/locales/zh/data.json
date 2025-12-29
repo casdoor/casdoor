@@ -188,8 +188,11 @@
   "verification": {
     "Invalid captcha provider.": "非法的验证码提供商",
     "Phone number is invalid in your region %s": "您所在地区的电话号码无效 %s",
+    "The user does not exist": "用户不存在",
     "The verification code has already been used!": "验证码已使用过!",
     "The verification code has not been sent yet!": "验证码未发送！",
+    "The verification link has already been used!": "验证链接已使用过!",
+    "The verification link is invalid or has expired!": "验证链接无效或已过期!",
     "Turing test failed.": "验证码还未发送",
     "Unable to get the email modify rule.": "无法获取邮箱修改规则",
     "Unable to get the phone modify rule.": "无法获取手机号修改规则",

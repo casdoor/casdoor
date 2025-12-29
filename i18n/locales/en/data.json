@@ -188,8 +188,11 @@
   "verification": {
     "Invalid captcha provider.": "Invalid captcha provider.",
     "Phone number is invalid in your region %s": "Phone number is invalid in your region %s",
+    "The user does not exist": "The user does not exist",
     "The verification code has already been used!": "The verification code has already been used!",
     "The verification code has not been sent yet!": "The verification code has not been sent yet!",
+    "The verification link has already been used!": "The verification link has already been used!",
+    "The verification link is invalid or has expired!": "The verification link is invalid or has expired!",
     "Turing test failed.": "Turing test failed.",
     "Unable to get the email modify rule.": "Unable to get the email modify rule.",
     "Unable to get the phone modify rule.": "Unable to get the phone modify rule.",
