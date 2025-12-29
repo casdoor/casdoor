@@ -44,8 +44,9 @@ class ForgetPage extends React.Component {
       dest: "",
       isVerifyTypeFixed: false,
       verifyType: "", // "email", "phone"
-      current: queryParams.get("code") ? 2 : 0,
+      current: queryParams.get("code") ? 2 : (queryParams.get("token") ? 2 : 0),
       code: queryParams.get("code"),
+      token: queryParams.get("token"),
       queryParams: queryParams,
     };
     this.form = React.createRef();
@@ -58,7 +59,31 @@ class ForgetPage extends React.Component {
       } else {
         Setting.showMessage("error", i18next.t("forget:Unknown forget type") + ": " + this.state.type);
       }
+    } else if (this.state.token) {
+      // If token is present, verify it automatically
+      this.verifyToken();
     }
+  }
+
+  verifyToken() {
+    UserBackend.verifyResetToken(this.state.token)
+      .then((res) => {
+        if (res.status === "ok") {
+          // Token is valid, set the username and dest from response
+          this.setState({
+            name: res.data,
+            dest: res.data2,
+            current: 2,
+          });
+        } else {
+          Setting.showMessage("error", res.msg);
+          // Reset to initial state if token is invalid
+          this.setState({
+            current: 0,
+            token: null,
+          });
+        }
+      });
   }
 
   getApplication() {
@@ -73,6 +98,10 @@ class ForgetPage extends React.Component {
           return;
         }
         this.onUpdateApplication(res.data);
+        // If token is present, verify it after application is loaded
+        if (this.state.token) {
+          this.verifyToken();
+        }
       });
   }
   getApplicationObj() {
@@ -156,7 +185,9 @@ class ForgetPage extends React.Component {
     values.username = this.state.name;
     values.userOwner = this.getApplicationObj()?.organizationObj.name;
 
-    if (this.state.queryParams.get("code")) {
+    // Handle token-based reset (no need to verify again as it was done in componentDidMount)
+    // Handle code-based reset (verify the code if it came from URL)
+    if (this.state.queryParams.get("code") && !this.state.token) {
       const res = await UserBackend.verifyCode({
         application: this.getApplicationObj().name,
         organization: values.userOwner,
@@ -189,7 +220,9 @@ class ForgetPage extends React.Component {
       encryptedNewPassword = passwordCipher;
     }
 
-    UserBackend.setPassword(values.userOwner, values.username, "", encryptedNewPassword, this.state.code).then(res => {
+    // Use token if available, otherwise use code
+    const verificationCode = this.state.token || this.state.code;
+    UserBackend.setPassword(values.userOwner, values.username, "", encryptedNewPassword, verificationCode).then(res => {
       if (res.status === "ok") {
         const linkInStorage = sessionStorage.getItem("signinUrl");
         if (linkInStorage !== null && linkInStorage !== "") {

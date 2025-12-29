@@ -559,3 +559,49 @@ func (c *ApiController) VerifyCode() {
 	c.SetSession("verifiedUserId", user.GetId())
 	c.ResponseOk()
 }
+
+// VerifyResetToken
+// @Tag Verification API
+// @Title VerifyResetToken
+// @router /verify-reset-token [post]
+// @Success 200 {object} object.Userinfo The Response object
+func (c *ApiController) VerifyResetToken() {
+	token := c.Ctx.Request.Form.Get("token")
+	if token == "" {
+		c.ResponseError(c.T("general:Missing parameter"))
+		return
+	}
+
+	result, record, err := object.CheckVerificationToken(token, c.GetAcceptLanguage())
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	if result.Code != object.VerificationSuccess {
+		c.ResponseError(result.Msg)
+		return
+	}
+
+	// Get the user from the verification record
+	user, err := object.GetUser(record.User)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	if user == nil {
+		c.ResponseError(c.T("verification:The user does not exist"))
+		return
+	}
+
+	// Mark the token as used
+	err = object.DisableVerificationToken(token)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	// Set session variables to allow password reset
+	c.SetSession("verifiedCode", token)
+	c.SetSession("verifiedUserId", user.GetId())
+	c.ResponseOk(user.Name, record.Receiver)
+}

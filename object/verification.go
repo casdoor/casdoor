@@ -15,9 +15,11 @@
 package object
 
 import (
+	"crypto/rand"
+	"encoding/base64"
 	"fmt"
 	"math"
-	"math/rand"
+	mathrand "math/rand"
 	"net/url"
 	"regexp"
 	"strings"
@@ -109,15 +111,45 @@ func SendVerificationCodeToEmail(organization *Organization, user *User, provide
 	if method == "forget" {
 		originFrontend, _ := getOriginFromHost(host)
 
-		query := url.Values{}
-		query.Add("code", code)
-		query.Add("username", user.Name)
-		query.Add("dest", util.GetMaskedEmail(dest))
-		forgetURL := originFrontend + "/forget/" + applicationName + "?" + query.Encode()
+		// Check if the email template contains <reset-link> tags for magic link
+		matchContent := ResetLinkReg.Find([]byte(provider.Content))
+		if matchContent != nil {
+			// Generate a secure token for magic link
+			token, err := generateSecureToken(32)
+			if err != nil {
+				return err
+			}
 
-		content = strings.Replace(content, "%link", forgetURL, -1)
-		content = strings.Replace(content, "<reset-link>", "", -1)
-		content = strings.Replace(content, "</reset-link>", "", -1)
+			// Create magic link URL with token
+			query := url.Values{}
+			query.Add("token", token)
+			query.Add("username", user.Name)
+			query.Add("dest", util.GetMaskedEmail(dest))
+			magicLinkURL := originFrontend + "/forget/" + applicationName + "?" + query.Encode()
+
+			// Replace %link with the magic link URL
+			content = strings.Replace(provider.Content, "%link", magicLinkURL, -1)
+			// Extract and replace the content within <reset-link> tags
+			linkContent := string(ResetLinkReg.FindSubmatch([]byte(provider.Content))[1])
+			linkHTML := fmt.Sprintf("<a href=\"%s\">%s</a>", magicLinkURL, linkContent)
+			content = ResetLinkReg.ReplaceAllString(content, linkHTML)
+			// Replace %s with the code in case it's also in the template
+			content = strings.Replace(content, "%s", code, 1)
+
+			// Store the token as the code in the verification record
+			code = token
+		} else {
+			// Fallback to original verification code flow
+			query := url.Values{}
+			query.Add("code", code)
+			query.Add("username", user.Name)
+			query.Add("dest", util.GetMaskedEmail(dest))
+			forgetURL := originFrontend + "/forget/" + applicationName + "?" + query.Encode()
+
+			content = strings.Replace(content, "%link", forgetURL, -1)
+			content = strings.Replace(content, "<reset-link>", "", -1)
+			content = strings.Replace(content, "</reset-link>", "", -1)
+		}
 	} else {
 		matchContent := ResetLinkReg.Find([]byte(content))
 		content = strings.Replace(content, string(matchContent), "", -1)
@@ -296,10 +328,54 @@ func CheckVerificationCode(dest string, code string, lang string) (*VerifyResult
 	return &VerifyResult{VerificationSuccess, ""}, nil
 }
 
+// CheckVerificationToken validates a magic link token
+func CheckVerificationToken(token string, lang string) (*VerifyResult, *VerificationRecord, error) {
+	record := &VerificationRecord{}
+	record.Code = token
+
+	has, err := ormer.Engine.Desc("time").Where("is_used = false").Get(record)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	record = filterRecordIn24Hours(record)
+	if record == nil {
+		has = false
+	}
+
+	if !has {
+		return &VerifyResult{noRecordError, i18n.Translate(lang, "verification:The verification link is invalid or has expired!")}, nil, nil
+	}
+
+	if record.IsUsed {
+		return &VerifyResult{noRecordError, i18n.Translate(lang, "verification:The verification link has already been used!")}, nil, nil
+	}
+
+	// Token-based verification uses 24-hour expiration (already filtered above)
+	// This provides a longer validity period than the default code timeout
+
+	return &VerifyResult{VerificationSuccess, ""}, record, nil
+}
+
 func DisableVerificationCode(dest string) error {
 	record, err := getUnusedVerificationRecord(dest)
 	if record == nil || err != nil {
 		return nil
+	}
+
+	record.IsUsed = true
+	_, err = ormer.Engine.ID(core.PK{record.Owner, record.Name}).AllCols().Update(record)
+	return err
+}
+
+// DisableVerificationToken marks a verification token as used
+func DisableVerificationToken(token string) error {
+	record := &VerificationRecord{}
+	record.Code = token
+
+	has, err := ormer.Engine.Desc("time").Where("is_used = false").Get(record)
+	if err != nil || !has {
+		return err
 	}
 
 	record.IsUsed = true
@@ -364,11 +440,21 @@ var stdNums = []byte("0123456789")
 
 func getRandomCode(length int) string {
 	var result []byte
-	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	r := mathrand.New(mathrand.NewSource(time.Now().UnixNano()))
 	for i := 0; i < length; i++ {
 		result = append(result, stdNums[r.Intn(len(stdNums))])
 	}
 	return string(result)
+}
+
+// generateSecureToken generates a cryptographically secure random token for magic links
+func generateSecureToken(length int) (string, error) {
+	bytes := make([]byte, length)
+	if _, err := rand.Read(bytes); err != nil {
+		return "", err
+	}
+	// Use URL-safe base64 encoding and remove padding
+	return base64.URLEncoding.EncodeToString(bytes), nil
 }
 
 func GetVerificationCount(owner, field, value string) (int64, error) {

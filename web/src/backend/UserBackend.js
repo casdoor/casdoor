@@ -220,6 +220,19 @@ export function verifyCode(values) {
   }).then(res => res.json());
 }
 
+export function verifyResetToken(token) {
+  const formData = new FormData();
+  formData.append("token", token);
+  return fetch(`${Setting.ServerUrl}/api/verify-reset-token`, {
+    method: "POST",
+    credentials: "include",
+    body: formData,
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}
+
 export function checkUserPassword(values) {
   return fetch(`${Setting.ServerUrl}/api/check-user-password`, {
     method: "POST",
