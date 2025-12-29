@@ -35,7 +35,7 @@ func TestRadiusMfaUtil(t *testing.T) {
 	}
 
 	// Test Initiate
-	mfaProps, err := radiusMfa.Initiate("test/user")
+	mfaProps, err := radiusMfa.Initiate("test/user", "")
 	if err != nil {
 		t.Errorf("Initiate failed: %v", err)
 	}

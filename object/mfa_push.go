@@ -31,7 +31,7 @@ type PushMfa struct {
 	challengeExp time.Time
 }
 
-func (mfa *PushMfa) Initiate(userId string) (*MfaProps, error) {
+func (mfa *PushMfa) Initiate(userId string, issuer string) (*MfaProps, error) {
 	mfaProps := MfaProps{
 		MfaType: mfa.MfaType,
 	}
