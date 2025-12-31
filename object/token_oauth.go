@@ -334,7 +334,7 @@ func RefreshToken(grantType string, refreshToken string, scope string, clientId 
 			ErrorDescription: "refresh token is invalid, expired or revoked",
 		}, nil
 	}
-	
+
 	// Validate DPoP proof if token is DPoP-bound
 	var dpopJkt string
 	if token.DPoPJkt != "" {
@@ -345,7 +345,7 @@ func RefreshToken(grantType string, refreshToken string, scope string, clientId 
 				ErrorDescription: "DPoP proof required for DPoP-bound token",
 			}, nil
 		}
-		
+
 		// Validate the DPoP proof (no access token hash for refresh)
 		dpopJkt, err = ValidateDPoPProof(dpopProof, httpMethod, httpUri, "")
 		if err != nil {
@@ -354,7 +354,7 @@ func RefreshToken(grantType string, refreshToken string, scope string, clientId 
 				ErrorDescription: fmt.Sprintf("invalid DPoP proof: %s", err.Error()),
 			}, nil
 		}
-		
+
 		// Verify the JKT matches the original token binding
 		if dpopJkt != token.DPoPJkt {
 			return &TokenError{
@@ -428,7 +428,7 @@ func RefreshToken(grantType string, refreshToken string, scope string, clientId 
 			ErrorDescription: fmt.Sprintf("generate jwt token error: %s", err.Error()),
 		}, nil
 	}
-	
+
 	tokenType := "Bearer"
 	if dpopJkt != "" {
 		tokenType = "DPoP"
@@ -588,7 +588,7 @@ func createGuestUserToken(application *Application, clientSecret string, verifie
 			ErrorDescription: fmt.Sprintf("failed to generate token: %s", err.Error()),
 		}, nil
 	}
-	
+
 	// Determine token type
 	tokenType := "Bearer"
 	if dpopJkt != "" {
@@ -714,13 +714,13 @@ func GetAuthorizationCodeToken(application *Application, clientSecret string, co
 			ErrorDescription: fmt.Sprintf("authorization code has expired, nowUnix: [%s], token.CodeExpireIn: [%s]", time.Unix(nowUnix, 0).Format(time.RFC3339), time.Unix(token.CodeExpireIn, 0).Format(time.RFC3339)),
 		}, nil
 	}
-	
+
 	// Store DPoP JKT if provided
 	if dpopJkt != "" {
 		token.DPoPJkt = dpopJkt
 		token.TokenType = "DPoP"
 	}
-	
+
 	return token, nil, nil
 }
 
@@ -776,12 +776,12 @@ func GetPasswordToken(application *Application, username string, password string
 			ErrorDescription: fmt.Sprintf("generate jwt token error: %s", err.Error()),
 		}, nil
 	}
-	
+
 	tokenType := "Bearer"
 	if dpopJkt != "" {
 		tokenType = "DPoP"
 	}
-	
+
 	token := &Token{
 		Owner:        application.Owner,
 		Name:         tokenName,
@@ -829,12 +829,12 @@ func GetClientCredentialsToken(application *Application, clientSecret string, sc
 			ErrorDescription: fmt.Sprintf("generate jwt token error: %s", err.Error()),
 		}, nil
 	}
-	
+
 	tokenType := "Bearer"
 	if dpopJkt != "" {
 		tokenType = "DPoP"
 	}
-	
+
 	token := &Token{
 		Owner:        application.Owner,
 		Name:         tokenName,
@@ -897,7 +897,7 @@ func GetTokenByUser(application *Application, user *User, scope string, nonce st
 	if err != nil {
 		return nil, err
 	}
-	
+
 	tokenType := "Bearer"
 	if dpopJkt != "" {
 		tokenType = "DPoP"
@@ -1013,7 +1013,7 @@ func GetWechatMiniProgramToken(application *Application, code string, host strin
 			ErrorDescription: fmt.Sprintf("generate jwt token error: %s", err.Error()),
 		}, nil
 	}
-	
+
 	tokenType := "Bearer"
 	if dpopJkt != "" {
 		tokenType = "DPoP"

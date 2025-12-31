@@ -275,7 +275,7 @@ func (c *ApiController) GetOAuthToken() {
 		}
 		httpUri = fmt.Sprintf("%s://%s%s", scheme, host, c.Ctx.Request.URL.Path)
 	}
-	
+
 	token, err := object.GetOAuthToken(grantType, clientId, clientSecret, code, verifier, scope, nonce, username, password, host, refreshToken, tag, avatar, c.GetAcceptLanguage(), dpopProof, httpMethod, httpUri)
 	if err != nil {
 		c.ResponseError(err.Error())
