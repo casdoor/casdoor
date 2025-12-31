@@ -17,6 +17,7 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/beego/beego/v2/core/utils/pagination"
@@ -263,7 +264,19 @@ func (c *ApiController) GetOAuthToken() {
 	}
 
 	host := c.Ctx.Request.Host
-	token, err := object.GetOAuthToken(grantType, clientId, clientSecret, code, verifier, scope, nonce, username, password, host, refreshToken, tag, avatar, c.GetAcceptLanguage())
+	dpopProof := c.Ctx.Request.Header.Get("DPoP")
+	httpMethod := c.Ctx.Request.Method
+	httpUri := c.Ctx.Request.URL.String()
+	if !strings.HasPrefix(httpUri, "http") {
+		// Build full URI
+		scheme := "https"
+		if strings.Contains(host, "localhost") || strings.Contains(host, "127.0.0.1") {
+			scheme = "http"
+		}
+		httpUri = fmt.Sprintf("%s://%s%s", scheme, host, c.Ctx.Request.URL.Path)
+	}
+	
+	token, err := object.GetOAuthToken(grantType, clientId, clientSecret, code, verifier, scope, nonce, username, password, host, refreshToken, tag, avatar, c.GetAcceptLanguage(), dpopProof, httpMethod, httpUri)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

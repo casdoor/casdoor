@@ -36,7 +36,14 @@ type Claims struct {
 	Provider string `json:"provider,omitempty"`
 
 	SigninMethod string `json:"signinMethod,omitempty"`
+	// DPoP confirmation claim (RFC 9449)
+	Cnf *CnfClaim `json:"cnf,omitempty"`
 	jwt.RegisteredClaims
+}
+
+// CnfClaim represents the confirmation claim for DPoP
+type CnfClaim struct {
+	Jkt string `json:"jkt,omitempty"`
 }
 
 type UserShort struct {
@@ -447,7 +454,7 @@ func refineUser(user *User) *User {
 	return user
 }
 
-func generateJwtToken(application *Application, user *User, provider string, signinMethod string, nonce string, scope string, host string) (string, string, string, error) {
+func generateJwtToken(application *Application, user *User, provider string, signinMethod string, nonce string, scope string, host string, dpopJkt string) (string, string, string, error) {
 	nowTime := time.Now()
 	expireTime := nowTime.Add(time.Duration(application.ExpireInHours * float64(time.Hour)))
 	refreshExpireTime := nowTime.Add(time.Duration(application.RefreshExpireInHours * float64(time.Hour)))
@@ -489,6 +496,11 @@ func generateJwtToken(application *Application, user *User, provider string, sig
 			IssuedAt:  jwt.NewNumericDate(nowTime),
 			ID:        jti,
 		},
+	}
+
+	// Add DPoP confirmation claim if DPoP is used
+	if dpopJkt != "" {
+		claims.Cnf = &CnfClaim{Jkt: dpopJkt}
 	}
 
 	if application.IsShared {
