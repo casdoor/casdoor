@@ -316,39 +316,44 @@ func getInvalidSmsReceivers(smsForm SmsForm) []string {
 	return invalidReceivers
 }
 
-
 // GetFullRequestUri constructs the full request URI including scheme and host
 func GetFullRequestUri(ctx *context.Context) string {
-host := ctx.Request.Host
-uri := ctx.Request.URL.String()
-
-if strings.HasPrefix(uri, "http") {
-return uri
-}
-
-// Check X-Forwarded-Proto header first
-scheme := ctx.Request.Header.Get("X-Forwarded-Proto")
-if scheme == "" {
-// Determine scheme from request
-if ctx.Request.TLS != nil {
-scheme = "https"
-} else if strings.Contains(host, "localhost") || strings.Contains(host, "127.0.0.1") || strings.Contains(host, "::1") {
-scheme = "http"
-} else {
-scheme = "https"
-}
-}
-
-return fmt.Sprintf("%s://%s%s", scheme, host, ctx.Request.URL.Path)
+	host := ctx.Request.Host
+	
+	// If the URL already has the host, return it as is
+	if ctx.Request.URL.Host != "" {
+		return ctx.Request.URL.String()
+	}
+	
+	// Check X-Forwarded-Proto header first
+	scheme := ctx.Request.Header.Get("X-Forwarded-Proto")
+	if scheme == "" {
+		// Determine scheme from request
+		if ctx.Request.TLS != nil {
+			scheme = "https"
+		} else if strings.Contains(host, "localhost") || strings.Contains(host, "127.0.0.1") || strings.Contains(host, "::1") {
+			scheme = "http"
+		} else {
+			scheme = "https"
+		}
+	}
+	
+	// Construct full URI including path and query
+	path := ctx.Request.URL.Path
+	if ctx.Request.URL.RawQuery != "" {
+		path = path + "?" + ctx.Request.URL.RawQuery
+	}
+	
+	return fmt.Sprintf("%s://%s%s", scheme, host, path)
 }
 
 // ExtractAccessTokenFromAuthHeader extracts the access token from Authorization header
 // Supports both "Bearer <token>" and "DPoP <token>" formats
 func ExtractAccessTokenFromAuthHeader(authHeader string) string {
-if strings.HasPrefix(authHeader, "Bearer ") {
-return strings.TrimPrefix(authHeader, "Bearer ")
-} else if strings.HasPrefix(authHeader, "DPoP ") {
-return strings.TrimPrefix(authHeader, "DPoP ")
-}
-return ""
+	if strings.HasPrefix(authHeader, "Bearer ") {
+		return strings.TrimPrefix(authHeader, "Bearer ")
+	} else if strings.HasPrefix(authHeader, "DPoP ") {
+		return strings.TrimPrefix(authHeader, "DPoP ")
+	}
+	return ""
 }
