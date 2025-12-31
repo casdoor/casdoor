@@ -320,7 +320,18 @@ func (c *ApiController) RefreshToken() {
 		}
 	}
 
-	refreshToken2, err := object.RefreshToken(grantType, refreshToken, scope, clientId, clientSecret, host)
+	dpopProof := c.Ctx.Request.Header.Get("DPoP")
+	httpMethod := c.Ctx.Request.Method
+	httpUri := c.Ctx.Request.URL.String()
+	if !strings.HasPrefix(httpUri, "http") {
+		scheme := "https"
+		if strings.Contains(host, "localhost") || strings.Contains(host, "127.0.0.1") {
+			scheme = "http"
+		}
+		httpUri = fmt.Sprintf("%s://%s%s", scheme, host, c.Ctx.Request.URL.Path)
+	}
+
+	refreshToken2, err := object.RefreshToken(grantType, refreshToken, scope, clientId, clientSecret, host, dpopProof, httpMethod, httpUri)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -474,6 +485,37 @@ func (c *ApiController) IntrospectToken() {
 	}
 
 	if token != nil {
+		// Verify DPoP proof for DPoP-bound tokens
+		if token.DPoPJkt != "" {
+			dpopProof := c.Ctx.Request.Header.Get("DPoP")
+			if dpopProof == "" {
+				c.ResponseTokenError("DPoP proof required for DPoP-bound token")
+				return
+			}
+
+			httpMethod := c.Ctx.Request.Method
+			host := c.Ctx.Request.Host
+			httpUri := c.Ctx.Request.URL.String()
+			if !strings.HasPrefix(httpUri, "http") {
+				scheme := "https"
+				if strings.Contains(host, "localhost") || strings.Contains(host, "127.0.0.1") {
+					scheme = "http"
+				}
+				httpUri = fmt.Sprintf("%s://%s%s", scheme, host, c.Ctx.Request.URL.Path)
+			}
+
+			dpopJkt, err := object.ValidateDPoPProof(dpopProof, httpMethod, httpUri, tokenValue)
+			if err != nil {
+				c.ResponseTokenError(fmt.Sprintf("Invalid DPoP proof: %s", err.Error()))
+				return
+			}
+
+			if dpopJkt != token.DPoPJkt {
+				c.ResponseTokenError("DPoP proof JKT does not match token binding")
+				return
+			}
+		}
+
 		application, err = object.GetApplication(fmt.Sprintf("%s/%s", token.Owner, token.Application))
 		if err != nil {
 			c.ResponseTokenError(err.Error())

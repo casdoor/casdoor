@@ -618,6 +618,52 @@ func (c *ApiController) GetUserinfo() {
 	scope, aud := c.GetSessionOidc()
 	host := c.Ctx.Request.Host
 
+	// Check if there's a DPoP header present
+	dpopProof := c.Ctx.Request.Header.Get("DPoP")
+	if dpopProof != "" {
+		// Extract access token from Authorization header
+		authHeader := c.Ctx.Request.Header.Get("Authorization")
+		var accessToken string
+		if strings.HasPrefix(authHeader, "Bearer ") {
+			accessToken = strings.TrimPrefix(authHeader, "Bearer ")
+		} else if strings.HasPrefix(authHeader, "DPoP ") {
+			accessToken = strings.TrimPrefix(authHeader, "DPoP ")
+		}
+
+		if accessToken != "" {
+			// Get token from database to check if it's DPoP-bound
+			token, err := object.GetTokenByAccessToken(accessToken)
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
+
+			if token != nil && token.DPoPJkt != "" {
+				// This is a DPoP-bound token, validate the proof
+				httpMethod := c.Ctx.Request.Method
+				httpUri := c.Ctx.Request.URL.String()
+				if !strings.HasPrefix(httpUri, "http") {
+					scheme := "https"
+					if strings.Contains(host, "localhost") || strings.Contains(host, "127.0.0.1") {
+						scheme = "http"
+					}
+					httpUri = fmt.Sprintf("%s://%s%s", scheme, host, c.Ctx.Request.URL.Path)
+				}
+
+				dpopJkt, err := object.ValidateDPoPProof(dpopProof, httpMethod, httpUri, accessToken)
+				if err != nil {
+					c.ResponseError(fmt.Sprintf("Invalid DPoP proof: %s", err.Error()))
+					return
+				}
+
+				if dpopJkt != token.DPoPJkt {
+					c.ResponseError("DPoP proof JKT does not match token binding")
+					return
+				}
+			}
+		}
+	}
+
 	userInfo, err := object.GetUserInfo(user, scope, aud, host)
 	if err != nil {
 		c.ResponseError(err.Error())
