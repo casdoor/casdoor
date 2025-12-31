@@ -37,7 +37,10 @@ const (
 	UnsupportedGrantType = "unsupported_grant_type"
 	InvalidScope         = "invalid_scope"
 	EndpointError        = "endpoint_error"
+	NoDPoPBinding        = ""
 )
+
+const noDPoPBinding = NoDPoPBinding
 
 var DeviceAuthMap = sync.Map{}
 
@@ -172,7 +175,7 @@ func GetOAuthCode(userId string, clientId string, provider string, signinMethod 
 	if err != nil {
 		return nil, err
 	}
-	accessToken, refreshToken, tokenName, err := generateJwtToken(application, user, provider, signinMethod, nonce, scope, host, "")
+	accessToken, refreshToken, tokenName, err := generateJwtToken(application, user, provider, signinMethod, nonce, scope, host, noDPoPBinding)
 	if err != nil {
 		return nil, err
 	}

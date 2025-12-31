@@ -322,14 +322,7 @@ func (c *ApiController) RefreshToken() {
 
 	dpopProof := c.Ctx.Request.Header.Get("DPoP")
 	httpMethod := c.Ctx.Request.Method
-	httpUri := c.Ctx.Request.URL.String()
-	if !strings.HasPrefix(httpUri, "http") {
-		scheme := "https"
-		if strings.Contains(host, "localhost") || strings.Contains(host, "127.0.0.1") {
-			scheme = "http"
-		}
-		httpUri = fmt.Sprintf("%s://%s%s", scheme, host, c.Ctx.Request.URL.Path)
-	}
+	httpUri := GetFullRequestUri(c.Ctx)
 
 	refreshToken2, err := object.RefreshToken(grantType, refreshToken, scope, clientId, clientSecret, host, dpopProof, httpMethod, httpUri)
 	if err != nil {
@@ -494,15 +487,7 @@ func (c *ApiController) IntrospectToken() {
 			}
 
 			httpMethod := c.Ctx.Request.Method
-			host := c.Ctx.Request.Host
-			httpUri := c.Ctx.Request.URL.String()
-			if !strings.HasPrefix(httpUri, "http") {
-				scheme := "https"
-				if strings.Contains(host, "localhost") || strings.Contains(host, "127.0.0.1") {
-					scheme = "http"
-				}
-				httpUri = fmt.Sprintf("%s://%s%s", scheme, host, c.Ctx.Request.URL.Path)
-			}
+			httpUri := GetFullRequestUri(c.Ctx)
 
 			dpopJkt, err := object.ValidateDPoPProof(dpopProof, httpMethod, httpUri, tokenValue)
 			if err != nil {

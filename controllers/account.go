@@ -623,12 +623,7 @@ func (c *ApiController) GetUserinfo() {
 	if dpopProof != "" {
 		// Extract access token from Authorization header
 		authHeader := c.Ctx.Request.Header.Get("Authorization")
-		var accessToken string
-		if strings.HasPrefix(authHeader, "Bearer ") {
-			accessToken = strings.TrimPrefix(authHeader, "Bearer ")
-		} else if strings.HasPrefix(authHeader, "DPoP ") {
-			accessToken = strings.TrimPrefix(authHeader, "DPoP ")
-		}
+		accessToken := ExtractAccessTokenFromAuthHeader(authHeader)
 
 		if accessToken != "" {
 			// Get token from database to check if it's DPoP-bound
@@ -641,14 +636,7 @@ func (c *ApiController) GetUserinfo() {
 			if token != nil && token.DPoPJkt != "" {
 				// This is a DPoP-bound token, validate the proof
 				httpMethod := c.Ctx.Request.Method
-				httpUri := c.Ctx.Request.URL.String()
-				if !strings.HasPrefix(httpUri, "http") {
-					scheme := "https"
-					if strings.Contains(host, "localhost") || strings.Contains(host, "127.0.0.1") {
-						scheme = "http"
-					}
-					httpUri = fmt.Sprintf("%s://%s%s", scheme, host, c.Ctx.Request.URL.Path)
-				}
+				httpUri := GetFullRequestUri(c.Ctx)
 
 				dpopJkt, err := object.ValidateDPoPProof(dpopProof, httpMethod, httpUri, accessToken)
 				if err != nil {

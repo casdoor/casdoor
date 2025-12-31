@@ -46,16 +46,33 @@ type DPoPHeader struct {
 
 // dpopNonceStore stores nonces for DPoP replay protection
 var dpopNonceStore = &sync.Map{}
+var cleanupStarted sync.Once
 
 const (
-	dpopNonceExpiration = 5 * time.Minute
-	dpopJtiExpiration   = 1 * time.Hour
+	dpopNonceExpiration        = 5 * time.Minute
+	dpopJtiExpiration          = 1 * time.Hour
+	dpopIatToleranceSeconds    = 60
+	dpopCleanupIntervalSeconds = 300 // Clean up expired JTIs every 5 minutes
 )
 
 // DPoPNonce represents a stored nonce with expiration
 type DPoPNonce struct {
 	Value     string
 	ExpiresAt time.Time
+}
+
+// startCleanupTask starts a background goroutine to periodically clean up expired JTIs
+func startCleanupTask() {
+	cleanupStarted.Do(func() {
+		go func() {
+			ticker := time.NewTicker(dpopCleanupIntervalSeconds * time.Second)
+			defer ticker.Stop()
+
+			for range ticker.C {
+				cleanupExpiredJtis()
+			}
+		}()
+	})
 }
 
 // ValidateDPoPProof validates a DPoP proof JWT according to RFC 9449
@@ -158,12 +175,12 @@ func ValidateDPoPProof(dpopProof string, httpMethod string, httpUri string, acce
 		return "", fmt.Errorf("DPoP proof htu claim mismatch")
 	}
 
-	// Validate iat is recent (within 60 seconds)
+	// Validate iat is recent (within configured tolerance window)
 	now := time.Now().Unix()
 	if claims.Iat == 0 {
 		return "", fmt.Errorf("DPoP proof missing iat claim")
 	}
-	if claims.Iat > now+60 || claims.Iat < now-60 {
+	if claims.Iat > now+dpopIatToleranceSeconds || claims.Iat < now-dpopIatToleranceSeconds {
 		return "", fmt.Errorf("DPoP proof iat claim outside acceptable time window")
 	}
 
@@ -271,6 +288,9 @@ func validateHtu(htu string, requestUri string) bool {
 
 // validateJti validates the jti hasn't been used before
 func validateJti(jti string) error {
+	// Start cleanup task on first use
+	startCleanupTask()
+
 	now := time.Now()
 
 	// Check if jti exists
@@ -280,9 +300,6 @@ func validateJti(jti string) error {
 
 	// Store the jti with expiration
 	dpopNonceStore.Store(jti, now.Add(dpopJtiExpiration))
-
-	// Clean up expired jtis (simple cleanup)
-	go cleanupExpiredJtis()
 
 	return nil
 }
