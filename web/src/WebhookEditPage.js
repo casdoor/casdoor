@@ -273,13 +273,11 @@ class WebhookEditPage extends React.Component {
                 this.updateWebhookField("events", value);
               }} >
               {
-                (
-                  ["signup", "login", "logout", "new-user"].concat(Setting.getApiPaths()).map((option, index) => {
-                    return (
-                      <Option key={option} value={option}>{option}</Option>
-                    );
-                  })
-                )
+                Setting.getApiPaths().map((option, index) => {
+                  return (
+                    <Option key={option} value={option}>{option}</Option>
+                  );
+                })
               }
             </Select>
           </Col>
