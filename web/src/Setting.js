@@ -2312,8 +2312,14 @@ export function filterTableColumns(columns, formItems, actionKey = "op") {
 }
 
 export function getApiPaths() {
-  const objects = ["organization", "group", "user", "application", "provider", "resource", "cert", "role", "permission", "model", "adapter", "enforcer", "session", "record", "token", "product", "payment", "plan", "pricing", "subscription", "syncer", "webhook"];
+  const objects = ["organization", "group", "user", "application", "provider", "resource", "cert", "role", "permission", "model", "adapter", "enforcer", "session", "token", "product", "payment", "plan", "pricing", "subscription", "syncer", "webhook", "form", "invitation", "ldap", "order", "ticket", "transaction"];
   const res = [];
+
+  // Auth and user session APIs
+  res.push("signup", "login", "logout", "sso-logout", "unlink");
+  res.push("new-user"); // Custom event for new user creation
+
+  // CRUD operations for objects
   objects.forEach(obj => {
     ["add", "update", "delete"].forEach(action => {
       res.push(`${action}-${obj}`);
@@ -2321,9 +2327,77 @@ export function getApiPaths() {
     if (obj === "payment") {
       res.push("invoice-payment", "notify-payment");
     }
-    if (obj === "product") {
-      res.push("buy-product");
+    if (obj === "order") {
+      res.push("place-order", "cancel-order", "pay-order");
+    }
+    if (obj === "user") {
+      res.push("add-user-keys", "remove-user-from-group", "upload-users");
+      res.push("check-user-password", "set-password", "reset-email-or-phone");
+      res.push("verify-identification");
+    }
+    if (obj === "group") {
+      res.push("upload-groups");
+    }
+    if (obj === "role") {
+      res.push("upload-roles");
+    }
+    if (obj === "permission") {
+      res.push("upload-permissions");
+    }
+    if (obj === "resource") {
+      res.push("upload-resource");
+    }
+    if (obj === "invitation") {
+      res.push("send-invitation", "verify-invitation");
+    }
+    if (obj === "ticket") {
+      res.push("add-ticket-message");
+    }
+    if (obj === "syncer") {
+      res.push("run-syncer", "test-syncer-db");
+    }
+    if (obj === "ldap") {
+      res.push("sync-ldap-users");
+    }
+    if (obj === "enforcer") {
+      res.push("enforce", "batch-enforce");
+    }
+    if (obj === "session") {
+      res.push("is-session-duplicated");
     }
   });
+
+  // Special cases that don't follow the standard pattern
+  res.push("add-policy", "update-policy", "remove-policy");
+  res.push("add-record");
+  res.push("delete-mfa", "set-preferred-mfa");
+
+  // MFA setup APIs
+  res.push("mfa/setup/initiate", "mfa/setup/verify", "mfa/setup/enable");
+
+  // WebAuthn APIs
+  res.push("webauthn/signup/begin", "webauthn/signup/finish");
+  res.push("webauthn/signin/begin", "webauthn/signin/finish");
+
+  // OAuth APIs
+  res.push("login/oauth/access_token", "login/oauth/refresh_token", "login/oauth/introspect");
+
+  // Verification and communication APIs
+  res.push("send-verification-code", "verify-code", "verify-captcha");
+  res.push("send-email", "send-sms", "send-notification");
+
+  // SAML APIs
+  res.push("acs", "saml/metadata");
+
+  // Casbin engine APIs
+  res.push("run-casbin-command", "refresh-engines");
+
+  // Monitoring and health APIs
+  res.push("health", "metrics");
+
+  // Other APIs
+  res.push("callback", "device-auth", "faceid-signin-begin");
+  res.push("user", "userinfo");
+
   return res;
 }
