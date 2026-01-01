@@ -71,6 +71,8 @@ class OrganizationListPage extends BaseListPage {
         {name: "ID card type", visible: true, viewRule: "Public", modifyRule: "Self"},
         {name: "ID card", visible: true, viewRule: "Public", modifyRule: "Self"},
         {name: "ID card info", visible: true, viewRule: "Public", modifyRule: "Self"},
+        {name: "Real name", visible: true, viewRule: "Public", modifyRule: "Self"},
+        {name: "ID verification", visible: true, viewRule: "Self", modifyRule: "Self"},
         {name: "Homepage", visible: true, viewRule: "Public", modifyRule: "Self"},
         {name: "Bio", visible: true, viewRule: "Public", modifyRule: "Self"},
         {name: "Tag", visible: true, viewRule: "Public", modifyRule: "Admin"},
