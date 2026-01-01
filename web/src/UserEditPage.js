@@ -676,12 +676,12 @@ class UserEditPage extends React.Component {
           </Col>
         </Row>
       );
-    } else if (accountItem.name === "ID verification") {
+    } else if (accountItem.name === "ID Verification") {
       const isVerified = this.state.user.isVerified;
       return (
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("user:ID verification"), i18next.t("user:ID verification - Tooltip"))} :
+            {Setting.getLabel(i18next.t("user:ID Verification"), i18next.t("user:ID Verification - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Button
