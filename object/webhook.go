@@ -74,7 +74,13 @@ func GetPaginationWebhooks(owner, organization string, offset, limit int, field,
 
 func getWebhooksByOrganization(organization string) ([]*Webhook, error) {
 	webhooks := []*Webhook{}
-	err := ormer.Engine.Desc("created_time").Find(&webhooks, &Webhook{Organization: organization})
+	var err error
+	if organization == "" {
+		// Return all webhooks when organization is empty
+		err = ormer.Engine.Desc("created_time").Find(&webhooks)
+	} else {
+		err = ormer.Engine.Desc("created_time").Find(&webhooks, &Webhook{Organization: organization})
+	}
 	if err != nil {
 		return webhooks, err
 	}
