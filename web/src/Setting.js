@@ -2312,7 +2312,7 @@ export function filterTableColumns(columns, formItems, actionKey = "op") {
 }
 
 export function getApiPaths() {
-  const objects = ["organization", "group", "user", "application", "provider", "resource", "cert", "role", "permission", "model", "adapter", "enforcer", "session", "record", "token", "product", "payment", "plan", "pricing", "subscription", "syncer", "webhook"];
+  const objects = ["organization", "group", "user", "application", "provider", "resource", "cert", "role", "permission", "model", "adapter", "enforcer", "session", "token", "product", "payment", "plan", "pricing", "subscription", "syncer", "webhook", "form", "invitation", "ldap", "order", "ticket", "transaction"];
   const res = [];
   objects.forEach(obj => {
     ["add", "update", "delete"].forEach(action => {
@@ -2321,9 +2321,34 @@ export function getApiPaths() {
     if (obj === "payment") {
       res.push("invoice-payment", "notify-payment");
     }
-    if (obj === "product") {
-      res.push("buy-product");
+    if (obj === "order") {
+      res.push("place-order", "cancel-order", "pay-order");
+    }
+    if (obj === "user") {
+      res.push("add-user-keys", "remove-user-from-group", "upload-users");
+    }
+    if (obj === "group") {
+      res.push("upload-groups");
+    }
+    if (obj === "role") {
+      res.push("upload-roles");
+    }
+    if (obj === "permission") {
+      res.push("upload-permissions");
+    }
+    if (obj === "resource") {
+      res.push("upload-resource");
+    }
+    if (obj === "invitation") {
+      res.push("send-invitation");
+    }
+    if (obj === "ticket") {
+      res.push("add-ticket-message");
     }
   });
+  // Special cases that don't follow the standard pattern
+  res.push("add-policy", "update-policy", "remove-policy");
+  res.push("add-record");
+  res.push("delete-mfa");
   return res;
 }
