@@ -550,6 +550,7 @@ export const GetTranslatedUserItems = () => {
     {name: "Face ID", label: i18next.t("user:Face ID")},
     {name: "MFA accounts", label: i18next.t("user:MFA accounts")},
     {name: "MFA items", label: i18next.t("general:MFA items")},
+    {name: "ID verification", label: i18next.t("user:ID verification")},
   ];
 };
 
