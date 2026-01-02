@@ -26,6 +26,7 @@ package routers
 import (
 	"github.com/beego/beego/v2/server/web"
 	"github.com/casdoor/casdoor/controllers"
+	"github.com/casdoor/casdoor/mcp"
 )
 
 func InitAPI() {
@@ -333,7 +334,7 @@ func InitAPI() {
 
 	web.Router("/scim/*", &controllers.RootController{}, "*:HandleScim")
 
-	web.Router("/api/mcp", &controllers.ApiController{}, "POST:HandleMCP")
+	web.Router("/api/mcp", &mcp.MCPController{}, "POST:HandleMCP")
 
 	web.Router("/api/faceid-signin-begin", &controllers.ApiController{}, "GET:FaceIDSigninBegin")
 }
