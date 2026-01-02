@@ -177,6 +177,22 @@ class TicketEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {i18next.t("general:Created time")}:
+          </Col>
+          <Col span={22} >
+            <Input value={this.state.ticket.createdTime} disabled={true} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {i18next.t("general:Updated time")}:
+          </Col>
+          <Col span={22} >
+            <Input value={this.state.ticket.updatedTime} disabled={true} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {i18next.t("general:Title")}:
           </Col>
           <Col span={22} >
@@ -200,7 +216,7 @@ class TicketEditPage extends React.Component {
             {i18next.t("general:User")}:
           </Col>
           <Col span={22} >
-            <Input value={this.state.ticket.user} disabled={true} />
+            <Input value={this.state.ticket.user} />
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
@@ -218,22 +234,6 @@ class TicketEditPage extends React.Component {
               <Option value="Resolved">{i18next.t("ticket:Resolved")}</Option>
               <Option value="Closed">{i18next.t("ticket:Closed")}</Option>
             </Select>
-          </Col>
-        </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {i18next.t("general:Created time")}:
-          </Col>
-          <Col span={22} >
-            <Input value={this.state.ticket.createdTime} disabled={true} />
-          </Col>
-        </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {i18next.t("general:Updated time")}:
-          </Col>
-          <Col span={22} >
-            <Input value={this.state.ticket.updatedTime} disabled={true} />
           </Col>
         </Row>
       </Card>

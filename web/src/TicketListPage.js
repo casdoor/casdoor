@@ -96,41 +96,10 @@ class TicketListPage extends BaseListPage {
         },
       },
       {
-        title: i18next.t("general:Display name"),
-        dataIndex: "displayName",
-        key: "displayName",
-        width: "200px",
-        sorter: true,
-        ...this.getColumnSearchProps("displayName"),
-      },
-      {
-        title: i18next.t("general:Title"),
-        dataIndex: "title",
-        key: "title",
-        width: "200px",
-        sorter: true,
-        ...this.getColumnSearchProps("title"),
-      },
-      {
-        title: i18next.t("general:User"),
-        dataIndex: "user",
-        key: "user",
-        width: "120px",
-        sorter: true,
-        ...this.getColumnSearchProps("user"),
-        render: (text, record, index) => {
-          return (
-            <Link to={`/users/${record.owner}/${text}`}>
-              {text}
-            </Link>
-          );
-        },
-      },
-      {
         title: i18next.t("general:Created time"),
         dataIndex: "createdTime",
         key: "createdTime",
-        width: "160px",
+        width: "180px",
         sorter: true,
         render: (text, record, index) => {
           return Setting.getFormattedDate(text);
@@ -140,17 +109,48 @@ class TicketListPage extends BaseListPage {
         title: i18next.t("general:Updated time"),
         dataIndex: "updatedTime",
         key: "updatedTime",
-        width: "160px",
+        width: "180px",
         sorter: true,
         render: (text, record, index) => {
           return Setting.getFormattedDate(text);
         },
       },
       {
+        title: i18next.t("general:Display name"),
+        dataIndex: "displayName",
+        key: "displayName",
+        width: "250px",
+        sorter: true,
+        ...this.getColumnSearchProps("displayName"),
+      },
+      {
+        title: i18next.t("general:Title"),
+        dataIndex: "title",
+        key: "title",
+        // width: "200px",
+        sorter: true,
+        ...this.getColumnSearchProps("title"),
+      },
+      {
+        title: i18next.t("general:User"),
+        dataIndex: "user",
+        key: "user",
+        width: "140px",
+        sorter: true,
+        ...this.getColumnSearchProps("user"),
+        render: (text, record, index) => {
+          return (
+            <Link to={`/users/${text}`}>
+              {text}
+            </Link>
+          );
+        },
+      },
+      {
         title: i18next.t("general:State"),
         dataIndex: "state",
         key: "state",
-        width: "120px",
+        width: "140px",
         sorter: true,
         ...this.getColumnSearchProps("state"),
         render: (text, record, index) => {
@@ -177,7 +177,7 @@ class TicketListPage extends BaseListPage {
         render: (text, record, index) => {
           return (
             <div>
-              <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} onClick={() => this.props.history.push(`/tickets/${record.owner}/${record.name}`)}>{i18next.t("general:View")}</Button>
+              <Button type="primary" style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} onClick={() => this.props.history.push(`/tickets/${record.owner}/${record.name}`)}>{i18next.t("general:Edit")}</Button>
               {Setting.isAdminUser(this.props.account) ? (
                 <PopconfirmModal
                   title={i18next.t("general:Sure to delete") + `: ${record.name} ?`}
