@@ -129,7 +129,7 @@ func (c *ApiController) PayOrder() {
 		return
 	}
 
-	payment, attachInfo, err := object.PayOrder(providerName, host, paymentEnv, order)
+	payment, attachInfo, err := object.PayOrder(providerName, host, paymentEnv, order, c.GetAcceptLanguage())
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
