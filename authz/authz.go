@@ -71,6 +71,9 @@ p, *, *, GET, /api/get-payment, *, *
 p, *, *, POST, /api/update-payment, *, *
 p, *, *, POST, /api/invoice-payment, *, *
 p, *, *, POST, /api/notify-payment, *, *
+p, *, *, POST, /api/place-order, *, *
+p, *, *, POST, /api/cancel-order, *, *
+p, *, *, POST, /api/pay-order, *, *
 p, *, *, POST, /api/unlink, *, *
 p, *, *, POST, /api/set-password, *, *
 p, *, *, POST, /api/send-verification-code, *, *
