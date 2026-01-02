@@ -907,3 +907,120 @@ func (c *ApiController) VerifyIdentification() {
 
 	c.ResponseOk(user.RealName)
 }
+
+// ImpersonateUser
+// @Title ImpersonateUser
+// @Tag User API
+// @Description Impersonate a user (admin only)
+// @Param   owner     query    string  true   "The owner of the target user"
+// @Param   name      query    string  true   "The name of the target user"
+// @Param   application query  string  false  "The application to generate token for (optional)"
+// @Success 200 {object} controllers.Response The Response object with access token
+// @router /impersonate-user [post]
+func (c *ApiController) ImpersonateUser() {
+	targetOwner := c.Ctx.Input.Query("owner")
+	targetName := c.Ctx.Input.Query("name")
+	applicationName := c.Ctx.Input.Query("application")
+
+	// Check if the current user is logged in
+	currentUserId := c.GetSessionUsername()
+	if currentUserId == "" {
+		c.ResponseError(c.T("general:Please login first"))
+		return
+	}
+
+	// Get the current user
+	currentUser, err := object.GetUser(currentUserId)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	if currentUser == nil {
+		c.ResponseError(fmt.Sprintf(c.T("general:The user: %s doesn't exist"), currentUserId))
+		return
+	}
+
+	// Only admins can impersonate other users
+	if !currentUser.IsGlobalAdmin() && !currentUser.IsAdmin {
+		c.ResponseError(c.T("auth:Unauthorized operation"))
+		return
+	}
+
+	// Get the target user
+	targetUserId := util.GetId(targetOwner, targetName)
+	targetUser, err := object.GetUser(targetUserId)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	if targetUser == nil {
+		c.ResponseError(fmt.Sprintf(c.T("general:The user: %s doesn't exist"), targetUserId))
+		return
+	}
+
+	// Check if target user is forbidden or deleted
+	if targetUser.IsForbidden {
+		c.ResponseError(c.T("check:The user is forbidden to sign in, please contact the administrator"))
+		return
+	}
+
+	if targetUser.IsDeleted {
+		c.ResponseError(c.T("check:The user has been deleted and cannot be used to sign in, please contact the administrator"))
+		return
+	}
+
+	// Global admins can impersonate anyone
+	// Regular admins can only impersonate users in their own organization
+	if !currentUser.IsGlobalAdmin() {
+		if currentUser.Owner != targetUser.Owner {
+			c.ResponseError(c.T("auth:You can only impersonate users in your own organization"))
+			return
+		}
+	}
+
+	// Get application (use target user's signup application if not specified)
+	var application *object.Application
+	if applicationName != "" {
+		application, err = object.GetApplication(fmt.Sprintf("admin/%s", applicationName))
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+	} else {
+		// Use the target user's application
+		application, err = object.GetApplicationByUser(targetUser)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+	}
+
+	if application == nil {
+		c.ResponseError(c.T("auth:No application found for the user"))
+		return
+	}
+
+	// Generate token for the target user
+	token, err := object.ImpersonateUser(application, targetUser, currentUser, c.Ctx.Request.Host)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	if token == nil {
+		c.ResponseError(c.T("auth:Failed to generate impersonation token"))
+		return
+	}
+
+	// Return the token
+	c.ResponseOk(object.TokenWrapper{
+		AccessToken:  token.AccessToken,
+		IdToken:      token.AccessToken,
+		RefreshToken: token.RefreshToken,
+		TokenType:    token.TokenType,
+		ExpiresIn:    token.ExpiresIn,
+		Scope:        token.Scope,
+	})
+}

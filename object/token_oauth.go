@@ -846,6 +846,45 @@ func GetTokenByUser(application *Application, user *User, scope string, nonce st
 	return token, nil
 }
 
+// ImpersonateUser generates a token for a target user on behalf of an admin
+func ImpersonateUser(application *Application, targetUser *User, impersonator *User, host string) (*Token, error) {
+	// Extend target user with roles and permissions
+	err := ExtendUserWithRolesAndPermissions(targetUser)
+	if err != nil {
+		return nil, err
+	}
+
+	// Generate JWT token for the target user
+	accessToken, refreshToken, tokenName, err := generateJwtToken(application, targetUser, "", "impersonation", "", "", host)
+	if err != nil {
+		return nil, err
+	}
+
+	// Create token record with impersonation context
+	token := &Token{
+		Owner:        application.Owner,
+		Name:         tokenName,
+		CreatedTime:  util.GetCurrentTime(),
+		Application:  application.Name,
+		Organization: targetUser.Owner,
+		User:         targetUser.Name,
+		Code:         util.GenerateClientId(),
+		AccessToken:  accessToken,
+		RefreshToken: refreshToken,
+		ExpiresIn:    int(application.ExpireInHours * float64(hourSeconds)),
+		Scope:        fmt.Sprintf("impersonated_by:%s", impersonator.GetId()),
+		TokenType:    "Bearer",
+		CodeIsUsed:   true,
+	}
+
+	_, err = AddToken(token)
+	if err != nil {
+		return nil, err
+	}
+
+	return token, nil
+}
+
 // GetWechatMiniProgramToken
 // Wechat Mini Program flow
 func GetWechatMiniProgramToken(application *Application, code string, host string, username string, avatar string, lang string) (*Token, *TokenError, error) {
