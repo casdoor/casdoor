@@ -1,4 +1,4 @@
-// Copyright 2021 The Casdoor Authors. All Rights Reserved.
+// Copyright 2026 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,12 +22,12 @@ import (
 	"github.com/casdoor/casdoor/object"
 )
 
-// HandleGetApplicationsTool handles the get_applications MCP tool
-func (c *MCPController) HandleGetApplicationsTool(id interface{}, args map[string]interface{}) {
+// handleGetApplicationsTool handles the get_applications MCP tool
+func (c *McpController) handleGetApplicationsTool(id interface{}, args map[string]interface{}) {
 	userId := c.GetSessionUsername()
 	owner, ok := args["owner"].(string)
 	if !ok {
-		c.SendMCPError(id, -32602, "Invalid params", "Missing or invalid 'owner' parameter")
+		c.SendMcpError(id, -32602, "Invalid params", "Missing or invalid 'owner' parameter")
 		return
 	}
 
@@ -47,12 +47,12 @@ func (c *MCPController) HandleGetApplicationsTool(id interface{}, args map[strin
 	c.SendToolResult(id, string(jsonData))
 }
 
-// HandleGetApplicationTool handles the get_application MCP tool
-func (c *MCPController) HandleGetApplicationTool(id interface{}, args map[string]interface{}) {
+// handleGetApplicationTool handles the get_application MCP tool
+func (c *McpController) handleGetApplicationTool(id interface{}, args map[string]interface{}) {
 	userId := c.GetSessionUsername()
 	appId, ok := args["id"].(string)
 	if !ok {
-		c.SendMCPError(id, -32602, "Invalid params", "Missing or invalid 'id' parameter")
+		c.SendMcpError(id, -32602, "Invalid params", "Missing or invalid 'id' parameter")
 		return
 	}
 
@@ -72,11 +72,11 @@ func (c *MCPController) HandleGetApplicationTool(id interface{}, args map[string
 	c.SendToolResult(id, string(jsonData))
 }
 
-// HandleAddApplicationTool handles the add_application MCP tool
-func (c *MCPController) HandleAddApplicationTool(id interface{}, args map[string]interface{}) {
+// handleAddApplicationTool handles the add_application MCP tool
+func (c *McpController) handleAddApplicationTool(id interface{}, args map[string]interface{}) {
 	appData, ok := args["application"].(map[string]interface{})
 	if !ok {
-		c.SendMCPError(id, -32602, "Invalid params", "Missing or invalid 'application' parameter")
+		c.SendMcpError(id, -32602, "Invalid params", "Missing or invalid 'application' parameter")
 		return
 	}
 
@@ -118,17 +118,17 @@ func (c *MCPController) HandleAddApplicationTool(id interface{}, args map[string
 	c.SendToolResult(id, FormatOperationResult("add", "application", affected))
 }
 
-// HandleUpdateApplicationTool handles the update_application MCP tool
-func (c *MCPController) HandleUpdateApplicationTool(id interface{}, args map[string]interface{}) {
+// handleUpdateApplicationTool handles the update_application MCP tool
+func (c *McpController) handleUpdateApplicationTool(id interface{}, args map[string]interface{}) {
 	appId, ok := args["id"].(string)
 	if !ok {
-		c.SendMCPError(id, -32602, "Invalid params", "Missing or invalid 'id' parameter")
+		c.SendMcpError(id, -32602, "Invalid params", "Missing or invalid 'id' parameter")
 		return
 	}
 
 	appData, ok := args["application"].(map[string]interface{})
 	if !ok {
-		c.SendMCPError(id, -32602, "Invalid params", "Missing or invalid 'application' parameter")
+		c.SendMcpError(id, -32602, "Invalid params", "Missing or invalid 'application' parameter")
 		return
 	}
 
@@ -159,11 +159,11 @@ func (c *MCPController) HandleUpdateApplicationTool(id interface{}, args map[str
 	c.SendToolResult(id, FormatOperationResult("update", "application", affected))
 }
 
-// HandleDeleteApplicationTool handles the delete_application MCP tool
-func (c *MCPController) HandleDeleteApplicationTool(id interface{}, args map[string]interface{}) {
+// handleDeleteApplicationTool handles the delete_application MCP tool
+func (c *McpController) handleDeleteApplicationTool(id interface{}, args map[string]interface{}) {
 	appData, ok := args["application"].(map[string]interface{})
 	if !ok {
-		c.SendMCPError(id, -32602, "Invalid params", "Missing or invalid 'application' parameter")
+		c.SendMcpError(id, -32602, "Invalid params", "Missing or invalid 'application' parameter")
 		return
 	}
 

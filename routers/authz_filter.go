@@ -102,7 +102,7 @@ func getObject(ctx *context.Context) (string, string, error) {
 
 	// Special handling for MCP requests
 	if path == "/api/mcp" && method == http.MethodPost {
-		return getMCPObject(ctx)
+		return getMcpObject(ctx)
 	}
 
 	if method == http.MethodGet {
@@ -215,7 +215,7 @@ func willLog(subOwner string, subName string, method string, urlPath string, obj
 func getUrlPath(urlPath string, ctx *context.Context) string {
 	// Special handling for MCP requests
 	if urlPath == "/api/mcp" {
-		return getMCPUrlPath(ctx)
+		return getMcpUrlPath(ctx)
 	}
 
 	if strings.HasPrefix(urlPath, "/cas") && (strings.HasSuffix(urlPath, "/serviceValidate") || strings.HasSuffix(urlPath, "/proxy") || strings.HasSuffix(urlPath, "/proxyValidate") || strings.HasSuffix(urlPath, "/validate") || strings.HasSuffix(urlPath, "/p3/serviceValidate") || strings.HasSuffix(urlPath, "/p3/proxyValidate") || strings.HasSuffix(urlPath, "/samlValidate")) {

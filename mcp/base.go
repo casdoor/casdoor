@@ -1,4 +1,4 @@
-// Copyright 2021 The Casdoor Authors. All Rights Reserved.
+// Copyright 2026 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -89,12 +89,12 @@ type MCPContent struct {
 }
 
 // MCPController handles MCP protocol requests
-type MCPController struct {
+type McpController struct {
 	web.Controller
 }
 
-// SendMCPResponse sends a successful MCP response
-func (c *MCPController) SendMCPResponse(id interface{}, result interface{}) {
+// SendMcpResponse sends a successful MCP response
+func (c *McpController) SendMcpResponse(id interface{}, result interface{}) {
 	resp := MCPResponse{
 		JSONRPC: "2.0",
 		ID:      id,
@@ -104,8 +104,8 @@ func (c *MCPController) SendMCPResponse(id interface{}, result interface{}) {
 	c.ServeJSON()
 }
 
-// SendMCPError sends an MCP error response
-func (c *MCPController) SendMCPError(id interface{}, code int, message string, data interface{}) {
+// SendMcpError sends an MCP error response
+func (c *McpController) SendMcpError(id interface{}, code int, message string, data interface{}) {
 	resp := MCPResponse{
 		JSONRPC: "2.0",
 		ID:      id,
@@ -120,7 +120,7 @@ func (c *MCPController) SendMCPError(id interface{}, code int, message string, d
 }
 
 // SendToolResult sends a successful tool execution result
-func (c *MCPController) SendToolResult(id interface{}, text string) {
+func (c *McpController) SendToolResult(id interface{}, text string) {
 	result := MCPCallToolResult{
 		Content: []MCPContent{
 			{
@@ -130,11 +130,11 @@ func (c *MCPController) SendToolResult(id interface{}, text string) {
 		},
 		IsError: false,
 	}
-	c.SendMCPResponse(id, result)
+	c.SendMcpResponse(id, result)
 }
 
 // SendToolErrorResult sends a tool execution error result
-func (c *MCPController) SendToolErrorResult(id interface{}, errorMsg string) {
+func (c *McpController) SendToolErrorResult(id interface{}, errorMsg string) {
 	result := MCPCallToolResult{
 		Content: []MCPContent{
 			{
@@ -144,7 +144,7 @@ func (c *MCPController) SendToolErrorResult(id interface{}, errorMsg string) {
 		},
 		IsError: true,
 	}
-	c.SendMCPResponse(id, result)
+	c.SendMcpResponse(id, result)
 }
 
 // FormatOperationResult formats the result of CRUD operations in a clear, descriptive way
@@ -164,17 +164,17 @@ func FormatOperationResult(operation, resourceType string, affected bool) string
 	return fmt.Sprintf("No changes were made to %s (may already exist or not found)", resourceType)
 }
 
-// HandleMCP handles MCP protocol requests
-// @Title HandleMCP
+// HandleMcp handles MCP protocol requests
+// @Title HandleMcp
 // @Tag MCP API
 // @Description handle MCP (Model Context Protocol) requests
 // @Success 200 {object} MCPResponse The Response object
 // @router /mcp [post]
-func (c *MCPController) HandleMCP() {
+func (c *McpController) HandleMcp() {
 	var req MCPRequest
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &req)
 	if err != nil {
-		c.SendMCPError(nil, -32700, "Parse error", err.Error())
+		c.SendMcpError(nil, -32700, "Parse error", err.Error())
 		return
 	}
 
@@ -187,16 +187,16 @@ func (c *MCPController) HandleMCP() {
 	case "tools/call":
 		c.handleToolsCall(req)
 	default:
-		c.SendMCPError(req.ID, -32601, "Method not found", fmt.Sprintf("Method '%s' not found", req.Method))
+		c.SendMcpError(req.ID, -32601, "Method not found", fmt.Sprintf("Method '%s' not found", req.Method))
 	}
 }
 
-func (c *MCPController) handleInitialize(req MCPRequest) {
+func (c *McpController) handleInitialize(req MCPRequest) {
 	var params MCPInitializeParams
 	if req.Params != nil {
 		err := json.Unmarshal(req.Params, &params)
 		if err != nil {
-			c.SendMCPError(req.ID, -32602, "Invalid params", err.Error())
+			c.SendMcpError(req.ID, -32602, "Invalid params", err.Error())
 			return
 		}
 	}
@@ -212,10 +212,10 @@ func (c *MCPController) handleInitialize(req MCPRequest) {
 		},
 	}
 
-	c.SendMCPResponse(req.ID, result)
+	c.SendMcpResponse(req.ID, result)
 }
 
-func (c *MCPController) handleToolsList(req MCPRequest) {
+func (c *McpController) handleToolsList(req MCPRequest) {
 	tools := []MCPTool{
 		{
 			Name:        "get_applications",
@@ -297,30 +297,30 @@ func (c *MCPController) handleToolsList(req MCPRequest) {
 		Tools: tools,
 	}
 
-	c.SendMCPResponse(req.ID, result)
+	c.SendMcpResponse(req.ID, result)
 }
 
-func (c *MCPController) handleToolsCall(req MCPRequest) {
+func (c *McpController) handleToolsCall(req MCPRequest) {
 	var params MCPCallToolParams
 	err := json.Unmarshal(req.Params, &params)
 	if err != nil {
-		c.SendMCPError(req.ID, -32602, "Invalid params", err.Error())
+		c.SendMcpError(req.ID, -32602, "Invalid params", err.Error())
 		return
 	}
 
 	// Route to the appropriate tool handler
 	switch params.Name {
 	case "get_applications":
-		c.HandleGetApplicationsTool(req.ID, params.Arguments)
+		c.handleGetApplicationsTool(req.ID, params.Arguments)
 	case "get_application":
-		c.HandleGetApplicationTool(req.ID, params.Arguments)
+		c.handleGetApplicationTool(req.ID, params.Arguments)
 	case "add_application":
-		c.HandleAddApplicationTool(req.ID, params.Arguments)
+		c.handleAddApplicationTool(req.ID, params.Arguments)
 	case "update_application":
-		c.HandleUpdateApplicationTool(req.ID, params.Arguments)
+		c.handleUpdateApplicationTool(req.ID, params.Arguments)
 	case "delete_application":
-		c.HandleDeleteApplicationTool(req.ID, params.Arguments)
+		c.handleDeleteApplicationTool(req.ID, params.Arguments)
 	default:
-		c.SendMCPError(req.ID, -32602, "Invalid tool name", fmt.Sprintf("Tool '%s' not found", params.Name))
+		c.SendMcpError(req.ID, -32602, "Invalid tool name", fmt.Sprintf("Tool '%s' not found", params.Name))
 	}
 }

@@ -1,4 +1,4 @@
-// Copyright 2021 The Casdoor Authors. All Rights Reserved.
+// Copyright 2026 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import (
 	"github.com/casdoor/casdoor/util"
 )
 
-func getMCPObject(ctx *context.Context) (string, string, error) {
+func getMcpObject(ctx *context.Context) (string, string, error) {
 	body := ctx.Input.RequestBody
 	if len(body) == 0 {
 		return "", "", nil
@@ -94,7 +94,7 @@ func extractOwnerNameFromAppData(appData map[string]interface{}) (string, string
 	return "", "", nil
 }
 
-func getMCPUrlPath(ctx *context.Context) string {
+func getMcpUrlPath(ctx *context.Context) string {
 	body := ctx.Input.RequestBody
 	if len(body) == 0 {
 		return "/api/mcp"
