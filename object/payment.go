@@ -205,93 +205,143 @@ func notifyPayment(body []byte, owner string, paymentName string) (*Payment, *pp
 		return payment, nil, err
 	}
 
-	if payment.IsRecharge {
-		currency := payment.Currency
-		if currency == "" {
-			currency = "USD"
-		}
-		err = UpdateUserBalance(payment.Owner, payment.User, payment.Price, currency, "en")
-		return payment, notifyResult, err
-	}
-
 	return payment, notifyResult, nil
 }
 
-func NotifyPayment(body []byte, owner string, paymentName string) (*Payment, error) {
+func NotifyPayment(body []byte, owner string, paymentName string, lang string) (*Payment, error) {
 	payment, notifyResult, err := notifyPayment(body, owner, paymentName)
-	if payment != nil {
-		if err != nil {
-			payment.State = pp.PaymentStateError
-			payment.Message = err.Error()
-		} else {
-			payment.State = notifyResult.PaymentStatus
-			payment.Message = notifyResult.NotifyMessage
-		}
-		_, err = UpdatePayment(payment.GetId(), payment)
-		if err != nil {
-			return nil, err
-		}
-
-		transaction, err := GetTransaction(payment.GetId())
-		if err != nil {
-			return nil, err
-		}
-
-		if transaction != nil {
-			transaction.State = string(payment.State)
-			_, err = UpdateTransaction(transaction.GetId(), transaction, "en")
-			if err != nil {
-				return nil, err
-			}
-		}
-
-		// Update order state based on payment status
-		if payment.Order != "" {
-			order, err := getOrder(payment.Owner, payment.Order)
-			if err != nil {
-				return nil, err
-			}
-			if order == nil {
-				return nil, fmt.Errorf("the order: %s does not exist", payment.Order)
-			}
-
-			if payment.State == pp.PaymentStatePaid {
-				order.State = "Paid"
-				order.Message = "Payment successful"
-				order.EndTime = util.GetCurrentTime()
-			} else if payment.State == pp.PaymentStateError {
-				order.State = "PaymentFailed"
-				order.Message = payment.Message
-			} else if payment.State == pp.PaymentStateCanceled {
-				order.State = "Canceled"
-				order.Message = "Payment was cancelled"
-			} else if payment.State == pp.PaymentStateTimeout {
-				order.State = "Timeout"
-				order.Message = "Payment timed out"
-			}
-			_, err = UpdateOrder(order.GetId(), order)
-			if err != nil {
-				return nil, err
-			}
-
-			// Update product stock after order state is persisted
-			if payment.State == pp.PaymentStatePaid {
-				product, err := getProduct(payment.Owner, payment.ProductName)
-				if err != nil {
-					return nil, err
-				}
-				if product == nil {
-					return nil, fmt.Errorf("the product: %s does not exist", payment.ProductName)
-				}
-
-				err = UpdateProductStock(product)
-				if err != nil {
-					return nil, err
-				}
-			}
-		}
+	if payment == nil {
+		return nil, fmt.Errorf("the payment: %s does not exist", paymentName)
 	}
 
+	// Check if payment is already in a terminal state to prevent duplicate processing
+	if payment.State == pp.PaymentStatePaid || payment.State == pp.PaymentStateError ||
+		payment.State == pp.PaymentStateCanceled || payment.State == pp.PaymentStateTimeout {
+		return payment, nil
+	}
+
+	if err != nil {
+		payment.State = pp.PaymentStateError
+		payment.Message = err.Error()
+	} else {
+		payment.State = notifyResult.PaymentStatus
+		payment.Message = notifyResult.NotifyMessage
+	}
+	_, err = UpdatePayment(payment.GetId(), payment)
+	if err != nil {
+		return nil, err
+	}
+
+	// Update order state based on payment status
+	order, err := getOrder(payment.Owner, payment.Order)
+	if err != nil {
+		return nil, err
+	}
+	if order == nil {
+		return nil, fmt.Errorf("the order: %s does not exist", payment.Order)
+	}
+
+	if payment.State == pp.PaymentStatePaid {
+		order.State = "Paid"
+		order.Message = "Payment successful"
+		order.EndTime = util.GetCurrentTime()
+	} else if payment.State == pp.PaymentStateError {
+		order.State = "PaymentFailed"
+		order.Message = payment.Message
+	} else if payment.State == pp.PaymentStateCanceled {
+		order.State = "Canceled"
+		order.Message = "Payment was cancelled"
+	} else if payment.State == pp.PaymentStateTimeout {
+		order.State = "Timeout"
+		order.Message = "Payment timed out"
+	}
+	_, err = UpdateOrder(order.GetId(), order)
+	if err != nil {
+		return nil, err
+	}
+
+	if payment.State == pp.PaymentStatePaid {
+		// Get provider, product and user for transaction creation
+		provider, err := getProvider(payment.Owner, payment.Provider)
+		if err != nil {
+			return nil, err
+		}
+		if provider == nil {
+			return nil, fmt.Errorf("the provider: %s does not exist", payment.Provider)
+		}
+
+		product, err := getProduct(payment.Owner, payment.ProductName)
+		if err != nil {
+			return nil, err
+		}
+		if product == nil {
+			return nil, fmt.Errorf("the product: %s does not exist", payment.ProductName)
+		}
+
+		user, err := getUser(payment.Owner, payment.User)
+		if err != nil {
+			return nil, err
+		}
+		if user == nil {
+			return nil, fmt.Errorf("the user: %s does not exist", payment.User)
+		}
+
+		transaction := &Transaction{
+			Owner:       payment.Owner,
+			CreatedTime: util.GetCurrentTime(),
+			Application: user.SignupApplication,
+			Amount:      -payment.Price,
+			Currency:    order.Currency,
+			Payment:     payment.Name,
+			Category:    TransactionCategoryPurchase,
+			Type:        provider.Category,
+			Subtype:     provider.Type,
+			Provider:    provider.Name,
+			Tag:         "User",
+			User:        payment.User,
+			State:       string(pp.PaymentStatePaid),
+		}
+
+		var affected bool
+		affected, err = AddExternalPaymentTransaction(transaction, lang)
+		if err != nil {
+			return nil, err
+		}
+		if !affected {
+			return nil, fmt.Errorf("failed to add transaction: %s", util.StructToJson(transaction))
+		}
+
+		if product.IsRecharge {
+			rechargeTransaction := &Transaction{
+				Owner:       payment.Owner,
+				CreatedTime: util.GetCurrentTime(),
+				Application: user.SignupApplication,
+				Amount:      payment.Price,
+				Currency:    order.Currency,
+				Payment:     payment.Name,
+				Category:    TransactionCategoryRecharge,
+				Type:        provider.Category,
+				Subtype:     provider.Type,
+				Provider:    provider.Name,
+				Tag:         "User",
+				User:        payment.User,
+				State:       string(pp.PaymentStatePaid),
+			}
+
+			affected, err = AddExternalPaymentTransaction(rechargeTransaction, lang)
+			if err != nil {
+				return nil, err
+			}
+			if !affected {
+				return nil, fmt.Errorf("failed to add recharge transaction: %s", util.StructToJson(rechargeTransaction))
+			}
+		}
+
+		err = UpdateProductStock(product)
+		if err != nil {
+			return nil, err
+		}
+	}
 	return payment, nil
 }
 

@@ -23,20 +23,27 @@ import (
 	"github.com/xorm-io/core"
 )
 
+type TransactionCategory string
+
+const (
+	TransactionCategoryPurchase TransactionCategory = "Purchase"
+	TransactionCategoryRecharge TransactionCategory = "Recharge"
+)
+
 type Transaction struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 	DisplayName string `xorm:"varchar(100)" json:"displayName"`
 
-	Application string `xorm:"varchar(100)" json:"application"`
-	Domain      string `xorm:"varchar(1000)" json:"domain"`
-	Category    string `xorm:"varchar(100)" json:"category"`
-	Type        string `xorm:"varchar(100)" json:"type"`
-	Subtype     string `xorm:"varchar(100)" json:"subtype"`
-	Provider    string `xorm:"varchar(100)" json:"provider"`
-	User        string `xorm:"varchar(100)" json:"user"`
-	Tag         string `xorm:"varchar(100)" json:"tag"`
+	Application string              `xorm:"varchar(100)" json:"application"`
+	Domain      string              `xorm:"varchar(1000)" json:"domain"`
+	Category    TransactionCategory `xorm:"varchar(100)" json:"category"`
+	Type        string              `xorm:"varchar(100)" json:"type"`
+	Subtype     string              `xorm:"varchar(100)" json:"subtype"`
+	Provider    string              `xorm:"varchar(100)" json:"provider"`
+	User        string              `xorm:"varchar(100)" json:"user"`
+	Tag         string              `xorm:"varchar(100)" json:"tag"`
 
 	Amount   float64 `json:"amount"`
 	Currency string  `xorm:"varchar(100)" json:"currency"`
@@ -185,6 +192,25 @@ func AddInternalPaymentTransaction(transaction *Transaction, lang string) (bool,
 	}
 
 	if affected != 0 {
+		if err := updateBalanceForTransaction(transaction, transaction.Amount, lang); err != nil {
+			return false, err
+		}
+	}
+
+	return affected != 0, nil
+}
+
+func AddExternalPaymentTransaction(transaction *Transaction, lang string) (bool, error) {
+	transactionId := strings.ReplaceAll(util.GenerateId(), "-", "")
+	transaction.Name = transactionId
+	transaction.DisplayName = transactionId
+
+	affected, err := ormer.Engine.Insert(transaction)
+	if err != nil {
+		return false, err
+	}
+
+	if affected != 0 && transaction.Category == TransactionCategoryRecharge {
 		if err := updateBalanceForTransaction(transaction, transaction.Amount, lang); err != nil {
 			return false, err
 		}

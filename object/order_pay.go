@@ -92,7 +92,7 @@ func PlaceOrder(productId string, user *User, pricingName string, planName strin
 	return order, nil
 }
 
-func PayOrder(providerName, host, paymentEnv string, order *Order) (payment *Payment, attachInfo map[string]interface{}, err error) {
+func PayOrder(providerName, host, paymentEnv string, order *Order, lang string) (payment *Payment, attachInfo map[string]interface{}, err error) {
 	if order.State != "Created" {
 		return nil, nil, fmt.Errorf("cannot pay for order: %s, current state is %s", order.GetId(), order.State)
 	}
@@ -222,46 +222,8 @@ func PayOrder(providerName, host, paymentEnv string, order *Order) (payment *Pay
 		OutOrderId: payResp.OrderId,
 	}
 
-	transaction := &Transaction{
-		Owner:       payment.Owner,
-		Name:        payment.Name,
-		CreatedTime: util.GetCurrentTime(),
-		Application: user.SignupApplication,
-		Domain:      "",
-		Amount:      payment.Price,
-		Currency:    order.Currency,
-		Payment:     payment.Name,
-		Type:        provider.Category,
-		Subtype:     provider.Type,
-		Provider:    provider.Name,
-		User:        payment.User,
-		Tag:         "User",
-		State:       string(pp.PaymentStateCreated),
-	}
-
-	var rechargeTransaction *Transaction
-
-	if product.IsRecharge {
-		rechargeTransaction = &Transaction{
-			Owner:       payment.Owner,
-			CreatedTime: util.GetCurrentTime(),
-			Application: owner,
-			Amount:      payment.Price,
-			Currency:    order.Currency,
-			Payment:     payment.Name,
-			Category:    "Recharge",
-			Tag:         "User",
-			User:        payment.User,
-			State:       string(pp.PaymentStateCreated),
-		}
-	}
-
 	if provider.Type == "Dummy" || provider.Type == "Balance" {
 		payment.State = pp.PaymentStatePaid
-		transaction.State = string(pp.PaymentStatePaid)
-		if product.IsRecharge {
-			rechargeTransaction.State = string(pp.PaymentStatePaid)
-		}
 	}
 
 	affected, err := AddPayment(payment)
@@ -274,7 +236,23 @@ func PayOrder(providerName, host, paymentEnv string, order *Order) (payment *Pay
 	}
 
 	if provider.Type == "Balance" {
-		affected, err = AddInternalPaymentTransaction(transaction, "en")
+		transaction := &Transaction{
+			Owner:       payment.Owner,
+			CreatedTime: util.GetCurrentTime(),
+			Application: user.SignupApplication,
+			Amount:      -payment.Price,
+			Currency:    order.Currency,
+			Payment:     payment.Name,
+			Category:    TransactionCategoryPurchase,
+			Type:        provider.Category,
+			Subtype:     provider.Type,
+			Provider:    provider.Name,
+			Tag:         "User",
+			User:        payment.User,
+			State:       string(pp.PaymentStatePaid),
+		}
+
+		affected, err = AddInternalPaymentTransaction(transaction, lang)
 		if err != nil {
 			return nil, nil, err
 		}
@@ -283,7 +261,23 @@ func PayOrder(providerName, host, paymentEnv string, order *Order) (payment *Pay
 		}
 
 		if product.IsRecharge {
-			affected, err := AddInternalPaymentTransaction(rechargeTransaction, "en")
+			rechargeTransaction := &Transaction{
+				Owner:       payment.Owner,
+				CreatedTime: util.GetCurrentTime(),
+				Application: user.SignupApplication,
+				Amount:      payment.Price,
+				Currency:    order.Currency,
+				Payment:     payment.Name,
+				Category:    TransactionCategoryRecharge,
+				Type:        provider.Category,
+				Subtype:     provider.Type,
+				Provider:    provider.Name,
+				Tag:         "User",
+				User:        payment.User,
+				State:       string(pp.PaymentStatePaid),
+			}
+
+			affected, err = AddInternalPaymentTransaction(rechargeTransaction, lang)
 			if err != nil {
 				return nil, nil, err
 			}
