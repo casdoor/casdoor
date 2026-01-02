@@ -24,6 +24,37 @@ import (
 // ToolHandler handles MCP tool invocations
 type ToolHandler struct{}
 
+// getOptionalStringParam extracts an optional string parameter from params
+func getOptionalStringParam(params map[string]interface{}, key string) string {
+	if value, ok := params[key].(string); ok {
+		return value
+	}
+	return ""
+}
+
+// marshalToCallResult converts an interface to a CallToolResult with JSON marshaling
+func marshalToCallResult(data interface{}) (*CallToolResult, error) {
+	jsonData, err := json.MarshalIndent(data, "", "  ")
+	if err != nil {
+		return &CallToolResult{
+			Content: []ContentItem{{Type: "text", Text: fmt.Sprintf("Error marshaling data: %v", err)}},
+			IsError: true,
+		}, nil
+	}
+
+	return &CallToolResult{
+		Content: []ContentItem{{Type: "text", Text: string(jsonData)}},
+	}, nil
+}
+
+// errorResult creates an error CallToolResult
+func errorResult(message string) *CallToolResult {
+	return &CallToolResult{
+		Content: []ContentItem{{Type: "text", Text: message}},
+		IsError: true,
+	}
+}
+
 // CallTool executes a tool and returns the result
 func (h *ToolHandler) CallTool(toolName string, params map[string]interface{}) (*CallToolResult, error) {
 	switch toolName {
@@ -52,262 +83,122 @@ func (h *ToolHandler) CallTool(toolName string, params map[string]interface{}) (
 func (h *ToolHandler) getUser(params map[string]interface{}) (*CallToolResult, error) {
 	userId, ok := params["userId"].(string)
 	if !ok {
-		return &CallToolResult{
-			Content: []ContentItem{{Type: "text", Text: "Missing or invalid userId parameter"}},
-			IsError: true,
-		}, nil
+		return errorResult("Missing or invalid userId parameter"), nil
 	}
 
 	user, err := object.GetUser(userId)
 	if err != nil {
-		return &CallToolResult{
-			Content: []ContentItem{{Type: "text", Text: fmt.Sprintf("Error retrieving user: %v", err)}},
-			IsError: true,
-		}, nil
+		return errorResult(fmt.Sprintf("Error retrieving user: %v", err)), nil
 	}
 
 	if user == nil {
-		return &CallToolResult{
-			Content: []ContentItem{{Type: "text", Text: fmt.Sprintf("User not found: %s", userId)}},
-			IsError: true,
-		}, nil
+		return errorResult(fmt.Sprintf("User not found: %s", userId)), nil
 	}
 
-	jsonData, err := json.MarshalIndent(user, "", "  ")
-	if err != nil {
-		return &CallToolResult{
-			Content: []ContentItem{{Type: "text", Text: fmt.Sprintf("Error marshaling user data: %v", err)}},
-			IsError: true,
-		}, nil
-	}
-
-	return &CallToolResult{
-		Content: []ContentItem{{Type: "text", Text: string(jsonData)}},
-	}, nil
+	return marshalToCallResult(user)
 }
 
 // listUsers lists all users
 func (h *ToolHandler) listUsers(params map[string]interface{}) (*CallToolResult, error) {
-	owner := ""
-	if ownerParam, ok := params["owner"].(string); ok {
-		owner = ownerParam
-	}
+	owner := getOptionalStringParam(params, "owner")
 
 	users, err := object.GetUsers(owner)
 	if err != nil {
-		return &CallToolResult{
-			Content: []ContentItem{{Type: "text", Text: fmt.Sprintf("Error retrieving users: %v", err)}},
-			IsError: true,
-		}, nil
+		return errorResult(fmt.Sprintf("Error retrieving users: %v", err)), nil
 	}
 
-	jsonData, err := json.MarshalIndent(users, "", "  ")
-	if err != nil {
-		return &CallToolResult{
-			Content: []ContentItem{{Type: "text", Text: fmt.Sprintf("Error marshaling users data: %v", err)}},
-			IsError: true,
-		}, nil
-	}
-
-	return &CallToolResult{
-		Content: []ContentItem{{Type: "text", Text: string(jsonData)}},
-	}, nil
+	return marshalToCallResult(users)
 }
 
 // getOrganization retrieves an organization by ID
 func (h *ToolHandler) getOrganization(params map[string]interface{}) (*CallToolResult, error) {
 	orgId, ok := params["organizationId"].(string)
 	if !ok {
-		return &CallToolResult{
-			Content: []ContentItem{{Type: "text", Text: "Missing or invalid organizationId parameter"}},
-			IsError: true,
-		}, nil
+		return errorResult("Missing or invalid organizationId parameter"), nil
 	}
 
 	org, err := object.GetOrganization(orgId)
 	if err != nil {
-		return &CallToolResult{
-			Content: []ContentItem{{Type: "text", Text: fmt.Sprintf("Error retrieving organization: %v", err)}},
-			IsError: true,
-		}, nil
+		return errorResult(fmt.Sprintf("Error retrieving organization: %v", err)), nil
 	}
 
 	if org == nil {
-		return &CallToolResult{
-			Content: []ContentItem{{Type: "text", Text: fmt.Sprintf("Organization not found: %s", orgId)}},
-			IsError: true,
-		}, nil
+		return errorResult(fmt.Sprintf("Organization not found: %s", orgId)), nil
 	}
 
-	jsonData, err := json.MarshalIndent(org, "", "  ")
-	if err != nil {
-		return &CallToolResult{
-			Content: []ContentItem{{Type: "text", Text: fmt.Sprintf("Error marshaling organization data: %v", err)}},
-			IsError: true,
-		}, nil
-	}
-
-	return &CallToolResult{
-		Content: []ContentItem{{Type: "text", Text: string(jsonData)}},
-	}, nil
+	return marshalToCallResult(org)
 }
 
 // listOrganizations lists all organizations
 func (h *ToolHandler) listOrganizations(params map[string]interface{}) (*CallToolResult, error) {
-	owner := ""
-	if ownerParam, ok := params["owner"].(string); ok {
-		owner = ownerParam
-	}
+	owner := getOptionalStringParam(params, "owner")
 
 	orgs, err := object.GetOrganizations(owner)
 	if err != nil {
-		return &CallToolResult{
-			Content: []ContentItem{{Type: "text", Text: fmt.Sprintf("Error retrieving organizations: %v", err)}},
-			IsError: true,
-		}, nil
+		return errorResult(fmt.Sprintf("Error retrieving organizations: %v", err)), nil
 	}
 
-	jsonData, err := json.MarshalIndent(orgs, "", "  ")
-	if err != nil {
-		return &CallToolResult{
-			Content: []ContentItem{{Type: "text", Text: fmt.Sprintf("Error marshaling organizations data: %v", err)}},
-			IsError: true,
-		}, nil
-	}
-
-	return &CallToolResult{
-		Content: []ContentItem{{Type: "text", Text: string(jsonData)}},
-	}, nil
+	return marshalToCallResult(orgs)
 }
 
 // getApplication retrieves an application by ID
 func (h *ToolHandler) getApplication(params map[string]interface{}) (*CallToolResult, error) {
 	appId, ok := params["applicationId"].(string)
 	if !ok {
-		return &CallToolResult{
-			Content: []ContentItem{{Type: "text", Text: "Missing or invalid applicationId parameter"}},
-			IsError: true,
-		}, nil
+		return errorResult("Missing or invalid applicationId parameter"), nil
 	}
 
 	app, err := object.GetApplication(appId)
 	if err != nil {
-		return &CallToolResult{
-			Content: []ContentItem{{Type: "text", Text: fmt.Sprintf("Error retrieving application: %v", err)}},
-			IsError: true,
-		}, nil
+		return errorResult(fmt.Sprintf("Error retrieving application: %v", err)), nil
 	}
 
 	if app == nil {
-		return &CallToolResult{
-			Content: []ContentItem{{Type: "text", Text: fmt.Sprintf("Application not found: %s", appId)}},
-			IsError: true,
-		}, nil
+		return errorResult(fmt.Sprintf("Application not found: %s", appId)), nil
 	}
 
-	jsonData, err := json.MarshalIndent(app, "", "  ")
-	if err != nil {
-		return &CallToolResult{
-			Content: []ContentItem{{Type: "text", Text: fmt.Sprintf("Error marshaling application data: %v", err)}},
-			IsError: true,
-		}, nil
-	}
-
-	return &CallToolResult{
-		Content: []ContentItem{{Type: "text", Text: string(jsonData)}},
-	}, nil
+	return marshalToCallResult(app)
 }
 
 // listApplications lists all applications
 func (h *ToolHandler) listApplications(params map[string]interface{}) (*CallToolResult, error) {
-	owner := ""
-	if ownerParam, ok := params["owner"].(string); ok {
-		owner = ownerParam
-	}
+	owner := getOptionalStringParam(params, "owner")
 
 	apps, err := object.GetApplications(owner)
 	if err != nil {
-		return &CallToolResult{
-			Content: []ContentItem{{Type: "text", Text: fmt.Sprintf("Error retrieving applications: %v", err)}},
-			IsError: true,
-		}, nil
+		return errorResult(fmt.Sprintf("Error retrieving applications: %v", err)), nil
 	}
 
-	jsonData, err := json.MarshalIndent(apps, "", "  ")
-	if err != nil {
-		return &CallToolResult{
-			Content: []ContentItem{{Type: "text", Text: fmt.Sprintf("Error marshaling applications data: %v", err)}},
-			IsError: true,
-		}, nil
-	}
-
-	return &CallToolResult{
-		Content: []ContentItem{{Type: "text", Text: string(jsonData)}},
-	}, nil
+	return marshalToCallResult(apps)
 }
 
 // getRole retrieves a role by ID
 func (h *ToolHandler) getRole(params map[string]interface{}) (*CallToolResult, error) {
 	roleId, ok := params["roleId"].(string)
 	if !ok {
-		return &CallToolResult{
-			Content: []ContentItem{{Type: "text", Text: "Missing or invalid roleId parameter"}},
-			IsError: true,
-		}, nil
+		return errorResult("Missing or invalid roleId parameter"), nil
 	}
 
 	role, err := object.GetRole(roleId)
 	if err != nil {
-		return &CallToolResult{
-			Content: []ContentItem{{Type: "text", Text: fmt.Sprintf("Error retrieving role: %v", err)}},
-			IsError: true,
-		}, nil
+		return errorResult(fmt.Sprintf("Error retrieving role: %v", err)), nil
 	}
 
 	if role == nil {
-		return &CallToolResult{
-			Content: []ContentItem{{Type: "text", Text: fmt.Sprintf("Role not found: %s", roleId)}},
-			IsError: true,
-		}, nil
+		return errorResult(fmt.Sprintf("Role not found: %s", roleId)), nil
 	}
 
-	jsonData, err := json.MarshalIndent(role, "", "  ")
-	if err != nil {
-		return &CallToolResult{
-			Content: []ContentItem{{Type: "text", Text: fmt.Sprintf("Error marshaling role data: %v", err)}},
-			IsError: true,
-		}, nil
-	}
-
-	return &CallToolResult{
-		Content: []ContentItem{{Type: "text", Text: string(jsonData)}},
-	}, nil
+	return marshalToCallResult(role)
 }
 
 // listRoles lists all roles
 func (h *ToolHandler) listRoles(params map[string]interface{}) (*CallToolResult, error) {
-	owner := ""
-	if ownerParam, ok := params["owner"].(string); ok {
-		owner = ownerParam
-	}
+	owner := getOptionalStringParam(params, "owner")
 
 	roles, err := object.GetRoles(owner)
 	if err != nil {
-		return &CallToolResult{
-			Content: []ContentItem{{Type: "text", Text: fmt.Sprintf("Error retrieving roles: %v", err)}},
-			IsError: true,
-		}, nil
+		return errorResult(fmt.Sprintf("Error retrieving roles: %v", err)), nil
 	}
 
-	jsonData, err := json.MarshalIndent(roles, "", "  ")
-	if err != nil {
-		return &CallToolResult{
-			Content: []ContentItem{{Type: "text", Text: fmt.Sprintf("Error marshaling roles data: %v", err)}},
-			IsError: true,
-		}, nil
-	}
-
-	return &CallToolResult{
-		Content: []ContentItem{{Type: "text", Text: string(jsonData)}},
-	}, nil
+	return marshalToCallResult(roles)
 }

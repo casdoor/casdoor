@@ -396,6 +396,21 @@ curl -X POST https://your-casdoor-instance.com/mcp \
   }'
 ```
 
+## Example Client
+
+An example Go client is provided in the `examples/` directory. You can use it to test the MCP server:
+
+```bash
+# Run the example client
+cd mcp/examples
+go run example_client.go http://localhost:8000/mcp YOUR_TOKEN
+```
+
+The example client demonstrates:
+- Initializing the MCP connection
+- Listing available tools
+- Calling tools with parameters
+
 ## Security Considerations
 
 - The MCP endpoint requires admin authentication

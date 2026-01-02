@@ -292,7 +292,13 @@ func (s *Server) writeError(w http.ResponseWriter, id interface{}, code int, mes
 		},
 	}
 
-	responseData, _ := json.Marshal(response)
+	responseData, err := json.Marshal(response)
+	if err != nil {
+		// Fallback to a simple error message if marshaling fails
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(`{"jsonrpc":"2.0","error":{"code":-32603,"message":"Internal error"}}`))
+		return
+	}
 	w.WriteHeader(http.StatusOK)
 	w.Write(responseData)
 }
