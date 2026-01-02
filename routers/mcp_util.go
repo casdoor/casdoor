@@ -28,17 +28,17 @@ func getMcpObject(ctx *context.Context) (string, string, error) {
 	}
 
 	// Parse MCP request to determine tool name
-	type MCPRequest struct {
+	type McpRequest struct {
 		Method string          `json:"method"`
 		Params json.RawMessage `json:"params,omitempty"`
 	}
 
-	type MCPCallToolParams struct {
+	type McpCallToolParams struct {
 		Name      string                 `json:"name"`
 		Arguments map[string]interface{} `json:"arguments,omitempty"`
 	}
 
-	var mcpReq MCPRequest
+	var mcpReq McpRequest
 	err := json.Unmarshal(body, &mcpReq)
 	if err != nil {
 		return "", "", nil
@@ -49,7 +49,7 @@ func getMcpObject(ctx *context.Context) (string, string, error) {
 		return "", "", nil
 	}
 
-	var params MCPCallToolParams
+	var params McpCallToolParams
 	err = json.Unmarshal(mcpReq.Params, &params)
 	if err != nil {
 		return "", "", nil
@@ -100,16 +100,16 @@ func getMcpUrlPath(ctx *context.Context) string {
 		return "/api/mcp"
 	}
 
-	type MCPRequest struct {
+	type McpRequest struct {
 		Method string          `json:"method"`
 		Params json.RawMessage `json:"params,omitempty"`
 	}
 
-	type MCPCallToolParams struct {
+	type McpCallToolParams struct {
 		Name string `json:"name"`
 	}
 
-	var mcpReq MCPRequest
+	var mcpReq McpRequest
 	err := json.Unmarshal(body, &mcpReq)
 	if err != nil {
 		return "/api/mcp"
@@ -126,7 +126,7 @@ func getMcpUrlPath(ctx *context.Context) string {
 		return "/api/mcp"
 	}
 
-	var params MCPCallToolParams
+	var params McpCallToolParams
 	err = json.Unmarshal(mcpReq.Params, &params)
 	if err != nil {
 		return "/api/mcp"

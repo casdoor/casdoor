@@ -22,68 +22,68 @@ import (
 )
 
 // MCP JSON-RPC 2.0 structures
-type MCPRequest struct {
+type McpRequest struct {
 	JSONRPC string          `json:"jsonrpc"`
 	ID      interface{}     `json:"id"`
 	Method  string          `json:"method"`
 	Params  json.RawMessage `json:"params,omitempty"`
 }
 
-type MCPResponse struct {
+type McpResponse struct {
 	JSONRPC string      `json:"jsonrpc"`
 	ID      interface{} `json:"id"`
 	Result  interface{} `json:"result,omitempty"`
-	Error   *MCPError   `json:"error,omitempty"`
+	Error   *McpError   `json:"error,omitempty"`
 }
 
-type MCPError struct {
+type McpError struct {
 	Code    int         `json:"code"`
 	Message string      `json:"message"`
 	Data    interface{} `json:"data,omitempty"`
 }
 
-type MCPInitializeParams struct {
+type McpInitializeParams struct {
 	ProtocolVersion string                 `json:"protocolVersion"`
 	Capabilities    map[string]interface{} `json:"capabilities"`
-	ClientInfo      MCPImplementation      `json:"clientInfo"`
+	ClientInfo      McpImplementation      `json:"clientInfo"`
 }
 
-type MCPImplementation struct {
+type McpImplementation struct {
 	Name    string `json:"name"`
 	Version string `json:"version"`
 }
 
-type MCPInitializeResult struct {
+type McpInitializeResult struct {
 	ProtocolVersion string                `json:"protocolVersion"`
-	Capabilities    MCPServerCapabilities `json:"capabilities"`
-	ServerInfo      MCPImplementation     `json:"serverInfo"`
+	Capabilities    McpServerCapabilities `json:"capabilities"`
+	ServerInfo      McpImplementation     `json:"serverInfo"`
 }
 
-type MCPServerCapabilities struct {
+type McpServerCapabilities struct {
 	Tools map[string]interface{} `json:"tools,omitempty"`
 }
 
-type MCPListToolsResult struct {
-	Tools []MCPTool `json:"tools"`
+type McpListToolsResult struct {
+	Tools []McpTool `json:"tools"`
 }
 
-type MCPTool struct {
+type McpTool struct {
 	Name        string                 `json:"name"`
 	Description string                 `json:"description"`
 	InputSchema map[string]interface{} `json:"inputSchema"`
 }
 
-type MCPCallToolParams struct {
+type McpCallToolParams struct {
 	Name      string                 `json:"name"`
 	Arguments map[string]interface{} `json:"arguments,omitempty"`
 }
 
-type MCPCallToolResult struct {
-	Content []MCPContent `json:"content"`
+type McpCallToolResult struct {
+	Content []McpContent `json:"content"`
 	IsError bool         `json:"isError,omitempty"`
 }
 
-type MCPContent struct {
+type McpContent struct {
 	Type string `json:"type"`
 	Text string `json:"text"`
 }
@@ -95,7 +95,7 @@ type McpController struct {
 
 // SendMcpResponse sends a successful MCP response
 func (c *McpController) SendMcpResponse(id interface{}, result interface{}) {
-	resp := MCPResponse{
+	resp := McpResponse{
 		JSONRPC: "2.0",
 		ID:      id,
 		Result:  result,
@@ -106,10 +106,10 @@ func (c *McpController) SendMcpResponse(id interface{}, result interface{}) {
 
 // SendMcpError sends an MCP error response
 func (c *McpController) SendMcpError(id interface{}, code int, message string, data interface{}) {
-	resp := MCPResponse{
+	resp := McpResponse{
 		JSONRPC: "2.0",
 		ID:      id,
-		Error: &MCPError{
+		Error: &McpError{
 			Code:    code,
 			Message: message,
 			Data:    data,
@@ -119,10 +119,15 @@ func (c *McpController) SendMcpError(id interface{}, code int, message string, d
 	c.ServeJSON()
 }
 
+// sendInvalidParamsError sends an invalid params error
+func (c *McpController) sendInvalidParamsError(id interface{}, details string) {
+	c.SendMcpError(id, -32602, "Invalid params", details)
+}
+
 // SendToolResult sends a successful tool execution result
 func (c *McpController) SendToolResult(id interface{}, text string) {
-	result := MCPCallToolResult{
-		Content: []MCPContent{
+	result := McpCallToolResult{
+		Content: []McpContent{
 			{
 				Type: "text",
 				Text: text,
@@ -135,8 +140,8 @@ func (c *McpController) SendToolResult(id interface{}, text string) {
 
 // SendToolErrorResult sends a tool execution error result
 func (c *McpController) SendToolErrorResult(id interface{}, errorMsg string) {
-	result := MCPCallToolResult{
-		Content: []MCPContent{
+	result := McpCallToolResult{
+		Content: []McpContent{
 			{
 				Type: "text",
 				Text: errorMsg,
@@ -168,10 +173,10 @@ func FormatOperationResult(operation, resourceType string, affected bool) string
 // @Title HandleMcp
 // @Tag MCP API
 // @Description handle MCP (Model Context Protocol) requests
-// @Success 200 {object} MCPResponse The Response object
+// @Success 200 {object} McpResponse The Response object
 // @router /mcp [post]
 func (c *McpController) HandleMcp() {
-	var req MCPRequest
+	var req McpRequest
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &req)
 	if err != nil {
 		c.SendMcpError(nil, -32700, "Parse error", err.Error())
@@ -191,22 +196,22 @@ func (c *McpController) HandleMcp() {
 	}
 }
 
-func (c *McpController) handleInitialize(req MCPRequest) {
-	var params MCPInitializeParams
+func (c *McpController) handleInitialize(req McpRequest) {
+	var params McpInitializeParams
 	if req.Params != nil {
 		err := json.Unmarshal(req.Params, &params)
 		if err != nil {
-			c.SendMcpError(req.ID, -32602, "Invalid params", err.Error())
+			c.sendInvalidParamsError(req.ID, err.Error())
 			return
 		}
 	}
 
-	result := MCPInitializeResult{
+	result := McpInitializeResult{
 		ProtocolVersion: "2024-11-05",
-		Capabilities: MCPServerCapabilities{
+		Capabilities: McpServerCapabilities{
 			Tools: map[string]interface{}{},
 		},
-		ServerInfo: MCPImplementation{
+		ServerInfo: McpImplementation{
 			Name:    "Casdoor MCP Server",
 			Version: "1.0.0",
 		},
@@ -215,8 +220,8 @@ func (c *McpController) handleInitialize(req MCPRequest) {
 	c.SendMcpResponse(req.ID, result)
 }
 
-func (c *McpController) handleToolsList(req MCPRequest) {
-	tools := []MCPTool{
+func (c *McpController) handleToolsList(req McpRequest) {
+	tools := []McpTool{
 		{
 			Name:        "get_applications",
 			Description: "Get all applications for a specific owner",
@@ -293,33 +298,36 @@ func (c *McpController) handleToolsList(req MCPRequest) {
 		},
 	}
 
-	result := MCPListToolsResult{
+	result := McpListToolsResult{
 		Tools: tools,
 	}
 
 	c.SendMcpResponse(req.ID, result)
 }
 
-func (c *McpController) handleToolsCall(req MCPRequest) {
-	var params MCPCallToolParams
+func (c *McpController) handleToolsCall(req McpRequest) {
+	var params McpCallToolParams
 	err := json.Unmarshal(req.Params, &params)
 	if err != nil {
-		c.SendMcpError(req.ID, -32602, "Invalid params", err.Error())
+		c.sendInvalidParamsError(req.ID, err.Error())
 		return
 	}
+
+	// Convert ID to string for tool handlers
+	idStr := fmt.Sprintf("%v", req.ID)
 
 	// Route to the appropriate tool handler
 	switch params.Name {
 	case "get_applications":
-		c.handleGetApplicationsTool(req.ID, params.Arguments)
+		c.handleGetApplicationsTool(idStr, params.Arguments)
 	case "get_application":
-		c.handleGetApplicationTool(req.ID, params.Arguments)
+		c.handleGetApplicationTool(idStr, params.Arguments)
 	case "add_application":
-		c.handleAddApplicationTool(req.ID, params.Arguments)
+		c.handleAddApplicationTool(idStr, params.Arguments)
 	case "update_application":
-		c.handleUpdateApplicationTool(req.ID, params.Arguments)
+		c.handleUpdateApplicationTool(idStr, params.Arguments)
 	case "delete_application":
-		c.handleDeleteApplicationTool(req.ID, params.Arguments)
+		c.handleDeleteApplicationTool(idStr, params.Arguments)
 	default:
 		c.SendMcpError(req.ID, -32602, "Invalid tool name", fmt.Sprintf("Tool '%s' not found", params.Name))
 	}

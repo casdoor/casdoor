@@ -15,19 +15,19 @@
 package mcp
 
 import (
-	"encoding/json"
 	"fmt"
 
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/object"
+	"github.com/casdoor/casdoor/util"
 )
 
 // handleGetApplicationsTool handles the get_applications MCP tool
-func (c *McpController) handleGetApplicationsTool(id interface{}, args map[string]interface{}) {
+func (c *McpController) handleGetApplicationsTool(id string, args map[string]interface{}) {
 	userId := c.GetSessionUsername()
 	owner, ok := args["owner"].(string)
 	if !ok {
-		c.SendMcpError(id, -32602, "Invalid params", "Missing or invalid 'owner' parameter")
+		c.sendInvalidParamsError(id, "Missing or invalid 'owner' parameter")
 		return
 	}
 
@@ -38,21 +38,15 @@ func (c *McpController) handleGetApplicationsTool(id interface{}, args map[strin
 	}
 
 	maskedApps := object.GetMaskedApplications(applications, userId)
-	jsonData, err := json.MarshalIndent(maskedApps, "", "  ")
-	if err != nil {
-		c.SendToolErrorResult(id, err.Error())
-		return
-	}
-
-	c.SendToolResult(id, string(jsonData))
+	c.SendToolResult(id, util.StructToJsonFormatted(maskedApps))
 }
 
 // handleGetApplicationTool handles the get_application MCP tool
-func (c *McpController) handleGetApplicationTool(id interface{}, args map[string]interface{}) {
+func (c *McpController) handleGetApplicationTool(id string, args map[string]interface{}) {
 	userId := c.GetSessionUsername()
 	appId, ok := args["id"].(string)
 	if !ok {
-		c.SendMcpError(id, -32602, "Invalid params", "Missing or invalid 'id' parameter")
+		c.sendInvalidParamsError(id, "Missing or invalid 'id' parameter")
 		return
 	}
 
@@ -63,31 +57,19 @@ func (c *McpController) handleGetApplicationTool(id interface{}, args map[string
 	}
 
 	maskedApp := object.GetMaskedApplication(application, userId)
-	jsonData, err := json.MarshalIndent(maskedApp, "", "  ")
-	if err != nil {
-		c.SendToolErrorResult(id, err.Error())
-		return
-	}
-
-	c.SendToolResult(id, string(jsonData))
+	c.SendToolResult(id, util.StructToJsonFormatted(maskedApp))
 }
 
 // handleAddApplicationTool handles the add_application MCP tool
-func (c *McpController) handleAddApplicationTool(id interface{}, args map[string]interface{}) {
+func (c *McpController) handleAddApplicationTool(id string, args map[string]interface{}) {
 	appData, ok := args["application"].(map[string]interface{})
 	if !ok {
-		c.SendMcpError(id, -32602, "Invalid params", "Missing or invalid 'application' parameter")
-		return
-	}
-
-	jsonBytes, err := json.Marshal(appData)
-	if err != nil {
-		c.SendToolErrorResult(id, err.Error())
+		c.sendInvalidParamsError(id, "Missing or invalid 'application' parameter")
 		return
 	}
 
 	var application object.Application
-	err = json.Unmarshal(jsonBytes, &application)
+	err := util.JsonToStruct(util.StructToJson(appData), &application)
 	if err != nil {
 		c.SendToolErrorResult(id, err.Error())
 		return
@@ -119,28 +101,27 @@ func (c *McpController) handleAddApplicationTool(id interface{}, args map[string
 }
 
 // handleUpdateApplicationTool handles the update_application MCP tool
-func (c *McpController) handleUpdateApplicationTool(id interface{}, args map[string]interface{}) {
+func (c *McpController) handleUpdateApplicationTool(id string, args map[string]interface{}) {
 	appId, ok := args["id"].(string)
 	if !ok {
-		c.SendMcpError(id, -32602, "Invalid params", "Missing or invalid 'id' parameter")
+		c.sendInvalidParamsError(id, "Missing or invalid 'id' parameter")
 		return
 	}
 
 	appData, ok := args["application"].(map[string]interface{})
 	if !ok {
-		c.SendMcpError(id, -32602, "Invalid params", "Missing or invalid 'application' parameter")
+		c.sendInvalidParamsError(id, "Missing or invalid 'application' parameter")
 		return
 	}
 
-	jsonBytes, err := json.Marshal(appData)
+	var application object.Application
+	err := util.JsonToStruct(util.StructToJson(appData), &application)
 	if err != nil {
 		c.SendToolErrorResult(id, err.Error())
 		return
 	}
 
-	var application object.Application
-	err = json.Unmarshal(jsonBytes, &application)
-	if err != nil {
+	if err = object.CheckIpWhitelist(application.IpWhitelist, c.GetAcceptLanguage()); err != nil {
 		c.SendToolErrorResult(id, err.Error())
 		return
 	}
@@ -160,21 +141,15 @@ func (c *McpController) handleUpdateApplicationTool(id interface{}, args map[str
 }
 
 // handleDeleteApplicationTool handles the delete_application MCP tool
-func (c *McpController) handleDeleteApplicationTool(id interface{}, args map[string]interface{}) {
+func (c *McpController) handleDeleteApplicationTool(id string, args map[string]interface{}) {
 	appData, ok := args["application"].(map[string]interface{})
 	if !ok {
-		c.SendMcpError(id, -32602, "Invalid params", "Missing or invalid 'application' parameter")
-		return
-	}
-
-	jsonBytes, err := json.Marshal(appData)
-	if err != nil {
-		c.SendToolErrorResult(id, err.Error())
+		c.sendInvalidParamsError(id, "Missing or invalid 'application' parameter")
 		return
 	}
 
 	var application object.Application
-	err = json.Unmarshal(jsonBytes, &application)
+	err := util.JsonToStruct(util.StructToJson(appData), &application)
 	if err != nil {
 		c.SendToolErrorResult(id, err.Error())
 		return
