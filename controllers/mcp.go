@@ -464,7 +464,16 @@ func (c *ApiController) sendToolErrorResult(id interface{}, errorMsg string) {
 // formatOperationResult formats the result of CRUD operations in a clear, descriptive way
 func (c *ApiController) formatOperationResult(operation, resourceType string, affected bool) string {
 	if affected {
-		return fmt.Sprintf("Successfully %sd %s", operation, resourceType)
+		// Map operation to past tense
+		pastTense := operation + "d"
+		if operation == "add" {
+			pastTense = "added"
+		} else if operation == "update" {
+			pastTense = "updated"
+		} else if operation == "delete" {
+			pastTense = "deleted"
+		}
+		return fmt.Sprintf("Successfully %s %s", pastTense, resourceType)
 	}
 	return fmt.Sprintf("No changes were made to %s (may already exist or not found)", resourceType)
 }
