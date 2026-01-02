@@ -333,5 +333,7 @@ func InitAPI() {
 
 	web.Router("/scim/*", &controllers.RootController{}, "*:HandleScim")
 
+	web.Router("/api/mcp", &controllers.ApiController{}, "POST:HandleMCP")
+
 	web.Router("/api/faceid-signin-begin", &controllers.ApiController{}, "GET:FaceIDSigninBegin")
 }

@@ -100,6 +100,11 @@ func getObject(ctx *context.Context) (string, string, error) {
 	method := ctx.Request.Method
 	path := ctx.Request.URL.Path
 
+	// Special handling for MCP requests
+	if path == "/api/mcp" && method == http.MethodPost {
+		return getMCPObject(ctx)
+	}
+
 	if method == http.MethodGet {
 		if ctx.Request.URL.Path == "/api/get-policies" {
 			if ctx.Input.Query("id") == "/" {
@@ -176,6 +181,123 @@ func getObject(ctx *context.Context) (string, string, error) {
 	}
 }
 
+func getMCPObject(ctx *context.Context) (string, string, error) {
+	body := ctx.Input.RequestBody
+	if len(body) == 0 {
+		return "", "", nil
+	}
+
+	// Parse MCP request to determine tool name
+	type MCPRequest struct {
+		Method string          `json:"method"`
+		Params json.RawMessage `json:"params,omitempty"`
+	}
+
+	type MCPCallToolParams struct {
+		Name      string                 `json:"name"`
+		Arguments map[string]interface{} `json:"arguments,omitempty"`
+	}
+
+	var mcpReq MCPRequest
+	err := json.Unmarshal(body, &mcpReq)
+	if err != nil {
+		return "", "", nil
+	}
+
+	// Only extract object for tool calls
+	if mcpReq.Method != "tools/call" {
+		return "", "", nil
+	}
+
+	var params MCPCallToolParams
+	err = json.Unmarshal(mcpReq.Params, &params)
+	if err != nil {
+		return "", "", nil
+	}
+
+	// Extract owner/id from arguments based on tool
+	switch params.Name {
+	case "get_applications":
+		if owner, ok := params.Arguments["owner"].(string); ok {
+			return owner, "", nil
+		}
+	case "get_application", "update_application":
+		if id, ok := params.Arguments["id"].(string); ok {
+			return util.GetOwnerAndNameFromIdWithError(id)
+		}
+	case "add_application", "delete_application":
+		if appData, ok := params.Arguments["application"].(map[string]interface{}); ok {
+			if org, ok := appData["organization"].(string); ok {
+				if name, ok := appData["name"].(string); ok {
+					return org, name, nil
+				}
+				return org, "", nil
+			}
+			if owner, ok := appData["owner"].(string); ok {
+				if name, ok := appData["name"].(string); ok {
+					return owner, name, nil
+				}
+				return owner, "", nil
+			}
+		}
+	}
+
+	return "", "", nil
+}
+
+func getMCPUrlPath(ctx *context.Context) string {
+	body := ctx.Input.RequestBody
+	if len(body) == 0 {
+		return "/api/mcp"
+	}
+
+	type MCPRequest struct {
+		Method string          `json:"method"`
+		Params json.RawMessage `json:"params,omitempty"`
+	}
+
+	type MCPCallToolParams struct {
+		Name string `json:"name"`
+	}
+
+	var mcpReq MCPRequest
+	err := json.Unmarshal(body, &mcpReq)
+	if err != nil {
+		return "/api/mcp"
+	}
+
+	// Map initialize and tools/list to public endpoints
+	if mcpReq.Method == "initialize" || mcpReq.Method == "tools/list" {
+		return "/api/get-application" // Use a safe default for listing
+	}
+
+	if mcpReq.Method != "tools/call" {
+		return "/api/mcp"
+	}
+
+	var params MCPCallToolParams
+	err = json.Unmarshal(mcpReq.Params, &params)
+	if err != nil {
+		return "/api/mcp"
+	}
+
+	// Map MCP tool names to corresponding API paths
+	switch params.Name {
+	case "get_applications":
+		return "/api/get-applications"
+	case "get_application":
+		return "/api/get-application"
+	case "add_application":
+		return "/api/add-application"
+	case "update_application":
+		return "/api/update-application"
+	case "delete_application":
+		return "/api/delete-application"
+	default:
+		return "/api/mcp"
+	}
+}
+
 func getKeys(ctx *context.Context) (string, string) {
 	method := ctx.Request.Method
 
@@ -207,7 +329,12 @@ func willLog(subOwner string, subName string, method string, urlPath string, obj
 	return true
 }
 
-func getUrlPath(urlPath string) string {
+func getUrlPath(urlPath string, ctx *context.Context) string {
+	// Special handling for MCP requests
+	if urlPath == "/api/mcp" {
+		return getMCPUrlPath(ctx)
+	}
+
 	if strings.HasPrefix(urlPath, "/cas") && (strings.HasSuffix(urlPath, "/serviceValidate") || strings.HasSuffix(urlPath, "/proxy") || strings.HasSuffix(urlPath, "/proxyValidate") || strings.HasSuffix(urlPath, "/validate") || strings.HasSuffix(urlPath, "/p3/serviceValidate") || strings.HasSuffix(urlPath, "/p3/proxyValidate") || strings.HasSuffix(urlPath, "/samlValidate")) {
 		return "/cas"
 	}
@@ -234,7 +361,7 @@ func getUrlPath(urlPath string) string {
 func ApiFilter(ctx *context.Context) {
 	subOwner, subName := getSubject(ctx)
 	method := ctx.Request.Method
-	urlPath := getUrlPath(ctx.Request.URL.Path)
+	urlPath := getUrlPath(ctx.Request.URL.Path, ctx)
 
 	objOwner, objName := "", ""
 	if urlPath != "/api/get-app-login" && urlPath != "/api/get-resource" {
