@@ -983,7 +983,7 @@ func (c *ApiController) ImpersonateUser() {
 	// Get application (use target user's signup application if not specified)
 	var application *object.Application
 	if applicationName != "" {
-		application, err = object.GetApplication(fmt.Sprintf("admin/%s", applicationName))
+		application, err = object.GetApplication(util.GetId("admin", applicationName))
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
