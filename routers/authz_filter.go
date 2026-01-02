@@ -227,21 +227,30 @@ func getMCPObject(ctx *context.Context) (string, string, error) {
 		}
 	case "add_application", "delete_application":
 		if appData, ok := params.Arguments["application"].(map[string]interface{}); ok {
-			if org, ok := appData["organization"].(string); ok {
-				if name, ok := appData["name"].(string); ok {
-					return org, name, nil
-				}
-				return org, "", nil
-			}
-			if owner, ok := appData["owner"].(string); ok {
-				if name, ok := appData["name"].(string); ok {
-					return owner, name, nil
-				}
-				return owner, "", nil
-			}
+			return extractOwnerNameFromAppData(appData)
 		}
 	}
 
+	return "", "", nil
+}
+
+// extractOwnerNameFromAppData extracts owner and name from application data
+// Prioritizes organization field over owner field for consistency
+func extractOwnerNameFromAppData(appData map[string]interface{}) (string, string, error) {
+	// Try organization field first (used in application APIs)
+	if org, ok := appData["organization"].(string); ok {
+		if name, ok := appData["name"].(string); ok {
+			return org, name, nil
+		}
+		return org, "", nil
+	}
+	// Fall back to owner field
+	if owner, ok := appData["owner"].(string); ok {
+		if name, ok := appData["name"].(string); ok {
+			return owner, name, nil
+		}
+		return owner, "", nil
+	}
 	return "", "", nil
 }
 
@@ -267,8 +276,10 @@ func getMCPUrlPath(ctx *context.Context) string {
 	}
 
 	// Map initialize and tools/list to public endpoints
+	// These operations don't require special permissions beyond authentication
+	// We use /api/get-application as it's a read-only operation that authenticated users can access
 	if mcpReq.Method == "initialize" || mcpReq.Method == "tools/list" {
-		return "/api/get-application" // Use a safe default for listing
+		return "/api/get-application"
 	}
 
 	if mcpReq.Method != "tools/call" {

@@ -339,11 +339,7 @@ func (c *ApiController) handleAddApplicationTool(id interface{}, args map[string
 		return
 	}
 
-	result := "Unaffected"
-	if affected {
-		result = "Affected"
-	}
-	c.sendToolResult(id, fmt.Sprintf("Application added successfully: %s", result))
+	c.sendToolResult(id, c.formatOperationResult("add", "application", affected))
 }
 
 func (c *ApiController) handleUpdateApplicationTool(id interface{}, args map[string]interface{}) {
@@ -383,11 +379,7 @@ func (c *ApiController) handleUpdateApplicationTool(id interface{}, args map[str
 		return
 	}
 
-	result := "Unaffected"
-	if affected {
-		result = "Affected"
-	}
-	c.sendToolResult(id, fmt.Sprintf("Application updated successfully: %s", result))
+	c.sendToolResult(id, c.formatOperationResult("update", "application", affected))
 }
 
 func (c *ApiController) handleDeleteApplicationTool(id interface{}, args map[string]interface{}) {
@@ -416,11 +408,7 @@ func (c *ApiController) handleDeleteApplicationTool(id interface{}, args map[str
 		return
 	}
 
-	result := "Unaffected"
-	if affected {
-		result = "Affected"
-	}
-	c.sendToolResult(id, fmt.Sprintf("Application deleted successfully: %s", result))
+	c.sendToolResult(id, c.formatOperationResult("delete", "application", affected))
 }
 
 func (c *ApiController) sendMCPResponse(id interface{}, result interface{}) {
@@ -471,4 +459,12 @@ func (c *ApiController) sendToolErrorResult(id interface{}, errorMsg string) {
 		IsError: true,
 	}
 	c.sendMCPResponse(id, result)
+}
+
+// formatOperationResult formats the result of CRUD operations in a clear, descriptive way
+func (c *ApiController) formatOperationResult(operation, resourceType string, affected bool) string {
+	if affected {
+		return fmt.Sprintf("Successfully %sd %s", operation, resourceType)
+	}
+	return fmt.Sprintf("No changes were made to %s (may already exist or not found)", resourceType)
 }
