@@ -432,6 +432,77 @@ func GetCaptchaProviderByApplication(applicationId, isCurrentProvider, lang stri
 	return nil, nil
 }
 
+// shouldShowCaptchaByRule evaluates if CAPTCHA should be shown based on the provider item's rule
+func shouldShowCaptchaByRule(providerItem *ProviderItem, organization, username, clientIp string) (bool, error) {
+	switch providerItem.Rule {
+	case "Always":
+		return true, nil
+	case "Internet-Only":
+		return util.IsInternetIp(clientIp), nil
+	case "Dynamic":
+		// For Dynamic rule, check if user has failed signin attempts
+		if organization != "" && username != "" {
+			user, err := GetUserByFields(organization, username)
+			if err != nil {
+				return false, err
+			}
+			if user != nil {
+				failedSigninLimit, _, err := GetFailedSigninConfigByUser(user)
+				if err != nil {
+					return false, err
+				}
+				return user.SigninWrongTimes >= failedSigninLimit, nil
+			}
+		}
+		return false, nil
+	default:
+		return false, nil
+	}
+}
+
+// GetCaptchaProviderByApplicationWithRule gets the CAPTCHA provider and evaluates the rule
+// to determine if CAPTCHA should be shown. Returns nil if CAPTCHA should not be shown.
+func GetCaptchaProviderByApplicationWithRule(applicationId, isCurrentProvider, organization, username, clientIp, lang string) (*Provider, error) {
+	if isCurrentProvider == "true" {
+		return GetCaptchaProviderByOwnerName(applicationId, lang)
+	}
+
+	application, err := GetApplication(applicationId)
+	if err != nil {
+		return nil, err
+	}
+
+	if application == nil || len(application.Providers) == 0 {
+		return nil, fmt.Errorf(i18n.Translate(lang, "provider:Invalid application id"))
+	}
+
+	for _, providerItem := range application.Providers {
+		if providerItem.Provider == nil {
+			continue
+		}
+		if providerItem.Provider.Category == "Captcha" {
+			// For CAPTCHA providers, "None" means disabled (don't show CAPTCHA at all)
+			if providerItem.Rule == "None" || providerItem.Rule == "" {
+				return nil, nil
+			}
+
+			// Evaluate the rule to determine if CAPTCHA should be shown
+			shouldShow, err := shouldShowCaptchaByRule(providerItem, organization, username, clientIp)
+			if err != nil {
+				return nil, err
+			}
+
+			if !shouldShow {
+				return nil, nil
+			}
+
+			return GetCaptchaProviderByOwnerName(util.GetId(providerItem.Provider.Owner, providerItem.Provider.Name), lang)
+		}
+	}
+	return nil, nil
+}
+
+
 func GetFaceIdProviderByOwnerName(applicationId, lang string) (*Provider, error) {
 	owner, name, err := util.GetOwnerAndNameFromIdWithError(applicationId)
 	if err != nil {

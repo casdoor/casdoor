@@ -1353,6 +1353,8 @@ class LoginPage extends React.Component {
                 captchaValue={this.state.captchaValues}
                 useInlineCaptcha={this.isInlineCaptchaEnabled(application)}
                 refreshCaptcha={this.refreshInlineCaptcha}
+                username={this.state.username}
+                organization={application.organization}
               />
             </Form.Item>
           </div>
@@ -1382,6 +1384,8 @@ class LoginPage extends React.Component {
               captchaValue={this.state.captchaValues}
               useInlineCaptcha={this.isInlineCaptchaEnabled(application)}
               refreshCaptcha={this.refreshInlineCaptcha}
+              username={this.state.username}
+              organization={application.organization}
             />
           </Form.Item>
         </Col>

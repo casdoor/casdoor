@@ -662,8 +662,12 @@ func (c *ApiController) GetUserinfo2() {
 func (c *ApiController) GetCaptcha() {
 	applicationId := c.Ctx.Input.Query("applicationId")
 	isCurrentProvider := c.Ctx.Input.Query("isCurrentProvider")
+	organization := c.Ctx.Input.Query("organization")
+	username := c.Ctx.Input.Query("username")
 
-	captchaProvider, err := object.GetCaptchaProviderByApplication(applicationId, isCurrentProvider, c.GetAcceptLanguage())
+	clientIp := util.GetClientIpFromRequest(c.Ctx.Request)
+
+	captchaProvider, err := object.GetCaptchaProviderByApplicationWithRule(applicationId, isCurrentProvider, organization, username, clientIp, c.GetAcceptLanguage())
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
