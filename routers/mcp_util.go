@@ -21,6 +21,13 @@ import (
 	"github.com/casdoor/casdoor/util"
 )
 
+// applicationStub is a lightweight struct for extracting owner/name from application data
+type applicationStub struct {
+	Owner        string `json:"owner"`
+	Name         string `json:"name"`
+	Organization string `json:"organization"`
+}
+
 func getMcpObject(ctx *context.Context) (string, string, error) {
 	body := ctx.Input.RequestBody
 	if len(body) == 0 {
@@ -28,17 +35,37 @@ func getMcpObject(ctx *context.Context) (string, string, error) {
 	}
 
 	// Parse MCP request to determine tool name
-	type McpRequest struct {
+	type mcpRequest struct {
 		Method string          `json:"method"`
 		Params json.RawMessage `json:"params,omitempty"`
 	}
 
-	type McpCallToolParams struct {
-		Name      string                 `json:"name"`
-		Arguments map[string]interface{} `json:"arguments,omitempty"`
+	type mcpCallToolParams struct {
+		Name      string          `json:"name"`
+		Arguments json.RawMessage `json:"arguments,omitempty"`
 	}
 
-	var mcpReq McpRequest
+	type getApplicationsArgs struct {
+		Owner string `json:"owner"`
+	}
+
+	type getApplicationArgs struct {
+		Id string `json:"id"`
+	}
+
+	type addApplicationArgs struct {
+		Application applicationStub `json:"application"`
+	}
+
+	type updateApplicationArgs struct {
+		Id string `json:"id"`
+	}
+
+	type deleteApplicationArgs struct {
+		Application applicationStub `json:"application"`
+	}
+
+	var mcpReq mcpRequest
 	err := json.Unmarshal(body, &mcpReq)
 	if err != nil {
 		return "", "", nil
@@ -49,7 +76,7 @@ func getMcpObject(ctx *context.Context) (string, string, error) {
 		return "", "", nil
 	}
 
-	var params McpCallToolParams
+	var params mcpCallToolParams
 	err = json.Unmarshal(mcpReq.Params, &params)
 	if err != nil {
 		return "", "", nil
@@ -58,38 +85,45 @@ func getMcpObject(ctx *context.Context) (string, string, error) {
 	// Extract owner/id from arguments based on tool
 	switch params.Name {
 	case "get_applications":
-		if owner, ok := params.Arguments["owner"].(string); ok {
-			return owner, "", nil
+		var args getApplicationsArgs
+		if err := json.Unmarshal(params.Arguments, &args); err == nil {
+			return args.Owner, "", nil
 		}
-	case "get_application", "update_application":
-		if id, ok := params.Arguments["id"].(string); ok {
-			return util.GetOwnerAndNameFromIdWithError(id)
+	case "get_application":
+		var args getApplicationArgs
+		if err := json.Unmarshal(params.Arguments, &args); err == nil {
+			return util.GetOwnerAndNameFromIdWithError(args.Id)
 		}
-	case "add_application", "delete_application":
-		if appData, ok := params.Arguments["application"].(map[string]interface{}); ok {
-			return extractOwnerNameFromAppData(appData)
+	case "update_application":
+		var args updateApplicationArgs
+		if err := json.Unmarshal(params.Arguments, &args); err == nil {
+			return util.GetOwnerAndNameFromIdWithError(args.Id)
+		}
+	case "add_application":
+		var args addApplicationArgs
+		if err := json.Unmarshal(params.Arguments, &args); err == nil {
+			return extractOwnerNameFromAppStub(args.Application)
+		}
+	case "delete_application":
+		var args deleteApplicationArgs
+		if err := json.Unmarshal(params.Arguments, &args); err == nil {
+			return extractOwnerNameFromAppStub(args.Application)
 		}
 	}
 
 	return "", "", nil
 }
 
-// extractOwnerNameFromAppData extracts owner and name from application data
+// extractOwnerNameFromAppStub extracts owner and name from application stub
 // Prioritizes organization field over owner field for consistency
-func extractOwnerNameFromAppData(appData map[string]interface{}) (string, string, error) {
+func extractOwnerNameFromAppStub(app applicationStub) (string, string, error) {
 	// Try organization field first (used in application APIs)
-	if org, ok := appData["organization"].(string); ok {
-		if name, ok := appData["name"].(string); ok {
-			return org, name, nil
-		}
-		return org, "", nil
+	if app.Organization != "" {
+		return app.Organization, app.Name, nil
 	}
 	// Fall back to owner field
-	if owner, ok := appData["owner"].(string); ok {
-		if name, ok := appData["name"].(string); ok {
-			return owner, name, nil
-		}
-		return owner, "", nil
+	if app.Owner != "" {
+		return app.Owner, app.Name, nil
 	}
 	return "", "", nil
 }
@@ -100,16 +134,16 @@ func getMcpUrlPath(ctx *context.Context) string {
 		return "/api/mcp"
 	}
 
-	type McpRequest struct {
+	type mcpRequest struct {
 		Method string          `json:"method"`
 		Params json.RawMessage `json:"params,omitempty"`
 	}
 
-	type McpCallToolParams struct {
+	type mcpCallToolParams struct {
 		Name string `json:"name"`
 	}
 
-	var mcpReq McpRequest
+	var mcpReq mcpRequest
 	err := json.Unmarshal(body, &mcpReq)
 	if err != nil {
 		return "/api/mcp"
@@ -126,7 +160,7 @@ func getMcpUrlPath(ctx *context.Context) string {
 		return "/api/mcp"
 	}
 
-	var params McpCallToolParams
+	var params mcpCallToolParams
 	err = json.Unmarshal(mcpReq.Params, &params)
 	if err != nil {
 		return "/api/mcp"

@@ -19,6 +19,7 @@ import (
 	"fmt"
 
 	"github.com/beego/beego/v2/server/web"
+	"github.com/casdoor/casdoor/object"
 )
 
 // MCP JSON-RPC 2.0 structures
@@ -74,8 +75,30 @@ type McpTool struct {
 }
 
 type McpCallToolParams struct {
-	Name      string                 `json:"name"`
-	Arguments map[string]interface{} `json:"arguments,omitempty"`
+	Name      string          `json:"name"`
+	Arguments json.RawMessage `json:"arguments,omitempty"`
+}
+
+// Tool-specific argument structs
+type GetApplicationsArgs struct {
+	Owner string `json:"owner"`
+}
+
+type GetApplicationArgs struct {
+	Id string `json:"id"`
+}
+
+type AddApplicationArgs struct {
+	Application object.Application `json:"application"`
+}
+
+type UpdateApplicationArgs struct {
+	Id          string             `json:"id"`
+	Application object.Application `json:"application"`
+}
+
+type DeleteApplicationArgs struct {
+	Application object.Application `json:"application"`
 }
 
 type McpCallToolResult struct {
@@ -319,15 +342,40 @@ func (c *McpController) handleToolsCall(req McpRequest) {
 	// Route to the appropriate tool handler
 	switch params.Name {
 	case "get_applications":
-		c.handleGetApplicationsTool(idStr, params.Arguments)
+		var args GetApplicationsArgs
+		if err := json.Unmarshal(params.Arguments, &args); err != nil {
+			c.sendInvalidParamsError(req.ID, err.Error())
+			return
+		}
+		c.handleGetApplicationsTool(idStr, args)
 	case "get_application":
-		c.handleGetApplicationTool(idStr, params.Arguments)
+		var args GetApplicationArgs
+		if err := json.Unmarshal(params.Arguments, &args); err != nil {
+			c.sendInvalidParamsError(req.ID, err.Error())
+			return
+		}
+		c.handleGetApplicationTool(idStr, args)
 	case "add_application":
-		c.handleAddApplicationTool(idStr, params.Arguments)
+		var args AddApplicationArgs
+		if err := json.Unmarshal(params.Arguments, &args); err != nil {
+			c.sendInvalidParamsError(req.ID, err.Error())
+			return
+		}
+		c.handleAddApplicationTool(idStr, args)
 	case "update_application":
-		c.handleUpdateApplicationTool(idStr, params.Arguments)
+		var args UpdateApplicationArgs
+		if err := json.Unmarshal(params.Arguments, &args); err != nil {
+			c.sendInvalidParamsError(req.ID, err.Error())
+			return
+		}
+		c.handleUpdateApplicationTool(idStr, args)
 	case "delete_application":
-		c.handleDeleteApplicationTool(idStr, params.Arguments)
+		var args DeleteApplicationArgs
+		if err := json.Unmarshal(params.Arguments, &args); err != nil {
+			c.sendInvalidParamsError(req.ID, err.Error())
+			return
+		}
+		c.handleDeleteApplicationTool(idStr, args)
 	default:
 		c.SendMcpError(req.ID, -32602, "Invalid tool name", fmt.Sprintf("Tool '%s' not found", params.Name))
 	}
