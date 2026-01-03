@@ -190,7 +190,7 @@
     "Phone number is invalid in your region %s": "Numer telefonu jest nieprawidłowy w twoim regionie %s",
     "The verification code has already been used!": "Kod weryfikacyjny został już wykorzystany!",
     "The verification code has not been sent yet!": "Kod weryfikacyjny nie został jeszcze wysłany!",
-    "Turing test failed.": "Test Turinga nie powiódł się.",
+    "Turing test failed.": "Test Turinga oblany.",
     "Unable to get the email modify rule.": "Nie można pobrać reguły modyfikacji email.",
     "Unable to get the phone modify rule.": "Nie można pobrać reguły modyfikacji telefonu.",
     "Unknown type": "Nieznany typ",
