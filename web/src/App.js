@@ -29,6 +29,7 @@ import EntryPage from "./EntryPage";
 import * as AuthBackend from "./auth/AuthBackend";
 import AuthCallback from "./auth/AuthCallback";
 import SamlCallback from "./auth/SamlCallback";
+import TelegramLogin from "./auth/TelegramLogin";
 import i18next from "i18next";
 import {withTranslation} from "react-i18next";
 const ManagementPage = lazy(() => import("./ManagementPage"));
@@ -605,6 +606,7 @@ class App extends Component {
                     <Switch>
                       <Route exact path="/callback" render={(props) => <AuthCallback {...props} {...this.props} application={this.state.application} onLoginSuccess={(redirectUrl) => {this.onLoginSuccess(redirectUrl);}} />} />
                       <Route exact path="/callback/saml" render={(props) => <SamlCallback {...props} {...this.props} application={this.state.application} onLoginSuccess={(redirectUrl) => {this.onLoginSuccess(redirectUrl);}} />} />
+                      <Route exact path="/telegram-login" render={(props) => <TelegramLogin {...props} {...this.props} />} />
                       <Route path="" render={() => <Result status="404" title="404 NOT FOUND" subTitle={i18next.t("general:Sorry, the page you visited does not exist.")}
                         extra={<a href="/"><Button type="primary">{i18next.t("general:Back Home")}</Button></a>} />} />
                     </Switch>
