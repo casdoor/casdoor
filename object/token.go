@@ -261,7 +261,7 @@ func GetTokensBySessionIds(sessionIds []string) ([]*Token, error) {
 	// This limit should be enforced at the API level, but we add it here as a safety measure
 	maxSessionIds := 100
 	if len(sessionIds) > maxSessionIds {
-		return nil, fmt.Errorf("too many session IDs: maximum allowed is %d", maxSessionIds)
+		return nil, fmt.Errorf("Too many session IDs. Maximum allowed: %d", maxSessionIds)
 	}
 
 	tokens := []*Token{}
