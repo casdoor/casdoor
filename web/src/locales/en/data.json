@@ -587,6 +587,7 @@
     "Last Sync": "Last Sync",
     "Search Filter": "Search Filter",
     "Search Filter - Tooltip": "LDAP search filter",
+    "Search by name, email or display name": "Search by name, email or display name",
     "Server": "Server",
     "Server host": "Server host",
     "Server host - Tooltip": "LDAP server address",

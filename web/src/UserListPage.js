@@ -14,8 +14,9 @@
 
 import React from "react";
 import {Link} from "react-router-dom";
-import {Button, Modal, Space, Switch, Table, Upload} from "antd";
+import {Button, Input, Modal, Space, Switch, Table, Upload} from "antd";
 import {UploadOutlined} from "@ant-design/icons";
+
 import moment from "moment";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as Setting from "./Setting";
@@ -32,6 +33,7 @@ class UserListPage extends BaseListPage {
     this.state = {
       ...this.state,
       organization: null,
+      globalSearchValue: "",
     };
   }
 
@@ -188,6 +190,24 @@ class UserListPage extends BaseListPage {
       });
   }
 
+  handleGlobalSearch = (value) => {
+    this.setState({globalSearchValue: value});
+    if (value) {
+      this.fetch({
+        searchText: value,
+        searchedColumn: "nameOrEmailOrDisplayName",
+        pagination: {...this.state.pagination, current: 1},
+      });
+    } else {
+      this.fetch({
+        searchText: "",
+        searchedColumn: "",
+        pagination: {...this.state.pagination, current: 1},
+      });
+    }
+  };
+
+
   renderUpload() {
     const uploadThis = this;
     const props = {
@@ -267,6 +287,28 @@ class UserListPage extends BaseListPage {
       </>
     );
   }
+
+  renderGlobalSearch() {
+    const {Search} = Input;
+    return (
+      <div style={{marginBottom: 16}}>
+        <Search
+          placeholder={i18next.t("user:Search by name, email or display name")}
+          allowClear
+          enterButton={i18next.t("general:Search")}
+          size="large"
+          style={{maxWidth: 600}}
+          onSearch={this.handleGlobalSearch}
+          onChange={(e) => {
+            if (!e.target.value) {
+              this.handleGlobalSearch("");
+            }
+          }}
+        />
+      </div>
+    );
+  }
+
 
   renderTable(users) {
     const columns = [
@@ -568,6 +610,7 @@ class UserListPage extends BaseListPage {
 
     return (
       <div>
+        {this.renderGlobalSearch()}
         <Table scroll={{x: "max-content"}} columns={filteredColumns} dataSource={users} rowKey={(record) => `${record.owner}/${record.name}`} size="middle" bordered pagination={paginationProps}
           title={() => (
             <div>
