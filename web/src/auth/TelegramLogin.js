@@ -31,7 +31,7 @@ class TelegramLogin extends React.Component {
     };
   }
 
-  UNSAFE_componentWillMount() {
+  componentDidMount() {
     const params = new URLSearchParams(this.props.location.search);
     const state = params.get("state");
     const queryString = Util.getQueryParamsFromState(state);
@@ -73,6 +73,8 @@ class TelegramLogin extends React.Component {
     }
 
     // Create and load the Telegram widget script
+    // Note: We load from official Telegram domain over HTTPS for security.
+    // SRI is not used as Telegram doesn't provide integrity hashes and the script version may change.
     const script = document.createElement("script");
     script.src = "https://telegram.org/js/telegram-widget.js?22";
     script.setAttribute("data-telegram-login", this.state.botUsername);
