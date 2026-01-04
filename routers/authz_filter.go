@@ -143,17 +143,16 @@ func getObject(ctx *context.Context) (string, string, error) {
 			}
 		}
 
-		if path == "/api/place-order" {
-			productId := ctx.Input.Query("productId")
-			if productId != "" {
-				return util.GetOwnerAndNameFromIdWithError(productId)
+		if path == "/api/place-order" || path == "/api/pay-order" || path == "/api/cancel-order" {
+			var paramName string
+			if path == "/api/place-order" {
+				paramName = "productId"
+			} else {
+				paramName = "id"
 			}
-		}
-
-		if path == "/api/pay-order" || path == "/api/cancel-order" {
-			id := ctx.Input.Query("id")
-			if id != "" {
-				return util.GetOwnerAndNameFromIdWithError(id)
+			paramValue := ctx.Input.Query(paramName)
+			if paramValue != "" {
+				return util.GetOwnerAndNameFromIdWithError(paramValue)
 			}
 		}
 
