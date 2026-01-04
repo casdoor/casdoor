@@ -28,6 +28,7 @@ import (
 	"strings"
 	"time"
 	"unicode"
+	"unicode/utf8"
 
 	"github.com/google/uuid"
 	"github.com/nyaruka/phonenumbers"
@@ -392,4 +393,37 @@ func StringToInterfaceArray2d(arrays [][]string) [][]interface{} {
 		interfaceArrays = append(interfaceArrays, interfaceArray)
 	}
 	return interfaceArrays
+}
+
+// SanitizeUTF8String ensures a string contains only valid UTF-8 characters.
+// Invalid UTF-8 sequences are replaced with the Unicode replacement character (U+FFFD).
+// This is useful for handling data from external sources like LDAP/Active Directory
+// that may contain binary or malformed text data.
+func SanitizeUTF8String(s string) string {
+	if utf8.ValidString(s) {
+		return s
+	}
+	// Use strings.ToValidUTF8 to replace invalid sequences with replacement character
+	return strings.ToValidUTF8(s, "\uFFFD")
+}
+
+// FormatADObjectGUID converts Active Directory objectGUID binary data to a string UUID.
+// Active Directory stores objectGUID as a 16-byte binary value that needs special formatting.
+// The byte order follows Microsoft's GUID structure: little-endian for the first three groups,
+// big-endian for the last two groups.
+func FormatADObjectGUID(guidBytes []byte) string {
+	if len(guidBytes) != 16 {
+		// If not 16 bytes, return empty string or could return hex encoding
+		return ""
+	}
+
+	// Microsoft GUID format: Data1 (4 bytes, little-endian), Data2 (2 bytes, little-endian),
+	// Data3 (2 bytes, little-endian), Data4 (8 bytes, big-endian)
+	return fmt.Sprintf("%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x",
+		guidBytes[3], guidBytes[2], guidBytes[1], guidBytes[0], // Data1 (little-endian)
+		guidBytes[5], guidBytes[4], // Data2 (little-endian)
+		guidBytes[7], guidBytes[6], // Data3 (little-endian)
+		guidBytes[8], guidBytes[9], // Data4 (big-endian)
+		guidBytes[10], guidBytes[11], guidBytes[12], guidBytes[13], guidBytes[14], guidBytes[15],
+	)
 }

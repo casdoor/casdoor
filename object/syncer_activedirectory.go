@@ -197,26 +197,38 @@ func (p *ActiveDirectorySyncerProvider) adEntryToOriginalUser(entry *goldap.Entr
 		Groups:     []string{},
 	}
 
-	// Get basic attributes
-	sAMAccountName := entry.GetAttributeValue("sAMAccountName")
-	userPrincipalName := entry.GetAttributeValue("userPrincipalName")
-	displayName := entry.GetAttributeValue("displayName")
-	givenName := entry.GetAttributeValue("givenName")
-	sn := entry.GetAttributeValue("sn")
-	mail := entry.GetAttributeValue("mail")
-	telephoneNumber := entry.GetAttributeValue("telephoneNumber")
-	mobile := entry.GetAttributeValue("mobile")
-	title := entry.GetAttributeValue("title")
-	department := entry.GetAttributeValue("department")
-	company := entry.GetAttributeValue("company")
-	streetAddress := entry.GetAttributeValue("streetAddress")
-	city := entry.GetAttributeValue("l")
-	state := entry.GetAttributeValue("st")
-	postalCode := entry.GetAttributeValue("postalCode")
-	country := entry.GetAttributeValue("co")
-	objectGUID := entry.GetAttributeValue("objectGUID")
-	whenCreated := entry.GetAttributeValue("whenCreated")
-	userAccountControlStr := entry.GetAttributeValue("userAccountControl")
+	// Helper function to get and sanitize text attributes
+	getTextAttribute := func(attrName string) string {
+		value := entry.GetAttributeValue(attrName)
+		return util.SanitizeUTF8String(value)
+	}
+
+	// Get basic attributes with UTF-8 sanitization
+	sAMAccountName := getTextAttribute("sAMAccountName")
+	userPrincipalName := getTextAttribute("userPrincipalName")
+	displayName := getTextAttribute("displayName")
+	givenName := getTextAttribute("givenName")
+	sn := getTextAttribute("sn")
+	mail := getTextAttribute("mail")
+	telephoneNumber := getTextAttribute("telephoneNumber")
+	mobile := getTextAttribute("mobile")
+	title := getTextAttribute("title")
+	department := getTextAttribute("department")
+	company := getTextAttribute("company")
+	streetAddress := getTextAttribute("streetAddress")
+	city := getTextAttribute("l")
+	state := getTextAttribute("st")
+	postalCode := getTextAttribute("postalCode")
+	country := getTextAttribute("co")
+	whenCreated := getTextAttribute("whenCreated")
+	userAccountControlStr := getTextAttribute("userAccountControl")
+
+	// Get objectGUID as binary data and convert to string UUID
+	var objectGUID string
+	guidBytes := entry.GetRawAttributeValue("objectGUID")
+	if len(guidBytes) > 0 {
+		objectGUID = util.FormatADObjectGUID(guidBytes)
+	}
 
 	// Set user fields
 	// Use sAMAccountName as the primary username

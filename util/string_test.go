@@ -227,3 +227,93 @@ func TestParseId(t *testing.T) {
 		})
 	}
 }
+
+func TestSanitizeUTF8String(t *testing.T) {
+	tests := []struct {
+		name     string
+		input    string
+		expected string
+	}{
+		{
+			name:     "Valid UTF-8 string",
+			input:    "Hello World",
+			expected: "Hello World",
+		},
+		{
+			name:     "Valid UTF-8 with unicode",
+			input:    "你好世界",
+			expected: "你好世界",
+		},
+		{
+			name:  "Invalid UTF-8 sequence",
+			input: "Hello\xe7\xe8\x17World",
+			// strings.ToValidUTF8 replaces invalid sequences, not each byte
+			expected: "Hello�\x17World",
+		},
+		{
+			name:     "Empty string",
+			input:    "",
+			expected: "",
+		},
+		{
+			name:  "Only invalid bytes",
+			input: "\xe7\xe8\x17",
+			// strings.ToValidUTF8 replaces invalid sequences, not each byte
+			expected: "�\x17",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := SanitizeUTF8String(tt.input)
+			if result != tt.expected {
+				t.Errorf("SanitizeUTF8String(%q) = %q, want %q", tt.input, result, tt.expected)
+			}
+		})
+	}
+}
+
+func TestFormatADObjectGUID(t *testing.T) {
+	tests := []struct {
+		name     string
+		input    []byte
+		expected string
+	}{
+		{
+			name: "Valid 16-byte GUID",
+			// Example GUID: {01234567-89ab-cdef-0123-456789abcdef}
+			// In AD binary format (little-endian for first 3 groups)
+			input:    []byte{0x67, 0x45, 0x23, 0x01, 0xab, 0x89, 0xef, 0xcd, 0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef},
+			expected: "01234567-89ab-cdef-0123-456789abcdef",
+		},
+		{
+			name:     "Empty bytes",
+			input:    []byte{},
+			expected: "",
+		},
+		{
+			name:     "Too few bytes",
+			input:    []byte{0x01, 0x02, 0x03},
+			expected: "",
+		},
+		{
+			name:     "Too many bytes",
+			input:    []byte{0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x10, 0x11},
+			expected: "",
+		},
+		{
+			name:     "All zeros",
+			input:    []byte{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+			expected: "00000000-0000-0000-0000-000000000000",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := FormatADObjectGUID(tt.input)
+			if result != tt.expected {
+				t.Errorf("FormatADObjectGUID() = %q, want %q", result, tt.expected)
+			}
+		})
+	}
+}
