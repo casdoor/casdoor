@@ -488,14 +488,46 @@ func (c *ApiController) IntrospectToken() {
 // @Success 200 {object} controllers.Response The Response object
 // @router /get-tokens-by-session-ids [get]
 func (c *ApiController) GetTokensBySessionIds() {
+	// Check authentication - only authenticated users can query tokens
+	user, ok := c.RequireSignedInUser()
+	if !ok {
+		return
+	}
+
+	// Only allow admins or the token owner to query tokens
+	if !c.IsAdmin() {
+		c.ResponseError(c.T("auth:Unauthorized operation"))
+		return
+	}
+
 	sessionIdsStr := c.Ctx.Input.Query("sessionIds")
 	if sessionIdsStr == "" {
 		c.ResponseError(c.T("general:Missing parameter") + ": sessionIds")
 		return
 	}
 
-	// Parse comma-separated sessionIds
-	sessionIds := strings.Split(sessionIdsStr, ",")
+	// Parse comma-separated sessionIds and trim whitespace
+	sessionIdsParts := strings.Split(sessionIdsStr, ",")
+	sessionIds := make([]string, 0, len(sessionIdsParts))
+	for _, id := range sessionIdsParts {
+		trimmed := strings.TrimSpace(id)
+		if trimmed != "" {
+			sessionIds = append(sessionIds, trimmed)
+		}
+	}
+
+	// Validate we have at least one session ID after trimming
+	if len(sessionIds) == 0 {
+		c.ResponseError(c.T("general:Missing parameter") + ": sessionIds")
+		return
+	}
+
+	// Limit the number of session IDs to prevent abuse
+	maxSessionIds := 100
+	if len(sessionIds) > maxSessionIds {
+		c.ResponseError(fmt.Sprintf("Too many session IDs. Maximum allowed: %d", maxSessionIds))
+		return
+	}
 
 	tokens, err := object.GetTokensBySessionIds(sessionIds)
 	if err != nil {
@@ -506,6 +538,11 @@ func (c *ApiController) GetTokensBySessionIds() {
 	// Return masked tokens (without sensitive data)
 	maskedTokens := make([]map[string]interface{}, 0, len(tokens))
 	for _, token := range tokens {
+		// Additional authorization check: ensure user can access these tokens
+		if !c.IsGlobalAdmin() && user.Owner != token.Organization {
+			continue // Skip tokens from other organizations
+		}
+
 		maskedToken := map[string]interface{}{
 			"owner":            token.Owner,
 			"name":             token.Name,

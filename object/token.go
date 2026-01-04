@@ -238,6 +238,11 @@ func ExpireTokenByUser(owner, username string) (bool, error) {
 
 // GetTokensBySessionId retrieves all tokens associated with a specific session ID
 func GetTokensBySessionId(sessionId string) ([]*Token, error) {
+	// Early return for empty sessionId to avoid unnecessary database queries
+	if sessionId == "" {
+		return []*Token{}, nil
+	}
+
 	tokens := []*Token{}
 	err := ormer.Engine.Where("session_id = ?", sessionId).Find(&tokens)
 	if err != nil {
@@ -250,6 +255,13 @@ func GetTokensBySessionId(sessionId string) ([]*Token, error) {
 func GetTokensBySessionIds(sessionIds []string) ([]*Token, error) {
 	if len(sessionIds) == 0 {
 		return []*Token{}, nil
+	}
+
+	// Limit the number of session IDs to prevent inefficient queries
+	// This limit should be enforced at the API level, but we add it here as a safety measure
+	maxSessionIds := 100
+	if len(sessionIds) > maxSessionIds {
+		return nil, fmt.Errorf("too many session IDs: maximum allowed is %d", maxSessionIds)
 	}
 
 	tokens := []*Token{}
