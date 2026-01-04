@@ -120,13 +120,27 @@ class AuthCallback extends React.Component {
     if (telegramId !== null && code === null) {
       const telegramAuthData = {
         id: parseInt(telegramId),
-        first_name: params.get("first_name") || "",
-        last_name: params.get("last_name") || "",
-        username: params.get("username") || "",
-        photo_url: params.get("photo_url") || "",
-        auth_date: params.get("auth_date") || "",
-        hash: params.get("hash") || "",
       };
+      
+      // Required fields
+      const hash = params.get("hash");
+      const authDate = params.get("auth_date");
+      if (hash) {
+        telegramAuthData.hash = hash;
+      }
+      if (authDate) {
+        telegramAuthData.auth_date = authDate;
+      }
+      
+      // Optional fields - only include if present
+      const optionalFields = ["first_name", "last_name", "username", "photo_url"];
+      optionalFields.forEach(field => {
+        const value = params.get(field);
+        if (value !== null && value !== "") {
+          telegramAuthData[field] = value;
+        }
+      });
+      
       code = JSON.stringify(telegramAuthData);
     }
 

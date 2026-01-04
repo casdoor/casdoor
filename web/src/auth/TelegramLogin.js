@@ -17,6 +17,7 @@ import {Card} from "antd";
 import {withRouter} from "react-router-dom";
 import * as Util from "./Util";
 import * as Setting from "../Setting";
+import * as ProviderBackend from "../backend/ProviderBackend";
 import i18next from "i18next";
 
 class TelegramLogin extends React.Component {
@@ -40,8 +41,9 @@ class TelegramLogin extends React.Component {
     const providerName = innerParams.get("provider");
     
     // Get provider info to retrieve bot username
-    Setting.getProvider("admin", providerName).then((provider) => {
-      if (provider) {
+    ProviderBackend.getProvider("admin", providerName).then((res) => {
+      if (res.status === "ok") {
+        const provider = res.data;
         const redirectOrigin = window.location.origin;
         const redirectUri = `${redirectOrigin}/callback`;
         
@@ -53,6 +55,8 @@ class TelegramLogin extends React.Component {
         }, () => {
           this.loadTelegramWidget();
         });
+      } else {
+        Setting.showMessage("error", `Failed to get provider: ${res.msg}`);
       }
     });
   }
