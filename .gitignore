@@ -35,3 +35,7 @@ server
 
 # include helm-chart
 !manifests/casdoor
+
+# Test generated keys
+object/token_jwt_key.key
+object/token_jwt_key.pem
