@@ -584,6 +584,7 @@
     "Last Sync": "最近同步",
     "Search Filter": "搜索过滤",
     "Search Filter - Tooltip": "LDAP搜索过滤器",
+    "Search by name, email or display name": "按姓名、邮箱或显示名称搜索",
     "Server": "服务器",
     "Server host": "域名",
     "Server host - Tooltip": "LDAP服务器地址",

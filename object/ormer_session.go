@@ -22,6 +22,11 @@ import (
 	"github.com/xorm-io/xorm"
 )
 
+const (
+	// MultiFieldSearchField is the special field name used to search across name, email, and display_name
+	MultiFieldSearchField = "nameOrEmailOrDisplayName"
+)
+
 func GetSession(owner string, offset, limit int, field, value, sortField, sortOrder string) *xorm.Session {
 	session := ormer.Engine.Prepare()
 	if offset != -1 && limit != -1 {
@@ -31,7 +36,11 @@ func GetSession(owner string, offset, limit int, field, value, sortField, sortOr
 		session = session.And("owner=?", owner)
 	}
 	if field != "" && value != "" {
-		if util.FilterField(field) {
+		// Support searching across multiple fields for name/email filter
+		if field == MultiFieldSearchField {
+			searchPattern := fmt.Sprintf("%%%s%%", value)
+			session = session.And("(name like ? OR email like ? OR display_name like ?)", searchPattern, searchPattern, searchPattern)
+		} else if util.FilterField(field) {
 			session = session.And(fmt.Sprintf("%s like ?", util.SnakeString(field)), fmt.Sprintf("%%%s%%", value))
 		}
 	}
@@ -59,7 +68,15 @@ func GetSessionForUser(owner string, offset, limit int, field, value, sortField,
 		}
 	}
 	if field != "" && value != "" {
-		if util.FilterField(field) {
+		// Support searching across multiple fields for name/email filter
+		if field == MultiFieldSearchField {
+			searchPattern := fmt.Sprintf("%%%s%%", value)
+			if offset != -1 {
+				session = session.And("(a.name like ? OR a.email like ? OR a.display_name like ?)", searchPattern, searchPattern, searchPattern)
+			} else {
+				session = session.And("(name like ? OR email like ? OR display_name like ?)", searchPattern, searchPattern, searchPattern)
+			}
+		} else if util.FilterField(field) {
 			if offset != -1 {
 				field = fmt.Sprintf("a.%s", field)
 			}
