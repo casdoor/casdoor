@@ -97,6 +97,11 @@ func TestVerifySsoLogoutSignature(t *testing.T) {
 }
 
 func TestSsoLogoutNotificationStructure(t *testing.T) {
+	sessionTokenMap := map[string][]string{
+		"session-1": {"hash-1"},
+		"session-2": {"hash-2"},
+	}
+
 	notification := SsoLogoutNotification{
 		Owner:             "test-org",
 		Name:              "test-user",
@@ -107,6 +112,7 @@ func TestSsoLogoutNotificationStructure(t *testing.T) {
 		Event:             "sso-logout",
 		SessionIds:        []string{"session-1", "session-2"},
 		AccessTokenHashes: []string{"hash-1", "hash-2"},
+		SessionTokenMap:   sessionTokenMap,
 		Nonce:             "nonce-123",
 		Timestamp:         1699900000,
 		Signature:         "sig-123",
@@ -127,6 +133,15 @@ func TestSsoLogoutNotificationStructure(t *testing.T) {
 	}
 	if len(notification.AccessTokenHashes) != 2 {
 		t.Errorf("AccessTokenHashes count mismatch, got %d", len(notification.AccessTokenHashes))
+	}
+	if len(notification.SessionTokenMap) != 2 {
+		t.Errorf("SessionTokenMap count mismatch, got %d", len(notification.SessionTokenMap))
+	}
+	if len(notification.SessionTokenMap["session-1"]) != 1 {
+		t.Errorf("SessionTokenMap[session-1] should have 1 token, got %d", len(notification.SessionTokenMap["session-1"]))
+	}
+	if notification.SessionTokenMap["session-1"][0] != "hash-1" {
+		t.Errorf("SessionTokenMap[session-1][0] should be hash-1, got %s", notification.SessionTokenMap["session-1"][0])
 	}
 }
 
