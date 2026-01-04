@@ -61,8 +61,9 @@ type SsoLogoutNotification struct {
 	Event string `json:"event"`
 
 	// Session-level information for targeted logout
-	SessionIds        []string `json:"sessionIds"`        // List of session IDs being logged out
-	AccessTokenHashes []string `json:"accessTokenHashes"` // Hashes of access tokens being expired
+	SessionIds        []string            `json:"sessionIds"`        // List of session IDs being logged out
+	AccessTokenHashes []string            `json:"accessTokenHashes"` // Hashes of access tokens being expired
+	SessionTokenMap   map[string][]string `json:"sessionTokenMap"`   // Map of sessionId to list of accessTokenHashes for that session
 
 	// Authentication fields to prevent malicious logout requests
 	Nonce     string `json:"nonce"`     // Random nonce for replay protection
@@ -114,11 +115,17 @@ func SendSsoLogoutNotifications(user *User, sessionIds []string, tokens []*Token
 		return fmt.Errorf("signup application not found: %s", user.SignupApplication)
 	}
 
-	// Extract access token hashes from tokens
+	// Extract access token hashes from tokens and build session-to-token map
 	accessTokenHashes := make([]string, 0, len(tokens))
+	sessionTokenMap := make(map[string][]string)
+
 	for _, token := range tokens {
 		if token.AccessTokenHash != "" {
 			accessTokenHashes = append(accessTokenHashes, token.AccessTokenHash)
+			// Build the mapping from sessionId to token hashes
+			if token.SessionId != "" {
+				sessionTokenMap[token.SessionId] = append(sessionTokenMap[token.SessionId], token.AccessTokenHash)
+			}
 		}
 	}
 
@@ -148,6 +155,7 @@ func SendSsoLogoutNotifications(user *User, sessionIds []string, tokens []*Token
 		Event:             "sso-logout",
 		SessionIds:        sessionIds,
 		AccessTokenHashes: accessTokenHashes,
+		SessionTokenMap:   sessionTokenMap,
 		Nonce:             nonce,
 		Timestamp:         timestamp,
 		Signature:         signature,

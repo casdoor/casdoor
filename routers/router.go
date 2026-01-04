@@ -188,6 +188,7 @@ func InitAPI() {
 
 	web.Router("/api/get-tokens", &controllers.ApiController{}, "GET:GetTokens")
 	web.Router("/api/get-token", &controllers.ApiController{}, "GET:GetToken")
+	web.Router("/api/get-tokens-by-session-ids", &controllers.ApiController{}, "GET:GetTokensBySessionIds")
 	web.Router("/api/update-token", &controllers.ApiController{}, "POST:UpdateToken")
 	web.Router("/api/add-token", &controllers.ApiController{}, "POST:AddToken")
 	web.Router("/api/delete-token", &controllers.ApiController{}, "POST:DeleteToken")
