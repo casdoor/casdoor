@@ -22,6 +22,11 @@ import (
 	"github.com/xorm-io/xorm"
 )
 
+const (
+	// MultiFieldSearchField is the special field name used to search across name, email, and display_name
+	MultiFieldSearchField = "nameOrEmailOrDisplayName"
+)
+
 func GetSession(owner string, offset, limit int, field, value, sortField, sortOrder string) *xorm.Session {
 	session := ormer.Engine.Prepare()
 	if offset != -1 && limit != -1 {
@@ -32,7 +37,7 @@ func GetSession(owner string, offset, limit int, field, value, sortField, sortOr
 	}
 	if field != "" && value != "" {
 		// Support searching across multiple fields for name/email filter
-		if field == "nameOrEmailOrDisplayName" {
+		if field == MultiFieldSearchField {
 			searchPattern := fmt.Sprintf("%%%s%%", value)
 			session = session.And("(name like ? OR email like ? OR display_name like ?)", searchPattern, searchPattern, searchPattern)
 		} else if util.FilterField(field) {
@@ -64,7 +69,7 @@ func GetSessionForUser(owner string, offset, limit int, field, value, sortField,
 	}
 	if field != "" && value != "" {
 		// Support searching across multiple fields for name/email filter
-		if field == "nameOrEmailOrDisplayName" {
+		if field == MultiFieldSearchField {
 			searchPattern := fmt.Sprintf("%%%s%%", value)
 			if offset != -1 {
 				session = session.And("(a.name like ? OR a.email like ? OR a.display_name like ?)", searchPattern, searchPattern, searchPattern)
