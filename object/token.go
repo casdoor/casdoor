@@ -43,6 +43,7 @@ type Token struct {
 	CodeChallenge    string `xorm:"varchar(100)" json:"codeChallenge"`
 	CodeIsUsed       bool   `json:"codeIsUsed"`
 	CodeExpireIn     int64  `json:"codeExpireIn"`
+	SessionId        string `xorm:"varchar(100) index" json:"sessionId"` // Session ID for session-level logout
 }
 
 func GetTokenCount(owner, organization, field, value string) (int64, error) {
@@ -233,4 +234,28 @@ func ExpireTokenByUser(owner, username string) (bool, error) {
 	}
 
 	return affected != 0, nil
+}
+
+// GetTokensBySessionId retrieves all tokens associated with a specific session ID
+func GetTokensBySessionId(sessionId string) ([]*Token, error) {
+	tokens := []*Token{}
+	err := ormer.Engine.Where("session_id = ?", sessionId).Find(&tokens)
+	if err != nil {
+		return nil, err
+	}
+	return tokens, nil
+}
+
+// GetTokensBySessionIds retrieves all tokens associated with multiple session IDs
+func GetTokensBySessionIds(sessionIds []string) ([]*Token, error) {
+	if len(sessionIds) == 0 {
+		return []*Token{}, nil
+	}
+
+	tokens := []*Token{}
+	err := ormer.Engine.In("session_id", sessionIds).Find(&tokens)
+	if err != nil {
+		return nil, err
+	}
+	return tokens, nil
 }

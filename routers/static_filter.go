@@ -16,6 +16,7 @@ package routers
 
 import (
 	"compress/gzip"
+	stdcontext "context"
 	"fmt"
 	"io"
 	"net/http"
@@ -57,6 +58,12 @@ func fastAutoSignin(ctx *context.Context) (string, error) {
 		return "", nil
 	}
 
+	// Capture sessionId before it's potentially cleared
+	sessionId := ""
+	if ctx.Input.CruSession != nil {
+		sessionId = ctx.Input.CruSession.SessionID(stdcontext.Background())
+	}
+
 	clientId := ctx.Input.Query("client_id")
 	responseType := ctx.Input.Query("response_type")
 	redirectUri := ctx.Input.Query("redirect_uri")
@@ -89,7 +96,7 @@ func fastAutoSignin(ctx *context.Context) (string, error) {
 		return "", nil
 	}
 
-	code, err := object.GetOAuthCode(userId, clientId, "", "autoSignin", responseType, redirectUri, scope, state, nonce, codeChallenge, ctx.Request.Host, getAcceptLanguage(ctx))
+	code, err := object.GetOAuthCode(userId, clientId, "", "autoSignin", responseType, redirectUri, scope, state, nonce, codeChallenge, ctx.Request.Host, sessionId, getAcceptLanguage(ctx))
 	if err != nil {
 		return "", err
 	} else if code.Message != "" {

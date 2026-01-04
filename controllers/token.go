@@ -17,6 +17,7 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/beego/beego/v2/core/utils/pagination"
@@ -477,4 +478,49 @@ func (c *ApiController) IntrospectToken() {
 
 	c.Data["json"] = introspectionResponse
 	c.ServeJSON()
+}
+
+// GetTokensBySessionIds
+// @Title GetTokensBySessionIds
+// @Tag Token API
+// @Description Get tokens by session IDs for session-level logout
+// @Param   sessionIds     query    string  true        "Comma-separated session IDs"
+// @Success 200 {object} controllers.Response The Response object
+// @router /get-tokens-by-session-ids [get]
+func (c *ApiController) GetTokensBySessionIds() {
+	sessionIdsStr := c.Ctx.Input.Query("sessionIds")
+	if sessionIdsStr == "" {
+		c.ResponseError(c.T("general:Missing parameter") + ": sessionIds")
+		return
+	}
+
+	// Parse comma-separated sessionIds
+	sessionIds := strings.Split(sessionIdsStr, ",")
+
+	tokens, err := object.GetTokensBySessionIds(sessionIds)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	// Return masked tokens (without sensitive data)
+	maskedTokens := make([]map[string]interface{}, 0, len(tokens))
+	for _, token := range tokens {
+		maskedToken := map[string]interface{}{
+			"owner":            token.Owner,
+			"name":             token.Name,
+			"application":      token.Application,
+			"organization":     token.Organization,
+			"user":             token.User,
+			"accessTokenHash":  token.AccessTokenHash,
+			"refreshTokenHash": token.RefreshTokenHash,
+			"sessionId":        token.SessionId,
+			"expiresIn":        token.ExpiresIn,
+			"scope":            token.Scope,
+			"createdTime":      token.CreatedTime,
+		}
+		maskedTokens = append(maskedTokens, maskedToken)
+	}
+
+	c.ResponseOk(maskedTokens)
 }
