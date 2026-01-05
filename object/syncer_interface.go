@@ -47,6 +47,8 @@ func GetSyncerProvider(syncer *Syncer) SyncerProvider {
 		return &GoogleWorkspaceSyncerProvider{Syncer: syncer}
 	case "Active Directory":
 		return &ActiveDirectorySyncerProvider{Syncer: syncer}
+	case "DingTalk":
+		return &DingtalkSyncerProvider{Syncer: syncer}
 	case "Keycloak":
 		return &KeycloakSyncerProvider{
 			DatabaseSyncerProvider: DatabaseSyncerProvider{Syncer: syncer},
