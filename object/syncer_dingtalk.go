@@ -87,10 +87,10 @@ type DingtalkUser struct {
 }
 
 type DingtalkUserListResp struct {
-	Errcode  int             `json:"errcode"`
-	Errmsg   string          `json:"errmsg"`
-	Result   *DingtalkResult `json:"result"`
-	RequestId string         `json:"request_id"`
+	Errcode   int             `json:"errcode"`
+	Errmsg    string          `json:"errmsg"`
+	Result    *DingtalkResult `json:"result"`
+	RequestId string          `json:"request_id"`
 }
 
 type DingtalkResult struct {
@@ -168,7 +168,7 @@ func (p *DingtalkSyncerProvider) getDingtalkDepartments(accessToken string) ([]i
 	postData := map[string]interface{}{
 		"dept_id": 1,
 	}
-	
+
 	data, err := p.postJSON(apiUrl, postData)
 	if err != nil {
 		return nil, err
@@ -197,15 +197,15 @@ func (p *DingtalkSyncerProvider) getDingtalkDepartments(accessToken string) ([]i
 func (p *DingtalkSyncerProvider) getDingtalkUsersFromDept(accessToken string, deptId int64) ([]*DingtalkUser, error) {
 	allUsers := []*DingtalkUser{}
 	cursor := int64(0)
-	
+
 	for {
 		apiUrl := fmt.Sprintf("https://oapi.dingtalk.com/topapi/user/listsimple?access_token=%s",
 			url.QueryEscape(accessToken))
 
 		postData := map[string]interface{}{
-			"dept_id":    deptId,
-			"cursor":     cursor,
-			"size":       100,
+			"dept_id": deptId,
+			"cursor":  cursor,
+			"size":    100,
 		}
 
 		data, err := p.postJSON(apiUrl, postData)
@@ -226,7 +226,7 @@ func (p *DingtalkSyncerProvider) getDingtalkUsersFromDept(accessToken string, de
 
 		if userResp.Result != nil {
 			allUsers = append(allUsers, userResp.Result.List...)
-			
+
 			if !userResp.Result.HasMore {
 				break
 			}
@@ -254,8 +254,8 @@ func (p *DingtalkSyncerProvider) getDingtalkUserDetails(accessToken string, user
 	}
 
 	var resp struct {
-		Errcode int    `json:"errcode"`
-		Errmsg  string `json:"errmsg"`
+		Errcode int           `json:"errcode"`
+		Errmsg  string        `json:"errmsg"`
 		Result  *DingtalkUser `json:"result"`
 	}
 
@@ -286,7 +286,7 @@ func (p *DingtalkSyncerProvider) postJSON(url string, data map[string]interface{
 	if err != nil {
 		return nil, err
 	}
-	
+
 	req.Header.Set("Content-Type", "application/json")
 	req.ContentLength = int64(len(jsonData))
 
