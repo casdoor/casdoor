@@ -282,13 +282,12 @@ func (p *DingtalkSyncerProvider) postJSON(url string, data map[string]interface{
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
-	req, err := http.NewRequestWithContext(ctx, "POST", url, io.NopCloser(bytes.NewReader(jsonData)))
+	req, err := http.NewRequestWithContext(ctx, "POST", url, bytes.NewReader(jsonData))
 	if err != nil {
 		return nil, err
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	req.ContentLength = int64(len(jsonData))
 
 	client := &http.Client{Timeout: 30 * time.Second}
 	resp, err := client.Do(req)
@@ -355,9 +354,15 @@ func (p *DingtalkSyncerProvider) getDingtalkUsers() ([]*OriginalUser, error) {
 
 // dingtalkUserToOriginalUser converts DingTalk user to Casdoor OriginalUser
 func (p *DingtalkSyncerProvider) dingtalkUserToOriginalUser(dingtalkUser *DingtalkUser) *OriginalUser {
+	// Use job number as name if available, otherwise use userId
+	userName := dingtalkUser.UserId
+	if dingtalkUser.JobNumber != "" {
+		userName = dingtalkUser.JobNumber
+	}
+
 	user := &OriginalUser{
 		Id:          dingtalkUser.UserId,
-		Name:        dingtalkUser.UserId,
+		Name:        userName,
 		DisplayName: dingtalkUser.Name,
 		Email:       dingtalkUser.Email,
 		Phone:       dingtalkUser.Mobile,
@@ -368,12 +373,7 @@ func (p *DingtalkSyncerProvider) dingtalkUserToOriginalUser(dingtalkUser *Dingta
 		Groups:      []string{},
 	}
 
-	// Use job number as name if available
-	if dingtalkUser.JobNumber != "" {
-		user.Name = dingtalkUser.JobNumber
-	}
-
-	// Set IsForbidden based on active status
+	// Set IsForbidden based on active status (active=false means user is forbidden)
 	user.IsForbidden = !dingtalkUser.Active
 
 	// Set CreatedTime to current time if not set
