@@ -660,7 +660,7 @@ class SyncerEditPage extends React.Component {
               <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
                 {Setting.getLabel(
                   this.state.syncer.type === "WeCom" ? i18next.t("syncer:Corp ID") :
-                    this.state.syncer.type === "DingTalk" ? i18next.t("syncer:App Key") :
+                    this.state.syncer.type === "DingTalk" ? i18next.t("provider:App Key") :
                       this.state.syncer.type === "Azure AD" ? i18next.t("provider:Client ID") :
                         this.state.syncer.type === "Active Directory" ? i18next.t("syncer:Bind DN") :
                           i18next.t("general:User"),
@@ -679,7 +679,7 @@ class SyncerEditPage extends React.Component {
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(
               this.state.syncer.type === "WeCom" ? i18next.t("syncer:Corp secret") :
-                this.state.syncer.type === "DingTalk" ? i18next.t("syncer:App Secret") :
+                this.state.syncer.type === "DingTalk" ? i18next.t("provider:App secret") :
                   this.state.syncer.type === "Azure AD" ? i18next.t("provider:Client secret") :
                     this.state.syncer.type === "Google Workspace" ? i18next.t("syncer:Service account key") :
                       i18next.t("general:Password"),
