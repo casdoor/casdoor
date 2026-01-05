@@ -100,6 +100,11 @@ func getObject(ctx *context.Context) (string, string, error) {
 	method := ctx.Request.Method
 	path := ctx.Request.URL.Path
 
+	// Special handling for MCP requests
+	if path == "/api/mcp" && method == http.MethodPost {
+		return getMcpObject(ctx)
+	}
+
 	if method == http.MethodGet {
 		if ctx.Request.URL.Path == "/api/get-policies" {
 			if ctx.Input.Query("id") == "/" {
@@ -207,7 +212,12 @@ func willLog(subOwner string, subName string, method string, urlPath string, obj
 	return true
 }
 
-func getUrlPath(urlPath string) string {
+func getUrlPath(urlPath string, ctx *context.Context) string {
+	// Special handling for MCP requests
+	if urlPath == "/api/mcp" {
+		return getMcpUrlPath(ctx)
+	}
+
 	if strings.HasPrefix(urlPath, "/cas") && (strings.HasSuffix(urlPath, "/serviceValidate") || strings.HasSuffix(urlPath, "/proxy") || strings.HasSuffix(urlPath, "/proxyValidate") || strings.HasSuffix(urlPath, "/validate") || strings.HasSuffix(urlPath, "/p3/serviceValidate") || strings.HasSuffix(urlPath, "/p3/proxyValidate") || strings.HasSuffix(urlPath, "/samlValidate")) {
 		return "/cas"
 	}
@@ -234,7 +244,7 @@ func getUrlPath(urlPath string) string {
 func ApiFilter(ctx *context.Context) {
 	subOwner, subName := getSubject(ctx)
 	method := ctx.Request.Method
-	urlPath := getUrlPath(ctx.Request.URL.Path)
+	urlPath := getUrlPath(ctx.Request.URL.Path, ctx)
 
 	objOwner, objName := "", ""
 	if urlPath != "/api/get-app-login" && urlPath != "/api/get-resource" {
