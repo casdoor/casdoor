@@ -109,7 +109,7 @@ func (idp *TelegramIdProvider) verifyTelegramAuth(authData map[string]interface{
 		switch v := value.(type) {
 		case float64:
 			// Telegram sends numeric values as integers, but JSON unmarshaling makes them float64
-			// Convert to int to avoid scientific notation (e.g., 1.23e+08)
+			// Convert to int to avoid scientific notation (e.g., 1.23456789e+08)
 			valueStr = fmt.Sprintf("%d", int64(v))
 		case string:
 			valueStr = v
