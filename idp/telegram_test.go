@@ -25,6 +25,37 @@ import (
 	"testing"
 )
 
+// calculateTelegramHash is a helper function to calculate the hash for test auth data
+func calculateTelegramHash(authData map[string]interface{}, botToken string) string {
+	var dataCheckArr []string
+	for key, value := range authData {
+		if key == "hash" {
+			continue
+		}
+		valueStr := formatTelegramValue(value)
+		dataCheckArr = append(dataCheckArr, fmt.Sprintf("%s=%s", key, valueStr))
+	}
+	sort.Strings(dataCheckArr)
+	dataCheckString := strings.Join(dataCheckArr, "\n")
+
+	secretKey := sha256.Sum256([]byte(botToken))
+	h := hmac.New(sha256.New, secretKey[:])
+	h.Write([]byte(dataCheckString))
+	return hex.EncodeToString(h.Sum(nil))
+}
+
+// formatTelegramValue formats a value according to Telegram's expectations
+func formatTelegramValue(value interface{}) string {
+	switch v := value.(type) {
+	case float64:
+		return fmt.Sprintf("%d", int64(v))
+	case string:
+		return v
+	default:
+		return fmt.Sprintf("%v", v)
+	}
+}
+
 // TestTelegramAuthVerification tests the Telegram authentication data verification
 func TestTelegramAuthVerification(t *testing.T) {
 	// Test bot token
@@ -38,31 +69,8 @@ func TestTelegramAuthVerification(t *testing.T) {
 		"auth_date":  float64(1704467532),
 	}
 
-	// Calculate the expected hash using the correct method
-	var dataCheckArr []string
-	for key, value := range authData {
-		var valueStr string
-		switch v := value.(type) {
-		case float64:
-			// Format numeric values as integers (without decimal points)
-			valueStr = fmt.Sprintf("%d", int64(v))
-		case string:
-			valueStr = v
-		default:
-			valueStr = fmt.Sprintf("%v", v)
-		}
-		dataCheckArr = append(dataCheckArr, fmt.Sprintf("%s=%s", key, valueStr))
-	}
-	sort.Strings(dataCheckArr)
-	dataCheckString := strings.Join(dataCheckArr, "\n")
-
-	secretKey := sha256.Sum256([]byte(botToken))
-	h := hmac.New(sha256.New, secretKey[:])
-	h.Write([]byte(dataCheckString))
-	expectedHash := hex.EncodeToString(h.Sum(nil))
-
-	// Add the hash to auth data
-	authData["hash"] = expectedHash
+	// Calculate and add the hash
+	authData["hash"] = calculateTelegramHash(authData, botToken)
 
 	// Test verification
 	idp := NewTelegramIdProvider("", botToken, "")
@@ -104,28 +112,8 @@ func TestTelegramGetToken(t *testing.T) {
 		"auth_date":  float64(1704467532),
 	}
 
-	// Calculate hash properly
-	var dataCheckArr []string
-	for key, value := range authData {
-		var valueStr string
-		switch v := value.(type) {
-		case float64:
-			valueStr = fmt.Sprintf("%d", int64(v))
-		case string:
-			valueStr = v
-		default:
-			valueStr = fmt.Sprintf("%v", v)
-		}
-		dataCheckArr = append(dataCheckArr, fmt.Sprintf("%s=%s", key, valueStr))
-	}
-	sort.Strings(dataCheckArr)
-	dataCheckString := strings.Join(dataCheckArr, "\n")
-
-	secretKey := sha256.Sum256([]byte(botToken))
-	h := hmac.New(sha256.New, secretKey[:])
-	h.Write([]byte(dataCheckString))
-	expectedHash := hex.EncodeToString(h.Sum(nil))
-	authData["hash"] = expectedHash
+	// Calculate and add the hash
+	authData["hash"] = calculateTelegramHash(authData, botToken)
 
 	// Encode as JSON
 	authDataJSON, _ := json.Marshal(authData)
@@ -159,15 +147,7 @@ func TestTelegramNumericFormatting(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			var result string
-			switch v := tt.value.(type) {
-			case float64:
-				result = fmt.Sprintf("%d", int64(v))
-			case string:
-				result = v
-			default:
-				result = fmt.Sprintf("%v", v)
-			}
+			result := formatTelegramValue(tt.value)
 
 			if result != tt.expected {
 				t.Errorf("Expected %s, got %s", tt.expected, result)
