@@ -36,17 +36,17 @@ class TelegramLogin extends React.Component {
     const state = params.get("state");
     const queryString = Util.getQueryParamsFromState(state);
     const innerParams = new URLSearchParams(queryString);
-    
+
     const applicationName = innerParams.get("application");
     const providerName = innerParams.get("provider");
-    
+
     // Get provider info to retrieve bot username
     ProviderBackend.getProvider("admin", providerName).then((res) => {
       if (res.status === "ok") {
         const provider = res.data;
         const redirectOrigin = window.location.origin;
         const redirectUri = `${redirectOrigin}/callback`;
-        
+
         this.setState({
           applicationName: applicationName,
           providerName: providerName,
@@ -67,7 +67,7 @@ class TelegramLogin extends React.Component {
     }
 
     // Remove any existing Telegram script
-    const existingScript = document.querySelector('script[src*="telegram-widget"]');
+    const existingScript = document.querySelector("script[src*='telegram-widget']");
     if (existingScript) {
       existingScript.remove();
     }
@@ -105,7 +105,7 @@ class TelegramLogin extends React.Component {
                 <img
                   width={40}
                   height={40}
-                  src={Setting.getProviderLogoURL({type: "Telegram"})}
+                  src={Setting.getProviderLogoURL({type: "Telegram", category: "OAuth"})}
                   alt="Telegram"
                   style={{marginRight: "10px"}}
                 />

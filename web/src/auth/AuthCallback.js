@@ -117,11 +117,11 @@ class AuthCallback extends React.Component {
     // Telegram sends auth data as individual URL parameters
     // Collect them and convert to JSON for backend processing
     const telegramId = params.get("id");
-    if (telegramId !== null && code === null) {
+    if (telegramId !== null && (code === null || code === "")) {
       const telegramAuthData = {
         id: parseInt(telegramId),
       };
-      
+
       // Required fields
       const hash = params.get("hash");
       const authDate = params.get("auth_date");
@@ -131,7 +131,7 @@ class AuthCallback extends React.Component {
       if (authDate) {
         telegramAuthData.auth_date = authDate;
       }
-      
+
       // Optional fields - only include if present
       const optionalFields = ["first_name", "last_name", "username", "photo_url"];
       optionalFields.forEach(field => {
@@ -140,7 +140,7 @@ class AuthCallback extends React.Component {
           telegramAuthData[field] = value;
         }
       });
-      
+
       code = JSON.stringify(telegramAuthData);
     }
 
