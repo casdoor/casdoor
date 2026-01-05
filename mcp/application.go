@@ -23,7 +23,7 @@ import (
 )
 
 // handleGetApplicationsTool handles the get_applications MCP tool
-func (c *McpController) handleGetApplicationsTool(id string, args GetApplicationsArgs) {
+func (c *McpController) handleGetApplicationsTool(id interface{}, args GetApplicationsArgs) {
 	userId := c.GetSessionUsername()
 
 	applications, err := object.GetApplications(args.Owner)
@@ -37,7 +37,7 @@ func (c *McpController) handleGetApplicationsTool(id string, args GetApplication
 }
 
 // handleGetApplicationTool handles the get_application MCP tool
-func (c *McpController) handleGetApplicationTool(id string, args GetApplicationArgs) {
+func (c *McpController) handleGetApplicationTool(id interface{}, args GetApplicationArgs) {
 	userId := c.GetSessionUsername()
 
 	application, err := object.GetApplication(args.Id)
@@ -51,7 +51,7 @@ func (c *McpController) handleGetApplicationTool(id string, args GetApplicationA
 }
 
 // handleAddApplicationTool handles the add_application MCP tool
-func (c *McpController) handleAddApplicationTool(id string, args AddApplicationArgs) {
+func (c *McpController) handleAddApplicationTool(id interface{}, args AddApplicationArgs) {
 	count, err := object.GetApplicationCount("", "", "")
 	if err != nil {
 		c.SendToolErrorResult(id, err.Error())
@@ -78,7 +78,7 @@ func (c *McpController) handleAddApplicationTool(id string, args AddApplicationA
 }
 
 // handleUpdateApplicationTool handles the update_application MCP tool
-func (c *McpController) handleUpdateApplicationTool(id string, args UpdateApplicationArgs) {
+func (c *McpController) handleUpdateApplicationTool(id interface{}, args UpdateApplicationArgs) {
 	if err := object.CheckIpWhitelist(args.Application.IpWhitelist, c.GetAcceptLanguage()); err != nil {
 		c.SendToolErrorResult(id, err.Error())
 		return
@@ -94,7 +94,7 @@ func (c *McpController) handleUpdateApplicationTool(id string, args UpdateApplic
 }
 
 // handleDeleteApplicationTool handles the delete_application MCP tool
-func (c *McpController) handleDeleteApplicationTool(id string, args DeleteApplicationArgs) {
+func (c *McpController) handleDeleteApplicationTool(id interface{}, args DeleteApplicationArgs) {
 	affected, err := object.DeleteApplication(&args.Application)
 	if err != nil {
 		c.SendToolErrorResult(id, err.Error())
