@@ -20,6 +20,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"math"
 	"net/http"
 	"sort"
 	"strconv"
@@ -65,7 +66,7 @@ func (idp *TelegramIdProvider) GetToken(code string) (*oauth2.Token, error) {
 	}
 
 	// Create a token with the user ID as access token
-	userId, ok := authData["id"].(float64)
+	userId, ok := telegramAsInt64(authData["id"])
 	if !ok {
 		return nil, fmt.Errorf("invalid user id in auth data")
 	}
@@ -77,7 +78,7 @@ func (idp *TelegramIdProvider) GetToken(code string) (*oauth2.Token, error) {
 	}
 
 	token := &oauth2.Token{
-		AccessToken: fmt.Sprintf("telegram_%d", int64(userId)),
+		AccessToken: fmt.Sprintf("telegram_%d", userId),
 		TokenType:   "Bearer",
 	}
 
@@ -97,6 +98,7 @@ func (idp *TelegramIdProvider) verifyTelegramAuth(authData map[string]interface{
 	if !ok {
 		return fmt.Errorf("hash not found in auth data")
 	}
+	hash = strings.TrimSpace(hash)
 
 	// Prepare data check string
 	var dataCheckArr []string
@@ -104,13 +106,14 @@ func (idp *TelegramIdProvider) verifyTelegramAuth(authData map[string]interface{
 		if key == "hash" {
 			continue
 		}
-		dataCheckArr = append(dataCheckArr, fmt.Sprintf("%s=%v", key, value))
+		dataCheckArr = append(dataCheckArr, fmt.Sprintf("%s=%s", key, telegramAsString(value)))
 	}
 	sort.Strings(dataCheckArr)
 	dataCheckString := strings.Join(dataCheckArr, "\n")
 
 	// Calculate secret key
-	secretKey := sha256.Sum256([]byte(idp.ClientSecret))
+	clientSecret := strings.TrimSpace(idp.ClientSecret)
+	secretKey := sha256.Sum256([]byte(clientSecret))
 
 	// Calculate hash
 	h := hmac.New(sha256.New, secretKey[:])
@@ -118,7 +121,7 @@ func (idp *TelegramIdProvider) verifyTelegramAuth(authData map[string]interface{
 	calculatedHash := hex.EncodeToString(h.Sum(nil))
 
 	// Compare hashes
-	if calculatedHash != hash {
+	if !strings.EqualFold(calculatedHash, hash) {
 		return fmt.Errorf("data verification failed")
 	}
 
@@ -139,7 +142,7 @@ func (idp *TelegramIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, erro
 	}
 
 	// Extract user information from auth data
-	userId, ok := authData["id"].(float64)
+	userId, ok := telegramAsInt64(authData["id"])
 	if !ok {
 		return nil, fmt.Errorf("invalid user id in auth data")
 	}
@@ -155,15 +158,50 @@ func (idp *TelegramIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, erro
 		displayName = username
 	}
 	if displayName == "" {
-		displayName = strconv.FormatInt(int64(userId), 10)
+		displayName = strconv.FormatInt(userId, 10)
 	}
 
 	userInfo := UserInfo{
-		Id:          strconv.FormatInt(int64(userId), 10),
+		Id:          strconv.FormatInt(userId, 10),
 		Username:    username,
 		DisplayName: displayName,
 		AvatarUrl:   photoUrl,
 	}
 
 	return &userInfo, nil
+}
+
+func telegramAsInt64(v interface{}) (int64, bool) {
+	switch t := v.(type) {
+	case float64:
+		if t != math.Trunc(t) {
+			return 0, false
+		}
+		if t > float64(math.MaxInt64) || t < float64(math.MinInt64) {
+			return 0, false
+		}
+		return int64(t), true
+	case string:
+		i, err := strconv.ParseInt(t, 10, 64)
+		if err != nil {
+			return 0, false
+		}
+		return i, true
+	default:
+		return 0, false
+	}
+}
+
+func telegramAsString(v interface{}) string {
+	switch t := v.(type) {
+	case string:
+		return t
+	case float64:
+		if t == math.Trunc(t) && t <= float64(math.MaxInt64) && t >= float64(math.MinInt64) {
+			return strconv.FormatInt(int64(t), 10)
+		}
+		return strconv.FormatFloat(t, 'g', -1, 64)
+	default:
+		return fmt.Sprint(v)
+	}
 }

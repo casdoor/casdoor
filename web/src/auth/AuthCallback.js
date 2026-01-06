@@ -114,6 +114,36 @@ class AuthCallback extends React.Component {
     const samlRequest = innerParams.get("SAMLRequest");
     const casService = innerParams.get("service");
 
+    // Telegram sends auth data as individual URL parameters
+    // Collect them and convert to JSON for backend processing
+    const telegramId = params.get("id");
+    if (telegramId !== null && (code === null || code === "")) {
+      const telegramAuthData = {
+        id: parseInt(telegramId),
+      };
+
+      // Required fields
+      const hash = params.get("hash");
+      const authDate = params.get("auth_date");
+      if (hash) {
+        telegramAuthData.hash = hash;
+      }
+      if (authDate) {
+        telegramAuthData.auth_date = authDate;
+      }
+
+      // Optional fields - only include if present
+      const optionalFields = ["first_name", "last_name", "username", "photo_url"];
+      optionalFields.forEach(field => {
+        const value = params.get(field);
+        if (value !== null && value !== "") {
+          telegramAuthData[field] = value;
+        }
+      });
+
+      code = JSON.stringify(telegramAuthData);
+    }
+
     const redirectUri = `${window.location.origin}/callback`;
 
     const body = {
