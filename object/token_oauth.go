@@ -323,6 +323,14 @@ func RefreshToken(grantType string, refreshToken string, scope string, clientId 
 		}, nil
 	}
 
+	// check if the token has been invalidated (e.g., by SSO logout)
+	if token.ExpiresIn <= 0 {
+		return &TokenError{
+			Error:            InvalidGrant,
+			ErrorDescription: "refresh token is invalid, expired or revoked",
+		}, nil
+	}
+
 	cert, err := getCertByApplication(application)
 	if err != nil {
 		return nil, err
