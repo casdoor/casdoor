@@ -610,7 +610,7 @@ func (c *ApiController) Login() {
 				c.ResponseError(err.Error())
 				return
 			} else if enableCaptcha {
-				captchaProvider, err := object.GetCaptchaProviderByApplication(util.GetId(application.Owner, application.Name), "false", c.GetAcceptLanguage())
+				captchaProvider, err := object.GetCaptchaProviderByApplication(util.GetId(application.Owner, application.Name), "false", c.GetAcceptLanguage(), clientIp, authForm.Organization, authForm.Username)
 				if err != nil {
 					c.ResponseError(err.Error())
 					return

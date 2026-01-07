@@ -151,7 +151,29 @@ func (c *ApiController) SendVerificationCode() {
 		return
 	}
 
-	provider, err := object.GetCaptchaProviderByApplication(vform.ApplicationId, "false", c.GetAcceptLanguage())
+	application, err := object.GetApplication(vform.ApplicationId)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	organization, err := object.GetOrganization(util.GetId(application.Owner, application.Organization))
+	if err != nil {
+		c.ResponseError(c.T(err.Error()))
+	}
+
+	if organization == nil {
+		c.ResponseError(c.T("check:Organization does not exist"))
+		return
+	}
+
+	// Determine username for captcha rule checking
+	username := vform.Dest
+	if vform.CheckUser != "" {
+		username = vform.CheckUser
+	}
+
+	provider, err := object.GetCaptchaProviderByApplication(vform.ApplicationId, "false", c.GetAcceptLanguage(), clientIp, organization.Name, username)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -179,22 +201,6 @@ func (c *ApiController) SendVerificationCode() {
 				return
 			}
 		}
-	}
-
-	application, err := object.GetApplication(vform.ApplicationId)
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
-	}
-
-	organization, err := object.GetOrganization(util.GetId(application.Owner, application.Organization))
-	if err != nil {
-		c.ResponseError(c.T(err.Error()))
-	}
-
-	if organization == nil {
-		c.ResponseError(c.T("check:Organization does not exist"))
-		return
 	}
 
 	var user *object.User
