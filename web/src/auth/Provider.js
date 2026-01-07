@@ -510,8 +510,8 @@ export function getAuthUrl(application, provider, method, code) {
     return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&scope=${scope}&code_challenge=${codeChallenge}&code_challenge_method=S256`;
   } else if (provider.type === "Telegram") {
     // Telegram uses widget-based authentication
-    // The actual login is handled by Telegram widget on the frontend
-    return `${redirectUri}?state=${state}`;
+    // Redirect to a page that displays the Telegram login widget
+    return `${redirectOrigin}/telegram-login?state=${state}`;
   } else if (provider.type === "MetaMask") {
     return `${redirectUri}?state=${state}`;
   } else if (provider.type === "Web3Onboard") {
