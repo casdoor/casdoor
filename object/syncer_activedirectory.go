@@ -197,26 +197,27 @@ func (p *ActiveDirectorySyncerProvider) adEntryToOriginalUser(entry *goldap.Entr
 		Groups:     []string{},
 	}
 
-	// Get basic attributes
-	sAMAccountName := entry.GetAttributeValue("sAMAccountName")
-	userPrincipalName := entry.GetAttributeValue("userPrincipalName")
-	displayName := entry.GetAttributeValue("displayName")
-	givenName := entry.GetAttributeValue("givenName")
-	sn := entry.GetAttributeValue("sn")
-	mail := entry.GetAttributeValue("mail")
-	telephoneNumber := entry.GetAttributeValue("telephoneNumber")
-	mobile := entry.GetAttributeValue("mobile")
-	title := entry.GetAttributeValue("title")
-	department := entry.GetAttributeValue("department")
-	company := entry.GetAttributeValue("company")
-	streetAddress := entry.GetAttributeValue("streetAddress")
-	city := entry.GetAttributeValue("l")
-	state := entry.GetAttributeValue("st")
-	postalCode := entry.GetAttributeValue("postalCode")
-	country := entry.GetAttributeValue("co")
-	objectGUID := entry.GetAttributeValue("objectGUID")
-	whenCreated := entry.GetAttributeValue("whenCreated")
-	userAccountControlStr := entry.GetAttributeValue("userAccountControl")
+	// Get basic attributes and sanitize them to ensure valid UTF-8
+	// This prevents PostgreSQL errors when AD returns non-UTF8 data
+	sAMAccountName := util.SanitizeUTF8(entry.GetAttributeValue("sAMAccountName"))
+	userPrincipalName := util.SanitizeUTF8(entry.GetAttributeValue("userPrincipalName"))
+	displayName := util.SanitizeUTF8(entry.GetAttributeValue("displayName"))
+	givenName := util.SanitizeUTF8(entry.GetAttributeValue("givenName"))
+	sn := util.SanitizeUTF8(entry.GetAttributeValue("sn"))
+	mail := util.SanitizeUTF8(entry.GetAttributeValue("mail"))
+	telephoneNumber := util.SanitizeUTF8(entry.GetAttributeValue("telephoneNumber"))
+	mobile := util.SanitizeUTF8(entry.GetAttributeValue("mobile"))
+	title := util.SanitizeUTF8(entry.GetAttributeValue("title"))
+	department := util.SanitizeUTF8(entry.GetAttributeValue("department"))
+	company := util.SanitizeUTF8(entry.GetAttributeValue("company"))
+	streetAddress := util.SanitizeUTF8(entry.GetAttributeValue("streetAddress"))
+	city := util.SanitizeUTF8(entry.GetAttributeValue("l"))
+	state := util.SanitizeUTF8(entry.GetAttributeValue("st"))
+	postalCode := util.SanitizeUTF8(entry.GetAttributeValue("postalCode"))
+	country := util.SanitizeUTF8(entry.GetAttributeValue("co"))
+	objectGUID := util.SanitizeUTF8(entry.GetAttributeValue("objectGUID"))
+	whenCreated := util.SanitizeUTF8(entry.GetAttributeValue("whenCreated"))
+	userAccountControlStr := util.SanitizeUTF8(entry.GetAttributeValue("userAccountControl"))
 
 	// Set user fields
 	// Use sAMAccountName as the primary username

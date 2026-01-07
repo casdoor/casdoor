@@ -227,3 +227,25 @@ func TestParseId(t *testing.T) {
 		})
 	}
 }
+
+func TestSanitizeUTF8(t *testing.T) {
+	scenarios := []struct {
+		description string
+		input       string
+		expected    string
+	}{
+		{"Should return same string for valid UTF-8", "Hello World", "Hello World"},
+		{"Should return same string for valid UTF-8 with unicode", "你好世界", "你好世界"},
+		{"Should handle empty string", "", ""},
+		{"Should remove invalid UTF-8 sequences while preserving valid bytes", "Hello\xe7\xe8\x17World", "Hello\x17World"},
+		{"Should handle string with invalid and valid sequences", "\xe7\xe8\x17", "\x17"},
+		{"Should preserve valid UTF-8 around invalid bytes", "Test\xe7\xe8\x17Data", "Test\x17Data"},
+		{"Should remove completely invalid multi-byte sequence", "Test\xc3\x28Data", "Test(Data"},
+	}
+	for _, scenery := range scenarios {
+		t.Run(scenery.description, func(t *testing.T) {
+			actual := SanitizeUTF8(scenery.input)
+			assert.Equal(t, scenery.expected, actual, "The returned value not is expected")
+		})
+	}
+}

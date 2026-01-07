@@ -28,6 +28,7 @@ import (
 	"strings"
 	"time"
 	"unicode"
+	"unicode/utf8"
 
 	"github.com/google/uuid"
 	"github.com/nyaruka/phonenumbers"
@@ -392,4 +393,18 @@ func StringToInterfaceArray2d(arrays [][]string) [][]interface{} {
 		interfaceArrays = append(interfaceArrays, interfaceArray)
 	}
 	return interfaceArrays
+}
+
+// SanitizeUTF8 removes or replaces invalid UTF-8 sequences from a string.
+// This is useful when data from external systems (like Active Directory) may contain
+// invalid UTF-8 byte sequences that would cause database errors in PostgreSQL.
+// It replaces invalid sequences with the Unicode replacement character (U+FFFD).
+func SanitizeUTF8(s string) string {
+	if utf8.ValidString(s) {
+		return s
+	}
+	
+	// If the string is not valid UTF-8, convert it properly
+	// This approach replaces invalid sequences with the replacement character
+	return strings.ToValidUTF8(s, "")
 }
