@@ -76,7 +76,7 @@ class TelegramLogin extends React.Component {
     // Note: We load from official Telegram domain over HTTPS for security.
     // SRI is not used as Telegram doesn't provide integrity hashes and the script version may change.
     const script = document.createElement("script");
-    script.src = "https://telegram.org/js/telegram-widget.js?22";
+    script.src = "https://telegram.org/js/telegram-widget.js";
     script.setAttribute("data-telegram-login", this.state.botUsername);
     script.setAttribute("data-size", "large");
     script.setAttribute("data-auth-url", this.state.authUrl);
