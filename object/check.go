@@ -806,3 +806,53 @@ func CheckToEnableCaptcha(application *Application, organization, username strin
 
 	return false, nil
 }
+
+func CheckToEnableCaptchaForVerification(application *Application, organization, dest string, clientIp string) (bool, error) {
+	if len(application.Providers) == 0 {
+		return false, nil
+	}
+
+	for _, providerItem := range application.Providers {
+		if providerItem.Provider == nil || providerItem.Provider.Category != "Captcha" {
+			continue
+		}
+
+		if providerItem.Rule == "Internet-Only" {
+			if util.IsInternetIp(clientIp) {
+				return true, nil
+			}
+		}
+
+		if providerItem.Rule == "Dynamic" {
+			// For verification codes, check if the user exists by email or phone
+			var user *User
+			var err error
+
+			if util.IsEmailValid(dest) {
+				user, err = GetUserByEmail(organization, dest)
+			} else {
+				user, err = GetUserByPhone(organization, dest)
+			}
+
+			if err != nil {
+				return false, err
+			}
+
+			if user != nil {
+				failedSigninLimit, _, err := GetFailedSigninConfigByUser(user)
+				if err != nil {
+					return false, err
+				}
+
+				return user.SigninWrongTimes >= failedSigninLimit, nil
+			}
+
+			// If user doesn't exist (e.g., during signup), don't enable CAPTCHA for Dynamic rule
+			return false, nil
+		}
+
+		return providerItem.Rule == "Always", nil
+	}
+
+	return false, nil
+}

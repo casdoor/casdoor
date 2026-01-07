@@ -20,7 +20,7 @@ import {CaptchaWidget} from "../CaptchaWidget";
 import {SafetyOutlined} from "@ant-design/icons";
 
 export const CaptchaModal = (props) => {
-  const {owner, name, visible, onOk, onUpdateToken, onCancel, isCurrentProvider, noModal, innerRef} = props;
+  const {owner, name, visible, onOk, onUpdateToken, onCancel, isCurrentProvider, noModal, innerRef, dest} = props;
 
   const [captchaType, setCaptchaType] = React.useState("none");
   const [clientId, setClientId] = React.useState("");
@@ -68,7 +68,7 @@ export const CaptchaModal = (props) => {
   }, [innerRef]);
 
   const loadCaptcha = () => {
-    UserBackend.getCaptcha(owner, name, isCurrentProvider).then((res) => {
+    UserBackend.getCaptcha(owner, name, isCurrentProvider, dest).then((res) => {
       if (res.type === "none") {
         handleOk();
       } else if (res.type === "Default") {

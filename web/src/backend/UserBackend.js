@@ -200,8 +200,8 @@ export function resetEmailOrPhone(dest, type, code) {
   }).then(res => res.json());
 }
 
-export function getCaptcha(owner, name, isCurrentProvider) {
-  return fetch(`${Setting.ServerUrl}/api/get-captcha?applicationId=${owner}/${encodeURIComponent(name)}&isCurrentProvider=${isCurrentProvider}`, {
+export function getCaptcha(owner, name, isCurrentProvider, dest = "") {
+  return fetch(`${Setting.ServerUrl}/api/get-captcha?applicationId=${owner}/${encodeURIComponent(name)}&isCurrentProvider=${isCurrentProvider}&dest=${encodeURIComponent(dest)}`, {
     method: "GET",
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),

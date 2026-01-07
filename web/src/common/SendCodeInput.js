@@ -111,6 +111,7 @@ export const SendCodeInput = ({value, disabled, captchaValue, useInlineCaptcha, 
             onOk={handleOk}
             onCancel={handleCancel}
             isCurrentProvider={false}
+            dest={onButtonClickArgs && onButtonClickArgs.length > 0 ? onButtonClickArgs[0] : ""}
           />
         )
       }

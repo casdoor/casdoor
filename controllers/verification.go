@@ -146,55 +146,71 @@ func (c *ApiController) SendVerificationCode() {
 
 	clientIp := util.GetClientIpFromRequest(c.Ctx.Request)
 
-	if msg := vform.CheckParameter(form.SendVerifyCode, c.GetAcceptLanguage()); msg != "" {
-		c.ResponseError(msg)
-		return
-	}
-
-	provider, err := object.GetCaptchaProviderByApplication(vform.ApplicationId, "false", c.GetAcceptLanguage())
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
-	}
-
-	if provider != nil {
-		if vform.CaptchaType != provider.Type {
-			c.ResponseError(c.T("verification:Turing test failed."))
-			return
-		}
-
-		if provider.Type != "Default" {
-			vform.ClientSecret = provider.ClientSecret
-		}
-
-		if vform.CaptchaType != "none" {
-			if captchaProvider := captcha.GetCaptchaProvider(vform.CaptchaType); captchaProvider == nil {
-				c.ResponseError(c.T("general:don't support captchaProvider: ") + vform.CaptchaType)
-				return
-			} else if isHuman, err := captchaProvider.VerifyCaptcha(vform.CaptchaToken, provider.ClientId, vform.ClientSecret, provider.ClientId2); err != nil {
-				c.ResponseError(err.Error())
-				return
-			} else if !isHuman {
-				c.ResponseError(c.T("verification:Turing test failed."))
-				return
-			}
-		}
-	}
-
 	application, err := object.GetApplication(vform.ApplicationId)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
 
+	if application == nil {
+		c.ResponseError(c.T("verification:Invalid application id"))
+		return
+	}
+
 	organization, err := object.GetOrganization(util.GetId(application.Owner, application.Organization))
 	if err != nil {
 		c.ResponseError(c.T(err.Error()))
+		return
 	}
 
 	if organization == nil {
 		c.ResponseError(c.T("check:Organization does not exist"))
 		return
+	}
+
+	// Check if CAPTCHA should be enabled based on the rule
+	enableCaptcha, err := object.CheckToEnableCaptchaForVerification(application, organization.Name, vform.Dest, clientIp)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	if msg := vform.CheckParameter(form.SendVerifyCode, c.GetAcceptLanguage()); msg != "" {
+		c.ResponseError(msg)
+		return
+	}
+
+	// Only verify CAPTCHA if it should be enabled
+	if enableCaptcha {
+		provider, err := object.GetCaptchaProviderByApplication(vform.ApplicationId, "false", c.GetAcceptLanguage())
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		if provider != nil {
+			if vform.CaptchaType != provider.Type {
+				c.ResponseError(c.T("verification:Turing test failed."))
+				return
+			}
+
+			if provider.Type != "Default" {
+				vform.ClientSecret = provider.ClientSecret
+			}
+
+			if vform.CaptchaType != "none" {
+				if captchaProvider := captcha.GetCaptchaProvider(vform.CaptchaType); captchaProvider == nil {
+					c.ResponseError(c.T("general:don't support captchaProvider: ") + vform.CaptchaType)
+					return
+				} else if isHuman, err := captchaProvider.VerifyCaptcha(vform.CaptchaToken, provider.ClientId, vform.ClientSecret, provider.ClientId2); err != nil {
+					c.ResponseError(err.Error())
+					return
+				} else if !isHuman {
+					c.ResponseError(c.T("verification:Turing test failed."))
+					return
+				}
+			}
+		}
 	}
 
 	var user *object.User

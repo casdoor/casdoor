@@ -662,6 +662,81 @@ func (c *ApiController) GetUserinfo2() {
 func (c *ApiController) GetCaptcha() {
 	applicationId := c.Ctx.Input.Query("applicationId")
 	isCurrentProvider := c.Ctx.Input.Query("isCurrentProvider")
+	dest := c.Ctx.Input.Query("dest")
+
+	// If isCurrentProvider is true, return the captcha without checking rules (for preview)
+	if isCurrentProvider == "true" {
+		captchaProvider, err := object.GetCaptchaProviderByApplication(applicationId, isCurrentProvider, c.GetAcceptLanguage())
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		if captchaProvider != nil {
+			if captchaProvider.Type == "Default" {
+				id, img, err := object.GetCaptcha()
+				if err != nil {
+					c.ResponseError(err.Error())
+					return
+				}
+
+				c.ResponseOk(Captcha{Owner: captchaProvider.Owner, Name: captchaProvider.Name, Type: captchaProvider.Type, CaptchaId: id, CaptchaImage: img})
+				return
+			} else if captchaProvider.Type != "" {
+				c.ResponseOk(Captcha{
+					Owner:         captchaProvider.Owner,
+					Name:          captchaProvider.Name,
+					Type:          captchaProvider.Type,
+					SubType:       captchaProvider.SubType,
+					ClientId:      captchaProvider.ClientId,
+					ClientSecret:  "***",
+					ClientId2:     captchaProvider.ClientId2,
+					ClientSecret2: captchaProvider.ClientSecret2,
+				})
+				return
+			}
+		}
+
+		c.ResponseOk(Captcha{Type: "none"})
+		return
+	}
+
+	// For actual usage (not preview), check if CAPTCHA should be enabled based on rules
+	application, err := object.GetApplication(applicationId)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	if application == nil {
+		c.ResponseOk(Captcha{Type: "none"})
+		return
+	}
+
+	organization, err := object.GetOrganization(util.GetId(application.Owner, application.Organization))
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	if organization == nil {
+		c.ResponseOk(Captcha{Type: "none"})
+		return
+	}
+
+	clientIp := util.GetClientIpFromRequest(c.Ctx.Request)
+
+	// Check if CAPTCHA should be enabled based on the rule
+	enableCaptcha, err := object.CheckToEnableCaptchaForVerification(application, organization.Name, dest, clientIp)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	if !enableCaptcha {
+		c.ResponseOk(Captcha{Type: "none"})
+		return
+	}
 
 	captchaProvider, err := object.GetCaptchaProviderByApplication(applicationId, isCurrentProvider, c.GetAcceptLanguage())
 	if err != nil {
