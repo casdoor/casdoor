@@ -136,7 +136,11 @@ const Dashboard = (props) => {
         return;
       }
 
-      const myChart = echarts.init(chartDom);
+      let myChart = echarts.getInstanceByDom(chartDom);
+      if (myChart) {
+        myChart.dispose();
+      }
+      myChart = echarts.init(chartDom);
       const dateArray = getDateArray();
 
       const option = {
@@ -159,7 +163,9 @@ const Dashboard = (props) => {
       myChart.setOption(option);
 
       return () => {
-        myChart.dispose();
+        if (myChart) {
+          myChart.dispose();
+        }
       };
     }, [dashboardData, chartId, title, seriesConfig]);
 
@@ -186,7 +192,7 @@ const Dashboard = (props) => {
     };
 
     return (
-      <Row id="statistic" gutter={16} justify={"center"} style={{marginBottom: "20px"}}>
+      <Row id="statistic" gutter={16} justify="center" style={{marginBottom: "20px"}}>
         <Col xs={24} sm={12} lg={6} style={{marginBottom: "10px"}}>
           <Card variant="borderless" styles={cardStyles}>
             <Statistic title={i18next.t("home:Total users")} fontSize="100px" value={dashboardData.userCounts[30]} valueStyle={{fontSize: "30px"}} style={{width: "200px", paddingLeft: "10px"}} />
