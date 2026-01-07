@@ -466,7 +466,7 @@ func shouldEnableCaptchaByRule(providerItem *ProviderItem, organization, usernam
 		return false, nil
 	}
 
-	// For "Always" rule or any other rule, show captcha
+	// For "Always" rule, show captcha; for any other rule, don't show
 	return providerItem.Rule == "Always", nil
 }
 

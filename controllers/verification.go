@@ -160,6 +160,7 @@ func (c *ApiController) SendVerificationCode() {
 	organization, err := object.GetOrganization(util.GetId(application.Owner, application.Organization))
 	if err != nil {
 		c.ResponseError(c.T(err.Error()))
+		return
 	}
 
 	if organization == nil {
