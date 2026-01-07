@@ -403,7 +403,7 @@ func SanitizeUTF8(s string) string {
 	if utf8.ValidString(s) {
 		return s
 	}
-	
+
 	// If the string is not valid UTF-8, remove invalid sequences
 	return strings.ToValidUTF8(s, "")
 }
