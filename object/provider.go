@@ -428,7 +428,7 @@ func GetCaptchaProviderByApplication(applicationId, isCurrentProvider, lang, cli
 			}
 
 			// Check rule conditions to determine if captcha should be shown
-			shouldShowCaptcha, err := shouldEnableCaptchaByRule(provider, organization, username, clientIp)
+			shouldShowCaptcha, err := checkProviderItemRule(provider, organization, username, clientIp)
 			if err != nil {
 				return nil, err
 			}
@@ -440,34 +440,6 @@ func GetCaptchaProviderByApplication(applicationId, isCurrentProvider, lang, cli
 		}
 	}
 	return nil, nil
-}
-
-func shouldEnableCaptchaByRule(providerItem *ProviderItem, organization, username, clientIp string) (bool, error) {
-	if providerItem.Rule == "Internet-Only" {
-		return util.IsInternetIp(clientIp), nil
-	}
-
-	if providerItem.Rule == "Dynamic" {
-		// For Dynamic rule, check if user exists and has failed signin attempts
-		user, err := GetUserByFields(organization, username)
-		if err != nil {
-			return false, err
-		}
-
-		if user != nil {
-			failedSigninLimit, _, err := GetFailedSigninConfigByUser(user)
-			if err != nil {
-				return false, err
-			}
-
-			return user.SigninWrongTimes >= failedSigninLimit, nil
-		}
-
-		return false, nil
-	}
-
-	// For "Always" rule, show captcha; for any other rule, don't show
-	return providerItem.Rule == "Always", nil
 }
 
 func GetFaceIdProviderByOwnerName(applicationId, lang string) (*Provider, error) {

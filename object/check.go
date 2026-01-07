@@ -767,6 +767,33 @@ func CheckUpdateUser(oldUser, user *User, lang string) string {
 	return ""
 }
 
+func checkProviderItemRule(providerItem *ProviderItem, organization, username, clientIp string) (bool, error) {
+	if providerItem.Rule == "Internet-Only" {
+		return util.IsInternetIp(clientIp), nil
+	}
+
+	if providerItem.Rule == "Dynamic" {
+		user, err := GetUserByFields(organization, username)
+		if err != nil {
+			return false, err
+		}
+
+		if user != nil {
+			failedSigninLimit, _, err := GetFailedSigninConfigByUser(user)
+			if err != nil {
+				return false, err
+			}
+
+			return user.SigninWrongTimes >= failedSigninLimit, nil
+		}
+
+		return false, nil
+	}
+
+	// For "Always" rule, show captcha; for any other rule, don't show
+	return providerItem.Rule == "Always", nil
+}
+
 func CheckToEnableCaptcha(application *Application, organization, username string, clientIp string) (bool, error) {
 	if len(application.Providers) == 0 {
 		return false, nil
@@ -777,31 +804,7 @@ func CheckToEnableCaptcha(application *Application, organization, username strin
 			continue
 		}
 
-		if providerItem.Rule == "Internet-Only" {
-			if util.IsInternetIp(clientIp) {
-				return true, nil
-			}
-		}
-
-		if providerItem.Rule == "Dynamic" {
-			user, err := GetUserByFields(organization, username)
-			if err != nil {
-				return false, err
-			}
-
-			if user != nil {
-				failedSigninLimit, _, err := GetFailedSigninConfigByUser(user)
-				if err != nil {
-					return false, err
-				}
-
-				return user.SigninWrongTimes >= failedSigninLimit, nil
-			}
-
-			return false, nil
-		}
-
-		return providerItem.Rule == "Always", nil
+		return checkProviderItemRule(providerItem, organization, username, clientIp)
 	}
 
 	return false, nil
