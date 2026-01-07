@@ -245,7 +245,7 @@ func TestSanitizeUTF8(t *testing.T) {
 	for _, scenery := range scenarios {
 		t.Run(scenery.description, func(t *testing.T) {
 			actual := SanitizeUTF8(scenery.input)
-			assert.Equal(t, scenery.expected, actual, "The returned value not is expected")
+			assert.Equal(t, scenery.expected, actual, "The returned value is not as expected")
 		})
 	}
 }

@@ -395,16 +395,15 @@ func StringToInterfaceArray2d(arrays [][]string) [][]interface{} {
 	return interfaceArrays
 }
 
-// SanitizeUTF8 removes or replaces invalid UTF-8 sequences from a string.
+// SanitizeUTF8 removes invalid UTF-8 sequences from a string.
 // This is useful when data from external systems (like Active Directory) may contain
 // invalid UTF-8 byte sequences that would cause database errors in PostgreSQL.
-// It replaces invalid sequences with the Unicode replacement character (U+FFFD).
+// Invalid sequences are removed from the string (replaced with empty string).
 func SanitizeUTF8(s string) string {
 	if utf8.ValidString(s) {
 		return s
 	}
 	
-	// If the string is not valid UTF-8, convert it properly
-	// This approach replaces invalid sequences with the replacement character
+	// If the string is not valid UTF-8, remove invalid sequences
 	return strings.ToValidUTF8(s, "")
 }
