@@ -111,24 +111,7 @@ const Dashboard = (props) => {
     return steps;
   };
 
-  const renderEChart = () => {
-    const chartDom = document.getElementById("echarts-chart");
-
-    if (dashboardData === null) {
-      if (chartDom) {
-        const instance = echarts.getInstanceByDom(chartDom);
-        if (instance) {
-          instance.dispose();
-        }
-      }
-      return (
-        <div style={{display: "flex", justifyContent: "center", alignItems: "center"}}>
-          <Spin size="large" tip={i18next.t("login:Loading")} style={{paddingTop: "10%"}} />
-        </div>
-      );
-    }
-
-    const myChart = echarts.init(chartDom);
+  const getDateArray = () => {
     const currentDate = new Date();
     const dateArray = [];
     for (let i = 30; i >= 0; i--) {
@@ -139,46 +122,58 @@ const Dashboard = (props) => {
       const formattedDate = `${month}-${day}`;
       dateArray.push(formattedDate);
     }
-    const option = {
-      title: {text: i18next.t("home:Past 30 Days")},
-      tooltip: {trigger: "axis"},
-      legend: {data: [
-        i18next.t("general:Users"),
-        i18next.t("general:Providers"),
-        i18next.t("general:Applications"),
-        i18next.t("general:Organizations"),
-        i18next.t("general:Subscriptions"),
-        i18next.t("general:Roles"),
-        i18next.t("general:Groups"),
-        i18next.t("general:Resources"),
-        i18next.t("general:Certs"),
-        i18next.t("general:Permissions"),
-        i18next.t("general:Transactions"),
-        i18next.t("general:Models"),
-        i18next.t("general:Adapters"),
-        i18next.t("general:Enforcers"),
-      ], top: "10%"},
-      grid: {left: "3%", right: "4%", bottom: "0", top: "25%", containLabel: true},
-      xAxis: {type: "category", boundaryGap: false, data: dateArray},
-      yAxis: {type: "value"},
-      series: [
-        {name: i18next.t("general:Organizations"), type: "line", data: dashboardData.organizationCounts},
-        {name: i18next.t("general:Users"), type: "line", data: dashboardData.userCounts},
-        {name: i18next.t("general:Providers"), type: "line", data: dashboardData.providerCounts},
-        {name: i18next.t("general:Applications"), type: "line", data: dashboardData.applicationCounts},
-        {name: i18next.t("general:Subscriptions"), type: "line", data: dashboardData.subscriptionCounts},
-        {name: i18next.t("general:Roles"), type: "line", data: dashboardData.roleCounts},
-        {name: i18next.t("general:Groups"), type: "line", data: dashboardData.groupCounts},
-        {name: i18next.t("general:Resources"), type: "line", data: dashboardData.resourceCounts},
-        {name: i18next.t("general:Certs"), type: "line", data: dashboardData.certCounts},
-        {name: i18next.t("general:Permissions"), type: "line", data: dashboardData.permissionCounts},
-        {name: i18next.t("general:Transactions"), type: "line", data: dashboardData.transactionCounts},
-        {name: i18next.t("general:Models"), type: "line", data: dashboardData.modelCounts},
-        {name: i18next.t("general:Adapters"), type: "line", data: dashboardData.adapterCounts},
-        {name: i18next.t("general:Enforcers"), type: "line", data: dashboardData.enforcerCounts},
-      ],
-    };
-    myChart.setOption(option);
+    return dateArray;
+  };
+
+  const ChartWidget = ({chartId, title, seriesConfig}) => {
+    React.useEffect(() => {
+      if (dashboardData === null) {
+        return;
+      }
+
+      const chartDom = document.getElementById(chartId);
+      if (!chartDom) {
+        return;
+      }
+
+      const myChart = echarts.init(chartDom);
+      const dateArray = getDateArray();
+
+      const option = {
+        title: {text: title, left: "center"},
+        tooltip: {trigger: "axis"},
+        legend: {
+          data: seriesConfig.map(s => s.name),
+          top: "10%",
+        },
+        grid: {left: "3%", right: "4%", bottom: "3%", top: "20%", containLabel: true},
+        xAxis: {type: "category", boundaryGap: false, data: dateArray},
+        yAxis: {type: "value"},
+        series: seriesConfig.map(s => ({
+          name: s.name,
+          type: "line",
+          data: dashboardData[s.dataKey],
+          smooth: true,
+        })),
+      };
+      myChart.setOption(option);
+
+      return () => {
+        myChart.dispose();
+      };
+    }, [dashboardData, chartId, title, seriesConfig]);
+
+    return <div id={chartId} style={{width: "100%", height: "350px"}} />;
+  };
+
+  const renderStatistics = () => {
+    if (dashboardData === null) {
+      return (
+        <div style={{display: "flex", justifyContent: "center", alignItems: "center", padding: "40px"}}>
+          <Spin size="large" tip={i18next.t("login:Loading")} />
+        </div>
+      );
+    }
 
     const cardStyles = {
       body: {
@@ -191,23 +186,23 @@ const Dashboard = (props) => {
     };
 
     return (
-      <Row id="statistic" gutter={80} justify={"center"}>
-        <Col span={50} style={{marginBottom: "10px"}}>
+      <Row id="statistic" gutter={16} justify={"center"} style={{marginBottom: "20px"}}>
+        <Col xs={24} sm={12} lg={6} style={{marginBottom: "10px"}}>
           <Card variant="borderless" styles={cardStyles}>
             <Statistic title={i18next.t("home:Total users")} fontSize="100px" value={dashboardData.userCounts[30]} valueStyle={{fontSize: "30px"}} style={{width: "200px", paddingLeft: "10px"}} />
           </Card>
         </Col>
-        <Col span={50} style={{marginBottom: "10px"}}>
+        <Col xs={24} sm={12} lg={6} style={{marginBottom: "10px"}}>
           <Card variant="borderless" styles={cardStyles}>
             <Statistic title={i18next.t("home:New users today")} fontSize="100px" value={dashboardData.userCounts[30] - dashboardData.userCounts[30 - 1]} valueStyle={{fontSize: "30px"}} prefix={<ArrowUpOutlined />} style={{width: "200px", paddingLeft: "10px"}} />
           </Card>
         </Col>
-        <Col span={50} style={{marginBottom: "10px"}}>
+        <Col xs={24} sm={12} lg={6} style={{marginBottom: "10px"}}>
           <Card variant="borderless" styles={cardStyles}>
             <Statistic title={i18next.t("home:New users past 7 days")} value={dashboardData.userCounts[30] - dashboardData.userCounts[30 - 7]} valueStyle={{fontSize: "30px"}} prefix={<ArrowUpOutlined />} style={{width: "200px", paddingLeft: "10px"}} />
           </Card>
         </Col>
-        <Col span={50} style={{marginBottom: "10px"}}>
+        <Col xs={24} sm={12} lg={6} style={{marginBottom: "10px"}}>
           <Card variant="borderless" styles={cardStyles}>
             <Statistic title={i18next.t("home:New users past 30 days")} value={dashboardData.userCounts[30] - dashboardData.userCounts[30 - 30]} valueStyle={{fontSize: "30px"}} prefix={<ArrowUpOutlined />} style={{width: "200px", paddingLeft: "10px"}} />
           </Card>
@@ -217,9 +212,67 @@ const Dashboard = (props) => {
   };
 
   return (
-    <div style={{display: "flex", justifyContent: "center", flexDirection: "column", alignItems: "center"}}>
-      {renderEChart()}
-      <div id="echarts-chart" style={{width: "80%", height: "400px", textAlign: "center", marginTop: "20px"}} />
+    <div style={{padding: "20px", maxWidth: "1400px", margin: "0 auto"}}>
+      {renderStatistics()}
+      
+      <Row gutter={[16, 16]}>
+        <Col xs={24} lg={12}>
+          <Card title={i18next.t("home:User & Organization Metrics")} style={{height: "100%"}}>
+            <ChartWidget chartId="users-orgs-chart" title={i18next.t("home:Past 30 Days")} seriesConfig={[
+              {name: i18next.t("general:Users"), dataKey: "userCounts"},
+              {name: i18next.t("general:Organizations"), dataKey: "organizationCounts"},
+            ]} />
+          </Card>
+        </Col>
+        
+        <Col xs={24} lg={12}>
+          <Card title={i18next.t("home:Authentication & Applications")} style={{height: "100%"}}>
+            <ChartWidget chartId="auth-apps-chart" title={i18next.t("home:Past 30 Days")} seriesConfig={[
+              {name: i18next.t("general:Providers"), dataKey: "providerCounts"},
+              {name: i18next.t("general:Applications"), dataKey: "applicationCounts"},
+            ]} />
+          </Card>
+        </Col>
+        
+        <Col xs={24} lg={12}>
+          <Card title={i18next.t("home:Access Control")} style={{height: "100%"}}>
+            <ChartWidget chartId="access-control-chart" title={i18next.t("home:Past 30 Days")} seriesConfig={[
+              {name: i18next.t("general:Roles"), dataKey: "roleCounts"},
+              {name: i18next.t("general:Groups"), dataKey: "groupCounts"},
+              {name: i18next.t("general:Permissions"), dataKey: "permissionCounts"},
+              {name: i18next.t("general:Enforcers"), dataKey: "enforcerCounts"},
+            ]} />
+          </Card>
+        </Col>
+        
+        <Col xs={24} lg={12}>
+          <Card title={i18next.t("home:Resources & Security")} style={{height: "100%"}}>
+            <ChartWidget chartId="resources-security-chart" title={i18next.t("home:Past 30 Days")} seriesConfig={[
+              {name: i18next.t("general:Resources"), dataKey: "resourceCounts"},
+              {name: i18next.t("general:Certs"), dataKey: "certCounts"},
+              {name: i18next.t("general:Subscriptions"), dataKey: "subscriptionCounts"},
+            ]} />
+          </Card>
+        </Col>
+        
+        <Col xs={24} lg={12}>
+          <Card title={i18next.t("home:Transactions & Payments")} style={{height: "100%"}}>
+            <ChartWidget chartId="transactions-chart" title={i18next.t("home:Past 30 Days")} seriesConfig={[
+              {name: i18next.t("general:Transactions"), dataKey: "transactionCounts"},
+            ]} />
+          </Card>
+        </Col>
+        
+        <Col xs={24} lg={12}>
+          <Card title={i18next.t("home:System & Integration")} style={{height: "100%"}}>
+            <ChartWidget chartId="system-integration-chart" title={i18next.t("home:Past 30 Days")} seriesConfig={[
+              {name: i18next.t("general:Models"), dataKey: "modelCounts"},
+              {name: i18next.t("general:Adapters"), dataKey: "adapterCounts"},
+            ]} />
+          </Card>
+        </Col>
+      </Row>
+      
       <Tour
         open={Setting.isMobile() ? false : isTourVisible}
         onClose={setIsTourToLocal}
