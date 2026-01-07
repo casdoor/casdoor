@@ -18,10 +18,57 @@ import (
 	"crypto/tls"
 	"fmt"
 	"strings"
+	"unicode/utf8"
 
 	"github.com/casdoor/casdoor/util"
 	goldap "github.com/go-ldap/ldap/v3"
 )
+
+// convertGUIDToString converts a binary GUID byte array to a standard UUID string format
+// Active Directory GUIDs are 16 bytes in a specific byte order
+func convertGUIDToString(guidBytes []byte) string {
+	if len(guidBytes) != 16 {
+		return ""
+	}
+
+	// Active Directory GUID format is:
+	// Data1 (4 bytes, little-endian) - Data2 (2 bytes, little-endian) - Data3 (2 bytes, little-endian) - Data4 (2 bytes, big-endian) - Data5 (6 bytes, big-endian)
+	// Convert to standard UUID format: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+	return fmt.Sprintf("%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x",
+		guidBytes[3], guidBytes[2], guidBytes[1], guidBytes[0], // Data1 (reverse byte order)
+		guidBytes[5], guidBytes[4], // Data2 (reverse byte order)
+		guidBytes[7], guidBytes[6], // Data3 (reverse byte order)
+		guidBytes[8], guidBytes[9], // Data4 (big-endian)
+		guidBytes[10], guidBytes[11], guidBytes[12], guidBytes[13], guidBytes[14], guidBytes[15]) // Data5 (big-endian)
+}
+
+// sanitizeUTF8 ensures the string contains only valid UTF-8 characters
+// Invalid UTF-8 sequences are replaced with the Unicode replacement character
+func sanitizeUTF8(s string) string {
+	if utf8.ValidString(s) {
+		return s
+	}
+
+	// Build a new string with only valid UTF-8
+	var builder strings.Builder
+	builder.Grow(len(s))
+
+	for _, r := range s {
+		if r == utf8.RuneError {
+			// Skip invalid runes
+			continue
+		}
+		builder.WriteRune(r)
+	}
+
+	return builder.String()
+}
+
+// getAttributeValueSafe safely retrieves an LDAP attribute value and ensures it's valid UTF-8
+func getAttributeValueSafe(entry *goldap.Entry, attributeName string) string {
+	value := entry.GetAttributeValue(attributeName)
+	return sanitizeUTF8(value)
+}
 
 // ActiveDirectorySyncerProvider implements SyncerProvider for Active Directory LDAP-based syncers
 type ActiveDirectorySyncerProvider struct {
@@ -197,26 +244,32 @@ func (p *ActiveDirectorySyncerProvider) adEntryToOriginalUser(entry *goldap.Entr
 		Groups:     []string{},
 	}
 
-	// Get basic attributes
-	sAMAccountName := entry.GetAttributeValue("sAMAccountName")
-	userPrincipalName := entry.GetAttributeValue("userPrincipalName")
-	displayName := entry.GetAttributeValue("displayName")
-	givenName := entry.GetAttributeValue("givenName")
-	sn := entry.GetAttributeValue("sn")
-	mail := entry.GetAttributeValue("mail")
-	telephoneNumber := entry.GetAttributeValue("telephoneNumber")
-	mobile := entry.GetAttributeValue("mobile")
-	title := entry.GetAttributeValue("title")
-	department := entry.GetAttributeValue("department")
-	company := entry.GetAttributeValue("company")
-	streetAddress := entry.GetAttributeValue("streetAddress")
-	city := entry.GetAttributeValue("l")
-	state := entry.GetAttributeValue("st")
-	postalCode := entry.GetAttributeValue("postalCode")
-	country := entry.GetAttributeValue("co")
-	objectGUID := entry.GetAttributeValue("objectGUID")
-	whenCreated := entry.GetAttributeValue("whenCreated")
-	userAccountControlStr := entry.GetAttributeValue("userAccountControl")
+	// Get basic attributes with UTF-8 sanitization
+	sAMAccountName := getAttributeValueSafe(entry, "sAMAccountName")
+	userPrincipalName := getAttributeValueSafe(entry, "userPrincipalName")
+	displayName := getAttributeValueSafe(entry, "displayName")
+	givenName := getAttributeValueSafe(entry, "givenName")
+	sn := getAttributeValueSafe(entry, "sn")
+	mail := getAttributeValueSafe(entry, "mail")
+	telephoneNumber := getAttributeValueSafe(entry, "telephoneNumber")
+	mobile := getAttributeValueSafe(entry, "mobile")
+	title := getAttributeValueSafe(entry, "title")
+	department := getAttributeValueSafe(entry, "department")
+	company := getAttributeValueSafe(entry, "company")
+	streetAddress := getAttributeValueSafe(entry, "streetAddress")
+	city := getAttributeValueSafe(entry, "l")
+	state := getAttributeValueSafe(entry, "st")
+	postalCode := getAttributeValueSafe(entry, "postalCode")
+	country := getAttributeValueSafe(entry, "co")
+	whenCreated := getAttributeValueSafe(entry, "whenCreated")
+	userAccountControlStr := getAttributeValueSafe(entry, "userAccountControl")
+
+	// Handle objectGUID specially - it's a binary attribute
+	var objectGUID string
+	objectGUIDBytes := entry.GetRawAttributeValue("objectGUID")
+	if len(objectGUIDBytes) == 16 {
+		objectGUID = convertGUIDToString(objectGUIDBytes)
+	}
 
 	// Set user fields
 	// Use sAMAccountName as the primary username
