@@ -214,7 +214,7 @@ const Dashboard = (props) => {
   return (
     <div style={{padding: "20px", maxWidth: "1400px", margin: "0 auto"}}>
       {renderStatistics()}
-      
+
       <Row gutter={[16, 16]}>
         <Col xs={24} lg={12}>
           <Card title={i18next.t("home:User & Organization Metrics")} style={{height: "100%"}}>
@@ -224,7 +224,7 @@ const Dashboard = (props) => {
             ]} />
           </Card>
         </Col>
-        
+
         <Col xs={24} lg={12}>
           <Card title={i18next.t("home:Authentication & Applications")} style={{height: "100%"}}>
             <ChartWidget chartId="auth-apps-chart" title={i18next.t("home:Past 30 Days")} seriesConfig={[
@@ -233,7 +233,7 @@ const Dashboard = (props) => {
             ]} />
           </Card>
         </Col>
-        
+
         <Col xs={24} lg={12}>
           <Card title={i18next.t("home:Access Control")} style={{height: "100%"}}>
             <ChartWidget chartId="access-control-chart" title={i18next.t("home:Past 30 Days")} seriesConfig={[
@@ -244,7 +244,7 @@ const Dashboard = (props) => {
             ]} />
           </Card>
         </Col>
-        
+
         <Col xs={24} lg={12}>
           <Card title={i18next.t("home:Resources & Security")} style={{height: "100%"}}>
             <ChartWidget chartId="resources-security-chart" title={i18next.t("home:Past 30 Days")} seriesConfig={[
@@ -254,7 +254,7 @@ const Dashboard = (props) => {
             ]} />
           </Card>
         </Col>
-        
+
         <Col xs={24} lg={12}>
           <Card title={i18next.t("home:Transactions & Payments")} style={{height: "100%"}}>
             <ChartWidget chartId="transactions-chart" title={i18next.t("home:Past 30 Days")} seriesConfig={[
@@ -262,7 +262,7 @@ const Dashboard = (props) => {
             ]} />
           </Card>
         </Col>
-        
+
         <Col xs={24} lg={12}>
           <Card title={i18next.t("home:System & Integration")} style={{height: "100%"}}>
             <ChartWidget chartId="system-integration-chart" title={i18next.t("home:Past 30 Days")} seriesConfig={[
@@ -272,7 +272,7 @@ const Dashboard = (props) => {
           </Card>
         </Col>
       </Row>
-      
+
       <Tour
         open={Setting.isMobile() ? false : isTourVisible}
         onClose={setIsTourToLocal}
