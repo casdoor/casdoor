@@ -119,7 +119,7 @@ class AuthCallback extends React.Component {
     const telegramId = params.get("id");
     if (telegramId !== null && (code === null || code === "")) {
       const telegramAuthData = {
-        id: parseInt(telegramId),
+        id: parseInt(telegramId, 10),
       };
 
       // Required fields
