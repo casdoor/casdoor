@@ -275,8 +275,7 @@ func (c *ApiController) SendVerificationCode() {
 			}
 		}
 
-		var provider *object.Provider
-		provider, err = application.GetEmailProvider(vform.Method)
+		provider, err := application.GetEmailProvider(vform.Method)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
@@ -318,8 +317,7 @@ func (c *ApiController) SendVerificationCode() {
 			vform.CountryCode = user.GetCountryCode(vform.CountryCode)
 		}
 
-		var provider *object.Provider
-		provider, err = application.GetSmsProvider(vform.Method, vform.CountryCode)
+		provider, err := application.GetSmsProvider(vform.Method, vform.CountryCode)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
