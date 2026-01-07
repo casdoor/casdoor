@@ -790,7 +790,8 @@ func checkProviderItemRule(providerItem *ProviderItem, organization, username, c
 		return false, nil
 	}
 
-	// For "Always" rule, show captcha; for any other rule, don't show
+	// "Always" returns true, all other rules (including "None") return false
+	// Note: "None" should be filtered out before calling this function
 	return providerItem.Rule == "Always", nil
 }
 
