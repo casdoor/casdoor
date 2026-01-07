@@ -18,6 +18,7 @@ vendor/
 bin/
 
 .idea/
+.DS_Store
 *.iml
 .vscode/settings.json
 
