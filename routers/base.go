@@ -16,14 +16,17 @@ package routers
 
 import (
 	stdcontext "context"
+	"encoding/json"
 	"fmt"
 	"net"
+	"net/http"
 	"net/url"
 	"strings"
 
 	"github.com/beego/beego/v2/server/web/context"
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/i18n"
+	"github.com/casdoor/casdoor/mcp"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 )
@@ -64,6 +67,29 @@ func T(ctx *context.Context, error string) string {
 
 func denyRequest(ctx *context.Context) {
 	responseError(ctx, T(ctx, "auth:Unauthorized operation"))
+}
+
+func denyMcpRequest(ctx *context.Context) {
+	req := mcp.McpRequest{}
+	err := json.Unmarshal(ctx.Input.RequestBody, &req)
+	if err != nil {
+		ctx.Output.SetStatus(http.StatusBadRequest)
+		return
+	}
+
+	if req.ID == nil {
+		ctx.Output.SetStatus(http.StatusAccepted)
+		return
+	}
+
+	resp := mcp.GetMcpResponse(req.ID, nil, &mcp.McpError{
+		Code:    -32001,
+		Message: "Unauthorized",
+		Data:    T(ctx, "auth:Unauthorized operation"),
+	})
+
+	ctx.Output.SetStatus(http.StatusUnauthorized)
+	_ = ctx.Output.JSON(resp, true, false)
 }
 
 func getUsernameByClientIdSecret(ctx *context.Context) (string, error) {

@@ -122,11 +122,7 @@ func (c *McpController) Prepare() {
 
 // SendMcpResponse sends a successful MCP response
 func (c *McpController) SendMcpResponse(id interface{}, result interface{}) {
-	resp := McpResponse{
-		JSONRPC: "2.0",
-		ID:      id,
-		Result:  result,
-	}
+	resp := GetMcpResponse(id, result, nil)
 
 	// Set proper HTTP headers for MCP responses
 	c.Ctx.Output.Header("Content-Type", "application/json")
@@ -136,20 +132,27 @@ func (c *McpController) SendMcpResponse(id interface{}, result interface{}) {
 
 // SendMcpError sends an MCP error response
 func (c *McpController) SendMcpError(id interface{}, code int, message string, data interface{}) {
-	resp := McpResponse{
-		JSONRPC: "2.0",
-		ID:      id,
-		Error: &McpError{
-			Code:    code,
-			Message: message,
-			Data:    data,
-		},
-	}
+	resp := GetMcpResponse(id, nil, &McpError{
+		Code:    code,
+		Message: message,
+		Data:    data,
+	})
 
 	// Set proper HTTP headers for MCP responses
 	c.Ctx.Output.Header("Content-Type", "application/json")
 	c.Data["json"] = resp
 	c.ServeJSON()
+}
+
+// GetMcpResponse returns a McpResponse object
+func GetMcpResponse(id interface{}, result interface{}, err *McpError) McpResponse {
+	resp := McpResponse{
+		JSONRPC: "2.0",
+		ID:      id,
+		Result:  result,
+		Error:   err,
+	}
+	return resp
 }
 
 // sendInvalidParamsError sends an invalid params error
@@ -259,10 +262,7 @@ func (c *McpController) handleInitialize(req McpRequest) {
 }
 
 func (c *McpController) handleNotificationsInitialized(req McpRequest) {
-	// notifications/initialized is a notification from client indicating
-	// that the initialization process is complete and the client is ready
-	// to start using the server. No response is expected for notifications.
-	// We can log this event or perform any post-initialization setup here.
+	c.Ctx.Output.SetStatus(202)
 }
 
 func (c *McpController) handlePing(req McpRequest) {

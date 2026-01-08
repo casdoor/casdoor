@@ -297,7 +297,11 @@ func ApiFilter(ctx *context.Context) {
 	}
 
 	if !isAllowed {
-		denyRequest(ctx)
+		if urlPath == "/api/mcp" {
+			denyMcpRequest(ctx)
+		} else {
+			denyRequest(ctx)
+		}
 		record, err := object.NewRecord(ctx)
 		if err != nil {
 			return
