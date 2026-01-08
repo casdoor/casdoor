@@ -43,22 +43,24 @@ type UserShort struct {
 	Owner string `xorm:"varchar(100) notnull pk" json:"owner"`
 	Name  string `xorm:"varchar(100) notnull pk" json:"name"`
 
-	Id          string `xorm:"varchar(100) index" json:"id"`
-	DisplayName string `xorm:"varchar(100)" json:"displayName"`
-	Avatar      string `xorm:"varchar(500)" json:"avatar"`
-	Email       string `xorm:"varchar(100) index" json:"email"`
-	Phone       string `xorm:"varchar(100) index" json:"phone"`
+	Id            string `xorm:"varchar(100) index" json:"id"`
+	DisplayName   string `xorm:"varchar(100)" json:"displayName"`
+	Avatar        string `xorm:"varchar(500)" json:"avatar"`
+	Email         string `xorm:"varchar(100) index" json:"email"`
+	EmailVerified bool   `json:"email_verified,omitempty"`
+	Phone         string `xorm:"varchar(100) index" json:"phone"`
 }
 
 type UserStandard struct {
 	Owner string `xorm:"varchar(100) notnull pk" json:"owner"`
 	Name  string `xorm:"varchar(100) notnull pk" json:"preferred_username,omitempty"`
 
-	Id          string `xorm:"varchar(100) index" json:"id"`
-	DisplayName string `xorm:"varchar(100)" json:"name,omitempty"`
-	Avatar      string `xorm:"varchar(500)" json:"picture,omitempty"`
-	Email       string `xorm:"varchar(100) index" json:"email,omitempty"`
-	Phone       string `xorm:"varchar(100) index" json:"phone,omitempty"`
+	Id            string `xorm:"varchar(100) index" json:"id"`
+	DisplayName   string `xorm:"varchar(100)" json:"name,omitempty"`
+	Avatar        string `xorm:"varchar(500)" json:"picture,omitempty"`
+	Email         string `xorm:"varchar(100) index" json:"email,omitempty"`
+	EmailVerified bool   `json:"email_verified,omitempty"`
+	Phone         string `xorm:"varchar(100) index" json:"phone,omitempty"`
 }
 
 type UserWithoutThirdIdp struct {
@@ -80,7 +82,7 @@ type UserWithoutThirdIdp struct {
 	AvatarType        string   `xorm:"varchar(100)" json:"avatarType"`
 	PermanentAvatar   string   `xorm:"varchar(500)" json:"permanentAvatar"`
 	Email             string   `xorm:"varchar(100) index" json:"email"`
-	EmailVerified     bool     `json:"emailVerified"`
+	EmailVerified     bool     `json:"email_verified"`
 	Phone             string   `xorm:"varchar(100) index" json:"phone"`
 	CountryCode       string   `xorm:"varchar(6)" json:"countryCode"`
 	Region            string   `xorm:"varchar(100)" json:"region"`
@@ -190,11 +192,12 @@ func getShortUser(user *User) *UserShort {
 		Owner: user.Owner,
 		Name:  user.Name,
 
-		Id:          user.Id,
-		DisplayName: user.DisplayName,
-		Avatar:      user.Avatar,
-		Email:       user.Email,
-		Phone:       user.Phone,
+		Id:            user.Id,
+		DisplayName:   user.DisplayName,
+		Avatar:        user.Avatar,
+		Email:         user.Email,
+		EmailVerified: user.EmailVerified,
+		Phone:         user.Phone,
 	}
 	return res
 }
@@ -204,11 +207,12 @@ func getStandardUser(user *User) *UserStandard {
 		Owner: user.Owner,
 		Name:  user.Name,
 
-		Id:          user.Id,
-		DisplayName: user.DisplayName,
-		Avatar:      user.Avatar,
-		Email:       user.Email,
-		Phone:       user.Phone,
+		Id:            user.Id,
+		DisplayName:   user.DisplayName,
+		Avatar:        user.Avatar,
+		Email:         user.Email,
+		EmailVerified: user.EmailVerified,
+		Phone:         user.Phone,
 	}
 	return res
 }
