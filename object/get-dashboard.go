@@ -15,6 +15,9 @@
 package object
 
 import (
+	"fmt"
+	"reflect"
+	"strings"
 	"sync"
 	"time"
 
@@ -23,6 +26,21 @@ import (
 
 type DashboardDateItem struct {
 	CreatedTime string `json:"createTime"`
+}
+
+type DashboardLoginHeatmap struct {
+	XAxis []int     `json:"xAxis"`
+	YAxis []string  `json:"yAxis"`
+	Data  [][]int64 `json:"data"`
+	Max   int64     `json:"max"`
+}
+
+type DashboardMfaCoverageItem struct {
+	Organization  string `json:"organization" xorm:"organization"`
+	AdminEnabled  int64  `json:"adminEnabled" xorm:"adminEnabled"`
+	AdminDisabled int64  `json:"adminDisabled" xorm:"adminDisabled"`
+	UserEnabled   int64  `json:"userEnabled" xorm:"userEnabled"`
+	UserDisabled  int64  `json:"userDisabled" xorm:"userDisabled"`
 }
 
 type DashboardMapItem struct {
@@ -100,6 +118,197 @@ func GetDashboard(owner string) (*map[string][]int64, error) {
 	return &dashboard, nil
 }
 
+func GetDashboardUsersByProvider(owner string) (*map[string]int64, error) {
+	if owner == "All" {
+		owner = ""
+	}
+
+	allowColumns := getUserProviderColumns()
+	var providers []*Provider
+	var err error
+	if owner == "" {
+		providers, err = GetGlobalProviders()
+	} else {
+		providers, err = GetProviders(owner)
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	tableNamePrefix := conf.GetConfigString("tableNamePrefix")
+	userTable := tableNamePrefix + "user"
+
+	res := map[string]int64{}
+	seenTypes := map[string]struct{}{}
+	for _, provider := range providers {
+		if provider == nil {
+			continue
+		}
+		if provider.Category != "OAuth" {
+			continue
+		}
+		if provider.Type == "" {
+			continue
+		}
+		if _, ok := seenTypes[provider.Type]; ok {
+			continue
+		}
+		seenTypes[provider.Type] = struct{}{}
+
+		column := normalizeProviderColumn(provider.Type)
+		dbQuery := ormer.Engine.Table(userTable)
+		if owner != "" {
+			dbQuery = dbQuery.And("owner = ?", owner)
+		}
+		dbQuery = dbQuery.And("is_deleted <> ?", 1)
+
+		if _, ok := allowColumns[column]; ok && isSafeIdentifier(column) {
+			dbQuery = dbQuery.And(fmt.Sprintf("%s <> ''", column))
+		} else {
+			dbQuery = dbQuery.And("properties like ?", fmt.Sprintf("%%oauth_%s_%%", provider.Type))
+		}
+
+		cnt, err := dbQuery.Count()
+		if err != nil {
+			return nil, err
+		}
+		res[provider.Type] = cnt
+	}
+
+	return &res, nil
+}
+
+func GetDashboardLoginHeatmap(owner string) (*DashboardLoginHeatmap, error) {
+	if owner == "All" {
+		owner = ""
+	}
+
+	type recordCreatedTimeItem struct {
+		CreatedTime string `xorm:"created_time"`
+	}
+
+	tableNamePrefix := conf.GetConfigString("tableNamePrefix")
+	recordTable := tableNamePrefix + "record"
+
+	time7day := time.Now().AddDate(0, 0, -7).Format(time.RFC3339)
+
+	dbQuery := ormer.Engine.Table(recordTable).Cols("created_time").
+		And("action = ?", "login").
+		And("created_time >= ?", time7day)
+	if owner != "" {
+		dbQuery = dbQuery.And("owner = ?", owner)
+	}
+
+	nowLocal := time.Now().Local()
+	// Past 7 days (oldest -> newest)
+	yAxis := make([]string, 7)
+	yIndex := map[string]int{}
+	for i := 6; i >= 0; i-- {
+		dayTime := nowLocal.AddDate(0, 0, -i)
+		dateKey := dayTime.Format("2006-01-02")
+		dateStr := dayTime.Format("1-2")
+		row := 6 - i
+		yAxis[row] = dateStr
+		yIndex[dateKey] = row
+	}
+
+	xAxis := make([]int, 24)
+	for i := 0; i < 24; i++ {
+		xAxis[i] = i
+	}
+
+	counts := make([][]int64, 7)
+	for i := 0; i < 7; i++ {
+		counts[i] = make([]int64, 24)
+	}
+
+	rows, err := dbQuery.Rows(&recordCreatedTimeItem{})
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		item := recordCreatedTimeItem{}
+		if err := rows.Scan(&item); err != nil {
+			return nil, err
+		}
+
+		t, err := time.Parse(time.RFC3339, item.CreatedTime)
+		if err != nil {
+			continue
+		}
+
+		localTime := t.Local()
+		hour := localTime.Hour()
+
+		row, ok := yIndex[localTime.Format("2006-01-02")]
+		if !ok {
+			continue
+		}
+		counts[row][hour]++
+	}
+
+	var max int64
+	data := [][]int64{}
+	for y := 0; y < 7; y++ {
+		for x := 0; x < 24; x++ {
+			v := counts[y][x]
+			if v > max {
+				max = v
+			}
+			if v == 0 {
+				continue
+			}
+			data = append(data, []int64{int64(x), int64(y), v})
+		}
+	}
+
+	return &DashboardLoginHeatmap{
+		XAxis: xAxis,
+		YAxis: yAxis,
+		Data:  data,
+		Max:   max,
+	}, nil
+}
+
+func GetDashboardMfaCoverage(owner string) (*[]DashboardMfaCoverageItem, error) {
+	if owner == "All" {
+		owner = ""
+	}
+
+	tableNamePrefix := conf.GetConfigString("tableNamePrefix")
+	userTable := tableNamePrefix + "user"
+
+	mfaEnabledExpr := "(mfaAccounts IS NOT NULL AND LENGTH(TRIM(mfaAccounts)) > 2 AND TRIM(mfaAccounts) <> '[]')"
+
+	sql := fmt.Sprintf(`
+SELECT
+  owner AS organization,
+  SUM(CASE WHEN is_admin = 1 AND %s THEN 1 ELSE 0 END) AS adminEnabled,
+  SUM(CASE WHEN is_admin = 1 AND NOT %s THEN 1 ELSE 0 END) AS adminDisabled,
+  SUM(CASE WHEN (is_admin IS NULL OR is_admin <> 1) AND %s THEN 1 ELSE 0 END) AS userEnabled,
+  SUM(CASE WHEN (is_admin IS NULL OR is_admin <> 1) AND NOT %s THEN 1 ELSE 0 END) AS userDisabled
+FROM %s
+WHERE is_deleted <> 1
+`, mfaEnabledExpr, mfaEnabledExpr, mfaEnabledExpr, mfaEnabledExpr, userTable)
+
+	args := []interface{}{}
+	if owner != "" {
+		sql += "  AND owner = ?\n"
+		args = append(args, owner)
+	}
+
+	sql += "GROUP BY owner\nORDER BY adminDisabled DESC, userDisabled DESC, organization ASC"
+
+	items := []DashboardMfaCoverageItem{}
+	if err := ormer.Engine.SQL(sql, args...).Find(&items); err != nil {
+		return nil, err
+	}
+
+	return &items, nil
+}
+
 func countCreatedBefore(dashboardMapItem DashboardMapItem, before time.Time) int64 {
 	count := dashboardMapItem.itemCount
 	for _, e := range dashboardMapItem.dashboardDateItems {
@@ -109,4 +318,61 @@ func countCreatedBefore(dashboardMapItem DashboardMapItem, before time.Time) int
 		}
 	}
 	return count
+}
+
+func normalizeProviderColumn(providerType string) string {
+	column := strings.ToLower(providerType)
+	column = strings.ReplaceAll(column, " ", "")
+	column = strings.ReplaceAll(column, "-", "")
+	column = strings.ReplaceAll(column, "_", "")
+	return column
+}
+
+func isSafeIdentifier(s string) bool {
+	if s == "" {
+		return false
+	}
+	for _, c := range s {
+		if c >= 'a' && c <= 'z' {
+			continue
+		}
+		if c >= '0' && c <= '9' {
+			continue
+		}
+		return false
+	}
+	return true
+}
+
+func getUserProviderColumns() map[string]struct{} {
+	userType := reflect.TypeOf(User{})
+	start := -1
+	end := -1
+	for i := 0; i < userType.NumField(); i++ {
+		field := userType.Field(i)
+		if field.Name == "GitHub" {
+			start = i
+		} else if field.Name == "Custom10" {
+			end = i
+		}
+	}
+
+	if start == -1 || end == -1 || end < start {
+		return map[string]struct{}{}
+	}
+
+	res := map[string]struct{}{}
+	for i := start; i <= end; i++ {
+		field := userType.Field(i)
+		if field.Type.Kind() != reflect.String {
+			continue
+		}
+
+		jsonTag := strings.Split(field.Tag.Get("json"), ",")[0]
+		if jsonTag == "" || jsonTag == "-" {
+			continue
+		}
+		res[jsonTag] = struct{}{}
+	}
+	return res
 }
