@@ -294,7 +294,16 @@ const Dashboard = (props) => {
         ],
       };
 
-      return attachEChart(chartDom, option);
+      // Initialize the chart
+      attachEChart(chartDom, option);
+
+      // Cleanup: dispose of the ECharts instance when the component unmounts or dependencies change
+      return () => {
+        const chartInstance = echarts.getInstanceByDom(chartDom);
+        if (chartInstance) {
+          chartInstance.dispose();
+        }
+      };
     }, [mfaCoverage, chartId, height]);
 
     return <div id={chartId} role="img" aria-label={chartId} style={{width: "100%", height}} />;
