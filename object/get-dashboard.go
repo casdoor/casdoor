@@ -244,7 +244,7 @@ func GetDashboardLoginHeatmap(owner string) (*DashboardLoginHeatmap, error) {
 		counts[row][hour]++
 	}
 
-	var max int64 = 0
+	var max int64
 	data := [][]int64{}
 	for y := 0; y < 7; y++ {
 		for x := 0; x < 24; x++ {
