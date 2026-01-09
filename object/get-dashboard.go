@@ -233,9 +233,6 @@ func GetDashboardLoginHeatmap(owner string) (*DashboardLoginHeatmap, error) {
 
 		localTime := t.Local()
 		hour := localTime.Hour()
-		if hour < 0 || hour > 23 {
-			continue
-		}
 
 		row, ok := yIndex[localTime.Format("1-2")]
 		if !ok {
