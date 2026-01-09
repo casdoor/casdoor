@@ -17,6 +17,7 @@ package mcp
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
 
 	"github.com/beego/beego/v2/server/web"
 	"github.com/casdoor/casdoor/object"
@@ -120,32 +121,26 @@ func (c *McpController) Prepare() {
 	c.EnableRender = false
 }
 
-// SendMcpResponse sends a successful MCP response
-func (c *McpController) SendMcpResponse(id interface{}, result interface{}) {
-	resp := GetMcpResponse(id, result, nil)
-
-	// Set proper HTTP headers for MCP responses
+func (c *McpController) McpResponseOk(id interface{}, result interface{}) {
+	resp := BuildMcpResponse(id, result, nil)
 	c.Ctx.Output.Header("Content-Type", "application/json")
 	c.Data["json"] = resp
 	c.ServeJSON()
 }
 
-// SendMcpError sends an MCP error response
-func (c *McpController) SendMcpError(id interface{}, code int, message string, data interface{}) {
-	resp := GetMcpResponse(id, nil, &McpError{
+func (c *McpController) McpResponseError(id interface{}, code int, message string, data interface{}) {
+	resp := BuildMcpResponse(id, nil, &McpError{
 		Code:    code,
 		Message: message,
 		Data:    data,
 	})
-
-	// Set proper HTTP headers for MCP responses
 	c.Ctx.Output.Header("Content-Type", "application/json")
 	c.Data["json"] = resp
 	c.ServeJSON()
 }
 
 // GetMcpResponse returns a McpResponse object
-func GetMcpResponse(id interface{}, result interface{}, err *McpError) McpResponse {
+func BuildMcpResponse(id interface{}, result interface{}, err *McpError) McpResponse {
 	resp := McpResponse{
 		JSONRPC: "2.0",
 		ID:      id,
@@ -157,7 +152,7 @@ func GetMcpResponse(id interface{}, result interface{}, err *McpError) McpRespon
 
 // sendInvalidParamsError sends an invalid params error
 func (c *McpController) sendInvalidParamsError(id interface{}, details string) {
-	c.SendMcpError(id, -32602, "Invalid params", details)
+	c.McpResponseError(id, -32602, "Invalid params", details)
 }
 
 // SendToolResult sends a successful tool execution result
@@ -170,7 +165,7 @@ func (c *McpController) SendToolResult(id interface{}, text string) {
 			},
 		},
 	}
-	c.SendMcpResponse(id, result)
+	c.McpResponseOk(id, result)
 }
 
 // SendToolErrorResult sends a tool execution error result
@@ -184,7 +179,7 @@ func (c *McpController) SendToolErrorResult(id interface{}, errorMsg string) {
 		},
 		IsError: true,
 	}
-	c.SendMcpResponse(id, result)
+	c.McpResponseOk(id, result)
 }
 
 // FormatOperationResult formats the result of CRUD operations in a clear, descriptive way
@@ -214,7 +209,7 @@ func (c *McpController) HandleMcp() {
 	var req McpRequest
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &req)
 	if err != nil {
-		c.SendMcpError(nil, -32700, "Parse error", err.Error())
+		c.McpResponseError(nil, -32700, "Parse error", err.Error())
 		return
 	}
 
@@ -231,7 +226,7 @@ func (c *McpController) HandleMcp() {
 	case "tools/call":
 		c.handleToolsCall(req)
 	default:
-		c.SendMcpError(req.ID, -32601, "Method not found", fmt.Sprintf("Method '%s' not found", req.Method))
+		c.McpResponseError(req.ID, -32601, "Method not found", fmt.Sprintf("Method '%s' not found", req.Method))
 	}
 }
 
@@ -258,17 +253,18 @@ func (c *McpController) handleInitialize(req McpRequest) {
 		},
 	}
 
-	c.SendMcpResponse(req.ID, result)
+	c.McpResponseOk(req.ID, result)
 }
 
 func (c *McpController) handleNotificationsInitialized(req McpRequest) {
-	c.Ctx.Output.SetStatus(202)
+	c.Ctx.Output.SetStatus(http.StatusAccepted)
+	c.Ctx.Output.Body([]byte{})
 }
 
 func (c *McpController) handlePing(req McpRequest) {
 	// ping method is used to check if the server is alive and responsive
 	// Return an empty object as result to indicate server is active
-	c.SendMcpResponse(req.ID, map[string]interface{}{})
+	c.McpResponseOk(req.ID, map[string]interface{}{})
 }
 
 func (c *McpController) handleToolsList(req McpRequest) {
@@ -353,7 +349,7 @@ func (c *McpController) handleToolsList(req McpRequest) {
 		Tools: tools,
 	}
 
-	c.SendMcpResponse(req.ID, result)
+	c.McpResponseOk(req.ID, result)
 }
 
 func (c *McpController) handleToolsCall(req McpRequest) {
@@ -402,6 +398,6 @@ func (c *McpController) handleToolsCall(req McpRequest) {
 		}
 		c.handleDeleteApplicationTool(req.ID, args)
 	default:
-		c.SendMcpError(req.ID, -32602, "Invalid tool name", fmt.Sprintf("Tool '%s' not found", params.Name))
+		c.McpResponseError(req.ID, -32602, "Invalid tool name", fmt.Sprintf("Tool '%s' not found", params.Name))
 	}
 }
