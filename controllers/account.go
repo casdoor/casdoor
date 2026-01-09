@@ -467,15 +467,17 @@ func (c *ApiController) SsoLogout() {
 	var tokens []*object.Token
 	var sessionIds []string
 
+	// Get tokens for notification (needed for both session-level and full logout)
+	// This enables subsystems to identify and invalidate corresponding access tokens
+	// Note: Tokens must be retrieved BEFORE expiration to include their hashes in the notification
+	tokens, err = object.GetTokensByUser(owner, username)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
 	if logoutAllSessions {
 		// Logout from all sessions: expire all tokens and delete all sessions
-		// Get tokens before expiring them (for session-level logout notification)
-		tokens, err = object.GetTokensByUser(owner, username)
-		if err != nil {
-			c.ResponseError(err.Error())
-			return
-		}
-
 		_, err = object.ExpireTokenByUser(owner, username)
 		if err != nil {
 			c.ResponseError(err.Error())
