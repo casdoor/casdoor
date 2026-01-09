@@ -33,3 +33,57 @@ func (c *ApiController) GetDashboard() {
 
 	c.ResponseOk(data)
 }
+
+// GetDashboardUsersByProvider
+// @Title GetDashboardUsersByProvider
+// @Tag System API
+// @Description get user count by provider
+// @Success 200 {object} controllers.Response The Response object
+// @router /get-dashboard-providers [get]
+func (c *ApiController) GetDashboardUsersByProvider() {
+	owner := c.Ctx.Input.Query("owner")
+
+	data, err := object.GetDashboardUsersByProvider(owner)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	c.ResponseOk(data)
+}
+
+// GetDashboardLoginHeatmap
+// @Title GetDashboardLoginHeatmap
+// @Tag System API
+// @Description get login count heatmap by weekday and hour
+// @Success 200 {object} controllers.Response The Response object
+// @router /get-dashboard-login-time-heatmap [get]
+func (c *ApiController) GetDashboardLoginHeatmap() {
+	owner := c.Ctx.Input.Query("owner")
+
+	data, err := object.GetDashboardLoginHeatmap(owner)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	c.ResponseOk(data)
+}
+
+// GetDashboardMfaCoverage
+// @Title GetDashboardMfaCoverage
+// @Tag System API
+// @Description get MFA coverage by organization
+// @Success 200 {object} controllers.Response The Response object
+// @router /get-dashboard-mfa-coverage [get]
+func (c *ApiController) GetDashboardMfaCoverage() {
+	owner := c.Ctx.Input.Query("owner")
+
+	data, err := object.GetDashboardMfaCoverage(owner)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	c.ResponseOk(data)
+}
