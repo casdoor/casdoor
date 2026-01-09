@@ -15,10 +15,12 @@
 package routers
 
 import (
+	"encoding/json"
 	"fmt"
 	"strings"
 
 	"github.com/beego/beego/v2/server/web/context"
+	"github.com/casdoor/casdoor/mcp"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 )
@@ -27,6 +29,14 @@ func AutoSigninFilter(ctx *context.Context) {
 	urlPath := ctx.Request.URL.Path
 	if strings.HasPrefix(urlPath, "/api/login/oauth/access_token") {
 		return
+	}
+	if urlPath == "/api/mcp" {
+		var req mcp.McpRequest
+		if err := json.Unmarshal(ctx.Input.RequestBody, &req); err == nil {
+			if req.Method == "initialize" || req.Method == "notifications/initialized" || req.Method == "ping" || req.Method == "tools/list" {
+				return
+			}
+		}
 	}
 	//if getSessionUser(ctx) != "" {
 	//	return

@@ -40,6 +40,11 @@ type Response struct {
 
 func responseError(ctx *context.Context, error string, data ...interface{}) {
 	// ctx.ResponseWriter.WriteHeader(http.StatusForbidden)
+	urlPath := ctx.Request.URL.Path
+	if urlPath == "/api/mcp" {
+		denyMcpRequest(ctx)
+		return
+	}
 
 	resp := Response{Status: "error", Msg: error}
 	switch len(data) {
@@ -79,10 +84,11 @@ func denyMcpRequest(ctx *context.Context) {
 
 	if req.ID == nil {
 		ctx.Output.SetStatus(http.StatusAccepted)
+		ctx.Output.Body([]byte{})
 		return
 	}
 
-	resp := mcp.GetMcpResponse(req.ID, nil, &mcp.McpError{
+	resp := mcp.BuildMcpResponse(req.ID, nil, &mcp.McpError{
 		Code:    -32001,
 		Message: "Unauthorized",
 		Data:    T(ctx, "auth:Unauthorized operation"),
