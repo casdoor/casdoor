@@ -56,36 +56,28 @@ const Dashboard = (props) => {
   };
 
   const fetchDashboardData = (organization) => {
-    DashboardBackend.getDashboard(organization).then((res) => {
-      if (res.status === "ok") {
-        setDashboardData(res.data);
-      } else {
-        Setting.showMessage("error", res.msg);
-      }
-    });
+    Promise.allSettled([
+      DashboardBackend.getDashboard(organization),
+      DashboardBackend.getDashboardUsersByProvider(organization),
+      DashboardBackend.getDashboardLoginHeatmap(organization),
+      DashboardBackend.getDashboardMfaCoverage(organization),
+    ]).then(([dashboardRes, usersByProviderRes, loginHeatmapRes, mfaCoverageRes]) => {
+      const handleResult = (result, setter) => {
+        if (result.status === "fulfilled") {
+          if (result.value?.status === "ok") {
+            setter(result.value.data);
+          } else {
+            Setting.showMessage("error", result.value?.msg ?? "Request failed");
+          }
+        } else {
+          Setting.showMessage("error", result.reason?.message ?? "Request failed");
+        }
+      };
 
-    DashboardBackend.getDashboardUsersByProvider(organization).then((res) => {
-      if (res.status === "ok") {
-        setUsersByProvider(res.data);
-      } else {
-        Setting.showMessage("error", res.msg);
-      }
-    });
-
-    DashboardBackend.getDashboardLoginHeatmap(organization).then((res) => {
-      if (res.status === "ok") {
-        setLoginHeatmap(res.data);
-      } else {
-        Setting.showMessage("error", res.msg);
-      }
-    });
-
-    DashboardBackend.getDashboardMfaCoverage(organization).then((res) => {
-      if (res.status === "ok") {
-        setMfaCoverage(res.data);
-      } else {
-        Setting.showMessage("error", res.msg);
-      }
+      handleResult(dashboardRes, setDashboardData);
+      handleResult(usersByProviderRes, setUsersByProvider);
+      handleResult(loginHeatmapRes, setLoginHeatmap);
+      handleResult(mfaCoverageRes, setMfaCoverage);
     });
   };
 
@@ -239,7 +231,7 @@ const Dashboard = (props) => {
       return attachEChart(chartDom, option);
     }, [dashboardData, chartId, height, seriesConfigKey, yAxisName]);
 
-    return <div id={chartId} style={{width: "100%", height}} />;
+    return <div id={chartId} role="img" aria-label={chartId} style={{width: "100%", height}} />;
   };
 
   const MfaCoverageWidget = ({chartId, height}) => {
@@ -299,7 +291,7 @@ const Dashboard = (props) => {
       return attachEChart(chartDom, option);
     }, [mfaCoverage, chartId, height]);
 
-    return <div id={chartId} style={{width: "100%", height}} />;
+    return <div id={chartId} role="img" aria-label={chartId} style={{width: "100%", height}} />;
   };
 
   const DonutWidget = ({chartId, height}) => {
@@ -378,7 +370,7 @@ const Dashboard = (props) => {
       return attachEChart(chartDom, option);
     }, [usersByProvider, chartId, height]);
 
-    return <div id={chartId} style={{width: "100%", height}} />;
+    return <div id={chartId} role="img" aria-label={chartId} style={{width: "100%", height}} />;
   };
 
   const HeatmapWidget = ({chartId, height}) => {
@@ -447,7 +439,7 @@ const Dashboard = (props) => {
       return attachEChart(chartDom, option, {notMerge: true});
     }, [loginHeatmap, chartId, height]);
 
-    return <div id={chartId} style={{width: "100%", height}} />;
+    return <div id={chartId} role="img" aria-label={chartId} style={{width: "100%", height}} />;
   };
 
   const renderStatistics = () => {

@@ -162,7 +162,7 @@ func GetDashboardUsersByProvider(owner string) (*map[string]int64, error) {
 		}
 		dbQuery = dbQuery.And("is_deleted <> ?", 1)
 
-		if _, ok := allowColumns[column]; ok {
+		if _, ok := allowColumns[column]; ok && isSafeIdentifier(column) {
 			dbQuery = dbQuery.And(fmt.Sprintf("%s <> ''", column))
 		} else {
 			dbQuery = dbQuery.And("properties like ?", fmt.Sprintf("%%oauth_%s_%%", provider.Type))
@@ -199,20 +199,17 @@ func GetDashboardLoginHeatmap(owner string) (*DashboardLoginHeatmap, error) {
 		dbQuery = dbQuery.And("owner = ?", owner)
 	}
 
-	items := []recordCreatedTimeItem{}
-	if err := dbQuery.Find(&items); err != nil {
-		return nil, err
-	}
-
 	nowLocal := time.Now().Local()
 	// Past 7 days (oldest -> newest)
 	yAxis := make([]string, 7)
 	yIndex := map[string]int{}
 	for i := 6; i >= 0; i-- {
-		dateStr := nowLocal.AddDate(0, 0, -i).Format("1-2")
+		dayTime := nowLocal.AddDate(0, 0, -i)
+		dateKey := dayTime.Format("2006-01-02")
+		dateStr := dayTime.Format("1-2")
 		row := 6 - i
 		yAxis[row] = dateStr
-		yIndex[dateStr] = row
+		yIndex[dateKey] = row
 	}
 
 	xAxis := make([]int, 24)
@@ -225,7 +222,18 @@ func GetDashboardLoginHeatmap(owner string) (*DashboardLoginHeatmap, error) {
 		counts[i] = make([]int64, 24)
 	}
 
-	for _, item := range items {
+	rows, err := dbQuery.Rows(&recordCreatedTimeItem{})
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		item := recordCreatedTimeItem{}
+		if err := rows.Scan(&item); err != nil {
+			return nil, err
+		}
+
 		t, err := time.Parse(time.RFC3339, item.CreatedTime)
 		if err != nil {
 			continue
@@ -234,7 +242,7 @@ func GetDashboardLoginHeatmap(owner string) (*DashboardLoginHeatmap, error) {
 		localTime := t.Local()
 		hour := localTime.Hour()
 
-		row, ok := yIndex[localTime.Format("1-2")]
+		row, ok := yIndex[localTime.Format("2006-01-02")]
 		if !ok {
 			continue
 		}
@@ -272,7 +280,7 @@ func GetDashboardMfaCoverage(owner string) (*[]DashboardMfaCoverageItem, error) 
 	tableNamePrefix := conf.GetConfigString("tableNamePrefix")
 	userTable := tableNamePrefix + "user"
 
-	mfaEnabledExpr := "(mfaAccounts IS NOT NULL AND LENGTH(TRIM(CAST(mfaAccounts AS CHAR))) > 2 AND TRIM(CAST(mfaAccounts AS CHAR)) <> '[]')"
+	mfaEnabledExpr := "(mfaAccounts IS NOT NULL AND LENGTH(TRIM(mfaAccounts)) > 2 AND TRIM(mfaAccounts) <> '[]')"
 
 	sql := fmt.Sprintf(`
 SELECT
@@ -318,6 +326,22 @@ func normalizeProviderColumn(providerType string) string {
 	column = strings.ReplaceAll(column, "-", "")
 	column = strings.ReplaceAll(column, "_", "")
 	return column
+}
+
+func isSafeIdentifier(s string) bool {
+	if s == "" {
+		return false
+	}
+	for _, c := range s {
+		if c >= 'a' && c <= 'z' {
+			continue
+		}
+		if c >= '0' && c <= '9' {
+			continue
+		}
+		return false
+	}
+	return true
 }
 
 func getUserProviderColumns() map[string]struct{} {
