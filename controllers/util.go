@@ -319,12 +319,12 @@ func getInvalidSmsReceivers(smsForm SmsForm) []string {
 // GetFullRequestUri constructs the full request URI including scheme and host
 func GetFullRequestUri(ctx *context.Context) string {
 	host := ctx.Request.Host
-	
+
 	// If the URL already has the host, return it as is
 	if ctx.Request.URL.Host != "" {
 		return ctx.Request.URL.String()
 	}
-	
+
 	// Check X-Forwarded-Proto header first
 	scheme := ctx.Request.Header.Get("X-Forwarded-Proto")
 	if scheme == "" {
@@ -337,13 +337,13 @@ func GetFullRequestUri(ctx *context.Context) string {
 			scheme = "https"
 		}
 	}
-	
+
 	// Construct full URI including path and query
 	path := ctx.Request.URL.Path
 	if ctx.Request.URL.RawQuery != "" {
 		path = path + "?" + ctx.Request.URL.RawQuery
 	}
-	
+
 	return fmt.Sprintf("%s://%s%s", scheme, host, path)
 }
 

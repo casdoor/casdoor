@@ -45,8 +45,10 @@ type DPoPHeader struct {
 }
 
 // dpopNonceStore stores nonces for DPoP replay protection
-var dpopNonceStore = &sync.Map{}
-var cleanupStarted sync.Once
+var (
+	dpopNonceStore = &sync.Map{}
+	cleanupStarted sync.Once
+)
 
 const (
 	dpopNonceExpiration        = 5 * time.Minute
@@ -140,7 +142,6 @@ func ValidateDPoPProof(dpopProof string, httpMethod string, httpUri string, acce
 		}
 		return publicKey, nil
 	})
-
 	if err != nil {
 		return "", fmt.Errorf("failed to validate DPoP proof signature: %w", err)
 	}

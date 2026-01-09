@@ -62,34 +62,34 @@ func TestComputeJwkThumbprint(t *testing.T) {
 
 func TestValidateHtu(t *testing.T) {
 	tests := []struct {
-		name      string
-		htu       string
+		name       string
+		htu        string
 		requestUri string
-		expected  bool
+		expected   bool
 	}{
 		{
-			name:      "exact match",
-			htu:       "https://example.com/token",
+			name:       "exact match",
+			htu:        "https://example.com/token",
 			requestUri: "https://example.com/token",
-			expected:  true,
+			expected:   true,
 		},
 		{
-			name:      "with query params - should match",
-			htu:       "https://example.com/token",
+			name:       "with query params - should match",
+			htu:        "https://example.com/token",
 			requestUri: "https://example.com/token?code=abc",
-			expected:  true,
+			expected:   true,
 		},
 		{
-			name:      "different path",
-			htu:       "https://example.com/token",
+			name:       "different path",
+			htu:        "https://example.com/token",
 			requestUri: "https://example.com/other",
-			expected:  false,
+			expected:   false,
 		},
 		{
-			name:      "different domain",
-			htu:       "https://example.com/token",
+			name:       "different domain",
+			htu:        "https://example.com/token",
 			requestUri: "https://other.com/token",
-			expected:  false,
+			expected:   false,
 		},
 	}
 
