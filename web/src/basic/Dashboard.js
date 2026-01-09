@@ -228,7 +228,13 @@ const Dashboard = (props) => {
         }),
       };
 
-      return attachEChart(chartDom, option);
+      const cleanup = attachEChart(chartDom, option);
+
+      return () => {
+        if (typeof cleanup === "function") {
+          cleanup();
+        }
+      };
     }, [dashboardData, chartId, height, seriesConfigKey, yAxisName]);
 
     return <div id={chartId} role="img" aria-label={chartId} style={{width: "100%", height}} />;
