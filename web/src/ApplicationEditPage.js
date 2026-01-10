@@ -1173,7 +1173,14 @@ class ApplicationEditPage extends React.Component {
                                 ? "primary" : "default"}
                               onClick={() => {
                                 const {isEnabled} = this.state.application.themeData ?? {...Conf.ThemeDefault, isEnabled: false};
-                                this.updateApplicationField("themeData", {...theme.themeData, isEnabled});
+                                const application = this.state.application;
+                                application.themeData = {...theme.themeData, isEnabled};
+                                application.formOffset = theme.formOffset;
+                                application.formBackgroundUrl = theme.formBackgroundUrl;
+                                application.formBackgroundUrlMobile = theme.formBackgroundUrlMobile;
+                                application.formCss = theme.formCss;
+                                application.formCssMobile = theme.formCssMobile;
+                                this.setState({application});
                               }}
                             >
                               {i18next.t(`theme:${theme.displayName}`)}
