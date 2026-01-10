@@ -20,7 +20,6 @@ import i18next from "i18next";
 import * as Conf from "../Conf";
 
 function ThemeSwitcher(props) {
-  const {application} = props;
   const [builtInThemes, setBuiltInThemes] = useState([]);
   const [visible, setVisible] = useState(false);
 
