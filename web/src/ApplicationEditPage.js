@@ -121,6 +121,7 @@ class ApplicationEditPage extends React.Component {
       samlAttributes: [],
       samlMetadata: null,
       isAuthorized: true,
+      builtInThemes: [],
     };
   }
 
@@ -128,6 +129,7 @@ class ApplicationEditPage extends React.Component {
     this.getApplication();
     this.getOrganizations();
     this.getGroups();
+    this.getBuiltInThemes();
   }
 
   getApplication() {
@@ -226,6 +228,19 @@ class ApplicationEditPage extends React.Component {
         this.setState({
           samlMetadata: data,
         });
+      });
+  }
+
+  getBuiltInThemes() {
+    ApplicationBackend.getBuiltInThemes()
+      .then((res) => {
+        if (res.status === "ok") {
+          this.setState({
+            builtInThemes: res.data || [],
+          });
+        } else {
+          Setting.showMessage("error", res.msg);
+        }
       });
   }
 
@@ -1142,12 +1157,39 @@ class ApplicationEditPage extends React.Component {
             </Row>
             {
               this.state.application.themeData?.isEnabled ?
-                <Row style={{marginTop: "20px"}}>
-                  <ThemeEditor themeData={this.state.application.themeData} onThemeChange={(_, nextThemeData) => {
-                    const {isEnabled} = this.state.application.themeData ?? {...Conf.ThemeDefault, isEnabled: false};
-                    this.updateApplicationField("themeData", {...nextThemeData, isEnabled});
-                  }} />
-                </Row> : null
+                <div>
+                  <Row style={{marginTop: "20px"}}>
+                    <Col span={24}>
+                      <Space direction="vertical" style={{width: "100%"}}>
+                        <div style={{marginBottom: "10px"}}>
+                          <strong>{i18next.t("theme:Built-in theme presets")}:</strong>
+                        </div>
+                        <Space wrap size="middle">
+                          {this.state.builtInThemes.map((theme) => (
+                            <Button
+                              key={theme.name}
+                              type={this.state.application.themeData?.themeType === theme.themeData.themeType &&
+                                    this.state.application.themeData?.colorPrimary === theme.themeData.colorPrimary
+                                ? "primary" : "default"}
+                              onClick={() => {
+                                const {isEnabled} = this.state.application.themeData ?? {...Conf.ThemeDefault, isEnabled: false};
+                                this.updateApplicationField("themeData", {...theme.themeData, isEnabled});
+                              }}
+                            >
+                              {i18next.t(`theme:${theme.displayName}`)}
+                            </Button>
+                          ))}
+                        </Space>
+                      </Space>
+                    </Col>
+                  </Row>
+                  <Row style={{marginTop: "20px"}}>
+                    <ThemeEditor themeData={this.state.application.themeData} onThemeChange={(_, nextThemeData) => {
+                      const {isEnabled} = this.state.application.themeData ?? {...Conf.ThemeDefault, isEnabled: false};
+                      this.updateApplicationField("themeData", {...nextThemeData, isEnabled});
+                    }} />
+                  </Row>
+                </div> : null
             }
           </Col>
         </Row>

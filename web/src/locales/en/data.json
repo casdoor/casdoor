@@ -1260,13 +1260,18 @@
   "theme": {
     "Blossom": "Blossom",
     "Border radius": "Border radius",
+    "Built-in theme presets": "Built-in theme presets",
     "Compact": "Compact",
+    "Corporate": "Corporate",
     "Customize theme": "Customize theme",
     "Dark": "Dark",
     "Default": "Default",
     "Document": "Document",
+    "Forest": "Forest",
     "Is compact": "Is compact",
+    "Ocean": "Ocean",
     "Primary color": "Primary color",
+    "Sunset": "Sunset",
     "Theme": "Theme",
     "Theme - Tooltip": "Style theme of the application"
   },
