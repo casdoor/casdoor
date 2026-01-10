@@ -138,8 +138,9 @@ func GetDashboardUsersByProvider(owner string) (*map[string]int64, error) {
 	tableNamePrefix := conf.GetConfigString("tableNamePrefix")
 	userTable := tableNamePrefix + "user"
 
-	res := map[string]int64{}
+	// Filter unique provider types
 	seenTypes := map[string]struct{}{}
+	var uniqueProviders []*Provider
 	for _, provider := range providers {
 		if provider == nil {
 			continue
@@ -154,26 +155,57 @@ func GetDashboardUsersByProvider(owner string) (*map[string]int64, error) {
 			continue
 		}
 		seenTypes[provider.Type] = struct{}{}
+		uniqueProviders = append(uniqueProviders, provider)
+	}
 
-		column := normalizeProviderColumn(provider.Type)
-		dbQuery := ormer.Engine.Table(userTable)
-		if owner != "" {
-			dbQuery = dbQuery.And("owner = ?", owner)
-		}
-		dbQuery = dbQuery.And("is_deleted <> ?", 1)
+	// Use goroutines for parallel database queries
+	var wg sync.WaitGroup
+	var resMap sync.Map
+	ch := make(chan error, len(uniqueProviders))
 
-		if _, ok := allowColumns[column]; ok && isSafeIdentifier(column) {
-			dbQuery = dbQuery.And(fmt.Sprintf("%s <> ''", column))
-		} else {
-			dbQuery = dbQuery.And("properties like ?", fmt.Sprintf("%%oauth_%s_%%", provider.Type))
-		}
+	wg.Add(len(uniqueProviders))
+	for _, provider := range uniqueProviders {
+		go func(p *Provider, ch chan error) {
+			defer wg.Done()
 
-		cnt, err := dbQuery.Count()
+			column := normalizeProviderColumn(p.Type)
+			dbQuery := ormer.Engine.Table(userTable)
+			if owner != "" {
+				dbQuery = dbQuery.And("owner = ?", owner)
+			}
+			dbQuery = dbQuery.And("is_deleted <> ?", 1)
+
+			if _, ok := allowColumns[column]; ok && isSafeIdentifier(column) {
+				dbQuery = dbQuery.And(fmt.Sprintf("%s <> ''", column))
+			} else {
+				dbQuery = dbQuery.And("properties like ?", fmt.Sprintf("%%oauth_%s_%%", p.Type))
+			}
+
+			cnt, err := dbQuery.Count()
+			if err != nil {
+				ch <- err
+				return
+			}
+			resMap.Store(p.Type, cnt)
+		}(provider, ch)
+	}
+
+	wg.Wait()
+	close(ch)
+
+	// Check for errors
+	for err = range ch {
 		if err != nil {
 			return nil, err
 		}
-		res[provider.Type] = cnt
 	}
+
+	// Convert sync.Map to regular map
+	res := map[string]int64{}
+	resMap.Range(func(key, value interface{}) bool {
+		res[key.(string)] = value.(int64)
+		return true
+	})
 
 	return &res, nil
 }
