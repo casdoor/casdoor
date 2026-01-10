@@ -237,6 +237,14 @@ const Dashboard = (props) => {
       };
     }, [dashboardData, chartId, height, seriesConfigKey, yAxisName]);
 
+    if (dashboardData === null) {
+      return (
+        <div style={{display: "flex", justifyContent: "center", alignItems: "center", height}}>
+          <Spin size="large" />
+        </div>
+      );
+    }
+
     return <div id={chartId} role="img" aria-label={chartId} style={{width: "100%", height}} />;
   };
 
@@ -305,6 +313,14 @@ const Dashboard = (props) => {
         }
       };
     }, [mfaCoverage, chartId, height]);
+
+    if (mfaCoverage === null) {
+      return (
+        <div style={{display: "flex", justifyContent: "center", alignItems: "center", height}}>
+          <Spin size="large" />
+        </div>
+      );
+    }
 
     return <div id={chartId} role="img" aria-label={chartId} style={{width: "100%", height}} />;
   };
@@ -390,6 +406,14 @@ const Dashboard = (props) => {
       };
     }, [usersByProvider, chartId, height]);
 
+    if (usersByProvider === null) {
+      return (
+        <div style={{display: "flex", justifyContent: "center", alignItems: "center", height}}>
+          <Spin size="large" />
+        </div>
+      );
+    }
+
     return <div id={chartId} role="img" aria-label={chartId} style={{width: "100%", height}} />;
   };
 
@@ -459,27 +483,21 @@ const Dashboard = (props) => {
       return attachEChart(chartDom, option, {notMerge: true});
     }, [loginHeatmap, chartId, height]);
 
-    return <div id={chartId} role="img" aria-label={chartId} style={{width: "100%", height}} />;
-  };
-
-  const renderStatistics = () => {
-    if (dashboardData === null) {
+    if (loginHeatmap === null) {
       return (
-        <div style={{display: "flex", justifyContent: "center", alignItems: "center", padding: "40px"}}>
-          <Spin size="large" tip={i18next.t("login:Loading")} />
+        <div style={{display: "flex", justifyContent: "center", alignItems: "center", height}}>
+          <Spin size="large" />
         </div>
       );
     }
 
-    return null;
+    return <div id={chartId} role="img" aria-label={chartId} style={{width: "100%", height}} />;
   };
 
   const colSpan = 12;
 
   return (
     <div style={{padding: `${padding}px`, maxWidth: "1400px", margin: "0 auto", overflow: "hidden"}}>
-      {renderStatistics()}
-
       <Row gutter={[gutter, gutter]}>
         <Col xs={colSpan}>
           <Card title={i18next.t("home:Past 30 Days")} size="small" style={{height: "100%"}} styles={{body: {padding: 12}}}>
