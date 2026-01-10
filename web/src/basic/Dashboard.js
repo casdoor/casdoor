@@ -302,16 +302,8 @@ const Dashboard = (props) => {
         ],
       };
 
-      // Initialize the chart
-      attachEChart(chartDom, option);
-
-      // Cleanup: dispose of the ECharts instance when the component unmounts or dependencies change
-      return () => {
-        const chartInstance = echarts.getInstanceByDom(chartDom);
-        if (chartInstance) {
-          chartInstance.dispose();
-        }
-      };
+      // Initialize the chart and return the cleanup function
+      return attachEChart(chartDom, option);
     }, [mfaCoverage, chartId, height]);
 
     if (mfaCoverage === null) {
