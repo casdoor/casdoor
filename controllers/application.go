@@ -294,3 +294,14 @@ func (c *ApiController) DeleteApplication() {
 	c.Data["json"] = wrapActionResponse(object.DeleteApplication(&application))
 	c.ServeJSON()
 }
+
+// GetBuiltInThemes
+// @Title GetBuiltInThemes
+// @Tag Application API
+// @Description get all built-in theme presets
+// @Success 200 {array} object.BuiltInTheme The Response object
+// @router /get-built-in-themes [get]
+func (c *ApiController) GetBuiltInThemes() {
+	themes := object.GetBuiltInThemes()
+	c.ResponseOk(themes)
+}
