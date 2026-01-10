@@ -1,12 +1,24 @@
 FROM --platform=$BUILDPLATFORM node:18.19.0 AS FRONT
 WORKDIR /web
-COPY ./web .
-RUN yarn install --frozen-lockfile --network-timeout 1000000 && NODE_OPTIONS="--max-old-space-size=4096" yarn run build
 
+# Copy only dependency files first for better caching
+COPY ./web/package.json ./web/yarn.lock ./
+RUN yarn install --frozen-lockfile --network-timeout 1000000
+
+# Copy source files and build
+COPY ./web .
+RUN NODE_OPTIONS="--max-old-space-size=4096" yarn run build
 
 FROM --platform=$BUILDPLATFORM golang:1.23.12 AS BACK
 WORKDIR /go/src/casdoor
+
+# Copy only go.mod and go.sum first for dependency caching
+COPY go.mod go.sum ./
+RUN go mod download
+
+# Copy source files
 COPY . .
+
 RUN ./build.sh
 RUN go test -v -run TestGetVersionInfo ./util/system_test.go ./util/system.go > version_info.txt
 
