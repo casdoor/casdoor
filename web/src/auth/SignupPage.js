@@ -25,6 +25,7 @@ import * as AgreementModal from "../common/modal/AgreementModal";
 import {SendCodeInput} from "../common/SendCodeInput";
 import RegionSelect from "../common/select/RegionSelect";
 import CustomGithubCorner from "../common/CustomGithubCorner";
+import ThemeSwitcher from "../common/ThemeSwitcher";
 import LanguageSelect from "../common/select/LanguageSelect";
 import {withRouter} from "react-router-dom";
 import {CountryCodeSelect} from "../common/select/CountryCodeSelect";
@@ -969,6 +970,7 @@ class SignupPage extends React.Component {
     return (
       <React.Fragment>
         <CustomGithubCorner />
+        <ThemeSwitcher application={application} />
         <div className="login-content" style={{margin: this.props.preview ?? this.parseOffset(application.formOffset)}}>
           {Setting.inIframe() || Setting.isMobile() ? null : <div dangerouslySetInnerHTML={{__html: application.formCss}} />}
           {Setting.inIframe() || !Setting.isMobile() ? null : <div dangerouslySetInnerHTML={{__html: application.formCssMobile}} />}
