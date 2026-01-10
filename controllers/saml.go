@@ -17,6 +17,7 @@ package controllers
 import (
 	"fmt"
 	"net/http"
+	"net/url"
 
 	"github.com/casdoor/casdoor/object"
 )
@@ -62,6 +63,7 @@ func (c *ApiController) HandleSamlRedirect() {
 	username := c.Ctx.Input.Query("username")
 	loginHint := c.Ctx.Input.Query("login_hint")
 
+	relayState = url.QueryEscape(relayState)
 	targetURL := object.GetSamlRedirectAddress(owner, application, relayState, samlRequest, host, username, loginHint)
 
 	c.Redirect(targetURL, http.StatusSeeOther)
