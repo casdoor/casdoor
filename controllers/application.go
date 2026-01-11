@@ -302,6 +302,11 @@ func (c *ApiController) DeleteApplication() {
 // @Success 200 {array} object.BuiltInTheme The Response object
 // @router /get-built-in-themes [get]
 func (c *ApiController) GetBuiltInThemes() {
+	userId := c.GetSessionUsername()
+	if userId == "" {
+		c.RequireSignedIn()
+		return
+	}
 	themes := object.GetBuiltInThemes()
 	c.ResponseOk(themes)
 }

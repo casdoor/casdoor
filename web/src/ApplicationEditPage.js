@@ -1170,6 +1170,7 @@ class ApplicationEditPage extends React.Component {
                               this.state.application.themeData?.themeType === theme.themeData.themeType &&
                               this.state.application.themeData?.colorPrimary === theme.themeData.colorPrimary &&
                               this.state.application.themeData?.borderRadius === theme.themeData.borderRadius &&
+                              this.state.application.themeData?.isCompact === theme.themeData.isCompact &&
                               this.state.application.formBackgroundUrl === theme.formBackgroundUrl;
                             return (
                               <Button
