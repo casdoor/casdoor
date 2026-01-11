@@ -67,6 +67,9 @@ p, *, *, POST, /api/upload-users, *, *
 p, *, *, GET, /api/get-resources, *, *
 p, *, *, GET, /api/get-records, *, *
 p, *, *, GET, /api/get-product, *, *
+p, *, *, GET, /api/get-order, *, *
+p, *, *, GET, /api/get-orders, *, *
+p, *, *, GET, /api/get-user-orders, *, *
 p, *, *, GET, /api/get-payment, *, *
 p, *, *, POST, /api/update-payment, *, *
 p, *, *, POST, /api/invoice-payment, *, *
@@ -132,7 +135,15 @@ p, *, *, GET, /api/faceid-signin-begin, *, *
 	}
 }
 
-func IsAllowed(subOwner string, subName string, method string, urlPath string, objOwner string, objName string) bool {
+func IsAllowed(subOwner string, subName string, method string, urlPath string, objOwner string, objName string, extraInfo map[string]interface{}) bool {
+	if urlPath == "/api/mcp" {
+		if detailPath, ok := extraInfo["detailPathUrl"].(string); ok {
+			if detailPath == "initialize" || detailPath == "notifications/initialized" || detailPath == "ping" || detailPath == "tools/list" {
+				return true
+			}
+		}
+	}
+
 	if conf.IsDemoMode() {
 		if !isAllowedInDemoMode(subOwner, subName, method, urlPath, objOwner, objName) {
 			return false

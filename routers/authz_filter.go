@@ -212,11 +212,8 @@ func willLog(subOwner string, subName string, method string, urlPath string, obj
 	return true
 }
 
-func getUrlPath(urlPath string, ctx *context.Context) string {
-	// Special handling for MCP requests
-	if urlPath == "/api/mcp" {
-		return getMcpUrlPath(ctx)
-	}
+func getUrlPath(ctx *context.Context) string {
+	urlPath := ctx.Request.URL.Path
 
 	if strings.HasPrefix(urlPath, "/cas") && (strings.HasSuffix(urlPath, "/serviceValidate") || strings.HasSuffix(urlPath, "/proxy") || strings.HasSuffix(urlPath, "/proxyValidate") || strings.HasSuffix(urlPath, "/validate") || strings.HasSuffix(urlPath, "/p3/serviceValidate") || strings.HasSuffix(urlPath, "/p3/proxyValidate") || strings.HasSuffix(urlPath, "/samlValidate")) {
 		return "/cas"
@@ -239,6 +236,26 @@ func getUrlPath(urlPath string, ctx *context.Context) string {
 	}
 
 	return urlPath
+}
+
+func getExtraInfo(ctx *context.Context, urlPath string) map[string]interface{} {
+	var extra map[string]interface{}
+	if urlPath == "/api/mcp" {
+		var m map[string]interface{}
+		if err := json.Unmarshal(ctx.Input.RequestBody, &m); err != nil {
+			return nil
+		}
+
+		method, ok := m["method"].(string)
+		if !ok {
+			return nil
+		}
+
+		return map[string]interface{}{
+			"detailPathUrl": method,
+		}
+	}
+	return extra
 }
 
 func ApiFilter(ctx *context.Context) {
@@ -274,7 +291,8 @@ func ApiFilter(ctx *context.Context) {
 	ctx.Input.SetData("currentUserId", username)
 
 	method := ctx.Request.Method
-	urlPath := getUrlPath(ctx.Request.URL.Path, ctx)
+	urlPath := getUrlPath(ctx)
+	extraInfo := getExtraInfo(ctx, urlPath)
 
 	objOwner, objName := "", ""
 	if urlPath != "/api/get-app-login" && urlPath != "/api/get-resource" {
@@ -290,7 +308,7 @@ func ApiFilter(ctx *context.Context) {
 		urlPath = "/api/notify-payment"
 	}
 
-	isAllowed := authz.IsAllowed(subOwner, subName, method, urlPath, objOwner, objName)
+	isAllowed := authz.IsAllowed(subOwner, subName, method, urlPath, objOwner, objName, extraInfo)
 
 	result := "deny"
 	if isAllowed {
@@ -300,12 +318,20 @@ func ApiFilter(ctx *context.Context) {
 	if willLog(subOwner, subName, method, urlPath, objOwner, objName) {
 		logLine := fmt.Sprintf("subOwner = %s, subName = %s, method = %s, urlPath = %s, obj.Owner = %s, obj.Name = %s, result = %s",
 			subOwner, subName, method, urlPath, objOwner, objName, result)
+		extra := formatExtraInfo(extraInfo)
+		if extra != "" {
+			logLine += fmt.Sprintf(", extraInfo = %s", extra)
+		}
 		fmt.Println(logLine)
 		util.LogInfo(ctx, logLine)
 	}
 
 	if !isAllowed {
-		denyRequest(ctx)
+		if urlPath == "/api/mcp" {
+			denyMcpRequest(ctx)
+		} else {
+			denyRequest(ctx)
+		}
 		record, err := object.NewRecord(ctx)
 		if err != nil {
 			return
@@ -319,4 +345,15 @@ func ApiFilter(ctx *context.Context) {
 			object.AddRecord(record)
 		})
 	}
+}
+
+func formatExtraInfo(extra map[string]interface{}) string {
+	if extra == nil {
+		return ""
+	}
+	b, err := json.Marshal(extra)
+	if err != nil {
+		return ""
+	}
+	return string(b)
 }
