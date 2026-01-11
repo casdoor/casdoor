@@ -216,6 +216,7 @@ const Dashboard = (props) => {
   const screens = Grid.useBreakpoint();
   const nextPathName = TourConfig.getNextUrl("home");
   const chartHeight = screens.xs ? "280px" : "calc((93vh - 230px) / 2)";
+  // Estimation: Header(approximately 64px) + Footer(approximately 50px) + Card header and spacing (approximately 100px) ≈ 230px
 
   const getOrganizationName = useCallback(() => {
     let organization = localStorage.getItem("organization") === "All" ? "" : localStorage.getItem("organization");

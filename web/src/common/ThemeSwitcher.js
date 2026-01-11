@@ -33,6 +33,9 @@ function ThemeSwitcher(props) {
       if (res.status === "ok") {
         setBuiltInThemes(res.data || []);
       }
+    }).catch((error) => {
+      // eslint-disable-next-line no-console
+      console.error("Failed to fetch built-in themes:", error);
     });
   }, []);
 

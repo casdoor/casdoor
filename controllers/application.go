@@ -307,6 +307,10 @@ func (c *ApiController) GetBuiltInThemes() {
 		c.RequireSignedIn()
 		return
 	}
+	if !c.IsAdmin() {
+		c.ResponseError("no permission")
+		return
+	}
 	themes := object.GetBuiltInThemes()
 	c.ResponseOk(themes)
 }

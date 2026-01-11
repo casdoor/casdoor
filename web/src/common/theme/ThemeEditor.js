@@ -69,14 +69,29 @@ export default function ThemeEditor(props) {
   const prevThemeTypeRef = React.useRef(themeType);
   useLayoutEffect(() => {
     if (prevThemeTypeRef.current !== themeType) {
-      const currentColorPrimary = themeData.colorPrimary;
       const themeInfo = ThemesInfo[themeType] || {};
       const prevThemeInfo = ThemesInfo[prevThemeTypeRef.current] || {};
-      const isDefaultColor = currentColorPrimary === Conf.ThemeDefault.colorPrimary ||
-                            currentColorPrimary === prevThemeInfo.colorPrimary;
 
+      const mergedData = {...themeData, themeType};
+      let hasChanges = false;
+
+      // Check if colorPrimary is default or from the previous theme (not customized by user)
+      const isDefaultColor = themeData.colorPrimary === Conf.ThemeDefault.colorPrimary ||
+                            themeData.colorPrimary === prevThemeInfo.colorPrimary;
       if (isDefaultColor && themeInfo.colorPrimary) {
-        const mergedData = {...themeData, ...themeInfo, themeType};
+        mergedData.colorPrimary = themeInfo.colorPrimary;
+        hasChanges = true;
+      }
+
+      // Check if borderRadius is default or from the previous theme (not customized by user)
+      const isDefaultBorderRadius = themeData.borderRadius === Conf.ThemeDefault.borderRadius ||
+                                   themeData.borderRadius === prevThemeInfo.borderRadius;
+      if (isDefaultBorderRadius && themeInfo.borderRadius !== undefined) {
+        mergedData.borderRadius = themeInfo.borderRadius;
+        hasChanges = true;
+      }
+
+      if (hasChanges) {
         onThemeChange(null, mergedData);
         form.setFieldsValue(mergedData);
       }
