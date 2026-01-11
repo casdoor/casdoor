@@ -26,11 +26,17 @@ type SessionData struct {
 	ExpireTime int64
 }
 
-// GetSessionUsername returns the username from session
+// GetSessionUsername returns the username from session or ctx
 func (c *McpController) GetSessionUsername() string {
-	// check if user session expired
-	sessionData := c.GetSessionData()
+	// prefer username stored in Beego context by ApiFilter
+	if ctxUser := c.Ctx.Input.GetData("currentUserId"); ctxUser != nil {
+		if username, ok := ctxUser.(string); ok {
+			return username
+		}
+	}
 
+	// fallback to previous session-based logic with expiry check
+	sessionData := c.GetSessionData()
 	if sessionData != nil &&
 		sessionData.ExpireTime != 0 &&
 		sessionData.ExpireTime < time.Now().Unix() {
@@ -76,7 +82,16 @@ func (c *McpController) IsGlobalAdmin() bool {
 }
 
 func (c *McpController) isGlobalAdmin() (bool, *object.User) {
-	username := c.GetSessionUsername()
+	// prefer user id from Beego context
+	var username string
+	if ctxUser := c.Ctx.Input.GetData("currentUserId"); ctxUser != nil {
+		if u, ok := ctxUser.(string); ok {
+			username = u
+		}
+	}
+	if username == "" {
+		username = c.GetSessionUsername()
+	}
 	if object.IsAppUser(username) {
 		// e.g., "app/app-casnode"
 		return true, nil
@@ -91,6 +106,17 @@ func (c *McpController) isGlobalAdmin() (bool, *object.User) {
 }
 
 func (c *McpController) getCurrentUser() *object.User {
+	// try user id from context first
+	if ctxUser := c.Ctx.Input.GetData("currentUserId"); ctxUser != nil {
+		if userId, ok := ctxUser.(string); ok && userId != "" {
+			user, err := object.GetUser(userId)
+			if err != nil {
+				return nil
+			}
+			return user
+		}
+	}
+
 	var user *object.User
 	var err error
 	userId := c.GetSessionUsername()

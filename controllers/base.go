@@ -105,6 +105,13 @@ func (c *ApiController) getCurrentUser() *object.User {
 
 // GetSessionUsername ...
 func (c *ApiController) GetSessionUsername() string {
+	// prefer username stored in Beego context by ApiFilter
+	if ctxUser := c.Ctx.Input.GetData("currentUserId"); ctxUser != nil {
+		if username, ok := ctxUser.(string); ok {
+			return username
+		}
+	}
+
 	// check if user session expired
 	sessionData := c.GetSessionData()
 

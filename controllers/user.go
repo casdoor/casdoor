@@ -778,6 +778,50 @@ func (c *ApiController) RemoveUserFromGroup() {
 	c.ResponseOk(affected)
 }
 
+// ImpersonationUser
+// @Title ImpersonationUser
+// @Tag User API
+// @Description set impersonation user for current admin session
+// @Param   username    formData   string  true        "The username to impersonate (owner/name)"
+// @Success 200 {object} controllers.Response The Response object
+// @router /impersonation-user [post]
+func (c *ApiController) ImpersonationUser() {
+	if !c.IsAdmin() {
+		c.ResponseError(c.T("auth:Unauthorized operation"))
+		return
+	}
+
+	username := c.Ctx.Request.Form.Get("username")
+	if username == "" {
+		c.ResponseError(c.T("general:Missing parameter"))
+		return
+	}
+
+	err := c.SetSession("impersonationUser", username)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	c.Ctx.SetCookie("impersonationUser", username)
+	c.ResponseOk()
+}
+
+// ExitImpersonationUser
+// @Title ExitImpersonationUser
+// @Tag User API
+// @Description clear impersonation info for current session
+// @Success 200 {object} controllers.Response The Response object
+// @router /exit-impersonation-user [post]
+func (c *ApiController) ExitImpersonationUser() {
+	err := c.SetSession("impersonationUser", "")
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	c.Ctx.SetCookie("impersonationUser", "", -1, "/")
+	c.ResponseOk()
+}
+
 // VerifyIdentification
 // @Title VerifyIdentification
 // @Tag User API
