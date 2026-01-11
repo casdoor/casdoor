@@ -82,7 +82,7 @@ export default function ThemeEditor(props) {
       }
       prevThemeTypeRef.current = themeType;
     }
-  }, [themeType]);
+  }, [themeType, themeData, onThemeChange, form]);
 
   return (
     <ConfigProvider
