@@ -62,10 +62,26 @@ export default function ThemeEditor(props) {
     form.setFieldsValue(themeData);
   }, []);
 
+  useEffect(() => {
+    form.setFieldsValue(themeData);
+  }, [themeData, form]);
+
+  const prevThemeTypeRef = React.useRef(themeType);
   useLayoutEffect(() => {
-    const mergedData = Object.assign(Object.assign(Object.assign({}, Conf.ThemeDefault), {themeType}), ThemesInfo[themeType]);
-    onThemeChange(null, mergedData);
-    form.setFieldsValue(mergedData);
+    if (prevThemeTypeRef.current !== themeType) {
+      const currentColorPrimary = themeData.colorPrimary;
+      const themeInfo = ThemesInfo[themeType] || {};
+      const prevThemeInfo = ThemesInfo[prevThemeTypeRef.current] || {};
+      const isDefaultColor = currentColorPrimary === Conf.ThemeDefault.colorPrimary ||
+                            currentColorPrimary === prevThemeInfo.colorPrimary;
+
+      if (isDefaultColor && themeInfo.colorPrimary) {
+        const mergedData = {...themeData, ...themeInfo, themeType};
+        onThemeChange(null, mergedData);
+        form.setFieldsValue(mergedData);
+      }
+      prevThemeTypeRef.current = themeType;
+    }
   }, [themeType]);
 
   return (

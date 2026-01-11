@@ -601,6 +601,13 @@ class App extends Component {
                           application: application,
                         });
                       }}
+                      updateThemeAlgorithm={(themeType) => {
+                        const newThemeAlgorithm = themeType === "dark" ? ["dark"] : ["default"];
+                        this.setState({
+                          themeAlgorithm: newThemeAlgorithm,
+                          logo: this.getLogo(newThemeAlgorithm),
+                        });
+                      }}
                       onLoginSuccess={(redirectUrl) => {this.onLoginSuccess(redirectUrl);}}
                       onUpdateAccount={(account) => this.onUpdateAccount(account)}
                       updataThemeData={this.setTheme}
