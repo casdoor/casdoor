@@ -215,7 +215,7 @@ const Dashboard = (props) => {
 
   const screens = Grid.useBreakpoint();
   const nextPathName = TourConfig.getNextUrl("home");
-  const chartHeight = screens.xs ? "300px" : "clamp(300px, 40vh, 550px)";
+  const chartHeight = screens.xs ? "280px" : "calc((93vh - 230px) / 2)";
 
   const getOrganizationName = useCallback(() => {
     let organization = localStorage.getItem("organization") === "All" ? "" : localStorage.getItem("organization");
@@ -304,25 +304,25 @@ const Dashboard = (props) => {
   ], []);
 
   return (
-    <div>
-      <Row gutter={[16, 16]}>
-        <Col xs={12}>
-          <Card title={i18next.t("home:Past 30 Days")} size="small" style={{height: "100%"}} styles={{body: {padding: 0}}}>
+    <div style={{height: "100%", display: "flex", flexDirection: "column"}}>
+      <Row gutter={[16, 16]} style={{flex: 1, margin: 0}}>
+        <Col xs={12} style={{height: "50%"}}>
+          <Card title={i18next.t("home:Past 30 Days")} size="small" style={{height: "100%"}} styles={{body: {padding: 0, height: "calc(100% - 38px)"}}}>
             <LineChartWidget chartId="past-30-days-chart" height={chartHeight} seriesConfig={lineChartConfig} data={dashboardData} />
           </Card>
         </Col>
-        <Col xs={12}>
-          <Card title={i18next.t("general:MFA items")} size="small" style={{height: "100%"}} styles={{body: {padding: 0}}}>
+        <Col xs={12} style={{height: "50%"}}>
+          <Card title={i18next.t("general:MFA items")} size="small" style={{height: "100%"}} styles={{body: {padding: 0, height: "calc(100% - 38px)"}}}>
             <MfaCoverageWidget chartId="mfa-coverage-chart" height={chartHeight} data={mfaCoverage} />
           </Card>
         </Col>
-        <Col xs={12}>
-          <Card title={i18next.t("user:3rd-party logins")} size="small" style={{height: "100%"}} styles={{body: {padding: 0}}}>
+        <Col xs={12} style={{height: "50%"}}>
+          <Card title={i18next.t("user:3rd-party logins")} size="small" style={{height: "100%"}} styles={{body: {padding: 0, height: "calc(100% - 38px)"}}}>
             <DonutWidget chartId="users-by-provider-chart" height={chartHeight} data={usersByProvider} />
           </Card>
         </Col>
-        <Col xs={12}>
-          <Card title={i18next.t("general:Records")} size="small" style={{height: "100%"}} styles={{body: {padding: 0}}}>
+        <Col xs={12} style={{height: "50%"}}>
+          <Card title={i18next.t("general:Records")} size="small" style={{height: "100%"}} styles={{body: {padding: 0, height: "calc(100% - 38px)"}}}>
             <HeatmapWidget chartId="login-time-heatmap" height={chartHeight} data={loginHeatmap} />
           </Card>
         </Col>
