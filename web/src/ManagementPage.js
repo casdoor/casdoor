@@ -158,7 +158,7 @@ function ManagementPage(props) {
       ));
     }
     const curCookie = Cookie.parse(document.cookie);
-    if (curCookie["impersonationUser"]) {
+    if (curCookie["impersonateUser"]) {
       items.push(Setting.getItem(<><LogoutOutlined />&nbsp;&nbsp;{i18next.t("account:Exit impersonation")}</>,
         "/exit-impersonation"));
     } else {
@@ -174,7 +174,7 @@ function ManagementPage(props) {
       } else if (e.key === "/logout") {
         logout();
       } else if (e.key === "/exit-impersonation") {
-        UserBackend.exitImpersonationUser().then((res) => {
+        UserBackend.exitImpersonateUser().then((res) => {
           if (res.status === "ok") {
             Setting.showMessage("success", i18next.t("account:Exit impersonation"));
             Setting.goToLinkSoft({props}, "/");
