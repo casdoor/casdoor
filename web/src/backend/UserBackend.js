@@ -200,7 +200,7 @@ export function resetEmailOrPhone(dest, type, code) {
   }).then(res => res.json());
 }
 
-export function impersonationUser(username) {
+export function impersonateUser(username) {
   const formData = new FormData();
   formData.append("username", username);
   return fetch(`${Setting.ServerUrl}/api/impersonation-user`, {
@@ -213,7 +213,7 @@ export function impersonationUser(username) {
   }).then(res => res.json());
 }
 
-export function exitImpersonationUser() {
+export function exitImpersonateUser() {
   return fetch(`${Setting.ServerUrl}/api/exit-impersonation-user`, {
     method: "POST",
     credentials: "include",
