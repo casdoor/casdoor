@@ -200,6 +200,29 @@ export function resetEmailOrPhone(dest, type, code) {
   }).then(res => res.json());
 }
 
+export function impersonationUser(username) {
+  const formData = new FormData();
+  formData.append("username", username);
+  return fetch(`${Setting.ServerUrl}/api/impersonation-user`, {
+    method: "POST",
+    credentials: "include",
+    body: formData,
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}
+
+export function exitImpersonationUser() {
+  return fetch(`${Setting.ServerUrl}/api/exit-impersonation-user`, {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}
+
 export function getCaptcha(owner, name, isCurrentProvider) {
   return fetch(`${Setting.ServerUrl}/api/get-captcha?applicationId=${owner}/${encodeURIComponent(name)}&isCurrentProvider=${isCurrentProvider}`, {
     method: "GET",
