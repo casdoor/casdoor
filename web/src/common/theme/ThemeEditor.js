@@ -62,11 +62,42 @@ export default function ThemeEditor(props) {
     form.setFieldsValue(themeData);
   }, []);
 
+  useEffect(() => {
+    form.setFieldsValue(themeData);
+  }, [themeData, form]);
+
+  const prevThemeTypeRef = React.useRef(themeType);
   useLayoutEffect(() => {
-    const mergedData = Object.assign(Object.assign(Object.assign({}, Conf.ThemeDefault), {themeType}), ThemesInfo[themeType]);
-    onThemeChange(null, mergedData);
-    form.setFieldsValue(mergedData);
-  }, [themeType]);
+    if (prevThemeTypeRef.current !== themeType) {
+      const themeInfo = ThemesInfo[themeType] || {};
+      const prevThemeInfo = ThemesInfo[prevThemeTypeRef.current] || {};
+
+      const mergedData = {...themeData, themeType};
+      let hasChanges = false;
+
+      // Check if colorPrimary is default or from the previous theme (not customized by user)
+      const isDefaultColor = themeData.colorPrimary === Conf.ThemeDefault.colorPrimary ||
+                            themeData.colorPrimary === prevThemeInfo.colorPrimary;
+      if (isDefaultColor && themeInfo.colorPrimary) {
+        mergedData.colorPrimary = themeInfo.colorPrimary;
+        hasChanges = true;
+      }
+
+      // Check if borderRadius is default or from the previous theme (not customized by user)
+      const isDefaultBorderRadius = themeData.borderRadius === Conf.ThemeDefault.borderRadius ||
+                                   themeData.borderRadius === prevThemeInfo.borderRadius;
+      if (isDefaultBorderRadius && themeInfo.borderRadius !== undefined) {
+        mergedData.borderRadius = themeInfo.borderRadius;
+        hasChanges = true;
+      }
+
+      if (hasChanges) {
+        onThemeChange(null, mergedData);
+        form.setFieldsValue(mergedData);
+      }
+      prevThemeTypeRef.current = themeType;
+    }
+  }, [themeType, themeData, onThemeChange, form]);
 
   return (
     <ConfigProvider

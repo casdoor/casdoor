@@ -121,6 +121,7 @@ class ApplicationEditPage extends React.Component {
       samlAttributes: [],
       samlMetadata: null,
       isAuthorized: true,
+      builtInThemes: [],
     };
   }
 
@@ -128,6 +129,7 @@ class ApplicationEditPage extends React.Component {
     this.getApplication();
     this.getOrganizations();
     this.getGroups();
+    this.getBuiltInThemes();
   }
 
   getApplication() {
@@ -226,6 +228,19 @@ class ApplicationEditPage extends React.Component {
         this.setState({
           samlMetadata: data,
         });
+      });
+  }
+
+  getBuiltInThemes() {
+    ApplicationBackend.getBuiltInThemes()
+      .then((res) => {
+        if (res.status === "ok") {
+          this.setState({
+            builtInThemes: res.data || [],
+          });
+        } else {
+          Setting.showMessage("error", res.msg);
+        }
       });
   }
 
@@ -1142,12 +1157,54 @@ class ApplicationEditPage extends React.Component {
             </Row>
             {
               this.state.application.themeData?.isEnabled ?
-                <Row style={{marginTop: "20px"}}>
-                  <ThemeEditor themeData={this.state.application.themeData} onThemeChange={(_, nextThemeData) => {
-                    const {isEnabled} = this.state.application.themeData ?? {...Conf.ThemeDefault, isEnabled: false};
-                    this.updateApplicationField("themeData", {...nextThemeData, isEnabled});
-                  }} />
-                </Row> : null
+                <div>
+                  <Row style={{marginTop: "20px"}}>
+                    <Col span={24}>
+                      <Space direction="vertical" style={{width: "100%"}}>
+                        <div style={{marginBottom: "10px"}}>
+                          <strong>{i18next.t("theme:Built-in theme presets")}:</strong>
+                        </div>
+                        <Space wrap size="middle">
+                          {this.state.builtInThemes.map((theme) => {
+                            const isSelected =
+                              this.state.application.themeData?.themeType === theme.themeData.themeType &&
+                              this.state.application.themeData?.colorPrimary === theme.themeData.colorPrimary &&
+                              this.state.application.themeData?.borderRadius === theme.themeData.borderRadius &&
+                              this.state.application.themeData?.isCompact === theme.themeData.isCompact &&
+                              this.state.application.formBackgroundUrl === theme.formBackgroundUrl;
+                            return (
+                              <Button
+                                key={theme.name}
+                                type={isSelected ? "primary" : "default"}
+                                onClick={() => {
+                                  const {isEnabled} = this.state.application.themeData ?? {...Conf.ThemeDefault, isEnabled: false};
+                                  const newApplication = {
+                                    ...this.state.application,
+                                    themeData: {...theme.themeData, isEnabled},
+                                    formOffset: theme.formOffset,
+                                    formBackgroundUrl: theme.formBackgroundUrl,
+                                    formBackgroundUrlMobile: theme.formBackgroundUrlMobile,
+                                    formCss: theme.formCss,
+                                    formCssMobile: theme.formCssMobile,
+                                  };
+                                  this.setState({application: newApplication});
+                                }}
+                              >
+                                {i18next.t(`theme:${theme.displayName}`)}
+                              </Button>
+                            );
+                          })}
+                        </Space>
+                      </Space>
+                    </Col>
+                  </Row>
+                  <Row style={{marginTop: "20px"}}>
+                    <ThemeEditor themeData={this.state.application.themeData} onThemeChange={(_, nextThemeData) => {
+                      const {isEnabled} = this.state.application.themeData ?? {...Conf.ThemeDefault, isEnabled: false};
+                      this.updateApplicationField("themeData", {...nextThemeData, isEnabled});
+                    }} />
+                  </Row>
+                </div> : null
             }
           </Col>
         </Row>
@@ -1303,11 +1360,11 @@ class ApplicationEditPage extends React.Component {
               {
                 Setting.isPasswordEnabled(this.state.application) ? (
                   <div className="loginBackground" style={{backgroundImage: `url(${this.state.application?.formBackgroundUrl})`, overflow: "auto"}}>
-                    <SignupPage application={this.state.application} preview = "auto" />
+                    <SignupPage application={this.state.application} preview="auto" themeAlgorithm={themeData.themeType === "dark" ? ["dark"] : []} />
                   </div>
                 ) : (
                   <div className="loginBackground" style={{backgroundImage: `url(${this.state.application?.formBackgroundUrl})`, overflow: "auto"}}>
-                    <LoginPage type={"login"} mode={"signup"} application={this.state.application} preview = "auto" />
+                    <LoginPage type={"login"} mode={"signup"} application={this.state.application} preview="auto" themeAlgorithm={themeData.themeType === "dark" ? ["dark"] : []} />
                   </div>
                 )
               }
@@ -1333,7 +1390,7 @@ class ApplicationEditPage extends React.Component {
           }}>
             <div style={{position: "relative", width: previewWidth, border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888", overflow: "auto"}}>
               <div className="loginBackground" style={{backgroundImage: `url(${this.state.application?.formBackgroundUrl})`, overflow: "auto"}}>
-                <LoginPage type={"login"} mode={"signin"} application={this.state.application} preview = "auto" />
+                <LoginPage type={"login"} mode={"signin"} application={this.state.application} preview="auto" themeAlgorithm={themeData.themeType === "dark" ? ["dark"] : []} />
               </div>
               <div style={{overflow: "auto", ...maskStyle}} />
             </div>
