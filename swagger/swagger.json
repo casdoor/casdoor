@@ -9572,6 +9572,9 @@
                 "originalToken": {
                     "type": "string"
                 },
+                "originalRefToken": {
+                    "type": "string"
+                },
                 "oura": {
                     "type": "string"
                 },
