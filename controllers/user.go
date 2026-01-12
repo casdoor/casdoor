@@ -835,7 +835,8 @@ func (c *ApiController) ImpersonateUser() {
 // @Success 200 {object} controllers.Response The Response object
 // @router /exit-impersonation-user [post]
 func (c *ApiController) ExitImpersonateUser() {
-	if _, ok := c.RequireAdmin(); !ok {
+	_, ok := c.Ctx.Input.GetData("impersonating").(bool)
+	if !ok {
 		c.ResponseError(c.T("auth:Unauthorized operation"))
 		return
 	}

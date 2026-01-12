@@ -285,6 +285,7 @@ func ApiFilter(ctx *context.Context) {
 				}
 
 				username = impersonateUser
+				ctx.Input.SetData("impersonating", true)
 			}
 		}
 	}
