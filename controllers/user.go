@@ -778,6 +778,78 @@ func (c *ApiController) RemoveUserFromGroup() {
 	c.ResponseOk(affected)
 }
 
+// ImpersonateUser
+// @Title ImpersonateUser
+// @Tag User API
+// @Description set impersonation user for current admin session
+// @Param   username    formData   string  true        "The username to impersonate (owner/name)"
+// @Success 200 {object} controllers.Response The Response object
+// @router /impersonation-user [post]
+func (c *ApiController) ImpersonateUser() {
+	org, ok := c.RequireAdmin()
+	if !ok {
+		return
+	}
+
+	username := c.Ctx.Request.Form.Get("username")
+	if username == "" {
+		c.ResponseError(c.T("general:Missing parameter"))
+		return
+	}
+
+	owner, _, err := util.GetOwnerAndNameFromIdWithError(username)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	if !(owner == org || org == "") {
+		c.ResponseError(c.T("auth:Unauthorized operation"))
+		return
+	}
+
+	targetUser, err := object.GetUser(username)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	if targetUser == nil {
+		c.ResponseError(fmt.Sprintf(c.T("general:The user: %s doesn't exist"), username))
+		return
+	}
+
+	err = c.SetSession("impersonateUser", username)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	c.Ctx.SetCookie("impersonateUser", username, 0, "/")
+	c.ResponseOk()
+}
+
+// ExitImpersonateUser
+// @Title ExitImpersonateUser
+// @Tag User API
+// @Description clear impersonation info for current session
+// @Success 200 {object} controllers.Response The Response object
+// @router /exit-impersonation-user [post]
+func (c *ApiController) ExitImpersonateUser() {
+	_, ok := c.Ctx.Input.GetData("impersonating").(bool)
+	if !ok {
+		c.ResponseError(c.T("auth:Unauthorized operation"))
+		return
+	}
+
+	err := c.SetSession("impersonateUser", "")
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	c.Ctx.SetCookie("impersonateUser", "", -1, "/")
+	c.ResponseOk()
+}
+
 // VerifyIdentification
 // @Title VerifyIdentification
 // @Tag User API

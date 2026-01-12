@@ -101,6 +101,8 @@ import TransactionEditPage from "./TransactionEditPage";
 import VerificationListPage from "./VerificationListPage";
 import TicketListPage from "./TicketListPage";
 import TicketEditPage from "./TicketEditPage";
+import * as Cookie from "cookie";
+import * as UserBackend from "./backend/UserBackend";
 
 function ManagementPage(props) {
   const [menuVisible, setMenuVisible] = useState(false);
@@ -155,8 +157,14 @@ function ManagementPage(props) {
         "/account"
       ));
     }
-    items.push(Setting.getItem(<><LogoutOutlined />&nbsp;&nbsp;{i18next.t("account:Logout")}</>,
-      "/logout"));
+    const curCookie = Cookie.parse(document.cookie);
+    if (curCookie["impersonateUser"]) {
+      items.push(Setting.getItem(<><LogoutOutlined />&nbsp;&nbsp;{i18next.t("account:Exit impersonation")}</>,
+        "/exit-impersonation"));
+    } else {
+      items.push(Setting.getItem(<><LogoutOutlined />&nbsp;&nbsp;{i18next.t("account:Logout")}</>,
+        "/logout"));
+    }
 
     const onClick = (e) => {
       if (e.key === "/account") {
@@ -165,6 +173,16 @@ function ManagementPage(props) {
         props.history.push("/subscription");
       } else if (e.key === "/logout") {
         logout();
+      } else if (e.key === "/exit-impersonation") {
+        UserBackend.exitImpersonateUser().then((res) => {
+          if (res.status === "ok") {
+            Setting.showMessage("success", i18next.t("account:Exit impersonation"));
+            Setting.goToLinkSoft({props}, "/");
+            window.location.reload();
+          } else {
+            Setting.showMessage("error", res.msg);
+          }
+        });
       }
     };
 
