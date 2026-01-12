@@ -316,22 +316,22 @@ func GetDashboardMfaCoverage(owner string) (*[]DashboardMfaCoverageItem, error) 
 
 	sql := fmt.Sprintf(`
 SELECT
-  owner AS organization,
+  "owner" AS organization,
   SUM(CASE WHEN is_admin = 1 AND %s THEN 1 ELSE 0 END) AS adminEnabled,
   SUM(CASE WHEN is_admin = 1 AND NOT %s THEN 1 ELSE 0 END) AS adminDisabled,
   SUM(CASE WHEN (is_admin IS NULL OR is_admin <> 1) AND %s THEN 1 ELSE 0 END) AS userEnabled,
   SUM(CASE WHEN (is_admin IS NULL OR is_admin <> 1) AND NOT %s THEN 1 ELSE 0 END) AS userDisabled
-FROM %s
+FROM "%s"
 WHERE is_deleted <> 1
 `, mfaEnabledExpr, mfaEnabledExpr, mfaEnabledExpr, mfaEnabledExpr, userTable)
 
 	args := []interface{}{}
 	if owner != "" {
-		sql += "  AND owner = ?\n"
+		sql += "  AND \"owner\" = ?\n"
 		args = append(args, owner)
 	}
 
-	sql += "GROUP BY owner\nORDER BY adminDisabled DESC, userDisabled DESC, organization ASC"
+	sql += "GROUP BY \"owner\"\nORDER BY adminDisabled DESC, userDisabled DESC, organization ASC"
 
 	items := []DashboardMfaCoverageItem{}
 	if err := ormer.Engine.SQL(sql, args...).Find(&items); err != nil {
