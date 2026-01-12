@@ -1,0 +1,46 @@
+name: Build PR Docker Image
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to build'
+        required: true
+        default: 'copilot/add-rrsa-support-alibaba-oss'
+      tag:
+        description: 'Docker image tag'
+        required: true
+        default: '2.235.0-rrsa-test'
+
+jobs:
+  build-docker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.branch }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          target: STANDARD
+          platforms: linux/amd64
+          push: false
+          load: true
+          tags: casdoor:${{ github.event.inputs.tag }}
+
+      - name: Save Docker image
+        run: |
+          docker save casdoor:${{ github.event.inputs.tag }} | gzip > casdoor-${{ github.event.inputs.tag }}.tar.gz
+
+      - name: Upload Docker image artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: casdoor-docker-image-${{ github.event.inputs.tag }}
+          path: casdoor-${{ github.event.inputs.tag }}.tar.gz
+          retention-days: 7
