@@ -35,16 +35,6 @@ func PlaceOrder(productId string, user *User, pricingName string, planName strin
 		return nil, fmt.Errorf("the product: %s is out of stock", product.Name)
 	}
 
-	userBalanceCurrency := user.BalanceCurrency
-	if userBalanceCurrency == "" {
-		org, err := getOrganization("admin", user.Owner)
-		if err == nil && org != nil && org.BalanceCurrency != "" {
-			userBalanceCurrency = org.BalanceCurrency
-		} else {
-			userBalanceCurrency = "USD"
-		}
-	}
-
 	productCurrency := product.Currency
 	if productCurrency == "" {
 		productCurrency = "USD"
@@ -59,7 +49,6 @@ func PlaceOrder(productId string, user *User, pricingName string, planName strin
 	} else {
 		productPrice = product.Price
 	}
-	price := ConvertCurrency(productPrice, productCurrency, userBalanceCurrency)
 
 	orderName := fmt.Sprintf("order_%v", util.GenerateTimeId())
 	order := &Order{
@@ -73,8 +62,8 @@ func PlaceOrder(productId string, user *User, pricingName string, planName strin
 		PlanName:    planName,
 		User:        user.Name,
 		Payment:     "", // Payment will be set when user pays
-		Price:       price,
-		Currency:    userBalanceCurrency,
+		Price:       productPrice,
+		Currency:    productCurrency,
 		State:       "Created",
 		Message:     "",
 		StartTime:   util.GetCurrentTime(),
