@@ -273,16 +273,19 @@ func ApiFilter(ctx *context.Context) {
 				panic(err)
 			}
 
-			impUserOwner, impUserName, err := util.GetOwnerAndNameFromIdWithError(impersonateUser)
-			if err != nil {
-				panic(err)
-			}
+			if user != nil {
+				impUserOwner, impUserName, err := util.GetOwnerAndNameFromIdWithError(impersonateUser)
+				if err != nil {
+					panic(err)
+				}
 
-			if user.IsAdmin && impUserOwner == user.Owner {
-				subName = impUserName
-			}
+				if user.IsAdmin && impUserOwner == user.Owner {
+					subOwner = impUserOwner
+					subName = impUserName
+				}
 
-			username = impersonateUser
+				username = impersonateUser
+			}
 		}
 	}
 	ctx.Input.SetData("currentUserId", username)

@@ -788,7 +788,6 @@ func (c *ApiController) RemoveUserFromGroup() {
 func (c *ApiController) ImpersonateUser() {
 	org, ok := c.RequireAdmin()
 	if !ok {
-		c.ResponseError(c.T("auth:Unauthorized operation"))
 		return
 	}
 
@@ -836,7 +835,7 @@ func (c *ApiController) ImpersonateUser() {
 // @Success 200 {object} controllers.Response The Response object
 // @router /exit-impersonation-user [post]
 func (c *ApiController) ExitImpersonateUser() {
-	if !c.IsAdmin() {
+	if _, ok := c.RequireAdmin(); !ok {
 		c.ResponseError(c.T("auth:Unauthorized operation"))
 		return
 	}
