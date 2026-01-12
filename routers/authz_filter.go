@@ -282,10 +282,9 @@ func ApiFilter(ctx *context.Context) {
 				if user.IsAdmin && impUserOwner == user.Owner {
 					subOwner = impUserOwner
 					subName = impUserName
+					username = impersonateUser
+					ctx.Input.SetData("impersonating", true)
 				}
-
-				username = impersonateUser
-				ctx.Input.SetData("impersonating", true)
 			}
 		}
 	}

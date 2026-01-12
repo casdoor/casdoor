@@ -824,7 +824,7 @@ func (c *ApiController) ImpersonateUser() {
 		c.ResponseError(err.Error())
 		return
 	}
-	c.Ctx.SetCookie("impersonateUser", username)
+	c.Ctx.SetCookie("impersonateUser", username, 0, "/")
 	c.ResponseOk()
 }
 
