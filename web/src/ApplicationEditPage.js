@@ -33,6 +33,7 @@ import SamlAttributeTable from "./table/SamlAttributeTable";
 import PromptPage from "./auth/PromptPage";
 import copy from "copy-to-clipboard";
 import ThemeEditor from "./common/theme/ThemeEditor";
+import {builtInThemes} from "./common/BuiltInThemes";
 
 import SigninTable from "./table/SigninTable";
 import Editor from "./common/Editor";
@@ -121,7 +122,7 @@ class ApplicationEditPage extends React.Component {
       samlAttributes: [],
       samlMetadata: null,
       isAuthorized: true,
-      builtInThemes: [],
+      builtInThemes: builtInThemes,
     };
   }
 
@@ -129,7 +130,6 @@ class ApplicationEditPage extends React.Component {
     this.getApplication();
     this.getOrganizations();
     this.getGroups();
-    this.getBuiltInThemes();
   }
 
   getApplication() {
@@ -228,19 +228,6 @@ class ApplicationEditPage extends React.Component {
         this.setState({
           samlMetadata: data,
         });
-      });
-  }
-
-  getBuiltInThemes() {
-    ApplicationBackend.getBuiltInThemes()
-      .then((res) => {
-        if (res.status === "ok") {
-          this.setState({
-            builtInThemes: res.data || [],
-          });
-        } else {
-          Setting.showMessage("error", res.msg);
-        }
       });
   }
 
@@ -1360,11 +1347,11 @@ class ApplicationEditPage extends React.Component {
               {
                 Setting.isPasswordEnabled(this.state.application) ? (
                   <div className="loginBackground" style={{backgroundImage: `url(${this.state.application?.formBackgroundUrl})`, overflow: "auto"}}>
-                    <SignupPage application={this.state.application} preview="auto" themeAlgorithm={themeData.themeType === "dark" ? ["dark"] : []} />
+                    <SignupPage application={this.state.application} preview="auto" />
                   </div>
                 ) : (
                   <div className="loginBackground" style={{backgroundImage: `url(${this.state.application?.formBackgroundUrl})`, overflow: "auto"}}>
-                    <LoginPage type={"login"} mode={"signup"} application={this.state.application} preview="auto" themeAlgorithm={themeData.themeType === "dark" ? ["dark"] : []} />
+                    <LoginPage type={"login"} mode={"signup"} application={this.state.application} preview="auto" />
                   </div>
                 )
               }
@@ -1390,7 +1377,7 @@ class ApplicationEditPage extends React.Component {
           }}>
             <div style={{position: "relative", width: previewWidth, border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888", overflow: "auto"}}>
               <div className="loginBackground" style={{backgroundImage: `url(${this.state.application?.formBackgroundUrl})`, overflow: "auto"}}>
-                <LoginPage type={"login"} mode={"signin"} application={this.state.application} preview="auto" themeAlgorithm={themeData.themeType === "dark" ? ["dark"] : []} />
+                <LoginPage type={"login"} mode={"signin"} application={this.state.application} preview="auto" />
               </div>
               <div style={{overflow: "auto", ...maskStyle}} />
             </div>

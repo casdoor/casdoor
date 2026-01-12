@@ -73,11 +73,6 @@ class EntryPage extends React.Component {
       this.props.updataThemeData(themeData);
       this.props.updateApplication(application);
 
-      // Update themeAlgorithm based on application's themeType for dark theme support
-      if (themeData?.themeType && this.props.updateThemeAlgorithm) {
-        this.props.updateThemeAlgorithm(themeData.themeType);
-      }
-
       if (application) {
         localStorage.setItem("applicationName", application.name);
       }

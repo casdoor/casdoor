@@ -112,7 +112,6 @@ func InitAPI() {
 	web.Router("/api/update-application", &controllers.ApiController{}, "POST:UpdateApplication")
 	web.Router("/api/add-application", &controllers.ApiController{}, "POST:AddApplication")
 	web.Router("/api/delete-application", &controllers.ApiController{}, "POST:DeleteApplication")
-	web.Router("/api/get-built-in-themes", &controllers.ApiController{}, "GET:GetBuiltInThemes")
 
 	web.Router("/api/get-providers", &controllers.ApiController{}, "GET:GetProviders")
 	web.Router("/api/get-provider", &controllers.ApiController{}, "GET:GetProvider")

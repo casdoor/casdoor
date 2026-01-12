@@ -12,32 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {Button, Popover, Space} from "antd";
 import {BgColorsOutlined} from "@ant-design/icons";
-import * as ApplicationBackend from "../backend/ApplicationBackend";
+import {builtInThemes} from "./BuiltInThemes";
 import i18next from "i18next";
 import * as Conf from "../Conf";
 
 function ThemeSwitcher(props) {
-  const [builtInThemes, setBuiltInThemes] = useState([]);
   const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    if (!Conf.IsDemoMode) {
-      return;
-    }
-
-    // Fetch built-in themes
-    ApplicationBackend.getBuiltInThemes().then((res) => {
-      if (res.status === "ok") {
-        setBuiltInThemes(res.data || []);
-      }
-    }).catch((error) => {
-      // eslint-disable-next-line no-console
-      console.error("Failed to fetch built-in themes:", error);
-    });
-  }, []);
 
   if (!Conf.IsDemoMode || builtInThemes.length === 0) {
     return null;
