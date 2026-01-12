@@ -306,8 +306,9 @@ func getDefaultTableColumns(syncerType string) []*TableColumn {
 			{Name: "name", Type: "string", CasdoorName: "DisplayName", IsHashed: true, Values: []string{}},
 			{Name: "email", Type: "string", CasdoorName: "Email", IsHashed: true, Values: []string{}},
 			{Name: "mobile", Type: "string", CasdoorName: "Phone", IsHashed: true, Values: []string{}},
+			{Name: "avatar", Type: "string", CasdoorName: "Avatar", IsHashed: true, Values: []string{}},
 			{Name: "title", Type: "string", CasdoorName: "Title", IsHashed: true, Values: []string{}},
-			{Name: "avatar", Type: "string", CasdoorName: "Avatar", IsHashed: false, Values: []string{}},
+			{Name: "job_number", Type: "string", CasdoorName: "Name", IsHashed: true, Values: []string{}},
 		}
 	case "WeCom":
 		return []*TableColumn{
@@ -315,8 +316,9 @@ func getDefaultTableColumns(syncerType string) []*TableColumn {
 			{Name: "name", Type: "string", CasdoorName: "DisplayName", IsHashed: true, Values: []string{}},
 			{Name: "email", Type: "string", CasdoorName: "Email", IsHashed: true, Values: []string{}},
 			{Name: "mobile", Type: "string", CasdoorName: "Phone", IsHashed: true, Values: []string{}},
+			{Name: "avatar", Type: "string", CasdoorName: "Avatar", IsHashed: true, Values: []string{}},
 			{Name: "position", Type: "string", CasdoorName: "Title", IsHashed: true, Values: []string{}},
-			{Name: "avatar", Type: "string", CasdoorName: "Avatar", IsHashed: false, Values: []string{}},
+			{Name: "gender", Type: "string", CasdoorName: "Gender", IsHashed: true, Values: []string{}},
 		}
 	case "Azure AD":
 		return []*TableColumn{
