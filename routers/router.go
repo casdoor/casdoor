@@ -92,6 +92,8 @@ func InitAPI() {
 	web.Router("/api/upload-users", &controllers.ApiController{}, "POST:UploadUsers")
 	web.Router("/api/remove-user-from-group", &controllers.ApiController{}, "POST:RemoveUserFromGroup")
 	web.Router("/api/verify-identification", &controllers.ApiController{}, "POST:VerifyIdentification")
+	web.Router("/api/impersonate-user", &controllers.ApiController{}, "POST:ImpersonateUser")
+	web.Router("/api/exit-impersonate-user", &controllers.ApiController{}, "POST:ExitImpersonateUser")
 
 	web.Router("/api/get-invitations", &controllers.ApiController{}, "GET:GetInvitations")
 	web.Router("/api/get-invitation", &controllers.ApiController{}, "GET:GetInvitation")

@@ -188,6 +188,18 @@ class UserListPage extends BaseListPage {
       });
   }
 
+  impersonateUser(user) {
+    UserBackend.impersonateUser(user).then((res) => {
+      if (res.status === "ok") {
+        Setting.showMessage("success", i18next.t("general:Success"));
+        Setting.goToLinkSoft(this, "/");
+        window.location.reload();
+      } else {
+        Setting.showMessage("error", res.msg);
+      }
+    });
+  }
+
   renderUpload() {
     const uploadThis = this;
     const props = {
@@ -533,6 +545,10 @@ class UserListPage extends BaseListPage {
           const disabled = (record.owner === this.props.account.owner && record.name === this.props.account.name) || (record.owner === "built-in" && record.name === "admin");
           return (
             <Space>
+              <Button size={isTreePage ? "small" : "middle"} type="primary" onClick={() => {
+                this.impersonateUser(`${record.owner}/${record.name}`);
+              }}>{i18next.t("general:Impersonation")}
+              </Button>
               <Button size={isTreePage ? "small" : "middle"} type="primary" onClick={() => {
                 sessionStorage.setItem("userListUrl", window.location.pathname);
                 this.props.history.push(`/users/${record.owner}/${record.name}`);
