@@ -58,6 +58,11 @@ class SyncerEditPage extends React.Component {
           return;
         }
 
+        // Initialize table columns for API-based syncers if empty
+        if (res.data && (!res.data.tableColumns || res.data.tableColumns.length === 0)) {
+          res.data.tableColumns = this.getSyncerTableColumns(res.data);
+        }
+
         this.setState({
           syncer: res.data,
         });

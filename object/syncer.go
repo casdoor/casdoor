@@ -297,7 +297,62 @@ func (syncer *Syncer) getTargetTablePrimaryKey() string {
 	return column.Name
 }
 
+// getDefaultTableColumns returns default table columns for API-based syncers
+func getDefaultTableColumns(syncerType string) []*TableColumn {
+	switch syncerType {
+	case "DingTalk":
+		return []*TableColumn{
+			{Name: "userid", Type: "string", CasdoorName: "Id", IsKey: true, IsHashed: true, Values: []string{}},
+			{Name: "name", Type: "string", CasdoorName: "DisplayName", IsHashed: true, Values: []string{}},
+			{Name: "email", Type: "string", CasdoorName: "Email", IsHashed: true, Values: []string{}},
+			{Name: "mobile", Type: "string", CasdoorName: "Phone", IsHashed: true, Values: []string{}},
+			{Name: "title", Type: "string", CasdoorName: "Title", IsHashed: true, Values: []string{}},
+			{Name: "avatar", Type: "string", CasdoorName: "Avatar", IsHashed: false, Values: []string{}},
+		}
+	case "WeCom":
+		return []*TableColumn{
+			{Name: "userid", Type: "string", CasdoorName: "Id", IsKey: true, IsHashed: true, Values: []string{}},
+			{Name: "name", Type: "string", CasdoorName: "DisplayName", IsHashed: true, Values: []string{}},
+			{Name: "email", Type: "string", CasdoorName: "Email", IsHashed: true, Values: []string{}},
+			{Name: "mobile", Type: "string", CasdoorName: "Phone", IsHashed: true, Values: []string{}},
+			{Name: "position", Type: "string", CasdoorName: "Title", IsHashed: true, Values: []string{}},
+			{Name: "avatar", Type: "string", CasdoorName: "Avatar", IsHashed: false, Values: []string{}},
+		}
+	case "Azure AD":
+		return []*TableColumn{
+			{Name: "id", Type: "string", CasdoorName: "Id", IsKey: true, IsHashed: true, Values: []string{}},
+			{Name: "displayName", Type: "string", CasdoorName: "DisplayName", IsHashed: true, Values: []string{}},
+			{Name: "mail", Type: "string", CasdoorName: "Email", IsHashed: true, Values: []string{}},
+			{Name: "mobilePhone", Type: "string", CasdoorName: "Phone", IsHashed: true, Values: []string{}},
+			{Name: "jobTitle", Type: "string", CasdoorName: "Title", IsHashed: true, Values: []string{}},
+		}
+	case "Google Workspace":
+		return []*TableColumn{
+			{Name: "id", Type: "string", CasdoorName: "Id", IsKey: true, IsHashed: true, Values: []string{}},
+			{Name: "name", Type: "string", CasdoorName: "DisplayName", IsHashed: true, Values: []string{}},
+			{Name: "primaryEmail", Type: "string", CasdoorName: "Email", IsHashed: true, Values: []string{}},
+			{Name: "phones", Type: "string", CasdoorName: "Phone", IsHashed: true, Values: []string{}},
+		}
+	case "Active Directory":
+		return []*TableColumn{
+			{Name: "cn", Type: "string", CasdoorName: "Id", IsKey: true, IsHashed: true, Values: []string{}},
+			{Name: "displayName", Type: "string", CasdoorName: "DisplayName", IsHashed: true, Values: []string{}},
+			{Name: "mail", Type: "string", CasdoorName: "Email", IsHashed: true, Values: []string{}},
+			{Name: "mobile", Type: "string", CasdoorName: "Phone", IsHashed: true, Values: []string{}},
+			{Name: "title", Type: "string", CasdoorName: "Title", IsHashed: true, Values: []string{}},
+		}
+	default:
+		// Return empty for database-based syncers
+		return []*TableColumn{}
+	}
+}
+
 func RunSyncer(syncer *Syncer) error {
+	// Ensure table columns are populated for API-based syncers
+	if len(syncer.TableColumns) == 0 {
+		syncer.TableColumns = getDefaultTableColumns(syncer.Type)
+	}
+
 	err := syncer.initAdapter()
 	if err != nil {
 		return err
