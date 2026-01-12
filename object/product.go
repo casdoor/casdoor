@@ -137,6 +137,12 @@ func UpdateProduct(id string, product *Product) (bool, error) {
 	} else if p == nil {
 		return false, nil
 	}
+
+	err = checkProduct(product)
+	if err != nil {
+		return false, err
+	}
+
 	affected, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(product)
 	if err != nil {
 		return false, err
@@ -146,12 +152,34 @@ func UpdateProduct(id string, product *Product) (bool, error) {
 }
 
 func AddProduct(product *Product) (bool, error) {
+	err := checkProduct(product)
+	if err != nil {
+		return false, err
+	}
+
 	affected, err := ormer.Engine.Insert(product)
 	if err != nil {
 		return false, err
 	}
 
 	return affected != 0, nil
+}
+
+func checkProduct(product *Product) error {
+	if product == nil {
+		return fmt.Errorf("the product not exist")
+	}
+
+	for _, providerName := range product.Providers {
+		provider, err := getProvider(product.Owner, providerName)
+		if err != nil {
+			return err
+		}
+		if provider != nil && provider.Type == "Alipay" && product.Currency != "CNY" {
+			return fmt.Errorf("alipay provider only supports CNY, got: %s", product.Currency)
+		}
+	}
+	return nil
 }
 
 func DeleteProduct(product *Product) (bool, error) {
@@ -167,13 +195,23 @@ func (product *Product) GetId() string {
 	return fmt.Sprintf("%s/%s", product.Owner, product.Name)
 }
 
-func (product *Product) isValidProvider(provider *Provider) bool {
+func (product *Product) isValidProvider(provider *Provider) error {
+	if provider.Type == "Alipay" && product.Currency != "CNY" {
+		return fmt.Errorf("alipay provider only supports CNY, got: %s", product.Currency)
+	}
+
+	providerMatched := false
 	for _, providerName := range product.Providers {
 		if providerName == provider.Name {
-			return true
+			providerMatched = true
+			break
 		}
 	}
-	return false
+	if !providerMatched {
+		return fmt.Errorf("the payment provider: %s is not valid for the product: %s", provider.Name, product.Name)
+	}
+
+	return nil
 }
 
 func (product *Product) getProvider(providerName string) (*Provider, error) {
@@ -186,8 +224,8 @@ func (product *Product) getProvider(providerName string) (*Provider, error) {
 		return nil, fmt.Errorf("the payment provider: %s does not exist", providerName)
 	}
 
-	if !product.isValidProvider(provider) {
-		return nil, fmt.Errorf("the payment provider: %s is not valid for the product: %s", providerName, product.Name)
+	if err := product.isValidProvider(provider); err != nil {
+		return nil, err
 	}
 
 	return provider, nil
