@@ -17,6 +17,7 @@ package object
 import (
 	"fmt"
 	"reflect"
+	"sort"
 	"strings"
 	"sync"
 	"time"
@@ -312,31 +313,69 @@ func GetDashboardMfaCoverage(owner string) (*[]DashboardMfaCoverageItem, error) 
 	tableNamePrefix := conf.GetConfigString("tableNamePrefix")
 	userTable := tableNamePrefix + "user"
 
-	mfaEnabledExpr := "(mfaAccounts IS NOT NULL AND LENGTH(TRIM(mfaAccounts)) > 2 AND TRIM(mfaAccounts) <> '[]')"
-
-	sql := fmt.Sprintf(`
-SELECT
-  "owner" AS organization,
-  SUM(CASE WHEN is_admin = 1 AND %s THEN 1 ELSE 0 END) AS adminEnabled,
-  SUM(CASE WHEN is_admin = 1 AND NOT %s THEN 1 ELSE 0 END) AS adminDisabled,
-  SUM(CASE WHEN (is_admin IS NULL OR is_admin <> 1) AND %s THEN 1 ELSE 0 END) AS userEnabled,
-  SUM(CASE WHEN (is_admin IS NULL OR is_admin <> 1) AND NOT %s THEN 1 ELSE 0 END) AS userDisabled
-FROM "%s"
-WHERE is_deleted <> 1
-`, mfaEnabledExpr, mfaEnabledExpr, mfaEnabledExpr, mfaEnabledExpr, userTable)
-
-	args := []interface{}{}
-	if owner != "" {
-		sql += "  AND \"owner\" = ?\n"
-		args = append(args, owner)
+	// Fetch users with required fields using ORM
+	type userMfaInfo struct {
+		Owner       string       `xorm:"owner"`
+		IsAdmin     bool         `xorm:"is_admin"`
+		MfaAccounts []MfaAccount `xorm:"mfaAccounts"`
 	}
 
-	sql += "GROUP BY \"owner\"\nORDER BY adminDisabled DESC, userDisabled DESC, organization ASC"
+	users := []userMfaInfo{}
+	dbQuery := ormer.Engine.Table(userTable).
+		Cols("owner", "is_admin", "mfaAccounts").
+		Where("is_deleted <> ?", 1)
 
-	items := []DashboardMfaCoverageItem{}
-	if err := ormer.Engine.SQL(sql, args...).Find(&items); err != nil {
+	if owner != "" {
+		dbQuery = dbQuery.And("owner = ?", owner)
+	}
+
+	if err := dbQuery.Find(&users); err != nil {
 		return nil, err
 	}
+
+	// Aggregate results by organization
+	orgStats := make(map[string]*DashboardMfaCoverageItem)
+
+	for _, user := range users {
+		item, exists := orgStats[user.Owner]
+		if !exists {
+			item = &DashboardMfaCoverageItem{Organization: user.Owner}
+			orgStats[user.Owner] = item
+		}
+
+		mfaEnabled := len(user.MfaAccounts) > 0
+
+		if user.IsAdmin {
+			if mfaEnabled {
+				item.AdminEnabled++
+			} else {
+				item.AdminDisabled++
+			}
+		} else {
+			if mfaEnabled {
+				item.UserEnabled++
+			} else {
+				item.UserDisabled++
+			}
+		}
+	}
+
+	// Convert map to slice and sort
+	items := make([]DashboardMfaCoverageItem, 0, len(orgStats))
+	for _, item := range orgStats {
+		items = append(items, *item)
+	}
+
+	// Sort by adminDisabled DESC, userDisabled DESC, organization ASC
+	sort.Slice(items, func(i, j int) bool {
+		if items[i].AdminDisabled != items[j].AdminDisabled {
+			return items[i].AdminDisabled > items[j].AdminDisabled
+		}
+		if items[i].UserDisabled != items[j].UserDisabled {
+			return items[i].UserDisabled > items[j].UserDisabled
+		}
+		return items[i].Organization < items[j].Organization
+	})
 
 	return &items, nil
 }
