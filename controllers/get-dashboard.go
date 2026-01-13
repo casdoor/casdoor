@@ -39,7 +39,7 @@ func (c *ApiController) GetDashboard() {
 // @Tag System API
 // @Description get user count by provider
 // @Success 200 {object} controllers.Response The Response object
-// @router /get-dashboard-providers [get]
+// @router /get-dashboard-users-by-provider [get]
 func (c *ApiController) GetDashboardUsersByProvider() {
 	owner := c.Ctx.Input.Query("owner")
 
@@ -70,16 +70,16 @@ func (c *ApiController) GetDashboardLoginHeatmap() {
 	c.ResponseOk(data)
 }
 
-// GetDashboardMfaCoverage
-// @Title GetDashboardMfaCoverage
+// GetDashboardResourcesByProvider
+// @Title GetDashboardResourcesByProvider
 // @Tag System API
-// @Description get MFA coverage by organization
+// @Description get resource count by provider
 // @Success 200 {object} controllers.Response The Response object
-// @router /get-dashboard-mfa-coverage [get]
-func (c *ApiController) GetDashboardMfaCoverage() {
+// @router /get-dashboard-resources-by-provider [get]
+func (c *ApiController) GetDashboardResourcesByProvider() {
 	owner := c.Ctx.Input.Query("owner")
 
-	data, err := object.GetDashboardMfaCoverage(owner)
+	data, err := object.GetDashboardResourcesByProvider(owner)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

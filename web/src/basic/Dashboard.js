@@ -54,7 +54,7 @@ const getYAxisLayout = (values) => {
   const maxValue = (values ?? []).reduce((max, item) => Math.max(max, Math.abs(Number(item) || 0)), 0);
   const label = formatAxisValue(maxValue);
   const left = Math.min(44, Math.max(32, label.length * 6 + 10));
-  const nameGap = Math.min(68, Math.max(48, label.length * 4 + 12));
+  const nameGap = Math.min(76, Math.max(56, label.length * 4 + 14));
   return {left, nameGap};
 };
 
@@ -109,45 +109,52 @@ const LineChartWidget = ({chartId, seriesConfig, height, data}) => {
   return <div id={chartId} style={{width: "100%", height}} />;
 };
 
-const MfaCoverageWidget = ({chartId, height, data}) => {
+const ResourcesByProviderWidget = ({chartId, height, data}) => {
   useEffect(() => {
-    if (!data || !document.getElementById(chartId)) {
+    if (data === null || data === undefined || !document.getElementById(chartId)) {
       return;
     }
 
     const items = Array.isArray(data) ? data : [];
-    const organizations = items.map(i => i.organization);
-    const adminDisabled = items.map(i => i.adminDisabled ?? 0);
-    const userDisabled = items.map(i => i.userDisabled ?? 0);
-    const adminEnabled = items.map(i => i.adminEnabled ?? 0);
-    const userEnabled = items.map(i => i.userEnabled ?? 0);
+    const providerData = items
+      .filter(item => item.count > 0)
+      .sort((a, b) => b.count - a.count)
+      .map(item => ({
+        name: item.provider || i18next.t("general:Unbound"),
+        value: item.count,
+      }));
 
-    const yAxisLayout = getYAxisLayout([...adminDisabled, ...userDisabled, ...adminEnabled, ...userEnabled]);
+    // Handle empty data case
+    if (providerData.length === 0) {
+      providerData.push({name: "No data", value: 0});
+    }
+
+    const yAxisLayout = getYAxisLayout(providerData.map(d => d.value));
 
     const option = {
       tooltip: {trigger: "axis", axisPointer: {type: "shadow"}},
-      legend: {top: 0, left: "center"},
-      grid: {left: yAxisLayout.left, right: "4%", bottom: 28, top: 32, containLabel: true},
-      xAxis: {type: "category", name: i18next.t("general:Organization"), nameLocation: "middle", nameGap: 28, data: organizations},
-      yAxis: {type: "value", name: i18next.t("Total"), nameLocation: "middle", nameGap: yAxisLayout.nameGap, minInterval: 1, axisLabel: {formatter: formatAxisValue}},
-      series: [
-        {name: `${i18next.t("ldap:Admin")} (${i18next.t("general:Disable")})`, type: "bar", stack: "total", data: adminDisabled, itemStyle: {color: "#EE6666"}, barMaxWidth: 28},
-        {name: `${i18next.t("general:User")} (${i18next.t("general:Disable")})`, type: "bar", stack: "total", data: userDisabled, itemStyle: {color: "#FC8452"}, barMaxWidth: 28},
-        {name: `${i18next.t("ldap:Admin")} (${i18next.t("general:Enabled")})`, type: "bar", stack: "total", data: adminEnabled, itemStyle: {color: "#3BA272"}, barMaxWidth: 28},
-        {name: `${i18next.t("general:User")} (${i18next.t("general:Enabled")})`, type: "bar", stack: "total", data: userEnabled, itemStyle: {color: "#91CC75"}, barMaxWidth: 28},
-      ],
+      grid: {left: yAxisLayout.left, right: "4%", bottom: 28, top: 12, containLabel: true},
+      xAxis: {type: "category", name: i18next.t("general:Providers"), nameLocation: "middle", nameGap: 28, data: providerData.map(d => d.name), axisLabel: {interval: 0, rotate: providerData.length > 5 ? 30 : 0}},
+      yAxis: {type: "value", name: i18next.t("Total"), nameLocation: "middle", nameGap: yAxisLayout.nameGap, axisLabel: {formatter: formatAxisValue}},
+      series: [{
+        type: "bar",
+        colorBy: "data",
+        data: providerData.map(d => d.value),
+        itemStyle: {borderRadius: [4, 4, 0, 0]},
+        barMaxWidth: 50,
+      }],
     };
 
     return attachEChart(document.getElementById(chartId), option);
   }, [data, chartId, height]);
 
-  if (!data) {
+  if (data === null || data === undefined) {
     return <div style={{display: "flex", justifyContent: "center", alignItems: "center", height}}><Spin size="large" /></div>;
   }
   return <div id={chartId} style={{width: "100%", height}} />;
 };
 
-const DonutWidget = ({chartId, height, data}) => {
+const UserByProviderWidget = ({chartId, height, data}) => {
   useEffect(() => {
     if (!data || !document.getElementById(chartId)) {
       return;
@@ -209,8 +216,8 @@ const HeatmapWidget = ({chartId, height, data}) => {
 const Dashboard = (props) => {
   const [dashboardData, setDashboardData] = useState(null);
   const [usersByProvider, setUsersByProvider] = useState(null);
+  const [resourcesByProvider, setResourcesByProvider] = useState(null);
   const [loginHeatmap, setLoginHeatmap] = useState(null);
-  const [mfaCoverage, setMfaCoverage] = useState(null);
   const [isTourVisible, setIsTourVisible] = useState(TourConfig.getTourVisible());
 
   const screens = Grid.useBreakpoint();
@@ -229,9 +236,9 @@ const Dashboard = (props) => {
     Promise.allSettled([
       DashboardBackend.getDashboard(organization),
       DashboardBackend.getDashboardUsersByProvider(organization),
+      DashboardBackend.getDashboardResourcesByProvider(organization),
       DashboardBackend.getDashboardLoginHeatmap(organization),
-      DashboardBackend.getDashboardMfaCoverage(organization),
-    ]).then(([dashRes, userRes, heatmapRes, mfaRes]) => {
+    ]).then(([dashRes, userRes, resourcesRes, heatmapRes]) => {
       const handle = (res, setter) => {
         if (res.status === "fulfilled" && res.value?.status === "ok") {
           setter(res.value.data);
@@ -242,7 +249,7 @@ const Dashboard = (props) => {
       handle(dashRes, setDashboardData);
       handle(userRes, setUsersByProvider);
       handle(heatmapRes, setLoginHeatmap);
-      handle(mfaRes, setMfaCoverage);
+      handle(resourcesRes, setResourcesByProvider);
     });
   }, []);
 
@@ -262,8 +269,8 @@ const Dashboard = (props) => {
       }
       setDashboardData(null);
       setUsersByProvider(null);
+      setResourcesByProvider(null);
       setLoginHeatmap(null);
-      setMfaCoverage(null);
       fetchDashboardData(getOrganizationName());
     };
 
@@ -312,13 +319,13 @@ const Dashboard = (props) => {
           </Card>
         </Col>
         <Col xs={12}>
-          <Card title={i18next.t("general:MFA items")} size="small" style={{height: "100%"}} styles={{body: {padding: 0}}}>
-            <MfaCoverageWidget chartId="mfa-coverage-chart" height={chartHeight} data={mfaCoverage} />
+          <Card title={i18next.t("home:Resources by Provider")} size="small" style={{height: "100%"}} styles={{body: {padding: 0}}}>
+            <ResourcesByProviderWidget chartId="resources-by-provider-chart" height={chartHeight} data={resourcesByProvider} />
           </Card>
         </Col>
         <Col xs={12}>
           <Card title={i18next.t("user:3rd-party logins")} size="small" style={{height: "100%"}} styles={{body: {padding: 0}}}>
-            <DonutWidget chartId="users-by-provider-chart" height={chartHeight} data={usersByProvider} />
+            <UserByProviderWidget chartId="users-by-provider-chart" height={chartHeight} data={usersByProvider} />
           </Card>
         </Col>
         <Col xs={12}>

@@ -36,12 +36,9 @@ type DashboardLoginHeatmap struct {
 	Max   int64     `json:"max"`
 }
 
-type DashboardMfaCoverageItem struct {
-	Organization  string `json:"organization" xorm:"organization"`
-	AdminEnabled  int64  `json:"adminEnabled" xorm:"adminEnabled"`
-	AdminDisabled int64  `json:"adminDisabled" xorm:"adminDisabled"`
-	UserEnabled   int64  `json:"userEnabled" xorm:"userEnabled"`
-	UserDisabled  int64  `json:"userDisabled" xorm:"userDisabled"`
+type DashboardResourceByProviderItem struct {
+	Provider string `json:"provider" xorm:"provider"`
+	Count    int64  `json:"count" xorm:"count"`
 }
 
 type DashboardMapItem struct {
@@ -305,79 +302,34 @@ func GetDashboardLoginHeatmap(owner string) (*DashboardLoginHeatmap, error) {
 	}, nil
 }
 
-func GetDashboardMfaCoverage(owner string) (*[]DashboardMfaCoverageItem, error) {
+func GetDashboardResourcesByProvider(owner string) (*[]DashboardResourceByProviderItem, error) {
 	if owner == "All" {
 		owner = ""
 	}
 
 	tableNamePrefix := conf.GetConfigString("tableNamePrefix")
-	userTable := tableNamePrefix + "user"
+	resourceTable := tableNamePrefix + "resource"
 
-	// Fetch users with required fields using ORM
-	type userMfaInfo struct {
-		Owner       string       `xorm:"owner"`
-		IsAdmin     bool         `xorm:"is_admin"`
-		MfaAccounts []MfaAccount `xorm:"mfaAccounts"`
-	}
+	results := []DashboardResourceByProviderItem{}
 
-	users := []userMfaInfo{}
-	dbQuery := ormer.Engine.Table(userTable).
-		Cols("owner", "is_admin", "mfaAccounts").
-		Where("is_deleted <> ?", 1)
+	dbQuery := ormer.Engine.Table(resourceTable).
+		Select("provider, COUNT(*) as count").
+		GroupBy("provider")
 
 	if owner != "" {
-		dbQuery = dbQuery.And("owner = ?", owner)
+		dbQuery = dbQuery.Where("owner = ?", owner)
 	}
 
-	if err := dbQuery.Find(&users); err != nil {
+	if err := dbQuery.Find(&results); err != nil {
 		return nil, err
 	}
 
-	// Aggregate results by organization
-	orgStats := make(map[string]*DashboardMfaCoverageItem)
-
-	for _, user := range users {
-		item, exists := orgStats[user.Owner]
-		if !exists {
-			item = &DashboardMfaCoverageItem{Organization: user.Owner}
-			orgStats[user.Owner] = item
-		}
-
-		mfaEnabled := len(user.MfaAccounts) > 0
-
-		if user.IsAdmin {
-			if mfaEnabled {
-				item.AdminEnabled++
-			} else {
-				item.AdminDisabled++
-			}
-		} else {
-			if mfaEnabled {
-				item.UserEnabled++
-			} else {
-				item.UserDisabled++
-			}
-		}
-	}
-
-	// Convert map to slice and sort
-	items := make([]DashboardMfaCoverageItem, 0, len(orgStats))
-	for _, item := range orgStats {
-		items = append(items, *item)
-	}
-
-	// Sort by adminDisabled DESC, userDisabled DESC, organization ASC
-	sort.Slice(items, func(i, j int) bool {
-		if items[i].AdminDisabled != items[j].AdminDisabled {
-			return items[i].AdminDisabled > items[j].AdminDisabled
-		}
-		if items[i].UserDisabled != items[j].UserDisabled {
-			return items[i].UserDisabled > items[j].UserDisabled
-		}
-		return items[i].Organization < items[j].Organization
+	// Sort by count DESC
+	sort.Slice(results, func(i, j int) bool {
+		return results[i].Count > results[j].Count
 	})
 
-	return &items, nil
+	return &results, nil
 }
 
 func countCreatedBefore(dashboardMapItem DashboardMapItem, before time.Time) int64 {

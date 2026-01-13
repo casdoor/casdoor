@@ -25,7 +25,17 @@ export function getDashboard(owner) {
 }
 
 export function getDashboardUsersByProvider(owner) {
-  return fetch(`${Setting.ServerUrl}/api/get-dashboard-providers?owner=${owner}`, {
+  return fetch(`${Setting.ServerUrl}/api/get-dashboard-users-by-provider?owner=${owner}`, {
+    method: "GET",
+    credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}
+
+export function getDashboardResourcesByProvider(owner) {
+  return fetch(`${Setting.ServerUrl}/api/get-dashboard-resources-by-provider?owner=${owner}`, {
     method: "GET",
     credentials: "include",
     headers: {
@@ -36,16 +46,6 @@ export function getDashboardUsersByProvider(owner) {
 
 export function getDashboardLoginHeatmap(owner) {
   return fetch(`${Setting.ServerUrl}/api/get-dashboard-login-time-heatmap?owner=${owner}`, {
-    method: "GET",
-    credentials: "include",
-    headers: {
-      "Accept-Language": Setting.getAcceptLanguage(),
-    },
-  }).then(res => res.json());
-}
-
-export function getDashboardMfaCoverage(owner) {
-  return fetch(`${Setting.ServerUrl}/api/get-dashboard-mfa-coverage?owner=${owner}`, {
     method: "GET",
     credentials: "include",
     headers: {
