@@ -49,7 +49,7 @@ func TestParseStandardJwtTokenWithRSA(t *testing.T) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodRS256, claims)
-	
+
 	// Parse private key for signing
 	key, err := jwt.ParseRSAPrivateKeyFromPEM([]byte(privateKey))
 	if err != nil {
@@ -101,7 +101,7 @@ func TestParseStandardJwtTokenWithES256(t *testing.T) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodES256, claims)
-	
+
 	// Parse private key for signing
 	key, err := jwt.ParseECPrivateKeyFromPEM([]byte(privateKey))
 	if err != nil {
@@ -153,7 +153,7 @@ func TestParseStandardJwtTokenWithES384(t *testing.T) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodES384, claims)
-	
+
 	// Parse private key for signing
 	key, err := jwt.ParseECPrivateKeyFromPEM([]byte(privateKey))
 	if err != nil {
@@ -205,7 +205,7 @@ func TestParseStandardJwtTokenWithES512(t *testing.T) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodES512, claims)
-	
+
 	// Parse private key for signing
 	key, err := jwt.ParseECPrivateKeyFromPEM([]byte(privateKey))
 	if err != nil {
