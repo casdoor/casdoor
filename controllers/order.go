@@ -52,13 +52,13 @@ func (c *ApiController) GetOrders() {
 	if limit == "" || page == "" {
 		var orders []*object.Order
 		var err error
-		
+
 		if isAdmin {
 			orders, err = object.GetOrders(owner)
 		} else {
 			orders, err = object.GetUserOrders(owner, user.Name)
 		}
-		
+
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
@@ -67,12 +67,12 @@ func (c *ApiController) GetOrders() {
 		c.ResponseOk(orders)
 	} else {
 		limit := util.ParseInt(limit)
-		
+
 		var count int64
 		var orders []*object.Order
 		var err error
 		var paginator *pagination.Paginator
-		
+
 		if isAdmin {
 			count, err = object.GetOrderCount(owner, field, value)
 			if err != nil {
@@ -90,24 +90,24 @@ func (c *ApiController) GetOrders() {
 				c.ResponseError(err.Error())
 				return
 			}
-			
+
 			count = int64(len(allUserOrders))
 			paginator = pagination.NewPaginator(c.Ctx.Request, limit, count)
-			
+
 			// Apply pagination manually
 			offset := paginator.Offset()
 			end := offset + limit
 			if end > len(allUserOrders) {
 				end = len(allUserOrders)
 			}
-			
+
 			if offset < len(allUserOrders) {
 				orders = allUserOrders[offset:end]
 			} else {
 				orders = []*object.Order{}
 			}
 		}
-		
+
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
