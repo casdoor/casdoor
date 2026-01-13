@@ -266,8 +266,8 @@ func (syncer *Syncer) getTable() string {
 
 // isApiBasedSyncer checks if the syncer is API-based (doesn't use TableColumns)
 func (syncer *Syncer) isApiBasedSyncer() bool {
-	return syncer.Type == "DingTalk" || syncer.Type == "WeCom" || 
-		syncer.Type == "Azure AD" || syncer.Type == "Google Workspace" || 
+	return syncer.Type == "DingTalk" || syncer.Type == "WeCom" ||
+		syncer.Type == "Azure AD" || syncer.Type == "Google Workspace" ||
 		syncer.Type == "Active Directory"
 }
 
