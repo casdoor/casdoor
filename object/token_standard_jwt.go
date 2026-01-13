@@ -89,16 +89,25 @@ func getStandardClaims(claims Claims) ClaimsStandard {
 
 func ParseStandardJwtToken(token string, cert *Cert) (*ClaimsStandard, error) {
 	t, err := jwt.ParseWithClaims(token, &ClaimsStandard{}, func(token *jwt.Token) (interface{}, error) {
-		if _, ok := token.Method.(*jwt.SigningMethodRSA); !ok {
-			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
-		}
+		var (
+			certificate interface{}
+			err         error
+		)
 
 		if cert.Certificate == "" {
 			return nil, fmt.Errorf("the certificate field should not be empty for the cert: %v", cert)
 		}
 
-		// RSA certificate
-		certificate, err := jwt.ParseRSAPublicKeyFromPEM([]byte(cert.Certificate))
+		if _, ok := token.Method.(*jwt.SigningMethodRSA); ok {
+			// RSA certificate
+			certificate, err = jwt.ParseRSAPublicKeyFromPEM([]byte(cert.Certificate))
+		} else if _, ok := token.Method.(*jwt.SigningMethodECDSA); ok {
+			// ES certificate
+			certificate, err = jwt.ParseECPublicKeyFromPEM([]byte(cert.Certificate))
+		} else {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
+
 		if err != nil {
 			return nil, err
 		}
