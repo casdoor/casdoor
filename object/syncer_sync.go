@@ -21,7 +21,8 @@ import (
 )
 
 func (syncer *Syncer) syncUsers() error {
-	if len(syncer.TableColumns) == 0 {
+	// API-based syncers (DingTalk, WeCom, Azure AD, etc.) don't use TableColumns
+	if !syncer.isApiBasedSyncer() && len(syncer.TableColumns) == 0 {
 		return fmt.Errorf("The syncer table columns should not be empty")
 	}
 

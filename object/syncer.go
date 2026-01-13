@@ -264,7 +264,23 @@ func (syncer *Syncer) getTable() string {
 	}
 }
 
+// isApiBasedSyncer checks if the syncer is API-based (doesn't use TableColumns)
+func (syncer *Syncer) isApiBasedSyncer() bool {
+	return syncer.Type == "DingTalk" || syncer.Type == "WeCom" || 
+		syncer.Type == "Azure AD" || syncer.Type == "Google Workspace" || 
+		syncer.Type == "Active Directory"
+}
+
 func (syncer *Syncer) getKeyColumn() *TableColumn {
+	// For API-based syncers, return a default column for "Name"
+	if syncer.isApiBasedSyncer() {
+		return &TableColumn{
+			Name:        "name",
+			CasdoorName: "Name",
+			IsKey:       true,
+		}
+	}
+
 	var column *TableColumn
 	for _, tableColumn := range syncer.TableColumns {
 		if tableColumn.IsKey {
