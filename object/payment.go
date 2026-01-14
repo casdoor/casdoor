@@ -18,7 +18,6 @@ import (
 	"fmt"
 
 	"github.com/casdoor/casdoor/pp"
-
 	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/core"
 )
@@ -37,7 +36,6 @@ type Payment struct {
 	Detail             string  `xorm:"varchar(255)" json:"detail"`
 	Currency           string  `xorm:"varchar(100)" json:"currency"`
 	Price              float64 `json:"price"`
-	IsRecharge         bool    `xorm:"bool" json:"isRecharge"`
 
 	// Payer Info
 	User         string `xorm:"varchar(100)" json:"user"`
@@ -270,12 +268,17 @@ func NotifyPayment(body []byte, owner string, paymentName string, lang string) (
 			return nil, fmt.Errorf("the provider: %s does not exist", payment.Provider)
 		}
 
-		product, err := getProduct(payment.Owner, payment.ProductName)
+		products, err := getOrderProducts(payment.Owner, order.Products)
 		if err != nil {
 			return nil, err
 		}
-		if product == nil {
-			return nil, fmt.Errorf("the product: %s does not exist", payment.ProductName)
+		if len(products) == 0 {
+			return nil, fmt.Errorf("order has no products")
+		}
+		for _, product := range products {
+			if !product.IsRecharge && product.Quantity <= 0 {
+				return nil, fmt.Errorf("the product: %s is out of stock", product.Name)
+			}
 		}
 
 		user, err := getUser(payment.Owner, payment.User)
@@ -311,7 +314,16 @@ func NotifyPayment(body []byte, owner string, paymentName string, lang string) (
 			return nil, fmt.Errorf("failed to add transaction: %s", util.StructToJson(transaction))
 		}
 
-		if product.IsRecharge {
+		hasRecharge := false
+		rechargeAmount := 0.0
+		for _, productInfo := range order.ProductInfos {
+			if productInfo.IsRecharge {
+				hasRecharge = true
+				rechargeAmount += productInfo.Price
+			}
+		}
+
+		if hasRecharge {
 			rechargeTransaction := &Transaction{
 				Owner:       payment.Owner,
 				CreatedTime: util.GetCurrentTime(),
@@ -337,7 +349,7 @@ func NotifyPayment(body []byte, owner string, paymentName string, lang string) (
 			}
 		}
 
-		err = UpdateProductStock(product)
+		err = UpdateProductStock(products)
 		if err != nil {
 			return nil, err
 		}

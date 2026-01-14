@@ -16,6 +16,7 @@ package object
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/casdoor/casdoor/idp"
 	"github.com/casdoor/casdoor/pp"
@@ -51,23 +52,35 @@ func PlaceOrder(productId string, user *User, pricingName string, planName strin
 	}
 
 	orderName := fmt.Sprintf("order_%v", util.GenerateTimeId())
+	productNames := []string{product.Name}
+	productInfos := []ProductInfo{
+		{
+			Name:        product.Name,
+			DisplayName: product.DisplayName,
+			Image:       product.Image,
+			Detail:      product.Detail,
+			Price:       productPrice,
+			IsRecharge:  product.IsRecharge,
+		},
+	}
+
 	order := &Order{
-		Owner:       product.Owner,
-		Name:        orderName,
-		CreatedTime: util.GetCurrentTime(),
-		DisplayName: fmt.Sprintf("Order for %s", product.DisplayName),
-		ProductName: product.Name,
-		Products:    []string{product.Name},
-		PricingName: pricingName,
-		PlanName:    planName,
-		User:        user.Name,
-		Payment:     "", // Payment will be set when user pays
-		Price:       productPrice,
-		Currency:    productCurrency,
-		State:       "Created",
-		Message:     "",
-		StartTime:   util.GetCurrentTime(),
-		EndTime:     "",
+		Owner:        product.Owner,
+		Name:         orderName,
+		CreatedTime:  util.GetCurrentTime(),
+		DisplayName:  fmt.Sprintf("Order for %s", strings.Join(productNames, ",")),
+		Products:     productNames,
+		ProductInfos: productInfos,
+		PricingName:  pricingName,
+		PlanName:     planName,
+		User:         user.Name,
+		Payment:      "", // Payment will be set when user pays
+		Price:        productPrice,
+		Currency:     productCurrency,
+		State:        "Created",
+		Message:      "",
+		StartTime:    util.GetCurrentTime(),
+		EndTime:      "",
 	}
 
 	affected, err := AddOrder(order)
@@ -85,18 +98,18 @@ func PayOrder(providerName, host, paymentEnv string, order *Order, lang string) 
 	if order.State != "Created" {
 		return nil, nil, fmt.Errorf("cannot pay for order: %s, current state is %s", order.GetId(), order.State)
 	}
-
-	productId := util.GetId(order.Owner, order.ProductName)
-	product, err := GetProduct(productId)
+	productNames := order.Products
+	products, err := getOrderProducts(order.Owner, productNames)
 	if err != nil {
 		return nil, nil, err
 	}
-	if product == nil {
-		return nil, nil, fmt.Errorf("the product: %s does not exist", productId)
+	if len(products) == 0 {
+		return nil, nil, fmt.Errorf("order has no products")
 	}
-
-	if !product.IsRecharge && product.Quantity <= 0 {
-		return nil, nil, fmt.Errorf("the product: %s is out of stock", product.Name)
+	for _, product := range products {
+		if !product.IsRecharge && product.Quantity <= 0 {
+			return nil, nil, fmt.Errorf("the product: %s is out of stock", product.Name)
+		}
 	}
 
 	user, err := GetUser(util.GetId(order.Owner, order.User))
@@ -107,7 +120,9 @@ func PayOrder(providerName, host, paymentEnv string, order *Order, lang string) 
 		return nil, nil, fmt.Errorf("the user: %s does not exist", order.User)
 	}
 
-	provider, err := product.getProvider(providerName)
+	// For multi-product orders, the payment provider is determined by the first product
+	baseProduct := products[0]
+	provider, err := baseProduct.getProvider(providerName)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -117,7 +132,7 @@ func PayOrder(providerName, host, paymentEnv string, order *Order, lang string) 
 		return nil, nil, err
 	}
 
-	owner := product.Owner
+	owner := baseProduct.Owner
 	payerName := fmt.Sprintf("%s | %s", user.Name, user.DisplayName)
 	paymentName := fmt.Sprintf("payment_%v", util.GenerateTimeId())
 
@@ -152,20 +167,30 @@ func PayOrder(providerName, host, paymentEnv string, order *Order, lang string) 
 		returnUrl = fmt.Sprintf("%s/buy-plan/%s/%s/result?subscription=%s", originFrontend, owner, order.PricingName, sub.Name)
 	}
 
-	if product.SuccessUrl != "" {
-		returnUrl = fmt.Sprintf("%s?transactionOwner=%s&transactionName=%s", product.SuccessUrl, owner, paymentName)
+	if baseProduct.SuccessUrl != "" {
+		returnUrl = fmt.Sprintf("%s?transactionOwner=%s&transactionName=%s", baseProduct.SuccessUrl, owner, paymentName)
 	}
+
+	displayNames := make([]string, len(products))
+	descriptions := make([]string, len(products))
+	for i, p := range products {
+		displayNames[i] = p.DisplayName
+		descriptions[i] = p.Description
+	}
+	reqProductName := strings.Join(productNames, "、")
+	reqProductDisplayName := strings.Join(displayNames, "、")
+	reqProductDescription := strings.Join(descriptions, "、")
 
 	payReq := &pp.PayReq{
 		ProviderName:       providerName,
-		ProductName:        product.Name,
+		ProductName:        reqProductName,
 		PayerName:          payerName,
 		PayerId:            user.Id,
 		PayerEmail:         user.Email,
 		PaymentName:        paymentName,
-		ProductDisplayName: product.DisplayName,
-		ProductDescription: product.Description,
-		ProductImage:       product.Image,
+		ProductDisplayName: reqProductDisplayName,
+		ProductDescription: reqProductDescription,
+		ProductImage:       baseProduct.Image,
 		Price:              order.Price,
 		Currency:           order.Currency,
 		ReturnUrl:          returnUrl,
@@ -188,7 +213,7 @@ func PayOrder(providerName, host, paymentEnv string, order *Order, lang string) 
 	}
 
 	payment = &Payment{
-		Owner:       product.Owner,
+		Owner:       baseProduct.Owner,
 		Name:        paymentName,
 		CreatedTime: util.GetCurrentTime(),
 		DisplayName: paymentName,
@@ -196,12 +221,11 @@ func PayOrder(providerName, host, paymentEnv string, order *Order, lang string) 
 		Provider: provider.Name,
 		Type:     provider.Type,
 
-		ProductName:        product.Name,
-		ProductDisplayName: product.DisplayName,
-		Detail:             product.Detail,
+		ProductName:        reqProductName,
+		ProductDisplayName: reqProductDisplayName,
+		Detail:             reqProductDescription,
 		Currency:           order.Currency,
 		Price:              order.Price,
-		IsRecharge:         product.IsRecharge,
 
 		User:       user.Name,
 		Order:      order.Name,
@@ -249,12 +273,21 @@ func PayOrder(providerName, host, paymentEnv string, order *Order, lang string) 
 			return nil, nil, fmt.Errorf("failed to add transaction: %s", util.StructToJson(transaction))
 		}
 
-		if product.IsRecharge {
+		hasRecharge := false
+		rechargeAmount := 0.0
+		for _, productInfo := range order.ProductInfos {
+			if productInfo.IsRecharge {
+				hasRecharge = true
+				rechargeAmount += productInfo.Price
+			}
+		}
+
+		if hasRecharge {
 			rechargeTransaction := &Transaction{
 				Owner:       payment.Owner,
 				CreatedTime: util.GetCurrentTime(),
 				Application: user.SignupApplication,
-				Amount:      payment.Price,
+				Amount:      rechargeAmount,
 				Currency:    order.Currency,
 				Payment:     payment.Name,
 				Category:    TransactionCategoryRecharge,
@@ -291,7 +324,7 @@ func PayOrder(providerName, host, paymentEnv string, order *Order, lang string) 
 
 	// Update product stock after order state is persisted (for instant payment methods)
 	if provider.Type == "Dummy" || provider.Type == "Balance" {
-		err = UpdateProductStock(product)
+		err = UpdateProductStock(products)
 		if err != nil {
 			return nil, nil, err
 		}
