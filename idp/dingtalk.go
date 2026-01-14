@@ -183,7 +183,7 @@ func (idp *DingTalkIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, erro
 		return nil, err
 	}
 
-	corpMobile, corpEmail, jobNumber, err := idp.getUserCorpEmail(userId, corpAccessToken)
+	corpMobile, corpEmail, unionId, err := idp.getUserCorpEmail(userId, corpAccessToken)
 	if err == nil {
 		if corpMobile != "" {
 			userInfo.Phone = corpMobile
@@ -193,8 +193,8 @@ func (idp *DingTalkIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, erro
 			userInfo.Email = corpEmail
 		}
 
-		if jobNumber != "" {
-			userInfo.Username = jobNumber
+		if unionId != "" {
+			userInfo.Username = unionId
 		}
 	}
 
@@ -286,7 +286,7 @@ func (idp *DingTalkIdProvider) getUserCorpEmail(userId string, accessToken strin
 		Result     struct {
 			Mobile    string `json:"mobile"`
 			Email     string `json:"email"`
-			JobNumber string `json:"job_number"`
+			UnionId string `json:"unionid"`
 		} `json:"result"`
 	}
 	err = json.Unmarshal(respBytes, &data)
@@ -296,5 +296,5 @@ func (idp *DingTalkIdProvider) getUserCorpEmail(userId string, accessToken strin
 	if data.ErrMessage != "ok" {
 		return "", "", "", fmt.Errorf(data.ErrMessage)
 	}
-	return data.Result.Mobile, data.Result.Email, data.Result.JobNumber, nil
+	return data.Result.Mobile, data.Result.Email, data.Result.UnionId, nil
 }
