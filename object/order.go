@@ -16,6 +16,7 @@ package object
 
 import (
 	"fmt"
+	"slices"
 
 	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/core"
@@ -28,8 +29,8 @@ type Order struct {
 	DisplayName string `xorm:"varchar(100)" json:"displayName"`
 
 	// Product Info
-	ProductName string   `xorm:"varchar(100)" json:"productName"`
-	Products    []string `xorm:"varchar(1000)" json:"products"` // Future support for multiple products per order. Using varchar(1000) for simple JSON array storage; can be refactored to separate table if needed
+	Products     []string      `xorm:"varchar(1000)" json:"products"` // Support for multiple products per order. Using varchar(1000) for simple JSON array storage; can be refactored to separate table if needed
+	ProductInfos []ProductInfo `xorm:"varchar(2000)" json:"productInfos"`
 
 	// Subscription Info (for subscription orders)
 	PricingName string `xorm:"varchar(100)" json:"pricingName"`
@@ -50,6 +51,15 @@ type Order struct {
 	// Order Duration
 	StartTime string `xorm:"varchar(100)" json:"startTime"`
 	EndTime   string `xorm:"varchar(100)" json:"endTime"`
+}
+
+type ProductInfo struct {
+	Name        string  `json:"name"`
+	DisplayName string  `json:"displayName"`
+	Image       string  `json:"image"`
+	Detail      string  `json:"detail"`
+	Price       float64 `json:"price"`
+	IsRecharge  bool    `json:"isRecharge"`
 }
 
 func GetOrderCount(owner, field, value string) (int64, error) {
@@ -119,10 +129,41 @@ func UpdateOrder(id string, order *Order) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	if o, err := getOrder(owner, name); err != nil {
+
+	var o *Order
+	if o, err = getOrder(owner, name); err != nil {
 		return false, err
 	} else if o == nil {
 		return false, nil
+	}
+
+	if !slices.Equal(o.Products, order.Products) {
+		existingInfos := make(map[string]ProductInfo, len(o.ProductInfos))
+		for _, info := range o.ProductInfos {
+			existingInfos[info.Name] = info
+		}
+
+		productInfos := make([]ProductInfo, 0, len(order.Products))
+		products, err := getOrderProducts(owner, order.Products)
+		if err != nil {
+			return false, err
+		}
+		for _, product := range products {
+			if existingInfo, ok := existingInfos[product.Name]; ok {
+				productInfos = append(productInfos, existingInfo)
+				continue
+			}
+
+			productInfos = append(productInfos, ProductInfo{
+				Name:        product.Name,
+				DisplayName: product.DisplayName,
+				Image:       product.Image,
+				Detail:      product.Detail,
+				Price:       product.Price,
+				IsRecharge:  product.IsRecharge,
+			})
+		}
+		order.ProductInfos = productInfos
 	}
 
 	affected, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(order)
