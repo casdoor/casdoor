@@ -39,7 +39,26 @@ func (c *ApiController) GetSubscriptions() {
 	sortOrder := c.Ctx.Input.Query("sortOrder")
 
 	if limit == "" || page == "" {
-		subscriptions, err := object.GetSubscriptions(owner)
+		var subscriptions []*object.Subscription
+		var err error
+
+		if c.IsAdmin() {
+			// If field is "user", filter by that user even for admins
+			if field == "user" && value != "" {
+				subscriptions, err = object.GetSubscriptionsByUser(owner, value)
+			} else {
+				subscriptions, err = object.GetSubscriptions(owner)
+			}
+		} else {
+			user := c.GetSessionUsername()
+			_, userName, userErr := util.GetOwnerAndNameFromIdWithError(user)
+			if userErr != nil {
+				c.ResponseError(userErr.Error())
+				return
+			}
+			subscriptions, err = object.GetSubscriptionsByUser(owner, userName)
+		}
+
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
@@ -48,6 +67,16 @@ func (c *ApiController) GetSubscriptions() {
 		c.ResponseOk(subscriptions)
 	} else {
 		limit := util.ParseInt(limit)
+		if !c.IsAdmin() {
+			user := c.GetSessionUsername()
+			_, userName, userErr := util.GetOwnerAndNameFromIdWithError(user)
+			if userErr != nil {
+				c.ResponseError(userErr.Error())
+				return
+			}
+			field = "user"
+			value = userName
+		}
 		count, err := object.GetSubscriptionCount(owner, field, value)
 		if err != nil {
 			c.ResponseError(err.Error())
