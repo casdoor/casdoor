@@ -98,31 +98,33 @@ func GetProduct(id string) (*Product, error) {
 	return getProduct(owner, name)
 }
 
-func UpdateProductStock(product *Product) error {
+func UpdateProductStock(products []Product) error {
 	var (
 		affected int64
 		err      error
 	)
-	if product.IsRecharge {
-		affected, err = ormer.Engine.ID(core.PK{product.Owner, product.Name}).
-			Incr("sold", 1).
-			Update(&Product{})
-	} else {
-		affected, err = ormer.Engine.ID(core.PK{product.Owner, product.Name}).
-			Where("quantity > 0").
-			Decr("quantity", 1).
-			Incr("sold", 1).
-			Update(&Product{})
-	}
-
-	if err != nil {
-		return err
-	}
-	if affected == 0 {
+	for _, product := range products {
 		if product.IsRecharge {
-			return fmt.Errorf("failed to update stock for product: %s", product.Name)
+			affected, err = ormer.Engine.ID(core.PK{product.Owner, product.Name}).
+				Incr("sold", 1).
+				Update(&Product{})
+		} else {
+			affected, err = ormer.Engine.ID(core.PK{product.Owner, product.Name}).
+				Where("quantity > 0").
+				Decr("quantity", 1).
+				Incr("sold", 1).
+				Update(&Product{})
 		}
-		return fmt.Errorf("insufficient stock for product: %s", product.Name)
+
+		if err != nil {
+			return err
+		}
+		if affected == 0 {
+			if product.IsRecharge {
+				return fmt.Errorf("failed to update stock for product: %s", product.Name)
+			}
+			return fmt.Errorf("insufficient stock for product: %s", product.Name)
+		}
 	}
 	return nil
 }
@@ -286,4 +288,25 @@ func UpdateProductForPlan(plan *Plan, product *Product) {
 	product.Price = plan.Price
 	product.Currency = plan.Currency
 	product.Providers = plan.PaymentProviders
+}
+
+func getOrderProducts(owner string, productNames []string) ([]Product, error) {
+	if len(productNames) == 0 {
+		return []Product{}, nil
+	}
+
+	names := make([]string, 0, len(productNames))
+	for _, productName := range productNames {
+		names = append(names, productName)
+	}
+
+	var products []Product
+	err := ormer.Engine.
+		Where("owner = ?", owner).
+		In("name", names).
+		Find(&products)
+	if err != nil {
+		return nil, err
+	}
+	return products, nil
 }
