@@ -39,7 +39,26 @@ func (c *ApiController) GetPayments() {
 	sortOrder := c.Ctx.Input.Query("sortOrder")
 
 	if limit == "" || page == "" {
-		payments, err := object.GetPayments(owner)
+		var payments []*object.Payment
+		var err error
+
+		if c.IsAdmin() {
+			// If field is "user", filter by that user even for admins
+			if field == "user" && value != "" {
+				payments, err = object.GetUserPayments(owner, value)
+			} else {
+				payments, err = object.GetPayments(owner)
+			}
+		} else {
+			user := c.GetSessionUsername()
+			_, userName, userErr := util.GetOwnerAndNameFromIdWithError(user)
+			if userErr != nil {
+				c.ResponseError(userErr.Error())
+				return
+			}
+			payments, err = object.GetUserPayments(owner, userName)
+		}
+
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
@@ -48,6 +67,16 @@ func (c *ApiController) GetPayments() {
 		c.ResponseOk(payments)
 	} else {
 		limit := util.ParseInt(limit)
+		if !c.IsAdmin() {
+			user := c.GetSessionUsername()
+			_, userName, userErr := util.GetOwnerAndNameFromIdWithError(user)
+			if userErr != nil {
+				c.ResponseError(userErr.Error())
+				return
+			}
+			field = "user"
+			value = userName
+		}
 		count, err := object.GetPaymentCount(owner, field, value)
 		if err != nil {
 			c.ResponseError(err.Error())
