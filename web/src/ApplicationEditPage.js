@@ -918,7 +918,7 @@ class ApplicationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2}>
-            {Setting.getLabel(i18next.t("application:Disable SAML attributes"), i18next.t("application:Disable SAML attributes - Tooltip"))} :
+            {Setting.getLabel("Disable SAML attributes", "Disable sending SAML attributes in the response")} :
           </Col>
           <Col span={1} >
             <Switch checked={this.state.application.disableSamlAttributes} onChange={checked => {
@@ -928,7 +928,7 @@ class ApplicationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2}>
-            {Setting.getLabel(i18next.t("application:Enable SAML assertion signature"), i18next.t("application:Enable SAML assertion signature - Tooltip"))} :
+            {Setting.getLabel("Enable SAML assertion signature", "Enable signing of SAML assertions. Some service providers may not support assertion signatures, disable this option if you encounter compatibility issues")} :
           </Col>
           <Col span={1} >
             <Switch checked={this.state.application.enableSamlAssertionSignature} onChange={checked => {
