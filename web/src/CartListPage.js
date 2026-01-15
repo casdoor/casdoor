@@ -172,19 +172,18 @@ class CartListPage extends BaseListPage {
         width: "260px",
         fixed: (Setting.isMobile()) ? "false" : "right",
         render: (text, record, index) => {
-          const isAdmin = Setting.isLocalAdminUser(this.props.account);
           return (
             <div>
-              <Button 
-                style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} 
+              <Button
+                style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}}
                 disabled={!record.productName}
                 onClick={() => this.props.history.push(`/products/${record.owner}/${record.productName}/buy`)}
               >
                 {i18next.t("product:Buy")}
               </Button>
-              <Button 
-                style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} 
-                type="primary" 
+              <Button
+                style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}}
+                type="primary"
                 onClick={() => this.props.history.push(`/carts/${record.owner}/${record.name}`)}
               >
                 {i18next.t("general:Edit")}
@@ -209,13 +208,13 @@ class CartListPage extends BaseListPage {
 
     return (
       <div>
-        <Table 
-          scroll={{x: "max-content"}} 
-          columns={columns} 
-          dataSource={carts} 
-          rowKey={(record) => `${record.owner}/${record.name}`} 
-          size="middle" 
-          bordered 
+        <Table
+          scroll={{x: "max-content"}}
+          columns={columns}
+          dataSource={carts}
+          rowKey={(record) => `${record.owner}/${record.name}`}
+          size="middle"
+          bordered
           pagination={paginationProps}
           title={() => {
             return (
