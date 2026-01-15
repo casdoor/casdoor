@@ -138,7 +138,7 @@ class SubscriptionListPage extends BaseListPage {
         ...this.getColumnSearchProps("period"),
       },
       {
-        title: i18next.t("subscription:Start time"),
+        title: i18next.t("general:Start time"),
         dataIndex: "startTime",
         key: "startTime",
         width: "140px",
@@ -148,7 +148,7 @@ class SubscriptionListPage extends BaseListPage {
         },
       },
       {
-        title: i18next.t("subscription:End time"),
+        title: i18next.t("general:End time"),
         dataIndex: "endTime",
         key: "endTime",
         width: "140px",

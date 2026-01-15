@@ -67,8 +67,8 @@ func PlaceOrder(productId string, user *User, pricingName string, planName strin
 	order := &Order{
 		Owner:        product.Owner,
 		Name:         orderName,
+		DisplayName:  orderName,
 		CreatedTime:  util.GetCurrentTime(),
-		DisplayName:  fmt.Sprintf("Order for %s", strings.Join(productNames, ",")),
 		Products:     productNames,
 		ProductInfos: productInfos,
 		PricingName:  pricingName,
@@ -177,9 +177,9 @@ func PayOrder(providerName, host, paymentEnv string, order *Order, lang string) 
 		displayNames[i] = p.DisplayName
 		descriptions[i] = p.Description
 	}
-	reqProductName := strings.Join(productNames, "、")
-	reqProductDisplayName := strings.Join(displayNames, "、")
-	reqProductDescription := strings.Join(descriptions, "、")
+	reqProductName := strings.Join(productNames, ", ")
+	reqProductDisplayName := strings.Join(displayNames, ", ")
+	reqProductDescription := strings.Join(descriptions, ", ")
 
 	payReq := &pp.PayReq{
 		ProviderName:       providerName,
@@ -221,11 +221,11 @@ func PayOrder(providerName, host, paymentEnv string, order *Order, lang string) 
 		Provider: provider.Name,
 		Type:     provider.Type,
 
-		ProductName:        reqProductName,
-		ProductDisplayName: reqProductDisplayName,
-		Detail:             reqProductDescription,
-		Currency:           order.Currency,
-		Price:              order.Price,
+		Products:            productNames,
+		ProductsDisplayName: reqProductDisplayName,
+		Detail:              reqProductDescription,
+		Currency:            order.Currency,
+		Price:               order.Price,
 
 		User:       user.Name,
 		Order:      order.Name,

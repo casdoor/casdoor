@@ -14,7 +14,7 @@
 
 import React from "react";
 import {Link} from "react-router-dom";
-import {Button, Table} from "antd";
+import {Button, List, Table, Tooltip} from "antd";
 import moment from "moment";
 import * as Setting from "./Setting";
 import * as PaymentBackend from "./backend/PaymentBackend";
@@ -22,6 +22,7 @@ import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
 import * as Provider from "./auth/Provider";
 import PopconfirmModal from "./common/modal/PopconfirmModal";
+import {EditOutlined} from "@ant-design/icons";
 
 class PaymentListPage extends BaseListPage {
   newPayment() {
@@ -35,9 +36,9 @@ class PaymentListPage extends BaseListPage {
       provider: "provider_pay_paypal",
       type: "PayPal",
       user: "admin",
-      productName: "computer-1",
-      productDisplayName: "A notebook computer",
-      detail: "This is a computer with excellent CPU, memory and disk",
+      products: [],
+      productsDisplayName: "",
+      detail: "This is a payment",
       tag: "Promotion-1",
       currency: "USD",
       price: 300.00,
@@ -174,17 +175,41 @@ class PaymentListPage extends BaseListPage {
         },
       },
       {
-        title: i18next.t("payment:Product"),
-        dataIndex: "productDisplayName",
-        key: "productDisplayName",
-        // width: '160px',
-        sorter: true,
-        ...this.getColumnSearchProps("productDisplayName"),
+        title: i18next.t("order:Products"),
+        dataIndex: "products",
+        key: "products",
+        ...this.getColumnSearchProps("products"),
         render: (text, record, index) => {
+          const products = record?.products || [];
+          if (products.length === 0) {
+            return `(${i18next.t("general:empty")})`;
+          }
           return (
-            <Link to={`/products/${record.owner}/${record.productName}`}>
-              {text}
-            </Link>
+            <div>
+              <List
+                size="small"
+                locale={{emptyText: " "}}
+                dataSource={products}
+                style={{
+                  paddingTop: 8,
+                  paddingBottom: 8,
+                }}
+                renderItem={(productName, i) => {
+                  return (
+                    <List.Item>
+                      <div style={{display: "inline"}}>
+                        <Tooltip placement="topLeft" title={i18next.t("general:Edit")}>
+                          <Button style={{marginRight: "5px"}} icon={<EditOutlined />} size="small" onClick={() => Setting.goToLinkSoft(this, `/products/${record.owner}/${productName}`)} />
+                        </Tooltip>
+                        <Link to={`/products/${record.owner}/${productName}`}>
+                          {productName}
+                        </Link>
+                      </div>
+                    </List.Item>
+                  );
+                }}
+              />
+            </div>
           );
         },
       },
