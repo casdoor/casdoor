@@ -34,6 +34,14 @@ func (syncer *Syncer) addUser(user *OriginalUser) (bool, error) {
 }
 
 func (syncer *Syncer) getCasdoorColumns() []string {
+	// For API-based syncers, return a default set of common columns to update
+	if syncer.isApiBasedSyncer() {
+		return []string{
+			"display_name", "email", "phone", "avatar", "title",
+			"is_forbidden", "created_time", "updated_time",
+		}
+	}
+
 	res := []string{}
 	for _, tableColumn := range syncer.TableColumns {
 		if tableColumn.CasdoorName != "Id" {
@@ -81,9 +89,20 @@ func (syncer *Syncer) updateUserForOriginalFields(user *User, key string) (bool,
 func (syncer *Syncer) calculateHash(user *OriginalUser) string {
 	values := []string{}
 	m := syncer.getMapFromOriginalUser(user)
-	for _, tableColumn := range syncer.TableColumns {
-		if tableColumn.IsHashed {
-			values = append(values, m[tableColumn.Name])
+
+	// For API-based syncers, hash a default set of important fields
+	if syncer.isApiBasedSyncer() {
+		// Hash key user fields to detect changes
+		fields := []string{"Name", "DisplayName", "Email", "Phone", "Avatar", "Title", "IsForbidden"}
+		for _, field := range fields {
+			values = append(values, m[field])
+		}
+	} else {
+		// For database syncers, use the configured columns
+		for _, tableColumn := range syncer.TableColumns {
+			if tableColumn.IsHashed {
+				values = append(values, m[tableColumn.Name])
+			}
 		}
 	}
 

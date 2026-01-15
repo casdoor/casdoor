@@ -447,6 +447,12 @@ func (syncer *Syncer) getMapFromOriginalUser(user *OriginalUser) map[string]stri
 	m["MfaAccounts"] = marshalToJSONString(user.MfaAccounts)
 	m["MfaItems"] = marshalToJSONString(user.MfaItems)
 
+	// For API-based syncers, return the full map since there are no TableColumns
+	if syncer.isApiBasedSyncer() {
+		return m
+	}
+
+	// For database syncers, filter by TableColumns
 	m2 := map[string]string{}
 	for _, tableColumn := range syncer.TableColumns {
 		m2[tableColumn.Name] = m[tableColumn.CasdoorName]
