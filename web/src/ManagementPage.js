@@ -426,8 +426,13 @@ function ManagementPage(props) {
 
   function renderLoginIfNotLoggedIn(component) {
     if (props.account === null) {
+      const lastLoginOrg = localStorage.getItem("lastLoginOrg");
       sessionStorage.setItem("from", window.location.pathname);
-      return <Redirect to="/login" />;
+      if (lastLoginOrg) {
+        return <Redirect to={`/login/${lastLoginOrg}`} />;
+      } else {
+        return <Redirect to="/login" />;
+      }
     } else if (props.account === undefined) {
       return null;
     } else if (props.account.needUpdatePassword) {

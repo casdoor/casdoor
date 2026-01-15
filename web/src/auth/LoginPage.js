@@ -591,6 +591,7 @@ class LoginPage extends React.Component {
             }
           }
         }).finally(() => {
+          localStorage.setItem("lastLoginOrg", values?.organization || "");
           this.setState({loginLoading: false});
         });
     }
