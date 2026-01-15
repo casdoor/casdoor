@@ -31,11 +31,11 @@ type Payment struct {
 	Provider string `xorm:"varchar(100)" json:"provider"`
 	Type     string `xorm:"varchar(100)" json:"type"`
 	// Product Info
-	ProductName        string  `xorm:"varchar(100)" json:"productName"`
-	ProductDisplayName string  `xorm:"varchar(100)" json:"productDisplayName"`
-	Detail             string  `xorm:"varchar(255)" json:"detail"`
-	Currency           string  `xorm:"varchar(100)" json:"currency"`
-	Price              float64 `json:"price"`
+	Products            []string `xorm:"varchar(1000)" json:"products"`
+	ProductsDisplayName string   `xorm:"varchar(1000)" json:"productsDisplayName"`
+	Detail              string   `xorm:"varchar(255)" json:"detail"`
+	Currency            string   `xorm:"varchar(100)" json:"currency"`
+	Price               float64  `json:"price"`
 
 	// Payer Info
 	User         string `xorm:"varchar(100)" json:"user"`
@@ -176,12 +176,9 @@ func notifyPayment(body []byte, owner string, paymentName string) (*Payment, *pp
 		return nil, nil, err
 	}
 
-	product, err := getProduct(owner, payment.ProductName)
+	// Check if the order products exist
+	_, err = getOrderProducts(owner, payment.Products)
 	if err != nil {
-		return nil, nil, err
-	}
-	if product == nil {
-		err = fmt.Errorf("the product: %s does not exist", payment.ProductName)
 		return nil, nil, err
 	}
 
@@ -193,13 +190,13 @@ func notifyPayment(body []byte, owner string, paymentName string) (*Payment, *pp
 		return payment, notifyResult, nil
 	}
 	// Only check paid payment
-	if notifyResult.ProductDisplayName != "" && notifyResult.ProductDisplayName != product.DisplayName {
-		err = fmt.Errorf("the payment's product name: %s doesn't equal to the expected product name: %s", notifyResult.ProductDisplayName, product.DisplayName)
+	if notifyResult.ProductDisplayName != "" && notifyResult.ProductDisplayName != payment.ProductsDisplayName {
+		err = fmt.Errorf("the payment's product name: %s doesn't equal to the expected product name: %s", notifyResult.ProductDisplayName, payment.ProductsDisplayName)
 		return payment, nil, err
 	}
 
-	if notifyResult.Price != product.Price && !product.IsRecharge {
-		err = fmt.Errorf("the payment's price: %f doesn't equal to the expected price: %f", notifyResult.Price, product.Price)
+	if notifyResult.Price != payment.Price {
+		err = fmt.Errorf("the payment's price: %f doesn't equal to the expected price: %f", notifyResult.Price, payment.Price)
 		return payment, nil, err
 	}
 

@@ -27,7 +27,8 @@ class OrderPayPage extends React.Component {
       owner: props?.match?.params?.organizationName ?? props?.match?.params?.owner ?? null,
       orderName: props?.match?.params?.orderName ?? null,
       order: null,
-      product: null,
+      firstProduct: null,
+      productInfos: [],
       paymentEnv: "",
       isProcessingPayment: false,
       isViewMode: params.get("view") === "true",
@@ -59,6 +60,7 @@ class OrderPayPage extends React.Component {
     if (res.status === "ok") {
       this.setState({
         order: res.data,
+        productInfos: res.data?.productInfos,
       }, () => {
         this.getProduct();
       });
@@ -68,13 +70,19 @@ class OrderPayPage extends React.Component {
   }
 
   async getProduct() {
-    if (!this.state.order || !this.state.order.productName) {
+    if (!this.state.order) {
       return;
     }
-    const res = await ProductBackend.getProduct(this.state.order.owner, this.state.order.productName);
+
+    const firstProductName = this.state.order?.products?.[0] ?? this.state.order?.productInfos?.[0]?.name;
+    if (!firstProductName) {
+      return;
+    }
+
+    const res = await ProductBackend.getProduct(this.state.order.owner, firstProductName);
     if (res.status === "ok") {
       this.setState({
-        product: res.data,
+        firstProduct: res.data,
       });
     } else {
       Setting.showMessage("error", res.msg);
@@ -86,7 +94,7 @@ class OrderPayPage extends React.Component {
   }
 
   getProductPrice(product) {
-    return `${Setting.getCurrencySymbol(product?.currency)}${product?.price} (${Setting.getCurrencyText(product)})`;
+    return `${Setting.getCurrencySymbol(this.state.order?.currency)}${product.price} (${Setting.getCurrencyText(this.state.order)})`;
   }
 
   // Call Wechat Pay via jsapi
@@ -129,8 +137,8 @@ class OrderPayPage extends React.Component {
   }
 
   payOrder(provider) {
-    const {product, order} = this.state;
-    if (!product || !order) {
+    const {firstProduct, order} = this.state;
+    if (!firstProduct || !order) {
       return;
     }
 
@@ -198,20 +206,43 @@ class OrderPayPage extends React.Component {
   }
 
   renderPaymentMethods() {
-    const {product} = this.state;
-    if (!product || !product.providerObjs || product.providerObjs.length === 0) {
+    const {firstProduct} = this.state;
+    if (!firstProduct || !firstProduct.providerObjs || firstProduct.providerObjs.length === 0) {
       return <div>{i18next.t("product:There is no payment channel for this product.")}</div>;
     }
 
-    return product.providerObjs.map(provider => {
+    return firstProduct.providerObjs.map(provider => {
       return this.renderProviderButton(provider);
     });
   }
 
-  render() {
-    const {order, product} = this.state;
+  renderProduct(product) {
+    return (
+      <React.Fragment key={product.name}>
+        <Descriptions.Item label={i18next.t("general:Name")} span={3}>
+          <span style={{fontSize: 20}}>
+            {Setting.getLanguageText(product?.displayName)}
+          </span>
+        </Descriptions.Item>
+        <Descriptions.Item label={i18next.t("product:Image")} span={3}>
+          <img src={product?.image} alt={Setting.getLanguageText(product?.displayName)} height={90} style={{marginBottom: "20px"}} />
+        </Descriptions.Item>
+        <Descriptions.Item label={i18next.t("product:Price")} span={3}>
+          <span style={{fontSize: 18, fontWeight: "bold"}}>
+            {this.getProductPrice(product)}
+          </span>
+        </Descriptions.Item>
+        <Descriptions.Item label={i18next.t("product:Detail")} span={3}>
+          <span style={{fontSize: 16}}>{Setting.getLanguageText(product?.detail)}</span>
+        </Descriptions.Item>
+      </React.Fragment>
+    );
+  }
 
-    if (!order || !product) {
+  render() {
+    const {order, productInfos} = this.state;
+
+    if (!order || !productInfos) {
       return null;
     }
 
@@ -247,22 +278,7 @@ class OrderPayPage extends React.Component {
 
           <div style={{marginBottom: "20px"}}>
             <Descriptions title={<span style={Setting.isMobile() ? {fontSize: 18} : {fontSize: 24}}>{i18next.t("product:Product Information")}</span>} bordered column={3}>
-              <Descriptions.Item label={i18next.t("general:Name")} span={3}>
-                <span style={{fontSize: 20}}>
-                  {Setting.getLanguageText(product?.displayName)}
-                </span>
-              </Descriptions.Item>
-              <Descriptions.Item label={i18next.t("product:Image")} span={3}>
-                <img src={product?.image} alt={Setting.getLanguageText(product?.displayName)} height={90} style={{marginBottom: "20px"}} />
-              </Descriptions.Item>
-              <Descriptions.Item label={i18next.t("product:Price")} span={3}>
-                <span style={{fontSize: 18, fontWeight: "bold"}}>
-                  {this.getProductPrice(product)}
-                </span>
-              </Descriptions.Item>
-              <Descriptions.Item label={i18next.t("product:Detail")} span={3}>
-                <span style={{fontSize: 16}}>{Setting.getLanguageText(product?.detail)}</span>
-              </Descriptions.Item>
+              {productInfos.map(product => this.renderProduct(product))}
             </Descriptions>
           </div>
 

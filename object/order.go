@@ -148,22 +148,25 @@ func UpdateOrder(id string, order *Order) (bool, error) {
 		if err != nil {
 			return false, err
 		}
+		price := 0.0
 		for _, product := range products {
-			if existingInfo, ok := existingInfos[product.Name]; ok {
-				productInfos = append(productInfos, existingInfo)
-				continue
-			}
-
-			productInfos = append(productInfos, ProductInfo{
+			productInfo := ProductInfo{
 				Name:        product.Name,
 				DisplayName: product.DisplayName,
 				Image:       product.Image,
 				Detail:      product.Detail,
 				Price:       product.Price,
 				IsRecharge:  product.IsRecharge,
-			})
+			}
+			if existingInfo, ok := existingInfos[product.Name]; ok {
+				// Keep historical product info; do not overwrite with current product.
+				productInfo = existingInfo
+			}
+			price += productInfo.Price
+			productInfos = append(productInfos, productInfo)
 		}
 		order.ProductInfos = productInfos
+		order.Price = price
 	}
 
 	affected, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(order)

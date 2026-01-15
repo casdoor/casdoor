@@ -14,13 +14,14 @@
 
 import React from "react";
 import {Link} from "react-router-dom";
-import {Button, Table} from "antd";
+import {Button, List, Table, Tooltip} from "antd";
 import moment from "moment";
 import * as Setting from "./Setting";
 import * as OrderBackend from "./backend/OrderBackend";
 import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
 import PopconfirmModal from "./common/modal/PopconfirmModal";
+import {EditOutlined} from "@ant-design/icons";
 
 class OrderListPage extends BaseListPage {
   newOrder() {
@@ -31,7 +32,7 @@ class OrderListPage extends BaseListPage {
       name: `order_${randomName}`,
       createdTime: moment().format(),
       displayName: `New Order - ${randomName}`,
-      productName: "",
+      products: [],
       user: "",
       payment: "",
       state: "Created",
@@ -146,20 +147,41 @@ class OrderListPage extends BaseListPage {
         ...this.getColumnSearchProps("displayName"),
       },
       {
-        title: i18next.t("order:Product"),
-        dataIndex: "productName",
-        key: "productName",
-        width: "170px",
-        sorter: true,
-        ...this.getColumnSearchProps("productName"),
+        title: i18next.t("order:Products"),
+        dataIndex: "products",
+        key: "products",
+        ...this.getColumnSearchProps("products"),
         render: (text, record, index) => {
-          if (text === "") {
-            return "(empty)";
+          const products = record?.products || [];
+          if (products.length === 0) {
+            return `(${i18next.t("general:empty")})`;
           }
           return (
-            <Link to={`/products/${record.owner}/${text}`}>
-              {text}
-            </Link>
+            <div>
+              <List
+                size="small"
+                locale={{emptyText: " "}}
+                dataSource={products}
+                style={{
+                  paddingTop: 8,
+                  paddingBottom: 8,
+                }}
+                renderItem={(productName, i) => {
+                  return (
+                    <List.Item>
+                      <div style={{display: "inline"}}>
+                        <Tooltip placement="topLeft" title={i18next.t("general:Edit")}>
+                          <Button style={{marginRight: "5px"}} icon={<EditOutlined />} size="small" onClick={() => Setting.goToLinkSoft(this, `/products/${record.owner}/${productName}`)} />
+                        </Tooltip>
+                        <Link to={`/products/${record.owner}/${productName}`}>
+                          {productName}
+                        </Link>
+                      </div>
+                    </List.Item>
+                  );
+                }}
+              />
+            </div>
           );
         },
       },
@@ -208,7 +230,7 @@ class OrderListPage extends BaseListPage {
         ...this.getColumnSearchProps("state"),
       },
       {
-        title: i18next.t("order:Start time"),
+        title: i18next.t("general:Start time"),
         dataIndex: "startTime",
         key: "startTime",
         width: "160px",
@@ -218,7 +240,7 @@ class OrderListPage extends BaseListPage {
         },
       },
       {
-        title: i18next.t("order:End time"),
+        title: i18next.t("general:End time"),
         dataIndex: "endTime",
         key: "endTime",
         width: "160px",
@@ -234,7 +256,7 @@ class OrderListPage extends BaseListPage {
         title: i18next.t("general:Action"),
         dataIndex: "",
         key: "op",
-        width: "240px",
+        width: "300px",
         fixed: (Setting.isMobile()) ? "false" : "right",
         render: (text, record, index) => {
           const isAdmin = Setting.isLocalAdminUser(this.props.account);
