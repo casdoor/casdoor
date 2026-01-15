@@ -323,8 +323,7 @@ func (p *DingtalkSyncerProvider) getDingtalkUsers() ([]*OriginalUser, error) {
 	for _, deptId := range deptIds {
 		users, err := p.getDingtalkUsersFromDept(accessToken, deptId)
 		if err != nil {
-			// Continue even if one department fails
-			continue
+			return nil, err
 		}
 
 		for _, user := range users {
