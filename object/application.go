@@ -89,11 +89,12 @@ type Application struct {
 	EnableAutoSignin      bool            `json:"enableAutoSignin"`
 	EnableCodeSignin      bool            `json:"enableCodeSignin"`
 	EnableExclusiveSignin bool            `json:"enableExclusiveSignin"`
-	EnableSamlCompress    bool            `json:"enableSamlCompress"`
-	EnableSamlC14n10      bool            `json:"enableSamlC14n10"`
-	EnableSamlPostBinding bool            `json:"enableSamlPostBinding"`
-	DisableSamlAttributes bool            `json:"disableSamlAttributes"`
-	UseEmailAsSamlNameId  bool            `json:"useEmailAsSamlNameId"`
+	EnableSamlCompress           bool            `json:"enableSamlCompress"`
+	EnableSamlC14n10             bool            `json:"enableSamlC14n10"`
+	EnableSamlPostBinding        bool            `json:"enableSamlPostBinding"`
+	DisableSamlAttributes        bool            `json:"disableSamlAttributes"`
+	EnableSamlAssertionSignature bool            `json:"enableSamlAssertionSignature"`
+	UseEmailAsSamlNameId         bool            `json:"useEmailAsSamlNameId"`
 	EnableWebAuthn        bool            `json:"enableWebAuthn"`
 	EnableLinkWithEmail   bool            `json:"enableLinkWithEmail"`
 	OrgChoiceMode         string          `json:"orgChoiceMode"`
