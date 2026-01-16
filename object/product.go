@@ -319,3 +319,19 @@ func getOrderProducts(owner string, productNames []string) ([]Product, error) {
 	}
 	return orderedProducts, nil
 }
+
+func validateProductCurrencies(products []Product, orderCurrency string) error {
+	for _, product := range products {
+		productCurrency := product.Currency
+		if productCurrency == "" {
+			productCurrency = "USD"
+		}
+		if productCurrency != orderCurrency {
+			return fmt.Errorf("products have different currencies, expected: %s, got: %s (product: %s)", orderCurrency, productCurrency, product.Name)
+		}
+		if !product.IsRecharge && product.Quantity <= 0 {
+			return fmt.Errorf("the product: %s is out of stock", product.Name)
+		}
+	}
+	return nil
+}
