@@ -630,7 +630,7 @@ func GetAuthorizationCodeToken(application *Application, clientSecret string, co
 	if token.State != "" && state != token.State {
 		return nil, &TokenError{
 			Error:            InvalidGrant,
-			ErrorDescription: fmt.Sprintf("state parameter mismatch, expected: [%s], got: [%s]", token.State, state),
+			ErrorDescription: "state parameter validation failed",
 		}, nil
 	}
 
