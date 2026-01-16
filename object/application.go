@@ -593,10 +593,10 @@ func GetMaskedApplication(application *Application, userId string) *Application 
 	}
 	application.Providers = providerItems
 
-	application.GrantTypes = nil
-	application.RedirectUris = nil
+	application.GrantTypes = []string{}
+	application.RedirectUris = []string{}
 	application.TokenFormat = "***"
-	application.TokenFields = nil
+	application.TokenFields = []string{}
 	application.ExpireInHours = -1
 	application.RefreshExpireInHours = -1
 	application.FailedSigninLimit = -1
