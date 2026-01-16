@@ -100,7 +100,8 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 	// check user's tag
 	if !user.IsGlobalAdmin() && !user.IsAdmin && len(application.Tags) > 0 {
 		// only users with the tag that is listed in the application tags can login
-		if !util.InSlice(application.Tags, user.Tag) {
+		// supports comma-separated tags in user.Tag (e.g., "default-policy,project-admin")
+		if !util.HasTagInSlice(application.Tags, user.Tag) {
 			c.ResponseError(fmt.Sprintf(c.T("auth:User's tag: %s is not listed in the application's tags"), user.Tag))
 			return
 		}

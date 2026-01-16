@@ -14,7 +14,10 @@
 
 package util
 
-import "slices"
+import (
+	"slices"
+	"strings"
+)
 
 func DeleteVal(values []string, val string) []string {
 	newValues := []string{}
@@ -60,6 +63,26 @@ func HaveIntersection(arr1 []string, arr2 []string) bool {
 
 	for _, str := range arr2 {
 		if elements[str] {
+			return true
+		}
+	}
+
+	return false
+}
+
+// HasTagInSlice checks if a comma-separated tag string contains any tag that matches the slice.
+// For example, if userTag is "default-policy,project-admin" and slice is ["default-policy", "project-admin"],
+// it will return true because "default-policy" and "project-admin" are both in the slice.
+func HasTagInSlice(slice []string, userTag string) bool {
+	if userTag == "" {
+		return false
+	}
+
+	// Split the comma-separated tags and check each one
+	userTags := strings.Split(userTag, ",")
+	for _, tag := range userTags {
+		trimmedTag := strings.TrimSpace(tag)
+		if trimmedTag != "" && slices.Contains(slice, trimmedTag) {
 			return true
 		}
 	}
