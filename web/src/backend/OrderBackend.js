@@ -90,10 +90,11 @@ export function deleteOrder(order) {
   }).then(res => res.json());
 }
 
-export function placeOrder(productId, pricingName = "", planName = "", userName = "", customPrice = 0) {
-  return fetch(`${Setting.ServerUrl}/api/place-order?productId=${encodeURIComponent(productId)}&pricingName=${encodeURIComponent(pricingName)}&planName=${encodeURIComponent(planName)}&userName=${encodeURIComponent(userName)}&customPrice=${customPrice}`, {
+export function placeOrder(owner, productInfos, pricingName = "", planName = "", userName = "") {
+  return fetch(`${Setting.ServerUrl}/api/place-order?owner=${encodeURIComponent(owner)}&pricingName=${encodeURIComponent(pricingName)}&planName=${encodeURIComponent(planName)}&userName=${encodeURIComponent(userName)}`, {
     method: "POST",
     credentials: "include",
+    body: JSON.stringify({productInfos}),
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },

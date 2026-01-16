@@ -134,11 +134,16 @@ class ProductBuyPage extends React.Component {
       isPlacingOrder: true,
     });
 
-    const productId = `${product.owner}/${product.name}`;
     const pricingName = this.state.pricingName || "";
     const planName = this.state.planName || "";
     const customPrice = this.state.customPrice || 0;
-    OrderBackend.placeOrder(productId, pricingName, planName, this.state.userName ?? "", customPrice)
+
+    const productInfos = [{
+      name: product.name,
+      price: product.isRecharge ? customPrice : product.price,
+    }];
+
+    OrderBackend.placeOrder(product.owner, productInfos, pricingName, planName, this.state.userName ?? "")
       .then((res) => {
         if (res.status === "ok") {
           const order = res.data;

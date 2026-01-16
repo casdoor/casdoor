@@ -23,49 +23,64 @@ import (
 	"github.com/casdoor/casdoor/util"
 )
 
-func PlaceOrder(productId string, user *User, pricingName string, planName string, customPrice float64) (*Order, error) {
-	product, err := GetProduct(productId)
+func PlaceOrder(owner string, reqProductInfos []ProductInfo, user *User, pricingName string, planName string) (*Order, error) {
+	if len(reqProductInfos) == 0 {
+		return nil, fmt.Errorf("order has no products")
+	}
+
+	productNames := make([]string, 0, len(reqProductInfos))
+	reqInfoMap := make(map[string]ProductInfo, len(reqProductInfos))
+	for _, reqInfo := range reqProductInfos {
+		if reqInfo.Name == "" {
+			return nil, fmt.Errorf("product name cannot be empty")
+		}
+		productNames = append(productNames, reqInfo.Name)
+		reqInfoMap[reqInfo.Name] = reqInfo
+	}
+
+	products, err := getOrderProducts(owner, productNames)
 	if err != nil {
 		return nil, err
 	}
-	if product == nil {
-		return nil, fmt.Errorf("the product: %s does not exist", productId)
+
+	orderCurrency := products[0].Currency
+	if orderCurrency == "" {
+		orderCurrency = "USD"
 	}
 
-	if !product.IsRecharge && product.Quantity <= 0 {
-		return nil, fmt.Errorf("the product: %s is out of stock", product.Name)
+	if err := validateProductCurrencies(products, orderCurrency); err != nil {
+		return nil, err
 	}
 
-	productCurrency := product.Currency
-	if productCurrency == "" {
-		productCurrency = "USD"
-	}
+	var productInfos []ProductInfo
+	orderPrice := 0.0
+	for _, product := range products {
+		reqInfo := reqInfoMap[product.Name]
 
-	var productPrice float64
-	if product.IsRecharge {
-		if customPrice <= 0 {
-			return nil, fmt.Errorf("the custom price should be greater than zero")
+		var productPrice float64
+		if product.IsRecharge {
+			productPrice = reqInfo.Price
+			if productPrice <= 0 {
+				return nil, fmt.Errorf("the custom price should be greater than zero")
+			}
+		} else {
+			productPrice = product.Price
 		}
-		productPrice = customPrice
-	} else {
-		productPrice = product.Price
-	}
-
-	orderName := fmt.Sprintf("order_%v", util.GenerateTimeId())
-	productNames := []string{product.Name}
-	productInfos := []ProductInfo{
-		{
+		productInfos = append(productInfos, ProductInfo{
 			Name:        product.Name,
 			DisplayName: product.DisplayName,
 			Image:       product.Image,
 			Detail:      product.Detail,
 			Price:       productPrice,
 			IsRecharge:  product.IsRecharge,
-		},
+		})
+
+		orderPrice += productPrice
 	}
 
+	orderName := fmt.Sprintf("order_%v", util.GenerateTimeId())
 	order := &Order{
-		Owner:        product.Owner,
+		Owner:        owner,
 		Name:         orderName,
 		DisplayName:  orderName,
 		CreatedTime:  util.GetCurrentTime(),
@@ -75,8 +90,8 @@ func PlaceOrder(productId string, user *User, pricingName string, planName strin
 		PlanName:     planName,
 		User:         user.Name,
 		Payment:      "", // Payment will be set when user pays
-		Price:        productPrice,
-		Currency:     productCurrency,
+		Price:        orderPrice,
+		Currency:     orderCurrency,
 		State:        "Created",
 		Message:      "",
 		StartTime:    util.GetCurrentTime(),
@@ -106,10 +121,14 @@ func PayOrder(providerName, host, paymentEnv string, order *Order, lang string) 
 	if len(products) == 0 {
 		return nil, nil, fmt.Errorf("order has no products")
 	}
-	for _, product := range products {
-		if !product.IsRecharge && product.Quantity <= 0 {
-			return nil, nil, fmt.Errorf("the product: %s is out of stock", product.Name)
-		}
+
+	orderCurrency := order.Currency
+	if orderCurrency == "" {
+		orderCurrency = "USD"
+	}
+
+	if err := validateProductCurrencies(products, orderCurrency); err != nil {
+		return nil, nil, err
 	}
 
 	user, err := GetUser(util.GetId(order.Owner, order.User))
