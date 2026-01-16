@@ -261,7 +261,7 @@ If state validation fails:
 ```json
 {
     "error": "invalid_grant",
-    "error_description": "state parameter mismatch, expected: [stored-state], got: [provided-state]"
+    "error_description": "state parameter validation failed"
 }
 ```
 
