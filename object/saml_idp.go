@@ -394,14 +394,17 @@ func GetSamlResponse(application *Application, user *User, samlRequest string, h
 	// }
 
 	// Sign the assertion (SAML 2.0 best practice)
-	assertion := samlResponse.FindElement("./Assertion")
-	if assertion != nil {
-		assertionSig, err := ctx.ConstructSignature(assertion, true)
-		if err != nil {
-			return "", "", "", fmt.Errorf("err: Failed to sign SAML assertion, %s", err.Error())
+	// Only sign if EnableSamlAssertionSignature is true
+	if application.EnableSamlAssertionSignature {
+		assertion := samlResponse.FindElement("./Assertion")
+		if assertion != nil {
+			assertionSig, err := ctx.ConstructSignature(assertion, true)
+			if err != nil {
+				return "", "", "", fmt.Errorf("err: Failed to sign SAML assertion, %s", err.Error())
+			}
+			// Insert signature as the second child of assertion (after Issuer)
+			assertion.InsertChildAt(1, assertionSig)
 		}
-		// Insert signature as the second child of assertion (after Issuer)
-		assertion.InsertChildAt(1, assertionSig)
 	}
 
 	// Sign the response
