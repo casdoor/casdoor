@@ -64,6 +64,7 @@ import ProductListPage from "./ProductListPage";
 import ProductStorePage from "./ProductStorePage";
 import ProductEditPage from "./ProductEditPage";
 import ProductBuyPage from "./ProductBuyPage";
+import CartListPage from "./CartListPage";
 import OrderListPage from "./OrderListPage";
 import OrderEditPage from "./OrderEditPage";
 import OrderPayPage from "./OrderPayPage";
@@ -349,6 +350,7 @@ function ManagementPage(props) {
     res.push(Setting.getItem(<Link style={{color: textColor}} to="/products">{i18next.t("general:Business & Payments")}</Link>, "/business", <DollarTwoTone twoToneColor={twoToneColor} />, [
       Setting.getItem(<Link to="/product-store">{i18next.t("general:Product Store")}</Link>, "/product-store"),
       Setting.getItem(<Link to="/products">{i18next.t("general:Products")}</Link>, "/products"),
+      Setting.getItem(<Link to="/carts">{i18next.t("general:Carts")}</Link>, "/carts"),
       Setting.getItem(<Link to="/orders">{i18next.t("general:Orders")}</Link>, "/orders"),
       Setting.getItem(<Link to="/payments">{i18next.t("general:Payments")}</Link>, "/payments"),
       Setting.getItem(<Link to="/plans">{i18next.t("general:Plans")}</Link>, "/plans"),
@@ -489,6 +491,7 @@ function ManagementPage(props) {
         <Route exact path="/products" render={(props) => renderLoginIfNotLoggedIn(<ProductListPage account={account} {...props} />)} />
         <Route exact path="/products/:organizationName/:productName" render={(props) => renderLoginIfNotLoggedIn(<ProductEditPage account={account} {...props} />)} />
         <Route exact path="/products/:organizationName/:productName/buy" render={(props) => renderLoginIfNotLoggedIn(<ProductBuyPage account={account} {...props} />)} />
+        <Route exact path="/carts" render={(props) => renderLoginIfNotLoggedIn(<CartListPage account={account} {...props} />)} />
         <Route exact path="/orders" render={(props) => renderLoginIfNotLoggedIn(<OrderListPage account={account} {...props} />)} />
         <Route exact path="/orders/:organizationName/:orderName" render={(props) => renderLoginIfNotLoggedIn(<OrderEditPage account={account} {...props} />)} />
         <Route exact path="/orders/:organizationName/:orderName/pay" render={(props) => renderLoginIfNotLoggedIn(<OrderPayPage account={account} {...props} />)} />
