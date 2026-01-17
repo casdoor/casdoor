@@ -620,6 +620,40 @@ func (c *ApiController) GetUserinfo() {
 	scope, aud := c.GetSessionOidc()
 	host := c.Ctx.Request.Host
 
+	// Check if there's a DPoP header present
+	dpopProof := c.Ctx.Request.Header.Get("DPoP")
+	if dpopProof != "" {
+		// Extract access token from Authorization header
+		authHeader := c.Ctx.Request.Header.Get("Authorization")
+		accessToken := ExtractAccessTokenFromAuthHeader(authHeader)
+
+		if accessToken != "" {
+			// Get token from database to check if it's DPoP-bound
+			token, err := object.GetTokenByAccessToken(accessToken)
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
+
+			if token != nil && token.DPoPJkt != "" {
+				// This is a DPoP-bound token, validate the proof
+				httpMethod := c.Ctx.Request.Method
+				httpUri := GetFullRequestUri(c.Ctx)
+
+				dpopJkt, err := object.ValidateDPoPProof(dpopProof, httpMethod, httpUri, accessToken)
+				if err != nil {
+					c.ResponseError(fmt.Sprintf("Invalid DPoP proof: %s", err.Error()))
+					return
+				}
+
+				if dpopJkt != token.DPoPJkt {
+					c.ResponseError("DPoP proof JKT does not match token binding")
+					return
+				}
+			}
+		}
+	}
+
 	userInfo, err := object.GetUserInfo(user, scope, aud, host)
 	if err != nil {
 		c.ResponseError(err.Error())
