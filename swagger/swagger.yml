@@ -6314,6 +6314,8 @@ definitions:
         type: string
       originalToken:
         type: string
+      originalRefreshToken:
+        type: string
       oura:
         type: string
       owner:
