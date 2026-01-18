@@ -9572,7 +9572,7 @@
                 "originalToken": {
                     "type": "string"
                 },
-                "originalRefToken": {
+                "originalRefreshToken": {
                     "type": "string"
                 },
                 "oura": {

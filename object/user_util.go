@@ -188,7 +188,7 @@ func SetUserOAuthProperties(organization *Organization, user *User, providerType
 	// Store the original OAuth provider token if available
 	if token != nil && token.AccessToken != "" {
 		user.OriginalToken = token.AccessToken
-		user.OriginalRefToken = token.RefreshToken
+		user.OriginalRefreshToken = token.RefreshToken
 	}
 
 	if userInfo.Id != "" {
