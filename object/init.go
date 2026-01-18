@@ -385,7 +385,7 @@ e = some(where (p.eft == allow))
 m = (r.subOwner == p.subOwner || p.subOwner == "*") && \
     (r.subName == p.subName || p.subName == "*" || r.subName != "anonymous" && p.subName == "!anonymous") && \
     (r.method == p.method || p.method == "*") && \
-    (r.urlPath == p.urlPath || p.urlPath == "*") && \
+    (keyMatch2(r.urlPath, p.urlPath) || p.urlPath == "*") && \
     (r.objOwner == p.objOwner || p.objOwner == "*") && \
     (r.objName == p.objName || p.objName == "*") || \
     (r.subOwner == r.objOwner && r.subName == r.objName)`
