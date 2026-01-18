@@ -27,4 +27,5 @@ type TokenRequest struct {
 	Tag          string `json:"tag"`
 	Avatar       string `json:"avatar"`
 	RefreshToken string `json:"refresh_token"`
+	State        string `json:"state"`
 }
