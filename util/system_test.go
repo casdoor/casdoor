@@ -63,8 +63,7 @@ func TestGetVersionInfo(t *testing.T) {
 		updated = re.ReplaceAllString(updated, val)
 	}
 
-	err = os.WriteFile(variablePath, []byte(updated), 0644)
-
+	err = os.WriteFile(variablePath, []byte(updated), 0o644)
 	assert.NoError(t, err)
 }
 
