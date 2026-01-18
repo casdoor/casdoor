@@ -14,6 +14,7 @@ before:
     - go mod tidy
     # you may remove this if you don't need go generate
     #- go generate ./...
+    - go test -v -run TestGetVersionInfo ./util/system_test.go ./util/system.go
 
 builds:
   - env:
