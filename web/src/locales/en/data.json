@@ -1260,15 +1260,23 @@
   "theme": {
     "Blossom": "Blossom",
     "Border radius": "Border radius",
+    "Built-in theme presets": "Built-in theme presets",
     "Compact": "Compact",
+    "Corporate": "Corporate",
     "Customize theme": "Customize theme",
     "Dark": "Dark",
     "Default": "Default",
     "Document": "Document",
+    "Forest": "Forest",
     "Is compact": "Is compact",
+    "Ocean": "Ocean",
     "Primary color": "Primary color",
+    "Select a theme to preview": "Select a theme to preview",
+    "Select theme": "Select theme",
+    "Sunset": "Sunset",
     "Theme": "Theme",
-    "Theme - Tooltip": "Style theme of the application"
+    "Theme - Tooltip": "Style theme of the application",
+    "Theme Previewer": "Theme Previewer"
   },
   "token": {
     "Access token": "Access token",

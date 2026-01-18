@@ -98,3 +98,13 @@ export function getSamlMetadata(owner, name, enablePostBinding) {
     },
   }).then(res => res.text());
 }
+
+export function getBuiltInThemes() {
+  return fetch(`${Setting.ServerUrl}/api/get-built-in-themes`, {
+    method: "GET",
+    credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}

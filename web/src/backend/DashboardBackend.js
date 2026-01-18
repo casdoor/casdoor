@@ -23,3 +23,33 @@ export function getDashboard(owner) {
     },
   }).then(res => res.json());
 }
+
+export function getDashboardUsersByProvider(owner) {
+  return fetch(`${Setting.ServerUrl}/api/get-dashboard-providers?owner=${owner}`, {
+    method: "GET",
+    credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}
+
+export function getDashboardLoginHeatmap(owner) {
+  return fetch(`${Setting.ServerUrl}/api/get-dashboard-login-time-heatmap?owner=${owner}`, {
+    method: "GET",
+    credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}
+
+export function getDashboardMfaCoverage(owner) {
+  return fetch(`${Setting.ServerUrl}/api/get-dashboard-mfa-coverage?owner=${owner}`, {
+    method: "GET",
+    credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}
