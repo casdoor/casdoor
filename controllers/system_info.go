@@ -50,13 +50,13 @@ func (c *ApiController) GetSystemInfo() {
 // @router /get-version-info [get]
 func (c *ApiController) GetVersionInfo() {
 	versionInfo, err := util.GetVersionInfo()
+	if err != nil && !errors.Is(err, git.ErrRepositoryNotExists) {
+		c.ResponseError(err.Error())
+	}
+
 	if versionInfo.Version != "" {
 		c.ResponseOk(versionInfo)
 		return
-	}
-
-	if err != nil && !errors.Is(err, git.ErrRepositoryNotExists) {
-		c.ResponseError(err.Error())
 	}
 
 	c.ResponseOk(util.GetBuiltInVersionInfo())
