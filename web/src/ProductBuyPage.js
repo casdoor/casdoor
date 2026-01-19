@@ -19,6 +19,7 @@ import * as ProductBackend from "./backend/ProductBackend";
 import * as PlanBackend from "./backend/PlanBackend";
 import * as PricingBackend from "./backend/PricingBackend";
 import * as OrderBackend from "./backend/OrderBackend";
+import * as UserBackend from "./backend/UserBackend";
 import * as Setting from "./Setting";
 
 class ProductBuyPage extends React.Component {
@@ -37,6 +38,7 @@ class ProductBuyPage extends React.Component {
       pricing: props?.pricing ?? null,
       plan: null,
       isPlacingOrder: false,
+      isAddingToCart: false,
       customPrice: 0,
     };
   }
@@ -127,6 +129,85 @@ class ProductBuyPage extends React.Component {
 
   getPrice(product) {
     return `${Setting.getCurrencySymbol(product?.currency)}${product?.price} (${Setting.getCurrencyText(product)})`;
+  }
+
+  addToCart(product) {
+    if (this.state.isAddingToCart) {
+      return;
+    }
+
+    this.setState({isAddingToCart: true});
+
+    const userOwner = this.props.account.owner;
+    const userName = this.props.account.name;
+
+    UserBackend.getUser(userOwner, userName)
+      .then((res) => {
+        if (res.status === "ok") {
+          const user = res.data;
+          const cart = user.cart || [];
+
+          let actualPrice = product.price;
+          if (product.isRecharge) {
+            actualPrice = this.state.customPrice;
+            if (actualPrice <= 0) {
+              Setting.showMessage("error", i18next.t("product:Custom price should be greater than zero"));
+              this.setState({isAddingToCart: false});
+              return;
+            }
+          }
+
+          if (cart.length > 0) {
+            const firstItem = cart[0];
+            if (firstItem.currency && product.currency && firstItem.currency !== product.currency) {
+              Setting.showMessage("error", i18next.t("product:The currency of the product you are adding is different from the currency of the items in the cart"));
+              this.setState({isAddingToCart: false});
+              return;
+            }
+          }
+
+          const existingItemIndex = cart.findIndex(item => item.name === product.name && item.price === actualPrice);
+
+          if (existingItemIndex !== -1) {
+            cart[existingItemIndex].quantity += 1;
+          } else {
+            const newProductInfo = {
+              name: product.name,
+              displayName: product.displayName,
+              image: product.image,
+              detail: product.detail,
+              price: actualPrice,
+              currency: product.currency,
+              quantity: 1,
+              isRecharge: product.isRecharge,
+            };
+            cart.push(newProductInfo);
+          }
+
+          user.cart = cart;
+          UserBackend.updateUser(user.owner, user.name, user)
+            .then((res) => {
+              if (res.status === "ok") {
+                Setting.showMessage("success", i18next.t("general:Successfully added"));
+              } else {
+                Setting.showMessage("error", res.msg);
+              }
+            })
+            .catch((error) => {
+              Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
+            })
+            .finally(() => {
+              this.setState({isAddingToCart: false});
+            });
+        } else {
+          Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${res.msg}`);
+          this.setState({isAddingToCart: false});
+        }
+      })
+      .catch((error) => {
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
+        this.setState({isAddingToCart: false});
+      });
   }
 
   placeOrder(product) {
@@ -229,9 +310,10 @@ class ProductBuyPage extends React.Component {
     const hasOptions = product.rechargeOptions && product.rechargeOptions.length > 0;
     const disableCustom = product.disableCustomRecharge;
     const isRechargeUnpurchasable = product.isRecharge && !hasOptions && disableCustom;
+    const isSubscription = product.tag === "Subscription";
 
     return (
-      <div style={{display: "flex", justifyContent: "center", alignItems: "center"}}>
+      <div style={{display: "flex", justifyContent: "center", alignItems: "center", gap: "20px"}}>
         <Button
           type="primary"
           size="large"
@@ -248,6 +330,24 @@ class ProductBuyPage extends React.Component {
         >
           {i18next.t("order:Place Order")}
         </Button>
+        {!isSubscription && (
+          <Button
+            type="primary"
+            size="large"
+            style={{
+              height: "50px",
+              fontSize: "18px",
+              borderRadius: "30px",
+              paddingLeft: "30px",
+              paddingRight: "30px",
+            }}
+            onClick={() => this.addToCart(product)}
+            disabled={isRechargeUnpurchasable || this.state.isAddingToCart}
+            loading={this.state.isAddingToCart}
+          >
+            {i18next.t("product:Add to cart")}
+          </Button>
+        )}
       </div>
     );
   }

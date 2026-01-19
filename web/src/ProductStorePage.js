@@ -16,6 +16,7 @@ import React from "react";
 import {Button, Card, Col, Row, Tag, Typography} from "antd";
 import * as Setting from "./Setting";
 import * as ProductBackend from "./backend/ProductBackend";
+import * as UserBackend from "./backend/UserBackend";
 import i18next from "i18next";
 
 const {Text, Title} = Typography;
@@ -28,6 +29,7 @@ class ProductStorePage extends React.Component {
     this.state = {
       products: [],
       loading: true,
+      isAddingToCart: false,
     };
   }
 
@@ -57,11 +59,83 @@ class ProductStorePage extends React.Component {
       });
   }
 
+  addToCart(product) {
+    if (this.state.isAddingToCart) {
+      return;
+    }
+
+    this.setState({isAddingToCart: true});
+
+    const userOwner = this.props.account.owner;
+    const userName = this.props.account.name;
+
+    UserBackend.getUser(userOwner, userName)
+      .then((res) => {
+        if (res.status === "ok") {
+          const user = res.data;
+          const cart = user.cart || [];
+
+          if (cart.length > 0) {
+            const firstItem = cart[0];
+
+            if (firstItem.currency && product.currency && firstItem.currency !== product.currency) {
+              Setting.showMessage("error", i18next.t("product:The currency of the product you are adding is different from the currency of the items in the cart"));
+              this.setState({isAddingToCart: false});
+              return;
+            }
+          }
+
+          const existingItemIndex = cart.findIndex(item => item.name === product.name && item.price === product.price);
+
+          if (existingItemIndex !== -1) {
+            cart[existingItemIndex].quantity += 1;
+          } else {
+            const newCartProductInfo = {
+              name: product.name,
+              displayName: product.displayName,
+              image: product.image,
+              detail: product.detail,
+              price: product.price,
+              currency: product.currency,
+              quantity: 1,
+              isRecharge: product.isRecharge || false,
+            };
+            cart.push(newCartProductInfo);
+          }
+
+          user.cart = cart;
+          UserBackend.updateUser(user.owner, user.name, user)
+            .then((res) => {
+              if (res.status === "ok") {
+                Setting.showMessage("success", i18next.t("general:Successfully added"));
+              } else {
+                Setting.showMessage("error", res.msg);
+              }
+            })
+            .catch(error => {
+              Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
+            })
+            .finally(() => {
+              this.setState({isAddingToCart: false});
+            });
+        } else {
+          Setting.showMessage("error", res.msg);
+          this.setState({isAddingToCart: false});
+        }
+      })
+      .catch(error => {
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
+        this.setState({isAddingToCart: false});
+      });
+  }
+
   handleBuyProduct(product) {
     this.props.history.push(`/products/${product.owner}/${product.name}/buy`);
   }
 
   renderProductCard(product) {
+    const isSubscription = product.tag === "Subscription";
+
     return (
       <Col xs={24} sm={12} md={8} lg={6} key={`${product.owner}/${product.name}`} style={{marginBottom: "20px"}}>
         <Card
@@ -78,16 +152,32 @@ class ProductStorePage extends React.Component {
             </div>
           }
           actions={[
-            <Button
-              key="buy"
-              type="primary"
-              onClick={(e) => {
-                e.stopPropagation();
-                this.handleBuyProduct(product);
-              }}
-            >
-              {i18next.t("product:Buy")}
-            </Button>,
+            <div key="actions" style={{display: "flex", justifyContent: "center", gap: "10px", width: "100%", padding: "0 10px"}} onClick={(e) => e.stopPropagation()}>
+              <Button
+                key="buy"
+                type="primary"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  this.handleBuyProduct(product);
+                }}
+              >
+                {i18next.t("product:Buy")}
+              </Button>
+              {!product.isRecharge && !isSubscription && (
+                <Button
+                  key="add"
+                  type="primary"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    this.addToCart(product);
+                  }}
+                  disabled={this.state.isAddingToCart}
+                  loading={this.state.isAddingToCart}
+                >
+                  {i18next.t("product:Add to cart")}
+                </Button>
+              )}
+            </div>,
           ]}
           bodyStyle={{flex: 1, display: "flex", flexDirection: "column"}}
         >
