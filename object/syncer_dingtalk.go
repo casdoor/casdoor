@@ -76,6 +76,7 @@ type DingtalkAccessTokenResp struct {
 
 type DingtalkUser struct {
 	UserId     string `json:"userid"`
+	UnionId    string `json:"unionid"`
 	Name       string `json:"name"`
 	Department []int  `json:"dept_id_list"`
 	Position   string `json:"title"`
@@ -353,10 +354,11 @@ func (p *DingtalkSyncerProvider) getDingtalkUsers() ([]*OriginalUser, error) {
 
 // dingtalkUserToOriginalUser converts DingTalk user to Casdoor OriginalUser
 func (p *DingtalkSyncerProvider) dingtalkUserToOriginalUser(dingtalkUser *DingtalkUser) *OriginalUser {
-	// Use job number as name if available, otherwise use userId
+	// Use unionid as name to be consistent with OAuth provider
+	// Fallback to userId if unionid is not available
 	userName := dingtalkUser.UserId
-	if dingtalkUser.JobNumber != "" {
-		userName = dingtalkUser.JobNumber
+	if dingtalkUser.UnionId != "" {
+		userName = dingtalkUser.UnionId
 	}
 
 	user := &OriginalUser{
