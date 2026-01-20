@@ -98,21 +98,21 @@ func GetProduct(id string) (*Product, error) {
 	return getProduct(owner, name)
 }
 
-func UpdateProductStock(products []Product) error {
+func UpdateProductStock(productInfos []ProductInfo) error {
 	var (
 		affected int64
 		err      error
 	)
-	for _, product := range products {
+	for _, product := range productInfos {
 		if product.IsRecharge {
 			affected, err = ormer.Engine.ID(core.PK{product.Owner, product.Name}).
-				Incr("sold", 1).
+				Incr("sold", product.Quantity).
 				Update(&Product{})
 		} else {
 			affected, err = ormer.Engine.ID(core.PK{product.Owner, product.Name}).
-				Where("quantity > 0").
-				Decr("quantity", 1).
-				Incr("sold", 1).
+				Where("quantity >= ?", product.Quantity).
+				Decr("quantity", product.Quantity).
+				Incr("sold", product.Quantity).
 				Update(&Product{})
 		}
 

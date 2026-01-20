@@ -17,11 +17,70 @@ import {Link} from "react-router-dom";
 import {Button, Table} from "antd";
 import * as Setting from "./Setting";
 import * as UserBackend from "./backend/UserBackend";
+import * as OrderBackend from "./backend/OrderBackend";
+import * as ProductBackend from "./backend/ProductBackend";
 import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
 import PopconfirmModal from "./common/modal/PopconfirmModal";
 
 class CartListPage extends BaseListPage {
+  constructor(props) {
+    super(props);
+    this.state = {
+      ...this.state,
+      data: [],
+      user: null,
+      isPlacingOrder: false,
+      loading: false,
+      pagination: {
+        current: 1,
+        pageSize: 10,
+        total: 0,
+      },
+      searchText: "",
+      searchedColumn: "",
+    };
+  }
+
+  placeOrder() {
+    if (this.state.isPlacingOrder) {
+      return;
+    }
+
+    const owner = this.state.user?.owner || this.props.account.owner;
+    const carts = this.state.data || [];
+    if (carts.length === 0) {
+      Setting.showMessage("error", i18next.t("product:Product list cannot be empty"));
+      return;
+    }
+
+    this.setState({isPlacingOrder: true});
+
+    const productInfos = carts.map(item => ({
+      name: item.name,
+      price: item.price,
+      quantity: item.quantity,
+      pricingName: item.pricingName,
+      planName: item.planName,
+    }));
+
+    OrderBackend.placeOrder(owner, productInfos, this.state.user?.name)
+      .then((res) => {
+        if (res.status === "ok") {
+          const order = res.data;
+          Setting.showMessage("success", i18next.t("product:Order created successfully"));
+          Setting.goToLink(`/orders/${order.owner}/${order.name}/pay`);
+        } else {
+          Setting.showMessage("error", `${i18next.t("product:Failed to create order")}: ${res.msg}`);
+          this.setState({isPlacingOrder: false});
+        }
+      })
+      .catch((error) => {
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
+        this.setState({isPlacingOrder: false});
+      });
+  }
+
   deleteCart(record) {
     const user = Setting.deepCopy(this.state.user);
     if (user === undefined || user === null || !Array.isArray(user.cart)) {
@@ -29,7 +88,7 @@ class CartListPage extends BaseListPage {
       return;
     }
 
-    const index = user.cart.findIndex(item => item.name === record.name && item.price === record.price);
+    const index = user.cart.findIndex(item => item.name === record.name && item.price === record.price && (item.pricingName || "") === (record.pricingName || "") && (item.planName || "") === (record.planName || ""));
     if (index === -1) {
       Setting.showMessage("error", i18next.t("general:Failed to delete"));
       return;
@@ -52,7 +111,17 @@ class CartListPage extends BaseListPage {
   }
 
   renderTable(carts) {
+    const isEmpty = carts === undefined || carts === null || carts.length === 0;
     const owner = this.state.user?.owner || this.props.account.owner;
+
+    let total = 0;
+    let currency = "";
+    if (carts && carts.length > 0) {
+      carts.forEach(item => {
+        total += item.price * item.quantity;
+      });
+      currency = carts[0].currency;
+    }
 
     const columns = [
       {
@@ -107,6 +176,44 @@ class CartListPage extends BaseListPage {
         key: "price",
         width: "120px",
         sorter: true,
+        render: (text, record) => {
+          const subtotal = record.price * record.quantity;
+          return (
+            <span>
+              {Setting.getCurrencySymbol(record.currency)}{subtotal.toFixed(2)}
+            </span>
+          );
+        },
+      },
+      {
+        title: i18next.t("pricing:Pricing name"),
+        dataIndex: "pricingName",
+        key: "pricingName",
+        width: "140px",
+        sorter: true,
+        render: (text, record) => {
+          if (!text) {return null;}
+          return (
+            <Link to={`/pricings/${owner}/${text}`}>
+              {text}
+            </Link>
+          );
+        },
+      },
+      {
+        title: i18next.t("plan:Plan name"),
+        dataIndex: "planName",
+        key: "planName",
+        width: "140px",
+        sorter: true,
+        render: (text, record) => {
+          if (!text) {return null;}
+          return (
+            <Link to={`/plans/${owner}/${text}`}>
+              {text}
+            </Link>
+          );
+        },
       },
       {
         title: i18next.t("product:Quantity"),
@@ -125,7 +232,7 @@ class CartListPage extends BaseListPage {
           return (
             <div style={{display: "flex", flexWrap: "wrap", gap: "8px"}}>
               <Button type="primary" onClick={() => this.props.history.push(`/products/${owner}/${record.name}/buy`)}>
-                {i18next.t("product:Buy")}
+                {i18next.t("product:Detail")}
               </Button>
               <PopconfirmModal
                 title={i18next.t("general:Sure to delete") + `: ${record.name} ?`}
@@ -138,36 +245,50 @@ class CartListPage extends BaseListPage {
       },
     ];
 
-    const paginationProps = {
-      total: this.state.pagination.total,
-      showQuickJumper: true,
-      showSizeChanger: true,
-      showTotal: () => i18next.t("general:{total} in total").replace("{total}", this.state.pagination.total),
-    };
-
     return (
       <div>
         <Table
           scroll={{x: "max-content"}}
           columns={columns}
           dataSource={carts}
-          rowKey={(record, index) => `${record.name}-${index}`}
+          rowKey={(record, index) => `${record.name}-${record.pricingName}-${record.planName}-${index}`}
           size="middle"
           bordered
-          pagination={paginationProps}
+          pagination={false}
           title={() => {
             return (
               <div>
                 {i18next.t("general:Carts")}&nbsp;&nbsp;&nbsp;&nbsp;
-                <Button type="primary" size="small" onClick={() => this.props.history.push("/product-store")}>{i18next.t("general:Add")}</Button>
+                <Button size="small" onClick={() => this.props.history.push("/product-store")}>{i18next.t("general:Add")}</Button>
                 &nbsp;&nbsp;
-                <Button size="small">{i18next.t("general:Place Order")}</Button>
+                <Button type="primary" size="small" onClick={() => this.placeOrder()} disabled={isEmpty || this.state.isPlacingOrder} loading={this.state.isPlacingOrder}>{i18next.t("general:Place Order")}</Button>
               </div>
             );
           }}
           loading={this.state.loading}
           onChange={this.handleTableChange}
         />
+
+        {!isEmpty && (
+          <div style={{marginTop: "20px", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", gap: "20px"}}>
+            <div style={{display: "flex", alignItems: "center", fontSize: "18px", fontWeight: "bold"}}>
+              {i18next.t("product:Total Price")}:&nbsp;
+              <span style={{color: "red", fontSize: "28px"}}>
+                {Setting.getCurrencySymbol(currency)}{total.toFixed(2)} ({Setting.getCurrencyText({currency: currency})})
+              </span>
+            </div>
+            <Button
+              type="primary"
+              size="large"
+              style={{height: "50px", fontSize: "20px", padding: "0 40px", borderRadius: "5px"}}
+              onClick={() => this.placeOrder()}
+              disabled={this.state.isPlacingOrder}
+              loading={this.state.isPlacingOrder}
+            >
+              {i18next.t("general:Place Order")}
+            </Button>
+          </div>
+        )}
       </div>
     );
   }
@@ -178,23 +299,42 @@ class CartListPage extends BaseListPage {
     const userName = this.props.account.name;
 
     UserBackend.getUser(organizationName, userName)
-      .then((res) => {
-        this.setState({
-          loading: false,
-        });
+      .then(async(res) => {
         if (res.status === "ok") {
           const cartData = res.data.cart || [];
+
+          const productPromises = cartData.map(item =>
+            ProductBackend.getProduct(organizationName, item.name)
+              .then(pRes => {
+                if (pRes.status === "ok" && pRes.data) {
+                  return {
+                    ...pRes.data,
+                    pricingName: item.pricingName,
+                    planName: item.planName,
+                    quantity: item.quantity,
+                    price: pRes.data.isRecharge ? item.price : pRes.data.price,
+                  };
+                }
+                return item;
+              })
+              .catch(() => item)
+          );
+
+          const fullCartData = await Promise.all(productPromises);
+
           this.setState({
-            data: cartData,
+            loading: false,
+            data: fullCartData,
             user: res.data,
             pagination: {
               ...params.pagination,
-              total: cartData.length,
+              total: fullCartData.length,
             },
             searchText: params.searchText,
             searchedColumn: params.searchedColumn,
           });
         } else {
+          this.setState({loading: false});
           Setting.showMessage("error", res.msg);
         }
       })

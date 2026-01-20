@@ -94,7 +94,8 @@ class OrderPayPage extends React.Component {
   }
 
   getProductPrice(product) {
-    return `${Setting.getCurrencySymbol(this.state.order?.currency)}${product.price} (${Setting.getCurrencyText(this.state.order)})`;
+    const price = product.price * (product.quantity ?? 1);
+    return `${Setting.getCurrencySymbol(this.state.order?.currency)}${price.toFixed(2)} (${Setting.getCurrencyText(this.state.order)})`;
   }
 
   // Call Wechat Pay via jsapi
@@ -217,25 +218,48 @@ class OrderPayPage extends React.Component {
   }
 
   renderProduct(product) {
+    const isSubscriptionOrder = product.pricingName && product.planName;
+
     return (
-      <React.Fragment key={product.name}>
-        <Descriptions.Item label={i18next.t("general:Name")} span={3}>
-          <span style={{fontSize: 20}}>
-            {Setting.getLanguageText(product?.displayName)}
-          </span>
-        </Descriptions.Item>
-        <Descriptions.Item label={i18next.t("product:Image")} span={3}>
-          <img src={product?.image} alt={Setting.getLanguageText(product?.displayName)} height={90} style={{marginBottom: "20px"}} />
-        </Descriptions.Item>
-        <Descriptions.Item label={i18next.t("product:Price")} span={3}>
-          <span style={{fontSize: 18, fontWeight: "bold"}}>
-            {this.getProductPrice(product)}
-          </span>
-        </Descriptions.Item>
-        <Descriptions.Item label={i18next.t("product:Detail")} span={3}>
-          <span style={{fontSize: 16}}>{Setting.getLanguageText(product?.detail)}</span>
-        </Descriptions.Item>
-      </React.Fragment>
+      <div key={product.name} style={{marginBottom: "20px", border: "1px solid #f0f0f0", borderRadius: "2px", padding: "1px"}}>
+        <Descriptions bordered column={2} size="middle" labelStyle={{width: "150px"}}>
+          <Descriptions.Item label={i18next.t("general:Name")} span={2}>
+            <span style={{fontSize: 20, fontWeight: "500"}}>
+              {Setting.getLanguageText(product?.displayName)}
+            </span>
+          </Descriptions.Item>
+          <Descriptions.Item label={i18next.t("product:Image")} span={2}>
+            <img src={product?.image} alt={Setting.getLanguageText(product?.displayName)} height={90} style={{objectFit: "contain"}} />
+          </Descriptions.Item>
+
+          <Descriptions.Item label={i18next.t("product:Price")} span={1}>
+            <span style={{fontSize: 18, fontWeight: "bold"}}>
+              {this.getProductPrice(product)}
+            </span>
+          </Descriptions.Item>
+          <Descriptions.Item label={i18next.t("product:Quantity")} span={1}>
+            <span style={{fontSize: 18}}>
+              {product.quantity ?? 1}
+            </span>
+          </Descriptions.Item>
+
+          {product?.detail && (
+            <Descriptions.Item label={i18next.t("product:Detail")} span={2}>
+              <span style={{fontSize: 16}}>{Setting.getLanguageText(product?.detail)}</span>
+            </Descriptions.Item>
+          )}
+          {isSubscriptionOrder && (
+            <>
+              <Descriptions.Item label={i18next.t("subscription:Subscription plan")} span={1}>
+                <span style={{fontSize: 16}}>{Setting.getLanguageText(product?.planName)}</span>
+              </Descriptions.Item>
+              <Descriptions.Item label={i18next.t("subscription:Subscription pricing")} span={1}>
+                <span style={{fontSize: 16}}>{Setting.getLanguageText(product?.pricingName)}</span>
+              </Descriptions.Item>
+            </>
+          )}
+        </Descriptions>
+      </div>
     );
   }
 
@@ -245,8 +269,6 @@ class OrderPayPage extends React.Component {
     if (!order || !productInfos) {
       return null;
     }
-
-    const isSubscriptionOrder = order.pricingName && order.planName;
 
     return (
       <div className="login-content">
@@ -277,23 +299,11 @@ class OrderPayPage extends React.Component {
           </div>
 
           <div style={{marginBottom: "20px"}}>
-            <Descriptions title={<span style={Setting.isMobile() ? {fontSize: 18} : {fontSize: 24}}>{i18next.t("product:Product Information")}</span>} bordered column={3}>
-              {productInfos.map(product => this.renderProduct(product))}
-            </Descriptions>
-          </div>
-
-          {isSubscriptionOrder && (
-            <div style={{marginBottom: "20px"}}>
-              <Descriptions title={<span style={Setting.isMobile() ? {fontSize: 18} : {fontSize: 24}}>{i18next.t("subscription:Subscription Information")}</span>} bordered column={3}>
-                <Descriptions.Item label={i18next.t("general:Plan")} span={3}>
-                  <span style={{fontSize: 16}}>{order.planName}</span>
-                </Descriptions.Item>
-                <Descriptions.Item label={i18next.t("general:Pricing")} span={3}>
-                  <span style={{fontSize: 16}}>{order.pricingName}</span>
-                </Descriptions.Item>
-              </Descriptions>
+            <div style={{fontSize: Setting.isMobile() ? 18 : 24, fontWeight: "bold", marginBottom: "16px", color: "rgba(0, 0, 0, 0.85)"}}>
+              {i18next.t("product:Product Information")}
             </div>
-          )}
+            {productInfos.map(product => this.renderProduct(product))}
+          </div>
 
           <div>
             <Descriptions title={<span style={Setting.isMobile() ? {fontSize: 18} : {fontSize: 24}}>{i18next.t("payment:Payment Information")}</span>} bordered column={3}>

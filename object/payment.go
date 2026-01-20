@@ -313,10 +313,11 @@ func NotifyPayment(body []byte, owner string, paymentName string, lang string) (
 
 		hasRecharge := false
 		rechargeAmount := 0.0
-		for _, productInfo := range order.ProductInfos {
+		orderProductInfos := order.ProductInfos
+		for _, productInfo := range orderProductInfos {
 			if productInfo.IsRecharge {
 				hasRecharge = true
-				rechargeAmount += productInfo.Price
+				rechargeAmount += productInfo.Price * float64(productInfo.Quantity)
 			}
 		}
 
@@ -346,7 +347,7 @@ func NotifyPayment(body []byte, owner string, paymentName string, lang string) (
 			}
 		}
 
-		err = UpdateProductStock(products)
+		err = UpdateProductStock(orderProductInfos)
 		if err != nil {
 			return nil, err
 		}

@@ -35,8 +35,6 @@ import (
 // @router /place-order [post]
 func (c *ApiController) PlaceOrder() {
 	owner := c.Ctx.Input.Query("owner")
-	pricingName := c.Ctx.Input.Query("pricingName")
-	planName := c.Ctx.Input.Query("planName")
 	paidUserName := c.Ctx.Input.Query("userName")
 
 	var req struct {
@@ -82,7 +80,7 @@ func (c *ApiController) PlaceOrder() {
 		return
 	}
 
-	order, err := object.PlaceOrder(owner, productInfos, user, pricingName, planName)
+	order, err := object.PlaceOrder(owner, productInfos, user)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

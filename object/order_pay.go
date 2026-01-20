@@ -23,24 +23,26 @@ import (
 	"github.com/casdoor/casdoor/util"
 )
 
-func PlaceOrder(owner string, reqProductInfos []ProductInfo, user *User, pricingName string, planName string) (*Order, error) {
+func PlaceOrder(owner string, reqProductInfos []ProductInfo, user *User) (*Order, error) {
 	if len(reqProductInfos) == 0 {
 		return nil, fmt.Errorf("order has no products")
 	}
 
 	productNames := make([]string, 0, len(reqProductInfos))
-	reqInfoMap := make(map[string]ProductInfo, len(reqProductInfos))
 	for _, reqInfo := range reqProductInfos {
 		if reqInfo.Name == "" {
 			return nil, fmt.Errorf("product name cannot be empty")
 		}
 		productNames = append(productNames, reqInfo.Name)
-		reqInfoMap[reqInfo.Name] = reqInfo
 	}
 
 	products, err := getOrderProducts(owner, productNames)
 	if err != nil {
 		return nil, err
+	}
+	productMap := make(map[string]Product, len(reqProductInfos))
+	for _, product := range products {
+		productMap[product.Name] = product
 	}
 
 	orderCurrency := products[0].Currency
@@ -54,12 +56,12 @@ func PlaceOrder(owner string, reqProductInfos []ProductInfo, user *User, pricing
 
 	var productInfos []ProductInfo
 	orderPrice := 0.0
-	for _, product := range products {
-		reqInfo := reqInfoMap[product.Name]
+	for _, productInfo := range reqProductInfos {
+		product := productMap[productInfo.Name]
 
 		var productPrice float64
 		if product.IsRecharge {
-			productPrice = reqInfo.Price
+			productPrice = productInfo.Price
 			if productPrice <= 0 {
 				return nil, fmt.Errorf("the custom price should be greater than zero")
 			}
@@ -67,15 +69,20 @@ func PlaceOrder(owner string, reqProductInfos []ProductInfo, user *User, pricing
 			productPrice = product.Price
 		}
 		productInfos = append(productInfos, ProductInfo{
+			Owner:       owner,
 			Name:        product.Name,
 			DisplayName: product.DisplayName,
 			Image:       product.Image,
 			Detail:      product.Detail,
 			Price:       productPrice,
+			Currency:    product.Currency,
 			IsRecharge:  product.IsRecharge,
+			Quantity:    productInfo.Quantity,
+			PricingName: productInfo.PricingName,
+			PlanName:    productInfo.PlanName,
 		})
 
-		orderPrice += productPrice
+		orderPrice += productPrice * float64(productInfo.Quantity)
 	}
 
 	orderName := fmt.Sprintf("order_%v", util.GenerateTimeId())
@@ -86,8 +93,6 @@ func PlaceOrder(owner string, reqProductInfos []ProductInfo, user *User, pricing
 		CreatedTime:  util.GetCurrentTime(),
 		Products:     productNames,
 		ProductInfos: productInfos,
-		PricingName:  pricingName,
-		PlanName:     planName,
 		User:         user.Name,
 		Payment:      "", // Payment will be set when user pays
 		Price:        orderPrice,
@@ -159,15 +164,20 @@ func PayOrder(providerName, host, paymentEnv string, order *Order, lang string) 
 	returnUrl := fmt.Sprintf("%s/payments/%s/%s/result", originFrontend, owner, paymentName)
 	notifyUrl := fmt.Sprintf("%s/api/notify-payment/%s/%s", originBackend, owner, paymentName)
 
+	orderProductInfos := order.ProductInfos
 	// Create a subscription when pricing and plan are provided
 	// This allows both free users and paid users to subscribe to plans
-	if order.PricingName != "" && order.PlanName != "" {
-		plan, err := GetPlan(util.GetId(owner, order.PlanName))
+	for i, productInfo := range orderProductInfos {
+		if productInfo.PricingName == "" || productInfo.PlanName == "" {
+			continue
+		}
+
+		plan, err := GetPlan(util.GetId(owner, productInfo.PlanName))
 		if err != nil {
 			return nil, nil, err
 		}
 		if plan == nil {
-			return nil, nil, fmt.Errorf("the plan: %s does not exist", order.PlanName)
+			return nil, nil, fmt.Errorf("the plan: %s does not exist", productInfo.PlanName)
 		}
 
 		sub, err := NewSubscription(owner, user.Name, plan.Name, paymentName, plan.Period)
@@ -183,7 +193,9 @@ func PayOrder(providerName, host, paymentEnv string, order *Order, lang string) 
 			return nil, nil, fmt.Errorf("failed to add subscription: %s", sub.Name)
 		}
 
-		returnUrl = fmt.Sprintf("%s/buy-plan/%s/%s/result?subscription=%s", originFrontend, owner, order.PricingName, sub.Name)
+		if i == 0 {
+			returnUrl = fmt.Sprintf("%s/buy-plan/%s/%s/result?subscription=%s", originFrontend, owner, productInfo.PricingName, sub.Name)
+		}
 	}
 
 	if baseProduct.SuccessUrl != "" {
@@ -294,10 +306,10 @@ func PayOrder(providerName, host, paymentEnv string, order *Order, lang string) 
 
 		hasRecharge := false
 		rechargeAmount := 0.0
-		for _, productInfo := range order.ProductInfos {
+		for _, productInfo := range orderProductInfos {
 			if productInfo.IsRecharge {
 				hasRecharge = true
-				rechargeAmount += productInfo.Price
+				rechargeAmount += productInfo.Price * float64(productInfo.Quantity)
 			}
 		}
 
@@ -343,7 +355,7 @@ func PayOrder(providerName, host, paymentEnv string, order *Order, lang string) 
 
 	// Update product stock after order state is persisted (for instant payment methods)
 	if provider.Type == "Dummy" || provider.Type == "Balance" {
-		err = UpdateProductStock(products)
+		err = UpdateProductStock(orderProductInfos)
 		if err != nil {
 			return nil, nil, err
 		}

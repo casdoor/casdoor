@@ -1115,6 +1115,10 @@ export function getAvatarColor(s) {
 }
 
 export function getLanguageText(text) {
+  if (!text) {
+    return "";
+  }
+
   if (!text.includes("|")) {
     return text;
   }
