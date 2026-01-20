@@ -20,6 +20,7 @@ import (
 	"io"
 	"net/http"
 	"runtime"
+	"strings"
 )
 
 type LatestVersionInfo struct {
@@ -93,8 +94,16 @@ func GetLatestVersion() (*LatestVersionInfo, error) {
 
 	// Check if there's an update available
 	hasUpdate := false
-	if currentVersion.Version != "" && release.TagName != "" && release.TagName != currentVersion.Version {
-		hasUpdate = true
+	if currentVersion.Version != "" && release.TagName != "" {
+		// Normalize version strings by removing 'v' prefix if present
+		currentVer := strings.TrimPrefix(currentVersion.Version, "v")
+		latestVer := strings.TrimPrefix(release.TagName, "v")
+		
+		// Simple version comparison - consider different if strings don't match
+		// For production use, consider using a semantic versioning library
+		if currentVer != latestVer {
+			hasUpdate = true
+		}
 	}
 
 	return &LatestVersionInfo{

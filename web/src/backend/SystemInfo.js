@@ -60,6 +60,7 @@ export function performUpgrade(downloadUrl) {
     credentials: "include",
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({downloadUrl: downloadUrl}),
   }).then(res => res.json());

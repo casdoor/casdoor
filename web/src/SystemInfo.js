@@ -161,32 +161,24 @@ class SystemInfo extends React.Component {
 
     Modal.confirm({
       title: i18next.t("system:Confirm Upgrade"),
-      content: i18next.t("system:Are you sure you want to upgrade to version") + ` ${this.state.latestVersionInfo.version}? ` + i18next.t("system:This will download and install the new version."),
+      content: i18next.t("system:Are you sure you want to upgrade to version") + ` ${this.state.latestVersionInfo.version}? ` + i18next.t("system:You will be provided with download instructions."),
       okText: i18next.t("general:OK"),
       cancelText: i18next.t("general:Cancel"),
       onOk: () => {
-        this.setState({loadingUpgrade: true});
-        SystemBackend.performUpgrade(this.state.latestVersionInfo.downloadUrl).then(res => {
-          this.setState({loadingUpgrade: false});
-          if (res.status === "ok") {
-            Setting.showMessage("success", i18next.t("system:Upgrade completed successfully"));
-          } else {
-            // Show the download link as a fallback
-            Modal.info({
-              title: i18next.t("system:Manual Upgrade Required"),
-              content: (
-                <div>
-                  <p>{res.msg}</p>
-                  <p>
-                    {i18next.t("system:Please download manually from")}: <a href={this.state.latestVersionInfo.downloadUrl} target="_blank" rel="noreferrer">{i18next.t("system:Download")}</a>
-                  </p>
-                </div>
-              ),
-            });
-          }
-        }).catch(err => {
-          this.setState({loadingUpgrade: false});
-          Setting.showMessage("error", `${i18next.t("system:Upgrade failed")}: ${err}`);
+        // Show the download link directly since automatic upgrade requires elevated permissions
+        Modal.info({
+          title: i18next.t("system:Manual Upgrade Required"),
+          content: (
+            <div>
+              <p>{i18next.t("system:Automatic upgrade requires elevated permissions and service restart.")}</p>
+              <p>
+                {i18next.t("system:Please download manually from")}: <a href={this.state.latestVersionInfo.downloadUrl} target="_blank" rel="noreferrer">{i18next.t("system:Download")}</a>
+              </p>
+              <p>
+                {i18next.t("system:Or visit the release page")}: <a href={this.state.latestVersionInfo.releaseUrl} target="_blank" rel="noreferrer">{this.state.latestVersionInfo.version}</a>
+              </p>
+            </div>
+          ),
         });
       },
     });
