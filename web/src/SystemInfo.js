@@ -12,13 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {Card, Col, Divider, Progress, Row, Spin, Tour} from "antd";
+import {Button, Card, Col, Divider, Modal, Progress, Row, Spin, Tag, Tour} from "antd";
 import * as SystemBackend from "./backend/SystemInfo";
 import React from "react";
 import * as Setting from "./Setting";
 import * as TourConfig from "./TourConfig";
 import i18next from "i18next";
 import PrometheusInfoTable from "./table/PrometheusInfoTable";
+import {UploadOutlined} from "@ant-design/icons";
 
 class SystemInfo extends React.Component {
 
@@ -27,9 +28,12 @@ class SystemInfo extends React.Component {
     this.state = {
       systemInfo: {cpuUsage: [], memoryUsed: 0, memoryTotal: 0},
       versionInfo: {},
+      latestVersionInfo: {},
       prometheusInfo: {apiThroughput: [], apiLatency: [], totalThroughput: 0},
       intervalId: null,
       loading: true,
+      loadingUpgrade: false,
+      checkingUpdate: false,
       isTourVisible: TourConfig.getTourVisible(),
     };
   }
@@ -127,6 +131,67 @@ class SystemInfo extends React.Component {
     }
   };
 
+  checkForUpdates = () => {
+    this.setState({checkingUpdate: true});
+    SystemBackend.getLatestVersion().then(res => {
+      this.setState({checkingUpdate: false});
+      if (res.status === "ok") {
+        this.setState({
+          latestVersionInfo: res.data,
+        });
+        if (res.data.hasUpdate) {
+          Setting.showMessage("success", i18next.t("system:New version available") + `: ${res.data.version}`);
+        } else {
+          Setting.showMessage("success", i18next.t("system:You are running the latest version"));
+        }
+      } else {
+        Setting.showMessage("error", res.msg);
+      }
+    }).catch(err => {
+      this.setState({checkingUpdate: false});
+      Setting.showMessage("error", `${i18next.t("general:Failed to check for updates")}: ${err}`);
+    });
+  };
+
+  handleUpgrade = () => {
+    if (!this.state.latestVersionInfo.downloadUrl) {
+      Setting.showMessage("error", i18next.t("system:No download available for this platform"));
+      return;
+    }
+
+    Modal.confirm({
+      title: i18next.t("system:Confirm Upgrade"),
+      content: i18next.t("system:Are you sure you want to upgrade to version") + ` ${this.state.latestVersionInfo.version}? ` + i18next.t("system:This will download and install the new version."),
+      okText: i18next.t("general:OK"),
+      cancelText: i18next.t("general:Cancel"),
+      onOk: () => {
+        this.setState({loadingUpgrade: true});
+        SystemBackend.performUpgrade(this.state.latestVersionInfo.downloadUrl).then(res => {
+          this.setState({loadingUpgrade: false});
+          if (res.status === "ok") {
+            Setting.showMessage("success", i18next.t("system:Upgrade completed successfully"));
+          } else {
+            // Show the download link as a fallback
+            Modal.info({
+              title: i18next.t("system:Manual Upgrade Required"),
+              content: (
+                <div>
+                  <p>{res.msg}</p>
+                  <p>
+                    {i18next.t("system:Please download manually from")}: <a href={this.state.latestVersionInfo.downloadUrl} target="_blank" rel="noreferrer">{i18next.t("system:Download")}</a>
+                  </p>
+                </div>
+              ),
+            });
+          }
+        }).catch(err => {
+          this.setState({loadingUpgrade: false});
+          Setting.showMessage("error", `${i18next.t("system:Upgrade failed")}: ${err}`);
+        });
+      },
+    });
+  };
+
   getSteps = () => {
     const nextPathName = TourConfig.getNextUrl();
     const steps = TourConfig.getSteps();
@@ -199,10 +264,36 @@ class SystemInfo extends React.Component {
                 GitHub: <a target="_blank" rel="noreferrer" href="https://github.com/casdoor/casdoor">Casdoor</a>
                 <br />
                 {i18next.t("system:Version")}: <a target="_blank" rel="noreferrer" href={link}>{versionText}</a>
+                {this.state.latestVersionInfo.hasUpdate && (
+                  <Tag color="green" style={{marginLeft: 8}}>
+                    {i18next.t("system:Update available")}: {this.state.latestVersionInfo.version}
+                  </Tag>
+                )}
                 <br />
                 {i18next.t("system:Official website")}: <a target="_blank" rel="noreferrer" href="https://casdoor.org">https://casdoor.org</a>
                 <br />
                 {i18next.t("system:Community")}: <a target="_blank" rel="noreferrer" href="https://casdoor.org/#:~:text=Casdoor%20API-,Community,-GitHub">Get in Touch!</a>
+                <br />
+                <br />
+                <Button
+                  type="primary"
+                  icon={<UploadOutlined />}
+                  onClick={this.checkForUpdates}
+                  loading={this.state.checkingUpdate}
+                  style={{marginRight: 8}}
+                >
+                  {i18next.t("system:Check for Updates")}
+                </Button>
+                {this.state.latestVersionInfo.hasUpdate && (
+                  <Button
+                    type="primary"
+                    danger
+                    onClick={this.handleUpgrade}
+                    loading={this.state.loadingUpgrade}
+                  >
+                    {i18next.t("system:Upgrade Now")}
+                  </Button>
+                )}
               </Card>
             </Col>
             <Col span={6}></Col>
@@ -239,10 +330,36 @@ class SystemInfo extends React.Component {
               GitHub: <a target="_blank" rel="noreferrer" href="https://github.com/casdoor/casdoor">Casdoor</a>
               <br />
               {i18next.t("system:Version")}: <a target="_blank" rel="noreferrer" href={link}>{versionText}</a>
+              {this.state.latestVersionInfo.hasUpdate && (
+                <Tag color="green" style={{marginLeft: 8}}>
+                  {i18next.t("system:Update available")}: {this.state.latestVersionInfo.version}
+                </Tag>
+              )}
               <br />
               {i18next.t("system:Official website")}: <a target="_blank" rel="noreferrer" href="https://casdoor.org">https://casdoor.org</a>
               <br />
               {i18next.t("system:Community")}: <a target="_blank" rel="noreferrer" href="https://casdoor.org/#:~:text=Casdoor%20API-,Community,-GitHub">Get in Touch!</a>
+              <br />
+              <br />
+              <Button
+                type="primary"
+                icon={<UploadOutlined />}
+                onClick={this.checkForUpdates}
+                loading={this.state.checkingUpdate}
+                style={{marginRight: 8}}
+              >
+                {i18next.t("system:Check for Updates")}
+              </Button>
+              {this.state.latestVersionInfo.hasUpdate && (
+                <Button
+                  type="primary"
+                  danger
+                  onClick={this.handleUpgrade}
+                  loading={this.state.loadingUpgrade}
+                >
+                  {i18next.t("system:Upgrade Now")}
+                </Button>
+              )}
             </Card>
           </Col>
         </Row>
