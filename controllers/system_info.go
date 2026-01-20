@@ -15,7 +15,10 @@
 package controllers
 
 import (
+	"errors"
+
 	"github.com/casdoor/casdoor/util"
+	"github.com/go-git/go-git/v5"
 )
 
 // GetSystemInfo
@@ -46,10 +49,10 @@ func (c *ApiController) GetSystemInfo() {
 // @Success 200 {object} util.VersionInfo The Response object
 // @router /get-version-info [get]
 func (c *ApiController) GetVersionInfo() {
-	errInfo := ""
 	versionInfo, err := util.GetVersionInfo()
-	if err != nil {
-		errInfo = "Git error: " + err.Error()
+	if err != nil && !errors.Is(err, git.ErrRepositoryNotExists) {
+		c.ResponseError(err.Error())
+		return
 	}
 
 	if versionInfo.Version != "" {
@@ -57,14 +60,7 @@ func (c *ApiController) GetVersionInfo() {
 		return
 	}
 
-	versionInfo, err = util.GetVersionInfoFromFile()
-	if err != nil {
-		errInfo = errInfo + ", File error: " + err.Error()
-		c.ResponseError(errInfo)
-		return
-	}
-
-	c.ResponseOk(versionInfo)
+	c.ResponseOk(util.GetBuiltInVersionInfo())
 }
 
 // Health
