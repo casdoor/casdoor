@@ -52,6 +52,7 @@ func (c *ApiController) GetVersionInfo() {
 	versionInfo, err := util.GetVersionInfo()
 	if err != nil && !errors.Is(err, git.ErrRepositoryNotExists) {
 		c.ResponseError(err.Error())
+		return
 	}
 
 	if versionInfo.Version != "" {
