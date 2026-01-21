@@ -90,8 +90,8 @@ export function deleteOrder(order) {
   }).then(res => res.json());
 }
 
-export function placeOrder(owner, productInfos, pricingName = "", planName = "", userName = "") {
-  return fetch(`${Setting.ServerUrl}/api/place-order?owner=${encodeURIComponent(owner)}&pricingName=${encodeURIComponent(pricingName)}&planName=${encodeURIComponent(planName)}&userName=${encodeURIComponent(userName)}`, {
+export function placeOrder(owner, productInfos, userName = "") {
+  return fetch(`${Setting.ServerUrl}/api/place-order?owner=${encodeURIComponent(owner)}&userName=${encodeURIComponent(userName)}`, {
     method: "POST",
     credentials: "include",
     body: JSON.stringify({productInfos}),

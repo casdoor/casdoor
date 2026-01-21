@@ -92,13 +92,10 @@ class ProductStorePage extends React.Component {
           } else {
             const newCartProductInfo = {
               name: product.name,
-              displayName: product.displayName,
-              image: product.image,
-              detail: product.detail,
               price: product.price,
-              currency: product.currency,
+              pricingName: "",
+              planName: "",
               quantity: 1,
-              isRecharge: product.isRecharge || false,
             };
             cart.push(newCartProductInfo);
           }
@@ -134,8 +131,6 @@ class ProductStorePage extends React.Component {
   }
 
   renderProductCard(product) {
-    const isSubscription = product.tag === "Subscription";
-
     return (
       <Col xs={24} sm={12} md={8} lg={6} key={`${product.owner}/${product.name}`} style={{marginBottom: "20px"}}>
         <Card
@@ -163,7 +158,7 @@ class ProductStorePage extends React.Component {
               >
                 {i18next.t("product:Buy")}
               </Button>
-              {!product.isRecharge && !isSubscription && (
+              {!product.isRecharge && (
                 <Button
                   key="add"
                   type="primary"

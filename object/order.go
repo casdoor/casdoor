@@ -32,10 +32,6 @@ type Order struct {
 	Products     []string      `xorm:"varchar(1000)" json:"products"` // Support for multiple products per order. Using varchar(1000) for simple JSON array storage; can be refactored to separate table if needed
 	ProductInfos []ProductInfo `xorm:"mediumtext" json:"productInfos"`
 
-	// Subscription Info (for subscription orders)
-	PricingName string `xorm:"varchar(100)" json:"pricingName"`
-	PlanName    string `xorm:"varchar(100)" json:"planName"`
-
 	// User Info
 	User string `xorm:"varchar(100)" json:"user"`
 
@@ -54,6 +50,7 @@ type Order struct {
 }
 
 type ProductInfo struct {
+	Owner       string  `json:"owner"`
 	Name        string  `json:"name"`
 	DisplayName string  `json:"displayName"`
 	Image       string  `json:"image,omitempty"`
@@ -62,6 +59,8 @@ type ProductInfo struct {
 	Currency    string  `json:"currency,omitempty"`
 	IsRecharge  bool    `json:"isRecharge,omitempty"`
 	Quantity    int     `json:"quantity,omitempty"`
+	PricingName string  `json:"pricingName,omitempty"`
+	PlanName    string  `json:"planName,omitempty"`
 }
 
 func GetOrderCount(owner, field, value string) (int64, error) {

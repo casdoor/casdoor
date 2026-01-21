@@ -157,6 +157,8 @@ class ProductBuyPage extends React.Component {
             }
           }
 
+          const pricingName = this.state.pricingName || "";
+          const planName = this.state.planName || "";
           if (cart.length > 0) {
             const firstItem = cart[0];
             if (firstItem.currency && product.currency && firstItem.currency !== product.currency) {
@@ -166,20 +168,17 @@ class ProductBuyPage extends React.Component {
             }
           }
 
-          const existingItemIndex = cart.findIndex(item => item.name === product.name && item.price === actualPrice);
+          const existingItemIndex = cart.findIndex(item => item.name === product.name && item.price === actualPrice && (item.pricingName || "") === pricingName && (item.planName || "") === planName);
 
           if (existingItemIndex !== -1) {
             cart[existingItemIndex].quantity += 1;
           } else {
             const newProductInfo = {
               name: product.name,
-              displayName: product.displayName,
-              image: product.image,
-              detail: product.detail,
               price: actualPrice,
-              currency: product.currency,
+              pricingName: pricingName,
+              planName: planName,
               quantity: 1,
-              isRecharge: product.isRecharge,
             };
             cart.push(newProductInfo);
           }
@@ -222,9 +221,12 @@ class ProductBuyPage extends React.Component {
     const productInfos = [{
       name: product.name,
       price: product.isRecharge ? customPrice : product.price,
+      pricingName: pricingName,
+      planName: planName,
+      quantity: 1,
     }];
 
-    OrderBackend.placeOrder(product.owner, productInfos, pricingName, planName, this.state.userName ?? "")
+    OrderBackend.placeOrder(product.owner, productInfos, this.state.userName ?? "")
       .then((res) => {
         if (res.status === "ok") {
           const order = res.data;
@@ -310,7 +312,6 @@ class ProductBuyPage extends React.Component {
     const hasOptions = product.rechargeOptions && product.rechargeOptions.length > 0;
     const disableCustom = product.disableCustomRecharge;
     const isRechargeUnpurchasable = product.isRecharge && !hasOptions && disableCustom;
-    const isSubscription = product.tag === "Subscription";
 
     return (
       <div style={{display: "flex", justifyContent: "center", alignItems: "center", gap: "20px"}}>
@@ -330,24 +331,22 @@ class ProductBuyPage extends React.Component {
         >
           {i18next.t("order:Place Order")}
         </Button>
-        {!isSubscription && (
-          <Button
-            type="primary"
-            size="large"
-            style={{
-              height: "50px",
-              fontSize: "18px",
-              borderRadius: "30px",
-              paddingLeft: "30px",
-              paddingRight: "30px",
-            }}
-            onClick={() => this.addToCart(product)}
-            disabled={isRechargeUnpurchasable || this.state.isAddingToCart}
-            loading={this.state.isAddingToCart}
-          >
-            {i18next.t("product:Add to cart")}
-          </Button>
-        )}
+        <Button
+          type="primary"
+          size="large"
+          style={{
+            height: "50px",
+            fontSize: "18px",
+            borderRadius: "30px",
+            paddingLeft: "30px",
+            paddingRight: "30px",
+          }}
+          onClick={() => this.addToCart(product)}
+          disabled={isRechargeUnpurchasable || this.state.isAddingToCart}
+          loading={this.state.isAddingToCart}
+        >
+          {i18next.t("product:Add to cart")}
+        </Button>
       </div>
     );
   }
