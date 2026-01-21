@@ -42,6 +42,28 @@ class CartListPage extends BaseListPage {
     };
   }
 
+  clearCart() {
+    const user = Setting.deepCopy(this.state.user);
+    if (user === undefined || user === null) {
+      Setting.showMessage("error", i18next.t("general:Failed to delete"));
+      return;
+    }
+
+    user.cart = [];
+    UserBackend.updateUser(user.owner, user.name, user)
+      .then((res) => {
+        if (res.status === "ok") {
+          Setting.showMessage("success", i18next.t("general:Successfully deleted"));
+          this.fetch();
+        } else {
+          Setting.showMessage("error", `${i18next.t("general:Failed to delete")}: ${res.msg}`);
+        }
+      })
+      .catch(error => {
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
+      });
+  }
+
   placeOrder() {
     if (this.state.isPlacingOrder) {
       return;
@@ -258,9 +280,17 @@ class CartListPage extends BaseListPage {
           title={() => {
             return (
               <div>
-                {i18next.t("general:Carts")}&nbsp;&nbsp;&nbsp;&nbsp;
+                {i18next.t("general:Cart")}&nbsp;&nbsp;&nbsp;&nbsp;
                 <Button size="small" onClick={() => this.props.history.push("/product-store")}>{i18next.t("general:Add")}</Button>
                 &nbsp;&nbsp;
+                <PopconfirmModal
+                  size="small"
+                  style={{marginRight: "8px"}}
+                  text={i18next.t("general:Clear")}
+                  title={i18next.t("general:Sure to delete") + `: ${i18next.t("general:Cart")} ?`}
+                  onConfirm={() => this.clearCart()}
+                  disabled={isEmpty}
+                />
                 <Button type="primary" size="small" onClick={() => this.placeOrder()} disabled={isEmpty || this.state.isPlacingOrder} loading={this.state.isPlacingOrder}>{i18next.t("general:Place Order")}</Button>
               </div>
             );

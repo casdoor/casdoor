@@ -256,14 +256,14 @@ class OrderListPage extends BaseListPage {
         title: i18next.t("general:Action"),
         dataIndex: "",
         key: "op",
-        width: "300px",
+        width: "320px",
         fixed: (Setting.isMobile()) ? "false" : "right",
         render: (text, record, index) => {
           const isAdmin = Setting.isLocalAdminUser(this.props.account);
           return (
             <div style={{display: "flex", flexWrap: "wrap", gap: "8px"}}>
-              <Button onClick={() => this.props.history.push(`/orders/${record.owner}/${record.name}/pay`)} disabled={record.state !== "Created"}>
-                {i18next.t("order:Pay")}
+              <Button onClick={() => this.props.history.push(`/orders/${record.owner}/${record.name}/pay` + (record.state === "Created" ? "" : "?view=true"))}>
+                {record.state === "Created" ? i18next.t("order:Pay") : i18next.t("general:Detail")}
               </Button>
               <Button danger onClick={() => this.cancelOrder(record)} disabled={record.state !== "Created" || !isAdmin}>
                 {i18next.t("general:Cancel")}
