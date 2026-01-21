@@ -242,7 +242,8 @@ func (p *DingtalkSyncerProvider) getDingtalkDepartmentMap(accessToken string, de
 	for _, deptId := range deptIds {
 		dept, err := p.getDingtalkDepartmentDetails(accessToken, deptId)
 		if err != nil {
-			// Log error but continue with other departments
+			// Continue with other departments even if one fails
+			// Return a partial map rather than failing completely
 			continue
 		}
 		if dept != nil {
@@ -441,8 +442,10 @@ func (p *DingtalkSyncerProvider) dingtalkUserToOriginalUser(dingtalkUser *Dingta
 
 	// Set Affiliation from the first department
 	if len(dingtalkUser.Department) > 0 && deptMap != nil {
+		// Use the first department as the primary department
+		// Safe conversion from int to int64
 		primaryDeptId := int64(dingtalkUser.Department[0])
-		if deptName, ok := deptMap[primaryDeptId]; ok {
+		if deptName, ok := deptMap[primaryDeptId]; ok && deptName != "" {
 			user.Affiliation = deptName
 		}
 	}
