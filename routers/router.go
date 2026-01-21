@@ -48,6 +48,9 @@ func InitAPI() {
 	web.Router("/api/login", &controllers.ApiController{}, "POST:Login")
 	web.Router("/api/get-app-login", &controllers.ApiController{}, "GET:GetApplicationLogin")
 	web.Router("/api/get-dashboard", &controllers.ApiController{}, "GET:GetDashboard")
+	web.Router("/api/get-dashboard-providers", &controllers.ApiController{}, "GET:GetDashboardUsersByProvider")
+	web.Router("/api/get-dashboard-login-time-heatmap", &controllers.ApiController{}, "GET:GetDashboardLoginHeatmap")
+	web.Router("/api/get-dashboard-mfa-coverage", &controllers.ApiController{}, "GET:GetDashboardMfaCoverage")
 	web.Router("/api/logout", &controllers.ApiController{}, "GET,POST:Logout")
 	web.Router("/api/sso-logout", &controllers.ApiController{}, "GET,POST:SsoLogout")
 	web.Router("/api/get-account", &controllers.ApiController{}, "GET:GetAccount")
@@ -111,6 +114,7 @@ func InitAPI() {
 	web.Router("/api/update-application", &controllers.ApiController{}, "POST:UpdateApplication")
 	web.Router("/api/add-application", &controllers.ApiController{}, "POST:AddApplication")
 	web.Router("/api/delete-application", &controllers.ApiController{}, "POST:DeleteApplication")
+	web.Router("/api/get-built-in-themes", &controllers.ApiController{}, "GET:GetBuiltInThemes")
 
 	web.Router("/api/get-providers", &controllers.ApiController{}, "GET:GetProviders")
 	web.Router("/api/get-provider", &controllers.ApiController{}, "GET:GetProvider")
