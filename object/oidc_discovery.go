@@ -112,16 +112,14 @@ func GetOidcDiscovery(host string, applicationName string) OidcDiscovery {
 	originFrontend, originBackend := getOriginFromHost(host)
 
 	// If application is provided, use application-specific URLs
-	var issuer, authzEndpoint, jwksUri string
+	var issuer, jwksUri string
 	if applicationName != "" {
 		// Application-specific issuer and endpoints (owner is always "admin")
 		issuer = fmt.Sprintf("%s/.well-known/%s", originBackend, applicationName)
-		authzEndpoint = fmt.Sprintf("%s/login/oauth/authorize", originFrontend)
 		jwksUri = fmt.Sprintf("%s/.well-known/%s/jwks", originBackend, applicationName)
 	} else {
 		// Default global issuer and endpoints
 		issuer = originBackend
-		authzEndpoint = fmt.Sprintf("%s/login/oauth/authorize", originFrontend)
 		jwksUri = fmt.Sprintf("%s/.well-known/jwks", originBackend)
 	}
 
@@ -132,7 +130,7 @@ func GetOidcDiscovery(host string, applicationName string) OidcDiscovery {
 	// https://access.line.me/.well-known/openid-configuration
 	oidcDiscovery := OidcDiscovery{
 		Issuer:                                 issuer,
-		AuthorizationEndpoint:                  authzEndpoint,
+		AuthorizationEndpoint:                  fmt.Sprintf("%s/login/oauth/authorize", originFrontend),
 		TokenEndpoint:                          fmt.Sprintf("%s/api/login/oauth/access_token", originBackend),
 		UserinfoEndpoint:                       fmt.Sprintf("%s/api/userinfo", originBackend),
 		DeviceAuthorizationEndpoint:            fmt.Sprintf("%s/api/device-auth", originBackend),
