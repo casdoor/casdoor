@@ -898,6 +898,16 @@ class ProviderEditPage extends React.Component {
                         }} />
                       </Col>
                     </Row>
+                    <Row style={{marginTop: "20px"}} >
+                      <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                        {Setting.getLabel(i18next.t("provider:Enable PKCE"), i18next.t("provider:Enable PKCE - Tooltip"))} :
+                      </Col>
+                      <Col span={22} >
+                        <Switch checked={this.state.provider.enablePkce} onChange={checked => {
+                          this.updateProviderField("enablePkce", checked);
+                        }} />
+                      </Col>
+                    </Row>
                   </Col>
                 ) : null
               }
