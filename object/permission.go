@@ -259,9 +259,8 @@ func AddPermissionsInBatch(permissions []*Permission) (bool, error) {
 		return false, nil
 	}
 
-	// Permission struct has approximately 19 database fields
 	// Use safe batch size to avoid PostgreSQL parameter limit (65535)
-	batchSize := calculateSafeBatchSize(19)
+	batchSize := calculateSafeBatchSize(permissionDBFields)
 
 	affected := false
 	for i := 0; i < len(permissions); i += batchSize {

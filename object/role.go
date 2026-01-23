@@ -216,9 +216,8 @@ func AddRolesInBatch(roles []*Role) bool {
 		return false
 	}
 
-	// Role struct has approximately 9 database fields
 	// Use safe batch size to avoid PostgreSQL parameter limit (65535)
-	batchSize := calculateSafeBatchSize(9)
+	batchSize := calculateSafeBatchSize(roleDBFields)
 
 	affected := false
 	for i := 0; i < len(roles); i += batchSize {

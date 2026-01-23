@@ -22,6 +22,12 @@ const (
 	// PostgreSQL parameter limit
 	// See: https://www.postgresql.org/docs/current/limits.html
 	postgresMaxParameters = 65535
+
+	// Database field counts for batch operations
+	// These should be updated when struct fields change
+	userDBFields       = 157 // User struct has ~157 database fields (xorm tagged)
+	roleDBFields       = 9   // Role struct has ~9 database fields
+	permissionDBFields = 19  // Permission struct has ~19 database fields
 )
 
 // calculateSafeBatchSize calculates a safe batch size that respects both
@@ -33,7 +39,8 @@ func calculateSafeBatchSize(fieldsPerRecord int) int {
 	
 	// Calculate maximum batch size based on PostgreSQL parameter limit
 	// Leave some margin for safety (use 90% of the limit)
-	maxSafeBatchSize := int(float64(postgresMaxParameters) * 0.9 / float64(fieldsPerRecord))
+	// Using integer arithmetic to avoid floating-point precision issues
+	maxSafeBatchSize := (postgresMaxParameters * 9) / (10 * fieldsPerRecord)
 	
 	// Use the smaller of configured batch size and safe batch size
 	if configuredBatchSize < maxSafeBatchSize {
