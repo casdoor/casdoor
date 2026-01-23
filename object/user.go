@@ -1119,7 +1119,9 @@ func AddUsersInBatch(users []*User) (bool, error) {
 		return false, fmt.Errorf("no users are provided")
 	}
 
-	batchSize := conf.GetConfigBatchSize()
+	// User struct has approximately 157 database fields
+	// Use safe batch size to avoid PostgreSQL parameter limit (65535)
+	batchSize := calculateSafeBatchSize(157)
 
 	affected := false
 	for i := 0; i < len(users); i += batchSize {

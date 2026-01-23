@@ -18,8 +18,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/casdoor/casdoor/conf"
-
 	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/core"
 )
@@ -214,11 +212,13 @@ func AddRoles(roles []*Role) bool {
 }
 
 func AddRolesInBatch(roles []*Role) bool {
-	batchSize := conf.GetConfigBatchSize()
-
 	if len(roles) == 0 {
 		return false
 	}
+
+	// Role struct has approximately 9 database fields
+	// Use safe batch size to avoid PostgreSQL parameter limit (65535)
+	batchSize := calculateSafeBatchSize(9)
 
 	affected := false
 	for i := 0; i < len(roles); i += batchSize {
