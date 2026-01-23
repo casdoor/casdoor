@@ -34,7 +34,8 @@ function base64UrlEncode(buffer) {
 }
 
 function generateCodeChallenge(verifier) {
-  const hash = CryptoJS.SHA256(verifier);
+  // Convert verifier to UTF-8 bytes and compute SHA-256 hash
+  const hash = CryptoJS.SHA256(CryptoJS.enc.Utf8.parse(verifier));
   const base64Hash = CryptoJS.enc.Base64.stringify(hash);
   return base64Hash
     .replace(/\+/g, "-")

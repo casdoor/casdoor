@@ -454,7 +454,8 @@ func (idp *GothIdProvider) GetToken(code string) (*oauth2.Token, error) {
 			if verifier == "" {
 				verifier = "casdoor-verifier"
 			}
-			value.Add("oauth_verifier", verifier)
+			// RFC 7636 PKCE uses 'code_verifier' parameter
+			value.Add("code_verifier", verifier)
 		}
 	}
 	accessToken, err := idp.Session.Authorize(idp.Provider, value)
