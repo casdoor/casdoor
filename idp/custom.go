@@ -31,11 +31,12 @@ type CustomIdProvider struct {
 	Client *http.Client
 	Config *oauth2.Config
 
-	UserInfoURL string
-	TokenURL    string
-	AuthURL     string
-	UserMapping map[string]string
-	Scopes      []string
+	UserInfoURL  string
+	TokenURL     string
+	AuthURL      string
+	UserMapping  map[string]string
+	Scopes       []string
+	CodeVerifier string
 }
 
 func NewCustomIdProvider(idpInfo *ProviderInfo, redirectUrl string) *CustomIdProvider {
@@ -53,6 +54,7 @@ func NewCustomIdProvider(idpInfo *ProviderInfo, redirectUrl string) *CustomIdPro
 	idp.UserInfoURL = idpInfo.UserInfoURL
 	idp.UserMapping = idpInfo.UserMapping
 
+	idp.CodeVerifier = idpInfo.CodeVerifier
 	return idp
 }
 
@@ -62,7 +64,11 @@ func (idp *CustomIdProvider) SetHttpClient(client *http.Client) {
 
 func (idp *CustomIdProvider) GetToken(code string) (*oauth2.Token, error) {
 	ctx := context.WithValue(context.Background(), oauth2.HTTPClient, idp.Client)
-	return idp.Config.Exchange(ctx, code)
+	var oauth2Opts []oauth2.AuthCodeOption
+	if idp.CodeVerifier != "" {
+		oauth2Opts = append(oauth2Opts, oauth2.VerifierOption(idp.CodeVerifier))
+	}
+	return idp.Config.Exchange(ctx, code, oauth2Opts...)
 }
 
 func getNestedValue(data map[string]interface{}, path string) (interface{}, error) {

@@ -28,8 +28,9 @@ import (
 )
 
 type TwitterIdProvider struct {
-	Client *http.Client
-	Config *oauth2.Config
+	Client       *http.Client
+	Config       *oauth2.Config
+	CodeVerifier string
 }
 
 func NewTwitterIdProvider(clientId string, clientSecret string, redirectUrl string) *TwitterIdProvider {
@@ -84,7 +85,12 @@ func (idp *TwitterIdProvider) GetToken(code string) (*oauth2.Token, error) {
 	params := url.Values{}
 	// params.Add("client_id", idp.Config.ClientID)
 	params.Add("redirect_uri", idp.Config.RedirectURL)
-	params.Add("code_verifier", "casdoor-verifier")
+	// Use dynamic code verifier if provided, otherwise fall back to static one
+	verifier := idp.CodeVerifier
+	if verifier == "" {
+		verifier = "casdoor-verifier"
+	}
+	params.Add("code_verifier", verifier)
 	params.Add("code", code)
 	params.Add("grant_type", "authorization_code")
 	req, err := http.NewRequest("POST", "https://api.twitter.com/2/oauth2/token", strings.NewReader(params.Encode()))
