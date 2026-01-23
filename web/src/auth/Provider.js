@@ -497,7 +497,11 @@ export function getAuthUrl(application, provider, method, code) {
   } else if (provider.type === "Kwai") {
     return `${endpoint}?app_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&scope=${scope}`;
   } else if (type === "Custom") {
-    return `${provider.customAuthUrl}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${provider.scopes}&response_type=code&state=${state}`;
+    let authUrl = `${provider.customAuthUrl}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${provider.scopes}&response_type=code&state=${state}`;
+    if (provider.enablePkce) {
+      authUrl += `&code_challenge=${codeChallenge}&code_challenge_method=S256`;
+    }
+    return authUrl;
   } else if (provider.type === "Bilibili") {
     return `${endpoint}#/?client_id=${provider.clientId}&return_url=${redirectUri}&state=${state}&response_type=code`;
   } else if (provider.type === "Deezer") {
