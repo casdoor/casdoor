@@ -43,3 +43,25 @@ export function getPrometheusInfo() {
     },
   }).then(res => res.json());
 }
+
+export function getLatestVersion() {
+  return fetch(`${Setting.ServerUrl}/api/get-latest-version`, {
+    method: "GET",
+    credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}
+
+export function performUpgrade(downloadUrl) {
+  return fetch(`${Setting.ServerUrl}/api/perform-upgrade`, {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({downloadUrl: downloadUrl}),
+  }).then(res => res.json());
+}

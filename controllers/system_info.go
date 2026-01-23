@@ -15,6 +15,7 @@
 package controllers
 
 import (
+	"encoding/json"
 	"errors"
 
 	"github.com/casdoor/casdoor/util"
@@ -61,6 +62,59 @@ func (c *ApiController) GetVersionInfo() {
 	}
 
 	c.ResponseOk(util.GetBuiltInVersionInfo())
+}
+
+// GetLatestVersion
+// @Title GetLatestVersion
+// @Tag System API
+// @Description get latest Casdoor version from GitHub releases
+// @Success 200 {object} util.LatestVersionInfo The Response object
+// @router /get-latest-version [get]
+func (c *ApiController) GetLatestVersion() {
+	_, ok := c.RequireAdmin()
+	if !ok {
+		return
+	}
+
+	latestVersion, err := util.GetLatestVersion()
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	c.ResponseOk(latestVersion)
+}
+
+// PerformUpgrade
+// @Title PerformUpgrade
+// @Tag System API
+// @Description perform system upgrade to the latest version
+// @Param   body    body    object  true        "Download URL for the upgrade"
+// @Success 200 {object} controllers.Response The Response object
+// @router /perform-upgrade [post]
+func (c *ApiController) PerformUpgrade() {
+	_, ok := c.RequireAdmin()
+	if !ok {
+		return
+	}
+
+	var body struct {
+		DownloadUrl string `json:"downloadUrl"`
+	}
+
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, &body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	err = util.PerformUpgrade(body.DownloadUrl)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	c.ResponseOk()
 }
 
 // Health
