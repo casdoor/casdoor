@@ -87,8 +87,9 @@ import (
 )
 
 type GothIdProvider struct {
-	Provider goth.Provider
-	Session  goth.Session
+	Provider     goth.Provider
+	Session      goth.Session
+	CodeVerifier string
 }
 
 func NewGothIdProvider(providerType string, clientId string, clientSecret string, clientId2 string, clientSecret2 string, redirectUrl string, hostUrl string) (*GothIdProvider, error) {
@@ -448,7 +449,12 @@ func (idp *GothIdProvider) GetToken(code string) (*oauth2.Token, error) {
 		value = url.Values{}
 		value.Add("code", code)
 		if idp.Provider.Name() == "twitterv2" || idp.Provider.Name() == "fitbit" {
-			value.Add("oauth_verifier", "casdoor-verifier")
+			// Use dynamic code verifier if provided, otherwise fall back to static one
+			verifier := idp.CodeVerifier
+			if verifier == "" {
+				verifier = "casdoor-verifier"
+			}
+			value.Add("oauth_verifier", verifier)
 		}
 	}
 	accessToken, err := idp.Session.Authorize(idp.Provider, value)

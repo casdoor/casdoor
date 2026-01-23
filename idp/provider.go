@@ -45,6 +45,7 @@ type ProviderInfo struct {
 	HostUrl       string
 	RedirectUrl   string
 	DisableSsl    bool
+	CodeVerifier  string
 
 	TokenURL    string
 	AuthURL     string
@@ -128,12 +129,18 @@ func GetIdProvider(idpInfo *ProviderInfo, redirectUrl string) (IdProvider, error
 	case "Web3Onboard":
 		return NewWeb3OnboardIdProvider(), nil
 	case "Twitter":
-		return NewTwitterIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl), nil
+		provider := NewTwitterIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl)
+		provider.CodeVerifier = idpInfo.CodeVerifier
+		return provider, nil
 	case "Telegram":
 		return NewTelegramIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl), nil
 	default:
 		if isGothSupport(idpInfo.Type) {
-			return NewGothIdProvider(idpInfo.Type, idpInfo.ClientId, idpInfo.ClientSecret, idpInfo.ClientId2, idpInfo.ClientSecret2, redirectUrl, idpInfo.HostUrl)
+			provider, err := NewGothIdProvider(idpInfo.Type, idpInfo.ClientId, idpInfo.ClientSecret, idpInfo.ClientId2, idpInfo.ClientSecret2, redirectUrl, idpInfo.HostUrl)
+			if err == nil && provider != nil {
+				provider.CodeVerifier = idpInfo.CodeVerifier
+			}
+			return provider, err
 		}
 		if strings.HasPrefix(idpInfo.Type, "Custom") {
 			return NewCustomIdProvider(idpInfo, redirectUrl), nil

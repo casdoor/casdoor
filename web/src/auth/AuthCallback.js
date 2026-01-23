@@ -17,6 +17,7 @@ import {Spin} from "antd";
 import {withRouter} from "react-router-dom";
 import * as AuthBackend from "./AuthBackend";
 import * as Util from "./Util";
+import * as Provider from "./Provider";
 import {authConfig} from "./Auth";
 import * as Setting from "../Setting";
 import i18next from "i18next";
@@ -145,6 +146,9 @@ class AuthCallback extends React.Component {
     }
 
     const redirectUri = `${window.location.origin}/callback`;
+    
+    // Retrieve the code verifier for PKCE if it exists
+    const codeVerifier = Provider.getCodeVerifier(params.get("state"));
 
     const body = {
       type: this.getResponseType(),
@@ -156,7 +160,13 @@ class AuthCallback extends React.Component {
       state: applicationName,
       redirectUri: redirectUri,
       method: method,
+      codeVerifier: codeVerifier, // Include PKCE code verifier
     };
+    
+    // Clean up the stored code verifier after using it
+    if (codeVerifier) {
+      Provider.clearCodeVerifier(params.get("state"));
+    }
 
     if (this.getResponseType() === "cas") {
       // user is using casdoor as cas sso server, and wants the ticket to be acquired
