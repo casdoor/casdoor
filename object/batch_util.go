@@ -36,12 +36,22 @@ const (
 // PostgreSQL has a limit of 65535 parameters per query, and each record
 // in a batch insert uses N parameters (where N is the number of fields).
 func calculateSafeBatchSize(fieldsPerRecord int) int {
+	// Guard against invalid input
+	if fieldsPerRecord <= 0 {
+		return 1
+	}
+	
 	configuredBatchSize := conf.GetConfigBatchSize()
 	
 	// Calculate maximum batch size based on PostgreSQL parameter limit
 	// Leave some margin for safety (use 90% of the limit)
 	// Using integer arithmetic to avoid floating-point precision issues
 	maxSafeBatchSize := (postgresMaxParameters * 9) / (10 * fieldsPerRecord)
+	
+	// Ensure we always have at least batch size of 1
+	if maxSafeBatchSize < 1 {
+		maxSafeBatchSize = 1
+	}
 	
 	// Use the smaller of configured batch size and safe batch size
 	if configuredBatchSize < maxSafeBatchSize {

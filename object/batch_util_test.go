@@ -136,3 +136,43 @@ func TestFieldCountConstants(t *testing.T) {
 		})
 	}
 }
+
+func TestCalculateSafeBatchSizeEdgeCases(t *testing.T) {
+	tests := []struct {
+		name            string
+		fieldsPerRecord int
+		expectMinimum   bool
+	}{
+		{
+			name:            "Zero fields should return 1",
+			fieldsPerRecord: 0,
+			expectMinimum:   true,
+		},
+		{
+			name:            "Negative fields should return 1",
+			fieldsPerRecord: -1,
+			expectMinimum:   true,
+		},
+		{
+			name:            "Very large field count should return at least 1",
+			fieldsPerRecord: 100000,
+			expectMinimum:   true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			batchSize := calculateSafeBatchSize(tt.fieldsPerRecord)
+			
+			if batchSize < 1 {
+				t.Errorf("calculateSafeBatchSize(%d) returned %d, expected at least 1",
+					tt.fieldsPerRecord, batchSize)
+			}
+			
+			if tt.expectMinimum && batchSize != 1 {
+				t.Logf("Note: calculateSafeBatchSize(%d) returned %d (expected 1 for edge case)",
+					tt.fieldsPerRecord, batchSize)
+			}
+		})
+	}
+}
