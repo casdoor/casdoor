@@ -43,6 +43,7 @@ import (
 const (
 	defaultConfigPath     = "conf/app.conf"
 	defaultExportFilePath = "init_data_dump.json"
+	mysqlTLSConfigName    = "custom-mtls"
 )
 
 var (
@@ -75,14 +76,14 @@ func GetExportFilePath() string {
 }
 
 // setupMySQLTLS configures TLS for MySQL connections if certificate paths are provided
-func setupMySQLTLS() (string, error) {
+func setupMySQLTLS() error {
 	caCertPath := conf.GetConfigString("dbCaCert")
 	clientCertPath := conf.GetConfigString("dbClientCert")
 	clientKeyPath := conf.GetConfigString("dbClientKey")
 
-	// If no certificates are configured, return empty string (no TLS)
+	// If no certificates are configured, return nil (no TLS)
 	if caCertPath == "" && clientCertPath == "" && clientKeyPath == "" {
-		return "", nil
+		return nil
 	}
 
 	// Create TLS config
@@ -92,12 +93,12 @@ func setupMySQLTLS() (string, error) {
 	if caCertPath != "" {
 		caCert, err := os.ReadFile(caCertPath)
 		if err != nil {
-			return "", fmt.Errorf("failed to read CA certificate from %s: %w", caCertPath, err)
+			return fmt.Errorf("failed to read CA certificate from %s: %w", caCertPath, err)
 		}
 
 		caCertPool := x509.NewCertPool()
 		if !caCertPool.AppendCertsFromPEM(caCert) {
-			return "", fmt.Errorf("failed to parse CA certificate from %s", caCertPath)
+			return fmt.Errorf("failed to parse CA certificate from %s", caCertPath)
 		}
 		tlsConfig.RootCAs = caCertPool
 	}
@@ -106,43 +107,44 @@ func setupMySQLTLS() (string, error) {
 	if clientCertPath != "" && clientKeyPath != "" {
 		cert, err := tls.LoadX509KeyPair(clientCertPath, clientKeyPath)
 		if err != nil {
-			return "", fmt.Errorf("failed to load client certificate/key from %s and %s: %w", clientCertPath, clientKeyPath, err)
+			return fmt.Errorf("failed to load client certificate/key from %s and %s: %w", clientCertPath, clientKeyPath, err)
 		}
 		tlsConfig.Certificates = []tls.Certificate{cert}
 	} else if clientCertPath != "" || clientKeyPath != "" {
 		// If only one is provided, return an error
-		return "", fmt.Errorf("both dbClientCert and dbClientKey must be provided together")
+		return fmt.Errorf("both dbClientCert and dbClientKey must be provided together")
 	}
 
 	// Register the TLS config with MySQL driver
-	const tlsConfigName = "custom-mtls"
-	err := mysql.RegisterTLSConfig(tlsConfigName, tlsConfig)
+	err := mysql.RegisterTLSConfig(mysqlTLSConfigName, tlsConfig)
 	if err != nil {
-		return "", fmt.Errorf("failed to register MySQL TLS config: %w", err)
+		return fmt.Errorf("failed to register MySQL TLS config: %w", err)
 	}
 
-	return tlsConfigName, nil
+	return nil
+}
+
+// isMySQLTLSConfigured returns true if any MySQL TLS certificate is configured
+func isMySQLTLSConfigured() bool {
+	caCertPath := conf.GetConfigString("dbCaCert")
+	clientCertPath := conf.GetConfigString("dbClientCert")
+	clientKeyPath := conf.GetConfigString("dbClientKey")
+	return caCertPath != "" || clientCertPath != "" || clientKeyPath != ""
 }
 
 // appendMySQLTLSParam appends the TLS parameter to MySQL DSN if TLS is configured
 func appendMySQLTLSParam(dsn string) string {
-	// Check if TLS certificates are configured
-	caCertPath := conf.GetConfigString("dbCaCert")
-	clientCertPath := conf.GetConfigString("dbClientCert")
-	clientKeyPath := conf.GetConfigString("dbClientKey")
-
 	// If no certificates are configured, return the original DSN
-	if caCertPath == "" && clientCertPath == "" && clientKeyPath == "" {
+	if !isMySQLTLSConfigured() {
 		return dsn
 	}
 
 	// Append the TLS parameter
-	const tlsConfigName = "custom-mtls"
 	separator := "?"
 	if strings.Contains(dsn, "?") {
 		separator = "&"
 	}
-	return dsn + separator + "tls=" + tlsConfigName
+	return dsn + separator + "tls=" + mysqlTLSConfigName
 }
 
 func InitConfig() {
@@ -171,7 +173,7 @@ func InitAdapter() {
 
 	// Setup MySQL TLS if certificates are configured
 	if conf.GetConfigString("driverName") == "mysql" {
-		_, err := setupMySQLTLS()
+		err := setupMySQLTLS()
 		if err != nil {
 			panic(err)
 		}

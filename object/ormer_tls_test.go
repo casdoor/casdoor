@@ -102,9 +102,8 @@ func TestSetupMySQLTLS_NoCertificates(t *testing.T) {
 	os.Unsetenv("dbClientCert")
 	os.Unsetenv("dbClientKey")
 
-	tlsName, err := setupMySQLTLS()
+	err = setupMySQLTLS()
 	assert.Nil(t, err)
-	assert.Equal(t, "", tlsName)
 }
 
 func TestSetupMySQLTLS_InvalidCertPath(t *testing.T) {
@@ -116,7 +115,7 @@ func TestSetupMySQLTLS_InvalidCertPath(t *testing.T) {
 	os.Setenv("dbCaCert", "/invalid/path/ca.pem")
 	defer os.Unsetenv("dbCaCert")
 
-	_, err = setupMySQLTLS()
+	err = setupMySQLTLS()
 	assert.NotNil(t, err)
 	assert.Contains(t, err.Error(), "failed to read CA certificate")
 }
@@ -130,7 +129,7 @@ func TestSetupMySQLTLS_MismatchedClientCerts(t *testing.T) {
 	os.Setenv("dbClientCert", "/path/to/client.pem")
 	defer os.Unsetenv("dbClientCert")
 
-	_, err = setupMySQLTLS()
+	err = setupMySQLTLS()
 	assert.NotNil(t, err)
 	assert.Contains(t, err.Error(), "both dbClientCert and dbClientKey must be provided together")
 }
