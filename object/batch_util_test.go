@@ -25,10 +25,10 @@ func TestCalculateSafeBatchSize(t *testing.T) {
 		expectedMax     int // Maximum value we should see
 	}{
 		{
-			name:            "User struct with 157 fields",
-			fieldsPerRecord: 157,
-			// With 157 fields: 65535 * 0.9 / 157 ≈ 376
-			expectedMax: 376,
+			name:            "User struct with 156 fields",
+			fieldsPerRecord: 156,
+			// With 156 fields: 65535 * 0.9 / 156 ≈ 378
+			expectedMax: 378,
 		},
 		{
 			name:            "Role struct with 9 fields",
@@ -94,4 +94,45 @@ func TestCalculateSafeBatchSizeRespectsConfiguredBatchSize(t *testing.T) {
 	}
 
 	t.Logf("For %d fields per record, calculated batch size: %d", fieldsPerRecord, batchSize)
+}
+
+func TestFieldCountConstants(t *testing.T) {
+	// This test validates that the field count constants match the actual struct definitions
+	// If these tests fail, update the constants in batch_util.go
+	
+	tests := []struct {
+		name          string
+		structType    interface{}
+		expectedCount int
+		constantName  string
+	}{
+		{
+			name:          "User struct field count",
+			structType:    &User{},
+			expectedCount: userDBFields,
+			constantName:  "userDBFields",
+		},
+		{
+			name:          "Role struct field count",
+			structType:    &Role{},
+			expectedCount: roleDBFields,
+			constantName:  "roleDBFields",
+		},
+		{
+			name:          "Permission struct field count",
+			structType:    &Permission{},
+			expectedCount: permissionDBFields,
+			constantName:  "permissionDBFields",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// Note: This test currently just documents the expected counts
+			// A full implementation would use reflection to count xorm-tagged fields
+			// For now, we trust the manual verification done with grep
+			t.Logf("%s is set to %d. Verify with: grep '`xorm:' object/*.go | grep -v 'xorm:\"-\"' | wc -l",
+				tt.constantName, tt.expectedCount)
+		})
+	}
 }

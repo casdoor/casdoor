@@ -24,10 +24,11 @@ const (
 	postgresMaxParameters = 65535
 
 	// Database field counts for batch operations
-	// These should be updated when struct fields change
-	userDBFields       = 157 // User struct has ~157 database fields (xorm tagged)
-	roleDBFields       = 9   // Role struct has ~9 database fields
-	permissionDBFields = 19  // Permission struct has ~19 database fields
+	// These are the number of fields with xorm tags (excluding xorm:"-")
+	// To verify: grep -c '`xorm:' object/<struct>.go | grep -v 'xorm:"-"'
+	userDBFields       = 156 // User struct database fields
+	roleDBFields       = 9   // Role struct database fields
+	permissionDBFields = 19  // Permission struct database fields
 )
 
 // calculateSafeBatchSize calculates a safe batch size that respects both
