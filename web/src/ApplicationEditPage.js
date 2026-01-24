@@ -141,7 +141,7 @@ class ApplicationEditPage extends React.Component {
       samlAttributes: [],
       samlMetadata: null,
       isAuthorized: true,
-      activeMenuKey: window.location.hash.slice(1) || "basic",
+      activeMenuKey: window.location.hash?.slice(1) || "basic",
       menuMode: "horizontal",
     };
   }
