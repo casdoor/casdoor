@@ -39,7 +39,7 @@ class ProductBuyPage extends React.Component {
       plan: null,
       isPlacingOrder: false,
       isAddingToCart: false,
-      customPrice: 0,
+      customPrice: 100,
     };
   }
 
@@ -108,10 +108,16 @@ class ProductBuyPage extends React.Component {
         product: res.data,
       });
 
-      if (res.data.isRecharge && res.data.rechargeOptions?.length > 0) {
-        this.setState({
-          customPrice: res.data.rechargeOptions[0],
-        });
+      if (res.data.isRecharge) {
+        if (res.data.rechargeOptions?.length > 0) {
+          this.setState({
+            customPrice: res.data.rechargeOptions[0],
+          });
+        } else {
+          this.setState({
+            customPrice: 100,
+          });
+        }
       }
     } catch (err) {
       Setting.showMessage("error", err.message);
@@ -176,6 +182,7 @@ class ProductBuyPage extends React.Component {
             const newProductInfo = {
               name: product.name,
               price: actualPrice,
+              currency: product.currency,
               pricingName: pricingName,
               planName: planName,
               quantity: 1,
@@ -312,6 +319,7 @@ class ProductBuyPage extends React.Component {
     const hasOptions = product.rechargeOptions && product.rechargeOptions.length > 0;
     const disableCustom = product.disableCustomRecharge;
     const isRechargeUnpurchasable = product.isRecharge && !hasOptions && disableCustom;
+    const isAmountZero = product.isRecharge && (this.state.customPrice === 0 || this.state.customPrice === null);
 
     return (
       <div style={{display: "flex", justifyContent: "center", alignItems: "center", gap: "20px"}}>
@@ -326,7 +334,7 @@ class ProductBuyPage extends React.Component {
             paddingRight: "60px",
           }}
           onClick={() => this.placeOrder(product)}
-          disabled={this.state.isPlacingOrder || isRechargeUnpurchasable}
+          disabled={this.state.isPlacingOrder || isRechargeUnpurchasable || isAmountZero}
           loading={this.state.isPlacingOrder}
         >
           {i18next.t("order:Place Order")}
@@ -342,7 +350,7 @@ class ProductBuyPage extends React.Component {
             paddingRight: "30px",
           }}
           onClick={() => this.addToCart(product)}
-          disabled={isRechargeUnpurchasable || this.state.isAddingToCart}
+          disabled={isRechargeUnpurchasable || this.state.isAddingToCart || isAmountZero}
           loading={this.state.isAddingToCart}
         >
           {i18next.t("product:Add to cart")}
