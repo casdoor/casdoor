@@ -440,7 +440,7 @@ export function getAuthUrl(application, provider, method, code) {
     applicationName = `${application.name}-org-${application.organization}`;
   }
   const state = Util.getStateFromQueryParams(applicationName, provider.name, method, isShortState);
-  
+
   // Generate PKCE code verifier and challenge dynamically
   const codeVerifier = generateCodeVerifier();
   const codeChallenge = generateCodeChallenge(codeVerifier);

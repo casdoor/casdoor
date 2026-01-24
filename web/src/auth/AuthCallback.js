@@ -146,7 +146,7 @@ class AuthCallback extends React.Component {
     }
 
     const redirectUri = `${window.location.origin}/callback`;
-    
+
     // Retrieve the code verifier for PKCE if it exists
     const codeVerifier = Provider.getCodeVerifier(params.get("state"));
 
@@ -162,7 +162,7 @@ class AuthCallback extends React.Component {
       method: method,
       codeVerifier: codeVerifier, // Include PKCE code verifier
     };
-    
+
     // Clean up the stored code verifier after using it
     if (codeVerifier) {
       Provider.clearCodeVerifier(params.get("state"));
