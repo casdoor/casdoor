@@ -40,19 +40,19 @@ func calculateSafeBatchSize(fieldsPerRecord int) int {
 	if fieldsPerRecord <= 0 {
 		return 1
 	}
-	
+
 	configuredBatchSize := conf.GetConfigBatchSize()
-	
+
 	// Calculate maximum batch size based on PostgreSQL parameter limit
 	// Leave some margin for safety (use 90% of the limit)
 	// Using integer arithmetic to avoid floating-point precision issues
 	maxSafeBatchSize := (postgresMaxParameters * 9) / (10 * fieldsPerRecord)
-	
+
 	// Ensure we always have at least batch size of 1
 	if maxSafeBatchSize < 1 {
 		maxSafeBatchSize = 1
 	}
-	
+
 	// Use the smaller of configured batch size and safe batch size
 	if configuredBatchSize < maxSafeBatchSize {
 		return configuredBatchSize

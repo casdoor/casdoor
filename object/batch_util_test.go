@@ -79,7 +79,7 @@ func TestCalculateSafeBatchSize(t *testing.T) {
 func TestCalculateSafeBatchSizeRespectsConfiguredBatchSize(t *testing.T) {
 	// This test verifies that if the configured batch size is smaller than
 	// the PostgreSQL-safe batch size, we use the configured batch size.
-	
+
 	// For a struct with very few fields (e.g., 2 fields), the safe batch size
 	// would be very large (65535 * 0.9 / 2 ≈ 29490).
 	// But if the configured batch size is 100, we should use 100 instead.
@@ -99,7 +99,7 @@ func TestCalculateSafeBatchSizeRespectsConfiguredBatchSize(t *testing.T) {
 func TestFieldCountConstants(t *testing.T) {
 	// This test validates that the field count constants match the actual struct definitions
 	// If these tests fail, update the constants in batch_util.go
-	
+
 	tests := []struct {
 		name          string
 		structType    interface{}
@@ -163,12 +163,12 @@ func TestCalculateSafeBatchSizeEdgeCases(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			batchSize := calculateSafeBatchSize(tt.fieldsPerRecord)
-			
+
 			if batchSize < 1 {
 				t.Errorf("calculateSafeBatchSize(%d) returned %d, expected at least 1",
 					tt.fieldsPerRecord, batchSize)
 			}
-			
+
 			if tt.expectMinimum && batchSize != 1 {
 				t.Logf("Note: calculateSafeBatchSize(%d) returned %d (expected 1 for edge case)",
 					tt.fieldsPerRecord, batchSize)
