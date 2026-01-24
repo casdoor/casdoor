@@ -776,25 +776,21 @@ class ApplicationEditPage extends React.Component {
             </Popover>
           </Col>
         </Row>
-        {
-          <React.Fragment>
-            <Row style={{marginTop: "20px"}} >
-              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                {Setting.getLabel(i18next.t("application:Signin items"), i18next.t("application:Signin items - Tooltip"))} :
-              </Col>
-              <Col span={22} >
-                <SigninTable
-                  title={i18next.t("application:Signin items")}
-                  table={this.state.application.signinItems}
-                  themeAlgorithm={this.state.themeAlgorithm}
-                  onUpdateTable={(value) => {
-                    this.updateApplicationField("signinItems", value);
-                  }}
-                />
-              </Col>
-            </Row>
-          </React.Fragment>
-        }
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("application:Signin items"), i18next.t("application:Signin items - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <SigninTable
+              title={i18next.t("application:Signin items")}
+              table={this.state.application.signinItems}
+              themeAlgorithm={this.state.themeAlgorithm}
+              onUpdateTable={(value) => {
+                this.updateApplicationField("signinItems", value);
+              }}
+            />
+          </Col>
+        </Row>
         {
           !this.state.application.enableSignUp ? null : (
             <React.Fragment>
