@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, ConfigProvider, Input, InputNumber, Popover, Radio, Result, Row, Select, Space, Switch, Upload, message} from "antd";
+import {Button, Card, Col, ConfigProvider, Input, InputNumber, Menu, Popover, Radio, Result, Row, Select, Space, Switch, Upload, message} from "antd";
 import {CopyOutlined, HolderOutlined, LinkOutlined, UploadOutlined, UsergroupAddOutlined} from "@ant-design/icons";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
 import * as CertBackend from "./backend/CertBackend";
@@ -121,6 +121,8 @@ class ApplicationEditPage extends React.Component {
       samlAttributes: [],
       samlMetadata: null,
       isAuthorized: true,
+      activeMenuKey: "basic",
+      menuMode: "horizontal",
     };
   }
 
@@ -275,9 +277,23 @@ class ApplicationEditPage extends React.Component {
           {this.state.mode === "add" ? <Button style={{marginLeft: "20px"}} onClick={() => this.deleteApplication()}>{i18next.t("general:Cancel")}</Button> : null}
         </div>
       } style={(Setting.isMobile()) ? {margin: "5px"} : {}} type="inner">
-        <Row style={{marginTop: "10px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:Name"), i18next.t("general:Name - Tooltip"))} :
+        <Menu
+          mode={this.state.menuMode}
+          selectedKeys={[this.state.activeMenuKey]}
+          onClick={({key}) => this.setState({activeMenuKey: key})}
+          style={{marginBottom: "20px"}}
+        >
+          <Menu.Item key="basic">{i18next.t("application:Basic settings")}</Menu.Item>
+          <Menu.Item key="authentication">{i18next.t("application:Authentication settings")}</Menu.Item>
+          <Menu.Item key="providers">{i18next.t("application:Providers configuration")}</Menu.Item>
+          <Menu.Item key="ui-customization">{i18next.t("application:UI Customization")}</Menu.Item>
+          <Menu.Item key="security">{i18next.t("application:Security settings")}</Menu.Item>
+        </Menu>
+        {this.state.activeMenuKey === "basic" && (
+          <React.Fragment>
+            <Row style={{marginTop: "10px"}} >
+              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                {Setting.getLabel(i18next.t("general:Name"), i18next.t("general:Name - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Input value={this.state.application.name} disabled={this.state.application.name === "app-built-in"} onChange={e => {
@@ -422,34 +438,37 @@ class ApplicationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("application:Order"), i18next.t("application:Order - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <InputNumber style={{width: "150px"}} value={this.state.application.order} min={0} step={1} precision={0} addonAfter="" onChange={value => {
+              this.updateApplicationField("order", value);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("application:Menu mode"), i18next.t("application:Menu mode - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Radio.Group value={this.state.menuMode} onChange={e => this.setState({menuMode: e.target.value})}>
+              <Radio value="horizontal">{i18next.t("application:Horizontal")}</Radio>
+              <Radio value="vertical">{i18next.t("application:Vertical")}</Radio>
+            </Radio.Group>
+          </Col>
+        </Row>
+          </React.Fragment>
+        )}
+        {this.state.activeMenuKey === "authentication" && (
+          <React.Fragment>
+            <Row style={{marginTop: "10px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("provider:Client ID"), i18next.t("provider:Client ID - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Input value={this.state.application.clientId} onChange={e => {
               this.updateApplicationField("clientId", e.target.value);
             }} />
-          </Col>
-        </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("provider:Client secret"), i18next.t("provider:Client secret - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <Input value={this.state.application.clientSecret} onChange={e => {
-              this.updateApplicationField("clientSecret", e.target.value);
-            }} />
-          </Col>
-        </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:Cert"), i18next.t("general:Cert - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <Select virtual={false} style={{width: "100%"}} value={this.state.application.cert} onChange={(value => {this.updateApplicationField("cert", value);})}>
-              {
-                this.state.certs.map((cert, index) => <Option key={index} value={cert.name}>{cert.name}</Option>)
-              }
-            </Select>
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
@@ -525,16 +544,6 @@ class ApplicationEditPage extends React.Component {
         }
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("application:Order"), i18next.t("application:Order - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <InputNumber style={{width: "150px"}} value={this.state.application.order} min={0} step={1} precision={0} addonAfter="" onChange={value => {
-              this.updateApplicationField("order", value);
-            }} />
-          </Col>
-        </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("application:Token expire"), i18next.t("application:Token expire - Tooltip"))} :
           </Col>
           <Col span={22} >
@@ -560,36 +569,6 @@ class ApplicationEditPage extends React.Component {
           <Col span={22} >
             <InputNumber style={{width: "150px"}} value={this.state.application.cookieExpireInHours || 720} min={1} step={1} precision={0} addonAfter="Hours" onChange={value => {
               this.updateApplicationField("cookieExpireInHours", value);
-            }} />
-          </Col>
-        </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("application:Failed signin limit"), i18next.t("application:Failed signin limit - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <InputNumber style={{width: "150px"}} value={this.state.application.failedSigninLimit} min={1} step={1} precision={0} addonAfter="Times" onChange={value => {
-              this.updateApplicationField("failedSigninLimit", value);
-            }} />
-          </Col>
-        </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("application:Failed signin frozen time"), i18next.t("application:Failed signin frozen time - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <InputNumber style={{width: "150px"}} value={this.state.application.failedSigninFrozenTime} min={1} step={1} precision={0} addonAfter="Minutes" onChange={value => {
-              this.updateApplicationField("failedSigninFrozenTime", value);
-            }} />
-          </Col>
-        </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("application:Code resend timeout"), i18next.t("application:Code resend timeout - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <InputNumber style={{width: "150px"}} value={this.state.application.codeResendTimeout} min={0} step={1} precision={0} addonAfter="Seconds" onChange={value => {
-              this.updateApplicationField("codeResendTimeout", value);
             }} />
           </Col>
         </Row>
@@ -763,30 +742,6 @@ class ApplicationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:IP whitelist"), i18next.t("general:IP whitelist - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <Input placeholder = {this.state.application.organizationObj?.ipWhitelist} value={this.state.application.ipWhitelist} onChange={e => {
-              this.updateApplicationField("ipWhitelist", e.target.value);
-            }} />
-          </Col>
-        </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("signup:Terms of Use"), i18next.t("signup:Terms of Use - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <Input prefix={<LinkOutlined />} value={this.state.application.termsOfUse} style={{marginBottom: "10px"}} onChange={e => {
-              this.updateApplicationField("termsOfUse", e.target.value);
-            }} />
-            <Upload maxCount={1} accept=".html" showUploadList={false}
-              beforeUpload={file => {return false;}} onChange={info => {this.handleUpload(info);}}>
-              <Button icon={<UploadOutlined />} loading={this.state.uploading}>{i18next.t("general:Click to Upload")}</Button>
-            </Upload>
-          </Col>
-        </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("provider:Signup HTML"), i18next.t("provider:Signup HTML - Tooltip"))} :
           </Col>
           <Col span={22} >
@@ -821,30 +776,45 @@ class ApplicationEditPage extends React.Component {
             </Popover>
           </Col>
         </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("application:Grant types"), i18next.t("application:Grant types - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <Select virtual={false} mode="multiple" style={{width: "100%"}}
-              value={this.state.application.grantTypes}
-              onChange={(value => {
-                this.updateApplicationField("grantTypes", value);
-              })} >
-              {
-                [
-                  {id: "authorization_code", name: "Authorization Code"},
-                  {id: "password", name: "Password"},
-                  {id: "client_credentials", name: "Client Credentials"},
-                  {id: "token", name: "Token"},
-                  {id: "id_token", name: "ID Token"},
-                  {id: "refresh_token", name: "Refresh Token"},
-                  {id: "urn:ietf:params:oauth:grant-type:device_code", name: "Device Code"},
-                ].map((item, index) => <Option key={index} value={item.id}>{item.name}</Option>)
-              }
-            </Select>
-          </Col>
-        </Row>
+        {
+          <React.Fragment>
+            <Row style={{marginTop: "20px"}} >
+              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                {Setting.getLabel(i18next.t("application:Signin items"), i18next.t("application:Signin items - Tooltip"))} :
+              </Col>
+              <Col span={22} >
+                <SigninTable
+                  title={i18next.t("application:Signin items")}
+                  table={this.state.application.signinItems}
+                  themeAlgorithm={this.state.themeAlgorithm}
+                  onUpdateTable={(value) => {
+                    this.updateApplicationField("signinItems", value);
+                  }}
+                />
+              </Col>
+            </Row>
+          </React.Fragment>
+        }
+        {
+          !this.state.application.enableSignUp ? null : (
+            <React.Fragment>
+              <Row style={{marginTop: "20px"}} >
+                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {Setting.getLabel(i18next.t("application:Signup items"), i18next.t("application:Signup items - Tooltip"))} :
+                </Col>
+                <Col span={22} >
+                  <SignupTable
+                    title={i18next.t("application:Signup items")}
+                    table={this.state.application.signupItems}
+                    onUpdateTable={(value) => {
+                      this.updateApplicationField("signupItems", value);
+                    }}
+                  />
+                </Col>
+              </Row>
+            </React.Fragment>
+          )
+        }
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("application:SAML reply URL"), i18next.t("application:Redirect URL (Assertion Consumer Service POST Binding URL) - Tooltip"))} :
@@ -969,7 +939,11 @@ class ApplicationEditPage extends React.Component {
             </Button>
           </Col>
         </Row>
-        <Row style={{marginTop: "20px"}} >
+          </React.Fragment>
+        )}
+        {this.state.activeMenuKey === "providers" && (
+          <React.Fragment>
+            <Row style={{marginTop: "10px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("general:Providers"), i18next.t("general:Providers - Tooltip"))} :
           </Col>
@@ -983,7 +957,11 @@ class ApplicationEditPage extends React.Component {
             />
           </Col>
         </Row>
-        <Row style={{marginTop: "20px"}} >
+          </React.Fragment>
+        )}
+        {this.state.activeMenuKey === "ui-customization" && (
+          <React.Fragment>
+            <Row style={{marginTop: "10px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("general:Preview"), i18next.t("general:Preview - Tooltip"))} :
           </Col>
@@ -1219,45 +1197,6 @@ class ApplicationEditPage extends React.Component {
             {i18next.t("application:Reset to Empty")}
           </Button>
         </Row>
-        {
-          <React.Fragment>
-            <Row style={{marginTop: "20px"}} >
-              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                {Setting.getLabel(i18next.t("application:Signin items"), i18next.t("application:Signin items - Tooltip"))} :
-              </Col>
-              <Col span={22} >
-                <SigninTable
-                  title={i18next.t("application:Signin items")}
-                  table={this.state.application.signinItems}
-                  themeAlgorithm={this.state.themeAlgorithm}
-                  onUpdateTable={(value) => {
-                    this.updateApplicationField("signinItems", value);
-                  }}
-                />
-              </Col>
-            </Row>
-          </React.Fragment>
-        }
-        {
-          !this.state.application.enableSignUp ? null : (
-            <React.Fragment>
-              <Row style={{marginTop: "20px"}} >
-                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                  {Setting.getLabel(i18next.t("application:Signup items"), i18next.t("application:Signup items - Tooltip"))} :
-                </Col>
-                <Col span={22} >
-                  <SignupTable
-                    title={i18next.t("application:Signup items")}
-                    table={this.state.application.signupItems}
-                    onUpdateTable={(value) => {
-                      this.updateApplicationField("signupItems", value);
-                    }}
-                  />
-                </Col>
-              </Row>
-            </React.Fragment>
-          )
-        }
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("general:Preview"), i18next.t("general:Preview - Tooltip"))} :
@@ -1266,6 +1205,112 @@ class ApplicationEditPage extends React.Component {
             this.renderPromptPreview()
           }
         </Row>
+          </React.Fragment>
+        )}
+        {this.state.activeMenuKey === "security" && (
+          <React.Fragment>
+            <Row style={{marginTop: "10px"}} >
+              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                {Setting.getLabel(i18next.t("provider:Client secret"), i18next.t("provider:Client secret - Tooltip"))} :
+              </Col>
+              <Col span={22} >
+                <Input value={this.state.application.clientSecret} onChange={e => {
+                  this.updateApplicationField("clientSecret", e.target.value);
+                }} />
+              </Col>
+            </Row>
+            <Row style={{marginTop: "20px"}} >
+              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                {Setting.getLabel(i18next.t("general:Cert"), i18next.t("general:Cert - Tooltip"))} :
+              </Col>
+              <Col span={22} >
+                <Select virtual={false} style={{width: "100%"}} value={this.state.application.cert} onChange={(value => {this.updateApplicationField("cert", value);})}>
+                  {
+                    this.state.certs.map((cert, index) => <Option key={index} value={cert.name}>{cert.name}</Option>)
+                  }
+                </Select>
+              </Col>
+            </Row>
+            <Row style={{marginTop: "20px"}} >
+              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                {Setting.getLabel(i18next.t("application:Grant types"), i18next.t("application:Grant types - Tooltip"))} :
+              </Col>
+              <Col span={22} >
+                <Select virtual={false} mode="multiple" style={{width: "100%"}}
+                  value={this.state.application.grantTypes}
+                  onChange={(value => {
+                    this.updateApplicationField("grantTypes", value);
+                  })} >
+                  {
+                    [
+                      {id: "authorization_code", name: "Authorization Code"},
+                      {id: "password", name: "Password"},
+                      {id: "client_credentials", name: "Client Credentials"},
+                      {id: "token", name: "Token"},
+                      {id: "id_token", name: "ID Token"},
+                      {id: "refresh_token", name: "Refresh Token"},
+                      {id: "urn:ietf:params:oauth:grant-type:device_code", name: "Device Code"},
+                    ].map((item, index) => <Option key={index} value={item.id}>{item.name}</Option>)
+                  }
+                </Select>
+              </Col>
+            </Row>
+            <Row style={{marginTop: "20px"}} >
+              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                {Setting.getLabel(i18next.t("application:Failed signin limit"), i18next.t("application:Failed signin limit - Tooltip"))} :
+              </Col>
+              <Col span={22} >
+                <InputNumber style={{width: "150px"}} value={this.state.application.failedSigninLimit} min={1} step={1} precision={0} addonAfter="Times" onChange={value => {
+                  this.updateApplicationField("failedSigninLimit", value);
+                }} />
+              </Col>
+            </Row>
+            <Row style={{marginTop: "20px"}} >
+              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                {Setting.getLabel(i18next.t("application:Failed signin frozen time"), i18next.t("application:Failed signin frozen time - Tooltip"))} :
+              </Col>
+              <Col span={22} >
+                <InputNumber style={{width: "150px"}} value={this.state.application.failedSigninFrozenTime} min={1} step={1} precision={0} addonAfter="Minutes" onChange={value => {
+                  this.updateApplicationField("failedSigninFrozenTime", value);
+                }} />
+              </Col>
+            </Row>
+            <Row style={{marginTop: "20px"}} >
+              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                {Setting.getLabel(i18next.t("application:Code resend timeout"), i18next.t("application:Code resend timeout - Tooltip"))} :
+              </Col>
+              <Col span={22} >
+                <InputNumber style={{width: "150px"}} value={this.state.application.codeResendTimeout} min={0} step={1} precision={0} addonAfter="Seconds" onChange={value => {
+                  this.updateApplicationField("codeResendTimeout", value);
+                }} />
+              </Col>
+            </Row>
+            <Row style={{marginTop: "20px"}} >
+              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                {Setting.getLabel(i18next.t("general:IP whitelist"), i18next.t("general:IP whitelist - Tooltip"))} :
+              </Col>
+              <Col span={22} >
+                <Input placeholder = {this.state.application.organizationObj?.ipWhitelist} value={this.state.application.ipWhitelist} onChange={e => {
+                  this.updateApplicationField("ipWhitelist", e.target.value);
+                }} />
+              </Col>
+            </Row>
+            <Row style={{marginTop: "20px"}} >
+              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                {Setting.getLabel(i18next.t("signup:Terms of Use"), i18next.t("signup:Terms of Use - Tooltip"))} :
+              </Col>
+              <Col span={22} >
+                <Input prefix={<LinkOutlined />} value={this.state.application.termsOfUse} style={{marginBottom: "10px"}} onChange={e => {
+                  this.updateApplicationField("termsOfUse", e.target.value);
+                }} />
+                <Upload maxCount={1} accept=".html" showUploadList={false}
+                  beforeUpload={file => {return false;}} onChange={info => {this.handleUpload(info);}}>
+                  <Button icon={<UploadOutlined />} loading={this.state.uploading}>{i18next.t("general:Click to Upload")}</Button>
+                </Upload>
+              </Col>
+            </Row>
+          </React.Fragment>
+        )}
       </Card>
     );
   }
