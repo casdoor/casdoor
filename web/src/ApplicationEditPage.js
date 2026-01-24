@@ -267,6 +267,10 @@ class ApplicationEditPage extends React.Component {
       });
   }
 
+  handleMenuClick = ({key}) => {
+    this.setState({activeMenuKey: key});
+  };
+
   renderApplication() {
     return (
       <Card size="small" title={
@@ -280,7 +284,7 @@ class ApplicationEditPage extends React.Component {
         <Menu
           mode={this.state.menuMode}
           selectedKeys={[this.state.activeMenuKey]}
-          onClick={({key}) => this.setState({activeMenuKey: key})}
+          onClick={this.handleMenuClick}
           style={{marginBottom: "20px"}}
         >
           <Menu.Item key="basic">{i18next.t("application:Basic settings")}</Menu.Item>
