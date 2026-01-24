@@ -1342,7 +1342,7 @@ class ApplicationEditPage extends React.Component {
               </Header>
             ) : null
           }
-          <Layout style={{background: "inherit", maxHeight: "70vh", overflow: "auto"}}>
+          <Layout style={{background: "inherit", maxHeight: "calc(70vh - 70px)", overflow: "auto"}}>
             {
               this.state.menuMode === "vertical" ? (
                 <Sider width={200} style={{background: "inherit", position: "sticky", top: 0}}>
