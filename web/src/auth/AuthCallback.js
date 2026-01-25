@@ -32,6 +32,7 @@ class AuthCallback extends React.Component {
       samlResponse: "",
       relayState: "",
       redirectUrl: "",
+      nextParam: "",
     };
   }
 
@@ -87,6 +88,10 @@ class AuthCallback extends React.Component {
   UNSAFE_componentWillMount() {
     const params = new URLSearchParams(this.props.location.search);
     const isSteam = params.get("openid.mode");
+
+    // Extract from both direct URL params and state params
+    const nextParam = params.get("next") || innerParams.get("next");
+    this.setState({nextParam});
     let code = params.get("code");
     // WeCom returns "auth_code=xxx" instead of "code=xxx"
     if (code === null) {
@@ -174,6 +179,9 @@ class AuthCallback extends React.Component {
               const st = res.data;
               const newUrl = new URL(casService);
               newUrl.searchParams.append("ticket", st);
+              if (this.state.nextParam) {
+                newUrl.searchParams.append("next", this.state.nextParam);
+              }
               window.location.href = newUrl.toString();
             }
           };
@@ -205,7 +213,7 @@ class AuthCallback extends React.Component {
               }
               Setting.showMessage("success", "Logged in successfully");
               // Setting.goToLinkSoft(this, "/");
-              const link = Setting.getFromLink();
+              const link = this.state.nextParam || Setting.getFromLink();
               Setting.goToLink(link);
             } else if (responseType === "code") {
               if (res.data3) {
@@ -222,7 +230,11 @@ class AuthCallback extends React.Component {
                 createFormAndSubmit(oAuthParams?.redirectUri, params);
               } else {
                 const code = res.data;
-                Setting.goToLink(`${oAuthParams.redirectUri}${concatChar}code=${code}&state=${oAuthParams.state}`);
+                const baseUrl = `${oAuthParams.redirectUri}${concatChar}code=${code}&state=${oAuthParams.state}`;
+                const finalUrl = this.state.nextParam
+                  ? `${baseUrl}&next=${encodeURIComponent(this.state.nextParam)}`
+                  : baseUrl;
+                Setting.goToLink(finalUrl);
               }
             // Setting.showMessage("success", `Authorization code: ${res.data}`);
             } else if (responseTypes.includes("token") || responseTypes.includes("id_token")) {
@@ -242,7 +254,11 @@ class AuthCallback extends React.Component {
                 createFormAndSubmit(oAuthParams?.redirectUri, params);
               } else {
                 const token = res.data;
-                Setting.goToLink(`${oAuthParams.redirectUri}${concatChar}${responseType}=${token}&state=${oAuthParams.state}&token_type=bearer`);
+                const baseUrl = `${oAuthParams.redirectUri}${concatChar}${responseType}=${token}&state=${oAuthParams.state}&token_type=bearer`;
+                const finalUrl = this.state.nextParam
+                  ? `${baseUrl}&next=${encodeURIComponent(this.state.nextParam)}`
+                  : baseUrl;
+                Setting.goToLink(finalUrl);
               }
             } else if (responseType === "link") {
               let from = innerParams.get("from");
@@ -250,7 +266,8 @@ class AuthCallback extends React.Component {
               if (oauth) {
                 from += `?oauth=${oauth}`;
               }
-              Setting.goToLinkSoftOrJumpSelf(this, from);
+              const finalDestination = this.state.nextParam || from;
+              Setting.goToLinkSoftOrJumpSelf(this, finalDestination);
             } else if (responseType === "saml") {
               if (res.data2.method === "POST") {
                 this.setState({
@@ -266,7 +283,11 @@ class AuthCallback extends React.Component {
                 }
                 const SAMLResponse = res.data;
                 const redirectUri = res.data2.redirectUrl;
-                Setting.goToLink(`${redirectUri}${redirectUri.includes("?") ? "&" : "?"}SAMLResponse=${encodeURIComponent(SAMLResponse)}&RelayState=${oAuthParams.relayState}`);
+                const baseUrl = `${redirectUri}${redirectUri.includes("?") ? "&" : "?"}SAMLResponse=${encodeURIComponent(SAMLResponse)}&RelayState=${oAuthParams.relayState}`;
+                const finalUrl = this.state.nextParam
+                  ? `${baseUrl}&next=${encodeURIComponent(this.state.nextParam)}`
+                  : baseUrl;
+                Setting.goToLink(finalUrl);
               }
             }
           };
