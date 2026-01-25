@@ -32,6 +32,7 @@ type AccountItem struct {
 	ViewRule   string `json:"viewRule"`
 	ModifyRule string `json:"modifyRule"`
 	Regex      string `json:"regex"`
+	Tab        string `json:"tab"`
 }
 
 type ThemeData struct {

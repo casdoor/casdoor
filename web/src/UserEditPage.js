@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Form, Input, InputNumber, List, Result, Row, Select, Space, Spin, Switch, Tag, Tooltip} from "antd";
+import {Button, Card, Col, Form, Input, InputNumber, Layout, List, Menu, Result, Row, Select, Space, Spin, Switch, Tabs, Tag, Tooltip} from "antd";
 import {withRouter} from "react-router-dom";
 import {TotpMfaType} from "./auth/MfaSetupPage";
 import * as GroupBackend from "./backend/GroupBackend";
@@ -45,6 +45,8 @@ import MfaAccountTable from "./table/MfaAccountTable";
 import MfaTable from "./table/MfaTable";
 import TransactionTable from "./table/TransactionTable";
 import * as TransactionBackend from "./backend/TransactionBackend";
+import {Content, Header} from "antd/es/layout/layout";
+import Sider from "antd/es/layout/Sider";
 
 const {Option} = Select;
 
@@ -66,6 +68,7 @@ class UserEditPage extends React.Component {
       idCardInfo: ["ID card front", "ID card back", "ID card with person"],
       openFaceRecognitionModal: false,
       transactions: [],
+      activeMenuKey: "",
     };
   }
 
@@ -1322,6 +1325,124 @@ class UserEditPage extends React.Component {
     );
   }
 
+  getAccountItemsByTab(tab) {
+    const accountItems = this.getUserOrganization()?.accountItems || [];
+    return accountItems.filter(item => {
+      if (!item.visible) {
+        return false;
+      }
+
+      const isAdmin = Setting.isLocalAdminUser(this.props.account);
+      if (item.viewRule === "Self") {
+        if (!this.isSelfOrAdmin()) {
+          return false;
+        }
+      } else if (item.viewRule === "Admin") {
+        if (!isAdmin) {
+          return false;
+        }
+      }
+
+      const itemTab = item.tab || "";
+      return itemTab === tab;
+    });
+  }
+
+  getUniqueTabs() {
+    const accountItems = this.getUserOrganization()?.accountItems || [];
+    const tabs = new Set();
+    
+    accountItems.forEach(item => {
+      if (item.visible) {
+        const isAdmin = Setting.isLocalAdminUser(this.props.account);
+        if (item.viewRule === "Self" && !this.isSelfOrAdmin()) {
+          return;
+        }
+        if (item.viewRule === "Admin" && !isAdmin) {
+          return;
+        }
+        tabs.add(item.tab || "");
+      }
+    });
+
+    return Array.from(tabs).sort((a, b) => {
+      // Empty string (default tab) comes first
+      if (a === "") {return -1;}
+      if (b === "") {return 1;}
+      return a.localeCompare(b);
+    });
+  }
+
+  renderUserForm() {
+    const tabs = this.getUniqueTabs();
+    
+    // If there's only one tab (default), render without tab navigation
+    if (tabs.length === 1 && tabs[0] === "") {
+      const accountItems = this.getAccountItemsByTab("");
+      return (
+        <Form>
+          {accountItems.map(accountItem => (
+            <React.Fragment key={accountItem.name}>
+              <Form.Item name={accountItem.name}
+                validateTrigger="onChange"
+                rules={[
+                  {
+                    pattern: accountItem.regex ? new RegExp(accountItem.regex, "g") : null,
+                    message: i18next.t("user:This field value doesn't match the pattern rule"),
+                  },
+                ]}
+                style={{margin: 0}}>
+                {this.renderAccountItem(accountItem)}
+              </Form.Item>
+            </React.Fragment>
+          ))}
+        </Form>
+      );
+    }
+
+    // Render with tabs
+    const activeKey = this.state.activeMenuKey || tabs[0];
+    
+    return (
+      <Layout style={{background: "inherit"}}>
+        <Header style={{background: "inherit", padding: "0px"}}>
+          <Tabs
+            onChange={(key) => {
+              this.setState({activeMenuKey: key});
+            }}
+            type="card"
+            activeKey={activeKey}
+            items={tabs.map(tab => ({
+              label: tab === "" ? i18next.t("user:Default") : tab,
+              key: tab,
+            }))}
+          />
+        </Header>
+        <Layout style={{background: "inherit", maxHeight: "70vh", overflow: "auto"}}>
+          <Content style={{padding: "15px"}}>
+            <Form>
+              {this.getAccountItemsByTab(activeKey).map(accountItem => (
+                <React.Fragment key={accountItem.name}>
+                  <Form.Item name={accountItem.name}
+                    validateTrigger="onChange"
+                    rules={[
+                      {
+                        pattern: accountItem.regex ? new RegExp(accountItem.regex, "g") : null,
+                        message: i18next.t("user:This field value doesn't match the pattern rule"),
+                      },
+                    ]}
+                    style={{margin: 0}}>
+                    {this.renderAccountItem(accountItem)}
+                  </Form.Item>
+                </React.Fragment>
+              ))}
+            </Form>
+          </Content>
+        </Layout>
+      </Layout>
+    );
+  }
+
   renderUser() {
     return (
       <div>
@@ -1335,42 +1456,7 @@ class UserEditPage extends React.Component {
             </div>
           )
         } style={(Setting.isMobile()) ? {margin: "5px"} : {}} type="inner">
-          <Form>
-            {
-              this.getUserOrganization()?.accountItems?.map(accountItem => {
-                if (!accountItem.visible) {
-                  return null;
-                }
-
-                const isAdmin = Setting.isLocalAdminUser(this.props.account);
-
-                if (accountItem.viewRule === "Self") {
-                  if (!this.isSelfOrAdmin()) {
-                    return null;
-                  }
-                } else if (accountItem.viewRule === "Admin") {
-                  if (!isAdmin) {
-                    return null;
-                  }
-                }
-                return (
-                  <React.Fragment key={accountItem.name}>
-                    <Form.Item name={accountItem.name}
-                      validateTrigger="onChange"
-                      rules={[
-                        {
-                          pattern: accountItem.regex ? new RegExp(accountItem.regex, "g") : null,
-                          message: i18next.t("user:This field value doesn't match the pattern rule"),
-                        },
-                      ]}
-                      style={{margin: 0}}>
-                      {this.renderAccountItem(accountItem)}
-                    </Form.Item>
-                  </React.Fragment>
-                );
-              })
-            }
-          </Form>
+          {this.renderUserForm()}
         </Card>
       </div>
     );

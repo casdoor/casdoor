@@ -38,7 +38,7 @@ class AccountTable extends React.Component {
   }
 
   addRow(table) {
-    const row = {name: Setting.getNewRowNameForTable(table, "Please select an account item"), visible: true, viewRule: "Public", modifyRule: "Self"};
+    const row = {name: Setting.getNewRowNameForTable(table, "Please select an account item"), visible: true, viewRule: "Public", modifyRule: "Self", tab: ""};
     if (table === undefined) {
       table = [];
     }
@@ -89,6 +89,19 @@ class AccountTable extends React.Component {
           return (
             <Switch checked={text} onChange={checked => {
               this.updateField(table, index, "visible", checked);
+            }} />
+          );
+        },
+      },
+      {
+        title: i18next.t("general:Tab"),
+        dataIndex: "tab",
+        key: "tab",
+        width: "150px",
+        render: (text, record, index) => {
+          return (
+            <Input value={text} placeholder={i18next.t("user:Default")} onChange={e => {
+              this.updateField(table, index, "tab", e.target.value);
             }} />
           );
         },
