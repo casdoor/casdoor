@@ -1342,7 +1342,7 @@ class ApplicationEditPage extends React.Component {
               </Header>
             ) : null
           }
-          <Layout style={{background: "inherit", maxHeight: "70vh", overflow: "auto"}}>
+          <Layout style={{background: "inherit", maxHeight: "calc(70vh - 70px)", overflow: "auto"}}>
             {
               this.state.menuMode === "vertical" ? (
                 <Sider width={200} style={{background: "inherit", position: "sticky", top: 0}}>
@@ -1544,11 +1544,6 @@ class ApplicationEditPage extends React.Component {
         {
           this.state.application !== null ? this.renderApplication() : null
         }
-        <div style={{marginTop: "20px", marginLeft: "40px"}}>
-          <Button size="large" onClick={() => this.submitApplicationEdit(false)}>{i18next.t("general:Save")}</Button>
-          <Button style={{marginLeft: "20px"}} type="primary" size="large" onClick={() => this.submitApplicationEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
-          {this.state.mode === "add" ? <Button style={{marginLeft: "20px"}} size="large" onClick={() => this.deleteApplication()}>{i18next.t("general:Cancel")}</Button> : null}
-        </div>
       </div>
     );
   }
