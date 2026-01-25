@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Form, Input, InputNumber, Layout, List, Menu, Result, Row, Select, Space, Spin, Switch, Tabs, Tag, Tooltip} from "antd";
+import {Button, Card, Col, Form, Input, InputNumber, Layout, List, Result, Row, Select, Space, Spin, Switch, Tabs, Tag, Tooltip} from "antd";
 import {withRouter} from "react-router-dom";
 import {TotpMfaType} from "./auth/MfaSetupPage";
 import * as GroupBackend from "./backend/GroupBackend";
@@ -46,7 +46,6 @@ import MfaTable from "./table/MfaTable";
 import TransactionTable from "./table/TransactionTable";
 import * as TransactionBackend from "./backend/TransactionBackend";
 import {Content, Header} from "antd/es/layout/layout";
-import Sider from "antd/es/layout/Sider";
 
 const {Option} = Select;
 
@@ -1367,8 +1366,12 @@ class UserEditPage extends React.Component {
 
     return Array.from(tabs).sort((a, b) => {
       // Empty string (default tab) comes first
-      if (a === "") {return -1;}
-      if (b === "") {return 1;}
+      if (a === "") {
+        return -1;
+      }
+      if (b === "") {
+        return 1;
+      }
       return a.localeCompare(b);
     });
   }
