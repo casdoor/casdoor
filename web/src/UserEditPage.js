@@ -1324,22 +1324,30 @@ class UserEditPage extends React.Component {
     );
   }
 
+  isAccountItemVisible(item) {
+    if (!item.visible) {
+      return false;
+    }
+
+    const isAdmin = Setting.isLocalAdminUser(this.props.account);
+    if (item.viewRule === "Self") {
+      if (!this.isSelfOrAdmin()) {
+        return false;
+      }
+    } else if (item.viewRule === "Admin") {
+      if (!isAdmin) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   getAccountItemsByTab(tab) {
     const accountItems = this.getUserOrganization()?.accountItems || [];
     return accountItems.filter(item => {
-      if (!item.visible) {
+      if (!this.isAccountItemVisible(item)) {
         return false;
-      }
-
-      const isAdmin = Setting.isLocalAdminUser(this.props.account);
-      if (item.viewRule === "Self") {
-        if (!this.isSelfOrAdmin()) {
-          return false;
-        }
-      } else if (item.viewRule === "Admin") {
-        if (!isAdmin) {
-          return false;
-        }
       }
 
       const itemTab = item.tab || "";
@@ -1352,14 +1360,7 @@ class UserEditPage extends React.Component {
     const tabs = new Set();
     
     accountItems.forEach(item => {
-      if (item.visible) {
-        const isAdmin = Setting.isLocalAdminUser(this.props.account);
-        if (item.viewRule === "Self" && !this.isSelfOrAdmin()) {
-          return;
-        }
-        if (item.viewRule === "Admin" && !isAdmin) {
-          return;
-        }
+      if (this.isAccountItemVisible(item)) {
         tabs.add(item.tab || "");
       }
     });
@@ -1379,8 +1380,8 @@ class UserEditPage extends React.Component {
   renderUserForm() {
     const tabs = this.getUniqueTabs();
     
-    // If there's only one tab (default), render without tab navigation
-    if (tabs.length === 1 && tabs[0] === "") {
+    // If there are no tabs or only one tab (default), render without tab navigation
+    if (tabs.length === 0 || (tabs.length === 1 && tabs[0] === "")) {
       const accountItems = this.getAccountItemsByTab("");
       return (
         <Form>
@@ -1404,7 +1405,7 @@ class UserEditPage extends React.Component {
     }
 
     // Render with tabs
-    const activeKey = this.state.activeMenuKey || tabs[0];
+    const activeKey = this.state.activeMenuKey || tabs[0] || "";
     
     return (
       <Layout style={{background: "inherit"}}>
