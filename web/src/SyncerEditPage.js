@@ -512,6 +512,72 @@ class SyncerEditPage extends React.Component {
           "values": [],
         },
       ];
+    case "JumpCloud":
+      return [
+        {
+          "name": "_id",
+          "type": "string",
+          "casdoorName": "Id",
+          "isHashed": true,
+          "values": [],
+        },
+        {
+          "name": "username",
+          "type": "string",
+          "casdoorName": "Name",
+          "isHashed": true,
+          "values": [],
+        },
+        {
+          "name": "displayname",
+          "type": "string",
+          "casdoorName": "DisplayName",
+          "isHashed": true,
+          "values": [],
+        },
+        {
+          "name": "firstname",
+          "type": "string",
+          "casdoorName": "FirstName",
+          "isHashed": true,
+          "values": [],
+        },
+        {
+          "name": "lastname",
+          "type": "string",
+          "casdoorName": "LastName",
+          "isHashed": true,
+          "values": [],
+        },
+        {
+          "name": "email",
+          "type": "string",
+          "casdoorName": "Email",
+          "isHashed": true,
+          "values": [],
+        },
+        {
+          "name": "jobTitle",
+          "type": "string",
+          "casdoorName": "Title",
+          "isHashed": true,
+          "values": [],
+        },
+        {
+          "name": "location",
+          "type": "string",
+          "casdoorName": "Location",
+          "isHashed": true,
+          "values": [],
+        },
+        {
+          "name": "activated",
+          "type": "boolean",
+          "casdoorName": "IsForbidden",
+          "isHashed": true,
+          "values": [],
+        },
+      ];
     default:
       return [];
     }
@@ -568,14 +634,14 @@ class SyncerEditPage extends React.Component {
               });
             })}>
               {
-                ["Database", "Keycloak", "WeCom", "Azure AD", "Active Directory", "Google Workspace", "DingTalk"]
+                ["Database", "Keycloak", "WeCom", "Azure AD", "Active Directory", "Google Workspace", "DingTalk", "JumpCloud"]
                   .map((item, index) => <Option key={index} value={item}>{item}</Option>)
               }
             </Select>
           </Col>
         </Row>
         {
-          this.state.syncer.type === "WeCom" || this.state.syncer.type === "Azure AD" || this.state.syncer.type === "Active Directory" || this.state.syncer.type === "Google Workspace" || this.state.syncer.type === "DingTalk" ? null : (
+          this.state.syncer.type === "WeCom" || this.state.syncer.type === "Azure AD" || this.state.syncer.type === "Active Directory" || this.state.syncer.type === "Google Workspace" || this.state.syncer.type === "DingTalk" || this.state.syncer.type === "JumpCloud" ? null : (
             <Row style={{marginTop: "20px"}} >
               <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
                 {Setting.getLabel(i18next.t("syncer:Database type"), i18next.t("syncer:Database type - Tooltip"))} :
@@ -627,7 +693,7 @@ class SyncerEditPage extends React.Component {
           )
         }
         {
-          this.state.syncer.type === "WeCom" || this.state.syncer.type === "DingTalk" ? null : (
+          this.state.syncer.type === "WeCom" || this.state.syncer.type === "DingTalk" || this.state.syncer.type === "JumpCloud" ? null : (
             <Row style={{marginTop: "20px"}} >
               <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
                 {Setting.getLabel(this.state.syncer.type === "Azure AD" ? i18next.t("provider:Tenant ID") : this.state.syncer.type === "Google Workspace" ? i18next.t("syncer:Admin Email") : this.state.syncer.type === "Active Directory" ? i18next.t("ldap:Server") : i18next.t("provider:Host"), i18next.t("provider:Host - Tooltip"))} :
@@ -641,7 +707,7 @@ class SyncerEditPage extends React.Component {
           )
         }
         {
-          this.state.syncer.type === "WeCom" || this.state.syncer.type === "Azure AD" || this.state.syncer.type === "Google Workspace" || this.state.syncer.type === "DingTalk" ? null : (
+          this.state.syncer.type === "WeCom" || this.state.syncer.type === "Azure AD" || this.state.syncer.type === "Google Workspace" || this.state.syncer.type === "DingTalk" || this.state.syncer.type === "JumpCloud" ? null : (
             <Row style={{marginTop: "20px"}} >
               <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
                 {Setting.getLabel(this.state.syncer.type === "Active Directory" ? i18next.t("provider:LDAP port") : i18next.t("provider:Port"), i18next.t("provider:Port - Tooltip"))} :
@@ -662,8 +728,9 @@ class SyncerEditPage extends React.Component {
                   this.state.syncer.type === "WeCom" ? i18next.t("syncer:Corp ID") :
                     this.state.syncer.type === "DingTalk" ? i18next.t("provider:App Key") :
                       this.state.syncer.type === "Azure AD" ? i18next.t("provider:Client ID") :
-                        this.state.syncer.type === "Active Directory" ? i18next.t("syncer:Bind DN") :
-                          i18next.t("general:User"),
+                        this.state.syncer.type === "JumpCloud" ? i18next.t("provider:API key") :
+                          this.state.syncer.type === "Active Directory" ? i18next.t("syncer:Bind DN") :
+                            i18next.t("general:User"),
                   i18next.t("general:User - Tooltip")
                 )} :
               </Col>
@@ -675,33 +742,37 @@ class SyncerEditPage extends React.Component {
             </Row>
           )
         }
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(
-              this.state.syncer.type === "WeCom" ? i18next.t("syncer:Corp secret") :
-                this.state.syncer.type === "DingTalk" ? i18next.t("provider:App secret") :
-                  this.state.syncer.type === "Azure AD" ? i18next.t("provider:Client secret") :
-                    this.state.syncer.type === "Google Workspace" ? i18next.t("syncer:Service account key") :
-                      i18next.t("general:Password"),
-              i18next.t("general:Password - Tooltip")
-            )} :
-          </Col>
-          <Col span={22} >
-            {
-              this.state.syncer.type === "Google Workspace" ? (
-                <Input.TextArea rows={4} value={this.state.syncer.password} onChange={e => {
-                  this.updateSyncerField("password", e.target.value);
-                }} placeholder={i18next.t("syncer:Paste your Google Workspace service account JSON key here")} />
-              ) : (
-                <Input.Password value={this.state.syncer.password} onChange={e => {
-                  this.updateSyncerField("password", e.target.value);
-                }} />
-              )
-            }
-          </Col>
-        </Row>
         {
-          this.state.syncer.type === "WeCom" || this.state.syncer.type === "Azure AD" || this.state.syncer.type === "Google Workspace" || this.state.syncer.type === "DingTalk" ? null : (
+          this.state.syncer.type === "JumpCloud" ? null : (
+            <Row style={{marginTop: "20px"}} >
+              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                {Setting.getLabel(
+                  this.state.syncer.type === "WeCom" ? i18next.t("syncer:Corp secret") :
+                    this.state.syncer.type === "DingTalk" ? i18next.t("provider:App secret") :
+                      this.state.syncer.type === "Azure AD" ? i18next.t("provider:Client secret") :
+                        this.state.syncer.type === "Google Workspace" ? i18next.t("syncer:Service account key") :
+                          i18next.t("general:Password"),
+                  i18next.t("general:Password - Tooltip")
+                )} :
+              </Col>
+              <Col span={22} >
+                {
+                  this.state.syncer.type === "Google Workspace" ? (
+                    <Input.TextArea rows={4} value={this.state.syncer.password} onChange={e => {
+                      this.updateSyncerField("password", e.target.value);
+                    }} placeholder={i18next.t("syncer:Paste your Google Workspace service account JSON key here")} />
+                  ) : (
+                    <Input.Password value={this.state.syncer.password} onChange={e => {
+                      this.updateSyncerField("password", e.target.value);
+                    }} />
+                  )
+                }
+              </Col>
+            </Row>
+          )
+        }
+        {
+          this.state.syncer.type === "WeCom" || this.state.syncer.type === "Azure AD" || this.state.syncer.type === "Google Workspace" || this.state.syncer.type === "DingTalk" || this.state.syncer.type === "JumpCloud" ? null : (
             <Row style={{marginTop: "20px"}} >
               <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
                 {Setting.getLabel(this.state.syncer.type === "Active Directory" ? i18next.t("syncer:Base DN") : i18next.t("syncer:Database"), i18next.t("syncer:Database - Tooltip"))} :
@@ -797,7 +868,7 @@ class SyncerEditPage extends React.Component {
           ) : null
         }
         {
-          this.state.syncer.type === "WeCom" || this.state.syncer.type === "Azure AD" || this.state.syncer.type === "Google Workspace" || this.state.syncer.type === "DingTalk" ? null : (
+          this.state.syncer.type === "WeCom" || this.state.syncer.type === "Azure AD" || this.state.syncer.type === "Google Workspace" || this.state.syncer.type === "DingTalk" || this.state.syncer.type === "JumpCloud" ? null : (
             <Row style={{marginTop: "20px"}} >
               <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
                 {Setting.getLabel(i18next.t("syncer:Table"), i18next.t("syncer:Table - Tooltip"))} :
