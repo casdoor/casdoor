@@ -177,7 +177,7 @@ func checkProduct(product *Product) error {
 	}
 
 	if len(product.Providers) == 0 {
-		providers, err := GetPaymentProviders(product.Owner, "Payment")
+		providers, err := GetProvidersByCategory(product.Owner, "Payment")
 		if err != nil {
 			return err
 		}
