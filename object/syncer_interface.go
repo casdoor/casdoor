@@ -43,6 +43,8 @@ func GetSyncerProvider(syncer *Syncer) SyncerProvider {
 		return &WecomSyncerProvider{Syncer: syncer}
 	case "Azure AD":
 		return &AzureAdSyncerProvider{Syncer: syncer}
+	case "AWS IAM":
+		return &AwsIamSyncerProvider{Syncer: syncer}
 	case "Google Workspace":
 		return &GoogleWorkspaceSyncerProvider{Syncer: syncer}
 	case "Active Directory":
