@@ -49,6 +49,8 @@ func GetSyncerProvider(syncer *Syncer) SyncerProvider {
 		return &ActiveDirectorySyncerProvider{Syncer: syncer}
 	case "DingTalk":
 		return &DingtalkSyncerProvider{Syncer: syncer}
+	case "OneLogin":
+		return &OneLoginSyncerProvider{Syncer: syncer}
 	case "Keycloak":
 		return &KeycloakSyncerProvider{
 			DatabaseSyncerProvider: DatabaseSyncerProvider{Syncer: syncer},
