@@ -190,6 +190,10 @@ func checkProduct(product *Product) error {
 				product.Providers = append(product.Providers, provider.Name)
 			}
 		}
+
+		if len(product.Providers) == 0 {
+			return fmt.Errorf("no compatible payment provider available for currency: %s", product.Currency)
+		}
 	} else {
 		for _, providerName := range product.Providers {
 			provider, err := getProvider(product.Owner, providerName)
