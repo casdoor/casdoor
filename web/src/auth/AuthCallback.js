@@ -89,9 +89,7 @@ class AuthCallback extends React.Component {
     const params = new URLSearchParams(this.props.location.search);
     const isSteam = params.get("openid.mode");
 
-    // Extract from both direct URL params and state params
-    const nextParam = params.get("next") || innerParams.get("next");
-    this.setState({nextParam});
+
     let code = params.get("code");
     // WeCom returns "auth_code=xxx" instead of "code=xxx"
     if (code === null) {
@@ -113,6 +111,9 @@ class AuthCallback extends React.Component {
     }
 
     const innerParams = this.getInnerParams();
+    // Extract from both direct URL params and state params
+    const nextParam = params.get("next") || innerParams.get("next");
+    this.setState({nextParam});
     const applicationName = innerParams.get("application");
     const providerName = innerParams.get("provider");
     const method = innerParams.get("method");
