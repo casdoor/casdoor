@@ -138,12 +138,8 @@ func (p *OktaSyncerProvider) getOktaUsers(nextLink string) ([]*OktaUser, string,
 	if nextLink != "" {
 		apiUrl = nextLink
 	} else {
-		// Remove https:// prefix if present in domain
-		if len(domain) > 8 && domain[:8] == "https://" {
-			domain = domain[8:]
-		} else if len(domain) > 7 && domain[:7] == "http://" {
-			domain = domain[7:]
-		}
+		// Remove https:// or http:// prefix if present in domain
+		domain = strings.TrimPrefix(strings.TrimPrefix(domain, "https://"), "http://")
 		apiUrl = fmt.Sprintf("https://%s/api/v1/users?limit=200", domain)
 	}
 
