@@ -37,7 +37,10 @@ const (
 	UnsupportedGrantType = "unsupported_grant_type"
 	InvalidScope         = "invalid_scope"
 	EndpointError        = "endpoint_error"
+	NoDPoPBinding        = ""
 )
+
+const noDPoPBinding = NoDPoPBinding
 
 var DeviceAuthMap = sync.Map{}
 
@@ -172,7 +175,7 @@ func GetOAuthCode(userId string, clientId string, provider string, signinMethod 
 	if err != nil {
 		return nil, err
 	}
-	accessToken, refreshToken, tokenName, err := generateJwtToken(application, user, provider, signinMethod, nonce, scope, host)
+	accessToken, refreshToken, tokenName, err := generateJwtToken(application, user, provider, signinMethod, nonce, scope, host, noDPoPBinding)
 	if err != nil {
 		return nil, err
 	}
@@ -209,7 +212,7 @@ func GetOAuthCode(userId string, clientId string, provider string, signinMethod 
 	}, nil
 }
 
-func GetOAuthToken(grantType string, clientId string, clientSecret string, code string, verifier string, scope string, nonce string, username string, password string, host string, refreshToken string, tag string, avatar string, lang string) (interface{}, error) {
+func GetOAuthToken(grantType string, clientId string, clientSecret string, code string, verifier string, scope string, nonce string, username string, password string, host string, refreshToken string, tag string, avatar string, lang string, dpopProof string, httpMethod string, httpUri string) (interface{}, error) {
 	application, err := GetApplicationByClientId(clientId)
 	if err != nil {
 		return nil, err
@@ -220,6 +223,18 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 			Error:            InvalidClient,
 			ErrorDescription: "client_id is invalid",
 		}, nil
+	}
+
+	// Validate DPoP proof if provided
+	var dpopJkt string
+	if dpopProof != "" {
+		dpopJkt, err = ValidateDPoPProof(dpopProof, httpMethod, httpUri, "")
+		if err != nil {
+			return &TokenError{
+				Error:            InvalidRequest,
+				ErrorDescription: fmt.Sprintf("invalid DPoP proof: %s", err.Error()),
+			}, nil
+		}
 	}
 
 	// Check if grantType is allowed in the current application
@@ -235,17 +250,17 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 	var tokenError *TokenError
 	switch grantType {
 	case "authorization_code": // Authorization Code Grant
-		token, tokenError, err = GetAuthorizationCodeToken(application, clientSecret, code, verifier)
+		token, tokenError, err = GetAuthorizationCodeToken(application, clientSecret, code, verifier, dpopJkt)
 	case "password": //	Resource Owner Password Credentials Grant
-		token, tokenError, err = GetPasswordToken(application, username, password, scope, host)
+		token, tokenError, err = GetPasswordToken(application, username, password, scope, host, dpopJkt)
 	case "client_credentials": // Client Credentials Grant
-		token, tokenError, err = GetClientCredentialsToken(application, clientSecret, scope, host)
+		token, tokenError, err = GetClientCredentialsToken(application, clientSecret, scope, host, dpopJkt)
 	case "token", "id_token": // Implicit Grant
-		token, tokenError, err = GetImplicitToken(application, username, scope, nonce, host)
+		token, tokenError, err = GetImplicitToken(application, username, scope, nonce, host, dpopJkt)
 	case "urn:ietf:params:oauth:grant-type:device_code":
-		token, tokenError, err = GetImplicitToken(application, username, scope, nonce, host)
+		token, tokenError, err = GetImplicitToken(application, username, scope, nonce, host, dpopJkt)
 	case "refresh_token":
-		refreshToken2, err := RefreshToken(grantType, refreshToken, scope, clientId, clientSecret, host)
+		refreshToken2, err := RefreshToken(grantType, refreshToken, scope, clientId, clientSecret, host, dpopProof, httpMethod, httpUri)
 		if err != nil {
 			return nil, err
 		}
@@ -258,7 +273,7 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 
 	if tag == "wechat_miniprogram" {
 		// Wechat Mini Program
-		token, tokenError, err = GetWechatMiniProgramToken(application, code, host, username, avatar, lang)
+		token, tokenError, err = GetWechatMiniProgramToken(application, code, host, username, avatar, lang, dpopJkt)
 		if err != nil {
 			return nil, err
 		}
@@ -287,7 +302,7 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 	return tokenWrapper, nil
 }
 
-func RefreshToken(grantType string, refreshToken string, scope string, clientId string, clientSecret string, host string) (interface{}, error) {
+func RefreshToken(grantType string, refreshToken string, scope string, clientId string, clientSecret string, host string, dpopProof string, httpMethod string, httpUri string) (interface{}, error) {
 	// check parameters
 	if grantType != "refresh_token" {
 		return &TokenError{
@@ -329,6 +344,35 @@ func RefreshToken(grantType string, refreshToken string, scope string, clientId 
 			Error:            InvalidGrant,
 			ErrorDescription: "refresh token is expired",
 		}, nil
+	}
+
+	// Validate DPoP proof if token is DPoP-bound
+	var dpopJkt string
+	if token.DPoPJkt != "" {
+		// For DPoP-bound tokens, DPoP proof is required
+		if dpopProof == "" {
+			return &TokenError{
+				Error:            InvalidRequest,
+				ErrorDescription: "DPoP proof required for DPoP-bound token",
+			}, nil
+		}
+
+		// Validate the DPoP proof (no access token hash for refresh)
+		dpopJkt, err = ValidateDPoPProof(dpopProof, httpMethod, httpUri, "")
+		if err != nil {
+			return &TokenError{
+				Error:            InvalidRequest,
+				ErrorDescription: fmt.Sprintf("invalid DPoP proof: %s", err.Error()),
+			}, nil
+		}
+
+		// Verify the JKT matches the original token binding
+		if dpopJkt != token.DPoPJkt {
+			return &TokenError{
+				Error:            InvalidGrant,
+				ErrorDescription: "DPoP proof JKT does not match token binding",
+			}, nil
+		}
 	}
 
 	cert, err := getCertByApplication(application)
@@ -388,12 +432,17 @@ func RefreshToken(grantType string, refreshToken string, scope string, clientId 
 		return nil, err
 	}
 
-	newAccessToken, newRefreshToken, tokenName, err := generateJwtToken(application, user, "", "", "", scope, host)
+	newAccessToken, newRefreshToken, tokenName, err := generateJwtToken(application, user, "", "", "", scope, host, dpopJkt)
 	if err != nil {
 		return &TokenError{
 			Error:            EndpointError,
 			ErrorDescription: fmt.Sprintf("generate jwt token error: %s", err.Error()),
 		}, nil
+	}
+
+	tokenType := "Bearer"
+	if dpopJkt != "" {
+		tokenType = "DPoP"
 	}
 
 	newToken := &Token{
@@ -408,7 +457,8 @@ func RefreshToken(grantType string, refreshToken string, scope string, clientId 
 		RefreshToken: newRefreshToken,
 		ExpiresIn:    int(application.ExpireInHours * float64(hourSeconds)),
 		Scope:        scope,
-		TokenType:    "Bearer",
+		TokenType:    tokenType,
+		DPoPJkt:      dpopJkt,
 	}
 	_, err = AddToken(newToken)
 	if err != nil {
@@ -454,7 +504,7 @@ func IsGrantTypeValid(method string, grantTypes []string) bool {
 }
 
 // createGuestUserToken creates a new guest user and returns a token for them
-func createGuestUserToken(application *Application, clientSecret string, verifier string) (*Token, *TokenError, error) {
+func createGuestUserToken(application *Application, clientSecret string, verifier string, dpopJkt string) (*Token, *TokenError, error) {
 	// Verify client secret if provided
 	if clientSecret != "" && application.ClientSecret != clientSecret {
 		return nil, &TokenError{
@@ -542,12 +592,18 @@ func createGuestUserToken(application *Application, clientSecret string, verifie
 	}
 
 	// Generate JWT token
-	accessToken, refreshToken, tokenName, err := generateJwtToken(application, guestUser, "", "", "", "", "")
+	accessToken, refreshToken, tokenName, err := generateJwtToken(application, guestUser, "", "", "", "", "", dpopJkt)
 	if err != nil {
 		return nil, &TokenError{
 			Error:            EndpointError,
 			ErrorDescription: fmt.Sprintf("failed to generate token: %s", err.Error()),
 		}, nil
+	}
+
+	// Determine token type
+	tokenType := "Bearer"
+	if dpopJkt != "" {
+		tokenType = "DPoP"
 	}
 
 	// Create token object
@@ -563,10 +619,11 @@ func createGuestUserToken(application *Application, clientSecret string, verifie
 		RefreshToken:  refreshToken,
 		ExpiresIn:     int(application.ExpireInHours * float64(hourSeconds)),
 		Scope:         "",
-		TokenType:     "Bearer",
+		TokenType:     tokenType,
 		CodeChallenge: "",
 		CodeIsUsed:    true,
 		CodeExpireIn:  0,
+		DPoPJkt:       dpopJkt,
 	}
 
 	_, err = AddToken(token)
@@ -592,7 +649,7 @@ func generateGuestUsername() string {
 
 // GetAuthorizationCodeToken
 // Authorization code flow
-func GetAuthorizationCodeToken(application *Application, clientSecret string, code string, verifier string) (*Token, *TokenError, error) {
+func GetAuthorizationCodeToken(application *Application, clientSecret string, code string, verifier string, dpopJkt string) (*Token, *TokenError, error) {
 	if code == "" {
 		return nil, &TokenError{
 			Error:            InvalidRequest,
@@ -602,7 +659,7 @@ func GetAuthorizationCodeToken(application *Application, clientSecret string, co
 
 	// Handle guest user creation
 	if code == "guest-user" {
-		return createGuestUserToken(application, clientSecret, verifier)
+		return createGuestUserToken(application, clientSecret, verifier, dpopJkt)
 	}
 
 	token, err := getTokenByCode(code)
@@ -668,12 +725,19 @@ func GetAuthorizationCodeToken(application *Application, clientSecret string, co
 			ErrorDescription: fmt.Sprintf("authorization code has expired, nowUnix: [%s], token.CodeExpireIn: [%s]", time.Unix(nowUnix, 0).Format(time.RFC3339), time.Unix(token.CodeExpireIn, 0).Format(time.RFC3339)),
 		}, nil
 	}
+
+	// Store DPoP JKT if provided
+	if dpopJkt != "" {
+		token.DPoPJkt = dpopJkt
+		token.TokenType = "DPoP"
+	}
+
 	return token, nil, nil
 }
 
 // GetPasswordToken
 // Resource Owner Password Credentials flow
-func GetPasswordToken(application *Application, username string, password string, scope string, host string) (*Token, *TokenError, error) {
+func GetPasswordToken(application *Application, username string, password string, scope string, host string, dpopJkt string) (*Token, *TokenError, error) {
 	user, err := GetUserByFields(application.Organization, username)
 	if err != nil {
 		return nil, nil, err
@@ -716,13 +780,19 @@ func GetPasswordToken(application *Application, username string, password string
 		return nil, nil, err
 	}
 
-	accessToken, refreshToken, tokenName, err := generateJwtToken(application, user, "", "", "", scope, host)
+	accessToken, refreshToken, tokenName, err := generateJwtToken(application, user, "", "", "", scope, host, dpopJkt)
 	if err != nil {
 		return nil, &TokenError{
 			Error:            EndpointError,
 			ErrorDescription: fmt.Sprintf("generate jwt token error: %s", err.Error()),
 		}, nil
 	}
+
+	tokenType := "Bearer"
+	if dpopJkt != "" {
+		tokenType = "DPoP"
+	}
+
 	token := &Token{
 		Owner:        application.Owner,
 		Name:         tokenName,
@@ -735,8 +805,9 @@ func GetPasswordToken(application *Application, username string, password string
 		RefreshToken: refreshToken,
 		ExpiresIn:    int(application.ExpireInHours * float64(hourSeconds)),
 		Scope:        scope,
-		TokenType:    "Bearer",
+		TokenType:    tokenType,
 		CodeIsUsed:   true,
+		DPoPJkt:      dpopJkt,
 	}
 	_, err = AddToken(token)
 	if err != nil {
@@ -748,7 +819,7 @@ func GetPasswordToken(application *Application, username string, password string
 
 // GetClientCredentialsToken
 // Client Credentials flow
-func GetClientCredentialsToken(application *Application, clientSecret string, scope string, host string) (*Token, *TokenError, error) {
+func GetClientCredentialsToken(application *Application, clientSecret string, scope string, host string, dpopJkt string) (*Token, *TokenError, error) {
 	if application.ClientSecret != clientSecret {
 		return nil, &TokenError{
 			Error:            InvalidClient,
@@ -762,13 +833,19 @@ func GetClientCredentialsToken(application *Application, clientSecret string, sc
 		Type:  "application",
 	}
 
-	accessToken, _, tokenName, err := generateJwtToken(application, nullUser, "", "", "", scope, host)
+	accessToken, _, tokenName, err := generateJwtToken(application, nullUser, "", "", "", scope, host, dpopJkt)
 	if err != nil {
 		return nil, &TokenError{
 			Error:            EndpointError,
 			ErrorDescription: fmt.Sprintf("generate jwt token error: %s", err.Error()),
 		}, nil
 	}
+
+	tokenType := "Bearer"
+	if dpopJkt != "" {
+		tokenType = "DPoP"
+	}
+
 	token := &Token{
 		Owner:        application.Owner,
 		Name:         tokenName,
@@ -780,8 +857,9 @@ func GetClientCredentialsToken(application *Application, clientSecret string, sc
 		AccessToken:  accessToken,
 		ExpiresIn:    int(application.ExpireInHours * float64(hourSeconds)),
 		Scope:        scope,
-		TokenType:    "Bearer",
+		TokenType:    tokenType,
 		CodeIsUsed:   true,
+		DPoPJkt:      dpopJkt,
 	}
 	_, err = AddToken(token)
 	if err != nil {
@@ -793,7 +871,7 @@ func GetClientCredentialsToken(application *Application, clientSecret string, sc
 
 // GetImplicitToken
 // Implicit flow
-func GetImplicitToken(application *Application, username string, scope string, nonce string, host string) (*Token, *TokenError, error) {
+func GetImplicitToken(application *Application, username string, scope string, nonce string, host string, dpopJkt string) (*Token, *TokenError, error) {
 	user, err := GetUserByFields(application.Organization, username)
 	if err != nil {
 		return nil, nil, err
@@ -811,7 +889,7 @@ func GetImplicitToken(application *Application, username string, scope string, n
 		}, nil
 	}
 
-	token, err := GetTokenByUser(application, user, scope, nonce, host)
+	token, err := GetTokenByUser(application, user, scope, nonce, host, dpopJkt)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -820,15 +898,20 @@ func GetImplicitToken(application *Application, username string, scope string, n
 
 // GetTokenByUser
 // Implicit flow
-func GetTokenByUser(application *Application, user *User, scope string, nonce string, host string) (*Token, error) {
+func GetTokenByUser(application *Application, user *User, scope string, nonce string, host string, dpopJkt string) (*Token, error) {
 	err := ExtendUserWithRolesAndPermissions(user)
 	if err != nil {
 		return nil, err
 	}
 
-	accessToken, refreshToken, tokenName, err := generateJwtToken(application, user, "", "", nonce, scope, host)
+	accessToken, refreshToken, tokenName, err := generateJwtToken(application, user, "", "", nonce, scope, host, dpopJkt)
 	if err != nil {
 		return nil, err
+	}
+
+	tokenType := "Bearer"
+	if dpopJkt != "" {
+		tokenType = "DPoP"
 	}
 
 	token := &Token{
@@ -843,8 +926,9 @@ func GetTokenByUser(application *Application, user *User, scope string, nonce st
 		RefreshToken: refreshToken,
 		ExpiresIn:    int(application.ExpireInHours * float64(hourSeconds)),
 		Scope:        scope,
-		TokenType:    "Bearer",
+		TokenType:    tokenType,
 		CodeIsUsed:   true,
+		DPoPJkt:      dpopJkt,
 	}
 	_, err = AddToken(token)
 	if err != nil {
@@ -856,7 +940,7 @@ func GetTokenByUser(application *Application, user *User, scope string, nonce st
 
 // GetWechatMiniProgramToken
 // Wechat Mini Program flow
-func GetWechatMiniProgramToken(application *Application, code string, host string, username string, avatar string, lang string) (*Token, *TokenError, error) {
+func GetWechatMiniProgramToken(application *Application, code string, host string, username string, avatar string, lang string, dpopJkt string) (*Token, *TokenError, error) {
 	mpProvider := GetWechatMiniProgramProvider(application)
 	if mpProvider == nil {
 		return nil, &TokenError{
@@ -933,12 +1017,17 @@ func GetWechatMiniProgramToken(application *Application, code string, host strin
 		return nil, nil, err
 	}
 
-	accessToken, refreshToken, tokenName, err := generateJwtToken(application, user, "", "", "", "", host)
+	accessToken, refreshToken, tokenName, err := generateJwtToken(application, user, "", "", "", "", host, dpopJkt)
 	if err != nil {
 		return nil, &TokenError{
 			Error:            EndpointError,
 			ErrorDescription: fmt.Sprintf("generate jwt token error: %s", err.Error()),
 		}, nil
+	}
+
+	tokenType := "Bearer"
+	if dpopJkt != "" {
+		tokenType = "DPoP"
 	}
 
 	token := &Token{
@@ -953,8 +1042,9 @@ func GetWechatMiniProgramToken(application *Application, code string, host strin
 		RefreshToken: refreshToken,
 		ExpiresIn:    int(application.ExpireInHours * float64(hourSeconds)),
 		Scope:        "",
-		TokenType:    "Bearer",
+		TokenType:    tokenType,
 		CodeIsUsed:   true,
+		DPoPJkt:      dpopJkt,
 	}
 	_, err = AddToken(token)
 	if err != nil {
@@ -972,7 +1062,7 @@ func GetAccessTokenByUser(user *User, host string) (string, error) {
 		return "", fmt.Errorf("the application for user %s is not found", user.Id)
 	}
 
-	token, err := GetTokenByUser(application, user, "profile", "", host)
+	token, err := GetTokenByUser(application, user, "profile", "", host, "")
 	if err != nil {
 		return "", err
 	}
