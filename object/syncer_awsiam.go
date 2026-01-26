@@ -23,6 +23,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/iam"
+	"github.com/aws/aws-sdk-go-v2/service/iam/types"
 	"github.com/casdoor/casdoor/util"
 )
 
@@ -126,7 +127,7 @@ func (p *AwsIamSyncerProvider) getAwsIamClient() (*iam.Client, error) {
 }
 
 // getAwsIamUsers gets all users from AWS IAM
-func (p *AwsIamSyncerProvider) getAwsIamUsers() ([]*iam.User, error) {
+func (p *AwsIamSyncerProvider) getAwsIamUsers() ([]types.User, error) {
 	client, err := p.getAwsIamClient()
 	if err != nil {
 		return nil, err
@@ -135,7 +136,7 @@ func (p *AwsIamSyncerProvider) getAwsIamUsers() ([]*iam.User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
-	allUsers := []*iam.User{}
+	allUsers := []types.User{}
 	var marker *string
 
 	// Paginate through all users
@@ -153,7 +154,7 @@ func (p *AwsIamSyncerProvider) getAwsIamUsers() ([]*iam.User, error) {
 		}
 
 		for _, user := range result.Users {
-			allUsers = append(allUsers, &user)
+			allUsers = append(allUsers, user)
 		}
 
 		// Check if there are more results
@@ -167,7 +168,7 @@ func (p *AwsIamSyncerProvider) getAwsIamUsers() ([]*iam.User, error) {
 }
 
 // awsIamUserToOriginalUser converts AWS IAM user to Casdoor OriginalUser
-func (p *AwsIamSyncerProvider) awsIamUserToOriginalUser(iamUser *iam.User) *OriginalUser {
+func (p *AwsIamSyncerProvider) awsIamUserToOriginalUser(iamUser types.User) *OriginalUser {
 	user := &OriginalUser{
 		Id:          aws.ToString(iamUser.UserId),
 		Name:        aws.ToString(iamUser.UserName),
