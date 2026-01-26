@@ -20,7 +20,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"net/url"
 	"time"
 
 	"github.com/casdoor/casdoor/util"
@@ -145,10 +144,10 @@ func (p *OktaSyncerProvider) fetchOktaUsers(limit int) ([]*OktaUser, error) {
 
 	for nextUrl != "" {
 		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-		defer cancel()
 
 		req, err := http.NewRequestWithContext(ctx, "GET", nextUrl, nil)
 		if err != nil {
+			cancel()
 			return nil, err
 		}
 
@@ -159,16 +158,20 @@ func (p *OktaSyncerProvider) fetchOktaUsers(limit int) ([]*OktaUser, error) {
 		client := &http.Client{Timeout: 30 * time.Second}
 		resp, err := client.Do(req)
 		if err != nil {
+			cancel()
 			return nil, err
 		}
-		defer resp.Body.Close()
 
 		if resp.StatusCode != http.StatusOK {
 			body, _ := io.ReadAll(resp.Body)
+			resp.Body.Close()
+			cancel()
 			return nil, fmt.Errorf("failed to get users: status=%d, body=%s", resp.StatusCode, string(body))
 		}
 
 		body, err := io.ReadAll(resp.Body)
+		resp.Body.Close()
+		cancel()
 		if err != nil {
 			return nil, err
 		}
