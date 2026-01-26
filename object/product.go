@@ -172,13 +172,37 @@ func checkProduct(product *Product) error {
 		return fmt.Errorf("the product not exist")
 	}
 
-	for _, providerName := range product.Providers {
-		provider, err := getProvider(product.Owner, providerName)
+	if product.Currency == "" {
+		return fmt.Errorf("currency cannot be empty")
+	}
+
+	if len(product.Providers) == 0 {
+		providers, err := GetProvidersByCategory(product.Owner, "Payment")
 		if err != nil {
 			return err
 		}
-		if provider != nil && provider.Type == "Alipay" && product.Currency != "CNY" {
-			return fmt.Errorf("alipay provider only supports CNY, got: %s", product.Currency)
+		if len(providers) == 0 {
+			return fmt.Errorf("no payment provider available")
+		}
+
+		for _, provider := range providers {
+			if provider.Type != "Alipay" || product.Currency == "CNY" {
+				product.Providers = append(product.Providers, provider.Name)
+			}
+		}
+
+		if len(product.Providers) == 0 {
+			return fmt.Errorf("no compatible payment provider available for currency: %s", product.Currency)
+		}
+	} else {
+		for _, providerName := range product.Providers {
+			provider, err := getProvider(product.Owner, providerName)
+			if err != nil {
+				return err
+			}
+			if provider != nil && provider.Type == "Alipay" && product.Currency != "CNY" {
+				return fmt.Errorf("alipay provider only supports CNY, got: %s", product.Currency)
+			}
 		}
 	}
 	return nil

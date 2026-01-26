@@ -133,6 +133,16 @@ func GetProviders(owner string) ([]*Provider, error) {
 	return providers, nil
 }
 
+func GetProvidersByCategory(owner string, category string) ([]*Provider, error) {
+	providers := []*Provider{}
+	err := ormer.Engine.Where("(owner = ? or owner = ?) and category = ?", "admin", owner, category).Desc("created_time").Find(&providers, &Provider{})
+	if err != nil {
+		return providers, err
+	}
+
+	return providers, nil
+}
+
 func GetGlobalProviders() ([]*Provider, error) {
 	providers := []*Provider{}
 	err := ormer.Engine.Desc("created_time").Find(&providers)
