@@ -1358,7 +1358,7 @@ class UserEditPage extends React.Component {
   getUniqueTabs() {
     const accountItems = this.getUserOrganization()?.accountItems || [];
     const tabs = new Set();
-    
+
     accountItems.forEach(item => {
       if (this.isAccountItemVisible(item)) {
         tabs.add(item.tab || "");
@@ -1379,7 +1379,7 @@ class UserEditPage extends React.Component {
 
   renderUserForm() {
     const tabs = this.getUniqueTabs();
-    
+
     // If there are no tabs or only one tab (default), render without tab navigation
     if (tabs.length === 0 || (tabs.length === 1 && tabs[0] === "")) {
       const accountItems = this.getAccountItemsByTab("");
@@ -1406,7 +1406,7 @@ class UserEditPage extends React.Component {
 
     // Render with tabs
     const activeKey = this.state.activeMenuKey || tabs[0] || "";
-    
+
     return (
       <Layout style={{background: "inherit"}}>
         <Header style={{background: "inherit", padding: "0px"}}>
