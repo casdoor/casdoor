@@ -74,25 +74,25 @@ type LarkAccessTokenResp struct {
 }
 
 type LarkUser struct {
-	UserId         string   `json:"user_id"`
-	UnionId        string   `json:"union_id"`
-	OpenId         string   `json:"open_id"`
-	Name           string   `json:"name"`
-	EnName         string   `json:"en_name"`
-	Email          string   `json:"email"`
-	Mobile         string   `json:"mobile"`
-	Gender         int      `json:"gender"`
-	Avatar         *LarkAvatar `json:"avatar"`
-	Status         *LarkStatus `json:"status"`
-	DepartmentIds  []string `json:"department_ids"`
-	JobTitle       string   `json:"job_title"`
+	UserId        string      `json:"user_id"`
+	UnionId       string      `json:"union_id"`
+	OpenId        string      `json:"open_id"`
+	Name          string      `json:"name"`
+	EnName        string      `json:"en_name"`
+	Email         string      `json:"email"`
+	Mobile        string      `json:"mobile"`
+	Gender        int         `json:"gender"`
+	Avatar        *LarkAvatar `json:"avatar"`
+	Status        *LarkStatus `json:"status"`
+	DepartmentIds []string    `json:"department_ids"`
+	JobTitle      string      `json:"job_title"`
 }
 
 type LarkAvatar struct {
-	Avatar72       string `json:"avatar_72"`
-	Avatar240      string `json:"avatar_240"`
-	Avatar640      string `json:"avatar_640"`
-	AvatarOrigin   string `json:"avatar_origin"`
+	Avatar72     string `json:"avatar_72"`
+	Avatar240    string `json:"avatar_240"`
+	Avatar640    string `json:"avatar_640"`
+	AvatarOrigin string `json:"avatar_origin"`
 }
 
 type LarkStatus struct {
@@ -106,9 +106,9 @@ type LarkUserListResp struct {
 	Code int    `json:"code"`
 	Msg  string `json:"msg"`
 	Data struct {
-		Items   []*LarkUser `json:"items"`
-		HasMore bool        `json:"has_more"`
-		PageToken string    `json:"page_token"`
+		Items     []*LarkUser `json:"items"`
+		HasMore   bool        `json:"has_more"`
+		PageToken string      `json:"page_token"`
 	} `json:"data"`
 }
 
@@ -116,7 +116,7 @@ type LarkDeptListResp struct {
 	Code int    `json:"code"`
 	Msg  string `json:"msg"`
 	Data struct {
-		Items   []struct {
+		Items []struct {
 			DepartmentId string `json:"department_id"`
 		} `json:"items"`
 		HasMore   bool   `json:"has_more"`
