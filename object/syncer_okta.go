@@ -20,7 +20,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"net/url"
 	"time"
 
 	"github.com/casdoor/casdoor/util"
@@ -73,25 +72,25 @@ type OktaUser struct {
 	Status  string `json:"status"`
 	Created string `json:"created"`
 	Profile struct {
-		Login            string `json:"login"`
-		Email            string `json:"email"`
-		FirstName        string `json:"firstName"`
-		LastName         string `json:"lastName"`
-		DisplayName      string `json:"displayName"`
-		MobilePhone      string `json:"mobilePhone"`
-		PrimaryPhone     string `json:"primaryPhone"`
-		StreetAddress    string `json:"streetAddress"`
-		City             string `json:"city"`
-		State            string `json:"state"`
-		ZipCode          string `json:"zipCode"`
-		CountryCode      string `json:"countryCode"`
-		PostalAddress    string `json:"postalAddress"`
+		Login             string `json:"login"`
+		Email             string `json:"email"`
+		FirstName         string `json:"firstName"`
+		LastName          string `json:"lastName"`
+		DisplayName       string `json:"displayName"`
+		MobilePhone       string `json:"mobilePhone"`
+		PrimaryPhone      string `json:"primaryPhone"`
+		StreetAddress     string `json:"streetAddress"`
+		City              string `json:"city"`
+		State             string `json:"state"`
+		ZipCode           string `json:"zipCode"`
+		CountryCode       string `json:"countryCode"`
+		PostalAddress     string `json:"postalAddress"`
 		PreferredLanguage string `json:"preferredLanguage"`
-		Locale           string `json:"locale"`
-		Timezone         string `json:"timezone"`
-		Title            string `json:"title"`
-		Department       string `json:"department"`
-		Organization     string `json:"organization"`
+		Locale            string `json:"locale"`
+		Timezone          string `json:"timezone"`
+		Title             string `json:"title"`
+		Department        string `json:"department"`
+		Organization      string `json:"organization"`
 	} `json:"profile"`
 }
 
@@ -99,7 +98,7 @@ type OktaUser struct {
 func (p *OktaSyncerProvider) getOktaUsers(nextLink string) ([]*OktaUser, error) {
 	// syncer.Host should be the Okta domain (e.g., "dev-12345.okta.com" or full URL)
 	// syncer.Password should be the API token
-	
+
 	domain := p.Syncer.Host
 	if domain == "" {
 		return nil, fmt.Errorf("Okta domain (host field) is required for Okta syncer")
