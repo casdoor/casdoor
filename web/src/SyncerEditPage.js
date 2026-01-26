@@ -265,13 +265,6 @@ class SyncerEditPage extends React.Component {
           "values": [],
         },
         {
-          "name": "userName",
-          "type": "string",
-          "casdoorName": "DisplayName",
-          "isHashed": true,
-          "values": [],
-        },
-        {
           "name": "arn",
           "type": "string",
           "casdoorName": "Properties.arn",

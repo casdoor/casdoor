@@ -142,7 +142,7 @@ func (p *AwsIamSyncerProvider) getAwsIamUsers() ([]types.User, error) {
 	// Paginate through all users
 	for {
 		input := &iam.ListUsersInput{
-			MaxItems: aws.Int32(100),
+			MaxItems: aws.Int32(1000), // AWS IAM supports up to 1000
 		}
 		if marker != nil {
 			input.Marker = marker
@@ -192,6 +192,8 @@ func (p *AwsIamSyncerProvider) awsIamUserToOriginalUser(iamUser types.User) *Ori
 	if iamUser.CreateDate != nil {
 		user.CreatedTime = iamUser.CreateDate.Format(time.RFC3339)
 	} else {
+		// AWS IAM users should always have a CreateDate, log warning if missing
+		fmt.Printf("Warning: AWS IAM user %s has no CreateDate, using current time\n", aws.ToString(iamUser.UserName))
 		user.CreatedTime = util.GetCurrentTime()
 	}
 
