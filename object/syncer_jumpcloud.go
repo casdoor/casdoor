@@ -87,12 +87,12 @@ type JumpCloudUser struct {
 		Number string `json:"number"`
 	} `json:"phoneNumbers"`
 	Addresses []struct {
-		Type           string `json:"type"`
-		StreetAddress  string `json:"streetAddress"`
-		Locality       string `json:"locality"`
-		Region         string `json:"region"`
-		PostalCode     string `json:"postalCode"`
-		Country        string `json:"country"`
+		Type            string `json:"type"`
+		StreetAddress   string `json:"streetAddress"`
+		Locality        string `json:"locality"`
+		Region          string `json:"region"`
+		PostalCode      string `json:"postalCode"`
+		Country         string `json:"country"`
 		ExtendedAddress string `json:"extendedAddress"`
 	} `json:"addresses"`
 }
@@ -102,7 +102,7 @@ func (p *JumpCloudSyncerProvider) getJumpCloudUsers(limit, skip int) ([]*JumpClo
 	// syncer.User should be the API key (X-API-KEY)
 	// syncer.Host can be optionally used for custom JumpCloud console URL
 	// Default to console.jumpcloud.com if not specified
-	
+
 	apiKey := p.Syncer.User
 	if apiKey == "" {
 		return nil, fmt.Errorf("API key (user field) is required for JumpCloud syncer")
