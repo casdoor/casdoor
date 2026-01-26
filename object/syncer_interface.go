@@ -51,6 +51,8 @@ func GetSyncerProvider(syncer *Syncer) SyncerProvider {
 		return &DingtalkSyncerProvider{Syncer: syncer}
 	case "Lark":
 		return &LarkSyncerProvider{Syncer: syncer}
+	case "Okta":
+		return &OktaSyncerProvider{Syncer: syncer}
 	case "Keycloak":
 		return &KeycloakSyncerProvider{
 			DatabaseSyncerProvider: DatabaseSyncerProvider{Syncer: syncer},
