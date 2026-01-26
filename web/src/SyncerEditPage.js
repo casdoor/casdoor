@@ -352,20 +352,6 @@ class SyncerEditPage extends React.Component {
           "values": [],
         },
         {
-          "name": "Arn",
-          "type": "string",
-          "casdoorName": "Properties",
-          "isHashed": true,
-          "values": [],
-        },
-        {
-          "name": "Path",
-          "type": "string",
-          "casdoorName": "Properties",
-          "isHashed": true,
-          "values": [],
-        },
-        {
           "name": "CreateDate",
           "type": "string",
           "casdoorName": "CreatedTime",
