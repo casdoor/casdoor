@@ -141,10 +141,10 @@ func (p *SCIMSyncerProvider) getSCIMUsers() ([]*OriginalUser, error) {
 		usersURL := fmt.Sprintf("%s/Users?startIndex=%d&count=%d", host, startIndex, count)
 
 		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-		defer cancel()
 
 		req, err := http.NewRequestWithContext(ctx, "GET", usersURL, nil)
 		if err != nil {
+			cancel()
 			return nil, err
 		}
 
@@ -163,16 +163,20 @@ func (p *SCIMSyncerProvider) getSCIMUsers() ([]*OriginalUser, error) {
 		client := &http.Client{Timeout: 30 * time.Second}
 		resp, err := client.Do(req)
 		if err != nil {
+			cancel()
 			return nil, err
 		}
-		defer resp.Body.Close()
 
 		if resp.StatusCode != http.StatusOK {
 			body, _ := io.ReadAll(resp.Body)
+			resp.Body.Close()
+			cancel()
 			return nil, fmt.Errorf("failed to get users from SCIM: status=%d, body=%s", resp.StatusCode, string(body))
 		}
 
 		body, err := io.ReadAll(resp.Body)
+		resp.Body.Close()
+		cancel()
 		if err != nil {
 			return nil, err
 		}
@@ -250,7 +254,21 @@ func (p *SCIMSyncerProvider) scimUserToOriginalUser(scimUser *SCIMUser) *Origina
 			if addr.Primary {
 				user.Location = addr.Formatted
 				if user.Location == "" {
-					user.Location = fmt.Sprintf("%s, %s, %s %s", addr.StreetAddress, addr.Locality, addr.Region, addr.PostalCode)
+					// Build address from components, filtering out empty fields
+					parts := []string{}
+					if addr.StreetAddress != "" {
+						parts = append(parts, addr.StreetAddress)
+					}
+					if addr.Locality != "" {
+						parts = append(parts, addr.Locality)
+					}
+					if addr.Region != "" {
+						parts = append(parts, addr.Region)
+					}
+					if addr.PostalCode != "" {
+						parts = append(parts, addr.PostalCode)
+					}
+					user.Location = strings.Join(parts, ", ")
 				}
 				break
 			}
@@ -281,7 +299,7 @@ func (p *SCIMSyncerProvider) scimUserToOriginalUser(scimUser *SCIMUser) *Origina
 		if scimUser.Name.Formatted != "" {
 			user.DisplayName = scimUser.Name.Formatted
 		} else if user.FirstName != "" || user.LastName != "" {
-			user.DisplayName = fmt.Sprintf("%s %s", user.FirstName, user.LastName)
+			user.DisplayName = strings.TrimSpace(fmt.Sprintf("%s %s", user.FirstName, user.LastName))
 		} else if scimUser.NickName != "" {
 			user.DisplayName = scimUser.NickName
 		} else {
