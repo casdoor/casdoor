@@ -378,7 +378,7 @@ class ProductEditPage extends React.Component {
       Setting.showMessage("error", i18next.t("product:Please select a currency"));
       return;
     }
-    if (!product.providers || product.providers.length === 0) {
+    if (!product.isCreatedByPlan && (!product.providers || product.providers.length === 0)) {
       Setting.showMessage("error", i18next.t("product:Please select at least one payment provider"));
       return;
     }
