@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/casdoor/casdoor/util"
@@ -56,7 +57,7 @@ func (p *OktaSyncerProvider) UpdateUser(user *OriginalUser) (bool, error) {
 // TestConnection tests the Okta API connection
 func (p *OktaSyncerProvider) TestConnection() error {
 	// Try to fetch first page of users to verify connection
-	_, err := p.getOktaUsers("")
+	_, _, err := p.getOktaUsers("")
 	return err
 }
 
@@ -94,19 +95,42 @@ type OktaUser struct {
 	} `json:"profile"`
 }
 
+// parseLinkHeader parses the HTTP Link header
+// Format: <https://example.com/api/v1/users?after=xyz>; rel="next"
+func parseLinkHeader(header string) map[string]string {
+	links := make(map[string]string)
+	parts := strings.Split(header, ",")
+	for _, part := range parts {
+		section := strings.Split(strings.TrimSpace(part), ";")
+		if len(section) != 2 {
+			continue
+		}
+
+		url := strings.Trim(strings.TrimSpace(section[0]), "<>")
+		rel := strings.TrimSpace(section[1])
+
+		if strings.HasPrefix(rel, "rel=\"") && strings.HasSuffix(rel, "\"") {
+			relValue := rel[5 : len(rel)-1]
+			links[relValue] = url
+		}
+	}
+	return links
+}
+
 // getOktaUsers retrieves users from Okta API with pagination support
-func (p *OktaSyncerProvider) getOktaUsers(nextLink string) ([]*OktaUser, error) {
+// Returns users and the next page link (if any)
+func (p *OktaSyncerProvider) getOktaUsers(nextLink string) ([]*OktaUser, string, error) {
 	// syncer.Host should be the Okta domain (e.g., "dev-12345.okta.com" or full URL)
 	// syncer.Password should be the API token
 
 	domain := p.Syncer.Host
 	if domain == "" {
-		return nil, fmt.Errorf("Okta domain (host field) is required for Okta syncer")
+		return nil, "", fmt.Errorf("Okta domain (host field) is required for Okta syncer")
 	}
 
 	apiToken := p.Syncer.Password
 	if apiToken == "" {
-		return nil, fmt.Errorf("API token (password field) is required for Okta syncer")
+		return nil, "", fmt.Errorf("API token (password field) is required for Okta syncer")
 	}
 
 	// Construct API URL
@@ -128,7 +152,7 @@ func (p *OktaSyncerProvider) getOktaUsers(nextLink string) ([]*OktaUser, error) 
 
 	req, err := http.NewRequestWithContext(ctx, "GET", apiUrl, nil)
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
 
 	req.Header.Set("Authorization", "SSWS "+apiToken)
@@ -138,27 +162,38 @@ func (p *OktaSyncerProvider) getOktaUsers(nextLink string) ([]*OktaUser, error) 
 	client := &http.Client{Timeout: 30 * time.Second}
 	resp, err := client.Do(req)
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		body, _ := io.ReadAll(resp.Body)
-		return nil, fmt.Errorf("failed to get users from Okta: status=%d, body=%s", resp.StatusCode, string(body))
+		return nil, "", fmt.Errorf("failed to get users from Okta: status=%d, body=%s", resp.StatusCode, string(body))
 	}
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
 
 	var users []*OktaUser
 	err = json.Unmarshal(body, &users)
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
 
-	return users, nil
+	// Parse Link header for next page
+	// Link header format: <https://...>; rel="next"
+	nextPageLink := ""
+	linkHeader := resp.Header.Get("Link")
+	if linkHeader != "" {
+		links := parseLinkHeader(linkHeader)
+		if next, ok := links["next"]; ok {
+			nextPageLink = next
+		}
+	}
+
+	return users, nextPageLink, nil
 }
 
 // oktaUserToOriginalUser converts Okta user to Casdoor OriginalUser
@@ -213,7 +248,7 @@ func (p *OktaSyncerProvider) oktaUserToOriginalUser(oktaUser *OktaUser) *Origina
 
 	// If display name is empty, construct from first and last name
 	if user.DisplayName == "" && (user.FirstName != "" || user.LastName != "") {
-		user.DisplayName = fmt.Sprintf("%s %s", user.FirstName, user.LastName)
+		user.DisplayName = strings.TrimSpace(fmt.Sprintf("%s %s", user.FirstName, user.LastName))
 	}
 
 	// If email is empty, use login as email (typically login is an email)
@@ -241,22 +276,19 @@ func (p *OktaSyncerProvider) getOktaOriginalUsers() ([]*OriginalUser, error) {
 
 	// Fetch all users with pagination
 	for {
-		users, err := p.getOktaUsers(nextLink)
+		users, next, err := p.getOktaUsers(nextLink)
 		if err != nil {
 			return nil, err
 		}
 
 		allUsers = append(allUsers, users...)
 
-		// Check if there are more pages
-		// Okta uses Link header for pagination, but for simplicity we'll stop if we get less than limit
-		if len(users) < 200 {
+		// If there's no next link, we've fetched all users
+		if next == "" {
 			break
 		}
 
-		// For proper pagination, we would need to parse the Link header
-		// For now, we'll just break after getting all users in one batch
-		break
+		nextLink = next
 	}
 
 	// Convert Okta users to Casdoor OriginalUser
