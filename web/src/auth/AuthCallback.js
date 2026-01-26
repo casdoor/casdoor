@@ -89,7 +89,6 @@ class AuthCallback extends React.Component {
     const params = new URLSearchParams(this.props.location.search);
     const isSteam = params.get("openid.mode");
 
-
     let code = params.get("code");
     // WeCom returns "auth_code=xxx" instead of "code=xxx"
     if (code === null) {
