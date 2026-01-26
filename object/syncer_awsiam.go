@@ -140,11 +140,11 @@ func (p *AwsIamSyncerProvider) getAwsIamUsers() ([]types.User, error) {
 	allUsers := []types.User{}
 	var marker *string
 
+	ctx, cancel := context.WithTimeout(context.Background(), 120*time.Second)
+	defer cancel()
+
 	// Paginate through all users
 	for {
-		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-		defer cancel()
-
 		input := &iam.ListUsersInput{
 			Marker: marker,
 		}
