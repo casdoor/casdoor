@@ -222,10 +222,10 @@ func (p *OneLoginSyncerProvider) getOneLoginUsers(accessToken string) ([]OneLogi
 
 	for nextLink != "" {
 		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-		defer cancel()
 
 		req, err := http.NewRequestWithContext(ctx, "GET", nextLink, nil)
 		if err != nil {
+			cancel()
 			return nil, err
 		}
 
@@ -235,16 +235,21 @@ func (p *OneLoginSyncerProvider) getOneLoginUsers(accessToken string) ([]OneLogi
 		client := &http.Client{Timeout: 30 * time.Second}
 		resp, err := client.Do(req)
 		if err != nil {
+			cancel()
 			return nil, err
 		}
-		defer resp.Body.Close()
 
 		if resp.StatusCode != http.StatusOK {
 			body, _ := io.ReadAll(resp.Body)
+			resp.Body.Close()
+			cancel()
 			return nil, fmt.Errorf("failed to get users: status=%d, body=%s", resp.StatusCode, string(body))
 		}
 
 		body, err := io.ReadAll(resp.Body)
+		resp.Body.Close()
+		cancel()
+
 		if err != nil {
 			return nil, err
 		}
@@ -280,14 +285,11 @@ func (p *OneLoginSyncerProvider) oneLoginUserToOriginalUser(oneLoginUser *OneLog
 		Phone:       oneLoginUser.Phone,
 		Title:       oneLoginUser.Title,
 		Location:    oneLoginUser.Company,
-		Address:     []string{},
-		Properties:  map[string]string{},
-		Groups:      []string{},
 	}
 
-	// Add department to properties
+	// Map department to Affiliation
 	if oneLoginUser.Department != "" {
-		user.Properties["department"] = oneLoginUser.Department
+		user.Affiliation = oneLoginUser.Department
 	}
 
 	// Set IsForbidden based on status (0 = Unactivated, 1 = Active, 2 = Suspended, 3 = Locked, 4 = Password expired, 5 = Awaiting password reset)
