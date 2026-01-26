@@ -130,22 +130,14 @@ class PlanListPage extends BaseListPage {
         ...this.getColumnSearchProps("displayName"),
       },
       {
-        title: i18next.t("payment:Currency"),
-        dataIndex: "currency",
-        key: "currency",
-        width: "120px",
-        sorter: true,
-        ...this.getColumnSearchProps("currency"),
-        render: (text, record, index) => {
-          return Setting.getCurrencyWithFlag(text);
-        },
-      },
-      {
         title: i18next.t("plan:Price"),
         dataIndex: "price",
         key: "price",
-        width: "130px",
+        width: "160px",
         ...this.getColumnSearchProps("price"),
+        render: (text, record, index) => {
+          return Setting.getPriceDisplay(record.price, record.currency);
+        },
       },
       {
         title: i18next.t("plan:Period"),

@@ -74,8 +74,7 @@ class PaymentEditPage extends React.Component {
   goToViewOrder() {
     const payment = this.state.payment;
     if (payment && payment.order) {
-      const viewUrl = `/orders/${payment.owner}/${payment.order}/pay?view=true`;
-      this.props.history.push(viewUrl);
+      this.props.history.push(`/orders/${payment.owner}/${payment.order}/pay`);
     } else {
       Setting.showMessage("error", i18next.t("order:Order not found"));
     }

@@ -134,7 +134,7 @@ class ProductBuyPage extends React.Component {
   }
 
   getPrice(product) {
-    return `${Setting.getCurrencySymbol(product?.currency)}${product?.price} (${Setting.getCurrencyText(product)})`;
+    return `${Setting.getCurrencySymbol(product?.currency)}${product?.price} (${Setting.getCurrencyText(product?.currency)})`;
   }
 
   addToCart(product) {
@@ -301,7 +301,7 @@ class ProductBuyPage extends React.Component {
             onChange={(e) => {this.setState({customPrice: e});}}
             disabled={disableCustom}
           />
-          <span style={{fontSize: 16}}>{Setting.getCurrencyText(product)}</span>
+          <span style={{fontSize: 16}}>{Setting.getCurrencyText(product?.currency)}</span>
         </Space>
       </Space>
     );

@@ -1868,6 +1868,17 @@ export function getCurrencyCountryCode(currency) {
   return currencyToCountry[currency?.toUpperCase()] || null;
 }
 
+export function getCurrencyFlag(currency) {
+  const countryCode = getCurrencyCountryCode(currency);
+  if (!countryCode) {
+    return null;
+  }
+
+  return (
+    <img src={`${StaticBaseUrl}/flag-icons/${countryCode}.svg`} alt={`${currency} flag`} height={20} style={{marginRight: 5}} />
+  );
+}
+
 export function getCurrencyWithFlag(currency) {
   const translationKey = `currency:${currency}`;
   const translatedText = i18next.t(translationKey);
@@ -1883,6 +1894,16 @@ export function getCurrencyWithFlag(currency) {
       <img src={`${StaticBaseUrl}/flag-icons/${countryCode}.svg`} alt={`${currency} flag`} height={20} style={{marginRight: 5}} />
       {currencyText}
     </span>
+  );
+}
+
+export function getPriceDisplay(price, currency) {
+  const priceValue = price || 0;
+  const currencyValue = currency || "USD";
+  return (
+    <>
+      {getCurrencyFlag(currencyValue)} {getCurrencySymbol(currencyValue)}{priceValue} ({getCurrencyText(currencyValue)})
+    </>
   );
 }
 
@@ -2013,58 +2034,58 @@ export function getDefaultInvitationHtmlEmailContent() {
 </html>`;
 }
 
-export function getCurrencyText(product) {
-  if (product?.currency === "USD") {
+export function getCurrencyText(currency) {
+  if (currency === "USD") {
     return i18next.t("currency:USD");
-  } else if (product?.currency === "CNY") {
+  } else if (currency === "CNY") {
     return i18next.t("currency:CNY");
-  } else if (product?.currency === "EUR") {
+  } else if (currency === "EUR") {
     return i18next.t("currency:EUR");
-  } else if (product?.currency === "JPY") {
+  } else if (currency === "JPY") {
     return i18next.t("currency:JPY");
-  } else if (product?.currency === "GBP") {
+  } else if (currency === "GBP") {
     return i18next.t("currency:GBP");
-  } else if (product?.currency === "AUD") {
+  } else if (currency === "AUD") {
     return i18next.t("currency:AUD");
-  } else if (product?.currency === "CAD") {
+  } else if (currency === "CAD") {
     return i18next.t("currency:CAD");
-  } else if (product?.currency === "CHF") {
+  } else if (currency === "CHF") {
     return i18next.t("currency:CHF");
-  } else if (product?.currency === "HKD") {
+  } else if (currency === "HKD") {
     return i18next.t("currency:HKD");
-  } else if (product?.currency === "SGD") {
+  } else if (currency === "SGD") {
     return i18next.t("currency:SGD");
-  } else if (product?.currency === "BRL") {
+  } else if (currency === "BRL") {
     return i18next.t("currency:BRL");
-  } else if (product?.currency === "PLN") {
+  } else if (currency === "PLN") {
     return i18next.t("currency:PLN");
-  } else if (product?.currency === "KRW") {
+  } else if (currency === "KRW") {
     return i18next.t("currency:KRW");
-  } else if (product?.currency === "INR") {
+  } else if (currency === "INR") {
     return i18next.t("currency:INR");
-  } else if (product?.currency === "RUB") {
+  } else if (currency === "RUB") {
     return i18next.t("currency:RUB");
-  } else if (product?.currency === "MXN") {
+  } else if (currency === "MXN") {
     return i18next.t("currency:MXN");
-  } else if (product?.currency === "ZAR") {
+  } else if (currency === "ZAR") {
     return i18next.t("currency:ZAR");
-  } else if (product?.currency === "TRY") {
+  } else if (currency === "TRY") {
     return i18next.t("currency:TRY");
-  } else if (product?.currency === "SEK") {
+  } else if (currency === "SEK") {
     return i18next.t("currency:SEK");
-  } else if (product?.currency === "NOK") {
+  } else if (currency === "NOK") {
     return i18next.t("currency:NOK");
-  } else if (product?.currency === "DKK") {
+  } else if (currency === "DKK") {
     return i18next.t("currency:DKK");
-  } else if (product?.currency === "THB") {
+  } else if (currency === "THB") {
     return i18next.t("currency:THB");
-  } else if (product?.currency === "MYR") {
+  } else if (currency === "MYR") {
     return i18next.t("currency:MYR");
-  } else if (product?.currency === "TWD") {
+  } else if (currency === "TWD") {
     return i18next.t("currency:TWD");
-  } else if (product?.currency === "CZK") {
+  } else if (currency === "CZK") {
     return i18next.t("currency:CZK");
-  } else if (product?.currency === "HUF") {
+  } else if (currency === "HUF") {
     return i18next.t("currency:HUF");
   } else {
     return "(Unknown currency)";

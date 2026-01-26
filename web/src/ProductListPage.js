@@ -153,23 +153,15 @@ class ProductListPage extends BaseListPage {
         ...this.getColumnSearchProps("tag"),
       },
       {
-        title: i18next.t("payment:Currency"),
-        dataIndex: "currency",
-        key: "currency",
-        width: "120px",
-        sorter: true,
-        ...this.getColumnSearchProps("currency"),
-        render: (text, record, index) => {
-          return Setting.getCurrencyWithFlag(text);
-        },
-      },
-      {
         title: i18next.t("product:Price"),
         dataIndex: "price",
         key: "price",
-        width: "120px",
+        width: "160px",
         sorter: true,
         ...this.getColumnSearchProps("price"),
+        render: (text, record, index) => {
+          return Setting.getPriceDisplay(record.price, record.currency);
+        },
       },
       {
         title: i18next.t("product:Quantity"),
