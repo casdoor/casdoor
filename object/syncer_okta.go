@@ -1,4 +1,4 @@
-// Copyright 2026 The Casdoor Authors. All Rights Reserved.
+// Copyright 2025 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/casdoor/casdoor/util"
@@ -143,41 +144,7 @@ func (p *OktaSyncerProvider) fetchOktaUsers(limit int) ([]*OktaUser, error) {
 	nextUrl := fmt.Sprintf("https://%s/api/v1/users?limit=%d", oktaDomain, pageLimit)
 
 	for nextUrl != "" {
-		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-
-		req, err := http.NewRequestWithContext(ctx, "GET", nextUrl, nil)
-		if err != nil {
-			cancel()
-			return nil, err
-		}
-
-		req.Header.Set("Authorization", "SSWS "+apiToken)
-		req.Header.Set("Content-Type", "application/json")
-		req.Header.Set("Accept", "application/json")
-
-		client := &http.Client{Timeout: 30 * time.Second}
-		resp, err := client.Do(req)
-		if err != nil {
-			cancel()
-			return nil, err
-		}
-
-		if resp.StatusCode != http.StatusOK {
-			body, _ := io.ReadAll(resp.Body)
-			resp.Body.Close()
-			cancel()
-			return nil, fmt.Errorf("failed to get users: status=%d, body=%s", resp.StatusCode, string(body))
-		}
-
-		body, err := io.ReadAll(resp.Body)
-		resp.Body.Close()
-		cancel()
-		if err != nil {
-			return nil, err
-		}
-
-		var users []*OktaUser
-		err = json.Unmarshal(body, &users)
+		users, newNextUrl, err := p.fetchOktaUsersPage(nextUrl, apiToken)
 		if err != nil {
 			return nil, err
 		}
@@ -189,15 +156,57 @@ func (p *OktaSyncerProvider) fetchOktaUsers(limit int) ([]*OktaUser, error) {
 			break
 		}
 
-		// Check for pagination link in response headers
-		linkHeader := resp.Header.Get("Link")
-		nextUrl = ""
-		if linkHeader != "" {
-			nextUrl = p.parseNextLink(linkHeader)
-		}
+		nextUrl = newNextUrl
 	}
 
 	return allUsers, nil
+}
+
+// fetchOktaUsersPage fetches a single page of users from Okta API
+func (p *OktaSyncerProvider) fetchOktaUsersPage(url string, apiToken string) ([]*OktaUser, string, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
+	if err != nil {
+		return nil, "", err
+	}
+
+	req.Header.Set("Authorization", "SSWS "+apiToken)
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Accept", "application/json")
+
+	client := &http.Client{Timeout: 30 * time.Second}
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, "", err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		body, _ := io.ReadAll(resp.Body)
+		return nil, "", fmt.Errorf("failed to get users: status=%d, body=%s", resp.StatusCode, string(body))
+	}
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, "", err
+	}
+
+	var users []*OktaUser
+	err = json.Unmarshal(body, &users)
+	if err != nil {
+		return nil, "", err
+	}
+
+	// Check for pagination link in response headers
+	linkHeader := resp.Header.Get("Link")
+	nextUrl := ""
+	if linkHeader != "" {
+		nextUrl = p.parseNextLink(linkHeader)
+	}
+
+	return users, nextUrl, nil
 }
 
 // parseNextLink extracts the next page URL from the Link header
@@ -239,7 +248,7 @@ func parseLinkHeader(linkHeader string) map[string]string {
 		
 		// Extract rel value
 		relStart := -1
-		for i := urlEnd; i < len(part)-4; i++ {
+		for i := urlEnd; i <= len(part)-5; i++ {
 			if part[i:i+5] == "rel=\"" {
 				relStart = i + 5
 				break
@@ -322,7 +331,7 @@ func (p *OktaSyncerProvider) oktaUserToOriginalUser(oktaUser *OktaUser) *Origina
 	// Build display name
 	displayName := profile.DisplayName
 	if displayName == "" && (profile.FirstName != "" || profile.LastName != "") {
-		displayName = fmt.Sprintf("%s %s", profile.FirstName, profile.LastName)
+		displayName = strings.TrimSpace(fmt.Sprintf("%s %s", profile.FirstName, profile.LastName))
 	}
 	if displayName == "" {
 		displayName = profile.Login
