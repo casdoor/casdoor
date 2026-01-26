@@ -374,6 +374,14 @@ class ProductEditPage extends React.Component {
 
   submitProductEdit(exitAfterSave) {
     const product = Setting.deepCopy(this.state.product);
+    if (!product.currency) {
+      Setting.showMessage("error", i18next.t("product:Please select a currency"));
+      return;
+    }
+    if (!product.providers || product.providers.length === 0) {
+      Setting.showMessage("error", i18next.t("product:Please select at least one payment provider"));
+      return;
+    }
     if (product.isRecharge && product.disableCustomRecharge && (!product.rechargeOptions || product.rechargeOptions.length === 0)) {
       Setting.showMessage("error", i18next.t("product:Please add at least one recharge option when custom amount is disabled"));
       return;
