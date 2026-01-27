@@ -133,6 +133,15 @@ func InitAPI() {
 	web.Router("/api/add-cert", &controllers.ApiController{}, "POST:AddCert")
 	web.Router("/api/delete-cert", &controllers.ApiController{}, "POST:DeleteCert")
 
+	web.Router("/api/get-backups", &controllers.ApiController{}, "GET:GetBackups")
+	web.Router("/api/get-global-backups", &controllers.ApiController{}, "GET:GetGlobalBackups")
+	web.Router("/api/get-backup", &controllers.ApiController{}, "GET:GetBackup")
+	web.Router("/api/update-backup", &controllers.ApiController{}, "POST:UpdateBackup")
+	web.Router("/api/add-backup", &controllers.ApiController{}, "POST:AddBackup")
+	web.Router("/api/delete-backup", &controllers.ApiController{}, "POST:DeleteBackup")
+	web.Router("/api/execute-backup", &controllers.ApiController{}, "POST:ExecuteBackup")
+	web.Router("/api/restore-backup", &controllers.ApiController{}, "POST:RestoreBackup")
+
 	web.Router("/api/get-roles", &controllers.ApiController{}, "GET:GetRoles")
 	web.Router("/api/get-role", &controllers.ApiController{}, "GET:GetRole")
 	web.Router("/api/update-role", &controllers.ApiController{}, "POST:UpdateRole")
