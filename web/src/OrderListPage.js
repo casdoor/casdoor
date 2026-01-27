@@ -144,8 +144,8 @@ class OrderListPage extends BaseListPage {
         key: "products",
         ...this.getColumnSearchProps("products"),
         render: (text, record, index) => {
-          const products = record?.products || [];
-          if (products.length === 0) {
+          const productInfos = record?.productInfos || [];
+          if (productInfos.length === 0) {
             return `(${i18next.t("general:empty")})`;
           }
           return (
@@ -153,21 +153,26 @@ class OrderListPage extends BaseListPage {
               <List
                 size="small"
                 locale={{emptyText: " "}}
-                dataSource={products}
+                dataSource={productInfos}
                 style={{
                   paddingTop: 8,
                   paddingBottom: 8,
                 }}
-                renderItem={(productName, i) => {
+                renderItem={(productInfo, i) => {
+                  const price = productInfo.price * (productInfo.quantity || 1);
+                  const currency = record.currency || "USD";
                   return (
                     <List.Item>
                       <div style={{display: "inline"}}>
                         <Tooltip placement="topLeft" title={i18next.t("general:Edit")}>
-                          <Button style={{marginRight: "5px"}} icon={<EditOutlined />} size="small" onClick={() => Setting.goToLinkSoft(this, `/products/${record.owner}/${productName}`)} />
+                          <Button style={{marginRight: "5px"}} icon={<EditOutlined />} size="small" onClick={() => Setting.goToLinkSoft(this, `/products/${record.owner}/${productInfo.name}`)} />
                         </Tooltip>
-                        <Link to={`/products/${record.owner}/${productName}`}>
-                          {productName}
+                        <Link to={`/products/${record.owner}/${productInfo.name}`}>
+                          {productInfo.displayName || productInfo.name}
                         </Link>
+                        <span style={{marginLeft: "8px", color: "#666"}}>
+                          {Setting.getPriceDisplay(price, currency)}
+                        </span>
                       </div>
                     </List.Item>
                   );
