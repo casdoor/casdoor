@@ -420,7 +420,16 @@ class App extends Component {
     }
 
     if (query !== "") {
-      window.history.replaceState({}, document.title, this.getUrlWithoutQuery());
+      const currentParams = new URLSearchParams(this.props.location.search);
+      const returnUrl = currentParams.get("returnUrl");
+
+      let newUrl;
+      if (returnUrl) {
+        newUrl = window.location.pathname + "?returnUrl=" + returnUrl;
+      } else {
+        newUrl = this.getUrlWithoutQuery();
+      }
+      window.history.replaceState({}, document.title, newUrl);
     }
 
     AuthBackend.getAccount(query)
