@@ -34,17 +34,27 @@ class LanguageSelect extends React.Component {
       onClick: props.onClick,
     };
 
+    // Create a map for fast language lookup
+    this.languageMap = new Map(Setting.Countries.map(country => [country.key, country]));
+
     Setting.Countries.forEach((country) => {
       new Image().src = `${Setting.StaticBaseUrl}/flag-icons/${country.country}.svg`;
     });
   }
 
   getCountryByLanguage(languageKey) {
-    return Setting.Countries.find(country => country.key === languageKey);
+    return this.languageMap.get(languageKey);
+  }
+
+  getValidLanguageOptions() {
+    return this.state.languages
+      .map((langKey) => this.getCountryByLanguage(langKey))
+      .filter((country) => country !== undefined);
   }
 
   render() {
     const currentLanguage = Setting.getLanguage();
+    const validOptions = this.getValidLanguageOptions();
 
     const onChange = (value) => {
       if (typeof this.state.onClick === "function") {
@@ -59,15 +69,12 @@ class LanguageSelect extends React.Component {
         onChange={onChange}
         style={{width: 150, display: this.state.languages.length === 0 ? "none" : null, ...this.props.style}}
       >
-        {this.state.languages
-          .map((langKey) => this.getCountryByLanguage(langKey))
-          .filter((country) => country !== undefined)
-          .map((country) => (
-            <Option key={country.key} value={country.key}>
-              {flagIcon(country.country, country.alt)}
-              {country.label}
-            </Option>
-          ))}
+        {validOptions.map((country) => (
+          <Option key={country.key} value={country.key}>
+            {flagIcon(country.country, country.alt)}
+            {country.label}
+          </Option>
+        ))}
       </Select>
     );
   }
