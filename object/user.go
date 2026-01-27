@@ -77,6 +77,7 @@ type User struct {
 	Region               string   `xorm:"varchar(100)" json:"region"`
 	Location             string   `xorm:"varchar(100)" json:"location"`
 	Address              []string `json:"address"`
+	Addresses            []*Address `xorm:"addresses blob" json:"addresses"`
 	Affiliation          string   `xorm:"varchar(100)" json:"affiliation"`
 	Title                string   `xorm:"varchar(100)" json:"title"`
 	IdCardType           string   `xorm:"varchar(100)" json:"idCardType"`
@@ -272,6 +273,16 @@ type MfaAccount struct {
 	Issuer      string `xorm:"varchar(100)" json:"issuer"`
 	SecretKey   string `xorm:"varchar(100)" json:"secretKey"`
 	Origin      string `xorm:"varchar(100)" json:"origin"`
+}
+
+type Address struct {
+	Tag     string `xorm:"varchar(100)" json:"tag"`
+	Line1   string `xorm:"varchar(100)" json:"line1"`
+	Line2   string `xorm:"varchar(100)" json:"line2"`
+	City    string `xorm:"varchar(100)" json:"city"`
+	State   string `xorm:"varchar(100)" json:"state"`
+	ZipCode string `xorm:"varchar(100)" json:"zipCode"`
+	Region  string `xorm:"varchar(100)" json:"region"`
 }
 
 type FaceId struct {

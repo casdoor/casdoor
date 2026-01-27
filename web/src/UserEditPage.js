@@ -33,6 +33,7 @@ import SamlWidget from "./common/SamlWidget";
 import RegionSelect from "./common/select/RegionSelect";
 import WebAuthnCredentialTable from "./table/WebauthnCredentialTable";
 import ManagedAccountTable from "./table/ManagedAccountTable";
+import AddressTable from "./table/AddressTable";
 import PropertyTable from "./table/propertyTable";
 import {CountryCodeSelect} from "./common/select/CountryCodeSelect";
 import PopconfirmModal from "./common/modal/PopconfirmModal";
@@ -596,6 +597,16 @@ class UserEditPage extends React.Component {
             </Col>
           </Row>
         </React.Fragment>
+      );
+    } else if (accountItem.name === "Addresses") {
+      return (
+        <AddressTable
+          title={i18next.t("user:Addresses")}
+          table={this.state.user.addresses}
+          onUpdateTable={(value) => {
+            this.updateUserField("addresses", value);
+          }}
+        />
       );
     } else if (accountItem.name === "Affiliation") {
       return (

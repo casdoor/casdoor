@@ -61,6 +61,8 @@ func getBuiltInAccountItems() []*AccountItem {
 		{Name: "Country code", Visible: true, ViewRule: "Public", ModifyRule: "Admin"},
 		{Name: "Country/Region", Visible: true, ViewRule: "Public", ModifyRule: "Self"},
 		{Name: "Location", Visible: true, ViewRule: "Public", ModifyRule: "Self"},
+		{Name: "Address", Visible: true, ViewRule: "Public", ModifyRule: "Self"},
+		{Name: "Addresses", Visible: true, ViewRule: "Public", ModifyRule: "Self"},
 		{Name: "Affiliation", Visible: true, ViewRule: "Public", ModifyRule: "Self"},
 		{Name: "Title", Visible: true, ViewRule: "Public", ModifyRule: "Self"},
 		{Name: "ID card type", Visible: true, ViewRule: "Public", ModifyRule: "Self"},
