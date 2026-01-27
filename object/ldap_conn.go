@@ -26,9 +26,34 @@ import (
 	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/util"
 	goldap "github.com/go-ldap/ldap/v3"
+	"github.com/nyaruka/phonenumbers"
 	"github.com/thanhpk/randstr"
 	"golang.org/x/text/encoding/unicode"
 )
+
+// formatUserPhone processes phone number for a user based on their CountryCode
+func formatUserPhone(u *User) {
+	if u.Phone == "" {
+		return
+	}
+
+	// 1. Normalize hint (e.g., "China" -> "CN") for the parser
+	countryHint := u.CountryCode
+	if strings.EqualFold(countryHint, "China") {
+		countryHint = "CN"
+	}
+	if len(countryHint) != 2 {
+		countryHint = "" // Only 2-letter codes are valid hints
+	}
+
+	// 2. Try parsing (Strictly using countryHint from LDAP)
+	num, err := phonenumbers.Parse(u.Phone, countryHint)
+
+	if err == nil && num != nil && phonenumbers.IsValidNumber(num) {
+		// Store a clean national number (digits only, without country prefix)
+		u.Phone = fmt.Sprint(num.GetNationalNumber())
+	}
+}
 
 type LdapConn struct {
 	Conn *goldap.Conn
@@ -288,7 +313,8 @@ func AutoAdjustLdapUser(users []LdapUser) []LdapUser {
 			Email:       util.ReturnAnyNotEmpty(user.Email, user.EmailAddress, user.Mail),
 			Mobile:      util.ReturnAnyNotEmpty(user.Mobile, user.MobileTelephoneNumber, user.TelephoneNumber),
 			Address:     util.ReturnAnyNotEmpty(user.Address, user.PostalAddress, user.RegisteredAddress),
-			Country:     util.ReturnAnyNotEmpty(user.Country, user.CountryName),
+			Country:     user.Country,
+			CountryName: user.CountryName,
 			Attributes:  user.Attributes,
 		}
 	}
@@ -361,6 +387,7 @@ func SyncLdapUsers(owner string, syncUsers []LdapUser, ldapId string) (existUser
 				Avatar:            organization.DefaultAvatar,
 				Email:             syncUser.Email,
 				Phone:             syncUser.Mobile,
+				CountryCode:       syncUser.Country,
 				Address:           []string{syncUser.Address},
 				Region:            util.ReturnAnyNotEmpty(syncUser.Country, syncUser.CountryName),
 				Affiliation:       affiliation,
@@ -369,6 +396,7 @@ func SyncLdapUsers(owner string, syncUsers []LdapUser, ldapId string) (existUser
 				Ldap:              syncUser.Uuid,
 				Properties:        syncUser.Attributes,
 			}
+			formatUserPhone(newUser)
 
 			if ldap.DefaultGroup != "" {
 				newUser.Groups = []string{ldap.DefaultGroup}
