@@ -14,13 +14,14 @@
 
 import React from "react";
 import * as Setting from "../../Setting";
-import {Dropdown} from "antd";
+import {Select} from "antd";
 import "../../App.less";
-import {GlobalOutlined} from "@ant-design/icons";
+
+const {Option} = Select;
 
 function flagIcon(country, alt) {
   return (
-    <img width={24} alt={alt} src={`${Setting.StaticBaseUrl}/flag-icons/${country}.svg`} />
+    <img width={20} alt={alt} src={`${Setting.StaticBaseUrl}/flag-icons/${country}.svg`} style={{marginRight: 8}} />
   );
 }
 
@@ -33,36 +34,48 @@ class LanguageSelect extends React.Component {
       onClick: props.onClick,
     };
 
+    // Create a map for fast language lookup
+    this.languageMap = new Map(Setting.Countries.map(country => [country.key, country]));
+
     Setting.Countries.forEach((country) => {
       new Image().src = `${Setting.StaticBaseUrl}/flag-icons/${country.country}.svg`;
     });
   }
 
-  items = Setting.Countries.map((country) => Setting.getItem(country.label, country.key, flagIcon(country.country, country.alt)));
+  getCountryByLanguage(languageKey) {
+    return this.languageMap.get(languageKey);
+  }
 
-  getOrganizationLanguages(languages) {
-    const select = [];
-    for (const language of languages) {
-      this.items.map((item, index) => item.key === language ? select.push(item) : null);
-    }
-    return select;
+  getValidLanguageOptions() {
+    return this.state.languages
+      .map((langKey) => this.getCountryByLanguage(langKey))
+      .filter((country) => country !== undefined);
   }
 
   render() {
-    const languageItems = this.getOrganizationLanguages(this.state.languages);
-    const onClick = (e) => {
+    const currentLanguage = Setting.getLanguage();
+    const validOptions = this.getValidLanguageOptions();
+
+    const onChange = (value) => {
       if (typeof this.state.onClick === "function") {
-        this.state.onClick(e.key);
+        this.state.onClick(value);
       }
-      Setting.setLanguage(e.key);
+      Setting.setLanguage(value);
     };
 
     return (
-      <Dropdown menu={{items: languageItems, onClick}} >
-        <div className="select-box" style={{display: languageItems.length === 0 ? "none" : null, ...this.props.style}} >
-          <GlobalOutlined style={{fontSize: "24px"}} />
-        </div>
-      </Dropdown>
+      <Select
+        value={currentLanguage}
+        onChange={onChange}
+        style={{width: 150, display: this.state.languages.length === 0 ? "none" : null, ...this.props.style}}
+      >
+        {validOptions.map((country) => (
+          <Option key={country.key} value={country.key}>
+            {flagIcon(country.country, country.alt)}
+            {country.label}
+          </Option>
+        ))}
+      </Select>
     );
   }
 }
