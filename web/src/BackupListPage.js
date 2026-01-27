@@ -209,22 +209,25 @@ class BackupListPage extends BaseListPage {
         width: "300px",
         fixed: (Setting.isMobile()) ? "false" : "right",
         render: (text, record, index) => {
+          const canEdit = Setting.isAdminUser(this.props.account) || (record.owner === this.props.account.owner);
+          const canRestore = canEdit && record.status === "Completed";
+          
           return (
             <div>
               <Button 
-                disabled={!Setting.isAdminUser(this.props.account) && (record.owner !== this.props.account.owner)} 
+                disabled={!canEdit} 
                 style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} 
                 onClick={() => this.executeBackup(record)}
               >
                 {i18next.t("backup:Execute")}
               </Button>
               <PopconfirmModal
-                disabled={!Setting.isAdminUser(this.props.account) && (record.owner !== this.props.account.owner) || record.status !== "Completed"}
+                disabled={!canRestore}
                 title={i18next.t("backup:Sure to restore") + `: ${record.name} ?`}
                 onConfirm={() => this.restoreBackup(record)}
               >
                 <Button 
-                  disabled={!Setting.isAdminUser(this.props.account) && (record.owner !== this.props.account.owner) || record.status !== "Completed"}
+                  disabled={!canRestore}
                   style={{marginBottom: "10px", marginRight: "10px"}}
                   type="default"
                 >
@@ -232,7 +235,7 @@ class BackupListPage extends BaseListPage {
                 </Button>
               </PopconfirmModal>
               <Button 
-                disabled={!Setting.isAdminUser(this.props.account) && (record.owner !== this.props.account.owner)} 
+                disabled={!canEdit} 
                 style={{marginBottom: "10px", marginRight: "10px"}} 
                 type="primary" 
                 onClick={() => this.props.history.push(`/backups/${record.owner}/${record.name}`)}
@@ -240,12 +243,12 @@ class BackupListPage extends BaseListPage {
                 {i18next.t("general:Edit")}
               </Button>
               <PopconfirmModal
-                disabled={!Setting.isAdminUser(this.props.account) && (record.owner !== this.props.account.owner)}
+                disabled={!canEdit}
                 title={i18next.t("general:Sure to delete") + `: ${record.name} ?`}
                 onConfirm={() => this.deleteBackup(index)}
               >
                 <Button 
-                  disabled={!Setting.isAdminUser(this.props.account) && (record.owner !== this.props.account.owner)} 
+                  disabled={!canEdit} 
                   style={{marginBottom: "10px"}} 
                   type="danger"
                 >

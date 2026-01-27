@@ -202,6 +202,47 @@ func (b *Backup) GetId() string {
 	return fmt.Sprintf("%s/%s", b.Owner, b.Name)
 }
 
+// parseConnectionInfo extracts database connection info from dataSourceName or uses provided values
+func (b *Backup) parseConnectionInfo() (host string, port int, database string, username string, password string, err error) {
+	host = b.Host
+	port = b.Port
+	database = b.Database
+	username = b.Username
+	password = b.Password
+
+	// If host is empty, try to extract from dataSourceName
+	if host == "" {
+		dataSource := conf.GetConfigString("dataSourceName")
+		parts := strings.Split(dataSource, "@tcp(")
+		if len(parts) == 2 {
+			hostPort := strings.Split(parts[1], ")/")
+			if len(hostPort) == 2 {
+				host = strings.Split(hostPort[0], ":")[0]
+			}
+		} else {
+			host = "localhost"
+		}
+	}
+
+	if port == 0 {
+		port = 3306
+	}
+
+	// If database is empty, try to extract from dataSourceName
+	if database == "" {
+		dataSource := conf.GetConfigString("dataSourceName")
+		parts := strings.Split(dataSource, ")/")
+		if len(parts) == 2 {
+			dbParams := strings.Split(parts[1], "?")
+			database = dbParams[0]
+		} else {
+			database = "casdoor"
+		}
+	}
+
+	return host, port, database, username, password, nil
+}
+
 // ExecuteBackup performs a database backup using mysqldump
 func (b *Backup) ExecuteBackup() error {
 	// Update status to InProgress
@@ -222,42 +263,13 @@ func (b *Backup) ExecuteBackup() error {
 	backupFilePath := fmt.Sprintf("%s/%s_%s_%s.sql", backupDir, b.Owner, b.Name, util.GetCurrentTime())
 	b.BackupFile = backupFilePath
 
-	// Build mysqldump command
-	host := b.Host
-	if host == "" {
-		host = conf.GetConfigString("dataSourceName")
-		// Extract host from dataSourceName if using default
-		parts := strings.Split(host, "@tcp(")
-		if len(parts) == 2 {
-			hostPort := strings.Split(parts[1], ")/")
-			if len(hostPort) == 2 {
-				host = strings.Split(hostPort[0], ":")[0]
-			}
-		} else {
-			host = "localhost"
-		}
+	// Get connection info
+	host, port, database, username, password, err := b.parseConnectionInfo()
+	if err != nil {
+		b.Status = "Failed"
+		_, _ = UpdateBackup(b.GetId(), b)
+		return err
 	}
-
-	port := b.Port
-	if port == 0 {
-		port = 3306
-	}
-
-	database := b.Database
-	if database == "" {
-		// Extract database from dataSourceName
-		dataSource := conf.GetConfigString("dataSourceName")
-		parts := strings.Split(dataSource, ")/")
-		if len(parts) == 2 {
-			dbParams := strings.Split(parts[1], "?")
-			database = dbParams[0]
-		} else {
-			database = "casdoor"
-		}
-	}
-
-	username := b.Username
-	password := b.Password
 
 	// Execute mysqldump command
 	args := []string{
@@ -270,11 +282,12 @@ func (b *Backup) ExecuteBackup() error {
 		database,
 	}
 
-	if password != "" {
-		args = append([]string{fmt.Sprintf("--password=%s", password)}, args...)
-	}
-
 	cmd := exec.Command("mysqldump", args...)
+	
+	// Set password via environment variable for security
+	if password != "" {
+		cmd.Env = append(os.Environ(), fmt.Sprintf("MYSQL_PWD=%s", password))
+	}
 	
 	outFile, err := os.Create(backupFilePath)
 	if err != nil {
@@ -323,40 +336,11 @@ func (b *Backup) RestoreBackup() error {
 		return fmt.Errorf("backup file does not exist: %s", b.BackupFile)
 	}
 
-	// Build mysql restore command
-	host := b.Host
-	if host == "" {
-		host = conf.GetConfigString("dataSourceName")
-		parts := strings.Split(host, "@tcp(")
-		if len(parts) == 2 {
-			hostPort := strings.Split(parts[1], ")/")
-			if len(hostPort) == 2 {
-				host = strings.Split(hostPort[0], ":")[0]
-			}
-		} else {
-			host = "localhost"
-		}
+	// Get connection info
+	host, port, database, username, password, err := b.parseConnectionInfo()
+	if err != nil {
+		return err
 	}
-
-	port := b.Port
-	if port == 0 {
-		port = 3306
-	}
-
-	database := b.Database
-	if database == "" {
-		dataSource := conf.GetConfigString("dataSourceName")
-		parts := strings.Split(dataSource, ")/")
-		if len(parts) == 2 {
-			dbParams := strings.Split(parts[1], "?")
-			database = dbParams[0]
-		} else {
-			database = "casdoor"
-		}
-	}
-
-	username := b.Username
-	password := b.Password
 
 	// Execute mysql restore command
 	args := []string{
@@ -366,11 +350,12 @@ func (b *Backup) RestoreBackup() error {
 		database,
 	}
 
-	if password != "" {
-		args = append([]string{fmt.Sprintf("--password=%s", password)}, args...)
-	}
-
 	cmd := exec.Command("mysql", args...)
+	
+	// Set password via environment variable for security
+	if password != "" {
+		cmd.Env = append(os.Environ(), fmt.Sprintf("MYSQL_PWD=%s", password))
+	}
 	
 	inFile, err := os.Open(b.BackupFile)
 	if err != nil {

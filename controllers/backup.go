@@ -206,7 +206,12 @@ func (c *ApiController) ExecuteBackup() {
 
 	// Execute backup in background
 	go func() {
-		_ = backup.ExecuteBackup()
+		err := backup.ExecuteBackup()
+		if err != nil {
+			util.LogInfo(c.Ctx, "Backup execution failed for [%s]: %v", backup.GetId(), err)
+		} else {
+			util.LogInfo(c.Ctx, "Backup execution completed for [%s]", backup.GetId())
+		}
 	}()
 
 	c.Data["json"] = Response{Status: "ok", Msg: "Backup started", Data: "Backup process started"}
