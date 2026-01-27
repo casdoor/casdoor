@@ -14,13 +14,14 @@
 
 import React from "react";
 import * as Setting from "../../Setting";
-import {Dropdown} from "antd";
+import {Select} from "antd";
 import "../../App.less";
-import {GlobalOutlined} from "@ant-design/icons";
+
+const {Option} = Select;
 
 function flagIcon(country, alt) {
   return (
-    <img width={24} alt={alt} src={`${Setting.StaticBaseUrl}/flag-icons/${country}.svg`} />
+    <img width={20} alt={alt} src={`${Setting.StaticBaseUrl}/flag-icons/${country}.svg`} style={{marginRight: 8}} />
   );
 }
 
@@ -38,31 +39,37 @@ class LanguageSelect extends React.Component {
     });
   }
 
-  items = Setting.Countries.map((country) => Setting.getItem(country.label, country.key, flagIcon(country.country, country.alt)));
-
-  getOrganizationLanguages(languages) {
-    const select = [];
-    for (const language of languages) {
-      this.items.map((item, index) => item.key === language ? select.push(item) : null);
-    }
-    return select;
+  getCountryByLanguage(languageKey) {
+    return Setting.Countries.find(country => country.key === languageKey);
   }
 
   render() {
-    const languageItems = this.getOrganizationLanguages(this.state.languages);
-    const onClick = (e) => {
+    const currentLanguage = Setting.getLanguage();
+
+    const onChange = (value) => {
       if (typeof this.state.onClick === "function") {
-        this.state.onClick(e.key);
+        this.state.onClick(value);
       }
-      Setting.setLanguage(e.key);
+      Setting.setLanguage(value);
     };
 
     return (
-      <Dropdown menu={{items: languageItems, onClick}} >
-        <div className="select-box" style={{display: languageItems.length === 0 ? "none" : null, ...this.props.style}} >
-          <GlobalOutlined style={{fontSize: "24px"}} />
-        </div>
-      </Dropdown>
+      <Select
+        value={currentLanguage}
+        onChange={onChange}
+        style={{width: 150, display: this.state.languages.length === 0 ? "none" : null, ...this.props.style}}
+      >
+        {this.state.languages.map((langKey) => {
+          const country = this.getCountryByLanguage(langKey);
+          if (!country) {return null;}
+          return (
+            <Option key={langKey} value={langKey}>
+              {flagIcon(country.country, country.alt)}
+              {country.label}
+            </Option>
+          );
+        })}
+      </Select>
     );
   }
 }
