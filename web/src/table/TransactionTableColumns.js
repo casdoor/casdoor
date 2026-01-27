@@ -275,22 +275,12 @@ export function getTransactionTableColumns(options = {}) {
     title: i18next.t("transaction:Amount"),
     dataIndex: "amount",
     key: "amount",
-    width: "120px",
+    width: "160px",
     sorter: getSorter("amount"),
     ...(getColumnSearchProps ? getColumnSearchProps("amount") : {}),
     fixed: (Setting.isMobile()) ? "false" : "right",
-  });
-
-  columns.push({
-    title: i18next.t("payment:Currency"),
-    dataIndex: "currency",
-    key: "currency",
-    width: "120px",
-    sorter: getSorter("currency"),
-    ...(getColumnSearchProps ? getColumnSearchProps("currency") : {}),
-    fixed: (Setting.isMobile()) ? "false" : "right",
     render: (text, record, index) => {
-      return Setting.getCurrencyWithFlag(text);
+      return Setting.getPriceDisplay(record.amount, record.currency);
     },
   });
 

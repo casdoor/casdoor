@@ -22,7 +22,6 @@ import * as Setting from "./Setting";
 class OrderPayPage extends React.Component {
   constructor(props) {
     super(props);
-    const params = new URLSearchParams(window.location.search);
     this.state = {
       owner: props?.match?.params?.organizationName ?? props?.match?.params?.owner ?? null,
       orderName: props?.match?.params?.orderName ?? null,
@@ -31,7 +30,7 @@ class OrderPayPage extends React.Component {
       productInfos: [],
       paymentEnv: "",
       isProcessingPayment: false,
-      isViewMode: params.get("view") === "true",
+      isViewMode: false,
     };
   }
 
@@ -61,6 +60,7 @@ class OrderPayPage extends React.Component {
       this.setState({
         order: res.data,
         productInfos: res.data?.productInfos,
+        isViewMode: res.data?.state !== "Created",
       }, () => {
         this.getProduct();
       });
@@ -90,12 +90,12 @@ class OrderPayPage extends React.Component {
   }
 
   getPrice(order) {
-    return `${Setting.getCurrencySymbol(order?.currency)}${order?.price} (${Setting.getCurrencyText(order)})`;
+    return `${Setting.getCurrencySymbol(order?.currency)}${order?.price} (${Setting.getCurrencyText(order?.currency)})`;
   }
 
   getProductPrice(product) {
     const price = product.price * (product.quantity ?? 1);
-    return `${Setting.getCurrencySymbol(this.state.order?.currency)}${price.toFixed(2)} (${Setting.getCurrencyText(this.state.order)})`;
+    return `${Setting.getCurrencySymbol(this.state.order?.currency)}${price.toFixed(2)} (${Setting.getCurrencyText(this.state.order?.currency)})`;
   }
 
   // Call Wechat Pay via jsapi
@@ -275,13 +275,13 @@ class OrderPayPage extends React.Component {
       <div className="login-content">
         <Spin spinning={this.state.isProcessingPayment} size="large" tip={i18next.t("product:Processing payment...")} style={{paddingTop: "10%"}} >
           <div style={{marginBottom: "20px"}}>
-            <Descriptions title={<span style={Setting.isMobile() ? {fontSize: 18} : {fontSize: 24}}>{i18next.t("order:Order")}</span>} bordered column={3}>
-              <Descriptions.Item label={i18next.t("order:ID")} span={3}>
+            <Descriptions title={<span style={Setting.isMobile() ? {fontSize: 18} : {fontSize: 24}}>{i18next.t("general:Order")}</span>} bordered column={3}>
+              <Descriptions.Item label={i18next.t("general:ID")} span={3}>
                 <span style={{fontSize: 16}}>
                   {order.name}
                 </span>
               </Descriptions.Item>
-              <Descriptions.Item label={i18next.t("order:Status")}>
+              <Descriptions.Item label={i18next.t("general:Status")}>
                 <span style={{fontSize: 16}}>
                   {order.state}
                 </span>

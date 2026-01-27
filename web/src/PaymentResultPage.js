@@ -150,8 +150,7 @@ class PaymentResultPage extends React.Component {
   goToViewOrder() {
     const payment = this.state.payment;
     if (payment && payment.order) {
-      const viewUrl = `/orders/${payment.owner}/${payment.order}/pay?view=true`;
-      this.props.history.push(viewUrl);
+      this.props.history.push(`/orders/${payment.owner}/${payment.order}/pay`);
     } else {
       Setting.showMessage("error", i18next.t("order:Order not found"));
     }
@@ -178,7 +177,7 @@ class PaymentResultPage extends React.Component {
             <Result
               status="success"
               title={`${i18next.t("payment:Recharged successfully")}`}
-              subTitle={`${i18next.t("payment:You have successfully recharged")} ${payment.price} ${Setting.getCurrencyText(payment)}, ${i18next.t("payment:Your current balance is")} ${this.state.user?.balance} ${Setting.getCurrencyText(payment)}`}
+              subTitle={`${i18next.t("payment:You have successfully recharged")} ${payment.price} ${Setting.getCurrencyText(payment?.currency)}, ${i18next.t("payment:Your current balance is")} ${this.state.user?.balance} ${Setting.getCurrencyText(payment?.currency)}`}
               extra={[
                 <Button type="primary" key="viewOrder" onClick={() => {
                   this.goToViewOrder();
