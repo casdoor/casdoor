@@ -59,16 +59,15 @@ class LanguageSelect extends React.Component {
         onChange={onChange}
         style={{width: 150, display: this.state.languages.length === 0 ? "none" : null, ...this.props.style}}
       >
-        {this.state.languages.map((langKey) => {
-          const country = this.getCountryByLanguage(langKey);
-          if (!country) {return null;}
-          return (
-            <Option key={langKey} value={langKey}>
+        {this.state.languages
+          .map((langKey) => this.getCountryByLanguage(langKey))
+          .filter((country) => country !== undefined)
+          .map((country) => (
+            <Option key={country.key} value={country.key}>
               {flagIcon(country.country, country.alt)}
               {country.label}
             </Option>
-          );
-        })}
+          ))}
       </Select>
     );
   }
