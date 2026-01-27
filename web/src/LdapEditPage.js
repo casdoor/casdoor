@@ -259,7 +259,21 @@ class LdapEditPage extends React.Component {
             {Setting.getLabel(i18next.t("ldap:Default group"), i18next.t("ldap:Default group - Tooltip"))} :
           </Col>
           <Col span={21}>
-            <Select virtual={false} style={{width: "100%"}} value={this.state.ldap.defaultGroup ?? []} onChange={(value => {
+            <Select virtual={false} mode="multiple" style={{width: "100%"}} value={this.state.ldap.defaultGroup ?? []} onChange={(value => {
+              const groups = this.state.groups;
+              const physicalGroups = value.filter(groupId => {
+                const group = groups.find(g => `${g.owner}/${g.name}` === groupId);
+                return group && group.type === "Physical";
+              });
+              if (physicalGroups.length > 1) {
+                const lastPhysicalGroup = physicalGroups[physicalGroups.length - 1];
+                const virtualGroups = value.filter(groupId => {
+                  const group = groups.find(g => `${g.owner}/${g.name}` === groupId);
+                  return group && group.type !== "Physical";
+                });
+                value = [...virtualGroups, lastPhysicalGroup];
+                Setting.showMessage("warning", i18next.t("general:You can only select one physical group"));
+              }
               this.updateLdapField("defaultGroup", value);
             })}
             >

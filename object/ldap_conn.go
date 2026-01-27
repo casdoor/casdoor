@@ -370,8 +370,8 @@ func SyncLdapUsers(owner string, syncUsers []LdapUser, ldapId string) (existUser
 				Properties:        syncUser.Attributes,
 			}
 
-			if ldap.DefaultGroup != "" {
-				newUser.Groups = []string{ldap.DefaultGroup}
+			if len(ldap.DefaultGroup) > 0 {
+				newUser.Groups = ldap.DefaultGroup
 			}
 
 			affected, err := AddUser(newUser, "en")
