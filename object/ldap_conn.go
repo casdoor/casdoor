@@ -313,7 +313,7 @@ func AutoAdjustLdapUser(users []LdapUser) []LdapUser {
 			Email:       util.ReturnAnyNotEmpty(user.Email, user.EmailAddress, user.Mail),
 			Mobile:      util.ReturnAnyNotEmpty(user.Mobile, user.MobileTelephoneNumber, user.TelephoneNumber),
 			Address:     util.ReturnAnyNotEmpty(user.Address, user.PostalAddress, user.RegisteredAddress),
-			Country:     user.Country,
+			Country:     util.ReturnAnyNotEmpty(user.Country, user.CountryName),
 			CountryName: user.CountryName,
 			Attributes:  user.Attributes,
 		}
