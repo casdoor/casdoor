@@ -83,8 +83,8 @@
     "The user is forbidden to sign in, please contact the administrator": "Kullanıcı giriş yapmaktan men edildi, lütfen yönetici ile iletişime geçin",
     "The user: %s doesn't exist in LDAP server": "Kullanıcı: %s LDAP sunucusunda mevcut değil",
     "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.": "Kullanıcı adı yalnızca alfanümerik karakterler, alt çizgi veya tire içerebilir, ardışık tire veya alt çizgi içeremez ve tire veya alt çizgi ile başlayamaz veya bitemez.",
-    "The value \\\"%s\\\" for account field \\\"%s\\\" doesn't match the account item regex": "Hesap alanı \\\"%s\\\" için \\\"%s\\\" değeri, hesap öğesi regex'iyle eşleşmiyor",
-    "The value \\\"%s\\\" for signup field \\\"%s\\\" doesn't match the signup item regex of the application \\\"%s\\\"": "Kayıt alanı \\\"%s\\\" için \\\"%s\\\" değeri, \\\"%s\\\" uygulamasının kayıt öğesi regex'iyle eşleşmiyor",
+    "The value \"%s\" for account field \"%s\" doesn't match the account item regex": "Hesap alanı \"%s\" için \"%s\" değeri, hesap öğesi regex'iyle eşleşmiyor",
+    "The value \"%s\" for signup field \"%s\" doesn't match the signup item regex of the application \"%s\"": "Kayıt alanı \"%s\" için \"%s\" değeri, \"%s\" uygulamasının kayıt öğesi regex'iyle eşleşmiyor",
     "Username already exists": "Kullanıcı adı zaten var",
     "Username cannot be an email address": "Kullanıcı adı e-posta adresi olamaz",
     "Username cannot contain white spaces": "Kullanıcı adı boşluk içeremez",
@@ -94,7 +94,7 @@
     "Username supports email format. Also The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline. Also pay attention to the email format.": "Kullanıcı adı e-posta biçimini destekler. Ayrıca kullanıcı adı yalnızca alfanümerik karakterler, alt çizgiler veya tireler içerebilir, ardışık tireler veya alt çizgiler olamaz ve tire veya alt çizgi ile başlayıp bitemez. Ayrıca e-posta biçimine dikkat edin.",
     "You have entered the wrong password or code too many times, please wait for %d minutes and try again": "Çok fazla hatalı şifre veya kod girdiniz, lütfen %d dakika bekleyin ve tekrar deneyin",
     "Your IP address: %s has been banned according to the configuration of: ": "IP adresiniz: %s, yapılandırmaya göre yasaklandı: ",
-    "Your password has expired. Please reset your password by clicking \\\"Forgot password\\\"": "Şifrenizin süresi doldu. Lütfen \\\"Şifremi unuttum\\\"a tıklayarak şifrenizi sıfırlayın",
+    "Your password has expired. Please reset your password by clicking \"Forgot password\"": "Şifrenizin süresi doldu. Lütfen \"Şifremi unuttum\"a tıklayarak şifrenizi sıfırlayın",
     "Your region is not allow to signup by phone": "Bölgeniz telefonla kayıt yapmaya izin verilmiyor",
     "password or code is incorrect": "şifre veya kod yanlış",
     "password or code is incorrect, you have %s remaining chances": "şifre veya kod yanlış, %s hakkınız kaldı",
@@ -137,7 +137,7 @@
     "adding a new user to the 'built-in' organization is currently disabled. Please note: all users in the 'built-in' organization are global administrators in Casdoor. Refer to the docs: https://casdoor.org/docs/basic/core-concepts#how-does-casdoor-manage-itself. If you still wish to create a user for the 'built-in' organization, go to the organization's settings page and enable the 'Has privilege consent' option.": "'built-in' (yerleşik) organizasyona yeni bir kullanıcı ekleme şu anda devre dışı bırakılmıştır. Not: 'built-in' organizasyonundaki tüm kullanıcılar Casdoor'da genel yöneticilerdir. Belgelere bakın: https://casdoor.org/docs/basic/core-concepts#how-does-casdoor-manage-itself. Hala 'built-in' organizasyonu için bir kullanıcı oluşturmak isterseniz, organizasyonun ayarları sayfasına gidin ve 'Yetki onayı var' seçeneğini etkinleştirin."
   },
   "permission": {
-    "The permission: \\\"%s\\\" doesn't exist": "İzin: \\\"%s\\\" mevcut değil"
+    "The permission: \"%s\" doesn't exist": "İzin: \"%s\" mevcut değil"
   },
   "provider": {
     "Invalid application id": "Geçersiz uygulama id",
@@ -196,8 +196,8 @@
     "Unknown type": "Bilinmeyen tür",
     "Wrong verification code!": "Yanlış doğrulama kodu!",
     "You should verify your code in %d min!": "Kodunuzu %d dakika içinde doğrulamalısınız!",
-    "please add a SMS provider to the \\\"Providers\\\" list for the application: %s": "lütfen uygulama için \\\"Sağlayıcılar\\\" listesine bir SMS sağlayıcı ekleyin: %s",
-    "please add an Email provider to the \\\"Providers\\\" list for the application: %s": "lütfen uygulama için \\\"Sağlayıcılar\\\" listesine bir E-posta sağlayıcı ekleyin: %s",
+    "please add a SMS provider to the \"Providers\" list for the application: %s": "lütfen uygulama için \"Sağlayıcılar\" listesine bir SMS sağlayıcı ekleyin: %s",
+    "please add an Email provider to the \"Providers\" list for the application: %s": "lütfen uygulama için \"Sağlayıcılar\" listesine bir E-posta sağlayıcı ekleyin: %s",
     "the user does not exist, please sign up first": "kullanıcı mevcut değil, lütfen önce kaydolun"
   },
   "webauthn": {

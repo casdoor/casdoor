@@ -100,7 +100,7 @@
     "Order - Tooltip": "数值越小，在应用列表页面中排序越靠前",
     "Org choice mode": "组织选择模式",
     "Org choice mode - Tooltip": "采用什么方式选择要登录的组织",
-    "Please enable \\\"Signin session\\\" first before enabling \\\"Auto signin\\\"": "开启 \\\"保持登录会话\\\" 后才能开启 \\\"自动登录\\\"",
+    "Please enable \"Signin session\" first before enabling \"Auto signin\"": "开启 \"保持登录会话\" 后才能开启 \"自动登录\"",
     "Please input your application!": "请输入你的应用",
     "Please input your organization!": "请输入你的组织",
     "Please select a HTML file": "请选择一个HTML文件",

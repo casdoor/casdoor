@@ -83,8 +83,8 @@
     "The user is forbidden to sign in, please contact the administrator": "O usuário está proibido de entrar, entre em contato com o administrador",
     "The user: %s doesn't exist in LDAP server": "O usuário: %s não existe no servidor LDAP",
     "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.": "O nome de usuário pode conter apenas caracteres alfanuméricos, sublinhados ou hífens, não pode ter hífens ou sublinhados consecutivos e não pode começar ou terminar com hífen ou sublinhado.",
-    "The value \\\"%s\\\" for account field \\\"%s\\\" doesn't match the account item regex": "O valor \\\"%s\\\" para o campo de conta \\\"%s\\\" não corresponde à expressão regular definida",
-    "The value \\\"%s\\\" for signup field \\\"%s\\\" doesn't match the signup item regex of the application \\\"%s\\\"": "O valor \\\"%s\\\" para o campo de registro \\\"%s\\\" não corresponde à expressão regular definida na aplicação \\\"%s\\\"",
+    "The value \"%s\" for account field \"%s\" doesn't match the account item regex": "O valor \"%s\" para o campo de conta \"%s\" não corresponde à expressão regular definida",
+    "The value \"%s\" for signup field \"%s\" doesn't match the signup item regex of the application \"%s\"": "O valor \"%s\" para o campo de registro \"%s\" não corresponde à expressão regular definida na aplicação \"%s\"",
     "Username already exists": "O nome de usuário já existe",
     "Username cannot be an email address": "O nome de usuário não pode ser um endereço de e-mail",
     "Username cannot contain white spaces": "O nome de usuário não pode conter espaços em branco",
@@ -94,7 +94,7 @@
     "Username supports email format. Also The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline. Also pay attention to the email format.": "O nome de usuário suporta o formato de e-mail. Além disso, pode conter apenas caracteres alfanuméricos, sublinhados ou hífens, não pode ter hífens ou sublinhados consecutivos e não pode começar ou terminar com hífen ou sublinhado. Também preste atenção ao formato do e-mail.",
     "You have entered the wrong password or code too many times, please wait for %d minutes and try again": "Você digitou a senha ou o código incorretos muitas vezes. Aguarde %d minutos e tente novamente",
     "Your IP address: %s has been banned according to the configuration of: ": "Seu endereço IP: %s foi bloqueado de acordo com a configuração de: ",
-    "Your password has expired. Please reset your password by clicking \\\"Forgot password\\\"": "Sua senha expirou. Por favor, redefina-a clicando em \\\"Esqueci a senha\\\"",
+    "Your password has expired. Please reset your password by clicking \"Forgot password\"": "Sua senha expirou. Por favor, redefina-a clicando em \"Esqueci a senha\"",
     "Your region is not allow to signup by phone": "Sua região não permite cadastro por telefone",
     "password or code is incorrect": "Senha ou código incorreto",
     "password or code is incorrect, you have %s remaining chances": "Senha ou código incorreto, você tem %s tentativas restantes",
@@ -137,7 +137,7 @@
     "adding a new user to the 'built-in' organization is currently disabled. Please note: all users in the 'built-in' organization are global administrators in Casdoor. Refer to the docs: https://casdoor.org/docs/basic/core-concepts#how-does-casdoor-manage-itself. If you still wish to create a user for the 'built-in' organization, go to the organization's settings page and enable the 'Has privilege consent' option.": "A adição de novos usuários à organização 'built-in' está desativada. Observe que todos os usuários nessa organização são administradores globais no Casdoor. Consulte a documentação: https://casdoor.org/docs/basic/core-concepts#how-does-casdoor-manage-itself. Se ainda desejar criar um usuário, vá até a página de configurações da organização e habilite a opção 'Possui consentimento de privilégios'."
   },
   "permission": {
-    "The permission: \\\"%s\\\" doesn't exist": "A permissão: \\\"%s\\\" não existe"
+    "The permission: \"%s\" doesn't exist": "A permissão: \"%s\" não existe"
   },
   "provider": {
     "Invalid application id": "ID de aplicativo inválido",
@@ -196,8 +196,8 @@
     "Unknown type": "Tipo desconhecido",
     "Wrong verification code!": "Código de verificação incorreto!",
     "You should verify your code in %d min!": "Você deve verificar seu código em %d minuto(s)!",
-    "please add a SMS provider to the \\\"Providers\\\" list for the application: %s": "Adicione um provedor de SMS à lista \\\"Providers\\\" do aplicativo: %s",
-    "please add an Email provider to the \\\"Providers\\\" list for the application: %s": "Adicione um provedor de e-mail à lista \\\"Providers\\\" do aplicativo: %s",
+    "please add a SMS provider to the \"Providers\" list for the application: %s": "Adicione um provedor de SMS à lista \"Providers\" do aplicativo: %s",
+    "please add an Email provider to the \"Providers\" list for the application: %s": "Adicione um provedor de e-mail à lista \"Providers\" do aplicativo: %s",
     "the user does not exist, please sign up first": "O usuário não existe, cadastre-se primeiro"
   },
   "webauthn": {
