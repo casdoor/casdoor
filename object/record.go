@@ -80,7 +80,7 @@ func NewRecord(ctx *context.Context) (*casvisorsdk.Record, error) {
 		return nil, err
 	}
 
-	if action != "buy-product" {
+	if action != "buy-product" && action != "notify-payment" {
 		resp.Data = nil
 	}
 
