@@ -1683,7 +1683,20 @@ export function getRandomNumber() {
   return Math.random().toString(10).slice(-11);
 }
 
-export function getFromLink() {
+export function getFromLink(redirectUrl) {
+  // First check if a redirect URL was passed (e.g., from login response)
+  if (redirectUrl !== null && redirectUrl !== undefined && redirectUrl !== "") {
+    return redirectUrl;
+  }
+  
+  // Fall back to URL parameter 'redirect'
+  const params = new URLSearchParams(window.location.search);
+  const redirectParam = params.get("redirect");
+  if (redirectParam !== null && redirectParam !== "") {
+    return redirectParam;
+  }
+  
+  // Finally, fall back to sessionStorage
   const from = sessionStorage.getItem("from");
   if (from === null) {
     return "/";

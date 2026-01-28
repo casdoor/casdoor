@@ -341,6 +341,13 @@ class LoginPage extends React.Component {
       values["type"] = "saml";
       values["relayState"] = oAuthParams.relayState;
     }
+
+    // Add redirect parameter if present
+    const params = new URLSearchParams(this.props.location.search);
+    const redirectParam = params.get("redirect");
+    if (redirectParam !== null && redirectParam !== "") {
+      values["redirect"] = redirectParam;
+    }
   }
 
   sendPopupData(message, redirectUri) {
