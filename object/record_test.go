@@ -45,7 +45,10 @@ func TestNewRecord_NotifyPayment_PreservesPaymentData(t *testing.T) {
 	}
 
 	// Create a mock context with notify-payment action
-	req, _ := http.NewRequest("POST", "/api/notify-payment/test-org/test-payment", strings.NewReader("{}"))
+	req, err := http.NewRequest("POST", "/api/notify-payment/test-org/test-payment", strings.NewReader("{}"))
+	if err != nil {
+		t.Fatalf("Failed to create request: %v", err)
+	}
 	req.Header.Set("Accept-Language", "en")
 
 	ctx := &context.Context{
@@ -56,9 +59,15 @@ func TestNewRecord_NotifyPayment_PreservesPaymentData(t *testing.T) {
 	ctx.Input.RequestBody = []byte("{}")
 
 	// Simulate what the controller does - sets the response data
-	respJson, _ := json.Marshal(mockResponse)
+	respJson, err := json.Marshal(mockResponse)
+	if err != nil {
+		t.Fatalf("Failed to marshal response: %v", err)
+	}
 	var responseMap map[string]interface{}
-	json.Unmarshal(respJson, &responseMap)
+	err = json.Unmarshal(respJson, &responseMap)
+	if err != nil {
+		t.Fatalf("Failed to unmarshal response: %v", err)
+	}
 	ctx.Input.SetData("json", responseMap)
 
 	// Call NewRecord
@@ -101,7 +110,10 @@ func TestNewRecord_BuyProduct_PreservesProductData(t *testing.T) {
 		Data:   mockData,
 	}
 
-	req, _ := http.NewRequest("POST", "/api/buy-product", strings.NewReader("{}"))
+	req, err := http.NewRequest("POST", "/api/buy-product", strings.NewReader("{}"))
+	if err != nil {
+		t.Fatalf("Failed to create request: %v", err)
+	}
 	req.Header.Set("Accept-Language", "en")
 
 	ctx := &context.Context{
@@ -111,7 +123,10 @@ func TestNewRecord_BuyProduct_PreservesProductData(t *testing.T) {
 	ctx.Input.Context = ctx
 	ctx.Input.RequestBody = []byte("{}")
 
-	respJson, _ := json.Marshal(mockResponse)
+	respJson, err := json.Marshal(mockResponse)
+	if err != nil {
+		t.Fatalf("Failed to marshal response: %v", err)
+	}
 	ctx.Input.SetData("json", json.RawMessage(respJson))
 
 	record, err := NewRecord(ctx)
@@ -133,7 +148,10 @@ func TestNewRecord_OtherActions_DoNotPreserveData(t *testing.T) {
 		Data:   mockData,
 	}
 
-	req, _ := http.NewRequest("POST", "/api/some-other-action", strings.NewReader("{}"))
+	req, err := http.NewRequest("POST", "/api/some-other-action", strings.NewReader("{}"))
+	if err != nil {
+		t.Fatalf("Failed to create request: %v", err)
+	}
 	req.Header.Set("Accept-Language", "en")
 
 	ctx := &context.Context{
@@ -143,7 +161,10 @@ func TestNewRecord_OtherActions_DoNotPreserveData(t *testing.T) {
 	ctx.Input.Context = ctx
 	ctx.Input.RequestBody = []byte("{}")
 
-	respJson, _ := json.Marshal(mockResponse)
+	respJson, err := json.Marshal(mockResponse)
+	if err != nil {
+		t.Fatalf("Failed to marshal response: %v", err)
+	}
 	ctx.Input.SetData("json", json.RawMessage(respJson))
 
 	record, err := NewRecord(ctx)
