@@ -83,8 +83,8 @@
     "The user is forbidden to sign in, please contact the administrator": "Người dùng bị cấm đăng nhập, vui lòng liên hệ với quản trị viên",
     "The user: %s doesn't exist in LDAP server": "Người dùng: %s không tồn tại trên máy chủ LDAP",
     "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.": "Tên người dùng chỉ có thể chứa các ký tự chữ và số, gạch dưới hoặc gạch ngang, không được có hai ký tự gạch dưới hoặc gạch ngang liền kề và không được bắt đầu hoặc kết thúc bằng dấu gạch dưới hoặc gạch ngang.",
-    "The value \\\"%s\\\" for account field \\\"%s\\\" doesn't match the account item regex": "Giá trị \\\"%s\\\" cho trường tài khoản \\\"%s\\\" không khớp với biểu thức chính quy của mục tài khoản",
-    "The value \\\"%s\\\" for signup field \\\"%s\\\" doesn't match the signup item regex of the application \\\"%s\\\"": "Giá trị \\\"%s\\\" cho trường đăng ký \\\"%s\\\" không khớp với biểu thức chính quy của mục đăng ký trong ứng dụng \\\"%s\\\"",
+    "The value \"%s\" for account field \"%s\" doesn't match the account item regex": "Giá trị \"%s\" cho trường tài khoản \"%s\" không khớp với biểu thức chính quy của mục tài khoản",
+    "The value \"%s\" for signup field \"%s\" doesn't match the signup item regex of the application \"%s\"": "Giá trị \"%s\" cho trường đăng ký \"%s\" không khớp với biểu thức chính quy của mục đăng ký trong ứng dụng \"%s\"",
     "Username already exists": "Tên đăng nhập đã tồn tại",
     "Username cannot be an email address": "Tên người dùng không thể là địa chỉ email",
     "Username cannot contain white spaces": "Tên người dùng không thể chứa khoảng trắng",
@@ -94,7 +94,7 @@
     "Username supports email format. Also The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline. Also pay attention to the email format.": "Tên người dùng hỗ trợ định dạng email. Ngoài ra, tên người dùng chỉ có thể chứa ký tự chữ và số, gạch dưới hoặc gạch ngang, không được có gạch ngang hoặc gạch dưới liên tiếp và không được bắt đầu hoặc kết thúc bằng gạch ngang hoặc gạch dưới. Đồng thời lưu ý định dạng email.",
     "You have entered the wrong password or code too many times, please wait for %d minutes and try again": "Bạn đã nhập sai mật khẩu hoặc mã quá nhiều lần, vui lòng đợi %d phút và thử lại",
     "Your IP address: %s has been banned according to the configuration of: ": "Địa chỉ IP của bạn: %s đã bị cấm theo cấu hình của: ",
-    "Your password has expired. Please reset your password by clicking \\\"Forgot password\\\"": "Mật khẩu của bạn đã hết hạn. Vui lòng đặt lại mật khẩu bằng cách nhấp vào \\\"Quên mật khẩu\\\"",
+    "Your password has expired. Please reset your password by clicking \"Forgot password\"": "Mật khẩu của bạn đã hết hạn. Vui lòng đặt lại mật khẩu bằng cách nhấp vào \"Quên mật khẩu\"",
     "Your region is not allow to signup by phone": "Vùng của bạn không được phép đăng ký bằng điện thoại",
     "password or code is incorrect": "mật khẩu hoặc mã không đúng",
     "password or code is incorrect, you have %s remaining chances": "Mật khẩu hoặc mã không chính xác, bạn còn %s lần cơ hội",
@@ -137,7 +137,7 @@
     "adding a new user to the 'built-in' organization is currently disabled. Please note: all users in the 'built-in' organization are global administrators in Casdoor. Refer to the docs: https://casdoor.org/docs/basic/core-concepts#how-does-casdoor-manage-itself. If you still wish to create a user for the 'built-in' organization, go to the organization's settings page and enable the 'Has privilege consent' option.": "Thêm người dùng mới vào tổ chức 'built-in' (tích hợp sẵn) hiện đang bị vô hiệu hóa. Lưu ý: Tất cả người dùng trong tổ chức 'built-in' đều là quản trị viên toàn cầu trong Casdoor. Xem tài liệu: https://casdoor.org/docs/basic/core-concepts#how-does-casdoor-manage-itself. Nếu bạn vẫn muốn tạo người dùng cho tổ chức 'built-in', hãy truy cập trang cài đặt của tổ chức và bật tùy chọn 'Có đồng ý quyền đặc biệt'."
   },
   "permission": {
-    "The permission: \\\"%s\\\" doesn't exist": "Quyền: \\\"%s\\\" không tồn tại"
+    "The permission: \"%s\" doesn't exist": "Quyền: \"%s\" không tồn tại"
   },
   "provider": {
     "Invalid application id": "Sai ID ứng dụng",
@@ -196,8 +196,8 @@
     "Unknown type": "Loại không xác định",
     "Wrong verification code!": "Mã xác thực sai!",
     "You should verify your code in %d min!": "Bạn nên kiểm tra mã của mình trong %d phút!",
-    "please add a SMS provider to the \\\"Providers\\\" list for the application: %s": "vui lòng thêm nhà cung cấp SMS vào danh sách \\\"Providers\\\" cho ứng dụng: %s",
-    "please add an Email provider to the \\\"Providers\\\" list for the application: %s": "vui lòng thêm nhà cung cấp Email vào danh sách \\\"Providers\\\" cho ứng dụng: %s",
+    "please add a SMS provider to the \"Providers\" list for the application: %s": "vui lòng thêm nhà cung cấp SMS vào danh sách \"Providers\" cho ứng dụng: %s",
+    "please add an Email provider to the \"Providers\" list for the application: %s": "vui lòng thêm nhà cung cấp Email vào danh sách \"Providers\" cho ứng dụng: %s",
     "the user does not exist, please sign up first": "Người dùng không tồn tại, vui lòng đăng ký trước"
   },
   "webauthn": {

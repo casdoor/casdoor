@@ -19,6 +19,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/casdoor/casdoor/util"
@@ -47,7 +48,14 @@ func getAllI18nStringsFrontend(fileContent string) []string {
 	}
 
 	for _, match := range matches {
-		res = append(res, match[1])
+		if strings.Contains(match[1], "Please enable") {
+			print("aaa")
+		}
+		target, err := strconv.Unquote("\"" + match[1] + "\"")
+		if err != nil {
+			target = match[1]
+		}
+		res = append(res, target)
 	}
 	return res
 }
@@ -61,7 +69,12 @@ func getAllI18nStringsBackend(fileContent string, isObjectPackage bool) []string
 		}
 		for _, match := range matches {
 			match := strings.SplitN(match[1], ",", 2)
-			res = append(res, match[1][2:])
+			target, err := strconv.Unquote("\"" + match[1][2:] + "\"")
+			if err != nil {
+				target = match[1][2:]
+			}
+
+			res = append(res, target)
 		}
 	} else {
 		matches := reI18nBackendController.FindAllStringSubmatch(fileContent, -1)
@@ -69,7 +82,11 @@ func getAllI18nStringsBackend(fileContent string, isObjectPackage bool) []string
 			return res
 		}
 		for _, match := range matches {
-			res = append(res, match[1][1:])
+			target, err := strconv.Unquote("\"" + match[1][1:] + "\"")
+			if err != nil {
+				target = match[1][1:]
+			}
+			res = append(res, target)
 		}
 	}
 

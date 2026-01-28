@@ -83,8 +83,8 @@
     "The user is forbidden to sign in, please contact the administrator": "ユーザーはサインインできません。管理者に連絡してください",
     "The user: %s doesn't exist in LDAP server": "ユーザー「%s」は LDAP サーバーに存在しません",
     "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.": "ユーザー名には英数字、アンダースコア、ハイフンしか含めることができません。連続したハイフンまたはアンダースコアは不可であり、ハイフンまたはアンダースコアで始まるまたは終わることもできません。",
-    "The value \\\"%s\\\" for account field \\\"%s\\\" doesn't match the account item regex": "アカウントフィールド「%s」の値「%s」がアカウント項目の正規表現に一致しません",
-    "The value \\\"%s\\\" for signup field \\\"%s\\\" doesn't match the signup item regex of the application \\\"%s\\\"": "アプリケーション「%s」のサインアップ項目「%s」の値「%s」が正規表現に一致しません",
+    "The value \"%s\" for account field \"%s\" doesn't match the account item regex": "アカウントフィールド「%s」の値「%s」がアカウント項目の正規表現に一致しません",
+    "The value \"%s\" for signup field \"%s\" doesn't match the signup item regex of the application \"%s\"": "アプリケーション「%s」のサインアップ項目「%s」の値「%s」が正規表現に一致しません",
     "Username already exists": "ユーザー名はすでに存在しています",
     "Username cannot be an email address": "ユーザー名には電子メールアドレスを使用できません",
     "Username cannot contain white spaces": "ユーザ名にはスペースを含めることはできません",
@@ -94,7 +94,7 @@
     "Username supports email format. Also The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline. Also pay attention to the email format.": "ユーザー名はメール形式もサポートします。ユーザー名は英数字、アンダースコア、またはハイフンのみを含め、連続するハイフンやアンダースコアは使用できません。また、ハイフンまたはアンダースコアで始まったり終わったりすることもできません。メール形式にも注意してください。",
     "You have entered the wrong password or code too many times, please wait for %d minutes and try again": "あなたは間違ったパスワードまたはコードを何度も入力しました。%d 分間待ってから再度お試しください",
     "Your IP address: %s has been banned according to the configuration of: ": "あなたの IP アドレス「%s」は設定によりアクセスが禁止されています: ",
-    "Your password has expired. Please reset your password by clicking \\\"Forgot password\\\"": "パスワードの有効期限が切れています。「パスワードを忘れた方はこちら」をクリックしてリセットしてください",
+    "Your password has expired. Please reset your password by clicking \"Forgot password\"": "パスワードの有効期限が切れています。「パスワードを忘れた方はこちら」をクリックしてリセットしてください",
     "Your region is not allow to signup by phone": "あなたの地域は電話でサインアップすることができません",
     "password or code is incorrect": "パスワードまたはコードが正しくありません",
     "password or code is incorrect, you have %s remaining chances": "パスワードまたはコードが間違っています。あと %s 回の試行機会があります",
@@ -137,7 +137,7 @@
     "adding a new user to the 'built-in' organization is currently disabled. Please note: all users in the 'built-in' organization are global administrators in Casdoor. Refer to the docs: https://casdoor.org/docs/basic/core-concepts#how-does-casdoor-manage-itself. If you still wish to create a user for the 'built-in' organization, go to the organization's settings page and enable the 'Has privilege consent' option.": "「built-in」（組み込み）組織への新しいユーザーの追加は現在無効になっています。注意：「built-in」組織のすべてのユーザーは、Casdoor のグローバル管理者です。ドキュメントを参照してください：https://casdoor.org/docs/basic/core-concepts#how-does-casdoor-manage-itself。「built-in」組織のユーザーを作成したい場合は、組織の設定ページに移動し、「特権同意を持つ」オプションを有効にしてください。"
   },
   "permission": {
-    "The permission: \\\"%s\\\" doesn't exist": "権限「%s」は存在しません"
+    "The permission: \"%s\" doesn't exist": "権限「%s」は存在しません"
   },
   "provider": {
     "Invalid application id": "アプリケーションIDが無効です",
@@ -196,8 +196,8 @@
     "Unknown type": "不明なタイプ",
     "Wrong verification code!": "誤った検証コードです！",
     "You should verify your code in %d min!": "あなたは%d分であなたのコードを確認する必要があります！",
-    "please add a SMS provider to the \\\"Providers\\\" list for the application: %s": "アプリケーション「%s」の「Providers」リストに SMS プロバイダを追加してください",
-    "please add an Email provider to the \\\"Providers\\\" list for the application: %s": "アプリケーション「%s」の「Providers」リストにメールプロバイダを追加してください",
+    "please add a SMS provider to the \"Providers\" list for the application: %s": "アプリケーション「%s」の「Providers」リストに SMS プロバイダを追加してください",
+    "please add an Email provider to the \"Providers\" list for the application: %s": "アプリケーション「%s」の「Providers」リストにメールプロバイダを追加してください",
     "the user does not exist, please sign up first": "ユーザーは存在しません。まず登録してください"
   },
   "webauthn": {
