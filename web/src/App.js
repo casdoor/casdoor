@@ -420,8 +420,7 @@ class App extends Component {
     }
 
     if (query !== "") {
-      const currentParams = new URLSearchParams(this.props.location.search);
-      const returnUrl = currentParams.get("returnUrl");
+      const returnUrl = params.get("returnUrl");
 
       let newUrl;
       if (returnUrl) {
