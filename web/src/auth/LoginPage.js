@@ -342,10 +342,10 @@ class LoginPage extends React.Component {
       values["relayState"] = oAuthParams.relayState;
     }
 
-    // Add redirect parameter if present
+    // Add redirect parameter if present and valid
     const params = new URLSearchParams(this.props.location.search);
     const redirectParam = params.get("redirect");
-    if (redirectParam !== null && redirectParam !== "") {
+    if (redirectParam !== null && redirectParam !== "" && Setting.isValidRedirectUrl(redirectParam)) {
       values["redirect"] = redirectParam;
     }
   }

@@ -1683,16 +1683,40 @@ export function getRandomNumber() {
   return Math.random().toString(10).slice(-11);
 }
 
+export function isValidRedirectUrl(url) {
+  // Basic validation to prevent obvious security issues
+  // Note: Primary validation is done on the backend
+  if (!url || url === "") {
+    return false;
+  }
+  
+  // Allow relative URLs (same-domain)
+  if (url.startsWith("/")) {
+    return true;
+  }
+  
+  // For absolute URLs, check if they are valid HTTP/HTTPS
+  try {
+    const urlObj = new URL(url);
+    return urlObj.protocol === "http:" || urlObj.protocol === "https:";
+  } catch (e) {
+    return false;
+  }
+}
+
 export function getFromLink(redirectUrl) {
   // First check if a redirect URL was passed (e.g., from login response)
+  // The backend should have already validated this, but we check basic validity
   if (redirectUrl !== null && redirectUrl !== undefined && redirectUrl !== "") {
-    return redirectUrl;
+    if (isValidRedirectUrl(redirectUrl)) {
+      return redirectUrl;
+    }
   }
   
   // Fall back to URL parameter 'redirect'
   const params = new URLSearchParams(window.location.search);
   const redirectParam = params.get("redirect");
-  if (redirectParam !== null && redirectParam !== "") {
+  if (redirectParam !== null && redirectParam !== "" && isValidRedirectUrl(redirectParam)) {
     return redirectParam;
   }
   
