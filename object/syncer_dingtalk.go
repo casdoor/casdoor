@@ -109,6 +109,19 @@ type DingtalkDeptListResp struct {
 	RequestId string `json:"request_id"`
 }
 
+type DingtalkDepartment struct {
+	DeptId   int64  `json:"dept_id"`
+	Name     string `json:"name"`
+	ParentId int64  `json:"parent_id"`
+}
+
+type DingtalkDeptDetailResp struct {
+	Errcode   int                 `json:"errcode"`
+	Errmsg    string              `json:"errmsg"`
+	Result    *DingtalkDepartment `json:"result"`
+	RequestId string              `json:"request_id"`
+}
+
 // getDingtalkAccessToken gets access token from DingTalk API
 func (p *DingtalkSyncerProvider) getDingtalkAccessToken() (string, error) {
 	// syncer.User should be the appKey
@@ -192,6 +205,53 @@ func (p *DingtalkSyncerProvider) getDingtalkDepartments(accessToken string) ([]i
 	}
 
 	return deptIds, nil
+}
+
+// getDingtalkDepartmentDetails gets department details by ID from DingTalk API
+func (p *DingtalkSyncerProvider) getDingtalkDepartmentDetails(accessToken string, deptId int64) (*DingtalkDepartment, error) {
+	apiUrl := fmt.Sprintf("https://oapi.dingtalk.com/topapi/v2/department/get?access_token=%s",
+		url.QueryEscape(accessToken))
+
+	postData := map[string]interface{}{
+		"dept_id": deptId,
+	}
+
+	data, err := p.postJSON(apiUrl, postData)
+	if err != nil {
+		return nil, err
+	}
+
+	var deptResp DingtalkDeptDetailResp
+	err = json.Unmarshal(data, &deptResp)
+	if err != nil {
+		return nil, err
+	}
+
+	if deptResp.Errcode != 0 {
+		return nil, fmt.Errorf("failed to get department details for %d: errcode=%d, errmsg=%s",
+			deptId, deptResp.Errcode, deptResp.Errmsg)
+	}
+
+	return deptResp.Result, nil
+}
+
+// getDingtalkDepartmentMap gets all departments and builds a map of ID to name
+func (p *DingtalkSyncerProvider) getDingtalkDepartmentMap(accessToken string, deptIds []int64) (map[int64]string, error) {
+	deptMap := make(map[int64]string)
+
+	for _, deptId := range deptIds {
+		dept, err := p.getDingtalkDepartmentDetails(accessToken, deptId)
+		if err != nil {
+			// Continue with other departments even if one fails
+			// Return a partial map rather than failing completely
+			continue
+		}
+		if dept != nil {
+			deptMap[dept.DeptId] = dept.Name
+		}
+	}
+
+	return deptMap, nil
 }
 
 // getDingtalkUsersFromDept gets users from a specific department
@@ -319,6 +379,12 @@ func (p *DingtalkSyncerProvider) getDingtalkUsers() ([]*OriginalUser, error) {
 		return nil, err
 	}
 
+	// Build department ID to name mapping
+	deptMap, err := p.getDingtalkDepartmentMap(accessToken, deptIds)
+	if err != nil {
+		return nil, err
+	}
+
 	// Get users from all departments (deduplicate by userid)
 	userMap := make(map[string]*DingtalkUser)
 	for _, deptId := range deptIds {
@@ -345,7 +411,7 @@ func (p *DingtalkSyncerProvider) getDingtalkUsers() ([]*OriginalUser, error) {
 	// Convert DingTalk users to Casdoor OriginalUser
 	originalUsers := []*OriginalUser{}
 	for _, dingtalkUser := range userMap {
-		originalUser := p.dingtalkUserToOriginalUser(dingtalkUser)
+		originalUser := p.dingtalkUserToOriginalUser(dingtalkUser, deptMap)
 		originalUsers = append(originalUsers, originalUser)
 	}
 
@@ -353,7 +419,7 @@ func (p *DingtalkSyncerProvider) getDingtalkUsers() ([]*OriginalUser, error) {
 }
 
 // dingtalkUserToOriginalUser converts DingTalk user to Casdoor OriginalUser
-func (p *DingtalkSyncerProvider) dingtalkUserToOriginalUser(dingtalkUser *DingtalkUser) *OriginalUser {
+func (p *DingtalkSyncerProvider) dingtalkUserToOriginalUser(dingtalkUser *DingtalkUser, deptMap map[int64]string) *OriginalUser {
 	// Use unionid as name to be consistent with OAuth provider
 	// Fallback to userId if unionid is not available
 	userName := dingtalkUser.UserId
@@ -372,6 +438,16 @@ func (p *DingtalkSyncerProvider) dingtalkUserToOriginalUser(dingtalkUser *Dingta
 		Address:     []string{},
 		Properties:  map[string]string{},
 		Groups:      []string{},
+	}
+
+	// Set Affiliation from the first department
+	if len(dingtalkUser.Department) > 0 && deptMap != nil {
+		// Use the first department as the primary department
+		// Safe conversion from int to int64
+		primaryDeptId := int64(dingtalkUser.Department[0])
+		if deptName, ok := deptMap[primaryDeptId]; ok && deptName != "" {
+			user.Affiliation = deptName
+		}
 	}
 
 	// Set IsForbidden based on active status (active=false means user is forbidden)
