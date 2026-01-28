@@ -83,8 +83,8 @@
     "The user is forbidden to sign in, please contact the administrator": "Користувачу заборонено вхід, зверніться до адміністратора",
     "The user: %s doesn't exist in LDAP server": "Користувач: %s не існує на сервері LDAP",
     "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.": "Ім’я користувача може містити лише буквено-цифрові символи, підкреслення або дефіси, не може мати послідовні дефіси або підкреслення та не може починатися або закінчуватися дефісом або підкресленням.",
-    "The value \\\"%s\\\" for account field \\\"%s\\\" doesn't match the account item regex": "Värdet \\\"%s\\\" för kontofältet \\\"%s\\\" matchar inte kontots regex",
-    "The value \\\"%s\\\" for signup field \\\"%s\\\" doesn't match the signup item regex of the application \\\"%s\\\"": "Värdet \\\"%s\\\" för registreringsfältet \\\"%s\\\" matchar inte registreringsfältets regex för applikationen \\\"%s\\\"",
+    "The value \"%s\" for account field \"%s\" doesn't match the account item regex": "Värdet \"%s\" för kontofältet \"%s\" matchar inte kontots regex",
+    "The value \"%s\" for signup field \"%s\" doesn't match the signup item regex of the application \"%s\"": "Värdet \"%s\" för registreringsfältet \"%s\" matchar inte registreringsfältets regex för applikationen \"%s\"",
     "Username already exists": "Ім’я користувача вже існує",
     "Username cannot be an email address": "Ім’я користувача не може бути email-адресою",
     "Username cannot contain white spaces": "Ім’я користувача не може містити пробіли",
@@ -94,7 +94,7 @@
     "Username supports email format. Also The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline. Also pay attention to the email format.": "Ім’я користувача підтримує формат email. Також може містити лише буквено-цифрові символи, підкреслення або дефіси, не може мати послідовні дефіси або підкреслення та не може починатися або закінчуватися дефісом або підкресленням. Зверніть увагу на формат email.",
     "You have entered the wrong password or code too many times, please wait for %d minutes and try again": "Ви ввели неправильний пароль або код забагато разів, зачекайте %d хвилин і спробуйте знову",
     "Your IP address: %s has been banned according to the configuration of: ": "Ваша IP-адреса: %s заблокована відповідно до конфігурації: ",
-    "Your password has expired. Please reset your password by clicking \\\"Forgot password\\\"": "Ditt lösenord har gått ut. Återställ det genom att klicka på \\\"Glömt lösenord\\\"",
+    "Your password has expired. Please reset your password by clicking \"Forgot password\"": "Ditt lösenord har gått ut. Återställ det genom att klicka på \"Glömt lösenord\"",
     "Your region is not allow to signup by phone": "У вашому регіоні реєстрація за телефоном недоступна",
     "password or code is incorrect": "пароль або код неправильний",
     "password or code is incorrect, you have %s remaining chances": "пароль або код неправильний, у вас залишилось %s спроб",
@@ -137,7 +137,7 @@
     "adding a new user to the 'built-in' organization is currently disabled. Please note: all users in the 'built-in' organization are global administrators in Casdoor. Refer to the docs: https://casdoor.org/docs/basic/core-concepts#how-does-casdoor-manage-itself. If you still wish to create a user for the 'built-in' organization, go to the organization's settings page and enable the 'Has privilege consent' option.": "Додавання нового користувача до організації «built-in» (вбудованої) на даний момент вимкнено. Зауважте: усі користувачі в організації «built-in» є глобальними адміністраторами в Casdoor. Дивіться документацію: https://casdoor.org/docs/basic/core-concepts#how-does-casdoor-manage-itself. Якщо ви все ще хочете створити користувача для організації «built-in», перейдіть на сторінку налаштувань організації та увімкніть опцію «Має згоду на привілеї»."
   },
   "permission": {
-    "The permission: \\\"%s\\\" doesn't exist": "Behörigheten: \\\"%s\\\" finns inte"
+    "The permission: \"%s\" doesn't exist": "Behörigheten: \"%s\" finns inte"
   },
   "provider": {
     "Invalid application id": "Недійсний id додатка",
@@ -196,8 +196,8 @@
     "Unknown type": "Невідомий тип",
     "Wrong verification code!": "Неправильний код підтвердження!",
     "You should verify your code in %d min!": "Ви маєте підтвердити код за %d хв!",
-    "please add a SMS provider to the \\\"Providers\\\" list for the application: %s": "lägg till en SMS-leverantör i listan \\\"Leverantörer\\\" för applikationen: %s",
-    "please add an Email provider to the \\\"Providers\\\" list for the application: %s": "lägg till en e-postleverantör i listan \\\"Leverantörer\\\" för applikationen: %s",
+    "please add a SMS provider to the \"Providers\" list for the application: %s": "lägg till en SMS-leverantör i listan \"Leverantörer\" för applikationen: %s",
+    "please add an Email provider to the \"Providers\" list for the application: %s": "lägg till en e-postleverantör i listan \"Leverantörer\" för applikationen: %s",
     "the user does not exist, please sign up first": "користувача не існує, спочатку зареєструйтесь"
   },
   "webauthn": {

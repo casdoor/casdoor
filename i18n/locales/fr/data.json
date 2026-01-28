@@ -83,8 +83,8 @@
     "The user is forbidden to sign in, please contact the administrator": "L'utilisateur est interdit de se connecter, veuillez contacter l'administrateur",
     "The user: %s doesn't exist in LDAP server": "L'utilisateur : %s n'existe pas sur le serveur LDAP",
     "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.": "Le nom d'utilisateur ne peut contenir que des caractères alphanumériques, des traits soulignés ou des tirets, ne peut pas avoir de tirets ou de traits soulignés consécutifs et ne peut pas commencer ou se terminer par un tiret ou un trait souligné.",
-    "The value \\\"%s\\\" for account field \\\"%s\\\" doesn't match the account item regex": "La valeur \\\"%s\\\" pour le champ de compte \\\"%s\\\" ne correspond pas à l'expression régulière de l'élément de compte",
-    "The value \\\"%s\\\" for signup field \\\"%s\\\" doesn't match the signup item regex of the application \\\"%s\\\"": "La valeur \\\"%s\\\" pour le champ d'inscription \\\"%s\\\" ne correspond pas à l'expression régulière de l'élément d'inscription de l'application \\\"%s\\\"",
+    "The value \"%s\" for account field \"%s\" doesn't match the account item regex": "La valeur \"%s\" pour le champ de compte \"%s\" ne correspond pas à l'expression régulière de l'élément de compte",
+    "The value \"%s\" for signup field \"%s\" doesn't match the signup item regex of the application \"%s\"": "La valeur \"%s\" pour le champ d'inscription \"%s\" ne correspond pas à l'expression régulière de l'élément d'inscription de l'application \"%s\"",
     "Username already exists": "Nom d'utilisateur existe déjà",
     "Username cannot be an email address": "Nom d'utilisateur ne peut pas être une adresse e-mail",
     "Username cannot contain white spaces": "Nom d'utilisateur ne peut pas contenir d'espaces blancs",
@@ -94,7 +94,7 @@
     "Username supports email format. Also The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline. Also pay attention to the email format.": "Le nom d'utilisateur prend en charge le format e-mail. De plus, il ne peut contenir que des caractères alphanumériques, des tirets bas ou des traits d'union, ne peut pas avoir de traits d'union ou de tirets bas consécutifs, et ne peut pas commencer ou se terminer par un trait d'union ou un tiret bas. Faites également attention au format de l'e-mail.",
     "You have entered the wrong password or code too many times, please wait for %d minutes and try again": "Vous avez entré le mauvais mot de passe ou code plusieurs fois, veuillez attendre %d minutes et réessayer",
     "Your IP address: %s has been banned according to the configuration of: ": "Votre adresse IP : %s a été bannie selon la configuration de : ",
-    "Your password has expired. Please reset your password by clicking \\\"Forgot password\\\"": "Votre mot de passe a expiré. Veuillez le réinitialiser en cliquant sur \\\"Mot de passe oublié\\\"",
+    "Your password has expired. Please reset your password by clicking \"Forgot password\"": "Votre mot de passe a expiré. Veuillez le réinitialiser en cliquant sur \"Mot de passe oublié\"",
     "Your region is not allow to signup by phone": "Votre région n'est pas autorisée à s'inscrire par téléphone",
     "password or code is incorrect": "mot de passe ou code incorrect",
     "password or code is incorrect, you have %s remaining chances": "Le mot de passe ou le code est incorrect, il vous reste %s chances",
@@ -137,7 +137,7 @@
     "adding a new user to the 'built-in' organization is currently disabled. Please note: all users in the 'built-in' organization are global administrators in Casdoor. Refer to the docs: https://casdoor.org/docs/basic/core-concepts#how-does-casdoor-manage-itself. If you still wish to create a user for the 'built-in' organization, go to the organization's settings page and enable the 'Has privilege consent' option.": "L'ajout d'un nouvel utilisateur à l'organisation « built-in » (intégrée) est actuellement désactivé. Veuillez noter : Tous les utilisateurs de l'organisation « built-in » sont des administrateurs globaux dans Casdoor. Consulter la documentation : https://casdoor.org/docs/basic/core-concepts#how-does-casdoor-manage-itself. Si vous souhaitez encore créer un utilisateur pour l'organisation « built-in », accédez à la page des paramètres de l'organisation et activez l'option « A le consentement aux privilèges »."
   },
   "permission": {
-    "The permission: \\\"%s\\\" doesn't exist": "La permission : \\\"%s\\\" n'existe pas"
+    "The permission: \"%s\" doesn't exist": "La permission : \"%s\" n'existe pas"
   },
   "provider": {
     "Invalid application id": "Identifiant d'application invalide",
@@ -196,8 +196,8 @@
     "Unknown type": "Type inconnu",
     "Wrong verification code!": "Mauvais code de vérification !",
     "You should verify your code in %d min!": "Vous devriez vérifier votre code en %d min !",
-    "please add a SMS provider to the \\\"Providers\\\" list for the application: %s": "veuillez ajouter un fournisseur SMS à la liste \\\"Providers\\\" pour l'application : %s",
-    "please add an Email provider to the \\\"Providers\\\" list for the application: %s": "veuillez ajouter un fournisseur d'e-mail à la liste \\\"Providers\\\" pour l'application : %s",
+    "please add a SMS provider to the \"Providers\" list for the application: %s": "veuillez ajouter un fournisseur SMS à la liste \"Providers\" pour l'application : %s",
+    "please add an Email provider to the \"Providers\" list for the application: %s": "veuillez ajouter un fournisseur d'e-mail à la liste \"Providers\" pour l'application : %s",
     "the user does not exist, please sign up first": "L'utilisateur n'existe pas, veuillez vous inscrire d'abord"
   },
   "webauthn": {

@@ -83,8 +83,8 @@
     "The user is forbidden to sign in, please contact the administrator": "Dem Benutzer ist der Zugang verboten, bitte kontaktieren Sie den Administrator",
     "The user: %s doesn't exist in LDAP server": "Der Benutzer: %s existiert nicht im LDAP-Server",
     "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.": "Der Benutzername darf nur alphanumerische Zeichen, Unterstriche oder Bindestriche enthalten, keine aufeinanderfolgenden Bindestriche oder Unterstriche haben und darf nicht mit einem Bindestrich oder Unterstrich beginnen oder enden.",
-    "The value \\\"%s\\\" for account field \\\"%s\\\" doesn't match the account item regex": "Der Wert \\\"%s\\\" für das Kontenfeld \\\"%s\\\" stimmt nicht mit dem Kontenelement-Regex überein",
-    "The value \\\"%s\\\" for signup field \\\"%s\\\" doesn't match the signup item regex of the application \\\"%s\\\"": "Der Wert \\\"%s\\\" für das Registrierungsfeld \\\"%s\\\" stimmt nicht mit dem Registrierungselement-Regex der Anwendung \\\"%s\\\" überein",
+    "The value \"%s\" for account field \"%s\" doesn't match the account item regex": "Der Wert \"%s\" für das Kontenfeld \"%s\" stimmt nicht mit dem Kontenelement-Regex überein",
+    "The value \"%s\" for signup field \"%s\" doesn't match the signup item regex of the application \"%s\"": "Der Wert \"%s\" für das Registrierungsfeld \"%s\" stimmt nicht mit dem Registrierungselement-Regex der Anwendung \"%s\" überein",
     "Username already exists": "Benutzername existiert bereits",
     "Username cannot be an email address": "Benutzername kann keine E-Mail-Adresse sein",
     "Username cannot contain white spaces": "Benutzername darf keine Leerzeichen enthalten",
@@ -94,7 +94,7 @@
     "Username supports email format. Also The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline. Also pay attention to the email format.": "Benutzername unterstützt E-Mail-Format. Der Benutzername darf nur alphanumerische Zeichen, Unterstriche oder Bindestriche enthalten, keine aufeinanderfolgenden Bindestriche oder Unterstriche haben und darf nicht mit einem Bindestrich oder Unterstrich beginnen oder enden. Achten Sie auch auf das E-Mail-Format.",
     "You have entered the wrong password or code too many times, please wait for %d minutes and try again": "Sie haben zu oft das falsche Passwort oder den falschen Code eingegeben. Bitte warten Sie %d Minuten und versuchen Sie es erneut",
     "Your IP address: %s has been banned according to the configuration of: ": "Ihre IP-Adresse: %s wurde laut Konfiguration gesperrt von: ",
-    "Your password has expired. Please reset your password by clicking \\\"Forgot password\\\"": "Ihr Passwort ist abgelaufen. Bitte setzen Sie Ihr Passwort zurück, indem Sie auf \\\"Passwort vergessen\\\" klicken",
+    "Your password has expired. Please reset your password by clicking \"Forgot password\"": "Ihr Passwort ist abgelaufen. Bitte setzen Sie Ihr Passwort zurück, indem Sie auf \"Passwort vergessen\" klicken",
     "Your region is not allow to signup by phone": "Ihre Region ist nicht berechtigt, sich telefonisch anzumelden",
     "password or code is incorrect": "Passwort oder Code ist falsch",
     "password or code is incorrect, you have %s remaining chances": "Das Passwort oder der Code ist falsch. Du hast noch %s Versuche übrig",
@@ -137,7 +137,7 @@
     "adding a new user to the 'built-in' organization is currently disabled. Please note: all users in the 'built-in' organization are global administrators in Casdoor. Refer to the docs: https://casdoor.org/docs/basic/core-concepts#how-does-casdoor-manage-itself. If you still wish to create a user for the 'built-in' organization, go to the organization's settings page and enable the 'Has privilege consent' option.": "Das Hinzufügen eines neuen Benutzers zur 'eingebauten' Organisation ist derzeit deaktiviert. Bitte beachten Sie: Alle Benutzer in der 'eingebauten' Organisation sind globale Administratoren in Casdoor. Siehe die Docs: https://casdoor.org/docs/basic/core-concepts#how  -does-casdoor-manage-sich selbst. Wenn Sie immer noch einen Benutzer für die 'eingebaute' Organisation erstellen möchten, gehen Sie auf die Einstellungsseite der Organisation und aktivieren Sie die Option 'Habt Berechtigungszustimmung'."
   },
   "permission": {
-    "The permission: \\\"%s\\\" doesn't exist": "Die Berechtigung: \\\"%s\\\" existiert nicht"
+    "The permission: \"%s\" doesn't exist": "Die Berechtigung: \"%s\" existiert nicht"
   },
   "provider": {
     "Invalid application id": "Ungültige Anwendungs-ID",
@@ -196,8 +196,8 @@
     "Unknown type": "Unbekannter Typ",
     "Wrong verification code!": "Falscher Bestätigungscode!",
     "You should verify your code in %d min!": "Du solltest deinen Code in %d Minuten verifizieren!",
-    "please add a SMS provider to the \\\"Providers\\\" list for the application: %s": "Bitte fügen Sie einen SMS-Anbieter zur \\\"Providers\\\"-Liste für die Anwendung hinzu: %s",
-    "please add an Email provider to the \\\"Providers\\\" list for the application: %s": "Bitte fügen Sie einen E-Mail-Anbieter zur \\\"Providers\\\"-Liste für die Anwendung hinzu: %s",
+    "please add a SMS provider to the \"Providers\" list for the application: %s": "Bitte fügen Sie einen SMS-Anbieter zur \"Providers\"-Liste für die Anwendung hinzu: %s",
+    "please add an Email provider to the \"Providers\" list for the application: %s": "Bitte fügen Sie einen E-Mail-Anbieter zur \"Providers\"-Liste für die Anwendung hinzu: %s",
     "the user does not exist, please sign up first": "Der Benutzer existiert nicht, bitte zuerst anmelden"
   },
   "webauthn": {

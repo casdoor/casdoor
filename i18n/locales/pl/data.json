@@ -83,8 +83,8 @@
     "The user is forbidden to sign in, please contact the administrator": "Użytkownikowi zabroniono logowania, skontaktuj się z administratorem",
     "The user: %s doesn't exist in LDAP server": "Użytkownik: %s nie istnieje w serwerze LDAP",
     "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.": "Nazwa użytkownika może zawierać tylko znaki alfanumeryczne, podkreślenia lub myślniki, nie może mieć kolejnych myślników lub podkreśleń i nie może zaczynać się ani kończyć myślnikiem lub podkreśleniem.",
-    "The value \\\"%s\\\" for account field \\\"%s\\\" doesn't match the account item regex": "Wartość \\\"%s\\\" dla pola konta \\\"%s\\\" nie pasuje do wyrażenia regularnego elementu konta",
-    "The value \\\"%s\\\" for signup field \\\"%s\\\" doesn't match the signup item regex of the application \\\"%s\\\"": "Wartość \\\"%s\\\" dla pola rejestracji \\\"%s\\\" nie pasuje do wyrażenia regularnego elementu rejestracji aplikacji \\\"%s\\\"",
+    "The value \"%s\" for account field \"%s\" doesn't match the account item regex": "Wartość \"%s\" dla pola konta \"%s\" nie pasuje do wyrażenia regularnego elementu konta",
+    "The value \"%s\" for signup field \"%s\" doesn't match the signup item regex of the application \"%s\"": "Wartość \"%s\" dla pola rejestracji \"%s\" nie pasuje do wyrażenia regularnego elementu rejestracji aplikacji \"%s\"",
     "Username already exists": "Nazwa użytkownika już istnieje",
     "Username cannot be an email address": "Nazwa użytkownika nie może być adresem email",
     "Username cannot contain white spaces": "Nazwa użytkownika nie może zawierać spacji",
@@ -94,7 +94,7 @@
     "Username supports email format. Also The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline. Also pay attention to the email format.": "Nazwa użytkownika obsługuje format email. Również nazwa użytkownika może zawierać tylko znaki alfanumeryczne, podkreślenia lub myślniki, nie może mieć kolejnych myślników lub podkreśleń i nie może zaczynać się ani kończyć myślnikiem lub podkreśleniem. Zwróć też uwagę na format email.",
     "You have entered the wrong password or code too many times, please wait for %d minutes and try again": "Wprowadziłeś złe hasło lub kod zbyt wiele razy, poczekaj %d minut i spróbuj ponownie",
     "Your IP address: %s has been banned according to the configuration of: ": "Twój adres IP: %s został zablokowany zgodnie z konfiguracją: ",
-    "Your password has expired. Please reset your password by clicking \\\"Forgot password\\\"": "Twoje hasło wygasło. Zresetuj hasło klikając \\\"Zapomniałem hasła\\\"",
+    "Your password has expired. Please reset your password by clicking \"Forgot password\"": "Twoje hasło wygasło. Zresetuj hasło klikając \"Zapomniałem hasła\"",
     "Your region is not allow to signup by phone": "Twój region nie pozwala na rejestrację przez telefon",
     "password or code is incorrect": "hasło lub kod jest nieprawidłowe",
     "password or code is incorrect, you have %s remaining chances": "hasło lub kod jest nieprawidłowe, masz jeszcze %s prób",
@@ -137,7 +137,7 @@
     "adding a new user to the 'built-in' organization is currently disabled. Please note: all users in the 'built-in' organization are global administrators in Casdoor. Refer to the docs: https://casdoor.org/docs/basic/core-concepts#how-does-casdoor-manage-itself. If you still wish to create a user for the 'built-in' organization, go to the organization's settings page and enable the 'Has privilege consent' option.": "Dodawanie nowego użytkownika do organizacji „built-in' (wbudowanej) jest obecnie wyłączone. Należy zauważyć, że wszyscy użytkownicy w organizacji „built-in' są globalnymi administratorami w Casdoor. Zobacz dokumentację: https://casdoor.org/docs/basic/core-concepts#how-does-casdoor-manage-itself. Jeśli nadal chcesz utworzyć użytkownika dla organizacji „built-in', przejdź do strony ustawień organizacji i włącz opcję „Ma zgodę na uprawnienia'."
   },
   "permission": {
-    "The permission: \\\"%s\\\" doesn't exist": "Uprawnienie: \\\"%s\\\" nie istnieje"
+    "The permission: \"%s\" doesn't exist": "Uprawnienie: \"%s\" nie istnieje"
   },
   "provider": {
     "Invalid application id": "Nieprawidłowe id aplikacji",
@@ -196,8 +196,8 @@
     "Unknown type": "Nieznany typ",
     "Wrong verification code!": "Zły kod weryfikacyjny!",
     "You should verify your code in %d min!": "Powinieneś zweryfikować swój kod w ciągu %d min!",
-    "please add a SMS provider to the \\\"Providers\\\" list for the application: %s": "proszę dodać dostawcę SMS do listy \\\"Providers\\\" dla aplikacji: %s",
-    "please add an Email provider to the \\\"Providers\\\" list for the application: %s": "proszę dodać dostawcę email do listy \\\"Providers\\\" dla aplikacji: %s",
+    "please add a SMS provider to the \"Providers\" list for the application: %s": "proszę dodać dostawcę SMS do listy \"Providers\" dla aplikacji: %s",
+    "please add an Email provider to the \"Providers\" list for the application: %s": "proszę dodać dostawcę email do listy \"Providers\" dla aplikacji: %s",
     "the user does not exist, please sign up first": "użytkownik nie istnieje, najpierw się zarejestruj"
   },
   "webauthn": {

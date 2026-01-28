@@ -83,8 +83,8 @@
     "The user is forbidden to sign in, please contact the administrator": "该用户被禁止登录，请联系管理员",
     "The user: %s doesn't exist in LDAP server": "用户: %s 在LDAP服务器中未找到",
     "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.": "用户名只能包含字母数字字符、下划线或连字符，不能有连续的连字符或下划线，也不能以连字符或下划线开头或结尾",
-    "The value \\\"%s\\\" for account field \\\"%s\\\" doesn't match the account item regex": "值 \\\"%s\\\"在账户信息字段\\\"%s\\\" 中与应用的账户项正则表达式不匹配",
-    "The value \\\"%s\\\" for signup field \\\"%s\\\" doesn't match the signup item regex of the application \\\"%s\\\"": "值\\\"%s\\\"在注册字段\\\"%s\\\"中与应用\\\"%s\\\"的注册项正则表达式不匹配",
+    "The value \"%s\" for account field \"%s\" doesn't match the account item regex": "值 \"%s\"在账户信息字段\"%s\" 中与应用的账户项正则表达式不匹配",
+    "The value \"%s\" for signup field \"%s\" doesn't match the signup item regex of the application \"%s\"": "值\"%s\"在注册字段\"%s\"中与应用\"%s\"的注册项正则表达式不匹配",
     "Username already exists": "用户名已存在",
     "Username cannot be an email address": "用户名不可以是邮箱地址",
     "Username cannot contain white spaces": "用户名禁止包含空格",
@@ -94,7 +94,7 @@
     "Username supports email format. Also The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline. Also pay attention to the email format.": "用户名支持电子邮件格式。此外，用户名只能包含字母数字字符、下划线或连字符，不能包含连续的连字符或下划线，也不能以连字符或下划线开头或结尾。同时请注意电子邮件格式。",
     "You have entered the wrong password or code too many times, please wait for %d minutes and try again": "密码错误次数已达上限，请在 %d 分后重试",
     "Your IP address: %s has been banned according to the configuration of: ": "您的IP地址：%s 根据以下配置已被禁止： ",
-    "Your password has expired. Please reset your password by clicking \\\"Forgot password\\\"": "您的密码已过期。请点击 \\\"忘记密码\\\" 以重置密码",
+    "Your password has expired. Please reset your password by clicking \"Forgot password\"": "您的密码已过期。请点击 \"忘记密码\" 以重置密码",
     "Your region is not allow to signup by phone": "所在地区不支持手机号注册",
     "password or code is incorrect": "密码错误",
     "password or code is incorrect, you have %s remaining chances": "密码错误，您还有 %s 次尝试的机会",
@@ -137,7 +137,7 @@
     "adding a new user to the 'built-in' organization is currently disabled. Please note: all users in the 'built-in' organization are global administrators in Casdoor. Refer to the docs: https://casdoor.org/docs/basic/core-concepts#how-does-casdoor-manage-itself. If you still wish to create a user for the 'built-in' organization, go to the organization's settings page and enable the 'Has privilege consent' option.": "目前，向'built-in'组织添加新用户的功能已禁用。请注意：'built-in'组织中的所有用户均为Casdoor的全局管理员。请参阅文档：https://casdoor.org/docs/basic/core-concepts#how-does-casdoor-manage-itself。如果您仍希望为built-in组织创建用户，请转到该组织的设置页面并启用“特权同意”选项。"
   },
   "permission": {
-    "The permission: \\\"%s\\\" doesn't exist": "权限: \\\"%s\\\" 不存在"
+    "The permission: \"%s\" doesn't exist": "权限: \"%s\" 不存在"
   },
   "provider": {
     "Invalid application id": "无效的应用ID",
@@ -196,8 +196,8 @@
     "Unknown type": "未知类型",
     "Wrong verification code!": "验证码错误!",
     "You should verify your code in %d min!": "请在 %d 分钟内输入正确验证码",
-    "please add a SMS provider to the \\\"Providers\\\" list for the application: %s": "请添加一个SMS提供商到应用： %s 的 \\\"提供商 \\\"列表",
-    "please add an Email provider to the \\\"Providers\\\" list for the application: %s": "请添加一个Email提供商到应用： %s 的 \\\"提供商 \\\"列表",
+    "please add a SMS provider to the \"Providers\" list for the application: %s": "请添加一个SMS提供商到应用： %s 的 \"提供商 \"列表",
+    "please add an Email provider to the \"Providers\" list for the application: %s": "请添加一个Email提供商到应用： %s 的 \"提供商 \"列表",
     "the user does not exist, please sign up first": "用户不存在，请先注册"
   },
   "webauthn": {
