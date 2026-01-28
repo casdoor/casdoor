@@ -14,8 +14,51 @@
 
 import React from "react";
 import {Tooltip} from "antd";
+import CryptoJS from "crypto-js";
 import * as Util from "./Util";
 import * as Setting from "../Setting";
+
+// PKCE helper functions
+function generateCodeVerifier() {
+  const array = new Uint8Array(32);
+  crypto.getRandomValues(array);
+  return base64UrlEncode(array);
+}
+
+function base64UrlEncode(buffer) {
+  const base64 = btoa(String.fromCharCode.apply(null, buffer));
+  return base64
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=/g, "");
+}
+
+function generateCodeChallenge(verifier) {
+  // Convert verifier to UTF-8 bytes and compute SHA-256 hash
+  const hash = CryptoJS.SHA256(CryptoJS.enc.Utf8.parse(verifier));
+  const base64Hash = CryptoJS.enc.Base64.stringify(hash);
+  return base64Hash
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=/g, "");
+}
+
+function storeCodeVerifier(state, verifier) {
+  localStorage.setItem("pkce_verifier", `${state}#${verifier}`);
+}
+
+export function getCodeVerifier(state) {
+  const verifierStore = localStorage.getItem("pkce_verifier");
+  const [storedState, verifier] = verifierStore ? verifierStore.split("#") : [null, null];
+  if (storedState !== state) {
+    return null;
+  }
+  return verifier;
+}
+
+export function clearCodeVerifier(state) {
+  localStorage.removeItem("pkce_verifier");
+}
 
 const authInfo = {
   Google: {
@@ -402,7 +445,11 @@ export function getAuthUrl(application, provider, method, code) {
     applicationName = `${application.name}-org-${application.organization}`;
   }
   const state = Util.getStateFromQueryParams(applicationName, provider.name, method, isShortState);
-  const codeChallenge = "P3S-a7dr8bgM4bF6vOyiKkKETDl16rcAzao9F8UIL1Y"; // SHA256(Base64-URL-encode("casdoor-verifier"))
+
+  // Generate PKCE code verifier and challenge dynamically
+  const codeVerifier = generateCodeVerifier();
+  const codeChallenge = generateCodeChallenge(codeVerifier);
+  storeCodeVerifier(state, codeVerifier);
 
   if (provider.type === "AzureAD") {
     if (provider.domain !== "") {

@@ -739,6 +739,7 @@ func (c *ApiController) Login() {
 		} else if provider.Category == "OAuth" || provider.Category == "Web3" {
 			// OAuth
 			idpInfo := object.FromProviderToIdpInfo(c.Ctx, provider)
+			idpInfo.CodeVerifier = authForm.CodeVerifier
 			var idProvider idp.IdProvider
 			idProvider, err = idp.GetIdProvider(idpInfo, authForm.RedirectUri)
 			if err != nil {
