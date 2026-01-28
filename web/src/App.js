@@ -424,7 +424,9 @@ class App extends Component {
 
       let newUrl;
       if (returnUrl) {
-        newUrl = window.location.pathname + "?returnUrl=" + returnUrl;
+        const newParams = new URLSearchParams();
+        newParams.set("returnUrl", returnUrl);
+        newUrl = window.location.pathname + "?" + newParams.toString();
       } else {
         newUrl = this.getUrlWithoutQuery();
       }
