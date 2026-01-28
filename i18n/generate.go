@@ -48,9 +48,6 @@ func getAllI18nStringsFrontend(fileContent string) []string {
 	}
 
 	for _, match := range matches {
-		if strings.Contains(match[1], "Please enable") {
-			print("aaa")
-		}
 		target, err := strconv.Unquote("\"" + match[1] + "\"")
 		if err != nil {
 			target = match[1]
