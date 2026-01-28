@@ -47,14 +47,14 @@ func TestNewRecord_NotifyPayment_PreservesPaymentData(t *testing.T) {
 	// Create a mock context with notify-payment action
 	req, _ := http.NewRequest("POST", "/api/notify-payment/test-org/test-payment", strings.NewReader("{}"))
 	req.Header.Set("Accept-Language", "en")
-	
+
 	ctx := &context.Context{
 		Request: req,
 		Input:   context.NewInput(),
 	}
 	ctx.Input.Context = ctx
 	ctx.Input.RequestBody = []byte("{}")
-	
+
 	// Simulate what the controller does - sets the response data
 	respJson, _ := json.Marshal(mockResponse)
 	var responseMap map[string]interface{}
@@ -103,14 +103,14 @@ func TestNewRecord_BuyProduct_PreservesProductData(t *testing.T) {
 
 	req, _ := http.NewRequest("POST", "/api/buy-product", strings.NewReader("{}"))
 	req.Header.Set("Accept-Language", "en")
-	
+
 	ctx := &context.Context{
 		Request: req,
 		Input:   context.NewInput(),
 	}
 	ctx.Input.Context = ctx
 	ctx.Input.RequestBody = []byte("{}")
-	
+
 	respJson, _ := json.Marshal(mockResponse)
 	ctx.Input.SetData("json", json.RawMessage(respJson))
 
@@ -135,14 +135,14 @@ func TestNewRecord_OtherActions_DoNotPreserveData(t *testing.T) {
 
 	req, _ := http.NewRequest("POST", "/api/some-other-action", strings.NewReader("{}"))
 	req.Header.Set("Accept-Language", "en")
-	
+
 	ctx := &context.Context{
 		Request: req,
 		Input:   context.NewInput(),
 	}
 	ctx.Input.Context = ctx
 	ctx.Input.RequestBody = []byte("{}")
-	
+
 	respJson, _ := json.Marshal(mockResponse)
 	ctx.Input.SetData("json", json.RawMessage(respJson))
 
