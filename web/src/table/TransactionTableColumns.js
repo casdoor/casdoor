@@ -275,7 +275,7 @@ export function getTransactionTableColumns(options = {}) {
     title: i18next.t("transaction:Amount"),
     dataIndex: "amount",
     key: "amount",
-    width: "160px",
+    width: "180px",
     sorter: getSorter("amount"),
     ...(getColumnSearchProps ? getColumnSearchProps("amount") : {}),
     fixed: (Setting.isMobile()) ? "false" : "right",

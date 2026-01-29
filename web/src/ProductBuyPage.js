@@ -340,7 +340,7 @@ class ProductBuyPage extends React.Component {
           {i18next.t("order:Place Order")}
         </Button>
         <Button
-          type="primary"
+          type="primary" danger
           size="large"
           style={{
             height: "50px",

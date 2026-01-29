@@ -162,7 +162,7 @@ class ProductStorePage extends React.Component {
               {!product.isRecharge && (
                 <Button
                   key="add"
-                  type="primary"
+                  type="primary" danger
                   onClick={(e) => {
                     e.stopPropagation();
                     this.addToCart(product);
