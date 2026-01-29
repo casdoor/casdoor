@@ -215,7 +215,7 @@ class AuthCallback extends React.Component {
               }
               Setting.showMessage("success", "Logged in successfully");
               // Setting.goToLinkSoft(this, "/");
-              const link = Setting.getFromLink();
+              const link = Setting.getFromLink(res.data2);
               Setting.goToLink(link);
             } else if (responseType === "code") {
               if (res.data3) {
