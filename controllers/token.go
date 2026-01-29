@@ -173,6 +173,7 @@ func (c *ApiController) GetOAuthToken() {
 	avatar := c.Ctx.Input.Query("avatar")
 	refreshToken := c.Ctx.Input.Query("refresh_token")
 	deviceCode := c.Ctx.Input.Query("device_code")
+	state := c.Ctx.Input.Query("state")
 
 	if clientId == "" && clientSecret == "" {
 		clientId, clientSecret, _ = c.Ctx.Request.BasicAuth()
@@ -219,6 +220,9 @@ func (c *ApiController) GetOAuthToken() {
 			if refreshToken == "" {
 				refreshToken = tokenRequest.RefreshToken
 			}
+			if state == "" {
+				state = tokenRequest.State
+			}
 		}
 	}
 
@@ -263,7 +267,7 @@ func (c *ApiController) GetOAuthToken() {
 	}
 
 	host := c.Ctx.Request.Host
-	token, err := object.GetOAuthToken(grantType, clientId, clientSecret, code, verifier, scope, nonce, username, password, host, refreshToken, tag, avatar, c.GetAcceptLanguage())
+	token, err := object.GetOAuthToken(grantType, clientId, clientSecret, code, verifier, scope, state, nonce, username, password, host, refreshToken, tag, avatar, c.GetAcceptLanguage())
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
