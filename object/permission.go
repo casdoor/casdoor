@@ -18,7 +18,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/core"
 )
@@ -256,11 +255,12 @@ func AddPermissions(permissions []*Permission) (bool, error) {
 }
 
 func AddPermissionsInBatch(permissions []*Permission) (bool, error) {
-	batchSize := conf.GetConfigBatchSize()
-
 	if len(permissions) == 0 {
 		return false, nil
 	}
+
+	// Use safe batch size to avoid PostgreSQL parameter limit (65535)
+	batchSize := calculateSafeBatchSize(permissionDBFields)
 
 	affected := false
 	for i := 0; i < len(permissions); i += batchSize {

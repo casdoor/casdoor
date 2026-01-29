@@ -1130,7 +1130,8 @@ func AddUsersInBatch(users []*User) (bool, error) {
 		return false, fmt.Errorf("no users are provided")
 	}
 
-	batchSize := conf.GetConfigBatchSize()
+	// Use safe batch size to avoid PostgreSQL parameter limit (65535)
+	batchSize := calculateSafeBatchSize(userDBFields)
 
 	affected := false
 	for i := 0; i < len(users); i += batchSize {
