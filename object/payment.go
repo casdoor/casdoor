@@ -380,7 +380,7 @@ func NotifyPayment(body []byte, owner string, paymentName string, lang string) (
 		for _, productInfo := range orderProductInfos {
 			if productInfo.IsRecharge {
 				hasRecharge = true
-				
+
 				// Calculate paid and granted amounts for this product
 				totalPaidAmount += productInfo.PaidAmount * float64(productInfo.Quantity)
 				totalGrantedAmount += productInfo.GrantedAmount * float64(productInfo.Quantity)
