@@ -35,4 +35,3 @@ server
 
 # include helm-chart
 !manifests/casdoor
-__pycache__/

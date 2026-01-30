@@ -70,18 +70,6 @@ https://casdoor.org/docs/how-to-connect/overview
 
 https://casdoor.org/docs/category/integrations
 
-## Linux Machine Login
-
-Casdoor supports Linux machine authentication via its LDAP server, enabling centralized user management for Linux systems similar to FreeIPA. Features include:
-
-- **POSIX-compliant LDAP directory** with user and group support
-- **SSH key-based authentication** via LDAP attributes
-- **SSSD integration** for seamless Linux login
-- **Customizable login shells** per user
-- **Group-based access control**
-
-For setup instructions, see [LINUX_LOGIN.md](./LINUX_LOGIN.md) and [examples/linux-login/](./examples/linux-login/).
-
 ## How to contact?
 
 - Discord: https://discord.gg/5rPsrAzK7S
