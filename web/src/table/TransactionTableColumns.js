@@ -284,6 +284,38 @@ export function getTransactionTableColumns(options = {}) {
     },
   });
 
+  columns.push({
+    title: i18next.t("transaction:Paid amount"),
+    dataIndex: "paidAmount",
+    key: "paidAmount",
+    width: "180px",
+    sorter: getSorter("paidAmount"),
+    ...(getColumnSearchProps ? getColumnSearchProps("paidAmount") : {}),
+    fixed: (Setting.isMobile()) ? "false" : "right",
+    render: (text, record, index) => {
+      if (text === undefined || text === 0) {
+        return "-";
+      }
+      return Setting.getPriceDisplay(record.paidAmount, record.currency);
+    },
+  });
+
+  columns.push({
+    title: i18next.t("transaction:Granted amount"),
+    dataIndex: "grantedAmount",
+    key: "grantedAmount",
+    width: "180px",
+    sorter: getSorter("grantedAmount"),
+    ...(getColumnSearchProps ? getColumnSearchProps("grantedAmount") : {}),
+    fixed: (Setting.isMobile()) ? "false" : "right",
+    render: (text, record, index) => {
+      if (text === undefined || text === 0) {
+        return "-";
+      }
+      return Setting.getPriceDisplay(record.grantedAmount, record.currency);
+    },
+  });
+
   if (includeActions && account && onEdit && onDelete) {
     columns.push({
       title: i18next.t("general:Action"),
