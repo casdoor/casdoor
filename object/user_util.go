@@ -918,6 +918,8 @@ func StringArrayToStruct[T any](stringArray [][]string) ([]*T, error) {
 				err = setReflectAttr[[]MfaAccount](&fv, v)
 			case reflect.TypeOf([]webauthn.Credential{}):
 				err = setReflectAttr[[]webauthn.Credential](&fv, v)
+			case reflect.TypeOf(map[string]string{}):
+				err = setReflectAttr[map[string]string](&fv, v)
 			}
 
 			if err != nil {
