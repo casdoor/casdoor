@@ -24,6 +24,12 @@ const (
 	PaymentStateError    PaymentState = "Error"
 )
 
+// IsTerminalState checks if a payment state is terminal (cannot transition to other states)
+func IsTerminalState(state PaymentState) bool {
+	return state == PaymentStatePaid || state == PaymentStateError ||
+		state == PaymentStateCanceled || state == PaymentStateTimeout
+}
+
 const (
 	PaymentEnvWechatBrowser = "WechatBrowser"
 )
