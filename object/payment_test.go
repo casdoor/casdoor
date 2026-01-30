@@ -84,10 +84,7 @@ func TestPaymentStateChangeDetection(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			// Test terminal state check
-			isTerminal := tc.currentState == pp.PaymentStatePaid ||
-				tc.currentState == pp.PaymentStateError ||
-				tc.currentState == pp.PaymentStateCanceled ||
-				tc.currentState == pp.PaymentStateTimeout
+			isTerminal := pp.IsTerminalState(tc.currentState)
 
 			if isTerminal != tc.isTerminalState {
 				t.Errorf("%s: Expected isTerminal=%v, got %v",
@@ -154,10 +151,7 @@ func TestPaymentNotificationLogic(t *testing.T) {
 	for _, scenario := range testScenarios {
 		t.Run(scenario.scenario, func(t *testing.T) {
 			// Check if it's a terminal state
-			isTerminal := scenario.currentState == pp.PaymentStatePaid ||
-				scenario.currentState == pp.PaymentStateError ||
-				scenario.currentState == pp.PaymentStateCanceled ||
-				scenario.currentState == pp.PaymentStateTimeout
+			isTerminal := pp.IsTerminalState(scenario.currentState)
 
 			// Check if state would change
 			stateWouldChange := scenario.currentState != scenario.newState

@@ -210,8 +210,7 @@ func NotifyPayment(body []byte, owner string, paymentName string, lang string) (
 	}
 
 	// Check if payment is already in a terminal state to prevent duplicate processing
-	if payment.State == pp.PaymentStatePaid || payment.State == pp.PaymentStateError ||
-		payment.State == pp.PaymentStateCanceled || payment.State == pp.PaymentStateTimeout {
+	if pp.IsTerminalState(payment.State) {
 		return payment, nil
 	}
 
