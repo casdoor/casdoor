@@ -312,6 +312,29 @@ func (c *ApiController) Signup() {
 	userId := user.GetId()
 	util.LogInfo(c.Ctx, "API: [%s] is signed up as new user", userId)
 
+	// Check if this is an OAuth flow and automatically generate code
+	clientId := c.Ctx.Input.Query("clientId")
+	responseType := c.Ctx.Input.Query("responseType")
+	redirectUri := c.Ctx.Input.Query("redirectUri")
+	scope := c.Ctx.Input.Query("scope")
+	state := c.Ctx.Input.Query("state")
+	nonce := c.Ctx.Input.Query("nonce")
+	codeChallenge := c.Ctx.Input.Query("code_challenge")
+
+	// If OAuth parameters are present, generate OAuth code and return it
+	if clientId != "" && responseType == ResponseTypeCode {
+		code, err := object.GetOAuthCode(userId, clientId, "", "password", responseType, redirectUri, scope, state, nonce, codeChallenge, c.Ctx.Request.Host, c.GetAcceptLanguage())
+		if err != nil {
+			c.ResponseError(err.Error(), nil)
+			return
+		}
+
+		resp := codeToResponse(code)
+		c.Data["json"] = resp
+		c.ServeJSON()
+		return
+	}
+
 	c.ResponseOk(userId)
 }
 
