@@ -56,7 +56,10 @@ RUN apt update \
     && apt install -y \
         mariadb-server \
         mariadb-client \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* \
+    && mkdir -p /var/lib/mysql /run/mysqld \
+    && chown -R mysql:mysql /var/lib/mysql /run/mysqld \
+    && chmod 755 /run/mysqld
 
 
 FROM db AS ALLINONE
