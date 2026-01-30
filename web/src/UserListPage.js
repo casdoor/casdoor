@@ -589,9 +589,15 @@ class UserListPage extends BaseListPage {
             <div>
               {i18next.t("general:Users")}&nbsp;&nbsp;&nbsp;&nbsp;
               <Button style={{marginRight: "15px"}} type="primary" size="small" onClick={this.addUser.bind(this)}>{i18next.t("general:Add")} </Button>
-              <Button style={{marginRight: "15px"}} type="primary" size="small" onClick={this.generateDownloadTemplate}>{i18next.t("general:Download template")} </Button>
               {
-                this.renderUpload()
+                Setting.isLocalAdminUser(this.props.account) && (
+                  <>
+                    <Button style={{marginRight: "15px"}} type="primary" size="small" onClick={this.generateDownloadTemplate}>{i18next.t("general:Download template")} </Button>
+                    {
+                      this.renderUpload()
+                    }
+                  </>
+                )
               }
             </div>
           )}
