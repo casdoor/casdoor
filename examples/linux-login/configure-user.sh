@@ -149,27 +149,52 @@ except:
 
 log_info "Current user properties: $CURRENT_PROPERTIES"
 
-# Build updated properties
-UPDATED_PROPERTIES=$(python3 -c "
+# Build updated properties using safer JSON handling
+UPDATED_PROPERTIES=$(python3 << 'EOF'
 import sys, json
-props = json.loads('$CURRENT_PROPERTIES')
-props['loginShell'] = '$LOGIN_SHELL'
-if '$SSH_PUBLIC_KEY':
-    props['sshPublicKey'] = '''$SSH_PUBLIC_KEY'''.strip()
+
+# Read inputs safely from stdin
+current_props_str = input()
+login_shell = input()
+ssh_key = input()
+
+props = json.loads(current_props_str)
+props['loginShell'] = login_shell
+
+if ssh_key:
+    props['sshPublicKey'] = ssh_key
+
 print(json.dumps(props))
-")
+EOF
+<< INPUTS
+$CURRENT_PROPERTIES
+$LOGIN_SHELL
+$SSH_PUBLIC_KEY
+INPUTS
+)
 
 log_info "Updating user with new properties..."
 
 # Update user via API
-UPDATE_PAYLOAD=$(python3 -c "
+UPDATE_PAYLOAD=$(python3 << 'EOF'
 import sys, json
-user_data = json.loads('''$USER_DATA''')
+
+# Read inputs safely
+user_data_str = input()
+updated_props_str = input()
+
+user_data = json.loads(user_data_str)
 if 'data' in user_data:
     user_data = user_data['data']
-user_data['properties'] = json.loads('''$UPDATED_PROPERTIES''')
+
+user_data['properties'] = json.loads(updated_props_str)
 print(json.dumps(user_data))
-")
+EOF
+<< INPUTS
+$USER_DATA
+$UPDATED_PROPERTIES
+INPUTS
+)
 
 RESPONSE=$(curl -s -X POST \
     "${CASDOOR_URL}/api/update-user?id=${ORGANIZATION}/${USERNAME}" \

@@ -33,12 +33,17 @@ class CasdoorClient:
 
     def get_user(self, username: str) -> dict:
         """Fetch user data from Casdoor."""
-        response = requests.get(
-            f"{self.url}/api/get-user",
-            params={"id": f"{self.organization}/{username}"},
-            headers=self.headers,
-        )
-        response.raise_for_status()
+        try:
+            response = requests.get(
+                f"{self.url}/api/get-user",
+                params={"id": f"{self.organization}/{username}"},
+                headers=self.headers,
+                timeout=30,
+            )
+            response.raise_for_status()
+        except requests.exceptions.RequestException as e:
+            raise Exception(f"Failed to connect to Casdoor: {e}")
+
         data = response.json()
 
         if data.get("status") == "error":
@@ -48,13 +53,18 @@ class CasdoorClient:
 
     def update_user(self, username: str, user_data: dict) -> dict:
         """Update user data in Casdoor."""
-        response = requests.post(
-            f"{self.url}/api/update-user",
-            params={"id": f"{self.organization}/{username}"},
-            headers=self.headers,
-            json=user_data,
-        )
-        response.raise_for_status()
+        try:
+            response = requests.post(
+                f"{self.url}/api/update-user",
+                params={"id": f"{self.organization}/{username}"},
+                headers=self.headers,
+                json=user_data,
+                timeout=30,
+            )
+            response.raise_for_status()
+        except requests.exceptions.RequestException as e:
+            raise Exception(f"Failed to connect to Casdoor: {e}")
+
         data = response.json()
 
         if data.get("status") != "ok":

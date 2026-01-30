@@ -162,7 +162,7 @@ ssh your-casdoor-username@localhost
 
 ## Full Documentation
 
-See [../LINUX_LOGIN.md](../LINUX_LOGIN.md) for complete documentation including:
+See [../../LINUX_LOGIN.md](../../LINUX_LOGIN.md) for complete documentation including:
 - Detailed configuration options
 - Troubleshooting guide
 - Security considerations
