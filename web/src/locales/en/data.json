@@ -1304,6 +1304,7 @@
     "Granted amount - Tooltip": "The bonus amount granted (promotional credits)",
     "Edit Transaction": "Edit Transaction",
     "New Transaction": "New Transaction",
+    "Recharge": "Recharge",
     "Tag - Tooltip": "The tag of the transaction"
   },
   "user": {
