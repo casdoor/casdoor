@@ -215,13 +215,25 @@ func NotifyPayment(body []byte, owner string, paymentName string, lang string) (
 		return payment, nil
 	}
 
+	// Determine the new payment state
+	var newState pp.PaymentState
+	var newMessage string
 	if err != nil {
-		payment.State = pp.PaymentStateError
-		payment.Message = err.Error()
+		newState = pp.PaymentStateError
+		newMessage = err.Error()
 	} else {
-		payment.State = notifyResult.PaymentStatus
-		payment.Message = notifyResult.NotifyMessage
+		newState = notifyResult.PaymentStatus
+		newMessage = notifyResult.NotifyMessage
 	}
+
+	// Check if the payment state would actually change
+	// This prevents duplicate webhook events when providers send redundant notifications
+	if payment.State == newState {
+		return payment, nil
+	}
+
+	payment.State = newState
+	payment.Message = newMessage
 	_, err = UpdatePayment(payment.GetId(), payment)
 	if err != nil {
 		return nil, err
