@@ -69,9 +69,19 @@ func PlaceOrder(owner string, reqProductInfos []ProductInfo, user *User) (*Order
 			}
 			// For recharge products, calculate paid and granted amounts
 			if product.PaidAmount > 0 || product.GrantedAmount > 0 {
-				// Use the configured amounts from product
-				paidAmount = product.PaidAmount
-				grantedAmount = product.GrantedAmount
+				// Calculate the configured total amount and ratio
+				configuredTotal := product.PaidAmount + product.GrantedAmount
+				if configuredTotal > 0 {
+					// Scale paid and granted amounts proportionally to the actual price
+					paidRatio := product.PaidAmount / configuredTotal
+					grantedRatio := product.GrantedAmount / configuredTotal
+					paidAmount = productPrice * paidRatio
+					grantedAmount = productPrice * grantedRatio
+				} else {
+					// If configured total is 0, treat all as paid amount
+					paidAmount = productPrice
+					grantedAmount = 0
+				}
 			} else {
 				// Backward compatibility: if not set, treat all as paid amount
 				paidAmount = productPrice

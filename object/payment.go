@@ -374,24 +374,16 @@ func NotifyPayment(body []byte, owner string, paymentName string, lang string) (
 		}
 
 		hasRecharge := false
-		rechargeAmount := 0.0
 		totalPaidAmount := 0.0
 		totalGrantedAmount := 0.0
 		orderProductInfos := order.ProductInfos
 		for _, productInfo := range orderProductInfos {
 			if productInfo.IsRecharge {
 				hasRecharge = true
-				productTotal := productInfo.Price * float64(productInfo.Quantity)
-				rechargeAmount += productTotal
 				
 				// Calculate paid and granted amounts for this product
-				if productInfo.PaidAmount > 0 || productInfo.GrantedAmount > 0 {
-					totalPaidAmount += productInfo.PaidAmount * float64(productInfo.Quantity)
-					totalGrantedAmount += productInfo.GrantedAmount * float64(productInfo.Quantity)
-				} else {
-					// Backward compatibility: if not set, treat all as paid amount
-					totalPaidAmount += productTotal
-				}
+				totalPaidAmount += productInfo.PaidAmount * float64(productInfo.Quantity)
+				totalGrantedAmount += productInfo.GrantedAmount * float64(productInfo.Quantity)
 			}
 		}
 
@@ -400,7 +392,7 @@ func NotifyPayment(body []byte, owner string, paymentName string, lang string) (
 				Owner:         payment.Owner,
 				CreatedTime:   util.GetCurrentTime(),
 				Application:   user.SignupApplication,
-				Amount:        payment.Price,
+				Amount:        totalPaidAmount + totalGrantedAmount,
 				PaidAmount:    totalPaidAmount,
 				GrantedAmount: totalGrantedAmount,
 				Currency:      order.Currency,
