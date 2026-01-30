@@ -50,7 +50,8 @@ type Payment struct {
 	InvoiceRemark string `xorm:"varchar(100)" json:"invoiceRemark"`
 	InvoiceUrl    string `xorm:"varchar(255)" json:"invoiceUrl"`
 	// Order Info
-	Order      string          `xorm:"varchar(100)" json:"order"`      // Internal order name
+	Order      string          `xorm:"varchar(100)" json:"order"` // Internal order name
+	OrderObj   *Order          `xorm:"-" json:"orderObj,omitempty"`
 	OutOrderId string          `xorm:"varchar(100)" json:"outOrderId"` // External payment provider's order ID
 	PayUrl     string          `xorm:"varchar(2000)" json:"payUrl"`
 	SuccessUrl string          `xorm:"varchar(2000)" json:"successUrl"` // `successUrl` is redirected from `payUrl` after pay success
@@ -70,12 +71,22 @@ func GetPayments(owner string) ([]*Payment, error) {
 		return nil, err
 	}
 
+	err = ExtendPaymentWithOrder(payments)
+	if err != nil {
+		return nil, err
+	}
+
 	return payments, nil
 }
 
 func GetUserPayments(owner, user string) ([]*Payment, error) {
 	payments := []*Payment{}
 	err := ormer.Engine.Desc("created_time").Find(&payments, &Payment{Owner: owner, User: user})
+	if err != nil {
+		return nil, err
+	}
+
+	err = ExtendPaymentWithOrder(payments)
 	if err != nil {
 		return nil, err
 	}
@@ -91,7 +102,47 @@ func GetPaginationPayments(owner string, offset, limit int, field, value, sortFi
 		return nil, err
 	}
 
+	err = ExtendPaymentWithOrder(payments)
+	if err != nil {
+		return nil, err
+	}
+
 	return payments, nil
+}
+
+func ExtendPaymentWithOrder(payments []*Payment) error {
+	ownerOrdersMap := make(map[string][]string)
+	for _, payment := range payments {
+		if payment.Order != "" {
+			ownerOrdersMap[payment.Owner] = append(ownerOrdersMap[payment.Owner], payment.Order)
+		}
+	}
+
+	ordersMap := make(map[string]*Order)
+	for owner, orderNames := range ownerOrdersMap {
+		if len(orderNames) == 0 {
+			continue
+		}
+		var orders []*Order
+		err := ormer.Engine.In("name", orderNames).Find(&orders, &Order{Owner: owner})
+		if err != nil {
+			return err
+		}
+
+		for _, order := range orders {
+			ordersMap[util.GetId(order.Owner, order.Name)] = order
+		}
+	}
+
+	for _, payment := range payments {
+		if payment.Order != "" {
+			orderId := util.GetId(payment.Owner, payment.Order)
+			if order, ok := ordersMap[orderId]; ok {
+				payment.OrderObj = order
+			}
+		}
+	}
+	return nil
 }
 
 func getPayment(owner string, name string) (*Payment, error) {
