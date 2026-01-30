@@ -36,6 +36,8 @@ type Product struct {
 	Quantity              int       `json:"quantity"`
 	Sold                  int       `json:"sold"`
 	IsRecharge            bool      `json:"isRecharge"`
+	PaidAmount            float64   `json:"paidAmount"`
+	GrantedAmount         float64   `json:"grantedAmount"`
 	RechargeOptions       []float64 `xorm:"varchar(500)" json:"rechargeOptions"`
 	DisableCustomRecharge bool      `json:"disableCustomRecharge"`
 	Providers             []string  `xorm:"varchar(255)" json:"providers"`

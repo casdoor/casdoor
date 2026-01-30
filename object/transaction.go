@@ -45,8 +45,10 @@ type Transaction struct {
 	User        string              `xorm:"varchar(100)" json:"user"`
 	Tag         string              `xorm:"varchar(100)" json:"tag"`
 
-	Amount   float64 `json:"amount"`
-	Currency string  `xorm:"varchar(100)" json:"currency"`
+	Amount        float64 `json:"amount"`
+	PaidAmount    float64 `json:"paidAmount"`
+	GrantedAmount float64 `json:"grantedAmount"`
+	Currency      string  `xorm:"varchar(100)" json:"currency"`
 
 	Payment string `xorm:"varchar(100)" json:"payment"`
 

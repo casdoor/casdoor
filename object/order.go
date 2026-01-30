@@ -50,17 +50,19 @@ type Order struct {
 }
 
 type ProductInfo struct {
-	Owner       string  `json:"owner"`
-	Name        string  `json:"name"`
-	DisplayName string  `json:"displayName"`
-	Image       string  `json:"image,omitempty"`
-	Detail      string  `json:"detail,omitempty"`
-	Price       float64 `json:"price"`
-	Currency    string  `json:"currency,omitempty"`
-	IsRecharge  bool    `json:"isRecharge,omitempty"`
-	Quantity    int     `json:"quantity,omitempty"`
-	PricingName string  `json:"pricingName,omitempty"`
-	PlanName    string  `json:"planName,omitempty"`
+	Owner         string  `json:"owner"`
+	Name          string  `json:"name"`
+	DisplayName   string  `json:"displayName"`
+	Image         string  `json:"image,omitempty"`
+	Detail        string  `json:"detail,omitempty"`
+	Price         float64 `json:"price"`
+	Currency      string  `json:"currency,omitempty"`
+	IsRecharge    bool    `json:"isRecharge,omitempty"`
+	PaidAmount    float64 `json:"paidAmount,omitempty"`
+	GrantedAmount float64 `json:"grantedAmount,omitempty"`
+	Quantity      int     `json:"quantity,omitempty"`
+	PricingName   string  `json:"pricingName,omitempty"`
+	PlanName      string  `json:"planName,omitempty"`
 }
 
 func GetOrderCount(owner, field, value string) (int64, error) {
@@ -152,12 +154,14 @@ func UpdateOrder(id string, order *Order) (bool, error) {
 		price := 0.0
 		for _, product := range products {
 			productInfo := ProductInfo{
-				Name:        product.Name,
-				DisplayName: product.DisplayName,
-				Image:       product.Image,
-				Detail:      product.Detail,
-				Price:       product.Price,
-				IsRecharge:  product.IsRecharge,
+				Name:          product.Name,
+				DisplayName:   product.DisplayName,
+				Image:         product.Image,
+				Detail:        product.Detail,
+				Price:         product.Price,
+				IsRecharge:    product.IsRecharge,
+				PaidAmount:    product.PaidAmount,
+				GrantedAmount: product.GrantedAmount,
 			}
 			if existingInfo, ok := existingInfos[product.Name]; ok {
 				// Keep historical product info; do not overwrite with current product.
