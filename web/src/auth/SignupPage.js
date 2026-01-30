@@ -284,7 +284,8 @@ class SignupPage extends React.Component {
       .then((res) => {
         if (res.status === "ok") {
           // Check if this is OAuth flow with code response
-          if (oAuthParams && res.data && typeof res.data === "string" && res.data.length > 20) {
+          // When OAuth parameters are present and code is returned, it won't contain '/'
+          if (oAuthParams && res.data && typeof res.data === "string" && !res.data.includes("/")) {
             // OAuth code returned, redirect to redirect_uri with code
             const code = res.data;
             const redirectUrl = `${oAuthParams.redirectUri}${oAuthParams.redirectUri.includes("?") ? "&" : "?"}code=${code}&state=${oAuthParams.state}`;
