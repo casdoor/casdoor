@@ -216,6 +216,16 @@ func handleSearch(w ldap.ResponseWriter, m *ldap.Message) {
 		e.AddAttribute("mobile", message.AttributeValue(user.Phone))
 		e.AddAttribute("sn", message.AttributeValue(user.LastName))
 		e.AddAttribute("givenName", message.AttributeValue(user.FirstName))
+		// Add POSIX attributes for Linux machine login support
+		e.AddAttribute("loginShell", getAttribute("loginShell", user))
+		e.AddAttribute("gecos", getAttribute("gecos", user))
+		// Add SSH public key if available
+		sshKey := getAttribute("sshPublicKey", user)
+		if sshKey != "" {
+			e.AddAttribute("sshPublicKey", sshKey)
+		}
+		// Add objectClass for posixAccount
+		e.AddAttribute("objectClass", "posixAccount")
 		for _, group := range user.Groups {
 			e.AddAttribute(ldapMemberOfAttr, message.AttributeValue(group))
 		}
