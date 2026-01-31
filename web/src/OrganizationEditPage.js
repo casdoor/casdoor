@@ -680,6 +680,16 @@ class OrganizationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("organization:Account menu"), i18next.t("organization:Account menu - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Select virtual={false} style={{width: "100%"}} value={this.state.organization.accountMenu || "horizontal"} onChange={(value => {this.updateOrganizationField("accountMenu", value);})}
+              options={[{value: "horizontal", label: i18next.t("general:horizontal")}, {value: "vertical", label: i18next.t("general:vertical")}].map(item => Setting.getOption(item.label, item.value))}
+            />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("organization:Account items"), i18next.t("organization:Account items - Tooltip"))} :
           </Col>
           <Col span={22} >
