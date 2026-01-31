@@ -281,7 +281,7 @@ func CheckVerificationCode(dest string, code string, lang string) (*VerifyResult
 
 	timeoutInMinutes, err := conf.GetConfigInt64("verificationCodeTimeout")
 	if err != nil {
-		return nil, err
+		timeoutInMinutes = 10
 	}
 
 	now := time.Now().Unix()
