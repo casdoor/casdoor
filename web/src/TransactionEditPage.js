@@ -369,6 +369,26 @@ class TransactionEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("transaction:Paid amount"), i18next.t("transaction:Paid amount - Tooltip"))} :
+          </Col>
+          <Col span={4} >
+            <InputNumber disabled={!isRechargeMode} value={this.state.transaction.paidAmount ?? 0} onChange={value => {
+              this.updateTransactionField("paidAmount", value);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("transaction:Granted amount"), i18next.t("transaction:Granted amount - Tooltip"))} :
+          </Col>
+          <Col span={4} >
+            <InputNumber disabled={!isRechargeMode} value={this.state.transaction.grantedAmount ?? 0} onChange={value => {
+              this.updateTransactionField("grantedAmount", value);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("currency:Currency"), i18next.t("currency:Currency - Tooltip"))} :
           </Col>
           <Col span={22} >
