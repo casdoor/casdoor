@@ -1,8 +1,11 @@
 #!/bin/bash
-if [ "${MYSQL_ROOT_PASSWORD}" = "" ] ;then MYSQL_ROOT_PASSWORD=123456 ;fi
+#if [ "${MYSQL_ROOT_PASSWORD}" = "" ] ;then MYSQL_ROOT_PASSWORD=123456 ;fi
+#
+#service mariadb start
+#
+#mysqladmin -u root password ${MYSQL_ROOT_PASSWORD}
 
-service mariadb start
+export driverName=sqlite
+export dataSourceName="file:casdoor.db?cache=shared"
 
-mysqladmin -u root password ${MYSQL_ROOT_PASSWORD}
-
-exec /server --createDatabase=true
+exec /server
