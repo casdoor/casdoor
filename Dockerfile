@@ -51,28 +51,21 @@ COPY --from=FRONT --chown=$USER:$USER /web/build ./web/build
 ENTRYPOINT ["/server"]
 
 
-FROM debian:latest AS db
-RUN apt update \
-    && apt install -y \
-        mariadb-server \
-        mariadb-client \
-    && rm -rf /var/lib/apt/lists/*
-
-
-FROM db AS ALLINONE
+FROM alpine:latest AS ALLINONE
 LABEL MAINTAINER="https://casdoor.org/"
 ARG TARGETOS
 ARG TARGETARCH
 ENV BUILDX_ARCH="${TARGETOS:-linux}_${TARGETARCH:-amd64}"
 
-RUN apt update
-RUN apt install -y ca-certificates && update-ca-certificates
+RUN sed -i 's/https/http/' /etc/apk/repositories
+RUN apk add --update bash
+RUN apk add ca-certificates && update-ca-certificates
 
 WORKDIR /
 COPY --from=BACK /go/src/casdoor/server_${BUILDX_ARCH} ./server
 COPY --from=BACK /go/src/casdoor/swagger ./swagger
 COPY --from=BACK /go/src/casdoor/docker-entrypoint.sh /docker-entrypoint.sh
-COPY --from=BACK /go/src/casdoor/conf/app.conf ./conf/app.conf
+COPY --from=BACK /go/src/casdoor/conf/app.conf.allinone ./conf/app.conf
 COPY --from=FRONT /web/build ./web/build
 
 ENTRYPOINT ["/bin/bash"]
