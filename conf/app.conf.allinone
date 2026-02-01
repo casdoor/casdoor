@@ -1,6 +1,6 @@
 appname = casdoor
 httpport = 8000
-runmode = dev
+runmode = prod
 copyrequestbody = true
 driverName = sqlite
 dataSourceName = file:casdoor.db?cache=shared
@@ -11,7 +11,7 @@ redisEndpoint =
 defaultStorageProvider =
 isCloudIntranet = false
 authState = "casdoor"
-socks5Proxy = "127.0.0.1:10808"
+socks5Proxy =
 verificationCodeTimeout = 10
 initScore = 0
 logPostOnly = true
