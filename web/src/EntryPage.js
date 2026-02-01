@@ -80,9 +80,11 @@ class EntryPage extends React.Component {
           const res = await ApplicationBackend.getApplication(owner, name);
           if (res.status === "ok" && res.data) {
             apps.push(res.data);
+          } else if (res.msg) {
+            Setting.showMessage("error", `Failed to load carousel application ${appName}: ${res.msg}`);
           }
         } catch (error) {
-          // Failed to load carousel application
+          Setting.showMessage("error", `Failed to load carousel application ${appName}`);
         }
       }
     }
@@ -188,10 +190,11 @@ class EntryPage extends React.Component {
             top: 20,
             right: 20,
             zIndex: 1000,
-            backgroundColor: "rgba(255, 255, 255, 0.9)",
+            backgroundColor: isDarkMode ? "rgba(30, 30, 30, 0.9)" : "rgba(255, 255, 255, 0.9)",
+            color: isDarkMode ? "#fff" : "#000",
             padding: "15px",
             borderRadius: "8px",
-            boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+            boxShadow: isDarkMode ? "0 2px 8px rgba(255,255,255,0.15)" : "0 2px 8px rgba(0,0,0,0.15)",
             display: "flex",
             flexDirection: "column",
             gap: "10px",
@@ -215,9 +218,6 @@ class EntryPage extends React.Component {
                 value={this.state.carouselCurrentIndex}
                 onChange={(index) => {
                   this.setState({carouselCurrentIndex: index});
-                  if (this.state.carouselAutoScroll) {
-                    this.startCarouselTimer();
-                  }
                 }}
               >
                 {this.state.carouselApplications.map((app, index) => (
