@@ -13,7 +13,10 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Form, Input, InputNumber, Layout, List, Result, Row, Select, Space, Spin, Switch, Tabs, Tag, Tooltip} from "antd";
+import {
+  Button, Card, Col, Form, Input, InputNumber, Layout, List,
+  Menu, Result, Row, Select, Space, Spin, Switch, Tabs, Tag, Tooltip
+} from "antd";
 import {withRouter} from "react-router-dom";
 import {TotpMfaType} from "./auth/MfaSetupPage";
 import * as GroupBackend from "./backend/GroupBackend";
@@ -47,6 +50,7 @@ import MfaTable from "./table/MfaTable";
 import TransactionTable from "./table/TransactionTable";
 import * as TransactionBackend from "./backend/TransactionBackend";
 import {Content, Header} from "antd/es/layout/layout";
+import Sider from "antd/es/layout/Sider";
 
 const {Option} = Select;
 
@@ -68,7 +72,8 @@ class UserEditPage extends React.Component {
       idCardInfo: ["ID card front", "ID card back", "ID card with person"],
       openFaceRecognitionModal: false,
       transactions: [],
-      activeMenuKey: "",
+      activeMenuKey: window.location.hash?.slice(1) || "",
+      menuMode: "Horizontal",
     };
   }
 
@@ -177,6 +182,7 @@ class UserEditPage extends React.Component {
         }
 
         this.setState({
+          menuMode: res.data?.organizationObj?.accountMenu ?? "Horizontal",
           application: res.data,
         });
       });
@@ -1420,20 +1426,43 @@ class UserEditPage extends React.Component {
 
     return (
       <Layout style={{background: "inherit"}}>
-        <Header style={{background: "inherit", padding: "0px"}}>
-          <Tabs
-            onChange={(key) => {
-              this.setState({activeMenuKey: key});
-            }}
-            type="card"
-            activeKey={activeKey}
-            items={tabs.map(tab => ({
-              label: tab === "" ? i18next.t("user:Default") : tab,
-              key: tab,
-            }))}
-          />
-        </Header>
+        {
+          this.state.menuMode === "Vertical" ? null : (
+            <Header style={{background: "inherit", padding: "0px"}}>
+              <Tabs
+                onChange={(key) => {
+                  this.setState({activeMenuKey: key});
+                  window.location.hash = key;
+                }}
+                type="card"
+                activeKey={activeKey}
+                items={tabs.map(tab => ({
+                  label: tab === "" ? i18next.t("user:Default") : tab,
+                  key: tab,
+                }))}
+              />
+            </Header>
+          )
+        }
         <Layout style={{background: "inherit", maxHeight: "70vh", overflow: "auto"}}>
+          {
+            this.state.menuMode === "Vertical" ? (
+              <Sider width={200} style={{background: "inherit", position: "sticky", top: 0}}>
+                <Menu
+                  mode="vertical"
+                  selectedKeys={[activeKey]}
+                  onClick={({key}) => {
+                    this.setState({activeMenuKey: key});
+                    window.location.hash = key;
+                  }}
+                  style={{marginBottom: "20px", height: "100%"}}
+                  items={tabs.map(tab => ({
+                    label: tab === "" ? i18next.t("user:Default") : tab,
+                    key: tab,
+                  }))}
+                />
+              </Sider>) : null
+          }
           <Content style={{padding: "15px"}}>
             <Form>
               {this.getAccountItemsByTab(activeKey).map(accountItem => (
