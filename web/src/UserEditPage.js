@@ -73,7 +73,7 @@ class UserEditPage extends React.Component {
       openFaceRecognitionModal: false,
       transactions: [],
       activeMenuKey: window.location.hash?.slice(1) || "",
-      menuMode: "horizontal",
+      menuMode: "Horizontal",
     };
   }
 
@@ -182,7 +182,7 @@ class UserEditPage extends React.Component {
         }
 
         this.setState({
-          menuMode: res.data?.organizationObj?.accountMenu ?? "horizontal",
+          menuMode: res.data?.organizationObj?.accountMenu ?? "Horizontal",
           application: res.data,
         });
       });
@@ -1427,7 +1427,7 @@ class UserEditPage extends React.Component {
     return (
       <Layout style={{background: "inherit"}}>
         {
-          this.state.menuMode === "vertical" ? null : (
+          this.state.menuMode === "Vertical" ? null : (
             <Header style={{background: "inherit", padding: "0px"}}>
               <Tabs
                 onChange={(key) => {
@@ -1446,7 +1446,7 @@ class UserEditPage extends React.Component {
         }
         <Layout style={{background: "inherit", maxHeight: "70vh", overflow: "auto"}}>
           {
-            this.state.menuMode === "vertical" ? (
+            this.state.menuMode === "Vertical" ? (
               <Sider width={200} style={{background: "inherit", position: "sticky", top: 0}}>
                 <Menu
                   mode="vertical"
