@@ -14,7 +14,8 @@
 
 import React from "react";
 import {Redirect, Route, Switch} from "react-router-dom";
-import {Spin, Select, Switch as AntSwitch} from "antd";
+import {Select, Spin} from "antd";
+import {Switch as AntSwitch} from "antd";
 import i18next from "i18next";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
 import PricingPage from "./pricing/PricingPage";
@@ -69,7 +70,7 @@ class EntryPage extends React.Component {
     this.stopCarouselTimer();
   }
 
-  loadCarouselApplications = async (carouselAppNames) => {
+  loadCarouselApplications = async(carouselAppNames) => {
     const apps = [];
     for (const appName of carouselAppNames) {
       const parts = appName.split("/");
@@ -81,7 +82,7 @@ class EntryPage extends React.Component {
             apps.push(res.data);
           }
         } catch (error) {
-          console.error(`Failed to load carousel application: ${appName}`, error);
+          // Failed to load carousel application
         }
       }
     }
