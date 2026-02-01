@@ -1450,7 +1450,7 @@ class UserEditPage extends React.Component {
               <Sider width={200} style={{background: "inherit", position: "sticky", top: 0}}>
                 <Menu
                   mode="vertical"
-                  selectedKeys={[this.state.activeMenuKey]}
+                  selectedKeys={[activeKey]}
                   onClick={({key}) => {
                     this.setState({activeMenuKey: key});
                     window.location.hash = key;
