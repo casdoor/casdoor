@@ -125,3 +125,35 @@ func TestGetConfigLogs(t *testing.T) {
 		assert.Equal(t, scenery.expected, quota)
 	}
 }
+
+func TestGetConfigInt64WithDefault(t *testing.T) {
+	scenarios := []struct {
+		description string
+		input       string
+		expected    int64
+	}{
+		{"Should return default 10 for missing verificationCodeTimeout", "verificationCodeTimeout", 10},
+	}
+
+	// Create a temporary config without verificationCodeTimeout
+	tempConfig := `appname = casdoor
+httpport = 8000`
+	tempFile, err := os.CreateTemp("", "test_app.conf")
+	assert.Nil(t, err)
+	defer os.Remove(tempFile.Name())
+
+	_, err = tempFile.WriteString(tempConfig)
+	assert.Nil(t, err)
+	tempFile.Close()
+
+	err = web.LoadAppConfig("ini", tempFile.Name())
+	assert.Nil(t, err)
+
+	for _, scenery := range scenarios {
+		t.Run(scenery.description, func(t *testing.T) {
+			actual, err := GetConfigInt64(scenery.input)
+			assert.Nil(t, err)
+			assert.Equal(t, scenery.expected, actual)
+		})
+	}
+}

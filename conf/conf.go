@@ -66,6 +66,11 @@ func GetConfigBool(key string) bool {
 
 func GetConfigInt64(key string) (int64, error) {
 	value := GetConfigString(key)
+	if value == "" {
+		if key == "verificationCodeTimeout" {
+			return 10, nil
+		}
+	}
 	num, err := strconv.ParseInt(value, 10, 64)
 	if err != nil {
 		return 0, fmt.Errorf("GetConfigInt64(%s) error, %s", key, err.Error())
