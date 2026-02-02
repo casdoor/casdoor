@@ -50,12 +50,8 @@ func SendSms(provider *Provider, content string, phoneNumbers ...string) error {
 		if provider.AppId != "" {
 			phoneNumbers = append([]string{provider.AppId}, phoneNumbers...)
 		}
-	} else if provider.Type == sender.Aliyun {
-		for i, number := range phoneNumbers {
-			phoneNumbers[i] = strings.TrimPrefix(number, "+86")
-		}
-	} else if provider.Type == "Alibaba Cloud PNVS SMS" {
-		// PNVS also requires phone numbers without +86 prefix for Chinese numbers
+	} else if provider.Type == sender.Aliyun || provider.Type == "Alibaba Cloud PNVS SMS" {
+		// Both Aliyun SMS and PNVS require phone numbers without +86 prefix for Chinese numbers
 		for i, number := range phoneNumbers {
 			phoneNumbers[i] = strings.TrimPrefix(number, "+86")
 		}
