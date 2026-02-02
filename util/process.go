@@ -15,6 +15,7 @@
 package util
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"os/exec"
@@ -36,13 +37,17 @@ func getPidByPort(port int) (int, error) {
 
 	output, err := cmd.Output()
 	if err != nil {
+		// If the command is not found (e.g., lsof not installed in Docker),
+		// treat it as no process found on the port
+		if errors.Is(err, exec.ErrNotFound) {
+			return 0, nil
+		}
 		if exitErr, ok := err.(*exec.ExitError); ok {
 			if exitErr.ExitCode() == 1 {
 				return 0, nil
 			}
-		} else {
-			return 0, err
 		}
+		return 0, err
 	}
 
 	lines := strings.Split(string(output), "\n")
