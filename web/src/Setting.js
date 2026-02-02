@@ -1293,6 +1293,7 @@ export function getProviderTypeOptions(category) {
     return (
       [
         {id: "Aliyun SMS", name: "Alibaba Cloud SMS"},
+        {id: "Alibaba Cloud PNVS SMS", name: "Alibaba Cloud PNVS SMS"},
         {id: "Amazon SNS", name: "Amazon SNS"},
         {id: "Azure ACS", name: "Azure ACS"},
         {id: "Custom HTTP SMS", name: "Custom HTTP SMS"},
