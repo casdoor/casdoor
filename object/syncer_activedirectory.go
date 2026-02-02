@@ -382,4 +382,3 @@ func (p *ActiveDirectorySyncerProvider) GetOriginalUserGroups(userId string) ([]
 	// TODO: Implement Active Directory user group membership sync
 	return []string{}, nil
 }
-

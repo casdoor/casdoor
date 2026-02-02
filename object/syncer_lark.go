@@ -426,4 +426,3 @@ func (p *LarkSyncerProvider) GetOriginalUserGroups(userId string) ([]string, err
 	// TODO: Implement Lark user group membership sync
 	return []string{}, nil
 }
-

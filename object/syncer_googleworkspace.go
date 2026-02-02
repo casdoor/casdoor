@@ -389,4 +389,3 @@ func (p *GoogleWorkspaceSyncerProvider) googleWorkspaceGroupToOriginalGroup(gwGr
 
 	return group
 }
-

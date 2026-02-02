@@ -347,4 +347,3 @@ func (p *SCIMSyncerProvider) GetOriginalUserGroups(userId string) ([]string, err
 	// TODO: Implement SCIM user group membership sync
 	return []string{}, nil
 }
-

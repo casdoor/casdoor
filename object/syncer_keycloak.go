@@ -41,4 +41,3 @@ func (p *KeycloakSyncerProvider) GetOriginalUserGroups(userId string) ([]string,
 	// TODO: Implement Keycloak user group membership sync
 	return []string{}, nil
 }
-

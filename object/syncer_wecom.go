@@ -315,4 +315,3 @@ func (p *WecomSyncerProvider) GetOriginalUserGroups(userId string) ([]string, er
 	// TODO: Implement WeCom user group membership sync
 	return []string{}, nil
 }
-

@@ -176,4 +176,3 @@ func (p *DatabaseSyncerProvider) GetOriginalUserGroups(userId string) ([]string,
 	// TODO: Implement Database user group membership sync
 	return []string{}, nil
 }
-

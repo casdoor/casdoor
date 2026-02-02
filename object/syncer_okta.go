@@ -308,4 +308,3 @@ func (p *OktaSyncerProvider) GetOriginalUserGroups(userId string) ([]string, err
 	// TODO: Implement Okta user group membership sync
 	return []string{}, nil
 }
-

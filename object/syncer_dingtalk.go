@@ -396,4 +396,3 @@ func (p *DingtalkSyncerProvider) GetOriginalUserGroups(userId string) ([]string,
 	// TODO: Implement DingTalk user group membership sync
 	return []string{}, nil
 }
-
