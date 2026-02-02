@@ -133,11 +133,13 @@ func TestGetConfigInt64WithDefault(t *testing.T) {
 		expected    int64
 	}{
 		{"Should return default 10 minutes for missing verificationCodeTimeout", "verificationCodeTimeout", 10},
+		{"Should return 0 for missing inactiveTimeoutMinutes", "inactiveTimeoutMinutes", 0},
 	}
 
 	// Create a temporary config without verificationCodeTimeout
 	tempConfig := `appname = casdoor
-httpport = 8000`
+httpport = 8000
+inactiveTimeoutMinutes = `
 	tempFile, err := os.CreateTemp("", "test_app.conf")
 	assert.Nil(t, err)
 	defer os.Remove(tempFile.Name())

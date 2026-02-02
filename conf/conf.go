@@ -72,9 +72,12 @@ func GetConfigBool(key string) bool {
 func GetConfigInt64(key string) (int64, error) {
 	value := GetConfigString(key)
 	if value == "" {
+		// Return default values for known keys with empty config
 		if key == "verificationCodeTimeout" {
 			return DefaultVerificationCodeTimeout, nil
 		}
+		// For other keys, return 0 when config value is empty
+		return 0, nil
 	}
 	num, err := strconv.ParseInt(value, 10, 64)
 	if err != nil {
