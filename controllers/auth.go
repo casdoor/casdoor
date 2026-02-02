@@ -867,9 +867,15 @@ func (c *ApiController) Login() {
 						return
 					}
 
-					if application.IsSignupItemRequired("Invitation code") {
-						c.ResponseError(c.T("check:Invitation code cannot be blank"))
+					// Check and validate invitation code
+					invitation, msg := object.CheckInvitationCode(application, organization, &authForm, c.GetAcceptLanguage())
+					if msg != "" {
+						c.ResponseError(msg)
 						return
+					}
+					invitationName := ""
+					if invitation != nil {
+						invitationName = invitation.Name
 					}
 
 					// Handle UseEmailAsUsername for OAuth and Web3
@@ -937,11 +943,16 @@ func (c *ApiController) Login() {
 						IsDeleted:         false,
 						SignupApplication: application.Name,
 						Properties:        properties,
+						Invitation:        invitationName,
+						InvitationCode:    authForm.InvitationCode,
 						RegisterType:      "Application Signup",
 						RegisterSource:    fmt.Sprintf("%s/%s", application.Organization, application.Name),
 					}
 
-					if providerItem.SignupGroup != "" {
+					// Set group from invitation code if available, otherwise use provider's signup group
+					if invitation != nil && invitation.SignupGroup != "" {
+						user.Groups = []string{invitation.SignupGroup}
+					} else if providerItem.SignupGroup != "" {
 						user.Groups = []string{providerItem.SignupGroup}
 					}
 
@@ -955,6 +966,16 @@ func (c *ApiController) Login() {
 					if !affected {
 						c.ResponseError(fmt.Sprintf(c.T("auth:Failed to create user, user information is invalid: %s"), util.StructToJson(user)))
 						return
+					}
+
+					// Increment invitation usage count
+					if invitation != nil {
+						invitation.UsedCount += 1
+						_, err = object.UpdateInvitation(invitation.GetId(), invitation, c.GetAcceptLanguage())
+						if err != nil {
+							c.ResponseError(err.Error())
+							return
+						}
 					}
 				}
 
