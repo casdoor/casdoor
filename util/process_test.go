@@ -23,7 +23,8 @@ func TestStopOldInstance(t *testing.T) {
 	// This simulates the Docker environment where lsof is not installed
 	// The function should handle this gracefully and not return an error
 	
-	// Use a port that's unlikely to be in use
+	// Use a high port number (59999) that's unlikely to be in use by other services
+	// This avoids conflicts with commonly used ports (e.g., 8000, 8080, 3000)
 	port := 59999
 	
 	err := StopOldInstance(port)
@@ -34,7 +35,7 @@ func TestStopOldInstance(t *testing.T) {
 
 func TestGetPidByPort(t *testing.T) {
 	// Test that getPidByPort handles missing lsof gracefully
-	// Use a port that's unlikely to be in use
+	// Use a high port number (59998) that's unlikely to be in use by other services
 	port := 59998
 	
 	pid, err := getPidByPort(port)
@@ -43,7 +44,9 @@ func TestGetPidByPort(t *testing.T) {
 	}
 	
 	// When lsof is not available or port is not in use, pid should be 0
+	// Note: If lsof is available and a process is found on this port, pid may be non-zero
+	// This is acceptable as the test's primary goal is to ensure no errors occur
 	if pid != 0 {
-		t.Logf("getPidByPort returned pid %d, expected 0 (no process found)", pid)
+		t.Logf("getPidByPort returned pid %d (a process may be using port %d, or lsof found something)", pid, port)
 	}
 }
