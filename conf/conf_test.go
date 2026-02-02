@@ -132,7 +132,7 @@ func TestGetConfigInt64WithDefault(t *testing.T) {
 		input       string
 		expected    int64
 	}{
-		{"Should return default 10 for missing verificationCodeTimeout", "verificationCodeTimeout", 10},
+		{"Should return default 10 minutes for missing verificationCodeTimeout", "verificationCodeTimeout", 10},
 	}
 
 	// Create a temporary config without verificationCodeTimeout

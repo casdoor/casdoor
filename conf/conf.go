@@ -24,6 +24,11 @@ import (
 	"github.com/beego/beego/v2/server/web"
 )
 
+const (
+	// DefaultVerificationCodeTimeout is the default timeout for verification codes in minutes
+	DefaultVerificationCodeTimeout = 10
+)
+
 func init() {
 	// this array contains the beego configuration items that may be modified via env
 	presetConfigItems := []string{"httpport", "appname"}
@@ -68,7 +73,7 @@ func GetConfigInt64(key string) (int64, error) {
 	value := GetConfigString(key)
 	if value == "" {
 		if key == "verificationCodeTimeout" {
-			return 10, nil
+			return DefaultVerificationCodeTimeout, nil
 		}
 	}
 	num, err := strconv.ParseInt(value, 10, 64)
