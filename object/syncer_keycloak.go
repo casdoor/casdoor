@@ -29,3 +29,15 @@ func (p *KeycloakSyncerProvider) GetOriginalUsers() ([]*OriginalUser, error) {
 
 // Note: Keycloak-specific user mapping is handled in syncer_util.go
 // via getOriginalUsersFromMap which checks syncer.Type == "Keycloak"
+
+// GetOriginalGroups retrieves all groups from Keycloak (not implemented yet)
+func (p *KeycloakSyncerProvider) GetOriginalGroups() ([]*OriginalGroup, error) {
+	// TODO: Implement Keycloak group sync
+	return []*OriginalGroup{}, nil
+}
+
+// GetOriginalUserGroups retrieves the group IDs that a user belongs to (not implemented yet)
+func (p *KeycloakSyncerProvider) GetOriginalUserGroups(userId string) ([]string, error) {
+	// TODO: Implement Keycloak user group membership sync
+	return []string{}, nil
+}

@@ -14,6 +14,17 @@
 
 package object
 
+// OriginalGroup represents a group from an external system
+type OriginalGroup struct {
+	Id          string
+	Name        string
+	DisplayName string
+	Description string
+	Type        string
+	Manager     string
+	Email       string
+}
+
 // SyncerProvider defines the interface that all syncer implementations must satisfy.
 // Different syncer types (Database, Keycloak, WeCom, Azure AD) implement this interface.
 type SyncerProvider interface {
@@ -22,6 +33,12 @@ type SyncerProvider interface {
 
 	// GetOriginalUsers retrieves all users from the external system
 	GetOriginalUsers() ([]*OriginalUser, error)
+
+	// GetOriginalGroups retrieves all groups from the external system
+	GetOriginalGroups() ([]*OriginalGroup, error)
+
+	// GetOriginalUserGroups retrieves the group IDs that a user belongs to
+	GetOriginalUserGroups(userId string) ([]string, error)
 
 	// AddUser adds a new user to the external system
 	AddUser(user *OriginalUser) (bool, error)

@@ -296,3 +296,15 @@ func (p *OktaSyncerProvider) getOktaOriginalUsers() ([]*OriginalUser, error) {
 
 	return originalUsers, nil
 }
+
+// GetOriginalGroups retrieves all groups from Okta (not implemented yet)
+func (p *OktaSyncerProvider) GetOriginalGroups() ([]*OriginalGroup, error) {
+	// TODO: Implement Okta group sync
+	return []*OriginalGroup{}, nil
+}
+
+// GetOriginalUserGroups retrieves the group IDs that a user belongs to (not implemented yet)
+func (p *OktaSyncerProvider) GetOriginalUserGroups(userId string) ([]string, error) {
+	// TODO: Implement Okta user group membership sync
+	return []string{}, nil
+}
