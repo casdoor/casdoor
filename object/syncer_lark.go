@@ -414,3 +414,16 @@ func (p *LarkSyncerProvider) larkUserToOriginalUser(larkUser *LarkUser) *Origina
 
 	return user
 }
+
+// GetOriginalGroups retrieves all groups from Lark (not implemented yet)
+func (p *LarkSyncerProvider) GetOriginalGroups() ([]*OriginalGroup, error) {
+	// TODO: Implement Lark group sync
+	return []*OriginalGroup{}, nil
+}
+
+// GetOriginalUserGroups retrieves the group IDs that a user belongs to (not implemented yet)
+func (p *LarkSyncerProvider) GetOriginalUserGroups(userId string) ([]string, error) {
+	// TODO: Implement Lark user group membership sync
+	return []string{}, nil
+}
+

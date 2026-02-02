@@ -335,3 +335,16 @@ func (p *SCIMSyncerProvider) scimUserToOriginalUser(scimUser *SCIMUser) *Origina
 
 	return user
 }
+
+// GetOriginalGroups retrieves all groups from SCIM (not implemented yet)
+func (p *SCIMSyncerProvider) GetOriginalGroups() ([]*OriginalGroup, error) {
+	// TODO: Implement SCIM group sync
+	return []*OriginalGroup{}, nil
+}
+
+// GetOriginalUserGroups retrieves the group IDs that a user belongs to (not implemented yet)
+func (p *SCIMSyncerProvider) GetOriginalUserGroups(userId string) ([]string, error) {
+	// TODO: Implement SCIM user group membership sync
+	return []string{}, nil
+}
+

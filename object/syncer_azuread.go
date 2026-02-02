@@ -274,3 +274,15 @@ func (p *AzureAdSyncerProvider) getAzureAdOriginalUsers() ([]*OriginalUser, erro
 
 	return originalUsers, nil
 }
+
+// GetOriginalGroups retrieves all groups from Azure AD (not implemented yet)
+func (p *AzureAdSyncerProvider) GetOriginalGroups() ([]*OriginalGroup, error) {
+	// TODO: Implement Azure AD group sync
+	return []*OriginalGroup{}, nil
+}
+
+// GetOriginalUserGroups retrieves the group IDs that a user belongs to (not implemented yet)
+func (p *AzureAdSyncerProvider) GetOriginalUserGroups(userId string) ([]string, error) {
+	// TODO: Implement Azure AD user group membership sync
+	return []string{}, nil
+}

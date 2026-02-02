@@ -370,3 +370,16 @@ func (p *ActiveDirectorySyncerProvider) adEntryToOriginalUser(entry *goldap.Entr
 
 	return user
 }
+
+// GetOriginalGroups retrieves all groups from Active Directory (not implemented yet)
+func (p *ActiveDirectorySyncerProvider) GetOriginalGroups() ([]*OriginalGroup, error) {
+	// TODO: Implement Active Directory group sync
+	return []*OriginalGroup{}, nil
+}
+
+// GetOriginalUserGroups retrieves the group IDs that a user belongs to (not implemented yet)
+func (p *ActiveDirectorySyncerProvider) GetOriginalUserGroups(userId string) ([]string, error) {
+	// TODO: Implement Active Directory user group membership sync
+	return []string{}, nil
+}
+
