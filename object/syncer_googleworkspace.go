@@ -285,7 +285,6 @@ func (p *GoogleWorkspaceSyncerProvider) getGroupMembers(service *admin.Service, 
 	return allMembers, nil
 }
 
-
 // GetOriginalGroups retrieves all groups from Google Workspace
 func (p *GoogleWorkspaceSyncerProvider) GetOriginalGroups() ([]*OriginalGroup, error) {
 	// Get Admin SDK service
