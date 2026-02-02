@@ -203,18 +203,24 @@ func (p *GoogleWorkspaceSyncerProvider) getGoogleWorkspaceOriginalUsers() ([]*Or
 		return nil, err
 	}
 
+	// Get all groups and their members to build a user-to-groups mapping
+	// This avoids N+1 queries by fetching group memberships upfront
+	userGroupsMap, err := p.buildUserGroupsMap(service)
+	if err != nil {
+		fmt.Printf("Warning: failed to fetch group memberships: %v. Users will have no groups assigned.\n", err)
+		userGroupsMap = make(map[string][]string)
+	}
+
 	// Convert Google Workspace users to Casdoor OriginalUser
 	originalUsers := []*OriginalUser{}
 	for _, gwUser := range gwUsers {
 		originalUser := p.googleWorkspaceUserToOriginalUser(gwUser)
 
-		// Get groups for this user
-		groupIds, err := p.GetOriginalUserGroups(gwUser.PrimaryEmail)
-		if err != nil {
-			// Log the error but continue processing other users
-			fmt.Printf("Warning: failed to get groups for user %s: %v\n", gwUser.PrimaryEmail, err)
+		// Assign groups from the pre-built map
+		if groups, exists := userGroupsMap[gwUser.PrimaryEmail]; exists {
+			originalUser.Groups = groups
 		} else {
-			originalUser.Groups = groupIds
+			originalUser.Groups = []string{}
 		}
 
 		originalUsers = append(originalUsers, originalUser)
@@ -222,6 +228,63 @@ func (p *GoogleWorkspaceSyncerProvider) getGoogleWorkspaceOriginalUsers() ([]*Or
 
 	return originalUsers, nil
 }
+
+// buildUserGroupsMap builds a map of user email to group emails by iterating through all groups
+// and their members. This is more efficient than querying groups for each user individually.
+func (p *GoogleWorkspaceSyncerProvider) buildUserGroupsMap(service *admin.Service) (map[string][]string, error) {
+	userGroupsMap := make(map[string][]string)
+
+	// Get all groups
+	groups, err := p.getGoogleWorkspaceGroups(service)
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch groups: %v", err)
+	}
+
+	// For each group, get its members and populate the user-to-groups map
+	for _, group := range groups {
+		members, err := p.getGroupMembers(service, group.Id)
+		if err != nil {
+			fmt.Printf("Warning: failed to get members for group %s: %v\n", group.Email, err)
+			continue
+		}
+
+		// Add this group to each member's group list
+		for _, member := range members {
+			userGroupsMap[member.Email] = append(userGroupsMap[member.Email], group.Email)
+		}
+	}
+
+	return userGroupsMap, nil
+}
+
+// getGroupMembers retrieves all members of a specific group
+func (p *GoogleWorkspaceSyncerProvider) getGroupMembers(service *admin.Service, groupId string) ([]*admin.Member, error) {
+	allMembers := []*admin.Member{}
+	pageToken := ""
+
+	for {
+		call := service.Members.List(groupId).MaxResults(500)
+		if pageToken != "" {
+			call = call.PageToken(pageToken)
+		}
+
+		resp, err := call.Do()
+		if err != nil {
+			return nil, fmt.Errorf("failed to list members: %v", err)
+		}
+
+		allMembers = append(allMembers, resp.Members...)
+
+		// Handle pagination
+		if resp.NextPageToken == "" {
+			break
+		}
+		pageToken = resp.NextPageToken
+	}
+
+	return allMembers, nil
+}
+
 
 // GetOriginalGroups retrieves all groups from Google Workspace
 func (p *GoogleWorkspaceSyncerProvider) GetOriginalGroups() ([]*OriginalGroup, error) {
