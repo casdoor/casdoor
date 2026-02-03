@@ -211,7 +211,7 @@ class ApplicationEditPage extends React.Component {
   getGroups(searchValue = "") {
     const field = searchValue ? "name" : "";
     const value = searchValue || "";
-    const pageSize = searchValue ? "" : "100"; // Load first 100 items initially, or search results when searching
+    const pageSize = "100"; // Always limit to 100 items for performance
     GroupBackend.getGroups(this.state.owner, false, "", pageSize, field, value)
       .then((res) => {
         if (res.status === "ok") {

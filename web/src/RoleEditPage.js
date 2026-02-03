@@ -91,7 +91,7 @@ class RoleEditPage extends React.Component {
   getUsers(organizationName, searchValue = "") {
     const field = searchValue ? "name" : "";
     const value = searchValue || "";
-    const pageSize = searchValue ? "" : "100"; // Load first 100 items initially, or search results when searching
+    const pageSize = "100"; // Always limit to 100 items for performance
     UserBackend.getUsers(organizationName, "", pageSize, field, value)
       .then((res) => {
         if (res.status === "error") {
@@ -108,7 +108,7 @@ class RoleEditPage extends React.Component {
   getGroups(organizationName, searchValue = "") {
     const field = searchValue ? "name" : "";
     const value = searchValue || "";
-    const pageSize = searchValue ? "" : "100"; // Load first 100 items initially, or search results when searching
+    const pageSize = "100"; // Always limit to 100 items for performance
     GroupBackend.getGroups(organizationName, false, "", pageSize, field, value)
       .then((res) => {
         if (res.status === "error") {
@@ -125,7 +125,7 @@ class RoleEditPage extends React.Component {
   getRoles(organizationName, searchValue = "") {
     const field = searchValue ? "name" : "";
     const value = searchValue || "";
-    const pageSize = searchValue ? "" : "100"; // Load first 100 items initially, or search results when searching
+    const pageSize = "100"; // Always limit to 100 items for performance
     RoleBackend.getRoles(organizationName, "", pageSize, field, value)
       .then((res) => {
         if (res.status === "error") {
