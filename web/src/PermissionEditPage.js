@@ -104,7 +104,8 @@ class PermissionEditPage extends React.Component {
   getUsers(organizationName, searchValue = "") {
     const field = searchValue ? "name" : "";
     const value = searchValue || "";
-    UserBackend.getUsers(organizationName, "", "", field, value)
+    const pageSize = searchValue ? "" : "100"; // Load first 100 items initially, or search results when searching
+    UserBackend.getUsers(organizationName, "", pageSize, field, value)
       .then((res) => {
         if (res.status === "error") {
           Setting.showMessage("error", res.msg);
@@ -120,7 +121,8 @@ class PermissionEditPage extends React.Component {
   getGroups(organizationName, searchValue = "") {
     const field = searchValue ? "name" : "";
     const value = searchValue || "";
-    GroupBackend.getGroups(organizationName, false, "", "", field, value)
+    const pageSize = searchValue ? "" : "100"; // Load first 100 items initially, or search results when searching
+    GroupBackend.getGroups(organizationName, false, "", pageSize, field, value)
       .then((res) => {
         if (res.status === "error") {
           Setting.showMessage("error", res.msg);
@@ -136,7 +138,8 @@ class PermissionEditPage extends React.Component {
   getRoles(organizationName, searchValue = "") {
     const field = searchValue ? "name" : "";
     const value = searchValue || "";
-    RoleBackend.getRoles(organizationName, "", "", field, value)
+    const pageSize = searchValue ? "" : "100"; // Load first 100 items initially, or search results when searching
+    RoleBackend.getRoles(organizationName, "", pageSize, field, value)
       .then((res) => {
         if (res.status === "error") {
           Setting.showMessage("error", res.msg);
