@@ -52,6 +52,18 @@ class PermissionEditPage extends React.Component {
     this.getOrganizations();
   }
 
+  componentWillUnmount() {
+    if (this.userSearchTimeout) {
+      clearTimeout(this.userSearchTimeout);
+    }
+    if (this.groupSearchTimeout) {
+      clearTimeout(this.groupSearchTimeout);
+    }
+    if (this.roleSearchTimeout) {
+      clearTimeout(this.roleSearchTimeout);
+    }
+  }
+
   getPermission() {
     PermissionBackend.getPermission(this.state.organizationName, this.state.permissionName)
       .then((res) => {

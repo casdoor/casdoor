@@ -45,6 +45,18 @@ class RoleEditPage extends React.Component {
     this.getOrganizations();
   }
 
+  componentWillUnmount() {
+    if (this.userSearchTimeout) {
+      clearTimeout(this.userSearchTimeout);
+    }
+    if (this.groupSearchTimeout) {
+      clearTimeout(this.groupSearchTimeout);
+    }
+    if (this.roleSearchTimeout) {
+      clearTimeout(this.roleSearchTimeout);
+    }
+  }
+
   getRole() {
     RoleBackend.getRole(this.state.organizationName, this.state.roleName)
       .then((res) => {

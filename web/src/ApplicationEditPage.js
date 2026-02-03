@@ -153,6 +153,12 @@ class ApplicationEditPage extends React.Component {
     this.getGroups();
   }
 
+  componentWillUnmount() {
+    if (this.groupSearchTimeout) {
+      clearTimeout(this.groupSearchTimeout);
+    }
+  }
+
   getApplication() {
     ApplicationBackend.getApplication("admin", this.state.applicationName)
       .then((res) => {
