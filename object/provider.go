@@ -19,6 +19,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/beego/beego/v2/core/logs"
 	"github.com/beego/beego/v2/server/web/context"
 	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/idp"
@@ -590,7 +591,13 @@ func FromProviderToIdpInfo(ctx *context.Context, provider *Provider) *idp.Provid
 	} else if provider.Type == "Alipay" && provider.Cert != "" {
 		// For Alipay OAuth, extract private key from the configured cert
 		cert, err := GetCert(util.GetId(provider.Owner, provider.Cert))
-		if err == nil && cert != nil && cert.PrivateKey != "" {
+		if err != nil {
+			logs.Warning("Failed to load cert %s for Alipay OAuth provider %s: %v", provider.Cert, provider.Name, err)
+		} else if cert == nil {
+			logs.Warning("Cert %s does not exist for Alipay OAuth provider %s", provider.Cert, provider.Name)
+		} else if cert.PrivateKey == "" {
+			logs.Warning("Cert %s for Alipay OAuth provider %s has empty private key", provider.Cert, provider.Name)
+		} else {
 			// Use the private key from the cert as the client secret for OAuth signing
 			providerInfo.ClientSecret = cert.PrivateKey
 		}
