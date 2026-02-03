@@ -301,16 +301,19 @@ func NotifyPayment(body []byte, owner string, paymentName string, lang string) (
 	if payment.State == pp.PaymentStatePaid {
 		order.State = "Paid"
 		order.Message = "Payment successful"
-		order.EndTime = util.GetCurrentTime()
+		order.UpdateTime = util.GetCurrentTime()
 	} else if payment.State == pp.PaymentStateError {
 		order.State = "PaymentFailed"
 		order.Message = payment.Message
+		order.UpdateTime = util.GetCurrentTime()
 	} else if payment.State == pp.PaymentStateCanceled {
 		order.State = "Canceled"
 		order.Message = "Payment was cancelled"
+		order.UpdateTime = util.GetCurrentTime()
 	} else if payment.State == pp.PaymentStateTimeout {
 		order.State = "Timeout"
 		order.Message = "Payment timed out"
+		order.UpdateTime = util.GetCurrentTime()
 	}
 	_, err = UpdateOrder(order.GetId(), order)
 	if err != nil {

@@ -239,26 +239,6 @@ class OrderEditPage extends React.Component {
             }} />
           </Col>
         </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {i18next.t("order:Start time")}:
-          </Col>
-          <Col span={22} >
-            <Input value={this.state.order.startTime} onChange={e => {
-              this.updateOrderField("startTime", e.target.value);
-            }} />
-          </Col>
-        </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {i18next.t("order:End time")}:
-          </Col>
-          <Col span={22} >
-            <Input value={this.state.order.endTime} onChange={e => {
-              this.updateOrderField("endTime", e.target.value);
-            }} />
-          </Col>
-        </Row>
       </Card>
     );
   }

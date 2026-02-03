@@ -14,7 +14,7 @@
 
 import React from "react";
 import {Link} from "react-router-dom";
-import {Button, List, Table, Tooltip} from "antd";
+import {Button, Col, List, Row, Table, Tooltip} from "antd";
 import moment from "moment";
 import * as Setting from "./Setting";
 import * as OrderBackend from "./backend/OrderBackend";
@@ -37,8 +37,6 @@ class OrderListPage extends BaseListPage {
       payment: "",
       state: "Created",
       message: "",
-      startTime: moment().format(),
-      endTime: "",
     };
   }
 
@@ -159,21 +157,31 @@ class OrderListPage extends BaseListPage {
                   paddingBottom: 8,
                 }}
                 renderItem={(productInfo, i) => {
-                  const price = productInfo.price * (productInfo.quantity || 1);
+                  const price = productInfo.price || 0;
+                  const number = productInfo.quantity || 1;
                   const currency = record.currency || "USD";
+                  const productName = productInfo.displayName || productInfo.name;
                   return (
                     <List.Item>
-                      <div style={{display: "inline"}}>
-                        <Tooltip placement="topLeft" title={i18next.t("general:Edit")}>
-                          <Button style={{marginRight: "5px"}} icon={<EditOutlined />} size="small" onClick={() => Setting.goToLinkSoft(this, `/products/${record.owner}/${productInfo.name}`)} />
-                        </Tooltip>
-                        <Link to={`/products/${record.owner}/${productInfo.name}`}>
-                          {productInfo.displayName || productInfo.name}
-                        </Link>
-                        <span style={{marginLeft: "8px", color: "#666"}}>
-                          {Setting.getPriceDisplay(price, currency)}
-                        </span>
-                      </div>
+                      <Row style={{width: "100%"}} wrap={false} gutter={[12, 0]}>
+                        <Col flex="auto" style={{minWidth: 0}}>
+                          <div style={{display: "flex", alignItems: "center", minWidth: 0}}>
+                            <Tooltip placement="topLeft" title={i18next.t("general:Edit")}>
+                              <Button style={{marginRight: "5px"}} icon={<EditOutlined />} size="small" onClick={() => Setting.goToLinkSoft(this, `/products/${record.owner}/${productInfo.name}`)} />
+                            </Tooltip>
+                            <Tooltip placement="topLeft" title={productName}>
+                              <Link to={`/products/${record.owner}/${productInfo.name}`} style={{display: "inline-block", maxWidth: "100%", minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap"}}>
+                                {productName}
+                              </Link>
+                            </Tooltip>
+                          </div>
+                        </Col>
+                        <Col flex="none" style={{whiteSpace: "nowrap"}}>
+                          <span style={{color: "#666"}}>
+                            {Setting.getCurrencySymbol(currency)}{price} ({Setting.getCurrencyText(currency)}) × {number}
+                          </span>
+                        </Col>
+                      </Row>
                     </List.Item>
                   );
                 }}
@@ -228,29 +236,6 @@ class OrderListPage extends BaseListPage {
         width: "120px",
         sorter: true,
         ...this.getColumnSearchProps("state"),
-      },
-      {
-        title: i18next.t("general:Start time"),
-        dataIndex: "startTime",
-        key: "startTime",
-        width: "160px",
-        sorter: true,
-        render: (text, record, index) => {
-          return Setting.getFormattedDate(text);
-        },
-      },
-      {
-        title: i18next.t("general:End time"),
-        dataIndex: "endTime",
-        key: "endTime",
-        width: "160px",
-        sorter: true,
-        render: (text, record, index) => {
-          if (text === "") {
-            return "(empty)";
-          }
-          return Setting.getFormattedDate(text);
-        },
       },
       {
         title: i18next.t("general:Action"),
