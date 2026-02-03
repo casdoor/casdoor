@@ -26,6 +26,7 @@ type Order struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
+	UpdateTime  string `xorm:"varchar(100)" json:"updateTime"`
 	DisplayName string `xorm:"varchar(100)" json:"displayName"`
 
 	// Product Info
@@ -43,10 +44,6 @@ type Order struct {
 	// Order State
 	State   string `xorm:"varchar(100)" json:"state"`
 	Message string `xorm:"varchar(2000)" json:"message"`
-
-	// Order Duration
-	StartTime string `xorm:"varchar(100)" json:"startTime"`
-	EndTime   string `xorm:"varchar(100)" json:"endTime"`
 }
 
 type ProductInfo struct {
@@ -136,6 +133,14 @@ func UpdateOrder(id string, order *Order) (bool, error) {
 		return false, err
 	} else if o == nil {
 		return false, nil
+	}
+
+	if o.State != order.State {
+		if order.State == "Created" {
+			order.UpdateTime = ""
+		} else {
+			order.UpdateTime = util.GetCurrentTime()
+		}
 	}
 
 	if !slices.Equal(o.Products, order.Products) {

@@ -99,8 +99,7 @@ func PlaceOrder(owner string, reqProductInfos []ProductInfo, user *User) (*Order
 		Currency:     orderCurrency,
 		State:        "Created",
 		Message:      "",
-		StartTime:    util.GetCurrentTime(),
-		EndTime:      "",
+		UpdateTime:   "",
 	}
 
 	affected, err := AddOrder(order)
@@ -344,7 +343,7 @@ func PayOrder(providerName, host, paymentEnv string, order *Order, lang string) 
 	if provider.Type == "Dummy" || provider.Type == "Balance" {
 		order.State = "Paid"
 		order.Message = "Payment successful"
-		order.EndTime = util.GetCurrentTime()
+		order.UpdateTime = util.GetCurrentTime()
 	}
 
 	// Update order state first to avoid inconsistency
@@ -371,6 +370,6 @@ func CancelOrder(order *Order) (bool, error) {
 
 	order.State = "Canceled"
 	order.Message = "Canceled by user"
-	order.EndTime = util.GetCurrentTime()
+	order.UpdateTime = util.GetCurrentTime()
 	return UpdateOrder(order.GetId(), order)
 }

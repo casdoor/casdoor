@@ -267,6 +267,17 @@ class OrderPayPage extends React.Component {
   render() {
     const {order, productInfos} = this.state;
 
+    const updateTime = order?.updateTime || "";
+    const state = order?.state || "";
+    const updateTimeMap = {
+      Paid: i18next.t("order:Payment time"),
+      Canceled: i18next.t("order:Cancel time"),
+      PaymentFailed: i18next.t("order:Payment failed time"),
+      Timeout: i18next.t("order:Timeout time"),
+    };
+    const updateTimeLabel = updateTimeMap[state] || i18next.t("general:Updated time");
+    const shouldShowUpdateTime = state !== "Created" && updateTime !== "";
+
     if (!order || !productInfos) {
       return null;
     }
@@ -291,6 +302,13 @@ class OrderPayPage extends React.Component {
                   {Setting.getFormattedDate(order.createdTime)}
                 </span>
               </Descriptions.Item>
+              {shouldShowUpdateTime && (
+                <Descriptions.Item label={updateTimeLabel}>
+                  <span style={{fontSize: 16}}>
+                    {Setting.getFormattedDate(updateTime)}
+                  </span>
+                </Descriptions.Item>
+              )}
               <Descriptions.Item label={i18next.t("general:User")}>
                 <span style={{fontSize: 16}}>
                   {order.user}
