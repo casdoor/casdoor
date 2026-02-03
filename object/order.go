@@ -131,7 +131,8 @@ func UpdateOrder(id string, order *Order) (bool, error) {
 	var o *Order
 	if o, err = getOrder(owner, name); err != nil {
 		return false, err
-	} else if o == nil {
+	}
+	if o == nil {
 		return false, nil
 	}
 
