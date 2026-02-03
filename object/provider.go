@@ -590,7 +590,7 @@ func FromProviderToIdpInfo(ctx *context.Context, provider *Provider) *idp.Provid
 	} else if provider.Type == "Alipay" && provider.Cert != "" {
 		// For Alipay OAuth, extract private key from the configured cert
 		cert, err := GetCert(util.GetId(provider.Owner, provider.Cert))
-		if err == nil && cert != nil {
+		if err == nil && cert != nil && cert.PrivateKey != "" {
 			// Use the private key from the cert as the client secret for OAuth signing
 			providerInfo.ClientSecret = cert.PrivateKey
 		}
