@@ -105,6 +105,7 @@ class PermissionEditPage extends React.Component {
   }
 
   getUsers(organizationName, searchValue = "") {
+    // When searchValue is empty, field is also empty which tells backend to return results without filtering
     const field = searchValue ? "name" : "";
     const pageSize = String(MAX_PAGE_SIZE); // Always limit to MAX_PAGE_SIZE items for performance
     UserBackend.getUsers(organizationName, "", pageSize, field, searchValue)
@@ -121,6 +122,7 @@ class PermissionEditPage extends React.Component {
   }
 
   getGroups(organizationName, searchValue = "") {
+    // When searchValue is empty, field is also empty which tells backend to return results without filtering
     const field = searchValue ? "name" : "";
     const pageSize = String(MAX_PAGE_SIZE); // Always limit to MAX_PAGE_SIZE items for performance
     GroupBackend.getGroups(organizationName, false, "", pageSize, field, searchValue)
@@ -137,6 +139,7 @@ class PermissionEditPage extends React.Component {
   }
 
   getRoles(organizationName, searchValue = "") {
+    // When searchValue is empty, field is also empty which tells backend to return results without filtering
     const field = searchValue ? "name" : "";
     const pageSize = String(MAX_PAGE_SIZE); // Always limit to MAX_PAGE_SIZE items for performance
     RoleBackend.getRoles(organizationName, "", pageSize, field, searchValue)

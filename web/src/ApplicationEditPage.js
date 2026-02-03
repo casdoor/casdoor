@@ -212,6 +212,7 @@ class ApplicationEditPage extends React.Component {
   }
 
   getGroups(searchValue = "") {
+    // When searchValue is empty, field is also empty which tells backend to return results without filtering
     const field = searchValue ? "name" : "";
     const pageSize = String(MAX_PAGE_SIZE); // Always limit to MAX_PAGE_SIZE items for performance
     GroupBackend.getGroups(this.state.owner, false, "", pageSize, field, searchValue)
