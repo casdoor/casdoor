@@ -144,12 +144,19 @@ class ApplicationEditPage extends React.Component {
       activeMenuKey: window.location.hash?.slice(1) || "basic",
       menuMode: "horizontal",
     };
+    this.groupSearchTimeout = null;
   }
 
   UNSAFE_componentWillMount() {
     this.getApplication();
     this.getOrganizations();
     this.getGroups();
+  }
+
+  componentWillUnmount() {
+    if (this.groupSearchTimeout) {
+      clearTimeout(this.groupSearchTimeout);
+    }
   }
 
   getApplication() {
@@ -201,16 +208,28 @@ class ApplicationEditPage extends React.Component {
       });
   }
 
-  getGroups() {
-    GroupBackend.getGroups(this.state.owner)
+  getGroups(searchValue = "") {
+    // When searchValue is empty, field is also empty which tells backend to return results without filtering
+    const field = searchValue ? "name" : "";
+    const pageSize = String(Setting.MAX_PAGE_SIZE); // Always limit to MAX_PAGE_SIZE items for performance
+    GroupBackend.getGroups(this.state.owner, false, "", pageSize, field, searchValue)
       .then((res) => {
         if (res.status === "ok") {
           this.setState({
-            groups: res.data,
+            groups: res.data || [],
           });
         }
       });
   }
+
+  handleGroupSearch = (searchValue) => {
+    if (this.groupSearchTimeout) {
+      clearTimeout(this.groupSearchTimeout);
+    }
+    this.groupSearchTimeout = setTimeout(() => {
+      this.getGroups(searchValue);
+    }, Setting.SEARCH_DEBOUNCE_MS);
+  };
 
   getCerts(application) {
     let owner = application.organization;
@@ -611,9 +630,13 @@ class ApplicationEditPage extends React.Component {
               {Setting.getLabel(i18next.t("ldap:Default group"), i18next.t("ldap:Default group - Tooltip"))} :
             </Col>
             <Col span={21}>
-              <Select virtual={false} style={{width: "100%"}} value={this.state.application.defaultGroup ?? []} onChange={(value => {
-                this.updateApplicationField("defaultGroup", value);
-              })}
+              <Select virtual={false} style={{width: "100%"}} value={this.state.application.defaultGroup ?? []}
+                showSearch
+                filterOption={false}
+                onSearch={this.handleGroupSearch}
+                onChange={(value => {
+                  this.updateApplicationField("defaultGroup", value);
+                })}
               >
                 <Option key={""} value={""}>
                   <Space>

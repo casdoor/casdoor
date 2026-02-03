@@ -42,11 +42,26 @@ class PermissionEditPage extends React.Component {
       resources: [],
       mode: props.location.mode !== undefined ? props.location.mode : "edit",
     };
+    this.userSearchTimeout = null;
+    this.groupSearchTimeout = null;
+    this.roleSearchTimeout = null;
   }
 
   UNSAFE_componentWillMount() {
     this.getPermission();
     this.getOrganizations();
+  }
+
+  componentWillUnmount() {
+    if (this.userSearchTimeout) {
+      clearTimeout(this.userSearchTimeout);
+    }
+    if (this.groupSearchTimeout) {
+      clearTimeout(this.groupSearchTimeout);
+    }
+    if (this.roleSearchTimeout) {
+      clearTimeout(this.roleSearchTimeout);
+    }
   }
 
   getPermission() {
@@ -86,8 +101,11 @@ class PermissionEditPage extends React.Component {
       });
   }
 
-  getUsers(organizationName) {
-    UserBackend.getUsers(organizationName)
+  getUsers(organizationName, searchValue = "") {
+    // When searchValue is empty, field is also empty which tells backend to return results without filtering
+    const field = searchValue ? "name" : "";
+    const pageSize = String(Setting.MAX_PAGE_SIZE); // Always limit to MAX_PAGE_SIZE items for performance
+    UserBackend.getUsers(organizationName, "", pageSize, field, searchValue)
       .then((res) => {
         if (res.status === "error") {
           Setting.showMessage("error", res.msg);
@@ -95,13 +113,16 @@ class PermissionEditPage extends React.Component {
         }
 
         this.setState({
-          users: res.data,
+          users: res.data || [],
         });
       });
   }
 
-  getGroups(organizationName) {
-    GroupBackend.getGroups(organizationName)
+  getGroups(organizationName, searchValue = "") {
+    // When searchValue is empty, field is also empty which tells backend to return results without filtering
+    const field = searchValue ? "name" : "";
+    const pageSize = String(Setting.MAX_PAGE_SIZE); // Always limit to MAX_PAGE_SIZE items for performance
+    GroupBackend.getGroups(organizationName, false, "", pageSize, field, searchValue)
       .then((res) => {
         if (res.status === "error") {
           Setting.showMessage("error", res.msg);
@@ -109,13 +130,16 @@ class PermissionEditPage extends React.Component {
         }
 
         this.setState({
-          groups: res.data,
+          groups: res.data || [],
         });
       });
   }
 
-  getRoles(organizationName) {
-    RoleBackend.getRoles(organizationName)
+  getRoles(organizationName, searchValue = "") {
+    // When searchValue is empty, field is also empty which tells backend to return results without filtering
+    const field = searchValue ? "name" : "";
+    const pageSize = String(Setting.MAX_PAGE_SIZE); // Always limit to MAX_PAGE_SIZE items for performance
+    RoleBackend.getRoles(organizationName, "", pageSize, field, searchValue)
       .then((res) => {
         if (res.status === "error") {
           Setting.showMessage("error", res.msg);
@@ -123,10 +147,37 @@ class PermissionEditPage extends React.Component {
         }
 
         this.setState({
-          roles: res.data,
+          roles: res.data || [],
         });
       });
   }
+
+  handleUserSearch = (searchValue) => {
+    if (this.userSearchTimeout) {
+      clearTimeout(this.userSearchTimeout);
+    }
+    this.userSearchTimeout = setTimeout(() => {
+      this.getUsers(this.state.permission.owner, searchValue);
+    }, Setting.SEARCH_DEBOUNCE_MS);
+  };
+
+  handleGroupSearch = (searchValue) => {
+    if (this.groupSearchTimeout) {
+      clearTimeout(this.groupSearchTimeout);
+    }
+    this.groupSearchTimeout = setTimeout(() => {
+      this.getGroups(this.state.permission.owner, searchValue);
+    }, Setting.SEARCH_DEBOUNCE_MS);
+  };
+
+  handleRoleSearch = (searchValue) => {
+    if (this.roleSearchTimeout) {
+      clearTimeout(this.roleSearchTimeout);
+    }
+    this.roleSearchTimeout = setTimeout(() => {
+      this.getRoles(this.state.permission.owner, searchValue);
+    }, Setting.SEARCH_DEBOUNCE_MS);
+  };
 
   getModels(organizationName) {
     ModelBackend.getModels(organizationName)
@@ -269,6 +320,9 @@ class PermissionEditPage extends React.Component {
           </Col>
           <Col span={22} >
             <Select virtual={false} mode="multiple" style={{width: "100%"}} value={this.state.permission.users}
+              showSearch
+              filterOption={false}
+              onSearch={this.handleUserSearch}
               onChange={(value => {this.updatePermissionField("users", value);})}
               options={[
                 Setting.getOption(i18next.t("organization:All"), "*"),
@@ -283,6 +337,9 @@ class PermissionEditPage extends React.Component {
           </Col>
           <Col span={22} >
             <Select virtual={false} mode="multiple" style={{width: "100%"}} value={this.state.permission.groups}
+              showSearch
+              filterOption={false}
+              onSearch={this.handleGroupSearch}
               onChange={(value => {this.updatePermissionField("groups", value);})}
               options={[
                 Setting.getOption(i18next.t("organization:All"), "*"),
@@ -297,6 +354,9 @@ class PermissionEditPage extends React.Component {
           </Col>
           <Col span={22} >
             <Select disabled={!this.hasRoleDefinition(this.state.model)} placeholder={this.hasRoleDefinition(this.state.model) ? "" : "This field is disabled because the model is empty or it doesn't support RBAC (in another word, doesn't contain [role_definition])"} virtual={false} mode="multiple" style={{width: "100%"}} value={this.state.permission.roles}
+              showSearch
+              filterOption={false}
+              onSearch={this.handleRoleSearch}
               onChange={(value => {this.updatePermissionField("roles", value);})}
               options={[
                 Setting.getOption(i18next.t("organization:All"), "*"),

@@ -36,6 +36,7 @@ class TransactionEditPage extends React.Component {
       applications: [],
       users: [],
     };
+    this.userSearchTimeout = null;
   }
 
   UNSAFE_componentWillMount() {
@@ -44,6 +45,12 @@ class TransactionEditPage extends React.Component {
       this.getOrganizations();
       this.getApplications(this.state.organizationName);
       this.getUsers(this.state.organizationName);
+    }
+  }
+
+  componentWillUnmount() {
+    if (this.userSearchTimeout) {
+      clearTimeout(this.userSearchTimeout);
     }
   }
 
@@ -103,9 +110,12 @@ class TransactionEditPage extends React.Component {
       });
   }
 
-  getUsers(organizationName) {
+  getUsers(organizationName, searchValue = "") {
     const targetOrganizationName = organizationName || this.state.organizationName;
-    UserBackend.getUsers(targetOrganizationName)
+    // When searchValue is empty, field is also empty which tells backend to return results without filtering
+    const field = searchValue ? "name" : "";
+    const pageSize = String(Setting.MAX_PAGE_SIZE); // Always limit to MAX_PAGE_SIZE items for performance
+    UserBackend.getUsers(targetOrganizationName, "", pageSize, field, searchValue)
       .then((res) => {
         this.setState({
           users: res.data || [],
@@ -115,6 +125,15 @@ class TransactionEditPage extends React.Component {
         Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
   }
+
+  handleUserSearch = (searchValue) => {
+    if (this.userSearchTimeout) {
+      clearTimeout(this.userSearchTimeout);
+    }
+    this.userSearchTimeout = setTimeout(() => {
+      this.getUsers(this.state.transaction?.organization || this.state.organizationName, searchValue);
+    }, Setting.SEARCH_DEBOUNCE_MS);
+  };
 
   submitTransactionEdit(exitAfterSave) {
     if (this.state.transaction === null) {
@@ -344,6 +363,9 @@ class TransactionEditPage extends React.Component {
                 value={this.state.transaction.user}
                 disabled={this.state.transaction.tag === "Organization"}
                 allowClear
+                showSearch
+                filterOption={false}
+                onSearch={this.handleUserSearch}
                 onChange={(value) => {
                   this.updateTransactionField("user", value || "");
                 }}>
