@@ -106,9 +106,8 @@ class PermissionEditPage extends React.Component {
 
   getUsers(organizationName, searchValue = "") {
     const field = searchValue ? "name" : "";
-    const value = searchValue || "";
     const pageSize = String(MAX_PAGE_SIZE); // Always limit to MAX_PAGE_SIZE items for performance
-    UserBackend.getUsers(organizationName, "", pageSize, field, value)
+    UserBackend.getUsers(organizationName, "", pageSize, field, searchValue)
       .then((res) => {
         if (res.status === "error") {
           Setting.showMessage("error", res.msg);
@@ -123,9 +122,8 @@ class PermissionEditPage extends React.Component {
 
   getGroups(organizationName, searchValue = "") {
     const field = searchValue ? "name" : "";
-    const value = searchValue || "";
     const pageSize = String(MAX_PAGE_SIZE); // Always limit to MAX_PAGE_SIZE items for performance
-    GroupBackend.getGroups(organizationName, false, "", pageSize, field, value)
+    GroupBackend.getGroups(organizationName, false, "", pageSize, field, searchValue)
       .then((res) => {
         if (res.status === "error") {
           Setting.showMessage("error", res.msg);
@@ -140,9 +138,8 @@ class PermissionEditPage extends React.Component {
 
   getRoles(organizationName, searchValue = "") {
     const field = searchValue ? "name" : "";
-    const value = searchValue || "";
     const pageSize = String(MAX_PAGE_SIZE); // Always limit to MAX_PAGE_SIZE items for performance
-    RoleBackend.getRoles(organizationName, "", pageSize, field, value)
+    RoleBackend.getRoles(organizationName, "", pageSize, field, searchValue)
       .then((res) => {
         if (res.status === "error") {
           Setting.showMessage("error", res.msg);

@@ -213,9 +213,8 @@ class ApplicationEditPage extends React.Component {
 
   getGroups(searchValue = "") {
     const field = searchValue ? "name" : "";
-    const value = searchValue || "";
     const pageSize = String(MAX_PAGE_SIZE); // Always limit to MAX_PAGE_SIZE items for performance
-    GroupBackend.getGroups(this.state.owner, false, "", pageSize, field, value)
+    GroupBackend.getGroups(this.state.owner, false, "", pageSize, field, searchValue)
       .then((res) => {
         if (res.status === "ok") {
           this.setState({
