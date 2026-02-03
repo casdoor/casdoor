@@ -61,6 +61,9 @@ import Sider from "antd/es/layout/Sider";
 
 const {Option} = Select;
 
+const MAX_PAGE_SIZE = 100;
+const SEARCH_DEBOUNCE_MS = 300;
+
 const template = `<style>
   .login-panel {
     padding: 40px 70px 0 70px;
@@ -211,7 +214,7 @@ class ApplicationEditPage extends React.Component {
   getGroups(searchValue = "") {
     const field = searchValue ? "name" : "";
     const value = searchValue || "";
-    const pageSize = "100"; // Always limit to 100 items for performance
+    const pageSize = String(MAX_PAGE_SIZE); // Always limit to MAX_PAGE_SIZE items for performance
     GroupBackend.getGroups(this.state.owner, false, "", pageSize, field, value)
       .then((res) => {
         if (res.status === "ok") {
@@ -228,7 +231,7 @@ class ApplicationEditPage extends React.Component {
     }
     this.groupSearchTimeout = setTimeout(() => {
       this.getGroups(searchValue);
-    }, 300);
+    }, SEARCH_DEBOUNCE_MS);
   };
 
   getCerts(application) {
