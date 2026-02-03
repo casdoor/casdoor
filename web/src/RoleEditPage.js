@@ -35,6 +35,9 @@ class RoleEditPage extends React.Component {
       roles: [],
       mode: props.location.mode !== undefined ? props.location.mode : "edit",
     };
+    this.userSearchTimeout = null;
+    this.groupSearchTimeout = null;
+    this.roleSearchTimeout = null;
   }
 
   UNSAFE_componentWillMount() {
@@ -73,8 +76,10 @@ class RoleEditPage extends React.Component {
       });
   }
 
-  getUsers(organizationName) {
-    UserBackend.getUsers(organizationName)
+  getUsers(organizationName, searchValue = "") {
+    const field = searchValue ? "name" : "";
+    const value = searchValue || "";
+    UserBackend.getUsers(organizationName, "", "", field, value)
       .then((res) => {
         if (res.status === "error") {
           Setting.showMessage("error", res.msg);
@@ -82,13 +87,15 @@ class RoleEditPage extends React.Component {
         }
 
         this.setState({
-          users: res.data,
+          users: res.data || [],
         });
       });
   }
 
-  getGroups(organizationName) {
-    GroupBackend.getGroups(organizationName)
+  getGroups(organizationName, searchValue = "") {
+    const field = searchValue ? "name" : "";
+    const value = searchValue || "";
+    GroupBackend.getGroups(organizationName, false, "", "", field, value)
       .then((res) => {
         if (res.status === "error") {
           Setting.showMessage("error", res.msg);
@@ -96,13 +103,15 @@ class RoleEditPage extends React.Component {
         }
 
         this.setState({
-          groups: res.data,
+          groups: res.data || [],
         });
       });
   }
 
-  getRoles(organizationName) {
-    RoleBackend.getRoles(organizationName)
+  getRoles(organizationName, searchValue = "") {
+    const field = searchValue ? "name" : "";
+    const value = searchValue || "";
+    RoleBackend.getRoles(organizationName, "", "", field, value)
       .then((res) => {
         if (res.status === "error") {
           Setting.showMessage("error", res.msg);
@@ -110,10 +119,37 @@ class RoleEditPage extends React.Component {
         }
 
         this.setState({
-          roles: res.data,
+          roles: res.data || [],
         });
       });
   }
+
+  handleUserSearch = (searchValue) => {
+    if (this.userSearchTimeout) {
+      clearTimeout(this.userSearchTimeout);
+    }
+    this.userSearchTimeout = setTimeout(() => {
+      this.getUsers(this.state.role.owner, searchValue);
+    }, 300);
+  };
+
+  handleGroupSearch = (searchValue) => {
+    if (this.groupSearchTimeout) {
+      clearTimeout(this.groupSearchTimeout);
+    }
+    this.groupSearchTimeout = setTimeout(() => {
+      this.getGroups(this.state.role.owner, searchValue);
+    }, 300);
+  };
+
+  handleRoleSearch = (searchValue) => {
+    if (this.roleSearchTimeout) {
+      clearTimeout(this.roleSearchTimeout);
+    }
+    this.roleSearchTimeout = setTimeout(() => {
+      this.getRoles(this.state.role.owner, searchValue);
+    }, 300);
+  };
 
   parseRoleField(key, value) {
     if ([""].includes(key)) {
@@ -188,6 +224,9 @@ class RoleEditPage extends React.Component {
           </Col>
           <Col span={22} >
             <Select virtual={true} mode="multiple" style={{width: "100%"}} value={this.state.role.users}
+              showSearch
+              filterOption={false}
+              onSearch={this.handleUserSearch}
               onChange={(value => {this.updateRoleField("users", value);})}
               options={this.state.users.map((user) => Setting.getOption(`${user.owner}/${user.name}`, `${user.owner}/${user.name}`))}
             />
@@ -199,6 +238,9 @@ class RoleEditPage extends React.Component {
           </Col>
           <Col span={22} >
             <Select virtual={false} mode="multiple" style={{width: "100%"}} value={this.state.role.groups}
+              showSearch
+              filterOption={false}
+              onSearch={this.handleGroupSearch}
               onChange={(value => {this.updateRoleField("groups", value);})}
               options={this.state.groups.map((group) => Setting.getOption(`${group.owner}/${group.name}`, `${group.owner}/${group.name}`))}
             />
@@ -209,7 +251,11 @@ class RoleEditPage extends React.Component {
             {Setting.getLabel(i18next.t("role:Sub roles"), i18next.t("role:Sub roles - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} mode="multiple" style={{width: "100%"}} value={this.state.role.roles} onChange={(value => {this.updateRoleField("roles", value);})}
+            <Select virtual={false} mode="multiple" style={{width: "100%"}} value={this.state.role.roles}
+              showSearch
+              filterOption={false}
+              onSearch={this.handleRoleSearch}
+              onChange={(value => {this.updateRoleField("roles", value);})}
               options={this.state.roles.filter(role => (role.owner !== this.state.role.owner || role.name !== this.state.role.name)).map((role) => Setting.getOption(`${role.owner}/${role.name}`, `${role.owner}/${role.name}`))
               } />
           </Col>
