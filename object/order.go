@@ -138,8 +138,9 @@ func UpdateOrder(id string, order *Order) (bool, error) {
 	if o.State != order.State {
 		if order.State == "Created" {
 			order.UpdateTime = ""
+		} else {
+			order.UpdateTime = util.GetCurrentTime()
 		}
-		order.UpdateTime = util.GetCurrentTime()
 	}
 
 	if !slices.Equal(o.Products, order.Products) {
