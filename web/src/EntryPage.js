@@ -56,6 +56,14 @@ class EntryPage extends React.Component {
   renderLoginIfNotLoggedIn(component) {
     if (this.props.account === null) {
       sessionStorage.setItem("from", window.location.pathname);
+      
+      // Preserve redirect parameter if present and valid
+      const params = new URLSearchParams(window.location.search);
+      const redirectParam = params.get("redirect");
+      if (redirectParam !== null && redirectParam !== "" && Setting.isValidRedirectUrl(redirectParam)) {
+        return <Redirect to={`/login?redirect=${encodeURIComponent(redirectParam)}`} />;
+      }
+      
       return <Redirect to="/login" />;
     } else if (this.props.account === undefined) {
       return null;
