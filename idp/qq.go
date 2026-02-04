@@ -186,6 +186,7 @@ func (idp *QqIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
 		Username:    visibleUnencode(userId),
 		DisplayName: qqUserInfo.Nickname,
 		AvatarUrl:   qqUserInfo.FigureurlQq1,
+		UnionId:     unionId,
 	}
 	return &userInfo, nil
 }
