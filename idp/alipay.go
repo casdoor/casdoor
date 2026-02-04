@@ -372,7 +372,7 @@ func (idp *AlipayIdProvider) postWithParams(params map[string]string, targetUrl 
 }
 
 // get the string to sign, see https://opendocs.alipay.com/common/02kf5q
-// According to Alipay docs, the string to sign should include URL-encoded parameter values
+// According to Alipay docs, the string to sign should use raw (non-URL-encoded) parameter values
 func getStringToSign(formData url.Values) string {
 	keys := make([]string, 0, len(formData))
 	for k := range formData {
