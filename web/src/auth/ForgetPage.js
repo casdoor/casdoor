@@ -89,13 +89,17 @@ class ForgetPage extends React.Component {
     return forgotPasswordItem ? forgotPasswordItem.visible : false;
   }
 
+  handleDisabledForgotPassword(application) {
+    Setting.showMessage("error", i18next.t("forget:The forgot password feature is disabled"));
+    Setting.redirectToLoginPage(application, this.props.history);
+  }
+
   onUpdateApplication(application) {
     this.props.onUpdateApplication(application);
 
     // Check if "Forgot password?" signin item is visible
     if (!this.isForgotPasswordEnabled(application)) {
-      Setting.showMessage("error", i18next.t("forget:The forgot password feature is disabled"));
-      Setting.redirectToLoginPage(application, this.props.history);
+      this.handleDisabledForgotPassword(application);
       return;
     }
   }
@@ -542,8 +546,7 @@ class ForgetPage extends React.Component {
 
     // Check if "Forgot password?" signin item is visible
     if (!this.isForgotPasswordEnabled(application)) {
-      Setting.showMessage("error", i18next.t("forget:The forgot password feature is disabled"));
-      Setting.redirectToLoginPage(application, this.props.history);
+      this.handleDisabledForgotPassword(application);
       return null;
     }
 
