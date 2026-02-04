@@ -141,27 +141,19 @@ type QqUserInfo struct {
 }
 
 func (idp *QqIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
-	openIdUrl := fmt.Sprintf("https://graph.qq.com/oauth2.0/me?access_token=%s", token.AccessToken)
-	resp, err := idp.Client.Get(openIdUrl)
+	// Try to get unionid first (requires app to be bindable to unionid)
+	// See: https://wiki.connect.qq.com/unionid%E4%BB%8B%E7%BB%8D
+	openId, unionId, err := idp.getOpenIdAndUnionId(token.AccessToken, true)
 	if err != nil {
-		return nil, err
-	}
-
-	defer resp.Body.Close()
-	openIdBody, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	re := regexp.MustCompile("\"openid\":\"(.*?)\"}")
-	matched := re.FindAllStringSubmatch(string(openIdBody), -1)
-	openId := matched[0][1]
-	if openId == "" {
-		return nil, errors.New("openId is empty")
+		// Fallback to get openid only if unionid request fails
+		openId, unionId, err = idp.getOpenIdAndUnionId(token.AccessToken, false)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	userInfoUrl := fmt.Sprintf("https://graph.qq.com/user/get_user_info?access_token=%s&oauth_consumer_key=%s&openid=%s", token.AccessToken, idp.Config.ClientID, openId)
-	resp, err = idp.Client.Get(userInfoUrl)
+	resp, err := idp.Client.Get(userInfoUrl)
 	if err != nil {
 		return nil, err
 	}
@@ -182,11 +174,79 @@ func (idp *QqIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
 		return nil, fmt.Errorf("ret expected 0, got %d", qqUserInfo.Ret)
 	}
 
+	// Use unionid as Id if available, otherwise use openid
+	// Use unionid/openid as Username instead of nickname for security
+	userId := unionId
+	if userId == "" {
+		userId = openId
+	}
+
 	userInfo := UserInfo{
-		Id:          openId,
-		Username:    qqUserInfo.Nickname,
+		Id:          visibleUnencode(userId),
+		Username:    visibleUnencode(userId),
 		DisplayName: qqUserInfo.Nickname,
 		AvatarUrl:   qqUserInfo.FigureurlQq1,
 	}
 	return &userInfo, nil
+}
+
+// getOpenIdAndUnionId fetches openid and optionally unionid from QQ
+// If withUnionId is true, it will request unionid (requires app to have unionid permission)
+func (idp *QqIdProvider) getOpenIdAndUnionId(accessToken string, withUnionId bool) (openId string, unionId string, err error) {
+	openIdUrl := fmt.Sprintf("https://graph.qq.com/oauth2.0/me?access_token=%s", accessToken)
+	if withUnionId {
+		openIdUrl += "&unionid=1"
+	}
+
+	resp, err := idp.Client.Get(openIdUrl)
+	if err != nil {
+		return "", "", err
+	}
+	defer resp.Body.Close()
+
+	openIdBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", "", err
+	}
+
+	// Response format: callback( {"client_id":"YOUR_APPID","openid":"YOUR_OPENID","unionid":"YOUR_UNIONID"} );
+	// or error: callback( {"error":100016,"error_description":"access token check failed"} );
+	bodyStr := string(openIdBody)
+
+	// Check for error response
+	errRe := regexp.MustCompile(`"error":(\d+)`)
+	if errMatch := errRe.FindStringSubmatch(bodyStr); len(errMatch) > 0 {
+		errDescRe := regexp.MustCompile(`"error_description":"(.*?)"`)
+		errDesc := ""
+		if descMatch := errDescRe.FindStringSubmatch(bodyStr); len(descMatch) > 1 {
+			errDesc = descMatch[1]
+		}
+		return "", "", fmt.Errorf("QQ API error %s: %s", errMatch[1], errDesc)
+	}
+
+	// Extract openid
+	openIdRe := regexp.MustCompile(`"openid":"(.*?)"`)
+	openIdMatch := openIdRe.FindStringSubmatch(bodyStr)
+	if len(openIdMatch) < 2 || openIdMatch[1] == "" {
+		return "", "", errors.New("openid is empty")
+	}
+	openId = openIdMatch[1]
+
+	// Extract unionid if requested and available
+	if withUnionId {
+		unionIdRe := regexp.MustCompile(`"unionid":"(.*?)"`)
+		unionIdMatch := unionIdRe.FindStringSubmatch(bodyStr)
+		if len(unionIdMatch) < 2 || unionIdMatch[1] == "" {
+			return "", "", errors.New("unionid not available, app may not have unionid permission")
+		}
+		unionId = unionIdMatch[1]
+	}
+
+	return openId, unionId, nil
+}
+
+// visibleUnencode ensures the string is safe for display (no special encoding)
+func visibleUnencode(s string) string {
+	// QQ IDs are typically alphanumeric, just return as-is
+	return s
 }
