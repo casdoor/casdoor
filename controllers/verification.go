@@ -196,6 +196,7 @@ func (c *ApiController) SendVerificationCode() {
 				break
 			}
 		}
+		// Block access if the signin item is not found or is explicitly hidden
 		if !isForgotPasswordEnabled {
 			c.ResponseError(c.T("verification:The forgot password feature is disabled"))
 			return
