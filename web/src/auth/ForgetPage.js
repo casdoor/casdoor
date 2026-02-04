@@ -79,12 +79,21 @@ class ForgetPage extends React.Component {
     return this.props.application;
   }
 
+  isForgotPasswordEnabled(application) {
+    if (!application?.signinItems) {
+      return true; // If no signin items defined, allow access by default for backward compatibility
+    }
+
+    const forgotPasswordItem = application.signinItems.find(item => item.name === "Forgot password?");
+    // Block access if the item exists and is not visible, or if the item doesn't exist at all
+    return forgotPasswordItem ? forgotPasswordItem.visible : false;
+  }
+
   onUpdateApplication(application) {
     this.props.onUpdateApplication(application);
 
     // Check if "Forgot password?" signin item is visible
-    const forgotPasswordItem = application?.signinItems?.find(item => item.name === "Forgot password?");
-    if (forgotPasswordItem && !forgotPasswordItem.visible) {
+    if (!this.isForgotPasswordEnabled(application)) {
       Setting.showMessage("error", i18next.t("forget:The forgot password feature is disabled"));
       Setting.redirectToLoginPage(application, this.props.history);
       return;
@@ -532,8 +541,7 @@ class ForgetPage extends React.Component {
     }
 
     // Check if "Forgot password?" signin item is visible
-    const forgotPasswordItem = application?.signinItems?.find(item => item.name === "Forgot password?");
-    if (forgotPasswordItem && !forgotPasswordItem.visible) {
+    if (!this.isForgotPasswordEnabled(application)) {
       Setting.showMessage("error", i18next.t("forget:The forgot password feature is disabled"));
       Setting.redirectToLoginPage(application, this.props.history);
       return null;
