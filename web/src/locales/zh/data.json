@@ -223,6 +223,7 @@
     "Please input your username!": "请输入您的用户名！",
     "Reset": "重置",
     "Reset password": "重置密码",
+    "The forgot password feature is disabled": "忘记密码功能已被禁用",
     "Unknown forget type": "未知的忘记密码类型",
     "Verify": "验证"
   },
