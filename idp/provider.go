@@ -51,6 +51,11 @@ type ProviderInfo struct {
 	AuthURL     string
 	UserInfoURL string
 	UserMapping map[string]string
+
+	// Alipay certificate mode fields
+	AppCertificate      string // Application public key certificate (PEM format)
+	AlipayCertificate   string // Alipay public key certificate (PEM format)  
+	AlipayRootCert      string // Alipay root certificate (PEM format)
 }
 
 type IdProvider interface {
@@ -103,6 +108,10 @@ func GetIdProvider(idpInfo *ProviderInfo, redirectUrl string) (IdProvider, error
 	case "Baidu":
 		return NewBaiduIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl), nil
 	case "Alipay":
+		// Use certificate mode if certificates are provided
+		if idpInfo.AppCertificate != "" || idpInfo.AlipayRootCert != "" {
+			return NewAlipayIdProviderWithCert(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl, idpInfo.AppCertificate, idpInfo.AlipayRootCert), nil
+		}
 		return NewAlipayIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl), nil
 	case "Custom":
 		return NewCustomIdProvider(idpInfo, redirectUrl), nil
