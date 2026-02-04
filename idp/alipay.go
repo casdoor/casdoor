@@ -38,10 +38,10 @@ import (
 )
 
 type AlipayIdProvider struct {
-	Client            *http.Client
-	Config            *oauth2.Config
-	AppCertSN         string // Application certificate SN
-	AlipayRootCertSN  string // Alipay root certificate SN
+	Client           *http.Client
+	Config           *oauth2.Config
+	AppCertSN        string // Application certificate SN
+	AlipayRootCertSN string // Alipay root certificate SN
 }
 
 // NewAlipayIdProvider ...
@@ -57,7 +57,7 @@ func NewAlipayIdProvider(clientId string, clientSecret string, redirectUrl strin
 // NewAlipayIdProviderWithCert creates a new AlipayIdProvider with certificate mode support
 func NewAlipayIdProviderWithCert(clientId string, clientSecret string, redirectUrl string, appCert string, alipayRootCert string) *AlipayIdProvider {
 	idp := NewAlipayIdProvider(clientId, clientSecret, redirectUrl)
-	
+
 	// Calculate certificate SNs if certificates are provided
 	if appCert != "" {
 		sn, err := calculateCertSN(appCert)
@@ -68,7 +68,7 @@ func NewAlipayIdProviderWithCert(clientId string, clientSecret string, redirectU
 			logs.Info("[Alipay] Calculated app_cert_sn: %s", sn)
 		}
 	}
-	
+
 	if alipayRootCert != "" {
 		sn, err := calculateRootCertSN(alipayRootCert)
 		if err != nil {
@@ -78,7 +78,7 @@ func NewAlipayIdProviderWithCert(clientId string, clientSecret string, redirectU
 			logs.Info("[Alipay] Calculated alipay_root_cert_sn: %s", sn)
 		}
 	}
-	
+
 	return idp
 }
 
@@ -106,9 +106,9 @@ func (idp *AlipayIdProvider) getConfig(clientId string, clientSecret string, red
 }
 
 type AlipayAccessToken struct {
-	Response       AlipaySystemOauthTokenResponse `json:"alipay_system_oauth_token_response"`
-	ErrorResponse  *AlipayErrorResponse           `json:"error_response"`
-	Sign           string                         `json:"sign"`
+	Response      AlipaySystemOauthTokenResponse `json:"alipay_system_oauth_token_response"`
+	ErrorResponse *AlipayErrorResponse           `json:"error_response"`
+	Sign          string                         `json:"sign"`
 	// Legacy error response fields (fallback)
 	Code    string `json:"code"`
 	Msg     string `json:"msg"`
@@ -150,7 +150,7 @@ func (idp *AlipayIdProvider) GetToken(code string) (*oauth2.Token, error) {
 		"timestamp":  time.Now().Format("2006-01-02 15:04:05"),
 		"version":    "1.0",
 	}
-	
+
 	// Add certificate SNs if using certificate mode
 	if idp.AppCertSN != "" {
 		params["app_cert_sn"] = idp.AppCertSN
@@ -264,7 +264,7 @@ func (idp *AlipayIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error)
 		"timestamp":  time.Now().Format("2006-01-02 15:04:05"),
 		"version":    "1.0",
 	}
-	
+
 	// Add certificate SNs if using certificate mode
 	if idp.AppCertSN != "" {
 		params["app_cert_sn"] = idp.AppCertSN
@@ -272,7 +272,7 @@ func (idp *AlipayIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error)
 	if idp.AlipayRootCertSN != "" {
 		params["alipay_root_cert_sn"] = idp.AlipayRootCertSN
 	}
-	
+
 	data, err := idp.postWithParams(params, idp.Config.Endpoint.TokenURL)
 	if err != nil {
 		return nil, err
@@ -379,7 +379,7 @@ func getStringToSign(formData url.Values) string {
 		keys = append(keys, k)
 	}
 	sort.Strings(keys)
-	
+
 	var parts []string
 	for _, k := range keys {
 		if k == "sign" || len(formData[k]) == 0 || formData[k][0] == "" {
@@ -389,14 +389,14 @@ func getStringToSign(formData url.Values) string {
 		// See: https://opendocs.alipay.com/common/02kf5q
 		parts = append(parts, k+"="+formData[k][0])
 	}
-	
+
 	return strings.Join(parts, "&")
 }
 
 // use privateKey to sign the content
 func rsaSignWithRSA256(signContent string, privateKey string) (string, error) {
 	privateKey = formatPrivateKey(privateKey)
-	
+
 	if len(privateKey) == 0 {
 		return "", fmt.Errorf("private key is empty after formatting")
 	}
@@ -409,7 +409,7 @@ func rsaSignWithRSA256(signContent string, privateKey string) (string, error) {
 
 	// If PKCS#8 fails, try PKCS#1 format as fallback
 	privateKeyPKCS1 := convertToPKCS1Format(privateKey)
-	
+
 	signature, _, err2 := trySignWithKey(privateKeyPKCS1, signContent)
 	if err2 == nil {
 		return signature, nil
@@ -463,23 +463,23 @@ func convertToPKCS1Format(pkcs8Key string) string {
 	// Extract the base64 content between BEGIN and END
 	lines := strings.Split(strings.TrimSpace(pkcs8Key), "\n")
 	var keyContent strings.Builder
-	
+
 	for _, line := range lines {
 		line = strings.TrimSpace(line)
 		if !strings.HasPrefix(line, "-----") {
 			keyContent.WriteString(line)
 		}
 	}
-	
+
 	// Rewrap with PKCS#1 format
 	base64Content := keyContent.String()
 	if len(base64Content) == 0 {
 		return ""
 	}
-	
+
 	var result strings.Builder
 	result.WriteString("-----BEGIN RSA PRIVATE KEY-----\n")
-	
+
 	for i := 0; i < len(base64Content); i += 64 {
 		end := i + 64
 		if end > len(base64Content) {
@@ -488,7 +488,7 @@ func convertToPKCS1Format(pkcs8Key string) string {
 		result.WriteString(base64Content[i:end])
 		result.WriteString("\n")
 	}
-	
+
 	result.WriteString("-----END RSA PRIVATE KEY-----")
 	return result.String()
 }
@@ -550,16 +550,16 @@ func calculateCertSN(certPEM string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("failed to parse certificate: %v", err)
 	}
-	
+
 	// Get issuer DN in RFC2253 format and serial number
 	issuer := cert.Issuer.String()
 	serialNumber := cert.SerialNumber.String()
-	
+
 	// Calculate MD5 hash of issuer + serialNumber
 	data := issuer + serialNumber
 	hash := md5.Sum([]byte(data))
 	sn := hex.EncodeToString(hash[:])
-	
+
 	return sn, nil
 }
 
@@ -568,7 +568,7 @@ func calculateCertSN(certPEM string) (string, error) {
 // See: https://opendocs.alipay.com/common/057k2t
 func calculateRootCertSN(rootCertPEM string) (string, error) {
 	var sns []string
-	
+
 	// Parse all certificates in the PEM file
 	remaining := []byte(rootCertPEM)
 	for {
@@ -577,36 +577,36 @@ func calculateRootCertSN(rootCertPEM string) (string, error) {
 		if block == nil {
 			break
 		}
-		
+
 		if block.Type != "CERTIFICATE" {
 			continue
 		}
-		
+
 		cert, err := x509.ParseCertificate(block.Bytes)
 		if err != nil {
 			continue
 		}
-		
+
 		// Only include RSA certificates (signature algorithm contains RSA)
 		sigAlg := cert.SignatureAlgorithm.String()
 		if !strings.Contains(sigAlg, "RSA") {
 			continue
 		}
-		
+
 		// Calculate SN for this certificate
 		issuer := cert.Issuer.String()
 		serialNumber := cert.SerialNumber.String()
 		data := issuer + serialNumber
 		hash := md5.Sum([]byte(data))
 		sn := hex.EncodeToString(hash[:])
-		
+
 		sns = append(sns, sn)
 	}
-	
+
 	if len(sns) == 0 {
 		return "", fmt.Errorf("no valid RSA certificates found in root cert")
 	}
-	
+
 	return strings.Join(sns, "_"), nil
 }
 
@@ -616,11 +616,11 @@ func parseCertificate(certPEM string) (*x509.Certificate, error) {
 	if block == nil {
 		return nil, fmt.Errorf("failed to decode PEM block")
 	}
-	
+
 	cert, err := x509.ParseCertificate(block.Bytes)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse certificate: %v", err)
 	}
-	
+
 	return cert, nil
 }

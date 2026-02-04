@@ -608,7 +608,7 @@ func FromProviderToIdpInfo(ctx *context.Context, provider *Provider) *idp.Provid
 				providerInfo.AppCertificate = cert.Certificate
 			}
 		}
-		
+
 		// Load Alipay root certificate from Metadata field (same as payment provider)
 		// The root cert content is stored in rootCert.PrivateKey (not Certificate)
 		if provider.Metadata != "" {

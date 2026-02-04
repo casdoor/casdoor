@@ -53,9 +53,9 @@ type ProviderInfo struct {
 	UserMapping map[string]string
 
 	// Alipay certificate mode fields
-	AppCertificate      string // Application public key certificate (PEM format)
-	AlipayCertificate   string // Alipay public key certificate (PEM format)  
-	AlipayRootCert      string // Alipay root certificate (PEM format)
+	AppCertificate    string // Application public key certificate (PEM format)
+	AlipayCertificate string // Alipay public key certificate (PEM format)
+	AlipayRootCert    string // Alipay root certificate (PEM format)
 }
 
 type IdProvider interface {
