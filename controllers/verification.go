@@ -187,6 +187,21 @@ func (c *ApiController) SendVerificationCode() {
 		return
 	}
 
+	// Check if "Forgot password?" signin item is visible when using forget verification
+	if vform.Method == ForgetVerification {
+		isForgotPasswordEnabled := false
+		for _, item := range application.SigninItems {
+			if item.Name == "Forgot password?" {
+				isForgotPasswordEnabled = item.Visible
+				break
+			}
+		}
+		if !isForgotPasswordEnabled {
+			c.ResponseError(c.T("verification:The forgot password feature is disabled"))
+			return
+		}
+	}
+
 	organization, err := object.GetOrganization(util.GetId(application.Owner, application.Organization))
 	if err != nil {
 		c.ResponseError(c.T(err.Error()))
