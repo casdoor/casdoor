@@ -245,8 +245,12 @@ func (idp *QqIdProvider) getOpenIdAndUnionId(accessToken string, withUnionId boo
 	return openId, unionId, nil
 }
 
-// visibleUnencode ensures the string is safe for display (no special encoding)
+// visibleUnencode ensures the string is safe for display by removing URL-style encodings.
 func visibleUnencode(s string) string {
-	// QQ IDs are typically alphanumeric, just return as-is
-	return s
+	decoded, err := url.QueryUnescape(s)
+	if err != nil {
+		// In case of an error, fall back to the original string to avoid changing behavior.
+		return s
+	}
+	return decoded
 }
