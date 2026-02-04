@@ -401,22 +401,13 @@ func rsaSignWithRSA256(signContent string, privateKey string) (string, error) {
 		return "", fmt.Errorf("private key is empty after formatting")
 	}
 
-	// Try to parse and sign with the formatted key (PKCS#8 format by default)
+	// Try to parse and sign with the formatted key; trySignWithKey handles both PKCS#8 and PKCS#1
 	signature, _, err := trySignWithKey(privateKey, signContent)
-	if err == nil {
-		return signature, nil
+	if err != nil {
+		return "", fmt.Errorf("failed to sign with private key: %v", err)
 	}
 
-	// If PKCS#8 fails, try PKCS#1 format as fallback
-	privateKeyPKCS1 := convertToPKCS1Format(privateKey)
-
-	signature, _, err2 := trySignWithKey(privateKeyPKCS1, signContent)
-	if err2 == nil {
-		return signature, nil
-	}
-
-	// Both formats failed, return the original PKCS#8 error
-	return "", fmt.Errorf("failed to sign with private key: PKCS#8 error: %v, PKCS#1 error: %v", err, err2)
+	return signature, nil
 }
 
 // trySignWithKey attempts to sign content with the given PEM-formatted key
