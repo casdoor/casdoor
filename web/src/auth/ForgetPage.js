@@ -547,7 +547,7 @@ class ForgetPage extends React.Component {
     // Check if "Forgot password?" signin item is visible
     if (!this.isForgotPasswordEnabled(application)) {
       this.handleDisabledForgotPassword(application);
-      return null;
+      return null; // Prevent rendering while redirect is in progress
     }
 
     return (
