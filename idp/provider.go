@@ -108,9 +108,13 @@ func GetIdProvider(idpInfo *ProviderInfo, redirectUrl string) (IdProvider, error
 	case "Baidu":
 		return NewBaiduIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl), nil
 	case "Alipay":
-		// Use certificate mode if certificates are provided
-		if idpInfo.AppCertificate != "" || idpInfo.AlipayRootCert != "" {
+		// Use certificate mode only when both certificates are provided
+		if idpInfo.AppCertificate != "" && idpInfo.AlipayRootCert != "" {
 			return NewAlipayIdProviderWithCert(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl, idpInfo.AppCertificate, idpInfo.AlipayRootCert), nil
+		}
+		// If only one of the certificates is configured, log a warning and fall back to non-certificate mode
+		if (idpInfo.AppCertificate != "" && idpInfo.AlipayRootCert == "") || (idpInfo.AppCertificate == "" && idpInfo.AlipayRootCert != "") {
+			fmt.Printf("warning: partial Alipay certificate configuration detected for clientId %s; falling back to non-certificate mode\n", idpInfo.ClientId)
 		}
 		return NewAlipayIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl), nil
 	case "Custom":
