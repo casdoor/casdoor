@@ -18,6 +18,7 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"fmt"
+	"strings"
 	"sync"
 	"time"
 
@@ -209,7 +210,7 @@ func GetOAuthCode(userId string, clientId string, provider string, signinMethod 
 	}, nil
 }
 
-func GetOAuthToken(grantType string, clientId string, clientSecret string, code string, verifier string, scope string, nonce string, username string, password string, host string, refreshToken string, tag string, avatar string, lang string) (interface{}, error) {
+func GetOAuthToken(grantType string, clientId string, clientSecret string, code string, verifier string, scope string, nonce string, username string, password string, host string, refreshToken string, tag string, avatar string, lang string, subjectToken string, subjectTokenType string, audience string) (interface{}, error) {
 	application, err := GetApplicationByClientId(clientId)
 	if err != nil {
 		return nil, err
@@ -244,6 +245,8 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 		token, tokenError, err = GetImplicitToken(application, username, scope, nonce, host)
 	case "urn:ietf:params:oauth:grant-type:device_code":
 		token, tokenError, err = GetImplicitToken(application, username, scope, nonce, host)
+	case "urn:ietf:params:oauth:grant-type:token-exchange": // Token Exchange Grant (RFC 8693)
+		token, tokenError, err = GetTokenExchangeToken(application, clientSecret, subjectToken, subjectTokenType, audience, scope, host)
 	case "refresh_token":
 		refreshToken2, err := RefreshToken(grantType, refreshToken, scope, clientId, clientSecret, host)
 		if err != nil {
@@ -960,6 +963,183 @@ func GetWechatMiniProgramToken(application *Application, code string, host strin
 	if err != nil {
 		return nil, nil, err
 	}
+	return token, nil, nil
+}
+
+// GetTokenExchangeToken
+// Token Exchange Grant (RFC 8693)
+// Exchanges a subject token for a new token with different audience or scope
+func GetTokenExchangeToken(application *Application, clientSecret string, subjectToken string, subjectTokenType string, audience string, scope string, host string) (*Token, *TokenError, error) {
+	// Verify client secret
+	if application.ClientSecret != clientSecret {
+		return nil, &TokenError{
+			Error:            InvalidClient,
+			ErrorDescription: "client_secret is invalid",
+		}, nil
+	}
+
+	// Validate subject_token parameter
+	if subjectToken == "" {
+		return nil, &TokenError{
+			Error:            InvalidRequest,
+			ErrorDescription: "subject_token is required",
+		}, nil
+	}
+
+	// Validate subject_token_type parameter
+	// RFC 8693 defines standard token type identifiers
+	if subjectTokenType == "" {
+		subjectTokenType = "urn:ietf:params:oauth:token-type:access_token" // Default to access_token
+	}
+
+	// Support common token types
+	supportedTokenTypes := []string{
+		"urn:ietf:params:oauth:token-type:access_token",
+		"urn:ietf:params:oauth:token-type:jwt",
+		"urn:ietf:params:oauth:token-type:id_token",
+	}
+
+	isValidTokenType := false
+	for _, tokenType := range supportedTokenTypes {
+		if subjectTokenType == tokenType {
+			isValidTokenType = true
+			break
+		}
+	}
+
+	if !isValidTokenType {
+		return nil, &TokenError{
+			Error:            InvalidRequest,
+			ErrorDescription: fmt.Sprintf("unsupported subject_token_type: %s", subjectTokenType),
+		}, nil
+	}
+
+	// Get certificate for token validation
+	cert, err := getCertByApplication(application)
+	if err != nil {
+		return nil, nil, err
+	}
+	if cert == nil {
+		return nil, &TokenError{
+			Error:            EndpointError,
+			ErrorDescription: fmt.Sprintf("cert: %s cannot be found", application.Cert),
+		}, nil
+	}
+
+	// Parse and validate the subject token
+	var subjectOwner, subjectName, subjectScope string
+	if application.TokenFormat == "JWT-Standard" {
+		standardClaims, err := ParseStandardJwtToken(subjectToken, cert)
+		if err != nil {
+			return nil, &TokenError{
+				Error:            InvalidGrant,
+				ErrorDescription: fmt.Sprintf("invalid subject_token: %s", err.Error()),
+			}, nil
+		}
+		subjectOwner = standardClaims.Owner
+		subjectName = standardClaims.Name
+		subjectScope = standardClaims.Scope
+	} else {
+		claims, err := ParseJwtToken(subjectToken, cert)
+		if err != nil {
+			return nil, &TokenError{
+				Error:            InvalidGrant,
+				ErrorDescription: fmt.Sprintf("invalid subject_token: %s", err.Error()),
+			}, nil
+		}
+		subjectOwner = claims.Owner
+		subjectName = claims.Name
+		subjectScope = claims.Scope
+	}
+
+	// Get the user from the subject token
+	user, err := getUser(subjectOwner, subjectName)
+	if err != nil {
+		return nil, nil, err
+	}
+	if user == nil {
+		return nil, &TokenError{
+			Error:            InvalidGrant,
+			ErrorDescription: fmt.Sprintf("user from subject_token does not exist: %s", util.GetId(subjectOwner, subjectName)),
+		}, nil
+	}
+
+	if user.IsForbidden {
+		return nil, &TokenError{
+			Error:            InvalidGrant,
+			ErrorDescription: "the user is forbidden to sign in, please contact the administrator",
+		}, nil
+	}
+
+	// Handle scope parameter
+	// If scope is not provided, use the scope from the subject token
+	// If scope is provided, it should be a subset of the subject token's scope (downscoping)
+	if scope == "" {
+		scope = subjectScope
+	} else {
+		// Validate scope downscoping (basic implementation)
+		// In a production environment, you would implement more sophisticated scope validation
+		if subjectScope != "" {
+			subjectScopes := strings.Split(subjectScope, " ")
+			requestedScopes := strings.Split(scope, " ")
+			for _, requestedScope := range requestedScopes {
+				if requestedScope == "" {
+					continue // Skip empty strings
+				}
+				found := false
+				for _, existingScope := range subjectScopes {
+					if existingScope != "" && requestedScope == existingScope {
+						found = true
+						break
+					}
+				}
+				if !found {
+					return nil, &TokenError{
+						Error:            InvalidScope,
+						ErrorDescription: fmt.Sprintf("requested scope '%s' is not in subject token's scope", requestedScope),
+					}, nil
+				}
+			}
+		}
+	}
+
+	// Extend user with roles and permissions
+	err = ExtendUserWithRolesAndPermissions(user)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	// Generate new JWT token
+	accessToken, refreshToken, tokenName, err := generateJwtToken(application, user, "", "", "", scope, host)
+	if err != nil {
+		return nil, &TokenError{
+			Error:            EndpointError,
+			ErrorDescription: fmt.Sprintf("generate jwt token error: %s", err.Error()),
+		}, nil
+	}
+
+	// Create token object
+	token := &Token{
+		Owner:        application.Owner,
+		Name:         tokenName,
+		CreatedTime:  util.GetCurrentTime(),
+		Application:  application.Name,
+		Organization: user.Owner,
+		User:         user.Name,
+		Code:         util.GenerateClientId(),
+		AccessToken:  accessToken,
+		RefreshToken: refreshToken,
+		ExpiresIn:    int(application.ExpireInHours * float64(hourSeconds)),
+		Scope:        scope,
+		TokenType:    "Bearer",
+		CodeIsUsed:   true,
+	}
+
+	_, err = AddToken(token)
+	if err != nil {
+		return nil, nil, err
+	}
+
 	return token, nil, nil
 }
 
