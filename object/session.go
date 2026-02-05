@@ -175,6 +175,8 @@ func DeleteSession(id, curSessionId string) (bool, error) {
 			return false, err
 		}
 
+		// If session doesn't exist, return success with no rows affected
+		// This is a valid state (e.g., when a user has no active session)
 		if session == nil {
 			return false, nil
 		}
