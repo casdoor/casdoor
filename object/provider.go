@@ -75,9 +75,10 @@ type Provider struct {
 	EnableSignAuthnRequest bool   `json:"enableSignAuthnRequest"`
 	EmailRegex             string `xorm:"varchar(200)" json:"emailRegex"`
 
-	ProviderUrl string `xorm:"varchar(200)" json:"providerUrl"`
-	EnableProxy bool   `json:"enableProxy"`
-	EnablePkce  bool   `json:"enablePkce"`
+	ProviderUrl        string `xorm:"varchar(200)" json:"providerUrl"`
+	EnableProxy        bool   `json:"enableProxy"`
+	EnablePkce         bool   `json:"enablePkce"`
+	InsecureSkipVerify bool   `json:"insecureSkipVerify"`
 }
 
 func GetMaskedProvider(provider *Provider, isMaskEnabled bool) *Provider {

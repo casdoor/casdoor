@@ -20,7 +20,7 @@ import "github.com/casdoor/casdoor/email"
 
 // TestSmtpServer Test the SMTP server
 func TestSmtpServer(provider *Provider) error {
-	smtpEmailProvider := email.NewSmtpEmailProvider(provider.ClientId, provider.ClientSecret, provider.Host, provider.Port, provider.Type, provider.DisableSsl, provider.EnableProxy)
+	smtpEmailProvider := email.NewSmtpEmailProvider(provider.ClientId, provider.ClientSecret, provider.Host, provider.Port, provider.Type, provider.DisableSsl, provider.EnableProxy, provider.InsecureSkipVerify)
 	sender, err := smtpEmailProvider.Dialer.Dial()
 	if err != nil {
 		return err
@@ -31,7 +31,7 @@ func TestSmtpServer(provider *Provider) error {
 }
 
 func SendEmail(provider *Provider, title string, content string, dest []string, sender string) error {
-	emailProvider := email.GetEmailProvider(provider.Type, provider.ClientId, provider.ClientSecret, provider.Host, provider.Port, provider.DisableSsl, provider.Endpoint, provider.Method, provider.HttpHeaders, provider.UserMapping, provider.IssuerUrl, provider.EnableProxy)
+	emailProvider := email.GetEmailProvider(provider.Type, provider.ClientId, provider.ClientSecret, provider.Host, provider.Port, provider.DisableSsl, provider.Endpoint, provider.Method, provider.HttpHeaders, provider.UserMapping, provider.IssuerUrl, provider.EnableProxy, provider.InsecureSkipVerify)
 
 	fromAddress := provider.ClientId2
 	if fromAddress == "" {
