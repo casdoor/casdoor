@@ -862,12 +862,26 @@ function isSignupItemAnswered(user, signupItem) {
     return false;
   }
 
-  if (signupItem.name !== "Country/Region") {
+  // Map signup item names to user field names
+  const fieldMapping = {
+    "Display name": "displayName",
+    "First name": "firstName",
+    "Last name": "lastName",
+    "Email": "email",
+    "Phone": "phone",
+    "Affiliation": "affiliation",
+    "Country/Region": "region",
+    "ID card": "idCard",
+  };
+
+  const fieldName = fieldMapping[signupItem.name];
+  if (!fieldName) {
+    // Unknown signup item, consider it answered
     return true;
   }
 
-  const value = user["region"];
-  return value !== undefined && value !== "";
+  const value = user[fieldName];
+  return value !== undefined && value !== null && value !== "";
 }
 
 export function isPromptAnswered(user, application) {

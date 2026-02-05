@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Result, Row} from "antd";
+import {Button, Card, Col, Input, Result, Row, Form} from "antd";
 import * as ApplicationBackend from "../backend/ApplicationBackend";
 import * as UserBackend from "../backend/UserBackend";
 import * as Setting from "../Setting";
@@ -23,6 +23,7 @@ import OAuthWidget from "../common/OAuthWidget";
 import RegionSelect from "../common/select/RegionSelect";
 import {withRouter} from "react-router-dom";
 import * as AuthBackend from "./AuthBackend";
+import {CountryCodeSelect} from "../common/select/CountryCodeSelect";
 
 class PromptPage extends React.Component {
   constructor(props) {
@@ -36,7 +37,9 @@ class PromptPage extends React.Component {
       steps: null,
       current: 0,
       finished: false,
+      validPhone: true,
     };
+    this.form = React.createRef();
   }
 
   UNSAFE_componentWillMount() {
@@ -124,31 +127,253 @@ class PromptPage extends React.Component {
     });
   }
 
-  renderAffiliation(application) {
-    if (!Setting.isAffiliationPrompted(application)) {
-      return null;
-    }
-
-    if (application === null || this.state.user === null) {
-      return null;
-    }
-
-    return (
-      <AffiliationSelect labelSpan={6} application={application} user={this.state.user} onUpdateUserField={(key, value) => {return this.updateUserField(key, value);}} />
-    );
-  }
-
   unlinked() {
     this.getUser();
   }
 
+  renderSignupItem(signupItem) {
+    const required = signupItem.required;
+    const user = this.state.user;
+
+    if (signupItem.name === "Display name") {
+      const displayNameRules = [
+        {
+          required: required,
+          message: i18next.t("signup:Please input your display name!"),
+          whitespace: true,
+        },
+      ];
+      if (signupItem.regex) {
+        displayNameRules.push({
+          pattern: new RegExp(signupItem.regex),
+          message: i18next.t("signup:The input doesn't match the signup item regex!"),
+        });
+      }
+
+      return (
+        <Form.Item
+          key={signupItem.name}
+          name="name"
+          label={signupItem.label ? signupItem.label : i18next.t("general:Display name")}
+          rules={displayNameRules}
+          initialValue={user?.displayName || ""}
+        >
+          <Input placeholder={signupItem.placeholder} onChange={e => this.updateUserFieldWithoutSubmit("displayName", e.target.value)} />
+        </Form.Item>
+      );
+    } else if (signupItem.name === "First name") {
+      const firstNameRules = [
+        {
+          required: required,
+          message: i18next.t("signup:Please input your first name!"),
+          whitespace: true,
+        },
+      ];
+      if (signupItem.regex) {
+        firstNameRules.push({
+          pattern: new RegExp(signupItem.regex),
+          message: i18next.t("signup:The input doesn't match the signup item regex!"),
+        });
+      }
+      return (
+        <Form.Item
+          key={signupItem.name}
+          name="firstName"
+          label={signupItem.label ? signupItem.label : i18next.t("general:First name")}
+          rules={firstNameRules}
+          initialValue={user?.firstName || ""}
+        >
+          <Input placeholder={signupItem.placeholder} onChange={e => this.updateUserFieldWithoutSubmit("firstName", e.target.value)} />
+        </Form.Item>
+      );
+    } else if (signupItem.name === "Last name") {
+      const lastNameRules = [
+        {
+          required: required,
+          message: i18next.t("signup:Please input your last name!"),
+          whitespace: true,
+        },
+      ];
+      if (signupItem.regex) {
+        lastNameRules.push({
+          pattern: new RegExp(signupItem.regex),
+          message: i18next.t("signup:The input doesn't match the signup item regex!"),
+        });
+      }
+      return (
+        <Form.Item
+          key={signupItem.name}
+          name="lastName"
+          label={signupItem.label ? signupItem.label : i18next.t("general:Last name")}
+          rules={lastNameRules}
+          initialValue={user?.lastName || ""}
+        >
+          <Input placeholder={signupItem.placeholder} onChange={e => this.updateUserFieldWithoutSubmit("lastName", e.target.value)} />
+        </Form.Item>
+      );
+    } else if (signupItem.name === "Email") {
+      const emailRules = [
+        {
+          required: required,
+          message: i18next.t("signup:Please input your Email!"),
+        },
+        {
+          validator: (_, value) => {
+            if (value !== "" && !Setting.isValidEmail(value)) {
+              return Promise.reject(i18next.t("signup:The input is not valid Email!"));
+            }
+
+            if (signupItem.regex) {
+              const reg = new RegExp(signupItem.regex);
+              if (!reg.test(value)) {
+                return Promise.reject(i18next.t("signup:The input Email doesn't match the signup item regex!"));
+              }
+            }
+
+            return Promise.resolve();
+          },
+        },
+      ];
+      return (
+        <Form.Item
+          key={signupItem.name}
+          name="email"
+          label={signupItem.label ? signupItem.label : i18next.t("general:Email")}
+          rules={emailRules}
+          initialValue={user?.email || ""}
+        >
+          <Input placeholder={signupItem.placeholder} onChange={e => this.updateUserFieldWithoutSubmit("email", e.target.value)} />
+        </Form.Item>
+      );
+    } else if (signupItem.name === "Phone") {
+      return (
+        <Form.Item key={signupItem.name} label={signupItem.label ? signupItem.label : i18next.t("general:Phone")} required={required}>
+          <Input.Group compact>
+            <Form.Item
+              name="countryCode"
+              noStyle
+              rules={[
+                {
+                  required: required,
+                  message: i18next.t("signup:Please select your country code!"),
+                },
+              ]}
+              initialValue={user?.countryCode || ""}
+            >
+              <CountryCodeSelect
+                style={{width: "35%"}}
+                countryCodes={this.getApplicationObj().organizationObj.countryCodes}
+                onChange={value => this.updateUserFieldWithoutSubmit("countryCode", value)}
+              />
+            </Form.Item>
+            <Form.Item
+              name="phone"
+              dependencies={["countryCode"]}
+              noStyle
+              rules={[
+                {
+                  required: required,
+                  message: i18next.t("signup:Please input your phone number!"),
+                },
+                ({getFieldValue}) => ({
+                  validator: (_, value) => {
+                    if (!required && !value) {
+                      return Promise.resolve();
+                    }
+
+                    if (value && !Setting.isValidPhone(value, getFieldValue("countryCode"))) {
+                      this.setState({validPhone: false});
+                      return Promise.reject(i18next.t("signup:The input is not valid Phone!"));
+                    }
+
+                    this.setState({validPhone: true});
+                    return Promise.resolve();
+                  },
+                }),
+              ]}
+              initialValue={user?.phone || ""}
+            >
+              <Input
+                placeholder={signupItem.placeholder}
+                style={{width: "65%"}}
+                onChange={e => this.updateUserFieldWithoutSubmit("phone", e.target.value)}
+              />
+            </Form.Item>
+          </Input.Group>
+        </Form.Item>
+      );
+    } else if (signupItem.name === "Affiliation") {
+      const affiliationRules = [
+        {
+          required: required,
+          message: i18next.t("signup:Please input your affiliation!"),
+          whitespace: true,
+        },
+      ];
+      if (signupItem.regex) {
+        affiliationRules.push({
+          pattern: new RegExp(signupItem.regex),
+          message: i18next.t("signup:The input doesn't match the signup item regex!"),
+        });
+      }
+      return (
+        <Form.Item
+          key={signupItem.name}
+          name="affiliation"
+          label={signupItem.label ? signupItem.label : i18next.t("user:Affiliation")}
+          rules={affiliationRules}
+          initialValue={user?.affiliation || ""}
+        >
+          <Input placeholder={signupItem.placeholder} onChange={e => this.updateUserFieldWithoutSubmit("affiliation", e.target.value)} />
+        </Form.Item>
+      );
+    } else if (signupItem.name === "Country/Region") {
+      return (
+        <Form.Item
+          key={signupItem.name}
+          name="region"
+          label={signupItem.label ? signupItem.label : i18next.t("user:Country/Region")}
+          rules={[
+            {
+              required: required,
+              message: i18next.t("signup:Please select your country/region!"),
+            },
+          ]}
+          initialValue={user?.region || ""}
+        >
+          <RegionSelect onChange={(value) => {
+            this.updateUserFieldWithoutSubmit("region", value);
+          }} />
+        </Form.Item>
+      );
+    } else if (signupItem.name === "ID card") {
+      return (
+        <Form.Item
+          key={signupItem.name}
+          name="idCard"
+          label={signupItem.label ? signupItem.label : i18next.t("user:ID card")}
+          rules={[
+            {
+              required: required,
+              message: i18next.t("signup:Please input your ID card number!"),
+              whitespace: true,
+            },
+          ]}
+          initialValue={user?.idCard || ""}
+        >
+          <Input placeholder={signupItem.placeholder} onChange={e => this.updateUserFieldWithoutSubmit("idCard", e.target.value)} />
+        </Form.Item>
+      );
+    }
+    return null;
+  }
+
   renderContent(application) {
+    const promptedSignupItems = application?.signupItems?.filter(signupItem => Setting.isSignupItemPrompted(signupItem)) || [];
+
     return (
       <div style={{width: "500px"}}>
-        {
-          this.renderAffiliation(application)
-        }
-        <div>
+        <Form ref={this.form}>
           {
             (application === null || this.state.user === null) ? null : (
               application?.providers.filter(providerItem => Setting.isProviderPrompted(providerItem)).map((providerItem, index) => <OAuthWidget key={providerItem.name} labelSpan={6} user={this.state.user} application={application} providerItem={providerItem} account={this.props.account} onUnlinked={() => {return this.unlinked();}} />)
@@ -156,30 +381,10 @@ class PromptPage extends React.Component {
           }
           {
             (application === null || this.state.user === null) ? null : (
-              application?.signupItems?.filter(signupItem => Setting.isSignupItemPrompted(signupItem)).map((signupItem, index) => {
-                if (signupItem.name !== "Country/Region") {
-                  return null;
-                }
-                return (
-                  <Row key={signupItem.name} style={{marginTop: "20px", justifyContent: "space-between"}} >
-                    <Col style={{marginTop: "5px"}} >
-                      <span style={{marginLeft: "5px"}}>
-                        {
-                          i18next.t("user:Country/Region")
-                        }:
-                      </span>
-                    </Col>
-                    <Col >
-                      <RegionSelect defaultValue={this.state.user.region} onChange={(value) => {
-                        this.updateUserFieldWithoutSubmit("region", value);
-                      }} />
-                    </Col>
-                  </Row>
-                );
-              })
+              promptedSignupItems.map((signupItem, index) => this.renderSignupItem(signupItem))
             )
           }
-        </div>
+        </Form>
       </div>
     );
   }
@@ -227,25 +432,54 @@ class PromptPage extends React.Component {
   }
 
   submitUserEdit(isFinal) {
-    const user = Setting.deepCopy(this.state.user);
-    UserBackend.updateUser(this.state.user.owner, this.state.user.name, user)
-      .then((res) => {
-        if (res.status === "ok") {
-          if (isFinal) {
-            Setting.showMessage("success", i18next.t("general:Successfully saved"));
-            this.finishAndJump();
+    if (isFinal && this.form.current) {
+      // Validate all form fields before submission
+      this.form.current.validateFields()
+        .then(values => {
+          const user = Setting.deepCopy(this.state.user);
+          UserBackend.updateUser(this.state.user.owner, this.state.user.name, user)
+            .then((res) => {
+              if (res.status === "ok") {
+                if (isFinal) {
+                  Setting.showMessage("success", i18next.t("general:Successfully saved"));
+                  this.finishAndJump();
+                }
+              } else {
+                if (isFinal) {
+                  Setting.showMessage("error", res.msg);
+                }
+              }
+            })
+            .catch(error => {
+              if (isFinal) {
+                Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
+              }
+            });
+        })
+        .catch(errorInfo => {
+          Setting.showMessage("error", i18next.t("signup:Please fill in all required fields!"));
+        });
+    } else {
+      const user = Setting.deepCopy(this.state.user);
+      UserBackend.updateUser(this.state.user.owner, this.state.user.name, user)
+        .then((res) => {
+          if (res.status === "ok") {
+            if (isFinal) {
+              Setting.showMessage("success", i18next.t("general:Successfully saved"));
+              this.finishAndJump();
+            }
+          } else {
+            if (isFinal) {
+              Setting.showMessage("error", res.msg);
+            }
           }
-        } else {
+        })
+        .catch(error => {
           if (isFinal) {
-            Setting.showMessage("error", res.msg);
+            Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
           }
-        }
-      })
-      .catch(error => {
-        if (isFinal) {
-          Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
-        }
-      });
+        });
+    }
   }
 
   renderPromptProvider(application) {
