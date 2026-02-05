@@ -383,7 +383,6 @@ class ProductBuyPage extends React.Component {
             fontSize: "18px",
             borderRadius: "30px",
             paddingLeft: "40px",
-
             paddingRight: "40px",
           }}
           onClick={() => this.placeOrder(product)}
