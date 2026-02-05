@@ -1079,21 +1079,26 @@ func GetTokenExchangeToken(application *Application, clientSecret string, subjec
 	} else {
 		// Validate scope downscoping (basic implementation)
 		// In a production environment, you would implement more sophisticated scope validation
-		subjectScopes := strings.Split(subjectScope, " ")
-		requestedScopes := strings.Split(scope, " ")
-		for _, requestedScope := range requestedScopes {
-			found := false
-			for _, existingScope := range subjectScopes {
-				if requestedScope == existingScope {
-					found = true
-					break
+		if subjectScope != "" {
+			subjectScopes := strings.Split(subjectScope, " ")
+			requestedScopes := strings.Split(scope, " ")
+			for _, requestedScope := range requestedScopes {
+				if requestedScope == "" {
+					continue // Skip empty strings
 				}
-			}
-			if !found {
-				return nil, &TokenError{
-					Error:            InvalidScope,
-					ErrorDescription: fmt.Sprintf("requested scope '%s' is not in subject token's scope", requestedScope),
-				}, nil
+				found := false
+				for _, existingScope := range subjectScopes {
+					if existingScope != "" && requestedScope == existingScope {
+						found = true
+						break
+					}
+				}
+				if !found {
+					return nil, &TokenError{
+						Error:            InvalidScope,
+						ErrorDescription: fmt.Sprintf("requested scope '%s' is not in subject token's scope", requestedScope),
+					}, nil
+				}
 			}
 		}
 	}
