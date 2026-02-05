@@ -1053,6 +1053,22 @@ class ApplicationEditPage extends React.Component {
               </Row>
             </Col>
           </Row>
+          <Row style={{marginTop: "20px"}} >
+            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
+              {Setting.getLabel(i18next.t("application:Carousel applications"), i18next.t("application:Carousel applications - Tooltip"))} :
+            </Col>
+            <Col span={21} >
+              <Select
+                mode="tags"
+                style={{width: "100%"}}
+                placeholder={i18next.t("application:Please input application names (format: owner/name)")}
+                value={this.state.application.carouselApplications || []}
+                onChange={(value) => {
+                  this.updateApplicationField("carouselApplications", value);
+                }}
+              />
+            </Col>
+          </Row>
           <Row>
             <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
               {Setting.getLabel(i18next.t("application:Custom CSS"), i18next.t("application:Custom CSS - Tooltip"))} :

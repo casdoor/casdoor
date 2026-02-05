@@ -29,6 +29,8 @@
     "Big icon": "Big icon",
     "Binding providers": "Binding providers",
     "CSS style": "CSS style",
+    "Carousel applications": "Carousel applications",
+    "Carousel applications - Tooltip": "List of applications to display in carousel mode on login page (format: owner/name). The login UI will automatically switch between these applications every 5 seconds",
     "Center": "Center",
     "Code resend timeout": "Code resend timeout",
     "Code resend timeout - Tooltip": "Time period (in seconds) that users must wait before requesting another verification code. Set to 0 to use the global default (60 seconds)",
@@ -600,9 +602,11 @@
     "unsynced": "unsynced"
   },
   "login": {
+    "Auto scroll": "Auto scroll",
     "Auto sign in": "Auto sign in",
     "Back button": "Back button",
     "Continue with": "Continue with",
+    "Current application": "Current application",
     "Email": "Email",
     "Email or phone": "Email or phone",
     "Face ID": "Face ID",

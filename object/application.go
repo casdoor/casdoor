@@ -139,6 +139,7 @@ type Application struct {
 	FormSideHtml            string     `xorm:"mediumtext" json:"formSideHtml"`
 	FormBackgroundUrl       string     `xorm:"varchar(200)" json:"formBackgroundUrl"`
 	FormBackgroundUrlMobile string     `xorm:"varchar(200)" json:"formBackgroundUrlMobile"`
+	CarouselApplications    []string   `xorm:"varchar(1000)" json:"carouselApplications"`
 
 	FailedSigninLimit      int `json:"failedSigninLimit"`
 	FailedSigninFrozenTime int `json:"failedSigninFrozenTime"`
