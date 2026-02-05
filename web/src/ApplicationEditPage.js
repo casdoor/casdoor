@@ -1283,23 +1283,38 @@ class ApplicationEditPage extends React.Component {
               {Setting.getLabel(i18next.t("application:Custom CSS"), i18next.t("application:Custom CSS - Tooltip"))} :
             </Col>
             <Col span={21}>
-              <Popover placement="right" content={
-                <div style={{width: "900px", height: "300px"}} >
-                  <Editor
-                    value={this.state.application.formCss === "" ? template : this.state.application.formCss}
-                    lang="css"
-                    fillHeight
-                    dark
-                    onChange={value => {
-                      this.updateApplicationField("formCss", value);
+              <Row gutter={8}>
+                <Col flex="auto">
+                  <Popover placement="right" content={
+                    <div style={{width: "900px", height: "300px"}} >
+                      <Editor
+                        value={this.state.application.formCss === "" ? template : this.state.application.formCss}
+                        lang="css"
+                        fillHeight
+                        dark
+                        onChange={value => {
+                          this.updateApplicationField("formCss", value);
+                        }}
+                      />
+                    </div>
+                  } title={i18next.t("application:Custom CSS - Edit")} trigger="click">
+                    <Input value={this.state.application.formCss} style={{marginBottom: "10px"}} onChange={e => {
+                      this.updateApplicationField("formCss", e.target.value);
+                    }} />
+                  </Popover>
+                </Col>
+                <Col>
+                  <Button
+                    style={{marginBottom: "10px"}}
+                    onClick={() => {
+                      this.updateApplicationField("formCss", qoderTemplate);
+                      message.success(i18next.t("application:Qoder template loaded successfully"));
                     }}
-                  />
-                </div>
-              } title={i18next.t("application:Custom CSS - Edit")} trigger="click">
-                <Input value={this.state.application.formCss} style={{marginBottom: "10px"}} onChange={e => {
-                  this.updateApplicationField("formCss", e.target.value);
-                }} />
-              </Popover>
+                  >
+                    {i18next.t("application:Load Qoder Template")}
+                  </Button>
+                </Col>
+              </Row>
             </Col>
           </Row>
           <Row>
@@ -1307,23 +1322,38 @@ class ApplicationEditPage extends React.Component {
               {Setting.getLabel(i18next.t("application:Custom CSS Mobile"), i18next.t("application:Custom CSS Mobile - Tooltip"))} :
             </Col>
             <Col span={21}>
-              <Popover placement="right" content={
-                <div style={{width: "900px", height: "300px"}} >
-                  <Editor
-                    value={this.state.application.formCssMobile === "" ? template : this.state.application.formCssMobile}
-                    lang="css"
-                    fillHeight
-                    dark
-                    onChange={value => {
-                      this.updateApplicationField("formCssMobile", value);
+              <Row gutter={8}>
+                <Col flex="auto">
+                  <Popover placement="right" content={
+                    <div style={{width: "900px", height: "300px"}} >
+                      <Editor
+                        value={this.state.application.formCssMobile === "" ? template : this.state.application.formCssMobile}
+                        lang="css"
+                        fillHeight
+                        dark
+                        onChange={value => {
+                          this.updateApplicationField("formCssMobile", value);
+                        }}
+                      />
+                    </div>
+                  } title={i18next.t("application:Custom CSS Mobile - Edit")} trigger="click">
+                    <Input value={this.state.application.formCssMobile} style={{marginBottom: "10px"}} onChange={e => {
+                      this.updateApplicationField("formCssMobile", e.target.value);
+                    }} />
+                  </Popover>
+                </Col>
+                <Col>
+                  <Button
+                    style={{marginBottom: "10px"}}
+                    onClick={() => {
+                      this.updateApplicationField("formCssMobile", qoderTemplate);
+                      message.success(i18next.t("application:Qoder template loaded successfully"));
                     }}
-                  />
-                </div>
-              } title={i18next.t("application:Custom CSS Mobile - Edit")} trigger="click">
-                <Input value={this.state.application.formCssMobile} style={{marginBottom: "10px"}} onChange={e => {
-                  this.updateApplicationField("formCssMobile", e.target.value);
-                }} />
-              </Popover>
+                  >
+                    {i18next.t("application:Load Qoder Template")}
+                  </Button>
+                </Col>
+              </Row>
             </Col>
           </Row>
           <Row style={{marginTop: "20px"}} >
