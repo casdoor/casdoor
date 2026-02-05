@@ -1083,8 +1083,8 @@ func GetTokenExchangeToken(application *Application, clientSecret string, subjec
 		requestedScopes := strings.Split(scope, " ")
 		for _, requestedScope := range requestedScopes {
 			found := false
-			for _, subjectScope := range subjectScopes {
-				if requestedScope == subjectScope {
+			for _, existingScope := range subjectScopes {
+				if requestedScope == existingScope {
 					found = true
 					break
 				}

@@ -61,4 +61,3 @@ func TestTokenExchangeValidation(t *testing.T) {
 		t.Errorf("Expected InvalidRequest error, got: %s", tokenError.Error)
 	}
 }
-
