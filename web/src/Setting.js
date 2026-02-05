@@ -863,6 +863,7 @@ function isSignupItemAnswered(user, signupItem) {
   }
 
   // Map signup item names to user field names
+  // All fields mapped here are string types in the current implementation
   const fieldMapping = {
     "Display name": "displayName",
     "First name": "firstName",
@@ -882,8 +883,7 @@ function isSignupItemAnswered(user, signupItem) {
 
   const value = user[fieldName];
   // Check for empty string, null, or undefined
-  // Note: This assumes all prompted fields are strings
-  // For future numeric/boolean fields, additional type checking would be needed
+  // All current fields are string types, so this check is appropriate
   return value !== undefined && value !== null && value !== "";
 }
 

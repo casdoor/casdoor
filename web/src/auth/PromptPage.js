@@ -37,7 +37,6 @@ class PromptPage extends React.Component {
       steps: null,
       current: 0,
       finished: false,
-      validPhone: true,
     };
     this.form = React.createRef();
   }
@@ -282,11 +281,9 @@ class PromptPage extends React.Component {
                     }
 
                     if (value && !Setting.isValidPhone(value, getFieldValue("countryCode"))) {
-                      this.setState({validPhone: false});
                       return Promise.reject(i18next.t("signup:The input is not valid Phone!"));
                     }
 
-                    this.setState({validPhone: true});
                     return Promise.resolve();
                   },
                 }),
@@ -465,9 +462,8 @@ class PromptPage extends React.Component {
           const errors = errorInfo.errorFields || [];
           if (errors.length > 0) {
             const firstError = errors[0];
-            const fieldName = firstError.name.join(".");
             const errorMsg = firstError.errors[0] || i18next.t("signup:Please fill in all required fields!");
-            Setting.showMessage("error", `${fieldName}: ${errorMsg}`);
+            Setting.showMessage("error", errorMsg);
           } else {
             Setting.showMessage("error", i18next.t("signup:Please fill in all required fields!"));
           }
