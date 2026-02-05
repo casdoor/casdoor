@@ -881,6 +881,9 @@ function isSignupItemAnswered(user, signupItem) {
   }
 
   const value = user[fieldName];
+  // Check for empty string, null, or undefined
+  // Note: This assumes all prompted fields are strings
+  // For future numeric/boolean fields, additional type checking would be needed
   return value !== undefined && value !== null && value !== "";
 }
 

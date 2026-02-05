@@ -431,54 +431,49 @@ class PromptPage extends React.Component {
     });
   }
 
+  performUserUpdate(isFinal) {
+    const user = Setting.deepCopy(this.state.user);
+    UserBackend.updateUser(this.state.user.owner, this.state.user.name, user)
+      .then((res) => {
+        if (res.status === "ok") {
+          if (isFinal) {
+            Setting.showMessage("success", i18next.t("general:Successfully saved"));
+            this.finishAndJump();
+          }
+        } else {
+          if (isFinal) {
+            Setting.showMessage("error", res.msg);
+          }
+        }
+      })
+      .catch(error => {
+        if (isFinal) {
+          Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
+        }
+      });
+  }
+
   submitUserEdit(isFinal) {
     if (isFinal && this.form.current) {
       // Validate all form fields before submission
       this.form.current.validateFields()
         .then(values => {
-          const user = Setting.deepCopy(this.state.user);
-          UserBackend.updateUser(this.state.user.owner, this.state.user.name, user)
-            .then((res) => {
-              if (res.status === "ok") {
-                if (isFinal) {
-                  Setting.showMessage("success", i18next.t("general:Successfully saved"));
-                  this.finishAndJump();
-                }
-              } else {
-                if (isFinal) {
-                  Setting.showMessage("error", res.msg);
-                }
-              }
-            })
-            .catch(error => {
-              if (isFinal) {
-                Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
-              }
-            });
+          this.performUserUpdate(isFinal);
         })
         .catch(errorInfo => {
-          Setting.showMessage("error", i18next.t("signup:Please fill in all required fields!"));
+          // Extract field-specific error messages for better user feedback
+          const errors = errorInfo.errorFields || [];
+          if (errors.length > 0) {
+            const firstError = errors[0];
+            const fieldName = firstError.name.join(".");
+            const errorMsg = firstError.errors[0] || i18next.t("signup:Please fill in all required fields!");
+            Setting.showMessage("error", `${fieldName}: ${errorMsg}`);
+          } else {
+            Setting.showMessage("error", i18next.t("signup:Please fill in all required fields!"));
+          }
         });
     } else {
-      const user = Setting.deepCopy(this.state.user);
-      UserBackend.updateUser(this.state.user.owner, this.state.user.name, user)
-        .then((res) => {
-          if (res.status === "ok") {
-            if (isFinal) {
-              Setting.showMessage("success", i18next.t("general:Successfully saved"));
-              this.finishAndJump();
-            }
-          } else {
-            if (isFinal) {
-              Setting.showMessage("error", res.msg);
-            }
-          }
-        })
-        .catch(error => {
-          if (isFinal) {
-            Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
-          }
-        });
+      this.performUserUpdate(isFinal);
     }
   }
 
