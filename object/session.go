@@ -176,7 +176,7 @@ func DeleteSession(id, curSessionId string) (bool, error) {
 		}
 
 		if session == nil {
-			return false, fmt.Errorf("session is nil")
+			return false, nil
 		}
 
 		if slices.Contains(session.SessionId, curSessionId) {
