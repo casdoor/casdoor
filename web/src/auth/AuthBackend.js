@@ -25,8 +25,8 @@ export function getAccount(query = "") {
   }).then(res => res.json());
 }
 
-export function signup(values) {
-  return fetch(`${authConfig.serverUrl}/api/signup`, {
+export function signup(values, oAuthParams) {
+  return fetch(`${authConfig.serverUrl}/api/signup${oAuthParamsToQuery(oAuthParams)}`, {
     method: "POST",
     credentials: "include",
     body: JSON.stringify(values),
