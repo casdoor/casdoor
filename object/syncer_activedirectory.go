@@ -148,7 +148,7 @@ func (p *ActiveDirectorySyncerProvider) getLdapConn() (*goldap.Conn, error) {
 	// Check if SSL is enabled (port 636 typically indicates LDAPS)
 	if port == 636 {
 		tlsConfig := &tls.Config{
-			InsecureSkipVerify: true, // TODO: Make this configurable
+			InsecureSkipVerify: p.Syncer.LdapInsecureSkipVerify,
 		}
 		conn, err = goldap.DialTLS("tcp", fmt.Sprintf("%s:%d", host, port), tlsConfig)
 	} else {
