@@ -38,7 +38,7 @@
     "Copy signup page URL": "Copy signup page URL",
     "Custom CSS": "Custom CSS",
     "Custom CSS - Edit": "Custom CSS - Edit",
-    "Custom CSS - Tooltip": "CSS styling of the signup, signin and forget password forms (e.g. adding borders and shadows)",
+    "Custom CSS - Tooltip": "CSS styling of the signup, signin and forget password forms (e.g. adding borders and shadows). See qoderTemplate in ApplicationEditPage.js for a dark theme example similar to qoder.com",
     "Custom CSS Mobile": "Custom CSS Mobile",
     "Custom CSS Mobile - Edit": "Custom CSS Mobile - Edit",
     "Custom CSS Mobile - Tooltip": "Registration, login, and password-reset form styles (border and shadow) for mobile",
