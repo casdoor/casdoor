@@ -276,9 +276,23 @@ class SignupPage extends React.Component {
     const params = new URLSearchParams(window.location.search);
     values.plan = params.get("plan");
     values.pricing = params.get("pricing");
-    AuthBackend.signup(values)
+
+    // Get OAuth parameters if present
+    const oAuthParams = Util.getOAuthGetParameters();
+
+    AuthBackend.signup(values, oAuthParams)
       .then((res) => {
         if (res.status === "ok") {
+          // Check if this is OAuth flow with code response
+          // When OAuth parameters are present and code is returned, it won't contain '/'
+          if (oAuthParams && res.data && typeof res.data === "string" && !res.data.includes("/")) {
+            // OAuth code returned, redirect to redirect_uri with code
+            const code = res.data;
+            const redirectUrl = `${oAuthParams.redirectUri}${oAuthParams.redirectUri.includes("?") ? "&" : "?"}code=${code}&state=${oAuthParams.state}`;
+            Setting.goToLink(redirectUrl);
+            return;
+          }
+
           // the user's id will be returned by `signup()`, if user signup by phone, the `username` in `values` is undefined.
           values.username = res.data.split("/")[1];
           if (Setting.hasPromptPage(application) && (!values.plan || !values.pricing)) {
