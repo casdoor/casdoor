@@ -15,16 +15,19 @@
 package controllers
 
 type TokenRequest struct {
-	ClientId     string `json:"client_id"`
-	ClientSecret string `json:"client_secret"`
-	GrantType    string `json:"grant_type"`
-	Code         string `json:"code"`
-	Verifier     string `json:"code_verifier"`
-	Scope        string `json:"scope"`
-	Nonce        string `json:"nonce"`
-	Username     string `json:"username"`
-	Password     string `json:"password"`
-	Tag          string `json:"tag"`
-	Avatar       string `json:"avatar"`
-	RefreshToken string `json:"refresh_token"`
+	ClientId         string `json:"client_id"`
+	ClientSecret     string `json:"client_secret"`
+	GrantType        string `json:"grant_type"`
+	Code             string `json:"code"`
+	Verifier         string `json:"code_verifier"`
+	Scope            string `json:"scope"`
+	Nonce            string `json:"nonce"`
+	Username         string `json:"username"`
+	Password         string `json:"password"`
+	Tag              string `json:"tag"`
+	Avatar           string `json:"avatar"`
+	RefreshToken     string `json:"refresh_token"`
+	SubjectToken     string `json:"subject_token"`
+	SubjectTokenType string `json:"subject_token_type"`
+	Audience         string `json:"audience"`
 }

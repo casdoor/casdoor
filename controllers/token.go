@@ -173,6 +173,9 @@ func (c *ApiController) GetOAuthToken() {
 	avatar := c.Ctx.Input.Query("avatar")
 	refreshToken := c.Ctx.Input.Query("refresh_token")
 	deviceCode := c.Ctx.Input.Query("device_code")
+	subjectToken := c.Ctx.Input.Query("subject_token")
+	subjectTokenType := c.Ctx.Input.Query("subject_token_type")
+	audience := c.Ctx.Input.Query("audience")
 
 	if clientId == "" && clientSecret == "" {
 		clientId, clientSecret, _ = c.Ctx.Request.BasicAuth()
@@ -219,6 +222,15 @@ func (c *ApiController) GetOAuthToken() {
 			if refreshToken == "" {
 				refreshToken = tokenRequest.RefreshToken
 			}
+			if subjectToken == "" {
+				subjectToken = tokenRequest.SubjectToken
+			}
+			if subjectTokenType == "" {
+				subjectTokenType = tokenRequest.SubjectTokenType
+			}
+			if audience == "" {
+				audience = tokenRequest.Audience
+			}
 		}
 	}
 
@@ -263,7 +275,7 @@ func (c *ApiController) GetOAuthToken() {
 	}
 
 	host := c.Ctx.Request.Host
-	token, err := object.GetOAuthToken(grantType, clientId, clientSecret, code, verifier, scope, nonce, username, password, host, refreshToken, tag, avatar, c.GetAcceptLanguage())
+	token, err := object.GetOAuthToken(grantType, clientId, clientSecret, code, verifier, scope, nonce, username, password, host, refreshToken, tag, avatar, c.GetAcceptLanguage(), subjectToken, subjectTokenType, audience)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
