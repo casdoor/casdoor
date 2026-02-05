@@ -85,7 +85,7 @@ const template = `<style>
 </style>`;
 
 // Qoder-style dark theme template (similar to https://qoder.com/users/sign-in)
-// To use this style, copy and paste into the Custom CSS field above
+// Click the "Load Qoder Template" button in Custom CSS field to apply this template
 const qoderTemplate = `<style>
   /* Dark background for the entire page */
   .loginBackground,
@@ -490,6 +490,11 @@ class ApplicationEditPage extends React.Component {
     this.setState({
       application: application,
     });
+  }
+
+  loadQoderTemplate(fieldName) {
+    this.updateApplicationField(fieldName, qoderTemplate);
+    message.success(i18next.t("application:Qoder template loaded successfully"));
   }
 
   handleUpload(info) {
@@ -1306,10 +1311,7 @@ class ApplicationEditPage extends React.Component {
                 <Col>
                   <Button
                     style={{marginBottom: "10px"}}
-                    onClick={() => {
-                      this.updateApplicationField("formCss", qoderTemplate);
-                      message.success(i18next.t("application:Qoder template loaded successfully"));
-                    }}
+                    onClick={() => this.loadQoderTemplate("formCss")}
                   >
                     {i18next.t("application:Load Qoder Template")}
                   </Button>
@@ -1345,10 +1347,7 @@ class ApplicationEditPage extends React.Component {
                 <Col>
                   <Button
                     style={{marginBottom: "10px"}}
-                    onClick={() => {
-                      this.updateApplicationField("formCssMobile", qoderTemplate);
-                      message.success(i18next.t("application:Qoder template loaded successfully"));
-                    }}
+                    onClick={() => this.loadQoderTemplate("formCssMobile")}
                   >
                     {i18next.t("application:Load Qoder Template")}
                   </Button>
