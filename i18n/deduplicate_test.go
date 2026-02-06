@@ -24,9 +24,9 @@ import (
 	"testing"
 )
 
-// findDuplicateKeysInJSON finds duplicate keys within each namespace in an i18n JSON file
-// Returns a map of namespace -> list of duplicate keys
-func findDuplicateKeysInJSON(filePath string) (map[string][]string, error) {
+// findDuplicateKeysInJSON finds duplicate keys across the entire JSON file
+// Returns a list of duplicate keys found anywhere in the file
+func findDuplicateKeysInJSON(filePath string) ([]string, error) {
 	// Read the JSON file
 	fileContent, err := os.ReadFile(filePath)
 	if err != nil {
@@ -39,21 +39,19 @@ func findDuplicateKeysInJSON(filePath string) (map[string][]string, error) {
 		return nil, fmt.Errorf("failed to parse JSON from %s: %w", filePath, err)
 	}
 
-	// Use a custom decoder to detect duplicate keys
-	duplicates := make(map[string][]string)
-	
+	// Track all keys seen across the entire file
+	keySeen := make(map[string]bool)
+	var duplicates []string
+
 	// Decode the top-level object
 	var rawData map[string]json.RawMessage
 	if err := json.Unmarshal(fileContent, &rawData); err != nil {
 		return nil, fmt.Errorf("failed to decode JSON: %w", err)
 	}
 
-	// For each namespace, check for duplicate keys by parsing the raw JSON
-	for namespace, rawNamespace := range rawData {
-		// Track keys seen in this namespace
-		keySeen := make(map[string]bool)
-		
-		// Use a custom decoder to detect duplicates
+	// For each namespace, check all keys across the whole file
+	for _, rawNamespace := range rawData {
+		// Use a custom decoder to read all keys
 		decoder := json.NewDecoder(bytes.NewReader(rawNamespace))
 		
 		// Read the opening brace
@@ -78,12 +76,19 @@ func findDuplicateKeysInJSON(filePath string) (map[string][]string, error) {
 				return nil, fmt.Errorf("expected string key, got %v", token)
 			}
 
-			// Check if this key was already seen
+			// Check if this key was already seen anywhere in the file
 			if keySeen[key] {
-				if duplicates[namespace] == nil {
-					duplicates[namespace] = []string{}
+				// Only add to duplicates list if not already there
+				alreadyRecorded := false
+				for _, dup := range duplicates {
+					if dup == key {
+						alreadyRecorded = true
+						break
+					}
 				}
-				duplicates[namespace] = append(duplicates[namespace], key)
+				if !alreadyRecorded {
+					duplicates = append(duplicates, key)
+				}
 			}
 			keySeen[key] = true
 
@@ -111,10 +116,8 @@ func TestDeduplicateFrontendI18n(t *testing.T) {
 	// Print all duplicates and fail the test if any are found
 	if len(duplicates) > 0 {
 		t.Errorf("Found duplicate i18n keys in frontend file (%s):", filePath)
-		for namespace, keys := range duplicates {
-			for _, key := range keys {
-				t.Errorf("  Namespace '%s': duplicate key '%s'", namespace, key)
-			}
+		for _, key := range duplicates {
+			t.Errorf("  Duplicate key: '%s'", key)
 		}
 		t.Fail()
 	}
@@ -133,10 +136,8 @@ func TestDeduplicateBackendI18n(t *testing.T) {
 	// Print all duplicates and fail the test if any are found
 	if len(duplicates) > 0 {
 		t.Errorf("Found duplicate i18n keys in backend file (%s):", filePath)
-		for namespace, keys := range duplicates {
-			for _, key := range keys {
-				t.Errorf("  Namespace '%s': duplicate key '%s'", namespace, key)
-			}
+		for _, key := range duplicates {
+			t.Errorf("  Duplicate key: '%s'", key)
 		}
 		t.Fail()
 	}

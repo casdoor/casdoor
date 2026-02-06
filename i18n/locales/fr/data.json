@@ -2,6 +2,7 @@
   "account": {
     "Failed to add user": "Échec d'ajout d'utilisateur",
     "Get init score failed, error: %w": "Obtention du score initiale échouée, erreur : %w",
+    "Please sign out first": "Veuillez vous déconnecter en premier",
     "The application does not allow to sign up new account": "L'application ne permet pas de créer un nouveau compte"
   },
   "auth": {
@@ -22,7 +23,6 @@
     "The login method: login with email is not enabled for the application": "La méthode de connexion : connexion par e-mail n'est pas activée pour l'application",
     "The login method: login with face is not enabled for the application": "La méthode de connexion : connexion par visage n'est pas activée pour l'application",
     "The login method: login with password is not enabled for the application": "La méthode de connexion : connexion avec mot de passe n'est pas activée pour l'application",
-    "The order: %s does not exist": "The order: %s does not exist",
     "The organization: %s does not exist": "L'organisation : %s n'existe pas",
     "The organization: %s has disabled users to signin": "L'organisation: %s a désactivé la connexion des utilisateurs",
     "The plan: %s does not exist": "Le plan : %s n'existe pas",
@@ -57,11 +57,11 @@
     "Face data mismatch": "Données faciales incorrectes",
     "Failed to parse client IP: %s": "Échec de l'analyse de l'IP client : %s",
     "FirstName cannot be blank": "Le prénom ne peut pas être laissé vide",
-    "Guest users must upgrade their account by setting a username and password before they can sign in directly": "Guest users must upgrade their account by setting a username and password before they can sign in directly",
     "Invitation code cannot be blank": "Le code d'invitation ne peut pas être vide",
     "Invitation code exhausted": "Code d'invitation épuisé",
     "Invitation code is invalid": "Code d'invitation invalide",
     "Invitation code suspended": "Code d'invitation suspendu",
+    "LDAP user name or password incorrect": "Nom d'utilisateur ou mot de passe LDAP incorrect",
     "LastName cannot be blank": "Le nom de famille ne peut pas être vide",
     "Multiple accounts with same uid, please check your ldap server": "Plusieurs comptes avec le même identifiant d'utilisateur, veuillez vérifier votre serveur LDAP",
     "Organization does not exist": "L'organisation n'existe pas",
@@ -106,19 +106,11 @@
   "general": {
     "Failed to import groups": "Échec de l'importation des groupes",
     "Failed to import users": "Échec de l'importation des utilisateurs",
-    "Insufficient balance: new balance %v would be below credit limit %v": "Insufficient balance: new balance %v would be below credit limit %v",
-    "Insufficient balance: new organization balance %v would be below credit limit %v": "Insufficient balance: new organization balance %v would be below credit limit %v",
     "Missing parameter": "Paramètre manquant",
     "Only admin user can specify user": "Seul un administrateur peut désigner un utilisateur",
     "Please login first": "Veuillez d'abord vous connecter",
-    "The LDAP: %s does not exist": "The LDAP: %s does not exist",
-    "The application: %s does not exist": "The application: %s does not exist",
-    "The organization: %s does not exist": "The organization: %s does not exist",
     "The organization: %s should have one application at least": "L'organisation : %s doit avoir au moins une application",
-    "The syncer: %s does not exist": "The syncer: %s does not exist",
     "The user: %s doesn't exist": "L'utilisateur : %s n'existe pas",
-    "The user: %s is not found": "The user: %s is not found",
-    "User is required for User category transaction": "User is required for User category transaction",
     "Wrong userId": "ID utilisateur incorrect",
     "don't support captchaProvider: ": "ne prend pas en charge captchaProvider: ",
     "this operation is not allowed in demo mode": "cette opération n'est pas autorisée en mode démo",
@@ -147,15 +139,8 @@
   "permission": {
     "The permission: \"%s\" doesn't exist": "La permission : \"%s\" n'existe pas"
   },
-  "product": {
-    "Product list cannot be empty": "Product list cannot be empty"
-  },
   "provider": {
-    "Failed to initialize ID Verification provider": "Failed to initialize ID Verification provider",
     "Invalid application id": "Identifiant d'application invalide",
-    "No ID Verification provider configured": "No ID Verification provider configured",
-    "Provider is not an ID Verification provider": "Provider is not an ID Verification provider",
-    "The provider: %s does not exist": "The provider: %s does not exist",
     "the provider: %s does not exist": "Le fournisseur : %s n'existe pas"
   },
   "resource": {
@@ -173,18 +158,12 @@
     "Invalid Email receivers: %s": "Destinataires d'e-mail invalides : %s",
     "Invalid phone receivers: %s": "Destinataires de téléphone invalide : %s"
   },
-  "session": {
-    "session id %s is the current session and cannot be deleted": "session id %s is the current session and cannot be deleted"
-  },
   "storage": {
     "The objectKey: %s is not allowed": "La clé d'objet : %s n'est pas autorisée",
     "The provider type: %s is not supported": "Le type de fournisseur : %s n'est pas pris en charge"
   },
   "subscription": {
     "Error": "Erreur"
-  },
-  "ticket": {
-    "Ticket not found": "Ticket not found"
   },
   "token": {
     "Grant_type: %s is not supported in this application": "Type_de_subvention : %s n'est pas pris en charge dans cette application",
@@ -195,14 +174,10 @@
   },
   "user": {
     "Display name cannot be empty": "Le nom d'affichage ne peut pas être vide",
-    "ID card information and real name are required": "ID card information and real name are required",
-    "Identity verification failed": "Identity verification failed",
     "MFA email is enabled but email is empty": "L'authentification MFA par e-mail est activée mais l'e-mail est vide",
     "MFA phone is enabled but phone number is empty": "L'authentification MFA par téléphone est activée mais le numéro de téléphone est vide",
     "New password cannot contain blank space.": "Le nouveau mot de passe ne peut pas contenir d'espace.",
-    "No application found for user": "No application found for user",
     "The new password must be different from your current password": "Le nouveau mot de passe doit être différent de votre mot de passe actuel",
-    "User is already verified": "User is already verified",
     "the user's owner and name should not be empty": "le propriétaire et le nom de l'utilisateur ne doivent pas être vides"
   },
   "util": {
@@ -213,7 +188,6 @@
   "verification": {
     "Invalid captcha provider.": "Fournisseur de captcha invalide.",
     "Phone number is invalid in your region %s": "Le numéro de téléphone n'est pas valide dans votre région %s",
-    "The forgot password feature is disabled": "The forgot password feature is disabled",
     "The verification code has already been used!": "Le code de vérification a déjà été utilisé !",
     "The verification code has not been sent yet!": "Le code de vérification n'a pas encore été envoyé !",
     "Turing test failed.": "Le test de Turing a échoué.",
