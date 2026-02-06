@@ -731,7 +731,7 @@ func CheckUpdateUser(oldUser, user *User, lang string) string {
 			return err.Error()
 		}
 		if organization == nil {
-			return fmt.Sprintf(i18n.Translate(lang, "auth:The organization: %s does not exist"), organizationName)
+			return fmt.Sprintf(i18n.Translate(lang, "general:The organization: %s does not exist"), organizationName)
 		}
 
 		if organization.UseEmailAsUsername {

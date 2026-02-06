@@ -205,7 +205,7 @@ func (c *ApiController) GetUser() {
 			return
 		}
 		if organization == nil {
-			c.ResponseError(fmt.Sprintf(c.T("auth:The organization: %s does not exist"), owner))
+			c.ResponseError(fmt.Sprintf(c.T("general:The organization: %s does not exist"), owner))
 			return
 		}
 

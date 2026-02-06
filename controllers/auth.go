@@ -335,7 +335,7 @@ func (c *ApiController) GetApplicationLogin() {
 			return
 		}
 		if application == nil {
-			c.ResponseError(fmt.Sprintf(c.T("auth:The application: %s does not exist"), id))
+			c.ResponseError(fmt.Sprintf(c.T("general:The application: %s does not exist"), id))
 			return
 		}
 
@@ -483,7 +483,7 @@ func (c *ApiController) Login() {
 			}
 
 			if application == nil {
-				c.ResponseError(fmt.Sprintf(c.T("auth:The application: %s does not exist"), authForm.Application))
+				c.ResponseError(fmt.Sprintf(c.T("general:The application: %s does not exist"), authForm.Application))
 				return
 			}
 
@@ -530,7 +530,7 @@ func (c *ApiController) Login() {
 			}
 
 			if application == nil {
-				c.ResponseError(fmt.Sprintf(c.T("auth:The application: %s does not exist"), authForm.Application))
+				c.ResponseError(fmt.Sprintf(c.T("general:The application: %s does not exist"), authForm.Application))
 				return
 			}
 
@@ -592,7 +592,7 @@ func (c *ApiController) Login() {
 			}
 
 			if application == nil {
-				c.ResponseError(fmt.Sprintf(c.T("auth:The application: %s does not exist"), authForm.Application))
+				c.ResponseError(fmt.Sprintf(c.T("general:The application: %s does not exist"), authForm.Application))
 				return
 			}
 			if authForm.SigninMethod == "Password" && !application.IsPasswordEnabled() {
@@ -666,7 +666,7 @@ func (c *ApiController) Login() {
 			}
 
 			if application == nil {
-				c.ResponseError(fmt.Sprintf(c.T("auth:The application: %s does not exist"), authForm.Application))
+				c.ResponseError(fmt.Sprintf(c.T("general:The application: %s does not exist"), authForm.Application))
 				return
 			}
 
@@ -701,7 +701,7 @@ func (c *ApiController) Login() {
 		}
 
 		if application == nil {
-			c.ResponseError(fmt.Sprintf(c.T("auth:The application: %s does not exist"), authForm.Application))
+			c.ResponseError(fmt.Sprintf(c.T("general:The application: %s does not exist"), authForm.Application))
 			return
 		}
 
@@ -718,7 +718,7 @@ func (c *ApiController) Login() {
 			return
 		}
 		if provider == nil {
-			c.ResponseError(fmt.Sprintf(c.T("auth:The provider: %s does not exist"), authForm.Provider))
+			c.ResponseError(fmt.Sprintf(c.T("provider:The provider: %s does not exist"), authForm.Provider))
 			return
 		}
 
@@ -1071,7 +1071,7 @@ func (c *ApiController) Login() {
 		}
 
 		if application == nil {
-			c.ResponseError(fmt.Sprintf(c.T("auth:The application: %s does not exist"), authForm.Application))
+			c.ResponseError(fmt.Sprintf(c.T("general:The application: %s does not exist"), authForm.Application))
 			return
 		}
 
@@ -1145,7 +1145,7 @@ func (c *ApiController) Login() {
 			}
 
 			if application == nil {
-				c.ResponseError(fmt.Sprintf(c.T("auth:The application: %s does not exist"), authForm.Application))
+				c.ResponseError(fmt.Sprintf(c.T("general:The application: %s does not exist"), authForm.Application))
 				return
 			}
 
@@ -1255,7 +1255,7 @@ func (c *ApiController) HandleOfficialAccountEvent() {
 		return
 	}
 	if provider == nil {
-		c.ResponseError(fmt.Sprintf(c.T("auth:The provider: %s does not exist"), providerId))
+		c.ResponseError(fmt.Sprintf(c.T("provider:The provider: %s does not exist"), providerId))
 		return
 	}
 
@@ -1311,7 +1311,7 @@ func (c *ApiController) GetQRCode() {
 		return
 	}
 	if provider == nil {
-		c.ResponseError(fmt.Sprintf(c.T("auth:The provider: %s does not exist"), providerId))
+		c.ResponseError(fmt.Sprintf(c.T("provider:The provider: %s does not exist"), providerId))
 		return
 	}
 

@@ -107,7 +107,7 @@ func UploadUsers(owner string, path string, userObj *User, lang string) (bool, e
 		return false, err
 	}
 	if organization == nil {
-		return false, fmt.Errorf(i18n.Translate(lang, "auth:The organization: %s does not exist"), organizationName)
+		return false, fmt.Errorf(i18n.Translate(lang, "general:The organization: %s does not exist"), organizationName)
 	}
 
 	oldUserMap, err := getUserMap(organizationName)
