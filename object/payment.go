@@ -377,30 +377,36 @@ func NotifyPayment(body []byte, owner string, paymentName string, lang string) (
 		}
 
 		hasRecharge := false
-		rechargeAmount := 0.0
+		totalPaidAmount := 0.0
+		totalGrantedAmount := 0.0
 		orderProductInfos := order.ProductInfos
 		for _, productInfo := range orderProductInfos {
 			if productInfo.IsRecharge {
 				hasRecharge = true
-				rechargeAmount += productInfo.Price * float64(productInfo.Quantity)
+
+				// Calculate paid and granted amounts for this product
+				totalPaidAmount += productInfo.PaidAmount * float64(productInfo.Quantity)
+				totalGrantedAmount += productInfo.GrantedAmount * float64(productInfo.Quantity)
 			}
 		}
 
 		if hasRecharge {
 			rechargeTransaction := &Transaction{
-				Owner:       payment.Owner,
-				CreatedTime: util.GetCurrentTime(),
-				Application: user.SignupApplication,
-				Amount:      payment.Price,
-				Currency:    order.Currency,
-				Payment:     payment.Name,
-				Category:    TransactionCategoryRecharge,
-				Type:        provider.Category,
-				Subtype:     provider.Type,
-				Provider:    provider.Name,
-				Tag:         "User",
-				User:        payment.User,
-				State:       string(pp.PaymentStatePaid),
+				Owner:         payment.Owner,
+				CreatedTime:   util.GetCurrentTime(),
+				Application:   user.SignupApplication,
+				Amount:        totalPaidAmount + totalGrantedAmount,
+				PaidAmount:    totalPaidAmount,
+				GrantedAmount: totalGrantedAmount,
+				Currency:      order.Currency,
+				Payment:       payment.Name,
+				Category:      TransactionCategoryRecharge,
+				Type:          provider.Category,
+				Subtype:       provider.Type,
+				Provider:      provider.Name,
+				Tag:           "User",
+				User:          payment.User,
+				State:         string(pp.PaymentStatePaid),
 			}
 
 			affected, err = AddExternalPaymentTransaction(rechargeTransaction, lang)

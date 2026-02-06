@@ -60,26 +60,52 @@ func PlaceOrder(owner string, reqProductInfos []ProductInfo, user *User) (*Order
 		product := productMap[productInfo.Name]
 
 		var productPrice float64
+		var paidAmount float64
+		var grantedAmount float64
 		if product.IsRecharge {
 			productPrice = productInfo.Price
 			if productPrice <= 0 {
 				return nil, fmt.Errorf("the custom price should be greater than zero")
 			}
+			// For recharge products, calculate paid and granted amounts
+			if product.PaidAmount > 0 || product.GrantedAmount > 0 {
+				// Calculate the configured total amount and ratio
+				configuredTotal := product.PaidAmount + product.GrantedAmount
+				if configuredTotal > 0 {
+					// Scale paid and granted amounts proportionally to the actual price
+					paidRatio := product.PaidAmount / configuredTotal
+					grantedRatio := product.GrantedAmount / configuredTotal
+					paidAmount = productPrice * paidRatio
+					grantedAmount = productPrice * grantedRatio
+				} else {
+					// If configured total is 0, treat all as paid amount
+					paidAmount = productPrice
+					grantedAmount = 0
+				}
+			} else {
+				// Backward compatibility: if not set, treat all as paid amount
+				paidAmount = productPrice
+				grantedAmount = 0
+			}
 		} else {
 			productPrice = product.Price
+			paidAmount = 0
+			grantedAmount = 0
 		}
 		productInfos = append(productInfos, ProductInfo{
-			Owner:       owner,
-			Name:        product.Name,
-			DisplayName: product.DisplayName,
-			Image:       product.Image,
-			Detail:      product.Detail,
-			Price:       productPrice,
-			Currency:    product.Currency,
-			IsRecharge:  product.IsRecharge,
-			Quantity:    productInfo.Quantity,
-			PricingName: productInfo.PricingName,
-			PlanName:    productInfo.PlanName,
+			Owner:         owner,
+			Name:          product.Name,
+			DisplayName:   product.DisplayName,
+			Image:         product.Image,
+			Detail:        product.Detail,
+			Price:         productPrice,
+			Currency:      product.Currency,
+			IsRecharge:    product.IsRecharge,
+			PaidAmount:    paidAmount,
+			GrantedAmount: grantedAmount,
+			Quantity:      productInfo.Quantity,
+			PricingName:   productInfo.PricingName,
+			PlanName:      productInfo.PlanName,
 		})
 
 		orderPrice += productPrice * float64(productInfo.Quantity)

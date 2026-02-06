@@ -871,6 +871,10 @@
     "Image - Tooltip": "Image of product",
     "Is recharge": "Is recharge",
     "Is recharge - Tooltip": "Whether the current product is to recharge balance",
+    "Paid amount": "Paid amount",
+    "Paid amount - Tooltip": "Amount that user actually pays (excluding bonus)",
+    "Granted amount": "Granted amount",
+    "Granted amount - Tooltip": "Bonus amount granted for this recharge (promotional credits)",
     "New Product": "New Product",
     "Pay": "Pay",
     "PayPal": "PayPal",
@@ -1294,8 +1298,13 @@
   "transaction": {
     "Amount": "Amount",
     "Amount - Tooltip": "The amount of traded products",
+    "Paid amount": "Paid amount",
+    "Paid amount - Tooltip": "The amount user actually paid (excluding bonus)",
+    "Granted amount": "Granted amount",
+    "Granted amount - Tooltip": "The bonus amount granted (promotional credits)",
     "Edit Transaction": "Edit Transaction",
     "New Transaction": "New Transaction",
+    "Recharge": "Recharge",
     "Tag - Tooltip": "The tag of the transaction"
   },
   "user": {

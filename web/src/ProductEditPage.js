@@ -234,6 +234,26 @@ class ProductEditPage extends React.Component {
             <>
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {Setting.getLabel(i18next.t("product:Paid amount"), i18next.t("product:Paid amount - Tooltip"))} :
+                </Col>
+                <Col span={22} >
+                  <InputNumber value={this.state.product.paidAmount} disabled={isViewMode} onChange={value => {
+                    this.updateProductField("paidAmount", value);
+                  }} />
+                </Col>
+              </Row>
+              <Row style={{marginTop: "20px"}} >
+                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {Setting.getLabel(i18next.t("product:Granted amount"), i18next.t("product:Granted amount - Tooltip"))} :
+                </Col>
+                <Col span={22} >
+                  <InputNumber value={this.state.product.grantedAmount} disabled={isViewMode} onChange={value => {
+                    this.updateProductField("grantedAmount", value);
+                  }} />
+                </Col>
+              </Row>
+              <Row style={{marginTop: "20px"}} >
+                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
                   {Setting.getLabel(i18next.t("product:Disable custom amount"), i18next.t("product:Disable custom amount - Tooltip"))} :
                 </Col>
                 <Col span={1} >
