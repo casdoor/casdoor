@@ -30,7 +30,7 @@ export const THEMES = {
 };
 
 const themeTypes = {
-  default: "Default", // i18next.t("theme:Default")
+  default: "Default", // i18next.t("general:Default")
   dark: "Dark",       // i18next.t("theme:Dark")
   lark: "Document",   // i18next.t("theme:Document")
   comic: "Blossom",   // i18next.t("theme:Blossom")

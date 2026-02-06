@@ -21,7 +21,7 @@ import {CheckOutlined} from "@ant-design/icons";
 import {CompactTheme, DarkTheme, Light} from "antd-token-previewer/es/icons";
 
 export const Themes = [
-  {label: "Default", key: "default", icon: <Light style={{fontSize: "24px"}} />},        // i18next.t("theme:Default")
+  {label: "Default", key: "default", icon: <Light style={{fontSize: "24px"}} />},        // i18next.t("general:Default")
   {label: "Dark", key: "dark", icon: <DarkTheme style={{fontSize: "24px"}} />},          // i18next.t("theme:Dark")
   {label: "Compact", key: "compact", icon: <CompactTheme style={{fontSize: "24px"}} />}, // i18next.t("theme:Compact")
 ];

@@ -870,11 +870,11 @@ class ApplicationEditPage extends React.Component {
         <React.Fragment>
           <Row style={{marginTop: "10px"}} >
             <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
-              {Setting.getLabel(i18next.t("general:Providers"), i18next.t("general:Providers - Tooltip"))} :
+              {Setting.getLabel(i18next.t("application:Providers"), i18next.t("general:Providers - Tooltip"))} :
             </Col>
             <Col span={21} >
               <ProviderTable
-                title={i18next.t("general:Providers")}
+                title={i18next.t("application:Providers")}
                 table={this.state.application.providers}
                 providers={this.state.providers}
                 application={this.state.application}
@@ -1357,7 +1357,7 @@ class ApplicationEditPage extends React.Component {
                   >
                     <Menu.Item key="basic">{i18next.t("application:Basic")}</Menu.Item>
                     <Menu.Item key="authentication">{i18next.t("application:Authentication")}</Menu.Item>
-                    <Menu.Item key="providers">{i18next.t("general:Providers")}</Menu.Item>
+                    <Menu.Item key="providers">{i18next.t("application:Providers")}</Menu.Item>
                     <Menu.Item key="ui-customization">{i18next.t("application:UI Customization")}</Menu.Item>
                     <Menu.Item key="security">{i18next.t("application:Security")}</Menu.Item>
                   </Menu>

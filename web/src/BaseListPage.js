@@ -132,7 +132,7 @@ class BaseListPage extends React.Component {
             {i18next.t("general:Search")}
           </Button>
           <Button onClick={() => this.handleReset(clearFilters)} size="small" style={{width: 90}}>
-            {i18next.t("general:Reset")}
+            {i18next.t("forget:Reset")}
           </Button>
           <Button
             type="link"

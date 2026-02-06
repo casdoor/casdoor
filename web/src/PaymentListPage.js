@@ -161,7 +161,7 @@ class PaymentListPage extends BaseListPage {
         },
       },
       {
-        title: i18next.t("provider:Type"),
+        title: i18next.t("general:Type"),
         dataIndex: "type",
         key: "type",
         width: "140px",
@@ -175,7 +175,7 @@ class PaymentListPage extends BaseListPage {
         },
       },
       {
-        title: i18next.t("order:Products"),
+        title: i18next.t("general:Products"),
         dataIndex: "products",
         key: "products",
         ...this.getColumnSearchProps("products"),
@@ -219,7 +219,7 @@ class PaymentListPage extends BaseListPage {
         },
       },
       {
-        title: i18next.t("product:Price"),
+        title: i18next.t("order:Price"),
         dataIndex: "price",
         key: "price",
         width: "160px",

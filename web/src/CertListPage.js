@@ -147,7 +147,7 @@ class CertListPage extends BaseListPage {
         sorter: true,
       },
       {
-        title: i18next.t("provider:Type"),
+        title: i18next.t("general:Type"),
         dataIndex: "type",
         key: "type",
         filterMultiple: false,
