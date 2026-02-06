@@ -257,7 +257,7 @@ class ProviderEditPage extends React.Component {
         <Input value={this.state.provider.userMapping.affiliation} onChange={e => {
           this.updateUserMappingField("affiliation", e.target.value);
         }} />
-        {Setting.getLabel(i18next.t("user:Title"), i18next.t("user:Title - Tooltip"))} :
+        {Setting.getLabel(i18next.t("general:Title"), i18next.t("general:Title - Tooltip"))} :
         <Input value={this.state.provider.userMapping.title} onChange={e => {
           this.updateUserMappingField("title", e.target.value);
         }} />
@@ -319,7 +319,7 @@ class ProviderEditPage extends React.Component {
       return Setting.getLabel(i18next.t("signup:Username"), i18next.t("signup:Username - Tooltip"));
     case "SMS":
       if (provider.type === "Volc Engine SMS" || provider.type === "Amazon SNS" || provider.type === "Baidu Cloud SMS") {
-        return Setting.getLabel(i18next.t("provider:Access key"), i18next.t("provider:Access key - Tooltip"));
+        return Setting.getLabel(i18next.t("general:Access key"), i18next.t("general:Access key - Tooltip"));
       } else if (provider.type === "Huawei Cloud SMS") {
         return Setting.getLabel(i18next.t("provider:App key"), i18next.t("provider:App key - Tooltip"));
       } else if (provider.type === "UCloud SMS") {
@@ -331,19 +331,19 @@ class ProviderEditPage extends React.Component {
       }
     case "Captcha":
       if (provider.type === "Aliyun Captcha") {
-        return Setting.getLabel(i18next.t("provider:Access key"), i18next.t("provider:Access key - Tooltip"));
+        return Setting.getLabel(i18next.t("general:Access key"), i18next.t("general:Access key - Tooltip"));
       } else {
         return Setting.getLabel(i18next.t("provider:Site key"), i18next.t("provider:Site key - Tooltip"));
       }
     case "Notification":
       if (provider.type === "DingTalk") {
-        return Setting.getLabel(i18next.t("provider:Access key"), i18next.t("provider:Access key - Tooltip"));
+        return Setting.getLabel(i18next.t("general:Access key"), i18next.t("general:Access key - Tooltip"));
       } else {
         return Setting.getLabel(i18next.t("provider:Client ID"), i18next.t("provider:Client ID - Tooltip"));
       }
     case "ID Verification":
       if (provider.type === "Alibaba Cloud") {
-        return Setting.getLabel(i18next.t("provider:Access key"), i18next.t("provider:Access key - Tooltip"));
+        return Setting.getLabel(i18next.t("general:Access key"), i18next.t("general:Access key - Tooltip"));
       } else {
         return Setting.getLabel(i18next.t("provider:Client ID"), i18next.t("provider:Client ID - Tooltip"));
       }
@@ -751,7 +751,7 @@ class ProviderEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("provider:Type"), i18next.t("provider:Type - Tooltip"))} :
+            {Setting.getLabel(i18next.t("general:Type"), i18next.t("cert:Type - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Select virtual={false} style={{width: "100%"}} showSearch value={this.state.provider.type} onChange={(value => {
@@ -816,7 +816,7 @@ class ProviderEditPage extends React.Component {
                         }}>
                           {
                             [
-                              {id: "Normal", name: i18next.t("provider:Normal")},
+                              {id: "Normal", name: i18next.t("application:Normal")},
                               {id: "Silent", name: i18next.t("provider:Silent")},
                             ].map((method, index) => <Option key={index} value={method.id}>{method.name}</Option>)
                           }
@@ -880,7 +880,7 @@ class ProviderEditPage extends React.Component {
                     </Row>
                     <Row style={{marginTop: "20px"}} >
                       <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                        {Setting.getLabel(i18next.t("provider:Scope"), i18next.t("provider:Scope - Tooltip"))}
+                        {Setting.getLabel(i18next.t("provider:Scope"), i18next.t("cert:Scope - Tooltip"))}
                       </Col>
                       <Col span={22} >
                         <Input value={this.state.provider.scopes} onChange={e => {
@@ -1127,7 +1127,7 @@ class ProviderEditPage extends React.Component {
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={2}>
                   {["Casdoor"].includes(this.state.provider.type) ?
-                    Setting.getLabel(i18next.t("general:Provider"), i18next.t("provider:Provider - Tooltip"))
+                    Setting.getLabel(i18next.t("general:Provider"), i18next.t("general:Provider - Tooltip"))
                     : Setting.getLabel(i18next.t("provider:Bucket"), i18next.t("provider:Bucket - Tooltip"))} :
                 </Col>
                 <Col span={22} >
@@ -1758,7 +1758,7 @@ class ProviderEditPage extends React.Component {
                     copy(`${authConfig.serverUrl}/api/acs`);
                     Setting.showMessage("success", i18next.t("general:Copied to clipboard successfully"));
                   }}>
-                    {i18next.t("provider:Copy")}
+                    {i18next.t("general:Copy")}
                   </Button>
                 </Col>
               </Row>
@@ -1774,7 +1774,7 @@ class ProviderEditPage extends React.Component {
                     copy(`${authConfig.serverUrl}/api/acs`);
                     Setting.showMessage("success", i18next.t("general:Copied to clipboard successfully"));
                   }}>
-                    {i18next.t("provider:Copy")}
+                    {i18next.t("general:Copy")}
                   </Button>
                 </Col>
               </Row>

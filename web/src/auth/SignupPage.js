@@ -423,7 +423,7 @@ class SignupPage extends React.Component {
         <Form.Item
           name="name"
           className="signup-name"
-          label={(signupItem.label ? signupItem.label : (signupItem.rule === "Real name" || signupItem.rule === "First, last") ? i18next.t("general:Real name") : i18next.t("general:Display name"))}
+          label={(signupItem.label ? signupItem.label : (signupItem.rule === "Real name" || signupItem.rule === "First, last") ? i18next.t("application:Real name") : i18next.t("general:Display name"))}
           rules={displayNameRules}
         >
           <Input className="signup-name-input" placeholder={signupItem.placeholder} />
@@ -552,13 +552,13 @@ class SignupPage extends React.Component {
               rules={[
                 {
                   required: required,
-                  message: i18next.t("signup:Please input your Email!"),
+                  message: i18next.t("login:Please input your Email!"),
                 },
                 {
                   validator: (_, value) => {
                     if (this.state.email !== "" && !Setting.isValidEmail(this.state.email)) {
                       this.setState({validEmail: false});
-                      return Promise.reject(i18next.t("signup:The input is not valid Email!"));
+                      return Promise.reject(i18next.t("login:The input is not valid Email!"));
                     }
 
                     if (signupItem.regex) {
@@ -772,7 +772,7 @@ class SignupPage extends React.Component {
         <Form.Item
           name="confirm"
           className="signup-confirm"
-          label={signupItem.label ? signupItem.label : i18next.t("signup:Confirm")}
+          label={signupItem.label ? signupItem.label : i18next.t("general:Confirm")}
           dependencies={["password"]}
           hasFeedback
           rules={[

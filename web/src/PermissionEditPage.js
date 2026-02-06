@@ -271,7 +271,7 @@ class PermissionEditPage extends React.Component {
             <Select virtual={false} mode="multiple" style={{width: "100%"}} value={this.state.permission.users}
               onChange={(value => {this.updatePermissionField("users", value);})}
               options={[
-                Setting.getOption(i18next.t("organization:All"), "*"),
+                Setting.getOption(i18next.t("general:All"), "*"),
                 ...this.state.users.map((user) => Setting.getOption(`${user.owner}/${user.name}`, `${user.owner}/${user.name}`)),
               ]}
             />
@@ -285,7 +285,7 @@ class PermissionEditPage extends React.Component {
             <Select virtual={false} mode="multiple" style={{width: "100%"}} value={this.state.permission.groups}
               onChange={(value => {this.updatePermissionField("groups", value);})}
               options={[
-                Setting.getOption(i18next.t("organization:All"), "*"),
+                Setting.getOption(i18next.t("general:All"), "*"),
                 ...this.state.groups.map((group) => Setting.getOption(`${group.owner}/${group.name}`, `${group.owner}/${group.name}`)),
               ]}
             />
@@ -299,7 +299,7 @@ class PermissionEditPage extends React.Component {
             <Select disabled={!this.hasRoleDefinition(this.state.model)} placeholder={this.hasRoleDefinition(this.state.model) ? "" : "This field is disabled because the model is empty or it doesn't support RBAC (in another word, doesn't contain [role_definition])"} virtual={false} mode="multiple" style={{width: "100%"}} value={this.state.permission.roles}
               onChange={(value => {this.updatePermissionField("roles", value);})}
               options={[
-                Setting.getOption(i18next.t("organization:All"), "*"),
+                Setting.getOption(i18next.t("general:All"), "*"),
                 ...this.state.roles.filter(roles => (roles.owner !== this.state.roles.owner || roles.name !== this.state.roles.name)).map((permission) => Setting.getOption(`${permission.owner}/${permission.name}`, `${permission.owner}/${permission.name}`)),
               ]}
             />
@@ -315,7 +315,7 @@ class PermissionEditPage extends React.Component {
                 this.updatePermissionField("domains", value);
               })}
               options={[
-                Setting.getOption(i18next.t("organization:All"), "*"),
+                Setting.getOption(i18next.t("general:All"), "*"),
                 ...this.state.permission.domains.filter(domain => domain !== "*").map((domain) => Setting.getOption(domain, domain)),
               ]}
             />
@@ -349,7 +349,7 @@ class PermissionEditPage extends React.Component {
               options={this.state.permission.resourceType === "API" ? Setting.getApiPaths().map((option, index) => {
                 return Setting.getOption(option, option);
               }) : [
-                Setting.getOption(i18next.t("organization:All"), "*"),
+                Setting.getOption(i18next.t("general:All"), "*"),
                 ...this.state.resources.map((resource) => Setting.getOption(`${resource.name}`, `${resource.name}`)),
               ]}
             />
@@ -369,7 +369,7 @@ class PermissionEditPage extends React.Component {
             ] : [
               {value: "Read", name: i18next.t("permission:Read")},
               {value: "Write", name: i18next.t("permission:Write")},
-              {value: "Admin", name: i18next.t("permission:Admin")},
+              {value: "Admin", name: i18next.t("general:Admin")},
             ].map((item) => Setting.getOption(item.name, item.value))}
             />
           </Col>

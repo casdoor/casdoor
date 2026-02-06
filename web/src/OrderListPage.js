@@ -137,7 +137,7 @@ class OrderListPage extends BaseListPage {
         },
       },
       {
-        title: i18next.t("order:Products"),
+        title: i18next.t("general:Products"),
         dataIndex: "products",
         key: "products",
         ...this.getColumnSearchProps("products"),
