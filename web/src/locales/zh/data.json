@@ -378,7 +378,7 @@
     "Name": "名称",
     "Name - Tooltip": "唯一的、字符串式的ID",
     "Name format": "名称格式",
-    "No products available": "暂无可用商品",
+    "No products available": "没有可用的产品",
     "No verification method": "没有验证方法",
     "Non-LDAP": "禁用LDAP",
     "None": "无",
@@ -526,7 +526,8 @@
     "You must select a picture first": "您必须先选择一张图片",
     "empty": "无",
     "remove": "移除",
-    "{total} in total": "{total} 总计"
+    "{total} in total": "{total} 总计",
+    "Orders": "订单"
   },
   "group": {
     "Edit Group": "编辑群组",

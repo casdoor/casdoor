@@ -523,7 +523,10 @@
     "You must select a picture first": "You must select a picture first",
     "empty": "порожній",
     "remove": "видалити",
-    "{total} in total": "загалом {total}"
+    "{total} in total": "загалом {total}",
+    "No products available": "Немає доступних продуктів",
+    "Orders": "Замовлення",
+    "Product Store": "Магазин продуктів"
   },
   "group": {
     "Edit Group": "Редагувати групу",

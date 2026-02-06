@@ -523,7 +523,10 @@
     "You must select a picture first": "You must select a picture first",
     "empty": "trống",
     "remove": "xóa",
-    "{total} in total": "Trong tổng số {total}"
+    "{total} in total": "Trong tổng số {total}",
+    "No products available": "Không có sản phẩm nào",
+    "Orders": "Đơn hàng",
+    "Product Store": "Cửa hàng sản phẩm"
   },
   "group": {
     "Edit Group": "Chỉnh sửa nhóm",

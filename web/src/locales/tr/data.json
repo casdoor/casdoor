@@ -523,7 +523,10 @@
     "You must select a picture first": "You must select a picture first",
     "empty": "boş",
     "remove": "kaldır",
-    "{total} in total": "Toplam {total} adet"
+    "{total} in total": "Toplam {total} adet",
+    "No products available": "Kullanılabilir ürün yok",
+    "Orders": "Siparişler",
+    "Product Store": "Ürün Mağazası"
   },
   "group": {
     "Edit Group": "Grubu Düzenle",

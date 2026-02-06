@@ -412,7 +412,7 @@
     "Phone only": "Téléphone uniquement",
     "Phone or Email": "Téléphone ou e-mail",
     "Plain": "Simple",
-    "Plan": "Plan",
+    "Plan": "Forfait",
     "Plan - Tooltip": "Plan d'abonnement",
     "Plans": "Offres",
     "Plans - Tooltip": "Plans - Infobulle",
@@ -523,7 +523,10 @@
     "You must select a picture first": "You must select a picture first",
     "empty": "vide",
     "remove": "supprimer",
-    "{total} in total": "{total} au total"
+    "{total} in total": "{total} au total",
+    "No products available": "Aucun produit disponible",
+    "Orders": "Commandes",
+    "Product Store": "Boutique de produits"
   },
   "group": {
     "Edit Group": "Modifier le groupe",

@@ -523,7 +523,10 @@
     "You must select a picture first": "You must select a picture first",
     "empty": "空",
     "remove": "削除",
-    "{total} in total": "総計{total}"
+    "{total} in total": "総計{total}",
+    "No products available": "利用可能な製品がありません",
+    "Orders": "注文",
+    "Product Store": "製品ストア"
   },
   "group": {
     "Edit Group": "グループを編集",

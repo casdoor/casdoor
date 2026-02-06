@@ -523,7 +523,10 @@
     "You must select a picture first": "You must select a picture first",
     "empty": "pusty",
     "remove": "usuń",
-    "{total} in total": "łącznie {total}"
+    "{total} in total": "łącznie {total}",
+    "No products available": "Brak dostępnych produktów",
+    "Orders": "Zamówienia",
+    "Product Store": "Sklep z produktami"
   },
   "group": {
     "Edit Group": "Edytuj grupę",
