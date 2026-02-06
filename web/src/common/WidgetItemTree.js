@@ -5,7 +5,7 @@ import React from "react";
 export const WidgetItemTree = ({disabled, checkedKeys, defaultExpandedKeys, onCheck}) => {
   const WidgetItemNodes = [
     {
-      title: i18next.t("organization:All"),
+      title: i18next.t("general:All"),
       key: "all",
       children: [
         {title: i18next.t("general:Tour"), key: "tour"},

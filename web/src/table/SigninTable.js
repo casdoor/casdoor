@@ -114,7 +114,7 @@ class SigninTable extends React.Component {
             {name: "Username", displayName: i18next.t("signup:Username")},
             {name: "Password", displayName: i18next.t("general:Password")},
             {name: "Verification code", displayName: i18next.t("login:Verification code")},
-            {name: "Providers", displayName: i18next.t("general:Providers")},
+            {name: "Providers", displayName: i18next.t("application:Providers")},
             {name: "Agreement", displayName: i18next.t("signup:Agreement")},
             {name: "Forgot password?", displayName: i18next.t("login:Forgot password?")},
             {name: "Login button", displayName: i18next.t("login:Signin button")},

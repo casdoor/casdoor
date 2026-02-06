@@ -337,7 +337,7 @@ class PermissionListPage extends BaseListPage {
             case "Write":
               return i18next.t("permission:Write");
             case "Admin":
-              return i18next.t("permission:Admin");
+              return i18next.t("general:Admin");
             default:
               return null;
             }

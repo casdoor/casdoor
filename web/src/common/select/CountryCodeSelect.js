@@ -52,9 +52,9 @@ export const CountryCodeSelect = (props) => {
       filterOption={(input, option) => (option?.text ?? "").toLowerCase().includes(input.toLowerCase())}
     >
       {
-        props.hasDefault ? (<Option key={"All"} value={"All"} label={i18next.t("organization:All")} text={"organization:All"} >
+        props.hasDefault ? (<Option key={"All"} value={"All"} label={i18next.t("general:All")} text={"general:All"} >
           <div style={{display: "flex", justifyContent: "space-between", marginRight: "10px"}}>
-            {i18next.t("organization:All")}
+            {i18next.t("general:All")}
           </div>
         </Option>) : null
       }

@@ -286,8 +286,8 @@ class LoginPage extends React.Component {
     }
     switch (this.state.loginMethod) {
     case "verificationCode": return i18next.t("login:Email or phone");
-    case "verificationCodeEmail": return i18next.t("login:Email");
-    case "verificationCodePhone": return i18next.t("login:Phone");
+    case "verificationCodeEmail": return i18next.t("general:Email");
+    case "verificationCodePhone": return i18next.t("general:Phone");
     case "ldap": return i18next.t("login:LDAP username, Email or phone");
     default: return i18next.t("login:username, Email or phone");
     }

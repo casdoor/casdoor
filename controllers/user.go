@@ -942,7 +942,7 @@ func (c *ApiController) VerifyIdentification() {
 		}
 
 		if provider == nil {
-			c.ResponseError(fmt.Sprintf(c.T("provider:The provider: %s does not exist"), providerName))
+			c.ResponseError(fmt.Sprintf(c.T("auth:The provider: %s does not exist"), providerName))
 			return
 		}
 

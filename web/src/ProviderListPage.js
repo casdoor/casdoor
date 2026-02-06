@@ -158,7 +158,7 @@ class ProviderListPage extends BaseListPage {
         sorter: true,
       },
       {
-        title: i18next.t("provider:Type"),
+        title: i18next.t("general:Type"),
         dataIndex: "type",
         key: "type",
         width: "110px",
@@ -243,7 +243,7 @@ class ProviderListPage extends BaseListPage {
         <Table scroll={{x: "max-content"}} columns={filteredColumns} dataSource={providers} rowKey={(record) => `${record.owner}/${record.name}`} size="middle" bordered pagination={paginationProps}
           title={() => (
             <div>
-              {i18next.t("general:Providers")}&nbsp;&nbsp;&nbsp;&nbsp;
+              {i18next.t("application:Providers")}&nbsp;&nbsp;&nbsp;&nbsp;
               <Button id="add-button" type="primary" size="small" onClick={this.addProvider.bind(this)}>{i18next.t("general:Add")}</Button>
             </div>
           )}

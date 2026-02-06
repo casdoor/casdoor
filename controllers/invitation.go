@@ -103,7 +103,7 @@ func (c *ApiController) GetInvitationCodeInfo() {
 		return
 	}
 	if application == nil {
-		c.ResponseError(fmt.Sprintf(c.T("general:The application: %s does not exist"), applicationId))
+		c.ResponseError(fmt.Sprintf(c.T("auth:The application: %s does not exist"), applicationId))
 		return
 	}
 
@@ -230,7 +230,7 @@ func (c *ApiController) SendInvitation() {
 		return
 	}
 	if organization == nil {
-		c.ResponseError(fmt.Sprintf(c.T("general:The organization: %s does not exist"), invitation.Owner))
+		c.ResponseError(fmt.Sprintf(c.T("auth:The organization: %s does not exist"), invitation.Owner))
 		return
 	}
 

@@ -144,7 +144,7 @@ const Dashboard = (props) => {
       tooltip: {trigger: "axis"},
       legend: {data: [
         i18next.t("general:Users"),
-        i18next.t("general:Providers"),
+        i18next.t("application:Providers"),
         i18next.t("general:Applications"),
         i18next.t("general:Organizations"),
         i18next.t("general:Subscriptions"),
@@ -164,7 +164,7 @@ const Dashboard = (props) => {
       series: [
         {name: i18next.t("general:Organizations"), type: "line", data: dashboardData.organizationCounts},
         {name: i18next.t("general:Users"), type: "line", data: dashboardData.userCounts},
-        {name: i18next.t("general:Providers"), type: "line", data: dashboardData.providerCounts},
+        {name: i18next.t("application:Providers"), type: "line", data: dashboardData.providerCounts},
         {name: i18next.t("general:Applications"), type: "line", data: dashboardData.applicationCounts},
         {name: i18next.t("general:Subscriptions"), type: "line", data: dashboardData.subscriptionCounts},
         {name: i18next.t("general:Roles"), type: "line", data: dashboardData.roleCounts},

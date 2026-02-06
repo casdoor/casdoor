@@ -158,7 +158,7 @@ class TokenEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("provider:Scope"), i18next.t("provider:Scope - Tooltip"))}
+            {Setting.getLabel(i18next.t("provider:Scope"), i18next.t("cert:Scope - Tooltip"))}
           </Col>
           <Col span={22} >
             <Input value={this.state.token.scope} onChange={e => {

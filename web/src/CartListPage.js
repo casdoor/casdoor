@@ -250,7 +250,7 @@ class CartListPage extends BaseListPage {
         },
       },
       {
-        title: i18next.t("product:Price"),
+        title: i18next.t("order:Price"),
         dataIndex: "price",
         key: "price",
         width: "160px",
@@ -321,7 +321,7 @@ class CartListPage extends BaseListPage {
           return (
             <div style={{display: "flex", flexWrap: "wrap", gap: "8px"}}>
               <Button type="primary" onClick={() => this.props.history.push(`/products/${owner}/${record.name}/buy`)}>
-                {i18next.t("product:Detail")}
+                {i18next.t("general:Detail")}
               </Button>
               <PopconfirmModal
                 title={i18next.t("general:Sure to delete") + `: ${record.name} ?`}

@@ -498,11 +498,11 @@ export const GetTranslatedUserItems = () => {
     {name: "Location", label: i18next.t("user:Location")},
     {name: "Address", label: i18next.t("user:Address")},
     {name: "Affiliation", label: i18next.t("user:Affiliation")},
-    {name: "Title", label: i18next.t("user:Title")},
+    {name: "Title", label: i18next.t("general:Title")},
     {name: "ID card type", label: i18next.t("user:ID card type")},
     {name: "ID card", label: i18next.t("user:ID card")},
     {name: "ID card info", label: i18next.t("user:ID card info")},
-    {name: "Real name", label: i18next.t("user:Real name")},
+    {name: "Real name", label: i18next.t("application:Real name")},
     {name: "ID verification", label: i18next.t("user:ID verification")},
     {name: "Homepage", label: i18next.t("user:Homepage")},
     {name: "Bio", label: i18next.t("user:Bio")},
@@ -514,7 +514,7 @@ export const GetTranslatedUserItems = () => {
     {name: "Balance", label: i18next.t("user:Balance")},
     {name: "Balance currency", label: i18next.t("organization:Balance currency")},
     {name: "Balance credit", label: i18next.t("organization:Balance credit")},
-    {name: "Transactions", label: i18next.t("transaction:Transactions")},
+    {name: "Transactions", label: i18next.t("general:Transactions")},
     {name: "Score", label: i18next.t("user:Score")},
     {name: "Karma", label: i18next.t("user:Karma")},
     {name: "Ranking", label: i18next.t("user:Ranking")},
@@ -531,10 +531,10 @@ export const GetTranslatedUserItems = () => {
     {name: "Is deleted", label: i18next.t("user:Is deleted")},
     {name: "Need update password", label: i18next.t("user:Need update password")},
     {name: "IP whitelist", label: i18next.t("general:IP whitelist")},
-    {name: "Multi-factor authentication", label: i18next.t("user:Multi-factor authentication")},
+    {name: "Multi-factor authentication", label: i18next.t("mfa:Multi-factor authentication")},
     {name: "WebAuthn credentials", label: i18next.t("user:WebAuthn credentials")},
     {name: "Managed accounts", label: i18next.t("user:Managed accounts")},
-    {name: "Face ID", label: i18next.t("user:Face ID")},
+    {name: "Face ID", label: i18next.t("login:Face ID")},
     {name: "MFA accounts", label: i18next.t("user:MFA accounts")},
     {name: "MFA items", label: i18next.t("general:MFA items")},
   ];
@@ -2232,7 +2232,7 @@ export function createFormAndSubmit(url, params) {
 export function getFormTypeOptions() {
   return [
     {id: "users", name: "general:Users"},
-    {id: "providers", name: "general:Providers"},
+    {id: "providers", name: "application:Providers"},
     {id: "applications", name: "general:Applications"},
     {id: "organizations", name: "general:Organizations"},
   ];
@@ -2264,7 +2264,7 @@ export function getFormTypeItems(formType) {
       {name: "createdTime", label: "general:Created time", visible: true, width: "180"},
       {name: "displayName", label: "general:Display name", visible: true, width: "150"},
       {name: "category", label: "provider:Category", visible: true, width: "110"},
-      {name: "type", label: "provider:Type", visible: true, width: "110"},
+      {name: "type", label: "general:Type", visible: true, width: "110"},
       {name: "clientId", label: "provider:Client ID", visible: true, width: "100"},
       {name: "providerUrl", label: "provider:Provider URL", visible: true, width: "150"},
     ];
@@ -2275,7 +2275,7 @@ export function getFormTypeItems(formType) {
       {name: "displayName", label: "general:Display name", visible: true, width: "150"},
       {name: "logo", label: "Logo", visible: true, width: "200"},
       {name: "organization", label: "general:Organization", visible: true, width: "150"},
-      {name: "providers", label: "general:Providers", visible: true, width: "500"},
+      {name: "providers", label: "application:Providers", visible: true, width: "500"},
     ];
   } else if (formType === "organizations") {
     return [

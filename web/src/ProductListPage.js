@@ -153,7 +153,7 @@ class ProductListPage extends BaseListPage {
         ...this.getColumnSearchProps("tag"),
       },
       {
-        title: i18next.t("product:Price"),
+        title: i18next.t("order:Price"),
         dataIndex: "price",
         key: "price",
         width: "160px",

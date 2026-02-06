@@ -488,7 +488,7 @@ class ForgetPage extends React.Component {
             >
               <Input.Password
                 prefix={<CheckCircleOutlined />}
-                placeholder={i18next.t("signup:Confirm")}
+                placeholder={i18next.t("general:Confirm")}
               />
             </Form.Item>
             <br />

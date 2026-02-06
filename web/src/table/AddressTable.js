@@ -92,7 +92,7 @@ class AddressTable extends React.Component {
               onChange={value => {
                 this.updateField(table, index, "tag", value);
               }} >
-              <Option value="Home">{i18next.t("user:Home")}</Option>
+              <Option value="Home">{i18next.t("general:Home")}</Option>
               <Option value="Work">{i18next.t("user:Work")}</Option>
               <Option value="Other">{i18next.t("user:Other")}</Option>
             </Select>
@@ -139,7 +139,7 @@ class AddressTable extends React.Component {
         },
       },
       {
-        title: i18next.t("user:State"),
+        title: i18next.t("general:State"),
         dataIndex: "state",
         key: "state",
         width: "100px",
@@ -165,7 +165,7 @@ class AddressTable extends React.Component {
         },
       },
       {
-        title: i18next.t("user:Region"),
+        title: i18next.t("provider:Region"),
         dataIndex: "region",
         key: "region",
         width: "150px",

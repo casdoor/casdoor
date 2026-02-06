@@ -626,7 +626,7 @@ class UserEditPage extends React.Component {
       return (
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("user:Title"), i18next.t("user:Title - Tooltip"))} :
+            {Setting.getLabel(i18next.t("general:Title"), i18next.t("general:Title - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Input value={this.state.user.title} onChange={e => {
@@ -686,7 +686,7 @@ class UserEditPage extends React.Component {
       return (
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("user:Real name"), i18next.t("user:Real name - Tooltip"))} :
+            {Setting.getLabel(i18next.t("application:Real name"), i18next.t("user:Real name - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Input value={this.state.user.realName} disabled={disabled} onChange={e => {
@@ -744,7 +744,7 @@ class UserEditPage extends React.Component {
       return (
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("user:Tag"), i18next.t("user:Tag - Tooltip"))} :
+            {Setting.getLabel(i18next.t("user:Tag"), i18next.t("product:Tag - Tooltip"))} :
           </Col>
           <Col span={22} >
             {
@@ -835,7 +835,7 @@ class UserEditPage extends React.Component {
       return (
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("user:Balance credit"), i18next.t("user:Balance credit - Tooltip"))} :
+            {Setting.getLabel(i18next.t("organization:Balance credit"), i18next.t("organization:Balance credit - Tooltip"))} :
           </Col>
           <Col span={22} >
             <InputNumber value={this.state.user.balanceCredit ?? 0} onChange={value => {
@@ -848,7 +848,7 @@ class UserEditPage extends React.Component {
       return (
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("user:Balance currency"), i18next.t("user:Balance currency - Tooltip"))} :
+            {Setting.getLabel(i18next.t("organization:Balance currency"), i18next.t("organization:Balance currency - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Select virtual={false} style={{width: "100%"}} value={this.state.user.balanceCurrency || "USD"} onChange={(value => {
@@ -1437,7 +1437,7 @@ class UserEditPage extends React.Component {
                 type="card"
                 activeKey={activeKey}
                 items={tabs.map(tab => ({
-                  label: tab === "" ? i18next.t("user:Default") : tab,
+                  label: tab === "" ? i18next.t("general:Default") : tab,
                   key: tab,
                 }))}
               />
@@ -1457,7 +1457,7 @@ class UserEditPage extends React.Component {
                   }}
                   style={{marginBottom: "20px", height: "100%"}}
                   items={tabs.map(tab => ({
-                    label: tab === "" ? i18next.t("user:Default") : tab,
+                    label: tab === "" ? i18next.t("general:Default") : tab,
                     key: tab,
                   }))}
                 />

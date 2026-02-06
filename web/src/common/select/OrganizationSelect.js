@@ -58,7 +58,7 @@ function OrganizationSelect(props) {
 
     if (withAll) {
       items.unshift({
-        label: i18next.t("organization:All"),
+        label: i18next.t("general:All"),
         value: "All",
       });
     }

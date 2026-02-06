@@ -112,8 +112,6 @@
     "Only admin user can specify user": "Yalnızca yönetici kullanıcı kullanıcı belirleyebilir",
     "Please login first": "Lütfen önce giriş yapın",
     "The LDAP: %s does not exist": "The LDAP: %s does not exist",
-    "The application: %s does not exist": "The application: %s does not exist",
-    "The organization: %s does not exist": "The organization: %s does not exist",
     "The organization: %s should have one application at least": "Organizasyon: %s en az bir uygulamaya sahip olmalı",
     "The syncer: %s does not exist": "The syncer: %s does not exist",
     "The user: %s doesn't exist": "Kullanıcı: %s bulunamadı",
@@ -155,7 +153,6 @@
     "Invalid application id": "Geçersiz uygulama id",
     "No ID Verification provider configured": "No ID Verification provider configured",
     "Provider is not an ID Verification provider": "Provider is not an ID Verification provider",
-    "The provider: %s does not exist": "The provider: %s does not exist",
     "the provider: %s does not exist": "provider: %s bulunamadı"
   },
   "resource": {

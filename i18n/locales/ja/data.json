@@ -112,8 +112,6 @@
     "Only admin user can specify user": "管理者ユーザーのみがユーザーを指定できます",
     "Please login first": "最初にログインしてください",
     "The LDAP: %s does not exist": "The LDAP: %s does not exist",
-    "The application: %s does not exist": "The application: %s does not exist",
-    "The organization: %s does not exist": "The organization: %s does not exist",
     "The organization: %s should have one application at least": "組織「%s」は少なくとも1つのアプリケーションを持っている必要があります",
     "The syncer: %s does not exist": "The syncer: %s does not exist",
     "The user: %s doesn't exist": "そのユーザー：%sは存在しません",
@@ -155,7 +153,6 @@
     "Invalid application id": "アプリケーションIDが無効です",
     "No ID Verification provider configured": "No ID Verification provider configured",
     "Provider is not an ID Verification provider": "Provider is not an ID Verification provider",
-    "The provider: %s does not exist": "The provider: %s does not exist",
     "the provider: %s does not exist": "プロバイダー%sは存在しません"
   },
   "resource": {

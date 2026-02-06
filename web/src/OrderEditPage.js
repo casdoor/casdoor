@@ -158,7 +158,7 @@ class OrderEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {i18next.t("order:Products")}:
+            {i18next.t("general:Products")}:
           </Col>
           <Col span={22} >
             <Select
@@ -195,7 +195,7 @@ class OrderEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {i18next.t("order:Payment")}:
+            {i18next.t("general:Payment")}:
           </Col>
           <Col span={22} >
             <Select virtual={false} style={{width: "100%"}} value={this.state.order.payment} disabled={isViewMode} onChange={(value) => {

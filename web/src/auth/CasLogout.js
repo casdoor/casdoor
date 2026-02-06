@@ -44,7 +44,7 @@ class CasLogout extends React.Component {
               if (logoutRes.status === "ok") {
                 logoutTimeOut(logoutRes.data2);
               } else {
-                Setting.showMessage("error", `${i18next.t("login:Failed to log out")}: ${logoutRes.msg}`);
+                Setting.showMessage("error", `${i18next.t("general:Failed to log out")}: ${logoutRes.msg}`);
               }
             });
           } else {
@@ -67,7 +67,7 @@ class CasLogout extends React.Component {
         if (res.status === "ok") {
           logoutTimeOut(res.data2);
         } else {
-          Setting.showMessage("error", `${i18next.t("login:Failed to log out")}: ${res.msg}`);
+          Setting.showMessage("error", `${i18next.t("general:Failed to log out")}: ${res.msg}`);
         }
       });
   }

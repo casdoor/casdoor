@@ -131,7 +131,7 @@ class SubscriptionListPage extends BaseListPage {
         ...this.getColumnSearchProps("displayName"),
       },
       {
-        title: i18next.t("subscription:Period"),
+        title: i18next.t("plan:Period"),
         dataIndex: "period",
         key: "period",
         width: "140px",
@@ -209,7 +209,7 @@ class SubscriptionListPage extends BaseListPage {
         render: (text, record, index) => {
           switch (text) {
           case "Pending":
-            return Setting.getTag("processing", i18next.t("subscription:Pending"), <ExclamationCircleOutlined />);
+            return Setting.getTag("processing", i18next.t("permission:Pending"), <ExclamationCircleOutlined />);
           case "Active":
             return Setting.getTag("success", i18next.t("subscription:Active"), <SyncOutlined spin />);
           case "Upcoming":

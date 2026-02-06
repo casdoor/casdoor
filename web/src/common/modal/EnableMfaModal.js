@@ -64,7 +64,7 @@ const EnableMfaModal = ({user, mfaType, onSuccess}) => {
   const showModal = () => {
     if (!isValid()) {
       if (mfaType === EmailMfaType) {
-        Setting.showMessage("error", i18next.t("signup:Please input your Email!"));
+        Setting.showMessage("error", i18next.t("login:Please input your Email!"));
       } else {
         Setting.showMessage("error", i18next.t("signup:Please input your phone number!"));
       }
