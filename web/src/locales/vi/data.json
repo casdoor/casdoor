@@ -878,7 +878,19 @@
     "Test buy page..": "Trang mua thử.",
     "There is no payment channel for this product.": "Không có kênh thanh toán cho sản phẩm này.",
     "This product is currently not in sale.": "Sản phẩm này hiện không được bán.",
-    "WeChat Pay": "WeChat Pay"
+    "WeChat Pay": "WeChat Pay",
+    "Recharge options": "Tùy chọn nạp tiền",
+    "Recharge options - Tooltip": "Số tiền nạp đã cài đặt trước",
+    "Disable custom amount": "Vô hiệu hóa số tiền tùy chỉnh",
+    "Disable custom amount - Tooltip": "Có vô hiệu hóa số tiền nạp tùy chỉnh hay không",
+    "Select amount": "Chọn số tiền",
+    "Amount": "Số tiền",
+    "Custom amount available": "Số tiền tùy chỉnh có sẵn",
+    "Please add at least one recharge option when custom amount is disabled": "Vui lòng thêm ít nhất một tùy chọn nạp tiền khi số tiền tùy chỉnh bị vô hiệu hóa",
+    "Enter preset amounts": "Nhập số tiền đã cài đặt trước",
+    "This product is currently not purchasable (No options available)": "Sản phẩm này hiện không thể mua được (Không có tùy chọn nào)",
+    "Order created successfully": "Đơn hàng đã được tạo thành công",
+    "Failed to create order": "Không thể tạo đơn hàng"
   },
   "provider": {
     "Access key": "Chìa khóa truy cập",
@@ -1364,7 +1376,6 @@
     "Set Password": "Đặt mật khẩu",
     "Set new profile picture": "Đặt hình đại diện mới",
     "Set password...": "Đặt mật khẩu...",
-    "Tag": "Thẻ",
     "Tag - Tooltip": "Thẻ của người dùng",
     "The password must contain at least one special character": "Mật khẩu phải chứa ít nhất một ký tự đặc biệt",
     "The password must contain at least one uppercase letter, one lowercase letter and one digit": "Mật khẩu phải chứa ít nhất một chữ hoa, một chữ thường và một chữ số",
@@ -1411,5 +1422,17 @@
     "Single org only": "Chỉ một tổ chức",
     "Single org only - Tooltip": "Chỉ kích hoạt trong tổ chức mà webhook thuộc về",
     "Value": "Giá trị"
+  },
+  "order": {
+    "Edit Order": "Chỉnh sửa đơn hàng",
+    "End time": "Thời gian kết thúc",
+    "End time - Tooltip": "Khi đơn hàng hết hạn (ví dụ: đối với các giao dịch mua có thời hạn)",
+    "New Order": "Đơn hàng mới",
+    "Payment": "Thanh toán",
+    "Payment - Tooltip": "Khoản thanh toán liên quan đến đơn hàng này",
+    "Product": "Sản phẩm",
+    "Product - Tooltip": "Sản phẩm đã được mua",
+    "Start time": "Thời gian bắt đầu",
+    "Start time - Tooltip": "Khi đơn hàng bắt đầu"
   }
 }

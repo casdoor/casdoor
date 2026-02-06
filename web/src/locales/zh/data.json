@@ -1382,7 +1382,6 @@
     "Set Password": "设置密码",
     "Set new profile picture": "设置新头像",
     "Set password...": "设置密码...",
-    "Tag": "标签",
     "Tag - Tooltip": "用户的标签",
     "The password must contain at least one special character": "密码必须包含至少一个特殊字符",
     "The password must contain at least one uppercase letter, one lowercase letter and one digit": "密码必须包含至少一个大写字母、一个小写字母和一个数字",
@@ -1428,5 +1427,17 @@
     "Single org only": "仅本组织",
     "Single org only - Tooltip": "仅在Webhook所在组织触发",
     "Value": "值"
+  },
+  "order": {
+    "Edit Order": "编辑订单",
+    "End time": "结束时间",
+    "End time - Tooltip": "订单到期时间（例如，限时购买）",
+    "New Order": "新建订单",
+    "Payment": "支付",
+    "Payment - Tooltip": "与此订单关联的支付",
+    "Product": "产品",
+    "Product - Tooltip": "购买的产品",
+    "Start time": "开始时间",
+    "Start time - Tooltip": "订单开始时间"
   }
 }

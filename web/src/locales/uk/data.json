@@ -878,7 +878,19 @@
     "Test buy page..": "Сторінка тестової покупки..",
     "There is no payment channel for this product.": "Для цього продукту немає платіжного каналу.",
     "This product is currently not in sale.": "Цей товар наразі відсутній у продажу.",
-    "WeChat Pay": "Вейчат Платіж"
+    "WeChat Pay": "Вейчат Платіж",
+    "Recharge options": "Варіанти поповнення",
+    "Recharge options - Tooltip": "Попередньо встановлені суми поповнення",
+    "Disable custom amount": "Вимкнути користувацьку суму",
+    "Disable custom amount - Tooltip": "Чи вимикати користувацькі суми поповнення",
+    "Select amount": "Виберіть суму",
+    "Amount": "Сума",
+    "Custom amount available": "Користувацька сума доступна",
+    "Please add at least one recharge option when custom amount is disabled": "Будь ласка, додайте принаймні один варіант поповнення, коли користувацька сума вимкнена",
+    "Enter preset amounts": "Введіть попередньо встановлені суми",
+    "This product is currently not purchasable (No options available)": "Цей продукт зараз недоступний для покупки (Немає доступних варіантів)",
+    "Order created successfully": "Замовлення успішно створено",
+    "Failed to create order": "Не вдалося створити замовлення"
   },
   "provider": {
     "Access key": "Ключ доступу",
@@ -1364,7 +1376,6 @@
     "Set Password": "Встановити пароль",
     "Set new profile picture": "Встановити нове зображення профілю",
     "Set password...": "Встановити пароль...",
-    "Tag": "Тег",
     "Tag - Tooltip": "Тег користувача",
     "The password must contain at least one special character": "Пароль повинен містити хоча б один спеціальний символ",
     "The password must contain at least one uppercase letter, one lowercase letter and one digit": "Пароль повинен містити принаймні одну велику літеру, одну малу літеру та одну цифру",
@@ -1411,5 +1422,17 @@
     "Single org only": "Лише одна організація",
     "Single org only - Tooltip": "Активується лише в організації, якій належить вебхук",
     "Value": "Значення"
+  },
+  "order": {
+    "Edit Order": "Редагувати замовлення",
+    "End time": "Час завершення",
+    "End time - Tooltip": "Коли закінчується термін дії замовлення (наприклад, для покупок з обмеженим терміном)",
+    "New Order": "Нове замовлення",
+    "Payment": "Платіж",
+    "Payment - Tooltip": "Платіж, пов'язаний з цим замовленням",
+    "Product": "Продукт",
+    "Product - Tooltip": "Придбаний продукт",
+    "Start time": "Час початку",
+    "Start time - Tooltip": "Коли починається замовлення"
   }
 }

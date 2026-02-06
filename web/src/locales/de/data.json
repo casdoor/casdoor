@@ -878,7 +878,19 @@
     "Test buy page..": "Testkaufseite.",
     "There is no payment channel for this product.": "Es gibt keinen Zahlungskanal für dieses Produkt.",
     "This product is currently not in sale.": "Dieses Produkt steht derzeit nicht zum Verkauf.",
-    "WeChat Pay": "WeChat Pay"
+    "WeChat Pay": "WeChat Pay",
+    "Recharge options": "Aufladeoptionen",
+    "Recharge options - Tooltip": "Voreingestellte Aufladebeträge",
+    "Disable custom amount": "Benutzerdefinierten Betrag deaktivieren",
+    "Disable custom amount - Tooltip": "Ob benutzerdefinierte Aufladebeträge deaktiviert werden sollen",
+    "Select amount": "Betrag auswählen",
+    "Amount": "Betrag",
+    "Custom amount available": "Benutzerdefinierter Betrag verfügbar",
+    "Please add at least one recharge option when custom amount is disabled": "Bitte fügen Sie mindestens eine Aufladeoption hinzu, wenn der benutzerdefinierte Betrag deaktiviert ist",
+    "Enter preset amounts": "Voreingestellte Beträge eingeben",
+    "This product is currently not purchasable (No options available)": "Dieses Produkt ist derzeit nicht käuflich (Keine Optionen verfügbar)",
+    "Order created successfully": "Bestellung erfolgreich erstellt",
+    "Failed to create order": "Bestellung konnte nicht erstellt werden"
   },
   "provider": {
     "Access key": "Access-Key",
@@ -1271,7 +1283,7 @@
     "Address line": "Adresszeile",
     "Addresses": "Adressen",
     "Addresses - Tooltip": "Mehrere Adressen des Benutzers",
-    "Tag": "Tag",
+    "Tag": "Markierung",
     "Line 1": "Zeile 1",
     "Line 2": "Zeile 2",
     "City": "Stadt",
@@ -1364,7 +1376,6 @@
     "Set Password": "Passwort festlegen",
     "Set new profile picture": "Neues Profilbild festlegen",
     "Set password...": "Passwort festlegen...",
-    "Tag": "Markierung",
     "Tag - Tooltip": "Tags des Benutzers",
     "The password must contain at least one special character": "Das Passwort muss mindestens ein Sonderzeichen enthalten.",
     "The password must contain at least one uppercase letter, one lowercase letter and one digit": "Das Passwort muss mindestens einen Großbuchstaben, einen Kleinbuchstaben und eine Ziffer enthalten.",
@@ -1411,5 +1422,17 @@
     "Single org only": "Nur einzelne Organisation",
     "Single org only - Tooltip": "Nur in der Organisation auslösen, zu der der Webhook gehört",
     "Value": "Wert"
+  },
+  "order": {
+    "Edit Order": "Bestellung bearbeiten",
+    "End time": "Endzeit",
+    "End time - Tooltip": "Wann die Bestellung abläuft (z. B. bei zeitlich begrenzten Käufen)",
+    "New Order": "Neue Bestellung",
+    "Payment": "Zahlung",
+    "Payment - Tooltip": "Die mit dieser Bestellung verbundene Zahlung",
+    "Product": "Produkt",
+    "Product - Tooltip": "Das gekaufte Produkt",
+    "Start time": "Startzeit",
+    "Start time - Tooltip": "Wann die Bestellung beginnt"
   }
 }

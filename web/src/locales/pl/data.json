@@ -878,7 +878,19 @@
     "Test buy page..": "Testowa strona zakupu...",
     "There is no payment channel for this product.": "Brak kanału płatności dla tego produktu.",
     "This product is currently not in sale.": "Ten produkt jest obecnie niedostępny.",
-    "WeChat Pay": "Płatność WeChat"
+    "WeChat Pay": "Płatność WeChat",
+    "Recharge options": "Opcje doładowania",
+    "Recharge options - Tooltip": "Wstępnie ustawione kwoty doładowania",
+    "Disable custom amount": "Wyłącz niestandardową kwotę",
+    "Disable custom amount - Tooltip": "Czy wyłączyć niestandardowe kwoty doładowania",
+    "Select amount": "Wybierz kwotę",
+    "Amount": "Kwota",
+    "Custom amount available": "Niestandardowa kwota dostępna",
+    "Please add at least one recharge option when custom amount is disabled": "Proszę dodać przynajmniej jedną opcję doładowania, gdy niestandardowa kwota jest wyłączona",
+    "Enter preset amounts": "Wprowadź wstępnie ustawione kwoty",
+    "This product is currently not purchasable (No options available)": "Ten produkt nie jest obecnie dostępny do zakupu (Brak dostępnych opcji)",
+    "Order created successfully": "Zamówienie utworzono pomyślnie",
+    "Failed to create order": "Nie udało się utworzyć zamówienia"
   },
   "provider": {
     "Access key": "Klucz dostępu",
@@ -1271,7 +1283,7 @@
     "Address line": "Linia adresu",
     "Addresses": "Adresy",
     "Addresses - Tooltip": "Wiele adresów użytkownika",
-    "Tag": "Tag",
+    "Tag": "Znacznik",
     "Line 1": "Linia 1",
     "Line 2": "Linia 2",
     "City": "Miasto",
@@ -1364,7 +1376,6 @@
     "Set Password": "Ustaw hasło",
     "Set new profile picture": "Ustaw nowe zdjęcie profilowe",
     "Set password...": "Ustaw hasło...",
-    "Tag": "Znacznik",
     "Tag - Tooltip": "Znacznik użytkownika",
     "The password must contain at least one special character": "Hasło musi zawierać co najmniej jeden znak specjalny",
     "The password must contain at least one uppercase letter, one lowercase letter and one digit": "Hasło musi zawierać co najmniej jedną wielką literę, jedną małą literę i jedną cyfrę",
@@ -1411,5 +1422,17 @@
     "Single org only": "Tylko jedna organizacja",
     "Single org only - Tooltip": "Wyzwalane tylko w organizacji, do której należy webhook",
     "Value": "Wartość"
+  },
+  "order": {
+    "Edit Order": "Edytuj zamówienie",
+    "End time": "Czas zakończenia",
+    "End time - Tooltip": "Kiedy zamówienie wygasa (np. dla zakupów ograniczonych czasowo)",
+    "New Order": "Nowe zamówienie",
+    "Payment": "Płatność",
+    "Payment - Tooltip": "Płatność powiązana z tym zamówieniem",
+    "Product": "Produkt",
+    "Product - Tooltip": "Zakupiony produkt",
+    "Start time": "Czas rozpoczęcia",
+    "Start time - Tooltip": "Kiedy zamówienie się rozpoczyna"
   }
 }

@@ -878,7 +878,19 @@
     "Test buy page..": "テスト購入ページ。",
     "There is no payment channel for this product.": "この製品には支払いチャネルがありません。",
     "This product is currently not in sale.": "この製品は現在販売されていません。",
-    "WeChat Pay": "微信支付"
+    "WeChat Pay": "微信支付",
+    "Recharge options": "チャージオプション",
+    "Recharge options - Tooltip": "事前設定されたチャージ金額",
+    "Disable custom amount": "カスタム金額を無効にする",
+    "Disable custom amount - Tooltip": "カスタムチャージ金額を無効にするかどうか",
+    "Select amount": "金額を選択",
+    "Amount": "金額",
+    "Custom amount available": "カスタム金額が利用可能",
+    "Please add at least one recharge option when custom amount is disabled": "カスタム金額が無効な場合は、少なくとも1つのチャージオプションを追加してください",
+    "Enter preset amounts": "事前設定金額を入力",
+    "This product is currently not purchasable (No options available)": "この商品は現在購入できません（オプションがありません）",
+    "Order created successfully": "注文が正常に作成されました",
+    "Failed to create order": "注文の作成に失敗しました"
   },
   "provider": {
     "Access key": "アクセスキー",
@@ -1364,7 +1376,6 @@
     "Set Password": "パスワードを設定する",
     "Set new profile picture": "新しいプロフィール写真を設定する",
     "Set password...": "パスワードの設定...",
-    "Tag": "タグ",
     "Tag - Tooltip": "ユーザーのタグ",
     "The password must contain at least one special character": "パスワードには少なくとも1つの特殊文字が必要です",
     "The password must contain at least one uppercase letter, one lowercase letter and one digit": "パスワードには少なくとも1つの大文字、1つの小文字、1つの数字が必要です",
@@ -1411,5 +1422,17 @@
     "Single org only": "単一組織のみ",
     "Single org only - Tooltip": "Webhookが属する組織でのみトリガーされます",
     "Value": "値"
+  },
+  "order": {
+    "Edit Order": "注文を編集",
+    "End time": "終了時刻",
+    "End time - Tooltip": "注文の有効期限（例：期間限定購入の場合）",
+    "New Order": "新規注文",
+    "Payment": "支払い",
+    "Payment - Tooltip": "この注文に関連付けられた支払い",
+    "Product": "製品",
+    "Product - Tooltip": "購入された製品",
+    "Start time": "開始時刻",
+    "Start time - Tooltip": "注文が開始される時刻"
   }
 }

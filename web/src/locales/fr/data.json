@@ -878,7 +878,19 @@
     "Test buy page..": "Page d'achat de test.",
     "There is no payment channel for this product.": "Il n'y a aucun canal de paiement pour ce produit.",
     "This product is currently not in sale.": "Ce produit n'est actuellement pas en vente.",
-    "WeChat Pay": "WeChat Pay"
+    "WeChat Pay": "WeChat Pay",
+    "Recharge options": "Options de recharge",
+    "Recharge options - Tooltip": "Montants de recharge prédéfinis",
+    "Disable custom amount": "Désactiver le montant personnalisé",
+    "Disable custom amount - Tooltip": "S'il faut désactiver les montants de recharge personnalisés",
+    "Select amount": "Sélectionner le montant",
+    "Amount": "Montant",
+    "Custom amount available": "Montant personnalisé disponible",
+    "Please add at least one recharge option when custom amount is disabled": "Veuillez ajouter au moins une option de recharge lorsque le montant personnalisé est désactivé",
+    "Enter preset amounts": "Entrer les montants prédéfinis",
+    "This product is currently not purchasable (No options available)": "Ce produit n'est actuellement pas achetable (Aucune option disponible)",
+    "Order created successfully": "Commande créée avec succès",
+    "Failed to create order": "Échec de la création de la commande"
   },
   "provider": {
     "Access key": "Clé d'accès",
@@ -1364,7 +1376,6 @@
     "Set Password": "Définir le mot de passe",
     "Set new profile picture": "Modifier la photo de profil",
     "Set password...": "Définir le mot de passe...",
-    "Tag": "Étiquette",
     "Tag - Tooltip": "Étiquette du compte",
     "The password must contain at least one special character": "Le mot de passe doit contenir au moins un caractère spécial",
     "The password must contain at least one uppercase letter, one lowercase letter and one digit": "Le mot de passe doit contenir au moins une majuscule, une minuscule et un chiffre",
@@ -1411,5 +1422,17 @@
     "Single org only": "Seulement une organisation",
     "Single org only - Tooltip": "Déclenché uniquement dans l'organisation à laquelle appartient le webhook",
     "Value": "Valeur"
+  },
+  "order": {
+    "Edit Order": "Modifier la commande",
+    "End time": "Heure de fin",
+    "End time - Tooltip": "Quand la commande expire (par exemple, pour les achats à durée limitée)",
+    "New Order": "Nouvelle commande",
+    "Payment": "Paiement",
+    "Payment - Tooltip": "Le paiement associé à cette commande",
+    "Product": "Produit",
+    "Product - Tooltip": "Le produit qui a été acheté",
+    "Start time": "Heure de début",
+    "Start time - Tooltip": "Quand la commande commence"
   }
 }

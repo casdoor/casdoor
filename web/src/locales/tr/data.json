@@ -878,7 +878,19 @@
     "Test buy page..": "Test satın alım sayfası..",
     "There is no payment channel for this product.": "Bu ürün için ödeme kanalı yoktur.",
     "This product is currently not in sale.": "Bu ürün şu anda satışta değil.",
-    "WeChat Pay": "WeChat Ödeme"
+    "WeChat Pay": "WeChat Ödeme",
+    "Recharge options": "Yükleme seçenekleri",
+    "Recharge options - Tooltip": "Önceden ayarlanmış yükleme tutarları",
+    "Disable custom amount": "Özel tutarı devre dışı bırak",
+    "Disable custom amount - Tooltip": "Özel yükleme tutarlarının devre dışı bırakılıp bırakılmayacağı",
+    "Select amount": "Tutar seçin",
+    "Amount": "Tutar",
+    "Custom amount available": "Özel tutar mevcut",
+    "Please add at least one recharge option when custom amount is disabled": "Özel tutar devre dışı bırakıldığında lütfen en az bir yükleme seçeneği ekleyin",
+    "Enter preset amounts": "Önceden ayarlanmış tutarları girin",
+    "This product is currently not purchasable (No options available)": "Bu ürün şu anda satın alınamaz (Mevcut seçenek yok)",
+    "Order created successfully": "Sipariş başarıyla oluşturuldu",
+    "Failed to create order": "Sipariş oluşturulamadı"
   },
   "provider": {
     "Access key": "Erişim anahtarı",
@@ -1364,7 +1376,6 @@
     "Set Password": "Parola Ayarla",
     "Set new profile picture": "Yeni profil fotoğrafı ayarla",
     "Set password...": "Parola ayarla...",
-    "Tag": "Etiket",
     "Tag - Tooltip": "Kullanıcının etiketi",
     "The password must contain at least one special character": "Şifre en az bir özel karakter içermelidir",
     "The password must contain at least one uppercase letter, one lowercase letter and one digit": "Şifre en az bir büyük harf, bir küçük harf ve bir rakam içermelidir",
@@ -1411,5 +1422,17 @@
     "Single org only": "Yalnızca tek organizasyon",
     "Single org only - Tooltip": "Webhook'un ait olduğu organizasyonda yalnızca tetiklenir",
     "Value": "Değer"
+  },
+  "order": {
+    "Edit Order": "Siparişi Düzenle",
+    "End time": "Bitiş zamanı",
+    "End time - Tooltip": "Siparişin ne zaman sona ereceği (örneğin, süreli satın almalar için)",
+    "New Order": "Yeni Sipariş",
+    "Payment": "Ödeme",
+    "Payment - Tooltip": "Bu siparişle ilişkili ödeme",
+    "Product": "Ürün",
+    "Product - Tooltip": "Satın alınan ürün",
+    "Start time": "Başlangıç zamanı",
+    "Start time - Tooltip": "Siparişin ne zaman başladığı"
   }
 }
