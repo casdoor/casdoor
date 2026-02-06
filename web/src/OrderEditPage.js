@@ -36,6 +36,7 @@ class OrderEditPage extends React.Component {
       payments: [],
       mode: props.location.mode !== undefined ? props.location.mode : "edit",
     };
+    this.userSearchTimeout = null;
   }
 
   UNSAFE_componentWillMount() {
@@ -43,6 +44,12 @@ class OrderEditPage extends React.Component {
     this.getProducts();
     this.getUsers();
     this.getPayments();
+  }
+
+  componentWillUnmount() {
+    if (this.userSearchTimeout) {
+      clearTimeout(this.userSearchTimeout);
+    }
   }
 
   getOrder() {
@@ -72,18 +79,30 @@ class OrderEditPage extends React.Component {
       });
   }
 
-  getUsers() {
-    UserBackend.getUsers(this.state.organizationName)
+  getUsers(searchValue = "") {
+    // When searchValue is empty, field is also empty which tells backend to return results without filtering
+    const field = searchValue ? "name" : "";
+    const pageSize = String(Setting.MAX_PAGE_SIZE); // Always limit to MAX_PAGE_SIZE items for performance
+    UserBackend.getUsers(this.state.organizationName, "", pageSize, field, searchValue)
       .then((res) => {
         if (res.status === "ok") {
           this.setState({
-            users: res.data,
+            users: res.data || [],
           });
         } else {
           Setting.showMessage("error", `Failed to get users: ${res.msg}`);
         }
       });
   }
+
+  handleUserSearch = (searchValue) => {
+    if (this.userSearchTimeout) {
+      clearTimeout(this.userSearchTimeout);
+    }
+    this.userSearchTimeout = setTimeout(() => {
+      this.getUsers(searchValue);
+    }, Setting.SEARCH_DEBOUNCE_MS);
+  };
 
   getPayments() {
     PaymentBackend.getPayments(this.state.organizationName)
@@ -184,9 +203,13 @@ class OrderEditPage extends React.Component {
             {i18next.t("general:User")}:
           </Col>
           <Col span={22} >
-            <Select virtual={false} style={{width: "100%"}} value={this.state.order.user} disabled={isViewMode} onChange={(value) => {
-              this.updateOrderField("user", value);
-            }}>
+            <Select virtual={false} style={{width: "100%"}} value={this.state.order.user} disabled={isViewMode}
+              showSearch
+              filterOption={false}
+              onSearch={this.handleUserSearch}
+              onChange={(value) => {
+                this.updateOrderField("user", value);
+              }}>
               {
                 this.state.users?.map((user, index) => <Option key={index} value={user.name}>{user.name}</Option>)
               }

@@ -38,11 +38,22 @@ class PlanEditPage extends React.Component {
       paymentProviders: [],
       mode: props?.location?.mode ?? "edit",
     };
+    this.userSearchTimeout = null;
+    this.roleSearchTimeout = null;
   }
 
   UNSAFE_componentWillMount() {
     this.getPlan();
     this.getOrganizations();
+  }
+
+  componentWillUnmount() {
+    if (this.userSearchTimeout) {
+      clearTimeout(this.userSearchTimeout);
+    }
+    if (this.roleSearchTimeout) {
+      clearTimeout(this.roleSearchTimeout);
+    }
   }
 
   getPlan() {
@@ -63,8 +74,11 @@ class PlanEditPage extends React.Component {
       });
   }
 
-  getRoles(organizationName) {
-    RoleBackend.getRoles(organizationName)
+  getRoles(organizationName, searchValue = "") {
+    // When searchValue is empty, field is also empty which tells backend to return results without filtering
+    const field = searchValue ? "name" : "";
+    const pageSize = String(Setting.MAX_PAGE_SIZE); // Always limit to MAX_PAGE_SIZE items for performance
+    RoleBackend.getRoles(organizationName, "", pageSize, field, searchValue)
       .then((res) => {
         if (res.status === "error") {
           Setting.showMessage("error", res.msg);
@@ -72,13 +86,16 @@ class PlanEditPage extends React.Component {
         }
 
         this.setState({
-          roles: res.data,
+          roles: res.data || [],
         });
       });
   }
 
-  getUsers(organizationName) {
-    UserBackend.getUsers(organizationName)
+  getUsers(organizationName, searchValue = "") {
+    // When searchValue is empty, field is also empty which tells backend to return results without filtering
+    const field = searchValue ? "name" : "";
+    const pageSize = String(Setting.MAX_PAGE_SIZE); // Always limit to MAX_PAGE_SIZE items for performance
+    UserBackend.getUsers(organizationName, "", pageSize, field, searchValue)
       .then((res) => {
         if (res.status === "error") {
           Setting.showMessage("error", res.msg);
@@ -86,10 +103,28 @@ class PlanEditPage extends React.Component {
         }
 
         this.setState({
-          users: res.data,
+          users: res.data || [],
         });
       });
   }
+
+  handleUserSearch = (searchValue) => {
+    if (this.userSearchTimeout) {
+      clearTimeout(this.userSearchTimeout);
+    }
+    this.userSearchTimeout = setTimeout(() => {
+      this.getUsers(this.state.plan.owner, searchValue);
+    }, Setting.SEARCH_DEBOUNCE_MS);
+  };
+
+  handleRoleSearch = (searchValue) => {
+    if (this.roleSearchTimeout) {
+      clearTimeout(this.roleSearchTimeout);
+    }
+    this.roleSearchTimeout = setTimeout(() => {
+      this.getRoles(this.state.plan.owner, searchValue);
+    }, Setting.SEARCH_DEBOUNCE_MS);
+  };
 
   getPaymentProviders(organizationName) {
     ProviderBackend.getProviders(organizationName)
@@ -184,7 +219,11 @@ class PlanEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Role"), i18next.t("general:Role - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} style={{width: "100%"}} value={this.state.plan.role} disabled={isViewMode} onChange={(value => {this.updatePlanField("role", value);})}
+            <Select virtual={false} style={{width: "100%"}} value={this.state.plan.role} disabled={isViewMode}
+              showSearch
+              filterOption={false}
+              onSearch={this.handleRoleSearch}
+              onChange={(value => {this.updatePlanField("role", value);})}
               options={this.state.roles.map((role) => Setting.getOption(role.name, role.name))
               } />
           </Col>

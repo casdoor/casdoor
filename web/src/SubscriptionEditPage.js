@@ -39,11 +39,18 @@ class SubscriptionEditPage extends React.Component {
       providers: [],
       mode: props.location.mode !== undefined ? props.location.mode : "edit",
     };
+    this.userSearchTimeout = null;
   }
 
   UNSAFE_componentWillMount() {
     this.getSubscription();
     this.getOrganizations();
+  }
+
+  componentWillUnmount() {
+    if (this.userSearchTimeout) {
+      clearTimeout(this.userSearchTimeout);
+    }
   }
 
   getSubscription() {
@@ -87,8 +94,11 @@ class SubscriptionEditPage extends React.Component {
       });
   }
 
-  getUsers(organizationName) {
-    UserBackend.getUsers(organizationName)
+  getUsers(organizationName, searchValue = "") {
+    // When searchValue is empty, field is also empty which tells backend to return results without filtering
+    const field = searchValue ? "name" : "";
+    const pageSize = String(Setting.MAX_PAGE_SIZE); // Always limit to MAX_PAGE_SIZE items for performance
+    UserBackend.getUsers(organizationName, "", pageSize, field, searchValue)
       .then((res) => {
         if (res.status === "error") {
           Setting.showMessage("error", res.msg);
@@ -96,10 +106,19 @@ class SubscriptionEditPage extends React.Component {
         }
 
         this.setState({
-          users: res.data,
+          users: res.data || [],
         });
       });
   }
+
+  handleUserSearch = (searchValue) => {
+    if (this.userSearchTimeout) {
+      clearTimeout(this.userSearchTimeout);
+    }
+    this.userSearchTimeout = setTimeout(() => {
+      this.getUsers(this.state.subscription.owner, searchValue);
+    }, Setting.SEARCH_DEBOUNCE_MS);
+  };
 
   getOrganizations() {
     OrganizationBackend.getOrganizations("admin")
@@ -219,6 +238,9 @@ class SubscriptionEditPage extends React.Component {
           <Col span={22} >
             <Select style={{width: "100%"}} value={this.state.subscription.user}
               disabled={isViewMode}
+              showSearch
+              filterOption={false}
+              onSearch={this.handleUserSearch}
               onChange={(value => {this.updateSubscriptionField("user", value);})}
               options={this.state.users.map((user) => Setting.getOption(user.name, user.name))}
             />
