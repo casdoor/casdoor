@@ -109,6 +109,21 @@ type DingtalkDeptListResp struct {
 	RequestId string `json:"request_id"`
 }
 
+type DingtalkDepartment struct {
+	DeptId          int64  `json:"dept_id"`
+	Name            string `json:"name"`
+	ParentId        int64  `json:"parent_id"`
+	CreateDeptGroup bool   `json:"create_dept_group"`
+	AutoAddUser     bool   `json:"auto_add_user"`
+}
+
+type DingtalkDeptDetailResp struct {
+	Errcode   int                 `json:"errcode"`
+	Errmsg    string              `json:"errmsg"`
+	Result    *DingtalkDepartment `json:"result"`
+	RequestId string              `json:"request_id"`
+}
+
 // getDingtalkAccessToken gets access token from DingTalk API
 func (p *DingtalkSyncerProvider) getDingtalkAccessToken() (string, error) {
 	// syncer.User should be the appKey
@@ -192,6 +207,34 @@ func (p *DingtalkSyncerProvider) getDingtalkDepartments(accessToken string) ([]i
 	}
 
 	return deptIds, nil
+}
+
+// getDingtalkDepartmentDetails gets detailed department information
+func (p *DingtalkSyncerProvider) getDingtalkDepartmentDetails(accessToken string, deptId int64) (*DingtalkDepartment, error) {
+	apiUrl := fmt.Sprintf("https://oapi.dingtalk.com/topapi/v2/department/get?access_token=%s",
+		url.QueryEscape(accessToken))
+
+	postData := map[string]interface{}{
+		"dept_id": deptId,
+	}
+
+	data, err := p.postJSON(apiUrl, postData)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp DingtalkDeptDetailResp
+	err = json.Unmarshal(data, &resp)
+	if err != nil {
+		return nil, err
+	}
+
+	if resp.Errcode != 0 {
+		return nil, fmt.Errorf("failed to get department details for %d: errcode=%d, errmsg=%s",
+			deptId, resp.Errcode, resp.Errmsg)
+	}
+
+	return resp.Result, nil
 }
 
 // getDingtalkUsersFromDept gets users from a specific department
@@ -374,6 +417,11 @@ func (p *DingtalkSyncerProvider) dingtalkUserToOriginalUser(dingtalkUser *Dingta
 		Groups:      []string{},
 	}
 
+	// Add department IDs to Groups field
+	for _, deptId := range dingtalkUser.Department {
+		user.Groups = append(user.Groups, fmt.Sprintf("%d", deptId))
+	}
+
 	// Set IsForbidden based on active status (active=false means user is forbidden)
 	user.IsForbidden = !dingtalkUser.Active
 
@@ -385,14 +433,72 @@ func (p *DingtalkSyncerProvider) dingtalkUserToOriginalUser(dingtalkUser *Dingta
 	return user
 }
 
-// GetOriginalGroups retrieves all groups from DingTalk (not implemented yet)
+// GetOriginalGroups retrieves all groups (departments) from DingTalk
 func (p *DingtalkSyncerProvider) GetOriginalGroups() ([]*OriginalGroup, error) {
-	// TODO: Implement DingTalk group sync
-	return []*OriginalGroup{}, nil
+	// Get access token
+	accessToken, err := p.getDingtalkAccessToken()
+	if err != nil {
+		return nil, err
+	}
+
+	// Get all department IDs
+	deptIds, err := p.getDingtalkDepartments(accessToken)
+	if err != nil {
+		return nil, err
+	}
+
+	// Get detailed information for each department
+	originalGroups := []*OriginalGroup{}
+	for _, deptId := range deptIds {
+		dept, err := p.getDingtalkDepartmentDetails(accessToken, deptId)
+		if err != nil {
+			// Log error but continue with other departments
+			fmt.Printf("Warning: failed to get details for department %d: %v\n", deptId, err)
+			continue
+		}
+
+		originalGroup := p.dingtalkDepartmentToOriginalGroup(dept)
+		originalGroups = append(originalGroups, originalGroup)
+	}
+
+	return originalGroups, nil
 }
 
-// GetOriginalUserGroups retrieves the group IDs that a user belongs to (not implemented yet)
+// dingtalkDepartmentToOriginalGroup converts DingTalk department to Casdoor OriginalGroup
+func (p *DingtalkSyncerProvider) dingtalkDepartmentToOriginalGroup(dept *DingtalkDepartment) *OriginalGroup {
+	// Convert department ID to string for group ID
+	deptIdStr := fmt.Sprintf("%d", dept.DeptId)
+
+	return &OriginalGroup{
+		Id:          deptIdStr,
+		Name:        deptIdStr,    // Use ID as name for uniqueness
+		DisplayName: dept.Name,    // Use actual name as display name
+		Description: "",           // DingTalk doesn't provide description
+		Type:        "department", // Mark as department type
+		Manager:     "",           // DingTalk doesn't provide manager in dept details
+		Email:       "",           // DingTalk doesn't provide email for departments
+	}
+}
+
+// GetOriginalUserGroups retrieves the group (department) IDs that a user belongs to
 func (p *DingtalkSyncerProvider) GetOriginalUserGroups(userId string) ([]string, error) {
-	// TODO: Implement DingTalk user group membership sync
-	return []string{}, nil
+	// Get access token
+	accessToken, err := p.getDingtalkAccessToken()
+	if err != nil {
+		return nil, err
+	}
+
+	// Get detailed user information which includes department list
+	user, err := p.getDingtalkUserDetails(accessToken, userId)
+	if err != nil {
+		return nil, err
+	}
+
+	// Convert department IDs to strings
+	groupIds := []string{}
+	for _, deptId := range user.Department {
+		groupIds = append(groupIds, fmt.Sprintf("%d", deptId))
+	}
+
+	return groupIds, nil
 }
