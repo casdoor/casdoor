@@ -29,13 +29,13 @@ type Plan struct {
 	DisplayName string `xorm:"varchar(100)" json:"displayName"`
 	Description string `xorm:"varchar(100)" json:"description"`
 
-	Price            float64  `json:"price"`
-	Currency         string   `xorm:"varchar(100)" json:"currency"`
-	Period           string   `xorm:"varchar(100)" json:"period"`
-	Product          string   `xorm:"varchar(100)" json:"product"`
-	PaymentProviders []string `xorm:"varchar(100)" json:"paymentProviders"` // payment providers for related product
-	IsEnabled        bool     `json:"isEnabled"`
-	IsOneTimeSubscription bool `json:"isOneTimeSubscription"` // if true, a user can only have at most one subscription of this plan
+	Price                 float64  `json:"price"`
+	Currency              string   `xorm:"varchar(100)" json:"currency"`
+	Period                string   `xorm:"varchar(100)" json:"period"`
+	Product               string   `xorm:"varchar(100)" json:"product"`
+	PaymentProviders      []string `xorm:"varchar(100)" json:"paymentProviders"` // payment providers for related product
+	IsEnabled             bool     `json:"isEnabled"`
+	IsOneTimeSubscription bool     `json:"isOneTimeSubscription"` // if true, a user can only have at most one subscription of this plan
 
 	Role    string   `xorm:"varchar(100)" json:"role"`
 	Options []string `xorm:"-" json:"options"`
