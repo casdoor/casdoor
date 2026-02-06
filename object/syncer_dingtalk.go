@@ -468,10 +468,6 @@ func (p *DingtalkSyncerProvider) GetOriginalGroups() ([]*OriginalGroup, error) {
 func (p *DingtalkSyncerProvider) dingtalkDepartmentToOriginalGroup(dept *DingtalkDepartment) *OriginalGroup {
 	// Convert department ID to string for group ID
 	deptIdStr := fmt.Sprintf("%d", dept.DeptId)
-	parentIdStr := ""
-	if dept.ParentId != 0 {
-		parentIdStr = fmt.Sprintf("%d", dept.ParentId)
-	}
 
 	return &OriginalGroup{
 		Id:          deptIdStr,
