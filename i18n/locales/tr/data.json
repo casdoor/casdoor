@@ -2,7 +2,6 @@
   "account": {
     "Failed to add user": "Kullanıcı eklenemedi",
     "Get init score failed, error: %w": "Başlangıç puanı alınamadı, hata: %w",
-    "Please sign out first": "Lütfen önce çıkış yapın",
     "The application does not allow to sign up new account": "Uygulama yeni hesap kaydına izin vermiyor"
   },
   "auth": {
@@ -23,6 +22,7 @@
     "The login method: login with email is not enabled for the application": "Uygulama için e-posta ile giriş yöntemi etkin değil",
     "The login method: login with face is not enabled for the application": "Uygulama için yüz ile giriş yöntemi etkin değil",
     "The login method: login with password is not enabled for the application": "Şifre ile giriş yöntemi bu uygulama için etkin değil",
+    "The order: %s does not exist": "The order: %s does not exist",
     "The organization: %s does not exist": "Organizasyon: %s mevcut değil",
     "The organization: %s has disabled users to signin": "Organizasyon: %s kullanıcıların oturum açmasını devre dışı bıraktı",
     "The plan: %s does not exist": "Plan: %s mevcut değil",
@@ -57,11 +57,11 @@
     "Face data mismatch": "Yüz verisi uyuşmazlığı",
     "Failed to parse client IP: %s": "İstemci IP'si ayrıştırılamadı: %s",
     "FirstName cannot be blank": "Ad boş olamaz",
+    "Guest users must upgrade their account by setting a username and password before they can sign in directly": "Guest users must upgrade their account by setting a username and password before they can sign in directly",
     "Invitation code cannot be blank": "Davet kodu boş olamaz",
     "Invitation code exhausted": "Davet kodu kullanım dışı",
     "Invitation code is invalid": "Davet kodu geçersiz",
     "Invitation code suspended": "Davet kodu askıya alındı",
-    "LDAP user name or password incorrect": "LDAP kullanıcı adı veya şifre yanlış",
     "LastName cannot be blank": "Soyad boş olamaz",
     "Multiple accounts with same uid, please check your ldap server": "Aynı uid'ye sahip birden fazla hesap, lütfen ldap sunucunuzu kontrol edin",
     "Organization does not exist": "Organizasyon bulunamadı",
@@ -106,11 +106,19 @@
   "general": {
     "Failed to import groups": "Gruplar içe aktarılamadı",
     "Failed to import users": "Kullanıcılar içe aktarılamadı",
+    "Insufficient balance: new balance %v would be below credit limit %v": "Insufficient balance: new balance %v would be below credit limit %v",
+    "Insufficient balance: new organization balance %v would be below credit limit %v": "Insufficient balance: new organization balance %v would be below credit limit %v",
     "Missing parameter": "Eksik parametre",
     "Only admin user can specify user": "Yalnızca yönetici kullanıcı kullanıcı belirleyebilir",
     "Please login first": "Lütfen önce giriş yapın",
+    "The LDAP: %s does not exist": "The LDAP: %s does not exist",
+    "The application: %s does not exist": "The application: %s does not exist",
+    "The organization: %s does not exist": "The organization: %s does not exist",
     "The organization: %s should have one application at least": "Organizasyon: %s en az bir uygulamaya sahip olmalı",
+    "The syncer: %s does not exist": "The syncer: %s does not exist",
     "The user: %s doesn't exist": "Kullanıcı: %s bulunamadı",
+    "The user: %s is not found": "The user: %s is not found",
+    "User is required for User category transaction": "User is required for User category transaction",
     "Wrong userId": "Yanlış kullanıcı kimliği",
     "don't support captchaProvider: ": "captchaProvider desteklenmiyor: ",
     "this operation is not allowed in demo mode": "bu işlem demo modunda izin verilmiyor",
@@ -139,8 +147,15 @@
   "permission": {
     "The permission: \"%s\" doesn't exist": "İzin: \"%s\" mevcut değil"
   },
+  "product": {
+    "Product list cannot be empty": "Product list cannot be empty"
+  },
   "provider": {
+    "Failed to initialize ID Verification provider": "Failed to initialize ID Verification provider",
     "Invalid application id": "Geçersiz uygulama id",
+    "No ID Verification provider configured": "No ID Verification provider configured",
+    "Provider is not an ID Verification provider": "Provider is not an ID Verification provider",
+    "The provider: %s does not exist": "The provider: %s does not exist",
     "the provider: %s does not exist": "provider: %s bulunamadı"
   },
   "resource": {
@@ -158,12 +173,18 @@
     "Invalid Email receivers: %s": "Geçersiz e-posta alıcıları: %s",
     "Invalid phone receivers: %s": "Geçersiz telefon alıcıları: %s"
   },
+  "session": {
+    "session id %s is the current session and cannot be deleted": "session id %s is the current session and cannot be deleted"
+  },
   "storage": {
     "The objectKey: %s is not allowed": "objectKey: %s izin verilmiyor",
     "The provider type: %s is not supported": "provider türü: %s desteklenmiyor"
   },
   "subscription": {
     "Error": "Hata"
+  },
+  "ticket": {
+    "Ticket not found": "Ticket not found"
   },
   "token": {
     "Grant_type: %s is not supported in this application": "Grant_type: %s bu uygulamada desteklenmiyor",
@@ -174,10 +195,14 @@
   },
   "user": {
     "Display name cannot be empty": "Görünen ad boş olamaz",
+    "ID card information and real name are required": "ID card information and real name are required",
+    "Identity verification failed": "Identity verification failed",
     "MFA email is enabled but email is empty": "MFA e-postası etkin ancak e-posta boş",
     "MFA phone is enabled but phone number is empty": "MFA telefonu etkin ancak telefon numarası boş",
     "New password cannot contain blank space.": "Yeni şifre boşluk içeremez.",
+    "No application found for user": "No application found for user",
     "The new password must be different from your current password": "Yeni şifre mevcut şifrenizden farklı olmalıdır",
+    "User is already verified": "User is already verified",
     "the user's owner and name should not be empty": "kullanıcının sahibi ve adı boş olmamalıdır"
   },
   "util": {
@@ -188,6 +213,7 @@
   "verification": {
     "Invalid captcha provider.": "Geçersiz captcha sağlayıcı.",
     "Phone number is invalid in your region %s": "Telefon numaranız bölgenizde geçersiz %s",
+    "The forgot password feature is disabled": "The forgot password feature is disabled",
     "The verification code has already been used!": "Doğrulama kodu zaten kullanılmış!",
     "The verification code has not been sent yet!": "Doğrulama kodu henüz gönderilmedi!",
     "Turing test failed.": "Turing testi başarısız.",
