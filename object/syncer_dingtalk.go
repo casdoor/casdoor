@@ -110,11 +110,11 @@ type DingtalkDeptListResp struct {
 }
 
 type DingtalkDepartment struct {
-	DeptId       int64  `json:"dept_id"`
-	Name         string `json:"name"`
-	ParentId     int64  `json:"parent_id"`
-	CreateDeptGroup bool `json:"create_dept_group"`
-	AutoAddUser  bool   `json:"auto_add_user"`
+	DeptId          int64  `json:"dept_id"`
+	Name            string `json:"name"`
+	ParentId        int64  `json:"parent_id"`
+	CreateDeptGroup bool   `json:"create_dept_group"`
+	AutoAddUser     bool   `json:"auto_add_user"`
 }
 
 type DingtalkDeptDetailResp struct {
@@ -471,12 +471,12 @@ func (p *DingtalkSyncerProvider) dingtalkDepartmentToOriginalGroup(dept *Dingtal
 
 	return &OriginalGroup{
 		Id:          deptIdStr,
-		Name:        deptIdStr,          // Use ID as name for uniqueness
-		DisplayName: dept.Name,          // Use actual name as display name
-		Description: "",                 // DingTalk doesn't provide description
-		Type:        "department",       // Mark as department type
-		Manager:     "",                 // DingTalk doesn't provide manager in dept details
-		Email:       "",                 // DingTalk doesn't provide email for departments
+		Name:        deptIdStr,    // Use ID as name for uniqueness
+		DisplayName: dept.Name,    // Use actual name as display name
+		Description: "",           // DingTalk doesn't provide description
+		Type:        "department", // Mark as department type
+		Manager:     "",           // DingTalk doesn't provide manager in dept details
+		Email:       "",           // DingTalk doesn't provide email for departments
 	}
 }
 
