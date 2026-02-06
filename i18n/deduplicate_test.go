@@ -24,11 +24,11 @@ import (
 
 // DuplicateInfo represents information about a duplicate key
 type DuplicateInfo struct {
-	Key           string
-	OldPrefix     string
-	NewPrefix     string
-	OldPrefixKey  string // e.g., "general:Submitter"
-	NewPrefixKey  string // e.g., "permission:Submitter"
+	Key          string
+	OldPrefix    string
+	NewPrefix    string
+	OldPrefixKey string // e.g., "general:Submitter"
+	NewPrefixKey string // e.g., "permission:Submitter"
 }
 
 // findDuplicateKeysInJSON finds duplicate keys across the entire JSON file
