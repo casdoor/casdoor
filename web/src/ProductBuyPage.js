@@ -389,7 +389,7 @@ class ProductBuyPage extends React.Component {
           disabled={this.state.isPlacingOrder || isRechargeUnpurchasable || isAmountZero}
           loading={this.state.isPlacingOrder}
         >
-          {i18next.t("order:Place Order")}
+          {i18next.t("general:Place Order")}
         </Button>
       </div>
     );
@@ -416,7 +416,7 @@ class ProductBuyPage extends React.Component {
                 {Setting.getLanguageText(product?.displayName)}
               </span>
             </Descriptions.Item>
-            <Descriptions.Item label={i18next.t("product:Detail")}><span style={{fontSize: 16}}>{Setting.getLanguageText(product?.detail)}</span></Descriptions.Item>
+            <Descriptions.Item label={i18next.t("general:Detail")}><span style={{fontSize: 16}}>{Setting.getLanguageText(product?.detail)}</span></Descriptions.Item>
             <Descriptions.Item label={i18next.t("user:Tag")}><span style={{fontSize: 16}}>{product?.tag}</span></Descriptions.Item>
             <Descriptions.Item label={i18next.t("product:SKU")}><span style={{fontSize: 16}}>{product?.name}</span></Descriptions.Item>
             <Descriptions.Item label={i18next.t("product:Image")} span={3}>
@@ -424,12 +424,12 @@ class ProductBuyPage extends React.Component {
             </Descriptions.Item>
             {
               product.isRecharge ? (
-                <Descriptions.Item span={3} label={i18next.t("product:Price")}>
+                <Descriptions.Item span={3} label={i18next.t("order:Price")}>
                   {this.renderRechargeInput(product)}
                 </Descriptions.Item>
               ) : (
                 <React.Fragment>
-                  <Descriptions.Item label={i18next.t("product:Price")}>
+                  <Descriptions.Item label={i18next.t("order:Price")}>
                     <span style={{fontSize: 28, color: "red", fontWeight: "bold"}}>
                       {
                         this.getPrice(product)
@@ -441,7 +441,7 @@ class ProductBuyPage extends React.Component {
                 </React.Fragment>
               )
             }
-            <Descriptions.Item label={i18next.t("order:Place Order")} span={3}>
+            <Descriptions.Item label={i18next.t("general:Place Order")} span={3}>
               <div style={{display: "flex", justifyContent: "center", alignItems: "center", minHeight: "80px"}}>
                 {placeOrderButton}
               </div>

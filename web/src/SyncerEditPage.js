@@ -753,7 +753,7 @@ class SyncerEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("provider:Type"), i18next.t("provider:Type - Tooltip"))} :
+            {Setting.getLabel(i18next.t("general:Type"), i18next.t("cert:Type - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Select virtual={false} style={{width: "100%"}} value={this.state.syncer.type} onChange={(value => {
@@ -906,7 +906,7 @@ class SyncerEditPage extends React.Component {
           this.state.syncer.type === "WeCom" || this.state.syncer.type === "Azure AD" || this.state.syncer.type === "Google Workspace" || this.state.syncer.type === "DingTalk" || this.state.syncer.type === "Lark" || this.state.syncer.type === "Okta" || this.state.syncer.type === "SCIM" ? null : (
             <Row style={{marginTop: "20px"}} >
               <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                {Setting.getLabel(this.state.syncer.type === "Active Directory" ? i18next.t("syncer:Base DN") : i18next.t("syncer:Database"), i18next.t("syncer:Database - Tooltip"))} :
+                {Setting.getLabel(this.state.syncer.type === "Active Directory" ? i18next.t("ldap:Base DN") : i18next.t("syncer:Database"), i18next.t("syncer:Database - Tooltip"))} :
               </Col>
               <Col span={22} >
                 <Input value={this.state.syncer.database} onChange={e => {

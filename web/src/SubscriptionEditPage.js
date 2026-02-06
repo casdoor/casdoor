@@ -287,7 +287,7 @@ class SubscriptionEditPage extends React.Component {
               this.updateSubscriptionField("state", value);
             })}
             options={[
-              {value: "Pending", name: i18next.t("subscription:Pending")},
+              {value: "Pending", name: i18next.t("permission:Pending")},
               {value: "Active", name: i18next.t("subscription:Active")},
               {value: "Upcoming", name: i18next.t("subscription:Upcoming")},
               {value: "Expired", name: i18next.t("subscription:Expired")},

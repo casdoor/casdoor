@@ -112,8 +112,6 @@
     "Only admin user can specify user": "Solo el usuario administrador puede especificar usuario",
     "Please login first": "Por favor, inicia sesión primero",
     "The LDAP: %s does not exist": "The LDAP: %s does not exist",
-    "The application: %s does not exist": "The application: %s does not exist",
-    "The organization: %s does not exist": "The organization: %s does not exist",
     "The organization: %s should have one application at least": "La organización: %s debe tener al menos una aplicación",
     "The syncer: %s does not exist": "The syncer: %s does not exist",
     "The user: %s doesn't exist": "El usuario: %s no existe",
@@ -155,7 +153,6 @@
     "Invalid application id": "Identificación de aplicación no válida",
     "No ID Verification provider configured": "No ID Verification provider configured",
     "Provider is not an ID Verification provider": "Provider is not an ID Verification provider",
-    "The provider: %s does not exist": "The provider: %s does not exist",
     "the provider: %s does not exist": "El proveedor: %s no existe"
   },
   "resource": {

@@ -112,8 +112,6 @@
     "Only admin user can specify user": "仅管理员用户可以指定用户",
     "Please login first": "请先登录",
     "The LDAP: %s does not exist": "The LDAP: %s does not exist",
-    "The application: %s does not exist": "The application: %s does not exist",
-    "The organization: %s does not exist": "The organization: %s does not exist",
     "The organization: %s should have one application at least": "组织: %s 应该拥有至少一个应用",
     "The syncer: %s does not exist": "The syncer: %s does not exist",
     "The user: %s doesn't exist": "用户: %s不存在",
@@ -155,7 +153,6 @@
     "Invalid application id": "无效的应用ID",
     "No ID Verification provider configured": "No ID Verification provider configured",
     "Provider is not an ID Verification provider": "Provider is not an ID Verification provider",
-    "The provider: %s does not exist": "The provider: %s does not exist",
     "the provider: %s does not exist": "提供商: %s不存在"
   },
   "resource": {
