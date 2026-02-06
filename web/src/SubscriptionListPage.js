@@ -165,7 +165,7 @@ class SubscriptionListPage extends BaseListPage {
         ...this.getColumnSearchProps("plan"),
         render: (text, record, index) => {
           return (
-            <Link to={`/plans/${record.owner}/${text}`}>
+            <Link to={`/plans/${text}`}>
               {text}
             </Link>
           );
@@ -179,7 +179,7 @@ class SubscriptionListPage extends BaseListPage {
         ...this.getColumnSearchProps("user"),
         render: (text, record, index) => {
           return (
-            <Link to={`/users/${record.owner}/${text}`}>
+            <Link to={`/users/${text}`}>
               {text}
             </Link>
           );
@@ -193,7 +193,7 @@ class SubscriptionListPage extends BaseListPage {
         ...this.getColumnSearchProps("payment"),
         render: (text, record, index) => {
           return (
-            <Link to={`/payments/${record.owner}/${text}`}>
+            <Link to={`/payments/${text}`}>
               {text}
             </Link>
           );

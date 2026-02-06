@@ -154,7 +154,7 @@ class PlanListPage extends BaseListPage {
         ...this.getColumnSearchProps("role"),
         render: (text, record, index) => {
           return (
-            <Link to={`/roles/${record.owner}/${text}`}>
+            <Link to={`/roles/${text}`}>
               {text}
             </Link>
           );
