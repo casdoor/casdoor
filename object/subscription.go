@@ -217,6 +217,26 @@ func GetSubscription(id string) (*Subscription, error) {
 	return getSubscription(owner, name)
 }
 
+func HasActiveSubscriptionForPlan(owner, userName, planName string) (bool, error) {
+	subscriptions := []*Subscription{}
+	err := ormer.Engine.Find(&subscriptions, &Subscription{Owner: owner, User: userName, Plan: planName})
+	if err != nil {
+		return false, err
+	}
+
+	for _, sub := range subscriptions {
+		err = sub.UpdateState()
+		if err != nil {
+			return false, err
+		}
+		// Check if subscription is active, upcoming, or pending (not expired, error, or suspended)
+		if sub.State == SubStateActive || sub.State == SubStateUpcoming || sub.State == SubStatePending {
+			return true, nil
+		}
+	}
+	return false, nil
+}
+
 func UpdateSubscription(id string, subscription *Subscription) (bool, error) {
 	owner, name, err := util.GetOwnerAndNameFromIdWithError(id)
 	if err != nil {

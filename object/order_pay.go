@@ -179,6 +179,17 @@ func PayOrder(providerName, host, paymentEnv string, order *Order, lang string) 
 			return nil, nil, fmt.Errorf("the plan: %s does not exist", productInfo.PlanName)
 		}
 
+		// Check if plan restricts user to one subscription
+		if plan.IsOneTimeSubscription {
+			hasSubscription, err := HasActiveSubscriptionForPlan(owner, user.Name, plan.Name)
+			if err != nil {
+				return nil, nil, err
+			}
+			if hasSubscription {
+				return nil, nil, fmt.Errorf("user already has an active subscription for plan: %s", plan.Name)
+			}
+		}
+
 		sub, err := NewSubscription(owner, user.Name, plan.Name, paymentName, plan.Period)
 		if err != nil {
 			return nil, nil, err
