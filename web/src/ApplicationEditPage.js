@@ -1357,7 +1357,7 @@ class ApplicationEditPage extends React.Component {
                   >
                     <Menu.Item key="basic">{i18next.t("application:Basic")}</Menu.Item>
                     <Menu.Item key="authentication">{i18next.t("application:Authentication")}</Menu.Item>
-                    <Menu.Item key="providers">{i18next.t("application:Providers")}</Menu.Item>
+                    <Menu.Item key="providers">{i18next.t("general:Providers")}</Menu.Item>
                     <Menu.Item key="ui-customization">{i18next.t("application:UI Customization")}</Menu.Item>
                     <Menu.Item key="security">{i18next.t("application:Security")}</Menu.Item>
                   </Menu>
