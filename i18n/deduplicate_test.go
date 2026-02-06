@@ -24,78 +24,76 @@ import (
 	"testing"
 )
 
+// DuplicateInfo represents information about a duplicate key
+type DuplicateInfo struct {
+	Key           string
+	OldPrefix     string
+	NewPrefix     string
+	OldPrefixKey  string // e.g., "general:Submitter"
+	NewPrefixKey  string // e.g., "permission:Submitter"
+}
+
 // findDuplicateKeysInJSON finds duplicate keys across the entire JSON file
-// Returns a list of duplicate keys found anywhere in the file
-func findDuplicateKeysInJSON(filePath string) ([]string, error) {
+// Returns a list of duplicate information showing old and new prefix:key pairs
+// The order is determined by the order keys appear in the JSON file (git history)
+func findDuplicateKeysInJSON(filePath string) ([]DuplicateInfo, error) {
 	// Read the JSON file
 	fileContent, err := os.ReadFile(filePath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read file %s: %w", filePath, err)
 	}
 
-	// Parse JSON into a map to check structure
-	var data map[string]map[string]string
-	if err := json.Unmarshal(fileContent, &data); err != nil {
-		return nil, fmt.Errorf("failed to parse JSON from %s: %w", filePath, err)
+	// Track the first occurrence of each key (prefix where it was first seen)
+	keyFirstPrefix := make(map[string]string)
+	var duplicates []DuplicateInfo
+
+	// To preserve order, we need to parse the JSON with order preservation
+	// We'll use a decoder to read through the top-level object
+	decoder := json.NewDecoder(bytes.NewReader(fileContent))
+
+	// Read the opening brace of the top-level object
+	token, err := decoder.Token()
+	if err != nil {
+		return nil, fmt.Errorf("failed to read token: %w", err)
+	}
+	if delim, ok := token.(json.Delim); !ok || delim != '{' {
+		return nil, fmt.Errorf("expected object start, got %v", token)
 	}
 
-	// Track all keys seen across the entire file
-	keySeen := make(map[string]bool)
-	var duplicates []string
-
-	// Decode the top-level object
-	var rawData map[string]json.RawMessage
-	if err := json.Unmarshal(fileContent, &rawData); err != nil {
-		return nil, fmt.Errorf("failed to decode JSON: %w", err)
-	}
-
-	// For each namespace, check all keys across the whole file
-	for _, rawNamespace := range rawData {
-		// Use a custom decoder to read all keys
-		decoder := json.NewDecoder(bytes.NewReader(rawNamespace))
-		
-		// Read the opening brace
+	// Read all namespaces in order
+	for decoder.More() {
+		// Read the namespace (prefix) name
 		token, err := decoder.Token()
 		if err != nil {
-			return nil, fmt.Errorf("failed to read token: %w", err)
-		}
-		if delim, ok := token.(json.Delim); !ok || delim != '{' {
-			return nil, fmt.Errorf("expected object start, got %v", token)
+			return nil, fmt.Errorf("failed to read namespace: %w", err)
 		}
 
-		// Read all key-value pairs
-		for decoder.More() {
-			// Read the key
-			token, err := decoder.Token()
-			if err != nil {
-				return nil, fmt.Errorf("failed to read key: %w", err)
-			}
-			
-			key, ok := token.(string)
-			if !ok {
-				return nil, fmt.Errorf("expected string key, got %v", token)
-			}
+		prefix, ok := token.(string)
+		if !ok {
+			return nil, fmt.Errorf("expected string namespace, got %v", token)
+		}
 
-			// Check if this key was already seen anywhere in the file
-			if keySeen[key] {
-				// Only add to duplicates list if not already there
-				alreadyRecorded := false
-				for _, dup := range duplicates {
-					if dup == key {
-						alreadyRecorded = true
-						break
-					}
-				}
-				if !alreadyRecorded {
-					duplicates = append(duplicates, key)
-				}
-			}
-			keySeen[key] = true
+		// Read the namespace object as raw message
+		var namespaceData map[string]string
+		if err := decoder.Decode(&namespaceData); err != nil {
+			return nil, fmt.Errorf("failed to decode namespace %s: %w", prefix, err)
+		}
 
-			// Skip the value
-			var value interface{}
-			if err := decoder.Decode(&value); err != nil {
-				return nil, fmt.Errorf("failed to decode value: %w", err)
+		// Now check each key in this namespace
+		for key := range namespaceData {
+			// Check if this key was already seen in a different prefix
+			if firstPrefix, exists := keyFirstPrefix[key]; exists {
+				// This is a duplicate - the key exists in another prefix
+				duplicates = append(duplicates, DuplicateInfo{
+					Key:          key,
+					OldPrefix:    firstPrefix,
+					NewPrefix:    prefix,
+					OldPrefixKey: fmt.Sprintf("%s:%s", firstPrefix, key),
+					NewPrefixKey: fmt.Sprintf("%s:%s", prefix, key),
+				})
+			} else {
+				// First time seeing this key, record the prefix
+				keyFirstPrefix[key] = prefix
 			}
 		}
 	}
@@ -116,8 +114,8 @@ func TestDeduplicateFrontendI18n(t *testing.T) {
 	// Print all duplicates and fail the test if any are found
 	if len(duplicates) > 0 {
 		t.Errorf("Found duplicate i18n keys in frontend file (%s):", filePath)
-		for _, key := range duplicates {
-			t.Errorf("  Duplicate key: '%s'", key)
+		for _, dup := range duplicates {
+			t.Errorf("  i18next.t(\"%s\") duplicates with i18next.t(\"%s\")", dup.NewPrefixKey, dup.OldPrefixKey)
 		}
 		t.Fail()
 	}
@@ -136,8 +134,8 @@ func TestDeduplicateBackendI18n(t *testing.T) {
 	// Print all duplicates and fail the test if any are found
 	if len(duplicates) > 0 {
 		t.Errorf("Found duplicate i18n keys in backend file (%s):", filePath)
-		for _, key := range duplicates {
-			t.Errorf("  Duplicate key: '%s'", key)
+		for _, dup := range duplicates {
+			t.Errorf("  i18n.Translate(\"%s\") duplicates with i18n.Translate(\"%s\")", dup.NewPrefixKey, dup.OldPrefixKey)
 		}
 		t.Fail()
 	}
