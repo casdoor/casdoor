@@ -180,7 +180,7 @@ func PayOrder(providerName, host, paymentEnv string, order *Order, lang string) 
 		}
 
 		// Check if plan restricts user to one subscription
-		if plan.IsOneTimeSubscription {
+		if plan.IsExclusive {
 			hasSubscription, err := HasActiveSubscriptionForPlan(owner, user.Name, plan.Name)
 			if err != nil {
 				return nil, nil, err

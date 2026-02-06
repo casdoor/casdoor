@@ -564,7 +564,7 @@
     "Physical": "实体组",
     "Show all": "显示全部",
     "Virtual": "虚拟组",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "您需要先删除所有子组。您可以在 [组织] -> [群组] 页面左侧的群组树中查看子组"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "您需要先删除所有子组。您可以在 [组织] -\u003e [群组] 页面左侧的群组树中查看子组"
   },
   "home": {
     "New users past 30 days": "过去 30 天新增的用户",
@@ -875,9 +875,7 @@
     "Related product": "对应的商品",
     "View Plan": "View Plan",
     "per month": "每月",
-    "per year": "每年",
-    "One-time subscription": "One-time subscription",
-    "One-time subscription - Tooltip": "If enabled, a user can only have at most one subscription of this plan"
+    "per year": "每年"
   },
   "pricing": {
     "Copy pricing page URL": "复制定价页面链接",

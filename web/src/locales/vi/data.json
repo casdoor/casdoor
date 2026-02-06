@@ -564,7 +564,7 @@
     "Physical": "Vật lý",
     "Show all": "Hiển thị tất cả",
     "Virtual": "Ảo",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Bạn cần xóa tất cả nhóm con trước. Bạn có thể xem các nhóm con trong cây nhóm bên trái của trang [Tổ chức] -> [Nhóm]"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "Bạn cần xóa tất cả nhóm con trước. Bạn có thể xem các nhóm con trong cây nhóm bên trái của trang [Tổ chức] -\u003e [Nhóm]"
   },
   "home": {
     "New users past 30 days": "Người dùng mới trong 30 ngày qua",
@@ -875,9 +875,7 @@
     "Related product": "Sản phẩm liên quan",
     "View Plan": "View Plan",
     "per month": "mỗi tháng",
-    "per year": "mỗi năm",
-    "One-time subscription": "One-time subscription",
-    "One-time subscription - Tooltip": "If enabled, a user can only have at most one subscription of this plan"
+    "per year": "mỗi năm"
   },
   "pricing": {
     "Copy pricing page URL": "Sao chép URL trang bảng giá",

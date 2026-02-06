@@ -564,7 +564,7 @@
     "Physical": "Físico",
     "Show all": "Mostrar todos",
     "Virtual": "Virtual",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Necesitas eliminar todos los subgrupos primero. Puedes ver los subgrupos en el árbol de grupos a la izquierda en la página [Organizaciones] -> [Grupos]"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "Necesitas eliminar todos los subgrupos primero. Puedes ver los subgrupos en el árbol de grupos a la izquierda en la página [Organizaciones] -\u003e [Grupos]"
   },
   "home": {
     "New users past 30 days": "Nuevos usuarios en los últimos 30 días",
@@ -875,9 +875,7 @@
     "Related product": "Producto relacionado",
     "View Plan": "View Plan",
     "per month": "por mes",
-    "per year": "por año",
-    "One-time subscription": "One-time subscription",
-    "One-time subscription - Tooltip": "If enabled, a user can only have at most one subscription of this plan"
+    "per year": "por año"
   },
   "pricing": {
     "Copy pricing page URL": "Copiar URL de la página de precios",

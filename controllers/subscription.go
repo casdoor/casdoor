@@ -158,7 +158,7 @@ func (c *ApiController) AddSubscription() {
 			c.ResponseError(err.Error())
 			return
 		}
-		if plan != nil && plan.IsOneTimeSubscription {
+		if plan != nil && plan.IsExclusive {
 			hasSubscription, err := object.HasActiveSubscriptionForPlan(subscription.Owner, subscription.User, subscription.Plan)
 			if err != nil {
 				c.ResponseError(err.Error())

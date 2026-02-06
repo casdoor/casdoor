@@ -262,11 +262,11 @@ class PlanEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2}>
-            {Setting.getLabel(i18next.t("plan:One-time subscription"), i18next.t("plan:One-time subscription - Tooltip"))} :
+            {Setting.getLabel("Is exclusive", "If enabled, a user can only have at most one subscription of this plan")} :
           </Col>
           <Col span={1} >
-            <Switch checked={this.state.plan.isOneTimeSubscription} disabled={isViewMode} onChange={checked => {
-              this.updatePlanField("isOneTimeSubscription", checked);
+            <Switch checked={this.state.plan.isExclusive} disabled={isViewMode} onChange={checked => {
+              this.updatePlanField("isExclusive", checked);
             }} />
           </Col>
         </Row>
