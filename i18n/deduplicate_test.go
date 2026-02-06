@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//go:build !skipCi
-
 package i18n
 
 import (
@@ -143,4 +141,3 @@ func TestDeduplicateBackendI18n(t *testing.T) {
 		t.Fail()
 	}
 }
-
