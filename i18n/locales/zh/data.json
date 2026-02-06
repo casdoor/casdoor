@@ -146,7 +146,7 @@
     "The permission: \"%s\" doesn't exist": "权限: \"%s\" 不存在"
   },
   "product": {
-    "Product list cannot be empty": "Product list cannot be empty"
+    "Product list cannot be empty": "产品列表不能为空"
   },
   "provider": {
     "Failed to initialize ID Verification provider": "Failed to initialize ID Verification provider",
@@ -171,7 +171,7 @@
     "Invalid phone receivers: %s": "无效的手机短信收信人: %s"
   },
   "session": {
-    "session id %s is the current session and cannot be deleted": "session id %s is the current session and cannot be deleted"
+    "session id %s is the current session and cannot be deleted": "会话 ID %s 是当前会话，无法删除"
   },
   "storage": {
     "The objectKey: %s is not allowed": "objectKey: %s被禁止",
@@ -181,7 +181,7 @@
     "Error": "错误"
   },
   "ticket": {
-    "Ticket not found": "Ticket not found"
+    "Ticket not found": "工单未找到"
   },
   "token": {
     "Grant_type: %s is not supported in this application": "该应用不支持Grant_type: %s",

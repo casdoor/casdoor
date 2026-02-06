@@ -564,7 +564,7 @@
     "Physical": "物理",
     "Show all": "すべて表示",
     "Virtual": "仮想",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "最初にすべてのサブグループを削除する必要があります。[組織] -\u003e [グループ]ページの左側のグループツリーでサブグループを確認できます"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "最初にすべてのサブグループを削除する必要があります。[組織] -> [グループ]ページの左側のグループツリーでサブグループを確認できます"
   },
   "home": {
     "New users past 30 days": "過去30日間の新規ユーザー",
@@ -732,17 +732,17 @@
     "New Model": "新しいモデル"
   },
   "order": {
-    "Cancel time": "Cancel time",
-    "Edit Order": "Edit Order",
-    "New Order": "New Order",
-    "Order not found": "Order not found",
-    "Pay": "Pay",
-    "Payment failed time": "Payment failed time",
-    "Payment time": "Payment time",
-    "Price": "Price",
-    "Return to Order List": "Return to Order List",
-    "Timeout time": "Timeout time",
-    "View Order": "View Order"
+    "Cancel time": "キャンセル時刻",
+    "Edit Order": "注文を編集",
+    "New Order": "新しい注文",
+    "Order not found": "注文が見つかりません",
+    "Pay": "支払う",
+    "Payment failed time": "支払い失敗時刻",
+    "Payment time": "支払い時刻",
+    "Price": "価格",
+    "Return to Order List": "注文リストに戻る",
+    "Timeout time": "タイムアウト時刻",
+    "View Order": "注文を表示"
   },
   "organization": {
     "Account items": "アカウントアイテム",
@@ -923,7 +923,7 @@
     "Please select a currency": "Please select a currency",
     "Please select at least one payment provider": "Please select at least one payment provider",
     "Processing payment...": "Processing payment...",
-    "Product list cannot be empty": "Product list cannot be empty",
+    "Product list cannot be empty": "製品リストは空にできません",
     "Quantity": "量",
     "Quantity - Tooltip": "製品の量",
     "Recharge options": "Recharge options",
@@ -1311,16 +1311,16 @@
     "Theme - Tooltip": "アプリケーションのスタイルテーマ"
   },
   "ticket": {
-    "Closed": "Closed",
-    "Edit Ticket": "Edit Ticket",
-    "In Progress": "In Progress",
-    "Messages": "Messages",
-    "New Ticket": "New Ticket",
-    "Open": "Open",
-    "Please enter a message": "Please enter a message",
-    "Press Ctrl+Enter to send": "Press Ctrl+Enter to send",
-    "Resolved": "Resolved",
-    "Type your message here...": "Type your message here..."
+    "Closed": "クローズ",
+    "Edit Ticket": "チケットを編集",
+    "In Progress": "進行中",
+    "Messages": "メッセージ",
+    "New Ticket": "新しいチケット",
+    "Open": "オープン",
+    "Please enter a message": "メッセージを入力してください",
+    "Press Ctrl+Enter to send": "Ctrl+Enterを押して送信",
+    "Resolved": "解決済み",
+    "Type your message here...": "ここにメッセージを入力してください..."
   },
   "token": {
     "Access token": "アクセストークン",

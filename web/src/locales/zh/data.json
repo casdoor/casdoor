@@ -564,7 +564,7 @@
     "Physical": "实体组",
     "Show all": "显示全部",
     "Virtual": "虚拟组",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "您需要先删除所有子组。您可以在 [组织] -\u003e [群组] 页面左侧的群组树中查看子组"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "您需要先删除所有子组。您可以在 [组织] -> [群组] 页面左侧的群组树中查看子组"
   },
   "home": {
     "New users past 30 days": "过去 30 天新增的用户",
@@ -732,17 +732,17 @@
     "New Model": "添加模型"
   },
   "order": {
-    "Cancel time": "Cancel time",
-    "Edit Order": "Edit Order",
-    "New Order": "New Order",
-    "Order not found": "Order not found",
-    "Pay": "Pay",
-    "Payment failed time": "Payment failed time",
-    "Payment time": "Payment time",
-    "Price": "Price",
-    "Return to Order List": "Return to Order List",
-    "Timeout time": "Timeout time",
-    "View Order": "View Order"
+    "Cancel time": "取消时间",
+    "Edit Order": "编辑订单",
+    "New Order": "新订单",
+    "Order not found": "订单未找到",
+    "Pay": "支付",
+    "Payment failed time": "支付失败时间",
+    "Payment time": "支付时间",
+    "Price": "价格",
+    "Return to Order List": "返回订单列表",
+    "Timeout time": "超时时间",
+    "View Order": "查看订单"
   },
   "organization": {
     "Account items": "个人页设置项",
@@ -923,7 +923,7 @@
     "Please select a currency": "Please select a currency",
     "Please select at least one payment provider": "Please select at least one payment provider",
     "Processing payment...": "Processing payment...",
-    "Product list cannot be empty": "Product list cannot be empty",
+    "Product list cannot be empty": "产品列表不能为空",
     "Quantity": "库存",
     "Quantity - Tooltip": "库存的数量",
     "Recharge options": "充值选项",
@@ -1311,16 +1311,16 @@
     "Theme - Tooltip": "应用的样式主题"
   },
   "ticket": {
-    "Closed": "Closed",
-    "Edit Ticket": "Edit Ticket",
-    "In Progress": "In Progress",
-    "Messages": "Messages",
-    "New Ticket": "New Ticket",
-    "Open": "Open",
-    "Please enter a message": "Please enter a message",
-    "Press Ctrl+Enter to send": "Press Ctrl+Enter to send",
-    "Resolved": "Resolved",
-    "Type your message here...": "Type your message here..."
+    "Closed": "已关闭",
+    "Edit Ticket": "编辑工单",
+    "In Progress": "进行中",
+    "Messages": "消息",
+    "New Ticket": "新工单",
+    "Open": "打开",
+    "Please enter a message": "请输入消息",
+    "Press Ctrl+Enter to send": "按 Ctrl+Enter 发送",
+    "Resolved": "已解决",
+    "Type your message here...": "在此输入您的消息..."
   },
   "token": {
     "Access token": "访问令牌",

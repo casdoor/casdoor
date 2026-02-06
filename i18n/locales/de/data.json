@@ -146,7 +146,7 @@
     "The permission: \"%s\" doesn't exist": "Die Berechtigung: \"%s\" existiert nicht"
   },
   "product": {
-    "Product list cannot be empty": "Product list cannot be empty"
+    "Product list cannot be empty": "Produktliste darf nicht leer sein"
   },
   "provider": {
     "Failed to initialize ID Verification provider": "Failed to initialize ID Verification provider",
@@ -171,7 +171,7 @@
     "Invalid phone receivers: %s": "Ungültige Telefonempfänger: %s"
   },
   "session": {
-    "session id %s is the current session and cannot be deleted": "session id %s is the current session and cannot be deleted"
+    "session id %s is the current session and cannot be deleted": "Sitzungs-ID %s ist die aktuelle Sitzung und kann nicht gelöscht werden"
   },
   "storage": {
     "The objectKey: %s is not allowed": "Der Objektschlüssel %s ist nicht erlaubt",
@@ -181,7 +181,7 @@
     "Error": "Fehler"
   },
   "ticket": {
-    "Ticket not found": "Ticket not found"
+    "Ticket not found": "Ticket nicht gefunden"
   },
   "token": {
     "Grant_type: %s is not supported in this application": "Grant_type: %s wird von dieser Anwendung nicht unterstützt",

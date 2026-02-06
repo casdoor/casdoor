@@ -564,7 +564,7 @@
     "Physical": "Fiziksel",
     "Show all": "Tümünü göster",
     "Virtual": "Sanal",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "Önce tüm alt grupları silmeniz gerekir. Alt grupları [Organizasyonlar] -\u003e [Gruplar] sayfasının sol grup ağacından görüntüleyebilirsiniz."
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Önce tüm alt grupları silmeniz gerekir. Alt grupları [Organizasyonlar] -> [Gruplar] sayfasının sol grup ağacından görüntüleyebilirsiniz."
   },
   "home": {
     "New users past 30 days": "Son 30 gündeki yeni kullanıcılar",
@@ -732,17 +732,17 @@
     "New Model": "New Model"
   },
   "order": {
-    "Cancel time": "Cancel time",
-    "Edit Order": "Edit Order",
-    "New Order": "New Order",
-    "Order not found": "Order not found",
-    "Pay": "Pay",
-    "Payment failed time": "Payment failed time",
-    "Payment time": "Payment time",
-    "Price": "Price",
-    "Return to Order List": "Return to Order List",
-    "Timeout time": "Timeout time",
-    "View Order": "View Order"
+    "Cancel time": "İptal zamanı",
+    "Edit Order": "Siparişi düzenle",
+    "New Order": "Yeni sipariş",
+    "Order not found": "Sipariş bulunamadı",
+    "Pay": "Öde",
+    "Payment failed time": "Ödeme başarısız zamanı",
+    "Payment time": "Ödeme zamanı",
+    "Price": "Fiyat",
+    "Return to Order List": "Sipariş listesine dön",
+    "Timeout time": "Zaman aşımı süresi",
+    "View Order": "Siparişi görüntüle"
   },
   "organization": {
     "Account items": "Hesap öğeleri",
@@ -923,7 +923,7 @@
     "Please select a currency": "Please select a currency",
     "Please select at least one payment provider": "Please select at least one payment provider",
     "Processing payment...": "Processing payment...",
-    "Product list cannot be empty": "Product list cannot be empty",
+    "Product list cannot be empty": "Ürün listesi boş olamaz",
     "Quantity": "Miktar",
     "Quantity - Tooltip": "Ürün miktarı",
     "Recharge options": "Recharge options",
@@ -1311,16 +1311,16 @@
     "Theme - Tooltip": "Uygulamanın stil teması"
   },
   "ticket": {
-    "Closed": "Closed",
-    "Edit Ticket": "Edit Ticket",
-    "In Progress": "In Progress",
-    "Messages": "Messages",
-    "New Ticket": "New Ticket",
-    "Open": "Open",
-    "Please enter a message": "Please enter a message",
-    "Press Ctrl+Enter to send": "Press Ctrl+Enter to send",
-    "Resolved": "Resolved",
-    "Type your message here...": "Type your message here..."
+    "Closed": "Kapalı",
+    "Edit Ticket": "Bileti düzenle",
+    "In Progress": "Devam ediyor",
+    "Messages": "Mesajlar",
+    "New Ticket": "Yeni bilet",
+    "Open": "Açık",
+    "Please enter a message": "Lütfen bir mesaj girin",
+    "Press Ctrl+Enter to send": "Göndermek için Ctrl+Enter'a basın",
+    "Resolved": "Çözüldü",
+    "Type your message here...": "Mesajınızı buraya yazın..."
   },
   "token": {
     "Access token": "Erişim jetonu",

@@ -146,7 +146,7 @@
     "The permission: \"%s\" doesn't exist": "Behörigheten: \"%s\" finns inte"
   },
   "product": {
-    "Product list cannot be empty": "Product list cannot be empty"
+    "Product list cannot be empty": "Список продуктів не може бути порожнім"
   },
   "provider": {
     "Failed to initialize ID Verification provider": "Failed to initialize ID Verification provider",
@@ -171,7 +171,7 @@
     "Invalid phone receivers: %s": "Недійсні отримувачі телефону: %s"
   },
   "session": {
-    "session id %s is the current session and cannot be deleted": "session id %s is the current session and cannot be deleted"
+    "session id %s is the current session and cannot be deleted": "ID сесії %s є поточною сесією і не може бути видалений"
   },
   "storage": {
     "The objectKey: %s is not allowed": "objectKey: %s не дозволено",
@@ -181,7 +181,7 @@
     "Error": "Помилка"
   },
   "ticket": {
-    "Ticket not found": "Ticket not found"
+    "Ticket not found": "Квиток не знайдено"
   },
   "token": {
     "Grant_type: %s is not supported in this application": "Grant_type: %s не підтримується в цьому додатку",

@@ -146,7 +146,7 @@
     "The permission: \"%s\" doesn't exist": "İzin: \"%s\" mevcut değil"
   },
   "product": {
-    "Product list cannot be empty": "Product list cannot be empty"
+    "Product list cannot be empty": "Ürün listesi boş olamaz"
   },
   "provider": {
     "Failed to initialize ID Verification provider": "Failed to initialize ID Verification provider",
@@ -171,7 +171,7 @@
     "Invalid phone receivers: %s": "Geçersiz telefon alıcıları: %s"
   },
   "session": {
-    "session id %s is the current session and cannot be deleted": "session id %s is the current session and cannot be deleted"
+    "session id %s is the current session and cannot be deleted": "Oturum kimliği %s mevcut oturumdur ve silinemez"
   },
   "storage": {
     "The objectKey: %s is not allowed": "objectKey: %s izin verilmiyor",
@@ -181,7 +181,7 @@
     "Error": "Hata"
   },
   "ticket": {
-    "Ticket not found": "Ticket not found"
+    "Ticket not found": "Bilet bulunamadı"
   },
   "token": {
     "Grant_type: %s is not supported in this application": "Grant_type: %s bu uygulamada desteklenmiyor",

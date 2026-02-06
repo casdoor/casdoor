@@ -564,7 +564,7 @@
     "Physical": "Physique",
     "Show all": "Afficher tout",
     "Virtual": "Virtuel",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "Vous devez d'abord supprimer tous les sous-groupes. Vous pouvez voir les sous-groupes dans l'arborescence des groupes à gauche de la page [Organisations] -\u003e [Groupes]"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Vous devez d'abord supprimer tous les sous-groupes. Vous pouvez voir les sous-groupes dans l'arborescence des groupes à gauche de la page [Organisations] -> [Groupes]"
   },
   "home": {
     "New users past 30 days": "Nouveaux utilisateurs ces 30 derniers jours",
@@ -732,17 +732,17 @@
     "New Model": "Nouveau modèle"
   },
   "order": {
-    "Cancel time": "Cancel time",
-    "Edit Order": "Edit Order",
-    "New Order": "New Order",
-    "Order not found": "Order not found",
-    "Pay": "Pay",
-    "Payment failed time": "Payment failed time",
-    "Payment time": "Payment time",
-    "Price": "Price",
-    "Return to Order List": "Return to Order List",
-    "Timeout time": "Timeout time",
-    "View Order": "View Order"
+    "Cancel time": "Heure d'annulation",
+    "Edit Order": "Modifier la commande",
+    "New Order": "Nouvelle commande",
+    "Order not found": "Commande introuvable",
+    "Pay": "Payer",
+    "Payment failed time": "Heure d'échec du paiement",
+    "Payment time": "Heure de paiement",
+    "Price": "Prix",
+    "Return to Order List": "Retour à la liste des commandes",
+    "Timeout time": "Délai d'expiration",
+    "View Order": "Voir la commande"
   },
   "organization": {
     "Account items": "Champs du compte",
@@ -923,7 +923,7 @@
     "Please select a currency": "Please select a currency",
     "Please select at least one payment provider": "Please select at least one payment provider",
     "Processing payment...": "Processing payment...",
-    "Product list cannot be empty": "Product list cannot be empty",
+    "Product list cannot be empty": "La liste de produits ne peut pas être vide",
     "Quantity": "Quantité",
     "Quantity - Tooltip": "Quantité de produit",
     "Recharge options": "Recharge options",
@@ -1311,16 +1311,16 @@
     "Theme - Tooltip": "Thème de style de l'application"
   },
   "ticket": {
-    "Closed": "Closed",
-    "Edit Ticket": "Edit Ticket",
-    "In Progress": "In Progress",
+    "Closed": "Fermé",
+    "Edit Ticket": "Modifier le ticket",
+    "In Progress": "En cours",
     "Messages": "Messages",
-    "New Ticket": "New Ticket",
-    "Open": "Open",
-    "Please enter a message": "Please enter a message",
-    "Press Ctrl+Enter to send": "Press Ctrl+Enter to send",
-    "Resolved": "Resolved",
-    "Type your message here...": "Type your message here..."
+    "New Ticket": "Nouveau ticket",
+    "Open": "Ouvert",
+    "Please enter a message": "Veuillez saisir un message",
+    "Press Ctrl+Enter to send": "Appuyez sur Ctrl+Entrée pour envoyer",
+    "Resolved": "Résolu",
+    "Type your message here...": "Tapez votre message ici..."
   },
   "token": {
     "Access token": "Token d'accès",

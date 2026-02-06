@@ -564,7 +564,7 @@
     "Physical": "фізичний",
     "Show all": "Покажи все",
     "Virtual": "Віртуальний",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "Спочатку потрібно видалити всі підгрупи. Підгрупи можна переглянути у лівому дереві груп на сторінці [Організації] -\u003e [Групи]"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Спочатку потрібно видалити всі підгрупи. Підгрупи можна переглянути у лівому дереві груп на сторінці [Організації] -> [Групи]"
   },
   "home": {
     "New users past 30 days": "Нові користувачі за останні 30 днів",
@@ -732,17 +732,17 @@
     "New Model": "Нова модель"
   },
   "order": {
-    "Cancel time": "Cancel time",
-    "Edit Order": "Edit Order",
-    "New Order": "New Order",
-    "Order not found": "Order not found",
-    "Pay": "Pay",
-    "Payment failed time": "Payment failed time",
-    "Payment time": "Payment time",
-    "Price": "Price",
-    "Return to Order List": "Return to Order List",
-    "Timeout time": "Timeout time",
-    "View Order": "View Order"
+    "Cancel time": "Час скасування",
+    "Edit Order": "Редагувати замовлення",
+    "New Order": "Нове замовлення",
+    "Order not found": "Замовлення не знайдено",
+    "Pay": "Сплатити",
+    "Payment failed time": "Час невдалої оплати",
+    "Payment time": "Час оплати",
+    "Price": "Ціна",
+    "Return to Order List": "Повернутися до списку замовлень",
+    "Timeout time": "Час очікування",
+    "View Order": "Переглянути замовлення"
   },
   "organization": {
     "Account items": "Елементи облікового запису",
@@ -923,7 +923,7 @@
     "Please select a currency": "Please select a currency",
     "Please select at least one payment provider": "Please select at least one payment provider",
     "Processing payment...": "Processing payment...",
-    "Product list cannot be empty": "Product list cannot be empty",
+    "Product list cannot be empty": "Список продуктів не може бути порожнім",
     "Quantity": "Кількість",
     "Quantity - Tooltip": "Кількість товару",
     "Recharge options": "Recharge options",
@@ -1311,16 +1311,16 @@
     "Theme - Tooltip": "Тема стилю програми"
   },
   "ticket": {
-    "Closed": "Closed",
-    "Edit Ticket": "Edit Ticket",
-    "In Progress": "In Progress",
-    "Messages": "Messages",
-    "New Ticket": "New Ticket",
-    "Open": "Open",
-    "Please enter a message": "Please enter a message",
-    "Press Ctrl+Enter to send": "Press Ctrl+Enter to send",
-    "Resolved": "Resolved",
-    "Type your message here...": "Type your message here..."
+    "Closed": "Закрито",
+    "Edit Ticket": "Редагувати квиток",
+    "In Progress": "В процесі",
+    "Messages": "Повідомлення",
+    "New Ticket": "Новий квиток",
+    "Open": "Відкрито",
+    "Please enter a message": "Будь ласка, введіть повідомлення",
+    "Press Ctrl+Enter to send": "Натисніть Ctrl+Enter для відправки",
+    "Resolved": "Вирішено",
+    "Type your message here...": "Введіть ваше повідомлення тут..."
   },
   "token": {
     "Access token": "Маркер доступу",

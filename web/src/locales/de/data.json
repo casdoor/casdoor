@@ -564,7 +564,7 @@
     "Physical": "Physisch",
     "Show all": "Alle anzeigen",
     "Virtual": "Virtuell",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "Sie müssen zuerst alle Untergruppen löschen. Sie können die Untergruppen im linken Gruppenbaum unter [Organisationen] -\u003e [Gruppen] anzeigen."
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Sie müssen zuerst alle Untergruppen löschen. Sie können die Untergruppen im linken Gruppenbaum unter [Organisationen] -> [Gruppen] anzeigen."
   },
   "home": {
     "New users past 30 days": "Neue Benutzer der letzten 30 Tage",
@@ -732,17 +732,17 @@
     "New Model": "Neues Modell"
   },
   "order": {
-    "Cancel time": "Cancel time",
-    "Edit Order": "Edit Order",
-    "New Order": "New Order",
-    "Order not found": "Order not found",
-    "Pay": "Pay",
-    "Payment failed time": "Payment failed time",
-    "Payment time": "Payment time",
-    "Price": "Price",
-    "Return to Order List": "Return to Order List",
-    "Timeout time": "Timeout time",
-    "View Order": "View Order"
+    "Cancel time": "Stornierungszeit",
+    "Edit Order": "Bestellung bearbeiten",
+    "New Order": "Neue Bestellung",
+    "Order not found": "Bestellung nicht gefunden",
+    "Pay": "Bezahlen",
+    "Payment failed time": "Zahlungsfehlschlagzeit",
+    "Payment time": "Zahlungszeit",
+    "Price": "Preis",
+    "Return to Order List": "Zurück zur Bestellliste",
+    "Timeout time": "Zeitüberschreitungszeit",
+    "View Order": "Bestellung ansehen"
   },
   "organization": {
     "Account items": "Konto Items",
@@ -923,7 +923,7 @@
     "Please select a currency": "Please select a currency",
     "Please select at least one payment provider": "Please select at least one payment provider",
     "Processing payment...": "Processing payment...",
-    "Product list cannot be empty": "Product list cannot be empty",
+    "Product list cannot be empty": "Produktliste darf nicht leer sein",
     "Quantity": "Menge",
     "Quantity - Tooltip": "Menge des Produkts",
     "Recharge options": "Recharge options",
@@ -1311,16 +1311,16 @@
     "Theme - Tooltip": "Stiltheme der Anwendung"
   },
   "ticket": {
-    "Closed": "Closed",
-    "Edit Ticket": "Edit Ticket",
-    "In Progress": "In Progress",
-    "Messages": "Messages",
-    "New Ticket": "New Ticket",
-    "Open": "Open",
-    "Please enter a message": "Please enter a message",
-    "Press Ctrl+Enter to send": "Press Ctrl+Enter to send",
-    "Resolved": "Resolved",
-    "Type your message here...": "Type your message here..."
+    "Closed": "Geschlossen",
+    "Edit Ticket": "Ticket bearbeiten",
+    "In Progress": "In Bearbeitung",
+    "Messages": "Nachrichten",
+    "New Ticket": "Neues Ticket",
+    "Open": "Offen",
+    "Please enter a message": "Bitte geben Sie eine Nachricht ein",
+    "Press Ctrl+Enter to send": "Drücken Sie Strg+Enter zum Senden",
+    "Resolved": "Gelöst",
+    "Type your message here...": "Geben Sie hier Ihre Nachricht ein..."
   },
   "token": {
     "Access token": "Access-Token",

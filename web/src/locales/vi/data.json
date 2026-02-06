@@ -564,7 +564,7 @@
     "Physical": "Vật lý",
     "Show all": "Hiển thị tất cả",
     "Virtual": "Ảo",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "Bạn cần xóa tất cả nhóm con trước. Bạn có thể xem các nhóm con trong cây nhóm bên trái của trang [Tổ chức] -\u003e [Nhóm]"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Bạn cần xóa tất cả nhóm con trước. Bạn có thể xem các nhóm con trong cây nhóm bên trái của trang [Tổ chức] -> [Nhóm]"
   },
   "home": {
     "New users past 30 days": "Người dùng mới trong 30 ngày qua",
@@ -732,17 +732,17 @@
     "New Model": "Mô hình mới"
   },
   "order": {
-    "Cancel time": "Cancel time",
-    "Edit Order": "Edit Order",
-    "New Order": "New Order",
-    "Order not found": "Order not found",
-    "Pay": "Pay",
-    "Payment failed time": "Payment failed time",
-    "Payment time": "Payment time",
-    "Price": "Price",
-    "Return to Order List": "Return to Order List",
-    "Timeout time": "Timeout time",
-    "View Order": "View Order"
+    "Cancel time": "Thời gian hủy",
+    "Edit Order": "Chỉnh sửa đơn hàng",
+    "New Order": "Đơn hàng mới",
+    "Order not found": "Không tìm thấy đơn hàng",
+    "Pay": "Thanh toán",
+    "Payment failed time": "Thời gian thanh toán thất bại",
+    "Payment time": "Thời gian thanh toán",
+    "Price": "Giá",
+    "Return to Order List": "Quay lại danh sách đơn hàng",
+    "Timeout time": "Thời gian hết hạn",
+    "View Order": "Xem đơn hàng"
   },
   "organization": {
     "Account items": "Mục tài khoản",
@@ -923,7 +923,7 @@
     "Please select a currency": "Please select a currency",
     "Please select at least one payment provider": "Please select at least one payment provider",
     "Processing payment...": "Processing payment...",
-    "Product list cannot be empty": "Product list cannot be empty",
+    "Product list cannot be empty": "Danh sách sản phẩm không được để trống",
     "Quantity": "Số lượng",
     "Quantity - Tooltip": "Số lượng sản phẩm",
     "Recharge options": "Recharge options",
@@ -1311,16 +1311,16 @@
     "Theme - Tooltip": "Trang trí giao diện của ứng dụng"
   },
   "ticket": {
-    "Closed": "Closed",
-    "Edit Ticket": "Edit Ticket",
-    "In Progress": "In Progress",
-    "Messages": "Messages",
-    "New Ticket": "New Ticket",
-    "Open": "Open",
-    "Please enter a message": "Please enter a message",
-    "Press Ctrl+Enter to send": "Press Ctrl+Enter to send",
-    "Resolved": "Resolved",
-    "Type your message here...": "Type your message here..."
+    "Closed": "Đã đóng",
+    "Edit Ticket": "Chỉnh sửa vé",
+    "In Progress": "Đang xử lý",
+    "Messages": "Tin nhắn",
+    "New Ticket": "Vé mới",
+    "Open": "Mở",
+    "Please enter a message": "Vui lòng nhập tin nhắn",
+    "Press Ctrl+Enter to send": "Nhấn Ctrl+Enter để gửi",
+    "Resolved": "Đã giải quyết",
+    "Type your message here...": "Nhập tin nhắn của bạn ở đây..."
   },
   "token": {
     "Access token": "Mã thông báo truy cập",

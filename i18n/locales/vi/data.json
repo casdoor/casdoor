@@ -146,7 +146,7 @@
     "The permission: \"%s\" doesn't exist": "Quyền: \"%s\" không tồn tại"
   },
   "product": {
-    "Product list cannot be empty": "Product list cannot be empty"
+    "Product list cannot be empty": "Danh sách sản phẩm không được để trống"
   },
   "provider": {
     "Failed to initialize ID Verification provider": "Failed to initialize ID Verification provider",
@@ -171,7 +171,7 @@
     "Invalid phone receivers: %s": "Người nhận điện thoại không hợp lệ: %s"
   },
   "session": {
-    "session id %s is the current session and cannot be deleted": "session id %s is the current session and cannot be deleted"
+    "session id %s is the current session and cannot be deleted": "ID phiên %s là phiên hiện tại và không thể xóa"
   },
   "storage": {
     "The objectKey: %s is not allowed": "Khóa đối tượng: %s không được phép",
@@ -181,7 +181,7 @@
     "Error": "Lỗi"
   },
   "ticket": {
-    "Ticket not found": "Ticket not found"
+    "Ticket not found": "Không tìm thấy vé"
   },
   "token": {
     "Grant_type: %s is not supported in this application": "Loại cấp phép: %s không được hỗ trợ trong ứng dụng này",
