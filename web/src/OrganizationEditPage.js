@@ -684,7 +684,7 @@ class OrganizationEditPage extends React.Component {
           </Col>
           <Col span={22} >
             <Select virtual={false} style={{width: "100%"}} value={this.state.organization.accountMenu || "Horizontal"} onChange={(value => {this.updateOrganizationField("accountMenu", value);})}
-              options={[{value: "Horizontal", label: i18next.t("general:Horizontal")}, {value: "Vertical", label: i18next.t("general:Vertical")}].map(item => Setting.getOption(item.label, item.value))}
+              options={[{value: "Horizontal", label: i18next.t("application:Horizontal")}, {value: "Vertical", label: i18next.t("application:Vertical")}].map(item => Setting.getOption(item.label, item.value))}
             />
           </Col>
         </Row>

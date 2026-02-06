@@ -203,7 +203,7 @@ class TicketEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {i18next.t("general:Content")}:
+            {i18next.t("provider:Content")}:
           </Col>
           <Col span={22} >
             <TextArea autoSize={{minRows: 3, maxRows: 10}} value={this.state.ticket.content} disabled={!isAdmin && !isOwner} onChange={e => {
