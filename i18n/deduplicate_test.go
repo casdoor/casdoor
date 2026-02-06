@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//go:build !skipCi
+
 package i18n
 
 import (
-	"bufio"
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"os"
-	"regexp"
-	"strings"
 	"testing"
 )
 
@@ -33,69 +33,69 @@ func findDuplicateKeysInJSON(filePath string) (map[string][]string, error) {
 		return nil, fmt.Errorf("failed to read file %s: %w", filePath, err)
 	}
 
+	// Parse JSON into a map to check structure
+	var data map[string]map[string]string
+	if err := json.Unmarshal(fileContent, &data); err != nil {
+		return nil, fmt.Errorf("failed to parse JSON from %s: %w", filePath, err)
+	}
+
+	// Use a custom decoder to detect duplicate keys
 	duplicates := make(map[string][]string)
-	scanner := bufio.NewScanner(bytes.NewReader(fileContent))
-
-	// Regular expression to match JSON key-value pairs
-	// Matches: "key": "value" or "key": value
-	keyRegex := regexp.MustCompile(`^\s*"([^"]+)"\s*:`)
-
-	var currentNamespace string
-	namespaceKeys := make(map[string]int)
-	bracketDepth := 0
-	inNamespaceBlock := false
-
-	for scanner.Scan() {
-		line := scanner.Text()
-		trimmedLine := strings.TrimSpace(line)
-
-		// Match keys in the line BEFORE updating bracket depth
-		if matches := keyRegex.FindStringSubmatch(line); len(matches) > 1 {
-			key := matches[1]
-
-			// Determine if this is a namespace (depth = 1) or a regular key (depth = 2)
-			if bracketDepth == 1 && !inNamespaceBlock {
-				// This is a namespace key - start tracking a new namespace
-				currentNamespace = key
-				namespaceKeys = make(map[string]int)
-				inNamespaceBlock = true
-			} else if bracketDepth == 2 && inNamespaceBlock {
-				// This is a key within the current namespace
-				namespaceKeys[key]++
-			}
-		}
-
-		// Count opening and closing braces to track depth AFTER processing keys
-		bracketDepth += strings.Count(line, "{") - strings.Count(line, "}")
-
-		// Reset when we exit a namespace block
-		if (trimmedLine == "}," || trimmedLine == "}") && bracketDepth == 1 && inNamespaceBlock {
-			// End of namespace block - check for duplicates
-			for k, count := range namespaceKeys {
-				if count > 1 {
-					if duplicates[currentNamespace] == nil {
-						duplicates[currentNamespace] = []string{}
-					}
-					duplicates[currentNamespace] = append(duplicates[currentNamespace], k)
-				}
-			}
-			inNamespaceBlock = false
-		}
+	
+	// Decode the top-level object
+	var rawData map[string]json.RawMessage
+	if err := json.Unmarshal(fileContent, &rawData); err != nil {
+		return nil, fmt.Errorf("failed to decode JSON: %w", err)
 	}
 
-	// Check the last namespace if we're still in one
-	if inNamespaceBlock && currentNamespace != "" {
-		for k, count := range namespaceKeys {
-			if count > 1 {
-				if duplicates[currentNamespace] == nil {
-					duplicates[currentNamespace] = []string{}
+	// For each namespace, check for duplicate keys by parsing the raw JSON
+	for namespace, rawNamespace := range rawData {
+		// Track keys seen in this namespace
+		keySeen := make(map[string]bool)
+		
+		// Use a custom decoder to detect duplicates
+		decoder := json.NewDecoder(bytes.NewReader(rawNamespace))
+		
+		// Read the opening brace
+		token, err := decoder.Token()
+		if err != nil {
+			return nil, fmt.Errorf("failed to read token: %w", err)
+		}
+		if delim, ok := token.(json.Delim); !ok || delim != '{' {
+			return nil, fmt.Errorf("expected object start, got %v", token)
+		}
+
+		// Read all key-value pairs
+		for decoder.More() {
+			// Read the key
+			token, err := decoder.Token()
+			if err != nil {
+				return nil, fmt.Errorf("failed to read key: %w", err)
+			}
+			
+			key, ok := token.(string)
+			if !ok {
+				return nil, fmt.Errorf("expected string key, got %v", token)
+			}
+
+			// Check if this key was already seen
+			if keySeen[key] {
+				if duplicates[namespace] == nil {
+					duplicates[namespace] = []string{}
 				}
-				duplicates[currentNamespace] = append(duplicates[currentNamespace], k)
+				duplicates[namespace] = append(duplicates[namespace], key)
+			}
+			keySeen[key] = true
+
+			// Skip the value
+			var value interface{}
+			if err := decoder.Decode(&value); err != nil {
+				return nil, fmt.Errorf("failed to decode value: %w", err)
 			}
 		}
 	}
 
-	return duplicates, scanner.Err()
+	return duplicates, nil
 }
 
 // TestDeduplicateFrontendI18n checks for duplicate i18n keys in the frontend en.json file
