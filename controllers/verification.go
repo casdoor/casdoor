@@ -151,36 +151,6 @@ func (c *ApiController) SendVerificationCode() {
 		return
 	}
 
-	provider, err := object.GetCaptchaProviderByApplication(vform.ApplicationId, "false", c.GetAcceptLanguage())
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
-	}
-
-	if provider != nil {
-		if vform.CaptchaType != provider.Type {
-			c.ResponseError(c.T("verification:Turing test failed."))
-			return
-		}
-
-		if provider.Type != "Default" {
-			vform.ClientSecret = provider.ClientSecret
-		}
-
-		if vform.CaptchaType != "none" {
-			if captchaProvider := captcha.GetCaptchaProvider(vform.CaptchaType); captchaProvider == nil {
-				c.ResponseError(c.T("general:don't support captchaProvider: ") + vform.CaptchaType)
-				return
-			} else if isHuman, err := captchaProvider.VerifyCaptcha(vform.CaptchaToken, provider.ClientId, vform.ClientSecret, provider.ClientId2); err != nil {
-				c.ResponseError(err.Error())
-				return
-			} else if !isHuman {
-				c.ResponseError(c.T("verification:Turing test failed."))
-				return
-			}
-		}
-	}
-
 	application, err := object.GetApplication(vform.ApplicationId)
 	if err != nil {
 		c.ResponseError(err.Error())
@@ -214,6 +184,7 @@ func (c *ApiController) SendVerificationCode() {
 	}
 
 	var user *object.User
+	// Try to resolve user for CAPTCHA rule checking
 	// checkUser != "", means method is ForgetVerification
 	if vform.CheckUser != "" {
 		owner := application.Organization
@@ -231,18 +202,78 @@ func (c *ApiController) SendVerificationCode() {
 			c.ResponseError(c.T("check:The user is forbidden to sign in, please contact the administrator"))
 			return
 		}
-	}
-
-	// mfaUserSession != "", means method is MfaAuthVerification
-	if mfaUserSession := c.getMfaUserSession(); mfaUserSession != "" {
+	} else if mfaUserSession := c.getMfaUserSession(); mfaUserSession != "" {
+		// mfaUserSession != "", means method is MfaAuthVerification
 		user, err = object.GetUser(mfaUserSession)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
 		}
+	} else if vform.Method == ResetVerification {
+		// For reset verification, get the current logged-in user
+		user = c.getCurrentUser()
+	} else if vform.Method == LoginVerification {
+		// For login verification, try to find user by email/phone for CAPTCHA check
+		// This is a preliminary lookup; the actual validation happens later in the switch statement
+		if vform.Type == object.VerifyTypeEmail && util.IsEmailValid(vform.Dest) {
+			user, _ = object.GetUserByEmail(organization.Name, vform.Dest)
+		} else if vform.Type == object.VerifyTypePhone {
+			if phone, ok := util.GetE164Number(vform.Dest, vform.CountryCode); ok {
+				user, _ = object.GetUserByPhone(organization.Name, phone)
+			}
+		}
+	}
+
+	// Determine username for CAPTCHA check
+	username := ""
+	if user != nil {
+		username = user.Name
+	} else if vform.CheckUser != "" {
+		username = vform.CheckUser
+	}
+
+	// Check if CAPTCHA should be enabled based on the rule (Dynamic/Always/Internet-Only)
+	enableCaptcha, err := object.CheckToEnableCaptcha(application, organization.Name, username, clientIp)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	// Only verify CAPTCHA if it should be enabled
+	if enableCaptcha {
+		provider, err := object.GetCaptchaProviderByApplication(vform.ApplicationId, "false", c.GetAcceptLanguage())
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		if provider != nil {
+			if vform.CaptchaType != provider.Type {
+				c.ResponseError(c.T("verification:Turing test failed."))
+				return
+			}
+
+			if provider.Type != "Default" {
+				vform.ClientSecret = provider.ClientSecret
+			}
+
+			if vform.CaptchaType != "none" {
+				if captchaProvider := captcha.GetCaptchaProvider(vform.CaptchaType); captchaProvider == nil {
+					c.ResponseError(c.T("general:don't support captchaProvider: ") + vform.CaptchaType)
+					return
+				} else if isHuman, err := captchaProvider.VerifyCaptcha(vform.CaptchaToken, provider.ClientId, vform.ClientSecret, provider.ClientId2); err != nil {
+					c.ResponseError(err.Error())
+					return
+				} else if !isHuman {
+					c.ResponseError(c.T("verification:Turing test failed."))
+					return
+				}
+			}
+		}
 	}
 
 	sendResp := errors.New("invalid dest type")
+	var provider *object.Provider
 
 	switch vform.Type {
 	case object.VerifyTypeEmail:
