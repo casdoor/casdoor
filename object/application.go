@@ -708,17 +708,17 @@ func UpdateApplication(id string, application *Application, isGlobalAdmin bool, 
 	}
 
 	// Check for multiple captcha providers
-	captchaCount := 0
+	foundCaptcha := false
 	for _, providerItem := range application.Providers {
 		provider, err := GetProvider(util.GetId(providerItem.Owner, providerItem.Name))
 		if err != nil {
 			return false, err
 		}
 		if provider != nil && provider.Category == "Captcha" {
-			captchaCount++
-			if captchaCount > 1 {
+			if foundCaptcha {
 				return false, fmt.Errorf("multiple captcha providers are not allowed in the same application")
 			}
+			foundCaptcha = true
 		}
 	}
 
