@@ -204,11 +204,11 @@ func SetUserOAuthProperties(organization *Organization, user *User, providerType
 	if token != nil && token.AccessToken != "" {
 		// Store tokens per provider in Properties map
 		setUserProperty(user, getOAuthTokenPropertyKey(providerType, "accessToken"), token.AccessToken)
-		
+
 		if token.RefreshToken != "" {
 			setUserProperty(user, getOAuthTokenPropertyKey(providerType, "refreshToken"), token.RefreshToken)
 		}
-		
+
 		// Also update the legacy fields for backward compatibility
 		user.OriginalToken = token.AccessToken
 		user.OriginalRefreshToken = token.RefreshToken
