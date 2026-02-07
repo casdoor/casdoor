@@ -149,7 +149,7 @@ func finalizer(a *Ormer) {
 	if a.ReadEngine != nil && a.ReadEngine != a.Engine {
 		err = a.ReadEngine.Close()
 		if err != nil {
-			panic(err)
+			panic(fmt.Sprintf("Failed to close read engine: %v", err))
 		}
 	}
 
@@ -174,6 +174,9 @@ func NewAdapter(driverName string, dataSourceName string, dbName string) (*Ormer
 		return nil, err
 	}
 
+	// Set ReadEngine to Engine for backward compatibility
+	a.ReadEngine = a.Engine
+
 	// Call the destructor when the object is released.
 	runtime.SetFinalizer(a, finalizer)
 
@@ -193,6 +196,9 @@ func NewAdapterFromDb(driverName string, dataSourceName string, dbName string, d
 	if err != nil {
 		return nil, err
 	}
+
+	// Set ReadEngine to Engine for backward compatibility
+	a.ReadEngine = a.Engine
 
 	// Call the destructor when the object is released.
 	runtime.SetFinalizer(a, finalizer)
