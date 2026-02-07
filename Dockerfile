@@ -48,6 +48,7 @@ COPY --from=BACK --chown=$USER:$USER /go/src/casdoor/swagger ./swagger
 COPY --from=BACK --chown=$USER:$USER /go/src/casdoor/conf/app.conf ./conf/app.conf
 COPY --from=FRONT --chown=$USER:$USER /web/build ./web/build
 
+EXPOSE 8000
 ENTRYPOINT ["/server"]
 
 
@@ -67,5 +68,6 @@ COPY --from=BACK /go/src/casdoor/docker-entrypoint.sh /docker-entrypoint.sh
 COPY --from=BACK /go/src/casdoor/conf/app.conf ./conf/app.conf
 COPY --from=FRONT /web/build ./web/build
 
+EXPOSE 8000
 ENTRYPOINT ["/bin/bash"]
 CMD ["/docker-entrypoint.sh"]

@@ -685,9 +685,11 @@ export function isLocalhost() {
 }
 
 export function getFullServerUrl() {
-  let fullServerUrl = window.location.origin;
+  const fullServerUrl = window.location.origin;
+  // Only redirect to port 8000 when running the React dev server on port 7001
+  // In production/Docker, the frontend is served from the same origin as the backend
   if (fullServerUrl === "http://localhost:7001") {
-    fullServerUrl = "http://localhost:8000";
+    return "http://localhost:8000";
   }
   return fullServerUrl;
 }
