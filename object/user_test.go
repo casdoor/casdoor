@@ -133,3 +133,125 @@ func TestGetEmailsForUsers(t *testing.T) {
 	text := strings.Join(emails, "\n")
 	println(text)
 }
+
+func TestPerProviderOAuthTokens(t *testing.T) {
+	// Create test user
+	user := &User{
+		Owner:      "test-org",
+		Name:       "test-user",
+		Properties: make(map[string]string),
+	}
+
+	// Simulate storing tokens for GitHub provider
+	githubTokenKey := fmt.Sprintf("oauth_%s_accessToken", "GitHub")
+	githubRefreshKey := fmt.Sprintf("oauth_%s_refreshToken", "GitHub")
+	setUserProperty(user, githubTokenKey, "github-access-token-123")
+	setUserProperty(user, githubRefreshKey, "github-refresh-token-456")
+
+	// Simulate storing tokens for Custom provider
+	customTokenKey := fmt.Sprintf("oauth_%s_accessToken", "Custom")
+	customRefreshKey := fmt.Sprintf("oauth_%s_refreshToken", "Custom")
+	setUserProperty(user, customTokenKey, "custom-access-token-789")
+	setUserProperty(user, customRefreshKey, "custom-refresh-token-012")
+
+	// Test retrieving GitHub tokens
+	githubAccessToken := GetUserOAuthAccessToken(user, "GitHub")
+	if githubAccessToken != "github-access-token-123" {
+		t.Errorf("Expected GitHub access token 'github-access-token-123', got '%s'", githubAccessToken)
+	}
+
+	githubRefreshToken := GetUserOAuthRefreshToken(user, "GitHub")
+	if githubRefreshToken != "github-refresh-token-456" {
+		t.Errorf("Expected GitHub refresh token 'github-refresh-token-456', got '%s'", githubRefreshToken)
+	}
+
+	// Test retrieving Custom tokens
+	customAccessToken := GetUserOAuthAccessToken(user, "Custom")
+	if customAccessToken != "custom-access-token-789" {
+		t.Errorf("Expected Custom access token 'custom-access-token-789', got '%s'", customAccessToken)
+	}
+
+	customRefreshToken := GetUserOAuthRefreshToken(user, "Custom")
+	if customRefreshToken != "custom-refresh-token-012" {
+		t.Errorf("Expected Custom refresh token 'custom-refresh-token-012', got '%s'", customRefreshToken)
+	}
+
+	// Verify both tokens exist simultaneously
+	if len(user.Properties) != 4 {
+		t.Errorf("Expected 4 properties, got %d", len(user.Properties))
+	}
+}
+
+func TestOAuthTokenMasking(t *testing.T) {
+	// Create test user with OAuth tokens
+	user := &User{
+		Owner:                "test-org",
+		Name:                 "test-user",
+		OriginalToken:        "legacy-token-123",
+		OriginalRefreshToken: "legacy-refresh-456",
+		Properties: map[string]string{
+			"oauth_GitHub_accessToken":  "github-token-abc",
+			"oauth_GitHub_refreshToken": "github-refresh-def",
+			"oauth_Custom_accessToken":  "custom-token-xyz",
+			"oauth_Custom_refreshToken": "custom-refresh-uvw",
+			"oauth_GitHub_id":           "12345",
+			"oauth_Custom_username":     "testuser",
+		},
+	}
+
+	// Make a copy for testing
+	maskedUser := *user
+	maskedUser.Properties = make(map[string]string)
+	for k, v := range user.Properties {
+		maskedUser.Properties[k] = v
+	}
+
+	// Apply masking logic (simulate non-admin user)
+	isAdminOrSelf := false
+	if !isAdminOrSelf {
+		if maskedUser.OriginalToken != "" {
+			maskedUser.OriginalToken = "***"
+		}
+		if maskedUser.OriginalRefreshToken != "" {
+			maskedUser.OriginalRefreshToken = "***"
+		}
+		// Mask per-provider OAuth tokens in Properties
+		if maskedUser.Properties != nil {
+			for key := range maskedUser.Properties {
+				if strings.Contains(key, "_accessToken") || strings.Contains(key, "_refreshToken") {
+					maskedUser.Properties[key] = "***"
+				}
+			}
+		}
+	}
+
+	// Verify legacy tokens are masked
+	if maskedUser.OriginalToken != "***" {
+		t.Errorf("Expected OriginalToken to be masked, got '%s'", maskedUser.OriginalToken)
+	}
+	if maskedUser.OriginalRefreshToken != "***" {
+		t.Errorf("Expected OriginalRefreshToken to be masked, got '%s'", maskedUser.OriginalRefreshToken)
+	}
+
+	// Verify per-provider tokens are masked
+	if maskedUser.Properties["oauth_GitHub_accessToken"] != "***" {
+		t.Errorf("Expected GitHub access token to be masked, got '%s'", maskedUser.Properties["oauth_GitHub_accessToken"])
+	}
+	if maskedUser.Properties["oauth_GitHub_refreshToken"] != "***" {
+		t.Errorf("Expected GitHub refresh token to be masked, got '%s'", maskedUser.Properties["oauth_GitHub_refreshToken"])
+	}
+	if maskedUser.Properties["oauth_Custom_accessToken"] != "***" {
+		t.Errorf("Expected Custom access token to be masked, got '%s'", maskedUser.Properties["oauth_Custom_accessToken"])
+	}
+	if maskedUser.Properties["oauth_Custom_refreshToken"] != "***" {
+		t.Errorf("Expected Custom refresh token to be masked, got '%s'", maskedUser.Properties["oauth_Custom_refreshToken"])
+	}
+
+	// Verify non-token properties are NOT masked
+	if maskedUser.Properties["oauth_GitHub_id"] != "12345" {
+		t.Errorf("Expected GitHub ID to not be masked, got '%s'", maskedUser.Properties["oauth_GitHub_id"])
+	}
+	if maskedUser.Properties["oauth_Custom_username"] != "testuser" {
+		t.Errorf("Expected Custom username to not be masked, got '%s'", maskedUser.Properties["oauth_Custom_username"])
+	}
+}

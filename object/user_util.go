@@ -184,9 +184,31 @@ func getUserExtraProperty(user *User, providerType, key string) (string, error) 
 	return extra[key], nil
 }
 
+// GetUserOAuthAccessToken retrieves the OAuth access token for a specific provider
+func GetUserOAuthAccessToken(user *User, providerType string) string {
+	accessTokenKey := fmt.Sprintf("oauth_%s_accessToken", providerType)
+	return getUserProperty(user, accessTokenKey)
+}
+
+// GetUserOAuthRefreshToken retrieves the OAuth refresh token for a specific provider
+func GetUserOAuthRefreshToken(user *User, providerType string) string {
+	refreshTokenKey := fmt.Sprintf("oauth_%s_refreshToken", providerType)
+	return getUserProperty(user, refreshTokenKey)
+}
+
 func SetUserOAuthProperties(organization *Organization, user *User, providerType string, userInfo *idp.UserInfo, token *oauth2.Token, userMapping ...map[string]string) (bool, error) {
 	// Store the original OAuth provider token if available
 	if token != nil && token.AccessToken != "" {
+		// Store tokens per provider in Properties map
+		accessTokenKey := fmt.Sprintf("oauth_%s_accessToken", providerType)
+		setUserProperty(user, accessTokenKey, token.AccessToken)
+		
+		if token.RefreshToken != "" {
+			refreshTokenKey := fmt.Sprintf("oauth_%s_refreshToken", providerType)
+			setUserProperty(user, refreshTokenKey, token.RefreshToken)
+		}
+		
+		// Also update the legacy fields for backward compatibility
 		user.OriginalToken = token.AccessToken
 		user.OriginalRefreshToken = token.RefreshToken
 	}
