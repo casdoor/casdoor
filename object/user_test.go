@@ -20,8 +20,10 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/casdoor/casdoor/idp"
 	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/core"
+	"golang.org/x/oauth2"
 )
 
 func updateUserColumn(column string, user *User) bool {
@@ -253,5 +255,106 @@ func TestOAuthTokenMasking(t *testing.T) {
 	}
 	if maskedUser.Properties["oauth_Custom_username"] != "testuser" {
 		t.Errorf("Expected Custom username to not be masked, got '%s'", maskedUser.Properties["oauth_Custom_username"])
+	}
+}
+
+func TestMultiProviderOAuthFlow(t *testing.T) {
+	// Simulate a user logging in with multiple OAuth providers
+	user := &User{
+		Owner:      "test-org",
+		Name:       "multi-provider-user",
+		Properties: make(map[string]string),
+	}
+
+	// Simulate GitHub OAuth login (first provider)
+	githubUserInfo := &idp.UserInfo{
+		Id:          "github-user-123",
+		Username:    "githubuser",
+		DisplayName: "GitHub User",
+		Email:       "user@github.com",
+	}
+	githubToken := &oauth2.Token{
+		AccessToken:  "github-access-token-abc",
+		RefreshToken: "github-refresh-token-def",
+	}
+
+	// Manually set GitHub OAuth properties (simulating SetUserOAuthProperties logic without DB)
+	// Store tokens per provider in Properties map
+	accessTokenKey := fmt.Sprintf("oauth_%s_accessToken", "GitHub")
+	setUserProperty(user, accessTokenKey, githubToken.AccessToken)
+	refreshTokenKey := fmt.Sprintf("oauth_%s_refreshToken", "GitHub")
+	setUserProperty(user, refreshTokenKey, githubToken.RefreshToken)
+	user.OriginalToken = githubToken.AccessToken
+	user.OriginalRefreshToken = githubToken.RefreshToken
+
+	// Set GitHub user info
+	setUserProperty(user, "oauth_GitHub_id", githubUserInfo.Id)
+	setUserProperty(user, "oauth_GitHub_username", githubUserInfo.Username)
+
+	// Verify GitHub tokens are stored
+	githubAccess := GetUserOAuthAccessToken(user, "GitHub")
+	if githubAccess != "github-access-token-abc" {
+		t.Errorf("Expected GitHub access token, got '%s'", githubAccess)
+	}
+
+	// Simulate Custom provider OAuth login (second provider)
+	customUserInfo := &idp.UserInfo{
+		Id:          "custom-user-456",
+		Username:    "customuser",
+		DisplayName: "Custom User",
+		Email:       "user@custom.com",
+	}
+	customToken := &oauth2.Token{
+		AccessToken:  "custom-access-token-xyz",
+		RefreshToken: "custom-refresh-token-uvw",
+	}
+
+	// Manually set Custom OAuth properties (simulating SetUserOAuthProperties logic without DB)
+	accessTokenKey = fmt.Sprintf("oauth_%s_accessToken", "Custom")
+	setUserProperty(user, accessTokenKey, customToken.AccessToken)
+	refreshTokenKey = fmt.Sprintf("oauth_%s_refreshToken", "Custom")
+	setUserProperty(user, refreshTokenKey, customToken.RefreshToken)
+	user.OriginalToken = customToken.AccessToken
+	user.OriginalRefreshToken = customToken.RefreshToken
+
+	// Set Custom user info
+	setUserProperty(user, "oauth_Custom_id", customUserInfo.Id)
+	setUserProperty(user, "oauth_Custom_username", customUserInfo.Username)
+
+	// Verify Custom tokens are stored
+	customAccess := GetUserOAuthAccessToken(user, "Custom")
+	if customAccess != "custom-access-token-xyz" {
+		t.Errorf("Expected Custom access token, got '%s'", customAccess)
+	}
+
+	// CRITICAL: Verify GitHub tokens are STILL present (not overwritten)
+	githubAccessAfter := GetUserOAuthAccessToken(user, "GitHub")
+	if githubAccessAfter != "github-access-token-abc" {
+		t.Errorf("GitHub tokens were overwritten! Expected 'github-access-token-abc', got '%s'", githubAccessAfter)
+	}
+
+	githubRefreshAfter := GetUserOAuthRefreshToken(user, "GitHub")
+	if githubRefreshAfter != "github-refresh-token-def" {
+		t.Errorf("GitHub refresh token was overwritten! Expected 'github-refresh-token-def', got '%s'", githubRefreshAfter)
+	}
+
+	// Verify both provider IDs are present
+	githubId := getUserProperty(user, "oauth_GitHub_id")
+	if githubId != "github-user-123" {
+		t.Errorf("Expected GitHub ID, got '%s'", githubId)
+	}
+
+	customId := getUserProperty(user, "oauth_Custom_id")
+	if customId != "custom-user-456" {
+		t.Errorf("Expected Custom ID, got '%s'", customId)
+	}
+
+	// Verify legacy fields contain the most recent token (for backward compatibility)
+	if user.OriginalToken != "custom-access-token-xyz" {
+		t.Errorf("Expected legacy OriginalToken to have most recent token, got '%s'", user.OriginalToken)
+	}
+
+	if user.OriginalRefreshToken != "custom-refresh-token-uvw" {
+		t.Errorf("Expected legacy OriginalRefreshToken to have most recent token, got '%s'", user.OriginalRefreshToken)
 	}
 }
