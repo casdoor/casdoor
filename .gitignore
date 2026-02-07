@@ -33,5 +33,8 @@ commentsRouter*.go
 casdoor
 server
 
+# ignore npm package-lock.json (using yarn instead)
+package-lock.json
+
 # include helm-chart
 !manifests/casdoor
