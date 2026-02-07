@@ -692,7 +692,8 @@ func GetMaskedUser(user *User, isAdminOrSelf bool, errs ...error) (*User, error)
 		// Mask per-provider OAuth tokens in Properties
 		if user.Properties != nil {
 			for key := range user.Properties {
-				if strings.Contains(key, "_accessToken") || strings.Contains(key, "_refreshToken") {
+				// More specific pattern matching to avoid masking unrelated properties
+				if strings.HasPrefix(key, "oauth_") && (strings.HasSuffix(key, "_accessToken") || strings.HasSuffix(key, "_refreshToken")) {
 					user.Properties[key] = "***"
 				}
 			}
