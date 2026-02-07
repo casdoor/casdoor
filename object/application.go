@@ -669,6 +669,21 @@ func GetAllowedApplications(applications []*Application, userId string, lang str
 	return res, nil
 }
 
+func checkMultipleCaptchaProviders(application *Application, lang string) error {
+	var captchaProviders []string
+	for _, providerItem := range application.Providers {
+		if providerItem.Provider != nil && providerItem.Provider.Category == "Captcha" {
+			captchaProviders = append(captchaProviders, providerItem.Name)
+		}
+	}
+
+	if len(captchaProviders) > 1 {
+		return fmt.Errorf(i18n.Translate(lang, "general:Multiple captcha providers are not allowed in the same application: %s"), strings.Join(captchaProviders, ", "))
+	}
+
+	return nil
+}
+
 func UpdateApplication(id string, application *Application, isGlobalAdmin bool, lang string) (bool, error) {
 	owner, name, err := util.GetOwnerAndNameFromIdWithError(id)
 	if err != nil {
@@ -707,19 +722,9 @@ func UpdateApplication(id string, application *Application, isGlobalAdmin bool, 
 		return false, fmt.Errorf("only applications belonging to built-in organization can be shared")
 	}
 
-	// Check for multiple captcha providers
-	foundCaptcha := false
-	for _, providerItem := range application.Providers {
-		provider, err := GetProvider(util.GetId(providerItem.Owner, providerItem.Name))
-		if err != nil {
-			return false, err
-		}
-		if provider != nil && provider.Category == "Captcha" {
-			if foundCaptcha {
-				return false, fmt.Errorf("multiple captcha providers are not allowed in the same application")
-			}
-			foundCaptcha = true
-		}
+	err = checkMultipleCaptchaProviders(application, lang)
+	if err != nil {
+		return false, err
 	}
 
 	for _, providerItem := range application.Providers {
