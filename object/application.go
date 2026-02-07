@@ -707,6 +707,21 @@ func UpdateApplication(id string, application *Application, isGlobalAdmin bool, 
 		return false, fmt.Errorf("only applications belonging to built-in organization can be shared")
 	}
 
+	// Check for multiple captcha providers
+	captchaCount := 0
+	for _, providerItem := range application.Providers {
+		provider, err := GetProvider(util.GetId(providerItem.Owner, providerItem.Name))
+		if err != nil {
+			return false, err
+		}
+		if provider != nil && provider.Category == "Captcha" {
+			captchaCount++
+			if captchaCount > 1 {
+				return false, fmt.Errorf("multiple captcha providers are not allowed in the same application")
+			}
+		}
+	}
+
 	for _, providerItem := range application.Providers {
 		providerItem.Provider = nil
 	}
