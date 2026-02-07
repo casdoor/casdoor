@@ -79,6 +79,14 @@ func GetConfigDataSourceName() string {
 	return ReplaceDataSourceNameByDocker(dataSourceName)
 }
 
+func GetConfigReadDataSourceName() string {
+	readDataSourceName := GetConfigString("readDataSourceName")
+	if readDataSourceName == "" {
+		return GetConfigDataSourceName()
+	}
+	return ReplaceDataSourceNameByDocker(readDataSourceName)
+}
+
 func ReplaceDataSourceNameByDocker(dataSourceName string) string {
 	runningInDocker := os.Getenv("RUNNING_IN_DOCKER")
 	if runningInDocker == "true" {

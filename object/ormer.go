@@ -104,7 +104,7 @@ func InitAdapter() {
 	}
 
 	var err error
-	ormer, err = NewAdapter(conf.GetConfigString("driverName"), conf.GetConfigDataSourceName(), conf.GetConfigString("dbName"))
+	ormer, err = NewAdapterWithReadReplica(conf.GetConfigString("driverName"), conf.GetConfigDataSourceName(), conf.GetConfigReadDataSourceName(), conf.GetConfigString("dbName"))
 	if err != nil {
 		panic(err)
 	}
@@ -112,6 +112,9 @@ func InitAdapter() {
 	tableNamePrefix := conf.GetConfigString("tableNamePrefix")
 	tbMapper := names.NewPrefixMapper(names.SnakeMapper{}, tableNamePrefix)
 	ormer.Engine.SetTableMapper(tbMapper)
+	if ormer.ReadEngine != nil && ormer.ReadEngine != ormer.Engine {
+		ormer.ReadEngine.SetTableMapper(tbMapper)
+	}
 }
 
 func CreateTables() {
@@ -127,11 +130,13 @@ func CreateTables() {
 
 // Ormer represents the MySQL adapter for policy storage.
 type Ormer struct {
-	driverName     string
-	dataSourceName string
-	dbName         string
-	Db             *sql.DB
-	Engine         *xorm.Engine
+	driverName         string
+	dataSourceName     string
+	readDataSourceName string
+	dbName             string
+	Db                 *sql.DB
+	Engine             *xorm.Engine
+	ReadEngine         *xorm.Engine
 }
 
 // finalizer is the destructor for Ormer.
@@ -139,6 +144,13 @@ func finalizer(a *Ormer) {
 	err := a.Engine.Close()
 	if err != nil {
 		panic(err)
+	}
+
+	if a.ReadEngine != nil && a.ReadEngine != a.Engine {
+		err = a.ReadEngine.Close()
+		if err != nil {
+			panic(err)
+		}
 	}
 
 	if a.Db != nil {
@@ -180,6 +192,37 @@ func NewAdapterFromDb(driverName string, dataSourceName string, dbName string, d
 	err := a.openFromDb(a.Db)
 	if err != nil {
 		return nil, err
+	}
+
+	// Call the destructor when the object is released.
+	runtime.SetFinalizer(a, finalizer)
+
+	return a, nil
+}
+
+// NewAdapterWithReadReplica is the constructor for Ormer with optional read replica support.
+func NewAdapterWithReadReplica(driverName string, dataSourceName string, readDataSourceName string, dbName string) (*Ormer, error) {
+	a := &Ormer{}
+	a.driverName = driverName
+	a.dataSourceName = dataSourceName
+	a.readDataSourceName = readDataSourceName
+	a.dbName = dbName
+
+	// Open the write DB
+	err := a.open()
+	if err != nil {
+		return nil, err
+	}
+
+	// Open the read DB if a separate read data source is configured
+	if readDataSourceName != "" && readDataSourceName != dataSourceName {
+		err = a.openReadEngine()
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		// Use the same engine for both read and write
+		a.ReadEngine = a.Engine
 	}
 
 	// Call the destructor when the object is released.
@@ -266,6 +309,28 @@ func (a *Ormer) open() error {
 	return nil
 }
 
+func (a *Ormer) openReadEngine() error {
+	readDataSourceName := a.readDataSourceName + a.dbName
+	if a.driverName != "mysql" {
+		readDataSourceName = a.readDataSourceName
+	}
+
+	readEngine, err := xorm.NewEngine(a.driverName, readDataSourceName)
+	if err != nil {
+		return err
+	}
+
+	if a.driverName == "postgres" {
+		schema := util.GetValueFromDataSourceName("search_path", readDataSourceName)
+		if schema != "" {
+			readEngine.SetSchema(schema)
+		}
+	}
+
+	a.ReadEngine = readEngine
+	return nil
+}
+
 func (a *Ormer) openFromDb(db *sql.DB) error {
 	dataSourceName := a.dataSourceName + a.dbName
 	if a.driverName != "mysql" {
@@ -293,6 +358,15 @@ func (a *Ormer) openFromDb(db *sql.DB) error {
 func (a *Ormer) close() {
 	_ = a.Engine.Close()
 	a.Engine = nil
+}
+
+// GetReadEngine returns the read engine for read operations.
+// If a separate read engine is configured, it returns that; otherwise, it returns the write engine.
+func (a *Ormer) GetReadEngine() *xorm.Engine {
+	if a.ReadEngine != nil {
+		return a.ReadEngine
+	}
+	return a.Engine
 }
 
 func (a *Ormer) createTable() {
