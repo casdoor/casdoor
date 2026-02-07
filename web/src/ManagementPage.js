@@ -188,7 +188,7 @@ function ManagementPage(props) {
     };
 
     return (
-      <Dropdown key="/rightDropDown" menu={{items, onClick}} >
+      <Dropdown key="/rightDropDown" menu={{items, onClick}} placement="bottomRight" >
         <div className="rightDropDown">
           {
             renderAvatar()
