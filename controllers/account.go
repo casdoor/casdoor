@@ -688,6 +688,48 @@ func (c *ApiController) GetCaptcha() {
 	applicationId := c.Ctx.Input.Query("applicationId")
 	isCurrentProvider := c.Ctx.Input.Query("isCurrentProvider")
 
+	application, err := object.GetApplication(applicationId)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	if application == nil {
+		c.ResponseOk(Captcha{Type: "none"})
+		return
+	}
+
+	// Check the CAPTCHA rule to determine if CAPTCHA should be shown
+	clientIp := util.GetClientIpFromRequest(c.Ctx.Request)
+	
+	// For Internet-Only rule, we can determine on the backend if CAPTCHA should be shown
+	// For other rules (Dynamic, Always), we need to return the CAPTCHA config
+	shouldSkipCaptcha := false
+	for _, providerItem := range application.Providers {
+		if providerItem.Provider == nil || providerItem.Provider.Category != "Captcha" {
+			continue
+		}
+		
+		// For Internet-Only rule, check if the client is from intranet
+		if providerItem.Rule == "Internet-Only" {
+			if !util.IsInternetIp(clientIp) {
+				// Client is from intranet, skip CAPTCHA
+				shouldSkipCaptcha = true
+			}
+		}
+		// For "None" rule, skip CAPTCHA
+		if providerItem.Rule == "None" || providerItem.Rule == "" {
+			shouldSkipCaptcha = true
+		}
+		
+		break // Only check the first CAPTCHA provider
+	}
+
+	if shouldSkipCaptcha {
+		c.ResponseOk(Captcha{Type: "none"})
+		return
+	}
+
 	captchaProvider, err := object.GetCaptchaProviderByApplication(applicationId, isCurrentProvider, c.GetAcceptLanguage())
 	if err != nil {
 		c.ResponseError(err.Error())
