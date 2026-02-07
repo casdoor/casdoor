@@ -710,16 +710,15 @@ func (c *ApiController) GetCaptcha() {
 			continue
 		}
 		
-		// For Internet-Only rule, check if the client is from intranet
-		if providerItem.Rule == "Internet-Only" {
+		// For "None" rule, skip CAPTCHA
+		if providerItem.Rule == "None" || providerItem.Rule == "" {
+			shouldSkipCaptcha = true
+		} else if providerItem.Rule == "Internet-Only" {
+			// For Internet-Only rule, check if the client is from intranet
 			if !util.IsInternetIp(clientIp) {
 				// Client is from intranet, skip CAPTCHA
 				shouldSkipCaptcha = true
 			}
-		}
-		// For "None" rule, skip CAPTCHA
-		if providerItem.Rule == "None" || providerItem.Rule == "" {
-			shouldSkipCaptcha = true
 		}
 		
 		break // Only check the first CAPTCHA provider
