@@ -14,10 +14,10 @@
 
 import React from "react";
 import {Button, Card, Col, Input, InputNumber, Row, Select, Switch} from "antd";
+import PaginateSelect from "./common/PaginateSelect";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as RoleBackend from "./backend/RoleBackend";
 import * as PlanBackend from "./backend/PlanBackend";
-import * as UserBackend from "./backend/UserBackend";
 import * as ProviderBackend from "./backend/ProviderBackend";
 import * as Setting from "./Setting";
 import i18next from "i18next";
@@ -38,22 +38,11 @@ class PlanEditPage extends React.Component {
       paymentProviders: [],
       mode: props?.location?.mode ?? "edit",
     };
-    this.userSearchTimeout = null;
-    this.roleSearchTimeout = null;
   }
 
   UNSAFE_componentWillMount() {
     this.getPlan();
     this.getOrganizations();
-  }
-
-  componentWillUnmount() {
-    if (this.userSearchTimeout) {
-      clearTimeout(this.userSearchTimeout);
-    }
-    if (this.roleSearchTimeout) {
-      clearTimeout(this.roleSearchTimeout);
-    }
   }
 
   getPlan() {
@@ -68,63 +57,9 @@ class PlanEditPage extends React.Component {
           plan: res.data,
         });
 
-        this.getUsers(this.state.organizationName);
-        this.getRoles(this.state.organizationName);
         this.getPaymentProviders(this.state.organizationName);
       });
   }
-
-  getRoles(organizationName, searchValue = "") {
-    // When searchValue is empty, field is also empty which tells backend to return results without filtering
-    const field = searchValue ? "name" : "";
-    const pageSize = String(Setting.MAX_PAGE_SIZE); // Always limit to MAX_PAGE_SIZE items for performance
-    RoleBackend.getRoles(organizationName, "", pageSize, field, searchValue)
-      .then((res) => {
-        if (res.status === "error") {
-          Setting.showMessage("error", res.msg);
-          return;
-        }
-
-        this.setState({
-          roles: res.data || [],
-        });
-      });
-  }
-
-  getUsers(organizationName, searchValue = "") {
-    // When searchValue is empty, field is also empty which tells backend to return results without filtering
-    const field = searchValue ? "name" : "";
-    const pageSize = String(Setting.MAX_PAGE_SIZE); // Always limit to MAX_PAGE_SIZE items for performance
-    UserBackend.getUsers(organizationName, "", pageSize, field, searchValue)
-      .then((res) => {
-        if (res.status === "error") {
-          Setting.showMessage("error", res.msg);
-          return;
-        }
-
-        this.setState({
-          users: res.data || [],
-        });
-      });
-  }
-
-  handleUserSearch = (searchValue) => {
-    if (this.userSearchTimeout) {
-      clearTimeout(this.userSearchTimeout);
-    }
-    this.userSearchTimeout = setTimeout(() => {
-      this.getUsers(this.state.plan.owner, searchValue);
-    }, Setting.SEARCH_DEBOUNCE_MS);
-  };
-
-  handleRoleSearch = (searchValue) => {
-    if (this.roleSearchTimeout) {
-      clearTimeout(this.roleSearchTimeout);
-    }
-    this.roleSearchTimeout = setTimeout(() => {
-      this.getRoles(this.state.plan.owner, searchValue);
-    }, Setting.SEARCH_DEBOUNCE_MS);
-  };
 
   getPaymentProviders(organizationName) {
     ProviderBackend.getProviders(organizationName)
@@ -186,8 +121,6 @@ class PlanEditPage extends React.Component {
           <Col span={22} >
             <Select virtual={false} style={{width: "100%"}} value={this.state.plan.owner} disabled={isViewMode} onChange={(owner => {
               this.updatePlanField("owner", owner);
-              this.getUsers(owner);
-              this.getRoles(owner);
               this.getPaymentProviders(owner);
             })}
             options={this.state.organizations.map((organization) => Setting.getOption(organization.name, organization.name))
@@ -219,13 +152,22 @@ class PlanEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Role"), i18next.t("general:Role - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} style={{width: "100%"}} value={this.state.plan.role} disabled={isViewMode}
-              showSearch
+            <PaginateSelect
+              virtual
+              style={{width: "100%"}}
+              value={this.state.plan.role}
+              disabled={isViewMode}
+              allowClear
+              fetchPage={RoleBackend.getRoles}
+              buildFetchArgs={({page, pageSize, searchText}) => {
+                const field = searchText ? "name" : "";
+                return [this.state.plan.owner, page, pageSize, field, searchText, "", ""];
+              }}
+              reloadKey={this.state.plan.owner}
+              optionMapper={(role) => Setting.getOption(role.name, role.name)}
               filterOption={false}
-              onSearch={this.handleRoleSearch}
-              onChange={(value => {this.updatePlanField("role", value);})}
-              options={this.state.roles.map((role) => Setting.getOption(role.name, role.name))
-              } />
+              onChange={(value => {this.updatePlanField("role", value || "");})}
+            />
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >

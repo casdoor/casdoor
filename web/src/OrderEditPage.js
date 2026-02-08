@@ -14,6 +14,7 @@
 
 import React from "react";
 import {Button, Card, Col, Input, Row, Select} from "antd";
+import PaginateSelect from "./common/PaginateSelect";
 import * as OrderBackend from "./backend/OrderBackend";
 import * as ProductBackend from "./backend/ProductBackend";
 import * as UserBackend from "./backend/UserBackend";
@@ -36,20 +37,12 @@ class OrderEditPage extends React.Component {
       payments: [],
       mode: props.location.mode !== undefined ? props.location.mode : "edit",
     };
-    this.userSearchTimeout = null;
   }
 
   UNSAFE_componentWillMount() {
     this.getOrder();
     this.getProducts();
-    this.getUsers();
     this.getPayments();
-  }
-
-  componentWillUnmount() {
-    if (this.userSearchTimeout) {
-      clearTimeout(this.userSearchTimeout);
-    }
   }
 
   getOrder() {
@@ -78,31 +71,6 @@ class OrderEditPage extends React.Component {
         }
       });
   }
-
-  getUsers(searchValue = "") {
-    // When searchValue is empty, field is also empty which tells backend to return results without filtering
-    const field = searchValue ? "name" : "";
-    const pageSize = String(Setting.MAX_PAGE_SIZE); // Always limit to MAX_PAGE_SIZE items for performance
-    UserBackend.getUsers(this.state.organizationName, "", pageSize, field, searchValue)
-      .then((res) => {
-        if (res.status === "ok") {
-          this.setState({
-            users: res.data || [],
-          });
-        } else {
-          Setting.showMessage("error", `Failed to get users: ${res.msg}`);
-        }
-      });
-  }
-
-  handleUserSearch = (searchValue) => {
-    if (this.userSearchTimeout) {
-      clearTimeout(this.userSearchTimeout);
-    }
-    this.userSearchTimeout = setTimeout(() => {
-      this.getUsers(searchValue);
-    }, Setting.SEARCH_DEBOUNCE_MS);
-  };
 
   getPayments() {
     PaymentBackend.getPayments(this.state.organizationName)
@@ -203,17 +171,24 @@ class OrderEditPage extends React.Component {
             {i18next.t("general:User")}:
           </Col>
           <Col span={22} >
-            <Select virtual={false} style={{width: "100%"}} value={this.state.order.user} disabled={isViewMode}
-              showSearch
+            <PaginateSelect
+              virtual
+              style={{width: "100%"}}
+              value={this.state.order.user}
+              disabled={isViewMode}
+              allowClear
+              fetchPage={UserBackend.getUsers}
+              buildFetchArgs={({page, pageSize, searchText}) => {
+                const field = searchText ? "name" : "";
+                return [this.state.organizationName, page, pageSize, field, searchText];
+              }}
+              reloadKey={this.state.organizationName}
+              optionMapper={(user) => Setting.getOption(user.name, user.name)}
               filterOption={false}
-              onSearch={this.handleUserSearch}
               onChange={(value) => {
-                this.updateOrderField("user", value);
-              }}>
-              {
-                this.state.users?.map((user, index) => <Option key={index} value={user.name}>{user.name}</Option>)
-              }
-            </Select>
+                this.updateOrderField("user", value || "");
+              }}
+            />
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
