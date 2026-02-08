@@ -22,7 +22,7 @@
     "The login method: login with email is not enabled for the application": "このアプリケーションではメールログインは有効になっていません",
     "The login method: login with face is not enabled for the application": "このアプリケーションでは顔認証ログインは有効になっていません",
     "The login method: login with password is not enabled for the application": "ログイン方法：パスワードでのログインはアプリケーションで有効になっていません",
-    "The order: %s does not exist": "The order: %s does not exist",
+    "The order: %s does not exist": "注文：%s は存在しません",
     "The organization: %s does not exist": "組織「%s」は存在しません",
     "The organization: %s has disabled users to signin": "組織: %s はユーザーのサインインを無効にしました",
     "The plan: %s does not exist": "プラン: %sは存在しません",
@@ -57,7 +57,7 @@
     "Face data mismatch": "顔認証データが一致しません",
     "Failed to parse client IP: %s": "クライアント IP「%s」の解析に失敗しました",
     "FirstName cannot be blank": "ファーストネームは空白にできません",
-    "Guest users must upgrade their account by setting a username and password before they can sign in directly": "Guest users must upgrade their account by setting a username and password before they can sign in directly",
+    "Guest users must upgrade their account by setting a username and password before they can sign in directly": "ゲストユーザーは直接サインインする前に、ユーザー名とパスワードを設定してアカウントをアップグレードする必要があります",
     "Invitation code cannot be blank": "招待コードは空にできません",
     "Invitation code exhausted": "招待コードの使用回数が上限に達しました",
     "Invitation code is invalid": "招待コードが無効です",
@@ -106,17 +106,17 @@
   "general": {
     "Failed to import groups": "グループのインポートに失敗しました",
     "Failed to import users": "ユーザーのインポートに失敗しました",
-    "Insufficient balance: new balance %v would be below credit limit %v": "Insufficient balance: new balance %v would be below credit limit %v",
-    "Insufficient balance: new organization balance %v would be below credit limit %v": "Insufficient balance: new organization balance %v would be below credit limit %v",
+    "Insufficient balance: new balance %v would be below credit limit %v": "残高不足：新しい残高 %v がクレジット制限 %v を下回ります",
+    "Insufficient balance: new organization balance %v would be below credit limit %v": "残高不足：新しい組織残高 %v がクレジット制限 %v を下回ります",
     "Missing parameter": "不足しているパラメーター",
     "Only admin user can specify user": "管理者ユーザーのみがユーザーを指定できます",
     "Please login first": "最初にログインしてください",
-    "The LDAP: %s does not exist": "The LDAP: %s does not exist",
+    "The LDAP: %s does not exist": "LDAP：%s は存在しません",
     "The organization: %s should have one application at least": "組織「%s」は少なくとも1つのアプリケーションを持っている必要があります",
-    "The syncer: %s does not exist": "The syncer: %s does not exist",
+    "The syncer: %s does not exist": "同期装置：%s は存在しません",
     "The user: %s doesn't exist": "そのユーザー：%sは存在しません",
-    "The user: %s is not found": "The user: %s is not found",
-    "User is required for User category transaction": "User is required for User category transaction",
+    "The user: %s is not found": "ユーザー：%s が見つかりません",
+    "User is required for User category transaction": "ユーザーカテゴリトランザクションにはユーザーが必要です",
     "Wrong userId": "無効なユーザーIDです",
     "don't support captchaProvider: ": "captchaProviderをサポートしないでください",
     "this operation is not allowed in demo mode": "この操作はデモモードでは許可されていません",
@@ -146,13 +146,13 @@
     "The permission: \"%s\" doesn't exist": "権限「%s」は存在しません"
   },
   "product": {
-    "Product list cannot be empty": "Product list cannot be empty"
+    "Product list cannot be empty": "商品リストは空にできません"
   },
   "provider": {
-    "Failed to initialize ID Verification provider": "Failed to initialize ID Verification provider",
+    "Failed to initialize ID Verification provider": "ID認証プロバイダーの初期化に失敗しました",
     "Invalid application id": "アプリケーションIDが無効です",
-    "No ID Verification provider configured": "No ID Verification provider configured",
-    "Provider is not an ID Verification provider": "Provider is not an ID Verification provider",
+    "No ID Verification provider configured": "ID認証プロバイダーが設定されていません",
+    "Provider is not an ID Verification provider": "プロバイダーはID認証プロバイダーではありません",
     "the provider: %s does not exist": "プロバイダー%sは存在しません"
   },
   "resource": {
@@ -171,7 +171,7 @@
     "Invalid phone receivers: %s": "電話受信者が無効です：%s"
   },
   "session": {
-    "session id %s is the current session and cannot be deleted": "session id %s is the current session and cannot be deleted"
+    "session id %s is the current session and cannot be deleted": "セッションID %s は現在のセッションであり、削除できません"
   },
   "storage": {
     "The objectKey: %s is not allowed": "オブジェクトキー %s は許可されていません",
@@ -181,7 +181,7 @@
     "Error": "エラー"
   },
   "ticket": {
-    "Ticket not found": "Ticket not found"
+    "Ticket not found": "チケットが見つかりません"
   },
   "token": {
     "Grant_type: %s is not supported in this application": "grant_type：%sはこのアプリケーションでサポートされていません",
@@ -192,14 +192,14 @@
   },
   "user": {
     "Display name cannot be empty": "表示名は空にできません",
-    "ID card information and real name are required": "ID card information and real name are required",
-    "Identity verification failed": "Identity verification failed",
+    "ID card information and real name are required": "身分証明書の情報と実名が必要です",
+    "Identity verification failed": "身元確認に失敗しました",
     "MFA email is enabled but email is empty": "MFA メールが有効になっていますが、メールアドレスが空です",
     "MFA phone is enabled but phone number is empty": "MFA 電話番号が有効になっていますが、電話番号が空です",
     "New password cannot contain blank space.": "新しいパスワードにはスペースを含めることはできません。",
-    "No application found for user": "No application found for user",
+    "No application found for user": "ユーザーのアプリケーションが見つかりません",
     "The new password must be different from your current password": "新しいパスワードは現在のパスワードと異なる必要があります",
-    "User is already verified": "User is already verified",
+    "User is already verified": "ユーザーは既に認証済みです",
     "the user's owner and name should not be empty": "ユーザーのオーナーと名前は空にできません"
   },
   "util": {
@@ -210,7 +210,7 @@
   "verification": {
     "Invalid captcha provider.": "無効なCAPTCHAプロバイダー。",
     "Phone number is invalid in your region %s": "電話番号はあなたの地域で無効です %s",
-    "The forgot password feature is disabled": "The forgot password feature is disabled",
+    "The forgot password feature is disabled": "パスワードを忘れた機能は無効になっています",
     "The verification code has already been used!": "この検証コードは既に使用されています！",
     "The verification code has not been sent yet!": "検証コードはまだ送信されていません！",
     "Turing test failed.": "チューリングテストは失敗しました。",
