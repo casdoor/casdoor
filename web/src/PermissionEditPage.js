@@ -229,6 +229,9 @@ class PermissionEditPage extends React.Component {
               allowClear
               fetchPage={async(...args) => {
                 const res = await UserBackend.getUsers(...args);
+                if (res.status !== "ok") {
+                  return res;
+                }
                 const data = res.data.map((user) => Setting.getOption(`${user.owner}/${user.name}`, `${user.owner}/${user.name}`));
                 if (args?.[1] === 1 && Array.isArray(res?.data)) {
                   res.data = [
@@ -263,6 +266,9 @@ class PermissionEditPage extends React.Component {
               allowClear
               fetchPage={async(...args) => {
                 const res = await GroupBackend.getGroups(...args);
+                if (res.status !== "ok") {
+                  return res;
+                }
                 const data = res.data.map((group) => Setting.getOption(`${group.owner}/${group.name}`, `${group.owner}/${group.name}`));
                 if (args?.[2] === 1 && Array.isArray(res?.data)) {
                   res.data = [
@@ -298,8 +304,10 @@ class PermissionEditPage extends React.Component {
               allowClear
               fetchPage={async(...args) => {
                 const res = await RoleBackend.getRoles(...args);
-                const data = res.data.filter(roles => (roles.owner !== this.state.roles.owner || roles.name !== this.state.roles.name))
-                  .map((permission) => Setting.getOption(`${permission.owner}/${permission.name}`, `${permission.owner}/${permission.name}`));
+                if (res.status !== "ok") {
+                  return res;
+                }
+                const data = res.data.map((role) => Setting.getOption(`${role.owner}/${role.name}`, `${role.owner}/${role.name}`));
                 if (args?.[1] === 1 && Array.isArray(res?.data)) {
                   // res.data = [{owner: i18next.t("organization:All"), name: "*"}, ...res.data];
                   res.data = [
