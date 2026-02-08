@@ -115,6 +115,11 @@ func validateClientAssertion(application *Application, assertion string, tokenEn
 		// Validate the signing algorithm
 		sigAlgorithm := token.Method.Alg()
 		
+		// Validate algorithm length
+		if len(sigAlgorithm) < 2 {
+			return nil, fmt.Errorf("invalid signing algorithm: %s", sigAlgorithm)
+		}
+		
 		// Get the public key based on the algorithm
 		var certificate interface{}
 		var parseErr error
@@ -214,8 +219,12 @@ func validateClientAssertion(application *Application, assertion string, tokenEn
 		}
 	}
 
-	// JWT ID (jti) should be present for replay protection (recommended but not required)
-	// In production, you might want to store used JTIs to prevent replay attacks
+	// TODO: Implement JTI replay protection for production use
+	// JWT ID (jti) should be tracked to prevent replay attacks.
+	// Recommended implementation:
+	// - Store used JTIs in Redis/cache with TTL = exp - iat
+	// - Reject assertions with previously seen JTIs
+	// - Handle distributed deployments with shared cache
 
 	return nil
 }

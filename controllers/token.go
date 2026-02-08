@@ -331,7 +331,7 @@ func (c *ApiController) RefreshToken() {
 		}
 	}
 
-	tokenEndpoint := fmt.Sprintf("https://%s/api/login/oauth/refresh_token", host)
+	tokenEndpoint := fmt.Sprintf("https://%s/api/login/oauth/access_token", host)
 	refreshToken2, err := object.RefreshToken(grantType, refreshToken, scope, clientId, clientSecret, clientAssertion, clientAssertionType, host, tokenEndpoint)
 	if err != nil {
 		c.ResponseError(err.Error())
