@@ -22,7 +22,7 @@
     "The login method: login with email is not enabled for the application": "Метод входу через email не увімкнено для цього додатка",
     "The login method: login with face is not enabled for the application": "Метод входу через обличчя не увімкнено для цього додатка",
     "The login method: login with password is not enabled for the application": "Метод входу через пароль не увімкнено для цього додатка",
-    "The order: %s does not exist": "The order: %s does not exist",
+    "The order: %s does not exist": "Замовлення: %s не існує",
     "The organization: %s does not exist": "Організація: %s не існує",
     "The organization: %s has disabled users to signin": "Організація: %s вимкнула вхід користувачів",
     "The plan: %s does not exist": "План: %s не існує",
@@ -57,7 +57,7 @@
     "Face data mismatch": "Невідповідність даних обличчя",
     "Failed to parse client IP: %s": "Не вдалося розібрати IP клієнта: %s",
     "FirstName cannot be blank": "Ім’я не може бути порожнім",
-    "Guest users must upgrade their account by setting a username and password before they can sign in directly": "Guest users must upgrade their account by setting a username and password before they can sign in directly",
+    "Guest users must upgrade their account by setting a username and password before they can sign in directly": "Гостьові користувачі повинні оновити свій обліковий запис, встановивши ім'я користувача та пароль, перш ніж вони зможуть увійти безпосередньо",
     "Invitation code cannot be blank": "Код запрошення не може бути порожнім",
     "Invitation code exhausted": "Код запрошення вичерпано",
     "Invitation code is invalid": "Код запрошення недійсний",
@@ -83,8 +83,8 @@
     "The user is forbidden to sign in, please contact the administrator": "Користувачу заборонено вхід, зверніться до адміністратора",
     "The user: %s doesn't exist in LDAP server": "Користувач: %s не існує на сервері LDAP",
     "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.": "Ім’я користувача може містити лише буквено-цифрові символи, підкреслення або дефіси, не може мати послідовні дефіси або підкреслення та не може починатися або закінчуватися дефісом або підкресленням.",
-    "The value \"%s\" for account field \"%s\" doesn't match the account item regex": "Värdet \"%s\" för kontofältet \"%s\" matchar inte kontots regex",
-    "The value \"%s\" for signup field \"%s\" doesn't match the signup item regex of the application \"%s\"": "Värdet \"%s\" för registreringsfältet \"%s\" matchar inte registreringsfältets regex för applikationen \"%s\"",
+    "The value \"%s\" for account field \"%s\" doesn't match the account item regex": "Значення \"%s\" для поля облікового запису \"%s\" не відповідає регулярному виразу облікового запису",
+    "The value \"%s\" for signup field \"%s\" doesn't match the signup item regex of the application \"%s\"": "Значення \"%s\" для поля реєстрації \"%s\" не відповідає регулярному виразу поля реєстрації додатка \"%s\"",
     "Username already exists": "Ім’я користувача вже існує",
     "Username cannot be an email address": "Ім’я користувача не може бути email-адресою",
     "Username cannot contain white spaces": "Ім’я користувача не може містити пробіли",
@@ -94,7 +94,7 @@
     "Username supports email format. Also The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline. Also pay attention to the email format.": "Ім’я користувача підтримує формат email. Також може містити лише буквено-цифрові символи, підкреслення або дефіси, не може мати послідовні дефіси або підкреслення та не може починатися або закінчуватися дефісом або підкресленням. Зверніть увагу на формат email.",
     "You have entered the wrong password or code too many times, please wait for %d minutes and try again": "Ви ввели неправильний пароль або код забагато разів, зачекайте %d хвилин і спробуйте знову",
     "Your IP address: %s has been banned according to the configuration of: ": "Ваша IP-адреса: %s заблокована відповідно до конфігурації: ",
-    "Your password has expired. Please reset your password by clicking \"Forgot password\"": "Ditt lösenord har gått ut. Återställ det genom att klicka på \"Glömt lösenord\"",
+    "Your password has expired. Please reset your password by clicking \"Forgot password\"": "Ваш пароль застарів. Будь ласка, скиньте пароль, натиснувши \"Забув пароль\"",
     "Your region is not allow to signup by phone": "У вашому регіоні реєстрація за телефоном недоступна",
     "password or code is incorrect": "пароль або код неправильний",
     "password or code is incorrect, you have %s remaining chances": "пароль або код неправильний, у вас залишилось %s спроб",
@@ -106,17 +106,17 @@
   "general": {
     "Failed to import groups": "Не вдалося імпортувати групи",
     "Failed to import users": "Не вдалося імпортувати користувачів",
-    "Insufficient balance: new balance %v would be below credit limit %v": "Insufficient balance: new balance %v would be below credit limit %v",
-    "Insufficient balance: new organization balance %v would be below credit limit %v": "Insufficient balance: new organization balance %v would be below credit limit %v",
+    "Insufficient balance: new balance %v would be below credit limit %v": "Недостатній баланс: новий баланс %v буде нижче кредитного ліміту %v",
+    "Insufficient balance: new organization balance %v would be below credit limit %v": "Недостатній баланс: новий баланс організації %v буде нижче кредитного ліміту %v",
     "Missing parameter": "Відсутній параметр",
     "Only admin user can specify user": "Лише адміністратор може вказати користувача",
     "Please login first": "Спочатку увійдіть",
-    "The LDAP: %s does not exist": "The LDAP: %s does not exist",
+    "The LDAP: %s does not exist": "LDAP: %s не існує",
     "The organization: %s should have one application at least": "Організація: %s має мати щонайменше один додаток",
-    "The syncer: %s does not exist": "The syncer: %s does not exist",
+    "The syncer: %s does not exist": "Синхронізатор: %s не існує",
     "The user: %s doesn't exist": "Користувач: %s не існує",
-    "The user: %s is not found": "The user: %s is not found",
-    "User is required for User category transaction": "User is required for User category transaction",
+    "The user: %s is not found": "Користувач: %s не знайдено",
+    "User is required for User category transaction": "Користувач обов'язковий для транзакції категорії користувача",
     "Wrong userId": "Неправильний userId",
     "don't support captchaProvider: ": "не підтримується captchaProvider: ",
     "this operation is not allowed in demo mode": "ця операція недоступна в демо-режимі",
@@ -143,16 +143,16 @@
     "adding a new user to the 'built-in' organization is currently disabled. Please note: all users in the 'built-in' organization are global administrators in Casdoor. Refer to the docs: https://casdoor.org/docs/basic/core-concepts#how-does-casdoor-manage-itself. If you still wish to create a user for the 'built-in' organization, go to the organization's settings page and enable the 'Has privilege consent' option.": "Додавання нового користувача до організації «built-in» (вбудованої) на даний момент вимкнено. Зауважте: усі користувачі в організації «built-in» є глобальними адміністраторами в Casdoor. Дивіться документацію: https://casdoor.org/docs/basic/core-concepts#how-does-casdoor-manage-itself. Якщо ви все ще хочете створити користувача для організації «built-in», перейдіть на сторінку налаштувань організації та увімкніть опцію «Має згоду на привілеї»."
   },
   "permission": {
-    "The permission: \"%s\" doesn't exist": "Behörigheten: \"%s\" finns inte"
+    "The permission: \"%s\" doesn't exist": "Дозвіл: \"%s\" не існує"
   },
   "product": {
-    "Product list cannot be empty": "Product list cannot be empty"
+    "Product list cannot be empty": "Список товарів не може бути порожнім"
   },
   "provider": {
-    "Failed to initialize ID Verification provider": "Failed to initialize ID Verification provider",
+    "Failed to initialize ID Verification provider": "Не вдалося ініціалізувати провайдера верифікації ID",
     "Invalid application id": "Недійсний id додатка",
-    "No ID Verification provider configured": "No ID Verification provider configured",
-    "Provider is not an ID Verification provider": "Provider is not an ID Verification provider",
+    "No ID Verification provider configured": "Провайдер верифікації ID не налаштований",
+    "Provider is not an ID Verification provider": "Провайдер не є провайдером верифікації ID",
     "the provider: %s does not exist": "провайдер: %s не існує"
   },
   "resource": {
@@ -171,7 +171,7 @@
     "Invalid phone receivers: %s": "Недійсні отримувачі телефону: %s"
   },
   "session": {
-    "session id %s is the current session and cannot be deleted": "session id %s is the current session and cannot be deleted"
+    "session id %s is the current session and cannot be deleted": "ідентифікатор сесії %s є поточною сесією і не може бути видалений"
   },
   "storage": {
     "The objectKey: %s is not allowed": "objectKey: %s не дозволено",
@@ -181,7 +181,7 @@
     "Error": "Помилка"
   },
   "ticket": {
-    "Ticket not found": "Ticket not found"
+    "Ticket not found": "Квиток не знайдено"
   },
   "token": {
     "Grant_type: %s is not supported in this application": "Grant_type: %s не підтримується в цьому додатку",
@@ -192,14 +192,14 @@
   },
   "user": {
     "Display name cannot be empty": "Відображуване ім’я не може бути порожнім",
-    "ID card information and real name are required": "ID card information and real name are required",
-    "Identity verification failed": "Identity verification failed",
+    "ID card information and real name are required": "Інформація про посвідчення особи та справжнє ім'я обов'язкові",
+    "Identity verification failed": "Верифікація особи не вдалася",
     "MFA email is enabled but email is empty": "MFA email увімкнено, але email порожній",
     "MFA phone is enabled but phone number is empty": "MFA телефон увімкнено, але номер телефону порожній",
     "New password cannot contain blank space.": "Новий пароль не може містити пробіли.",
-    "No application found for user": "No application found for user",
+    "No application found for user": "Не знайдено додаток для користувача",
     "The new password must be different from your current password": "Новий пароль повинен відрізнятися від поточного пароля",
-    "User is already verified": "User is already verified",
+    "User is already verified": "Користувач уже верифікований",
     "the user's owner and name should not be empty": "власник ім’я користувача не повинні бути порожніми"
   },
   "util": {
@@ -210,7 +210,7 @@
   "verification": {
     "Invalid captcha provider.": "Недійсний провайдер captcha.",
     "Phone number is invalid in your region %s": "Номер телефону недійсний у вашому регіоні %s",
-    "The forgot password feature is disabled": "The forgot password feature is disabled",
+    "The forgot password feature is disabled": "Функція відновлення пароля вимкнена",
     "The verification code has already been used!": "Код підтвердження вже використано!",
     "The verification code has not been sent yet!": "Код підтвердження ще не надіслано!",
     "Turing test failed.": "Тест Тюрінга не пройдено.",
@@ -219,8 +219,8 @@
     "Unknown type": "Невідомий тип",
     "Wrong verification code!": "Неправильний код підтвердження!",
     "You should verify your code in %d min!": "Ви маєте підтвердити код за %d хв!",
-    "please add a SMS provider to the \"Providers\" list for the application: %s": "lägg till en SMS-leverantör i listan \"Leverantörer\" för applikationen: %s",
-    "please add an Email provider to the \"Providers\" list for the application: %s": "lägg till en e-postleverantör i listan \"Leverantörer\" för applikationen: %s",
+    "please add a SMS provider to the \"Providers\" list for the application: %s": "будь ласка, додайте SMS-провайдера до списку \"Провайдери\" для додатка: %s",
+    "please add an Email provider to the \"Providers\" list for the application: %s": "будь ласка, додайте Email-провайдера до списку \"Провайдери\" для додатка: %s",
     "the user does not exist, please sign up first": "користувача не існує, спочатку зареєструйтесь"
   },
   "webauthn": {

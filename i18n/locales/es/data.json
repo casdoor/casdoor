@@ -22,7 +22,7 @@
     "The login method: login with email is not enabled for the application": "El método de inicio de sesión: inicio de sesión con correo electrónico no está habilitado para la aplicación",
     "The login method: login with face is not enabled for the application": "El método de inicio de sesión: inicio de sesión con reconocimiento facial no está habilitado para la aplicación",
     "The login method: login with password is not enabled for the application": "El método de inicio de sesión: inicio de sesión con contraseña no está habilitado para la aplicación",
-    "The order: %s does not exist": "The order: %s does not exist",
+    "The order: %s does not exist": "El pedido: %s no existe",
     "The organization: %s does not exist": "La organización: %s no existe",
     "The organization: %s has disabled users to signin": "La organización: %s ha desactivado el inicio de sesión de usuarios",
     "The plan: %s does not exist": "El plan: %s no existe",
@@ -35,7 +35,7 @@
     "User's tag: %s is not listed in the application's tags": "La etiqueta del usuario: %s no está incluida en las etiquetas de la aplicación",
     "UserCode Expired": "Código de usuario expirado",
     "UserCode Invalid": "Código de usuario inválido",
-    "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing": "El usuario de pago %s no tiene una suscripción activa o pendiente y la aplicación: %s no tiene precio predeterminado",
+    "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing": "El usuario de pago %s no tiene una suscripción activa o pendiente y la aplicación %s no tiene precios predeterminados",
     "the application for user %s is not found": "no se encontró la aplicación para el usuario %s",
     "the organization: %s is not found": "no se encontró la organización: %s"
   },
@@ -44,9 +44,9 @@
   },
   "check": {
     "%s does not meet the CIDR format requirements: %s": "%s no cumple con los requisitos del formato CIDR: %s",
-    "Affiliation cannot be blank": "Afiliación no puede estar en blanco",
+    "Affiliation cannot be blank": "La afiliación no puede estar vacía",
     "CIDR for IP: %s should not be empty": "El CIDR para la IP: %s no debe estar vacío",
-    "Default code does not match the code's matching rules": "El código predeterminado no coincide con las reglas de coincidencia de códigos",
+    "Default code does not match the code's matching rules": "El código predeterminado no cumple con las reglas de validación del código",
     "DisplayName cannot be blank": "El nombre de visualización no puede estar en blanco",
     "DisplayName is not valid real name": "El nombre de pantalla no es un nombre real válido",
     "Email already exists": "El correo electrónico ya existe",
@@ -57,7 +57,7 @@
     "Face data mismatch": "Los datos faciales no coinciden",
     "Failed to parse client IP: %s": "Error al analizar la IP del cliente: %s",
     "FirstName cannot be blank": "El nombre no puede estar en blanco",
-    "Guest users must upgrade their account by setting a username and password before they can sign in directly": "Guest users must upgrade their account by setting a username and password before they can sign in directly",
+    "Guest users must upgrade their account by setting a username and password before they can sign in directly": "Los usuarios invitados deben actualizar su cuenta configurando un nombre de usuario y una contraseña antes de poder iniciar sesión directamente",
     "Invitation code cannot be blank": "El código de invitación no puede estar vacío",
     "Invitation code exhausted": "Código de invitación agotado",
     "Invitation code is invalid": "Código de invitación inválido",
@@ -106,17 +106,17 @@
   "general": {
     "Failed to import groups": "Error al importar grupos",
     "Failed to import users": "Error al importar usuarios",
-    "Insufficient balance: new balance %v would be below credit limit %v": "Insufficient balance: new balance %v would be below credit limit %v",
-    "Insufficient balance: new organization balance %v would be below credit limit %v": "Insufficient balance: new organization balance %v would be below credit limit %v",
+    "Insufficient balance: new balance %v would be below credit limit %v": "Saldo insuficiente: el nuevo saldo %v estaría por debajo del límite de crédito %v",
+    "Insufficient balance: new organization balance %v would be below credit limit %v": "Saldo insuficiente: el nuevo saldo de la organización %v estaría por debajo del límite de crédito %v",
     "Missing parameter": "Parámetro faltante",
     "Only admin user can specify user": "Solo el usuario administrador puede especificar usuario",
     "Please login first": "Por favor, inicia sesión primero",
-    "The LDAP: %s does not exist": "The LDAP: %s does not exist",
+    "The LDAP: %s does not exist": "El LDAP: %s no existe",
     "The organization: %s should have one application at least": "La organización: %s debe tener al menos una aplicación",
-    "The syncer: %s does not exist": "The syncer: %s does not exist",
+    "The syncer: %s does not exist": "El sincronizador: %s no existe",
     "The user: %s doesn't exist": "El usuario: %s no existe",
-    "The user: %s is not found": "The user: %s is not found",
-    "User is required for User category transaction": "User is required for User category transaction",
+    "The user: %s is not found": "El usuario: %s no encontrado",
+    "User is required for User category transaction": "El usuario es obligatorio para la transacción de la categoría Usuario",
     "Wrong userId": "ID de usuario incorrecto",
     "don't support captchaProvider: ": "No apoyo a captchaProvider",
     "this operation is not allowed in demo mode": "esta operación no está permitida en modo de demostración",
@@ -146,13 +146,13 @@
     "The permission: \"%s\" doesn't exist": "El permiso: \"%s\" no existe"
   },
   "product": {
-    "Product list cannot be empty": "Product list cannot be empty"
+    "Product list cannot be empty": "La lista de productos no puede estar vacía"
   },
   "provider": {
-    "Failed to initialize ID Verification provider": "Failed to initialize ID Verification provider",
+    "Failed to initialize ID Verification provider": "Error al inicializar el proveedor de verificación de ID",
     "Invalid application id": "Identificación de aplicación no válida",
-    "No ID Verification provider configured": "No ID Verification provider configured",
-    "Provider is not an ID Verification provider": "Provider is not an ID Verification provider",
+    "No ID Verification provider configured": "No hay proveedor de verificación de ID configurado",
+    "Provider is not an ID Verification provider": "El proveedor no es un proveedor de verificación de ID",
     "the provider: %s does not exist": "El proveedor: %s no existe"
   },
   "resource": {
@@ -181,7 +181,7 @@
     "Error": "Error"
   },
   "ticket": {
-    "Ticket not found": "Ticket not found"
+    "Ticket not found": "Ticket no encontrado"
   },
   "token": {
     "Grant_type: %s is not supported in this application": "El tipo de subvención: %s no es compatible con esta aplicación",
@@ -192,14 +192,14 @@
   },
   "user": {
     "Display name cannot be empty": "El nombre de pantalla no puede estar vacío",
-    "ID card information and real name are required": "ID card information and real name are required",
-    "Identity verification failed": "Identity verification failed",
+    "ID card information and real name are required": "Se requiere información de la tarjeta de identificación y el nombre real",
+    "Identity verification failed": "Falló la verificación de identidad",
     "MFA email is enabled but email is empty": "El correo electrónico MFA está habilitado pero el correo está vacío",
     "MFA phone is enabled but phone number is empty": "El teléfono MFA está habilitado pero el número de teléfono está vacío",
     "New password cannot contain blank space.": "La nueva contraseña no puede contener espacios en blanco.",
-    "No application found for user": "No application found for user",
+    "No application found for user": "No se encontró aplicación para el usuario",
     "The new password must be different from your current password": "La nueva contraseña debe ser diferente de su contraseña actual",
-    "User is already verified": "User is already verified",
+    "User is already verified": "El usuario ya está verificado",
     "the user's owner and name should not be empty": "el propietario y el nombre del usuario no deben estar vacíos"
   },
   "util": {
@@ -210,7 +210,7 @@
   "verification": {
     "Invalid captcha provider.": "Proveedor de captcha no válido.",
     "Phone number is invalid in your region %s": "El número de teléfono es inválido en tu región %s",
-    "The forgot password feature is disabled": "The forgot password feature is disabled",
+    "The forgot password feature is disabled": "La función de contraseña olvidada está deshabilitada",
     "The verification code has already been used!": "¡El código de verificación ya ha sido utilizado!",
     "The verification code has not been sent yet!": "¡El código de verificación aún no ha sido enviado!",
     "Turing test failed.": "El test de Turing falló.",

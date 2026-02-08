@@ -22,7 +22,7 @@
     "The login method: login with email is not enabled for the application": "Phương thức đăng nhập bằng email chưa được bật cho ứng dụng",
     "The login method: login with face is not enabled for the application": "Phương thức đăng nhập bằng khuôn mặt chưa được bật cho ứng dụng",
     "The login method: login with password is not enabled for the application": "Phương thức đăng nhập: đăng nhập bằng mật khẩu không được kích hoạt cho ứng dụng",
-    "The order: %s does not exist": "The order: %s does not exist",
+    "The order: %s does not exist": "Đơn hàng: %s không tồn tại",
     "The organization: %s does not exist": "Tổ chức: %s không tồn tại",
     "The organization: %s has disabled users to signin": "Tổ chức: %s đã vô hiệu hóa đăng nhập của người dùng",
     "The plan: %s does not exist": "Kế hoạch: %s không tồn tại",
@@ -57,7 +57,7 @@
     "Face data mismatch": "Dữ liệu khuôn mặt không khớp",
     "Failed to parse client IP: %s": "Không thể phân tích IP khách: %s",
     "FirstName cannot be blank": "Tên không được để trống",
-    "Guest users must upgrade their account by setting a username and password before they can sign in directly": "Guest users must upgrade their account by setting a username and password before they can sign in directly",
+    "Guest users must upgrade their account by setting a username and password before they can sign in directly": "Người dùng khách phải nâng cấp tài khoản bằng cách đặt tên người dùng và mật khẩu trước khi có thể đăng nhập trực tiếp",
     "Invitation code cannot be blank": "Mã mời không được để trống",
     "Invitation code exhausted": "Mã mời đã hết",
     "Invitation code is invalid": "Mã mời không hợp lệ",
@@ -106,17 +106,17 @@
   "general": {
     "Failed to import groups": "Không thể nhập nhóm",
     "Failed to import users": "Không thể nhập người dùng",
-    "Insufficient balance: new balance %v would be below credit limit %v": "Insufficient balance: new balance %v would be below credit limit %v",
-    "Insufficient balance: new organization balance %v would be below credit limit %v": "Insufficient balance: new organization balance %v would be below credit limit %v",
+    "Insufficient balance: new balance %v would be below credit limit %v": "Số dư không đủ: số dư mới %v sẽ thấp hơn giới hạn tín dụng %v",
+    "Insufficient balance: new organization balance %v would be below credit limit %v": "Số dư không đủ: số dư tổ chức mới %v sẽ thấp hơn giới hạn tín dụng %v",
     "Missing parameter": "Thiếu tham số",
     "Only admin user can specify user": "Chỉ người dùng quản trị mới có thể chỉ định người dùng",
     "Please login first": "Vui lòng đăng nhập trước",
-    "The LDAP: %s does not exist": "The LDAP: %s does not exist",
+    "The LDAP: %s does not exist": "LDAP: %s không tồn tại",
     "The organization: %s should have one application at least": "Tổ chức: %s cần có ít nhất một ứng dụng",
-    "The syncer: %s does not exist": "The syncer: %s does not exist",
+    "The syncer: %s does not exist": "Bộ đồng bộ: %s không tồn tại",
     "The user: %s doesn't exist": "Người dùng: %s không tồn tại",
-    "The user: %s is not found": "The user: %s is not found",
-    "User is required for User category transaction": "User is required for User category transaction",
+    "The user: %s is not found": "Người dùng: %s không được tìm thấy",
+    "User is required for User category transaction": "Người dùng được yêu cầu cho giao dịch danh mục Người dùng",
     "Wrong userId": "ID người dùng sai",
     "don't support captchaProvider: ": "không hỗ trợ captchaProvider: ",
     "this operation is not allowed in demo mode": "thao tác này không được phép trong chế độ demo",
@@ -146,13 +146,13 @@
     "The permission: \"%s\" doesn't exist": "Quyền: \"%s\" không tồn tại"
   },
   "product": {
-    "Product list cannot be empty": "Product list cannot be empty"
+    "Product list cannot be empty": "Danh sách sản phẩm không thể trống"
   },
   "provider": {
-    "Failed to initialize ID Verification provider": "Failed to initialize ID Verification provider",
+    "Failed to initialize ID Verification provider": "Không thể khởi tạo nhà cung cấp Xác minh ID",
     "Invalid application id": "Sai ID ứng dụng",
-    "No ID Verification provider configured": "No ID Verification provider configured",
-    "Provider is not an ID Verification provider": "Provider is not an ID Verification provider",
+    "No ID Verification provider configured": "Không có nhà cung cấp Xác minh ID được cấu hình",
+    "Provider is not an ID Verification provider": "Nhà cung cấp không phải là nhà cung cấp Xác minh ID",
     "the provider: %s does not exist": "Nhà cung cấp: %s không tồn tại"
   },
   "resource": {
@@ -171,7 +171,7 @@
     "Invalid phone receivers: %s": "Người nhận điện thoại không hợp lệ: %s"
   },
   "session": {
-    "session id %s is the current session and cannot be deleted": "session id %s is the current session and cannot be deleted"
+    "session id %s is the current session and cannot be deleted": "id phiên %s là phiên hiện tại và không thể bị xóa"
   },
   "storage": {
     "The objectKey: %s is not allowed": "Khóa đối tượng: %s không được phép",
@@ -181,7 +181,7 @@
     "Error": "Lỗi"
   },
   "ticket": {
-    "Ticket not found": "Ticket not found"
+    "Ticket not found": "Không tìm thấy vé"
   },
   "token": {
     "Grant_type: %s is not supported in this application": "Loại cấp phép: %s không được hỗ trợ trong ứng dụng này",
@@ -192,14 +192,14 @@
   },
   "user": {
     "Display name cannot be empty": "Tên hiển thị không thể trống",
-    "ID card information and real name are required": "ID card information and real name are required",
-    "Identity verification failed": "Identity verification failed",
+    "ID card information and real name are required": "Thông tin chứng minh nhân dân và tên thật là bắt buộc",
+    "Identity verification failed": "Xác minh danh tính thất bại",
     "MFA email is enabled but email is empty": "MFA email đã bật nhưng email trống",
     "MFA phone is enabled but phone number is empty": "MFA điện thoại đã bật nhưng số điện thoại trống",
     "New password cannot contain blank space.": "Mật khẩu mới không thể chứa dấu trắng.",
-    "No application found for user": "No application found for user",
+    "No application found for user": "Không tìm thấy ứng dụng cho người dùng",
     "The new password must be different from your current password": "Mật khẩu mới phải khác với mật khẩu hiện tại của bạn",
-    "User is already verified": "User is already verified",
+    "User is already verified": "Người dùng đã được xác minh",
     "the user's owner and name should not be empty": "chủ sở hữu và tên người dùng không được để trống"
   },
   "util": {
@@ -210,7 +210,7 @@
   "verification": {
     "Invalid captcha provider.": "Nhà cung cấp captcha không hợp lệ.",
     "Phone number is invalid in your region %s": "Số điện thoại không hợp lệ trong vùng của bạn %s",
-    "The forgot password feature is disabled": "The forgot password feature is disabled",
+    "The forgot password feature is disabled": "Tính năng quên mật khẩu đã bị tắt",
     "The verification code has already been used!": "Mã xác thực đã được sử dụng!",
     "The verification code has not been sent yet!": "Mã xác thực chưa được gửi!",
     "Turing test failed.": "Kiểm định Turing thất bại.",

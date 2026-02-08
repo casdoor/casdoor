@@ -22,7 +22,7 @@
     "The login method: login with email is not enabled for the application": "Metoda logowania: logowanie przez email nie jest włączona dla aplikacji",
     "The login method: login with face is not enabled for the application": "Metoda logowania: logowanie przez twarz nie jest włączona dla aplikacji",
     "The login method: login with password is not enabled for the application": "Metoda logowania: logowanie przez hasło nie jest włączone dla aplikacji",
-    "The order: %s does not exist": "The order: %s does not exist",
+    "The order: %s does not exist": "Zamówienie: %s nie istnieje",
     "The organization: %s does not exist": "Organizacja: %s nie istnieje",
     "The organization: %s has disabled users to signin": "Organizacja: %s wyłączyła logowanie użytkowników",
     "The plan: %s does not exist": "Plan: %s nie istnieje",
@@ -57,7 +57,7 @@
     "Face data mismatch": "Niezgodność danych twarzy",
     "Failed to parse client IP: %s": "Nie udało się przeanalizować IP klienta: %s",
     "FirstName cannot be blank": "Imię nie może być puste",
-    "Guest users must upgrade their account by setting a username and password before they can sign in directly": "Guest users must upgrade their account by setting a username and password before they can sign in directly",
+    "Guest users must upgrade their account by setting a username and password before they can sign in directly": "Użytkownicy-goście muszą uaktualnić swoje konto, ustawiając nazwę użytkownika i hasło, zanim będą mogli się zalogować bezpośrednio",
     "Invitation code cannot be blank": "Kod zaproszenia nie może być pusty",
     "Invitation code exhausted": "Kod zaproszenia został wykorzystany",
     "Invitation code is invalid": "Kod zaproszenia jest nieprawidłowy",
@@ -106,17 +106,17 @@
   "general": {
     "Failed to import groups": "Nie udało się zaimportować grup",
     "Failed to import users": "Nie udało się zaimportować użytkowników",
-    "Insufficient balance: new balance %v would be below credit limit %v": "Insufficient balance: new balance %v would be below credit limit %v",
-    "Insufficient balance: new organization balance %v would be below credit limit %v": "Insufficient balance: new organization balance %v would be below credit limit %v",
+    "Insufficient balance: new balance %v would be below credit limit %v": "Niewystarczające saldo: nowe saldo %v byłoby poniżej limitu kredytowego %v",
+    "Insufficient balance: new organization balance %v would be below credit limit %v": "Niewystarczające saldo: nowe saldo organizacji %v byłoby poniżej limitu kredytowego %v",
     "Missing parameter": "Brakujący parametr",
     "Only admin user can specify user": "Tylko administrator może wskazać użytkownika",
     "Please login first": "Najpierw się zaloguj",
-    "The LDAP: %s does not exist": "The LDAP: %s does not exist",
+    "The LDAP: %s does not exist": "LDAP: %s nie istnieje",
     "The organization: %s should have one application at least": "Organizacja: %s powinna mieć co najmniej jedną aplikację",
-    "The syncer: %s does not exist": "The syncer: %s does not exist",
+    "The syncer: %s does not exist": "Synchronizer: %s nie istnieje",
     "The user: %s doesn't exist": "Użytkownik: %s nie istnieje",
-    "The user: %s is not found": "The user: %s is not found",
-    "User is required for User category transaction": "User is required for User category transaction",
+    "The user: %s is not found": "Użytkownik: %s nie został znaleziony",
+    "User is required for User category transaction": "Użytkownik jest wymagany do transakcji kategorii użytkownika",
     "Wrong userId": "Nieprawidłowy userId",
     "don't support captchaProvider: ": "nie obsługuje captchaProvider: ",
     "this operation is not allowed in demo mode": "ta operacja nie jest dozwolona w trybie demo",
@@ -146,13 +146,13 @@
     "The permission: \"%s\" doesn't exist": "Uprawnienie: \"%s\" nie istnieje"
   },
   "product": {
-    "Product list cannot be empty": "Product list cannot be empty"
+    "Product list cannot be empty": "Lista produktów nie może być pusta"
   },
   "provider": {
-    "Failed to initialize ID Verification provider": "Failed to initialize ID Verification provider",
+    "Failed to initialize ID Verification provider": "Nie udało się zainicjować dostawcy weryfikacji ID",
     "Invalid application id": "Nieprawidłowe id aplikacji",
-    "No ID Verification provider configured": "No ID Verification provider configured",
-    "Provider is not an ID Verification provider": "Provider is not an ID Verification provider",
+    "No ID Verification provider configured": "Brak skonfigurowanego dostawcy weryfikacji ID",
+    "Provider is not an ID Verification provider": "Dostawca nie jest dostawcą weryfikacji ID",
     "the provider: %s does not exist": "dostawca: %s nie istnieje"
   },
   "resource": {
@@ -171,7 +171,7 @@
     "Invalid phone receivers: %s": "Nieprawidłowi odbiorcy telefonu: %s"
   },
   "session": {
-    "session id %s is the current session and cannot be deleted": "session id %s is the current session and cannot be deleted"
+    "session id %s is the current session and cannot be deleted": "identyfikator sesji %s jest bieżącą sesją i nie może być usunięty"
   },
   "storage": {
     "The objectKey: %s is not allowed": "Klucz obiektu: %s jest niedozwolony",
@@ -181,7 +181,7 @@
     "Error": "Błąd"
   },
   "ticket": {
-    "Ticket not found": "Ticket not found"
+    "Ticket not found": "Nie znaleziono biletu"
   },
   "token": {
     "Grant_type: %s is not supported in this application": "Grant_type: %s nie jest obsługiwany w tej aplikacji",
@@ -192,14 +192,14 @@
   },
   "user": {
     "Display name cannot be empty": "Nazwa wyświetlana nie może być pusta",
-    "ID card information and real name are required": "ID card information and real name are required",
-    "Identity verification failed": "Identity verification failed",
+    "ID card information and real name are required": "Wymagane są informacje z dowodu osobistego i prawdziwe nazwisko",
+    "Identity verification failed": "Weryfikacja tożsamości nie powiodła się",
     "MFA email is enabled but email is empty": "MFA email jest włączone, ale email jest pusty",
     "MFA phone is enabled but phone number is empty": "MFA telefon jest włączony, ale numer telefonu jest pusty",
     "New password cannot contain blank space.": "Nowe hasło nie może zawierać spacji.",
-    "No application found for user": "No application found for user",
+    "No application found for user": "Nie znaleziono aplikacji dla użytkownika",
     "The new password must be different from your current password": "Nowe hasło musi różnić się od obecnego hasła",
-    "User is already verified": "User is already verified",
+    "User is already verified": "Użytkownik jest już zweryfikowany",
     "the user's owner and name should not be empty": "właściciel i nazwa użytkownika nie powinny być puste"
   },
   "util": {
@@ -210,7 +210,7 @@
   "verification": {
     "Invalid captcha provider.": "Nieprawidłowy dostawca captcha.",
     "Phone number is invalid in your region %s": "Numer telefonu jest nieprawidłowy w twoim regionie %s",
-    "The forgot password feature is disabled": "The forgot password feature is disabled",
+    "The forgot password feature is disabled": "Funkcja \"Zapomniałem hasła\" jest wyłączona",
     "The verification code has already been used!": "Kod weryfikacyjny został już wykorzystany!",
     "The verification code has not been sent yet!": "Kod weryfikacyjny nie został jeszcze wysłany!",
     "Turing test failed.": "Test Turinga nie powiódł się.",
