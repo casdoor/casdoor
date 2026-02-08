@@ -112,9 +112,10 @@ type Application struct {
 	IsShared                     bool            `json:"isShared"`
 	IpRestriction                string          `json:"ipRestriction"`
 
-	ClientId                string     `xorm:"varchar(100)" json:"clientId"`
-	ClientSecret            string     `xorm:"varchar(100)" json:"clientSecret"`
-	RedirectUris            []string   `xorm:"varchar(1000)" json:"redirectUris"`
+	ClientId                   string     `xorm:"varchar(100)" json:"clientId"`
+	ClientSecret               string     `xorm:"varchar(100)" json:"clientSecret"`
+	RedirectUris               []string   `xorm:"varchar(1000)" json:"redirectUris"`
+	TokenEndpointAuthMethod    string     `xorm:"varchar(100)" json:"tokenEndpointAuthMethod"`
 	ForcedRedirectOrigin    string     `xorm:"varchar(100)" json:"forcedRedirectOrigin"`
 	TokenFormat             string     `xorm:"varchar(100)" json:"tokenFormat"`
 	TokenSigningMethod      string     `xorm:"varchar(100)" json:"tokenSigningMethod"`

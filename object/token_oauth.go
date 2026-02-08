@@ -210,7 +210,7 @@ func GetOAuthCode(userId string, clientId string, provider string, signinMethod 
 	}, nil
 }
 
-func GetOAuthToken(grantType string, clientId string, clientSecret string, code string, verifier string, scope string, nonce string, username string, password string, host string, refreshToken string, tag string, avatar string, lang string, subjectToken string, subjectTokenType string, audience string) (interface{}, error) {
+func GetOAuthToken(grantType string, clientId string, clientSecret string, clientAssertion string, clientAssertionType string, code string, verifier string, scope string, nonce string, username string, password string, host string, refreshToken string, tag string, avatar string, lang string, subjectToken string, subjectTokenType string, audience string) (interface{}, error) {
 	application, err := GetApplicationByClientId(clientId)
 	if err != nil {
 		return nil, err
@@ -232,23 +232,26 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 		}, nil
 	}
 
+	// Construct token endpoint URL for client assertion validation
+	tokenEndpoint := fmt.Sprintf("https://%s/api/login/oauth/access_token", host)
+
 	var token *Token
 	var tokenError *TokenError
 	switch grantType {
 	case "authorization_code": // Authorization Code Grant
-		token, tokenError, err = GetAuthorizationCodeToken(application, clientSecret, code, verifier)
+		token, tokenError, err = GetAuthorizationCodeToken(application, clientSecret, clientAssertion, clientAssertionType, code, verifier, tokenEndpoint)
 	case "password": //	Resource Owner Password Credentials Grant
 		token, tokenError, err = GetPasswordToken(application, username, password, scope, host)
 	case "client_credentials": // Client Credentials Grant
-		token, tokenError, err = GetClientCredentialsToken(application, clientSecret, scope, host)
+		token, tokenError, err = GetClientCredentialsToken(application, clientSecret, clientAssertion, clientAssertionType, scope, host, tokenEndpoint)
 	case "token", "id_token": // Implicit Grant
 		token, tokenError, err = GetImplicitToken(application, username, scope, nonce, host)
 	case "urn:ietf:params:oauth:grant-type:device_code":
 		token, tokenError, err = GetImplicitToken(application, username, scope, nonce, host)
 	case "urn:ietf:params:oauth:grant-type:token-exchange": // Token Exchange Grant (RFC 8693)
-		token, tokenError, err = GetTokenExchangeToken(application, clientSecret, subjectToken, subjectTokenType, audience, scope, host)
+		token, tokenError, err = GetTokenExchangeToken(application, clientSecret, clientAssertion, clientAssertionType, subjectToken, subjectTokenType, audience, scope, host, tokenEndpoint)
 	case "refresh_token":
-		refreshToken2, err := RefreshToken(grantType, refreshToken, scope, clientId, clientSecret, host)
+		refreshToken2, err := RefreshToken(grantType, refreshToken, scope, clientId, clientSecret, clientAssertion, clientAssertionType, host, tokenEndpoint)
 		if err != nil {
 			return nil, err
 		}
@@ -290,7 +293,7 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 	return tokenWrapper, nil
 }
 
-func RefreshToken(grantType string, refreshToken string, scope string, clientId string, clientSecret string, host string) (interface{}, error) {
+func RefreshToken(grantType string, refreshToken string, scope string, clientId string, clientSecret string, clientAssertion string, clientAssertionType string, host string, tokenEndpoint string) (interface{}, error) {
 	// check parameters
 	if grantType != "refresh_token" {
 		return &TokenError{
@@ -310,11 +313,12 @@ func RefreshToken(grantType string, refreshToken string, scope string, clientId 
 		}, nil
 	}
 
-	if clientSecret != "" && application.ClientSecret != clientSecret {
-		return &TokenError{
-			Error:            InvalidClient,
-			ErrorDescription: "client_secret is invalid",
-		}, nil
+	// Validate client authentication (optional for refresh tokens, but if provided must be valid)
+	if clientSecret != "" || clientAssertion != "" {
+		tokenErr := ValidateClientAuthentication(application, clientSecret, clientAssertion, clientAssertionType, tokenEndpoint)
+		if tokenErr != nil {
+			return tokenErr, nil
+		}
 	}
 
 	// check whether the refresh token is valid, and has not expired.
@@ -595,7 +599,7 @@ func generateGuestUsername() string {
 
 // GetAuthorizationCodeToken
 // Authorization code flow
-func GetAuthorizationCodeToken(application *Application, clientSecret string, code string, verifier string) (*Token, *TokenError, error) {
+func GetAuthorizationCodeToken(application *Application, clientSecret string, clientAssertion string, clientAssertionType string, code string, verifier string, tokenEndpoint string) (*Token, *TokenError, error) {
 	if code == "" {
 		return nil, &TokenError{
 			Error:            InvalidRequest,
@@ -638,20 +642,18 @@ func GetAuthorizationCodeToken(application *Application, clientSecret string, co
 		}
 	}
 
-	if application.ClientSecret != clientSecret {
-		// when using PKCE, the Client Secret can be empty,
-		// but if it is provided, it must be accurate.
-		if token.CodeChallenge == "" {
-			return nil, &TokenError{
-				Error:            InvalidClient,
-				ErrorDescription: fmt.Sprintf("client_secret is invalid for application: [%s], token.CodeChallenge: empty", application.GetId()),
-			}, nil
-		} else {
-			if clientSecret != "" {
-				return nil, &TokenError{
-					Error:            InvalidClient,
-					ErrorDescription: fmt.Sprintf("client_secret is invalid for application: [%s], token.CodeChallenge: [%s]", application.GetId(), token.CodeChallenge),
-				}, nil
+	// Validate client authentication (supports both client_secret and private_key_jwt)
+	// For PKCE flows (when CodeChallenge is present), client authentication may be optional
+	if token.CodeChallenge == "" || clientSecret != "" || clientAssertion != "" {
+		tokenErr := ValidateClientAuthentication(application, clientSecret, clientAssertion, clientAssertionType, tokenEndpoint)
+		if tokenErr != nil {
+			// Allow PKCE to work without client authentication if CodeChallenge is present
+			if token.CodeChallenge == "" {
+				return nil, tokenErr, nil
+			}
+			// If client auth was provided but is invalid, reject even with PKCE
+			if clientSecret != "" || clientAssertion != "" {
+				return nil, tokenErr, nil
 			}
 		}
 	}
@@ -751,13 +753,13 @@ func GetPasswordToken(application *Application, username string, password string
 
 // GetClientCredentialsToken
 // Client Credentials flow
-func GetClientCredentialsToken(application *Application, clientSecret string, scope string, host string) (*Token, *TokenError, error) {
-	if application.ClientSecret != clientSecret {
-		return nil, &TokenError{
-			Error:            InvalidClient,
-			ErrorDescription: "client_secret is invalid",
-		}, nil
+func GetClientCredentialsToken(application *Application, clientSecret string, clientAssertion string, clientAssertionType string, scope string, host string, tokenEndpoint string) (*Token, *TokenError, error) {
+	// Validate client authentication (supports both client_secret and private_key_jwt)
+	tokenErr := ValidateClientAuthentication(application, clientSecret, clientAssertion, clientAssertionType, tokenEndpoint)
+	if tokenErr != nil {
+		return nil, tokenErr, nil
 	}
+
 	nullUser := &User{
 		Owner: application.Owner,
 		Id:    application.GetId(),
@@ -969,13 +971,11 @@ func GetWechatMiniProgramToken(application *Application, code string, host strin
 // GetTokenExchangeToken
 // Token Exchange Grant (RFC 8693)
 // Exchanges a subject token for a new token with different audience or scope
-func GetTokenExchangeToken(application *Application, clientSecret string, subjectToken string, subjectTokenType string, audience string, scope string, host string) (*Token, *TokenError, error) {
-	// Verify client secret
-	if application.ClientSecret != clientSecret {
-		return nil, &TokenError{
-			Error:            InvalidClient,
-			ErrorDescription: "client_secret is invalid",
-		}, nil
+func GetTokenExchangeToken(application *Application, clientSecret string, clientAssertion string, clientAssertionType string, subjectToken string, subjectTokenType string, audience string, scope string, host string, tokenEndpoint string) (*Token, *TokenError, error) {
+	// Validate client authentication (supports both client_secret and private_key_jwt)
+	tokenErr := ValidateClientAuthentication(application, clientSecret, clientAssertion, clientAssertionType, tokenEndpoint)
+	if tokenErr != nil {
+		return nil, tokenErr, nil
 	}
 
 	// Validate subject_token parameter
