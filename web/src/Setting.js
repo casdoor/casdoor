@@ -34,7 +34,7 @@ export const ServerUrl = "";
 
 export const StaticBaseUrl = "https://cdn.casbin.org";
 
-export const MAX_PAGE_SIZE = 10;
+export const MAX_PAGE_SIZE = 25;
 export const SEARCH_DEBOUNCE_MS = 300;
 
 export const Countries = [
