@@ -1,0 +1,230 @@
+{
+  "account": {
+    "Failed to add user": "Не удалось добавить пользователя",
+    "Get init score failed, error: %w": "Не удалось получить исходный балл, ошибка: %w",
+    "The application does not allow to sign up new account": "Приложение не позволяет зарегистрироваться новому аккаунту"
+  },
+  "auth": {
+    "Challenge method should be S256": "Метод проверки должен быть S256",
+    "DeviceCode Invalid": "Неверный код устройства",
+    "Failed to create user, user information is invalid: %s": "Не удалось создать пользователя, информация о пользователе недействительна: %s",
+    "Failed to login in: %s": "Не удалось войти в систему: %s",
+    "Invalid token": "Недействительный токен",
+    "State expected: %s, but got: %s": "Ожидался статус: %s, но получен: %s",
+    "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %s, please use another way to sign up": "Аккаунт провайдера: %s и имя пользователя: %s (%s) не существует и не может быть зарегистрирован через %s, пожалуйста, используйте другой способ регистрации",
+    "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "Аккаунт для провайдера: %s и имя пользователя: %s (%s) не существует и не может быть зарегистрирован как новый аккаунт. Пожалуйста, обратитесь в службу поддержки IT",
+    "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)": "Аккаунт поставщика: %s и имя пользователя: %s (%s) уже связаны с другим аккаунтом: %s (%s)",
+    "The application: %s does not exist": "Приложение: %s не существует",
+    "The application: %s has disabled users to signin": "Приложение: %s отключило вход пользователей",
+    "The group: %s does not exist": "Группа: %s не существует",
+    "The login method: login with LDAP is not enabled for the application": "Метод входа через LDAP отключен для этого приложения",
+    "The login method: login with SMS is not enabled for the application": "Метод входа через SMS отключен для этого приложения",
+    "The login method: login with email is not enabled for the application": "Метод входа через электронную почту отключен для этого приложения",
+    "The login method: login with face is not enabled for the application": "Метод входа через распознавание лица отключен для этого приложения",
+    "The login method: login with password is not enabled for the application": "Метод входа: вход с паролем не включен для приложения",
+    "The order: %s does not exist": "The order: %s does not exist",
+    "The organization: %s does not exist": "Организация: %s не существует",
+    "The organization: %s has disabled users to signin": "Организация: %s отключила вход пользователей",
+    "The plan: %s does not exist": "План: %s не существует",
+    "The pricing: %s does not exist": "Тариф: %s не существует",
+    "The pricing: %s does not have plan: %s": "Тариф: %s не имеет план: %s",
+    "The provider: %s does not exist": "Провайдер: %s не существует",
+    "The provider: %s is not enabled for the application": "Провайдер: %s не включен для приложения",
+    "Unauthorized operation": "Несанкционированная операция",
+    "Unknown authentication type (not password or provider), form = %s": "Неизвестный тип аутентификации (не пароль и не провайдер), форма = %s",
+    "User's tag: %s is not listed in the application's tags": "Тег пользователя: %s отсутствует в списке тегов приложения",
+    "UserCode Expired": "Срок действия кода пользователя истек",
+    "UserCode Invalid": "Неверный код пользователя",
+    "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing": "Платный пользователь %s не имеет активной или ожидающей подписки, а приложение %s не имеет цены по умолчанию",
+    "the application for user %s is not found": "Приложение для пользователя %s не найдено",
+    "the organization: %s is not found": "Организация: %s не найдена"
+  },
+  "cas": {
+    "Service %s and %s do not match": "Сервисы %s и %s не совпадают"
+  },
+  "check": {
+    "%s does not meet the CIDR format requirements: %s": "%s не соответствует требованиям формата CIDR: %s",
+    "Affiliation cannot be blank": "Принадлежность не может быть пустым значением",
+    "CIDR for IP: %s should not be empty": "CIDR для IP: %s не должен быть пустым",
+    "Default code does not match the code's matching rules": "Код по умолчанию не соответствует правилам соответствия кода",
+    "DisplayName cannot be blank": "Имя отображения не может быть пустым",
+    "DisplayName is not valid real name": "DisplayName не является действительным именем",
+    "Email already exists": "Электронная почта уже существует",
+    "Email cannot be empty": "Электронная почта не может быть пустой",
+    "Email is invalid": "Адрес электронной почты недействительный",
+    "Empty username.": "Пустое имя пользователя.",
+    "Face data does not exist, cannot log in": "Данные лица отсутствуют, вход невозможен",
+    "Face data mismatch": "Несоответствие данных лица",
+    "Failed to parse client IP: %s": "Не удалось разобрать IP клиента: %s",
+    "FirstName cannot be blank": "Имя не может быть пустым",
+    "Guest users must upgrade their account by setting a username and password before they can sign in directly": "Guest users must upgrade their account by setting a username and password before they can sign in directly",
+    "Invitation code cannot be blank": "Код приглашения не может быть пустым",
+    "Invitation code exhausted": "Код приглашения исчерпан",
+    "Invitation code is invalid": "Код приглашения недействителен",
+    "Invitation code suspended": "Код приглашения приостановлен",
+    "LastName cannot be blank": "Фамилия не может быть пустой",
+    "Multiple accounts with same uid, please check your ldap server": "Множественные учетные записи с тем же UID. Пожалуйста, проверьте свой сервер LDAP",
+    "Organization does not exist": "Организация не существует",
+    "Password cannot be empty": "Пароль не может быть пустым",
+    "Phone already exists": "Телефон уже существует",
+    "Phone cannot be empty": "Телефон не может быть пустым",
+    "Phone number is invalid": "Номер телефона является недействительным",
+    "Please register using the email corresponding to the invitation code": "Пожалуйста, зарегистрируйтесь, используя электронную почту, соответствующую коду приглашения",
+    "Please register using the phone  corresponding to the invitation code": "Пожалуйста, зарегистрируйтесь, используя номер телефона, соответствующий коду приглашения",
+    "Please register using the username corresponding to the invitation code": "Пожалуйста, зарегистрируйтесь, используя имя пользователя, соответствующее коду приглашения",
+    "Session outdated, please login again": "Сессия устарела, пожалуйста, войдите снова",
+    "The invitation code has already been used": "Код приглашения уже использован",
+    "The password must contain at least one special character": "Пароль должен содержать хотя бы один специальный символ",
+    "The password must contain at least one uppercase letter, one lowercase letter and one digit": "Пароль должен содержать хотя бы одну заглавную букву, одну строчную букву и одну цифру",
+    "The password must have at least 6 characters": "Пароль должен содержать не менее 6 символов",
+    "The password must have at least 8 characters": "Пароль должен содержать не менее 8 символов",
+    "The password must not contain any repeated characters": "Пароль не должен содержать повторяющихся символов",
+    "The user has been deleted and cannot be used to sign in, please contact the administrator": "Пользователь был удален и не может быть использован для входа, пожалуйста, свяжитесь с администратором",
+    "The user is forbidden to sign in, please contact the administrator": "Пользователю запрещен вход, пожалуйста, обратитесь к администратору",
+    "The user: %s doesn't exist in LDAP server": "Пользователь: %s не существует на сервере LDAP",
+    "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.": "Имя пользователя может состоять только из буквенно-цифровых символов, нижних подчеркиваний или дефисов, не может содержать последовательные дефисы или подчеркивания, а также не может начинаться или заканчиваться на дефис или подчеркивание.",
+    "The value \"%s\" for account field \"%s\" doesn't match the account item regex": "The value \"%s\" for account field \"%s\" doesn't match the account item regex",
+    "The value \"%s\" for signup field \"%s\" doesn't match the signup item regex of the application \"%s\"": "The value \"%s\" for signup field \"%s\" doesn't match the signup item regex of the application \"%s\"",
+    "Username already exists": "Имя пользователя уже существует",
+    "Username cannot be an email address": "Имя пользователя не может быть адресом электронной почты",
+    "Username cannot contain white spaces": "Имя пользователя не может содержать пробелы",
+    "Username cannot start with a digit": "Имя пользователя не может начинаться с цифры",
+    "Username is too long (maximum is 255 characters).": "Имя пользователя слишком длинное (максимальная длина - 255 символов).",
+    "Username must have at least 2 characters": "Имя пользователя должно содержать не менее 2 символов",
+    "Username supports email format. Also The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline. Also pay attention to the email format.": "Имя пользователя поддерживает формат электронной почты. Также имя пользователя может содержать только буквенно-цифровые символы, подчеркивания или дефисы, не может иметь последовательных дефисов или подчеркиваний и не может начинаться или заканчиваться дефисом или подчеркиванием. Также обратите внимание на формат электронной почты.",
+    "You have entered the wrong password or code too many times, please wait for %d minutes and try again": "Вы ввели неправильный пароль или код слишком много раз, пожалуйста, подождите %d минут и попробуйте снова",
+    "Your IP address: %s has been banned according to the configuration of: ": "Ваш IP-адрес: %s заблокирован согласно конфигурации: ",
+    "Your password has expired. Please reset your password by clicking \"Forgot password\"": "Your password has expired. Please reset your password by clicking \"Forgot password\"",
+    "Your region is not allow to signup by phone": "Ваш регион не разрешает регистрацию по телефону",
+    "password or code is incorrect": "пароль или код неверны",
+    "password or code is incorrect, you have %s remaining chances": "Неправильный пароль или код, у вас осталось %s попыток",
+    "unsupported password type: %s": "неподдерживаемый тип пароля: %s"
+  },
+  "enforcer": {
+    "the adapter: %s is not found": "адаптер: %s не найден"
+  },
+  "general": {
+    "Failed to import groups": "Не удалось импортировать группы",
+    "Failed to import users": "Не удалось импортировать пользователей",
+    "Insufficient balance: new balance %v would be below credit limit %v": "Insufficient balance: new balance %v would be below credit limit %v",
+    "Insufficient balance: new organization balance %v would be below credit limit %v": "Insufficient balance: new organization balance %v would be below credit limit %v",
+    "Missing parameter": "Отсутствующий параметр",
+    "Only admin user can specify user": "Только администратор может указать пользователя",
+    "Please login first": "Пожалуйста, сначала войдите в систему",
+    "The LDAP: %s does not exist": "The LDAP: %s does not exist",
+    "The organization: %s should have one application at least": "Организация: %s должна иметь хотя бы одно приложение",
+    "The syncer: %s does not exist": "The syncer: %s does not exist",
+    "The user: %s doesn't exist": "Пользователь %s не существует",
+    "The user: %s is not found": "The user: %s is not found",
+    "User is required for User category transaction": "User is required for User category transaction",
+    "Wrong userId": "Неверный идентификатор пользователя",
+    "don't support captchaProvider: ": "неподдерживаемый captchaProvider: ",
+    "this operation is not allowed in demo mode": "эта операция недоступна в демонстрационном режиме",
+    "this operation requires administrator to perform": "эта операция требует прав администратора"
+  },
+  "invitation": {
+    "Invitation %s does not exist": "Приглашение %s не существует"
+  },
+  "ldap": {
+    "Ldap server exist": "LDAP-сервер существует"
+  },
+  "link": {
+    "Please link first": "Пожалуйста, сначала установите ссылку",
+    "This application has no providers": "Это приложение не имеет провайдеров",
+    "This application has no providers of type": "Это приложение не имеет провайдеров данного типа",
+    "This provider can't be unlinked": "Этот провайдер не может быть отсоединен",
+    "You are not the global admin, you can't unlink other users": "Вы не являетесь глобальным администратором, вы не можете отсоединять других пользователей",
+    "You can't unlink yourself, you are not a member of any application": "Вы не можете отвязаться, так как вы не являетесь участником никакого приложения"
+  },
+  "organization": {
+    "Only admin can modify the %s.": "Только администратор может изменять %s.",
+    "The %s is immutable.": "%s неизменяемый.",
+    "Unknown modify rule %s.": "Неизвестное изменение правила %s.",
+    "adding a new user to the 'built-in' organization is currently disabled. Please note: all users in the 'built-in' organization are global administrators in Casdoor. Refer to the docs: https://casdoor.org/docs/basic/core-concepts#how-does-casdoor-manage-itself. If you still wish to create a user for the 'built-in' organization, go to the organization's settings page and enable the 'Has privilege consent' option.": "Добавление нового пользователя в организацию «built-in» (встроенная) в настоящее время отключено. Обратите внимание: все пользователи в организации «built-in» являются глобальными администраторами в Casdoor. См. документацию: https://casdoor.org/docs/basic/core-concepts#how-does-casdoor-manage-itself. Если вы все еще хотите создать пользователя для организации «built-in», перейдите на страницу настроек организации и включите опцию «Имеет согласие на привилегии»."
+  },
+  "permission": {
+    "The permission: \"%s\" doesn't exist": "The permission: \"%s\" doesn't exist"
+  },
+  "product": {
+    "Product list cannot be empty": "Product list cannot be empty"
+  },
+  "provider": {
+    "Failed to initialize ID Verification provider": "Failed to initialize ID Verification provider",
+    "Invalid application id": "Неверный идентификатор приложения",
+    "No ID Verification provider configured": "No ID Verification provider configured",
+    "Provider is not an ID Verification provider": "Provider is not an ID Verification provider",
+    "the provider: %s does not exist": "Провайдер: %s не существует"
+  },
+  "resource": {
+    "User is nil for tag: avatar": "Пользователь равен нулю для тега: аватар",
+    "Username or fullFilePath is empty: username = %s, fullFilePath = %s": "Имя пользователя или полный путь к файлу пусты: имя_пользователя = %s, полный_путь_к_файлу = %s"
+  },
+  "saml": {
+    "Application %s not found": "Приложение %s не найдено"
+  },
+  "saml_sp": {
+    "provider %s's category is not SAML": "Категория провайдера %s не является SAML"
+  },
+  "service": {
+    "Empty parameters for emailForm: %v": "Пустые параметры для emailForm: %v",
+    "Invalid Email receivers: %s": "Некорректные получатели электронной почты: %s",
+    "Invalid phone receivers: %s": "Некорректные получатели телефонных звонков: %s"
+  },
+  "session": {
+    "session id %s is the current session and cannot be deleted": "session id %s is the current session and cannot be deleted"
+  },
+  "storage": {
+    "The objectKey: %s is not allowed": "Объект «objectKey: %s» не разрешен",
+    "The provider type: %s is not supported": "Тип провайдера: %s не поддерживается"
+  },
+  "subscription": {
+    "Error": "Ошибка"
+  },
+  "ticket": {
+    "Ticket not found": "Ticket not found"
+  },
+  "token": {
+    "Grant_type: %s is not supported in this application": "Тип предоставления: %s не поддерживается в данном приложении",
+    "Invalid application or wrong clientSecret": "Недействительное приложение или неправильный clientSecret",
+    "Invalid client_id": "Недействительный идентификатор клиента",
+    "Redirect URI: %s doesn't exist in the allowed Redirect URI list": "URI перенаправления: %s не существует в списке разрешенных URI перенаправления",
+    "Token not found, invalid accessToken": "Токен не найден, недействительный accessToken"
+  },
+  "user": {
+    "Display name cannot be empty": "Отображаемое имя не может быть пустым",
+    "ID card information and real name are required": "ID card information and real name are required",
+    "Identity verification failed": "Identity verification failed",
+    "MFA email is enabled but email is empty": "MFA по электронной почте включен, но электронная почта не указана",
+    "MFA phone is enabled but phone number is empty": "MFA по телефону включен, но номер телефона не указан",
+    "New password cannot contain blank space.": "Новый пароль не может содержать пробелы.",
+    "No application found for user": "No application found for user",
+    "The new password must be different from your current password": "Новый пароль должен отличаться от текущего пароля",
+    "User is already verified": "User is already verified",
+    "the user's owner and name should not be empty": "владелец и имя пользователя не должны быть пустыми"
+  },
+  "util": {
+    "No application is found for userId: %s": "Не найдено заявки для пользователя с идентификатором: %s",
+    "No provider for category: %s is found for application: %s": "Нет провайдера для категории: %s для приложения: %s",
+    "The provider: %s is not found": "Поставщик: %s не найден"
+  },
+  "verification": {
+    "Invalid captcha provider.": "Недействительный поставщик CAPTCHA.",
+    "Phone number is invalid in your region %s": "Номер телефона недействителен в вашем регионе %s",
+    "The forgot password feature is disabled": "The forgot password feature is disabled",
+    "The verification code has already been used!": "Код подтверждения уже использован!",
+    "The verification code has not been sent yet!": "Код подтверждения еще не был отправлен!",
+    "Turing test failed.": "Тест Тьюринга не удался.",
+    "Unable to get the email modify rule.": "Невозможно получить правило изменения электронной почты.",
+    "Unable to get the phone modify rule.": "Невозможно получить правило изменения телефона.",
+    "Unknown type": "Неизвестный тип",
+    "Wrong verification code!": "Неправильный код подтверждения!",
+    "You should verify your code in %d min!": "Вы должны проверить свой код через %d минут!",
+    "please add a SMS provider to the \"Providers\" list for the application: %s": "please add a SMS provider to the \"Providers\" list for the application: %s",
+    "please add an Email provider to the \"Providers\" list for the application: %s": "please add an Email provider to the \"Providers\" list for the application: %s",
+    "the user does not exist, please sign up first": "Пользователь не существует, пожалуйста, сначала зарегистрируйтесь"
+  },
+  "webauthn": {
+    "Found no credentials for this user": "Учетные данные для этого пользователя не найдены",
+    "Please call WebAuthnSigninBegin first": "Пожалуйста, сначала вызовите WebAuthnSigninBegin"
+  }
+}
