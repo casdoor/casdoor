@@ -14,6 +14,7 @@
 
 import React from "react";
 import {Button, Card, Col, Input, Row, Select} from "antd";
+import PaginateSelect from "./common/PaginateSelect";
 import * as OrderBackend from "./backend/OrderBackend";
 import * as ProductBackend from "./backend/ProductBackend";
 import * as UserBackend from "./backend/UserBackend";
@@ -41,7 +42,6 @@ class OrderEditPage extends React.Component {
   UNSAFE_componentWillMount() {
     this.getOrder();
     this.getProducts();
-    this.getUsers();
     this.getPayments();
   }
 
@@ -68,19 +68,6 @@ class OrderEditPage extends React.Component {
           });
         } else {
           Setting.showMessage("error", `Failed to get products: ${res.msg}`);
-        }
-      });
-  }
-
-  getUsers() {
-    UserBackend.getUsers(this.state.organizationName)
-      .then((res) => {
-        if (res.status === "ok") {
-          this.setState({
-            users: res.data,
-          });
-        } else {
-          Setting.showMessage("error", `Failed to get users: ${res.msg}`);
         }
       });
   }
@@ -184,13 +171,24 @@ class OrderEditPage extends React.Component {
             {i18next.t("general:User")}:
           </Col>
           <Col span={22} >
-            <Select virtual={false} style={{width: "100%"}} value={this.state.order.user} disabled={isViewMode} onChange={(value) => {
-              this.updateOrderField("user", value);
-            }}>
-              {
-                this.state.users?.map((user, index) => <Option key={index} value={user.name}>{user.name}</Option>)
-              }
-            </Select>
+            <PaginateSelect
+              virtual
+              style={{width: "100%"}}
+              value={this.state.order.user}
+              disabled={isViewMode}
+              allowClear
+              fetchPage={UserBackend.getUsers}
+              buildFetchArgs={({page, pageSize, searchText}) => {
+                const field = searchText ? "name" : "";
+                return [this.state.organizationName, page, pageSize, field, searchText];
+              }}
+              reloadKey={this.state.organizationName}
+              optionMapper={(user) => Setting.getOption(user.name, user.name)}
+              filterOption={false}
+              onChange={(value) => {
+                this.updateOrderField("user", value || "");
+              }}
+            />
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >

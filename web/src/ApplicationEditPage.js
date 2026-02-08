@@ -58,6 +58,7 @@ import * as GroupBackend from "./backend/GroupBackend";
 import TokenAttributeTable from "./table/TokenAttributeTable";
 import {Content, Header} from "antd/es/layout/layout";
 import Sider from "antd/es/layout/Sider";
+import PaginateSelect from "./common/PaginateSelect";
 
 const {Option} = Select;
 
@@ -149,7 +150,6 @@ class ApplicationEditPage extends React.Component {
   UNSAFE_componentWillMount() {
     this.getApplication();
     this.getOrganizations();
-    this.getGroups();
   }
 
   getApplication() {
@@ -196,17 +196,6 @@ class ApplicationEditPage extends React.Component {
         } else {
           this.setState({
             organizations: res.data || [],
-          });
-        }
-      });
-  }
-
-  getGroups() {
-    GroupBackend.getGroups(this.state.owner)
-      .then((res) => {
-        if (res.status === "ok") {
-          this.setState({
-            groups: res.data,
           });
         }
       });
@@ -611,24 +600,30 @@ class ApplicationEditPage extends React.Component {
               {Setting.getLabel(i18next.t("ldap:Default group"), i18next.t("ldap:Default group - Tooltip"))} :
             </Col>
             <Col span={21}>
-              <Select virtual={false} style={{width: "100%"}} value={this.state.application.defaultGroup ?? []} onChange={(value => {
-                this.updateApplicationField("defaultGroup", value);
-              })}
-              >
-                <Option key={""} value={""}>
+              <PaginateSelect
+                virtual
+                style={{width: "100%"}}
+                allowClear
+                placeholder={i18next.t("general:Default")}
+                value={this.state.application.defaultGroup || undefined}
+                fetchPage={GroupBackend.getGroups}
+                buildFetchArgs={({page, pageSize, searchText}) => {
+                  const field = searchText ? "name" : "";
+                  return [this.state.owner, false, page, pageSize, field, searchText, "", ""];
+                }}
+                reloadKey={this.state.owner}
+                optionMapper={(group) => Setting.getOption(
                   <Space>
-                    {i18next.t("general:Default")}
-                  </Space>
-                </Option>
-                {
-                  this.state.groups?.map((group) => <Option key={group.name} value={`${group.owner}/${group.name}`}>
-                    <Space>
-                      {group.type === "Physical" ? <UsergroupAddOutlined /> : <HolderOutlined />}
-                      {group.displayName}
-                    </Space>
-                  </Option>)
-                }
-              </Select>
+                    {group.type === "Physical" ? <UsergroupAddOutlined /> : <HolderOutlined />}
+                    {group.displayName}
+                  </Space>,
+                  `${group.owner}/${group.name}`
+                )}
+                filterOption={false}
+                onChange={(value) => {
+                  this.updateApplicationField("defaultGroup", value || "");
+                }}
+              />
             </Col>
           </Row>
           <Row style={{marginTop: "20px"}} >

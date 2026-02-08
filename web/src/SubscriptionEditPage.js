@@ -15,6 +15,7 @@
 import moment from "moment";
 import React from "react";
 import {Button, Card, Col, DatePicker, Input, Row, Select} from "antd";
+import PaginateSelect from "./common/PaginateSelect";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as PricingBackend from "./backend/PricingBackend";
 import * as PlanBackend from "./backend/PlanBackend";
@@ -63,7 +64,6 @@ class SubscriptionEditPage extends React.Component {
           subscription: res.data,
         });
 
-        this.getUsers(this.state.organizationName);
         this.getPricings(this.state.organizationName);
         this.getPlans(this.state.organizationName);
       });
@@ -83,20 +83,6 @@ class SubscriptionEditPage extends React.Component {
       .then((res) => {
         this.setState({
           plans: res.data,
-        });
-      });
-  }
-
-  getUsers(organizationName) {
-    UserBackend.getUsers(organizationName)
-      .then((res) => {
-        if (res.status === "error") {
-          Setting.showMessage("error", res.msg);
-          return;
-        }
-
-        this.setState({
-          users: res.data,
         });
       });
   }
@@ -147,7 +133,6 @@ class SubscriptionEditPage extends React.Component {
           <Col span={22} >
             <Select virtual={false} style={{width: "100%"}} value={this.state.subscription.owner} disabled={isViewMode} onChange={(owner => {
               this.updateSubscriptionField("owner", owner);
-              this.getUsers(owner);
               this.getPlans(owner);
             })}
             options={this.state.organizations.map((organization) => Setting.getOption(organization.name, organization.name))
@@ -217,10 +202,21 @@ class SubscriptionEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:User"), i18next.t("general:User - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select style={{width: "100%"}} value={this.state.subscription.user}
+            <PaginateSelect
+              virtual
+              style={{width: "100%"}}
+              value={this.state.subscription.user}
               disabled={isViewMode}
-              onChange={(value => {this.updateSubscriptionField("user", value);})}
-              options={this.state.users.map((user) => Setting.getOption(user.name, user.name))}
+              allowClear
+              fetchPage={UserBackend.getUsers}
+              buildFetchArgs={({page, pageSize, searchText}) => {
+                const field = searchText ? "name" : "";
+                return [this.state.subscription.owner, page, pageSize, field, searchText];
+              }}
+              reloadKey={this.state.subscription?.owner}
+              optionMapper={(user) => Setting.getOption(user.name, user.name)}
+              filterOption={false}
+              onChange={(value => {this.updateSubscriptionField("user", value || "");})}
             />
           </Col>
         </Row>

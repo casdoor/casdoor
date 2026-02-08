@@ -20,6 +20,7 @@ import * as GroupBackend from "./backend/GroupBackend";
 import * as RoleBackend from "./backend/RoleBackend";
 import * as Setting from "./Setting";
 import i18next from "i18next";
+import PaginateSelect from "./common/PaginateSelect";
 
 class RoleEditPage extends React.Component {
   constructor(props) {
@@ -30,9 +31,6 @@ class RoleEditPage extends React.Component {
       roleName: decodeURIComponent(props.match.params.roleName),
       role: null,
       organizations: [],
-      users: [],
-      groups: [],
-      roles: [],
       mode: props.location.mode !== undefined ? props.location.mode : "edit",
     };
   }
@@ -57,10 +55,6 @@ class RoleEditPage extends React.Component {
         this.setState({
           role: res.data,
         });
-
-        this.getUsers(this.state.organizationName);
-        this.getGroups(this.state.organizationName);
-        this.getRoles(this.state.organizationName);
       });
   }
 
@@ -69,48 +63,6 @@ class RoleEditPage extends React.Component {
       .then((res) => {
         this.setState({
           organizations: res.data || [],
-        });
-      });
-  }
-
-  getUsers(organizationName) {
-    UserBackend.getUsers(organizationName)
-      .then((res) => {
-        if (res.status === "error") {
-          Setting.showMessage("error", res.msg);
-          return;
-        }
-
-        this.setState({
-          users: res.data,
-        });
-      });
-  }
-
-  getGroups(organizationName) {
-    GroupBackend.getGroups(organizationName)
-      .then((res) => {
-        if (res.status === "error") {
-          Setting.showMessage("error", res.msg);
-          return;
-        }
-
-        this.setState({
-          groups: res.data,
-        });
-      });
-  }
-
-  getRoles(organizationName) {
-    RoleBackend.getRoles(organizationName)
-      .then((res) => {
-        if (res.status === "error") {
-          Setting.showMessage("error", res.msg);
-          return;
-        }
-
-        this.setState({
-          roles: res.data,
         });
       });
   }
@@ -187,9 +139,20 @@ class RoleEditPage extends React.Component {
             {Setting.getLabel(i18next.t("role:Sub users"), i18next.t("role:Sub users - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={true} mode="multiple" style={{width: "100%"}} value={this.state.role.users}
+            <PaginateSelect
+              virtual
+              mode="multiple"
+              style={{width: "100%"}}
+              value={this.state.role.users}
+              fetchPage={UserBackend.getUsers}
+              buildFetchArgs={({page, pageSize, searchText}) => {
+                const field = searchText ? "name" : "";
+                return [this.state.role.owner, page, pageSize, field, searchText];
+              }}
+              reloadKey={this.state.role.owner}
+              optionMapper={(user) => Setting.getOption(`${user.owner}/${user.name}`, `${user.owner}/${user.name}`)}
+              filterOption={false}
               onChange={(value => {this.updateRoleField("users", value);})}
-              options={this.state.users.map((user) => Setting.getOption(`${user.owner}/${user.name}`, `${user.owner}/${user.name}`))}
             />
           </Col>
         </Row>
@@ -198,9 +161,19 @@ class RoleEditPage extends React.Component {
             {Setting.getLabel(i18next.t("role:Sub groups"), i18next.t("role:Sub groups - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} mode="multiple" style={{width: "100%"}} value={this.state.role.groups}
+            <PaginateSelect
+              mode="multiple"
+              style={{width: "100%"}}
+              value={this.state.role.groups}
+              fetchPage={GroupBackend.getGroups}
+              buildFetchArgs={({page, pageSize, searchText}) => {
+                const field = searchText ? "name" : "";
+                return [this.state.role.owner, false, page, pageSize, field, searchText, "", ""];
+              }}
+              reloadKey={this.state.role.owner}
+              optionMapper={(group) => Setting.getOption(`${group.owner}/${group.name}`, `${group.owner}/${group.name}`)}
+              filterOption={false}
               onChange={(value => {this.updateRoleField("groups", value);})}
-              options={this.state.groups.map((group) => Setting.getOption(`${group.owner}/${group.name}`, `${group.owner}/${group.name}`))}
             />
           </Col>
         </Row>
@@ -209,9 +182,25 @@ class RoleEditPage extends React.Component {
             {Setting.getLabel(i18next.t("role:Sub roles"), i18next.t("role:Sub roles - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} mode="multiple" style={{width: "100%"}} value={this.state.role.roles} onChange={(value => {this.updateRoleField("roles", value);})}
-              options={this.state.roles.filter(role => (role.owner !== this.state.role.owner || role.name !== this.state.role.name)).map((role) => Setting.getOption(`${role.owner}/${role.name}`, `${role.owner}/${role.name}`))
-              } />
+            <PaginateSelect
+              mode="multiple"
+              style={{width: "100%"}}
+              value={this.state.role.roles}
+              fetchPage={RoleBackend.getRoles}
+              buildFetchArgs={({page, pageSize, searchText}) => {
+                const field = searchText ? "name" : "";
+                return [this.state.role.owner, page, pageSize, field, searchText, "", ""];
+              }}
+              reloadKey={`${this.state.role.owner}/${this.state.role.name}`}
+              optionMapper={(role) => {
+                if (role.owner === this.state.role.owner && role.name === this.state.role.name) {
+                  return null;
+                }
+                return Setting.getOption(`${role.owner}/${role.name}`, `${role.owner}/${role.name}`);
+              }}
+              filterOption={false}
+              onChange={(value => {this.updateRoleField("roles", value);})}
+            />
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
