@@ -162,6 +162,8 @@ func (c *ApiController) DeleteToken() {
 func (c *ApiController) GetOAuthToken() {
 	clientId := c.Ctx.Input.Query("client_id")
 	clientSecret := c.Ctx.Input.Query("client_secret")
+	clientAssertion := c.Ctx.Input.Query("client_assertion")
+	clientAssertionType := c.Ctx.Input.Query("client_assertion_type")
 	grantType := c.Ctx.Input.Query("grant_type")
 	code := c.Ctx.Input.Query("code")
 	verifier := c.Ctx.Input.Query("code_verifier")
@@ -191,6 +193,12 @@ func (c *ApiController) GetOAuthToken() {
 			}
 			if clientSecret == "" {
 				clientSecret = tokenRequest.ClientSecret
+			}
+			if clientAssertion == "" {
+				clientAssertion = tokenRequest.ClientAssertion
+			}
+			if clientAssertionType == "" {
+				clientAssertionType = tokenRequest.ClientAssertionType
 			}
 			if grantType == "" {
 				grantType = tokenRequest.GrantType
@@ -275,7 +283,7 @@ func (c *ApiController) GetOAuthToken() {
 	}
 
 	host := c.Ctx.Request.Host
-	token, err := object.GetOAuthToken(grantType, clientId, clientSecret, code, verifier, scope, nonce, username, password, host, refreshToken, tag, avatar, c.GetAcceptLanguage(), subjectToken, subjectTokenType, audience)
+	token, err := object.GetOAuthToken(grantType, clientId, clientSecret, clientAssertion, clientAssertionType, code, verifier, scope, nonce, username, password, host, refreshToken, tag, avatar, c.GetAcceptLanguage(), subjectToken, subjectTokenType, audience)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -305,6 +313,8 @@ func (c *ApiController) RefreshToken() {
 	scope := c.Ctx.Input.Query("scope")
 	clientId := c.Ctx.Input.Query("client_id")
 	clientSecret := c.Ctx.Input.Query("client_secret")
+	clientAssertion := c.Ctx.Input.Query("client_assertion")
+	clientAssertionType := c.Ctx.Input.Query("client_assertion_type")
 	host := c.Ctx.Request.Host
 
 	if clientId == "" {
@@ -313,13 +323,16 @@ func (c *ApiController) RefreshToken() {
 		if err := json.Unmarshal(c.Ctx.Input.RequestBody, &tokenRequest); err == nil {
 			clientId = tokenRequest.ClientId
 			clientSecret = tokenRequest.ClientSecret
+			clientAssertion = tokenRequest.ClientAssertion
+			clientAssertionType = tokenRequest.ClientAssertionType
 			grantType = tokenRequest.GrantType
 			scope = tokenRequest.Scope
 			refreshToken = tokenRequest.RefreshToken
 		}
 	}
 
-	refreshToken2, err := object.RefreshToken(grantType, refreshToken, scope, clientId, clientSecret, host)
+	tokenEndpoint := fmt.Sprintf("https://%s/api/login/oauth/refresh_token", host)
+	refreshToken2, err := object.RefreshToken(grantType, refreshToken, scope, clientId, clientSecret, clientAssertion, clientAssertionType, host, tokenEndpoint)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
