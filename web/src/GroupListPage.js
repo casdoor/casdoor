@@ -92,7 +92,7 @@ class GroupListPage extends BaseListPage {
   uploadFile(info) {
     const {status, msg} = info;
     if (status === "ok") {
-      Setting.showMessage("success", "Groups uploaded successfully, refreshing the page");
+      Setting.showMessage("success", i18next.t("general:Successfully saved"));
       const {pagination} = this.state;
       this.fetch({pagination});
     } else if (status === "error") {

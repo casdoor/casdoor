@@ -232,7 +232,7 @@ class PermissionEditPage extends React.Component {
                 const data = res.data.map((user) => Setting.getOption(`${user.owner}/${user.name}`, `${user.owner}/${user.name}`));
                 if (args?.[1] === 1 && Array.isArray(res?.data)) {
                   res.data = [
-                    Setting.getOption(i18next.t("organization:All"), "*"),
+                    Setting.getOption(i18next.t("general:All"), "*"),
                     ...data,
                   ];
                 } else {
@@ -266,7 +266,7 @@ class PermissionEditPage extends React.Component {
                 const data = res.data.map((group) => Setting.getOption(`${group.owner}/${group.name}`, `${group.owner}/${group.name}`));
                 if (args?.[2] === 1 && Array.isArray(res?.data)) {
                   res.data = [
-                    Setting.getOption(i18next.t("organization:All"), "*"),
+                    Setting.getOption(i18next.t("general:All"), "*"),
                     ...data,
                   ];
                 } else {
@@ -303,7 +303,7 @@ class PermissionEditPage extends React.Component {
                 if (args?.[1] === 1 && Array.isArray(res?.data)) {
                   // res.data = [{owner: i18next.t("organization:All"), name: "*"}, ...res.data];
                   res.data = [
-                    Setting.getOption(i18next.t("organization:All"), "*"),
+                    Setting.getOption(i18next.t("general:All"), "*"),
                     ...data,
                   ];
                 } else {
@@ -331,7 +331,7 @@ class PermissionEditPage extends React.Component {
                 this.updatePermissionField("domains", value);
               })}
               options={[
-                Setting.getOption(i18next.t("organization:All"), "*"),
+                Setting.getOption(i18next.t("general:All"), "*"),
                 ...this.state.permission.domains.filter(domain => domain !== "*").map((domain) => Setting.getOption(domain, domain)),
               ]}
             />
@@ -365,7 +365,7 @@ class PermissionEditPage extends React.Component {
               options={this.state.permission.resourceType === "API" ? Setting.getApiPaths().map((option, index) => {
                 return Setting.getOption(option, option);
               }) : [
-                Setting.getOption(i18next.t("organization:All"), "*"),
+                Setting.getOption(i18next.t("general:All"), "*"),
                 ...this.state.resources.map((resource) => Setting.getOption(`${resource.name}`, `${resource.name}`)),
               ]}
             />
@@ -385,7 +385,7 @@ class PermissionEditPage extends React.Component {
             ] : [
               {value: "Read", name: i18next.t("permission:Read")},
               {value: "Write", name: i18next.t("permission:Write")},
-              {value: "Admin", name: i18next.t("permission:Admin")},
+              {value: "Admin", name: i18next.t("general:Admin")},
             ].map((item) => Setting.getOption(item.name, item.value))}
             />
           </Col>

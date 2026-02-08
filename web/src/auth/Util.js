@@ -31,7 +31,7 @@ export function renderMessage(msg) {
           type="error"
           action={
             <Button size="small" type="primary" danger>
-              {i18next.t("product:Detail")}
+              {i18next.t("general:Detail")}
             </Button>
           }
         />

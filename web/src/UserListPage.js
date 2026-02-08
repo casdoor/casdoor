@@ -191,7 +191,7 @@ class UserListPage extends BaseListPage {
   impersonateUser(user) {
     UserBackend.impersonateUser(user).then((res) => {
       if (res.status === "ok") {
-        Setting.showMessage("success", i18next.t("general:Success"));
+        Setting.showMessage("success", i18next.t("general:Successfully executed"));
         Setting.goToLinkSoft(this, "/");
         window.location.reload();
       } else {
@@ -393,7 +393,7 @@ class UserListPage extends BaseListPage {
         ...this.getColumnSearchProps("affiliation"),
       },
       {
-        title: i18next.t("user:Real name"),
+        title: i18next.t("application:Real name"),
         dataIndex: "realName",
         key: "realName",
         width: "120px",
@@ -479,7 +479,7 @@ class UserListPage extends BaseListPage {
         },
       },
       {
-        title: i18next.t("user:Balance credit"),
+        title: i18next.t("organization:Balance credit"),
         dataIndex: "balanceCredit",
         key: "balanceCredit",
         width: "120px",
@@ -489,7 +489,7 @@ class UserListPage extends BaseListPage {
         },
       },
       {
-        title: i18next.t("user:Balance currency"),
+        title: i18next.t("organization:Balance currency"),
         dataIndex: "balanceCurrency",
         key: "balanceCurrency",
         width: "140px",

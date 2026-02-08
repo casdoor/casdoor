@@ -865,11 +865,11 @@ class ApplicationEditPage extends React.Component {
         <React.Fragment>
           <Row style={{marginTop: "10px"}} >
             <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
-              {Setting.getLabel(i18next.t("general:Providers"), i18next.t("general:Providers - Tooltip"))} :
+              {Setting.getLabel(i18next.t("application:Providers"), i18next.t("general:Providers - Tooltip"))} :
             </Col>
             <Col span={21} >
               <ProviderTable
-                title={i18next.t("general:Providers")}
+                title={i18next.t("application:Providers")}
                 table={this.state.application.providers}
                 providers={this.state.providers}
                 application={this.state.application}

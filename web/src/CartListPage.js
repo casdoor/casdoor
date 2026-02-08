@@ -22,6 +22,7 @@ import * as ProductBackend from "./backend/ProductBackend";
 import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
 import PopconfirmModal from "./common/modal/PopconfirmModal";
+import {QuantityStepper} from "./common/product/CartControls";
 
 class CartListPage extends BaseListPage {
   constructor(props) {
@@ -30,6 +31,7 @@ class CartListPage extends BaseListPage {
       ...this.state,
       data: [],
       user: null,
+      updatingCartItems: {},
       isPlacingOrder: false,
       loading: false,
       pagination: {
@@ -40,6 +42,8 @@ class CartListPage extends BaseListPage {
       searchText: "",
       searchedColumn: "",
     };
+
+    this.updatingCartItemsRef = {};
   }
 
   clearCart() {
@@ -90,6 +94,9 @@ class CartListPage extends BaseListPage {
       .then((res) => {
         if (res.status === "ok") {
           const order = res.data;
+          const user = Setting.deepCopy(this.state.user);
+          user.cart = [];
+          UserBackend.updateUser(user.owner, user.name, user);
           Setting.showMessage("success", i18next.t("product:Order created successfully"));
           Setting.goToLink(`/orders/${order.owner}/${order.name}/pay`);
         } else {
@@ -130,6 +137,66 @@ class CartListPage extends BaseListPage {
       .catch(error => {
         Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
+  }
+
+  updateCartItemQuantity(record, newQuantity) {
+    if (newQuantity < 1) {
+      return;
+    }
+
+    const itemKey = `${record.name}-${record.price}-${record.pricingName || ""}-${record.planName || ""}`;
+    if (this.updatingCartItemsRef?.[itemKey]) {
+      return;
+    }
+
+    this.updatingCartItemsRef[itemKey] = true;
+
+    const user = Setting.deepCopy(this.state.user);
+    const index = user.cart.findIndex(item => item.name === record.name && item.price === record.price && (item.pricingName || "") === (record.pricingName || "") && (item.planName || "") === (record.planName || ""));
+    if (index === -1) {
+      delete this.updatingCartItemsRef[itemKey];
+      return;
+    }
+
+    if (index !== -1) {
+      user.cart[index].quantity = newQuantity;
+
+      const newData = [...this.state.data];
+      const dataIndex = newData.findIndex(item => item.name === record.name && item.price === record.price && (item.pricingName || "") === (record.pricingName || "") && (item.planName || "") === (record.planName || ""));
+      if (dataIndex !== -1) {
+        newData[dataIndex].quantity = newQuantity;
+        this.setState({data: newData});
+      }
+
+      this.setState(prevState => ({
+        updatingCartItems: {
+          ...(prevState.updatingCartItems || {}),
+          [itemKey]: true,
+        },
+      }));
+
+      UserBackend.updateUser(user.owner, user.name, user)
+        .then((res) => {
+          if (res.status === "ok") {
+            this.setState({user: user});
+          } else {
+            Setting.showMessage("error", res.msg);
+            this.fetch();
+          }
+        })
+        .catch(error => {
+          Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
+          this.fetch();
+        })
+        .finally(() => {
+          delete this.updatingCartItemsRef[itemKey];
+          this.setState(prevState => {
+            const updatingCartItems = {...(prevState.updatingCartItems || {})};
+            delete updatingCartItems[itemKey];
+            return {updatingCartItems};
+          });
+        });
+    }
   }
 
   renderTable(carts) {
@@ -183,7 +250,7 @@ class CartListPage extends BaseListPage {
         },
       },
       {
-        title: i18next.t("product:Price"),
+        title: i18next.t("order:Price"),
         dataIndex: "price",
         key: "price",
         width: "160px",
@@ -227,8 +294,22 @@ class CartListPage extends BaseListPage {
         title: i18next.t("product:Quantity"),
         dataIndex: "quantity",
         key: "quantity",
-        width: "120px",
+        width: "100px",
         sorter: true,
+        render: (text, record) => {
+          const itemKey = `${record.name}-${record.price}-${record.pricingName || ""}-${record.planName || ""}`;
+          const isUpdating = this.state.updatingCartItems?.[itemKey] === true;
+          return (
+            <QuantityStepper
+              value={text}
+              min={1}
+              onIncrease={() => this.updateCartItemQuantity(record, text + 1)}
+              onDecrease={() => this.updateCartItemQuantity(record, text - 1)}
+              onChange={null}
+              disabled={isUpdating}
+            />
+          );
+        },
       },
       {
         title: i18next.t("general:Action"),
@@ -240,7 +321,7 @@ class CartListPage extends BaseListPage {
           return (
             <div style={{display: "flex", flexWrap: "wrap", gap: "8px"}}>
               <Button type="primary" onClick={() => this.props.history.push(`/products/${owner}/${record.name}/buy`)}>
-                {i18next.t("product:Detail")}
+                {i18next.t("general:Detail")}
               </Button>
               <PopconfirmModal
                 title={i18next.t("general:Sure to delete") + `: ${record.name} ?`}
@@ -338,13 +419,28 @@ class CartListPage extends BaseListPage {
 
           const fullCartData = await Promise.all(productPromises);
 
+          const sortedData = [...fullCartData];
+          if (params.sortField && params.sortOrder) {
+            sortedData.sort((a, b) => {
+              const aValue = a[params.sortField];
+              const bValue = b[params.sortField];
+
+              if (aValue === bValue) {
+                return 0;
+              }
+
+              const comparison = aValue > bValue ? 1 : -1;
+              return params.sortOrder === "ascend" ? comparison : -comparison;
+            });
+          }
+
           this.setState({
             loading: false,
-            data: fullCartData,
+            data: sortedData,
             user: res.data,
             pagination: {
               ...params.pagination,
-              total: fullCartData.length,
+              total: sortedData.length,
             },
             searchText: params.searchText,
             searchedColumn: params.searchedColumn,

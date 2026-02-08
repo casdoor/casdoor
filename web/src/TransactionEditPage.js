@@ -269,7 +269,7 @@ class TransactionEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("provider:Type"), i18next.t("payment:Type - Tooltip"))} :
+            {Setting.getLabel(i18next.t("general:Type"), i18next.t("cert:Type - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Input disabled={true} value={this.state.transaction.type} onChange={e => {
@@ -299,7 +299,7 @@ class TransactionEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("user:Tag"), i18next.t("transaction:Tag - Tooltip"))} :
+            {Setting.getLabel(i18next.t("user:Tag"), i18next.t("product:Tag - Tooltip"))} :
           </Col>
           <Col span={22} >
             {isRechargeMode ? (
@@ -352,7 +352,7 @@ class TransactionEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("transaction:Amount"), i18next.t("transaction:Amount - Tooltip"))} :
+            {Setting.getLabel(i18next.t("product:Amount"), i18next.t("transaction:Amount - Tooltip"))} :
           </Col>
           <Col span={4} >
             <InputNumber disabled={!isRechargeMode} value={this.state.transaction.amount ?? 0} onChange={value => {
@@ -362,7 +362,7 @@ class TransactionEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("currency:Currency"), i18next.t("currency:Currency - Tooltip"))} :
+            {Setting.getLabel(i18next.t("payment:Currency"), i18next.t("payment:Currency - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Select virtual={false} style={{width: "100%"}} value={this.state.transaction.currency} disabled={!isRechargeMode} onChange={(value => {

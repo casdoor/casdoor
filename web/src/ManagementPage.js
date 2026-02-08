@@ -188,7 +188,7 @@ function ManagementPage(props) {
     };
 
     return (
-      <Dropdown key="/rightDropDown" menu={{items, onClick}} >
+      <Dropdown key="/rightDropDown" menu={{items, onClick}} placement="bottomRight" >
         <div className="rightDropDown">
           {
             renderAvatar()
@@ -320,7 +320,7 @@ function ManagementPage(props) {
 
     res.push(Setting.getItem(<Link style={{color: textColor}} to="/applications">{i18next.t("general:Identity")}</Link>, "/identity", <LockTwoTone twoToneColor={twoToneColor} />, [
       Setting.getItem(<Link to="/applications">{i18next.t("general:Applications")}</Link>, "/applications"),
-      Setting.getItem(<Link to="/providers">{i18next.t("general:Providers")}</Link>, "/providers"),
+      Setting.getItem(<Link to="/providers">{i18next.t("application:Providers")}</Link>, "/providers"),
       Setting.getItem(<Link to="/resources">{i18next.t("general:Resources")}</Link>, "/resources"),
       Setting.getItem(<Link to="/certs">{i18next.t("general:Certs")}</Link>, "/certs"),
     ]));

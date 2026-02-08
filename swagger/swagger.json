@@ -850,6 +850,69 @@
                 }
             }
         },
+        "/api/add-ticket": {
+            "post": {
+                "tags": [
+                    "Ticket API"
+                ],
+                "description": "add ticket",
+                "operationId": "ApiController.AddTicket",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "The details of the ticket",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/object.Ticket"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/add-ticket-message": {
+            "post": {
+                "tags": [
+                    "Ticket API"
+                ],
+                "description": "add a message to a ticket",
+                "operationId": "ApiController.AddTicketMessage",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "id",
+                        "description": "The id ( owner/name ) of the ticket",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "The message to add",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/object.TicketMessage"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/add-token": {
             "post": {
                 "tags": [
@@ -1707,6 +1770,34 @@
                 }
             }
         },
+        "/api/delete-ticket": {
+            "post": {
+                "tags": [
+                    "Ticket API"
+                ],
+                "description": "delete ticket",
+                "operationId": "ApiController.DeleteTicket",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "The details of the ticket",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/object.Ticket"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/delete-token": {
             "post": {
                 "tags": [
@@ -1891,6 +1982,23 @@
                 }
             }
         },
+        "/api/exit-impersonation-user": {
+            "post": {
+                "tags": [
+                    "User API"
+                ],
+                "description": "clear impersonation info for current session",
+                "operationId": "ApiController.ExitImpersonateUser",
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/faceid-signin-begin": {
             "get": {
                 "tags": [
@@ -1991,6 +2099,81 @@
                             "items": {
                                 "$ref": "#/definitions/object.Adapter"
                             }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/get-all-actions": {
+            "get": {
+                "tags": [
+                    "Enforcer API"
+                ],
+                "description": "Get all actions for a user (Casbin API)",
+                "operationId": "ApiController.GetAllActions",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "userId",
+                        "description": "user id like built-in/admin",
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/get-all-objects": {
+            "get": {
+                "tags": [
+                    "Enforcer API"
+                ],
+                "description": "Get all objects for a user (Casbin API)",
+                "operationId": "ApiController.GetAllObjects",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "userId",
+                        "description": "user id like built-in/admin",
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/get-all-roles": {
+            "get": {
+                "tags": [
+                    "Enforcer API"
+                ],
+                "description": "Get all roles for a user (Casbin API)",
+                "operationId": "ApiController.GetAllRoles",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "userId",
+                        "description": "user id like built-in/admin",
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
                         }
                     }
                 }
@@ -3843,6 +4026,61 @@
                 }
             }
         },
+        "/api/get-ticket": {
+            "get": {
+                "tags": [
+                    "Ticket API"
+                ],
+                "description": "get ticket",
+                "operationId": "ApiController.GetTicket",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "id",
+                        "description": "The id ( owner/name ) of the ticket",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/object.Ticket"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/get-tickets": {
+            "get": {
+                "tags": [
+                    "Ticket API"
+                ],
+                "description": "get tickets",
+                "operationId": "ApiController.GetTickets",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "owner",
+                        "description": "The owner of tickets",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/object.Ticket"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/get-token": {
             "get": {
                 "tags": [
@@ -4289,6 +4527,32 @@
                 ],
                 "description": "check if the system is live",
                 "operationId": "ApiController.Health",
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/impersonation-user": {
+            "post": {
+                "tags": [
+                    "User API"
+                ],
+                "description": "set impersonation user for current admin session",
+                "operationId": "ApiController.ImpersonateUser",
+                "parameters": [
+                    {
+                        "in": "formData",
+                        "name": "username",
+                        "description": "The username to impersonate (owner/name)",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "The Response object",
@@ -5219,8 +5483,16 @@
                 "tags": [
                     "Login API"
                 ],
-                "description": "logout the current user from all applications",
+                "description": "logout the current user from all applications or current session only",
                 "operationId": "ApiController.SsoLogout",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "logoutAll",
+                        "description": "Whether to logout from all sessions. Accepted values: 'true', '1', or empty (default: true). Any other value means false.",
+                        "type": "string"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "The Response object",
@@ -5234,8 +5506,16 @@
                 "tags": [
                     "Login API"
                 ],
-                "description": "logout the current user from all applications",
+                "description": "logout the current user from all applications or current session only",
                 "operationId": "ApiController.SsoLogout",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "logoutAll",
+                        "description": "Whether to logout from all sessions. Accepted values: 'true', '1', or empty (default: true). Any other value means false.",
+                        "type": "string"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "The Response object",
@@ -6082,6 +6362,41 @@
                 }
             }
         },
+        "/api/update-ticket": {
+            "post": {
+                "tags": [
+                    "Ticket API"
+                ],
+                "description": "update ticket",
+                "operationId": "ApiController.UpdateTicket",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "id",
+                        "description": "The id ( owner/name ) of the ticket",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "The details of the ticket",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/object.Ticket"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/update-token": {
             "post": {
                 "tags": [
@@ -6564,12 +6879,16 @@
         }
     },
     "definitions": {
-        "217748.\u003cnil\u003e.string": {
+        "232967.\u003cnil\u003e.string": {
             "title": "string",
             "type": "object"
         },
-        "217806.string.string": {
+        "233025.string.string": {
             "title": "string",
+            "type": "object"
+        },
+        "McpResponse": {
+            "title": "McpResponse",
             "type": "object"
         },
         "Response": {
@@ -6763,6 +7082,9 @@
                 "regex": {
                     "type": "string"
                 },
+                "tab": {
+                    "type": "string"
+                },
                 "viewRule": {
                     "type": "string"
                 },
@@ -6814,6 +7136,33 @@
                 }
             }
         },
+        "object.Address": {
+            "title": "Address",
+            "type": "object",
+            "properties": {
+                "city": {
+                    "type": "string"
+                },
+                "line1": {
+                    "type": "string"
+                },
+                "line2": {
+                    "type": "string"
+                },
+                "region": {
+                    "type": "string"
+                },
+                "state": {
+                    "type": "string"
+                },
+                "tag": {
+                    "type": "string"
+                },
+                "zipCode": {
+                    "type": "string"
+                }
+            }
+        },
         "object.Application": {
             "title": "Application",
             "type": "object",
@@ -6834,6 +7183,10 @@
                     "type": "string"
                 },
                 "codeResendTimeout": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "cookieExpireInHours": {
                     "type": "integer",
                     "format": "int64"
                 },
@@ -6868,6 +7221,9 @@
                     "type": "boolean"
                 },
                 "enablePassword": {
+                    "type": "boolean"
+                },
+                "enableSamlAssertionSignature": {
                     "type": "boolean"
                 },
                 "enableSamlC14n10": {
@@ -7822,9 +8178,6 @@
                 "displayName": {
                     "type": "string"
                 },
-                "endTime": {
-                    "type": "string"
-                },
                 "message": {
                     "type": "string"
                 },
@@ -7837,18 +8190,15 @@
                 "payment": {
                     "type": "string"
                 },
-                "planName": {
-                    "type": "string"
-                },
                 "price": {
                     "type": "number",
                     "format": "double"
                 },
-                "pricingName": {
-                    "type": "string"
-                },
-                "productName": {
-                    "type": "string"
+                "productInfos": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/object.ProductInfo"
+                    }
                 },
                 "products": {
                     "type": "array",
@@ -7856,10 +8206,10 @@
                         "type": "string"
                     }
                 },
-                "startTime": {
+                "state": {
                     "type": "string"
                 },
-                "state": {
+                "updateTime": {
                     "type": "string"
                 },
                 "user": {
@@ -7876,6 +8226,9 @@
                     "items": {
                         "$ref": "#/definitions/object.AccountItem"
                     }
+                },
+                "accountMenu": {
+                    "type": "string"
                 },
                 "balanceCredit": {
                     "type": "number",
@@ -8090,9 +8443,6 @@
                 "invoiceUrl": {
                     "type": "string"
                 },
-                "isRecharge": {
-                    "type": "boolean"
-                },
                 "message": {
                     "type": "string"
                 },
@@ -8101,6 +8451,9 @@
                 },
                 "order": {
                     "type": "string"
+                },
+                "orderObj": {
+                    "$ref": "#/definitions/object.Order"
                 },
                 "outOrderId": {
                     "type": "string"
@@ -8127,10 +8480,13 @@
                     "type": "number",
                     "format": "double"
                 },
-                "productDisplayName": {
-                    "type": "string"
+                "products": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
-                "productName": {
+                "productsDisplayName": {
                     "type": "string"
                 },
                 "provider": {
@@ -8140,9 +8496,6 @@
                     "$ref": "#/definitions/pp.PaymentState"
                 },
                 "successUrl": {
-                    "type": "string"
-                },
-                "tag": {
                     "type": "string"
                 },
                 "type": {
@@ -8402,6 +8755,47 @@
                 }
             }
         },
+        "object.ProductInfo": {
+            "title": "ProductInfo",
+            "type": "object",
+            "properties": {
+                "currency": {
+                    "type": "string"
+                },
+                "detail": {
+                    "type": "string"
+                },
+                "displayName": {
+                    "type": "string"
+                },
+                "image": {
+                    "type": "string"
+                },
+                "isRecharge": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "owner": {
+                    "type": "string"
+                },
+                "planName": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number",
+                    "format": "double"
+                },
+                "pricingName": {
+                    "type": "string"
+                },
+                "quantity": {
+                    "type": "integer",
+                    "format": "int64"
+                }
+            }
+        },
         "object.PrometheusInfo": {
             "title": "PrometheusInfo",
             "type": "object",
@@ -8481,6 +8875,9 @@
                 },
                 "emailRegex": {
                     "type": "string"
+                },
+                "enablePkce": {
+                    "type": "boolean"
                 },
                 "enableProxy": {
                     "type": "boolean"
@@ -9024,6 +9421,63 @@
                 }
             }
         },
+        "object.Ticket": {
+            "title": "Ticket",
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "createdTime": {
+                    "type": "string"
+                },
+                "displayName": {
+                    "type": "string"
+                },
+                "messages": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/object.TicketMessage"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                },
+                "owner": {
+                    "type": "string"
+                },
+                "state": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "updatedTime": {
+                    "type": "string"
+                },
+                "user": {
+                    "type": "string"
+                }
+            }
+        },
+        "object.TicketMessage": {
+            "title": "TicketMessage",
+            "type": "object",
+            "properties": {
+                "author": {
+                    "type": "string"
+                },
+                "isAdmin": {
+                    "type": "boolean"
+                },
+                "text": {
+                    "type": "string"
+                },
+                "timestamp": {
+                    "type": "string"
+                }
+            }
+        },
         "object.Token": {
             "title": "Token",
             "type": "object",
@@ -9132,7 +9586,7 @@
                     "type": "string"
                 },
                 "category": {
-                    "type": "string"
+                    "$ref": "#/definitions/object.TransactionCategory"
                 },
                 "createdTime": {
                     "type": "string"
@@ -9159,7 +9613,7 @@
                     "type": "string"
                 },
                 "state": {
-                    "$ref": "#/definitions/pp.PaymentState"
+                    "type": "string"
                 },
                 "subtype": {
                     "type": "string"
@@ -9174,6 +9628,15 @@
                     "type": "string"
                 }
             }
+        },
+        "object.TransactionCategory": {
+            "title": "TransactionCategory",
+            "type": "string",
+            "enum": [
+                "TransactionCategoryPurchase = \"Purchase\"",
+                "TransactionCategoryRecharge = \"Recharge\""
+            ],
+            "example": "Purchase"
         },
         "object.User": {
             "title": "User",
@@ -9192,6 +9655,12 @@
                     "type": "array",
                     "items": {
                         "type": "string"
+                    }
+                },
+                "addresses": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/object.Address"
                     }
                 },
                 "adfs": {
@@ -9255,6 +9724,12 @@
                 },
                 "box": {
                     "type": "string"
+                },
+                "cart": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/object.ProductInfo"
+                    }
                 },
                 "casdoor": {
                     "type": "string"
@@ -9569,10 +10044,10 @@
                 "onedrive": {
                     "type": "string"
                 },
-                "originalToken": {
+                "originalRefreshToken": {
                     "type": "string"
                 },
-                "originalRefreshToken": {
+                "originalToken": {
                     "type": "string"
                 },
                 "oura": {
@@ -9828,7 +10303,7 @@
             "type": "object",
             "properties": {
                 "aliases": {
-                    "$ref": "#/definitions/217748.\u003cnil\u003e.string"
+                    "$ref": "#/definitions/232967.\u003cnil\u003e.string"
                 },
                 "links": {
                     "type": "array",
@@ -9837,7 +10312,7 @@
                     }
                 },
                 "properties": {
-                    "$ref": "#/definitions/217806.string.string"
+                    "$ref": "#/definitions/233025.string.string"
                 },
                 "subject": {
                     "type": "string"

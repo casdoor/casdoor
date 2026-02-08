@@ -131,14 +131,14 @@ class SubscriptionListPage extends BaseListPage {
         ...this.getColumnSearchProps("displayName"),
       },
       {
-        title: i18next.t("subscription:Period"),
+        title: i18next.t("plan:Period"),
         dataIndex: "period",
         key: "period",
         width: "140px",
         ...this.getColumnSearchProps("period"),
       },
       {
-        title: i18next.t("general:Start time"),
+        title: i18next.t("subscription:Start time"),
         dataIndex: "startTime",
         key: "startTime",
         width: "140px",
@@ -148,7 +148,7 @@ class SubscriptionListPage extends BaseListPage {
         },
       },
       {
-        title: i18next.t("general:End time"),
+        title: i18next.t("subscription:End time"),
         dataIndex: "endTime",
         key: "endTime",
         width: "140px",
@@ -165,7 +165,7 @@ class SubscriptionListPage extends BaseListPage {
         ...this.getColumnSearchProps("plan"),
         render: (text, record, index) => {
           return (
-            <Link to={`/plans/${record.owner}/${text}`}>
+            <Link to={`/plans/${text}`}>
               {text}
             </Link>
           );
@@ -179,7 +179,7 @@ class SubscriptionListPage extends BaseListPage {
         ...this.getColumnSearchProps("user"),
         render: (text, record, index) => {
           return (
-            <Link to={`/users/${record.owner}/${text}`}>
+            <Link to={`/users/${text}`}>
               {text}
             </Link>
           );
@@ -193,7 +193,7 @@ class SubscriptionListPage extends BaseListPage {
         ...this.getColumnSearchProps("payment"),
         render: (text, record, index) => {
           return (
-            <Link to={`/payments/${record.owner}/${text}`}>
+            <Link to={`/payments/${text}`}>
               {text}
             </Link>
           );
@@ -209,7 +209,7 @@ class SubscriptionListPage extends BaseListPage {
         render: (text, record, index) => {
           switch (text) {
           case "Pending":
-            return Setting.getTag("processing", i18next.t("subscription:Pending"), <ExclamationCircleOutlined />);
+            return Setting.getTag("processing", i18next.t("permission:Pending"), <ExclamationCircleOutlined />);
           case "Active":
             return Setting.getTag("success", i18next.t("subscription:Active"), <SyncOutlined spin />);
           case "Upcoming":

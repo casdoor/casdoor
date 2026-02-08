@@ -100,7 +100,7 @@ class AccountTable extends React.Component {
         width: "150px",
         render: (text, record, index) => {
           return (
-            <Input value={text} placeholder={i18next.t("user:Default")} onChange={e => {
+            <Input value={text} placeholder={i18next.t("general:Default")} onChange={e => {
               this.updateField(table, index, "tab", e.target.value);
             }} />
           );

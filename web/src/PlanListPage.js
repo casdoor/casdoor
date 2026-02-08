@@ -130,7 +130,7 @@ class PlanListPage extends BaseListPage {
         ...this.getColumnSearchProps("displayName"),
       },
       {
-        title: i18next.t("plan:Price"),
+        title: i18next.t("order:Price"),
         dataIndex: "price",
         key: "price",
         width: "160px",
@@ -154,7 +154,7 @@ class PlanListPage extends BaseListPage {
         ...this.getColumnSearchProps("role"),
         render: (text, record, index) => {
           return (
-            <Link to={`/roles/${record.owner}/${text}`}>
+            <Link to={`/roles/${text}`}>
               {text}
             </Link>
           );

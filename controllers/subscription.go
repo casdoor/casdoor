@@ -16,6 +16,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/beego/beego/v2/core/utils/pagination"
 	"github.com/casdoor/casdoor/object"
@@ -148,6 +149,26 @@ func (c *ApiController) AddSubscription() {
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
+	}
+
+	// Check if plan restricts user to one subscription
+	if subscription.Plan != "" {
+		plan, err := object.GetPlan(util.GetId(subscription.Owner, subscription.Plan))
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+		if plan != nil && plan.IsExclusive {
+			hasSubscription, err := object.HasActiveSubscriptionForPlan(subscription.Owner, subscription.User, subscription.Plan)
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
+			if hasSubscription {
+				c.ResponseError(fmt.Sprintf("User already has an active subscription for plan: %s", subscription.Plan))
+				return
+			}
+		}
 	}
 
 	c.Data["json"] = wrapActionResponse(object.AddSubscription(&subscription))

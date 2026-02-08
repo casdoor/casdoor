@@ -233,7 +233,7 @@ class OrderPayPage extends React.Component {
             <img src={product?.image} alt={Setting.getLanguageText(product?.displayName)} height={90} style={{objectFit: "contain"}} />
           </Descriptions.Item>
 
-          <Descriptions.Item label={i18next.t("product:Price")} span={1}>
+          <Descriptions.Item label={i18next.t("order:Price")} span={1}>
             <span style={{fontSize: 18, fontWeight: "bold"}}>
               {this.getProductPrice(product)}
             </span>
@@ -245,7 +245,7 @@ class OrderPayPage extends React.Component {
           </Descriptions.Item>
 
           {product?.detail && (
-            <Descriptions.Item label={i18next.t("product:Detail")} span={2}>
+            <Descriptions.Item label={i18next.t("general:Detail")} span={2}>
               <span style={{fontSize: 16}}>{Setting.getLanguageText(product?.detail)}</span>
             </Descriptions.Item>
           )}
@@ -267,6 +267,17 @@ class OrderPayPage extends React.Component {
   render() {
     const {order, productInfos} = this.state;
 
+    const updateTime = order?.updateTime || "";
+    const state = order?.state || "";
+    const updateTimeMap = {
+      Paid: i18next.t("order:Payment time"),
+      Canceled: i18next.t("order:Cancel time"),
+      PaymentFailed: i18next.t("order:Payment failed time"),
+      Timeout: i18next.t("order:Timeout time"),
+    };
+    const updateTimeLabel = updateTimeMap[state] || i18next.t("general:Updated time");
+    const shouldShowUpdateTime = state !== "Created" && updateTime !== "";
+
     if (!order || !productInfos) {
       return null;
     }
@@ -275,7 +286,7 @@ class OrderPayPage extends React.Component {
       <div className="login-content">
         <Spin spinning={this.state.isProcessingPayment} size="large" tip={i18next.t("product:Processing payment...")} style={{paddingTop: "10%"}} >
           <div style={{marginBottom: "20px"}}>
-            <Descriptions title={<span style={Setting.isMobile() ? {fontSize: 18} : {fontSize: 24}}>{i18next.t("general:Order")}</span>} bordered column={3}>
+            <Descriptions title={<span style={Setting.isMobile() ? {fontSize: 18} : {fontSize: 24}}>{i18next.t("application:Order")}</span>} bordered column={3}>
               <Descriptions.Item label={i18next.t("general:ID")} span={3}>
                 <span style={{fontSize: 16}}>
                   {order.name}
@@ -291,6 +302,13 @@ class OrderPayPage extends React.Component {
                   {Setting.getFormattedDate(order.createdTime)}
                 </span>
               </Descriptions.Item>
+              {shouldShowUpdateTime && (
+                <Descriptions.Item label={updateTimeLabel}>
+                  <span style={{fontSize: 16}}>
+                    {Setting.getFormattedDate(updateTime)}
+                  </span>
+                </Descriptions.Item>
+              )}
               <Descriptions.Item label={i18next.t("general:User")}>
                 <span style={{fontSize: 16}}>
                   {order.user}
@@ -307,14 +325,14 @@ class OrderPayPage extends React.Component {
           </div>
 
           <div>
-            <Descriptions title={<span style={Setting.isMobile() ? {fontSize: 18} : {fontSize: 24}}>{i18next.t("order:Payment")}</span>} bordered column={3}>
-              <Descriptions.Item label={i18next.t("product:Price")} span={3}>
+            <Descriptions title={<span style={Setting.isMobile() ? {fontSize: 18} : {fontSize: 24}}>{i18next.t("general:Payment")}</span>} bordered column={3}>
+              <Descriptions.Item label={i18next.t("order:Price")} span={3}>
                 <span style={{fontSize: 28, color: "red", fontWeight: "bold"}}>
                   {this.getPrice(order)}
                 </span>
               </Descriptions.Item>
               {!this.state.isViewMode && (
-                <Descriptions.Item label={i18next.t("product:Pay")} span={3}>
+                <Descriptions.Item label={i18next.t("order:Pay")} span={3}>
                   {this.renderPaymentMethods()}
                 </Descriptions.Item>
               )}

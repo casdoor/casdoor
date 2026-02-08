@@ -90,10 +90,7 @@ class ProviderTable extends React.Component {
                 }
               }} >
               {
-                Setting.getDeduplicatedArray(this.props.providers, table, "name").filter(provider => provider.category !== "Captcha" || !table.some(tableItem => {
-                  const existingProvider = Setting.getArrayItem(this.props.providers, "name", tableItem.name);
-                  return existingProvider && existingProvider.category === "Captcha";
-                })).map((provider, index) => (
+                Setting.getDeduplicatedArray(this.props.providers, table, "name").map((provider, index) => (
                   <Option key={index} value={provider.name} label={`${provider.name} ${provider.displayName || ""}`}>
                     <div style={{display: "flex", alignItems: "center", gap: "8px"}}>
                       <img width={20} height={20} src={Setting.getProviderLogoURL(provider)} alt={provider.type} />
@@ -117,7 +114,7 @@ class ProviderTable extends React.Component {
         },
       },
       {
-        title: i18next.t("provider:Type"),
+        title: i18next.t("general:Type"),
         dataIndex: "type",
         key: "type",
         width: "80px",

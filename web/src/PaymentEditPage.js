@@ -232,7 +232,7 @@ class PaymentEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("provider:Type"), i18next.t("payment:Type - Tooltip"))} :
+            {Setting.getLabel(i18next.t("general:Type"), i18next.t("cert:Type - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Input disabled={true} value={this.state.payment.type} onChange={e => {
@@ -242,7 +242,7 @@ class PaymentEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("payment:Products"), i18next.t("payment:Products - Tooltip"))} :
+            {Setting.getLabel(i18next.t("general:Products"), i18next.t("payment:Products - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Select
@@ -265,7 +265,7 @@ class PaymentEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("product:Price"), i18next.t("product:Price - Tooltip"))} :
+            {Setting.getLabel(i18next.t("order:Price"), i18next.t("plan:Price - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Input disabled={true} value={this.state.payment.price} onChange={e => {
@@ -456,7 +456,7 @@ class PaymentEditPage extends React.Component {
     }
 
     if (!Setting.isValidEmail(this.state.payment.personEmail)) {
-      return i18next.t("signup:The input is not valid Email!");
+      return i18next.t("login:The input is not valid Email!");
     }
 
     if (!Setting.isValidPhone(this.state.payment.personPhone)) {
