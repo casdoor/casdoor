@@ -17,6 +17,7 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/beego/beego/v2/core/utils/pagination"
@@ -147,6 +148,26 @@ func (c *ApiController) DeleteToken() {
 	c.ServeJSON()
 }
 
+// authenticateClientAssertion handles private_key_jwt client authentication (RFC 7523)
+// Returns the clientId if successful, or an error otherwise
+func authenticateClientAssertion(clientAssertion, clientAssertionType, host string) (string, error) {
+	if clientAssertion == "" || clientAssertionType == "" {
+		return "", nil // No client assertion provided
+	}
+
+	app, authenticatedUserId, err := object.AuthenticateClientByAssertion(clientAssertion, clientAssertionType, host)
+	if err != nil {
+		return "", err
+	}
+
+	// Extract the actual client ID from the authenticated user ID (format: "app/clientName")
+	if strings.HasPrefix(authenticatedUserId, "app/") && app != nil {
+		return app.ClientId, nil
+	}
+
+	return "", fmt.Errorf("failed to extract client ID from authenticated user")
+}
+
 // GetOAuthToken
 // @Title GetOAuthToken
 // @Tag Token API
@@ -162,6 +183,8 @@ func (c *ApiController) DeleteToken() {
 func (c *ApiController) GetOAuthToken() {
 	clientId := c.Ctx.Input.Query("client_id")
 	clientSecret := c.Ctx.Input.Query("client_secret")
+	clientAssertion := c.Ctx.Input.Query("client_assertion")
+	clientAssertionType := c.Ctx.Input.Query("client_assertion_type")
 	grantType := c.Ctx.Input.Query("grant_type")
 	code := c.Ctx.Input.Query("code")
 	verifier := c.Ctx.Input.Query("code_verifier")
@@ -191,6 +214,12 @@ func (c *ApiController) GetOAuthToken() {
 			}
 			if clientSecret == "" {
 				clientSecret = tokenRequest.ClientSecret
+			}
+			if clientAssertion == "" {
+				clientAssertion = tokenRequest.ClientAssertion
+			}
+			if clientAssertionType == "" {
+				clientAssertionType = tokenRequest.ClientAssertionType
 			}
 			if grantType == "" {
 				grantType = tokenRequest.GrantType
@@ -234,6 +263,18 @@ func (c *ApiController) GetOAuthToken() {
 		}
 	}
 
+	// Handle private_key_jwt client authentication (RFC 7523) after all parameters are collected
+	host := c.Ctx.Request.Host
+	authenticatedClientId, err := authenticateClientAssertion(clientAssertion, clientAssertionType, host)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	if authenticatedClientId != "" {
+		clientId = authenticatedClientId
+		clientSecret = "" // Clear client_secret as it's not used with private_key_jwt
+	}
+
 	if deviceCode != "" {
 		deviceAuthCache, ok := object.DeviceAuthMap.Load(deviceCode)
 		if !ok {
@@ -274,7 +315,6 @@ func (c *ApiController) GetOAuthToken() {
 		username = deviceAuthCacheCast.UserName
 	}
 
-	host := c.Ctx.Request.Host
 	token, err := object.GetOAuthToken(grantType, clientId, clientSecret, code, verifier, scope, nonce, username, password, host, refreshToken, tag, avatar, c.GetAcceptLanguage(), subjectToken, subjectTokenType, audience)
 	if err != nil {
 		c.ResponseError(err.Error())
@@ -305,6 +345,8 @@ func (c *ApiController) RefreshToken() {
 	scope := c.Ctx.Input.Query("scope")
 	clientId := c.Ctx.Input.Query("client_id")
 	clientSecret := c.Ctx.Input.Query("client_secret")
+	clientAssertion := c.Ctx.Input.Query("client_assertion")
+	clientAssertionType := c.Ctx.Input.Query("client_assertion_type")
 	host := c.Ctx.Request.Host
 
 	if clientId == "" {
@@ -313,10 +355,23 @@ func (c *ApiController) RefreshToken() {
 		if err := json.Unmarshal(c.Ctx.Input.RequestBody, &tokenRequest); err == nil {
 			clientId = tokenRequest.ClientId
 			clientSecret = tokenRequest.ClientSecret
+			clientAssertion = tokenRequest.ClientAssertion
+			clientAssertionType = tokenRequest.ClientAssertionType
 			grantType = tokenRequest.GrantType
 			scope = tokenRequest.Scope
 			refreshToken = tokenRequest.RefreshToken
 		}
+	}
+
+	// Handle private_key_jwt client authentication (RFC 7523) after all parameters are collected
+	authenticatedClientId, err := authenticateClientAssertion(clientAssertion, clientAssertionType, host)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	if authenticatedClientId != "" {
+		clientId = authenticatedClientId
+		clientSecret = ""
 	}
 
 	refreshToken2, err := object.RefreshToken(grantType, refreshToken, scope, clientId, clientSecret, host)

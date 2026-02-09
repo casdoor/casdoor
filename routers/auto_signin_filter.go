@@ -97,6 +97,23 @@ func AutoSigninFilter(ctx *context.Context) {
 		setSessionUser(ctx, userId)
 	}
 
+	// OAuth 2.0 private_key_jwt client authentication (RFC 7523)
+	// "?client_assertion_type=urn:ietf:params:oauth:client-assertion-type:jwt-bearer&client_assertion=<jwt>"
+	clientAssertion := ctx.Input.Query("client_assertion")
+	clientAssertionType := ctx.Input.Query("client_assertion_type")
+	if clientAssertion != "" && clientAssertionType != "" {
+		host := ctx.Request.Host
+		_, userId, err := object.AuthenticateClientByAssertion(clientAssertion, clientAssertionType, host)
+		if err != nil {
+			responseError(ctx, fmt.Sprintf("Client assertion authentication failed: %v", err))
+			return
+		}
+		if userId != "" {
+			setSessionUser(ctx, userId)
+			return
+		}
+	}
+
 	// "/page?clientId=123&clientSecret=456"
 	userId, err := getUsernameByClientIdSecret(ctx)
 	if err != nil {

@@ -638,22 +638,22 @@ func GetAuthorizationCodeToken(application *Application, clientSecret string, co
 		}
 	}
 
-	if application.ClientSecret != clientSecret {
-		// when using PKCE, the Client Secret can be empty,
-		// but if it is provided, it must be accurate.
-		if token.CodeChallenge == "" {
-			return nil, &TokenError{
-				Error:            InvalidClient,
-				ErrorDescription: fmt.Sprintf("client_secret is invalid for application: [%s], token.CodeChallenge: empty", application.GetId()),
-			}, nil
-		} else {
-			if clientSecret != "" {
-				return nil, &TokenError{
-					Error:            InvalidClient,
-					ErrorDescription: fmt.Sprintf("client_secret is invalid for application: [%s], token.CodeChallenge: [%s]", application.GetId(), token.CodeChallenge),
-				}, nil
-			}
-		}
+	// Validate client_secret only if provided
+	// When using private_key_jwt authentication, clientSecret will be empty
+	// When using PKCE, the Client Secret can be empty, but if provided, must be accurate
+	if clientSecret != "" && application.ClientSecret != clientSecret {
+		return nil, &TokenError{
+			Error:            InvalidClient,
+			ErrorDescription: fmt.Sprintf("client_secret is invalid for application: [%s]", application.GetId()),
+		}, nil
+	}
+
+	// For non-PKCE flows without JWT authentication, client_secret is required
+	if clientSecret == "" && token.CodeChallenge == "" {
+		return nil, &TokenError{
+			Error:            InvalidClient,
+			ErrorDescription: fmt.Sprintf("client authentication required (client_secret or private_key_jwt) for application: [%s]", application.GetId()),
+		}, nil
 	}
 
 	if application.Name != token.Application {
@@ -752,7 +752,9 @@ func GetPasswordToken(application *Application, username string, password string
 // GetClientCredentialsToken
 // Client Credentials flow
 func GetClientCredentialsToken(application *Application, clientSecret string, scope string, host string) (*Token, *TokenError, error) {
-	if application.ClientSecret != clientSecret {
+	// Validate client_secret only if provided
+	// When using private_key_jwt authentication, clientSecret will be empty
+	if clientSecret != "" && application.ClientSecret != clientSecret {
 		return nil, &TokenError{
 			Error:            InvalidClient,
 			ErrorDescription: "client_secret is invalid",
@@ -970,8 +972,9 @@ func GetWechatMiniProgramToken(application *Application, code string, host strin
 // Token Exchange Grant (RFC 8693)
 // Exchanges a subject token for a new token with different audience or scope
 func GetTokenExchangeToken(application *Application, clientSecret string, subjectToken string, subjectTokenType string, audience string, scope string, host string) (*Token, *TokenError, error) {
-	// Verify client secret
-	if application.ClientSecret != clientSecret {
+	// Validate client_secret only if provided
+	// When using private_key_jwt authentication, clientSecret will be empty
+	if clientSecret != "" && application.ClientSecret != clientSecret {
 		return nil, &TokenError{
 			Error:            InvalidClient,
 			ErrorDescription: "client_secret is invalid",
