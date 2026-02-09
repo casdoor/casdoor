@@ -206,18 +206,6 @@ func (c *ApiController) GetOAuthToken() {
 	subjectTokenType := c.Ctx.Input.Query("subject_token_type")
 	audience := c.Ctx.Input.Query("audience")
 
-	// Handle private_key_jwt client authentication (RFC 7523)
-	host := c.Ctx.Request.Host
-	authenticatedClientId, err := authenticateClientAssertion(clientAssertion, clientAssertionType, host)
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
-	}
-	if authenticatedClientId != "" {
-		clientId = authenticatedClientId
-		clientSecret = "" // Clear client_secret as it's not used with private_key_jwt
-	}
-
 	if clientId == "" && clientSecret == "" {
 		clientId, clientSecret, _ = c.Ctx.Request.BasicAuth()
 	}
@@ -238,16 +226,6 @@ func (c *ApiController) GetOAuthToken() {
 			}
 			if clientAssertionType == "" {
 				clientAssertionType = tokenRequest.ClientAssertionType
-			}
-			// Handle private_key_jwt from request body
-			authenticatedClientId, err := authenticateClientAssertion(clientAssertion, clientAssertionType, host)
-			if err != nil {
-				c.ResponseError(err.Error())
-				return
-			}
-			if authenticatedClientId != "" {
-				clientId = authenticatedClientId
-				clientSecret = ""
 			}
 			if grantType == "" {
 				grantType = tokenRequest.GrantType
@@ -289,6 +267,18 @@ func (c *ApiController) GetOAuthToken() {
 				audience = tokenRequest.Audience
 			}
 		}
+	}
+
+	// Handle private_key_jwt client authentication (RFC 7523) after all parameters are collected
+	host := c.Ctx.Request.Host
+	authenticatedClientId, err := authenticateClientAssertion(clientAssertion, clientAssertionType, host)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	if authenticatedClientId != "" {
+		clientId = authenticatedClientId
+		clientSecret = "" // Clear client_secret as it's not used with private_key_jwt
 	}
 
 	if deviceCode != "" {
@@ -365,17 +355,6 @@ func (c *ApiController) RefreshToken() {
 	clientAssertionType := c.Ctx.Input.Query("client_assertion_type")
 	host := c.Ctx.Request.Host
 
-	// Handle private_key_jwt client authentication (RFC 7523)
-	authenticatedClientId, err := authenticateClientAssertion(clientAssertion, clientAssertionType, host)
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
-	}
-	if authenticatedClientId != "" {
-		clientId = authenticatedClientId
-		clientSecret = ""
-	}
-
 	if clientId == "" {
 		// If clientID is empty, try to read data from RequestBody
 		var tokenRequest TokenRequest
@@ -384,20 +363,21 @@ func (c *ApiController) RefreshToken() {
 			clientSecret = tokenRequest.ClientSecret
 			clientAssertion = tokenRequest.ClientAssertion
 			clientAssertionType = tokenRequest.ClientAssertionType
-			// Handle private_key_jwt from request body
-			authenticatedClientId, err := authenticateClientAssertion(clientAssertion, clientAssertionType, host)
-			if err != nil {
-				c.ResponseError(err.Error())
-				return
-			}
-			if authenticatedClientId != "" {
-				clientId = authenticatedClientId
-				clientSecret = ""
-			}
 			grantType = tokenRequest.GrantType
 			scope = tokenRequest.Scope
 			refreshToken = tokenRequest.RefreshToken
 		}
+	}
+
+	// Handle private_key_jwt client authentication (RFC 7523) after all parameters are collected
+	authenticatedClientId, err := authenticateClientAssertion(clientAssertion, clientAssertionType, host)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	if authenticatedClientId != "" {
+		clientId = authenticatedClientId
+		clientSecret = ""
 	}
 
 	refreshToken2, err := object.RefreshToken(grantType, refreshToken, scope, clientId, clientSecret, host)

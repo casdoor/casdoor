@@ -136,7 +136,7 @@ func ValidateClientAssertion(assertion string, expectedAudience string) (string,
 	// Validate 'iat' claim - issued at time (optional but recommended)
 	if validatedClaims.IssuedAt != nil {
 		// Check that the token is not issued more than 5 minutes in the future (allowing clock skew)
-		if time.Now().Add(5 * time.Minute).Before(validatedClaims.IssuedAt.Time) {
+		if validatedClaims.IssuedAt.Time.After(time.Now().Add(5 * time.Minute)) {
 			return "", fmt.Errorf("client assertion issued in the future")
 		}
 	}
