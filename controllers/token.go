@@ -17,6 +17,7 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/beego/beego/v2/core/utils/pagination"
@@ -162,6 +163,8 @@ func (c *ApiController) DeleteToken() {
 func (c *ApiController) GetOAuthToken() {
 	clientId := c.Ctx.Input.Query("client_id")
 	clientSecret := c.Ctx.Input.Query("client_secret")
+	clientAssertion := c.Ctx.Input.Query("client_assertion")
+	clientAssertionType := c.Ctx.Input.Query("client_assertion_type")
 	grantType := c.Ctx.Input.Query("grant_type")
 	code := c.Ctx.Input.Query("code")
 	verifier := c.Ctx.Input.Query("code_verifier")
@@ -177,6 +180,25 @@ func (c *ApiController) GetOAuthToken() {
 	subjectTokenType := c.Ctx.Input.Query("subject_token_type")
 	audience := c.Ctx.Input.Query("audience")
 
+	// Handle private_key_jwt client authentication (RFC 7523)
+	if clientAssertion != "" && clientAssertionType != "" {
+		host := c.Ctx.Request.Host
+		_, authenticatedClientId, err := object.AuthenticateClientByAssertion(clientAssertion, clientAssertionType, host)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+		// Extract the actual client ID from the authenticated user ID (format: "app/clientName")
+		if strings.HasPrefix(authenticatedClientId, "app/") {
+			app, err := object.GetApplicationByUserId(authenticatedClientId)
+			if err == nil && app != nil {
+				clientId = app.ClientId
+				// Clear client_secret as it's not used with private_key_jwt
+				clientSecret = ""
+			}
+		}
+	}
+
 	if clientId == "" && clientSecret == "" {
 		clientId, clientSecret, _ = c.Ctx.Request.BasicAuth()
 	}
@@ -191,6 +213,28 @@ func (c *ApiController) GetOAuthToken() {
 			}
 			if clientSecret == "" {
 				clientSecret = tokenRequest.ClientSecret
+			}
+			if clientAssertion == "" {
+				clientAssertion = tokenRequest.ClientAssertion
+			}
+			if clientAssertionType == "" {
+				clientAssertionType = tokenRequest.ClientAssertionType
+			}
+			// Handle private_key_jwt from request body
+			if clientAssertion != "" && clientAssertionType != "" {
+				host := c.Ctx.Request.Host
+				_, authenticatedClientId, err := object.AuthenticateClientByAssertion(clientAssertion, clientAssertionType, host)
+				if err != nil {
+					c.ResponseError(err.Error())
+					return
+				}
+				if strings.HasPrefix(authenticatedClientId, "app/") {
+					app, err := object.GetApplicationByUserId(authenticatedClientId)
+					if err == nil && app != nil {
+						clientId = app.ClientId
+						clientSecret = ""
+					}
+				}
 			}
 			if grantType == "" {
 				grantType = tokenRequest.GrantType
@@ -305,7 +349,25 @@ func (c *ApiController) RefreshToken() {
 	scope := c.Ctx.Input.Query("scope")
 	clientId := c.Ctx.Input.Query("client_id")
 	clientSecret := c.Ctx.Input.Query("client_secret")
+	clientAssertion := c.Ctx.Input.Query("client_assertion")
+	clientAssertionType := c.Ctx.Input.Query("client_assertion_type")
 	host := c.Ctx.Request.Host
+
+	// Handle private_key_jwt client authentication (RFC 7523)
+	if clientAssertion != "" && clientAssertionType != "" {
+		_, authenticatedClientId, err := object.AuthenticateClientByAssertion(clientAssertion, clientAssertionType, host)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+		if strings.HasPrefix(authenticatedClientId, "app/") {
+			app, err := object.GetApplicationByUserId(authenticatedClientId)
+			if err == nil && app != nil {
+				clientId = app.ClientId
+				clientSecret = ""
+			}
+		}
+	}
 
 	if clientId == "" {
 		// If clientID is empty, try to read data from RequestBody
@@ -313,6 +375,23 @@ func (c *ApiController) RefreshToken() {
 		if err := json.Unmarshal(c.Ctx.Input.RequestBody, &tokenRequest); err == nil {
 			clientId = tokenRequest.ClientId
 			clientSecret = tokenRequest.ClientSecret
+			clientAssertion = tokenRequest.ClientAssertion
+			clientAssertionType = tokenRequest.ClientAssertionType
+			// Handle private_key_jwt from request body
+			if clientAssertion != "" && clientAssertionType != "" {
+				_, authenticatedClientId, err := object.AuthenticateClientByAssertion(clientAssertion, clientAssertionType, host)
+				if err != nil {
+					c.ResponseError(err.Error())
+					return
+				}
+				if strings.HasPrefix(authenticatedClientId, "app/") {
+					app, err := object.GetApplicationByUserId(authenticatedClientId)
+					if err == nil && app != nil {
+						clientId = app.ClientId
+						clientSecret = ""
+					}
+				}
+			}
 			grantType = tokenRequest.GrantType
 			scope = tokenRequest.Scope
 			refreshToken = tokenRequest.RefreshToken
