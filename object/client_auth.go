@@ -23,6 +23,11 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
+const (
+	// OAuth2TokenEndpointPath is the standard OAuth 2.0 token endpoint path
+	OAuth2TokenEndpointPath = "/login/oauth/access_token"
+)
+
 // ClientAssertionClaims represents the claims in a client assertion JWT (RFC 7523)
 type ClientAssertionClaims struct {
 	jwt.RegisteredClaims
@@ -110,7 +115,7 @@ func ValidateClientAssertion(assertion string, expectedAudience string) (string,
 	// Check if expectedAudience is in the audience list
 	audienceValid := false
 	for _, aud := range validatedClaims.Audience {
-		if aud == expectedAudience || aud == expectedAudience+"/login/oauth/access_token" {
+		if aud == expectedAudience || aud == expectedAudience+OAuth2TokenEndpointPath {
 			audienceValid = true
 			break
 		}
@@ -130,8 +135,8 @@ func ValidateClientAssertion(assertion string, expectedAudience string) (string,
 
 	// Validate 'iat' claim - issued at time (optional but recommended)
 	if validatedClaims.IssuedAt != nil {
-		// Check that the token is not issued in the future (with 5 minute tolerance)
-		if time.Now().Add(-5 * time.Minute).Before(validatedClaims.IssuedAt.Time) {
+		// Check that the token is not issued more than 5 minutes in the future (allowing clock skew)
+		if time.Now().Add(5 * time.Minute).Before(validatedClaims.IssuedAt.Time) {
 			return "", fmt.Errorf("client assertion issued in the future")
 		}
 	}

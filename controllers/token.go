@@ -148,6 +148,32 @@ func (c *ApiController) DeleteToken() {
 	c.ServeJSON()
 }
 
+// authenticateClientAssertion handles private_key_jwt client authentication (RFC 7523)
+// Returns the clientId if successful, or an error otherwise
+func authenticateClientAssertion(clientAssertion, clientAssertionType, host string) (string, error) {
+	if clientAssertion == "" || clientAssertionType == "" {
+		return "", nil // No client assertion provided
+	}
+
+	_, authenticatedUserId, err := object.AuthenticateClientByAssertion(clientAssertion, clientAssertionType, host)
+	if err != nil {
+		return "", err
+	}
+
+	// Extract the actual client ID from the authenticated user ID (format: "app/clientName")
+	if strings.HasPrefix(authenticatedUserId, "app/") {
+		app, err := object.GetApplicationByUserId(authenticatedUserId)
+		if err != nil {
+			return "", err
+		}
+		if app != nil {
+			return app.ClientId, nil
+		}
+	}
+
+	return "", fmt.Errorf("failed to extract client ID from authenticated user")
+}
+
 // GetOAuthToken
 // @Title GetOAuthToken
 // @Tag Token API
@@ -181,22 +207,15 @@ func (c *ApiController) GetOAuthToken() {
 	audience := c.Ctx.Input.Query("audience")
 
 	// Handle private_key_jwt client authentication (RFC 7523)
-	if clientAssertion != "" && clientAssertionType != "" {
-		host := c.Ctx.Request.Host
-		_, authenticatedClientId, err := object.AuthenticateClientByAssertion(clientAssertion, clientAssertionType, host)
-		if err != nil {
-			c.ResponseError(err.Error())
-			return
-		}
-		// Extract the actual client ID from the authenticated user ID (format: "app/clientName")
-		if strings.HasPrefix(authenticatedClientId, "app/") {
-			app, err := object.GetApplicationByUserId(authenticatedClientId)
-			if err == nil && app != nil {
-				clientId = app.ClientId
-				// Clear client_secret as it's not used with private_key_jwt
-				clientSecret = ""
-			}
-		}
+	host := c.Ctx.Request.Host
+	authenticatedClientId, err := authenticateClientAssertion(clientAssertion, clientAssertionType, host)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	if authenticatedClientId != "" {
+		clientId = authenticatedClientId
+		clientSecret = "" // Clear client_secret as it's not used with private_key_jwt
 	}
 
 	if clientId == "" && clientSecret == "" {
@@ -221,20 +240,14 @@ func (c *ApiController) GetOAuthToken() {
 				clientAssertionType = tokenRequest.ClientAssertionType
 			}
 			// Handle private_key_jwt from request body
-			if clientAssertion != "" && clientAssertionType != "" {
-				host := c.Ctx.Request.Host
-				_, authenticatedClientId, err := object.AuthenticateClientByAssertion(clientAssertion, clientAssertionType, host)
-				if err != nil {
-					c.ResponseError(err.Error())
-					return
-				}
-				if strings.HasPrefix(authenticatedClientId, "app/") {
-					app, err := object.GetApplicationByUserId(authenticatedClientId)
-					if err == nil && app != nil {
-						clientId = app.ClientId
-						clientSecret = ""
-					}
-				}
+			authenticatedClientId, err := authenticateClientAssertion(clientAssertion, clientAssertionType, host)
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
+			if authenticatedClientId != "" {
+				clientId = authenticatedClientId
+				clientSecret = ""
 			}
 			if grantType == "" {
 				grantType = tokenRequest.GrantType
@@ -318,7 +331,6 @@ func (c *ApiController) GetOAuthToken() {
 		username = deviceAuthCacheCast.UserName
 	}
 
-	host := c.Ctx.Request.Host
 	token, err := object.GetOAuthToken(grantType, clientId, clientSecret, code, verifier, scope, nonce, username, password, host, refreshToken, tag, avatar, c.GetAcceptLanguage(), subjectToken, subjectTokenType, audience)
 	if err != nil {
 		c.ResponseError(err.Error())
@@ -354,19 +366,14 @@ func (c *ApiController) RefreshToken() {
 	host := c.Ctx.Request.Host
 
 	// Handle private_key_jwt client authentication (RFC 7523)
-	if clientAssertion != "" && clientAssertionType != "" {
-		_, authenticatedClientId, err := object.AuthenticateClientByAssertion(clientAssertion, clientAssertionType, host)
-		if err != nil {
-			c.ResponseError(err.Error())
-			return
-		}
-		if strings.HasPrefix(authenticatedClientId, "app/") {
-			app, err := object.GetApplicationByUserId(authenticatedClientId)
-			if err == nil && app != nil {
-				clientId = app.ClientId
-				clientSecret = ""
-			}
-		}
+	authenticatedClientId, err := authenticateClientAssertion(clientAssertion, clientAssertionType, host)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	if authenticatedClientId != "" {
+		clientId = authenticatedClientId
+		clientSecret = ""
 	}
 
 	if clientId == "" {
@@ -378,19 +385,14 @@ func (c *ApiController) RefreshToken() {
 			clientAssertion = tokenRequest.ClientAssertion
 			clientAssertionType = tokenRequest.ClientAssertionType
 			// Handle private_key_jwt from request body
-			if clientAssertion != "" && clientAssertionType != "" {
-				_, authenticatedClientId, err := object.AuthenticateClientByAssertion(clientAssertion, clientAssertionType, host)
-				if err != nil {
-					c.ResponseError(err.Error())
-					return
-				}
-				if strings.HasPrefix(authenticatedClientId, "app/") {
-					app, err := object.GetApplicationByUserId(authenticatedClientId)
-					if err == nil && app != nil {
-						clientId = app.ClientId
-						clientSecret = ""
-					}
-				}
+			authenticatedClientId, err := authenticateClientAssertion(clientAssertion, clientAssertionType, host)
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
+			if authenticatedClientId != "" {
+				clientId = authenticatedClientId
+				clientSecret = ""
 			}
 			grantType = tokenRequest.GrantType
 			scope = tokenRequest.Scope
