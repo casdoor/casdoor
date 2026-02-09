@@ -123,6 +123,7 @@ The following template variables can be used in `TokenAttributes` to create dyna
 You can also access custom user properties:
 - Use `Properties.<propertyName>` in `TokenFields`
 - Properties will be included with the property name as the claim name
+- **Note**: Property names are case-sensitive
 
 ## Common Use Cases
 
@@ -385,13 +386,15 @@ curl -X POST https://your-casdoor-instance/api/update-application \
 
 1. **Standard Claims**: The JWT always includes standard registered claims (`iss`, `sub`, `aud`, `exp`, `nbf`, `iat`, `jti`) regardless of configuration.
 
-2. **Built-in Claims**: When using `JWT-Custom` format, the token also includes `tokenType`, `nonce`, `scope`, and `azp` (if applicable).
+2. **Built-in Claims**: When using `JWT-Custom` format, the token always includes `tokenType`, `nonce`, and `scope`. The `azp` (authorized party) claim is included when the application has a client ID configured.
 
 3. **Dynamic Updates**: Claims using template variables like `$user.roles` are dynamically evaluated each time a token is generated, ensuring they always reflect the current user state.
 
 4. **Field Name Conversion**: User field names in `tokenFields` are automatically converted to snake_case in the token (e.g., `DisplayName` becomes `display_name`).
 
 5. **Permission Names**: Use the special field `permissionNames` in `tokenFields` to get an array of just the permission names instead of full permission objects.
+
+6. **Refresh Tokens**: Refresh tokens are generated with the same custom claims configuration but with extended expiration time (configured via `RefreshExpireInHours`) and `tokenType` set to `"refresh-token"`.
 
 ## Troubleshooting
 
@@ -406,6 +409,9 @@ curl -X POST https://your-casdoor-instance/api/update-application \
 
 **Problem**: Array claim showing as a single string  
 **Solution**: Ensure the `type` is set to `"Array"`, not `"String"` in the token attribute configuration.
+
+**Problem**: Custom property not appearing in token  
+**Solution**: Property names are case-sensitive. Ensure `Properties.<propertyName>` uses the exact case as stored in the user's properties.
 
 ## Additional Resources
 
