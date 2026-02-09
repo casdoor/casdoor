@@ -914,6 +914,7 @@
     "Is recharge": "チャージ用か",
     "Is recharge - Tooltip": "現在の製品が残高をチャージするためかどうか",
     "New Product": "新製品",
+    "No recharge options available": "利用可能なチャージオプションがありません",
     "Order created successfully": "注文が正常に作成されました",
     "PayPal": "ペイパル",
     "Payment cancelled": "支払いキャンセル",
