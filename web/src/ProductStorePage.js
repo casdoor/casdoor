@@ -22,8 +22,6 @@ import {FloatingCartButton, QuantityStepper} from "./common/product/CartControls
 
 const {Text, Title} = Typography;
 
-const MAX_DISPLAYED_RECHARGE_OPTIONS = 3;
-
 class ProductStorePage extends React.Component {
   constructor(props) {
     super(props);
@@ -275,17 +273,15 @@ class ProductStorePage extends React.Component {
                       <Text type="secondary" style={{fontSize: "13px", display: "block", marginBottom: 4}}>
                         {i18next.t("product:Recharge options")}:
                       </Text>
-                      <div style={{display: "flex", flexWrap: "wrap", gap: "4px"}}>
-                        {product.rechargeOptions.slice(0, MAX_DISPLAYED_RECHARGE_OPTIONS).map((amount, index) => (
-                          <Tag key={index} color="blue" style={{fontSize: "14px", fontWeight: 600, margin: 0}}>
+                      <div style={{display: "flex", flexWrap: "wrap", gap: "4px", alignItems: "center"}}>
+                        {product.rechargeOptions.map((amount, index) => (
+                          <Tag key={amount} color="blue" style={{fontSize: "14px", fontWeight: 600, margin: 0}}>
                             {Setting.getCurrencySymbol(product.currency)}{amount}
                           </Tag>
                         ))}
-                        {product.rechargeOptions.length > MAX_DISPLAYED_RECHARGE_OPTIONS && (
-                          <Tag color="blue" style={{fontSize: "14px", fontWeight: 600, margin: 0}}>
-                            +{product.rechargeOptions.length - MAX_DISPLAYED_RECHARGE_OPTIONS}
-                          </Tag>
-                        )}
+                        <Text type="secondary" style={{fontSize: "13px", marginLeft: 8}}>
+                          {Setting.getCurrencyWithFlag(product.currency)}
+                        </Text>
                       </div>
                     </div>
                   )}
@@ -294,13 +290,23 @@ class ProductStorePage extends React.Component {
                       <Text strong style={{fontSize: "16px", color: "#1890ff"}}>
                         {i18next.t("product:Custom amount available")}
                       </Text>
+                      {(!product.rechargeOptions || product.rechargeOptions.length === 0) && (
+                        <Text type="secondary" style={{fontSize: "13px", marginLeft: 8}}>
+                          {Setting.getCurrencyWithFlag(product.currency)}
+                        </Text>
+                      )}
                     </div>
                   )}
-                  <div>
-                    <Text type="secondary" style={{fontSize: "13px"}}>
-                      {Setting.getCurrencyWithFlag(product.currency)}
-                    </Text>
-                  </div>
+                  {(!product.rechargeOptions || product.rechargeOptions.length === 0) && product.disableCustomRecharge === true && (
+                    <div style={{marginBottom: 8}}>
+                      <Text type="secondary" style={{fontSize: "13px", display: "block", marginBottom: 4}}>
+                        {i18next.t("product:No recharge options available")}
+                      </Text>
+                      <Text type="secondary" style={{fontSize: "13px"}}>
+                        {Setting.getCurrencyWithFlag(product.currency)}
+                      </Text>
+                    </div>
+                  )}
                 </>
               ) : (
                 <>
