@@ -53,7 +53,7 @@ Special fields:
 - `Permissions` - Array of user's permission objects  
 - `Groups` - Array of user's group names
 - `permissionNames` - Array of permission names only (special handling)
-- `Properties.<fieldName>` - Access custom user properties
+- `Properties.{propertyName}` - Access custom user properties (e.g., `Properties.department`)
 
 **Example Configuration:**
 
@@ -315,7 +315,7 @@ Resulting JWT payload:
   "exp": 1234567890,
   "iat": 1234567890,
   "email": "user@example.com",
-  "display_name": "John Doe",
+  "displayName": "John Doe",
   "phone": "+1234567890",
   "user_roles": ["admin", "developer"],
   "user_permissions": ["read:users", "write:users", "delete:users"],
@@ -390,7 +390,7 @@ curl -X POST https://your-casdoor-instance/api/update-application \
 
 3. **Dynamic Updates**: Claims using template variables like `$user.roles` are dynamically evaluated each time a token is generated, ensuring they always reflect the current user state.
 
-4. **Field Name Conversion**: User field names in `tokenFields` are automatically converted to snake_case in the token (e.g., `DisplayName` becomes `display_name`).
+4. **Field Name Conversion**: User field names in `tokenFields` are automatically converted to camelCase with a lowercase first letter in the token (e.g., `DisplayName` becomes `displayName`, `Email` becomes `email`).
 
 5. **Permission Names**: Use the special field `permissionNames` in `tokenFields` to get an array of just the permission names instead of full permission objects.
 
