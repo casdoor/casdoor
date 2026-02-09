@@ -51,6 +51,10 @@
 
 https://casdoor.org
 
+### Additional Guides
+
+- [Custom OIDC Claims Guide](./CUSTOM_CLAIMS.md) - Learn how to configure custom JWT claims including dynamic user roles, permissions, and groups
+
 ## Install
 
 - By source code: https://casdoor.org/docs/basic/server-installation
