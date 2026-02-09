@@ -14,6 +14,7 @@
 
 import React from "react";
 import {Button, Card, Col, Input, Row, Select, Switch} from "antd";
+import PaginateSelect from "./common/PaginateSelect";
 import * as PermissionBackend from "./backend/PermissionBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as UserBackend from "./backend/UserBackend";
@@ -68,9 +69,6 @@ class PermissionEditPage extends React.Component {
           permission: permission,
         });
 
-        this.getUsers(permission.owner);
-        this.getGroups(permission.owner);
-        this.getRoles(permission.owner);
         this.getModels(permission.owner);
         this.getResources(permission.owner);
         this.getModel(permission.model);
@@ -82,48 +80,6 @@ class PermissionEditPage extends React.Component {
       .then((res) => {
         this.setState({
           organizations: res.data || [],
-        });
-      });
-  }
-
-  getUsers(organizationName) {
-    UserBackend.getUsers(organizationName)
-      .then((res) => {
-        if (res.status === "error") {
-          Setting.showMessage("error", res.msg);
-          return;
-        }
-
-        this.setState({
-          users: res.data,
-        });
-      });
-  }
-
-  getGroups(organizationName) {
-    GroupBackend.getGroups(organizationName)
-      .then((res) => {
-        if (res.status === "error") {
-          Setting.showMessage("error", res.msg);
-          return;
-        }
-
-        this.setState({
-          groups: res.data,
-        });
-      });
-  }
-
-  getRoles(organizationName) {
-    RoleBackend.getRoles(organizationName)
-      .then((res) => {
-        if (res.status === "error") {
-          Setting.showMessage("error", res.msg);
-          return;
-        }
-
-        this.setState({
-          roles: res.data,
         });
       });
   }
@@ -211,9 +167,6 @@ class PermissionEditPage extends React.Component {
           <Col span={22} >
             <Select virtual={false} style={{width: "100%"}} disabled={!Setting.isAdminUser(this.props.account)} value={this.state.permission.owner} onChange={(owner => {
               this.updatePermissionField("owner", owner);
-              this.getUsers(owner);
-              this.getGroups(owner);
-              this.getRoles(owner);
               this.getModels(owner);
               this.getResources(owner);
             })}
@@ -268,12 +221,35 @@ class PermissionEditPage extends React.Component {
             {Setting.getLabel(i18next.t("role:Sub users"), i18next.t("role:Sub users - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} mode="multiple" style={{width: "100%"}} value={this.state.permission.users}
+            <PaginateSelect
+              virtual
+              mode="multiple"
+              style={{width: "100%"}}
+              value={this.state.permission.users}
+              allowClear
+              fetchPage={async(...args) => {
+                const res = await UserBackend.getUsers(...args);
+                if (res.status !== "ok") {
+                  return res;
+                }
+                const data = res.data.map((user) => Setting.getOption(`${user.owner}/${user.name}`, `${user.owner}/${user.name}`));
+                if (args?.[1] === 1 && Array.isArray(res?.data)) {
+                  res.data = [
+                    Setting.getOption(i18next.t("general:All"), "*"),
+                    ...data,
+                  ];
+                } else {
+                  res.data = data;
+                }
+                return res;
+              }}
+              buildFetchArgs={({page, pageSize, searchText}) => {
+                const field = searchText ? "name" : "";
+                return [this.state.permission.owner, page, pageSize, field, searchText];
+              }}
+              reloadKey={this.state.permission?.owner}
+              filterOption={false}
               onChange={(value => {this.updatePermissionField("users", value);})}
-              options={[
-                Setting.getOption(i18next.t("general:All"), "*"),
-                ...this.state.users.map((user) => Setting.getOption(`${user.owner}/${user.name}`, `${user.owner}/${user.name}`)),
-              ]}
             />
           </Col>
         </Row>
@@ -282,12 +258,35 @@ class PermissionEditPage extends React.Component {
             {Setting.getLabel(i18next.t("role:Sub groups"), i18next.t("role:Sub groups - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} mode="multiple" style={{width: "100%"}} value={this.state.permission.groups}
+            <PaginateSelect
+              virtual
+              mode="multiple"
+              style={{width: "100%"}}
+              value={this.state.permission.groups}
+              allowClear
+              fetchPage={async(...args) => {
+                const res = await GroupBackend.getGroups(...args);
+                if (res.status !== "ok") {
+                  return res;
+                }
+                const data = res.data.map((group) => Setting.getOption(`${group.owner}/${group.name}`, `${group.owner}/${group.name}`));
+                if (args?.[2] === 1 && Array.isArray(res?.data)) {
+                  res.data = [
+                    Setting.getOption(i18next.t("general:All"), "*"),
+                    ...data,
+                  ];
+                } else {
+                  res.data = data;
+                }
+                return res;
+              }}
+              buildFetchArgs={({page, pageSize, searchText}) => {
+                const field = searchText ? "name" : "";
+                return [this.state.permission.owner, false, page, pageSize, field, searchText, "", ""];
+              }}
+              reloadKey={this.state.permission?.owner}
+              filterOption={false}
               onChange={(value => {this.updatePermissionField("groups", value);})}
-              options={[
-                Setting.getOption(i18next.t("general:All"), "*"),
-                ...this.state.groups.map((group) => Setting.getOption(`${group.owner}/${group.name}`, `${group.owner}/${group.name}`)),
-              ]}
             />
           </Col>
         </Row>
@@ -296,12 +295,37 @@ class PermissionEditPage extends React.Component {
             {Setting.getLabel(i18next.t("role:Sub roles"), i18next.t("role:Sub roles - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select disabled={!this.hasRoleDefinition(this.state.model)} placeholder={this.hasRoleDefinition(this.state.model) ? "" : "This field is disabled because the model is empty or it doesn't support RBAC (in another word, doesn't contain [role_definition])"} virtual={false} mode="multiple" style={{width: "100%"}} value={this.state.permission.roles}
+            <PaginateSelect
+              virtual
+              mode="multiple"
+              style={{width: "100%"}}
+              value={this.state.permission.roles}
+              disabled={!this.hasRoleDefinition(this.state.model)}
+              allowClear
+              fetchPage={async(...args) => {
+                const res = await RoleBackend.getRoles(...args);
+                if (res.status !== "ok") {
+                  return res;
+                }
+                const data = res.data.map((role) => Setting.getOption(`${role.owner}/${role.name}`, `${role.owner}/${role.name}`));
+                if (args?.[1] === 1 && Array.isArray(res?.data)) {
+                  // res.data = [{owner: i18next.t("organization:All"), name: "*"}, ...res.data];
+                  res.data = [
+                    Setting.getOption(i18next.t("general:All"), "*"),
+                    ...data,
+                  ];
+                } else {
+                  res.data = data;
+                }
+                return res;
+              }}
+              buildFetchArgs={({page, pageSize, searchText}) => {
+                const field = searchText ? "name" : "";
+                return [this.state.permission.owner, page, pageSize, field, searchText, "", ""];
+              }}
+              reloadKey={this.state.permission?.owner}
+              filterOption={false}
               onChange={(value => {this.updatePermissionField("roles", value);})}
-              options={[
-                Setting.getOption(i18next.t("general:All"), "*"),
-                ...this.state.roles.filter(roles => (roles.owner !== this.state.roles.owner || roles.name !== this.state.roles.name)).map((permission) => Setting.getOption(`${permission.owner}/${permission.name}`, `${permission.owner}/${permission.name}`)),
-              ]}
             />
           </Col>
         </Row>

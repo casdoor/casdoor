@@ -19,6 +19,7 @@ import * as ApplicationBackend from "./backend/ApplicationBackend";
 import * as UserBackend from "./backend/UserBackend";
 import * as Setting from "./Setting";
 import {Button, Card, Col, Input, InputNumber, Row, Select} from "antd";
+import PaginateSelect from "./common/PaginateSelect";
 import i18next from "i18next";
 
 const {Option} = Select;
@@ -43,7 +44,6 @@ class TransactionEditPage extends React.Component {
     if (this.state.mode === "recharge") {
       this.getOrganizations();
       this.getApplications(this.state.organizationName);
-      this.getUsers(this.state.organizationName);
     }
   }
 
@@ -96,19 +96,6 @@ class TransactionEditPage extends React.Component {
       .then((res) => {
         this.setState({
           applications: res.data || [],
-        });
-      })
-      .catch(error => {
-        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
-      });
-  }
-
-  getUsers(organizationName) {
-    const targetOrganizationName = organizationName || this.state.organizationName;
-    UserBackend.getUsers(targetOrganizationName)
-      .then((res) => {
-        this.setState({
-          users: res.data || [],
         });
       })
       .catch(error => {
@@ -205,7 +192,6 @@ class TransactionEditPage extends React.Component {
                   this.updateTransactionField("owner", value);
                   this.updateTransactionField("application", "");
                   this.getApplications(value);
-                  this.getUsers(value);
                 }}>
                 {
                   this.state.organizations.map((org, index) => <Option key={index} value={org.name}>{org.name}</Option>)
@@ -340,17 +326,24 @@ class TransactionEditPage extends React.Component {
           </Col>
           <Col span={22} >
             {isRechargeMode ? (
-              <Select virtual={false} style={{width: "100%"}}
+              <PaginateSelect
+                virtual
+                style={{width: "100%"}}
                 value={this.state.transaction.user}
                 disabled={this.state.transaction.tag === "Organization"}
                 allowClear
+                fetchPage={UserBackend.getUsers}
+                buildFetchArgs={({page, pageSize, searchText}) => {
+                  const field = searchText ? "name" : "";
+                  return [this.state.transaction?.organization || this.state.organizationName, page, pageSize, field, searchText];
+                }}
+                reloadKey={this.state.transaction?.organization || this.state.organizationName}
+                optionMapper={(user) => Setting.getOption(user.name, user.name)}
+                filterOption={false}
                 onChange={(value) => {
                   this.updateTransactionField("user", value || "");
-                }}>
-                {
-                  this.state.users.map((user, index) => <Option key={index} value={user.name}>{user.name}</Option>)
-                }
-              </Select>
+                }}
+              />
             ) : (
               <Input disabled={true} value={this.state.transaction.user} onChange={e => {
               }} />
