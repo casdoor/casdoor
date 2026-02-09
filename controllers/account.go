@@ -701,7 +701,7 @@ func (c *ApiController) GetCaptcha() {
 
 	// Check the CAPTCHA rule to determine if CAPTCHA should be shown
 	clientIp := util.GetClientIpFromRequest(c.Ctx.Request)
-	
+
 	// For Internet-Only rule, we can determine on the backend if CAPTCHA should be shown
 	// For other rules (Dynamic, Always), we need to return the CAPTCHA config
 	shouldSkipCaptcha := false
@@ -709,7 +709,7 @@ func (c *ApiController) GetCaptcha() {
 		if providerItem.Provider == nil || providerItem.Provider.Category != "Captcha" {
 			continue
 		}
-		
+
 		// For "None" rule, skip CAPTCHA
 		if providerItem.Rule == "None" || providerItem.Rule == "" {
 			shouldSkipCaptcha = true
@@ -720,7 +720,7 @@ func (c *ApiController) GetCaptcha() {
 				shouldSkipCaptcha = true
 			}
 		}
-		
+
 		break // Only check the first CAPTCHA provider
 	}
 
