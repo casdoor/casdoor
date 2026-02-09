@@ -275,7 +275,7 @@ class ProductStorePage extends React.Component {
                       </Text>
                       <div style={{display: "flex", flexWrap: "wrap", gap: "4px", alignItems: "center"}}>
                         {product.rechargeOptions.map((amount, index) => (
-                          <Tag key={index} color="blue" style={{fontSize: "14px", fontWeight: 600, margin: 0}}>
+                          <Tag key={amount} color="blue" style={{fontSize: "14px", fontWeight: 600, margin: 0}}>
                             {Setting.getCurrencySymbol(product.currency)}{amount}
                           </Tag>
                         ))}
