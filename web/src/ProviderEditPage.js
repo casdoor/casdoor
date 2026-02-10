@@ -825,6 +825,19 @@ class ProviderEditPage extends React.Component {
                     </Row>
                     <Row style={{marginTop: "20px"}} >
                       <Col style={{marginTop: "5px"}} span={2}>
+                        {Setting.getLabel(i18next.t("provider:Scope"), i18next.t("provider:Scope - Tooltip"))} :
+                      </Col>
+                      <Col span={22} >
+                        <Select virtual={false} style={{width: "100%"}} value={this.state.provider.scopes} onChange={value => {
+                          this.updateProviderField("scopes", value);
+                        }}>
+                          <Option key="snsapi_userinfo" value="snsapi_userinfo">snsapi_userinfo</Option>
+                          <Option key="snsapi_privateinfo" value="snsapi_privateinfo">snsapi_privateinfo</Option>
+                        </Select>
+                      </Col>
+                    </Row>
+                    <Row style={{marginTop: "20px"}} >
+                      <Col style={{marginTop: "5px"}} span={2}>
                         {Setting.getLabel(i18next.t("provider:Use id as name"), i18next.t("provider:Use id as name - Tooltip"))} :
                       </Col>
                       <Col span={22} >
