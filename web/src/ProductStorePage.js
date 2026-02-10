@@ -126,7 +126,13 @@ class ProductStorePage extends React.Component {
             }
           }
 
-          const existingItemIndex = cart.findIndex(item => item.name === product.name && item.price === product.price);
+          if (product.isRecharge) {
+            Setting.showMessage("error", i18next.t("product:Recharge products need to go to the product detail page to set custom amount"));
+            this.setState(prevState => ({addingToCartProducts: prevState.addingToCartProducts.filter(name => name !== product.name)}));
+            return;
+          }
+
+          const existingItemIndex = cart.findIndex(item => item.name === product.name);
           const quantityToAdd = this.state.productQuantities[product.name] || 1;
 
           if (existingItemIndex !== -1) {
@@ -134,7 +140,6 @@ class ProductStorePage extends React.Component {
           } else {
             const newCartProductInfo = {
               name: product.name,
-              price: product.price,
               currency: product.currency,
               pricingName: "",
               planName: "",
