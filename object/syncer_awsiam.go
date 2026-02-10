@@ -152,6 +152,11 @@ func (p *AwsIamSyncerProvider) getAwsIamUsers() ([]*OriginalUser, error) {
 		originalUser, err := p.awsIamUserToOriginalUser(iamUser)
 		if err != nil {
 			// Log error but continue processing other users
+			userName := "unknown"
+			if iamUser.UserName != nil {
+				userName = *iamUser.UserName
+			}
+			fmt.Printf("Warning: Failed to convert IAM user %s: %v\n", userName, err)
 			continue
 		}
 		originalUsers = append(originalUsers, originalUser)
@@ -311,11 +316,12 @@ func (p *AwsIamSyncerProvider) GetOriginalUserGroups(userId string) ([]string, e
 		}
 	}
 
-	// First, we need to get the username from userId
-	// In AWS IAM, we use UserName to query groups, not UserId
-	// This is a limitation - we need the UserName
-	// For now, we'll return empty groups
-	// TODO: Implement a mapping mechanism or use UserName instead of UserId
+	// Note: AWS IAM API requires UserName to query groups, but this interface provides UserId.
+	// This is a known limitation. To properly implement this, we would need to:
+	// 1. Maintain a mapping cache from UserId to UserName, or
+	// 2. Modify the interface to accept both UserId and UserName
+	// For now, returning empty groups to maintain interface compatibility.
+	// TODO: Implement user group synchronization by maintaining a UserId->UserName mapping
 
 	return []string{}, nil
 }
