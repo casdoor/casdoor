@@ -175,14 +175,18 @@ func (p *DingtalkSyncerProvider) getDingtalkAccessToken() (string, error) {
 	return tokenResp.AccessToken, nil
 }
 
-// getDingtalkDepartments gets all department IDs from DingTalk API
+// getDingtalkDepartments gets all department IDs from DingTalk API recursively
 func (p *DingtalkSyncerProvider) getDingtalkDepartments(accessToken string) ([]int64, error) {
+	return p.getDingtalkDepartmentsRecursive(accessToken, 1)
+}
+
+// getDingtalkDepartmentsRecursive recursively fetches all departments starting from parentDeptId
+func (p *DingtalkSyncerProvider) getDingtalkDepartmentsRecursive(accessToken string, parentDeptId int64) ([]int64, error) {
 	apiUrl := fmt.Sprintf("https://oapi.dingtalk.com/topapi/v2/department/listsub?access_token=%s",
 		url.QueryEscape(accessToken))
 
-	// Get root department (dept_id=1)
 	postData := map[string]interface{}{
-		"dept_id": 1,
+		"dept_id": parentDeptId,
 	}
 
 	data, err := p.postJSON(apiUrl, postData)
@@ -201,9 +205,16 @@ func (p *DingtalkSyncerProvider) getDingtalkDepartments(accessToken string) ([]i
 			deptResp.Errcode, deptResp.Errmsg)
 	}
 
-	deptIds := []int64{1} // Include root department
+	// Start with the parent department itself
+	deptIds := []int64{parentDeptId}
+
+	// Recursively fetch all child departments
 	for _, dept := range deptResp.Result {
-		deptIds = append(deptIds, dept.DeptId)
+		childDeptIds, err := p.getDingtalkDepartmentsRecursive(accessToken, dept.DeptId)
+		if err != nil {
+			return nil, err
+		}
+		deptIds = append(deptIds, childDeptIds...)
 	}
 
 	return deptIds, nil
