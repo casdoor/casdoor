@@ -289,11 +289,11 @@ export const OtherProviderInfo = {
       url: "https://fastspring.com/",
     },
     "Lemon Squeezy": {
-      logo: `${StaticBaseUrl}/img/payment_lemonsqueezy.png`,
+      logo: `${StaticBaseUrl}/img/payment_lemonsqueezy.jpg`,
       url: "https://www.lemonsqueezy.com/",
     },
     "Adyen": {
-      logo: `${StaticBaseUrl}/img/payment_adyen.png`,
+      logo: `${StaticBaseUrl}/img/payment_adyen.svg`,
       url: "https://www.adyen.com/",
     },
   },
