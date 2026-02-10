@@ -303,7 +303,21 @@ func RunSyncer(syncer *Syncer) error {
 		return err
 	}
 
-	return syncer.syncUsers()
+	// Sync groups first (this may create Organization from company info)
+	// The syncer.Organization will be updated to the new organization name
+	err = syncer.syncGroups()
+	if err != nil {
+		// Log warning but don't fail the entire sync
+		fmt.Printf("Warning: syncGroups() error: %s\n", err.Error())
+	}
+
+	// Then sync users to the (possibly updated) organization
+	err = syncer.syncUsers()
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func TestSyncer(syncer Syncer) error {

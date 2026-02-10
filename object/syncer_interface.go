@@ -23,6 +23,26 @@ type OriginalGroup struct {
 	Type        string
 	Manager     string
 	Email       string
+	ParentId    string // Parent group ID or name
+	ParentName  string // Parent group display name
+	IsTopGroup  bool   // Whether this is a top-level group
+}
+
+// OriginalCompany represents a company from an external system
+// This is used to sync company information to Casdoor Organization
+type OriginalCompany struct {
+	Name        string
+	DisplayName string
+	Logo        string
+	WebsiteUrl  string
+}
+
+// CompanyInfoProvider is an optional interface that SyncerProviders can implement
+// to provide company-level information that will be synced to the Casdoor Organization
+type CompanyInfoProvider interface {
+	// GetCompanyInfo retrieves company information from the external system
+	// This is used to create/update the Organization
+	GetCompanyInfo() (*OriginalCompany, error)
 }
 
 // SyncerProvider defines the interface that all syncer implementations must satisfy.
