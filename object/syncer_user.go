@@ -70,6 +70,18 @@ func (syncer *Syncer) updateUserForOriginalFields(user *User, key string) (bool,
 
 	columns := syncer.getCasdoorColumns()
 	columns = append(columns, "affiliation", "hash", "pre_hash")
+	
+	// Add provider-specific field for API-based syncers to enable login binding
+	// This allows synced users to login via their provider accounts
+	switch syncer.Type {
+	case "WeCom":
+		columns = append(columns, "wecom")
+	case "DingTalk":
+		columns = append(columns, "dingtalk")
+	case "Lark":
+		columns = append(columns, "lark")
+	}
+	
 	affected, err := ormer.Engine.Where(key+" = ? and owner = ?", syncer.getUserValue(&oldUser, key), oldUser.Owner).Cols(columns...).Update(user)
 	if err != nil {
 		return false, err

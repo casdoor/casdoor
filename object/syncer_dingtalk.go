@@ -415,6 +415,7 @@ func (p *DingtalkSyncerProvider) dingtalkUserToOriginalUser(dingtalkUser *Dingta
 		Address:     []string{},
 		Properties:  map[string]string{},
 		Groups:      []string{},
+		DingTalk:    dingtalkUser.UserId, // Link DingTalk provider account
 	}
 
 	// Add department IDs to Groups field
