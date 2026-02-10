@@ -96,7 +96,6 @@ func ValidateClientAssertion(assertion string, expectedAudience string) (string,
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
 	})
-
 	if err != nil {
 		return "", fmt.Errorf("failed to validate client assertion signature: %v", err)
 	}
