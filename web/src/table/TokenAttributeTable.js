@@ -24,6 +24,8 @@ class TokenAttributeTable extends React.Component {
     this.state = {
       classes: props,
     };
+    // List of available user fields for "Existing Field" category
+    this.userFields = ["Owner", "Name", "Id", "DisplayName", "Email", "Phone", "Tag", "Roles", "Permissions", "permissionNames", "Groups"];
   }
 
   updateTable(table) {
@@ -36,6 +38,7 @@ class TokenAttributeTable extends React.Component {
   }
 
   addRow(table) {
+    // Note: Field names use lowercase to match JSON serialization from backend (json:"name", json:"value", json:"type", json:"category")
     const row = {name: "", value: "", type: "Array", category: "Static Value"};
     if (table === undefined || table === null) {
       table = [];
@@ -60,9 +63,6 @@ class TokenAttributeTable extends React.Component {
   }
 
   renderTable(table) {
-    // Get the list of available fields for "Existing Field" category
-    const userFields = ["Owner", "Name", "Id", "DisplayName", "Email", "Phone", "Tag", "Roles", "Permissions", "permissionNames", "Groups"];
-    
     const columns = [
       {
         title: i18next.t("general:Name"),
@@ -111,7 +111,7 @@ class TokenAttributeTable extends React.Component {
             return (
               <Select virtual={false} style={{width: "100%"}}
                 value={text}
-                options={userFields.map((field) =>
+                options={this.userFields.map((field) =>
                   Setting.getOption(field, field))
                 }
                 onChange={value => {
