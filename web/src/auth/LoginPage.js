@@ -1175,33 +1175,33 @@ class LoginPage extends React.Component {
             size="large"
             ref={this.form}
           >
-          <Form.Item
-            hidden={true}
-            name="application"
-            rules={[
-              {
-                required: true,
-                message: i18next.t("application:Please input your application!"),
-              },
-            ]}
-          >
-          </Form.Item>
-          <Form.Item
-            hidden={true}
-            name="organization"
-            rules={[
-              {
-                required: true,
-                message: i18next.t("application:Please input your organization!"),
-              },
-            ]}
-          >
-          </Form.Item>
+            <Form.Item
+              hidden={true}
+              name="application"
+              rules={[
+                {
+                  required: true,
+                  message: i18next.t("application:Please input your application!"),
+                },
+              ]}
+            >
+            </Form.Item>
+            <Form.Item
+              hidden={true}
+              name="organization"
+              rules={[
+                {
+                  required: true,
+                  message: i18next.t("application:Please input your organization!"),
+                },
+              ]}
+            >
+            </Form.Item>
 
-          {
-            application.signinItems?.map(signinItem => this.renderFormItem(application, signinItem))
-          }
-        </Form>
+            {
+              application.signinItems?.map(signinItem => this.renderFormItem(application, signinItem))
+            }
+          </Form>
         </>
       );
     } else {

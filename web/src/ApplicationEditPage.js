@@ -449,11 +449,11 @@ class ApplicationEditPage extends React.Component {
               {Setting.getLabel(i18next.t("application:Carousel applications"), i18next.t("application:Carousel applications - Tooltip"))} :
             </Col>
             <Col span={21} >
-              <Select 
-                virtual={false} 
-                mode="multiple" 
-                style={{width: "100%"}} 
-                value={this.state.application.carouselApplications} 
+              <Select
+                virtual={false}
+                mode="multiple"
+                style={{width: "100%"}}
+                value={this.state.application.carouselApplications}
                 onChange={(value => {this.updateApplicationField("carouselApplications", value);})}
                 placeholder={i18next.t("application:Select applications to display in carousel")}
               >
