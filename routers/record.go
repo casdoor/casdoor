@@ -73,7 +73,7 @@ func RecordMessage(ctx *context.Context) {
 		} else {
 			userOwner := ctx.Request.Form.Get("userOwner")
 			userName := ctx.Request.Form.Get("userName")
-			
+
 			if userOwner != "" && userName != "" {
 				targetUserId := util.GetId(userOwner, userName)
 				ctx.Input.SetParam("recordTargetUserId", targetUserId)
