@@ -193,7 +193,13 @@ class ProductBuyPage extends React.Component {
             }
           }
 
-          const existingItemIndex = cart.findIndex(item => item.name === product.name && item.price === actualPrice && (item.pricingName || "") === pricingName && (item.planName || "") === planName);
+          const cartPrice = product.isRecharge ? actualPrice : null;
+          const existingItemIndex = cart.findIndex(item =>
+            item.name === product.name &&
+            (product.isRecharge ? item.price === actualPrice : true) &&
+            (item.pricingName || "") === pricingName &&
+            (item.planName || "") === planName
+          );
           const quantityToAdd = this.state.buyQuantity;
 
           if (existingItemIndex !== -1) {
@@ -201,7 +207,7 @@ class ProductBuyPage extends React.Component {
           } else {
             const newProductInfo = {
               name: product.name,
-              price: actualPrice,
+              price: cartPrice,
               currency: product.currency,
               pricingName: pricingName,
               planName: planName,
