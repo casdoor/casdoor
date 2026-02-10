@@ -155,20 +155,14 @@ func authenticateClientAssertion(clientAssertion, clientAssertionType, host stri
 		return "", nil // No client assertion provided
 	}
 
-	_, authenticatedUserId, err := object.AuthenticateClientByAssertion(clientAssertion, clientAssertionType, host)
+	app, authenticatedUserId, err := object.AuthenticateClientByAssertion(clientAssertion, clientAssertionType, host)
 	if err != nil {
 		return "", err
 	}
 
 	// Extract the actual client ID from the authenticated user ID (format: "app/clientName")
-	if strings.HasPrefix(authenticatedUserId, "app/") {
-		app, err := object.GetApplicationByUserId(authenticatedUserId)
-		if err != nil {
-			return "", err
-		}
-		if app != nil {
-			return app.ClientId, nil
-		}
+	if strings.HasPrefix(authenticatedUserId, "app/") && app != nil {
+		return app.ClientId, nil
 	}
 
 	return "", fmt.Errorf("failed to extract client ID from authenticated user")
