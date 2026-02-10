@@ -424,6 +424,11 @@ func (a *Ormer) createTable() {
 		panic(err)
 	}
 
+	err = a.Engine.Sync2(new(WebhookEvent))
+	if err != nil {
+		panic(err)
+	}
+
 	err = a.Engine.Sync2(new(VerificationRecord))
 	if err != nil {
 		panic(err)

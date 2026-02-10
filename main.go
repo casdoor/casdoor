@@ -125,6 +125,9 @@ func main() {
 	go ldap.StartLdapServer()
 	go radius.StartRadiusServer()
 	go object.ClearThroughputPerSecond()
+	
+	// Start webhook delivery worker
+	object.StartWebhookDeliveryWorker()
 
 	web.Run(fmt.Sprintf(":%v", port))
 }

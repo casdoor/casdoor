@@ -334,16 +334,15 @@ func SendWebhooks(record *casvisorsdk.Record) error {
 			}
 		}
 
-		statusCode, respBody, err := sendWebhook(webhook, &record2, user)
+		// Create webhook event for tracking and retry
+		_, err = CreateWebhookEventFromRecord(webhook, &record2, user)
 		if err != nil {
 			errs = append(errs, err)
+			continue
 		}
-
-		err = addWebhookRecord(webhook, &record2, statusCode, respBody, err)
-		if err != nil {
-			errs = append(errs, err)
-		}
-
+		
+		// The webhook will be delivered by the background worker
+		// This provides automatic retry and replay capability
 	}
 
 	if len(errs) > 0 {
