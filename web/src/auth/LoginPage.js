@@ -75,8 +75,9 @@ class LoginPage extends React.Component {
       carouselApplications: [],
       currentCarouselIndex: 0,
       enableAutoScroll: true,
-      carouselTimer: null,
     };
+
+    this.carouselTimer = null;
 
     if (this.state.type === "cas" && props.match?.params.casApplicationName !== undefined) {
       this.state.owner = props.match?.params?.owner;
@@ -254,6 +255,7 @@ class LoginPage extends React.Component {
 
   initializeCarousel(application) {
     if (!application || !application.carouselApplications || application.carouselApplications.length === 0) {
+      this.stopCarousel();
       return;
     }
 
@@ -278,21 +280,20 @@ class LoginPage extends React.Component {
   startCarousel() {
     this.stopCarousel();
     if (this.state.carouselApplications.length > 0) {
-      const timer = setInterval(() => {
+      this.carouselTimer = setInterval(() => {
         this.setState(prevState => ({
           currentCarouselIndex: (prevState.currentCarouselIndex + 1) % prevState.carouselApplications.length,
         }), () => {
           this.loadCarouselApplication();
         });
       }, 5000);
-      this.setState({carouselTimer: timer});
     }
   }
 
   stopCarousel() {
-    if (this.state.carouselTimer) {
-      clearInterval(this.state.carouselTimer);
-      this.setState({carouselTimer: null});
+    if (this.carouselTimer) {
+      clearInterval(this.carouselTimer);
+      this.carouselTimer = null;
     }
   }
 
@@ -307,6 +308,9 @@ class LoginPage extends React.Component {
           if (res.status === "ok" && res.data) {
             this.onUpdateApplication(res.data);
           }
+        })
+        .catch(() => {
+          // Silently fail - carousel will continue to next application
         });
     }
   }
@@ -1085,7 +1089,7 @@ class LoginPage extends React.Component {
             {i18next.t("application:Application")}:
           </label>
           <Select
-            style={{width: "60%", minWidth: "200px"}}
+            style={{width: Setting.isMobile() ? "100%" : "60%", minWidth: Setting.isMobile() ? "auto" : "200px"}}
             value={currentAppId}
             onChange={(value) => this.handleCarouselAppChange(value)}
           >
