@@ -17,7 +17,6 @@ package object
 import (
 	"encoding/json"
 	"fmt"
-	"math"
 	"time"
 
 	"github.com/casdoor/casdoor/util"
@@ -25,8 +24,10 @@ import (
 )
 
 var (
-	webhookWorkerRunning = false
-	webhookWorkerStop    = make(chan bool)
+	webhookWorkerRunning    = false
+	webhookWorkerStop       = make(chan bool)
+	webhookPollingInterval  = 30 * time.Second // Configurable polling interval
+	webhookBatchSize        = 100              // Configurable batch size for processing events
 )
 
 // StartWebhookDeliveryWorker starts the background worker for webhook delivery
@@ -38,7 +39,7 @@ func StartWebhookDeliveryWorker() {
 	webhookWorkerRunning = true
 
 	util.SafeGoroutine(func() {
-		ticker := time.NewTicker(30 * time.Second) // Check every 30 seconds
+		ticker := time.NewTicker(webhookPollingInterval)
 		defer ticker.Stop()
 
 		for {
@@ -63,7 +64,7 @@ func StopWebhookDeliveryWorker() {
 
 // processWebhookEvents processes pending webhook events
 func processWebhookEvents() {
-	events, err := GetPendingWebhookEvents(100) // Process up to 100 events per cycle
+	events, err := GetPendingWebhookEvents(webhookBatchSize)
 	if err != nil {
 		fmt.Printf("Error getting pending webhook events: %v\n", err)
 		return
@@ -164,8 +165,14 @@ func calculateNextRetryTime(attemptCount int, baseInterval int, useExponentialBa
 
 	if useExponentialBackoff {
 		// Exponential backoff: baseInterval * 2^(attemptCount-1)
-		// For example: 60s, 120s, 240s, 480s...
-		delaySeconds = baseInterval * int(math.Pow(2, float64(attemptCount-1)))
+		// Cap attemptCount at 10 to prevent overflow
+		cappedAttemptCount := attemptCount - 1
+		if cappedAttemptCount > 10 {
+			cappedAttemptCount = 10
+		}
+
+		// Calculate delay with overflow protection
+		delaySeconds = baseInterval * (1 << uint(cappedAttemptCount))
 
 		// Cap at 1 hour
 		if delaySeconds > 3600 {

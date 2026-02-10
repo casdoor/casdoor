@@ -124,7 +124,10 @@ func (c *ApiController) ReplayWebhookEvents() {
 		return
 	}
 
-	c.ResponseOk(count, "webhook events replayed successfully")
+	c.ResponseOk(map[string]interface{}{
+		"count":   count,
+		"message": "webhook events replayed successfully",
+	})
 }
 
 // DeleteWebhookEvent
