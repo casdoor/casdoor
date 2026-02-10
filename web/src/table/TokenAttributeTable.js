@@ -68,9 +68,13 @@ class TokenAttributeTable extends React.Component {
         width: "200px",
         render: (text, record, index) => {
           return (
-            <Input value={text} onChange={e => {
-              this.updateField(table, index, "name", e.target.value);
-            }} />
+            <Input 
+              value={text} 
+              placeholder={i18next.t("application:Token attribute name placeholder")}
+              onChange={e => {
+                this.updateField(table, index, "name", e.target.value);
+              }} 
+            />
           );
         },
       },
@@ -81,9 +85,13 @@ class TokenAttributeTable extends React.Component {
         width: "200px",
         render: (text, record, index) => {
           return (
-            <Input value={text} onChange={e => {
-              this.updateField(table, index, "value", e.target.value);
-            }} />
+            <Input 
+              value={text} 
+              placeholder={i18next.t("application:Token attribute value placeholder")}
+              onChange={e => {
+                this.updateField(table, index, "value", e.target.value);
+              }} 
+            />
           );
         },
       },
@@ -136,6 +144,9 @@ class TokenAttributeTable extends React.Component {
       <Table title={() => (
         <div>
           <Button style={{marginRight: "5px"}} type="primary" size="small" onClick={() => this.addRow(table)}>{i18next.t("general:Add")}</Button>
+          <span style={{marginLeft: "10px", color: "#666", fontSize: "12px"}}>
+            {i18next.t("application:Token attributes help text")}
+          </span>
         </div>
       )}
       columns={columns} dataSource={table} rowKey="key" size="middle" bordered
