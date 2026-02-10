@@ -144,6 +144,7 @@ class ApplicationEditPage extends React.Component {
       isAuthorized: true,
       activeMenuKey: window.location.hash?.slice(1) || "basic",
       menuMode: "horizontal",
+      applications: [],
     };
   }
 
@@ -174,6 +175,10 @@ class ApplicationEditPage extends React.Component {
           application.tags = [];
         }
 
+        if (application.carouselApplications === null || application.carouselApplications === undefined) {
+          application.carouselApplications = [];
+        }
+
         this.setState({
           application: application,
         });
@@ -183,6 +188,8 @@ class ApplicationEditPage extends React.Component {
         this.getCerts(application);
 
         this.getSamlMetadata(application.enableSamlPostBinding);
+
+        this.getApplications(application.organization);
       });
   }
 
@@ -198,6 +205,18 @@ class ApplicationEditPage extends React.Component {
             organizations: res.data || [],
           });
         }
+      });
+  }
+
+  getApplications(organization) {
+    if (!organization) {
+      return;
+    }
+    ApplicationBackend.getApplicationsByOrganization("admin", organization)
+      .then((res) => {
+        this.setState({
+          applications: res.data || [],
+        });
       });
   }
 
@@ -421,6 +440,29 @@ class ApplicationEditPage extends React.Component {
               <Select virtual={false} mode="tags" style={{width: "100%"}} value={this.state.application.tags} onChange={(value => {this.updateApplicationField("tags", value);})}>
                 {
                   this.state.application.tags?.map((item, index) => <Option key={index} value={item}>{item}</Option>)
+                }
+              </Select>
+            </Col>
+          </Row>
+          <Row style={{marginTop: "20px"}} >
+            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
+              {Setting.getLabel(i18next.t("application:Carousel applications"), i18next.t("application:Carousel applications - Tooltip"))} :
+            </Col>
+            <Col span={21} >
+              <Select 
+                virtual={false} 
+                mode="multiple" 
+                style={{width: "100%"}} 
+                value={this.state.application.carouselApplications} 
+                onChange={(value => {this.updateApplicationField("carouselApplications", value);})}
+                placeholder={i18next.t("application:Select applications to display in carousel")}
+              >
+                {
+                  this.state.applications?.map((app, index) => (
+                    <Option key={index} value={`${app.owner}/${app.name}`}>
+                      {app.displayName || app.name}
+                    </Option>
+                  ))
                 }
               </Select>
             </Col>

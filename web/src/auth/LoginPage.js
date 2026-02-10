@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React, {Suspense, lazy} from "react";
-import {Button, Checkbox, Col, Form, Input, Result, Spin, Tabs, message} from "antd";
+import {Button, Checkbox, Col, Form, Input, Result, Select, Spin, Switch, Tabs, message} from "antd";
 import {ArrowLeftOutlined, LockOutlined, UserOutlined} from "@ant-design/icons";
 import {withRouter} from "react-router-dom";
 import * as UserWebauthnBackend from "../backend/UserWebauthnBackend";
@@ -72,6 +72,10 @@ class LoginPage extends React.Component {
       userCode: props.userCode ?? (props.match?.params?.userCode ?? null),
       userCodeStatus: "",
       prefilledUsername: urlParams.get("username") || urlParams.get("login_hint"),
+      carouselApplications: [],
+      currentCarouselIndex: 0,
+      enableAutoScroll: true,
+      carouselTimer: null,
     };
 
     if (this.state.type === "cas" && props.match?.params.casApplicationName !== undefined) {
@@ -112,6 +116,7 @@ class LoginPage extends React.Component {
     }
     if (prevProps.application !== this.props.application) {
       this.setState({loginMethod: this.getDefaultLoginMethod(this.props.application)});
+      this.initializeCarousel(this.props.application);
     }
     if (this.props.account !== undefined) {
       if (prevProps.account === this.props.account && prevProps.application === this.props.application) {
@@ -241,6 +246,88 @@ class LoginPage extends React.Component {
 
   getApplicationObj() {
     return this.props.application;
+  }
+
+  componentWillUnmount() {
+    this.stopCarousel();
+  }
+
+  initializeCarousel(application) {
+    if (!application || !application.carouselApplications || application.carouselApplications.length === 0) {
+      return;
+    }
+
+    const carouselApps = [];
+    application.carouselApplications.forEach(appId => {
+      const [owner, name] = appId.split("/");
+      if (owner && name) {
+        carouselApps.push({owner, name, id: appId});
+      }
+    });
+
+    this.setState({
+      carouselApplications: carouselApps,
+      currentCarouselIndex: 0,
+    }, () => {
+      if (this.state.enableAutoScroll && carouselApps.length > 0) {
+        this.startCarousel();
+      }
+    });
+  }
+
+  startCarousel() {
+    this.stopCarousel();
+    if (this.state.carouselApplications.length > 0) {
+      const timer = setInterval(() => {
+        this.setState(prevState => ({
+          currentCarouselIndex: (prevState.currentCarouselIndex + 1) % prevState.carouselApplications.length,
+        }), () => {
+          this.loadCarouselApplication();
+        });
+      }, 5000);
+      this.setState({carouselTimer: timer});
+    }
+  }
+
+  stopCarousel() {
+    if (this.state.carouselTimer) {
+      clearInterval(this.state.carouselTimer);
+      this.setState({carouselTimer: null});
+    }
+  }
+
+  loadCarouselApplication() {
+    if (this.state.carouselApplications.length === 0) {
+      return;
+    }
+    const currentApp = this.state.carouselApplications[this.state.currentCarouselIndex];
+    if (currentApp) {
+      ApplicationBackend.getApplication(currentApp.owner, currentApp.name)
+        .then((res) => {
+          if (res.status === "ok" && res.data) {
+            this.onUpdateApplication(res.data);
+          }
+        });
+    }
+  }
+
+  handleCarouselAppChange(value) {
+    const index = this.state.carouselApplications.findIndex(app => app.id === value);
+    if (index !== -1) {
+      this.setState({currentCarouselIndex: index}, () => {
+        this.loadCarouselApplication();
+      });
+    }
+  }
+
+  handleAutoScrollChange(checked) {
+    this.setState({enableAutoScroll: checked}, () => {
+      if (checked) {
+        this.startCarousel();
+      } else {
+        this.stopCarousel();
+      }
+    });
   }
 
   getDefaultLoginMethod(application) {
@@ -983,6 +1070,47 @@ class LoginPage extends React.Component {
     }
   }
 
+  renderCarouselControls(application) {
+    if (!this.state.carouselApplications || this.state.carouselApplications.length === 0) {
+      return null;
+    }
+
+    const {Option} = Select;
+    const currentAppId = this.state.carouselApplications[this.state.currentCarouselIndex]?.id;
+
+    return (
+      <div style={{marginBottom: "20px", padding: "10px", backgroundColor: "#f5f5f5", borderRadius: "8px"}}>
+        <div style={{marginBottom: "10px"}}>
+          <label style={{marginRight: "10px", fontWeight: "500"}}>
+            {i18next.t("application:Application")}:
+          </label>
+          <Select
+            style={{width: "60%", minWidth: "200px"}}
+            value={currentAppId}
+            onChange={(value) => this.handleCarouselAppChange(value)}
+          >
+            {
+              this.state.carouselApplications.map((app, index) => (
+                <Option key={index} value={app.id}>
+                  {app.name}
+                </Option>
+              ))
+            }
+          </Select>
+        </div>
+        <div>
+          <label style={{marginRight: "10px", fontWeight: "500"}}>
+            {i18next.t("application:Enable auto scroll")}:
+          </label>
+          <Switch
+            checked={this.state.enableAutoScroll}
+            onChange={(checked) => this.handleAutoScrollChange(checked)}
+          />
+        </div>
+      </div>
+    );
+  }
+
   renderForm(application) {
     if (this.state.msg !== null) {
       return Util.renderMessage(this.state.msg);
@@ -1029,22 +1157,24 @@ class LoginPage extends React.Component {
       }
 
       return (
-        <Form
-          name="normal_login"
-          initialValues={{
-            organization: application.organization,
-            application: application.name,
-            autoSignin: !application?.signinItems.map(signinItem => signinItem.name === "Forgot password?" && signinItem.rule === "Auto sign in - False")?.includes(true),
-            username: this.state.prefilledUsername || (Conf.ShowGithubCorner ? "admin" : ""),
-            password: Conf.ShowGithubCorner ? "123" : "",
-          }}
-          onFinish={(values) => {
-            this.onFinish(values);
-          }}
-          style={{width: `${loginWidth}px`}}
-          size="large"
-          ref={this.form}
-        >
+        <>
+          {this.renderCarouselControls(application)}
+          <Form
+            name="normal_login"
+            initialValues={{
+              organization: application.organization,
+              application: application.name,
+              autoSignin: !application?.signinItems.map(signinItem => signinItem.name === "Forgot password?" && signinItem.rule === "Auto sign in - False")?.includes(true),
+              username: this.state.prefilledUsername || (Conf.ShowGithubCorner ? "admin" : ""),
+              password: Conf.ShowGithubCorner ? "123" : "",
+            }}
+            onFinish={(values) => {
+              this.onFinish(values);
+            }}
+            style={{width: `${loginWidth}px`}}
+            size="large"
+            ref={this.form}
+          >
           <Form.Item
             hidden={true}
             name="application"
@@ -1072,6 +1202,7 @@ class LoginPage extends React.Component {
             application.signinItems?.map(signinItem => this.renderFormItem(application, signinItem))
           }
         </Form>
+        </>
       );
     } else {
       return (

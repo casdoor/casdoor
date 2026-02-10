@@ -143,6 +143,8 @@ type Application struct {
 	FailedSigninLimit      int `json:"failedSigninLimit"`
 	FailedSigninFrozenTime int `json:"failedSigninFrozenTime"`
 	CodeResendTimeout      int `json:"codeResendTimeout"`
+
+	CarouselApplications []string `xorm:"mediumtext" json:"carouselApplications"`
 }
 
 func GetApplicationCount(owner, field, value string) (int64, error) {
