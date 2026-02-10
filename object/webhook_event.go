@@ -26,10 +26,10 @@ import (
 type WebhookEventStatus string
 
 const (
-	WebhookEventStatusPending   WebhookEventStatus = "pending"
-	WebhookEventStatusSuccess   WebhookEventStatus = "success"
-	WebhookEventStatusFailed    WebhookEventStatus = "failed"
-	WebhookEventStatusRetrying  WebhookEventStatus = "retrying"
+	WebhookEventStatusPending  WebhookEventStatus = "pending"
+	WebhookEventStatusSuccess  WebhookEventStatus = "success"
+	WebhookEventStatusFailed   WebhookEventStatus = "failed"
+	WebhookEventStatusRetrying WebhookEventStatus = "retrying"
 )
 
 // WebhookEvent represents a webhook delivery event with retry and replay capability
@@ -43,18 +43,18 @@ type WebhookEvent struct {
 	Organization string             `xorm:"varchar(100) index" json:"organization"`
 	EventType    string             `xorm:"varchar(100)" json:"eventType"`
 	Status       WebhookEventStatus `xorm:"varchar(50) index" json:"status"`
-	
+
 	// Payload stores the event data (Record)
 	Payload string `xorm:"mediumtext" json:"payload"`
-	
+
 	// Extended user data if applicable
 	ExtendedUser string `xorm:"mediumtext" json:"extendedUser"`
-	
+
 	// Delivery tracking
-	AttemptCount    int    `xorm:"int default 0" json:"attemptCount"`
-	MaxRetries      int    `xorm:"int default 3" json:"maxRetries"`
-	NextRetryTime   string `xorm:"varchar(100)" json:"nextRetryTime"`
-	
+	AttemptCount  int    `xorm:"int default 0" json:"attemptCount"`
+	MaxRetries    int    `xorm:"int default 3" json:"maxRetries"`
+	NextRetryTime string `xorm:"varchar(100)" json:"nextRetryTime"`
+
 	// Last delivery response
 	LastStatusCode int    `xorm:"int" json:"lastStatusCode"`
 	LastResponse   string `xorm:"mediumtext" json:"lastResponse"`
@@ -89,7 +89,7 @@ func getWebhookEvent(owner string, name string) (*WebhookEvent, error) {
 func GetWebhookEvents(owner, organization, webhookName string, status WebhookEventStatus, offset, limit int) ([]*WebhookEvent, error) {
 	events := []*WebhookEvent{}
 	session := ormer.Engine.Desc("created_time")
-	
+
 	if owner != "" {
 		session = session.Where("owner = ?", owner)
 	}
@@ -102,36 +102,36 @@ func GetWebhookEvents(owner, organization, webhookName string, status WebhookEve
 	if status != "" {
 		session = session.Where("status = ?", status)
 	}
-	
+
 	if offset > 0 {
 		session = session.Limit(limit, offset)
 	} else if limit > 0 {
 		session = session.Limit(limit)
 	}
-	
+
 	err := session.Find(&events)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	return events, nil
 }
 
 func GetPendingWebhookEvents(limit int) ([]*WebhookEvent, error) {
 	events := []*WebhookEvent{}
 	currentTime := util.GetCurrentTime()
-	
+
 	err := ormer.Engine.
 		Where("status = ? OR status = ?", WebhookEventStatusPending, WebhookEventStatusRetrying).
 		And("(next_retry_time = '' OR next_retry_time <= ?)", currentTime).
 		Asc("created_time").
 		Limit(limit).
 		Find(&events)
-	
+
 	if err != nil {
 		return nil, err
 	}
-	
+
 	return events, nil
 }
 
@@ -148,12 +148,12 @@ func AddWebhookEvent(event *WebhookEvent) (bool, error) {
 	if event.Status == "" {
 		event.Status = WebhookEventStatusPending
 	}
-	
+
 	affected, err := ormer.Engine.Insert(event)
 	if err != nil {
 		return false, err
 	}
-	
+
 	return affected != 0, nil
 }
 
@@ -162,14 +162,14 @@ func UpdateWebhookEvent(id string, event *WebhookEvent) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	
+
 	event.UpdatedTime = util.GetCurrentTime()
-	
+
 	affected, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(event)
 	if err != nil {
 		return false, err
 	}
-	
+
 	return affected != 0, nil
 }
 
@@ -178,21 +178,21 @@ func UpdateWebhookEventStatus(event *WebhookEvent, status WebhookEventStatus, st
 	event.LastStatusCode = statusCode
 	event.LastResponse = response
 	event.UpdatedTime = util.GetCurrentTime()
-	
+
 	if err != nil {
 		event.LastError = err.Error()
 	} else {
 		event.LastError = ""
 	}
-	
+
 	affected, dbErr := ormer.Engine.ID(core.PK{event.Owner, event.Name}).
 		Cols("status", "last_status_code", "last_response", "last_error", "updated_time", "attempt_count", "next_retry_time").
 		Update(event)
-	
+
 	if dbErr != nil {
 		return false, dbErr
 	}
-	
+
 	return affected != 0, nil
 }
 
@@ -201,7 +201,7 @@ func DeleteWebhookEvent(event *WebhookEvent) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	
+
 	return affected != 0, nil
 }
 
@@ -224,15 +224,15 @@ func CreateWebhookEventFromRecord(webhook *Webhook, record *casvisorsdk.Record, 
 		AttemptCount: 0,
 		MaxRetries:   3, // Default max retries
 	}
-	
+
 	if extendedUser != nil {
 		event.ExtendedUser = util.StructToJson(extendedUser)
 	}
-	
+
 	_, err := AddWebhookEvent(event)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	return event, nil
 }
