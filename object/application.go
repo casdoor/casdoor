@@ -61,9 +61,10 @@ type SamlItem struct {
 }
 
 type JwtItem struct {
-	Name  string `json:"name"`
-	Value string `json:"value"`
-	Type  string `json:"type"`
+	Name     string `json:"name"`
+	Value    string `json:"value"`
+	Type     string `json:"type"`
+	Category string `json:"category"`
 }
 
 type Application struct {
