@@ -338,6 +338,50 @@ func getClaimsWithoutThirdIdp(claims Claims) ClaimsWithoutThirdIdp {
 	return res
 }
 
+// getUserFieldValue gets the value of a user field by name, handling special cases like Roles and Permissions
+func getUserFieldValue(user *User, fieldName string) (interface{}, bool) {
+	if user == nil {
+		return nil, false
+	}
+
+	// Handle special fields that need conversion
+	switch fieldName {
+	case "Roles":
+		return getUserRoleNames(user), true
+	case "Permissions":
+		return getUserPermissionNames(user), true
+	case "permissionNames":
+		permissionNames := []string{}
+		for _, val := range user.Permissions {
+			permissionNames = append(permissionNames, val.Name)
+		}
+		return permissionNames, true
+	}
+
+	// Handle Properties fields (e.g., Properties.my_field)
+	if strings.HasPrefix(fieldName, "Properties.") {
+		parts := strings.Split(fieldName, ".")
+		if len(parts) == 2 {
+			propName := parts[1]
+			if user.Properties != nil {
+				if value, exists := user.Properties[propName]; exists {
+					return value, true
+				}
+			}
+		}
+		return nil, false
+	}
+
+	// Use reflection to get the field value
+	userValue := reflect.ValueOf(user).Elem()
+	userField := userValue.FieldByName(fieldName)
+	if userField.IsValid() {
+		return userField.Interface(), true
+	}
+
+	return nil, false
+}
+
 func getClaimsCustom(claims Claims, tokenField []string, tokenAttributes []*JwtItem) jwt.MapClaims {
 	res := make(jwt.MapClaims)
 
@@ -414,16 +458,30 @@ func getClaimsCustom(claims Claims, tokenField []string, tokenAttributes []*JwtI
 	}
 
 	for _, item := range tokenAttributes {
-		valueList := replaceAttributeValue(claims.User, item.Value)
-		if len(valueList) == 0 {
-			continue
+		var value interface{}
+
+		// If Category is "Existing Field", get the actual field value from the user
+		if item.Category == "Existing Field" {
+			fieldValue, found := getUserFieldValue(claims.User, item.Value)
+			if !found {
+				continue
+			}
+			value = fieldValue
+		} else {
+			// Default behavior: use replaceAttributeValue for "Static Value" or empty category
+			valueList := replaceAttributeValue(claims.User, item.Value)
+			if len(valueList) == 0 {
+				continue
+			}
+
+			if item.Type == "String" {
+				value = valueList[0]
+			} else {
+				value = valueList
+			}
 		}
 
-		if item.Type == "String" {
-			res[item.Name] = valueList[0]
-		} else {
-			res[item.Name] = valueList
-		}
+		res[item.Name] = value
 	}
 
 	return res
