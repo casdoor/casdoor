@@ -376,6 +376,7 @@ func (p *LarkSyncerProvider) larkUserToOriginalUser(larkUser *LarkUser) *Origina
 		Address:     []string{},
 		Properties:  map[string]string{},
 		Groups:      []string{},
+		Lark:        larkUser.UserId, // Link Lark provider account
 	}
 
 	// Set avatar if available
