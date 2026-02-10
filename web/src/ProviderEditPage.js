@@ -829,7 +829,7 @@ class ProviderEditPage extends React.Component {
                       </Col>
                       <Col span={22} >
                         <Input value={this.state.provider.scopes} onChange={e => {
-                          this.updateProviderField("scopes", e.target.value);
+                          this.updateProviderField("scopes", e.target.value.trim());
                         }} placeholder="snsapi_privateinfo" />
                       </Col>
                     </Row>
