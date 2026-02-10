@@ -62,9 +62,9 @@ type SamlItem struct {
 
 type JwtItem struct {
 	Name     string `json:"name"`
+	Category string `json:"category"`
 	Value    string `json:"value"`
 	Type     string `json:"type"`
-	Category string `json:"category"`
 }
 
 type Application struct {
