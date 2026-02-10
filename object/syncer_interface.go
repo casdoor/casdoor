@@ -72,6 +72,8 @@ func GetSyncerProvider(syncer *Syncer) SyncerProvider {
 		return &OktaSyncerProvider{Syncer: syncer}
 	case "SCIM":
 		return &SCIMSyncerProvider{Syncer: syncer}
+	case "AWS IAM":
+		return &AwsIamSyncerProvider{Syncer: syncer}
 	case "Keycloak":
 		return &KeycloakSyncerProvider{
 			DatabaseSyncerProvider: DatabaseSyncerProvider{Syncer: syncer},
