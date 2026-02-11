@@ -18,6 +18,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"os"
+	"strings"
 	"sync"
 	"time"
 
@@ -51,8 +53,8 @@ func InitPolicySynchronizer() error {
 		return nil
 	}
 
-	// Generate a unique pod ID for this instance
-	podId = fmt.Sprintf("pod-%d-%d", time.Now().UnixNano(), getPodHash())
+	// Generate a unique pod ID for this instance using hostname or random ID
+	podId = generatePodId()
 
 	// Initialize Redis client
 	redisClient = redis.NewClient(&redis.Options{
@@ -192,8 +194,39 @@ func reloadApiEnforcer() error {
 	return nil
 }
 
-// getPodHash generates a hash from hostname or other unique identifier
-func getPodHash() int64 {
-	// Simple hash based on time to ensure uniqueness
-	return time.Now().UnixNano() % 100000
+// generatePodId generates a unique identifier for this pod instance
+// It tries to use the hostname, falling back to a timestamp-based ID
+func generatePodId() string {
+	hostname := getHostname()
+	if hostname != "" {
+		return fmt.Sprintf("pod-%s-%d", hostname, time.Now().Unix())
+	}
+	// Fallback to timestamp-based ID if hostname is not available
+	return fmt.Sprintf("pod-%d", time.Now().UnixNano())
 }
+
+// getHostname returns the hostname of the current machine
+func getHostname() string {
+	hostname, err := getEnvOrHostname()
+	if err != nil || hostname == "" {
+		return ""
+	}
+	// Clean hostname to make it a valid identifier
+	return strings.ReplaceAll(hostname, ".", "-")
+}
+
+// getEnvOrHostname tries to get hostname from environment or system
+func getEnvOrHostname() (string, error) {
+	// Try to get pod name from Kubernetes environment variable
+	if podName := getEnvVar("HOSTNAME"); podName != "" {
+		return podName, nil
+	}
+	if podName := getEnvVar("POD_NAME"); podName != "" {
+		return podName, nil
+	}
+	// Fallback to system hostname
+	return "", fmt.Errorf("no hostname available")
+}
+
+// getEnvVar is a helper to get environment variables (can be mocked in tests)
+var getEnvVar = os.Getenv
