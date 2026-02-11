@@ -30,9 +30,20 @@ func getSyncerForUser(user *User) (*Syncer, error) {
 	return nil, nil
 }
 
-// Deprecated: Use getSyncerForUser instead
+// Deprecated: Use getSyncerForUser instead. Maintained for backward compatibility.
+// This function only returns database-type syncers.
 func getDbSyncerForUser(user *User) (*Syncer, error) {
-	return getSyncerForUser(user)
+	syncers, err := GetSyncers("admin")
+	if err != nil {
+		return nil, err
+	}
+
+	for _, syncer := range syncers {
+		if syncer.Organization == user.Owner && syncer.IsEnabled && syncer.Type == "Database" {
+			return syncer, nil
+		}
+	}
+	return nil, nil
 }
 
 func getEnabledSyncerForOrganization(organization string) (*Syncer, error) {

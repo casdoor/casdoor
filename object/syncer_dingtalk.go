@@ -411,7 +411,7 @@ func (p *DingtalkSyncerProvider) dingtalkUserToOriginalUser(dingtalkUser *Dingta
 	// Determine the userName based on the NameMapping configuration
 	// Default behavior (for backward compatibility): unionid, fallback to userId
 	var userName string
-	
+
 	switch p.Syncer.NameMapping {
 	case "userid":
 		userName = dingtalkUser.UserId
