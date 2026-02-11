@@ -497,8 +497,6 @@ class CartListPage extends BaseListPage {
           });
 
           const invalidProducts = sortedData.filter(item => item.isInvalid);
-          // eslint-disable-next-line no-console
-          console.log(invalidProducts);
           invalidProducts.forEach(item => {
             Setting.showMessage("error", i18next.t("product:Product not found or invalid") + `: ${item.name}`);
           });
