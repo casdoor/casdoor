@@ -234,6 +234,10 @@ func addPolicies(permission *Permission) error {
 	policies := getPolicies(permission)
 
 	_, err = enforcer.AddPolicies(policies)
+	if err == nil {
+		// Notify other pods about the policy change
+		_ = publishPolicyChange(permission.GetId(), "add")
+	}
 	return err
 }
 
@@ -246,6 +250,10 @@ func removePolicies(permission *Permission) error {
 	policies := getPolicies(permission)
 
 	_, err = enforcer.RemovePolicies(policies)
+	if err == nil {
+		// Notify other pods about the policy change
+		_ = publishPolicyChange(permission.GetId(), "remove")
+	}
 	return err
 }
 
@@ -265,6 +273,8 @@ func addGroupingPolicies(permission *Permission) error {
 		if err != nil {
 			return err
 		}
+		// Notify other pods about the policy change
+		_ = publishPolicyChange(permission.GetId(), "add")
 	}
 
 	return nil
@@ -286,6 +296,8 @@ func removeGroupingPolicies(permission *Permission) error {
 		if err != nil {
 			return err
 		}
+		// Notify other pods about the policy change
+		_ = publishPolicyChange(permission.GetId(), "remove")
 	}
 
 	return nil
