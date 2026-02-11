@@ -400,11 +400,15 @@ func updateUserGroups(owner string, syncUser LdapUser, ldapGroupNames []string, 
 		return err
 	}
 	if !has {
-		return fmt.Errorf("user with LDAP UUID %s not found", syncUser.Uuid)
+		return fmt.Errorf("user with LDAP UUID %s not found in database (may be a new user)", syncUser.Uuid)
 	}
 
-	// Prepare new group list
-	newGroups := []string{}
+	// Prepare new group list with preallocated capacity
+	capacity := len(ldapGroupNames)
+	if defaultGroup != "" {
+		capacity++
+	}
+	newGroups := make([]string, 0, capacity)
 	if defaultGroup != "" {
 		newGroups = append(newGroups, defaultGroup)
 	}
@@ -492,8 +496,12 @@ func SyncLdapUsers(owner string, syncUsers []LdapUser, ldapId string) (existUser
 				return nil, nil, err
 			}
 
-			// Prepare group assignments for new user
-			userGroups := []string{}
+			// Prepare group assignments for new user with preallocated capacity
+			capacity := len(ldapGroupNames)
+			if ldap.DefaultGroup != "" {
+				capacity++
+			}
+			userGroups := make([]string, 0, capacity)
 			if ldap.DefaultGroup != "" {
 				userGroups = append(userGroups, ldap.DefaultGroup)
 			}
