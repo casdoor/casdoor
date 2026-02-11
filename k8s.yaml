@@ -25,7 +25,13 @@ metadata:
   labels:
     app: casdoor
 spec:
-  #EDIT IT: if you don't use redis, casdoor should not have multiple replicas
+  #EDIT IT: 
+  # - For single-pod deployments, use replicas: 1
+  # - For multi-pod deployments with policy synchronization, configure Redis:
+  #   1. Set 'redisEndpoint' in conf/app.conf (e.g., "redis-service:6379")
+  #   2. Enable 'isCloudIntelligent=true' if needed
+  #   3. Then you can use replicas: 3 or more
+  #   Policy changes will be automatically synchronized across all pods via Redis pub/sub
   replicas: 1
   selector:
     matchLabels:
