@@ -199,7 +199,8 @@ func reloadApiEnforcer() error {
 func generatePodId() string {
 	hostname := getHostname()
 	if hostname != "" {
-		return fmt.Sprintf("pod-%s-%d", hostname, time.Now().Unix())
+		// Use hostname without timestamp for stable identification across restarts
+		return fmt.Sprintf("pod-%s", hostname)
 	}
 	// Fallback to timestamp-based ID if hostname is not available
 	return fmt.Sprintf("pod-%d", time.Now().UnixNano())
@@ -224,8 +225,8 @@ func getEnvOrHostname() (string, error) {
 	if podName := getEnvVar("POD_NAME"); podName != "" {
 		return podName, nil
 	}
-	// Fallback to system hostname
-	return "", fmt.Errorf("no hostname available")
+	// Fallback: hostname not available from environment variables
+	return "", fmt.Errorf("hostname not available from HOSTNAME or POD_NAME environment variables")
 }
 
 // getEnvVar is a helper to get environment variables (can be mocked in tests)

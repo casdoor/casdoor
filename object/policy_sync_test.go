@@ -22,6 +22,16 @@ import (
 // TestPolicySyncWithoutRedis tests that policy synchronization gracefully handles
 // the case when Redis is not configured (no panic, no errors for basic operations)
 func TestPolicySyncWithoutRedis(t *testing.T) {
+	// Save original values
+	origRedisClient := redisClient
+	origPodId := podId
+	
+	// Reset values after test
+	t.Cleanup(func() {
+		redisClient = origRedisClient
+		podId = origPodId
+	})
+
 	// Ensure redisClient is nil (no Redis configured)
 	redisClient = nil
 	podId = "test-pod"
@@ -45,14 +55,18 @@ func TestPolicySyncWithoutRedis(t *testing.T) {
 
 // TestPodIdGeneration tests that pod ID generation works correctly
 func TestPodIdGeneration(t *testing.T) {
-	// Mock getEnvVar to return empty string for testing
+	// Save original function
 	originalGetEnvVar := getEnvVar
+	
+	// Reset after test
+	t.Cleanup(func() {
+		getEnvVar = originalGetEnvVar
+	})
+
+	// Mock getEnvVar to return empty string for testing
 	getEnvVar = func(key string) string {
 		return ""
 	}
-	defer func() {
-		getEnvVar = originalGetEnvVar
-	}()
 
 	podId := generatePodId()
 	if podId == "" {
