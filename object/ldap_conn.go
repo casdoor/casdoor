@@ -22,6 +22,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/beego/beego/v2/core/logs"
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/util"
@@ -29,6 +30,10 @@ import (
 	"github.com/nyaruka/phonenumbers"
 	"github.com/thanhpk/randstr"
 	"golang.org/x/text/encoding/unicode"
+)
+
+const (
+	LdapGroupType = "ldap-group"
 )
 
 // formatUserPhone processes phone number for a user based on their CountryCode
@@ -377,7 +382,7 @@ func ensureGroupExists(owner, groupName string) error {
 		CreatedTime: util.GetCurrentTime(),
 		UpdatedTime: util.GetCurrentTime(),
 		DisplayName: groupName,
-		Type:        "ldap-group",
+		Type:        LdapGroupType,
 		IsEnabled:   true,
 		IsTopGroup:  true,
 	}
@@ -454,7 +459,7 @@ func SyncLdapUsers(owner string, syncUsers []LdapUser, ldapId string) (existUser
 			err := ensureGroupExists(owner, groupName)
 			if err != nil {
 				// Log warning but continue processing
-				fmt.Printf("Warning: Failed to create group %s: %v\n", groupName, err)
+				logs.Warning("Failed to create LDAP group %s: %v", groupName, err)
 			}
 		}
 
@@ -469,7 +474,7 @@ func SyncLdapUsers(owner string, syncUsers []LdapUser, ldapId string) (existUser
 					if len(ldapGroupNames) > 0 {
 						err := updateUserGroups(owner, syncUser, ldapGroupNames, ldap.DefaultGroup)
 						if err != nil {
-							fmt.Printf("Warning: Failed to update groups for user %s: %v\n", syncUser.Uuid, err)
+							logs.Warning("Failed to update groups for user %s: %v", syncUser.Uuid, err)
 						}
 					}
 				}
