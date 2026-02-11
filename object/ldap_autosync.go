@@ -116,7 +116,7 @@ func (l *LdapAutoSynchronizer) syncRoutine(ldap *Ldap, stopChan chan struct{}) e
 			logs.Warning(fmt.Sprintf("ldap autosync,%d new users,but %d user failed during :", len(users)-len(existed)-len(failed), len(failed)), failed)
 			logs.Warning(err.Error())
 		} else {
-			logs.Info(fmt.Sprintf("ldap autosync success, %d new users, %d existing users", len(users)-len(existed), len(existed)))
+			logs.Info(fmt.Sprintf("ldap autosync success, %d new users, %d existing users (groups synchronized)", len(users)-len(existed), len(existed)))
 		}
 
 		conn.Close()

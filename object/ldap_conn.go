@@ -88,6 +88,7 @@ type LdapUser struct {
 	GroupId    string            `json:"groupId"`
 	Address    string            `json:"address"`
 	MemberOf   string            `json:"memberOf"`
+	MemberOfs  []string          `json:"memberOfs"`
 	Attributes map[string]string `json:"attributes"`
 }
 
@@ -179,7 +180,7 @@ func (l *LdapConn) GetLdapUsers(ldapServer *Ldap) ([]LdapUser, error) {
 	SearchAttributes := []string{
 		"uidNumber", "cn", "sn", "gidNumber", "entryUUID", "displayName", "mail", "email",
 		"emailAddress", "telephoneNumber", "mobile", "mobileTelephoneNumber", "registeredAddress", "postalAddress",
-		"c", "co",
+		"c", "co", "memberOf",
 	}
 	if l.IsAD {
 		SearchAttributes = append(SearchAttributes, "sAMAccountName")
@@ -248,6 +249,7 @@ func (l *LdapConn) GetLdapUsers(ldapServer *Ldap) ([]LdapUser, error) {
 				user.CountryName = attribute.Values[0]
 			case "memberOf":
 				user.MemberOf = attribute.Values[0]
+				user.MemberOfs = attribute.Values
 			default:
 				if propName, ok := ldapServer.CustomAttributes[attribute.Name]; ok {
 					if user.Attributes == nil {
@@ -315,10 +317,98 @@ func AutoAdjustLdapUser(users []LdapUser) []LdapUser {
 			Address:     util.ReturnAnyNotEmpty(user.Address, user.PostalAddress, user.RegisteredAddress),
 			Country:     util.ReturnAnyNotEmpty(user.Country, user.CountryName),
 			CountryName: user.CountryName,
+			MemberOf:    user.MemberOf,
+			MemberOfs:   user.MemberOfs,
 			Attributes:  user.Attributes,
 		}
 	}
 	return res
+}
+
+// parseGroupNameFromDN extracts the CN (Common Name) from an LDAP DN
+// e.g., "CN=GroupName,OU=Groups,DC=example,DC=com" -> "GroupName"
+func parseGroupNameFromDN(dn string) string {
+	if dn == "" {
+		return ""
+	}
+
+	// Split by comma and find the CN component
+	parts := strings.Split(dn, ",")
+	for _, part := range parts {
+		part = strings.TrimSpace(part)
+		if strings.HasPrefix(strings.ToLower(part), "cn=") {
+			return part[3:] // Return everything after "cn="
+		}
+	}
+	return ""
+}
+
+// extractGroupNamesFromMemberOf extracts group names from memberOf DNs
+func extractGroupNamesFromMemberOf(memberOfs []string) []string {
+	var groupNames []string
+	for _, dn := range memberOfs {
+		groupName := parseGroupNameFromDN(dn)
+		if groupName != "" {
+			groupNames = append(groupNames, groupName)
+		}
+	}
+	return groupNames
+}
+
+// ensureGroupExists creates a group if it doesn't exist
+func ensureGroupExists(owner, groupName string) error {
+	if groupName == "" {
+		return nil
+	}
+
+	existingGroup, err := getGroup(owner, groupName)
+	if err != nil {
+		return err
+	}
+
+	if existingGroup != nil {
+		return nil // Group already exists
+	}
+
+	// Create the group
+	newGroup := &Group{
+		Owner:       owner,
+		Name:        groupName,
+		CreatedTime: util.GetCurrentTime(),
+		UpdatedTime: util.GetCurrentTime(),
+		DisplayName: groupName,
+		Type:        "ldap-group",
+		IsEnabled:   true,
+		IsTopGroup:  true,
+	}
+
+	_, err = AddGroup(newGroup)
+	return err
+}
+
+// updateUserGroups updates an existing user's group memberships from LDAP
+func updateUserGroups(owner string, syncUser LdapUser, ldapGroupNames []string, defaultGroup string) error {
+	// Find the user by LDAP UUID
+	user := &User{}
+	has, err := ormer.Engine.Where("owner = ? AND ldap = ?", owner, syncUser.Uuid).Get(user)
+	if err != nil {
+		return err
+	}
+	if !has {
+		return fmt.Errorf("user with LDAP UUID %s not found", syncUser.Uuid)
+	}
+
+	// Prepare new group list
+	newGroups := []string{}
+	if defaultGroup != "" {
+		newGroups = append(newGroups, defaultGroup)
+	}
+	newGroups = append(newGroups, ldapGroupNames...)
+
+	// Update user groups
+	user.Groups = newGroups
+	_, err = UpdateUser(user.GetId(), user, []string{"groups"}, false)
+	return err
 }
 
 func SyncLdapUsers(owner string, syncUsers []LdapUser, ldapId string) (existUsers []LdapUser, failedUsers []LdapUser, err error) {
@@ -356,12 +446,32 @@ func SyncLdapUsers(owner string, syncUsers []LdapUser, ldapId string) (existUser
 			return nil, nil, err
 		}
 
+		// Extract group names from LDAP memberOf attributes
+		ldapGroupNames := extractGroupNamesFromMemberOf(syncUser.MemberOfs)
+
+		// Ensure all LDAP groups exist in Casdoor
+		for _, groupName := range ldapGroupNames {
+			err := ensureGroupExists(owner, groupName)
+			if err != nil {
+				// Log warning but continue processing
+				fmt.Printf("Warning: Failed to create group %s: %v\n", groupName, err)
+			}
+		}
+
 		found := false
 		if len(existUuids) > 0 {
 			for _, existUuid := range existUuids {
 				if syncUser.Uuid == existUuid {
 					existUsers = append(existUsers, syncUser)
 					found = true
+
+					// Update existing user's group memberships
+					if len(ldapGroupNames) > 0 {
+						err := updateUserGroups(owner, syncUser, ldapGroupNames, ldap.DefaultGroup)
+						if err != nil {
+							fmt.Printf("Warning: Failed to update groups for user %s: %v\n", syncUser.Uuid, err)
+						}
+					}
 				}
 			}
 		}
@@ -376,6 +486,14 @@ func SyncLdapUsers(owner string, syncUsers []LdapUser, ldapId string) (existUser
 			if err != nil {
 				return nil, nil, err
 			}
+
+			// Prepare group assignments for new user
+			userGroups := []string{}
+			if ldap.DefaultGroup != "" {
+				userGroups = append(userGroups, ldap.DefaultGroup)
+			}
+			// Add LDAP groups
+			userGroups = append(userGroups, ldapGroupNames...)
 
 			newUser := &User{
 				Owner:             owner,
@@ -395,12 +513,9 @@ func SyncLdapUsers(owner string, syncUsers []LdapUser, ldapId string) (existUser
 				Score:             score,
 				Ldap:              syncUser.Uuid,
 				Properties:        syncUser.Attributes,
+				Groups:            userGroups,
 			}
 			formatUserPhone(newUser)
-
-			if ldap.DefaultGroup != "" {
-				newUser.Groups = []string{ldap.DefaultGroup}
-			}
 
 			affected, err := AddUser(newUser, "en")
 			if err != nil {
