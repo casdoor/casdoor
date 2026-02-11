@@ -61,6 +61,7 @@ type Syncer struct {
 	SyncInterval     int            `json:"syncInterval"`
 	IsReadOnly       bool           `json:"isReadOnly"`
 	IsEnabled        bool           `json:"isEnabled"`
+	NameMapping      string         `xorm:"varchar(100)" json:"nameMapping"`
 
 	Ormer     *Ormer      `xorm:"-" json:"-"`
 	SshClient *ssh.Client `xorm:"-" json:"-"`

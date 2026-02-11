@@ -408,11 +408,37 @@ func (p *DingtalkSyncerProvider) getDingtalkUsers() ([]*OriginalUser, error) {
 
 // dingtalkUserToOriginalUser converts DingTalk user to Casdoor OriginalUser
 func (p *DingtalkSyncerProvider) dingtalkUserToOriginalUser(dingtalkUser *DingtalkUser) *OriginalUser {
-	// Use unionid as name to be consistent with OAuth provider
-	// Fallback to userId if unionid is not available
-	userName := dingtalkUser.UserId
-	if dingtalkUser.UnionId != "" {
+	// Determine the userName based on the NameMapping configuration
+	// Default behavior (for backward compatibility): unionid, fallback to userId
+	var userName string
+	
+	switch p.Syncer.NameMapping {
+	case "userid":
+		userName = dingtalkUser.UserId
+	case "email":
+		userName = dingtalkUser.Email
+		if userName == "" {
+			// Fallback to userId if email is empty
+			userName = dingtalkUser.UserId
+		}
+	case "mobile":
+		userName = dingtalkUser.Mobile
+		if userName == "" {
+			// Fallback to userId if mobile is empty
+			userName = dingtalkUser.UserId
+		}
+	case "unionid":
 		userName = dingtalkUser.UnionId
+		if userName == "" {
+			// Fallback to userId if unionid is empty
+			userName = dingtalkUser.UserId
+		}
+	default:
+		// Default behavior: prefer unionid, fallback to userId
+		userName = dingtalkUser.UserId
+		if dingtalkUser.UnionId != "" {
+			userName = dingtalkUser.UnionId
+		}
 	}
 
 	user := &OriginalUser{
