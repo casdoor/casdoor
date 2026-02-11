@@ -1262,6 +1262,8 @@
     "Is key": "Is key",
     "Is read-only": "Is read-only",
     "Is read-only - Tooltip": "Is read-only - Tooltip",
+    "Name mapping": "Name mapping",
+    "Name mapping - Tooltip": "Choose which DingTalk field to use as the username in Casdoor. Default is Union ID for compatibility with OAuth login.",
     "New Syncer": "New Syncer",
     "Paste your Google Workspace service account JSON key here": "Paste your Google Workspace service account JSON key here",
     "SCIM Server URL": "SCIM Server URL",

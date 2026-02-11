@@ -978,6 +978,27 @@ class SyncerEditPage extends React.Component {
           </Col>
         </Row>
         {
+          this.state.syncer.type === "DingTalk" ? (
+            <Row style={{marginTop: "20px"}} >
+              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                {Setting.getLabel(i18next.t("syncer:Name mapping"), i18next.t("syncer:Name mapping - Tooltip"))} :
+              </Col>
+              <Col span={22} >
+                <Select virtual={false} style={{width: "100%"}} value={this.state.syncer.nameMapping} onChange={(value => {this.updateSyncerField("nameMapping", value);})}>
+                  {
+                    [
+                      {id: "unionid", name: "Union ID (default)"},
+                      {id: "userid", name: "User ID"},
+                      {id: "email", name: "Email"},
+                      {id: "mobile", name: "Mobile"},
+                    ].map((item, index) => <Option key={index} value={item.id}>{item.name}</Option>)
+                  }
+                </Select>
+              </Col>
+            </Row>
+          ) : null
+        }
+        {
           this.state.syncer.type === "WeCom" || this.state.syncer.type === "Azure AD" || this.state.syncer.type === "Google Workspace" || this.state.syncer.type === "DingTalk" || this.state.syncer.type === "Lark" || this.state.syncer.type === "Okta" || this.state.syncer.type === "SCIM" || this.state.syncer.type === "AWS IAM" ? null : (
             <Row style={{marginTop: "20px"}} >
               <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
