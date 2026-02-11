@@ -20,7 +20,7 @@ import (
 )
 
 func calculateHash(user *User) (string, error) {
-	syncer, err := getDbSyncerForUser(user)
+	syncer, err := getSyncerForUser(user)
 	if err != nil {
 		return "", err
 	}
