@@ -208,16 +208,17 @@ func generatePodId() string {
 
 // getHostname returns the hostname of the current machine
 func getHostname() string {
-	hostname, err := getEnvOrHostname()
+	hostname, err := getHostnameFromEnv()
 	if err != nil || hostname == "" {
+		logs.Debug("Could not get hostname from environment: %v", err)
 		return ""
 	}
 	// Clean hostname to make it a valid identifier
 	return strings.ReplaceAll(hostname, ".", "-")
 }
 
-// getEnvOrHostname tries to get hostname from environment or system
-func getEnvOrHostname() (string, error) {
+// getHostnameFromEnv tries to get hostname from Kubernetes environment variables
+func getHostnameFromEnv() (string, error) {
 	// Try to get pod name from Kubernetes environment variable
 	if podName := getEnvVar("HOSTNAME"); podName != "" {
 		return podName, nil
@@ -225,7 +226,7 @@ func getEnvOrHostname() (string, error) {
 	if podName := getEnvVar("POD_NAME"); podName != "" {
 		return podName, nil
 	}
-	// Fallback: hostname not available from environment variables
+	// Hostname not available from environment variables
 	return "", fmt.Errorf("hostname not available from HOSTNAME or POD_NAME environment variables")
 }
 
