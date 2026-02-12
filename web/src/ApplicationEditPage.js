@@ -1313,11 +1313,12 @@ class ApplicationEditPage extends React.Component {
           <Button style={{marginLeft: "20px"}} type="primary" onClick={() => this.submitApplicationEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
           {this.state.mode === "add" ? <Button style={{marginLeft: "20px"}} onClick={() => this.deleteApplication()}>{i18next.t("general:Cancel")}</Button> : null}
         </div>
-      } style={(Setting.isMobile()) ? {margin: "5px"} : {}} type="inner">
-        <Layout style={{background: "inherit"}}>
+      } style={{margin: (Setting.isMobile()) ? "5px" : {}, height: "calc(100vh - 145px - 48px)", overflow: "hidden"}}
+      styles={{body: {height: "100%"}}} type="inner">
+        <Layout style={{background: "inherit", height: "100%", overflow: "auto"}}>
           {
             this.state.menuMode === "horizontal" || !this.state.menuMode ? (
-              <Header style={{background: "inherit", padding: "0px"}}>
+              <Header style={{background: "inherit", padding: "0px", position: "sticky", top: 0}}>
                 <div className="demo-logo" />
                 <Tabs
                   onChange={(key) => {
@@ -1337,7 +1338,7 @@ class ApplicationEditPage extends React.Component {
               </Header>
             ) : null
           }
-          <Layout style={{background: "inherit", maxHeight: "calc(70vh - 70px)", overflow: "auto"}}>
+          <Layout style={{background: "inherit", overflow: "auto"}}>
             {
               this.state.menuMode === "vertical" ? (
                 <Sider width={200} style={{background: "inherit", position: "sticky", top: 0}}>
