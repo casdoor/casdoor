@@ -241,27 +241,27 @@ func (c *ApiController) SendVerificationCode() {
 
 	// Only verify CAPTCHA if it should be enabled
 	if enableCaptcha {
-		provider, err := object.GetCaptchaProviderByApplication(vform.ApplicationId, "false", c.GetAcceptLanguage())
+		captchaProvider, err := object.GetCaptchaProviderByApplication(vform.ApplicationId, "false", c.GetAcceptLanguage())
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
 		}
 
-		if provider != nil {
-			if vform.CaptchaType != provider.Type {
+		if captchaProvider != nil {
+			if vform.CaptchaType != captchaProvider.Type {
 				c.ResponseError(c.T("verification:Turing test failed."))
 				return
 			}
 
-			if provider.Type != "Default" {
-				vform.ClientSecret = provider.ClientSecret
+			if captchaProvider.Type != "Default" {
+				vform.ClientSecret = captchaProvider.ClientSecret
 			}
 
 			if vform.CaptchaType != "none" {
-				if captchaProvider := captcha.GetCaptchaProvider(vform.CaptchaType); captchaProvider == nil {
+				if captchaService := captcha.GetCaptchaProvider(vform.CaptchaType); captchaService == nil {
 					c.ResponseError(c.T("general:don't support captchaProvider: ") + vform.CaptchaType)
 					return
-				} else if isHuman, err := captchaProvider.VerifyCaptcha(vform.CaptchaToken, provider.ClientId, vform.ClientSecret, provider.ClientId2); err != nil {
+				} else if isHuman, err := captchaService.VerifyCaptcha(vform.CaptchaToken, captchaProvider.ClientId, vform.ClientSecret, captchaProvider.ClientId2); err != nil {
 					c.ResponseError(err.Error())
 					return
 				} else if !isHuman {
