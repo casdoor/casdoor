@@ -18,7 +18,7 @@ type EmailProvider interface {
 	Send(fromAddress string, fromName string, toAddress []string, subject string, content string) error
 }
 
-func GetEmailProvider(typ string, clientId string, clientSecret string, host string, port int, disableSsl bool, endpoint string, method string, httpHeaders map[string]string, bodyMapping map[string]string, contentType string, enableProxy bool) EmailProvider {
+func GetEmailProvider(typ string, clientId string, clientSecret string, host string, port int, disableSslMode string, endpoint string, method string, httpHeaders map[string]string, bodyMapping map[string]string, contentType string, enableProxy bool) EmailProvider {
 	if typ == "Azure ACS" {
 		return NewAzureACSEmailProvider(clientSecret, host)
 	} else if typ == "Custom HTTP Email" {
@@ -26,6 +26,6 @@ func GetEmailProvider(typ string, clientId string, clientSecret string, host str
 	} else if typ == "SendGrid" {
 		return NewSendgridEmailProvider(clientSecret, host, endpoint)
 	} else {
-		return NewSmtpEmailProvider(clientId, clientSecret, host, port, typ, disableSsl, enableProxy)
+		return NewSmtpEmailProvider(clientId, clientSecret, host, port, typ, disableSslMode, enableProxy)
 	}
 }

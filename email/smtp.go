@@ -25,13 +25,19 @@ type SmtpEmailProvider struct {
 	Dialer *gomail.Dialer
 }
 
-func NewSmtpEmailProvider(userName string, password string, host string, port int, typ string, disableSsl bool, enableProxy bool) *SmtpEmailProvider {
+func NewSmtpEmailProvider(userName string, password string, host string, port int, typ string, disableSslMode string, enableProxy bool) *SmtpEmailProvider {
 	dialer := gomail.NewDialer(host, port, userName, password)
 	if typ == "SUBMAIL" {
 		dialer.TLSConfig = &tls.Config{InsecureSkipVerify: true}
 	}
 
-	dialer.SSL = !disableSsl
+	// Handle DisableSslMode: "True" = disable SSL, "False" = enable SSL, "Unspecified" or empty = let gomail decide based on port
+	if disableSslMode == "True" {
+		dialer.SSL = false
+	} else if disableSslMode == "False" {
+		dialer.SSL = true
+	}
+	// For "Unspecified" or empty, gomail will automatically set SSL based on port (465 = SSL, others = no SSL)
 
 	if enableProxy {
 		socks5Proxy := conf.GetConfigString("socks5Proxy")
