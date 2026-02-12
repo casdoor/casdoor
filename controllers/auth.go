@@ -826,11 +826,11 @@ func (c *ApiController) Login() {
 				// Sign up via OAuth
 				autoLinkPolicy := providerItem.AutoLinkPolicy
 				if autoLinkPolicy == "" {
-					autoLinkPolicy = "Allow" // Default to allow for backward compatibility
+					autoLinkPolicy = object.AutoLinkPolicyAllow // Default to allow for backward compatibility
 				}
 
-				if autoLinkPolicy != "Disabled" && application.EnableLinkWithEmail {
-					if autoLinkPolicy == "Allow" || autoLinkPolicy == "Email only" {
+				if autoLinkPolicy != object.AutoLinkPolicyDisabled && application.EnableLinkWithEmail {
+					if autoLinkPolicy == object.AutoLinkPolicyAllow || autoLinkPolicy == object.AutoLinkPolicyEmailOnly {
 						if userInfo.Email != "" {
 							// Find existing user with Email
 							user, err = object.GetUserByField(application.Organization, "email", userInfo.Email)
@@ -855,7 +855,7 @@ func (c *ApiController) Login() {
 				// This allows OAuth providers (e.g., Wecom) to automatically associate with
 				// existing users when usernames match, particularly useful for enterprise
 				// scenarios where signup is disabled and users already exist in Casdoor
-				if autoLinkPolicy != "Disabled" && autoLinkPolicy != "Email only" {
+				if autoLinkPolicy == object.AutoLinkPolicyAllow || autoLinkPolicy == object.AutoLinkPolicyUsernameOnly {
 					if user == nil && userInfo.Username != "" {
 						user, err = object.GetUserByFields(application.Organization, userInfo.Username)
 						if err != nil {

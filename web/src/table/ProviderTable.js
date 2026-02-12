@@ -305,7 +305,6 @@ class ProviderTable extends React.Component {
           return (
             <Select virtual={false} style={{width: "100%"}}
               value={text || "Allow"}
-              defaultValue="Allow"
               onChange={value => {
                 this.updateField(table, index, "autoLinkPolicy", value);
               }} >

@@ -28,6 +28,15 @@ import (
 	"github.com/xorm-io/core"
 )
 
+// Auto-link policy constants
+const (
+	AutoLinkPolicyAllow        = "Allow"
+	AutoLinkPolicyUsernameOnly = "Username only"
+	AutoLinkPolicyEmailOnly    = "Email only"
+	AutoLinkPolicyDisabled     = "Disabled"
+)
+
+
 type Provider struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
 	Name        string `xorm:"varchar(100) notnull pk unique" json:"name"`
