@@ -221,11 +221,19 @@ func (c *ApiController) SendVerificationCode() {
 		// For login verification, try to find user by email/phone for CAPTCHA check
 		// This is a preliminary lookup; the actual validation happens later in the switch statement
 		if vform.Type == object.VerifyTypeEmail && util.IsEmailValid(vform.Dest) {
-			user, _ = object.GetUserByEmail(organization.Name, vform.Dest)
+			user, err = object.GetUserByEmail(organization.Name, vform.Dest)
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
 		} else if vform.Type == object.VerifyTypePhone {
 			// Prefer resolving the user directly by phone, consistent with the later login switch,
 			// so that Dynamic CAPTCHA is not skipped due to missing/invalid country code.
-			user, _ = object.GetUserByPhone(organization.Name, vform.Dest)
+			user, err = object.GetUserByPhone(organization.Name, vform.Dest)
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
 		}
 	}
 
