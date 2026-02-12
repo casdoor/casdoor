@@ -700,7 +700,7 @@ func (c *ApiController) GetCaptcha() {
 		}
 
 		if application == nil {
-			c.ResponseError(fmt.Sprintf("application: %s not found", applicationId))
+			c.ResponseError(fmt.Sprintf(c.T("auth:The application: %s does not exist"), applicationId))
 			return
 		}
 

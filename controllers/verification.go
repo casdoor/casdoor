@@ -157,6 +157,11 @@ func (c *ApiController) SendVerificationCode() {
 		return
 	}
 
+	if application == nil {
+		c.ResponseError(fmt.Sprintf(c.T("auth:The application: %s does not exist"), vform.ApplicationId))
+		return
+	}
+
 	// Check if "Forgot password?" signin item is visible when using forget verification
 	if vform.Method == ForgetVerification {
 		isForgotPasswordEnabled := false
