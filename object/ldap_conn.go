@@ -689,9 +689,23 @@ func dnToGroupName(owner, dn string) string {
 	// Join with underscore to create a unique group name
 	groupName := strings.Join(nameComponents, "_")
 	
-	// Sanitize group name (remove invalid characters)
-	groupName = strings.ReplaceAll(groupName, "/", "_")
-	groupName = strings.ReplaceAll(groupName, " ", "_")
+	// Sanitize group name - replace invalid characters with underscores
+	// Keep only alphanumeric characters, underscores, and hyphens
+	var sanitized strings.Builder
+	for _, r := range groupName {
+		if (r >= 'a' && r <= 'z') || (r >= 'A' && r <= 'Z') || (r >= '0' && r <= '9') || r == '_' || r == '-' {
+			sanitized.WriteRune(r)
+		} else {
+			sanitized.WriteRune('_')
+		}
+	}
+	groupName = sanitized.String()
+	
+	// Remove consecutive underscores and trim
+	for strings.Contains(groupName, "__") {
+		groupName = strings.ReplaceAll(groupName, "__", "_")
+	}
+	groupName = strings.Trim(groupName, "_")
 	
 	return groupName
 }

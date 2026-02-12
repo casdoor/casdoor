@@ -94,6 +94,24 @@ func TestDnToGroupName(t *testing.T) {
 			dn:       "OU=Sales Team,DC=example,DC=com",
 			expected: "Sales_Team",
 		},
+		{
+			name:     "Name with special characters",
+			owner:    "org1",
+			dn:       "OU=Sales & Marketing!,DC=example,DC=com",
+			expected: "Sales_Marketing",
+		},
+		{
+			name:     "Name with consecutive spaces/special chars",
+			owner:    "org1",
+			dn:       "OU=Sales   &   Marketing,DC=example,DC=com",
+			expected: "Sales_Marketing",
+		},
+		{
+			name:     "Name with forward slash",
+			owner:    "org1",
+			dn:       "OU=IT/Support,DC=example,DC=com",
+			expected: "IT_Support",
+		},
 	}
 
 	for _, tt := range tests {
