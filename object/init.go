@@ -87,6 +87,7 @@ func getBuiltInAccountItems() []*AccountItem {
 		{Name: "WebAuthn credentials", Visible: true, ViewRule: "Self", ModifyRule: "Self"},
 		{Name: "Managed accounts", Visible: true, ViewRule: "Self", ModifyRule: "Self"},
 		{Name: "MFA accounts", Visible: true, ViewRule: "Self", ModifyRule: "Self"},
+		{Name: "Cart", Visible: true, ViewRule: "Self", ModifyRule: "Self"},
 	}
 }
 
