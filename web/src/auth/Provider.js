@@ -461,14 +461,10 @@ export function getAuthUrl(application, provider, method, code) {
     }
   } else if (provider.type === "Apple") {
     redirectUri = `${redirectOrigin}/api/callback`;
-  } else if (provider.type === "Google" && provider.disableSsl) {
-    scope += "+https://www.googleapis.com/auth/user.phonenumbers.read";
   } else if (provider.type === "Nextcloud") {
     if (provider.domain) {
       endpoint = `${provider.domain}/apps/oauth2/authorize`;
     }
-  } else if (provider.type === "Lark" && provider.disableSsl) {
-    endpoint = authInfo[provider.type].endpoint2;
   }
 
   if (provider.type === "Google" || provider.type === "GitHub" || provider.type === "Facebook"
@@ -493,9 +489,6 @@ export function getAuthUrl(application, provider, method, code) {
     if (navigator.userAgent.includes("MicroMessenger")) {
       return `${authInfo[provider.type].mpEndpoint}?appid=${provider.clientId2}&redirect_uri=${redirectUri}&state=${state}&scope=${authInfo[provider.type].mpScope}&response_type=code#wechat_redirect`;
     } else {
-      if (provider.clientId2 && provider?.disableSsl && provider?.signName === "media") {
-        return `${redirectOrigin}/callback?state=${state}&code=${"wechat_oa:" + code}`;
-      }
       return `${endpoint}?appid=${provider.clientId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=code&state=${state}#wechat_redirect`;
     }
   } else if (provider.type === "WeCom") {
@@ -523,9 +516,6 @@ export function getAuthUrl(application, provider, method, code) {
       return `https://error:not-supported-provider-sub-type:${provider.subType}`;
     }
   } else if (provider.type === "Lark") {
-    if (provider.disableSsl) {
-      redirectUri = encodeURIComponent(redirectUri);
-    }
     return `${endpoint}?app_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}`;
   } else if (provider.type === "ADFS") {
     return `${provider.domain}/adfs/oauth2/authorize?client_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&nonce=casdoor&scope=openid`;

@@ -51,11 +51,10 @@ type Provider struct {
 	UserMapping       map[string]string `xorm:"varchar(500)" json:"userMapping"`
 	HttpHeaders       map[string]string `xorm:"varchar(500)" json:"httpHeaders"`
 
-	Host       string `xorm:"varchar(100)" json:"host"`
-	Port       int    `json:"port"`
-	DisableSsl bool   `json:"disableSsl"` // If the provider type is WeChat, DisableSsl means EnableQRCode, if type is Google, it means sync phone number
-	SslMode    string `xorm:"varchar(100)" json:"sslMode"` // For Email providers: "Auto" (default/empty), "Enable", "Disable"
-	Title      string `xorm:"varchar(100)" json:"title"`
+	Host    string `xorm:"varchar(100)" json:"host"`
+	Port    int    `json:"port"`
+	SslMode string `xorm:"varchar(100)" json:"sslMode"` // For Email providers: "Auto" (default/empty), "Enable", "Disable"
+	Title   string `xorm:"varchar(100)" json:"title"`
 	Content    string `xorm:"varchar(2000)" json:"content"` // If provider type is WeChat, Content means QRCode string by Base64 encoding
 	Receiver   string `xorm:"varchar(100)" json:"receiver"`
 
@@ -578,7 +577,6 @@ func FromProviderToIdpInfo(ctx *context.Context, provider *Provider) *idp.Provid
 		AuthURL:       provider.CustomAuthUrl,
 		UserInfoURL:   provider.CustomUserInfoUrl,
 		UserMapping:   provider.UserMapping,
-		DisableSsl:    provider.DisableSsl,
 	}
 
 	if provider.Type == "WeChat" {

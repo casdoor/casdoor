@@ -160,20 +160,6 @@ class ProviderEditPage extends React.Component {
 
     provider[key] = value;
 
-    if (provider["type"] === "WeChat") {
-      if (!provider["clientId"]) {
-        provider["signName"] = "media";
-        provider["disableSsl"] = true;
-      }
-      if (!provider["clientId2"]) {
-        provider["signName"] = "open";
-        provider["disableSsl"] = false;
-      }
-      if (!provider["disableSsl"]) {
-        provider["signName"] = "open";
-      }
-    }
-
     this.setState({
       provider: provider,
     });
@@ -698,7 +684,7 @@ class ProviderEditPage extends React.Component {
                 this.updateProviderField("type", "Default");
                 this.updateProviderField("host", "smtp.example.com");
                 this.updateProviderField("port", 465);
-                this.updateProviderField("disableSsl", false);
+                this.updateProviderField("sslMode", "Auto");
                 this.updateProviderField("title", "Casdoor Verification Code");
                 this.updateProviderField("content", Setting.getDefaultHtmlEmailContent());
                 this.updateProviderField("metadata", Setting.getDefaultInvitationHtmlEmailContent());
@@ -1036,64 +1022,6 @@ class ProviderEditPage extends React.Component {
                 )
               }
             </React.Fragment>
-          )
-        }
-        {
-          this.state.provider.type !== "WeChat" ? null : (
-            <React.Fragment>
-              <Row style={{marginTop: "20px"}} >
-                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                  {Setting.getLabel(i18next.t("provider:Use WeChat Media Platform in PC"), i18next.t("provider:Use WeChat Media Platform in PC - Tooltip"))} :
-                </Col>
-                <Col span={1} >
-                  <Switch disabled={!this.state.provider.clientId} checked={this.state.provider.disableSsl} onChange={checked => {
-                    this.updateProviderField("disableSsl", checked);
-                  }} />
-                </Col>
-              </Row>
-              <Row style={{marginTop: "20px"}} >
-                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                  {Setting.getLabel(i18next.t("token:Access token"), i18next.t("token:Access token - Tooltip"))} :
-                </Col>
-                <Col span={22} >
-                  <Input value={this.state.provider.content} disabled={!this.state.provider.disableSsl || !this.state.provider.clientId2} onChange={e => {
-                    this.updateProviderField("content", e.target.value);
-                  }} />
-                </Col>
-              </Row>
-              <Row style={{marginTop: "20px"}} >
-                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                  {Setting.getLabel(i18next.t("provider:Follow-up action"), i18next.t("provider:Follow-up action - Tooltip"))} :
-                </Col>
-                <Col>
-                  <Radio.Group value={this.state.provider.signName}
-                    disabled={!this.state.provider.disableSsl || !this.state.provider.clientId || !this.state.provider.clientId2}
-                    buttonStyle="solid"
-                    onChange={e => {
-                      this.updateProviderField("signName", e.target.value);
-                    }}>
-                    <Radio.Button value="open">{i18next.t("provider:Use WeChat Open Platform to login")}</Radio.Button>
-                    <Radio.Button value="media">{i18next.t("provider:Use WeChat Media Platform to login")}</Radio.Button>
-                  </Radio.Group>
-                </Col>
-              </Row>
-            </React.Fragment>
-          )
-        }
-        {
-          this.state.provider.type !== "Google" && this.state.provider.type !== "Lark" ? null : (
-            <Row style={{marginTop: "20px"}} >
-              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                {this.state.provider.type === "Google" ?
-                  Setting.getLabel(i18next.t("provider:Get phone number"), i18next.t("provider:Get phone number - Tooltip"))
-                  : Setting.getLabel(i18next.t("provider:Use global endpoint"), i18next.t("provider:Use global endpoint - Tooltip"))} :
-              </Col>
-              <Col span={1} >
-                <Switch disabled={!this.state.provider.clientId} checked={this.state.provider.disableSsl} onChange={checked => {
-                  this.updateProviderField("disableSsl", checked);
-                }} />
-              </Col>
-            </Row>
           )
         }
         {

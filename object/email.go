@@ -48,16 +48,11 @@ func SendEmail(provider *Provider, title string, content string, dest []string, 
 	return emailProvider.Send(fromAddress, fromName, dest, title, content)
 }
 
-// getSslMode converts the provider's SslMode or legacy DisableSsl field to the appropriate SSL mode string
+// getSslMode returns the SSL mode for email providers
 func getSslMode(provider *Provider) string {
 	// If SslMode is set, use it directly
 	if provider.SslMode != "" {
 		return provider.SslMode
-	}
-
-	// Otherwise, convert from legacy DisableSsl field for backward compatibility
-	if provider.DisableSsl {
-		return "Disable"
 	}
 
 	// Default to "Auto" to let gomail decide based on port
