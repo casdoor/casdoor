@@ -26,6 +26,8 @@ type ProviderItem struct {
 	SignupGroup  string    `json:"signupGroup"`
 	Rule         string    `json:"rule"`
 	Provider     *Provider `json:"provider"`
+
+	AutoLinkPolicy string `json:"autoLinkPolicy"`
 }
 
 func (application *Application) GetProviderItem(providerName string) *ProviderItem {

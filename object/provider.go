@@ -78,6 +78,8 @@ type Provider struct {
 	ProviderUrl string `xorm:"varchar(200)" json:"providerUrl"`
 	EnableProxy bool   `json:"enableProxy"`
 	EnablePkce  bool   `json:"enablePkce"`
+
+	AutoLinkPolicy string `xorm:"varchar(100)" json:"autoLinkPolicy"`
 }
 
 func GetMaskedProvider(provider *Provider, isMaskEnabled bool) *Provider {

@@ -564,7 +564,7 @@
     "Physical": "实体组",
     "Show all": "显示全部",
     "Virtual": "虚拟组",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "您需要先删除所有子组。您可以在 [组织] -\u003e [群组] 页面左侧的群组树中查看子组"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "您需要先删除所有子组。您可以在 [组织] -> [群组] 页面左侧的群组树中查看子组"
   },
   "home": {
     "New users past 30 days": "过去 30 天新增的用户",
@@ -972,6 +972,11 @@
     "Can signin": "可用于登录",
     "Can signup": "可用于注册",
     "Can unlink": "可解绑定",
+    "Allow": "允许",
+    "Auto link policy": "自动关联策略",
+    "Disabled": "禁用",
+    "Email only": "仅邮箱",
+    "Username only": "仅用户名",
     "Category": "分类",
     "Category - Tooltip": "用于对项目或内容进行归类分组的标识",
     "Channel No.": "Channel号码",

@@ -44,7 +44,7 @@ class ProviderTable extends React.Component {
   }
 
   addRow(table) {
-    const row = {name: Setting.getNewRowNameForTable(table, "Please select a provider"), canSignUp: true, canSignIn: true, canUnlink: true, prompted: false, signupGroup: "", rule: "None"};
+    const row = {name: Setting.getNewRowNameForTable(table, "Please select a provider"), canSignUp: true, canSignIn: true, canUnlink: true, prompted: false, signupGroup: "", rule: "None", autoLinkPolicy: "Allow"};
     if (table === undefined) {
       table = [];
     }
@@ -290,6 +290,31 @@ class ProviderTable extends React.Component {
           } else {
             return null;
           }
+        },
+      },
+      {
+        title: i18next.t("provider:Auto link policy"),
+        dataIndex: "autoLinkPolicy",
+        key: "autoLinkPolicy",
+        width: "160px",
+        render: (text, record, index) => {
+          if (!["OAuth", "Web3", "SAML"].includes(record.provider?.category)) {
+            return null;
+          }
+
+          return (
+            <Select virtual={false} style={{width: "100%"}}
+              value={text || "Allow"}
+              defaultValue="Allow"
+              onChange={value => {
+                this.updateField(table, index, "autoLinkPolicy", value);
+              }} >
+              <Option key="Allow" value="Allow">{i18next.t("provider:Allow")}</Option>
+              <Option key="Username only" value="Username only">{i18next.t("provider:Username only")}</Option>
+              <Option key="Email only" value="Email only">{i18next.t("provider:Email only")}</Option>
+              <Option key="Disabled" value="Disabled">{i18next.t("provider:Disabled")}</Option>
+            </Select>
+          );
         },
       },
       {
