@@ -33,7 +33,7 @@ type Ldap struct {
 	BaseDn              string            `xorm:"varchar(500)" json:"baseDn"`
 	Filter              string            `xorm:"varchar(200)" json:"filter"`
 	FilterFields        []string          `xorm:"varchar(100)" json:"filterFields"`
-	DefaultGroup        string            `xorm:"varchar(100)" json:"defaultGroup"`
+	DefaultGroup        []string          `xorm:"varchar(1000)" json:"defaultGroup"`
 	PasswordType        string            `xorm:"varchar(100)" json:"passwordType"`
 	CustomAttributes    map[string]string `json:"customAttributes"`
 
