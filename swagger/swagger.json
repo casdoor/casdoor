@@ -8939,9 +8939,6 @@
                 "signName": {
                     "type": "string"
                 },
-                "sslMode": {
-                    "type": "string"
-                },
                 "subType": {
                     "type": "string"
                 },
