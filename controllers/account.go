@@ -688,47 +688,51 @@ func (c *ApiController) GetCaptcha() {
 	applicationId := c.Ctx.Input.Query("applicationId")
 	isCurrentProvider := c.Ctx.Input.Query("isCurrentProvider")
 
-	application, err := object.GetApplication(applicationId)
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
-	}
-
-	if application == nil {
-		c.ResponseOk(Captcha{Type: "none"})
-		return
-	}
-
-	// Check the CAPTCHA rule to determine if CAPTCHA should be shown
-	clientIp := util.GetClientIpFromRequest(c.Ctx.Request)
-
-	// For Internet-Only rule, we can determine on the backend if CAPTCHA should be shown
-	// For other rules (Dynamic, Always), we need to return the CAPTCHA config
+	// When isCurrentProvider == "true", the frontend passes a provider ID instead of an application ID.
+	// In that case, skip application lookup and rule evaluation, and just return the provider config.
 	shouldSkipCaptcha := false
-	for _, providerItem := range application.Providers {
-		if providerItem.Provider == nil || providerItem.Provider.Category != "Captcha" {
-			continue
+
+	if isCurrentProvider != "true" {
+		application, err := object.GetApplication(applicationId)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
 		}
 
-		// For "None" rule, skip CAPTCHA
-		if providerItem.Rule == "None" || providerItem.Rule == "" {
-			shouldSkipCaptcha = true
-		} else if providerItem.Rule == "Internet-Only" {
-			// For Internet-Only rule, check if the client is from intranet
-			if !util.IsInternetIp(clientIp) {
-				// Client is from intranet, skip CAPTCHA
-				shouldSkipCaptcha = true
+		if application == nil {
+			c.ResponseError(fmt.Sprintf("application: %s not found", applicationId))
+			return
+		}
+
+		// Check the CAPTCHA rule to determine if CAPTCHA should be shown
+		clientIp := util.GetClientIpFromRequest(c.Ctx.Request)
+
+		// For Internet-Only rule, we can determine on the backend if CAPTCHA should be shown
+		// For other rules (Dynamic, Always), we need to return the CAPTCHA config
+		for _, providerItem := range application.Providers {
+			if providerItem.Provider == nil || providerItem.Provider.Category != "Captcha" {
+				continue
 			}
+
+			// For "None" rule, skip CAPTCHA
+			if providerItem.Rule == "None" || providerItem.Rule == "" {
+				shouldSkipCaptcha = true
+			} else if providerItem.Rule == "Internet-Only" {
+				// For Internet-Only rule, check if the client is from intranet
+				if !util.IsInternetIp(clientIp) {
+					// Client is from intranet, skip CAPTCHA
+					shouldSkipCaptcha = true
+				}
+			}
+
+			break // Only check the first CAPTCHA provider
 		}
 
-		break // Only check the first CAPTCHA provider
+		if shouldSkipCaptcha {
+			c.ResponseOk(Captcha{Type: "none"})
+			return
+		}
 	}
-
-	if shouldSkipCaptcha {
-		c.ResponseOk(Captcha{Type: "none"})
-		return
-	}
-
 	captchaProvider, err := object.GetCaptchaProviderByApplication(applicationId, isCurrentProvider, c.GetAcceptLanguage())
 	if err != nil {
 		c.ResponseError(err.Error())
