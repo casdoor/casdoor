@@ -54,12 +54,12 @@ func getSslMode(provider *Provider) string {
 	if provider.SslMode != "" {
 		return provider.SslMode
 	}
-	
+
 	// Otherwise, convert from legacy DisableSsl field for backward compatibility
 	if provider.DisableSsl {
 		return "Disable"
 	}
-	
+
 	// Default to "Auto" to let gomail decide based on port
 	return "Auto"
 }
