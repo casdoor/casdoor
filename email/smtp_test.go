@@ -49,7 +49,7 @@ func TestSmtpEmailProviderSSLMode(t *testing.T) {
 		},
 		{
 			name:           "DisableSslMode empty string with port 465 should enable SSL (gomail default)",
-			disableSslMode: "Unspecified",
+			disableSslMode: "",
 			port:           465,
 			expectedSSL:    true,
 		},
