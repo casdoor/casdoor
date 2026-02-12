@@ -20,7 +20,8 @@ import "github.com/casdoor/casdoor/email"
 
 // TestSmtpServer Test the SMTP server
 func TestSmtpServer(provider *Provider) error {
-	smtpEmailProvider := email.NewSmtpEmailProvider(provider.ClientId, provider.ClientSecret, provider.Host, provider.Port, provider.Type, provider.DisableSsl, provider.EnableProxy)
+	sslMode := getSslMode(provider)
+	smtpEmailProvider := email.NewSmtpEmailProvider(provider.ClientId, provider.ClientSecret, provider.Host, provider.Port, provider.Type, sslMode, provider.EnableProxy)
 	sender, err := smtpEmailProvider.Dialer.Dial()
 	if err != nil {
 		return err
@@ -31,7 +32,8 @@ func TestSmtpServer(provider *Provider) error {
 }
 
 func SendEmail(provider *Provider, title string, content string, dest []string, sender string) error {
-	emailProvider := email.GetEmailProvider(provider.Type, provider.ClientId, provider.ClientSecret, provider.Host, provider.Port, provider.DisableSsl, provider.Endpoint, provider.Method, provider.HttpHeaders, provider.UserMapping, provider.IssuerUrl, provider.EnableProxy)
+	sslMode := getSslMode(provider)
+	emailProvider := email.GetEmailProvider(provider.Type, provider.ClientId, provider.ClientSecret, provider.Host, provider.Port, sslMode, provider.Endpoint, provider.Method, provider.HttpHeaders, provider.UserMapping, provider.IssuerUrl, provider.EnableProxy)
 
 	fromAddress := provider.ClientId2
 	if fromAddress == "" {
@@ -44,4 +46,20 @@ func SendEmail(provider *Provider, title string, content string, dest []string, 
 	}
 
 	return emailProvider.Send(fromAddress, fromName, dest, title, content)
+}
+
+// getSslMode returns the SSL mode for the provider, with backward compatibility for DisableSsl
+func getSslMode(provider *Provider) string {
+	// If SslMode is set, use it
+	if provider.SslMode != "" {
+		return provider.SslMode
+	}
+
+	// Backward compatibility: convert DisableSsl to SslMode
+	if provider.DisableSsl {
+		return "Disable"
+	}
+
+	// Default to "Auto" for new configurations or when DisableSsl is false
+	return "Auto"
 }

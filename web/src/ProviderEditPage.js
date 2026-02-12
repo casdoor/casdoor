@@ -698,7 +698,7 @@ class ProviderEditPage extends React.Component {
                 this.updateProviderField("type", "Default");
                 this.updateProviderField("host", "smtp.example.com");
                 this.updateProviderField("port", 465);
-                this.updateProviderField("disableSsl", false);
+                this.updateProviderField("sslMode", "Auto");
                 this.updateProviderField("title", "Casdoor Verification Code");
                 this.updateProviderField("content", Setting.getDefaultHtmlEmailContent());
                 this.updateProviderField("metadata", Setting.getDefaultInvitationHtmlEmailContent());
@@ -1294,12 +1294,16 @@ class ProviderEditPage extends React.Component {
               {["Azure ACS", "SendGrid"].includes(this.state.provider.type) ? null : (
                 <Row style={{marginTop: "20px"}} >
                   <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                    {Setting.getLabel(i18next.t("provider:Disable SSL"), i18next.t("provider:Disable SSL - Tooltip"))} :
+                    {Setting.getLabel(i18next.t("provider:SSL mode"), i18next.t("provider:SSL mode - Tooltip"))} :
                   </Col>
-                  <Col span={1} >
-                    <Switch checked={this.state.provider.disableSsl} onChange={checked => {
-                      this.updateProviderField("disableSsl", checked);
-                    }} />
+                  <Col span={22} >
+                    <Select virtual={false} style={{width: "200px"}} value={this.state.provider.sslMode || "Auto"} onChange={value => {
+                      this.updateProviderField("sslMode", value);
+                    }}>
+                      <Option value="Auto">{i18next.t("provider:Auto")}</Option>
+                      <Option value="Enable">{i18next.t("provider:Enable")}</Option>
+                      <Option value="Disable">{i18next.t("provider:Disable")}</Option>
+                    </Select>
                   </Col>
                 </Row>
               )}
