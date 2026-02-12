@@ -218,9 +218,9 @@ func (c *ApiController) SendVerificationCode() {
 		if vform.Type == object.VerifyTypeEmail && util.IsEmailValid(vform.Dest) {
 			user, _ = object.GetUserByEmail(organization.Name, vform.Dest)
 		} else if vform.Type == object.VerifyTypePhone {
-			if phone, ok := util.GetE164Number(vform.Dest, vform.CountryCode); ok {
-				user, _ = object.GetUserByPhone(organization.Name, phone)
-			}
+			// Prefer resolving the user directly by phone, consistent with the later login switch,
+			// so that Dynamic CAPTCHA is not skipped due to missing/invalid country code.
+			user, _ = object.GetUserByPhone(organization.Name, vform.Dest)
 		}
 	}
 
