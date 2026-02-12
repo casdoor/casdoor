@@ -95,7 +95,7 @@ func ValidateClientAssertion(assertion string, expectedAudience string) (string,
 		default:
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
-	})
+	}, jwt.WithoutClaimsValidation())
 	if err != nil {
 		return "", fmt.Errorf("failed to validate client assertion signature: %v", err)
 	}
