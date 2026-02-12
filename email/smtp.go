@@ -31,13 +31,13 @@ func NewSmtpEmailProvider(userName string, password string, host string, port in
 		dialer.TLSConfig = &tls.Config{InsecureSkipVerify: true}
 	}
 
-	// Handle DisableSslMode: "True" = disable SSL, "False" = enable SSL, "Unspecified" or empty = let gomail decide based on port
+	// Handle DisableSslMode: "True" = disable SSL, "False" = enable SSL, empty string = let gomail decide based on port
 	if disableSslMode == "True" {
 		dialer.SSL = false
 	} else if disableSslMode == "False" {
 		dialer.SSL = true
 	}
-	// For "Unspecified" or empty, gomail will automatically set SSL based on port (465 = SSL, others = no SSL)
+	// For empty string, gomail will automatically set SSL based on port (465 = SSL, others = no SSL/STARTTLS)
 
 	if enableProxy {
 		socks5Proxy := conf.GetConfigString("socks5Proxy")
