@@ -54,12 +54,12 @@ func getSslMode(provider *Provider) string {
 	if provider.SslMode != "" {
 		return provider.SslMode
 	}
-	
+
 	// Backward compatibility: convert DisableSsl to SslMode
 	if provider.DisableSsl {
 		return "Disable"
 	}
-	
+
 	// Default to "Auto" for new configurations or when DisableSsl is false
 	return "Auto"
 }
