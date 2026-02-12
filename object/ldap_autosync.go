@@ -91,11 +91,26 @@ func (l *LdapAutoSynchronizer) syncRoutine(ldap *Ldap, stopChan chan struct{}) e
 			return err
 		}
 
-		// fetch all users
+		// fetch all users and groups
 		conn, err := ldap.GetLdapConn()
 		if err != nil {
 			logs.Warning(fmt.Sprintf("autoSync failed for %s, error %s", ldap.Id, err))
 			continue
+		}
+
+		// Sync groups first if enabled (so they exist before assigning users)
+		if ldap.EnableGroups {
+			groups, err := conn.GetLdapGroups(ldap)
+			if err != nil {
+				logs.Warning(fmt.Sprintf("autoSync failed to fetch groups for %s, error %s", ldap.Id, err))
+			} else {
+				newGroups, updatedGroups, err := SyncLdapGroups(ldap.Owner, groups, ldap.Id)
+				if err != nil {
+					logs.Warning(fmt.Sprintf("autoSync failed to sync groups for %s, error %s", ldap.Id, err))
+				} else {
+					logs.Info(fmt.Sprintf("ldap group sync success for %s, %d new groups, %d updated groups", ldap.Id, newGroups, updatedGroups))
+				}
+			}
 		}
 
 		users, err := conn.GetLdapUsers(ldap)
