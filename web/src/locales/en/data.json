@@ -55,6 +55,7 @@
     "Dynamic": "Dynamic",
     "Edit Application": "Edit Application",
     "Enable auto scroll": "Enable auto scroll",
+    "Every 5 seconds": "Every 5 seconds",
     "Enable Email linking": "Enable Email linking",
     "Enable Email linking - Tooltip": "When using 3rd-party providers to log in, if there is a user in the organization with the same Email, the 3rd-party login method will be automatically associated with that user",
     "Enable SAML C14N10": "Enable SAML C14N10",

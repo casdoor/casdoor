@@ -14,7 +14,7 @@
 
 import React, {Suspense, lazy} from "react";
 import {Button, Checkbox, Col, Form, Input, Result, Select, Spin, Switch, Tabs, message} from "antd";
-import {ArrowLeftOutlined, LockOutlined, UserOutlined} from "@ant-design/icons";
+import {ArrowLeftOutlined, LeftOutlined, LockOutlined, RightOutlined, UserOutlined} from "@ant-design/icons";
 import {withRouter} from "react-router-dom";
 import * as UserWebauthnBackend from "../backend/UserWebauthnBackend";
 import OrganizationSelect from "../common/select/OrganizationSelect";
@@ -72,7 +72,7 @@ class LoginPage extends React.Component {
       userCode: props.userCode ?? (props.match?.params?.userCode ?? null),
       userCodeStatus: "",
       prefilledUsername: urlParams.get("username") || urlParams.get("login_hint"),
-      carouselApplications: [],
+      carouselAppsData: [],
       currentCarouselIndex: 0,
       enableAutoScroll: true,
     };
@@ -256,36 +256,40 @@ class LoginPage extends React.Component {
   initializeCarousel(application) {
     if (!application || !application.carouselApplications || application.carouselApplications.length === 0) {
       this.stopCarousel();
+      this.setState({carouselAppsData: [], currentCarouselIndex: 0});
       return;
     }
 
-    const carouselApps = [];
-    application.carouselApplications.forEach(appId => {
-      const [owner, name] = appId.split("/");
-      if (owner && name) {
-        carouselApps.push({owner, name, id: appId});
+    const promises = application.carouselApplications.map(appId => {
+      const parts = appId.split("/");
+      if (parts.length === 2) {
+        return ApplicationBackend.getApplication(parts[0], parts[1])
+          .then(res => (res.status === "ok" ? res.data : null))
+          .catch(() => null);
       }
+      return Promise.resolve(null);
     });
 
-    this.setState({
-      carouselApplications: carouselApps,
-      currentCarouselIndex: 0,
-    }, () => {
-      if (this.state.enableAutoScroll && carouselApps.length > 0) {
-        this.startCarousel();
-      }
+    Promise.all(promises).then(apps => {
+      const validApps = apps.filter(app => app !== null);
+      this.setState({
+        carouselAppsData: validApps,
+        currentCarouselIndex: 0,
+      }, () => {
+        if (this.state.enableAutoScroll && validApps.length > 1) {
+          this.startCarousel();
+        }
+      });
     });
   }
 
   startCarousel() {
     this.stopCarousel();
-    if (this.state.carouselApplications.length > 0) {
+    if (this.state.carouselAppsData.length > 1) {
       this.carouselTimer = setInterval(() => {
         this.setState(prevState => ({
-          currentCarouselIndex: (prevState.currentCarouselIndex + 1) % prevState.carouselApplications.length,
-        }), () => {
-          this.loadCarouselApplication();
-        });
+          currentCarouselIndex: (prevState.currentCarouselIndex + 1) % prevState.carouselAppsData.length,
+        }));
       }, 5000);
     }
   }
@@ -297,31 +301,12 @@ class LoginPage extends React.Component {
     }
   }
 
-  loadCarouselApplication() {
-    if (this.state.carouselApplications.length === 0) {
-      return;
-    }
-    const currentApp = this.state.carouselApplications[this.state.currentCarouselIndex];
-    if (currentApp) {
-      ApplicationBackend.getApplication(currentApp.owner, currentApp.name)
-        .then((res) => {
-          if (res.status === "ok" && res.data) {
-            this.onUpdateApplication(res.data);
-          }
-        })
-        .catch(() => {
-          // Silently fail - carousel will continue to next application
-        });
-    }
-  }
-
-  handleCarouselAppChange(value) {
-    const index = this.state.carouselApplications.findIndex(app => app.id === value);
-    if (index !== -1) {
-      this.setState({currentCarouselIndex: index}, () => {
-        this.loadCarouselApplication();
-      });
-    }
+  handleCarouselAppChange(index) {
+    this.setState({currentCarouselIndex: index}, () => {
+      if (this.state.enableAutoScroll) {
+        this.startCarousel();
+      }
+    });
   }
 
   handleAutoScrollChange(checked) {
@@ -332,6 +317,14 @@ class LoginPage extends React.Component {
         this.stopCarousel();
       }
     });
+  }
+
+  getCurrentCarouselApp() {
+    const {carouselAppsData, currentCarouselIndex} = this.state;
+    if (carouselAppsData.length > 0 && currentCarouselIndex < carouselAppsData.length) {
+      return carouselAppsData[currentCarouselIndex];
+    }
+    return null;
   }
 
   getDefaultLoginMethod(application) {
@@ -1074,48 +1067,100 @@ class LoginPage extends React.Component {
     }
   }
 
-  renderCarouselControls(application) {
-    if (!this.state.carouselApplications || this.state.carouselApplications.length === 0) {
+  renderCarouselControls() {
+    const {carouselAppsData, currentCarouselIndex, enableAutoScroll} = this.state;
+    if (!carouselAppsData || carouselAppsData.length === 0) {
       return null;
     }
 
     const {Option} = Select;
-    const currentAppId = this.state.carouselApplications[this.state.currentCarouselIndex]?.id;
+    const totalApps = carouselAppsData.length;
+
+    const goToPrev = () => {
+      const newIndex = (currentCarouselIndex - 1 + totalApps) % totalApps;
+      this.handleCarouselAppChange(newIndex);
+    };
+
+    const goToNext = () => {
+      const newIndex = (currentCarouselIndex + 1) % totalApps;
+      this.handleCarouselAppChange(newIndex);
+    };
 
     return (
-      <div style={{marginBottom: "20px", padding: "10px", backgroundColor: "#f5f5f5", borderRadius: "8px"}}>
-        <div style={{marginBottom: "10px"}}>
-          <label style={{marginRight: "10px", fontWeight: "500"}}>
-            {i18next.t("application:Application")}:
-          </label>
+      <div style={{marginBottom: "20px", padding: "12px 15px", backgroundColor: "#f7f8fa", borderRadius: "8px", border: "1px solid #e8e8e8"}}>
+        <div style={{display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", marginBottom: "10px", flexWrap: "wrap"}}>
+          <Button
+            icon={<LeftOutlined />}
+            onClick={goToPrev}
+            disabled={totalApps <= 1}
+            shape="circle"
+            size="small"
+          />
           <Select
-            style={{width: Setting.isMobile() ? "100%" : "60%", minWidth: Setting.isMobile() ? "auto" : "200px"}}
-            value={currentAppId}
+            style={{minWidth: "180px", maxWidth: Setting.isMobile() ? "100%" : "250px", flex: 1}}
+            value={currentCarouselIndex}
             onChange={(value) => this.handleCarouselAppChange(value)}
           >
             {
-              this.state.carouselApplications.map((app, index) => (
-                <Option key={index} value={app.id}>
-                  {app.name}
+              carouselAppsData.map((app, index) => (
+                <Option key={index} value={index}>
+                  {app.displayName || app.name}
                 </Option>
               ))
             }
           </Select>
+          <Button
+            icon={<RightOutlined />}
+            onClick={goToNext}
+            disabled={totalApps <= 1}
+            shape="circle"
+            size="small"
+          />
         </div>
-        <div>
-          <label style={{marginRight: "10px", fontWeight: "500"}}>
-            {i18next.t("application:Enable auto scroll")}:
-          </label>
+        {totalApps > 1 && (
+          <div style={{display: "flex", justifyContent: "center", gap: "6px", marginBottom: "10px"}}>
+            {carouselAppsData.map((app, index) => (
+              <div
+                key={app.name}
+                onClick={() => this.handleCarouselAppChange(index)}
+                style={{
+                  width: 8,
+                  height: 8,
+                  borderRadius: "50%",
+                  backgroundColor: index === currentCarouselIndex ? "#5734d3" : "#d9d9d9",
+                  cursor: "pointer",
+                  transition: "background-color 0.3s",
+                }}
+              />
+            ))}
+          </div>
+        )}
+        <div style={{display: "flex", alignItems: "center", justifyContent: "center", gap: "8px"}}>
+          <span style={{fontSize: "13px", color: "#666"}}>
+            {i18next.t("application:Enable auto scroll")}
+          </span>
           <Switch
-            checked={this.state.enableAutoScroll}
+            size="small"
+            checked={enableAutoScroll}
             onChange={(checked) => this.handleAutoScrollChange(checked)}
           />
+          {enableAutoScroll && (
+            <span style={{fontSize: "12px", color: "#999"}}>
+              ({i18next.t("application:Every 5 seconds")})
+            </span>
+          )}
         </div>
       </div>
     );
   }
 
   renderForm(application) {
+    // Use carousel application data when active
+    const carouselApp = this.getCurrentCarouselApp();
+    if (carouselApp) {
+      application = carouselApp;
+    }
+
     if (this.state.msg !== null) {
       return Util.renderMessage(this.state.msg);
     }
@@ -1162,8 +1207,8 @@ class LoginPage extends React.Component {
 
       return (
         <>
-          {this.renderCarouselControls(application)}
           <Form
+            key={`login-form-${application.name}`}
             name="normal_login"
             initialValues={{
               organization: application.organization,
@@ -1588,6 +1633,7 @@ class LoginPage extends React.Component {
     } else {
       return (
         <React.Fragment>
+          {this.renderCarouselControls()}
           {this.renderSignedInBox()}
           {this.renderForm(application)}
         </React.Fragment>
