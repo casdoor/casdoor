@@ -72,7 +72,7 @@ func ValidateClientAssertion(assertion string, expectedAudience string) (string,
 		return "", fmt.Errorf("no client certificate configured for application: %s", application.Name)
 	}
 
-	clientCert, err := GetCert(application.ClientCert)
+	clientCert, err := getCertByName(application.ClientCert)
 	if err != nil {
 		return "", fmt.Errorf("failed to get client certificate: %v", err)
 	}
