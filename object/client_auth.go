@@ -25,7 +25,7 @@ import (
 
 const (
 	// OAuth2TokenEndpointPath is the standard OAuth 2.0 token endpoint path
-	OAuth2TokenEndpointPath = "/login/oauth/access_token"
+	OAuth2TokenEndpointPath = "/api/login/oauth/access_token"
 )
 
 // ClientAssertionClaims represents the claims in a client assertion JWT (RFC 7523)
