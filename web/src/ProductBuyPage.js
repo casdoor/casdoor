@@ -207,6 +207,7 @@ class ProductBuyPage extends React.Component {
           } else {
             const newProductInfo = {
               name: product.name,
+              createdTime: new Date().toISOString(),
               price: cartPrice,
               currency: product.currency,
               pricingName: pricingName,

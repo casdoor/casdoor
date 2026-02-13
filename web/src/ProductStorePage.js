@@ -140,6 +140,7 @@ class ProductStorePage extends React.Component {
           } else {
             const newCartProductInfo = {
               name: product.name,
+              createdTime: new Date().toISOString(),
               currency: product.currency,
               pricingName: "",
               planName: "",
