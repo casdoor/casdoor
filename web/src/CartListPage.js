@@ -124,7 +124,7 @@ class CartListPage extends BaseListPage {
 
     const index = user.cart.findIndex(item =>
       item.name === record.name &&
-      (record.price !== null ? item.price === record.price : true) &&
+      (record.isRecharge ? item.price === record.price : true) &&
       (item.pricingName || "") === (record.pricingName || "") &&
       (item.planName || "") === (record.planName || ""));
     if (index === -1) {
