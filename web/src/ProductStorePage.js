@@ -144,6 +144,7 @@ class ProductStorePage extends React.Component {
               pricingName: "",
               planName: "",
               quantity: quantityToAdd,
+              addTime: new Date().toISOString(),
             };
             cart.push(newCartProductInfo);
           }

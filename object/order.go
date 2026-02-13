@@ -58,6 +58,7 @@ type ProductInfo struct {
 	Quantity    int     `json:"quantity,omitempty"`
 	PricingName string  `json:"pricingName,omitempty"`
 	PlanName    string  `json:"planName,omitempty"`
+	AddTime     string  `json:"addTime,omitempty"`
 }
 
 func GetOrderCount(owner, field, value string) (int64, error) {

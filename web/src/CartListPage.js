@@ -124,7 +124,7 @@ class CartListPage extends BaseListPage {
 
     const index = user.cart.findIndex(item =>
       item.name === record.name &&
-      (record.price !== null ? item.price === record.price : true) &&
+      (record.isRecharge ? item.price === record.price : true) &&
       (item.pricingName || "") === (record.pricingName || "") &&
       (item.planName || "") === (record.planName || ""));
     if (index === -1) {
@@ -259,6 +259,19 @@ class CartListPage extends BaseListPage {
             return <span style={{color: "red"}}>{i18next.t("product:Invalid product")}</span>;
           }
           return text;
+        },
+      },
+      {
+        title: i18next.t("general:Created time"),
+        dataIndex: "createTime",
+        key: "createTime",
+        width: "160px",
+        sorter: true,
+        render: (text, record) => {
+          if (!text) {
+            return null;
+          }
+          return Setting.getFormattedDate(text);
         },
       },
       {
@@ -449,6 +462,7 @@ class CartListPage extends BaseListPage {
                     planName: item.planName,
                     quantity: item.quantity,
                     price: pRes.data.isRecharge ? item.price : pRes.data.price,
+                    createTime: item.addTime,
                     isInvalid: isCurrencyChanged,
                   };
                 }
@@ -481,6 +495,12 @@ class CartListPage extends BaseListPage {
 
               const comparison = aValue > bValue ? 1 : -1;
               return params.sortOrder === "ascend" ? comparison : -comparison;
+            });
+          } else {
+            sortedData.sort((a, b) => {
+              const aTime = new Date(a.createTime || 0).getTime();
+              const bTime = new Date(b.createTime || 0).getTime();
+              return bTime - aTime;
             });
           }
 
