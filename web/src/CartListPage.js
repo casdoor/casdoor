@@ -15,7 +15,6 @@
 import React from "react";
 import {Link} from "react-router-dom";
 import {Button, Table} from "antd";
-import moment from "moment";
 import * as Setting from "./Setting";
 import * as UserBackend from "./backend/UserBackend";
 import * as OrderBackend from "./backend/OrderBackend";
