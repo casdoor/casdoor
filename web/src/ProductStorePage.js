@@ -14,6 +14,7 @@
 
 import React from "react";
 import {Button, Card, Col, Row, Tag, Typography} from "antd";
+import moment from "moment";
 import * as Setting from "./Setting";
 import * as ProductBackend from "./backend/ProductBackend";
 import * as UserBackend from "./backend/UserBackend";
@@ -140,6 +141,7 @@ class ProductStorePage extends React.Component {
           } else {
             const newCartProductInfo = {
               name: product.name,
+              createdTime: moment().format(),
               currency: product.currency,
               pricingName: "",
               planName: "",

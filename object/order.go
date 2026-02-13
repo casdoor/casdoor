@@ -49,6 +49,7 @@ type Order struct {
 type ProductInfo struct {
 	Owner       string  `json:"owner"`
 	Name        string  `json:"name"`
+	CreatedTime string  `json:"createdTime,omitempty"`
 	DisplayName string  `json:"displayName"`
 	Image       string  `json:"image,omitempty"`
 	Detail      string  `json:"detail,omitempty"`
