@@ -737,6 +737,38 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, allowDis
 		}
 	}
 
+	if oldUser.BalanceCredit != newUser.BalanceCredit {
+		item := GetAccountItemByName("Balance credit", organization)
+		if !userVisible(isAdmin, item) {
+			newUser.BalanceCredit = oldUser.BalanceCredit
+		} else {
+			itemsChanged = append(itemsChanged, item)
+		}
+	}
+
+	if oldUser.BalanceCurrency != newUser.BalanceCurrency {
+		item := GetAccountItemByName("Balance currency", organization)
+		if !userVisible(isAdmin, item) {
+			newUser.BalanceCurrency = oldUser.BalanceCurrency
+		} else {
+			itemsChanged = append(itemsChanged, item)
+		}
+	}
+
+	oldUserCartJson, _ := json.Marshal(oldUser.Cart)
+	if newUser.Cart == nil {
+		newUser.Cart = []ProductInfo{}
+	}
+	newUserCartJson, _ := json.Marshal(newUser.Cart)
+	if string(oldUserCartJson) != string(newUserCartJson) {
+		item := GetAccountItemByName("Cart", organization)
+		if !userVisible(isAdmin, item) {
+			newUser.Cart = oldUser.Cart
+		} else {
+			itemsChanged = append(itemsChanged, item)
+		}
+	}
+
 	if oldUser.Score != newUser.Score {
 		item := GetAccountItemByName("Score", organization)
 		if !userVisible(isAdmin, item) {

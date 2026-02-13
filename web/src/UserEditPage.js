@@ -48,6 +48,7 @@ import FaceIdTable from "./table/FaceIdTable";
 import MfaAccountTable from "./table/MfaAccountTable";
 import MfaTable from "./table/MfaTable";
 import TransactionTable from "./table/TransactionTable";
+import CartTable from "./table/CartTable";
 import * as TransactionBackend from "./backend/TransactionBackend";
 import {Content, Header} from "antd/es/layout/layout";
 import Sider from "antd/es/layout/Sider";
@@ -858,6 +859,17 @@ class UserEditPage extends React.Component {
                 Setting.CurrencyOptions.map((item, index) => <Option key={index} value={item.id}>{Setting.getCurrencyWithFlag(item.id)}</Option>)
               }
             </Select>
+          </Col>
+        </Row>
+      );
+    } else if (accountItem.name === "Cart") {
+      return (
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("general:Cart"), i18next.t("general:Cart"))} :
+          </Col>
+          <Col span={22}>
+            <CartTable cart={this.state.user.cart} />
           </Col>
         </Row>
       );

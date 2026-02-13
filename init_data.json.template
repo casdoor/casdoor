@@ -100,7 +100,11 @@
         {"name": "Multi-factor authentication", "visible": true, "viewRule": "Self", "modifyRule": "Self"},
         {"name": "WebAuthn credentials", "visible": true, "viewRule": "Self", "modifyRule": "Self"},
         {"name": "Managed accounts", "visible": true, "viewRule": "Self", "modifyRule": "Self"},
-        {"name": "MFA accounts", "visible": true, "viewRule": "Self", "modifyRule": "Self"}
+        {"name": "MFA accounts", "visible": true, "viewRule": "Self", "modifyRule": "Self"},
+        {"name": "Balance", "visible": true, "viewRule": "Self", "modifyRule": "Self"},
+        {"name": "Balance credit", "visible": true, "viewRule": "Self", "modifyRule": "Self"},
+        {"name": "Balance currency", "visible": true, "viewRule": "Self", "modifyRule": "Self"},
+        {"name": "Cart", "visible": true, "viewRule": "Self", "modifyRule": "Self"}
       ]
     }
   ],
