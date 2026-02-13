@@ -564,10 +564,11 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, allowDis
 			itemsChanged = append(itemsChanged, item)
 		}
 	}
-	if oldUser.SignupApplication != newUser.SignupApplication {
-		item := GetAccountItemByName("Signup application", organization)
+
+	if oldUser.Language != newUser.Language {
+		item := GetAccountItemByName("Language", organization)
 		if !userVisible(isAdmin, item) {
-			newUser.SignupApplication = oldUser.SignupApplication
+			newUser.Language = oldUser.Language
 		} else {
 			itemsChanged = append(itemsChanged, item)
 		}
@@ -595,6 +596,83 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, allowDis
 		item := GetAccountItemByName("Education", organization)
 		if !userVisible(isAdmin, item) {
 			newUser.Education = oldUser.Education
+		} else {
+			itemsChanged = append(itemsChanged, item)
+		}
+	}
+
+	if oldUser.Balance != newUser.Balance {
+		item := GetAccountItemByName("Balance", organization)
+		if !userVisible(isAdmin, item) {
+			newUser.Balance = oldUser.Balance
+		} else {
+			itemsChanged = append(itemsChanged, item)
+		}
+	}
+
+	if oldUser.BalanceCredit != newUser.BalanceCredit {
+		item := GetAccountItemByName("Balance credit", organization)
+		if !userVisible(isAdmin, item) {
+			newUser.BalanceCredit = oldUser.BalanceCredit
+		} else {
+			itemsChanged = append(itemsChanged, item)
+		}
+	}
+
+	if oldUser.BalanceCurrency != newUser.BalanceCurrency {
+		item := GetAccountItemByName("Balance currency", organization)
+		if !userVisible(isAdmin, item) {
+			newUser.BalanceCurrency = oldUser.BalanceCurrency
+		} else {
+			itemsChanged = append(itemsChanged, item)
+		}
+	}
+
+	oldUserCartJson, _ := json.Marshal(oldUser.Cart)
+	if newUser.Cart == nil {
+		newUser.Cart = []ProductInfo{}
+	}
+	newUserCartJson, _ := json.Marshal(newUser.Cart)
+	if string(oldUserCartJson) != string(newUserCartJson) {
+		item := GetAccountItemByName("Cart", organization)
+		if !userVisible(isAdmin, item) {
+			newUser.Cart = oldUser.Cart
+		} else {
+			itemsChanged = append(itemsChanged, item)
+		}
+	}
+
+	if oldUser.Score != newUser.Score {
+		item := GetAccountItemByName("Score", organization)
+		if !userVisible(isAdmin, item) {
+			newUser.Score = oldUser.Score
+		} else {
+			itemsChanged = append(itemsChanged, item)
+		}
+	}
+
+	if oldUser.Karma != newUser.Karma {
+		item := GetAccountItemByName("Karma", organization)
+		if !userVisible(isAdmin, item) {
+			newUser.Karma = oldUser.Karma
+		} else {
+			itemsChanged = append(itemsChanged, item)
+		}
+	}
+
+	if oldUser.Ranking != newUser.Ranking {
+		item := GetAccountItemByName("Ranking", organization)
+		if !userVisible(isAdmin, item) {
+			newUser.Ranking = oldUser.Ranking
+		} else {
+			itemsChanged = append(itemsChanged, item)
+		}
+	}
+
+	if oldUser.SignupApplication != newUser.SignupApplication {
+		item := GetAccountItemByName("Signup application", organization)
+		if !userVisible(isAdmin, item) {
+			newUser.SignupApplication = oldUser.SignupApplication
 		} else {
 			itemsChanged = append(itemsChanged, item)
 		}
@@ -723,83 +801,6 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, allowDis
 		item := GetAccountItemByName("IP whitelist", organization)
 		if !userVisible(isAdmin, item) {
 			newUser.IpWhitelist = oldUser.IpWhitelist
-		} else {
-			itemsChanged = append(itemsChanged, item)
-		}
-	}
-
-	if oldUser.Balance != newUser.Balance {
-		item := GetAccountItemByName("Balance", organization)
-		if !userVisible(isAdmin, item) {
-			newUser.Balance = oldUser.Balance
-		} else {
-			itemsChanged = append(itemsChanged, item)
-		}
-	}
-
-	if oldUser.BalanceCredit != newUser.BalanceCredit {
-		item := GetAccountItemByName("Balance credit", organization)
-		if !userVisible(isAdmin, item) {
-			newUser.BalanceCredit = oldUser.BalanceCredit
-		} else {
-			itemsChanged = append(itemsChanged, item)
-		}
-	}
-
-	if oldUser.BalanceCurrency != newUser.BalanceCurrency {
-		item := GetAccountItemByName("Balance currency", organization)
-		if !userVisible(isAdmin, item) {
-			newUser.BalanceCurrency = oldUser.BalanceCurrency
-		} else {
-			itemsChanged = append(itemsChanged, item)
-		}
-	}
-
-	oldUserCartJson, _ := json.Marshal(oldUser.Cart)
-	if newUser.Cart == nil {
-		newUser.Cart = []ProductInfo{}
-	}
-	newUserCartJson, _ := json.Marshal(newUser.Cart)
-	if string(oldUserCartJson) != string(newUserCartJson) {
-		item := GetAccountItemByName("Cart", organization)
-		if !userVisible(isAdmin, item) {
-			newUser.Cart = oldUser.Cart
-		} else {
-			itemsChanged = append(itemsChanged, item)
-		}
-	}
-
-	if oldUser.Score != newUser.Score {
-		item := GetAccountItemByName("Score", organization)
-		if !userVisible(isAdmin, item) {
-			newUser.Score = oldUser.Score
-		} else {
-			itemsChanged = append(itemsChanged, item)
-		}
-	}
-
-	if oldUser.Karma != newUser.Karma {
-		item := GetAccountItemByName("Karma", organization)
-		if !userVisible(isAdmin, item) {
-			newUser.Karma = oldUser.Karma
-		} else {
-			itemsChanged = append(itemsChanged, item)
-		}
-	}
-
-	if oldUser.Language != newUser.Language {
-		item := GetAccountItemByName("Language", organization)
-		if !userVisible(isAdmin, item) {
-			newUser.Language = oldUser.Language
-		} else {
-			itemsChanged = append(itemsChanged, item)
-		}
-	}
-
-	if oldUser.Ranking != newUser.Ranking {
-		item := GetAccountItemByName("Ranking", organization)
-		if !userVisible(isAdmin, item) {
-			newUser.Ranking = oldUser.Ranking
 		} else {
 			itemsChanged = append(itemsChanged, item)
 		}

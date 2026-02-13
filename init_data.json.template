@@ -86,6 +86,18 @@
         {"name": "Homepage", "visible": true, "viewRule": "Public", "modifyRule": "Self"},
         {"name": "Bio", "visible": true, "viewRule": "Public", "modifyRule": "Self"},
         {"name": "Tag", "visible": true, "viewRule": "Public", "modifyRule": "Admin"},
+        {"name": "Language", "visible": true, "viewRule": "Public", "modifyRule": "Self"},
+        {"name": "Gender", "visible": true, "viewRule": "Public", "modifyRule": "Self"},
+        {"name": "Birthday", "visible": true, "viewRule": "Public", "modifyRule": "Self"},
+        {"name": "Education", "visible": true, "viewRule": "Public", "modifyRule": "Self"},
+        {"name": "Balance", "visible": true, "viewRule": "Self", "modifyRule": "Self"},
+        {"name": "Balance credit", "visible": true, "viewRule": "Self", "modifyRule": "Self"},
+        {"name": "Balance currency", "visible": true, "viewRule": "Self", "modifyRule": "Self"},
+        {"name": "Cart", "visible": true, "viewRule": "Self", "modifyRule": "Self"},
+        {"name": "Transactions", "visible": true, "viewRule": "Self", "modifyRule": "Self"},
+        {"name": "Score", "visible": true, "viewRule": "Public", "modifyRule": "Self"},
+        {"name": "Karma", "visible": true, "viewRule": "Public", "modifyRule": "Self"},
+        {"name": "Ranking", "visible": true, "viewRule": "Public", "modifyRule": "Self"},
         {"name": "Signup application", "visible": true, "viewRule": "Public", "modifyRule": "Admin"},
         {"name": "Register type", "visible": true, "viewRule": "Public", "modifyRule": "Admin"},
         {"name": "Register source", "visible": true, "viewRule": "Public", "modifyRule": "Admin"},
@@ -100,11 +112,7 @@
         {"name": "Multi-factor authentication", "visible": true, "viewRule": "Self", "modifyRule": "Self"},
         {"name": "WebAuthn credentials", "visible": true, "viewRule": "Self", "modifyRule": "Self"},
         {"name": "Managed accounts", "visible": true, "viewRule": "Self", "modifyRule": "Self"},
-        {"name": "MFA accounts", "visible": true, "viewRule": "Self", "modifyRule": "Self"},
-        {"name": "Balance", "visible": true, "viewRule": "Self", "modifyRule": "Self"},
-        {"name": "Balance credit", "visible": true, "viewRule": "Self", "modifyRule": "Self"},
-        {"name": "Balance currency", "visible": true, "viewRule": "Self", "modifyRule": "Self"},
-        {"name": "Cart", "visible": true, "viewRule": "Self", "modifyRule": "Self"}
+        {"name": "MFA accounts", "visible": true, "viewRule": "Self", "modifyRule": "Self"}
       ]
     }
   ],
