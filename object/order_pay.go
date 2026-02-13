@@ -276,7 +276,7 @@ func PayOrder(providerName, host, paymentEnv string, order *Order, lang string) 
 		OutOrderId: payResp.OrderId,
 	}
 
-	if provider.Type == "Dummy" || provider.Type == "Balance" {
+	if provider.Type == "Balance" {
 		payment.State = pp.PaymentStatePaid
 	}
 
@@ -351,7 +351,7 @@ func PayOrder(providerName, host, paymentEnv string, order *Order, lang string) 
 	}
 
 	order.Payment = payment.Name
-	if provider.Type == "Dummy" || provider.Type == "Balance" {
+	if provider.Type == "Balance" {
 		order.State = "Paid"
 		order.Message = "Payment successful"
 		order.UpdateTime = util.GetCurrentTime()
@@ -364,7 +364,7 @@ func PayOrder(providerName, host, paymentEnv string, order *Order, lang string) 
 	}
 
 	// Update product stock after order state is persisted (for instant payment methods)
-	if provider.Type == "Dummy" || provider.Type == "Balance" {
+	if provider.Type == "Balance" {
 		err = UpdateProductStock(orderProductInfos)
 		if err != nil {
 			return nil, nil, err
