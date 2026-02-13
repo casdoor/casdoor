@@ -443,7 +443,7 @@ func (p *DingtalkSyncerProvider) dingtalkUserToOriginalUser(dingtalkUser *Dingta
 	}
 
 	// Apply TableColumns mapping if configured
-	if p.Syncer.TableColumns != nil && len(p.Syncer.TableColumns) > 0 {
+	if len(p.Syncer.TableColumns) > 0 {
 		for _, tableColumn := range p.Syncer.TableColumns {
 			value := p.getDingtalkUserFieldValue(dingtalkUser, tableColumn.Name)
 			p.Syncer.setUserByKeyValue(user, tableColumn.CasdoorName, value)
