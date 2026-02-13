@@ -406,36 +406,67 @@ func (p *DingtalkSyncerProvider) getDingtalkUsers() ([]*OriginalUser, error) {
 	return originalUsers, nil
 }
 
+// getDingtalkUserFieldValue extracts a field value from DingtalkUser by field name
+func (p *DingtalkSyncerProvider) getDingtalkUserFieldValue(dingtalkUser *DingtalkUser, fieldName string) string {
+	switch fieldName {
+	case "userid":
+		return dingtalkUser.UserId
+	case "unionid":
+		return dingtalkUser.UnionId
+	case "name":
+		return dingtalkUser.Name
+	case "email":
+		return dingtalkUser.Email
+	case "mobile":
+		return dingtalkUser.Mobile
+	case "avatar":
+		return dingtalkUser.Avatar
+	case "title":
+		return dingtalkUser.Position
+	case "job_number":
+		return dingtalkUser.JobNumber
+	case "active":
+		// Invert the boolean because active=true means NOT forbidden
+		return util.BoolToString(!dingtalkUser.Active)
+	default:
+		return ""
+	}
+}
+
 // dingtalkUserToOriginalUser converts DingTalk user to Casdoor OriginalUser
 func (p *DingtalkSyncerProvider) dingtalkUserToOriginalUser(dingtalkUser *DingtalkUser) *OriginalUser {
-	// Use unionid as name to be consistent with OAuth provider
-	// Fallback to userId if unionid is not available
-	userName := dingtalkUser.UserId
-	if dingtalkUser.UnionId != "" {
-		userName = dingtalkUser.UnionId
+	user := &OriginalUser{
+		Address:    []string{},
+		Properties: map[string]string{},
+		Groups:     []string{},
+		DingTalk:   dingtalkUser.UserId, // Link DingTalk provider account
 	}
 
-	user := &OriginalUser{
-		Id:          dingtalkUser.UserId,
-		Name:        userName,
-		DisplayName: dingtalkUser.Name,
-		Email:       dingtalkUser.Email,
-		Phone:       dingtalkUser.Mobile,
-		Avatar:      dingtalkUser.Avatar,
-		Title:       dingtalkUser.Position,
-		Address:     []string{},
-		Properties:  map[string]string{},
-		Groups:      []string{},
-		DingTalk:    dingtalkUser.UserId, // Link DingTalk provider account
+	// Apply TableColumns mapping if configured
+	if p.Syncer.TableColumns != nil && len(p.Syncer.TableColumns) > 0 {
+		for _, tableColumn := range p.Syncer.TableColumns {
+			value := p.getDingtalkUserFieldValue(dingtalkUser, tableColumn.Name)
+			p.Syncer.setUserByKeyValue(user, tableColumn.CasdoorName, value)
+		}
+	} else {
+		// Fallback to default mapping for backward compatibility
+		user.Id = dingtalkUser.UserId
+		user.Name = dingtalkUser.UserId
+		if dingtalkUser.UnionId != "" {
+			user.Name = dingtalkUser.UnionId
+		}
+		user.DisplayName = dingtalkUser.Name
+		user.Email = dingtalkUser.Email
+		user.Phone = dingtalkUser.Mobile
+		user.Avatar = dingtalkUser.Avatar
+		user.Title = dingtalkUser.Position
+		user.IsForbidden = !dingtalkUser.Active
 	}
 
 	// Add department IDs to Groups field
 	for _, deptId := range dingtalkUser.Department {
 		user.Groups = append(user.Groups, fmt.Sprintf("%d", deptId))
 	}
-
-	// Set IsForbidden based on active status (active=false means user is forbidden)
-	user.IsForbidden = !dingtalkUser.Active
 
 	// Set CreatedTime to current time if not set
 	if user.CreatedTime == "" {
