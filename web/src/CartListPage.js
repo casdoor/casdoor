@@ -15,6 +15,7 @@
 import React from "react";
 import {Link} from "react-router-dom";
 import {Button, Table} from "antd";
+import moment from "moment";
 import * as Setting from "./Setting";
 import * as UserBackend from "./backend/UserBackend";
 import * as OrderBackend from "./backend/OrderBackend";
@@ -487,8 +488,8 @@ class CartListPage extends BaseListPage {
             // Default sorting by createdTime in descending order (newest first)
             // Items without createdTime (legacy items) are assigned an old timestamp to appear at the bottom
             sortedData.sort((a, b) => {
-              const aTime = a.createdTime || "1970-01-01T00:00:00Z";
-              const bTime = b.createdTime || "1970-01-01T00:00:00Z";
+              const aTime = a.createdTime || moment("1970-01-01").format();
+              const bTime = b.createdTime || moment("1970-01-01").format();
               
               // Descending order: newer items (larger timestamps) come first
               // ISO 8601 strings can be compared directly

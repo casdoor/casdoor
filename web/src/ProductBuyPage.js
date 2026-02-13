@@ -14,6 +14,7 @@
 
 import React from "react";
 import {Button, Descriptions, Divider, InputNumber, Radio, Space, Spin, Typography} from "antd";
+import moment from "moment";
 import i18next from "i18next";
 import * as ProductBackend from "./backend/ProductBackend";
 import * as PlanBackend from "./backend/PlanBackend";
@@ -207,7 +208,7 @@ class ProductBuyPage extends React.Component {
           } else {
             const newProductInfo = {
               name: product.name,
-              createdTime: new Date().toISOString(),
+              createdTime: moment().format(),
               price: cartPrice,
               currency: product.currency,
               pricingName: pricingName,
