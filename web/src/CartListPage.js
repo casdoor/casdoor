@@ -445,6 +445,7 @@ class CartListPage extends BaseListPage {
                   }
                   return {
                     ...pRes.data,
+                    createdTime: item.createdTime,
                     pricingName: item.pricingName,
                     planName: item.planName,
                     quantity: item.quantity,
@@ -481,6 +482,10 @@ class CartListPage extends BaseListPage {
 
               const comparison = aValue > bValue ? 1 : -1;
               return params.sortOrder === "ascend" ? comparison : -comparison;
+            });
+          } else {
+            sortedData.sort((a, b) => {
+              return b.createdTime - a.createdTime;
             });
           }
 
