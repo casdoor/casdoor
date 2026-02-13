@@ -485,15 +485,16 @@ class CartListPage extends BaseListPage {
             });
           } else {
             // Default sorting by createdTime in descending order (newest first)
+            // Items without createdTime (legacy items) are assigned an old timestamp to appear at the bottom
             sortedData.sort((a, b) => {
-              const aTime = a.createdTime || "";
-              const bTime = b.createdTime || "";
+              const aTime = a.createdTime || "1970-01-01T00:00:00Z";
+              const bTime = b.createdTime || "1970-01-01T00:00:00Z";
               
-              if (aTime === bTime) {
-                return 0;
-              }
-              
-              return aTime > bTime ? -1 : 1;
+              // Descending order: newer items (larger timestamps) come first
+              // ISO 8601 strings can be compared directly
+              if (bTime > aTime) return 1;
+              if (bTime < aTime) return -1;
+              return 0;
             });
           }
 
