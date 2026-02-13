@@ -18,10 +18,6 @@ import i18next from "i18next";
 import * as Setting from "../Setting";
 
 class CartTable extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     const columns = [
       {
