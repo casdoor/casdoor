@@ -487,9 +487,10 @@ class CartListPage extends BaseListPage {
           } else {
             // Default sorting by createdTime in descending order (newest first)
             // Items without createdTime (legacy items) are assigned an old timestamp to appear at the bottom
+            const fallbackTime = moment("1970-01-01").format();
             sortedData.sort((a, b) => {
-              const aTime = a.createdTime || moment("1970-01-01").format();
-              const bTime = b.createdTime || moment("1970-01-01").format();
+              const aTime = a.createdTime || fallbackTime;
+              const bTime = b.createdTime || fallbackTime;
               
               // Descending order: newer items (larger timestamps) come first
               // ISO 8601 strings can be compared directly
