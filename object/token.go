@@ -43,6 +43,9 @@ type Token struct {
 	CodeChallenge    string `xorm:"varchar(100)" json:"codeChallenge"`
 	CodeIsUsed       bool   `json:"codeIsUsed"`
 	CodeExpireIn     int64  `json:"codeExpireIn"`
+
+	// RFC 8705 - Certificate-Bound Access Tokens
+	CertFingerprint string `xorm:"varchar(200)" json:"certFingerprint,omitempty"`
 }
 
 func GetTokenCount(owner, organization, field, value string) (int64, error) {

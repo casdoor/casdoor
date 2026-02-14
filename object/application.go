@@ -144,6 +144,11 @@ type Application struct {
 	FailedSigninLimit      int `json:"failedSigninLimit"`
 	FailedSigninFrozenTime int `json:"failedSigninFrozenTime"`
 	CodeResendTimeout      int `json:"codeResendTimeout"`
+
+	// mTLS (RFC 8705) configuration
+	EnableMtls               bool     `json:"enableMtls"`
+	MtlsAuthMethod           string   `xorm:"varchar(100)" json:"mtlsAuthMethod"`
+	AllowedClientCertIssuers []string `xorm:"varchar(1000)" json:"allowedClientCertIssuers"`
 }
 
 func GetApplicationCount(owner, field, value string) (int64, error) {

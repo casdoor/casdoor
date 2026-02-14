@@ -275,7 +275,25 @@ func (c *ApiController) GetOAuthToken() {
 	}
 
 	host := c.Ctx.Request.Host
-	token, err := object.GetOAuthToken(grantType, clientId, clientSecret, code, verifier, scope, nonce, username, password, host, refreshToken, tag, avatar, c.GetAcceptLanguage(), subjectToken, subjectTokenType, audience)
+	
+	// Check for mTLS authentication (RFC 8705)
+	var certFingerprint string
+	cert, err := object.GetClientCertificate(c.Ctx.Request)
+	if err == nil && cert != nil {
+		// Client certificate is present, check if application supports mTLS
+		application, _ := object.GetApplicationByClientId(clientId)
+		if application != nil && object.IsMtlsEnabled(application) {
+			// Validate the certificate
+			certValidated, err := object.ValidateMtlsRequest(c.Ctx.Request, application)
+			if err == nil && certValidated != nil {
+				certFingerprint = object.GetCertificateFingerprint(certValidated)
+				// For mTLS client authentication, we can skip client_secret validation
+				// This is handled in the token generation functions
+			}
+		}
+	}
+	
+	token, err := object.GetOAuthTokenWithCert(grantType, clientId, clientSecret, code, verifier, scope, nonce, username, password, host, refreshToken, tag, avatar, c.GetAcceptLanguage(), subjectToken, subjectTokenType, audience, certFingerprint)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

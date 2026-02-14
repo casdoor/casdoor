@@ -108,6 +108,17 @@ func AutoSigninFilter(ctx *context.Context) {
 		return
 	}
 
+	// mTLS client certificate authentication (RFC 8705)
+	userId, err = getUsernameByClientCert(ctx)
+	if err != nil {
+		responseError(ctx, err.Error())
+		return
+	}
+	if userId != "" {
+		setSessionUser(ctx, userId)
+		return
+	}
+
 	// "/page?username=built-in/admin&password=123"
 	userId = ctx.Input.Query("username")
 	password := ctx.Input.Query("password")

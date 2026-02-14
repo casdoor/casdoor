@@ -142,6 +142,44 @@ func getUsernameByKeys(ctx *context.Context) (string, error) {
 	return user.GetId(), nil
 }
 
+func getUsernameByClientCert(ctx *context.Context) (string, error) {
+	// Get client ID from query or header
+	clientId := ctx.Input.Query("clientId")
+	if clientId == "" {
+		clientId, _, _ = ctx.Request.BasicAuth()
+	}
+
+	if clientId == "" {
+		return "", nil
+	}
+
+	application, err := object.GetApplicationByClientId(clientId)
+	if err != nil {
+		return "", err
+	}
+	if application == nil {
+		return "", nil
+	}
+
+	// Check if mTLS is enabled for this application
+	if !object.IsMtlsEnabled(application) {
+		return "", nil
+	}
+
+	// Validate client certificate
+	cert, err := object.ValidateMtlsRequest(ctx.Request, application)
+	if err != nil {
+		return "", err
+	}
+
+	if cert == nil {
+		return "", nil
+	}
+
+	// Successfully authenticated via mTLS
+	return fmt.Sprintf("app/%s", application.Name), nil
+}
+
 func getSessionUser(ctx *context.Context) string {
 	user := ctx.Input.CruSession.Get(stdcontext.Background(), "username")
 	if user == nil {
