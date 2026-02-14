@@ -85,6 +85,231 @@ const template = `<style>
   }
 </style>`;
 
+// Qoder-style dark theme template (similar to https://qoder.com/users/sign-in)
+// Click the "Load Qoder Template" button in Custom CSS field to apply this template
+const qoderTemplate = `<style>
+  /* Dark background for the entire page */
+  .loginBackground,
+  .loginBackgroundDark {
+    background-color: #0d0d0d !important;
+    min-height: 100vh;
+  }
+
+  /* Centered login panel with dark card style */
+  .login-panel,
+  .login-panel-dark {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 50px 50px 40px 50px;
+    background-color: #1a1a1a;
+    border-radius: 16px;
+    border: 1px solid #2a2a2a;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  }
+
+  /* Logo styling */
+  .login-logo-box {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .panel-logo img {
+    max-width: 60px;
+    margin-bottom: 10px;
+  }
+
+  /* Sign in heading */
+  .login-form > div > h1,
+  .login-form > div > h2 {
+    color: #ffffff;
+    font-size: 28px;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 30px;
+  }
+
+  /* Provider buttons (OAuth) */
+  .provider-big-img {
+    margin-bottom: 15px;
+  }
+
+  .provider-big-img button {
+    width: 100%;
+    height: 48px;
+    background-color: #2a2a2a;
+    border: 1px solid #3a3a3a;
+    border-radius: 8px;
+    color: #ffffff;
+    font-size: 15px;
+    transition: all 0.2s;
+  }
+
+  .provider-big-img button:hover {
+    background-color: #333333;
+    border-color: #4a4a4a;
+  }
+
+  /* OR divider */
+  .signin-methods {
+    text-align: center;
+    margin: 25px 0;
+    position: relative;
+  }
+
+  .signin-methods::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 100%;
+    height: 1px;
+    background: #3a3a3a;
+  }
+
+  .signin-methods .ant-tabs-nav {
+    display: none;
+  }
+
+  /* Input fields */
+  .login-username,
+  .login-password,
+  .verification-code {
+    margin-bottom: 20px;
+  }
+
+  .login-username label,
+  .login-password label,
+  .verification-code label {
+    color: #cccccc;
+    font-size: 14px;
+    font-weight: 500;
+    display: block;
+    margin-bottom: 8px;
+    text-align: left;
+  }
+
+  .login-username-input input,
+  .login-password-input input,
+  .verification-code-input input {
+    width: 100%;
+    height: 48px;
+    background-color: #2a2a2a;
+    border: 1px solid #3a3a3a;
+    border-radius: 8px;
+    color: #ffffff;
+    font-size: 15px;
+    padding: 0 16px;
+    transition: all 0.2s;
+  }
+
+  .login-username-input input:hover,
+  .login-password-input input:hover,
+  .verification-code-input input:hover {
+    border-color: #4a4a4a;
+  }
+
+  .login-username-input input:focus,
+  .login-password-input input:focus,
+  .verification-code-input input:focus {
+    background-color: #2a2a2a;
+    border-color: #00d084;
+    box-shadow: 0 0 0 2px rgba(0, 208, 132, 0.1);
+  }
+
+  .login-username-input input::placeholder,
+  .login-password-input input::placeholder,
+  .verification-code-input input::placeholder {
+    color: #666666;
+  }
+
+  /* Login/Continue button */
+  .login-button-box {
+    margin-bottom: 20px;
+    margin-top: 25px;
+  }
+
+  .login-button {
+    width: 100%;
+    height: 48px;
+    background-color: #00d084;
+    border: none;
+    border-radius: 8px;
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .login-button:hover {
+    background-color: #00b872;
+  }
+
+  .login-button:active {
+    background-color: #00a066;
+  }
+
+  /* Signup link */
+  .login-signup-link {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .login-signup-link a {
+    color: #ffffff;
+    font-size: 14px;
+  }
+
+  .login-signup-link a:hover {
+    color: #00d084;
+  }
+
+  /* Forgot password */
+  .login-forget-password {
+    text-align: left;
+    margin-bottom: 20px;
+  }
+
+  .login-forget-password a {
+    color: #888888;
+    font-size: 14px;
+  }
+
+  .login-forget-password a:hover {
+    color: #00d084;
+  }
+
+  /* Language selector */
+  .login-languages {
+    top: 20px;
+    right: 20px;
+  }
+
+  /* Agreement checkbox */
+  .login-agreement {
+    text-align: left;
+    margin-bottom: 20px;
+    color: #888888;
+  }
+
+  .login-agreement a {
+    color: #ffffff;
+  }
+
+  .login-agreement a:hover {
+    color: #00d084;
+  }
+
+  /* Mobile responsive */
+  @media (max-width: 768px) {
+    .login-panel,
+    .login-panel-dark {
+      margin: 20px;
+      padding: 40px 30px 30px 30px;
+    }
+  }
+</style>`;
+
 const previewGrid = Setting.isMobile() ? 22 : 11;
 const previewWidth = Setting.isMobile() ? "110%" : "90%";
 
@@ -254,6 +479,11 @@ class ApplicationEditPage extends React.Component {
     this.setState({
       application: application,
     });
+  }
+
+  loadQoderTemplate(fieldName) {
+    this.updateApplicationField(fieldName, qoderTemplate);
+    message.success(i18next.t("application:Qoder template loaded successfully"));
   }
 
   handleUpload(info) {
@@ -1053,23 +1283,35 @@ class ApplicationEditPage extends React.Component {
               {Setting.getLabel(i18next.t("application:Custom CSS"), i18next.t("application:Custom CSS - Tooltip"))} :
             </Col>
             <Col span={21}>
-              <Popover placement="right" content={
-                <div style={{width: "900px", height: "300px"}} >
-                  <Editor
-                    value={this.state.application.formCss === "" ? template : this.state.application.formCss}
-                    lang="css"
-                    fillHeight
-                    dark
-                    onChange={value => {
-                      this.updateApplicationField("formCss", value);
-                    }}
-                  />
-                </div>
-              } title={i18next.t("application:Custom CSS - Edit")} trigger="click">
-                <Input value={this.state.application.formCss} style={{marginBottom: "10px"}} onChange={e => {
-                  this.updateApplicationField("formCss", e.target.value);
-                }} />
-              </Popover>
+              <Row gutter={8}>
+                <Col flex="auto">
+                  <Popover placement="right" content={
+                    <div style={{width: "900px", height: "300px"}} >
+                      <Editor
+                        value={this.state.application.formCss === "" ? template : this.state.application.formCss}
+                        lang="css"
+                        fillHeight
+                        dark
+                        onChange={value => {
+                          this.updateApplicationField("formCss", value);
+                        }}
+                      />
+                    </div>
+                  } title={i18next.t("application:Custom CSS - Edit")} trigger="click">
+                    <Input value={this.state.application.formCss} style={{marginBottom: "10px"}} onChange={e => {
+                      this.updateApplicationField("formCss", e.target.value);
+                    }} />
+                  </Popover>
+                </Col>
+                <Col>
+                  <Button
+                    style={{marginBottom: "10px"}}
+                    onClick={() => this.loadQoderTemplate("formCss")}
+                  >
+                    {i18next.t("application:Load Qoder Template")}
+                  </Button>
+                </Col>
+              </Row>
             </Col>
           </Row>
           <Row>
@@ -1077,23 +1319,35 @@ class ApplicationEditPage extends React.Component {
               {Setting.getLabel(i18next.t("application:Custom CSS Mobile"), i18next.t("application:Custom CSS Mobile - Tooltip"))} :
             </Col>
             <Col span={21}>
-              <Popover placement="right" content={
-                <div style={{width: "900px", height: "300px"}} >
-                  <Editor
-                    value={this.state.application.formCssMobile === "" ? template : this.state.application.formCssMobile}
-                    lang="css"
-                    fillHeight
-                    dark
-                    onChange={value => {
-                      this.updateApplicationField("formCssMobile", value);
-                    }}
-                  />
-                </div>
-              } title={i18next.t("application:Custom CSS Mobile - Edit")} trigger="click">
-                <Input value={this.state.application.formCssMobile} style={{marginBottom: "10px"}} onChange={e => {
-                  this.updateApplicationField("formCssMobile", e.target.value);
-                }} />
-              </Popover>
+              <Row gutter={8}>
+                <Col flex="auto">
+                  <Popover placement="right" content={
+                    <div style={{width: "900px", height: "300px"}} >
+                      <Editor
+                        value={this.state.application.formCssMobile === "" ? template : this.state.application.formCssMobile}
+                        lang="css"
+                        fillHeight
+                        dark
+                        onChange={value => {
+                          this.updateApplicationField("formCssMobile", value);
+                        }}
+                      />
+                    </div>
+                  } title={i18next.t("application:Custom CSS Mobile - Edit")} trigger="click">
+                    <Input value={this.state.application.formCssMobile} style={{marginBottom: "10px"}} onChange={e => {
+                      this.updateApplicationField("formCssMobile", e.target.value);
+                    }} />
+                  </Popover>
+                </Col>
+                <Col>
+                  <Button
+                    style={{marginBottom: "10px"}}
+                    onClick={() => this.loadQoderTemplate("formCssMobile")}
+                  >
+                    {i18next.t("application:Load Qoder Template")}
+                  </Button>
+                </Col>
+              </Row>
             </Col>
           </Row>
           <Row style={{marginTop: "20px"}} >
