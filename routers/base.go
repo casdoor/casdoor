@@ -177,6 +177,8 @@ func getUsernameByClientCert(ctx *context.Context) (string, error) {
 	}
 
 	// Successfully authenticated via mTLS
+	// Return service account identifier in format "app/{applicationName}"
+	// This is consistent with Casdoor's convention for application-level authentication
 	return fmt.Sprintf("app/%s", application.Name), nil
 }
 

@@ -278,17 +278,20 @@ func (c *ApiController) GetOAuthToken() {
 	
 	// Check for mTLS authentication (RFC 8705)
 	var certFingerprint string
-	cert, err := object.GetClientCertificate(c.Ctx.Request)
-	if err == nil && cert != nil {
+	cert, certErr := object.GetClientCertificate(c.Ctx.Request)
+	if certErr == nil && cert != nil {
 		// Client certificate is present, check if application supports mTLS
-		application, _ := object.GetApplicationByClientId(clientId)
-		if application != nil && object.IsMtlsEnabled(application) {
+		application, appErr := object.GetApplicationByClientId(clientId)
+		if appErr == nil && application != nil && object.IsMtlsEnabled(application) {
 			// Validate the certificate
-			certValidated, err := object.ValidateMtlsRequest(c.Ctx.Request, application)
-			if err == nil && certValidated != nil {
+			certValidated, validationErr := object.ValidateMtlsRequest(c.Ctx.Request, application)
+			if validationErr != nil {
+				// Certificate validation failed for mTLS-enabled application
+				c.ResponseError(fmt.Sprintf("mTLS certificate validation failed: %s", validationErr.Error()))
+				return
+			}
+			if certValidated != nil {
 				certFingerprint = object.GetCertificateFingerprint(certValidated)
-				// For mTLS client authentication, we can skip client_secret validation
-				// This is handled in the token generation functions
 			}
 		}
 	}

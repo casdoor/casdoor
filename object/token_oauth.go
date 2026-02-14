@@ -762,14 +762,18 @@ func GetClientCredentialsToken(application *Application, clientSecret string, sc
 // GetClientCredentialsTokenWithCert
 // Client Credentials flow with optional mTLS support
 func GetClientCredentialsTokenWithCert(application *Application, clientSecret string, scope string, host string, certFingerprint string) (*Token, *TokenError, error) {
-	// If mTLS is enabled and cert fingerprint is provided, skip client secret validation
+	// If mTLS is enabled and cert fingerprint is provided, certificate-based auth is used
 	mtlsAuth := IsMtlsEnabled(application) && certFingerprint != ""
 	
-	if !mtlsAuth && application.ClientSecret != clientSecret {
-		return nil, &TokenError{
-			Error:            InvalidClient,
-			ErrorDescription: "client_secret is invalid",
-		}, nil
+	// For defense in depth, we still validate the client secret even with mTLS
+	// unless the application explicitly has no client secret configured
+	if !mtlsAuth || application.ClientSecret != "" {
+		if application.ClientSecret != clientSecret {
+			return nil, &TokenError{
+				Error:            InvalidClient,
+				ErrorDescription: "client_secret is invalid",
+			}, nil
+		}
 	}
 	
 	nullUser := &User{

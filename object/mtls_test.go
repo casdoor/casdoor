@@ -196,6 +196,12 @@ func TestSupportsMtlsAuthMethod(t *testing.T) {
 			method: "tls_client_auth",
 			want:   false,
 		},
+		{
+			name:   "no method configured",
+			app:    &Application{EnableMtls: true, MtlsAuthMethod: ""},
+			method: "tls_client_auth",
+			want:   false,
+		},
 	}
 
 	for _, tt := range tests {
