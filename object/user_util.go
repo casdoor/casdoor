@@ -250,8 +250,15 @@ func SetUserOAuthProperties(organization *Organization, user *User, providerType
 
 	if userInfo.AvatarUrl != "" {
 		propertyName := fmt.Sprintf("oauth_%s_avatarUrl", providerType)
+		oldAvatarUrl := getUserProperty(user, propertyName)
 		setUserProperty(user, propertyName, userInfo.AvatarUrl)
+
+		// Update avatar if:
+		// 1. User has no avatar or has default avatar, OR
+		// 2. Current avatar matches the old OAuth avatar (meaning it was set by OAuth) and the new avatar is different
 		if user.Avatar == "" || user.Avatar == organization.DefaultAvatar {
+			user.Avatar = userInfo.AvatarUrl
+		} else if oldAvatarUrl != "" && user.Avatar == oldAvatarUrl && oldAvatarUrl != userInfo.AvatarUrl {
 			user.Avatar = userInfo.AvatarUrl
 		}
 	}
