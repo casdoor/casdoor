@@ -72,6 +72,11 @@ func main() {
 	object.InitFromFile()
 	object.InitCasvisorConfig()
 	object.InitCleanupTokens()
+	
+	// Initialize Redis-based policy synchronization for multi-pod deployments
+	if err := object.InitPolicySynchronizer(); err != nil {
+		logs.Warning("Failed to initialize policy synchronizer: %v", err)
+	}
 
 	util.SafeGoroutine(func() { object.RunSyncUsersJob() })
 	util.SafeGoroutine(func() { controllers.InitCLIDownloader() })

@@ -34,7 +34,12 @@ func (e *UserGroupEnforcer) AddGroupForUser(user string, group string) (bool, er
 		return false, err
 	}
 
-	return e.enforcer.AddRoleForUser(user, GetGroupWithPrefix(group))
+	affected, err := e.enforcer.AddRoleForUser(user, GetGroupWithPrefix(group))
+	if err == nil && affected {
+		// Notify other pods about the policy change
+		_ = publishPolicyChange(UserEnforcerId, "add")
+	}
+	return affected, err
 }
 
 func (e *UserGroupEnforcer) AddGroupsForUser(user string, groups []string) (bool, error) {
@@ -47,7 +52,12 @@ func (e *UserGroupEnforcer) AddGroupsForUser(user string, groups []string) (bool
 	for i, group := range groups {
 		g[i] = GetGroupWithPrefix(group)
 	}
-	return e.enforcer.AddRolesForUser(user, g)
+	affected, err := e.enforcer.AddRolesForUser(user, g)
+	if err == nil && affected {
+		// Notify other pods about the policy change
+		_ = publishPolicyChange(UserEnforcerId, "add")
+	}
+	return affected, err
 }
 
 func (e *UserGroupEnforcer) DeleteGroupForUser(user string, group string) (bool, error) {
@@ -56,7 +66,12 @@ func (e *UserGroupEnforcer) DeleteGroupForUser(user string, group string) (bool,
 		return false, err
 	}
 
-	return e.enforcer.DeleteRoleForUser(user, GetGroupWithPrefix(group))
+	affected, err := e.enforcer.DeleteRoleForUser(user, GetGroupWithPrefix(group))
+	if err == nil && affected {
+		// Notify other pods about the policy change
+		_ = publishPolicyChange(UserEnforcerId, "remove")
+	}
+	return affected, err
 }
 
 func (e *UserGroupEnforcer) DeleteGroupsForUser(user string) (bool, error) {
@@ -65,7 +80,12 @@ func (e *UserGroupEnforcer) DeleteGroupsForUser(user string) (bool, error) {
 		return false, err
 	}
 
-	return e.enforcer.DeleteRolesForUser(user)
+	affected, err := e.enforcer.DeleteRolesForUser(user)
+	if err == nil && affected {
+		// Notify other pods about the policy change
+		_ = publishPolicyChange(UserEnforcerId, "remove")
+	}
+	return affected, err
 }
 
 func (e *UserGroupEnforcer) GetGroupsForUser(user string) ([]string, error) {
@@ -141,5 +161,6 @@ func (e *UserGroupEnforcer) UpdateGroupsForUser(user string, groups []string) (b
 		return false, err
 	}
 
+	// Notification already sent by DeleteGroupsForUser and AddGroupsForUser
 	return affected, nil
 }

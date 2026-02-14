@@ -328,11 +328,19 @@ func UpdatePolicy(id string, ptype string, oldPolicy []string, newPolicy []strin
 		return false, err
 	}
 
+	var affected bool
 	if ptype == "p" {
-		return enforcer.UpdatePolicy(oldPolicy, newPolicy)
+		affected, err = enforcer.UpdatePolicy(oldPolicy, newPolicy)
 	} else {
-		return enforcer.UpdateGroupingPolicy(oldPolicy, newPolicy)
+		affected, err = enforcer.UpdateGroupingPolicy(oldPolicy, newPolicy)
 	}
+
+	if err == nil && affected {
+		// Notify other pods about the policy change
+		_ = publishPolicyChange(id, "update")
+	}
+
+	return affected, err
 }
 
 func AddPolicy(id string, ptype string, policy []string) (bool, error) {
@@ -341,11 +349,19 @@ func AddPolicy(id string, ptype string, policy []string) (bool, error) {
 		return false, err
 	}
 
+	var affected bool
 	if ptype == "p" {
-		return enforcer.AddPolicy(policy)
+		affected, err = enforcer.AddPolicy(policy)
 	} else {
-		return enforcer.AddGroupingPolicy(policy)
+		affected, err = enforcer.AddGroupingPolicy(policy)
 	}
+
+	if err == nil && affected {
+		// Notify other pods about the policy change
+		_ = publishPolicyChange(id, "add")
+	}
+
+	return affected, err
 }
 
 func RemovePolicy(id string, ptype string, policy []string) (bool, error) {
@@ -354,11 +370,19 @@ func RemovePolicy(id string, ptype string, policy []string) (bool, error) {
 		return false, err
 	}
 
+	var affected bool
 	if ptype == "p" {
-		return enforcer.RemovePolicy(policy)
+		affected, err = enforcer.RemovePolicy(policy)
 	} else {
-		return enforcer.RemoveGroupingPolicy(policy)
+		affected, err = enforcer.RemoveGroupingPolicy(policy)
 	}
+
+	if err == nil && affected {
+		// Notify other pods about the policy change
+		_ = publishPolicyChange(id, "remove")
+	}
+
+	return affected, err
 }
 
 func (enforcer *Enforcer) LoadModelCfg() error {
