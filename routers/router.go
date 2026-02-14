@@ -269,6 +269,13 @@ func InitAPI() {
 	web.Router("/api/update-webhook", &controllers.ApiController{}, "POST:UpdateWebhook")
 	web.Router("/api/add-webhook", &controllers.ApiController{}, "POST:AddWebhook")
 	web.Router("/api/delete-webhook", &controllers.ApiController{}, "POST:DeleteWebhook")
+	
+	// Webhook event routes
+	web.Router("/api/get-webhook-events", &controllers.ApiController{}, "GET:GetWebhookEvents")
+	web.Router("/api/get-webhook-event-detail", &controllers.ApiController{}, "GET:GetWebhookEvent")
+	web.Router("/api/replay-webhook-event", &controllers.ApiController{}, "POST:ReplayWebhookEvent")
+	web.Router("/api/replay-webhook-events", &controllers.ApiController{}, "POST:ReplayWebhookEvents")
+	web.Router("/api/delete-webhook-event", &controllers.ApiController{}, "POST:DeleteWebhookEvent")
 
 	web.Router("/api/get-tickets", &controllers.ApiController{}, "GET:GetTickets")
 	web.Router("/api/get-ticket", &controllers.ApiController{}, "GET:GetTicket")

@@ -323,27 +323,26 @@ func SendWebhooks(record *casvisorsdk.Record) error {
 		if webhook.IsUserExtended {
 			user, err = getUser(record.Organization, record.User)
 			if err != nil {
-				errs = append(errs, err)
+				errs = append(errs, fmt.Errorf("webhook %s: failed to get user: %w", webhook.GetId(), err))
 				continue
 			}
 
 			user, err = GetMaskedUser(user, false, err)
 			if err != nil {
-				errs = append(errs, err)
+				errs = append(errs, fmt.Errorf("webhook %s: failed to mask user: %w", webhook.GetId(), err))
 				continue
 			}
 		}
 
-		statusCode, respBody, err := sendWebhook(webhook, &record2, user)
+		// Create webhook event for tracking and retry
+		_, err = CreateWebhookEventFromRecord(webhook, &record2, user)
 		if err != nil {
-			errs = append(errs, err)
+			errs = append(errs, fmt.Errorf("webhook %s: failed to create event: %w", webhook.GetId(), err))
+			continue
 		}
 
-		err = addWebhookRecord(webhook, &record2, statusCode, respBody, err)
-		if err != nil {
-			errs = append(errs, err)
-		}
-
+		// The webhook will be delivered by the background worker
+		// This provides automatic retry and replay capability
 	}
 
 	if len(errs) > 0 {
