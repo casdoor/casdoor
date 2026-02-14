@@ -825,6 +825,9 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, allowDis
 	}
 
 	for _, accountItem := range itemsChanged {
+		if accountItem == nil {
+			continue
+		}
 
 		if pass, err := CheckAccountItemModifyRule(accountItem, isAdmin, lang); !pass {
 			return pass, err
