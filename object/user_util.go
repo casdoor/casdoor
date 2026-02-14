@@ -825,6 +825,8 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, allowDis
 	}
 
 	for _, accountItem := range itemsChanged {
+		// Skip nil items - these occur when a field doesn't have a corresponding
+		// account item configuration, meaning no validation rules apply
 		if accountItem == nil {
 			continue
 		}
