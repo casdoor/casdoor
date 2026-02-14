@@ -70,8 +70,8 @@ func ValidateCertificate(clientCert, storedCert *x509.Certificate) error {
 	return nil
 }
 
-// GetCertificateFingerprint returns a string representation of the certificate for logging
-func GetCertificateFingerprint(cert *x509.Certificate) string {
+// GetCertificateInfo returns a string representation of the certificate for logging
+func GetCertificateInfo(cert *x509.Certificate) string {
 	if cert == nil {
 		return ""
 	}

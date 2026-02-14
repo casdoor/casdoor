@@ -129,17 +129,17 @@ func getUsernameByClientCert(ctx *context.Context, clientId string) (string, err
 		return "", fmt.Errorf("mTLS is enabled but no client certificate is configured for application: %s", application.Name)
 	}
 
-	// Get the stored certificate
-	cert, err := object.GetCert(util.GetId(application.Owner, application.ClientCert))
+	// Get the stored certificate configuration
+	certConfig, err := object.GetCert(util.GetId(application.Owner, application.ClientCert))
 	if err != nil {
 		return "", fmt.Errorf("failed to get client certificate for application %s: %w", application.Name, err)
 	}
-	if cert == nil {
+	if certConfig == nil {
 		return "", fmt.Errorf("client certificate not found: %s", application.ClientCert)
 	}
 
 	// Parse the stored certificate
-	storedCert, err := util.ParseCertificate(cert.Certificate)
+	storedCert, err := util.ParseCertificate(certConfig.Certificate)
 	if err != nil {
 		return "", fmt.Errorf("failed to parse stored certificate for application %s: %w", application.Name, err)
 	}

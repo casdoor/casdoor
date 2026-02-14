@@ -187,7 +187,7 @@ func TestValidateCertificate(t *testing.T) {
 	}
 }
 
-func TestGetCertificateFingerprint(t *testing.T) {
+func TestGetCertificateInfo(t *testing.T) {
 	now := time.Now()
 	cert, _, err := generateTestCertificate(now, now.Add(365*24*time.Hour))
 	if err != nil {
@@ -213,12 +213,12 @@ func TestGetCertificateFingerprint(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := GetCertificateFingerprint(tt.cert)
+			got := GetCertificateInfo(tt.cert)
 			if tt.cert == nil && got != "" {
-				t.Error("GetCertificateFingerprint() should return empty string for nil certificate")
+				t.Error("GetCertificateInfo() should return empty string for nil certificate")
 			}
 			if tt.cert != nil && got == "" {
-				t.Error("GetCertificateFingerprint() should return non-empty string for valid certificate")
+				t.Error("GetCertificateInfo() should return non-empty string for valid certificate")
 			}
 		})
 	}
