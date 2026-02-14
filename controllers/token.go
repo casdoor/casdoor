@@ -501,6 +501,20 @@ func (c *ApiController) IntrospectToken() {
 			return
 		}
 
+		// Validate certificate-bound token (RFC 8705)
+		if token.CertFingerprint != "" {
+			cert, certErr := object.GetClientCertificate(c.Ctx.Request)
+			if certErr != nil || cert == nil {
+				respondWithInactiveToken()
+				return
+			}
+			currentFingerprint := object.GetCertificateFingerprint(cert)
+			if currentFingerprint != token.CertFingerprint {
+				respondWithInactiveToken()
+				return
+			}
+		}
+
 		introspectionResponse.TokenType = token.TokenType
 		introspectionResponse.ClientId = application.ClientId
 	}
