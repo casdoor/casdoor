@@ -73,6 +73,8 @@ type AuthForm struct {
 	FaceId      []float64 `json:"faceId"`
 	FaceIdImage []string  `json:"faceIdImage"`
 	UserCode    string    `json:"userCode"`
+
+	Redirect string `json:"redirect"`
 }
 
 func GetAuthFormFieldValue(form *AuthForm, fieldName string) (bool, string) {

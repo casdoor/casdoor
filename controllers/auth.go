@@ -151,7 +151,18 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 	if form.Type == ResponseTypeLogin {
 		c.SetSessionUsername(userId)
 		util.LogInfo(c.Ctx, "API: [%s] signed in", userId)
-		resp = &Response{Status: "ok", Msg: "", Data: userId, Data3: user.NeedUpdatePassword}
+
+		// Validate redirect URL if provided
+		validatedRedirect := ""
+		if form.Redirect != "" {
+			if application.IsRedirectUriValid(form.Redirect) {
+				validatedRedirect = form.Redirect
+			} else {
+				util.LogInfo(c.Ctx, "Invalid redirect URL: %s", form.Redirect)
+			}
+		}
+
+		resp = &Response{Status: "ok", Msg: "", Data: userId, Data2: validatedRedirect, Data3: user.NeedUpdatePassword}
 	} else if form.Type == ResponseTypeCode {
 		clientId := c.Ctx.Input.Query("clientId")
 		responseType := c.Ctx.Input.Query("responseType")
