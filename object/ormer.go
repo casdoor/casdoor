@@ -29,8 +29,8 @@ import (
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/util"
 	xormadapter "github.com/casdoor/xorm-adapter/v3"
-	_ "github.com/denisenkom/go-mssqldb" // db = mssql
-	_ "github.com/go-sql-driver/mysql"   // db = mysql
+	_ "github.com/microsoft/go-mssqldb" // db = mssql
+	_ "github.com/go-sql-driver/mysql"  // db = mysql
 	_ "github.com/lib/pq"                // db = postgres
 	"github.com/xorm-io/xorm"
 	"github.com/xorm-io/xorm/core"
