@@ -119,3 +119,54 @@ func Translate(language string, errorText string) string {
 	}
 	return res
 }
+
+// TranslatableError is an error type that can be translated when needed
+// It stores the translation key and parameters, allowing translation to happen
+// at the point where the error is displayed, not when it's created
+type TranslatableError struct {
+	Key    string
+	Params []interface{}
+}
+
+// NewTranslatableError creates a new TranslatableError with the given key and parameters
+// The key should be in the format "namespace:message" (e.g., "general:User not found")
+// Parameters can be used for formatting the translated message
+func NewTranslatableError(key string, params ...interface{}) *TranslatableError {
+	return &TranslatableError{
+		Key:    key,
+		Params: params,
+	}
+}
+
+// Error implements the error interface, returning the untranslated key
+// This is useful for logging or when translation context is not available
+func (te *TranslatableError) Error() string {
+	firstColonIndex := strings.Index(te.Key, ":")
+	if firstColonIndex == -1 {
+		// If no ":" is found, format with params if any
+		if len(te.Params) > 0 {
+			return fmt.Sprintf(te.Key, te.Params...)
+		}
+		return te.Key
+	}
+	// Extract the part after the first ":"
+	keyWithoutCategory := te.Key[firstColonIndex+1:]
+	if len(te.Params) > 0 {
+		return fmt.Sprintf(keyWithoutCategory, te.Params...)
+	}
+	return keyWithoutCategory
+}
+
+func (te *TranslatableError) TranslateWithLanguage(language string) string {
+	translatedFormat := Translate(language, te.Key)
+	if len(te.Params) > 0 {
+		return fmt.Sprintf(translatedFormat, te.Params...)
+	}
+	return translatedFormat
+}
+
+// T is a convenience function that creates a TranslatableError
+// Usage: return i18n.T("general:User not found", userId)
+func T(key string, params ...interface{}) *TranslatableError {
+	return NewTranslatableError(key, params...)
+}
