@@ -246,7 +246,8 @@ func notifyPayment(body []byte, owner string, paymentName string) (*Payment, *pp
 		return payment, nil, err
 	}
 
-	if notifyResult.Price != payment.Price {
+	// Skip price validation for Dummy payment type as it doesn't connect to a real payment gateway
+	if payment.Type != "Dummy" && notifyResult.Price != payment.Price {
 		err = fmt.Errorf("the payment's price: %f doesn't equal to the expected price: %f", notifyResult.Price, payment.Price)
 		return payment, nil, err
 	}
