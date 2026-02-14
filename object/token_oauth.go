@@ -764,7 +764,7 @@ func GetClientCredentialsToken(application *Application, clientSecret string, sc
 func GetClientCredentialsTokenWithCert(application *Application, clientSecret string, scope string, host string, certFingerprint string) (*Token, *TokenError, error) {
 	// If mTLS is enabled and cert fingerprint is provided, certificate-based auth is used
 	mtlsAuth := IsMtlsEnabled(application) && certFingerprint != ""
-	
+
 	// Defense-in-depth: If a client secret is configured, always validate it
 	// This ensures both certificate AND secret are valid when both are configured
 	if application.ClientSecret != "" {
@@ -781,7 +781,7 @@ func GetClientCredentialsTokenWithCert(application *Application, clientSecret st
 			ErrorDescription: "authentication required",
 		}, nil
 	}
-	
+
 	nullUser := &User{
 		Owner: application.Owner,
 		Id:    application.GetId(),

@@ -275,7 +275,7 @@ func (c *ApiController) GetOAuthToken() {
 	}
 
 	host := c.Ctx.Request.Host
-	
+
 	// Check for mTLS authentication (RFC 8705)
 	var certFingerprint string
 	cert, certErr := object.GetClientCertificate(c.Ctx.Request)
@@ -295,7 +295,7 @@ func (c *ApiController) GetOAuthToken() {
 			}
 		}
 	}
-	
+
 	token, err := object.GetOAuthTokenWithCert(grantType, clientId, clientSecret, code, verifier, scope, nonce, username, password, host, refreshToken, tag, avatar, c.GetAcceptLanguage(), subjectToken, subjectTokenType, audience, certFingerprint)
 	if err != nil {
 		c.ResponseError(err.Error())
