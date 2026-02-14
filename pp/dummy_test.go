@@ -22,7 +22,7 @@ func TestDummyPaymentProvider_PayAndNotify(t *testing.T) {
 		t.Fatalf("Failed to create dummy provider: %v", err)
 	}
 
-	// Test the Pay method
+	// Test the Pay method with multiple products (matching the bug report scenario)
 	payReq := &PayReq{
 		ProviderName:       "test-provider",
 		ProductName:        "test-product",
@@ -31,7 +31,7 @@ func TestDummyPaymentProvider_PayAndNotify(t *testing.T) {
 		PayerEmail:         "test@example.com",
 		PaymentName:        "payment_test_123",
 		ProductDisplayName: "Product App1, Product - Casbin Software, Product - Recharge",
-		ProductDescription: "Description, , ",
+		ProductDescription: "Test product description",
 		Price:              340.0,
 		Currency:           "USD",
 		ReturnUrl:          "https://example.com/return",

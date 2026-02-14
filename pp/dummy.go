@@ -33,7 +33,9 @@ func NewDummyPaymentProvider() (*DummyPaymentProvider, error) {
 }
 
 func (pp *DummyPaymentProvider) Pay(r *PayReq) (*PayResp, error) {
-	// Encode payment information in OrderId for later retrieval in Notify
+	// Encode payment information in OrderId for later retrieval in Notify.
+	// Note: This is a test/mock provider and the OrderId is only used internally for testing.
+	// Real payment providers would receive this information from their external payment gateway.
 	orderInfo := DummyOrderInfo{
 		Price:              r.Price,
 		Currency:           r.Currency,
