@@ -54,7 +54,9 @@ func ValidateClientCertificate(cert *x509.Certificate, app *Application) error {
 			issuerDN := cert.Issuer.String()
 			allowed := false
 			for _, allowedIssuer := range app.AllowedClientCertIssuers {
-				if strings.Contains(issuerDN, allowedIssuer) {
+				// Use exact match or prefix match for DN components
+				// This ensures proper validation without substring bypass attacks
+				if issuerDN == allowedIssuer || strings.HasPrefix(issuerDN, allowedIssuer+",") {
 					allowed = true
 					break
 				}

@@ -214,7 +214,7 @@ func TestSupportsMtlsAuthMethod(t *testing.T) {
 }
 
 func TestGetClientCertificate(t *testing.T) {
-	cert, key, err := generateTestCertificate()
+	cert, _, err := generateTestCertificate()
 	if err != nil {
 		t.Fatalf("Failed to generate test certificate: %v", err)
 	}
@@ -246,9 +246,6 @@ func TestGetClientCertificate(t *testing.T) {
 	if retrievedCert2 != nil {
 		t.Error("Expected nil certificate for non-TLS request")
 	}
-
-	// Suppress unused variable warning
-	_ = key
 }
 
 func TestGetCertificateSubject(t *testing.T) {
