@@ -405,7 +405,7 @@ func ClearUserOAuthProperties(user *User, providerType string) (bool, error) {
 
 func userVisible(isAdmin bool, item *AccountItem) bool {
 	if item == nil {
-		return false
+		return true
 	}
 
 	if item.ViewRule == "Admin" && !isAdmin {

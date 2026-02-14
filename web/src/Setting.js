@@ -517,6 +517,7 @@ export const GetTranslatedUserItems = () => {
     {name: "Balance", label: i18next.t("user:Balance")},
     {name: "Balance currency", label: i18next.t("organization:Balance currency")},
     {name: "Balance credit", label: i18next.t("organization:Balance credit")},
+    {name: "Cart", label: i18next.t("general:Cart")},
     {name: "Transactions", label: i18next.t("general:Transactions")},
     {name: "Score", label: i18next.t("user:Score")},
     {name: "Karma", label: i18next.t("user:Karma")},
