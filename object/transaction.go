@@ -181,8 +181,12 @@ func AddInternalPaymentTransaction(transaction *Transaction, lang string) (bool,
 	transaction.Name = transactionId
 	transaction.DisplayName = transactionId
 
+	amount := 0.0
+	if transaction.Subtype == "Balance" {
+		amount = transaction.Amount
+	}
 	// Validate balance impact first
-	if err := validateBalanceForTransaction(transaction, transaction.Amount, lang); err != nil {
+	if err := validateBalanceForTransaction(transaction, amount, lang); err != nil {
 		return false, err
 	}
 
@@ -192,7 +196,7 @@ func AddInternalPaymentTransaction(transaction *Transaction, lang string) (bool,
 	}
 
 	if affected != 0 {
-		if err := updateBalanceForTransaction(transaction, transaction.Amount, lang); err != nil {
+		if err := updateBalanceForTransaction(transaction, amount, lang); err != nil {
 			return false, err
 		}
 	}
