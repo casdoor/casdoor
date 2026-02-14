@@ -98,6 +98,62 @@ func denyMcpRequest(ctx *context.Context) {
 	_ = ctx.Output.JSON(resp, true, false)
 }
 
+// getUsernameByClientCert authenticates a client using mTLS (RFC 8705)
+// It extracts the client certificate from the TLS connection and validates it
+// against the certificate stored in the application configuration
+func getUsernameByClientCert(ctx *context.Context, clientId string) (string, error) {
+	// Check if TLS is being used and if peer certificates are available
+	if ctx.Request.TLS == nil || len(ctx.Request.TLS.PeerCertificates) == 0 {
+		return "", nil
+	}
+
+	// Get the client certificate (first in the chain)
+	clientCert := ctx.Request.TLS.PeerCertificates[0]
+
+	// Get the application by clientId
+	application, err := object.GetApplicationByClientId(clientId)
+	if err != nil {
+		return "", err
+	}
+	if application == nil {
+		return "", nil
+	}
+
+	// Check if mTLS is enabled for this application
+	if !application.EnableClientCert {
+		return "", nil
+	}
+
+	// Check if a client certificate is configured
+	if application.ClientCert == "" {
+		return "", fmt.Errorf("mTLS is enabled but no client certificate is configured for application: %s", application.Name)
+	}
+
+	// Get the stored certificate
+	cert, err := object.GetCert(util.GetId(application.Owner, application.ClientCert))
+	if err != nil {
+		return "", fmt.Errorf("failed to get client certificate for application %s: %w", application.Name, err)
+	}
+	if cert == nil {
+		return "", fmt.Errorf("client certificate not found: %s", application.ClientCert)
+	}
+
+	// Parse the stored certificate
+	storedCert, err := util.ParseCertificate(cert.Certificate)
+	if err != nil {
+		return "", fmt.Errorf("failed to parse stored certificate for application %s: %w", application.Name, err)
+	}
+
+	// Validate the client certificate
+	err = util.ValidateCertificate(clientCert, storedCert)
+	if err != nil {
+		return "", fmt.Errorf("certificate validation failed for application %s: %w", application.Name, err)
+	}
+
+	// Authentication successful
+	return fmt.Sprintf("app/%s", application.Name), nil
+}
+
 func getUsernameByClientIdSecret(ctx *context.Context) (string, error) {
 	clientId, clientSecret, ok := ctx.Request.BasicAuth()
 	if !ok {
@@ -105,7 +161,23 @@ func getUsernameByClientIdSecret(ctx *context.Context) (string, error) {
 		clientSecret = ctx.Input.Query("clientSecret")
 	}
 
-	if clientId == "" || clientSecret == "" {
+	if clientId == "" {
+		return "", nil
+	}
+
+	// Try certificate-based authentication first (RFC 8705 - tls_client_auth)
+	if ctx.Request.TLS != nil && len(ctx.Request.TLS.PeerCertificates) > 0 {
+		username, err := getUsernameByClientCert(ctx, clientId)
+		if err != nil {
+			return "", err
+		}
+		if username != "" {
+			return username, nil
+		}
+	}
+
+	// Fall back to client secret authentication
+	if clientSecret == "" {
 		return "", nil
 	}
 

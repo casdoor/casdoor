@@ -144,6 +144,10 @@ type Application struct {
 	FailedSigninLimit      int `json:"failedSigninLimit"`
 	FailedSigninFrozenTime int `json:"failedSigninFrozenTime"`
 	CodeResendTimeout      int `json:"codeResendTimeout"`
+
+	// mTLS (Mutual TLS) Client Authentication (RFC 8705)
+	EnableClientCert bool   `json:"enableClientCert"`
+	ClientCert       string `xorm:"varchar(100)" json:"clientCert"`
 }
 
 func GetApplicationCount(owner, field, value string) (int64, error) {
