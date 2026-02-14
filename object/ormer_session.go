@@ -23,7 +23,7 @@ import (
 )
 
 func GetSession(owner string, offset, limit int, field, value, sortField, sortOrder string) *xorm.Session {
-	session := ormer.Engine.Prepare()
+	session := ormer.GetReadEngine().Prepare()
 	if offset != -1 && limit != -1 {
 		session.Limit(limit, offset)
 	}
@@ -47,7 +47,7 @@ func GetSession(owner string, offset, limit int, field, value, sortField, sortOr
 }
 
 func GetSessionForUser(owner string, offset, limit int, field, value, sortField, sortOrder string) *xorm.Session {
-	session := ormer.Engine.Prepare()
+	session := ormer.GetReadEngine().Prepare()
 	if offset != -1 && limit != -1 {
 		session.Limit(limit, offset)
 	}
