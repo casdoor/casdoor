@@ -309,7 +309,7 @@ class PermissionEditPage extends React.Component {
                 }
                 const data = res.data.map((role) => Setting.getOption(`${role.owner}/${role.name}`, `${role.owner}/${role.name}`));
                 if (args?.[1] === 1 && Array.isArray(res?.data)) {
-                  // res.data = [{owner: i18next.t("organization:All"), name: "*"}, ...res.data];
+                  // res.data = [{owner: i18next.t("general:All"), name: "*"}, ...res.data];
                   res.data = [
                     Setting.getOption(i18next.t("general:All"), "*"),
                     ...data,

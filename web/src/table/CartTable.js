@@ -21,7 +21,7 @@ class CartTable extends React.Component {
   render() {
     const columns = [
       {
-        title: i18next.t("product:Name"),
+        title: i18next.t("general:Name"),
         dataIndex: "displayName",
         key: "displayName",
         width: "200px",
@@ -43,7 +43,7 @@ class CartTable extends React.Component {
         },
       },
       {
-        title: i18next.t("product:Price"),
+        title: i18next.t("order:Price"),
         dataIndex: "price",
         key: "price",
         width: "120px",
