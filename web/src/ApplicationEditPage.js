@@ -1382,7 +1382,7 @@ class ApplicationEditPage extends React.Component {
         <React.Fragment>
           <Row style={{marginTop: "20px"}} >
             <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
-              {Setting.getLabel(i18next.t("application:Proxy domain"), i18next.t("application:Proxy domain - Tooltip"))} :
+              {Setting.getLabel("Domain", "The public-facing domain for this application (e.g., blog.example.com)")} :
             </Col>
             <Col span={21} >
               <Input value={this.state.application.domain} placeholder="blog.example.com" onChange={e => {
@@ -1392,7 +1392,7 @@ class ApplicationEditPage extends React.Component {
           </Row>
           <Row style={{marginTop: "20px"}} >
             <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
-              {Setting.getLabel(i18next.t("application:Other domains"), i18next.t("application:Other domains - Tooltip"))} :
+              {Setting.getLabel("Other domains", "Additional domains that should also route to this application")} :
             </Col>
             <Col span={21} >
               <Select
@@ -1402,13 +1402,13 @@ class ApplicationEditPage extends React.Component {
                 onChange={(value) => {
                   this.updateApplicationField("otherDomains", value);
                 }}
-                placeholder={i18next.t("application:Please input additional domains")}
+                placeholder="Please input additional domains"
               />
             </Col>
           </Row>
           <Row style={{marginTop: "20px"}} >
             <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
-              {Setting.getLabel(i18next.t("application:Upstream host"), i18next.t("application:Upstream host - Tooltip"))} :
+              {Setting.getLabel("Upstream host", "The upstream backend address to forward requests to (e.g., localhost:8080 or 192.168.1.100)")} :
             </Col>
             <Col span={21} >
               <Input value={this.state.application.upstreamHost} placeholder="localhost:8080" onChange={e => {
@@ -1418,7 +1418,7 @@ class ApplicationEditPage extends React.Component {
           </Row>
           <Row style={{marginTop: "20px"}} >
             <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
-              {Setting.getLabel(i18next.t("application:Proxy SSL mode"), i18next.t("application:Proxy SSL mode - Tooltip"))} :
+              {Setting.getLabel("SSL mode", "SSL/TLS mode for the reverse proxy")} :
             </Col>
             <Col span={21} >
               <Select virtual={false} style={{width: "100%"}} value={this.state.application.sslMode} onChange={(value => {this.updateApplicationField("sslMode", value);})}>
@@ -1430,7 +1430,7 @@ class ApplicationEditPage extends React.Component {
           </Row>
           <Row style={{marginTop: "20px"}} >
             <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
-              {Setting.getLabel(i18next.t("application:SSL cert"), i18next.t("application:SSL cert - Tooltip"))} :
+              {Setting.getLabel("SSL cert", "Certificate to use for TLS termination")} :
             </Col>
             <Col span={21} >
               <Select virtual={false} style={{width: "100%"}} value={this.state.application.sslCert} onChange={(value => {this.updateApplicationField("sslCert", value);})}>
@@ -1474,7 +1474,7 @@ class ApplicationEditPage extends React.Component {
                     {label: i18next.t("application:Providers"), key: "providers"},
                     {label: i18next.t("application:UI Customization"), key: "ui-customization"},
                     {label: i18next.t("application:Security"), key: "security"},
-                    {label: i18next.t("application:Reverse Proxy"), key: "reverse-proxy"},
+                    {label: "Reverse Proxy", key: "reverse-proxy"},
                   ]}
                 />
               </Header>
@@ -1498,7 +1498,7 @@ class ApplicationEditPage extends React.Component {
                     <Menu.Item key="providers">{i18next.t("application:Providers")}</Menu.Item>
                     <Menu.Item key="ui-customization">{i18next.t("application:UI Customization")}</Menu.Item>
                     <Menu.Item key="security">{i18next.t("application:Security")}</Menu.Item>
-                    <Menu.Item key="reverse-proxy">{i18next.t("application:Reverse Proxy")}</Menu.Item>
+                    <Menu.Item key="reverse-proxy">Reverse Proxy</Menu.Item>
                   </Menu>
                 </Sider>) : null
             }
