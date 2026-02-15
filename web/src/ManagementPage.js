@@ -193,12 +193,12 @@ function ManagementPage(props) {
           {
             renderAvatar()
           }
-                    &nbsp;
-                    &nbsp;
+          &nbsp;
+          &nbsp;
           {Setting.isMobile() ? null : Setting.getShortText(Setting.getNameAtLeast(props.account.displayName), 30)} &nbsp; <DownOutlined />
-                    &nbsp;
-                    &nbsp;
-                    &nbsp;
+          &nbsp;
+          &nbsp;
+          &nbsp;
         </div>
       </Dropdown>
     );
@@ -252,15 +252,15 @@ function ManagementPage(props) {
           {renderRightDropdown()}
           {renderWidgets()}
           {Setting.isAdminUser(props.account) && (props.uri.indexOf("/trees") === -1) &&
-                        <OrganizationSelect
-                          initValue={Setting.getOrganization()}
-                          withAll={true}
-                          className="org-select"
-                          style={{display: Setting.isMobile() ? "none" : "flex"}}
-                          onChange={(value) => {
-                            Setting.setOrganization(value);
-                          }}
-                        />
+            <OrganizationSelect
+              initValue={Setting.getOrganization()}
+              withAll={true}
+              className="org-select"
+              style={{display: Setting.isMobile() ? "none" : "flex"}}
+              onChange={(value) => {
+                Setting.setOrganization(value);
+              }}
+            />
           }
         </React.Fragment>
       );
@@ -287,9 +287,9 @@ function ManagementPage(props) {
 
     !Setting.isMobile() ? res.push({
       label:
-            <Link to="/">
-              <img className="logo" src={logo ?? props.logo} alt="logo" />
-            </Link>,
+        <Link to="/">
+          <img className="logo" src={logo ?? props.logo} alt="logo" />
+        </Link>,
       disabled: true, key: "logo",
       style: {
         padding: 0,

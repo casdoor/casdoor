@@ -200,6 +200,13 @@
     "Sending": "Sending",
     "Submit and complete": "Submit and complete"
   },
+  "consent": {
+    "Consents": "Consents",
+    "Consents - Tooltip": "Manage the permissions you have granted to applications",
+    "Granted scopes": "Granted scopes",
+    "Revoke": "Revoke",
+    "Are you sure you want to revoke this consent?": "Are you sure you want to revoke this consent?"
+  },
   "currency": {
     "AUD": "AUD",
     "BRL": "BRL",

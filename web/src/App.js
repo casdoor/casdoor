@@ -487,7 +487,7 @@ class App extends Component {
               : (
                 Conf.CustomFooter !== null ? Conf.CustomFooter : (
                   <React.Fragment>
-                  Powered by <a target="_blank" href="https://casdoor.org" rel="noreferrer"><img style={{paddingBottom: "3px"}} height={"20px"} alt={"Casdoor"} src={logo} /></a>
+                    Powered by <a target="_blank" href="https://casdoor.org" rel="noreferrer"><img style={{paddingBottom: "3px"}} height={"20px"} alt={"Casdoor"} src={logo} /></a>
                   </React.Fragment>
                 )
               )
@@ -539,15 +539,16 @@ class App extends Component {
 
   isEntryPages() {
     return window.location.pathname.startsWith("/signup") ||
-        window.location.pathname.startsWith("/login") ||
-        window.location.pathname.startsWith("/forget") ||
-        window.location.pathname.startsWith("/prompt") ||
-        window.location.pathname.startsWith("/result") ||
-        window.location.pathname.startsWith("/cas") ||
-        window.location.pathname.startsWith("/select-plan") ||
-        window.location.pathname.startsWith("/buy-plan") ||
-        window.location.pathname.startsWith("/qrcode") ||
-        window.location.pathname.startsWith("/captcha");
+      window.location.pathname.startsWith("/login") ||
+      window.location.pathname.startsWith("/forget") ||
+      window.location.pathname.startsWith("/prompt") ||
+      window.location.pathname.startsWith("/result") ||
+      window.location.pathname.startsWith("/cas") ||
+      window.location.pathname.startsWith("/select-plan") ||
+      window.location.pathname.startsWith("/buy-plan") ||
+      window.location.pathname.startsWith("/qrcode") ||
+      window.location.pathname.startsWith("/consent") ||
+      window.location.pathname.startsWith("/captcha");
   }
 
   onClick = ({key}) => {
@@ -656,7 +657,7 @@ class App extends Component {
                 menuVisible={this.state.menuVisible}
                 logo={this.state.logo}
                 onChangeTheme={this.setTheme}
-                onClick = {this.onClick}
+                onClick={this.onClick}
                 onfinish={() => {
                   this.setState({requiredEnableMfa: false});
                 }}

@@ -216,7 +216,7 @@ class LoginPage extends React.Component {
             this.setState({
               msg: res.msg,
             });
-            return ;
+            return;
           }
           this.onUpdateApplication(res.data);
         });
@@ -366,6 +366,13 @@ class LoginPage extends React.Component {
     if (resp.data3) {
       sessionStorage.setItem("signinUrl", window.location.pathname + window.location.search);
       Setting.goToLinkSoft(ths, `/forget/${application.name}`);
+      return;
+    }
+
+    // Check if consent is required
+    if (resp.data?.required === true) {
+      // Consent required, redirect to consent page
+      Setting.goToLinkSoft(ths, `/consent/${application.name}?${window.location.search.substring(1)}`);
       return;
     }
 
@@ -1141,9 +1148,11 @@ class LoginPage extends React.Component {
       visible={this.state.openCaptchaModal}
       noModal={noModal}
       onUpdateToken={(captchaType, captchaToken, clientSecret) => {
-        this.setState({captchaValues: {
-          captchaType, captchaToken, clientSecret,
-        }});
+        this.setState({
+          captchaValues: {
+            captchaType, captchaToken, clientSecret,
+          },
+        });
       }}
       onOk={(captchaType, captchaToken, clientSecret) => {
         const values = this.state.values;

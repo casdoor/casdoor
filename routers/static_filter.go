@@ -89,6 +89,23 @@ func fastAutoSignin(ctx *context.Context) (string, error) {
 		return "", nil
 	}
 
+	user, err := object.GetUser(userId)
+	if err != nil {
+		return "", err
+	}
+	if user == nil {
+		return "", nil
+	}
+
+	consentRequired, err := object.CheckConsentRequired(user, application, scope)
+	if err != nil {
+		return "", err
+	}
+
+	if consentRequired {
+		return "", nil
+	}
+
 	code, err := object.GetOAuthCode(userId, clientId, "", "autoSignin", responseType, redirectUri, scope, state, nonce, codeChallenge, "", ctx.Request.Host, getAcceptLanguage(ctx))
 	if err != nil {
 		return "", err

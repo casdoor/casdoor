@@ -144,6 +144,8 @@ type Application struct {
 	FailedSigninLimit      int `json:"failedSigninLimit"`
 	FailedSigninFrozenTime int `json:"failedSigninFrozenTime"`
 	CodeResendTimeout      int `json:"codeResendTimeout"`
+
+	CustomScopes []*ScopeDescription `xorm:"mediumtext" json:"customScopes"`
 }
 
 func GetApplicationCount(owner, field, value string) (int64, error) {
@@ -685,6 +687,15 @@ func checkMultipleCaptchaProviders(application *Application, lang string) error 
 	return nil
 }
 
+func validateCustomScopes(customScopes []*ScopeDescription, lang string) error {
+	for _, scope := range customScopes {
+		if scope == nil || strings.TrimSpace(scope.Scope) == "" {
+			return fmt.Errorf("%s: custom scope name", i18n.Translate(lang, "general:Missing parameter"))
+		}
+	}
+	return nil
+}
+
 func UpdateApplication(id string, application *Application, isGlobalAdmin bool, lang string) (bool, error) {
 	owner, name, err := util.GetOwnerAndNameFromIdWithError(id)
 	if err != nil {
@@ -724,6 +735,11 @@ func UpdateApplication(id string, application *Application, isGlobalAdmin bool, 
 	}
 
 	err = checkMultipleCaptchaProviders(application, lang)
+	if err != nil {
+		return false, err
+	}
+
+	err = validateCustomScopes(application.CustomScopes, lang)
 	if err != nil {
 		return false, err
 	}
@@ -779,6 +795,11 @@ func AddApplication(application *Application) (bool, error) {
 	}
 
 	err = extendApplicationWithSigninMethods(application)
+	if err != nil {
+		return false, err
+	}
+
+	err = validateCustomScopes(application.CustomScopes, "en")
 	if err != nil {
 		return false, err
 	}

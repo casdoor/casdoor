@@ -26,6 +26,7 @@ import LoginPage from "./auth/LoginPage";
 import SelfForgetPage from "./auth/SelfForgetPage";
 import ForgetPage from "./auth/ForgetPage";
 import PromptPage from "./auth/PromptPage";
+import ConsentPage from "./auth/ConsentPage";
 import ResultPage from "./auth/ResultPage";
 import CasLogout from "./auth/CasLogout";
 import {authConfig} from "./auth/Auth";
@@ -125,6 +126,7 @@ class EntryPage extends React.Component {
             <Route exact path="/forget/:applicationName" render={(props) => <ForgetPage {...this.props} account={this.props.account} application={this.state.application} onUpdateApplication={onUpdateApplication} {...props} />} />
             <Route exact path="/prompt" render={(props) => this.renderLoginIfNotLoggedIn(<PromptPage {...this.props} application={this.state.application} onUpdateApplication={onUpdateApplication} {...props} />)} />
             <Route exact path="/prompt/:applicationName" render={(props) => this.renderLoginIfNotLoggedIn(<PromptPage {...this.props} application={this.state.application} onUpdateApplication={onUpdateApplication} {...props} />)} />
+            <Route exact path="/consent/:applicationName" render={(props) => this.renderLoginIfNotLoggedIn(<ConsentPage {...this.props} application={this.state.application} onUpdateApplication={onUpdateApplication} {...props} />)} />
             <Route exact path="/result" render={(props) => this.renderHomeIfLoggedIn(<ResultPage {...this.props} application={this.state.application} onUpdateApplication={onUpdateApplication} {...props} />)} />
             <Route exact path="/result/:applicationName" render={(props) => this.renderHomeIfLoggedIn(<ResultPage {...this.props} application={this.state.application} onUpdateApplication={onUpdateApplication} {...props} />)} />
             <Route exact path="/cas/:owner/:casApplicationName/logout" render={(props) => this.renderHomeIfLoggedIn(<CasLogout {...this.props} application={this.state.application} onUpdateApplication={onUpdateApplication} {...props} />)} />

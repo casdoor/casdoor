@@ -213,17 +213,19 @@ export async function WechatOfficialAccountModal(application, provider, method) 
       }
 
       const t1 = setInterval(await getEvent, 1000, application, provider, res.data2, method);
-      {Modal.info({
-        title: i18next.t("provider:Please use WeChat to scan the QR code and follow the official account for sign in"),
-        content: (
-          <div style={{marginRight: "34px"}}>
-            <QRCode style={{padding: "20px", margin: "auto"}} bordered={false} value={res.data} size={230} />
-          </div>
-        ),
-        onOk() {
-          window.clearInterval(t1);
-        },
-      });}
+      {
+        Modal.info({
+          title: i18next.t("provider:Please use WeChat to scan the QR code and follow the official account for sign in"),
+          content: (
+            <div style={{marginRight: "34px"}}>
+              <QRCode style={{padding: "20px", margin: "auto"}} bordered={false} value={res.data} size={230} />
+            </div>
+          ),
+          onOk() {
+            window.clearInterval(t1);
+          },
+        });
+      }
     }
   );
 }

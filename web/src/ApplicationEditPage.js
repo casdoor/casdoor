@@ -56,6 +56,7 @@ import SigninTable from "./table/SigninTable";
 import Editor from "./common/Editor";
 import * as GroupBackend from "./backend/GroupBackend";
 import TokenAttributeTable from "./table/TokenAttributeTable";
+import CustomScopeTable from "./table/CustomScopeTable";
 import {Content, Header} from "antd/es/layout/layout";
 import Sider from "antd/es/layout/Sider";
 import PaginateSelect from "./common/PaginateSelect";
@@ -245,6 +246,33 @@ class ApplicationEditPage extends React.Component {
       value = Setting.myParseInt(value);
     }
     return value;
+  }
+
+  trimCustomScopes(customScopes) {
+    if (!Array.isArray(customScopes)) {
+      return [];
+    }
+    return customScopes.map((item) => {
+      const scope = (item?.scope || "").trim();
+      const displayName = (item?.displayName || "").trim();
+      const description = (item?.description || "").trim();
+      return {
+        ...item,
+        scope: scope,
+        displayName: displayName,
+        description: description,
+      };
+    });
+  }
+
+  validateCustomScopes(customScopes) {
+    const trimmed = this.trimCustomScopes(customScopes);
+    for (const item of trimmed) {
+      if (!item || !item.scope || item.scope.trim() === "") {
+        return {ok: false, scopes: trimmed};
+      }
+    }
+    return {ok: true, scopes: trimmed};
   }
 
   updateApplicationField(key, value) {
@@ -514,6 +542,18 @@ class ApplicationEditPage extends React.Component {
                   ].map((item, index) => <Option key={index} value={item.id}>{item.name}</Option>)
                 }
               </Select>
+            </Col>
+          </Row>
+          <Row style={{marginTop: "20px"}} >
+            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
+              {Setting.getLabel(i18next.t("application:Custom scopes"), i18next.t("application:Custom scopes - Tooltip"))} :
+            </Col>
+            <Col span={21} >
+              <CustomScopeTable
+                title={i18next.t("application:Custom scopes")}
+                table={this.state.application.customScopes}
+                onUpdateTable={(value) => {this.updateApplicationField("customScopes", value);}}
+              />
             </Col>
           </Row>
           <Row style={{marginTop: "20px"}} >
@@ -1281,7 +1321,7 @@ class ApplicationEditPage extends React.Component {
               {Setting.getLabel(i18next.t("general:IP whitelist"), i18next.t("general:IP whitelist - Tooltip"))} :
             </Col>
             <Col span={21} >
-              <Input placeholder = {this.state.application.organizationObj?.ipWhitelist} value={this.state.application.ipWhitelist} onChange={e => {
+              <Input placeholder={this.state.application.organizationObj?.ipWhitelist} value={this.state.application.ipWhitelist} onChange={e => {
                 this.updateApplicationField("ipWhitelist", e.target.value);
               }} />
             </Col>
@@ -1411,11 +1451,11 @@ class ApplicationEditPage extends React.Component {
               {
                 Setting.isPasswordEnabled(this.state.application) ? (
                   <div className="loginBackground" style={{backgroundImage: `url(${this.state.application?.formBackgroundUrl})`, overflow: "auto"}}>
-                    <SignupPage application={this.state.application} preview = "auto" />
+                    <SignupPage application={this.state.application} preview="auto" />
                   </div>
                 ) : (
                   <div className="loginBackground" style={{backgroundImage: `url(${this.state.application?.formBackgroundUrl})`, overflow: "auto"}}>
-                    <LoginPage type={"login"} mode={"signup"} application={this.state.application} preview = "auto" />
+                    <LoginPage type={"login"} mode={"signup"} application={this.state.application} preview="auto" />
                   </div>
                 )
               }
@@ -1441,7 +1481,7 @@ class ApplicationEditPage extends React.Component {
           }}>
             <div style={{position: "relative", width: previewWidth, border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888", overflow: "auto"}}>
               <div className="loginBackground" style={{backgroundImage: `url(${this.state.application?.formBackgroundUrl})`, overflow: "auto"}}>
-                <LoginPage type={"login"} mode={"signin"} application={this.state.application} preview = "auto" />
+                <LoginPage type={"login"} mode={"signin"} application={this.state.application} preview="auto" />
               </div>
               <div style={{overflow: "auto", ...maskStyle}} />
             </div>
@@ -1485,6 +1525,12 @@ class ApplicationEditPage extends React.Component {
     const application = Setting.deepCopy(this.state.application);
     application.providers = application.providers?.filter(provider => this.state.providers.map(provider => provider.name).includes(provider.name));
     application.signinMethods = application.signinMethods?.filter(signinMethod => ["Password", "Verification code", "WebAuthn", "LDAP", "Face ID", "WeChat"].includes(signinMethod.name));
+    const customScopeValidation = this.validateCustomScopes(application.customScopes);
+    application.customScopes = customScopeValidation.scopes;
+    if (!customScopeValidation.ok) {
+      Setting.showMessage("error", `${i18next.t("general:Name")}: ${i18next.t("provider:This field is required")}`);
+      return;
+    }
 
     ApplicationBackend.updateApplication("admin", this.state.applicationName, application)
       .then((res) => {

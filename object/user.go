@@ -241,6 +241,7 @@ type User struct {
 	MfaRememberDeadline string           `xorm:"varchar(100)" json:"mfaRememberDeadline"`
 	NeedUpdatePassword  bool             `json:"needUpdatePassword"`
 	IpWhitelist         string           `xorm:"varchar(200)" json:"ipWhitelist"`
+	ApplicationScopes   []ConsentRecord  `xorm:"mediumtext" json:"applicationScopes"`
 }
 
 type Userinfo struct {
@@ -289,6 +290,20 @@ type FaceId struct {
 	Name       string    `xorm:"varchar(100) notnull pk" json:"name"`
 	FaceIdData []float64 `json:"faceIdData"`
 	ImageUrl   string    `json:"ImageUrl"`
+}
+
+// ConsentRecord represents the data for OAuth consent API requests/responses
+type ConsentRecord struct {
+	// owner/name
+	Application   string   `json:"application"`
+	GrantedScopes []string `json:"grantedScopes"`
+}
+
+// ScopeDescription represents a human-readable description of an OAuth scope
+type ScopeDescription struct {
+	Scope       string `json:"scope"`
+	DisplayName string `json:"displayName"`
+	Description string `json:"description"`
 }
 
 func GetUserFieldStringValue(user *User, fieldName string) (bool, string, error) {
@@ -870,7 +885,7 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 			"microsoftonline", "naver", "nextcloud", "onedrive", "oura", "patreon", "paypal", "salesforce", "shopify", "soundcloud",
 			"spotify", "strava", "stripe", "type", "tiktok", "tumblr", "twitch", "twitter", "typetalk", "uber", "vk", "wepay", "xero", "yahoo",
 			"yammer", "yandex", "zoom", "custom", "need_update_password", "ip_whitelist", "mfa_items", "mfa_remember_deadline",
-			"cart",
+			"cart", "application_scopes",
 		}
 	}
 	if isAdmin {
@@ -1571,4 +1586,78 @@ func UpdateUserBalance(owner string, name string, balance float64, currency stri
 	user.Balance = newBalance
 	_, err = UpdateUser(user.GetId(), user, []string{"balance"}, true)
 	return err
+}
+
+// parseScopes converts a space-separated scope string to a slice
+func parseScopes(scopeStr string) []string {
+	if scopeStr == "" {
+		return []string{}
+	}
+	scopes := strings.Split(scopeStr, " ")
+	var result []string
+	for _, scope := range scopes {
+		trimmed := strings.TrimSpace(scope)
+		if trimmed != "" {
+			result = append(result, trimmed)
+		}
+	}
+	return result
+}
+
+// CheckConsentRequired checks if user consent is required for the OAuth flow
+func CheckConsentRequired(userObj *User, application *Application, scopeStr string) (bool, error) {
+	// Skip consent when no custom scopes are configured
+	if len(application.CustomScopes) == 0 {
+		return false, nil
+	}
+
+	// Once policy: check if consent already granted
+	requestedScopes := parseScopes(scopeStr)
+	appId := application.GetId()
+
+	// Filter requestedScopes to only include scopes defined in application.CustomScopes
+	customScopesMap := make(map[string]bool)
+	for _, customScope := range application.CustomScopes {
+		if customScope.Scope != "" {
+			customScopesMap[customScope.Scope] = true
+		}
+	}
+
+	validRequestedScopes := []string{}
+	for _, scope := range requestedScopes {
+		if customScopesMap[scope] {
+			validRequestedScopes = append(validRequestedScopes, scope)
+		}
+	}
+
+	// If no valid requested scopes, no consent required
+	if len(validRequestedScopes) == 0 {
+		return false, nil
+	}
+
+	for _, record := range userObj.ApplicationScopes {
+		if record.Application == appId {
+			// Check if grantedScopes contains all validRequestedScopes
+			grantedMap := make(map[string]bool)
+			for _, scope := range record.GrantedScopes {
+				grantedMap[scope] = true
+			}
+
+			allGranted := true
+			for _, scope := range validRequestedScopes {
+				if !grantedMap[scope] {
+					allGranted = false
+					break
+				}
+			}
+
+			if allGranted {
+				// Consent already granted for all valid requested scopes
+				return false, nil
+			}
+		}
+	}
+
+	// Consent required
+	return true, nil
 }

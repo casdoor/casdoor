@@ -319,6 +319,9 @@ func InitAPI() {
 	web.Router("/api/delete-mfa", &controllers.ApiController{}, "POST:DeleteMfa")
 	web.Router("/api/set-preferred-mfa", &controllers.ApiController{}, "POST:SetPreferredMfa")
 
+	web.Router("/api/grant-consent", &controllers.ApiController{}, "POST:GrantConsent")
+	web.Router("/api/revoke-consent", &controllers.ApiController{}, "POST:RevokeConsent")
+
 	web.Router("/.well-known/openid-configuration", &controllers.RootController{}, "GET:GetOidcDiscovery")
 	web.Router("/.well-known/:application/openid-configuration", &controllers.RootController{}, "GET:GetOidcDiscoveryByApplication")
 	web.Router("/.well-known/oauth-authorization-server", &controllers.RootController{}, "GET:GetOAuthServerMetadata")
