@@ -109,6 +109,7 @@
     "Insufficient balance: new balance %v would be below credit limit %v": "Insufficient balance: new balance %v would be below credit limit %v",
     "Insufficient balance: new organization balance %v would be below credit limit %v": "Insufficient balance: new organization balance %v would be below credit limit %v",
     "Missing parameter": "Missing parameter",
+    "Multiple captcha providers are not allowed in the same application: %s": "Multiple captcha providers are not allowed in the same application: %s",
     "Only admin user can specify user": "Only admin user can specify user",
     "Please login first": "Please login first",
     "The LDAP: %s does not exist": "The LDAP: %s does not exist",

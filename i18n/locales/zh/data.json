@@ -109,6 +109,7 @@
     "Insufficient balance: new balance %v would be below credit limit %v": "余额不足：新余额 %v 将低于信用限额 %v",
     "Insufficient balance: new organization balance %v would be below credit limit %v": "余额不足：新组织余额 %v 将低于信用限额 %v",
     "Missing parameter": "缺少参数",
+    "Multiple captcha providers are not allowed in the same application: %s": "Multiple captcha providers are not allowed in the same application: %s",
     "Only admin user can specify user": "仅管理员用户可以指定用户",
     "Please login first": "请先登录",
     "The LDAP: %s does not exist": "LDAP: %s 不存在",

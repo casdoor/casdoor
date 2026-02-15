@@ -109,6 +109,7 @@
     "Insufficient balance: new balance %v would be below credit limit %v": "Yetersiz bakiye: yeni bakiye %v kredi limitinin altında olacak %v",
     "Insufficient balance: new organization balance %v would be below credit limit %v": "Yetersiz bakiye: yeni organizasyon bakiyesi %v kredi limitinin altında olacak %v",
     "Missing parameter": "Eksik parametre",
+    "Multiple captcha providers are not allowed in the same application: %s": "Multiple captcha providers are not allowed in the same application: %s",
     "Only admin user can specify user": "Yalnızca yönetici kullanıcı kullanıcı belirleyebilir",
     "Please login first": "Lütfen önce giriş yapın",
     "The LDAP: %s does not exist": "LDAP: %s mevcut değil",

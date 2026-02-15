@@ -109,6 +109,7 @@
     "Insufficient balance: new balance %v would be below credit limit %v": "Недостатній баланс: новий баланс %v буде нижче кредитного ліміту %v",
     "Insufficient balance: new organization balance %v would be below credit limit %v": "Недостатній баланс: новий баланс організації %v буде нижче кредитного ліміту %v",
     "Missing parameter": "Відсутній параметр",
+    "Multiple captcha providers are not allowed in the same application: %s": "Multiple captcha providers are not allowed in the same application: %s",
     "Only admin user can specify user": "Лише адміністратор може вказати користувача",
     "Please login first": "Спочатку увійдіть",
     "The LDAP: %s does not exist": "LDAP: %s не існує",
