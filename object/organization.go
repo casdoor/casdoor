@@ -92,6 +92,8 @@ type Organization struct {
 	AccountMenu        string         `xorm:"varchar(20)" json:"accountMenu"`
 	AccountItems       []*AccountItem `xorm:"mediumtext" json:"accountItems"`
 
+	DcrPolicy string `xorm:"varchar(100)" json:"dcrPolicy"`
+
 	OrgBalance      float64 `json:"orgBalance"`
 	UserBalance     float64 `json:"userBalance"`
 	BalanceCredit   float64 `json:"balanceCredit"`
