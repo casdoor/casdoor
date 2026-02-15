@@ -385,7 +385,7 @@
     "Later": "Để sau",
     "Logging & Auditing": "Nhật ký & Kiểm toán",
     "Login page": "Trang đăng nhập",
-    "Logo": "Logo",
+    "Logo": "Biểu tượng",
     "Logo - Tooltip": "Biểu tượng mà ứng dụng hiển thị ra ngoài thế giới",
     "Logo dark": "Logo tối",
     "Logo dark - Tooltip": "Logo được sử dụng trong chủ đề tối",
@@ -410,7 +410,7 @@
     "None": "Không có",
     "OAuth providers": "Nhà cung cấp OAuth",
     "OFF": "TẮT",
-    "OK": "OK",
+    "OK": "Được rồi",
     "ON": "BẬT",
     "Only 1 MFA method can be required": "Chỉ có thể yêu cầu 1 phương thức MFA",
     "Or": "Hoặc",
@@ -570,7 +570,7 @@
     "Physical": "Vật lý",
     "Show all": "Hiển thị tất cả",
     "Virtual": "Ảo",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "Bạn cần xóa tất cả nhóm con trước. Bạn có thể xem các nhóm con trong cây nhóm bên trái của trang [Tổ chức] -\u003e [Nhóm]"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Bạn cần xóa tất cả nhóm con trước. Bạn có thể xem các nhóm con trong cây nhóm bên trái của trang [Tổ chức] -> [Nhóm]"
   },
   "home": {
     "New users past 30 days": "Người dùng mới trong 30 ngày qua",
@@ -761,7 +761,7 @@
     "Balance credit - Tooltip": "Số dư tín dụng",
     "Balance currency": "Đơn vị tiền tệ",
     "Balance currency - Tooltip": "Đơn vị tiền tệ",
-    "Edit Organization": "Chỉnh sửa tổ chức",
+    "Edit Organization": "Sửa tổ chức",
     "Follow global theme": "Theo giao diện chung",
     "Has privilege consent": "Có sự đồng ý đặc quyền",
     "Has privilege consent - Tooltip": "Ngăn thêm người dùng cho tổ chức tích hợp nếu HasPrivilegeConsent là false",
