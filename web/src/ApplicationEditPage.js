@@ -1382,7 +1382,7 @@ class ApplicationEditPage extends React.Component {
         <React.Fragment>
           <Row style={{marginTop: "20px"}} >
             <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
-              {Setting.getLabel(i18next.t("application:Domain"), i18next.t("application:Domain - Tooltip"))} :
+              {Setting.getLabel(i18next.t("application:Proxy domain"), i18next.t("application:Proxy domain - Tooltip"))} :
             </Col>
             <Col span={21} >
               <Input value={this.state.application.domain} placeholder="blog.example.com" onChange={e => {
@@ -1418,11 +1418,11 @@ class ApplicationEditPage extends React.Component {
           </Row>
           <Row style={{marginTop: "20px"}} >
             <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
-              {Setting.getLabel(i18next.t("application:SSL mode"), i18next.t("application:SSL mode - Tooltip"))} :
+              {Setting.getLabel(i18next.t("application:Proxy SSL mode"), i18next.t("application:Proxy SSL mode - Tooltip"))} :
             </Col>
             <Col span={21} >
               <Select virtual={false} style={{width: "100%"}} value={this.state.application.sslMode} onChange={(value => {this.updateApplicationField("sslMode", value);})}>
-                <Option value="">{i18next.t("application:None")}</Option>
+                <Option value="">{i18next.t("general:None")}</Option>
                 <Option value="HTTPS and HTTP">HTTPS and HTTP</Option>
                 <Option value="HTTPS Only">HTTPS Only</Option>
               </Select>
@@ -1434,7 +1434,7 @@ class ApplicationEditPage extends React.Component {
             </Col>
             <Col span={21} >
               <Select virtual={false} style={{width: "100%"}} value={this.state.application.sslCert} onChange={(value => {this.updateApplicationField("sslCert", value);})}>
-                <Option value="">{i18next.t("application:None")}</Option>
+                <Option value="">{i18next.t("general:None")}</Option>
                 {
                   this.state.certs.map((cert, index) => <Option key={index} value={cert.name}>{cert.name}</Option>)
                 }
