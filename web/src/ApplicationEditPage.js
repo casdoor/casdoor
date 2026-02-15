@@ -175,6 +175,10 @@ class ApplicationEditPage extends React.Component {
           application.tags = [];
         }
 
+        if (application.otherDomains === null || application.otherDomains === undefined) {
+          application.otherDomains = [];
+        }
+
         this.setState({
           application: application,
         });
