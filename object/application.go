@@ -157,7 +157,7 @@ type Application struct {
 
 	// Reverse Proxy fields
 	Domain       string   `xorm:"varchar(100)" json:"domain"`
-	OtherDomains []string `xorm:"varchar(500)" json:"otherDomains"`
+	OtherDomains []string `xorm:"mediumtext" json:"otherDomains"`
 	UpstreamHost string   `xorm:"varchar(100)" json:"upstreamHost"`
 	SslMode      string   `xorm:"varchar(100)" json:"sslMode"`
 	SslCert      string   `xorm:"varchar(100)" json:"sslCert"`

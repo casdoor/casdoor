@@ -1423,7 +1423,6 @@ class ApplicationEditPage extends React.Component {
             <Col span={21} >
               <Select virtual={false} style={{width: "100%"}} value={this.state.application.sslMode} onChange={(value => {this.updateApplicationField("sslMode", value);})}>
                 <Option value="">{i18next.t("application:None")}</Option>
-                <Option value="HTTP">HTTP</Option>
                 <Option value="HTTPS and HTTP">HTTPS and HTTP</Option>
                 <Option value="HTTPS Only">HTTPS Only</Option>
               </Select>
