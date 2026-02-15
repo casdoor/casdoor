@@ -143,3 +143,16 @@ func GetToolsForScopes(grantedScopes []string, registry []*object.ScopeItem) map
 
 	return allowed
 }
+
+// GetRequiredScopeForTool returns the first scope that provides access to the given tool
+// Returns an empty string if no scope is found for the tool
+func GetRequiredScopeForTool(toolName string, registry []*object.ScopeItem) string {
+	for _, scopeItem := range registry {
+		for _, tool := range scopeItem.Tools {
+			if tool == toolName {
+				return scopeItem.Name
+			}
+		}
+	}
+	return ""
+}

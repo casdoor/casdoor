@@ -22,57 +22,57 @@ import (
 
 func TestGetToolsForScopes(t *testing.T) {
 	tests := []struct {
-		name           string
-		grantedScopes  []string
-		expectedTools  []string
+		name            string
+		grantedScopes   []string
+		expectedTools   []string
 		unexpectedTools []string
 	}{
 		{
-			name:          "application:read scope",
-			grantedScopes: []string{"application:read"},
-			expectedTools: []string{"get_applications", "get_application"},
+			name:            "application:read scope",
+			grantedScopes:   []string{"application:read"},
+			expectedTools:   []string{"get_applications", "get_application"},
 			unexpectedTools: []string{"add_application", "update_application", "delete_application"},
 		},
 		{
-			name:          "application:write scope",
-			grantedScopes: []string{"application:write"},
-			expectedTools: []string{"add_application", "update_application", "delete_application"},
+			name:            "application:write scope",
+			grantedScopes:   []string{"application:write"},
+			expectedTools:   []string{"add_application", "update_application", "delete_application"},
 			unexpectedTools: []string{"get_applications", "get_application"},
 		},
 		{
-			name:          "both application scopes",
-			grantedScopes: []string{"application:read", "application:write"},
-			expectedTools: []string{"get_applications", "get_application", "add_application", "update_application", "delete_application"},
+			name:            "both application scopes",
+			grantedScopes:   []string{"application:read", "application:write"},
+			expectedTools:   []string{"get_applications", "get_application", "add_application", "update_application", "delete_application"},
 			unexpectedTools: []string{},
 		},
 		{
-			name:          "read convenience scope",
-			grantedScopes: []string{"read"},
-			expectedTools: []string{"get_applications", "get_application"},
+			name:            "read convenience scope",
+			grantedScopes:   []string{"read"},
+			expectedTools:   []string{"get_applications", "get_application"},
 			unexpectedTools: []string{"add_application", "update_application", "delete_application"},
 		},
 		{
-			name:          "write convenience scope",
-			grantedScopes: []string{"write"},
-			expectedTools: []string{"add_application", "update_application", "delete_application"},
+			name:            "write convenience scope",
+			grantedScopes:   []string{"write"},
+			expectedTools:   []string{"add_application", "update_application", "delete_application"},
 			unexpectedTools: []string{},
 		},
 		{
-			name:          "admin convenience scope",
-			grantedScopes: []string{"admin"},
-			expectedTools: []string{"get_applications", "get_application", "add_application", "update_application", "delete_application"},
+			name:            "admin convenience scope",
+			grantedScopes:   []string{"admin"},
+			expectedTools:   []string{"get_applications", "get_application", "add_application", "update_application", "delete_application"},
 			unexpectedTools: []string{},
 		},
 		{
-			name:          "no scopes",
-			grantedScopes: []string{},
-			expectedTools: []string{},
+			name:            "no scopes",
+			grantedScopes:   []string{},
+			expectedTools:   []string{},
 			unexpectedTools: []string{"get_applications", "add_application"},
 		},
 		{
-			name:          "unknown scope",
-			grantedScopes: []string{"unknown:scope"},
-			expectedTools: []string{},
+			name:            "unknown scope",
+			grantedScopes:   []string{"unknown:scope"},
+			expectedTools:   []string{},
 			unexpectedTools: []string{"get_applications", "add_application"},
 		},
 	}
@@ -101,11 +101,11 @@ func TestGetToolsForScopes(t *testing.T) {
 func TestBuiltinScopesCompleteness(t *testing.T) {
 	// Verify that all tools are covered by at least one scope
 	allTools := map[string]bool{
-		"get_applications":    false,
-		"get_application":     false,
-		"add_application":     false,
-		"update_application":  false,
-		"delete_application":  false,
+		"get_applications":   false,
+		"get_application":    false,
+		"add_application":    false,
+		"update_application": false,
+		"delete_application": false,
 	}
 
 	for _, scopeItem := range BuiltinScopes {
@@ -175,6 +175,45 @@ func TestGetScopesFromClaims(t *testing.T) {
 				if i >= len(scopes) || scopes[i] != expectedScope {
 					t.Errorf("Expected scope %s at index %d, got %s", expectedScope, i, scopes[i])
 				}
+			}
+		})
+	}
+}
+
+func TestGetRequiredScopeForTool(t *testing.T) {
+	tests := []struct {
+		name          string
+		toolName      string
+		expectedScope string
+	}{
+		{
+			name:          "get_applications tool",
+			toolName:      "get_applications",
+			expectedScope: "application:read",
+		},
+		{
+			name:          "add_application tool",
+			toolName:      "add_application",
+			expectedScope: "application:write",
+		},
+		{
+			name:          "update_application tool",
+			toolName:      "update_application",
+			expectedScope: "application:write",
+		},
+		{
+			name:          "unknown tool",
+			toolName:      "unknown_tool",
+			expectedScope: "",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			scope := GetRequiredScopeForTool(tt.toolName, BuiltinScopes)
+
+			if scope != tt.expectedScope {
+				t.Errorf("Expected scope %s for tool %s, got %s", tt.expectedScope, tt.toolName, scope)
 			}
 		})
 	}

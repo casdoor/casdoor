@@ -406,18 +406,7 @@ func (c *McpController) checkToolPermission(id interface{}, toolName string) boo
 // sendInsufficientScopeError sends an error response for insufficient scope
 func (c *McpController) sendInsufficientScopeError(id interface{}, toolName string, grantedScopes []string) {
 	// Find required scope for this tool
-	requiredScope := ""
-	for _, scopeItem := range BuiltinScopes {
-		for _, tool := range scopeItem.Tools {
-			if tool == toolName {
-				requiredScope = scopeItem.Name
-				break
-			}
-		}
-		if requiredScope != "" {
-			break
-		}
-	}
+	requiredScope := GetRequiredScopeForTool(toolName, BuiltinScopes)
 
 	errorData := map[string]interface{}{
 		"tool":           toolName,
