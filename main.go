@@ -72,6 +72,7 @@ func main() {
 	object.InitFromFile()
 	object.InitCasvisorConfig()
 	object.InitCleanupTokens()
+	object.InitApplicationMap()
 
 	util.SafeGoroutine(func() { object.RunSyncUsersJob() })
 	util.SafeGoroutine(func() { controllers.InitCLIDownloader() })
@@ -125,6 +126,7 @@ func main() {
 	go ldap.StartLdapServer()
 	go radius.StartRadiusServer()
 	go object.ClearThroughputPerSecond()
+	go proxy.StartProxyServer()
 
 	web.Run(fmt.Sprintf(":%v", port))
 }
