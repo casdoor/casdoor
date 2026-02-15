@@ -97,7 +97,11 @@ func RegisterDynamicClient(req *DynamicClientRegistrationRequest, organization s
 
 	// Set defaults
 	if req.ClientName == "" {
-		req.ClientName = fmt.Sprintf("DCR Client %s", util.GenerateClientId()[:8])
+		clientIdPrefix := util.GenerateClientId()
+		if len(clientIdPrefix) > 8 {
+			clientIdPrefix = clientIdPrefix[:8]
+		}
+		req.ClientName = fmt.Sprintf("DCR Client %s", clientIdPrefix)
 	}
 	if len(req.GrantTypes) == 0 {
 		req.GrantTypes = []string{"authorization_code"}
@@ -117,6 +121,8 @@ func RegisterDynamicClient(req *DynamicClientRegistrationRequest, organization s
 	appName := fmt.Sprintf("dcr_%s", randomName)
 
 	// Create Application object
+	// Note: DCR applications are created under "admin" owner by default
+	// This can be made configurable in future versions
 	clientId := util.GenerateClientId()
 	clientSecret := util.GenerateClientSecret()
 	createdTime := util.GetCurrentTime()

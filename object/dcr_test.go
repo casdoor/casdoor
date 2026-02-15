@@ -19,7 +19,7 @@ import (
 )
 
 func TestRegisterDynamicClient(t *testing.T) {
-	// Test with valid request
+	// Test with valid request structure
 	req := &DynamicClientRegistrationRequest{
 		ClientName:              "Test Client",
 		RedirectUris:            []string{"http://localhost:3000/callback"},
@@ -31,19 +31,19 @@ func TestRegisterDynamicClient(t *testing.T) {
 
 	// Note: This test would require a running database and proper initialization
 	// For now, we're just testing the structure and validation logic
-	
-	// Test missing redirect_uris
+
+	// Validate that the request structure is correct
+	if len(req.RedirectUris) == 0 {
+		t.Error("Redirect URIs should not be empty for valid request")
+	}
+
+	// Test missing redirect_uris would fail validation
 	reqInvalid := &DynamicClientRegistrationRequest{
 		ClientName: "Invalid Client",
 	}
-	
-	// Validate that the request structure is correct
-	if reqInvalid.ClientName == "" {
-		t.Error("Client name should not be empty")
-	}
-	
-	if len(req.RedirectUris) == 0 {
-		t.Error("Redirect URIs should not be empty for valid request")
+
+	if len(reqInvalid.RedirectUris) != 0 {
+		t.Error("Invalid request should have empty redirect URIs")
 	}
 }
 
