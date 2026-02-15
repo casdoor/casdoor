@@ -36,7 +36,7 @@ class ConsentPage extends React.Component {
     };
   }
 
-  UNSAFE_componentWillMount() {
+  componentDidMount() {
     this.getApplication();
     this.loadScopeDescriptions();
   }

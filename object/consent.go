@@ -242,7 +242,7 @@ func JoinScopes(scopes []string) string {
 }
 
 // checkConsentRequired checks if user consent is required for the OAuth flow
-func checkConsentRequired(user *User, application *Application, scopeStr string) (bool, error) {
+func checkConsentRequired(userObj *User, application *Application, scopeStr string) (bool, error) {
 	// Check consent policy
 	consentPolicy := application.ConsentPolicy
 	if consentPolicy == "" || consentPolicy == "skip" {
@@ -257,7 +257,7 @@ func checkConsentRequired(user *User, application *Application, scopeStr string)
 
 	// Policy is "once" - check if consent already granted
 	requestedScopes := ParseScopes(scopeStr)
-	existingConsent, err := GetUserConsentForApplication(user.Name, application.Name)
+	existingConsent, err := GetUserConsentForApplication(userObj.Name, application.Name)
 	if err != nil {
 		return false, err
 	}

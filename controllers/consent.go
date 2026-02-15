@@ -189,9 +189,21 @@ func (c *ApiController) GrantConsent() {
 	}
 
 	userId := userObj.GetId()
-	code, err := object.GetOAuthCode(userId, request.ClientId, request.Provider, request.SigninMethod, 
-		request.ResponseType, request.RedirectUri, request.Scope, request.State, request.Nonce, 
-		request.Challenge, request.Resource, c.Ctx.Request.Host, c.GetAcceptLanguage())
+	code, err := object.GetOAuthCode(
+		userId,
+		request.ClientId,
+		request.Provider,
+		request.SigninMethod,
+		request.ResponseType,
+		request.RedirectUri,
+		request.Scope,
+		request.State,
+		request.Nonce,
+		request.Challenge,
+		request.Resource,
+		c.Ctx.Request.Host,
+		c.GetAcceptLanguage(),
+	)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
