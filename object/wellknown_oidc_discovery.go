@@ -40,6 +40,7 @@ type OidcDiscovery struct {
 	SubjectTypesSupported                  []string `json:"subject_types_supported"`
 	IdTokenSigningAlgValuesSupported       []string `json:"id_token_signing_alg_values_supported"`
 	ScopesSupported                        []string `json:"scopes_supported"`
+	CodeChallengeMethodsSupported          []string `json:"code_challenge_methods_supported"`
 	ClaimsSupported                        []string `json:"claims_supported"`
 	RequestParameterSupported              bool     `json:"request_parameter_supported"`
 	RequestObjectSigningAlgValuesSupported []string `json:"request_object_signing_alg_values_supported"`
@@ -142,6 +143,7 @@ func GetOidcDiscovery(host string, applicationName string) OidcDiscovery {
 		SubjectTypesSupported:                  []string{"public"},
 		IdTokenSigningAlgValuesSupported:       []string{"RS256", "RS512", "ES256", "ES384", "ES512"},
 		ScopesSupported:                        []string{"openid", "email", "profile", "address", "phone", "offline_access"},
+		CodeChallengeMethodsSupported:          []string{"S256"},
 		ClaimsSupported:                        []string{"iss", "ver", "sub", "aud", "iat", "exp", "id", "type", "displayName", "avatar", "permanentAvatar", "email", "phone", "location", "affiliation", "title", "homepage", "bio", "tag", "region", "language", "score", "ranking", "isOnline", "isAdmin", "isForbidden", "signupApplication", "ldap"},
 		RequestParameterSupported:              true,
 		RequestObjectSigningAlgValuesSupported: []string{"HS256", "HS384", "HS512"},
