@@ -39,7 +39,7 @@ func (pp *DummyPaymentProvider) Pay(r *PayReq) (*PayResp, error) {
 	orderInfo := DummyOrderInfo{
 		Price:              r.Price,
 		Currency:           r.Currency,
-		ProductDisplayName: r.ProductDisplayName,
+		ProductDisplayName: "",
 	}
 	orderInfoBytes, err := json.Marshal(orderInfo)
 	if err != nil {
