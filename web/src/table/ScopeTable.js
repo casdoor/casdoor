@@ -72,12 +72,12 @@ class ScopeTable extends React.Component {
         width: "25%",
         render: (text, record, index) => {
           return (
-            <Input 
-              value={text} 
-              placeholder="e.g., files:read" 
+            <Input
+              value={text}
+              placeholder="e.g., files:read"
               onChange={e => {
                 this.updateField(table, index, "name", e.target.value);
-              }} 
+              }}
             />
           );
         },
@@ -89,12 +89,12 @@ class ScopeTable extends React.Component {
         width: "25%",
         render: (text, record, index) => {
           return (
-            <Input 
-              value={text} 
-              placeholder="e.g., Read Files" 
+            <Input
+              value={text}
+              placeholder="e.g., Read Files"
               onChange={e => {
                 this.updateField(table, index, "displayName", e.target.value);
-              }} 
+              }}
             />
           );
         },
@@ -106,12 +106,12 @@ class ScopeTable extends React.Component {
         width: "40%",
         render: (text, record, index) => {
           return (
-            <Input 
-              value={text} 
-              placeholder="e.g., Allow reading your files and documents" 
+            <Input
+              value={text}
+              placeholder="e.g., Allow reading your files and documents"
               onChange={e => {
                 this.updateField(table, index, "description", e.target.value);
-              }} 
+              }}
             />
           );
         },

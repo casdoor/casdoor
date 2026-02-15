@@ -313,10 +313,10 @@ class ApplicationEditPage extends React.Component {
               {Setting.getLabel(i18next.t("general:Category"), i18next.t("general:Category - Tooltip"))} :
             </Col>
             <Col span={21} >
-              <Select 
-                virtual={false} 
-                style={{width: "100%"}} 
-                value={this.state.application.category} 
+              <Select
+                virtual={false}
+                style={{width: "100%"}}
+                value={this.state.application.category}
                 onChange={(value) => {
                   this.updateApplicationField("category", value);
                   if (value === "Agent") {
@@ -336,9 +336,9 @@ class ApplicationEditPage extends React.Component {
               {Setting.getLabel(i18next.t("general:Type"), i18next.t("general:Type - Tooltip"))} :
             </Col>
             <Col span={21} >
-              <Select 
-                virtual={false} 
-                style={{width: "100%"}} 
+              <Select
+                virtual={false}
+                style={{width: "100%"}}
                 value={this.state.application.type}
                 onChange={(value) => {
                   this.updateApplicationField("type", value);
