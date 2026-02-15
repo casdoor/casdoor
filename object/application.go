@@ -769,7 +769,9 @@ func UpdateApplication(id string, application *Application, isGlobalAdmin bool, 
 	}
 
 	if affected != 0 {
-		_ = RefreshApplicationCache()
+		if err := RefreshApplicationCache(); err != nil {
+			fmt.Printf("Failed to refresh application cache after update: %v\n", err)
+		}
 	}
 
 	return affected != 0, nil
@@ -824,7 +826,9 @@ func AddApplication(application *Application) (bool, error) {
 	}
 
 	if affected != 0 {
-		_ = RefreshApplicationCache()
+		if err := RefreshApplicationCache(); err != nil {
+			fmt.Printf("Failed to refresh application cache after add: %v\n", err)
+		}
 	}
 
 	return affected != 0, nil
@@ -837,7 +841,9 @@ func deleteApplication(application *Application) (bool, error) {
 	}
 
 	if affected != 0 {
-		_ = RefreshApplicationCache()
+		if err := RefreshApplicationCache(); err != nil {
+			fmt.Printf("Failed to refresh application cache after delete: %v\n", err)
+		}
 	}
 
 	return affected != 0, nil

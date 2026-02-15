@@ -18,6 +18,7 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"strings"
 	"testing"
 )
@@ -160,13 +161,19 @@ func TestReverseProxyUpstreamHostVariations(t *testing.T) {
 	}))
 	defer backend.Close()
 
+	// Parse backend URL to get host
+	backendURL, err := url.Parse(backend.URL)
+	if err != nil {
+		t.Fatalf("Failed to parse backend URL: %v", err)
+	}
+
 	tests := []struct {
 		name         string
 		upstreamHost string
 		shouldWork   bool
 	}{
 		{"Full URL", backend.URL, true},
-		{"Host only", strings.TrimPrefix(backend.URL, "http://"), true},
+		{"Host only", backendURL.Host, true},
 		{"Empty", "", false},
 	}
 

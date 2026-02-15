@@ -75,7 +75,7 @@ func forwardHandler(targetUrl string, writer http.ResponseWriter, request *http.
 
 		// Set X-Real-IP and X-Forwarded-For headers
 		if clientIP, _, err := net.SplitHostPort(r.RemoteAddr); err == nil {
-			if xff := r.Header.Get("X-Forwarded-For"); xff != "" && xff != clientIP {
+			if xff := r.Header.Get("X-Forwarded-For"); xff != "" {
 				r.Header.Set("X-Forwarded-For", fmt.Sprintf("%s, %s", xff, clientIP))
 			} else {
 				r.Header.Set("X-Forwarded-For", clientIP)
