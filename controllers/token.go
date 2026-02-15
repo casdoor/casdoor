@@ -275,7 +275,28 @@ func (c *ApiController) GetOAuthToken() {
 	}
 
 	host := c.Ctx.Request.Host
-	token, err := object.GetOAuthToken(grantType, clientId, clientSecret, code, verifier, scope, nonce, username, password, host, refreshToken, tag, avatar, c.GetAcceptLanguage(), subjectToken, subjectTokenType, audience)
+
+	// Check for mTLS authentication (RFC 8705)
+	var certFingerprint string
+	cert, certErr := object.GetClientCertificate(c.Ctx.Request)
+	if certErr == nil && cert != nil {
+		// Client certificate is present, check if application supports mTLS
+		application, appErr := object.GetApplicationByClientId(clientId)
+		if appErr == nil && application != nil && object.IsMtlsEnabled(application) {
+			// Validate the certificate
+			certValidated, validationErr := object.ValidateMtlsRequest(c.Ctx.Request, application)
+			if validationErr != nil {
+				// Certificate validation failed for mTLS-enabled application
+				c.ResponseError(fmt.Sprintf("mTLS certificate validation failed: %s", validationErr.Error()))
+				return
+			}
+			if certValidated != nil {
+				certFingerprint = object.GetCertificateFingerprint(certValidated)
+			}
+		}
+	}
+
+	token, err := object.GetOAuthTokenWithCert(grantType, clientId, clientSecret, code, verifier, scope, nonce, username, password, host, refreshToken, tag, avatar, c.GetAcceptLanguage(), subjectToken, subjectTokenType, audience, certFingerprint)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -481,6 +502,20 @@ func (c *ApiController) IntrospectToken() {
 		if application == nil {
 			c.ResponseError(fmt.Sprintf(c.T("auth:The application: %s does not exist"), token.Application))
 			return
+		}
+
+		// Validate certificate-bound token (RFC 8705)
+		if token.CertFingerprint != "" {
+			cert, certErr := object.GetClientCertificate(c.Ctx.Request)
+			if certErr != nil || cert == nil {
+				respondWithInactiveToken()
+				return
+			}
+			currentFingerprint := object.GetCertificateFingerprint(cert)
+			if currentFingerprint != token.CertFingerprint {
+				respondWithInactiveToken()
+				return
+			}
 		}
 
 		introspectionResponse.TokenType = token.TokenType

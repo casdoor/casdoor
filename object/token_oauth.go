@@ -211,6 +211,10 @@ func GetOAuthCode(userId string, clientId string, provider string, signinMethod 
 }
 
 func GetOAuthToken(grantType string, clientId string, clientSecret string, code string, verifier string, scope string, nonce string, username string, password string, host string, refreshToken string, tag string, avatar string, lang string, subjectToken string, subjectTokenType string, audience string) (interface{}, error) {
+	return GetOAuthTokenWithCert(grantType, clientId, clientSecret, code, verifier, scope, nonce, username, password, host, refreshToken, tag, avatar, lang, subjectToken, subjectTokenType, audience, "")
+}
+
+func GetOAuthTokenWithCert(grantType string, clientId string, clientSecret string, code string, verifier string, scope string, nonce string, username string, password string, host string, refreshToken string, tag string, avatar string, lang string, subjectToken string, subjectTokenType string, audience string, certFingerprint string) (interface{}, error) {
 	application, err := GetApplicationByClientId(clientId)
 	if err != nil {
 		return nil, err
@@ -240,7 +244,7 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 	case "password": //	Resource Owner Password Credentials Grant
 		token, tokenError, err = GetPasswordToken(application, username, password, scope, host)
 	case "client_credentials": // Client Credentials Grant
-		token, tokenError, err = GetClientCredentialsToken(application, clientSecret, scope, host)
+		token, tokenError, err = GetClientCredentialsTokenWithCert(application, clientSecret, scope, host, certFingerprint)
 	case "token", "id_token": // Implicit Grant
 		token, tokenError, err = GetImplicitToken(application, username, scope, nonce, host)
 	case "urn:ietf:params:oauth:grant-type:device_code":
@@ -752,12 +756,32 @@ func GetPasswordToken(application *Application, username string, password string
 // GetClientCredentialsToken
 // Client Credentials flow
 func GetClientCredentialsToken(application *Application, clientSecret string, scope string, host string) (*Token, *TokenError, error) {
-	if application.ClientSecret != clientSecret {
+	return GetClientCredentialsTokenWithCert(application, clientSecret, scope, host, "")
+}
+
+// GetClientCredentialsTokenWithCert
+// Client Credentials flow with optional mTLS support
+func GetClientCredentialsTokenWithCert(application *Application, clientSecret string, scope string, host string, certFingerprint string) (*Token, *TokenError, error) {
+	// If mTLS is enabled and cert fingerprint is provided, certificate-based auth is used
+	mtlsAuth := IsMtlsEnabled(application) && certFingerprint != ""
+
+	// Defense-in-depth: If a client secret is configured, always validate it
+	// This ensures both certificate AND secret are valid when both are configured
+	if application.ClientSecret != "" {
+		if application.ClientSecret != clientSecret {
+			return nil, &TokenError{
+				Error:            InvalidClient,
+				ErrorDescription: "client_secret is invalid",
+			}, nil
+		}
+	} else if !mtlsAuth {
+		// No client secret and no mTLS - reject
 		return nil, &TokenError{
 			Error:            InvalidClient,
-			ErrorDescription: "client_secret is invalid",
+			ErrorDescription: "authentication required",
 		}, nil
 	}
+
 	nullUser := &User{
 		Owner: application.Owner,
 		Id:    application.GetId(),
@@ -773,18 +797,19 @@ func GetClientCredentialsToken(application *Application, clientSecret string, sc
 		}, nil
 	}
 	token := &Token{
-		Owner:        application.Owner,
-		Name:         tokenName,
-		CreatedTime:  util.GetCurrentTime(),
-		Application:  application.Name,
-		Organization: application.Organization,
-		User:         nullUser.Name,
-		Code:         util.GenerateClientId(),
-		AccessToken:  accessToken,
-		ExpiresIn:    int(application.ExpireInHours * float64(hourSeconds)),
-		Scope:        scope,
-		TokenType:    "Bearer",
-		CodeIsUsed:   true,
+		Owner:           application.Owner,
+		Name:            tokenName,
+		CreatedTime:     util.GetCurrentTime(),
+		Application:     application.Name,
+		Organization:    application.Organization,
+		User:            nullUser.Name,
+		Code:            util.GenerateClientId(),
+		AccessToken:     accessToken,
+		ExpiresIn:       int(application.ExpireInHours * float64(hourSeconds)),
+		Scope:           scope,
+		TokenType:       "Bearer",
+		CodeIsUsed:      true,
+		CertFingerprint: certFingerprint,
 	}
 	_, err = AddToken(token)
 	if err != nil {

@@ -70,6 +70,20 @@ func AutoSigninFilter(ctx *context.Context) {
 			return
 		}
 
+		// Validate certificate-bound token (RFC 8705)
+		if token.CertFingerprint != "" {
+			cert, certErr := object.GetClientCertificate(ctx.Request)
+			if certErr != nil || cert == nil {
+				responseError(ctx, "Certificate-bound token requires client certificate")
+				return
+			}
+			currentFingerprint := object.GetCertificateFingerprint(cert)
+			if currentFingerprint != token.CertFingerprint {
+				responseError(ctx, "Client certificate does not match token binding")
+				return
+			}
+		}
+
 		userId := util.GetId(token.Organization, token.User)
 		application, err := object.GetApplicationByUserId(fmt.Sprintf("app/%s", token.Application))
 		if err != nil {
@@ -99,6 +113,17 @@ func AutoSigninFilter(ctx *context.Context) {
 
 	// "/page?clientId=123&clientSecret=456"
 	userId, err := getUsernameByClientIdSecret(ctx)
+	if err != nil {
+		responseError(ctx, err.Error())
+		return
+	}
+	if userId != "" {
+		setSessionUser(ctx, userId)
+		return
+	}
+
+	// mTLS client certificate authentication (RFC 8705)
+	userId, err = getUsernameByClientCert(ctx)
 	if err != nil {
 		responseError(ctx, err.Error())
 		return
