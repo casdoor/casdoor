@@ -95,11 +95,13 @@ func denyMcpRequest(ctx *context.Context) {
 	})
 
 	// Add WWW-Authenticate header per MCP Authorization spec (RFC 9728)
-	scheme := "https"
-	if ctx.Request.URL.Scheme != "" {
-		scheme = ctx.Request.URL.Scheme
-	}
+	// Use the same logic as getOriginFromHost to determine the scheme
 	host := ctx.Request.Host
+	scheme := "https"
+	if !strings.Contains(host, ".") {
+		// localhost:8000 or computer-name:80
+		scheme = "http"
+	}
 	resourceMetadataUrl := fmt.Sprintf("%s://%s/.well-known/oauth-protected-resource", scheme, host)
 	ctx.Output.Header("WWW-Authenticate", fmt.Sprintf("Bearer realm=\"casdoor\", resource_metadata=\"%s\"", resourceMetadataUrl))
 

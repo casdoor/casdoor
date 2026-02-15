@@ -15,6 +15,7 @@
 package object
 
 import (
+	"strings"
 	"testing"
 )
 
@@ -39,7 +40,7 @@ func TestGetOauthProtectedResourceMetadata(t *testing.T) {
 	}
 
 	// Verify it starts with https for proper domain
-	if metadata.Resource[:8] != "https://" {
+	if len(metadata.Resource) < 8 || metadata.Resource[:8] != "https://" {
 		t.Errorf("Resource should start with https:// for domain, got: %s", metadata.Resource)
 	}
 
@@ -71,15 +72,13 @@ func TestGetOauthProtectedResourceMetadataByApplication(t *testing.T) {
 
 	// Verify resource includes application name
 	expectedSuffix := "/.well-known/" + appName
-	if len(metadata.Resource) < len(expectedSuffix) ||
-		metadata.Resource[len(metadata.Resource)-len(expectedSuffix):] != expectedSuffix {
-		t.Errorf("Resource should end with /.well-known/%s, got: %s", appName, metadata.Resource)
+	if !strings.HasSuffix(metadata.Resource, expectedSuffix) {
+		t.Errorf("Resource should end with %s, got: %s", expectedSuffix, metadata.Resource)
 	}
 
 	// Verify auth server includes application name
-	if len(metadata.AuthorizationServers[0]) < len(expectedSuffix) ||
-		metadata.AuthorizationServers[0][len(metadata.AuthorizationServers[0])-len(expectedSuffix):] != expectedSuffix {
-		t.Errorf("AuthorizationServers[0] should end with /.well-known/%s, got: %s", appName, metadata.AuthorizationServers[0])
+	if !strings.HasSuffix(metadata.AuthorizationServers[0], expectedSuffix) {
+		t.Errorf("AuthorizationServers[0] should end with %s, got: %s", expectedSuffix, metadata.AuthorizationServers[0])
 	}
 
 	// Verify resource and auth server match for application-specific discovery
@@ -95,13 +94,12 @@ func TestOauthProtectedResourceMetadataLocalhost(t *testing.T) {
 	metadata := GetOauthProtectedResourceMetadata(host)
 
 	// Verify it starts with http for localhost
-	if metadata.Resource[:7] != "http://" {
+	if len(metadata.Resource) < 7 || metadata.Resource[:7] != "http://" {
 		t.Errorf("Resource should start with http:// for localhost, got: %s", metadata.Resource)
 	}
 
 	// Verify the host is included
-	if len(metadata.Resource) < len(host) ||
-		metadata.Resource[len(metadata.Resource)-len(host):] != host {
+	if !strings.HasSuffix(metadata.Resource, host) {
 		t.Errorf("Resource should end with %s, got: %s", host, metadata.Resource)
 	}
 }
