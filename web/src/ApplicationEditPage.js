@@ -48,7 +48,7 @@ import ProviderTable from "./table/ProviderTable";
 import SigninMethodTable from "./table/SigninMethodTable";
 import SignupTable from "./table/SignupTable";
 import SamlAttributeTable from "./table/SamlAttributeTable";
-import ScopesTable from "./table/ScopesTable";
+import ScopeTable from "./table/ScopeTable";
 import PromptPage from "./auth/PromptPage";
 import copy from "copy-to-clipboard";
 import ThemeEditor from "./common/theme/ThemeEditor";
@@ -310,6 +310,61 @@ class ApplicationEditPage extends React.Component {
           </Row>
           <Row style={{marginTop: "20px"}} >
             <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
+              {Setting.getLabel(i18next.t("general:Category"), i18next.t("general:Category - Tooltip"))} :
+            </Col>
+            <Col span={21} >
+              <Select 
+                virtual={false} 
+                style={{width: "100%"}} 
+                value={this.state.application.category} 
+                onChange={(value) => {
+                  this.updateApplicationField("category", value);
+                  if (value === "Agent") {
+                    this.updateApplicationField("type", "MCP");
+                  } else {
+                    this.updateApplicationField("type", "All");
+                  }
+                }}
+              >
+                <Option value="Default">Default</Option>
+                <Option value="Agent">Agent</Option>
+              </Select>
+            </Col>
+          </Row>
+          <Row style={{marginTop: "20px"}} >
+            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
+              {Setting.getLabel(i18next.t("general:Type"), i18next.t("general:Type - Tooltip"))} :
+            </Col>
+            <Col span={21} >
+              <Select 
+                virtual={false} 
+                style={{width: "100%"}} 
+                value={this.state.application.type}
+                onChange={(value) => {
+                  this.updateApplicationField("type", value);
+                }}
+              >
+                {
+                  (this.state.application.category === "Agent") ? (
+                    <>
+                      <Option value="MCP">MCP</Option>
+                      <Option value="A2A">A2A</Option>
+                    </>
+                  ) : (
+                    <>
+                      <Option value="All">All</Option>
+                      <Option value="OIDC">OIDC</Option>
+                      <Option value="OAuth">OAuth</Option>
+                      <Option value="SAML">SAML</Option>
+                      <Option value="CAS">CAS</Option>
+                    </>
+                  )
+                }
+              </Select>
+            </Col>
+          </Row>
+          <Row style={{marginTop: "20px"}} >
+            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
               {Setting.getLabel(i18next.t("general:Is shared"), i18next.t("general:Is shared - Tooltip"))} :
             </Col>
             <Col span={21} >
@@ -410,62 +465,6 @@ class ApplicationEditPage extends React.Component {
               <Select virtual={false} style={{width: "100%"}} disabled={!Setting.isAdminUser(this.props.account)} value={this.state.application.organization} onChange={(value => {this.updateApplicationField("organization", value);})}>
                 {
                   this.state.organizations.map((organization, index) => <Option key={index} value={organization.name}>{organization.name}</Option>)
-                }
-              </Select>
-            </Col>
-          </Row>
-          <Row style={{marginTop: "20px"}} >
-            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
-              {Setting.getLabel(i18next.t("application:Category"), i18next.t("application:Category - Tooltip"))} :
-            </Col>
-            <Col span={21} >
-              <Select 
-                virtual={false} 
-                style={{width: "100%"}} 
-                value={this.state.application.category || "Default"} 
-                onChange={(value) => {
-                  this.updateApplicationField("category", value);
-                  // Reset type when category changes
-                  if (value === "Agent") {
-                    this.updateApplicationField("type", "MCP");
-                  } else {
-                    this.updateApplicationField("type", "");
-                  }
-                }}
-              >
-                <Option value="Default">{i18next.t("application:Default")}</Option>
-                <Option value="Agent">{i18next.t("application:Agent")}</Option>
-              </Select>
-            </Col>
-          </Row>
-          <Row style={{marginTop: "20px"}} >
-            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
-              {Setting.getLabel(i18next.t("application:Type"), i18next.t("application:Type - Tooltip"))} :
-            </Col>
-            <Col span={21} >
-              <Select 
-                virtual={false} 
-                style={{width: "100%"}} 
-                value={this.state.application.type || ((this.state.application.category === "Agent") ? "MCP" : "")}
-                onChange={(value) => {
-                  this.updateApplicationField("type", value);
-                }}
-              >
-                {
-                  (this.state.application.category === "Agent") ? (
-                    <>
-                      <Option value="MCP">{i18next.t("application:MCP")}</Option>
-                      <Option value="A2A">{i18next.t("application:A2A")}</Option>
-                    </>
-                  ) : (
-                    <>
-                      <Option value="">{i18next.t("application:All")}</Option>
-                      <Option value="OIDC">{i18next.t("application:OIDC")}</Option>
-                      <Option value="OAuth">{i18next.t("application:OAuth")}</Option>
-                      <Option value="SAML">{i18next.t("application:SAML")}</Option>
-                      <Option value="CAS">{i18next.t("application:CAS")}</Option>
-                    </>
-                  )
                 }
               </Select>
             </Col>
@@ -577,12 +576,12 @@ class ApplicationEditPage extends React.Component {
             (this.state.application.category === "Agent") ? (
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
-                  {Setting.getLabel(i18next.t("application:Scopes"), i18next.t("application:Scopes - Tooltip"))} :
+                  {Setting.getLabel(i18next.t("general:Scopes"), i18next.t("general:Scopes - Tooltip"))} :
                 </Col>
                 <Col span={21} >
-                  <ScopesTable
-                    title={i18next.t("application:Scopes")}
-                    table={this.state.application.scopes || []}
+                  <ScopeTable
+                    title={i18next.t("general:Scopes")}
+                    table={this.state.application.scopes}
                     onUpdateTable={(value) => {this.updateApplicationField("scopes", value);}}
                   />
                 </Col>

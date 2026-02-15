@@ -198,6 +198,9 @@ func initBuiltInApplication() {
 		Name:           "app-built-in",
 		CreatedTime:    util.GetCurrentTime(),
 		DisplayName:    "Casdoor",
+		Category:       "Default",
+		Type:           "All",
+		Scopes:         []*ScopeItem{},
 		Logo:           fmt.Sprintf("%s/img/casdoor-logo_1185x256.png", conf.GetConfigString("staticBaseUrl")),
 		HomepageUrl:    "https://casdoor.org",
 		Organization:   "built-in",
@@ -231,9 +234,6 @@ func initBuiltInApplication() {
 		FormOffset:    2,
 
 		CookieExpireInHours: 720,
-
-		Category: "Default",
-		Scopes:   []*ScopeItem{},
 	}
 	_, err = AddApplication(application)
 	if err != nil {

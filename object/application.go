@@ -79,6 +79,9 @@ type Application struct {
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 
 	DisplayName                  string          `xorm:"varchar(100)" json:"displayName"`
+	Category                     string          `xorm:"varchar(20)" json:"category"`
+	Type                         string          `xorm:"varchar(20)" json:"type"`
+	Scopes                       []*ScopeItem    `xorm:"mediumtext" json:"scopes"`
 	Logo                         string          `xorm:"varchar(200)" json:"logo"`
 	Title                        string          `xorm:"varchar(100)" json:"title"`
 	Favicon                      string          `xorm:"varchar(200)" json:"favicon"`
@@ -150,10 +153,6 @@ type Application struct {
 	FailedSigninLimit      int `json:"failedSigninLimit"`
 	FailedSigninFrozenTime int `json:"failedSigninFrozenTime"`
 	CodeResendTimeout      int `json:"codeResendTimeout"`
-
-	Category string        `xorm:"varchar(20)" json:"category"`
-	Type     string        `xorm:"varchar(20)" json:"type"`
-	Scopes   []*ScopeItem  `xorm:"mediumtext" json:"scopes"`
 }
 
 func GetApplicationCount(owner, field, value string) (int64, error) {

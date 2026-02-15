@@ -217,12 +217,6 @@ func readInitDataFromFile(filePath string) (*InitData, error) {
 		if application.TokenFields == nil {
 			application.TokenFields = []string{}
 		}
-		if application.Category == "" {
-			application.Category = "Default"
-		}
-		if application.Scopes == nil {
-			application.Scopes = []*ScopeItem{}
-		}
 	}
 	for _, permission := range data.Permissions {
 		if permission.Actions == nil {

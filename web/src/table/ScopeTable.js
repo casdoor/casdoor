@@ -18,7 +18,7 @@ import {Button, Input, Table, Tooltip} from "antd";
 import * as Setting from "../Setting";
 import i18next from "i18next";
 
-class ScopesTable extends React.Component {
+class ScopeTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -66,7 +66,7 @@ class ScopesTable extends React.Component {
 
     const columns = [
       {
-        title: i18next.t("application:Scope name"),
+        title: i18next.t("general:Name"),
         dataIndex: "name",
         key: "name",
         width: "25%",
@@ -83,7 +83,7 @@ class ScopesTable extends React.Component {
         },
       },
       {
-        title: i18next.t("application:Scope display name"),
+        title: i18next.t("general:Display name"),
         dataIndex: "displayName",
         key: "displayName",
         width: "25%",
@@ -100,7 +100,7 @@ class ScopesTable extends React.Component {
         },
       },
       {
-        title: i18next.t("application:Scope description"),
+        title: i18next.t("general:Description"),
         dataIndex: "description",
         key: "description",
         width: "40%",
@@ -144,7 +144,7 @@ class ScopesTable extends React.Component {
           title={() => (
             <div>
               {this.props.title}&nbsp;&nbsp;&nbsp;&nbsp;
-              <Button style={{marginRight: "5px"}} type="primary" size="small" onClick={() => this.addRow(table)}>{i18next.t("application:Add scope")}</Button>
+              <Button style={{marginRight: "5px"}} type="primary" size="small" onClick={() => this.addRow(table)}>{i18next.t("general:Add")}</Button>
             </div>
           )}
         />
@@ -163,4 +163,4 @@ class ScopesTable extends React.Component {
   }
 }
 
-export default ScopesTable;
+export default ScopeTable;
