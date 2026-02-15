@@ -152,6 +152,9 @@ func RegisterDynamicClient(req *DynamicClientRegistrationRequest, organization s
 		FormOffset:           2,
 		Tags:                 []string{"dcr"},
 		TermsOfUse:           req.TosUri,
+		Category:             "Agent", // DCR applications default to Agent category
+		Type:                 "MCP",   // DCR applications default to MCP type
+		Scopes:               []*ScopeItem{},
 	}
 
 	// Add the application

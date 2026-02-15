@@ -231,6 +231,9 @@ func initBuiltInApplication() {
 		FormOffset:    2,
 
 		CookieExpireInHours: 720,
+
+		Category: "Default",
+		Scopes:   []*ScopeItem{},
 	}
 	_, err = AddApplication(application)
 	if err != nil {

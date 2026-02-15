@@ -67,6 +67,12 @@ type JwtItem struct {
 	Type     string `json:"type"`
 }
 
+type ScopeItem struct {
+	Name        string `json:"name"`
+	DisplayName string `json:"displayName"`
+	Description string `json:"description"`
+}
+
 type Application struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
@@ -144,6 +150,10 @@ type Application struct {
 	FailedSigninLimit      int `json:"failedSigninLimit"`
 	FailedSigninFrozenTime int `json:"failedSigninFrozenTime"`
 	CodeResendTimeout      int `json:"codeResendTimeout"`
+
+	Category string        `xorm:"varchar(20)" json:"category"`
+	Type     string        `xorm:"varchar(20)" json:"type"`
+	Scopes   []*ScopeItem  `xorm:"mediumtext" json:"scopes"`
 }
 
 func GetApplicationCount(owner, field, value string) (int64, error) {
