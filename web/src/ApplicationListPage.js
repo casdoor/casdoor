@@ -76,6 +76,9 @@ class ApplicationListPage extends BaseListPage {
       refreshExpireInHours: 24 * 7,
       cookieExpireInHours: 24 * 30,
       formOffset: 2,
+      category: "Default",
+      type: "",
+      scopes: [],
     };
   }
 
@@ -261,6 +264,45 @@ class ApplicationListPage extends BaseListPage {
               </Row>
             </div>
           );
+        },
+      },
+      {
+        title: i18next.t("application:Category"),
+        dataIndex: "category",
+        key: "category",
+        width: "120px",
+        sorter: true,
+        ...this.getColumnSearchProps("category"),
+        render: (text, record, index) => {
+          const category = text || "Default";
+          const tagColor = category === "Agent" ? "green" : "blue";
+          return (
+            <span style={{
+              padding: "4px 8px",
+              borderRadius: "4px",
+              backgroundColor: tagColor,
+              color: "white",
+              fontWeight: "500",
+            }}>
+              {category}
+            </span>
+          );
+        },
+      },
+      {
+        title: i18next.t("application:Type"),
+        dataIndex: "type",
+        key: "type",
+        width: "100px",
+        sorter: true,
+        ...this.getColumnSearchProps("type"),
+        render: (text, record, index) => {
+          const category = record.category || "Default";
+          const typ = text || (category === "Default" ? "All" : "");
+          if (!typ) {
+            return "-";
+          }
+          return typ;
         },
       },
       {

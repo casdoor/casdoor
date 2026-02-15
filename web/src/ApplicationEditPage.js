@@ -415,6 +415,62 @@ class ApplicationEditPage extends React.Component {
           </Row>
           <Row style={{marginTop: "20px"}} >
             <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
+              {Setting.getLabel(i18next.t("application:Category"), i18next.t("application:Category - Tooltip"))} :
+            </Col>
+            <Col span={21} >
+              <Select 
+                virtual={false} 
+                style={{width: "100%"}} 
+                value={this.state.application.category || "Default"} 
+                onChange={(value) => {
+                  this.updateApplicationField("category", value);
+                  // Reset type when category changes
+                  if (value === "Agent") {
+                    this.updateApplicationField("type", "MCP");
+                  } else {
+                    this.updateApplicationField("type", "");
+                  }
+                }}
+              >
+                <Option value="Default">{i18next.t("application:Default")}</Option>
+                <Option value="Agent">{i18next.t("application:Agent")}</Option>
+              </Select>
+            </Col>
+          </Row>
+          <Row style={{marginTop: "20px"}} >
+            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
+              {Setting.getLabel(i18next.t("application:Type"), i18next.t("application:Type - Tooltip"))} :
+            </Col>
+            <Col span={21} >
+              <Select 
+                virtual={false} 
+                style={{width: "100%"}} 
+                value={this.state.application.type || ((this.state.application.category === "Agent") ? "MCP" : "")}
+                onChange={(value) => {
+                  this.updateApplicationField("type", value);
+                }}
+              >
+                {
+                  (this.state.application.category === "Agent") ? (
+                    <>
+                      <Option value="MCP">{i18next.t("application:MCP")}</Option>
+                      <Option value="A2A">{i18next.t("application:A2A")}</Option>
+                    </>
+                  ) : (
+                    <>
+                      <Option value="">{i18next.t("application:All")}</Option>
+                      <Option value="OIDC">{i18next.t("application:OIDC")}</Option>
+                      <Option value="OAuth">{i18next.t("application:OAuth")}</Option>
+                      <Option value="SAML">{i18next.t("application:SAML")}</Option>
+                      <Option value="CAS">{i18next.t("application:CAS")}</Option>
+                    </>
+                  )
+                }
+              </Select>
+            </Col>
+          </Row>
+          <Row style={{marginTop: "20px"}} >
+            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
               {Setting.getLabel(i18next.t("organization:Tags"), i18next.t("application:Tags - Tooltip"))} :
             </Col>
             <Col span={21} >
