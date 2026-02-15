@@ -30,11 +30,11 @@ type OauthProtectedResourceMetadata struct {
 
 // GetOauthProtectedResourceMetadata returns RFC 9728 Protected Resource Metadata for global discovery
 func GetOauthProtectedResourceMetadata(host string) OauthProtectedResourceMetadata {
-	backend := getBackendUrl(host)
+	_, originBackend := getOriginFromHost(host)
 
 	return OauthProtectedResourceMetadata{
-		Resource:               backend,
-		AuthorizationServers:   []string{backend},
+		Resource:               originBackend,
+		AuthorizationServers:   []string{originBackend},
 		BearerMethodsSupported: []string{"header"},
 		ScopesSupported:        []string{"openid", "profile", "email", "read", "write"},
 		ResourceSigningAlg:     []string{"RS256"},
@@ -43,11 +43,11 @@ func GetOauthProtectedResourceMetadata(host string) OauthProtectedResourceMetada
 
 // GetOauthProtectedResourceMetadataByApplication returns RFC 9728 Protected Resource Metadata for application-specific discovery
 func GetOauthProtectedResourceMetadataByApplication(host string, applicationName string) OauthProtectedResourceMetadata {
-	backend := getBackendUrl(host)
+	_, originBackend := getOriginFromHost(host)
 
 	// For application-specific discovery, the resource identifier includes the application name
-	resourceIdentifier := fmt.Sprintf("%s/.well-known/%s", backend, applicationName)
-	authServer := fmt.Sprintf("%s/.well-known/%s", backend, applicationName)
+	resourceIdentifier := fmt.Sprintf("%s/.well-known/%s", originBackend, applicationName)
+	authServer := fmt.Sprintf("%s/.well-known/%s", originBackend, applicationName)
 
 	return OauthProtectedResourceMetadata{
 		Resource:               resourceIdentifier,
