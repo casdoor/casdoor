@@ -132,6 +132,7 @@ func initBuiltInOrganization() bool {
 		IsProfilePublic:    false,
 		UseEmailAsUsername: false,
 		EnableTour:         true,
+		DcrPolicy:          "open",
 	}
 	_, err = AddOrganization(organization)
 	if err != nil {
