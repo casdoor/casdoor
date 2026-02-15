@@ -161,12 +161,13 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 		nonce := c.Ctx.Input.Query("nonce")
 		challengeMethod := c.Ctx.Input.Query("code_challenge_method")
 		codeChallenge := c.Ctx.Input.Query("code_challenge")
+		resource := c.Ctx.Input.Query("resource")
 
 		if challengeMethod != "S256" && challengeMethod != "null" && challengeMethod != "" {
 			c.ResponseError(c.T("auth:Challenge method should be S256"))
 			return
 		}
-		code, err := object.GetOAuthCode(userId, clientId, form.Provider, form.SigninMethod, responseType, redirectUri, scope, state, nonce, codeChallenge, c.Ctx.Request.Host, c.GetAcceptLanguage())
+		code, err := object.GetOAuthCode(userId, clientId, form.Provider, form.SigninMethod, responseType, redirectUri, scope, state, nonce, codeChallenge, resource, c.Ctx.Request.Host, c.GetAcceptLanguage())
 		if err != nil {
 			c.ResponseError(err.Error(), nil)
 			return

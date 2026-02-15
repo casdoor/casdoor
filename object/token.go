@@ -43,6 +43,7 @@ type Token struct {
 	CodeChallenge    string `xorm:"varchar(100)" json:"codeChallenge"`
 	CodeIsUsed       bool   `json:"codeIsUsed"`
 	CodeExpireIn     int64  `json:"codeExpireIn"`
+	Resource         string `xorm:"varchar(255)" json:"resource"` // RFC 8707 Resource Indicator
 }
 
 func GetTokenCount(owner, organization, field, value string) (int64, error) {
