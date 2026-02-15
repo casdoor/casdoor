@@ -268,7 +268,171 @@ func (c *McpController) handlePing(req McpRequest) {
 }
 
 func (c *McpController) handleToolsList(req McpRequest) {
-	tools := []McpTool{
+	allTools := c.getAllTools()
+
+	// Get JWT claims from the request
+	claims := c.GetClaimsFromToken()
+
+	// If no token is present, check session authentication
+	if claims == nil {
+		username := c.GetSessionUsername()
+		// If user is authenticated via session, return all tools (backward compatibility)
+		if username != "" {
+			result := McpListToolsResult{
+				Tools: allTools,
+			}
+			c.McpResponseOk(req.ID, result)
+			return
+		}
+
+		// Unauthenticated request - return all tools for discovery
+		// This allows clients to see what tools are available before authenticating
+		result := McpListToolsResult{
+			Tools: allTools,
+		}
+		c.McpResponseOk(req.ID, result)
+		return
+	}
+
+	// Token-based authentication - filter tools by scopes
+	grantedScopes := GetScopesFromClaims(claims)
+	allowedTools := GetToolsForScopes(grantedScopes, BuiltinScopes)
+
+	// Filter tools based on allowed scopes
+	var filteredTools []McpTool
+	for _, tool := range allTools {
+		if allowedTools[tool.Name] {
+			filteredTools = append(filteredTools, tool)
+		}
+	}
+
+	result := McpListToolsResult{
+		Tools: filteredTools,
+	}
+
+	c.McpResponseOk(req.ID, result)
+}
+
+func (c *McpController) handleToolsCall(req McpRequest) {
+	var params McpCallToolParams
+	err := json.Unmarshal(req.Params, &params)
+	if err != nil {
+		c.sendInvalidParamsError(req.ID, err.Error())
+		return
+	}
+
+	// Check scope-tool permission
+	if !c.checkToolPermission(req.ID, params.Name) {
+		return // Error already sent by checkToolPermission
+	}
+
+	// Route to the appropriate tool handler
+	switch params.Name {
+	case "get_applications":
+		var args GetApplicationsArgs
+		if err := json.Unmarshal(params.Arguments, &args); err != nil {
+			c.sendInvalidParamsError(req.ID, err.Error())
+			return
+		}
+		c.handleGetApplicationsTool(req.ID, args)
+	case "get_application":
+		var args GetApplicationArgs
+		if err := json.Unmarshal(params.Arguments, &args); err != nil {
+			c.sendInvalidParamsError(req.ID, err.Error())
+			return
+		}
+		c.handleGetApplicationTool(req.ID, args)
+	case "add_application":
+		var args AddApplicationArgs
+		if err := json.Unmarshal(params.Arguments, &args); err != nil {
+			c.sendInvalidParamsError(req.ID, err.Error())
+			return
+		}
+		c.handleAddApplicationTool(req.ID, args)
+	case "update_application":
+		var args UpdateApplicationArgs
+		if err := json.Unmarshal(params.Arguments, &args); err != nil {
+			c.sendInvalidParamsError(req.ID, err.Error())
+			return
+		}
+		c.handleUpdateApplicationTool(req.ID, args)
+	case "delete_application":
+		var args DeleteApplicationArgs
+		if err := json.Unmarshal(params.Arguments, &args); err != nil {
+			c.sendInvalidParamsError(req.ID, err.Error())
+			return
+		}
+		c.handleDeleteApplicationTool(req.ID, args)
+	default:
+		c.McpResponseError(req.ID, -32602, "Invalid tool name", fmt.Sprintf("Tool '%s' not found", params.Name))
+	}
+}
+
+// checkToolPermission validates that the current token has the required scope for the tool
+// Returns false and sends an error response if permission is denied
+func (c *McpController) checkToolPermission(id interface{}, toolName string) bool {
+	// Get JWT claims from the request
+	claims := c.GetClaimsFromToken()
+
+	// If no token is present, check if the user is authenticated via session
+	if claims == nil {
+		username := c.GetSessionUsername()
+		// If user is authenticated via session (e.g., session cookie), allow access
+		// This maintains backward compatibility with existing session-based auth
+		if username != "" {
+			return true
+		}
+
+		// No authentication present - deny access
+		c.sendInsufficientScopeError(id, toolName, []string{})
+		return false
+	}
+
+	// Extract scopes from claims
+	grantedScopes := GetScopesFromClaims(claims)
+
+	// Get allowed tools for the granted scopes
+	allowedTools := GetToolsForScopes(grantedScopes, BuiltinScopes)
+
+	// Check if the requested tool is allowed
+	if !allowedTools[toolName] {
+		c.sendInsufficientScopeError(id, toolName, grantedScopes)
+		return false
+	}
+
+	return true
+}
+
+// sendInsufficientScopeError sends an error response for insufficient scope
+func (c *McpController) sendInsufficientScopeError(id interface{}, toolName string, grantedScopes []string) {
+	// Find required scope for this tool
+	requiredScope := ""
+	for _, scopeItem := range BuiltinScopes {
+		for _, tool := range scopeItem.Tools {
+			if tool == toolName {
+				requiredScope = scopeItem.Name
+				break
+			}
+		}
+		if requiredScope != "" {
+			break
+		}
+	}
+
+	errorData := map[string]interface{}{
+		"tool":           toolName,
+		"granted_scopes": grantedScopes,
+	}
+	if requiredScope != "" {
+		errorData["required_scope"] = requiredScope
+	}
+
+	c.McpResponseError(id, -32001, "insufficient_scope", errorData)
+}
+
+// getAllTools returns all available MCP tools
+func (c *McpController) getAllTools() []McpTool {
+	return []McpTool{
 		{
 			Name:        "get_applications",
 			Description: "Get all applications for a specific owner",
@@ -343,61 +507,5 @@ func (c *McpController) handleToolsList(req McpRequest) {
 				"required": []string{"application"},
 			},
 		},
-	}
-
-	result := McpListToolsResult{
-		Tools: tools,
-	}
-
-	c.McpResponseOk(req.ID, result)
-}
-
-func (c *McpController) handleToolsCall(req McpRequest) {
-	var params McpCallToolParams
-	err := json.Unmarshal(req.Params, &params)
-	if err != nil {
-		c.sendInvalidParamsError(req.ID, err.Error())
-		return
-	}
-
-	// Route to the appropriate tool handler
-	switch params.Name {
-	case "get_applications":
-		var args GetApplicationsArgs
-		if err := json.Unmarshal(params.Arguments, &args); err != nil {
-			c.sendInvalidParamsError(req.ID, err.Error())
-			return
-		}
-		c.handleGetApplicationsTool(req.ID, args)
-	case "get_application":
-		var args GetApplicationArgs
-		if err := json.Unmarshal(params.Arguments, &args); err != nil {
-			c.sendInvalidParamsError(req.ID, err.Error())
-			return
-		}
-		c.handleGetApplicationTool(req.ID, args)
-	case "add_application":
-		var args AddApplicationArgs
-		if err := json.Unmarshal(params.Arguments, &args); err != nil {
-			c.sendInvalidParamsError(req.ID, err.Error())
-			return
-		}
-		c.handleAddApplicationTool(req.ID, args)
-	case "update_application":
-		var args UpdateApplicationArgs
-		if err := json.Unmarshal(params.Arguments, &args); err != nil {
-			c.sendInvalidParamsError(req.ID, err.Error())
-			return
-		}
-		c.handleUpdateApplicationTool(req.ID, args)
-	case "delete_application":
-		var args DeleteApplicationArgs
-		if err := json.Unmarshal(params.Arguments, &args); err != nil {
-			c.sendInvalidParamsError(req.ID, err.Error())
-			return
-		}
-		c.handleDeleteApplicationTool(req.ID, args)
-	default:
-		c.McpResponseError(req.ID, -32602, "Invalid tool name", fmt.Sprintf("Tool '%s' not found", params.Name))
 	}
 }
