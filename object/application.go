@@ -154,6 +154,13 @@ type Application struct {
 	FailedSigninLimit      int `json:"failedSigninLimit"`
 	FailedSigninFrozenTime int `json:"failedSigninFrozenTime"`
 	CodeResendTimeout      int `json:"codeResendTimeout"`
+
+	// Reverse proxy fields
+	Domain       string   `xorm:"varchar(100)" json:"domain"`
+	OtherDomains []string `xorm:"varchar(1000)" json:"otherDomains"`
+	UpstreamHost string   `xorm:"varchar(100)" json:"upstreamHost"`
+	SslMode      string   `xorm:"varchar(100)" json:"sslMode"`
+	SslCert      string   `xorm:"varchar(100)" json:"sslCert"`
 }
 
 func GetApplicationCount(owner, field, value string) (int64, error) {
