@@ -101,11 +101,11 @@ func (c *ApiController) RevokeConsent() {
 	c.ResponseOk(success)
 }
 
-// GrantConsent grants consent for an OAuth application
+// GrantConsent grants consent for an OAuth application and returns authorization code
 // @Title GrantConsent
 // @Tag Consent API
-// @Description grant consent for an OAuth application
-// @Param body body object.ConsentRecord true "The consent object"
+// @Description grant consent for an OAuth application and get authorization code
+// @Param body body object.ConsentRecord true "The consent object with OAuth parameters"
 // @Success 200 {object} controllers.Response The Response object
 // @router /grant-consent [post]
 func (c *ApiController) GrantConsent() {
@@ -115,21 +115,42 @@ func (c *ApiController) GrantConsent() {
 		return
 	}
 
-	var consent object.ConsentRecord
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &consent)
+	var request struct {
+		Owner       string   `json:"owner"`
+		Application string   `json:"application"`
+		Scopes      []string `json:"grantedScopes"`
+		ClientId    string   `json:"clientId"`
+		Provider    string   `json:"provider"`
+		SigninMethod string  `json:"signinMethod"`
+		ResponseType string  `json:"responseType"`
+		RedirectUri string   `json:"redirectUri"`
+		Scope       string   `json:"scope"`
+		State       string   `json:"state"`
+		Nonce       string   `json:"nonce"`
+		Challenge   string   `json:"challenge"`
+		Resource    string   `json:"resource"`
+	}
+
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, &request)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
 
-	// Set the user to current session user
-	consent.User = user
-	consent.Name = util.GenerateId()
-	consent.CreatedTime = util.GetCurrentTime()
-	consent.ConsentTime = util.GetCurrentTime()
+	// Create and save consent record
+	consent := object.ConsentRecord{
+		Owner:          request.Owner,
+		Name:           util.GenerateId(),
+		CreatedTime:    util.GetCurrentTime(),
+		User:           user,
+		Application:    request.Application,
+		GrantedScopes:  request.Scopes,
+		ConsentTime:    util.GetCurrentTime(),
+		ExpirationTime: "",
+	}
 
 	// Check if consent already exists for this user and application
-	existingConsent, err := object.GetUserConsentForApplication(user, consent.Application)
+	existingConsent, err := object.GetUserConsentForApplication(user, request.Application)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -137,25 +158,46 @@ func (c *ApiController) GrantConsent() {
 
 	if existingConsent != nil {
 		// Update existing consent
-		existingConsent.GrantedScopes = consent.GrantedScopes
+		existingConsent.GrantedScopes = request.Scopes
 		existingConsent.ConsentTime = util.GetCurrentTime()
-		success, err := object.UpdateConsentRecord(util.GetId(existingConsent.Owner, existingConsent.Name), existingConsent)
+		_, err := object.UpdateConsentRecord(util.GetId(existingConsent.Owner, existingConsent.Name), existingConsent)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
 		}
-		c.ResponseOk(success)
+	} else {
+		// Add new consent
+		_, err = object.AddConsentRecord(&consent)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+	}
+
+	// Now get the OAuth code
+	// Get the user object to build proper userId
+	username := c.GetSessionUsername()
+	// The username from session is already in "owner/name" format
+	userObj, err := object.GetUser(username)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	if userObj == nil {
+		c.ResponseError(c.T("general:User not found"))
 		return
 	}
 
-	// Add new consent
-	success, err := object.AddConsentRecord(&consent)
+	userId := userObj.GetId()
+	code, err := object.GetOAuthCode(userId, request.ClientId, request.Provider, request.SigninMethod, 
+		request.ResponseType, request.RedirectUri, request.Scope, request.State, request.Nonce, 
+		request.Challenge, request.Resource, c.Ctx.Request.Host, c.GetAcceptLanguage())
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
 
-	c.ResponseOk(success)
+	c.ResponseOk(code.Code)
 }
 
 // CheckConsentRequired checks if consent is required for the OAuth flow

@@ -42,6 +42,10 @@ import (
 )
 
 func codeToResponse(code *object.Code) *Response {
+	if code.ConsentRequired {
+		return &Response{Status: "ok", Msg: "", Data: "", Data4: true}
+	}
+
 	if code.Code == "" {
 		return &Response{Status: "error", Msg: code.Message, Data: code.Code}
 	}
