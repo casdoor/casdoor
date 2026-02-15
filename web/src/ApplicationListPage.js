@@ -190,19 +190,15 @@ class ApplicationListPage extends BaseListPage {
         sorter: true,
         ...this.getColumnSearchProps("category"),
         render: (text, record, index) => {
-          const category = text;
-          const tagColor = category === "Agent" ? "green" : "blue";
-          return (
-            <span style={{
-              padding: "4px 8px",
-              borderRadius: "4px",
-              backgroundColor: tagColor,
-              color: "white",
-              fontWeight: "500",
-            }}>
-              {category}
-            </span>
-          );
+          if (!text) {
+            text = "Default";
+          }
+
+          if (text === "Agent") {
+            return Setting.getTag("success", text);
+          } else {
+            return Setting.getTag("default", text);
+          }
         },
       },
       {
