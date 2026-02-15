@@ -94,6 +94,15 @@ func denyMcpRequest(ctx *context.Context) {
 		Data:    T(ctx, "auth:Unauthorized operation"),
 	})
 
+	// Add WWW-Authenticate header per MCP Authorization spec (RFC 9728)
+	scheme := "https"
+	if ctx.Request.URL.Scheme != "" {
+		scheme = ctx.Request.URL.Scheme
+	}
+	host := ctx.Request.Host
+	resourceMetadataUrl := fmt.Sprintf("%s://%s/.well-known/oauth-protected-resource", scheme, host)
+	ctx.Output.Header("WWW-Authenticate", fmt.Sprintf("Bearer realm=\"casdoor\", resource_metadata=\"%s\"", resourceMetadataUrl))
+
 	ctx.Output.SetStatus(http.StatusUnauthorized)
 	_ = ctx.Output.JSON(resp, true, false)
 }
