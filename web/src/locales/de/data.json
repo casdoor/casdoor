@@ -570,7 +570,7 @@
     "Physical": "Physisch",
     "Show all": "Alle anzeigen",
     "Virtual": "Virtuell",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "Sie müssen zuerst alle Untergruppen löschen. Sie können die Untergruppen im linken Gruppenbaum unter [Organisationen] -\u003e [Gruppen] anzeigen."
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Sie müssen zuerst alle Untergruppen löschen. Sie können die Untergruppen im linken Gruppenbaum unter [Organisationen] -> [Gruppen] anzeigen."
   },
   "home": {
     "New users past 30 days": "Neue Benutzer der letzten 30 Tage",
@@ -1047,7 +1047,7 @@
     "Metadata url - Tooltip": "SAML-Metadaten-URL",
     "Method - Tooltip": "Anmeldeverfahren, QR-Code oder Silent-Login",
     "Mobile": "Mobil",
-    "New Provider": "Neuer Anbieter",
+    "New Provider": "Neuer Provider",
     "Parameter": "Parameter",
     "Parameter - Tooltip": "Konfigurationsparameter",
     "Parse": "parsen",
@@ -1081,7 +1081,7 @@
     "SMS account - Tooltip": "SMS-Konto",
     "SMTP connected successfully": "SMTP erfolgreich verbunden",
     "SP ACS URL": "SP-ACS-URL",
-    "SP ACS URL - Tooltip": "SP ACS URL",
+    "SP ACS URL - Tooltip": "SP ACS URL - Tooltip",
     "SP Entity ID": "SP-Entitäts-ID",
     "SSL mode": "SSL mode",
     "SSL mode - Tooltip": "SSL mode - Tooltip",

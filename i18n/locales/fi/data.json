@@ -1,0 +1,230 @@
+{
+  "account": {
+    "Failed to add user": "Käyttäjän lisäys epäonnistui",
+    "Get init score failed, error: %w": "Alkupisteen haku epäonnistui, virhe: %w",
+    "The application does not allow to sign up new account": "Sovellus ei salli uuden tilin luomista"
+  },
+  "auth": {
+    "Challenge method should be S256": "Haasteen metodin tulee olla S256",
+    "DeviceCode Invalid": "DeviceCode virheellinen",
+    "Failed to create user, user information is invalid: %s": "Käyttäjän luonti epäonnistui, käyttäjätiedot ovat virheelliset: %s",
+    "Failed to login in: %s": "Sisäänkirjautuminen epäonnistui: %s",
+    "Invalid token": "Virheellinen token",
+    "State expected: %s, but got: %s": "Odotettiin tilaa: %s, mutta saatiin: %s",
+    "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %s, please use another way to sign up": "Tiliä providerille: %s ja käyttäjälle: %s (%s) ei ole olemassa, eikä sitä voi rekisteröidä uutena tilinä kautta %s, käytä toista tapaa rekisteröityä",
+    "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "Tiliä providerille: %s ja käyttäjälle: %s (%s) ei ole olemassa, eikä sitä voi rekisteröidä uutena tilinä, ota yhteyttä IT-tukeen",
+    "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)": "Tili providerille: %s ja käyttäjälle: %s (%s) on jo linkitetty toiseen tiliin: %s (%s)",
+    "The application: %s does not exist": "Sovellus: %s ei ole olemassa",
+    "The application: %s has disabled users to signin": "Sovellus: %s on estänyt käyttäjien kirjautumisen",
+    "The group: %s does not exist": "Ryhmä: %s ei ole olemassa",
+    "The login method: login with LDAP is not enabled for the application": "Kirjautumistapa: kirjautuminen LDAP:n kautta ei ole käytössä sovelluksessa",
+    "The login method: login with SMS is not enabled for the application": "Kirjautumistapa: kirjautuminen SMS:n kautta ei ole käytössä sovelluksessa",
+    "The login method: login with email is not enabled for the application": "Kirjautumistapa: kirjautuminen sähköpostin kautta ei ole käytössä sovelluksessa",
+    "The login method: login with face is not enabled for the application": "Kirjautumistapa: kirjautuminen kasvotunnistuksella ei ole käytössä sovelluksessa",
+    "The login method: login with password is not enabled for the application": "Kirjautumistapa: kirjautuminen salasanalla ei ole käytössä sovelluksessa",
+    "The order: %s does not exist": "The order: %s does not exist",
+    "The organization: %s does not exist": "Organisaatio: %s ei ole olemassa",
+    "The organization: %s has disabled users to signin": "Organisaatio: %s on estänyt käyttäjien kirjautumisen",
+    "The plan: %s does not exist": "Suunnitelma: %s ei ole olemassa",
+    "The pricing: %s does not exist": "Hinnoittelu: %s ei ole olemassa",
+    "The pricing: %s does not have plan: %s": "Hinnoittelu: %s ei sisällä suunnitelmaa: %s",
+    "The provider: %s does not exist": "Provider: %s ei ole olemassa",
+    "The provider: %s is not enabled for the application": "Provider: %s ei ole käytössä sovelluksessa",
+    "Unauthorized operation": "Luvaton toiminto",
+    "Unknown authentication type (not password or provider), form = %s": "Tuntematon todennustyyppi (ei salasana tai provider), form = %s",
+    "User's tag: %s is not listed in the application's tags": "Käyttäjän tagi: %s ei ole listattu sovelluksen tageissa",
+    "UserCode Expired": "UserCode vanhentunut",
+    "UserCode Invalid": "UserCode virheellinen",
+    "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing": "maksettu-käyttäjä %s ei ole aktiivista tai odottavaa tilausta ja sovellus: %s ei ole oletushinnoittelua",
+    "the application for user %s is not found": "sovellusta käyttäjälle %s ei löydy",
+    "the organization: %s is not found": "organisaatiota: %s ei löydy"
+  },
+  "cas": {
+    "Service %s and %s do not match": "Palvelu %s ja %s eivät täsmää"
+  },
+  "check": {
+    "%s does not meet the CIDR format requirements: %s": "%s ei täytä CIDR-muodon vaatimuksia: %s",
+    "Affiliation cannot be blank": "Affiliaatio ei voi olla tyhjä",
+    "CIDR for IP: %s should not be empty": "CIDR IP:lle: %s ei saa olla tyhjä",
+    "Default code does not match the code's matching rules": "Oletuskoodi ei täsmää koodin täsmäyssääntöihin",
+    "DisplayName cannot be blank": "Näyttönimi ei voi olla tyhjä",
+    "DisplayName is not valid real name": "Näyttönimi ei ole kelvollinen oikea nimi",
+    "Email already exists": "Sähköposti on jo olemassa",
+    "Email cannot be empty": "Sähköposti ei voi olla tyhjä",
+    "Email is invalid": "Sähköposti on virheellinen",
+    "Empty username.": "Tyhjä käyttäjänimi.",
+    "Face data does not exist, cannot log in": "Kasvodataa ei ole olemassa, ei voi kirjautua",
+    "Face data mismatch": "Kasvodata ei täsmää",
+    "Failed to parse client IP: %s": "Client IP:n jäsentäminen epäonnistui: %s",
+    "FirstName cannot be blank": "Etunimi ei voi olla tyhjä",
+    "Guest users must upgrade their account by setting a username and password before they can sign in directly": "Guest users must upgrade their account by setting a username and password before they can sign in directly",
+    "Invitation code cannot be blank": "Kutsukoodi ei voi olla tyhjä",
+    "Invitation code exhausted": "Kutsukoodi on käytetty loppuun",
+    "Invitation code is invalid": "Kutsukoodi on virheellinen",
+    "Invitation code suspended": "Kutsukoodi on keskeytetty",
+    "LastName cannot be blank": "Sukunimi ei voi olla tyhjä",
+    "Multiple accounts with same uid, please check your ldap server": "Useita tilejä samalla uid:llä, tarkista ldap-palvelimesi",
+    "Organization does not exist": "Organisaatiota ei ole olemassa",
+    "Password cannot be empty": "Salasana ei voi olla tyhjä",
+    "Phone already exists": "Puhelinnumero on jo olemassa",
+    "Phone cannot be empty": "Puhelinnumero ei voi olla tyhjä",
+    "Phone number is invalid": "Puhelinnumero on virheellinen",
+    "Please register using the email corresponding to the invitation code": "Rekisteröidy käyttämällä kutsukoodiin vastaavaa sähköpostia",
+    "Please register using the phone  corresponding to the invitation code": "Rekisteröidy käyttämällä kutsukoodiin vastaavaa puhelinnumeroa",
+    "Please register using the username corresponding to the invitation code": "Rekisteröidy käyttämällä kutsukoodiin vastaavaa käyttäjänimeä",
+    "Session outdated, please login again": "Istunto vanhentunut, kirjaudu uudelleen",
+    "The invitation code has already been used": "Kutsukoodi on jo käytetty",
+    "The password must contain at least one special character": "Salasanan on sisällettävä vähintään yksi erikoismerkki",
+    "The password must contain at least one uppercase letter, one lowercase letter and one digit": "Salasanan on sisällettävä vähintään yksi iso kirjain, yksi pieni kirjain ja yksi numero",
+    "The password must have at least 6 characters": "Salasanassa on oltava vähintään 6 merkkiä",
+    "The password must have at least 8 characters": "Salasanassa on oltava vähintään 8 merkkiä",
+    "The password must not contain any repeated characters": "Salasana ei saa sisältää toistuvia merkkejä",
+    "The user has been deleted and cannot be used to sign in, please contact the administrator": "Käyttäjä on poistettu eikä sitä voi käyttää kirjautumiseen, ota yhteyttä järjestelmänvalvojaan",
+    "The user is forbidden to sign in, please contact the administrator": "Käyttäjän kirjautuminen on estetty, ota yhteyttä ylläpitäjään",
+    "The user: %s doesn't exist in LDAP server": "Käyttäjä: %s ei ole olemassa LDAP-palvelimessa",
+    "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.": "Käyttäjänimi voi sisältää vain alfanumeerisia merkkejä, alaviivoja tai tavuviivoja, ei voi sisältää peräkkäisiä tavuviivoja tai alaviivoja, eikä voi alkaa tai loppua tavuviivalla tai alaviivalla.",
+    "The value \"%s\" for account field \"%s\" doesn't match the account item regex": "The value \"%s\" for account field \"%s\" doesn't match the account item regex",
+    "The value \"%s\" for signup field \"%s\" doesn't match the signup item regex of the application \"%s\"": "The value \"%s\" for signup field \"%s\" doesn't match the signup item regex of the application \"%s\"",
+    "Username already exists": "Käyttäjänimi on jo olemassa",
+    "Username cannot be an email address": "Käyttäjänimi ei voi olla sähköpostiosoite",
+    "Username cannot contain white spaces": "Käyttäjänimi ei voi sisältää välilyöntejä",
+    "Username cannot start with a digit": "Käyttäjänimi ei voi alkaa numerolla",
+    "Username is too long (maximum is 255 characters).": "Käyttäjänimi on liian pitkä (enintään 255 merkkiä).",
+    "Username must have at least 2 characters": "Käyttäjänimessä on oltava vähintään 2 merkkiä",
+    "Username supports email format. Also The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline. Also pay attention to the email format.": "Käyttäjänimi tukee sähköpostimuotoa. Lisäksi käyttäjänimi voi sisältää vain alfanumeerisia merkkejä, alaviivoja tai tavuviivoja, ei voi sisältää peräkkäisiä tavuviivoja tai alaviivoja, eikä voi alkaa tai loppua tavuviivalla tai alaviivalla. Huomioi myös sähköpostimuoto.",
+    "You have entered the wrong password or code too many times, please wait for %d minutes and try again": "Olet syöttänyt väärän salasanan tai koodin liian monta kertaa, odota %d minuuttia ja yritä uudelleen",
+    "Your IP address: %s has been banned according to the configuration of: ": "IP-osoitteesi: %s on estetty asetuksen mukaan: ",
+    "Your password has expired. Please reset your password by clicking \"Forgot password\"": "Your password has expired. Please reset your password by clicking \"Forgot password\"",
+    "Your region is not allow to signup by phone": "Alueellasi ei ole sallittua rekisteröityä puhelimella",
+    "password or code is incorrect": "salasana tai koodi on virheellinen",
+    "password or code is incorrect, you have %s remaining chances": "salasana tai koodi on virheellinen, sinulla on %s yritystä jäljellä",
+    "unsupported password type: %s": "ei-tuettu salasanatyyppi: %s"
+  },
+  "enforcer": {
+    "the adapter: %s is not found": "adapteria: %s ei löydy"
+  },
+  "general": {
+    "Failed to import groups": "Ryhmien tuonti epäonnistui",
+    "Failed to import users": "Käyttäjien tuonti epäonnistui",
+    "Insufficient balance: new balance %v would be below credit limit %v": "Insufficient balance: new balance %v would be below credit limit %v",
+    "Insufficient balance: new organization balance %v would be below credit limit %v": "Insufficient balance: new organization balance %v would be below credit limit %v",
+    "Missing parameter": "Parametri puuttuu",
+    "Only admin user can specify user": "Vain ylläpitäjä voi määrittää käyttäjän",
+    "Please login first": "Kirjaudu ensin sisään",
+    "The LDAP: %s does not exist": "The LDAP: %s does not exist",
+    "The organization: %s should have one application at least": "Organisaatiolla: %s on oltava vähintään yksi sovellus",
+    "The syncer: %s does not exist": "The syncer: %s does not exist",
+    "The user: %s doesn't exist": "Käyttäjää: %s ei ole olemassa",
+    "The user: %s is not found": "The user: %s is not found",
+    "User is required for User category transaction": "User is required for User category transaction",
+    "Wrong userId": "Väärä userId",
+    "don't support captchaProvider: ": "ei tueta captchaProvider: ",
+    "this operation is not allowed in demo mode": "tämä toiminto ei ole sallittu demo-tilassa",
+    "this operation requires administrator to perform": "tämä toiminto vaatii ylläpitäjän suorittamista"
+  },
+  "invitation": {
+    "Invitation %s does not exist": "Kutsua %s ei ole olemassa"
+  },
+  "ldap": {
+    "Ldap server exist": "LDAP-palvelin on olemassa"
+  },
+  "link": {
+    "Please link first": "Linkitä ensin",
+    "This application has no providers": "Tällä sovelluksella ei ole providereita",
+    "This application has no providers of type": "Tällä sovelluksella ei ole tämän tyyppisiä providereita",
+    "This provider can't be unlinked": "Tätä provideria ei voi irrottaa",
+    "You are not the global admin, you can't unlink other users": "Et ole globaali ylläpitäjä, et voi irrottaa muita käyttäjiä",
+    "You can't unlink yourself, you are not a member of any application": "Et voi irrottaa itseäsi, et ole minkään sovelluksen jäsen"
+  },
+  "organization": {
+    "Only admin can modify the %s.": "Vain ylläpitäjä voi muokata %s.",
+    "The %s is immutable.": "%s on muuttumaton.",
+    "Unknown modify rule %s.": "Tuntematon muokkaussääntö %s.",
+    "adding a new user to the 'built-in' organization is currently disabled. Please note: all users in the 'built-in' organization are global administrators in Casdoor. Refer to the docs: https://casdoor.org/docs/basic/core-concepts#how-does-casdoor-manage-itself. If you still wish to create a user for the 'built-in' organization, go to the organization's settings page and enable the 'Has privilege consent' option.": "Uuden käyttäjän lisääminen 'built-in'-organisaatioon on tällä hetkellä poistettu käytöstä. Huomioi: Kaikki 'built-in'-organisaation käyttäjät ovat Casdoorin globaaleja ylläpitäjiä. Katso dokumentaatio: https://casdoor.org/docs/basic/core-concepts#how-does-casdoor-manage-itself. Jos haluat silti luoda käyttäjän 'built-in'-organisaatiolle, siirry organisaation asetussivulle ja käytä käyttöön vaihtoehdon 'On oikeuksien suostumus'."
+  },
+  "permission": {
+    "The permission: \"%s\" doesn't exist": "The permission: \"%s\" doesn't exist"
+  },
+  "product": {
+    "Product list cannot be empty": "Product list cannot be empty"
+  },
+  "provider": {
+    "Failed to initialize ID Verification provider": "Failed to initialize ID Verification provider",
+    "Invalid application id": "Virheellinen sovelluksen id",
+    "No ID Verification provider configured": "No ID Verification provider configured",
+    "Provider is not an ID Verification provider": "Provider is not an ID Verification provider",
+    "the provider: %s does not exist": "provideria: %s ei ole olemassa"
+  },
+  "resource": {
+    "User is nil for tag: avatar": "Käyttäjä on nil tagille: avatar",
+    "Username or fullFilePath is empty: username = %s, fullFilePath = %s": "Käyttäjänimi tai fullFilePath on tyhjä: username = %s, fullFilePath = %s"
+  },
+  "saml": {
+    "Application %s not found": "Sovellusta %s ei löydy"
+  },
+  "saml_sp": {
+    "provider %s's category is not SAML": "provider %s:n kategoria ei ole SAML"
+  },
+  "service": {
+    "Empty parameters for emailForm: %v": "Tyhjät parametrit emailFormille: %v",
+    "Invalid Email receivers: %s": "Virheelliset sähköpostivastaanottajat: %s",
+    "Invalid phone receivers: %s": "Virheelliset puhelinvastaanottajat: %s"
+  },
+  "session": {
+    "session id %s is the current session and cannot be deleted": "session id %s is the current session and cannot be deleted"
+  },
+  "storage": {
+    "The objectKey: %s is not allowed": "objectKey: %s ei ole sallittu",
+    "The provider type: %s is not supported": "Provider-tyyppiä: %s ei tueta"
+  },
+  "subscription": {
+    "Error": "Virhe"
+  },
+  "ticket": {
+    "Ticket not found": "Ticket not found"
+  },
+  "token": {
+    "Grant_type: %s is not supported in this application": "Grant_type: %s ei ole tuettu tässä sovelluksessa",
+    "Invalid application or wrong clientSecret": "Virheellinen sovellus tai väärä clientSecret",
+    "Invalid client_id": "Virheellinen client_id",
+    "Redirect URI: %s doesn't exist in the allowed Redirect URI list": "Uudelleenohjaus-URI: %s ei ole sallittujen uudelleenohjaus-URI-listassa",
+    "Token not found, invalid accessToken": "Tokenia ei löydy, virheellinen accessToken"
+  },
+  "user": {
+    "Display name cannot be empty": "Näyttönimi ei voi olla tyhjä",
+    "ID card information and real name are required": "ID card information and real name are required",
+    "Identity verification failed": "Identity verification failed",
+    "MFA email is enabled but email is empty": "MFA-sähköposti on käytössä, mutta sähköposti on tyhjä",
+    "MFA phone is enabled but phone number is empty": "MFA-puhelin on käytössä, mutta puhelinnumero on tyhjä",
+    "New password cannot contain blank space.": "Uusi salasana ei voi sisältää välilyöntejä.",
+    "No application found for user": "No application found for user",
+    "The new password must be different from your current password": "Uuden salasanan on oltava erilainen kuin nykyinen salasana",
+    "User is already verified": "User is already verified",
+    "the user's owner and name should not be empty": "käyttäjän omistaja ja nimi eivät saa olla tyhjiä"
+  },
+  "util": {
+    "No application is found for userId: %s": "Sovellusta ei löydy userId:lle: %s",
+    "No provider for category: %s is found for application: %s": "Provideria kategorialle: %s ei löydy sovellukselle: %s",
+    "The provider: %s is not found": "Provideria: %s ei löydy"
+  },
+  "verification": {
+    "Invalid captcha provider.": "Virheellinen captcha-provider.",
+    "Phone number is invalid in your region %s": "Puhelinnumero on virheellinen alueellasi %s",
+    "The forgot password feature is disabled": "The forgot password feature is disabled",
+    "The verification code has already been used!": "Vahvistuskoodi on jo käytetty!",
+    "The verification code has not been sent yet!": "Vahvistuskoodia ei ole vielä lähetetty!",
+    "Turing test failed.": "Turing-testi epäonnistui.",
+    "Unable to get the email modify rule.": "Sähköpostin muokkaussääntöä ei saada.",
+    "Unable to get the phone modify rule.": "Puhelimen muokkaussääntöä ei saada.",
+    "Unknown type": "Tuntematon tyyppi",
+    "Wrong verification code!": "Väärä vahvistuskoodi!",
+    "You should verify your code in %d min!": "Sinun tulee vahvistaa koodisi %d minuutissa!",
+    "please add a SMS provider to the \"Providers\" list for the application: %s": "please add a SMS provider to the \"Providers\" list for the application: %s",
+    "please add an Email provider to the \"Providers\" list for the application: %s": "please add an Email provider to the \"Providers\" list for the application: %s",
+    "the user does not exist, please sign up first": "käyttäjää ei ole olemassa, rekisteröidy ensin"
+  },
+  "webauthn": {
+    "Found no credentials for this user": "Tälle käyttäjälle ei löytynyt kirjautumistietoja",
+    "Please call WebAuthnSigninBegin first": "Kutsu ensin WebAuthnSigninBegin"
+  }
+}
