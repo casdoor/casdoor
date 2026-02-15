@@ -272,7 +272,7 @@ class OrderPayPage extends React.Component {
     const updateTimeMap = {
       Paid: i18next.t("order:Payment time"),
       Canceled: i18next.t("order:Cancel time"),
-      PaymentFailed: i18next.t("order:Payment failed time"),
+      Failed: i18next.t("order:Payment failed time"),
       Timeout: i18next.t("order:Timeout time"),
     };
     const updateTimeLabel = updateTimeMap[state] || i18next.t("general:Updated time");
