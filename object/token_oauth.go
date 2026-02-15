@@ -44,8 +44,9 @@ const (
 var DeviceAuthMap = sync.Map{}
 
 type Code struct {
-	Message string `xorm:"varchar(100)" json:"message"`
-	Code    string `xorm:"varchar(100)" json:"code"`
+	Message         string `xorm:"varchar(100)" json:"message"`
+	Code            string `xorm:"varchar(100)" json:"code"`
+	ConsentRequired bool   `json:"consentRequired,omitempty"`
 }
 
 type TokenWrapper struct {
@@ -195,6 +196,20 @@ func GetOAuthCode(userId string, clientId string, provider string, signinMethod 
 		return &Code{
 			Message: err.Error(),
 			Code:    "",
+		}, nil
+	}
+
+	// Check if consent is required
+	consentRequired, err := checkConsentRequired(user, application, scope)
+	if err != nil {
+		return nil, err
+	}
+
+	if consentRequired {
+		return &Code{
+			Message:         "",
+			Code:            "",
+			ConsentRequired: true,
 		}, nil
 	}
 
