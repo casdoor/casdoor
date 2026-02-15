@@ -168,7 +168,18 @@
     "Use Email as NameID": "使用邮箱作为NameID",
     "Use Email as NameID - Tooltip": "使用邮箱作为NameID",
     "Vertical": "垂直",
-    "You are unexpected to see this prompt page": "错误：该提醒页面不应出现"
+    "You are unexpected to see this prompt page": "错误：该提醒页面不应出现",
+    "Reverse Proxy": "反向代理",
+    "Domain": "域名",
+    "Domain - Tooltip": "此应用程序的公共域名（例如，blog.example.com）",
+    "Other domains": "其他域名",
+    "Other domains - Tooltip": "也应路由到此应用程序的其他域名",
+    "Upstream host": "上游主机",
+    "Upstream host - Tooltip": "要转发请求的上游后端地址（例如，localhost:8080 或 192.168.1.100:3000）",
+    "SSL mode": "SSL 模式",
+    "SSL mode - Tooltip": "为此应用程序选择 SSL/TLS 模式：HTTP、HTTPS 和 HTTP 或仅 HTTPS",
+    "SSL cert": "SSL 证书",
+    "SSL cert - Tooltip": "用于 TLS 终止的 SSL 证书"
   },
   "cert": {
     "Bit size": "位大小",
@@ -570,7 +581,7 @@
     "Physical": "实体组",
     "Show all": "显示全部",
     "Virtual": "虚拟组",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "您需要先删除所有子组。您可以在 [组织] -\u003e [群组] 页面左侧的群组树中查看子组"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "您需要先删除所有子组。您可以在 [组织] -> [群组] 页面左侧的群组树中查看子组"
   },
   "home": {
     "New users past 30 days": "过去 30 天新增的用户",
