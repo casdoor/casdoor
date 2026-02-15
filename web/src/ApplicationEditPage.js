@@ -48,6 +48,7 @@ import ProviderTable from "./table/ProviderTable";
 import SigninMethodTable from "./table/SigninMethodTable";
 import SignupTable from "./table/SignupTable";
 import SamlAttributeTable from "./table/SamlAttributeTable";
+import ScopesTable from "./table/ScopesTable";
 import PromptPage from "./auth/PromptPage";
 import copy from "copy-to-clipboard";
 import ThemeEditor from "./common/theme/ThemeEditor";
@@ -572,6 +573,22 @@ class ApplicationEditPage extends React.Component {
               </Select>
             </Col>
           </Row>
+          {
+            (this.state.application.category === "Agent") ? (
+              <Row style={{marginTop: "20px"}} >
+                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
+                  {Setting.getLabel(i18next.t("application:Scopes"), i18next.t("application:Scopes - Tooltip"))} :
+                </Col>
+                <Col span={21} >
+                  <ScopesTable
+                    title={i18next.t("application:Scopes")}
+                    table={this.state.application.scopes || []}
+                    onUpdateTable={(value) => {this.updateApplicationField("scopes", value);}}
+                  />
+                </Col>
+              </Row>
+            ) : null
+          }
           <Row style={{marginTop: "20px"}} >
             <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
               {Setting.getLabel(i18next.t("application:Token format"), i18next.t("application:Token format - Tooltip"))} :
