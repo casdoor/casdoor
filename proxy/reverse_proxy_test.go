@@ -56,7 +56,7 @@ func TestHandleReverseProxy(t *testing.T) {
 		if r.Header.Get("X-Forwarded-Host") == "" {
 			t.Error("X-Forwarded-Host header not set")
 		}
-		
+
 		w.WriteHeader(http.StatusOK)
 		fmt.Fprintf(w, "Backend response")
 	}))

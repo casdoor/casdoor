@@ -66,7 +66,7 @@ func forwardHandler(targetUrl string, writer http.ResponseWriter, request *http.
 	}
 
 	proxy := httputil.NewSingleHostReverseProxy(target)
-	
+
 	// Configure the Director to set proper headers
 	proxy.Director = func(r *http.Request) {
 		r.URL.Scheme = target.Scheme
@@ -132,7 +132,7 @@ func forwardHandler(targetUrl string, writer http.ResponseWriter, request *http.
 // HandleReverseProxy handles incoming requests and forwards them to the appropriate upstream
 func HandleReverseProxy(w http.ResponseWriter, r *http.Request) {
 	domain := getDomainWithoutPort(r.Host)
-	
+
 	if applicationLookup == nil {
 		logs.Error("Application lookup function not set")
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
@@ -193,11 +193,11 @@ func StartProxyServer() {
 	if proxyHttpsPort != "" {
 		go func() {
 			addr := fmt.Sprintf(":%s", proxyHttpsPort)
-			
+
 			// For now, HTTPS will need certificate configuration
 			// This can be enhanced later to use Application's SslCert field
 			logs.Info("HTTPS proxy server on %s requires certificate configuration - not implemented yet", addr)
-			
+
 			// When implemented, use code like:
 			// server := &http.Server{
 			// 	Handler: serverMux,

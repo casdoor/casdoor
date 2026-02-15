@@ -33,13 +33,13 @@ func TestReverseProxyIntegration(t *testing.T) {
 			"X-Real-IP",
 			"X-Forwarded-Host",
 		}
-		
+
 		for _, header := range headers {
 			if r.Header.Get(header) == "" {
 				t.Errorf("Expected header %s to be set", header)
 			}
 		}
-		
+
 		// Echo the path and query
 		w.Header().Set("Content-Type", "text/plain")
 		w.WriteHeader(http.StatusOK)
@@ -92,7 +92,7 @@ func TestReverseProxyIntegration(t *testing.T) {
 
 			body, _ := io.ReadAll(w.Body)
 			bodyStr := string(body)
-			
+
 			if !strings.Contains(bodyStr, tt.expected) {
 				t.Errorf("Expected response to contain %q, got %q", tt.expected, bodyStr)
 			}
@@ -105,7 +105,7 @@ func TestReverseProxyWebSocket(t *testing.T) {
 	// Note: WebSocket upgrade through httptest.ResponseRecorder has limitations
 	// This test verifies that WebSocket headers are passed through, but
 	// full WebSocket functionality would need integration testing with real servers
-	
+
 	backend := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Verify WebSocket headers are present
 		if r.Header.Get("Upgrade") == "websocket" &&
@@ -145,7 +145,7 @@ func TestReverseProxyWebSocket(t *testing.T) {
 
 	body, _ := io.ReadAll(w.Body)
 	bodyStr := string(body)
-	
+
 	// We expect the headers to be passed through to the backend
 	if !strings.Contains(bodyStr, "WebSocket headers received") {
 		t.Errorf("WebSocket headers were not properly forwarded. Got: %s", bodyStr)
