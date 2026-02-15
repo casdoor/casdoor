@@ -154,24 +154,13 @@ func HandleReverseProxy(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Build the target URL
+	// Build the target URL - just use the upstream host, the actual path/query will be set by the proxy Director
 	targetUrl := app.UpstreamHost
 	if !strings.HasPrefix(targetUrl, "http://") && !strings.HasPrefix(targetUrl, "https://") {
 		targetUrl = "http://" + targetUrl
 	}
 
-	// Append the request URI to the target URL
-	if !strings.HasSuffix(targetUrl, "/") && strings.HasPrefix(r.RequestURI, "/") {
-		targetUrl = targetUrl + r.RequestURI
-	} else if strings.HasSuffix(targetUrl, "/") && strings.HasPrefix(r.RequestURI, "/") {
-		targetUrl = targetUrl + r.RequestURI[1:]
-	} else if !strings.HasSuffix(targetUrl, "/") && !strings.HasPrefix(r.RequestURI, "/") {
-		targetUrl = targetUrl + "/" + r.RequestURI
-	} else {
-		targetUrl = targetUrl + r.RequestURI
-	}
-
-	logs.Debug("Forwarding request from %s to %s", r.Host+r.RequestURI, targetUrl)
+	logs.Debug("Forwarding request from %s%s to %s", r.Host, r.RequestURI, targetUrl)
 	forwardHandler(targetUrl, w, r)
 }
 
