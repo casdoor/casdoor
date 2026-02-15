@@ -1373,6 +1373,72 @@ class ApplicationEditPage extends React.Component {
             </Col>
           </Row>
         </React.Fragment>
+      )}
+      {this.state.activeMenuKey === "reverse-proxy" && (
+        <React.Fragment>
+          <Row style={{marginTop: "20px"}} >
+            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
+              {Setting.getLabel(i18next.t("application:Domain"), i18next.t("application:Domain - Tooltip"))} :
+            </Col>
+            <Col span={21} >
+              <Input value={this.state.application.domain} placeholder="blog.example.com" onChange={e => {
+                this.updateApplicationField("domain", e.target.value);
+              }} />
+            </Col>
+          </Row>
+          <Row style={{marginTop: "20px"}} >
+            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
+              {Setting.getLabel(i18next.t("application:Other domains"), i18next.t("application:Other domains - Tooltip"))} :
+            </Col>
+            <Col span={21} >
+              <Select
+                mode="tags"
+                style={{width: "100%"}}
+                value={this.state.application.otherDomains}
+                onChange={(value) => {
+                  this.updateApplicationField("otherDomains", value);
+                }}
+                placeholder={i18next.t("application:Please input additional domains")}
+              />
+            </Col>
+          </Row>
+          <Row style={{marginTop: "20px"}} >
+            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
+              {Setting.getLabel(i18next.t("application:Upstream host"), i18next.t("application:Upstream host - Tooltip"))} :
+            </Col>
+            <Col span={21} >
+              <Input value={this.state.application.upstreamHost} placeholder="localhost:8080" onChange={e => {
+                this.updateApplicationField("upstreamHost", e.target.value);
+              }} />
+            </Col>
+          </Row>
+          <Row style={{marginTop: "20px"}} >
+            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
+              {Setting.getLabel(i18next.t("application:SSL mode"), i18next.t("application:SSL mode - Tooltip"))} :
+            </Col>
+            <Col span={21} >
+              <Select virtual={false} style={{width: "100%"}} value={this.state.application.sslMode} onChange={(value => {this.updateApplicationField("sslMode", value);})}>
+                <Option value="">{i18next.t("application:None")}</Option>
+                <Option value="HTTP">HTTP</Option>
+                <Option value="HTTPS and HTTP">HTTPS and HTTP</Option>
+                <Option value="HTTPS Only">HTTPS Only</Option>
+              </Select>
+            </Col>
+          </Row>
+          <Row style={{marginTop: "20px"}} >
+            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
+              {Setting.getLabel(i18next.t("application:SSL cert"), i18next.t("application:SSL cert - Tooltip"))} :
+            </Col>
+            <Col span={21} >
+              <Select virtual={false} style={{width: "100%"}} value={this.state.application.sslCert} onChange={(value => {this.updateApplicationField("sslCert", value);})}>
+                <Option value="">{i18next.t("application:None")}</Option>
+                {
+                  this.state.certs.map((cert, index) => <Option key={index} value={cert.name}>{cert.name}</Option>)
+                }
+              </Select>
+            </Col>
+          </Row>
+        </React.Fragment>
       )}</>;
   }
 
@@ -1405,6 +1471,7 @@ class ApplicationEditPage extends React.Component {
                     {label: i18next.t("application:Providers"), key: "providers"},
                     {label: i18next.t("application:UI Customization"), key: "ui-customization"},
                     {label: i18next.t("application:Security"), key: "security"},
+                    {label: i18next.t("application:Reverse Proxy"), key: "reverse-proxy"},
                   ]}
                 />
               </Header>
@@ -1428,6 +1495,7 @@ class ApplicationEditPage extends React.Component {
                     <Menu.Item key="providers">{i18next.t("application:Providers")}</Menu.Item>
                     <Menu.Item key="ui-customization">{i18next.t("application:UI Customization")}</Menu.Item>
                     <Menu.Item key="security">{i18next.t("application:Security")}</Menu.Item>
+                    <Menu.Item key="reverse-proxy">{i18next.t("application:Reverse Proxy")}</Menu.Item>
                   </Menu>
                 </Sider>) : null
             }
