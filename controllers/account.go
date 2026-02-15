@@ -44,6 +44,7 @@ type Response struct {
 	Data   interface{} `json:"data"`
 	Data2  interface{} `json:"data2"`
 	Data3  interface{} `json:"data3"`
+	Data4  interface{} `json:"data4"`
 }
 
 type Captcha struct {

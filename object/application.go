@@ -154,6 +154,9 @@ type Application struct {
 	FailedSigninLimit      int `json:"failedSigninLimit"`
 	FailedSigninFrozenTime int `json:"failedSigninFrozenTime"`
 	CodeResendTimeout      int `json:"codeResendTimeout"`
+
+	// OAuth consent policy: "always", "once", or "skip" (default)
+	ConsentPolicy string `xorm:"varchar(100)" json:"consentPolicy"`
 }
 
 func GetApplicationCount(owner, field, value string) (int64, error) {

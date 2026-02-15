@@ -590,6 +590,26 @@ class ApplicationEditPage extends React.Component {
           }
           <Row style={{marginTop: "20px"}} >
             <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
+              {Setting.getLabel(i18next.t("application:Consent policy"), i18next.t("application:Consent policy - Tooltip"))} :
+            </Col>
+            <Col span={21} >
+              <Select virtual={false} style={{width: "100%"}}
+                value={this.state.application.consentPolicy || "skip"}
+                onChange={(value => {
+                  this.updateApplicationField("consentPolicy", value);
+                })} >
+                {
+                  [
+                    {id: "skip", name: "Skip (No consent screen)"},
+                    {id: "once", name: "Once (Show once per app)"},
+                    {id: "always", name: "Always (Show every time)"},
+                  ].map((item, index) => <Option key={index} value={item.id}>{item.name}</Option>)
+                }
+              </Select>
+            </Col>
+          </Row>
+          <Row style={{marginTop: "20px"}} >
+            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
               {Setting.getLabel(i18next.t("application:Token format"), i18next.t("application:Token format - Tooltip"))} :
             </Col>
             <Col span={21} >
