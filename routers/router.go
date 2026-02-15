@@ -320,6 +320,8 @@ func InitAPI() {
 
 	web.Router("/.well-known/openid-configuration", &controllers.RootController{}, "GET:GetOidcDiscovery")
 	web.Router("/.well-known/:application/openid-configuration", &controllers.RootController{}, "GET:GetOidcDiscoveryByApplication")
+	web.Router("/.well-known/oauth-authorization-server", &controllers.RootController{}, "GET:GetOAuthServerMetadata")
+	web.Router("/.well-known/:application/oauth-authorization-server", &controllers.RootController{}, "GET:GetOAuthServerMetadataByApplication")
 	web.Router("/.well-known/jwks", &controllers.RootController{}, "*:GetJwks")
 	web.Router("/.well-known/:application/jwks", &controllers.RootController{}, "*:GetJwksByApplication")
 	web.Router("/.well-known/webfinger", &controllers.RootController{}, "GET:GetWebFinger")

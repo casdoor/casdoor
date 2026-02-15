@@ -137,3 +137,29 @@ func (c *RootController) GetWebFingerByApplication() {
 	c.Ctx.Output.ContentType("application/jrd+json")
 	c.ServeJSON()
 }
+
+// GetOAuthServerMetadata
+// @Title GetOAuthServerMetadata
+// @Tag OAuth API
+// @Description Get OAuth 2.0 Authorization Server Metadata (RFC 8414)
+// @Success 200 {object} object.OidcDiscovery
+// @router /.well-known/oauth-authorization-server [get]
+func (c *RootController) GetOAuthServerMetadata() {
+	host := c.Ctx.Request.Host
+	c.Data["json"] = object.GetOidcDiscovery(host, "")
+	c.ServeJSON()
+}
+
+// GetOAuthServerMetadataByApplication
+// @Title GetOAuthServerMetadataByApplication
+// @Tag OAuth API
+// @Description Get OAuth 2.0 Authorization Server Metadata for specific application (RFC 8414)
+// @Param application path string true "application name"
+// @Success 200 {object} object.OidcDiscovery
+// @router /.well-known/:application/oauth-authorization-server [get]
+func (c *RootController) GetOAuthServerMetadataByApplication() {
+	application := c.Ctx.Input.Param(":application")
+	host := c.Ctx.Request.Host
+	c.Data["json"] = object.GetOidcDiscovery(host, application)
+	c.ServeJSON()
+}
