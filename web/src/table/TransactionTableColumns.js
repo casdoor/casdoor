@@ -168,7 +168,7 @@ export function getTransactionTableColumns(options = {}) {
   });
 
   columns.push({
-    title: i18next.t("provider:Category"),
+    title: i18next.t("general:Category"),
     dataIndex: "category",
     key: "category",
     width: "120px",
