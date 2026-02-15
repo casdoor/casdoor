@@ -38,6 +38,9 @@ class ApplicationListPage extends BaseListPage {
       organization: organizationName,
       createdTime: moment().format(),
       displayName: `New Application - ${randomName}`,
+      category: "Default",
+      type: "All",
+      scopes: [],
       logo: `${Setting.StaticBaseUrl}/img/casdoor-logo_1185x256.png`,
       enablePassword: true,
       enableSignUp: true,
@@ -178,6 +181,40 @@ class ApplicationListPage extends BaseListPage {
         // width: '100px',
         sorter: true,
         ...this.getColumnSearchProps("displayName"),
+      },
+      {
+        title: i18next.t("general:Category"),
+        dataIndex: "category",
+        key: "category",
+        width: "120px",
+        sorter: true,
+        ...this.getColumnSearchProps("category"),
+        render: (text, record, index) => {
+          const category = text;
+          const tagColor = category === "Agent" ? "green" : "blue";
+          return (
+            <span style={{
+              padding: "4px 8px",
+              borderRadius: "4px",
+              backgroundColor: tagColor,
+              color: "white",
+              fontWeight: "500",
+            }}>
+              {category}
+            </span>
+          );
+        },
+      },
+      {
+        title: i18next.t("general:Type"),
+        dataIndex: "type",
+        key: "type",
+        width: "100px",
+        sorter: true,
+        ...this.getColumnSearchProps("type"),
+        render: (text, record, index) => {
+          return text;
+        },
       },
       {
         title: "Logo",
