@@ -44,20 +44,15 @@ function generateCodeChallenge(verifier) {
 }
 
 function storeCodeVerifier(state, verifier) {
-  localStorage.setItem("pkce_verifier", `${state}#${verifier}`);
+  localStorage.setItem(`pkce_verifier_${state}`, verifier);
 }
 
 export function getCodeVerifier(state) {
-  const verifierStore = localStorage.getItem("pkce_verifier");
-  const [storedState, verifier] = verifierStore ? verifierStore.split("#") : [null, null];
-  if (storedState !== state) {
-    return null;
-  }
-  return verifier;
+  return localStorage.getItem(`pkce_verifier_${state}`);
 }
 
 export function clearCodeVerifier(state) {
-  localStorage.removeItem("pkce_verifier");
+  localStorage.removeItem(`pkce_verifier_${state}`);
 }
 
 const authInfo = {
