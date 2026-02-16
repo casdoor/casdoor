@@ -18,7 +18,6 @@ import {InfoCircleTwoTone} from "@ant-design/icons";
 import * as PaymentBackend from "./backend/PaymentBackend";
 import * as Setting from "./Setting";
 import i18next from "i18next";
-import * as ProductBackend from "./backend/ProductBackend";
 
 const {Option} = Select;
 
@@ -30,7 +29,6 @@ class PaymentEditPage extends React.Component {
       organizationName: props.organizationName !== undefined ? props.organizationName : props.match.params.organizationName,
       paymentName: props.match.params.paymentName,
       payment: null,
-      products: [],
       isModalVisible: false,
       isInvoiceLoading: false,
       mode: props.location.mode !== undefined ? props.location.mode : "edit",
@@ -39,7 +37,6 @@ class PaymentEditPage extends React.Component {
 
   UNSAFE_componentWillMount() {
     this.getPayment();
-    this.getProducts();
   }
 
   getPayment() {
@@ -55,19 +52,6 @@ class PaymentEditPage extends React.Component {
         });
 
         Setting.scrollToDiv("invoice-area");
-      });
-  }
-
-  getProducts() {
-    ProductBackend.getProducts(this.state.organizationName)
-      .then((res) => {
-        if (res.status === "ok") {
-          this.setState({
-            products: res.data,
-          });
-        } else {
-          Setting.showMessage("error", `Failed to get products: ${res.msg}`);
-        }
       });
   }
 
@@ -238,29 +222,6 @@ class PaymentEditPage extends React.Component {
             <Input disabled={true} value={this.state.payment.type} onChange={e => {
               // this.updatePaymentField('type', e.target.value);
             }} />
-          </Col>
-        </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:Products"), i18next.t("payment:Products - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <Select
-              mode="multiple"
-              style={{width: "100%"}}
-              value={this.state.payment?.products || []}
-              disabled={isViewMode}
-              allowClear
-              options={(this.state.products || [])
-                .map((p) => ({
-                  label: Setting.getLanguageText(p?.displayName) || p?.name,
-                  value: p?.name,
-                }))
-                .filter((o) => o.value)}
-              onChange={(value) => {
-                this.updatePaymentField("products", value);
-              }}
-            />
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
