@@ -276,18 +276,19 @@ func formatPrivateKey(privateKey string) string {
 	privateKey = strings.ReplaceAll(privateKey, "\r", "")
 	privateKey = strings.ReplaceAll(privateKey, " ", "")
 
-	// Format the key with line breaks every 64 characters
-	preFmtPrivateKey := ""
+	// Format the key with line breaks every 64 characters using strings.Builder
+	var builder strings.Builder
 	for i := 0; i < len(privateKey); i += 64 {
 		end := i + 64
 		if end > len(privateKey) {
 			end = len(privateKey)
 		}
-		preFmtPrivateKey += privateKey[i:end] + "\n"
+		builder.WriteString(privateKey[i:end])
+		if end < len(privateKey) {
+			builder.WriteString("\n")
+		}
 	}
-	privateKey = strings.TrimRight(preFmtPrivateKey, "\n")
 
 	// add pkcs#8 BEGIN and END
-	privateKey = "-----BEGIN PRIVATE KEY-----\n" + privateKey + "\n-----END PRIVATE KEY-----"
-	return privateKey
+	return "-----BEGIN PRIVATE KEY-----\n" + builder.String() + "\n-----END PRIVATE KEY-----"
 }

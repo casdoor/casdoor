@@ -591,7 +591,15 @@ func FromProviderToIdpInfo(ctx *context.Context, provider *Provider) *idp.Provid
 	} else if provider.Type == "Alipay" && provider.Cert != "" {
 		// For Alipay with certificate mode, load private key from certificate
 		cert, err := GetCert(util.GetId(provider.Owner, provider.Cert))
-		if err == nil && cert != nil {
+		if err != nil {
+			if ctx != nil {
+				util.LogWarning(ctx, "Failed to load certificate for Alipay provider %s: %v", provider.Name, err)
+			}
+		} else if cert == nil {
+			if ctx != nil {
+				util.LogWarning(ctx, "Certificate not found for Alipay provider %s", provider.Name)
+			}
+		} else {
 			providerInfo.ClientSecret = cert.PrivateKey
 		}
 	}
