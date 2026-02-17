@@ -17,7 +17,7 @@ Users can go **straight to** the chosen identity provider (e.g. Google, SAML) wh
 
 ---
 
-## After
+## After Changes"
 
 | What happens |
 |--------------|
