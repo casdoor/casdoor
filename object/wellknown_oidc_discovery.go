@@ -32,6 +32,7 @@ type OidcDiscovery struct {
 	TokenEndpoint                          string   `json:"token_endpoint"`
 	UserinfoEndpoint                       string   `json:"userinfo_endpoint"`
 	DeviceAuthorizationEndpoint            string   `json:"device_authorization_endpoint"`
+	RegistrationEndpoint                   string   `json:"registration_endpoint,omitempty"`
 	JwksUri                                string   `json:"jwks_uri"`
 	IntrospectionEndpoint                  string   `json:"introspection_endpoint"`
 	ResponseTypesSupported                 []string `json:"response_types_supported"`
@@ -40,6 +41,7 @@ type OidcDiscovery struct {
 	SubjectTypesSupported                  []string `json:"subject_types_supported"`
 	IdTokenSigningAlgValuesSupported       []string `json:"id_token_signing_alg_values_supported"`
 	ScopesSupported                        []string `json:"scopes_supported"`
+	CodeChallengeMethodsSupported          []string `json:"code_challenge_methods_supported"`
 	ClaimsSupported                        []string `json:"claims_supported"`
 	RequestParameterSupported              bool     `json:"request_parameter_supported"`
 	RequestObjectSigningAlgValuesSupported []string `json:"request_object_signing_alg_values_supported"`
@@ -123,6 +125,23 @@ func GetOidcDiscovery(host string, applicationName string) OidcDiscovery {
 		jwksUri = fmt.Sprintf("%s/.well-known/jwks", originBackend)
 	}
 
+	// Default OIDC scopes
+	scopes := []string{"openid", "email", "profile", "address", "phone", "offline_access"}
+
+	// Merge application-specific custom scopes if application is provided
+	if applicationName != "" {
+		applicationId := util.GetId("admin", applicationName)
+		application, err := GetApplication(applicationId)
+		if err == nil && application != nil && len(application.Scopes) > 0 {
+			for _, scope := range application.Scopes {
+				// Add custom scope names to the scopes list
+				if scope.Name != "" {
+					scopes = append(scopes, scope.Name)
+				}
+			}
+		}
+	}
+
 	// Examples:
 	// https://login.okta.com/.well-known/openid-configuration
 	// https://auth0.auth0.com/.well-known/openid-configuration
@@ -134,6 +153,7 @@ func GetOidcDiscovery(host string, applicationName string) OidcDiscovery {
 		TokenEndpoint:                          fmt.Sprintf("%s/api/login/oauth/access_token", originBackend),
 		UserinfoEndpoint:                       fmt.Sprintf("%s/api/userinfo", originBackend),
 		DeviceAuthorizationEndpoint:            fmt.Sprintf("%s/api/device-auth", originBackend),
+		RegistrationEndpoint:                   fmt.Sprintf("%s/api/oauth/register", originBackend),
 		JwksUri:                                jwksUri,
 		IntrospectionEndpoint:                  fmt.Sprintf("%s/api/login/oauth/introspect", originBackend),
 		ResponseTypesSupported:                 []string{"code", "token", "id_token", "code token", "code id_token", "token id_token", "code token id_token", "none"},
@@ -141,7 +161,8 @@ func GetOidcDiscovery(host string, applicationName string) OidcDiscovery {
 		GrantTypesSupported:                    []string{"authorization_code", "implicit", "password", "client_credentials", "refresh_token", "urn:ietf:params:oauth:grant-type:device_code", "urn:ietf:params:oauth:grant-type:token-exchange"},
 		SubjectTypesSupported:                  []string{"public"},
 		IdTokenSigningAlgValuesSupported:       []string{"RS256", "RS512", "ES256", "ES384", "ES512"},
-		ScopesSupported:                        []string{"openid", "email", "profile", "address", "phone", "offline_access"},
+		ScopesSupported:                        scopes,
+		CodeChallengeMethodsSupported:          []string{"S256"},
 		ClaimsSupported:                        []string{"iss", "ver", "sub", "aud", "iat", "exp", "id", "type", "displayName", "avatar", "permanentAvatar", "email", "phone", "location", "affiliation", "title", "homepage", "bio", "tag", "region", "language", "score", "ranking", "isOnline", "isAdmin", "isForbidden", "signupApplication", "ldap"},
 		RequestParameterSupported:              true,
 		RequestObjectSigningAlgValuesSupported: []string{"HS256", "HS384", "HS512"},

@@ -75,6 +75,11 @@ class CartListPage extends BaseListPage {
 
     const owner = this.state.user?.owner || this.props.account.owner;
     const carts = this.state.data || [];
+    const invalidCarts = carts.filter(item => item.isInvalid);
+    if (invalidCarts.length > 0) {
+      Setting.showMessage("error", i18next.t("product:Cart contains invalid products, please delete them before placing an order"));
+      return;
+    }
     if (carts.length === 0) {
       Setting.showMessage("error", i18next.t("product:Product list cannot be empty"));
       return;
@@ -117,7 +122,11 @@ class CartListPage extends BaseListPage {
       return;
     }
 
-    const index = user.cart.findIndex(item => item.name === record.name && item.price === record.price && (item.pricingName || "") === (record.pricingName || "") && (item.planName || "") === (record.planName || ""));
+    const index = user.cart.findIndex(item =>
+      item.name === record.name &&
+      (record.isRecharge ? item.price === record.price : true) &&
+      (item.pricingName || "") === (record.pricingName || "") &&
+      (item.planName || "") === (record.planName || ""));
     if (index === -1) {
       Setting.showMessage("error", i18next.t("general:Failed to delete"));
       return;
@@ -144,7 +153,7 @@ class CartListPage extends BaseListPage {
       return;
     }
 
-    const itemKey = `${record.name}-${record.price}-${record.pricingName || ""}-${record.planName || ""}`;
+    const itemKey = `${record.name}-${record.price !== null ? record.price : "null"}-${record.pricingName || ""}-${record.planName || ""}`;
     if (this.updatingCartItemsRef?.[itemKey]) {
       return;
     }
@@ -152,64 +161,71 @@ class CartListPage extends BaseListPage {
     this.updatingCartItemsRef[itemKey] = true;
 
     const user = Setting.deepCopy(this.state.user);
-    const index = user.cart.findIndex(item => item.name === record.name && item.price === record.price && (item.pricingName || "") === (record.pricingName || "") && (item.planName || "") === (record.planName || ""));
+    const index = user.cart.findIndex(item =>
+      item.name === record.name &&
+      (record.isRecharge ? item.price === record.price : true) &&
+      (item.pricingName || "") === (record.pricingName || "") &&
+      (item.planName || "") === (record.planName || ""));
     if (index === -1) {
       delete this.updatingCartItemsRef[itemKey];
       return;
     }
 
-    if (index !== -1) {
-      user.cart[index].quantity = newQuantity;
-
-      const newData = [...this.state.data];
-      const dataIndex = newData.findIndex(item => item.name === record.name && item.price === record.price && (item.pricingName || "") === (record.pricingName || "") && (item.planName || "") === (record.planName || ""));
-      if (dataIndex !== -1) {
-        newData[dataIndex].quantity = newQuantity;
-        this.setState({data: newData});
-      }
-
-      this.setState(prevState => ({
-        updatingCartItems: {
-          ...(prevState.updatingCartItems || {}),
-          [itemKey]: true,
-        },
-      }));
-
-      UserBackend.updateUser(user.owner, user.name, user)
-        .then((res) => {
-          if (res.status === "ok") {
-            this.setState({user: user});
-          } else {
-            Setting.showMessage("error", res.msg);
-            this.fetch();
-          }
-        })
-        .catch(error => {
-          Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
-          this.fetch();
-        })
-        .finally(() => {
-          delete this.updatingCartItemsRef[itemKey];
-          this.setState(prevState => {
-            const updatingCartItems = {...(prevState.updatingCartItems || {})};
-            delete updatingCartItems[itemKey];
-            return {updatingCartItems};
-          });
-        });
+    user.cart[index].quantity = newQuantity;
+    const newData = [...this.state.data];
+    const dataIndex = newData.findIndex(item =>
+      item.name === record.name &&
+      (record.price !== null ? item.price === record.price : true) &&
+      (item.pricingName || "") === (record.pricingName || "") &&
+      (item.planName || "") === (record.planName || ""));
+    if (dataIndex !== -1) {
+      newData[dataIndex].quantity = newQuantity;
+      this.setState({data: newData});
     }
+
+    this.setState(prevState => ({
+      updatingCartItems: {
+        ...(prevState.updatingCartItems || {}),
+        [itemKey]: true,
+      },
+    }));
+
+    UserBackend.updateUser(user.owner, user.name, user)
+      .then((res) => {
+        if (res.status === "ok") {
+          this.setState({user: user});
+        } else {
+          Setting.showMessage("error", res.msg);
+          this.fetch();
+        }
+      })
+      .catch(error => {
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
+        this.fetch();
+      })
+      .finally(() => {
+        delete this.updatingCartItemsRef[itemKey];
+        this.setState(prevState => {
+          const updatingCartItems = {...(prevState.updatingCartItems || {})};
+          delete updatingCartItems[itemKey];
+          return {updatingCartItems};
+        });
+      });
   }
 
   renderTable(carts) {
     const isEmpty = carts === undefined || carts === null || carts.length === 0;
+    const hasInvalidItems = carts && carts.some(item => item.isInvalid);
     const owner = this.state.user?.owner || this.props.account.owner;
 
     let total = 0;
     let currency = "";
     if (carts && carts.length > 0) {
-      carts.forEach(item => {
+      const validCarts = carts.filter(item => !item.isInvalid);
+      validCarts.forEach(item => {
         total += item.price * item.quantity;
       });
-      currency = carts[0].currency;
+      currency = validCarts.length > 0 ? validCarts[0].currency : (carts[0].currency || "USD");
     }
 
     const columns = [
@@ -222,6 +238,9 @@ class CartListPage extends BaseListPage {
         sorter: true,
         ...this.getColumnSearchProps("name"),
         render: (text, record, index) => {
+          if (record.isInvalid) {
+            return <span style={{color: "red"}}>{text}</span>;
+          }
           return (
             <Link to={`/products/${owner}/${text}`}>
               {text}
@@ -235,6 +254,12 @@ class CartListPage extends BaseListPage {
         key: "displayName",
         width: "170px",
         sorter: true,
+        render: (text, record) => {
+          if (record.isInvalid) {
+            return <span style={{color: "red"}}>{i18next.t("product:Invalid product")}</span>;
+          }
+          return text;
+        },
       },
       {
         title: i18next.t("product:Image"),
@@ -268,6 +293,9 @@ class CartListPage extends BaseListPage {
         sorter: true,
         render: (text, record) => {
           if (!text) {return null;}
+          if (record.isInvalid) {
+            return <span style={{color: "red"}}>{text}</span>;
+          }
           return (
             <Link to={`/pricings/${owner}/${text}`}>
               {text}
@@ -283,6 +311,9 @@ class CartListPage extends BaseListPage {
         sorter: true,
         render: (text, record) => {
           if (!text) {return null;}
+          if (record.isInvalid) {
+            return <span style={{color: "red"}}>{text}</span>;
+          }
           return (
             <Link to={`/plans/${owner}/${text}`}>
               {text}
@@ -297,7 +328,7 @@ class CartListPage extends BaseListPage {
         width: "100px",
         sorter: true,
         render: (text, record) => {
-          const itemKey = `${record.name}-${record.price}-${record.pricingName || ""}-${record.planName || ""}`;
+          const itemKey = `${record.name}-${record.price !== null ? record.price : "null"}-${record.pricingName || ""}-${record.planName || ""}`;
           const isUpdating = this.state.updatingCartItems?.[itemKey] === true;
           return (
             <QuantityStepper
@@ -306,7 +337,7 @@ class CartListPage extends BaseListPage {
               onIncrease={() => this.updateCartItemQuantity(record, text + 1)}
               onDecrease={() => this.updateCartItemQuantity(record, text - 1)}
               onChange={null}
-              disabled={isUpdating}
+              disabled={isUpdating || record.isInvalid}
             />
           );
         },
@@ -320,7 +351,11 @@ class CartListPage extends BaseListPage {
         render: (text, record, index) => {
           return (
             <div style={{display: "flex", flexWrap: "wrap", gap: "8px"}}>
-              <Button type="primary" onClick={() => this.props.history.push(`/products/${owner}/${record.name}/buy`)}>
+              <Button
+                type="primary"
+                onClick={() => this.props.history.push(`/products/${owner}/${record.name}/buy`)}
+                disabled={record.isInvalid}
+              >
                 {i18next.t("general:Detail")}
               </Button>
               <PopconfirmModal
@@ -358,7 +393,7 @@ class CartListPage extends BaseListPage {
                   onConfirm={() => this.clearCart()}
                   disabled={isEmpty}
                 />
-                <Button type="primary" size="small" onClick={() => this.placeOrder()} disabled={isEmpty || this.state.isPlacingOrder} loading={this.state.isPlacingOrder}>{i18next.t("general:Place Order")}</Button>
+                <Button type="primary" size="small" onClick={() => this.placeOrder()} disabled={isEmpty || hasInvalidItems || this.state.isPlacingOrder} loading={this.state.isPlacingOrder}>{i18next.t("general:Place Order")}</Button>
               </div>
             );
           }}
@@ -379,7 +414,7 @@ class CartListPage extends BaseListPage {
               size="large"
               style={{height: "50px", fontSize: "20px", padding: "0 40px", borderRadius: "5px"}}
               onClick={() => this.placeOrder()}
-              disabled={this.state.isPlacingOrder}
+              disabled={hasInvalidItems || this.state.isPlacingOrder}
               loading={this.state.isPlacingOrder}
             >
               {i18next.t("general:Place Order")}
@@ -404,17 +439,33 @@ class CartListPage extends BaseListPage {
             ProductBackend.getProduct(organizationName, item.name)
               .then(pRes => {
                 if (pRes.status === "ok" && pRes.data) {
+                  const isCurrencyChanged = item.currency && pRes.data.currency && item.currency !== pRes.data.currency;
+                  if (isCurrencyChanged) {
+                    Setting.showMessage("warning", i18next.t("product:Product not found or invalid") + `: ${item.name}`);
+                  }
                   return {
                     ...pRes.data,
+                    createdTime: item.createdTime,
                     pricingName: item.pricingName,
                     planName: item.planName,
                     quantity: item.quantity,
                     price: pRes.data.isRecharge ? item.price : pRes.data.price,
+                    isInvalid: isCurrencyChanged,
                   };
                 }
-                return item;
+                Setting.showMessage("warning", i18next.t("product:Product not found or invalid") + `: ${item.name}`);
+                return {
+                  ...item,
+                  isInvalid: true,
+                };
               })
-              .catch(() => item)
+              .catch(() => {
+                Setting.showMessage("warning", i18next.t("product:Product not found or invalid") + `: ${item.name}`);
+                return {
+                  ...item,
+                  isInvalid: true,
+                };
+              })
           );
 
           const fullCartData = await Promise.all(productPromises);
@@ -432,6 +483,10 @@ class CartListPage extends BaseListPage {
               const comparison = aValue > bValue ? 1 : -1;
               return params.sortOrder === "ascend" ? comparison : -comparison;
             });
+          } else {
+            sortedData.sort((a, b) => {
+              return b.createdTime - a.createdTime;
+            });
           }
 
           this.setState({
@@ -444,6 +499,11 @@ class CartListPage extends BaseListPage {
             },
             searchText: params.searchText,
             searchedColumn: params.searchedColumn,
+          });
+
+          const invalidProducts = sortedData.filter(item => item.isInvalid);
+          invalidProducts.forEach(item => {
+            Setting.showMessage("error", i18next.t("product:Product not found or invalid") + `: ${item.name}`);
           });
         } else {
           this.setState({loading: false});

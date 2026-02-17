@@ -14,6 +14,7 @@
 
 import React from "react";
 import {Button, Card, Col, Row, Tag, Typography} from "antd";
+import moment from "moment";
 import * as Setting from "./Setting";
 import * as ProductBackend from "./backend/ProductBackend";
 import * as UserBackend from "./backend/UserBackend";
@@ -126,7 +127,13 @@ class ProductStorePage extends React.Component {
             }
           }
 
-          const existingItemIndex = cart.findIndex(item => item.name === product.name && item.price === product.price);
+          if (product.isRecharge) {
+            Setting.showMessage("error", i18next.t("product:Recharge products need to go to the product detail page to set custom amount"));
+            this.setState(prevState => ({addingToCartProducts: prevState.addingToCartProducts.filter(name => name !== product.name)}));
+            return;
+          }
+
+          const existingItemIndex = cart.findIndex(item => item.name === product.name);
           const quantityToAdd = this.state.productQuantities[product.name] || 1;
 
           if (existingItemIndex !== -1) {
@@ -134,7 +141,7 @@ class ProductStorePage extends React.Component {
           } else {
             const newCartProductInfo = {
               name: product.name,
-              price: product.price,
+              createdTime: moment().format(),
               currency: product.currency,
               pricingName: "",
               planName: "",

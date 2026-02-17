@@ -19,6 +19,7 @@ import (
 	"encoding/base64"
 	"fmt"
 	"slices"
+	"net/url"
 	"strings"
 	"sync"
 	"time"
@@ -93,6 +94,26 @@ type DeviceAuthResponse struct {
 	Interval        int    `json:"interval"`
 }
 
+// validateResourceURI validates that the resource parameter is a valid absolute URI
+// according to RFC 8707 Section 2
+func validateResourceURI(resource string) error {
+	if resource == "" {
+		return nil // empty resource is allowed (backward compatibility)
+	}
+
+	parsedURL, err := url.Parse(resource)
+	if err != nil {
+		return fmt.Errorf("resource must be a valid URI")
+	}
+
+	// RFC 8707: The resource parameter must be an absolute URI
+	if !parsedURL.IsAbs() {
+		return fmt.Errorf("resource must be an absolute URI")
+	}
+
+	return nil
+}
+
 func ExpireTokenByAccessToken(accessToken string) (bool, *Application, *Token, error) {
 	token, err := GetTokenByAccessToken(accessToken)
 	if err != nil {
@@ -139,7 +160,7 @@ func CheckOAuthLogin(clientId string, responseType string, redirectUri string, s
 	return "", application, nil
 }
 
-func GetOAuthCode(userId string, clientId string, provider string, signinMethod string, responseType string, redirectUri string, scope string, state string, nonce string, challenge string, host string, lang string) (*Code, error) {
+func GetOAuthCode(userId string, clientId string, provider string, signinMethod string, responseType string, redirectUri string, scope string, state string, nonce string, challenge string, resource string, host string, lang string) (*Code, error) {
 	user, err := GetUser(userId)
 	if err != nil {
 		return nil, err
@@ -170,11 +191,19 @@ func GetOAuthCode(userId string, clientId string, provider string, signinMethod 
 		}, nil
 	}
 
+	// Validate resource parameter (RFC 8707)
+	if err := validateResourceURI(resource); err != nil {
+		return &Code{
+			Message: err.Error(),
+			Code:    "",
+		}, nil
+	}
+
 	err = ExtendUserWithRolesAndPermissions(user)
 	if err != nil {
 		return nil, err
 	}
-	accessToken, refreshToken, tokenName, err := generateJwtToken(application, user, provider, signinMethod, nonce, scope, host)
+	accessToken, refreshToken, tokenName, err := generateJwtToken(application, user, provider, signinMethod, nonce, scope, resource, host)
 	if err != nil {
 		return nil, err
 	}
@@ -199,6 +228,7 @@ func GetOAuthCode(userId string, clientId string, provider string, signinMethod 
 		CodeChallenge: challenge,
 		CodeIsUsed:    false,
 		CodeExpireIn:  time.Now().Add(time.Minute * 5).Unix(),
+		Resource:      resource,
 	}
 	_, err = AddToken(token)
 	if err != nil {
@@ -211,7 +241,7 @@ func GetOAuthCode(userId string, clientId string, provider string, signinMethod 
 	}, nil
 }
 
-func GetOAuthToken(grantType string, clientId string, clientSecret string, code string, verifier string, scope string, nonce string, username string, password string, host string, refreshToken string, tag string, avatar string, lang string, subjectToken string, subjectTokenType string, assertion string, clientAssertion string, clientAssertionType string, audience string) (interface{}, error) {
+func GetOAuthToken(grantType string, clientId string, clientSecret string, code string, verifier string, scope string, nonce string, username string, password string, host string, refreshToken string, tag string, avatar string, lang string, subjectToken string, subjectTokenType string, assertion string, clientAssertion string, clientAssertionType string, audience string,  resource string) (interface{}, error) {
 	var application *Application
 	var err error
 	var ok bool
@@ -257,7 +287,7 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 	var tokenError *TokenError
 	switch grantType {
 	case "authorization_code": // Authorization Code Grant
-		token, tokenError, err = GetAuthorizationCodeToken(application, clientSecret, code, verifier)
+		token, tokenError, err = GetAuthorizationCodeToken(application, clientSecret, code, verifier, resource)
 	case "password": //	Resource Owner Password Credentials Grant
 		token, tokenError, err = GetPasswordToken(application, username, password, scope, host)
 	case "client_credentials": // Client Credentials Grant
@@ -418,7 +448,7 @@ func RefreshToken(application *Application, grantType string, refreshToken strin
 		return nil, err
 	}
 
-	newAccessToken, newRefreshToken, tokenName, err := generateJwtToken(application, user, "", "", "", scope, host)
+	newAccessToken, newRefreshToken, tokenName, err := generateJwtToken(application, user, "", "", "", scope, "", host)
 	if err != nil {
 		return &TokenError{
 			Error:            EndpointError,
@@ -572,7 +602,7 @@ func createGuestUserToken(application *Application, clientSecret string, verifie
 	}
 
 	// Generate JWT token
-	accessToken, refreshToken, tokenName, err := generateJwtToken(application, guestUser, "", "", "", "", "")
+	accessToken, refreshToken, tokenName, err := generateJwtToken(application, guestUser, "", "", "", "", "", "")
 	if err != nil {
 		return nil, &TokenError{
 			Error:            EndpointError,
@@ -622,7 +652,7 @@ func generateGuestUsername() string {
 
 // GetAuthorizationCodeToken
 // Authorization code flow
-func GetAuthorizationCodeToken(application *Application, clientSecret string, code string, verifier string) (*Token, *TokenError, error) {
+func GetAuthorizationCodeToken(application *Application, clientSecret string, code string, verifier string, resource string) (*Token, *TokenError, error) {
 	if code == "" {
 		return nil, &TokenError{
 			Error:            InvalidRequest,
@@ -690,6 +720,14 @@ func GetAuthorizationCodeToken(application *Application, clientSecret string, co
 		}, nil
 	}
 
+	// RFC 8707: Validate resource parameter matches the one in the authorization request
+	if resource != token.Resource {
+		return nil, &TokenError{
+			Error:            InvalidGrant,
+			ErrorDescription: fmt.Sprintf("resource parameter does not match authorization request, expected: [%s], got: [%s]", token.Resource, resource),
+		}, nil
+	}
+
 	nowUnix := time.Now().Unix()
 	if nowUnix > token.CodeExpireIn {
 		// code must be used within 5 minutes
@@ -746,7 +784,7 @@ func GetPasswordToken(application *Application, username string, password string
 		return nil, nil, err
 	}
 
-	accessToken, refreshToken, tokenName, err := generateJwtToken(application, user, "", "", "", scope, host)
+	accessToken, refreshToken, tokenName, err := generateJwtToken(application, user, "", "", "", scope, "", host)
 	if err != nil {
 		return nil, &TokenError{
 			Error:            EndpointError,
@@ -779,8 +817,6 @@ func GetPasswordToken(application *Application, username string, password string
 // GetClientCredentialsToken
 // Client Credentials flow
 func GetClientCredentialsToken(application *Application, clientSecret string, scope string, host string) (*Token, *TokenError, error) {
-	// Validate client_secret only if provided
-	// When using private_key_jwt authentication, clientSecret will be empty
 	if application.ClientSecret != clientSecret {
 		return nil, &TokenError{
 			Error:            InvalidClient,
@@ -794,7 +830,7 @@ func GetClientCredentialsToken(application *Application, clientSecret string, sc
 		Type:  "application",
 	}
 
-	accessToken, _, tokenName, err := generateJwtToken(application, nullUser, "", "", "", scope, host)
+	accessToken, _, tokenName, err := generateJwtToken(application, nullUser, "", "", "", scope, "", host)
 	if err != nil {
 		return nil, &TokenError{
 			Error:            EndpointError,
@@ -930,7 +966,7 @@ func GetTokenByUser(application *Application, user *User, scope string, nonce st
 		return nil, err
 	}
 
-	accessToken, refreshToken, tokenName, err := generateJwtToken(application, user, "", "", nonce, scope, host)
+	accessToken, refreshToken, tokenName, err := generateJwtToken(application, user, "", "", nonce, scope, "", host)
 	if err != nil {
 		return nil, err
 	}
@@ -1037,7 +1073,7 @@ func GetWechatMiniProgramToken(application *Application, code string, host strin
 		return nil, nil, err
 	}
 
-	accessToken, refreshToken, tokenName, err := generateJwtToken(application, user, "", "", "", "", host)
+	accessToken, refreshToken, tokenName, err := generateJwtToken(application, user, "", "", "", "", "", host)
 	if err != nil {
 		return nil, &TokenError{
 			Error:            EndpointError,
@@ -1071,8 +1107,7 @@ func GetWechatMiniProgramToken(application *Application, code string, host strin
 // Token Exchange Grant (RFC 8693)
 // Exchanges a subject token for a new token with different audience or scope
 func GetTokenExchangeToken(application *Application, clientSecret string, subjectToken string, subjectTokenType string, audience string, scope string, host string) (*Token, *TokenError, error) {
-	// Validate client_secret only if provided
-	// When using private_key_jwt authentication, clientSecret will be empty
+	// Verify client secret
 	if application.ClientSecret != clientSecret {
 		return nil, &TokenError{
 			Error:            InvalidClient,
@@ -1212,7 +1247,7 @@ func GetTokenExchangeToken(application *Application, clientSecret string, subjec
 	}
 
 	// Generate new JWT token
-	accessToken, refreshToken, tokenName, err := generateJwtToken(application, user, "", "", "", scope, host)
+	accessToken, refreshToken, tokenName, err := generateJwtToken(application, user, "", "", "", scope, "", host)
 	if err != nil {
 		return nil, &TokenError{
 			Error:            EndpointError,

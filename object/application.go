@@ -61,9 +61,17 @@ type SamlItem struct {
 }
 
 type JwtItem struct {
-	Name  string `json:"name"`
-	Value string `json:"value"`
-	Type  string `json:"type"`
+	Name     string `json:"name"`
+	Category string `json:"category"`
+	Value    string `json:"value"`
+	Type     string `json:"type"`
+}
+
+type ScopeItem struct {
+	Name        string   `json:"name"`
+	DisplayName string   `json:"displayName"`
+	Description string   `json:"description"`
+	Tools       []string `json:"tools"` // MCP tools allowed by this scope
 }
 
 type Application struct {
@@ -72,6 +80,9 @@ type Application struct {
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 
 	DisplayName                  string          `xorm:"varchar(100)" json:"displayName"`
+	Category                     string          `xorm:"varchar(20)" json:"category"`
+	Type                         string          `xorm:"varchar(20)" json:"type"`
+	Scopes                       []*ScopeItem    `xorm:"mediumtext" json:"scopes"`
 	Logo                         string          `xorm:"varchar(200)" json:"logo"`
 	Title                        string          `xorm:"varchar(100)" json:"title"`
 	Favicon                      string          `xorm:"varchar(200)" json:"favicon"`
@@ -144,6 +155,13 @@ type Application struct {
 	FailedSigninLimit      int `json:"failedSigninLimit"`
 	FailedSigninFrozenTime int `json:"failedSigninFrozenTime"`
 	CodeResendTimeout      int `json:"codeResendTimeout"`
+
+	// Reverse proxy fields
+	Domain       string   `xorm:"varchar(100)" json:"domain"`
+	OtherDomains []string `xorm:"varchar(1000)" json:"otherDomains"`
+	UpstreamHost string   `xorm:"varchar(100)" json:"upstreamHost"`
+	SslMode      string   `xorm:"varchar(100)" json:"sslMode"`
+	SslCert      string   `xorm:"varchar(100)" json:"sslCert"`
 }
 
 func GetApplicationCount(owner, field, value string) (int64, error) {

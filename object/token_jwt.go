@@ -338,6 +338,50 @@ func getClaimsWithoutThirdIdp(claims Claims) ClaimsWithoutThirdIdp {
 	return res
 }
 
+// getUserFieldValue gets the value of a user field by name, handling special cases like Roles and Permissions
+func getUserFieldValue(user *User, fieldName string) (interface{}, bool) {
+	if user == nil {
+		return nil, false
+	}
+
+	// Handle special fields that need conversion
+	switch fieldName {
+	case "Roles":
+		return getUserRoleNames(user), true
+	case "Permissions":
+		return getUserPermissionNames(user), true
+	case "permissionNames":
+		permissionNames := []string{}
+		for _, val := range user.Permissions {
+			permissionNames = append(permissionNames, val.Name)
+		}
+		return permissionNames, true
+	}
+
+	// Handle Properties fields (e.g., Properties.my_field)
+	if strings.HasPrefix(fieldName, "Properties.") {
+		parts := strings.Split(fieldName, ".")
+		if len(parts) == 2 {
+			propName := parts[1]
+			if user.Properties != nil {
+				if value, exists := user.Properties[propName]; exists {
+					return value, true
+				}
+			}
+		}
+		return nil, false
+	}
+
+	// Use reflection to get the field value
+	userValue := reflect.ValueOf(user).Elem()
+	userField := userValue.FieldByName(fieldName)
+	if userField.IsValid() {
+		return userField.Interface(), true
+	}
+
+	return nil, false
+}
+
 func getClaimsCustom(claims Claims, tokenField []string, tokenAttributes []*JwtItem) jwt.MapClaims {
 	res := make(jwt.MapClaims)
 
@@ -414,16 +458,30 @@ func getClaimsCustom(claims Claims, tokenField []string, tokenAttributes []*JwtI
 	}
 
 	for _, item := range tokenAttributes {
-		valueList := replaceAttributeValue(claims.User, item.Value)
-		if len(valueList) == 0 {
-			continue
+		var value interface{}
+
+		// If Category is "Existing Field", get the actual field value from the user
+		if item.Category == "Existing Field" {
+			fieldValue, found := getUserFieldValue(claims.User, item.Value)
+			if !found {
+				continue
+			}
+			value = fieldValue
+		} else {
+			// Default behavior: use replaceAttributeValue for "Static Value" or empty category
+			valueList := replaceAttributeValue(claims.User, item.Value)
+			if len(valueList) == 0 {
+				continue
+			}
+
+			if item.Type == "String" {
+				value = valueList[0]
+			} else {
+				value = valueList
+			}
 		}
 
-		if item.Type == "String" {
-			res[item.Name] = valueList[0]
-		} else {
-			res[item.Name] = valueList
-		}
+		res[item.Name] = value
 	}
 
 	return res
@@ -451,7 +509,7 @@ func refineUser(user *User) *User {
 	return user
 }
 
-func generateJwtToken(application *Application, user *User, provider string, signinMethod string, nonce string, scope string, host string) (string, string, string, error) {
+func generateJwtToken(application *Application, user *User, provider string, signinMethod string, nonce string, scope string, resource string, host string) (string, string, string, error) {
 	nowTime := time.Now()
 	expireTime := nowTime.Add(time.Duration(application.ExpireInHours * float64(time.Hour)))
 	refreshExpireTime := nowTime.Add(time.Duration(application.RefreshExpireInHours * float64(time.Hour)))
@@ -495,7 +553,10 @@ func generateJwtToken(application *Application, user *User, provider string, sig
 		},
 	}
 
-	if application.IsShared {
+	// RFC 8707: Use resource as audience when provided
+	if resource != "" {
+		claims.Audience = []string{resource}
+	} else if application.IsShared {
 		claims.Audience = []string{application.ClientId + "-org-" + user.Owner}
 	}
 

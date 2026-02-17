@@ -303,7 +303,7 @@ func NotifyPayment(body []byte, owner string, paymentName string, lang string) (
 		order.Message = "Payment successful"
 		order.UpdateTime = util.GetCurrentTime()
 	} else if payment.State == pp.PaymentStateError {
-		order.State = "PaymentFailed"
+		order.State = "Failed"
 		order.Message = payment.Message
 		order.UpdateTime = util.GetCurrentTime()
 	} else if payment.State == pp.PaymentStateCanceled {

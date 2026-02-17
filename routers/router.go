@@ -298,6 +298,7 @@ func InitAPI() {
 	web.Router("/api/login/oauth/access_token", &controllers.ApiController{}, "POST:GetOAuthToken")
 	web.Router("/api/login/oauth/refresh_token", &controllers.ApiController{}, "POST:RefreshToken")
 	web.Router("/api/login/oauth/introspect", &controllers.ApiController{}, "POST:IntrospectToken")
+	web.Router("/api/oauth/register", &controllers.ApiController{}, "POST:DynamicClientRegister")
 
 	web.Router("/api/get-records", &controllers.ApiController{}, "GET:GetRecords")
 	web.Router("/api/get-records-filter", &controllers.ApiController{}, "POST:GetRecordsByFilter")
@@ -320,10 +321,14 @@ func InitAPI() {
 
 	web.Router("/.well-known/openid-configuration", &controllers.RootController{}, "GET:GetOidcDiscovery")
 	web.Router("/.well-known/:application/openid-configuration", &controllers.RootController{}, "GET:GetOidcDiscoveryByApplication")
+	web.Router("/.well-known/oauth-authorization-server", &controllers.RootController{}, "GET:GetOAuthServerMetadata")
+	web.Router("/.well-known/:application/oauth-authorization-server", &controllers.RootController{}, "GET:GetOAuthServerMetadataByApplication")
 	web.Router("/.well-known/jwks", &controllers.RootController{}, "*:GetJwks")
 	web.Router("/.well-known/:application/jwks", &controllers.RootController{}, "*:GetJwksByApplication")
 	web.Router("/.well-known/webfinger", &controllers.RootController{}, "GET:GetWebFinger")
 	web.Router("/.well-known/:application/webfinger", &controllers.RootController{}, "GET:GetWebFingerByApplication")
+	web.Router("/.well-known/oauth-protected-resource", &controllers.RootController{}, "GET:GetOauthProtectedResourceMetadata")
+	web.Router("/.well-known/:application/oauth-protected-resource", &controllers.RootController{}, "GET:GetOauthProtectedResourceMetadataByApplication")
 
 	web.Router("/cas/:organization/:application/serviceValidate", &controllers.RootController{}, "GET:CasServiceValidate")
 	web.Router("/cas/:organization/:application/proxyValidate", &controllers.RootController{}, "GET:CasProxyValidate")

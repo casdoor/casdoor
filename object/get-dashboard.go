@@ -15,6 +15,7 @@
 package object
 
 import (
+	"fmt"
 	"sync"
 	"time"
 
@@ -49,7 +50,12 @@ func GetDashboard(owner string) (*map[string][]int64, error) {
 		dashboard[tableName+"Counts"] = make([]int64, 31)
 		tableFullName := tableNamePrefix + tableName
 		go func(ch chan error) {
-			defer wg.Done()
+			defer func() {
+				if r := recover(); r != nil {
+					ch <- fmt.Errorf("panic in dashboard goroutine: %v", r)
+				}
+				wg.Done()
+			}()
 			dashboardDateItems := []DashboardDateItem{}
 			var countResult int64
 

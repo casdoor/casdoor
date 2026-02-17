@@ -48,6 +48,7 @@ import ProviderTable from "./table/ProviderTable";
 import SigninMethodTable from "./table/SigninMethodTable";
 import SignupTable from "./table/SignupTable";
 import SamlAttributeTable from "./table/SamlAttributeTable";
+import ScopeTable from "./table/ScopeTable";
 import PromptPage from "./auth/PromptPage";
 import copy from "copy-to-clipboard";
 import ThemeEditor from "./common/theme/ThemeEditor";
@@ -309,6 +310,61 @@ class ApplicationEditPage extends React.Component {
           </Row>
           <Row style={{marginTop: "20px"}} >
             <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
+              {Setting.getLabel(i18next.t("general:Category"), i18next.t("general:Category - Tooltip"))} :
+            </Col>
+            <Col span={21} >
+              <Select
+                virtual={false}
+                style={{width: "100%"}}
+                value={this.state.application.category}
+                onChange={(value) => {
+                  this.updateApplicationField("category", value);
+                  if (value === "Agent") {
+                    this.updateApplicationField("type", "MCP");
+                  } else {
+                    this.updateApplicationField("type", "All");
+                  }
+                }}
+              >
+                <Option value="Default">Default</Option>
+                <Option value="Agent">Agent</Option>
+              </Select>
+            </Col>
+          </Row>
+          <Row style={{marginTop: "20px"}} >
+            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
+              {Setting.getLabel(i18next.t("general:Type"), i18next.t("general:Type - Tooltip"))} :
+            </Col>
+            <Col span={21} >
+              <Select
+                virtual={false}
+                style={{width: "100%"}}
+                value={this.state.application.type}
+                onChange={(value) => {
+                  this.updateApplicationField("type", value);
+                }}
+              >
+                {
+                  (this.state.application.category === "Agent") ? (
+                    <>
+                      <Option value="MCP">MCP</Option>
+                      <Option value="A2A">A2A</Option>
+                    </>
+                  ) : (
+                    <>
+                      <Option value="All">All</Option>
+                      <Option value="OIDC">OIDC</Option>
+                      <Option value="OAuth">OAuth</Option>
+                      <Option value="SAML">SAML</Option>
+                      <Option value="CAS">CAS</Option>
+                    </>
+                  )
+                }
+              </Select>
+            </Col>
+          </Row>
+          <Row style={{marginTop: "20px"}} >
+            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
               {Setting.getLabel(i18next.t("general:Is shared"), i18next.t("general:Is shared - Tooltip"))} :
             </Col>
             <Col span={21} >
@@ -517,6 +573,22 @@ class ApplicationEditPage extends React.Component {
               </Select>
             </Col>
           </Row>
+          {
+            (this.state.application.category === "Agent") ? (
+              <Row style={{marginTop: "20px"}} >
+                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
+                  {Setting.getLabel(i18next.t("general:Scopes"), i18next.t("general:Scopes - Tooltip"))} :
+                </Col>
+                <Col span={21} >
+                  <ScopeTable
+                    title={i18next.t("general:Scopes")}
+                    table={this.state.application.scopes}
+                    onUpdateTable={(value) => {this.updateApplicationField("scopes", value);}}
+                  />
+                </Col>
+              </Row>
+            ) : null
+          }
           <Row style={{marginTop: "20px"}} >
             <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
               {Setting.getLabel(i18next.t("application:Token format"), i18next.t("application:Token format - Tooltip"))} :
@@ -1314,6 +1386,68 @@ class ApplicationEditPage extends React.Component {
             </Col>
           </Row>
         </React.Fragment>
+      )}
+      {this.state.activeMenuKey === "reverse-proxy" && (
+        <React.Fragment>
+          <Row style={{marginTop: "20px"}} >
+            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
+              {Setting.getLabel(i18next.t("provider:Domain"), i18next.t("provider:Domain - Tooltip"))} :
+            </Col>
+            <Col span={21} >
+              <Input value={this.state.application.domain} placeholder="e.g., blog.example.com" onChange={e => {
+                this.updateApplicationField("domain", e.target.value);
+              }} />
+            </Col>
+          </Row>
+          <Row style={{marginTop: "20px"}} >
+            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
+              {Setting.getLabel(i18next.t("application:Other domains"), i18next.t("application:Other domains - Tooltip"))} :
+            </Col>
+            <Col span={21} >
+              <UrlTable
+                title={i18next.t("application:Other domains")}
+                table={this.state.application.otherDomains}
+                onUpdateTable={(value) => {this.updateApplicationField("otherDomains", value);}}
+              />
+            </Col>
+          </Row>
+          <Row style={{marginTop: "20px"}} >
+            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
+              {Setting.getLabel(i18next.t("application:Upstream host"), i18next.t("application:Upstream host - Tooltip"))} :
+            </Col>
+            <Col span={21} >
+              <Input value={this.state.application.upstreamHost} placeholder="e.g., localhost:8080 or 192.168.1.100:3000" onChange={e => {
+                this.updateApplicationField("upstreamHost", e.target.value);
+              }} />
+            </Col>
+          </Row>
+          <Row style={{marginTop: "20px"}} >
+            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
+              {Setting.getLabel(i18next.t("provider:SSL mode"), i18next.t("provider:SSL mode - Tooltip"))} :
+            </Col>
+            <Col span={21} >
+              <Select virtual={false} style={{width: "100%"}} value={this.state.application.sslMode} onChange={(value => {this.updateApplicationField("sslMode", value);})}>
+                <Option value="">{i18next.t("general:None")}</Option>
+                <Option value="HTTP">HTTP</Option>
+                <Option value="HTTPS and HTTP">HTTPS and HTTP</Option>
+                <Option value="HTTPS Only">HTTPS Only</Option>
+              </Select>
+            </Col>
+          </Row>
+          <Row style={{marginTop: "20px"}} >
+            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
+              {Setting.getLabel(i18next.t("application:SSL cert"), i18next.t("application:SSL cert - Tooltip"))} :
+            </Col>
+            <Col span={21} >
+              <Select virtual={false} style={{width: "100%"}} value={this.state.application.sslCert} onChange={(value => {this.updateApplicationField("sslCert", value);})}>
+                <Option value="">{i18next.t("general:None")}</Option>
+                {
+                  this.state.certs.map((cert, index) => <Option key={index} value={cert.name}>{cert.name}</Option>)
+                }
+              </Select>
+            </Col>
+          </Row>
+        </React.Fragment>
       )}</>;
   }
 
@@ -1326,11 +1460,12 @@ class ApplicationEditPage extends React.Component {
           <Button style={{marginLeft: "20px"}} type="primary" onClick={() => this.submitApplicationEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
           {this.state.mode === "add" ? <Button style={{marginLeft: "20px"}} onClick={() => this.deleteApplication()}>{i18next.t("general:Cancel")}</Button> : null}
         </div>
-      } style={(Setting.isMobile()) ? {margin: "5px"} : {}} type="inner">
-        <Layout style={{background: "inherit"}}>
+      } style={{margin: (Setting.isMobile()) ? "5px" : {}, height: "calc(100vh - 145px - 48px)", overflow: "hidden"}}
+      styles={{body: {height: "100%"}}} type="inner">
+        <Layout style={{background: "inherit", height: "100%", overflow: "auto"}}>
           {
             this.state.menuMode === "horizontal" || !this.state.menuMode ? (
-              <Header style={{background: "inherit", padding: "0px"}}>
+              <Header style={{background: "inherit", padding: "0px", position: "sticky", top: 0}}>
                 <div className="demo-logo" />
                 <Tabs
                   onChange={(key) => {
@@ -1345,12 +1480,13 @@ class ApplicationEditPage extends React.Component {
                     {label: i18next.t("application:Providers"), key: "providers"},
                     {label: i18next.t("application:UI Customization"), key: "ui-customization"},
                     {label: i18next.t("application:Security"), key: "security"},
+                    {label: i18next.t("application:Reverse Proxy"), key: "reverse-proxy"},
                   ]}
                 />
               </Header>
             ) : null
           }
-          <Layout style={{background: "inherit", maxHeight: "calc(70vh - 70px)", overflow: "auto"}}>
+          <Layout style={{background: "inherit", overflow: "auto"}}>
             {
               this.state.menuMode === "vertical" ? (
                 <Sider width={200} style={{background: "inherit", position: "sticky", top: 0}}>
@@ -1368,6 +1504,7 @@ class ApplicationEditPage extends React.Component {
                     <Menu.Item key="providers">{i18next.t("application:Providers")}</Menu.Item>
                     <Menu.Item key="ui-customization">{i18next.t("application:UI Customization")}</Menu.Item>
                     <Menu.Item key="security">{i18next.t("application:Security")}</Menu.Item>
+                    <Menu.Item key="reverse-proxy">{i18next.t("application:Reverse Proxy")}</Menu.Item>
                   </Menu>
                 </Sider>) : null
             }

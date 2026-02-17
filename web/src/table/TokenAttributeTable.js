@@ -24,6 +24,8 @@ class TokenAttributeTable extends React.Component {
     this.state = {
       classes: props,
     };
+    // List of available user fields for "Existing Field" category
+    this.userFields = ["Owner", "Name", "Id", "DisplayName", "Email", "Phone", "Tag", "Roles", "Permissions", "permissionNames", "Groups"];
   }
 
   updateTable(table) {
@@ -36,7 +38,8 @@ class TokenAttributeTable extends React.Component {
   }
 
   addRow(table) {
-    const row = {Name: "", nameFormat: "", value: ""};
+    // Note: Field names use lowercase to match JSON serialization from backend (json:"name", json:"value", json:"type", json:"category")
+    const row = {name: "", value: "", type: "Array", category: "Static Value"};
     if (table === undefined || table === null) {
       table = [];
     }
@@ -75,23 +78,62 @@ class TokenAttributeTable extends React.Component {
         },
       },
       {
+        title: i18next.t("general:Category"),
+        dataIndex: "category",
+        key: "category",
+        width: "150px",
+        render: (text, record, index) => {
+          return (
+            <Select virtual={false} style={{width: "100%"}}
+              value={text ?? "Static Value"}
+              options={[
+                {value: "Static Value", label: i18next.t("application:Static Value")},
+                {value: "Existing Field", label: i18next.t("application:Existing Field")},
+              ].map((item) =>
+                Setting.getOption(item.label, item.value))
+              }
+              onChange={value => {
+                this.updateField(table, index, "category", value);
+              }} >
+            </Select>
+          );
+        },
+      },
+      {
         title: i18next.t("webhook:Value"),
         dataIndex: "value",
         key: "value",
         width: "200px",
         render: (text, record, index) => {
-          return (
-            <Input value={text} onChange={e => {
-              this.updateField(table, index, "value", e.target.value);
-            }} />
-          );
+          const category = record.category ?? "Static Value";
+          if (category === "Existing Field") {
+            // Show dropdown for existing fields
+            return (
+              <Select virtual={false} style={{width: "100%"}}
+                value={text}
+                options={this.userFields.map((field) =>
+                  Setting.getOption(field, field))
+                }
+                onChange={value => {
+                  this.updateField(table, index, "value", value);
+                }} >
+              </Select>
+            );
+          } else {
+            // Show text input for static values
+            return (
+              <Input value={text} onChange={e => {
+                this.updateField(table, index, "value", e.target.value);
+              }} />
+            );
+          }
         },
       },
       {
         title: i18next.t("general:Type"),
         dataIndex: "type",
         key: "type",
-        width: "200px",
+        width: "150px",
         render: (text, record, index) => {
           return (
             <Select virtual={false} style={{width: "100%"}}

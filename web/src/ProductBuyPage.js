@@ -14,6 +14,7 @@
 
 import React from "react";
 import {Button, Descriptions, Divider, InputNumber, Radio, Space, Spin, Typography} from "antd";
+import moment from "moment";
 import i18next from "i18next";
 import * as ProductBackend from "./backend/ProductBackend";
 import * as PlanBackend from "./backend/PlanBackend";
@@ -193,7 +194,13 @@ class ProductBuyPage extends React.Component {
             }
           }
 
-          const existingItemIndex = cart.findIndex(item => item.name === product.name && item.price === actualPrice && (item.pricingName || "") === pricingName && (item.planName || "") === planName);
+          const cartPrice = product.isRecharge ? actualPrice : null;
+          const existingItemIndex = cart.findIndex(item =>
+            item.name === product.name &&
+            (product.isRecharge ? item.price === actualPrice : true) &&
+            (item.pricingName || "") === pricingName &&
+            (item.planName || "") === planName
+          );
           const quantityToAdd = this.state.buyQuantity;
 
           if (existingItemIndex !== -1) {
@@ -201,7 +208,8 @@ class ProductBuyPage extends React.Component {
           } else {
             const newProductInfo = {
               name: product.name,
-              price: actualPrice,
+              createdTime: moment().format(),
+              price: cartPrice,
               currency: product.currency,
               pricingName: pricingName,
               planName: planName,
