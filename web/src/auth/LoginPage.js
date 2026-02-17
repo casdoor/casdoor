@@ -971,7 +971,7 @@ class LoginPage extends React.Component {
                 if (hintMatches) {
                   // Delegate to shared redirect logic to avoid duplication and divergence.
                   this.tryRedirectToProviderFromUrl();
-                  return;
+                  return null;
                 }
                 return (
                   <span key={id} onClick={(e) => {
