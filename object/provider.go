@@ -564,7 +564,7 @@ func providerChangeTrigger(oldName string, newName string) error {
 	return session.Commit()
 }
 
-func FromProviderToIdpInfo(ctx *context.Context, provider *Provider) *idp.ProviderInfo {
+func FromProviderToIdpInfo(ctx *context.Context, provider *Provider) (*idp.ProviderInfo, error) {
 	providerInfo := &idp.ProviderInfo{
 		Type:          provider.Type,
 		SubType:       provider.SubType,
@@ -592,19 +592,15 @@ func FromProviderToIdpInfo(ctx *context.Context, provider *Provider) *idp.Provid
 		// For Alipay with certificate mode, load private key from certificate
 		cert, err := GetCert(util.GetId(provider.Owner, provider.Cert))
 		if err != nil {
-			if ctx != nil {
-				util.LogWarning(ctx, "Failed to load certificate for Alipay provider %s: %v", provider.Name, err)
-			}
-		} else if cert == nil {
-			if ctx != nil {
-				util.LogWarning(ctx, "Certificate not found for Alipay provider %s", provider.Name)
-			}
-		} else {
-			providerInfo.ClientSecret = cert.PrivateKey
+			return nil, fmt.Errorf("failed to load certificate for Alipay provider %s: %w", provider.Name, err)
 		}
+		if cert == nil {
+			return nil, fmt.Errorf("certificate not found for Alipay provider %s", provider.Name)
+		}
+		providerInfo.ClientSecret = cert.PrivateKey
 	}
 
-	return providerInfo
+	return providerInfo, nil
 }
 
 func GetIdvProviderFromProvider(provider *Provider) idv.IdvProvider {
