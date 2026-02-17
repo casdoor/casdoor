@@ -110,8 +110,10 @@ class LoginPage extends React.Component {
       goToLink(Provider.getAuthUrl(application, provider, "signin"));
     } else if (provider.category === "SAML") {
       ProviderButton.goToSamlUrl(provider, this.props.location);
+    } else if (provider.category === "Web3") {
+      ProviderButton.goToWeb3Url(provider, this.props.location);
     }
-    return provider.category === "OAuth" || provider.category === "SAML";
+    return provider.category === "OAuth" || provider.category === "SAML" || provider.category === "Web3";
   }
 
   refreshInlineCaptcha() {
