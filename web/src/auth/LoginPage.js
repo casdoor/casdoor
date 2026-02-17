@@ -98,14 +98,14 @@ class LoginPage extends React.Component {
     if (!id || !providers.length) {
       return false;
     }
-    const pi = providers.find(p => {
+    const providerItem = providers.find(p => {
       const prov = p.provider || p.Provider;
       return prov && (prov.name === id || `${prov.owner}/${prov.name}` === id);
     });
-    if (!pi) {
+    if (!providerItem) {
       return false;
     }
-    const provider = pi.provider || pi.Provider;
+    const provider = providerItem.provider || providerItem.Provider;
     if (provider.category === "OAuth") {
       goToLink(Provider.getAuthUrl(application, provider, "signin"));
     } else if (provider.category === "SAML") {
