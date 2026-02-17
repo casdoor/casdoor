@@ -511,6 +511,7 @@ class ApplicationEditPage extends React.Component {
                     {id: "id_token", name: "ID Token"},
                     {id: "refresh_token", name: "Refresh Token"},
                     {id: "urn:ietf:params:oauth:grant-type:device_code", name: "Device Code"},
+                    {id: "urn:ietf:params:oauth:grant-type:jwt-bearer", name: "Jwt bearer"},
                   ].map((item, index) => <Option key={index} value={item.id}>{item.name}</Option>)
                 }
               </Select>
@@ -1236,10 +1237,22 @@ class ApplicationEditPage extends React.Component {
         <React.Fragment>
           <Row style={{marginTop: "20px"}} >
             <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
-              {Setting.getLabel(i18next.t("general:Cert"), i18next.t("general:Cert - Tooltip"))} :
+              {Setting.getLabel(i18next.t("application:Token cert"), i18next.t("application:Token cert - Tooltip"))} :
             </Col>
             <Col span={21} >
               <Select virtual={false} style={{width: "100%"}} value={this.state.application.cert} onChange={(value => {this.updateApplicationField("cert", value);})}>
+                {
+                  this.state.certs.map((cert, index) => <Option key={index} value={cert.name}>{cert.name}</Option>)
+                }
+              </Select>
+            </Col>
+          </Row>
+          <Row style={{marginTop: "20px"}} >
+            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
+              {Setting.getLabel(i18next.t("application:Client cert"), i18next.t("application:Client cert - Tooltip"))} :
+            </Col>
+            <Col span={21} >
+              <Select virtual={false} style={{width: "100%"}} value={this.state.application.clientCert} onChange={(value => {this.updateApplicationField("clientCert", value);})}>
                 {
                   this.state.certs.map((cert, index) => <Option key={index} value={cert.name}>{cert.name}</Option>)
                 }
