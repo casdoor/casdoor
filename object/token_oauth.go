@@ -18,8 +18,8 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"fmt"
-	"slices"
 	"net/url"
+	"slices"
 	"strings"
 	"sync"
 	"time"
@@ -241,10 +241,13 @@ func GetOAuthCode(userId string, clientId string, provider string, signinMethod 
 	}, nil
 }
 
-func GetOAuthToken(grantType string, clientId string, clientSecret string, code string, verifier string, scope string, nonce string, username string, password string, host string, refreshToken string, tag string, avatar string, lang string, subjectToken string, subjectTokenType string, assertion string, clientAssertion string, clientAssertionType string, audience string,  resource string) (interface{}, error) {
-	var application *Application
-	var err error
-	var ok bool
+func GetOAuthToken(grantType string, clientId string, clientSecret string, code string, verifier string, scope string, nonce string, username string, password string, host string, refreshToken string, tag string, avatar string, lang string, subjectToken string, subjectTokenType string, assertion string, clientAssertion string, clientAssertionType string, audience string, resource string) (interface{}, error) {
+	var (
+		application *Application
+		err         error
+		ok          bool
+	)
+
 	if clientAssertionType == "urn:ietf:params:oauth:client-assertion-type:jwt-bearer" {
 		ok, application, err = ValidateClientAssertion(clientAssertion, host)
 		if err != nil {
