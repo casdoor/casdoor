@@ -17,7 +17,6 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
-	"strings"
 	"time"
 
 	"github.com/beego/beego/v2/core/utils/pagination"
@@ -148,26 +147,6 @@ func (c *ApiController) DeleteToken() {
 	c.ServeJSON()
 }
 
-// authenticateClientAssertion handles private_key_jwt client authentication (RFC 7523)
-// Returns the clientId if successful, or an error otherwise
-func authenticateClientAssertion(clientAssertion, clientAssertionType, host string) (string, error) {
-	if clientAssertion == "" || clientAssertionType == "" {
-		return "", nil // No client assertion provided
-	}
-
-	app, authenticatedUserId, err := object.AuthenticateClientByAssertion(clientAssertion, clientAssertionType, host)
-	if err != nil {
-		return "", err
-	}
-
-	// Extract the actual client ID from the authenticated user ID (format: "app/clientName")
-	if strings.HasPrefix(authenticatedUserId, "app/") && app != nil {
-		return app.ClientId, nil
-	}
-
-	return "", fmt.Errorf("failed to extract client ID from authenticated user")
-}
-
 // GetOAuthToken
 // @Title GetOAuthToken
 // @Tag Token API
@@ -183,6 +162,7 @@ func authenticateClientAssertion(clientAssertion, clientAssertionType, host stri
 func (c *ApiController) GetOAuthToken() {
 	clientId := c.Ctx.Input.Query("client_id")
 	clientSecret := c.Ctx.Input.Query("client_secret")
+	assertion := c.Ctx.Input.Query("assertion")
 	clientAssertion := c.Ctx.Input.Query("client_assertion")
 	clientAssertionType := c.Ctx.Input.Query("client_assertion_type")
 	grantType := c.Ctx.Input.Query("grant_type")
@@ -260,20 +240,14 @@ func (c *ApiController) GetOAuthToken() {
 			if audience == "" {
 				audience = tokenRequest.Audience
 			}
+			if assertion == "" {
+				assertion = tokenRequest.Assertion
+			}
 		}
 	}
 
 	// Handle private_key_jwt client authentication (RFC 7523) after all parameters are collected
 	host := c.Ctx.Request.Host
-	authenticatedClientId, err := authenticateClientAssertion(clientAssertion, clientAssertionType, host)
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
-	}
-	if authenticatedClientId != "" {
-		clientId = authenticatedClientId
-		clientSecret = "" // Clear client_secret as it's not used with private_key_jwt
-	}
 
 	if deviceCode != "" {
 		deviceAuthCache, ok := object.DeviceAuthMap.Load(deviceCode)
@@ -315,7 +289,7 @@ func (c *ApiController) GetOAuthToken() {
 		username = deviceAuthCacheCast.UserName
 	}
 
-	token, err := object.GetOAuthToken(grantType, clientId, clientSecret, code, verifier, scope, nonce, username, password, host, refreshToken, tag, avatar, c.GetAcceptLanguage(), subjectToken, subjectTokenType, audience)
+	token, err := object.GetOAuthToken(grantType, clientId, clientSecret, code, verifier, scope, nonce, username, password, host, refreshToken, tag, avatar, c.GetAcceptLanguage(), subjectToken, subjectTokenType, assertion, clientAssertion, clientAssertionType, audience)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -345,8 +319,6 @@ func (c *ApiController) RefreshToken() {
 	scope := c.Ctx.Input.Query("scope")
 	clientId := c.Ctx.Input.Query("client_id")
 	clientSecret := c.Ctx.Input.Query("client_secret")
-	clientAssertion := c.Ctx.Input.Query("client_assertion")
-	clientAssertionType := c.Ctx.Input.Query("client_assertion_type")
 	host := c.Ctx.Request.Host
 
 	if clientId == "" {
@@ -355,26 +327,18 @@ func (c *ApiController) RefreshToken() {
 		if err := json.Unmarshal(c.Ctx.Input.RequestBody, &tokenRequest); err == nil {
 			clientId = tokenRequest.ClientId
 			clientSecret = tokenRequest.ClientSecret
-			clientAssertion = tokenRequest.ClientAssertion
-			clientAssertionType = tokenRequest.ClientAssertionType
 			grantType = tokenRequest.GrantType
 			scope = tokenRequest.Scope
 			refreshToken = tokenRequest.RefreshToken
 		}
 	}
 
-	// Handle private_key_jwt client authentication (RFC 7523) after all parameters are collected
-	authenticatedClientId, err := authenticateClientAssertion(clientAssertion, clientAssertionType, host)
-	if err != nil {
-		c.ResponseError(err.Error())
+	ok, application, clientId, _, err := c.ValidateOAuth(clientId, clientSecret)
+	if err != nil || !ok {
 		return
 	}
-	if authenticatedClientId != "" {
-		clientId = authenticatedClientId
-		clientSecret = ""
-	}
 
-	refreshToken2, err := object.RefreshToken(grantType, refreshToken, scope, clientId, clientSecret, host)
+	refreshToken2, err := object.RefreshToken(application, grantType, refreshToken, scope, clientId, clientSecret, host)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -385,12 +349,63 @@ func (c *ApiController) RefreshToken() {
 	c.ServeJSON()
 }
 
-func (c *ApiController) ResponseTokenError(errorMsg string) {
+func (c *ApiController) ResponseTokenError(errorMsg string, errorDescription string) {
 	c.Data["json"] = &object.TokenError{
-		Error: errorMsg,
+		Error:            errorMsg,
+		ErrorDescription: errorDescription,
 	}
 	c.SetTokenErrorHttpStatus()
 	c.ServeJSON()
+}
+
+func (c *ApiController) ValidateOAuth(reqClientId, reqClientSecret string) (ok bool, application *object.Application, clientId, clientSecret string, err error) {
+	clientAssertion := c.Ctx.Input.Query("client_assertion")
+	clientAssertionType := c.Ctx.Input.Query("client_assertion_type")
+
+	if clientAssertionType == "urn:ietf:params:oauth:client-assertion-type:jwt-bearer" {
+		ok, application, err = object.ValidateClientAssertion(clientAssertion, c.Ctx.Request.Host)
+		if err != nil {
+			c.ResponseTokenError(object.InvalidClient, err.Error())
+			return
+		}
+
+		if !ok || application == nil {
+			c.ResponseTokenError(object.InvalidClient, "client_assertion is invalid")
+			return
+		}
+
+		clientSecret = application.ClientSecret
+		clientId = application.ClientId
+		return
+	}
+
+	if reqClientId == "" && reqClientSecret == "" {
+		clientId, clientSecret, ok = c.Ctx.Request.BasicAuth()
+		if !ok {
+			clientId = c.Ctx.Input.Query("client_id")
+			clientSecret = c.Ctx.Input.Query("client_secret")
+			if clientId == "" || clientSecret == "" {
+				c.ResponseTokenError(object.InvalidRequest, "")
+				return
+			}
+		}
+	} else {
+		clientId = reqClientId
+		clientSecret = reqClientSecret
+	}
+
+	application, err = object.GetApplicationByClientId(clientId)
+	if err != nil {
+		c.ResponseTokenError(object.InvalidClient, err.Error())
+		return
+	}
+
+	if application == nil || application.ClientSecret != clientSecret {
+		c.ResponseTokenError(object.InvalidClient, c.T("token:Invalid application or wrong clientSecret"))
+		return
+	}
+
+	return
 }
 
 // IntrospectToken
@@ -410,24 +425,9 @@ func (c *ApiController) ResponseTokenError(errorMsg string) {
 // @router /login/oauth/introspect [post]
 func (c *ApiController) IntrospectToken() {
 	tokenValue := c.Ctx.Input.Query("token")
-	clientId, clientSecret, ok := c.Ctx.Request.BasicAuth()
-	if !ok {
-		clientId = c.Ctx.Input.Query("client_id")
-		clientSecret = c.Ctx.Input.Query("client_secret")
-		if clientId == "" || clientSecret == "" {
-			c.ResponseTokenError(object.InvalidRequest)
-			return
-		}
-	}
 
-	application, err := object.GetApplicationByClientId(clientId)
-	if err != nil {
-		c.ResponseTokenError(err.Error())
-		return
-	}
-
-	if application == nil || application.ClientSecret != clientSecret {
-		c.ResponseTokenError(c.T("token:Invalid application or wrong clientSecret"))
+	ok, application, clientId, _, err := c.ValidateOAuth("", "")
+	if err != nil || !ok {
 		return
 	}
 
@@ -441,7 +441,7 @@ func (c *ApiController) IntrospectToken() {
 	if tokenTypeHint != "" {
 		token, err = object.GetTokenByTokenValue(tokenValue, tokenTypeHint)
 		if err != nil {
-			c.ResponseTokenError(err.Error())
+			c.ResponseTokenError(object.InvalidRequest, err.Error())
 			return
 		}
 		if token == nil || token.ExpiresIn <= 0 {
@@ -518,7 +518,7 @@ func (c *ApiController) IntrospectToken() {
 	if tokenTypeHint == "" {
 		token, err = object.GetTokenByTokenValue(tokenValue, introspectionResponse.TokenType)
 		if err != nil {
-			c.ResponseTokenError(err.Error())
+			c.ResponseTokenError(object.InvalidRequest, err.Error())
 			return
 		}
 		if token == nil || token.ExpiresIn <= 0 {
@@ -530,7 +530,7 @@ func (c *ApiController) IntrospectToken() {
 	if token != nil {
 		application, err = object.GetApplication(fmt.Sprintf("%s/%s", token.Owner, token.Application))
 		if err != nil {
-			c.ResponseTokenError(err.Error())
+			c.ResponseTokenError(object.InvalidClient, err.Error())
 			return
 		}
 		if application == nil {

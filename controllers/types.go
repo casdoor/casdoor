@@ -15,6 +15,7 @@
 package controllers
 
 type TokenRequest struct {
+	Assertion           string `json:"assertion"`
 	ClientId            string `json:"client_id"`
 	ClientSecret        string `json:"client_secret"`
 	ClientAssertion     string `json:"client_assertion"`
