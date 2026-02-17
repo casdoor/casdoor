@@ -969,11 +969,8 @@ class LoginPage extends React.Component {
                 const p = providerItem.provider;
                 const hintMatches = searchParams.get("silentSignin") === "1" && idParam && (p?.name === idParam || (p?.owner && `${p.owner}/${p.name}` === idParam));
                 if (hintMatches) {
-                  if (p?.category === "OAuth") {
-                    goToLink(Provider.getAuthUrl(application, providerItem.provider, this.state.mode === "signup" ? "signup" : "signin"));
-                  } else if (p?.category === "SAML") {
-                    ProviderButton.goToSamlUrl(providerItem.provider, this.props.location);
-                  }
+                  // Delegate to shared redirect logic to avoid duplication and divergence.
+                  this.tryRedirectToProviderFromUrl();
                   return;
                 }
                 return (
