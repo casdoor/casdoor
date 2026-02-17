@@ -588,6 +588,12 @@ func FromProviderToIdpInfo(ctx *context.Context, provider *Provider) *idp.Provid
 		}
 	} else if provider.Type == "ADFS" || provider.Type == "AzureAD" || provider.Type == "AzureADB2C" || provider.Type == "Casdoor" || provider.Type == "Okta" {
 		providerInfo.HostUrl = provider.Domain
+	} else if provider.Type == "Alipay" && provider.Cert != "" {
+		// For Alipay with certificate mode, load private key from certificate
+		cert, err := GetCert(util.GetId(provider.Owner, provider.Cert))
+		if err == nil && cert != nil {
+			providerInfo.ClientSecret = cert.PrivateKey
+		}
 	}
 
 	return providerInfo

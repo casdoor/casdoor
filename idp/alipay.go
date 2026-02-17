@@ -264,27 +264,30 @@ func rsaSignWithRSA256(signContent string, privateKey string) (string, error) {
 
 // privateKey in database is a string, format it to PEM style
 func formatPrivateKey(privateKey string) string {
-	// each line length is 64
-	preFmtPrivateKey := ""
-	for i := 0; ; {
-		if i+64 <= len(privateKey) {
-			preFmtPrivateKey = preFmtPrivateKey + privateKey[i:i+64] + "\n"
-			i += 64
-		} else {
-			preFmtPrivateKey = preFmtPrivateKey + privateKey[i:]
-			break
-		}
+	// Check if the key is already in PEM format
+	if strings.HasPrefix(privateKey, "-----BEGIN PRIVATE KEY-----") ||
+		strings.HasPrefix(privateKey, "-----BEGIN RSA PRIVATE KEY-----") {
+		// Key is already in PEM format, return as is
+		return privateKey
 	}
-	privateKey = strings.Trim(preFmtPrivateKey, "\n")
+
+	// Remove any whitespace from the key
+	privateKey = strings.ReplaceAll(privateKey, "\n", "")
+	privateKey = strings.ReplaceAll(privateKey, "\r", "")
+	privateKey = strings.ReplaceAll(privateKey, " ", "")
+
+	// Format the key with line breaks every 64 characters
+	preFmtPrivateKey := ""
+	for i := 0; i < len(privateKey); i += 64 {
+		end := i + 64
+		if end > len(privateKey) {
+			end = len(privateKey)
+		}
+		preFmtPrivateKey += privateKey[i:end] + "\n"
+	}
+	privateKey = strings.TrimRight(preFmtPrivateKey, "\n")
 
 	// add pkcs#8 BEGIN and END
-	PemBegin := "-----BEGIN PRIVATE KEY-----\n"
-	PemEnd := "\n-----END PRIVATE KEY-----"
-	if !strings.HasPrefix(privateKey, PemBegin) {
-		privateKey = PemBegin + privateKey
-	}
-	if !strings.HasSuffix(privateKey, PemEnd) {
-		privateKey = privateKey + PemEnd
-	}
+	privateKey = "-----BEGIN PRIVATE KEY-----\n" + privateKey + "\n-----END PRIVATE KEY-----"
 	return privateKey
 }
