@@ -954,7 +954,7 @@ func UpdateUserForAllFields(id string, user *User) (bool, error) {
 
 	user.UpdatedTime = util.GetCurrentTime()
 
-	if user.Groups != nil && len(user.Groups) > 0 {
+	if len(user.Groups) > 0 {
 		_, err = userEnforcer.UpdateGroupsForUser(user.GetId(), user.Groups)
 		if err != nil {
 			return false, err
