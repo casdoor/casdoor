@@ -85,6 +85,35 @@ class LoginPage extends React.Component {
     this.refreshInlineCaptcha = this.refreshInlineCaptcha.bind(this);
   }
 
+  tryRedirectToProviderFromUrl(application) {
+    if (this.state.type !== "code" || this.state.mode !== "signin" || !application) {
+      return false;
+    }
+    const q = new URLSearchParams(this.props.location?.search || "");
+    if (q.get("silentSignin") !== "1") {
+      return false;
+    }
+    const id = q.get("id");
+    const providers = application.providers || application.Providers || [];
+    if (!id || !providers.length) {
+      return false;
+    }
+    const pi = providers.find(p => {
+      const prov = p.provider || p.Provider;
+      return prov && (prov.name === id || `${prov.owner}/${prov.name}` === id);
+    });
+    if (!pi) {
+      return false;
+    }
+    const provider = pi.provider || pi.Provider;
+    if (provider.category === "OAuth") {
+      goToLink(Provider.getAuthUrl(application, provider, "signin"));
+    } else if (provider.category === "SAML") {
+      ProviderButton.goToSamlUrl(provider, this.props.location);
+    }
+    return provider.category === "OAuth" || provider.category === "SAML";
+  }
+
   refreshInlineCaptcha() {
     this.captchaRef.current?.loadCaptcha?.();
   }
@@ -112,6 +141,9 @@ class LoginPage extends React.Component {
     }
     if (prevProps.application !== this.props.application) {
       this.setState({loginMethod: this.getDefaultLoginMethod(this.props.application)});
+    }
+    if (this.tryRedirectToProviderFromUrl(this.getApplicationObj())) {
+      return;
     }
     if (this.props.account !== undefined) {
       if (prevProps.account === this.props.account && prevProps.application === this.props.application) {
@@ -188,7 +220,9 @@ class LoginPage extends React.Component {
       .then((res) => {
         if (res.status === "ok") {
           const application = res.data;
-          this.onUpdateApplication(application);
+          if (!this.tryRedirectToProviderFromUrl(application)) {
+            this.onUpdateApplication(application);
+          }
         } else {
           if (this.state.type === "device") {
             this.setState({
@@ -922,7 +956,7 @@ class LoginPage extends React.Component {
         signinItem.rule = showForm ? "small" : "big";
       }
       const searchParams = new URLSearchParams(window.location.search);
-      const providerHint = searchParams.get("provider_hint");
+      const idParam = searchParams.get("id");
 
       return (
         <div key={resultItemKey}>
@@ -930,8 +964,14 @@ class LoginPage extends React.Component {
           <Form.Item>
             {
               application.providers.filter(providerItem => this.isProviderVisible(providerItem)).map((providerItem, id) => {
-                if (providerHint === providerItem.provider.name) {
-                  goToLink(Provider.getAuthUrl(application, providerItem.provider, "signup"));
+                const p = providerItem.provider;
+                const hintMatches = searchParams.get("silentSignin") === "1" && idParam && (p?.name === idParam || (p?.owner && `${p.owner}/${p.name}` === idParam));
+                if (hintMatches) {
+                  if (p?.category === "OAuth") {
+                    goToLink(Provider.getAuthUrl(application, providerItem.provider, this.state.mode === "signup" ? "signup" : "signin"));
+                  } else if (p?.category === "SAML") {
+                    ProviderButton.goToSamlUrl(providerItem.provider, this.props.location);
+                  }
                   return;
                 }
                 return (
