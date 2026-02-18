@@ -160,25 +160,28 @@ class PromptPage extends React.Component {
               application?.signupItems?.filter(signupItem => 
                 Setting.isSignupItemPrompted(signupItem) && supportedSignupItems.includes(signupItem.name)
               ).map((signupItem, index) => {
-                if (signupItem.name === "Country/Region") {
-                  return (
-                    <Row key={signupItem.name} style={{marginTop: "20px", justifyContent: "space-between"}} >
-                      <Col style={{marginTop: "5px"}} >
-                        <span style={{marginLeft: "5px"}}>
-                          {
-                            i18next.t("user:Country/Region")
-                          }:
-                        </span>
-                      </Col>
-                      <Col >
-                        <RegionSelect defaultValue={this.state.user.region} onChange={(value) => {
-                          this.updateUserFieldWithoutSubmit("region", value);
-                        }} />
-                      </Col>
-                    </Row>
-                  );
+                // Render based on signup item type
+                switch (signupItem.name) {
+                  case "Country/Region":
+                    return (
+                      <Row key={signupItem.name} style={{marginTop: "20px", justifyContent: "space-between"}} >
+                        <Col style={{marginTop: "5px"}} >
+                          <span style={{marginLeft: "5px"}}>
+                            {
+                              i18next.t("user:Country/Region")
+                            }:
+                          </span>
+                        </Col>
+                        <Col >
+                          <RegionSelect defaultValue={this.state.user.region} onChange={(value) => {
+                            this.updateUserFieldWithoutSubmit("region", value);
+                          }} />
+                        </Col>
+                      </Row>
+                    );
+                  default:
+                    return null;
                 }
-                return null;
               })
             )
           }
