@@ -264,9 +264,12 @@ func PayOrder(providerName, host, paymentEnv string, order *Order, lang string) 
 
 		Products:            productNames,
 		ProductsDisplayName: reqProductDisplayName,
-		Detail:              reqProductDescription,
-		Currency:            order.Currency,
-		Price:               order.Price,
+		// Old fields for backward compatibility - use first product's values
+		ProductName:        reqProductName,
+		ProductDisplayName: reqProductDisplayName,
+		Detail:             reqProductDescription,
+		Currency:           order.Currency,
+		Price:              order.Price,
 
 		User:       user.Name,
 		Order:      order.Name,
