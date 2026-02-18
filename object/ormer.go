@@ -72,8 +72,12 @@ func GetExportFilePath() string {
 	return exportFilePath
 }
 
+func GetConfigPath() string {
+	return configPath
+}
+
 func InitConfig() {
-	err := web.LoadAppConfig("ini", "../conf/app.conf")
+	err := web.LoadAppConfig("ini", configPath)
 	if err != nil {
 		panic(err)
 	}

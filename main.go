@@ -48,6 +48,13 @@ func main() {
 
 	routers.InitAPI()
 	object.InitFlag()
+
+	// Load configuration from custom path if specified via --config flag
+	configPath := object.GetConfigPath()
+	if err := web.LoadAppConfig("ini", configPath); err != nil {
+		panic(err)
+	}
+
 	object.InitAdapter()
 	object.CreateTables()
 
