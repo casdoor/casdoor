@@ -33,9 +33,9 @@ type Payment struct {
 	// Product Info
 	Products            []string `xorm:"varchar(1000)" json:"products"`
 	ProductsDisplayName string   `xorm:"varchar(1000)" json:"productsDisplayName"`
-	// Old fields kept for backward compatibility
-	ProductName        string  `xorm:"varchar(100)" json:"productName"`
-	ProductDisplayName string  `xorm:"varchar(100)" json:"productDisplayName"`
+	// Old fields kept for backward compatibility - contain comma-separated product names/display names
+	ProductName        string  `xorm:"varchar(1000)" json:"productName"`
+	ProductDisplayName string  `xorm:"varchar(1000)" json:"productDisplayName"`
 	Detail             string  `xorm:"varchar(255)" json:"detail"`
 	Currency           string  `xorm:"varchar(100)" json:"currency"`
 	Price              float64 `json:"price"`

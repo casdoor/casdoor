@@ -264,7 +264,7 @@ func PayOrder(providerName, host, paymentEnv string, order *Order, lang string) 
 
 		Products:            productNames,
 		ProductsDisplayName: reqProductDisplayName,
-		// Old fields for backward compatibility - use first product's values
+		// Old fields for backward compatibility - contain comma-separated product names/display names
 		ProductName:        reqProductName,
 		ProductDisplayName: reqProductDisplayName,
 		Detail:             reqProductDescription,
