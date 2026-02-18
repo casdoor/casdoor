@@ -132,7 +132,7 @@ export function renderEmailProviderFields(provider, updateProviderField, renderE
               </Col>
             </Row> : null}
           </React.Fragment>
-        )
+        ) : null
       }
       <Row style={{marginTop: "20px"}} >
         <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
@@ -151,10 +151,10 @@ export function renderEmailProviderFields(provider, updateProviderField, renderE
         <Col span={22} >
           <Row style={{marginTop: "20px"}} >
             <Button style={{marginLeft: "10px", marginBottom: "5px"}} onClick={() => updateProviderField("content", "You have requested a verification code at Casdoor. Here is your code: %s, please enter in 5 minutes. <reset-link>Or click %link to reset</reset-link>")} >
-              {i18next.t("general:Reset to Default")}
+              {i18next.t("general:Reset to Default")} (Text)
             </Button>
             <Button style={{marginLeft: "10px", marginBottom: "5px"}} type="primary" onClick={() => updateProviderField("content", Setting.getDefaultHtmlEmailContent())} >
-              {i18next.t("general:Reset to Default")}
+              {i18next.t("general:Reset to Default")} (HTML)
             </Button>
           </Row>
           <Row>
@@ -187,10 +187,10 @@ export function renderEmailProviderFields(provider, updateProviderField, renderE
         <Col span={22} >
           <Row style={{marginTop: "20px"}} >
             <Button style={{marginLeft: "10px", marginBottom: "5px"}} onClick={() => updateProviderField("metadata", "You have invited to join Casdoor. Here is your invitation code: %s, please enter in 5 minutes. Or click %link to signup")} >
-              {i18next.t("general:Reset to Default")}
+              {i18next.t("general:Reset to Default")} (Text)
             </Button>
             <Button style={{marginLeft: "10px", marginBottom: "5px"}} type="primary" onClick={() => updateProviderField("metadata", Setting.getDefaultInvitationHtmlEmailContent())} >
-              {i18next.t("general:Reset to Default")}
+              {i18next.t("general:Reset to Default")} (HTML)
             </Button>
           </Row>
           <Row>

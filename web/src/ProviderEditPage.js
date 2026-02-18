@@ -13,23 +13,15 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Checkbox, Col, Input, InputNumber, Radio, Row, Select, Switch} from "antd";
+import {Button, Card, Checkbox, Col, Input, Radio, Row, Select, Switch} from "antd";
 import {LinkOutlined} from "@ant-design/icons";
 import * as ProviderBackend from "./backend/ProviderBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as CertBackend from "./backend/CertBackend";
 import * as Setting from "./Setting";
 import i18next from "i18next";
-import {authConfig} from "./auth/Auth";
-import * as ProviderEditTestEmail from "./common/TestEmailWidget";
-import * as ProviderNotification from "./common/TestNotificationWidget";
-import * as ProviderEditTestSms from "./common/TestSmsWidget";
-import copy from "copy-to-clipboard";
 import {CaptchaPreview} from "./common/CaptchaPreview";
-import {CountryCodeSelect} from "./common/select/CountryCodeSelect";
 import * as Web3Auth from "./auth/Web3Auth";
-import Editor from "./common/Editor";
-import HttpHeaderTable from "./table/HttpHeaderTable";
 import {renderNotificationProviderFields} from "./provider/NotificationProviderFields";
 import {renderEmailProviderFields} from "./provider/EmailProviderFields";
 import {renderSmsProviderFields} from "./provider/SmsProviderFields";

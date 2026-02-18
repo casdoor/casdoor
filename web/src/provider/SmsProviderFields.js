@@ -124,7 +124,7 @@ export function renderSmsProviderFields(provider, updateProviderField, renderSms
               </Col>
             </Row>
           </React.Fragment>
-        )
+        ) : null
       }
       <Row style={{marginTop: "20px"}} >
         <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
