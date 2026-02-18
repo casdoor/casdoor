@@ -144,7 +144,6 @@ class PromptPage extends React.Component {
 
   renderContent(application) {
     const supportedSignupItems = this.getPromptPageSupportedSignupItems();
-    
     return (
       <div style={{width: "500px"}}>
         {
