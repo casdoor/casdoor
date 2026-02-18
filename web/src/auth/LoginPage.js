@@ -102,7 +102,7 @@ class LoginPage extends React.Component {
       const prov = p.provider || p.Provider;
       return prov && (prov.name === id || `${prov.owner}/${prov.name}` === id);
     });
-    if (!providerItem) {
+    if (!providerItem || !this.isProviderVisible(providerItem)) {
       return false;
     }
     const provider = providerItem.provider || providerItem.Provider;
@@ -957,37 +957,25 @@ class LoginPage extends React.Component {
       if (signinItem.rule === "None" || signinItem.rule === "") {
         signinItem.rule = showForm ? "small" : "big";
       }
-      const searchParams = new URLSearchParams(window.location.search);
-      const idParam = searchParams.get("id");
-
       return (
         <div key={resultItemKey}>
           <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.customCss?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
           <Form.Item>
             {
-              application.providers.filter(providerItem => this.isProviderVisible(providerItem)).map((providerItem, id) => {
-                const p = providerItem.provider;
-                const hintMatches = searchParams.get("silentSignin") === "1" && idParam && (p?.name === idParam || (p?.owner && `${p.owner}/${p.name}` === idParam));
-                if (hintMatches) {
-                  // Delegate to shared redirect logic to avoid duplication and divergence.
-                  this.tryRedirectToProviderFromUrl();
-                  return null;
-                }
-                return (
-                  <span key={id} onClick={(e) => {
-                    const agreementChecked = this.form.current.getFieldValue("agreement");
+              application.providers.filter(providerItem => this.isProviderVisible(providerItem)).map((providerItem, id) => (
+                <span key={id} onClick={(e) => {
+                  const agreementChecked = this.form.current.getFieldValue("agreement");
 
-                    if (agreementChecked !== undefined && typeof agreementChecked === "boolean" && !agreementChecked) {
-                      e.preventDefault();
-                      message.error(i18next.t("signup:Please accept the agreement!"));
-                    }
-                  }}>
-                    {
-                      ProviderButton.renderProviderLogo(providerItem.provider, application, null, null, signinItem.rule, this.props.location)
-                    }
-                  </span>
-                );
-              })
+                  if (agreementChecked !== undefined && typeof agreementChecked === "boolean" && !agreementChecked) {
+                    e.preventDefault();
+                    message.error(i18next.t("signup:Please accept the agreement!"));
+                  }
+                }}>
+                  {
+                    ProviderButton.renderProviderLogo(providerItem.provider, application, null, null, signinItem.rule, this.props.location)
+                  }
+                </span>
+              ))
             }
             {
               this.renderOtherFormProvider(application)
