@@ -771,6 +771,8 @@ func (c *ApiController) Login() {
 			stateBytes, err := base64.StdEncoding.DecodeString(authForm.State)
 			if err == nil {
 				stateQuery := string(stateBytes)
+				// Remove leading '?' if present, as url.ParseQuery expects raw query string
+				stateQuery = strings.TrimPrefix(stateQuery, "?")
 				// Parse query parameters from the decoded state
 				if stateParams, err := url.ParseQuery(stateQuery); err == nil {
 					// Extract invitation code if present in state
