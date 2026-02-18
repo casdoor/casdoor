@@ -80,7 +80,7 @@ export function renderNotificationProviderFields(provider, updateProviderField, 
       <Row style={{marginTop: "20px"}} >
         {getReceiverRow(provider)}
         <Button style={{marginLeft: "10px", marginBottom: "5px"}} type="primary"
-          onClick={() => ProviderNotification.sendTestNotification(provider, provider.receiver)} >
+          onClick={() => ProviderNotification.sendTestNotification(provider)} >
           {i18next.t("provider:Send Testing Notification")}
         </Button>
       </Row>
