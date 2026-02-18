@@ -77,7 +77,7 @@ func GetConfigPath() string {
 }
 
 func InitConfig() {
-	err := web.LoadAppConfig("ini", configPath)
+	err := web.LoadAppConfig("ini", "../conf/app.conf")
 	if err != nil {
 		panic(err)
 	}
