@@ -66,7 +66,7 @@ func InitFlag() {
 	// Load beego config from the specified config path
 	err := web.LoadAppConfig("ini", configPath)
 	if err != nil {
-		panic(err)
+		panic(fmt.Sprintf("failed to load config from %s: %v", configPath, err))
 	}
 }
 
