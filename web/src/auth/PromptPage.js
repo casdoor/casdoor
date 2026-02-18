@@ -24,6 +24,9 @@ import RegionSelect from "../common/select/RegionSelect";
 import {withRouter} from "react-router-dom";
 import * as AuthBackend from "./AuthBackend";
 
+// List of signup item names that can be rendered on the prompt page
+const PROMPT_PAGE_SUPPORTED_SIGNUP_ITEMS = ["Country/Region"];
+
 class PromptPage extends React.Component {
   constructor(props) {
     super(props);
@@ -143,7 +146,6 @@ class PromptPage extends React.Component {
   }
 
   renderContent(application) {
-    const supportedSignupItems = this.getPromptPageSupportedSignupItems();
     return (
       <div style={{width: "500px"}}>
         {
@@ -158,7 +160,7 @@ class PromptPage extends React.Component {
           {
             (application === null || this.state.user === null) ? null : (
               application?.signupItems?.filter(signupItem => 
-                Setting.isSignupItemPrompted(signupItem) && supportedSignupItems.includes(signupItem.name)
+                Setting.isSignupItemPrompted(signupItem) && PROMPT_PAGE_SUPPORTED_SIGNUP_ITEMS.includes(signupItem.name)
               ).map((signupItem, index) => {
                 // Render based on signup item type
                 switch (signupItem.name) {
@@ -268,12 +270,6 @@ class PromptPage extends React.Component {
       </div>);
   }
 
-  getPromptPageSupportedSignupItems() {
-    // Return list of signup item names that can be rendered on the prompt page
-    // Currently only "Country/Region" is supported with RegionSelect component
-    return ["Country/Region"];
-  }
-
   hasPromptContent(application) {
     // Check if there are any prompted and visible providers
     const promptedProviders = application?.providers?.filter(providerItem => Setting.isProviderPrompted(providerItem));
@@ -282,9 +278,8 @@ class PromptPage extends React.Component {
     }
 
     // Check if there are any prompted signup items that are supported on prompt page
-    const supportedItems = this.getPromptPageSupportedSignupItems();
     const promptedSignupItems = application?.signupItems?.filter(signupItem => 
-      Setting.isSignupItemPrompted(signupItem) && supportedItems.includes(signupItem.name)
+      Setting.isSignupItemPrompted(signupItem) && PROMPT_PAGE_SUPPORTED_SIGNUP_ITEMS.includes(signupItem.name)
     );
     if (promptedSignupItems?.length > 0) {
       return true;

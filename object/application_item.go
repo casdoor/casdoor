@@ -14,6 +14,12 @@
 
 package object
 
+// List of signup items supported on the prompt page
+// Currently only "Country/Region" is rendered with RegionSelect component
+var promptPageSupportedSignupItems = map[string]bool{
+	"Country/Region": true,
+}
+
 func (application *Application) GetProviderByCategory(category string) (*Provider, error) {
 	providers, err := GetProviders(application.Organization)
 	if err != nil {
@@ -170,15 +176,9 @@ func (application *Application) HasPromptPage() bool {
 		return true
 	}
 
-	// List of signup items supported on the prompt page
-	// Currently only "Country/Region" is rendered with RegionSelect component
-	supportedPromptPageSignupItems := map[string]bool{
-		"Country/Region": true,
-	}
-
 	signupItems := application.getAllPromptedSignupItems()
 	for _, signupItem := range signupItems {
-		if supportedPromptPageSignupItems[signupItem.Name] {
+		if promptPageSupportedSignupItems[signupItem.Name] {
 			return true
 		}
 	}
