@@ -75,7 +75,7 @@ export function renderEmailProviderFields(provider, updateProviderField, renderE
         </Col>
       </Row>
       {
-        !["Custom HTTP Email"].includes(provider.type) ? null : (
+        provider.type === "Custom HTTP Email" ? (
           <React.Fragment>
             <Row style={{marginTop: "20px"}} >
               <Col style={{marginTop: "5px"}} span={2}>

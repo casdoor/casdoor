@@ -22,10 +22,13 @@ import HttpHeaderTable from "../table/HttpHeaderTable";
 
 const {Option} = Select;
 
+const SMS_PROVIDERS_WITHOUT_SIGN_NAME = ["Custom HTTP SMS", "Twilio SMS", "Amazon SNS", "Msg91 SMS", "Infobip SMS"];
+const SMS_PROVIDERS_WITHOUT_TEMPLATE_CODE = ["Infobip SMS", "Custom HTTP SMS"];
+
 export function renderSmsProviderFields(provider, updateProviderField, renderSmsMappingInput, account) {
   return (
     <React.Fragment>
-      {["Custom HTTP SMS", "Twilio SMS", "Amazon SNS", "Msg91 SMS", "Infobip SMS"].includes(provider.type) ?
+      {SMS_PROVIDERS_WITHOUT_SIGN_NAME.includes(provider.type) ?
         null :
         (<Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
@@ -39,7 +42,7 @@ export function renderSmsProviderFields(provider, updateProviderField, renderSms
         </Row>
         )
       }
-      {["Infobip SMS", "Custom HTTP SMS"].includes(provider.type) ?
+      {SMS_PROVIDERS_WITHOUT_TEMPLATE_CODE.includes(provider.type) ?
         null :
         (<Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
@@ -54,7 +57,7 @@ export function renderSmsProviderFields(provider, updateProviderField, renderSms
         )
       }
       {
-        provider.type !== "Custom HTTP SMS" ? null : (
+        provider.type === "Custom HTTP SMS" ? (
           <React.Fragment>
             <Row style={{marginTop: "20px"}} >
               <Col style={{marginTop: "5px"}} span={2}>
