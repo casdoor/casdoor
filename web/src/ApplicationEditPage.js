@@ -567,7 +567,7 @@ class ApplicationEditPage extends React.Component {
                     {id: "id_token", name: "ID Token"},
                     {id: "refresh_token", name: "Refresh Token"},
                     {id: "urn:ietf:params:oauth:grant-type:device_code", name: "Device Code"},
-                    {id: "urn:ietf:params:oauth:grant-type:jwt-bearer", name: "Jwt bearer"},
+                    {id: "urn:ietf:params:oauth:grant-type:jwt-bearer", name: "JWT Bearer"},
                   ].map((item, index) => <Option key={index} value={item.id}>{item.name}</Option>)
                 }
               </Select>

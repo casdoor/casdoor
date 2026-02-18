@@ -896,13 +896,13 @@ func GetJwtBearerToken(application *Application, assertion string, scope string,
 	if err != nil || !ok {
 		if err != nil {
 			return nil, &TokenError{
-				Error:            InvalidClient,
+				Error:            InvalidGrant,
 				ErrorDescription: err.Error(),
 			}, err
 		}
 
 		return nil, &TokenError{
-			Error:            InvalidClient,
+			Error:            InvalidGrant,
 			ErrorDescription: fmt.Sprintf("client_assertion is invalid for application: [%s]", application.GetId()),
 		}, nil
 	}
@@ -917,6 +917,9 @@ func ValidateJwtAssertion(clientAssertion string, application *Application, host
 	if err != nil {
 		return false, nil, err
 	}
+	if clientCert == nil {
+		return false, nil, fmt.Errorf("client certificate is not configured for application: [%s]", application.GetId())
+	}
 
 	claims, err := ParseJwtToken(clientAssertion, clientCert)
 	if err != nil {
@@ -927,7 +930,7 @@ func ValidateJwtAssertion(clientAssertion string, application *Application, host
 		return false, nil, nil
 	}
 
-	if slices.Contains(claims.Audience, fmt.Sprintf("%s/api/login/oauth/access_token", originBackend)) {
+	if !slices.Contains(claims.Audience, fmt.Sprintf("%s/api/login/oauth/access_token", originBackend)) {
 		return false, nil, nil
 	}
 
@@ -950,12 +953,12 @@ func ValidateClientAssertion(clientAssertion string, host string) (bool, *Applic
 		return false, nil, err
 	}
 
-	if ok, _, err := ValidateJwtAssertion(clientAssertion, application, host); err != nil || !ok {
-		if err != nil {
-			return false, application, err
-		}
-
+	ok, _, err := ValidateJwtAssertion(clientAssertion, application, host)
+	if err != nil {
 		return false, application, err
+	}
+	if !ok {
+		return false, application, nil
 	}
 
 	return true, application, nil

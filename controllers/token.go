@@ -249,8 +249,7 @@ func (c *ApiController) GetOAuthToken() {
 			}
 		}
 	}
-
-	// Handle private_key_jwt client authentication (RFC 7523) after all parameters are collected
+	
 	host := c.Ctx.Request.Host
 
 	if deviceCode != "" {
@@ -380,6 +379,7 @@ func (c *ApiController) ValidateOAuth(reqClientId, reqClientSecret string) (ok b
 
 		clientSecret = application.ClientSecret
 		clientId = application.ClientId
+		ok = true
 		return
 	}
 
@@ -409,6 +409,7 @@ func (c *ApiController) ValidateOAuth(reqClientId, reqClientSecret string) (ok b
 		return
 	}
 
+	ok = true
 	return
 }
 
