@@ -262,9 +262,32 @@ class PromptPage extends React.Component {
       </div>);
   }
 
+  hasPromptContent(application) {
+    // Check if there are any prompted and visible providers
+    const promptedProviders = application?.providers?.filter(providerItem => Setting.isProviderPrompted(providerItem));
+    if (promptedProviders?.length > 0) {
+      return true;
+    }
+
+    // Check if there are any prompted signup items (only Country/Region is rendered)
+    const promptedSignupItems = application?.signupItems?.filter(signupItem => 
+      Setting.isSignupItemPrompted(signupItem) && signupItem.name === "Country/Region"
+    );
+    if (promptedSignupItems?.length > 0) {
+      return true;
+    }
+
+    // Check if affiliation is prompted
+    if (Setting.isAffiliationPrompted(application)) {
+      return true;
+    }
+
+    return false;
+  }
+
   initSteps(user, application) {
     const steps = [];
-    if (Setting.hasPromptPage(application)) {
+    if (this.hasPromptContent(application)) {
       steps.push({
         content: this.renderPromptProvider(application),
         name: "provider",

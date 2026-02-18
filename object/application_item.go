@@ -170,9 +170,12 @@ func (application *Application) HasPromptPage() bool {
 		return true
 	}
 
+	// Only "Country/Region" signup item is rendered on the prompt page
 	signupItems := application.getAllPromptedSignupItems()
-	if len(signupItems) != 0 {
-		return true
+	for _, signupItem := range signupItems {
+		if signupItem.Name == "Country/Region" {
+			return true
+		}
 	}
 
 	return application.isAffiliationPrompted()

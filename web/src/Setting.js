@@ -832,9 +832,12 @@ export function hasPromptPage(application) {
     return true;
   }
 
+  // Only "Country/Region" signup item is rendered on the prompt page
   const signupItems = getAllPromptedSignupItems(application);
-  if (signupItems?.length > 0) {
-    return true;
+  for (const signupItem of signupItems || []) {
+    if (signupItem.name === "Country/Region") {
+      return true;
+    }
   }
 
   return isAffiliationPrompted(application);
