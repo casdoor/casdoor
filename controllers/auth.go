@@ -766,12 +766,16 @@ func (c *ApiController) Login() {
 
 			// Extract query parameters from OAuth state
 			// The state contains base64-encoded query parameters including invitationCode
+			// Frontend encodes all query params (e.g., ?invitationCode=ABC&application=app)
+			// We decode to restore invitation code for OAuth signup flow
 			stateBytes, err := base64.StdEncoding.DecodeString(authForm.State)
 			if err == nil {
 				stateQuery := string(stateBytes)
 				// Parse query parameters from the decoded state
 				if stateParams, err := url.ParseQuery(stateQuery); err == nil {
 					// Extract invitation code if present in state
+					// Note: Only set from state if not already provided directly (e.g., via form)
+					// This preserves the precedence: direct form input > state-encoded value
 					if invCode := stateParams.Get("invitationCode"); invCode != "" && authForm.InvitationCode == "" {
 						authForm.InvitationCode = invCode
 					}
