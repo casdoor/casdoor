@@ -832,10 +832,13 @@ export function hasPromptPage(application) {
     return true;
   }
 
-  // Only "Country/Region" signup item is rendered on the prompt page
+  // List of signup items supported on the prompt page
+  // Currently only "Country/Region" is rendered with RegionSelect component
+  const supportedPromptPageSignupItems = ["Country/Region"];
+  
   const signupItems = getAllPromptedSignupItems(application);
   for (const signupItem of signupItems || []) {
-    if (signupItem.name === "Country/Region") {
+    if (supportedPromptPageSignupItems.includes(signupItem.name)) {
       return true;
     }
   }

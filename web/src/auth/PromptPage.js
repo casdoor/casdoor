@@ -143,6 +143,8 @@ class PromptPage extends React.Component {
   }
 
   renderContent(application) {
+    const supportedSignupItems = this.getPromptPageSupportedSignupItems();
+    
     return (
       <div style={{width: "500px"}}>
         {
@@ -156,26 +158,28 @@ class PromptPage extends React.Component {
           }
           {
             (application === null || this.state.user === null) ? null : (
-              application?.signupItems?.filter(signupItem => Setting.isSignupItemPrompted(signupItem)).map((signupItem, index) => {
-                if (signupItem.name !== "Country/Region") {
-                  return null;
+              application?.signupItems?.filter(signupItem => 
+                Setting.isSignupItemPrompted(signupItem) && supportedSignupItems.includes(signupItem.name)
+              ).map((signupItem, index) => {
+                if (signupItem.name === "Country/Region") {
+                  return (
+                    <Row key={signupItem.name} style={{marginTop: "20px", justifyContent: "space-between"}} >
+                      <Col style={{marginTop: "5px"}} >
+                        <span style={{marginLeft: "5px"}}>
+                          {
+                            i18next.t("user:Country/Region")
+                          }:
+                        </span>
+                      </Col>
+                      <Col >
+                        <RegionSelect defaultValue={this.state.user.region} onChange={(value) => {
+                          this.updateUserFieldWithoutSubmit("region", value);
+                        }} />
+                      </Col>
+                    </Row>
+                  );
                 }
-                return (
-                  <Row key={signupItem.name} style={{marginTop: "20px", justifyContent: "space-between"}} >
-                    <Col style={{marginTop: "5px"}} >
-                      <span style={{marginLeft: "5px"}}>
-                        {
-                          i18next.t("user:Country/Region")
-                        }:
-                      </span>
-                    </Col>
-                    <Col >
-                      <RegionSelect defaultValue={this.state.user.region} onChange={(value) => {
-                        this.updateUserFieldWithoutSubmit("region", value);
-                      }} />
-                    </Col>
-                  </Row>
-                );
+                return null;
               })
             )
           }
@@ -262,6 +266,12 @@ class PromptPage extends React.Component {
       </div>);
   }
 
+  getPromptPageSupportedSignupItems() {
+    // Return list of signup item names that can be rendered on the prompt page
+    // Currently only "Country/Region" is supported with RegionSelect component
+    return ["Country/Region"];
+  }
+
   hasPromptContent(application) {
     // Check if there are any prompted and visible providers
     const promptedProviders = application?.providers?.filter(providerItem => Setting.isProviderPrompted(providerItem));
@@ -269,9 +279,10 @@ class PromptPage extends React.Component {
       return true;
     }
 
-    // Check if there are any prompted signup items (only Country/Region is rendered)
+    // Check if there are any prompted signup items that are supported on prompt page
+    const supportedItems = this.getPromptPageSupportedSignupItems();
     const promptedSignupItems = application?.signupItems?.filter(signupItem => 
-      Setting.isSignupItemPrompted(signupItem) && signupItem.name === "Country/Region"
+      Setting.isSignupItemPrompted(signupItem) && supportedItems.includes(signupItem.name)
     );
     if (promptedSignupItems?.length > 0) {
       return true;
