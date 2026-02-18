@@ -903,7 +903,7 @@ func GetJwtBearerToken(application *Application, assertion string, scope string,
 
 		return nil, &TokenError{
 			Error:            InvalidGrant,
-			ErrorDescription: fmt.Sprintf("client_assertion is invalid for application: [%s]", application.GetId()),
+			ErrorDescription: fmt.Sprintf("assertion (JWT) is invalid for application: [%s]", application.GetId()),
 		}, nil
 	}
 
@@ -951,6 +951,9 @@ func ValidateClientAssertion(clientAssertion string, host string) (bool, *Applic
 	application, err := GetApplicationByClientId(clientId)
 	if err != nil {
 		return false, nil, err
+	}
+	if application == nil {
+		return false, nil, fmt.Errorf("application not found for client: [%s]", clientId)
 	}
 
 	ok, _, err := ValidateJwtAssertion(clientAssertion, application, host)

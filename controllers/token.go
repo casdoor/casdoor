@@ -335,7 +335,7 @@ func (c *ApiController) RefreshToken() {
 		}
 	}
 
-	ok, application, clientId, _, err := c.ValidateOAuth(clientId, clientSecret)
+	ok, application, clientId, _, err := c.ValidateOAuth(true)
 	if err != nil || !ok {
 		return
 	}
@@ -360,9 +360,21 @@ func (c *ApiController) ResponseTokenError(errorMsg string, errorDescription str
 	c.ServeJSON()
 }
 
-func (c *ApiController) ValidateOAuth(reqClientId, reqClientSecret string) (ok bool, application *object.Application, clientId, clientSecret string, err error) {
+func (c *ApiController) ValidateOAuth(ignoreValidSecret bool) (ok bool, application *object.Application, clientId, clientSecret string, err error) {
+	reqClientId := c.Ctx.Input.Query("client_id")
+	reqClientSecret := c.Ctx.Input.Query("client_secret")
 	clientAssertion := c.Ctx.Input.Query("client_assertion")
 	clientAssertionType := c.Ctx.Input.Query("client_assertion_type")
+
+	if reqClientId == "" && clientAssertionType == "" {
+		var tokenRequest TokenRequest
+		if err := json.Unmarshal(c.Ctx.Input.RequestBody, &tokenRequest); err == nil {
+			reqClientId = tokenRequest.ClientId
+			reqClientSecret = tokenRequest.ClientSecret
+			clientAssertion = tokenRequest.ClientAssertion
+			clientAssertionType = tokenRequest.ClientAssertionType
+		}
+	}
 
 	if clientAssertionType == "urn:ietf:params:oauth:client-assertion-type:jwt-bearer" {
 		ok, application, err = object.ValidateClientAssertion(clientAssertion, c.Ctx.Request.Host)
@@ -403,7 +415,7 @@ func (c *ApiController) ValidateOAuth(reqClientId, reqClientSecret string) (ok b
 		return
 	}
 
-	if application == nil || application.ClientSecret != clientSecret {
+	if application == nil || (application.ClientSecret != clientSecret && !ignoreValidSecret) {
 		c.ResponseTokenError(object.InvalidClient, c.T("token:Invalid application or wrong clientSecret"))
 		return
 	}
@@ -419,7 +431,7 @@ func (c *ApiController) ValidateOAuth(reqClientId, reqClientSecret string) (ok b
 // parameter representing an OAuth 2.0 token and returns a JSON document
 // representing the meta information surrounding the
 // token, including whether this token is currently active.
-// This endpoint only support Basic Authorization.
+// This endpoint support Basic Authorization and authorization defined in RFC 7523.
 //
 // @Param token formData string true "access_token's value or refresh_token's value"
 // @Param token_type_hint formData string true "the token type access_token or refresh_token"
@@ -430,7 +442,7 @@ func (c *ApiController) ValidateOAuth(reqClientId, reqClientSecret string) (ok b
 func (c *ApiController) IntrospectToken() {
 	tokenValue := c.Ctx.Input.Query("token")
 
-	ok, application, clientId, _, err := c.ValidateOAuth("", "")
+	ok, application, clientId, _, err := c.ValidateOAuth(false)
 	if err != nil || !ok {
 		return
 	}
