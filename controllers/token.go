@@ -249,9 +249,8 @@ func (c *ApiController) GetOAuthToken() {
 			}
 		}
 	}
-	
-	host := c.Ctx.Request.Host
 
+	host := c.Ctx.Request.Host
 	if deviceCode != "" {
 		deviceAuthCache, ok := object.DeviceAuthMap.Load(deviceCode)
 		if !ok {
