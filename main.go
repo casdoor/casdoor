@@ -50,9 +50,10 @@ func main() {
 	object.InitFlag()
 
 	// Load configuration from custom path if specified via --config flag
+	// GetConfigPath() returns the path from --config flag, or defaults to "conf/app.conf"
 	configPath := object.GetConfigPath()
 	if err := web.LoadAppConfig("ini", configPath); err != nil {
-		panic(err)
+		panic(fmt.Sprintf("Failed to load config from %s: %v", configPath, err))
 	}
 
 	object.InitAdapter()
