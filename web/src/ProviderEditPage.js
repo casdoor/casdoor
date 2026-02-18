@@ -1235,11 +1235,13 @@ class ProviderEditPage extends React.Component {
           ) : this.state.provider.category === "SAML" ? renderSamlProviderFields(
             this.state.provider,
             this.updateProviderField.bind(this),
-            this.state.requestUrl,
-            (value) => this.setState({requestUrl: value}),
-            this.state.metadataLoading,
-            this.fetchSamlMetadata.bind(this),
-            this.parseSamlMetadata.bind(this)
+            {
+              requestUrl: this.state.requestUrl,
+              setRequestUrl: (value) => this.setState({requestUrl: value}),
+              metadataLoading: this.state.metadataLoading,
+              fetchSamlMetadata: this.fetchSamlMetadata.bind(this),
+              parseSamlMetadata: this.parseSamlMetadata.bind(this),
+            }
           ) : null
         }
         {

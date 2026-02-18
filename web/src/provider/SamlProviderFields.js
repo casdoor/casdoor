@@ -21,7 +21,8 @@ import copy from "copy-to-clipboard";
 
 const {TextArea} = Input;
 
-export function renderSamlProviderFields(provider, updateProviderField, requestUrl, setRequestUrl, metadataLoading, fetchSamlMetadata, parseSamlMetadata) {
+export function renderSamlProviderFields(provider, updateProviderField, metadataConfig) {
+  const {requestUrl, setRequestUrl, metadataLoading, fetchSamlMetadata, parseSamlMetadata} = metadataConfig;
   return (
     <React.Fragment>
       <Row style={{marginTop: "20px"}} >
