@@ -24,8 +24,9 @@ import RegionSelect from "../common/select/RegionSelect";
 import {withRouter} from "react-router-dom";
 import * as AuthBackend from "./AuthBackend";
 
-// List of signup item names that can be rendered on the prompt page
-const PROMPT_PAGE_SUPPORTED_SIGNUP_ITEMS = ["Country/Region"];
+// Set of signup item names that can be rendered on the prompt page
+// Currently only "Country/Region" is supported with RegionSelect component
+const PROMPT_PAGE_SUPPORTED_SIGNUP_ITEMS = new Set(["Country/Region"]);
 
 class PromptPage extends React.Component {
   constructor(props) {
@@ -160,7 +161,7 @@ class PromptPage extends React.Component {
           {
             (application === null || this.state.user === null) ? null : (
               application?.signupItems?.filter(signupItem => 
-                Setting.isSignupItemPrompted(signupItem) && PROMPT_PAGE_SUPPORTED_SIGNUP_ITEMS.includes(signupItem.name)
+                Setting.isSignupItemPrompted(signupItem) && PROMPT_PAGE_SUPPORTED_SIGNUP_ITEMS.has(signupItem.name)
               ).map((signupItem, index) => {
                 // Render based on signup item type
                 switch (signupItem.name) {
@@ -279,7 +280,7 @@ class PromptPage extends React.Component {
 
     // Check if there are any prompted signup items that are supported on prompt page
     const promptedSignupItems = application?.signupItems?.filter(signupItem => 
-      Setting.isSignupItemPrompted(signupItem) && PROMPT_PAGE_SUPPORTED_SIGNUP_ITEMS.includes(signupItem.name)
+      Setting.isSignupItemPrompted(signupItem) && PROMPT_PAGE_SUPPORTED_SIGNUP_ITEMS.has(signupItem.name)
     );
     if (promptedSignupItems?.length > 0) {
       return true;
