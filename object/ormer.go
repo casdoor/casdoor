@@ -72,6 +72,9 @@ func GetExportFilePath() string {
 	return exportFilePath
 }
 
+// GetConfigPath returns the configuration file path.
+// It returns the path specified by the --config command-line flag,
+// or the default "conf/app.conf" if the flag was not provided.
 func GetConfigPath() string {
 	return configPath
 }
