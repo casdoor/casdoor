@@ -759,6 +759,10 @@ export function getSignupItem(application, itemName) {
   return null;
 }
 
+// List of signup items supported on the prompt page
+// Currently only "Country/Region" is rendered with RegionSelect component
+const PROMPT_PAGE_SUPPORTED_SIGNUP_ITEMS = ["Country/Region"];
+
 export function isValidPersonName(personName) {
   return personName !== "";
 
@@ -832,13 +836,9 @@ export function hasPromptPage(application) {
     return true;
   }
 
-  // List of signup items supported on the prompt page
-  // Currently only "Country/Region" is rendered with RegionSelect component
-  const supportedPromptPageSignupItems = ["Country/Region"];
-  
   const signupItems = getAllPromptedSignupItems(application);
   for (const signupItem of signupItems || []) {
-    if (supportedPromptPageSignupItems.includes(signupItem.name)) {
+    if (PROMPT_PAGE_SUPPORTED_SIGNUP_ITEMS.includes(signupItem.name)) {
       return true;
     }
   }
