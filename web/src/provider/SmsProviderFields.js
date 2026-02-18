@@ -60,7 +60,7 @@ export function renderSmsProviderFields(provider, updateProviderField, renderSms
         provider.type === "Custom HTTP SMS" ? (
           <React.Fragment>
             <Row style={{marginTop: "20px"}} >
-              <Col style={{marginTop: "5px"}} span={2}>
+              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
                 {Setting.getLabel(i18next.t("general:Method"), i18next.t("provider:Method - Tooltip"))} :
               </Col>
               <Col span={22} >
