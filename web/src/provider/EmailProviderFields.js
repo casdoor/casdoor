@@ -210,7 +210,7 @@ export function renderEmailProviderFields(provider, updateProviderField, renderE
             <Col span={1} />
             <Col span={Setting.isMobile() ? 22 : 11}>
               <div style={{margin: "10px"}}>
-                <div dangerouslySetInnerHTML={{__html: provider.metadata.replace("%code", "123456")}} />
+                <div dangerouslySetInnerHTML={{__html: provider.metadata.replace("%code", "123456").replace("%s", "123456")}} />
               </div>
             </Col>
           </Row>

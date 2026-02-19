@@ -19,6 +19,14 @@ import i18next from "i18next";
 import * as Web3Auth from "../auth/Web3Auth";
 
 export function renderWeb3ProviderFields(provider, updateProviderField) {
+  const getWalletValue = () => {
+    try {
+      return JSON.parse(provider.metadata);
+    } catch {
+      return ["injected"];
+    }
+  };
+
   return (
     provider.type === "Web3Onboard" ? (
       <Row style={{marginTop: "20px"}} >
@@ -28,13 +36,7 @@ export function renderWeb3ProviderFields(provider, updateProviderField) {
         <Col span={22}>
           <Checkbox.Group
             options={Web3Auth.getWeb3OnboardWalletsOptions()}
-            value={() => {
-              try {
-                return JSON.parse(provider.metadata);
-              } catch {
-                return ["injected"];
-              }
-            }}
+            value={getWalletValue()}
             onChange={options => {
               updateProviderField("metadata", JSON.stringify(options));
             }}

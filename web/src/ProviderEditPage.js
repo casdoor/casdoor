@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Checkbox, Col, Input, Radio, Row, Select, Switch} from "antd";
+import {Button, Card, Col, Input, Radio, Row, Select, Switch} from "antd";
 import {LinkOutlined} from "@ant-design/icons";
 import * as ProviderBackend from "./backend/ProviderBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";

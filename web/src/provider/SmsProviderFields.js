@@ -160,7 +160,7 @@ export function renderSmsProviderFields(provider, updateProviderField, renderSms
         </Col>
         <Col span={2} >
           <Button style={{marginLeft: "10px", marginBottom: "5px"}} type="primary"
-            disabled={!Setting.isValidPhone(provider.receiver) && (provider.type !== "Custom HTTP SMS" || provider.endpoint === "")}
+            disabled={!Setting.isValidPhone(provider.receiver) || (provider.type === "Custom HTTP SMS" && provider.endpoint === "")}
             onClick={() => ProviderEditTestSms.sendTestSms(provider, "+" + Setting.getCountryCode(provider.content) + provider.receiver)} >
             {i18next.t("provider:Send Testing SMS")}
           </Button>
