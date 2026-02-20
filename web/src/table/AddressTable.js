@@ -87,7 +87,7 @@ class AddressTable extends React.Component {
         width: "100px",
         render: (text, record, index) => {
           return (
-            <Select virtual={false} style={{width: "100%"}}
+            <Select virtual={false} size="small" style={{width: "100%"}}
               value={text}
               onChange={value => {
                 this.updateField(table, index, "tag", value);
@@ -106,7 +106,7 @@ class AddressTable extends React.Component {
         width: "150px",
         render: (text, record, index) => {
           return (
-            <Input value={text} onChange={e => {
+            <Input size="small" value={text} onChange={e => {
               this.updateField(table, index, "line1", e.target.value);
             }} />
           );
@@ -119,7 +119,7 @@ class AddressTable extends React.Component {
         width: "150px",
         render: (text, record, index) => {
           return (
-            <Input value={text} onChange={e => {
+            <Input size="small" value={text} onChange={e => {
               this.updateField(table, index, "line2", e.target.value);
             }} />
           );
@@ -132,7 +132,7 @@ class AddressTable extends React.Component {
         width: "120px",
         render: (text, record, index) => {
           return (
-            <Input value={text} onChange={e => {
+            <Input size="small" value={text} onChange={e => {
               this.updateField(table, index, "city", e.target.value);
             }} />
           );
@@ -145,7 +145,7 @@ class AddressTable extends React.Component {
         width: "100px",
         render: (text, record, index) => {
           return (
-            <Input value={text} onChange={e => {
+            <Input size="small" value={text} onChange={e => {
               this.updateField(table, index, "state", e.target.value);
             }} />
           );
@@ -158,7 +158,7 @@ class AddressTable extends React.Component {
         width: "100px",
         render: (text, record, index) => {
           return (
-            <Input value={text} onChange={e => {
+            <Input size="small" value={text} onChange={e => {
               this.updateField(table, index, "zipCode", e.target.value);
             }} />
           );
@@ -172,6 +172,7 @@ class AddressTable extends React.Component {
         render: (text, record, index) => {
           return (
             <RegionSelect
+              size="small"
               value={text}
               onChange={value => {
                 this.updateField(table, index, "region", value);

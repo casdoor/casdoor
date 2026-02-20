@@ -84,7 +84,7 @@ class MfaTable extends React.Component {
         key: "name",
         render: (text, record, index) => {
           return (
-            <Select virtual={false} style={{width: "100%"}}
+            <Select virtual={false} size="small" style={{width: "100%"}}
               value={text}
               onChange={value => {
                 this.updateField(table, index, "name", value);
@@ -103,7 +103,7 @@ class MfaTable extends React.Component {
         width: "100px",
         render: (text, record, index) => {
           return (
-            <Select virtual={false} style={{width: "100%"}}
+            <Select virtual={false} size="small" style={{width: "100%"}}
               value={text}
               defaultValue="Optional"
               options={RuleItems.map((item) =>

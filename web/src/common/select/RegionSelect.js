@@ -35,6 +35,7 @@ class RegionSelect extends React.Component {
   render() {
     return (
       <Select virtual={false}
+        size={this.props.size}
         showSearch
         optionFilterProp="label"
         style={{width: "100%"}}
