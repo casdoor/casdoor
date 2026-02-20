@@ -14,12 +14,16 @@
 
 import React from "react";
 import {DeleteOutlined, DownOutlined, UpOutlined} from "@ant-design/icons";
-import {Button, Col, Input, Row, Select, Table, Tooltip} from "antd";
+import {AutoComplete, Button, Col, Input, Row, Table, Tooltip} from "antd";
 import * as Setting from "../Setting";
 import i18next from "i18next";
 import RegionSelect from "../common/select/RegionSelect";
 
-const {Option} = Select;
+const TAG_OPTIONS = [
+  {value: "Home", label: "Home"},
+  {value: "Work", label: "Work"},
+  {value: "Other", label: "Other"},
+];
 
 class AddressTable extends React.Component {
   constructor(props) {
@@ -86,16 +90,20 @@ class AddressTable extends React.Component {
         key: "tag",
         width: "100px",
         render: (text, record, index) => {
+          const tagOptions = TAG_OPTIONS.map(opt => ({...opt, label: opt.value === "Home" ? i18next.t("general:Home") : opt.value === "Work" ? i18next.t("user:Work") : i18next.t("user:Other")}));
           return (
-            <Select virtual={false} size="small" style={{width: "100%"}}
-              value={text}
+            <AutoComplete
+              size="small"
+              style={{width: "100%"}}
+              value={text || ""}
+              options={tagOptions}
               onChange={value => {
                 this.updateField(table, index, "tag", value);
-              }} >
-              <Option value="Home">{i18next.t("general:Home")}</Option>
-              <Option value="Work">{i18next.t("user:Work")}</Option>
-              <Option value="Other">{i18next.t("user:Other")}</Option>
-            </Select>
+              }}
+              onSelect={value => {
+                this.updateField(table, index, "tag", value);
+              }}
+            />
           );
         },
       },
