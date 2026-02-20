@@ -19,6 +19,7 @@ import i18next from "i18next";
 import * as ProviderEditTestSms from "../common/TestSmsWidget";
 import {CountryCodeSelect} from "../common/select/CountryCodeSelect";
 import HttpHeaderTable from "../table/HttpHeaderTable";
+import {LinkOutlined} from "@ant-design/icons";
 
 const {Option} = Select;
 
@@ -59,6 +60,16 @@ export function renderSmsProviderFields(provider, updateProviderField, renderSms
       {
         provider.type === "Custom HTTP SMS" ? (
           <React.Fragment>
+            <Row style={{marginTop: "20px"}} >
+              <Col style={{marginTop: "5px"}} span={2}>
+                {Setting.getLabel(i18next.t("provider:Endpoint"), i18next.t("provider:Region endpoint for Internet"))} :
+              </Col>
+              <Col span={22} >
+                <Input prefix={<LinkOutlined />} value={provider.endpoint} onChange={e => {
+                  updateProviderField("endpoint", e.target.value);
+                }} />
+              </Col>
+            </Row>
             <Row style={{marginTop: "20px"}} >
               <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
                 {Setting.getLabel(i18next.t("general:Method"), i18next.t("provider:Method - Tooltip"))} :

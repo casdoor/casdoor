@@ -13,9 +13,10 @@
 // limitations under the License.
 
 import React from "react";
-import {Col, Row, Select} from "antd";
+import {Col, Input, Row, Select} from "antd";
 import * as Setting from "../Setting";
 import i18next from "i18next";
+import {LinkOutlined} from "@ant-design/icons";
 
 const {Option} = Select;
 
@@ -54,6 +55,18 @@ export function renderPaymentProviderFields(provider, updateProviderField, certs
           </Row>
         ) : null
       }
+      {(provider.type === "GC" || provider.type === "FastSpring") ? (
+        <Row style={{marginTop: "20px"}}>
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("provider:Host"), i18next.t("provider:Host - Tooltip"))} :
+          </Col>
+          <Col span={22}>
+            <Input prefix={<LinkOutlined />} value={provider.host} onChange={e => {
+              updateProviderField("host", e.target.value);
+            }} />
+          </Col>
+        </Row>
+      ) : null}
     </React.Fragment>
   );
 }

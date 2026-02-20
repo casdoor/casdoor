@@ -31,7 +31,7 @@ import {renderPaymentProviderFields} from "./provider/PaymentProviderFields";
 import {renderWeb3ProviderFields} from "./provider/Web3ProviderFields";
 import {renderStorageProviderFields} from "./provider/StorageProviderFields";
 import {renderFaceIdProviderFields} from "./provider/FaceIDProviderFields";
-import {renderIDVerificationProviderFields} from "./provider/IDVerificationProvider";
+import {renderIDVerificationProviderFields} from "./provider/IDVerificationProviderFields";
 
 const {Option} = Select;
 const {TextArea} = Input;

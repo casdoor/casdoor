@@ -26,6 +26,19 @@ const {Option} = Select;
 export function renderEmailProviderFields(provider, updateProviderField, renderEmailMappingInput, account) {
   return (
     <React.Fragment>
+      {
+        ["Custom HTTP Email", "SendGrid"].includes(provider.type) ? (
+          <Row style={{marginTop: "20px"}} >
+            <Col style={{marginTop: "5px"}} span={2}>
+              {Setting.getLabel(i18next.t("provider:Endpoint"), i18next.t("provider:Region endpoint for Internet"))} :
+            </Col>
+            <Col span={22} >
+              <Input prefix={<LinkOutlined />} value={provider.endpoint} onChange={e => {
+                updateProviderField("endpoint", e.target.value);
+              }} />
+            </Col>
+          </Row>) : null
+      }
       <Row style={{marginTop: "20px"}} >
         <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
           {Setting.getLabel(i18next.t("provider:Host"), i18next.t("provider:Host - Tooltip"))} :
