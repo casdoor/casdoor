@@ -506,6 +506,160 @@ class ApplicationEditPage extends React.Component {
       )}
       {this.state.activeMenuKey === "authentication" && (
         <React.Fragment>
+          <Row style={{marginTop: "20px"}} >
+            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
+              {Setting.getLabel(i18next.t("application:Cookie expire"), i18next.t("application:Cookie expire - Tooltip"))} :
+            </Col>
+            <Col span={21} >
+              <InputNumber style={{width: "150px"}} value={this.state.application.cookieExpireInHours || 720} min={1} step={1} precision={0} addonAfter="Hours" onChange={value => {
+                this.updateApplicationField("cookieExpireInHours", value);
+              }} />
+            </Col>
+          </Row>
+          <Row style={{marginTop: "20px"}} >
+            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
+              {Setting.getLabel(i18next.t("ldap:Default group"), i18next.t("ldap:Default group - Tooltip"))} :
+            </Col>
+            <Col span={21}>
+              <PaginateSelect
+                virtual
+                style={{width: "100%"}}
+                allowClear
+                placeholder={i18next.t("general:Default")}
+                value={this.state.application.defaultGroup || undefined}
+                fetchPage={GroupBackend.getGroups}
+                buildFetchArgs={({page, pageSize, searchText}) => {
+                  const field = searchText ? "name" : "";
+                  return [this.state.owner, false, page, pageSize, field, searchText, "", ""];
+                }}
+                reloadKey={this.state.owner}
+                optionMapper={(group) => Setting.getOption(
+                  <Space>
+                    {group.type === "Physical" ? <UsergroupAddOutlined /> : <HolderOutlined />}
+                    {group.displayName}
+                  </Space>,
+                  `${group.owner}/${group.name}`
+                )}
+                filterOption={false}
+                onChange={(value) => {
+                  this.updateApplicationField("defaultGroup", value || "");
+                }}
+              />
+            </Col>
+          </Row>
+          <Row style={{marginTop: "20px"}} >
+            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2}>
+              {Setting.getLabel(i18next.t("application:Enable signup"), i18next.t("application:Enable signup - Tooltip"))} :
+            </Col>
+            <Col span={1} >
+              <Switch checked={this.state.application.enableSignUp} onChange={checked => {
+                this.updateApplicationField("enableSignUp", checked);
+              }} />
+            </Col>
+          </Row>
+          <Row style={{marginTop: "20px"}} >
+            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2}>
+              {Setting.getLabel(i18next.t("application:Disable signin"), i18next.t("application:Disable signin - Tooltip"))} :
+            </Col>
+            <Col span={1} >
+              <Switch checked={this.state.application.disableSignin} onChange={checked => {
+                this.updateApplicationField("disableSignin", checked);
+              }} />
+            </Col>
+          </Row>
+          <Row style={{marginTop: "20px"}} >
+            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2}>
+              {Setting.getLabel(i18next.t("application:Enable exclusive signin"), i18next.t("application:Enable exclusive signin - Tooltip"))} :
+            </Col>
+            <Col span={1} >
+              <Switch checked={this.state.application.enableExclusiveSignin} onChange={checked => {
+                this.updateApplicationField("enableExclusiveSignin", checked);
+              }} />
+            </Col>
+          </Row>
+          <Row style={{marginTop: "20px"}} >
+            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2}>
+              {Setting.getLabel(i18next.t("application:Signin session"), i18next.t("application:Enable signin session - Tooltip"))} :
+            </Col>
+            <Col span={1} >
+              <Switch checked={this.state.application.enableSigninSession} onChange={checked => {
+                if (!checked) {
+                  this.updateApplicationField("enableAutoSignin", false);
+                }
+
+                this.updateApplicationField("enableSigninSession", checked);
+              }} />
+            </Col>
+          </Row>
+          <Row style={{marginTop: "20px"}} >
+            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2}>
+              {Setting.getLabel(i18next.t("application:Auto signin"), i18next.t("application:Auto signin - Tooltip"))} :
+            </Col>
+            <Col span={1} >
+              <Switch checked={this.state.application.enableAutoSignin} onChange={checked => {
+                if (!this.state.application.enableSigninSession && checked) {
+                  Setting.showMessage("error", i18next.t("application:Please enable \"Signin session\" first before enabling \"Auto signin\""));
+                  return;
+                }
+
+                this.updateApplicationField("enableAutoSignin", checked);
+              }} />
+            </Col>
+          </Row>
+          <Row style={{marginTop: "20px"}} >
+            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2}>
+              {Setting.getLabel(i18next.t("application:Enable Email linking"), i18next.t("application:Enable Email linking - Tooltip"))} :
+            </Col>
+            <Col span={1} >
+              <Switch checked={this.state.application.enableLinkWithEmail} onChange={checked => {
+                this.updateApplicationField("enableLinkWithEmail", checked);
+              }} />
+            </Col>
+          </Row>
+          <Row style={{marginTop: "20px"}} >
+            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
+              {Setting.getLabel(i18next.t("general:Signup URL"), i18next.t("general:Signup URL - Tooltip"))} :
+            </Col>
+            <Col span={21} >
+              <Input prefix={<LinkOutlined />} value={this.state.application.signupUrl} onChange={e => {
+                this.updateApplicationField("signupUrl", e.target.value);
+              }} />
+            </Col>
+          </Row>
+          <Row style={{marginTop: "20px"}} >
+            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
+              {Setting.getLabel(i18next.t("general:Signin URL"), i18next.t("general:Signin URL - Tooltip"))} :
+            </Col>
+            <Col span={21} >
+              <Input prefix={<LinkOutlined />} value={this.state.application.signinUrl} onChange={e => {
+                this.updateApplicationField("signinUrl", e.target.value);
+              }} />
+            </Col>
+          </Row>
+          <Row style={{marginTop: "20px"}} >
+            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
+              {Setting.getLabel(i18next.t("general:Forget URL"), i18next.t("general:Forget URL - Tooltip"))} :
+            </Col>
+            <Col span={21} >
+              <Input prefix={<LinkOutlined />} value={this.state.application.forgetUrl} onChange={e => {
+                this.updateApplicationField("forgetUrl", e.target.value);
+              }} />
+            </Col>
+          </Row>
+          <Row style={{marginTop: "20px"}} >
+            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
+              {Setting.getLabel(i18next.t("general:Affiliation URL"), i18next.t("general:Affiliation URL - Tooltip"))} :
+            </Col>
+            <Col span={21} >
+              <Input prefix={<LinkOutlined />} value={this.state.application.affiliationUrl} onChange={e => {
+                this.updateApplicationField("affiliationUrl", e.target.value);
+              }} />
+            </Col>
+          </Row>
+        </React.Fragment>
+      )}
+      {this.state.activeMenuKey === "oidc-oauth" && (
+        <React.Fragment>
           <Row style={{marginTop: "10px"}} >
             <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
               {Setting.getLabel(i18next.t("provider:Client ID"), i18next.t("provider:Client ID - Tooltip"))} :
@@ -657,157 +811,11 @@ class ApplicationEditPage extends React.Component {
               }} />
             </Col>
           </Row>
-          <Row style={{marginTop: "20px"}} >
-            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
-              {Setting.getLabel(i18next.t("application:Cookie expire"), i18next.t("application:Cookie expire - Tooltip"))} :
-            </Col>
-            <Col span={21} >
-              <InputNumber style={{width: "150px"}} value={this.state.application.cookieExpireInHours || 720} min={1} step={1} precision={0} addonAfter="Hours" onChange={value => {
-                this.updateApplicationField("cookieExpireInHours", value);
-              }} />
-            </Col>
-          </Row>
-          <Row style={{marginTop: "20px"}} >
-            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
-              {Setting.getLabel(i18next.t("ldap:Default group"), i18next.t("ldap:Default group - Tooltip"))} :
-            </Col>
-            <Col span={21}>
-              <PaginateSelect
-                virtual
-                style={{width: "100%"}}
-                allowClear
-                placeholder={i18next.t("general:Default")}
-                value={this.state.application.defaultGroup || undefined}
-                fetchPage={GroupBackend.getGroups}
-                buildFetchArgs={({page, pageSize, searchText}) => {
-                  const field = searchText ? "name" : "";
-                  return [this.state.owner, false, page, pageSize, field, searchText, "", ""];
-                }}
-                reloadKey={this.state.owner}
-                optionMapper={(group) => Setting.getOption(
-                  <Space>
-                    {group.type === "Physical" ? <UsergroupAddOutlined /> : <HolderOutlined />}
-                    {group.displayName}
-                  </Space>,
-                  `${group.owner}/${group.name}`
-                )}
-                filterOption={false}
-                onChange={(value) => {
-                  this.updateApplicationField("defaultGroup", value || "");
-                }}
-              />
-            </Col>
-          </Row>
-          <Row style={{marginTop: "20px"}} >
-            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2}>
-              {Setting.getLabel(i18next.t("application:Enable signup"), i18next.t("application:Enable signup - Tooltip"))} :
-            </Col>
-            <Col span={1} >
-              <Switch checked={this.state.application.enableSignUp} onChange={checked => {
-                this.updateApplicationField("enableSignUp", checked);
-              }} />
-            </Col>
-          </Row>
-          <Row style={{marginTop: "20px"}} >
-            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2}>
-              {Setting.getLabel(i18next.t("application:Disable signin"), i18next.t("application:Disable signin - Tooltip"))} :
-            </Col>
-            <Col span={1} >
-              <Switch checked={this.state.application.disableSignin} onChange={checked => {
-                this.updateApplicationField("disableSignin", checked);
-              }} />
-            </Col>
-          </Row>
-          <Row style={{marginTop: "20px"}} >
-            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2}>
-              {Setting.getLabel(i18next.t("application:Enable exclusive signin"), i18next.t("application:Enable exclusive signin - Tooltip"))} :
-            </Col>
-            <Col span={1} >
-              <Switch checked={this.state.application.enableExclusiveSignin} onChange={checked => {
-                this.updateApplicationField("enableExclusiveSignin", checked);
-              }} />
-            </Col>
-          </Row>
-          <Row style={{marginTop: "20px"}} >
-            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2}>
-              {Setting.getLabel(i18next.t("application:Signin session"), i18next.t("application:Enable signin session - Tooltip"))} :
-            </Col>
-            <Col span={1} >
-              <Switch checked={this.state.application.enableSigninSession} onChange={checked => {
-                if (!checked) {
-                  this.updateApplicationField("enableAutoSignin", false);
-                }
-
-                this.updateApplicationField("enableSigninSession", checked);
-              }} />
-            </Col>
-          </Row>
-          <Row style={{marginTop: "20px"}} >
-            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2}>
-              {Setting.getLabel(i18next.t("application:Auto signin"), i18next.t("application:Auto signin - Tooltip"))} :
-            </Col>
-            <Col span={1} >
-              <Switch checked={this.state.application.enableAutoSignin} onChange={checked => {
-                if (!this.state.application.enableSigninSession && checked) {
-                  Setting.showMessage("error", i18next.t("application:Please enable \"Signin session\" first before enabling \"Auto signin\""));
-                  return;
-                }
-
-                this.updateApplicationField("enableAutoSignin", checked);
-              }} />
-            </Col>
-          </Row>
-          <Row style={{marginTop: "20px"}} >
-            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2}>
-              {Setting.getLabel(i18next.t("application:Enable Email linking"), i18next.t("application:Enable Email linking - Tooltip"))} :
-            </Col>
-            <Col span={1} >
-              <Switch checked={this.state.application.enableLinkWithEmail} onChange={checked => {
-                this.updateApplicationField("enableLinkWithEmail", checked);
-              }} />
-            </Col>
-          </Row>
-          <Row style={{marginTop: "20px"}} >
-            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
-              {Setting.getLabel(i18next.t("general:Signup URL"), i18next.t("general:Signup URL - Tooltip"))} :
-            </Col>
-            <Col span={21} >
-              <Input prefix={<LinkOutlined />} value={this.state.application.signupUrl} onChange={e => {
-                this.updateApplicationField("signupUrl", e.target.value);
-              }} />
-            </Col>
-          </Row>
-          <Row style={{marginTop: "20px"}} >
-            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
-              {Setting.getLabel(i18next.t("general:Signin URL"), i18next.t("general:Signin URL - Tooltip"))} :
-            </Col>
-            <Col span={21} >
-              <Input prefix={<LinkOutlined />} value={this.state.application.signinUrl} onChange={e => {
-                this.updateApplicationField("signinUrl", e.target.value);
-              }} />
-            </Col>
-          </Row>
-          <Row style={{marginTop: "20px"}} >
-            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
-              {Setting.getLabel(i18next.t("general:Forget URL"), i18next.t("general:Forget URL - Tooltip"))} :
-            </Col>
-            <Col span={21} >
-              <Input prefix={<LinkOutlined />} value={this.state.application.forgetUrl} onChange={e => {
-                this.updateApplicationField("forgetUrl", e.target.value);
-              }} />
-            </Col>
-          </Row>
-          <Row style={{marginTop: "20px"}} >
-            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
-              {Setting.getLabel(i18next.t("general:Affiliation URL"), i18next.t("general:Affiliation URL - Tooltip"))} :
-            </Col>
-            <Col span={21} >
-              <Input prefix={<LinkOutlined />} value={this.state.application.affiliationUrl} onChange={e => {
-                this.updateApplicationField("affiliationUrl", e.target.value);
-              }} />
-            </Col>
-          </Row>
-          <Row style={{marginTop: "20px"}} >
+        </React.Fragment>
+      )}
+      {this.state.activeMenuKey === "saml" && (
+        <React.Fragment>
+          <Row style={{marginTop: "10px"}} >
             <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
               {Setting.getLabel(i18next.t("application:SAML reply URL"), i18next.t("application:Redirect URL (Assertion Consumer Service POST Binding URL) - Tooltip"))} :
             </Col>
@@ -1464,6 +1472,8 @@ class ApplicationEditPage extends React.Component {
                   items={[
                     {label: i18next.t("application:Basic"), key: "basic"},
                     {label: i18next.t("application:Authentication"), key: "authentication"},
+                    {label: "OIDC/OAuth", key: "oidc-oauth"},
+                    {label: "SAML", key: "saml"},
                     {label: i18next.t("application:Providers"), key: "providers"},
                     {label: i18next.t("application:UI Customization"), key: "ui-customization"},
                     {label: i18next.t("application:Security"), key: "security"},
@@ -1488,6 +1498,8 @@ class ApplicationEditPage extends React.Component {
                   >
                     <Menu.Item key="basic">{i18next.t("application:Basic")}</Menu.Item>
                     <Menu.Item key="authentication">{i18next.t("application:Authentication")}</Menu.Item>
+                    <Menu.Item key="oidc-oauth">OIDC/OAuth</Menu.Item>
+                    <Menu.Item key="saml">SAML</Menu.Item>
                     <Menu.Item key="providers">{i18next.t("application:Providers")}</Menu.Item>
                     <Menu.Item key="ui-customization">{i18next.t("application:UI Customization")}</Menu.Item>
                     <Menu.Item key="security">{i18next.t("application:Security")}</Menu.Item>
