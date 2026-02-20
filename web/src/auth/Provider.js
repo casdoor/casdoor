@@ -402,24 +402,27 @@ export function getProviderUrl(provider) {
   }
 }
 
-export function getProviderLogoWidget(provider) {
+export function getProviderLogoWidget(provider, options = {}) {
   if (provider === undefined) {
     return null;
   }
 
   const url = getProviderUrl(provider);
-  if (url !== "") {
+  const disableLink = options.disableLink === true;
+  const imgEl = <img width={36} height={36} src={Setting.getProviderLogoURL(provider)} alt={provider.displayName} />;
+
+  if (url !== "" && !disableLink) {
     return (
       <Tooltip title={provider.type}>
         <a target="_blank" rel="noreferrer" href={getProviderUrl(provider)}>
-          <img width={36} height={36} src={Setting.getProviderLogoURL(provider)} alt={provider.displayName} />
+          {imgEl}
         </a>
       </Tooltip>
     );
   } else {
     return (
       <Tooltip title={provider.type}>
-        <img width={36} height={36} src={Setting.getProviderLogoURL(provider)} alt={provider.displayName} />
+        {imgEl}
       </Tooltip>
     );
   }

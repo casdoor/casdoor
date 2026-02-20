@@ -110,7 +110,17 @@ class ProviderTable extends React.Component {
         width: "100px",
         render: (text, record, index) => {
           const provider = Setting.getArrayItem(this.props.providers, "name", record.name);
-          return provider?.category;
+          const owner = provider?.owner || this.getUserOrganization()?.name;
+          const editUrl = provider && owner && provider.name ? `/providers/${owner}/${provider.name}` : null;
+          const categoryText = provider?.category;
+          if (editUrl && categoryText) {
+            return (
+              <a href={editUrl} target="_blank" rel="noopener noreferrer">
+                {categoryText}
+              </a>
+            );
+          }
+          return categoryText;
         },
       },
       {
@@ -120,7 +130,17 @@ class ProviderTable extends React.Component {
         width: "80px",
         render: (text, record, index) => {
           const provider = Setting.getArrayItem(this.props.providers, "name", record.name);
-          return Provider.getProviderLogoWidget(provider);
+          const owner = provider?.owner || this.getUserOrganization()?.name;
+          const editUrl = provider && owner && provider.name ? `/providers/${owner}/${provider.name}` : null;
+          const typeWidget = Provider.getProviderLogoWidget(provider, {disableLink: !!editUrl});
+          if (editUrl && typeWidget) {
+            return (
+              <a href={editUrl} target="_blank" rel="noopener noreferrer">
+                {typeWidget}
+              </a>
+            );
+          }
+          return typeWidget;
         },
       },
       {
