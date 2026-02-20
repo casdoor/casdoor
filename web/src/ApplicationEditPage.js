@@ -1460,7 +1460,7 @@ class ApplicationEditPage extends React.Component {
         <Layout style={{background: "inherit", height: "100%", overflow: "auto"}}>
           {
             this.state.menuMode === "horizontal" || !this.state.menuMode ? (
-              <Header style={{background: "inherit", padding: "0px", position: "sticky", top: 0}}>
+              <Header style={{background: "inherit", padding: "0px", position: "sticky", top: 0, height: 38, minHeight: 38}}>
                 <div className="demo-logo" />
                 <Tabs
                   onChange={(key) => {
@@ -1469,6 +1469,7 @@ class ApplicationEditPage extends React.Component {
                   }}
                   type="card"
                   activeKey={this.state.activeMenuKey}
+                  tabBarStyle={{marginBottom: 0}}
                   items={[
                     {label: i18next.t("application:Basic"), key: "basic"},
                     {label: i18next.t("application:Authentication"), key: "authentication"},
