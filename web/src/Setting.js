@@ -457,8 +457,8 @@ export const UserFields = ["owner", "name", "password", "display_name", "id", "t
   "is_admin", "homepage", "birthday", "gender", "password_type", "password_salt", "external_id", "avatar", "first_name", "last_name",
   "avatar_type", "permanent_avatar", "email_verified", "region", "location", "address",
   "affiliation", "title", "id_card_type", "id_card", "real_name", "is_verified", "bio", "tag", "language",
-  "education", "score", "karma", "ranking", "balance", "currency", "is_default_avatar", "is_online",
-  "is_forbidden", "is_deleted", "signup_application", "hash", "pre_hash", "access_key", "access_secret", "access_token",
+  "education", "score", "karma", "ranking", "balance", "balance_credit", "balance_currency", "currency", "is_default_avatar", "is_online",
+  "is_forbidden", "is_deleted", "signup_application", "register_type", "register_source", "hash", "pre_hash", "access_key", "access_secret", "access_token",
   "created_ip", "last_signin_time", "last_signin_ip", "github", "google", "qq", "wechat", "facebook", "dingtalk",
   "weibo", "gitee", "linkedin", "wecom", "lark", "gitlab", "adfs", "baidu", "alipay", "casdoor", "infoflow", "apple",
   "azuread", "azureadb2c", "slack", "steam", "bilibili", "okta", "douyin", "kwai", "line", "amazon", "auth0",
@@ -469,7 +469,7 @@ export const UserFields = ["owner", "name", "password", "display_name", "id", "t
   "wepay", "xero", "yahoo", "yammer", "yandex", "zoom", "metamask", "web3onboard", "custom", "webauthnCredentials",
   "preferred_mfa_type", "recovery_codes", "totp_secret", "mfa_phone_enabled", "mfa_email_enabled", "invitation",
   "invitation_code", "face_ids", "ldap", "properties", "roles", "permissions", "groups", "last_change_password_time",
-  "last_signin_wrong_time", "signin_wrong_times", "managedAccounts", "mfaAccounts", "need_update_password",
+  "last_signin_wrong_time", "signin_wrong_times", "managedAccounts", "mfaAccounts", "mfaItems", "need_update_password",
   "created_time", "updated_time", "deleted_time",
   "ip_whitelist"];
 
@@ -500,6 +500,7 @@ export const GetTranslatedUserItems = () => {
     {name: "Country/Region", label: i18next.t("user:Country/Region")},
     {name: "Location", label: i18next.t("user:Location")},
     {name: "Address", label: i18next.t("user:Address")},
+    {name: "Addresses", label: i18next.t("user:Addresses")},
     {name: "Affiliation", label: i18next.t("user:Affiliation")},
     {name: "Title", label: i18next.t("general:Title")},
     {name: "ID card type", label: i18next.t("user:ID card type")},
@@ -523,6 +524,8 @@ export const GetTranslatedUserItems = () => {
     {name: "Karma", label: i18next.t("user:Karma")},
     {name: "Ranking", label: i18next.t("user:Ranking")},
     {name: "Signup application", label: i18next.t("general:Signup application")},
+    {name: "Register type", label: i18next.t("user:Register type")},
+    {name: "Register source", label: i18next.t("user:Register source")},
     {name: "API key", label: i18next.t("general:API key")},
     {name: "Groups", label: i18next.t("general:Groups")},
     {name: "Roles", label: i18next.t("general:Roles")},
@@ -537,6 +540,7 @@ export const GetTranslatedUserItems = () => {
     {name: "IP whitelist", label: i18next.t("general:IP whitelist")},
     {name: "Multi-factor authentication", label: i18next.t("mfa:Multi-factor authentication")},
     {name: "WebAuthn credentials", label: i18next.t("user:WebAuthn credentials")},
+    {name: "Last change password time", label: i18next.t("user:Last change password time")},
     {name: "Managed accounts", label: i18next.t("user:Managed accounts")},
     {name: "Face ID", label: i18next.t("login:Face ID")},
     {name: "MFA accounts", label: i18next.t("user:MFA accounts")},
@@ -554,6 +558,8 @@ export function getUserColumns() {
       transField = "Country/Region";
     } else if (field === "mfaAccounts") {
       transField = "MFA accounts";
+    } else if (field === "mfaItems") {
+      transField = "MFA items";
     } else if (field === "face_ids") {
       transField = "Face ID";
     } else if (field === "managedAccounts") {
