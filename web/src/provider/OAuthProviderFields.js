@@ -21,6 +21,19 @@ import i18next from "i18next";
 const {TextArea} = Input;
 
 export function renderOAuthProviderFields(provider, updateProviderField, renderUserMappingInput) {
+  const getDomainLabel = provider => {
+    switch (provider.category) {
+    case "OAuth":
+      if (provider.type === "AzureAD" || provider.type === "AzureADB2C") {
+        return Setting.getLabel(i18next.t("provider:Tenant ID"), i18next.t("provider:Tenant ID - Tooltip"));
+      } else {
+        return Setting.getLabel(i18next.t("provider:Domain"), i18next.t("provider:Domain - Tooltip"));
+      }
+    default:
+      return Setting.getLabel(i18next.t("provider:Domain"), i18next.t("provider:Domain - Tooltip"));
+    }
+  };
+
   return (
     <React.Fragment>
       <Row style={{marginTop: "20px"}} >
@@ -42,7 +55,7 @@ export function renderOAuthProviderFields(provider, updateProviderField, renderU
               </Col>
               <Col span={1} >
                 <Switch disabled={!provider.clientId} checked={provider.disableSsl} onChange={checked => {
-                  this.updateProviderField("disableSsl", checked);
+                  updateProviderField("disableSsl", checked);
                 }} />
               </Col>
             </Row>
@@ -52,7 +65,7 @@ export function renderOAuthProviderFields(provider, updateProviderField, renderU
               </Col>
               <Col span={22} >
                 <Input value={provider.content} disabled={!provider.disableSsl || !provider.clientId2} onChange={e => {
-                  this.updateProviderField("content", e.target.value);
+                  updateProviderField("content", e.target.value);
                 }} />
               </Col>
             </Row>
@@ -65,7 +78,7 @@ export function renderOAuthProviderFields(provider, updateProviderField, renderU
                   disabled={!provider.disableSsl || !provider.clientId || !provider.clientId2}
                   buttonStyle="solid"
                   onChange={e => {
-                    this.updateProviderField("signName", e.target.value);
+                    updateProviderField("signName", e.target.value);
                   }}>
                   <Radio.Button value="open">{i18next.t("provider:Use WeChat Open Platform to login")}</Radio.Button>
                   <Radio.Button value="media">{i18next.t("provider:Use WeChat Media Platform to login")}</Radio.Button>
@@ -81,11 +94,11 @@ export function renderOAuthProviderFields(provider, updateProviderField, renderU
         && provider.type !== "Okta" && provider.type !== "Nextcloud" ? null : (
             <Row style={{marginTop: "20px"}} >
               <Col style={{marginTop: "5px"}} span={2}>
-                {this.getDomainLabel(provider)} :
+                {getDomainLabel(provider)} :
               </Col>
               <Col span={22} >
                 <Input prefix={<LinkOutlined />} value={provider.domain} onChange={e => {
-                  this.updateProviderField("domain", e.target.value);
+                  updateProviderField("domain", e.target.value);
                 }} />
               </Col>
             </Row>
@@ -101,7 +114,7 @@ export function renderOAuthProviderFields(provider, updateProviderField, renderU
             </Col>
             <Col span={1} >
               <Switch disabled={!provider.clientId} checked={provider.disableSsl} onChange={checked => {
-                this.updateProviderField("disableSsl", checked);
+                updateProviderField("disableSsl", checked);
               }} />
             </Col>
           </Row>

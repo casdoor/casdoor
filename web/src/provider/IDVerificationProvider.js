@@ -26,7 +26,7 @@ export function renderIDVerificationProviderFields(provider, updateProviderField
       </Col>
       <Col span={22} >
         <Input prefix={<LinkOutlined />} value={provider.endpoint} onChange={e => {
-          this.updateProviderField("endpoint", e.target.value);
+          updateProviderField("endpoint", e.target.value);
         }} />
       </Col>
     </Row>

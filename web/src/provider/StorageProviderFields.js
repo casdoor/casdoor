@@ -28,7 +28,7 @@ export function renderStorageProviderFields(provider, updateProviderField) {
           </Col>
           <Col span={22} >
             <Input prefix={<LinkOutlined />} value={provider.intranetEndpoint} onChange={e => {
-              this.updateProviderField("intranetEndpoint", e.target.value);
+              updateProviderField("intranetEndpoint", e.target.value);
             }} />
           </Col>
         </Row>
@@ -40,7 +40,7 @@ export function renderStorageProviderFields(provider, updateProviderField) {
           </Col>
           <Col span={22} >
             <Input prefix={<LinkOutlined />} value={provider.endpoint} onChange={e => {
-              this.updateProviderField("endpoint", e.target.value);
+              updateProviderField("endpoint", e.target.value);
             }} />
           </Col>
         </Row>
@@ -54,7 +54,7 @@ export function renderStorageProviderFields(provider, updateProviderField) {
           </Col>
           <Col span={22} >
             <Input value={provider.bucket} onChange={e => {
-              this.updateProviderField("bucket", e.target.value);
+              updateProviderField("bucket", e.target.value);
             }} />
           </Col>
         </Row>
@@ -65,7 +65,7 @@ export function renderStorageProviderFields(provider, updateProviderField) {
         </Col>
         <Col span={22} >
           <Input value={provider.pathPrefix} onChange={e => {
-            this.updateProviderField("pathPrefix", e.target.value);
+            updateProviderField("pathPrefix", e.target.value);
           }} />
         </Col>
       </Row>
@@ -76,7 +76,7 @@ export function renderStorageProviderFields(provider, updateProviderField) {
           </Col>
           <Col span={22} >
             <Input prefix={<LinkOutlined />} value={provider.domain} disabled={provider.type === "Local File System"} onChange={e => {
-              this.updateProviderField("domain", e.target.value);
+              updateProviderField("domain", e.target.value);
             }} />
           </Col>
         </Row>
@@ -88,7 +88,7 @@ export function renderStorageProviderFields(provider, updateProviderField) {
           </Col>
           <Col span={22} >
             <Input value={provider.content} onChange={e => {
-              this.updateProviderField("content", e.target.value);
+              updateProviderField("content", e.target.value);
             }} />
           </Col>
         </Row>
@@ -102,7 +102,7 @@ export function renderStorageProviderFields(provider, updateProviderField) {
           </Col>
           <Col span={22} >
             <Input value={provider.regionId} onChange={e => {
-              this.updateProviderField("regionId", e.target.value);
+              updateProviderField("regionId", e.target.value);
             }} />
           </Col>
         </Row>

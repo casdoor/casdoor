@@ -28,7 +28,7 @@ export function renderFaceIdProviderFields(provider, updateProviderField) {
           </Col>
           <Col span={22} >
             <Input prefix={<LinkOutlined />} value={provider.intranetEndpoint} onChange={e => {
-              this.updateProviderField("intranetEndpoint", e.target.value);
+              updateProviderField("intranetEndpoint", e.target.value);
             }} />
           </Col>
         </Row>
@@ -39,7 +39,7 @@ export function renderFaceIdProviderFields(provider, updateProviderField) {
         </Col>
         <Col span={22} >
           <Input prefix={<LinkOutlined />} value={provider.endpoint} onChange={e => {
-            this.updateProviderField("endpoint", e.target.value);
+            updateProviderField("endpoint", e.target.value);
           }} />
         </Col>
       </Row>

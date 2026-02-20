@@ -453,19 +453,6 @@ class ProviderEditPage extends React.Component {
     }
   }
 
-  getDomainLabel(provider) {
-    switch (provider.category) {
-    case "OAuth":
-      if (provider.type === "AzureAD" || provider.type === "AzureADB2C") {
-        return Setting.getLabel(i18next.t("provider:Tenant ID"), i18next.t("provider:Tenant ID - Tooltip"));
-      } else {
-        return Setting.getLabel(i18next.t("provider:Domain"), i18next.t("provider:Domain - Tooltip"));
-      }
-    default:
-      return Setting.getLabel(i18next.t("provider:Domain"), i18next.t("provider:Domain - Tooltip"));
-    }
-  }
-
   getProviderSubTypeOptions(type) {
     if (type === "WeCom" || type === "Infoflow") {
       return (

@@ -33,7 +33,7 @@ export function renderNotificationProviderFields(provider, updateProviderField, 
           </Col>
           <Col span={22} >
             <Input value={provider.regionId} onChange={e => {
-              this.updateProviderField("regionId", e.target.value);
+              updateProviderField("regionId", e.target.value);
             }} />
           </Col>
         </Row>
