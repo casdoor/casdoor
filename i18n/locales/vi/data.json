@@ -187,6 +187,7 @@
     "Grant_type: %s is not supported in this application": "Loại cấp phép: %s không được hỗ trợ trong ứng dụng này",
     "Invalid application or wrong clientSecret": "Đơn đăng ký không hợp lệ hoặc sai clientSecret",
     "Invalid client_id": "Client_id không hợp lệ",
+    "Invalid scope": "Phạm vi không hợp lệ",
     "Redirect URI: %s doesn't exist in the allowed Redirect URI list": "Đường dẫn chuyển hướng URI: %s không tồn tại trong danh sách URI được phép chuyển hướng",
     "Token not found, invalid accessToken": "Token không tìm thấy, accessToken không hợp lệ"
   },

@@ -187,6 +187,7 @@
     "Grant_type: %s is not supported in this application": "Grant_type: %s не підтримується в цьому додатку",
     "Invalid application or wrong clientSecret": "Недійсний додаток або неправильний clientSecret",
     "Invalid client_id": "Недійсний client_id",
+    "Invalid scope": "Недійсний scope",
     "Redirect URI: %s doesn't exist in the allowed Redirect URI list": "Redirect URI: %s відсутній у списку дозволених",
     "Token not found, invalid accessToken": "Токен не знайдено, недійсний accessToken"
   },

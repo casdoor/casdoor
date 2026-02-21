@@ -187,6 +187,7 @@
     "Grant_type: %s is not supported in this application": "grant_type：%sはこのアプリケーションでサポートされていません",
     "Invalid application or wrong clientSecret": "無効なアプリケーションまたは誤ったクライアントシークレットです",
     "Invalid client_id": "client_idが無効です",
+    "Invalid scope": "スコープが無効です",
     "Redirect URI: %s doesn't exist in the allowed Redirect URI list": "リダイレクトURI：%sは許可されたリダイレクトURIリストに存在しません",
     "Token not found, invalid accessToken": "トークンが見つかりません。無効なアクセストークンです"
   },

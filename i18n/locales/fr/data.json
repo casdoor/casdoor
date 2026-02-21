@@ -187,6 +187,7 @@
     "Grant_type: %s is not supported in this application": "Type_de_subvention : %s n'est pas pris en charge dans cette application",
     "Invalid application or wrong clientSecret": "Application invalide ou clientSecret incorrect",
     "Invalid client_id": "Identifiant de client invalide",
+    "Invalid scope": "Portée invalide",
     "Redirect URI: %s doesn't exist in the allowed Redirect URI list": "URI de redirection: %s n'existe pas dans la liste des URI de redirection autorisés",
     "Token not found, invalid accessToken": "Jeton non trouvé, accessToken invalide"
   },

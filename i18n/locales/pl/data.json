@@ -187,6 +187,7 @@
     "Grant_type: %s is not supported in this application": "Grant_type: %s nie jest obsługiwany w tej aplikacji",
     "Invalid application or wrong clientSecret": "Nieprawidłowa aplikacja lub błędny clientSecret",
     "Invalid client_id": "Nieprawidłowy client_id",
+    "Invalid scope": "Nieprawidłowy zakres",
     "Redirect URI: %s doesn't exist in the allowed Redirect URI list": "Redirect URI: %s nie istnieje na liście dozwolonych Redirect URI",
     "Token not found, invalid accessToken": "Token nie znaleziony, nieprawidłowy accessToken"
   },

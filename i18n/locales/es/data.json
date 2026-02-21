@@ -187,6 +187,7 @@
     "Grant_type: %s is not supported in this application": "El tipo de subvención: %s no es compatible con esta aplicación",
     "Invalid application or wrong clientSecret": "Solicitud inválida o clientSecret incorrecto",
     "Invalid client_id": "Identificador de cliente no válido",
+    "Invalid scope": "Alcance no válido",
     "Redirect URI: %s doesn't exist in the allowed Redirect URI list": "El URI de redirección: %s no existe en la lista de URI de redirección permitidos",
     "Token not found, invalid accessToken": "Token no encontrado, accessToken inválido"
   },

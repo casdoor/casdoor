@@ -185,10 +185,14 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 		} else {
 			scope := c.Ctx.Input.Query("scope")
 			nonce := c.Ctx.Input.Query("nonce")
-			token, _ := object.GetTokenByUser(application, user, scope, nonce, c.Ctx.Request.Host)
-			resp = tokenToResponse(token)
+			if !object.IsScopeValid(scope, application) {
+				resp = &Response{Status: "error", Msg: "error: invalid_scope", Data: ""}
+			} else {
+				token, _ := object.GetTokenByUser(application, user, scope, nonce, c.Ctx.Request.Host)
+				resp = tokenToResponse(token)
 
-			resp.Data3 = user.NeedUpdatePassword
+				resp.Data3 = user.NeedUpdatePassword
+			}
 		}
 	} else if form.Type == ResponseTypeDevice {
 		authCache, ok := object.DeviceAuthMap.LoadAndDelete(form.UserCode)

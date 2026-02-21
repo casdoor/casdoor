@@ -187,6 +187,7 @@
     "Grant_type: %s is not supported in this application": "该应用不支持Grant_type: %s",
     "Invalid application or wrong clientSecret": "无效应用或错误的clientSecret",
     "Invalid client_id": "无效的ClientId",
+    "Invalid scope": "无效的scope",
     "Redirect URI: %s doesn't exist in the allowed Redirect URI list": "重定向 URI：%s在许可跳转列表中未找到",
     "Token not found, invalid accessToken": "未查询到对应token, accessToken无效"
   },

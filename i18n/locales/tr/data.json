@@ -187,6 +187,7 @@
     "Grant_type: %s is not supported in this application": "Grant_type: %s bu uygulamada desteklenmiyor",
     "Invalid application or wrong clientSecret": "Geçersiz uygulama veya yanlış clientSecret",
     "Invalid client_id": "Geçersiz client_id",
+    "Invalid scope": "Geçersiz kapsam",
     "Redirect URI: %s doesn't exist in the allowed Redirect URI list": "Redirect URI: %s izin verilen Redirect URI listesinde yok",
     "Token not found, invalid accessToken": "Token bulunamadı, geçersiz accessToken"
   },
