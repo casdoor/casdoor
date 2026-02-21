@@ -74,6 +74,7 @@ func main() {
 	object.InitCleanupTokens()
 
 	util.SafeGoroutine(func() { object.RunSyncUsersJob() })
+	util.SafeGoroutine(func() { object.RunSubscriptionRenewalJob() })
 	util.SafeGoroutine(func() { controllers.InitCLIDownloader() })
 
 	// web.DelStaticPath("/static")

@@ -1239,6 +1239,8 @@
     "End time - Tooltip": "End time of the subscription",
     "Error": "Error",
     "Expired": "Expired",
+    "Is auto renew": "Is auto renew",
+    "Is auto renew - Tooltip": "Automatically renew the subscription when it expires",
     "New Subscription": "New Subscription",
     "Start time": "Start time",
     "Start time - Tooltip": "Start time of the subscription",

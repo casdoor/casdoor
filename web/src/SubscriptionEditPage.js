@@ -14,7 +14,7 @@
 
 import moment from "moment";
 import React from "react";
-import {Button, Card, Col, DatePicker, Input, Row, Select} from "antd";
+import {Button, Card, Col, DatePicker, Input, Row, Select, Switch} from "antd";
 import PaginateSelect from "./common/PaginateSelect";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as PricingBackend from "./backend/PricingBackend";
@@ -291,6 +291,16 @@ class SubscriptionEditPage extends React.Component {
               {value: "Suspended", name: i18next.t("subscription:Suspended")},
             ].map((item) => Setting.getOption(item.name, item.value))}
             />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2}>
+            {Setting.getLabel(i18next.t("subscription:Is auto renew"), i18next.t("subscription:Is auto renew - Tooltip"))} :
+          </Col>
+          <Col span={1} >
+            <Switch checked={this.state.subscription.isAutoRenew} disabled={isViewMode} onChange={checked => {
+              this.updateSubscriptionField("isAutoRenew", checked);
+            }} />
           </Col>
         </Row>
       </Card>
