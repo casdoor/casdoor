@@ -154,6 +154,10 @@ func CheckOAuthLogin(clientId string, responseType string, redirectUri string, s
 		return fmt.Sprintf(i18n.Translate(lang, "token:Redirect URI: %s doesn't exist in the allowed Redirect URI list"), redirectUri), application, nil
 	}
 
+	if !IsScopeValid(scope, application) {
+		return i18n.Translate(lang, "token:Invalid scope"), application, nil
+	}
+
 	// Mask application for /api/get-app-login
 	application.ClientSecret = ""
 	return "", application, nil
@@ -486,6 +490,28 @@ func IsGrantTypeValid(method string, grantTypes []string) bool {
 	return false
 }
 
+// IsScopeValid checks whether all space-separated scopes in the scope string
+// are defined in the application's Scopes list.
+// If the application has no defined scopes, every scope is considered valid
+// (backward-compatible behaviour).
+func IsScopeValid(scope string, application *Application) bool {
+	if len(application.Scopes) == 0 || scope == "" {
+		return true
+	}
+
+	allowed := make(map[string]bool, len(application.Scopes))
+	for _, s := range application.Scopes {
+		allowed[s.Name] = true
+	}
+
+	for _, s := range strings.Fields(scope) {
+		if !allowed[s] {
+			return false
+		}
+	}
+	return true
+}
+
 // createGuestUserToken creates a new guest user and returns a token for them
 func createGuestUserToken(application *Application, clientSecret string, verifier string) (*Token, *TokenError, error) {
 	// Verify client secret if provided
@@ -715,6 +741,13 @@ func GetAuthorizationCodeToken(application *Application, clientSecret string, co
 // GetPasswordToken
 // Resource Owner Password Credentials flow
 func GetPasswordToken(application *Application, username string, password string, scope string, host string) (*Token, *TokenError, error) {
+	if !IsScopeValid(scope, application) {
+		return nil, &TokenError{
+			Error:            InvalidScope,
+			ErrorDescription: "the requested scope is invalid or not defined in the application",
+		}, nil
+	}
+
 	user, err := GetUserByFields(application.Organization, username)
 	if err != nil {
 		return nil, nil, err
@@ -796,6 +829,12 @@ func GetClientCredentialsToken(application *Application, clientSecret string, sc
 			ErrorDescription: "client_secret is invalid",
 		}, nil
 	}
+	if !IsScopeValid(scope, application) {
+		return nil, &TokenError{
+			Error:            InvalidScope,
+			ErrorDescription: "the requested scope is invalid or not defined in the application",
+		}, nil
+	}
 	nullUser := &User{
 		Owner: application.Owner,
 		Id:    application.GetId(),
@@ -835,6 +874,13 @@ func GetClientCredentialsToken(application *Application, clientSecret string, sc
 // GetImplicitToken
 // Implicit flow
 func GetImplicitToken(application *Application, username string, scope string, nonce string, host string) (*Token, *TokenError, error) {
+	if !IsScopeValid(scope, application) {
+		return nil, &TokenError{
+			Error:            InvalidScope,
+			ErrorDescription: "the requested scope is invalid or not defined in the application",
+		}, nil
+	}
+
 	user, err := GetUserByFields(application.Organization, username)
 	if err != nil {
 		return nil, nil, err
