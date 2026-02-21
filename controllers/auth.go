@@ -958,11 +958,13 @@ func (c *ApiController) Login() {
 						RegisterSource:    fmt.Sprintf("%s/%s", application.Organization, application.Name),
 					}
 
-					// Set group from invitation code if available, otherwise use provider's signup group
+					// Set group from invitation code if available, otherwise use provider's signup group or application's default group
 					if invitation != nil && invitation.SignupGroup != "" {
 						user.Groups = []string{invitation.SignupGroup}
 					} else if providerItem.SignupGroup != "" {
 						user.Groups = []string{providerItem.SignupGroup}
+					} else if application.DefaultGroup != "" {
+						user.Groups = []string{application.DefaultGroup}
 					}
 
 					var affected bool
