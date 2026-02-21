@@ -180,6 +180,7 @@ type User struct {
 	Spotify         string `xorm:"spotify varchar(100)" json:"spotify"`
 	Strava          string `xorm:"strava varchar(100)" json:"strava"`
 	Stripe          string `xorm:"stripe varchar(100)" json:"stripe"`
+	Telegram        string `xorm:"telegram varchar(100)" json:"telegram"`
 	TikTok          string `xorm:"tiktok varchar(100)" json:"tiktok"`
 	Tumblr          string `xorm:"tumblr varchar(100)" json:"tumblr"`
 	Twitch          string `xorm:"twitch varchar(100)" json:"twitch"`
@@ -868,7 +869,7 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 			"auth0", "battlenet", "bitbucket", "box", "cloudfoundry", "dailymotion", "deezer", "digitalocean", "discord", "dropbox",
 			"eveonline", "fitbit", "gitea", "heroku", "influxcloud", "instagram", "intercom", "kakao", "lastfm", "mailru", "meetup",
 			"microsoftonline", "naver", "nextcloud", "onedrive", "oura", "patreon", "paypal", "salesforce", "shopify", "soundcloud",
-			"spotify", "strava", "stripe", "type", "tiktok", "tumblr", "twitch", "twitter", "typetalk", "uber", "vk", "wepay", "xero", "yahoo",
+			"spotify", "strava", "stripe", "type", "telegram", "tiktok", "tumblr", "twitch", "twitter", "typetalk", "uber", "vk", "wepay", "xero", "yahoo",
 			"yammer", "yandex", "zoom", "custom", "need_update_password", "ip_whitelist", "mfa_remember_deadline",
 			"cart",
 		}
