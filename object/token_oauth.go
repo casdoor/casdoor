@@ -19,6 +19,7 @@ import (
 	"encoding/base64"
 	"fmt"
 	"net/url"
+	"regexp"
 	"strings"
 	"sync"
 	"time"
@@ -206,6 +207,8 @@ func GetOAuthCode(userId string, clientId string, provider string, signinMethod 
 	if err != nil {
 		return nil, err
 	}
+
+	scope, _ = ExpandScope(scope, application)
 	accessToken, refreshToken, tokenName, err := generateJwtToken(application, user, provider, signinMethod, nonce, scope, resource, host)
 	if err != nil {
 		return nil, err
@@ -490,26 +493,78 @@ func IsGrantTypeValid(method string, grantTypes []string) bool {
 	return false
 }
 
+// matchScopePattern matches a single scope pattern against a list of configured
+// scope names. It first tries an exact match, then treats the pattern as a
+// regex anchored to the full string.
+func matchScopePattern(pattern string, configuredScopes []string) []string {
+	// Try exact match first (fast path and avoids regex-special-char issues)
+	for _, s := range configuredScopes {
+		if pattern == s {
+			return []string{s}
+		}
+	}
+
+	// Try as a regex pattern.
+	// Go's regexp package uses RE2, which guarantees O(n) matching time and is
+	// therefore safe from ReDoS attacks regardless of the pattern complexity.
+	re, err := regexp.Compile("^(?:" + pattern + ")$")
+	if err != nil {
+		return nil
+	}
+
+	var matches []string
+	for _, s := range configuredScopes {
+		if re.MatchString(s) {
+			matches = append(matches, s)
+		}
+	}
+	return matches
+}
+
+// ExpandScope expands wildcard/regex scope patterns against the application's
+// configured scopes. Each space-separated token in scope is matched as a regex
+// pattern against the application's defined scope names. Concrete scopes that
+// match are included in the returned string (duplicates are deduplicated).
+// If any pattern matches no configured scope, the function returns ("", false).
+// When the application has no defined scopes the original scope string is
+// returned unchanged (backward-compatible behaviour).
+func ExpandScope(scope string, application *Application) (string, bool) {
+	if len(application.Scopes) == 0 || scope == "" {
+		return scope, true
+	}
+
+	configuredNames := make([]string, 0, len(application.Scopes))
+	for _, s := range application.Scopes {
+		configuredNames = append(configuredNames, s.Name)
+	}
+
+	var result []string
+	seen := make(map[string]bool)
+
+	for _, pattern := range strings.Fields(scope) {
+		matched := matchScopePattern(pattern, configuredNames)
+		if len(matched) == 0 {
+			return "", false
+		}
+		for _, m := range matched {
+			if !seen[m] {
+				seen[m] = true
+				result = append(result, m)
+			}
+		}
+	}
+
+	return strings.Join(result, " "), true
+}
+
 // IsScopeValid checks whether all space-separated scopes in the scope string
-// are defined in the application's Scopes list.
+// are defined in the application's Scopes list. Each token may be an exact
+// scope name or a regex pattern that matches at least one configured scope.
 // If the application has no defined scopes, every scope is considered valid
 // (backward-compatible behaviour).
 func IsScopeValid(scope string, application *Application) bool {
-	if len(application.Scopes) == 0 || scope == "" {
-		return true
-	}
-
-	allowed := make(map[string]bool, len(application.Scopes))
-	for _, s := range application.Scopes {
-		allowed[s.Name] = true
-	}
-
-	for _, s := range strings.Fields(scope) {
-		if !allowed[s] {
-			return false
-		}
-	}
-	return true
+	_, valid := ExpandScope(scope, application)
+	return valid
 }
 
 // createGuestUserToken creates a new guest user and returns a token for them
@@ -741,12 +796,14 @@ func GetAuthorizationCodeToken(application *Application, clientSecret string, co
 // GetPasswordToken
 // Resource Owner Password Credentials flow
 func GetPasswordToken(application *Application, username string, password string, scope string, host string) (*Token, *TokenError, error) {
-	if !IsScopeValid(scope, application) {
+	expandedScope, valid := ExpandScope(scope, application)
+	if !valid {
 		return nil, &TokenError{
 			Error:            InvalidScope,
 			ErrorDescription: "the requested scope is invalid or not defined in the application",
 		}, nil
 	}
+	scope = expandedScope
 
 	user, err := GetUserByFields(application.Organization, username)
 	if err != nil {
@@ -829,12 +886,14 @@ func GetClientCredentialsToken(application *Application, clientSecret string, sc
 			ErrorDescription: "client_secret is invalid",
 		}, nil
 	}
-	if !IsScopeValid(scope, application) {
+	expandedScope, valid := ExpandScope(scope, application)
+	if !valid {
 		return nil, &TokenError{
 			Error:            InvalidScope,
 			ErrorDescription: "the requested scope is invalid or not defined in the application",
 		}, nil
 	}
+	scope = expandedScope
 	nullUser := &User{
 		Owner: application.Owner,
 		Id:    application.GetId(),
@@ -874,12 +933,14 @@ func GetClientCredentialsToken(application *Application, clientSecret string, sc
 // GetImplicitToken
 // Implicit flow
 func GetImplicitToken(application *Application, username string, scope string, nonce string, host string) (*Token, *TokenError, error) {
-	if !IsScopeValid(scope, application) {
+	expandedScope, valid := ExpandScope(scope, application)
+	if !valid {
 		return nil, &TokenError{
 			Error:            InvalidScope,
 			ErrorDescription: "the requested scope is invalid or not defined in the application",
 		}, nil
 	}
+	scope = expandedScope
 
 	user, err := GetUserByFields(application.Organization, username)
 	if err != nil {

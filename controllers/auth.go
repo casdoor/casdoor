@@ -185,10 +185,11 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 		} else {
 			scope := c.Ctx.Input.Query("scope")
 			nonce := c.Ctx.Input.Query("nonce")
-			if !object.IsScopeValid(scope, application) {
+			expandedScope, valid := object.ExpandScope(scope, application)
+			if !valid {
 				resp = &Response{Status: "error", Msg: "error: invalid_scope", Data: ""}
 			} else {
-				token, _ := object.GetTokenByUser(application, user, scope, nonce, c.Ctx.Request.Host)
+				token, _ := object.GetTokenByUser(application, user, expandedScope, nonce, c.Ctx.Request.Host)
 				resp = tokenToResponse(token)
 
 				resp.Data3 = user.NeedUpdatePassword
