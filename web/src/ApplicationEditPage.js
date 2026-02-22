@@ -268,7 +268,7 @@ class ApplicationEditPage extends React.Component {
   validateCustomScopes(customScopes) {
     const trimmed = this.trimCustomScopes(customScopes);
     for (const item of trimmed) {
-      if (!item || !item.scope || item.scope.trim() === "") {
+      if (!item || !item.scope || item.scope === "") {
         return {ok: false, scopes: trimmed};
       }
     }
