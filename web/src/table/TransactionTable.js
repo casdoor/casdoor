@@ -131,13 +131,18 @@ class TransactionTable extends React.Component {
         columns={columns}
         dataSource={this.props.transactions}
         rowKey={(record) => `${record.owner}/${record.name}`}
-        size="small"
+        size="middle"
         bordered
         pagination={{
           pageSize: 10,
           showSizeChanger: true,
           pageSizeOptions: ["10", "20", "50", "100"],
         }}
+        title={this.props.title ? () => (
+          <div>
+            {this.props.title}&nbsp;&nbsp;&nbsp;&nbsp;
+          </div>
+        ) : undefined}
       />
     );
   }

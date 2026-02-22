@@ -197,10 +197,14 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 		} else {
 			scope := c.Ctx.Input.Query("scope")
 			nonce := c.Ctx.Input.Query("nonce")
-			token, _ := object.GetTokenByUser(application, user, scope, nonce, c.Ctx.Request.Host)
-			resp = tokenToResponse(token)
+			if !object.IsScopeValid(scope, application) {
+				resp = &Response{Status: "error", Msg: "error: invalid_scope", Data: ""}
+			} else {
+				token, _ := object.GetTokenByUser(application, user, scope, nonce, c.Ctx.Request.Host)
+				resp = tokenToResponse(token)
 
-			resp.Data3 = user.NeedUpdatePassword
+				resp.Data3 = user.NeedUpdatePassword
+			}
 		}
 	} else if form.Type == ResponseTypeDevice {
 		authCache, ok := object.DeviceAuthMap.LoadAndDelete(form.UserCode)
@@ -751,7 +755,11 @@ func (c *ApiController) Login() {
 			}
 		} else if provider.Category == "OAuth" || provider.Category == "Web3" {
 			// OAuth
-			idpInfo := object.FromProviderToIdpInfo(c.Ctx, provider)
+			idpInfo, err := object.FromProviderToIdpInfo(c.Ctx, provider)
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
 			idpInfo.CodeVerifier = authForm.CodeVerifier
 			var idProvider idp.IdProvider
 			idProvider, err = idp.GetIdProvider(idpInfo, authForm.RedirectUri)
@@ -962,11 +970,13 @@ func (c *ApiController) Login() {
 						RegisterSource:    fmt.Sprintf("%s/%s", application.Organization, application.Name),
 					}
 
-					// Set group from invitation code if available, otherwise use provider's signup group
+					// Set group from invitation code if available, otherwise use provider's signup group or application's default group
 					if invitation != nil && invitation.SignupGroup != "" {
 						user.Groups = []string{invitation.SignupGroup}
 					} else if providerItem.SignupGroup != "" {
 						user.Groups = []string{providerItem.SignupGroup}
+					} else if application.DefaultGroup != "" {
+						user.Groups = []string{application.DefaultGroup}
 					}
 
 					var affected bool

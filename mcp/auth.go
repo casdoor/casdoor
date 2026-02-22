@@ -15,6 +15,7 @@
 package mcp
 
 import (
+	"strings"
 	"time"
 
 	"github.com/casdoor/casdoor/object"
@@ -119,4 +120,59 @@ func (c *McpController) GetAcceptLanguage() string {
 		language = language[0:2]
 	}
 	return language
+}
+
+// GetTokenFromRequest extracts the Bearer token from the Authorization header
+func (c *McpController) GetTokenFromRequest() string {
+	authHeader := c.Ctx.Request.Header.Get("Authorization")
+	if authHeader == "" {
+		return ""
+	}
+
+	// Extract Bearer token
+	parts := strings.SplitN(authHeader, " ", 2)
+	if len(parts) != 2 || !strings.EqualFold(parts[0], "Bearer") {
+		return ""
+	}
+
+	return parts[1]
+}
+
+// GetClaimsFromToken parses and validates the JWT token and returns the claims
+// Returns nil if no token is present or if token is invalid
+func (c *McpController) GetClaimsFromToken() *object.Claims {
+	tokenString := c.GetTokenFromRequest()
+	if tokenString == "" {
+		return nil
+	}
+
+	// Try to find the application for this token
+	// For MCP, we'll try to parse using the first available application's certificate
+	// In a production scenario, you might want to use a specific MCP application
+	token, err := object.GetTokenByAccessToken(tokenString)
+	if err != nil || token == nil {
+		return nil
+	}
+
+	application, err := object.GetApplication(token.Application)
+	if err != nil || application == nil {
+		return nil
+	}
+
+	claims, err := object.ParseJwtTokenByApplication(tokenString, application)
+	if err != nil {
+		return nil
+	}
+
+	return claims
+}
+
+// GetScopesFromClaims extracts the scopes from JWT claims and returns them as a slice
+func GetScopesFromClaims(claims *object.Claims) []string {
+	if claims == nil || claims.Scope == "" {
+		return []string{}
+	}
+
+	// Scopes are space-separated in OAuth 2.0
+	return strings.Split(claims.Scope, " ")
 }

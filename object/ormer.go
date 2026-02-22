@@ -62,6 +62,12 @@ func InitFlag() {
 	configPath = *configPathPtr
 	exportData = *exportDataPtr
 	exportFilePath = *exportFilePathPtr
+
+	// Load beego config from the specified config path
+	err := web.LoadAppConfig("ini", configPath)
+	if err != nil {
+		panic(fmt.Sprintf("failed to load config from %s: %v", configPath, err))
+	}
 }
 
 func ShouldExportData() bool {

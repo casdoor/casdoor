@@ -86,7 +86,7 @@ class ManagedAccountTable extends React.Component {
         render: (text, record, index) => {
           const items = this.props.applications;
           return (
-            <Select virtual={false} style={{width: "100%"}}
+            <Select virtual={false} size="small" style={{width: "100%"}}
               value={text}
               onChange={value => {
                 this.updateField(table, index, "application", value);
@@ -105,7 +105,7 @@ class ManagedAccountTable extends React.Component {
         // width: "420px",
         render: (text, record, index) => {
           return (
-            <Input prefix={<LinkOutlined />} value={text} onChange={e => {
+            <Input size="small" prefix={<LinkOutlined />} value={text} onChange={e => {
               this.updateField(table, index, "signinUrl", e.target.value);
             }} />
           );
@@ -118,7 +118,7 @@ class ManagedAccountTable extends React.Component {
         width: "200px",
         render: (text, record, index) => {
           return (
-            <Input value={text} onChange={e => {
+            <Input size="small" value={text} onChange={e => {
               this.updateField(table, index, "username", e.target.value);
             }} />
           );
@@ -131,7 +131,7 @@ class ManagedAccountTable extends React.Component {
         width: "200px",
         render: (text, record, index) => {
           return (
-            <Input.Password value={text} onChange={e => {
+            <Input.Password size="small" value={text} onChange={e => {
               this.updateField(table, index, "password", e.target.value);
             }} />
           );

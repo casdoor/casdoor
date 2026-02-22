@@ -125,6 +125,23 @@ func GetOidcDiscovery(host string, applicationName string) OidcDiscovery {
 		jwksUri = fmt.Sprintf("%s/.well-known/jwks", originBackend)
 	}
 
+	// Default OIDC scopes
+	scopes := []string{"openid", "email", "profile", "address", "phone", "offline_access"}
+
+	// Merge application-specific custom scopes if application is provided
+	if applicationName != "" {
+		applicationId := util.GetId("admin", applicationName)
+		application, err := GetApplication(applicationId)
+		if err == nil && application != nil && len(application.Scopes) > 0 {
+			for _, scope := range application.Scopes {
+				// Add custom scope names to the scopes list
+				if scope.Name != "" {
+					scopes = append(scopes, scope.Name)
+				}
+			}
+		}
+	}
+
 	// Examples:
 	// https://login.okta.com/.well-known/openid-configuration
 	// https://auth0.auth0.com/.well-known/openid-configuration
@@ -144,7 +161,7 @@ func GetOidcDiscovery(host string, applicationName string) OidcDiscovery {
 		GrantTypesSupported:                    []string{"authorization_code", "implicit", "password", "client_credentials", "refresh_token", "urn:ietf:params:oauth:grant-type:device_code", "urn:ietf:params:oauth:grant-type:token-exchange"},
 		SubjectTypesSupported:                  []string{"public"},
 		IdTokenSigningAlgValuesSupported:       []string{"RS256", "RS512", "ES256", "ES384", "ES512"},
-		ScopesSupported:                        []string{"openid", "email", "profile", "address", "phone", "offline_access"},
+		ScopesSupported:                        scopes,
 		CodeChallengeMethodsSupported:          []string{"S256"},
 		ClaimsSupported:                        []string{"iss", "ver", "sub", "aud", "iat", "exp", "id", "type", "displayName", "avatar", "permanentAvatar", "email", "phone", "location", "affiliation", "title", "homepage", "bio", "tag", "region", "language", "score", "ranking", "isOnline", "isAdmin", "isForbidden", "signupApplication", "ldap"},
 		RequestParameterSupported:              true,

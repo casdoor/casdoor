@@ -236,6 +236,13 @@ class OrderListPage extends BaseListPage {
         width: "120px",
         sorter: true,
         ...this.getColumnSearchProps("state"),
+        render: (text, record, index) => {
+          return (
+            <Tooltip title={record.message || ""}>
+              <span>{text}</span>
+            </Tooltip>
+          );
+        },
       },
       {
         title: i18next.t("general:Action"),
@@ -248,7 +255,7 @@ class OrderListPage extends BaseListPage {
           return (
             <div style={{display: "flex", flexWrap: "wrap", gap: "8px"}}>
               <Button onClick={() => this.props.history.push(`/orders/${record.owner}/${record.name}/pay`)}>
-                {record.state === "Created" ? i18next.t("order:Pay") : i18next.t("general:Detail")}
+                {(record.state === "Created" || record.state === "Failed") ? i18next.t("order:Pay") : i18next.t("general:Detail")}
               </Button>
               <Button danger onClick={() => this.cancelOrder(record)} disabled={record.state !== "Created" || !isAdmin}>
                 {i18next.t("general:Cancel")}

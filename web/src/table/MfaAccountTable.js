@@ -86,7 +86,7 @@ class MfaAccountTable extends React.Component {
         width: "400px",
         render: (text, record, index) => {
           return (
-            <Input value={text} onChange={e => {
+            <Input size="small" value={text} onChange={e => {
               this.updateField(table, index, "accountName", e.target.value);
             }} />
           );
@@ -99,7 +99,7 @@ class MfaAccountTable extends React.Component {
         width: "300px",
         render: (text, record, index) => {
           return (
-            <Input value={text} onChange={e => {
+            <Input size="small" value={text} onChange={e => {
               this.updateField(table, index, "issuer", e.target.value);
             }} />
           );
@@ -111,7 +111,7 @@ class MfaAccountTable extends React.Component {
         key: "origin",
         render: (text, record, index) => {
           return (
-            <Input value={text} onChange={e => {
+            <Input size="small" value={text} onChange={e => {
               this.updateField(table, index, "origin", e.target.value);
             }} />
           );
@@ -123,7 +123,7 @@ class MfaAccountTable extends React.Component {
         key: "secretKey",
         render: (text, record, index) => {
           return (
-            <Input.Password value={text} onChange={e => {
+            <Input.Password size="small" value={text} onChange={e => {
               this.updateField(table, index, "secretKey", e.target.value);
             }} />
           );

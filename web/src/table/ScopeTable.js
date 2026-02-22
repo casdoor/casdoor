@@ -1,4 +1,4 @@
-// Copyright 2023 The Casdoor Authors. All Rights Reserved.
+// Copyright 2026 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,28 +14,11 @@
 
 import React from "react";
 import {DeleteOutlined, DownOutlined, UpOutlined} from "@ant-design/icons";
-import {Button, Col, Row, Select, Table, Tooltip} from "antd";
-import {EmailMfaType, PushMfaType, SmsMfaType, TotpMfaType} from "../auth/MfaSetupPage";
-import {MfaRuleOptional, MfaRulePrompted, MfaRuleRequired} from "../Setting";
+import {Button, Input, Table, Tooltip} from "antd";
 import * as Setting from "../Setting";
 import i18next from "i18next";
 
-const {Option} = Select;
-
-const MfaItems = [
-  {name: "Phone", value: SmsMfaType},
-  {name: "Email", value: EmailMfaType},
-  {name: "App", value: TotpMfaType},
-  {name: "Push", value: PushMfaType},
-];
-
-const RuleItems = [
-  {value: MfaRuleOptional, label: i18next.t("organization:Optional")},
-  {value: MfaRulePrompted, label: i18next.t("organization:Prompt")},
-  {value: MfaRuleRequired, label: i18next.t("organization:Required")},
-];
-
-class MfaTable extends React.Component {
+class ScopeTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -53,7 +36,7 @@ class MfaTable extends React.Component {
   }
 
   addRow(table) {
-    const row = {name: Setting.getNewRowNameForTable(table, "Please select a MFA method"), rule: "Optional"};
+    const row = {name: "", displayName: "", description: ""};
     if (table === undefined) {
       table = [];
     }
@@ -77,60 +60,66 @@ class MfaTable extends React.Component {
   }
 
   renderTable(table) {
+    if (table === null) {
+      return null;
+    }
+
     const columns = [
       {
         title: i18next.t("general:Name"),
         dataIndex: "name",
         key: "name",
+        width: "25%",
         render: (text, record, index) => {
           return (
-            <Select virtual={false} size="small" style={{width: "100%"}}
+            <Input
               value={text}
-              onChange={value => {
-                this.updateField(table, index, "name", value);
-              }} >
-              {
-                Setting.getDeduplicatedArray(MfaItems, table, "name").map((item, index) => <Option key={index} value={item.value}>{item.name}</Option>)
-              }
-            </Select>
+              placeholder="e.g., files:read"
+              onChange={e => {
+                this.updateField(table, index, "name", e.target.value);
+              }}
+            />
           );
         },
       },
       {
-        title: i18next.t("application:Rule"),
-        dataIndex: "rule",
-        key: "rule",
-        width: "100px",
+        title: i18next.t("general:Display name"),
+        dataIndex: "displayName",
+        key: "displayName",
+        width: "25%",
         render: (text, record, index) => {
           return (
-            <Select virtual={false} size="small" style={{width: "100%"}}
+            <Input
               value={text}
-              defaultValue="Optional"
-              options={RuleItems.map((item) =>
-                Setting.getOption(item.label, item.value))
-              }
-              onChange={value => {
-                let requiredCount = 0;
-                table.forEach((item) => {
-                  if (item.rule === MfaRuleRequired) {
-                    requiredCount++;
-                  }
-                });
-
-                if (value === MfaRuleRequired && requiredCount >= 1) {
-                  Setting.showMessage("error", i18next.t("general:Only 1 MFA method can be required"));
-                  return;
-                }
-                this.updateField(table, index, "rule", value);
-              }} >
-            </Select>
+              placeholder="e.g., Read Files"
+              onChange={e => {
+                this.updateField(table, index, "displayName", e.target.value);
+              }}
+            />
+          );
+        },
+      },
+      {
+        title: i18next.t("general:Description"),
+        dataIndex: "description",
+        key: "description",
+        width: "40%",
+        render: (text, record, index) => {
+          return (
+            <Input
+              value={text}
+              placeholder="e.g., Allow reading your files and documents"
+              onChange={e => {
+                this.updateField(table, index, "description", e.target.value);
+              }}
+            />
           );
         },
       },
       {
         title: i18next.t("general:Action"),
         key: "action",
-        width: "100px",
+        width: "10%",
         render: (text, record, index) => {
           return (
             <div>
@@ -150,30 +139,28 @@ class MfaTable extends React.Component {
     ];
 
     return (
-      <Table scroll={{x: "max-content"}} rowKey="name" columns={columns} dataSource={table} size="middle" bordered pagination={false}
-        title={() => (
-          <div>
-            {this.props.title}&nbsp;&nbsp;&nbsp;&nbsp;
-            <Button disabled={table.length >= MfaItems.length} style={{marginRight: "5px"}} type="primary" size="small" onClick={() => this.addRow(table)}>{i18next.t("general:Add")}</Button>
-          </div>
-        )}
-      />
+      <div>
+        <Table scroll={{x: "max-content"}} rowKey={(record, index) => index} columns={columns} dataSource={table} size="middle" bordered pagination={false}
+          title={() => (
+            <div>
+              {this.props.title}&nbsp;&nbsp;&nbsp;&nbsp;
+              <Button style={{marginRight: "5px"}} type="primary" size="small" onClick={() => this.addRow(table)}>{i18next.t("general:Add")}</Button>
+            </div>
+          )}
+        />
+      </div>
     );
   }
 
   render() {
     return (
       <div>
-        <Row style={{marginTop: "20px"}} >
-          <Col span={24}>
-            {
-              this.renderTable(this.props.table)
-            }
-          </Col>
-        </Row>
+        {
+          this.renderTable(this.props.table)
+        }
       </div>
     );
   }
 }
 
-export default MfaTable;
+export default ScopeTable;

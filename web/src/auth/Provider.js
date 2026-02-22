@@ -44,20 +44,15 @@ function generateCodeChallenge(verifier) {
 }
 
 function storeCodeVerifier(state, verifier) {
-  localStorage.setItem("pkce_verifier", `${state}#${verifier}`);
+  localStorage.setItem(`pkce_verifier_${state}`, verifier);
 }
 
 export function getCodeVerifier(state) {
-  const verifierStore = localStorage.getItem("pkce_verifier");
-  const [storedState, verifier] = verifierStore ? verifierStore.split("#") : [null, null];
-  if (storedState !== state) {
-    return null;
-  }
-  return verifier;
+  return localStorage.getItem(`pkce_verifier_${state}`);
 }
 
 export function clearCodeVerifier(state) {
-  localStorage.removeItem("pkce_verifier");
+  localStorage.removeItem(`pkce_verifier_${state}`);
 }
 
 const authInfo = {
@@ -407,24 +402,27 @@ export function getProviderUrl(provider) {
   }
 }
 
-export function getProviderLogoWidget(provider) {
+export function getProviderLogoWidget(provider, options = {}) {
   if (provider === undefined) {
     return null;
   }
 
   const url = getProviderUrl(provider);
-  if (url !== "") {
+  const disableLink = options.disableLink === true;
+  const imgEl = <img width={36} height={36} src={Setting.getProviderLogoURL(provider)} alt={provider.displayName} />;
+
+  if (url !== "" && !disableLink) {
     return (
       <Tooltip title={provider.type}>
         <a target="_blank" rel="noreferrer" href={getProviderUrl(provider)}>
-          <img width={36} height={36} src={Setting.getProviderLogoURL(provider)} alt={provider.displayName} />
+          {imgEl}
         </a>
       </Tooltip>
     );
   } else {
     return (
       <Tooltip title={provider.type}>
-        <img width={36} height={36} src={Setting.getProviderLogoURL(provider)} alt={provider.displayName} />
+        {imgEl}
       </Tooltip>
     );
   }

@@ -67,6 +67,8 @@
         {"name": "ID", "visible": true, "viewRule": "Public", "modifyRule": "Immutable"},
         {"name": "Name", "visible": true, "viewRule": "Public", "modifyRule": "Admin"},
         {"name": "Display name", "visible": true, "viewRule": "Public", "modifyRule": "Self"},
+        {"name": "First name", "visible": true, "viewRule": "Public", "modifyRule": "Self"},
+        {"name": "Last name", "visible": true, "viewRule": "Public", "modifyRule": "Self"},
         {"name": "Avatar", "visible": true, "viewRule": "Public", "modifyRule": "Self"},
         {"name": "User type", "visible": true, "viewRule": "Public", "modifyRule": "Admin"},
         {"name": "Password", "visible": true, "viewRule": "Self", "modifyRule": "Self"},
@@ -81,6 +83,7 @@
         {"name": "Title", "visible": true, "viewRule": "Public", "modifyRule": "Self"},
         {"name": "ID card type", "visible": true, "viewRule": "Public", "modifyRule": "Self"},
         {"name": "ID card", "visible": true, "viewRule": "Public", "modifyRule": "Self"},
+        {"name": "ID card info", "visible": true, "viewRule": "Self", "modifyRule": "Self"},
         {"name": "Real name", "visible": true, "viewRule": "Public", "modifyRule": "Self"},
         {"name": "ID verification", "visible": true, "viewRule": "Self", "modifyRule": "Self"},
         {"name": "Homepage", "visible": true, "viewRule": "Public", "modifyRule": "Self"},
@@ -101,6 +104,7 @@
         {"name": "Signup application", "visible": true, "viewRule": "Public", "modifyRule": "Admin"},
         {"name": "Register type", "visible": true, "viewRule": "Public", "modifyRule": "Admin"},
         {"name": "Register source", "visible": true, "viewRule": "Public", "modifyRule": "Admin"},
+        {"name": "API key", "visible": true, "viewRule": "Self", "modifyRule": "Self"},
         {"name": "Roles", "visible": true, "viewRule": "Public", "modifyRule": "Immutable"},
         {"name": "Permissions", "visible": true, "viewRule": "Public", "modifyRule": "Immutable"},
         {"name": "Groups", "visible": true, "viewRule": "Public", "modifyRule": "Admin"},
@@ -110,9 +114,14 @@
         {"name": "Is forbidden", "visible": true, "viewRule": "Admin", "modifyRule": "Admin"},
         {"name": "Is deleted", "visible": true, "viewRule": "Admin", "modifyRule": "Admin"},
         {"name": "Multi-factor authentication", "visible": true, "viewRule": "Self", "modifyRule": "Self"},
+        {"name": "MFA items", "visible": true, "viewRule": "Self", "modifyRule": "Self"},
         {"name": "WebAuthn credentials", "visible": true, "viewRule": "Self", "modifyRule": "Self"},
+        {"name": "Last change password time", "visible": true, "viewRule": "Admin", "modifyRule": "Admin"},
         {"name": "Managed accounts", "visible": true, "viewRule": "Self", "modifyRule": "Self"},
-        {"name": "MFA accounts", "visible": true, "viewRule": "Self", "modifyRule": "Self"}
+        {"name": "Face ID", "visible": true, "viewRule": "Self", "modifyRule": "Self"},
+        {"name": "MFA accounts", "visible": true, "viewRule": "Self", "modifyRule": "Self"},
+        {"name": "Need update password", "visible": true, "viewRule": "Admin", "modifyRule": "Admin"},
+        {"name": "IP whitelist", "visible": true, "viewRule": "Admin", "modifyRule": "Admin"}
       ]
     }
   ],
