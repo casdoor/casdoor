@@ -195,7 +195,7 @@ func (c *ApiController) GrantConsent() {
 		})
 	}
 
-	_, err = object.UpdateUser(userObj.GetId(), userObj, nil, false)
+	_, err = object.UpdateUser(userObj.GetId(), userObj, []string{"application_scopes"}, false)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
