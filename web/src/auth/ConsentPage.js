@@ -84,15 +84,16 @@ class ConsentPage extends React.Component {
     const scopeDescriptions = scopes
       .map(scope => {
         const item = customScopesMap[scope];
-        if (!item) {
+        if (item) {
           return {
             ...item,
-            description: i18next.t("consent:This scope is not defined in the application"),
+            displayName: item.displayName || item.scope,
           };
         }
         return {
-          ...item,
-          displayName: item.displayName || item.scope,
+          scope: scope,
+          displayName: scope,
+          description: i18next.t("consent:This scope is not defined in the application"),
         };
       })
       .filter(Boolean);
