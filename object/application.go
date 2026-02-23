@@ -154,7 +154,7 @@ type Application struct {
 	FailedSigninLimit      int `json:"failedSigninLimit"`
 	FailedSigninFrozenTime int `json:"failedSigninFrozenTime"`
 	CodeResendTimeout      int `json:"codeResendTimeout"`
-  
+
 	CustomScopes []*ScopeDescription `xorm:"mediumtext" json:"customScopes"`
 
 	// Reverse proxy fields
