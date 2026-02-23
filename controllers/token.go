@@ -162,6 +162,9 @@ func (c *ApiController) DeleteToken() {
 func (c *ApiController) GetOAuthToken() {
 	clientId := c.Ctx.Input.Query("client_id")
 	clientSecret := c.Ctx.Input.Query("client_secret")
+	assertion := c.Ctx.Input.Query("assertion")
+	clientAssertion := c.Ctx.Input.Query("client_assertion")
+	clientAssertionType := c.Ctx.Input.Query("client_assertion_type")
 	grantType := c.Ctx.Input.Query("grant_type")
 	code := c.Ctx.Input.Query("code")
 	verifier := c.Ctx.Input.Query("code_verifier")
@@ -192,6 +195,12 @@ func (c *ApiController) GetOAuthToken() {
 			}
 			if clientSecret == "" {
 				clientSecret = tokenRequest.ClientSecret
+			}
+			if clientAssertion == "" {
+				clientAssertion = tokenRequest.ClientAssertion
+			}
+			if clientAssertionType == "" {
+				clientAssertionType = tokenRequest.ClientAssertionType
 			}
 			if grantType == "" {
 				grantType = tokenRequest.GrantType
@@ -235,9 +244,13 @@ func (c *ApiController) GetOAuthToken() {
 			if resource == "" {
 				resource = tokenRequest.Resource
 			}
+			if assertion == "" {
+				assertion = tokenRequest.Assertion
+			}
 		}
 	}
 
+	host := c.Ctx.Request.Host
 	if deviceCode != "" {
 		deviceAuthCache, ok := object.DeviceAuthMap.Load(deviceCode)
 		if !ok {
@@ -278,8 +291,7 @@ func (c *ApiController) GetOAuthToken() {
 		username = deviceAuthCacheCast.UserName
 	}
 
-	host := c.Ctx.Request.Host
-	token, err := object.GetOAuthToken(grantType, clientId, clientSecret, code, verifier, scope, nonce, username, password, host, refreshToken, tag, avatar, c.GetAcceptLanguage(), subjectToken, subjectTokenType, audience, resource)
+	token, err := object.GetOAuthToken(grantType, clientId, clientSecret, code, verifier, scope, nonce, username, password, host, refreshToken, tag, avatar, c.GetAcceptLanguage(), subjectToken, subjectTokenType, assertion, clientAssertion, clientAssertionType, audience, resource)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -323,7 +335,12 @@ func (c *ApiController) RefreshToken() {
 		}
 	}
 
-	refreshToken2, err := object.RefreshToken(grantType, refreshToken, scope, clientId, clientSecret, host)
+	ok, application, clientId, _, err := c.ValidateOAuth(true)
+	if err != nil || !ok {
+		return
+	}
+
+	refreshToken2, err := object.RefreshToken(application, grantType, refreshToken, scope, clientId, clientSecret, host)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -334,12 +351,77 @@ func (c *ApiController) RefreshToken() {
 	c.ServeJSON()
 }
 
-func (c *ApiController) ResponseTokenError(errorMsg string) {
+func (c *ApiController) ResponseTokenError(errorMsg string, errorDescription string) {
 	c.Data["json"] = &object.TokenError{
-		Error: errorMsg,
+		Error:            errorMsg,
+		ErrorDescription: errorDescription,
 	}
 	c.SetTokenErrorHttpStatus()
 	c.ServeJSON()
+}
+
+func (c *ApiController) ValidateOAuth(ignoreValidSecret bool) (ok bool, application *object.Application, clientId, clientSecret string, err error) {
+	reqClientId := c.Ctx.Input.Query("client_id")
+	reqClientSecret := c.Ctx.Input.Query("client_secret")
+	clientAssertion := c.Ctx.Input.Query("client_assertion")
+	clientAssertionType := c.Ctx.Input.Query("client_assertion_type")
+
+	if reqClientId == "" && clientAssertionType == "" {
+		var tokenRequest TokenRequest
+		if err := json.Unmarshal(c.Ctx.Input.RequestBody, &tokenRequest); err == nil {
+			reqClientId = tokenRequest.ClientId
+			reqClientSecret = tokenRequest.ClientSecret
+			clientAssertion = tokenRequest.ClientAssertion
+			clientAssertionType = tokenRequest.ClientAssertionType
+		}
+	}
+
+	if clientAssertionType == "urn:ietf:params:oauth:client-assertion-type:jwt-bearer" {
+		ok, application, err = object.ValidateClientAssertion(clientAssertion, c.Ctx.Request.Host)
+		if err != nil {
+			c.ResponseTokenError(object.InvalidClient, err.Error())
+			return
+		}
+
+		if !ok || application == nil {
+			c.ResponseTokenError(object.InvalidClient, "client_assertion is invalid")
+			return
+		}
+
+		clientSecret = application.ClientSecret
+		clientId = application.ClientId
+		ok = true
+		return
+	}
+
+	if reqClientId == "" && reqClientSecret == "" {
+		clientId, clientSecret, ok = c.Ctx.Request.BasicAuth()
+		if !ok {
+			clientId = c.Ctx.Input.Query("client_id")
+			clientSecret = c.Ctx.Input.Query("client_secret")
+			if clientId == "" || clientSecret == "" {
+				c.ResponseTokenError(object.InvalidRequest, "")
+				return
+			}
+		}
+	} else {
+		clientId = reqClientId
+		clientSecret = reqClientSecret
+	}
+
+	application, err = object.GetApplicationByClientId(clientId)
+	if err != nil {
+		c.ResponseTokenError(object.InvalidClient, err.Error())
+		return
+	}
+
+	if application == nil || (application.ClientSecret != clientSecret && !ignoreValidSecret) {
+		c.ResponseTokenError(object.InvalidClient, c.T("token:Invalid application or wrong clientSecret"))
+		return
+	}
+
+	ok = true
+	return
 }
 
 // IntrospectToken
@@ -349,7 +431,7 @@ func (c *ApiController) ResponseTokenError(errorMsg string) {
 // parameter representing an OAuth 2.0 token and returns a JSON document
 // representing the meta information surrounding the
 // token, including whether this token is currently active.
-// This endpoint only support Basic Authorization.
+// This endpoint support Basic Authorization and authorization defined in RFC 7523.
 //
 // @Param token formData string true "access_token's value or refresh_token's value"
 // @Param token_type_hint formData string true "the token type access_token or refresh_token"
@@ -359,24 +441,9 @@ func (c *ApiController) ResponseTokenError(errorMsg string) {
 // @router /login/oauth/introspect [post]
 func (c *ApiController) IntrospectToken() {
 	tokenValue := c.Ctx.Input.Query("token")
-	clientId, clientSecret, ok := c.Ctx.Request.BasicAuth()
-	if !ok {
-		clientId = c.Ctx.Input.Query("client_id")
-		clientSecret = c.Ctx.Input.Query("client_secret")
-		if clientId == "" || clientSecret == "" {
-			c.ResponseTokenError(object.InvalidRequest)
-			return
-		}
-	}
 
-	application, err := object.GetApplicationByClientId(clientId)
-	if err != nil {
-		c.ResponseTokenError(err.Error())
-		return
-	}
-
-	if application == nil || application.ClientSecret != clientSecret {
-		c.ResponseTokenError(c.T("token:Invalid application or wrong clientSecret"))
+	ok, application, clientId, _, err := c.ValidateOAuth(false)
+	if err != nil || !ok {
 		return
 	}
 
@@ -390,7 +457,7 @@ func (c *ApiController) IntrospectToken() {
 	if tokenTypeHint != "" {
 		token, err = object.GetTokenByTokenValue(tokenValue, tokenTypeHint)
 		if err != nil {
-			c.ResponseTokenError(err.Error())
+			c.ResponseTokenError(object.InvalidRequest, err.Error())
 			return
 		}
 		if token == nil || token.ExpiresIn <= 0 {
@@ -467,7 +534,7 @@ func (c *ApiController) IntrospectToken() {
 	if tokenTypeHint == "" {
 		token, err = object.GetTokenByTokenValue(tokenValue, introspectionResponse.TokenType)
 		if err != nil {
-			c.ResponseTokenError(err.Error())
+			c.ResponseTokenError(object.InvalidRequest, err.Error())
 			return
 		}
 		if token == nil || token.ExpiresIn <= 0 {
@@ -479,7 +546,7 @@ func (c *ApiController) IntrospectToken() {
 	if token != nil {
 		application, err = object.GetApplication(fmt.Sprintf("%s/%s", token.Owner, token.Application))
 		if err != nil {
-			c.ResponseTokenError(err.Error())
+			c.ResponseTokenError(object.InvalidClient, err.Error())
 			return
 		}
 		if application == nil {

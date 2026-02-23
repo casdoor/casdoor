@@ -19,6 +19,7 @@ import (
 	"encoding/base64"
 	"fmt"
 	"net/url"
+	"slices"
 	"strings"
 	"sync"
 	"time"
@@ -244,10 +245,33 @@ func GetOAuthCode(userId string, clientId string, provider string, signinMethod 
 	}, nil
 }
 
-func GetOAuthToken(grantType string, clientId string, clientSecret string, code string, verifier string, scope string, nonce string, username string, password string, host string, refreshToken string, tag string, avatar string, lang string, subjectToken string, subjectTokenType string, audience string, resource string) (interface{}, error) {
-	application, err := GetApplicationByClientId(clientId)
-	if err != nil {
-		return nil, err
+func GetOAuthToken(grantType string, clientId string, clientSecret string, code string, verifier string, scope string, nonce string, username string, password string, host string, refreshToken string, tag string, avatar string, lang string, subjectToken string, subjectTokenType string, assertion string, clientAssertion string, clientAssertionType string, audience string, resource string) (interface{}, error) {
+	var (
+		application *Application
+		err         error
+		ok          bool
+	)
+
+	if clientAssertionType == "urn:ietf:params:oauth:client-assertion-type:jwt-bearer" {
+		ok, application, err = ValidateClientAssertion(clientAssertion, host)
+		if err != nil {
+			return nil, err
+		}
+
+		if !ok || application == nil {
+			return &TokenError{
+				Error:            InvalidClient,
+				ErrorDescription: "client_assertion is invalid",
+			}, nil
+		}
+
+		clientSecret = application.ClientSecret
+		clientId = application.ClientId
+	} else {
+		application, err = GetApplicationByClientId(clientId)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	if application == nil {
@@ -277,12 +301,14 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 		token, tokenError, err = GetClientCredentialsToken(application, clientSecret, scope, host)
 	case "token", "id_token": // Implicit Grant
 		token, tokenError, err = GetImplicitToken(application, username, scope, nonce, host)
+	case "urn:ietf:params:oauth:grant-type:jwt-bearer":
+		token, tokenError, err = GetJwtBearerToken(application, assertion, scope, nonce, host)
 	case "urn:ietf:params:oauth:grant-type:device_code":
 		token, tokenError, err = GetImplicitToken(application, username, scope, nonce, host)
 	case "urn:ietf:params:oauth:grant-type:token-exchange": // Token Exchange Grant (RFC 8693)
 		token, tokenError, err = GetTokenExchangeToken(application, clientSecret, subjectToken, subjectTokenType, audience, scope, host)
 	case "refresh_token":
-		refreshToken2, err := RefreshToken(grantType, refreshToken, scope, clientId, clientSecret, host)
+		refreshToken2, err := RefreshToken(application, grantType, refreshToken, scope, clientId, clientSecret, host)
 		if err != nil {
 			return nil, err
 		}
@@ -324,7 +350,7 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 	return tokenWrapper, nil
 }
 
-func RefreshToken(grantType string, refreshToken string, scope string, clientId string, clientSecret string, host string) (interface{}, error) {
+func RefreshToken(application *Application, grantType string, refreshToken string, scope string, clientId string, clientSecret string, host string) (interface{}, error) {
 	// check parameters
 	if grantType != "refresh_token" {
 		return &TokenError{
@@ -332,16 +358,20 @@ func RefreshToken(grantType string, refreshToken string, scope string, clientId 
 			ErrorDescription: "grant_type should be refresh_token",
 		}, nil
 	}
-	application, err := GetApplicationByClientId(clientId)
-	if err != nil {
-		return nil, err
-	}
 
+	var err error
 	if application == nil {
-		return &TokenError{
-			Error:            InvalidClient,
-			ErrorDescription: "client_id is invalid",
-		}, nil
+		application, err = GetApplicationByClientId(clientId)
+		if err != nil {
+			return nil, err
+		}
+
+		if application == nil {
+			return &TokenError{
+				Error:            InvalidClient,
+				ErrorDescription: "client_id is invalid",
+			}, nil
+		}
 	}
 
 	if clientSecret != "" && application.ClientSecret != clientSecret {
@@ -903,6 +933,84 @@ func GetImplicitToken(application *Application, username string, scope string, n
 		return nil, nil, err
 	}
 	return token, nil, nil
+}
+
+// GetJwtBearerToken
+// RFC 7523
+func GetJwtBearerToken(application *Application, assertion string, scope string, nonce string, host string) (*Token, *TokenError, error) {
+	ok, claims, err := ValidateJwtAssertion(assertion, application, host)
+	if err != nil || !ok {
+		if err != nil {
+			return nil, &TokenError{
+				Error:            InvalidGrant,
+				ErrorDescription: err.Error(),
+			}, err
+		}
+
+		return nil, &TokenError{
+			Error:            InvalidGrant,
+			ErrorDescription: fmt.Sprintf("assertion (JWT) is invalid for application: [%s]", application.GetId()),
+		}, nil
+	}
+
+	return GetImplicitToken(application, claims.Subject, scope, nonce, host)
+}
+
+func ValidateJwtAssertion(clientAssertion string, application *Application, host string) (bool, *Claims, error) {
+	_, originBackend := getOriginFromHost(host)
+
+	clientCert, err := getCert(application.Owner, application.ClientCert)
+	if err != nil {
+		return false, nil, err
+	}
+	if clientCert == nil {
+		return false, nil, fmt.Errorf("client certificate is not configured for application: [%s]", application.GetId())
+	}
+
+	claims, err := ParseJwtToken(clientAssertion, clientCert)
+	if err != nil {
+		return false, nil, err
+	}
+
+	if !slices.Contains(application.RedirectUris, claims.Issuer) {
+		return false, nil, nil
+	}
+
+	if !slices.Contains(claims.Audience, fmt.Sprintf("%s/api/login/oauth/access_token", originBackend)) {
+		return false, nil, nil
+	}
+
+	return true, claims, nil
+}
+
+func ValidateClientAssertion(clientAssertion string, host string) (bool, *Application, error) {
+	token, err := ParseJwtTokenWithoutValidation(clientAssertion)
+	if err != nil {
+		return false, nil, err
+	}
+
+	clientId, err := token.Claims.GetSubject()
+	if err != nil {
+		return false, nil, err
+	}
+
+	application, err := GetApplicationByClientId(clientId)
+	if err != nil {
+		return false, nil, err
+	}
+	if application == nil {
+		return false, nil, fmt.Errorf("application not found for client: [%s]", clientId)
+	}
+
+	ok, _, err := ValidateJwtAssertion(clientAssertion, application, host)
+	if err != nil {
+		return false, application, err
+	}
+	if !ok {
+		return false, application, nil
+	}
+
+	return true, application, nil
 }
 
 // GetTokenByUser

@@ -660,6 +660,15 @@ func generateJwtToken(application *Application, user *User, provider string, sig
 	return tokenString, refreshTokenString, name, err
 }
 
+func ParseJwtTokenWithoutValidation(token string) (*jwt.Token, error) {
+	t, _, err := jwt.NewParser().ParseUnverified(token, &Claims{})
+	if err != nil {
+		return nil, err
+	}
+
+	return t, nil
+}
+
 func ParseJwtToken(token string, cert *Cert) (*Claims, error) {
 	t, err := jwt.ParseWithClaims(token, &Claims{}, func(token *jwt.Token) (interface{}, error) {
 		var (
