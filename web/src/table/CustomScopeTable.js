@@ -25,8 +25,6 @@ const DefaultScopes = [
   {scope: "address", displayName: "Address", description: "Access the user's address information"},
   {scope: "phone", displayName: "Phone", description: "Access the user's phone number information"},
   {scope: "offline_access", displayName: "Offline Access", description: "Obtain refresh tokens for offline access"},
-  {scope: "address", displayName: "Address", description: "Access the user's address information"},
-  {scope: "phone", displayName: "Phone", description: "Access the user's phone number information"},
 ];
 
 class CustomScopeTable extends React.Component {
