@@ -216,7 +216,7 @@ class LoginPage extends React.Component {
             this.setState({
               msg: res.msg,
             });
-            return ;
+            return;
           }
           this.onUpdateApplication(res.data);
         });
@@ -1141,9 +1141,11 @@ class LoginPage extends React.Component {
       visible={this.state.openCaptchaModal}
       noModal={noModal}
       onUpdateToken={(captchaType, captchaToken, clientSecret) => {
-        this.setState({captchaValues: {
-          captchaType, captchaToken, clientSecret,
-        }});
+        this.setState({
+          captchaValues: {
+            captchaType, captchaToken, clientSecret,
+          },
+        });
       }}
       onOk={(captchaType, captchaToken, clientSecret) => {
         const values = this.state.values;

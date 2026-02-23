@@ -487,7 +487,7 @@ class App extends Component {
               : (
                 Conf.CustomFooter !== null ? Conf.CustomFooter : (
                   <React.Fragment>
-                  Powered by <a target="_blank" href="https://casdoor.org" rel="noreferrer"><img style={{paddingBottom: "3px"}} height={"20px"} alt={"Casdoor"} src={logo} /></a>
+                    Powered by <a target="_blank" href="https://casdoor.org" rel="noreferrer"><img style={{paddingBottom: "3px"}} height={"20px"} alt={"Casdoor"} src={logo} /></a>
                   </React.Fragment>
                 )
               )
@@ -656,7 +656,7 @@ class App extends Component {
                 menuVisible={this.state.menuVisible}
                 logo={this.state.logo}
                 onChangeTheme={this.setTheme}
-                onClick = {this.onClick}
+                onClick={this.onClick}
                 onfinish={() => {
                   this.setState({requiredEnableMfa: false});
                 }}

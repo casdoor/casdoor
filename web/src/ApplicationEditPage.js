@@ -1374,7 +1374,7 @@ class ApplicationEditPage extends React.Component {
               {Setting.getLabel(i18next.t("general:IP whitelist"), i18next.t("general:IP whitelist - Tooltip"))} :
             </Col>
             <Col span={21} >
-              <Input placeholder = {this.state.application.organizationObj?.ipWhitelist} value={this.state.application.ipWhitelist} onChange={e => {
+              <Input placeholder={this.state.application.organizationObj?.ipWhitelist} value={this.state.application.ipWhitelist} onChange={e => {
                 this.updateApplicationField("ipWhitelist", e.target.value);
               }} />
             </Col>
@@ -1573,11 +1573,11 @@ class ApplicationEditPage extends React.Component {
               {
                 Setting.isPasswordEnabled(this.state.application) ? (
                   <div className="loginBackground" style={{backgroundImage: `url(${this.state.application?.formBackgroundUrl})`, overflow: "auto"}}>
-                    <SignupPage application={this.state.application} preview = "auto" />
+                    <SignupPage application={this.state.application} preview="auto" />
                   </div>
                 ) : (
                   <div className="loginBackground" style={{backgroundImage: `url(${this.state.application?.formBackgroundUrl})`, overflow: "auto"}}>
-                    <LoginPage type={"login"} mode={"signup"} application={this.state.application} preview = "auto" />
+                    <LoginPage type={"login"} mode={"signup"} application={this.state.application} preview="auto" />
                   </div>
                 )
               }
@@ -1603,7 +1603,7 @@ class ApplicationEditPage extends React.Component {
           }}>
             <div style={{position: "relative", width: previewWidth, border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888", overflow: "auto"}}>
               <div className="loginBackground" style={{backgroundImage: `url(${this.state.application?.formBackgroundUrl})`, overflow: "auto"}}>
-                <LoginPage type={"login"} mode={"signin"} application={this.state.application} preview = "auto" />
+                <LoginPage type={"login"} mode={"signin"} application={this.state.application} preview="auto" />
               </div>
               <div style={{overflow: "auto", ...maskStyle}} />
             </div>

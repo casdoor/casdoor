@@ -274,7 +274,7 @@ class UserEditPage extends React.Component {
 
     // Fallback to comparing by owner and name
     return (this.state.user.owner === this.props.account.owner &&
-            this.state.user.name === this.props.account.name);
+      this.state.user.name === this.props.account.name);
   }
 
   isSelfOrAdmin() {
