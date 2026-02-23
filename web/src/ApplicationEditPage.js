@@ -57,7 +57,6 @@ import SigninTable from "./table/SigninTable";
 import Editor from "./common/Editor";
 import * as GroupBackend from "./backend/GroupBackend";
 import TokenAttributeTable from "./table/TokenAttributeTable";
-import CustomScopeTable from "./table/CustomScopeTable";
 import {Content, Header} from "antd/es/layout/layout";
 import Sider from "antd/es/layout/Sider";
 import PaginateSelect from "./common/PaginateSelect";
