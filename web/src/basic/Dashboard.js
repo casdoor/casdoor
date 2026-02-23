@@ -158,7 +158,7 @@ const Dashboard = (props) => {
         i18next.t("general:Adapters"),
         i18next.t("general:Enforcers"),
       ], top: "10%"},
-      grid: {left: "3%", right: "4%", bottom: "0", top: "25%", containLabel: true},
+      grid: {left: "3%", right: "4%", bottom: "0", top: "30%", containLabel: true},
       xAxis: {type: "category", boundaryGap: false, data: dateArray},
       yAxis: {type: "value"},
       series: [

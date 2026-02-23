@@ -30,6 +30,7 @@ import (
 	"github.com/casdoor/casdoor/radius"
 	"github.com/casdoor/casdoor/routers"
 	"github.com/casdoor/casdoor/util"
+	_ "github.com/mattn/go-sqlite3"
 )
 
 func main() {
