@@ -16,9 +16,11 @@ package routers
 
 import (
 	"compress/gzip"
+	"encoding/base64"
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
@@ -26,6 +28,7 @@ import (
 
 	"github.com/beego/beego/v2/server/web/context"
 	"github.com/casdoor/casdoor/conf"
+	"github.com/casdoor/casdoor/idp"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 )
@@ -104,6 +107,86 @@ func fastAutoSignin(ctx *context.Context) (string, error) {
 	return res, nil
 }
 
+// getProviderRedirectUrl builds a server-side redirect URL when provider_hint is present.
+// It looks up the application by client_id, finds the matching provider, and returns
+// the OAuth authorization URL for that provider, enabling an immediate redirect without
+// rendering the Casdoor login page.
+func getProviderRedirectUrl(ctx *context.Context) (string, error) {
+	providerHint := ctx.Input.Query("provider_hint")
+	if providerHint == "" {
+		return "", nil
+	}
+
+	clientId := ctx.Input.Query("client_id")
+	if clientId == "" {
+		return "", nil
+	}
+
+	application, err := object.GetApplicationByClientId(clientId)
+	if err != nil {
+		return "", err
+	}
+	if application == nil {
+		return "", nil
+	}
+
+	// Find the first visible provider matching the hint
+	var matchedProvider *object.Provider
+	for _, providerItem := range application.Providers {
+		if providerItem.Provider != nil &&
+			providerItem.Provider.Name == providerHint &&
+			providerItem.IsProviderVisible() {
+			matchedProvider = providerItem.Provider
+			break
+		}
+	}
+	if matchedProvider == nil {
+		return "", nil
+	}
+
+	// Build the state parameter, matching the frontend's getStateFromQueryParams logic:
+	// state = btoa("?" + rawQuery + "&application=" + encodeURIComponent(appName) +
+	//              "&provider=" + encodeURIComponent(providerName) + "&method=signup")
+	rawQuery := ctx.Request.URL.RawQuery
+	applicationName := application.Name
+	if application.IsShared {
+		applicationName = application.Name + "-org-" + application.Organization
+	}
+	stateStr := "?" + rawQuery +
+		"&application=" + url.QueryEscape(applicationName) +
+		"&provider=" + url.QueryEscape(matchedProvider.Name) +
+		"&method=signup"
+	state := base64.StdEncoding.EncodeToString([]byte(stateStr))
+
+	// Determine the redirect origin (matching frontend logic)
+	redirectOrigin := application.ForcedRedirectOrigin
+	if redirectOrigin == "" {
+		scheme := "https"
+		if ctx.Request.TLS == nil &&
+			ctx.Request.Header.Get("X-Forwarded-Proto") != "https" &&
+			ctx.Request.Header.Get("X-Forwarded-Ssl") != "on" {
+			scheme = "http"
+		}
+		redirectOrigin = scheme + "://" + ctx.Request.Host
+	}
+	redirectUrl := redirectOrigin + "/callback"
+
+	// Build OAuth URL using goth's BeginAuth for goth-based providers.
+	// Non-goth providers fall through to the frontend (return empty string).
+	idpInfo, err := object.FromProviderToIdpInfo(ctx, matchedProvider)
+	if err != nil {
+		return "", err
+	}
+
+	authUrl, err := idp.GetGothAuthUrl(idpInfo, state, redirectUrl)
+	if err != nil {
+		// Provider is not goth-based or initialization failed; let the frontend handle it
+		return "", nil
+	}
+
+	return authUrl, nil
+}
+
 func StaticFilter(ctx *context.Context) {
 	urlPath := ctx.Request.URL.Path
 
@@ -126,6 +209,14 @@ func StaticFilter(ctx *context.Context) {
 		if err != nil {
 			responseError(ctx, err.Error())
 			return
+		}
+
+		if redirectUrl == "" {
+			redirectUrl, err = getProviderRedirectUrl(ctx)
+			if err != nil {
+				responseError(ctx, err.Error())
+				return
+			}
 		}
 
 		if redirectUrl != "" {

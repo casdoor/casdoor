@@ -175,6 +175,21 @@ class LoginPage extends React.Component {
       });
   }
 
+  redirectWithProviderHint(application) {
+    const providerHint = new URLSearchParams(window.location.search).get("provider_hint");
+    if (!providerHint || !application?.providers) {
+      return false;
+    }
+    const providerItem = application.providers.find(
+      item => item.provider?.name === providerHint && Setting.isProviderVisible(item)
+    );
+    if (providerItem) {
+      goToLink(Provider.getAuthUrl(application, providerItem.provider, "signup"));
+      return true;
+    }
+    return false;
+  }
+
   getApplicationLogin() {
     let loginParams;
     if (this.state.type === "cas") {
@@ -188,6 +203,9 @@ class LoginPage extends React.Component {
       .then((res) => {
         if (res.status === "ok") {
           const application = res.data;
+          if (this.redirectWithProviderHint(application)) {
+            return;
+          }
           this.onUpdateApplication(application);
         } else {
           if (this.state.type === "device") {
@@ -218,6 +236,9 @@ class LoginPage extends React.Component {
             });
             return ;
           }
+          if (this.redirectWithProviderHint(res.data)) {
+            return;
+          }
           this.onUpdateApplication(res.data);
         });
     } else {
@@ -225,6 +246,9 @@ class LoginPage extends React.Component {
         .then((res) => {
           if (res.status === "ok") {
             const application = res.data;
+            if (this.redirectWithProviderHint(application)) {
+              return;
+            }
             this.onUpdateApplication(application);
             this.setState({
               applicationName: res.data.name,
