@@ -375,18 +375,11 @@ func (c *ApiController) Logout() {
 
 		c.ClearUserSession()
 		c.ClearTokenSession()
-		owner, username, err := util.GetOwnerAndNameFromIdWithError(user)
-		if err != nil {
-			c.ResponseError(err.Error())
-			return
-		}
-		_, err = object.DeleteSessionId(util.GetSessionId(owner, username, object.CasdoorApplication), c.Ctx.Input.CruSession.SessionID(context.Background()))
-		if err != nil {
-			c.ResponseError(err.Error())
-			return
-		}
 
-		util.LogInfo(c.Ctx, "API: [%s] logged out", user)
+		if err := c.deleteUserSession(user); err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
 
 		application := c.GetSessionApplication()
 		if application == nil || application.Name == "app-built-in" || application.HomepageUrl == "" {
@@ -426,20 +419,12 @@ func (c *ApiController) Logout() {
 
 		c.ClearUserSession()
 		c.ClearTokenSession()
+
 		// TODO https://github.com/casdoor/casdoor/pull/1494#discussion_r1095675265
-		owner, username, err := util.GetOwnerAndNameFromIdWithError(user)
-		if err != nil {
+		if err := c.deleteUserSession(user); err != nil {
 			c.ResponseError(err.Error())
 			return
 		}
-
-		_, err = object.DeleteSessionId(util.GetSessionId(owner, username, object.CasdoorApplication), c.Ctx.Input.CruSession.SessionID(context.Background()))
-		if err != nil {
-			c.ResponseError(err.Error())
-			return
-		}
-
-		util.LogInfo(c.Ctx, "API: [%s] logged out", user)
 
 		if redirectUri == "" {
 			c.ResponseOk()
@@ -776,4 +761,25 @@ func (c *ApiController) GetCaptcha() {
 	}
 
 	c.ResponseOk(Captcha{Type: "none"})
+}
+
+func (c *ApiController) deleteUserSession(user string) error {
+	owner, username, err := util.GetOwnerAndNameFromIdWithError(user)
+	if err != nil {
+		return err
+	}
+
+	// Casdoor session ID derived from owner, username, and application
+	sessionId := util.GetSessionId(owner, username, object.CasdoorApplication)
+
+	// Explicitly get the Beego session ID from the context
+	beegoSessionId := c.Ctx.Input.CruSession.SessionID(context.Background())
+
+	_, err = object.DeleteSessionId(sessionId, beegoSessionId)
+	if err != nil {
+		return err
+	}
+
+	util.LogInfo(c.Ctx, "API: [%s] logged out", user)
+	return nil
 }
