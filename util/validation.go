@@ -77,9 +77,30 @@ func IsInvitationCodeMatch(pattern string, invitationCode string) (bool, error) 
 	return regexp.MatchString(pattern, invitationCode)
 }
 
-func GetE164Number(phone string, countryCode string) (string, bool) {
-	phoneNumber, _ := phonenumbers.Parse(phone, countryCode)
-	return phonenumbers.Format(phoneNumber, phonenumbers.E164), phonenumbers.IsValidNumber(phoneNumber)
+func GetE164Number(phone, countryCode string) (string, bool) {
+	phone = strings.TrimSpace(phone)
+	phoneBase := phone
+	phoneSuffix := ""
+
+	if suffixStart := strings.Index(phone, "@@"); suffixStart >= 0 {
+		phoneBase = strings.TrimSpace(phone[:suffixStart])
+		phoneSuffix = phone[suffixStart:]
+	}
+	if phoneBase == "" {
+		return phone, false
+	}
+
+	phoneNumber, err := phonenumbers.Parse(phoneBase, countryCode)
+	if err != nil {
+		return phone, false
+	}
+
+	if !phonenumbers.IsValidNumber(phoneNumber) {
+		return phone, false
+	}
+
+	e164Phone := phonenumbers.Format(phoneNumber, phonenumbers.E164)
+	return e164Phone + phoneSuffix, true
 }
 
 func GetCountryCode(prefix string, phone string) (string, error) {
