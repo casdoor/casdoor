@@ -156,6 +156,8 @@ type Application struct {
 	FailedSigninFrozenTime int `json:"failedSigninFrozenTime"`
 	CodeResendTimeout      int `json:"codeResendTimeout"`
 
+	CustomScopes []*ScopeDescription `xorm:"mediumtext" json:"customScopes"`
+
 	// Reverse proxy fields
 	Domain       string   `xorm:"varchar(100)" json:"domain"`
 	OtherDomains []string `xorm:"varchar(1000)" json:"otherDomains"`
@@ -746,6 +748,11 @@ func UpdateApplication(id string, application *Application, isGlobalAdmin bool, 
 		return false, err
 	}
 
+	err = validateCustomScopes(application.CustomScopes, lang)
+	if err != nil {
+		return false, err
+	}
+
 	for _, providerItem := range application.Providers {
 		providerItem.Provider = nil
 	}
@@ -797,6 +804,11 @@ func AddApplication(application *Application) (bool, error) {
 	}
 
 	err = extendApplicationWithSigninMethods(application)
+	if err != nil {
+		return false, err
+	}
+
+	err = validateCustomScopes(application.CustomScopes, "en")
 	if err != nil {
 		return false, err
 	}

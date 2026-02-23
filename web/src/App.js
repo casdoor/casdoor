@@ -539,15 +539,16 @@ class App extends Component {
 
   isEntryPages() {
     return window.location.pathname.startsWith("/signup") ||
-        window.location.pathname.startsWith("/login") ||
-        window.location.pathname.startsWith("/forget") ||
-        window.location.pathname.startsWith("/prompt") ||
-        window.location.pathname.startsWith("/result") ||
-        window.location.pathname.startsWith("/cas") ||
-        window.location.pathname.startsWith("/select-plan") ||
-        window.location.pathname.startsWith("/buy-plan") ||
-        window.location.pathname.startsWith("/qrcode") ||
-        window.location.pathname.startsWith("/captcha");
+      window.location.pathname.startsWith("/login") ||
+      window.location.pathname.startsWith("/forget") ||
+      window.location.pathname.startsWith("/prompt") ||
+      window.location.pathname.startsWith("/result") ||
+      window.location.pathname.startsWith("/cas") ||
+      window.location.pathname.startsWith("/select-plan") ||
+      window.location.pathname.startsWith("/buy-plan") ||
+      window.location.pathname.startsWith("/qrcode") ||
+      window.location.pathname.startsWith("/consent") ||
+      window.location.pathname.startsWith("/captcha");
   }
 
   onClick = ({key}) => {

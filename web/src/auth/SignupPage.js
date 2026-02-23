@@ -293,8 +293,17 @@ class SignupPage extends React.Component {
             return;
           }
 
+          // Check if consent is required
+          if (oAuthParams && res.data && typeof res.data === "object" && res.data.required === true) {
+            // Consent required, redirect to consent page
+            Setting.goToLink(`/consent/${application.name}?${window.location.search.substring(1)}`);
+            return;
+          }
+
           // the user's id will be returned by `signup()`, if user signup by phone, the `username` in `values` is undefined.
-          values.username = res.data.split("/")[1];
+          if (typeof res.data === "string") {
+            values.username = res.data.split("/")[1];
+          }
           if (Setting.hasPromptPage(application) && (!values.plan || !values.pricing)) {
             AuthBackend.getAccount("")
               .then((res) => {

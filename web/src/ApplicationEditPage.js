@@ -248,6 +248,33 @@ class ApplicationEditPage extends React.Component {
     return value;
   }
 
+  trimCustomScopes(customScopes) {
+    if (!Array.isArray(customScopes)) {
+      return [];
+    }
+    return customScopes.map((item) => {
+      const scope = (item?.scope || "").trim();
+      const displayName = (item?.displayName || "").trim();
+      const description = (item?.description || "").trim();
+      return {
+        ...item,
+        scope: scope,
+        displayName: displayName,
+        description: description,
+      };
+    });
+  }
+
+  validateCustomScopes(customScopes) {
+    const trimmed = this.trimCustomScopes(customScopes);
+    for (const item of trimmed) {
+      if (!item || !item.scope || item.scope === "") {
+        return {ok: false, scopes: trimmed};
+      }
+    }
+    return {ok: true, scopes: trimmed};
+  }
+
   updateApplicationField(key, value) {
     value = this.parseApplicationField(key, value);
     const application = this.state.application;
@@ -1647,6 +1674,12 @@ class ApplicationEditPage extends React.Component {
     const application = Setting.deepCopy(this.state.application);
     application.providers = application.providers?.filter(provider => this.state.providers.map(provider => provider.name).includes(provider.name));
     application.signinMethods = application.signinMethods?.filter(signinMethod => ["Password", "Verification code", "WebAuthn", "LDAP", "Face ID", "WeChat"].includes(signinMethod.name));
+    const customScopeValidation = this.validateCustomScopes(application.customScopes);
+    application.customScopes = customScopeValidation.scopes;
+    if (!customScopeValidation.ok) {
+      Setting.showMessage("error", `${i18next.t("general:Name")}: ${i18next.t("provider:This field is required")}`);
+      return;
+    }
 
     ApplicationBackend.updateApplication("admin", this.state.applicationName, application)
       .then((res) => {

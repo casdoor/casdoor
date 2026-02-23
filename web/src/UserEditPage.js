@@ -50,6 +50,7 @@ import MfaTable from "./table/MfaTable";
 import TransactionTable from "./table/TransactionTable";
 import CartTable from "./table/CartTable";
 import * as TransactionBackend from "./backend/TransactionBackend";
+import ConsentTable from "./table/ConsentTable";
 import {Content, Header} from "antd/es/layout/layout";
 import Sider from "antd/es/layout/Sider";
 
@@ -73,6 +74,7 @@ class UserEditPage extends React.Component {
       idCardInfo: ["ID card front", "ID card back", "ID card with person"],
       openFaceRecognitionModal: false,
       transactions: [],
+      consents: [],
       activeMenuKey: window.location.hash?.slice(1) || "",
       menuMode: "Horizontal",
     };
@@ -110,6 +112,7 @@ class UserEditPage extends React.Component {
         this.setState({
           user: res.data,
           multiFactorAuths: res.data?.multiFactorAuths ?? [],
+          consents: res.data?.applicationScopes ?? [],
           loading: false,
         });
 
@@ -1129,6 +1132,21 @@ class UserEditPage extends React.Component {
           />
         </Col>
       </Row>);
+    } else if (accountItem.name === "Consents") {
+      return (
+        <Row style={{marginTop: "20px"}}>
+          <Col style={{marginTop: "5px"}} span={Setting.isMobile() ? 22 : 2}>
+            {Setting.getLabel(i18next.t("consent:Consents"), i18next.t("consent:Consents - Tooltip"))} :
+          </Col>
+          <Col span={22}>
+            <ConsentTable
+              title={i18next.t("consent:Consents")}
+              table={this.state.consents}
+              onUpdateTable={() => this.getUser()}
+            />
+          </Col>
+        </Row>
+      );
     } else if (accountItem.name === "Multi-factor authentication") {
       return (
         !this.isSelfOrAdmin() ? null : (
