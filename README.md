@@ -79,6 +79,17 @@ https://casdoor.org/docs/category/integrations
 
 For casdoor, if you have any questions, you can give Issues, or you can also directly start Pull Requests(but we recommend giving issues first to communicate with the community).
 
+### Local Development (SQLite)
+
+When setting up Casdoor locally for development (especially on Windows), it is highly recommended to use the pure-Go SQLite driver to avoid CGO and compiler errors. To run Casdoor locally for development without requiring a MySQL installation or CGO compilers, do this:
+
+1. Modify your `conf/app.conf`:
+   ```ini
+   driverName = sqlite
+   dataSourceName = casdoor.db
+   dbName = casdoor
+   ```
+
 ### I18n translation
 
 If you are contributing to casdoor, please note that we use [Crowdin](https://crowdin.com/project/casdoor-site) as translating platform and i18next as translating tool. When you add some words using i18next in the `web/` directory, please remember to add what you have added to the `web/src/locales/en/data.json` file.
