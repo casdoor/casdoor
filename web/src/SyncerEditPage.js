@@ -390,6 +390,13 @@ class SyncerEditPage extends React.Component {
           "values": [],
         },
         {
+          "name": "unionid",
+          "type": "string",
+          "casdoorName": "Name",
+          "isHashed": true,
+          "values": [],
+        },
+        {
           "name": "name",
           "type": "string",
           "casdoorName": "DisplayName",
@@ -421,13 +428,6 @@ class SyncerEditPage extends React.Component {
           "name": "title",
           "type": "string",
           "casdoorName": "Title",
-          "isHashed": true,
-          "values": [],
-        },
-        {
-          "name": "job_number",
-          "type": "string",
-          "casdoorName": "Name",
           "isHashed": true,
           "values": [],
         },
