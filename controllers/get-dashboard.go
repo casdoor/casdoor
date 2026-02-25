@@ -33,3 +33,24 @@ func (c *ApiController) GetDashboard() {
 
 	c.ResponseOk(data)
 }
+
+// GetDashboardAnalytics
+// @Title GetDashboardAnalytics
+// @Tag System API
+// @Description get analytics data for dashboard (weekly login trend, top apps, user activity)
+// @Param owner query string false "owner organization"
+// @Param userId query string false "user ID for user-specific analytics"
+// @Success 200 {object} controllers.Response The Response object
+// @router /get-dashboard-analytics [get]
+func (c *ApiController) GetDashboardAnalytics() {
+	owner := c.Ctx.Input.Query("owner")
+	userId := c.Ctx.Input.Query("userId")
+
+	data, err := object.GetDashboardAnalytics(owner, userId)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	c.ResponseOk(data)
+}

@@ -23,6 +23,7 @@ import * as TourConfig from "../TourConfig";
 
 const Dashboard = (props) => {
   const [dashboardData, setDashboardData] = React.useState(null);
+  const [analyticsData, setAnalyticsData] = React.useState(null);
   const [isTourVisible, setIsTourVisible] = React.useState(TourConfig.getTourVisible());
   const nextPathName = TourConfig.getNextUrl("home");
 
@@ -63,6 +64,13 @@ const Dashboard = (props) => {
         Setting.showMessage("error", res.msg);
       }
     });
+    DashboardBackend.getDashboardAnalytics(organization).then((res) => {
+      if (res.status === "ok") {
+        setAnalyticsData(res.data);
+      } else {
+        Setting.showMessage("error", res.msg);
+      }
+    });
   }, [props.owner]);
 
   const handleTourChange = () => {
@@ -75,11 +83,19 @@ const Dashboard = (props) => {
     }
 
     setDashboardData(null);
+    setAnalyticsData(null);
 
     const organization = getOrganizationName();
     DashboardBackend.getDashboard(organization).then((res) => {
       if (res.status === "ok") {
         setDashboardData(res.data);
+      } else {
+        Setting.showMessage("error", res.msg);
+      }
+    });
+    DashboardBackend.getDashboardAnalytics(organization).then((res) => {
+      if (res.status === "ok") {
+        setAnalyticsData(res.data);
       } else {
         Setting.showMessage("error", res.msg);
       }
@@ -216,10 +232,78 @@ const Dashboard = (props) => {
     );
   };
 
+  const renderWeeklyLoginChart = () => {
+    const chartDom = document.getElementById("weekly-login-chart");
+    if (!chartDom || !analyticsData) {
+      return;
+    }
+
+    const myChart = echarts.getInstanceByDom(chartDom) || echarts.init(chartDom);
+    const currentDate = new Date();
+    const dateArray = [];
+    for (let i = 6; i >= 0; i--) {
+      const date = new Date(currentDate);
+      date.setDate(date.getDate() - i);
+      const month = date.getMonth() + 1;
+      const day = date.getDate();
+      dateArray.push(`${month}-${day}`);
+    }
+    const option = {
+      title: {text: i18next.t("home:Weekly Login Trend")},
+      tooltip: {trigger: "axis"},
+      xAxis: {type: "category", data: dateArray},
+      yAxis: {type: "value", minInterval: 1},
+      series: [{
+        name: i18next.t("home:Logins"),
+        type: "bar",
+        data: analyticsData.weeklyLoginCounts || [],
+        itemStyle: {color: "#5734d3"},
+      }],
+    };
+    myChart.setOption(option);
+  };
+
+  const renderTopAppsChart = () => {
+    const chartDom = document.getElementById("top-apps-chart");
+    if (!chartDom || !analyticsData || !analyticsData.topApps) {
+      return;
+    }
+
+    const myChart = echarts.getInstanceByDom(chartDom) || echarts.init(chartDom);
+    const appNames = analyticsData.topApps.map(a => a.appName);
+    const appCounts = analyticsData.topApps.map(a => a.count);
+    const option = {
+      title: {text: i18next.t("home:Top 5 Applications")},
+      tooltip: {trigger: "axis"},
+      xAxis: {type: "category", data: appNames, axisLabel: {rotate: 15}},
+      yAxis: {type: "value", minInterval: 1},
+      series: [{
+        name: i18next.t("home:Logins"),
+        type: "bar",
+        data: appCounts,
+        itemStyle: {color: "#52c41a"},
+      }],
+    };
+    myChart.setOption(option);
+  };
+
+  React.useEffect(() => {
+    renderWeeklyLoginChart();
+    renderTopAppsChart();
+  }, [analyticsData]);
+
   return (
     <div style={{display: "flex", justifyContent: "center", flexDirection: "column", alignItems: "center"}}>
       {renderEChart()}
       <div id="echarts-chart" style={{width: "80%", height: "400px", textAlign: "center", marginTop: "20px"}} />
+      <Row gutter={40} style={{width: "80%", marginTop: "20px"}} justify="center">
+        <Col xs={24} md={12}>
+          <div id="weekly-login-chart" style={{width: "100%", height: "300px"}} />
+        </Col>
+        <Col xs={24} md={12}>
+          <div id="top-apps-chart" style={{width: "100%", height: "300px"}} />
+        </Col>
+      </Row>
       <Tour
         open={Setting.isMobile() ? false : isTourVisible}
         onClose={setIsTourToLocal}

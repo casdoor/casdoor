@@ -570,14 +570,17 @@
     "Physical": "物理",
     "Show all": "すべて表示",
     "Virtual": "仮想",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "最初にすべてのサブグループを削除する必要があります。[組織] -\u003e [グループ]ページの左側のグループツリーでサブグループを確認できます"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "最初にすべてのサブグループを削除する必要があります。[組織] -> [グループ]ページの左側のグループツリーでサブグループを確認できます"
   },
   "home": {
+    "Logins": "Logins",
     "New users past 30 days": "過去30日間の新規ユーザー",
     "New users past 7 days": "過去7日間の新規ユーザー",
     "New users today": "今日の新規ユーザー",
     "Past 30 Days": "過去30日間",
-    "Total users": "総ユーザー数"
+    "Top 5 Applications": "Top 5 Applications",
+    "Total users": "総ユーザー数",
+    "Weekly Login Trend": "Weekly Login Trend"
   },
   "invitation": {
     "Code": "コード",

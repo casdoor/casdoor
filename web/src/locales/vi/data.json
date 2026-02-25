@@ -570,14 +570,17 @@
     "Physical": "Vật lý",
     "Show all": "Hiển thị tất cả",
     "Virtual": "Ảo",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "Bạn cần xóa tất cả nhóm con trước. Bạn có thể xem các nhóm con trong cây nhóm bên trái của trang [Tổ chức] -\u003e [Nhóm]"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Bạn cần xóa tất cả nhóm con trước. Bạn có thể xem các nhóm con trong cây nhóm bên trái của trang [Tổ chức] -> [Nhóm]"
   },
   "home": {
+    "Logins": "Logins",
     "New users past 30 days": "Người dùng mới trong 30 ngày qua",
     "New users past 7 days": "Người dùng mới trong 7 ngày qua",
     "New users today": "Người dùng mới hôm nay",
     "Past 30 Days": "30 ngày qua",
-    "Total users": "Tổng người dùng"
+    "Top 5 Applications": "Top 5 Applications",
+    "Total users": "Tổng người dùng",
+    "Weekly Login Trend": "Weekly Login Trend"
   },
   "invitation": {
     "Code": "Mã",

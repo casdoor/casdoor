@@ -570,14 +570,17 @@
     "Physical": "Fiziksel",
     "Show all": "Tümünü göster",
     "Virtual": "Sanal",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "Önce tüm alt grupları silmeniz gerekir. Alt grupları [Organizasyonlar] -\u003e [Gruplar] sayfasının sol grup ağacından görüntüleyebilirsiniz."
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Önce tüm alt grupları silmeniz gerekir. Alt grupları [Organizasyonlar] -> [Gruplar] sayfasının sol grup ağacından görüntüleyebilirsiniz."
   },
   "home": {
+    "Logins": "Logins",
     "New users past 30 days": "Son 30 gündeki yeni kullanıcılar",
     "New users past 7 days": "Son 7 gündeki yeni kullanıcılar",
     "New users today": "Bugünkü yeni kullanıcılar",
     "Past 30 Days": "Son 30 Gün",
-    "Total users": "Toplam kullanıcı"
+    "Top 5 Applications": "Top 5 Applications",
+    "Total users": "Toplam kullanıcı",
+    "Weekly Login Trend": "Weekly Login Trend"
   },
   "invitation": {
     "Code": "Kod",
