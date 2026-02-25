@@ -14,5 +14,7 @@
 
 package certificate
 
-var accessKeyId = ""
-var accessKeySecret = ""
+var (
+	accessKeyId     = ""
+	accessKeySecret = ""
+)

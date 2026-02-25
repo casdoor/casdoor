@@ -44,7 +44,6 @@ func getDomainExpireTime(domainName string) (string, error) {
 		server = "whois.nic.run"
 	} else {
 		server = "grs-whois.hichina.com" // com, net, cc, tv
-		//return "", fmt.Errorf("unsupported suffix for domain: %s", domainName)
 	}
 
 	client := whois.NewClient()
