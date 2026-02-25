@@ -132,7 +132,8 @@ func InitAPI() {
 	web.Router("/api/update-cert", &controllers.ApiController{}, "POST:UpdateCert")
 	web.Router("/api/add-cert", &controllers.ApiController{}, "POST:AddCert")
 	web.Router("/api/delete-cert", &controllers.ApiController{}, "POST:DeleteCert")
-
+	web.Router("/api/update-cert-domain-expire", &controllers.ApiController{}, "POST:UpdateCertDomainExpire")
+	
 	web.Router("/api/get-roles", &controllers.ApiController{}, "GET:GetRoles")
 	web.Router("/api/get-role", &controllers.ApiController{}, "GET:GetRole")
 	web.Router("/api/update-role", &controllers.ApiController{}, "POST:UpdateRole")

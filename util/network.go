@@ -16,7 +16,23 @@ package util
 
 import (
 	"net"
+	"os"
 )
+
+var hostname = ""
+
+func init() {
+	name, err := os.Hostname()
+	if err != nil {
+		panic(err)
+	}
+
+	hostname = name
+}
+
+func GetHostname() string {
+	return hostname
+}
 
 func IsInternetIp(ip string) bool {
 	ipStr, _, err := net.SplitHostPort(ip)

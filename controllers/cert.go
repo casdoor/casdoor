@@ -183,3 +183,38 @@ func (c *ApiController) DeleteCert() {
 	c.Data["json"] = wrapActionResponse(object.DeleteCert(&cert))
 	c.ServeJSON()
 }
+
+// UpdateCertDomainExpire
+// @Title UpdateCertDomainExpire
+// @Tag Cert API
+// @Description delete cert
+// @Param   body    body   object.Cert  true        "The details of the cert"
+// @Success 200 {object} controllers.Response The Response object
+// @router /delete-cert [post]
+func (c *ApiController) UpdateCertDomainExpire() {
+	if _, ok := c.RequireSignedIn(); !ok {
+		return
+	}
+
+	id := c.Ctx.Input.Query("id")
+	cert, err := object.GetCert(id)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	domainExpireTime, err := object.GetDomainExpireTime(cert.Name)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	if domainExpireTime == "" {
+		c.ResponseError("Domain expire time is empty")
+		return
+	}
+	cert.DomainExpireTime = domainExpireTime
+
+	c.Data["json"] = wrapActionResponse(object.UpdateCert(id, cert))
+	c.ServeJSON()
+}
