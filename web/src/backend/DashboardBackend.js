@@ -23,3 +23,13 @@ export function getDashboard(owner) {
     },
   }).then(res => res.json());
 }
+
+export function getDashboardAnalytics(owner, userId = "") {
+  return fetch(`${Setting.ServerUrl}/api/get-dashboard-analytics?owner=${owner}&userId=${userId}`, {
+    method: "GET",
+    credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}
