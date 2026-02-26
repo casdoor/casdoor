@@ -187,10 +187,10 @@ func (c *ApiController) DeleteCert() {
 // UpdateCertDomainExpire
 // @Title UpdateCertDomainExpire
 // @Tag Cert API
-// @Description delete cert
-// @Param   body    body   object.Cert  true        "The details of the cert"
+// @Description update cert domain expire time
+// @Param   id     query   string  true        "The ID of the cert"
 // @Success 200 {object} controllers.Response The Response object
-// @router /delete-cert [post]
+// @router /update-cert-domain-expire [post]
 func (c *ApiController) UpdateCertDomainExpire() {
 	if _, ok := c.RequireSignedIn(); !ok {
 		return

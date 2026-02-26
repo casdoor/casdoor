@@ -281,7 +281,7 @@ func (p *Cert) populateContent() error {
 }
 
 func RenewCert(cert *Cert) (bool, error) {
-	useProxy := true
+	useProxy := false
 	if cert.Provider == "GoDaddy" {
 		useProxy = true
 	}

@@ -97,7 +97,7 @@ func getAcmeClient(email string, privateKey string, devMode bool, useProxy bool)
 		}
 
 		if acmeError.Type != "urn:ietf:params:acme:error:accountDoesNotExist" {
-			panic(acmeError)
+			return nil, err
 		}
 
 		// Failed to get account, so create an account based on the private key.
