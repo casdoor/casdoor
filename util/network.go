@@ -19,21 +19,14 @@ import (
 	"os"
 )
 
-var hostname = ""
-
-func init() {
+func GetHostname() string {
 	name, err := os.Hostname()
 	if err != nil {
 		panic(err)
 	}
 
-	hostname = name
+	return name
 }
-
-func GetHostname() string {
-	return hostname
-}
-
 func IsInternetIp(ip string) bool {
 	ipStr, _, err := net.SplitHostPort(ip)
 	if err != nil {
