@@ -95,7 +95,7 @@ class CertListPage extends BaseListPage {
         if (res.status === "error") {
           Setting.showMessage("error", `Failed to refresh domain expire: ${res.msg}`);
         } else {
-          Setting.showMessage("success", "Domain expire refresh successfully");
+          Setting.showMessage("success", "Domain expire refreshed successfully");
           this.fetch();
         }
       }
