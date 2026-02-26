@@ -88,6 +88,28 @@ class CertListPage extends BaseListPage {
       });
   }
 
+  refreshCert(i) {
+    const cert = this.state.data[i];
+    CertBackend.refreshDomainExpire(cert.owner, cert.name)
+      .then((res) => {
+        if (res.status === "error") {
+          Setting.showMessage("error", `Failed to refresh domain expire: ${res.msg}`);
+        } else {
+          Setting.showMessage("success", "Domain expire refreshed successfully");
+          this.fetch({
+            pagination: {
+              ...this.state.pagination,
+              current: this.state.pagination.current > 1 && this.state.data.length === 1 ? this.state.pagination.current - 1 : this.state.pagination.current,
+            },
+          });
+        }
+      }
+      )
+      .catch(error => {
+        Setting.showMessage("error", `Domain expire failed to refresh: ${error}`);
+      });
+  }
+
   renderTable(certs) {
     const columns = [
       {
@@ -194,6 +216,12 @@ class CertListPage extends BaseListPage {
         render: (text, record, index) => {
           return (
             <div>
+              {
+                record.type === "SSL" ? (
+                  <Button disabled={!Setting.isAdminUser(this.props.account) && (record.owner !== this.props.account.owner)} style={{margin: "10px 10px 10px 0"}} type="default" onClick={() => this.refreshCert(index)}>{i18next.t("general:Refresh")}
+                  </Button>
+                ) : null
+              }
               <Button disabled={!Setting.isAdminUser(this.props.account) && (record.owner !== this.props.account.owner)} style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => this.props.history.push(`/certs/${record.owner}/${record.name}`)}>{i18next.t("general:Edit")}</Button>
               <PopconfirmModal
                 disabled={!Setting.isAdminUser(this.props.account) && (record.owner !== this.props.account.owner)}
