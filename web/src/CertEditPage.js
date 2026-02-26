@@ -305,7 +305,7 @@ class CertEditPage extends React.Component {
                   {i18next.t("cert:Access secret")}:
                 </Col>
                 <Col span={22} >
-                  <Input value={this.state.cert.accessSecret} onChange={e => {
+                  <Input.Password value={this.state.cert.accessSecret} onChange={e => {
                     this.updateCertField("accessSecret", e.target.value);
                   }} />
                 </Col>
