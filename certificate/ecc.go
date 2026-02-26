@@ -42,6 +42,9 @@ func encodeEccKey(privateKey *ecdsa.PrivateKey) string {
 // decodeEccKey Return the entered private key string as a private key object that can be used
 func decodeEccKey(pemEncoded string) *ecdsa.PrivateKey {
 	block, _ := pem.Decode([]byte(pemEncoded))
+	if block == nil {
+		panic("invalid PEM-encoded EC private key")
+	}
 	x509Encoded := block.Bytes
 	privateKey, err := x509.ParseECPrivateKey(x509Encoded)
 	if err != nil {
