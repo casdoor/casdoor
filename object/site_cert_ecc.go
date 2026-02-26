@@ -16,30 +16,11 @@ package object
 
 import (
 	"crypto/ecdsa"
-	"crypto/elliptic"
-	"crypto/rand"
 	"crypto/x509"
 	"encoding/pem"
 	"fmt"
 	"strings"
 )
-
-// generateEccKey generates a public and private key pair.(NIST P-256)
-func generateEccKey() *ecdsa.PrivateKey {
-	privateKey, _ := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
-	return privateKey
-}
-
-// encodeEccKey Return the input private key object as string type private key
-func encodeEccKey(privateKey *ecdsa.PrivateKey) string {
-	x509Encoded, err := x509.MarshalECPrivateKey(privateKey)
-	if err != nil {
-		panic(err)
-	}
-
-	pemEncoded := pem.EncodeToMemory(&pem.Block{Type: "EC PRIVATE KEY", Bytes: x509Encoded})
-	return string(pemEncoded)
-}
 
 // decodeEccKey Return the entered private key string as a private key object that can be used
 func decodeEccKey(pemEncoded string) (*ecdsa.PrivateKey, error) {

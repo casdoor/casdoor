@@ -17,11 +17,7 @@ package certificate
 import (
 	"crypto"
 
-	"github.com/casbin/lego/v4/acme"
-	"github.com/casbin/lego/v4/certcrypto"
-	"github.com/casbin/lego/v4/lego"
 	"github.com/casbin/lego/v4/registration"
-	"github.com/casdoor/casdoor/proxy"
 )
 
 type Account struct {
@@ -45,61 +41,4 @@ func (a *Account) GetPrivateKey() crypto.PrivateKey {
 // GetRegistration returns the server registration.
 func (a *Account) GetRegistration() *registration.Resource {
 	return a.Registration
-}
-
-func getLegoClientAndAccount(email string, privateKey string, devMode bool) (*lego.Client, *Account) {
-	account := &Account{
-		Email: email,
-		key:   decodeEccKey(privateKey),
-	}
-
-	config := lego.NewConfig(account)
-	if devMode {
-		config.CADirURL = lego.LEDirectoryStaging
-	} else {
-		config.CADirURL = lego.LEDirectoryProduction
-	}
-
-	config.Certificate.KeyType = certcrypto.RSA2048
-	config.HTTPClient = proxy.ProxyHttpClient
-
-	client, err := lego.NewClient(config)
-	if err != nil {
-		panic(err)
-	}
-
-	return client, account
-}
-
-// GetAcmeClient Incoming an email ,a privatekey and a Boolean value that controls the opening of the test environment
-// When this function is started for the first time, it will initialize the account-related configuration,
-// After initializing the configuration, It will try to obtain an account based on the private key,
-// if it fails, it will create an account based on the private key.
-// This account will be used during the running of the program
-func GetAcmeClient(email string, privateKey string, devMode bool) *lego.Client {
-	// Create a user. New accounts need an email and private key to start.
-	client, account := getLegoClientAndAccount(email, privateKey, devMode)
-
-	// try to obtain an account based on the private key
-	var err error
-	account.Registration, err = client.Registration.ResolveAccountByKey()
-	if err != nil {
-		acmeError, ok := err.(*acme.ProblemDetails)
-		if !ok {
-			panic(err)
-		}
-
-		if acmeError.Type != "urn:ietf:params:acme:error:accountDoesNotExist" {
-			panic(acmeError)
-		}
-
-		// Failed to get account, so create an account based on the private key.
-		var err error
-		account.Registration, err = client.Registration.Register(registration.RegisterOptions{TermsOfServiceAgreed: true})
-		if err != nil {
-			panic(err)
-		}
-	}
-
-	return client
 }

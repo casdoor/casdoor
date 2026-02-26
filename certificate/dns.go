@@ -20,7 +20,6 @@ import (
 
 	"github.com/casbin/lego/v4/certificate"
 	"github.com/casbin/lego/v4/challenge/dns01"
-	"github.com/casbin/lego/v4/cmd"
 	"github.com/casbin/lego/v4/lego"
 	"github.com/casbin/lego/v4/providers/dns/alidns"
 	"github.com/casbin/lego/v4/providers/dns/godaddy"
@@ -141,11 +140,4 @@ func ObtainCertificateGoDaddy(client *lego.Client, domain string, accessKey stri
 		Timeout:   3,
 	}
 	return getGoDaddyCert(client, conf)
-}
-
-func SaveCert(path, filename string, cert *certificate.Resource) {
-	// Store the certificate file locally
-	certsStorage := cmd.NewCertificatesStorageLib(path, filename, true)
-	certsStorage.CreateRootFolder()
-	certsStorage.SaveResource(cert)
 }
