@@ -113,7 +113,7 @@ func getGoDaddyCert(client *lego.Client, conf GodaddyConf) (string, string, erro
 	}
 	cert, err := client.Certificate.Obtain(request)
 	if err != nil {
-		panic(err)
+		return "", "", err
 	}
 
 	return string(cert.Certificate), string(cert.PrivateKey), nil
