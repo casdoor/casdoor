@@ -210,7 +210,9 @@ func (c *ApiController) UpdateCertDomainExpire() {
 	}
 
 	if domainExpireTime == "" {
-		c.ResponseError("Domain expire time is empty")
+		c.ResponseError("Failed to determine domain expiration time for domain " + cert.Name +
+			". Please verify that the domain is valid, publicly resolvable, and has a retrievable expiration date, " +
+			"or update the domain expiration time manually.")
 		return
 	}
 	cert.DomainExpireTime = domainExpireTime
