@@ -95,8 +95,8 @@ class CertEditPage extends React.Component {
         cert.accessSecret = "";
         cert.certificate = "";
         cert.privateKey = "";
-        cert.expireTime = 0;
-        cert.domainExpireTime = 0;
+        cert.expireTime = "";
+        cert.domainExpireTime = "";
       }
     }
     cert[key] = value;
