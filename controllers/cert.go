@@ -183,3 +183,40 @@ func (c *ApiController) DeleteCert() {
 	c.Data["json"] = wrapActionResponse(object.DeleteCert(&cert))
 	c.ServeJSON()
 }
+
+// UpdateCertDomainExpire
+// @Title UpdateCertDomainExpire
+// @Tag Cert API
+// @Description update cert domain expire time
+// @Param   id     query   string  true        "The ID of the cert"
+// @Success 200 {object} controllers.Response The Response object
+// @router /update-cert-domain-expire [post]
+func (c *ApiController) UpdateCertDomainExpire() {
+	if _, ok := c.RequireSignedIn(); !ok {
+		return
+	}
+
+	id := c.Ctx.Input.Query("id")
+	cert, err := object.GetCert(id)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	domainExpireTime, err := object.GetDomainExpireTime(cert.Name)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	if domainExpireTime == "" {
+		c.ResponseError("Failed to determine domain expiration time for domain " + cert.Name +
+			". Please verify that the domain is valid, publicly resolvable, and has a retrievable expiration date, " +
+			"or update the domain expiration time manually.")
+		return
+	}
+	cert.DomainExpireTime = domainExpireTime
+
+	c.Data["json"] = wrapActionResponse(object.UpdateCert(id, cert))
+	c.ServeJSON()
+}
