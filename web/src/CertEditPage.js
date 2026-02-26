@@ -81,10 +81,19 @@ class CertEditPage extends React.Component {
     value = this.parseCertField(key, value);
 
     const cert = this.state.cert;
-    if (key === "type" && value === "SSL") {
-      cert.cryptoAlgorithm = "RSA";
-      cert.certificate = "";
-      cert.privateKey = "";
+    const previousType = cert.type;
+    if (key === "type") {
+      if (value === "SSL") {
+        cert.cryptoAlgorithm = "RSA";
+        cert.certificate = "";
+        cert.privateKey = "";
+      } else if (previousType === "SSL" && value !== "SSL") {
+        // Clear SSL-specific sensitive fields when leaving SSL type
+        cert.provider = "";
+        cert.account = "";
+        cert.accessKey = "";
+        cert.accessSecret = "";
+      }
     }
     cert[key] = value;
     this.setState({
