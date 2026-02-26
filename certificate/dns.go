@@ -20,6 +20,7 @@ import (
 
 	"github.com/casbin/lego/v4/certificate"
 	"github.com/casbin/lego/v4/challenge/dns01"
+	"github.com/casbin/lego/v4/cmd"
 	"github.com/casbin/lego/v4/lego"
 	"github.com/casbin/lego/v4/providers/dns/alidns"
 	"github.com/casbin/lego/v4/providers/dns/godaddy"
@@ -45,7 +46,7 @@ type GodaddyConf struct {
 
 // getCert Verify domain ownership, then obtain a certificate, and finally store it locally.
 // Need to pass in an AliConf struct, some parameters are required, other parameters can be left blank
-func getAliCert(client *lego.Client, conf AliConf) (string, string) {
+func getAliCert(client *lego.Client, conf AliConf) (string, string, error) {
 	if conf.Timeout <= 0 {
 		conf.Timeout = 3
 	}
@@ -59,14 +60,14 @@ func getAliCert(client *lego.Client, conf AliConf) (string, string) {
 
 	dnsProvider, err := alidns.NewDNSProvider(config)
 	if err != nil {
-		panic(err)
+		return "", "", err
 	}
 
 	// Choose a local DNS service provider to increase the authentication speed
 	servers := []string{"223.5.5.5:53"}
 	err = client.Challenge.SetDNS01Provider(dnsProvider, dns01.CondOption(len(servers) > 0, dns01.AddRecursiveNameservers(dns01.ParseNameservers(servers))), dns01.DisableCompletePropagationRequirement())
 	if err != nil {
-		panic(err)
+		return "", "", err
 	}
 
 	// Obtain the certificate
@@ -76,13 +77,13 @@ func getAliCert(client *lego.Client, conf AliConf) (string, string) {
 	}
 	cert, err := client.Certificate.Obtain(request)
 	if err != nil {
-		panic(err)
+		return "", "", err
 	}
 
-	return string(cert.Certificate), string(cert.PrivateKey)
+	return string(cert.Certificate), string(cert.PrivateKey), nil
 }
 
-func getGoDaddyCert(client *lego.Client, conf GodaddyConf) (string, string) {
+func getGoDaddyCert(client *lego.Client, conf GodaddyConf) (string, string, error) {
 	if conf.Timeout <= 0 {
 		conf.Timeout = 3
 	}
@@ -95,14 +96,14 @@ func getGoDaddyCert(client *lego.Client, conf GodaddyConf) (string, string) {
 
 	dnsProvider, err := godaddy.NewDNSProvider(config)
 	if err != nil {
-		panic(err)
+		return "", "", err
 	}
 
 	// Choose a local DNS service provider to increase the authentication speed
 	servers := []string{"223.5.5.5:53"}
 	err = client.Challenge.SetDNS01Provider(dnsProvider, dns01.CondOption(len(servers) > 0, dns01.AddRecursiveNameservers(dns01.ParseNameservers(servers))), dns01.DisableCompletePropagationRequirement())
 	if err != nil {
-		panic(err)
+		return "", "", err
 	}
 
 	// Obtain the certificate
@@ -115,10 +116,10 @@ func getGoDaddyCert(client *lego.Client, conf GodaddyConf) (string, string) {
 		panic(err)
 	}
 
-	return string(cert.Certificate), string(cert.PrivateKey)
+	return string(cert.Certificate), string(cert.PrivateKey), nil
 }
 
-func ObtainCertificateAli(client *lego.Client, domain string, accessKey string, accessSecret string) (string, string) {
+func ObtainCertificateAli(client *lego.Client, domain string, accessKey string, accessSecret string) (string, string, error) {
 	conf := AliConf{
 		Domains:       []string{fmt.Sprintf("*.%s", domain), domain},
 		AccessKey:     accessKey,
@@ -131,7 +132,7 @@ func ObtainCertificateAli(client *lego.Client, domain string, accessKey string, 
 	return getAliCert(client, conf)
 }
 
-func ObtainCertificateGoDaddy(client *lego.Client, domain string, accessKey string, accessSecret string) (string, string) {
+func ObtainCertificateGoDaddy(client *lego.Client, domain string, accessKey string, accessSecret string) (string, string, error) {
 	conf := GodaddyConf{
 		Domains:   []string{fmt.Sprintf("*.%s", domain), domain},
 		APIKey:    accessKey,
@@ -140,4 +141,11 @@ func ObtainCertificateGoDaddy(client *lego.Client, domain string, accessKey stri
 		Timeout:   3,
 	}
 	return getGoDaddyCert(client, conf)
+}
+
+func SaveCert(path, filename string, cert *certificate.Resource) {
+	// Store the certificate file locally
+	certsStorage := cmd.NewCertificatesStorageLib(path, filename, true)
+	certsStorage.CreateRootFolder()
+	certsStorage.SaveResource(cert)
 }

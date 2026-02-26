@@ -12,23 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//go:build !skipCi
-// +build !skipCi
-
 package certificate
 
-import (
-	"testing"
-
-	"github.com/casdoor/casdoor/util"
-	"github.com/stretchr/testify/assert"
+var (
+	accessKeyId     = ""
+	accessKeySecret = ""
 )
-
-func TestGenerateEccKey(t *testing.T) {
-	eccKey, err := generateEccKey()
-	assert.Nil(t, err)
-	eccKeyStr, err := encodeEccKey(eccKey)
-	assert.Nil(t, err)
-	println(eccKeyStr)
-	util.WriteStringToPath(eccKeyStr, "acme_account.key")
-}

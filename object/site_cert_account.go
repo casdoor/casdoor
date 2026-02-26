@@ -15,47 +15,26 @@
 package object
 
 import (
-	"crypto"
 	"fmt"
 
 	"github.com/casbin/lego/v4/acme"
 	"github.com/casbin/lego/v4/certcrypto"
 	"github.com/casbin/lego/v4/lego"
 	"github.com/casbin/lego/v4/registration"
+	"github.com/casdoor/casdoor/certificate"
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/proxy"
 )
 
-type Account struct {
-	Email        string
-	Registration *registration.Resource
-	key          crypto.PrivateKey
-}
-
-// GetEmail returns the email address for the account.
-func (a *Account) GetEmail() string {
-	return a.Email
-}
-
-// GetPrivateKey returns the private RSA account key.
-func (a *Account) GetPrivateKey() crypto.PrivateKey {
-	return a.key
-}
-
-// GetRegistration returns the server registration.
-func (a *Account) GetRegistration() *registration.Resource {
-	return a.Registration
-}
-
-func getLegoClientAndAccount(email string, privateKey string, devMode bool, useProxy bool) (*lego.Client, *Account, error) {
+func getLegoClientAndAccount(email string, privateKey string, devMode bool, useProxy bool) (*lego.Client, *certificate.Account, error) {
 	eccKey, err := decodeEccKey(privateKey)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	account := &Account{
+	account := &certificate.Account{
 		Email: email,
-		key:   eccKey,
+		Key:   eccKey,
 	}
 
 	config := lego.NewConfig(account)

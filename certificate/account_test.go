@@ -23,6 +23,7 @@ import (
 	"github.com/beego/beego/v2/server/web"
 	"github.com/casdoor/casdoor/proxy"
 	"github.com/casdoor/casdoor/util"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestGetClient(t *testing.T) {
@@ -36,8 +37,10 @@ func TestGetClient(t *testing.T) {
 	eccKey := util.ReadStringFromPath("acme_account.key")
 	println(eccKey)
 
-	client := GetAcmeClient("acme2@casbin.org", eccKey, false)
-	pem, key := ObtainCertificateAli(client, "casbin.com", accessKeyId, accessKeySecret)
+	client, err := GetAcmeClient("acme2@casbin.org", eccKey, false)
+	assert.Nil(t, err)
+	pem, key, err := ObtainCertificateAli(client, "casbin.com", accessKeyId, accessKeySecret)
+	assert.Nil(t, err)
 	println(pem)
 	println()
 	println(key)
