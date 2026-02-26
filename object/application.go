@@ -78,6 +78,7 @@ type Application struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
+	McpConfig   string `xorm:"mediumtext" json:"mcpConfig"`
 
 	DisplayName                  string          `xorm:"varchar(100)" json:"displayName"`
 	Category                     string          `xorm:"varchar(20)" json:"category"`
