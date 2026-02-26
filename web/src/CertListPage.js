@@ -213,7 +213,7 @@ class CertListPage extends BaseListPage {
             <div>
               {
                 record.type === "SSL" ? (
-                  <Button style={{margin: "10px 10px 10px 0"}} type="default" onClick={() => this.refreshCert(index)}>{i18next.t("general:Refresh")}
+                  <Button disabled={!Setting.isAdminUser(this.props.account) && (record.owner !== this.props.account.owner)} style={{margin: "10px 10px 10px 0"}} type="default" onClick={() => this.refreshCert(index)}>{i18next.t("general:Refresh")}
                   </Button>
                 ) : null
               }
