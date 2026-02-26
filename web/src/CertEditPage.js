@@ -88,11 +88,15 @@ class CertEditPage extends React.Component {
         cert.certificate = "";
         cert.privateKey = "";
       } else if (previousType === "SSL" && value !== "SSL") {
-        // Clear SSL-specific sensitive fields when leaving SSL type
+        // Clear SSL-specific sensitive and derived fields when leaving SSL type
         cert.provider = "";
         cert.account = "";
         cert.accessKey = "";
         cert.accessSecret = "";
+        cert.certificate = "";
+        cert.privateKey = "";
+        cert.expireTime = 0;
+        cert.domainExpireTime = 0;
       }
     }
     cert[key] = value;
