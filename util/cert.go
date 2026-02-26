@@ -29,7 +29,7 @@ func GetCertExpireTime(s string) (string, error) {
 	if block == nil {
 		return "", errors.New("getCertExpireTime() error, block should not be nil")
 	} else if block.Type != "CERTIFICATE" {
-		return "", errors.New(fmt.Sprintf("getCertExpireTime() error, block.Type should be \"CERTIFICATE\" instead of %s", block.Type))
+		return "", fmt.Errorf("getCertExpireTime() error, block.Type should be \"CERTIFICATE\" instead of %s", block.Type)
 	}
 
 	certificate, err := x509.ParseCertificate(block.Bytes)
