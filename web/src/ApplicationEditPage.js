@@ -14,6 +14,7 @@
 
 import React from "react";
 import {
+  Alert,
   Button,
   Card,
   Col,
@@ -1681,45 +1682,45 @@ class ApplicationEditPage extends React.Component {
     const app = this.state.application;
     if (!app) {Setting.showMessage("error", "No application to export");return;}
     const minimalApp = {};
-    if (app.name) {minimalApp.name = app.name;}
-    if (app.displayName) {minimalApp.displayName = app.displayName;}
-    if (app.organization) {minimalApp.organization = app.organization;}
-    if (app.logo) {minimalApp.logo = app.logo;}
-    if (app.homepageUrl) {minimalApp.homepageUrl = app.homepageUrl;}
-    if (app.description) {minimalApp.description = app.description;}
-    if (app.enablePassword) {minimalApp.enablePassword = true;}
-    if (app.enableSignUp) {minimalApp.enableSignUp = true;}
-    if (app.disableSignin) {minimalApp.disableSignin = true;}
-    if (app.enableCodeSignin) {minimalApp.enableCodeSignin = true;}
-    if (app.enableWebAuthn) {minimalApp.enableWebAuthn = true;}
+    if (app.name !== undefined) {minimalApp.name = app.name;}
+    if (app.displayName !== undefined) {minimalApp.displayName = app.displayName;}
+    if (app.organization !== undefined) {minimalApp.organization = app.organization;}
+    if (app.logo !== undefined) {minimalApp.logo = app.logo;}
+    if (app.homepageUrl !== undefined) {minimalApp.homepageUrl = app.homepageUrl;}
+    if (app.description !== undefined) {minimalApp.description = app.description;}
+    if (app.enablePassword !== undefined) {minimalApp.enablePassword = app.enablePassword;}
+    if (app.enableSignUp !== undefined) {minimalApp.enableSignUp = app.enableSignUp;}
+    if (app.disableSignin !== undefined) {minimalApp.disableSignin = app.disableSignin;}
+    if (app.enableCodeSignin !== undefined) {minimalApp.enableCodeSignin = app.enableCodeSignin;}
+    if (app.enableWebAuthn !== undefined) {minimalApp.enableWebAuthn = app.enableWebAuthn;}
     if (app.providers && app.providers.length > 0) {
       minimalApp.providers = app.providers.map(p => {
         const item = {name: p.name};
-        if (p.canSignUp !== undefined && p.canSignUp !== false) {item.canSignUp = p.canSignUp;}
-        if (p.canSignIn !== undefined && p.canSignIn !== false) {item.canSignIn = p.canSignIn;}
-        if (p.canUnlink !== undefined && p.canUnlink !== false) {item.canUnlink = p.canUnlink;}
-        if (p.rule) {item.rule = p.rule;}
-        if (p.prompted) {item.prompted = p.prompted;}
-        if (p.signupGroup) {item.signupGroup = p.signupGroup;}
+        if (p.canSignUp !== undefined) {item.canSignUp = p.canSignUp;}
+        if (p.canSignIn !== undefined) {item.canSignIn = p.canSignIn;}
+        if (p.canUnlink !== undefined) {item.canUnlink = p.canUnlink;}
+        if (p.rule !== undefined) {item.rule = p.rule;}
+        if (p.prompted !== undefined) {item.prompted = p.prompted;}
+        if (p.signupGroup !== undefined) {item.signupGroup = p.signupGroup;}
         return item;
       });
     }
-    if (app.themeData) {minimalApp.themeData = app.themeData;}
-    if (app.formCss) {minimalApp.formCss = app.formCss;}
-    if (app.formSideHtml) {minimalApp.formSideHtml = app.formSideHtml;}
-    if (app.headerHtml) {minimalApp.headerHtml = app.headerHtml;}
-    if (app.footerHtml) {minimalApp.footerHtml = app.footerHtml;}
-    if (app.signupHtml) {minimalApp.signupHtml = app.signupHtml;}
-    if (app.signinHtml) {minimalApp.signinHtml = app.signinHtml;}
+    if (app.themeData !== undefined) {minimalApp.themeData = app.themeData;}
+    if (app.formCss !== undefined) {minimalApp.formCss = app.formCss;}
+    if (app.formSideHtml !== undefined) {minimalApp.formSideHtml = app.formSideHtml;}
+    if (app.headerHtml !== undefined) {minimalApp.headerHtml = app.headerHtml;}
+    if (app.footerHtml !== undefined) {minimalApp.footerHtml = app.footerHtml;}
+    if (app.signupHtml !== undefined) {minimalApp.signupHtml = app.signupHtml;}
+    if (app.signinHtml !== undefined) {minimalApp.signinHtml = app.signinHtml;}
     if (app.signinItems && app.signinItems.length > 0) {
       minimalApp.signinItems = app.signinItems.map(item => {
         const newItem = {name: item.name};
         if (item.visible !== undefined) {newItem.visible = item.visible;}
-        if (item.label) {newItem.label = item.label;}
-        if (item.customCss) {newItem.customCss = item.customCss;}
-        if (item.placeholder) {newItem.placeholder = item.placeholder;}
-        if (item.rule) {newItem.rule = item.rule;}
-        if (item.isCustom) {newItem.isCustom = item.isCustom;}
+        if (item.label !== undefined) {newItem.label = item.label;}
+        if (item.customCss !== undefined) {newItem.customCss = item.customCss;}
+        if (item.placeholder !== undefined) {newItem.placeholder = item.placeholder;}
+        if (item.rule !== undefined) {newItem.rule = item.rule;}
+        if (item.isCustom !== undefined) {newItem.isCustom = item.isCustom;}
         return newItem;
       });
     }
@@ -1729,10 +1730,10 @@ class ApplicationEditPage extends React.Component {
         if (item.visible !== undefined) {newItem.visible = item.visible;}
         if (item.required !== undefined) {newItem.required = item.required;}
         if (item.prompted !== undefined) {newItem.prompted = item.prompted;}
-        if (item.label) {newItem.label = item.label;}
-        if (item.customCss) {newItem.customCss = item.customCss;}
-        if (item.placeholder) {newItem.placeholder = item.placeholder;}
-        if (item.rule) {newItem.rule = item.rule;}
+        if (item.label !== undefined) {newItem.label = item.label;}
+        if (item.customCss !== undefined) {newItem.customCss = item.customCss;}
+        if (item.placeholder !== undefined) {newItem.placeholder = item.placeholder;}
+        if (item.rule !== undefined) {newItem.rule = item.rule;}
         return newItem;
       });
     }
@@ -1745,14 +1746,52 @@ class ApplicationEditPage extends React.Component {
   // Import JSON
   importApplicationJson() {
     const jsonStr = this.state.importJson.trim();
-    if (!jsonStr) {Setting.showMessage("error", "Please paste JSON content");return;}
+    if (!jsonStr) {Setting.showMessage("error", i18next.t("general:Please paste JSON content"));return;}
     let appData;
-    try {appData = JSON.parse(jsonStr);} catch (e) {Setting.showMessage("error", "Invalid JSON format");return;}
-    if (!appData.name) {Setting.showMessage("error", "name field is required");return;}
-    if (!appData.organization) {Setting.showMessage("error", "organization field is required");return;}
+    try {
+      appData = JSON.parse(jsonStr);
+      if (typeof appData !== "object" || appData === null || Array.isArray(appData)) {
+        Setting.showMessage("error", i18next.t("general:Invalid JSON format"));
+        return;
+      }
+    } catch (e) {Setting.showMessage("error", `${i18next.t("general:Invalid JSON format")}: ${e.message}`);return;}
+
+    // Basic XSS check for HTML fields
+    const htmlFields = ["headerHtml", "footerHtml", "signupHtml", "signinHtml", "formSideHtml"];
+    for (const field of htmlFields) {
+      if (appData[field] && !this.validateHtmlContent(appData[field])) {
+        Setting.showMessage("error", i18next.t("general:Field contains dangerous content") + ` (${field})`);
+        return;
+      }
+    }
+
     const existingApp = this.state.application;
+
+    // Verify name and organization match current application (prevent hijacking other apps)
+    if (appData.name && existingApp && appData.name !== existingApp.name) {
+      Setting.showMessage("error", `${i18next.t("general:Failed to import")}: ${i18next.t("general:Name")} ${i18next.t("general:does not match")}`);
+      return;
+    }
+    if (appData.organization && existingApp && appData.organization !== existingApp.organization) {
+      Setting.showMessage("error", `${i18next.t("general:Failed to import")}: ${i18next.t("general:Organization")} ${i18next.t("general:does not match")}`);
+      return;
+    }
+
     const mergedApp = existingApp ? Setting.deepCopy(existingApp) : {};
-    Object.keys(appData).forEach(key => {mergedApp[key] = appData[key];});
+
+    // Filter out dangerous keys to prevent prototype pollution
+    const dangerousKeys = ["__proto__", "constructor", "prototype"];
+    Object.keys(appData).forEach(key => {
+      if (dangerousKeys.includes(key)) {
+        return;
+      }
+      // Do not allow import to change application identity fields
+      if (key === "name" || key === "organization") {
+        return;
+      }
+      mergedApp[key] = appData[key];
+    });
+
     ApplicationBackend.updateApplication("admin", this.state.applicationName, mergedApp).then(res => {
       if (res.status === "ok") {
         Setting.showMessage("success", i18next.t("general:Successfully imported"));
@@ -1762,12 +1801,23 @@ class ApplicationEditPage extends React.Component {
     }).catch(err => {Setting.showMessage("error", err.message);});
   }
 
+  // Basic validation to prevent obvious XSS in HTML fields
+  validateHtmlContent(htmlString) {
+    if (!htmlString || typeof htmlString !== "string") {
+      return true;
+    }
+    // Check for dangerous tags and event handlers
+    const dangerous = /<script|<iframe|on\w+\s*=|javascript:/gi;
+    return !dangerous.test(htmlString);
+  }
+
   // Render Import Modal
   renderImportModal() {
     return (
       <Modal title={i18next.t("general:Import JSON")} open={this.state.importModalVisible} onOk={() => this.importApplicationJson()} onCancel={() => this.setState({importModalVisible: false, importJson: ""})} width={700} okText={i18next.t("general:Import")} cancelText={i18next.t("general:Cancel")}>
+        <Alert message={i18next.t("general:Warning")} description={i18next.t("general:Import all application settings")} type="warning" style={{marginBottom: "15px"}} showIcon />
         <p style={{marginBottom: "10px"}}>{i18next.t("general:Paste JSON content here")}</p>
-        <Input.TextArea rows={15} value={this.state.importJson} onChange={(e) => this.setState({importJson: e.target.value})} placeholder={JSON.stringify({name: "app-example", displayName: "Example App", organization: "casbin"}, null, 2)} />
+        <Input.TextArea rows={15} value={this.state.importJson} onChange={(e) => this.setState({importJson: e.target.value})} placeholder={JSON.stringify({displayName: "My Custom App", enablePassword: true, enableSignUp: false, themeData: {colorPrimary: "#1890ff"}}, null, 2)} />
       </Modal>
     );
   }
