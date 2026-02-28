@@ -1680,7 +1680,7 @@ class ApplicationEditPage extends React.Component {
   // Export JSON
   exportApplicationJson() {
     const app = this.state.application;
-    if (!app) {Setting.showMessage("error", "No application to export");return;}
+    if (!app) {Setting.showMessage("error", i18next.t("application:No application to export"));return;}
     const minimalApp = {};
     if (app.name !== undefined) {minimalApp.name = app.name;}
     if (app.displayName !== undefined) {minimalApp.displayName = app.displayName;}
