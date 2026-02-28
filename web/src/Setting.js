@@ -753,8 +753,19 @@ export function getAllPromptedProviderItems(application) {
   return application.providers?.filter(providerItem => isProviderPrompted(providerItem));
 }
 
+const PromptRenderableSignupItemNames = new Set([
+  "Country/Region",
+]);
+
+export function isPromptableSignupItem(signupItem) {
+  if (!signupItem) {
+    return false;
+  }
+  return isSignupItemPrompted(signupItem) && PromptRenderableSignupItemNames.has(signupItem.name);
+}
+
 export function getAllPromptedSignupItems(application) {
-  return application.signupItems?.filter(signupItem => isSignupItemPrompted(signupItem));
+  return application.signupItems?.filter(isPromptableSignupItem);
 }
 
 export function getSignupItem(application, itemName) {
