@@ -1681,59 +1681,83 @@ class ApplicationEditPage extends React.Component {
   exportApplicationJson() {
     const app = this.state.application;
     if (!app) {Setting.showMessage("error", i18next.t("application:No application to export"));return;}
+
+    const copyDefinedFields = (source, target, fields) => {
+      fields.forEach(field => {
+        if (source[field] !== undefined) {
+          target[field] = source[field];
+        }
+      });
+    };
+
     const minimalApp = {};
-    if (app.name !== undefined) {minimalApp.name = app.name;}
-    if (app.displayName !== undefined) {minimalApp.displayName = app.displayName;}
-    if (app.organization !== undefined) {minimalApp.organization = app.organization;}
-    if (app.logo !== undefined) {minimalApp.logo = app.logo;}
-    if (app.homepageUrl !== undefined) {minimalApp.homepageUrl = app.homepageUrl;}
-    if (app.description !== undefined) {minimalApp.description = app.description;}
-    if (app.enablePassword !== undefined) {minimalApp.enablePassword = app.enablePassword;}
-    if (app.enableSignUp !== undefined) {minimalApp.enableSignUp = app.enableSignUp;}
-    if (app.disableSignin !== undefined) {minimalApp.disableSignin = app.disableSignin;}
-    if (app.enableCodeSignin !== undefined) {minimalApp.enableCodeSignin = app.enableCodeSignin;}
-    if (app.enableWebAuthn !== undefined) {minimalApp.enableWebAuthn = app.enableWebAuthn;}
+    const appFields = [
+      "name",
+      "displayName",
+      "organization",
+      "logo",
+      "homepageUrl",
+      "description",
+      "enablePassword",
+      "enableSignUp",
+      "disableSignin",
+      "enableCodeSignin",
+      "enableWebAuthn",
+      "themeData",
+      "formCss",
+      "formSideHtml",
+      "headerHtml",
+      "footerHtml",
+      "signupHtml",
+      "signinHtml"
+    ];
+    copyDefinedFields(app, minimalApp, appFields);
+
     if (app.providers && app.providers.length > 0) {
+      const providerOptionalFields = [
+        "canSignUp",
+        "canSignIn",
+        "canUnlink",
+        "rule",
+        "prompted",
+        "signupGroup"
+      ];
       minimalApp.providers = app.providers.map(p => {
         const item = {name: p.name};
-        if (p.canSignUp !== undefined) {item.canSignUp = p.canSignUp;}
-        if (p.canSignIn !== undefined) {item.canSignIn = p.canSignIn;}
-        if (p.canUnlink !== undefined) {item.canUnlink = p.canUnlink;}
-        if (p.rule !== undefined) {item.rule = p.rule;}
-        if (p.prompted !== undefined) {item.prompted = p.prompted;}
-        if (p.signupGroup !== undefined) {item.signupGroup = p.signupGroup;}
+        copyDefinedFields(p, item, providerOptionalFields);
         return item;
       });
     }
-    if (app.themeData !== undefined) {minimalApp.themeData = app.themeData;}
-    if (app.formCss !== undefined) {minimalApp.formCss = app.formCss;}
-    if (app.formSideHtml !== undefined) {minimalApp.formSideHtml = app.formSideHtml;}
-    if (app.headerHtml !== undefined) {minimalApp.headerHtml = app.headerHtml;}
-    if (app.footerHtml !== undefined) {minimalApp.footerHtml = app.footerHtml;}
-    if (app.signupHtml !== undefined) {minimalApp.signupHtml = app.signupHtml;}
-    if (app.signinHtml !== undefined) {minimalApp.signinHtml = app.signinHtml;}
+
     if (app.signinItems && app.signinItems.length > 0) {
+      const signinItemFields = [
+        "visible",
+        "label",
+        "customCss",
+        "placeholder",
+        "rule",
+        "isCustom"
+      ];
       minimalApp.signinItems = app.signinItems.map(item => {
         const newItem = {name: item.name};
-        if (item.visible !== undefined) {newItem.visible = item.visible;}
-        if (item.label !== undefined) {newItem.label = item.label;}
-        if (item.customCss !== undefined) {newItem.customCss = item.customCss;}
-        if (item.placeholder !== undefined) {newItem.placeholder = item.placeholder;}
-        if (item.rule !== undefined) {newItem.rule = item.rule;}
-        if (item.isCustom !== undefined) {newItem.isCustom = item.isCustom;}
+        copyDefinedFields(item, newItem, signinItemFields);
         return newItem;
       });
     }
+
     if (app.signupItems && app.signupItems.length > 0) {
+      const signupItemFields = [
+        "visible",
+        "required",
+        "prompted",
+        "label",
+        "customCss",
+        "placeholder",
+        "rule"
+      ];
       minimalApp.signupItems = app.signupItems.map(item => {
         const newItem = {name: item.name};
-        if (item.visible !== undefined) {newItem.visible = item.visible;}
-        if (item.required !== undefined) {newItem.required = item.required;}
-        if (item.prompted !== undefined) {newItem.prompted = item.prompted;}
-        if (item.label !== undefined) {newItem.label = item.label;}
-        if (item.customCss !== undefined) {newItem.customCss = item.customCss;}
-        if (item.placeholder !== undefined) {newItem.placeholder = item.placeholder;}
-        if (item.rule !== undefined) {newItem.rule = item.rule;}
+        copyDefinedFields(item, newItem, signupItemFields);
         return newItem;
       });
     }
