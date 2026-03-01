@@ -14,7 +14,7 @@
 
 import React from "react";
 import * as Setting from "../../Setting";
-import {Dropdown} from "antd";
+import {Dropdown, Select} from "antd";
 import "../../App.less";
 import {GlobalOutlined} from "@ant-design/icons";
 
@@ -48,8 +48,44 @@ class LanguageSelect extends React.Component {
     return select;
   }
 
+  renderSelect(languageItems) {
+    const currentLanguage = Setting.getLanguage();
+    const options = languageItems.map(item => ({
+      value: item.key,
+      label: (
+        <span style={{display: "flex", alignItems: "center", gap: "8px"}}>
+          {flagIcon(Setting.Countries.find(c => c.key === item.key)?.country, item.key)}
+          {item.label}
+        </span>
+      ),
+    }));
+
+    return (
+      <Select
+        virtual={false}
+        style={{width: "140px", ...this.props.style}}
+        value={currentLanguage}
+        onChange={(value) => {
+          if (typeof this.state.onClick === "function") {
+            this.state.onClick(value);
+          }
+          Setting.setLanguage(value);
+        }}
+        options={options}
+      />
+    );
+  }
+
   render() {
     const languageItems = this.getOrganizationLanguages(this.state.languages);
+
+    if (this.props.type === "Select") {
+      if (languageItems.length === 0) {
+        return null;
+      }
+      return this.renderSelect(languageItems);
+    }
+
     const onClick = (e) => {
       if (typeof this.state.onClick === "function") {
         this.state.onClick(e.key);

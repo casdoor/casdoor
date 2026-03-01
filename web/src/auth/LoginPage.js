@@ -695,7 +695,7 @@ class LoginPage extends React.Component {
       return (
         <div key={resultItemKey} className="login-languages">
           <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.customCss?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
-          <LanguageSelect languages={application.organizationObj.languages} onClick={key => {this.setState({userLang: key});}} />
+          <LanguageSelect languages={application.organizationObj.languages} type={signinItem.rule === "Select" ? "Select" : undefined} onClick={key => {this.setState({userLang: key});}} />
         </div>
       );
     } else if (signinItem.name === "Signin methods") {
