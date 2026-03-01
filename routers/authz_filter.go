@@ -44,6 +44,12 @@ type ObjectWithOrg struct {
 }
 
 func getUsername(ctx *context.Context) (username string) {
+	if ctxUser := ctx.Input.GetData("username"); ctxUser != nil {
+		if u, ok := ctxUser.(string); ok && u != "" {
+			return u
+		}
+	}
+
 	username, ok := ctx.Input.Session("username").(string)
 	if !ok || username == "" {
 		username, _ = getUsernameByClientIdSecret(ctx)

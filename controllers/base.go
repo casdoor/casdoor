@@ -184,6 +184,16 @@ func (c *ApiController) ClearTokenSession() {
 }
 
 func (c *ApiController) GetSessionOidc() (string, string) {
+	// Check context data first (set by AutoSigninFilter for API-based auth)
+	if ctxScope := c.Ctx.Input.GetData("scope"); ctxScope != nil {
+		scope, _ := ctxScope.(string)
+		aud := ""
+		if ctxAud := c.Ctx.Input.GetData("aud"); ctxAud != nil {
+			aud, _ = ctxAud.(string)
+		}
+		return scope, aud
+	}
+
 	sessionData := c.GetSessionData()
 	if sessionData != nil &&
 		sessionData.ExpireTime != 0 &&

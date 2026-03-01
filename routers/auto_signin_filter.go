@@ -81,8 +81,8 @@ func AutoSigninFilter(ctx *context.Context) {
 			return
 		}
 
-		setSessionUser(ctx, userId)
-		setSessionOidc(ctx, token.Scope, application.ClientId)
+		setContextUser(ctx, userId)
+		setContextOidc(ctx, token.Scope, application.ClientId)
 		return
 	}
 
@@ -94,7 +94,7 @@ func AutoSigninFilter(ctx *context.Context) {
 			responseError(ctx, err.Error())
 		}
 
-		setSessionUser(ctx, userId)
+		setContextUser(ctx, userId)
 	}
 
 	// "/page?clientId=123&clientSecret=456"
@@ -104,7 +104,7 @@ func AutoSigninFilter(ctx *context.Context) {
 		return
 	}
 	if userId != "" {
-		setSessionUser(ctx, userId)
+		setContextUser(ctx, userId)
 		return
 	}
 
@@ -124,6 +124,6 @@ func AutoSigninFilter(ctx *context.Context) {
 			return
 		}
 
-		setSessionUser(ctx, userId)
+		setContextUser(ctx, userId)
 	}
 }

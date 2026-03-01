@@ -154,6 +154,12 @@ func getUsernameByKeys(ctx *context.Context) (string, error) {
 }
 
 func getSessionUser(ctx *context.Context) string {
+	if ctxUser := ctx.Input.GetData("username"); ctxUser != nil {
+		if username, ok := ctxUser.(string); ok {
+			return username
+		}
+	}
+
 	user := ctx.Input.CruSession.Get(stdcontext.Background(), "username")
 	if user == nil {
 		return ""
@@ -170,6 +176,15 @@ func setSessionUser(ctx *context.Context, user string) {
 
 	// https://github.com/beego/beego/issues/3445#issuecomment-455411915
 	ctx.Input.CruSession.SessionRelease(stdcontext.Background(), ctx.ResponseWriter)
+}
+
+func setContextUser(ctx *context.Context, user string) {
+	ctx.Input.SetData("username", user)
+}
+
+func setContextOidc(ctx *context.Context, scope string, aud string) {
+	ctx.Input.SetData("scope", scope)
+	ctx.Input.SetData("aud", aud)
 }
 
 func setSessionExpire(ctx *context.Context, ExpireTime int64) {
