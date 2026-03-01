@@ -1792,13 +1792,16 @@ class ApplicationEditPage extends React.Component {
       mergedApp[key] = appData[key];
     });
 
-    ApplicationBackend.updateApplication("admin", this.state.applicationName, mergedApp).then(res => {
-      if (res.status === "ok") {
-        Setting.showMessage("success", i18next.t("general:Successfully imported"));
-        this.setState({importModalVisible: false, importJson: "", application: mergedApp});
-        this.getApplication();
-      } else {Setting.showMessage("error", res.msg);}
-    }).catch(err => {Setting.showMessage("error", err.message);});
+    this.setState({
+      application: mergedApp,
+      importModalVisible: false,
+      importJson: "",
+    }, () => {
+      // Reuse the existing save pipeline (normalization/validation + updateApplication)
+      if (typeof this.submitApplicationEdit === "function") {
+        this.submitApplicationEdit();
+      }
+    });
   }
 
   // Basic validation to prevent obvious XSS in HTML fields
