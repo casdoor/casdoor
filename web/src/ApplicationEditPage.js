@@ -1499,8 +1499,8 @@ class ApplicationEditPage extends React.Component {
           <Button onClick={() => this.submitApplicationEdit(false)}>{i18next.t("general:Save")}</Button>
           <Button style={{marginLeft: "20px"}} type="primary" onClick={() => this.submitApplicationEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
           {this.state.mode === "add" ? <Button style={{marginLeft: "20px"}} onClick={() => this.deleteApplication()}>{i18next.t("general:Cancel")}</Button> : null}
-          <Button style={{marginLeft: "20px"}} icon={<ExportOutlined />} onClick={() => this.exportApplicationJson()}>{i18next.t("general:Export JSON")}</Button>
-          <Button style={{marginLeft: "10px"}} icon={<ImportOutlined />} onClick={() => this.setState({importModalVisible: true})}>{i18next.t("general:Import JSON")}</Button>
+          <Button style={{marginLeft: "20px"}} icon={<ExportOutlined />} onClick={() => this.exportApplicationJson()} data-cy="export-json-button">{i18next.t("general:Export JSON")}</Button>
+          <Button style={{marginLeft: "10px"}} icon={<ImportOutlined />} onClick={() => this.setState({importModalVisible: true})} data-cy="import-json-button">{i18next.t("general:Import JSON")}</Button>
         </div>
       } style={{margin: (Setting.isMobile()) ? "5px" : {}, height: "calc(100vh - 145px - 48px)", overflow: "hidden"}}
       styles={{body: {height: "100%"}}} type="inner">
