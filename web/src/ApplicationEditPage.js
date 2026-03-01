@@ -1709,7 +1709,7 @@ class ApplicationEditPage extends React.Component {
       "headerHtml",
       "footerHtml",
       "signupHtml",
-      "signinHtml"
+      "signinHtml",
     ];
     copyDefinedFields(app, minimalApp, appFields);
 
@@ -1720,7 +1720,7 @@ class ApplicationEditPage extends React.Component {
         "canUnlink",
         "rule",
         "prompted",
-        "signupGroup"
+        "signupGroup",
       ];
       minimalApp.providers = app.providers.map(p => {
         const item = {name: p.name};
@@ -1736,7 +1736,7 @@ class ApplicationEditPage extends React.Component {
         "customCss",
         "placeholder",
         "rule",
-        "isCustom"
+        "isCustom",
       ];
       minimalApp.signinItems = app.signinItems.map(item => {
         const newItem = {name: item.name};
@@ -1753,7 +1753,7 @@ class ApplicationEditPage extends React.Component {
         "label",
         "customCss",
         "placeholder",
-        "rule"
+        "rule",
       ];
       minimalApp.signupItems = app.signupItems.map(item => {
         const newItem = {name: item.name};
@@ -1779,15 +1779,6 @@ class ApplicationEditPage extends React.Component {
         return;
       }
     } catch (e) {Setting.showMessage("error", `${i18next.t("general:Invalid JSON format")}: ${e.message}`);return;}
-
-    // Basic XSS check for HTML fields
-    const htmlFields = ["headerHtml", "footerHtml", "signupHtml", "signinHtml", "formSideHtml"];
-    for (const field of htmlFields) {
-      if (appData[field] && !this.validateHtmlContent(appData[field])) {
-        Setting.showMessage("error", i18next.t("general:Field contains dangerous content") + ` (${field})`);
-        return;
-      }
-    }
 
     const existingApp = this.state.application;
 
@@ -1826,16 +1817,6 @@ class ApplicationEditPage extends React.Component {
         this.submitApplicationEdit();
       }
     });
-  }
-
-  // Basic validation to prevent obvious XSS in HTML fields
-  validateHtmlContent(htmlString) {
-    if (!htmlString || typeof htmlString !== "string") {
-      return true;
-    }
-    // Check for dangerous tags and event handlers
-    const dangerous = /<script|<iframe|on\w+\s*=|javascript:/gi;
-    return !dangerous.test(htmlString);
   }
 
   // Render Import Modal
