@@ -29,6 +29,7 @@ import (
 	"github.com/casdoor/casdoor/proxy"
 	"github.com/casdoor/casdoor/radius"
 	"github.com/casdoor/casdoor/routers"
+	"github.com/casdoor/casdoor/service"
 	"github.com/casdoor/casdoor/util"
 )
 
@@ -125,6 +126,8 @@ func main() {
 	go ldap.StartLdapServer()
 	go radius.StartRadiusServer()
 	go object.ClearThroughputPerSecond()
+
+	service.Start()
 
 	web.Run(fmt.Sprintf(":%v", port))
 }

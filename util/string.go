@@ -20,6 +20,7 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
+	"math/big"
 	"math/rand"
 	"os"
 	"path/filepath"
@@ -392,4 +393,38 @@ func StringToInterfaceArray2d(arrays [][]string) [][]interface{} {
 		interfaceArrays = append(interfaceArrays, interfaceArray)
 	}
 	return interfaceArrays
+}
+
+func generateRandomString(length int) (string, error) {
+	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+	b := make([]byte, length)
+	for i := range b {
+		var c byte
+		index := rand.Intn(len(charset))
+		c = charset[index]
+		b[i] = c
+	}
+	return string(b), nil
+}
+
+func GenerateTwoUniqueRandomStrings() (string, string, error) {
+	len1 := 16 + int(big.NewInt(17).Int64())
+	len2 := 16 + int(big.NewInt(17).Int64())
+
+	str1, err := generateRandomString(len1)
+	if err != nil {
+		return "", "", err
+	}
+	str2, err := generateRandomString(len2)
+	if err != nil {
+		return "", "", err
+	}
+
+	for str1 == str2 {
+		str2, err = generateRandomString(len2)
+		if err != nil {
+			return "", "", err
+		}
+	}
+	return str1, str2, nil
 }

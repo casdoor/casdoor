@@ -15,8 +15,12 @@
 package util
 
 import (
+	"fmt"
 	"net"
+	"net/http"
 	"os"
+	"strings"
+	"time"
 )
 
 func GetHostname() string {
@@ -53,4 +57,56 @@ func IsHostIntranet(ip string) bool {
 	}
 
 	return parsedIP.IsPrivate() || parsedIP.IsLoopback() || parsedIP.IsLinkLocalUnicast() || parsedIP.IsLinkLocalMulticast()
+}
+
+func ResolveDomainToIp(domain string) string {
+	ips, err := net.LookupIP(domain)
+	if err != nil {
+		if strings.Contains(err.Error(), "no such host") {
+			return "(empty)"
+		}
+
+		fmt.Printf("resolveDomainToIp() error: %s\n", err.Error())
+		return err.Error()
+	}
+
+	for _, ip := range ips {
+		if ipv4 := ip.To4(); ipv4 != nil {
+			return ipv4.String()
+		}
+	}
+	return "(empty)"
+}
+
+func PingUrl(url string) (bool, string) {
+	client := http.Client{
+		Timeout: 5 * time.Second,
+	}
+	resp, err := client.Get(url)
+	if err != nil {
+		return false, err.Error()
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode >= 200 && resp.StatusCode <= 299 {
+		return true, ""
+	}
+	return false, fmt.Sprintf("Status: %s", resp.Status)
+}
+
+func IsIntranetIp(ip string) bool {
+	ipStr, _, err := net.SplitHostPort(ip)
+	if err != nil {
+		ipStr = ip
+	}
+
+	parsedIP := net.ParseIP(ipStr)
+	if parsedIP == nil {
+		return false
+	}
+
+	return parsedIP.IsPrivate() ||
+		parsedIP.IsLoopback() ||
+		parsedIP.IsLinkLocalUnicast() ||
+		parsedIP.IsLinkLocalMulticast()
 }
