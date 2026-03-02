@@ -27,7 +27,6 @@ func GetHostname() string {
 
 	return name
 }
-
 func IsInternetIp(ip string) bool {
 	ipStr, _, err := net.SplitHostPort(ip)
 	if err != nil {

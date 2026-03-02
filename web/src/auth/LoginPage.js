@@ -538,6 +538,7 @@ class LoginPage extends React.Component {
               if (res.data3) {
                 sessionStorage.setItem("signinUrl", window.location.pathname + window.location.search);
                 Setting.goToLinkSoft(this, "/account");
+                return;
               }
               Setting.showMessage("success", i18next.t("application:Logged in successfully"));
               this.props.onLoginSuccess();
@@ -552,6 +553,7 @@ class LoginPage extends React.Component {
               if (res.data3) {
                 sessionStorage.setItem("signinUrl", window.location.pathname + window.location.search);
                 Setting.goToLinkSoft(this, "/account");
+                return;
               }
               const amendatoryResponseType = responseType === "token" ? "access_token" : responseType;
               const accessToken = res.data;
@@ -574,6 +576,7 @@ class LoginPage extends React.Component {
               if (res.data3) {
                 sessionStorage.setItem("signinUrl", window.location.pathname + window.location.search);
                 Setting.goToLinkSoft(this, "/account");
+                return;
               }
               if (res.data2.method === "POST") {
                 this.setState({
