@@ -183,13 +183,6 @@ func handleRequest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if site.Node == "" {
-		site.Node = util.GetHostname()
-		_, err := object.UpdateSiteNoRefresh(site.GetId(), site)
-		responseError(w, "CasWAF error: UpdateSiteNoRefresh() error: %v", err)
-		return
-	}
-
 	if strings.HasPrefix(r.RequestURI, "/.well-known/acme-challenge/") {
 		challengeMap := site.GetChallengeMap()
 		for token, keyAuth := range challengeMap {
