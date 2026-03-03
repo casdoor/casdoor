@@ -15,8 +15,10 @@
 package object
 
 import (
+	"strconv"
 	"strings"
 
+	"github.com/casdoor/casdoor/conf"
 	sender "github.com/casdoor/go-sms-sender"
 )
 
@@ -61,6 +63,13 @@ func SendSms(provider *Provider, content string, phoneNumbers ...string) error {
 		params["0"] = content
 	} else {
 		params["code"] = content
+		if provider.Type == "Alibaba Cloud PNVS SMS" {
+			timeoutInMinutes, err := conf.GetConfigInt64("verificationCodeTimeout")
+			if err != nil || timeoutInMinutes <= 0 {
+				timeoutInMinutes = 10
+			}
+			params["min"] = strconv.FormatInt(timeoutInMinutes, 10)
+		}
 	}
 
 	err = client.SendMessage(params, phoneNumbers...)
