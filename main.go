@@ -74,6 +74,9 @@ func main() {
 	object.InitCasvisorConfig()
 	object.InitCleanupTokens()
 
+	object.InitSiteMap()
+	object.InitRuleMap()
+
 	util.SafeGoroutine(func() { object.RunSyncUsersJob() })
 	util.SafeGoroutine(func() { controllers.InitCLIDownloader() })
 
