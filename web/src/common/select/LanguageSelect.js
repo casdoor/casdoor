@@ -50,11 +50,14 @@ class LanguageSelect extends React.Component {
 
   renderSelect(languageItems) {
     const currentLanguage = Setting.getLanguage();
+    const validKeys = languageItems.map(item => item.key);
+    const selectedValue = validKeys.includes(currentLanguage) ? currentLanguage : validKeys[0];
+
     const options = languageItems.map(item => ({
       value: item.key,
       label: (
         <span style={{display: "flex", alignItems: "center", gap: "8px"}}>
-          {flagIcon(Setting.Countries.find(c => c.key === item.key)?.country, item.key)}
+          {item.icon}
           {item.label}
         </span>
       ),
@@ -64,7 +67,7 @@ class LanguageSelect extends React.Component {
       <Select
         virtual={false}
         style={{width: "140px", ...this.props.style}}
-        value={currentLanguage}
+        value={selectedValue}
         onChange={(value) => {
           if (typeof this.state.onClick === "function") {
             this.state.onClick(value);

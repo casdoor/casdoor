@@ -52,7 +52,6 @@
     "Disable SAML attributes - Tooltip": "是否禁用SAML响应中的属性",
     "Disable signin": "禁止登录",
     "Disable signin - Tooltip": "禁止用户进行登录操作",
-    "Dropdown": "下拉菜单",
     "Dynamic": "动态开启",
     "Edit Application": "编辑应用",
     "Enable Email linking": "自动关联邮箱相同的账号",

@@ -271,7 +271,7 @@ class SigninTable extends React.Component {
           }
           if (record.name === "Languages") {
             options = [
-              {id: "None", name: i18next.t("application:Dropdown")},
+              {id: "Dropdown", name: i18next.t("general:Default")},
               {id: "Select", name: i18next.t("application:Select")},
             ];
           }
