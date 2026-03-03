@@ -22,6 +22,11 @@ import (
 	sender "github.com/casdoor/go-sms-sender"
 )
 
+const (
+	AlibabaPNVSSMS                     = "Alibaba Cloud PNVS SMS"
+	defaultVerificationCodeTimeoutMins = 10
+)
+
 func getSmsClient(provider *Provider) (sender.SmsClient, error) {
 	var client sender.SmsClient
 	var err error
@@ -30,7 +35,7 @@ func getSmsClient(provider *Provider) (sender.SmsClient, error) {
 		client, err = sender.NewSmsClient(provider.Type, provider.ClientId, provider.ClientSecret, provider.SignName, provider.TemplateCode, provider.ProviderUrl, provider.AppId)
 	} else if provider.Type == "Custom HTTP SMS" {
 		client, err = newHttpSmsClient(provider.Endpoint, provider.Method, provider.Title, provider.TemplateCode, provider.HttpHeaders, provider.UserMapping, provider.IssuerUrl, provider.EnableProxy)
-	} else if provider.Type == "Alibaba Cloud PNVS SMS" {
+	} else if provider.Type == AlibabaPNVSSMS {
 		client, err = newPnvsSmsClient(provider.ClientId, provider.ClientSecret, provider.SignName, provider.TemplateCode, provider.RegionId)
 	} else {
 		client, err = sender.NewSmsClient(provider.Type, provider.ClientId, provider.ClientSecret, provider.SignName, provider.TemplateCode, provider.AppId)
@@ -52,7 +57,7 @@ func SendSms(provider *Provider, content string, phoneNumbers ...string) error {
 		if provider.AppId != "" {
 			phoneNumbers = append([]string{provider.AppId}, phoneNumbers...)
 		}
-	} else if provider.Type == sender.Aliyun || provider.Type == "Alibaba Cloud PNVS SMS" {
+	} else if provider.Type == sender.Aliyun || provider.Type == AlibabaPNVSSMS {
 		for i, number := range phoneNumbers {
 			phoneNumbers[i] = strings.TrimPrefix(number, "+86")
 		}
@@ -63,10 +68,10 @@ func SendSms(provider *Provider, content string, phoneNumbers ...string) error {
 		params["0"] = content
 	} else {
 		params["code"] = content
-		if provider.Type == "Alibaba Cloud PNVS SMS" {
+		if provider.Type == AlibabaPNVSSMS {
 			timeoutInMinutes, err := conf.GetConfigInt64("verificationCodeTimeout")
 			if err != nil || timeoutInMinutes <= 0 {
-				timeoutInMinutes = 10
+				timeoutInMinutes = defaultVerificationCodeTimeoutMins
 			}
 			params["min"] = strconv.FormatInt(timeoutInMinutes, 10)
 		}
