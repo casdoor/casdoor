@@ -309,16 +309,6 @@ class ProductEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("product:Return URL"), i18next.t("product:Return URL - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <Input prefix={<LinkOutlined />} value={this.state.product.returnUrl} disabled={isViewMode} onChange={e => {
-              this.updateProductField("returnUrl", e.target.value);
-            }} />
-          </Col>
-        </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("product:Success URL"), i18next.t("product:Success URL - Tooltip"))} :
           </Col>
           <Col span={22} >
