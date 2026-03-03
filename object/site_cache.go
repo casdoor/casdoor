@@ -17,13 +17,15 @@ package object
 import (
 	"fmt"
 	"strings"
-	
+
 	"github.com/casdoor/casdoor/util"
 )
 
-var siteMap = map[string]*Site{}
-var certMap = map[string]*Cert{}
-var healthCheckNeededDomains []string
+var (
+	siteMap                  = map[string]*Site{}
+	certMap                  = map[string]*Cert{}
+	healthCheckNeededDomains []string
+)
 
 func InitSiteMap() {
 	err := refreshSiteMap()

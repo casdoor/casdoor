@@ -39,6 +39,7 @@ class SiteEditPage extends React.Component {
       site: null,
       certs: null,
       applications: null,
+      organizations: [],
     };
   }
 

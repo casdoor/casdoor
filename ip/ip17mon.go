@@ -160,7 +160,6 @@ func (loc *Locator) init(data []byte) {
 }
 
 func newLocationInfo(str []byte) *LocationInfo {
-
 	var info *LocationInfo
 
 	fields := bytes.Split(str, []byte("\t"))
