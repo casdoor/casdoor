@@ -1016,7 +1016,32 @@ func replaceAttributeValue(user *User, value string) []string {
 	valueList = replaceAttributeValues("$user.id", user.Id, valueList)
 	valueList = replaceAttributeValues("$user.phone", user.Phone, valueList)
 
+	// If no template substitution occurred, try to resolve value as a user field JSON tag name
+	if len(valueList) == 1 && valueList[0] == value {
+		if fieldValue, found := getUserStringFieldByJsonTag(user, value); found {
+			return []string{fieldValue}
+		}
+	}
+
 	return valueList
+}
+
+// getUserStringFieldByJsonTag looks up a string field on the User struct by its JSON tag name.
+// Returns the field value and true if a matching exported string field is found, or ("", false) otherwise.
+func getUserStringFieldByJsonTag(user *User, jsonTag string) (string, bool) {
+	userType := reflect.TypeOf(*user)
+	userValue := reflect.ValueOf(*user)
+	for i := 0; i < userType.NumField(); i++ {
+		field := userType.Field(i)
+		if !field.IsExported() {
+			continue
+		}
+		tag := strings.Split(field.Tag.Get("json"), ",")[0]
+		if tag == jsonTag && userValue.Field(i).Kind() == reflect.String {
+			return userValue.Field(i).String(), true
+		}
+	}
+	return "", false
 }
 
 func replaceAttributeValues(val string, replaceVal string, values []string) []string {
