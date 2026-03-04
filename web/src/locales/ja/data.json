@@ -168,7 +168,8 @@
     "Use Email as NameID": "メールアドレスをNameIDとして使用",
     "Use Email as NameID - Tooltip": "メールアドレスをNameIDとして使用 - ツールチップ",
     "Vertical": "垂直",
-    "You are unexpected to see this prompt page": "このプロンプトページを見ることは予期せぬことである"
+    "You are unexpected to see this prompt page": "このプロンプトページを見ることは予期せぬことである",
+    "e.g. {NameID}, $user.name, $user.email": "例: {NameID}, $user.name, $user.email"
   },
   "cert": {
     "Bit size": "ビットサイズ",
@@ -570,7 +571,7 @@
     "Physical": "物理",
     "Show all": "すべて表示",
     "Virtual": "仮想",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "最初にすべてのサブグループを削除する必要があります。[組織] -\u003e [グループ]ページの左側のグループツリーでサブグループを確認できます"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "最初にすべてのサブグループを削除する必要があります。[組織] -> [グループ]ページの左側のグループツリーでサブグループを確認できます"
   },
   "home": {
     "New users past 30 days": "過去30日間の新規ユーザー",

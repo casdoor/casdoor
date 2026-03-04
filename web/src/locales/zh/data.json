@@ -168,7 +168,8 @@
     "Use Email as NameID": "使用邮箱作为NameID",
     "Use Email as NameID - Tooltip": "使用邮箱作为NameID",
     "Vertical": "垂直",
-    "You are unexpected to see this prompt page": "错误：该提醒页面不应出现"
+    "You are unexpected to see this prompt page": "错误：该提醒页面不应出现",
+    "e.g. {NameID}, $user.name, $user.email": "例如 {NameID}, $user.name, $user.email"
   },
   "cert": {
     "Bit size": "位大小",
@@ -570,7 +571,7 @@
     "Physical": "实体组",
     "Show all": "显示全部",
     "Virtual": "虚拟组",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "您需要先删除所有子组。您可以在 [组织] -\u003e [群组] 页面左侧的群组树中查看子组"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "您需要先删除所有子组。您可以在 [组织] -> [群组] 页面左侧的群组树中查看子组"
   },
   "home": {
     "New users past 30 days": "过去 30 天新增的用户",

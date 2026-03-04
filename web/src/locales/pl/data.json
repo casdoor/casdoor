@@ -168,7 +168,8 @@
     "Use Email as NameID": "Użyj e-maila jako NameID",
     "Use Email as NameID - Tooltip": "Użyj e-maila jako NameID - Podpowiedź",
     "Vertical": "Pionowy",
-    "You are unexpected to see this prompt page": "Nieoczekiwanie widzisz tę stronę monitu"
+    "You are unexpected to see this prompt page": "Nieoczekiwanie widzisz tę stronę monitu",
+    "e.g. {NameID}, $user.name, $user.email": "np. {NameID}, $user.name, $user.email"
   },
   "cert": {
     "Bit size": "Rozmiar bitów",
@@ -570,7 +571,7 @@
     "Physical": "Fizyczna",
     "Show all": "Pokaż wszystko",
     "Virtual": "Wirtualna",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "Musisz najpierw usunąć wszystkie podgrupy. Możesz przeglądać podgrupy w lewym drzewie grup na stronie [Organizacje] -\u003e [Grupy]"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Musisz najpierw usunąć wszystkie podgrupy. Możesz przeglądać podgrupy w lewym drzewie grup na stronie [Organizacje] -> [Grupy]"
   },
   "home": {
     "New users past 30 days": "Nowi użytkownicy w ciągu ostatnich 30 dni",

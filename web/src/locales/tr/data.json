@@ -168,7 +168,8 @@
     "Use Email as NameID": "NameID olarak E-posta kullan",
     "Use Email as NameID - Tooltip": "NameID olarak E-posta kullanın - Araç ipucu",
     "Vertical": "Dikey",
-    "You are unexpected to see this prompt page": "Bu uyarı sayfasını görmeye beklemiyordunuz"
+    "You are unexpected to see this prompt page": "Bu uyarı sayfasını görmeye beklemiyordunuz",
+    "e.g. {NameID}, $user.name, $user.email": "örn. {NameID}, $user.name, $user.email"
   },
   "cert": {
     "Bit size": "Bit boyutu",
@@ -570,7 +571,7 @@
     "Physical": "Fiziksel",
     "Show all": "Tümünü göster",
     "Virtual": "Sanal",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "Önce tüm alt grupları silmeniz gerekir. Alt grupları [Organizasyonlar] -\u003e [Gruplar] sayfasının sol grup ağacından görüntüleyebilirsiniz."
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Önce tüm alt grupları silmeniz gerekir. Alt grupları [Organizasyonlar] -> [Gruplar] sayfasının sol grup ağacından görüntüleyebilirsiniz."
   },
   "home": {
     "New users past 30 days": "Son 30 gündeki yeni kullanıcılar",

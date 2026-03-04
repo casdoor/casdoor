@@ -168,7 +168,8 @@
     "Use Email as NameID": "Використовувати Email як NameID",
     "Use Email as NameID - Tooltip": "Використовувати Email як NameID - підказка",
     "Vertical": "Вертикальний",
-    "You are unexpected to see this prompt page": "Ви неочікувано побачите цю сторінку запиту"
+    "You are unexpected to see this prompt page": "Ви неочікувано побачите цю сторінку запиту",
+    "e.g. {NameID}, $user.name, $user.email": "напр. {NameID}, $user.name, $user.email"
   },
   "cert": {
     "Bit size": "Розрядність",
@@ -570,7 +571,7 @@
     "Physical": "фізичний",
     "Show all": "Покажи все",
     "Virtual": "Віртуальний",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "Спочатку потрібно видалити всі підгрупи. Підгрупи можна переглянути у лівому дереві груп на сторінці [Організації] -\u003e [Групи]"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Спочатку потрібно видалити всі підгрупи. Підгрупи можна переглянути у лівому дереві груп на сторінці [Організації] -> [Групи]"
   },
   "home": {
     "New users past 30 days": "Нові користувачі за останні 30 днів",

@@ -132,7 +132,9 @@ func NewSamlResponse(application *Application, user *User, host string, certific
 			role.CreateAttr("Name", item.Name)
 			role.CreateAttr("NameFormat", item.NameFormat)
 
-			valueList := replaceAttributeValue(user, item.Value)
+			itemValue := strings.ReplaceAll(item.Value, "{{NameID}}", nameIDValue)
+			itemValue = strings.ReplaceAll(itemValue, "{NameID}", nameIDValue)
+			valueList := replaceAttributeValue(user, itemValue)
 			for _, value := range valueList {
 				av := role.CreateElement("saml:AttributeValue")
 				av.CreateAttr("xsi:type", "xs:string").Element().SetText(value)

@@ -168,7 +168,8 @@
     "Use Email as NameID": "Usar e-mail como NameID",
     "Use Email as NameID - Tooltip": "Dica: usar e-mail como NameID",
     "Vertical": "Vertical",
-    "You are unexpected to see this prompt page": "Você não deveria ver esta página de prompt"
+    "You are unexpected to see this prompt page": "Você não deveria ver esta página de prompt",
+    "e.g. {NameID}, $user.name, $user.email": "p.ex. {NameID}, $user.name, $user.email"
   },
   "cert": {
     "Bit size": "Tamanho do bit",
@@ -570,7 +571,7 @@
     "Physical": "Físico",
     "Show all": "Mostrar todos",
     "Virtual": "Virtual",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "Você precisa excluir todos os subgrupos primeiro. Você pode visualizar os subgrupos na árvore de grupos à esquerda na página [Organizações] -\u003e [Grupos]"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Você precisa excluir todos os subgrupos primeiro. Você pode visualizar os subgrupos na árvore de grupos à esquerda na página [Organizações] -> [Grupos]"
   },
   "home": {
     "New users past 30 days": "Novos usuários nos últimos 30 dias",
