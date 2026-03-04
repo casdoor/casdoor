@@ -780,6 +780,26 @@ func (c *ApiController) Login() {
 				c.ResponseError(fmt.Sprintf(c.T("auth:State expected: %s, but got: %s"), conf.GetConfigString("authState"), authForm.State))
 				return
 			}
+			// issues/5126
+			// Extract query parameters from OAuth state
+			// The state contains base64-encoded query parameters including invitationCode
+			// Frontend encodes all query params (e.g., ?invitationCode=ABC&application=app)
+			// We decode to restore invitation code for OAuth signup flow
+			stateBytes, err := base64.StdEncoding.DecodeString(authForm.State)
+			if err == nil {
+				stateQuery := string(stateBytes)
+				// Remove leading '?' if present, as url.ParseQuery expects raw query string
+				stateQuery = strings.TrimPrefix(stateQuery, "?")
+				// Parse query parameters from the decoded state
+				if stateParams, err := url.ParseQuery(stateQuery); err == nil {
+					// Extract invitation code if present in state
+					// Note: Only set from state if not already provided directly (e.g., via form)
+					// This preserves the precedence: direct form input > state-encoded value
+					if invCode := stateParams.Get("invitationCode"); invCode != "" && authForm.InvitationCode == "" {
+						authForm.InvitationCode = invCode
+					}
+				}
+			}
 
 			// https://github.com/golang/oauth2/issues/123#issuecomment-103715338
 			token, err = idProvider.GetToken(authForm.Code)

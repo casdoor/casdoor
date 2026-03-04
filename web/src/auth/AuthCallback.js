@@ -158,6 +158,7 @@ class AuthCallback extends React.Component {
       samlRequest: samlRequest,
       // state: innerParams.get("state"),
       state: applicationName,
+      invitationCode: innerParams.get("invitationCode") || "",
       redirectUri: redirectUri,
       method: method,
       codeVerifier: codeVerifier, // Include PKCE code verifier
