@@ -570,7 +570,7 @@
     "Physical": "Físico",
     "Show all": "Mostrar todos",
     "Virtual": "Virtual",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "Necesitas eliminar todos los subgrupos primero. Puedes ver los subgrupos en el árbol de grupos a la izquierda en la página [Organizaciones] -\u003e [Grupos]"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Necesitas eliminar todos los subgrupos primero. Puedes ver los subgrupos en el árbol de grupos a la izquierda en la página [Organizaciones] -> [Grupos]"
   },
   "home": {
     "New users past 30 days": "Nuevos usuarios en los últimos 30 días",
@@ -795,7 +795,9 @@
     "Website URL": "URL del sitio web",
     "Website URL - Tooltip": "La URL de la página de inicio de la organización. Este campo no se usa en Casdoor",
     "Widget items": "Elementos del widget",
-    "Widget items - Tooltip": "Elementos del widget - Información adicional"
+    "Widget items - Tooltip": "Elementos del widget - Información adicional",
+    "LDAP attribute deny list": "Lista de atributos LDAP denegados",
+    "LDAP attribute deny list - Tooltip": "Atributos LDAP que deben ocultarse en las respuestas del servidor LDAP"
   },
   "payment": {
     "Confirm your invoice information": "Confirma la información de tu factura",

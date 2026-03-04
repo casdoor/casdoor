@@ -762,6 +762,35 @@ class OrganizationEditPage extends React.Component {
             />
           </Col>
         </Row>
+        <Row style={{marginTop: "20px"}}>
+          <Col style={{lineHeight: "32px", textAlign: "right", paddingRight: "25px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("organization:LDAP attribute deny list"), i18next.t("organization:LDAP attribute deny list - Tooltip"))} :
+          </Col>
+          <Col span={22}>
+            <Select virtual={false} mode="multiple" style={{width: "100%"}} value={this.state.organization.ldapServerAttributeDenyList ?? []}
+              options={[
+                {value: "uid", label: "uid"},
+                {value: "cn", label: "cn"},
+                {value: "mail", label: "mail"},
+                {value: "mobile", label: "mobile"},
+                {value: "sn", label: "sn"},
+                {value: "givenName", label: "givenName"},
+                {value: "displayName", label: "displayName"},
+                {value: "uidNumber", label: "uidNumber"},
+                {value: "gidNumber", label: "gidNumber"},
+                {value: "homeDirectory", label: "homeDirectory"},
+                {value: "loginShell", label: "loginShell"},
+                {value: "gecos", label: "gecos"},
+                {value: "sshPublicKey", label: "sshPublicKey"},
+                {value: "memberOf", label: "memberOf"},
+                {value: "userPassword", label: "userPassword"},
+              ].map((item) => Setting.getOption(item.label, item.value))}
+              onChange={(value) => {
+                this.updateOrganizationField("ldapServerAttributeDenyList", value);
+              }}
+            />
+          </Col>
+        </Row>
       </Card>
     );
   }

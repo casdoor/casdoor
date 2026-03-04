@@ -570,7 +570,7 @@
     "Physical": "Vật lý",
     "Show all": "Hiển thị tất cả",
     "Virtual": "Ảo",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "Bạn cần xóa tất cả nhóm con trước. Bạn có thể xem các nhóm con trong cây nhóm bên trái của trang [Tổ chức] -\u003e [Nhóm]"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Bạn cần xóa tất cả nhóm con trước. Bạn có thể xem các nhóm con trong cây nhóm bên trái của trang [Tổ chức] -> [Nhóm]"
   },
   "home": {
     "New users past 30 days": "Người dùng mới trong 30 ngày qua",
@@ -795,7 +795,9 @@
     "Website URL": "Địa chỉ trang web",
     "Website URL - Tooltip": "Địa chỉ trang chủ của tổ chức. Trường này không được sử dụng trong Casdoor",
     "Widget items": "Các mục tiện ích",
-    "Widget items - Tooltip": "Gợi ý các mục tiện ích"
+    "Widget items - Tooltip": "Gợi ý các mục tiện ích",
+    "LDAP attribute deny list": "Danh sách từ chối thuộc tính LDAP",
+    "LDAP attribute deny list - Tooltip": "Các thuộc tính LDAP cần ẩn trong phản hồi của máy chủ LDAP"
   },
   "payment": {
     "Confirm your invoice information": "Xác nhận thông tin hóa đơn của bạn",

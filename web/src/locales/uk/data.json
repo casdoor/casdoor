@@ -570,7 +570,7 @@
     "Physical": "фізичний",
     "Show all": "Покажи все",
     "Virtual": "Віртуальний",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "Спочатку потрібно видалити всі підгрупи. Підгрупи можна переглянути у лівому дереві груп на сторінці [Організації] -\u003e [Групи]"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Спочатку потрібно видалити всі підгрупи. Підгрупи можна переглянути у лівому дереві груп на сторінці [Організації] -> [Групи]"
   },
   "home": {
     "New users past 30 days": "Нові користувачі за останні 30 днів",
@@ -795,7 +795,9 @@
     "Website URL": "Website URL",
     "Website URL - Tooltip": "Website URL - Tooltip",
     "Widget items": "Widget items",
-    "Widget items - Tooltip": "Widget items - Tooltip"
+    "Widget items - Tooltip": "Widget items - Tooltip",
+    "LDAP attribute deny list": "Список заблокованих атрибутів LDAP",
+    "LDAP attribute deny list - Tooltip": "Атрибути LDAP, які потрібно приховати у відповідях сервера LDAP"
   },
   "payment": {
     "Confirm your invoice information": "Підтвердьте інформацію про рахунок",
