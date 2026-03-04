@@ -168,7 +168,8 @@
     "Use Email as NameID": "Use Email as NameID",
     "Use Email as NameID - Tooltip": "Use Email as NameID",
     "Vertical": "Vertical",
-    "You are unexpected to see this prompt page": "You are unexpected to see this prompt page"
+    "You are unexpected to see this prompt page": "You are unexpected to see this prompt page",
+    "e.g. {NameID}, $user.name, $user.email": "e.g. {NameID}, $user.name, $user.email"
   },
   "cert": {
     "Bit size": "Bit size",
@@ -570,7 +571,7 @@
     "Physical": "Physical",
     "Show all": "Show all",
     "Virtual": "Virtual",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page"
   },
   "home": {
     "New users past 30 days": "New users past 30 days",

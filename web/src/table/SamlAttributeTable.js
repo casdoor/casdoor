@@ -104,7 +104,7 @@ class SamlAttributeTable extends React.Component {
         width: "200px",
         render: (text, record, index) => {
           return (
-            <Input value={text} onChange={e => {
+            <Input value={text} placeholder={i18next.t("application:e.g. {NameID}, $user.name, $user.email")} onChange={e => {
               this.updateField(table, index, "value", e.target.value);
             }} />
           );

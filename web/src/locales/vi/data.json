@@ -168,7 +168,8 @@
     "Use Email as NameID": "Sử dụng Email làm NameID",
     "Use Email as NameID - Tooltip": "Gợi ý sử dụng Email làm NameID",
     "Vertical": "Dọc",
-    "You are unexpected to see this prompt page": "Bạn không mong đợi thấy trang này hiện lên"
+    "You are unexpected to see this prompt page": "Bạn không mong đợi thấy trang này hiện lên",
+    "e.g. {NameID}, $user.name, $user.email": "vd. {NameID}, $user.name, $user.email"
   },
   "cert": {
     "Bit size": "Kích cỡ bit",
@@ -570,7 +571,7 @@
     "Physical": "Vật lý",
     "Show all": "Hiển thị tất cả",
     "Virtual": "Ảo",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "Bạn cần xóa tất cả nhóm con trước. Bạn có thể xem các nhóm con trong cây nhóm bên trái của trang [Tổ chức] -\u003e [Nhóm]"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Bạn cần xóa tất cả nhóm con trước. Bạn có thể xem các nhóm con trong cây nhóm bên trái của trang [Tổ chức] -> [Nhóm]"
   },
   "home": {
     "New users past 30 days": "Người dùng mới trong 30 ngày qua",
