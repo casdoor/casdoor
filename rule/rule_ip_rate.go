@@ -94,7 +94,7 @@ func (r *IpRateRule) checkRule(expressions []*object.Expression, req *http.Reque
 				Reason: "Rate limit exceeded",
 			}, nil
 		} else {
-			delete(blackList, clientIp)
+			delete(blackList[r.ruleName], clientIp)
 		}
 	}
 

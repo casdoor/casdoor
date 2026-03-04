@@ -101,9 +101,9 @@ func refreshSiteMap() error {
 		if site.Domain != "" && site.PublicIp == "" {
 			go func(site *Site) {
 				site.PublicIp = util.ResolveDomainToIp(site.Domain)
-				_, err = UpdateSiteNoRefresh(site.GetId(), site)
-				if err != nil {
-					fmt.Printf("UpdateSiteNoRefresh() error: %v\n", err)
+				_, err2 := UpdateSiteNoRefresh(site.GetId(), site)
+				if err2 != nil {
+					fmt.Printf("UpdateSiteNoRefresh() error: %v\n", err2)
 				}
 			}(site)
 		}

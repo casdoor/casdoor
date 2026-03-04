@@ -109,7 +109,12 @@ func DeleteRule(rule *Rule) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-
+	if affected != 0 {
+		err = refreshRuleMap()
+		if err != nil {
+			return false, err
+		}
+	}
 	return affected != 0, nil
 }
 

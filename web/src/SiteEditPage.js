@@ -77,7 +77,7 @@ class SiteEditPage extends React.Component {
   }
 
   getCerts() {
-    CertBackend.getCerts(this.props.account.name)
+    CertBackend.getCerts(this.state.owner)
       .then((res) => {
         if (res.status === "ok") {
           this.setState({
@@ -90,7 +90,7 @@ class SiteEditPage extends React.Component {
   }
 
   getRules() {
-    RuleBackend.getRules(this.props.account.name)
+    RuleBackend.getRules(this.state.owner)
       .then((res) => {
         if (res.status === "ok") {
           this.setState({

@@ -2432,14 +2432,18 @@ export function getVersionInfo(text, siteName) {
     return null;
   }
 
-  const versionInfo = JSON.parse(text);
-  const link = versionInfo?.version !== "" ? `${getRepoUrl(siteName)}/releases/tag/${versionInfo?.version}` : "";
-  let versionText = versionInfo?.version !== "" ? versionInfo?.version : "Unknown version";
-  if (versionInfo?.commitOffset > 0) {
-    versionText += ` (ahead+${versionInfo?.commitOffset})`;
-  }
+  try {
+    const versionInfo = JSON.parse(text);
+    const link = versionInfo?.version !== "" ? `${getRepoUrl(siteName)}/releases/tag/${versionInfo?.version}` : "";
+    let versionText = versionInfo?.version !== "" ? versionInfo?.version : "Unknown version";
+    if (versionInfo?.commitOffset > 0) {
+      versionText += ` (ahead+${versionInfo?.commitOffset})`;
+    }
 
-  return {text: versionText, link: link};
+    return {text: versionText, link: link};
+  } catch (e) {
+    return {text: "", link: ""};
+  }
 }
 
 export function prependRow(array, row) {
