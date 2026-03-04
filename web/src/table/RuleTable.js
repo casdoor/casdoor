@@ -46,7 +46,7 @@ class RuleTable extends React.Component {
   }
 
   addRow(table) {
-    const row = {owner: this.props.account.name, name: ""};
+    const row = {owner: this.props.account.owner, name: ""};
     if (table === undefined) {
       table = [];
     }

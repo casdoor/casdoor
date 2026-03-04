@@ -20,7 +20,7 @@ import React, {useState} from "react";
 import i18next from "i18next";
 import {
   AppstoreTwoTone,
-  BarsOutlined, DeploymentUnitOutlined, DollarTwoTone, DownOutlined,
+  BarsOutlined, CheckCircleTwoTone, DeploymentUnitOutlined, DollarTwoTone, DownOutlined,
   HomeTwoTone,
   LockTwoTone, LogoutOutlined,
   SafetyCertificateTwoTone, SettingOutlined, SettingTwoTone,
@@ -345,6 +345,12 @@ function ManagementPage(props) {
       }
     })));
 
+    res.push(Setting.getItem(<Link style={{color: textColor}} to="/sites">{i18next.t("general:Gateway")}</Link>, "/gateway", <CheckCircleTwoTone twoToneColor={twoToneColor} />, [
+      Setting.getItem(<Link to="/sites">{i18next.t("general:Sites")}</Link>, "/sites"),
+      Setting.getItem(<Link to="/certs-ssl">{i18next.t("general:Certs")}</Link>, "/certs"),
+      Setting.getItem(<Link to="/rules">{i18next.t("general:Rules")}</Link>, "/rules"),
+    ]));
+
     res.push(Setting.getItem(<Link style={{color: textColor}} to="/sessions">{i18next.t("general:Logging & Auditing")}</Link>, "/logs", <WalletTwoTone twoToneColor={twoToneColor} />, [
       Setting.getItem(<Link to="/sessions">{i18next.t("general:Sessions")}</Link>, "/sessions"),
       Conf.CasvisorUrl ? Setting.getItem(<a target="_blank" rel="noreferrer" href={Conf.CasvisorUrl}>{i18next.t("general:Records")}</a>, "/records")
@@ -478,6 +484,7 @@ function ManagementPage(props) {
         <Route exact path="/records" render={(props) => renderLoginIfNotLoggedIn(<RecordListPage account={account} {...props} />)} />
         <Route exact path="/resources" render={(props) => renderLoginIfNotLoggedIn(<ResourceListPage account={account} {...props} />)} />
         <Route exact path="/certs" render={(props) => renderLoginIfNotLoggedIn(<CertListPage account={account} {...props} />)} />
+        <Route exact path="/certs-ssl" render={(props) => renderLoginIfNotLoggedIn(<CertListPage account={account} {...props} type={"SSL"} />)} />
         <Route exact path="/certs/:organizationName/:certName" render={(props) => renderLoginIfNotLoggedIn(<CertEditPage account={account} {...props} />)} />
         <Route exact path="/sites" render={(props) => renderLoginIfNotLoggedIn(<SiteListPage account={account} {...props} />)} />
         <Route exact path="/sites/:organizationName/:siteName" render={(props) => renderLoginIfNotLoggedIn(<SiteEditPage account={account} {...props} />)} />
