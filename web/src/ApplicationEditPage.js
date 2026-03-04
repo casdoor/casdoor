@@ -14,7 +14,6 @@
 
 import React from "react";
 import {
-  Alert,
   Button,
   Card,
   Col,
@@ -23,7 +22,6 @@ import {
   InputNumber,
   Layout,
   Menu,
-  Modal,
   Popover,
   Radio,
   Result,
@@ -35,7 +33,7 @@ import {
   Upload,
   message
 } from "antd";
-import {CopyOutlined, ExportOutlined, HolderOutlined, ImportOutlined, LinkOutlined, UploadOutlined, UsergroupAddOutlined} from "@ant-design/icons";
+import {CopyOutlined, HolderOutlined, LinkOutlined, UploadOutlined, UsergroupAddOutlined} from "@ant-design/icons";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
 import * as CertBackend from "./backend/CertBackend";
 import * as Setting from "./Setting";
@@ -63,6 +61,7 @@ import TokenAttributeTable from "./table/TokenAttributeTable";
 import {Content, Header} from "antd/es/layout/layout";
 import Sider from "antd/es/layout/Sider";
 import PaginateSelect from "./common/PaginateSelect";
+import {ApplicationImportExport} from "./ApplicationImportExport";
 
 const {Option} = Select;
 
@@ -1499,8 +1498,11 @@ class ApplicationEditPage extends React.Component {
           <Button onClick={() => this.submitApplicationEdit(false)}>{i18next.t("general:Save")}</Button>
           <Button style={{marginLeft: "20px"}} type="primary" onClick={() => this.submitApplicationEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
           {this.state.mode === "add" ? <Button style={{marginLeft: "20px"}} onClick={() => this.deleteApplication()}>{i18next.t("general:Cancel")}</Button> : null}
-          <Button style={{marginLeft: "20px"}} icon={<ExportOutlined />} onClick={() => this.exportApplicationJson()} data-cy="export-json-button">{i18next.t("general:Export JSON")}</Button>
-          <Button style={{marginLeft: "10px"}} icon={<ImportOutlined />} onClick={() => this.setState({importModalVisible: true})} data-cy="import-json-button">{i18next.t("general:Import JSON")}</Button>
+          {ApplicationImportExport.renderImportExportButtons(
+            this.state.application,
+            () => ApplicationImportExport.exportApplicationJson(this.state.application),
+            () => this.setState({importModalVisible: true, importJson: ""})
+          )}
         </div>
       } style={{margin: (Setting.isMobile()) ? "5px" : {}, height: "calc(100vh - 145px - 48px)", overflow: "hidden"}}
       styles={{body: {height: "100%"}}} type="inner">
@@ -1677,156 +1679,22 @@ class ApplicationEditPage extends React.Component {
     );
   }
 
-  // Export JSON
-  exportApplicationJson() {
-    const app = this.state.application;
-    if (!app) {Setting.showMessage("error", i18next.t("application:No application to export"));return;}
-
-    const copyDefinedFields = (source, target, fields) => {
-      fields.forEach(field => {
-        if (source[field] !== undefined) {
-          target[field] = source[field];
-        }
-      });
-    };
-
-    const minimalApp = {};
-    const appFields = [
-      "name",
-      "displayName",
-      "organization",
-      "logo",
-      "homepageUrl",
-      "description",
-      "enablePassword",
-      "enableSignUp",
-      "disableSignin",
-      "enableCodeSignin",
-      "enableWebAuthn",
-      "themeData",
-      "formCss",
-      "formSideHtml",
-      "headerHtml",
-      "footerHtml",
-      "signupHtml",
-      "signinHtml",
-    ];
-    copyDefinedFields(app, minimalApp, appFields);
-
-    if (app.providers && app.providers.length > 0) {
-      const providerOptionalFields = [
-        "canSignUp",
-        "canSignIn",
-        "canUnlink",
-        "rule",
-        "prompted",
-        "signupGroup",
-      ];
-      minimalApp.providers = app.providers.map(p => {
-        const item = {name: p.name};
-        copyDefinedFields(p, item, providerOptionalFields);
-        return item;
-      });
-    }
-
-    if (app.signinItems && app.signinItems.length > 0) {
-      const signinItemFields = [
-        "visible",
-        "label",
-        "customCss",
-        "placeholder",
-        "rule",
-        "isCustom",
-      ];
-      minimalApp.signinItems = app.signinItems.map(item => {
-        const newItem = {name: item.name};
-        copyDefinedFields(item, newItem, signinItemFields);
-        return newItem;
-      });
-    }
-
-    if (app.signupItems && app.signupItems.length > 0) {
-      const signupItemFields = [
-        "visible",
-        "required",
-        "prompted",
-        "label",
-        "customCss",
-        "placeholder",
-        "rule",
-      ];
-      minimalApp.signupItems = app.signupItems.map(item => {
-        const newItem = {name: item.name};
-        copyDefinedFields(item, newItem, signupItemFields);
-        return newItem;
-      });
-    }
-    if (app.signinMethods && app.signinMethods.length > 0) {minimalApp.signinMethods = app.signinMethods;}
-    const jsonStr = JSON.stringify(minimalApp, null, 2);
-    copy(jsonStr);
-    Setting.showMessage("success", i18next.t("general:Copied to clipboard successfully"));
-  }
-
-  // Import JSON
-  importApplicationJson() {
-    const jsonStr = this.state.importJson.trim();
-    if (!jsonStr) {Setting.showMessage("error", i18next.t("general:Please paste JSON content"));return;}
-    let appData;
-    try {
-      appData = JSON.parse(jsonStr);
-      if (typeof appData !== "object" || appData === null || Array.isArray(appData)) {
-        Setting.showMessage("error", i18next.t("general:Invalid JSON format"));
-        return;
+  // Handle import from JSON
+  handleImportJson() {
+    ApplicationImportExport.importApplicationJson(
+      this.state.importJson,
+      this.state.application,
+      (mergedApp) => {
+        this.setState({
+          application: mergedApp,
+          importModalVisible: false,
+          importJson: "",
+        }, () => {
+          if (typeof this.submitApplicationEdit === "function") {
+            this.submitApplicationEdit();
+          }
+        });
       }
-    } catch (e) {Setting.showMessage("error", `${i18next.t("general:Invalid JSON format")}: ${e.message}`);return;}
-
-    const existingApp = this.state.application;
-
-    // Verify name and organization match current application (prevent hijacking other apps)
-    if (appData.name && existingApp && appData.name !== existingApp.name) {
-      Setting.showMessage("error", `${i18next.t("general:Failed to import")}: ${i18next.t("general:Name")} ${i18next.t("general:does not match")}`);
-      return;
-    }
-    if (appData.organization && existingApp && appData.organization !== existingApp.organization) {
-      Setting.showMessage("error", `${i18next.t("general:Failed to import")}: ${i18next.t("general:Organization")} ${i18next.t("general:does not match")}`);
-      return;
-    }
-
-    const mergedApp = existingApp ? Setting.deepCopy(existingApp) : {};
-
-    // Filter out dangerous keys to prevent prototype pollution
-    const dangerousKeys = ["__proto__", "constructor", "prototype"];
-    Object.keys(appData).forEach(key => {
-      if (dangerousKeys.includes(key)) {
-        return;
-      }
-      // Do not allow import to change application identity fields
-      if (key === "name" || key === "organization") {
-        return;
-      }
-      mergedApp[key] = appData[key];
-    });
-
-    this.setState({
-      application: mergedApp,
-      importModalVisible: false,
-      importJson: "",
-    }, () => {
-      // Reuse the existing save pipeline (normalization/validation + updateApplication)
-      if (typeof this.submitApplicationEdit === "function") {
-        this.submitApplicationEdit();
-      }
-    });
-  }
-
-  // Render Import Modal
-  renderImportModal() {
-    return (
-      <Modal title={i18next.t("general:Import JSON")} open={this.state.importModalVisible} onOk={() => this.importApplicationJson()} onCancel={() => this.setState({importModalVisible: false, importJson: ""})} width={700} okText={i18next.t("general:Import")} cancelText={i18next.t("general:Cancel")}>
-        <Alert message={i18next.t("general:Warning")} description={i18next.t("general:Import all application settings")} type="warning" style={{marginBottom: "15px"}} showIcon />
-        <p style={{marginBottom: "10px"}}>{i18next.t("general:Paste JSON content here")}</p>
-        <Input.TextArea rows={15} value={this.state.importJson} onChange={(e) => this.setState({importJson: e.target.value})} placeholder={JSON.stringify({displayName: "My Custom App", enablePassword: true, enableSignUp: false, themeData: {colorPrimary: "#1890ff"}}, null, 2)} />
-      </Modal>
     );
   }
 
@@ -1895,7 +1763,13 @@ class ApplicationEditPage extends React.Component {
         {
           this.state.application !== null ? this.renderApplication() : null
         }
-        {this.renderImportModal()}
+        {ApplicationImportExport.renderImportModal(
+          this.state.importModalVisible,
+          this.state.importJson,
+          (value) => this.setState({importJson: value}),
+          () => this.handleImportJson(),
+          () => this.setState({importModalVisible: false, importJson: ""})
+        )}
       </div>
     );
   }
