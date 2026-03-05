@@ -76,6 +76,7 @@ func main() {
 
 	object.InitSiteMap()
 	object.InitRuleMap()
+	object.StartMonitorSitesLoop()
 
 	util.SafeGoroutine(func() { object.RunSyncUsersJob() })
 	util.SafeGoroutine(func() { controllers.InitCLIDownloader() })

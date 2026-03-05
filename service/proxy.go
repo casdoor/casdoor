@@ -310,12 +310,12 @@ func Start() {
 
 	gatewayHttpPort, err := conf.GetConfigInt64("gatewayHttpPort")
 	if err != nil {
-		panic(err)
+		gatewayHttpPort = 80
 	}
 
 	gatewayHttpsPort, err := conf.GetConfigInt64("gatewayHttpsPort")
 	if err != nil {
-		panic(err)
+		gatewayHttpsPort = 443
 	}
 
 	go func() {
