@@ -20,7 +20,7 @@ import React, {useState} from "react";
 import i18next from "i18next";
 import {
   AppstoreTwoTone,
-  BarsOutlined, DeploymentUnitOutlined, DollarTwoTone, DownOutlined,
+  BarsOutlined, CheckCircleTwoTone, DeploymentUnitOutlined, DollarTwoTone, DownOutlined,
   HomeTwoTone,
   LockTwoTone, LogoutOutlined,
   SafetyCertificateTwoTone, SettingOutlined, SettingTwoTone,
@@ -104,6 +104,10 @@ import TicketListPage from "./TicketListPage";
 import TicketEditPage from "./TicketEditPage";
 import * as Cookie from "cookie";
 import * as UserBackend from "./backend/UserBackend";
+import SiteListPage from "./SiteListPage";
+import SiteEditPage from "./SiteEditPage";
+import RuleEditPage from "./RuleEditPage";
+import RuleListPage from "./RuleListPage";
 
 function ManagementPage(props) {
   const [menuVisible, setMenuVisible] = useState(false);
@@ -323,6 +327,8 @@ function ManagementPage(props) {
       Setting.getItem(<Link to="/providers">{i18next.t("application:Providers")}</Link>, "/providers"),
       Setting.getItem(<Link to="/resources">{i18next.t("general:Resources")}</Link>, "/resources"),
       Setting.getItem(<Link to="/certs">{i18next.t("general:Certs")}</Link>, "/certs"),
+      Setting.getItem(<Link to="/sites">{i18next.t("general:Sites")}</Link>, "/sites"),
+      Setting.getItem(<Link to="/rules">{i18next.t("general:Rules")}</Link>, "/rules"),
     ]));
 
     res.push(Setting.getItem(<Link style={{color: textColor}} to="/roles">{i18next.t("general:Authorization")}</Link>, "/auth", <SafetyCertificateTwoTone twoToneColor={twoToneColor} />, [
@@ -338,6 +344,12 @@ function ManagementPage(props) {
         return true;
       }
     })));
+
+    res.push(Setting.getItem(<Link style={{color: textColor}} to="/sites">{i18next.t("general:Gateway")}</Link>, "/gateway", <CheckCircleTwoTone twoToneColor={twoToneColor} />, [
+      Setting.getItem(<Link to="/sites">{i18next.t("general:Sites")}</Link>, "/sites"),
+      Setting.getItem(<Link to="/certs">{i18next.t("general:Certs")}</Link>, "/certs"),
+      Setting.getItem(<Link to="/rules">{i18next.t("general:Rules")}</Link>, "/rules"),
+    ]));
 
     res.push(Setting.getItem(<Link style={{color: textColor}} to="/sessions">{i18next.t("general:Logging & Auditing")}</Link>, "/logs", <WalletTwoTone twoToneColor={twoToneColor} />, [
       Setting.getItem(<Link to="/sessions">{i18next.t("general:Sessions")}</Link>, "/sessions"),
@@ -473,6 +485,10 @@ function ManagementPage(props) {
         <Route exact path="/resources" render={(props) => renderLoginIfNotLoggedIn(<ResourceListPage account={account} {...props} />)} />
         <Route exact path="/certs" render={(props) => renderLoginIfNotLoggedIn(<CertListPage account={account} {...props} />)} />
         <Route exact path="/certs/:organizationName/:certName" render={(props) => renderLoginIfNotLoggedIn(<CertEditPage account={account} {...props} />)} />
+        <Route exact path="/sites" render={(props) => renderLoginIfNotLoggedIn(<SiteListPage account={account} {...props} />)} />
+        <Route exact path="/sites/:organizationName/:siteName" render={(props) => renderLoginIfNotLoggedIn(<SiteEditPage account={account} {...props} />)} />
+        <Route exact path="/rules" render={(props) => renderLoginIfNotLoggedIn(<RuleListPage account={account} {...props} />)} />
+        <Route exact path="/rules/:organizationName/:ruleName" render={(props) => renderLoginIfNotLoggedIn(<RuleEditPage account={account} {...props} />)} />
         <Route exact path="/verifications" render={(props) => renderLoginIfNotLoggedIn(<VerificationListPage account={account} {...props} />)} />
         <Route exact path="/roles" render={(props) => renderLoginIfNotLoggedIn(<RoleListPage account={account} {...props} />)} />
         <Route exact path="/roles/:organizationName/:roleName" render={(props) => renderLoginIfNotLoggedIn(<RoleEditPage account={account} {...props} />)} />

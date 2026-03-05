@@ -29,6 +29,7 @@ import (
 	"github.com/casdoor/casdoor/proxy"
 	"github.com/casdoor/casdoor/radius"
 	"github.com/casdoor/casdoor/routers"
+	"github.com/casdoor/casdoor/service"
 	"github.com/casdoor/casdoor/util"
 )
 
@@ -72,6 +73,10 @@ func main() {
 	object.InitFromFile()
 	object.InitCasvisorConfig()
 	object.InitCleanupTokens()
+
+	object.InitSiteMap()
+	object.InitRuleMap()
+	object.StartMonitorSitesLoop()
 
 	util.SafeGoroutine(func() { object.RunSyncUsersJob() })
 	util.SafeGoroutine(func() { controllers.InitCLIDownloader() })
@@ -125,6 +130,10 @@ func main() {
 	go ldap.StartLdapServer()
 	go radius.StartRadiusServer()
 	go object.ClearThroughputPerSecond()
+
+	if len(object.SiteMap) != 0 {
+		service.Start()
+	}
 
 	web.Run(fmt.Sprintf(":%v", port))
 }

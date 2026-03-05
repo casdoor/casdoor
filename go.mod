@@ -23,6 +23,7 @@ require (
 	github.com/beevik/etree v1.1.0
 	github.com/casbin/casbin/v2 v2.77.2
 	github.com/casbin/lego/v4 v4.5.4
+	github.com/casdoor/casdoor-go-sdk v0.50.0
 	github.com/casdoor/go-sms-sender v0.25.0
 	github.com/casdoor/gomail/v2 v2.2.0
 	github.com/casdoor/ldapserver v1.2.0
@@ -30,6 +31,7 @@ require (
 	github.com/casdoor/oss v1.8.0
 	github.com/casdoor/xorm-adapter/v3 v3.1.0
 	github.com/casvisor/casvisor-go-sdk v1.4.0
+	github.com/corazawaf/coraza/v3 v3.3.3
 	github.com/dchest/captcha v0.0.0-20200903113550-03f5f0333e1f
 	github.com/elimity-com/scim v0.0.0-20230426070224-941a5eac92f3
 	github.com/fogleman/gg v1.3.0
@@ -45,6 +47,7 @@ require (
 	github.com/go-webauthn/webauthn v0.10.2
 	github.com/golang-jwt/jwt/v5 v5.2.2
 	github.com/google/uuid v1.6.0
+	github.com/hsluoyz/modsecurity-go v0.0.7
 	github.com/json-iterator/go v1.1.12
 	github.com/lestrrat-go/jwx v1.2.29
 	github.com/lib/pq v1.10.9
@@ -78,6 +81,7 @@ require (
 	golang.org/x/net v0.41.0
 	golang.org/x/oauth2 v0.27.0
 	golang.org/x/text v0.27.0
+	golang.org/x/time v0.8.0
 	google.golang.org/api v0.215.0
 	layeh.com/radius v0.0.0-20231213012653-1006025d24f8
 	maunium.net/go/mautrix v0.22.1
@@ -126,17 +130,17 @@ require (
 	github.com/boombuler/barcode v1.0.1 // indirect
 	github.com/bwmarrin/discordgo v0.28.1 // indirect
 	github.com/caarlos0/go-reddit/v3 v3.0.1 // indirect
-	github.com/casdoor/casdoor-go-sdk v0.50.0 // indirect
 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
 	github.com/census-instrumentation/opencensus-proto v0.4.1 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/clbanning/mxj/v2 v2.7.0 // indirect
 	github.com/cloudflare/circl v1.6.1 // indirect
 	github.com/cncf/xds/go v0.0.0-20240905190251-b4127c9b8d78 // indirect
+	github.com/corazawaf/libinjection-go v0.2.2 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.0 // indirect
 	github.com/cschomburg/go-pushbullet v0.0.0-20171206132031-67759df45fbb // indirect
 	github.com/cyphar/filepath-securejoin v0.4.1 // indirect
-	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.4.0 // indirect
 	github.com/dghubble/oauth1 v0.7.3 // indirect
 	github.com/dghubble/sling v1.4.2 // indirect
@@ -196,24 +200,26 @@ require (
 	github.com/likexian/gokit v0.25.13 // indirect
 	github.com/line/line-bot-sdk-go v7.8.0+incompatible // indirect
 	github.com/lufia/plan9stats v0.0.0-20211012122336-39d0f177ccd0 // indirect
+	github.com/magefile/mage v1.15.1-0.20241126214340-bdc92f694516 // indirect
 	github.com/markbates/going v1.0.0 // indirect
 	github.com/mattermost/xml-roundtrip-validator v0.1.0 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-ieproxy v0.0.1 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
-	github.com/miekg/dns v1.1.43 // indirect
+	github.com/miekg/dns v1.1.57 // indirect
 	github.com/mileusna/viber v1.0.1 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/mrjones/oauth v0.0.0-20180629183705-f4e24b6d100c // indirect
 	github.com/opentracing/opentracing-go v1.2.1-0.20220228012449-10b1cf09e00b // indirect
+	github.com/petar-dambovaliev/aho-corasick v0.0.0-20240411101913-e07a1f0e8eb4 // indirect
 	github.com/pingcap/errors v0.11.5-0.20210425183316-da1aaba5fb63 // indirect
 	github.com/pingcap/log v0.0.0-20210625125904-98ed8e2eb1c7 // indirect
 	github.com/pingcap/tidb/parser v0.0.0-20221126021158-6b02a5d8ba7d // indirect
 	github.com/pjbgf/sha1cd v0.3.2 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/planetscale/vtprotobuf v0.6.1-0.20240319094008-0393e58bdf10 // indirect
-	github.com/pmezard/go-difflib v1.0.0 // indirect
+	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
 	github.com/power-devops/perfstat v0.0.0-20240221224432-82ca36839d55 // indirect
 	github.com/prometheus/common v0.48.0 // indirect
 	github.com/prometheus/procfs v0.12.0 // indirect
@@ -250,6 +256,7 @@ require (
 	github.com/ucloud/ucloud-sdk-go v0.22.5 // indirect
 	github.com/urfave/cli v1.22.5 // indirect
 	github.com/utahta/go-linenotify v0.5.0 // indirect
+	github.com/valllabh/ocsf-schema-golang v1.0.3 // indirect
 	github.com/volcengine/volc-sdk-golang v1.0.117 // indirect
 	github.com/x448/float16 v0.8.4 // indirect
 	github.com/xanzy/ssh-agent v0.3.3 // indirect
@@ -272,7 +279,6 @@ require (
 	golang.org/x/mod v0.25.0 // indirect
 	golang.org/x/sync v0.16.0 // indirect
 	golang.org/x/sys v0.35.0 // indirect
-	golang.org/x/time v0.8.0 // indirect
 	golang.org/x/tools v0.34.0 // indirect
 	google.golang.org/genproto v0.0.0-20241118233622-e639e219e697 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20241209162323-e6fa225c2576 // indirect
@@ -295,4 +301,5 @@ require (
 	modernc.org/opt v0.1.3 // indirect
 	modernc.org/strutil v1.1.3 // indirect
 	modernc.org/token v1.0.1 // indirect
+	rsc.io/binaryregexp v0.2.0 // indirect
 )

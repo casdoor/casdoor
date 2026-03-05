@@ -164,6 +164,8 @@ type Application struct {
 	UpstreamHost string   `xorm:"varchar(100)" json:"upstreamHost"`
 	SslMode      string   `xorm:"varchar(100)" json:"sslMode"`
 	SslCert      string   `xorm:"varchar(100)" json:"sslCert"`
+
+	CertObj *Cert `xorm:"-"`
 }
 
 func GetApplicationCount(owner, field, value string) (int64, error) {
