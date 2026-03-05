@@ -71,6 +71,19 @@ func (syncer *Syncer) updateUserForOriginalFields(user *User, key string) (bool,
 	columns := syncer.getCasdoorColumns()
 	columns = append(columns, "affiliation", "hash", "pre_hash")
 
+	// Skip password-related columns when the incoming user has no password data.
+	// API-based syncers (DingTalk, WeCom, Lark, etc.) do not provide passwords,
+	// so updating these columns would wipe out locally set passwords.
+	if user.Password == "" {
+		filtered := make([]string, 0, len(columns))
+		for _, col := range columns {
+			if col != "password" && col != "password_salt" && col != "password_type" {
+				filtered = append(filtered, col)
+			}
+		}
+		columns = filtered
+	}
+
 	// Add provider-specific field for API-based syncers to enable login binding
 	// This allows synced users to login via their provider accounts
 	switch syncer.Type {
