@@ -126,7 +126,6 @@ class IpRuleTable extends React.Component {
               [
                 {value: "is in", text: i18next.t("rule:is in")},
                 {value: "is not in", text: i18next.t("rule:is not in")},
-                {value: "is abroad", text: i18next.t("rule:is abroad")},
               ].map((item, index) => <Option key={index} value={item.value}>{item.text}</Option>)
             }
           </Select>
