@@ -182,6 +182,10 @@ export const OtherProviderInfo = {
       logo: `${StaticBaseUrl}/img/social_default.png`,
       url: "https://casdoor.org/docs/provider/email/overview",
     },
+    "Resend": {
+      logo: `${StaticBaseUrl}/img/email_resend.png`,
+      url: "https://resend.com/",
+    },
   },
   Storage: {
     "Local File System": {
@@ -1297,6 +1301,7 @@ export function getProviderTypeOptions(category) {
         {id: "Azure ACS", name: "Azure ACS"},
         {id: "SendGrid", name: "SendGrid"},
         {id: "Custom HTTP Email", name: "Custom HTTP Email"},
+        {id: "Resend", name: "Resend"},
       ]
     );
   } else if (category === "SMS") {

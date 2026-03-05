@@ -19,13 +19,16 @@ type EmailProvider interface {
 }
 
 func GetEmailProvider(typ string, clientId string, clientSecret string, host string, port int, sslMode string, endpoint string, method string, httpHeaders map[string]string, bodyMapping map[string]string, contentType string, enableProxy bool) EmailProvider {
-	if typ == "Azure ACS" {
+	switch typ {
+	case "Azure ACS":
 		return NewAzureACSEmailProvider(clientSecret, host)
-	} else if typ == "Custom HTTP Email" {
+	case "Custom HTTP Email":
 		return NewHttpEmailProvider(endpoint, method, httpHeaders, bodyMapping, contentType)
-	} else if typ == "SendGrid" {
+	case "SendGrid":
 		return NewSendgridEmailProvider(clientSecret, host, endpoint)
-	} else {
+	case "Resend":
+		return NewResendEmailProvider(clientSecret)
+	default:
 		return NewSmtpEmailProvider(clientId, clientSecret, host, port, typ, sslMode, enableProxy)
 	}
 }

@@ -369,7 +369,7 @@ class ProviderEditPage extends React.Component {
         return Setting.getLabel(i18next.t("provider:Client secret"), i18next.t("provider:Client secret - Tooltip"));
       }
     case "Email":
-      if (provider.type === "Azure ACS" || provider.type === "SendGrid") {
+      if (provider.type === "Azure ACS" || provider.type === "SendGrid" || provider.type === "Resend") {
         return Setting.getLabel(i18next.t("provider:Secret key"), i18next.t("provider:Secret key - Tooltip"));
       } else {
         return Setting.getLabel(i18next.t("general:Password"), i18next.t("general:Password - Tooltip"));
@@ -858,7 +858,7 @@ class ProviderEditPage extends React.Component {
               <React.Fragment>
                 {
                   (this.state.provider.category === "Storage" && this.state.provider.type === "Google Cloud Storage") ||
-                  (this.state.provider.category === "Email" && (this.state.provider.type === "Azure ACS" || this.state.provider.type === "SendGrid")) ||
+                  (this.state.provider.category === "Email" && (this.state.provider.type === "Azure ACS" || this.state.provider.type === "SendGrid" || this.state.provider.type === "Resend")) ||
                   (this.state.provider.category === "Notification" && (this.state.provider.type === "Line" || this.state.provider.type === "Telegram" || this.state.provider.type === "Bark" || this.state.provider.type === "Discord" || this.state.provider.type === "Slack" || this.state.provider.type === "Pushbullet" || this.state.provider.type === "Pushover" || this.state.provider.type === "Lark" || this.state.provider.type === "Microsoft Teams" || this.state.provider.type === "WeCom")) ? null : (
                       <Row style={{marginTop: "20px"}} >
                         <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
