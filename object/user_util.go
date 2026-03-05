@@ -1016,7 +1016,57 @@ func replaceAttributeValue(user *User, value string) []string {
 	valueList = replaceAttributeValues("$user.id", user.Id, valueList)
 	valueList = replaceAttributeValues("$user.phone", user.Phone, valueList)
 
+	// If value is unchanged and doesn't contain $, try to resolve it as a direct user field name.
+	// This allows using simple field names like "email", "name", "displayName", etc.
+	if len(valueList) == 1 && valueList[0] == value && !strings.Contains(value, "$") {
+		if fieldValue, ok := getUserFieldValueByName(user, value); ok {
+			return []string{fieldValue}
+		}
+	}
+
 	return valueList
+}
+
+// sensitiveUserFields contains JSON tag names of user fields that must not be exposed via attribute resolution.
+var sensitiveUserFields = map[string]bool{
+	"password":             true,
+	"passwordSalt":         true,
+	"totpSecret":           true,
+	"accessKey":            true,
+	"accessSecret":         true,
+	"accessToken":          true,
+	"originalToken":        true,
+	"originalRefreshToken": true,
+	"hash":                 true,
+	"preHash":              true,
+}
+
+// getUserFieldValueByName resolves a user field name to its string value.
+// It supports both JSON tag names (e.g., "email", "displayName") and Go field names (e.g., "Email", "DisplayName").
+// Sensitive fields (password, secrets, tokens) are never resolved.
+func getUserFieldValueByName(user *User, fieldName string) (string, bool) {
+	userValue := reflect.ValueOf(user).Elem()
+	userType := userValue.Type()
+
+	for i := 0; i < userType.NumField(); i++ {
+		field := userType.Field(i)
+		jsonTag := field.Tag.Get("json")
+		if idx := strings.Index(jsonTag, ","); idx != -1 {
+			jsonTag = jsonTag[:idx]
+		}
+
+		if jsonTag == fieldName || strings.EqualFold(field.Name, fieldName) {
+			if sensitiveUserFields[jsonTag] {
+				return "", false
+			}
+			fieldValue := userValue.Field(i)
+			if fieldValue.Kind() == reflect.String {
+				return fieldValue.String(), true
+			}
+		}
+	}
+
+	return "", false
 }
 
 func replaceAttributeValues(val string, replaceVal string, values []string) []string {
