@@ -32,6 +32,10 @@ func getSmsClient(provider *Provider) (sender.SmsClient, error) {
 		client, err = newHttpSmsClient(provider.Endpoint, provider.Method, provider.Title, provider.TemplateCode, provider.HttpHeaders, provider.UserMapping, provider.IssuerUrl, provider.EnableProxy)
 	} else if provider.Type == "Alibaba Cloud PNVS SMS" {
 		client, err = newPnvsSmsClient(provider.ClientId, provider.ClientSecret, provider.SignName, provider.TemplateCode, provider.RegionId)
+	} else if provider.Type == sender.Twilio {
+		// For Twilio, the message body is pre-formatted in SendSms using the template.
+		// Pass "%s" as the template so go-sms-sender's fmt.Sprintf passes the content through unchanged.
+		client, err = sender.NewSmsClient(provider.Type, provider.ClientId, provider.ClientSecret, provider.SignName, "%s", provider.AppId)
 	} else {
 		client, err = sender.NewSmsClient(provider.Type, provider.ClientId, provider.ClientSecret, provider.SignName, provider.TemplateCode, provider.AppId)
 	}
@@ -51,6 +55,11 @@ func SendSms(provider *Provider, content string, phoneNumbers ...string) error {
 	if provider.Type == sender.Twilio {
 		if provider.AppId != "" {
 			phoneNumbers = append([]string{provider.AppId}, phoneNumbers...)
+		}
+		// Pre-format the message body using the provider's template.
+		// If the template contains "%s", substitute the code; otherwise use the content (code) directly.
+		if strings.Contains(provider.TemplateCode, "%s") {
+			content = strings.Replace(provider.TemplateCode, "%s", content, 1)
 		}
 	} else if provider.Type == sender.Aliyun || provider.Type == "Alibaba Cloud PNVS SMS" {
 		for i, number := range phoneNumbers {
