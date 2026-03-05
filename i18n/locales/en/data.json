@@ -106,8 +106,8 @@
   "general": {
     "Failed to import groups": "Failed to import groups",
     "Failed to import users": "Failed to import users",
-    "Insufficient balance: new balance %v would be below credit limit %v": "Insufficient balance: new balance %v would be below credit limit %v",
-    "Insufficient balance: new organization balance %v would be below credit limit %v": "Insufficient balance: new organization balance %v would be below credit limit %v",
+    "Insufficient balance: new balance %v would exceed the credit limit %v": "Insufficient balance: new balance %v would exceed the credit limit %v",
+    "Insufficient balance: new organization balance %v would exceed the credit limit %v": "Insufficient balance: new organization balance %v would exceed the credit limit %v",
     "Missing parameter": "Missing parameter",
     "Only admin user can specify user": "Only admin user can specify user",
     "Please login first": "Please login first",

@@ -106,8 +106,8 @@
   "general": {
     "Failed to import groups": "Gruplar içe aktarılamadı",
     "Failed to import users": "Kullanıcılar içe aktarılamadı",
-    "Insufficient balance: new balance %v would be below credit limit %v": "Yetersiz bakiye: yeni bakiye %v kredi limitinin altında olacak %v",
-    "Insufficient balance: new organization balance %v would be below credit limit %v": "Yetersiz bakiye: yeni organizasyon bakiyesi %v kredi limitinin altında olacak %v",
+    "Insufficient balance: new balance %v would exceed the credit limit %v": "Yetersiz bakiye: yeni bakiye %v kredi limitini aşacak %v",
+    "Insufficient balance: new organization balance %v would exceed the credit limit %v": "Yetersiz bakiye: yeni organizasyon bakiyesi %v kredi limitini aşacak %v",
     "Missing parameter": "Eksik parametre",
     "Only admin user can specify user": "Yalnızca yönetici kullanıcı kullanıcı belirleyebilir",
     "Please login first": "Lütfen önce giriş yapın",
