@@ -106,8 +106,8 @@
   "general": {
     "Failed to import groups": "グループのインポートに失敗しました",
     "Failed to import users": "ユーザーのインポートに失敗しました",
-    "Insufficient balance: new balance %v would be below credit limit %v": "残高不足：新しい残高 %v がクレジット制限 %v を下回ります",
-    "Insufficient balance: new organization balance %v would be below credit limit %v": "残高不足：新しい組織残高 %v がクレジット制限 %v を下回ります",
+    "Insufficient balance: new balance %v would exceed the credit limit %v": "残高不足：新しい残高 %v がクレジット制限 %v を超過します",
+    "Insufficient balance: new organization balance %v would exceed the credit limit %v": "残高不足：新しい組織残高 %v がクレジット制限 %v を超過します",
     "Missing parameter": "不足しているパラメーター",
     "Only admin user can specify user": "管理者ユーザーのみがユーザーを指定できます",
     "Please login first": "最初にログインしてください",
