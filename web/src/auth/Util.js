@@ -130,8 +130,11 @@ export function getOAuthGetParameters(params) {
   }
 
   let state = getRefinedValue(queries.get("state"));
-  if (state.startsWith("/auth/oauth2/login.php?wantsurl=")) {
-    // state contains URL param encoding for Moodle, URLSearchParams automatically decoded it, so here encode it again
+  // Per the OAuth2 spec, the state parameter is opaque and must be returned exactly as received.
+  // URLSearchParams.get() automatically URL-decodes values. If the decoded state contains
+  // URL-unsafe characters ('?', '&', '#'), it was originally URL-encoded and must be
+  // re-encoded to prevent it from breaking the redirect URL's query string structure.
+  if (state !== "" && /[?&#]/.test(state)) {
     state = encodeURIComponent(state);
   }
   if (redirectUri.includes("#") && state === "") {
