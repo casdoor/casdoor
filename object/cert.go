@@ -16,10 +16,12 @@ package object
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/casdoor/casdoor/certificate"
 	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/core"
+	"golang.org/x/net/publicsuffix"
 )
 
 type Cert struct {
@@ -345,4 +347,65 @@ func certChangeTrigger(oldName string, newName string) error {
 	}
 
 	return session.Commit()
+}
+
+func getBaseDomain(domain string) (string, error) {
+	// abc.com -> abc.com
+	// abc.com.it -> abc.com.it
+	// subdomain.abc.io -> abc.io
+	// subdomain.abc.org.us -> abc.org.us
+	return publicsuffix.EffectiveTLDPlusOne(domain)
+}
+
+func GetCertByDomain(domain string) (*Cert, error) {
+	if domain == "" {
+		return nil, fmt.Errorf("GetCertByDomain() error: domain should not be empty")
+	}
+
+	cert, ok := certMap[domain]
+	if ok {
+		return cert, nil
+	}
+
+	baseDomain, err := getBaseDomain(domain)
+	if err != nil {
+		return nil, err
+	}
+
+	cert, ok = certMap[baseDomain]
+	if ok {
+		return cert, nil
+	}
+
+	return nil, nil
+}
+
+func getCertMap() (map[string]*Cert, error) {
+	certs, err := GetGlobalCerts()
+	if err != nil {
+		return nil, err
+	}
+
+	res := map[string]*Cert{}
+	for _, cert := range certs {
+		res[cert.Name] = cert
+	}
+	return res, nil
+}
+
+func (p *Cert) isCertNearExpire() (bool, error) {
+	if p.ExpireTime == "" {
+		return true, nil
+	}
+
+	expireTime, err := time.Parse(time.RFC3339, p.ExpireTime)
+	if err != nil {
+		return false, err
+	}
+
+	now := time.Now()
+	duration := expireTime.Sub(now)
+	res := duration <= 7*24*time.Hour
+
+	return res, nil
 }

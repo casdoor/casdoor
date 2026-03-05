@@ -15,6 +15,7 @@
 package conf
 
 import (
+	_ "embed"
 	"fmt"
 	"os"
 	"runtime"
@@ -23,6 +24,9 @@ import (
 
 	"github.com/beego/beego/v2/server/web"
 )
+
+//go:embed waf.conf
+var WafConf string
 
 func init() {
 	// this array contains the beego configuration items that may be modified via env
