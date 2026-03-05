@@ -22,7 +22,7 @@ import (
 )
 
 var (
-	siteMap                  = map[string]*Site{}
+	SiteMap                  = map[string]*Site{}
 	certMap                  = map[string]*Cert{}
 	healthCheckNeededDomains []string
 )
@@ -119,13 +119,13 @@ func refreshSiteMap() error {
 		}
 	}
 
-	siteMap = newSiteMap
+	SiteMap = newSiteMap
 	healthCheckNeededDomains = newHealthCheckNeededDomains
 	return nil
 }
 
 func GetSiteByDomain(domain string) *Site {
-	if site, ok := siteMap[strings.ToLower(domain)]; ok {
+	if site, ok := SiteMap[strings.ToLower(domain)]; ok {
 		return site
 	} else {
 		return nil

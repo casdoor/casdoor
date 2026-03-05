@@ -308,12 +308,6 @@ func Start() {
 	serverMux.HandleFunc("/", handleRequest)
 	serverMux.HandleFunc("/caswaf-handler", handleAuthCallback)
 
-	gatewayEnabled := conf.GetConfigBool("gatewayEnabled")
-	if !gatewayEnabled {
-		fmt.Printf("CasWAF gateway not enabled (gatewayEnabled == \"false\")\n")
-		return
-	}
-
 	gatewayHttpPort, err := conf.GetConfigInt64("gatewayHttpPort")
 	if err != nil {
 		panic(err)

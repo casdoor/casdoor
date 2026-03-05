@@ -130,7 +130,9 @@ func main() {
 	go radius.StartRadiusServer()
 	go object.ClearThroughputPerSecond()
 
-	service.Start()
+	if len(object.SiteMap) != 0 {
+		service.Start()
+	}
 
 	web.Run(fmt.Sprintf(":%v", port))
 }
