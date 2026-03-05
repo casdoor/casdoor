@@ -615,8 +615,8 @@ func UpdateOrganizationBalance(owner string, name string, balance float64, curre
 	if isOrgBalance {
 		newBalance = AddPrices(organization.OrgBalance, convertedBalance)
 		// Check organization balance credit limit
-		if newBalance < organization.BalanceCredit {
-			return fmt.Errorf(i18n.Translate(lang, "general:Insufficient balance: new organization balance %v would be below credit limit %v"), newBalance, organization.BalanceCredit)
+		if newBalance+organization.BalanceCredit < 0 {
+			return fmt.Errorf(i18n.Translate(lang, "general:Insufficient balance: new organization balance %v would exceed credit limit %v"), newBalance, organization.BalanceCredit)
 		}
 		organization.OrgBalance = newBalance
 		columns = []string{"org_balance"}

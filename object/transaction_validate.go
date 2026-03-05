@@ -63,8 +63,8 @@ func validateOrganizationBalance(owner string, name string, balance float64, cur
 	if isOrgBalance {
 		newBalance = AddPrices(organization.OrgBalance, convertedBalance)
 		// Check organization balance credit limit
-		if newBalance < organization.BalanceCredit {
-			return fmt.Errorf(i18n.Translate(lang, "general:Insufficient balance: new organization balance %v would be below credit limit %v"), newBalance, organization.BalanceCredit)
+		if newBalance+organization.BalanceCredit < 0 {
+			return fmt.Errorf(i18n.Translate(lang, "general:Insufficient balance: new organization balance %v would exceed credit limit %v"), newBalance, organization.BalanceCredit)
 		}
 	} else {
 		// User balance is just a sum of all users' balances, no credit limit check here
@@ -121,8 +121,8 @@ func validateUserBalance(owner string, name string, balance float64, currency st
 	}
 
 	// Validate new balance against credit limit
-	if newBalance < balanceCredit {
-		return fmt.Errorf(i18n.Translate(lang, "general:Insufficient balance: new balance %v would be below credit limit %v"), newBalance, balanceCredit)
+	if newBalance+balanceCredit < 0 {
+		return fmt.Errorf(i18n.Translate(lang, "general:Insufficient balance: new balance %v would exceed credit limit %v"), newBalance, balanceCredit)
 	}
 
 	// In validation mode, we don't actually update the balance
