@@ -564,7 +564,7 @@ class OrganizationEditPage extends React.Component {
             {Setting.getLabel(i18next.t("organization:Balance credit"), i18next.t("organization:Balance credit - Tooltip"))} :
           </Col>
           <Col span={4} >
-            <InputNumber value={this.state.organization.balanceCredit ?? 0} onChange={value => {
+            <InputNumber value={this.state.organization.balanceCredit ?? 0} max={0} onChange={value => {
               this.updateOrganizationField("balanceCredit", value);
             }} />
           </Col>
