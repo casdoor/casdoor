@@ -106,8 +106,8 @@
   "general": {
     "Failed to import groups": "Nie udało się zaimportować grup",
     "Failed to import users": "Nie udało się zaimportować użytkowników",
-    "Insufficient balance: new balance %v would exceed the credit limit %v": "Niewystarczające saldo: nowe saldo %v przekroczyłoby limit kredytowy %v",
-    "Insufficient balance: new organization balance %v would exceed the credit limit %v": "Niewystarczające saldo: nowe saldo organizacji %v przekroczyłoby limit kredytowy %v",
+    "Insufficient balance: new balance %v would be below credit limit %v": "Niewystarczające saldo: nowe saldo %v byłoby poniżej limitu kredytowego %v",
+    "Insufficient balance: new organization balance %v would be below credit limit %v": "Niewystarczające saldo: nowe saldo organizacji %v byłoby poniżej limitu kredytowego %v",
     "Missing parameter": "Brakujący parametr",
     "Only admin user can specify user": "Tylko administrator może wskazać użytkownika",
     "Please login first": "Najpierw się zaloguj",

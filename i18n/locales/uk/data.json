@@ -106,8 +106,8 @@
   "general": {
     "Failed to import groups": "Не вдалося імпортувати групи",
     "Failed to import users": "Не вдалося імпортувати користувачів",
-    "Insufficient balance: new balance %v would exceed the credit limit %v": "Недостатній баланс: новий баланс %v перевищить кредитний ліміт %v",
-    "Insufficient balance: new organization balance %v would exceed the credit limit %v": "Недостатній баланс: новий баланс організації %v перевищить кредитний ліміт %v",
+    "Insufficient balance: new balance %v would be below credit limit %v": "Недостатній баланс: новий баланс %v буде нижче кредитного ліміту %v",
+    "Insufficient balance: new organization balance %v would be below credit limit %v": "Недостатній баланс: новий баланс організації %v буде нижче кредитного ліміту %v",
     "Missing parameter": "Відсутній параметр",
     "Only admin user can specify user": "Лише адміністратор може вказати користувача",
     "Please login first": "Спочатку увійдіть",
