@@ -85,6 +85,37 @@ class LoginPage extends React.Component {
     this.refreshInlineCaptcha = this.refreshInlineCaptcha.bind(this);
   }
 
+  tryRedirectToProviderFromUrl(application) {
+    if (this.state.type !== "code" || this.state.mode !== "signin" || !application) {
+      return false;
+    }
+    const q = new URLSearchParams(this.props.location?.search || "");
+    if (q.get("silentSignin") !== "1") {
+      return false;
+    }
+    const id = q.get("id");
+    const providers = application.providers || application.Providers || [];
+    if (!id || !providers.length) {
+      return false;
+    }
+    const providerItem = providers.find(p => {
+      const prov = p.provider || p.Provider;
+      return prov && (prov.name === id || `${prov.owner}/${prov.name}` === id);
+    });
+    if (!providerItem || !this.isProviderVisible(providerItem)) {
+      return false;
+    }
+    const provider = providerItem.provider || providerItem.Provider;
+    if (provider.category === "OAuth") {
+      goToLink(Provider.getAuthUrl(application, provider, "signin"));
+      return true;
+    } else if (provider.category === "SAML") {
+      ProviderButton.goToSamlUrl(provider, this.props.location);
+      return true;
+    }
+    return false;
+  }
+
   refreshInlineCaptcha() {
     this.captchaRef.current?.loadCaptcha?.();
   }
@@ -112,6 +143,9 @@ class LoginPage extends React.Component {
     }
     if (prevProps.application !== this.props.application) {
       this.setState({loginMethod: this.getDefaultLoginMethod(this.props.application)});
+    }
+    if (this.tryRedirectToProviderFromUrl(this.getApplicationObj())) {
+      return;
     }
     if (this.props.account !== undefined) {
       if (prevProps.account === this.props.account && prevProps.application === this.props.application) {
@@ -188,7 +222,9 @@ class LoginPage extends React.Component {
       .then((res) => {
         if (res.status === "ok") {
           const application = res.data;
-          this.onUpdateApplication(application);
+          if (!this.tryRedirectToProviderFromUrl(application)) {
+            this.onUpdateApplication(application);
+          }
         } else {
           if (this.state.type === "device") {
             this.setState({
@@ -928,34 +964,25 @@ class LoginPage extends React.Component {
       if (signinItem.rule === "None" || signinItem.rule === "") {
         signinItem.rule = showForm ? "small" : "big";
       }
-      const searchParams = new URLSearchParams(window.location.search);
-      const providerHint = searchParams.get("provider_hint");
-
       return (
         <div key={resultItemKey}>
           <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.customCss?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
           <Form.Item>
             {
-              application.providers.filter(providerItem => this.isProviderVisible(providerItem)).map((providerItem, id) => {
-                if (providerHint === providerItem.provider.name) {
-                  goToLink(Provider.getAuthUrl(application, providerItem.provider, "signup"));
-                  return;
-                }
-                return (
-                  <span key={id} onClick={(e) => {
-                    const agreementChecked = this.form.current.getFieldValue("agreement");
+              application.providers.filter(providerItem => this.isProviderVisible(providerItem)).map((providerItem, id) => (
+                <span key={id} onClick={(e) => {
+                  const agreementChecked = this.form.current.getFieldValue("agreement");
 
-                    if (agreementChecked !== undefined && typeof agreementChecked === "boolean" && !agreementChecked) {
-                      e.preventDefault();
-                      message.error(i18next.t("signup:Please accept the agreement!"));
-                    }
-                  }}>
-                    {
-                      ProviderButton.renderProviderLogo(providerItem.provider, application, null, null, signinItem.rule, this.props.location)
-                    }
-                  </span>
-                );
-              })
+                  if (agreementChecked !== undefined && typeof agreementChecked === "boolean" && !agreementChecked) {
+                    e.preventDefault();
+                    message.error(i18next.t("signup:Please accept the agreement!"));
+                  }
+                }}>
+                  {
+                    ProviderButton.renderProviderLogo(providerItem.provider, application, null, null, signinItem.rule, this.props.location)
+                  }
+                </span>
+              ))
             }
             {
               this.renderOtherFormProvider(application)
