@@ -19,6 +19,8 @@ import (
 	"encoding/base64"
 	"fmt"
 	"net/url"
+	"path"
+	"regexp"
 	"slices"
 	"strings"
 	"sync"
@@ -194,6 +196,9 @@ func GetOAuthCode(userId string, clientId string, provider string, signinMethod 
 			Code:    "",
 		}, nil
 	}
+
+	// Expand wildcard/regex scope patterns to concrete scope names
+	scope, _ = ExpandScopes(scope, application)
 
 	// Validate resource parameter (RFC 8707)
 	if err := validateResourceURI(resource); err != nil {
@@ -520,26 +525,93 @@ func IsGrantTypeValid(method string, grantTypes []string) bool {
 	return false
 }
 
+// ExpandScopes expands a space-separated scope string that may contain wildcard or
+// regex patterns into a space-separated string of concrete scope names drawn
+// exclusively from the application's configured Scopes list.
+//
+// Expansion rules per token in the scope string:
+//   - Tokens enclosed in "/" (e.g. "/payment\.t1\..*/") are matched as regexes.
+//   - Tokens containing "*" (e.g. "payment.t1.*") are matched as glob wildcards.
+//   - All other tokens must match a configured scope name exactly.
+//
+// If the application defines no scopes, the original scope string is returned
+// unchanged (backward-compatible behavior).
+// If any token does not match at least one configured scope, ("", false) is returned.
+// Duplicate matches across multiple patterns are deduplicated in the result.
+func ExpandScopes(scope string, application *Application) (string, bool) {
+	if len(application.Scopes) == 0 || scope == "" {
+		return scope, true
+	}
+
+	allowedNames := make([]string, 0, len(application.Scopes))
+	for _, s := range application.Scopes {
+		allowedNames = append(allowedNames, s.Name)
+	}
+
+	expanded := make([]string, 0)
+	seen := make(map[string]bool)
+
+	for _, requestedScope := range strings.Fields(scope) {
+		// Determine the match function once per requested scope token so that
+		// regex patterns are compiled only once instead of once per allowed name.
+		var matches func(allowedName string) bool
+		isPattern := false
+
+		if len(requestedScope) > 2 && requestedScope[0] == '/' && requestedScope[len(requestedScope)-1] == '/' {
+			// Regex pattern enclosed in slashes, e.g. "/payment\.t1\..+/"
+			regexStr := requestedScope[1 : len(requestedScope)-1]
+			re, err := regexp.Compile("^(?:" + regexStr + ")$")
+			if err != nil {
+				// Invalid regex – no scope can match
+				return "", false
+			}
+			matches = re.MatchString
+			isPattern = true
+		} else if strings.Contains(requestedScope, "*") {
+			// Wildcard glob pattern, e.g. "payment.t1.*"
+			pattern := requestedScope
+			matches = func(allowedName string) bool {
+				ok, err := path.Match(pattern, allowedName)
+				return err == nil && ok
+			}
+			isPattern = true
+		} else {
+			// Exact match
+			token := requestedScope
+			matches = func(allowedName string) bool { return allowedName == token }
+		}
+
+		matched := false
+		for _, allowedName := range allowedNames {
+			if matches(allowedName) {
+				if !seen[allowedName] {
+					expanded = append(expanded, allowedName)
+					seen[allowedName] = true
+				}
+				matched = true
+				if !isPattern {
+					// exact match found – no need to continue scanning
+					break
+				}
+			}
+		}
+		if !matched {
+			return "", false
+		}
+	}
+
+	return strings.Join(expanded, " "), true
+}
+
 // IsScopeValid checks whether all space-separated scopes in the scope string
 // are defined in the application's Scopes list.
 // If the application has no defined scopes, every scope is considered valid
-// (backward-compatible behaviour).
+// (backward-compatible behavior).
+// Scope tokens may be wildcard patterns (containing '*') or regex patterns
+// (enclosed in '/'), in which case they must match at least one configured scope.
 func IsScopeValid(scope string, application *Application) bool {
-	if len(application.Scopes) == 0 || scope == "" {
-		return true
-	}
-
-	allowed := make(map[string]bool, len(application.Scopes))
-	for _, s := range application.Scopes {
-		allowed[s.Name] = true
-	}
-
-	for _, s := range strings.Fields(scope) {
-		if !allowed[s] {
-			return false
-		}
-	}
-	return true
+	_, ok := ExpandScopes(scope, application)
+	return ok
 }
 
 // createGuestUserToken creates a new guest user and returns a token for them
@@ -778,12 +850,14 @@ func GetAuthorizationCodeToken(application *Application, clientSecret string, co
 // GetPasswordToken
 // Resource Owner Password Credentials flow
 func GetPasswordToken(application *Application, username string, password string, scope string, host string) (*Token, *TokenError, error) {
-	if !IsScopeValid(scope, application) {
+	expandedScope, ok := ExpandScopes(scope, application)
+	if !ok {
 		return nil, &TokenError{
 			Error:            InvalidScope,
 			ErrorDescription: "the requested scope is invalid or not defined in the application",
 		}, nil
 	}
+	scope = expandedScope
 
 	user, err := GetUserByFields(application.Organization, username)
 	if err != nil {
@@ -866,12 +940,14 @@ func GetClientCredentialsToken(application *Application, clientSecret string, sc
 			ErrorDescription: "client_secret is invalid",
 		}, nil
 	}
-	if !IsScopeValid(scope, application) {
+	expandedScope, ok := ExpandScopes(scope, application)
+	if !ok {
 		return nil, &TokenError{
 			Error:            InvalidScope,
 			ErrorDescription: "the requested scope is invalid or not defined in the application",
 		}, nil
 	}
+	scope = expandedScope
 	nullUser := &User{
 		Owner: application.Owner,
 		Id:    application.GetId(),
@@ -911,12 +987,14 @@ func GetClientCredentialsToken(application *Application, clientSecret string, sc
 // GetImplicitToken
 // Implicit flow
 func GetImplicitToken(application *Application, username string, scope string, nonce string, host string) (*Token, *TokenError, error) {
-	if !IsScopeValid(scope, application) {
+	expandedScope, ok := ExpandScopes(scope, application)
+	if !ok {
 		return nil, &TokenError{
 			Error:            InvalidScope,
 			ErrorDescription: "the requested scope is invalid or not defined in the application",
 		}, nil
 	}
+	scope = expandedScope
 
 	user, err := GetUserByFields(application.Organization, username)
 	if err != nil {
