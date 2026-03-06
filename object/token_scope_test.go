@@ -181,7 +181,7 @@ func TestIsRegexScope(t *testing.T) {
 		want  bool
 	}{
 		{"read", false},
-		{"payment.t1.read", true}, // contains '.'
+		{"payment.t1.read", true}, // '.' is a regex metacharacter
 		{"payment.t1.*", true},
 		{"payment\\.t1\\..*", true},
 		{"scope[12]", true},

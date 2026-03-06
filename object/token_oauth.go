@@ -197,7 +197,13 @@ func GetOAuthCode(userId string, clientId string, provider string, signinMethod 
 	}
 
 	// Expand regex/wildcard scopes to concrete scope names.
-	expandedScope, _ := ExpandScope(scope, application)
+	expandedScope, ok := ExpandScope(scope, application)
+	if !ok {
+		return &Code{
+			Message: i18n.Translate(lang, "token:Invalid scope"),
+			Code:    "",
+		}, nil
+	}
 	scope = expandedScope
 
 	// Validate resource parameter (RFC 8707)
