@@ -570,7 +570,7 @@
     "Physical": "Vật lý",
     "Show all": "Hiển thị tất cả",
     "Virtual": "Ảo",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "Bạn cần xóa tất cả nhóm con trước. Bạn có thể xem các nhóm con trong cây nhóm bên trái của trang [Tổ chức] -\u003e [Nhóm]"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Bạn cần xóa tất cả nhóm con trước. Bạn có thể xem các nhóm con trong cây nhóm bên trái của trang [Tổ chức] -> [Nhóm]"
   },
   "home": {
     "New users past 30 days": "Người dùng mới trong 30 ngày qua",
@@ -795,7 +795,15 @@
     "Website URL": "Địa chỉ trang web",
     "Website URL - Tooltip": "Địa chỉ trang chủ của tổ chức. Trường này không được sử dụng trong Casdoor",
     "Widget items": "Các mục tiện ích",
-    "Widget items - Tooltip": "Gợi ý các mục tiện ích"
+    "Widget items - Tooltip": "Gợi ý các mục tiện ích",
+    "Kerberos realm": "Kerberos realm",
+    "Kerberos realm - Tooltip": "The Kerberos realm for IWA/SPNEGO authentication (e.g., EXAMPLE.COM)",
+    "Kerberos KDC host": "Kerberos KDC host",
+    "Kerberos KDC host - Tooltip": "The hostname of the Kerberos Key Distribution Center (e.g., kdc.example.com)",
+    "Kerberos keytab": "Kerberos keytab",
+    "Kerberos keytab - Tooltip": "The base64-encoded keytab file for the service principal",
+    "Kerberos service name": "Kerberos service name",
+    "Kerberos service name - Tooltip": "The Kerberos service principal name (defaults to HTTP)"
   },
   "payment": {
     "Confirm your invoice information": "Xác nhận thông tin hóa đơn của bạn",

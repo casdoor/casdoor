@@ -570,7 +570,7 @@
     "Physical": "Physique",
     "Show all": "Afficher tout",
     "Virtual": "Virtuel",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "Vous devez d'abord supprimer tous les sous-groupes. Vous pouvez voir les sous-groupes dans l'arborescence des groupes à gauche de la page [Organisations] -\u003e [Groupes]"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Vous devez d'abord supprimer tous les sous-groupes. Vous pouvez voir les sous-groupes dans l'arborescence des groupes à gauche de la page [Organisations] -> [Groupes]"
   },
   "home": {
     "New users past 30 days": "Nouveaux utilisateurs ces 30 derniers jours",
@@ -795,7 +795,15 @@
     "Website URL": "URL du site web",
     "Website URL - Tooltip": "URL du site web l'organisation. Ce champ n'est pas utilisé dans Casdoor",
     "Widget items": "Éléments du widget",
-    "Widget items - Tooltip": "Éléments du widget - Infobulle"
+    "Widget items - Tooltip": "Éléments du widget - Infobulle",
+    "Kerberos realm": "Kerberos realm",
+    "Kerberos realm - Tooltip": "The Kerberos realm for IWA/SPNEGO authentication (e.g., EXAMPLE.COM)",
+    "Kerberos KDC host": "Kerberos KDC host",
+    "Kerberos KDC host - Tooltip": "The hostname of the Kerberos Key Distribution Center (e.g., kdc.example.com)",
+    "Kerberos keytab": "Kerberos keytab",
+    "Kerberos keytab - Tooltip": "The base64-encoded keytab file for the service principal",
+    "Kerberos service name": "Kerberos service name",
+    "Kerberos service name - Tooltip": "The Kerberos service principal name (defaults to HTTP)"
   },
   "payment": {
     "Confirm your invoice information": "Confirmez les informations de votre facture",
