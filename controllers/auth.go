@@ -198,7 +198,7 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 		} else {
 			scope := c.Ctx.Input.Query("scope")
 			nonce := c.Ctx.Input.Query("nonce")
-			expandedScope, valid := object.ExpandScope(scope, application)
+			expandedScope, valid := object.IsScopeValidAndExpand(scope, application)
 			if !valid {
 				resp = &Response{Status: "error", Msg: "error: invalid_scope", Data: ""}
 			} else {

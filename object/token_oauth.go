@@ -197,7 +197,7 @@ func GetOAuthCode(userId string, clientId string, provider string, signinMethod 
 	}
 
 	// Expand regex/wildcard scopes to concrete scope names.
-	expandedScope, ok := ExpandScope(scope, application)
+	expandedScope, ok := IsScopeValidAndExpand(scope, application)
 	if !ok {
 		return &Code{
 			Message: i18n.Translate(lang, "token:Invalid scope"),
@@ -536,14 +536,14 @@ func isRegexScope(scope string) bool {
 	return strings.ContainsAny(scope, ".*+?^${}()|[]\\")
 }
 
-// ExpandScope expands any regex patterns in the space-separated scope string
+// IsScopeValidAndExpand expands any regex patterns in the space-separated scope string
 // against the application's configured scopes. Literal scopes are kept as-is
 // after verifying they exist in the allowed list. Regex scopes are matched
 // against every allowed scope name; all matches replace the pattern.
 // If the application has no defined scopes, the original scope string is
 // returned unchanged (backward-compatible behaviour).
 // Returns the expanded scope string and whether the scope is valid.
-func ExpandScope(scope string, application *Application) (string, bool) {
+func IsScopeValidAndExpand(scope string, application *Application) (string, bool) {
 	if len(application.Scopes) == 0 || scope == "" {
 		return scope, true
 	}
@@ -602,7 +602,7 @@ func ExpandScope(scope string, application *Application) (string, bool) {
 // If the application has no defined scopes, every scope is considered valid
 // (backward-compatible behaviour).
 func IsScopeValid(scope string, application *Application) bool {
-	_, ok := ExpandScope(scope, application)
+	_, ok := IsScopeValidAndExpand(scope, application)
 	return ok
 }
 
@@ -842,7 +842,7 @@ func GetAuthorizationCodeToken(application *Application, clientSecret string, co
 // GetPasswordToken
 // Resource Owner Password Credentials flow
 func GetPasswordToken(application *Application, username string, password string, scope string, host string) (*Token, *TokenError, error) {
-	expandedScope, ok := ExpandScope(scope, application)
+	expandedScope, ok := IsScopeValidAndExpand(scope, application)
 	if !ok {
 		return nil, &TokenError{
 			Error:            InvalidScope,
@@ -932,7 +932,7 @@ func GetClientCredentialsToken(application *Application, clientSecret string, sc
 			ErrorDescription: "client_secret is invalid",
 		}, nil
 	}
-	expandedScope, ok := ExpandScope(scope, application)
+	expandedScope, ok := IsScopeValidAndExpand(scope, application)
 	if !ok {
 		return nil, &TokenError{
 			Error:            InvalidScope,
@@ -979,7 +979,7 @@ func GetClientCredentialsToken(application *Application, clientSecret string, sc
 // GetImplicitToken
 // Implicit flow
 func GetImplicitToken(application *Application, username string, scope string, nonce string, host string) (*Token, *TokenError, error) {
-	expandedScope, ok := ExpandScope(scope, application)
+	expandedScope, ok := IsScopeValidAndExpand(scope, application)
 	if !ok {
 		return nil, &TokenError{
 			Error:            InvalidScope,
