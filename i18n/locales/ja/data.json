@@ -38,8 +38,8 @@
     "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing": "有料ユーザー「%s」には有効または保留中のサブスクリプションがなく、アプリケーション「%s」にはデフォルトの価格設定がありません",
     "the application for user %s is not found": "ユーザー「%s」のアプリケーションが見つかりません",
     "the organization: %s is not found": "組織「%s」が見つかりません",
-    "The login method: login with Kerberos is not enabled for the application": "The login method: login with Kerberos is not enabled for the application",
-    "Kerberos authentication failed: %s": "Kerberos authentication failed: %s"
+    "The login method: login with Kerberos is not enabled for the application": "ログイン方法: Kerberosでのログインはこのアプリケーションで有効になっていません",
+    "Kerberos authentication failed: %s": "Kerberos認証に失敗しました: %s"
   },
   "cas": {
     "Service %s and %s do not match": "サービス%sと%sは一致しません"

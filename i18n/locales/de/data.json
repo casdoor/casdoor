@@ -38,8 +38,8 @@
     "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing": "Bezahlter Benutzer %s hat kein aktives oder ausstehendes Abonnement und die Anwendung: %s hat keine Standardpreisgestaltung",
     "the application for user %s is not found": "Die Anwendung für Benutzer %s wurde nicht gefunden",
     "the organization: %s is not found": "Die Organisation: %s wurde nicht gefunden",
-    "The login method: login with Kerberos is not enabled for the application": "The login method: login with Kerberos is not enabled for the application",
-    "Kerberos authentication failed: %s": "Kerberos authentication failed: %s"
+    "The login method: login with Kerberos is not enabled for the application": "Die Anmeldemethode: Anmelden mit Kerberos ist für die Anwendung nicht aktiviert",
+    "Kerberos authentication failed: %s": "Kerberos-Authentifizierung fehlgeschlagen: %s"
   },
   "cas": {
     "Service %s and %s do not match": "Service %s und %s stimmen nicht überein"

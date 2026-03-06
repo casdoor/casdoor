@@ -38,8 +38,8 @@
     "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing": "người dùng trả phí %s không có đăng ký đang hoạt động hoặc đang chờ và ứng dụng: %s không có giá mặc định",
     "the application for user %s is not found": "không tìm thấy ứng dụng cho người dùng %s",
     "the organization: %s is not found": "không tìm thấy tổ chức: %s",
-    "The login method: login with Kerberos is not enabled for the application": "The login method: login with Kerberos is not enabled for the application",
-    "Kerberos authentication failed: %s": "Kerberos authentication failed: %s"
+    "The login method: login with Kerberos is not enabled for the application": "Phương thức đăng nhập: đăng nhập bằng Kerberos không được bật cho ứng dụng này",
+    "Kerberos authentication failed: %s": "Xác thực Kerberos thất bại: %s"
   },
   "cas": {
     "Service %s and %s do not match": "Dịch sang tiếng Việt: Dịch vụ %s và %s không khớp"

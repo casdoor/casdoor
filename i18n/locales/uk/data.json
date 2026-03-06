@@ -38,8 +38,8 @@
     "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing": "Користувач %s не має активної або очікуваної підписки, а додаток: %s не має типової ціни",
     "the application for user %s is not found": "Додаток для користувача %s не знайдено",
     "the organization: %s is not found": "Організація: %s не знайдена",
-    "The login method: login with Kerberos is not enabled for the application": "The login method: login with Kerberos is not enabled for the application",
-    "Kerberos authentication failed: %s": "Kerberos authentication failed: %s"
+    "The login method: login with Kerberos is not enabled for the application": "Метод входу: вхід за допомогою Kerberos не увімкнено для цього застосунку",
+    "Kerberos authentication failed: %s": "Помилка автентифікації Kerberos: %s"
   },
   "cas": {
     "Service %s and %s do not match": "Сервіс %s і %s не збігаються"
