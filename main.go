@@ -73,6 +73,7 @@ func main() {
 	object.InitFromFile()
 	object.InitCasvisorConfig()
 	object.InitCleanupTokens()
+	object.InitApplicationMap()
 
 	object.InitSiteMap()
 	object.InitRuleMap()
@@ -130,6 +131,7 @@ func main() {
 	go ldap.StartLdapServer()
 	go radius.StartRadiusServer()
 	go object.ClearThroughputPerSecond()
+	go proxy.StartProxyServer()
 
 	if len(object.SiteMap) != 0 {
 		service.Start()

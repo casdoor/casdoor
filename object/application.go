@@ -178,6 +178,16 @@ func GetOrganizationApplicationCount(owner, organization, field, value string) (
 	return session.Where("organization = ? or is_shared = ? ", organization, true).Count(&Application{})
 }
 
+func GetGlobalApplications() ([]*Application, error) {
+	applications := []*Application{}
+	err := ormer.Engine.Desc("created_time").Find(&applications)
+	if err != nil {
+		return applications, err
+	}
+
+	return applications, nil
+}
+
 func GetApplications(owner string) ([]*Application, error) {
 	applications := []*Application{}
 	err := ormer.Engine.Desc("created_time").Find(&applications, &Application{Owner: owner})
@@ -768,6 +778,12 @@ func UpdateApplication(id string, application *Application, isGlobalAdmin bool, 
 		return false, err
 	}
 
+	if affected != 0 {
+		if err := RefreshApplicationCache(); err != nil {
+			fmt.Printf("Failed to refresh application cache after update: %v\n", err)
+		}
+	}
+
 	return affected != 0, nil
 }
 
@@ -824,6 +840,12 @@ func AddApplication(application *Application) (bool, error) {
 		return false, nil
 	}
 
+	if affected != 0 {
+		if err := RefreshApplicationCache(); err != nil {
+			fmt.Printf("Failed to refresh application cache after add: %v\n", err)
+		}
+	}
+
 	return affected != 0, nil
 }
 
@@ -831,6 +853,12 @@ func deleteApplication(application *Application) (bool, error) {
 	affected, err := ormer.Engine.ID(core.PK{application.Owner, application.Name}).Where("organization = ?", application.Organization).Delete(&Application{})
 	if err != nil {
 		return false, err
+	}
+
+	if affected != 0 {
+		if err := RefreshApplicationCache(); err != nil {
+			fmt.Printf("Failed to refresh application cache after delete: %v\n", err)
+		}
 	}
 
 	return affected != 0, nil
