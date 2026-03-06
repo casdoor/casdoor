@@ -1476,6 +1476,10 @@ export function isLdapEnabled(application) {
   return isSigninMethodEnabled(application, "LDAP");
 }
 
+export function isKerberosEnabled(application) {
+  return isSigninMethodEnabled(application, "Kerberos");
+}
+
 export function isFaceIdEnabled(application) {
   return isSigninMethodEnabled(application, "Face ID");
 }

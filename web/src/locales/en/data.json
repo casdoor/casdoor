@@ -570,7 +570,7 @@
     "Physical": "Physical",
     "Show all": "Show all",
     "Virtual": "Virtual",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page"
   },
   "home": {
     "New users past 30 days": "New users past 30 days",
@@ -686,7 +686,9 @@
     "WeChat": "WeChat",
     "WebAuthn": "WebAuthn",
     "sign up now": "sign up now",
-    "username, Email or phone": "username, Email or phone"
+    "username, Email or phone": "username, Email or phone",
+    "Kerberos": "Kerberos",
+    "Sign in with Kerberos": "Sign in with Windows Authentication"
   },
   "mfa": {
     "Each time you sign in to your Account, you'll need your password and a authentication code": "Each time you sign in to your Account, you'll need your password and a authentication code",
@@ -795,7 +797,16 @@
     "Website URL": "Website URL",
     "Website URL - Tooltip": "The homepage URL of the organization. This field is not used in Casdoor",
     "Widget items": "Widget items",
-    "Widget items - Tooltip": "Items displayed in the widget"
+    "Widget items - Tooltip": "Items displayed in the widget",
+    "Kerberos realm": "Kerberos Realm",
+    "Kerberos realm - Tooltip": "The Kerberos realm (Active Directory domain name), e.g. EXAMPLE.COM",
+    "Kerberos KDC host": "KDC Host",
+    "Kerberos KDC host - Tooltip": "The Kerberos Key Distribution Center (KDC) hostname. Leave empty to use DNS discovery.",
+    "Kerberos service name": "Service Principal Name",
+    "Kerberos service name - Tooltip": "The Kerberos Service Principal Name (SPN) for this Casdoor instance, e.g. HTTP/casdoor.example.com",
+    "Kerberos keytab": "Keytab (Base64)",
+    "Kerberos keytab - Tooltip": "The service keytab file encoded in Base64, used to validate Kerberos tokens",
+    "Kerberos keytab placeholder": "Paste the Base64-encoded keytab file content here"
   },
   "payment": {
     "Confirm your invoice information": "Confirm your invoice information",

@@ -570,7 +570,7 @@
     "Physical": "实体组",
     "Show all": "显示全部",
     "Virtual": "虚拟组",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "您需要先删除所有子组。您可以在 [组织] -\u003e [群组] 页面左侧的群组树中查看子组"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "您需要先删除所有子组。您可以在 [组织] -> [群组] 页面左侧的群组树中查看子组"
   },
   "home": {
     "New users past 30 days": "过去 30 天新增的用户",
@@ -686,7 +686,9 @@
     "WeChat": "微信",
     "WebAuthn": "Web身份验证",
     "sign up now": "立即注册",
-    "username, Email or phone": "用户名、Email或手机号"
+    "username, Email or phone": "用户名、Email或手机号",
+    "Kerberos": "Kerberos",
+    "Sign in with Kerberos": "使用Windows集成认证登录"
   },
   "mfa": {
     "Each time you sign in to your Account, you'll need your password and a authentication code": "每次登录帐户时，都需要密码和认证码",
@@ -795,7 +797,16 @@
     "Website URL": "主页地址",
     "Website URL - Tooltip": "组织的主页地址URL，该字段在Casdoor平台中未被使用",
     "Widget items": "功能按钮",
-    "Widget items - Tooltip": "小部件中显示的项目"
+    "Widget items - Tooltip": "小部件中显示的项目",
+    "Kerberos realm": "Kerberos 域",
+    "Kerberos realm - Tooltip": "Kerberos 域（Active Directory 域名），例如 EXAMPLE.COM",
+    "Kerberos KDC host": "KDC 主机",
+    "Kerberos KDC host - Tooltip": "Kerberos 密钥分发中心（KDC）主机名，留空则使用 DNS 自动发现",
+    "Kerberos service name": "服务主体名称",
+    "Kerberos service name - Tooltip": "此 Casdoor 实例的 Kerberos 服务主体名称（SPN），例如 HTTP/casdoor.example.com",
+    "Kerberos keytab": "Keytab（Base64）",
+    "Kerberos keytab - Tooltip": "Base64 编码的服务 keytab 文件，用于验证 Kerberos 令牌",
+    "Kerberos keytab placeholder": "在此处粘贴 Base64 编码的 keytab 文件内容"
   },
   "payment": {
     "Confirm your invoice information": "确认您的发票信息",

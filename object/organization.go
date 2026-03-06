@@ -98,6 +98,11 @@ type Organization struct {
 	UserBalance     float64 `json:"userBalance"`
 	BalanceCredit   float64 `json:"balanceCredit"`
 	BalanceCurrency string  `xorm:"varchar(100)" json:"balanceCurrency"`
+
+	KerberosRealm       string `xorm:"varchar(100)" json:"kerberosRealm"`
+	KerberosKdcHost     string `xorm:"varchar(100)" json:"kerberosKdcHost"`
+	KerberosKeytab      string `xorm:"mediumtext" json:"kerberosKeytab"`
+	KerberosServiceName string `xorm:"varchar(200)" json:"kerberosServiceName"`
 }
 
 func GetOrganizationCount(owner, name, field, value string) (int64, error) {

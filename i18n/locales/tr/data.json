@@ -37,7 +37,9 @@
     "UserCode Invalid": "Kullanıcı Kodu Geçersiz",
     "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing": "Ücretli kullanıcı %s aktif veya bekleyen bir aboneliğe sahip değil ve uygulama: %s varsayılan fiyatlandırmaya sahip değil",
     "the application for user %s is not found": "%s kullanıcısı için uygulama bulunamadı",
-    "the organization: %s is not found": "Organizasyon: %s bulunamadı"
+    "the organization: %s is not found": "Organizasyon: %s bulunamadı",
+    "The login method: login with Kerberos is not enabled for the application": "The login method: login with Kerberos is not enabled for the application",
+    "Kerberos authentication failed: %s": "Kerberos authentication failed: %s"
   },
   "cas": {
     "Service %s and %s do not match": "Servis %s ve %s eşleşmiyor"

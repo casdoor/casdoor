@@ -258,6 +258,7 @@ class LoginPage extends React.Component {
       case "WebAuthn": return "webAuthn";
       case "LDAP": return "ldap";
       case "Face ID": return "faceId";
+      case "Kerberos": return "kerberos";
       }
     }
 
@@ -273,6 +274,8 @@ class LoginPage extends React.Component {
       return "WebAuthn";
     } else if (this.state.loginMethod === "ldap") {
       return "LDAP";
+    } else if (this.state.loginMethod === "kerberos") {
+      return "Kerberos";
     } else if (this.state.loginMethod === "faceId") {
       return "Face ID";
     } else {
@@ -420,6 +423,10 @@ class LoginPage extends React.Component {
       }
 
       this.signInWithWebAuthn(username, values);
+      return;
+    }
+    if (this.state.loginMethod === "kerberos") {
+      this.signInWithKerberos(values);
       return;
     }
     if (this.state.loginMethod === "faceId") {
@@ -711,6 +718,10 @@ class LoginPage extends React.Component {
         return (<WeChatLoginPanel application={application} loginMethod={this.state.loginMethod} />);
       }
 
+      if (this.state.loginMethod === "kerberos") {
+        return null;
+      }
+
       if (this.state.loginMethod === "verificationCodePhone") {
         return <Form.Item className="signin-phone" required={true}>
           <Input.Group compact>
@@ -890,7 +901,8 @@ class LoginPage extends React.Component {
             {
               this.state.loginMethod === "webAuthn" ? i18next.t("login:Sign in with WebAuthn") :
                 this.state.loginMethod === "faceId" ? i18next.t("login:Sign in with Face ID") :
-                  signinItem.label ? signinItem.label : i18next.t("login:Sign In")
+                  this.state.loginMethod === "kerberos" ? i18next.t("login:Sign in with Kerberos") :
+                    signinItem.label ? signinItem.label : i18next.t("login:Sign In")
             }
           </Button>
           {
@@ -924,7 +936,7 @@ class LoginPage extends React.Component {
         </Form.Item>
       );
     } else if (signinItem.name === "Providers") {
-      const showForm = Setting.isPasswordEnabled(application) || Setting.isCodeSigninEnabled(application) || Setting.isWebAuthnEnabled(application) || Setting.isLdapEnabled(application);
+      const showForm = Setting.isPasswordEnabled(application) || Setting.isCodeSigninEnabled(application) || Setting.isWebAuthnEnabled(application) || Setting.isLdapEnabled(application) || Setting.isKerberosEnabled(application);
       if (signinItem.rule === "None" || signinItem.rule === "") {
         signinItem.rule = showForm ? "small" : "big";
       }
@@ -1316,6 +1328,34 @@ class LoginPage extends React.Component {
       });
   }
 
+  signInWithKerberos(values) {
+    const oAuthParams = Util.getOAuthGetParameters();
+    this.populateOauthValues(values);
+    AuthBackend.kerberosLogin(values, oAuthParams)
+      .then((res) => {
+        if (res.status === "ok") {
+          const responseType = values["type"];
+          if (responseType === "code") {
+            this.postCodeLoginAction(res);
+          } else if (responseType === "token" || responseType === "id_token") {
+            const accessToken = res.data;
+            Setting.goToLink(`${oAuthParams.redirectUri}#${responseType}=${accessToken}&state=${oAuthParams.state}&token_type=bearer`);
+          } else {
+            Setting.showMessage("success", i18next.t("login:Logged in successfully"));
+            Setting.goToLink("/");
+          }
+        } else {
+          Setting.showMessage("error", `${i18next.t("application:Failed to sign in")}: ${res.msg}`);
+        }
+      })
+      .catch(error => {
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}${error}`);
+      })
+      .finally(() => {
+        this.setState({loginLoading: false});
+      });
+  }
+
   hasVerificationCodeSigninItem(application) {
     const targetApp = application || this.getApplicationObj();
     if (!targetApp || !targetApp.signinItems) {
@@ -1417,6 +1457,7 @@ class LoginPage extends React.Component {
       [generateItemKey("Verification code", "Phone only"), {label: i18next.t("login:Verification code"), key: "verificationCodePhone"}],
       [generateItemKey("WebAuthn", "None"), {label: i18next.t("login:WebAuthn"), key: "webAuthn"}],
       [generateItemKey("LDAP", "None"), {label: i18next.t("login:LDAP"), key: "ldap"}],
+      [generateItemKey("Kerberos", "None"), {label: i18next.t("login:Kerberos"), key: "kerberos"}],
       [generateItemKey("Face ID", "None"), {label: i18next.t("login:Face ID"), key: "faceId"}],
       [generateItemKey("WeChat", "Tab"), {label: i18next.t("login:WeChat"), key: "wechat"}],
       [generateItemKey("WeChat", "None"), {label: i18next.t("login:WeChat"), key: "wechat"}],

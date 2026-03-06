@@ -570,7 +570,7 @@
     "Physical": "фізичний",
     "Show all": "Покажи все",
     "Virtual": "Віртуальний",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "Спочатку потрібно видалити всі підгрупи. Підгрупи можна переглянути у лівому дереві груп на сторінці [Організації] -\u003e [Групи]"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Спочатку потрібно видалити всі підгрупи. Підгрупи можна переглянути у лівому дереві груп на сторінці [Організації] -> [Групи]"
   },
   "home": {
     "New users past 30 days": "Нові користувачі за останні 30 днів",
@@ -686,7 +686,9 @@
     "WeChat": "Вейчат",
     "WebAuthn": "WebAuthn",
     "sign up now": "Зареєструйся зараз",
-    "username, Email or phone": "ім'я користувача, електронну пошту або телефон"
+    "username, Email or phone": "ім'я користувача, електронну пошту або телефон",
+    "Kerberos": "Kerberos",
+    "Sign in with Kerberos": "Увійти через автентифікацію Windows"
   },
   "mfa": {
     "Each time you sign in to your Account, you'll need your password and a authentication code": "Кожного разу, коли ви входите в обліковий запис, вам знадобляться пароль і код автентифікації",

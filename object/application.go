@@ -943,6 +943,17 @@ func (application *Application) IsFaceIdEnabled() bool {
 	return false
 }
 
+func (application *Application) IsKerberosEnabled() bool {
+	if len(application.SigninMethods) > 0 {
+		for _, signinMethod := range application.SigninMethods {
+			if signinMethod.Name == "Kerberos" {
+				return true
+			}
+		}
+	}
+	return false
+}
+
 func IsOriginAllowed(origin string) (bool, error) {
 	applications, err := GetApplications("")
 	if err != nil {

@@ -570,7 +570,7 @@
     "Physical": "Físico",
     "Show all": "Mostrar todos",
     "Virtual": "Virtual",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "Necesitas eliminar todos los subgrupos primero. Puedes ver los subgrupos en el árbol de grupos a la izquierda en la página [Organizaciones] -\u003e [Grupos]"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Necesitas eliminar todos los subgrupos primero. Puedes ver los subgrupos en el árbol de grupos a la izquierda en la página [Organizaciones] -> [Grupos]"
   },
   "home": {
     "New users past 30 days": "Nuevos usuarios en los últimos 30 días",
@@ -686,7 +686,9 @@
     "WeChat": "WeChat",
     "WebAuthn": "WebAuthn",
     "sign up now": "Regístrate ahora",
-    "username, Email or phone": "Nombre de usuario, correo electrónico o teléfono"
+    "username, Email or phone": "Nombre de usuario, correo electrónico o teléfono",
+    "Kerberos": "Kerberos",
+    "Sign in with Kerberos": "Iniciar sesión con autenticación de Windows"
   },
   "mfa": {
     "Each time you sign in to your Account, you'll need your password and a authentication code": "Cada vez que inicies sesión en tu cuenta, necesitarás tu contraseña y un código de autenticación",

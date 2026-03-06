@@ -37,7 +37,9 @@
     "UserCode Invalid": "Código de usuario inválido",
     "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing": "El usuario de pago %s no tiene una suscripción activa o pendiente y la aplicación %s no tiene precios predeterminados",
     "the application for user %s is not found": "no se encontró la aplicación para el usuario %s",
-    "the organization: %s is not found": "no se encontró la organización: %s"
+    "the organization: %s is not found": "no se encontró la organización: %s",
+    "The login method: login with Kerberos is not enabled for the application": "The login method: login with Kerberos is not enabled for the application",
+    "Kerberos authentication failed: %s": "Kerberos authentication failed: %s"
   },
   "cas": {
     "Service %s and %s do not match": "Los servicios %s y %s no coinciden"

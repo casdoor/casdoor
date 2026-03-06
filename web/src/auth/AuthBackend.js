@@ -131,6 +131,16 @@ export function getSamlLogin(providerId, relayState) {
   }).then(res => res.json());
 }
 
+export function kerberosLogin(values, oAuthParams) {
+  return fetch(`${authConfig.serverUrl}/api/kerberos-login${oAuthParamsToQuery(oAuthParams)}&application=${values["application"]}`, {
+    method: "GET",
+    credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}
+
 export function loginWithSaml(values, param) {
   return fetch(`${authConfig.serverUrl}/api/login${param}`, {
     method: "POST",

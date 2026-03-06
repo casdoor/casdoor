@@ -570,7 +570,7 @@
     "Physical": "Fiziksel",
     "Show all": "Tümünü göster",
     "Virtual": "Sanal",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "Önce tüm alt grupları silmeniz gerekir. Alt grupları [Organizasyonlar] -\u003e [Gruplar] sayfasının sol grup ağacından görüntüleyebilirsiniz."
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Önce tüm alt grupları silmeniz gerekir. Alt grupları [Organizasyonlar] -> [Gruplar] sayfasının sol grup ağacından görüntüleyebilirsiniz."
   },
   "home": {
     "New users past 30 days": "Son 30 gündeki yeni kullanıcılar",
@@ -686,7 +686,9 @@
     "WeChat": "WeChat",
     "WebAuthn": "WebAuthn",
     "sign up now": "hemen kaydolun",
-    "username, Email or phone": "kullanıcı adınız, Eposta adresiniz ve telefon numaranız"
+    "username, Email or phone": "kullanıcı adınız, Eposta adresiniz ve telefon numaranız",
+    "Kerberos": "Kerberos",
+    "Sign in with Kerberos": "Windows Kimlik Doğrulaması ile giriş yap"
   },
   "mfa": {
     "Each time you sign in to your Account, you'll need your password and a authentication code": "Hesabınıza her oturum açtığınızda şifreniz ve bir doğrulama kodu gerekecek",

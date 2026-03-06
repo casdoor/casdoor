@@ -570,7 +570,7 @@
     "Physical": "Vật lý",
     "Show all": "Hiển thị tất cả",
     "Virtual": "Ảo",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "Bạn cần xóa tất cả nhóm con trước. Bạn có thể xem các nhóm con trong cây nhóm bên trái của trang [Tổ chức] -\u003e [Nhóm]"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Bạn cần xóa tất cả nhóm con trước. Bạn có thể xem các nhóm con trong cây nhóm bên trái của trang [Tổ chức] -> [Nhóm]"
   },
   "home": {
     "New users past 30 days": "Người dùng mới trong 30 ngày qua",
@@ -686,7 +686,9 @@
     "WeChat": "WeChat",
     "WebAuthn": "WebAuthn",
     "sign up now": "Đăng ký ngay bây giờ",
-    "username, Email or phone": "Tên đăng nhập, Email hoặc điện thoại"
+    "username, Email or phone": "Tên đăng nhập, Email hoặc điện thoại",
+    "Kerberos": "Kerberos",
+    "Sign in with Kerberos": "Đăng nhập bằng xác thực Windows"
   },
   "mfa": {
     "Each time you sign in to your Account, you'll need your password and a authentication code": "Mỗi lần đăng nhập vào Tài khoản của bạn, bạn sẽ cần mật khẩu và mã xác thực",
