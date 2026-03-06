@@ -570,7 +570,7 @@
     "Physical": "Physical",
     "Show all": "Show all",
     "Virtual": "Virtual",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page"
   },
   "home": {
     "New users past 30 days": "New users past 30 days",
@@ -770,6 +770,8 @@
     "Init score - Tooltip": "Initial score points awarded to users upon registration",
     "Is profile public": "Is profile public",
     "Is profile public - Tooltip": "After being closed, only global administrators or users in the same organization can access the user's profile page",
+    "LDAP server attribute filter": "LDAP server attribute filter",
+    "LDAP server attribute filter - Tooltip": "Configure which LDAP attributes are returned by the LDAP server. Leave empty to return all attributes.",
     "Modify rule": "Modify rule",
     "New Organization": "New Organization",
     "Optional": "Optional",

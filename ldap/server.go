@@ -203,31 +203,69 @@ func handleSearch(w ldap.ResponseWriter, m *ldap.Message) {
 		return
 	}
 
+	orgCache := make(map[string]*object.Organization)
+
 	for _, user := range users {
+		if _, ok := orgCache[user.Owner]; !ok {
+			org, err := object.GetOrganizationByUser(user)
+			if err == nil {
+				orgCache[user.Owner] = org
+			} else {
+				orgCache[user.Owner] = nil
+			}
+		}
+		org := orgCache[user.Owner]
+
 		dn := fmt.Sprintf("uid=%s,cn=%s,%s", user.Id, user.Name, string(r.BaseObject()))
 		e := ldap.NewSearchResultEntry(dn)
 		uidNumberStr := fmt.Sprintf("%v", hash(user.Name))
-		e.AddAttribute("uidNumber", message.AttributeValue(uidNumberStr))
-		e.AddAttribute("gidNumber", message.AttributeValue(uidNumberStr))
-		e.AddAttribute("homeDirectory", message.AttributeValue("/home/"+user.Name))
-		e.AddAttribute("cn", message.AttributeValue(user.Name))
-		e.AddAttribute("uid", message.AttributeValue(user.Id))
-		e.AddAttribute("mail", message.AttributeValue(user.Email))
-		e.AddAttribute("mobile", message.AttributeValue(user.Phone))
-		e.AddAttribute("sn", message.AttributeValue(user.LastName))
-		e.AddAttribute("givenName", message.AttributeValue(user.FirstName))
+		if IsLdapAttrAllowed(org, "uidNumber") {
+			e.AddAttribute("uidNumber", message.AttributeValue(uidNumberStr))
+		}
+		if IsLdapAttrAllowed(org, "gidNumber") {
+			e.AddAttribute("gidNumber", message.AttributeValue(uidNumberStr))
+		}
+		if IsLdapAttrAllowed(org, "homeDirectory") {
+			e.AddAttribute("homeDirectory", message.AttributeValue("/home/"+user.Name))
+		}
+		if IsLdapAttrAllowed(org, "cn") {
+			e.AddAttribute("cn", message.AttributeValue(user.Name))
+		}
+		if IsLdapAttrAllowed(org, "uid") {
+			e.AddAttribute("uid", message.AttributeValue(user.Id))
+		}
+		if IsLdapAttrAllowed(org, "mail") {
+			e.AddAttribute("mail", message.AttributeValue(user.Email))
+		}
+		if IsLdapAttrAllowed(org, "mobile") {
+			e.AddAttribute("mobile", message.AttributeValue(user.Phone))
+		}
+		if IsLdapAttrAllowed(org, "sn") {
+			e.AddAttribute("sn", message.AttributeValue(user.LastName))
+		}
+		if IsLdapAttrAllowed(org, "givenName") {
+			e.AddAttribute("givenName", message.AttributeValue(user.FirstName))
+		}
 		// Add POSIX attributes for Linux machine login support
-		e.AddAttribute("loginShell", getAttribute("loginShell", user))
-		e.AddAttribute("gecos", getAttribute("gecos", user))
+		if IsLdapAttrAllowed(org, "loginShell") {
+			e.AddAttribute("loginShell", getAttribute("loginShell", user))
+		}
+		if IsLdapAttrAllowed(org, "gecos") {
+			e.AddAttribute("gecos", getAttribute("gecos", user))
+		}
 		// Add SSH public key if available
-		sshKey := getAttribute("sshPublicKey", user)
-		if sshKey != "" {
-			e.AddAttribute("sshPublicKey", sshKey)
+		if IsLdapAttrAllowed(org, "sshPublicKey") {
+			sshKey := getAttribute("sshPublicKey", user)
+			if sshKey != "" {
+				e.AddAttribute("sshPublicKey", sshKey)
+			}
 		}
 		// Add objectClass for posixAccount
 		e.AddAttribute("objectClass", "posixAccount")
-		for _, group := range user.Groups {
-			e.AddAttribute(ldapMemberOfAttr, message.AttributeValue(group))
+		if IsLdapAttrAllowed(org, ldapMemberOfAttr) {
+			for _, group := range user.Groups {
+				e.AddAttribute(ldapMemberOfAttr, message.AttributeValue(group))
+			}
 		}
 		attrs := r.Attributes()
 		for _, attr := range attrs {
@@ -237,6 +275,9 @@ func handleSearch(w ldap.ResponseWriter, m *ldap.Message) {
 			}
 		}
 		for _, attr := range attrs {
+			if !IsLdapAttrAllowed(org, string(attr)) {
+				continue
+			}
 			e.AddAttribute(message.AttributeDescription(attr), getAttribute(string(attr), user))
 			if string(attr) == "title" {
 				e.AddAttribute(message.AttributeDescription(attr), getAttribute("title", user))

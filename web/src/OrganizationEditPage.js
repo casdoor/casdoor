@@ -748,6 +748,43 @@ class OrganizationEditPage extends React.Component {
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}}>
+          <Col style={{lineHeight: "32px", textAlign: "right", paddingRight: "25px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("organization:LDAP server attribute filter"), i18next.t("organization:LDAP server attribute filter - Tooltip"))} :
+          </Col>
+          <Col span={22}>
+            <Select
+              mode="multiple"
+              allowClear
+              style={{width: "100%"}}
+              value={this.state.organization.ldapServerAttributeFilter ?? []}
+              onChange={(value) => {
+                this.updateOrganizationField("ldapServerAttributeFilter", value);
+              }}
+              options={[
+                {value: "uid", label: "uid"},
+                {value: "cn", label: "cn"},
+                {value: "mail", label: "mail"},
+                {value: "email", label: "email"},
+                {value: "mobile", label: "mobile"},
+                {value: "displayName", label: "displayName"},
+                {value: "givenName", label: "givenName"},
+                {value: "sn", label: "sn"},
+                {value: "uidNumber", label: "uidNumber"},
+                {value: "gidNumber", label: "gidNumber"},
+                {value: "homeDirectory", label: "homeDirectory"},
+                {value: "loginShell", label: "loginShell"},
+                {value: "gecos", label: "gecos"},
+                {value: "sshPublicKey", label: "sshPublicKey"},
+                {value: "memberOf", label: "memberOf"},
+                {value: "title", label: "title"},
+                {value: "userPassword", label: "userPassword"},
+                {value: "c", label: "c"},
+                {value: "co", label: "co"},
+              ]}
+            />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}}>
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("general:LDAPs"), i18next.t("general:LDAPs - Tooltip"))} :
           </Col>

@@ -570,7 +570,7 @@
     "Physical": "物理",
     "Show all": "すべて表示",
     "Virtual": "仮想",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "最初にすべてのサブグループを削除する必要があります。[組織] -\u003e [グループ]ページの左側のグループツリーでサブグループを確認できます"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "最初にすべてのサブグループを削除する必要があります。[組織] -> [グループ]ページの左側のグループツリーでサブグループを確認できます"
   },
   "home": {
     "New users past 30 days": "過去30日間の新規ユーザー",
@@ -770,6 +770,8 @@
     "Init score - Tooltip": "登録時にユーザーに与えられる初期スコアポイント",
     "Is profile public": "プロフィールは公開されていますか？",
     "Is profile public - Tooltip": "閉鎖された後、グローバル管理者または同じ組織のユーザーだけがユーザーのプロファイルページにアクセスできます",
+    "LDAP server attribute filter": "LDAPサーバー属性フィルター",
+    "LDAP server attribute filter - Tooltip": "LDAPサーバーが返すLDAP属性を設定します。空のままにすると、すべての属性が返されます。",
     "Modify rule": "ルールを変更する",
     "New Organization": "新しい組織",
     "Optional": "オプション",
