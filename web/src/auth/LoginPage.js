@@ -1335,13 +1335,16 @@ class LoginPage extends React.Component {
       .then((res) => {
         if (res.status === "ok") {
           const responseType = values["type"];
-          if (responseType === "code") {
+          if (responseType === "login") {
+            Setting.showMessage("success", i18next.t("application:Logged in successfully"));
+            this.props.onLoginSuccess();
+          } else if (responseType === "code") {
             this.postCodeLoginAction(res);
           } else if (responseType === "token" || responseType === "id_token") {
             const accessToken = res.data;
             Setting.goToLink(`${oAuthParams.redirectUri}#${responseType}=${accessToken}&state=${oAuthParams.state}&token_type=bearer`);
           } else {
-            Setting.showMessage("success", i18next.t("login:Logged in successfully"));
+            Setting.showMessage("success", i18next.t("application:Logged in successfully"));
             Setting.goToLink("/");
           }
         } else {

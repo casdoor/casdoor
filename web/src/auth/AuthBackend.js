@@ -132,7 +132,9 @@ export function getSamlLogin(providerId, relayState) {
 }
 
 export function kerberosLogin(values, oAuthParams) {
-  return fetch(`${authConfig.serverUrl}/api/kerberos-login${oAuthParamsToQuery(oAuthParams)}&application=${values["application"]}`, {
+  const oAuthQuery = oAuthParamsToQuery(oAuthParams);
+  const separator = oAuthQuery ? "&" : "?";
+  return fetch(`${authConfig.serverUrl}/api/kerberos-login${oAuthQuery}${separator}application=${encodeURIComponent(values["application"])}`, {
     method: "GET",
     credentials: "include",
     headers: {
