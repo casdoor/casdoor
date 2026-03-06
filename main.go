@@ -110,7 +110,7 @@ func main() {
 	} else {
 		logAdapter = logConfigMap["adapter"].(string)
 	}
-	if logAdapter == "console" {
+	if logAdapter == "console" || logAdapter == util.AdapterStderr {
 		logs.Reset()
 	}
 	err = logs.SetLogger(logAdapter, conf.GetConfigString("logConfig"))
