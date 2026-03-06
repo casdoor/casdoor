@@ -570,7 +570,7 @@
     "Physical": "实体组",
     "Show all": "显示全部",
     "Virtual": "虚拟组",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "您需要先删除所有子组。您可以在 [组织] -> [群组] 页面左侧的群组树中查看子组"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "您需要先删除所有子组。您可以在 [组织] -\u003e [群组] 页面左侧的群组树中查看子组"
   },
   "home": {
     "New users past 30 days": "过去 30 天新增的用户",
@@ -770,8 +770,6 @@
     "Init score - Tooltip": "用户注册后所拥有的初始积分",
     "Is profile public": "是否公开用户个人页",
     "Is profile public - Tooltip": "关闭后只有全局管理员或同组织用户才能访问用户主页",
-    "LDAP server attribute filter": "LDAP服务器属性过滤",
-    "LDAP server attribute filter - Tooltip": "配置LDAP服务器返回哪些LDAP属性，留空表示返回所有属性。",
     "Modify rule": "修改规则",
     "New Organization": "添加组织",
     "Optional": "可选",

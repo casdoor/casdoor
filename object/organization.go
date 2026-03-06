@@ -94,7 +94,7 @@ type Organization struct {
 
 	DcrPolicy string `xorm:"varchar(100)" json:"dcrPolicy"`
 
-	LdapServerAttributeFilter []string `xorm:"mediumtext" json:"ldapServerAttributeFilter"`
+	LdapAttributes []string `xorm:"mediumtext" json:"ldapAttributes"`
 
 	OrgBalance      float64 `json:"orgBalance"`
 	UserBalance     float64 `json:"userBalance"`

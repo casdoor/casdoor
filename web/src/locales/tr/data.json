@@ -570,7 +570,7 @@
     "Physical": "Fiziksel",
     "Show all": "Tümünü göster",
     "Virtual": "Sanal",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Önce tüm alt grupları silmeniz gerekir. Alt grupları [Organizasyonlar] -> [Gruplar] sayfasının sol grup ağacından görüntüleyebilirsiniz."
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "Önce tüm alt grupları silmeniz gerekir. Alt grupları [Organizasyonlar] -\u003e [Gruplar] sayfasının sol grup ağacından görüntüleyebilirsiniz."
   },
   "home": {
     "New users past 30 days": "Son 30 gündeki yeni kullanıcılar",
@@ -770,8 +770,6 @@
     "Init score - Tooltip": "Kullanıcılara kayıt sırasında verilen başlangıç puanları",
     "Is profile public": "Profil genel mi",
     "Is profile public - Tooltip": "Kapatıldıktan sonra, yalnızca küresel yöneticiler veya aynı organizasyondaki kullanıcılar kullanıcının profil sayfasına erişebilir",
-    "LDAP server attribute filter": "LDAP sunucu nitelik filtresi",
-    "LDAP server attribute filter - Tooltip": "LDAP sunucusunun hangi LDAP niteliklerini döndüreceğini yapılandırın. Tüm nitelikleri döndürmek için boş bırakın.",
     "Modify rule": "Kuralı Değiştir",
     "New Organization": "Yeni Organizasyon",
     "Optional": "İsteğe bağlı",

@@ -749,16 +749,16 @@ class OrganizationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}}>
           <Col style={{lineHeight: "32px", textAlign: "right", paddingRight: "25px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("organization:LDAP server attribute filter"), i18next.t("organization:LDAP server attribute filter - Tooltip"))} :
+            {Setting.getLabel(i18next.t("organization:LDAP attributes"), i18next.t("organization:LDAP attributes - Tooltip"))} :
           </Col>
           <Col span={22}>
             <Select
               mode="multiple"
               allowClear
               style={{width: "100%"}}
-              value={this.state.organization.ldapServerAttributeFilter ?? []}
+              value={this.state.organization.ldapAttributes ?? []}
               onChange={(value) => {
-                this.updateOrganizationField("ldapServerAttributeFilter", value);
+                this.updateOrganizationField("ldapAttributes", value);
               }}
               options={[
                 {value: "uid", label: "uid"},

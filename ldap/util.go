@@ -201,10 +201,10 @@ func stringInSlice(value string, list []string) bool {
 // IsLdapAttrAllowed checks whether the given LDAP attribute is allowed for the organization.
 // An empty filter or a filter containing "All" means all attributes are allowed.
 func IsLdapAttrAllowed(org *object.Organization, attr string) bool {
-	if org == nil || len(org.LdapServerAttributeFilter) == 0 {
+	if org == nil || len(org.LdapAttributes) == 0 {
 		return true
 	}
-	for _, f := range org.LdapServerAttributeFilter {
+	for _, f := range org.LdapAttributes {
 		if strings.EqualFold(f, "All") || strings.EqualFold(f, attr) {
 			return true
 		}
