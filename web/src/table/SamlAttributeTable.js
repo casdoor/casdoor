@@ -14,7 +14,7 @@
 
 import React from "react";
 import {DeleteOutlined, DownOutlined, UpOutlined} from "@ant-design/icons";
-import {Button, Col, Input, Row, Select, Table, Tooltip} from "antd";
+import {AutoComplete, Button, Col, Input, Row, Select, Table, Tooltip} from "antd";
 import * as Setting from "../Setting";
 import i18next from "i18next";
 
@@ -104,9 +104,26 @@ class SamlAttributeTable extends React.Component {
         width: "200px",
         render: (text, record, index) => {
           return (
-            <Input value={text} onChange={e => {
-              this.updateField(table, index, "value", e.target.value);
-            }} />
+            <AutoComplete
+              style={{width: "100%"}}
+              options={[
+                {value: "$user.owner"},
+                {value: "$user.name"},
+                {value: "$user.email"},
+                {value: "$user.id"},
+                {value: "$user.phone"},
+                {value: "$user.roles"},
+                {value: "$user.permissions"},
+                {value: "$user.groups"},
+              ]}
+              value={text}
+              onChange={value => {
+                this.updateField(table, index, "value", value);
+              }}
+              filterOption={(inputValue, option) =>
+                option.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
+              }
+            />
           );
         },
       },
