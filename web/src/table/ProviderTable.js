@@ -219,6 +219,31 @@ class ProviderTable extends React.Component {
         },
       },
       {
+        title: i18next.t("provider:Auto link"),
+        dataIndex: "autoLink",
+        key: "autoLink",
+        width: "120px",
+        render: (text, record, index) => {
+          if (!["OAuth", "Web3", "SAML"].includes(record.provider?.category)) {
+            return null;
+          }
+
+          return (
+            <Select virtual={false} style={{width: "100%"}}
+              value={text}
+              defaultValue="Default"
+              onChange={value => {
+                this.updateField(table, index, "autoLink", value);
+              }} >
+              <Option key="Default" value="Default">{i18next.t("general:Default")}</Option>
+              <Option key="EmailOnly" value="EmailOnly">{i18next.t("provider:Email only")}</Option>
+              <Option key="NameOnly" value="NameOnly">{i18next.t("provider:Name only")}</Option>
+              <Option key="Disabled" value="Disabled">{i18next.t("general:Disabled")}</Option>
+            </Select>
+          );
+        },
+      },
+      {
         title: i18next.t("provider:Prompted"),
         dataIndex: "prompted",
         key: "prompted",
