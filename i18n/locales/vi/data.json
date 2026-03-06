@@ -106,8 +106,8 @@
   "general": {
     "Failed to import groups": "Không thể nhập nhóm",
     "Failed to import users": "Không thể nhập người dùng",
-    "Insufficient balance: new balance %v would exceed the credit limit %v": "Số dư không đủ: số dư mới %v sẽ vượt quá giới hạn tín dụng %v",
-    "Insufficient balance: new organization balance %v would exceed the credit limit %v": "Số dư không đủ: số dư tổ chức mới %v sẽ vượt quá giới hạn tín dụng %v",
+    "Insufficient balance: new balance %v would be below credit limit %v": "Số dư không đủ: số dư mới %v sẽ thấp hơn giới hạn tín dụng %v",
+    "Insufficient balance: new organization balance %v would be below credit limit %v": "Số dư không đủ: số dư tổ chức mới %v sẽ thấp hơn giới hạn tín dụng %v",
     "Missing parameter": "Thiếu tham số",
     "Only admin user can specify user": "Chỉ người dùng quản trị mới có thể chỉ định người dùng",
     "Please login first": "Vui lòng đăng nhập trước",
