@@ -770,7 +770,7 @@
     "Init score - Tooltip": "Score initial attribué au compte lors de leur inscription",
     "Is profile public": "Est-ce que le profil est public ?",
     "Is profile public - Tooltip": "Après sa fermeture, seuls les administrateurs et administratrices globales ou les comptes de la même organisation peuvent accéder à la page de profil de l'utilisateur",
-    "LDAP server attribute filter": "Filtre d attributs du serveur LDAP",
+    "LDAP server attribute filter": "Filtre d'attributs du serveur LDAP",
     "LDAP server attribute filter - Tooltip": "Configurez les attributs LDAP renvoyés par le serveur LDAP. Laissez vide pour renvoyer tous les attributs.",
     "Modify rule": "Règle de modification",
     "New Organization": "Nouvelle organisation",

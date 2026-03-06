@@ -208,11 +208,10 @@ func handleSearch(w ldap.ResponseWriter, m *ldap.Message) {
 	for _, user := range users {
 		if _, ok := orgCache[user.Owner]; !ok {
 			org, err := object.GetOrganizationByUser(user)
-			if err == nil {
-				orgCache[user.Owner] = org
-			} else {
-				orgCache[user.Owner] = nil
+			if err != nil {
+				log.Printf("handleSearch: failed to get organization for user %s: %v", user.Name, err)
 			}
+			orgCache[user.Owner] = org
 		}
 		org := orgCache[user.Owner]
 
@@ -279,9 +278,6 @@ func handleSearch(w ldap.ResponseWriter, m *ldap.Message) {
 				continue
 			}
 			e.AddAttribute(message.AttributeDescription(attr), getAttribute(string(attr), user))
-			if string(attr) == "title" {
-				e.AddAttribute(message.AttributeDescription(attr), getAttribute("title", user))
-			}
 		}
 
 		w.Write(e)
