@@ -1572,9 +1572,9 @@ func UpdateUserBalance(owner string, name string, balance float64, currency stri
 		}
 	}
 
-	// Validate new balance against credit limit (BalanceCredit is an overdraft limit: balance can go down to -BalanceCredit)
-	if newBalance < -balanceCredit {
-		return fmt.Errorf(i18n.Translate(lang, "general:Insufficient balance: new balance %v would exceed the credit limit %v"), newBalance, balanceCredit)
+	// Validate new balance against credit limit
+	if newBalance < balanceCredit {
+		return fmt.Errorf(i18n.Translate(lang, "general:Insufficient balance: new balance %v would be below credit limit %v"), newBalance, balanceCredit)
 	}
 
 	user.Balance = newBalance
