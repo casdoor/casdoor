@@ -26,6 +26,10 @@ class SamlAttributeTable extends React.Component {
     this.state = {
       classes: props,
     };
+    this.samlVariables = [
+      "$user.owner", "$user.name", "$user.email", "$user.id",
+      "$user.phone", "$user.roles", "$user.permissions", "$user.groups",
+    ].map(v => ({value: v}));
   }
 
   updateTable(table) {
@@ -106,16 +110,7 @@ class SamlAttributeTable extends React.Component {
           return (
             <AutoComplete
               style={{width: "100%"}}
-              options={[
-                {value: "$user.owner"},
-                {value: "$user.name"},
-                {value: "$user.email"},
-                {value: "$user.id"},
-                {value: "$user.phone"},
-                {value: "$user.roles"},
-                {value: "$user.permissions"},
-                {value: "$user.groups"},
-              ]}
+              options={this.samlVariables}
               value={text}
               onChange={value => {
                 this.updateField(table, index, "value", value);
