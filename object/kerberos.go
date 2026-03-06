@@ -27,7 +27,9 @@ import (
 )
 
 // ctxCredentials is the SPNEGO context key holding the Kerberos credentials.
-// This must match the value used internally by gokrb5.
+// This must match the value used internally by gokrb5's spnego package.
+// If the gokrb5 library changes this internal constant in a future version,
+// this value will need to be updated accordingly.
 const ctxCredentials = "github.com/jcmturner/gokrb5/v8/ctxCredentials"
 
 // ValidateKerberosToken validates a base64-encoded SPNEGO token from the
