@@ -462,6 +462,10 @@ func getExistUserByBindingRule(providerItem *object.ProviderItem, application *o
 	emailRule := slices.Contains(providerItem.BindingRule, "Email")
 	phoneRule := slices.Contains(providerItem.BindingRule, "Phone")
 	nameRule := slices.Contains(providerItem.BindingRule, "Name")
+	if len(providerItem.BindingRule) == 0 {
+		allRule = true
+	}
+
 	if !noneRule {
 		if application.EnableLinkWithEmail && (emailRule || allRule || phoneRule) {
 			if userInfo.Email != "" {
