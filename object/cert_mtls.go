@@ -18,6 +18,8 @@ import (
 	"crypto/x509"
 	"encoding/pem"
 	"fmt"
+	"net/http"
+	"net/url"
 )
 
 // ValidateClientCertForApplication validates the given client certificate
@@ -96,4 +98,34 @@ func GetApplicationByClientCert(clientId string, clientCert *x509.Certificate) (
 	}
 
 	return application, nil
+}
+
+// GetClientCertFromRequest extracts the client certificate from the TLS connection
+// or from the X-Client-Cert header (for reverse proxy setups).
+func GetClientCertFromRequest(r *http.Request) *x509.Certificate {
+	if r.TLS != nil && len(r.TLS.PeerCertificates) > 0 {
+		return r.TLS.PeerCertificates[0]
+	}
+
+	certHeader := r.Header.Get("X-Client-Cert")
+	if certHeader == "" {
+		return nil
+	}
+
+	certPem, err := url.QueryUnescape(certHeader)
+	if err != nil {
+		return nil
+	}
+
+	block, _ := pem.Decode([]byte(certPem))
+	if block == nil {
+		return nil
+	}
+
+	cert, err := x509.ParseCertificate(block.Bytes)
+	if err != nil {
+		return nil
+	}
+
+	return cert
 }

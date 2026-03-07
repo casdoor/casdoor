@@ -15,11 +15,8 @@
 package controllers
 
 import (
-	"crypto/x509"
 	"encoding/json"
-	"encoding/pem"
 	"fmt"
-	"net/url"
 	"time"
 
 	"github.com/beego/beego/v2/core/utils/pagination"
@@ -363,36 +360,6 @@ func (c *ApiController) ResponseTokenError(errorMsg string, errorDescription str
 	c.ServeJSON()
 }
 
-// getClientCertFromRequest extracts the client certificate from the TLS connection
-// or from the X-Client-Cert header (for reverse proxy setups).
-func (c *ApiController) getClientCertFromRequest() *x509.Certificate {
-	if c.Ctx.Request.TLS != nil && len(c.Ctx.Request.TLS.PeerCertificates) > 0 {
-		return c.Ctx.Request.TLS.PeerCertificates[0]
-	}
-
-	certHeader := c.Ctx.Request.Header.Get("X-Client-Cert")
-	if certHeader == "" {
-		return nil
-	}
-
-	certPem, err := url.QueryUnescape(certHeader)
-	if err != nil {
-		return nil
-	}
-
-	block, _ := pem.Decode([]byte(certPem))
-	if block == nil {
-		return nil
-	}
-
-	cert, err := x509.ParseCertificate(block.Bytes)
-	if err != nil {
-		return nil
-	}
-
-	return cert
-}
-
 func (c *ApiController) ValidateOAuth(ignoreValidSecret bool) (ok bool, application *object.Application, clientId, clientSecret string, err error) {
 	reqClientId := c.Ctx.Input.Query("client_id")
 	reqClientSecret := c.Ctx.Input.Query("client_secret")
@@ -430,7 +397,7 @@ func (c *ApiController) ValidateOAuth(ignoreValidSecret bool) (ok bool, applicat
 	// mTLS client certificate authentication (RFC 8705: tls_client_auth)
 	// If a client certificate is presented and client_id is provided without client_secret,
 	// authenticate using the TLS client certificate.
-	clientCert := c.getClientCertFromRequest()
+	clientCert := object.GetClientCertFromRequest(c.Ctx.Request)
 	if clientCert != nil && reqClientId != "" && reqClientSecret == "" {
 		application, err = object.GetApplicationByClientCert(reqClientId, clientCert)
 		if err != nil {
