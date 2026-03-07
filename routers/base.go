@@ -16,7 +16,9 @@ package routers
 
 import (
 	stdcontext "context"
+	"crypto/x509"
 	"encoding/json"
+	"encoding/pem"
 	"fmt"
 	"net"
 	"net/http"
@@ -228,4 +230,61 @@ func removePort(s string) string {
 		ipStr = s
 	}
 	return ipStr
+}
+
+// getClientCertFromRequest extracts the client certificate from the TLS connection
+// or from the X-Client-Cert header (for reverse proxy setups).
+func getClientCertFromRequest(ctx *context.Context) *x509.Certificate {
+	// First, try to get the certificate from the TLS connection directly
+	if ctx.Request.TLS != nil && len(ctx.Request.TLS.PeerCertificates) > 0 {
+		return ctx.Request.TLS.PeerCertificates[0]
+	}
+
+	// Fall back to the X-Client-Cert header (URL-encoded PEM, used by reverse proxies)
+	certHeader := ctx.Request.Header.Get("X-Client-Cert")
+	if certHeader == "" {
+		return nil
+	}
+
+	certPem, err := url.QueryUnescape(certHeader)
+	if err != nil {
+		return nil
+	}
+
+	block, _ := pem.Decode([]byte(certPem))
+	if block == nil {
+		return nil
+	}
+
+	cert, err := x509.ParseCertificate(block.Bytes)
+	if err != nil {
+		return nil
+	}
+
+	return cert
+}
+
+// getUsernameByClientCert authenticates a client using mTLS.
+// It requires a clientId to look up the application and validates the TLS client
+// certificate against the application's configured Cert.
+func getUsernameByClientCert(ctx *context.Context) (string, error) {
+	clientCert := getClientCertFromRequest(ctx)
+	if clientCert == nil {
+		return "", nil
+	}
+
+	clientId := ctx.Input.Query("clientId")
+	if clientId == "" {
+		clientId = ctx.Input.Query("client_id")
+	}
+	if clientId == "" {
+		return "", nil
+	}
+
+	application, err := object.GetApplicationByClientCert(clientId, clientCert)
+	if err != nil {
+		return "", err
+	}
+
+	return fmt.Sprintf("app/%s", application.Name), nil
 }
