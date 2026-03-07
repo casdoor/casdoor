@@ -843,7 +843,7 @@ export function hasPromptPage(application) {
   }
 
   const signupItems = getAllPromptedSignupItems(application);
-  if (signupItems?.length > 0) {
+  if (signupItems?.filter(item => item.name === "Country/Region").length > 0) {
     return true;
   }
 
