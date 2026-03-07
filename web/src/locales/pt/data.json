@@ -570,7 +570,7 @@
     "Physical": "Físico",
     "Show all": "Mostrar todos",
     "Virtual": "Virtual",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "Você precisa excluir todos os subgrupos primeiro. Você pode visualizar os subgrupos na árvore de grupos à esquerda na página [Organizações] -\u003e [Grupos]"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Você precisa excluir todos os subgrupos primeiro. Você pode visualizar os subgrupos na árvore de grupos à esquerda na página [Organizações] -> [Grupos]"
   },
   "home": {
     "New users past 30 days": "Novos usuários nos últimos 30 dias",
@@ -770,6 +770,14 @@
     "Init score - Tooltip": "Pontos de pontuação inicial concedidos aos usuários no momento do registro",
     "Is profile public": "Perfil é público",
     "Is profile public - Tooltip": "Após ser fechado, apenas administradores globais ou usuários na mesma organização podem acessar a página de perfil do usuário",
+    "Kerberos KDC host": "Kerberos KDC host",
+    "Kerberos KDC host - Tooltip": "The hostname of the Kerberos Key Distribution Center (e.g., kdc.example.com)",
+    "Kerberos keytab": "Kerberos keytab",
+    "Kerberos keytab - Tooltip": "The base64-encoded keytab file for the service principal",
+    "Kerberos realm": "Kerberos realm",
+    "Kerberos realm - Tooltip": "The Kerberos realm for IWA/SPNEGO authentication (e.g., EXAMPLE.COM)",
+    "Kerberos service name": "Kerberos service name",
+    "Kerberos service name - Tooltip": "The Kerberos service principal name (defaults to HTTP)",
     "Modify rule": "Modificar regra",
     "New Organization": "Nova Organização",
     "Optional": "Opcional",

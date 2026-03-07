@@ -96,6 +96,11 @@ type Organization struct {
 
 	LdapAttributes []string `xorm:"mediumtext" json:"ldapAttributes"`
 
+	KerberosRealm       string `xorm:"varchar(200)" json:"kerberosRealm"`
+	KerberosKdcHost     string `xorm:"varchar(200)" json:"kerberosKdcHost"`
+	KerberosKeytab      string `xorm:"mediumtext" json:"kerberosKeytab"`
+	KerberosServiceName string `xorm:"varchar(100)" json:"kerberosServiceName"`
+
 	OrgBalance      float64 `json:"orgBalance"`
 	UserBalance     float64 `json:"userBalance"`
 	BalanceCredit   float64 `json:"balanceCredit"`
