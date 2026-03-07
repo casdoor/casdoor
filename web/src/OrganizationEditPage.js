@@ -799,6 +799,46 @@ class OrganizationEditPage extends React.Component {
             />
           </Col>
         </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("organization:Kerberos realm"), i18next.t("organization:Kerberos realm - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Input value={this.state.organization.kerberosRealm} onChange={e => {
+              this.updateOrganizationField("kerberosRealm", e.target.value);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("organization:Kerberos KDC host"), i18next.t("organization:Kerberos KDC host - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Input value={this.state.organization.kerberosKdcHost} onChange={e => {
+              this.updateOrganizationField("kerberosKdcHost", e.target.value);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("organization:Kerberos keytab"), i18next.t("organization:Kerberos keytab - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Input.TextArea rows={4} value={this.state.organization.kerberosKeytab} onChange={e => {
+              this.updateOrganizationField("kerberosKeytab", e.target.value);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("organization:Kerberos service name"), i18next.t("organization:Kerberos service name - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Input value={this.state.organization.kerberosServiceName} placeholder="HTTP" onChange={e => {
+              this.updateOrganizationField("kerberosServiceName", e.target.value);
+            }} />
+          </Col>
+        </Row>
       </Card>
     );
   }

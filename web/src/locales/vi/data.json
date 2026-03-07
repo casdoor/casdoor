@@ -570,7 +570,7 @@
     "Physical": "Vật lý",
     "Show all": "Hiển thị tất cả",
     "Virtual": "Ảo",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "Bạn cần xóa tất cả nhóm con trước. Bạn có thể xem các nhóm con trong cây nhóm bên trái của trang [Tổ chức] -\u003e [Nhóm]"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Bạn cần xóa tất cả nhóm con trước. Bạn có thể xem các nhóm con trong cây nhóm bên trái của trang [Tổ chức] -> [Nhóm]"
   },
   "home": {
     "New users past 30 days": "Người dùng mới trong 30 ngày qua",
@@ -770,6 +770,14 @@
     "Init score - Tooltip": "Điểm số ban đầu được trao cho người dùng khi đăng ký",
     "Is profile public": "Hồ sơ có công khai không?",
     "Is profile public - Tooltip": "Sau khi đóng lại, chỉ các quản trị viên toàn cầu hoặc người dùng trong cùng tổ chức mới có thể truy cập trang hồ sơ người dùng",
+    "Kerberos KDC host": "Kerberos KDC host",
+    "Kerberos KDC host - Tooltip": "The hostname of the Kerberos Key Distribution Center (e.g., kdc.example.com)",
+    "Kerberos keytab": "Kerberos keytab",
+    "Kerberos keytab - Tooltip": "The base64-encoded keytab file for the service principal",
+    "Kerberos realm": "Kerberos realm",
+    "Kerberos realm - Tooltip": "The Kerberos realm for IWA/SPNEGO authentication (e.g., EXAMPLE.COM)",
+    "Kerberos service name": "Kerberos service name",
+    "Kerberos service name - Tooltip": "The Kerberos service principal name (defaults to HTTP)",
     "Modify rule": "Sửa đổi quy tắc",
     "New Organization": "Tổ chức mới",
     "Optional": "Tùy chọn",

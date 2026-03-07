@@ -64,6 +64,7 @@ func InitAPI() {
 	web.Router("/api/get-captcha-status", &controllers.ApiController{}, "GET:GetCaptchaStatus")
 	web.Router("/api/callback", &controllers.ApiController{}, "POST:Callback")
 	web.Router("/api/device-auth", &controllers.ApiController{}, "POST:DeviceAuth")
+	web.Router("/api/kerberos-login", &controllers.ApiController{}, "GET:KerberosLogin")
 
 	web.Router("/api/get-organizations", &controllers.ApiController{}, "GET:GetOrganizations")
 	web.Router("/api/get-organization", &controllers.ApiController{}, "GET:GetOrganization")

@@ -570,7 +570,7 @@
     "Physical": "Fiziksel",
     "Show all": "Tümünü göster",
     "Virtual": "Sanal",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "Önce tüm alt grupları silmeniz gerekir. Alt grupları [Organizasyonlar] -\u003e [Gruplar] sayfasının sol grup ağacından görüntüleyebilirsiniz."
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Önce tüm alt grupları silmeniz gerekir. Alt grupları [Organizasyonlar] -> [Gruplar] sayfasının sol grup ağacından görüntüleyebilirsiniz."
   },
   "home": {
     "New users past 30 days": "Son 30 gündeki yeni kullanıcılar",
@@ -770,6 +770,14 @@
     "Init score - Tooltip": "Kullanıcılara kayıt sırasında verilen başlangıç puanları",
     "Is profile public": "Profil genel mi",
     "Is profile public - Tooltip": "Kapatıldıktan sonra, yalnızca küresel yöneticiler veya aynı organizasyondaki kullanıcılar kullanıcının profil sayfasına erişebilir",
+    "Kerberos KDC host": "Kerberos KDC host",
+    "Kerberos KDC host - Tooltip": "The hostname of the Kerberos Key Distribution Center (e.g., kdc.example.com)",
+    "Kerberos keytab": "Kerberos keytab",
+    "Kerberos keytab - Tooltip": "The base64-encoded keytab file for the service principal",
+    "Kerberos realm": "Kerberos realm",
+    "Kerberos realm - Tooltip": "The Kerberos realm for IWA/SPNEGO authentication (e.g., EXAMPLE.COM)",
+    "Kerberos service name": "Kerberos service name",
+    "Kerberos service name - Tooltip": "The Kerberos service principal name (defaults to HTTP)",
     "Modify rule": "Kuralı Değiştir",
     "New Organization": "Yeni Organizasyon",
     "Optional": "İsteğe bağlı",
