@@ -24,7 +24,6 @@ import (
 	"net/http"
 	"net/url"
 	"regexp"
-	"slices"
 	"strconv"
 	"strings"
 	"time"
@@ -457,31 +456,33 @@ func checkMfaEnable(c *ApiController, user *object.User, organization *object.Or
 }
 
 func getExistUserByBindingRule(providerItem *object.ProviderItem, application *object.Application, userInfo *idp.UserInfo) (user *object.User, err error) {
-	noneRule := slices.Contains(providerItem.BindingRule, "None")
-	allRule := slices.Contains(providerItem.BindingRule, "All")
-	emailRule := slices.Contains(providerItem.BindingRule, "Email")
-	phoneRule := slices.Contains(providerItem.BindingRule, "Phone")
-	nameRule := slices.Contains(providerItem.BindingRule, "Name")
-	if len(providerItem.BindingRule) == 0 {
-		allRule = true
+	if providerItem.BindingRule == nil {
+		providerItem.BindingRule = &[]string{"Email", "Phone", "Name"}
+	}
+	if len(*providerItem.BindingRule) == 0 {
+		return nil, nil
 	}
 
-	if !noneRule {
-		if application.EnableLinkWithEmail && (emailRule || allRule || phoneRule) {
-			if userInfo.Email != "" {
-				// Find existing user with Email
-				user, err = object.GetUserByField(application.Organization, "email", userInfo.Email)
-				if err != nil {
-					return nil, err
-				}
+	for _, rule := range *providerItem.BindingRule {
+		// Find existing user with Email
+		if rule == "Email" {
+			user, err = object.GetUserByField(application.Organization, "email", userInfo.Email)
+			if err != nil {
+				return nil, err
 			}
+			if user != nil {
+				return user, nil
+			}
+		}
 
-			if user == nil && userInfo.Phone != "" && (phoneRule || allRule) {
-				// Find existing user with phone number
-				user, err = object.GetUserByField(application.Organization, "phone", userInfo.Phone)
-				if err != nil {
-					return nil, err
-				}
+		// Find existing user with phone number
+		if rule == "Phone" {
+			user, err = object.GetUserByField(application.Organization, "phone", userInfo.Phone)
+			if err != nil {
+				return nil, err
+			}
+			if user != nil {
+				return user, nil
 			}
 		}
 
@@ -489,10 +490,13 @@ func getExistUserByBindingRule(providerItem *object.ProviderItem, application *o
 		// This allows OAuth providers (e.g., Wecom) to automatically associate with
 		// existing users when usernames match, particularly useful for enterprise
 		// scenarios where signup is disabled and users already exist in Casdoor
-		if user == nil && userInfo.Username != "" && (nameRule || allRule) {
+		if rule == "Name" {
 			user, err = object.GetUserByFields(application.Organization, userInfo.Username)
 			if err != nil {
 				return nil, err
+			}
+			if user != nil {
+				return user, nil
 			}
 		}
 	}
