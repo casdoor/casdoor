@@ -229,3 +229,28 @@ func removePort(s string) string {
 	}
 	return ipStr
 }
+
+// getUsernameByClientCert authenticates a client using mTLS.
+// It requires a clientId to look up the application and validates the TLS client
+// certificate against the application's configured Cert.
+func getUsernameByClientCert(ctx *context.Context) (string, error) {
+	clientCert := object.GetClientCertFromRequest(ctx.Request)
+	if clientCert == nil {
+		return "", nil
+	}
+
+	clientId := ctx.Input.Query("clientId")
+	if clientId == "" {
+		clientId = ctx.Input.Query("client_id")
+	}
+	if clientId == "" {
+		return "", nil
+	}
+
+	application, err := object.GetApplicationByClientCert(clientId, clientCert)
+	if err != nil {
+		return "", err
+	}
+
+	return fmt.Sprintf("app/%s", application.Name), nil
+}
