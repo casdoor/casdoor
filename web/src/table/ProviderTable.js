@@ -230,14 +230,28 @@ class ProviderTable extends React.Component {
 
           return (
             <Select virtual={false} style={{width: "100%"}}
-              value={text}
-              defaultValue="All"
+              value={text || ["All"]}
+              mode={"multiple"}
               onChange={value => {
+                text = text || [];
+                if (value.includes("None") && !text.includes("None")) {
+                  value = ["None"];
+                }
+                if (text.includes("None") && value.includes("None") && value.length > 1) {
+                  value = value.filter(item => item !== "None");
+                }
+                if (value.includes("All") && !text.includes("All")) {
+                  value = ["All"];
+                }
+                if (text.includes("All") && value.includes("All") && value.length > 1) {
+                  value = value.filter(item => item !== "All");
+                }
                 this.updateField(table, index, "bindingRule", value);
               }} >
               <Option key="All" value="All">{i18next.t("general:All")}</Option>
-              <Option key="Email only" value="Email only">{i18next.t("general:Email only")}</Option>
-              <Option key="Name only" value="Name only">{i18next.t("general:Name only")}</Option>
+              <Option key="Email" value="Email">{i18next.t("general:Email")}</Option>
+              <Option key="Name" value="Name">{i18next.t("general:Name")}</Option>
+              <Option key="Phone" value="Phone">{i18next.t("general:Phone")}</Option>
               <Option key="None" value="None">{i18next.t("general:None")}</Option>
             </Select>
           );
