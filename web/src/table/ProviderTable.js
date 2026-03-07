@@ -230,10 +230,10 @@ class ProviderTable extends React.Component {
 
           return (
             <Select virtual={false} style={{width: "100%"}}
-              value={text || ["All"]}
+              value={(text && text.length > 0) ? text : ["All"]}
               mode={"multiple"}
               onChange={value => {
-                text = text || [];
+                text = Array.isArray(text) ? text : [];
                 if (value.includes("None") && !text.includes("None")) {
                   value = ["None"];
                 }
