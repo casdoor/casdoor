@@ -456,6 +456,55 @@ func checkMfaEnable(c *ApiController, user *object.User, organization *object.Or
 	return false
 }
 
+func getExistUserByBindingRule(providerItem *object.ProviderItem, application *object.Application, userInfo *idp.UserInfo) (user *object.User, err error) {
+	if providerItem.BindingRule == nil {
+		providerItem.BindingRule = &[]string{"Email", "Phone", "Name"}
+	}
+	if len(*providerItem.BindingRule) == 0 {
+		return nil, nil
+	}
+
+	for _, rule := range *providerItem.BindingRule {
+		// Find existing user with Email
+		if rule == "Email" {
+			user, err = object.GetUserByField(application.Organization, "email", userInfo.Email)
+			if err != nil {
+				return nil, err
+			}
+			if user != nil {
+				return user, nil
+			}
+		}
+
+		// Find existing user with phone number
+		if rule == "Phone" {
+			user, err = object.GetUserByField(application.Organization, "phone", userInfo.Phone)
+			if err != nil {
+				return nil, err
+			}
+			if user != nil {
+				return user, nil
+			}
+		}
+
+		// Try to find existing user by username (case-insensitive)
+		// This allows OAuth providers (e.g., Wecom) to automatically associate with
+		// existing users when usernames match, particularly useful for enterprise
+		// scenarios where signup is disabled and users already exist in Casdoor
+		if rule == "Name" {
+			user, err = object.GetUserByFields(application.Organization, userInfo.Username)
+			if err != nil {
+				return nil, err
+			}
+			if user != nil {
+				return user, nil
+			}
+		}
+	}
+
+	return user, nil
+}
+
 // Login ...
 // @Title Login
 // @Tag Login API
@@ -847,36 +896,10 @@ func (c *ApiController) Login() {
 				c.Ctx.Input.SetParam("recordUserId", user.GetId())
 			} else if provider.Category == "OAuth" || provider.Category == "Web3" || provider.Category == "SAML" {
 				// Sign up via OAuth
-				if application.EnableLinkWithEmail {
-					if userInfo.Email != "" {
-						// Find existing user with Email
-						user, err = object.GetUserByField(application.Organization, "email", userInfo.Email)
-						if err != nil {
-							c.ResponseError(err.Error())
-							return
-						}
-					}
-
-					if user == nil && userInfo.Phone != "" {
-						// Find existing user with phone number
-						user, err = object.GetUserByField(application.Organization, "phone", userInfo.Phone)
-						if err != nil {
-							c.ResponseError(err.Error())
-							return
-						}
-					}
-				}
-
-				// Try to find existing user by username (case-insensitive)
-				// This allows OAuth providers (e.g., Wecom) to automatically associate with
-				// existing users when usernames match, particularly useful for enterprise
-				// scenarios where signup is disabled and users already exist in Casdoor
-				if user == nil && userInfo.Username != "" {
-					user, err = object.GetUserByFields(application.Organization, userInfo.Username)
-					if err != nil {
-						c.ResponseError(err.Error())
-						return
-					}
+				user, err = getExistUserByBindingRule(providerItem, application, userInfo)
+				if err != nil {
+					c.ResponseError(err.Error())
+					return
 				}
 
 				if user == nil {
