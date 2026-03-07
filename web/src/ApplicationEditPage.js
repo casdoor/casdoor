@@ -30,7 +30,8 @@ import {
   Space,
   Switch,
   Tabs,
-  Upload, message
+  Upload,
+  message
 } from "antd";
 import {CopyOutlined, HolderOutlined, LinkOutlined, UploadOutlined, UsergroupAddOutlined} from "@ant-design/icons";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
@@ -60,6 +61,7 @@ import TokenAttributeTable from "./table/TokenAttributeTable";
 import {Content, Header} from "antd/es/layout/layout";
 import Sider from "antd/es/layout/Sider";
 import PaginateSelect from "./common/PaginateSelect";
+import {ApplicationImportExport} from "./ApplicationImportExport";
 
 const {Option} = Select;
 
@@ -145,6 +147,8 @@ class ApplicationEditPage extends React.Component {
       isAuthorized: true,
       activeMenuKey: window.location.hash?.slice(1) || "basic",
       menuMode: "horizontal",
+      importModalVisible: false,
+      importJson: "",
     };
   }
 
@@ -1494,6 +1498,11 @@ class ApplicationEditPage extends React.Component {
           <Button onClick={() => this.submitApplicationEdit(false)}>{i18next.t("general:Save")}</Button>
           <Button style={{marginLeft: "20px"}} type="primary" onClick={() => this.submitApplicationEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
           {this.state.mode === "add" ? <Button style={{marginLeft: "20px"}} onClick={() => this.deleteApplication()}>{i18next.t("general:Cancel")}</Button> : null}
+          {ApplicationImportExport.renderImportExportButtons(
+            this.state.application,
+            () => ApplicationImportExport.exportApplicationJson(this.state.application),
+            () => this.setState({importModalVisible: true, importJson: ""})
+          )}
         </div>
       } style={{margin: (Setting.isMobile()) ? "5px" : {}, height: "calc(100vh - 145px - 48px)", overflow: "hidden"}}
       styles={{body: {height: "100%"}}} type="inner">
@@ -1670,6 +1679,25 @@ class ApplicationEditPage extends React.Component {
     );
   }
 
+  // Handle import from JSON
+  handleImportJson() {
+    ApplicationImportExport.importApplicationJson(
+      this.state.importJson,
+      this.state.application,
+      (mergedApp) => {
+        this.setState({
+          application: mergedApp,
+          importModalVisible: false,
+          importJson: "",
+        }, () => {
+          if (typeof this.submitApplicationEdit === "function") {
+            this.submitApplicationEdit();
+          }
+        });
+      }
+    );
+  }
+
   submitApplicationEdit(exitAfterSave) {
     const application = Setting.deepCopy(this.state.application);
     application.providers = application.providers?.filter(provider => this.state.providers.map(provider => provider.name).includes(provider.name));
@@ -1735,6 +1763,13 @@ class ApplicationEditPage extends React.Component {
         {
           this.state.application !== null ? this.renderApplication() : null
         }
+        {ApplicationImportExport.renderImportModal(
+          this.state.importModalVisible,
+          this.state.importJson,
+          (value) => this.setState({importJson: value}),
+          () => this.handleImportJson(),
+          () => this.setState({importModalVisible: false, importJson: ""})
+        )}
       </div>
     );
   }
