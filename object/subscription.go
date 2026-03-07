@@ -48,10 +48,11 @@ type Subscription struct {
 	Plan    string `xorm:"varchar(100)" json:"plan"`
 	Payment string `xorm:"varchar(100)" json:"payment"`
 
-	StartTime string            `xorm:"varchar(100)" json:"startTime"`
-	EndTime   string            `xorm:"varchar(100)" json:"endTime"`
-	Period    string            `xorm:"varchar(100)" json:"period"`
-	State     SubscriptionState `xorm:"varchar(100)" json:"state"`
+	StartTime   string            `xorm:"varchar(100)" json:"startTime"`
+	EndTime     string            `xorm:"varchar(100)" json:"endTime"`
+	Period      string            `xorm:"varchar(100)" json:"period"`
+	State       SubscriptionState `xorm:"varchar(100)" json:"state"`
+	IsAutoRenew bool              `json:"isAutoRenew"`
 }
 
 func (sub *Subscription) GetId() string {
@@ -137,6 +138,42 @@ func NewSubscription(owner, userName, planName, paymentName, period string) (*Su
 		State:     SubStatePending, // waiting for payment complete
 	}
 	return res, nil
+}
+
+func renewSubscription(sub *Subscription) (*Subscription, error) {
+	oldEndTime, err := time.Parse(time.RFC3339, sub.EndTime)
+	if err != nil {
+		return nil, err
+	}
+
+	var newEndTime time.Time
+	if sub.Period == PeriodYearly {
+		newEndTime = oldEndTime.AddDate(1, 0, 0)
+	} else if sub.Period == PeriodMonthly {
+		newEndTime = oldEndTime.AddDate(0, 1, 0)
+	} else {
+		return nil, fmt.Errorf("invalid period: %s", sub.Period)
+	}
+
+	id := util.GenerateId()[:6]
+	newSub := &Subscription{
+		Owner:       sub.Owner,
+		Name:        "sub_" + id,
+		DisplayName: "Renewed Subscription - " + id,
+		CreatedTime: util.GetCurrentTime(),
+
+		User:    sub.User,
+		Pricing: sub.Pricing,
+		Plan:    sub.Plan,
+		Payment: "",
+
+		StartTime:   sub.EndTime,
+		EndTime:     newEndTime.Format(time.RFC3339),
+		Period:      sub.Period,
+		State:       SubStateActive,
+		IsAutoRenew: sub.IsAutoRenew,
+	}
+	return newSub, nil
 }
 
 func GetSubscriptionCount(owner, field, value string) (int64, error) {
