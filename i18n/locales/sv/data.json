@@ -1,0 +1,230 @@
+{
+  "account": {
+    "Failed to add user": "Misslyckades lägga till användare",
+    "Get init score failed, error: %w": "Misslyckades hämta init-poäng, fel: %w",
+    "The application does not allow to sign up new account": "Applikationen tillåter inte registrering av nytt konto"
+  },
+  "auth": {
+    "Challenge method should be S256": "Utmaningsmetoden ska vara S256",
+    "DeviceCode Invalid": "Ogiltig enhetskod",
+    "Failed to create user, user information is invalid: %s": "Misslyckades skapa användare, användarinformationen är ogiltig: %s",
+    "Failed to login in: %s": "Misslyckades logga in: %s",
+    "Invalid token": "Ogiltig token",
+    "State expected: %s, but got: %s": "Förväntat tillstånd: %s, men fick: %s",
+    "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %s, please use another way to sign up": "Kontot för leverantör: %s och användarnamn: %s (%s) finns inte och det är inte tillåtet att registrera ett nytt konto via %s, använd ett annat sätt att registrera dig",
+    "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "Kontot för leverantör: %s och användarnamn: %s (%s) finns inte och det är inte tillåtet att registrera ett nytt konto, kontakta din IT-support",
+    "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)": "Kontot för leverantör: %s och användarnamn: %s (%s) är redan länkat till ett annat konto: %s (%s)",
+    "The application: %s does not exist": "Applikationen: %s finns inte",
+    "The application: %s has disabled users to signin": "Applikationen: %s har inaktiverat användarinloggning",
+    "The group: %s does not exist": "Gruppen: %s finns inte",
+    "The login method: login with LDAP is not enabled for the application": "Inloggningsmetoden: inloggning med LDAP är inte aktiverad för applikationen",
+    "The login method: login with SMS is not enabled for the application": "Inloggningsmetoden: inloggning med SMS är inte aktiverad för applikationen",
+    "The login method: login with email is not enabled for the application": "Inloggningsmetoden: inloggning med e-post är inte aktiverad för applikationen",
+    "The login method: login with face is not enabled for the application": "Inloggningsmetoden: inloggning med ansikte är inte aktiverad för applikationen",
+    "The login method: login with password is not enabled for the application": "Inloggningsmetoden: inloggning med lösenord är inte aktiverad för applikationen",
+    "The order: %s does not exist": "The order: %s does not exist",
+    "The organization: %s does not exist": "Organisationen: %s finns inte",
+    "The organization: %s has disabled users to signin": "Organisationen: %s har inaktiverat användarinloggning",
+    "The plan: %s does not exist": "Planen: %s finns inte",
+    "The pricing: %s does not exist": "Prissättningen: %s finns inte",
+    "The pricing: %s does not have plan: %s": "Prissättningen: %s har inte plan: %s",
+    "The provider: %s does not exist": "Leverantören: %s finns inte",
+    "The provider: %s is not enabled for the application": "Leverantören: %s är inte aktiverad för applikationen",
+    "Unauthorized operation": "Obehörig åtgärd",
+    "Unknown authentication type (not password or provider), form = %s": "Okänd autentiseringstyp (inte lösenord eller leverantör), form = %s",
+    "User's tag: %s is not listed in the application's tags": "Användarens tagg: %s finns inte med i applikationens taggar",
+    "UserCode Expired": "Användarkoden har löpt ut",
+    "UserCode Invalid": "Ogiltig användarkod",
+    "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing": "Betalningsanvändare %s har ingen aktiv eller väntande prenumeration och applikationen: %s har ingen standardprissättning",
+    "the application for user %s is not found": "Applikationen för användare %s hittades inte",
+    "the organization: %s is not found": "Organisationen: %s hittades inte"
+  },
+  "cas": {
+    "Service %s and %s do not match": "Tjänsten %s och %s matchar inte"
+  },
+  "check": {
+    "%s does not meet the CIDR format requirements: %s": "%s uppfyller inte CIDR-formatets krav: %s",
+    "Affiliation cannot be blank": "Tillhörighet får inte vara tom",
+    "CIDR for IP: %s should not be empty": "CIDR för IP: %s får inte vara tomt",
+    "Default code does not match the code's matching rules": "Standardkoden matchar inte kodens matchningsregler",
+    "DisplayName cannot be blank": "Visningsnamn får inte vara tomt",
+    "DisplayName is not valid real name": "Visningsnamn är inte ett giltigt riktigt namn",
+    "Email already exists": "E-postadressen finns redan",
+    "Email cannot be empty": "E-post får inte vara tomt",
+    "Email is invalid": "E-postadressen är ogiltig",
+    "Empty username.": "Tomt användarnamn.",
+    "Face data does not exist, cannot log in": "Ansiktsdata finns inte, kan inte logga in",
+    "Face data mismatch": "Ansiktsdata stämmer inte",
+    "Failed to parse client IP: %s": "Misslyckades tolka klient-IP: %s",
+    "FirstName cannot be blank": "Förnamn får inte vara tomt",
+    "Guest users must upgrade their account by setting a username and password before they can sign in directly": "Guest users must upgrade their account by setting a username and password before they can sign in directly",
+    "Invitation code cannot be blank": "Inbjudningskod får inte vara tom",
+    "Invitation code exhausted": "Inbjudningskoden är slut",
+    "Invitation code is invalid": "Inbjudningskoden är ogiltig",
+    "Invitation code suspended": "Inbjudningskoden är avstängd",
+    "LastName cannot be blank": "Efternamn får inte vara tomt",
+    "Multiple accounts with same uid, please check your ldap server": "Flera konton med samma uid, kontrollera din LDAP-server",
+    "Organization does not exist": "Organisationen finns inte",
+    "Password cannot be empty": "Lösenord får inte vara tomt",
+    "Phone already exists": "Telefonnumret finns redan",
+    "Phone cannot be empty": "Telefon får inte vara tomt",
+    "Phone number is invalid": "Telefonnumret är ogiltigt",
+    "Please register using the email corresponding to the invitation code": "Registrera dig med den e-postadress som motsvarar inbjudningskoden",
+    "Please register using the phone  corresponding to the invitation code": "Registrera dig med det telefonnummer som motsvarar inbjudningskoden",
+    "Please register using the username corresponding to the invitation code": "Registrera dig med det användarnamn som motsvarar inbjudningskoden",
+    "Session outdated, please login again": "Sessionen har gått ut, logga in igen",
+    "The invitation code has already been used": "Inbjudningskoden har redan använts",
+    "The password must contain at least one special character": "Lösenordet måste innehålla minst ett specialtecken",
+    "The password must contain at least one uppercase letter, one lowercase letter and one digit": "Lösenordet måste innehålla minst en stor bokstav, en liten bokstav och en siffra",
+    "The password must have at least 6 characters": "Lösenordet måste ha minst 6 tecken",
+    "The password must have at least 8 characters": "Lösenordet måste ha minst 8 tecken",
+    "The password must not contain any repeated characters": "Lösenordet får inte innehålla upprepade tecken",
+    "The user has been deleted and cannot be used to sign in, please contact the administrator": "Användaren har tagits bort och kan inte användas för att logga in, kontakta administratören",
+    "The user is forbidden to sign in, please contact the administrator": "Användaren är förbjuden att logga in, kontakta administratören",
+    "The user: %s doesn't exist in LDAP server": "Användaren: %s finns inte i LDAP-servern",
+    "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.": "Användarnamnet får endast innehålla alfanumeriska tecken, understreck eller bindestreck, får inte ha flera understreck eller bindestreck i följd, och får inte börja eller sluta med ett understreck eller bindestreck.",
+    "The value \"%s\" for account field \"%s\" doesn't match the account item regex": "The value \"%s\" for account field \"%s\" doesn't match the account item regex",
+    "The value \"%s\" for signup field \"%s\" doesn't match the signup item regex of the application \"%s\"": "The value \"%s\" for signup field \"%s\" doesn't match the signup item regex of the application \"%s\"",
+    "Username already exists": "Användarnamnet finns redan",
+    "Username cannot be an email address": "Användarnamnet får inte vara en e-postadress",
+    "Username cannot contain white spaces": "Användarnamnet får inte innehålla mellanslag",
+    "Username cannot start with a digit": "Användarnamnet får inte börja med en siffra",
+    "Username is too long (maximum is 255 characters).": "Användarnamnet är för långt (max 255 tecken).",
+    "Username must have at least 2 characters": "Användarnamnet måste ha minst 2 tecken",
+    "Username supports email format. Also The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline. Also pay attention to the email format.": "Användarnamnet stöder e-postformat. Användarnamnet får endast innehålla alfanumeriska tecken, understreck eller bindestreck, får inte ha flera understreck eller bindestreck i följd, och får inte börja eller sluta med ett understreck eller bindestreck. Observera även e-postformatet.",
+    "You have entered the wrong password or code too many times, please wait for %d minutes and try again": "Du har angett fel lösenord eller kod för många gånger, vänta %d minuter och försök igen",
+    "Your IP address: %s has been banned according to the configuration of: ": "Din IP-adress: %s har blockerats enligt konfigurationen av: ",
+    "Your password has expired. Please reset your password by clicking \"Forgot password\"": "Your password has expired. Please reset your password by clicking \"Forgot password\"",
+    "Your region is not allow to signup by phone": "Din region tillåter inte registrering via telefon",
+    "password or code is incorrect": "lösenord eller kod är felaktig",
+    "password or code is incorrect, you have %s remaining chances": "lösenord eller kod är felaktig, du har %s försök kvar",
+    "unsupported password type: %s": "lösenordstypen stöds inte: %s"
+  },
+  "enforcer": {
+    "the adapter: %s is not found": "adaptern: %s hittades inte"
+  },
+  "general": {
+    "Failed to import groups": "Misslyckades importera grupper",
+    "Failed to import users": "Misslyckades importera användare",
+    "Insufficient balance: new balance %v would be below credit limit %v": "Insufficient balance: new balance %v would be below credit limit %v",
+    "Insufficient balance: new organization balance %v would be below credit limit %v": "Insufficient balance: new organization balance %v would be below credit limit %v",
+    "Missing parameter": "Saknad parameter",
+    "Only admin user can specify user": "Endast administratör kan ange användare",
+    "Please login first": "Logga in först",
+    "The LDAP: %s does not exist": "The LDAP: %s does not exist",
+    "The organization: %s should have one application at least": "Organisationen: %s bör ha minst en applikation",
+    "The syncer: %s does not exist": "The syncer: %s does not exist",
+    "The user: %s doesn't exist": "Användaren: %s finns inte",
+    "The user: %s is not found": "The user: %s is not found",
+    "User is required for User category transaction": "User is required for User category transaction",
+    "Wrong userId": "Fel användar-ID",
+    "don't support captchaProvider: ": "stödjer inte captcha-leverantör: ",
+    "this operation is not allowed in demo mode": "denna åtgärd är inte tillåten i demoläge",
+    "this operation requires administrator to perform": "denna åtgärd kräver administratör för att genomföras"
+  },
+  "invitation": {
+    "Invitation %s does not exist": "Inbjudan %s existerar inte"
+  },
+  "ldap": {
+    "Ldap server exist": "LDAP-servern finns redan"
+  },
+  "link": {
+    "Please link first": "Länka först",
+    "This application has no providers": "Denna applikation har inga leverantörer",
+    "This application has no providers of type": "Denna applikation har inga leverantörer av typen",
+    "This provider can't be unlinked": "Denna leverantör kan inte avlänkas",
+    "You are not the global admin, you can't unlink other users": "Du är inte global administratör, du kan inte avlänka andra användare",
+    "You can't unlink yourself, you are not a member of any application": "Du kan inte avlänka dig själv, du är inte medlem i någon applikation"
+  },
+  "organization": {
+    "Only admin can modify the %s.": "Endast administratör kan ändra %s.",
+    "The %s is immutable.": "%s är oföränderlig.",
+    "Unknown modify rule %s.": "Okänd ändringsregel %s.",
+    "adding a new user to the 'built-in' organization is currently disabled. Please note: all users in the 'built-in' organization are global administrators in Casdoor. Refer to the docs: https://casdoor.org/docs/basic/core-concepts#how-does-casdoor-manage-itself. If you still wish to create a user for the 'built-in' organization, go to the organization's settings page and enable the 'Has privilege consent' option.": "Lägg till en ny användare i organisationen 'built-in' (inbyggd) är för närvarande inaktiverat. Observera att alla användare i organisationen 'built-in' är globala administratörer i Casdoor. Se dokumentationen: https://casdoor.org/docs/basic/core-concepts#how-does-casdoor-manage-itself. Om du fortfarande vill skapa en användare för organisationen 'built-in', gå till organisationens inställningssida och aktivera alternativet 'Har privilegiekonsensus'."
+  },
+  "permission": {
+    "The permission: \"%s\" doesn't exist": "The permission: \"%s\" doesn't exist"
+  },
+  "product": {
+    "Product list cannot be empty": "Product list cannot be empty"
+  },
+  "provider": {
+    "Failed to initialize ID Verification provider": "Failed to initialize ID Verification provider",
+    "Invalid application id": "Ogiltigt applikations-ID",
+    "No ID Verification provider configured": "No ID Verification provider configured",
+    "Provider is not an ID Verification provider": "Provider is not an ID Verification provider",
+    "the provider: %s does not exist": "leverantören: %s finns inte"
+  },
+  "resource": {
+    "User is nil for tag: avatar": "Användaren är nil för taggen: avatar",
+    "Username or fullFilePath is empty: username = %s, fullFilePath = %s": "Användarnamn eller fullständig filsökväg är tom: användarnamn = %s, fullständig filsökväg = %s"
+  },
+  "saml": {
+    "Application %s not found": "Applikationen %s hittades inte"
+  },
+  "saml_sp": {
+    "provider %s's category is not SAML": "leverantören %s:s kategori är inte SAML"
+  },
+  "service": {
+    "Empty parameters for emailForm: %v": "Tomma parametrar för e-postformulär: %v",
+    "Invalid Email receivers: %s": "Ogiltiga e-postmottagare: %s",
+    "Invalid phone receivers: %s": "Ogiltiga telefonmottagare: %s"
+  },
+  "session": {
+    "session id %s is the current session and cannot be deleted": "session id %s is the current session and cannot be deleted"
+  },
+  "storage": {
+    "The objectKey: %s is not allowed": "Objektnyckeln: %s är inte tillåten",
+    "The provider type: %s is not supported": "Leverantörstypen: %s stöds inte"
+  },
+  "subscription": {
+    "Error": "Fel"
+  },
+  "ticket": {
+    "Ticket not found": "Ticket not found"
+  },
+  "token": {
+    "Grant_type: %s is not supported in this application": "Grant_type: %s stöds inte i denna applikation",
+    "Invalid application or wrong clientSecret": "Ogiltig applikation eller fel clientSecret",
+    "Invalid client_id": "Ogiltigt client_id",
+    "Redirect URI: %s doesn't exist in the allowed Redirect URI list": "Omdirigerings-URI: %s finns inte i listan över tillåtna omdirigerings-URI:er",
+    "Token not found, invalid accessToken": "Token hittades inte, ogiltig accessToken"
+  },
+  "user": {
+    "Display name cannot be empty": "Visningsnamn får inte vara tomt",
+    "ID card information and real name are required": "ID card information and real name are required",
+    "Identity verification failed": "Identity verification failed",
+    "MFA email is enabled but email is empty": "MFA-e-post är aktiverat men e-post är tom",
+    "MFA phone is enabled but phone number is empty": "MFA-telefon är aktiverat men telefonnummer är tomt",
+    "New password cannot contain blank space.": "Nytt lösenord får inte innehålla mellanslag.",
+    "No application found for user": "No application found for user",
+    "The new password must be different from your current password": "Det nya lösenordet måste skilja sig från ditt nuvarande lösenord",
+    "User is already verified": "User is already verified",
+    "the user's owner and name should not be empty": "användarens ägare och namn får inte vara tomma"
+  },
+  "util": {
+    "No application is found for userId: %s": "Ingen applikation hittades för användar-ID: %s",
+    "No provider for category: %s is found for application: %s": "Ingen leverantör för kategori: %s hittades för applikation: %s",
+    "The provider: %s is not found": "Leverantören: %s hittades inte"
+  },
+  "verification": {
+    "Invalid captcha provider.": "Ogiltig captcha-leverantör.",
+    "Phone number is invalid in your region %s": "Telefonnumret är ogiltigt i din region %s",
+    "The forgot password feature is disabled": "The forgot password feature is disabled",
+    "The verification code has already been used!": "Verifieringskoden har redan använts!",
+    "The verification code has not been sent yet!": "Verifieringskoden har inte skickats än!",
+    "Turing test failed.": "Turing-test misslyckades.",
+    "Unable to get the email modify rule.": "Kunde inte hämta regeln för ändring av e-post.",
+    "Unable to get the phone modify rule.": "Kunde inte hämta regeln för ändring av telefon.",
+    "Unknown type": "Okänd typ",
+    "Wrong verification code!": "Fel verifieringskod!",
+    "You should verify your code in %d min!": "Du bör verifiera din kod inom %d min!",
+    "please add a SMS provider to the \"Providers\" list for the application: %s": "please add a SMS provider to the \"Providers\" list for the application: %s",
+    "please add an Email provider to the \"Providers\" list for the application: %s": "please add an Email provider to the \"Providers\" list for the application: %s",
+    "the user does not exist, please sign up first": "användaren finns inte, registrera dig först"
+  },
+  "webauthn": {
+    "Found no credentials for this user": "Inga autentiseringsuppgifter hittades för denna användare",
+    "Please call WebAuthnSigninBegin first": "Anropa WebAuthnSigninBegin först"
+  }
+}
