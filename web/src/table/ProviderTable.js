@@ -219,6 +219,31 @@ class ProviderTable extends React.Component {
         },
       },
       {
+        title: i18next.t("provider:Binding rule"),
+        dataIndex: "bindingRule",
+        key: "bindingRule",
+        width: "120px",
+        render: (text, record, index) => {
+          if (!["OAuth", "Web3", "SAML"].includes(record.provider?.category)) {
+            return null;
+          }
+
+          return (
+            <Select virtual={false} style={{width: "100%"}}
+              value={text || ["Email", "Phone", "Name"]}
+              mode={"multiple"}
+              onChange={value => {
+                text = Array.isArray(text) ? text : [];
+                this.updateField(table, index, "bindingRule", value);
+              }} >
+              <Option key="Email" value="Email">{i18next.t("general:Email")}</Option>
+              <Option key="Name" value="Name">{i18next.t("general:Name")}</Option>
+              <Option key="Phone" value="Phone">{i18next.t("general:Phone")}</Option>
+            </Select>
+          );
+        },
+      },
+      {
         title: i18next.t("provider:Prompted"),
         dataIndex: "prompted",
         key: "prompted",
