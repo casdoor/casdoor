@@ -423,6 +423,27 @@ func NewGothIdProvider(providerType string, clientId string, clientSecret string
 	return &idp, nil
 }
 
+// GetGothAuthUrl builds the OAuth authorization URL for a goth-based provider using BeginAuth.
+// It returns an empty string if the provider type is not supported by goth.
+func GetGothAuthUrl(idpInfo *ProviderInfo, state string, redirectUrl string) (string, error) {
+	gothIdp, err := NewGothIdProvider(idpInfo.Type, idpInfo.ClientId, idpInfo.ClientSecret, idpInfo.ClientId2, idpInfo.ClientSecret2, redirectUrl, idpInfo.HostUrl)
+	if err != nil {
+		return "", err
+	}
+
+	session, err := gothIdp.Provider.BeginAuth(state)
+	if err != nil {
+		return "", err
+	}
+
+	authUrl, err := session.GetAuthURL()
+	if err != nil {
+		return "", err
+	}
+
+	return authUrl, nil
+}
+
 // SetHttpClient
 // Goth's idp all implement the Client method, but since the goth.Provider interface does not provide to modify idp's client method, reflection is required
 func (idp *GothIdProvider) SetHttpClient(client *http.Client) {
