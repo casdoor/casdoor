@@ -21,7 +21,7 @@ type ProviderItem struct {
 	CanSignUp    bool      `json:"canSignUp"`
 	CanSignIn    bool      `json:"canSignIn"`
 	CanUnlink    bool      `json:"canUnlink"`
-	AutoLink     string    `json:"autoLink"`
+	BindingRule  string    `json:"bindingRule"`
 	CountryCodes []string  `json:"countryCodes"`
 	Prompted     bool      `json:"prompted"`
 	SignupGroup  string    `json:"signupGroup"`

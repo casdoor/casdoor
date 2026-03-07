@@ -219,9 +219,9 @@ class ProviderTable extends React.Component {
         },
       },
       {
-        title: i18next.t("provider:Auto link"),
-        dataIndex: "autoLink",
-        key: "autoLink",
+        title: i18next.t("provider:Binding rule"),
+        dataIndex: "bindingRule",
+        key: "bindingRule",
         width: "120px",
         render: (text, record, index) => {
           if (!["OAuth", "Web3", "SAML"].includes(record.provider?.category)) {
@@ -231,14 +231,14 @@ class ProviderTable extends React.Component {
           return (
             <Select virtual={false} style={{width: "100%"}}
               value={text}
-              defaultValue="Default"
+              defaultValue="All"
               onChange={value => {
-                this.updateField(table, index, "autoLink", value);
+                this.updateField(table, index, "bindingRule", value);
               }} >
-              <Option key="Default" value="Default">{i18next.t("general:Default")}</Option>
-              <Option key="EmailOnly" value="EmailOnly">{i18next.t("provider:Email only")}</Option>
-              <Option key="NameOnly" value="NameOnly">{i18next.t("provider:Name only")}</Option>
-              <Option key="Disabled" value="Disabled">{i18next.t("general:Disabled")}</Option>
+              <Option key="All" value="All">{i18next.t("general:All")}</Option>
+              <Option key="Email only" value="Email only">{i18next.t("general:Email only")}</Option>
+              <Option key="Name only" value="Name only">{i18next.t("general:Name only")}</Option>
+              <Option key="None" value="None">{i18next.t("general:None")}</Option>
             </Select>
           );
         },
