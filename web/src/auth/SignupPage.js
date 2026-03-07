@@ -273,6 +273,10 @@ class SignupPage extends React.Component {
       values.education = values.education.join(", ");
     }
 
+    if (this.state.invitationCode && !values.invitationCode) {
+      values.invitationCode = this.state.invitationCode;
+    }
+
     const params = new URLSearchParams(window.location.search);
     values.plan = params.get("plan");
     values.pricing = params.get("pricing");
