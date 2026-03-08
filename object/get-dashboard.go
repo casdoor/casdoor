@@ -16,11 +16,24 @@ package object
 
 import (
 	"fmt"
+	"sort"
 	"sync"
 	"time"
 
 	"github.com/casdoor/casdoor/conf"
 )
+
+type AppUsage struct {
+	AppName string `json:"appName"`
+	Count   int64  `json:"count"`
+}
+
+type DashboardAnalytics struct {
+	WeeklyLoginCounts  []int64    `json:"weeklyLoginCounts"`
+	TopApps            []AppUsage `json:"topApps"`
+	UserTopApps        []AppUsage `json:"userTopApps"`
+	UserActivityHeatmap []int64   `json:"userActivityHeatmap"`
+}
 
 type DashboardDateItem struct {
 	CreatedTime string `json:"createTime"`
@@ -115,4 +128,102 @@ func countCreatedBefore(dashboardMapItem DashboardMapItem, before time.Time) int
 		}
 	}
 	return count
+}
+
+type tokenCreatedTime struct {
+	CreatedTime string `xorm:"created_time"`
+	Application string `xorm:"application"`
+	User        string `xorm:"user"`
+}
+
+func GetDashboardAnalytics(owner, userId string) (*DashboardAnalytics, error) {
+	if owner == "All" {
+		owner = ""
+	}
+
+	tableNamePrefix := conf.GetConfigString("tableNamePrefix")
+	tokenTable := tableNamePrefix + "token"
+
+	now := time.Now()
+	time7day := now.AddDate(0, 0, -7)
+	time30day := now.AddDate(0, 0, -30)
+
+	// Query tokens from last 30 days for app usage and last 7 for login trend
+	var tokens []tokenCreatedTime
+	session := ormer.Engine.Table(tokenTable).
+		Cols("created_time", "application", "user").
+		Where("created_time >= ?", time30day)
+	if owner != "" {
+		session = session.And("owner = ?", owner)
+	}
+	if err := session.Find(&tokens); err != nil {
+		return nil, err
+	}
+
+	// Weekly login counts: index 0 = 6 days ago, index 6 = today
+	weeklyLoginCounts := make([]int64, 7)
+	// Top apps: count per application for last 30 days
+	appCountMap := make(map[string]int64)
+	// User-specific stats
+	userAppCountMap := make(map[string]int64)
+	userActivityHeatmap := make([]int64, 24)
+
+	for _, t := range tokens {
+		createdTime, err := time.Parse(time.RFC3339, t.CreatedTime)
+		if err != nil {
+			continue
+		}
+
+		// Weekly login counts (last 7 days)
+		if !createdTime.Before(time7day) {
+			daysDiff := int(now.Truncate(24*time.Hour).Sub(createdTime.Truncate(24*time.Hour)).Hours() / 24)
+			if daysDiff >= 0 && daysDiff < 7 {
+				weeklyLoginCounts[6-daysDiff]++
+			}
+		}
+
+		// Top apps (last 30 days)
+		if t.Application != "" {
+			appCountMap[t.Application]++
+		}
+
+		// User-specific stats
+		if userId != "" && t.User == userId {
+			if t.Application != "" {
+				userAppCountMap[t.Application]++
+			}
+			userActivityHeatmap[createdTime.Hour()]++
+		}
+	}
+
+	// Build top 5 apps slice sorted by count
+	topApps := make([]AppUsage, 0, len(appCountMap))
+	for appName, count := range appCountMap {
+		topApps = append(topApps, AppUsage{AppName: appName, Count: count})
+	}
+	sort.Slice(topApps, func(i, j int) bool {
+		return topApps[i].Count > topApps[j].Count
+	})
+	if len(topApps) > 5 {
+		topApps = topApps[:5]
+	}
+
+	// Build user top apps slice
+	userTopApps := make([]AppUsage, 0, len(userAppCountMap))
+	for appName, count := range userAppCountMap {
+		userTopApps = append(userTopApps, AppUsage{AppName: appName, Count: count})
+	}
+	sort.Slice(userTopApps, func(i, j int) bool {
+		return userTopApps[i].Count > userTopApps[j].Count
+	})
+	if len(userTopApps) > 5 {
+		userTopApps = userTopApps[:5]
+	}
+
+	return &DashboardAnalytics{
+		WeeklyLoginCounts:   weeklyLoginCounts,
+		TopApps:             topApps,
+		UserTopApps:         userTopApps,
+		UserActivityHeatmap: userActivityHeatmap,
+	}, nil
 }

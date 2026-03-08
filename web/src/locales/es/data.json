@@ -573,11 +573,14 @@
     "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Necesitas eliminar todos los subgrupos primero. Puedes ver los subgrupos en el árbol de grupos a la izquierda en la página [Organizaciones] -> [Grupos]"
   },
   "home": {
+    "Logins": "Logins",
     "New users past 30 days": "Nuevos usuarios en los últimos 30 días",
     "New users past 7 days": "Nuevos usuarios en los últimos 7 días",
     "New users today": "Nuevos usuarios hoy",
     "Past 30 Days": "Últimos 30 días",
-    "Total users": "Usuarios totales"
+    "Top 5 Applications": "Top 5 Applications",
+    "Total users": "Usuarios totales",
+    "Weekly Login Trend": "Weekly Login Trend"
   },
   "invitation": {
     "Code": "Código",
