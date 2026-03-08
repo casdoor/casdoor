@@ -19,6 +19,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"regexp"
 	"sync"
 	"time"
 
@@ -33,6 +34,8 @@ const AdapterStderr = "stderr"
 var logLevelNames = [logs.LevelDebug + 1]string{
 	"emergency", "alert", "critical", "error", "warning", "notice", "info", "debug",
 }
+
+var ansiEscapeRegexp = regexp.MustCompile(`\x1b\[[0-9;]*m`)
 
 // defaultTimeFormat is the timestamp format used in plain-text log output.
 const defaultTimeFormat = "2006/01/02 15:04:05.000 "
@@ -90,7 +93,7 @@ type stderrWriter struct {
 
 // Format implements logs.LogFormatter. It provides plain-text output without color escapes.
 func (w *stderrWriter) Format(lm *logs.LogMsg) string {
-	msg := lm.OldStyleFormat()
+	msg := ansiEscapeRegexp.ReplaceAllString(lm.OldStyleFormat(), "")
 	t := lm.When.Format(defaultTimeFormat)
 	return t + msg
 }
