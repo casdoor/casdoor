@@ -44,6 +44,11 @@ type Webhook struct {
 	IsUserExtended bool      `json:"isUserExtended"`
 	SingleOrgOnly  bool      `json:"singleOrgOnly"`
 	IsEnabled      bool      `json:"isEnabled"`
+	
+	// Retry configuration
+	MaxRetries         int `xorm:"int default 3" json:"maxRetries"`
+	RetryInterval      int `xorm:"int default 60" json:"retryInterval"` // seconds
+	UseExponentialBackoff bool `json:"useExponentialBackoff"`
 }
 
 func GetWebhookCount(owner, organization, field, value string) (int64, error) {

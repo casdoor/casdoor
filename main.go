@@ -130,6 +130,9 @@ func main() {
 	go ldap.StartLdapServer()
 	go radius.StartRadiusServer()
 	go object.ClearThroughputPerSecond()
+	
+	// Start webhook delivery worker
+	object.StartWebhookDeliveryWorker()
 
 	if len(object.SiteMap) != 0 {
 		service.Start()
