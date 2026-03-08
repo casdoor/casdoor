@@ -47,6 +47,7 @@ const defaultTimeFormat = "2006/01/02 15:04:05.000 "
 //	logConfig = {"adapter":"file","filename":"logs/casdoor.log","formatter":"json"}
 type JSONFormatter struct{}
 
+// Format renders a log message as a JSON string.
 func (j *JSONFormatter) Format(lm *logs.LogMsg) string {
 	msg := lm.Msg
 	if len(lm.Args) > 0 {
