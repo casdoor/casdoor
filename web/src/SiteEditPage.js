@@ -64,7 +64,7 @@ class SiteEditPage extends React.Component {
   }
 
   getSite() {
-    SiteBackend.getSite(this.state.owner, this.state.siteName)
+    SiteBackend.getSite(this.state.site?.owner || this.state.owner, this.state.siteName)
       .then((res) => {
         if (res.status === "ok") {
           this.setState({
