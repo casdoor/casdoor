@@ -53,6 +53,7 @@ func (j *JSONFormatter) Format(lm *logs.LogMsg) string {
 	if len(lm.Args) > 0 {
 		msg = fmt.Sprintf(lm.Msg, lm.Args...)
 	}
+	msg = ansiEscapeRegexp.ReplaceAllString(msg, "")
 
 	level := "unknown"
 	if lm.Level >= 0 && lm.Level <= logs.LevelDebug {
