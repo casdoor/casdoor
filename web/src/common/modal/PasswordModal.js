@@ -129,6 +129,9 @@ export const PasswordModal = (props) => {
         if (res.status === "ok") {
           Setting.showMessage("success", i18next.t("user:Password set successfully"));
           setVisible(false);
+          if (account.owner === user.owner && account.name === userName) {
+            account.needUpdatePassword = false;
+          }
         } else {
           Setting.showMessage("error", i18next.t(`user:${res.msg}`));
         }
