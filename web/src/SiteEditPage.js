@@ -435,7 +435,7 @@ class SiteEditPage extends React.Component {
 
   submitSiteEdit() {
     const site = Setting.deepCopy(this.state.site);
-    SiteBackend.updateSite(this.state.site.owner, this.state.siteName, site)
+    SiteBackend.updateSite(this.state.owner, this.state.siteName, site)
       .then((res) => {
         if (res.status === "error") {
           Setting.showMessage("error", `Failed to save: ${res.msg}`);
@@ -443,6 +443,7 @@ class SiteEditPage extends React.Component {
         } else {
           Setting.showMessage("success", "Successfully saved");
           this.setState({
+            owner: this.state.site.owner,
             siteName: this.state.site.name,
           });
           this.props.history.push(`/sites/${this.state.site.owner}/${this.state.site.name}`);
