@@ -436,7 +436,7 @@ class SiteListPage extends BaseListPage {
     }
     this.setState({loading: true});
     // SiteBackend.getSites(this.props.account.name, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
-    SiteBackend.getSites(this.props.account.owner, "", "", field, value, sortField, sortOrder)
+    (Setting.isDefaultOrganizationSelected(this.props.account) ? SiteBackend.getGlobalSites() : SiteBackend.getSites(Setting.getRequestOrganization(this.props.account), "", "", field, value, sortField, sortOrder))
       .then((res) => {
         this.setState({
           loading: false,
