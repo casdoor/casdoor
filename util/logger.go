@@ -19,6 +19,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"regexp"
 	"sync"
 	"time"
 
@@ -34,6 +35,8 @@ var logLevelNames = [logs.LevelDebug + 1]string{
 	"emergency", "alert", "critical", "error", "warning", "notice", "info", "debug",
 }
 
+var ansiEscapeRegexp = regexp.MustCompile(`\x1b\[[0-9;]*m`)
+
 // defaultTimeFormat is the timestamp format used in plain-text log output.
 const defaultTimeFormat = "2006/01/02 15:04:05.000 "
 
@@ -44,11 +47,13 @@ const defaultTimeFormat = "2006/01/02 15:04:05.000 "
 //	logConfig = {"adapter":"file","filename":"logs/casdoor.log","formatter":"json"}
 type JSONFormatter struct{}
 
+// Format renders a log message as a JSON string.
 func (j *JSONFormatter) Format(lm *logs.LogMsg) string {
 	msg := lm.Msg
 	if len(lm.Args) > 0 {
 		msg = fmt.Sprintf(lm.Msg, lm.Args...)
 	}
+	msg = ansiEscapeRegexp.ReplaceAllString(msg, "")
 
 	level := "unknown"
 	if lm.Level >= 0 && lm.Level <= logs.LevelDebug {
@@ -90,7 +95,7 @@ type stderrWriter struct {
 
 // Format implements logs.LogFormatter. It provides plain-text output without color escapes.
 func (w *stderrWriter) Format(lm *logs.LogMsg) string {
-	msg := lm.OldStyleFormat()
+	msg := ansiEscapeRegexp.ReplaceAllString(lm.OldStyleFormat(), "")
 	t := lm.When.Format(defaultTimeFormat)
 	return t + msg
 }

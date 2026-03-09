@@ -49,6 +49,29 @@ func main() {
 
 	routers.InitAPI()
 	object.InitFlag()
+
+	var logAdapter string
+	logConfigMap := make(map[string]interface{})
+	err := json.Unmarshal([]byte(conf.GetConfigString("logConfig")), &logConfigMap)
+	if err != nil {
+		panic(err)
+	}
+	_, ok := logConfigMap["adapter"]
+	if !ok {
+		logAdapter = "file"
+	} else {
+		logAdapter = logConfigMap["adapter"].(string)
+	}
+	if logAdapter == "console" {
+		logAdapter = util.AdapterStderr
+	}
+	logs.Reset()
+	err = logs.SetLogger(logAdapter, conf.GetConfigString("logConfig"))
+	if err != nil {
+		panic(err)
+	}
+	logs.SetLogFuncCall(false)
+
 	object.InitAdapter()
 	object.CreateTables()
 
@@ -98,29 +121,8 @@ func main() {
 	web.InsertFilter("*", web.BeforeRouter, routers.FieldValidationFilter)
 	web.InsertFilter("*", web.AfterExec, routers.AfterRecordMessage, web.WithReturnOnOutput(false))
 
-	var logAdapter string
-	logConfigMap := make(map[string]interface{})
-	err := json.Unmarshal([]byte(conf.GetConfigString("logConfig")), &logConfigMap)
-	if err != nil {
-		panic(err)
-	}
-	_, ok := logConfigMap["adapter"]
-	if !ok {
-		logAdapter = "file"
-	} else {
-		logAdapter = logConfigMap["adapter"].(string)
-	}
-	if logAdapter == "console" || logAdapter == util.AdapterStderr {
-		logs.Reset()
-	}
-	err = logs.SetLogger(logAdapter, conf.GetConfigString("logConfig"))
-	if err != nil {
-		panic(err)
-	}
-
 	port := web.AppConfig.DefaultInt("httpport", 8000)
 	// logs.SetLevel(logs.LevelInformational)
-	logs.SetLogFuncCall(false)
 
 	err = util.StopOldInstance(port)
 	if err != nil {
