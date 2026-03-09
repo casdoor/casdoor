@@ -24,6 +24,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/beego/beego/v2/core/logs"
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/rule"
@@ -322,7 +323,7 @@ func Start() {
 		fmt.Printf("CasWAF gateway running on: http://127.0.0.1:%d\n", gatewayHttpPort)
 		err := http.ListenAndServe(fmt.Sprintf(":%d", gatewayHttpPort), serverMux)
 		if err != nil {
-			panic(err)
+			logs.Error(err)
 		}
 	}()
 
@@ -366,7 +367,7 @@ func Start() {
 
 		err := server.ListenAndServeTLS("", "")
 		if err != nil {
-			panic(err)
+			logs.Error(err)
 		}
 	}()
 }
