@@ -228,6 +228,8 @@ type User struct {
 	Ldap       string            `xorm:"ldap varchar(100)" json:"ldap"`
 	Properties map[string]string `json:"properties"`
 
+	ThirdPartyLinks []*ThirdPartyLink `xorm:"-" json:"thirdPartyLinks,omitempty"`
+
 	Roles       []*Role       `json:"roles"`
 	Permissions []*Permission `json:"permissions"`
 	Groups      []string      `xorm:"mediumtext" json:"groups"`
@@ -442,6 +444,13 @@ func getUser(owner string, name string) (*User, error) {
 	}
 
 	if existed {
+		links, err := GetThirdPartyLinksByUser(owner, name)
+		if err != nil {
+			return nil, err
+		}
+		if len(links) > 0 {
+			user.ThirdPartyLinks = links
+		}
 		return &user, nil
 	} else {
 		return nil, nil
@@ -1259,6 +1268,19 @@ func GetUserInfo(user *User, scope string, aud string, host string) (*Userinfo, 
 
 func LinkUserAccount(user *User, field string, value string) (bool, error) {
 	return SetUserField(user, field, value)
+}
+
+func LinkFlexibleCustomAccount(user *User, providerName string, providerId string) (bool, error) {
+	if providerId == "" {
+		return DeleteThirdPartyLink(user.Owner, user.Name, providerName)
+	}
+	link := &ThirdPartyLink{
+		Owner:        user.Owner,
+		UserName:     user.Name,
+		ProviderName: providerName,
+		ProviderId:   providerId,
+	}
+	return AddThirdPartyLink(link)
 }
 
 func (user *User) GetId() string {

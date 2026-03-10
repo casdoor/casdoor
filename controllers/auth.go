@@ -863,7 +863,13 @@ func (c *ApiController) Login() {
 
 		if authForm.Method == "signup" {
 			user := &object.User{}
-			if provider.Category == "SAML" {
+			if object.IsFlexibleCustomProvider(provider.Type) {
+				user, err = object.GetUserByThirdPartyLink(application.Organization, provider.Name, userInfo.Id)
+				if err != nil {
+					c.ResponseError(err.Error())
+					return
+				}
+			} else if provider.Category == "SAML" {
 				// The userInfo.Id is the NameID in SAML response, it could be name / email / phone
 				user, err = object.GetUserByFields(application.Organization, userInfo.Id)
 				if err != nil {
@@ -1034,7 +1040,11 @@ func (c *ApiController) Login() {
 					return
 				}
 
-				_, err = object.LinkUserAccount(user, provider.Type, userInfo.Id)
+				if object.IsFlexibleCustomProvider(provider.Type) {
+					_, err = object.LinkFlexibleCustomAccount(user, provider.Name, userInfo.Id)
+				} else {
+					_, err = object.LinkUserAccount(user, provider.Type, userInfo.Id)
+				}
 				if err != nil {
 					c.ResponseError(err.Error())
 					return
@@ -1057,7 +1067,11 @@ func (c *ApiController) Login() {
 			}
 
 			var oldUser *object.User
-			oldUser, err = object.GetUserByField(application.Organization, provider.Type, userInfo.Id)
+			if object.IsFlexibleCustomProvider(provider.Type) {
+				oldUser, err = object.GetUserByThirdPartyLink(application.Organization, provider.Name, userInfo.Id)
+			} else {
+				oldUser, err = object.GetUserByField(application.Organization, provider.Type, userInfo.Id)
+			}
 			if err != nil {
 				c.ResponseError(err.Error())
 				return
@@ -1083,7 +1097,11 @@ func (c *ApiController) Login() {
 			}
 
 			var isLinked bool
-			isLinked, err = object.LinkUserAccount(user, provider.Type, userInfo.Id)
+			if object.IsFlexibleCustomProvider(provider.Type) {
+				isLinked, err = object.LinkFlexibleCustomAccount(user, provider.Name, userInfo.Id)
+			} else {
+				isLinked, err = object.LinkUserAccount(user, provider.Type, userInfo.Id)
+			}
 			if err != nil {
 				c.ResponseError(err.Error())
 				return

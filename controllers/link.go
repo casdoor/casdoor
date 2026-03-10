@@ -22,6 +22,7 @@ import (
 
 type LinkForm struct {
 	ProviderType string      `json:"providerType"`
+	ProviderName string      `json:"providerName"`
 	User         object.User `json:"user"`
 }
 
@@ -86,6 +87,39 @@ func (c *ApiController) Unlink() {
 	// only two situations can happen here
 	// 1. the user is the global admin
 	// 2. the user is unlinking themselves and provider can be unlinked
+
+	if object.IsFlexibleCustomProvider(providerType) {
+		providerName := form.ProviderName
+		if providerName == "" {
+			c.ResponseError(c.T("link:Provider name is required for Flexible Custom providers"))
+			return
+		}
+
+		link, err := object.GetThirdPartyLink(unlinkedUser.Owner, unlinkedUser.Name, providerName)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+		if link == nil {
+			c.ResponseError(c.T("link:Please link first"))
+			return
+		}
+
+		_, err = object.ClearUserOAuthProperties(&unlinkedUser, providerType)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		_, err = object.DeleteThirdPartyLink(unlinkedUser.Owner, unlinkedUser.Name, providerName)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		c.ResponseOk()
+		return
+	}
 
 	value := object.GetUserField(&unlinkedUser, providerType)
 

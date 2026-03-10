@@ -380,7 +380,7 @@ const authInfo = {
 
 export function getProviderUrl(provider) {
   if (provider.category === "OAuth") {
-    const type = provider.type.startsWith("Custom") ? "Custom" : provider.type;
+    const type = (provider.type.startsWith("Custom") || provider.type === "Flexible Custom") ? "Custom" : provider.type;
     const endpoint = authInfo[type].endpoint;
     const urlObj = new URL(endpoint);
 
@@ -432,7 +432,7 @@ export function getAuthUrl(application, provider, method, code) {
   if (application === null || provider === null) {
     return "";
   }
-  const type = provider.type.startsWith("Custom") ? "Custom" : provider.type;
+  const type = (provider.type.startsWith("Custom") || provider.type === "Flexible Custom") ? "Custom" : provider.type;
   let endpoint = authInfo[type].endpoint;
   const redirectOrigin = application.forcedRedirectOrigin ? application.forcedRedirectOrigin : window.location.origin;
   let redirectUri = `${redirectOrigin}/callback`;

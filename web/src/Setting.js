@@ -1175,11 +1175,11 @@ export function getClickable(text) {
 }
 
 export function getProviderLogoURL(provider) {
-  if (provider.type.startsWith("Custom") && provider.customLogo) {
+  if ((provider.type.startsWith("Custom") || provider.type === "Flexible Custom") && provider.customLogo) {
     return provider.customLogo;
   }
   if (provider.category === "OAuth") {
-    const type = provider.type.startsWith("Custom") ? "Custom" : provider.type;
+    const type = (provider.type.startsWith("Custom") || provider.type === "Flexible Custom") ? "Custom" : provider.type;
     return `${StaticBaseUrl}/img/social_${type.toLowerCase()}.png`;
   } else {
     const info = OtherProviderInfo[provider.category][provider.type];
@@ -1290,6 +1290,7 @@ export function getProviderTypeOptions(category) {
         {id: "Custom8", name: "Custom8"},
         {id: "Custom9", name: "Custom9"},
         {id: "Custom10", name: "Custom10"},
+        {id: "Flexible Custom", name: "Flexible Custom"},
       ]
     );
   } else if (category === "Email") {
@@ -1347,6 +1348,7 @@ export function getProviderTypeOptions(category) {
       {id: "Aliyun IDaaS", name: "Aliyun IDaaS"},
       {id: "Keycloak", name: "Keycloak"},
       {id: "Custom", name: "Custom"},
+      {id: "Flexible Custom", name: "Flexible Custom"},
     ]);
   } else if (category === "Payment") {
     return ([
