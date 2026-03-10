@@ -40,7 +40,7 @@ type Adapter struct {
 	Password     string `xorm:"varchar(150)" json:"password"`
 	Database     string `xorm:"varchar(100)" json:"database"`
 
-	engine *xorm.Engine          `xorm:"-" json:"-"`
+	engine               *xorm.Engine `xorm:"-" json:"-"`
 	*xormadapter.Adapter `xorm:"-" json:"-"`
 }
 
