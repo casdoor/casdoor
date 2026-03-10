@@ -49,6 +49,8 @@ func InitAPI() {
 	web.Router("/api/get-app-login", &controllers.ApiController{}, "GET:GetApplicationLogin")
 	web.Router("/api/get-dashboard", &controllers.ApiController{}, "GET:GetDashboard")
 	web.Router("/api/get-dashboard-analytics", &controllers.ApiController{}, "GET:GetDashboardAnalytics")
+	web.Router("/api/get-admin-dashboard-analytics", &controllers.ApiController{}, "GET:GetAdminDashboardAnalytics")
+	web.Router("/api/get-user-dashboard-analytics", &controllers.ApiController{}, "GET:GetUserDashboardAnalytics")
 	web.Router("/api/logout", &controllers.ApiController{}, "GET,POST:Logout")
 	web.Router("/api/sso-logout", &controllers.ApiController{}, "GET,POST:SsoLogout")
 	web.Router("/api/get-account", &controllers.ApiController{}, "GET:GetAccount")

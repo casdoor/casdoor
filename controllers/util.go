@@ -17,6 +17,7 @@ package controllers
 import (
 	"errors"
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/casdoor/casdoor/conf"
@@ -189,6 +190,20 @@ func (c *ApiController) IsMaskedEnabled() (bool, bool) {
 	}
 
 	return true, isMaskEnabled
+}
+
+// GetIntWithDefault parses a query parameter as int.
+// If the parameter is missing or invalid, it returns the provided defaultValue.
+func (c *ApiController) GetIntWithDefault(key string, defaultValue int) int {
+	raw := c.Ctx.Input.Query(key)
+	if raw == "" {
+		return defaultValue
+	}
+	v, err := strconv.Atoi(raw)
+	if err != nil {
+		return defaultValue
+	}
+	return v
 }
 
 func refineFullFilePath(fullFilePath string) (string, string) {
