@@ -15,7 +15,7 @@
 package object
 
 import (
-	"fmt"
+	"errors"
 	"time"
 
 	"github.com/casdoor/casdoor/i18n"
@@ -28,7 +28,7 @@ func checkPasswordExpired(user *User, lang string) error {
 		return err
 	}
 	if organization == nil {
-		return fmt.Errorf(i18n.Translate(lang, "check:Organization does not exist"))
+		return errors.New(i18n.Translate(lang, "check:Organization does not exist"))
 	}
 
 	passwordExpireDays := organization.PasswordExpireDays
@@ -39,7 +39,7 @@ func checkPasswordExpired(user *User, lang string) error {
 	lastChangePasswordTime := user.LastChangePasswordTime
 	if lastChangePasswordTime == "" {
 		if user.CreatedTime == "" {
-			return fmt.Errorf(i18n.Translate(lang, "check:Your password has expired. Please reset your password by clicking \"Forgot password\""))
+			return errors.New(i18n.Translate(lang, "check:Your password has expired. Please reset your password by clicking \"Forgot password\""))
 		}
 		lastChangePasswordTime = user.CreatedTime
 	}
@@ -47,7 +47,7 @@ func checkPasswordExpired(user *User, lang string) error {
 	lastTime := util.String2Time(lastChangePasswordTime)
 	expireTime := lastTime.AddDate(0, 0, passwordExpireDays)
 	if time.Now().After(expireTime) {
-		return fmt.Errorf(i18n.Translate(lang, "check:Your password has expired. Please reset your password by clicking \"Forgot password\""))
+		return errors.New(i18n.Translate(lang, "check:Your password has expired. Please reset your password by clicking \"Forgot password\""))
 	}
 	return nil
 }

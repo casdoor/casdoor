@@ -16,6 +16,7 @@ package routers
 
 import (
 	"compress/gzip"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -110,7 +111,7 @@ func fastAutoSignin(ctx *context.Context) (string, error) {
 	if err != nil {
 		return "", err
 	} else if code.Message != "" {
-		return "", fmt.Errorf(code.Message)
+		return "", errors.New(code.Message)
 	}
 
 	sep := "?"

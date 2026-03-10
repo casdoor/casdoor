@@ -16,6 +16,7 @@ package idp
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -158,7 +159,7 @@ func (idp *DingTalkIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, erro
 	}
 
 	if dtUserInfo.OpenId == "" || dtUserInfo.UnionId == "" {
-		return nil, fmt.Errorf(string(data))
+		return nil, errors.New(string(data))
 	}
 
 	countryCode, err := util.GetCountryCode(dtUserInfo.StateCode, dtUserInfo.Mobile)
@@ -267,7 +268,7 @@ func (idp *DingTalkIdProvider) getUserId(unionId string, accessToken string) (st
 	if data.ErrCode == 60121 {
 		return "", fmt.Errorf("该应用只允许本企业内部用户登录，您不属于该企业，无法登录")
 	} else if data.ErrCode != 0 {
-		return "", fmt.Errorf(data.ErrMessage)
+		return "", errors.New(data.ErrMessage)
 	}
 	return data.Result.UserId, nil
 }
@@ -294,7 +295,7 @@ func (idp *DingTalkIdProvider) getUserCorpEmail(userId string, accessToken strin
 		return "", "", "", err
 	}
 	if data.ErrMessage != "ok" {
-		return "", "", "", fmt.Errorf(data.ErrMessage)
+		return "", "", "", errors.New(data.ErrMessage)
 	}
 	return data.Result.Mobile, data.Result.Email, data.Result.UnionId, nil
 }
