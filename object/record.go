@@ -16,6 +16,7 @@ package object
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"regexp"
 	"strings"
@@ -351,7 +352,7 @@ func SendWebhooks(record *casvisorsdk.Record) error {
 		for _, err := range errs {
 			errStrings = append(errStrings, err.Error())
 		}
-		return fmt.Errorf(strings.Join(errStrings, " | "))
+		return errors.New(strings.Join(errStrings, " | "))
 	}
 	return nil
 }

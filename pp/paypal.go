@@ -17,7 +17,6 @@ package pp
 import (
 	"context"
 	"errors"
-	"fmt"
 	"strconv"
 
 	"github.com/casdoor/casdoor/conf"
@@ -108,7 +107,7 @@ func (pp *PaypalPaymentProvider) Notify(body []byte, orderId string) (*NotifyRes
 			notifyResult.NotifyMessage = errDetail.Description
 			return notifyResult, nil
 		default:
-			err = fmt.Errorf(errDetail.Description)
+			err = errors.New(errDetail.Description)
 			return nil, err
 		}
 	}
@@ -125,7 +124,7 @@ func (pp *PaypalPaymentProvider) Notify(body []byte, orderId string) (*NotifyRes
 			notifyResult.NotifyMessage = errDetail.Description
 			return notifyResult, nil
 		default:
-			err = fmt.Errorf(errDetail.Description)
+			err = errors.New(errDetail.Description)
 			return nil, err
 		}
 	}

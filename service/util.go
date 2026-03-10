@@ -47,7 +47,7 @@ func responseOk(w http.ResponseWriter, format string, a ...interface{}) {
 
 	msg := fmt.Sprintf(format, a...)
 	fmt.Println(msg)
-	_, err := fmt.Fprintf(w, msg)
+	_, err := fmt.Fprint(w, msg)
 	if err != nil {
 		panic(err)
 	}
@@ -58,7 +58,7 @@ func responseError(w http.ResponseWriter, format string, a ...interface{}) {
 
 	msg := fmt.Sprintf(format, a...)
 	fmt.Println(msg)
-	_, err := fmt.Fprintf(w, msg)
+	_, err := fmt.Fprint(w, msg)
 	if err != nil {
 		panic(err)
 	}
@@ -67,7 +67,7 @@ func responseError(w http.ResponseWriter, format string, a ...interface{}) {
 func responseErrorWithoutCode(w http.ResponseWriter, format string, a ...interface{}) {
 	msg := fmt.Sprintf(format, a...)
 	fmt.Println(msg)
-	_, err := fmt.Fprintf(w, msg)
+	_, err := fmt.Fprint(w, msg)
 	if err != nil {
 		panic(err)
 	}

@@ -188,12 +188,12 @@ func handleRequest(w http.ResponseWriter, r *http.Request) {
 		challengeMap := site.GetChallengeMap()
 		for token, keyAuth := range challengeMap {
 			if r.RequestURI == fmt.Sprintf("/.well-known/acme-challenge/%s", token) {
-				responseOk(w, keyAuth)
+				responseOk(w, "%s", keyAuth)
 				return
 			}
 		}
 
-		responseError(w, fmt.Sprintf("CasWAF error: ACME HTTP-01 challenge failed, requestUri cannot match with challengeMap, requestUri = %s, challengeMap = %v", r.RequestURI, challengeMap))
+		responseError(w, "CasWAF error: ACME HTTP-01 challenge failed, requestUri cannot match with challengeMap, requestUri = %s, challengeMap = %v", r.RequestURI, challengeMap)
 		return
 	}
 
@@ -201,7 +201,7 @@ func handleRequest(w http.ResponseWriter, r *http.Request) {
 		challengeMap := site.GetChallengeMap()
 		for path, value := range challengeMap {
 			if r.RequestURI == fmt.Sprintf("/%s", path) {
-				responseOk(w, value)
+				responseOk(w, "%s", value)
 				return
 			}
 		}

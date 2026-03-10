@@ -15,6 +15,7 @@
 package object
 
 import (
+	"errors"
 	"fmt"
 	"regexp"
 	"strings"
@@ -192,7 +193,7 @@ func CheckInvitationDefaultCode(code string, defaultCode string, lang string) er
 	if matched, err := util.IsInvitationCodeMatch(code, defaultCode); err != nil {
 		return err
 	} else if !matched {
-		return fmt.Errorf(i18n.Translate(lang, "check:Default code does not match the code's matching rules"))
+		return errors.New(i18n.Translate(lang, "check:Default code does not match the code's matching rules"))
 	}
 	return nil
 }
@@ -225,7 +226,7 @@ func checkSigninErrorTimes(user *User, lang string) error {
 
 func CheckPassword(user *User, password string, lang string, options ...bool) error {
 	if password == "" {
-		return fmt.Errorf(i18n.Translate(lang, "check:Password cannot be empty"))
+		return errors.New(i18n.Translate(lang, "check:Password cannot be empty"))
 	}
 
 	enableCaptcha := false
@@ -246,7 +247,7 @@ func CheckPassword(user *User, password string, lang string, options ...bool) er
 		return err
 	}
 	if organization == nil {
-		return fmt.Errorf(i18n.Translate(lang, "check:Organization does not exist"))
+		return errors.New(i18n.Translate(lang, "check:Organization does not exist"))
 	}
 
 	passwordType := user.PasswordType
@@ -335,7 +336,7 @@ func CheckLdapUserPassword(user *User, password string, lang string, options ...
 		}
 		if len(searchResult.Entries) > 1 {
 			conn.Close()
-			return fmt.Errorf(i18n.Translate(lang, "check:Multiple accounts with same uid, please check your ldap server"))
+			return errors.New(i18n.Translate(lang, "check:Multiple accounts with same uid, please check your ldap server"))
 		}
 
 		hit = true
@@ -377,12 +378,12 @@ func CheckUserPassword(organization string, username string, password string, la
 	}
 
 	if user.IsForbidden {
-		return nil, fmt.Errorf(i18n.Translate(lang, "check:The user is forbidden to sign in, please contact the administrator"))
+		return nil, errors.New(i18n.Translate(lang, "check:The user is forbidden to sign in, please contact the administrator"))
 	}
 
 	// Prevent direct login for guest users without upgrading
 	if user.Tag == "guest-user" {
-		return nil, fmt.Errorf(i18n.Translate(lang, "check:Guest users must upgrade their account by setting a username and password before they can sign in directly"))
+		return nil, errors.New(i18n.Translate(lang, "check:Guest users must upgrade their account by setting a username and password before they can sign in directly"))
 	}
 
 	if isSigninViaLdap {
@@ -393,7 +394,7 @@ func CheckUserPassword(organization string, username string, password string, la
 
 	if user.Ldap != "" {
 		if !isSigninViaLdap && !isPasswordWithLdapEnabled {
-			return nil, fmt.Errorf(i18n.Translate(lang, "check:password or code is incorrect"))
+			return nil, errors.New(i18n.Translate(lang, "check:password or code is incorrect"))
 		}
 
 		// only for LDAP users
@@ -422,7 +423,7 @@ func CheckUserPassword(organization string, username string, password string, la
 
 func CheckUserPermission(requestUserId, userId string, strict bool, lang string) (bool, error) {
 	if requestUserId == "" {
-		return false, fmt.Errorf(i18n.Translate(lang, "general:Please login first"))
+		return false, errors.New(i18n.Translate(lang, "general:Please login first"))
 	}
 
 	userOwner := util.GetOwnerFromId(userId)
@@ -454,7 +455,7 @@ func CheckUserPermission(requestUserId, userId string, strict bool, lang string)
 		}
 
 		if requestUser == nil {
-			return false, fmt.Errorf(i18n.Translate(lang, "check:Session outdated, please login again"))
+			return false, errors.New(i18n.Translate(lang, "check:Session outdated, please login again"))
 		}
 		if requestUser.IsGlobalAdmin() {
 			hasPermission = true
@@ -469,7 +470,7 @@ func CheckUserPermission(requestUserId, userId string, strict bool, lang string)
 		}
 	}
 
-	return hasPermission, fmt.Errorf(i18n.Translate(lang, "auth:Unauthorized operation"))
+	return hasPermission, errors.New(i18n.Translate(lang, "auth:Unauthorized operation"))
 }
 
 func CheckApiPermission(userId string, organization string, path string, method string) (bool, error) {

@@ -16,6 +16,7 @@ package object
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/dypnsapi"
@@ -77,7 +78,7 @@ func (c *PnvsSmsClient) SendMessage(param map[string]string, targetPhoneNumber .
 
 	if response.Code != "OK" {
 		if response.Message != "" {
-			return fmt.Errorf(response.Message)
+			return errors.New(response.Message)
 		}
 		return fmt.Errorf("PNVS SMS send failed with code: %s", response.Code)
 	}
