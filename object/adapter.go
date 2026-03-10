@@ -40,6 +40,7 @@ type Adapter struct {
 	Password     string `xorm:"varchar(150)" json:"password"`
 	Database     string `xorm:"varchar(100)" json:"database"`
 
+	engine *xorm.Engine          `xorm:"-" json:"-"`
 	*xormadapter.Adapter `xorm:"-" json:"-"`
 }
 
@@ -199,12 +200,20 @@ func (adapter *Adapter) InitAdapter() error {
 
 	tableName := adapter.Table
 
+	adapter.engine = engine
 	adapter.Adapter, err = xormadapter.NewAdapterByEngineWithTableName(engine, tableName, "")
 	if err != nil {
 		return err
 	}
 
 	return nil
+}
+
+func (adapter *Adapter) getTableName() string {
+	if adapter.Table != "" {
+		return adapter.Table
+	}
+	return "casbin_rule"
 }
 
 func adapterChangeTrigger(oldName string, newName string) error {
