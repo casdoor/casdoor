@@ -24,6 +24,9 @@ import i18next from "i18next";
 import RedirectForm from "../common/RedirectForm";
 import {createFormAndSubmit, renderLoginPanel} from "../Setting";
 
+const reactFallbackKey = "__casdoor_callback_react";
+const reactFallbackPayloadKey = "casdoor_callback_react_fallback";
+
 class AuthCallback extends React.Component {
   constructor(props) {
     super(props);
@@ -34,6 +37,134 @@ class AuthCallback extends React.Component {
       relayState: "",
       redirectUrl: "",
     };
+  }
+
+  getNormalizedSearch(search) {
+    const normalizedUrl = new URL(`${window.location.origin}/callback${search || ""}`);
+    normalizedUrl.searchParams.delete(reactFallbackKey);
+    return normalizedUrl.search;
+  }
+
+  consumeReactFallbackPayload() {
+    const payload = sessionStorage.getItem(reactFallbackPayloadKey);
+    if (!payload) {
+      return null;
+    }
+
+    try {
+      const parsedPayload = JSON.parse(payload);
+      if (this.getNormalizedSearch(parsedPayload.search) !== this.getNormalizedSearch(this.props.location.search)) {
+        return null;
+      }
+
+      sessionStorage.removeItem(reactFallbackPayloadKey);
+      return parsedPayload;
+    } catch {
+      sessionStorage.removeItem(reactFallbackPayloadKey);
+      return null;
+    }
+  }
+
+  handleCasLoginResult(res, body, casService) {
+    const handleCasLogin = (res) => {
+      let msg = "Logged in successfully.";
+      if (casService === "") {
+        msg += "Now you can visit apps protected by Casdoor.";
+      }
+      Setting.showMessage("success", msg);
+
+      if (casService !== "") {
+        const st = res.data;
+        const newUrl = new URL(casService);
+        newUrl.searchParams.append("ticket", st);
+        window.location.href = newUrl.toString();
+      }
+    };
+
+    Setting.checkLoginMfa(res, body, {"service": casService}, handleCasLogin, this);
+  }
+
+  handleOAuthLoginResult(res, body, innerParams, queryString, applicationName, responseType) {
+    const oAuthParams = Util.getOAuthGetParameters(innerParams);
+    const concatChar = oAuthParams?.redirectUri?.includes("?") ? "&" : "?";
+    const responseMode = oAuthParams?.responseMode || "query";
+    const signinUrl = localStorage.getItem("signinUrl");
+    const responseTypes = responseType.split(" ");
+
+    const handleLogin = (res) => {
+      if (responseType === "login") {
+        if (res.data3) {
+          sessionStorage.setItem("signinUrl", signinUrl);
+          Setting.goToLinkSoft(this, `/forget/${applicationName}`);
+          return;
+        }
+        Setting.showMessage("success", "Logged in successfully");
+        const link = Setting.getFromLink();
+        Setting.goToLink(link);
+      } else if (responseType === "code") {
+        if (res.data3) {
+          sessionStorage.setItem("signinUrl", signinUrl);
+          Setting.goToLinkSoft(this, `/forget/${applicationName}`);
+          return;
+        }
+
+        if (responseMode === "form_post") {
+          const params = {
+            code: res.data,
+            state: oAuthParams?.state,
+          };
+          createFormAndSubmit(oAuthParams?.redirectUri, params);
+        } else {
+          const code = res.data;
+          Setting.goToLink(`${oAuthParams.redirectUri}${concatChar}code=${code}&state=${oAuthParams.state}`);
+        }
+      } else if (responseTypes.includes("token") || responseTypes.includes("id_token")) {
+        if (res.data3) {
+          sessionStorage.setItem("signinUrl", signinUrl);
+          Setting.goToLinkSoft(this, `/forget/${applicationName}`);
+          return;
+        }
+
+        if (responseMode === "form_post") {
+          const params = {
+            token: responseTypes.includes("token") ? res.data : null,
+            id_token: responseTypes.includes("id_token") ? res.data : null,
+            token_type: "bearer",
+            state: oAuthParams?.state,
+          };
+          createFormAndSubmit(oAuthParams?.redirectUri, params);
+        } else {
+          const token = res.data;
+          Setting.goToLink(`${oAuthParams.redirectUri}${concatChar}${responseType}=${token}&state=${oAuthParams.state}&token_type=bearer`);
+        }
+      } else if (responseType === "link") {
+        let from = innerParams.get("from");
+        const oauth = innerParams.get("oauth");
+        if (oauth) {
+          from += `?oauth=${oauth}`;
+        }
+        Setting.goToLinkSoftOrJumpSelf(this, from);
+      } else if (responseType === "saml") {
+        if (res.data2.method === "POST") {
+          this.setState({
+            samlResponse: res.data,
+            redirectUrl: res.data2.redirectUrl,
+            relayState: oAuthParams.relayState,
+          });
+        } else {
+          if (res.data3) {
+            sessionStorage.setItem("signinUrl", signinUrl);
+            Setting.goToLinkSoft(this, `/forget/${applicationName}`);
+            return;
+          }
+          const SAMLResponse = res.data;
+          const redirectUri = res.data2.redirectUrl;
+          Setting.goToLink(`${redirectUri}${redirectUri.includes("?") ? "&" : "?"}SAMLResponse=${encodeURIComponent(SAMLResponse)}&RelayState=${oAuthParams.relayState}`);
+        }
+      }
+    };
+
+    Setting.checkLoginMfa(res, body, oAuthParams, handleLogin, this, window.location.origin);
   }
 
   getInnerParams() {
@@ -87,6 +218,7 @@ class AuthCallback extends React.Component {
 
   UNSAFE_componentWillMount() {
     const params = new URLSearchParams(this.props.location.search);
+    const queryString = Util.getQueryParamsFromState(params.get("state"));
     const isSteam = params.get("openid.mode");
     let code = params.get("code");
     // WeCom returns "auth_code=xxx" instead of "code=xxx"
@@ -169,27 +301,22 @@ class AuthCallback extends React.Component {
       Provider.clearCodeVerifier(params.get("state"));
     }
 
+    const reactFallbackPayload = this.consumeReactFallbackPayload();
+    if (reactFallbackPayload !== null) {
+      if (reactFallbackPayload.flow === "cas") {
+        this.handleCasLoginResult(reactFallbackPayload.res, reactFallbackPayload.body || body, reactFallbackPayload.casService || casService);
+      } else {
+        const fallbackInnerParams = new URLSearchParams(reactFallbackPayload.innerParams || Util.getQueryParamsFromState(params.get("state")));
+        this.handleOAuthLoginResult(reactFallbackPayload.res, reactFallbackPayload.body || body, fallbackInnerParams, reactFallbackPayload.queryString, applicationName, reactFallbackPayload.responseType || this.getResponseType());
+      }
+      return;
+    }
+
     if (this.getResponseType() === "cas") {
       // user is using casdoor as cas sso server, and wants the ticket to be acquired
       AuthBackend.loginCas(body, {"service": casService}).then((res) => {
         if (res.status === "ok") {
-          const handleCasLogin = (res) => {
-            let msg = "Logged in successfully.";
-            if (casService === "") {
-              // If service was not specified, Casdoor must display a message notifying the client that it has successfully initiated a single sign-on session.
-              msg += "Now you can visit apps protected by Casdoor.";
-            }
-            Setting.showMessage("success", msg);
-
-            if (casService !== "") {
-              const st = res.data;
-              const newUrl = new URL(casService);
-              newUrl.searchParams.append("ticket", st);
-              window.location.href = newUrl.toString();
-            }
-          };
-
-          Setting.checkLoginMfa(res, body, {"service": casService}, handleCasLogin, this);
+          this.handleCasLoginResult(res, body, casService);
         } else {
           Setting.showMessage("error", `${i18next.t("application:Failed to sign in")}: ${res.msg}`);
         }
@@ -198,91 +325,11 @@ class AuthCallback extends React.Component {
     }
     // OAuth
     const oAuthParams = Util.getOAuthGetParameters(innerParams);
-    const concatChar = oAuthParams?.redirectUri?.includes("?") ? "&" : "?";
-    const responseMode = oAuthParams?.responseMode || "query"; // Default to "query" if not specified
-    const signinUrl = localStorage.getItem("signinUrl");
 
     AuthBackend.login(body, oAuthParams)
       .then((res) => {
         if (res.status === "ok") {
-          const responseType = this.getResponseType();
-          const responseTypes = responseType.split(" ");
-          const handleLogin = (res) => {
-            if (responseType === "login") {
-              if (res.data3) {
-                sessionStorage.setItem("signinUrl", signinUrl);
-                Setting.goToLinkSoft(this, `/forget/${applicationName}`);
-                return;
-              }
-              Setting.showMessage("success", "Logged in successfully");
-              // Setting.goToLinkSoft(this, "/");
-              const link = Setting.getFromLink();
-              Setting.goToLink(link);
-            } else if (responseType === "code") {
-              if (res.data3) {
-                sessionStorage.setItem("signinUrl", signinUrl);
-                Setting.goToLinkSoft(this, `/forget/${applicationName}`);
-                return;
-              }
-
-              if (responseMode === "form_post") {
-                const params = {
-                  code: res.data,
-                  state: oAuthParams?.state,
-                };
-                createFormAndSubmit(oAuthParams?.redirectUri, params);
-              } else {
-                const code = res.data;
-                Setting.goToLink(`${oAuthParams.redirectUri}${concatChar}code=${code}&state=${oAuthParams.state}`);
-              }
-            // Setting.showMessage("success", `Authorization code: ${res.data}`);
-            } else if (responseTypes.includes("token") || responseTypes.includes("id_token")) {
-              if (res.data3) {
-                sessionStorage.setItem("signinUrl", signinUrl);
-                Setting.goToLinkSoft(this, `/forget/${applicationName}`);
-                return;
-              }
-
-              if (responseMode === "form_post") {
-                const params = {
-                  token: responseTypes.includes("token") ? res.data : null,
-                  id_token: responseTypes.includes("id_token") ? res.data : null,
-                  token_type: "bearer",
-                  state: oAuthParams?.state,
-                };
-                createFormAndSubmit(oAuthParams?.redirectUri, params);
-              } else {
-                const token = res.data;
-                Setting.goToLink(`${oAuthParams.redirectUri}${concatChar}${responseType}=${token}&state=${oAuthParams.state}&token_type=bearer`);
-              }
-            } else if (responseType === "link") {
-              let from = innerParams.get("from");
-              const oauth = innerParams.get("oauth");
-              if (oauth) {
-                from += `?oauth=${oauth}`;
-              }
-              Setting.goToLinkSoftOrJumpSelf(this, from);
-            } else if (responseType === "saml") {
-              if (res.data2.method === "POST") {
-                this.setState({
-                  samlResponse: res.data,
-                  redirectUrl: res.data2.redirectUrl,
-                  relayState: oAuthParams.relayState,
-                });
-              } else {
-                if (res.data3) {
-                  sessionStorage.setItem("signinUrl", signinUrl);
-                  Setting.goToLinkSoft(this, `/forget/${applicationName}`);
-                  return;
-                }
-                const SAMLResponse = res.data;
-                const redirectUri = res.data2.redirectUrl;
-                Setting.goToLink(`${redirectUri}${redirectUri.includes("?") ? "&" : "?"}SAMLResponse=${encodeURIComponent(SAMLResponse)}&RelayState=${oAuthParams.relayState}`);
-              }
-            }
-          };
-
-          Setting.checkLoginMfa(res, body, oAuthParams, handleLogin, this, window.location.origin);
+          this.handleOAuthLoginResult(res, body, innerParams, queryString, applicationName, this.getResponseType());
         } else {
           this.setState({
             msg: res.msg,
