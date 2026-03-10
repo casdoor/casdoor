@@ -15,6 +15,7 @@
 package object
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 
@@ -249,7 +250,7 @@ func updateBalanceForTransaction(transaction *Transaction, amount float64, lang 
 	} else if transaction.Tag == "User" {
 		// Update user's balance
 		if transaction.User == "" {
-			return fmt.Errorf(i18n.Translate(lang, "general:User is required for User category transaction"))
+			return errors.New(i18n.Translate(lang, "general:User is required for User category transaction"))
 		}
 		if err := UpdateUserBalance(transaction.Owner, transaction.User, amount, currency, lang); err != nil {
 			return err

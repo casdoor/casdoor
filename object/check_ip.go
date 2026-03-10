@@ -15,6 +15,7 @@
 package object
 
 import (
+	"errors"
 	"fmt"
 	"net"
 	"strings"
@@ -34,7 +35,7 @@ func CheckEntryIp(clientIp string, user *User, application *Application, organiz
 	if user != nil {
 		err = isEntryIpAllowd(user.IpWhitelist, entryIp, lang)
 		if err != nil {
-			return fmt.Errorf(err.Error() + user.Name)
+			return errors.New(err.Error() + user.Name)
 		}
 	}
 
@@ -42,7 +43,7 @@ func CheckEntryIp(clientIp string, user *User, application *Application, organiz
 		err = isEntryIpAllowd(application.IpWhitelist, entryIp, lang)
 		if err != nil {
 			application.IpRestriction = err.Error() + application.Name
-			return fmt.Errorf(err.Error() + application.Name)
+			return errors.New(err.Error() + application.Name)
 		} else {
 			application.IpRestriction = ""
 		}
@@ -56,7 +57,7 @@ func CheckEntryIp(clientIp string, user *User, application *Application, organiz
 		err = isEntryIpAllowd(organization.IpWhitelist, entryIp, lang)
 		if err != nil {
 			organization.IpRestriction = err.Error() + organization.Name
-			return fmt.Errorf(err.Error() + organization.Name)
+			return errors.New(err.Error() + organization.Name)
 		} else {
 			organization.IpRestriction = ""
 		}

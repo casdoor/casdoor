@@ -17,6 +17,7 @@ package idp
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -93,7 +94,7 @@ func (idp *WeChatMobileIdProvider) GetToken(code string) (*oauth2.Token, error) 
 
 	// Check for error response
 	if bytes.Contains(buf.Bytes(), []byte("errcode")) {
-		return nil, fmt.Errorf(buf.String())
+		return nil, errors.New(buf.String())
 	}
 
 	var wechatAccessToken WechatAccessToken

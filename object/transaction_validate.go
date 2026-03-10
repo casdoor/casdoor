@@ -15,6 +15,7 @@
 package object
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/casdoor/casdoor/i18n"
@@ -32,7 +33,7 @@ func validateBalanceForTransaction(transaction *Transaction, amount float64, lan
 	} else if transaction.Tag == "User" {
 		// Validate user balance change
 		if transaction.User == "" {
-			return fmt.Errorf(i18n.Translate(lang, "general:User is required for User category transaction"))
+			return errors.New(i18n.Translate(lang, "general:User is required for User category transaction"))
 		}
 		if err := validateUserBalance(transaction.Owner, transaction.User, amount, currency, lang); err != nil {
 			return err

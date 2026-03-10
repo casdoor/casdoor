@@ -32,7 +32,7 @@ func GetWebAuthnObject(host string) (*webauthn.WebAuthn, error) {
 
 	localUrl, err := url.Parse(originBackend)
 	if err != nil {
-		return nil, fmt.Errorf("error when parsing origin:" + err.Error())
+		return nil, fmt.Errorf("error when parsing origin: %w", err)
 	}
 
 	webAuthn, err := webauthn.New(&webauthn.Config{

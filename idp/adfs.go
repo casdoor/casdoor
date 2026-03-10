@@ -17,6 +17,7 @@ package idp
 import (
 	"crypto/tls"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -102,7 +103,7 @@ func (idp *AdfsIdProvider) GetToken(code string) (*oauth2.Token, error) {
 		return nil, err
 	}
 	if pToken.ErrMsg != "" {
-		return nil, fmt.Errorf(pToken.ErrMsg)
+		return nil, errors.New(pToken.ErrMsg)
 	}
 
 	token := &oauth2.Token{
