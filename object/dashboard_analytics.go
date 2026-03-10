@@ -13,11 +13,13 @@
 // limitations under the License.
 
 // Package object. dashboard_analytics provides analytics aggregation logic
-// for the admin and user dashboard, querying from the record (audit log) table
-// as the source of truth for login events.
+// for the admin and user dashboard. It queries Casdoor's record (audit log)
+// table as the source of truth for login events, parsing the JSON-encoded
+// object field to extract application, organization, and username.
 package object
 
 import (
+	"encoding/json"
 	"sort"
 	"time"
 
@@ -35,17 +37,15 @@ const (
 	PeriodMonth Period = "month"
 )
 
-// LoginTrendItem represents the login count for a single day.
+// LoginTrendItem represents the login count for a single calendar day.
 type LoginTrendItem struct {
-	Date  string `json:"date"` // Date is formatted as "YYYY-MM-DD".
+	// Date is formatted as "YYYY-MM-DD".
+	Date  string `json:"date"`
 	Count int64  `json:"count"`
 }
 
-// RealTimeActivity holds aggregated counts for a short rolling window.
-type RealTimeActivity struct {
-	SuccessCount int64 `json:"successCount"`
-	FailureCount int64 `json:"failureCount"`
-}
+// RealTimeActivity holds aggregated login counts over a short rolling window.
+type RealTimeActivity struct{}
 
 // AdminDashboardAnalytics is the full analytics payload for the admin dashboard.
 type AdminDashboardAnalytics struct {
@@ -57,25 +57,43 @@ type AdminDashboardAnalytics struct {
 
 // UserDashboardAnalytics is the full analytics payload for a specific user's dashboard.
 type UserDashboardAnalytics struct {
-	TopApps         []AppUsage `json:"topApps"`
-	ActivityHeatmap []int64    `json:"activityHeatmap"` // length 24, index = hour of day
+	TopApps []AppUsage `json:"topApps"`
+	// ActivityHeatmap has 24 slots; index = hour of day (0–23).
+	ActivityHeatmap []int64 `json:"activityHeatmap"`
 }
 
-// recordEntry is an internal struct for scanning rows from the record table.
+// recordEntry is an internal struct for scanning raw rows from the record table.
 type recordEntry struct {
 	CreatedTime string `xorm:"created_time"`
-	// Object in the record table stores the application name for login actions.
+	// Object is a raw JSON string containing application, organization, username, etc.
 	Object    string `xorm:"object"`
-	User      string `xorm:"user"`
 	IsSuccess bool   `xorm:"is_success"`
+}
+
+// loginObjectPayload mirrors the JSON structure stored in the record.object column.
+// Example:
+//
+//	{"application":"app-built-in","organization":"built-in","username":"admin",...}
+type loginObjectPayload struct {
+	Application  string `json:"application"`
+	Organization string `json:"organization"`
+	Username     string `json:"username"`
+}
+
+// parsedRecord is a fully decoded login event, ready for aggregation.
+type parsedRecord struct {
+	CreatedTime  time.Time
+	Application  string
+	Organization string
+	Username     string
 }
 
 // -------------------------------------------- Public Functions --------------------------------------------
 
 // GetAdminDashboardAnalytics returns aggregated analytics for the admin dashboard.
-// owner filters results to a specific organization; pass "" or "All" for global.
-// topAppsLimit controls how many top apps to return (defaults to 5).
-// topAppsPeriod controls the time window for top apps ("week" or "month").
+// owner filters results to a specific organization; pass "" or "All" for global scope.
+// topAppsLimit controls how many top apps to return (defaults to 5 if <= 0).
+// topAppsPeriod controls the time window for top apps ("day", "week", "month").
 func GetAdminDashboardAnalytics(owner string, topAppsLimit int, topAppsPeriod Period) (*AdminDashboardAnalytics, error) {
 	if owner == "All" {
 		owner = ""
@@ -89,46 +107,48 @@ func GetAdminDashboardAnalytics(owner string, topAppsLimit int, topAppsPeriod Pe
 		return nil, err
 	}
 
-	weeklyTrend, err := getWeeklyLoginTrend(owner)
+	// Fetch enough records to cover the widest window we need (30 days for monthly top apps).
+	since := periodToTime(PeriodMonth)
+	rawRecords, err := fetchRawLoginRecords(since)
 	if err != nil {
 		return nil, err
 	}
 
-	topApps, err := getTopApps(owner, topAppsLimit, topAppsPeriod)
-	if err != nil {
-		return nil, err
-	}
+	// Parse and decode every raw record once; filter by owner here too.
+	parsed := parseAndFilterRecords(rawRecords, owner)
 
-	realTime, err := getRealTimeActivity(owner)
-	if err != nil {
-		return nil, err
-	}
+	weeklyTrend := buildWeeklyLoginTrend(parsed)
+	topApps := buildTopApps(filterByPeriod(parsed, topAppsPeriod), topAppsLimit)
+	realTime := buildRealTimeActivity(parsed)
 
 	return &AdminDashboardAnalytics{
 		TotalUsers:       totalUsers,
 		WeeklyLoginTrend: weeklyTrend,
 		TopApps:          topApps,
-		RealTimeActivity: *realTime,
+		RealTimeActivity: realTime,
 	}, nil
 }
 
 // GetUserDashboardAnalytics returns analytics scoped to a single user.
-// owner is the organization name; userId is the user's name field.
-// topAppsPeriod controls the time window ("week" or "month").
-func GetUserDashboardAnalytics(owner, userId string, topAppsPeriod Period) (*UserDashboardAnalytics, error) {
+// owner is the organization name; username is the user's login name (from the JSON payload).
+// topAppsPeriod controls the time window ("day", "week", "month").
+func GetUserDashboardAnalytics(owner, username string, topAppsPeriod Period) (*UserDashboardAnalytics, error) {
 	if owner == "All" {
 		owner = ""
 	}
 
-	topApps, err := getUserTopApps(owner, userId, 5, topAppsPeriod)
+	// 30 days is enough for both heatmap and any supported period.
+	since := periodToTime(PeriodMonth)
+	rawRecords, err := fetchRawLoginRecords(since)
 	if err != nil {
 		return nil, err
 	}
 
-	heatmap, err := getUserActivityHeatmap(owner, userId)
-	if err != nil {
-		return nil, err
-	}
+	parsed := parseAndFilterRecords(rawRecords, owner)
+	userRecords := filterByUsername(parsed, username)
+
+	topApps := buildTopApps(filterByPeriod(userRecords, topAppsPeriod), 5)
+	heatmap := buildActivityHeatmap(userRecords)
 
 	return &UserDashboardAnalytics{
 		TopApps:         topApps,
@@ -138,7 +158,7 @@ func GetUserDashboardAnalytics(owner, userId string, topAppsPeriod Period) (*Use
 
 // -------------------------------------------- Private Helper Functions --------------------------------------------
 
-// countTotalUsers returns the total number of users for the given owner.
+// countTotalUsers returns the total number of users for the given owner organization.
 func countTotalUsers(owner string) (int64, error) {
 	tableNamePrefix := conf.GetConfigString("tableNamePrefix")
 	userTable := tableNamePrefix + "user"
@@ -147,34 +167,98 @@ func countTotalUsers(owner string) (int64, error) {
 	if owner != "" {
 		session = session.Where("owner = ?", owner)
 	}
-
-	count, err := session.Count()
-	if err != nil {
-		return 0, err
-	}
-	return count, nil
+	return session.Count()
 }
 
-// getWeeklyLoginTrend queries the record table and returns daily login counts
-// for the past 7 days. Index 0 = 6 days ago, index 6 = today.
-func getWeeklyLoginTrend(owner string) ([]LoginTrendItem, error) {
-	records, err := fetchLoginRecords(owner, time.Now().AddDate(0, 0, -7))
+// fetchRawLoginRecords retrieves all raw login records from the record table
+// created at or after `since`. No owner filtering is done at DB level because
+// the owner/organization lives inside the JSON object column — we filter in Go.
+func fetchRawLoginRecords(since time.Time) ([]recordEntry, error) {
+	tableNamePrefix := conf.GetConfigString("tableNamePrefix")
+	recordTable := tableNamePrefix + "record"
+
+	var entries []recordEntry
+	err := ormer.Engine.Table(recordTable).
+		Cols("created_time", "object").
+		Where("action = ?", "login").
+		And("created_time >= ?", since).
+		Find(&entries)
 	if err != nil {
 		return nil, err
 	}
+	return entries, nil
+}
 
-	now := time.Now()
-	// Build a map keyed by "YYYY-MM-DD" → count for quick lookup.
-	dayCountMap := make(map[string]int64)
-	for _, r := range records {
-		t, parseErr := parseRecordTime(r.CreatedTime)
-		if parseErr != nil {
+// parseAndFilterRecords decodes the raw record rows into parsedRecord values.
+// If owner is non-empty, only records whose JSON organization matches are kept.
+func parseAndFilterRecords(raw []recordEntry, owner string) []parsedRecord {
+	result := make([]parsedRecord, 0, len(raw))
+
+	for _, r := range raw {
+		t, err := parseRecordTime(r.CreatedTime)
+		if err != nil {
 			continue
 		}
-		key := t.Format("2006-01-02")
+
+		payload, err := parseObjectJSON(r.Object)
+		if err != nil {
+			continue
+		}
+
+		// Owner / organization filter: the record table's own `owner` column is
+		// empty for login events; the real org lives inside the JSON payload.
+		if owner != "" && payload.Organization != owner {
+			continue
+		}
+
+		result = append(result, parsedRecord{
+			CreatedTime:  t,
+			Application:  payload.Application,
+			Organization: payload.Organization,
+			Username:     payload.Username,
+		})
+	}
+	return result
+}
+
+// filterByPeriod returns only the records that fall within the given period window.
+func filterByPeriod(records []parsedRecord, period Period) []parsedRecord {
+	since := periodToTime(period)
+	filtered := make([]parsedRecord, 0, len(records))
+	for _, r := range records {
+		if !r.CreatedTime.Before(since) {
+			filtered = append(filtered, r)
+		}
+	}
+	return filtered
+}
+
+// filterByUsername returns only the records belonging to the given username.
+func filterByUsername(records []parsedRecord, username string) []parsedRecord {
+	filtered := make([]parsedRecord, 0)
+	for _, r := range records {
+		if r.Username == username {
+			filtered = append(filtered, r)
+		}
+	}
+	return filtered
+}
+
+// buildWeeklyLoginTrend builds a 7-slot trend from the past 7 days of records.
+// Index 0 = 6 days ago, index 6 = today.
+func buildWeeklyLoginTrend(records []parsedRecord) []LoginTrendItem {
+	weekAgo := periodToTime(PeriodWeek)
+
+	dayCountMap := make(map[string]int64)
+	for _, r := range records {
+		if r.CreatedTime.Before(weekAgo) {
+			continue
+		}
+		key := r.CreatedTime.Format("2006-01-02")
 		dayCountMap[key]++
 	}
 
+	now := time.Now()
 	trend := make([]LoginTrendItem, 7)
 	for i := 0; i < 7; i++ {
 		day := now.AddDate(0, 0, -(6 - i))
@@ -184,128 +268,15 @@ func getWeeklyLoginTrend(owner string) ([]LoginTrendItem, error) {
 			Count: dayCountMap[key],
 		}
 	}
-	return trend, nil
+	return trend
 }
 
-// getTopApps returns the top N applications by login count within the given period.
-func getTopApps(owner string, limit int, period Period) ([]AppUsage, error) {
-	since := periodToTime(period)
-	records, err := fetchLoginRecords(owner, since)
-	if err != nil {
-		return nil, err
-	}
-	return buildTopApps(records, limit), nil
-}
-
-// getUserTopApps returns top N apps for a specific user within the given period.
-func getUserTopApps(owner, userId string, limit int, period Period) ([]AppUsage, error) {
-	since := periodToTime(period)
-	records, err := fetchUserLoginRecords(owner, userId, since)
-	if err != nil {
-		return nil, err
-	}
-	return buildTopApps(records, limit), nil
-}
-
-// getUserActivityHeatmap returns a 24-slot slice where each index is the login
-// count for that hour of the day, aggregated over the past 30 days.
-func getUserActivityHeatmap(owner, userId string) ([]int64, error) {
-	since := time.Now().AddDate(0, 0, -30)
-	records, err := fetchUserLoginRecords(owner, userId, since)
-	if err != nil {
-		return nil, err
-	}
-
-	heatmap := make([]int64, 24)
-	for _, r := range records {
-		t, err := parseRecordTime(r.CreatedTime)
-		if err != nil {
-			continue
-		}
-		heatmap[t.Hour()]++
-	}
-	return heatmap, nil
-}
-
-// getRealTimeActivity returns successful and failed login counts in the last 5 minutes.
-func getRealTimeActivity(owner string) (*RealTimeActivity, error) {
-	tableNamePrefix := conf.GetConfigString("tableNamePrefix")
-	recordTable := tableNamePrefix + "record"
-
-	fiveMinutesAgo := time.Now().Add(-5 * time.Minute)
-
-	session := ormer.Engine.Table(recordTable).
-		Where("action = ?", "login").
-		And("created_time >= ?", fiveMinutesAgo)
-	if owner != "" {
-		session = session.And("owner = ?", owner)
-	}
-
-	var entries []recordEntry
-	if err := session.Cols("is_success").Find(&entries); err != nil {
-		return nil, err
-	}
-
-	var result RealTimeActivity
-	for _, e := range entries {
-		if e.IsSuccess {
-			result.SuccessCount++
-		} else {
-			result.FailureCount++
-		}
-	}
-	return &result, nil
-}
-
-// fetchLoginRecords retrieves all login records for an owner since a given time.
-// It queries the record table where action = "login".
-func fetchLoginRecords(owner string, since time.Time) ([]recordEntry, error) {
-	tableNamePrefix := conf.GetConfigString("tableNamePrefix")
-	recordTable := tableNamePrefix + "record"
-
-	session := ormer.Engine.Table(recordTable).
-		Cols("created_time", "object", "user", "is_success").
-		Where("action = ?", "login").
-		And("created_time >= ?", since)
-	if owner != "" {
-		session = session.And("owner = ?", owner)
-	}
-
-	var entries []recordEntry
-	if err := session.Find(&entries); err != nil {
-		return nil, err
-	}
-	return entries, nil
-}
-
-// fetchUserLoginRecords is like fetchLoginRecords but scoped to a single user.
-func fetchUserLoginRecords(owner, userId string, since time.Time) ([]recordEntry, error) {
-	tableNamePrefix := conf.GetConfigString("tableNamePrefix")
-	recordTable := tableNamePrefix + "record"
-
-	session := ormer.Engine.Table(recordTable).
-		Cols("created_time", "object", "user", "is_success").
-		Where("action = ?", "login").
-		And("created_time >= ?", since).
-		And("user = ?", userId)
-	if owner != "" {
-		session = session.And("owner = ?", owner)
-	}
-
-	var entries []recordEntry
-	if err := session.Find(&entries); err != nil {
-		return nil, err
-	}
-	return entries, nil
-}
-
-// buildTopApps takes a slice of records, counts per application, sorts descending,
-// and returns the top N entries.
-func buildTopApps(records []recordEntry, limit int) []AppUsage {
+// buildTopApps counts logins per application, sorts descending, and returns top N.
+func buildTopApps(records []parsedRecord, limit int) []AppUsage {
 	appCountMap := make(map[string]int64)
 	for _, r := range records {
-		if r.Object != "" {
-			appCountMap[r.Object]++
+		if r.Application != "" {
+			appCountMap[r.Application]++
 		}
 	}
 
@@ -323,7 +294,32 @@ func buildTopApps(records []recordEntry, limit int) []AppUsage {
 	return topApps
 }
 
-// periodToTime converts a Period constant to an absolute time.Time in the past.
+// buildActivityHeatmap returns a 24-slot slice where index = hour of day,
+// value = number of logins during that hour.
+func buildActivityHeatmap(records []parsedRecord) []int64 {
+	heatmap := make([]int64, 24)
+	for _, r := range records {
+		heatmap[r.CreatedTime.Hour()]++
+	}
+	return heatmap
+}
+
+// buildRealTimeActivity ...
+func buildRealTimeActivity(_ []parsedRecord) RealTimeActivity {
+	//TODO: maybe use websocket here?
+	return RealTimeActivity{}
+}
+
+// parseObjectJSON decodes the JSON string stored in the record's object column.
+func parseObjectJSON(raw string) (loginObjectPayload, error) {
+	var payload loginObjectPayload
+	if err := json.Unmarshal([]byte(raw), &payload); err != nil {
+		return loginObjectPayload{}, err
+	}
+	return payload, nil
+}
+
+// periodToTime converts a Period to an absolute time.Time boundary in the past.
 func periodToTime(period Period) time.Time {
 	now := time.Now()
 	switch period {
@@ -338,9 +334,8 @@ func periodToTime(period Period) time.Time {
 	}
 }
 
-// parseRecordTime parses timestamps stored by Casdoor in the record table.
-// Casdoor stores times in "2006-01-02T15:04:05Z07:00" (RFC3339) or
-// "2006-01-02 15:04:05" (MySQL DATETIME) format.
+// parseRecordTime handles both RFC3339 ("2006-01-02T15:04:05Z07:00") and
+// MySQL DATETIME ("2006-01-02 15:04:05") formats.
 func parseRecordTime(raw string) (time.Time, error) {
 	if t, err := time.Parse(time.RFC3339, raw); err == nil {
 		return t, nil
