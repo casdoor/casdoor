@@ -1,7 +1,22 @@
+// Copyright 2026 The Casdoor Authors. All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 (function() {
   "use strict";
 
   var reactFallbackKey = "__casdoor_callback_react";
+  var reactFallbackPayloadKey = "casdoor_callback_react_fallback";
 
   function setStatus(message, isError) {
     var statusNode = document.getElementById("callback-status");
@@ -27,6 +42,10 @@
     url.host = new URL(getReactCallbackOrigin()).host;
     url.searchParams.set(reactFallbackKey, "1");
     window.location.replace(url.toString());
+  }
+
+  function storeReactFallbackPayload(payload) {
+    sessionStorage.setItem(reactFallbackPayloadKey, JSON.stringify(payload));
   }
 
   function getQueryParamsFromState(state) {
@@ -224,11 +243,24 @@
   }
 
   function shouldFallbackToReact(res) {
-    return res.data === "RequiredMfa" || res.data === "NextMfa" || res.data3;
+    return res.data === "RequiredMfa" || res.data === "NextMfa" || res.data === "SelectPlan" || res.data === "BuyPlanResult" || res.data3;
   }
 
   function getFromLink() {
     return sessionStorage.getItem("from") || "/";
+  }
+
+  async function loginCas(body, casService) {
+    return fetch(window.location.origin + "/api/login?service=" + encodeURIComponent(casService || ""), {
+      method: "POST",
+      credentials: "include",
+      body: JSON.stringify(body),
+      headers: {
+        "Accept-Language": localStorage.getItem("language") || navigator.language || "en"
+      }
+    }).then(function(res) {
+      return res.json();
+    });
   }
 
   async function run() {
@@ -267,6 +299,37 @@
       clearCodeVerifier(params.get("state"));
     }
 
+    if (responseType === "cas") {
+      var casService = innerParams.get("service") || "";
+      var casRes = await loginCas(body, casService);
+      if (casRes.status !== "ok") {
+        setStatus(casRes.msg || "Failed to sign in.", true);
+        return;
+      }
+
+      if (shouldFallbackToReact(casRes)) {
+        storeReactFallbackPayload({
+          search: window.location.search,
+          body: body,
+          res: casRes,
+          flow: "cas",
+          casService: casService
+        });
+        goToReactFallback();
+        return;
+      }
+
+      if (casService === "") {
+        setStatus("Logged in successfully. Now you can visit apps protected by Casdoor.", false);
+        return;
+      }
+
+      var serviceUrl = new URL(casService);
+      serviceUrl.searchParams.append("ticket", casRes.data);
+      window.location.replace(serviceUrl.toString());
+      return;
+    }
+
     var oAuthParams = getOAuthGetParameters(innerParams, queryString);
     var response = await fetch(window.location.origin + "/api/login" + oAuthParamsToQuery(oAuthParams), {
       method: "POST",
@@ -283,6 +346,16 @@
     }
 
     if (shouldFallbackToReact(res)) {
+      storeReactFallbackPayload({
+        search: window.location.search,
+        body: body,
+        res: res,
+        flow: "oauth",
+        responseType: responseType,
+        queryString: queryString,
+        innerParams: queryString,
+        oAuthParams: oAuthParams
+      });
       goToReactFallback();
       return;
     }
