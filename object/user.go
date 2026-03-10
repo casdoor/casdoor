@@ -1295,9 +1295,7 @@ func (user *User) PopulateThirdPartyLinks() error {
 	if err != nil {
 		return err
 	}
-	if len(links) > 0 {
-		user.ThirdPartyLinks = links
-	}
+	user.ThirdPartyLinks = links
 	return nil
 }
 

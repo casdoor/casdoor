@@ -105,12 +105,6 @@ func (c *ApiController) Unlink() {
 			return
 		}
 
-		_, err = object.ClearUserOAuthProperties(&unlinkedUser, providerType)
-		if err != nil {
-			c.ResponseError(err.Error())
-			return
-		}
-
 		_, err = object.DeleteThirdPartyLink(unlinkedUser.Owner, unlinkedUser.Name, providerName)
 		if err != nil {
 			c.ResponseError(err.Error())
