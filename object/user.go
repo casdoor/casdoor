@@ -444,13 +444,6 @@ func getUser(owner string, name string) (*User, error) {
 	}
 
 	if existed {
-		links, err := GetThirdPartyLinksByUser(owner, name)
-		if err != nil {
-			return nil, err
-		}
-		if len(links) > 0 {
-			user.ThirdPartyLinks = links
-		}
 		return &user, nil
 	} else {
 		return nil, nil
@@ -669,7 +662,17 @@ func GetUser(id string) (*User, error) {
 	if err != nil {
 		return nil, err
 	}
-	return getUser(owner, name)
+	user, err := getUser(owner, name)
+	if err != nil {
+		return nil, err
+	}
+	if user != nil {
+		err = user.PopulateThirdPartyLinks()
+		if err != nil {
+			return nil, err
+		}
+	}
+	return user, nil
 }
 
 func GetUserNoCheck(id string) (*User, error) {
@@ -1285,6 +1288,17 @@ func LinkFlexibleCustomAccount(user *User, providerName string, providerId strin
 
 func (user *User) GetId() string {
 	return fmt.Sprintf("%s/%s", user.Owner, user.Name)
+}
+
+func (user *User) PopulateThirdPartyLinks() error {
+	links, err := GetThirdPartyLinksByUser(user.Owner, user.Name)
+	if err != nil {
+		return err
+	}
+	if len(links) > 0 {
+		user.ThirdPartyLinks = links
+	}
+	return nil
 }
 
 func (user *User) GetFriendlyName() string {

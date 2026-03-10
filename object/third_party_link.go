@@ -16,6 +16,7 @@ package object
 
 import (
 	"github.com/casdoor/casdoor/util"
+	"github.com/xorm-io/core"
 )
 
 type ThirdPartyLink struct {
@@ -70,6 +71,20 @@ func GetUserByThirdPartyLink(owner string, providerName string, providerId strin
 }
 
 func AddThirdPartyLink(link *ThirdPartyLink) (bool, error) {
+	existingLink, err := GetThirdPartyLink(link.Owner, link.UserName, link.ProviderName)
+	if err != nil {
+		return false, err
+	}
+
+	if existingLink != nil {
+		existingLink.ProviderId = link.ProviderId
+		affected, err := ormer.Engine.ID(core.PK{link.Owner, link.UserName, link.ProviderName}).Cols("provider_id").Update(existingLink)
+		if err != nil {
+			return false, err
+		}
+		return affected != 0, nil
+	}
+
 	link.CreatedTime = util.GetCurrentTime()
 	affected, err := ormer.Engine.Insert(link)
 	if err != nil {
