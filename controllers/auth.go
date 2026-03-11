@@ -411,6 +411,9 @@ func isProxyProviderType(providerType string) bool {
 		"Twitter",
 		"Uber",
 		"Yahoo",
+		"WeChat",
+		"WeChat Mini Program",
+		"WeCom",
 	}
 	for _, v := range providerTypes {
 		if strings.EqualFold(v, providerType) {
@@ -1363,7 +1366,7 @@ func (c *ApiController) GetQRCode() {
 		return
 	}
 
-	code, ticket, err := idp.GetWechatOfficialAccountQRCode(provider.ClientId2, provider.ClientSecret2, providerId)
+	code, ticket, err := idp.GetWechatOfficialAccountQRCode(provider.ClientId2, provider.ClientSecret2, providerId, proxy.ProxyHttpClient)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

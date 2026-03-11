@@ -248,15 +248,17 @@ func BuildWechatOpenIdKey(appId string) string {
 	return fmt.Sprintf("wechat_openid_%s", appId)
 }
 
-func GetWechatOfficialAccountAccessToken(clientId string, clientSecret string) (string, string, error) {
+func GetWechatOfficialAccountAccessToken(clientId string, clientSecret string, httpClient *http.Client) (string, string, error) {
 	accessTokenUrl := fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s", clientId, clientSecret)
 	request, err := http.NewRequest("GET", accessTokenUrl, nil)
 	if err != nil {
 		return "", "", err
 	}
 
-	client := new(http.Client)
-	resp, err := client.Do(request)
+	if httpClient == nil {
+		httpClient = new(http.Client)
+	}
+	resp, err := httpClient.Do(request)
 	if err != nil {
 		return "", "", err
 	}
@@ -281,8 +283,12 @@ func GetWechatOfficialAccountAccessToken(clientId string, clientSecret string) (
 	return data.AccessToken, data.Errmsg, nil
 }
 
-func GetWechatOfficialAccountQRCode(clientId string, clientSecret string, providerId string) (string, string, error) {
-	accessToken, errMsg, err := GetWechatOfficialAccountAccessToken(clientId, clientSecret)
+func GetWechatOfficialAccountQRCode(clientId string, clientSecret string, providerId string, httpClient *http.Client) (string, string, error) {
+	if httpClient == nil {
+		httpClient = new(http.Client)
+	}
+
+	accessToken, errMsg, err := GetWechatOfficialAccountAccessToken(clientId, clientSecret, httpClient)
 	if err != nil {
 		return "", "", err
 	}
@@ -290,8 +296,6 @@ func GetWechatOfficialAccountQRCode(clientId string, clientSecret string, provid
 	if errMsg != "" {
 		return "", "", fmt.Errorf("Fail to fetch WeChat QRcode: %s", errMsg)
 	}
-
-	client := new(http.Client)
 
 	weChatEndpoint := "https://api.weixin.qq.com/cgi-bin/qrcode/create"
 	qrCodeUrl := fmt.Sprintf("%s?access_token=%s", weChatEndpoint, accessToken)
@@ -303,7 +307,7 @@ func GetWechatOfficialAccountQRCode(clientId string, clientSecret string, provid
 		return "", "", err
 	}
 
-	resp, err := client.Do(request)
+	resp, err := httpClient.Do(request)
 	if err != nil {
 		return "", "", err
 	}
