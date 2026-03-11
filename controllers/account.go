@@ -373,6 +373,16 @@ func (c *ApiController) Logout() {
 			return
 		}
 
+		// Get the application and user BEFORE clearing the session so we can invoke
+		// the upstream provider's logout endpoint while the session is still active.
+		application := c.GetSessionApplication()
+		userObj, err := object.GetUser(user)
+		if err != nil {
+			util.LogWarning(c.Ctx, "Logout: failed to get user %s for provider logout: %v", user, err)
+		} else if userObj != nil && application != nil {
+			object.InvokeProviderLogout(userObj, application)
+		}
+
 		c.ClearUserSession()
 		c.ClearTokenSession()
 
@@ -381,7 +391,6 @@ func (c *ApiController) Logout() {
 			return
 		}
 
-		application := c.GetSessionApplication()
 		if application == nil || application.Name == "app-built-in" || application.HomepageUrl == "" {
 			c.ResponseOk(user)
 			return
@@ -415,6 +424,14 @@ func (c *ApiController) Logout() {
 
 		if user == "" {
 			user = util.GetId(token.Organization, token.User)
+		}
+
+		// Invoke upstream provider logout before clearing the Casdoor session.
+		userObj, err := object.GetUser(user)
+		if err != nil {
+			util.LogWarning(c.Ctx, "Logout: failed to get user %s for provider logout: %v", user, err)
+		} else if userObj != nil {
+			object.InvokeProviderLogout(userObj, application)
 		}
 
 		c.ClearUserSession()

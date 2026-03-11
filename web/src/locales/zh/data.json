@@ -1148,6 +1148,8 @@
     "To address - Tooltip": "邮件的收件人地址",
     "Token URL": "Token链接",
     "Token URL - Tooltip": "自定义OAuth的Token链接",
+    "Logout URL": "注销链接",
+    "Logout URL - Tooltip": "自定义OAuth的注销/结束会话链接。设置后，Casdoor将在注销时调用此端点以终止外部提供商的会话。",
     "Use WeChat Media Platform in PC": "在PC端使用微信公众平台",
     "Use WeChat Media Platform in PC - Tooltip": "是否使用微信公众平台的二维码进行登录",
     "Use WeChat Media Platform to login": "使用微信公众平台进行登录",
