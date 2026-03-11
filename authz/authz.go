@@ -63,6 +63,15 @@ p, *, *, POST, /api/oauth/register, *, *
 p, *, *, GET, /api/get-application, *, *
 p, *, *, GET, /api/get-organization-applications, *, *
 p, *, *, GET, /api/get-user, *, *
+p, *, *, GET, /api/get-group, *, *
+p, *, *, GET, /api/get-groups, *, *
+p, *, *, GET, /api/get-users, *, *
+p, *, *, GET, /api/get-user-count, *, *
+p, *, *, GET, /api/get-form, *, *
+p, *, *, POST, /api/add-user, *, *
+p, *, *, POST, /api/update-user, *, *
+p, *, *, POST, /api/delete-user, *, *
+p, *, *, POST, /api/remove-user-from-group, *, *
 p, *, *, GET, /api/get-user-application, *, *
 p, *, *, POST, /api/upload-users, *, *
 p, *, *, GET, /api/get-resources, *, *

@@ -160,8 +160,7 @@ class App extends Component {
   }
 
   shouldFlattenMenu() {
-    const organization = this.state.account?.organization;
-    const navItems = Setting.isLocalAdminUser(this.state.account) ? organization?.navItems : (organization?.userNavItems ?? []);
+    const navItems = Setting.getManagementNavItems(this.state.account);
 
     // If navItems is "all" or not configured, don't flatten
     if (!Array.isArray(navItems) || navItems?.includes("all")) {

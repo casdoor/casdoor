@@ -16,6 +16,7 @@ import React from "react";
 import {Button, Card, Col, Input, Row, Select, Switch} from "antd";
 import * as GroupBackend from "./backend/GroupBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
+import * as UserBackend from "./backend/UserBackend";
 import * as Setting from "./Setting";
 import i18next from "i18next";
 
@@ -37,6 +38,7 @@ class GroupEditPage extends React.Component {
   UNSAFE_componentWillMount() {
     this.getGroup();
     this.getGroups(this.state.organizationName);
+    this.getUsers(this.state.organizationName);
     this.getOrganizations();
   }
 
@@ -60,6 +62,29 @@ class GroupEditPage extends React.Component {
           });
         }
       });
+  }
+
+  getUsers(organizationName) {
+    UserBackend.getUsers(organizationName)
+      .then((res) => {
+        if (res.status === "ok") {
+          this.setState({
+            users: res.data || [],
+          });
+        }
+      });
+  }
+
+  getUserOptionLabel(user) {
+    if (!user) {
+      return "";
+    }
+
+    if (user.displayName && user.displayName !== user.name) {
+      return `${user.displayName} (${user.name})`;
+    }
+
+    return user.name;
   }
 
   getOrganizations() {
@@ -121,6 +146,7 @@ class GroupEditPage extends React.Component {
               onChange={(value => {
                 this.updateGroupField("owner", value);
                 this.getGroups(value);
+                this.getUsers(value);
               })}
               options={this.state.organizations.map((organization) => Setting.getOption(organization.displayName, organization.name))
               } />
@@ -175,6 +201,20 @@ class GroupEditPage extends React.Component {
                 this.updateGroupField("parentId", value);
               }
               )} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("group:Admin users"), i18next.t("group:Admin users - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Select virtual={false} mode="multiple" style={{width: "100%"}}
+              value={this.state.group.adminUsers ?? []}
+              onChange={(value => {
+                this.updateGroupField("adminUsers", value);
+              })}
+              options={this.state.users.map((user) => Setting.getOption(this.getUserOptionLabel(user), user.name))}
+            />
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >

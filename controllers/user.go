@@ -25,6 +25,33 @@ import (
 	"github.com/casdoor/casdoor/util"
 )
 
+func (c *ApiController) getScopedUserManager(owner string) (*object.User, bool) {
+	currentUser := c.getCurrentUser()
+	if c.IsAdmin() || currentUser == nil || owner == "" || currentUser.Owner != owner {
+		return currentUser, false
+	}
+	return currentUser, true
+}
+
+func (c *ApiController) canScopedManageGroup(owner string, groupName string) (bool, error) {
+	currentUser, isScopedManager := c.getScopedUserManager(owner)
+	if !isScopedManager {
+		return false, nil
+	}
+	return object.CanUserManageGroup(owner, currentUser.Name, groupName)
+}
+
+func (c *ApiController) canScopedManageUser(user *object.User) (bool, error) {
+	if user == nil {
+		return false, nil
+	}
+	currentUser, isScopedManager := c.getScopedUserManager(user.Owner)
+	if !isScopedManager {
+		return false, nil
+	}
+	return object.CanUserManageTargetUser(user.Owner, currentUser.Name, user)
+}
+
 // GetGlobalUsers
 // @Title GetGlobalUsers
 // @Tag User API
@@ -88,8 +115,45 @@ func (c *ApiController) GetUsers() {
 	value := c.Ctx.Input.Query("value")
 	sortField := c.Ctx.Input.Query("sortField")
 	sortOrder := c.Ctx.Input.Query("sortOrder")
+	currentUser, isScopedManager := c.getScopedUserManager(owner)
 
 	if limit == "" || page == "" {
+		if isScopedManager {
+			var users []*object.User
+			var err error
+			if groupName != "" {
+				allowed, err := object.CanUserManageGroup(owner, currentUser.Name, groupName)
+				if err != nil {
+					c.ResponseError(err.Error())
+					return
+				}
+				if !allowed {
+					c.ResponseError(c.T("auth:Unauthorized operation"))
+					return
+				}
+				users, err = object.GetManagedUsers(owner, currentUser.Name, groupName)
+			} else {
+				users, err = object.GetManagedUsers(owner, currentUser.Name, "")
+			}
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
+
+			users, err = object.GetMaskedUsers(users)
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
+
+			for _, user := range users {
+				user.CanManage = true
+			}
+
+			c.ResponseOk(users)
+			return
+		}
+
 		if groupName != "" {
 			users, err := object.GetMaskedUsers(object.GetGroupUsers(util.GetId(owner, groupName)))
 			if err != nil {
@@ -109,6 +173,46 @@ func (c *ApiController) GetUsers() {
 		c.ResponseOk(users)
 	} else {
 		limit := util.ParseInt(limit)
+		if isScopedManager {
+			if groupName != "" {
+				allowed, err := object.CanUserManageGroup(owner, currentUser.Name, groupName)
+				if err != nil {
+					c.ResponseError(err.Error())
+					return
+				}
+				if !allowed {
+					c.ResponseError(c.T("auth:Unauthorized operation"))
+					return
+				}
+			}
+
+			count, err := object.GetManagedUserCount(owner, currentUser.Name, field, value, groupName)
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
+
+			paginator := pagination.NewPaginator(c.Ctx.Request, limit, count)
+			users, err := object.GetPaginationManagedUsers(owner, currentUser.Name, paginator.Offset(), limit, field, value, sortField, sortOrder, groupName)
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
+
+			users, err = object.GetMaskedUsers(users)
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
+
+			for _, user := range users {
+				user.CanManage = true
+			}
+
+			c.ResponseOk(users, paginator.Nums())
+			return
+		}
+
 		count, err := object.GetUserCount(owner, field, value, groupName)
 		if err != nil {
 			c.ResponseError(err.Error())
@@ -209,7 +313,16 @@ func (c *ApiController) GetUser() {
 			return
 		}
 
-		if !organization.IsProfilePublic {
+		canManageUser := false
+		if !c.IsAdminOrSelf(user) {
+			canManageUser, err = c.canScopedManageUser(user)
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
+		}
+
+		if !organization.IsProfilePublic && !canManageUser {
 			requestUserId := c.GetSessionUsername()
 			var hasPermission bool
 			hasPermission, err = object.CheckUserPermission(requestUserId, user.GetId(), false, c.GetAcceptLanguage())
@@ -230,7 +343,12 @@ func (c *ApiController) GetUser() {
 		return
 	}
 
-	isAdminOrSelf := c.IsAdminOrSelf(user)
+	canManageUser, err := c.canScopedManageUser(user)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	isAdminOrSelf := c.IsAdminOrSelf(user) || canManageUser
 	user, err = object.GetMaskedUser(user, isAdminOrSelf)
 	if err != nil {
 		c.ResponseError(err.Error())
@@ -238,11 +356,12 @@ func (c *ApiController) GetUser() {
 	}
 
 	if organization != nil && user != nil {
-		user, err = object.GetFilteredUser(user, c.IsAdmin(), c.IsAdminOrSelf(user), organization.AccountItems)
+		user, err = object.GetFilteredUser(user, c.IsAdmin() || canManageUser, isAdminOrSelf, organization.AccountItems)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
 		}
+		user.CanManage = canManageUser
 	}
 
 	c.ResponseOk(user)
@@ -335,16 +454,53 @@ func (c *ApiController) UpdateUser() {
 		user.Name = strings.ToLower(user.Name)
 	}
 
-	isAdmin := c.IsAdmin()
+	columns := []string{}
+	if columnsStr != "" {
+		columns = strings.Split(columnsStr, ",")
+	}
+
+	isScopedManager, err := c.canScopedManageUser(oldUser)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	if !c.IsAdminOrSelf(oldUser) && !isScopedManager && !c.IsAdmin() {
+		c.ResponseError(c.T("auth:Unauthorized operation"))
+		return
+	}
+
+	isAdmin := c.IsAdmin() || isScopedManager
 	allowDisplayNameEmpty := c.Ctx.Input.Query("allowEmpty") != ""
 	if pass, err := object.CheckPermissionForUpdateUser(oldUser, &user, isAdmin, allowDisplayNameEmpty, c.GetAcceptLanguage()); !pass {
 		c.ResponseError(err)
 		return
 	}
 
-	columns := []string{}
-	if columnsStr != "" {
-		columns = strings.Split(columnsStr, ",")
+	if isScopedManager && !c.IsAdmin() {
+		effectiveNewGroups := user.Groups
+		if len(columns) > 0 && !util.InSlice(columns, "groups") {
+			effectiveNewGroups = oldUser.Groups
+		}
+
+		oldGroupAllowed, err := object.CanUserManageAllGroups(oldUser.Owner, c.getCurrentUser().Name, oldUser.Groups)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+		newGroupAllowed, err := object.CanUserManageAllGroups(oldUser.Owner, c.getCurrentUser().Name, effectiveNewGroups)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+		if !oldGroupAllowed || !newGroupAllowed {
+			c.ResponseError(c.T("auth:Unauthorized operation"))
+			return
+		}
+
+		user.Owner = oldUser.Owner
+		user.IsAdmin = oldUser.IsAdmin
+		user.IsForbidden = oldUser.IsForbidden
+		user.IsDeleted = oldUser.IsDeleted
 	}
 
 	affected, err := object.UpdateUser(id, &user, columns, isAdmin)
@@ -402,6 +558,29 @@ func (c *ApiController) AddUser() {
 			user.RegisterSource = currentUser.GetId()
 		}
 	}
+	if user.Owner == "" {
+		currentUser := c.getCurrentUser()
+		if currentUser != nil {
+			user.Owner = currentUser.Owner
+		}
+	}
+
+	currentUser, isScopedManager := c.getScopedUserManager(user.Owner)
+	if isScopedManager {
+		allowed, err := object.CanUserManageAllGroups(user.Owner, currentUser.Name, user.Groups)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+		if !allowed {
+			c.ResponseError(c.T("auth:Unauthorized operation"))
+			return
+		}
+		user.IsAdmin = false
+	} else if !c.IsAdmin() {
+		c.ResponseError(c.T("auth:Unauthorized operation"))
+		return
+	}
 
 	c.Data["json"] = wrapActionResponse(object.AddUser(&user, c.GetAcceptLanguage()))
 	c.ServeJSON()
@@ -423,6 +602,26 @@ func (c *ApiController) DeleteUser() {
 	}
 
 	if user.Owner == "built-in" && user.Name == "admin" {
+		c.ResponseError(c.T("auth:Unauthorized operation"))
+		return
+	}
+
+	targetUser, err := object.GetUser(user.GetId())
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	if targetUser == nil {
+		c.ResponseError(fmt.Sprintf(c.T("general:The user: %s doesn't exist"), user.GetId()))
+		return
+	}
+
+	canManageUser, err := c.canScopedManageUser(targetUser)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	if !c.IsAdminOrSelf(targetUser) && !canManageUser && !c.IsAdmin() {
 		c.ResponseError(c.T("auth:Unauthorized operation"))
 		return
 	}
@@ -717,7 +916,10 @@ func (c *ApiController) GetUserCount() {
 
 	var count int64
 	var err error
-	if isOnline == "" {
+	currentUser, isScopedManager := c.getScopedUserManager(owner)
+	if isOnline == "" && isScopedManager {
+		count, err = object.GetManagedUserCount(owner, currentUser.Name, "", "", "")
+	} else if isOnline == "" {
 		count, err = object.GetUserCount(owner, "", "", "")
 	} else {
 		count, err = object.GetOnlineUserCount(owner, util.ParseInt(isOnline))
@@ -763,10 +965,22 @@ func (c *ApiController) RemoveUserFromGroup() {
 		return
 	}
 	item := object.GetAccountItemByName("Groups", organization)
-	res, msg := object.CheckAccountItemModifyRule(item, c.IsAdmin(), c.GetAcceptLanguage())
+	currentUser, isScopedManager := c.getScopedUserManager(owner)
+	res, msg := object.CheckAccountItemModifyRule(item, c.IsAdmin() || isScopedManager, c.GetAcceptLanguage())
 	if !res {
 		c.ResponseError(msg)
 		return
+	}
+	if isScopedManager {
+		allowed, err := object.CanUserManageGroup(owner, currentUser.Name, groupName)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+		if !allowed {
+			c.ResponseError(c.T("auth:Unauthorized operation"))
+			return
+		}
 	}
 
 	affected, err := object.DeleteGroupForUser(util.GetId(owner, name), util.GetId(owner, groupName))

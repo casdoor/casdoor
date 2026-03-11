@@ -33,6 +33,7 @@ type Group struct {
 
 	DisplayName  string   `xorm:"varchar(100)" json:"displayName"`
 	Manager      string   `xorm:"varchar(100)" json:"manager"`
+	AdminUsers   []string `xorm:"mediumtext" json:"adminUsers"`
 	ContactEmail string   `xorm:"varchar(100)" json:"contactEmail"`
 	Type         string   `xorm:"varchar(100)" json:"type"`
 	ParentId     string   `xorm:"varchar(100)" json:"parentId"`
@@ -157,6 +158,11 @@ func UpdateGroup(id string, group *Group) (bool, error) {
 		return false, err
 	}
 
+	err = validateGroupAdminUsers(group)
+	if err != nil {
+		return false, err
+	}
+
 	if name != group.Name {
 		err := GroupChangeTrigger(name, group.Name)
 		if err != nil {
@@ -174,6 +180,11 @@ func UpdateGroup(id string, group *Group) (bool, error) {
 
 func AddGroup(group *Group) (bool, error) {
 	err := checkGroupName(group.Name)
+	if err != nil {
+		return false, err
+	}
+
+	err = validateGroupAdminUsers(group)
 	if err != nil {
 		return false, err
 	}
@@ -211,6 +222,11 @@ func AddGroupsInBatch(groups []*Group) (bool, error) {
 
 	for _, group := range groups {
 		err = checkGroupName(group.Name)
+		if err != nil {
+			return false, err
+		}
+
+		err = validateGroupAdminUsers(group)
 		if err != nil {
 			return false, err
 		}

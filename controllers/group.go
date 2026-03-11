@@ -38,8 +38,32 @@ func (c *ApiController) GetGroups() {
 	sortField := c.Ctx.Input.Query("sortField")
 	sortOrder := c.Ctx.Input.Query("sortOrder")
 	withTree := c.Ctx.Input.Query("withTree")
+	currentUser := c.getCurrentUser()
+	isScopedUser := !c.IsAdmin() && currentUser != nil && owner != "" && currentUser.Owner == owner
 
 	if limit == "" || page == "" {
+		if isScopedUser {
+			groups, err := object.GetManagedGroupsByUser(owner, currentUser.Name)
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
+
+			err = object.ExtendGroupsWithUsers(groups)
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
+
+			if withTree == "true" {
+				c.ResponseOk(object.GetScopedTreeData(groups, owner))
+				return
+			}
+
+			c.ResponseOk(groups)
+			return
+		}
+
 		groups, err := object.GetGroups(owner)
 		if err != nil {
 			c.ResponseError(err.Error())
@@ -60,6 +84,24 @@ func (c *ApiController) GetGroups() {
 		c.ResponseOk(groups)
 	} else {
 		limit := util.ParseInt(limit)
+		if isScopedUser {
+			groups, err := object.GetManagedGroupsByUser(owner, currentUser.Name)
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
+			filteredGroups := object.FilterManagedGroups(groups, field, value, sortField, sortOrder, -1, -1)
+			paginator := pagination.NewPaginator(c.Ctx.Request, limit, int64(len(filteredGroups)))
+			groups = object.FilterManagedGroups(groups, field, value, sortField, sortOrder, paginator.Offset(), limit)
+			err = object.ExtendGroupsWithUsers(groups)
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
+			c.ResponseOk(groups, paginator.Nums())
+			return
+		}
+
 		count, err := object.GetGroupCount(owner, field, value)
 		if err != nil {
 			c.ResponseError(err.Error())
@@ -110,6 +152,24 @@ func (c *ApiController) GetGroups() {
 // @router /get-group [get]
 func (c *ApiController) GetGroup() {
 	id := c.Ctx.Input.Query("id")
+	owner, name, err := util.GetOwnerAndNameFromIdWithError(id)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	currentUser := c.getCurrentUser()
+	if !c.IsAdmin() && currentUser != nil && currentUser.Owner == owner {
+		allowed, err := object.CanUserManageGroup(owner, currentUser.Name, name)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+		if !allowed {
+			c.ResponseError(c.T("auth:Unauthorized operation"))
+			return
+		}
+	}
 
 	group, err := object.GetGroup(id)
 	if err != nil {

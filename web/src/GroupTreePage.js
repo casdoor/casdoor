@@ -35,6 +35,10 @@ class GroupTreePage extends React.Component {
     };
   }
 
+  canManageGroups() {
+    return Setting.isLocalAdminUser(this.props.account);
+  }
+
   UNSAFE_componentWillMount() {
     this.getTreeData();
   }
@@ -71,7 +75,7 @@ class GroupTreePage extends React.Component {
         <span>{treeData.title}</span>
         {isSelected && (
           <React.Fragment>
-            <PlusOutlined
+            {this.canManageGroups() ? <PlusOutlined
               style={{
                 visibility: "visible",
                 color: "inherit",
@@ -94,8 +98,8 @@ class GroupTreePage extends React.Component {
                 sessionStorage.setItem("groupTreeUrl", window.location.pathname);
                 this.addGroup();
               }}
-            />
-            <EditOutlined
+            /> : null}
+            {this.canManageGroups() ? <EditOutlined
               style={{
                 visibility: "visible",
                 color: "inherit",
@@ -118,43 +122,42 @@ class GroupTreePage extends React.Component {
                 sessionStorage.setItem("groupTreeUrl", window.location.pathname);
                 this.props.history.push(`/groups/${this.state.organizationName}/${treeData.key}`);
               }}
-            />
-            {!haveChildren &&
-            <DeleteOutlined
-              style={{
-                visibility: "visible",
-                color: "inherit",
-                transition: "color 0.3s",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.color = "rgba(89,54,213,0.6)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.color = "inherit";
-              }}
-              onMouseDown={(e) => {
-                e.currentTarget.style.color = "rgba(89,54,213,0.4)";
-              }}
-              onMouseUp={(e) => {
-                e.currentTarget.style.color = "rgba(89,54,213,0.6)";
-              }}
-              onClick={(e) => {
-                e.stopPropagation();
-                GroupBackend.deleteGroup({owner: treeData.owner, name: treeData.key})
-                  .then((res) => {
-                    if (res.status === "ok") {
-                      Setting.showMessage("success", i18next.t("general:Successfully deleted"));
-                      this.getTreeData();
-                    } else {
-                      Setting.showMessage("error", `${i18next.t("general:Failed to delete")}: ${res.msg}`);
-                    }
-                  })
-                  .catch(error => {
-                    Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
-                  });
-              }}
-            />
-            }
+            /> : null}
+            {this.canManageGroups() && !haveChildren ?
+              <DeleteOutlined
+                style={{
+                  visibility: "visible",
+                  color: "inherit",
+                  transition: "color 0.3s",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = "rgba(89,54,213,0.6)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = "inherit";
+                }}
+                onMouseDown={(e) => {
+                  e.currentTarget.style.color = "rgba(89,54,213,0.4)";
+                }}
+                onMouseUp={(e) => {
+                  e.currentTarget.style.color = "rgba(89,54,213,0.6)";
+                }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  GroupBackend.deleteGroup({owner: treeData.owner, name: treeData.key})
+                    .then((res) => {
+                      if (res.status === "ok") {
+                        Setting.showMessage("success", i18next.t("general:Successfully deleted"));
+                        this.getTreeData();
+                      } else {
+                        Setting.showMessage("error", `${i18next.t("general:Failed to delete")}: ${res.msg}`);
+                      }
+                    })
+                    .catch(error => {
+                      Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
+                    });
+                }}
+              /> : null}
           </React.Fragment>
         )}
       </Space>,
@@ -289,9 +292,9 @@ class GroupTreePage extends React.Component {
                 >
                   {i18next.t("group:Show all")}
                 </Button>
-                <Button size={"small"} type={"primary"} style={{marginLeft: "10px"}} onClick={() => this.addGroup(true)}>
+                {this.canManageGroups() ? <Button size={"small"} type={"primary"} style={{marginLeft: "10px"}} onClick={() => this.addGroup(true)}>
                   {i18next.t("general:Add")}
-                </Button>
+                </Button> : null}
               </Col>
             </Row>
             <Row style={{marginTop: 10}}>
