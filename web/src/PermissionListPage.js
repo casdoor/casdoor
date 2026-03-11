@@ -339,7 +339,7 @@ class PermissionListPage extends BaseListPage {
             case "Admin":
               return i18next.t("general:Admin");
             default:
-              return null;
+              return tag || null;
             }
           });
           return Setting.getTags(tags);
