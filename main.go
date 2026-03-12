@@ -75,8 +75,10 @@ func main() {
 	object.InitCleanupTokens()
 
 	object.InitSiteMap()
-	object.InitRuleMap()
-	object.StartMonitorSitesLoop()
+	if len(object.SiteMap) != 0 {
+		object.InitRuleMap()
+		object.StartMonitorSitesLoop()
+	}
 
 	util.SafeGoroutine(func() { object.RunSyncUsersJob() })
 	util.SafeGoroutine(func() { controllers.InitCLIDownloader() })
