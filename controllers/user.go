@@ -118,6 +118,10 @@ func (c *ApiController) GetUsers() {
 	if !c.requireAuthenticatedSubject() {
 		return
 	}
+	currentUser := c.requireOrganizationAccess(owner)
+	if currentUser == nil && !c.IsAdmin() {
+		return
+	}
 	currentUser, isScopedManager := c.getScopedUserManager(owner)
 
 	if limit == "" || page == "" {
@@ -919,6 +923,10 @@ func (c *ApiController) GetUserCount() {
 	if !c.requireAuthenticatedSubject() {
 		return
 	}
+	currentUser := c.requireOrganizationAccess(owner)
+	if currentUser == nil && !c.IsAdmin() {
+		return
+	}
 
 	var count int64
 	var err error
@@ -967,19 +975,48 @@ func (c *ApiController) RemoveUserFromGroup() {
 	owner := c.Ctx.Request.Form.Get("owner")
 	name := c.Ctx.Request.Form.Get("name")
 	groupName := c.Ctx.Request.Form.Get("groupName")
+	if !c.requireAuthenticatedSubject() {
+		return
+	}
+	currentUser := c.requireOrganizationAccess(owner)
+	if currentUser == nil && !c.IsAdmin() {
+		return
+	}
 
 	organization, err := object.GetOrganization(util.GetId("admin", owner))
 	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	if organization == nil {
+		c.ResponseError(fmt.Sprintf(c.T("auth:The organization: %s does not exist"), owner))
 		return
 	}
 	item := object.GetAccountItemByName("Groups", organization)
-	currentUser, isScopedManager := c.getScopedUserManager(owner)
-	res, msg := object.CheckAccountItemModifyRule(item, c.IsAdmin() || isScopedManager, c.GetAcceptLanguage())
+	canManageAnyUser := c.IsAdmin()
+	if !canManageAnyUser {
+		targetUser, err := object.GetUser(util.GetId(owner, name))
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+		if targetUser == nil {
+			c.ResponseError(fmt.Sprintf(c.T("general:The user: %s doesn't exist"), util.GetId(owner, name)))
+			return
+		}
+
+		canManageAnyUser, err = c.canScopedManageUser(targetUser)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+	}
+	res, msg := object.CheckAccountItemModifyRule(item, canManageAnyUser, c.GetAcceptLanguage())
 	if !res {
 		c.ResponseError(msg)
 		return
 	}
-	if isScopedManager {
+	if !c.IsAdmin() {
 		allowed, err := object.CanUserManageGroup(owner, currentUser.Name, groupName)
 		if err != nil {
 			c.ResponseError(err.Error())

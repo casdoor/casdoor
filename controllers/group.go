@@ -41,7 +41,10 @@ func (c *ApiController) GetGroups() {
 	if !c.requireAuthenticatedSubject() {
 		return
 	}
-	currentUser := c.getCurrentUser()
+	currentUser := c.requireOrganizationAccess(owner)
+	if currentUser == nil && !c.IsAdmin() {
+		return
+	}
 	isScopedUser := !c.IsAdmin() && currentUser != nil && owner != "" && currentUser.Owner == owner
 
 	if limit == "" || page == "" {
@@ -174,8 +177,11 @@ func (c *ApiController) GetGroup() {
 		return
 	}
 
-	currentUser := c.getCurrentUser()
-	if !c.IsAdmin() && currentUser != nil && currentUser.Owner == owner {
+	currentUser := c.requireOrganizationAccess(owner)
+	if currentUser == nil && !c.IsAdmin() {
+		return
+	}
+	if !c.IsAdmin() {
 		allowed, err := object.CanUserManageGroup(owner, currentUser.Name, name)
 		if err != nil {
 			c.ResponseError(err.Error())

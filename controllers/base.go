@@ -111,6 +111,15 @@ func (c *ApiController) requireAuthenticatedSubject() bool {
 	return true
 }
 
+func (c *ApiController) requireOrganizationAccess(owner string) *object.User {
+	currentUser := c.getCurrentUser()
+	if !c.IsAdmin() && (currentUser == nil || currentUser.Owner != owner) {
+		c.ResponseError(c.T("auth:Unauthorized operation"))
+		return nil
+	}
+	return currentUser
+}
+
 // GetSessionUsername ...
 func (c *ApiController) GetSessionUsername() string {
 	// prefer username stored in Beego context by ApiFilter
