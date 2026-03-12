@@ -23,8 +23,9 @@ import (
 )
 
 var (
-	siteUpdateMap = map[string]string{}
-	lock          = &sync.Mutex{}
+	siteUpdateMap    = map[string]string{}
+	lock             = &sync.Mutex{}
+	monitorLoopOnce  sync.Once
 )
 
 func monitorSiteCerts() error {
@@ -52,36 +53,43 @@ func monitorSiteCerts() error {
 	return err
 }
 
-func StartMonitorSitesLoop() {
-	fmt.Printf("StartMonitorSitesLoop() Start!\n\n")
-	go func() {
-		defer func() {
-			if r := recover(); r != nil {
-				fmt.Printf("[%s] Recovered from StartMonitorSitesLoop() panic: %v\n", util.GetCurrentTime(), r)
-				StartMonitorSitesLoop()
-			}
-		}()
-
-		for {
-			err := refreshSiteMap()
-			if err != nil {
-				fmt.Println(err)
-				continue
-			}
-
-			err = refreshRuleMap()
-			if err != nil {
-				fmt.Println(err)
-				continue
-			}
-
-			err = monitorSiteCerts()
-			if err != nil {
-				fmt.Println(err)
-				continue
-			}
-
-			time.Sleep(5 * time.Second)
+func runMonitorSitesLoop() {
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Printf("[%s] Recovered from StartMonitorSitesLoop() panic: %v\n", util.GetCurrentTime(), r)
+			go runMonitorSitesLoop()
 		}
 	}()
+
+	for {
+		err := refreshSiteMap()
+		if err != nil {
+			fmt.Println(err)
+			time.Sleep(5 * time.Second)
+			continue
+		}
+
+		err = refreshRuleMap()
+		if err != nil {
+			fmt.Println(err)
+			time.Sleep(5 * time.Second)
+			continue
+		}
+
+		err = monitorSiteCerts()
+		if err != nil {
+			fmt.Println(err)
+			time.Sleep(5 * time.Second)
+			continue
+		}
+
+		time.Sleep(5 * time.Second)
+	}
+}
+
+func StartMonitorSitesLoop() {
+	monitorLoopOnce.Do(func() {
+		fmt.Printf("StartMonitorSitesLoop() Start!\n\n")
+		go runMonitorSitesLoop()
+	})
 }

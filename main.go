@@ -76,7 +76,6 @@ func main() {
 
 	object.InitSiteMap()
 	object.InitRuleMap()
-	object.StartMonitorSitesLoop()
 
 	util.SafeGoroutine(func() { object.RunSyncUsersJob() })
 	util.SafeGoroutine(func() { controllers.InitCLIDownloader() })
@@ -132,6 +131,7 @@ func main() {
 	go object.ClearThroughputPerSecond()
 
 	if len(object.SiteMap) != 0 {
+		object.StartMonitorSitesLoop()
 		service.Start()
 	}
 

@@ -198,6 +198,8 @@ func AddSite(site *Site) (bool, error) {
 		if err != nil {
 			return false, err
 		}
+
+		StartMonitorSitesLoop()
 	}
 
 	return affected != 0, nil
