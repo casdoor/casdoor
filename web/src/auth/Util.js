@@ -130,10 +130,6 @@ export function getOAuthGetParameters(params) {
   }
 
   let state = getRefinedValue(queries.get("state"));
-  if (state.startsWith("/auth/oauth2/login.php?wantsurl")) {
-    // state contains URL param encoding for Moodle, URLSearchParams automatically decoded it, so here encode it again
-    state = encodeURIComponent(state);
-  }
   if (redirectUri.includes("#") && state === "") {
     state = getRawGetParameter("state");
   }
