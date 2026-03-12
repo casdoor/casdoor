@@ -110,6 +110,25 @@ func GetManagedGroupsByUser(owner string, username string) ([]*Group, error) {
 	return res, nil
 }
 
+func HasManagedGroupsByUser(owner string, username string) (bool, error) {
+	if owner == "" || username == "" {
+		return false, nil
+	}
+
+	groups, err := GetGroups(owner)
+	if err != nil {
+		return false, err
+	}
+
+	for _, group := range groups {
+		if util.InSlice(group.AdminUsers, username) {
+			return true, nil
+		}
+	}
+
+	return false, nil
+}
+
 func GetManagedGroupIdsByUser(owner string, username string) ([]string, error) {
 	groups, err := GetManagedGroupsByUser(owner, username)
 	if err != nil {

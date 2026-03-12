@@ -63,15 +63,6 @@ p, *, *, POST, /api/oauth/register, *, *
 p, *, *, GET, /api/get-application, *, *
 p, *, *, GET, /api/get-organization-applications, *, *
 p, *, *, GET, /api/get-user, *, *
-p, *, !anonymous, GET, /api/get-group, *, *
-p, *, !anonymous, GET, /api/get-groups, *, *
-p, *, !anonymous, GET, /api/get-users, *, *
-p, *, !anonymous, GET, /api/get-user-count, *, *
-p, *, !anonymous, GET, /api/get-form, *, *
-p, *, !anonymous, POST, /api/add-user, *, *
-p, *, !anonymous, POST, /api/update-user, *, *
-p, *, !anonymous, POST, /api/delete-user, *, *
-p, *, !anonymous, POST, /api/remove-user-from-group, *, *
 p, *, *, GET, /api/get-user-application, *, *
 p, *, *, POST, /api/upload-users, *, *
 p, *, *, GET, /api/get-resources, *, *
@@ -183,6 +174,9 @@ func IsAllowed(subOwner string, subName string, method string, urlPath string, o
 		if user.IsAdmin && (subOwner == objOwner || (objOwner == "admin")) {
 			return true
 		}
+		if isScopedManagerApi(method, urlPath) {
+			return isScopedManager(user, objOwner)
+		}
 	}
 
 	res, err := Enforcer.Enforce(subOwner, subName, method, urlPath, objOwner, objName)
@@ -198,6 +192,44 @@ func IsAllowed(subOwner string, subName string, method string, urlPath string, o
 	}
 
 	return res
+}
+
+func isScopedManager(user *object.User, objOwner string) bool {
+	if objOwner == "" || user.Owner != objOwner {
+		return false
+	}
+
+	hasManagedGroups, err := object.HasManagedGroupsByUser(objOwner, user.Name)
+	if err != nil {
+		panic(err)
+	}
+
+	return hasManagedGroups
+}
+
+func isScopedManagerApi(method string, urlPath string) bool {
+	switch {
+	case method == "GET" && urlPath == "/api/get-group":
+		return true
+	case method == "GET" && urlPath == "/api/get-groups":
+		return true
+	case method == "GET" && urlPath == "/api/get-users":
+		return true
+	case method == "GET" && urlPath == "/api/get-user-count":
+		return true
+	case method == "GET" && urlPath == "/api/get-form":
+		return true
+	case method == "POST" && urlPath == "/api/add-user":
+		return true
+	case method == "POST" && urlPath == "/api/update-user":
+		return true
+	case method == "POST" && urlPath == "/api/delete-user":
+		return true
+	case method == "POST" && urlPath == "/api/remove-user-from-group":
+		return true
+	default:
+		return false
+	}
 }
 
 func isAllowedInDemoMode(subOwner string, subName string, method string, urlPath string, objOwner string, objName string) bool {
