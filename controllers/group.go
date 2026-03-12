@@ -95,7 +95,17 @@ func (c *ApiController) GetGroups() {
 			}
 			filteredGroups := object.FilterManagedGroups(groups, field, value, sortField, sortOrder, -1, -1)
 			paginator := pagination.NewPaginator(c.Ctx.Request, limit, int64(len(filteredGroups)))
-			groups = object.FilterManagedGroups(groups, field, value, sortField, sortOrder, paginator.Offset(), limit)
+			start := paginator.Offset()
+			end := start + limit
+			if start > len(filteredGroups) {
+				filteredGroups = []*object.Group{}
+			} else {
+				if end > len(filteredGroups) {
+					end = len(filteredGroups)
+				}
+				filteredGroups = filteredGroups[start:end]
+			}
+			groups = filteredGroups
 			err = object.ExtendGroupsWithUsers(groups)
 			if err != nil {
 				c.ResponseError(err.Error())

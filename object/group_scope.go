@@ -227,7 +227,7 @@ func GetManagedUserCount(owner, username, field, value, groupName string) (int64
 	tableNamePrefix := conf.GetConfigString("tableNamePrefix")
 	prefixedUserTable := tableNamePrefix + "user"
 	session := ormer.Engine.Table(prefixedUserTable).Where("owner = ?", owner).In("name", userNames)
-	if field != "" && value != "" {
+	if field != "" && value != "" && util.FilterField(field) {
 		session = session.And(fmt.Sprintf("%s.%s like ?", prefixedUserTable, util.CamelToSnakeCase(field)), "%"+value+"%")
 	}
 	return session.Count(&User{})
@@ -261,10 +261,10 @@ func GetPaginationManagedUsers(owner, username string, offset, limit int, field,
 	if offset != -1 && limit != -1 {
 		session.Limit(limit, offset)
 	}
-	if field != "" && value != "" {
+	if field != "" && value != "" && util.FilterField(field) {
 		session = session.And(fmt.Sprintf("%s.%s like ?", prefixedUserTable, util.CamelToSnakeCase(field)), "%"+value+"%")
 	}
-	if sortField == "" || sortOrder == "" {
+	if sortField == "" || sortOrder == "" || !util.FilterField(sortField) {
 		sortField = "created_time"
 	}
 	orderQuery := fmt.Sprintf("%s.%s", prefixedUserTable, util.SnakeString(sortField))

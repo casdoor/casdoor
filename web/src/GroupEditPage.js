@@ -62,11 +62,16 @@ class GroupEditPage extends React.Component {
       return;
     }
 
-    Promise.all(usernames.map((username) => UserBackend.getUser(organizationName, username)))
+    Promise.allSettled(usernames.map((username) => UserBackend.getUser(organizationName, username)))
       .then((results) => {
         const adminUserOptions = results
-          .filter((res) => res.status === "ok" && res.data)
-          .map((res) => Setting.getOption(this.getUserOptionLabel(res.data), res.data.name));
+          .filter((result) => result.status === "fulfilled" && result.value?.status === "ok" && result.value?.data)
+          .map((result) => Setting.getOption(this.getUserOptionLabel(result.value.data), result.value.data.name));
+
+        const hasFailures = results.some((result) => result.status === "rejected" || result.value?.status !== "ok");
+        if (hasFailures) {
+          Setting.showMessage("error", i18next.t("general:Failed to load"));
+        }
 
         this.setState({
           adminUserOptions,

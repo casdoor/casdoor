@@ -118,7 +118,6 @@ func (c *ApiController) GetUsers() {
 	if !c.requireAuthenticatedSubject() {
 		return
 	}
-	currentUser := c.getCurrentUser()
 	currentUser, isScopedManager := c.getScopedUserManager(owner)
 
 	if limit == "" || page == "" {
@@ -920,7 +919,6 @@ func (c *ApiController) GetUserCount() {
 	if !c.requireAuthenticatedSubject() {
 		return
 	}
-	currentUser := c.getCurrentUser()
 
 	var count int64
 	var err error

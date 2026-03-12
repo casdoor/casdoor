@@ -17,6 +17,7 @@ import {Select, Spin} from "antd";
 import * as Setting from "../Setting";
 
 const SCROLL_BOTTOM_OFFSET = 20;
+const EMPTY_OPTIONS = [];
 
 const defaultOptionMapper = (item) => {
   if (item === null) {
@@ -38,7 +39,7 @@ function PaginateSelect(props) {
     fetchPage,
     buildFetchArgs,
     optionMapper = defaultOptionMapper,
-    extraOptions = [],
+    extraOptions = EMPTY_OPTIONS,
     pageSize = Setting.MAX_PAGE_SIZE,
     debounceMs = Setting.SEARCH_DEBOUNCE_MS,
     onError,
