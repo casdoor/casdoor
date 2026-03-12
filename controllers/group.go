@@ -38,6 +38,9 @@ func (c *ApiController) GetGroups() {
 	sortField := c.Ctx.Input.Query("sortField")
 	sortOrder := c.Ctx.Input.Query("sortOrder")
 	withTree := c.Ctx.Input.Query("withTree")
+	if !c.requireAuthenticatedSubject() {
+		return
+	}
 	currentUser := c.getCurrentUser()
 	isScopedUser := !c.IsAdmin() && currentUser != nil && owner != "" && currentUser.Owner == owner
 
@@ -155,6 +158,9 @@ func (c *ApiController) GetGroup() {
 	owner, name, err := util.GetOwnerAndNameFromIdWithError(id)
 	if err != nil {
 		c.ResponseError(err.Error())
+		return
+	}
+	if !c.requireAuthenticatedSubject() {
 		return
 	}
 

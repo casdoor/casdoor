@@ -1038,7 +1038,7 @@ export function getManagementNavItems(account) {
     return organization?.userNavItems ?? [];
   }
 
-  const scopedManagerNavItems = userNavItems.filter((item) => !["/", "/shortcuts", "/apps"].includes(item));
+  const scopedManagerNavItems = userNavItems.filter((item) => !["all", "/", "/shortcuts", "/apps"].includes(item));
   return Array.from(new Set(["/groups", "/users", ...scopedManagerNavItems]));
 }
 

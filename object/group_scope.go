@@ -233,6 +233,18 @@ func GetManagedUserCount(owner, username, field, value, groupName string) (int64
 	return session.Count(&User{})
 }
 
+func GetManagedOnlineUserCount(owner, username string, isOnline int) (int64, error) {
+	userNames, err := getManagedUserNames(owner, username, "")
+	if err != nil {
+		return 0, err
+	}
+	if len(userNames) == 0 {
+		return 0, nil
+	}
+
+	return ormer.Engine.Where("owner = ?", owner).And("is_online = ?", isOnline).In("name", userNames).Count(&User{})
+}
+
 func GetPaginationManagedUsers(owner, username string, offset, limit int, field, value, sortField, sortOrder, groupName string) ([]*User, error) {
 	userNames, err := getManagedUserNames(owner, username, groupName)
 	if err != nil {

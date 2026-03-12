@@ -115,6 +115,10 @@ func (c *ApiController) GetUsers() {
 	value := c.Ctx.Input.Query("value")
 	sortField := c.Ctx.Input.Query("sortField")
 	sortOrder := c.Ctx.Input.Query("sortOrder")
+	if !c.requireAuthenticatedSubject() {
+		return
+	}
+	currentUser := c.getCurrentUser()
 	currentUser, isScopedManager := c.getScopedUserManager(owner)
 
 	if limit == "" || page == "" {
@@ -913,12 +917,18 @@ func (c *ApiController) GetSortedUsers() {
 func (c *ApiController) GetUserCount() {
 	owner := c.Ctx.Input.Query("owner")
 	isOnline := c.Ctx.Input.Query("isOnline")
+	if !c.requireAuthenticatedSubject() {
+		return
+	}
+	currentUser := c.getCurrentUser()
 
 	var count int64
 	var err error
 	currentUser, isScopedManager := c.getScopedUserManager(owner)
-	if isOnline == "" && isScopedManager {
+	if isScopedManager && isOnline == "" {
 		count, err = object.GetManagedUserCount(owner, currentUser.Name, "", "", "")
+	} else if isScopedManager {
+		count, err = object.GetManagedOnlineUserCount(owner, currentUser.Name, util.ParseInt(isOnline))
 	} else if isOnline == "" {
 		count, err = object.GetUserCount(owner, "", "", "")
 	} else {
