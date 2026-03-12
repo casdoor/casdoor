@@ -74,8 +74,8 @@ func main() {
 	object.InitCasvisorConfig()
 	object.InitCleanupTokens()
 
+	object.InitSiteMap()
 	if len(object.SiteMap) != 0 {
-		object.InitSiteMap()
 		object.InitRuleMap()
 		object.StartMonitorSitesLoop()
 	}
