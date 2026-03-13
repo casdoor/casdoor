@@ -453,20 +453,20 @@ func SyncLdapUsers(owner string, syncUsers []LdapUser, ldapId string) (existUser
 	}
 	tag := strings.Join(ou, ".")
 
-	for _, syncUser := range syncUsers {
-		existUuids, err := GetExistUuids(owner, uuids)
-		if err != nil {
-			return nil, nil, err
-		}
+	existUuids, err := GetExistUuids(owner, uuids)
+	if err != nil {
+		return nil, nil, err
+	}
 
-		found := false
-		if len(existUuids) > 0 {
-			for _, existUuid := range existUuids {
-				if syncUser.Uuid == existUuid {
-					existUsers = append(existUsers, syncUser)
-					found = true
-				}
-			}
+	existUuidSet := make(map[string]struct{}, len(existUuids))
+	for _, uuid := range existUuids {
+		existUuidSet[uuid] = struct{}{}
+	}
+
+	for _, syncUser := range syncUsers {
+		_, found := existUuidSet[syncUser.Uuid]
+		if found {
+			existUsers = append(existUsers, syncUser)
 		}
 
 		if !found {
@@ -713,11 +713,23 @@ func dnToGroupName(owner, dn string) string {
 func GetExistUuids(owner string, uuids []string) ([]string, error) {
 	var existUuids []string
 
+	// PostgreSQL only supports up to 65535 parameters per query, so we batch the uuids
+	const batchSize = 1000
 	tableNamePrefix := conf.GetConfigString("tableNamePrefix")
-	err := ormer.Engine.Table(tableNamePrefix+"user").Where("owner = ?", owner).Cols("ldap").
-		In("ldap", uuids).Select("DISTINCT ldap").Find(&existUuids)
-	if err != nil {
-		return existUuids, err
+	for i := 0; i < len(uuids); i += batchSize {
+		end := i + batchSize
+		if end > len(uuids) {
+			end = len(uuids)
+		}
+		batch := uuids[i:end]
+
+		var batchUuids []string
+		err := ormer.Engine.Table(tableNamePrefix+"user").Where("owner = ?", owner).Cols("ldap").
+			In("ldap", batch).Select("DISTINCT ldap").Find(&batchUuids)
+		if err != nil {
+			return existUuids, err
+		}
+		existUuids = append(existUuids, batchUuids...)
 	}
 
 	return existUuids, nil
