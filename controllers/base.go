@@ -102,6 +102,7 @@ func (c *ApiController) getCurrentUser() *object.User {
 	}
 	return user
 }
+
 func (c *ApiController) requireOrganizationAccess(owner string) *object.User {
 	currentUser := c.getCurrentUser()
 	if !c.IsAdmin() && (currentUser == nil || currentUser.Owner != owner) {
