@@ -394,6 +394,23 @@ func (c *ApiController) ValidateOAuth(ignoreValidSecret bool) (ok bool, applicat
 		return
 	}
 
+	// mTLS client certificate authentication (RFC 8705: tls_client_auth)
+	// If a client certificate is presented and client_id is provided without client_secret,
+	// authenticate using the TLS client certificate.
+	clientCert := object.GetClientCertFromRequest(c.Ctx.Request)
+	if clientCert != nil && reqClientId != "" && reqClientSecret == "" {
+		application, err = object.GetApplicationByClientCert(reqClientId, clientCert)
+		if err != nil {
+			c.ResponseTokenError(object.InvalidClient, err.Error())
+			return
+		}
+
+		clientSecret = application.ClientSecret
+		clientId = application.ClientId
+		ok = true
+		return
+	}
+
 	if reqClientId == "" && reqClientSecret == "" {
 		clientId, clientSecret, ok = c.Ctx.Request.BasicAuth()
 		if !ok {
