@@ -105,7 +105,7 @@ function getSigninButton(provider) {
   }
 }
 
-function goToSamlUrl(provider, location) {
+export function goToSamlUrl(provider, location) {
   const params = new URLSearchParams(location.search);
   const clientId = params.get("client_id") ?? "";
   const state = params.get("state");
