@@ -17,9 +17,13 @@ package object
 import (
 	"errors"
 	"fmt"
+	"io"
+	"net/http"
+	"net/url"
 	"regexp"
 	"strings"
 
+	"github.com/beego/beego/v2/core/logs"
 	"github.com/beego/beego/v2/server/web/context"
 	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/idp"
@@ -47,6 +51,7 @@ type Provider struct {
 	CustomAuthUrl     string            `xorm:"varchar(200)" json:"customAuthUrl"`
 	CustomTokenUrl    string            `xorm:"varchar(200)" json:"customTokenUrl"`
 	CustomUserInfoUrl string            `xorm:"varchar(200)" json:"customUserInfoUrl"`
+	CustomLogoutUrl   string            `xorm:"varchar(200)" json:"customLogoutUrl"`
 	CustomLogo        string            `xorm:"varchar(200)" json:"customLogo"`
 	Scopes            string            `xorm:"varchar(100)" json:"scopes"`
 	UserMapping       map[string]string `xorm:"varchar(500)" json:"userMapping"`
@@ -609,4 +614,67 @@ func GetIdvProviderFromProvider(provider *Provider) idv.IdvProvider {
 		return nil
 	}
 	return idv.GetIdvProvider(provider.Type, provider.ClientId, provider.ClientSecret, provider.Endpoint)
+}
+
+// InvokeProviderLogout calls the external OAuth provider's logout endpoint for all Custom OAuth providers
+// linked to the user in the given application. This is called during Casdoor logout to propagate the
+// logout to upstream identity providers.
+func InvokeProviderLogout(user *User, application *Application) {
+	if user == nil || application == nil {
+		return
+	}
+
+	for _, providerItem := range application.Providers {
+		provider := providerItem.Provider
+		if provider == nil {
+			continue
+		}
+		if provider.Category != "OAuth" {
+			continue
+		}
+		if !strings.HasPrefix(provider.Type, "Custom") {
+			continue
+		}
+		if provider.CustomLogoutUrl == "" {
+			continue
+		}
+
+		accessToken := GetUserOAuthAccessToken(user, provider.Type)
+		if accessToken == "" {
+			continue
+		}
+
+		refreshToken := GetUserOAuthRefreshToken(user, provider.Type)
+
+		go callProviderLogoutUrl(provider, accessToken, refreshToken)
+	}
+}
+
+// callProviderLogoutUrl makes an HTTP POST request to the provider's configured logout URL.
+// It sends token, client_id, client_secret, and optionally refresh_token as form parameters.
+// This is compatible with OAuth2 Token Revocation (RFC 7009) and OIDC back-channel logout.
+func callProviderLogoutUrl(provider *Provider, accessToken, refreshToken string) {
+	params := url.Values{}
+	params.Set("token", accessToken)
+	if provider.ClientId != "" {
+		params.Set("client_id", provider.ClientId)
+	}
+	if provider.ClientSecret != "" {
+		params.Set("client_secret", provider.ClientSecret)
+	}
+	if refreshToken != "" {
+		params.Set("refresh_token", refreshToken)
+	}
+
+	resp, err := http.PostForm(provider.CustomLogoutUrl, params)
+	if err != nil {
+		logs.Warning("InvokeProviderLogout: failed to call logout URL %s for provider %s: %v", provider.CustomLogoutUrl, provider.Name, err)
+		return
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		body, _ := io.ReadAll(resp.Body)
+		logs.Warning("InvokeProviderLogout: logout URL %s for provider %s returned status %d: %s", provider.CustomLogoutUrl, provider.Name, resp.StatusCode, string(body))
+	}
 }

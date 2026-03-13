@@ -1148,6 +1148,8 @@
     "To address - Tooltip": "Email address of \"To\"",
     "Token URL": "Token URL",
     "Token URL - Tooltip": "Custom OAuth Token URL",
+    "Logout URL": "Logout URL",
+    "Logout URL - Tooltip": "Custom OAuth logout/end_session URL. When set, Casdoor will call this endpoint during logout to terminate the external provider session.",
     "Use WeChat Media Platform in PC": "Use WeChat Media Platform in PC",
     "Use WeChat Media Platform in PC - Tooltip": "Whether to allow scanning WeChat Media Platform QR code to login",
     "Use WeChat Media Platform to login": "Use WeChat Media Platform to login",
