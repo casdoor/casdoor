@@ -460,7 +460,7 @@ func (c *ApiController) UpdateUser() {
 		c.ResponseError(err.Error())
 		return
 	}
-	if !c.IsAdminOrSelf(oldUser) && !isGroupAdmin && !c.IsAdmin() {
+	if !c.IsAdminOrSelf(oldUser) && !isGroupAdmin {
 		c.ResponseError(c.T("auth:Unauthorized operation"))
 		return
 	}
@@ -617,7 +617,7 @@ func (c *ApiController) DeleteUser() {
 		c.ResponseError(err.Error())
 		return
 	}
-	if !c.IsAdminOrSelf(targetUser) && !canManageUser && !c.IsAdmin() {
+	if !c.IsAdminOrSelf(targetUser) && !canManageUser {
 		c.ResponseError(c.T("auth:Unauthorized operation"))
 		return
 	}

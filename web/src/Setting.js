@@ -1027,10 +1027,6 @@ export function isGroupAdminOrAdmin(account) {
   return isLocalAdminUser(account) || isGroupAdminUser(account);
 }
 
-export function canManageUsers(account) {
-  return isGroupAdminOrAdmin(account);
-}
-
 export function getManagementNavItems(account) {
   const organization = account?.organization;
   if (isLocalAdminUser(account)) {

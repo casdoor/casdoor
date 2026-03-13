@@ -139,6 +139,7 @@ func GetManagedGroupIdsByUser(owner string, username string) ([]string, error) {
 	for _, group := range groups {
 		res = append(res, group.GetId())
 	}
+	sort.Strings(res)
 	return res, nil
 }
 
@@ -342,15 +343,6 @@ func CanUserManageAllGroups(owner string, username string, groupIds []string) (b
 		}
 	}
 	return true, nil
-}
-
-func GetManagedGroupsForAccount(owner string, username string) ([]string, error) {
-	groupIds, err := GetManagedGroupIdsByUser(owner, username)
-	if err != nil {
-		return nil, err
-	}
-	sort.Strings(groupIds)
-	return groupIds, nil
 }
 
 func FilterManagedGroups(groups []*Group, field, value, sortField, sortOrder string, offset, limit int) []*Group {
