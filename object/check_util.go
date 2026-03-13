@@ -38,7 +38,7 @@ func isValidRealName(s string) bool {
 	return reRealName.MatchString(s)
 }
 
-func resetUserSigninErrorTimes(user *User) error {
+func resetUserAuthErrorTimes(user *User) error {
 	// if the password is correct and wrong times is not zero, reset the error times
 	if user.SigninWrongTimes == 0 {
 		return nil
@@ -49,7 +49,7 @@ func resetUserSigninErrorTimes(user *User) error {
 	return err
 }
 
-func GetFailedSigninConfigByUser(user *User) (int, int, error) {
+func GetFailedAuthConfigByUser(user *User) (int, int, error) {
 	application, err := GetApplicationByUser(user)
 	if err != nil {
 		return 0, 0, err
@@ -71,13 +71,13 @@ func GetFailedSigninConfigByUser(user *User) (int, int, error) {
 	return failedSigninLimit, failedSigninFrozenTime, nil
 }
 
-func recordSigninErrorInfo(user *User, lang string, options ...bool) error {
+func recordUserAuthErrorInfo(user *User, lang string, options ...bool) error {
 	enableCaptcha := false
 	if len(options) > 0 {
 		enableCaptcha = options[0]
 	}
 
-	failedSigninLimit, failedSigninFrozenTime, errSignin := GetFailedSigninConfigByUser(user)
+	failedSigninLimit, failedSigninFrozenTime, errSignin := GetFailedAuthConfigByUser(user)
 	if errSignin != nil {
 		return errSignin
 	}

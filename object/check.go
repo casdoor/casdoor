@@ -198,8 +198,8 @@ func CheckInvitationDefaultCode(code string, defaultCode string, lang string) er
 	return nil
 }
 
-func checkSigninErrorTimes(user *User, lang string) error {
-	failedSigninLimit, failedSigninFrozenTime, err := GetFailedSigninConfigByUser(user)
+func checkAuthErrorTimes(user *User, lang string) error {
+	failedSigninLimit, failedSigninFrozenTime, err := GetFailedAuthConfigByUser(user)
 	if err != nil {
 		return err
 	}
@@ -236,7 +236,7 @@ func CheckPassword(user *User, password string, lang string, options ...bool) er
 
 	// check the login error times
 	if !enableCaptcha {
-		err := checkSigninErrorTimes(user, lang)
+		err := checkAuthErrorTimes(user, lang)
 		if err != nil {
 			return err
 		}
@@ -262,12 +262,12 @@ func CheckPassword(user *User, password string, lang string, options ...bool) er
 
 	if organization.MasterPassword != "" {
 		if password == organization.MasterPassword || credManager.IsPasswordCorrect(password, organization.MasterPassword, organization.PasswordSalt) {
-			return resetUserSigninErrorTimes(user)
+			return resetUserAuthErrorTimes(user)
 		}
 	}
 
 	if !credManager.IsPasswordCorrect(password, user.Password, organization.PasswordSalt) && !credManager.IsPasswordCorrect(password, user.Password, user.PasswordSalt) {
-		return recordSigninErrorInfo(user, lang, enableCaptcha)
+		return recordUserAuthErrorInfo(user, lang, enableCaptcha)
 	}
 
 	isOutdated := passwordType != organization.PasswordType
@@ -280,7 +280,7 @@ func CheckPassword(user *User, password string, lang string, options ...bool) er
 		}
 	}
 
-	return resetUserSigninErrorTimes(user)
+	return resetUserAuthErrorTimes(user)
 }
 
 func CheckPasswordComplexityByOrg(organization *Organization, password string, lang string) string {
@@ -301,7 +301,7 @@ func CheckLdapUserPassword(user *User, password string, lang string, options ...
 
 	// check the login error times
 	if !enableCaptcha {
-		err := checkSigninErrorTimes(user, lang)
+		err := checkAuthErrorTimes(user, lang)
 		if err != nil {
 			return err
 		}
@@ -354,9 +354,9 @@ func CheckLdapUserPassword(user *User, password string, lang string, options ...
 		if !hit {
 			return fmt.Errorf("user not exist")
 		}
-		return recordSigninErrorInfo(user, lang, enableCaptcha)
+		return recordUserAuthErrorInfo(user, lang, enableCaptcha)
 	}
-	return resetUserSigninErrorTimes(user)
+	return resetUserAuthErrorTimes(user)
 }
 
 func CheckUserPassword(organization string, username string, password string, lang string, options ...bool) (*User, error) {
@@ -791,7 +791,7 @@ func CheckToEnableCaptcha(application *Application, organization, username strin
 			}
 
 			if user != nil {
-				failedSigninLimit, _, err := GetFailedSigninConfigByUser(user)
+				failedSigninLimit, _, err := GetFailedAuthConfigByUser(user)
 				if err != nil {
 					return false, err
 				}

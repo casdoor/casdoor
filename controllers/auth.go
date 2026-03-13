@@ -625,7 +625,7 @@ func (c *ApiController) Login() {
 			}
 
 			// check result through Email or Phone
-			err = object.CheckSigninCode(user, checkDest, authForm.Code, c.GetAcceptLanguage())
+			err = object.CheckVerificationCodeWithLimit(user, checkDest, authForm.Code, c.GetAcceptLanguage())
 			if err != nil {
 				c.ResponseError(fmt.Sprintf("%s - %s", verificationCodeType, err.Error()))
 				return

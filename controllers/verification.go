@@ -598,13 +598,9 @@ func (c *ApiController) VerifyCode() {
 	}
 
 	if !passed {
-		result, err := object.CheckVerificationCode(checkDest, authForm.Code, c.GetAcceptLanguage())
+		err = object.CheckVerificationCodeWithLimit(user, checkDest, authForm.Code, c.GetAcceptLanguage())
 		if err != nil {
 			c.ResponseError(err.Error())
-			return
-		}
-		if result.Code != object.VerificationSuccess {
-			c.ResponseError(result.Msg)
 			return
 		}
 

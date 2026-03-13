@@ -308,9 +308,9 @@ func DisableVerificationCode(dest string) error {
 	return err
 }
 
-func CheckSigninCode(user *User, dest, code, lang string) error {
+func CheckVerificationCodeWithLimit(user *User, dest, code, lang string) error {
 	// check the login error times
-	err := checkSigninErrorTimes(user, lang)
+	err := checkAuthErrorTimes(user, lang)
 	if err != nil {
 		return err
 	}
@@ -322,9 +322,9 @@ func CheckSigninCode(user *User, dest, code, lang string) error {
 
 	switch result.Code {
 	case VerificationSuccess:
-		return resetUserSigninErrorTimes(user)
+		return resetUserAuthErrorTimes(user)
 	case wrongCodeError:
-		return recordSigninErrorInfo(user, lang)
+		return recordUserAuthErrorInfo(user, lang)
 	default:
 		return errors.New(result.Msg)
 	}
