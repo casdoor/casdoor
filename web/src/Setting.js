@@ -1016,15 +1016,19 @@ export function isLocalAdminUser(account) {
   return account.isAdmin === true || isAdminUser(account);
 }
 
-export function isScopedManagerUser(account) {
+export function isGroupAdminUser(account) {
   if (account === undefined || account === null) {
     return false;
   }
   return Array.isArray(account.managedGroups) && account.managedGroups.length > 0;
 }
 
-export function isManagerUser(account) {
-  return isLocalAdminUser(account) || isScopedManagerUser(account);
+export function isGroupAdminOrAdmin(account) {
+  return isLocalAdminUser(account) || isGroupAdminUser(account);
+}
+
+export function canManageUsers(account) {
+  return isGroupAdminOrAdmin(account);
 }
 
 export function getManagementNavItems(account) {
@@ -1034,16 +1038,16 @@ export function getManagementNavItems(account) {
   }
 
   const userNavItems = Array.isArray(organization?.userNavItems) ? organization.userNavItems : [];
-  if (!isScopedManagerUser(account)) {
+  if (!isGroupAdminUser(account)) {
     return organization?.userNavItems ?? [];
   }
 
-  const scopedManagerNavItems = userNavItems.filter((item) => !["all", "/", "/shortcuts", "/apps"].includes(item));
-  return Array.from(new Set(["/groups", "/users", ...scopedManagerNavItems]));
+  const groupAdminNavItems = userNavItems.filter((item) => !["all", "/", "/shortcuts", "/apps"].includes(item));
+  return Array.from(new Set(["/groups", "/users", ...groupAdminNavItems]));
 }
 
 export function getGroupsEntryPath(account) {
-  if (isScopedManagerUser(account) && !isLocalAdminUser(account) && account?.owner) {
+  if (isGroupAdminUser(account) && !isLocalAdminUser(account) && account?.owner) {
     return `/trees/${account.owner}`;
   }
   return "/groups";

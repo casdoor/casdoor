@@ -35,10 +35,6 @@ class UserListPage extends BaseListPage {
     };
   }
 
-  canManageUsers() {
-    return Setting.isLocalAdminUser(this.props.account) || Setting.isScopedManagerUser(this.props.account);
-  }
-
   UNSAFE_componentWillMount() {
     super.UNSAFE_componentWillMount();
     this.getOrganization(this.state.organizationName);
@@ -570,13 +566,13 @@ class UserListPage extends BaseListPage {
                   text={i18next.t("general:remove")}
                   title={i18next.t("general:Sure to remove") + `: ${record.name} ?`}
                   onConfirm={() => this.removeUserFromGroup(index)}
-                  disabled={disabled || !this.canManageUsers()}
+                  disabled={disabled || !Setting.canManageUsers(this.props.account)}
                   size="small"
                 /> : null}
               <PopconfirmModal
                 title={i18next.t("general:Sure to delete") + `: ${record.name} ?`}
                 onConfirm={() => this.deleteUser(index)}
-                disabled={disabled || !this.canManageUsers()}
+                disabled={disabled || !Setting.canManageUsers(this.props.account)}
                 size={isTreePage ? "small" : "default"}
               />
             </Space>
@@ -599,7 +595,7 @@ class UserListPage extends BaseListPage {
           title={() => (
             <div>
               {i18next.t("general:Users")}&nbsp;&nbsp;&nbsp;&nbsp;
-              {this.canManageUsers() ? <Button style={{marginRight: "15px"}} type="primary" size="small" onClick={this.addUser.bind(this)}>{i18next.t("general:Add")} </Button> : null}
+              {Setting.canManageUsers(this.props.account) ? <Button style={{marginRight: "15px"}} type="primary" size="small" onClick={this.addUser.bind(this)}>{i18next.t("general:Add")} </Button> : null}
               <Button style={{marginRight: "15px"}} type="primary" size="small" onClick={this.generateDownloadTemplate}>{i18next.t("general:Download template")} </Button>
               {
                 Setting.isLocalAdminUser(this.props.account) ? this.renderUpload() : null

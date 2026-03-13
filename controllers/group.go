@@ -38,17 +38,14 @@ func (c *ApiController) GetGroups() {
 	sortField := c.Ctx.Input.Query("sortField")
 	sortOrder := c.Ctx.Input.Query("sortOrder")
 	withTree := c.Ctx.Input.Query("withTree")
-	if !c.requireAuthenticatedSubject() {
-		return
-	}
 	currentUser := c.requireOrganizationAccess(owner)
 	if currentUser == nil && !c.IsAdmin() {
 		return
 	}
-	isScopedUser := !c.IsAdmin() && currentUser != nil && owner != "" && currentUser.Owner == owner
+	isGroupAdminUser := !c.IsAdmin() && currentUser != nil && owner != "" && currentUser.Owner == owner
 
 	if limit == "" || page == "" {
-		if isScopedUser {
+		if isGroupAdminUser {
 			groups, err := object.GetManagedGroupsByUser(owner, currentUser.Name)
 			if err != nil {
 				c.ResponseError(err.Error())
@@ -90,7 +87,7 @@ func (c *ApiController) GetGroups() {
 		c.ResponseOk(groups)
 	} else {
 		limit := util.ParseInt(limit)
-		if isScopedUser {
+		if isGroupAdminUser {
 			groups, err := object.GetManagedGroupsByUser(owner, currentUser.Name)
 			if err != nil {
 				c.ResponseError(err.Error())
@@ -168,12 +165,10 @@ func (c *ApiController) GetGroups() {
 // @router /get-group [get]
 func (c *ApiController) GetGroup() {
 	id := c.Ctx.Input.Query("id")
+	includeAdminUserDetails := c.Ctx.Input.Query("includeAdminUserDetails") == "true"
 	owner, name, err := util.GetOwnerAndNameFromIdWithError(id)
 	if err != nil {
 		c.ResponseError(err.Error())
-		return
-	}
-	if !c.requireAuthenticatedSubject() {
 		return
 	}
 
@@ -202,6 +197,23 @@ func (c *ApiController) GetGroup() {
 	err = object.ExtendGroupWithUsers(group)
 	if err != nil {
 		c.ResponseError(err.Error())
+		return
+	}
+
+	if includeAdminUserDetails {
+		adminUserDetails, err := object.GetGroupAdminUserDetails(group)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		c.ResponseOk(struct {
+			*object.Group
+			AdminUserDetails []*object.User `json:"adminUserDetails,omitempty"`
+		}{
+			Group:            group,
+			AdminUserDetails: adminUserDetails,
+		})
 		return
 	}
 

@@ -25,7 +25,7 @@ import (
 	"github.com/casdoor/casdoor/util"
 )
 
-func (c *ApiController) getScopedUserManager(owner string) (*object.User, bool) {
+func (c *ApiController) getGroupAdminUser(owner string) (*object.User, bool) {
 	currentUser := c.getCurrentUser()
 	if c.IsAdmin() || currentUser == nil || owner == "" || currentUser.Owner != owner {
 		return currentUser, false
@@ -33,20 +33,12 @@ func (c *ApiController) getScopedUserManager(owner string) (*object.User, bool) 
 	return currentUser, true
 }
 
-func (c *ApiController) canScopedManageGroup(owner string, groupName string) (bool, error) {
-	currentUser, isScopedManager := c.getScopedUserManager(owner)
-	if !isScopedManager {
-		return false, nil
-	}
-	return object.CanUserManageGroup(owner, currentUser.Name, groupName)
-}
-
-func (c *ApiController) canScopedManageUser(user *object.User) (bool, error) {
+func (c *ApiController) canGroupAdminManageUser(user *object.User) (bool, error) {
 	if user == nil {
 		return false, nil
 	}
-	currentUser, isScopedManager := c.getScopedUserManager(user.Owner)
-	if !isScopedManager {
+	currentUser, isGroupAdmin := c.getGroupAdminUser(user.Owner)
+	if !isGroupAdmin {
 		return false, nil
 	}
 	return object.CanUserManageTargetUser(user.Owner, currentUser.Name, user)
@@ -115,17 +107,14 @@ func (c *ApiController) GetUsers() {
 	value := c.Ctx.Input.Query("value")
 	sortField := c.Ctx.Input.Query("sortField")
 	sortOrder := c.Ctx.Input.Query("sortOrder")
-	if !c.requireAuthenticatedSubject() {
-		return
-	}
 	currentUser := c.requireOrganizationAccess(owner)
 	if currentUser == nil && !c.IsAdmin() {
 		return
 	}
-	currentUser, isScopedManager := c.getScopedUserManager(owner)
+	currentUser, isGroupAdmin := c.getGroupAdminUser(owner)
 
 	if limit == "" || page == "" {
-		if isScopedManager {
+		if isGroupAdmin {
 			var users []*object.User
 			var err error
 			if groupName != "" {
@@ -180,7 +169,7 @@ func (c *ApiController) GetUsers() {
 		c.ResponseOk(users)
 	} else {
 		limit := util.ParseInt(limit)
-		if isScopedManager {
+		if isGroupAdmin {
 			if groupName != "" {
 				allowed, err := object.CanUserManageGroup(owner, currentUser.Name, groupName)
 				if err != nil {
@@ -322,7 +311,7 @@ func (c *ApiController) GetUser() {
 
 		canManageUser := false
 		if !c.IsAdminOrSelf(user) {
-			canManageUser, err = c.canScopedManageUser(user)
+			canManageUser, err = c.canGroupAdminManageUser(user)
 			if err != nil {
 				c.ResponseError(err.Error())
 				return
@@ -350,7 +339,7 @@ func (c *ApiController) GetUser() {
 		return
 	}
 
-	canManageUser, err := c.canScopedManageUser(user)
+	canManageUser, err := c.canGroupAdminManageUser(user)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -466,24 +455,24 @@ func (c *ApiController) UpdateUser() {
 		columns = strings.Split(columnsStr, ",")
 	}
 
-	isScopedManager, err := c.canScopedManageUser(oldUser)
+	isGroupAdmin, err := c.canGroupAdminManageUser(oldUser)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
-	if !c.IsAdminOrSelf(oldUser) && !isScopedManager && !c.IsAdmin() {
+	if !c.IsAdminOrSelf(oldUser) && !isGroupAdmin && !c.IsAdmin() {
 		c.ResponseError(c.T("auth:Unauthorized operation"))
 		return
 	}
 
-	isAdmin := c.IsAdmin() || isScopedManager
+	isAdmin := c.IsAdmin() || isGroupAdmin
 	allowDisplayNameEmpty := c.Ctx.Input.Query("allowEmpty") != ""
 	if pass, err := object.CheckPermissionForUpdateUser(oldUser, &user, isAdmin, allowDisplayNameEmpty, c.GetAcceptLanguage()); !pass {
 		c.ResponseError(err)
 		return
 	}
 
-	if isScopedManager && !c.IsAdmin() {
+	if isGroupAdmin && !c.IsAdmin() {
 		effectiveNewGroups := user.Groups
 		if len(columns) > 0 && !util.InSlice(columns, "groups") {
 			effectiveNewGroups = oldUser.Groups
@@ -572,8 +561,8 @@ func (c *ApiController) AddUser() {
 		}
 	}
 
-	currentUser, isScopedManager := c.getScopedUserManager(user.Owner)
-	if isScopedManager {
+	currentUser, isGroupAdmin := c.getGroupAdminUser(user.Owner)
+	if isGroupAdmin {
 		allowed, err := object.CanUserManageAllGroups(user.Owner, currentUser.Name, user.Groups)
 		if err != nil {
 			c.ResponseError(err.Error())
@@ -623,7 +612,7 @@ func (c *ApiController) DeleteUser() {
 		return
 	}
 
-	canManageUser, err := c.canScopedManageUser(targetUser)
+	canManageUser, err := c.canGroupAdminManageUser(targetUser)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -920,9 +909,6 @@ func (c *ApiController) GetSortedUsers() {
 func (c *ApiController) GetUserCount() {
 	owner := c.Ctx.Input.Query("owner")
 	isOnline := c.Ctx.Input.Query("isOnline")
-	if !c.requireAuthenticatedSubject() {
-		return
-	}
 	currentUser := c.requireOrganizationAccess(owner)
 	if currentUser == nil && !c.IsAdmin() {
 		return
@@ -930,10 +916,10 @@ func (c *ApiController) GetUserCount() {
 
 	var count int64
 	var err error
-	currentUser, isScopedManager := c.getScopedUserManager(owner)
-	if isScopedManager && isOnline == "" {
+	currentUser, isGroupAdmin := c.getGroupAdminUser(owner)
+	if isGroupAdmin && isOnline == "" {
 		count, err = object.GetManagedUserCount(owner, currentUser.Name, "", "", "")
-	} else if isScopedManager {
+	} else if isGroupAdmin {
 		count, err = object.GetManagedOnlineUserCount(owner, currentUser.Name, util.ParseInt(isOnline))
 	} else if isOnline == "" {
 		count, err = object.GetUserCount(owner, "", "", "")
@@ -975,9 +961,6 @@ func (c *ApiController) RemoveUserFromGroup() {
 	owner := c.Ctx.Request.Form.Get("owner")
 	name := c.Ctx.Request.Form.Get("name")
 	groupName := c.Ctx.Request.Form.Get("groupName")
-	if !c.requireAuthenticatedSubject() {
-		return
-	}
 	currentUser := c.requireOrganizationAccess(owner)
 	if currentUser == nil && !c.IsAdmin() {
 		return
@@ -1005,7 +988,7 @@ func (c *ApiController) RemoveUserFromGroup() {
 			return
 		}
 
-		canManageAnyUser, err = c.canScopedManageUser(targetUser)
+		canManageAnyUser, err = c.canGroupAdminManageUser(targetUser)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return

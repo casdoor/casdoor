@@ -32,6 +32,7 @@ import (
 	"github.com/go-webauthn/webauthn/webauthn"
 	"github.com/xorm-io/builder"
 	"github.com/xorm-io/core"
+	"github.com/xorm-io/xorm"
 )
 
 const (
@@ -1338,7 +1339,7 @@ func userChangeTrigger(owner string, oldName string, newName string) error {
 			if err != nil {
 				return err
 			}
-			if userOwner == owner && name == oldName {
+			if name == oldName {
 				role.Users[j] = util.GetId(userOwner, newName)
 			}
 		}
@@ -1364,7 +1365,7 @@ func userChangeTrigger(owner string, oldName string, newName string) error {
 			if err != nil {
 				return err
 			}
-			if userOwner == owner && name == oldName {
+			if name == oldName {
 				permission.Users[j] = util.GetId(userOwner, newName)
 			}
 		}
@@ -1374,11 +1375,28 @@ func userChangeTrigger(owner string, oldName string, newName string) error {
 		}
 	}
 
-	var groups []*Group
-	err = ormer.Engine.Where("owner = ?", owner).Find(&groups)
+	err = syncGroupAdminUsersOnUserRename(session, owner, oldName, newName)
 	if err != nil {
 		return err
 	}
+
+	resource := new(Resource)
+	resource.User = newName
+	_, err = session.Where("user=?", oldName).Update(resource)
+	if err != nil {
+		return err
+	}
+
+	return session.Commit()
+}
+
+func syncGroupAdminUsersOnUserRename(session *xorm.Session, owner string, oldName string, newName string) error {
+	var groups []*Group
+	err := ormer.Engine.Where("owner = ?", owner).Find(&groups)
+	if err != nil {
+		return err
+	}
+
 	for _, group := range groups {
 		updated := false
 		for i, adminUser := range group.AdminUsers {
@@ -1390,6 +1408,7 @@ func userChangeTrigger(owner string, oldName string, newName string) error {
 		if !updated {
 			continue
 		}
+
 		group.AdminUsers = normalizeGroupAdminUsers(group.AdminUsers)
 		_, err = session.Where("name=?", group.Name).And("owner=?", group.Owner).Update(group)
 		if err != nil {
@@ -1397,14 +1416,7 @@ func userChangeTrigger(owner string, oldName string, newName string) error {
 		}
 	}
 
-	resource := new(Resource)
-	resource.User = newName
-	_, err = session.Where("user=?", oldName).Update(resource)
-	if err != nil {
-		return err
-	}
-
-	return session.Commit()
+	return nil
 }
 
 func (user *User) IsMfaEnabled() bool {

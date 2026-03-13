@@ -102,15 +102,6 @@ func (c *ApiController) getCurrentUser() *object.User {
 	}
 	return user
 }
-
-func (c *ApiController) requireAuthenticatedSubject() bool {
-	if c.GetSessionUsername() == "" {
-		c.ResponseError(c.T("general:Please login first"), "Please login first")
-		return false
-	}
-	return true
-}
-
 func (c *ApiController) requireOrganizationAccess(owner string) *object.User {
 	currentUser := c.getCurrentUser()
 	if !c.IsAdmin() && (currentUser == nil || currentUser.Owner != owner) {

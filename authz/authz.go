@@ -174,8 +174,8 @@ func IsAllowed(subOwner string, subName string, method string, urlPath string, o
 		if user.IsAdmin && (subOwner == objOwner || (objOwner == "admin")) {
 			return true
 		}
-		if isScopedManagerApi(method, urlPath) {
-			return isScopedManager(user, objOwner)
+		if isGroupAdminApi(method, urlPath) {
+			return isGroupAdmin(user, objOwner)
 		}
 	}
 
@@ -194,7 +194,7 @@ func IsAllowed(subOwner string, subName string, method string, urlPath string, o
 	return res
 }
 
-func isScopedManager(user *object.User, objOwner string) bool {
+func isGroupAdmin(user *object.User, objOwner string) bool {
 	if objOwner == "" || user.Owner != objOwner {
 		return false
 	}
@@ -207,7 +207,7 @@ func isScopedManager(user *object.User, objOwner string) bool {
 	return hasManagedGroups
 }
 
-func isScopedManagerApi(method string, urlPath string) bool {
+func isGroupAdminApi(method string, urlPath string) bool {
 	switch {
 	case method == "GET" && urlPath == "/api/get-group":
 		return true

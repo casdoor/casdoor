@@ -53,14 +53,6 @@ func (c *ApiController) GetForms() {
 	value := c.Ctx.Input.Query("value")
 	sortField := c.Ctx.Input.Query("sortField")
 	sortOrder := c.Ctx.Input.Query("sortOrder")
-	if !c.requireAuthenticatedSubject() {
-		return
-	}
-	currentUser := c.getCurrentUser()
-	if !c.IsAdmin() && currentUser != nil && owner != currentUser.Owner {
-		c.ResponseError(c.T("auth:Unauthorized operation"))
-		return
-	}
 
 	if limit == "" || page == "" {
 		forms, err := object.GetForms(owner)
@@ -97,19 +89,6 @@ func (c *ApiController) GetForms() {
 // @router /get-form [get]
 func (c *ApiController) GetForm() {
 	id := c.Ctx.Input.Query("id")
-	owner, _, err := util.GetOwnerAndNameFromIdWithError(id)
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
-	}
-	if !c.requireAuthenticatedSubject() {
-		return
-	}
-	currentUser := c.getCurrentUser()
-	if !c.IsAdmin() && currentUser != nil && owner != currentUser.Owner {
-		c.ResponseError(c.T("auth:Unauthorized operation"))
-		return
-	}
 
 	form, err := object.GetForm(id)
 	if err != nil {

@@ -20,7 +20,6 @@ import * as UserBackend from "./backend/UserBackend";
 import * as Setting from "./Setting";
 import PaginateSelect from "./common/PaginateSelect";
 import i18next from "i18next";
-
 class GroupEditPage extends React.Component {
   constructor(props) {
     super(props);
@@ -43,39 +42,14 @@ class GroupEditPage extends React.Component {
   }
 
   getGroup() {
-    GroupBackend.getGroup(this.state.organizationName, this.state.groupName)
+    GroupBackend.getGroup(this.state.organizationName, this.state.groupName, true)
       .then((res) => {
         if (res.status === "ok") {
           this.setState({
             group: res.data,
+            adminUserOptions: this.getAdminUserOptions(res.data.adminUserDetails ?? []),
           });
-          this.loadAdminUserOptions(res.data.owner, res.data.adminUsers ?? []);
         }
-      });
-  }
-
-  loadAdminUserOptions(organizationName, usernames) {
-    if (!organizationName || !Array.isArray(usernames) || usernames.length === 0) {
-      this.setState({
-        adminUserOptions: [],
-      });
-      return;
-    }
-
-    Promise.allSettled(usernames.map((username) => UserBackend.getUser(organizationName, username)))
-      .then((results) => {
-        const adminUserOptions = results
-          .filter((result) => result.status === "fulfilled" && result.value?.status === "ok" && result.value?.data)
-          .map((result) => Setting.getOption(this.getUserOptionLabel(result.value.data), result.value.data.name));
-
-        const hasFailures = results.some((result) => result.status === "rejected" || result.value?.status !== "ok");
-        if (hasFailures) {
-          Setting.showMessage("error", i18next.t("general:Failed to load"));
-        }
-
-        this.setState({
-          adminUserOptions,
-        });
       });
   }
 
@@ -131,6 +105,10 @@ class GroupEditPage extends React.Component {
     }
 
     return user.name;
+  }
+
+  getAdminUserOptions(users) {
+    return (users || []).map((user) => Setting.getOption(this.getUserOptionLabel(user), user.name));
   }
 
   getOrganizations() {
@@ -192,7 +170,7 @@ class GroupEditPage extends React.Component {
               onChange={(value => {
                 this.updateGroupField("owner", value);
                 this.getGroups(value);
-                this.loadAdminUserOptions(value, this.state.group.adminUsers ?? []);
+                this.setState({adminUserOptions: []});
               })}
               options={this.state.organizations.map((organization) => Setting.getOption(organization.displayName, organization.name))
               } />

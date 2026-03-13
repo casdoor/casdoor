@@ -24,8 +24,8 @@ export function getGroups(owner = "", withTree = false, page = "", pageSize = ""
   }).then(res => res.json());
 }
 
-export function getGroup(owner, name) {
-  return fetch(`${Setting.ServerUrl}/api/get-group?id=${owner}/${encodeURIComponent(name)}`, {
+export function getGroup(owner, name, includeAdminUserDetails = false) {
+  return fetch(`${Setting.ServerUrl}/api/get-group?id=${owner}/${encodeURIComponent(name)}&includeAdminUserDetails=${includeAdminUserDetails}`, {
     method: "GET",
     credentials: "include",
     headers: {
