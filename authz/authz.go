@@ -207,29 +207,20 @@ func isGroupAdmin(user *object.User, objOwner string) bool {
 	return hasManagedGroups
 }
 
+var groupAdminAllowedApis = map[string]bool{
+	"GET /api/get-group":               true,
+	"GET /api/get-groups":              true,
+	"GET /api/get-users":               true,
+	"GET /api/get-user-count":          true,
+	"GET /api/get-form":                true,
+	"POST /api/add-user":               true,
+	"POST /api/update-user":            true,
+	"POST /api/delete-user":            true,
+	"POST /api/remove-user-from-group": true,
+}
+
 func isGroupAdminApi(method string, urlPath string) bool {
-	switch {
-	case method == "GET" && urlPath == "/api/get-group":
-		return true
-	case method == "GET" && urlPath == "/api/get-groups":
-		return true
-	case method == "GET" && urlPath == "/api/get-users":
-		return true
-	case method == "GET" && urlPath == "/api/get-user-count":
-		return true
-	case method == "GET" && urlPath == "/api/get-form":
-		return true
-	case method == "POST" && urlPath == "/api/add-user":
-		return true
-	case method == "POST" && urlPath == "/api/update-user":
-		return true
-	case method == "POST" && urlPath == "/api/delete-user":
-		return true
-	case method == "POST" && urlPath == "/api/remove-user-from-group":
-		return true
-	default:
-		return false
-	}
+	return groupAdminAllowedApis[method+" "+urlPath]
 }
 
 func isAllowedInDemoMode(subOwner string, subName string, method string, urlPath string, objOwner string, objName string) bool {
