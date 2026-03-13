@@ -229,6 +229,8 @@ type User struct {
 	Ldap       string            `xorm:"ldap varchar(100)" json:"ldap"`
 	Properties map[string]string `json:"properties"`
 
+	ThirdPartyLinks []*ThirdPartyLink `xorm:"-" json:"thirdPartyLinks,omitempty"`
+
 	Roles       []*Role       `json:"roles"`
 	Permissions []*Permission `json:"permissions"`
 	Groups      []string      `xorm:"mediumtext" json:"groups"`
@@ -661,7 +663,17 @@ func GetUser(id string) (*User, error) {
 	if err != nil {
 		return nil, err
 	}
-	return getUser(owner, name)
+	user, err := getUser(owner, name)
+	if err != nil {
+		return nil, err
+	}
+	if user != nil {
+		err = user.PopulateThirdPartyLinks()
+		if err != nil {
+			return nil, err
+		}
+	}
+	return user, nil
 }
 
 func GetUserNoCheck(id string) (*User, error) {
@@ -1262,8 +1274,30 @@ func LinkUserAccount(user *User, field string, value string) (bool, error) {
 	return SetUserField(user, field, value)
 }
 
+func LinkFlexibleCustomAccount(user *User, providerName string, providerId string) (bool, error) {
+	if providerId == "" {
+		return DeleteThirdPartyLink(user.Owner, user.Name, providerName)
+	}
+	link := &ThirdPartyLink{
+		Owner:        user.Owner,
+		UserName:     user.Name,
+		ProviderName: providerName,
+		ProviderId:   providerId,
+	}
+	return AddThirdPartyLink(link)
+}
+
 func (user *User) GetId() string {
 	return fmt.Sprintf("%s/%s", user.Owner, user.Name)
+}
+
+func (user *User) PopulateThirdPartyLinks() error {
+	links, err := GetThirdPartyLinksByUser(user.Owner, user.Name)
+	if err != nil {
+		return err
+	}
+	user.ThirdPartyLinks = links
+	return nil
 }
 
 func (user *User) GetFriendlyName() string {
