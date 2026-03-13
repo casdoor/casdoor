@@ -1245,6 +1245,8 @@
     "End time - Tooltip": "订阅的结束时间",
     "Error": "错误",
     "Expired": "已过期",
+    "Is auto renew": "自动续订",
+    "Is auto renew - Tooltip": "订阅到期后自动续订",
     "New Subscription": "添加订阅",
     "Start time": "开始时间",
     "Start time - Tooltip": "订阅的开始时间",
