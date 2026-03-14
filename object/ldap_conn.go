@@ -714,7 +714,7 @@ func GetExistUuids(owner string, uuids []string) ([]string, error) {
 	var existUuids []string
 
 	// PostgreSQL only supports up to 65535 parameters per query, so we batch the uuids
-	const batchSize = 1000
+	const batchSize = 100
 	tableNamePrefix := conf.GetConfigString("tableNamePrefix")
 	for i := 0; i < len(uuids); i += batchSize {
 		end := i + batchSize
