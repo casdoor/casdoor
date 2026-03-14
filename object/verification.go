@@ -42,9 +42,11 @@ type verifyCodeErrorInfo struct {
 	lastWrongTime time.Time
 }
 
-var ResetLinkReg *regexp.Regexp
-var verifyCodeErrorMap = map[string]*verifyCodeErrorInfo{}
-var verifyCodeErrorMapLock sync.Mutex
+var (
+	ResetLinkReg           *regexp.Regexp
+	verifyCodeErrorMap     = map[string]*verifyCodeErrorInfo{}
+	verifyCodeErrorMapLock sync.Mutex
+)
 
 const (
 	VerificationSuccess = iota
