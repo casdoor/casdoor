@@ -21,7 +21,9 @@ import (
 	"math/rand"
 	"net/url"
 	"regexp"
+	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/casdoor/casdoor/conf"
@@ -35,7 +37,16 @@ type VerifyResult struct {
 	Msg  string
 }
 
-var ResetLinkReg *regexp.Regexp
+type verifyCodeErrorInfo struct {
+	wrongTimes    int
+	lastWrongTime time.Time
+}
+
+var (
+	ResetLinkReg           *regexp.Regexp
+	verifyCodeErrorMap     = map[string]*verifyCodeErrorInfo{}
+	verifyCodeErrorMapLock sync.Mutex
+)
 
 const (
 	VerificationSuccess = iota
@@ -325,6 +336,107 @@ func CheckSigninCode(user *User, dest, code, lang string) error {
 		return resetUserSigninErrorTimes(user)
 	case wrongCodeError:
 		return recordSigninErrorInfo(user, lang)
+	default:
+		return errors.New(result.Msg)
+	}
+}
+
+// getVerifyCodeErrorKey builds the in-memory key for verify-code failed attempt tracking
+func getVerifyCodeErrorKey(user *User, dest string) string {
+	if user == nil {
+		return dest
+	}
+
+	return fmt.Sprintf("%s:%s", user.GetId(), dest)
+}
+
+func checkVerifyCodeErrorTimes(user *User, dest, lang string) error {
+	failedSigninLimit, failedSigninFrozenTime, err := GetFailedSigninConfigByUser(user)
+	if err != nil {
+		return err
+	}
+
+	key := getVerifyCodeErrorKey(user, dest)
+
+	verifyCodeErrorMapLock.Lock()
+	defer verifyCodeErrorMapLock.Unlock()
+
+	errorInfo, ok := verifyCodeErrorMap[key]
+	if !ok || errorInfo == nil {
+		return nil
+	}
+
+	if errorInfo.wrongTimes < failedSigninLimit {
+		return nil
+	}
+
+	minutes := failedSigninFrozenTime - int(time.Now().UTC().Sub(errorInfo.lastWrongTime).Minutes())
+	if minutes > 0 {
+		return fmt.Errorf(i18n.Translate(lang, "check:You have entered the wrong password or code too many times, please wait for %d minutes and try again"), minutes)
+	}
+
+	delete(verifyCodeErrorMap, key)
+	return nil
+}
+
+func recordVerifyCodeErrorInfo(user *User, dest, lang string) error {
+	failedSigninLimit, failedSigninFrozenTime, err := GetFailedSigninConfigByUser(user)
+	if err != nil {
+		return err
+	}
+
+	key := getVerifyCodeErrorKey(user, dest)
+
+	verifyCodeErrorMapLock.Lock()
+	defer verifyCodeErrorMapLock.Unlock()
+
+	errorInfo, ok := verifyCodeErrorMap[key]
+	if !ok || errorInfo == nil {
+		errorInfo = &verifyCodeErrorInfo{}
+		verifyCodeErrorMap[key] = errorInfo
+	}
+
+	if errorInfo.wrongTimes < failedSigninLimit {
+		errorInfo.wrongTimes++
+	}
+
+	if errorInfo.wrongTimes >= failedSigninLimit {
+		errorInfo.lastWrongTime = time.Now().UTC()
+	}
+
+	leftChances := failedSigninLimit - errorInfo.wrongTimes
+	if leftChances >= 0 {
+		return fmt.Errorf(i18n.Translate(lang, "check:password or code is incorrect, you have %s remaining chances"), strconv.Itoa(leftChances))
+	}
+
+	return fmt.Errorf(i18n.Translate(lang, "check:You have entered the wrong password or code too many times, please wait for %d minutes and try again"), failedSigninFrozenTime)
+}
+
+func resetVerifyCodeErrorTimes(user *User, dest string) {
+	key := getVerifyCodeErrorKey(user, dest)
+
+	verifyCodeErrorMapLock.Lock()
+	defer verifyCodeErrorMapLock.Unlock()
+
+	delete(verifyCodeErrorMap, key)
+}
+
+func CheckVerifyCodeWithLimit(user *User, dest, code, lang string) error {
+	if err := checkVerifyCodeErrorTimes(user, dest, lang); err != nil {
+		return err
+	}
+
+	result, err := CheckVerificationCode(dest, code, lang)
+	if err != nil {
+		return err
+	}
+
+	switch result.Code {
+	case VerificationSuccess:
+		resetVerifyCodeErrorTimes(user, dest)
+		return nil
+	case wrongCodeError:
+		return recordVerifyCodeErrorInfo(user, dest, lang)
 	default:
 		return errors.New(result.Msg)
 	}
