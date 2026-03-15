@@ -1016,6 +1016,39 @@ export function isLocalAdminUser(account) {
   return account.isAdmin === true || isAdminUser(account);
 }
 
+export function isGroupAdminUser(account) {
+  if (account === undefined || account === null) {
+    return false;
+  }
+  return Array.isArray(account.managedGroups) && account.managedGroups.length > 0;
+}
+
+export function isGroupAdminOrAdmin(account) {
+  return isLocalAdminUser(account) || isGroupAdminUser(account);
+}
+
+export function getManagementNavItems(account) {
+  const organization = account?.organization;
+  if (isLocalAdminUser(account)) {
+    return organization?.navItems;
+  }
+
+  const userNavItems = Array.isArray(organization?.userNavItems) ? organization.userNavItems : [];
+  if (!isGroupAdminUser(account)) {
+    return organization?.userNavItems ?? [];
+  }
+
+  const groupAdminNavItems = userNavItems.filter((item) => !["all", "/", "/shortcuts", "/apps"].includes(item));
+  return Array.from(new Set(["/groups", "/users", ...groupAdminNavItems]));
+}
+
+export function getGroupsEntryPath(account) {
+  if (isGroupAdminUser(account) && !isLocalAdminUser(account) && account?.owner) {
+    return `/trees/${account.owner}`;
+  }
+  return "/groups";
+}
+
 export function deepCopy(obj) {
   return Object.assign({}, obj);
 }

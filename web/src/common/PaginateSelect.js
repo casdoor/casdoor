@@ -17,6 +17,7 @@ import {Select, Spin} from "antd";
 import * as Setting from "../Setting";
 
 const SCROLL_BOTTOM_OFFSET = 20;
+const EMPTY_OPTIONS = [];
 
 const defaultOptionMapper = (item) => {
   if (item === null) {
@@ -38,6 +39,7 @@ function PaginateSelect(props) {
     fetchPage,
     buildFetchArgs,
     optionMapper = defaultOptionMapper,
+    extraOptions = EMPTY_OPTIONS,
     pageSize = Setting.MAX_PAGE_SIZE,
     debounceMs = Setting.SEARCH_DEBOUNCE_MS,
     onError,
@@ -257,6 +259,7 @@ function PaginateSelect(props) {
 
   const mergedLoading = selectLoading ?? loading;
   const mergedNotFound = mergedLoading ? <Spin size="small" /> : notFoundContent;
+  const mergedOptions = React.useMemo(() => mergeOptions(extraOptions, options, false), [extraOptions, options, mergeOptions]);
 
   return (
     <Select
@@ -264,7 +267,7 @@ function PaginateSelect(props) {
       virtual={virtual}
       showSearch={showSearch}
       filterOption={filterOption}
-      options={options}
+      options={mergedOptions}
       loading={mergedLoading}
       notFoundContent={mergedNotFound}
       onSearch={showSearch ? handleSearch : undefined}

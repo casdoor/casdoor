@@ -176,6 +176,13 @@ class UserListPage extends BaseListPage {
   }
 
   getOrganization(organizationName) {
+    if (this.props.account?.organization?.name === organizationName) {
+      this.setState({
+        organization: this.props.account.organization,
+      });
+      return;
+    }
+
     OrganizationBackend.getOrganization("admin", organizationName)
       .then((res) => {
         if (res.status === "ok") {
@@ -547,7 +554,7 @@ class UserListPage extends BaseListPage {
             <Space>
               <Button size={isTreePage ? "small" : "middle"} type="primary" onClick={() => {
                 this.impersonateUser(`${record.owner}/${record.name}`);
-              }}>{i18next.t("general:Impersonation")}
+              }} hidden={!Setting.isLocalAdminUser(this.props.account)}>{i18next.t("general:Impersonation")}
               </Button>
               <Button size={isTreePage ? "small" : "middle"} type="primary" onClick={() => {
                 sessionStorage.setItem("userListUrl", window.location.pathname);
@@ -559,13 +566,13 @@ class UserListPage extends BaseListPage {
                   text={i18next.t("general:remove")}
                   title={i18next.t("general:Sure to remove") + `: ${record.name} ?`}
                   onConfirm={() => this.removeUserFromGroup(index)}
-                  disabled={disabled}
+                  disabled={disabled || !Setting.isGroupAdminOrAdmin(this.props.account)}
                   size="small"
                 /> : null}
               <PopconfirmModal
                 title={i18next.t("general:Sure to delete") + `: ${record.name} ?`}
                 onConfirm={() => this.deleteUser(index)}
-                disabled={disabled}
+                disabled={disabled || !Setting.isGroupAdminOrAdmin(this.props.account)}
                 size={isTreePage ? "small" : "default"}
               />
             </Space>
@@ -588,10 +595,10 @@ class UserListPage extends BaseListPage {
           title={() => (
             <div>
               {i18next.t("general:Users")}&nbsp;&nbsp;&nbsp;&nbsp;
-              <Button style={{marginRight: "15px"}} type="primary" size="small" onClick={this.addUser.bind(this)}>{i18next.t("general:Add")} </Button>
+              {Setting.isGroupAdminOrAdmin(this.props.account) ? <Button style={{marginRight: "15px"}} type="primary" size="small" onClick={this.addUser.bind(this)}>{i18next.t("general:Add")} </Button> : null}
               <Button style={{marginRight: "15px"}} type="primary" size="small" onClick={this.generateDownloadTemplate}>{i18next.t("general:Download template")} </Button>
               {
-                this.renderUpload()
+                Setting.isLocalAdminUser(this.props.account) ? this.renderUpload() : null
               }
             </div>
           )}

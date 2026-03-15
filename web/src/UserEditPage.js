@@ -206,7 +206,7 @@ class UserEditPage extends React.Component {
   }
 
   getGroups(organizationName) {
-    if (!Setting.isLocalAdminUser(this.props.account)) {
+    if (!Setting.isGroupAdminOrAdmin(this.props.account)) {
       return;
     }
 
@@ -281,7 +281,7 @@ class UserEditPage extends React.Component {
   }
 
   isSelfOrAdmin() {
-    return this.isSelf() || Setting.isLocalAdminUser(this.props.account);
+    return this.isSelf() || Setting.isGroupAdminOrAdmin(this.props.account);
   }
 
   getCountryCode() {
@@ -337,7 +337,7 @@ class UserEditPage extends React.Component {
   };
 
   renderAccountItem(accountItem) {
-    const isAdmin = Setting.isLocalAdminUser(this.props.account);
+    const isAdmin = Setting.isGroupAdminOrAdmin(this.props.account);
 
     let disabled = false;
     if (accountItem.modifyRule === "Self") {
@@ -512,7 +512,7 @@ class UserEditPage extends React.Component {
             <Input
               value={this.state.user.email}
               style={{width: "280Px"}}
-              disabled={!Setting.isLocalAdminUser(this.props.account) ? true : disabled}
+              disabled={!Setting.isGroupAdminOrAdmin(this.props.account) ? true : disabled}
               onChange={e => {
                 this.updateUserField("email", e.target.value);
               }}
@@ -543,7 +543,7 @@ class UserEditPage extends React.Component {
               />
               <Input value={this.state.user.phone}
                 style={{width: "70%"}}
-                disabled={!Setting.isLocalAdminUser(this.props.account) ? true : disabled}
+                disabled={!Setting.isGroupAdminOrAdmin(this.props.account) ? true : disabled}
                 onChange={e => {
                   this.updateUserField("phone", e.target.value);
                 }} />
@@ -1389,7 +1389,7 @@ class UserEditPage extends React.Component {
       return false;
     }
 
-    const isAdmin = Setting.isLocalAdminUser(this.props.account);
+    const isAdmin = Setting.isGroupAdminOrAdmin(this.props.account);
     if (item.viewRule === "Self") {
       if (!this.isSelfOrAdmin()) {
         return false;
@@ -1592,7 +1592,7 @@ class UserEditPage extends React.Component {
             if (userListUrl !== null) {
               this.props.history.push(userListUrl);
             } else {
-              if (Setting.isLocalAdminUser(this.props.account)) {
+              if (Setting.isGroupAdminOrAdmin(this.props.account)) {
                 this.props.history.push("/users");
               } else {
                 this.props.history.push("/");

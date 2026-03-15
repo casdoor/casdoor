@@ -112,7 +112,7 @@ import RuleListPage from "./RuleListPage";
 function ManagementPage(props) {
   const [menuVisible, setMenuVisible] = useState(false);
   const organization = props.account?.organization;
-  const navItems = Setting.isLocalAdminUser(props.account) ? organization?.navItems : (organization?.userNavItems ?? []);
+  const navItems = Setting.getManagementNavItems(props.account);
   const widgetItems = organization?.widgetItems;
 
   function logout() {
@@ -315,9 +315,9 @@ function ManagementPage(props) {
       </a>, "#"));
     }
 
-    res.push(Setting.getItem(<Link style={{color: textColor}} to="/organizations">{i18next.t("general:User Management")}</Link>, "/orgs", <AppstoreTwoTone twoToneColor={twoToneColor} />, [
+    res.push(Setting.getItem(<Link style={{color: textColor}} to={Setting.getGroupsEntryPath(props.account)}>{i18next.t("general:User Management")}</Link>, "/orgs", <AppstoreTwoTone twoToneColor={twoToneColor} />, [
       Setting.getItem(<Link to="/organizations">{i18next.t("general:Organizations")}</Link>, "/organizations"),
-      Setting.getItem(<Link to="/groups">{i18next.t("general:Groups")}</Link>, "/groups"),
+      Setting.getItem(<Link to={Setting.getGroupsEntryPath(props.account)}>{i18next.t("general:Groups")}</Link>, "/groups"),
       Setting.getItem(<Link to="/users">{i18next.t("general:Users")}</Link>, "/users"),
       Setting.getItem(<Link to="/invitations">{i18next.t("general:Invitations")}</Link>, "/invitations"),
     ]));

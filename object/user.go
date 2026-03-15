@@ -32,6 +32,7 @@ import (
 	"github.com/go-webauthn/webauthn/webauthn"
 	"github.com/xorm-io/builder"
 	"github.com/xorm-io/core"
+	"github.com/xorm-io/xorm"
 )
 
 const (
@@ -229,9 +230,11 @@ type User struct {
 	Ldap       string            `xorm:"ldap varchar(100)" json:"ldap"`
 	Properties map[string]string `json:"properties"`
 
-	Roles       []*Role       `json:"roles"`
-	Permissions []*Permission `json:"permissions"`
-	Groups      []string      `xorm:"mediumtext" json:"groups"`
+	Roles         []*Role       `json:"roles"`
+	Permissions   []*Permission `json:"permissions"`
+	Groups        []string      `xorm:"mediumtext" json:"groups"`
+	ManagedGroups []string      `xorm:"-" json:"managedGroups,omitempty"`
+	CanManage     bool          `xorm:"-" json:"canManage,omitempty"`
 
 	LastChangePasswordTime string `xorm:"varchar(100)" json:"lastChangePasswordTime"`
 	LastSigninWrongTime    string `xorm:"varchar(100)" json:"lastSigninWrongTime"`
@@ -839,7 +842,7 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 	}
 
 	if name != user.Name {
-		err := userChangeTrigger(name, user.Name)
+		err := userChangeTrigger(owner, name, user.Name)
 		if err != nil {
 			return false, err
 		}
@@ -937,7 +940,7 @@ func UpdateUserForAllFields(id string, user *User) (bool, error) {
 	}
 
 	if name != user.Name {
-		err := userChangeTrigger(name, user.Name)
+		err := userChangeTrigger(owner, name, user.Name)
 		if err != nil {
 			return false, err
 		}
@@ -1314,7 +1317,7 @@ func DeleteGroupForUser(user string, group string) (bool, error) {
 	return userEnforcer.DeleteGroupForUser(user, group)
 }
 
-func userChangeTrigger(oldName string, newName string) error {
+func userChangeTrigger(owner string, oldName string, newName string) error {
 	session := ormer.Engine.NewSession()
 	defer session.Close()
 
@@ -1332,12 +1335,12 @@ func userChangeTrigger(oldName string, newName string) error {
 	for _, role := range roles {
 		for j, u := range role.Users {
 			// u = organization/username
-			owner, name, err := util.GetOwnerAndNameFromIdWithError(u)
+			userOwner, name, err := util.GetOwnerAndNameFromIdWithError(u)
 			if err != nil {
 				return err
 			}
 			if name == oldName {
-				role.Users[j] = util.GetId(owner, newName)
+				role.Users[j] = util.GetId(userOwner, newName)
 			}
 		}
 		_, err = session.Where("name=?", role.Name).And("owner=?", role.Owner).Update(role)
@@ -1358,18 +1361,23 @@ func userChangeTrigger(oldName string, newName string) error {
 			}
 
 			// u = organization/username
-			owner, name, err := util.GetOwnerAndNameFromIdWithError(u)
+			userOwner, name, err := util.GetOwnerAndNameFromIdWithError(u)
 			if err != nil {
 				return err
 			}
 			if name == oldName {
-				permission.Users[j] = util.GetId(owner, newName)
+				permission.Users[j] = util.GetId(userOwner, newName)
 			}
 		}
 		_, err = session.Where("name=?", permission.Name).And("owner=?", permission.Owner).Update(permission)
 		if err != nil {
 			return err
 		}
+	}
+
+	err = syncGroupAdminUsersOnUserRename(session, owner, oldName, newName)
+	if err != nil {
+		return err
 	}
 
 	resource := new(Resource)
@@ -1380,6 +1388,35 @@ func userChangeTrigger(oldName string, newName string) error {
 	}
 
 	return session.Commit()
+}
+
+func syncGroupAdminUsersOnUserRename(session *xorm.Session, owner string, oldName string, newName string) error {
+	var groups []*Group
+	err := ormer.Engine.Where("owner = ?", owner).Find(&groups)
+	if err != nil {
+		return err
+	}
+
+	for _, group := range groups {
+		updated := false
+		for i, adminUser := range group.AdminUsers {
+			if adminUser == oldName {
+				group.AdminUsers[i] = newName
+				updated = true
+			}
+		}
+		if !updated {
+			continue
+		}
+
+		group.AdminUsers = normalizeGroupAdminUsers(group.AdminUsers)
+		_, err = session.Where("name=?", group.Name).And("owner=?", group.Owner).Update(group)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func (user *User) IsMfaEnabled() bool {

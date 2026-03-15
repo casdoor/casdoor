@@ -16,9 +16,10 @@ import React from "react";
 import {Button, Card, Col, Input, Row, Select, Switch} from "antd";
 import * as GroupBackend from "./backend/GroupBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
+import * as UserBackend from "./backend/UserBackend";
 import * as Setting from "./Setting";
+import PaginateSelect from "./common/PaginateSelect";
 import i18next from "i18next";
-
 class GroupEditPage extends React.Component {
   constructor(props) {
     super(props);
@@ -27,7 +28,7 @@ class GroupEditPage extends React.Component {
       groupName: props.match.params.groupName,
       organizationName: props.organizationName !== undefined ? props.organizationName : props.match.params.organizationName,
       group: null,
-      users: [],
+      adminUserOptions: [],
       groups: [],
       organizations: [],
       mode: props.location.mode !== undefined ? props.location.mode : "edit",
@@ -41,14 +42,46 @@ class GroupEditPage extends React.Component {
   }
 
   getGroup() {
-    GroupBackend.getGroup(this.state.organizationName, this.state.groupName)
+    GroupBackend.getGroup(this.state.organizationName, this.state.groupName, true)
       .then((res) => {
         if (res.status === "ok") {
           this.setState({
             group: res.data,
+            adminUserOptions: this.getAdminUserOptions(res.data.adminUserDetails ?? []),
           });
         }
       });
+  }
+
+  fetchAdminUsers(owner, page, pageSize, searchText) {
+    if (!searchText) {
+      return UserBackend.getUsers(owner, page, pageSize);
+    }
+
+    return Promise.all([
+      UserBackend.getUsers(owner, page, pageSize, "name", searchText),
+      UserBackend.getUsers(owner, page, pageSize, "displayName", searchText),
+    ]).then(([nameResult, displayNameResult]) => {
+      if (nameResult.status !== "ok") {
+        return nameResult;
+      }
+      if (displayNameResult.status !== "ok") {
+        return displayNameResult;
+      }
+
+      const userMap = new Map();
+      [...(nameResult.data || []), ...(displayNameResult.data || [])].forEach((user) => {
+        if (user?.name) {
+          userMap.set(user.name, user);
+        }
+      });
+
+      return {
+        status: "ok",
+        data: Array.from(userMap.values()),
+        hasMore: (nameResult.data || []).length === pageSize || (displayNameResult.data || []).length === pageSize,
+      };
+    });
   }
 
   getGroups(organizationName) {
@@ -60,6 +93,22 @@ class GroupEditPage extends React.Component {
           });
         }
       });
+  }
+
+  getUserOptionLabel(user) {
+    if (!user) {
+      return "";
+    }
+
+    if (user.displayName && user.displayName !== user.name) {
+      return `${user.displayName} (${user.name})`;
+    }
+
+    return user.name;
+  }
+
+  getAdminUserOptions(users) {
+    return (users || []).map((user) => Setting.getOption(this.getUserOptionLabel(user), user.name));
   }
 
   getOrganizations() {
@@ -121,6 +170,7 @@ class GroupEditPage extends React.Component {
               onChange={(value => {
                 this.updateGroupField("owner", value);
                 this.getGroups(value);
+                this.setState({adminUserOptions: []});
               })}
               options={this.state.organizations.map((organization) => Setting.getOption(organization.displayName, organization.name))
               } />
@@ -175,6 +225,27 @@ class GroupEditPage extends React.Component {
                 this.updateGroupField("parentId", value);
               }
               )} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("group:Admin users"), i18next.t("group:Admin users - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <PaginateSelect virtual mode="multiple" style={{width: "100%"}}
+              value={this.state.group.adminUsers ?? []}
+              fetchPage={(owner, page, pageSize, searchText) => this.fetchAdminUsers(owner, page, pageSize, searchText)}
+              buildFetchArgs={({page, pageSize, searchText}) => {
+                return [this.state.group.owner, page, pageSize, searchText];
+              }}
+              extraOptions={this.state.adminUserOptions}
+              reloadKey={this.state.group.owner}
+              optionMapper={(user) => Setting.getOption(this.getUserOptionLabel(user), user.name)}
+              filterOption={false}
+              onChange={(value => {
+                this.updateGroupField("adminUsers", value);
+              })}
+            />
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
