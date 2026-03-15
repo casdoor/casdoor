@@ -1495,8 +1495,8 @@ class ApplicationEditPage extends React.Component {
           <Button style={{marginLeft: "20px"}} type="primary" onClick={() => this.submitApplicationEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
           {this.state.mode === "add" ? <Button style={{marginLeft: "20px"}} onClick={() => this.deleteApplication()}>{i18next.t("general:Cancel")}</Button> : null}
         </div>
-      } style={{margin: (Setting.isMobile()) ? "5px" : {}, height: "calc(100vh - 145px - 48px)", overflow: "hidden"}}
-      styles={{body: {height: "100%"}}} type="inner">
+      } style={{margin: (Setting.isMobile()) ? "5px" : {}, height: "calc(100vh - 145px - 48px)", overflow: "hidden", display: "flex", flexDirection: "column"}}
+      styles={{body: {flex: 1, overflow: "hidden", minHeight: 0}}} type="inner">
         <Layout style={{background: "inherit", height: "100%", overflow: "auto"}}>
           {
             this.state.menuMode === "horizontal" || !this.state.menuMode ? (
