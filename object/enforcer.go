@@ -171,7 +171,7 @@ func (enforcer *Enforcer) InitEnforcer() error {
 		return err
 	}
 
-	casbinEnforcer, err := casbin.NewEnforcer(m.Model, a.Adapter)
+	casbinEnforcer, err := casbin.NewEnforcer(m.Model, newSafeAdapter(a.Adapter, a.engine, a.getTableName()))
 	if err != nil {
 		return err
 	}
