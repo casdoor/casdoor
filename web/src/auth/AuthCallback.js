@@ -116,7 +116,7 @@ class AuthCallback extends React.Component {
           createFormAndSubmit(oAuthParams?.redirectUri, params);
         } else {
           const code = res.data;
-          Setting.goToLink(`${oAuthParams.redirectUri}${concatChar}code=${code}&state=${oAuthParams.state}`);
+          Setting.goToLink(`${oAuthParams.redirectUri}${concatChar}code=${encodeURIComponent(code)}&state=${encodeURIComponent(oAuthParams.state)}`);
         }
       } else if (responseTypes.includes("token") || responseTypes.includes("id_token")) {
         if (res.data3) {
@@ -135,7 +135,7 @@ class AuthCallback extends React.Component {
           createFormAndSubmit(oAuthParams?.redirectUri, params);
         } else {
           const token = res.data;
-          Setting.goToLink(`${oAuthParams.redirectUri}${concatChar}${responseType}=${token}&state=${oAuthParams.state}&token_type=bearer`);
+          Setting.goToLink(`${oAuthParams.redirectUri}${concatChar}${responseType}=${encodeURIComponent(token)}&state=${encodeURIComponent(oAuthParams.state)}&token_type=bearer`);
         }
       } else if (responseType === "link") {
         let from = innerParams.get("from");

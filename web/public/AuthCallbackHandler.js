@@ -144,9 +144,6 @@
     }
 
     var state = getRefinedValue(innerParams.get("state"));
-    if (state.indexOf("/auth/oauth2/login.php?wantsurl") === 0) {
-      state = encodeURIComponent(state);
-    }
     if (redirectUri.indexOf("#") !== -1 && state === "") {
       state = getRawGetParameter("state", queryString);
     }
@@ -373,7 +370,7 @@
       if (responseMode === "form_post") {
         createFormAndSubmit(oAuthParams.redirectUri, {code: res.data, state: oAuthParams.state});
       } else {
-        window.location.replace(oAuthParams.redirectUri + concatChar + "code=" + res.data + "&state=" + oAuthParams.state);
+        window.location.replace(oAuthParams.redirectUri + concatChar + "code=" + encodeURIComponent(res.data) + "&state=" + encodeURIComponent(oAuthParams.state));
       }
       return;
     }
@@ -387,7 +384,7 @@
           state: oAuthParams.state
         });
       } else {
-        window.location.replace(oAuthParams.redirectUri + concatChar + responseType + "=" + res.data + "&state=" + oAuthParams.state + "&token_type=bearer");
+        window.location.replace(oAuthParams.redirectUri + concatChar + responseType + "=" + encodeURIComponent(res.data) + "&state=" + encodeURIComponent(oAuthParams.state) + "&token_type=bearer");
       }
       return;
     }
