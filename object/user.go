@@ -1327,7 +1327,7 @@ func userChangeTrigger(owner string, oldName string, newName string) error {
 	}
 
 	var roles []*Role
-	err = ormer.Engine.Find(&roles)
+	err = ormer.Engine.Where("owner=?", owner).Find(&roles)
 	if err != nil {
 		return err
 	}
@@ -1350,7 +1350,7 @@ func userChangeTrigger(owner string, oldName string, newName string) error {
 	}
 
 	var permissions []*Permission
-	err = ormer.Engine.Find(&permissions)
+	err = ormer.Engine.Where("owner=?", owner).Find(&permissions)
 	if err != nil {
 		return err
 	}
