@@ -1497,7 +1497,7 @@ class ApplicationEditPage extends React.Component {
         </div>
       } style={{margin: (Setting.isMobile()) ? "5px" : {}, height: "calc(100vh - 145px - 48px)", overflow: "hidden"}}
       styles={{body: {height: "100%"}}} type="inner">
-        <Layout style={{background: "inherit", height: "100%", overflow: "auto"}}>
+        <Layout style={{background: "inherit", height: "100%"}}>
           {
             this.state.menuMode === "horizontal" || !this.state.menuMode ? (
               <Header style={{background: "inherit", padding: "0px", position: "sticky", top: 0, height: 38, minHeight: 38}}>
@@ -1548,7 +1548,10 @@ class ApplicationEditPage extends React.Component {
                   </Menu>
                 </Sider>) : null
             }
-            <Content style={{padding: "15px"}}>
+            <Content style={{padding: "15px",
+              overflowY: "auto",
+              height: "100%",
+              paddingBottom: "80px"}}>
               {this.renderApplicationForm()}
             </Content>
           </Layout>
