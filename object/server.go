@@ -1,3 +1,17 @@
+// Copyright 2026 The Casdoor Authors. All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package object
 
 import (
@@ -94,7 +108,7 @@ func GetServerCount(owner, field, value string) (int64, error) {
 func GetPaginationServers(owner string, offset, limit int, field, value, sortField, sortOrder string) ([]*Server, error) {
 	servers := []*Server{}
 	session := GetSession(owner, offset, limit, field, value, sortField, sortOrder)
-	err := session.Where("owner = ? or owner = ?", "admin", owner).Find(&servers)
+	err := session.Where("owner = ?", owner).Find(&servers)
 	if err != nil {
 		return servers, err
 	}

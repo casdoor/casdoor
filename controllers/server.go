@@ -157,19 +157,19 @@ func (c *ApiController) DeleteServer() {
 // @Title ProxyServer
 // @Tag Server API
 // @Description proxy request to the upstream MCP server by Server URL
-// @Param   organization     path    string  true        "The organization name of the server"
+// @Param   owner    path    string  true        "The owner name of the server"
 // @Param   name     path    string  true        "The name of the server"
 // @Success 200 {object} controllers.Response The Response object
-// @router /server/:organization/:name [get,post]
+// @router /server/:owner/:name [get,post]
 func (c *ApiController) ProxyServer() {
-	organization := c.Ctx.Input.Param(":owner")
+	owner := c.Ctx.Input.Param(":owner")
 	name := c.Ctx.Input.Param(":name")
-	if util.IsStringsEmpty(organization, name) {
+	if util.IsStringsEmpty(owner, name) {
 		c.ResponseError("invalid server identifier")
 		return
 	}
 
-	server, err := object.GetServer(util.GetId(organization, name))
+	server, err := object.GetServer(util.GetId(owner, name))
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -200,7 +200,7 @@ func (c *ApiController) ProxyServer() {
 	}
 	proxy.Director = func(request *http.Request) {
 		incomingPath := request.URL.Path
-		prefix := fmt.Sprintf("/api/server/%s/%s", organization, name)
+		prefix := fmt.Sprintf("/api/server/%s/%s", owner, name)
 		suffixPath := strings.TrimPrefix(incomingPath, prefix)
 		if suffixPath == incomingPath {
 			suffixPath = ""

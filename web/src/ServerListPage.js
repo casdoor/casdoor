@@ -198,7 +198,7 @@ class ServerListPage extends BaseListPage {
         scroll={{x: "max-content"}}
         dataSource={servers}
         columns={filteredColumns}
-        rowKey="name"
+        rowKey={record => `${record.owner}/${record.name}`}
         pagination={{...this.state.pagination, ...paginationProps}}
         loading={this.state.loading}
         onChange={this.handleTableChange}
