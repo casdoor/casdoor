@@ -138,7 +138,7 @@ class ServerEditPage extends React.Component {
     return (
       <Card size="small" title={
         <div>
-          {this.state.mode === "add" ? "New Server" : "Edit Server"}&nbsp;&nbsp;&nbsp;&nbsp;
+          {this.state.mode === "add" ? i18next.t("server:New MCP Server") : i18next.t("server:Edit MCP Server")}&nbsp;&nbsp;&nbsp;&nbsp;
           <Button onClick={() => this.submitServerEdit(false)}>{i18next.t("general:Save")}</Button>
           <Button style={{marginLeft: "20px"}} type="primary" onClick={() => this.submitServerEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
           {this.state.mode === "add" ? <Button style={{marginLeft: "20px"}} onClick={() => this.deleteServer()}>{i18next.t("general:Cancel")}</Button> : null}

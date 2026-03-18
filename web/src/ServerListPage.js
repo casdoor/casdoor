@@ -206,7 +206,7 @@ class ServerListPage extends BaseListPage {
         bordered
         title={() => (
           <div>
-			Servers&nbsp;&nbsp;&nbsp;&nbsp;
+            {i18next.t("server:Edit MCP Server")}&nbsp;&nbsp;&nbsp;&nbsp;
             <Button type="primary" size="small" onClick={() => this.addServer()}>{i18next.t("general:Add")}</Button>
           </div>
         )}
