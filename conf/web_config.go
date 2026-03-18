@@ -20,7 +20,6 @@ type WebConfig struct {
 	DefaultLanguage  string `json:"defaultLanguage"`
 	IsDemoMode       bool   `json:"isDemoMode"`
 	StaticBaseUrl    string `json:"staticBaseUrl"`
-	CasvisorUrl      string `json:"casvisorUrl"`
 	AiAssistantUrl   string `json:"aiAssistantUrl"`
 }
 
@@ -32,7 +31,6 @@ func GetWebConfig() *WebConfig {
 	config.DefaultLanguage = GetLanguage(GetConfigString("defaultLanguage"))
 	config.IsDemoMode = IsDemoMode()
 	config.StaticBaseUrl = GetConfigString("staticBaseUrl")
-	config.CasvisorUrl = GetConfigString("casvisorUrl")
 	config.AiAssistantUrl = GetConfigString("aiAssistantUrl")
 
 	return config

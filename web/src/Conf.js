@@ -14,7 +14,7 @@
 
 export const DefaultApplication = "app-built-in";
 
-export let CasvisorUrl = "";
+export const CasvisorUrl = "";
 
 export let ShowGithubCorner = false;
 export let IsDemoMode = false;
@@ -59,9 +59,6 @@ export function setConfig(config) {
   }
   if (config.staticBaseUrl !== undefined) {
     StaticBaseUrl = config.staticBaseUrl;
-  }
-  if (config.casvisorUrl !== undefined) {
-    CasvisorUrl = config.casvisorUrl;
   }
   if (config.aiAssistantUrl !== undefined) {
     AiAssistantUrl = config.aiAssistantUrl;
