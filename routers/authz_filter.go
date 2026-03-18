@@ -105,6 +105,10 @@ func getObject(ctx *context.Context) (string, string, error) {
 		return getMcpObject(ctx)
 	}
 
+	if strings.HasPrefix(path, "/api/server/") {
+		return ctx.Input.Param(":owner"), ctx.Input.Param(":name"), nil
+	}
+
 	if method == http.MethodGet {
 		if ctx.Request.URL.Path == "/api/get-policies" {
 			if ctx.Input.Query("id") == "/" {
