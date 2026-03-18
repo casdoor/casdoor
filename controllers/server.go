@@ -20,7 +20,6 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"net/url"
-	"strings"
 
 	"github.com/beego/beego/v2/server/web/pagination"
 	"github.com/casdoor/casdoor/object"
@@ -199,13 +198,6 @@ func (c *ApiController) ProxyServer() {
 		c.ResponseError(fmt.Sprintf("failed to proxy server request: %s", proxyErr.Error()))
 	}
 	proxy.Director = func(request *http.Request) {
-		incomingPath := request.URL.Path
-		prefix := fmt.Sprintf("/api/server/%s/%s", owner, name)
-		suffixPath := strings.TrimPrefix(incomingPath, prefix)
-		if suffixPath == incomingPath {
-			suffixPath = ""
-		}
-
 		request.URL.Scheme = targetUrl.Scheme
 		request.URL.Host = targetUrl.Host
 		request.Host = targetUrl.Host

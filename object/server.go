@@ -28,7 +28,7 @@ type Server struct {
 	UpdatedTime string `xorm:"varchar(100)" json:"updatedTime"`
 	DisplayName string `xorm:"varchar(100)" json:"displayName"`
 
-	Url         string `xorm:"varchar(100)" json:"url"`
+	Url         string `xorm:"varchar(500)" json:"url"`
 	Application string `xorm:"varchar(100)" json:"application"`
 }
 
@@ -108,7 +108,7 @@ func GetServerCount(owner, field, value string) (int64, error) {
 func GetPaginationServers(owner string, offset, limit int, field, value, sortField, sortOrder string) ([]*Server, error) {
 	servers := []*Server{}
 	session := GetSession(owner, offset, limit, field, value, sortField, sortOrder)
-	err := session.Where("owner = ?", owner).Find(&servers)
+	err := session.Find(&servers)
 	if err != nil {
 		return servers, err
 	}
