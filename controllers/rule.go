@@ -26,6 +26,13 @@ import (
 	"github.com/hsluoyz/modsecurity-go/seclang/parser"
 )
 
+// GetRules
+// @Title GetRules
+// @Tag Rule API
+// @Description get rules
+// @Param   owner     query    string  true        "The owner of rules"
+// @Success 200 {array} object.Rule The Response object
+// @router /get-rules [get]
 func (c *ApiController) GetRules() {
 	owner := c.Ctx.Input.Query("owner")
 	if owner == "admin" {
@@ -65,6 +72,13 @@ func (c *ApiController) GetRules() {
 	}
 }
 
+// GetRule
+// @Title GetRule
+// @Tag Rule API
+// @Description get rule
+// @Param   id     query    string  true        "The id ( owner/name ) of the rule"
+// @Success 200 {object} object.Rule The Response object
+// @router /get-rule [get]
 func (c *ApiController) GetRule() {
 	id := c.Ctx.Input.Query("id")
 	rule, err := object.GetRule(id)
@@ -76,6 +90,13 @@ func (c *ApiController) GetRule() {
 	c.ResponseOk(rule)
 }
 
+// AddRule
+// @Title AddRule
+// @Tag Rule API
+// @Description add rule
+// @Param   body    body   object.Rule  true        "The details of the rule"
+// @Success 200 {object} controllers.Response The Response object
+// @router /add-rule [post]
 func (c *ApiController) AddRule() {
 	currentTime := util.GetCurrentTime()
 	rule := object.Rule{
@@ -96,6 +117,14 @@ func (c *ApiController) AddRule() {
 	c.ServeJSON()
 }
 
+// UpdateRule
+// @Title UpdateRule
+// @Tag Rule API
+// @Description update rule
+// @Param   id     query    string  true        "The id ( owner/name ) of the rule"
+// @Param   body    body   object.Rule  true        "The details of the rule"
+// @Success 200 {object} controllers.Response The Response object
+// @router /update-rule [post]
 func (c *ApiController) UpdateRule() {
 	var rule object.Rule
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &rule)
@@ -115,6 +144,13 @@ func (c *ApiController) UpdateRule() {
 	c.ServeJSON()
 }
 
+// DeleteRule
+// @Title DeleteRule
+// @Tag Rule API
+// @Description delete rule
+// @Param   body    body   object.Rule  true        "The details of the rule"
+// @Success 200 {object} controllers.Response The Response object
+// @router /delete-rule [post]
 func (c *ApiController) DeleteRule() {
 	var rule object.Rule
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &rule)

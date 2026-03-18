@@ -22,6 +22,12 @@ import (
 	"github.com/casdoor/casdoor/util"
 )
 
+// GetGlobalSites
+// @Title GetGlobalSites
+// @Tag Site API
+// @Description get global sites
+// @Success 200 {array} object.Site The Response object
+// @router /get-global-sites [get]
 func (c *ApiController) GetGlobalSites() {
 	sites, err := object.GetGlobalSites()
 	if err != nil {
@@ -32,6 +38,13 @@ func (c *ApiController) GetGlobalSites() {
 	c.ResponseOk(object.GetMaskedSites(sites, util.GetHostname()))
 }
 
+// GetSites
+// @Title GetSites
+// @Tag Site API
+// @Description get sites
+// @Param   owner     query    string  true        "The owner of sites"
+// @Success 200 {array} object.Site The Response object
+// @router /get-sites [get]
 func (c *ApiController) GetSites() {
 	owner := c.Ctx.Input.Query("owner")
 	if owner == "admin" {
@@ -72,6 +85,13 @@ func (c *ApiController) GetSites() {
 	c.ResponseOk(object.GetMaskedSites(sites, util.GetHostname()), paginator.Nums())
 }
 
+// GetSite
+// @Title GetSite
+// @Tag Site API
+// @Description get site
+// @Param   id     query    string  true        "The id ( owner/name ) of the site"
+// @Success 200 {object} object.Site The Response object
+// @router /get-site [get]
 func (c *ApiController) GetSite() {
 	id := c.Ctx.Input.Query("id")
 
@@ -84,6 +104,14 @@ func (c *ApiController) GetSite() {
 	c.ResponseOk(object.GetMaskedSite(site, util.GetHostname()))
 }
 
+// UpdateSite
+// @Title UpdateSite
+// @Tag Site API
+// @Description update site
+// @Param   id     query    string  true        "The id ( owner/name ) of the site"
+// @Param   body    body   object.Site  true        "The details of the site"
+// @Success 200 {object} controllers.Response The Response object
+// @router /update-site [post]
 func (c *ApiController) UpdateSite() {
 	id := c.Ctx.Input.Query("id")
 
@@ -98,6 +126,13 @@ func (c *ApiController) UpdateSite() {
 	c.ServeJSON()
 }
 
+// AddSite
+// @Title AddSite
+// @Tag Site API
+// @Description add site
+// @Param   body    body   object.Site  true        "The details of the site"
+// @Success 200 {object} controllers.Response The Response object
+// @router /add-site [post]
 func (c *ApiController) AddSite() {
 	var site object.Site
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &site)
@@ -110,6 +145,13 @@ func (c *ApiController) AddSite() {
 	c.ServeJSON()
 }
 
+// DeleteSite
+// @Title DeleteSite
+// @Tag Site API
+// @Description delete site
+// @Param   body    body   object.Site  true        "The details of the site"
+// @Success 200 {object} controllers.Response The Response object
+// @router /delete-site [post]
 func (c *ApiController) DeleteSite() {
 	var site object.Site
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &site)
