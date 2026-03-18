@@ -155,6 +155,8 @@ func serveProviderHintRedirectPage(ctx *context.Context) bool {
 </html>
 `
 
+	_ = util.AppendWebConfigCookie(ctx)
+
 	ctx.Output.Header("Content-Type", "text/html; charset=utf-8")
 	ctx.Output.Header("Cache-Control", "no-store")
 	http.ServeContent(ctx.ResponseWriter, ctx.Request, "provider-hint-redirect.html", time.Now(), strings.NewReader(providerHintRedirectHtml))
@@ -220,6 +222,8 @@ func serveAuthCallbackPage(ctx *context.Context) bool {
 </body>
 </html>
 `
+
+	_ = util.AppendWebConfigCookie(ctx)
 
 	ctx.Output.Header("Content-Type", "text/html; charset=utf-8")
 	ctx.Output.Header("Cache-Control", "no-store")

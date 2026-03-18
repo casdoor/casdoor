@@ -14,13 +14,15 @@
 
 export const DefaultApplication = "app-built-in";
 
-export const CasvisorUrl = "";
+export let CasvisorUrl = "";
 
-export const ShowGithubCorner = false;
-export const IsDemoMode = false;
+export let ShowGithubCorner = false;
+export let IsDemoMode = false;
 
-export const ForceLanguage = "";
-export const DefaultLanguage = "en";
+export let ForceLanguage = "";
+export let DefaultLanguage = "en";
+
+export let StaticBaseUrl = "https://cdn.casbin.org";
 
 export const InitThemeAlgorithm = true;
 export const ThemeDefault = {
@@ -33,7 +35,35 @@ export const ThemeDefault = {
 export const CustomFooter = null;
 
 // Blank or null to hide Ai Assistant button
-export const AiAssistantUrl = "https://ai.casbin.com";
+export let AiAssistantUrl = "https://ai.casbin.com";
 
 // Maximum number of navbar items before switching from flat to grouped menu
 export const MaxItemsForFlatMenu = 7;
+
+// setConfig updates the frontend configuration from backend
+export function setConfig(config) {
+  if (!config) {
+    return;
+  }
+  if (config.showGithubCorner !== undefined) {
+    ShowGithubCorner = config.showGithubCorner;
+  }
+  if (config.isDemoMode !== undefined) {
+    IsDemoMode = config.isDemoMode;
+  }
+  if (config.forceLanguage !== undefined) {
+    ForceLanguage = config.forceLanguage;
+  }
+  if (config.defaultLanguage !== undefined) {
+    DefaultLanguage = config.defaultLanguage;
+  }
+  if (config.staticBaseUrl !== undefined) {
+    StaticBaseUrl = config.staticBaseUrl;
+  }
+  if (config.casvisorUrl !== undefined) {
+    CasvisorUrl = config.casvisorUrl;
+  }
+  if (config.aiAssistantUrl !== undefined) {
+    AiAssistantUrl = config.aiAssistantUrl;
+  }
+}

@@ -185,6 +185,12 @@ func StaticFilter(ctx *context.Context) {
 	if strings.Contains(path, "/../") || !util.FileExist(path) {
 		path = webBuildFolder + "/index.html"
 	}
+	if strings.HasSuffix(path, "/index.html") {
+		err = util.AppendWebConfigCookie(ctx)
+		if err != nil {
+			fmt.Println(err)
+		}
+	}
 	if !util.FileExist(path) {
 		dir, err := os.Getwd()
 		if err != nil {

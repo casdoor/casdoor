@@ -125,6 +125,7 @@ class App extends Component {
       application: undefined,
     };
     Setting.initServerUrl();
+    Setting.initWebConfig();
     Auth.initAuthWithConfig({
       serverUrl: Setting.ServerUrl,
       appName: Conf.DefaultApplication, // the application used in Casdoor root path: "/"

@@ -558,6 +558,11 @@ func (c *ApiController) SsoLogout() {
 // @router /get-account [get]
 func (c *ApiController) GetAccount() {
 	var err error
+	err = util.AppendWebConfigCookie(c.Ctx)
+	if err != nil {
+		fmt.Println(err)
+	}
+
 	user, ok := c.RequireSignedInUser()
 	if !ok {
 		return

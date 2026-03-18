@@ -27,12 +27,13 @@ import * as phoneNumber from "libphonenumber-js";
 import moment from "moment";
 import {MfaAuthVerifyForm, NextMfa, RequiredMfa} from "./auth/mfa/MfaAuthVerifyForm";
 import {EmailMfaType, SmsMfaType, TotpMfaType} from "./auth/MfaSetupPage";
+import * as Cookie from "cookie";
 
 const {Option} = Select;
 
 export const ServerUrl = "";
 
-export const StaticBaseUrl = "https://cdn.casbin.org";
+export let StaticBaseUrl = "https://cdn.casbin.org";
 
 export const MAX_PAGE_SIZE = 25;
 export const SEARCH_DEBOUNCE_MS = 300;
@@ -696,6 +697,20 @@ export function initServerUrl() {
 export function isLocalhost() {
   const hostname = window.location.hostname;
   return hostname === "localhost";
+}
+
+export function initWebConfig() {
+  const curCookie = Cookie.parse(document.cookie);
+  if (curCookie["jsonWebConfig"] && curCookie["jsonWebConfig"] !== "null") {
+    const encoded = curCookie["jsonWebConfig"];
+    const decoded = decodeURIComponent(encoded.replace(/\+/g, " "));
+    const config = JSON.parse(decoded);
+    Conf.setConfig(config);
+
+    if (config.staticBaseUrl !== undefined && config.staticBaseUrl !== "") {
+      StaticBaseUrl = config.staticBaseUrl;
+    }
+  }
 }
 
 export function getFullServerUrl() {
