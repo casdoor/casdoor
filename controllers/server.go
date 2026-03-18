@@ -20,6 +20,7 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"net/url"
+	"strings"
 
 	"github.com/beego/beego/v2/server/web/pagination"
 	"github.com/casdoor/casdoor/object"
@@ -161,7 +162,7 @@ func (c *ApiController) DeleteServer() {
 // @Success 200 {object} controllers.Response The Response object
 // @router /server/:organization/:name [get,post]
 func (c *ApiController) ProxyServer() {
-	organization := c.Ctx.Input.Param(":organization")
+	organization := c.Ctx.Input.Param(":owner")
 	name := c.Ctx.Input.Param(":name")
 	if util.IsStringsEmpty(organization, name) {
 		c.ResponseError("invalid server identifier")
@@ -197,29 +198,22 @@ func (c *ApiController) ProxyServer() {
 		c.Ctx.Output.SetStatus(http.StatusBadGateway)
 		c.ResponseError(fmt.Sprintf("failed to proxy server request: %s", proxyErr.Error()))
 	}
-	//proxy.Director = func(request *http.Request) {
-	//	incomingPath := request.URL.Path
-	//	prefix := fmt.Sprintf("/api/server/%s/%s", organization, name)
-	//	suffixPath := strings.TrimPrefix(incomingPath, prefix)
-	//	if suffixPath == incomingPath {
-	//		suffixPath = ""
-	//	}
-	//
-	//	request.URL.Scheme = targetUrl.Scheme
-	//	request.URL.Host = targetUrl.Host
-	//	request.Host = targetUrl.Host
-	//	request.URL.Path = joinProxyPath(targetUrl.Path, suffixPath)
-	//	request.URL.RawPath = ""
-	//
-	//	if targetUrl.RawQuery == "" {
-	//		return
-	//	}
-	//	if request.URL.RawQuery == "" {
-	//		request.URL.RawQuery = targetUrl.RawQuery
-	//		return
-	//	}
-	//	request.URL.RawQuery = targetUrl.RawQuery + "&" + request.URL.RawQuery
-	//}
+	proxy.Director = func(request *http.Request) {
+		incomingPath := request.URL.Path
+		prefix := fmt.Sprintf("/api/server/%s/%s", organization, name)
+		suffixPath := strings.TrimPrefix(incomingPath, prefix)
+		if suffixPath == incomingPath {
+			suffixPath = ""
+		}
+
+		request.URL.Scheme = targetUrl.Scheme
+		request.URL.Host = targetUrl.Host
+		request.Host = targetUrl.Host
+		request.URL.Path = targetUrl.Path
+		request.URL.RawPath = ""
+
+		request.URL.RawQuery = targetUrl.RawQuery
+	}
 
 	proxy.ServeHTTP(c.Ctx.ResponseWriter, c.Ctx.Request)
 }
