@@ -41,6 +41,7 @@ type Adapter struct {
 	Database     string `xorm:"varchar(100)" json:"database"`
 
 	*xormadapter.Adapter `xorm:"-" json:"-"`
+	engine               *xorm.Engine
 }
 
 func GetAdapterCount(owner, field, value string) (int64, error) {
@@ -146,7 +147,7 @@ func (adapter *Adapter) GetId() string {
 }
 
 func (adapter *Adapter) InitAdapter() error {
-	if adapter.Adapter != nil {
+	if adapter.Adapter != nil && adapter.engine != nil {
 		return nil
 	}
 
@@ -199,10 +200,14 @@ func (adapter *Adapter) InitAdapter() error {
 
 	tableName := adapter.Table
 
-	adapter.Adapter, err = xormadapter.NewAdapterByEngineWithTableName(engine, tableName, "")
+	xa, err := xormadapter.NewAdapterByEngineWithTableName(engine, tableName, "")
 	if err != nil {
+		_ = engine.Close()
 		return err
 	}
+
+	adapter.engine = engine
+	adapter.Adapter = xa
 
 	return nil
 }
