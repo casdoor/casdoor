@@ -21,6 +21,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/beego/beego/v2/core/logs"
 	"github.com/casdoor/casdoor/form"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
@@ -560,7 +561,7 @@ func (c *ApiController) GetAccount() {
 	var err error
 	err = util.AppendWebConfigCookie(c.Ctx)
 	if err != nil {
-		fmt.Println(err)
+		logs.Error("AppendWebConfigCookie failed in GetAccount, error: %s", err)
 	}
 
 	user, ok := c.RequireSignedInUser()

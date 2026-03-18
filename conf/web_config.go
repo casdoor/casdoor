@@ -27,7 +27,7 @@ func GetWebConfig() *WebConfig {
 	config := &WebConfig{}
 
 	config.ShowGithubCorner = GetConfigBool("showGithubCorner")
-	config.ForceLanguage = GetConfigString("forceLanguage")
+	config.ForceLanguage = GetLanguage(GetConfigString("forceLanguage"))
 	config.DefaultLanguage = GetLanguage(GetConfigString("defaultLanguage"))
 	config.IsDemoMode = IsDemoMode()
 	config.StaticBaseUrl = GetConfigString("staticBaseUrl")

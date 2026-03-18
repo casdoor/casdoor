@@ -21,6 +21,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/beego/beego/v2/core/logs"
 	"github.com/beego/beego/v2/server/web/context"
 	"github.com/casdoor/casdoor/util"
 )
@@ -155,7 +156,10 @@ func serveProviderHintRedirectPage(ctx *context.Context) bool {
 </html>
 `
 
-	_ = util.AppendWebConfigCookie(ctx)
+	err := util.AppendWebConfigCookie(ctx)
+	if err != nil {
+		logs.Error("AppendWebConfigCookie failed in serveProviderHintRedirectPage, error: %s", err)
+	}
 
 	ctx.Output.Header("Content-Type", "text/html; charset=utf-8")
 	ctx.Output.Header("Cache-Control", "no-store")
@@ -223,7 +227,10 @@ func serveAuthCallbackPage(ctx *context.Context) bool {
 </html>
 `
 
-	_ = util.AppendWebConfigCookie(ctx)
+	err := util.AppendWebConfigCookie(ctx)
+	if err != nil {
+		logs.Error("AppendWebConfigCookie failed in serveAuthCallbackPage, error: %s", err)
+	}
 
 	ctx.Output.Header("Content-Type", "text/html; charset=utf-8")
 	ctx.Output.Header("Cache-Control", "no-store")

@@ -17,6 +17,9 @@ import * as Conf from "./Conf";
 import {initReactI18next} from "react-i18next";
 import en from "./locales/en/data.json";
 
+// Load backend-provided frontend config before language detection runs.
+Conf.initConfigFromCookie();
+
 const resourcesToBackend = (res) => ({
   type: "backend",
   init(services, backendOptions, i18nextOptions) {/* use services and options */},

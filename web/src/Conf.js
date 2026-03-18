@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import * as Cookie from "cookie";
+
 export const DefaultApplication = "app-built-in";
 
 export const CasvisorUrl = "";
@@ -62,5 +64,24 @@ export function setConfig(config) {
   }
   if (config.aiAssistantUrl !== undefined) {
     AiAssistantUrl = config.aiAssistantUrl;
+  }
+}
+
+export function initConfigFromCookie() {
+  if (typeof document === "undefined") {
+    return;
+  }
+
+  try {
+    const curCookie = Cookie.parse(document.cookie);
+    const raw = curCookie["jsonWebConfig"];
+    if (!raw || raw === "null") {
+      return;
+    }
+
+    const config = JSON.parse(raw);
+    setConfig(config);
+  } catch {
+    // Ignore malformed cookie and keep compile-time defaults.
   }
 }

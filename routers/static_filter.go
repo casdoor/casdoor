@@ -25,6 +25,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/beego/beego/v2/core/logs"
 	"github.com/beego/beego/v2/server/web/context"
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/object"
@@ -188,7 +189,7 @@ func StaticFilter(ctx *context.Context) {
 	if strings.HasSuffix(path, "/index.html") {
 		err = util.AppendWebConfigCookie(ctx)
 		if err != nil {
-			fmt.Println(err)
+			logs.Error("AppendWebConfigCookie failed in StaticFilter, error: %s", err)
 		}
 	}
 	if !util.FileExist(path) {
