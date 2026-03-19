@@ -4505,6 +4505,9 @@ definitions:
   casbin.Enforcer:
     title: Enforcer
     type: object
+  casvisorsdk.Record:
+    title: Record
+    type: object
   controllers.AuthForm:
     title: AuthForm
     type: object
