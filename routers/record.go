@@ -20,7 +20,6 @@ import (
 	"github.com/beego/beego/v2/server/web/context"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
-	"github.com/casvisor/casvisor-go-sdk/casvisorsdk"
 )
 
 func getUser(ctx *context.Context) (username string) {
@@ -113,7 +112,7 @@ func AfterRecordMessage(ctx *context.Context) {
 		record.Organization, record.User = owner, user
 	}
 
-	var record2 *casvisorsdk.Record
+	var record2 *object.Record
 	recordSignup := ctx.Input.Params()["recordSignup"]
 	if recordSignup == "true" {
 		record2 = object.CopyRecord(record)

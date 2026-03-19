@@ -24,7 +24,6 @@ import (
 	"github.com/beego/beego/v2/server/web/context"
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/util"
-	"github.com/casvisor/casvisor-go-sdk/casvisorsdk"
 )
 
 var (
@@ -38,7 +37,25 @@ func init() {
 }
 
 type Record struct {
-	casvisorsdk.Record
+	Id int `xorm:"int notnull pk autoincr" json:"id"`
+
+	Owner       string `xorm:"varchar(100) index" json:"owner"`
+	Name        string `xorm:"varchar(100) index" json:"name"`
+	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
+
+	Organization string `xorm:"varchar(100)" json:"organization"`
+	ClientIp     string `xorm:"varchar(100)" json:"clientIp"`
+	User         string `xorm:"varchar(100)" json:"user"`
+	Method       string `xorm:"varchar(100)" json:"method"`
+	RequestUri   string `xorm:"varchar(1000)" json:"requestUri"`
+	Action       string `xorm:"varchar(1000)" json:"action"`
+	Language     string `xorm:"varchar(100)" json:"language"`
+
+	Object     string `xorm:"mediumtext" json:"object"`
+	Response   string `xorm:"mediumtext" json:"response"`
+	StatusCode int    `json:"statusCode"`
+
+	IsTriggered bool `json:"isTriggered"`
 }
 
 type Response struct {
@@ -52,7 +69,7 @@ func maskPassword(recordString string) string {
 	return passwordRegex.ReplaceAllString(recordString, "\"password\":\"***\"")
 }
 
-func NewRecord(ctx *context.Context) (*casvisorsdk.Record, error) {
+func NewRecord(ctx *context.Context) (*Record, error) {
 	clientIp := strings.Replace(util.GetClientIpFromRequest(ctx.Request), ": ", "", -1)
 	action := strings.Replace(ctx.Request.URL.Path, "/api/", "", -1)
 	if strings.HasPrefix(action, "notify-payment") {
@@ -100,7 +117,7 @@ func NewRecord(ctx *context.Context) (*casvisorsdk.Record, error) {
 	}
 	languageCode := conf.GetLanguage(language)
 
-	record := casvisorsdk.Record{
+	record := Record{
 		Name:        util.GenerateId(),
 		CreatedTime: util.GetCurrentTime(),
 		ClientIp:    clientIp,
@@ -117,12 +134,12 @@ func NewRecord(ctx *context.Context) (*casvisorsdk.Record, error) {
 	return &record, nil
 }
 
-func addRecord(record *casvisorsdk.Record) (int64, error) {
+func addRecord(record *Record) (int64, error) {
 	affected, err := ormer.Engine.Insert(record)
 	return affected, err
 }
 
-func AddRecord(record *casvisorsdk.Record) bool {
+func AddRecord(record *Record) bool {
 	if logPostOnly {
 		if record.Method == "GET" {
 			return false
@@ -143,30 +160,21 @@ func AddRecord(record *casvisorsdk.Record) bool {
 		fmt.Println(errWebhook)
 	}
 
-	if casvisorsdk.GetClient() == nil {
-		affected, err := addRecord(record)
-		if err != nil {
-			panic(err)
-		}
-
-		return affected != 0
-	}
-
-	affected, err := casvisorsdk.AddRecord(record)
+	affected, err := addRecord(record)
 	if err != nil {
-		fmt.Printf("AddRecord() error: %s", err.Error())
+		panic(err)
 	}
 
-	return affected
+	return affected != 0
 }
 
-func GetRecordCount(field, value string, filterRecord *casvisorsdk.Record) (int64, error) {
+func GetRecordCount(field, value string, filterRecord *Record) (int64, error) {
 	session := GetSession("", -1, -1, field, value, "", "")
 	return session.Count(filterRecord)
 }
 
-func GetRecords() ([]*casvisorsdk.Record, error) {
-	records := []*casvisorsdk.Record{}
+func GetRecords() ([]*Record, error) {
+	records := []*Record{}
 	err := ormer.Engine.Desc("id").Find(&records)
 	if err != nil {
 		return records, err
@@ -175,8 +183,8 @@ func GetRecords() ([]*casvisorsdk.Record, error) {
 	return records, nil
 }
 
-func GetPaginationRecords(offset, limit int, field, value, sortField, sortOrder string, filterRecord *casvisorsdk.Record) ([]*casvisorsdk.Record, error) {
-	records := []*casvisorsdk.Record{}
+func GetPaginationRecords(offset, limit int, field, value, sortField, sortOrder string, filterRecord *Record) ([]*Record, error) {
+	records := []*Record{}
 
 	if sortField == "" || sortOrder == "" {
 		sortField = "id"
@@ -192,8 +200,8 @@ func GetPaginationRecords(offset, limit int, field, value, sortField, sortOrder 
 	return records, nil
 }
 
-func GetRecordsByField(record *casvisorsdk.Record) ([]*casvisorsdk.Record, error) {
-	records := []*casvisorsdk.Record{}
+func GetRecordsByField(record *Record) ([]*Record, error) {
+	records := []*Record{}
 	err := ormer.Engine.Find(&records, record)
 	if err != nil {
 		return records, err
@@ -202,8 +210,8 @@ func GetRecordsByField(record *casvisorsdk.Record) ([]*casvisorsdk.Record, error
 	return records, nil
 }
 
-func CopyRecord(record *casvisorsdk.Record) *casvisorsdk.Record {
-	res := &casvisorsdk.Record{
+func CopyRecord(record *Record) *Record {
+	res := &Record{
 		Owner:        record.Owner,
 		Name:         record.Name,
 		CreatedTime:  record.CreatedTime,
@@ -249,7 +257,7 @@ func getFilteredWebhooks(webhooks []*Webhook, organization string, action string
 	return res
 }
 
-func addWebhookRecord(webhook *Webhook, record *casvisorsdk.Record, statusCode int, respBody string, sendError error) error {
+func addWebhookRecord(webhook *Webhook, record *Record, statusCode int, respBody string, sendError error) error {
 	if statusCode == 200 {
 		return nil
 	}
@@ -258,7 +266,7 @@ func addWebhookRecord(webhook *Webhook, record *casvisorsdk.Record, statusCode i
 		respBody = respBody[0:300]
 	}
 
-	webhookRecord := &casvisorsdk.Record{
+	webhookRecord := &Record{
 		Owner:        record.Owner,
 		Name:         util.GenerateId(),
 		CreatedTime:  util.GetCurrentTime(),
@@ -304,7 +312,7 @@ func filterRecordObject(object string, objectFields []string) string {
 	return util.StructToJson(filteredObject)
 }
 
-func SendWebhooks(record *casvisorsdk.Record) error {
+func SendWebhooks(record *Record) error {
 	webhooks, err := getWebhooksByOrganization("")
 	if err != nil {
 		return err

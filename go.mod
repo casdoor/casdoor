@@ -32,7 +32,6 @@ require (
 	github.com/casdoor/notify2 v1.6.0
 	github.com/casdoor/oss v1.8.0
 	github.com/casdoor/xorm-adapter/v3 v3.1.0
-	github.com/casvisor/casvisor-go-sdk v1.4.0
 	github.com/corazawaf/coraza/v3 v3.3.3
 	github.com/dchest/captcha v0.0.0-20200903113550-03f5f0333e1f
 	github.com/elimity-com/scim v0.0.0-20230426070224-941a5eac92f3
