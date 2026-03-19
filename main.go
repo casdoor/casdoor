@@ -71,7 +71,6 @@ func main() {
 	authz.InitApi()
 	object.InitUserManager()
 	object.InitFromFile()
-	object.InitCasvisorConfig()
 	object.InitCleanupTokens()
 
 	object.InitSiteMap()

@@ -21,10 +21,9 @@ import (
 	"strings"
 
 	"github.com/casdoor/casdoor/util"
-	"github.com/casvisor/casvisor-go-sdk/casvisorsdk"
 )
 
-func sendWebhook(webhook *Webhook, record *casvisorsdk.Record, extendedUser *User) (int, string, error) {
+func sendWebhook(webhook *Webhook, record *Record, extendedUser *User) (int, string, error) {
 	client := &http.Client{}
 	userMap := make(map[string]interface{})
 	var body io.Reader
@@ -41,7 +40,7 @@ func sendWebhook(webhook *Webhook, record *casvisorsdk.Record, extendedUser *Use
 		}
 
 		type RecordEx struct {
-			casvisorsdk.Record
+			Record
 			ExtendedUser map[string]interface{} `json:"extendedUser"`
 		}
 
@@ -53,7 +52,7 @@ func sendWebhook(webhook *Webhook, record *casvisorsdk.Record, extendedUser *Use
 		body = strings.NewReader(util.StructToJson(recordEx))
 	} else {
 		type RecordEx struct {
-			casvisorsdk.Record
+			Record
 			ExtendedUser *User `xorm:"-" json:"extendedUser"`
 		}
 		recordEx := &RecordEx{

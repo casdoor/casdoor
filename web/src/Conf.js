@@ -16,8 +16,6 @@ import * as Cookie from "cookie";
 
 export const DefaultApplication = "app-built-in";
 
-export const CasvisorUrl = "";
-
 export let ShowGithubCorner = false;
 export let IsDemoMode = false;
 

@@ -26,7 +26,6 @@ import (
 	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/idp"
 	"github.com/casdoor/casdoor/util"
-	"github.com/casvisor/casvisor-go-sdk/casvisorsdk"
 	"github.com/go-webauthn/webauthn/webauthn"
 	jsoniter "github.com/json-iterator/go"
 	"github.com/xorm-io/core"
@@ -1047,7 +1046,7 @@ func TriggerWebhookForUser(action string, user *User) {
 		return
 	}
 
-	record := &casvisorsdk.Record{
+	record := &Record{
 		Name:         util.GenerateId(),
 		CreatedTime:  util.GetCurrentTime(),
 		Organization: user.Owner,

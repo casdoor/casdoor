@@ -17,8 +17,6 @@ package controllers
 import (
 	"encoding/json"
 
-	"github.com/casvisor/casvisor-go-sdk/casvisorsdk"
-
 	"github.com/beego/beego/v2/core/utils/pagination"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
@@ -59,7 +57,7 @@ func (c *ApiController) GetRecords() {
 		if c.IsGlobalAdmin() && organizationName != "" {
 			organization = organizationName
 		}
-		filterRecord := &casvisorsdk.Record{Organization: organization}
+		filterRecord := &object.Record{Organization: organization}
 		count, err := object.GetRecordCount(field, value, filterRecord)
 		if err != nil {
 			c.ResponseError(err.Error())
@@ -92,7 +90,7 @@ func (c *ApiController) GetRecordsByFilter() {
 
 	body := string(c.Ctx.Input.RequestBody)
 
-	record := &casvisorsdk.Record{}
+	record := &object.Record{}
 	err := util.JsonToStruct(body, record)
 	if err != nil {
 		c.ResponseError(err.Error())
@@ -116,7 +114,7 @@ func (c *ApiController) GetRecordsByFilter() {
 // @Success 200 {object} controllers.Response The Response object
 // @router /add-record [post]
 func (c *ApiController) AddRecord() {
-	var record casvisorsdk.Record
+	var record object.Record
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &record)
 	if err != nil {
 		c.ResponseError(err.Error())
