@@ -251,37 +251,10 @@ func SetUserOAuthProperties(organization *Organization, user *User, providerType
 		propertyName := fmt.Sprintf("oauth_%s_avatarUrl", providerType)
 
 		if organization.UsePermanentAvatar {
-			oldAvatarUrl := getUserProperty(user, propertyName)
-
-			avatarUrl := userInfo.AvatarUrl
-			permanentAvatarUrl, err := getPermanentAvatarUrl(user.Owner, user.Name, userInfo.AvatarUrl, false)
+			err := syncOAuthAvatarToPermanentStorage(organization, user, propertyName, userInfo.AvatarUrl)
 			if err != nil {
 				return false, err
 			}
-
-			if permanentAvatarUrl != "" {
-				avatarUrl = permanentAvatarUrl
-
-				if oldAvatarUrl != permanentAvatarUrl {
-					avatarUrl, err = getPermanentAvatarUrl(user.Owner, user.Name, userInfo.AvatarUrl, true)
-					if err != nil {
-						return false, err
-					}
-					if avatarUrl == "" {
-						avatarUrl = permanentAvatarUrl
-					}
-				}
-			}
-
-			setUserProperty(user, propertyName, avatarUrl)
-
-			if user.Avatar == "" ||
-				user.Avatar == organization.DefaultAvatar ||
-				user.Avatar == userInfo.AvatarUrl ||
-				(oldAvatarUrl != "" && user.Avatar == oldAvatarUrl) {
-				user.Avatar = avatarUrl
-			}
-
 		} else {
 			setUserProperty(user, propertyName, userInfo.AvatarUrl)
 			if user.Avatar == "" || user.Avatar == organization.DefaultAvatar {
@@ -317,6 +290,45 @@ func SetUserOAuthProperties(organization *Organization, user *User, providerType
 	}
 
 	return UpdateUserForAllFields(user.GetId(), user)
+}
+
+// syncOAuthAvatarToPermanentStorage ensures the user's avatar is stored in permanent storage.
+// It checks whether a permanent avatar already exists for the given sourceAvatarURL.
+// If not, it uploads the avatar and retrieves a permanent URL.
+// Finally, it updates the user's avatar fields with the resolved permanent URL.
+func syncOAuthAvatarToPermanentStorage(organization *Organization, user *User, propertyName, sourceAvatarUrl string) error {
+	oldAvatarUrl := getUserProperty(user, propertyName)
+
+	avatarUrl := sourceAvatarUrl
+	permanentAvatarUrl, err := getPermanentAvatarUrl(user.Owner, user.Name, sourceAvatarUrl, false)
+	if err != nil {
+		return err
+	}
+
+	if permanentAvatarUrl != "" {
+		avatarUrl = permanentAvatarUrl
+
+		if oldAvatarUrl != permanentAvatarUrl {
+			avatarUrl, err = getPermanentAvatarUrl(user.Owner, user.Name, sourceAvatarUrl, true)
+			if err != nil {
+				return err
+			}
+			if avatarUrl == "" {
+				avatarUrl = permanentAvatarUrl
+			}
+		}
+	}
+
+	setUserProperty(user, propertyName, avatarUrl)
+
+	if user.Avatar == "" ||
+		user.Avatar == organization.DefaultAvatar ||
+		user.Avatar == sourceAvatarUrl ||
+		(oldAvatarUrl != "" && user.Avatar == oldAvatarUrl) {
+		user.Avatar = avatarUrl
+	}
+
+	return nil
 }
 
 func applyUserMapping(user *User, extraClaims map[string]string, userMapping map[string]string) {
