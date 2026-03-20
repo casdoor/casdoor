@@ -288,7 +288,7 @@ func SetUserOAuthProperties(organization *Organization, user *User, providerType
 				user.Avatar = userInfo.AvatarUrl
 			}
 		}
-	} 
+	}
 
 	// Apply custom user mapping from provider configuration
 	if len(userMapping) > 0 && userMapping[0] != nil && len(userMapping[0]) > 0 && userInfo.Extra != nil {
