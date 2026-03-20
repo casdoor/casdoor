@@ -248,10 +248,33 @@ func SetUserOAuthProperties(organization *Organization, user *User, providerType
 	}
 
 	if userInfo.AvatarUrl != "" {
-		propertyName := fmt.Sprintf("oauth_%s_avatarUrl", providerType)
-		setUserProperty(user, propertyName, userInfo.AvatarUrl)
-		if user.Avatar == "" || user.Avatar == organization.DefaultAvatar {
-			user.Avatar = userInfo.AvatarUrl
+		if defaultStorageProvider == nil {
+			propertyName := fmt.Sprintf("oauth_%s_avatarUrl", providerType)
+			setUserProperty(user, propertyName, userInfo.AvatarUrl)
+			if user.Avatar == "" || user.Avatar == organization.DefaultAvatar {
+				user.Avatar = userInfo.AvatarUrl
+			}
+		} else {
+			propertyName := fmt.Sprintf("oauth_%s_avatarUrl", providerType)
+
+			cdnAvatarUrl, err := getPermanentAvatarUrl(user.Owner, user.Name, userInfo.AvatarUrl, false)
+			if err != nil {
+				return false, err
+			}
+
+			if getUserProperty(user, propertyName) != cdnAvatarUrl {
+				cdnAvatarUrl, err = getPermanentAvatarUrl(user.Owner, user.Name, userInfo.AvatarUrl, true)
+				if err != nil {
+					return false, err
+				}
+			}
+
+			setUserProperty(user, propertyName, cdnAvatarUrl)
+
+			if user.Avatar == "" || user.Avatar == organization.DefaultAvatar || user.Avatar == userInfo.AvatarUrl {
+				user.Avatar = cdnAvatarUrl
+				user.PermanentAvatar = cdnAvatarUrl
+			}
 		}
 	}
 
