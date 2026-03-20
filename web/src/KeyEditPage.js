@@ -23,6 +23,16 @@ import copy from "copy-to-clipboard";
 
 const {TextArea} = Input;
 const {Option} = Select;
+const fallbackScopeOptions = [
+  {value: "read", label: "read"},
+  {value: "write", label: "write"},
+  {value: "openid", label: "OpenID (openid)"},
+  {value: "profile", label: "Profile (profile)"},
+  {value: "email", label: "Email (email)"},
+  {value: "address", label: "Address (address)"},
+  {value: "phone", label: "Phone (phone)"},
+  {value: "offline_access", label: "Offline Access (offline_access)"},
+];
 
 class KeyEditPage extends React.Component {
   constructor(props) {
@@ -109,6 +119,51 @@ class KeyEditPage extends React.Component {
       });
   }
 
+  getSelectedApplication() {
+    return this.state.applications.find((application) => application.name === this.state.key.application);
+  }
+
+  getScopeOptions() {
+    const application = this.getSelectedApplication();
+    const scopeMap = new Map();
+
+    (application?.scopes || []).forEach((scopeItem) => {
+      if (!scopeItem?.name) {
+        return;
+      }
+
+      scopeMap.set(scopeItem.name, {
+        value: scopeItem.name,
+        label: scopeItem.displayName ? `${scopeItem.displayName} (${scopeItem.name})` : scopeItem.name,
+      });
+    });
+
+    (application?.customScopes || []).forEach((scopeItem) => {
+      if (!scopeItem?.scope) {
+        return;
+      }
+
+      scopeMap.set(scopeItem.scope, {
+        value: scopeItem.scope,
+        label: scopeItem.displayName ? `${scopeItem.displayName} (${scopeItem.scope})` : scopeItem.scope,
+      });
+    });
+
+    fallbackScopeOptions.forEach((scopeOption) => {
+      if (!scopeMap.has(scopeOption.value)) {
+        scopeMap.set(scopeOption.value, scopeOption);
+      }
+    });
+
+    (this.state.key.scopes || []).forEach((scope) => {
+      if (!scopeMap.has(scope)) {
+        scopeMap.set(scope, {value: scope, label: scope});
+      }
+    });
+
+    return Array.from(scopeMap.values());
+  }
+
   updateKeyField(keyField, value) {
     const key = this.state.key;
     key[keyField] = value;
@@ -126,6 +181,21 @@ class KeyEditPage extends React.Component {
     } else if (value === "organization") {
       key.user = "";
     }
+
+    this.setState({
+      key: key,
+    });
+  }
+
+  updateApplication(value) {
+    const key = this.state.key;
+    key.application = value;
+
+    const allowedScopes = new Set(this.getScopeOptions()
+      .filter((scopeOption) => scopeOption.value)
+      .map((scopeOption) => scopeOption.value));
+
+    key.scopes = (key.scopes || []).filter((scope) => allowedScopes.has(scope));
 
     this.setState({
       key: key,
@@ -224,7 +294,7 @@ class KeyEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Application"), i18next.t("general:Application - Tooltip"))} :
           </Col>
           <Col span={22}>
-            <Select virtual={false} showSearch optionFilterProp="children" style={{width: "100%"}} value={this.state.key.application} onChange={(value) => this.updateKeyField("application", value)}>
+            <Select virtual={false} showSearch optionFilterProp="children" style={{width: "100%"}} value={this.state.key.application} onChange={(value) => this.updateApplication(value)}>
               {this.state.applications.map(application => <Option key={`${application.organization}/${application.name}`} value={application.name}>{application.displayName || application.name}</Option>)}
             </Select>
           </Col>
@@ -254,13 +324,16 @@ class KeyEditPage extends React.Component {
           <Col span={22}>
             <Select
               virtual={false}
-              mode="tags"
+              mode="multiple"
+              allowClear
+              showSearch
               style={{width: "100%"}}
               value={this.state.key.scopes || []}
+              options={this.getScopeOptions()}
+              optionFilterProp="label"
+              placeholder={i18next.t("general:Please select")}
               onChange={(value) => this.updateKeyField("scopes", value)}
-            >
-              {(this.state.key.scopes || []).map(scope => <Option key={scope} value={scope}>{scope}</Option>)}
-            </Select>
+            />
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}}>
