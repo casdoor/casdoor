@@ -158,6 +158,7 @@ class OrganizationEditPage extends React.Component {
           {this.state.mode === "add" ? i18next.t("organization:New Organization") : i18next.t("organization:Edit Organization")}&nbsp;&nbsp;&nbsp;&nbsp;
           <Button onClick={() => this.submitOrganizationEdit(false)}>{i18next.t("general:Save")}</Button>
           <Button style={{marginLeft: "20px"}} type="primary" onClick={() => this.submitOrganizationEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
+          {this.state.mode !== "add" ? <Button style={{marginLeft: "20px"}} onClick={() => this.props.history.push(`/keys?type=organization&organization=${this.state.organizationName}`)}>{i18next.t("general:Keys")}</Button> : null}
           {this.state.mode === "add" ? <Button style={{marginLeft: "20px"}} onClick={() => this.deleteOrganization()}>{i18next.t("general:Cancel")}</Button> : null}
         </div>
       } style={(Setting.isMobile()) ? {margin: "5px"} : {}} type="inner">
