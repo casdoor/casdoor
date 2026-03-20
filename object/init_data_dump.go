@@ -91,6 +91,11 @@ func writeInitDataToFile(filePath string) error {
 		return err
 	}
 
+	keys, err := GetKeys("", "", "", "", "")
+	if err != nil {
+		return err
+	}
+
 	webhooks, err := GetWebhooks("", "")
 	if err != nil {
 		return err
@@ -171,6 +176,7 @@ func writeInitDataToFile(filePath string) error {
 		Roles:         roles,
 		Syncers:       syncers,
 		Tokens:        tokens,
+		Keys:          keys,
 		Webhooks:      webhooks,
 		Groups:        groups,
 		Adapters:      adapters,

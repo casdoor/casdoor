@@ -378,6 +378,11 @@ func (a *Ormer) createTable() {
 		panic(err)
 	}
 
+	err = a.Engine.Sync2(new(Key))
+	if err != nil {
+		panic(err)
+	}
+
 	err = a.Engine.Sync2(new(Product))
 	if err != nil {
 		panic(err)

@@ -34,6 +34,7 @@ type InitData struct {
 	Roles         []*Role         `json:"roles"`
 	Syncers       []*Syncer       `json:"syncers"`
 	Tokens        []*Token        `json:"tokens"`
+	Keys          []*Key          `json:"keys"`
 	Webhooks      []*Webhook      `json:"webhooks"`
 	Groups        []*Group        `json:"groups"`
 	Adapters      []*Adapter      `json:"adapters"`
@@ -105,6 +106,9 @@ func InitFromFile() {
 		}
 		for _, token := range initData.Tokens {
 			initDefinedToken(token)
+		}
+		for _, key := range initData.Keys {
+			initDefinedKey(key)
 		}
 		for _, webhook := range initData.Webhooks {
 			initDefinedWebhook(webhook)
@@ -630,6 +634,33 @@ func initDefinedToken(token *Token) {
 	}
 	token.CreatedTime = util.GetCurrentTime()
 	_, err = AddToken(token)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func initDefinedKey(key *Key) {
+	existed, err := GetKey(key.GetId())
+	if err != nil {
+		panic(err)
+	}
+
+	if existed != nil {
+		if initDataNewOnly {
+			return
+		}
+		affected, err := DeleteKey(key)
+		if err != nil {
+			panic(err)
+		}
+		if !affected {
+			panic("Fail to delete key")
+		}
+	}
+
+	key.CreatedTime = util.GetCurrentTime()
+	key.UpdatedTime = key.CreatedTime
+	_, err = AddKey(key)
 	if err != nil {
 		panic(err)
 	}

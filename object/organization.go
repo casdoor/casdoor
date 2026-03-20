@@ -557,6 +557,13 @@ func organizationChangeTrigger(oldName string, newName string) error {
 		return err
 	}
 
+	key := new(Key)
+	key.Organization = newName
+	_, err = session.Where("organization=?", oldName).Update(key)
+	if err != nil {
+		return err
+	}
+
 	webhook := new(Webhook)
 	webhook.Organization = newName
 	_, err = session.Where("organization=?", oldName).Update(webhook)
