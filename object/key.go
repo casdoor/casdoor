@@ -17,8 +17,11 @@ package object
 import (
 	"crypto/sha256"
 	"encoding/hex"
+	"errors"
 	"fmt"
+	"strings"
 
+	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/core"
 	"github.com/xorm-io/xorm"
@@ -57,6 +60,20 @@ func (key *Key) GetId() string {
 	return fmt.Sprintf("%s/%s", key.Owner, key.Name)
 }
 
+func GenerateKeySecret() string {
+	return fmt.Sprintf("casdoor_key_%s%s", util.GenerateClientId(), util.GenerateClientSecret())
+}
+
+func getKeyPreview(secret string) string {
+	if secret == "" {
+		return ""
+	}
+	if len(secret) <= 12 {
+		return secret
+	}
+	return fmt.Sprintf("%s...%s", secret[:8], secret[len(secret)-4:])
+}
+
 func getKeyHash(secret string) string {
 	hash := sha256.Sum256([]byte(secret))
 	res := hex.EncodeToString(hash[:])
@@ -64,6 +81,74 @@ func getKeyHash(secret string) string {
 		return res[:64]
 	}
 	return res
+}
+
+func (key *Key) SetSecret(secret string) {
+	key.SecretPreview = getKeyPreview(secret)
+	key.SecretHash = getKeyHash(secret)
+}
+
+func CheckKey(key *Key, lang string) error {
+	if key == nil {
+		return errors.New(i18n.Translate(lang, "general:Missing parameter"))
+	}
+
+	key.Type = strings.TrimSpace(key.Type)
+
+	if key.Owner == "" {
+		return errors.New("key owner cannot be empty")
+	}
+	if key.Name == "" {
+		return errors.New("key name cannot be empty")
+	}
+	if key.Application == "" {
+		return errors.New("key application cannot be empty")
+	}
+
+	application, err := GetApplication(util.GetId("admin", key.Application))
+	if err != nil {
+		return err
+	}
+	if application == nil {
+		return fmt.Errorf("the application: %s does not exist", key.Application)
+	}
+
+	switch key.Type {
+	case KeyTypeOrganization:
+		if key.Organization == "" {
+			return errors.New("key organization cannot be empty")
+		}
+		organization, err := GetOrganization(util.GetId("admin", key.Organization))
+		if err != nil {
+			return err
+		}
+		if organization == nil {
+			return fmt.Errorf("the organization: %s does not exist", key.Organization)
+		}
+	case KeyTypeApplication:
+		if key.Application == "" {
+			return errors.New("key application cannot be empty")
+		}
+	case KeyTypeUser:
+		if key.Organization == "" {
+			return errors.New("user key organization cannot be empty")
+		}
+		if key.User == "" {
+			return errors.New("user key user cannot be empty")
+		}
+		user, err := GetUser(util.GetId(key.Organization, key.User))
+		if err != nil {
+			return err
+		}
+		if user == nil {
+			return fmt.Errorf("the user: %s does not exist", util.GetId(key.Organization, key.User))
+		}
+	case KeyTypeGeneral:
+	default:
+		return fmt.Errorf("unsupported key type: %s", key.Type)
+	}
+
+	return nil
 }
 
 func GetKeyCount(owner, keyType, organization, application, user, field, value string) (int64, error) {

@@ -317,6 +317,13 @@ func InitAPI() {
 	web.Router("/api/delete-ldap", &controllers.ApiController{}, "POST:DeleteLdap")
 	web.Router("/api/sync-ldap-users", &controllers.ApiController{}, "POST:SyncLdapUsers")
 
+	web.Router("/api/get-keys", &controllers.ApiController{}, "GET:GetKeys")
+	web.Router("/api/get-key", &controllers.ApiController{}, "GET:GetKey")
+	web.Router("/api/add-key", &controllers.ApiController{}, "POST:AddKey")
+	web.Router("/api/update-key", &controllers.ApiController{}, "POST:UpdateKey")
+	web.Router("/api/delete-key", &controllers.ApiController{}, "POST:DeleteKey")
+	web.Router("/api/rotate-key", &controllers.ApiController{}, "POST:RotateKey")
+
 	web.Router("/api/login/oauth/access_token", &controllers.ApiController{}, "POST:GetOAuthToken")
 	web.Router("/api/login/oauth/refresh_token", &controllers.ApiController{}, "POST:RefreshToken")
 	web.Router("/api/login/oauth/introspect", &controllers.ApiController{}, "POST:IntrospectToken")
