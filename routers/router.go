@@ -155,6 +155,13 @@ func InitAPI() {
 	web.Router("/api/delete-cert", &controllers.ApiController{}, "POST:DeleteCert")
 	web.Router("/api/update-cert-domain-expire", &controllers.ApiController{}, "POST:UpdateCertDomainExpire")
 
+	web.Router("/api/get-keys", &controllers.ApiController{}, "GET:GetKeys")
+	web.Router("/api/get-global-keys", &controllers.ApiController{}, "GET:GetGlobalKeys")
+	web.Router("/api/get-key", &controllers.ApiController{}, "GET:GetKey")
+	web.Router("/api/update-key", &controllers.ApiController{}, "POST:UpdateKey")
+	web.Router("/api/add-key", &controllers.ApiController{}, "POST:AddKey")
+	web.Router("/api/delete-key", &controllers.ApiController{}, "POST:DeleteKey")
+
 	web.Router("/api/get-roles", &controllers.ApiController{}, "GET:GetRoles")
 	web.Router("/api/get-role", &controllers.ApiController{}, "GET:GetRole")
 	web.Router("/api/update-role", &controllers.ApiController{}, "POST:UpdateRole")
