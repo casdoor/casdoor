@@ -22,6 +22,19 @@ import (
 	"github.com/casdoor/casdoor/util"
 )
 
+type addKeyForm struct {
+	IsEnabled *bool `json:"isEnabled"`
+}
+
+func isAddKeyEnabledProvided(requestBody []byte) (bool, error) {
+	var form addKeyForm
+	if err := json.Unmarshal(requestBody, &form); err != nil {
+		return false, err
+	}
+
+	return form.IsEnabled != nil, nil
+}
+
 func (c *ApiController) GetKeys() {
 	owner := c.Ctx.Input.Query("owner")
 	limit := c.Ctx.Input.Query("pageSize")
@@ -139,6 +152,12 @@ func (c *ApiController) AddKey() {
 		return
 	}
 
+	isEnabledProvided, err := isAddKeyEnabledProvided(c.Ctx.Input.RequestBody)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
 	if err = object.CheckKey(&key, c.GetAcceptLanguage()); err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -154,7 +173,7 @@ func (c *ApiController) AddKey() {
 		return
 	}
 
-	if !key.IsEnabled {
+	if !isEnabledProvided {
 		key.IsEnabled = true
 	}
 
