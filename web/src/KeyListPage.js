@@ -141,6 +141,7 @@ class KeyListPage extends BaseListPage {
           {text: i18next.t("general:Organization"), value: "Organization"},
           {text: i18next.t("general:Application"), value: "Application"},
           {text: i18next.t("general:User"), value: "User"},
+          {text: "General", value: "General"},
         ],
       },
       {
