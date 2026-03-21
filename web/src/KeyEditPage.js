@@ -70,6 +70,43 @@ class KeyEditPage extends React.Component {
     };
   }
 
+  isGlobalAdmin() {
+    return Setting.isAdminUser(this.props.account);
+  }
+
+  isLocalAdmin() {
+    return Setting.isLocalAdminUser(this.props.account);
+  }
+
+  getManagedOrganization() {
+    return this.props.account?.owner ?? "";
+  }
+
+  getVisibleOrganizations() {
+    if (this.isGlobalAdmin()) {
+      return this.state.organizations;
+    }
+
+    return this.state.organizations.filter((organization) => organization.name === this.getManagedOrganization());
+  }
+
+  getApplicationOptions(key = this.state.key) {
+    let applications = this.state.applications;
+
+    if (!this.isGlobalAdmin()) {
+      applications = applications.filter((application) => application.organization === this.getManagedOrganization());
+    }
+
+    if (key && (key.type === "organization" || key.type === "user")) {
+      const targetOrganization = key.organization || (!this.isGlobalAdmin() ? this.getManagedOrganization() : "");
+      if (targetOrganization) {
+        applications = applications.filter((application) => application.organization === targetOrganization);
+      }
+    }
+
+    return applications;
+  }
+
   UNSAFE_componentWillMount() {
     if (this.state.mode !== "add") {
       this.getKey();
@@ -93,38 +130,56 @@ class KeyEditPage extends React.Component {
 
         this.setState({
           key: res.data,
+        }, () => {
+          this.syncKeyWithPermissions();
         });
       });
   }
 
   getOrganizations() {
+    if (!this.isGlobalAdmin()) {
+      this.setState({
+        organizations: [{
+          name: this.getManagedOrganization(),
+          displayName: this.getManagedOrganization(),
+        }],
+      }, () => {
+        this.syncKeyWithPermissions();
+      });
+      return;
+    }
+
     OrganizationBackend.getOrganizationNames("admin")
       .then((res) => {
         if (res.status === "ok") {
           this.setState({
             organizations: res.data || [],
+          }, () => {
+            this.syncKeyWithPermissions();
           });
         }
       });
   }
 
   getApplications() {
-    ApplicationBackend.getApplications("admin")
+    const promise = this.isGlobalAdmin() ?
+      ApplicationBackend.getApplications("admin") :
+      ApplicationBackend.getApplicationsByOrganization("admin", this.getManagedOrganization());
+
+    promise
       .then((res) => {
         if (res.status === "ok") {
           this.setState({
             applications: res.data || [],
+          }, () => {
+            this.syncKeyWithPermissions();
           });
         }
       });
   }
 
-  getSelectedApplication() {
-    return this.state.applications.find((application) => application.name === this.state.key.application);
-  }
-
-  getScopeOptions() {
-    const application = this.getSelectedApplication();
+  getScopeOptions(key = this.state.key) {
+    const application = this.state.applications.find((item) => item.name === key.application);
     const scopeMap = new Map();
 
     (application?.scopes || []).forEach((scopeItem) => {
@@ -155,7 +210,7 @@ class KeyEditPage extends React.Component {
       }
     });
 
-    (this.state.key.scopes || []).forEach((scope) => {
+    (key.scopes || []).forEach((scope) => {
       if (!scopeMap.has(scope)) {
         scopeMap.set(scope, {value: scope, label: scope});
       }
@@ -168,22 +223,16 @@ class KeyEditPage extends React.Component {
     const key = this.state.key;
     key[keyField] = value;
     this.setState({
-      key: key,
+      key: this.normalizeKeyForPermissions(key),
     });
   }
 
   updateKeyType(value) {
     const key = this.state.key;
     key.type = value;
-    if (value === "general" || value === "application") {
-      key.organization = "";
-      key.user = "";
-    } else if (value === "organization") {
-      key.user = "";
-    }
 
     this.setState({
-      key: key,
+      key: this.normalizeKeyForPermissions(key),
     });
   }
 
@@ -191,14 +240,8 @@ class KeyEditPage extends React.Component {
     const key = this.state.key;
     key.application = value;
 
-    const allowedScopes = new Set(this.getScopeOptions()
-      .filter((scopeOption) => scopeOption.value)
-      .map((scopeOption) => scopeOption.value));
-
-    key.scopes = (key.scopes || []).filter((scope) => allowedScopes.has(scope));
-
     this.setState({
-      key: key,
+      key: this.normalizeKeyForPermissions(key),
     });
   }
 
@@ -215,6 +258,60 @@ class KeyEditPage extends React.Component {
 
   isUserKey() {
     return this.state.key?.type === "user";
+  }
+
+  getTypeOptions() {
+    if (!this.isLocalAdmin()) {
+      return [{value: "user", label: i18next.t("general:User")}];
+    }
+
+    return [
+      {value: "organization", label: i18next.t("general:Organization")},
+      {value: "application", label: i18next.t("general:Application")},
+      {value: "user", label: i18next.t("general:User")},
+      {value: "general", label: "General"},
+    ];
+  }
+
+  normalizeKeyForPermissions(key) {
+    const normalizedKey = Setting.deepCopy(key);
+
+    if (!this.isLocalAdmin()) {
+      normalizedKey.type = "user";
+      normalizedKey.organization = this.getManagedOrganization();
+      normalizedKey.user = this.props.account?.name || normalizedKey.user;
+    } else if (!this.isGlobalAdmin() && (normalizedKey.type === "organization" || normalizedKey.type === "user")) {
+      normalizedKey.organization = this.getManagedOrganization();
+    }
+
+    if (normalizedKey.type === "general" || normalizedKey.type === "application") {
+      normalizedKey.organization = "";
+      normalizedKey.user = "";
+    } else if (normalizedKey.type === "organization") {
+      normalizedKey.user = "";
+    }
+
+    const availableApplications = this.getApplicationOptions(normalizedKey);
+    if (!availableApplications.some((application) => application.name === normalizedKey.application)) {
+      normalizedKey.application = availableApplications[0]?.name || "";
+    }
+
+    const allowedScopes = new Set(this.getScopeOptions(normalizedKey)
+      .filter((scopeOption) => scopeOption.value)
+      .map((scopeOption) => scopeOption.value));
+    normalizedKey.scopes = (normalizedKey.scopes || []).filter((scope) => allowedScopes.has(scope));
+
+    return normalizedKey;
+  }
+
+  syncKeyWithPermissions() {
+    if (!this.state.key) {
+      return;
+    }
+
+    this.setState({
+      key: this.normalizeKeyForPermissions(this.state.key),
+    });
   }
 
   renderLatestApiKey() {
@@ -266,10 +363,7 @@ class KeyEditPage extends React.Component {
           </Col>
           <Col span={22}>
             <Select virtual={false} style={{width: "100%"}} value={this.state.key.type} onChange={(value) => this.updateKeyType(value)}>
-              <Option value="organization">{i18next.t("general:Organization")}</Option>
-              <Option value="application">{i18next.t("general:Application")}</Option>
-              <Option value="user">{i18next.t("general:User")}</Option>
-              <Option value="general">General</Option>
+              {this.getTypeOptions().map((item) => <Option key={item.value} value={item.value}>{item.label}</Option>)}
             </Select>
           </Col>
         </Row>
@@ -295,7 +389,7 @@ class KeyEditPage extends React.Component {
           </Col>
           <Col span={22}>
             <Select virtual={false} showSearch optionFilterProp="children" style={{width: "100%"}} value={this.state.key.application} onChange={(value) => this.updateApplication(value)}>
-              {this.state.applications.map(application => <Option key={`${application.organization}/${application.name}`} value={application.name}>{application.displayName || application.name}</Option>)}
+              {this.getApplicationOptions().map(application => <Option key={`${application.organization}/${application.name}`} value={application.name}>{application.displayName || application.name}</Option>)}
             </Select>
           </Col>
         </Row>
@@ -304,8 +398,8 @@ class KeyEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Organization"), i18next.t("general:Organization - Tooltip"))} :
           </Col>
           <Col span={22}>
-            <Select virtual={false} showSearch optionFilterProp="children" style={{width: "100%"}} allowClear value={this.state.key.organization || undefined} onChange={(value) => this.updateKeyField("organization", value ?? "")} disabled={this.state.key.type === "general" || this.state.key.type === "application"}>
-              {this.state.organizations.map(organization => <Option key={organization.name} value={organization.name}>{organization.displayName || organization.name}</Option>)}
+            <Select virtual={false} showSearch optionFilterProp="children" style={{width: "100%"}} allowClear value={this.state.key.organization || undefined} onChange={(value) => this.updateKeyField("organization", value ?? "")} disabled={this.state.key.type === "general" || this.state.key.type === "application" || !this.isGlobalAdmin()}>
+              {this.getVisibleOrganizations().map(organization => <Option key={organization.name} value={organization.name}>{organization.displayName || organization.name}</Option>)}
             </Select>
           </Col>
         </Row>
@@ -314,7 +408,7 @@ class KeyEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:User"), i18next.t("general:User - Tooltip"))} :
           </Col>
           <Col span={22}>
-            <Input value={this.state.key.user} disabled={!this.isUserKey()} onChange={e => this.updateKeyField("user", e.target.value)} />
+            <Input value={this.state.key.user} disabled={!this.isUserKey() || !this.isLocalAdmin()} onChange={e => this.updateKeyField("user", e.target.value)} />
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}}>
