@@ -2342,7 +2342,7 @@ export function filterTableColumns(columns, formItems, actionKey = "op") {
 }
 
 export function getApiPaths() {
-  const objects = ["organization", "group", "user", "application", "provider", "resource", "cert", "role", "permission", "model", "adapter", "enforcer", "session", "token", "product", "payment", "plan", "pricing", "subscription", "syncer", "webhook", "form", "invitation", "ldap", "order", "ticket", "transaction"];
+  const objects = ["organization", "group", "user", "application", "provider", "resource", "cert", "role", "permission", "model", "adapter", "enforcer", "session", "token", "key", "product", "payment", "plan", "pricing", "subscription", "syncer", "webhook", "form", "invitation", "ldap", "order", "ticket", "transaction"];
   const res = [];
 
   // Auth and user session APIs
@@ -2394,6 +2394,9 @@ export function getApiPaths() {
     }
     if (obj === "session") {
       res.push("is-session-duplicated");
+    }
+    if (obj === "key") {
+      res.push("rotate-key");
     }
   });
 
