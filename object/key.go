@@ -93,7 +93,12 @@ func CheckKey(key *Key, lang string) error {
 		return errors.New(i18n.Translate(lang, "general:Missing parameter"))
 	}
 
+	key.Owner = strings.TrimSpace(key.Owner)
+	key.Name = strings.TrimSpace(key.Name)
 	key.Type = strings.TrimSpace(key.Type)
+	key.Organization = strings.TrimSpace(key.Organization)
+	key.Application = strings.TrimSpace(key.Application)
+	key.User = strings.TrimSpace(key.User)
 
 	if key.Owner == "" {
 		return errors.New("key owner cannot be empty")
@@ -125,6 +130,9 @@ func CheckKey(key *Key, lang string) error {
 		if organization == nil {
 			return fmt.Errorf("the organization: %s does not exist", key.Organization)
 		}
+		if application.Organization != key.Organization {
+			return fmt.Errorf("the application: %s does not belong to organization: %s", key.Application, key.Organization)
+		}
 	case KeyTypeApplication:
 		if key.Application == "" {
 			return errors.New("key application cannot be empty")
@@ -142,6 +150,12 @@ func CheckKey(key *Key, lang string) error {
 		}
 		if user == nil {
 			return fmt.Errorf("the user: %s does not exist", util.GetId(key.Organization, key.User))
+		}
+		if user.Owner != key.Organization {
+			return fmt.Errorf("the user: %s does not belong to organization: %s", util.GetId(key.Organization, key.User), key.Organization)
+		}
+		if application.Organization != key.Organization {
+			return fmt.Errorf("the application: %s does not belong to organization: %s", key.Application, key.Organization)
 		}
 	case KeyTypeGeneral:
 	default:
