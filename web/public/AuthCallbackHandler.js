@@ -124,60 +124,67 @@
     return decodeURIComponent(result);
   }
 
-  function getOAuthGetParameters(innerParams, queryString) {
-    var lowercaseQueries = {};
-    innerParams.forEach(function(value, key) {
-      lowercaseQueries[key.toLowerCase()] = value;
-    });
+function getOAuthGetParameters(innerParams, queryString) {
+  var lowercaseQueries = {};
+  innerParams.forEach(function(value, key) {
+    lowercaseQueries[key.toLowerCase()] = value;
+  });
 
-    var clientId = getRefinedValue(innerParams.get("client_id"));
-    var responseType = getRefinedValue(innerParams.get("response_type"));
+  var clientId = getRefinedValue(innerParams.get("client_id"));
+  var responseType = getRefinedValue(innerParams.get("response_type"));
 
-    var redirectUri = getRawGetParameter("redirect_uri", queryString);
-    if (redirectUri === "") {
-      redirectUri = getRefinedValue(innerParams.get("redirect_uri"));
-    }
-
-    var scope = getRefinedValue(innerParams.get("scope"));
-    if (redirectUri.indexOf("#") !== -1 && scope === "") {
-      scope = getRawGetParameter("scope", queryString);
-    }
-
-    var state = getRefinedValue(innerParams.get("state"));
-    if (redirectUri.indexOf("#") !== -1 && state === "") {
-      state = getRawGetParameter("state", queryString);
-    }
-
-    return {
-      clientId: clientId,
-      responseType: responseType,
-      redirectUri: redirectUri,
-      scope: scope,
-      state: state,
-      nonce: getRefinedValue(innerParams.get("nonce")),
-      challengeMethod: getRefinedValue(innerParams.get("code_challenge_method")),
-      codeChallenge: getRefinedValue(innerParams.get("code_challenge")),
-      responseMode: getRefinedValue(innerParams.get("response_mode")),
-      relayState: getRefinedValue(lowercaseQueries["relaystate"]),
-      type: "code"
-    };
+  var redirectUri = getRawGetParameter("redirect_uri", queryString);
+  if (redirectUri === "") {
+    redirectUri = getRefinedValue(innerParams.get("redirect_uri"));
   }
 
-  function oAuthParamsToQuery(oAuthParams) {
-    if (!oAuthParams) {
-      return "";
-    }
-
-    return "?clientId=" + oAuthParams.clientId +
-      "&responseType=" + oAuthParams.responseType +
-      "&redirectUri=" + encodeURIComponent(oAuthParams.redirectUri) +
-      "&type=" + oAuthParams.type +
-      "&scope=" + oAuthParams.scope +
-      "&state=" + oAuthParams.state +
-      "&nonce=" + oAuthParams.nonce +
-      "&code_challenge_method=" + oAuthParams.challengeMethod +
-      "&code_challenge=" + oAuthParams.codeChallenge;
+  var scope = getRefinedValue(innerParams.get("scope"));
+  if (redirectUri.indexOf("#") !== -1 && scope === "") {
+    scope = getRawGetParameter("scope", queryString);
   }
+
+  var state = getRefinedValue(innerParams.get("state"));
+  if (redirectUri.indexOf("#") !== -1 && state === "") {
+    state = getRawGetParameter("state", queryString);
+  }
+
+  return {
+    clientId: clientId,
+    responseType: responseType,
+    redirectUri: redirectUri,
+    scope: scope,
+    state: state,
+    nonce: getRefinedValue(innerParams.get("nonce")),
+    challengeMethod: getRefinedValue(innerParams.get("code_challenge_method")),
+    codeChallenge: getRefinedValue(innerParams.get("code_challenge")),
+    responseMode: getRefinedValue(innerParams.get("response_mode")),
+    relayState: getRefinedValue(lowercaseQueries["relaystate"]),
+    resource: getRefinedValue(innerParams.get("resource")),
+    type: "code"
+  };
+}
+
+function oAuthParamsToQuery(oAuthParams) {
+  if (!oAuthParams) {
+    return "";
+  }
+
+  var resourceQuery = oAuthParams.resource
+    ? "&resource=" + encodeURIComponent(oAuthParams.resource)
+    : "";
+
+  return "?clientId=" + oAuthParams.clientId +
+    "&responseType=" + oAuthParams.responseType +
+    "&redirectUri=" + encodeURIComponent(oAuthParams.redirectUri) +
+    "&type=" + oAuthParams.type +
+    "&scope=" + oAuthParams.scope +
+    "&state=" + oAuthParams.state +
+    "&nonce=" + oAuthParams.nonce +
+    "&code_challenge_method=" + oAuthParams.challengeMethod +
+    "&code_challenge=" + oAuthParams.codeChallenge +
+    resourceQuery;
+}
+
 
   function createFormAndSubmit(action, params) {
     var form = document.createElement("form");
