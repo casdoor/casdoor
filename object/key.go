@@ -28,7 +28,7 @@ type Key struct {
 	UpdatedTime string `xorm:"varchar(100)" json:"updatedTime"`
 	DisplayName string `xorm:"varchar(100)" json:"displayName"`
 
-	// Type indicates the scope this key belongs to: "Organization", "Application", or "User"
+	// Type indicates the scope this key belongs to: "Organization", "Application", "User", or "General"
 	Type         string `xorm:"varchar(100)" json:"type"`
 	Organization string `xorm:"varchar(100)" json:"organization"`
 	Application  string `xorm:"varchar(100)" json:"application"`

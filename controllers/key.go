@@ -156,10 +156,26 @@ func (c *ApiController) GetKey() {
 func (c *ApiController) UpdateKey() {
 	id := c.Ctx.Input.Query("id")
 
-	var key object.Key
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &key)
+	oldKey, err := object.GetKey(id)
 	if err != nil {
 		c.ResponseError(err.Error())
+		return
+	}
+	if oldKey == nil {
+		c.Data["json"] = wrapActionResponse(false)
+		c.ServeJSON()
+		return
+	}
+
+	var key object.Key
+	err = json.Unmarshal(c.Ctx.Input.RequestBody, &key)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	if !c.IsGlobalAdmin() && oldKey.Owner != key.Owner {
+		c.ResponseError(c.T("auth:Unauthorized operation"))
 		return
 	}
 

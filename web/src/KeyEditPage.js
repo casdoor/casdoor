@@ -167,6 +167,7 @@ class KeyEditPage extends React.Component {
               <Option value="Organization">{i18next.t("general:Organization")}</Option>
               <Option value="Application">{i18next.t("general:Application")}</Option>
               <Option value="User">{i18next.t("general:User")}</Option>
+              <Option value="General">{i18next.t("general:General")}</Option>
             </Select>
           </Col>
         </Row>
