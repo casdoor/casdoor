@@ -159,6 +159,7 @@
       codeChallenge: getRefinedValue(innerParams.get("code_challenge")),
       responseMode: getRefinedValue(innerParams.get("response_mode")),
       relayState: getRefinedValue(lowercaseQueries["relaystate"]),
+      resource: getRefinedValue(innerParams.get("resource")),
       type: "code"
     };
   }
@@ -168,6 +169,10 @@
       return "";
     }
 
+    var resourceQuery = oAuthParams.resource
+      ? "&resource=" + encodeURIComponent(oAuthParams.resource)
+      : "";
+
     return "?clientId=" + oAuthParams.clientId +
       "&responseType=" + oAuthParams.responseType +
       "&redirectUri=" + encodeURIComponent(oAuthParams.redirectUri) +
@@ -176,7 +181,8 @@
       "&state=" + oAuthParams.state +
       "&nonce=" + oAuthParams.nonce +
       "&code_challenge_method=" + oAuthParams.challengeMethod +
-      "&code_challenge=" + oAuthParams.codeChallenge;
+      "&code_challenge=" + oAuthParams.codeChallenge +
+      resourceQuery;
   }
 
   function createFormAndSubmit(action, params) {
