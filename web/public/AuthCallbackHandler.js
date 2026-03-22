@@ -185,7 +185,6 @@
       resourceQuery;
   }
 
-
   function createFormAndSubmit(action, params) {
     var form = document.createElement("form");
     form.method = "post";
