@@ -32,10 +32,8 @@ import (
 )
 
 type Object struct {
-	Owner        string `json:"owner"`
-	Name         string `json:"name"`
-	AccessKey    string `json:"accessKey"`
-	AccessSecret string `json:"accessSecret"`
+	Owner string `json:"owner"`
+	Name  string `json:"name"`
 }
 
 type ObjectWithOrg struct {
@@ -47,10 +45,6 @@ func getUsername(ctx *context.Context) (username string) {
 	username, ok := ctx.Input.Session("username").(string)
 	if !ok || username == "" {
 		username, _ = getUsernameByClientIdSecret(ctx)
-	}
-
-	if username == "" {
-		username, _ = getUsernameByKeys(ctx)
 	}
 
 	session := ctx.Input.Session("SessionData")
@@ -182,30 +176,6 @@ func getObject(ctx *context.Context) (string, string, error) {
 		}
 
 		return obj.Owner, obj.Name, nil
-	}
-}
-
-func getKeys(ctx *context.Context) (string, string) {
-	method := ctx.Request.Method
-
-	if method == http.MethodGet {
-		accessKey := ctx.Input.Query("accessKey")
-		accessSecret := ctx.Input.Query("accessSecret")
-		return accessKey, accessSecret
-	} else {
-		body := ctx.Input.RequestBody
-
-		if len(body) == 0 {
-			return ctx.Request.Form.Get("accessKey"), ctx.Request.Form.Get("accessSecret")
-		}
-
-		var obj Object
-		err := json.Unmarshal(body, &obj)
-		if err != nil {
-			return "", ""
-		}
-
-		return obj.AccessKey, obj.AccessSecret
 	}
 }
 

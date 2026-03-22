@@ -135,24 +135,6 @@ func getUsernameByClientIdSecret(ctx *context.Context) (string, error) {
 	return fmt.Sprintf("app/%s", application.Name), nil
 }
 
-func getUsernameByKeys(ctx *context.Context) (string, error) {
-	accessKey, accessSecret := getKeys(ctx)
-	user, err := object.GetUserByAccessKey(accessKey)
-	if err != nil {
-		return "", err
-	}
-
-	if user == nil {
-		return "", fmt.Errorf("user not found for access key: %s", accessKey)
-	}
-
-	if accessSecret != user.AccessSecret {
-		return "", fmt.Errorf("incorrect access secret for user: %s", user.Name)
-	}
-
-	return user.GetId(), nil
-}
-
 func getSessionUser(ctx *context.Context) string {
 	user := ctx.Input.CruSession.Get(stdcontext.Background(), "username")
 	if user == nil {

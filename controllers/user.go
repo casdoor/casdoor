@@ -730,29 +730,6 @@ func (c *ApiController) GetUserCount() {
 	c.ResponseOk(count)
 }
 
-// AddUserKeys
-// @Title AddUserKeys
-// @router /add-user-keys [post]
-// @Tag User API
-// @Success 200 {object} object.Userinfo The Response object
-func (c *ApiController) AddUserKeys() {
-	var user object.User
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &user)
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
-	}
-
-	isAdmin := c.IsAdmin()
-	affected, err := object.AddUserKeys(&user, isAdmin)
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
-	}
-
-	c.ResponseOk(affected)
-}
-
 func (c *ApiController) RemoveUserFromGroup() {
 	owner := c.Ctx.Request.Form.Get("owner")
 	name := c.Ctx.Request.Form.Get("name")
