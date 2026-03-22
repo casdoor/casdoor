@@ -16,40 +16,11 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
 
 	"github.com/beego/beego/v2/core/utils/pagination"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 )
-
-func (c *ApiController) checkKeyOwnerPermission(owner string) bool {
-	if c.IsGlobalAdmin() {
-		return true
-	}
-
-	user := c.GetSessionUsername()
-	if user == "" {
-		c.ResponseError("Please login first")
-		return false
-	}
-
-	currentUser, err := object.GetUser(user)
-	if err != nil {
-		c.ResponseError(err.Error())
-		return false
-	}
-	if currentUser == nil {
-		c.ResponseError("Session outdated, please login again")
-		return false
-	}
-	if !currentUser.IsAdmin || currentUser.Owner != owner {
-		c.ResponseError(fmt.Sprintf("Unauthorized operation, key owner: %s", owner))
-		return false
-	}
-
-	return true
-}
 
 // GetKeys
 // @Title GetKeys
@@ -66,10 +37,6 @@ func (c *ApiController) GetKeys() {
 	value := c.Ctx.Input.Query("value")
 	sortField := c.Ctx.Input.Query("sortField")
 	sortOrder := c.Ctx.Input.Query("sortOrder")
-
-	if !c.checkKeyOwnerPermission(owner) {
-		return
-	}
 
 	if limit == "" || page == "" {
 		keys, err := object.GetKeys(owner)
@@ -115,11 +82,6 @@ func (c *ApiController) GetKeys() {
 // @Success 200 {array} object.Key The Response object
 // @router /get-global-keys [get]
 func (c *ApiController) GetGlobalKeys() {
-	if !c.IsGlobalAdmin() {
-		c.ResponseError("Unauthorized operation")
-		return
-	}
-
 	limit := c.Ctx.Input.Query("pageSize")
 	page := c.Ctx.Input.Query("p")
 	field := c.Ctx.Input.Query("field")
@@ -179,13 +141,6 @@ func (c *ApiController) GetKey() {
 		c.ResponseError(err.Error())
 		return
 	}
-	if key == nil {
-		c.ResponseOk(nil)
-		return
-	}
-	if !c.checkKeyOwnerPermission(key.Owner) {
-		return
-	}
 
 	c.ResponseOk(key)
 }
@@ -211,9 +166,6 @@ func (c *ApiController) UpdateKey() {
 		c.ServeJSON()
 		return
 	}
-	if !c.checkKeyOwnerPermission(oldKey.Owner) {
-		return
-	}
 
 	var key object.Key
 	err = json.Unmarshal(c.Ctx.Input.RequestBody, &key)
@@ -221,7 +173,9 @@ func (c *ApiController) UpdateKey() {
 		c.ResponseError(err.Error())
 		return
 	}
-	if !c.checkKeyOwnerPermission(key.Owner) {
+
+	if !c.IsGlobalAdmin() && oldKey.Owner != key.Owner {
+		c.ResponseError(c.T("auth:Unauthorized operation"))
 		return
 	}
 
@@ -243,10 +197,6 @@ func (c *ApiController) AddKey() {
 		c.ResponseError(err.Error())
 		return
 	}
-	if !c.checkKeyOwnerPermission(key.Owner) {
-		return
-	}
-
 	c.Data["json"] = wrapActionResponse(object.AddKey(&key))
 	c.ServeJSON()
 }
@@ -265,10 +215,6 @@ func (c *ApiController) DeleteKey() {
 		c.ResponseError(err.Error())
 		return
 	}
-	if !c.checkKeyOwnerPermission(key.Owner) {
-		return
-	}
-
 	c.Data["json"] = wrapActionResponse(object.DeleteKey(&key))
 	c.ServeJSON()
 }
