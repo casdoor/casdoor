@@ -197,6 +197,7 @@ func (c *ApiController) AddKey() {
 		c.ResponseError(err.Error())
 		return
 	}
+
 	c.Data["json"] = wrapActionResponse(object.AddKey(&key))
 	c.ServeJSON()
 }
@@ -215,6 +216,7 @@ func (c *ApiController) DeleteKey() {
 		c.ResponseError(err.Error())
 		return
 	}
+
 	c.Data["json"] = wrapActionResponse(object.DeleteKey(&key))
 	c.ServeJSON()
 }
