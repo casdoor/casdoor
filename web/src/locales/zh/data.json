@@ -254,6 +254,7 @@
     "AI Assistant": "AI助理",
     "API key": "API密钥",
     "API key - Tooltip": "用于访问服务的API密钥",
+    "User API keys are now managed from the shared Keys page.": "用户 API 密钥现在统一在共享的 Keys 页面管理。",
     "Access key": "访问密钥",
     "Access key - Tooltip": "服务的访问密钥",
     "Access secret": "访问密码",

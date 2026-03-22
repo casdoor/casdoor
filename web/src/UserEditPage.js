@@ -974,7 +974,7 @@ class UserEditPage extends React.Component {
             <Row style={{marginTop: "20px", marginBottom: "20px"}} >
               <Col span={22}>
                 <div style={{marginBottom: "20px"}}>
-                  User API keys are now managed from the shared Keys page.
+                  {i18next.t("general:User API keys are now managed from the shared Keys page.")}
                 </div>
                 <Button type="primary" onClick={() => this.goToKeys()}>
                   {i18next.t("general:Keys")}
