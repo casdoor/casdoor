@@ -90,7 +90,6 @@ func getBuiltInAccountItems() []*AccountItem {
 		{Name: "Signup application", Visible: true, ViewRule: "Public", ModifyRule: "Admin"},
 		{Name: "Register type", Visible: true, ViewRule: "Public", ModifyRule: "Admin"},
 		{Name: "Register source", Visible: true, ViewRule: "Public", ModifyRule: "Admin"},
-		{Name: "API key", Visible: true, ViewRule: "Self", ModifyRule: "Self"},
 		{Name: "Roles", Visible: true, ViewRule: "Public", ModifyRule: "Immutable"},
 		{Name: "Permissions", Visible: true, ViewRule: "Public", ModifyRule: "Immutable"},
 		{Name: "Groups", Visible: true, ViewRule: "Public", ModifyRule: "Admin"},

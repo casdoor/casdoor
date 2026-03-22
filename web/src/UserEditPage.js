@@ -137,15 +137,8 @@ class UserEditPage extends React.Component {
       });
   }
 
-  addUserKeys() {
-    UserBackend.addUserKeys(this.state.user)
-      .then((res) => {
-        if (res.status === "ok") {
-          this.getUser();
-        } else {
-          Setting.showMessage("error", res.msg);
-        }
-      });
+  goToKeys() {
+    this.props.history.push("/keys");
   }
 
   getOrganizations() {
@@ -978,26 +971,13 @@ class UserEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:API key"), i18next.t("general:API key - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Row style={{marginTop: "20px"}} >
-              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                {Setting.getLabel(i18next.t("general:Access key"), i18next.t("general:Access key - Tooltip"))} :
-              </Col>
-              <Col span={22} >
-                <Input value={this.state.user.accessKey} disabled={true} />
-              </Col>
-            </Row>
-            <Row style={{marginTop: "20px"}} >
-              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                {Setting.getLabel(i18next.t("general:Access secret"), i18next.t("general:Access secret - Tooltip"))} :
-              </Col>
-              <Col span={22} >
-                <Input value={this.state.user.accessSecret} disabled={true} />
-              </Col>
-            </Row>
             <Row style={{marginTop: "20px", marginBottom: "20px"}} >
-              <Col span={22} >
-                <Button type="primary" onClick={() => this.addUserKeys()}>
-                  {i18next.t("general:Generate")}
+              <Col span={22}>
+                <div style={{marginBottom: "20px"}}>
+                  User API keys are now managed from the shared Keys page.
+                </div>
+                <Button type="primary" onClick={() => this.goToKeys()}>
+                  {i18next.t("general:Keys")}
                 </Button>
               </Col>
             </Row>
