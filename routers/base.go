@@ -136,32 +136,23 @@ func getUsernameByClientIdSecret(ctx *context.Context) (string, error) {
 }
 
 func getSubjectByKey(ctx *context.Context) (string, error) {
-	accessKey, accessSecret := getKeys(ctx)
+	accessKey, accessSecret := getKeyCredentials(ctx)
 	return object.ResolveSubjectByKey(accessKey, accessSecret)
 }
 
-func getKeys(ctx *context.Context) (string, string) {
-	method := ctx.Request.Method
-
-	if method == http.MethodGet {
-		return ctx.Input.Query("accessKey"), ctx.Input.Query("accessSecret")
+func getKeyCredentials(ctx *context.Context) (string, string) {
+	accessKey := ctx.Input.Query("accessKey")
+	accessSecret := ctx.Input.Query("accessSecret")
+	if accessKey != "" || accessSecret != "" {
+		return accessKey, accessSecret
 	}
 
-	body := ctx.Input.RequestBody
-	if len(body) == 0 {
-		return ctx.Request.Form.Get("accessKey"), ctx.Request.Form.Get("accessSecret")
-	}
-
-	var obj struct {
-		AccessKey    string `json:"accessKey"`
-		AccessSecret string `json:"accessSecret"`
-	}
-	err := json.Unmarshal(body, &obj)
-	if err != nil {
+	accessKey, accessSecret, ok := ctx.Request.BasicAuth()
+	if !ok {
 		return "", ""
 	}
 
-	return obj.AccessKey, obj.AccessSecret
+	return accessKey, accessSecret
 }
 
 func getSessionUser(ctx *context.Context) string {

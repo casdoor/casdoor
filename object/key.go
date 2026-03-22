@@ -252,14 +252,17 @@ func (key *Key) IsExpired() (bool, error) {
 }
 
 func parseKeyExpireTime(expireTime string) (time.Time, error) {
-	layouts := []string{
-		time.RFC3339,
+	if parsed, err := time.Parse(time.RFC3339, expireTime); err == nil {
+		return parsed, nil
+	}
+
+	localLayouts := []string{
 		"2006-01-02 15:04:05",
 		"2006-01-02T15:04:05",
 	}
 
-	for _, layout := range layouts {
-		if parsed, err := time.Parse(layout, expireTime); err == nil {
+	for _, layout := range localLayouts {
+		if parsed, err := time.ParseInLocation(layout, expireTime, time.Local); err == nil {
 			return parsed, nil
 		}
 	}
