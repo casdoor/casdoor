@@ -964,26 +964,6 @@ class UserEditPage extends React.Component {
           </Col>
         </Row>
       );
-    } else if (accountItem.name === "API key") {
-      return (
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:API key"), i18next.t("general:API key - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <Row style={{marginTop: "20px", marginBottom: "20px"}} >
-              <Col span={22}>
-                <div style={{marginBottom: "20px"}}>
-                  {i18next.t("general:User API keys are now managed from the shared Keys page.")}
-                </div>
-                <Button type="primary" onClick={() => this.goToKeys()}>
-                  {i18next.t("general:Keys")}
-                </Button>
-              </Col>
-            </Row>
-          </Col>
-        </Row>
-      );
     } else if (accountItem.name === "Roles") {
       return (
         <Row style={{marginTop: "20px", alignItems: "center"}} >
