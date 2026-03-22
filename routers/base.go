@@ -116,6 +116,17 @@ func getUsernameByClientIdSecret(ctx *context.Context) (string, error) {
 		clientSecret = ctx.Input.Query("clientSecret")
 	}
 
+	return getSubjectByClientCredentials(clientId, clientSecret)
+}
+
+func getUsernameByClientIdSecretFromQuery(ctx *context.Context) (string, error) {
+	clientId := ctx.Input.Query("clientId")
+	clientSecret := ctx.Input.Query("clientSecret")
+
+	return getSubjectByClientCredentials(clientId, clientSecret)
+}
+
+func getSubjectByClientCredentials(clientId string, clientSecret string) (string, error) {
 	if clientId == "" || clientSecret == "" {
 		return "", nil
 	}
@@ -141,12 +152,6 @@ func getSubjectByKey(ctx *context.Context) (string, error) {
 }
 
 func getKeyCredentials(ctx *context.Context) (string, string) {
-	accessKey := ctx.Input.Query("accessKey")
-	accessSecret := ctx.Input.Query("accessSecret")
-	if accessKey != "" || accessSecret != "" {
-		return accessKey, accessSecret
-	}
-
 	accessKey, accessSecret, ok := ctx.Request.BasicAuth()
 	if !ok {
 		return "", ""

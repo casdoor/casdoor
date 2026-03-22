@@ -15,6 +15,7 @@
 package object
 
 import (
+	"crypto/subtle"
 	"fmt"
 	"time"
 
@@ -218,23 +219,6 @@ func GetKeyByAccessKey(accessKey string) (*Key, error) {
 	return nil, nil
 }
 
-func GetKeyBySecret(accessSecret string) (*Key, error) {
-	if accessSecret == "" {
-		return nil, nil
-	}
-
-	key := Key{AccessSecret: accessSecret}
-	existed, err := ormer.Engine.Get(&key)
-	if err != nil {
-		return nil, err
-	}
-
-	if existed {
-		return &key, nil
-	}
-	return nil, nil
-}
-
 func (key *Key) IsActive() bool {
 	return key != nil && (key.State == "" || key.State == KeyStateActive)
 }
@@ -283,7 +267,7 @@ func ResolveSubjectByKey(accessKey string, accessSecret string) (string, error) 
 		return "", fmt.Errorf("key not found for access key: %s", accessKey)
 	}
 
-	if key.AccessSecret != accessSecret {
+	if subtle.ConstantTimeCompare([]byte(key.AccessSecret), []byte(accessSecret)) != 1 {
 		return "", fmt.Errorf("incorrect access secret for key: %s", key.Name)
 	}
 	if !key.IsActive() {

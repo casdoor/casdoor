@@ -174,6 +174,9 @@ func (c *ApiController) UpdateKey() {
 		return
 	}
 
+	key.AccessKey = oldKey.AccessKey
+	key.AccessSecret = oldKey.AccessSecret
+
 	if !c.IsGlobalAdmin() && oldKey.Owner != key.Owner {
 		c.ResponseError(c.T("auth:Unauthorized operation"))
 		return
