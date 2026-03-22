@@ -135,6 +135,35 @@ func getUsernameByClientIdSecret(ctx *context.Context) (string, error) {
 	return fmt.Sprintf("app/%s", application.Name), nil
 }
 
+func getSubjectByKey(ctx *context.Context) (string, error) {
+	accessKey, accessSecret := getKeys(ctx)
+	return object.ResolveSubjectByKey(accessKey, accessSecret)
+}
+
+func getKeys(ctx *context.Context) (string, string) {
+	method := ctx.Request.Method
+
+	if method == http.MethodGet {
+		return ctx.Input.Query("accessKey"), ctx.Input.Query("accessSecret")
+	}
+
+	body := ctx.Input.RequestBody
+	if len(body) == 0 {
+		return ctx.Request.Form.Get("accessKey"), ctx.Request.Form.Get("accessSecret")
+	}
+
+	var obj struct {
+		AccessKey    string `json:"accessKey"`
+		AccessSecret string `json:"accessSecret"`
+	}
+	err := json.Unmarshal(body, &obj)
+	if err != nil {
+		return "", ""
+	}
+
+	return obj.AccessKey, obj.AccessSecret
+}
+
 func getSessionUser(ctx *context.Context) string {
 	user := ctx.Input.CruSession.Get(stdcontext.Background(), "username")
 	if user == nil {

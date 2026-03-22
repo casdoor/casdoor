@@ -46,6 +46,9 @@ func getUsername(ctx *context.Context) (username string) {
 	if !ok || username == "" {
 		username, _ = getUsernameByClientIdSecret(ctx)
 	}
+	if username == "" {
+		username, _ = getSubjectByKey(ctx)
+	}
 
 	session := ctx.Input.Session("SessionData")
 	if session == nil {

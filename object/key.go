@@ -16,9 +16,20 @@ package object
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/core"
+)
+
+const (
+	KeyTypeOrganization = "Organization"
+	KeyTypeApplication  = "Application"
+	KeyTypeUser         = "User"
+	KeyTypeGeneral      = "General"
+
+	KeyStateActive   = "Active"
+	KeyStateInactive = "Inactive"
 )
 
 type Key struct {
@@ -205,4 +216,139 @@ func GetKeyByAccessKey(accessKey string) (*Key, error) {
 		return &key, nil
 	}
 	return nil, nil
+}
+
+func GetKeyBySecret(accessSecret string) (*Key, error) {
+	if accessSecret == "" {
+		return nil, nil
+	}
+
+	key := Key{AccessSecret: accessSecret}
+	existed, err := ormer.Engine.Get(&key)
+	if err != nil {
+		return nil, err
+	}
+
+	if existed {
+		return &key, nil
+	}
+	return nil, nil
+}
+
+func (key *Key) IsActive() bool {
+	return key != nil && (key.State == "" || key.State == KeyStateActive)
+}
+
+func (key *Key) IsExpired() (bool, error) {
+	if key == nil || key.ExpireTime == "" {
+		return false, nil
+	}
+
+	expireTime, err := parseKeyExpireTime(key.ExpireTime)
+	if err != nil {
+		return false, err
+	}
+	return time.Now().After(expireTime), nil
+}
+
+func parseKeyExpireTime(expireTime string) (time.Time, error) {
+	layouts := []string{
+		time.RFC3339,
+		"2006-01-02 15:04:05",
+		"2006-01-02T15:04:05",
+	}
+
+	for _, layout := range layouts {
+		if parsed, err := time.Parse(layout, expireTime); err == nil {
+			return parsed, nil
+		}
+	}
+
+	return time.Time{}, fmt.Errorf("invalid expire time format: %s", expireTime)
+}
+
+func ResolveSubjectByKey(accessKey string, accessSecret string) (string, error) {
+	if accessKey == "" || accessSecret == "" {
+		return "", nil
+	}
+
+	key, err := GetKeyByAccessKey(accessKey)
+	if err != nil {
+		return "", err
+	}
+	if key == nil {
+		return "", fmt.Errorf("key not found for access key: %s", accessKey)
+	}
+
+	if key.AccessSecret != accessSecret {
+		return "", fmt.Errorf("incorrect access secret for key: %s", key.Name)
+	}
+	if !key.IsActive() {
+		return "", fmt.Errorf("key: %s is inactive", key.GetId())
+	}
+
+	expired, err := key.IsExpired()
+	if err != nil {
+		return "", err
+	}
+	if expired {
+		return "", fmt.Errorf("key: %s is expired", key.GetId())
+	}
+
+	organization, err := key.getBoundOrganization()
+	if err != nil {
+		return "", err
+	}
+
+	switch key.Type {
+	case KeyTypeUser:
+		if key.User == "" {
+			return "", fmt.Errorf("user key: %s is not bound to a user", key.GetId())
+		}
+
+		user, err := getUser(organization, key.User)
+		if err != nil {
+			return "", err
+		}
+		if user == nil {
+			return "", fmt.Errorf("the user: %s does not exist", util.GetId(organization, key.User))
+		}
+		if user.IsForbidden {
+			return "", fmt.Errorf("the user: %s is forbidden", user.GetId())
+		}
+		return user.GetId(), nil
+	case KeyTypeApplication:
+		if key.Application == "" {
+			return "", fmt.Errorf("application key: %s is not bound to an application", key.GetId())
+		}
+
+		application, err := GetApplication(util.GetId("admin", key.Application))
+		if err != nil {
+			return "", err
+		}
+		if application == nil {
+			return "", fmt.Errorf("the application: %s does not exist", key.Application)
+		}
+		if application.Organization != organization {
+			return "", fmt.Errorf("application: %s does not belong to organization: %s", application.Name, organization)
+		}
+		return fmt.Sprintf("app/%s", application.Name), nil
+	case KeyTypeOrganization, KeyTypeGeneral:
+		return "", fmt.Errorf("key type: %s is not supported for direct authentication yet", key.Type)
+	default:
+		return "", fmt.Errorf("unsupported key type: %s", key.Type)
+	}
+}
+
+func (key *Key) getBoundOrganization() (string, error) {
+	if key == nil {
+		return "", fmt.Errorf("key is nil")
+	}
+	if key.Owner == "" {
+		return "", fmt.Errorf("key: %s has empty owner", key.Name)
+	}
+	if key.Organization != "" && key.Organization != key.Owner {
+		return "", fmt.Errorf("key: %s organization: %s does not match owner: %s", key.GetId(), key.Organization, key.Owner)
+	}
+	return key.Owner, nil
 }
