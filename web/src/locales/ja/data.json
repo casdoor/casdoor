@@ -254,6 +254,7 @@
     "AI Assistant": "AIアシスタント",
     "API key": "APIキー",
     "API key - Tooltip": "サービスにアクセスするためのAPIキー",
+    "User API keys are now managed from the shared Keys page.": "User API keys are now managed from the shared Keys page.",
     "Access key": "アクセスキー",
     "Access key - Tooltip": "サービスのアクセスキー",
     "Access secret": "アクセスシークレット",

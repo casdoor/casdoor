@@ -254,6 +254,7 @@
     "AI Assistant": "AI Асистент",
     "API key": "Ключ API",
     "API key - Tooltip": "Ключ API для доступу до сервісу",
+    "User API keys are now managed from the shared Keys page.": "User API keys are now managed from the shared Keys page.",
     "Access key": "Ключ доступу",
     "Access key - Tooltip": "Ключ доступу для сервісу",
     "Access secret": "Секрет доступу",
