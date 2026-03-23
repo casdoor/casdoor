@@ -26,7 +26,7 @@ import (
 	"github.com/beego/beego/v2/server/web/context"
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/i18n"
-	"github.com/casdoor/casdoor/mcp"
+	"github.com/casdoor/casdoor/mcpself"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 )
@@ -75,7 +75,7 @@ func denyRequest(ctx *context.Context) {
 }
 
 func denyMcpRequest(ctx *context.Context) {
-	req := mcp.McpRequest{}
+	req := mcpself.McpRequest{}
 	err := json.Unmarshal(ctx.Input.RequestBody, &req)
 	if err != nil {
 		ctx.Output.SetStatus(http.StatusBadRequest)
@@ -88,7 +88,7 @@ func denyMcpRequest(ctx *context.Context) {
 		return
 	}
 
-	resp := mcp.BuildMcpResponse(req.ID, nil, &mcp.McpError{
+	resp := mcpself.BuildMcpResponse(req.ID, nil, &mcpself.McpError{
 		Code:    -32001,
 		Message: "Unauthorized",
 		Data:    T(ctx, "auth:Unauthorized operation"),
