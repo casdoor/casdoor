@@ -1315,7 +1315,11 @@
     "Throughput": "Débit",
     "Total Throughput": "Débit total",
     "Unknown version": "Version inconnue",
-    "Version": "Version"
+    "Version": "Version",
+    "Disk Usage": "Disk Usage",
+    "Network Usage": "Network Usage",
+    "Received": "Received",
+    "Sent": "Sent"
   },
   "theme": {
     "Blossom": "Fleurir",

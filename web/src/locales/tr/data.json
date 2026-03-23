@@ -1315,7 +1315,11 @@
     "Throughput": "Verimlilik",
     "Total Throughput": "Toplam Verimlilik",
     "Unknown version": "Bilinmeyen sürüm",
-    "Version": "Versiyon"
+    "Version": "Versiyon",
+    "Disk Usage": "Disk Usage",
+    "Network Usage": "Network Usage",
+    "Received": "Received",
+    "Sent": "Sent"
   },
   "theme": {
     "Blossom": "Çiçek",

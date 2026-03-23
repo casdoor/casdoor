@@ -1315,7 +1315,11 @@
     "Throughput": "Пропускна здатність",
     "Total Throughput": "Загальна пропускна здатність",
     "Unknown version": "Невідома версія",
-    "Version": "Версія"
+    "Version": "Версія",
+    "Disk Usage": "Disk Usage",
+    "Network Usage": "Network Usage",
+    "Received": "Received",
+    "Sent": "Sent"
   },
   "theme": {
     "Blossom": "цвітіння",

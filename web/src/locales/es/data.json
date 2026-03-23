@@ -1315,7 +1315,11 @@
     "Throughput": "Rendimiento",
     "Total Throughput": "Rendimiento total",
     "Unknown version": "Versión desconocida",
-    "Version": "Versión"
+    "Version": "Versión",
+    "Disk Usage": "Disk Usage",
+    "Network Usage": "Network Usage",
+    "Received": "Received",
+    "Sent": "Sent"
   },
   "theme": {
     "Blossom": "Floración",

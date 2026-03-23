@@ -1315,7 +1315,11 @@
     "Throughput": "Przepustowość",
     "Total Throughput": "Całkowita przepustowość",
     "Unknown version": "Nieznana wersja",
-    "Version": "Wersja"
+    "Version": "Wersja",
+    "Disk Usage": "Disk Usage",
+    "Network Usage": "Network Usage",
+    "Received": "Received",
+    "Sent": "Sent"
   },
   "theme": {
     "Blossom": "Rozkwit",

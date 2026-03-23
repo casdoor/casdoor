@@ -1315,7 +1315,11 @@
     "Throughput": "Thông lượng",
     "Total Throughput": "Tổng thông lượng",
     "Unknown version": "Phiên bản không rõ",
-    "Version": "Phiên bản"
+    "Version": "Phiên bản",
+    "Disk Usage": "Disk Usage",
+    "Network Usage": "Network Usage",
+    "Received": "Received",
+    "Sent": "Sent"
   },
   "theme": {
     "Blossom": "hoa nở",
