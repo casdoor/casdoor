@@ -16,10 +16,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
-	"net/http"
-	"net/http/httputil"
-	"net/url"
 
 	"github.com/beego/beego/v2/server/web/pagination"
 	"github.com/casdoor/casdoor/object"
@@ -150,62 +146,4 @@ func (c *ApiController) DeleteServer() {
 
 	c.Data["json"] = wrapActionResponse(object.DeleteServer(&server))
 	c.ServeJSON()
-}
-
-// ProxyServer
-// @Title ProxyServer
-// @Tag Server API
-// @Description proxy request to the upstream MCP server by Server URL
-// @Param   owner    path    string  true        "The owner name of the server"
-// @Param   name     path    string  true        "The name of the server"
-// @Success 200 {object} controllers.Response The Response object
-// @router /server/:owner/:name [get,post]
-func (c *ApiController) ProxyServer() {
-	owner := c.Ctx.Input.Param(":owner")
-	name := c.Ctx.Input.Param(":name")
-	if util.IsStringsEmpty(owner, name) {
-		c.ResponseError("invalid server identifier")
-		return
-	}
-
-	server, err := object.GetServer(util.GetId(owner, name))
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
-	}
-	if server == nil {
-		c.ResponseError("server not found")
-		return
-	}
-	if server.Url == "" {
-		c.ResponseError("server URL is empty")
-		return
-	}
-
-	targetUrl, err := url.Parse(server.Url)
-	if err != nil || !targetUrl.IsAbs() || targetUrl.Host == "" {
-		c.ResponseError("server URL is invalid")
-		return
-	}
-	if targetUrl.Scheme != "http" && targetUrl.Scheme != "https" {
-		c.ResponseError("server URL scheme is invalid")
-		return
-	}
-
-	proxy := httputil.NewSingleHostReverseProxy(targetUrl)
-	proxy.ErrorHandler = func(writer http.ResponseWriter, request *http.Request, proxyErr error) {
-		c.Ctx.Output.SetStatus(http.StatusBadGateway)
-		c.ResponseError(fmt.Sprintf("failed to proxy server request: %s", proxyErr.Error()))
-	}
-	proxy.Director = func(request *http.Request) {
-		request.URL.Scheme = targetUrl.Scheme
-		request.URL.Host = targetUrl.Host
-		request.Host = targetUrl.Host
-		request.URL.Path = targetUrl.Path
-		request.URL.RawPath = ""
-
-		request.URL.RawQuery = targetUrl.RawQuery
-	}
-
-	proxy.ServeHTTP(c.Ctx.ResponseWriter, c.Ctx.Request)
 }

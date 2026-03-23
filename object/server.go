@@ -16,10 +16,18 @@ package object
 
 import (
 	"fmt"
+	"slices"
 
+	"github.com/casdoor/casdoor/mcp"
 	"github.com/casdoor/casdoor/util"
+	mcpsdk "github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/xorm-io/core"
 )
+
+type Tool struct {
+	mcpsdk.Tool
+	IsAllowed bool `json:"isAllowed"`
+}
 
 type Server struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
@@ -28,8 +36,10 @@ type Server struct {
 	UpdatedTime string `xorm:"varchar(100)" json:"updatedTime"`
 	DisplayName string `xorm:"varchar(100)" json:"displayName"`
 
-	Url         string `xorm:"varchar(500)" json:"url"`
-	Application string `xorm:"varchar(100)" json:"application"`
+	Url         string  `xorm:"varchar(500)" json:"url"`
+	Token       string  `xorm:"varchar(500)" json:"-"`
+	Application string  `xorm:"varchar(100)" json:"application"`
+	Tools       []*Tool `xorm:"mediumtext" json:"tools"`
 }
 
 func GetServers(owner string) ([]*Server, error) {
@@ -70,12 +80,44 @@ func UpdateServer(id string, server *Server) (bool, error) {
 
 	server.UpdatedTime = util.GetCurrentTime()
 
+	syncServerTools(server)
 	_, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(server)
 	if err != nil {
 		return false, err
 	}
 
 	return true, nil
+}
+
+func syncServerTools(server *Server) {
+	if server.Tools == nil {
+		server.Tools = []*Tool{}
+	}
+
+	tools, err := mcp.GetServerTools(server.Owner, server.Name, server.Url, server.Token)
+	if err != nil {
+		return
+	}
+
+	var newTools []*Tool
+	for _, tool := range tools {
+		oldToolIndex := slices.IndexFunc(server.Tools, func(oldTool *Tool) bool {
+			return oldTool.Name == tool.Name
+		})
+
+		isAllowed := true
+		if oldToolIndex != -1 {
+			isAllowed = server.Tools[oldToolIndex].IsAllowed
+		}
+
+		newTool := Tool{
+			Tool:      *tool,
+			IsAllowed: isAllowed,
+		}
+		newTools = append(newTools, &newTool)
+	}
+
+	server.Tools = newTools
 }
 
 func AddServer(server *Server) (bool, error) {

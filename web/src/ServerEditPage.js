@@ -20,6 +20,7 @@ import * as Setting from "./Setting";
 import i18next from "i18next";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
+import ToolTable from "./ToolTable";
 
 const {Option} = Select;
 
@@ -107,7 +108,7 @@ class ServerEditPage extends React.Component {
               mode: "edit",
               owner: server.owner,
               serverName: server.name,
-            });
+            }, () => {this.getServer();});
             this.props.history.push(`/servers/${server.owner}/${server.name}`);
           }
         } else {
@@ -188,6 +189,16 @@ class ServerEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("token:Access token"), i18next.t("token:Access token - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Input.Password placeholder={"***"} value={this.state.server.token} onChange={e => {
+              this.updateServerField("token", e.target.value);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("general:Application"), i18next.t("general:Application - Tooltip"))} :
           </Col>
           <Col span={22} >
@@ -196,6 +207,17 @@ class ServerEditPage extends React.Component {
                 this.state.applications.map((application, index) => <Option key={index} value={application.name}>{application.name}</Option>)
               }
             </Select>
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("general:Tool"), i18next.t("general:Tool - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <ToolTable
+              tools={this.state.server?.tools || []}
+              onUpdateTable={(value) => {this.updateServerField("tools", value);}}
+            />
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
