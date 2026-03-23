@@ -109,55 +109,38 @@ func denyMcpRequest(ctx *context.Context) {
 	_ = ctx.Output.JSON(resp, true, false)
 }
 
-func getUsernameByClientIdSecret(ctx *context.Context) (string, error) {
-	clientId, clientSecret, ok := ctx.Request.BasicAuth()
-	if !ok {
-		clientId = ctx.Input.Query("clientId")
-		clientSecret = ctx.Input.Query("clientSecret")
+func resolveSubjectByCredentialPair(identifier string, secret string) (string, error) {
+	if identifier == "" || secret == "" {
+		return "", nil
 	}
 
-	return getSubjectByClientCredentials(clientId, clientSecret)
+	subject, matched, err := resolveSubjectByClientCredentials(identifier, secret)
+	if err != nil || matched {
+		return subject, err
+	}
+
+	subject, _, err = object.ResolveSubjectByKey(identifier, secret)
+	return subject, err
 }
 
-func getUsernameByClientIdSecretFromQuery(ctx *context.Context) (string, error) {
-	clientId := ctx.Input.Query("clientId")
-	clientSecret := ctx.Input.Query("clientSecret")
-
-	return getSubjectByClientCredentials(clientId, clientSecret)
-}
-
-func getSubjectByClientCredentials(clientId string, clientSecret string) (string, error) {
+func resolveSubjectByClientCredentials(clientId string, clientSecret string) (string, bool, error) {
 	if clientId == "" || clientSecret == "" {
-		return "", nil
+		return "", false, nil
 	}
 
 	application, err := object.GetApplicationByClientId(clientId)
 	if err != nil {
-		return "", err
+		return "", false, err
 	}
 	if application == nil {
-		return "", fmt.Errorf("Application not found for client ID: %s", clientId)
+		return "", false, nil
 	}
 
 	if application.ClientSecret != clientSecret {
-		return "", fmt.Errorf("Incorrect client secret for application: %s", application.Name)
+		return "", true, fmt.Errorf("Incorrect client secret for application: %s", application.Name)
 	}
 
-	return fmt.Sprintf("app/%s", application.Name), nil
-}
-
-func getSubjectByKey(ctx *context.Context) (string, error) {
-	accessKey, accessSecret := getKeyCredentials(ctx)
-	return object.ResolveSubjectByKey(accessKey, accessSecret)
-}
-
-func getKeyCredentials(ctx *context.Context) (string, string) {
-	accessKey, accessSecret, ok := ctx.Request.BasicAuth()
-	if !ok {
-		return "", ""
-	}
-
-	return accessKey, accessSecret
+	return fmt.Sprintf("app/%s", application.Name), true, nil
 }
 
 func getSessionUser(ctx *context.Context) string {

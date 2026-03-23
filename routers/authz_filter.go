@@ -41,13 +41,13 @@ type ObjectWithOrg struct {
 	Organization string `json:"organization"`
 }
 
-func getUsername(ctx *context.Context) (username string) {
-	username, ok := ctx.Input.Session("username").(string)
-	if !ok || username == "" {
-		username, _ = getUsernameByClientIdSecret(ctx)
-	}
-	if username == "" {
-		username, _ = getSubjectByKey(ctx)
+func getSubjectId(ctx *context.Context) (subjectId string) {
+	subjectId, ok := ctx.Input.Session("username").(string)
+	if !ok || subjectId == "" {
+		identifier, secret, ok := ctx.Request.BasicAuth()
+		if ok {
+			subjectId, _ = resolveSubjectByCredentialPair(identifier, secret)
+		}
 	}
 
 	session := ctx.Input.Session("SessionData")
@@ -80,13 +80,13 @@ func getUsername(ctx *context.Context) (username string) {
 }
 
 func getSubject(ctx *context.Context) (string, string) {
-	username := getUsername(ctx)
-	if username == "" {
+	subjectId := getSubjectId(ctx)
+	if subjectId == "" {
 		return "anonymous", "anonymous"
 	}
 
-	// username == "built-in/admin"
-	owner, name, err := util.GetOwnerAndNameFromIdWithError(username)
+	// subjectId == "built-in/admin" or "app/app-built-in"
+	owner, name, err := util.GetOwnerAndNameFromIdWithError(subjectId)
 	if err != nil {
 		panic(err)
 	}
