@@ -18,6 +18,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"strings"
 
 	"github.com/beego/beego/v2/core/utils/pagination"
@@ -546,7 +547,12 @@ func (c *ApiController) ResetEmailOrPhone() {
 // @Success 200 {object} object.Userinfo The Response object
 func (c *ApiController) VerifyCode() {
 	var authForm form.AuthForm
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &authForm)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &authForm)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

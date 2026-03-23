@@ -18,6 +18,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 
 	"github.com/beego/beego/v2/core/utils/pagination"
 	"github.com/casdoor/casdoor/object"
@@ -94,7 +95,13 @@ func (c *ApiController) GetSingleSession() {
 // @router /update-session [post]
 func (c *ApiController) UpdateSession() {
 	var session object.Session
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &session)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	err = json.Unmarshal(body, &session)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -113,7 +120,13 @@ func (c *ApiController) UpdateSession() {
 // @router /add-session [post]
 func (c *ApiController) AddSession() {
 	var session object.Session
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &session)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	err = json.Unmarshal(body, &session)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -132,7 +145,13 @@ func (c *ApiController) AddSession() {
 // @router /delete-session [post]
 func (c *ApiController) DeleteSession() {
 	var session object.Session
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &session)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	err = json.Unmarshal(body, &session)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

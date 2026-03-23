@@ -17,6 +17,7 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
@@ -156,7 +157,12 @@ func (c *ApiController) GetLdap() {
 // @router /add-ldap [post]
 func (c *ApiController) AddLdap() {
 	var ldap object.Ldap
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &ldap)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &ldap)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -199,7 +205,12 @@ func (c *ApiController) AddLdap() {
 // @router /update-ldap [post]
 func (c *ApiController) UpdateLdap() {
 	var ldap object.Ldap
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &ldap)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &ldap)
 	if err != nil || util.IsStringsEmpty(ldap.Owner, ldap.ServerName, ldap.Host, ldap.Username, ldap.Password, ldap.BaseDn) {
 		c.ResponseError(c.T("general:Missing parameter"))
 		return
@@ -240,7 +251,12 @@ func (c *ApiController) UpdateLdap() {
 // @router /delete-ldap [post]
 func (c *ApiController) DeleteLdap() {
 	var ldap object.Ldap
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &ldap)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &ldap)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -274,7 +290,12 @@ func (c *ApiController) SyncLdapUsers() {
 		return
 	}
 	var users []object.LdapUser
-	err = json.Unmarshal(c.Ctx.Input.RequestBody, &users)
+	body, err2 := io.ReadAll(c.Ctx.Request.Body)
+	if err2 != nil {
+		c.ResponseError(err2.Error())
+		return
+	}
+	err = json.Unmarshal(body, &users)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

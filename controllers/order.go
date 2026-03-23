@@ -16,6 +16,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"io"
 
 	"github.com/beego/beego/v2/core/utils/pagination"
 	"github.com/casdoor/casdoor/object"
@@ -146,7 +147,12 @@ func (c *ApiController) UpdateOrder() {
 	id := c.Ctx.Input.Query("id")
 
 	var order object.Order
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &order)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &order)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -165,7 +171,12 @@ func (c *ApiController) UpdateOrder() {
 // @router /add-order [post]
 func (c *ApiController) AddOrder() {
 	var order object.Order
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &order)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &order)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -184,7 +195,12 @@ func (c *ApiController) AddOrder() {
 // @router /delete-order [post]
 func (c *ApiController) DeleteOrder() {
 	var order object.Order
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &order)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &order)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

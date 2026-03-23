@@ -17,6 +17,7 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"strings"
 
 	"github.com/beego/beego/v2/core/utils/pagination"
@@ -265,7 +266,12 @@ func (c *ApiController) UpdateUser() {
 	columnsStr := c.Ctx.Input.Query("columns")
 
 	var user object.User
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &user)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &user)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -374,7 +380,12 @@ func (c *ApiController) UpdateUser() {
 // @router /add-user [post]
 func (c *ApiController) AddUser() {
 	var user object.User
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &user)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &user)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -416,7 +427,12 @@ func (c *ApiController) AddUser() {
 // @router /delete-user [post]
 func (c *ApiController) DeleteUser() {
 	var user object.User
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &user)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &user)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -662,7 +678,12 @@ func (c *ApiController) SetPassword() {
 // @Success 200 {object} object.Userinfo The Response object
 func (c *ApiController) CheckUserPassword() {
 	var user object.User
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &user)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &user)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

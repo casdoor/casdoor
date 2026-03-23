@@ -17,6 +17,7 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 
 	"github.com/beego/beego/v2/core/utils/pagination"
 	"github.com/casdoor/casdoor/object"
@@ -126,7 +127,13 @@ func (c *ApiController) UpdateSubscription() {
 	id := c.Ctx.Input.Query("id")
 
 	var subscription object.Subscription
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &subscription)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	err = json.Unmarshal(body, &subscription)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -145,7 +152,13 @@ func (c *ApiController) UpdateSubscription() {
 // @router /add-subscription [post]
 func (c *ApiController) AddSubscription() {
 	var subscription object.Subscription
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &subscription)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	err = json.Unmarshal(body, &subscription)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -184,7 +197,13 @@ func (c *ApiController) AddSubscription() {
 // @router /delete-subscription [post]
 func (c *ApiController) DeleteSubscription() {
 	var subscription object.Subscription
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &subscription)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	err = json.Unmarshal(body, &subscription)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

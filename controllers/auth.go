@@ -524,7 +524,12 @@ func (c *ApiController) Login() {
 	resp := &Response{}
 
 	var authForm form.AuthForm
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &authForm)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &authForm)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

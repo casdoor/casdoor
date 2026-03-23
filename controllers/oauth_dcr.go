@@ -16,6 +16,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"io"
 	"net/http"
 
 	"github.com/casdoor/casdoor/object"
@@ -32,7 +33,12 @@ import (
 // @router /api/oauth/register [post]
 func (c *ApiController) DynamicClientRegister() {
 	var req object.DynamicClientRegistrationRequest
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &req)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &req)
 	if err != nil {
 		c.Ctx.Output.Status = http.StatusBadRequest
 		c.Data["json"] = object.DcrError{

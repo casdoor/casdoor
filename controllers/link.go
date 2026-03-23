@@ -16,6 +16,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"io"
 
 	"github.com/casdoor/casdoor/object"
 )
@@ -37,7 +38,12 @@ func (c *ApiController) Unlink() {
 	}
 
 	var form LinkForm
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &form)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &form)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

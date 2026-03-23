@@ -17,6 +17,7 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 
 	"github.com/beego/beego/v2/core/utils/pagination"
 	"github.com/casdoor/casdoor/object"
@@ -98,7 +99,13 @@ func (c *ApiController) UpdateSyncer() {
 	id := c.Ctx.Input.Query("id")
 
 	var syncer object.Syncer
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &syncer)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	err = json.Unmarshal(body, &syncer)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -117,7 +124,13 @@ func (c *ApiController) UpdateSyncer() {
 // @router /add-syncer [post]
 func (c *ApiController) AddSyncer() {
 	var syncer object.Syncer
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &syncer)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	err = json.Unmarshal(body, &syncer)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -136,7 +149,13 @@ func (c *ApiController) AddSyncer() {
 // @router /delete-syncer [post]
 func (c *ApiController) DeleteSyncer() {
 	var syncer object.Syncer
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &syncer)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	err = json.Unmarshal(body, &syncer)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -176,7 +195,13 @@ func (c *ApiController) RunSyncer() {
 
 func (c *ApiController) TestSyncerDb() {
 	var syncer object.Syncer
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &syncer)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	err = json.Unmarshal(body, &syncer)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

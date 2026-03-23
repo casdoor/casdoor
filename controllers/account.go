@@ -18,6 +18,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"strings"
 
@@ -83,7 +84,12 @@ type LaravelResponse struct {
 // @router /signup [post]
 func (c *ApiController) Signup() {
 	var authForm form.AuthForm
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &authForm)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &authForm)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

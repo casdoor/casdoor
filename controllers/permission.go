@@ -16,6 +16,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"io"
 
 	"github.com/beego/beego/v2/core/utils/pagination"
 	"github.com/casdoor/casdoor/object"
@@ -135,7 +136,13 @@ func (c *ApiController) UpdatePermission() {
 	id := c.Ctx.Input.Query("id")
 
 	var permission object.Permission
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &permission)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	err = json.Unmarshal(body, &permission)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -154,7 +161,13 @@ func (c *ApiController) UpdatePermission() {
 // @router /add-permission [post]
 func (c *ApiController) AddPermission() {
 	var permission object.Permission
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &permission)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	err = json.Unmarshal(body, &permission)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -173,7 +186,13 @@ func (c *ApiController) AddPermission() {
 // @router /delete-permission [post]
 func (c *ApiController) DeletePermission() {
 	var permission object.Permission
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &permission)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	err = json.Unmarshal(body, &permission)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

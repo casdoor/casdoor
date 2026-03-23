@@ -16,6 +16,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"io"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
@@ -38,7 +39,12 @@ func (c *ApiController) ProxyServer() {
 	name := c.Ctx.Input.Param(":name")
 
 	var mcpReq *mcpself.McpRequest
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &mcpReq)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.McpResponseError(1, -32700, "Parse error", err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &mcpReq)
 	if err != nil {
 		c.McpResponseError(1, -32700, "Parse error", err.Error())
 		return

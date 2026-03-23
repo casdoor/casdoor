@@ -16,6 +16,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"io"
 	"fmt"
 
 	"github.com/casdoor/casdoor/object"
@@ -40,7 +41,12 @@ func (c *ApiController) PlaceOrder() {
 	var req struct {
 		ProductInfos []object.ProductInfo `json:"productInfos"`
 	}
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &req)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &req)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

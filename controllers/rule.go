@@ -17,6 +17,7 @@ package controllers
 import (
 	"encoding/json"
 	"errors"
+	"io"
 	"net"
 	"strings"
 
@@ -103,7 +104,12 @@ func (c *ApiController) AddRule() {
 		CreatedTime: currentTime,
 		UpdatedTime: currentTime,
 	}
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &rule)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &rule)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -127,7 +133,12 @@ func (c *ApiController) AddRule() {
 // @router /update-rule [post]
 func (c *ApiController) UpdateRule() {
 	var rule object.Rule
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &rule)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &rule)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -153,7 +164,12 @@ func (c *ApiController) UpdateRule() {
 // @router /delete-rule [post]
 func (c *ApiController) DeleteRule() {
 	var rule object.Rule
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &rule)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &rule)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

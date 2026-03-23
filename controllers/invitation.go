@@ -17,6 +17,7 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"strings"
 
 	"github.com/beego/beego/v2/core/utils/pagination"
@@ -128,7 +129,12 @@ func (c *ApiController) UpdateInvitation() {
 	id := c.Ctx.Input.Query("id")
 
 	var invitation object.Invitation
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &invitation)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &invitation)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -147,7 +153,12 @@ func (c *ApiController) UpdateInvitation() {
 // @router /add-invitation [post]
 func (c *ApiController) AddInvitation() {
 	var invitation object.Invitation
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &invitation)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &invitation)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -166,7 +177,12 @@ func (c *ApiController) AddInvitation() {
 // @router /delete-invitation [post]
 func (c *ApiController) DeleteInvitation() {
 	var invitation object.Invitation
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &invitation)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &invitation)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -207,7 +223,12 @@ func (c *ApiController) SendInvitation() {
 	id := c.Ctx.Input.Query("id")
 
 	var destinations []string
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &destinations)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &destinations)
 
 	if !c.IsAdmin() {
 		c.ResponseError(c.T("auth:Unauthorized operation"))

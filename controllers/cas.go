@@ -16,6 +16,7 @@ package controllers
 
 import (
 	"encoding/xml"
+	"io"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -201,7 +202,11 @@ func (c *RootController) CasProxy() {
 func (c *RootController) SamlValidate() {
 	c.Ctx.Output.Header("Content-Type", "text/xml; charset=utf-8")
 	target := c.Ctx.Input.Query("TARGET")
-	body := c.Ctx.Input.RequestBody
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
 	envelopRequest := struct {
 		XMLName xml.Name `xml:"Envelope"`
 		Body    struct {
@@ -210,7 +215,7 @@ func (c *RootController) SamlValidate() {
 		}
 	}{}
 
-	err := xml.Unmarshal(body, &envelopRequest)
+	err = xml.Unmarshal(body, &envelopRequest)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

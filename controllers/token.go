@@ -17,6 +17,7 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"time"
 
 	"github.com/beego/beego/v2/core/utils/pagination"
@@ -99,7 +100,12 @@ func (c *ApiController) UpdateToken() {
 	id := c.Ctx.Input.Query("id")
 
 	var token object.Token
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &token)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &token)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -118,7 +124,12 @@ func (c *ApiController) UpdateToken() {
 // @router /add-token [post]
 func (c *ApiController) AddToken() {
 	var token object.Token
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &token)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &token)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -137,7 +148,12 @@ func (c *ApiController) AddToken() {
 // @router /delete-token [post]
 func (c *ApiController) DeleteToken() {
 	var token object.Token
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &token)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &token)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -185,10 +201,16 @@ func (c *ApiController) GetOAuthToken() {
 		clientId, clientSecret, _ = c.Ctx.Request.BasicAuth()
 	}
 
-	if len(c.Ctx.Input.RequestBody) != 0 && grantType != "urn:ietf:params:oauth:grant-type:device_code" {
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	if len(body) != 0 && grantType != "urn:ietf:params:oauth:grant-type:device_code" {
 		// If clientId is empty, try to read data from RequestBody
 		var tokenRequest TokenRequest
-		err := json.Unmarshal(c.Ctx.Input.RequestBody, &tokenRequest)
+		err := json.Unmarshal(body, &tokenRequest)
 		if err == nil {
 			if clientId == "" {
 				clientId = tokenRequest.ClientId
@@ -326,7 +348,12 @@ func (c *ApiController) RefreshToken() {
 	if clientId == "" {
 		// If clientID is empty, try to read data from RequestBody
 		var tokenRequest TokenRequest
-		if err := json.Unmarshal(c.Ctx.Input.RequestBody, &tokenRequest); err == nil {
+		body, err := io.ReadAll(c.Ctx.Request.Body)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+		if err := json.Unmarshal(body, &tokenRequest); err == nil {
 			clientId = tokenRequest.ClientId
 			clientSecret = tokenRequest.ClientSecret
 			grantType = tokenRequest.GrantType
@@ -368,11 +395,14 @@ func (c *ApiController) ValidateOAuth(ignoreValidSecret bool) (ok bool, applicat
 
 	if reqClientId == "" && clientAssertionType == "" {
 		var tokenRequest TokenRequest
-		if err := json.Unmarshal(c.Ctx.Input.RequestBody, &tokenRequest); err == nil {
-			reqClientId = tokenRequest.ClientId
-			reqClientSecret = tokenRequest.ClientSecret
-			clientAssertion = tokenRequest.ClientAssertion
-			clientAssertionType = tokenRequest.ClientAssertionType
+		body, readErr := io.ReadAll(c.Ctx.Request.Body)
+		if readErr == nil {
+			if err := json.Unmarshal(body, &tokenRequest); err == nil {
+				reqClientId = tokenRequest.ClientId
+				reqClientSecret = tokenRequest.ClientSecret
+				clientAssertion = tokenRequest.ClientAssertion
+				clientAssertionType = tokenRequest.ClientAssertionType
+			}
 		}
 	}
 

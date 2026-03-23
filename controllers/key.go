@@ -16,6 +16,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"io"
 
 	"github.com/beego/beego/v2/core/utils/pagination"
 	"github.com/casdoor/casdoor/object"
@@ -168,7 +169,12 @@ func (c *ApiController) UpdateKey() {
 	}
 
 	var key object.Key
-	err = json.Unmarshal(c.Ctx.Input.RequestBody, &key)
+	body, err2 := io.ReadAll(c.Ctx.Request.Body)
+	if err2 != nil {
+		c.ResponseError(err2.Error())
+		return
+	}
+	err = json.Unmarshal(body, &key)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -192,7 +198,12 @@ func (c *ApiController) UpdateKey() {
 // @router /add-key [post]
 func (c *ApiController) AddKey() {
 	var key object.Key
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &key)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &key)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -211,7 +222,12 @@ func (c *ApiController) AddKey() {
 // @router /delete-key [post]
 func (c *ApiController) DeleteKey() {
 	var key object.Key
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &key)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &key)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

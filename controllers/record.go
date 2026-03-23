@@ -16,6 +16,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"io"
 
 	"github.com/beego/beego/v2/core/utils/pagination"
 	"github.com/casdoor/casdoor/object"
@@ -88,10 +89,15 @@ func (c *ApiController) GetRecordsByFilter() {
 		return
 	}
 
-	body := string(c.Ctx.Input.RequestBody)
+	bodyBytes, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	body := string(bodyBytes)
 
 	record := &object.Record{}
-	err := util.JsonToStruct(body, record)
+	err = util.JsonToStruct(body, record)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -115,7 +121,12 @@ func (c *ApiController) GetRecordsByFilter() {
 // @router /add-record [post]
 func (c *ApiController) AddRecord() {
 	var record object.Record
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &record)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &record)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

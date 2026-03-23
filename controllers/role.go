@@ -16,6 +16,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"io"
 
 	"github.com/beego/beego/v2/core/utils/pagination"
 	"github.com/casdoor/casdoor/object"
@@ -96,7 +97,12 @@ func (c *ApiController) UpdateRole() {
 	id := c.Ctx.Input.Query("id")
 
 	var role object.Role
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &role)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &role)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -115,7 +121,12 @@ func (c *ApiController) UpdateRole() {
 // @router /add-role [post]
 func (c *ApiController) AddRole() {
 	var role object.Role
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &role)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &role)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -134,7 +145,12 @@ func (c *ApiController) AddRole() {
 // @router /delete-role [post]
 func (c *ApiController) DeleteRole() {
 	var role object.Role
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &role)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &role)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

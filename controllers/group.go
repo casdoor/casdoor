@@ -15,6 +15,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"io"
 	"fmt"
 
 	"github.com/beego/beego/v2/core/utils/pagination"
@@ -138,7 +139,12 @@ func (c *ApiController) UpdateGroup() {
 	id := c.Ctx.Input.Query("id")
 
 	var group object.Group
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &group)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &group)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -157,7 +163,12 @@ func (c *ApiController) UpdateGroup() {
 // @router /add-group [post]
 func (c *ApiController) AddGroup() {
 	var group object.Group
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &group)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &group)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -176,7 +187,12 @@ func (c *ApiController) AddGroup() {
 // @router /delete-group [post]
 func (c *ApiController) DeleteGroup() {
 	var group object.Group
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &group)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &group)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

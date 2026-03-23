@@ -17,6 +17,7 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 
 	"github.com/beego/beego/v2/core/utils/pagination"
 	"github.com/casdoor/casdoor/object"
@@ -226,7 +227,12 @@ func (c *ApiController) UpdateApplication() {
 	id := c.Ctx.Input.Query("id")
 
 	var application object.Application
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &application)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &application)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -250,7 +256,12 @@ func (c *ApiController) UpdateApplication() {
 // @router /add-application [post]
 func (c *ApiController) AddApplication() {
 	var application object.Application
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &application)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &application)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -285,7 +296,12 @@ func (c *ApiController) AddApplication() {
 // @router /delete-application [post]
 func (c *ApiController) DeleteApplication() {
 	var application object.Application
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &application)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &application)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

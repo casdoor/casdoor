@@ -17,6 +17,7 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
@@ -52,13 +53,18 @@ func (c *ApiController) Enforce() {
 		return
 	}
 
-	if len(c.Ctx.Input.RequestBody) == 0 {
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	if len(body) == 0 {
 		c.ResponseError("The request body should not be empty")
 		return
 	}
 
 	var request []string
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &request)
+	err = json.Unmarshal(body, &request)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -198,7 +204,12 @@ func (c *ApiController) BatchEnforce() {
 	}
 
 	var requests [][]string
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &requests)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &requests)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

@@ -16,6 +16,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"io"
 
 	"github.com/beego/beego/v2/core/utils/pagination"
 	"github.com/casdoor/casdoor/object"
@@ -111,7 +112,12 @@ func (c *ApiController) UpdateForm() {
 	id := c.Ctx.Input.Query("id")
 
 	var form object.Form
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &form)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &form)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -135,7 +141,12 @@ func (c *ApiController) UpdateForm() {
 // @router /add-form [post]
 func (c *ApiController) AddForm() {
 	var form object.Form
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &form)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &form)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -159,7 +170,12 @@ func (c *ApiController) AddForm() {
 // @router /delete-form [post]
 func (c *ApiController) DeleteForm() {
 	var form object.Form
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &form)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &form)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

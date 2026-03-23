@@ -16,6 +16,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"io"
 	"fmt"
 
 	"github.com/beego/beego/v2/core/utils/pagination"
@@ -108,7 +109,12 @@ func (c *ApiController) UpdateEnforcer() {
 	id := c.Ctx.Input.Query("id")
 
 	enforcer := object.Enforcer{}
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &enforcer)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &enforcer)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -127,7 +133,12 @@ func (c *ApiController) UpdateEnforcer() {
 // @router /add-enforcer [post]
 func (c *ApiController) AddEnforcer() {
 	enforcer := object.Enforcer{}
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &enforcer)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &enforcer)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -146,7 +157,12 @@ func (c *ApiController) AddEnforcer() {
 // @router /delete-enforcer [post]
 func (c *ApiController) DeleteEnforcer() {
 	var enforcer object.Enforcer
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &enforcer)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &enforcer)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -210,7 +226,12 @@ func (c *ApiController) GetFilteredPolicies() {
 	id := c.Ctx.Input.Query("id")
 
 	var filters []object.Filter
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &filters)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &filters)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -237,7 +258,12 @@ func (c *ApiController) UpdatePolicy() {
 	id := c.Ctx.Input.Query("id")
 
 	var policies []xormadapter.CasbinRule
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &policies)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &policies)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -264,7 +290,12 @@ func (c *ApiController) AddPolicy() {
 	id := c.Ctx.Input.Query("id")
 
 	var policy xormadapter.CasbinRule
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &policy)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &policy)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -291,7 +322,12 @@ func (c *ApiController) RemovePolicy() {
 	id := c.Ctx.Input.Query("id")
 
 	var policy xormadapter.CasbinRule
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &policy)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &policy)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

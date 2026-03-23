@@ -16,6 +16,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"io"
 
 	"github.com/beego/beego/v2/core/utils/pagination"
 	"github.com/casdoor/casdoor/object"
@@ -147,7 +148,13 @@ func (c *ApiController) UpdatePayment() {
 	id := c.Ctx.Input.Query("id")
 
 	var payment object.Payment
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &payment)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	err = json.Unmarshal(body, &payment)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -166,7 +173,13 @@ func (c *ApiController) UpdatePayment() {
 // @router /add-payment [post]
 func (c *ApiController) AddPayment() {
 	var payment object.Payment
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &payment)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	err = json.Unmarshal(body, &payment)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -185,7 +198,13 @@ func (c *ApiController) AddPayment() {
 // @router /delete-payment [post]
 func (c *ApiController) DeletePayment() {
 	var payment object.Payment
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &payment)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	err = json.Unmarshal(body, &payment)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -206,7 +225,11 @@ func (c *ApiController) NotifyPayment() {
 	owner := c.Ctx.Input.Param(":owner")
 	paymentName := c.Ctx.Input.Param(":payment")
 
-	body := c.Ctx.Input.RequestBody
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
 
 	payment, err := object.NotifyPayment(body, owner, paymentName, c.GetAcceptLanguage())
 	if err != nil {

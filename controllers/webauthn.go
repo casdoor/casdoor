@@ -94,7 +94,12 @@ func (c *ApiController) WebAuthnSignupFinish() {
 		c.ResponseError(c.T("webauthn:Please call WebAuthnSigninBegin first"))
 		return
 	}
-	c.Ctx.Request.Body = io.NopCloser(bytes.NewBuffer(c.Ctx.Input.RequestBody))
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	c.Ctx.Request.Body = io.NopCloser(bytes.NewBuffer(body))
 
 	credential, err := webauthnObj.FinishRegistration(user, sessionData, c.Ctx.Request)
 	if err != nil {
@@ -185,7 +190,12 @@ func (c *ApiController) WebAuthnSigninFinish() {
 		c.ResponseError(c.T("webauthn:Please call WebAuthnSigninBegin first"))
 		return
 	}
-	c.Ctx.Request.Body = io.NopCloser(bytes.NewBuffer(c.Ctx.Input.RequestBody))
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	c.Ctx.Request.Body = io.NopCloser(bytes.NewBuffer(body))
 
 	var user *object.User
 	if sessionData.UserID != nil {

@@ -16,6 +16,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"io"
 
 	"github.com/beego/beego/v2/core/utils/pagination"
 	"github.com/casdoor/casdoor/object"
@@ -96,7 +97,13 @@ func (c *ApiController) UpdatePricing() {
 	id := c.Ctx.Input.Query("id")
 
 	var pricing object.Pricing
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &pricing)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	err = json.Unmarshal(body, &pricing)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -115,7 +122,13 @@ func (c *ApiController) UpdatePricing() {
 // @router /add-pricing [post]
 func (c *ApiController) AddPricing() {
 	var pricing object.Pricing
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &pricing)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	err = json.Unmarshal(body, &pricing)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -134,7 +147,13 @@ func (c *ApiController) AddPricing() {
 // @router /delete-pricing [post]
 func (c *ApiController) DeletePricing() {
 	var pricing object.Pricing
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &pricing)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	err = json.Unmarshal(body, &pricing)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

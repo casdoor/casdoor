@@ -16,6 +16,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"io"
 
 	"github.com/beego/beego/v2/core/utils/pagination"
 	"github.com/casdoor/casdoor/object"
@@ -117,7 +118,12 @@ func (c *ApiController) UpdateOrganization() {
 	id := c.Ctx.Input.Query("id")
 
 	var organization object.Organization
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &organization)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &organization)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -147,7 +153,12 @@ func (c *ApiController) UpdateOrganization() {
 // @router /add-organization [post]
 func (c *ApiController) AddOrganization() {
 	var organization object.Organization
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &organization)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &organization)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -186,7 +197,12 @@ func (c *ApiController) AddOrganization() {
 // @router /delete-organization [post]
 func (c *ApiController) DeleteOrganization() {
 	var organization object.Organization
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &organization)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &organization)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

@@ -16,6 +16,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"io"
 
 	"github.com/beego/beego/v2/core/utils/pagination"
 	"github.com/casdoor/casdoor/object"
@@ -132,7 +133,13 @@ func (c *ApiController) UpdateTicket() {
 	id := c.Ctx.Input.Query("id")
 
 	var ticket object.Ticket
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &ticket)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	err = json.Unmarshal(body, &ticket)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -184,7 +191,13 @@ func (c *ApiController) UpdateTicket() {
 // @router /add-ticket [post]
 func (c *ApiController) AddTicket() {
 	var ticket object.Ticket
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &ticket)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	err = json.Unmarshal(body, &ticket)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -207,7 +220,13 @@ func (c *ApiController) AddTicket() {
 // @router /delete-ticket [post]
 func (c *ApiController) DeleteTicket() {
 	var ticket object.Ticket
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &ticket)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	err = json.Unmarshal(body, &ticket)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -235,7 +254,13 @@ func (c *ApiController) AddTicketMessage() {
 	id := c.Ctx.Input.Query("id")
 
 	var message object.TicketMessage
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &message)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	err = json.Unmarshal(body, &message)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

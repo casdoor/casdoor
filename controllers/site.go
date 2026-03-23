@@ -16,6 +16,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"io"
 
 	"github.com/beego/beego/v2/server/web/pagination"
 	"github.com/casdoor/casdoor/object"
@@ -116,7 +117,13 @@ func (c *ApiController) UpdateSite() {
 	id := c.Ctx.Input.Query("id")
 
 	var site object.Site
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &site)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	err = json.Unmarshal(body, &site)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -135,7 +142,13 @@ func (c *ApiController) UpdateSite() {
 // @router /add-site [post]
 func (c *ApiController) AddSite() {
 	var site object.Site
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &site)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	err = json.Unmarshal(body, &site)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -154,7 +167,13 @@ func (c *ApiController) AddSite() {
 // @router /delete-site [post]
 func (c *ApiController) DeleteSite() {
 	var site object.Site
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &site)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	err = json.Unmarshal(body, &site)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

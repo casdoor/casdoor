@@ -135,7 +135,12 @@ func (c *ApiController) UpdateResource() {
 	id := c.Ctx.Input.Query("id")
 
 	var resource object.Resource
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &resource)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &resource)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -153,7 +158,12 @@ func (c *ApiController) UpdateResource() {
 // @router /add-resource [post]
 func (c *ApiController) AddResource() {
 	var resource object.Resource
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &resource)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &resource)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -171,7 +181,12 @@ func (c *ApiController) AddResource() {
 // @router /delete-resource [post]
 func (c *ApiController) DeleteResource() {
 	var resource object.Resource
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &resource)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &resource)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

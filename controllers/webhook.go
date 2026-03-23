@@ -16,6 +16,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"io"
 
 	"github.com/beego/beego/v2/core/utils/pagination"
 	"github.com/casdoor/casdoor/object"
@@ -99,7 +100,12 @@ func (c *ApiController) UpdateWebhook() {
 	id := c.Ctx.Input.Query("id")
 
 	var webhook object.Webhook
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &webhook)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &webhook)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -118,7 +124,12 @@ func (c *ApiController) UpdateWebhook() {
 // @router /add-webhook [post]
 func (c *ApiController) AddWebhook() {
 	var webhook object.Webhook
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &webhook)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &webhook)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -137,7 +148,12 @@ func (c *ApiController) AddWebhook() {
 // @router /delete-webhook [post]
 func (c *ApiController) DeleteWebhook() {
 	var webhook object.Webhook
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &webhook)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &webhook)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

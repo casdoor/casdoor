@@ -16,6 +16,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"io"
 
 	"github.com/casdoor/casdoor/object"
 )
@@ -35,7 +36,12 @@ func (c *ApiController) RevokeConsent() {
 	}
 
 	var consent object.ConsentRecord
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &consent)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &consent)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -126,7 +132,12 @@ func (c *ApiController) GrantConsent() {
 		Resource     string   `json:"resource"`
 	}
 
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &request)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &request)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

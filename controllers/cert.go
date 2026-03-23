@@ -16,6 +16,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"io"
 
 	"github.com/beego/beego/v2/core/utils/pagination"
 	"github.com/casdoor/casdoor/object"
@@ -136,7 +137,12 @@ func (c *ApiController) UpdateCert() {
 	id := c.Ctx.Input.Query("id")
 
 	var cert object.Cert
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &cert)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &cert)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -155,7 +161,12 @@ func (c *ApiController) UpdateCert() {
 // @router /add-cert [post]
 func (c *ApiController) AddCert() {
 	var cert object.Cert
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &cert)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &cert)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -174,7 +185,12 @@ func (c *ApiController) AddCert() {
 // @router /delete-cert [post]
 func (c *ApiController) DeleteCert() {
 	var cert object.Cert
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &cert)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &cert)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

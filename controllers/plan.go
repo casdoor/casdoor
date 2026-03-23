@@ -16,6 +16,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"io"
 
 	"github.com/beego/beego/v2/core/utils/pagination"
 	"github.com/casdoor/casdoor/object"
@@ -110,7 +111,13 @@ func (c *ApiController) UpdatePlan() {
 	id := c.Ctx.Input.Query("id")
 	owner := util.GetOwnerFromId(id)
 	var plan object.Plan
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &plan)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	err = json.Unmarshal(body, &plan)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -144,7 +151,13 @@ func (c *ApiController) UpdatePlan() {
 // @router /add-plan [post]
 func (c *ApiController) AddPlan() {
 	var plan object.Plan
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &plan)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	err = json.Unmarshal(body, &plan)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -170,7 +183,13 @@ func (c *ApiController) AddPlan() {
 // @router /delete-plan [post]
 func (c *ApiController) DeletePlan() {
 	var plan object.Plan
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &plan)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	err = json.Unmarshal(body, &plan)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

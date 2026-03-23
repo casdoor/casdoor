@@ -20,6 +20,7 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"strings"
 
 	"github.com/casdoor/casdoor/object"
@@ -61,7 +62,12 @@ func (c *ApiController) SendEmail() {
 	}
 
 	var emailForm EmailForm
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &emailForm)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &emailForm)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -171,7 +177,12 @@ func (c *ApiController) SendSms() {
 	}
 
 	var smsForm SmsForm
-	err = json.Unmarshal(c.Ctx.Input.RequestBody, &smsForm)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &smsForm)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -209,7 +220,12 @@ func (c *ApiController) SendNotification() {
 	}
 
 	var notificationForm NotificationForm
-	err = json.Unmarshal(c.Ctx.Input.RequestBody, &notificationForm)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &notificationForm)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

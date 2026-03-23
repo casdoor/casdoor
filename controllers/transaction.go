@@ -16,6 +16,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"io"
 
 	"github.com/beego/beego/v2/core/utils/pagination"
 	"github.com/casdoor/casdoor/object"
@@ -149,7 +150,12 @@ func (c *ApiController) UpdateTransaction() {
 	id := c.Ctx.Input.Query("id")
 
 	var transaction object.Transaction
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &transaction)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &transaction)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -169,7 +175,12 @@ func (c *ApiController) UpdateTransaction() {
 // @router /add-transaction [post]
 func (c *ApiController) AddTransaction() {
 	var transaction object.Transaction
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &transaction)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &transaction)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -202,7 +213,12 @@ func (c *ApiController) AddTransaction() {
 // @router /delete-transaction [post]
 func (c *ApiController) DeleteTransaction() {
 	var transaction object.Transaction
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &transaction)
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &transaction)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
