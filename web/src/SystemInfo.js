@@ -20,6 +20,15 @@ import * as TourConfig from "./TourConfig";
 import i18next from "i18next";
 import PrometheusInfoTable from "./table/PrometheusInfoTable";
 
+const getProgressColor = (percent) => {
+  if (percent >= 90) {
+    return "#ff4d4f";
+  } else if (percent >= 70) {
+    return "#faad14";
+  }
+  return undefined;
+};
+
 class SystemInfo extends React.Component {
 
   constructor(props) {
@@ -144,16 +153,18 @@ class SystemInfo extends React.Component {
   render() {
     const cpuUi = this.state.systemInfo.cpuUsage?.length <= 0 ? i18next.t("general:Failed to get") :
       this.state.systemInfo.cpuUsage.map((usage, i) => {
+        const percent = Number(usage.toFixed(1));
         return (
-          <Progress key={i} percent={Number(usage.toFixed(1))} />
+          <Progress key={i} percent={percent} strokeColor={getProgressColor(percent)} format={p => `${p}%`} />
         );
       });
 
+    const memPercent = Number((Number(this.state.systemInfo.memoryUsed) / Number(this.state.systemInfo.memoryTotal) * 100).toFixed(2));
     const memUi = this.state.systemInfo.memoryUsed && this.state.systemInfo.memoryTotal && this.state.systemInfo.memoryTotal <= 0 ? i18next.t("general:Failed to get") :
       <div>
         {Setting.getFriendlyFileSize(this.state.systemInfo.memoryUsed)} / {Setting.getFriendlyFileSize(this.state.systemInfo.memoryTotal)}
         <br /> <br />
-        <Progress type="circle" percent={Number((Number(this.state.systemInfo.memoryUsed) / Number(this.state.systemInfo.memoryTotal) * 100).toFixed(2))} />
+        <Progress type="circle" percent={memPercent} strokeColor={getProgressColor(memPercent)} format={p => `${p}%`} />
       </div>;
     const latencyUi = this.state.prometheusInfo?.apiLatency === null || this.state.prometheusInfo?.apiLatency?.length <= 0 ? <Spin size="large" /> :
       <PrometheusInfoTable prometheusInfo={this.state.prometheusInfo} table={"latency"} />;
