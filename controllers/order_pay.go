@@ -16,8 +16,8 @@ package controllers
 
 import (
 	"encoding/json"
-	"io"
 	"fmt"
+	"io"
 
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"

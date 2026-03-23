@@ -16,8 +16,8 @@ package controllers
 
 import (
 	"encoding/xml"
-	"io"
 	"fmt"
+	"io"
 	"net/http"
 	"net/url"
 	"strings"

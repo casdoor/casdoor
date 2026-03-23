@@ -16,8 +16,8 @@ package controllers
 
 import (
 	"encoding/json"
-	"io"
 	"fmt"
+	"io"
 
 	"github.com/beego/beego/v2/core/utils/pagination"
 	"github.com/casdoor/casdoor/object"
