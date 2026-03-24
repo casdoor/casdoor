@@ -44,9 +44,8 @@ type ObjectWithOrg struct {
 func getUsername(ctx *context.Context) (username string) {
 	username, ok := ctx.Input.Session("username").(string)
 	if !ok || username == "" {
-		matched := false
-		username, matched, _ = getUsernameByClientIdSecret(ctx)
-		if username == "" && !matched {
+		username, _ = getUsernameByClientIdSecret(ctx)
+		if username == "" {
 			username, _ = getUsernameByKey(ctx)
 		}
 	}

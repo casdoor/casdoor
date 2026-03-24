@@ -109,7 +109,7 @@ func denyMcpRequest(ctx *context.Context) {
 	_ = ctx.Output.JSON(resp, true, false)
 }
 
-func getUsernameByClientIdSecret(ctx *context.Context) (string, bool, error) {
+func getUsernameByClientIdSecret(ctx *context.Context) (string, error) {
 	clientId, clientSecret, ok := ctx.Request.BasicAuth()
 	if !ok {
 		clientId = ctx.Input.Query("clientId")
@@ -117,22 +117,22 @@ func getUsernameByClientIdSecret(ctx *context.Context) (string, bool, error) {
 	}
 
 	if clientId == "" || clientSecret == "" {
-		return "", false, nil
+		return "", nil
 	}
 
 	application, err := object.GetApplicationByClientId(clientId)
 	if err != nil {
-		return "", false, err
+		return "", err
 	}
 	if application == nil {
-		return "", false, nil
+		return "", nil
 	}
 
 	if application.ClientSecret != clientSecret {
-		return "", true, fmt.Errorf("Incorrect client secret for application: %s", application.Name)
+		return "", fmt.Errorf("Incorrect client secret for application: %s", application.Name)
 	}
 
-	return fmt.Sprintf("app/%s", application.Name), true, nil
+	return fmt.Sprintf("app/%s", application.Name), nil
 }
 
 func getUsernameByKey(ctx *context.Context) (string, error) {

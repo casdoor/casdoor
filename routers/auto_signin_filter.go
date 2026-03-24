@@ -92,17 +92,20 @@ func AutoSigninFilter(ctx *context.Context) {
 	clientId := ctx.Input.Query("clientId")
 	clientSecret := ctx.Input.Query("clientSecret")
 	if clientId != "" && clientSecret != "" {
-		userId, matched, err := getUsernameByClientIdSecret(ctx)
+		application, err := object.GetApplicationByClientId(clientId)
 		if err != nil {
 			responseError(ctx, err.Error())
 			return
 		}
-		if !matched {
-			responseError(ctx, fmt.Sprintf("Application not found for client ID: %s", clientId))
+		if application != nil {
+			if application.ClientSecret != clientSecret {
+				responseError(ctx, fmt.Sprintf("Incorrect client secret for application: %s", application.Name))
+				return
+			}
+
+			setSessionUser(ctx, fmt.Sprintf("app/%s", application.Name))
 			return
 		}
-		setSessionUser(ctx, userId)
-		return
 	}
 
 	userId, err := getUsernameByKey(ctx)
