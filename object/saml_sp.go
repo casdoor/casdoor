@@ -154,13 +154,10 @@ func buildSpKeyStore() (dsig.X509KeyStore, error) {
 
 func buildSpCertificateStore(provider *Provider, samlResponse string) (certStore dsig.MemoryX509CertificateStore, err error) {
 	certEncodedData := ""
-	if samlResponse != "" {
-		certEncodedData, err = getCertificateFromSamlResponse(samlResponse, provider.Type)
-		if err != nil {
-			return
-		}
-	} else if provider.IdP != "" {
+	if provider.IdP != "" {
 		certEncodedData = provider.IdP
+	} else {
+		return certStore, fmt.Errorf("provider IdP certificate is not configured")
 	}
 
 	var certData []byte
