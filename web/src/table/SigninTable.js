@@ -269,6 +269,12 @@ class SigninTable extends React.Component {
               {id: "Auto sign in - False", name: `${i18next.t("login:Auto sign in")} - ${i18next.t("general:False")}`},
             ];
           }
+          if (record.name === "Languages") {
+            options = [
+              {id: "None", name: i18next.t("general:Default")},
+              {id: "Label", name: i18next.t("signup:Label")},
+            ];
+          }
 
           if (options.length === 0) {
             return null;

@@ -14,7 +14,7 @@
 
 import React from "react";
 import * as Setting from "../../Setting";
-import {Dropdown} from "antd";
+import {Dropdown, Select} from "antd";
 import "../../App.less";
 import {GlobalOutlined} from "@ant-design/icons";
 
@@ -28,9 +28,7 @@ class LanguageSelect extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      classes: props,
-      languages: props.languages ?? Setting.Countries.map(item => item.key),
-      onClick: props.onClick,
+      selectedLanguage: Setting.getLanguage(),
     };
 
     Setting.Countries.forEach((country) => {
@@ -38,32 +36,70 @@ class LanguageSelect extends React.Component {
     });
   }
 
-  items = Setting.Countries.map((country) => Setting.getItem(country.label, country.key, flagIcon(country.country, country.alt)));
-
-  getOrganizationLanguages(languages) {
-    const select = [];
-    for (const language of languages) {
-      this.items.map((item, index) => item.key === language ? select.push(item) : null);
-    }
-    return select;
+  getLanguages() {
+    return this.props.languages ?? Setting.Countries.map(item => item.key);
   }
 
-  render() {
-    const languageItems = this.getOrganizationLanguages(this.state.languages);
+  getLanguageItems(languages) {
+    return Setting.Countries.filter((country) => languages.includes(country.key));
+  }
+
+  getSelectorMode() {
+    return this.props.mode === "Label" ? "Label" : "Dropdown";
+  }
+
+  triggerLanguageChange(key) {
+    if (typeof this.props.onClick === "function") {
+      this.props.onClick(key);
+    }
+    Setting.setLanguage(key);
+    this.setState({selectedLanguage: key});
+  }
+
+  renderDropdown(languageItems) {
+    const items = languageItems.map((country) => Setting.getItem(country.label, country.key, flagIcon(country.country, country.alt)));
     const onClick = (e) => {
-      if (typeof this.state.onClick === "function") {
-        this.state.onClick(e.key);
-      }
-      Setting.setLanguage(e.key);
+      this.triggerLanguageChange(e.key);
     };
 
     return (
-      <Dropdown menu={{items: languageItems, onClick}} >
-        <div className="select-box" style={{display: languageItems.length === 0 ? "none" : null, ...this.props.style}} >
+      <Dropdown menu={{items, onClick}}>
+        <div className="select-box" style={{display: items.length === 0 ? "none" : null, ...this.props.style}}>
           <GlobalOutlined style={{fontSize: "24px"}} />
         </div>
       </Dropdown>
     );
+  }
+
+  renderTextOnlySelect(languageItems) {
+    if (languageItems.length === 0) {
+      return null;
+    }
+
+    const options = languageItems.map((country) => Setting.getOption(country.label, country.key));
+    let selectedLanguage = this.state.selectedLanguage || Setting.getLanguage();
+    if (!options.some((item) => item.value === selectedLanguage)) {
+      selectedLanguage = options[0].value;
+    }
+
+    return (
+      <Select
+        virtual={false}
+        value={selectedLanguage}
+        options={options}
+        onChange={(value) => this.triggerLanguageChange(value)}
+        style={{minWidth: "110px", ...this.props.style}}
+      />
+    );
+  }
+
+  render() {
+    const languageItems = this.getLanguageItems(this.getLanguages());
+    if (this.getSelectorMode() === "Label") {
+      return this.renderTextOnlySelect(languageItems);
+    }
+
+    return this.renderDropdown(languageItems);
   }
 }
 

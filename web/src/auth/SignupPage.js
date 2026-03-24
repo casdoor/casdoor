@@ -254,6 +254,11 @@ class SignupPage extends React.Component {
     }
   }
 
+  getLanguageSelectorMode(application) {
+    const languagesItem = application.signinItems?.find((item) => item.name === "Languages");
+    return languagesItem?.rule;
+  }
+
   onFinish(values) {
     const application = this.getApplicationObj();
 
@@ -1010,7 +1015,11 @@ class SignupPage extends React.Component {
               {
                 Setting.renderLogo(application)
               }
-              <LanguageSelect languages={application.organizationObj.languages} style={{top: "55px", right: "5px", position: "absolute"}} />
+              <LanguageSelect
+                languages={application.organizationObj.languages}
+                mode={this.getLanguageSelectorMode(application)}
+                style={{top: "55px", right: "5px", position: "absolute"}}
+              />
               {
                 this.renderForm(application)
               }
