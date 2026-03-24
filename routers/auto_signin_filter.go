@@ -27,11 +27,7 @@ import (
 
 func AutoSigninFilter(ctx *context.Context) {
 	urlPath := ctx.Request.URL.Path
-	var (
-		userId  string
-		err     error
-		matched bool
-	)
+	var userId string
 
 	if strings.HasPrefix(urlPath, "/api/login/oauth/access_token") {
 		return
@@ -96,31 +92,27 @@ func AutoSigninFilter(ctx *context.Context) {
 	clientId := ctx.Input.Query("clientId")
 	clientSecret := ctx.Input.Query("clientSecret")
 	if clientId != "" && clientSecret != "" {
-		userId, matched, err = resolveSubjectByClientCredentials(clientId, clientSecret)
+		userId, matched, err := getUsernameByClientIdSecret(ctx)
 		if err != nil {
 			responseError(ctx, err.Error())
 			return
 		}
-		if matched && userId != "" {
-			setSessionUser(ctx, userId)
+		if !matched {
+			responseError(ctx, fmt.Sprintf("Application not found for client ID: %s", clientId))
 			return
 		}
-
-		responseError(ctx, fmt.Sprintf("Application not found for client ID: %s", clientId))
+		setSessionUser(ctx, userId)
 		return
 	}
 
-	clientId, clientSecret, ok := ctx.Request.BasicAuth()
-	if ok {
-		userId, matched, err = resolveSubjectByClientCredentials(clientId, clientSecret)
-		if err != nil {
-			responseError(ctx, err.Error())
-			return
-		}
-		if matched && userId != "" {
-			setSessionUser(ctx, userId)
-			return
-		}
+	userId, err := getUsernameByKey(ctx)
+	if err != nil {
+		responseError(ctx, err.Error())
+		return
+	}
+	if userId != "" && !object.IsAppUser(userId) {
+		setSessionUser(ctx, userId)
+		return
 	}
 
 	// "/page?username=built-in/admin&password=123"

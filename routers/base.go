@@ -109,21 +109,13 @@ func denyMcpRequest(ctx *context.Context) {
 	_ = ctx.Output.JSON(resp, true, false)
 }
 
-func resolveSubjectByCredentialPair(identifier string, secret string) (string, error) {
-	if identifier == "" || secret == "" {
-		return "", nil
+func getUsernameByClientIdSecret(ctx *context.Context) (string, bool, error) {
+	clientId, clientSecret, ok := ctx.Request.BasicAuth()
+	if !ok {
+		clientId = ctx.Input.Query("clientId")
+		clientSecret = ctx.Input.Query("clientSecret")
 	}
 
-	subject, matched, err := resolveSubjectByClientCredentials(identifier, secret)
-	if err != nil || matched {
-		return subject, err
-	}
-
-	subject, _, err = object.ResolveSubjectByKey(identifier, secret)
-	return subject, err
-}
-
-func resolveSubjectByClientCredentials(clientId string, clientSecret string) (string, bool, error) {
 	if clientId == "" || clientSecret == "" {
 		return "", false, nil
 	}
@@ -141,6 +133,16 @@ func resolveSubjectByClientCredentials(clientId string, clientSecret string) (st
 	}
 
 	return fmt.Sprintf("app/%s", application.Name), true, nil
+}
+
+func getUsernameByKey(ctx *context.Context) (string, error) {
+	accessKey, accessSecret, ok := ctx.Request.BasicAuth()
+	if !ok {
+		return "", nil
+	}
+
+	// A key can represent either a user or an application.
+	return object.GetUsernameByKey(accessKey, accessSecret)
 }
 
 func getSessionUser(ctx *context.Context) string {

@@ -22,44 +22,40 @@ import (
 	"github.com/casdoor/casdoor/util"
 )
 
-func ResolveSubjectByKey(accessKey string, accessSecret string) (string, bool, error) {
+func GetUsernameByKey(accessKey string, accessSecret string) (string, error) {
 	if accessKey == "" || accessSecret == "" {
-		return "", false, nil
+		return "", nil
 	}
 
 	key, err := GetKeyByAccessKey(accessKey)
 	if err != nil {
-		return "", false, err
+		return "", err
 	}
 	if key == nil {
-		return "", false, nil
+		return "", nil
 	}
 
 	if subtle.ConstantTimeCompare([]byte(key.AccessSecret), []byte(accessSecret)) != 1 {
-		return "", true, fmt.Errorf("incorrect access secret for key: %s", key.Name)
+		return "", fmt.Errorf("incorrect access secret for key: %s", key.Name)
 	}
 	if !key.IsActive() {
-		return "", true, fmt.Errorf("key: %s is inactive", key.GetId())
+		return "", fmt.Errorf("key: %s is inactive", key.GetId())
 	}
 
 	expired, err := key.IsExpired()
 	if err != nil {
-		return "", true, err
+		return "", err
 	}
 	if expired {
-		return "", true, fmt.Errorf("key: %s is expired", key.GetId())
+		return "", fmt.Errorf("key: %s is expired", key.GetId())
 	}
 
 	organization, err := key.getBoundOrganization()
 	if err != nil {
-		return "", true, err
+		return "", err
 	}
 
-	subject, err := resolveSubjectFromKey(key, organization)
-	if err != nil {
-		return "", true, err
-	}
-	return subject, true, nil
+	return getUsernameFromKey(key, organization)
 }
 
 func (key *Key) IsActive() bool {
@@ -97,7 +93,7 @@ func parseKeyExpireTime(expireTime string) (time.Time, error) {
 	return time.Time{}, fmt.Errorf("invalid expire time format: %s", expireTime)
 }
 
-func resolveSubjectFromKey(key *Key, organization string) (string, error) {
+func getUsernameFromKey(key *Key, organization string) (string, error) {
 	switch key.Type {
 	case KeyTypeUser:
 		if key.User == "" {
@@ -114,6 +110,7 @@ func resolveSubjectFromKey(key *Key, organization string) (string, error) {
 		if user.IsForbidden {
 			return "", fmt.Errorf("the user: %s is forbidden", user.GetId())
 		}
+		// User keys return the normal "owner/name" user id.
 		return user.GetId(), nil
 	case KeyTypeApplication:
 		if key.Application == "" {
@@ -130,6 +127,7 @@ func resolveSubjectFromKey(key *Key, organization string) (string, error) {
 		if application.Organization != organization {
 			return "", fmt.Errorf("application: %s does not belong to organization: %s", application.Name, organization)
 		}
+		// Application keys reuse the existing "app/<application>" format.
 		return fmt.Sprintf("app/%s", application.Name), nil
 	case KeyTypeOrganization, KeyTypeGeneral:
 		return "", fmt.Errorf("key type: %s is not supported for direct authentication yet", key.Type)
