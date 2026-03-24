@@ -1040,6 +1040,10 @@ func (c *ApiController) Login() {
 					return
 				}
 
+				if checkMfaEnable(c, user, organization, verificationType) {
+					return
+				}
+
 				resp = c.HandleLoggedIn(application, user, &authForm)
 
 				c.Ctx.Input.SetParam("recordUserId", user.GetId())
