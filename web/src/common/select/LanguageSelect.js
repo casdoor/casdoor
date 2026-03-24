@@ -28,7 +28,6 @@ class LanguageSelect extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      classes: props,
       selectedLanguage: Setting.getLanguage(),
     };
 
