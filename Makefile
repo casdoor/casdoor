@@ -90,12 +90,12 @@ deps: ## Run dependencies for local development
 	docker compose up -d db
 
 lint-install: ## Install golangci-lint
-	@# The following installs a specific version of golangci-lint, which is appropriate for a CI server to avoid different results from build to build
-	go get github.com/golangci/golangci-lint/cmd/golangci-lint@v1.40.1
+	@# Keep the local golangci-lint version aligned with CI. Both local and CI lint run the gofumpt-only ruleset from .golangci.yml.
+	GOTOOLCHAIN=go1.25.8 go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.11.4
 
-lint: ## Run golangci-lint
+lint: vendor ## Run golangci-lint
 	@echo "---lint---"
-	golangci-lint run --modules-download-mode=vendor ./...
+	golangci-lint run ./...
 
 ##@ Deployment
 

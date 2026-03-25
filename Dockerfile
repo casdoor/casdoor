@@ -9,7 +9,7 @@ RUN yarn install --frozen-lockfile --network-timeout 1000000
 COPY ./web .
 RUN NODE_OPTIONS="--max-old-space-size=4096" yarn run build
 
-FROM --platform=$BUILDPLATFORM golang:1.24.13 AS BACK
+FROM --platform=$BUILDPLATFORM golang:1.25.8 AS BACK
 WORKDIR /go/src/casdoor
 
 # Copy only go.mod and go.sum first for dependency caching
