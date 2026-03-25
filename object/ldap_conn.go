@@ -200,16 +200,25 @@ func (l *LdapConn) GetLdapUsers(ldapServer *Ldap) ([]LdapUser, error) {
 		SearchAttributes = append(SearchAttributes, attribute)
 	}
 
+	// Some LDAP servers/configs use "{}" as a placeholder (e.g. "(uid={})").
+	// Casdoor doesn't interpolate it. For listing users, interpret it as a wildcard.
+	filter := strings.TrimSpace(ldapServer.Filter)
+	if filter == "" {
+		filter = "(objectClass=*)"
+	} else if strings.Contains(filter, "{}") {
+		filter = strings.ReplaceAll(filter, "{}", "*")
+	}
+
 	searchReq := goldap.NewSearchRequest(ldapServer.BaseDn, goldap.ScopeWholeSubtree, goldap.NeverDerefAliases,
 		0, 0, false,
-		ldapServer.Filter, SearchAttributes, nil)
+		filter, SearchAttributes, nil)
 	searchResult, err := l.Conn.SearchWithPaging(searchReq, 100)
 	if err != nil {
 		return nil, err
 	}
 
 	if len(searchResult.Entries) == 0 {
-		return nil, errors.New("no result")
+		return []LdapUser{}, nil
 	}
 
 	var ldapUsers []LdapUser
@@ -859,11 +868,20 @@ func (ldapUser *LdapUser) GetLdapUuid() string {
 }
 
 func (ldap *Ldap) buildAuthFilterString(user *User) string {
-	if len(ldap.FilterFields) == 0 {
-		return fmt.Sprintf("(&%s(uid=%s))", ldap.Filter, user.Name)
+	// Tolerate configs that use "{}" as a placeholder, e.g. "(uid={})".
+	// Casdoor doesn't interpolate it; treat it as wildcard so the base filter remains valid.
+	baseFilter := strings.TrimSpace(ldap.Filter)
+	if baseFilter == "" {
+		baseFilter = "(objectClass=*)"
+	} else if strings.Contains(baseFilter, "{}") {
+		baseFilter = strings.ReplaceAll(baseFilter, "{}", "*")
 	}
 
-	filter := fmt.Sprintf("(&%s(|", ldap.Filter)
+	if len(ldap.FilterFields) == 0 {
+		return fmt.Sprintf("(&%s(uid=%s))", baseFilter, user.Name)
+	}
+
+	filter := fmt.Sprintf("(&%s(|", baseFilter)
 	for _, field := range ldap.FilterFields {
 		filter = fmt.Sprintf("%s(%s=%s)", filter, field, user.getFieldFromLdapAttribute(field))
 	}
