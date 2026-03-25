@@ -15,14 +15,14 @@
 package conf
 
 type WebConfig struct {
-	ShowGithubCorner   bool   `json:"showGithubCorner"`
-	ForceLanguage      string `json:"forceLanguage"`
-	DefaultLanguage    string `json:"defaultLanguage"`
-	IsDemoMode         bool   `json:"isDemoMode"`
-	StaticBaseUrl      string `json:"staticBaseUrl"`
-	AiAssistantUrl     string `json:"aiAssistantUrl"`
-	DefaultApplication string `json:"defaultApplication"`
-	MaxItemsForFlatMenu int64 `json:"maxItemsForFlatMenu"`
+	ShowGithubCorner    bool   `json:"showGithubCorner"`
+	ForceLanguage       string `json:"forceLanguage"`
+	DefaultLanguage     string `json:"defaultLanguage"`
+	IsDemoMode          bool   `json:"isDemoMode"`
+	StaticBaseUrl       string `json:"staticBaseUrl"`
+	AiAssistantUrl      string `json:"aiAssistantUrl"`
+	DefaultApplication  string `json:"defaultApplication"`
+	MaxItemsForFlatMenu int64  `json:"maxItemsForFlatMenu"`
 }
 
 func GetWebConfig() *WebConfig {
