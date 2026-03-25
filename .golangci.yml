@@ -1,11 +1,26 @@
-# yaml-language-server: $schema=https://golangci.github.io/legacy-v1-doc/jsonschema/golangci.jsonschema.json
-
+version: "2"
 run:
-  timeout: 5m
   relative-path-mode: gomod
   modules-download-mode: vendor
-
 linters:
-  disable-all: true
+  default: none
+  exclusions:
+    generated: lax
+    presets:
+      - comments
+      - common-false-positives
+      - legacy
+      - std-error-handling
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
+formatters:
   enable:
     - gofumpt
+  exclusions:
+    generated: lax
+    paths:
+      - third_party$
+      - builtin$
+      - examples$

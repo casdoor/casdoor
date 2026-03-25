@@ -91,7 +91,7 @@ deps: ## Run dependencies for local development
 
 lint-install: ## Install golangci-lint
 	@# Keep the local golangci-lint version aligned with CI. Both local and CI lint run the gofumpt-only ruleset from .golangci.yml.
-	GOTOOLCHAIN=go1.25.8 go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.64.8
+	GOTOOLCHAIN=go1.25.8 go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.11.4
 
 lint: vendor ## Run golangci-lint
 	@echo "---lint---"
