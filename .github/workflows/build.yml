@@ -85,7 +85,7 @@ jobs:
 
       # CI and local `make lint` both use the repo's gofumpt-only golangci-lint config.
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v3
+        uses: golangci/golangci-lint-action@v9.2.0
         with:
           version: v2.11.4
           args: --config .golangci.yml ./...
