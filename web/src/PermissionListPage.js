@@ -17,6 +17,7 @@ import {Link} from "react-router-dom";
 import {Button, Modal, Switch, Table, Upload} from "antd";
 import moment from "moment";
 import * as Setting from "./Setting";
+import * as Conf from "./Conf";
 import * as PermissionBackend from "./backend/PermissionBackend";
 import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
@@ -38,7 +39,7 @@ class PermissionListPage extends BaseListPage {
       roles: [],
       domains: [],
       resourceType: "Application",
-      resources: ["app-built-in"],
+      resources: [Conf.DefaultApplication],
       actions: ["Read"],
       effect: "Allow",
       isEnabled: true,

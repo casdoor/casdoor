@@ -32,7 +32,7 @@ const {Option} = Select;
 
 export const ServerUrl = "";
 
-export const StaticBaseUrl = Conf.StaticBaseUrl;
+export let StaticBaseUrl = Conf.StaticBaseUrl;
 
 export const MAX_PAGE_SIZE = 25;
 export const SEARCH_DEBOUNCE_MS = 300;
@@ -700,6 +700,7 @@ export function isLocalhost() {
 
 export function initWebConfig() {
   Conf.initConfigFromCookie();
+  StaticBaseUrl = Conf.StaticBaseUrl;
 }
 
 export function getFullServerUrl() {

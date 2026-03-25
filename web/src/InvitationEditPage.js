@@ -19,6 +19,7 @@ import * as InvitationBackend from "./backend/InvitationBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
 import * as Setting from "./Setting";
+import * as Conf from "./Conf";
 import i18next from "i18next";
 import copy from "copy-to-clipboard";
 import * as GroupBackend from "./backend/GroupBackend";
@@ -111,7 +112,7 @@ class InvitationEditPage extends React.Component {
   copySignupLink() {
     let defaultApplication;
     if (this.state.invitation.owner === "built-in") {
-      defaultApplication = "app-built-in";
+      defaultApplication = Conf.DefaultApplication;
     } else {
       const selectedOrganization = Setting.getArrayItem(this.state.organizations, "name", this.state.invitation.owner);
       defaultApplication = selectedOrganization.defaultApplication;

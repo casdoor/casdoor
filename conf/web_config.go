@@ -21,6 +21,8 @@ type WebConfig struct {
 	IsDemoMode       bool   `json:"isDemoMode"`
 	StaticBaseUrl    string `json:"staticBaseUrl"`
 	AiAssistantUrl   string `json:"aiAssistantUrl"`
+	DefaultApplication string `json:"defaultApplication"`
+	MaxItemsForFlatMenu int64  `json:"maxItemsForFlatMenu"`
 }
 
 func GetWebConfig() *WebConfig {
@@ -32,6 +34,16 @@ func GetWebConfig() *WebConfig {
 	config.IsDemoMode = IsDemoMode()
 	config.StaticBaseUrl = GetConfigString("staticBaseUrl")
 	config.AiAssistantUrl = GetConfigString("aiAssistantUrl")
+	config.DefaultApplication = GetConfigString("defaultApplication")
+	if config.DefaultApplication == "" {
+		config.DefaultApplication = "app-built-in"
+	}
+
+	maxItemsForFlatMenu, err := GetConfigInt64("maxItemsForFlatMenu")
+	if err != nil {
+		maxItemsForFlatMenu = 7
+	}
+	config.MaxItemsForFlatMenu = maxItemsForFlatMenu
 
 	return config
 }
