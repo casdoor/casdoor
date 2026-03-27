@@ -175,6 +175,7 @@ func (enforcer *Enforcer) InitEnforcer() error {
 	if err != nil {
 		return err
 	}
+	casbinEnforcer.EnableAcceptJsonRequest(true)
 
 	enforcer.Enforcer = casbinEnforcer
 	return nil

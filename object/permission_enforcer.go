@@ -64,7 +64,46 @@ func getPermissionEnforcer(p *Permission, permissionIDs ...string) (*casbin.Enfo
 		return nil, err
 	}
 
+	enforcer.EnableAcceptJsonRequest(true)
+
 	return enforcer, nil
+}
+
+func GetRequestTokensFromModel(m model.Model) ([]string, error) {
+	if m == nil || m["r"] == nil || m["r"]["r"] == nil {
+		return nil, fmt.Errorf("the model is missing [request_definition] r")
+	}
+
+	tokens := m["r"]["r"].Tokens
+	requestTokens := make([]string, len(tokens))
+	for i, token := range tokens {
+		requestTokens[i] = strings.TrimPrefix(token, "r_")
+	}
+
+	return requestTokens, nil
+}
+
+func GetRequestTokensByPermission(p *Permission) ([]string, error) {
+	var permissionModel *Model
+	var err error
+	if p.Model != "" {
+		permissionModel, err = GetModel(p.Model)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	var m model.Model
+	if permissionModel != nil {
+		m, err = GetBuiltInModel(permissionModel.ModelText)
+	} else {
+		m, err = GetBuiltInModel("")
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	return GetRequestTokensFromModel(m)
 }
 
 func (p *Permission) setEnforcerAdapter(enforcer *casbin.Enforcer) error {

@@ -362,52 +362,42 @@ func GetUsernameFromEmail(email string) string {
 }
 
 func StringToInterfaceArray(array []string) []interface{} {
-	var (
-		interfaceArray []interface{}
-		elem           interface{}
-	)
-	for _, elem = range array {
-		jStruct, err := TryJsonToAnonymousStruct(elem.(string))
-		if err == nil {
-			elem = jStruct
-		}
-		interfaceArray = append(interfaceArray, elem)
+	interfaceArray := make([]interface{}, len(array))
+	for i, elem := range array {
+		interfaceArray[i] = ConvertInterfaceValue(elem)
 	}
 	return interfaceArray
 }
 
 func StringToInterfaceArray2d(arrays [][]string) [][]interface{} {
-	var interfaceArrays [][]interface{}
-	for _, req := range arrays {
-		var (
-			interfaceArray []interface{}
-			elem           interface{}
-		)
-		for _, elem = range req {
-			jStruct, err := TryJsonToAnonymousStruct(elem.(string))
-			if err == nil {
-				elem = jStruct
-			}
-			interfaceArray = append(interfaceArray, elem)
-		}
-		interfaceArrays = append(interfaceArrays, interfaceArray)
+	interfaceArrays := make([][]interface{}, len(arrays))
+	for i, req := range arrays {
+		interfaceArrays[i] = StringToInterfaceArray(req)
 	}
 	return interfaceArrays
+}
+
+func ConvertInterfaceValue(value interface{}) interface{} {
+	if s, ok := value.(string); ok {
+		jStruct, err := TryJsonToAnonymousStruct(s)
+		if err == nil {
+			return jStruct
+		}
+		return s
+	}
+
+	convertedValue, err := ConvertJsonValue(value)
+	if err == nil {
+		return convertedValue
+	}
+
+	return value
 }
 
 func ConvertInterfaceArray(array []interface{}) []interface{} {
 	result := make([]interface{}, len(array))
 	for i, elem := range array {
-		if s, ok := elem.(string); ok {
-			jStruct, err := TryJsonToAnonymousStruct(s)
-			if err == nil {
-				result[i] = jStruct
-			} else {
-				result[i] = elem
-			}
-		} else {
-			result[i] = elem
-		}
+		result[i] = ConvertInterfaceValue(elem)
 	}
 	return result
 }

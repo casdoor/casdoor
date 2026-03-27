@@ -22,6 +22,80 @@ import (
 	"github.com/casdoor/casdoor/util"
 )
 
+func parseEnforceRequestBody(requestBody []byte, requestTokens []string) ([]interface{}, error) {
+	if len(requestBody) == 0 {
+		return nil, fmt.Errorf("the request body should not be empty")
+	}
+
+	var rawBody interface{}
+	if err := json.Unmarshal(requestBody, &rawBody); err != nil {
+		return nil, err
+	}
+
+	switch typedBody := rawBody.(type) {
+	case []interface{}:
+		return typedBody, nil
+	case map[string]interface{}:
+		if len(requestTokens) == 0 {
+			return nil, fmt.Errorf("the request model is missing request tokens")
+		}
+
+		request := make([]interface{}, 0, len(requestTokens))
+		for _, token := range requestTokens {
+			value, ok := typedBody[token]
+			if !ok {
+				return nil, fmt.Errorf("the request body is missing %q", token)
+			}
+			request = append(request, value)
+		}
+		return request, nil
+	default:
+		return nil, fmt.Errorf("the request body should be a JSON array or object")
+	}
+}
+
+func parseBatchEnforceRequestBody(requestBody []byte, requestTokens []string) ([][]interface{}, error) {
+	if len(requestBody) == 0 {
+		return nil, fmt.Errorf("the request body should not be empty")
+	}
+
+	var rawBody interface{}
+	if err := json.Unmarshal(requestBody, &rawBody); err != nil {
+		return nil, err
+	}
+
+	items, ok := rawBody.([]interface{})
+	if !ok {
+		return nil, fmt.Errorf("the request body should be a JSON array")
+	}
+
+	requests := make([][]interface{}, 0, len(items))
+	for i, item := range items {
+		switch typedItem := item.(type) {
+		case []interface{}:
+			requests = append(requests, typedItem)
+		case map[string]interface{}:
+			if len(requestTokens) == 0 {
+				return nil, fmt.Errorf("the request model is missing request tokens")
+			}
+
+			request := make([]interface{}, 0, len(requestTokens))
+			for _, token := range requestTokens {
+				value, ok := typedItem[token]
+				if !ok {
+					return nil, fmt.Errorf("the batch request at index %d is missing %q", i, token)
+				}
+				request = append(request, value)
+			}
+			requests = append(requests, request)
+		default:
+			return nil, fmt.Errorf("the batch request at index %d should be a JSON array or object", i)
+		}
+	}
+
+	return requests, nil
+}
+
 // Enforce
 // @Title Enforce
 // @Tag Enforcer API
@@ -52,20 +126,20 @@ func (c *ApiController) Enforce() {
 		return
 	}
 
-	if len(c.Ctx.Input.RequestBody) == 0 {
-		c.ResponseError("The request body should not be empty")
-		return
-	}
-
-	var request []interface{}
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &request)
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
-	}
-
 	if enforcerId != "" {
 		enforcer, err := object.GetInitializedEnforcer(enforcerId)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		requestTokens, err := object.GetRequestTokensFromModel(enforcer.GetModel())
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		request, err := parseEnforceRequestBody(c.Ctx.Input.RequestBody, requestTokens)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
@@ -101,6 +175,18 @@ func (c *ApiController) Enforce() {
 			return
 		}
 
+		requestTokens, err := object.GetRequestTokensByPermission(permission)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		request, err := parseEnforceRequestBody(c.Ctx.Input.RequestBody, requestTokens)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
 		res := []bool{}
 		keyRes := []string{}
 
@@ -117,6 +203,7 @@ func (c *ApiController) Enforce() {
 		return
 	}
 
+	var err error
 	permissions := []*object.Permission{}
 	if modelId != "" {
 		owner, modelName, err := util.GetOwnerAndNameFromIdWithError(modelId)
@@ -151,6 +238,18 @@ func (c *ApiController) Enforce() {
 	listPermissionIdMap := object.GroupPermissionsByModelAdapter(permissions)
 	for key, permissionIds := range listPermissionIdMap {
 		firstPermission, err := object.GetPermission(permissionIds[0])
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		requestTokens, err := object.GetRequestTokensByPermission(firstPermission)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		request, err := parseEnforceRequestBody(c.Ctx.Input.RequestBody, requestTokens)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
@@ -197,15 +296,20 @@ func (c *ApiController) BatchEnforce() {
 		return
 	}
 
-	var requests [][]interface{}
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &requests)
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
-	}
-
 	if enforcerId != "" {
 		enforcer, err := object.GetInitializedEnforcer(enforcerId)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		requestTokens, err := object.GetRequestTokensFromModel(enforcer.GetModel())
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		requests, err := parseBatchEnforceRequestBody(c.Ctx.Input.RequestBody, requestTokens)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
@@ -241,6 +345,18 @@ func (c *ApiController) BatchEnforce() {
 			return
 		}
 
+		requestTokens, err := object.GetRequestTokensByPermission(permission)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		requests, err := parseBatchEnforceRequestBody(c.Ctx.Input.RequestBody, requestTokens)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
 		res := [][]bool{}
 		keyRes := []string{}
 
@@ -257,6 +373,7 @@ func (c *ApiController) BatchEnforce() {
 		return
 	}
 
+	var err error
 	permissions := []*object.Permission{}
 	if modelId != "" {
 		owner, modelName, err := util.GetOwnerAndNameFromIdWithError(modelId)
@@ -285,6 +402,18 @@ func (c *ApiController) BatchEnforce() {
 	listPermissionIdMap := object.GroupPermissionsByModelAdapter(permissions)
 	for _, permissionIds := range listPermissionIdMap {
 		firstPermission, err := object.GetPermission(permissionIds[0])
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		requestTokens, err := object.GetRequestTokensByPermission(firstPermission)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		requests, err := parseBatchEnforceRequestBody(c.Ctx.Input.RequestBody, requestTokens)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
