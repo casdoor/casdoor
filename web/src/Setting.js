@@ -940,7 +940,7 @@ export function getMfaItemsByRules(user, organization, mfaRules = []) {
 
 export function parseObject(s) {
   try {
-    return eval("(" + s + ")");
+    return JSON.parse(s);
   } catch (e) {
     return null;
   }
