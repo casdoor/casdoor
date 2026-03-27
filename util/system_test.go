@@ -42,6 +42,18 @@ func TestGetMemoryUsage(t *testing.T) {
 	t.Log(used, total)
 }
 
+func TestGetDiskUsage(t *testing.T) {
+	used, total, err := getDiskUsage()
+	assert.Nil(t, err)
+	t.Log(used, total)
+}
+
+func TestGetNetworkUsage(t *testing.T) {
+	sent, recv, total, err := getNetworkUsage()
+	assert.Nil(t, err)
+	t.Log(sent, recv, total)
+}
+
 func TestGetVersionInfo(t *testing.T) {
 	versionInfo, err := GetVersionInfo()
 	assert.NoError(t, err)

@@ -34,7 +34,7 @@ class SystemInfo extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      systemInfo: {cpuUsage: [], memoryUsed: 0, memoryTotal: 0},
+      systemInfo: {cpuUsage: [], memoryUsed: 0, memoryTotal: 0, diskUsed: 0, diskTotal: 0, networkSent: 0, networkRecv: 0, networkTotal: 0},
       versionInfo: {},
       prometheusInfo: {apiThroughput: [], apiLatency: [], totalThroughput: 0},
       intervalId: null,
@@ -166,6 +166,25 @@ class SystemInfo extends React.Component {
         <br /> <br />
         <Progress type="circle" percent={memPercent} strokeColor={getProgressColor(memPercent)} format={p => `${p}%`} />
       </div>;
+
+    const diskUi = this.state.systemInfo.diskTotal <= 0 ? i18next.t("general:Failed to get") :
+      <div>
+        {Setting.getFriendlyFileSize(this.state.systemInfo.diskUsed)} / {Setting.getFriendlyFileSize(this.state.systemInfo.diskTotal)}
+        <br /> <br />
+        <Progress type="circle" percent={Number((Number(this.state.systemInfo.diskUsed) / Number(this.state.systemInfo.diskTotal) * 100).toFixed(2))} />
+      </div>;
+
+    const networkUi = this.state.systemInfo.networkTotal === undefined || this.state.systemInfo.networkTotal === null ? i18next.t("general:Failed to get") :
+      <div>
+        {i18next.t("system:Sent")}: {Setting.getFriendlyFileSize(this.state.systemInfo.networkSent)}
+        <br />
+        {i18next.t("system:Received")}: {Setting.getFriendlyFileSize(this.state.systemInfo.networkRecv)}
+        <br /> <br />
+        <div style={{fontSize: "16px", fontWeight: "600", color: "rgba(0, 0, 0, 0.85)"}}>
+          {i18next.t("system:Total Throughput")}: {Setting.getFriendlyFileSize(this.state.systemInfo.networkTotal)}
+        </div>
+      </div>;
+
     const latencyUi = this.state.prometheusInfo?.apiLatency === null || this.state.prometheusInfo?.apiLatency?.length <= 0 ? <Spin size="large" /> :
       <PrometheusInfoTable prometheusInfo={this.state.prometheusInfo} table={"latency"} />;
     const throughputUi = this.state.prometheusInfo?.apiThroughput === null || this.state.prometheusInfo?.apiThroughput?.length <= 0 ? <Spin size="large" /> :
@@ -191,6 +210,16 @@ class SystemInfo extends React.Component {
                 <Col span={12}>
                   <Card id="memory-card" title={i18next.t("system:Memory Usage")} bordered={true} style={{textAlign: "center", height: "100%"}}>
                     {this.state.loading ? <Spin size="large" /> : memUi}
+                  </Card>
+                </Col>
+                <Col span={12}>
+                  <Card id="disk-card" title={i18next.t("system:Disk Usage")} bordered={true} style={{textAlign: "center", height: "100%"}}>
+                    {this.state.loading ? <Spin size="large" /> : diskUi}
+                  </Card>
+                </Col>
+                <Col span={12}>
+                  <Card id="network-card" title={i18next.t("system:Network Usage")} bordered={true} style={{textAlign: "center", height: "100%"}}>
+                    {this.state.loading ? <Spin size="large" /> : networkUi}
                   </Card>
                 </Col>
                 <Col span={24}>
@@ -242,6 +271,16 @@ class SystemInfo extends React.Component {
           <Col span={24}>
             <Card title={i18next.t("system:Memory Usage")} bordered={true} style={{textAlign: "center", width: "100%"}}>
               {this.state.loading ? <Spin size="large" /> : memUi}
+            </Card>
+          </Col>
+          <Col span={24}>
+            <Card title={i18next.t("system:Disk Usage")} bordered={true} style={{textAlign: "center", width: "100%"}}>
+              {this.state.loading ? <Spin size="large" /> : diskUi}
+            </Card>
+          </Col>
+          <Col span={24}>
+            <Card title={i18next.t("system:Network Usage")} bordered={true} style={{textAlign: "center", width: "100%"}}>
+              {this.state.loading ? <Spin size="large" /> : networkUi}
             </Card>
           </Col>
           <Col span={24}>
