@@ -700,7 +700,6 @@ export function isLocalhost() {
 
 export function initWebConfig() {
   Conf.initConfigFromCookie();
-  StaticBaseUrl = Conf.StaticBaseUrl;
 }
 
 export function getFullServerUrl() {
