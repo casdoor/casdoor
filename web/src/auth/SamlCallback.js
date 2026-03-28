@@ -18,6 +18,7 @@ import {withRouter} from "react-router-dom";
 import * as AuthBackend from "./AuthBackend";
 import * as Util from "./Util";
 import * as Setting from "../Setting";
+import * as Conf from "../Conf";
 import i18next from "i18next";
 import {authConfig} from "./Auth";
 import {renderLoginPanel} from "../Setting";
@@ -53,7 +54,7 @@ class SamlCallback extends React.Component {
 
     const messages = atob(relayState).split("&");
     const clientId = messages[0] === "" ? "" : messages[0];
-    const application = messages[0] === "" ? "app-built-in" : "";
+    const application = messages[0] === "" ? Conf.DefaultApplication : "";
     const state = messages[1];
     const providerName = messages[2];
     const redirectUri = messages[3];

@@ -15,6 +15,7 @@
 import BaseListPage from "./BaseListPage";
 import i18next from "i18next";
 import * as Setting from "./Setting";
+import * as Conf from "./Conf";
 import {Button, Table} from "antd";
 import React from "react";
 import * as TransactionBackend from "./backend/TransactionBackend";
@@ -27,7 +28,7 @@ class TransactionListPage extends BaseListPage {
     return {
       owner: organizationName,
       createdTime: moment().format(),
-      application: "app-built-in",
+      application: Conf.DefaultApplication,
       domain: "https://ai-admin.casibase.com",
       category: "",
       type: "chat_id",

@@ -14,7 +14,7 @@
 
 import * as Cookie from "cookie";
 
-export const DefaultApplication = "app-built-in";
+export let DefaultApplication = "app-built-in";
 
 export let ShowGithubCorner = false;
 export let IsDemoMode = false;
@@ -38,7 +38,7 @@ export const CustomFooter = null;
 export let AiAssistantUrl = "https://ai.casbin.com";
 
 // Maximum number of navbar items before switching from flat to grouped menu
-export const MaxItemsForFlatMenu = 7;
+export let MaxItemsForFlatMenu = 7;
 
 // setConfig updates the frontend configuration from backend
 export function setConfig(config) {
@@ -62,6 +62,12 @@ export function setConfig(config) {
   }
   if (config.aiAssistantUrl !== undefined) {
     AiAssistantUrl = config.aiAssistantUrl;
+  }
+  if (config.defaultApplication !== undefined) {
+    DefaultApplication = config.defaultApplication;
+  }
+  if (config.maxItemsForFlatMenu !== undefined) {
+    MaxItemsForFlatMenu = config.maxItemsForFlatMenu;
   }
 }
 

@@ -17,6 +17,7 @@ import {Link} from "react-router-dom";
 import {Button, Table} from "antd";
 import moment from "moment";
 import * as Setting from "./Setting";
+import * as Conf from "./Conf";
 import * as TokenBackend from "./backend/TokenBackend";
 import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
@@ -30,7 +31,7 @@ class TokenListPage extends BaseListPage {
       owner: "admin", // this.props.account.tokenname,
       name: `token_${randomName}`,
       createdTime: moment().format(),
-      application: "app-built-in",
+      application: Conf.DefaultApplication,
       organization: organizationName,
       user: "admin",
       accessToken: "",
