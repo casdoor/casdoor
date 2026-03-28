@@ -32,7 +32,7 @@ const {Option} = Select;
 
 export const ServerUrl = "";
 
-export let StaticBaseUrl = Conf.StaticBaseUrl;
+export const StaticBaseUrl = Conf.StaticBaseUrl;
 
 export const MAX_PAGE_SIZE = 25;
 export const SEARCH_DEBOUNCE_MS = 300;
