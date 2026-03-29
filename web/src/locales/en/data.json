@@ -17,10 +17,6 @@
     "Use same DB": "Use same DB",
     "Use same DB - Tooltip": "Use the same DB as Casdoor"
   },
-  "agent": {
-    "Edit Agent": "Edit Agent",
-    "New Agent": "New Agent"
-  },
   "application": {
     "Add Face ID": "Add Face ID",
     "Add Face ID with Image": "Add Face ID with Image",
@@ -270,7 +266,6 @@
     "Add": "Add",
     "Add custom item": "Add custom item",
     "Admin": "Admin",
-    "Agents": "Agents",
     "Affiliation URL": "Affiliation URL",
     "Affiliation URL - Tooltip": "The homepage URL for the affiliation",
     "All": "All",
@@ -383,8 +378,6 @@
     "Is shared - Tooltip": "Share this application with other organizations",
     "LDAPs": "LDAPs",
     "LDAPs - Tooltip": "LDAP servers",
-    "Listening URL": "Listening URL",
-    "Listening URL - Tooltip": "The URL that the agent listens on",
     "Languages": "Languages",
     "Languages - Tooltip": "Available languages",
     "Last name": "Last name",

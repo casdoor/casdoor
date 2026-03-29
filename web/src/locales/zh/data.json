@@ -17,10 +17,6 @@
     "Use same DB": "使用相同DB",
     "Use same DB - Tooltip": "与Casdoor使用同一个数据库"
   },
-  "agent": {
-    "Edit Agent": "编辑 Agent",
-    "New Agent": "添加 Agent"
-  },
   "application": {
     "Add Face ID": "添加人脸ID",
     "Add Face ID with Image": "添加图片人脸ID",
@@ -270,7 +266,6 @@
     "Add": "添加",
     "Add custom item": "添加自定义项",
     "Admin": "管理工具",
-    "Agents": "Agents",
     "Affiliation URL": "工作单位URL",
     "Affiliation URL - Tooltip": "工作单位的官网URL",
     "All": "全部",
@@ -383,8 +378,6 @@
     "Is shared - Tooltip": "与其他组织共享此应用",
     "LDAPs": "LDAP",
     "LDAPs - Tooltip": "LDAPs",
-    "Listening URL": "监听URL",
-    "Listening URL - Tooltip": "Agent 监听的 URL",
     "Languages": "语言",
     "Languages - Tooltip": "可选语言",
     "Last name": "姓氏",
