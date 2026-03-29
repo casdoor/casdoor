@@ -140,6 +140,12 @@ func InitAPI() {
 	web.Router("/api/delete-server", &controllers.ApiController{}, "POST:DeleteServer")
 	web.Router("/api/server/:owner/:name", &controllers.ApiController{}, "POST:ProxyServer")
 
+	web.Router("/api/get-agents", &controllers.ApiController{}, "GET:GetAgents")
+	web.Router("/api/get-agent", &controllers.ApiController{}, "GET:GetAgent")
+	web.Router("/api/update-agent", &controllers.ApiController{}, "POST:UpdateAgent")
+	web.Router("/api/add-agent", &controllers.ApiController{}, "POST:AddAgent")
+	web.Router("/api/delete-agent", &controllers.ApiController{}, "POST:DeleteAgent")
+
 	web.Router("/api/get-rules", &controllers.ApiController{}, "GET:GetRules")
 	web.Router("/api/get-rule", &controllers.ApiController{}, "GET:GetRule")
 	web.Router("/api/add-rule", &controllers.ApiController{}, "POST:AddRule")
