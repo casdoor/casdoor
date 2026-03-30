@@ -14,8 +14,22 @@
 
 import * as Setting from "../Setting";
 
-export function getEntries(owner = "", agentName = "") {
-  return fetch(`${Setting.ServerUrl}/api/get-entries?owner=${encodeURIComponent(owner)}&agentName=${encodeURIComponent(agentName)}`, {
+export function getAllEntries(owner = "") {
+  return getEntries(owner);
+}
+
+export function getEntries(owner = "", agentName) {
+  const params = new URLSearchParams();
+
+  if (owner) {
+    params.set("owner", owner);
+  }
+
+  if (agentName !== undefined && agentName !== null && agentName !== "") {
+    params.set("agentName", agentName);
+  }
+
+  return fetch(`${Setting.ServerUrl}/api/get-entries?${params.toString()}`, {
     method: "GET",
     credentials: "include",
     headers: {

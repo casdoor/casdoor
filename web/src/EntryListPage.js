@@ -201,7 +201,9 @@ class EntryListPage extends BaseListPage {
     const owner = Setting.isDefaultOrganizationSelected(this.props.account) ? "" : Setting.getRequestOrganization(this.props.account);
 
     this.setState({loading: true});
-    EntryBackend.getEntries(owner, agentName)
+    const request = agentName === "" ? EntryBackend.getAllEntries(owner) : EntryBackend.getEntries(owner, agentName);
+
+    request
       .then((res) => {
         this.setState({
           loading: false,

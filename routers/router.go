@@ -142,13 +142,14 @@ func InitAPI() {
 
 	web.Router("/api/get-agents", &controllers.ApiController{}, "GET:GetAgents")
 	web.Router("/api/get-agent", &controllers.ApiController{}, "GET:GetAgent")
+	web.Router("/api/update-agent", &controllers.ApiController{}, "POST:UpdateAgent")
+	web.Router("/api/add-agent", &controllers.ApiController{}, "POST:AddAgent")
+	web.Router("/api/delete-agent", &controllers.ApiController{}, "POST:DeleteAgent")
+
 	web.Router("/api/get-entries", &controllers.ApiController{}, "GET:GetEntries")
 	web.Router("/api/update-entry", &controllers.ApiController{}, "POST:UpdateEntry")
 	web.Router("/api/add-entry", &controllers.ApiController{}, "POST:AddEntry")
 	web.Router("/api/delete-entry", &controllers.ApiController{}, "POST:DeleteEntry")
-	web.Router("/api/update-agent", &controllers.ApiController{}, "POST:UpdateAgent")
-	web.Router("/api/add-agent", &controllers.ApiController{}, "POST:AddAgent")
-	web.Router("/api/delete-agent", &controllers.ApiController{}, "POST:DeleteAgent")
 
 	web.Router("/api/get-rules", &controllers.ApiController{}, "GET:GetRules")
 	web.Router("/api/get-rule", &controllers.ApiController{}, "GET:GetRule")
