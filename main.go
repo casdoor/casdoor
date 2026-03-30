@@ -132,6 +132,9 @@ func main() {
 	go radius.StartRadiusServer()
 	go object.ClearThroughputPerSecond()
 
+	// Start webhook delivery worker
+	object.StartWebhookDeliveryWorker()
+
 	if len(object.SiteMap) != 0 {
 		service.Start()
 	}

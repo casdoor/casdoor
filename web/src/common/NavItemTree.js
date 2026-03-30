@@ -38,14 +38,13 @@ export const NavItemTree = ({disabled, checkedKeys, defaultExpandedKeys, onCheck
           ],
         },
         {
-          title: i18next.t("general:Gateway"),
+          title: i18next.t("general:LLM AI"),
           key: "/sites-top",
           children: [
-            {title: i18next.t("general:Certs"), key: "/certs"},
             {title: i18next.t("general:Rules"), key: "/rules"},
             {title: i18next.t("general:Sites"), key: "/sites"},
-            {title: i18next.t("general:MCP Servers"), key: "/servers"},
             {title: i18next.t("general:Agents"), key: "/agents"},
+            {title: i18next.t("general:MCP Servers"), key: "/servers"},
           ],
         },
         {
@@ -89,6 +88,7 @@ export const NavItemTree = ({disabled, checkedKeys, defaultExpandedKeys, onCheck
             {title: i18next.t("general:System Info"), key: "/sysinfo"},
             {title: i18next.t("general:Syncers"), key: "/syncers"},
             {title: i18next.t("general:Webhooks"), key: "/webhooks"},
+            {title: i18next.t("general:Webhook Events"), key: "/webhook-events"},
             {title: i18next.t("general:Swagger"), key: "/swagger"},
           ],
         },
