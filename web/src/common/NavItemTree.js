@@ -64,6 +64,7 @@ export const NavItemTree = ({disabled, checkedKeys, defaultExpandedKeys, onCheck
           key: "/sessions-top",
           children: [
             {title: i18next.t("general:Sessions"), key: "/sessions"},
+            {title: i18next.t("general:Entries", {defaultValue: "Entries"}), key: "/entries"},
             {title: i18next.t("general:Records"), key: "/records"},
             {title: i18next.t("general:Tokens"), key: "/tokens"},
             {title: i18next.t("general:Verifications"), key: "/verifications"},

@@ -44,6 +44,7 @@ import ApplicationEditPage from "./ApplicationEditPage";
 import ProviderListPage from "./ProviderListPage";
 import ProviderEditPage from "./ProviderEditPage";
 import RecordListPage from "./RecordListPage";
+import EntryListPage from "./EntryListPage";
 import ResourceListPage from "./ResourceListPage";
 import CertListPage from "./CertListPage";
 import CertEditPage from "./CertEditPage";
@@ -362,6 +363,7 @@ function ManagementPage(props) {
 
     res.push(Setting.getItem(<Link style={{color: textColor}} to="/sessions">{i18next.t("general:Logging & Auditing")}</Link>, "/logs", <WalletTwoTone twoToneColor={twoToneColor} />, [
       Setting.getItem(<Link to="/sessions">{i18next.t("general:Sessions")}</Link>, "/sessions"),
+      Setting.getItem(<Link to="/entries">{i18next.t("general:Entries", {defaultValue: "Entries"})}</Link>, "/entries"),
       Setting.getItem(<Link to="/records">{i18next.t("general:Records")}</Link>, "/records"),
       Setting.getItem(<Link to="/tokens">{i18next.t("general:Tokens")}</Link>, "/tokens"),
       Setting.getItem(<Link to="/verifications">{i18next.t("general:Verifications")}</Link>, "/verifications"),
@@ -494,6 +496,7 @@ function ManagementPage(props) {
         <Route exact path="/providers" render={(props) => renderLoginIfNotLoggedIn(<ProviderListPage account={account} {...props} />)} />
         <Route exact path="/providers/:organizationName/:providerName" render={(props) => renderLoginIfNotLoggedIn(<ProviderEditPage account={account} {...props} />)} />
         <Route exact path="/records" render={(props) => renderLoginIfNotLoggedIn(<RecordListPage account={account} {...props} />)} />
+        <Route exact path="/entries" render={(props) => renderLoginIfNotLoggedIn(<EntryListPage account={account} {...props} />)} />
         <Route exact path="/resources" render={(props) => renderLoginIfNotLoggedIn(<ResourceListPage account={account} {...props} />)} />
         <Route exact path="/certs" render={(props) => renderLoginIfNotLoggedIn(<CertListPage account={account} {...props} />)} />
         <Route exact path="/certs/:organizationName/:certName" render={(props) => renderLoginIfNotLoggedIn(<CertEditPage account={account} {...props} />)} />

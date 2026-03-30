@@ -177,7 +177,7 @@ class App extends Component {
       "/applications", "/providers", "/resources", "/certs", "/keys", // Identity
       "/roles", "/permissions", "/models", "/adapters", "/enforcers", // Authorization
       "/servers", "/agents", "/sites", "/rules", // Gateway
-      "/sessions", "/records", "/tokens", "/verifications", // Logging & Auditing
+      "/sessions", "/entries", "/records", "/tokens", "/verifications", // Logging & Auditing
       "/products", "/orders", "/payments", "/plans", "/pricings", "/subscriptions", "/transactions", // Business
       "/sysinfo", "/forms", "/syncers", "/webhooks", "/tickets", "/swagger", // Admin
     ];
@@ -240,9 +240,11 @@ class App extends Component {
       } else if (uri.includes("/enforcers")) {
         return "/enforcers";
       }
-    } else if (uri.includes("/records") || uri.includes("/tokens") || uri.includes("/sessions") || uri.includes("/verifications")) {
+    } else if (uri.includes("/records") || uri.includes("/entries") || uri.includes("/tokens") || uri.includes("/sessions") || uri.includes("/verifications")) {
       if (uri.includes("/sessions")) {
         return "/sessions";
+      } else if (uri.includes("/entries")) {
+        return "/entries";
       } else if (uri.includes("/records")) {
         return "/records";
       } else if (uri.includes("/tokens")) {
@@ -312,7 +314,7 @@ class App extends Component {
       this.setState({selectedMenuKey: "/gateway"});
     } else if (uri.includes("/roles") || uri.includes("/permissions") || uri.includes("/models") || uri.includes("/adapters") || uri.includes("/enforcers")) {
       this.setState({selectedMenuKey: "/auth"});
-    } else if (uri.includes("/records") || uri.includes("/tokens") || uri.includes("/sessions") || uri.includes("/verifications")) {
+    } else if (uri.includes("/records") || uri.includes("/entries") || uri.includes("/tokens") || uri.includes("/sessions") || uri.includes("/verifications")) {
       this.setState({selectedMenuKey: "/logs"});
     } else if (uri.includes("/product-store") || uri.includes("/products") || uri.includes("/orders") || uri.includes("/payments") || uri.includes("/plans") || uri.includes("/pricings") || uri.includes("/subscriptions") || uri.includes("/transactions")) {
       this.setState({selectedMenuKey: "/business"});
