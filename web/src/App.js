@@ -176,7 +176,7 @@ class App extends Component {
       "/organizations", "/groups", "/users", "/invitations", // User Management
       "/applications", "/providers", "/resources", "/certs", "/keys", // Identity
       "/roles", "/permissions", "/models", "/adapters", "/enforcers", // Authorization
-      "/servers", "/agents", "/sites", "/rules", // Gateway
+      "/agents", "/servers", "/sites", "/rules", // LLM AI
       "/sessions", "/records", "/tokens", "/verifications", // Logging & Auditing
       "/products", "/orders", "/payments", "/plans", "/pricings", "/subscriptions", "/transactions", // Business
       "/sysinfo", "/forms", "/syncers", "/webhooks", "/webhook-events", "/tickets", "/swagger", // Admin
