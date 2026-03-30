@@ -14,7 +14,11 @@
 
 package controllers
 
-import "github.com/casdoor/casdoor/object"
+import (
+	"encoding/json"
+
+	"github.com/casdoor/casdoor/object"
+)
 
 // GetEntries
 // @Title GetEntries
@@ -34,4 +38,71 @@ func (c *ApiController) GetEntries() {
 	}
 
 	c.ResponseOk(entries)
+}
+
+// UpdateEntry
+// @Title UpdateEntry
+// @Tag Entry API
+// @Description update entry
+// @Param   body    body   object.Entry  true        "The details of the entry"
+// @Success 200 {object} controllers.Response The Response object
+// @router /update-entry [post]
+func (c *ApiController) UpdateEntry() {
+	var entry object.Entry
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, &entry)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	if entry.Id == 0 {
+		c.ResponseError(c.T("general:Missing parameter"))
+		return
+	}
+
+	c.Data["json"] = wrapActionResponse(object.UpdateEntry(entry.Id, &entry))
+	c.ServeJSON()
+}
+
+// AddEntry
+// @Title AddEntry
+// @Tag Entry API
+// @Description add entry
+// @Param   body    body   object.Entry  true        "The details of the entry"
+// @Success 200 {object} controllers.Response The Response object
+// @router /add-entry [post]
+func (c *ApiController) AddEntry() {
+	var entry object.Entry
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, &entry)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	c.Data["json"] = wrapActionResponse(object.AddEntry(&entry))
+	c.ServeJSON()
+}
+
+// DeleteEntry
+// @Title DeleteEntry
+// @Tag Entry API
+// @Description delete entry
+// @Param   body    body   object.Entry  true        "The details of the entry"
+// @Success 200 {object} controllers.Response The Response object
+// @router /delete-entry [post]
+func (c *ApiController) DeleteEntry() {
+	var entry object.Entry
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, &entry)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	if entry.Id == 0 {
+		c.ResponseError(c.T("general:Missing parameter"))
+		return
+	}
+
+	c.Data["json"] = wrapActionResponse(object.DeleteEntry(&entry))
+	c.ServeJSON()
 }
