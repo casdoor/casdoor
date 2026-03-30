@@ -88,6 +88,7 @@ export const NavItemTree = ({disabled, checkedKeys, defaultExpandedKeys, onCheck
             {title: i18next.t("general:System Info"), key: "/sysinfo"},
             {title: i18next.t("general:Syncers"), key: "/syncers"},
             {title: i18next.t("general:Webhooks"), key: "/webhooks"},
+            {title: i18next.t("general:Webhook Events"), key: "/webhook-events"},
             {title: i18next.t("general:Swagger"), key: "/swagger"},
           ],
         },

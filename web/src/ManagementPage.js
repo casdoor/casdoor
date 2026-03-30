@@ -85,6 +85,7 @@ import FormEditPage from "./FormEditPage";
 import SyncerListPage from "./SyncerListPage";
 import SyncerEditPage from "./SyncerEditPage";
 import WebhookListPage from "./WebhookListPage";
+import WebhookEventListPage from "./WebhookEventListPage";
 import WebhookEditPage from "./WebhookEditPage";
 import LdapEditPage from "./LdapEditPage";
 import LdapSyncPage from "./LdapSyncPage";
@@ -385,6 +386,7 @@ function ManagementPage(props) {
         Setting.getItem(<Link to="/forms">{i18next.t("general:Forms")}</Link>, "/forms"),
         Setting.getItem(<Link to="/syncers">{i18next.t("general:Syncers")}</Link>, "/syncers"),
         Setting.getItem(<Link to="/webhooks">{i18next.t("general:Webhooks")}</Link>, "/webhooks"),
+        Setting.getItem(<Link to="/webhook-events">{i18next.t("general:Webhook Events")}</Link>, "/webhook-events"),
         Setting.getItem(<Link to="/tickets">{i18next.t("general:Tickets")}</Link>, "/tickets"),
         Setting.getItem(<a target="_blank" rel="noreferrer" href={Setting.isLocalhost() ? `${Setting.ServerUrl}/swagger` : "/swagger"}>{i18next.t("general:Swagger")}</a>, "/swagger")]));
     } else {
@@ -392,6 +394,7 @@ function ManagementPage(props) {
         Setting.getItem(<Link to="/forms">{i18next.t("general:Forms")}</Link>, "/forms"),
         Setting.getItem(<Link to="/syncers">{i18next.t("general:Syncers")}</Link>, "/syncers"),
         Setting.getItem(<Link to="/webhooks">{i18next.t("general:Webhooks")}</Link>, "/webhooks"),
+        Setting.getItem(<Link to="/webhook-events">{i18next.t("general:Webhook Events")}</Link>, "/webhook-events"),
         Setting.getItem(<Link to="/tickets">{i18next.t("general:Tickets")}</Link>, "/tickets")]));
     }
 
@@ -546,6 +549,7 @@ function ManagementPage(props) {
         <Route exact path="/transactions" render={(props) => renderLoginIfNotLoggedIn(<TransactionListPage account={account} {...props} />)} />
         <Route exact path="/transactions/:organizationName/:transactionName" render={(props) => renderLoginIfNotLoggedIn(<TransactionEditPage account={account} {...props} />)} />
         <Route exact path="/webhooks" render={(props) => renderLoginIfNotLoggedIn(<WebhookListPage account={account} {...props} />)} />
+        <Route exact path="/webhook-events" render={(props) => renderLoginIfNotLoggedIn(<WebhookEventListPage account={account} {...props} />)} />
         <Route exact path="/webhooks/:webhookName" render={(props) => renderLoginIfNotLoggedIn(<WebhookEditPage account={account} {...props} />)} />
         <Route exact path="/tickets" render={(props) => renderLoginIfNotLoggedIn(<TicketListPage account={account} {...props} />)} />
         <Route exact path="/tickets/:organizationName/:ticketName" render={(props) => renderLoginIfNotLoggedIn(<TicketEditPage account={account} {...props} />)} />
