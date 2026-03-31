@@ -14,7 +14,7 @@
 
 import * as Setting from "../Setting";
 
-export function getWebhookEvents(owner = "", organization = "", page = "", pageSize = "", webhookName = "", status = "") {
+export function getWebhookEvents(owner = "", organization = "", page = "", pageSize = "", webhookName = "", status = "", sortField = "", sortOrder = "") {
   const params = new URLSearchParams({
     owner,
     organization,
@@ -22,6 +22,8 @@ export function getWebhookEvents(owner = "", organization = "", page = "", pageS
     p: page,
     webhookName,
     status,
+    sortField,
+    sortOrder,
   });
 
   return fetch(`${Setting.ServerUrl}/api/get-webhook-events?${params.toString()}`, {

@@ -20,6 +20,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/beego/beego/v2/core/logs"
 	"github.com/casdoor/casdoor/util"
 )
 
@@ -91,7 +92,7 @@ func StopWebhookDeliveryWorker() {
 func processWebhookEvents() {
 	events, err := GetPendingWebhookEvents(webhookBatchSize)
 	if err != nil {
-		fmt.Printf("Error getting pending webhook events: %v\n", err)
+		logs.Error(fmt.Sprintf("failed to get pending webhook events: %v", err))
 		return
 	}
 
@@ -105,7 +106,7 @@ func deliverWebhookEvent(event *WebhookEvent) {
 	// Get the webhook configuration
 	webhook, err := GetWebhook(event.WebhookName)
 	if err != nil {
-		fmt.Printf("Error getting webhook %s: %v\n", event.WebhookName, err)
+		logs.Error(fmt.Sprintf("failed to get webhook %s: %v", event.WebhookName, err))
 		return
 	}
 
@@ -118,7 +119,8 @@ func deliverWebhookEvent(event *WebhookEvent) {
 	}
 
 	if !webhook.IsEnabled {
-		// Webhook is disabled, skip for now
+		// Disabled webhooks should finalize the event to avoid hot-looping forever.
+		UpdateWebhookEventStatus(event, WebhookEventStatusFailed, 0, "", fmt.Errorf("webhook is disabled"))
 		return
 	}
 
@@ -138,7 +140,7 @@ func deliverWebhookEvent(event *WebhookEvent) {
 		extendedUser = &User{}
 		err = json.Unmarshal([]byte(event.ExtendedUser), extendedUser)
 		if err != nil {
-			fmt.Printf("Error parsing extended user: %v\n", err)
+			logs.Warning(fmt.Sprintf("failed to parse extended user for webhook event %s: %v", event.GetId(), err))
 			extendedUser = nil
 		}
 	}
@@ -242,22 +244,4 @@ func ReplayWebhookEvent(eventId string) error {
 	deliverWebhookEvent(event)
 
 	return nil
-}
-
-// ReplayWebhookEvents replays multiple webhook events matching the criteria
-func ReplayWebhookEvents(owner, organization, webhookName string, status WebhookEventStatus) (int, error) {
-	events, err := GetWebhookEvents(owner, organization, webhookName, status, 0, 0)
-	if err != nil {
-		return 0, err
-	}
-
-	count := 0
-	for _, event := range events {
-		err = ReplayWebhookEvent(event.GetId())
-		if err == nil {
-			count++
-		}
-	}
-
-	return count, nil
 }

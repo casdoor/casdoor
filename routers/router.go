@@ -315,7 +315,6 @@ func InitAPI() {
 	web.Router("/api/get-webhook-events", &controllers.ApiController{}, "GET:GetWebhookEvents")
 	web.Router("/api/get-webhook-event-detail", &controllers.ApiController{}, "GET:GetWebhookEvent")
 	web.Router("/api/replay-webhook-event", &controllers.ApiController{}, "POST:ReplayWebhookEvent")
-	web.Router("/api/replay-webhook-events", &controllers.ApiController{}, "POST:ReplayWebhookEvents")
 	web.Router("/api/delete-webhook-event", &controllers.ApiController{}, "POST:DeleteWebhookEvent")
 
 	web.Router("/api/get-tickets", &controllers.ApiController{}, "GET:GetTickets")

@@ -24,6 +24,38 @@ import (
 
 const defaultWebhookEventListLimit = 100
 
+func (c *ApiController) getScopedWebhookEventQuery() (string, string, bool) {
+	organization, ok := c.RequireAdmin()
+	if !ok {
+		return "", "", false
+	}
+
+	owner := ""
+	if c.IsGlobalAdmin() {
+		owner = c.Ctx.Input.Query("owner")
+
+		requestedOrganization := c.Ctx.Input.Query("organization")
+		if requestedOrganization != "" {
+			organization = requestedOrganization
+		}
+	}
+
+	return owner, organization, true
+}
+
+func (c *ApiController) checkWebhookEventAccess(event *object.WebhookEvent, organization string) bool {
+	if event == nil || c.IsGlobalAdmin() {
+		return true
+	}
+
+	if event.Organization != organization {
+		c.ResponseError(c.T("auth:Unauthorized operation"))
+		return false
+	}
+
+	return true
+}
+
 // GetWebhookEvents
 // @Title GetWebhookEvents
 // @Tag Webhook Event API
@@ -35,12 +67,16 @@ const defaultWebhookEventListLimit = 100
 // @Success 200 {array} object.WebhookEvent The Response object
 // @router /get-webhook-events [get]
 func (c *ApiController) GetWebhookEvents() {
-	owner := c.Ctx.Input.Query("owner")
-	organization := c.Ctx.Input.Query("organization")
+	owner, organization, ok := c.getScopedWebhookEventQuery()
+	if !ok {
+		return
+	}
 	webhookName := c.Ctx.Input.Query("webhookName")
 	status := c.Ctx.Input.Query("status")
 	limit := c.Ctx.Input.Query("pageSize")
 	page := c.Ctx.Input.Query("p")
+	sortField := c.Ctx.Input.Query("sortField")
+	sortOrder := c.Ctx.Input.Query("sortOrder")
 
 	if limit != "" && page != "" {
 		limit := util.ParseInt(limit)
@@ -51,7 +87,7 @@ func (c *ApiController) GetWebhookEvents() {
 		}
 
 		paginator := pagination.NewPaginator(c.Ctx.Request, limit, count)
-		events, err := object.GetWebhookEvents(owner, organization, webhookName, object.WebhookEventStatus(status), paginator.Offset(), limit)
+		events, err := object.GetWebhookEvents(owner, organization, webhookName, object.WebhookEventStatus(status), paginator.Offset(), limit, sortField, sortOrder)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
@@ -59,7 +95,7 @@ func (c *ApiController) GetWebhookEvents() {
 
 		c.ResponseOk(events, paginator.Nums())
 	} else {
-		events, err := object.GetWebhookEvents(owner, organization, webhookName, object.WebhookEventStatus(status), 0, defaultWebhookEventListLimit)
+		events, err := object.GetWebhookEvents(owner, organization, webhookName, object.WebhookEventStatus(status), 0, defaultWebhookEventListLimit, sortField, sortOrder)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
@@ -77,11 +113,20 @@ func (c *ApiController) GetWebhookEvents() {
 // @Success 200 {object} object.WebhookEvent The Response object
 // @router /get-webhook-event-detail [get]
 func (c *ApiController) GetWebhookEvent() {
+	organization, ok := c.RequireAdmin()
+	if !ok {
+		return
+	}
+
 	id := c.Ctx.Input.Query("id")
 
 	event, err := object.GetWebhookEvent(id)
 	if err != nil {
 		c.ResponseError(err.Error())
+		return
+	}
+
+	if !c.checkWebhookEventAccess(event, organization) {
 		return
 	}
 
@@ -96,43 +141,30 @@ func (c *ApiController) GetWebhookEvent() {
 // @Success 200 {object} controllers.Response The Response object
 // @router /replay-webhook-event [post]
 func (c *ApiController) ReplayWebhookEvent() {
+	organization, ok := c.RequireAdmin()
+	if !ok {
+		return
+	}
+
 	id := c.Ctx.Input.Query("id")
 
-	err := object.ReplayWebhookEvent(id)
+	event, err := object.GetWebhookEvent(id)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
 
-	c.ResponseOk("Webhook event replayed successfully")
-}
+	if !c.checkWebhookEventAccess(event, organization) {
+		return
+	}
 
-// ReplayWebhookEvents
-// @Title ReplayWebhookEvents
-// @Tag Webhook Event API
-// @Description replay multiple webhook events
-// @Param   owner     query    string  false       "The owner of webhook events"
-// @Param   organization     query    string  false       "The organization"
-// @Param   webhookName     query    string  false       "The webhook name"
-// @Param   status     query    string  false       "Event status to replay (e.g., failed)"
-// @Success 200 {object} controllers.Response The Response object
-// @router /replay-webhook-events [post]
-func (c *ApiController) ReplayWebhookEvents() {
-	owner := c.Ctx.Input.Query("owner")
-	organization := c.Ctx.Input.Query("organization")
-	webhookName := c.Ctx.Input.Query("webhookName")
-	status := c.Ctx.Input.Query("status")
-
-	count, err := object.ReplayWebhookEvents(owner, organization, webhookName, object.WebhookEventStatus(status))
+	err = object.ReplayWebhookEvent(id)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
 
-	c.ResponseOk(map[string]interface{}{
-		"count":   count,
-		"message": "webhook events replayed successfully",
-	})
+	c.ResponseOk("Webhook event replay triggered")
 }
 
 // DeleteWebhookEvent
@@ -143,10 +175,25 @@ func (c *ApiController) ReplayWebhookEvents() {
 // @Success 200 {object} controllers.Response The Response object
 // @router /delete-webhook-event [post]
 func (c *ApiController) DeleteWebhookEvent() {
+	organization, ok := c.RequireAdmin()
+	if !ok {
+		return
+	}
+
 	var event object.WebhookEvent
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &event)
 	if err != nil {
 		c.ResponseError(err.Error())
+		return
+	}
+
+	storedEvent, err := object.GetWebhookEvent(event.GetId())
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	if !c.checkWebhookEventAccess(storedEvent, organization) {
 		return
 	}
 

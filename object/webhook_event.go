@@ -19,6 +19,7 @@ import (
 
 	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/core"
+	"github.com/xorm-io/xorm"
 )
 
 // WebhookEventStatus represents the delivery status of a webhook event
@@ -85,9 +86,8 @@ func getWebhookEvent(owner string, name string) (*WebhookEvent, error) {
 	return nil, nil
 }
 
-func GetWebhookEvents(owner, organization, webhookName string, status WebhookEventStatus, offset, limit int) ([]*WebhookEvent, error) {
-	events := []*WebhookEvent{}
-	session := ormer.Engine.Desc("created_time")
+func getWebhookEventSession(owner, organization, webhookName string, status WebhookEventStatus, offset, limit int, sortField, sortOrder string) *xorm.Session {
+	session := ormer.Engine.Prepare()
 
 	if owner != "" {
 		session = session.Where("owner = ?", owner)
@@ -107,6 +107,22 @@ func GetWebhookEvents(owner, organization, webhookName string, status WebhookEve
 	} else if limit > 0 {
 		session = session.Limit(limit)
 	}
+
+	if sortField == "" || sortOrder == "" {
+		sortField = "created_time"
+	}
+	if sortOrder == "ascend" {
+		session = session.Asc(util.SnakeString(sortField))
+	} else {
+		session = session.Desc(util.SnakeString(sortField))
+	}
+
+	return session
+}
+
+func GetWebhookEvents(owner, organization, webhookName string, status WebhookEventStatus, offset, limit int, sortField, sortOrder string) ([]*WebhookEvent, error) {
+	events := []*WebhookEvent{}
+	session := getWebhookEventSession(owner, organization, webhookName, status, offset, limit, sortField, sortOrder)
 
 	err := session.Find(&events)
 	if err != nil {
@@ -195,6 +211,10 @@ func UpdateWebhookEventStatus(event *WebhookEvent, status WebhookEventStatus, st
 	event.LastStatusCode = statusCode
 	event.LastResponse = response
 	event.UpdatedTime = util.GetCurrentTime()
+
+	if status != WebhookEventStatusRetrying {
+		event.NextRetryTime = ""
+	}
 
 	if err != nil {
 		event.LastError = err.Error()

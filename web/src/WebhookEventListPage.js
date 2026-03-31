@@ -28,6 +28,9 @@ class WebhookEventListPage extends React.Component {
       loading: false,
       replayingId: "",
       isAuthorized: true,
+      statusFilter: "",
+      sortField: "",
+      sortOrder: "",
       detailShow: false,
       detailRecord: null,
       pagination: {
@@ -54,7 +57,7 @@ class WebhookEventListPage extends React.Component {
       ...this.state.pagination,
       current: 1,
     };
-    this.fetchWebhookEvents(pagination);
+    this.fetchWebhookEvents(pagination, this.state.statusFilter, this.state.sortField, this.state.sortOrder);
   };
 
   getStatusTag = (status) => {
@@ -94,16 +97,19 @@ class WebhookEventListPage extends React.Component {
     return Setting.isDefaultOrganizationSelected(this.props.account) ? "" : Setting.getRequestOrganization(this.props.account);
   };
 
-  fetchWebhookEvents = (pagination = this.state.pagination) => {
+  fetchWebhookEvents = (pagination = this.state.pagination, statusFilter = this.state.statusFilter, sortField = this.state.sortField, sortOrder = this.state.sortOrder) => {
     this.setState({loading: true});
 
-    WebhookEventBackend.getWebhookEvents("", this.getOrganizationFilter(), pagination.current, pagination.pageSize)
+    WebhookEventBackend.getWebhookEvents("", this.getOrganizationFilter(), pagination.current, pagination.pageSize, "", statusFilter, sortField, sortOrder)
       .then((res) => {
         this.setState({loading: false});
 
         if (res.status === "ok") {
           this.setState({
             data: res.data || [],
+            statusFilter,
+            sortField,
+            sortOrder,
             pagination: {
               ...pagination,
               total: res.data2 ?? 0,
@@ -130,10 +136,10 @@ class WebhookEventListPage extends React.Component {
         this.setState({replayingId: ""});
 
         if (res.status === "ok") {
-          Setting.showMessage("success", typeof res.data === "string" ? res.data : i18next.t("webhook:Webhook event replayed successfully"));
-          this.fetchWebhookEvents(this.state.pagination);
+          Setting.showMessage("success", typeof res.data === "string" ? res.data : i18next.t("webhook:Webhook event replay triggered"));
+          this.fetchWebhookEvents(this.state.pagination, this.state.statusFilter, this.state.sortField, this.state.sortOrder);
         } else {
-          Setting.showMessage("error", `${i18next.t("general:Failed to save")}: ${res.msg}`);
+          Setting.showMessage("error", `${i18next.t("webhook:Failed to replay webhook event")}: ${res.msg}`);
         }
       })
       .catch((error) => {
@@ -142,8 +148,16 @@ class WebhookEventListPage extends React.Component {
       });
   };
 
-  handleTableChange = (pagination) => {
-    this.fetchWebhookEvents(pagination);
+  handleTableChange = (pagination, filters, sorter) => {
+    const statusFilter = Array.isArray(filters?.status) ? (filters.status[0] ?? "") : (filters?.status ?? "");
+    const sortField = Array.isArray(sorter) ? "" : sorter?.field ?? "";
+    const sortOrder = Array.isArray(sorter) ? "" : sorter?.order ?? "";
+    const nextPagination = statusFilter !== this.state.statusFilter ? {
+      ...pagination,
+      current: 1,
+    } : pagination;
+
+    this.fetchWebhookEvents(nextPagination, statusFilter, sortField, sortOrder);
   };
 
   openDetailDrawer = (record) => {
@@ -207,7 +221,8 @@ class WebhookEventListPage extends React.Component {
           {text: i18next.t("webhook:Failed"), value: "failed"},
           {text: i18next.t("webhook:Retrying"), value: "retrying"},
         ],
-        onFilter: (value, record) => record.status === value,
+        filterMultiple: false,
+        filteredValue: this.state.statusFilter ? [this.state.statusFilter] : null,
         render: (text) => this.getStatusTag(text),
       },
       {
@@ -215,18 +230,16 @@ class WebhookEventListPage extends React.Component {
         dataIndex: "attemptCount",
         key: "attemptCount",
         width: 140,
-        sorter: (a, b) => (a.attemptCount || 0) - (b.attemptCount || 0),
+        sorter: true,
+        sortOrder: this.state.sortField === "attemptCount" ? this.state.sortOrder : null,
       },
       {
         title: i18next.t("webhook:Next Retry Time"),
         dataIndex: "nextRetryTime",
         key: "nextRetryTime",
         width: 180,
-        sorter: (a, b) => {
-          const timeA = a.nextRetryTime ? new Date(a.nextRetryTime).getTime() : 0;
-          const timeB = b.nextRetryTime ? new Date(b.nextRetryTime).getTime() : 0;
-          return timeA - timeB;
-        },
+        sorter: true,
+        sortOrder: this.state.sortField === "nextRetryTime" ? this.state.sortOrder : null,
         render: (text) => text ? Setting.getFormattedDate(text) : "-",
       },
       {
