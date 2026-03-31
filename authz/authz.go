@@ -38,7 +38,6 @@ func InitApi() {
 	// if len(Enforcer.GetPolicy()) == 0 {
 	if true {
 		ruleText := `
-p, *, *, POST, /api/v1/traces, *, *
 p, built-in, *, *, *, *, *
 p, app, *, *, *, *, *
 p, *, *, POST, /api/signup, *, *
@@ -86,6 +85,7 @@ p, *, *, POST, /api/send-verification-code, *, *
 p, *, *, GET, /api/get-captcha, *, *
 p, *, *, POST, /api/verify-captcha, *, *
 p, *, *, POST, /api/verify-code, *, *
+p, *, *, POST, /api/v1/traces, *, *
 p, *, *, POST, /api/reset-email-or-phone, *, *
 p, *, *, POST, /api/upload-resource, *, *
 p, *, *, GET, /.well-known/openid-configuration, *, *
