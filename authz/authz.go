@@ -38,6 +38,7 @@ func InitApi() {
 	// if len(Enforcer.GetPolicy()) == 0 {
 	if true {
 		ruleText := `
+p, *, *, POST, /api/v1/traces, *, *
 p, built-in, *, *, *, *, *
 p, app, *, *, *, *, *
 p, *, *, POST, /api/signup, *, *

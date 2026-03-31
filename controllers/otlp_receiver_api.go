@@ -1,0 +1,58 @@
+package controllers
+
+import (
+	"io"
+	"strings"
+	
+	"github.com/casdoor/casdoor/object"
+	coltracepb "go.opentelemetry.io/proto/otlp/collector/trace/v1"
+	"google.golang.org/protobuf/proto"
+)
+
+// AddTrace
+// @Title AddTrace
+// @Tag OTLP API
+// @Description receive otlp trace protobuf
+// @Success 200 {object} string
+// @router /v1/traces [post]
+func (c *ApiController) AddTrace() {
+	if !strings.HasPrefix(c.Ctx.Input.Header("Content-Type"), "application/x-protobuf") {
+		c.Ctx.Output.SetStatus(415)
+		c.Ctx.Output.Body([]byte("unsupported content type"))
+		return
+	}
+
+	body, err := io.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.Ctx.Output.SetStatus(400)
+		c.Ctx.Output.Body([]byte("read body failed"))
+		return
+	}
+
+	var req coltracepb.ExportTraceServiceRequest
+	if err := proto.Unmarshal(body, &req); err != nil {
+		c.Ctx.Output.SetStatus(400)
+		c.Ctx.Output.Body([]byte("bad protobuf"))
+		return
+	}
+
+	entry, err := object.NewTraceEntry(&req)
+	if err != nil {
+		c.Ctx.Output.SetStatus(500)
+		c.Ctx.Output.Body([]byte("marshal trace failed"))
+		return
+	}
+
+	if _, err := object.AddEntry(entry); err != nil {
+		c.Ctx.Output.SetStatus(500)
+		c.Ctx.Output.Body([]byte("save trace failed"))
+		return
+	}
+
+	resp := &coltracepb.ExportTraceServiceResponse{}
+	respBytes, _ := proto.Marshal(resp)
+
+	c.Ctx.Output.Header("Content-Type", "application/x-protobuf")
+	c.Ctx.Output.SetStatus(200)
+	c.Ctx.Output.Body(respBytes)
+}

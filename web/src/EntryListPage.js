@@ -34,6 +34,7 @@ class EntryListPage extends BaseListPage {
       url: "",
       token: "",
       application: "",
+      message: "",
     };
   }
 

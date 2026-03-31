@@ -19,6 +19,8 @@ import (
 
 	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/core"
+	coltracepb "go.opentelemetry.io/proto/otlp/collector/trace/v1"
+	"google.golang.org/protobuf/encoding/protojson"
 )
 
 type Entry struct {
@@ -31,6 +33,26 @@ type Entry struct {
 	Url         string `xorm:"varchar(500)" json:"url"`
 	Token       string `xorm:"varchar(500)" json:"token"`
 	Application string `xorm:"varchar(100)" json:"application"`
+	Message     string `xorm:"mediumtext" json:"message"`
+}
+
+func NewTraceEntry(req *coltracepb.ExportTraceServiceRequest) (*Entry, error) {
+	message, err := protojson.Marshal(req)
+	if err != nil {
+		return nil, err
+	}
+
+	currentTime := util.GetCurrentTime()
+	traceId := fmt.Sprintf("trace_%s_%s", util.GenerateSimpleTimeId(), util.GetRandomName())
+
+	return &Entry{
+		Owner:       CasdoorOrganization,
+		Name:        traceId,
+		CreatedTime: currentTime,
+		UpdatedTime: currentTime,
+		DisplayName: traceId,
+		Message:     string(message),
+	}, nil
 }
 
 func GetEntries(owner string) ([]*Entry, error) {
