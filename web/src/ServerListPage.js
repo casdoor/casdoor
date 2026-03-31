@@ -194,23 +194,27 @@ class ServerListPage extends BaseListPage {
     };
 
     return (
-      <Table
-        scroll={{x: "max-content"}}
-        dataSource={servers}
-        columns={filteredColumns}
-        rowKey={record => `${record.owner}/${record.name}`}
-        pagination={{...this.state.pagination, ...paginationProps}}
-        loading={this.state.loading}
-        onChange={this.handleTableChange}
-        size="middle"
-        bordered
-        title={() => (
-          <div>
-            {i18next.t("server:Edit MCP Server")}&nbsp;&nbsp;&nbsp;&nbsp;
-            <Button type="primary" size="small" onClick={() => this.addServer()}>{i18next.t("general:Add")}</Button>
-          </div>
-        )}
-      />
+      <>
+        <Table
+          scroll={{x: "max-content"}}
+          dataSource={servers}
+          columns={filteredColumns}
+          rowKey={record => `${record.owner}/${record.name}`}
+          pagination={{...this.state.pagination, ...paginationProps}}
+          loading={this.state.loading}
+          onChange={this.handleTableChange}
+          size="middle"
+          bordered
+          title={() => (
+            <div>
+              {i18next.t("server:Edit MCP Server")}&nbsp;&nbsp;&nbsp;&nbsp;
+              <Button type="primary" size="small" onClick={() => this.addServer()}>{i18next.t("general:Add")}</Button>
+            &nbsp;
+              <Button size="small" onClick={() => this.props.history.push("/server-store")}>{i18next.t("general:MCP Store")}</Button>
+            </div>
+          )}
+        />
+      </>
     );
   }
 }

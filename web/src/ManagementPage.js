@@ -110,6 +110,7 @@ import * as UserBackend from "./backend/UserBackend";
 import AgentListPage from "./AgentListPage";
 import AgentEditPage from "./AgentEditPage";
 import ServerListPage from "./ServerListPage";
+import ServerStorePage from "./ServerStorePage";
 import ServerEditPage from "./ServerEditPage";
 import EntryListPage from "./EntryListPage";
 import EntryEditPage from "./EntryEditPage";
@@ -356,6 +357,7 @@ function ManagementPage(props) {
     res.push(Setting.getItem(<Link style={{color: textColor}} to="/sites">{i18next.t("general:LLM AI")}</Link>, "/gateway", <CheckCircleTwoTone twoToneColor={twoToneColor} />, [
       Setting.getItem(<Link to="/agents">{i18next.t("general:Agents")}</Link>, "/agents"),
       Setting.getItem(<Link to="/servers">{i18next.t("general:MCP Servers")}</Link>, "/servers"),
+      Setting.getItem(<Link to="/server-store">{i18next.t("general:MCP Store")}</Link>, "/server-store"),
       Setting.getItem(<Link to="/entries">{i18next.t("general:Entries")}</Link>, "/entries"),
       Setting.getItem(<Link to="/sites">{i18next.t("general:Sites")}</Link>, "/sites"),
       Setting.getItem(<Link to="/rules">{i18next.t("general:Rules")}</Link>, "/rules"),
@@ -505,6 +507,7 @@ function ManagementPage(props) {
         <Route exact path="/agents" render={(props) => renderLoginIfNotLoggedIn(<AgentListPage account={account} {...props} />)} />
         <Route exact path="/agents/:organizationName/:agentName" render={(props) => renderLoginIfNotLoggedIn(<AgentEditPage account={account} {...props} />)} />
         <Route exact path="/servers" render={(props) => renderLoginIfNotLoggedIn(<ServerListPage account={account} {...props} />)} />
+        <Route exact path="/server-store" render={(props) => renderLoginIfNotLoggedIn(<ServerStorePage account={account} {...props} />)} />
         <Route exact path="/servers/:organizationName/:serverName" render={(props) => renderLoginIfNotLoggedIn(<ServerEditPage account={account} {...props} />)} />
         <Route exact path="/entries" render={(props) => renderLoginIfNotLoggedIn(<EntryListPage account={account} {...props} />)} />
         <Route exact path="/entries/:organizationName/:entryName" render={(props) => renderLoginIfNotLoggedIn(<EntryEditPage account={account} {...props} />)} />
