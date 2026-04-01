@@ -28,7 +28,7 @@ import (
 // @Tag OTLP API
 // @Description receive otlp trace protobuf
 // @Success 200 {object} string
-// @router /v1/traces [post]
+// @router /api/v1/traces [post]
 func (c *ApiController) AddTrace() {
 	if !strings.HasPrefix(c.Ctx.Input.Header("Content-Type"), "application/x-protobuf") {
 		c.Ctx.Output.SetStatus(415)
