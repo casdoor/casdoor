@@ -211,7 +211,7 @@ class EntryEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {i18next.t("general:Message")}:
+            {i18next.t("payment:Message")}:
           </Col>
           <Col span={22} >
             <TextArea autoSize={{minRows: 8, maxRows: 20}} value={this.state.entry.message} onChange={e => {
