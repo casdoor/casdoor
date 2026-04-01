@@ -15,15 +15,17 @@
 package controllers
 
 import (
+	"fmt"
 	"io"
 	"strings"
 
 	"github.com/casdoor/casdoor/object"
 	coltracepb "go.opentelemetry.io/proto/otlp/collector/trace/v1"
+	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/proto"
 )
 
-// AddTrace
+// AddOtlpEntry
 // @Title AddTrace
 // @Tag OTLP API
 // @Description receive otlp trace protobuf
@@ -44,22 +46,25 @@ func (c *ApiController) AddTrace() {
 	}
 
 	var req coltracepb.ExportTraceServiceRequest
+
 	if err := proto.Unmarshal(body, &req); err != nil {
 		c.Ctx.Output.SetStatus(400)
-		c.Ctx.Output.Body([]byte("bad protobuf"))
+		c.Ctx.Output.Body([]byte(fmt.Sprintf("bad protobuf: %v", err)))
 		return
 	}
 
-	entry, err := object.NewTraceEntry(&req)
+	message, err := protojson.Marshal(&req)
 	if err != nil {
 		c.Ctx.Output.SetStatus(500)
-		c.Ctx.Output.Body([]byte("marshal trace failed"))
+		c.Ctx.Output.Body([]byte(fmt.Sprintf("marshal trace failed: %v", err)))
 		return
 	}
+
+	entry := object.NewTraceEntry(message)
 
 	if _, err := object.AddEntry(entry); err != nil {
 		c.Ctx.Output.SetStatus(500)
-		c.Ctx.Output.Body([]byte("save trace failed"))
+		c.Ctx.Output.Body([]byte(fmt.Sprintf("save trace failed: %v", err)))
 		return
 	}
 
