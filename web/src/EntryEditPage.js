@@ -22,6 +22,7 @@ import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
 
 const {Option} = Select;
+const {TextArea} = Input;
 
 class EntryEditPage extends React.Component {
   constructor(props) {
@@ -206,6 +207,16 @@ class EntryEditPage extends React.Component {
                 this.state.applications.map((application, index) => <Option key={index} value={application.name}>{application.name}</Option>)
               }
             </Select>
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {i18next.t("payment:Message")}:
+          </Col>
+          <Col span={22} >
+            <TextArea autoSize={{minRows: 8, maxRows: 20}} value={this.state.entry.message} onChange={e => {
+              this.updateEntryField("message", e.target.value);
+            }} />
           </Col>
         </Row>
       </Card>

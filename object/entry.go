@@ -31,6 +31,21 @@ type Entry struct {
 	Url         string `xorm:"varchar(500)" json:"url"`
 	Token       string `xorm:"varchar(500)" json:"token"`
 	Application string `xorm:"varchar(100)" json:"application"`
+	Message     string `xorm:"mediumtext" json:"message"`
+}
+
+func NewTraceEntry(message []byte) *Entry {
+	currentTime := util.GetCurrentTime()
+	traceId := fmt.Sprintf("trace_%s_%s", util.GenerateSimpleTimeId(), util.GetRandomName())
+
+	return &Entry{
+		Owner:       CasdoorOrganization,
+		Name:        traceId,
+		CreatedTime: currentTime,
+		UpdatedTime: currentTime,
+		DisplayName: traceId,
+		Message:     string(message),
+	}
 }
 
 func GetEntries(owner string) ([]*Entry, error) {
