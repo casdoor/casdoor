@@ -455,6 +455,12 @@ export const OtherProviderInfo = {
       url: "https://www.aliyun.com/product/idverification",
     },
   },
+  Log: {
+    "Linux Syslog": {
+      logo: `${StaticBaseUrl}/img/social_default.png`,
+      url: "https://man7.org/linux/man-pages/man3/syslog.3.html",
+    },
+  },
 };
 
 export const UserFields = ["owner", "name", "password", "display_name", "id", "type", "email", "phone", "country_code",
@@ -1418,6 +1424,10 @@ export function getProviderTypeOptions(category) {
     return ([
       {id: "Jumio", name: "Jumio"},
       {id: "Alibaba Cloud", name: "Alibaba Cloud"},
+    ]);
+  } else if (category === "Log") {
+    return ([
+      {id: "Linux Syslog", name: "Linux Syslog"},
     ]);
   } else {
     return [];
