@@ -13,17 +13,16 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Input, Row, Select} from "antd";
+import {Alert, Button, Card, Col, Descriptions, Drawer, Input, Row, Select, Table} from "antd";
 import {LinkOutlined} from "@ant-design/icons";
 import * as EntryBackend from "./backend/EntryBackend";
 import * as Setting from "./Setting";
 import i18next from "i18next";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
+import Editor from "./common/Editor";
 
 const {Option} = Select;
-const {TextArea} = Input;
-
 class EntryEditPage extends React.Component {
   constructor(props) {
     super(props);
@@ -35,6 +34,8 @@ class EntryEditPage extends React.Component {
       organizations: [],
       applications: [],
       mode: props.location.mode !== undefined ? props.location.mode : "edit",
+      traceSpanDrawerVisible: false,
+      selectedTraceSpan: null,
     };
   }
 
@@ -135,6 +136,547 @@ class EntryEditPage extends React.Component {
       });
   }
 
+  getEditorMaxWidth() {
+    return Setting.isMobile() ? window.innerWidth - 60 : 560;
+  }
+
+  formatJsonValue(value) {
+    if (value === undefined || value === null || value === "") {
+      return "";
+    }
+
+    if (typeof value === "string") {
+      try {
+        return JSON.stringify(JSON.parse(value), null, 2);
+      } catch (e) {
+        return value;
+      }
+    }
+
+    return JSON.stringify(value, null, 2);
+  }
+
+  formatAnyValue(value) {
+    if (value === undefined || value === null) {
+      return "";
+    }
+
+    if (value.stringValue !== undefined) {
+      return value.stringValue;
+    }
+
+    if (value.boolValue !== undefined) {
+      return `${value.boolValue}`;
+    }
+
+    if (value.intValue !== undefined) {
+      return `${value.intValue}`;
+    }
+
+    if (value.doubleValue !== undefined) {
+      return `${value.doubleValue}`;
+    }
+
+    if (value.bytesValue !== undefined) {
+      return value.bytesValue;
+    }
+
+    if (Array.isArray(value.arrayValue?.values)) {
+      return value.arrayValue.values.map(item => this.formatAnyValue(item)).join(", ");
+    }
+
+    if (Array.isArray(value.kvlistValue?.values)) {
+      return value.kvlistValue.values.map(item => `${item?.key || "-"}=${this.formatAnyValue(item?.value)}`).join(", ");
+    }
+
+    return this.formatJsonValue(value);
+  }
+
+  getAnyValueType(value) {
+    if (value === undefined || value === null) {
+      return "-";
+    }
+
+    if (value.stringValue !== undefined) {
+      return "string";
+    }
+
+    if (value.boolValue !== undefined) {
+      return "bool";
+    }
+
+    if (value.intValue !== undefined) {
+      return "int";
+    }
+
+    if (value.doubleValue !== undefined) {
+      return "double";
+    }
+
+    if (value.bytesValue !== undefined) {
+      return "bytes";
+    }
+
+    if (Array.isArray(value.arrayValue?.values)) {
+      return "array";
+    }
+
+    if (Array.isArray(value.kvlistValue?.values)) {
+      return "map";
+    }
+
+    return "unknown";
+  }
+
+  getAttributeValue(attributes, key) {
+    const attribute = attributes.find(item => item?.key === key);
+    return attribute ? this.formatAnyValue(attribute.value) : "";
+  }
+
+  renderTraceAttributeTable(attributes) {
+    const rows = Array.isArray(attributes) ? attributes.map((attribute, index) => ({
+      key: `${attribute?.key || "attribute"}-${index}`,
+      name: attribute?.key || "-",
+      type: this.getAnyValueType(attribute?.value),
+      value: this.formatAnyValue(attribute?.value) || "-",
+    })) : [];
+
+    if (rows.length === 0) {
+      return "-";
+    }
+
+    const columns = [
+      {
+        title: i18next.t("user:Keys"),
+        dataIndex: "name",
+        key: "name",
+        width: 220,
+      },
+      {
+        title: i18next.t("general:Type"),
+        dataIndex: "type",
+        key: "type",
+        width: 120,
+      },
+      {
+        title: i18next.t("user:Values"),
+        dataIndex: "value",
+        key: "value",
+        render: value => (
+          <div style={{whiteSpace: "pre-wrap", wordBreak: "break-word"}}>
+            {value}
+          </div>
+        ),
+      },
+    ];
+
+    return (
+      <Table
+        scroll={{x: "max-content"}}
+        size="small"
+        bordered
+        columns={columns}
+        dataSource={rows}
+        rowKey="key"
+        pagination={false}
+      />
+    );
+  }
+
+  normalizeIntegerString(value) {
+    const text = `${value ?? ""}`.trim();
+    if (!/^\d+$/.test(text)) {
+      return "";
+    }
+
+    return text.replace(/^0+(?=\d)/, "");
+  }
+
+  subtractIntegerStrings(minuend, subtrahend) {
+    const left = this.normalizeIntegerString(minuend);
+    const right = this.normalizeIntegerString(subtrahend);
+    if (!left || !right) {
+      return "";
+    }
+
+    if (left.length < right.length || (left.length === right.length && left < right)) {
+      return "";
+    }
+
+    let borrow = 0;
+    let result = "";
+
+    for (let i = 0; i < left.length; i++) {
+      const leftDigit = Number(left[left.length - 1 - i]);
+      const rightDigit = Number(right[right.length - 1 - i] || 0);
+      let digit = leftDigit - borrow - rightDigit;
+      if (digit < 0) {
+        digit += 10;
+        borrow = 1;
+      } else {
+        borrow = 0;
+      }
+
+      result = `${digit}${result}`;
+    }
+
+    return result.replace(/^0+(?=\d)/, "");
+  }
+
+  getTraceData() {
+    if (this.state.entry?.type !== "trace") {
+      return {spans: [], error: ""};
+    }
+
+    const message = this.state.entry?.message?.trim();
+    if (!message) {
+      return {spans: [], error: ""};
+    }
+
+    try {
+      const trace = JSON.parse(message);
+      return {
+        spans: this.flattenTraceSpans(trace),
+        error: "",
+      };
+    } catch (e) {
+      return {
+        spans: [],
+        error: e.message,
+      };
+    }
+  }
+
+  flattenTraceSpans(trace) {
+    const spans = [];
+    const resourceSpans = Array.isArray(trace?.resourceSpans) ? trace.resourceSpans : [];
+
+    resourceSpans.forEach((resourceSpan, resourceIndex) => {
+      const resource = resourceSpan?.resource ?? {};
+      const resourceAttributes = Array.isArray(resource.attributes) ? resource.attributes : [];
+      const serviceName = this.getAttributeValue(resourceAttributes, "service.name");
+      const scopeSpans = Array.isArray(resourceSpan?.scopeSpans) ? resourceSpan.scopeSpans : [];
+
+      scopeSpans.forEach((scopeSpan, scopeIndex) => {
+        const scope = scopeSpan?.scope ?? {};
+        const scopeSchemaUrl = scopeSpan?.schemaUrl ?? "";
+        const innerSpans = Array.isArray(scopeSpan?.spans) ? scopeSpan.spans : [];
+
+        innerSpans.forEach((span, spanIndex) => {
+          spans.push({
+            key: `${resourceIndex}-${scopeIndex}-${spanIndex}-${span?.spanId ?? span?.name ?? "span"}`,
+            resource,
+            resourceAttributes,
+            resourceSchemaUrl: resourceSpan?.schemaUrl ?? "",
+            scope,
+            scopeSchemaUrl,
+            serviceName,
+            span,
+          });
+        });
+      });
+    });
+
+    return spans;
+  }
+
+  formatTraceTimestamp(unixNano) {
+    if (!unixNano) {
+      return "-";
+    }
+
+    const normalized = this.normalizeIntegerString(unixNano);
+    if (!normalized) {
+      return `${unixNano}`;
+    }
+
+    const padded = normalized.padStart(9, "0");
+    const milliseconds = Number(padded.slice(0, -6) || "0");
+    const nanoseconds = padded.slice(-9);
+    const date = new Date(milliseconds);
+    if (!Number.isFinite(milliseconds) || Number.isNaN(date.getTime())) {
+      return `${unixNano}`;
+    }
+
+    return `${Setting.getFormattedDate(date.toISOString())}.${nanoseconds}`;
+  }
+
+  getSpanDuration(span) {
+    if (!span?.startTimeUnixNano || !span?.endTimeUnixNano) {
+      return "-";
+    }
+
+    const duration = this.subtractIntegerStrings(span.endTimeUnixNano, span.startTimeUnixNano);
+    if (!duration) {
+      return "-";
+    }
+
+    const durationNumber = Number(duration);
+    if (!Number.isFinite(durationNumber)) {
+      return `${duration} ns`;
+    }
+
+    if (durationNumber >= 1e9) {
+      return `${(durationNumber / 1e9).toFixed(3)} s`;
+    }
+
+    if (durationNumber >= 1e6) {
+      return `${(durationNumber / 1e6).toFixed(3)} ms`;
+    }
+
+    if (durationNumber >= 1e3) {
+      return `${(durationNumber / 1e3).toFixed(3)} us`;
+    }
+
+    return `${durationNumber} ns`;
+  }
+
+  getSpanStatus(span) {
+    const code = span?.status?.code ?? "";
+    const message = span?.status?.message ?? "";
+
+    if (code && message) {
+      return `${code}: ${message}`;
+    }
+
+    return code || message || "-";
+  }
+
+  getScopeName(scope) {
+    if (!scope?.name) {
+      return "-";
+    }
+
+    return scope.version ? `${scope.name}@${scope.version}` : scope.name;
+  }
+
+  openTraceSpanDrawer(traceSpan) {
+    this.setState({
+      traceSpanDrawerVisible: true,
+      selectedTraceSpan: traceSpan,
+    });
+  }
+
+  closeTraceSpanDrawer = () => {
+    this.setState({
+      traceSpanDrawerVisible: false,
+      selectedTraceSpan: null,
+    });
+  };
+
+  renderJsonEditor(value) {
+    const formattedValue = this.formatJsonValue(value);
+    if (!formattedValue) {
+      return "-";
+    }
+
+    return (
+      <Editor
+        value={formattedValue}
+        lang="json"
+        fillHeight
+        fillWidth
+        maxWidth={this.getEditorMaxWidth()}
+        dark
+        readOnly
+      />
+    );
+  }
+
+  renderMessageEditor() {
+    return (
+      <Editor
+        value={this.formatJsonValue(this.state.entry?.message) || ""}
+        lang="json"
+        readOnly
+      />
+    );
+  }
+
+  renderTraceSpans() {
+    if (this.state.entry?.type !== "trace") {
+      return null;
+    }
+
+    const {spans, error} = this.getTraceData();
+    const columns = [
+      {
+        title: i18next.t("general:Name"),
+        dataIndex: ["span", "name"],
+        key: "name",
+        width: 220,
+        render: (text, record) => (
+          <Button type="link" style={{padding: 0}} onClick={() => this.openTraceSpanDrawer(record)}>
+            {text || record.span?.spanId || "-"}
+          </Button>
+        ),
+      },
+      {
+        title: "Service",
+        dataIndex: "serviceName",
+        key: "serviceName",
+        width: 180,
+        render: value => value || "-",
+      },
+      {
+        title: "Span ID",
+        dataIndex: ["span", "spanId"],
+        key: "spanId",
+        width: 180,
+        render: value => value || "-",
+      },
+      {
+        title: "Start time",
+        dataIndex: ["span", "startTimeUnixNano"],
+        key: "startTimeUnixNano",
+        width: 220,
+        render: value => this.formatTraceTimestamp(value),
+      },
+      {
+        title: "Duration",
+        key: "duration",
+        width: 120,
+        render: (_, record) => this.getSpanDuration(record.span),
+      },
+      {
+        title: i18next.t("general:Action"),
+        key: "action",
+        width: 100,
+        render: (_, record) => (
+          <Button type="link" onClick={() => this.openTraceSpanDrawer(record)}>
+            {i18next.t("general:View")}
+          </Button>
+        ),
+      },
+    ];
+
+    return (
+      <>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            Trace spans:
+          </Col>
+          <Col span={22} >
+            {error ? (
+              <Alert
+                message={`Failed to parse trace message: ${error}`}
+                type="warning"
+                showIcon
+              />
+            ) : (
+              <Table
+                scroll={{x: "max-content"}}
+                size="small"
+                bordered
+                columns={columns}
+                dataSource={spans}
+                rowKey="key"
+                onRow={record => ({
+                  onClick: () => this.openTraceSpanDrawer(record),
+                  style: {cursor: "pointer"},
+                })}
+                pagination={spans.length > 10 ? {pageSize: 10, hideOnSinglePage: true} : false}
+                locale={{emptyText: "No spans"}}
+              />
+            )}
+          </Col>
+        </Row>
+        {this.renderTraceSpanDrawer()}
+      </>
+    );
+  }
+
+  renderTraceSpanDrawer() {
+    const traceSpan = this.state.selectedTraceSpan;
+    const span = traceSpan?.span;
+    if (!traceSpan) {
+      return (
+        <Drawer
+          title="Span detail"
+          width={Setting.isMobile() ? "100%" : 760}
+          placement="right"
+          destroyOnClose
+          onClose={this.closeTraceSpanDrawer}
+          open={this.state.traceSpanDrawerVisible}
+        />
+      );
+    }
+
+    return (
+      <Drawer
+        title={`Span detail: ${span?.name || span?.spanId || "-"}`}
+        width={Setting.isMobile() ? "100%" : 760}
+        placement="right"
+        destroyOnClose
+        onClose={this.closeTraceSpanDrawer}
+        open={this.state.traceSpanDrawerVisible}
+      >
+        <Descriptions
+          bordered
+          size="small"
+          column={1}
+          layout={Setting.isMobile() ? "vertical" : "horizontal"}
+          style={{padding: "12px", height: "100%", overflowY: "auto"}}
+        >
+          <Descriptions.Item label={i18next.t("general:Name")}>
+            {span?.name || "-"}
+          </Descriptions.Item>
+          <Descriptions.Item label="Service">
+            {traceSpan.serviceName || "-"}
+          </Descriptions.Item>
+          <Descriptions.Item label="Scope">
+            {this.getScopeName(traceSpan.scope)}
+          </Descriptions.Item>
+          <Descriptions.Item label={i18next.t("general:Type")}>
+            {span?.kind || "-"}
+          </Descriptions.Item>
+          <Descriptions.Item label="Trace ID">
+            {span?.traceId || "-"}
+          </Descriptions.Item>
+          <Descriptions.Item label="Span ID">
+            {span?.spanId || "-"}
+          </Descriptions.Item>
+          <Descriptions.Item label="Parent Span ID">
+            {span?.parentSpanId || "-"}
+          </Descriptions.Item>
+          <Descriptions.Item label={i18next.t("general:Status")}>
+            {this.getSpanStatus(span)}
+          </Descriptions.Item>
+          <Descriptions.Item label="Start time">
+            {this.formatTraceTimestamp(span?.startTimeUnixNano)}
+          </Descriptions.Item>
+          <Descriptions.Item label="End time">
+            {this.formatTraceTimestamp(span?.endTimeUnixNano)}
+          </Descriptions.Item>
+          <Descriptions.Item label="Duration">
+            {this.getSpanDuration(span)}
+          </Descriptions.Item>
+          <Descriptions.Item label="Resource schema URL">
+            {traceSpan.resourceSchemaUrl || "-"}
+          </Descriptions.Item>
+          <Descriptions.Item label="Scope schema URL">
+            {traceSpan.scopeSchemaUrl || "-"}
+          </Descriptions.Item>
+          <Descriptions.Item label="Resource attributes">
+            {this.renderTraceAttributeTable(traceSpan.resourceAttributes)}
+          </Descriptions.Item>
+          <Descriptions.Item label="Span attributes">
+            {this.renderTraceAttributeTable(span?.attributes)}
+          </Descriptions.Item>
+          <Descriptions.Item label="Events">
+            {this.renderJsonEditor(span?.events)}
+          </Descriptions.Item>
+          <Descriptions.Item label="Links">
+            {this.renderJsonEditor(span?.links)}
+          </Descriptions.Item>
+          <Descriptions.Item label="Raw span">
+            {this.renderJsonEditor(span)}
+          </Descriptions.Item>
+        </Descriptions>
+      </Drawer>
+    );
+  }
+
   renderEntry() {
     return (
       <Card size="small" title={
@@ -179,6 +721,14 @@ class EntryEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("general:Type"), i18next.t("general:Type - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Input disabled value={this.state.entry.type ?? ""} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("general:Listening URL"), i18next.t("general:Listening URL - Tooltip"))} :
           </Col>
           <Col span={22} >
@@ -209,14 +759,13 @@ class EntryEditPage extends React.Component {
             </Select>
           </Col>
         </Row>
+        {this.renderTraceSpans()}
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {i18next.t("payment:Message")}:
           </Col>
           <Col span={22} >
-            <TextArea autoSize={{minRows: 8, maxRows: 20}} value={this.state.entry.message} onChange={e => {
-              this.updateEntryField("message", e.target.value);
-            }} />
+            {this.renderMessageEditor()}
           </Col>
         </Row>
       </Card>

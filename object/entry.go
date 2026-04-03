@@ -31,6 +31,7 @@ type Entry struct {
 	Url         string `xorm:"varchar(500)" json:"url"`
 	Token       string `xorm:"varchar(500)" json:"token"`
 	Application string `xorm:"varchar(100)" json:"application"`
+	Type        string `xorm:"varchar(100)" json:"type"`
 	Message     string `xorm:"mediumtext" json:"message"`
 }
 
@@ -44,6 +45,7 @@ func NewTraceEntry(message []byte) *Entry {
 		CreatedTime: currentTime,
 		UpdatedTime: currentTime,
 		DisplayName: traceId,
+		Type:        "trace",
 		Message:     string(message),
 	}
 }

@@ -34,6 +34,7 @@ class EntryListPage extends BaseListPage {
       url: "",
       token: "",
       application: "",
+      type: "",
       message: "",
     };
   }
@@ -142,6 +143,14 @@ class EntryListPage extends BaseListPage {
         key: "displayName",
         sorter: true,
         ...this.getColumnSearchProps("displayName"),
+      },
+      {
+        title: i18next.t("general:Type"),
+        dataIndex: "type",
+        key: "type",
+        width: "120px",
+        sorter: true,
+        ...this.getColumnSearchProps("type"),
       },
       {
         title: i18next.t("general:Listening URL"),
