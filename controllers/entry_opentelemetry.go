@@ -59,7 +59,6 @@ func (c *ApiController) AddTrace() {
 	}
 
 	message, err := opts.Marshal(&req)
-
 	if err != nil {
 		c.Ctx.Output.SetStatus(500)
 		c.Ctx.Output.Body([]byte(fmt.Sprintf("marshal trace failed: %v", err)))
