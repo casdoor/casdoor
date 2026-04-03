@@ -554,12 +554,12 @@ class EntryEditPage extends React.Component {
       <>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            Trace spans:
+            {i18next.t("entry:Trace spans", {defaultValue: "Trace spans"})}:
           </Col>
           <Col span={22} >
             {error ? (
               <Alert
-                message={`Failed to parse trace message: ${error}`}
+                message={`${i18next.t("entry:Failed to parse trace message", {defaultValue: "Failed to parse trace message"})}: ${error}`}
                 type="warning"
                 showIcon
               />
@@ -576,7 +576,7 @@ class EntryEditPage extends React.Component {
                   style: {cursor: "pointer"},
                 })}
                 pagination={spans.length > 10 ? {pageSize: 10, hideOnSinglePage: true} : false}
-                locale={{emptyText: "No spans"}}
+                locale={{emptyText: i18next.t("entry:No spans", {defaultValue: "No spans"})}}
               />
             )}
           </Col>
@@ -592,7 +592,7 @@ class EntryEditPage extends React.Component {
     if (!traceSpan) {
       return (
         <Drawer
-          title="Span detail"
+          title={i18next.t("entry:Span detail", {defaultValue: "Span detail"})}
           width={Setting.isMobile() ? "100%" : 760}
           placement="right"
           destroyOnClose
@@ -604,7 +604,7 @@ class EntryEditPage extends React.Component {
 
     return (
       <Drawer
-        title={`Span detail: ${span?.name || span?.spanId || "-"}`}
+        title={`${i18next.t("entry:Span detail", {defaultValue: "Span detail"})}: ${span?.name || span?.spanId || "-"}`}
         width={Setting.isMobile() ? "100%" : 760}
         placement="right"
         destroyOnClose
@@ -621,55 +621,55 @@ class EntryEditPage extends React.Component {
           <Descriptions.Item label={i18next.t("general:Name")}>
             {span?.name || "-"}
           </Descriptions.Item>
-          <Descriptions.Item label="Service">
+          <Descriptions.Item label={i18next.t("entry:Service", {defaultValue: "Service"})}>
             {traceSpan.serviceName || "-"}
           </Descriptions.Item>
-          <Descriptions.Item label="Scope">
+          <Descriptions.Item label={i18next.t("provider:Scope", {defaultValue: "Scope"})}>
             {this.getScopeName(traceSpan.scope)}
           </Descriptions.Item>
           <Descriptions.Item label={i18next.t("general:Type")}>
             {span?.kind || "-"}
           </Descriptions.Item>
-          <Descriptions.Item label="Trace ID">
+          <Descriptions.Item label={i18next.t("entry:Trace ID", {defaultValue: "Trace ID"})}>
             {span?.traceId || "-"}
           </Descriptions.Item>
-          <Descriptions.Item label="Span ID">
+          <Descriptions.Item label={i18next.t("entry:Span ID", {defaultValue: "Span ID"})}>
             {span?.spanId || "-"}
           </Descriptions.Item>
-          <Descriptions.Item label="Parent Span ID">
+          <Descriptions.Item label={i18next.t("entry:Parent Span ID", {defaultValue: "Parent Span ID"})}>
             {span?.parentSpanId || "-"}
           </Descriptions.Item>
           <Descriptions.Item label={i18next.t("general:Status")}>
             {this.getSpanStatus(span)}
           </Descriptions.Item>
-          <Descriptions.Item label="Start time">
+          <Descriptions.Item label={i18next.t("entry:Start time", {defaultValue: "Start time"})}>
             {this.formatTraceTimestamp(span?.startTimeUnixNano)}
           </Descriptions.Item>
-          <Descriptions.Item label="End time">
+          <Descriptions.Item label={i18next.t("subscription:End time", {defaultValue: "End time"})}>
             {this.formatTraceTimestamp(span?.endTimeUnixNano)}
           </Descriptions.Item>
-          <Descriptions.Item label="Duration">
+          <Descriptions.Item label={i18next.t("entry:Duration", {defaultValue: "Duration"})}>
             {this.getSpanDuration(span)}
           </Descriptions.Item>
-          <Descriptions.Item label="Resource schema URL">
+          <Descriptions.Item label={i18next.t("entry:Resource schema URL", {defaultValue: "Resource schema URL"})}>
             {traceSpan.resourceSchemaUrl || "-"}
           </Descriptions.Item>
-          <Descriptions.Item label="Scope schema URL">
+          <Descriptions.Item label={i18next.t("entry:Scope schema URL", {defaultValue: "Scope schema URL"})}>
             {traceSpan.scopeSchemaUrl || "-"}
           </Descriptions.Item>
-          <Descriptions.Item label="Resource attributes">
+          <Descriptions.Item label={i18next.t("entry:Resource attributes", {defaultValue: "Resource attributes"})}>
             {this.renderTraceAttributeTable(traceSpan.resourceAttributes)}
           </Descriptions.Item>
-          <Descriptions.Item label="Span attributes">
+          <Descriptions.Item label={i18next.t("entry:Span attributes", {defaultValue: "Span attributes"})}>
             {this.renderTraceAttributeTable(span?.attributes)}
           </Descriptions.Item>
-          <Descriptions.Item label="Events">
+          <Descriptions.Item label={i18next.t("webhook:Events", {defaultValue: "Events"})}>
             {this.renderJsonEditor(span?.events)}
           </Descriptions.Item>
-          <Descriptions.Item label="Links">
+          <Descriptions.Item label={i18next.t("entry:Links", {defaultValue: "Links"})}>
             {this.renderJsonEditor(span?.links)}
           </Descriptions.Item>
-          <Descriptions.Item label="Raw span">
+          <Descriptions.Item label={i18next.t("entry:Raw span", {defaultValue: "Raw span"})}>
             {this.renderJsonEditor(span)}
           </Descriptions.Item>
         </Descriptions>
