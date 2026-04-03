@@ -16,6 +16,7 @@ import (
 	"time"
 
 	"github.com/beego/beego/v2/server/web"
+	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/proxy"
 	"github.com/casdoor/casdoor/util"
 )
@@ -446,8 +447,8 @@ func downloadCLI() error {
 // @Success 200 {object} controllers.Response The Response object
 // @router /refresh-engines [post]
 func (c *ApiController) RefreshEngines() {
-	if !web.AppConfig.DefaultBool("isDemoMode", false) {
-		c.ResponseError("refresh engines is only available in demo mode")
+	if !conf.IsDemoMode() && !c.IsAdmin() {
+		c.ResponseError(c.T("auth:Unauthorized operation"))
 		return
 	}
 

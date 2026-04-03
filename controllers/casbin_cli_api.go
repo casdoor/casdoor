@@ -26,6 +26,8 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/casdoor/casdoor/conf"
 )
 
 type CLIVersionInfo struct {
@@ -164,6 +166,11 @@ func processArgsToTempFiles(args []string) ([]string, []string, error) {
 // @Success 200 {object} controllers.Response The Response object
 // @router /run-casbin-command [get]
 func (c *ApiController) RunCasbinCommand() {
+	if !conf.IsDemoMode() && !c.IsAdmin() {
+		c.ResponseError(c.T("auth:Unauthorized operation"))
+		return
+	}
+
 	if err := validateIdentifier(c); err != nil {
 		c.ResponseError(err.Error())
 		return
