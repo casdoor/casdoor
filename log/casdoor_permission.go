@@ -19,31 +19,30 @@ import (
 	"time"
 )
 
-// EntryAdder persists a log entry to the backing store.
-// Parameters map to the Entry table columns: owner, name (unique ID),
-// createdTime (RFC3339), provider (the log provider name), and message (the
-// log content). This indirection keeps the log package free of import-cycle
-// dependencies on the object package.
-type EntryAdder func(owner, name, createdTime, provider, message string) error
-
 // PermissionLogProvider records Casbin authorization decisions as Entry rows.
-// It implements LogProvider; actual storage is delegated to an EntryAdder so
-// that the log package remains free of import-cycle dependencies on object.
+// It is push-based: callers supply log lines via Write, which are immediately
+// persisted through the injected EntryAdder. Start and Stop are no-ops.
 type PermissionLogProvider struct {
 	providerName string
 	addEntry     EntryAdder
 }
 
-// NewPermissionLogProvider creates a PermissionLogProvider with the given
-// provider name, backed by addEntry.
+// NewPermissionLogProvider creates a PermissionLogProvider backed by addEntry.
 func NewPermissionLogProvider(providerName string, addEntry EntryAdder) *PermissionLogProvider {
 	return &PermissionLogProvider{providerName: providerName, addEntry: addEntry}
 }
 
 // Write stores one permission-log entry.
-// severity follows syslog conventions (e.g. info, err).
+// severity follows syslog conventions (e.g. info, warning, err).
 func (p *PermissionLogProvider) Write(severity string, message string) error {
 	name := fmt.Sprintf("%x", time.Now().UnixNano())
 	createdTime := time.Now().UTC().Format(time.RFC3339)
 	return p.addEntry("built-in", name, createdTime, p.providerName, fmt.Sprintf("[%s] %s", severity, message))
 }
+
+// Start is a no-op for PermissionLogProvider; it received its EntryAdder at
+// construction time and does not require background collection.
+func (p *PermissionLogProvider) Start(_ EntryAdder, _ func(error)) error { return nil }
+
+// Stop is a no-op for PermissionLogProvider.
+func (p *PermissionLogProvider) Stop() error { return nil }

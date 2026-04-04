@@ -343,6 +343,10 @@ func writePermissionLog(objOwner, subOwner, subName, method, urlPath string, all
 	message := fmt.Sprintf("sub=%s/%s method=%s url=%s objOwner=%s allowed=%v", subOwner, subName, method, urlPath, objOwner, allowed)
 
 	for _, provider := range providers {
+		// System Log is a pull-based collector; it does not accept Write calls.
+		if provider.Type == "System Log" {
+			continue
+		}
 		logProvider, err := object.GetLogProviderFromProvider(provider)
 		if err != nil {
 			continue

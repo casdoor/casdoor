@@ -14,36 +14,66 @@
 
 package log
 
-// SystemLogProvider writes log lines to the operating-system's native logging
-// facility (syslog on Linux/Unix, Event Log on Windows).
-// It implements LogProvider; the platform-specific open/write/close logic is
-// provided by system_log_unix.go and system_log_windows.go via the
-// platformLogger interface.
+import (
+	"context"
+	"fmt"
+)
+
+// platformCollector is an OS-specific log reader.
+// Implementations are in system_log_unix.go and system_log_windows.go.
+type platformCollector interface {
+	// collect blocks and streams new OS log records to addEntry until ctx is
+	// cancelled or a fatal error occurs. It must return promptly when
+	// ctx.Done() is closed. A non-nil error means collection stopped
+	// unexpectedly and should be reported to the operator.
+	collect(ctx context.Context, addEntry EntryAdder) error
+}
+
+// SystemLogProvider collects log records from the operating-system's native
+// logging facility (journald/syslog on Linux/Unix, Event Log on Windows) and
+// stores each record as an Entry row via the EntryAdder supplied to Start.
+//
+// It is pull-based: Write is not applicable and returns an error.
+// Start launches the background collector; Stop cancels it.
 type SystemLogProvider struct {
 	tag    string
-	logger platformLogger
+	cancel context.CancelFunc
 }
 
-// platformLogger abstracts the OS-level logging primitives so that
-// SystemLogProvider stays free of build-tag clutter.
-type platformLogger interface {
-	// log writes a single line at the given syslog-style severity.
-	log(severity, message string) error
-	// close releases any OS resource held by the logger.
-	close() error
-}
-
-// NewSystemLogProvider opens the OS logging facility with the supplied tag and
-// returns a ready-to-use SystemLogProvider.
+// NewSystemLogProvider creates a SystemLogProvider that will identify itself
+// with the given tag when collecting OS log records.
+// Call Start to begin collection.
 func NewSystemLogProvider(tag string) (*SystemLogProvider, error) {
-	pl, err := newPlatformLogger(tag)
-	if err != nil {
-		return nil, err
-	}
-	return &SystemLogProvider{tag: tag, logger: pl}, nil
+	return &SystemLogProvider{tag: tag}, nil
 }
 
-// Write implements LogProvider.
+// Write is not applicable for a pull-based collector and always returns an
+// error. Callers in the permission-log path should skip System Log providers.
 func (s *SystemLogProvider) Write(severity string, message string) error {
-	return s.logger.log(severity, message)
+	return fmt.Errorf("SystemLogProvider is a log collector and does not accept Write calls")
+}
+
+// Start launches a background goroutine that reads new OS log records and
+// persists each one by calling addEntry. It returns immediately; collection
+// runs until Stop is called. If the goroutine encounters a fatal error,
+// onError is called with that error (onError may be nil).
+func (s *SystemLogProvider) Start(addEntry EntryAdder, onError func(error)) error {
+	ctx, cancel := context.WithCancel(context.Background())
+	s.cancel = cancel
+	collector := newPlatformCollector(s.tag)
+	go func() {
+		if err := collector.collect(ctx, addEntry); err != nil && onError != nil {
+			onError(err)
+		}
+	}()
+	return nil
+}
+
+// Stop cancels background collection. It is safe to call multiple times.
+func (s *SystemLogProvider) Stop() error {
+	if s.cancel != nil {
+		s.cancel()
+		s.cancel = nil
+	}
+	return nil
 }
