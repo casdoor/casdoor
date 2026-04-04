@@ -291,23 +291,6 @@ func removeGroupingPolicies(permission *Permission) error {
 	return nil
 }
 
-// writePermissionLog calls Write on every active "Log" provider registered for
-// owner. Errors are intentionally swallowed so that a logging failure never
-// blocks an authorization decision.
-func writePermissionLog(owner, severity, message string) {
-	providers, err := GetProvidersByCategory(owner, "Log")
-	if err != nil {
-		return
-	}
-	for _, provider := range providers {
-		logProvider, err := GetLogProviderFromProvider(provider)
-		if err != nil {
-			continue
-		}
-		_ = logProvider.Write(severity, message)
-	}
-}
-
 func Enforce(permission *Permission, request []string, permissionIds ...string) (bool, error) {
 	enforcer, err := getPermissionEnforcer(permission, permissionIds...)
 	if err != nil {
@@ -317,14 +300,7 @@ func Enforce(permission *Permission, request []string, permissionIds ...string) 
 	// type transformation
 	interfaceRequest := util.StringToInterfaceArray(request)
 
-	result, err := enforcer.Enforce(interfaceRequest...)
-	if err != nil {
-		writePermissionLog(permission.Owner, "err", fmt.Sprintf("permission=%s request=%v error=%v", permission.GetId(), request, err))
-		return false, err
-	}
-
-	writePermissionLog(permission.Owner, "info", fmt.Sprintf("permission=%s request=%v result=%v", permission.GetId(), request, result))
-	return result, nil
+	return enforcer.Enforce(interfaceRequest...)
 }
 
 func BatchEnforce(permission *Permission, requests [][]string, permissionIds ...string) ([]bool, error) {
@@ -336,14 +312,7 @@ func BatchEnforce(permission *Permission, requests [][]string, permissionIds ...
 	// type transformation
 	interfaceRequests := util.StringToInterfaceArray2d(requests)
 
-	results, err := enforcer.BatchEnforce(interfaceRequests)
-	if err != nil {
-		writePermissionLog(permission.Owner, "err", fmt.Sprintf("permission=%s batch-requests=%v error=%v", permission.GetId(), requests, err))
-		return nil, err
-	}
-
-	writePermissionLog(permission.Owner, "info", fmt.Sprintf("permission=%s batch-requests=%v results=%v", permission.GetId(), requests, results))
-	return results, nil
+	return enforcer.BatchEnforce(interfaceRequests)
 }
 
 func getEnforcers(userId string) ([]*casbin.Enforcer, error) {

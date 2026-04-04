@@ -287,6 +287,12 @@ func ApiFilter(ctx *context.Context) {
 
 	isAllowed := authz.IsAllowed(subOwner, subName, method, urlPath, objOwner, objName, extraInfo)
 
+	if method != "GET" {
+		util.SafeGoroutine(func() {
+			writePermissionLog(objOwner, subOwner, subName, method, urlPath, isAllowed)
+		})
+	}
+
 	result := "deny"
 	if isAllowed {
 		result = "allow"
@@ -321,6 +327,27 @@ func ApiFilter(ctx *context.Context) {
 		util.SafeGoroutine(func() {
 			object.AddRecord(record)
 		})
+	}
+}
+
+func writePermissionLog(objOwner, subOwner, subName, method, urlPath string, allowed bool) {
+	providers, err := object.GetProvidersByCategory(objOwner, "Log")
+	if err != nil {
+		return
+	}
+
+	severity := "info"
+	if !allowed {
+		severity = "warning"
+	}
+	message := fmt.Sprintf("sub=%s/%s method=%s url=%s objOwner=%s allowed=%v", subOwner, subName, method, urlPath, objOwner, allowed)
+
+	for _, provider := range providers {
+		logProvider, err := object.GetLogProviderFromProvider(provider)
+		if err != nil {
+			continue
+		}
+		_ = logProvider.Write(severity, message)
 	}
 }
 
