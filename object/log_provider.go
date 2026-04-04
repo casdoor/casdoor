@@ -67,14 +67,14 @@ func startLogCollector(provider *Provider) {
 	}
 
 	providerName := provider.Name
-	addEntry := func(owner, name, createdTime, pName, message string) error {
+	addEntry := func(owner, name, createdTime, _ string, message string) error {
 		entry := &Entry{
 			Owner:       owner,
 			Name:        name,
 			CreatedTime: createdTime,
 			UpdatedTime: createdTime,
 			DisplayName: name,
-			Provider:    pName,
+			Provider:    providerName,
 			Message:     message,
 		}
 		_, err := AddEntry(entry)
