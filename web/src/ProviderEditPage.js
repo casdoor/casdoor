@@ -477,7 +477,11 @@ class ProviderEditPage extends React.Component {
   }
 
   getProviderSubTypeOptions(type) {
-    if (type === "WeCom" || type === "Infoflow") {
+    if (type === "Agent") {
+      return ([
+        {id: "OpenClaw", name: "OpenClaw"},
+      ]);
+    } else if (type === "WeCom" || type === "Infoflow") {
       return (
         [
           {id: "Internal", name: i18next.t("provider:Internal")},
@@ -835,7 +839,7 @@ class ProviderEditPage extends React.Component {
           </Col>
         </Row>
         {
-          this.state.provider.type !== "WeCom" && this.state.provider.type !== "Infoflow" && this.state.provider.type !== "WeChat" ? null : (
+          this.state.provider.type !== "WeCom" && this.state.provider.type !== "Infoflow" && this.state.provider.type !== "WeChat" && this.state.provider.type !== "Agent" ? null : (
             <React.Fragment>
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={2}>

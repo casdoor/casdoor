@@ -464,6 +464,10 @@ export const OtherProviderInfo = {
       logo: `${StaticBaseUrl}/img/social_default.png`,
       url: "https://en.wikipedia.org/wiki/Syslog",
     },
+    "Agent": {
+      logo: `${StaticBaseUrl}/img/social_default.png`,
+      url: "",
+    },
   },
 };
 
@@ -1433,6 +1437,7 @@ export function getProviderTypeOptions(category) {
     return ([
       {id: "Casdoor Permission Log", name: "Casdoor Permission Log"},
       {id: "System Log", name: "System Log"},
+      {id: "Agent", name: "Agent"},
     ]);
   } else {
     return [];

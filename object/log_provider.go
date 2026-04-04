@@ -92,6 +92,22 @@ func startLogCollector(provider *Provider) {
 	runningCollectors[id] = lp
 }
 
+// GetOpenClawProviderByIP returns the first Log/Agent/OpenClaw provider that
+// allows the given client IP. A provider with an empty Host field allows any IP.
+func GetOpenClawProviderByIP(clientIP string) (*Provider, error) {
+	providers := []*Provider{}
+	err := ormer.Engine.Where("category = ? AND type = ? AND sub_type = ?", "Log", "Agent", "OpenClaw").Find(&providers)
+	if err != nil {
+		return nil, err
+	}
+	for _, p := range providers {
+		if p.Host == "" || p.Host == clientIP {
+			return p, nil
+		}
+	}
+	return nil, nil
+}
+
 // makeEntryName returns a hex-encoded unique name for an Entry row.
 func makeEntryName() string {
 	return fmt.Sprintf("%x", time.Now().UnixNano())

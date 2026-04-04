@@ -37,7 +37,7 @@ type Entry struct {
 	Message string `xorm:"mediumtext" json:"message"`
 }
 
-func NewTraceEntry(message []byte) *Entry {
+func NewTraceEntry(providerName string, message []byte) *Entry {
 	currentTime := util.GetCurrentTime()
 	traceId := fmt.Sprintf("trace_%s_%s", util.GenerateSimpleTimeId(), util.GetRandomName())
 
@@ -47,6 +47,7 @@ func NewTraceEntry(message []byte) *Entry {
 		CreatedTime: currentTime,
 		UpdatedTime: currentTime,
 		DisplayName: traceId,
+		Provider:    providerName,
 		Type:        "trace",
 		Message:     string(message),
 	}

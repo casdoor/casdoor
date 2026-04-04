@@ -20,6 +20,7 @@ import (
 	"strings"
 
 	"github.com/casdoor/casdoor/object"
+	"github.com/casdoor/casdoor/util"
 	coltracepb "go.opentelemetry.io/proto/otlp/collector/trace/v1"
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/proto"
@@ -35,6 +36,19 @@ func (c *ApiController) AddTrace() {
 	if !strings.HasPrefix(c.Ctx.Input.Header("Content-Type"), "application/x-protobuf") {
 		c.Ctx.Output.SetStatus(415)
 		c.Ctx.Output.Body([]byte("unsupported content type"))
+		return
+	}
+
+	clientIP := util.GetClientIpFromRequest(c.Ctx.Request)
+	provider, err := object.GetOpenClawProviderByIP(clientIP)
+	if err != nil {
+		c.Ctx.Output.SetStatus(500)
+		c.Ctx.Output.Body([]byte(fmt.Sprintf("provider lookup failed: %v", err)))
+		return
+	}
+	if provider == nil {
+		c.Ctx.Output.SetStatus(403)
+		c.Ctx.Output.Body([]byte(fmt.Sprintf("forbidden: no OpenClaw provider configured for IP %s", clientIP)))
 		return
 	}
 
@@ -65,7 +79,7 @@ func (c *ApiController) AddTrace() {
 		return
 	}
 
-	entry := object.NewTraceEntry(message)
+	entry := object.NewTraceEntry(provider.Name, message)
 
 	if _, err := object.AddEntry(entry); err != nil {
 		c.Ctx.Output.SetStatus(500)

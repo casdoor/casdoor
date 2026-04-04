@@ -12,7 +12,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// eslint-disable-next-line no-unused-vars
+import React from "react";
+import {Col, Input, Row} from "antd";
+import * as Setting from "../Setting";
+import i18next from "i18next";
+
 export function renderLogProviderFields(provider, updateProviderField) {
+  if (provider.type === "Agent" && provider.subType === "OpenClaw") {
+    return (
+      <Row style={{marginTop: "20px"}} >
+        <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+          {Setting.getLabel(i18next.t("provider:Host"), i18next.t("provider:Host - Tooltip"))} :
+        </Col>
+        <Col span={22} >
+          <Input value={provider.host} placeholder="e.g. 192.168.1.100" onChange={e => {
+            updateProviderField("host", e.target.value);
+          }} />
+        </Col>
+      </Row>
+    );
+  }
   return null;
 }
