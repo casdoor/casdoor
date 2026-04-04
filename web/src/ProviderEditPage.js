@@ -45,13 +45,20 @@ function isDefaultProviderDisplayName(displayName) {
   return /^New Provider - [a-z0-9]+$/.test(displayName);
 }
 
-function getAutoProviderName(category, type) {
+function getAutoProviderName(category, type, subType) {
   const catSlug = category.toLowerCase().replace(/[\s-]+/g, "_").replace(/[^a-z0-9_]/g, "");
   const typeSlug = type.toLowerCase().replace(/[\s-]+/g, "_").replace(/[^a-z0-9_]/g, "");
+  if (subType) {
+    const subTypeSlug = subType.toLowerCase().replace(/[\s-]+/g, "_").replace(/[^a-z0-9_]/g, "");
+    return `provider_${catSlug}_${typeSlug}_${subTypeSlug}`;
+  }
   return `provider_${catSlug}_${typeSlug}`;
 }
 
-function getAutoProviderDisplayName(category, type) {
+function getAutoProviderDisplayName(category, type, subType) {
+  if (subType) {
+    return `${category} ${type} ${subType}`;
+  }
   return `${category} ${type}`;
 }
 
@@ -766,10 +773,10 @@ class ProviderEditPage extends React.Component {
               }
               if (defaultType) {
                 if (this.state.nameNotUserEdited) {
-                  this.updateProviderField("name", getAutoProviderName(value, defaultType));
+                  this.updateProviderField("name", getAutoProviderName(value, defaultType, ""));
                 }
                 if (this.state.displayNameNotUserEdited) {
-                  this.updateProviderField("displayName", getAutoProviderDisplayName(value, defaultType));
+                  this.updateProviderField("displayName", getAutoProviderDisplayName(value, defaultType, ""));
                 }
               }
             })}>
@@ -821,10 +828,10 @@ class ProviderEditPage extends React.Component {
                 this.updateProviderField("title", "");
               }
               if (this.state.nameNotUserEdited) {
-                this.updateProviderField("name", getAutoProviderName(this.state.provider.category, value));
+                this.updateProviderField("name", getAutoProviderName(this.state.provider.category, value, ""));
               }
               if (this.state.displayNameNotUserEdited) {
-                this.updateProviderField("displayName", getAutoProviderDisplayName(this.state.provider.category, value));
+                this.updateProviderField("displayName", getAutoProviderDisplayName(this.state.provider.category, value, ""));
               }
             })}>
               {
@@ -848,6 +855,12 @@ class ProviderEditPage extends React.Component {
                 <Col span={22} >
                   <Select virtual={false} style={{width: "100%"}} value={this.state.provider.subType} onChange={value => {
                     this.updateProviderField("subType", value);
+                    if (this.state.nameNotUserEdited) {
+                      this.updateProviderField("name", getAutoProviderName(this.state.provider.category, this.state.provider.type, value));
+                    }
+                    if (this.state.displayNameNotUserEdited) {
+                      this.updateProviderField("displayName", getAutoProviderDisplayName(this.state.provider.category, this.state.provider.type, value));
+                    }
                   }}>
                     {
                       this.getProviderSubTypeOptions(this.state.provider.type).map((providerSubType, index) => <Option key={index} value={providerSubType.id}>{providerSubType.name}</Option>)
