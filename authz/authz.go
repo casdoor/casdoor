@@ -86,6 +86,8 @@ p, *, *, GET, /api/get-captcha, *, *
 p, *, *, POST, /api/verify-captcha, *, *
 p, *, *, POST, /api/verify-code, *, *
 p, *, *, POST, /api/v1/traces, *, *
+p, *, *, POST, /api/v1/metrics, *, *
+p, *, *, POST, /api/v1/logs, *, *
 p, *, *, POST, /api/reset-email-or-phone, *, *
 p, *, *, POST, /api/upload-resource, *, *
 p, *, *, GET, /.well-known/openid-configuration, *, *

@@ -38,17 +38,21 @@ type Entry struct {
 }
 
 func NewTraceEntry(providerName string, message []byte) *Entry {
+	return NewOtlpEntry(providerName, "trace", message)
+}
+
+func NewOtlpEntry(providerName string, entryType string, message []byte) *Entry {
 	currentTime := util.GetCurrentTime()
-	traceId := fmt.Sprintf("trace_%s_%s", util.GenerateSimpleTimeId(), util.GetRandomName())
+	id := fmt.Sprintf("%s_%s_%s", entryType, util.GenerateSimpleTimeId(), util.GetRandomName())
 
 	return &Entry{
 		Owner:       CasdoorOrganization,
-		Name:        traceId,
+		Name:        id,
 		CreatedTime: currentTime,
 		UpdatedTime: currentTime,
-		DisplayName: traceId,
+		DisplayName: id,
 		Provider:    providerName,
-		Type:        "trace",
+		Type:        entryType,
 		Message:     string(message),
 	}
 }

@@ -147,7 +147,9 @@ func InitAPI() {
 	web.Router("/api/add-entry", &controllers.ApiController{}, "POST:AddEntry")
 	web.Router("/api/delete-entry", &controllers.ApiController{}, "POST:DeleteEntry")
 
-	web.Router("/api/v1/traces", &controllers.ApiController{}, "POST:AddTrace")
+	web.Router("/api/v1/traces", &controllers.ApiController{}, "POST:AddOtlpTrace")
+	web.Router("/api/v1/metrics", &controllers.ApiController{}, "POST:AddOtlpMetrics")
+	web.Router("/api/v1/logs", &controllers.ApiController{}, "POST:AddOtlpLogs")
 
 	web.Router("/api/get-global-sites", &controllers.ApiController{}, "GET:GetGlobalSites")
 	web.Router("/api/get-sites", &controllers.ApiController{}, "GET:GetSites")
