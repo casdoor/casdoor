@@ -37,6 +37,24 @@ import {renderLogProviderFields} from "./provider/LogProviderFields";
 const {Option} = Select;
 const {TextArea} = Input;
 
+function isDefaultProviderName(name) {
+  return /^provider_[a-z0-9]+$/.test(name);
+}
+
+function isDefaultProviderDisplayName(displayName) {
+  return /^New Provider - [a-z0-9]+$/.test(displayName);
+}
+
+function getAutoProviderName(category, type) {
+  const catSlug = category.toLowerCase().replace(/[\s-]+/g, "_").replace(/[^a-z0-9_]/g, "");
+  const typeSlug = type.toLowerCase().replace(/[\s-]+/g, "_").replace(/[^a-z0-9_]/g, "");
+  return `provider_${catSlug}_${typeSlug}`;
+}
+
+function getAutoProviderDisplayName(category, type) {
+  return `${category} ${type}`;
+}
+
 const defaultUserMapping = {
   id: "id",
   username: "username",
@@ -77,6 +95,8 @@ class ProviderEditPage extends React.Component {
       certs: [],
       organizations: [],
       mode: props.location.mode !== undefined ? props.location.mode : "edit",
+      nameNotUserEdited: false,
+      displayNameNotUserEdited: false,
     };
   }
 
@@ -115,6 +135,8 @@ class ProviderEditPage extends React.Component {
           }
           this.setState({
             provider: provider,
+            nameNotUserEdited: isDefaultProviderName(provider.name),
+            displayNameNotUserEdited: isDefaultProviderDisplayName(provider.displayName),
           });
         } else {
           Setting.showMessage("error", res.msg);
@@ -649,6 +671,7 @@ class ProviderEditPage extends React.Component {
           <Col span={22} >
             <Input value={this.state.provider.name} onChange={e => {
               this.updateProviderField("name", e.target.value);
+              this.setState({nameNotUserEdited: false});
             }} />
           </Col>
         </Row>
@@ -659,6 +682,7 @@ class ProviderEditPage extends React.Component {
           <Col span={22} >
             <Input value={this.state.provider.displayName} onChange={e => {
               this.updateProviderField("displayName", e.target.value);
+              this.setState({displayNameNotUserEdited: false});
             }} />
           </Col>
         </Row>
@@ -682,10 +706,13 @@ class ProviderEditPage extends React.Component {
           <Col span={22} >
             <Select virtual={false} style={{width: "100%"}} value={this.state.provider.category} onChange={(value => {
               this.updateProviderField("category", value);
+              let defaultType = "";
               if (value === "OAuth") {
-                this.updateProviderField("type", "Google");
+                defaultType = "Google";
+                this.updateProviderField("type", defaultType);
               } else if (value === "Email") {
-                this.updateProviderField("type", "Default");
+                defaultType = "Default";
+                this.updateProviderField("type", defaultType);
                 this.updateProviderField("host", "smtp.example.com");
                 this.updateProviderField("port", 465);
                 this.updateProviderField("sslMode", "Auto");
@@ -694,33 +721,52 @@ class ProviderEditPage extends React.Component {
                 this.updateProviderField("metadata", Setting.getDefaultInvitationHtmlEmailContent());
                 this.updateProviderField("receiver", this.props.account.email);
               } else if (value === "SMS") {
-                this.updateProviderField("type", "Twilio SMS");
+                defaultType = "Twilio SMS";
+                this.updateProviderField("type", defaultType);
               } else if (value === "Storage") {
-                this.updateProviderField("type", "AWS S3");
+                defaultType = "AWS S3";
+                this.updateProviderField("type", defaultType);
               } else if (value === "SAML") {
-                this.updateProviderField("type", "Keycloak");
+                defaultType = "Keycloak";
+                this.updateProviderField("type", defaultType);
               } else if (value === "Payment") {
-                this.updateProviderField("type", "PayPal");
+                defaultType = "PayPal";
+                this.updateProviderField("type", defaultType);
               } else if (value === "Captcha") {
-                this.updateProviderField("type", "Default");
+                defaultType = "Default";
+                this.updateProviderField("type", defaultType);
               } else if (value === "Web3") {
-                this.updateProviderField("type", "MetaMask");
+                defaultType = "MetaMask";
+                this.updateProviderField("type", defaultType);
               } else if (value === "Notification") {
-                this.updateProviderField("type", "Telegram");
+                defaultType = "Telegram";
+                this.updateProviderField("type", defaultType);
               } else if (value === "Face ID") {
-                this.updateProviderField("type", "Alibaba Cloud Facebody");
+                defaultType = "Alibaba Cloud Facebody";
+                this.updateProviderField("type", defaultType);
               } else if (value === "MFA") {
-                this.updateProviderField("type", "RADIUS");
+                defaultType = "RADIUS";
+                this.updateProviderField("type", defaultType);
                 this.updateProviderField("host", "");
                 this.updateProviderField("port", 1812);
               } else if (value === "ID Verification") {
-                this.updateProviderField("type", "Jumio");
+                defaultType = "Jumio";
+                this.updateProviderField("type", defaultType);
                 this.updateProviderField("endpoint", "");
               } else if (value === "Log") {
-                this.updateProviderField("type", "Linux Syslog");
+                defaultType = "Linux Syslog";
+                this.updateProviderField("type", defaultType);
                 this.updateProviderField("host", "127.0.0.1");
                 this.updateProviderField("port", 514);
                 this.updateProviderField("title", "casdoor");
+              }
+              if (defaultType) {
+                if (this.state.nameNotUserEdited) {
+                  this.updateProviderField("name", getAutoProviderName(value, defaultType));
+                }
+                if (this.state.displayNameNotUserEdited) {
+                  this.updateProviderField("displayName", getAutoProviderDisplayName(value, defaultType));
+                }
               }
             })}>
               {
@@ -769,6 +815,12 @@ class ProviderEditPage extends React.Component {
               } else if (value === "Custom HTTP") {
                 this.updateProviderField("method", "GET");
                 this.updateProviderField("title", "");
+              }
+              if (this.state.nameNotUserEdited) {
+                this.updateProviderField("name", getAutoProviderName(this.state.provider.category, value));
+              }
+              if (this.state.displayNameNotUserEdited) {
+                this.updateProviderField("displayName", getAutoProviderDisplayName(this.state.provider.category, value));
               }
             })}>
               {
