@@ -1038,16 +1038,18 @@ class ProviderEditPage extends React.Component {
           this.state.provider,
           this.updateProviderField.bind(this)
         ) : null}
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("provider:Provider URL"), i18next.t("provider:Provider URL - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <Input prefix={<LinkOutlined />} value={this.state.provider.providerUrl} onChange={e => {
-              this.updateProviderField("providerUrl", e.target.value);
-            }} />
-          </Col>
-        </Row>
+        {this.state.provider.type !== "Casdoor Permission Log" && (
+          <Row style={{marginTop: "20px"}} >
+            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+              {Setting.getLabel(i18next.t("provider:Provider URL"), i18next.t("provider:Provider URL - Tooltip"))} :
+            </Col>
+            <Col span={22} >
+              <Input prefix={<LinkOutlined />} value={this.state.provider.providerUrl} onChange={e => {
+                this.updateProviderField("providerUrl", e.target.value);
+              }} />
+            </Col>
+          </Row>
+        )}
         {
           this.state.provider.category === "Captcha" ? renderCaptchaProviderFields(
             this.state.provider,

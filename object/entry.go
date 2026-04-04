@@ -29,11 +29,12 @@ type Entry struct {
 	DisplayName string `xorm:"varchar(100)" json:"displayName"`
 
 	Provider    string `xorm:"varchar(100)" json:"provider"`
-	Url         string `xorm:"varchar(500)" json:"url"`
-	Token       string `xorm:"varchar(500)" json:"token"`
 	Application string `xorm:"varchar(100)" json:"application"`
-	Type        string `xorm:"varchar(100)" json:"type"`
-	Message     string `xorm:"mediumtext" json:"message"`
+
+	Url     string `xorm:"varchar(500)" json:"url"`
+	Token   string `xorm:"varchar(500)" json:"token"`
+	Type    string `xorm:"varchar(100)" json:"type"`
+	Message string `xorm:"mediumtext" json:"message"`
 }
 
 func NewTraceEntry(message []byte) *Entry {

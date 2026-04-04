@@ -20,7 +20,6 @@ import * as EntryBackend from "./backend/EntryBackend";
 import * as Setting from "./Setting";
 import i18next from "i18next";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
-import * as ApplicationBackend from "./backend/ApplicationBackend";
 import EntryMessageViewer from "./EntryMessageViewer";
 
 const {Option} = Select;
@@ -33,7 +32,6 @@ class EntryEditPage extends React.Component {
       owner: props.match.params.organizationName,
       entry: null,
       organizations: [],
-      applications: [],
       mode: props.location.mode !== undefined ? props.location.mode : "edit",
     };
   }
@@ -41,7 +39,6 @@ class EntryEditPage extends React.Component {
   UNSAFE_componentWillMount() {
     this.getEntry();
     this.getOrganizations();
-    this.getApplications(this.state.owner);
   }
 
   getEntry() {
@@ -73,22 +70,8 @@ class EntryEditPage extends React.Component {
     }
   }
 
-  getApplications(owner) {
-    ApplicationBackend.getApplicationsByOrganization("admin", owner)
-      .then((res) => {
-        this.setState({
-          applications: res.data || [],
-        });
-      });
-  }
-
   updateEntryField(key, value) {
     const entry = this.state.entry;
-    if (key === "owner" && entry.owner !== value) {
-      entry.application = "";
-      this.getApplications(value);
-    }
-
     entry[key] = value;
     this.setState({
       entry: entry,
@@ -191,6 +174,18 @@ class EntryEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("general:Application"), i18next.t("general:Application - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            {this.state.entry.application ? (
+              <Link to={`/applications/${this.state.entry.owner}/${this.state.entry.application}`}>
+                {this.state.entry.application}
+              </Link>
+            ) : null}
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("general:Type"), i18next.t("general:Type - Tooltip"))} :
           </Col>
           <Col span={22} >
@@ -215,18 +210,6 @@ class EntryEditPage extends React.Component {
             <Input.Password placeholder={"***"} value={this.state.entry.token} onChange={e => {
               this.updateEntryField("token", e.target.value);
             }} />
-          </Col>
-        </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:Application"), i18next.t("general:Application - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <Select virtual={false} style={{width: "100%"}} value={this.state.entry.application} onChange={(value => {this.updateEntryField("application", value);})}>
-              {
-                this.state.applications.map((application, index) => <Option key={index} value={application.name}>{application.name}</Option>)
-              }
-            </Select>
           </Col>
         </Row>
         <EntryMessageViewer entry={this.state.entry} labelSpan={(Setting.isMobile()) ? 22 : 2} contentSpan={22} />

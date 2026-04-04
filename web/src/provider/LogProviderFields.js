@@ -19,6 +19,10 @@ import * as Setting from "../Setting";
 import i18next from "i18next";
 
 export function renderLogProviderFields(provider, updateProviderField) {
+  if (provider.type === "Casdoor Permission Log") {
+    return null;
+  }
+
   return (
     <React.Fragment>
       <Row style={{marginTop: "20px"}} >

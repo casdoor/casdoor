@@ -165,6 +165,24 @@ class EntryListPage extends BaseListPage {
         },
       },
       {
+        title: i18next.t("general:Application"),
+        dataIndex: "application",
+        key: "application",
+        width: "140px",
+        sorter: true,
+        ...this.getColumnSearchProps("application"),
+        render: (text, record) => {
+          if (!text) {
+            return null;
+          }
+          return (
+            <Link to={`/applications/${record.owner}/${text}`}>
+              {text}
+            </Link>
+          );
+        },
+      },
+      {
         title: i18next.t("general:Listening URL"),
         dataIndex: "url",
         key: "url",
@@ -180,14 +198,6 @@ class EntryListPage extends BaseListPage {
             </a>
           );
         },
-      },
-      {
-        title: i18next.t("general:Application"),
-        dataIndex: "application",
-        key: "application",
-        width: "140px",
-        sorter: true,
-        ...this.getColumnSearchProps("application"),
       },
       {
         title: i18next.t("payment:Message"),

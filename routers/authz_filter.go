@@ -287,7 +287,7 @@ func ApiFilter(ctx *context.Context) {
 
 	isAllowed := authz.IsAllowed(subOwner, subName, method, urlPath, objOwner, objName, extraInfo)
 
-	if method != "GET" {
+	if method != "GET" && !strings.HasSuffix(urlPath, "-entry") {
 		util.SafeGoroutine(func() {
 			writePermissionLog(objOwner, subOwner, subName, method, urlPath, isAllowed)
 		})
