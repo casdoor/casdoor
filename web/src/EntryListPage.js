@@ -33,8 +33,6 @@ class EntryListPage extends BaseListPage {
       createdTime: moment().format(),
       displayName: randomHex,
       provider: "",
-      url: "",
-      token: "",
       application: "",
       type: "",
       message: "",
@@ -179,23 +177,6 @@ class EntryListPage extends BaseListPage {
             <Link to={`/applications/${record.owner}/${text}`}>
               {text}
             </Link>
-          );
-        },
-      },
-      {
-        title: i18next.t("general:Listening URL"),
-        dataIndex: "url",
-        key: "url",
-        sorter: true,
-        ...this.getColumnSearchProps("url"),
-        render: (text) => {
-          if (!text) {
-            return null;
-          }
-          return (
-            <a target="_blank" rel="noreferrer" href={text}>
-              {Setting.getShortText(text, 40)}
-            </a>
           );
         },
       },
