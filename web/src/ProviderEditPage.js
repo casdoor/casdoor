@@ -754,11 +754,11 @@ class ProviderEditPage extends React.Component {
                 this.updateProviderField("type", defaultType);
                 this.updateProviderField("endpoint", "");
               } else if (value === "Log") {
-                defaultType = "Linux Syslog";
+                defaultType = "Casdoor Permission Log";
                 this.updateProviderField("type", defaultType);
-                this.updateProviderField("host", "127.0.0.1");
-                this.updateProviderField("port", 514);
-                this.updateProviderField("title", "casdoor");
+                this.updateProviderField("host", "");
+                this.updateProviderField("port", 0);
+                this.updateProviderField("title", "");
               }
               if (defaultType) {
                 if (this.state.nameNotUserEdited) {
