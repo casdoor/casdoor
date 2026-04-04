@@ -51,7 +51,7 @@ class ProviderListPage extends BaseListPage {
       enableSignUp: true,
       host: "",
       port: 0,
-      providerUrl: "https://github.com/organizations/xxx/settings/applications/1234567",
+      providerUrl: "",
     };
   }
 
