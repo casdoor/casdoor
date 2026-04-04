@@ -85,21 +85,34 @@ func (w *windowsCollector) queryChannel(ctx context.Context, channel string, sin
 		return nil
 	}
 
-	// wevtutil outputs one <Event> element per record; wrap in a root element
-	// so the standard XML decoder can handle multiple records at once.
+	return w.parseAndPersistEvents(out, channel, addEntry)
+}
+
+// parseAndPersistEvents decodes wevtutil XML output and persists each Event
+// record via addEntry. wevtutil outputs one <Event> element per record;
+// the output is wrapped in a synthetic <Events> root so the decoder can
+// handle multiple records in one pass. Token()+DecodeElement() is used to
+// skip the wrapper element without triggering an XMLName mismatch error.
+func (w *windowsCollector) parseAndPersistEvents(out []byte, channel string, addEntry EntryAdder) error {
 	wrapped := "<Events>" + string(out) + "</Events>"
 	decoder := xml.NewDecoder(strings.NewReader(wrapped))
 
 	for {
-		var event winEvent
-		if err := decoder.Decode(&event); err != nil {
+		token, err := decoder.Token()
+		if err != nil {
 			if err == io.EOF {
 				break
 			}
-			return fmt.Errorf("SystemLogProvider: failed to decode event XML (channel=%s): %w", channel, err)
+			return fmt.Errorf("SystemLogProvider: failed to parse event XML (channel=%s): %w", channel, err)
 		}
-		if event.XMLName.Local != "Event" {
+		se, ok := token.(xml.StartElement)
+		if !ok || se.Name.Local != "Event" {
 			continue
+		}
+
+		var event winEvent
+		if err := decoder.DecodeElement(&event, &se); err != nil {
+			return fmt.Errorf("SystemLogProvider: failed to decode event XML (channel=%s): %w", channel, err)
 		}
 
 		severity := winEventSeverity(event.System.Level)
