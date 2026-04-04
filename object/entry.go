@@ -37,7 +37,6 @@ type Entry struct {
 	Message   string `xorm:"mediumtext" json:"message"`
 }
 
-
 func GetEntries(owner string) ([]*Entry, error) {
 	entries := []*Entry{}
 	err := ormer.Engine.Desc("created_time").Find(&entries, &Entry{Owner: owner})

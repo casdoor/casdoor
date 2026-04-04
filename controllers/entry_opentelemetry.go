@@ -34,27 +34,28 @@ func (c *ApiController) AddOtlpTrace() {
 	if body == nil {
 		return
 	}
-	provider := resolveOpenClawProvider(c.Ctx)
-	if provider == nil {
+	provider, status, err := resolveOpenClawProvider(c.Ctx)
+	if err != nil {
+		responseOtlpError(c.Ctx, status, body, err.Error())
 		return
 	}
 
 	var req coltracepb.ExportTraceServiceRequest
 	if err := proto.Unmarshal(body, &req); err != nil {
-		responseOtlpError(c.Ctx, 400, "bad protobuf: %v", err)
+		responseOtlpError(c.Ctx, 400, body, "bad protobuf: %v", err)
 		return
 	}
 
 	message, err := protojson.MarshalOptions{Multiline: true, Indent: "  "}.Marshal(&req)
 	if err != nil {
-		responseOtlpError(c.Ctx, 500, "marshal trace failed: %v", err)
+		responseOtlpError(c.Ctx, 500, body, "marshal trace failed: %v", err)
 		return
 	}
 
 	clientIp := util.GetClientIpFromRequest(c.Ctx.Request)
 	userAgent := c.Ctx.Request.Header.Get("User-Agent")
 	if err := provider.AddTrace(message, clientIp, userAgent); err != nil {
-		responseOtlpError(c.Ctx, 500, "save trace failed: %v", err)
+		responseOtlpError(c.Ctx, 500, body, "save trace failed: %v", err)
 		return
 	}
 
@@ -74,27 +75,28 @@ func (c *ApiController) AddOtlpMetrics() {
 	if body == nil {
 		return
 	}
-	provider := resolveOpenClawProvider(c.Ctx)
-	if provider == nil {
+	provider, status, err := resolveOpenClawProvider(c.Ctx)
+	if err != nil {
+		responseOtlpError(c.Ctx, status, body, err.Error())
 		return
 	}
 
 	var req colmetricspb.ExportMetricsServiceRequest
 	if err := proto.Unmarshal(body, &req); err != nil {
-		responseOtlpError(c.Ctx, 400, "bad protobuf: %v", err)
+		responseOtlpError(c.Ctx, 400, body, "bad protobuf: %v", err)
 		return
 	}
 
 	message, err := protojson.MarshalOptions{Multiline: true, Indent: "  "}.Marshal(&req)
 	if err != nil {
-		responseOtlpError(c.Ctx, 500, "marshal metrics failed: %v", err)
+		responseOtlpError(c.Ctx, 500, body, "marshal metrics failed: %v", err)
 		return
 	}
 
 	clientIp := util.GetClientIpFromRequest(c.Ctx.Request)
 	userAgent := c.Ctx.Request.Header.Get("User-Agent")
 	if err := provider.AddMetrics(message, clientIp, userAgent); err != nil {
-		responseOtlpError(c.Ctx, 500, "save metrics failed: %v", err)
+		responseOtlpError(c.Ctx, 500, body, "save metrics failed: %v", err)
 		return
 	}
 
@@ -114,27 +116,28 @@ func (c *ApiController) AddOtlpLogs() {
 	if body == nil {
 		return
 	}
-	provider := resolveOpenClawProvider(c.Ctx)
-	if provider == nil {
+	provider, status, err := resolveOpenClawProvider(c.Ctx)
+	if err != nil {
+		responseOtlpError(c.Ctx, status, body, err.Error())
 		return
 	}
 
 	var req collogspb.ExportLogsServiceRequest
 	if err := proto.Unmarshal(body, &req); err != nil {
-		responseOtlpError(c.Ctx, 400, "bad protobuf: %v", err)
+		responseOtlpError(c.Ctx, 400, body, "bad protobuf: %v", err)
 		return
 	}
 
 	message, err := protojson.MarshalOptions{Multiline: true, Indent: "  "}.Marshal(&req)
 	if err != nil {
-		responseOtlpError(c.Ctx, 500, "marshal logs failed: %v", err)
+		responseOtlpError(c.Ctx, 500, body, "marshal logs failed: %v", err)
 		return
 	}
 
 	clientIp := util.GetClientIpFromRequest(c.Ctx.Request)
 	userAgent := c.Ctx.Request.Header.Get("User-Agent")
 	if err := provider.AddLogs(message, clientIp, userAgent); err != nil {
-		responseOtlpError(c.Ctx, 500, "save logs failed: %v", err)
+		responseOtlpError(c.Ctx, 500, body, "save logs failed: %v", err)
 		return
 	}
 

@@ -25,33 +25,53 @@ import (
 	"github.com/casdoor/casdoor/util"
 )
 
-func responseOtlpError(ctx *context.Context, status int, format string, args ...interface{}) {
+func responseOtlpError(ctx *context.Context, status int, body []byte, format string, args ...interface{}) {
+	msg := fmt.Sprintf(format, args...)
+	req := ctx.Request
+	bodyInfo := "(no body)"
+	if len(body) > 0 {
+		bodyInfo = fmt.Sprintf("%d bytes: %q", len(body), truncate(body, 256))
+	}
+	fmt.Printf("responseOtlpError: [%d] %s | %s %s | remoteAddr=%s | Content-Type=%s | User-Agent=%s | body=%s\n",
+		status, msg,
+		req.Method, req.URL.Path,
+		req.RemoteAddr,
+		req.Header.Get("Content-Type"),
+		req.Header.Get("User-Agent"),
+		bodyInfo,
+	)
 	ctx.Output.SetStatus(status)
-	ctx.Output.Body([]byte(fmt.Sprintf(format, args...)))
+	ctx.Output.Body([]byte(msg))
 }
 
-func resolveOpenClawProvider(ctx *context.Context) *log.OpenClawProvider {
+func truncate(b []byte, max int) []byte {
+	if len(b) <= max {
+		return b
+	}
+	return b[:max]
+}
+
+func resolveOpenClawProvider(ctx *context.Context) (*log.OpenClawProvider, int, error) {
 	clientIP := util.GetClientIpFromRequest(ctx.Request)
 	provider, err := object.GetOpenClawProviderByIP(clientIP)
 	if err != nil {
-		responseOtlpError(ctx, 500, "provider lookup failed: %v", err)
-		return nil
+		return nil, 500, fmt.Errorf("provider lookup failed: %w", err)
 	}
 	if provider == nil {
-		responseOtlpError(ctx, 403, "forbidden: no OpenClaw provider configured for IP %s", clientIP)
-		return nil
+		return nil, 403, fmt.Errorf("forbidden: no OpenClaw provider configured for IP %s", clientIP)
 	}
-	return provider
+	return provider, 0, nil
 }
 
 func readProtobufBody(ctx *context.Context) []byte {
 	if !strings.HasPrefix(ctx.Input.Header("Content-Type"), "application/x-protobuf") {
-		responseOtlpError(ctx, 415, "unsupported content type")
+		preview, _ := io.ReadAll(io.LimitReader(ctx.Request.Body, 256))
+		responseOtlpError(ctx, 415, preview, "unsupported content type")
 		return nil
 	}
 	body, err := io.ReadAll(ctx.Request.Body)
 	if err != nil {
-		responseOtlpError(ctx, 400, "read body failed")
+		responseOtlpError(ctx, 400, nil, "read body failed")
 		return nil
 	}
 	return body
