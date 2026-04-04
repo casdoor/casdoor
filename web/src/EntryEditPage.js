@@ -191,6 +191,22 @@ class EntryEditPage extends React.Component {
             <Input disabled value={this.state.entry.type ?? ""} />
           </Col>
         </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {i18next.t("general:Client IP")}:
+          </Col>
+          <Col span={22} >
+            <Input disabled value={this.state.entry.clientIp ?? ""} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {i18next.t("general:User agent")}:
+          </Col>
+          <Col span={22} >
+            <Input disabled value={this.state.entry.userAgent ?? ""} />
+          </Col>
+        </Row>
         <EntryMessageViewer entry={this.state.entry} labelSpan={(Setting.isMobile()) ? 22 : 2} contentSpan={22} />
       </Card>
     );

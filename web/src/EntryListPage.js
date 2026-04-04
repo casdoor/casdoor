@@ -35,6 +35,8 @@ class EntryListPage extends BaseListPage {
       provider: "",
       application: "",
       type: "",
+      clientIp: "",
+      userAgent: "",
       message: "",
     };
   }
@@ -163,22 +165,31 @@ class EntryListPage extends BaseListPage {
         },
       },
       {
-        title: i18next.t("general:Application"),
-        dataIndex: "application",
-        key: "application",
+        title: i18next.t("general:Type"),
+        dataIndex: "type",
+        key: "type",
         width: "140px",
         sorter: true,
-        ...this.getColumnSearchProps("application"),
-        render: (text, record) => {
-          if (!text) {
-            return null;
-          }
-          return (
-            <Link to={`/applications/${record.owner}/${text}`}>
-              {text}
-            </Link>
-          );
-        },
+        ...this.getColumnSearchProps("type"),
+      },
+      {
+        title: i18next.t("general:Client IP"),
+        dataIndex: "clientIp",
+        key: "clientIp",
+        width: "140px",
+        sorter: true,
+        ...this.getColumnSearchProps("clientIp", (row, highlightContent) => (
+          <a target="_blank" rel="noreferrer" href={`https://db-ip.com/${row.text}`}>
+            {highlightContent}
+          </a>
+        )),
+      },
+      {
+        title: i18next.t("general:User agent"),
+        dataIndex: "userAgent",
+        key: "userAgent",
+        sorter: true,
+        ...this.getColumnSearchProps("userAgent"),
       },
       {
         title: i18next.t("payment:Message"),

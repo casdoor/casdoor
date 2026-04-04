@@ -637,7 +637,7 @@ func GetLogProviderFromProvider(provider *Provider) (log.LogProvider, error) {
 
 	if provider.Type == "Agent" && provider.SubType == "OpenClaw" {
 		providerName := provider.Name
-		return log.NewOpenClawProvider(providerName, func(entryType, message string) error {
+		return log.NewOpenClawProvider(providerName, func(entryType, message, clientIp, userAgent string) error {
 			name := log.GenerateEntryName()
 			currentTime := util.GetCurrentTime()
 			entry := &Entry{
@@ -648,6 +648,8 @@ func GetLogProviderFromProvider(provider *Provider) (log.LogProvider, error) {
 				DisplayName: name,
 				Provider:    providerName,
 				Type:        entryType,
+				ClientIp:    clientIp,
+				UserAgent:   userAgent,
 				Message:     message,
 			}
 			_, err := AddEntry(entry)

@@ -31,8 +31,10 @@ type Entry struct {
 	Provider    string `xorm:"varchar(100)" json:"provider"`
 	Application string `xorm:"varchar(100)" json:"application"`
 
-	Type    string `xorm:"varchar(100)" json:"type"`
-	Message string `xorm:"mediumtext" json:"message"`
+	Type      string `xorm:"varchar(100)" json:"type"`
+	ClientIp  string `xorm:"varchar(100)" json:"clientIp"`
+	UserAgent string `xorm:"varchar(500)" json:"userAgent"`
+	Message   string `xorm:"mediumtext" json:"message"`
 }
 
 
