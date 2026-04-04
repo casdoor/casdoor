@@ -626,6 +626,7 @@ func GetLogProviderFromProvider(provider *Provider) (log.LogProvider, error) {
 				UpdatedTime: createdTime,
 				DisplayName: name,
 				Provider:    providerName,
+				Application: CasdoorApplication,
 				Message:     message,
 			}
 			_, err := AddEntry(entry)

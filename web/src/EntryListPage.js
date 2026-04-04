@@ -14,23 +14,24 @@
 
 import React from "react";
 import {Link} from "react-router-dom";
-import {Button, Table} from "antd";
+import {Button, Popover, Table} from "antd";
 import moment from "moment";
 import * as Setting from "./Setting";
 import * as EntryBackend from "./backend/EntryBackend";
 import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
 import PopconfirmModal from "./common/modal/PopconfirmModal";
+import Editor from "./common/Editor";
 
 class EntryListPage extends BaseListPage {
   newEntry() {
-    const randomName = Setting.getRandomName();
+    const randomHex = Math.random().toString(16).slice(2, 18);
     const owner = Setting.getRequestOrganization(this.props.account);
     return {
       owner: owner,
-      name: `entry_${randomName}`,
+      name: randomHex,
       createdTime: moment().format(),
-      displayName: `New Entry - ${randomName}`,
+      displayName: randomHex,
       provider: "",
       url: "",
       token: "",
@@ -106,13 +107,28 @@ class EntryListPage extends BaseListPage {
   renderTable(entries) {
     const columns = [
       {
+        title: i18next.t("general:Organization"),
+        dataIndex: "owner",
+        key: "owner",
+        width: "130px",
+        sorter: true,
+        ...this.getColumnSearchProps("owner"),
+        render: (text) => {
+          return (
+            <Link to={`/organizations/${text}`}>
+              {text}
+            </Link>
+          );
+        },
+      },
+      {
         title: i18next.t("general:Name"),
         dataIndex: "name",
         key: "name",
         width: "160px",
         sorter: true,
         ...this.getColumnSearchProps("name"),
-        render: (text, record, index) => {
+        render: (text, record) => {
           return (
             <Link to={`/entries/${record.owner}/${text}`}>
               {text}
@@ -121,29 +137,14 @@ class EntryListPage extends BaseListPage {
         },
       },
       {
-        title: i18next.t("general:Organization"),
-        dataIndex: "owner",
-        key: "owner",
-        width: "130px",
-        sorter: true,
-        ...this.getColumnSearchProps("owner"),
-      },
-      {
         title: i18next.t("general:Created time"),
         dataIndex: "createdTime",
         key: "createdTime",
         width: "180px",
         sorter: true,
-        render: (text, record, index) => {
+        render: (text) => {
           return Setting.getFormattedDate(text);
         },
-      },
-      {
-        title: i18next.t("general:Display name"),
-        dataIndex: "displayName",
-        key: "displayName",
-        sorter: true,
-        ...this.getColumnSearchProps("displayName"),
       },
       {
         title: i18next.t("general:Provider"),
@@ -164,14 +165,6 @@ class EntryListPage extends BaseListPage {
         },
       },
       {
-        title: i18next.t("general:Type"),
-        dataIndex: "type",
-        key: "type",
-        width: "120px",
-        sorter: true,
-        ...this.getColumnSearchProps("type"),
-      },
-      {
         title: i18next.t("general:Listening URL"),
         dataIndex: "url",
         key: "url",
@@ -181,7 +174,6 @@ class EntryListPage extends BaseListPage {
           if (!text) {
             return null;
           }
-
           return (
             <a target="_blank" rel="noreferrer" href={text}>
               {Setting.getShortText(text, 40)}
@@ -196,6 +188,25 @@ class EntryListPage extends BaseListPage {
         width: "140px",
         sorter: true,
         ...this.getColumnSearchProps("application"),
+      },
+      {
+        title: i18next.t("payment:Message"),
+        dataIndex: "message",
+        key: "message",
+        sorter: true,
+        ...this.getColumnSearchProps("message"),
+        render: (text) => {
+          if (!text) {
+            return null;
+          }
+          return (
+            <Popover placement="topRight" content={() => (
+              <Editor value={text} readOnly={true} />
+            )} title="" trigger="hover">
+              {Setting.getShortText(text, 60)}
+            </Popover>
+          );
+        },
       },
       {
         title: i18next.t("general:Action"),
