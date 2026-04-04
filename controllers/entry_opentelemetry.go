@@ -15,7 +15,6 @@
 package controllers
 
 import (
-	"github.com/casdoor/casdoor/object"
 	collogspb "go.opentelemetry.io/proto/otlp/collector/logs/v1"
 	colmetricspb "go.opentelemetry.io/proto/otlp/collector/metrics/v1"
 	coltracepb "go.opentelemetry.io/proto/otlp/collector/trace/v1"
@@ -33,8 +32,8 @@ func (c *ApiController) AddOtlpTrace() {
 	if body == nil {
 		return
 	}
-	providerName := resolveOpenClawProvider(c.Ctx)
-	if providerName == "" {
+	provider := resolveOpenClawProvider(c.Ctx)
+	if provider == nil {
 		return
 	}
 
@@ -50,7 +49,7 @@ func (c *ApiController) AddOtlpTrace() {
 		return
 	}
 
-	if _, err := object.AddEntry(object.NewTraceEntry(providerName, message)); err != nil {
+	if err := provider.AddTrace(message); err != nil {
 		responseOtlpError(c.Ctx, 500, "save trace failed: %v", err)
 		return
 	}
@@ -71,8 +70,8 @@ func (c *ApiController) AddOtlpMetrics() {
 	if body == nil {
 		return
 	}
-	providerName := resolveOpenClawProvider(c.Ctx)
-	if providerName == "" {
+	provider := resolveOpenClawProvider(c.Ctx)
+	if provider == nil {
 		return
 	}
 
@@ -88,7 +87,7 @@ func (c *ApiController) AddOtlpMetrics() {
 		return
 	}
 
-	if _, err := object.AddEntry(object.NewOtlpEntry(providerName, "metrics", message)); err != nil {
+	if err := provider.AddMetrics(message); err != nil {
 		responseOtlpError(c.Ctx, 500, "save metrics failed: %v", err)
 		return
 	}
@@ -109,8 +108,8 @@ func (c *ApiController) AddOtlpLogs() {
 	if body == nil {
 		return
 	}
-	providerName := resolveOpenClawProvider(c.Ctx)
-	if providerName == "" {
+	provider := resolveOpenClawProvider(c.Ctx)
+	if provider == nil {
 		return
 	}
 
@@ -126,7 +125,7 @@ func (c *ApiController) AddOtlpLogs() {
 		return
 	}
 
-	if _, err := object.AddEntry(object.NewOtlpEntry(providerName, "log", message)); err != nil {
+	if err := provider.AddLogs(message); err != nil {
 		responseOtlpError(c.Ctx, 500, "save logs failed: %v", err)
 		return
 	}

@@ -121,9 +121,7 @@ func (w *windowsCollector) parseAndPersistEvents(out []byte, channel string, add
 			message = fmt.Sprintf("EventID=%d Source=%s", event.System.EventID, event.System.Provider.Name)
 		}
 		createdTime := winEventTimestamp(event.System.TimeCreated.SystemTime)
-		name := fmt.Sprintf("%x", time.Now().UnixNano())
-
-		if err := addEntry("built-in", name, createdTime, w.tag,
+		if err := addEntry("built-in", createdTime, w.tag,
 			fmt.Sprintf("[%s] [%s] %s", severity, channel, message)); err != nil {
 			return fmt.Errorf("SystemLogProvider: failed to persist event (channel=%s EventID=%d): %w",
 				channel, event.System.EventID, err)

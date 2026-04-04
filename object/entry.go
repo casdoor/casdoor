@@ -37,25 +37,6 @@ type Entry struct {
 	Message string `xorm:"mediumtext" json:"message"`
 }
 
-func NewTraceEntry(providerName string, message []byte) *Entry {
-	return NewOtlpEntry(providerName, "trace", message)
-}
-
-func NewOtlpEntry(providerName string, entryType string, message []byte) *Entry {
-	currentTime := util.GetCurrentTime()
-	id := fmt.Sprintf("%s_%s_%s", entryType, util.GenerateSimpleTimeId(), util.GetRandomName())
-
-	return &Entry{
-		Owner:       CasdoorOrganization,
-		Name:        id,
-		CreatedTime: currentTime,
-		UpdatedTime: currentTime,
-		DisplayName: id,
-		Provider:    providerName,
-		Type:        entryType,
-		Message:     string(message),
-	}
-}
 
 func GetEntries(owner string) ([]*Entry, error) {
 	entries := []*Entry{}

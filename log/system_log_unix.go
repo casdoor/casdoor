@@ -68,9 +68,7 @@ func (u *unixCollector) collect(ctx context.Context, addEntry EntryAdder) error 
 		severity := journalSeverity(fields)
 		message := journalMessage(fields)
 		createdTime := journalTimestamp(fields)
-		name := fmt.Sprintf("%x", time.Now().UnixNano())
-
-		if err := addEntry("built-in", name, createdTime, u.tag,
+		if err := addEntry("built-in", createdTime, u.tag,
 			fmt.Sprintf("[%s] %s", severity, message)); err != nil {
 			return fmt.Errorf("SystemLogProvider: failed to persist journal entry: %w", err)
 		}

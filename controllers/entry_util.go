@@ -20,6 +20,7 @@ import (
 	"strings"
 
 	"github.com/beego/beego/v2/server/web/context"
+	"github.com/casdoor/casdoor/log"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 )
@@ -29,18 +30,18 @@ func responseOtlpError(ctx *context.Context, status int, format string, args ...
 	ctx.Output.Body([]byte(fmt.Sprintf(format, args...)))
 }
 
-func resolveOpenClawProvider(ctx *context.Context) string {
+func resolveOpenClawProvider(ctx *context.Context) *log.OpenClawProvider {
 	clientIP := util.GetClientIpFromRequest(ctx.Request)
 	provider, err := object.GetOpenClawProviderByIP(clientIP)
 	if err != nil {
 		responseOtlpError(ctx, 500, "provider lookup failed: %v", err)
-		return ""
+		return nil
 	}
 	if provider == nil {
 		responseOtlpError(ctx, 403, "forbidden: no OpenClaw provider configured for IP %s", clientIP)
-		return ""
+		return nil
 	}
-	return provider.Name
+	return provider
 }
 
 func readProtobufBody(ctx *context.Context) []byte {

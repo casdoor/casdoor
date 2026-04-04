@@ -17,7 +17,6 @@ package object
 import (
 	"fmt"
 	"sync"
-	"time"
 
 	"github.com/casdoor/casdoor/log"
 )
@@ -28,7 +27,8 @@ var (
 )
 
 // InitLogProviders scans all globally-configured Log providers and starts
-// background collection for pull-based providers (e.g. System Log).
+// background collection for pull-based providers (e.g. System Log, SELinux Log)
+// and registers passive providers (e.g. OpenClaw).
 // It is called once from main() after the database is ready.
 func InitLogProviders() {
 	providers, err := GetGlobalProviders()
@@ -36,21 +36,29 @@ func InitLogProviders() {
 		return
 	}
 	for _, p := range providers {
-		if p.Category == "Log" && (p.Type == "System Log" || p.Type == "SELinux Log") {
+		if p.Category != "Log" {
+			continue
+		}
+		switch p.Type {
+		case "System Log", "SELinux Log":
 			startLogCollector(p)
+		case "Agent":
+			if p.SubType == "OpenClaw" {
+				startOpenClawProvider(p)
+			}
 		}
 	}
 }
 
-// startLogCollector starts a System Log collector for the given provider.
-// If a collector for the same provider is already running it is stopped first.
+// startLogCollector starts a pull-based log collector (System Log / SELinux Log)
+// for the given provider. If a collector for the same provider is already
+// running it is stopped first.
 func startLogCollector(provider *Provider) {
 	runningCollectorsMu.Lock()
 	defer runningCollectorsMu.Unlock()
 
 	id := provider.GetId()
 
-	// Stop the existing collector for this provider if any.
 	if existing, ok := runningCollectors[id]; ok {
 		_ = existing.Stop()
 		delete(runningCollectors, id)
@@ -67,7 +75,8 @@ func startLogCollector(provider *Provider) {
 	}
 
 	providerName := provider.Name
-	addEntry := func(owner, name, createdTime, _ string, message string) error {
+	addEntry := func(owner, createdTime, _ string, message string) error {
+		name := log.GenerateEntryName()
 		entry := &Entry{
 			Owner:       owner,
 			Name:        name,
@@ -92,23 +101,49 @@ func startLogCollector(provider *Provider) {
 	runningCollectors[id] = lp
 }
 
-// GetOpenClawProviderByIP returns the first Log/Agent/OpenClaw provider that
-// allows the given client IP. A provider with an empty Host field allows any IP.
-func GetOpenClawProviderByIP(clientIP string) (*Provider, error) {
+// startOpenClawProvider registers an OpenClaw provider in runningCollectors so
+// that incoming OTLP requests can be routed to it by IP.
+func startOpenClawProvider(provider *Provider) {
+	runningCollectorsMu.Lock()
+	defer runningCollectorsMu.Unlock()
+
+	id := provider.GetId()
+
+	if existing, ok := runningCollectors[id]; ok {
+		_ = existing.Stop()
+		delete(runningCollectors, id)
+	}
+
+	lp, err := GetLogProviderFromProvider(provider)
+	if err != nil {
+		fmt.Printf("InitLogProviders: failed to create OpenClaw provider %s: %v\n", provider.Name, err)
+		return
+	}
+
+	runningCollectors[id] = lp
+}
+
+// GetOpenClawProviderByIP returns the running OpenClawProvider whose Host field
+// matches clientIP, or whose Host is empty (meaning any IP is allowed).
+// Returns nil if no matching provider is registered.
+func GetOpenClawProviderByIP(clientIP string) (*log.OpenClawProvider, error) {
 	providers := []*Provider{}
 	err := ormer.Engine.Where("category = ? AND type = ? AND sub_type = ?", "Log", "Agent", "OpenClaw").Find(&providers)
 	if err != nil {
 		return nil, err
 	}
+
+	runningCollectorsMu.Lock()
+	defer runningCollectorsMu.Unlock()
+
 	for _, p := range providers {
 		if p.Host == "" || p.Host == clientIP {
-			return p, nil
+			if lp, ok := runningCollectors[p.GetId()]; ok {
+				if ocp, ok := lp.(*log.OpenClawProvider); ok {
+					return ocp, nil
+				}
+			}
 		}
 	}
 	return nil, nil
-}
-
-// makeEntryName returns a hex-encoded unique name for an Entry row.
-func makeEntryName() string {
-	return fmt.Sprintf("%x", time.Now().UnixNano())
 }

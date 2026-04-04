@@ -35,9 +35,8 @@ func NewPermissionLogProvider(providerName string, addEntry EntryAdder) *Permiss
 // Write stores one permission-log entry.
 // severity follows syslog conventions (e.g. info, warning, err).
 func (p *PermissionLogProvider) Write(severity string, message string) error {
-	name := fmt.Sprintf("%x", time.Now().UnixNano())
 	createdTime := time.Now().UTC().Format(time.RFC3339)
-	return p.addEntry("built-in", name, createdTime, p.providerName, fmt.Sprintf("[%s] %s", severity, message))
+	return p.addEntry("built-in", createdTime, p.providerName, fmt.Sprintf("[%s] %s", severity, message))
 }
 
 // Start is a no-op for PermissionLogProvider; it received its EntryAdder at

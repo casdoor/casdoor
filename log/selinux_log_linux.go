@@ -85,9 +85,7 @@ func collectSELinuxLogs(ctx context.Context, addEntry EntryAdder) error {
 
 		severity := selinuxSeverity(line)
 		createdTime := parseAuditTimestamp(line)
-		name := fmt.Sprintf("%x", time.Now().UnixNano())
-
-		if err := addEntry("built-in", name, createdTime, "",
+		if err := addEntry("built-in", createdTime, "",
 			fmt.Sprintf("[%s] %s", severity, line)); err != nil {
 			return fmt.Errorf("SELinuxLogProvider: failed to persist audit entry: %w", err)
 		}
