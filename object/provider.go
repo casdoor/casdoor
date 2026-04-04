@@ -24,7 +24,7 @@ import (
 	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/idp"
 	"github.com/casdoor/casdoor/idv"
-	"github.com/casdoor/casdoor/logprovider"
+	"github.com/casdoor/casdoor/log"
 	"github.com/casdoor/casdoor/pp"
 	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/core"
@@ -612,9 +612,9 @@ func GetIdvProviderFromProvider(provider *Provider) idv.IdvProvider {
 	return idv.GetIdvProvider(provider.Type, provider.ClientId, provider.ClientSecret, provider.Endpoint)
 }
 
-func GetLogProviderFromProvider(provider *Provider) (logprovider.LogProvider, error) {
+func GetLogProviderFromProvider(provider *Provider) (log.LogProvider, error) {
 	if provider.Category != "Log" {
 		return nil, fmt.Errorf("provider %s category is not Log", provider.Name)
 	}
-	return logprovider.GetLogProvider(provider.Type, provider.Host, provider.Port, provider.Title)
+	return log.GetLogProvider(provider.Type, provider.Host, provider.Port, provider.Title)
 }
