@@ -616,5 +616,21 @@ func GetLogProviderFromProvider(provider *Provider) (log.LogProvider, error) {
 	if provider.Category != "Log" {
 		return nil, fmt.Errorf("provider %s category is not Log", provider.Name)
 	}
+
+	if provider.Type == "Casdoor Permission Log" {
+		return log.NewPermissionLogProvider(func(owner, name, createdTime, message string) error {
+			entry := &Entry{
+				Owner:       owner,
+				Name:        name,
+				CreatedTime: createdTime,
+				UpdatedTime: createdTime,
+				DisplayName: name,
+				Message:     message,
+			}
+			_, err := AddEntry(entry)
+			return err
+		}), nil
+	}
+
 	return log.GetLogProvider(provider.Type, provider.Host, provider.Port, provider.Title)
 }
