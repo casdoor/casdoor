@@ -460,9 +460,9 @@ export const OtherProviderInfo = {
       logo: `${StaticBaseUrl}/img/social_default.png`,
       url: "https://casdoor.org",
     },
-    "Linux Syslog": {
+    "System Log": {
       logo: `${StaticBaseUrl}/img/social_default.png`,
-      url: "https://man7.org/linux/man-pages/man3/syslog.3.html",
+      url: "https://en.wikipedia.org/wiki/Syslog",
     },
   },
 };
@@ -1432,7 +1432,7 @@ export function getProviderTypeOptions(category) {
   } else if (category === "Log") {
     return ([
       {id: "Casdoor Permission Log", name: "Casdoor Permission Log"},
-      {id: "Linux Syslog", name: "Linux Syslog"},
+      {id: "System Log", name: "System Log"},
     ]);
   } else {
     return [];

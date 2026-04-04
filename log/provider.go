@@ -23,11 +23,16 @@ type LogProvider interface {
 }
 
 // GetLogProvider returns a concrete log provider for the given type and connection settings.
+// The title parameter is used as the syslog/event-log tag for System Log.
 // Types that are not yet implemented return a non-nil error.
-func GetLogProvider(typ string, _ string, _ int, _ string) (LogProvider, error) {
+func GetLogProvider(typ string, _ string, _ int, title string) (LogProvider, error) {
 	switch typ {
-	case "Linux Syslog":
-		return nil, fmt.Errorf("Linux Syslog log provider is not implemented yet")
+	case "System Log":
+		tag := title
+		if tag == "" {
+			tag = "casdoor"
+		}
+		return NewSystemLogProvider(tag)
 	default:
 		return nil, fmt.Errorf("unsupported log provider type: %s", typ)
 	}
