@@ -53,7 +53,12 @@ func (c *ApiController) AddTrace() {
 		return
 	}
 
-	message, err := protojson.Marshal(&req)
+	opts := protojson.MarshalOptions{
+		Multiline: true,
+		Indent:    "  ",
+	}
+
+	message, err := opts.Marshal(&req)
 	if err != nil {
 		c.Ctx.Output.SetStatus(500)
 		c.Ctx.Output.Body([]byte(fmt.Sprintf("marshal trace failed: %v", err)))
