@@ -32,11 +32,11 @@ const auditLogPath = "/var/log/audit/audit.log"
 
 // selinuxAuditTypes is the set of audit record types that are SELinux-related.
 var selinuxAuditTypes = map[string]bool{
-	"AVC":         true,
-	"USER_AVC":    true,
-	"SELINUX_ERR": true,
+	"AVC":             true,
+	"USER_AVC":        true,
+	"SELINUX_ERR":     true,
 	"MAC_POLICY_LOAD": true,
-	"MAC_STATUS":  true,
+	"MAC_STATUS":      true,
 }
 
 // auditTimestampRe matches the msg=audit(seconds.millis:serial) field.
