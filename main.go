@@ -66,6 +66,7 @@ func main() {
 	}
 
 	object.InitDefaultStorageProvider()
+	object.InitLogProviders()
 	object.InitLdapAutoSynchronizer()
 	proxy.InitHttpClient()
 	authz.InitApi()

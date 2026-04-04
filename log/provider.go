@@ -56,6 +56,8 @@ func GetLogProvider(typ string, _ string, _ int, title string) (LogProvider, err
 			tag = "casdoor"
 		}
 		return NewSystemLogProvider(tag)
+	case "SELinux Log":
+		return NewSELinuxLogProvider()
 	default:
 		return nil, fmt.Errorf("unsupported log provider type: %s", typ)
 	}

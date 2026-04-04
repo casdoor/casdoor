@@ -468,6 +468,10 @@ export const OtherProviderInfo = {
       logo: `${StaticBaseUrl}/img/social_default.png`,
       url: "",
     },
+    "SELinux Log": {
+      logo: `${StaticBaseUrl}/img/social_default.png`,
+      url: "https://github.com/SELinuxProject/selinux",
+    },
   },
 };
 
@@ -1438,6 +1442,7 @@ export function getProviderTypeOptions(category) {
       {id: "Casdoor Permission Log", name: "Casdoor Permission Log"},
       {id: "System Log", name: "System Log"},
       {id: "Agent", name: "Agent"},
+      {id: "SELinux Log", name: "SELinux Log"},
     ]);
   } else {
     return [];

@@ -36,7 +36,7 @@ func InitLogProviders() {
 		return
 	}
 	for _, p := range providers {
-		if p.Category == "Log" && p.Type == "System Log" {
+		if p.Category == "Log" && (p.Type == "System Log" || p.Type == "SELinux Log") {
 			startLogCollector(p)
 		}
 	}
