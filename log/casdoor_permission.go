@@ -21,21 +21,23 @@ import (
 
 // EntryAdder persists a log entry to the backing store.
 // Parameters map to the Entry table columns: owner, name (unique ID),
-// createdTime (RFC3339), and message (the log content).
-// This indirection keeps the log package free of import-cycle dependencies
-// on the object package.
-type EntryAdder func(owner, name, createdTime, message string) error
+// createdTime (RFC3339), provider (the log provider name), and message (the
+// log content). This indirection keeps the log package free of import-cycle
+// dependencies on the object package.
+type EntryAdder func(owner, name, createdTime, provider, message string) error
 
 // PermissionLogProvider records Casbin authorization decisions as Entry rows.
 // It implements LogProvider; actual storage is delegated to an EntryAdder so
 // that the log package remains free of import-cycle dependencies on object.
 type PermissionLogProvider struct {
-	addEntry EntryAdder
+	providerName string
+	addEntry     EntryAdder
 }
 
-// NewPermissionLogProvider creates a PermissionLogProvider backed by addEntry.
-func NewPermissionLogProvider(addEntry EntryAdder) *PermissionLogProvider {
-	return &PermissionLogProvider{addEntry: addEntry}
+// NewPermissionLogProvider creates a PermissionLogProvider with the given
+// provider name, backed by addEntry.
+func NewPermissionLogProvider(providerName string, addEntry EntryAdder) *PermissionLogProvider {
+	return &PermissionLogProvider{providerName: providerName, addEntry: addEntry}
 }
 
 // Write stores one permission-log entry.
@@ -43,5 +45,5 @@ func NewPermissionLogProvider(addEntry EntryAdder) *PermissionLogProvider {
 func (p *PermissionLogProvider) Write(severity string, message string) error {
 	name := fmt.Sprintf("perm-%d", time.Now().UnixNano())
 	createdTime := time.Now().UTC().Format(time.RFC3339)
-	return p.addEntry("built-in", name, createdTime, fmt.Sprintf("[%s] %s", severity, message))
+	return p.addEntry("built-in", name, createdTime, p.providerName, fmt.Sprintf("[%s] %s", severity, message))
 }

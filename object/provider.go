@@ -618,13 +618,14 @@ func GetLogProviderFromProvider(provider *Provider) (log.LogProvider, error) {
 	}
 
 	if provider.Type == "Casdoor Permission Log" {
-		return log.NewPermissionLogProvider(func(owner, name, createdTime, message string) error {
+		return log.NewPermissionLogProvider(provider.Name, func(owner, name, createdTime, providerName, message string) error {
 			entry := &Entry{
 				Owner:       owner,
 				Name:        name,
 				CreatedTime: createdTime,
 				UpdatedTime: createdTime,
 				DisplayName: name,
+				Provider:    providerName,
 				Message:     message,
 			}
 			_, err := AddEntry(entry)

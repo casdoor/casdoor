@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import React from "react";
+import {Link} from "react-router-dom";
 import {Button, Card, Col, Input, Row, Select} from "antd";
 import {LinkOutlined} from "@ant-design/icons";
 import * as EntryBackend from "./backend/EntryBackend";
@@ -174,6 +175,18 @@ class EntryEditPage extends React.Component {
             <Input value={this.state.entry.displayName} onChange={e => {
               this.updateEntryField("displayName", e.target.value);
             }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {i18next.t("general:Provider")}:
+          </Col>
+          <Col span={22} >
+            {this.state.entry.provider ? (
+              <Link to={`/providers/${this.state.entry.owner}/${this.state.entry.provider}`}>
+                {this.state.entry.provider}
+              </Link>
+            ) : null}
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
