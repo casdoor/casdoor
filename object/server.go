@@ -96,8 +96,19 @@ func UpdateServer(id string, server *Server) (bool, error) {
 	return true, nil
 }
 
-func SyncMcpTool(id string, server *Server) (bool, error) {
+func SyncMcpTool(id string, server *Server, isCleared bool) (bool, error) {
 	owner, name := util.GetOwnerAndNameFromIdNoCheck(id)
+
+	if isCleared {
+		server.Tools = nil
+		server.UpdatedTime = util.GetCurrentTime()
+		_, err := ormer.Engine.ID(core.PK{owner, name}).Cols("tools", "updated_time").Update(server)
+		if err != nil {
+			return false, err
+		}
+		return true, nil
+	}
+
 	oldServer, err := getServer(owner, name)
 	if err != nil {
 		return false, err

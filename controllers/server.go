@@ -115,11 +115,13 @@ func (c *ApiController) UpdateServer() {
 // @Tag Server API
 // @Description sync MCP tools for a server and return sync errors directly
 // @Param   id     query    string  true        "The id ( owner/name ) of the server"
+// @Param   isCleared  query    bool    false       "Whether to clear all tools instead of syncing"
 // @Param   body    body   object.Server  true        "The details of the server"
 // @Success 200 {object} controllers.Response The Response object
 // @router /sync-mcp-tool [post]
 func (c *ApiController) SyncMcpTool() {
 	id := c.Ctx.Input.Query("id")
+	isCleared := c.Ctx.Input.Query("isCleared") == "1"
 
 	var server object.Server
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &server)
@@ -128,7 +130,7 @@ func (c *ApiController) SyncMcpTool() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.SyncMcpTool(id, &server))
+	c.Data["json"] = wrapActionResponse(object.SyncMcpTool(id, &server, isCleared))
 	c.ServeJSON()
 }
 

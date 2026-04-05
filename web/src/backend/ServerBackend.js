@@ -44,9 +44,9 @@ export function updateServer(owner, name, server) {
   }).then(res => res.json());
 }
 
-export function syncMcpTool(owner, name, server) {
+export function syncMcpTool(owner, name, server, isCleared = false) {
   const newServer = Setting.deepCopy(server);
-  return fetch(`${Setting.ServerUrl}/api/sync-mcp-tool?id=${owner}/${encodeURIComponent(name)}`, {
+  return fetch(`${Setting.ServerUrl}/api/sync-mcp-tool?id=${owner}/${encodeURIComponent(name)}&isCleared=${isCleared ? "1" : "0"}`, {
     method: "POST",
     credentials: "include",
     body: JSON.stringify(newServer),

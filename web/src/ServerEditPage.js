@@ -136,6 +136,22 @@ class ServerEditPage extends React.Component {
       });
   }
 
+  clearMcpTool() {
+    const server = Setting.deepCopy(this.state.server);
+    ServerBackend.syncMcpTool(this.state.owner, this.state.serverName, server, true)
+      .then((res) => {
+        if (res.status === "ok") {
+          Setting.showMessage("success", i18next.t("general:Successfully modified"));
+          this.getServer();
+        } else {
+          Setting.showMessage("error", `${i18next.t("general:Failed to update")}: ${res.msg}`);
+        }
+      })
+      .catch(error => {
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
+      });
+  }
+
   deleteServer() {
     ServerBackend.deleteServer(this.state.server)
       .then((res) => {
@@ -231,6 +247,7 @@ class ServerEditPage extends React.Component {
           </Col>
           <Col span={22} >
             {this.state.mode !== "add" ? <Button type="primary" style={{marginBottom: "5px"}} onClick={() => this.syncMcpTool()}>{i18next.t("general:Sync")}</Button> : null}
+            {this.state.mode !== "add" ? <Button style={{marginBottom: "5px", marginLeft: "10px"}} onClick={() => this.clearMcpTool()}>{i18next.t("general:Clear")}</Button> : null}
             <ToolTable
               tools={this.state.server?.tools || []}
               onUpdateTable={(value) => {this.updateServerField("tools", value);}}
