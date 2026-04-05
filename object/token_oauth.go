@@ -756,6 +756,24 @@ func GetAuthorizationCodeToken(application *Application, clientSecret string, co
 
 	// Handle guest user creation
 	if code == "guest-user" {
+		if application.Organization == "built-in" {
+			return nil, &TokenError{
+				Error:            InvalidGrant,
+				ErrorDescription: "guest signin is not allowed for built-in organization",
+			}, nil
+		}
+		if !application.EnableGuestSignin {
+			return nil, &TokenError{
+				Error:            InvalidGrant,
+				ErrorDescription: "guest signin is not enabled for this application",
+			}, nil
+		}
+		if !application.EnableSignUp {
+			return nil, &TokenError{
+				Error:            InvalidGrant,
+				ErrorDescription: "sign up is not enabled for this application",
+			}, nil
+		}
 		return createGuestUserToken(application, clientSecret, verifier)
 	}
 

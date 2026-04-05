@@ -594,6 +594,20 @@ class ApplicationEditPage extends React.Component {
               }} />
             </Col>
           </Row>
+          {
+            this.state.application.organization !== "built-in" ? (
+              <Row style={{marginTop: "20px"}} >
+                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2}>
+                  {Setting.getLabel(i18next.t("application:Enable guest signin"), i18next.t("application:Enable guest signin - Tooltip"))} :
+                </Col>
+                <Col span={1} >
+                  <Switch checked={this.state.application.enableGuestSignin} onChange={checked => {
+                    this.updateApplicationField("enableGuestSignin", checked);
+                  }} />
+                </Col>
+              </Row>
+            ) : null
+          }
           <Row style={{marginTop: "20px"}} >
             <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2}>
               {Setting.getLabel(i18next.t("application:Enable exclusive signin"), i18next.t("application:Enable exclusive signin - Tooltip"))} :
