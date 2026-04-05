@@ -35,9 +35,18 @@ export function getServer(owner, name) {
   }).then(res => res.json());
 }
 
-export function updateServer(owner, name, server, reportSyncErr = false) {
+export function updateServer(owner, name, server) {
   const newServer = Setting.deepCopy(server);
-  return fetch(`${Setting.ServerUrl}/api/update-server?id=${owner}/${encodeURIComponent(name)}&reportSyncErr=${reportSyncErr}`, {
+  return fetch(`${Setting.ServerUrl}/api/update-server?id=${owner}/${encodeURIComponent(name)}`, {
+    method: "POST",
+    credentials: "include",
+    body: JSON.stringify(newServer),
+  }).then(res => res.json());
+}
+
+export function syncMcpTool(owner, name, server) {
+  const newServer = Setting.deepCopy(server);
+  return fetch(`${Setting.ServerUrl}/api/sync-mcp-tool?id=${owner}/${encodeURIComponent(name)}`, {
     method: "POST",
     credentials: "include",
     body: JSON.stringify(newServer),

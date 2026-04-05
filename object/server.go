@@ -70,14 +70,34 @@ func GetServer(id string) (*Server, error) {
 	return getServer(owner, name)
 }
 
-func UpdateServer(id string, server *Server, reportSyncErr bool) (bool, error) {
+func UpdateServer(id string, server *Server) (bool, error) {
 	owner, name := util.GetOwnerAndNameFromIdNoCheck(id)
-	if s, err := getServer(owner, name); err != nil {
+	oldServer, err := getServer(owner, name)
+	if err != nil {
 		return false, err
-	} else if s == nil {
+	}
+	if oldServer == nil {
 		return false, nil
 	}
 
+	if server.Token == "" {
+		server.Token = oldServer.Token
+	}
+
+	server.UpdatedTime = util.GetCurrentTime()
+
+	_ = syncServerTools(server)
+
+	_, err = ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(server)
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
+}
+
+func SyncMcpTool(id string, server *Server) (bool, error) {
+	owner, name := util.GetOwnerAndNameFromIdNoCheck(id)
 	oldServer, err := getServer(owner, name)
 	if err != nil {
 		return false, err
@@ -93,7 +113,7 @@ func UpdateServer(id string, server *Server, reportSyncErr bool) (bool, error) {
 	server.UpdatedTime = util.GetCurrentTime()
 
 	err = syncServerTools(server)
-	if err != nil && reportSyncErr {
+	if err != nil {
 		return false, err
 	}
 

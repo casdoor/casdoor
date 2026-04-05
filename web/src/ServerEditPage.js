@@ -95,9 +95,9 @@ class ServerEditPage extends React.Component {
     });
   }
 
-  submitServerEdit(willExit, reportSyncErr = false) {
+  submitServerEdit(willExit) {
     const server = Setting.deepCopy(this.state.server);
-    ServerBackend.updateServer(this.state.owner, this.state.serverName, server, reportSyncErr)
+    ServerBackend.updateServer(this.state.owner, this.state.serverName, server)
       .then((res) => {
         if (res.status === "ok") {
           Setting.showMessage("success", i18next.t("general:Successfully modified"));
@@ -111,6 +111,22 @@ class ServerEditPage extends React.Component {
             }, () => {this.getServer();});
             this.props.history.push(`/servers/${server.owner}/${server.name}`);
           }
+        } else {
+          Setting.showMessage("error", `${i18next.t("general:Failed to update")}: ${res.msg}`);
+        }
+      })
+      .catch(error => {
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
+      });
+  }
+
+  syncMcpTool() {
+    const server = Setting.deepCopy(this.state.server);
+    ServerBackend.syncMcpTool(this.state.owner, this.state.serverName, server)
+      .then((res) => {
+        if (res.status === "ok") {
+          Setting.showMessage("success", i18next.t("general:Successfully modified"));
+          this.getServer();
         } else {
           Setting.showMessage("error", `${i18next.t("general:Failed to update")}: ${res.msg}`);
         }
@@ -214,7 +230,7 @@ class ServerEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Tool"), i18next.t("general:Tool - Tooltip"))} :
           </Col>
           <Col span={22} >
-            {this.state.mode !== "add" ? <Button type="primary" style={{marginBottom: "5px"}} onClick={() => this.submitServerEdit(false, true)}>{i18next.t("general:Sync")}</Button> : null}
+            {this.state.mode !== "add" ? <Button type="primary" style={{marginBottom: "5px"}} onClick={() => this.syncMcpTool()}>{i18next.t("general:Sync")}</Button> : null}
             <ToolTable
               tools={this.state.server?.tools || []}
               onUpdateTable={(value) => {this.updateServerField("tools", value);}}
