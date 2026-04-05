@@ -257,6 +257,26 @@ func (product *Product) getProvider(providerName string) (*Provider, error) {
 	return provider, nil
 }
 
+func BuyProduct(id string, user *User, providerName, pricingName, planName, host, paymentEnv string, customPrice float64, lang string) (payment *Payment, attachInfo map[string]interface{}, err error) {
+	owner, productName, err := util.GetOwnerAndNameFromIdWithError(id)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	order, err := PlaceOrder(owner, []ProductInfo{{
+		Name:        productName,
+		Price:       customPrice,
+		Quantity:    1,
+		PricingName: pricingName,
+		PlanName:    planName,
+	}}, user)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return PayOrder(providerName, host, paymentEnv, order, lang)
+}
+
 func ExtendProductWithProviders(product *Product) error {
 	if product == nil {
 		return nil

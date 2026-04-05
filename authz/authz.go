@@ -69,6 +69,7 @@ p, *, *, GET, /api/get-resources, *, *
 p, *, *, GET, /api/get-records, *, *
 p, *, *, GET, /api/get-product, *, *
 p, *, *, GET, /api/get-products, *, *
+p, *, *, POST, /api/buy-product, *, *
 p, *, *, GET, /api/get-order, *, *
 p, *, *, GET, /api/get-orders, *, *
 p, *, *, GET, /api/get-user-orders, *, *

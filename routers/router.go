@@ -246,6 +246,7 @@ func InitAPI() {
 	web.Router("/api/update-product", &controllers.ApiController{}, "POST:UpdateProduct")
 	web.Router("/api/add-product", &controllers.ApiController{}, "POST:AddProduct")
 	web.Router("/api/delete-product", &controllers.ApiController{}, "POST:DeleteProduct")
+	web.Router("/api/buy-product", &controllers.ApiController{}, "POST:BuyProduct")
 
 	web.Router("/api/get-orders", &controllers.ApiController{}, "GET:GetOrders")
 	web.Router("/api/get-user-orders", &controllers.ApiController{}, "GET:GetUserOrders")

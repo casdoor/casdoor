@@ -1138,6 +1138,70 @@
                 }
             }
         },
+        "/api/buy-product": {
+            "post": {
+                "tags": [
+                    "Product API"
+                ],
+                "description": "buy product using the deprecated compatibility endpoint, prefer place-order plus pay-order for new integrations",
+                "operationId": "ApiController.BuyProduct",
+                "deprecated": true,
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "id",
+                        "description": "The id ( owner/name ) of the product",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "providerName",
+                        "description": "The name of the provider",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "pricingName",
+                        "description": "The name of the pricing (for subscription)",
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "planName",
+                        "description": "The name of the plan (for subscription)",
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "userName",
+                        "description": "The username to buy product for (admin only)",
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "paymentEnv",
+                        "description": "The payment environment",
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "customPrice",
+                        "description": "Custom price for recharge products",
+                        "type": "number"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/delete-adapter": {
             "post": {
                 "tags": [
