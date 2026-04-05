@@ -93,11 +93,13 @@ func (c *ApiController) GetServer() {
 // @Tag Server API
 // @Description update server
 // @Param   id     query    string  true        "The id ( owner/name ) of the server"
+// @Param   reportSyncErr query bool false       "Whether to return SyncTool errors during update"
 // @Param   body    body   object.Server  true        "The details of the server"
 // @Success 200 {object} controllers.Response The Response object
 // @router /update-server [post]
 func (c *ApiController) UpdateServer() {
 	id := c.Ctx.Input.Query("id")
+	reportSyncErr := c.Ctx.Input.Query("reportSyncErr") == "true"
 
 	var server object.Server
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &server)
@@ -106,7 +108,7 @@ func (c *ApiController) UpdateServer() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.UpdateServer(id, &server))
+	c.Data["json"] = wrapActionResponse(object.UpdateServer(id, &server, reportSyncErr))
 	c.ServeJSON()
 }
 

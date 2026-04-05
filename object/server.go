@@ -70,7 +70,7 @@ func GetServer(id string) (*Server, error) {
 	return getServer(owner, name)
 }
 
-func UpdateServer(id string, server *Server) (bool, error) {
+func UpdateServer(id string, server *Server, reportSyncErr bool) (bool, error) {
 	owner, name := util.GetOwnerAndNameFromIdNoCheck(id)
 	if s, err := getServer(owner, name); err != nil {
 		return false, err
@@ -80,8 +80,12 @@ func UpdateServer(id string, server *Server) (bool, error) {
 
 	server.UpdatedTime = util.GetCurrentTime()
 
-	syncServerTools(server)
-	_, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(server)
+	err := syncServerTools(server)
+	if err != nil && reportSyncErr {
+		return false, err
+	}
+
+	_, err = ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(server)
 	if err != nil {
 		return false, err
 	}
@@ -89,25 +93,26 @@ func UpdateServer(id string, server *Server) (bool, error) {
 	return true, nil
 }
 
-func syncServerTools(server *Server) {
-	if server.Tools == nil {
-		server.Tools = []*Tool{}
+func syncServerTools(server *Server) error {
+	oldTools := server.Tools
+	if oldTools == nil {
+		oldTools = []*Tool{}
 	}
 
 	tools, err := mcp.GetServerTools(server.Owner, server.Name, server.Url, server.Token)
 	if err != nil {
-		return
+		return err
 	}
 
 	var newTools []*Tool
 	for _, tool := range tools {
-		oldToolIndex := slices.IndexFunc(server.Tools, func(oldTool *Tool) bool {
+		oldToolIndex := slices.IndexFunc(oldTools, func(oldTool *Tool) bool {
 			return oldTool.Name == tool.Name
 		})
 
 		isAllowed := true
 		if oldToolIndex != -1 {
-			isAllowed = server.Tools[oldToolIndex].IsAllowed
+			isAllowed = oldTools[oldToolIndex].IsAllowed
 		}
 
 		newTool := Tool{
@@ -118,6 +123,7 @@ func syncServerTools(server *Server) {
 	}
 
 	server.Tools = newTools
+	return nil
 }
 
 func AddServer(server *Server) (bool, error) {

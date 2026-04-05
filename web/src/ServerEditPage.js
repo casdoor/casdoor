@@ -95,9 +95,9 @@ class ServerEditPage extends React.Component {
     });
   }
 
-  submitServerEdit(willExit) {
+  submitServerEdit(willExit, reportSyncErr = false) {
     const server = Setting.deepCopy(this.state.server);
-    ServerBackend.updateServer(this.state.owner, this.state.serverName, server)
+    ServerBackend.updateServer(this.state.owner, this.state.serverName, server, reportSyncErr)
       .then((res) => {
         if (res.status === "ok") {
           Setting.showMessage("success", i18next.t("general:Successfully modified"));
@@ -214,6 +214,7 @@ class ServerEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Tool"), i18next.t("general:Tool - Tooltip"))} :
           </Col>
           <Col span={22} >
+            {this.state.mode !== "add" ? <Button type="primary" style={{marginBottom: "5px"}} onClick={() => this.submitServerEdit(false, true)}>{i18next.t("general:Sync")}</Button> : null}
             <ToolTable
               tools={this.state.server?.tools || []}
               onUpdateTable={(value) => {this.updateServerField("tools", value);}}

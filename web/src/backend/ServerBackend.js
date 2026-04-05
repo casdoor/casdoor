@@ -35,9 +35,9 @@ export function getServer(owner, name) {
   }).then(res => res.json());
 }
 
-export function updateServer(owner, name, server) {
+export function updateServer(owner, name, server, reportSyncErr = false) {
   const newServer = Setting.deepCopy(server);
-  return fetch(`${Setting.ServerUrl}/api/update-server?id=${owner}/${encodeURIComponent(name)}`, {
+  return fetch(`${Setting.ServerUrl}/api/update-server?id=${owner}/${encodeURIComponent(name)}&reportSyncErr=${reportSyncErr}`, {
     method: "POST",
     credentials: "include",
     body: JSON.stringify(newServer),
