@@ -21,8 +21,7 @@ import (
 	"encoding/pem"
 	"fmt"
 	"net/url"
-	"regexp"
-	"strings"
+
 
 	"github.com/casdoor/casdoor/idp"
 	"github.com/mitchellh/mapstructure"
@@ -113,7 +112,7 @@ func GenerateSamlRequest(id, relayState, host, lang string) (auth string, method
 func buildSp(provider *Provider, samlResponse string, host string) (*saml2.SAMLServiceProvider, error) {
 	_, origin := getOriginFromHost(host)
 
-	certStore, err := buildSpCertificateStore(provider, samlResponse)
+	certStore, err := buildSpCertificateStore(provider)
 	if err != nil {
 		return nil, err
 	}
@@ -152,15 +151,10 @@ func buildSpKeyStore() (dsig.X509KeyStore, error) {
 	}, nil
 }
 
-func buildSpCertificateStore(provider *Provider, samlResponse string) (certStore dsig.MemoryX509CertificateStore, err error) {
-	certEncodedData := ""
-	if samlResponse != "" {
-		certEncodedData, err = getCertificateFromSamlResponse(samlResponse, provider.Type)
-		if err != nil {
-			return
-		}
-	} else if provider.IdP != "" {
-		certEncodedData = provider.IdP
+func buildSpCertificateStore(provider *Provider) (certStore dsig.MemoryX509CertificateStore, err error) {
+	certEncodedData := provider.IdP
+	if certEncodedData == "" {
+		return dsig.MemoryX509CertificateStore{}, fmt.Errorf("the IdP certificate of provider: %s is empty", provider.Name)
 	}
 
 	var certData []byte
@@ -187,29 +181,3 @@ func buildSpCertificateStore(provider *Provider, samlResponse string) (certStore
 	return certStore, nil
 }
 
-func getCertificateFromSamlResponse(samlResponse string, providerType string) (string, error) {
-	de, err := base64.StdEncoding.DecodeString(samlResponse)
-	if err != nil {
-		return "", err
-	}
-	var (
-		expression string
-		deStr      = strings.Replace(string(de), "\n", "", -1)
-		tagMap     = map[string]string{
-			"Aliyun IDaaS": "ds",
-			"Keycloak":     "dsig",
-		}
-	)
-	tag := tagMap[providerType]
-	if tag == "" {
-		// <ds:X509Certificate>...</ds:X509Certificate>
-		// <dsig:X509Certificate>...</dsig:X509Certificate>
-		// <X509Certificate>...</X509Certificate>
-		// ...
-		expression = "<[^>]*:?X509Certificate>([\\s\\S]*?)<[^>]*:?X509Certificate>"
-	} else {
-		expression = fmt.Sprintf("<%s:X509Certificate>([\\s\\S]*?)</%s:X509Certificate>", tag, tag)
-	}
-	res := regexp.MustCompile(expression).FindStringSubmatch(deStr)
-	return res[1], nil
-}
