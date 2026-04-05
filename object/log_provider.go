@@ -64,12 +64,7 @@ func startLogCollector(provider *Provider) {
 		delete(runningCollectors, id)
 	}
 
-	tag := provider.Title
-	if tag == "" {
-		tag = "casdoor"
-	}
-
-	lp, err := log.NewSystemLogProvider(tag)
+	lp, err := log.GetLogProvider(provider.Type, provider.Host, provider.Port, provider.Title)
 	if err != nil {
 		return
 	}
