@@ -21,7 +21,7 @@ import (
 	"time"
 )
 
-const onlineServerListUrl = "https://remotemcplist.com/api/servers.json"
+const onlineServerListUrl = "https://mcp.casdoor.org/registry.json"
 
 // GetOnlineServers
 // @Title GetOnlineServers

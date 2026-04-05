@@ -29,7 +29,7 @@ class ServerStorePage extends React.Component {
       onlineServerList: [],
       creatingOnlineServerId: "",
       onlineNameFilter: "",
-      onlineTagFilter: [],
+      onlineCategoryFilter: [],
     };
   }
 
@@ -41,7 +41,7 @@ class ServerStorePage extends React.Component {
     this.setState({
       onlineListLoading: true,
       onlineNameFilter: "",
-      onlineTagFilter: [],
+      onlineCategoryFilter: [],
     });
 
     ServerBackend.getOnlineServers()
@@ -72,16 +72,17 @@ class ServerStorePage extends React.Component {
   createServerFromOnline = (onlineServer) => {
     const owner = Setting.getRequestOrganization(this.props.account);
     const serverName = this.getOnlineServerName(onlineServer);
-    const serverUrl = onlineServer.production;
+    const serverUrl = onlineServer.endpoint;
 
     if (!serverUrl) {
       Setting.showMessage("error", i18next.t("server:Production endpoint is empty"));
       return;
     }
 
+    const randomName = Setting.getRandomName();
     const newServer = {
       owner: owner,
-      name: serverName,
+      name: serverName + randomName,
       createdTime: moment().format(),
       displayName: onlineServer.name || serverName,
       url: serverUrl,
@@ -107,20 +108,27 @@ class ServerStorePage extends React.Component {
 
   normalizeOnlineServers = (onlineServers) => {
     return onlineServers.map((server, index) => {
-      const rawTags = Array.isArray(server?.tags) ? server.tags : [];
+      const categoriesRaw = [server?.category].filter((category) => typeof category === "string" && category.trim() !== "");
 
       return {
         id: server.id ?? `${server.name ?? "server"}-${index}`,
         name: server.name ?? "",
         nameText: (server.name ?? "").toLowerCase(),
-        tagsRaw: rawTags,
-        tagsLower: rawTags.map((tag) => tag.toLowerCase()),
-        production: server.endpoints?.production ?? "",
+        categoriesRaw: categoriesRaw,
+        categoriesLower: categoriesRaw.map((category) => category.toLowerCase()),
+        endpoint: server.endpoints?.production ?? server.endpoint ?? "",
         description: server.description ?? "",
-        authentication: server?.authentication?.type,
-        website: server?.maintainer?.website,
+        website: server?.maintainer?.website ?? server?.website,
       };
-    }).filter(server => server.production.startsWith("http"));
+    }).filter(server => server.endpoint.startsWith("http"));
+  };
+
+  getWebsiteUrl = (website) => {
+    if (!website) {
+      return "";
+    }
+
+    return /^https?:\/\//i.test(website) ? website : `https://${website}`;
   };
 
   getOnlineServersFromResponse = (data) => {
@@ -139,19 +147,19 @@ class ServerStorePage extends React.Component {
     return [];
   };
 
-  getOnlineTagOptions = () => {
-    const tags = this.state.onlineServerList.flatMap((server) => server.tagsRaw || []);
-    return [...new Set(tags)].sort((a, b) => a.localeCompare(b)).map((tag) => ({label: tag, value: tag.toLowerCase()}));
+  getOnlineCategoryOptions = () => {
+    const categories = this.state.onlineServerList.flatMap((server) => server.categoriesRaw || []);
+    return [...new Set(categories)].sort((a, b) => a.localeCompare(b)).map((category) => ({label: category, value: category.toLowerCase()}));
   };
 
   getFilteredOnlineServers = () => {
     const nameFilter = this.state.onlineNameFilter.trim().toLowerCase();
-    const tagFilter = this.state.onlineTagFilter;
+    const categoryFilter = this.state.onlineCategoryFilter;
 
     return this.state.onlineServerList.filter((server) => {
       const nameMatched = !nameFilter || server.nameText.includes(nameFilter);
-      const tagMatched = tagFilter.length === 0 || tagFilter.some((tag) => server.tagsLower.includes(tag));
-      return nameMatched && tagMatched;
+      const categoryMatched = categoryFilter.length === 0 || categoryFilter.some((category) => server.categoriesLower.includes(category));
+      return nameMatched && categoryMatched;
     });
   };
 
@@ -180,19 +188,23 @@ class ServerStorePage extends React.Component {
             <Text type="secondary">{server.description || "-"}</Text>
           </div>
           <div style={{marginBottom: "8px"}}>
-            <Text strong>{i18next.t("application:Authentication")}: </Text>
-            <Text>{server.authentication || "-"}</Text>
+            <Text strong>{i18next.t("general:Url")}: </Text>
+            {server.website ? (
+              <a target="_blank" rel="noreferrer" href={this.getWebsiteUrl(server.endpoint)}>{server.endpoint}</a>
+            ) : (
+              <Text>-</Text>
+            )}
           </div>
           <div style={{marginBottom: "8px"}}>
             <Text strong>{i18next.t("general:Website")}: </Text>
             {server.website ? (
-              <a target="_blank" rel="noreferrer" href={`https://${server.website}`}>{server.website}</a>
+              <a target="_blank" rel="noreferrer" href={this.getWebsiteUrl(server.website)}>{server.website}</a>
             ) : (
               <Text>-</Text>
             )}
           </div>
           <div>
-            {(server.tagsRaw || []).map((tag) => <Tag key={`${server.id}-${tag}`}>{tag}</Tag>)}
+            {(server.categoriesRaw || []).map((category) => <Tag key={`${server.id}-${category}`}>{category}</Tag>)}
           </div>
         </Card>
       </Col>
@@ -214,13 +226,13 @@ class ServerStorePage extends React.Component {
           <Select
             mode="multiple"
             allowClear
-            placeholder={i18next.t("general:Tag")}
-            value={this.state.onlineTagFilter}
-            onChange={(values) => this.setState({onlineTagFilter: values})}
-            options={this.getOnlineTagOptions()}
+            placeholder={i18next.t("general:Category")}
+            value={this.state.onlineCategoryFilter}
+            onChange={(values) => this.setState({onlineCategoryFilter: values})}
+            options={this.getOnlineCategoryOptions()}
             style={{minWidth: "260px"}}
           />
-          <Button onClick={() => this.setState({onlineNameFilter: "", onlineTagFilter: []})}>
+          <Button onClick={() => this.setState({onlineNameFilter: "", onlineCategoryFilter: []})}>
             {i18next.t("general:Clear")}
           </Button>
           <Button onClick={this.fetchOnlineServers}>
