@@ -17,6 +17,7 @@ package object
 import (
 	"errors"
 	"fmt"
+	"net/url"
 	"regexp"
 	"strings"
 
@@ -372,16 +373,64 @@ func (application *Application) IsRedirectUriValid(redirectUri string) bool {
 		return true
 	}
 
+	redirectUriObj, err := url.Parse(redirectUri)
+	if err != nil || redirectUriObj.Host == "" {
+		return false
+	}
+
 	for _, targetUri := range application.RedirectUris {
 		if targetUri == "" {
 			continue
 		}
-		targetUriRegex := regexp.MustCompile(targetUri)
-		if targetUriRegex.MatchString(redirectUri) || strings.Contains(redirectUri, targetUri) {
+
+		if redirectUri == targetUri {
+			return true
+		}
+
+		// URL-based comparison: scheme/host/port/path must each match.
+		// The host may be the configured host or any subdomain of it.
+		// This prevents "double-URL" attacks like https://evil.com/?x=https://legit.example.com/cb
+		targetUriObj, err := url.Parse(targetUri)
+		if err == nil && targetUriObj.Host != "" {
+			if redirectUriMatchesTarget(redirectUriObj, targetUriObj) {
+				return true
+			}
+			// The configured URI is a valid URL; skip regex fallback to avoid false positives.
+			continue
+		}
+
+		// Fall back to anchored full-string regex for wildcard patterns
+		// (e.g. "https://.*\.example\.com/callback") that are not valid URLs.
+		// Anchoring with ^...$ prevents partial-match bypasses.
+		anchoredPattern := "^(?:" + targetUri + ")$"
+		targetUriRegex, err := regexp.Compile(anchoredPattern)
+		if err == nil && targetUriRegex.MatchString(redirectUri) {
 			return true
 		}
 	}
 	return false
+}
+
+// redirectUriMatchesTarget checks if redirectUri matches targetUri with subdomain support.
+// Scheme, port, and path must match exactly. The host may be the target host or any subdomain of it.
+func redirectUriMatchesTarget(redirectUri, targetUri *url.URL) bool {
+	if redirectUri.Scheme != targetUri.Scheme {
+		return false
+	}
+	if redirectUri.Port() != targetUri.Port() {
+		return false
+	}
+	redirectHost := redirectUri.Hostname()
+	targetHost := targetUri.Hostname()
+	// Allow exact host match or subdomain (e.g. aaa.example.com for target example.com).
+	// The "."+targetHost prefix prevents evilexample.com from matching example.com.
+	if redirectHost != targetHost && !strings.HasSuffix(redirectHost, "."+targetHost) {
+		return false
+	}
+	if redirectUri.Path != targetUri.Path {
+		return false
+	}
+	return true
 }
 
 func (application *Application) IsPasswordEnabled() bool {
