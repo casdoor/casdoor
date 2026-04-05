@@ -78,9 +78,21 @@ func UpdateServer(id string, server *Server, reportSyncErr bool) (bool, error) {
 		return false, nil
 	}
 
+	oldServer, err := getServer(owner, name)
+	if err != nil {
+		return false, err
+	}
+	if oldServer == nil {
+		return false, nil
+	}
+
+	if server.Token == "" {
+		server.Token = oldServer.Token
+	}
+
 	server.UpdatedTime = util.GetCurrentTime()
 
-	err := syncServerTools(server)
+	err = syncServerTools(server)
 	if err != nil && reportSyncErr {
 		return false, err
 	}
