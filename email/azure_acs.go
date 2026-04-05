@@ -26,7 +26,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/google/uuid"
+	"github.com/casdoor/casdoor/util"
 )
 
 const (
@@ -141,7 +141,7 @@ func (a *AzureACSEmailProvider) Send(fromAddress string, fromName string, toAddr
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("repeatability-request-id", uuid.New().String())
+	req.Header.Set("repeatability-request-id", util.GenerateUUID())
 	req.Header.Set("repeatability-first-sent", time.Now().UTC().Format(http.TimeFormat))
 
 	client := &http.Client{}

@@ -31,8 +31,8 @@ import (
 	"time"
 
 	"github.com/beevik/etree"
+	"github.com/casdoor/casdoor/util"
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/google/uuid"
 	saml "github.com/russellhaering/gosaml2"
 	dsig "github.com/russellhaering/goxmldsig"
 )
@@ -50,7 +50,7 @@ func NewSamlResponse(application *Application, user *User, host string, certific
 	samlResponse.CreateAttr("xmlns:saml", "urn:oasis:names:tc:SAML:2.0:assertion")
 	samlResponse.CreateAttr("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance")
 	samlResponse.CreateAttr("xmlns:xs", "http://www.w3.org/2001/XMLSchema")
-	arId := uuid.New()
+	arId := util.GenerateUUID()
 
 	samlResponse.CreateAttr("ID", fmt.Sprintf("_%s", arId))
 	samlResponse.CreateAttr("Version", "2.0")
@@ -65,7 +65,7 @@ func NewSamlResponse(application *Application, user *User, host string, certific
 	assertion.CreateAttr("xmlns:saml", "urn:oasis:names:tc:SAML:2.0:assertion")
 	assertion.CreateAttr("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance")
 	assertion.CreateAttr("xmlns:xs", "http://www.w3.org/2001/XMLSchema")
-	assertion.CreateAttr("ID", fmt.Sprintf("_%s", uuid.New()))
+	assertion.CreateAttr("ID", fmt.Sprintf("_%s", util.GenerateUUID()))
 	assertion.CreateAttr("Version", "2.0")
 	assertion.CreateAttr("IssueInstant", now)
 	assertion.CreateElement("saml:Issuer").SetText(host)
@@ -100,7 +100,7 @@ func NewSamlResponse(application *Application, user *User, host string, certific
 	}
 	authnStatement := assertion.CreateElement("saml:AuthnStatement")
 	authnStatement.CreateAttr("AuthnInstant", now)
-	authnStatement.CreateAttr("SessionIndex", fmt.Sprintf("_%s", uuid.New()))
+	authnStatement.CreateAttr("SessionIndex", fmt.Sprintf("_%s", util.GenerateUUID()))
 	authnStatement.CreateAttr("SessionNotOnOrAfter", expireTime)
 	authnStatement.CreateElement("saml:AuthnContext").CreateElement("saml:AuthnContextClassRef").SetText("urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport")
 
@@ -460,7 +460,7 @@ func NewSamlResponse11(application *Application, user *User, requestID string, h
 	samlResponse.CreateAttr("MajorVersion", "1")
 	samlResponse.CreateAttr("MinorVersion", "1")
 
-	responseID := uuid.New()
+	responseID := util.GenerateUUID()
 	samlResponse.CreateAttr("ResponseID", fmt.Sprintf("_%s", responseID))
 	samlResponse.CreateAttr("InResponseTo", requestID)
 
@@ -476,7 +476,7 @@ func NewSamlResponse11(application *Application, user *User, requestID string, h
 	assertion.CreateAttr("xmlns:saml", "urn:oasis:names:tc:SAML:1.0:assertion")
 	assertion.CreateAttr("MajorVersion", "1")
 	assertion.CreateAttr("MinorVersion", "1")
-	assertion.CreateAttr("AssertionID", uuid.New().String())
+	assertion.CreateAttr("AssertionID", util.GenerateUUID())
 	assertion.CreateAttr("Issuer", host)
 	assertion.CreateAttr("IssueInstant", now)
 

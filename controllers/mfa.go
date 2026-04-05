@@ -19,7 +19,6 @@ import (
 
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
-	"github.com/google/uuid"
 )
 
 // MfaSetupInitiate
@@ -77,7 +76,7 @@ func (c *ApiController) MfaSetupInitiate() {
 		return
 	}
 
-	recoveryCode := uuid.NewString()
+	recoveryCode := util.GenerateUUID()
 	mfaProps.RecoveryCodes = []string{recoveryCode}
 	mfaProps.MfaRememberInHours = organization.MfaRememberInHours
 

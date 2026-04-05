@@ -20,8 +20,6 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
-	"math/big"
-	"math/rand"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -30,7 +28,6 @@ import (
 	"time"
 	"unicode"
 
-	"github.com/google/uuid"
 	"github.com/nyaruka/phonenumbers"
 )
 
@@ -167,7 +164,7 @@ func GetSharedOrgFromApp(rawName string) (name string, organization string) {
 }
 
 func GenerateId() string {
-	return uuid.NewString()
+	return GenerateUUID()
 }
 
 func GenerateTimeId() string {
@@ -175,7 +172,7 @@ func GenerateTimeId() string {
 	tm := time.Unix(timestamp, 0)
 	t := tm.Format("20060102_150405")
 
-	random := uuid.NewString()[0:7]
+	random := GenerateUUID()[0:7]
 
 	res := fmt.Sprintf("%s_%s", t, random)
 	return res
@@ -187,16 +184,6 @@ func GenerateSimpleTimeId() string {
 	t := tm.Format("20060102150405")
 
 	return t
-}
-
-func GetRandomName() string {
-	rand.Seed(time.Now().UnixNano())
-	const charset = "0123456789abcdefghijklmnopqrstuvwxyz"
-	result := make([]byte, 6)
-	for i := range result {
-		result[i] = charset[rand.Intn(len(charset))]
-	}
-	return string(result)
 }
 
 func GetId(owner, name string) string {
@@ -355,7 +342,7 @@ func GetValueFromDataSourceName(key string, dataSourceName string) string {
 func GetUsernameFromEmail(email string) string {
 	tokens := strings.Split(email, "@")
 	if len(tokens) == 0 {
-		return uuid.NewString()
+		return GenerateUUID()
 	} else {
 		return tokens[0]
 	}
@@ -393,38 +380,4 @@ func StringToInterfaceArray2d(arrays [][]string) [][]interface{} {
 		interfaceArrays = append(interfaceArrays, interfaceArray)
 	}
 	return interfaceArrays
-}
-
-func generateRandomString(length int) (string, error) {
-	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-	b := make([]byte, length)
-	for i := range b {
-		var c byte
-		index := rand.Intn(len(charset))
-		c = charset[index]
-		b[i] = c
-	}
-	return string(b), nil
-}
-
-func GenerateTwoUniqueRandomStrings() (string, string, error) {
-	len1 := 16 + int(big.NewInt(17).Int64())
-	len2 := 16 + int(big.NewInt(17).Int64())
-
-	str1, err := generateRandomString(len1)
-	if err != nil {
-		return "", "", err
-	}
-	str2, err := generateRandomString(len2)
-	if err != nil {
-		return "", "", err
-	}
-
-	for str1 == str2 {
-		str2, err = generateRandomString(len2)
-		if err != nil {
-			return "", "", err
-		}
-	}
-	return str1, str2, nil
 }

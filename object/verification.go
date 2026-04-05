@@ -15,10 +15,11 @@
 package object
 
 import (
+	"crypto/rand"
 	"errors"
 	"fmt"
 	"math"
-	"math/rand"
+	"math/big"
 	"net/url"
 	"regexp"
 	"strconv"
@@ -476,10 +477,13 @@ func GetVerifyType(username string) (verificationCodeType string) {
 var stdNums = []byte("0123456789")
 
 func getRandomCode(length int) string {
-	var result []byte
-	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	result := make([]byte, length)
 	for i := 0; i < length; i++ {
-		result = append(result, stdNums[r.Intn(len(stdNums))])
+		n, err := rand.Int(rand.Reader, big.NewInt(int64(len(stdNums))))
+		if err != nil {
+			panic(err)
+		}
+		result[i] = stdNums[n.Int64()]
 	}
 	return string(result)
 }

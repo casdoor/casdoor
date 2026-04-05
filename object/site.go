@@ -16,9 +16,7 @@ package object
 
 import (
 	"fmt"
-	"math/rand"
 	"strings"
-	"time"
 
 	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/core"
@@ -234,8 +232,7 @@ func (site *Site) GetChallengeMap() map[string]string {
 
 func (site *Site) GetHost() string {
 	if len(site.Hosts) != 0 {
-		rand.Seed(time.Now().UnixNano())
-		return site.Hosts[rand.Intn(len(site.Hosts))]
+		return site.Hosts[util.RandomIntn(len(site.Hosts))]
 	}
 
 	if site.Host != "" {

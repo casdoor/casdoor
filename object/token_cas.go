@@ -21,7 +21,7 @@ import (
 	"encoding/pem"
 	"encoding/xml"
 	"fmt"
-	"math/rand"
+	"math"
 	"strings"
 	"sync"
 	"time"
@@ -273,7 +273,7 @@ func GenerateCasToken(userId string, service string) (string, error) {
 		}
 	}
 
-	st := fmt.Sprintf("ST-%d", rand.Int())
+	st := fmt.Sprintf("ST-%d", util.RandomIntn(math.MaxInt))
 	stToServiceResponse.Store(st, &CasAuthenticationSuccessWrapper{
 		AuthenticationSuccess: &authenticationSuccess,
 		Service:               service,

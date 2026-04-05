@@ -28,7 +28,6 @@ import (
 	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/idp"
 	"github.com/casdoor/casdoor/util"
-	"github.com/google/uuid"
 	"github.com/xorm-io/core"
 )
 
@@ -742,12 +741,7 @@ func createGuestUserToken(application *Application, clientSecret string, verifie
 
 // generateGuestUsername generates a unique username for guest users
 func generateGuestUsername() string {
-	uid, err := uuid.NewRandom()
-	if err != nil {
-		// Fallback to a timestamp-based unique ID if UUID generation fails
-		return fmt.Sprintf("guest_%d", time.Now().UnixNano())
-	}
-	return fmt.Sprintf("guest_%s", uid.String())
+	return fmt.Sprintf("guest_%s", util.GenerateUUID())
 }
 
 // GetAuthorizationCodeToken

@@ -37,7 +37,6 @@ import (
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/proxy"
 	"github.com/casdoor/casdoor/util"
-	"github.com/google/uuid"
 	"golang.org/x/oauth2"
 )
 
@@ -938,14 +937,7 @@ func (c *ApiController) Login() {
 					}
 
 					if tmpUser != nil {
-						var uid uuid.UUID
-						uid, err = uuid.NewRandom()
-						if err != nil {
-							c.ResponseError(err.Error())
-							return
-						}
-
-						uidStr := strings.Split(uid.String(), "-")
+						uidStr := strings.Split(util.GenerateUUID(), "-")
 						userInfo.Username = fmt.Sprintf("%s_%s", userInfo.Username, uidStr[1])
 					}
 
