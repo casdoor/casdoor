@@ -878,12 +878,12 @@ func (ldap *Ldap) buildAuthFilterString(user *User) string {
 	}
 
 	if len(ldap.FilterFields) == 0 {
-		return fmt.Sprintf("(&%s(uid=%s))", baseFilter, user.Name)
+		return fmt.Sprintf("(&%s(uid=%s))", baseFilter, goldap.EscapeFilter(user.Name))
 	}
 
 	filter := fmt.Sprintf("(&%s(|", baseFilter)
 	for _, field := range ldap.FilterFields {
-		filter = fmt.Sprintf("%s(%s=%s)", filter, field, user.getFieldFromLdapAttribute(field))
+		filter = fmt.Sprintf("%s(%s=%s)", filter, field, goldap.EscapeFilter(user.getFieldFromLdapAttribute(field)))
 	}
 	filter = fmt.Sprintf("%s))", filter)
 
