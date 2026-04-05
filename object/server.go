@@ -72,16 +72,23 @@ func GetServer(id string) (*Server, error) {
 
 func UpdateServer(id string, server *Server) (bool, error) {
 	owner, name := util.GetOwnerAndNameFromIdNoCheck(id)
-	if s, err := getServer(owner, name); err != nil {
+	oldServer, err := getServer(owner, name)
+	if err != nil {
 		return false, err
-	} else if s == nil {
+	}
+	if oldServer == nil {
 		return false, nil
+	}
+
+	if server.Token == "" {
+		server.Token = oldServer.Token
 	}
 
 	server.UpdatedTime = util.GetCurrentTime()
 
-	syncServerTools(server)
-	_, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(server)
+	_ = syncServerTools(server)
+
+	_, err = ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(server)
 	if err != nil {
 		return false, err
 	}
@@ -89,25 +96,55 @@ func UpdateServer(id string, server *Server) (bool, error) {
 	return true, nil
 }
 
-func syncServerTools(server *Server) {
-	if server.Tools == nil {
-		server.Tools = []*Tool{}
+func SyncMcpTool(id string, server *Server) (bool, error) {
+	owner, name := util.GetOwnerAndNameFromIdNoCheck(id)
+	oldServer, err := getServer(owner, name)
+	if err != nil {
+		return false, err
+	}
+	if oldServer == nil {
+		return false, nil
+	}
+
+	if server.Token == "" {
+		server.Token = oldServer.Token
+	}
+
+	server.UpdatedTime = util.GetCurrentTime()
+
+	err = syncServerTools(server)
+	if err != nil {
+		return false, err
+	}
+
+	_, err = ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(server)
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
+}
+
+func syncServerTools(server *Server) error {
+	oldTools := server.Tools
+	if oldTools == nil {
+		oldTools = []*Tool{}
 	}
 
 	tools, err := mcp.GetServerTools(server.Owner, server.Name, server.Url, server.Token)
 	if err != nil {
-		return
+		return err
 	}
 
 	var newTools []*Tool
 	for _, tool := range tools {
-		oldToolIndex := slices.IndexFunc(server.Tools, func(oldTool *Tool) bool {
+		oldToolIndex := slices.IndexFunc(oldTools, func(oldTool *Tool) bool {
 			return oldTool.Name == tool.Name
 		})
 
 		isAllowed := true
 		if oldToolIndex != -1 {
-			isAllowed = server.Tools[oldToolIndex].IsAllowed
+			isAllowed = oldTools[oldToolIndex].IsAllowed
 		}
 
 		newTool := Tool{
@@ -118,6 +155,7 @@ func syncServerTools(server *Server) {
 	}
 
 	server.Tools = newTools
+	return nil
 }
 
 func AddServer(server *Server) (bool, error) {

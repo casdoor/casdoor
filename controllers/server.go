@@ -110,6 +110,28 @@ func (c *ApiController) UpdateServer() {
 	c.ServeJSON()
 }
 
+// SyncMcpTool
+// @Title SyncMcpTool
+// @Tag Server API
+// @Description sync MCP tools for a server and return sync errors directly
+// @Param   id     query    string  true        "The id ( owner/name ) of the server"
+// @Param   body    body   object.Server  true        "The details of the server"
+// @Success 200 {object} controllers.Response The Response object
+// @router /sync-mcp-tool [post]
+func (c *ApiController) SyncMcpTool() {
+	id := c.Ctx.Input.Query("id")
+
+	var server object.Server
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, &server)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	c.Data["json"] = wrapActionResponse(object.SyncMcpTool(id, &server))
+	c.ServeJSON()
+}
+
 // AddServer
 // @Title AddServer
 // @Tag Server API
