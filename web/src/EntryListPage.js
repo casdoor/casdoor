@@ -18,12 +18,22 @@ import {Button, Popover, Table} from "antd";
 import moment from "moment";
 import * as Setting from "./Setting";
 import * as EntryBackend from "./backend/EntryBackend";
+import * as ProviderBackend from "./backend/ProviderBackend";
 import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
 import PopconfirmModal from "./common/modal/PopconfirmModal";
-import Editor from "./common/Editor";
+import EntryMessageViewer from "./EntryMessageViewer";
 
 class EntryListPage extends BaseListPage {
+  constructor(props) {
+    super(props);
+    this.state = {
+      ...this.state,
+      providerMap: {},
+      providerOwner: "",
+    };
+  }
+
   newEntry() {
     const randomHex = Math.random().toString(16).slice(2, 18);
     const owner = Setting.getRequestOrganization(this.props.account);
@@ -77,31 +87,75 @@ class EntryListPage extends BaseListPage {
       });
   }
 
+  getProviders(owner) {
+    if (!owner) {
+      return Promise.resolve({});
+    }
+
+    if (this.state.providerOwner === owner) {
+      return Promise.resolve(this.state.providerMap);
+    }
+
+    return ProviderBackend.getProviders(owner)
+      .then((res) => {
+        if (res.status !== "ok") {
+          return {};
+        }
+
+        const providerMap = {};
+        (res.data || []).forEach((provider) => {
+          if (provider?.category === "Log" && provider?.name) {
+            providerMap[provider.name] = provider;
+          }
+        });
+
+        this.setState({
+          providerMap,
+          providerOwner: owner,
+        });
+
+        return providerMap;
+      })
+      .catch(() => {
+        this.setState({
+          providerMap: {},
+          providerOwner: "",
+        });
+        return {};
+      });
+  }
+
   fetch = (params = {}) => {
     const field = params.searchedColumn, value = params.searchText;
     const sortField = params.sortField, sortOrder = params.sortOrder;
+    const owner = Setting.getRequestOrganization(this.props.account);
     if (!params.pagination) {
       params.pagination = {current: 1, pageSize: 10};
     }
 
     this.setState({loading: true});
-    EntryBackend.getEntries(Setting.getRequestOrganization(this.props.account), params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
-      .then((res) => {
-        this.setState({loading: false});
-        if (res.status === "ok") {
-          this.setState({
-            data: res.data,
-            pagination: {
-              ...params.pagination,
-              total: res.data2,
-            },
-            searchText: params.searchText,
-            searchedColumn: params.searchedColumn,
-          });
-        } else {
-          Setting.showMessage("error", `${i18next.t("general:Failed to get")}: ${res.msg}`);
-        }
-      });
+    Promise.all([
+      EntryBackend.getEntries(owner, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder),
+      this.getProviders(owner),
+    ]).then(([res]) => {
+      this.setState({loading: false});
+      if (res.status === "ok") {
+        this.setState({
+          data: res.data,
+          pagination: {
+            ...params.pagination,
+            total: res.data2,
+          },
+          searchText: params.searchText,
+          searchedColumn: params.searchedColumn,
+        });
+      } else {
+        Setting.showMessage("error", `${i18next.t("general:Failed to get")}: ${res.msg}`);
+      }
+    }).catch(error => {
+      this.setState({loading: false});
+      Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
+    });
   };
 
   renderTable(entries) {
@@ -197,14 +251,26 @@ class EntryListPage extends BaseListPage {
         key: "message",
         sorter: true,
         ...this.getColumnSearchProps("message"),
-        render: (text) => {
+        render: (text, record) => {
           if (!text) {
             return null;
           }
           return (
-            <Popover placement="topRight" content={() => (
-              <Editor value={text} readOnly={true} />
-            )} title="" trigger="hover">
+            <Popover
+              placement="topRight"
+              content={(
+                <div style={{width: Setting.isMobile() ? Math.min(window.innerWidth - 40, 720) : 720}}>
+                  <EntryMessageViewer
+                    entry={record}
+                    provider={this.state.providerMap[record.provider] ?? null}
+                    labelSpan={24}
+                    contentSpan={24}
+                  />
+                </div>
+              )}
+              title=""
+              trigger="hover"
+            >
               {Setting.getShortText(text, 60)}
             </Popover>
           );
