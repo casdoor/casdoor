@@ -1290,6 +1290,67 @@ func GetWechatMiniProgramToken(application *Application, code string, host strin
 	return token, nil, nil
 }
 
+// parseAndValidateSubjectToken validates a subject_token for RFC 8693 token exchange.
+// It uses the ISSUING application's certificate (not the requesting client's) and
+// enforces audience binding to prevent cross-client token reuse.
+func parseAndValidateSubjectToken(subjectToken string, requestingClientId string) (owner, name, scope string, tokenErr *TokenError, err error) {
+	unverifiedToken, err := ParseJwtTokenWithoutValidation(subjectToken)
+	if err != nil {
+		return "", "", "", &TokenError{Error: InvalidGrant, ErrorDescription: fmt.Sprintf("invalid subject_token: %s", err.Error())}, nil
+	}
+
+	unverifiedClaims, ok := unverifiedToken.Claims.(*Claims)
+	if !ok || unverifiedClaims.Azp == "" {
+		return "", "", "", &TokenError{Error: InvalidGrant, ErrorDescription: "subject_token is missing the azp claim"}, nil
+	}
+
+	issuingApp, err := GetApplicationByClientId(unverifiedClaims.Azp)
+	if err != nil {
+		return "", "", "", nil, err
+	}
+	if issuingApp == nil {
+		return "", "", "", &TokenError{Error: InvalidGrant, ErrorDescription: fmt.Sprintf("subject_token issuing application not found: %s", unverifiedClaims.Azp)}, nil
+	}
+
+	cert, err := getCertByApplication(issuingApp)
+	if err != nil {
+		return "", "", "", nil, err
+	}
+	if cert == nil {
+		return "", "", "", &TokenError{Error: EndpointError, ErrorDescription: fmt.Sprintf("cert for issuing application %s cannot be found", unverifiedClaims.Azp)}, nil
+	}
+
+	if issuingApp.TokenFormat == "JWT-Standard" {
+		standardClaims, err := ParseStandardJwtToken(subjectToken, cert)
+		if err != nil {
+			return "", "", "", &TokenError{Error: InvalidGrant, ErrorDescription: fmt.Sprintf("invalid subject_token: %s", err.Error())}, nil
+		}
+		return standardClaims.Owner, standardClaims.Name, standardClaims.Scope, nil, nil
+	}
+
+	claims, err := ParseJwtToken(subjectToken, cert)
+	if err != nil {
+		return "", "", "", &TokenError{Error: InvalidGrant, ErrorDescription: fmt.Sprintf("invalid subject_token: %s", err.Error())}, nil
+	}
+
+	// Audience binding: requesting client must be the issuer itself or appear in token's aud.
+	// Prevents an attacker from exchanging App A's token to obtain an App B token (RFC 8693 §2.1).
+	if issuingApp.ClientId != requestingClientId {
+		audienceMatched := false
+		for _, aud := range claims.Audience {
+			if aud == requestingClientId {
+				audienceMatched = true
+				break
+			}
+		}
+		if !audienceMatched {
+			return "", "", "", &TokenError{Error: InvalidGrant, ErrorDescription: fmt.Sprintf("subject_token audience does not include the requesting client '%s'", requestingClientId)}, nil
+		}
+	}
+
+	return claims.Owner, claims.Name, claims.Scope, nil, nil
+}
+
 // GetTokenExchangeToken
 // Token Exchange Grant (RFC 8693)
 // Exchanges a subject token for a new token with different audience or scope
@@ -1338,42 +1399,12 @@ func GetTokenExchangeToken(application *Application, clientSecret string, subjec
 		}, nil
 	}
 
-	// Get certificate for token validation
-	cert, err := getCertByApplication(application)
+	subjectOwner, subjectName, subjectScope, tokenError, err := parseAndValidateSubjectToken(subjectToken, application.ClientId)
 	if err != nil {
 		return nil, nil, err
 	}
-	if cert == nil {
-		return nil, &TokenError{
-			Error:            EndpointError,
-			ErrorDescription: fmt.Sprintf("cert: %s cannot be found", application.Cert),
-		}, nil
-	}
-
-	// Parse and validate the subject token
-	var subjectOwner, subjectName, subjectScope string
-	if application.TokenFormat == "JWT-Standard" {
-		standardClaims, err := ParseStandardJwtToken(subjectToken, cert)
-		if err != nil {
-			return nil, &TokenError{
-				Error:            InvalidGrant,
-				ErrorDescription: fmt.Sprintf("invalid subject_token: %s", err.Error()),
-			}, nil
-		}
-		subjectOwner = standardClaims.Owner
-		subjectName = standardClaims.Name
-		subjectScope = standardClaims.Scope
-	} else {
-		claims, err := ParseJwtToken(subjectToken, cert)
-		if err != nil {
-			return nil, &TokenError{
-				Error:            InvalidGrant,
-				ErrorDescription: fmt.Sprintf("invalid subject_token: %s", err.Error()),
-			}, nil
-		}
-		subjectOwner = claims.Owner
-		subjectName = claims.Name
-		subjectScope = claims.Scope
+	if tokenError != nil {
+		return nil, tokenError, nil
 	}
 
 	// Get the user from the subject token
