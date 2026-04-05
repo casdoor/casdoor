@@ -22,11 +22,9 @@ import (
 	"fmt"
 	"net/url"
 
-
+	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/idp"
 	"github.com/mitchellh/mapstructure"
-
-	"github.com/casdoor/casdoor/i18n"
 	saml2 "github.com/russellhaering/gosaml2"
 	dsig "github.com/russellhaering/goxmldsig"
 )
@@ -180,4 +178,3 @@ func buildSpCertificateStore(provider *Provider) (certStore dsig.MemoryX509Certi
 	}
 	return certStore, nil
 }
-
