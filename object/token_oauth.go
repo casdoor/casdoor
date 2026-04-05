@@ -310,11 +310,11 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 	case "client_credentials": // Client Credentials Grant
 		token, tokenError, err = GetClientCredentialsToken(application, clientSecret, scope, host)
 	case "token", "id_token": // Implicit Grant
-		token, tokenError, err = GetImplicitToken(application, username, scope, nonce, host)
+		token, tokenError, err = GetImplicitToken(application, username, password, scope, nonce, host)
 	case "urn:ietf:params:oauth:grant-type:jwt-bearer":
 		token, tokenError, err = GetJwtBearerToken(application, assertion, scope, nonce, host)
 	case "urn:ietf:params:oauth:grant-type:device_code":
-		token, tokenError, err = GetImplicitToken(application, username, scope, nonce, host)
+		token, tokenError, err = GetImplicitToken(application, username, password, scope, nonce, host)
 	case "urn:ietf:params:oauth:grant-type:token-exchange": // Token Exchange Grant (RFC 8693)
 		token, tokenError, err = GetTokenExchangeToken(application, clientSecret, subjectToken, subjectTokenType, audience, scope, host)
 	case "refresh_token":
@@ -970,9 +970,9 @@ func GetClientCredentialsToken(application *Application, clientSecret string, sc
 	return token, nil, nil
 }
 
-// GetImplicitToken
-// Implicit flow
-func GetImplicitToken(application *Application, username string, scope string, nonce string, host string) (*Token, *TokenError, error) {
+// mintImplicitToken mints a token for an already-authenticated user.
+// Callers must verify user identity before calling this function.
+func mintImplicitToken(application *Application, username string, scope string, nonce string, host string) (*Token, *TokenError, error) {
 	expandedScope, ok := IsScopeValidAndExpand(scope, application)
 	if !ok {
 		return nil, &TokenError{
@@ -1006,6 +1006,41 @@ func GetImplicitToken(application *Application, username string, scope string, n
 	return token, nil, nil
 }
 
+// GetImplicitToken
+// Implicit flow - requires password verification before minting a token
+func GetImplicitToken(application *Application, username string, password string, scope string, nonce string, host string) (*Token, *TokenError, error) {
+	user, err := GetUserByFields(application.Organization, username)
+	if err != nil {
+		return nil, nil, err
+	}
+	if user == nil {
+		return nil, &TokenError{
+			Error:            InvalidGrant,
+			ErrorDescription: "the user does not exist",
+		}, nil
+	}
+
+	if user.Ldap != "" {
+		err = CheckLdapUserPassword(user, password, "en")
+	} else {
+		if user.Password == "" {
+			return nil, &TokenError{
+				Error:            InvalidGrant,
+				ErrorDescription: "OAuth users cannot use implicit grant type, please use authorization code flow",
+			}, nil
+		}
+		err = CheckPassword(user, password, "en")
+	}
+	if err != nil {
+		return nil, &TokenError{
+			Error:            InvalidGrant,
+			ErrorDescription: fmt.Sprintf("invalid username or password: %s", err.Error()),
+		}, nil
+	}
+
+	return mintImplicitToken(application, username, scope, nonce, host)
+}
+
 // GetJwtBearerToken
 // RFC 7523
 func GetJwtBearerToken(application *Application, assertion string, scope string, nonce string, host string) (*Token, *TokenError, error) {
@@ -1024,7 +1059,8 @@ func GetJwtBearerToken(application *Application, assertion string, scope string,
 		}, nil
 	}
 
-	return GetImplicitToken(application, claims.Subject, scope, nonce, host)
+	// JWT assertion has already been validated above; skip password re-verification
+	return mintImplicitToken(application, claims.Subject, scope, nonce, host)
 }
 
 func ValidateJwtAssertion(clientAssertion string, application *Application, host string) (bool, *Claims, error) {
