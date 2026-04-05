@@ -36,7 +36,7 @@ func (c *ApiController) AddOtlpTrace() {
 	}
 	provider, status, err := resolveOpenClawProvider(c.Ctx)
 	if err != nil {
-		responseOtlpError(c.Ctx, status, body, err.Error())
+		responseOtlpError(c.Ctx, status, body, "%s", err.Error())
 		return
 	}
 
@@ -77,7 +77,7 @@ func (c *ApiController) AddOtlpMetrics() {
 	}
 	provider, status, err := resolveOpenClawProvider(c.Ctx)
 	if err != nil {
-		responseOtlpError(c.Ctx, status, body, err.Error())
+		responseOtlpError(c.Ctx, status, body, "%s", err.Error())
 		return
 	}
 
@@ -118,7 +118,7 @@ func (c *ApiController) AddOtlpLogs() {
 	}
 	provider, status, err := resolveOpenClawProvider(c.Ctx)
 	if err != nil {
-		responseOtlpError(c.Ctx, status, body, err.Error())
+		responseOtlpError(c.Ctx, status, body, "%s", err.Error())
 		return
 	}
 
