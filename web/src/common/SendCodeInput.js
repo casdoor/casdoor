@@ -16,6 +16,7 @@ import {Button, Input} from "antd";
 import React from "react";
 import i18next from "i18next";
 import * as UserBackend from "../backend/UserBackend";
+import * as AuthBackend from "../auth/AuthBackend";
 import * as Setting from "../Setting";
 import {SafetyOutlined} from "@ant-design/icons";
 import {CaptchaModal} from "./modal/CaptchaModal";
@@ -71,17 +72,66 @@ export const SendCodeInput = ({value, disabled, captchaValue, useInlineCaptcha, 
   };
 
   const handleSearch = () => {
-    if (!useInlineCaptcha) {
-      setVisible(true);
+    const sendCodeWithoutCaptcha = () => {
+      handleOk("none", "", "");
+    };
+
+    const sendCodeWithCaptcha = () => {
+      if (!useInlineCaptcha) {
+        setVisible(true);
+        return;
+      }
+
+      // client secret is validated in backend
+      if (!captchaValue?.captchaType || !captchaValue?.captchaToken) {
+        Setting.showMessage("error", i18next.t("general:Please complete the captcha correctly"));
+        return;
+      }
+
+      handleOk(captchaValue.captchaType, captchaValue.captchaToken, captchaValue.clientSecret);
+    };
+
+    const checkCaptchaStatusAndSend = () => {
+      if (!onButtonClickArgs?.[3]) {
+        return;
+      }
+      const values = {
+        organization: application?.organization,
+        username: onButtonClickArgs?.[3],
+        application: application?.name,
+      };
+
+      AuthBackend.getCaptchaStatus(values)
+        .then((res) => {
+          if (res.status === "ok" && res.data) {
+            sendCodeWithCaptcha();
+            return;
+          }
+
+          sendCodeWithoutCaptcha();
+        })
+        .catch(() => {
+          sendCodeWithoutCaptcha();
+        });
+    };
+
+    const captchaRule = Setting.getCaptchaRule(application);
+    if (captchaRule === Setting.CaptchaRule.Never) {
+      sendCodeWithoutCaptcha();
       return;
     }
 
-    // client secret is validated in backend 
-    if (!captchaValue?.captchaType || !captchaValue?.captchaToken) {
-      Setting.showMessage("error", i18next.t("general:Please complete the captcha correctly"));
+    if (captchaRule === Setting.CaptchaRule.Always) {
+      sendCodeWithCaptcha();
       return;
     }
-    handleOk(captchaValue.captchaType, captchaValue.captchaToken, captchaValue.clientSecret);
+
+    if (captchaRule === Setting.CaptchaRule.Dynamic || captchaRule === Setting.CaptchaRule.InternetOnly) {
+      checkCaptchaStatusAndSend();
+      return;
+    }
+
+    sendCodeWithoutCaptcha();
   };
 
   return (

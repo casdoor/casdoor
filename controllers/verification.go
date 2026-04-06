@@ -252,6 +252,10 @@ func (c *ApiController) SendVerificationCode() {
 		return
 	}
 
+	if vform.CaptchaToken != "" {
+		enableCaptcha = true
+	}
+
 	// Only verify CAPTCHA if it should be enabled
 	if enableCaptcha {
 		captchaProvider, err := object.GetCaptchaProviderByApplication(vform.ApplicationId, "false", c.GetAcceptLanguage())

@@ -1489,6 +1489,43 @@ function isSigninMethodEnabled(application, signinMethod) {
   }
 }
 
+export const CaptchaRule = {
+  Always: "Always",
+  Never: "Never",
+  Dynamic: "Dynamic",
+  InternetOnly: "Internet-Only",
+};
+
+export function getCaptchaProviderItems(application) {
+  const providers = application?.providers;
+  if (!providers) {
+    return [];
+  }
+
+  return providers.filter(providerItem => providerItem?.provider?.category === "Captcha");
+}
+
+export function getCaptchaRule(application) {
+  const captchaProviderItems = getCaptchaProviderItems(application);
+  if (captchaProviderItems.some(providerItem => providerItem.rule === CaptchaRule.Always)) {
+    return CaptchaRule.Always;
+  } else if (captchaProviderItems.some(providerItem => providerItem.rule === CaptchaRule.Dynamic)) {
+    return CaptchaRule.Dynamic;
+  } else if (captchaProviderItems.some(providerItem => providerItem.rule === CaptchaRule.InternetOnly)) {
+    return CaptchaRule.InternetOnly;
+  }
+
+  return CaptchaRule.Never;
+}
+
+export function isInlineCaptchaEnabled(application) {
+  return application?.signinItems?.some(signinItem => signinItem.name === "Captcha" && signinItem.rule === "inline") || false;
+}
+
+export function isCaptchaEnabled(application) {
+  return getCaptchaRule(application) !== CaptchaRule.Never;
+}
+
 export function isPasswordEnabled(application) {
   return isSigninMethodEnabled(application, "Password");
 }
