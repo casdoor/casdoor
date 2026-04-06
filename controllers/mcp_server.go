@@ -32,7 +32,7 @@ import (
 // @Param   owner    path    string  true        "The owner name of the server"
 // @Param   name     path    string  true        "The name of the server"
 // @Success 200 {object} mcp.McpResponse The Response object
-// @router /server/:owner/:name [post]
+// @router /server/:owner/:name [get,post]
 func (c *ApiController) ProxyServer() {
 	owner := c.Ctx.Input.Param(":owner")
 	name := c.Ctx.Input.Param(":name")
