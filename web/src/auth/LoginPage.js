@@ -32,7 +32,7 @@ import i18next from "i18next";
 import CustomGithubCorner from "../common/CustomGithubCorner";
 import {SendCodeInput} from "../common/SendCodeInput";
 import LanguageSelect from "../common/select/LanguageSelect";
-import {CaptchaModal, CaptchaRule} from "../common/modal/CaptchaModal";
+import {CaptchaModal} from "../common/modal/CaptchaModal";
 import RedirectForm from "../common/RedirectForm";
 import {RequiredMfa} from "./mfa/MfaAuthVerifyForm";
 import {GoogleOneTapLoginVirtualButton} from "./GoogleLoginButton";
@@ -89,10 +89,6 @@ class LoginPage extends React.Component {
     this.captchaRef.current?.loadCaptcha?.();
   }
 
-  isInlineCaptchaEnabled(application = this.getApplicationObj()) {
-    return application?.signinItems?.some(signinItem => signinItem.name === "Captcha" && signinItem.rule === "inline");
-  }
-
   componentDidMount() {
     if (this.getApplicationObj() === undefined) {
       if (this.state.type === "login" || this.state.type === "saml") {
@@ -140,21 +136,6 @@ class LoginPage extends React.Component {
           values["application"] = this.props.application.name;
           this.login(values);
         }
-      }
-    }
-  }
-
-  getCaptchaRule(application) {
-    const captchaProviderItems = this.getCaptchaProviderItems(application);
-    if (captchaProviderItems) {
-      if (captchaProviderItems.some(providerItem => providerItem.rule === "Always")) {
-        return CaptchaRule.Always;
-      } else if (captchaProviderItems.some(providerItem => providerItem.rule === "Dynamic")) {
-        return CaptchaRule.Dynamic;
-      } else if (captchaProviderItems.some(providerItem => providerItem.rule === "Internet-Only")) {
-        return CaptchaRule.InternetOnly;
-      } else {
-        return CaptchaRule.Never;
       }
     }
   }
@@ -459,20 +440,20 @@ class LoginPage extends React.Component {
       } else {
         values["password"] = passwordCipher;
       }
-      const captchaRule = this.getCaptchaRule(this.getApplicationObj());
+      const captchaRule = Setting.getCaptchaRule(this.getApplicationObj());
       const application = this.getApplicationObj();
-      const inlineCaptchaEnabled = this.isInlineCaptchaEnabled(application);
+      const inlineCaptchaEnabled = Setting.isInlineCaptchaEnabled(application);
       if (!inlineCaptchaEnabled) {
-        if (captchaRule === CaptchaRule.Always) {
+        if (captchaRule === Setting.CaptchaRule.Always) {
           this.setState({
             openCaptchaModal: true,
             values: values,
           });
           return;
-        } else if (captchaRule === CaptchaRule.Dynamic) {
+        } else if (captchaRule === Setting.CaptchaRule.Dynamic) {
           this.checkCaptchaStatus(values);
           return;
-        } else if (captchaRule === CaptchaRule.InternetOnly) {
+        } else if (captchaRule === Setting.CaptchaRule.InternetOnly) {
           this.checkCaptchaStatus(values);
           return;
         }
@@ -489,7 +470,7 @@ class LoginPage extends React.Component {
     // here we are supposed to determine whether Casdoor is working as an OAuth server or CAS server
     values["language"] = this.state.userLang ?? "";
     const usedCaptcha = this.state.captchaValues !== undefined;
-    const inlineCaptchaEnabled = this.isInlineCaptchaEnabled();
+    const inlineCaptchaEnabled = Setting.isInlineCaptchaEnabled(this.getApplicationObj());
     const shouldRefreshCaptcha = usedCaptcha && inlineCaptchaEnabled && !this.state.loginMethod?.includes("verificationCode");
     if (this.state.type === "cas") {
       // CAS
@@ -1108,40 +1089,24 @@ class LoginPage extends React.Component {
     }
   }
 
-  getCaptchaProviderItems(application) {
-    const providers = application?.providers;
-
-    if (providers === undefined || providers === null) {
-      return null;
-    }
-
-    return providers.filter(providerItem => {
-      if (providerItem.provider === undefined || providerItem.provider === null) {
-        return false;
-      }
-
-      return providerItem.provider.category === "Captcha";
-    });
-  }
-
   renderCaptchaModal(application, noModal) {
-    if (this.getCaptchaRule(this.getApplicationObj()) === CaptchaRule.Never) {
+    if (Setting.getCaptchaRule(this.getApplicationObj()) === Setting.CaptchaRule.Never) {
       return null;
     }
-    const captchaProviderItems = this.getCaptchaProviderItems(application);
+    const captchaProviderItems = Setting.getCaptchaProviderItems(application);
     const alwaysProviderItems = captchaProviderItems.filter(providerItem => providerItem.rule === "Always");
     const dynamicProviderItems = captchaProviderItems.filter(providerItem => providerItem.rule === "Dynamic");
     const internetOnlyProviderItems = captchaProviderItems.filter(providerItem => providerItem.rule === "Internet-Only");
 
     // Select provider based on the active captcha rule, not fixed priority
-    const captchaRule = this.getCaptchaRule(this.getApplicationObj());
+    const captchaRule = Setting.getCaptchaRule(this.getApplicationObj());
     let provider = null;
 
-    if (captchaRule === CaptchaRule.Always && alwaysProviderItems.length > 0) {
+    if (captchaRule === Setting.CaptchaRule.Always && alwaysProviderItems.length > 0) {
       provider = alwaysProviderItems[0].provider;
-    } else if (captchaRule === CaptchaRule.Dynamic && dynamicProviderItems.length > 0) {
+    } else if (captchaRule === Setting.CaptchaRule.Dynamic && dynamicProviderItems.length > 0) {
       provider = dynamicProviderItems[0].provider;
-    } else if (captchaRule === CaptchaRule.InternetOnly && internetOnlyProviderItems.length > 0) {
+    } else if (captchaRule === Setting.CaptchaRule.InternetOnly && internetOnlyProviderItems.length > 0) {
       provider = internetOnlyProviderItems[0].provider;
     }
 
@@ -1368,10 +1333,10 @@ class LoginPage extends React.Component {
               <SendCodeInput
                 disabled={this.state.username?.length === 0 || !this.state.validEmailOrPhone}
                 method={"login"}
-                onButtonClickArgs={[this.state.username, this.state.validEmail ? "email" : "phone", Setting.getApplicationName(application)]}
+                onButtonClickArgs={[this.state.username, this.state.validEmail ? "email" : "phone", Setting.getApplicationName(application), this.state.username]}
                 application={application}
                 captchaValue={this.state.captchaValues}
-                useInlineCaptcha={this.isInlineCaptchaEnabled(application)}
+                useInlineCaptcha={Setting.isInlineCaptchaEnabled(application)}
                 refreshCaptcha={this.refreshInlineCaptcha}
               />
             </Form.Item>
@@ -1400,7 +1365,7 @@ class LoginPage extends React.Component {
               onButtonClickArgs={[this.state.username, this.state.validEmail ? "email" : "phone", Setting.getApplicationName(application)]}
               application={application}
               captchaValue={this.state.captchaValues}
-              useInlineCaptcha={this.isInlineCaptchaEnabled(application)}
+              useInlineCaptcha={Setting.isInlineCaptchaEnabled(application)}
               refreshCaptcha={this.refreshInlineCaptcha}
             />
           </Form.Item>
