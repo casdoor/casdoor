@@ -318,10 +318,12 @@ func GetGroupUserCount(groupId string, field, value string) (int64, error) {
 		return int64(len(names)), nil
 	} else {
 		tableNamePrefix := conf.GetConfigString("tableNamePrefix")
-		return ormer.Engine.Table(tableNamePrefix+"user").
-			Where("owner = ?", owner).In("name", names).
-			And(fmt.Sprintf("user.%s like ?", util.CamelToSnakeCase(field)), "%"+value+"%").
-			Count()
+		session := ormer.Engine.Table(tableNamePrefix+"user").
+			Where("owner = ?", owner).In("name", names)
+		if util.FilterField(field) {
+			session = session.And(fmt.Sprintf("user.%s like ?", util.CamelToSnakeCase(field)), "%"+value+"%")
+		}
+		return session.Count()
 	}
 }
 
@@ -345,7 +347,7 @@ func GetPaginationGroupUsers(groupId string, offset, limit int, field, value, so
 		session.Limit(limit, offset)
 	}
 
-	if field != "" && value != "" {
+	if field != "" && value != "" && util.FilterField(field) {
 		session = session.And(fmt.Sprintf("%s.%s like ?", prefixedUserTable, util.CamelToSnakeCase(field)), "%"+value+"%")
 	}
 

@@ -25,17 +25,19 @@ import (
 )
 
 var (
-	rePhone             *regexp.Regexp
-	ReWhiteSpace        *regexp.Regexp
-	ReFieldWhiteList    *regexp.Regexp
-	ReUserName          *regexp.Regexp
-	ReUserNameWithEmail *regexp.Regexp
+	rePhone                    *regexp.Regexp
+	ReWhiteSpace               *regexp.Regexp
+	ReFieldWhiteList           *regexp.Regexp
+	ReFieldWhiteListIdentifier *regexp.Regexp
+	ReUserName                 *regexp.Regexp
+	ReUserNameWithEmail        *regexp.Regexp
 )
 
 func init() {
 	rePhone, _ = regexp.Compile(`(\d{3})\d*(\d{4})`)
 	ReWhiteSpace, _ = regexp.Compile(`\s`)
 	ReFieldWhiteList, _ = regexp.Compile(`^[A-Za-z0-9]+$`)
+	ReFieldWhiteListIdentifier, _ = regexp.Compile(`^[A-Za-z][A-Za-z0-9_]*$`)
 	ReUserName, _ = regexp.Compile("^[a-zA-Z0-9]+([-._][a-zA-Z0-9]+)*$")
 	ReUserNameWithEmail, _ = regexp.Compile(`^([a-zA-Z0-9]+([-._][a-zA-Z0-9]+)*)|([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$`) // Add support for email formats
 }
@@ -102,6 +104,13 @@ func GetCountryCode(prefix string, phone string) (string, error) {
 
 func FilterField(field string) bool {
 	return ReFieldWhiteList.MatchString(field)
+}
+
+// FilterSQLIdentifier validates that field is a safe SQL column identifier.
+// It allows letters, digits, and underscores (e.g. "id_card", "created_time"),
+// and requires the name to start with a letter to block numeric/special-char attacks.
+func FilterSQLIdentifier(field string) bool {
+	return ReFieldWhiteListIdentifier.MatchString(field)
 }
 
 func IsValidOrigin(origin string) (bool, error) {

@@ -37,6 +37,10 @@ func GetUserByField(organizationName string, field string, value string) (*User,
 		return nil, nil
 	}
 
+	if !util.FilterSQLIdentifier(field) {
+		return nil, nil
+	}
+
 	user := User{Owner: organizationName}
 	existed, err := ormer.Engine.Where(fmt.Sprintf("%s=?", strings.ToLower(field)), value).Get(&user)
 	if err != nil {

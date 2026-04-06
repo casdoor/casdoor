@@ -21,6 +21,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/casdoor/casdoor/util"
 	"github.com/go-sql-driver/mysql"
 	"golang.org/x/crypto/ssh"
 )
@@ -122,6 +123,10 @@ func (p *DatabaseSyncerProvider) AddUser(user *OriginalUser) (bool, error) {
 // UpdateUser updates an existing user in the database
 func (p *DatabaseSyncerProvider) UpdateUser(user *OriginalUser) (bool, error) {
 	key := p.Syncer.getTargetTablePrimaryKey()
+	if !util.FilterSQLIdentifier(key) {
+		return false, fmt.Errorf("object.UpdateUser: invalid primary key column name: %s", key)
+	}
+
 	m := p.Syncer.getMapFromOriginalUser(user)
 	pkValue := m[key]
 	delete(m, key)
