@@ -92,9 +92,13 @@ p, *, *, POST, /api/v1/logs, *, *
 p, *, *, POST, /api/reset-email-or-phone, *, *
 p, *, *, POST, /api/upload-resource, *, *
 p, *, *, GET, /.well-known/openid-configuration, *, *
+p, *, *, GET, /.well-known/oauth-authorization-server, *, *
+p, *, *, GET, /.well-known/oauth-protected-resource, *, *
 p, *, *, GET, /.well-known/webfinger, *, *
 p, *, *, *, /.well-known/jwks, *, *
 p, *, *, GET, /.well-known/:application/openid-configuration, *, *
+p, *, *, GET, /.well-known/:application/oauth-authorization-server, *, *
+p, *, *, GET, /.well-known/:application/oauth-protected-resource, *, *
 p, *, *, GET, /.well-known/:application/webfinger, *, *
 p, *, *, *, /.well-known/:application/jwks, *, *
 p, *, *, GET, /api/get-saml-login, *, *
