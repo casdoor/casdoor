@@ -20,16 +20,38 @@ import i18next from "i18next";
 export function renderLogProviderFields(provider, updateProviderField) {
   if (provider.type === "Agent" && provider.subType === "OpenClaw") {
     return (
-      <Row style={{marginTop: "20px"}} >
-        <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-          {Setting.getLabel(i18next.t("provider:Host"), i18next.t("provider:Host - Tooltip"))} :
-        </Col>
-        <Col span={22} >
-          <Input value={provider.host} placeholder="e.g. 192.168.1.100" onChange={e => {
-            updateProviderField("host", e.target.value);
-          }} />
-        </Col>
-      </Row>
+      <React.Fragment>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("provider:Host"), i18next.t("provider:Host - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Input value={provider.host} onChange={e => {
+              updateProviderField("host", e.target.value);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("provider:Agent ID"), i18next.t("provider:Agent ID - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Input value={provider.title} onChange={e => {
+              updateProviderField("title", e.target.value);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {i18next.t("general:Path")} :
+          </Col>
+          <Col span={22} >
+            <Input value={provider.endpoint} onChange={e => {
+              updateProviderField("endpoint", e.target.value);
+            }} />
+          </Col>
+        </Row>
+      </React.Fragment>
     );
   }
   return null;

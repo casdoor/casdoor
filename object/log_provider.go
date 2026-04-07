@@ -45,8 +45,19 @@ func InitLogProviders() {
 		case "Agent":
 			if p.SubType == "OpenClaw" {
 				startOpenClawProvider(p)
+				startOpenClawTranscriptSync(p)
 			}
 		}
+	}
+}
+
+func stopCollector(id string) {
+	runningCollectorsMu.Lock()
+	defer runningCollectorsMu.Unlock()
+
+	if existing, ok := runningCollectors[id]; ok {
+		_ = existing.Stop()
+		delete(runningCollectors, id)
 	}
 }
 
@@ -54,15 +65,8 @@ func InitLogProviders() {
 // for the given provider. If a collector for the same provider is already
 // running it is stopped first.
 func startLogCollector(provider *Provider) {
-	runningCollectorsMu.Lock()
-	defer runningCollectorsMu.Unlock()
-
 	id := provider.GetId()
-
-	if existing, ok := runningCollectors[id]; ok {
-		_ = existing.Stop()
-		delete(runningCollectors, id)
-	}
+	stopCollector(id)
 
 	lp, err := log.GetLogProvider(provider.Type, provider.Host, provider.Port, provider.Title)
 	if err != nil {
@@ -93,21 +97,16 @@ func startLogCollector(provider *Provider) {
 		return
 	}
 
+	runningCollectorsMu.Lock()
+	defer runningCollectorsMu.Unlock()
 	runningCollectors[id] = lp
 }
 
 // startOpenClawProvider registers an OpenClaw provider in runningCollectors so
 // that incoming OTLP requests can be routed to it by IP.
 func startOpenClawProvider(provider *Provider) {
-	runningCollectorsMu.Lock()
-	defer runningCollectorsMu.Unlock()
-
 	id := provider.GetId()
-
-	if existing, ok := runningCollectors[id]; ok {
-		_ = existing.Stop()
-		delete(runningCollectors, id)
-	}
+	stopCollector(id)
 
 	lp, err := GetLogProviderFromProvider(provider)
 	if err != nil {
@@ -115,7 +114,42 @@ func startOpenClawProvider(provider *Provider) {
 		return
 	}
 
+	runningCollectorsMu.Lock()
+	defer runningCollectorsMu.Unlock()
 	runningCollectors[id] = lp
+}
+
+func refreshLogProviderRuntime(oldID string, provider *Provider) {
+	if provider == nil {
+		if oldID != "" {
+			stopLogProviderRuntime(oldID)
+		}
+		return
+	}
+	if oldID != "" {
+		stopLogProviderRuntime(oldID)
+	}
+	if provider.Category != "Log" {
+		return
+	}
+
+	switch provider.Type {
+	case "System Log", "SELinux Log":
+		startLogCollector(provider)
+	case "Agent":
+		if provider.SubType == "OpenClaw" {
+			startOpenClawProvider(provider)
+			startOpenClawTranscriptSync(provider)
+		}
+	}
+}
+
+func stopLogProviderRuntime(providerID string) {
+	if providerID == "" {
+		return
+	}
+	stopCollector(providerID)
+	stopOpenClawTranscriptSync(providerID)
 }
 
 // GetOpenClawProviderByIP returns the running OpenClawProvider whose Host field
