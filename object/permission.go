@@ -120,18 +120,6 @@ func checkPermissionValid(permission *Permission) error {
 		return nil
 	}
 
-	groupingPolicies, err := getGroupingPolicies(permission)
-	if err != nil {
-		return err
-	}
-
-	if len(groupingPolicies) > 0 {
-		_, err = enforcer.AddGroupingPolicies(groupingPolicies)
-		if err != nil {
-			return err
-		}
-	}
-
 	return nil
 }
 
@@ -171,11 +159,6 @@ func UpdatePermission(id string, permission *Permission) (bool, error) {
 	}
 
 	if affected != 0 {
-		err = removeGroupingPolicies(oldPermission)
-		if err != nil {
-			return false, err
-		}
-
 		err = removePolicies(oldPermission)
 		if err != nil {
 			return false, err
@@ -190,11 +173,6 @@ func UpdatePermission(id string, permission *Permission) (bool, error) {
 		// 		}
 		// 	}
 		// }
-
-		err = addGroupingPolicies(permission)
-		if err != nil {
-			return false, err
-		}
 
 		err = addPolicies(permission)
 		if err != nil {
@@ -212,11 +190,6 @@ func AddPermission(permission *Permission) (bool, error) {
 	}
 
 	if affected != 0 {
-		err = addGroupingPolicies(permission)
-		if err != nil {
-			return false, err
-		}
-
 		err = addPolicies(permission)
 		if err != nil {
 			return false, err
@@ -241,11 +214,6 @@ func AddPermissions(permissions []*Permission) (bool, error) {
 	for _, permission := range permissions {
 		// add using for loop
 		if affected != 0 {
-			err = addGroupingPolicies(permission)
-			if err != nil {
-				return false, err
-			}
-
 			err = addPolicies(permission)
 			if err != nil {
 				return false, err
@@ -302,11 +270,6 @@ func DeletePermission(permission *Permission) (bool, error) {
 	}
 
 	if affected {
-		err = removeGroupingPolicies(permission)
-		if err != nil {
-			return false, err
-		}
-
 		err = removePolicies(permission)
 		if err != nil {
 			return false, err

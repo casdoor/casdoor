@@ -98,40 +98,23 @@ func UpdateRole(id string, role *Role) (bool, error) {
 		return false, nil
 	}
 
-	visited := map[string]struct{}{}
-
-	permissions, err := GetPermissionsByRole(id)
-	if err != nil {
-		return false, err
-	}
-
-	for _, permission := range permissions {
-		removeGroupingPolicies(permission)
-		removePolicies(permission)
-		visited[permission.GetId()] = struct{}{}
-	}
-
-	ancestorRoles, err := GetAncestorRoles(id)
-	if err != nil {
-		return false, err
-	}
-
-	for _, r := range ancestorRoles {
-		permissions, err := GetPermissionsByRole(r.GetId())
+	renameRole := name != role.Name
+	oldPermissions := []*Permission{}
+	if renameRole {
+		oldPermissions, err = GetPermissionsByRole(id)
 		if err != nil {
 			return false, err
 		}
 
-		for _, permission := range permissions {
-			permissionId := permission.GetId()
-			if _, ok := visited[permissionId]; !ok {
-				removeGroupingPolicies(permission)
-				visited[permissionId] = struct{}{}
+		for _, permission := range oldPermissions {
+			err = removePolicies(permission)
+			if err != nil {
+				return false, err
 			}
 		}
 	}
 
-	if name != role.Name {
+	if renameRole {
 		err := roleChangeTrigger(name, role.Name)
 		if err != nil {
 			return false, err
@@ -143,47 +126,16 @@ func UpdateRole(id string, role *Role) (bool, error) {
 		return false, err
 	}
 
-	visited = map[string]struct{}{}
-	newRoleID := role.GetId()
-	permissions, err = GetPermissionsByRole(newRoleID)
-	if err != nil {
-		return false, err
-	}
-
-	for _, permission := range permissions {
-		err = addGroupingPolicies(permission)
-		if err != nil {
-			return false, err
-		}
-
-		err = addPolicies(permission)
-		if err != nil {
-			return false, err
-		}
-
-		visited[permission.GetId()] = struct{}{}
-	}
-
-	ancestorRoles, err = GetAncestorRoles(newRoleID)
-	if err != nil {
-		return false, err
-	}
-
-	for _, r := range ancestorRoles {
-		permissions, err := GetPermissionsByRole(r.GetId())
+	if renameRole && affected != 0 {
+		permissions, err := GetPermissionsByRole(role.GetId())
 		if err != nil {
 			return false, err
 		}
 
 		for _, permission := range permissions {
-			permissionId := permission.GetId()
-			if _, ok := visited[permissionId]; !ok {
-				err = addGroupingPolicies(permission)
-				if err != nil {
-					return false, err
-				}
-
-				visited[permissionId] = struct{}{}
+			err = addPolicies(permission)
+			if err != nil {
+				return false, err
 			}
 		}
 	}
