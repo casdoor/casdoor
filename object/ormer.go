@@ -254,7 +254,11 @@ func (a *Ormer) open() error {
 		dataSourceName = a.dataSourceName
 	}
 
-	engine, err := xorm.NewEngine(a.driverName, dataSourceName)
+	driverName := a.driverName
+	if driverName == "sqlite3" {
+		driverName = "sqlite"
+	}
+	engine, err := xorm.NewEngine(driverName, dataSourceName)
 	if err != nil {
 		return err
 	}
@@ -278,7 +282,11 @@ func (a *Ormer) openFromDb(db *sql.DB) error {
 
 	xormDb := core.FromDB(db)
 
-	engine, err := xorm.NewEngineWithDB(a.driverName, dataSourceName, xormDb)
+	driverName := a.driverName
+	if driverName == "sqlite3" {
+		driverName = "sqlite"
+	}
+	engine, err := xorm.NewEngineWithDB(driverName, dataSourceName, xormDb)
 	if err != nil {
 		return err
 	}

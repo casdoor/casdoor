@@ -161,6 +161,9 @@ func (adapter *Adapter) InitAdapter() error {
 		}
 	} else {
 		driverName = adapter.DatabaseType
+		if driverName == "sqlite3" {
+			driverName = "sqlite"
+		}
 		switch driverName {
 		case "mssql":
 			dataSourceName = fmt.Sprintf("sqlserver://%s:%s@%s:%d?database=%s", adapter.User,
@@ -174,7 +177,7 @@ func (adapter *Adapter) InitAdapter() error {
 		case "CockroachDB":
 			dataSourceName = fmt.Sprintf("user=%s password=%s host=%s port=%d sslmode=disable dbname=%s serial_normalization=virtual_sequence",
 				adapter.User, adapter.Password, adapter.Host, adapter.Port, adapter.Database)
-		case "sqlite3":
+		case "sqlite":
 			dataSourceName = fmt.Sprintf("file:%s", adapter.Host)
 		default:
 			return fmt.Errorf("unsupported database type: %s", adapter.DatabaseType)
