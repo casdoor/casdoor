@@ -64,6 +64,53 @@ func (a *SafeAdapter) RemovePolicies(sec string, ptype string, rules [][]string)
 	return err
 }
 
+func (a *SafeAdapter) UpdatePolicy(sec string, ptype string, oldRule []string, newRule []string) error {
+	oldLine := a.buildCasbinRule(ptype, oldRule)
+	newLine := a.buildCasbinRule(ptype, newRule)
+
+	session := a.engine.NewSession()
+	defer session.Close()
+
+	if a.tableName != "" {
+		session = session.Table(a.tableName)
+	}
+
+	_, err := session.
+		Where("ptype = ? AND v0 = ? AND v1 = ? AND v2 = ? AND v3 = ? AND v4 = ? AND v5 = ?",
+			oldLine.Ptype, oldLine.V0, oldLine.V1, oldLine.V2, oldLine.V3, oldLine.V4, oldLine.V5).
+		MustCols("ptype", "v0", "v1", "v2", "v3", "v4", "v5").
+		Update(newLine)
+
+	return err
+}
+
+func (a *SafeAdapter) UpdatePolicies(sec string, ptype string, oldRules [][]string, newRules [][]string) error {
+	_, err := a.engine.Transaction(func(tx *xorm.Session) (interface{}, error) {
+		for i, oldRule := range oldRules {
+			oldLine := a.buildCasbinRule(ptype, oldRule)
+			newLine := a.buildCasbinRule(ptype, newRules[i])
+
+			var session *xorm.Session
+			if a.tableName != "" {
+				session = tx.Table(a.tableName)
+			} else {
+				session = tx
+			}
+
+			_, err := session.
+				Where("ptype = ? AND v0 = ? AND v1 = ? AND v2 = ? AND v3 = ? AND v4 = ? AND v5 = ?",
+					oldLine.Ptype, oldLine.V0, oldLine.V1, oldLine.V2, oldLine.V3, oldLine.V4, oldLine.V5).
+				MustCols("ptype", "v0", "v1", "v2", "v3", "v4", "v5").
+				Update(newLine)
+			if err != nil {
+				return nil, err
+			}
+		}
+		return nil, nil
+	})
+	return err
+}
+
 func (a *SafeAdapter) buildCasbinRule(ptype string, rule []string) *xormadapter.CasbinRule {
 	line := xormadapter.CasbinRule{Ptype: ptype}
 
