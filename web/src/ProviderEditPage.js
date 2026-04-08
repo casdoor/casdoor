@@ -770,6 +770,7 @@ class ProviderEditPage extends React.Component {
                 this.updateProviderField("host", "");
                 this.updateProviderField("port", 0);
                 this.updateProviderField("title", "");
+                this.updateProviderField("state", "Enabled");
               }
               if (defaultType) {
                 if (this.state.nameNotUserEdited) {

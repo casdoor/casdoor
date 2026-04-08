@@ -347,6 +347,9 @@ func writePermissionLog(objOwner, subOwner, subName, method, urlPath string, all
 		if provider.Type == "System Log" {
 			continue
 		}
+		if provider.State == "Disabled" {
+			continue
+		}
 		logProvider, err := object.GetLogProviderFromProvider(provider)
 		if err != nil {
 			continue

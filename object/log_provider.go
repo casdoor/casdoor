@@ -39,6 +39,9 @@ func InitLogProviders() {
 		if p.Category != "Log" {
 			continue
 		}
+		if p.State == "Disabled" {
+			continue
+		}
 		switch p.Type {
 		case "System Log", "SELinux Log":
 			startLogCollector(p)
@@ -132,6 +135,9 @@ func refreshLogProviderRuntime(oldID string, provider *Provider) {
 	if provider.Category != "Log" {
 		return
 	}
+	if provider.State == "Disabled" {
+		return
+	}
 
 	switch provider.Type {
 	case "System Log", "SELinux Log":
@@ -157,7 +163,7 @@ func stopLogProviderRuntime(providerID string) {
 // Returns nil if no matching provider is registered.
 func GetOpenClawProviderByIP(clientIP string) (*log.OpenClawProvider, error) {
 	providers := []*Provider{}
-	err := ormer.Engine.Where("category = ? AND type = ? AND sub_type = ?", "Log", "Agent", "OpenClaw").Find(&providers)
+	err := ormer.Engine.Where("category = ? AND type = ? AND sub_type = ? AND (state = ? OR state = ?)", "Log", "Agent", "OpenClaw", "Enabled", "").Find(&providers)
 	if err != nil {
 		return nil, err
 	}
