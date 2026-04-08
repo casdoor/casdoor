@@ -114,6 +114,17 @@ class ProviderEditPage extends React.Component {
   }
 
   getProvider() {
+    if (this.state.mode === "add" && this.props.location.provider) {
+      const provider = this.props.location.provider;
+      provider.userMapping = provider.userMapping || defaultUserMapping;
+      this.setState({
+        provider: provider,
+        nameNotUserEdited: isDefaultProviderName(provider.name),
+        displayNameNotUserEdited: isDefaultProviderDisplayName(provider.displayName),
+      });
+      return;
+    }
+
     ProviderBackend.getProvider(this.state.owner, this.state.providerName)
       .then((res) => {
         if (res.data === null) {
@@ -1080,13 +1091,18 @@ class ProviderEditPage extends React.Component {
 
   submitProviderEdit(exitAfterSave) {
     const provider = Setting.deepCopy(this.state.provider);
-    ProviderBackend.updateProvider(this.state.owner, this.state.providerName, provider)
+    const isAdd = this.state.mode === "add";
+    const apiCall = isAdd
+      ? ProviderBackend.addProvider(provider)
+      : ProviderBackend.updateProvider(this.state.owner, this.state.providerName, provider);
+    apiCall
       .then((res) => {
         if (res.status === "ok") {
           Setting.showMessage("success", i18next.t("general:Successfully saved"));
           this.setState({
             owner: this.state.provider.owner,
             providerName: this.state.provider.name,
+            mode: "edit",
           });
 
           if (exitAfterSave) {
@@ -1096,7 +1112,9 @@ class ProviderEditPage extends React.Component {
           }
         } else {
           Setting.showMessage("error", `${i18next.t("general:Failed to save")}: ${res.msg}`);
-          this.updateProviderField("name", this.state.providerName);
+          if (!isAdd) {
+            this.updateProviderField("name", this.state.providerName);
+          }
         }
       })
       .catch(error => {
@@ -1105,17 +1123,7 @@ class ProviderEditPage extends React.Component {
   }
 
   deleteProvider() {
-    ProviderBackend.deleteProvider(this.state.provider)
-      .then((res) => {
-        if (res.status === "ok") {
-          this.props.history.push("/providers");
-        } else {
-          Setting.showMessage("error", `${i18next.t("general:Failed to delete")}: ${res.msg}`);
-        }
-      })
-      .catch(error => {
-        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
-      });
+    this.props.history.push("/providers");
   }
 
   render() {
