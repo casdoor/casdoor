@@ -110,8 +110,8 @@ func denyMcpRequest(ctx *context.Context) {
 }
 
 func getUsernameByClientIdSecret(ctx *context.Context) (string, error) {
-	clientId, clientSecret, ok := ctx.Request.BasicAuth()
-	if !ok {
+	clientId, clientSecret, fromBasicAuth := ctx.Request.BasicAuth()
+	if !fromBasicAuth {
 		clientId = ctx.Input.Query("clientId")
 		clientSecret = ctx.Input.Query("clientSecret")
 	}
@@ -125,10 +125,20 @@ func getUsernameByClientIdSecret(ctx *context.Context) (string, error) {
 		return "", err
 	}
 	if application == nil {
+		if fromBasicAuth {
+			// The Basic Auth credentials may come from a reverse proxy protecting Casdoor with
+			// HTTP Basic Auth. In that case, the username is not an OAuth client ID, so we
+			// silently ignore it instead of returning an error that would break the whole system.
+			return "", nil
+		}
 		return "", fmt.Errorf("Application not found for client ID: %s", clientId)
 	}
 
 	if application.ClientSecret != clientSecret {
+		if fromBasicAuth {
+			// Same as above: the secret mismatch may be due to proxy-level Basic Auth credentials.
+			return "", nil
+		}
 		return "", fmt.Errorf("Incorrect client secret for application: %s", application.Name)
 	}
 
