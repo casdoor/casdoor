@@ -141,6 +141,19 @@ func getObject(ctx *context.Context) (string, string, error) {
 			}
 		}
 
+		// For non-GET requests, if the `id` query param is present it is the
+		// authoritative identifier of the object being operated on.  Use it
+		// instead of the request body so that an attacker cannot spoof the
+		// object owner by injecting "owner":"admin" (or any other value) into
+		// the request body while pointing the URL at a different organization's
+		// resource.
+		if id := ctx.Input.Query("id"); id != "" {
+			owner, name, err := util.GetOwnerAndNameFromIdWithError(id)
+			if err == nil {
+				return owner, name, nil
+			}
+		}
+
 		body := ctx.Input.RequestBody
 		if len(body) == 0 {
 			return ctx.Request.Form.Get("owner"), ctx.Request.Form.Get("name"), nil

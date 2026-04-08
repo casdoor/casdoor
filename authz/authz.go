@@ -179,7 +179,7 @@ func IsAllowed(subOwner string, subName string, method string, urlPath string, o
 			return true
 		}
 
-		if user.IsAdmin && (subOwner == objOwner || (objOwner == "admin")) {
+		if user.IsAdmin && subOwner == objOwner {
 			return true
 		}
 	}
