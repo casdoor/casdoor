@@ -57,7 +57,9 @@ func (c *ApiController) Enforce() {
 		return
 	}
 
-	var request []string
+	// Accept both plain string arrays (["alice","data1","read"]) and mixed arrays
+	// with JSON objects ([{"DivisionGuid":"x"}, "resource", "read"]) for ABAC support.
+	var request []interface{}
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &request)
 	if err != nil {
 		c.ResponseError(err.Error())
@@ -74,8 +76,8 @@ func (c *ApiController) Enforce() {
 		res := []bool{}
 		keyRes := []string{}
 
-		// type transformation
-		interfaceRequest := util.StringToInterfaceArray(request)
+		// Convert elements: JSON-object strings and maps become anonymous structs for ABAC.
+		interfaceRequest := util.InterfaceToEnforceArray(request)
 
 		enforceResult, err := enforcer.Enforce(interfaceRequest...)
 		if err != nil {
@@ -197,7 +199,8 @@ func (c *ApiController) BatchEnforce() {
 		return
 	}
 
-	var requests [][]string
+	// Accept both string arrays and mixed arrays with JSON objects for ABAC support.
+	var requests [][]interface{}
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &requests)
 	if err != nil {
 		c.ResponseError(err.Error())
@@ -214,8 +217,8 @@ func (c *ApiController) BatchEnforce() {
 		res := [][]bool{}
 		keyRes := []string{}
 
-		// type transformation
-		interfaceRequests := util.StringToInterfaceArray2d(requests)
+		// Convert elements: JSON-object strings and maps become anonymous structs for ABAC.
+		interfaceRequests := util.InterfaceToEnforceArray2d(requests)
 
 		enforceResult, err := enforcer.BatchEnforce(interfaceRequests)
 		if err != nil {

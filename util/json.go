@@ -67,3 +67,35 @@ func TryJsonToAnonymousStruct(j string) (interface{}, error) {
 	}
 	return i, nil
 }
+
+// InterfaceToEnforceValue converts a single request value for use in Casbin ABAC enforcement.
+//   - Strings that are valid JSON objects are converted to anonymous structs so Casbin can
+//     access their fields (e.g. r.sub.DivisionGuid).
+//   - Maps (map[string]interface{}) produced by direct JSON unmarshaling are re-marshaled and
+//     then converted to anonymous structs in the same way.
+//   - All other values are returned unchanged.
+func InterfaceToEnforceValue(v interface{}) interface{} {
+	switch val := v.(type) {
+	case string:
+		jStruct, err := TryJsonToAnonymousStruct(val)
+		if err == nil {
+			return jStruct
+		}
+		return val
+	case map[string]interface{}:
+		// The value was already decoded as a JSON object; re-encode it so we
+		// can reuse TryJsonToAnonymousStruct to produce a named-field struct
+		// that Casbin can evaluate with dot-notation (r.sub.Field).
+		jsonBytes, err := json.Marshal(val)
+		if err != nil {
+			return val
+		}
+		jStruct, err := TryJsonToAnonymousStruct(string(jsonBytes))
+		if err == nil {
+			return jStruct
+		}
+		return val
+	default:
+		return v
+	}
+}

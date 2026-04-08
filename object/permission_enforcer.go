@@ -357,26 +357,27 @@ func removePolicies(permission *Permission) error {
 	return err
 }
 
-func Enforce(permission *Permission, request []string, permissionIds ...string) (bool, error) {
+func Enforce(permission *Permission, request []interface{}, permissionIds ...string) (bool, error) {
 	enforcer, err := getPermissionEnforcer(permission, permissionIds...)
 	if err != nil {
 		return false, err
 	}
 
-	// type transformation
-	interfaceRequest := util.StringToInterfaceArray(request)
+	// Convert each element: JSON-object strings and maps become anonymous structs
+	// so Casbin can evaluate ABAC rules with dot-notation (e.g. r.sub.DivisionGuid).
+	interfaceRequest := util.InterfaceToEnforceArray(request)
 
 	return enforcer.Enforce(interfaceRequest...)
 }
 
-func BatchEnforce(permission *Permission, requests [][]string, permissionIds ...string) ([]bool, error) {
+func BatchEnforce(permission *Permission, requests [][]interface{}, permissionIds ...string) ([]bool, error) {
 	enforcer, err := getPermissionEnforcer(permission, permissionIds...)
 	if err != nil {
 		return nil, err
 	}
 
-	// type transformation
-	interfaceRequests := util.StringToInterfaceArray2d(requests)
+	// Convert each element in every row for ABAC support.
+	interfaceRequests := util.InterfaceToEnforceArray2d(requests)
 
 	return enforcer.BatchEnforce(interfaceRequests)
 }

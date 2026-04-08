@@ -381,3 +381,25 @@ func StringToInterfaceArray2d(arrays [][]string) [][]interface{} {
 	}
 	return interfaceArrays
 }
+
+// InterfaceToEnforceArray converts a []interface{} request for use in Casbin ABAC enforcement.
+// Each element is processed by InterfaceToEnforceValue: plain strings that are valid JSON
+// objects and map values decoded directly from JSON are both converted to anonymous structs
+// so Casbin can evaluate attribute-based rules with dot-notation (r.sub.Field).
+func InterfaceToEnforceArray(array []interface{}) []interface{} {
+	result := make([]interface{}, len(array))
+	for i, elem := range array {
+		result[i] = InterfaceToEnforceValue(elem)
+	}
+	return result
+}
+
+// InterfaceToEnforceArray2d applies InterfaceToEnforceArray to every row in a
+// two-dimensional slice, for use with Casbin BatchEnforce.
+func InterfaceToEnforceArray2d(arrays [][]interface{}) [][]interface{} {
+	result := make([][]interface{}, len(arrays))
+	for i, arr := range arrays {
+		result[i] = InterfaceToEnforceArray(arr)
+	}
+	return result
+}
