@@ -660,6 +660,11 @@ func GetLogProviderFromProvider(provider *Provider) (log.LogProvider, error) {
 	if provider.Type == "Agent" && provider.SubType == "OpenClaw" {
 		providerName := provider.Name
 		return log.NewOpenClawProvider(providerName, func(entryType, message, clientIp, userAgent string) error {
+			// Bypass: metrics entries are temporarily not persisted to the database.
+			if entryType == "metrics" {
+				return nil
+			}
+
 			name := log.GenerateEntryName()
 			currentTime := util.GetCurrentTime()
 			entry := &Entry{
