@@ -406,6 +406,9 @@ func GetUsersByTagWithFilter(owner string, tag string, cond builder.Cond) ([]*Us
 
 func GetSortedUsers(owner string, sorter string, limit int) ([]*User, error) {
 	users := []*User{}
+	if !util.FilterSQLIdentifier(sorter) {
+		return nil, fmt.Errorf("object.GetSortedUsers() error: invalid sorter field: %s", sorter)
+	}
 	err := ormer.Engine.Desc(sorter).Limit(limit, 0).Find(&users, &User{Owner: owner})
 	if err != nil {
 		return nil, err
