@@ -926,7 +926,7 @@ class LoginPage extends React.Component {
             {
               application.providers.filter(providerItem => this.isProviderVisible(providerItem)).map((providerItem, id) => {
                 if (providerHint === providerItem.provider.name) {
-                  goToLink(Provider.getAuthUrl(application, providerItem.provider, "signup"));
+                  goToLink(Provider.getAuthUrl(application, providerItem.provider, this.state.mode ?? "signup"));
                   return;
                 }
                 return (
@@ -939,7 +939,7 @@ class LoginPage extends React.Component {
                     }
                   }}>
                     {
-                      ProviderButton.renderProviderLogo(providerItem.provider, application, null, null, signinItem.rule, this.props.location)
+                      ProviderButton.renderProviderLogo(providerItem.provider, application, null, null, signinItem.rule, this.props.location, this.state.mode ?? "signup")
                     }
                   </span>
                 );
@@ -1550,7 +1550,7 @@ class LoginPage extends React.Component {
 
     const visibleOAuthProviderItems = (application.providers === null) ? [] : application.providers.filter(providerItem => this.isProviderVisible(providerItem) && providerItem.provider?.category !== "SAML");
     if (this.props.preview !== "auto" && !Setting.isPasswordEnabled(application) && !Setting.isCodeSigninEnabled(application) && !Setting.isWebAuthnEnabled(application) && !Setting.isLdapEnabled(application) && visibleOAuthProviderItems.length === 1) {
-      Setting.goToLink(Provider.getAuthUrl(application, visibleOAuthProviderItems[0].provider, "signup"));
+      Setting.goToLink(Provider.getAuthUrl(application, visibleOAuthProviderItems[0].provider, this.state.mode ?? "signup"));
       return (
         <div style={{display: "flex", justifyContent: "center", alignItems: "center", width: "100%"}}>
           <Spin size="large" tip={i18next.t("login:Signing in...")} />
