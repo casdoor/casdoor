@@ -587,7 +587,12 @@ func CheckLoginPermission(userId string, application *Application) (bool, error)
 		return true, nil
 	}
 
-	permissions, err := GetPermissions(application.Organization)
+	permissionOrganization := application.Organization
+	if application.IsShared {
+		permissionOrganization = owner
+	}
+
+	permissions, err := GetPermissions(permissionOrganization)
 	if err != nil {
 		return false, err
 	}
