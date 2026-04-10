@@ -97,6 +97,17 @@ func AutoSigninFilter(ctx *context.Context) {
 		return
 	}
 
+	// "/page?accessKey=123&accessSecret=456"
+	userId, err = getUsernameByAccessKey(ctx)
+	if err != nil {
+		responseError(ctx, err.Error())
+		return
+	}
+	if userId != "" {
+		setSessionUser(ctx, userId)
+		return
+	}
+
 	// "/page?username=built-in/admin&password=123"
 	userId = ctx.Input.Query("username")
 	password := ctx.Input.Query("password")

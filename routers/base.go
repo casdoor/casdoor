@@ -22,6 +22,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 
 	"github.com/beego/beego/v2/server/web/context"
 	"github.com/casdoor/casdoor/conf"
@@ -143,6 +144,51 @@ func getUsernameByClientIdSecret(ctx *context.Context) (string, error) {
 	}
 
 	return fmt.Sprintf("app/%s", application.Name), nil
+}
+
+func getUsernameByAccessKey(ctx *context.Context) (string, error) {
+	accessKey := ctx.Input.Query("accessKey")
+	accessSecret := ctx.Input.Query("accessSecret")
+
+	if accessKey == "" || accessSecret == "" {
+		return "", nil
+	}
+
+	key, err := object.GetKeyByAccessKey(accessKey)
+	if err != nil {
+		return "", err
+	}
+	if key == nil {
+		return "", fmt.Errorf("Access key not found: %s", accessKey)
+	}
+
+	if key.AccessSecret != accessSecret {
+		return "", fmt.Errorf("Incorrect access secret for key: %s", key.Name)
+	}
+
+	if key.State != "Active" {
+		return "", fmt.Errorf("Access key is not active: %s", key.Name)
+	}
+
+	if key.ExpireTime != "" {
+		expireTime, err := time.Parse(time.RFC3339, key.ExpireTime)
+		if err != nil {
+			return "", fmt.Errorf("Invalid expire time format for key: %s", key.Name)
+		}
+		if time.Now().After(expireTime) {
+			return "", fmt.Errorf("Access key has expired, expireTime = %s", key.ExpireTime)
+		}
+	}
+
+	if key.User != "" {
+		return util.GetId(key.Organization, key.User), nil
+	}
+
+	if key.Application != "" {
+		return fmt.Sprintf("app/%s", key.Application), nil
+	}
+
+	return "", nil
 }
 
 func getSessionUser(ctx *context.Context) string {
