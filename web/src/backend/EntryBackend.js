@@ -28,6 +28,13 @@ export function getEntry(owner, name) {
   }).then(res => res.json());
 }
 
+export function getOpenClawSessionGraph(owner, name) {
+  return fetch(`${Setting.ServerUrl}/api/get-openclaw-session-graph?id=${owner}/${encodeURIComponent(name)}`, {
+    method: "GET",
+    credentials: "include",
+  }).then(res => res.json());
+}
+
 export function updateEntry(owner, name, entry) {
   const newEntry = Setting.deepCopy(entry);
   return fetch(`${Setting.ServerUrl}/api/update-entry?id=${owner}/${encodeURIComponent(name)}`, {

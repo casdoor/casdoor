@@ -19,6 +19,8 @@ import i18next from "i18next";
 import Editor from "./common/Editor";
 import SELinuxEntryViewer from "./SELinuxEntryViewer";
 import * as ProviderBackend from "./backend/ProviderBackend";
+import OpenClawSessionGraphViewer from "./OpenClawSessionGraphViewer";
+import {isOpenClawSessionEntry} from "./OpenClawSessionGraphUtils";
 
 class EntryMessageViewer extends React.Component {
   constructor(props) {
@@ -491,12 +493,16 @@ class EntryMessageViewer extends React.Component {
   }
 
   renderSpecializedViewer() {
+    const provider = this.props.provider ?? this.state.provider;
     switch (this.getProviderViewerType()) {
     case "selinux":
       return <SELinuxEntryViewer entry={this.props.entry} labelSpan={this.getLabelSpan()} contentSpan={this.getContentSpan()} />;
     default:
       if (this.shouldRenderTraceViewer()) {
         return this.renderTraceSpans();
+      }
+      if (isOpenClawSessionEntry(this.props.entry, provider)) {
+        return <OpenClawSessionGraphViewer entry={this.props.entry} provider={provider} labelSpan={this.getLabelSpan()} contentSpan={this.getContentSpan()} />;
       }
       return null;
     }

@@ -88,6 +88,25 @@ func (c *ApiController) GetEntry() {
 	c.ResponseOk(entry)
 }
 
+// GetOpenClawSessionGraph
+// @Title GetOpenClawSessionGraph
+// @Tag Entry API
+// @Description get OpenClaw session graph
+// @Param   id     query    string  true        "The id ( owner/name ) of the entry"
+// @Success 200 {object} object.OpenClawSessionGraph The Response object
+// @router /get-openclaw-session-graph [get]
+func (c *ApiController) GetOpenClawSessionGraph() {
+	id := c.Ctx.Input.Query("id")
+
+	graph, err := object.GetOpenClawSessionGraph(id)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	c.ResponseOk(graph)
+}
+
 // UpdateEntry
 // @Title UpdateEntry
 // @Tag Entry API
