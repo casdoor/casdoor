@@ -166,6 +166,16 @@ export function renderOAuthProviderFields(provider, updateProviderField, renderU
               </Row>
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {Setting.getLabel(i18next.t("provider:Logout URL"), i18next.t("provider:Logout URL - Tooltip"))}
+                </Col>
+                <Col span={22} >
+                  <Input value={provider.customLogoutUrl} onChange={e => {
+                    updateProviderField("customLogoutUrl", e.target.value);
+                  }} />
+                </Col>
+              </Row>
+              <Row style={{marginTop: "20px"}} >
+                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
                   {Setting.getLabel(i18next.t("provider:Enable PKCE"), i18next.t("provider:Enable PKCE - Tooltip"))} :
                 </Col>
                 <Col span={22} >
