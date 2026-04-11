@@ -294,10 +294,10 @@ function ManagementPage(props) {
     ];
 
     if (widgetItemsIsAll()) {
-      return widgets.map(item => item.label);
+      return widgets.reverse().map(item => item.label);
     }
 
-    return widgets.filter(item => widgetItems.includes(item.key)).map(item => item.label);
+    return widgets.filter(item => widgetItems.includes(item.key)).reverse().map(item => item.label);
   }
 
   function renderAccountMenu() {
@@ -312,8 +312,13 @@ function ManagementPage(props) {
     } else {
       return (
         <React.Fragment>
-          {renderRightDropdown()}
-          {renderWidgets()}
+          {Setting.isLocalAdminUser(props.account) && Conf.ShowGithubCorner && !Setting.isMobile() &&
+            <a href={"https://casdoor.com"} target="_blank" rel="noreferrer" style={{marginRight: "8px"}}>
+              <span className="saas-hosting-btn">
+                🚀 SaaS Hosting 🔥
+              </span>
+            </a>
+          }
           {Setting.isAdminUser(props.account) && (props.uri.indexOf("/trees") === -1) &&
             <OrganizationSelect
               initValue={Setting.getOrganization()}
@@ -325,6 +330,8 @@ function ManagementPage(props) {
               }}
             />
           }
+          {renderWidgets()}
+          {renderRightDropdown()}
         </React.Fragment>
       );
     }
@@ -342,14 +349,6 @@ function ManagementPage(props) {
       Setting.getItem(<Link to="/shortcuts">{i18next.t("general:Shortcuts")}</Link>, "/shortcuts"),
       Setting.getItem(<Link to="/apps">{i18next.t("general:Apps")}</Link>, "/apps"),
     ]));
-
-    if (Setting.isLocalAdminUser(props.account) && Conf.ShowGithubCorner) {
-      res.push(Setting.getItem(<a href={"https://casdoor.com"}>
-        <span style={{fontWeight: "bold", backgroundColor: "rgba(87,52,211,0.4)", marginTop: "12px", paddingLeft: "5px", paddingRight: "5px", display: "flex", alignItems: "center", height: "40px", borderRadius: "5px"}}>
-          🚀 SaaS Hosting 🔥
-        </span>
-      </a>, "#"));
-    }
 
     res.push(Setting.getItem(<Link style={{color: textColor}} to="/organizations">{i18next.t("general:User Management")}</Link>, "/orgs", <AppstoreOutlined />, [
       Setting.getItem(<Link to="/organizations">{i18next.t("general:Organizations")}</Link>, "/organizations"),
@@ -700,7 +699,7 @@ function ManagementPage(props) {
             ))}
             <BreadcrumbBar uri={currentUri} />
           </div>
-          <div style={{flexShrink: 0}}>
+          <div style={{flexShrink: 0, display: "flex", alignItems: "center"}}>
             {renderAccountMenu()}
           </div>
         </Header>

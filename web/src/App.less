@@ -58,12 +58,32 @@ img {
   }
 }
 
+.saas-hosting-btn {
+  font-weight: bold;
+  background-color: rgba(87, 52, 211, 0.4);
+  padding: 0 8px;
+  display: flex;
+  align-items: center;
+  height: 40px;
+  border-radius: 5px;
+  transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    background-color: rgba(87, 52, 211, 0.65);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(87, 52, 211, 0.35);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: none;
+  }
+}
+
 .org-select {
   display: flex;
   position: relative;
-  transform: translateY(30%);
   margin: 0 10px !important;
-  float: right;
   min-width: 200px;
   max-width: 360px;
 }
