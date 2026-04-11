@@ -133,6 +133,7 @@ func UpdateTransaction(id string, transaction *Transaction, lang string) (bool, 
 		return false, err
 	}
 
+	transaction.Owner = owner
 	affected, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(transaction)
 	if err != nil {
 		return false, err

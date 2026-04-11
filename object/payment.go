@@ -184,6 +184,7 @@ func UpdatePayment(id string, payment *Payment) (bool, error) {
 		return false, nil
 	}
 
+	payment.Owner = owner
 	affected, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(payment)
 	if err != nil {
 		return false, err

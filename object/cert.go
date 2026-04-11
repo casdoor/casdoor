@@ -194,6 +194,7 @@ func UpdateCert(id string, cert *Cert) (bool, error) {
 		return false, err
 	}
 
+	cert.Owner = owner
 	affected, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(cert)
 	if err != nil {
 		return false, err

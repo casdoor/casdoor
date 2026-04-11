@@ -198,6 +198,7 @@ func UpdateWebhookEvent(id string, event *WebhookEvent) (bool, error) {
 
 	event.UpdatedTime = util.GetCurrentTime()
 
+	event.Owner = owner
 	affected, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(event)
 	if err != nil {
 		return false, err

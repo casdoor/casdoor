@@ -88,6 +88,7 @@ func UpdateServer(id string, server *Server) (bool, error) {
 
 	_ = syncServerTools(server)
 
+	server.Owner = owner
 	_, err = ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(server)
 	if err != nil {
 		return false, err
@@ -128,6 +129,7 @@ func SyncMcpTool(id string, server *Server, isCleared bool) (bool, error) {
 		return false, err
 	}
 
+	server.Owner = owner
 	_, err = ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(server)
 	if err != nil {
 		return false, err

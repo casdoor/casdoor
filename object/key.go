@@ -153,6 +153,7 @@ func UpdateKey(id string, key *Key) (bool, error) {
 
 	key.UpdatedTime = util.GetCurrentTime()
 
+	key.Owner = owner
 	affected, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(key)
 	if err != nil {
 		return false, err

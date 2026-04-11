@@ -102,6 +102,7 @@ func UpdateEnforcer(id string, enforcer *Enforcer) (bool, error) {
 		return false, nil
 	}
 
+	enforcer.Owner = owner
 	affected, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(enforcer)
 	if err != nil {
 		return false, err

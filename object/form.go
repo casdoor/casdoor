@@ -119,6 +119,7 @@ func UpdateForm(id string, form *Form) (bool, error) {
 		return false, nil
 	}
 
+	form.Owner = owner
 	_, err = ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(form)
 	if err != nil {
 		return false, err

@@ -176,6 +176,7 @@ func UpdateOrder(id string, order *Order) (bool, error) {
 		order.Price = price
 	}
 
+	order.Owner = owner
 	affected, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(order)
 	if err != nil {
 		return false, err

@@ -153,6 +153,7 @@ func UpdatePermission(id string, permission *Permission) (bool, error) {
 		}
 	}
 
+	permission.Owner = owner
 	affected, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(permission)
 	if err != nil {
 		return false, err

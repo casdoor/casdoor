@@ -199,6 +199,7 @@ func UpdateToken(id string, token *Token, isGlobalAdmin bool) (bool, error) {
 
 	token.popularHashes()
 
+	token.Owner = owner
 	affected, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(token)
 	if err != nil {
 		return false, err

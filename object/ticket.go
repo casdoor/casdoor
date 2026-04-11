@@ -114,6 +114,7 @@ func UpdateTicket(id string, ticket *Ticket) (bool, error) {
 		return false, nil
 	}
 
+	ticket.Owner = owner
 	affected, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(ticket)
 	if err != nil {
 		return false, err

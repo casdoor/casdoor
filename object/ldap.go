@@ -152,6 +152,7 @@ func UpdateLdap(ldap *Ldap) (bool, error) {
 		ldap.Password = l.Password
 	}
 
+	ldap.Owner = l.Owner
 	affected, err := ormer.Engine.ID(ldap.Id).Cols("owner", "server_name", "host",
 		"port", "enable_ssl", "username", "password", "base_dn", "filter", "filter_fields", "auto_sync", "default_group", "password_type", "allow_self_signed_cert", "custom_attributes", "enable_groups").Update(ldap)
 	if err != nil {

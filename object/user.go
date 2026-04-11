@@ -838,6 +838,8 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 		}
 	}
 
+	user.Owner = owner
+
 	if len(columns) == 0 {
 		columns = []string{
 			"owner", "display_name", "avatar", "first_name", "last_name",
@@ -942,6 +944,7 @@ func UpdateUserForAllFields(id string, user *User) (bool, error) {
 		}
 	}
 
+	user.Owner = owner
 	affected, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(user)
 	if err != nil {
 		return false, err

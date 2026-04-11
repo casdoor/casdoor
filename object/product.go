@@ -145,6 +145,7 @@ func UpdateProduct(id string, product *Product) (bool, error) {
 		return false, err
 	}
 
+	product.Owner = owner
 	affected, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(product)
 	if err != nil {
 		return false, err

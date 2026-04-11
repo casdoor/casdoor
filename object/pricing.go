@@ -130,6 +130,7 @@ func UpdatePricing(id string, pricing *Pricing) (bool, error) {
 		return false, nil
 	}
 
+	pricing.Owner = owner
 	affected, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(pricing)
 	if err != nil {
 		return false, err

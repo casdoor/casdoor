@@ -79,6 +79,7 @@ func UpdateRule(id string, rule *Rule) (bool, error) {
 		return false, nil
 	}
 	rule.UpdatedTime = util.GetCurrentTime()
+	rule.Owner = owner
 	_, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(rule)
 	if err != nil {
 		return false, err

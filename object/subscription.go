@@ -248,6 +248,7 @@ func UpdateSubscription(id string, subscription *Subscription) (bool, error) {
 		return false, nil
 	}
 
+	subscription.Owner = owner
 	affected, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(subscription)
 	if err != nil {
 		return false, err

@@ -268,6 +268,7 @@ func UpdateOrganization(id string, organization *Organization, isGlobalAdmin boo
 		session.Omit("master_verification_code")
 	}
 
+	organization.Owner = owner
 	affected, err := session.Update(organization)
 	if err != nil {
 		return false, err

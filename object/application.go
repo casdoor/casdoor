@@ -428,6 +428,7 @@ func UpdateApplication(id string, application *Application, isGlobalAdmin bool, 
 	if application.ClientSecret == "***" {
 		session.Omit("client_secret")
 	}
+	application.Owner = owner
 	affected, err := session.Update(application)
 	if err != nil {
 		return false, err

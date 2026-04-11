@@ -116,6 +116,7 @@ func UpdateAdapter(id string, adapter *Adapter) (bool, error) {
 	if adapter.Password == "***" {
 		session.Omit("password")
 	}
+	adapter.Owner = owner
 	affected, err := session.Update(adapter)
 	if err != nil {
 		return false, err

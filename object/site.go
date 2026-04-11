@@ -156,6 +156,7 @@ func UpdateSite(id string, site *Site) (bool, error) {
 
 	site.UpdatedTime = util.GetCurrentTime()
 
+	site.Owner = owner
 	_, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(site)
 	if err != nil {
 		return false, err
@@ -177,6 +178,7 @@ func UpdateSiteNoRefresh(id string, site *Site) (bool, error) {
 		return false, nil
 	}
 
+	site.Owner = owner
 	_, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(site)
 	if err != nil {
 		return false, err

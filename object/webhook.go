@@ -127,6 +127,7 @@ func UpdateWebhook(id string, webhook *Webhook, isGlobalAdmin bool, lang string)
 		return false, errors.New(i18n.Translate(lang, "auth:Unauthorized operation"))
 	}
 
+	webhook.Owner = owner
 	affected, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(webhook)
 	if err != nil {
 		return false, err

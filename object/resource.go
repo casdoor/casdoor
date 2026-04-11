@@ -107,6 +107,7 @@ func UpdateResource(id string, resource *Resource) (bool, error) {
 		return false, nil
 	}
 
+	resource.Owner = owner
 	_, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(resource)
 	if err != nil {
 		return false, err

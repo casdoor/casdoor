@@ -75,6 +75,7 @@ func UpdateEntry(id string, entry *Entry) (bool, error) {
 
 	entry.UpdatedTime = util.GetCurrentTime()
 
+	entry.Owner = owner
 	_, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(entry)
 	if err != nil {
 		return false, err

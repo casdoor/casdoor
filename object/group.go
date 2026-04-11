@@ -164,6 +164,7 @@ func UpdateGroup(id string, group *Group) (bool, error) {
 		}
 	}
 
+	group.Owner = owner
 	affected, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(group)
 	if err != nil {
 		return false, err

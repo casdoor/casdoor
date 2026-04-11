@@ -181,6 +181,7 @@ func UpdateSyncer(id string, syncer *Syncer, isGlobalAdmin bool, lang string) (b
 	if syncer.Password == "***" {
 		syncer.Password = s.Password
 	}
+	syncer.Owner = owner
 	affected, err := session.Update(syncer)
 	if err != nil {
 		return false, err

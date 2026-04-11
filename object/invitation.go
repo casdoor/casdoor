@@ -157,6 +157,7 @@ func UpdateInvitation(id string, invitation *Invitation, lang string) (bool, err
 		return false, err
 	}
 
+	invitation.Owner = owner
 	affected, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(invitation)
 	if err != nil {
 		return false, err

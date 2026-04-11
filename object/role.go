@@ -121,6 +121,7 @@ func UpdateRole(id string, role *Role) (bool, error) {
 		}
 	}
 
+	role.Owner = owner
 	affected, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(role)
 	if err != nil {
 		return false, err

@@ -258,6 +258,7 @@ func UpdateProvider(id string, provider *Provider) (bool, error) {
 		provider.IntranetEndpoint = util.GetEndPoint(provider.IntranetEndpoint)
 	}
 
+	provider.Owner = owner
 	affected, err := session.Update(provider)
 	if err != nil {
 		return false, err

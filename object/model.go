@@ -136,6 +136,7 @@ func UpdateModel(id string, modelObj *Model) (bool, error) {
 		}
 	}
 
+	modelObj.Owner = owner
 	affected, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(modelObj)
 	if err != nil {
 		return false, err

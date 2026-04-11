@@ -127,6 +127,7 @@ func UpdatePlan(id string, plan *Plan) (bool, error) {
 		return false, nil
 	}
 
+	plan.Owner = owner
 	affected, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(plan)
 	if err != nil {
 		return false, err
