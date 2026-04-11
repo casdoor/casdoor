@@ -182,7 +182,7 @@ class AuthCallback extends React.Component {
 
     const innerParams = this.getInnerParams();
     const method = innerParams.get("method");
-    if (method === "signup") {
+    if (method === "signup" || method === "signin") {
       const realRedirectUri = innerParams.get("redirect_uri");
       // Casdoor's own login page, so "code" is not necessary
       if (realRedirectUri === null) {

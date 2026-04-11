@@ -860,7 +860,7 @@ func (c *ApiController) Login() {
 			}
 		}
 
-		if authForm.Method == "signup" {
+		if authForm.Method == "signup" || authForm.Method == "signin" {
 			user := &object.User{}
 			if provider.Category == "SAML" {
 				// The userInfo.Id is the NameID in SAML response, it could be name / email / phone
@@ -1041,7 +1041,7 @@ func (c *ApiController) Login() {
 				resp = &Response{Status: "error", Msg: fmt.Sprintf(c.T("general:The user: %s doesn't exist"), util.GetId(application.Organization, userInfo.Id))}
 			}
 			// resp = &Response{Status: "ok", Msg: "", Data: res}
-		} else { // authForm.Method != "signup"
+		} else { // authForm.Method == "link"
 			userId := c.GetSessionUsername()
 			if userId == "" {
 				c.ResponseError(fmt.Sprintf(c.T("general:The user: %s doesn't exist"), util.GetId(application.Organization, userInfo.Id)), userInfo)
