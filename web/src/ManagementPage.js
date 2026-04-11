@@ -605,7 +605,7 @@ function ManagementPage(props) {
     setMenuVisible(true);
   };
 
-  const siderWidth = 220;
+  const siderWidth = 256;
   const siderCollapsedWidth = 80;
   const showSider = !Setting.isMobile() && !props.requiredEnableMfa;
   const contentMarginLeft = showSider ? (siderCollapsed ? siderCollapsedWidth : siderWidth) : 0;
