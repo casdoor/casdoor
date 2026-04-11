@@ -197,7 +197,7 @@ class SiteListPage extends BaseListPage {
         title: i18next.t("site:Other domains"),
         dataIndex: "otherDomains",
         key: "otherDomains",
-        width: "120px",
+        width: "140px",
         sorter: (a, b) => a.otherDomains.localeCompare(b.otherDomains),
         render: (text, record, index) => {
           return record.otherDomains.map(domain => {

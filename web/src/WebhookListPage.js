@@ -148,7 +148,7 @@ class WebhookListPage extends BaseListPage {
         title: i18next.t("webhook:Content type"),
         dataIndex: "contentType",
         key: "contentType",
-        width: "140px",
+        width: "150px",
         sorter: true,
         filterMultiple: false,
         filters: [
@@ -171,7 +171,7 @@ class WebhookListPage extends BaseListPage {
         title: i18next.t("webhook:Is user extended"),
         dataIndex: "isUserExtended",
         key: "isUserExtended",
-        width: "140px",
+        width: "150px",
         sorter: true,
         render: (text, record, index) => {
           return (

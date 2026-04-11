@@ -125,7 +125,7 @@ class AdapterListPage extends BaseListPage {
         title: i18next.t("adapter:Use same DB"),
         dataIndex: "useSameDb",
         key: "useSameDb",
-        width: "120px",
+        width: "130px",
         sorter: true,
         render: (text, record, index) => {
           return (
@@ -148,7 +148,7 @@ class AdapterListPage extends BaseListPage {
         title: i18next.t("syncer:Database type"),
         dataIndex: "databaseType",
         key: "databaseType",
-        width: "120px",
+        width: "140px",
         sorter: (a, b) => a.databaseType.localeCompare(b.databaseType),
       },
       {

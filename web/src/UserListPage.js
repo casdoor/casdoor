@@ -396,7 +396,7 @@ class UserListPage extends BaseListPage {
         title: i18next.t("application:Real name"),
         dataIndex: "realName",
         key: "realName",
-        width: "120px",
+        width: "130px",
         sorter: true,
         ...this.getColumnSearchProps("realName"),
       },
@@ -464,7 +464,7 @@ class UserListPage extends BaseListPage {
         title: i18next.t("user:Register source"),
         dataIndex: "registerSource",
         key: "registerSource",
-        width: "150px",
+        width: "160px",
         sorter: true,
         ...this.getColumnSearchProps("registerSource"),
       },
@@ -482,7 +482,7 @@ class UserListPage extends BaseListPage {
         title: i18next.t("organization:Balance credit"),
         dataIndex: "balanceCredit",
         key: "balanceCredit",
-        width: "120px",
+        width: "130px",
         sorter: true,
         render: (text, record, index) => {
           return text ?? 0;
@@ -492,7 +492,7 @@ class UserListPage extends BaseListPage {
         title: i18next.t("organization:Balance currency"),
         dataIndex: "balanceCurrency",
         key: "balanceCurrency",
-        width: "140px",
+        width: "160px",
         sorter: true,
         render: (text, record, index) => {
           return text || "USD";
@@ -514,7 +514,7 @@ class UserListPage extends BaseListPage {
         title: i18next.t("user:Is forbidden"),
         dataIndex: "isForbidden",
         key: "isForbidden",
-        width: "110px",
+        width: "120px",
         sorter: true,
         render: (text, record, index) => {
           return (

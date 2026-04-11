@@ -162,7 +162,7 @@ class SyncerListPage extends BaseListPage {
         title: i18next.t("syncer:Database type"),
         dataIndex: "databaseType",
         key: "databaseType",
-        width: "130px",
+        width: "140px",
         sorter: (a, b) => a.databaseType.localeCompare(b.databaseType),
       },
       {
@@ -215,7 +215,7 @@ class SyncerListPage extends BaseListPage {
         title: i18next.t("syncer:Sync interval"),
         dataIndex: "syncInterval",
         key: "syncInterval",
-        width: "140px",
+        width: "150px",
         sorter: true,
         ...this.getColumnSearchProps("syncInterval"),
       },

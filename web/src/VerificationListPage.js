@@ -142,7 +142,7 @@ class VerificationListPage extends BaseListPage {
         title: i18next.t("login:Verification code"),
         dataIndex: "code",
         key: "code",
-        width: "150px",
+        width: "160px",
         sorter: true,
         ...this.getColumnSearchProps("code"),
       },

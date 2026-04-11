@@ -415,7 +415,7 @@ class PermissionListPage extends BaseListPage {
         dataIndex: "approveTime",
         key: "approveTime",
         filterMultiple: false,
-        width: "120px",
+        width: "130px",
         sorter: true,
         render: (text, record, index) => {
           return Setting.getFormattedDate(text);

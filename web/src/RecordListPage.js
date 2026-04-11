@@ -72,7 +72,7 @@ class RecordListPage extends BaseListPage {
         title: i18next.t("general:Organization"),
         dataIndex: "organization",
         key: "organization",
-        width: "110px",
+        width: "140px",
         sorter: true,
         ...this.getColumnSearchProps("organization"),
         render: (text, record, index) => {
@@ -102,7 +102,7 @@ class RecordListPage extends BaseListPage {
         title: i18next.t("general:Method"),
         dataIndex: "method",
         key: "method",
-        width: "100px",
+        width: "110px",
         sorter: true,
         filterMultiple: false,
         filters: [
@@ -129,7 +129,7 @@ class RecordListPage extends BaseListPage {
         title: i18next.t("user:Language"),
         dataIndex: "language",
         key: "language",
-        width: "90px",
+        width: "120px",
         sorter: true,
         ...this.getColumnSearchProps("language"),
       },

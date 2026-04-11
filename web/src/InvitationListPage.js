@@ -164,7 +164,7 @@ class InvitationListPage extends BaseListPage {
         title: i18next.t("invitation:Used count"),
         dataIndex: "usedCount",
         key: "usedCount",
-        width: "130px",
+        width: "140px",
         sorter: true,
         ...this.getColumnSearchProps("usedCount"),
       },
