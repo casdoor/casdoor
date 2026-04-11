@@ -61,7 +61,7 @@ export const NavItemTree = ({disabled, checkedKeys, defaultExpandedKeys, onCheck
           ],
         },
         {
-          title: i18next.t("general:Logging & Auditing"),
+          title: i18next.t("general:Auditing"),
           key: "/sessions-top",
           children: [
             {title: i18next.t("general:Sessions"), key: "/sessions"},
@@ -71,7 +71,7 @@ export const NavItemTree = ({disabled, checkedKeys, defaultExpandedKeys, onCheck
           ],
         },
         {
-          title: i18next.t("general:Business & Payments"),
+          title: i18next.t("general:Business"),
           key: "/business-top",
           children: [
             {title: i18next.t("general:Products"), key: "/products"},

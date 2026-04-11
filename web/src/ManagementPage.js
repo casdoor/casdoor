@@ -388,14 +388,14 @@ function ManagementPage(props) {
       Setting.getItem(<Link to="/rules">{i18next.t("general:Rules")}</Link>, "/rules"),
     ]));
 
-    res.push(Setting.getItem(<Link style={{color: textColor}} to="/sessions">{i18next.t("general:Logging & Auditing")}</Link>, "/logs", <WalletOutlined />, [
+    res.push(Setting.getItem(<Link style={{color: textColor}} to="/sessions">{i18next.t("general:Auditing")}</Link>, "/logs", <WalletOutlined />, [
       Setting.getItem(<Link to="/sessions">{i18next.t("general:Sessions")}</Link>, "/sessions"),
       Setting.getItem(<Link to="/records">{i18next.t("general:Records")}</Link>, "/records"),
       Setting.getItem(<Link to="/tokens">{i18next.t("general:Tokens")}</Link>, "/tokens"),
       Setting.getItem(<Link to="/verifications">{i18next.t("general:Verifications")}</Link>, "/verifications"),
     ]));
 
-    res.push(Setting.getItem(<Link style={{color: textColor}} to="/products">{i18next.t("general:Business & Payments")}</Link>, "/business", <DollarOutlined />, [
+    res.push(Setting.getItem(<Link style={{color: textColor}} to="/products">{i18next.t("general:Business")}</Link>, "/business", <DollarOutlined />, [
       Setting.getItem(<Link to="/product-store">{i18next.t("general:Product Store")}</Link>, "/product-store"),
       Setting.getItem(<Link to="/products">{i18next.t("general:Products")}</Link>, "/products"),
       Setting.getItem(<Link to="/cart">{i18next.t("general:Cart")}</Link>, "/cart"),
