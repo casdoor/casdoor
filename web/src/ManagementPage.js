@@ -99,6 +99,7 @@ import ThemeSelect from "./common/select/ThemeSelect";
 import OpenTour from "./common/OpenTour";
 import OrganizationSelect from "./common/select/OrganizationSelect";
 import AccountAvatar from "./account/AccountAvatar";
+import BreadcrumbBar from "./common/BreadcrumbBar";
 import {Content, Header} from "antd/es/layout/layout";
 import * as AuthBackend from "./auth/AuthBackend";
 import {clearWeb3AuthToken} from "./auth/Web3Auth";
@@ -697,6 +698,7 @@ function ManagementPage(props) {
                 style={{fontSize: 16, width: 40, height: 40}}
               />
             ))}
+            <BreadcrumbBar uri={currentUri} />
           </div>
           <div style={{flexShrink: 0}}>
             {renderAccountMenu()}
