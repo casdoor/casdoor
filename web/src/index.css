@@ -125,6 +125,12 @@ code {
   font-weight: 600 !important;
 }
 
+/* Sidebar menu: selected item - darker background */
+.ant-layout-sider .ant-menu-light .ant-menu-item-selected,
+.ant-layout-sider .ant-menu-light>.ant-menu .ant-menu-item-selected {
+  background-color: rgba(0, 0, 0, 0.15) !important;
+}
+
 /* Message popups: static API renders outside ConfigProvider, override font explicitly */
 .ant-message,
 .ant-message .ant-message-notice-content,
