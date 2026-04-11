@@ -33,3 +33,57 @@ func (c *ApiController) GetDashboard() {
 
 	c.ResponseOk(data)
 }
+
+// GetDashboardProviderDistribution
+// @Title GetDashboardProviderDistribution
+// @Tag System API
+// @Description get provider type distribution for dashboard
+// @Success 200 {object} controllers.Response The Response object
+// @router /get-dashboard-providers [get]
+func (c *ApiController) GetDashboardProviderDistribution() {
+	owner := c.Ctx.Input.Query("owner")
+
+	data, err := object.GetDashboardProviderDistribution(owner)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	c.ResponseOk(data)
+}
+
+// GetDashboardMfaCoverage
+// @Title GetDashboardMfaCoverage
+// @Tag System API
+// @Description get MFA adoption coverage stats for dashboard
+// @Success 200 {object} controllers.Response The Response object
+// @router /get-dashboard-mfa [get]
+func (c *ApiController) GetDashboardMfaCoverage() {
+	owner := c.Ctx.Input.Query("owner")
+
+	data, err := object.GetDashboardMfaCoverage(owner)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	c.ResponseOk(data)
+}
+
+// GetDashboardLoginHeatmap
+// @Title GetDashboardLoginHeatmap
+// @Tag System API
+// @Description get system activity heatmap data for dashboard
+// @Success 200 {object} controllers.Response The Response object
+// @router /get-dashboard-heatmap [get]
+func (c *ApiController) GetDashboardLoginHeatmap() {
+	owner := c.Ctx.Input.Query("owner")
+
+	data, err := object.GetDashboardLoginHeatmap(owner)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	c.ResponseOk(data)
+}

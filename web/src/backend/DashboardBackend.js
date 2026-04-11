@@ -14,12 +14,33 @@
 
 import * as Setting from "../Setting";
 
-export function getDashboard(owner) {
-  return fetch(`${Setting.ServerUrl}/api/get-dashboard?owner=${owner}`, {
+function fetchDashboardApi(path, owner) {
+  return fetch(`${Setting.ServerUrl}/api/${path}?owner=${owner}`, {
     method: "GET",
     credentials: "include",
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  }).then(res => {
+    if (!res.ok) {
+      return {status: "error", msg: `${res.status} ${res.statusText}`};
+    }
+    return res.json();
+  });
+}
+
+export function getDashboard(owner) {
+  return fetchDashboardApi("get-dashboard", owner);
+}
+
+export function getDashboardProviders(owner) {
+  return fetchDashboardApi("get-dashboard-providers", owner);
+}
+
+export function getDashboardMfa(owner) {
+  return fetchDashboardApi("get-dashboard-mfa", owner);
+}
+
+export function getDashboardHeatmap(owner) {
+  return fetchDashboardApi("get-dashboard-heatmap", owner);
 }

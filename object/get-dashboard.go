@@ -38,7 +38,7 @@ func GetDashboard(owner string) (*map[string][]int64, error) {
 
 	dashboard := make(map[string][]int64)
 	dashboardMap := sync.Map{}
-	tableNames := []string{"organization", "user", "provider", "application", "subscription", "role", "group", "resource", "cert", "permission", "transaction", "model", "adapter", "enforcer"}
+	tableNames := []string{"organization", "user", "provider", "application", "token", "subscription", "role", "group", "resource", "cert", "permission", "transaction", "model", "adapter", "enforcer"}
 
 	time30day := time.Now().AddDate(0, 0, -30)
 	var wg sync.WaitGroup
