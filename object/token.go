@@ -43,8 +43,8 @@ type Token struct {
 	CodeChallenge    string `xorm:"varchar(100)" json:"codeChallenge"`
 	CodeIsUsed       bool   `json:"codeIsUsed"`
 	CodeExpireIn     int64  `json:"codeExpireIn"`
-	Resource string `xorm:"varchar(255)" json:"resource"` // RFC 8707 Resource Indicator
-	DPoPJkt  string `xorm:"varchar(255) 'dpop_jkt'" json:"dPoPJkt"` // RFC 9449 DPoP JWK thumbprint binding
+	Resource         string `xorm:"varchar(255)" json:"resource"`           // RFC 8707 Resource Indicator
+	DPoPJkt          string `xorm:"varchar(255) 'dpop_jkt'" json:"dPoPJkt"` // RFC 9449 DPoP JWK thumbprint binding
 }
 
 func GetTokenCount(owner, organization, field, value string) (int64, error) {
