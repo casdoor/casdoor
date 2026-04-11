@@ -127,11 +127,11 @@ function getMenuParentKey(uri) {
   if (uri === "/" || uri.includes("/shortcuts") || uri.includes("/apps")) {return "/home";}
   if (uri.includes("/organizations") || uri.includes("/trees") || uri.includes("/groups") || uri.includes("/users") || uri.includes("/invitations")) {return "/orgs";}
   if (uri.includes("/applications") || uri.includes("/providers") || uri.includes("/resources") || uri.includes("/certs") || uri.includes("/keys")) {return "/identity";}
-  if (uri.includes("/agents") || uri.includes("/servers") || uri.includes("/entries") || uri.includes("/sites") || uri.includes("/rules")) {return "/gateway";}
+  if (uri.includes("/agents") || uri.includes("/servers") || uri.includes("/server-store") || uri.includes("/entries") || uri.includes("/sites") || uri.includes("/rules")) {return "/gateway";}
   if (uri.includes("/roles") || uri.includes("/permissions") || uri.includes("/models") || uri.includes("/adapters") || uri.includes("/enforcers")) {return "/auth";}
   if (uri.includes("/records") || uri.includes("/tokens") || uri.includes("/sessions") || uri.includes("/verifications")) {return "/logs";}
-  if (uri.includes("/products") || uri.includes("/orders") || uri.includes("/payments") || uri.includes("/plans") || uri.includes("/pricings") || uri.includes("/subscriptions") || uri.includes("/transactions") || uri.includes("/cart")) {return "/business";}
-  if (uri.includes("/sysinfo") || uri.includes("/forms") || uri.includes("/syncers") || uri.includes("/webhooks") || uri.includes("/tickets")) {return "/admin";}
+  if (uri.includes("/product-store") || uri.includes("/products") || uri.includes("/orders") || uri.includes("/payments") || uri.includes("/plans") || uri.includes("/pricings") || uri.includes("/subscriptions") || uri.includes("/transactions") || uri.includes("/cart")) {return "/business";}
+  if (uri.includes("/sysinfo") || uri.includes("/forms") || uri.includes("/syncers") || uri.includes("/webhooks") || uri.includes("/webhook-events") || uri.includes("/tickets")) {return "/admin";}
   return null;
 }
 
