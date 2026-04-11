@@ -17,7 +17,7 @@ import {Avatar, Button, Card, Drawer, Dropdown, Menu, Result, Tooltip} from "ant
 import Sider from "antd/es/layout/Sider";
 import EnableMfaNotification from "./common/notifaction/EnableMfaNotification";
 import {Link, Redirect, Route, Switch, withRouter} from "react-router-dom";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import i18next from "i18next";
 import {
   AppstoreOutlined,
@@ -121,12 +121,40 @@ import SiteEditPage from "./SiteEditPage";
 import RuleListPage from "./RuleListPage";
 import RuleEditPage from "./RuleEditPage";
 
+function getMenuParentKey(uri) {
+  if (!uri) {return null;}
+  if (uri === "/" || uri.includes("/shortcuts") || uri.includes("/apps")) {return "/home";}
+  if (uri.includes("/organizations") || uri.includes("/trees") || uri.includes("/groups") || uri.includes("/users") || uri.includes("/invitations")) {return "/orgs";}
+  if (uri.includes("/applications") || uri.includes("/providers") || uri.includes("/resources") || uri.includes("/certs") || uri.includes("/keys")) {return "/identity";}
+  if (uri.includes("/agents") || uri.includes("/servers") || uri.includes("/entries") || uri.includes("/sites") || uri.includes("/rules")) {return "/gateway";}
+  if (uri.includes("/roles") || uri.includes("/permissions") || uri.includes("/models") || uri.includes("/adapters") || uri.includes("/enforcers")) {return "/auth";}
+  if (uri.includes("/records") || uri.includes("/tokens") || uri.includes("/sessions") || uri.includes("/verifications")) {return "/logs";}
+  if (uri.includes("/products") || uri.includes("/orders") || uri.includes("/payments") || uri.includes("/plans") || uri.includes("/pricings") || uri.includes("/subscriptions") || uri.includes("/transactions") || uri.includes("/cart")) {return "/business";}
+  if (uri.includes("/sysinfo") || uri.includes("/forms") || uri.includes("/syncers") || uri.includes("/webhooks") || uri.includes("/tickets")) {return "/admin";}
+  return null;
+}
+
 function ManagementPage(props) {
   const [menuVisible, setMenuVisible] = useState(false);
   const [siderCollapsed, setSiderCollapsed] = useState(() => localStorage.getItem("siderCollapsed") === "true");
+  const [menuOpenKeys, setMenuOpenKeys] = useState(() => {
+    const parentKey = getMenuParentKey(props.uri || location.pathname);
+    return parentKey ? [parentKey] : [];
+  });
+
+  useEffect(() => {
+    const parentKey = getMenuParentKey(props.uri);
+    if (parentKey) {
+      setMenuOpenKeys(prev =>
+        prev.includes(parentKey) ? prev : [...prev, parentKey]
+      );
+    }
+  }, [props.uri]);
   const organization = props.account?.organization;
   const navItems = Setting.isLocalAdminUser(props.account) ? organization?.navItems : (organization?.userNavItems ?? []);
   const widgetItems = organization?.widgetItems;
+  const currentUri = props.uri || location.pathname;
+  const selectedLeafKey = "/" + (currentUri.split("/").filter(Boolean)[0] || "");
 
   const isDark = props.themeAlgorithm.includes("dark");
   const textColor = isDark ? "white" : "black";
@@ -629,7 +657,9 @@ function ManagementPage(props) {
           <Menu
             mode="inline"
             items={getMenuItems()}
-            selectedKeys={[props.selectedMenuKey]}
+            selectedKeys={[selectedLeafKey]}
+            openKeys={menuOpenKeys}
+            onOpenChange={setMenuOpenKeys}
             theme={isDark ? "dark" : "light"}
             style={{borderRight: 0}}
           />
@@ -644,7 +674,9 @@ function ManagementPage(props) {
                   <Menu
                     items={getMenuItems()}
                     mode={"inline"}
-                    selectedKeys={[props.selectedMenuKey]}
+                    selectedKeys={[selectedLeafKey]}
+                    openKeys={menuOpenKeys}
+                    onOpenChange={setMenuOpenKeys}
                     style={{lineHeight: "48px"}}
                     onClick={onClose}
                   />
