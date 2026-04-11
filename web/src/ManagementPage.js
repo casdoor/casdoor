@@ -621,7 +621,6 @@ function ManagementPage(props) {
           trigger={null}
           theme={isDark ? "dark" : "light"}
           style={{
-            overflow: "auto",
             height: "100vh",
             position: "fixed",
             left: 0,
@@ -629,10 +628,13 @@ function ManagementPage(props) {
             bottom: 0,
             zIndex: 100,
             boxShadow: "2px 0 8px rgba(0,0,0,0.08)",
+            display: "flex",
+            flexDirection: "column",
           }}
         >
           <div style={{
             height: 64,
+            flexShrink: 0,
             display: "flex",
             alignItems: "center",
             justifyContent: siderCollapsed ? "center" : "flex-start",
@@ -654,15 +656,17 @@ function ManagementPage(props) {
               />
             </Link>
           </div>
-          <Menu
-            mode="inline"
-            items={getMenuItems()}
-            selectedKeys={[selectedLeafKey]}
-            openKeys={menuOpenKeys}
-            onOpenChange={setMenuOpenKeys}
-            theme={isDark ? "dark" : "light"}
-            style={{borderRight: 0}}
-          />
+          <div style={{flex: 1, overflow: "auto"}}>
+            <Menu
+              mode="inline"
+              items={getMenuItems()}
+              selectedKeys={[selectedLeafKey]}
+              openKeys={menuOpenKeys}
+              onOpenChange={setMenuOpenKeys}
+              theme={isDark ? "dark" : "light"}
+              style={{borderRight: 0}}
+            />
+          </div>
         </Sider>
       )}
       <div style={{marginLeft: contentMarginLeft, transition: "margin-left 0.2s", display: "flex", flexDirection: "column", minHeight: "100vh"}}>
