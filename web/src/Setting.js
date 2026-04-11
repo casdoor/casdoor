@@ -1578,7 +1578,7 @@ function renderLink(url, text, onClick) {
 
   if (url.startsWith("/")) {
     return (
-      <Link style={{float: "right"}} to={url} onClick={() => {
+      <Link className="login-link" style={{float: "right"}} to={url} onClick={() => {
         if (onClick !== null) {
           onClick();
         }
@@ -1586,7 +1586,7 @@ function renderLink(url, text, onClick) {
     );
   } else if (url.startsWith("http")) {
     return (
-      <a style={{float: "right"}} href={url} onClick={() => {
+      <a className="login-link" style={{float: "right"}} href={url} onClick={() => {
         if (onClick !== null) {
           onClick();
         }

@@ -850,7 +850,7 @@ class LoginPage extends React.Component {
           <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.customCss?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
           <div className="login-forget-password">
             <Form.Item name="autoSignin" valuePropName="checked" noStyle>
-              <Checkbox style={{float: "left"}}>
+              <Checkbox className="login-auto-signin" style={{float: "left"}}>
                 {i18next.t("login:Auto sign in")}
               </Checkbox>
             </Form.Item>
