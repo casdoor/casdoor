@@ -140,6 +140,7 @@ class SessionListPage extends BaseListPage {
 
     const paginationProps = {
       total: this.state.pagination.total,
+      pageSize: this.state.pagination.pageSize,
       showQuickJumper: true,
       showSizeChanger: true,
       showTotal: () => i18next.t("general:{total} in total").replace("{total}", this.state.pagination.total),
@@ -148,6 +149,11 @@ class SessionListPage extends BaseListPage {
     return (
       <div>
         <Table scroll={{x: "max-content"}} columns={columns} dataSource={sessions} rowKey={(record) => `${record.owner}/${record.name}`} size="middle" bordered pagination={paginationProps}
+          title={() => (
+            <div>
+              {i18next.t("general:Sessions")}&nbsp;&nbsp;&nbsp;&nbsp;
+            </div>
+          )}
           loading={this.state.loading}
           onChange={this.handleTableChange}
         />

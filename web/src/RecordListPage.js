@@ -204,13 +204,13 @@ class RecordListPage extends BaseListPage {
         sorter: true,
         fixed: "right",
         render: (text, record, index) => (
-          <Button type="link" onClick={() => {
+          <Button onClick={() => {
             this.setState({
               detailRecord: record,
               detailShow: true,
             });
           }}>
-            {i18next.t("general:Detail")}
+            {i18next.t("general:View")}
           </Button>
         ),
       },
