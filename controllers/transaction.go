@@ -155,6 +155,8 @@ func (c *ApiController) UpdateTransaction() {
 		return
 	}
 
+	c.enforceOwnerFromId(id, func(owner string) { transaction.Owner = owner })
+
 	c.Data["json"] = wrapActionResponse(object.UpdateTransaction(id, &transaction, c.GetAcceptLanguage()))
 	c.ServeJSON()
 }

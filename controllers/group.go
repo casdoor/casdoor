@@ -144,6 +144,8 @@ func (c *ApiController) UpdateGroup() {
 		return
 	}
 
+	c.enforceOwnerFromId(id, func(owner string) { group.Owner = owner })
+
 	c.Data["json"] = wrapActionResponse(object.UpdateGroup(id, &group))
 	c.ServeJSON()
 }

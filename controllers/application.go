@@ -232,6 +232,8 @@ func (c *ApiController) UpdateApplication() {
 		return
 	}
 
+	c.enforceOwnerFromId(id, func(owner string) { application.Owner = owner })
+
 	if err = object.CheckIpWhitelist(application.IpWhitelist, c.GetAcceptLanguage()); err != nil {
 		c.ResponseError(err.Error())
 		return

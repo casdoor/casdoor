@@ -110,6 +110,8 @@ func (c *ApiController) UpdateProduct() {
 		return
 	}
 
+	c.enforceOwnerFromId(id, func(owner string) { product.Owner = owner })
+
 	c.Data["json"] = wrapActionResponse(object.UpdateProduct(id, &product))
 	c.ServeJSON()
 }

@@ -126,6 +126,8 @@ func (c *ApiController) AddRule() {
 // @Success 200 {object} controllers.Response The Response object
 // @router /update-rule [post]
 func (c *ApiController) UpdateRule() {
+	id := c.Ctx.Input.Query("id")
+
 	var rule object.Rule
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &rule)
 	if err != nil {
@@ -133,13 +135,14 @@ func (c *ApiController) UpdateRule() {
 		return
 	}
 
+	c.enforceOwnerFromId(id, func(owner string) { rule.Owner = owner })
+
 	err = checkExpressions(rule.Expressions, rule.Type)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
 
-	id := c.Ctx.Input.Query("id")
 	c.Data["json"] = wrapActionResponse(object.UpdateRule(id, &rule))
 	c.ServeJSON()
 }

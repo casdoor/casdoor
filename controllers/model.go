@@ -102,6 +102,8 @@ func (c *ApiController) UpdateModel() {
 		return
 	}
 
+	c.enforceOwnerFromId(id, func(owner string) { model.Owner = owner })
+
 	c.Data["json"] = wrapErrorResponse(object.UpdateModelWithCheck(id, &model))
 	c.ServeJSON()
 }

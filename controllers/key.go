@@ -174,10 +174,7 @@ func (c *ApiController) UpdateKey() {
 		return
 	}
 
-	if !c.IsGlobalAdmin() && oldKey.Owner != key.Owner {
-		c.ResponseError(c.T("auth:Unauthorized operation"))
-		return
-	}
+	c.enforceOwnerFromId(id, func(owner string) { key.Owner = owner })
 
 	c.Data["json"] = wrapActionResponse(object.UpdateKey(id, &key))
 	c.ServeJSON()

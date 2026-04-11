@@ -132,6 +132,8 @@ func (c *ApiController) UpdateSubscription() {
 		return
 	}
 
+	c.enforceOwnerFromId(id, func(owner string) { subscription.Owner = owner })
+
 	c.Data["json"] = wrapActionResponse(object.UpdateSubscription(id, &subscription))
 	c.ServeJSON()
 }

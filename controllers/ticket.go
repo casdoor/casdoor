@@ -138,6 +138,8 @@ func (c *ApiController) UpdateTicket() {
 		return
 	}
 
+	c.enforceOwnerFromId(id, func(owner string) { ticket.Owner = owner })
+
 	// Check permission
 	user := c.getCurrentUser()
 	isAdmin := c.IsAdmin()

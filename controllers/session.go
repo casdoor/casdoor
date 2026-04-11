@@ -100,7 +100,10 @@ func (c *ApiController) UpdateSession() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.UpdateSession(util.GetSessionId(session.Owner, session.Name, session.Application), &session))
+	id := util.GetSessionId(session.Owner, session.Name, session.Application)
+	c.enforceOwnerFromId(id, func(owner string) { session.Owner = owner })
+
+	c.Data["json"] = wrapActionResponse(object.UpdateSession(id, &session))
 	c.ServeJSON()
 }
 

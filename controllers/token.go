@@ -105,6 +105,8 @@ func (c *ApiController) UpdateToken() {
 		return
 	}
 
+	c.enforceOwnerFromId(id, func(owner string) { token.Owner = owner })
+
 	c.Data["json"] = wrapActionResponse(object.UpdateToken(id, &token, c.IsGlobalAdmin()))
 	c.ServeJSON()
 }

@@ -342,6 +342,8 @@ func (c *ApiController) UpdateUser() {
 		return
 	}
 
+	c.enforceOwnerFromId(id, func(owner string) { user.Owner = owner })
+
 	columns := []string{}
 	if columnsStr != "" {
 		columns = strings.Split(columnsStr, ",")

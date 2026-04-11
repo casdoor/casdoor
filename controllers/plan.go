@@ -115,6 +115,9 @@ func (c *ApiController) UpdatePlan() {
 		c.ResponseError(err.Error())
 		return
 	}
+
+	c.enforceOwnerFromId(id, func(owner string) { plan.Owner = owner })
+
 	if plan.Product != "" {
 		productId := util.GetId(owner, plan.Product)
 		product, err := object.GetProduct(productId)

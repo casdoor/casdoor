@@ -142,6 +142,8 @@ func (c *ApiController) UpdateCert() {
 		return
 	}
 
+	c.enforceOwnerFromId(id, func(owner string) { cert.Owner = owner })
+
 	c.Data["json"] = wrapActionResponse(object.UpdateCert(id, &cert))
 	c.ServeJSON()
 }

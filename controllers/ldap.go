@@ -211,6 +211,10 @@ func (c *ApiController) UpdateLdap() {
 		return
 	}
 
+	if !c.IsGlobalAdmin() && prevLdap != nil {
+		ldap.Owner = prevLdap.Owner
+	}
+
 	affected, err := object.UpdateLdap(&ldap)
 	if err != nil {
 		c.ResponseError(err.Error())

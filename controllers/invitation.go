@@ -134,6 +134,8 @@ func (c *ApiController) UpdateInvitation() {
 		return
 	}
 
+	c.enforceOwnerFromId(id, func(owner string) { invitation.Owner = owner })
+
 	c.Data["json"] = wrapActionResponse(object.UpdateInvitation(id, &invitation, c.GetAcceptLanguage()))
 	c.ServeJSON()
 }

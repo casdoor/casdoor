@@ -104,6 +104,8 @@ func (c *ApiController) UpdateSyncer() {
 		return
 	}
 
+	c.enforceOwnerFromId(id, func(owner string) { syncer.Owner = owner })
+
 	c.Data["json"] = wrapActionResponse(object.UpdateSyncer(id, &syncer, c.IsGlobalAdmin(), c.GetAcceptLanguage()))
 	c.ServeJSON()
 }

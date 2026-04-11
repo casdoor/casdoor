@@ -117,6 +117,8 @@ func (c *ApiController) UpdateForm() {
 		return
 	}
 
+	c.enforceOwnerFromId(id, func(owner string) { form.Owner = owner })
+
 	success, err := object.UpdateForm(id, &form)
 	if err != nil {
 		c.ResponseError(err.Error())

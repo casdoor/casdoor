@@ -141,6 +141,8 @@ func (c *ApiController) UpdateResource() {
 		return
 	}
 
+	c.enforceOwnerFromId(id, func(owner string) { resource.Owner = owner })
+
 	c.Data["json"] = wrapActionResponse(object.UpdateResource(id, &resource))
 	c.ServeJSON()
 }

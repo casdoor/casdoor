@@ -141,6 +141,8 @@ func (c *ApiController) UpdatePermission() {
 		return
 	}
 
+	c.enforceOwnerFromId(id, func(owner string) { permission.Owner = owner })
+
 	c.Data["json"] = wrapActionResponse(object.UpdatePermission(id, &permission))
 	c.ServeJSON()
 }

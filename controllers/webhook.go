@@ -105,6 +105,8 @@ func (c *ApiController) UpdateWebhook() {
 		return
 	}
 
+	c.enforceOwnerFromId(id, func(owner string) { webhook.Owner = owner })
+
 	c.Data["json"] = wrapActionResponse(object.UpdateWebhook(id, &webhook, c.IsGlobalAdmin(), c.GetAcceptLanguage()))
 	c.ServeJSON()
 }

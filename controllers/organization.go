@@ -123,6 +123,8 @@ func (c *ApiController) UpdateOrganization() {
 		return
 	}
 
+	c.enforceOwnerFromId(id, func(owner string) { organization.Owner = owner })
+
 	if err = object.CheckIpWhitelist(organization.IpWhitelist, c.GetAcceptLanguage()); err != nil {
 		c.ResponseError(err.Error())
 		return

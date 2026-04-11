@@ -173,6 +173,8 @@ func (c *ApiController) UpdateProvider() {
 		return
 	}
 
+	c.enforceOwnerFromId(id, func(owner string) { provider.Owner = owner })
+
 	ok := c.requireProviderPermission(&provider)
 	if !ok {
 		return

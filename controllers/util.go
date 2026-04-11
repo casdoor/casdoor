@@ -59,6 +59,19 @@ func (c *ApiController) ResponseError(error string, data ...interface{}) {
 	c.ResponseJsonData(resp, data...)
 }
 
+// enforceOwnerFromId prevents non-global-admin users from tampering with the
+// owner field in update requests. It extracts the owner from the id query
+// parameter (which has been validated by the authz filter) and forces it onto
+// the entity struct when the caller is not a global admin.
+// Returns the owner and name parsed from id.
+func (c *ApiController) enforceOwnerFromId(id string, setOwner func(owner string)) (string, string) {
+	owner, name := util.GetOwnerAndNameFromIdNoCheck(id)
+	if !c.IsGlobalAdmin() {
+		setOwner(owner)
+	}
+	return owner, name
+}
+
 func (c *ApiController) T(error string) string {
 	return i18n.Translate(c.GetAcceptLanguage(), error)
 }
