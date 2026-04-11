@@ -14,6 +14,7 @@
 
 import * as Setting from "./Setting";
 import {Avatar, Button, Card, Drawer, Dropdown, Menu, Result, Tooltip} from "antd";
+import Sider from "antd/es/layout/Sider";
 import EnableMfaNotification from "./common/notifaction/EnableMfaNotification";
 import {Link, Redirect, Route, Switch, withRouter} from "react-router-dom";
 import React, {useState} from "react";
@@ -23,6 +24,7 @@ import {
   BarsOutlined, CheckCircleOutlined, DeploymentUnitOutlined, DollarOutlined, DownOutlined,
   HomeOutlined,
   LockOutlined, LogoutOutlined,
+  MenuFoldOutlined, MenuUnfoldOutlined,
   SafetyCertificateOutlined, SettingOutlined,
   WalletOutlined
 } from "@ant-design/icons";
@@ -121,9 +123,27 @@ import RuleEditPage from "./RuleEditPage";
 
 function ManagementPage(props) {
   const [menuVisible, setMenuVisible] = useState(false);
+  const [siderCollapsed, setSiderCollapsed] = useState(() => localStorage.getItem("siderCollapsed") === "true");
   const organization = props.account?.organization;
   const navItems = Setting.isLocalAdminUser(props.account) ? organization?.navItems : (organization?.userNavItems ?? []);
   const widgetItems = organization?.widgetItems;
+
+  const isDark = props.themeAlgorithm.includes("dark");
+  const textColor = isDark ? "white" : "black";
+  const siderLogo = (() => {
+    if (!props.account?.organization) {return Setting.getLogo(props.themeAlgorithm);}
+    let logo = props.account.organization.logo || Setting.getLogo(props.themeAlgorithm);
+    if (isDark && props.account.organization.logoDark) {
+      logo = props.account.organization.logoDark;
+    }
+    return logo;
+  })();
+
+  const toggleSider = () => {
+    const next = !siderCollapsed;
+    setSiderCollapsed(next);
+    localStorage.setItem("siderCollapsed", String(next));
+  };
 
   function logout() {
     AuthBackend.logout()
@@ -287,28 +307,6 @@ function ManagementPage(props) {
     if (props.account === null || props.account === undefined) {
       return [];
     }
-
-    let textColor = "black";
-
-    let logo = props.account.organization.logo ? props.account.organization.logo : Setting.getLogo(props.themeAlgorithm);
-    if (props.themeAlgorithm.includes("dark")) {
-      if (props.account.organization.logoDark) {
-        logo = props.account.organization.logoDark;
-      }
-      textColor = "white";
-    }
-
-    !Setting.isMobile() ? res.push({
-      label:
-        <Link to="/">
-          <img className="logo" src={logo ?? props.logo} alt="logo" />
-        </Link>,
-      disabled: true, key: "logo",
-      style: {
-        padding: 0,
-        height: "auto",
-      },
-    }) : null;
 
     res.push(Setting.getItem(<Link style={{color: textColor}} to="/">{i18next.t("general:Home")}</Link>, "/home", <HomeOutlined />, [
       Setting.getItem(<Link to="/">{i18next.t("general:Dashboard")}</Link>, "/"),
@@ -579,52 +577,97 @@ function ManagementPage(props) {
     setMenuVisible(true);
   };
 
+  const siderWidth = 220;
+  const siderCollapsedWidth = 80;
+  const showSider = !Setting.isMobile() && !props.requiredEnableMfa;
+  const contentMarginLeft = showSider ? (siderCollapsed ? siderCollapsedWidth : siderWidth) : 0;
+
   return (
     <React.Fragment>
       <EnableMfaNotification account={props.account} />
-      <Header style={{display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0", marginBottom: "4px", backgroundColor: props.themeAlgorithm.includes("dark") ? "black" : "white"}} >
-        {
-          props.requiredEnableMfa || (Setting.isMobile() ? (
-            <React.Fragment>
-              <Drawer title={i18next.t("general:Close")} placement="left" open={menuVisible} onClose={onClose}>
-                <Menu
-                  items={getMenuItems()}
-                  mode={"inline"}
-                  selectedKeys={[props.selectedMenuKey]}
-                  style={{lineHeight: "64px"}}
-                  onClick={onClose}
-                >
-                </Menu>
-              </Drawer>
-              <Button icon={<BarsOutlined />} onClick={showMenu} type="text">
-                {i18next.t("general:Menu")}
-              </Button>
-            </React.Fragment>
-          ) : (
-            // Padding 1px for Menu Item Highlight border
-            <div style={{flex: 1, overflow: "hidden", paddingBottom: "1px"}}>
-              <Menu
-                onClick={onClose}
-                items={getMenuItems()}
-                mode={"horizontal"}
-                selectedKeys={[props.selectedMenuKey]}
-                style={{backgroundColor: props.themeAlgorithm.includes("dark") ? "black" : "white"}}
+      {showSider && (
+        <Sider
+          collapsed={siderCollapsed}
+          collapsedWidth={siderCollapsedWidth}
+          width={siderWidth}
+          trigger={null}
+          theme={isDark ? "dark" : "light"}
+          style={{
+            overflow: "auto",
+            height: "100vh",
+            position: "fixed",
+            left: 0,
+            top: 0,
+            bottom: 0,
+            zIndex: 100,
+            boxShadow: "2px 0 8px rgba(0,0,0,0.08)",
+          }}
+        >
+          <div style={{
+            height: 64,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: siderCollapsed ? "center" : "flex-start",
+            padding: siderCollapsed ? "0" : "0 16px",
+            overflow: "hidden",
+          }}>
+            <Link to="/">
+              <img
+                src={siderLogo ?? props.logo}
+                alt="logo"
+                style={{height: 40, maxWidth: siderCollapsed ? 40 : 160, objectFit: "contain", transition: "max-width 0.2s"}}
               />
-            </div>
-          ))
-        }
-        <div style={{flexShrink: 0}}>
-          {renderAccountMenu()}
-        </div>
-      </Header>
-      <Content style={{display: "flex", flexDirection: "column"}} >
-        {isWithoutCard() ?
-          renderRouter() :
-          <Card className="content-warp-card">
-            {renderRouter()}
-          </Card>
-        }
-      </Content>
+            </Link>
+          </div>
+          <Menu
+            mode="inline"
+            items={getMenuItems()}
+            selectedKeys={[props.selectedMenuKey]}
+            theme={isDark ? "dark" : "light"}
+            style={{borderRight: 0}}
+          />
+        </Sider>
+      )}
+      <div style={{marginLeft: contentMarginLeft, transition: "margin-left 0.2s", display: "flex", flexDirection: "column", minHeight: "100vh"}}>
+        <Header style={{display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0", marginBottom: "4px", backgroundColor: isDark ? "black" : "white", position: "sticky", top: 0, zIndex: 99, boxShadow: "0 1px 4px rgba(0,0,0,0.08)"}}>
+          <div style={{display: "flex", alignItems: "center"}}>
+            {props.requiredEnableMfa ? null : (Setting.isMobile() ? (
+              <React.Fragment>
+                <Drawer title={i18next.t("general:Close")} placement="left" open={menuVisible} onClose={onClose}>
+                  <Menu
+                    items={getMenuItems()}
+                    mode={"inline"}
+                    selectedKeys={[props.selectedMenuKey]}
+                    style={{lineHeight: "64px"}}
+                    onClick={onClose}
+                  />
+                </Drawer>
+                <Button icon={<BarsOutlined />} onClick={showMenu} type="text">
+                  {i18next.t("general:Menu")}
+                </Button>
+              </React.Fragment>
+            ) : (
+              <Button
+                icon={siderCollapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+                onClick={toggleSider}
+                type="text"
+                style={{fontSize: 16, width: 48, height: 48}}
+              />
+            ))}
+          </div>
+          <div style={{flexShrink: 0}}>
+            {renderAccountMenu()}
+          </div>
+        </Header>
+        <Content style={{display: "flex", flexDirection: "column"}}>
+          {isWithoutCard() ?
+            renderRouter() :
+            <Card className="content-warp-card">
+              {renderRouter()}
+            </Card>
+          }
+        </Content>
+      </div>
     </React.Fragment>
   );
 }
