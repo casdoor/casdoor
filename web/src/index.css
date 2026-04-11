@@ -44,6 +44,10 @@ code {
   padding: 1px 8px !important;
 }
 
+.ant-table.ant-table-medium .ant-table-thead .ant-table-cell {
+  padding: 10px 8px !important;
+}
+
 .ant-list-sm .ant-list-item {
   padding: 2px !important;
 }
