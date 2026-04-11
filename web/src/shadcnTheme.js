@@ -16,6 +16,7 @@
 // Adapted from the "shadcn" preset on https://ant.design/
 
 export const shadcnThemeToken = {
+  fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif",
   colorPrimary: "#262626",
   colorSuccess: "#22c55e",
   colorWarning: "#f97316",
@@ -152,5 +153,16 @@ export const shadcnThemeComponents = {
   },
   ColorPicker: {
     borderRadius: 6,
+  },
+  Menu: {
+    itemFontSize: 14,
+    groupTitleFontSize: 12,
+    itemHeight: 40,
+    fontWeightStrong: 600,
+  },
+  Table: {
+    headerBg: "#fafafa",
+    headerSplitColor: "#e5e5e5",
+    fontWeightStrong: 600,
   },
 };

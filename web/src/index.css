@@ -1,6 +1,9 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+
 body {
   margin: 0;
   font-family:
+    "Inter",
     -apple-system,
     BlinkMacSystemFont,
     "Segoe UI",
@@ -68,4 +71,64 @@ code {
 
 .no-horizontal-scroll-editor [class*="CodeMirror-scroll"] {
   overflow-x: hidden !important;
+}
+
+/* Bold overrides for key UI elements */
+
+/* Sidebar menu: item labels */
+.ant-menu .ant-menu-item,
+.ant-menu .ant-menu-item a,
+.ant-menu .ant-menu-submenu-title {
+  font-weight: 600 !important;
+}
+
+/* Sidebar menu: group titles */
+.ant-menu .ant-menu-item-group-title {
+  font-weight: 700 !important;
+  letter-spacing: 0.04em;
+}
+
+/* Table: column headers (thead) */
+.ant-table .ant-table-thead > tr > th,
+.ant-table .ant-table-thead > tr > td {
+  font-weight: 600 !important;
+}
+
+/* Table: footer */
+.ant-table .ant-table-footer {
+  font-weight: 600 !important;
+}
+
+/* Table: title bar */
+.ant-table .ant-table-title {
+  font-weight: 700 !important;
+}
+
+/* Card: header title */
+.ant-card .ant-card-head-title {
+  font-weight: 600 !important;
+}
+
+/* Descriptions: item labels */
+.ant-descriptions .ant-descriptions-item-label {
+  font-weight: 600 !important;
+}
+
+/* Tabs: tab button labels */
+.ant-tabs .ant-tabs-tab .ant-tabs-tab-btn {
+  font-weight: 600 !important;
+}
+
+/* Layout sider: menu item and submenu labels */
+.ant-layout-sider .ant-menu-item,
+.ant-layout-sider .ant-menu-submenu-title {
+  font-weight: 600 !important;
+}
+
+/* Message popups: static API renders outside ConfigProvider, override font explicitly */
+.ant-message,
+.ant-message .ant-message-notice-content,
+.ant-message .ant-message-custom-content,
+.ant-message .ant-message-custom-content span {
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif !important;
 }
