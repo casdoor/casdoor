@@ -283,7 +283,7 @@ function ManagementPage(props) {
       Setting.getItem(<ThemeSelect themeAlgorithm={props.themeAlgorithm} onChange={props.setLogoAndThemeAlgorithm} />, "theme"),
       Setting.getItem(<LanguageSelect languages={props.account.organization.languages} />, "language"),
       Setting.getItem(Conf.AiAssistantUrl?.trim() && (
-        <Tooltip title="Click to open AI assistant">
+        <Tooltip title={i18next.t("general:Click to open AI assistant")}>
           <div className="select-box" onClick={props.openAiAssistant}>
             <DeploymentUnitOutlined style={{fontSize: "24px"}} />
           </div>

@@ -545,9 +545,9 @@ class UserListPage extends BaseListPage {
           const disabled = (record.owner === this.props.account.owner && record.name === this.props.account.name) || (record.owner === "built-in" && record.name === "admin");
           return (
             <Space>
-              <Button size={isTreePage ? "small" : "middle"} type="primary" onClick={() => {
+              <Button size={isTreePage ? "small" : "middle"} onClick={() => {
                 this.impersonateUser(`${record.owner}/${record.name}`);
-              }}>{i18next.t("general:Impersonation")}
+              }}>{i18next.t("general:Impersonate")}
               </Button>
               <Button size={isTreePage ? "small" : "middle"} type="primary" onClick={() => {
                 sessionStorage.setItem("userListUrl", window.location.pathname);

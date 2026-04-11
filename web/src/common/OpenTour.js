@@ -15,6 +15,7 @@
 import React from "react";
 import {Tooltip} from "antd";
 import {QuestionCircleOutlined} from "@ant-design/icons";
+import i18next from "i18next";
 import * as TourConfig from "../TourConfig";
 import * as Setting from "../Setting";
 
@@ -34,7 +35,7 @@ class OpenTour extends React.Component {
   render() {
     return (
       this.canTour() ?
-        <Tooltip title="Click to open tour">
+        <Tooltip title={i18next.t("general:Click to open tour")}>
           <div className="select-box" style={{display: Setting.isMobile() ? "none" : null, ...this.props.style}} onClick={() => TourConfig.setIsTourVisible(true)} >
             <QuestionCircleOutlined style={{fontSize: "24px"}} />
           </div>
