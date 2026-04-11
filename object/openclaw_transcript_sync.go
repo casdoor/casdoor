@@ -416,6 +416,10 @@ func buildOpenClawTranscriptEntries(provider *Provider, sessionID string, entry 
 		if text == "" {
 			return nil
 		}
+		if isHeartbeatText(text) {
+			return nil
+		}
+
 		return []*Entry{newOpenClawTranscriptEntry(provider, sessionID, "task", entry.ID, openClawBehaviorPayload{
 			Summary:   truncateText(fmt.Sprintf("task: %s", text), 100),
 			Kind:      "task",
@@ -711,6 +715,10 @@ func firstNonEmpty(values ...string) string {
 		}
 	}
 	return ""
+}
+
+func isHeartbeatText(text string) bool {
+	return strings.HasPrefix(strings.TrimSpace(text), "Read HEARTBEAT.md")
 }
 
 func truncateText(text string, max int) string {
