@@ -46,6 +46,7 @@ type OidcDiscovery struct {
 	RequestParameterSupported              bool     `json:"request_parameter_supported"`
 	RequestObjectSigningAlgValuesSupported []string `json:"request_object_signing_alg_values_supported"`
 	EndSessionEndpoint                     string   `json:"end_session_endpoint"`
+	DPoPSigningAlgValuesSupported          []string `json:"dpop_signing_alg_values_supported,omitempty"` // RFC 9449
 }
 
 type WebFinger struct {
@@ -167,6 +168,7 @@ func GetOidcDiscovery(host string, applicationName string) OidcDiscovery {
 		RequestParameterSupported:              true,
 		RequestObjectSigningAlgValuesSupported: []string{"HS256", "HS384", "HS512"},
 		EndSessionEndpoint:                     fmt.Sprintf("%s/api/logout", originBackend),
+		DPoPSigningAlgValuesSupported:          []string{"RS256", "RS512", "ES256", "ES384", "ES512", "PS256", "PS384", "PS512"},
 	}
 
 	return oidcDiscovery

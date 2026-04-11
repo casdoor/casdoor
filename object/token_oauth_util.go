@@ -62,19 +62,25 @@ type TokenError struct {
 	ErrorDescription string `json:"error_description,omitempty"`
 }
 
+// DPoPConfirmation holds the DPoP key confirmation claim (RFC 9449).
+type DPoPConfirmation struct {
+	JKT string `json:"jkt"`
+}
+
 type IntrospectionResponse struct {
-	Active    bool     `json:"active"`
-	Scope     string   `json:"scope,omitempty"`
-	ClientId  string   `json:"client_id,omitempty"`
-	Username  string   `json:"username,omitempty"`
-	TokenType string   `json:"token_type,omitempty"`
-	Exp       int64    `json:"exp,omitempty"`
-	Iat       int64    `json:"iat,omitempty"`
-	Nbf       int64    `json:"nbf,omitempty"`
-	Sub       string   `json:"sub,omitempty"`
-	Aud       []string `json:"aud,omitempty"`
-	Iss       string   `json:"iss,omitempty"`
-	Jti       string   `json:"jti,omitempty"`
+	Active    bool              `json:"active"`
+	Scope     string            `json:"scope,omitempty"`
+	ClientId  string            `json:"client_id,omitempty"`
+	Username  string            `json:"username,omitempty"`
+	TokenType string            `json:"token_type,omitempty"`
+	Exp       int64             `json:"exp,omitempty"`
+	Iat       int64             `json:"iat,omitempty"`
+	Nbf       int64             `json:"nbf,omitempty"`
+	Sub       string            `json:"sub,omitempty"`
+	Aud       []string          `json:"aud,omitempty"`
+	Iss       string            `json:"iss,omitempty"`
+	Jti       string            `json:"jti,omitempty"`
+	Cnf       *DPoPConfirmation `json:"cnf,omitempty"` // RFC 9449 DPoP key binding
 }
 
 type DeviceAuthCache struct {
@@ -349,7 +355,7 @@ func GetOAuthCode(userId string, clientId string, provider string, signinMethod 
 	}, nil
 }
 
-func RefreshToken(application *Application, grantType string, refreshToken string, scope string, clientId string, clientSecret string, host string) (interface{}, error) {
+func RefreshToken(application *Application, grantType string, refreshToken string, scope string, clientId string, clientSecret string, host string, dpopProof string) (interface{}, error) {
 	if grantType != "refresh_token" {
 		return &TokenError{
 			Error:            UnsupportedGrantType,
@@ -478,6 +484,23 @@ func RefreshToken(application *Application, grantType string, refreshToken strin
 	_, err = AddToken(newToken)
 	if err != nil {
 		return nil, err
+	}
+
+	// Apply DPoP binding to the refreshed token if a DPoP proof was provided.
+	if dpopProof != "" {
+		dpopHtu := GetDPoPHtu(host, "/api/login/oauth/access_token")
+		jkt, err := ValidateDPoPProof(dpopProof, "POST", dpopHtu, "")
+		if err != nil {
+			return &TokenError{
+				Error:            "invalid_dpop_proof",
+				ErrorDescription: err.Error(),
+			}, nil
+		}
+		newToken.TokenType = "DPoP"
+		newToken.DPoPJkt = jkt
+		if err = updateTokenDPoP(newToken); err != nil {
+			return nil, err
+		}
 	}
 
 	_, err = DeleteToken(token)

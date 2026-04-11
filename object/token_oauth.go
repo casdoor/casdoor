@@ -23,7 +23,7 @@ import (
 	"github.com/casdoor/casdoor/util"
 )
 
-func GetOAuthToken(grantType string, clientId string, clientSecret string, code string, verifier string, scope string, nonce string, username string, password string, host string, refreshToken string, tag string, avatar string, lang string, subjectToken string, subjectTokenType string, assertion string, clientAssertion string, clientAssertionType string, audience string, resource string) (interface{}, error) {
+func GetOAuthToken(grantType string, clientId string, clientSecret string, code string, verifier string, scope string, nonce string, username string, password string, host string, refreshToken string, tag string, avatar string, lang string, subjectToken string, subjectTokenType string, assertion string, clientAssertion string, clientAssertionType string, audience string, resource string, dpopProof string) (interface{}, error) {
 	var (
 		application *Application
 		err         error
@@ -85,7 +85,7 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 	case "urn:ietf:params:oauth:grant-type:token-exchange": // Token Exchange Grant (RFC 8693)
 		token, tokenError, err = GetTokenExchangeToken(application, clientSecret, subjectToken, subjectTokenType, audience, scope, host)
 	case "refresh_token":
-		refreshToken2, err := RefreshToken(application, grantType, refreshToken, scope, clientId, clientSecret, host)
+		refreshToken2, err := RefreshToken(application, grantType, refreshToken, scope, clientId, clientSecret, host, dpopProof)
 		if err != nil {
 			return nil, err
 		}
@@ -106,6 +106,23 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 
 	if tokenError != nil {
 		return tokenError, nil
+	}
+
+	// Apply DPoP binding (RFC 9449) if a DPoP proof was supplied by the client.
+	if dpopProof != "" {
+		dpopHtu := GetDPoPHtu(host, "/api/login/oauth/access_token")
+		jkt, dpopErr := ValidateDPoPProof(dpopProof, "POST", dpopHtu, "")
+		if dpopErr != nil {
+			return &TokenError{
+				Error:            "invalid_dpop_proof",
+				ErrorDescription: dpopErr.Error(),
+			}, nil
+		}
+		token.TokenType = "DPoP"
+		token.DPoPJkt = jkt
+		if err = updateTokenDPoP(token); err != nil {
+			return nil, err
+		}
 	}
 
 	token.CodeIsUsed = true

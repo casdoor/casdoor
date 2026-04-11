@@ -43,7 +43,8 @@ type Token struct {
 	CodeChallenge    string `xorm:"varchar(100)" json:"codeChallenge"`
 	CodeIsUsed       bool   `json:"codeIsUsed"`
 	CodeExpireIn     int64  `json:"codeExpireIn"`
-	Resource         string `xorm:"varchar(255)" json:"resource"` // RFC 8707 Resource Indicator
+	Resource string `xorm:"varchar(255)" json:"resource"` // RFC 8707 Resource Indicator
+	DPoPJkt  string `xorm:"varchar(255) 'dpop_jkt'" json:"dPoPJkt"` // RFC 9449 DPoP JWK thumbprint binding
 }
 
 func GetTokenCount(owner, organization, field, value string) (int64, error) {
@@ -234,4 +235,10 @@ func ExpireTokenByUser(owner, username string) (bool, error) {
 	}
 
 	return affected != 0, nil
+}
+
+// updateTokenDPoP updates the token_type and dpop_jkt columns for DPoP binding (RFC 9449).
+func updateTokenDPoP(token *Token) error {
+	_, err := ormer.Engine.ID(core.PK{token.Owner, token.Name}).Cols("token_type", "dpop_jkt").Update(token)
+	return err
 }

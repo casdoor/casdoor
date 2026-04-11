@@ -238,8 +238,9 @@ func parseBearerToken(ctx *context.Context) string {
 		return ""
 	}
 
+	// Accept both "Bearer" (RFC 6750) and "DPoP" (RFC 9449) authorization schemes.
 	prefix := tokens[0]
-	if prefix != "Bearer" {
+	if prefix != "Bearer" && prefix != "DPoP" {
 		return ""
 	}
 
