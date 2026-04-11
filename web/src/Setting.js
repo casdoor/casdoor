@@ -15,7 +15,7 @@
 import React from "react";
 import {Link} from "react-router-dom";
 import {Button, Select, Tag, Tooltip, message, theme} from "antd";
-import {QuestionCircleTwoTone} from "@ant-design/icons";
+import {QuestionCircleOutlined} from "@ant-design/icons";
 import {isMobile as isMobileDevice} from "react-device-detect";
 import "./i18n";
 import i18next from "i18next";
@@ -1666,7 +1666,7 @@ export function getLabel(text, tooltip) {
     <React.Fragment>
       <span style={{marginRight: 4}}>{text}</span>
       <Tooltip placement="top" title={tooltip}>
-        <QuestionCircleTwoTone twoToneColor="rgb(45,120,213)" />
+        <QuestionCircleOutlined style={{color: "var(--ant-color-primary)"}} />
       </Tooltip>
     </React.Fragment>
   );
