@@ -198,13 +198,13 @@ function ManagementPage(props) {
   function renderAvatar() {
     if (props.account.avatar === "") {
       return (
-        <Avatar style={{backgroundColor: Setting.getAvatarColor(props.account.name), verticalAlign: "middle"}} size="large">
+        <Avatar style={{backgroundColor: Setting.getAvatarColor(props.account.name), verticalAlign: "middle", marginLeft: 8}} size="large">
           {Setting.getShortName(props.account.name)}
         </Avatar>
       );
     } else {
       return (
-        <Avatar src={props.account.avatar} style={{verticalAlign: "middle"}} size="large"
+        <Avatar src={props.account.avatar} style={{verticalAlign: "middle", marginLeft: 8}} size="large"
           icon={<AccountAvatar src={props.account.avatar} style={{verticalAlign: "middle"}} size={40} />}
         >
           {Setting.getShortName(props.account.name)}
