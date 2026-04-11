@@ -32,10 +32,9 @@ code {
   float: left;
 }
 
-.ant-table.ant-table-middle .ant-table-title,
-.ant-table.ant-table-middle .ant-table-footer,
-.ant-table.ant-table-middle thead > tr > th,
-.ant-table.ant-table-middle tbody > tr > td {
+.ant-table.ant-table-medium .ant-table-title,
+.ant-table.ant-table-medium .ant-table-footer,
+.ant-table.ant-table-medium .ant-table-cell {
   padding: 1px 8px !important;
 }
 
