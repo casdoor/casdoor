@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {Card, Col, Divider, Progress, Row, Spin, Tour} from "antd";
+import {Card, Col, Progress, Row, Spin, Tour} from "antd";
 import * as SystemBackend from "./backend/SystemInfo";
 import React from "react";
 import * as Setting from "./Setting";
@@ -198,42 +198,38 @@ class SystemInfo extends React.Component {
     if (!Setting.isMobile()) {
       return (
         <>
-          <Row>
-            <Col span={6}></Col>
+          <Row gutter={[16, 16]}>
+            <Col span={6}>
+              <Card id="network-card" title={i18next.t("system:Network Usage")} bordered={true} style={{textAlign: "center", height: "100%"}}>
+                {this.state.loading ? <Spin size="large" /> : networkUi}
+              </Card>
+            </Col>
+            <Col span={6}>
+              <Card id="cpu-card" title={i18next.t("system:CPU Usage")} bordered={true} style={{textAlign: "center", height: "100%"}}>
+                {this.state.loading ? <Spin size="large" /> : cpuUi}
+              </Card>
+            </Col>
+            <Col span={6}>
+              <Card id="memory-card" title={i18next.t("system:Memory Usage")} bordered={true} style={{textAlign: "center", height: "100%"}}>
+                {this.state.loading ? <Spin size="large" /> : memUi}
+              </Card>
+            </Col>
+            <Col span={6}>
+              <Card id="disk-card" title={i18next.t("system:Disk Usage")} bordered={true} style={{textAlign: "center", height: "100%"}}>
+                {this.state.loading ? <Spin size="large" /> : diskUi}
+              </Card>
+            </Col>
             <Col span={12}>
-              <Row gutter={[10, 10]}>
-                <Col span={12}>
-                  <Card id="cpu-card" title={i18next.t("system:CPU Usage")} bordered={true} style={{textAlign: "center", height: "100%"}}>
-                    {this.state.loading ? <Spin size="large" /> : cpuUi}
-                  </Card>
-                </Col>
-                <Col span={12}>
-                  <Card id="memory-card" title={i18next.t("system:Memory Usage")} bordered={true} style={{textAlign: "center", height: "100%"}}>
-                    {this.state.loading ? <Spin size="large" /> : memUi}
-                  </Card>
-                </Col>
-                <Col span={12}>
-                  <Card id="disk-card" title={i18next.t("system:Disk Usage")} bordered={true} style={{textAlign: "center", height: "100%"}}>
-                    {this.state.loading ? <Spin size="large" /> : diskUi}
-                  </Card>
-                </Col>
-                <Col span={12}>
-                  <Card id="network-card" title={i18next.t("system:Network Usage")} bordered={true} style={{textAlign: "center", height: "100%"}}>
-                    {this.state.loading ? <Spin size="large" /> : networkUi}
-                  </Card>
-                </Col>
-                <Col span={24}>
-                  <Card id="latency-card" title={i18next.t("system:API Latency")} bordered={true} style={{textAlign: "center", height: "100%"}}>
-                    {this.state.loading ? <Spin size="large" /> : latencyUi}
-                  </Card>
-                </Col>
-                <Col span={24}>
-                  <Card id="throughput-card" title={i18next.t("system:API Throughput")} bordered={true} style={{textAlign: "center", height: "100%"}}>
-                    {this.state.loading ? <Spin size="large" /> : throughputUi}
-                  </Card>
-                </Col>
-              </Row>
-              <Divider />
+              <Card id="latency-card" title={i18next.t("system:API Latency")} bordered={true} style={{textAlign: "center", height: "100%"}}>
+                {this.state.loading ? <Spin size="large" /> : latencyUi}
+              </Card>
+            </Col>
+            <Col span={12}>
+              <Card id="throughput-card" title={i18next.t("system:API Throughput")} bordered={true} style={{textAlign: "center", height: "100%"}}>
+                {this.state.loading ? <Spin size="large" /> : throughputUi}
+              </Card>
+            </Col>
+            <Col span={24}>
               <Card id="about-card" title={i18next.t("system:About Casdoor")} bordered={true} style={{textAlign: "center"}}>
                 <div>{i18next.t("system:An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2.0, OIDC, SAML and CAS")}</div>
                 GitHub: <a target="_blank" rel="noreferrer" href="https://github.com/casdoor/casdoor">Casdoor</a>
@@ -245,7 +241,6 @@ class SystemInfo extends React.Component {
                 {i18next.t("system:Community")}: <a target="_blank" rel="noreferrer" href="https://casdoor.org/#:~:text=Casdoor%20API-,Community,-GitHub">Get in Touch!</a>
               </Card>
             </Col>
-            <Col span={6}></Col>
           </Row>
           <Tour
             open={Setting.isMobile() ? false : this.state.isTourVisible}
@@ -262,7 +257,12 @@ class SystemInfo extends React.Component {
       );
     } else {
       return (
-        <Row gutter={[16, 0]}>
+        <Row gutter={[16, 16]}>
+          <Col span={24}>
+            <Card title={i18next.t("system:Network Usage")} bordered={true} style={{textAlign: "center", width: "100%"}}>
+              {this.state.loading ? <Spin size="large" /> : networkUi}
+            </Card>
+          </Col>
           <Col span={24}>
             <Card title={i18next.t("system:CPU Usage")} bordered={true} style={{textAlign: "center", width: "100%"}}>
               {this.state.loading ? <Spin size="large" /> : cpuUi}
@@ -276,11 +276,6 @@ class SystemInfo extends React.Component {
           <Col span={24}>
             <Card title={i18next.t("system:Disk Usage")} bordered={true} style={{textAlign: "center", width: "100%"}}>
               {this.state.loading ? <Spin size="large" /> : diskUi}
-            </Card>
-          </Col>
-          <Col span={24}>
-            <Card title={i18next.t("system:Network Usage")} bordered={true} style={{textAlign: "center", width: "100%"}}>
-              {this.state.loading ? <Spin size="large" /> : networkUi}
             </Card>
           </Col>
           <Col span={24}>
