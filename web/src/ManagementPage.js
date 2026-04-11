@@ -19,12 +19,12 @@ import {Link, Redirect, Route, Switch, withRouter} from "react-router-dom";
 import React, {useState} from "react";
 import i18next from "i18next";
 import {
-  AppstoreTwoTone,
-  BarsOutlined, CheckCircleTwoTone, DeploymentUnitOutlined, DollarTwoTone, DownOutlined,
-  HomeTwoTone,
-  LockTwoTone, LogoutOutlined,
-  SafetyCertificateTwoTone, SettingOutlined, SettingTwoTone,
-  WalletTwoTone
+  AppstoreOutlined,
+  BarsOutlined, CheckCircleOutlined, DeploymentUnitOutlined, DollarOutlined, DownOutlined,
+  HomeOutlined,
+  LockOutlined, LogoutOutlined,
+  SafetyCertificateOutlined, SettingOutlined,
+  WalletOutlined
 } from "@ant-design/icons";
 import Dashboard from "./basic/Dashboard";
 import AppListPage from "./basic/AppListPage";
@@ -289,7 +289,6 @@ function ManagementPage(props) {
     }
 
     let textColor = "black";
-    const twoToneColor = props.themeData.colorPrimary;
 
     let logo = props.account.organization.logo ? props.account.organization.logo : Setting.getLogo(props.themeAlgorithm);
     if (props.themeAlgorithm.includes("dark")) {
@@ -311,7 +310,7 @@ function ManagementPage(props) {
       },
     }) : null;
 
-    res.push(Setting.getItem(<Link style={{color: textColor}} to="/">{i18next.t("general:Home")}</Link>, "/home", <HomeTwoTone twoToneColor={twoToneColor} />, [
+    res.push(Setting.getItem(<Link style={{color: textColor}} to="/">{i18next.t("general:Home")}</Link>, "/home", <HomeOutlined />, [
       Setting.getItem(<Link to="/">{i18next.t("general:Dashboard")}</Link>, "/"),
       Setting.getItem(<Link to="/shortcuts">{i18next.t("general:Shortcuts")}</Link>, "/shortcuts"),
       Setting.getItem(<Link to="/apps">{i18next.t("general:Apps")}</Link>, "/apps"),
@@ -325,14 +324,14 @@ function ManagementPage(props) {
       </a>, "#"));
     }
 
-    res.push(Setting.getItem(<Link style={{color: textColor}} to="/organizations">{i18next.t("general:User Management")}</Link>, "/orgs", <AppstoreTwoTone twoToneColor={twoToneColor} />, [
+    res.push(Setting.getItem(<Link style={{color: textColor}} to="/organizations">{i18next.t("general:User Management")}</Link>, "/orgs", <AppstoreOutlined />, [
       Setting.getItem(<Link to="/organizations">{i18next.t("general:Organizations")}</Link>, "/organizations"),
       Setting.getItem(<Link to="/groups">{i18next.t("general:Groups")}</Link>, "/groups"),
       Setting.getItem(<Link to="/users">{i18next.t("general:Users")}</Link>, "/users"),
       Setting.getItem(<Link to="/invitations">{i18next.t("general:Invitations")}</Link>, "/invitations"),
     ]));
 
-    res.push(Setting.getItem(<Link style={{color: textColor}} to="/applications">{i18next.t("general:Identity")}</Link>, "/identity", <LockTwoTone twoToneColor={twoToneColor} />, [
+    res.push(Setting.getItem(<Link style={{color: textColor}} to="/applications">{i18next.t("general:Identity")}</Link>, "/identity", <LockOutlined />, [
       Setting.getItem(<Link to="/applications">{i18next.t("general:Applications")}</Link>, "/applications"),
       Setting.getItem(<Link to="/providers">{i18next.t("application:Providers")}</Link>, "/providers"),
       Setting.getItem(<Link to="/resources">{i18next.t("general:Resources")}</Link>, "/resources"),
@@ -340,7 +339,7 @@ function ManagementPage(props) {
       Setting.getItem(<Link to="/keys">{i18next.t("general:Keys")}</Link>, "/keys"),
     ]));
 
-    res.push(Setting.getItem(<Link style={{color: textColor}} to="/roles">{i18next.t("general:Authorization")}</Link>, "/auth", <SafetyCertificateTwoTone twoToneColor={twoToneColor} />, [
+    res.push(Setting.getItem(<Link style={{color: textColor}} to="/roles">{i18next.t("general:Authorization")}</Link>, "/auth", <SafetyCertificateOutlined />, [
       Setting.getItem(<Link to="/roles">{i18next.t("general:Roles")}</Link>, "/roles"),
       Setting.getItem(<Link to="/permissions">{i18next.t("general:Permissions")}</Link>, "/permissions"),
       Setting.getItem(<Link to="/models">{i18next.t("general:Models")}</Link>, "/models"),
@@ -354,7 +353,7 @@ function ManagementPage(props) {
       }
     })));
 
-    res.push(Setting.getItem(<Link style={{color: textColor}} to="/sites">{i18next.t("general:LLM AI")}</Link>, "/gateway", <CheckCircleTwoTone twoToneColor={twoToneColor} />, [
+    res.push(Setting.getItem(<Link style={{color: textColor}} to="/sites">{i18next.t("general:LLM AI")}</Link>, "/gateway", <CheckCircleOutlined />, [
       Setting.getItem(<Link to="/agents">{i18next.t("general:Agents")}</Link>, "/agents"),
       Setting.getItem(<Link to="/servers">{i18next.t("general:MCP Servers")}</Link>, "/servers"),
       Setting.getItem(<Link to="/server-store">{i18next.t("general:MCP Store")}</Link>, "/server-store"),
@@ -363,14 +362,14 @@ function ManagementPage(props) {
       Setting.getItem(<Link to="/rules">{i18next.t("general:Rules")}</Link>, "/rules"),
     ]));
 
-    res.push(Setting.getItem(<Link style={{color: textColor}} to="/sessions">{i18next.t("general:Logging & Auditing")}</Link>, "/logs", <WalletTwoTone twoToneColor={twoToneColor} />, [
+    res.push(Setting.getItem(<Link style={{color: textColor}} to="/sessions">{i18next.t("general:Logging & Auditing")}</Link>, "/logs", <WalletOutlined />, [
       Setting.getItem(<Link to="/sessions">{i18next.t("general:Sessions")}</Link>, "/sessions"),
       Setting.getItem(<Link to="/records">{i18next.t("general:Records")}</Link>, "/records"),
       Setting.getItem(<Link to="/tokens">{i18next.t("general:Tokens")}</Link>, "/tokens"),
       Setting.getItem(<Link to="/verifications">{i18next.t("general:Verifications")}</Link>, "/verifications"),
     ]));
 
-    res.push(Setting.getItem(<Link style={{color: textColor}} to="/products">{i18next.t("general:Business & Payments")}</Link>, "/business", <DollarTwoTone twoToneColor={twoToneColor} />, [
+    res.push(Setting.getItem(<Link style={{color: textColor}} to="/products">{i18next.t("general:Business & Payments")}</Link>, "/business", <DollarOutlined />, [
       Setting.getItem(<Link to="/product-store">{i18next.t("general:Product Store")}</Link>, "/product-store"),
       Setting.getItem(<Link to="/products">{i18next.t("general:Products")}</Link>, "/products"),
       Setting.getItem(<Link to="/cart">{i18next.t("general:Cart")}</Link>, "/cart"),
@@ -383,7 +382,7 @@ function ManagementPage(props) {
     ]));
 
     if (Setting.isAdminUser(props.account)) {
-      res.push(Setting.getItem(<Link style={{color: textColor}} to="/sysinfo">{i18next.t("general:Admin")}</Link>, "/admin", <SettingTwoTone twoToneColor={twoToneColor} />, [
+      res.push(Setting.getItem(<Link style={{color: textColor}} to="/sysinfo">{i18next.t("general:Admin")}</Link>, "/admin", <SettingOutlined />, [
         Setting.getItem(<Link to="/sysinfo">{i18next.t("general:System Info")}</Link>, "/sysinfo"),
         Setting.getItem(<Link to="/forms">{i18next.t("general:Forms")}</Link>, "/forms"),
         Setting.getItem(<Link to="/syncers">{i18next.t("general:Syncers")}</Link>, "/syncers"),
@@ -392,7 +391,7 @@ function ManagementPage(props) {
         Setting.getItem(<Link to="/tickets">{i18next.t("general:Tickets")}</Link>, "/tickets"),
         Setting.getItem(<a target="_blank" rel="noreferrer" href={Setting.isLocalhost() ? `${Setting.ServerUrl}/swagger` : "/swagger"}>{i18next.t("general:Swagger")}</a>, "/swagger")]));
     } else {
-      res.push(Setting.getItem(<Link style={{color: textColor}} to="/syncers">{i18next.t("general:Admin")}</Link>, "/admin", <SettingTwoTone twoToneColor={twoToneColor} />, [
+      res.push(Setting.getItem(<Link style={{color: textColor}} to="/syncers">{i18next.t("general:Admin")}</Link>, "/admin", <SettingOutlined />, [
         Setting.getItem(<Link to="/forms">{i18next.t("general:Forms")}</Link>, "/forms"),
         Setting.getItem(<Link to="/syncers">{i18next.t("general:Syncers")}</Link>, "/syncers"),
         Setting.getItem(<Link to="/webhooks">{i18next.t("general:Webhooks")}</Link>, "/webhooks"),
