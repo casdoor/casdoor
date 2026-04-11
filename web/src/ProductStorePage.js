@@ -341,7 +341,7 @@ class ProductStorePage extends React.Component {
 
   render() {
     return (
-      <div>
+      <div style={{padding: "16px"}}>
         <FloatingCartButton
           itemCount={this.state.cartItemCount}
           onClick={() => this.props.history.push("/cart")}

@@ -215,7 +215,7 @@ class ServerStorePage extends React.Component {
     const filteredServers = this.getFilteredOnlineServers();
 
     return (
-      <div>
+      <div style={{padding: "16px"}}>
         <div style={{display: "flex", gap: "8px", marginBottom: "12px"}}>
           <Input
             allowClear

@@ -20,7 +20,7 @@ const ShortcutsPage = () => {
   };
 
   return (
-    <div style={{display: "flex", justifyContent: "center", flexDirection: "column", alignItems: "center"}}>
+    <div style={{display: "flex", justifyContent: "center", flexDirection: "column", alignItems: "center", padding: "16px"}}>
       <GridCards items={getItems()} />
     </div>
   );
