@@ -662,7 +662,7 @@ function ManagementPage(props) {
         <Content style={{display: "flex", flexDirection: "column"}}>
           {isWithoutCard() ?
             renderRouter() :
-            <Card className="content-warp-card">
+            <Card className="content-warp-card" styles={{body: {padding: 0, margin: 0}}}>
               {renderRouter()}
             </Card>
           }
