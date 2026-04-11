@@ -633,11 +633,11 @@ function ManagementPage(props) {
           }}
         >
           <div style={{
-            height: 64,
+            height: 52,
             flexShrink: 0,
             display: "flex",
             alignItems: "center",
-            justifyContent: siderCollapsed ? "center" : "flex-start",
+            justifyContent: "center",
             padding: siderCollapsed ? "0" : "0 16px",
             overflow: "hidden",
           }}>
