@@ -637,8 +637,8 @@ function ManagementPage(props) {
             flexShrink: 0,
             display: "flex",
             alignItems: "center",
-            justifyContent: "center",
-            padding: siderCollapsed ? "0" : "0 16px",
+            justifyContent: siderCollapsed ? "center" : "flex-start",
+            padding: siderCollapsed ? "0" : "0 16px 0 24px",
             overflow: "hidden",
           }}>
             <Link to="/">
