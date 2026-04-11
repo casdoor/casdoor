@@ -122,8 +122,8 @@ const Dashboard = (props) => {
         }
       }
       return (
-        <div style={{display: "flex", justifyContent: "center", alignItems: "center"}}>
-          <Spin size="large" tip={i18next.t("login:Loading")} style={{paddingTop: "10%"}} />
+        <div style={{display: "flex", justifyContent: "center", alignItems: "center", height: "calc(100vh - 120px)"}}>
+          <Spin size="large" tip={i18next.t("login:Loading")} />
         </div>
       );
     }

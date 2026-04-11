@@ -125,6 +125,11 @@ code {
   font-weight: 600 !important;
 }
 
+/* Table loading spinner - give the overlay enough height so spinner appears centered (antd v6) */
+.ant-table-wrapper .ant-spin.ant-spin-spinning {
+  min-height: 420px;
+}
+
 /* Sidebar menu: selected item - darker background */
 .ant-layout-sider .ant-menu-light .ant-menu-item-selected,
 .ant-layout-sider .ant-menu-light>.ant-menu .ant-menu-item-selected {
