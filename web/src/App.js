@@ -23,6 +23,7 @@ import {Alert, Button, ConfigProvider, Drawer, FloatButton, Layout, Result, Tool
 import {Route, Switch, withRouter} from "react-router-dom";
 import CustomGithubCorner from "./common/CustomGithubCorner";
 import * as Conf from "./Conf";
+import {shadcnThemeComponents, shadcnThemeToken} from "./shadcnTheme";
 
 import * as Auth from "./auth/Auth";
 import EntryPage from "./EntryPage";
@@ -614,9 +615,11 @@ class App extends Component {
           locale={getAntdLocale(Setting.getLanguage())}
           theme={{
             token: {
+              ...shadcnThemeToken,
               colorPrimary: themeData.colorPrimary,
               borderRadius: themeData.borderRadius,
             },
+            components: shadcnThemeComponents,
             algorithm: Setting.getAlgorithm(this.state.themeAlgorithm),
           }}>
           <StyleProvider hashPriority="high" transformers={[legacyLogicalPropertiesTransformer]}>
@@ -756,10 +759,12 @@ class App extends Component {
           locale={getAntdLocale(Setting.getLanguage())}
           theme={{
             token: {
+              ...shadcnThemeToken,
               colorPrimary: this.state.themeData.colorPrimary,
               colorInfo: this.state.themeData.colorPrimary,
               borderRadius: this.state.themeData.borderRadius,
             },
+            components: shadcnThemeComponents,
             algorithm: Setting.getAlgorithm(this.state.themeAlgorithm),
           }}>
           <StyleProvider hashPriority="high" transformers={[legacyLogicalPropertiesTransformer]}>
