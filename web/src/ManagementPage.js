@@ -656,7 +656,7 @@ function ManagementPage(props) {
               />
             </Link>
           </div>
-          <div style={{flex: 1, overflow: "auto"}}>
+          <div className="sider-menu-container" style={{flex: 1, overflow: "auto"}}>
             <Menu
               mode="inline"
               items={getMenuItems()}

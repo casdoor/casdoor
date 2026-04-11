@@ -140,6 +140,15 @@ code {
   background-color: rgba(0, 0, 0, 0.15) !important;
 }
 
+/* Sidebar menu container: hide scrollbar but keep scroll behavior */
+.sider-menu-container {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+}
+.sider-menu-container::-webkit-scrollbar {
+  display: none; /* Chrome/Safari/WebKit */
+}
+
 /* Message popups: static API renders outside ConfigProvider, override font explicitly */
 .ant-message,
 .ant-message .ant-message-notice-content,
