@@ -78,6 +78,13 @@ class EntryEditPage extends React.Component {
     });
   }
 
+  isNonEmptyEntryField(value) {
+    if (value === undefined || value === null) {
+      return false;
+    }
+    return String(value).trim() !== "";
+  }
+
   submitEntryEdit(willExit) {
     const entry = Setting.deepCopy(this.state.entry);
     EntryBackend.updateEntry(this.state.owner, this.state.entryName, entry)
@@ -160,54 +167,60 @@ class EntryEditPage extends React.Component {
             }} />
           </Col>
         </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {i18next.t("general:Provider")}:
-          </Col>
-          <Col span={22} >
-            {this.state.entry.provider ? (
+        {this.isNonEmptyEntryField(this.state.entry.provider) ? (
+          <Row style={{marginTop: "20px"}} >
+            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+              {i18next.t("general:Provider")}:
+            </Col>
+            <Col span={22} >
               <Link to={`/providers/${this.state.entry.owner}/${this.state.entry.provider}`}>
                 {this.state.entry.provider}
               </Link>
-            ) : null}
-          </Col>
-        </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:Application"), i18next.t("general:Application - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            {this.state.entry.application ? (
+            </Col>
+          </Row>
+        ) : null}
+        {this.isNonEmptyEntryField(this.state.entry.application) ? (
+          <Row style={{marginTop: "20px"}} >
+            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+              {Setting.getLabel(i18next.t("general:Application"), i18next.t("general:Application - Tooltip"))} :
+            </Col>
+            <Col span={22} >
               <Link to={`/applications/${this.state.entry.owner}/${this.state.entry.application}`}>
                 {this.state.entry.application}
               </Link>
-            ) : null}
-          </Col>
-        </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:Type"), i18next.t("general:Type - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <Input disabled value={this.state.entry.type ?? ""} />
-          </Col>
-        </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {i18next.t("general:Client IP")}:
-          </Col>
-          <Col span={22} >
-            <Input disabled value={this.state.entry.clientIp ?? ""} />
-          </Col>
-        </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {i18next.t("general:User agent")}:
-          </Col>
-          <Col span={22} >
-            <Input disabled value={this.state.entry.userAgent ?? ""} />
-          </Col>
-        </Row>
+            </Col>
+          </Row>
+        ) : null}
+        {this.isNonEmptyEntryField(this.state.entry.type) ? (
+          <Row style={{marginTop: "20px"}} >
+            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+              {Setting.getLabel(i18next.t("general:Type"), i18next.t("general:Type - Tooltip"))} :
+            </Col>
+            <Col span={22} >
+              <Input disabled value={this.state.entry.type ?? ""} />
+            </Col>
+          </Row>
+        ) : null}
+        {this.isNonEmptyEntryField(this.state.entry.clientIp) ? (
+          <Row style={{marginTop: "20px"}} >
+            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+              {i18next.t("general:Client IP")}:
+            </Col>
+            <Col span={22} >
+              <Input disabled value={this.state.entry.clientIp ?? ""} />
+            </Col>
+          </Row>
+        ) : null}
+        {this.isNonEmptyEntryField(this.state.entry.userAgent) ? (
+          <Row style={{marginTop: "20px"}} >
+            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+              {i18next.t("general:User agent")}:
+            </Col>
+            <Col span={22} >
+              <Input disabled value={this.state.entry.userAgent ?? ""} />
+            </Col>
+          </Row>
+        ) : null}
         <EntryMessageViewer entry={this.state.entry} labelSpan={(Setting.isMobile()) ? 22 : 2} contentSpan={22} />
       </Card>
     );
