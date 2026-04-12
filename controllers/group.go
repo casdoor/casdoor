@@ -144,7 +144,7 @@ func (c *ApiController) UpdateGroup() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.UpdateGroup(id, &group))
+	c.Data["json"] = wrapActionResponse(object.UpdateGroup(id, &group, c.IsGlobalAdmin(), c.GetAcceptLanguage()))
 	c.ServeJSON()
 }
 

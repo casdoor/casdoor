@@ -315,6 +315,11 @@ func (c *ApiController) UpdateUser() {
 		return
 	}
 
+	if !c.IsGlobalAdmin() && user.Owner != oldUser.Owner {
+		c.ResponseError(c.T("auth:Unauthorized operation"))
+		return
+	}
+
 	if user.MfaEmailEnabled && user.Email == "" {
 		c.ResponseError(c.T("user:MFA email is enabled but email is empty"))
 		return

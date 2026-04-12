@@ -20,6 +20,7 @@ import (
 	"strings"
 
 	"github.com/casdoor/casdoor/conf"
+	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/builder"
 	"github.com/xorm-io/core"
@@ -142,7 +143,7 @@ func GetGroup(id string) (*Group, error) {
 	return getGroup(owner, name)
 }
 
-func UpdateGroup(id string, group *Group) (bool, error) {
+func UpdateGroup(id string, group *Group, isGlobalAdmin bool, lang string) (bool, error) {
 	owner, name, err := util.GetOwnerAndNameFromIdWithError(id)
 	if err != nil {
 		return false, err
@@ -150,6 +151,10 @@ func UpdateGroup(id string, group *Group) (bool, error) {
 	oldGroup, err := getGroup(owner, name)
 	if oldGroup == nil {
 		return false, err
+	}
+
+	if !isGlobalAdmin && oldGroup.Owner != group.Owner {
+		return false, errors.New(i18n.Translate(lang, "auth:Unauthorized operation"))
 	}
 
 	err = checkGroupName(group.Name)

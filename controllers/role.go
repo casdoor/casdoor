@@ -102,7 +102,7 @@ func (c *ApiController) UpdateRole() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.UpdateRole(id, &role))
+	c.Data["json"] = wrapActionResponse(object.UpdateRole(id, &role, c.IsGlobalAdmin(), c.GetAcceptLanguage()))
 	c.ServeJSON()
 }
 
