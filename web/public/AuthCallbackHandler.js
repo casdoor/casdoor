@@ -69,7 +69,7 @@
 
   function getResponseType(innerParams) {
     var method = innerParams.get("method");
-    if (method === "signup") {
+    if (method === "signup" || method === "signin") {
       var realRedirectUri = innerParams.get("redirect_uri");
       if (realRedirectUri === null) {
         var samlRequest = innerParams.get("SAMLRequest");
