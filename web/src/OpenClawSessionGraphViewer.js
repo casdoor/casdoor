@@ -1,6 +1,7 @@
 import React from "react";
 import {
   Alert,
+  Button,
   Col,
   Descriptions,
   Drawer,
@@ -9,6 +10,7 @@ import {
   Tooltip,
   Typography
 } from "antd";
+import {FullscreenExitOutlined, FullscreenOutlined} from "@ant-design/icons";
 import i18next from "i18next";
 import Loading from "./common/Loading";
 import ReactFlow, {
@@ -164,8 +166,17 @@ function getStatusTag(node) {
 }
 
 function OpenClawSessionGraphCanvas(props) {
-  const {graph, onNodeSelect} = props;
+  const {
+    graph,
+    onNodeSelect,
+    height = 460,
+    fullscreen = false,
+    onEnterFullscreen,
+    onExitFullscreen,
+    topLeftOverlay = null,
+  } = props;
   const [reactFlowInstance, setReactFlowInstance] = React.useState(null);
+  const heightCss = typeof height === "number" ? `${height}px` : height;
   const elements = React.useMemo(() => {
     const flowElements = buildOpenClawFlowElements(graph);
     return {
@@ -206,18 +217,22 @@ function OpenClawSessionGraphCanvas(props) {
         {zoom: 1.02, duration: 0}
       );
     }, 0);
-  }, [elements.nodes, reactFlowInstance]);
+  }, [elements.nodes, reactFlowInstance, fullscreen]);
 
   return (
     <div
       style={{
-        height: 460,
+        position: "relative",
+        height: heightCss,
+        width: "100%",
+        minHeight: typeof height === "number" ? height : 0,
         border: "1px solid #e5e7eb",
         borderRadius: 16,
         overflow: "hidden",
       }}
     >
       <ReactFlow
+        style={{width: "100%", height: "100%"}}
         nodes={elements.nodes}
         edges={elements.edges}
         fitView
@@ -234,6 +249,43 @@ function OpenClawSessionGraphCanvas(props) {
         <Controls showInteractive={false} />
         <Background color="#f1f5f9" gap={16} />
       </ReactFlow>
+      {topLeftOverlay ? (
+        <div
+          style={{
+            position: "absolute",
+            top: 8,
+            left: 8,
+            right: 48,
+            zIndex: 9,
+            pointerEvents: "none",
+          }}
+        >
+          {topLeftOverlay}
+        </div>
+      ) : null}
+      <div
+        style={{
+          position: "absolute",
+          top: 8,
+          right: 8,
+          zIndex: 10,
+        }}
+      >
+        <Tooltip
+          title={
+            fullscreen
+              ? i18next.t("entry:Exit session graph fullscreen")
+              : i18next.t("entry:Session graph fullscreen")
+          }
+        >
+          <Button
+            type={fullscreen ? "primary" : "default"}
+            size="small"
+            icon={fullscreen ? <FullscreenExitOutlined /> : <FullscreenOutlined />}
+            onClick={fullscreen ? onExitFullscreen : onEnterFullscreen}
+          />
+        </Tooltip>
+      </div>
     </div>
   );
 }
@@ -246,29 +298,46 @@ class OpenClawSessionGraphViewer extends React.Component {
       error: "",
       graph: null,
       selectedNode: null,
+      graphFullscreen: false,
     };
     this.requestKey = "";
     this.isUnmounted = false;
+    this.handleFullscreenEscape = (e) => {
+      if (e.key === "Escape" && this.state.graphFullscreen) {
+        this.setState({graphFullscreen: false});
+      }
+    };
   }
 
   componentDidMount() {
     this.isUnmounted = false;
     this.loadGraph();
+    window.addEventListener("keydown", this.handleFullscreenEscape);
   }
 
-  componentDidUpdate(prevProps) {
-    if (
+  componentDidUpdate(prevProps, prevState) {
+    const entryChanged =
       prevProps.entry?.owner !== this.props.entry?.owner ||
-      prevProps.entry?.name !== this.props.entry?.name ||
-      prevProps.provider !== this.props.provider
-    ) {
+      prevProps.entry?.name !== this.props.entry?.name;
+    const providerChanged = prevProps.provider !== this.props.provider;
+
+    if (entryChanged || providerChanged) {
+      if (entryChanged && this.state.graphFullscreen) {
+        this.setState({graphFullscreen: false});
+      }
       this.loadGraph();
+    }
+
+    if (this.state.graphFullscreen !== prevState.graphFullscreen) {
+      document.body.style.overflow = this.state.graphFullscreen ? "hidden" : "";
     }
   }
 
   componentWillUnmount() {
     this.isUnmounted = true;
     this.requestKey = "";
+    window.removeEventListener("keydown", this.handleFullscreenEscape);
+    document.body.style.overflow = "";
   }
 
   getLabelSpan() {
@@ -457,15 +526,47 @@ class OpenClawSessionGraphViewer extends React.Component {
       return null;
     }
 
+    const {graphFullscreen} = this.state;
+
     return (
       <>
-        {this.renderStats()}
-        <ReactFlowProvider>
-          <OpenClawSessionGraphCanvas
-            graph={this.state.graph}
-            onNodeSelect={(selectedNode) => this.setState({selectedNode})}
-          />
-        </ReactFlowProvider>
+        {!graphFullscreen ? this.renderStats() : null}
+        <div
+          style={
+            graphFullscreen
+              ? {
+                position: "fixed",
+                zIndex: 999,
+                inset: 0,
+                background: "#fff",
+                display: "flex",
+                flexDirection: "column",
+                padding: 16,
+                boxSizing: "border-box",
+              }
+              : {}
+          }
+        >
+          <div
+            style={{
+              flex: graphFullscreen ? 1 : undefined,
+              minHeight: graphFullscreen ? 0 : undefined,
+              position: "relative",
+            }}
+          >
+            <ReactFlowProvider>
+              <OpenClawSessionGraphCanvas
+                graph={this.state.graph}
+                height={graphFullscreen ? "100%" : 460}
+                fullscreen={graphFullscreen}
+                topLeftOverlay={graphFullscreen ? this.renderStats() : null}
+                onEnterFullscreen={() => this.setState({graphFullscreen: true})}
+                onExitFullscreen={() => this.setState({graphFullscreen: false})}
+                onNodeSelect={(selectedNode) => this.setState({selectedNode})}
+              />
+            </ReactFlowProvider>
+          </div>
+        </div>
         {this.renderNodeDrawer()}
       </>
     );
