@@ -226,7 +226,7 @@ function OpenClawSessionGraphCanvas(props) {
         height: heightCss,
         width: "100%",
         minHeight: typeof height === "number" ? height : 0,
-        border: "1px solid #e5e7eb",
+        border: "2px solid #d1d5db",
         borderRadius: 16,
         overflow: "hidden",
       }}
@@ -240,6 +240,7 @@ function OpenClawSessionGraphCanvas(props) {
         nodesConnectable={false}
         onInit={setReactFlowInstance}
         onNodeClick={(_, node) => onNodeSelect(node.data?.rawNode ?? null)}
+        proOptions={{hideAttribution: true}}
       >
         <MiniMap
           pannable
