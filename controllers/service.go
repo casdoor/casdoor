@@ -60,6 +60,14 @@ func (c *ApiController) SendEmail() {
 		return
 	}
 
+	if isSendEmailRateLimitEnabled() {
+		clientIp := util.GetClientIp(c.Ctx.Request)
+		if !getSendEmailLimiter(clientIp).Allow() {
+			c.ResponseError(c.T("service:Too many requests, please try again later"))
+			return
+		}
+	}
+
 	var emailForm EmailForm
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &emailForm)
 	if err != nil {
@@ -99,6 +107,7 @@ func (c *ApiController) SendEmail() {
 			return
 		}
 		c.ResponseOk()
+		return
 	}
 
 	if util.IsStringsEmpty(emailForm.Title, emailForm.Content, emailForm.Sender) {
