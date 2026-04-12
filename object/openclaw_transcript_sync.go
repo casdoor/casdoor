@@ -26,11 +26,11 @@ var (
 )
 
 type openClawTranscriptSyncWorker struct {
-	provider        *Provider
-	stopCh          chan struct{}
-	doneCh          chan struct{}
-	fileStates      map[string]openClawTranscriptFileState
-	pathErrLogged   bool
+	provider      *Provider
+	stopCh        chan struct{}
+	doneCh        chan struct{}
+	fileStates    map[string]openClawTranscriptFileState
+	pathErrLogged bool
 }
 
 type openClawTranscriptFileState struct {
