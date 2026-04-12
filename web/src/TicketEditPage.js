@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import React from "react";
+import Loading from "./common/Loading";
 import {Avatar, Button, Card, Col, Divider, Input, List, Row, Select, Space, Tag} from "antd";
 import {SendOutlined, UserOutlined} from "@ant-design/icons";
 import * as TicketBackend from "./backend/TicketBackend";
@@ -304,11 +305,11 @@ class TicketEditPage extends React.Component {
     return (
       <div>
         {
-          this.state.ticket !== null ? this.renderTicket() : null
+          this.state.ticket !== null ? this.renderTicket() : <Loading type="page" tip={i18next.t("login:Loading")} />
         }
         <br />
         {
-          this.state.ticket !== null ? this.renderMessages() : null
+          this.state.ticket !== null ? this.renderMessages() : <Loading type="page" tip={i18next.t("login:Loading")} />
         }
       </div>
     );

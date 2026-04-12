@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import React from "react";
+import Loading from "./common/Loading";
 import {Button, Card, Col, Input, InputNumber, Row, Select} from "antd";
 import * as CertBackend from "./backend/CertBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
@@ -421,7 +422,7 @@ class CertEditPage extends React.Component {
     return (
       <div>
         {
-          this.state.cert !== null ? this.renderCert() : null
+          this.state.cert !== null ? this.renderCert() : <Loading type="page" tip={i18next.t("login:Loading")} />
         }
         <div style={{marginTop: "20px", marginLeft: "40px"}}>
           <Button size="large" onClick={() => this.submitCertEdit(false)}>{i18next.t("general:Save")}</Button>

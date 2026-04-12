@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import React from "react";
+import Loading from "./common/Loading";
 import {Button, Card, Col, Input, InputNumber, Row, Select, Switch} from "antd";
 import PaginateSelect from "./common/PaginateSelect";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
@@ -298,7 +299,7 @@ class PlanEditPage extends React.Component {
     return (
       <div>
         {
-          this.state.plan !== null ? this.renderPlan() : null
+          this.state.plan !== null ? this.renderPlan() : <Loading type="page" tip={i18next.t("login:Loading")} />
         }
         {this.state.mode !== "view" && (
           <div style={{marginTop: "20px", marginLeft: "40px"}}>

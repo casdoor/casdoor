@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import React from "react";
+import Loading from "./common/Loading";
 import {Button, Card, Col, Input, InputNumber, Popconfirm, Radio, Row, Select, Switch} from "antd";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
@@ -911,7 +912,7 @@ class OrganizationEditPage extends React.Component {
     return (
       <div>
         {
-          this.state.organization !== null ? this.renderOrganization() : null
+          this.state.organization !== null ? this.renderOrganization() : <Loading type="page" tip={i18next.t("login:Loading")} />
         }
         {this.state.mode !== "add" && this.state.transactions.length > 0 ? (
           <Card size="small" title={i18next.t("general:Transactions")} style={{marginTop: "20px"}} type="inner">

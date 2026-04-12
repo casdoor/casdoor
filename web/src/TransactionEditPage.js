@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import React from "react";
+import Loading from "./common/Loading";
 import * as TransactionBackend from "./backend/TransactionBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
@@ -411,7 +412,7 @@ class TransactionEditPage extends React.Component {
                 {this.state.mode === "add" ? <Button style={{marginLeft: "20px"}} size="large" onClick={() => this.deleteTransaction()}>{i18next.t("general:Cancel")}</Button> : null}
               </div>
             </>
-          ) : null
+          ) : <Loading type="page" tip={i18next.t("login:Loading")} />
         }
       </div>
     );

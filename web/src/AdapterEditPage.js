@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import React from "react";
+import Loading from "./common/Loading";
 import {Button, Card, Col, Input, InputNumber, Row, Select, Switch} from "antd";
 import * as AdapterBackend from "./backend/AdapterBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
@@ -316,7 +317,7 @@ class AdapterEditPage extends React.Component {
     return (
       <div>
         {
-          this.state.adapter !== null ? this.renderAdapter() : null
+          this.state.adapter !== null ? this.renderAdapter() : <Loading type="page" tip={i18next.t("login:Loading")} />
         }
         <div style={{marginTop: "20px", marginLeft: "40px"}}>
           <Button size="large" onClick={() => this.submitAdapterEdit(false)}>{i18next.t("general:Save")}</Button>

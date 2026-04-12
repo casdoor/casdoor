@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import React from "react";
+import Loading from "./common/Loading";
 import {Button, Card, Col, Input, InputNumber, Row, Select, Space, Switch} from "antd";
 import {EyeInvisibleOutlined, EyeTwoTone, HolderOutlined, UsergroupAddOutlined} from "@ant-design/icons";
 import * as LddpBackend from "./backend/LdapBackend";
@@ -328,7 +329,7 @@ class LdapEditPage extends React.Component {
     return (
       <div>
         {
-          this.state.ldap !== null ? this.renderLdap() : null
+          this.state.ldap !== null ? this.renderLdap() : <Loading type="page" tip={i18next.t("login:Loading")} />
         }
         <div style={{marginTop: "20px", marginLeft: "40px"}}>
           <Button size="large" onClick={() => this.submitLdapEdit()}>{i18next.t("general:Save")}</Button>

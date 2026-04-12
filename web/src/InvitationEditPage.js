@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import React from "react";
+import Loading from "./common/Loading";
 import {Button, Card, Col, Input, InputNumber, Modal, Row, Select, Table} from "antd";
 import {CopyOutlined} from "@ant-design/icons";
 import * as InvitationBackend from "./backend/InvitationBackend";
@@ -386,7 +387,7 @@ class InvitationEditPage extends React.Component {
       <div>
         {this.state.showSendModal ? this.renderSendEmailModal() : null}
         {
-          this.state.invitation !== null ? this.renderInvitation() : null
+          this.state.invitation !== null ? this.renderInvitation() : <Loading type="page" tip={i18next.t("login:Loading")} />
         }
         <div style={{marginTop: "20px", marginLeft: "40px"}}>
           <Button size="large" onClick={() => this.submitInvitationEdit(false)}>{i18next.t("general:Save")}</Button>

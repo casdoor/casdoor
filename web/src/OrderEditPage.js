@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import React from "react";
+import Loading from "./common/Loading";
 import {Button, Card, Col, Input, Row, Select} from "antd";
 import PaginateSelect from "./common/PaginateSelect";
 import * as OrderBackend from "./backend/OrderBackend";
@@ -282,7 +283,7 @@ class OrderEditPage extends React.Component {
     return (
       <div>
         {
-          this.state.order !== null ? this.renderOrder() : null
+          this.state.order !== null ? this.renderOrder() : <Loading type="page" tip={i18next.t("login:Loading")} />
         }
         {this.state.mode !== "view" && (
           <div style={{marginTop: "20px", marginLeft: "40px"}}>

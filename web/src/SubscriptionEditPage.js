@@ -14,6 +14,7 @@
 
 import moment from "moment";
 import React from "react";
+import Loading from "./common/Loading";
 import {Button, Card, Col, DatePicker, Input, Row, Select} from "antd";
 import PaginateSelect from "./common/PaginateSelect";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
@@ -340,7 +341,7 @@ class SubscriptionEditPage extends React.Component {
     return (
       <div>
         {
-          this.state.subscription !== null ? this.renderSubscription() : null
+          this.state.subscription !== null ? this.renderSubscription() : <Loading type="page" tip={i18next.t("login:Loading")} />
         }
         {this.state.mode !== "view" && (
           <div style={{marginTop: "20px", marginLeft: "40px"}}>

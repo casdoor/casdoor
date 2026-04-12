@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import React from "react";
+import Loading from "./common/Loading";
 import {Button, Card, Col, DatePicker, Input, Row, Select} from "antd";
 import * as KeyBackend from "./backend/KeyBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
@@ -299,7 +300,7 @@ class KeyEditPage extends React.Component {
     return (
       <div>
         {
-          this.state.key !== null ? this.renderKey() : null
+          this.state.key !== null ? this.renderKey() : <Loading type="page" tip={i18next.t("login:Loading")} />
         }
         <div style={{marginTop: "20px", marginLeft: "40px"}}>
           <Button size="large" onClick={() => this.submitKeyEdit(false)}>{i18next.t("general:Save")}</Button>

@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import React from "react";
+import Loading from "./common/Loading";
 import {Link} from "react-router-dom";
 import {Button, Card, Col, Input, Row, Select} from "antd";
 import * as EntryBackend from "./backend/EntryBackend";
@@ -214,7 +215,7 @@ class EntryEditPage extends React.Component {
 
   render() {
     if (this.state.entry === null) {
-      return null;
+      return <Loading type="page" tip={i18next.t("login:Loading")} />;
     }
 
     return (

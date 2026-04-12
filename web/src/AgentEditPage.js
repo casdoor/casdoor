@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import React from "react";
+import Loading from "./common/Loading";
 import {Button, Card, Col, Input, Row, Select} from "antd";
 import {LinkOutlined} from "@ant-design/icons";
 import * as AgentBackend from "./backend/AgentBackend";
@@ -214,7 +215,7 @@ class AgentEditPage extends React.Component {
 
   render() {
     if (this.state.agent === null) {
-      return null;
+      return <Loading type="page" tip={i18next.t("login:Loading")} />;
     }
 
     return (

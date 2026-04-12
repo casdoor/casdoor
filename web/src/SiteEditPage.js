@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import React from "react";
+import Loading from "./common/Loading";
 import {Button, Card, Col, Input, InputNumber, Row, Select, Switch} from "antd";
 import {LinkOutlined} from "@ant-design/icons";
 import * as ProviderBackend from "./backend/ProviderBackend";
@@ -463,7 +464,7 @@ class SiteEditPage extends React.Component {
           </Col>
           <Col span={22}>
             {
-              this.state.site !== null ? this.renderSite() : null
+              this.state.site !== null ? this.renderSite() : <Loading type="page" tip={i18next.t("login:Loading")} />
             }
           </Col>
           <Col span={1}>

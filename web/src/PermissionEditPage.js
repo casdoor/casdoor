@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import React from "react";
+import Loading from "./common/Loading";
 import {Button, Card, Col, Input, Row, Select, Switch} from "antd";
 import PaginateSelect from "./common/PaginateSelect";
 import * as PermissionBackend from "./backend/PermissionBackend";
@@ -547,7 +548,7 @@ class PermissionEditPage extends React.Component {
     return (
       <div>
         {
-          this.state.permission !== null ? this.renderPermission() : null
+          this.state.permission !== null ? this.renderPermission() : <Loading type="page" tip={i18next.t("login:Loading")} />
         }
         <div style={{marginTop: "20px", marginLeft: "40px"}}>
           <Button size="large" onClick={() => this.submitPermissionEdit(false)}>{i18next.t("general:Save")}</Button>

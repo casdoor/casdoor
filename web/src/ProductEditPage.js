@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import React from "react";
+import Loading from "./common/Loading";
 import {Button, Card, Col, Input, InputNumber, Row, Select, Switch} from "antd";
 import * as ProductBackend from "./backend/ProductBackend";
 import * as Setting from "./Setting";
@@ -418,7 +419,7 @@ class ProductEditPage extends React.Component {
     return (
       <div>
         {
-          this.state.product !== null ? this.renderProduct() : null
+          this.state.product !== null ? this.renderProduct() : <Loading type="page" tip={i18next.t("login:Loading")} />
         }
         {this.state.mode !== "view" && (
           <div style={{marginTop: "20px", marginLeft: "40px"}}>

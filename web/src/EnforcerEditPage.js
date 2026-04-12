@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import React from "react";
+import Loading from "./common/Loading";
 import {Button, Card, Col, Input, Row, Select} from "antd";
 import * as AdapterBackend from "./backend/AdapterBackend";
 import * as EnforcerBackend from "./backend/EnforcerBackend";
@@ -241,7 +242,7 @@ class EnforcerEditPage extends React.Component {
     return (
       <div>
         {
-          this.state.enforcer !== null ? this.renderEnforcer() : null
+          this.state.enforcer !== null ? this.renderEnforcer() : <Loading type="page" tip={i18next.t("login:Loading")} />
         }
         <div style={{marginTop: "20px", marginLeft: "40px"}}>
           <Button size="large" onClick={() => this.submitEnforcerEdit(false)}>{i18next.t("general:Save")}</Button>

@@ -1594,7 +1594,7 @@ class UserEditPage extends React.Component {
     return (
       <div>
         {
-          this.state.loading ? <Loading type="page" /> : (
+          this.state.loading ? <Loading type="page" tip={i18next.t("login:Loading")} /> : (
             this.state.user !== null ? this.renderUser() :
               <Result
                 status="404"

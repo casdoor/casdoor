@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import React from "react";
+import Loading from "./common/Loading";
 import {
   Button,
   Card,
@@ -1750,7 +1751,7 @@ class ApplicationEditPage extends React.Component {
     return (
       <div>
         {
-          this.state.application !== null ? this.renderApplication() : null
+          this.state.application !== null ? this.renderApplication() : <Loading type="page" tip={i18next.t("login:Loading")} />
         }
       </div>
     );

@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import React from "react";
+import Loading from "./common/Loading";
 import {Button, Card, Col, Input, Row} from "antd";
 import * as TokenBackend from "./backend/TokenBackend";
 import * as Setting from "./Setting";
@@ -254,7 +255,7 @@ class TokenEditPage extends React.Component {
     return (
       <div>
         {
-          this.state.token !== null ? this.renderToken() : null
+          this.state.token !== null ? this.renderToken() : <Loading type="page" tip={i18next.t("login:Loading")} />
         }
         <div style={{marginTop: "20px", marginLeft: "40px"}}>
           <Button size="large" onClick={() => this.submitTokenEdit(false)}>{i18next.t("general:Save")}</Button>

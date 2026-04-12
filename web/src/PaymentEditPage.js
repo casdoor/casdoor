@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import React from "react";
+import Loading from "./common/Loading";
 import {Button, Card, Col, Descriptions, Input, Modal, Row, Select} from "antd";
 import {InfoCircleTwoTone} from "@ant-design/icons";
 import * as PaymentBackend from "./backend/PaymentBackend";
@@ -498,7 +499,7 @@ class PaymentEditPage extends React.Component {
     return (
       <div>
         {
-          this.state.payment !== null ? this.renderPayment() : null
+          this.state.payment !== null ? this.renderPayment() : <Loading type="page" tip={i18next.t("login:Loading")} />
         }
         {
           this.renderModal()

@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import React from "react";
+import Loading from "./common/Loading";
 import {Button, Card, Col, Input, InputNumber, Row, Select, Switch} from "antd";
 import * as Setting from "./Setting";
 import * as RuleBackend from "./backend/RuleBackend";
@@ -268,7 +269,7 @@ class RuleEditPage extends React.Component {
           </Col>
           <Col span={22}>
             {
-              this.state.rule !== null ? this.renderRule() : null
+              this.state.rule !== null ? this.renderRule() : <Loading type="page" tip={i18next.t("login:Loading")} />
             }
           </Col>
           <Col span={1}>
