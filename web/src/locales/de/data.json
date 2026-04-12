@@ -17,6 +17,10 @@
     "Use same DB": "Gleiche DB verwenden",
     "Use same DB - Tooltip": "Verwenden Sie dieselbe DB wie Casdoor"
   },
+  "agent": {
+    "Edit Agent": "Agent bearbeiten",
+    "New Agent": "Neuer Agent"
+  },
   "application": {
     "Add Face ID": "Face ID hinzufügen",
     "Add Face ID with Image": "Face ID mit Bild hinzufügen",
@@ -34,6 +38,8 @@
     "Binding providers": "Bindungsanbieter",
     "CSS style": "CSS-Stil",
     "Center": "Zentrum",
+    "Client cert": "Client-Zertifikat",
+    "Client cert - Tooltip": "Client-Zertifikat für die gegenseitige TLS-Authentifizierung zwischen Client und Server",
     "Code resend timeout": "Code-Neusendungs-Timeout",
     "Code resend timeout - Tooltip": "Zeitraum (in Sekunden), den Benutzer warten müssen, bevor sie einen weiteren Verifizierungscode anfordern können. Auf 0 setzen, um die globale Standardeinstellung (60 Sekunden) zu verwenden",
     "Cookie expire": "Cookie-Ablauf",
@@ -66,11 +72,13 @@
     "Enable SAML compression - Tooltip": "Ob SAML-Antwortnachrichten komprimiert werden sollen, wenn Casdoor als SAML-IdP verwendet wird",
     "Enable exclusive signin": "Exklusive Anmeldung aktivieren",
     "Enable exclusive signin - Tooltip": "Wenn die exklusive Anmeldung aktiviert ist, kann der Benutzer nicht mehrere aktive Sitzungen haben",
+    "Enable guest signin": "Gastanmeldung aktivieren",
+    "Enable guest signin - Tooltip": "Ermöglicht Benutzern die Anmeldung als Gast ohne Konto",
     "Enable side panel": "Sidepanel aktivieren",
     "Enable signin session - Tooltip": "Ob Casdoor eine Sitzung aufrechterhält, nachdem man sich von der Anwendung aus bei Casdoor angemeldet hat",
     "Enable signup": "Registrierung aktivieren",
     "Enable signup - Tooltip": "Ob Benutzern erlaubt werden soll, ein neues Konto zu registrieren",
-    "Existing Field": "Existing Field",
+    "Existing Field": "Vorhandenes Feld",
     "Failed signin frozen time": "Sperrzeit bei fehlgeschlagenem Login",
     "Failed signin frozen time - Tooltip": "Zeit, für die das Konto nach fehlgeschlagenen Anmeldeversuchen gesperrt wird",
     "Failed signin limit": "Limit für fehlgeschlagene Logins",
@@ -113,6 +121,8 @@
     "Order - Tooltip": "Je kleiner der Wert, desto höher rangiert er auf der Apps-Seite",
     "Org choice mode": "Organisationsauswahlmodus",
     "Org choice mode - Tooltip": "Organisationsauswahlmodus - Hinweis",
+    "Other domains": "Weitere Domains",
+    "Other domains - Tooltip": "Weitere erlaubte Domains für diese Anwendung",
     "Please enable \"Signin session\" first before enabling \"Auto signin\"": "Bitte aktivieren Sie zuerst \"Anmeldesitzung\", bevor Sie \"Automatische Anmeldung\" aktivieren.",
     "Please input your application!": "Bitte geben Sie Ihre Anwendung ein!",
     "Please input your organization!": "Bitte geben Sie Ihre Organisation ein!",
@@ -128,6 +138,7 @@
     "Refresh token expire": "Gültigkeitsdauer des Refresh-Tokens",
     "Refresh token expire - Tooltip": "Angabe der Gültigkeitsdauer des Refresh Tokens",
     "Reset to Empty": "Auf leer zurücksetzen",
+    "Reverse Proxy": "Reverse Proxy",
     "Right": "Rechts",
     "Rule": "Regel",
     "SAML hash algorithm": "SAML-Hash-Algorithmus",
@@ -135,6 +146,8 @@
     "SAML metadata": "SAML-Metadaten",
     "SAML metadata - Tooltip": "Die Metadaten des SAML-Protokolls - Hinweis",
     "SAML reply URL": "SAML Reply-URL",
+    "SSL cert": "SSL-Zertifikat",
+    "SSL cert - Tooltip": "SSL-Zertifikat für HTTPS-Verbindungen der Anwendung",
     "Security": "Sicherheit",
     "Select": "Auswählen",
     "Side panel HTML": "Sidepanel-HTML",
@@ -152,10 +165,12 @@
     "Signup items - Tooltip": "Elemente für Benutzer, die beim Registrieren neuer Konten ausgefüllt werden müssen - Hinweis",
     "Single Choice": "Einfachauswahl",
     "Small icon": "Kleines Symbol",
-    "Static Value": "Static Value",
-    "String": "String",
+    "Static Value": "Statischer Wert",
+    "String": "Zeichenkette",
     "Tags - Tooltip": "Nur Benutzer mit einem Tag, das in den Anwendungstags aufgeführt ist, können sich anmelden",
     "The application does not allow to sign up new account": "Die Anwendung erlaubt es nicht, ein neues Konto zu registrieren",
+    "Token cert": "Token-Zertifikat",
+    "Token cert - Tooltip": "Zertifikat zum Signieren und Verifizieren von Access-Tokens",
     "Token expire": "Token läuft ab",
     "Token expire - Tooltip": "Ablaufzeit des Access-Tokens",
     "Token fields": "Token-Felder",
@@ -165,12 +180,16 @@
     "Token signing method": "Token-Signaturmethode",
     "Token signing method - Tooltip": "Signaturmethode des JWT-Tokens muss mit dem Zertifikat übereinstimmen",
     "UI Customization": "UI-Anpassung",
+    "Upstream host": "Upstream-Host",
+    "Upstream host - Tooltip": "Upstream-Backend-Host-Adresse im Reverse-Proxy-Modus",
     "Use Email as NameID": "E-Mail als NameID verwenden",
     "Use Email as NameID - Tooltip": "E-Mail als NameID verwenden",
     "Vertical": "Vertikal",
     "You are unexpected to see this prompt page": "Sie sind unerwartet auf diese Aufforderungsseite gelangt"
   },
   "cert": {
+    "Access secret": "Zugriffsschlüssel",
+    "Account": "Konto",
     "Bit size": "Bitgröße",
     "Bit size - Tooltip": "Länge des Secret-Keys",
     "Certificate": "Zertifikat",
@@ -179,6 +198,7 @@
     "Copy private key": "Private-Key kopieren",
     "Crypto algorithm": "Kryptoalgorithmus",
     "Crypto algorithm - Tooltip": "Verschlüsselungsalgorithmus, der vom Zertifikat verwendet wird",
+    "Domain expire": "Domain-Ablauf",
     "Download certificate": "Zertifikat herunterladen",
     "Download private key": "Private-Key herunterladen",
     "Edit Cert": "Edit Cert - Zertifikat bearbeiten",
@@ -199,6 +219,18 @@
     "Send Code": "Code senden",
     "Sending": "Sendet",
     "Submit and complete": "Einreichen und abschließen"
+  },
+  "consent": {
+    "Are you sure you want to revoke scope": "Möchten Sie diesen Berechtigungsbereich wirklich widerrufen",
+    "Are you sure you want to revoke this consent?": "Möchten Sie diese Einwilligung wirklich widerrufen?",
+    "Authorization Request": "Autorisierungsanfrage",
+    "By clicking Allow, you allow this app to use your information": "Durch Klicken auf 'Erlauben' erlauben Sie dieser App, Ihre Informationen zu verwenden",
+    "Consents": "Einwilligungen",
+    "Consents - Tooltip": "Liste der Benutzereinwilligungen, die Anwendungen Zugriff gewähren",
+    "Granted scopes": "Gewährte Berechtigungsbereiche",
+    "This application is requesting": "Diese Anwendung beantragt",
+    "This scope is not defined in the application": "Dieser Bereich ist in der Anwendung nicht definiert",
+    "wants to access your account": "möchte auf Ihr Konto zugreifen"
   },
   "currency": {
     "AUD": "Australischer Dollar",
@@ -232,8 +264,11 @@
     "Edit Enforcer": "Enforcer bearbeiten",
     "New Enforcer": "Neuer Enforcer"
   },
+  "entry": {
+    "Edit Entry": "Eintrag bearbeiten",
+    "New Entry": "Neuer Eintrag"
+  },
   "forget": {
-    "Account": "Konto",
     "Change Password": "Passwort ändern",
     "Choose email or phone": "Wählen Sie E-Mail oder Telefon",
     "Next Step": "Nächster Schritt",
@@ -253,11 +288,8 @@
     "A normal user can only modify the permission submitted by itself": "Ein normaler Benutzer kann nur die von ihm selbst eingereichte Berechtigung ändern",
     "AI Assistant": "KI-Assistent",
     "API key": "API-Schlüssel",
-    "API key - Tooltip": "API-Schlüssel für den Zugriff auf den Dienst",
     "Access key": "Zugriffsschlüssel",
     "Access key - Tooltip": "Zugriffsschlüssel für den Dienst",
-    "Access secret": "Zugriffsgeheimnis",
-    "Access secret - Tooltip": "Geheimer Schlüssel für den Zugriff auf den Dienst",
     "Access token is empty": "Zugriffstoken ist leer",
     "Action": "Aktion",
     "Adapter": "Adapter",
@@ -268,34 +300,39 @@
     "Admin": "Administrator",
     "Affiliation URL": "Zugehörigkeits-URL",
     "Affiliation URL - Tooltip": "Die Homepage-URL für die Zugehörigkeit",
+    "Agents": "Agenten",
     "All": "Alle",
     "Application": "Applikation",
     "Application - Tooltip": "Anwendung",
     "Applications": "Anwendungen",
     "Applications that require authentication": "Anwendungen, die eine Authentifizierung erfordern",
     "Apps": "Anwendungen",
+    "Auditing": "Prüfung",
     "Authorization": "Autorisierung",
-    "Auto": "Auto",
+    "Auto": "Automatisch",
     "Avatar": "Profilbild",
     "Avatar - Tooltip": "Öffentliches Avatarbild für den Benutzer",
     "Back": "Zurück",
     "Back Home": "Zurück nach Hause",
-    "Business & Payments": "Geschäft & Zahlungen",
+    "Business": "Geschäft",
     "Cancel": "Abbrechen",
     "Captcha": "Captcha",
     "Cart": "Warenkorb",
-    "Category": "Category",
-    "Category - Tooltip": "Category - Tooltip",
+    "Category": "Kategorie",
+    "Category - Tooltip": "Kategorie oder Klassifikation, zu der dieses Element gehört",
     "Cert": "Zertifikat",
     "Cert - Tooltip": "Das Public-Key-Zertifikat, das vom Client-SDK, das mit dieser Anwendung korrespondiert, verifiziert werden muss",
     "Certs": "Zertifikate",
     "Clear": "Leeren",
     "Click to Upload": "Klicken Sie zum Hochladen",
+    "Click to open AI assistant": "KI-Assistent öffnen",
+    "Click to open tour": "Führung öffnen",
     "Client IP": "Client-IP",
     "Close": "Schließen",
     "Confirm": "Bestätigen",
     "Copied to clipboard successfully": "Erfolgreich in die Zwischenablage kopiert",
     "Copy": "Kopieren",
+    "Create time": "Erstellungszeit",
     "Created time": "Erstellte Zeit",
     "Custom": "Benutzerdefiniert",
     "Dashboard": "Dashboard",
@@ -312,10 +349,12 @@
     "Description - Tooltip": "Detaillierte Beschreibungsinformationen zur Referenz, Casdoor selbst wird es nicht verwenden",
     "Detail": "Details",
     "Disable": "Deaktivieren",
+    "Disabled": "Deaktiviert",
     "Display name": "Anzeigename",
     "Display name - Tooltip": "Ein benutzerfreundlicher, leicht lesbarer Name, der öffentlich in der Benutzeroberfläche angezeigt wird",
     "Down": "Nach unten",
     "Download template": "Vorlage herunterladen",
+    "Duplicate": "Duplizieren",
     "Edit": "Bearbeiten",
     "Email": "E-Mail",
     "Email - Tooltip": "Gültige E-Mail-Adresse",
@@ -329,6 +368,10 @@
     "Enabled": "Aktiviert",
     "Enabled successfully": "Erfolgreich aktiviert",
     "Enforcers": "Enforcer",
+    "Entries": "Einträge",
+    "Error": "Fehler",
+    "Expire time": "Ablaufzeit",
+    "Expire time - Tooltip": "Zeitstempel, nach dem dieses Element ungültig wird",
     "Failed to add": "Fehler beim hinzufügen",
     "Failed to cancel": "Abbrechen fehlgeschlagen",
     "Failed to connect to server": "Die Verbindung zum Server konnte nicht hergestellt werden",
@@ -357,6 +400,7 @@
     "Forget URL - Tooltip": "Benutzerdefinierte URL für die \"Passwort vergessen\" Seite. Wenn nicht festgelegt, wird die standardmäßige Casdoor \"Passwort vergessen\" Seite verwendet. Wenn sie festgelegt ist, wird der \"Passwort vergessen\" Link auf der Login-Seite zu dieser URL umgeleitet",
     "Forms": "Formulare",
     "Found some texts still not translated? Please help us translate at": "Haben Sie noch Texte gefunden, die nicht übersetzt wurden? Bitte helfen Sie uns beim Übersetzen",
+    "General": "Allgemein",
     "Generate": "Generieren",
     "Go to enable": "Zum Aktivieren gehen",
     "Go to writable demo site?": "Gehe zur beschreibbaren Demo-Website?",
@@ -365,30 +409,38 @@
     "Hide password": "Passwort verstecken",
     "Home": "Zuhause",
     "Home - Tooltip": "Homepage der Anwendung",
+    "Host": "Host",
     "ID": "ID",
     "ID - Tooltip": "Einzigartiger Zufallsstring",
     "IP whitelist": "IP-Whitelist",
     "IP whitelist - Tooltip": "IP-Whitelist",
     "Identity": "Identität",
-    "Impersonation": "Identitätswechsel",
+    "Impersonate": "Identität annehmen",
+    "Invalid application": "Ungültige Anwendung",
     "Invitations": "Einladungen",
+    "Is allowed": "Ist erlaubt",
     "Is enabled": "Ist aktiviert",
     "Is enabled - Tooltip": "Festlegen, ob es verwendet werden kann",
     "Is shared": "Ist geteilt",
     "Is shared - Tooltip": "Diese Anwendung mit anderen Organisationen teilen",
-    "LDAPs": "LDAPs",
+    "Keys": "Schlüssel",
+    "LDAPs": "LDAPS",
     "LDAPs - Tooltip": "LDAP-Server",
+    "LLM AI": "LLM-KI",
     "Languages": "Sprachen",
     "Languages - Tooltip": "Verfügbare Sprachen",
     "Last name": "Nachname",
     "Last name - Tooltip": "Der Nachname des Benutzers",
     "Later": "Später",
-    "Logging & Auditing": "Protokollierung & Audit",
+    "Listening URL": "Abhör-URL",
+    "Listening URL - Tooltip": "URL, auf der der MCP-Server eingehende Verbindungen abhört",
     "Login page": "Anmeldeseite",
     "Logo": "Logo",
     "Logo - Tooltip": "Symbole, die die Anwendung der Außenwelt präsentiert",
     "Logo dark": "Dunkles Logo",
     "Logo dark - Tooltip": "Das Logo im dunklen Design",
+    "MCP Servers": "MCP-Server",
+    "MCP Store": "MCP-Store",
     "MFA items": "MFA-Elemente",
     "MFA items - Tooltip": "MFA-Elemente",
     "Master password": "Hauptpasswort",
@@ -403,6 +455,7 @@
     "Name": "Name",
     "Name - Tooltip": "Eindeutige, auf Strings basierende ID",
     "Name format": "Namensformat",
+    "No data": "Keine Daten",
     "No products available": "Keine Produkte verfügbar",
     "No sheets found in file": "Keine Tabellenblätter in der Datei gefunden",
     "No verification method": "Keine Verifizierungsmethode",
@@ -419,6 +472,8 @@
     "Organization - Tooltip": "Ähnlich wie bei Konzepten wie Mietern oder Benutzerpools gehört jeder Benutzer und jede Anwendung einer Organisation an",
     "Organization is null": "Organisation ist leer",
     "Organizations": "Organisationen",
+    "Owner": "Eigentümer",
+    "Parent": "Übergeordnet",
     "Password": "Passwort",
     "Password - Tooltip": "Stellen Sie sicher, dass das Passwort korrekt ist",
     "Password complexity options": "Passwortkomplexitätsoptionen",
@@ -431,6 +486,7 @@
     "Password salt - Tooltip": "Zufälliger Parameter, der für die Verschlüsselung von Passwörtern verwendet wird",
     "Password type": "Passworttyp",
     "Password type - Tooltip": "Speicherformat von Passwörtern in der Datenbank",
+    "Path": "Pfad",
     "Payment": "Zahlung",
     "Payment - Tooltip": "Zahlung",
     "Payments": "Zahlungen",
@@ -449,6 +505,7 @@
     "Please complete the captcha correctly": "Bitte lösen Sie das Captcha korrekt",
     "Please input your search": "Bitte geben Sie Ihre Suche ein",
     "Please select at least 1 user first": "Bitte wählen Sie zuerst mindestens 1 Benutzer aus",
+    "Port": "Port",
     "Preview": "Vorschau",
     "Preview - Tooltip": "Vorschau der konfigurierten Effekte",
     "Pricing": "Preisgestaltung",
@@ -462,16 +519,19 @@
     "QR Code": "QR-Code",
     "QR code is too large": "QR-Code ist zu groß",
     "Records": "Datensätze",
+    "Refresh": "Aktualisieren",
     "Request": "Anfrage",
     "Request URI": "Anfrage-URI",
     "Reset to Default": "Auf Standard zurücksetzen",
     "Resources": "Ressourcen",
+    "Restore": "Wiederherstellen",
     "Role": "Rolle",
     "Role - Tooltip": "Rolle",
     "Roles": "Rollen",
     "Roles - Tooltip": "Rollen, denen der Benutzer angehört",
     "Root cert": "Root-Zertifikat",
     "Root cert - Tooltip": "Root-Zertifikat",
+    "Rules": "Regeln",
     "SAML attributes": "SAML-Attribute",
     "SAML attributes - Tooltip": "SAML-Attribute",
     "SSH cert": "SSH-Zertifikat",
@@ -479,12 +539,14 @@
     "SSH type - Tooltip": "Der Authentifizierungstyp für SSH-Verbindungen",
     "Save": "Speichern",
     "Save & Exit": "Speichern und verlassen",
-    "Scopes": "Scopes",
-    "Scopes - Tooltip": "Scopes - Tooltip",
+    "Scopes": "Berechtigungsbereiche",
+    "Scopes - Tooltip": "OAuth 2.0-Bereiche, die Berechtigungen des Tokens definieren",
     "Search": "Suchen",
+    "Self": "Selbst",
     "Send": "Senden",
     "Session ID": "Session-ID",
     "Sessions": "Sitzungen",
+    "Severity": "Schweregrad",
     "Shortcuts": "Verknüpfungen",
     "Signin URL": "Anmeldungs-URL",
     "Signin URL - Tooltip": "Benutzerdefinierte URL für die Anmeldeseite. Wenn sie nicht festgelegt ist, wird die standardmäßige Casdoor-Anmeldeseite verwendet. Wenn sie festgelegt ist, leiten die Anmeldelinks auf verschiedenen Casdoor-Seiten zu dieser URL um",
@@ -493,9 +555,16 @@
     "Signup application": "Anmeldeanwendung",
     "Signup application - Tooltip": "Durch welche Anwendung hat sich der Benutzer angemeldet, als er sich registriert hat?",
     "Signup link": "Registrierungslink",
-    "Sorry, the page you visited does not exist.": "Entschuldigung, die von Ihnen besuchte Seite existiert nicht.",
-    "Sorry, the user you visited does not exist or you are not authorized to access this user.": "Entschuldigung, der von Ihnen besuchte Benutzer existiert nicht oder Sie sind nicht autorisiert, auf diesen Benutzer zuzugreifen.",
-    "Sorry, you do not have permission to access this page or logged in status invalid.": "Es tut uns leid, aber Sie haben keine Berechtigung, auf diese Seite zuzugreifen, oder Sie sind nicht angemeldet.",
+    "Sites": "Websites",
+    "Sorry, the page you visited does not exist": {
+      "": "Entschuldigung, die von Ihnen besuchte Seite existiert nicht."
+    },
+    "Sorry, the user you visited does not exist or you are not authorized to access this user": {
+      "": "Entschuldigung, der von Ihnen besuchte Benutzer existiert nicht oder Sie sind nicht autorisiert, auf diesen Benutzer zuzugreifen."
+    },
+    "Sorry, you do not have permission to access this page or logged in status invalid": {
+      "": "Es tut uns leid, aber Sie haben keine Berechtigung, auf diese Seite zuzugreifen, oder Sie sind nicht angemeldet."
+    },
     "State": "Bundesland / Staat",
     "State - Tooltip": "Bundesland",
     "Status": "Status",
@@ -505,7 +574,10 @@
     "Successfully copied": "Erfolgreich kopiert",
     "Successfully deleted": "Erfolgreich gelöscht",
     "Successfully executed": "Erfolgreich ausgeführt",
+    "Successfully got": "Erfolgreich abgerufen",
+    "Successfully modified": "Erfolgreich geändert",
     "Successfully removed": "Erfolgreich entfernt",
+    "Successfully revoked": "Erfolgreich widerrufen",
     "Successfully saved": "Erfolgreich gespeichert",
     "Successfully sent": "Erfolgreich gesendet",
     "Successfully synced": "Erfolgreich synchronisiert",
@@ -518,11 +590,16 @@
     "Sync": "Synchronisieren",
     "Syncers": "Syncer",
     "System Info": "Systeminformationen",
-    "Tab": "Tab",
+    "Tab": "Registerkarte",
+    "Tag": "Tag",
     "The actions cannot be empty": "Die Aktionen dürfen nicht leer sein",
     "The resources cannot be empty": "Die Ressourcen dürfen nicht leer sein",
     "The users and roles cannot be empty at the same time": "Benutzer und Rollen dürfen nicht gleichzeitig leer sein",
-    "There was a problem signing you in..": "Es gab ein Problem beim Anmelden...",
+    "There was a problem signing you in": {
+      "": {
+        "": "Es gab ein Problem beim Anmelden..."
+      }
+    },
     "This is a read-only demo site!": "Dies ist eine schreibgeschützte Demo-Seite!",
     "Tickets": "Tickets",
     "Timestamp": "Zeitstempel",
@@ -531,21 +608,29 @@
     "Token attributes": "Token-Attribute",
     "Token attributes - Tooltip": "Token-Attribute",
     "Tokens": "Token",
+    "Tool": "Werkzeug",
+    "Tool - Tooltip": "Werkzeug oder Dienstprogramm für diese Konfiguration",
     "Tour": "Tour",
     "Transactions": "Transaktionen",
     "True": "Wahr",
     "Type": "Typ",
-    "Type - Tooltip": "Type - Tooltip",
+    "Type - Tooltip": "Kategorie oder Typ, der das Verhalten dieses Elements klassifiziert",
     "URL": "URL",
     "URL - Tooltip": "URL-Link",
+    "Unauthorized": "Nicht autorisiert",
     "Unknown application name": "Unbekannter Anwendungsname",
     "Unknown authentication type": "Unbekannter Authentifizierungstyp",
     "Up": "Oben",
+    "Update time": "Aktualisierungszeit",
     "Updated time": "Aktualisierungszeit",
-    "Upload (.xlsx)": "Upload (.xlsx)",
+    "Upload (": {
+      "xlsx)": "Hochladen (.xlsx)"
+    },
+    "Url": "URL",
     "User": "Nutzer",
     "User - Tooltip": "Stellen Sie sicher, dass der Benutzername korrekt ist",
     "User Management": "Benutzerverwaltung",
+    "User agent": "User-Agent",
     "User already exists": "Benutzer existiert bereits",
     "User containers": "Nutzerpools",
     "User type": "Benutzertyp",
@@ -555,7 +640,9 @@
     "Users under all organizations": "Benutzer unter allen Organisationen",
     "Verifications": "Verifizierungen",
     "View": "Anzeigen",
+    "Webhook Events": "Webhook-Ereignisse",
     "Webhooks": "Webhooks",
+    "Website": "Website",
     "You can only select one physical group": "Sie können nur eine physische Gruppe auswählen",
     "You must select a picture first": "Sie müssen zuerst ein Bild auswählen",
     "empty": "leere",
@@ -570,13 +657,15 @@
     "Physical": "Physisch",
     "Show all": "Alle anzeigen",
     "Virtual": "Virtuell",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Sie müssen zuerst alle Untergruppen löschen. Sie können die Untergruppen im linken Gruppenbaum unter [Organisationen] -> [Gruppen] anzeigen."
+    "You need to delete all subgroups first": {
+      " You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Sie müssen zuerst alle Untergruppen löschen. Sie können die Untergruppen im linken Gruppenbaum unter [Organisationen] -> [Gruppen] anzeigen."
+    }
   },
   "home": {
-    "New users past 30 days": "Neue Benutzer der letzten 30 Tage",
-    "New users past 7 days": "Neue Benutzer der letzten 7 Tage",
+    "New users / 30 days": "Neue Benutzer / 30 Tage",
+    "New users / 7 days": "Neue Benutzer / 7 Tage",
     "New users today": "Neue Benutzer heute",
-    "Past 30 Days": "Letzte 30 Tage",
+    "Past 30 days": "Letzte 30 Tage",
     "Total users": "Gesamte Benutzer"
   },
   "invitation": {
@@ -591,6 +680,12 @@
     "Used count": "Verwendete Anzahl",
     "Used count - Tooltip": "Verwendungsanzahl",
     "You need to first specify a default application for organization: ": "Sie müssen zuerst eine Standardanwendung für die Organisation angeben: "
+  },
+  "key": {
+    "Access secret - Tooltip": "Geheimer Schlüssel zur Authentifizierung von API-Anfragen",
+    "Edit Key": "Schlüssel bearbeiten",
+    "Inactive": "Inaktiv",
+    "New Key": "Neuer Schlüssel"
   },
   "ldap": {
     "Admin - Tooltip": "CN oder ID des LDAP-Serveradministrators",
@@ -644,7 +739,13 @@
     "LDAP": "LDAP",
     "LDAP username, Email or phone": "LDAP-Benutzername, E-Mail oder Telefon",
     "Loading": "Laden",
-    "Logging out...": "Ausloggen...",
+    "Logging out": {
+      "": {
+        "": {
+          "": "Ausloggen..."
+        }
+      }
+    },
     "MetaMask plugin not detected": "MetaMask-Plugin nicht erkannt",
     "Model loading failure": "Modell-Ladefehler",
     "No account?": "Kein Konto?",
@@ -666,8 +767,9 @@
     "Please select an organization": "Bitte wählen Sie eine Organisation aus.",
     "Please select an organization to sign in": "Bitte wählen Sie eine Organisation zum Anmelden aus.",
     "Please type an organization to sign in": "Bitte geben Sie eine Organisation zum Anmelden ein.",
-    "Redirecting, please wait.": "Umleitung, bitte warten.",
-    "Refresh": "Aktualisieren",
+    "Redirecting, please wait": {
+      "": "Umleitung, bitte warten."
+    },
     "Select organization": "Organisation auswählen",
     "Sign In": "Anmelden",
     "Sign in with Face ID": "Mit Face ID anmelden",
@@ -675,7 +777,13 @@
     "Sign in with WebAuthn": "Melden Sie sich mit WebAuthn an",
     "Sign in with {type}": "Melden Sie sich mit {type} an",
     "Signin button": "Anmelde-Button",
-    "Signing in...": "Anmelden...",
+    "Signing in": {
+      "": {
+        "": {
+          "": "Anmelden..."
+        }
+      }
+    },
     "Successfully logged in with WebAuthn credentials": "Erfolgreich mit WebAuthn-Anmeldeinformationen angemeldet",
     "The camera is currently in use by another webpage": "Die Kamera wird gerade von einer anderen Webseite verwendet.",
     "The input is not valid Email or phone number!": "Die Eingabe ist keine gültige E-Mail-Adresse oder Telefonnummer!",
@@ -702,7 +810,9 @@
     "Please bind your email first, the system will automatically uses the mail for multi-factor authentication": "Bitte binden Sie zuerst Ihre E-Mail, das System verwendet diese automatisch für MFA.",
     "Please bind your phone first, the system automatically uses the phone for multi-factor authentication": "Bitte binden Sie zuerst Ihr Telefon, das System verwendet dieses automatisch für MFA.",
     "Please confirm the information below": "Bitte bestätigen Sie die folgenden Informationen",
-    "Please save this recovery code. Once your device cannot provide an authentication code, you can reset mfa authentication by this recovery code": "Bitte speichern Sie diesen Wiederherstellungscode. Falls Ihr Gerät keinen Code liefern kann, können Sie MFA mit diesem Code zurücksetzen.",
+    "Please save this recovery code": {
+      " Once your device cannot provide an authentication code, you can reset mfa authentication by this recovery code": "Bitte speichern Sie diesen Wiederherstellungscode. Falls Ihr Gerät keinen Code liefern kann, können Sie MFA mit diesem Code zurücksetzen."
+    },
     "Protect your account with Multi-factor authentication": "Schützen Sie Ihr Konto mit MFA",
     "Push notification receiver": "Empfänger für Push-Benachrichtigungen",
     "Recovery code": "Wiederherstellungscode",
@@ -770,14 +880,16 @@
     "Init score - Tooltip": "Anfangspunkte, die Benutzern bei der Registrierung vergeben werden",
     "Is profile public": "Ist das Profil öffentlich?",
     "Is profile public - Tooltip": "Nach der Schließung können nur globale Administratoren oder Benutzer in der gleichen Organisation auf die Profilseite des Benutzers zugreifen",
-    "Kerberos KDC host": "Kerberos KDC host",
-    "Kerberos KDC host - Tooltip": "The hostname of the Kerberos Key Distribution Center (e.g., kdc.example.com)",
-    "Kerberos keytab": "Kerberos keytab",
-    "Kerberos keytab - Tooltip": "The base64-encoded keytab file for the service principal",
-    "Kerberos realm": "Kerberos realm",
-    "Kerberos realm - Tooltip": "The Kerberos realm for IWA/SPNEGO authentication (e.g., EXAMPLE.COM)",
-    "Kerberos service name": "Kerberos service name",
-    "Kerberos service name - Tooltip": "The Kerberos service principal name (defaults to HTTP)",
+    "Kerberos KDC host": "Kerberos-KDC-Host",
+    "Kerberos KDC host - Tooltip": "Hostname des Kerberos Key Distribution Centers (z.B. kdc.example.com)",
+    "Kerberos keytab": "Kerberos-Keytab",
+    "Kerberos keytab - Tooltip": "Base64-kodierte Keytab-Datei für das Service-Principal",
+    "Kerberos realm": "Kerberos-Realm",
+    "Kerberos realm - Tooltip": "Kerberos-Realm für IWA/SPNEGO-Authentifizierung (z.B. EXAMPLE.COM)",
+    "Kerberos service name": "Kerberos-Dienstname",
+    "Kerberos service name - Tooltip": "Kerberos-Dienstprinzipalname (Standard: HTTP)",
+    "LDAP attributes": "LDAP-Attribute",
+    "LDAP attributes - Tooltip": "Zuordnung von LDAP-Verzeichnisattributen zu Casdoor-Benutzerfeldern",
     "Modify rule": "Regel ändern",
     "New Organization": "Neue Organisation",
     "Optional": "Optional",
@@ -792,6 +904,8 @@
     "Tags": "Tags",
     "Use Email as username": "E-Mail als Benutzername verwenden",
     "Use Email as username - Tooltip": "E-Mail als Benutzername verwenden, wenn das Feld „Benutzername“ bei der Registrierung nicht sichtbar ist.",
+    "Use permanent avatar": "Permanentes Avatar verwenden",
+    "Use permanent avatar - Tooltip": "Avatar-URL bleibt auch nach Aktualisierung des Avatars unverändert",
     "User balance": "Benutzerguthaben",
     "User balance - Tooltip": "Benutzerguthaben - Tooltip",
     "User navbar items": "Benutzer-Navigationsleisten-Elemente",
@@ -837,10 +951,19 @@
     "Person name - Tooltip": "Echter Name des Zahlenden",
     "Person phone": "Personen-Telefon",
     "Person phone - Tooltip": "Die Telefonnummer des Zahlenden",
-    "Please carefully check your invoice information. Once the invoice is issued, it cannot be withdrawn or modified.": "Bitte prüfen Sie sorgfältig Ihre Rechnungsinformationen. Sobald die Rechnung ausgestellt wurde, kann sie nicht zurückgenommen oder geändert werden.",
+    "Please carefully check your invoice information": {
+      " Once the invoice is issued, it cannot be withdrawn or modified": {
+        "": "Bitte prüfen Sie sorgfältig Ihre Rechnungsinformationen. Sobald die Rechnung ausgestellt wurde, kann sie nicht zurückgenommen oder geändert werden."
+      }
+    },
     "Please pay the order first!": "Bitte zahlen Sie zuerst die Bestellung!",
-    "Processing...": "In Bearbeitung...",
-    "Products - Tooltip": "Produkte - Tooltip",
+    "Processing": {
+      "": {
+        "": {
+          "": "In Bearbeitung..."
+        }
+      }
+    },
     "Recharged successfully": "Erfolgreich aufgeladen",
     "Result": "Ergebnis",
     "The payment has been canceled": "Die Zahlung wurde storniert",
@@ -852,13 +975,19 @@
     "You have successfully completed the payment": "Sie haben die Zahlung erfolgreich abgeschlossen",
     "You have successfully recharged": "Sie haben erfolgreich aufgeladen",
     "Your current balance is": "Ihr aktuelles Guthaben beträgt",
-    "please wait for a few seconds...": "Bitte warten Sie ein paar Sekunden...",
+    "please wait for a few seconds": {
+      "": {
+        "": {
+          "": "Bitte warten Sie ein paar Sekunden..."
+        }
+      }
+    },
     "the current state is": "der aktuelle Zustand ist"
   },
   "permission": {
     "Actions": "Aktionen",
     "Actions - Tooltip": "Erlaubte Aktionen",
-    "Allow": "erlauben",
+    "Allow": "Erlauben",
     "Approve time": "Zeit der Genehmigung",
     "Approve time - Tooltip": "Die Genehmigungszeit für diese Erlaubnis",
     "Approved": "Genehmigt",
@@ -869,7 +998,6 @@
     "Effect": "Wirkung",
     "Effect - Tooltip": "Erlauben oder ablehnen",
     "New Permission": "Neue Berechtigung",
-    "Pending": "Ausstehend",
     "Read": "Lesen",
     "Resource type": "Ressourcentyp",
     "Resource type - Tooltip": "Art der Ressource",
@@ -881,8 +1009,8 @@
   },
   "plan": {
     "Edit Plan": "Plan bearbeiten",
-    "Is exclusive": "Is exclusive",
-    "Is exclusive - Tooltip": "Is exclusive - Tooltip",
+    "Is exclusive": "Exklusiv",
+    "Is exclusive - Tooltip": "Wenn aktiviert, werden andere aktive Abonnements bei Auswahl dieses Plans gekündigt",
     "New Plan": "Neuer Plan",
     "Period": "Zeitraum",
     "Period - Tooltip": "Zeitraum",
@@ -913,7 +1041,7 @@
     "Amount": "Betrag",
     "Buy": "Kaufen",
     "Buy Product": "Produkt kaufen",
-    "Cart contains invalid products, please delete them before placing an order": "Cart contains invalid products, please delete them before placing an order",
+    "Cart contains invalid products, please delete them before placing an order": "Der Warenkorb enthält ungültige Produkte, bitte löschen Sie diese vor der Bestellung",
     "Custom amount available": "Benutzerdefinierter Betrag verfügbar",
     "Custom price should be greater than zero": "Benutzerdefinierter Preis muss größer als null sein",
     "Detail - Tooltip": "Detail des Produkts",
@@ -926,29 +1054,41 @@
     "Image": "Bild",
     "Image - Tooltip": "Bild des Produkts",
     "Information": "Information",
-    "Invalid product": "Invalid product",
+    "Invalid product": "Ungültiges Produkt",
     "Is recharge": "Ist Aufladung",
     "Is recharge - Tooltip": "Ob das Produkt zum Aufladen des Guthabens dient",
     "New Product": "Neues Produkt",
-    "No recharge options available": "No recharge options available",
+    "No recharge options available": "Keine Aufladeoptionen verfügbar",
     "Order created successfully": "Bestellung erfolgreich erstellt",
     "PayPal": "PayPal",
     "Payment cancelled": "Zahlung storniert",
     "Payment failed": "Zahlung fehlgeschlagen",
     "Payment providers": "Zahlungsprovider",
     "Payment providers - Tooltip": "Provider von Zahlungsdiensten",
-    "Placing order...": "Bestellung aufgeben...",
+    "Placing order": {
+      "": {
+        "": {
+          "": "Bestellung aufgeben..."
+        }
+      }
+    },
     "Please add at least one recharge option when custom amount is disabled": "Bitte fügen Sie mindestens eine Aufladeoption hinzu, wenn der benutzerdefinierte Betrag deaktiviert ist",
     "Please select a currency": "Bitte wählen Sie eine Währung",
     "Please select at least one payment provider": "Bitte wählen Sie mindestens einen Zahlungsanbieter aus",
-    "Processing payment...": "Zahlung wird verarbeitet...",
+    "Processing payment": {
+      "": {
+        "": {
+          "": "Zahlung wird verarbeitet..."
+        }
+      }
+    },
     "Product list cannot be empty": "Produktliste darf nicht leer sein",
-    "Product not found or invalid": "Product not found or invalid",
+    "Product not found or invalid": "Produkt nicht gefunden oder ungültig",
     "Quantity": "Menge",
     "Quantity - Tooltip": "Menge des Produkts",
     "Recharge options": "Aufladeoptionen",
     "Recharge options - Tooltip": "Aufladeoptionen - Tooltip",
-    "Recharge products need to go to the product detail page to set custom amount": "Recharge products need to go to the product detail page to set custom amount",
+    "Recharge products need to go to the product detail page to set custom amount": "Aufladeprodukte müssen auf der Produktdetailseite konfiguriert werden",
     "SKU": "SKU",
     "Select amount": "Betrag auswählen",
     "Sold": "Verkauft",
@@ -957,10 +1097,18 @@
     "Success URL": "Erfolgs-URL",
     "Success URL - Tooltip": "URL, zu der nach dem Kauf zurückgekehrt wird",
     "Tag - Tooltip": "Tag des Produkts",
-    "Test buy page..": "Testkaufseite.",
+    "Test buy page": {
+      "": {
+        "": "Testkaufseite."
+      }
+    },
     "The currency of the product you are adding is different from the currency of the items in the cart": "Die Währung des Produkts, das Sie hinzufügen, unterscheidet sich von der Währung der Artikel im Warenkorb",
-    "There is no payment channel for this product.": "Es gibt keinen Zahlungskanal für dieses Produkt.",
-    "This product is currently not in sale.": "Dieses Produkt steht derzeit nicht zum Verkauf.",
+    "There is no payment channel for this product": {
+      "": "Es gibt keinen Zahlungskanal für dieses Produkt."
+    },
+    "This product is currently not in sale": {
+      "": "Dieses Produkt steht derzeit nicht zum Verkauf."
+    },
     "This product is currently not purchasable (No options available)": "Dieses Produkt ist derzeit nicht kaufbar (keine Optionen verfügbar)",
     "Total Price": "Gesamtpreis",
     "View Product": "Produkt anzeigen",
@@ -985,14 +1133,17 @@
     "Auth URL - Tooltip": "URL für die Authentifizierung",
     "Base URL": "Basis-URL",
     "Base URL - Tooltip": "Basis-URL des Dienstes",
+    "Binding rule": "Bindungsregel",
     "Bucket": "Eimer",
     "Bucket - Tooltip": "Name des Buckets",
     "Can not parse metadata": "Kann Metadaten nicht durchsuchen / auswerten",
     "Can signin": "Kann sich einloggen",
     "Can signup": "Kann sich registrieren",
     "Can unlink": "Entlinken möglich",
-    "Channel No.": "Kanal Nr.",
-    "Channel No. - Tooltip": "Eindeutige Nummer zur Identifizierung eines Kommunikations- oder Datenübertragungskanals, verwendet zur Unterscheidung verschiedener Übertragungswege",
+    "Channel No": {
+      "": "Kanal Nr.",
+      " - Tooltip": "Eindeutige Nummer zur Identifizierung eines Kommunikations- oder Datenübertragungskanals, verwendet zur Unterscheidung verschiedener Übertragungswege"
+    },
     "Chat ID": "Chat-ID",
     "Chat ID - Tooltip": "Eindeutige Kennung für Chat-Sitzung oder Kanal, verwendet zur Lokalisierung spezifischer Gesprächsszenarien",
     "Client ID": "Client-ID",
@@ -1006,7 +1157,7 @@
     "Content": "Inhalt",
     "Content - Tooltip": "Spezifische Informationen oder Daten in Nachrichten, Benachrichtigungen oder Dokumenten",
     "DB test": "DB-Test",
-    "DB test - Tooltip": "DB-Test - Tooltip",
+    "DB test - Tooltip": "Datenbankverbindung mit den konfigurierten Parametern testen",
     "Domain": "Domäne",
     "Domain - Tooltip": "Benutzerdefinierte Domain für Objektspeicher",
     "Edit Provider": "Provider bearbeiten",
@@ -1017,7 +1168,7 @@
     "Email title": "Email-Titel",
     "Email title - Tooltip": "Betreff der E-Mail",
     "Enable PKCE": "PKCE aktivieren",
-    "Enable PKCE - Tooltip": "Enable PKCE - Tooltip",
+    "Enable PKCE - Tooltip": "PKCE-Erweiterungsprotokoll aktivieren",
     "Enable proxy": "Proxy aktivieren",
     "Enable proxy - Tooltip": "SOCKS5-Proxy beim Senden von E-Mails oder SMS aktivieren",
     "Endpoint": "Endpunkt",
@@ -1035,7 +1186,6 @@
     "HTTP body mapping - Tooltip": "HTTP-Body-Mapping",
     "HTTP header": "HTTP-Header",
     "HTTP header - Tooltip": "HTTP-Header-Informationen",
-    "Host": "Host",
     "Host - Tooltip": "Name des Hosts",
     "IdP": "IdP",
     "IdP certificate": "IdP-Zertifikat",
@@ -1047,6 +1197,8 @@
     "Key text": "Schlüsseltext",
     "Key text - Tooltip": "Inhalt des Schlüsseltexts",
     "LDAP port": "LDAP-Port",
+    "Logout URL": "Abmelde-URL",
+    "Logout URL - Tooltip": "URL, zu der Benutzer nach dem Abmelden weitergeleitet werden",
     "Metadata": "Metadaten",
     "Metadata - Tooltip": "SAML-Metadaten",
     "Metadata url": "Metadaten-URL",
@@ -1061,7 +1213,6 @@
     "Path prefix": "Pfadpräfix",
     "Path prefix - Tooltip": "Bucket-Pfad-Präfix für Objektspeicher",
     "Please use WeChat to scan the QR code and follow the official account for sign in": "Bitte scannen Sie den QR-Code mit WeChat und folgen Sie dem offiziellen Konto zum Anmelden.",
-    "Port": "Hafen",
     "Port - Tooltip": "Portnummer. Stellen Sie sicher, dass der Port offen ist",
     "Private Key": "Privater Schlüssel",
     "Private Key - Tooltip": "Privater Schlüssel für Verschlüsselung",
@@ -1080,21 +1231,24 @@
     "Region ID - Tooltip": "Regions-ID für den Dienstleister",
     "Region endpoint for Internet": "Regionsendpunkt für das Internet",
     "Region endpoint for Intranet": "Regionales Endpunkt für Intranet",
-    "SAML 2.0 Endpoint (HTTP)": "SAML 2.0 Endpunkt (HTTP)",
+    "SAML 2": {
+      "0 Endpoint (HTTP)": "SAML 2.0 Endpunkt (HTTP)"
+    },
     "SMS Test": "SMS-Test",
     "SMS Test - Tooltip": "Telefonnummer für den Versand von Test-SMS",
     "SMS account": "SMS-Konto",
     "SMS account - Tooltip": "SMS-Konto",
     "SMTP connected successfully": "SMTP erfolgreich verbunden",
     "SP ACS URL": "SP-ACS-URL",
-    "SP ACS URL - Tooltip": "SP ACS URL",
+    "SP ACS URL - Tooltip": "SP-ACS-URL",
     "SP Entity ID": "SP-Entitäts-ID",
-    "SSL mode": "SSL mode",
-    "SSL mode - Tooltip": "SSL mode - Tooltip",
+    "SP Entity ID - Tooltip": "Eindeutige Kennung des SAML Service Providers",
+    "SSL mode": "SSL-Modus",
+    "SSL mode - Tooltip": "SSL/TLS-Verbindungsmodus für Datenbankverbindungen",
     "Scene": "Szene",
     "Scene - Tooltip": "Spezifisches Geschäftsszenario, in dem die Funktion oder Operation angewendet wird, verwendet zur Anpassung der logischen Verarbeitung für verschiedene Szenarien",
     "Scope": "Umfang",
-    "Scope - Tooltip": "Scope - Tooltip",
+    "Scope - Tooltip": "Zugriffsbereich oder Berechtigungsebene für die Provider-Integration",
     "Secret access key": "Secret-Access-Key",
     "Secret access key - Tooltip": "Privater Schlüssel, der mit dem Zugriffsschlüssel gepaart ist, verwendet zum Signieren sensibler Operationen zur Verbesserung der Zugriffssicherheit",
     "Secret key": "Secret-Key",
@@ -1130,7 +1284,7 @@
     "Subject": "Betreff",
     "Subject - Tooltip": "E-Mail-Betreff",
     "Subtype": "Untertyp",
-    "Subtype - Tooltip": "Untertyp - Tooltip",
+    "Subtype - Tooltip": "Spezifischere Klassifizierung innerhalb des Provider-Typs",
     "Syncer test": "Synchronisierer-Test",
     "Syncer test - Tooltip": "Synchronisierer-Test",
     "Team ID": "Team-ID",
@@ -1170,16 +1324,20 @@
   "record": {
     "Is triggered": "Wurde ausgelöst",
     "Object": "Objekt",
-    "Response": "Antwort",
-    "Status code": "Statuscode"
+    "Response": "Antwort"
   },
   "resource": {
     "Copy Link": "Kopiere den Link",
     "File name": "Dateiname",
     "File size": "Dateigröße",
     "Format": "Format",
-    "Parent": "Elternteil",
-    "Upload a file...": "Hochladen einer Datei..."
+    "Upload a file": {
+      "": {
+        "": {
+          "": "Hochladen einer Datei..."
+        }
+      }
+    }
   },
   "role": {
     "Edit Role": "Rolle bearbeiten",
@@ -1192,6 +1350,40 @@
     "Sub roles - Tooltip": "Rollen, die in der aktuellen Rolle enthalten sind",
     "Sub users": "Unterbenutzer",
     "Sub users - Tooltip": "Benutzer, die derzeit der Rolle zugeordnet sind"
+  },
+  "rule": {
+    "Block": "Sperren",
+    "Block Duration": "Sperrdauer",
+    "Compound": "Zusammengesetzt",
+    "Edit Rule": "Regel bearbeiten",
+    "Expression": "Ausdruck",
+    "Expressions": "Ausdrücke",
+    "IP List": "IP-Liste",
+    "IP Rate Limiting": "IP-Ratenbegrenzung",
+    "Logic": "Logik",
+    "Operator": "Operator",
+    "Rate": "Rate",
+    "Reason": "Grund",
+    "Status code": "Statuscode",
+    "Verbose mode": "Ausführlicher Modus",
+    "and": "und",
+    "begin": "beginnt mit",
+    "contains": "enthält",
+    "does not contain": "enthält nicht",
+    "does not equal": "ist ungleich",
+    "equals": "ist gleich",
+    "is in": "ist in",
+    "is not in": "ist nicht in",
+    "or": "oder",
+    "regex match": "Regex-Übereinstimmung"
+  },
+  "server": {
+    "Edit MCP Server": "MCP-Server bearbeiten",
+    "New MCP Server": "Neuer MCP-Server",
+    "Please select at least one IP range": "Bitte wählen Sie mindestens einen IP-Bereich aus",
+    "Please select at least one port": "Bitte wählen Sie mindestens einen Port aus",
+    "Production endpoint is empty": "Produktionsendpunkt ist leer",
+    "Scan server": "Server scannen"
   },
   "signup": {
     "Accept": "Akzeptieren",
@@ -1238,12 +1430,27 @@
     "Your confirmed password is inconsistent with the password!": "Dein bestätigtes Passwort stimmt nicht mit dem Passwort überein!",
     "sign in now": "Jetzt anmelden"
   },
+  "site": {
+    "Alert interval": "Benachrichtigungsintervall",
+    "Alert providers": "Benachrichtigungsanbieter",
+    "Alert try times": "Benachrichtigungsversuche",
+    "Casdoor app": "Casdoor-App",
+    "Challenges": "Herausforderungen",
+    "Disable verbose": "Ausführlichen Modus deaktivieren",
+    "Edit Site": "Website bearbeiten",
+    "Enable alert": "Benachrichtigung aktivieren",
+    "Hosts": "Hosts",
+    "Mode": "Modus",
+    "Need redirect": "Weiterleitung erforderlich",
+    "Node": "Knoten",
+    "Nodes": "Knoten",
+    "Public IP": "Öffentliche IP"
+  },
   "subscription": {
     "Active": "Aktiv",
     "Edit Subscription": "Abonnement bearbeiten",
     "End time": "Endzeit",
     "End time - Tooltip": "Endzeit",
-    "Error": "Fehler",
     "Expired": "Abgelaufen",
     "New Subscription": "Neues Abonnement",
     "Start time": "Startzeit",
@@ -1255,10 +1462,10 @@
     "View Subscription": "Abonnement anzeigen"
   },
   "syncer": {
-    "API Token / Password": "API Token / Password",
-    "AWS Access Key ID": "AWS Access Key ID",
-    "AWS Region": "AWS Region",
-    "AWS Secret Access Key": "AWS Secret Access Key",
+    "API Token / Password": "API-Token / Passwort",
+    "AWS Access Key ID": "AWS-Zugriffsschlüssel-ID",
+    "AWS Region": "AWS-Region",
+    "AWS Secret Access Key": "AWS-Geheimer Zugriffsschlüssel",
     "Admin Email": "Admin-E-Mail",
     "Affiliation table": "Zuordnungstabelle",
     "Affiliation table - Tooltip": "Datenbanktabellenname der Arbeitseinheit",
@@ -1305,13 +1512,19 @@
     "API Latency": "API Latenz",
     "API Throughput": "API-Durchsatz",
     "About Casdoor": "Über Casdoor",
-    "An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2.0, OIDC, SAML and CAS": "Eine Identitäts- und Zugriffsverwaltung (IAM) / Single-Sign-On (SSO) Plattform mit Web-UI, die OAuth 2.0, OIDC, SAML und CAS unterstützt",
+    "An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2": {
+      "0, OIDC, SAML and CAS": "Eine Identitäts- und Zugriffsverwaltung (IAM) / Single-Sign-On (SSO) Plattform mit Web-UI, die OAuth 2.0, OIDC, SAML und CAS unterstützt"
+    },
     "CPU Usage": "CPU-Auslastung",
     "Community": "Gemeinschaft",
     "Count": "Zählen",
+    "Disk Usage": "Festplattennutzung",
     "Latency": "Latenz",
     "Memory Usage": "Speichernutzung",
+    "Network Usage": "Netzwerknutzung",
     "Official website": "Offizielle Webseite",
+    "Received": "Empfangen",
+    "Sent": "Gesendet",
     "Throughput": "Durchsatz",
     "Total Throughput": "Gesamtdurchsatz",
     "Unknown version": "Unbekannte Version",
@@ -1339,7 +1552,13 @@
     "Please enter a message": "Bitte geben Sie eine Nachricht ein",
     "Press Ctrl+Enter to send": "Drücken Sie Strg+Enter zum Senden",
     "Resolved": "Gelöst",
-    "Type your message here...": "Geben Sie hier Ihre Nachricht ein..."
+    "Type your message here": {
+      "": {
+        "": {
+          "": "Geben Sie hier Ihre Nachricht ein..."
+        }
+      }
+    }
   },
   "token": {
     "Access token": "Access-Token",
@@ -1362,6 +1581,9 @@
     "Edit Transaction": "Transaktion bearbeiten",
     "New Transaction": "Neue Transaktion",
     "Recharge": "Aufladen"
+  },
+  "usage": {
+    "seconds": "Sekunden"
   },
   "user": {
     "3rd-party logins": "Drittanbieter-Logins",
@@ -1406,7 +1628,7 @@
     "ID card type - Tooltip": "Art des Ausweises",
     "ID card with person": "Ausweis mit Person",
     "ID verification": "Identitätsprüfung",
-    "ID verification - Tooltip": "Identitätsprüfung - Tooltip",
+    "ID verification - Tooltip": "Echtname-Identitätsprüfung mit Ausweisdokumenten",
     "Identity verification successful": "Identitätsprüfung erfolgreich",
     "Identity verified": "Identität verifiziert",
     "Input your email": "Geben Sie Ihre E-Mail-Adresse ein",
@@ -1421,7 +1643,6 @@
     "Is verified": "Ist verifiziert",
     "Karma": "Karma",
     "Karma - Tooltip": "Punkte zur Messung der Vertrauensstufe des Benutzers, beeinflussen Berechtigungen oder den Umfang der Dienstnutzung",
-    "Keys": "Schlüssel",
     "Language": "Sprache",
     "Language - Tooltip": "Spracheinstellung für die Anzeige der Systemoberfläche oder des Inhalts",
     "Last change password time": "Letzte Passwortänderung",
@@ -1432,7 +1653,13 @@
     "Location - Tooltip": "Stadt des Wohnsitzes",
     "MFA accounts": "MFA-Konten",
     "Managed accounts": "Verwaltete Konten",
-    "Modify password...": "Passwort ändern...",
+    "Modify password": {
+      "": {
+        "": {
+          "": "Passwort ändern..."
+        }
+      }
+    },
     "Need update password": "Passwort-Update erforderlich",
     "Need update password - Tooltip": "Benutzer nach dem Login zum Passwort-Update zwingen",
     "New Email": "Neue E-Mail",
@@ -1452,27 +1679,52 @@
     "Ranking": "Rang",
     "Ranking - Tooltip": "Position des Benutzers in der Rangfolge basierend auf Punkten, Aktivitätsniveau und anderen Metriken",
     "Re-enter New": "Neueingabe wiederholen",
-    "Real name - Tooltip": "Echter Name - Tooltip",
+    "Real name - Tooltip": "Vollständiger Rechtsnamen des Benutzers",
     "Register source": "Registrierungsquelle",
     "Register source - Tooltip": "Die Quelle, von der aus der Benutzer registriert wurde",
     "Register type": "Registrierungstyp",
     "Register type - Tooltip": "Die zur Registrierung des Benutzers verwendete Methode",
-    "Reset Email...": "E-Mail zurücksetzen...",
-    "Reset Phone...": "Telefon zurücksetzen...",
+    "Reset Email": {
+      "": {
+        "": {
+          "": "E-Mail zurücksetzen..."
+        }
+      }
+    },
+    "Reset Phone": {
+      "": {
+        "": {
+          "": "Telefon zurücksetzen..."
+        }
+      }
+    },
     "Score": "Punktzahl",
     "Score - Tooltip": "Kumulative Punkte, die Benutzer durch Operationen oder Aufgaben verdienen, können zur Erlangung von Vorteilen oder zur Messung des Aktivitätsniveaus verwendet werden",
-    "Select a photo...": "Wählen Sie ein Foto aus...",
+    "Select a photo": {
+      "": {
+        "": {
+          "": "Wählen Sie ein Foto aus..."
+        }
+      }
+    },
     "Set Password": "Passwort festlegen",
     "Set new profile picture": "Neues Profilbild festlegen",
-    "Set password...": "Passwort festlegen...",
-    "Tag": "Markierung",
+    "Set password": {
+      "": {
+        "": {
+          "": "Passwort festlegen..."
+        }
+      }
+    },
     "The password must contain at least one special character": "Das Passwort muss mindestens ein Sonderzeichen enthalten.",
     "The password must contain at least one uppercase letter, one lowercase letter and one digit": "Das Passwort muss mindestens einen Großbuchstaben, einen Kleinbuchstaben und eine Ziffer enthalten.",
     "The password must have at least 6 characters": "Das Passwort muss mindestens 6 Zeichen lang sein.",
     "The password must have at least 8 characters": "Das Passwort muss mindestens 8 Zeichen lang sein.",
     "The password must not contain any repeated characters": "Das Passwort darf keine wiederholten Zeichen enthalten.",
     "This field value doesn't match the pattern rule": "Der Feldwert entspricht nicht dem Muster.",
-    "Two passwords you typed do not match.": "Zwei von Ihnen eingegebene Passwörter stimmen nicht überein.",
+    "Two passwords you typed do not match": {
+      "": "Zwei von Ihnen eingegebene Passwörter stimmen nicht überein."
+    },
     "Unlink": "Link aufheben",
     "Upload ID card back picture": "Rückseite des Ausweises hochladen",
     "Upload ID card front picture": "Vorderseite des Ausweises hochladen",
@@ -1494,6 +1746,7 @@
     "Receiver": "Empfänger"
   },
   "webhook": {
+    "Attempt Count": "Anzahl der Versuche",
     "Content type": "Content-Type",
     "Content type - Tooltip": "HTTP-Content-Type für Webhook-Anfragen",
     "Edit Webhook": "Webhook bearbeiten",
@@ -1501,15 +1754,29 @@
     "Events - Tooltip": "Ereignisse, die den Webhook auslösen",
     "Extended user fields": "Erweiterte Benutzerfelder",
     "Extended user fields - Tooltip": "Verwendete erweiterte Benutzerfelder",
+    "Failed": "Fehlgeschlagen",
+    "Failed to replay webhook event": "Webhook-Ereignis konnte nicht wiederholt werden",
     "Headers": "Überschriften",
     "Headers - Tooltip": "HTTP-Header (Schlüssel-Wert-Paare)",
     "Is user extended": "Wurde der Benutzer erweitert?",
     "Is user extended - Tooltip": "Sollten die erweiterten Felder des Benutzers in das JSON inkludiert werden?",
+    "Last Error": "Letzter Fehler",
     "New Webhook": "Neue Webhook",
+    "Next Retry Time": "Nächste Wiederholungszeit",
     "Object fields": "Objektfelder",
     "Object fields - Tooltip": "Anzeigbare Objektfelder",
+    "Payload": "Nutzlast",
+    "Pending": "Ausstehend",
+    "Replay": "Wiederholen",
+    "Retrying": "Wiederholung",
     "Single org only": "Nur einzelne Organisation",
     "Single org only - Tooltip": "Nur in der Organisation auslösen, zu der der Webhook gehört",
-    "Value": "Wert"
+    "Success": "Erfolgreich",
+    "Unknown": "Unbekannt",
+    "Value": "Wert",
+    "Webhook Event Detail": "Webhook-Ereignisdetail",
+    "Webhook Event Logs": "Webhook-Ereignisprotokolle",
+    "Webhook Name": "Webhook-Name",
+    "Webhook event replay triggered": "Webhook-Ereigniswiederholung ausgelöst"
   }
 }

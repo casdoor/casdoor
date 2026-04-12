@@ -445,7 +445,7 @@ const Dashboard = (props) => {
       <Row gutter={gutter} style={{marginTop: 16}}>
         <Col xs={24} xl={14}>
           <Card
-            title={i18next.t("home:Past 30 Days")}
+            title={i18next.t("home:Past 30 days")}
             variant="borderless"
             style={cardStyle}
           >

@@ -17,6 +17,10 @@
     "Use same DB": "使用相同DB",
     "Use same DB - Tooltip": "与Casdoor使用同一个数据库"
   },
+  "agent": {
+    "Edit Agent": "编辑代理",
+    "New Agent": "新建代理"
+  },
   "application": {
     "Add Face ID": "添加人脸ID",
     "Add Face ID with Image": "添加图片人脸ID",
@@ -34,6 +38,8 @@
     "Binding providers": "绑定提供商",
     "CSS style": "CSS样式",
     "Center": "居中",
+    "Client cert": "客户端证书",
+    "Client cert - Tooltip": "用于客户端与服务器之间双向TLS认证的客户端证书",
     "Code resend timeout": "代码重发超时",
     "Code resend timeout - Tooltip": "用户在请求另一个验证码之前必须等待的时间段（以秒为单位）。设置为0可使用全局默认值（60秒）",
     "Cookie expire": "Cookie过期时间",
@@ -66,11 +72,13 @@
     "Enable SAML compression - Tooltip": "Casdoor作为SAML IdP时，是否压缩SAML响应信息",
     "Enable exclusive signin": "互斥登陆",
     "Enable exclusive signin - Tooltip": "互斥登陆启用时，用户不能同时拥有多个活跃的会话",
+    "Enable guest signin": "启用访客登录",
+    "Enable guest signin - Tooltip": "允许用户以访客身份登录，无需创建或登录账户",
     "Enable side panel": "启用侧面板",
     "Enable signin session - Tooltip": "从应用登录Casdoor后，Casdoor是否保持会话",
     "Enable signup": "启用注册",
     "Enable signup - Tooltip": "是否允许用户注册",
-    "Existing Field": "Existing Field",
+    "Existing Field": "现有字段",
     "Failed signin frozen time": "登入重试等待时间",
     "Failed signin frozen time - Tooltip": "超过登入错误重试次数后的等待时间，只有超过等待时间后用户才能重新登入，默认值为15分钟，设置的值需为正整数",
     "Failed signin limit": "登入错误次数限制",
@@ -87,7 +95,7 @@
     "Form position - Tooltip": "注册、登录、忘记密码等表单的位置",
     "Grant types": "OAuth授权类型",
     "Grant types - Tooltip": "选择允许哪些OAuth协议中的grant types",
-    "Header HTML": "Header HTML",
+    "Header HTML": "页头 HTML",
     "Header HTML - Edit": "Header HTML - 编辑",
     "Header HTML - Tooltip": "自定义应用页面的head标签",
     "Horizontal": "水平",
@@ -113,6 +121,8 @@
     "Order - Tooltip": "数值越小，在应用列表页面中排序越靠前",
     "Org choice mode": "组织选择模式",
     "Org choice mode - Tooltip": "采用什么方式选择要登录的组织",
+    "Other domains": "其他域名",
+    "Other domains - Tooltip": "该应用允许的其他域名，用于跨域访问控制",
     "Please enable \"Signin session\" first before enabling \"Auto signin\"": "开启 \"保持登录会话\" 后才能开启 \"自动登录\"",
     "Please input your application!": "请输入你的应用",
     "Please input your organization!": "请输入你的组织",
@@ -128,6 +138,7 @@
     "Refresh token expire": "Refresh Token过期",
     "Refresh token expire - Tooltip": "Refresh Token过期时间",
     "Reset to Empty": "重置为空",
+    "Reverse Proxy": "反向代理",
     "Right": "居右",
     "Rule": "规则",
     "SAML hash algorithm": "SAML哈希算法",
@@ -135,6 +146,8 @@
     "SAML metadata": "SAML元数据",
     "SAML metadata - Tooltip": "SAML协议的元数据（Metadata）信息",
     "SAML reply URL": "SAML回复 URL",
+    "SSL cert": "SSL证书",
+    "SSL cert - Tooltip": "用于保护应用HTTPS连接的SSL证书",
     "Security": "安全设置",
     "Select": "选择",
     "Side panel HTML": "侧面板HTML",
@@ -152,10 +165,12 @@
     "Signup items - Tooltip": "注册用户注册时需要填写的项目",
     "Single Choice": "单选",
     "Small icon": "小图标",
-    "Static Value": "Static Value",
+    "Static Value": "静态值",
     "String": "字符串",
     "Tags - Tooltip": "用户的标签在应用的标签集合中时，用户才可以登录该应用",
     "The application does not allow to sign up new account": "该应用不允许注册新账户",
+    "Token cert": "Token证书",
+    "Token cert - Tooltip": "用于签名和验证访问令牌的证书，必须与所选的令牌签名算法相匹配",
     "Token expire": "Access Token过期",
     "Token expire - Tooltip": "Access Token过期时间",
     "Token fields": "Token字段",
@@ -165,12 +180,16 @@
     "Token signing method": "Token签名算法",
     "Token signing method - Tooltip": "JWT token的签名算法，需要与证书算法相匹配",
     "UI Customization": "界面定制",
+    "Upstream host": "上游主机",
+    "Upstream host - Tooltip": "Casdoor作为反向代理时的上游后端主机地址",
     "Use Email as NameID": "使用邮箱作为NameID",
     "Use Email as NameID - Tooltip": "使用邮箱作为NameID",
     "Vertical": "垂直",
     "You are unexpected to see this prompt page": "错误：该提醒页面不应出现"
   },
   "cert": {
+    "Access secret": "访问密钥",
+    "Account": "账户",
     "Bit size": "位大小",
     "Bit size - Tooltip": "秘钥长度",
     "Certificate": "证书",
@@ -179,6 +198,7 @@
     "Copy private key": "复制私钥",
     "Crypto algorithm": "加密算法",
     "Crypto algorithm - Tooltip": "公钥证书所使用的加密算法",
+    "Domain expire": "域名到期",
     "Download certificate": "下载证书",
     "Download private key": "下载私钥",
     "Edit Cert": "编辑证书",
@@ -199,6 +219,18 @@
     "Send Code": "发送验证码",
     "Sending": "发送中",
     "Submit and complete": "完成提交"
+  },
+  "consent": {
+    "Are you sure you want to revoke scope": "确定要撤销该授权范围吗",
+    "Are you sure you want to revoke this consent?": "确定要撤销该授权吗？",
+    "Authorization Request": "授权请求",
+    "By clicking Allow, you allow this app to use your information": "点击「允许」，即表示您允许此应用使用您的信息",
+    "Consents": "授权记录",
+    "Consents - Tooltip": "用户已授权的应用及权限列表",
+    "Granted scopes": "已授权的权限范围",
+    "This application is requesting": "该应用请求访问",
+    "This scope is not defined in the application": "该权限范围未在应用中定义",
+    "wants to access your account": "请求访问您的账户"
   },
   "currency": {
     "AUD": "澳大利亚元",
@@ -232,8 +264,11 @@
     "Edit Enforcer": "编辑Casbin执行器",
     "New Enforcer": "新建Casbin执行器"
   },
+  "entry": {
+    "Edit Entry": "编辑条目",
+    "New Entry": "新建条目"
+  },
   "forget": {
-    "Account": "账号",
     "Change Password": "修改密码",
     "Choose email or phone": "请选择邮箱或手机号验证",
     "Next Step": "下一步",
@@ -253,11 +288,8 @@
     "A normal user can only modify the permission submitted by itself": "普通用户只能修改自己提交的权限",
     "AI Assistant": "AI助理",
     "API key": "API密钥",
-    "API key - Tooltip": "用于访问服务的API密钥",
     "Access key": "访问密钥",
     "Access key - Tooltip": "服务的访问密钥",
-    "Access secret": "访问密码",
-    "Access secret - Tooltip": "访问服务的密钥",
     "Access token is empty": "Access token为空",
     "Action": "操作",
     "Adapter": "适配器",
@@ -268,19 +300,21 @@
     "Admin": "管理工具",
     "Affiliation URL": "工作单位URL",
     "Affiliation URL - Tooltip": "工作单位的官网URL",
+    "Agents": "代理",
     "All": "全部",
     "Application": "应用",
     "Application - Tooltip": "可以访问的应用",
     "Applications": "应用",
     "Applications that require authentication": "需要认证和鉴权的应用",
     "Apps": "应用列表",
+    "Auditing": "审计",
     "Authorization": "Casbin权限管理",
-    "Auto": "Auto",
+    "Auto": "自动",
     "Avatar": "头像",
     "Avatar - Tooltip": "公开展示的用户头像",
     "Back": "返回",
     "Back Home": "返回到首页",
-    "Business & Payments": "商业 & 付款",
+    "Business": "业务",
     "Cancel": "取消",
     "Captcha": "人机验证码",
     "Cart": "购物车",
@@ -291,11 +325,14 @@
     "Certs": "证书",
     "Clear": "清空",
     "Click to Upload": "点击上传",
+    "Click to open AI assistant": "点击打开AI助手",
+    "Click to open tour": "点击开启引导",
     "Client IP": "客户端IP",
     "Close": "关闭",
     "Confirm": "确认",
     "Copied to clipboard successfully": "已成功复制到剪贴板",
     "Copy": "复制",
+    "Create time": "创建时间",
     "Created time": "创建时间",
     "Custom": "自定义",
     "Dashboard": "数据看板",
@@ -312,10 +349,12 @@
     "Description - Tooltip": "供人参考的详细描述信息，Casdoor平台本身不会使用",
     "Detail": "详情",
     "Disable": "关闭",
+    "Disabled": "已禁用",
     "Display name": "显示名称",
     "Display name - Tooltip": "在界面里公开显示的、易读的名称",
     "Down": "下移",
     "Download template": "下载模板",
+    "Duplicate": "复制",
     "Edit": "编辑",
     "Email": "电子邮箱",
     "Email - Tooltip": "合法的电子邮件地址",
@@ -329,6 +368,10 @@
     "Enabled": "已开启",
     "Enabled successfully": "启用成功",
     "Enforcers": "Casbin执行器",
+    "Entries": "条目",
+    "Error": "错误",
+    "Expire time": "过期时间",
+    "Expire time - Tooltip": "该条目失效的过期时间戳",
     "Failed to add": "添加失败",
     "Failed to cancel": "取消失败",
     "Failed to connect to server": "连接服务器失败",
@@ -357,6 +400,7 @@
     "Forget URL - Tooltip": "自定义忘记密码页面的链接，不设置时采用Casdoor默认的忘记密码页面，设置后Casdoor各类页面的忘记密码链接会跳转到该URL",
     "Forms": "表单",
     "Found some texts still not translated? Please help us translate at": "发现有些文字尚未翻译？请移步这里帮我们翻译：",
+    "General": "通用",
     "Generate": "生成",
     "Go to enable": "前往启用",
     "Go to writable demo site?": "跳转至可写演示站点？",
@@ -365,30 +409,38 @@
     "Hide password": "隐藏密码",
     "Home": "首页",
     "Home - Tooltip": "应用的首页",
+    "Host": "主机",
     "ID": "ID",
     "ID - Tooltip": "唯一的随机字符串",
     "IP whitelist": "IP白名单",
     "IP whitelist - Tooltip": "允许的IP地址列表",
     "Identity": "身份认证",
-    "Impersonation": "身份模拟",
+    "Impersonate": "模拟身份",
+    "Invalid application": "无效的应用",
     "Invitations": "邀请码",
+    "Is allowed": "是否允许",
     "Is enabled": "已启用",
     "Is enabled - Tooltip": "是否启用",
     "Is shared": "是否共享",
     "Is shared - Tooltip": "与其他组织共享此应用",
+    "Keys": "密钥",
     "LDAPs": "LDAP",
-    "LDAPs - Tooltip": "LDAPs",
+    "LDAPs - Tooltip": "已配置的LDAP服务器，用于用户目录同步和身份验证",
+    "LLM AI": "大语言模型 AI",
     "Languages": "语言",
     "Languages - Tooltip": "可选语言",
     "Last name": "姓氏",
     "Last name - Tooltip": "用户的姓氏",
     "Later": "稍后",
-    "Logging & Auditing": "日志 & 审计",
+    "Listening URL": "监听URL",
+    "Listening URL - Tooltip": "MCP服务器监听传入连接的URL地址",
     "Login page": "登录页面",
-    "Logo": "Logo",
+    "Logo": "标志",
     "Logo - Tooltip": "应用程序向外展示的图标",
     "Logo dark": "暗黑logo",
     "Logo dark - Tooltip": "暗黑主题下使用的logo",
+    "MCP Servers": "MCP服务器",
+    "MCP Store": "MCP商店",
     "MFA items": "MFA设置项",
     "MFA items - Tooltip": "多因素认证项目",
     "Master password": "万能密码",
@@ -403,6 +455,7 @@
     "Name": "名称",
     "Name - Tooltip": "唯一的、字符串式的ID",
     "Name format": "名称格式",
+    "No data": "暂无数据",
     "No products available": "暂无可用商品",
     "No sheets found in file": "文件中未找到工作表",
     "No verification method": "没有验证方法",
@@ -419,6 +472,8 @@
     "Organization - Tooltip": "类似于租户、用户池等概念，每个用户和应用都从属于一个组织",
     "Organization is null": "组织为空",
     "Organizations": "组织",
+    "Owner": "所属者",
+    "Parent": "上级",
     "Password": "密码",
     "Password - Tooltip": "请确认密码正确",
     "Password complexity options": "密码复杂度选项",
@@ -431,6 +486,7 @@
     "Password salt - Tooltip": "用于密码加密的随机参数",
     "Password type": "密码类型",
     "Password type - Tooltip": "密码在数据库中的存储格式",
+    "Path": "路径",
     "Payment": "付款",
     "Payment - Tooltip": "对应的付款",
     "Payments": "付款",
@@ -449,6 +505,7 @@
     "Please complete the captcha correctly": "请正确完成验证码",
     "Please input your search": "请输入搜索内容",
     "Please select at least 1 user first": "请至少选择1个用户",
+    "Port": "端口",
     "Preview": "预览",
     "Preview - Tooltip": "可预览所配置的效果",
     "Pricing": "定价",
@@ -462,16 +519,19 @@
     "QR Code": "二维码",
     "QR code is too large": "二维码过大",
     "Records": "日志",
+    "Refresh": "刷新",
     "Request": "请求",
     "Request URI": "请求URI",
     "Reset to Default": "重置为默认",
     "Resources": "资源",
+    "Restore": "恢复",
     "Role": "角色",
     "Role - Tooltip": "所对应的角色",
     "Roles": "角色",
     "Roles - Tooltip": "用户所属的角色",
     "Root cert": "根证书",
     "Root cert - Tooltip": "根证书",
+    "Rules": "规则",
     "SAML attributes": "SAML属性",
     "SAML attributes - Tooltip": "Casdoor作为SAML IdP时所返回的SAML响应的属性",
     "SSH cert": "SSH证书",
@@ -479,12 +539,14 @@
     "SSH type - Tooltip": "SSH连接的认证类型",
     "Save": "保存",
     "Save & Exit": "保存 & 退出",
-    "Scopes": "Scopes",
-    "Scopes - Tooltip": "Scopes - Tooltip",
+    "Scopes": "权限范围",
+    "Scopes - Tooltip": "OAuth 2.0权限范围，定义了令牌授予的权限和访问级别",
     "Search": "搜索",
+    "Self": "本人",
     "Send": "发送",
     "Session ID": "会话ID",
     "Sessions": "会话",
+    "Severity": "严重程度",
     "Shortcuts": "快捷操作",
     "Signin URL": "登录URL",
     "Signin URL - Tooltip": "自定义登录页面的URL，不设置时采用Casdoor默认的登录页面，设置后Casdoor各类页面的登录链接会跳转到该URL",
@@ -493,9 +555,16 @@
     "Signup application": "注册应用",
     "Signup application - Tooltip": "用户注册时通过哪个应用注册的",
     "Signup link": "注册链接",
-    "Sorry, the page you visited does not exist.": "抱歉，您访问的页面不存在",
-    "Sorry, the user you visited does not exist or you are not authorized to access this user.": "抱歉，您访问的用户不存在或您无权访问该用户",
-    "Sorry, you do not have permission to access this page or logged in status invalid.": "抱歉，您无权访问该页面或登录状态失效",
+    "Sites": "站点",
+    "Sorry, the page you visited does not exist": {
+      "": "抱歉，您访问的页面不存在"
+    },
+    "Sorry, the user you visited does not exist or you are not authorized to access this user": {
+      "": "抱歉，您访问的用户不存在或您无权访问该用户"
+    },
+    "Sorry, you do not have permission to access this page or logged in status invalid": {
+      "": "抱歉，您无权访问该页面或登录状态失效"
+    },
     "State": "状态",
     "State - Tooltip": "当前状态或状态信息",
     "Status": "状态",
@@ -505,7 +574,10 @@
     "Successfully copied": "复制成功",
     "Successfully deleted": "删除成功",
     "Successfully executed": "执行成功",
+    "Successfully got": "获取成功",
+    "Successfully modified": "修改成功",
     "Successfully removed": "移除成功",
+    "Successfully revoked": "撤销成功",
     "Successfully saved": "保存成功",
     "Successfully sent": "发送成功",
     "Successfully synced": "同步成功",
@@ -519,10 +591,15 @@
     "Syncers": "同步器",
     "System Info": "系统信息",
     "Tab": "选项卡",
+    "Tag": "标签",
     "The actions cannot be empty": "操作不能为空",
     "The resources cannot be empty": "资源不能为空",
     "The users and roles cannot be empty at the same time": "用户和角色不能同时为空",
-    "There was a problem signing you in..": "登录时遇到问题..",
+    "There was a problem signing you in": {
+      "": {
+        "": "登录时遇到问题.."
+      }
+    },
     "This is a read-only demo site!": "这是一个只读演示站点！",
     "Tickets": "工单",
     "Timestamp": "时间",
@@ -531,21 +608,29 @@
     "Token attributes": "Token属性",
     "Token attributes - Tooltip": "Token中包含的属性",
     "Tokens": "令牌",
+    "Tool": "工具",
+    "Tool - Tooltip": "与此配置关联的工具或实用程序，如MCP工具或集成",
     "Tour": "引导",
     "Transactions": "交易",
     "True": "真",
     "Type": "类型",
-    "Type - Tooltip": "Type - Tooltip",
+    "Type - Tooltip": "对此条目行为或配置进行分类的类别或类型",
     "URL": "链接",
     "URL - Tooltip": "URL链接",
+    "Unauthorized": "未授权",
     "Unknown application name": "未知的应用程序名称",
     "Unknown authentication type": "未知的认证类型",
     "Up": "上移",
+    "Update time": "更新时间",
     "Updated time": "更新时间",
-    "Upload (.xlsx)": "上传 (.xlsx)",
+    "Upload (": {
+      "xlsx)": "上传 (.xlsx)"
+    },
+    "Url": "网址",
     "User": "用户",
     "User - Tooltip": "请确保用户名正确",
     "User Management": "用户管理",
+    "User agent": "用户代理",
     "User already exists": "用户已存在",
     "User containers": "用户池",
     "User type": "用户类型",
@@ -555,7 +640,9 @@
     "Users under all organizations": "所有组织里的用户",
     "Verifications": "验证",
     "View": "查看",
-    "Webhooks": "Webhooks",
+    "Webhook Events": "Webhook事件",
+    "Webhooks": "网络钩子",
+    "Website": "网站",
     "You can only select one physical group": "只能选择一个实体组",
     "You must select a picture first": "您必须先选择一张图片",
     "empty": "无",
@@ -570,13 +657,15 @@
     "Physical": "实体组",
     "Show all": "显示全部",
     "Virtual": "虚拟组",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "您需要先删除所有子组。您可以在 [组织] -> [群组] 页面左侧的群组树中查看子组"
+    "You need to delete all subgroups first": {
+      " You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "您需要先删除所有子组。您可以在 [组织] -> [群组] 页面左侧的群组树中查看子组"
+    }
   },
   "home": {
-    "New users past 30 days": "过去 30 天新增的用户",
-    "New users past 7 days": "过去 7 天新增的用户",
+    "New users / 30 days": "过去30天新增用户",
+    "New users / 7 days": "过去7天新增用户",
     "New users today": "今天新增的用户",
-    "Past 30 Days": "过去 30 天",
+    "Past 30 days": "过去30天",
     "Total users": "用户总数"
   },
   "invitation": {
@@ -592,6 +681,12 @@
     "Used count - Tooltip": "该邀请码已使用次数",
     "You need to first specify a default application for organization: ": "你需要先为组织指定一个默认应用程序: "
   },
+  "key": {
+    "Access secret - Tooltip": "用于验证API请求的密钥，请妥善保管此值",
+    "Edit Key": "编辑密钥",
+    "Inactive": "未激活",
+    "New Key": "新建密钥"
+  },
   "ldap": {
     "Admin - Tooltip": "LDAP服务器管理员的CN或ID",
     "Admin Password": "密码",
@@ -602,7 +697,7 @@
     "Auto Sync - Tooltip": "自动同步配置，为0时禁用",
     "Base DN": "基本DN",
     "Base DN - Tooltip": "LDAP搜索时的基DN",
-    "CN": "CN",
+    "CN": "CN（通用名）",
     "Custom attributes": "自定义属性",
     "Custom attributes - Tooltip": "自定义LDAP属性",
     "Default group": "默认群组",
@@ -635,7 +730,7 @@
     "Click the button below to sign in with Telegram": "点击下方按钮使用Telegram登录",
     "Continue with": "使用以下账号继续",
     "Email or phone": "Email或手机号",
-    "Face ID": "Face ID",
+    "Face ID": "面容 ID",
     "Face Recognition": "人脸识别",
     "Face recognition failed": "人脸识别失败",
     "Failed to obtain MetaMask authorization": "获取MetaMask授权失败",
@@ -644,7 +739,13 @@
     "LDAP": "LDAP登录",
     "LDAP username, Email or phone": "LDAP用户名, Email或手机号",
     "Loading": "加载中",
-    "Logging out...": "正在退出登录...",
+    "Logging out": {
+      "": {
+        "": {
+          "": "正在退出登录..."
+        }
+      }
+    },
     "MetaMask plugin not detected": "未检测到MetaMask插件",
     "Model loading failure": "人脸识别模型加载失败",
     "No account?": "没有账号？",
@@ -660,14 +761,15 @@
     "Please input your code!": "请输入您的验证码！",
     "Please input your organization name!": "请输入组织的名字!",
     "Please input your password!": "请输入您的密码！",
-    "Please input your push notification receiver!": "Please input your push notification receiver!",
+    "Please input your push notification receiver!": "请输入推送通知接收端！",
     "Please load the webpage using HTTPS, otherwise the camera cannot be accessed": "请使用HTTPS加载网页，否则无法使用摄像头",
     "Please provide permission to access the camera": "请打开摄像头访问权限",
     "Please select an organization": "请选择一个组织",
     "Please select an organization to sign in": "请选择要登录的组织",
     "Please type an organization to sign in": "请输入要登录的组织",
-    "Redirecting, please wait.": "正在跳转, 请稍等.",
-    "Refresh": "刷新",
+    "Redirecting, please wait": {
+      "": "正在跳转, 请稍等."
+    },
     "Select organization": "选择组织",
     "Sign In": "登录",
     "Sign in with Face ID": "人脸登录",
@@ -675,7 +777,13 @@
     "Sign in with WebAuthn": "WebAuthn登录",
     "Sign in with {type}": "{type}登录",
     "Signin button": "登录按钮",
-    "Signing in...": "正在登录...",
+    "Signing in": {
+      "": {
+        "": {
+          "": "正在登录..."
+        }
+      }
+    },
     "Successfully logged in with WebAuthn credentials": "成功使用WebAuthn证书登录",
     "The camera is currently in use by another webpage": "摄像头被占用，无法使用",
     "The input is not valid Email or phone number!": "您输入的电子邮箱格式或手机号有误！",
@@ -702,7 +810,9 @@
     "Please bind your email first, the system will automatically uses the mail for multi-factor authentication": "请先绑定邮箱，之后会自动使用该邮箱作为多因素认证的方式",
     "Please bind your phone first, the system automatically uses the phone for multi-factor authentication": "请先绑定手机号，之后会自动使用该手机号作为多因素认证的方式",
     "Please confirm the information below": "请确认以下信息",
-    "Please save this recovery code. Once your device cannot provide an authentication code, you can reset mfa authentication by this recovery code": "请保存此恢复代码。一旦您的设备无法提供身份验证码，您可以通过此恢复码重置多因素认证",
+    "Please save this recovery code": {
+      " Once your device cannot provide an authentication code, you can reset mfa authentication by this recovery code": "请保存此恢复代码。一旦您的设备无法提供身份验证码，您可以通过此恢复码重置多因素认证"
+    },
     "Protect your account with Multi-factor authentication": "通过多因素认证保护您的帐户",
     "Push notification receiver": "推送通知接收者",
     "Recovery code": "恢复码",
@@ -770,14 +880,16 @@
     "Init score - Tooltip": "用户注册后所拥有的初始积分",
     "Is profile public": "是否公开用户个人页",
     "Is profile public - Tooltip": "关闭后只有全局管理员或同组织用户才能访问用户主页",
-    "Kerberos KDC host": "Kerberos KDC host",
-    "Kerberos KDC host - Tooltip": "The hostname of the Kerberos Key Distribution Center (e.g., kdc.example.com)",
-    "Kerberos keytab": "Kerberos keytab",
-    "Kerberos keytab - Tooltip": "The base64-encoded keytab file for the service principal",
-    "Kerberos realm": "Kerberos realm",
-    "Kerberos realm - Tooltip": "The Kerberos realm for IWA/SPNEGO authentication (e.g., EXAMPLE.COM)",
-    "Kerberos service name": "Kerberos service name",
-    "Kerberos service name - Tooltip": "The Kerberos service principal name (defaults to HTTP)",
+    "Kerberos KDC host": "Kerberos KDC 主机",
+    "Kerberos KDC host - Tooltip": "Kerberos密钥分发中心的主机名（如：kdc.example.com）",
+    "Kerberos keytab": "Kerberos 密钥表（keytab）",
+    "Kerberos keytab - Tooltip": "服务主体的Base64编码keytab文件",
+    "Kerberos realm": "Kerberos域",
+    "Kerberos realm - Tooltip": "IWA/SPNEGO认证所使用的Kerberos域（如：EXAMPLE.COM）",
+    "Kerberos service name": "Kerberos服务名",
+    "Kerberos service name - Tooltip": "Kerberos服务主体名称（默认为HTTP）",
+    "LDAP attributes": "LDAP属性",
+    "LDAP attributes - Tooltip": "LDAP目录属性到Casdoor用户字段的映射，用于目录同步",
     "Modify rule": "修改规则",
     "New Organization": "添加组织",
     "Optional": "可选",
@@ -792,6 +904,8 @@
     "Tags": "标签集合",
     "Use Email as username": "邮箱作为用户名",
     "Use Email as username - Tooltip": "如果注册时用户名不可见，则使用邮箱作为用户名",
+    "Use permanent avatar": "使用永久头像",
+    "Use permanent avatar - Tooltip": "启用后，用户头像URL将是永久链接，即使更新头像也不会改变",
     "User balance": "用户余额",
     "User balance - Tooltip": "用户的余额信息",
     "User navbar items": "用户导航栏项",
@@ -837,10 +951,19 @@
     "Person name - Tooltip": "缴费人本人的姓名",
     "Person phone": "缴费人手机号",
     "Person phone - Tooltip": "缴费人本人的手机号",
-    "Please carefully check your invoice information. Once the invoice is issued, it cannot be withdrawn or modified.": "请仔细检查下列发票信息，发票一经开具，无法退换。",
+    "Please carefully check your invoice information": {
+      " Once the invoice is issued, it cannot be withdrawn or modified": {
+        "": "请仔细检查下列发票信息，发票一经开具，无法退换。"
+      }
+    },
     "Please pay the order first!": "请先完成支付后再进行操作!",
-    "Processing...": "正在处理...",
-    "Products - Tooltip": "商品相关信息",
+    "Processing": {
+      "": {
+        "": {
+          "": "正在处理..."
+        }
+      }
+    },
     "Recharged successfully": "充值成功",
     "Result": "结果",
     "The payment has been canceled": "付款已取消",
@@ -852,7 +975,13 @@
     "You have successfully completed the payment": "支付成功",
     "You have successfully recharged": "您已成功充值",
     "Your current balance is": "您现在的余额为",
-    "please wait for a few seconds...": "请稍后...",
+    "please wait for a few seconds": {
+      "": {
+        "": {
+          "": "请稍后..."
+        }
+      }
+    },
     "the current state is": "当前状态为"
   },
   "permission": {
@@ -869,7 +998,6 @@
     "Effect": "效果",
     "Effect - Tooltip": "允许还是拒绝",
     "New Permission": "添加权限",
-    "Pending": "待审批",
     "Read": "读权限",
     "Resource type": "资源类型",
     "Resource type - Tooltip": "授权资源的类型",
@@ -881,8 +1009,8 @@
   },
   "plan": {
     "Edit Plan": "编辑计划",
-    "Is exclusive": "Is exclusive",
-    "Is exclusive - Tooltip": "Is exclusive - Tooltip",
+    "Is exclusive": "是否互斥",
+    "Is exclusive - Tooltip": "启用后，订阅此计划将取消其他所有活跃订阅",
     "New Plan": "添加计划",
     "Period": "期限",
     "Period - Tooltip": "计划对应的期限",
@@ -913,7 +1041,7 @@
     "Amount": "金额",
     "Buy": "购买",
     "Buy Product": "购买商品",
-    "Cart contains invalid products, please delete them before placing an order": "Cart contains invalid products, please delete them before placing an order",
+    "Cart contains invalid products, please delete them before placing an order": "购物车包含无效商品，请在下单前删除它们",
     "Custom amount available": "可自定义金额",
     "Custom price should be greater than zero": "自定义价格必须大于零",
     "Detail - Tooltip": "商品详情",
@@ -926,29 +1054,41 @@
     "Image": "图片",
     "Image - Tooltip": "商品图片",
     "Information": "信息",
-    "Invalid product": "Invalid product",
+    "Invalid product": "无效商品",
     "Is recharge": "充值",
     "Is recharge - Tooltip": "当前商品是否为充值商品",
     "New Product": "添加商品",
-    "No recharge options available": "No recharge options available",
+    "No recharge options available": "没有可用的充值选项",
     "Order created successfully": "订单创建成功",
     "PayPal": "PayPal",
     "Payment cancelled": "支付取消",
     "Payment failed": "支付失败",
     "Payment providers": "支付提供商",
     "Payment providers - Tooltip": "支持的支付提供商",
-    "Placing order...": "正在下单...",
+    "Placing order": {
+      "": {
+        "": {
+          "": "正在下单..."
+        }
+      }
+    },
     "Please add at least one recharge option when custom amount is disabled": "当禁用自定义金额时，请至少添加一个充值选项",
     "Please select a currency": "请选择一种货币",
     "Please select at least one payment provider": "请至少选择一个支付提供商",
-    "Processing payment...": "正在处理支付...",
+    "Processing payment": {
+      "": {
+        "": {
+          "": "正在处理支付..."
+        }
+      }
+    },
     "Product list cannot be empty": "商品列表不能为空",
-    "Product not found or invalid": "Product not found or invalid",
+    "Product not found or invalid": "未找到商品或商品无效",
     "Quantity": "库存",
     "Quantity - Tooltip": "库存的数量",
     "Recharge options": "充值选项",
     "Recharge options - Tooltip": "预设充值金额",
-    "Recharge products need to go to the product detail page to set custom amount": "Recharge products need to go to the product detail page to set custom amount",
+    "Recharge products need to go to the product detail page to set custom amount": "充值商品需要前往商品详情页设置自定义金额",
     "SKU": "货号",
     "Select amount": "选择金额",
     "Sold": "售出",
@@ -957,10 +1097,18 @@
     "Success URL": "成功URL",
     "Success URL - Tooltip": "支付后跳转的URL",
     "Tag - Tooltip": "商品类别",
-    "Test buy page..": "测试购买页面..",
+    "Test buy page": {
+      "": {
+        "": "测试购买页面.."
+      }
+    },
     "The currency of the product you are adding is different from the currency of the items in the cart": "您正在添加的商品货币与购物车中物品的货币不同",
-    "There is no payment channel for this product.": "该商品没有付款方式。",
-    "This product is currently not in sale.": "该商品目前未在售。",
+    "There is no payment channel for this product": {
+      "": "该商品没有付款方式。"
+    },
+    "This product is currently not in sale": {
+      "": "该商品目前未在售。"
+    },
     "This product is currently not purchasable (No options available)": "该产品当前无法购买（没有可用选项）",
     "Total Price": "总价格",
     "View Product": "查看商品",
@@ -985,14 +1133,17 @@
     "Auth URL - Tooltip": "用于认证的URL",
     "Base URL": "基本URL",
     "Base URL - Tooltip": "服务的基本URL",
+    "Binding rule": "绑定规则",
     "Bucket": "存储桶",
     "Bucket - Tooltip": "Bucket名称",
     "Can not parse metadata": "无法解析元数据",
     "Can signin": "可用于登录",
     "Can signup": "可用于注册",
     "Can unlink": "可解绑定",
-    "Channel No.": "Channel号码",
-    "Channel No. - Tooltip": "标识通信或数据传输通道的唯一编号",
+    "Channel No": {
+      "": "Channel号码",
+      " - Tooltip": "标识通信或数据传输通道的唯一编号"
+    },
     "Chat ID": "聊天ID",
     "Chat ID - Tooltip": "聊天会话或频道的唯一标识符",
     "Client ID": "客户端ID",
@@ -1035,18 +1186,19 @@
     "HTTP body mapping - Tooltip": "HTTP body 映射",
     "HTTP header": "HTTP 标头",
     "HTTP header - Tooltip": "HTTP 标头",
-    "Host": "主机",
     "Host - Tooltip": "主机名",
     "IdP": "身份提供商",
     "IdP certificate": "IdP公钥证书",
     "Internal": "内部",
     "Issuer URL": "Issuer链接",
     "Issuer URL - Tooltip": "Issuer链接URL",
-    "Key ID": "Key ID",
+    "Key ID": "密钥 ID",
     "Key ID - Tooltip": "Key ID",
-    "Key text": "Key text",
+    "Key text": "密钥文本",
     "Key text - Tooltip": "Key text",
-    "LDAP port": "LDAP port",
+    "LDAP port": "LDAP 端口",
+    "Logout URL": "登出 URL",
+    "Logout URL - Tooltip": "用户退出登录后的重定向URL",
     "Metadata": "元数据",
     "Metadata - Tooltip": "SAML元数据",
     "Metadata url": "Metadata链接",
@@ -1061,7 +1213,6 @@
     "Path prefix": "路径前缀",
     "Path prefix - Tooltip": "对象存储的Bucket路径前缀",
     "Please use WeChat to scan the QR code and follow the official account for sign in": "请使用微信扫描二维码并关注公众号登录",
-    "Port": "端口",
     "Port - Tooltip": "请确保端口号打开",
     "Private Key": "私钥",
     "Private Key - Tooltip": "用于加密的私钥",
@@ -1080,7 +1231,9 @@
     "Region ID - Tooltip": "提供商服务所属的地域ID",
     "Region endpoint for Internet": "地域节点 (外网)",
     "Region endpoint for Intranet": "地域节点 (内网)",
-    "SAML 2.0 Endpoint (HTTP)": "SAML 2.0 端点 (HTTP)",
+    "SAML 2": {
+      "0 Endpoint (HTTP)": "SAML 2.0 端点 (HTTP)"
+    },
     "SMS Test": "测试短信配置",
     "SMS Test - Tooltip": "请输入测试手机号",
     "SMS account": "短信账户",
@@ -1089,12 +1242,13 @@
     "SP ACS URL": "SP ACS 网址",
     "SP ACS URL - Tooltip": "服务提供商（SP）的断言消费者服务（ACS）地址",
     "SP Entity ID": "SP 实体 ID",
-    "SSL mode": "SSL mode",
-    "SSL mode - Tooltip": "SSL mode - Tooltip",
+    "SP Entity ID - Tooltip": "SAML服务提供商的唯一标识符，用于区分不同的服务提供商",
+    "SSL mode": "SSL模式",
+    "SSL mode - Tooltip": "数据库连接的SSL/TLS模式（如：disable、require、verify-full）",
     "Scene": "场景",
     "Scene - Tooltip": "表示功能或操作适用的具体业务场景，用于适配不同场景下的逻辑处理",
     "Scope": "范围",
-    "Scope - Tooltip": "Scope - Tooltip",
+    "Scope - Tooltip": "授予提供商集成的访问范围或权限级别",
     "Secret access key": "秘密访问密钥",
     "Secret access key - Tooltip": "与访问密钥配套的私密密钥",
     "Secret key": "密钥",
@@ -1108,7 +1262,7 @@
     "Sender number - Tooltip": "发送者用于发送短信、电话等通信的具体号码，显示为接收方看到的来源号码",
     "Service ID identifier": "服务ID标识符",
     "Service ID identifier - Tooltip": "用于唯一标识特定服务的标识符，便于服务的调用、管理和关联配置",
-    "Service account JSON": "Service account JSON",
+    "Service account JSON": "服务账号 JSON",
     "Service account JSON - Tooltip": "Service account对应的JSON文件内容",
     "Sign Name": "签名名称",
     "Sign Name - Tooltip": "用于标识消息、文件等内容来源的签名标识，通常显示在接收方可见的位置",
@@ -1123,21 +1277,21 @@
     "Signup group": "注册后的群组",
     "Signup group - Tooltip": "注册后自动加入的群组",
     "Silent": "静默",
-    "Site key": "Site key",
+    "Site key": "站点密钥",
     "Site key - Tooltip": "与站点绑定的密钥",
     "Sub type": "子类型",
     "Sub type - Tooltip": "在主类型下进一步细分的类别",
     "Subject": "主题",
     "Subject - Tooltip": "邮件的主题",
     "Subtype": "子类型",
-    "Subtype - Tooltip": "在主类型下的细分类别",
+    "Subtype - Tooltip": "在主类型下的更具体分类，例如特定的OAuth或短信提供商变体",
     "Syncer test": "同步器测试",
     "Syncer test - Tooltip": "测试同步器是否连通",
-    "Team ID": "Team ID",
+    "Team ID": "团队 ID",
     "Team ID - Tooltip": "团队的唯一标识符",
     "Template code": "模板代码",
     "Template code - Tooltip": "标识特定模板的唯一编码",
-    "Tenant ID": "Tenant ID",
+    "Tenant ID": "租户 ID",
     "Tenant ID - Tooltip": "租户的唯一标识符",
     "Test Email": "测试Email配置",
     "Test Email - Tooltip": "接收测试邮件的Email邮箱",
@@ -1164,22 +1318,26 @@
     "UserInfo URL - Tooltip": "自定义OAuth的UserInfo链接",
     "Wallets": "钱包",
     "Wallets - Tooltip": "支持的数字钱包",
-    "Web": "Web",
+    "Web": "网页",
     "admin (Shared)": "admin（共享）"
   },
   "record": {
     "Is triggered": "是否触发",
     "Object": "实体",
-    "Response": "响应",
-    "Status code": "状态码"
+    "Response": "响应"
   },
   "resource": {
     "Copy Link": "复制链接",
     "File name": "文件名",
     "File size": "大小",
     "Format": "格式",
-    "Parent": "属主",
-    "Upload a file...": "上传文件..."
+    "Upload a file": {
+      "": {
+        "": {
+          "": "上传文件..."
+        }
+      }
+    }
   },
   "role": {
     "Edit Role": "编辑角色",
@@ -1192,6 +1350,40 @@
     "Sub roles - Tooltip": "当前角色所包含的子角色",
     "Sub users": "包含用户",
     "Sub users - Tooltip": "当前角色所包含的用户"
+  },
+  "rule": {
+    "Block": "封禁",
+    "Block Duration": "封禁时长",
+    "Compound": "复合",
+    "Edit Rule": "编辑规则",
+    "Expression": "表达式",
+    "Expressions": "表达式列表",
+    "IP List": "IP列表",
+    "IP Rate Limiting": "IP速率限制",
+    "Logic": "逻辑",
+    "Operator": "操作符",
+    "Rate": "速率",
+    "Reason": "原因",
+    "Status code": "状态码",
+    "Verbose mode": "详细模式",
+    "and": "且",
+    "begin": "开始于",
+    "contains": "包含",
+    "does not contain": "不包含",
+    "does not equal": "不等于",
+    "equals": "等于",
+    "is in": "属于",
+    "is not in": "不属于",
+    "or": "或",
+    "regex match": "正则匹配"
+  },
+  "server": {
+    "Edit MCP Server": "编辑MCP服务器",
+    "New MCP Server": "新建MCP服务器",
+    "Please select at least one IP range": "请至少选择一个IP范围",
+    "Please select at least one port": "请至少选择一个端口",
+    "Production endpoint is empty": "生产端点为空",
+    "Scan server": "扫描服务器"
   },
   "signup": {
     "Accept": "阅读并接受",
@@ -1233,17 +1425,32 @@
     "The input is not invoice title!": "您输入的发票抬头有误！",
     "The input is not valid Phone!": "您输入的手机号格式有误！",
     "Username": "用户名",
-    "Username - Tooltip": "用户名",
+    "Username - Tooltip": "注册时使用的用户名",
     "Your account has been created!": "您的账号已成功创建！",
     "Your confirmed password is inconsistent with the password!": "您两次输入的密码不一致！",
     "sign in now": "立即登录"
+  },
+  "site": {
+    "Alert interval": "告警间隔",
+    "Alert providers": "告警提供商",
+    "Alert try times": "告警重试次数",
+    "Casdoor app": "Casdoor应用",
+    "Challenges": "挑战",
+    "Disable verbose": "禁用详细模式",
+    "Edit Site": "编辑站点",
+    "Enable alert": "启用告警",
+    "Hosts": "主机列表",
+    "Mode": "模式",
+    "Need redirect": "需要重定向",
+    "Node": "节点",
+    "Nodes": "节点列表",
+    "Public IP": "公网IP"
   },
   "subscription": {
     "Active": "活跃的",
     "Edit Subscription": "编辑订阅",
     "End time": "结束时间",
     "End time - Tooltip": "订阅的结束时间",
-    "Error": "错误",
     "Expired": "已过期",
     "New Subscription": "添加订阅",
     "Start time": "开始时间",
@@ -1255,22 +1462,22 @@
     "View Subscription": "查看订阅"
   },
   "syncer": {
-    "API Token / Password": "API Token / Password",
-    "AWS Access Key ID": "AWS Access Key ID",
-    "AWS Region": "AWS Region",
-    "AWS Secret Access Key": "AWS Secret Access Key",
-    "Admin Email": "Admin Email",
+    "API Token / Password": "API令牌 / 密码",
+    "AWS Access Key ID": "AWS 访问密钥 ID",
+    "AWS Region": "AWS 区域",
+    "AWS Secret Access Key": "AWS 秘密访问密钥",
+    "Admin Email": "管理员邮箱",
     "Affiliation table": "工作单位表",
     "Affiliation table - Tooltip": "工作单位的数据库表名",
     "Avatar base URL": "头像基URL",
     "Avatar base URL - Tooltip": "头像图片的URL前缀",
-    "Bind DN": "Bind DN",
+    "Bind DN": "绑定 DN",
     "Casdoor column": "Casdoor列名",
     "Column name": "列名",
     "Column type": "列类型",
     "Connect successfully": "连接成功",
-    "Corp ID": "Corp ID",
-    "Corp secret": "Corp secret",
+    "Corp ID": "企业ID",
+    "Corp secret": "企业密钥",
     "Database": "数据库",
     "Database - Tooltip": "数据库名称",
     "Database type": "数据库类型",
@@ -1282,15 +1489,15 @@
     "Is hashed": "是否参与哈希计算",
     "Is key": "是否为主键",
     "Is read-only": "是否只读",
-    "Is read-only - Tooltip": "只读",
+    "Is read-only - Tooltip": "启用后，此同步器来源的数据只读取不写回",
     "New Syncer": "添加同步器",
-    "Paste your Google Workspace service account JSON key here": "Paste your Google Workspace service account JSON key here",
-    "SCIM Server URL": "SCIM Server URL",
+    "Paste your Google Workspace service account JSON key here": "请在此粘贴您的Google Workspace服务账户JSON密钥",
+    "SCIM Server URL": "SCIM 服务器 URL",
     "SSH host": "SSH主机",
     "SSH password": "SSH密码",
     "SSH port": "SSH端口",
     "SSH user": "SSH用户",
-    "Service account key": "Service account key",
+    "Service account key": "服务账号密钥",
     "Sync interval": "同步间隔",
     "Sync interval - Tooltip": "单位为秒",
     "Table": "表名",
@@ -1298,20 +1505,26 @@
     "Table columns": "表格列",
     "Table columns - Tooltip": "参与数据同步的表格列，不参与同步的列不需要添加",
     "Test Connection": "测试连接",
-    "Test DB Connection": "Test DB Connection",
-    "Username (optional)": "Username (optional)"
+    "Test DB Connection": "测试数据库连接",
+    "Username (optional)": "用户名（可选）"
   },
   "system": {
     "API Latency": "API延迟",
     "API Throughput": "API吞吐量",
     "About Casdoor": "关于Casdoor",
-    "An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2.0, OIDC, SAML and CAS": "一个支持OAuth 2.0、OIDC、SAML和CAS的Web UI优先的身份和访问管理（IAM）/单点登录（SSO）平台",
+    "An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2": {
+      "0, OIDC, SAML and CAS": "一个支持OAuth 2.0、OIDC、SAML和CAS的Web UI优先的身份和访问管理（IAM）/单点登录（SSO）平台"
+    },
     "CPU Usage": "CPU使用率",
     "Community": "社区",
     "Count": "次数",
+    "Disk Usage": "磁盘使用率",
     "Latency": "延迟",
     "Memory Usage": "内存使用率",
+    "Network Usage": "网络使用率",
     "Official website": "官方网站",
+    "Received": "接收",
+    "Sent": "发送",
     "Throughput": "吞吐量",
     "Total Throughput": "总吞吐量",
     "Unknown version": "未知版本",
@@ -1339,7 +1552,13 @@
     "Please enter a message": "请输入消息",
     "Press Ctrl+Enter to send": "按 Ctrl+Enter 发送",
     "Resolved": "已解决",
-    "Type your message here...": "在此输入您的消息..."
+    "Type your message here": {
+      "": {
+        "": {
+          "": "在此输入您的消息..."
+        }
+      }
+    }
   },
   "token": {
     "Access token": "访问令牌",
@@ -1363,6 +1582,9 @@
     "New Transaction": "添加交易",
     "Recharge": "充值"
   },
+  "usage": {
+    "seconds": "秒"
+  },
   "user": {
     "3rd-party logins": "第三方登录",
     "3rd-party logins - Tooltip": "用户所绑定的社会化登录",
@@ -1377,7 +1599,7 @@
     "Bio": "自我介绍",
     "Bio - Tooltip": "用户的自我介绍",
     "Birthday": "生日",
-    "Birthday - Tooltip": "生日",
+    "Birthday - Tooltip": "用户的出生日期",
     "Captcha Verify Failed": "验证码校验失败",
     "Captcha Verify Success": "验证码校验成功",
     "City": "城市",
@@ -1391,7 +1613,7 @@
     "Email cannot be empty": "邮箱不能为空",
     "Email/phone reset successfully": "邮箱或手机号重置成功",
     "Empty input!": "输入为空！",
-    "Face IDs": "Face IDs",
+    "Face IDs": "面容 ID",
     "Gender": "性别",
     "Gender - Tooltip": "性别",
     "Homepage": "个人主页",
@@ -1421,7 +1643,6 @@
     "Is verified": "已验证",
     "Karma": "信誉分",
     "Karma - Tooltip": "用于衡量用户信用等级的评分，影响权限或服务使用范围",
-    "Keys": "键",
     "Language": "语言",
     "Language - Tooltip": "系统界面或内容展示所使用的语言设置",
     "Last change password time": "上次修改密码时间",
@@ -1432,7 +1653,13 @@
     "Location - Tooltip": "居住地址所在的城市",
     "MFA accounts": "MFA账户",
     "Managed accounts": "托管账户",
-    "Modify password...": "编辑密码...",
+    "Modify password": {
+      "": {
+        "": {
+          "": "编辑密码..."
+        }
+      }
+    },
     "Need update password": "需要更新密码",
     "Need update password - Tooltip": "强制用户在登录后更新密码",
     "New Email": "新邮箱",
@@ -1452,27 +1679,52 @@
     "Ranking": "排名",
     "Ranking - Tooltip": "根据评分、活跃度等指标对用户进行的排序位置",
     "Re-enter New": "重复新密码",
-    "Real name - Tooltip": "真实姓名提示",
+    "Real name - Tooltip": "用户在官方身份证件上显示的全名",
     "Register source": "注册来源",
     "Register source - Tooltip": "用户注册的来源",
     "Register type": "注册类型",
     "Register type - Tooltip": "用户注册的方式",
-    "Reset Email...": "重置邮箱...",
-    "Reset Phone...": "重置手机号...",
+    "Reset Email": {
+      "": {
+        "": {
+          "": "重置邮箱..."
+        }
+      }
+    },
+    "Reset Phone": {
+      "": {
+        "": {
+          "": "重置手机号..."
+        }
+      }
+    },
     "Score": "积分",
     "Score - Tooltip": "用户通过操作或任务获得的累计分数，可用于兑换权益或衡量活跃度",
-    "Select a photo...": "选择图片...",
+    "Select a photo": {
+      "": {
+        "": {
+          "": "选择图片..."
+        }
+      }
+    },
     "Set Password": "设置密码",
     "Set new profile picture": "设置新头像",
-    "Set password...": "设置密码...",
-    "Tag": "标签",
+    "Set password": {
+      "": {
+        "": {
+          "": "设置密码..."
+        }
+      }
+    },
     "The password must contain at least one special character": "密码必须包含至少一个特殊字符",
     "The password must contain at least one uppercase letter, one lowercase letter and one digit": "密码必须包含至少一个大写字母、一个小写字母和一个数字",
     "The password must have at least 6 characters": "密码长度必须至少为6个字符",
     "The password must have at least 8 characters": "密码长度必须至少为8个字符",
     "The password must not contain any repeated characters": "密码不得包含任何重复字符",
     "This field value doesn't match the pattern rule": "此字段值与模式规则不匹配",
-    "Two passwords you typed do not match.": "两次输入的密码不匹配。",
+    "Two passwords you typed do not match": {
+      "": "两次输入的密码不匹配。"
+    },
     "Unlink": "解绑",
     "Upload ID card back picture": "上传身份证反面照片",
     "Upload ID card front picture": "上传身份证正面照片",
@@ -1494,6 +1746,7 @@
     "Receiver": "接收者"
   },
   "webhook": {
+    "Attempt Count": "尝试次数",
     "Content type": "内容类型",
     "Content type - Tooltip": "Webhook请求的HTTP内容类型",
     "Edit Webhook": "编辑Webhook",
@@ -1501,15 +1754,29 @@
     "Events - Tooltip": "触发Webhook的事件",
     "Extended user fields": "扩展用户字段",
     "Extended user fields - Tooltip": "扩展使用的用户字段",
+    "Failed": "失败",
+    "Failed to replay webhook event": "Webhook事件重放失败",
     "Headers": "协议头",
     "Headers - Tooltip": "HTTP协议头（键值对）",
     "Is user extended": "是否扩展用户字段",
     "Is user extended - Tooltip": "是否在JSON里加入用户的扩展字段",
+    "Last Error": "最后错误",
     "New Webhook": "添加Webhook",
+    "Next Retry Time": "下次重试时间",
     "Object fields": "Object字段",
     "Object fields - Tooltip": "可显示的Object字段",
+    "Payload": "负载",
+    "Pending": "等待中",
+    "Replay": "重放",
+    "Retrying": "重试中",
     "Single org only": "仅本组织",
     "Single org only - Tooltip": "仅在Webhook所在组织触发",
-    "Value": "值"
+    "Success": "成功",
+    "Unknown": "未知",
+    "Value": "值",
+    "Webhook Event Detail": "Webhook事件详情",
+    "Webhook Event Logs": "Webhook事件日志",
+    "Webhook Name": "Webhook名称",
+    "Webhook event replay triggered": "Webhook事件重放已触发"
   }
 }

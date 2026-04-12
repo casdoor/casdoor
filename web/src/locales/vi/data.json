@@ -17,6 +17,10 @@
     "Use same DB": "Sử dụng cùng DB",
     "Use same DB - Tooltip": "Sử dụng cùng DB với Casdoor"
   },
+  "agent": {
+    "Edit Agent": "Chỉnh sửa tác nhân",
+    "New Agent": "Tác nhân mới"
+  },
   "application": {
     "Add Face ID": "Thêm Face ID",
     "Add Face ID with Image": "Thêm Face ID với hình ảnh",
@@ -34,6 +38,8 @@
     "Binding providers": "Nhà cung cấp liên kết",
     "CSS style": "Kiểu CSS",
     "Center": "Trung tâm",
+    "Client cert": "Chứng chỉ máy khách",
+    "Client cert - Tooltip": "Client cert - Tooltip",
     "Code resend timeout": "Thời gian chờ gửi lại mã",
     "Code resend timeout - Tooltip": "Khoảng thời gian (tính bằng giây) mà người dùng phải đợi trước khi yêu cầu mã xác minh khác. Đặt thành 0 để sử dụng giá trị mặc định toàn cục (60 giây)",
     "Cookie expire": "Cookie hết hạn",
@@ -66,11 +72,13 @@
     "Enable SAML compression - Tooltip": "Liệu có nén các thông điệp phản hồi SAML khi Casdoor được sử dụng làm SAML idp không?",
     "Enable exclusive signin": "Bật đăng nhập độc quyền",
     "Enable exclusive signin - Tooltip": "Khi đăng nhập độc quyền được bật, người dùng không thể có nhiều phiên hoạt động",
+    "Enable guest signin": "Bật đăng nhập khách",
+    "Enable guest signin - Tooltip": "Enable guest signin - Tooltip",
     "Enable side panel": "Cho phép bên thanh phẩm",
     "Enable signin session - Tooltip": "Có phải Casdoor duy trì phiên sau khi đăng nhập vào Casdoor từ ứng dụng không?",
     "Enable signup": "Kích hoạt đăng ký",
     "Enable signup - Tooltip": "Có cho phép người dùng đăng ký tài khoản mới không?",
-    "Existing Field": "Existing Field",
+    "Existing Field": "Trường hiện có",
     "Failed signin frozen time": "Thời gian khóa khi đăng nhập thất bại",
     "Failed signin frozen time - Tooltip": "Thời gian tài khoản bị đóng băng sau các lần đăng nhập thất bại",
     "Failed signin limit": "Giới hạn đăng nhập thất bại",
@@ -113,6 +121,8 @@
     "Order - Tooltip": "Giá trị càng nhỏ, xếp hạng càng cao trong trang Ứng dụng",
     "Org choice mode": "Chế độ chọn tổ chức",
     "Org choice mode - Tooltip": "Phương thức chọn tổ chức để đăng nhập - Gợi ý",
+    "Other domains": "Tên miền khác",
+    "Other domains - Tooltip": "Other domains - Tooltip",
     "Please enable \"Signin session\" first before enabling \"Auto signin\"": "Vui lòng kích hoạt \"Phiên đăng nhập\" trước khi kích hoạt \"Đăng nhập tự động\"",
     "Please input your application!": "Vui lòng nhập ứng dụng của bạn!",
     "Please input your organization!": "Vui lòng nhập tổ chức của bạn!",
@@ -128,6 +138,7 @@
     "Refresh token expire": "Làm mới mã thông báo hết hạn",
     "Refresh token expire - Tooltip": "Thời gian hết hạn của mã thông báo làm mới",
     "Reset to Empty": "Đặt lại thành trống",
+    "Reverse Proxy": "Proxy ngược",
     "Right": "Đúng",
     "Rule": "Quy tắc",
     "SAML hash algorithm": "Thuật toán hash SAML",
@@ -135,6 +146,8 @@
     "SAML metadata": "SAML metadata: Siêu dữ liệu SAML",
     "SAML metadata - Tooltip": "Metadata của giao thức SAML - Gợi ý",
     "SAML reply URL": "URL phản hồi SAML",
+    "SSL cert": "Chứng chỉ SSL",
+    "SSL cert - Tooltip": "SSL cert - Tooltip",
     "Security": "Bảo mật",
     "Select": "Chọn",
     "Side panel HTML": "Bảng điều khiển HTML bên lề",
@@ -152,10 +165,12 @@
     "Signup items - Tooltip": "Mục cho người dùng đề điền khi đăng nhập - Gợi ý",
     "Single Choice": "Lựa chọn đơn",
     "Small icon": "Biểu tượng nhỏ",
-    "Static Value": "Static Value",
+    "Static Value": "Giá trị tĩnh",
     "String": "Chuỗi",
     "Tags - Tooltip": "Chỉ người dùng có thẻ được liệt kê trong thẻ ứng dụng mới có thể đăng nhập - Gợi ý",
     "The application does not allow to sign up new account": "Ứng dụng không cho phép đăng ký tài khoản mới",
+    "Token cert": "Chứng chỉ token",
+    "Token cert - Tooltip": "Token cert - Tooltip",
     "Token expire": "Mã thông báo hết hạn",
     "Token expire - Tooltip": "Thời gian hết hạn của mã truy cập",
     "Token fields": "Trường token",
@@ -165,12 +180,16 @@
     "Token signing method": "Phương thức ký token",
     "Token signing method - Tooltip": "Phương thức ký token JWT, cần cùng thuật toán với chứng chỉ",
     "UI Customization": "Tùy chỉnh giao diện",
+    "Upstream host": "Máy chủ upstream",
+    "Upstream host - Tooltip": "Upstream host - Tooltip",
     "Use Email as NameID": "Sử dụng Email làm NameID",
     "Use Email as NameID - Tooltip": "Gợi ý sử dụng Email làm NameID",
     "Vertical": "Dọc",
     "You are unexpected to see this prompt page": "Bạn không mong đợi thấy trang này hiện lên"
   },
   "cert": {
+    "Access secret": "Bí mật truy cập",
+    "Account": "Tài khoản",
     "Bit size": "Kích cỡ bit",
     "Bit size - Tooltip": "Độ dài khóa bí mật",
     "Certificate": "Giấy chứng nhận",
@@ -179,6 +198,7 @@
     "Copy private key": "Sao chép khóa riêng tư",
     "Crypto algorithm": "Thuật toán mã hóa",
     "Crypto algorithm - Tooltip": "Thuật toán mã hóa được sử dụng bởi chứng chỉ",
+    "Domain expire": "Hết hạn tên miền",
     "Download certificate": "Tải xuống chứng chỉ",
     "Download private key": "Tải xuống khóa riêng tư",
     "Edit Cert": "Chỉnh sửa chứng chỉ",
@@ -199,6 +219,18 @@
     "Send Code": "Gửi mã",
     "Sending": "Gửi",
     "Submit and complete": "Nộp và hoàn thành"
+  },
+  "consent": {
+    "Are you sure you want to revoke scope": "Bạn có chắc muốn thu hồi phạm vi này không?",
+    "Are you sure you want to revoke this consent?": "Bạn có chắc muốn thu hồi sự đồng ý này không?",
+    "Authorization Request": "Yêu cầu ủy quyền",
+    "By clicking Allow, you allow this app to use your information": "Bằng cách nhấn Cho phép, bạn cho phép ứng dụng này sử dụng thông tin của bạn",
+    "Consents": "Đồng ý",
+    "Consents - Tooltip": "Consents - Tooltip",
+    "Granted scopes": "Phạm vi đã cấp",
+    "This application is requesting": "Ứng dụng này đang yêu cầu",
+    "This scope is not defined in the application": "Phạm vi này chưa được định nghĩa trong ứng dụng",
+    "wants to access your account": "muốn truy cập tài khoản của bạn"
   },
   "currency": {
     "AUD": "Đô la Úc",
@@ -232,8 +264,11 @@
     "Edit Enforcer": "Chỉnh sửa Enforcer",
     "New Enforcer": "Enforcer mới"
   },
+  "entry": {
+    "Edit Entry": "Chỉnh sửa mục",
+    "New Entry": "Mục mới"
+  },
   "forget": {
-    "Account": "Tài khoản",
     "Change Password": "Đổi mật khẩu",
     "Choose email or phone": "Chọn điện thư hay điện thoại",
     "Next Step": "Bước tiếp theo",
@@ -253,11 +288,8 @@
     "A normal user can only modify the permission submitted by itself": "Người dùng thường chỉ có thể sửa đổi quyền do chính họ gửi",
     "AI Assistant": "Trợ lý AI",
     "API key": "Khóa API",
-    "API key - Tooltip": "Khóa API để truy cập dịch vụ",
     "Access key": "Khóa truy cập",
     "Access key - Tooltip": "Khóa truy cập cho dịch vụ",
-    "Access secret": "Mật khẩu truy cập",
-    "Access secret - Tooltip": "Khóa bí mật để truy cập dịch vụ",
     "Access token is empty": "Token truy cập rỗng",
     "Action": "Hành động",
     "Adapter": "Bộ chuyển đổi",
@@ -268,34 +300,39 @@
     "Admin": "Quản trị viên",
     "Affiliation URL": "Đường dẫn liên kết liên kết",
     "Affiliation URL - Tooltip": "Đường dẫn URL trang chủ của liên kết",
+    "Agents": "Tác nhân",
     "All": "Tất cả",
     "Application": "Ứng dụng",
     "Application - Tooltip": "Gợi ý ứng dụng",
     "Applications": "Ứng dụng",
     "Applications that require authentication": "Các ứng dụng yêu cầu xác thực",
     "Apps": "Ứng dụng",
+    "Auditing": "Kiểm toán",
     "Authorization": "Ủy quyền",
-    "Auto": "Auto",
+    "Auto": "Tự động",
     "Avatar": "Ảnh đại diện",
     "Avatar - Tooltip": "Ảnh đại diện công khai cho người dùng",
     "Back": "Quay lại",
     "Back Home": "Trở về nhà",
-    "Business & Payments": "Kinh doanh & Thanh toán",
+    "Business": "Kinh doanh",
     "Cancel": "Hủy bỏ",
     "Captcha": "Mã xác nhận",
     "Cart": "Giỏ hàng",
-    "Category": "Category",
+    "Category": "Danh mục",
     "Category - Tooltip": "Category - Tooltip",
     "Cert": "Chứng chỉ",
     "Cert - Tooltip": "Chứng chỉ khóa công khai cần được xác minh bởi SDK khách hàng tương ứng với ứng dụng này",
     "Certs": "Chứng chỉ",
     "Clear": "Xóa",
     "Click to Upload": "Nhấp để tải lên",
+    "Click to open AI assistant": "Nhấn để mở trợ lý AI",
+    "Click to open tour": "Nhấn để mở hướng dẫn",
     "Client IP": "IP khách hàng",
     "Close": "Đóng lại",
     "Confirm": "Xác nhận",
     "Copied to clipboard successfully": "Sao chép vào bộ nhớ tạm thành công",
     "Copy": "Sao chép",
+    "Create time": "Thời gian tạo",
     "Created time": "Thời gian tạo",
     "Custom": "Tùy chỉnh",
     "Dashboard": "Bảng điều khiển",
@@ -312,10 +349,12 @@
     "Description - Tooltip": "Thông tin chi tiết mô tả cho tham khảo, Casdoor chính nó sẽ không sử dụng nó",
     "Detail": "Chi tiết",
     "Disable": "Tắt",
+    "Disabled": "Đã tắt",
     "Display name": "Tên hiển thị",
     "Display name - Tooltip": "Một tên dễ sử dụng, dễ đọc được hiển thị công khai trên giao diện người dùng",
     "Down": "Xuống",
     "Download template": "Tải template",
+    "Duplicate": "Nhân bản",
     "Edit": "Sửa",
     "Email": "Email: Thư điện tử",
     "Email - Tooltip": "Địa chỉ email hợp lệ",
@@ -329,6 +368,10 @@
     "Enabled": "Đã bật",
     "Enabled successfully": "Bật thành công",
     "Enforcers": "Trình thực thi",
+    "Entries": "Mục",
+    "Error": "Lỗi",
+    "Expire time": "Thời gian hết hạn",
+    "Expire time - Tooltip": "Expire time - Tooltip",
     "Failed to add": "Không thể thêm được",
     "Failed to cancel": "Không thể hủy",
     "Failed to connect to server": "Không thể kết nối đến máy chủ",
@@ -357,6 +400,7 @@
     "Forget URL - Tooltip": "Đường dẫn tùy chỉnh cho trang \"Quên mật khẩu\". Nếu không được thiết lập, trang \"Quên mật khẩu\" mặc định của Casdoor sẽ được sử dụng. Khi cài đặt, liên kết \"Quên mật khẩu\" trên trang đăng nhập sẽ chuyển hướng đến URL này",
     "Forms": "Biểu mẫu",
     "Found some texts still not translated? Please help us translate at": "Tìm thấy một số văn bản vẫn chưa được dịch? Vui lòng giúp chúng tôi dịch tại",
+    "General": "Chung",
     "Generate": "Tạo",
     "Go to enable": "Đi để bật",
     "Go to writable demo site?": "Bạn có muốn đi đến trang demo có thể viết được không?",
@@ -365,30 +409,38 @@
     "Hide password": "Ẩn mật khẩu",
     "Home": "Nhà",
     "Home - Tooltip": "Trang chủ của ứng dụng",
+    "Host": "Máy chủ",
     "ID": "ID",
     "ID - Tooltip": "Chuỗi ngẫu nhiên độc nhất",
     "IP whitelist": "Danh sách trắng IP",
     "IP whitelist - Tooltip": "Danh sách trắng IP",
     "Identity": "Danh tính",
-    "Impersonation": "Giả danh",
+    "Impersonate": "Mạo danh",
+    "Invalid application": "Ứng dụng không hợp lệ",
     "Invitations": "Lời mời",
+    "Is allowed": "Được phép",
     "Is enabled": "Đã được kích hoạt",
     "Is enabled - Tooltip": "Đặt liệu nó có thể sử dụng hay không",
     "Is shared": "Được chia sẻ",
     "Is shared - Tooltip": "Chia sẻ ứng dụng này với các tổ chức khác",
-    "LDAPs": "LDAPs",
+    "Keys": "Khóa",
+    "LDAPs": "LDAPS",
     "LDAPs - Tooltip": "Máy chủ LDAP",
+    "LLM AI": "AI LLM",
     "Languages": "Ngôn ngữ",
     "Languages - Tooltip": "Ngôn ngữ hiện có",
     "Last name": "Họ",
     "Last name - Tooltip": "Họ của người dùng",
     "Later": "Để sau",
-    "Logging & Auditing": "Nhật ký & Kiểm toán",
+    "Listening URL": "URL lắng nghe",
+    "Listening URL - Tooltip": "Listening URL - Tooltip",
     "Login page": "Trang đăng nhập",
     "Logo": "Logo",
     "Logo - Tooltip": "Biểu tượng mà ứng dụng hiển thị ra ngoài thế giới",
     "Logo dark": "Logo tối",
     "Logo dark - Tooltip": "Logo được sử dụng trong chủ đề tối",
+    "MCP Servers": "Máy chủ MCP",
+    "MCP Store": "Cửa hàng MCP",
     "MFA items": "Các mục MFA",
     "MFA items - Tooltip": "Gợi ý các mục MFA",
     "Master password": "Mật khẩu chính",
@@ -403,6 +455,7 @@
     "Name": "Tên",
     "Name - Tooltip": "ID duy nhất dựa trên chuỗi",
     "Name format": "Định dạng tên",
+    "No data": "Không có dữ liệu",
     "No products available": "Không có sản phẩm nào",
     "No sheets found in file": "Không tìm thấy trang tính trong file",
     "No verification method": "Không có phương thức xác minh",
@@ -419,6 +472,8 @@
     "Organization - Tooltip": "Tương tự như các khái niệm như người thuê hoặc nhóm người dùng, mỗi người dùng và ứng dụng đều thuộc về một tổ chức",
     "Organization is null": "Tổ chức trống",
     "Organizations": "Tổ chức",
+    "Owner": "Chủ sở hữu",
+    "Parent": "Cha",
     "Password": "Mật khẩu",
     "Password - Tooltip": "Hãy đảm bảo rằng mật khẩu là chính xác",
     "Password complexity options": "Tùy chọn độ phức tạp mật khẩu",
@@ -431,6 +486,7 @@
     "Password salt - Tooltip": "Tham số ngẫu nhiên được sử dụng để mã hóa mật khẩu",
     "Password type": "Loại mật khẩu",
     "Password type - Tooltip": "Định dạng lưu trữ mật khẩu trong cơ sở dữ liệu",
+    "Path": "Đường dẫn",
     "Payment": "Thanh toán",
     "Payment - Tooltip": "Gợi ý thanh toán",
     "Payments": "Thanh toán",
@@ -449,6 +505,7 @@
     "Please complete the captcha correctly": "Vui lòng hoàn thành captcha chính xác",
     "Please input your search": "Vui lòng nhập tìm kiếm của bạn",
     "Please select at least 1 user first": "Vui lòng chọn ít nhất 1 người dùng trước",
+    "Port": "Cổng",
     "Preview": "Xem trước",
     "Preview - Tooltip": "Xem trước các hiệu ứng đã cấu hình",
     "Pricing": "Giá",
@@ -462,16 +519,19 @@
     "QR Code": "Mã QR",
     "QR code is too large": "Mã QR quá lớn",
     "Records": "Hồ sơ",
+    "Refresh": "Làm mới",
     "Request": "Yêu cầu",
     "Request URI": "URI yêu cầu",
     "Reset to Default": "Đặt lại về mặc định",
     "Resources": "Tài nguyên",
+    "Restore": "Khôi phục",
     "Role": "Vai trò",
     "Role - Tooltip": "Gợi ý vai trò",
     "Roles": "Vai trò",
     "Roles - Tooltip": "Các vai trò mà người dùng thuộc về",
     "Root cert": "Chứng chỉ gốc",
     "Root cert - Tooltip": "Gợi ý chứng chỉ gốc",
+    "Rules": "Quy tắc",
     "SAML attributes": "Thuộc tính SAML",
     "SAML attributes - Tooltip": "Gợi ý thuộc tính SAML",
     "SSH cert": "Chứng chỉ SSH",
@@ -479,12 +539,14 @@
     "SSH type - Tooltip": "Loại xác thực kết nối SSH",
     "Save": "Lưu",
     "Save & Exit": "Lưu và Thoát",
-    "Scopes": "Scopes",
+    "Scopes": "Phạm vi",
     "Scopes - Tooltip": "Scopes - Tooltip",
     "Search": "Tìm kiếm",
+    "Self": "Bản thân",
     "Send": "Gửi",
     "Session ID": "ID phiên làm việc",
     "Sessions": "Phiên",
+    "Severity": "Mức độ nghiêm trọng",
     "Shortcuts": "Lối tắt",
     "Signin URL": "Địa chỉ URL để đăng nhập",
     "Signin URL - Tooltip": "URL tùy chỉnh cho trang đăng nhập. Nếu không được thiết lập, trang đăng nhập mặc định của Casdoor sẽ được sử dụng. Khi được thiết lập, các liên kết đăng nhập trên các trang Casdoor khác sẽ chuyển hướng đến URL này",
@@ -493,9 +555,16 @@
     "Signup application": "Đăng ký ứng dụng",
     "Signup application - Tooltip": "Người dùng đã đăng ký thông qua ứng dụng nào khi họ đăng ký?",
     "Signup link": "Liên kết đăng ký",
-    "Sorry, the page you visited does not exist.": "Xin lỗi, trang web bạn truy cập không tồn tại.",
-    "Sorry, the user you visited does not exist or you are not authorized to access this user.": "Xin lỗi, người dùng mà bạn đã ghé thăm không tồn tại hoặc bạn không có quyền truy cập vào người dùng này.",
-    "Sorry, you do not have permission to access this page or logged in status invalid.": "Xin lỗi, bạn không có quyền truy cập trang này hoặc trạng thái đăng nhập không hợp lệ.",
+    "Sites": "Trang",
+    "Sorry, the page you visited does not exist": {
+      "": "Xin lỗi, trang web bạn truy cập không tồn tại."
+    },
+    "Sorry, the user you visited does not exist or you are not authorized to access this user": {
+      "": "Xin lỗi, người dùng mà bạn đã ghé thăm không tồn tại hoặc bạn không có quyền truy cập vào người dùng này."
+    },
+    "Sorry, you do not have permission to access this page or logged in status invalid": {
+      "": "Xin lỗi, bạn không có quyền truy cập trang này hoặc trạng thái đăng nhập không hợp lệ."
+    },
     "State": "Nhà nước",
     "State - Tooltip": "Trạng thái",
     "Status": "Trạng thái",
@@ -505,7 +574,10 @@
     "Successfully copied": "Đã sao chép thành công",
     "Successfully deleted": "Đã xóa thành công",
     "Successfully executed": "Thực hiện thành công",
+    "Successfully got": "Lấy thành công",
+    "Successfully modified": "Sửa thành công",
     "Successfully removed": "Đã xóa thành công",
+    "Successfully revoked": "Thu hồi thành công",
     "Successfully saved": "Thành công đã được lưu lại",
     "Successfully sent": "Đã gửi thành công",
     "Successfully synced": "Đã đồng bộ thành công",
@@ -518,19 +590,26 @@
     "Sync": "Đồng bộ",
     "Syncers": "Công cụ đồng bộ",
     "System Info": "Thông tin hệ thống",
-    "Tab": "Tab",
+    "Tab": "Thẻ",
+    "Tag": "Thẻ",
     "The actions cannot be empty": "Các hành động không được để trống",
     "The resources cannot be empty": "Các tài nguyên không được để trống",
     "The users and roles cannot be empty at the same time": "Người dùng và vai trò không được trống cùng lúc",
-    "There was a problem signing you in..": "Đã xảy ra lỗi khi đăng nhập..",
+    "There was a problem signing you in": {
+      "": {
+        "": "Đã xảy ra lỗi khi đăng nhập.."
+      }
+    },
     "This is a read-only demo site!": "Đây là trang web giới thiệu chỉ có chức năng đọc!",
-    "Tickets": "Tickets",
+    "Tickets": "Ticket",
     "Timestamp": "Dấu thời gian",
     "Title": "Tiêu đề",
     "Title - Tooltip": "Tiêu đề",
     "Token attributes": "Thuộc tính token",
     "Token attributes - Tooltip": "Thuộc tính token",
     "Tokens": "Mã thông báo",
+    "Tool": "Công cụ",
+    "Tool - Tooltip": "Tool - Tooltip",
     "Tour": "Hướng dẫn",
     "Transactions": "Giao dịch",
     "True": "Đúng",
@@ -538,14 +617,20 @@
     "Type - Tooltip": "Type - Tooltip",
     "URL": "URL",
     "URL - Tooltip": "Đường dẫn URL",
+    "Unauthorized": "Không được phép",
     "Unknown application name": "Tên ứng dụng không xác định",
     "Unknown authentication type": "Loại xác thực không xác định",
     "Up": "Lên",
+    "Update time": "Thời gian cập nhật",
     "Updated time": "Thời gian cập nhật",
-    "Upload (.xlsx)": "Tải lên (.xlsx)",
+    "Upload (": {
+      "xlsx)": "Tải lên (.xlsx)"
+    },
+    "Url": "URL",
     "User": "Người dùng",
     "User - Tooltip": "Hãy đảm bảo tên đăng nhập chính xác",
     "User Management": "Quản lý người dùng",
+    "User agent": "User-Agent",
     "User already exists": "Người dùng đã tồn tại",
     "User containers": "Nhóm người dùng",
     "User type": "Loại người dùng",
@@ -555,7 +640,9 @@
     "Users under all organizations": "Người dùng trong tất cả các tổ chức",
     "Verifications": "Xác minh",
     "View": "Xem",
-    "Webhooks": "Webhooks",
+    "Webhook Events": "Sự kiện webhook",
+    "Webhooks": "Webhook",
+    "Website": "Trang web",
     "You can only select one physical group": "Bạn chỉ có thể chọn một nhóm vật lý",
     "You must select a picture first": "Bạn phải chọn một hình ảnh trước",
     "empty": "trống",
@@ -570,13 +657,15 @@
     "Physical": "Vật lý",
     "Show all": "Hiển thị tất cả",
     "Virtual": "Ảo",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Bạn cần xóa tất cả nhóm con trước. Bạn có thể xem các nhóm con trong cây nhóm bên trái của trang [Tổ chức] -> [Nhóm]"
+    "You need to delete all subgroups first": {
+      " You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Bạn cần xóa tất cả nhóm con trước. Bạn có thể xem các nhóm con trong cây nhóm bên trái của trang [Tổ chức] -> [Nhóm]"
+    }
   },
   "home": {
-    "New users past 30 days": "Người dùng mới trong 30 ngày qua",
-    "New users past 7 days": "Người dùng mới trong 7 ngày qua",
+    "New users / 30 days": "Người dùng mới / 30 ngày",
+    "New users / 7 days": "Người dùng mới / 7 ngày",
     "New users today": "Người dùng mới hôm nay",
-    "Past 30 Days": "30 ngày qua",
+    "Past 30 days": "30 ngày qua",
     "Total users": "Tổng người dùng"
   },
   "invitation": {
@@ -591,6 +680,12 @@
     "Used count": "Số lần đã sử dụng",
     "Used count - Tooltip": "Số lần sử dụng",
     "You need to first specify a default application for organization: ": "Bạn cần chỉ định ứng dụng mặc định cho tổ chức: "
+  },
+  "key": {
+    "Access secret - Tooltip": "Access secret - Tooltip",
+    "Edit Key": "Chỉnh sửa khóa",
+    "Inactive": "Không hoạt động",
+    "New Key": "Khóa mới"
   },
   "ldap": {
     "Admin - Tooltip": "CN hoặc ID của quản trị viên máy chủ LDAP",
@@ -644,7 +739,13 @@
     "LDAP": "LDAP",
     "LDAP username, Email or phone": "Tên người dùng LDAP, Email hoặc điện thoại",
     "Loading": "Đang tải",
-    "Logging out...": "Đăng xuất ...",
+    "Logging out": {
+      "": {
+        "": {
+          "": "Đăng xuất ..."
+        }
+      }
+    },
     "MetaMask plugin not detected": "Không phát hiện plugin MetaMask",
     "Model loading failure": "Tải mô hình thất bại",
     "No account?": "Không có tài khoản?",
@@ -666,8 +767,9 @@
     "Please select an organization": "Vui lòng chọn một tổ chức",
     "Please select an organization to sign in": "Vui lòng chọn một tổ chức để đăng nhập",
     "Please type an organization to sign in": "Vui lòng nhập tên tổ chức để đăng nhập",
-    "Redirecting, please wait.": "Đang chuyển hướng, vui lòng đợi.",
-    "Refresh": "Làm mới",
+    "Redirecting, please wait": {
+      "": "Đang chuyển hướng, vui lòng đợi."
+    },
     "Select organization": "Chọn tổ chức",
     "Sign In": "Đăng nhập",
     "Sign in with Face ID": "Đăng nhập bằng Face ID",
@@ -675,7 +777,13 @@
     "Sign in with WebAuthn": "Đăng nhập với WebAuthn",
     "Sign in with {type}": "Đăng nhập bằng {type}",
     "Signin button": "Nút đăng nhập",
-    "Signing in...": "Đăng nhập...",
+    "Signing in": {
+      "": {
+        "": {
+          "": "Đăng nhập..."
+        }
+      }
+    },
     "Successfully logged in with WebAuthn credentials": "Đã đăng nhập thành công với thông tin WebAuthn",
     "The camera is currently in use by another webpage": "Camera hiện đang được sử dụng bởi trang khác",
     "The input is not valid Email or phone number!": "Đầu vào không phải là địa chỉ Email hoặc số điện thoại hợp lệ!",
@@ -702,7 +810,9 @@
     "Please bind your email first, the system will automatically uses the mail for multi-factor authentication": "Vui lòng liên kết email trước, hệ thống sẽ tự động sử dụng email cho xác thực đa yếu tố",
     "Please bind your phone first, the system automatically uses the phone for multi-factor authentication": "Vui lòng liên kết điện thoại trước, hệ thống sẽ tự động sử dụng điện thoại cho xác thực đa yếu tố",
     "Please confirm the information below": "Vui lòng xác nhận thông tin dưới đây",
-    "Please save this recovery code. Once your device cannot provide an authentication code, you can reset mfa authentication by this recovery code": "Vui lòng lưu mã khôi phục này. Khi thiết bị không thể cung cấp mã xác thực, bạn có thể đặt lại xác thực mfa bằng mã này",
+    "Please save this recovery code": {
+      " Once your device cannot provide an authentication code, you can reset mfa authentication by this recovery code": "Vui lòng lưu mã khôi phục này. Khi thiết bị không thể cung cấp mã xác thực, bạn có thể đặt lại xác thực mfa bằng mã này"
+    },
     "Protect your account with Multi-factor authentication": "Bảo vệ tài khoản của bạn với xác thực đa yếu tố",
     "Push notification receiver": "Người nhận thông báo đẩy",
     "Recovery code": "Mã khôi phục",
@@ -770,14 +880,16 @@
     "Init score - Tooltip": "Điểm số ban đầu được trao cho người dùng khi đăng ký",
     "Is profile public": "Hồ sơ có công khai không?",
     "Is profile public - Tooltip": "Sau khi đóng lại, chỉ các quản trị viên toàn cầu hoặc người dùng trong cùng tổ chức mới có thể truy cập trang hồ sơ người dùng",
-    "Kerberos KDC host": "Kerberos KDC host",
-    "Kerberos KDC host - Tooltip": "The hostname of the Kerberos Key Distribution Center (e.g., kdc.example.com)",
-    "Kerberos keytab": "Kerberos keytab",
-    "Kerberos keytab - Tooltip": "The base64-encoded keytab file for the service principal",
-    "Kerberos realm": "Kerberos realm",
-    "Kerberos realm - Tooltip": "The Kerberos realm for IWA/SPNEGO authentication (e.g., EXAMPLE.COM)",
-    "Kerberos service name": "Kerberos service name",
-    "Kerberos service name - Tooltip": "The Kerberos service principal name (defaults to HTTP)",
+    "Kerberos KDC host": "Máy chủ KDC Kerberos",
+    "Kerberos KDC host - Tooltip": "Tên máy chủ của Kerberos KDC (ví dụ kdc.example.com)",
+    "Kerberos keytab": "Keytab Kerberos",
+    "Kerberos keytab - Tooltip": "Tệp keytab mã hóa Base64 cho service principal",
+    "Kerberos realm": "Realm Kerberos",
+    "Kerberos realm - Tooltip": "Realm Kerberos cho xác thực IWA/SPNEGO (ví dụ EXAMPLE.COM)",
+    "Kerberos service name": "Tên dịch vụ Kerberos",
+    "Kerberos service name - Tooltip": "Tên service principal Kerberos (mặc định HTTP)",
+    "LDAP attributes": "Thuộc tính LDAP",
+    "LDAP attributes - Tooltip": "LDAP attributes - Tooltip",
     "Modify rule": "Sửa đổi quy tắc",
     "New Organization": "Tổ chức mới",
     "Optional": "Tùy chọn",
@@ -792,6 +904,8 @@
     "Tags": "Thẻ",
     "Use Email as username": "Sử dụng Email làm tên người dùng",
     "Use Email as username - Tooltip": "Sử dụng Email làm tên người dùng nếu trường tên người dùng không hiển thị khi đăng ký",
+    "Use permanent avatar": "Dùng ảnh đại diện cố định",
+    "Use permanent avatar - Tooltip": "Use permanent avatar - Tooltip",
     "User balance": "Số dư người dùng",
     "User balance - Tooltip": "Số dư người dùng - Gợi ý",
     "User navbar items": "Các mục thanh điều hướng người dùng",
@@ -837,10 +951,19 @@
     "Person name - Tooltip": "Tên thật của người thanh toán",
     "Person phone": "Điện thoại cá nhân",
     "Person phone - Tooltip": "Số điện thoại của người thanh toán",
-    "Please carefully check your invoice information. Once the invoice is issued, it cannot be withdrawn or modified.": "Hãy kiểm tra thông tin hóa đơn của bạn cẩn thận. Một khi hóa đơn đã được phát hành, nó không thể được thu hồi hoặc chỉnh sửa.",
+    "Please carefully check your invoice information": {
+      " Once the invoice is issued, it cannot be withdrawn or modified": {
+        "": "Hãy kiểm tra thông tin hóa đơn của bạn cẩn thận. Một khi hóa đơn đã được phát hành, nó không thể được thu hồi hoặc chỉnh sửa."
+      }
+    },
     "Please pay the order first!": "Vui lòng thanh toán đơn hàng trước!",
-    "Processing...": "Đang xử lý...",
-    "Products - Tooltip": "Sản phẩm - Gợi ý",
+    "Processing": {
+      "": {
+        "": {
+          "": "Đang xử lý..."
+        }
+      }
+    },
     "Recharged successfully": "Nạp tiền thành công",
     "Result": "Kết quả",
     "The payment has been canceled": "Thanh toán đã bị hủy",
@@ -852,7 +975,13 @@
     "You have successfully completed the payment": "Bạn đã hoàn thành thanh toán thành công",
     "You have successfully recharged": "Bạn đã nạp tiền thành công",
     "Your current balance is": "Số dư hiện tại của bạn là",
-    "please wait for a few seconds...": "Vui lòng đợi trong vài giây...",
+    "please wait for a few seconds": {
+      "": {
+        "": {
+          "": "Vui lòng đợi trong vài giây..."
+        }
+      }
+    },
     "the current state is": "tình trạng hiện tại là"
   },
   "permission": {
@@ -869,7 +998,6 @@
     "Effect": "Hiện tượng",
     "Effect - Tooltip": "Chấp nhận hoặc từ chối",
     "New Permission": "Quyền mới",
-    "Pending": "Đang chờ xử lý",
     "Read": "Đọc",
     "Resource type": "Loại tài nguyên",
     "Resource type - Tooltip": "Loại tài nguyên",
@@ -881,7 +1009,7 @@
   },
   "plan": {
     "Edit Plan": "Chỉnh sửa gói",
-    "Is exclusive": "Is exclusive",
+    "Is exclusive": "Độc quyền",
     "Is exclusive - Tooltip": "Is exclusive - Tooltip",
     "New Plan": "Gói mới",
     "Period": "Kỳ",
@@ -913,7 +1041,7 @@
     "Amount": "Số tiền",
     "Buy": "Mua",
     "Buy Product": "Mua sản phẩm",
-    "Cart contains invalid products, please delete them before placing an order": "Cart contains invalid products, please delete them before placing an order",
+    "Cart contains invalid products, please delete them before placing an order": "Giỏ hàng có sản phẩm không hợp lệ; hãy xóa trước khi đặt hàng",
     "Custom amount available": "Số tiền tùy chỉnh có sẵn",
     "Custom price should be greater than zero": "Giá tùy chỉnh phải lớn hơn không",
     "Detail - Tooltip": "Chi tiết sản phẩm",
@@ -926,29 +1054,41 @@
     "Image": "Ảnh",
     "Image - Tooltip": "Hình ảnh sản phẩm",
     "Information": "Thông tin",
-    "Invalid product": "Invalid product",
+    "Invalid product": "Sản phẩm không hợp lệ",
     "Is recharge": "Là nạp tiền",
     "Is recharge - Tooltip": "Sản phẩm hiện tại có phải để nạp số dư",
     "New Product": "Sản phẩm mới",
-    "No recharge options available": "No recharge options available",
+    "No recharge options available": "Không có tùy chọn nạp tiền",
     "Order created successfully": "Tạo đơn hàng thành công",
     "PayPal": "PayPal",
     "Payment cancelled": "Thanh toán đã bị hủy",
     "Payment failed": "Thanh toán thất bại",
     "Payment providers": "Nhà cung cấp thanh toán",
     "Payment providers - Tooltip": "Nhà cung cấp dịch vụ thanh toán",
-    "Placing order...": "Đặt hàng...",
+    "Placing order": {
+      "": {
+        "": {
+          "": "Đặt hàng..."
+        }
+      }
+    },
     "Please add at least one recharge option when custom amount is disabled": "Vui lòng thêm ít nhất một tùy chọn nạp tiền khi số tiền tùy chỉnh bị tắt",
     "Please select a currency": "Vui lòng chọn một loại tiền tệ",
     "Please select at least one payment provider": "Vui lòng chọn ít nhất một nhà cung cấp thanh toán",
-    "Processing payment...": "Đang xử lý thanh toán...",
+    "Processing payment": {
+      "": {
+        "": {
+          "": "Đang xử lý thanh toán..."
+        }
+      }
+    },
     "Product list cannot be empty": "Danh sách sản phẩm không thể trống",
-    "Product not found or invalid": "Product not found or invalid",
+    "Product not found or invalid": "Không tìm thấy sản phẩm hoặc không hợp lệ",
     "Quantity": "Số lượng",
     "Quantity - Tooltip": "Số lượng sản phẩm",
     "Recharge options": "Tùy chọn nạp tiền",
     "Recharge options - Tooltip": "Tùy chọn nạp tiền - Gợi ý",
-    "Recharge products need to go to the product detail page to set custom amount": "Recharge products need to go to the product detail page to set custom amount",
+    "Recharge products need to go to the product detail page to set custom amount": "Sản phẩm nạp tiền cần vào trang chi tiết để đặt số tiền tùy chỉnh",
     "SKU": "SKU",
     "Select amount": "Chọn số tiền",
     "Sold": "Đã bán",
@@ -957,10 +1097,18 @@
     "Success URL": "URL thành công",
     "Success URL - Tooltip": "URL để quay lại sau khi mua",
     "Tag - Tooltip": "Nhãn sản phẩm",
-    "Test buy page..": "Trang mua thử.",
+    "Test buy page": {
+      "": {
+        "": "Trang mua thử."
+      }
+    },
     "The currency of the product you are adding is different from the currency of the items in the cart": "Tiền tệ của sản phẩm bạn đang thêm khác với tiền tệ của các mặt hàng trong giỏ hàng",
-    "There is no payment channel for this product.": "Không có kênh thanh toán cho sản phẩm này.",
-    "This product is currently not in sale.": "Sản phẩm này hiện không được bán.",
+    "There is no payment channel for this product": {
+      "": "Không có kênh thanh toán cho sản phẩm này."
+    },
+    "This product is currently not in sale": {
+      "": "Sản phẩm này hiện không được bán."
+    },
     "This product is currently not purchasable (No options available)": "Sản phẩm này hiện không thể mua được (Không có tùy chọn)",
     "Total Price": "Tổng giá",
     "View Product": "Xem sản phẩm",
@@ -985,14 +1133,17 @@
     "Auth URL - Tooltip": "URL chứng thực",
     "Base URL": "URL cơ sở",
     "Base URL - Tooltip": "Gợi ý URL cơ sở",
+    "Binding rule": "Quy tắc ràng buộc",
     "Bucket": "Thùng đựng nước",
     "Bucket - Tooltip": "Tên của cái xô",
     "Can not parse metadata": "Không thể phân tích siêu dữ liệu",
     "Can signin": "Đăng nhập được không?",
     "Can signup": "Đăng ký có thể được thực hiện",
     "Can unlink": "Không liên kết được",
-    "Channel No.": "Kênh số.",
-    "Channel No. - Tooltip": "Kênh Số.",
+    "Channel No": {
+      "": "Kênh số.",
+      " - Tooltip": "Kênh Số."
+    },
     "Chat ID": "ID trò chuyện",
     "Chat ID - Tooltip": "Gợi ý ID trò chuyện",
     "Client ID": "Mã khách hàng",
@@ -1005,7 +1156,7 @@
     "Client secret 2 - Tooltip": "Khóa bí mật thứ hai của khách hàng",
     "Content": "Nội dung",
     "Content - Tooltip": "Gợi ý nội dung",
-    "DB test": "DB test",
+    "DB test": "Kiểm tra CSDL",
     "DB test - Tooltip": "Kiểm tra DB - Gợi ý",
     "Domain": "Miền",
     "Domain - Tooltip": "Tên miền tùy chỉnh cho lưu trữ đối tượng",
@@ -1016,10 +1167,10 @@
     "Email regex - Tooltip": "Gợi ý biểu thức chính quy Email",
     "Email title": "Tiêu đề email",
     "Email title - Tooltip": "Tiêu đề của email",
-    "Enable PKCE": "Enable PKCE",
+    "Enable PKCE": "Bật PKCE",
     "Enable PKCE - Tooltip": "Kích hoạt PKCE - Gợi ý",
-    "Enable proxy": "Enable proxy",
-    "Enable proxy - Tooltip": "Enable socks5 Proxy when sending email or sms",
+    "Enable proxy": "Bật proxy",
+    "Enable proxy - Tooltip": "Dùng proxy SOCKS5 khi gửi email hoặc SMS",
     "Endpoint": "Điểm cuối",
     "Endpoint (Intranet)": "Điểm kết thúc (mạng nội bộ)",
     "Endpoint - Tooltip": "Gợi ý điểm cuối",
@@ -1035,7 +1186,6 @@
     "HTTP body mapping - Tooltip": "Ánh xạ phần thân HTTP",
     "HTTP header": "Tiêu đề HTTP",
     "HTTP header - Tooltip": "Tiêu đề HTTP",
-    "Host": "Máy chủ",
     "Host - Tooltip": "Tên của người chủ chỗ ở",
     "IdP": "Nhà cung cấp IdP",
     "IdP certificate": "Chứng chỉ IdP",
@@ -1046,13 +1196,15 @@
     "Key ID - Tooltip": "ID khóa",
     "Key text": "Văn bản khóa",
     "Key text - Tooltip": "Văn bản khóa - Gợi ý",
-    "LDAP port": "LDAP port",
+    "LDAP port": "Cổng LDAP",
+    "Logout URL": "URL đăng xuất",
+    "Logout URL - Tooltip": "Logout URL - Tooltip",
     "Metadata": "Siêu dữ liệu",
     "Metadata - Tooltip": "SAML metadata: siêu dữ liệu SAML",
     "Metadata url": "URL siêu dữ liệu",
     "Metadata url - Tooltip": "Gợi ý URL siêu dữ liệu",
     "Method - Tooltip": "Phương thức đăng nhập, mã QR hoặc đăng nhập im lặng",
-    "Mobile": "Mobile",
+    "Mobile": "Di động",
     "New Provider": "Nhà cung cấp mới",
     "Parameter": "Tham số",
     "Parameter - Tooltip": "Gợi ý tham số",
@@ -1061,7 +1213,6 @@
     "Path prefix": "Tiền tố đường dẫn",
     "Path prefix - Tooltip": "Tiền tố đường dẫn thùng chứa cho lưu trữ đối tượng",
     "Please use WeChat to scan the QR code and follow the official account for sign in": "Vui lòng sử dụng WeChat để quét mã QR và theo dõi tài khoản chính thức để đăng nhập",
-    "Port": "Cảng",
     "Port - Tooltip": "Chắc chắn rằng cổng đang mở",
     "Private Key": "Khóa riêng",
     "Private Key - Tooltip": "Gợi ý khóa riêng",
@@ -1070,17 +1221,19 @@
     "Prompted": "Thúc đẩy",
     "Provider URL": "Địa chỉ URL nhà cung cấp",
     "Provider URL - Tooltip": "URL để cấu hình nhà cung cấp dịch vụ, trường này chỉ được sử dụng để tham khảo và không được sử dụng trong Casdoor",
-    "Provider test successful": "Provider test successful",
+    "Provider test successful": "Kiểm tra nhà cung cấp thành công",
     "Public key": "Khóa công khai",
     "Public key - Tooltip": "Gợi ý khóa công khai",
-    "RADIUS Shared Secret - Tooltip": "Shared Secret of RADIUS",
+    "RADIUS Shared Secret - Tooltip": "Bí mật dùng chung RADIUS",
     "Region": "Vùng",
     "Region - Tooltip": "Gợi ý vùng",
     "Region ID": "Định danh khu vực",
     "Region ID - Tooltip": "Định danh khu vực cho nhà cung cấp dịch vụ",
     "Region endpoint for Internet": "Điểm cuối khu vực cho Internet",
     "Region endpoint for Intranet": "Điểm cuối khu vực cho mạng nội bộ",
-    "SAML 2.0 Endpoint (HTTP)": "Điểm cuối SAML 2.0 (HTTP)",
+    "SAML 2": {
+      "0 Endpoint (HTTP)": "Điểm cuối SAML 2.0 (HTTP)"
+    },
     "SMS Test": "Kiểm tra SMS",
     "SMS Test - Tooltip": "Số điện thoại để gửi tin nhắn kiểm tra",
     "SMS account": "Tài khoản SMS",
@@ -1089,7 +1242,8 @@
     "SP ACS URL": "SP ACC URL",
     "SP ACS URL - Tooltip": "URL ACS của SP - Gợi ý",
     "SP Entity ID": "SP Entity ID: Định danh thực thể SP",
-    "SSL mode": "SSL mode",
+    "SP Entity ID - Tooltip": "SP Entity ID - Tooltip",
+    "SSL mode": "Chế độ SSL",
     "SSL mode - Tooltip": "SSL mode - Tooltip",
     "Scene": "Cảnh",
     "Scene - Tooltip": "Cảnh",
@@ -1129,7 +1283,7 @@
     "Sub type - Tooltip": "Loại phụ",
     "Subject": "Tiêu đề",
     "Subject - Tooltip": "Tiêu đề email",
-    "Subtype": "Subtype",
+    "Subtype": "Kiểu con",
     "Subtype - Tooltip": "Kiểu phụ - Gợi ý",
     "Syncer test": "Kiểm tra bộ đồng bộ",
     "Syncer test - Tooltip": "Kiểm tra xem kết nối bộ đồng bộ có hoạt động không",
@@ -1144,8 +1298,8 @@
     "Test SMTP Connection": "Kiểm tra kết nối SMTP",
     "Third-party": "Bên thứ ba",
     "This field is required": "Trường này là bắt buộc",
-    "To address": "To address",
-    "To address - Tooltip": "Email address of \"To\"",
+    "To address": "Địa chỉ người nhận",
+    "To address - Tooltip": "Địa chỉ email «Đến»",
     "Token URL": "Đường dẫn mã thông báo",
     "Token URL - Tooltip": "Địa chỉ của mã thông báo",
     "Use WeChat Media Platform in PC": "Sử dụng nền tảng truyền thông WeChat trên PC",
@@ -1170,16 +1324,20 @@
   "record": {
     "Is triggered": "Đã kích hoạt",
     "Object": "Đối tượng",
-    "Response": "Phản hồi",
-    "Status code": "Mã trạng thái"
+    "Response": "Phản hồi"
   },
   "resource": {
     "Copy Link": "Sao chép liên kết",
     "File name": "Tên tập tin",
     "File size": "Kích thước tệp",
     "Format": "Định dạng",
-    "Parent": "Phụ huynh",
-    "Upload a file...": "Tải lên một tệp..."
+    "Upload a file": {
+      "": {
+        "": {
+          "": "Tải lên một tệp..."
+        }
+      }
+    }
   },
   "role": {
     "Edit Role": "Sửa vai trò",
@@ -1192,6 +1350,40 @@
     "Sub roles - Tooltip": "Các vai trò bao gồm trong vai trò hiện tại",
     "Sub users": "Người dùng trong phụ",
     "Sub users - Tooltip": "Người dùng được bao gồm trong vai trò hiện tại"
+  },
+  "rule": {
+    "Block": "Chặn",
+    "Block Duration": "Thời gian chặn",
+    "Compound": "Ghép",
+    "Edit Rule": "Chỉnh sửa quy tắc",
+    "Expression": "Biểu thức",
+    "Expressions": "Biểu thức",
+    "IP List": "Danh sách IP",
+    "IP Rate Limiting": "Giới hạn tốc độ theo IP",
+    "Logic": "Logic",
+    "Operator": "Toán tử",
+    "Rate": "Tốc độ",
+    "Reason": "Lý do",
+    "Status code": "Mã trạng thái",
+    "Verbose mode": "Chế độ chi tiết",
+    "and": "và",
+    "begin": "bắt đầu",
+    "contains": "chứa",
+    "does not contain": "không chứa",
+    "does not equal": "không bằng",
+    "equals": "bằng",
+    "is in": "thuộc",
+    "is not in": "không thuộc",
+    "or": "hoặc",
+    "regex match": "khớp regex"
+  },
+  "server": {
+    "Edit MCP Server": "Chỉnh sửa máy chủ MCP",
+    "New MCP Server": "Máy chủ MCP mới",
+    "Please select at least one IP range": "Vui lòng chọn ít nhất một dải IP",
+    "Please select at least one port": "Vui lòng chọn ít nhất một cổng",
+    "Production endpoint is empty": "Điểm cuối production trống",
+    "Scan server": "Máy chủ quét"
   },
   "signup": {
     "Accept": "Chấp nhận",
@@ -1238,12 +1430,27 @@
     "Your confirmed password is inconsistent with the password!": "Mật khẩu xác nhận của bạn không khớp với mật khẩu đã nhập!",
     "sign in now": "Đăng nhập ngay bây giờ"
   },
+  "site": {
+    "Alert interval": "Khoảng cảnh báo",
+    "Alert providers": "Nhà cung cấp cảnh báo",
+    "Alert try times": "Số lần thử cảnh báo",
+    "Casdoor app": "Ứng dụng Casdoor",
+    "Challenges": "Thử thách",
+    "Disable verbose": "Tắt chế độ chi tiết",
+    "Edit Site": "Chỉnh sửa trang",
+    "Enable alert": "Bật cảnh báo",
+    "Hosts": "Máy chủ",
+    "Mode": "Chế độ",
+    "Need redirect": "Cần chuyển hướng",
+    "Node": "Nút",
+    "Nodes": "Nút",
+    "Public IP": "IP công cộng"
+  },
   "subscription": {
     "Active": "Hoạt động",
     "Edit Subscription": "Chỉnh sửa đăng ký",
     "End time": "Thời gian kết thúc",
     "End time - Tooltip": "Thời gian kết thúc - Gợi ý",
-    "Error": "Lỗi",
     "Expired": "Đã hết hạn",
     "New Subscription": "Đăng ký mới",
     "Start time": "Thời gian bắt đầu",
@@ -1256,9 +1463,9 @@
   },
   "syncer": {
     "API Token / Password": "Mã thông báo API / Mật khẩu",
-    "AWS Access Key ID": "AWS Access Key ID",
-    "AWS Region": "AWS Region",
-    "AWS Secret Access Key": "AWS Secret Access Key",
+    "AWS Access Key ID": "ID khóa truy cập AWS",
+    "AWS Region": "Vùng AWS",
+    "AWS Secret Access Key": "Khóa truy cập bí mật AWS",
     "Admin Email": "Email quản trị viên",
     "Affiliation table": "Bảng liên kết",
     "Affiliation table - Tooltip": "Bảng liên kết - Gợi ý",
@@ -1305,13 +1512,19 @@
     "API Latency": "Độ trễ API",
     "API Throughput": "Thông lượng API",
     "About Casdoor": "Về Casdoor",
-    "An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2.0, OIDC, SAML and CAS": "Một nền tảng Quản lý Danh tính và Truy cập (IAM) / Đăng nhập Một lần (SSO) với giao diện người dùng web hỗ trợ OAuth 2.0, OIDC, SAML và CAS",
+    "An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2": {
+      "0, OIDC, SAML and CAS": "Một nền tảng Quản lý Danh tính và Truy cập (IAM) / Đăng nhập Một lần (SSO) với giao diện người dùng web hỗ trợ OAuth 2.0, OIDC, SAML và CAS"
+    },
     "CPU Usage": "Sử dụng CPU",
     "Community": "Cộng đồng",
     "Count": "Đếm",
+    "Disk Usage": "Dung lượng đĩa",
     "Latency": "Trì hoãn",
     "Memory Usage": "Sử dụng bộ nhớ",
+    "Network Usage": "Lưu lượng mạng",
     "Official website": "Trang web chính thức",
+    "Received": "Đã nhận",
+    "Sent": "Đã gửi",
     "Throughput": "Thông lượng",
     "Total Throughput": "Tổng thông lượng",
     "Unknown version": "Phiên bản không rõ",
@@ -1339,7 +1552,13 @@
     "Please enter a message": "Vui lòng nhập tin nhắn",
     "Press Ctrl+Enter to send": "Nhấn Ctrl+Enter để gửi",
     "Resolved": "Đã giải quyết",
-    "Type your message here...": "Gõ tin nhắn tại đây..."
+    "Type your message here": {
+      "": {
+        "": {
+          "": "Gõ tin nhắn tại đây..."
+        }
+      }
+    }
   },
   "token": {
     "Access token": "Mã thông báo truy cập",
@@ -1362,6 +1581,9 @@
     "Edit Transaction": "Chỉnh sửa giao dịch",
     "New Transaction": "Giao dịch mới",
     "Recharge": "Nạp tiền"
+  },
+  "usage": {
+    "seconds": "giây"
   },
   "user": {
     "3rd-party logins": "Đăng nhập bên thứ ba",
@@ -1421,7 +1643,6 @@
     "Is verified": "Đã xác minh",
     "Karma": "Karma",
     "Karma - Tooltip": "Gợi ý Karma",
-    "Keys": "Chìa khóa",
     "Language": "Ngôn ngữ",
     "Language - Tooltip": "Gợi ý ngôn ngữ",
     "Last change password time": "Lần cuối thay đổi mật khẩu",
@@ -1432,7 +1653,13 @@
     "Location - Tooltip": "Thành phố cư trú",
     "MFA accounts": "Tài khoản MFA",
     "Managed accounts": "Quản lý tài khoản",
-    "Modify password...": "Sửa đổi mật khẩu...",
+    "Modify password": {
+      "": {
+        "": {
+          "": "Sửa đổi mật khẩu..."
+        }
+      }
+    },
     "Need update password": "Cần cập nhật mật khẩu",
     "Need update password - Tooltip": "Buộc người dùng cập nhật mật khẩu sau khi đăng nhập",
     "New Email": "Email mới",
@@ -1457,22 +1684,47 @@
     "Register source - Tooltip": "Nguồn mà người dùng đăng ký",
     "Register type": "Loại đăng ký",
     "Register type - Tooltip": "Phương pháp được sử dụng để đăng ký người dùng",
-    "Reset Email...": "Thiết lập lại Email...",
-    "Reset Phone...": "Đặt lại điện thoại...",
+    "Reset Email": {
+      "": {
+        "": {
+          "": "Thiết lập lại Email..."
+        }
+      }
+    },
+    "Reset Phone": {
+      "": {
+        "": {
+          "": "Đặt lại điện thoại..."
+        }
+      }
+    },
     "Score": "Điểm",
     "Score - Tooltip": "Gợi ý điểm",
-    "Select a photo...": "Chọn một bức ảnh...",
+    "Select a photo": {
+      "": {
+        "": {
+          "": "Chọn một bức ảnh..."
+        }
+      }
+    },
     "Set Password": "Đặt mật khẩu",
     "Set new profile picture": "Đặt hình đại diện mới",
-    "Set password...": "Đặt mật khẩu...",
-    "Tag": "Thẻ",
+    "Set password": {
+      "": {
+        "": {
+          "": "Đặt mật khẩu..."
+        }
+      }
+    },
     "The password must contain at least one special character": "Mật khẩu phải chứa ít nhất một ký tự đặc biệt",
     "The password must contain at least one uppercase letter, one lowercase letter and one digit": "Mật khẩu phải chứa ít nhất một chữ hoa, một chữ thường và một chữ số",
     "The password must have at least 6 characters": "Mật khẩu phải có ít nhất 6 ký tự",
     "The password must have at least 8 characters": "Mật khẩu phải có ít nhất 8 ký tự",
     "The password must not contain any repeated characters": "Mật khẩu không được chứa ký tự lặp lại",
     "This field value doesn't match the pattern rule": "Giá trị trường này không khớp quy tắc mẫu",
-    "Two passwords you typed do not match.": "Hai mật khẩu mà bạn đã nhập không khớp.",
+    "Two passwords you typed do not match": {
+      "": "Hai mật khẩu mà bạn đã nhập không khớp."
+    },
     "Unlink": "Hủy liên kết",
     "Upload ID card back picture": "Tải lên ảnh mặt sau thẻ ID",
     "Upload ID card front picture": "Tải lên ảnh mặt trước thẻ ID",
@@ -1494,6 +1746,7 @@
     "Receiver": "Người nhận"
   },
   "webhook": {
+    "Attempt Count": "Số lần thử",
     "Content type": "Loại nội dung",
     "Content type - Tooltip": "Loại nội dung",
     "Edit Webhook": "Sửa Webhook",
@@ -1501,15 +1754,29 @@
     "Events - Tooltip": "Sự kiện",
     "Extended user fields": "Các trường người dùng mở rộng",
     "Extended user fields - Tooltip": "Gợi ý các trường người dùng mở rộng",
+    "Failed": "Thất bại",
+    "Failed to replay webhook event": "Không thể phát lại sự kiện webhook",
     "Headers": "Tiêu đề",
     "Headers - Tooltip": "Tiêu đề HTTP (cặp key-value)",
     "Is user extended": "Người dùng có được mở rộng không?",
     "Is user extended - Tooltip": "Có nên bao gồm các trường mở rộng của người dùng trong định dạng JSON không?",
+    "Last Error": "Lỗi gần nhất",
     "New Webhook": "Webhook mới",
+    "Next Retry Time": "Lần thử lại tiếp theo",
     "Object fields": "Các trường đối tượng",
     "Object fields - Tooltip": "Các trường đối tượng có thể hiển thị",
+    "Payload": "Payload",
+    "Pending": "Đang chờ",
+    "Replay": "Phát lại",
+    "Retrying": "Đang thử lại",
     "Single org only": "Chỉ một tổ chức",
     "Single org only - Tooltip": "Chỉ kích hoạt trong tổ chức mà webhook thuộc về",
-    "Value": "Giá trị"
+    "Success": "Thành công",
+    "Unknown": "Không xác định",
+    "Value": "Giá trị",
+    "Webhook Event Detail": "Chi tiết sự kiện webhook",
+    "Webhook Event Logs": "Nhật ký sự kiện webhook",
+    "Webhook Name": "Tên webhook",
+    "Webhook event replay triggered": "Đã kích hoạt phát lại sự kiện webhook"
   }
 }

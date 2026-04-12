@@ -17,6 +17,10 @@
     "Use same DB": "Aynı veritabanını kullan",
     "Use same DB - Tooltip": "Casdoor ile aynı veritabanını kullan"
   },
+  "agent": {
+    "Edit Agent": "Aracıyı düzenle",
+    "New Agent": "Yeni aracı"
+  },
   "application": {
     "Add Face ID": "Face ID Ekle",
     "Add Face ID with Image": "Görüntü ile Face ID Ekle",
@@ -34,6 +38,8 @@
     "Binding providers": "Bağlama sağlayıcıları",
     "CSS style": "CSS stili",
     "Center": "Ortala",
+    "Client cert": "İstemci sertifikası",
+    "Client cert - Tooltip": "Client cert - Tooltip",
     "Code resend timeout": "Kod yeniden gönderme zaman aşımı",
     "Code resend timeout - Tooltip": "Kullanıcıların başka bir doğrulama kodu talep etmeden önce beklemesi gereken süre (saniye cinsinden). Genel varsayılanı (60 saniye) kullanmak için 0 olarak ayarlayın",
     "Cookie expire": "Çerez süresi",
@@ -66,11 +72,13 @@
     "Enable SAML compression - Tooltip": "Casdoor SAML idp olarak kullanıldığında SAML yanıt mesajlarını sıkıştırıp sıkıştırmayacağı",
     "Enable exclusive signin": "Özel oturum açmayı etkinleştir",
     "Enable exclusive signin - Tooltip": "Özel oturum açma etkinse kullanıcı birden fazla etkin oturuma sahip olamaz",
+    "Enable guest signin": "Misafir girişini etkinleştir",
+    "Enable guest signin - Tooltip": "Enable guest signin - Tooltip",
     "Enable side panel": "Yan paneli Etkinleştir",
     "Enable signin session - Tooltip": "Uygulamadan Casdoor'a giriş yaptıktan sonra Casdoor'un bir oturum sürdürüp sürdürmeyeceği",
     "Enable signup": "Kayıtı Etkinleştir",
     "Enable signup - Tooltip": "Kullanıcıların yeni bir hesap kaydetmesine izin verilip verilmeyeceği",
-    "Existing Field": "Existing Field",
+    "Existing Field": "Mevcut alan",
     "Failed signin frozen time": "Başarısız giriş dondurma süresi",
     "Failed signin frozen time - Tooltip": "Başarısız giriş denemelerinden sonra hesabın dondurulduğu süre",
     "Failed signin limit": "Başarısız giriş limiti",
@@ -113,6 +121,8 @@
     "Order - Tooltip": "Değer ne kadar küçükse, Uygulamalar sayfasında o kadar yüksek sıralanır",
     "Org choice mode": "Organizasyon seçim modu",
     "Org choice mode - Tooltip": "Giriş yapmak için organizasyon seçme yöntemi - İpucu",
+    "Other domains": "Diğer alan adları",
+    "Other domains - Tooltip": "Other domains - Tooltip",
     "Please enable \"Signin session\" first before enabling \"Auto signin\"": "Lütfen \"Oturum açma oturumu\"nu etkinleştirmeden önce \"Otomatik oturum açma\"yı etkinleştirin",
     "Please input your application!": "Lütfen uygulamanızı girin!",
     "Please input your organization!": "Lütfen organizasyonunuzu girin!",
@@ -128,6 +138,7 @@
     "Refresh token expire": "Yenileme jetonu sona erer",
     "Refresh token expire - Tooltip": "Yenileme jetonunun son kullanma süresi",
     "Reset to Empty": "Boşalt",
+    "Reverse Proxy": "Ters proxy",
     "Right": "Sağ",
     "Rule": "Kural",
     "SAML hash algorithm": "SAML karma algoritması",
@@ -135,6 +146,8 @@
     "SAML metadata": "SAML meta verileri",
     "SAML metadata - Tooltip": "SAML protokolünün meta verileri - İpucu",
     "SAML reply URL": "SAML yanıt URL'si",
+    "SSL cert": "SSL sertifikası",
+    "SSL cert - Tooltip": "SSL cert - Tooltip",
     "Security": "Güvenlik",
     "Select": "Seç",
     "Side panel HTML": "Yan panel HTML",
@@ -152,10 +165,12 @@
     "Signup items - Tooltip": "Kullanıcıların yeni hesaplar kaydederken doldurması gereken öğeler - İpucu",
     "Single Choice": "Tek Seçim",
     "Small icon": "Küçük simge",
-    "Static Value": "Static Value",
+    "Static Value": "Statik değer",
     "String": "Dize",
     "Tags - Tooltip": "Yalnızca uygulama etiketlerinde listelenen etikete sahip kullanıcılar giriş yapabilir - İpucu",
     "The application does not allow to sign up new account": "Uygulama yeni hesap kaydetmeyi izin vermemektedir",
+    "Token cert": "Jeton sertifikası",
+    "Token cert - Tooltip": "Token cert - Tooltip",
     "Token expire": "Jeton sona erer",
     "Token expire - Tooltip": "Erişim jetonunun son kullanma süresi",
     "Token fields": "Token alanları",
@@ -165,12 +180,16 @@
     "Token signing method": "Token imzalama yöntemi",
     "Token signing method - Tooltip": "JWT token'ın imzalama yöntemi, sertifika ile aynı algoritma olmalıdır",
     "UI Customization": "Arayüz Özelleştirme",
+    "Upstream host": "Üst akış sunucusu",
+    "Upstream host - Tooltip": "Upstream host - Tooltip",
     "Use Email as NameID": "NameID olarak E-posta kullan",
     "Use Email as NameID - Tooltip": "NameID olarak E-posta kullanın - Araç ipucu",
     "Vertical": "Dikey",
     "You are unexpected to see this prompt page": "Bu uyarı sayfasını görmeye beklemiyordunuz"
   },
   "cert": {
+    "Access secret": "Erişim sırrı",
+    "Account": "Hesap",
     "Bit size": "Bit boyutu",
     "Bit size - Tooltip": "Gizli anahtar uzunluğu",
     "Certificate": "Sertifika",
@@ -179,6 +198,7 @@
     "Copy private key": "Özel anahtarı Kopyala",
     "Crypto algorithm": "Kripto algoritması",
     "Crypto algorithm - Tooltip": "Sertifika tarafından kullanılan şifreleme algoritması",
+    "Domain expire": "Alan adı süresi doldu",
     "Download certificate": "Sertifikayı İndir",
     "Download private key": "Özel anahtarı İndir",
     "Edit Cert": "Sertifikayı Düzenle",
@@ -199,6 +219,18 @@
     "Send Code": "Kodu gönder",
     "Sending": "Gönderiliyor",
     "Submit and complete": "Gönder ve Tamamla"
+  },
+  "consent": {
+    "Are you sure you want to revoke scope": "Kapsamı iptal etmek istediğinizden emin misiniz?",
+    "Are you sure you want to revoke this consent?": "Bu onayı iptal etmek istediğinizden emin misiniz?",
+    "Authorization Request": "Yetkilendirme isteği",
+    "By clicking Allow, you allow this app to use your information": "İzin Ver'e tıklayarak bu uygulamanın bilgilerinizi kullanmasına izin vermiş olursunuz",
+    "Consents": "Onaylar",
+    "Consents - Tooltip": "Consents - Tooltip",
+    "Granted scopes": "Verilen kapsamlar",
+    "This application is requesting": "Bu uygulama şunu istiyor",
+    "This scope is not defined in the application": "Bu kapsam uygulamada tanımlı değil",
+    "wants to access your account": "hesabınıza erişmek istiyor"
   },
   "currency": {
     "AUD": "Avustralya Doları",
@@ -232,8 +264,11 @@
     "Edit Enforcer": "Zorlayıcıyı Düzenle",
     "New Enforcer": "Yeni Zorlayıcı"
   },
+  "entry": {
+    "Edit Entry": "Girdiyi düzenle",
+    "New Entry": "Yeni girdi"
+  },
   "forget": {
-    "Account": "Hesap",
     "Change Password": "Parola Değiştir",
     "Choose email or phone": "E-posta veya telefon seçin",
     "Next Step": "Sonraki adım",
@@ -253,11 +288,8 @@
     "A normal user can only modify the permission submitted by itself": "Normal bir kullanıcı yalnızca kendi gönderdiği izni değiştirebilir",
     "AI Assistant": "Yapay Zeka Asistanı",
     "API key": "API anahtarı",
-    "API key - Tooltip": "Hizmete erişim için API anahtarı",
     "Access key": "Erişim anahtarı",
     "Access key - Tooltip": "Hizmet için erişim anahtarı",
-    "Access secret": "Erişim gizli anahtarı",
-    "Access secret - Tooltip": "Hizmete erişim için gizli anahtar",
     "Access token is empty": "Erişim token'ı boş",
     "Action": "Eylem",
     "Adapter": "Adaptör",
@@ -268,34 +300,39 @@
     "Admin": "Yönetici",
     "Affiliation URL": "İlişki URL'si",
     "Affiliation URL - Tooltip": "İlişki için ana sayfa URL'si",
+    "Agents": "Aracılar",
     "All": "Tümü",
     "Application": "Uygulama",
     "Application - Tooltip": "Uygulama - Araç ipucu",
     "Applications": "Uygulamalar",
     "Applications that require authentication": "Kimlik doğrulaması gerektiren uygulamalar",
     "Apps": "Uygulamalar",
+    "Auditing": "Denetim",
     "Authorization": "Yetkilendirme",
-    "Auto": "Auto",
+    "Auto": "Otomatik",
     "Avatar": "Avatar",
     "Avatar - Tooltip": "Kullanıcı için genel avatar resmi",
     "Back": "Geri",
     "Back Home": "Ana sayfaya geri dön",
-    "Business & Payments": "İş ve Ödemeler",
+    "Business": "İş",
     "Cancel": "Vazgeç",
     "Captcha": "Captcha",
     "Cart": "Sepet",
-    "Category": "Category",
+    "Category": "Kategori",
     "Category - Tooltip": "Category - Tooltip",
     "Cert": "Sertifika",
     "Cert - Tooltip": "Bu uygulamaya karşılık gelen istemci SDK tarafından doğrulanması gereken genel anahtar sertifikası",
     "Certs": "Sertifikalar",
     "Clear": "Temizle",
     "Click to Upload": "Yüklemek için tıklayın",
+    "Click to open AI assistant": "Yapay zeka asistanını açmak için tıklayın",
+    "Click to open tour": "Turu açmak için tıklayın",
     "Client IP": "İstemci IP'si",
     "Close": "Kapat",
     "Confirm": "Onayla",
     "Copied to clipboard successfully": "Panoya başarıyla kopyalandı",
     "Copy": "Kopyala",
+    "Create time": "Oluşturulma zamanı",
     "Created time": "Oluşturma zamanı",
     "Custom": "Özel",
     "Dashboard": "Gösterge Paneli",
@@ -312,10 +349,12 @@
     "Description - Tooltip": "Referans için ayrıntılı açıklama bilgileri, Casdoor'un kendisi bunları kullanmayacaktır",
     "Detail": "Detaylar",
     "Disable": "Devre dışı bırak",
+    "Disabled": "Devre dışı",
     "Display name": "Görünen isim",
     "Display name - Tooltip": "Kullanıcı dostu, kolayca okunabilir, arayüzde genel olarak görüntülenen isim",
     "Down": "Aşağı",
     "Download template": "Şablonu indir",
+    "Duplicate": "Çoğalt",
     "Edit": "Düzenle",
     "Email": "E-Posta",
     "Email - Tooltip": "Geçerli e-posta adresi",
@@ -329,6 +368,10 @@
     "Enabled": "Etkinleştirildi",
     "Enabled successfully": "Başarıyla etkinleştirildi",
     "Enforcers": "Zorlayıcılar",
+    "Entries": "Girdiler",
+    "Error": "Hata",
+    "Expire time": "Son kullanma zamanı",
+    "Expire time - Tooltip": "Expire time - Tooltip",
     "Failed to add": "Ekleme başarısız oldu.",
     "Failed to cancel": "İptal edilemedi",
     "Failed to connect to server": "Sunucuya bağlanılamıyor",
@@ -347,7 +390,7 @@
     "Failed to upload": "Yüklenemedi",
     "Failed to verify": "Doğrulama başarısız",
     "False": "Yanlış",
-    "Favicon": "Favicon",
+    "Favicon": "Site simgesi",
     "Favicon - Tooltip": "Organizasyonun tüm Casdoor sayfalarında kullanılan Favicon simgesi URL'si",
     "Filter": "Filtrele",
     "First name": "İsim",
@@ -357,6 +400,7 @@
     "Forget URL - Tooltip": "\"Parolayı unuttum\" sayfası için özel URL. Ayarlanmamışsa, varsayılan Casdoor \"Parolayı unuttum\" sayfası kullanılacaktır. Ayarlanırsa, giriş sayfasındaki \"Parolayı unuttum\" bağlantısı bu URL'ye yönlendirilecektir",
     "Forms": "Formlar",
     "Found some texts still not translated? Please help us translate at": "Henüz çevrilmemiş bazı metinler buldunuz mu? Lütfen aşağıdaki adreste bize çeviri yaparak yardım edin",
+    "General": "Genel",
     "Generate": "Oluştur",
     "Go to enable": "Etkinleştirmek için git",
     "Go to writable demo site?": "Yazılabilir demo sitesine gitmek ister misiniz?",
@@ -365,30 +409,38 @@
     "Hide password": "Şifreyi gizle",
     "Home": "Ana sayfa",
     "Home - Tooltip": "Uygulamanın ana sayfası",
+    "Host": "Sunucu",
     "ID": "Kimlik",
     "ID - Tooltip": "Benzersiz rastgele dize",
     "IP whitelist": "IP beyaz listesi",
     "IP whitelist - Tooltip": "IP beyaz listesi",
     "Identity": "Kimlik",
-    "Impersonation": "Kimliğe bürünme",
+    "Impersonate": "Kimliğe bürün",
+    "Invalid application": "Geçersiz uygulama",
     "Invitations": "Davetler",
+    "Is allowed": "İzinli mi",
     "Is enabled": "Aktif Mi?",
     "Is enabled - Tooltip": "Kullanılabilir olup olmadığını ayarla",
     "Is shared": "Paylaşıldı",
     "Is shared - Tooltip": "Bu uygulamayı diğer organizasyonlarla paylaş",
+    "Keys": "Anahtarlar",
     "LDAPs": "LDAP'lar",
     "LDAPs - Tooltip": "LDAP sunucuları",
+    "LLM AI": "LLM yapay zekâ",
     "Languages": "Diller",
     "Languages - Tooltip": "Kullanılabilir diller",
     "Last name": "Soyisim",
     "Last name - Tooltip": "Kullanıcının soyadı",
     "Later": "Sonra",
-    "Logging & Auditing": "Günlük ve Denetim",
+    "Listening URL": "Dinleme URL'si",
+    "Listening URL - Tooltip": "Listening URL - Tooltip",
     "Login page": "Giriş sayfası",
     "Logo": "Logo",
     "Logo - Tooltip": "Uygulamanın dışarıya suntuğu simgeler",
     "Logo dark": "Koyu logo",
     "Logo dark - Tooltip": "Koyu tema için kullanılan logo",
+    "MCP Servers": "MCP sunucuları",
+    "MCP Store": "MCP mağazası",
     "MFA items": "MFA öğeleri",
     "MFA items - Tooltip": "MFA öğeleri - Araç ipucu",
     "Master password": "Ana parola",
@@ -403,6 +455,7 @@
     "Name": "Ad",
     "Name - Tooltip": "Benzersiz, dize tabanlı kimlik",
     "Name format": "Ad formatı",
+    "No data": "Veri yok",
     "No products available": "Ürün bulunamadı",
     "No sheets found in file": "Dosyada sayfa bulunamadı",
     "No verification method": "Doğrulama yöntemi yok",
@@ -419,6 +472,8 @@
     "Organization - Tooltip": "Kiracılar veya kullanıcı havuzları gibi kavramlara benzer, her kullanıcı ve uygulama bir organizasyona aittir",
     "Organization is null": "Organizasyon boş",
     "Organizations": "Organizasyonlar",
+    "Owner": "Sahip",
+    "Parent": "Üst",
     "Password": "Şifre",
     "Password - Tooltip": "Şifrenizin doğru olduğundan emin olun",
     "Password complexity options": "Şifre karmaşıklığı seçenekleri",
@@ -431,6 +486,7 @@
     "Password salt - Tooltip": "Parola şifreleme için kullanılan rastgele parametre",
     "Password type": "Parola türü",
     "Password type - Tooltip": "Veritabanında parolaların depolama formatı",
+    "Path": "Yol",
     "Payment": "Ödeme",
     "Payment - Tooltip": "Ödeme - Araç ipucu",
     "Payments": "Ödemeler",
@@ -449,6 +505,7 @@
     "Please complete the captcha correctly": "Lütfen captcha'yı doğru tamamlayın",
     "Please input your search": "Lütfen aramanızı girin",
     "Please select at least 1 user first": "Lütfen önce en az 1 kullanıcı seçin",
+    "Port": "Bağlantı noktası",
     "Preview": "Önizleme",
     "Preview - Tooltip": "Yapılandırılmış efektleri önizle",
     "Pricing": "Fiyatlandırma",
@@ -462,16 +519,19 @@
     "QR Code": "QR Kodu",
     "QR code is too large": "QR kodu çok büyük",
     "Records": "Kayıtlar",
+    "Refresh": "Yenile",
     "Request": "İstek",
     "Request URI": "İstek URI'si",
     "Reset to Default": "Varsayılana sıfırla",
     "Resources": "Kaynaklar",
+    "Restore": "Geri yükle",
     "Role": "Rol",
     "Role - Tooltip": "Rol - Araç ipucu",
     "Roles": "Roller",
     "Roles - Tooltip": "Kullanıcının ait olduğu roller",
     "Root cert": "Kök sertifika",
     "Root cert - Tooltip": "Kök sertifika - Araç ipucu",
+    "Rules": "Kurallar",
     "SAML attributes": "SAML nitelikleri",
     "SAML attributes - Tooltip": "SAML nitelikleri - Araç ipucu",
     "SSH cert": "SSH sertifikası",
@@ -479,12 +539,14 @@
     "SSH type - Tooltip": "SSH bağlantısının kimlik doğrulama türü",
     "Save": "Kaydet",
     "Save & Exit": "Kaydet ve Çık",
-    "Scopes": "Scopes",
+    "Scopes": "Kapsamlar",
     "Scopes - Tooltip": "Scopes - Tooltip",
     "Search": "Ara",
+    "Self": "Kendisi",
     "Send": "Gönder",
     "Session ID": "Oturum ID",
     "Sessions": "Oturumlar",
+    "Severity": "Önem derecesi",
     "Shortcuts": "Kısayollar",
     "Signin URL": "Giriş URL'si",
     "Signin URL - Tooltip": "Giriş sayfası için özel URL. Ayarlanmamışsa, varsayılan Casdoor giriş sayfası kullanılacaktır. Ayarlanırsa, çeşitli Casdoor sayfalarındaki giriş bağlantıları bu URL'ye yönlendirilecektir",
@@ -493,9 +555,16 @@
     "Signup application": "Kayıt uygulaması",
     "Signup application - Tooltip": "Kullanıcının kayıt olurken hangi uygulama üzerinden kayıt olduğunu",
     "Signup link": "Kayıt bağlantısı",
-    "Sorry, the page you visited does not exist.": "Üzgünüz, ziyaret ettiğiniz sayfa mevcut değil.",
-    "Sorry, the user you visited does not exist or you are not authorized to access this user.": "Üzgünüz, ziyaret ettiğiniz kullanıcı mevcut değil veya bu kullanıcıya erişim izniniz yok.",
-    "Sorry, you do not have permission to access this page or logged in status invalid.": "Üzgünüz, bu sayfaya erişim izniniz yok veya giriş durumu geçersiz.",
+    "Sites": "Siteler",
+    "Sorry, the page you visited does not exist": {
+      "": "Üzgünüz, ziyaret ettiğiniz sayfa mevcut değil."
+    },
+    "Sorry, the user you visited does not exist or you are not authorized to access this user": {
+      "": "Üzgünüz, ziyaret ettiğiniz kullanıcı mevcut değil veya bu kullanıcıya erişim izniniz yok."
+    },
+    "Sorry, you do not have permission to access this page or logged in status invalid": {
+      "": "Üzgünüz, bu sayfaya erişim izniniz yok veya giriş durumu geçersiz."
+    },
     "State": "Durum",
     "State - Tooltip": "Durum",
     "Status": "Durum",
@@ -505,7 +574,10 @@
     "Successfully copied": "Başarıyla kopyalandı",
     "Successfully deleted": "Başarıyla silindi",
     "Successfully executed": "Başarıyla çalıştırıldı",
+    "Successfully got": "Başarıyla alındı",
+    "Successfully modified": "Başarıyla değiştirildi",
     "Successfully removed": "Başarıyla kaldırıldı",
+    "Successfully revoked": "Başarıyla iptal edildi",
     "Successfully saved": "Başarıyla kaydedildi",
     "Successfully sent": "Başarıyla gönderildi",
     "Successfully synced": "Başarıyla senkronize edildi",
@@ -519,10 +591,15 @@
     "Syncers": "Senkronizörler",
     "System Info": "Sistem Bilgisi",
     "Tab": "Sekme",
+    "Tag": "Etiket",
     "The actions cannot be empty": "Eylemler boş olamaz",
     "The resources cannot be empty": "Kaynaklar boş olamaz",
     "The users and roles cannot be empty at the same time": "Kullanıcılar ve roller aynı anda boş olamaz",
-    "There was a problem signing you in..": "Oturum açarken bir sorun oluştu...",
+    "There was a problem signing you in": {
+      "": {
+        "": "Oturum açarken bir sorun oluştu..."
+      }
+    },
     "This is a read-only demo site!": "Bu site sadece görüntüleme amaçlıdır!",
     "Tickets": "Destek Talepleri",
     "Timestamp": "Zaman damgası",
@@ -531,6 +608,8 @@
     "Token attributes": "Token özellikleri",
     "Token attributes - Tooltip": "Token özellikleri",
     "Tokens": "Jetonnlar",
+    "Tool": "Araç",
+    "Tool - Tooltip": "Tool - Tooltip",
     "Tour": "Tur",
     "Transactions": "İşlemler",
     "True": "Doğru",
@@ -538,14 +617,20 @@
     "Type - Tooltip": "Type - Tooltip",
     "URL": "URL",
     "URL - Tooltip": "URL bağlantısı",
+    "Unauthorized": "Yetkisiz",
     "Unknown application name": "Bilinmeyen uygulama adı",
     "Unknown authentication type": "Bilinmeyen kimlik doğrulama türü",
     "Up": "Yukarı",
+    "Update time": "Güncellenme zamanı",
     "Updated time": "Güncellenme zamanı",
-    "Upload (.xlsx)": "Yükle (.xlsx)",
+    "Upload (": {
+      "xlsx)": "Yükle (.xlsx)"
+    },
+    "Url": "URL",
     "User": "Kullanıcı",
     "User - Tooltip": "Kullanıcı adının doğru olduğundan emin olun",
     "User Management": "Kullanıcı Yönetimi",
+    "User agent": "Kullanıcı aracısı",
     "User already exists": "Kullanıcı zaten mevcut",
     "User containers": "Kullanıcı havuzları",
     "User type": "Kullanıcı türü",
@@ -555,7 +640,9 @@
     "Users under all organizations": "Tüm organizasyonlar altındaki kullanıcılar",
     "Verifications": "Doğrulamalar",
     "View": "Görüntüle",
+    "Webhook Events": "Webhook olayları",
     "Webhooks": "Webhook'lar",
+    "Website": "Web sitesi",
     "You can only select one physical group": "Yalnızca bir fiziksel grup seçebilirsiniz",
     "You must select a picture first": "Önce bir resim seçmelisiniz",
     "empty": "boş",
@@ -570,13 +657,15 @@
     "Physical": "Fiziksel",
     "Show all": "Tümünü göster",
     "Virtual": "Sanal",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Önce tüm alt grupları silmeniz gerekir. Alt grupları [Organizasyonlar] -> [Gruplar] sayfasının sol grup ağacından görüntüleyebilirsiniz."
+    "You need to delete all subgroups first": {
+      " You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Önce tüm alt grupları silmeniz gerekir. Alt grupları [Organizasyonlar] -> [Gruplar] sayfasının sol grup ağacından görüntüleyebilirsiniz."
+    }
   },
   "home": {
-    "New users past 30 days": "Son 30 gündeki yeni kullanıcılar",
-    "New users past 7 days": "Son 7 gündeki yeni kullanıcılar",
+    "New users / 30 days": "Yeni kullanıcılar / 30 gün",
+    "New users / 7 days": "Yeni kullanıcılar / 7 gün",
     "New users today": "Bugünkü yeni kullanıcılar",
-    "Past 30 Days": "Son 30 Gün",
+    "Past 30 days": "Son 30 Gün",
     "Total users": "Toplam kullanıcı"
   },
   "invitation": {
@@ -591,6 +680,12 @@
     "Used count": "Kullanım sayısı",
     "Used count - Tooltip": "Kullanım sayısı",
     "You need to first specify a default application for organization: ": "Önce organizasyon için varsayılan bir uygulama belirtmeniz gerekiyor: "
+  },
+  "key": {
+    "Access secret - Tooltip": "Access secret - Tooltip",
+    "Edit Key": "Anahtarı düzenle",
+    "Inactive": "Etkin değil",
+    "New Key": "Yeni anahtar"
   },
   "ldap": {
     "Admin - Tooltip": "LDAP sunucusu yöneticisinin CN veya ID'si",
@@ -644,7 +739,13 @@
     "LDAP": "LDAP",
     "LDAP username, Email or phone": "LDAP kullanıcı adı, E-posta veya telefon",
     "Loading": "Yükleniyor",
-    "Logging out...": "Çıkış yapılıyor...",
+    "Logging out": {
+      "": {
+        "": {
+          "": "Çıkış yapılıyor..."
+        }
+      }
+    },
     "MetaMask plugin not detected": "MetaMask eklentisi algılanmadı",
     "Model loading failure": "Model yükleme hatası",
     "No account?": "Hesabınız yok mu?",
@@ -666,8 +767,9 @@
     "Please select an organization": "Lütfen bir organizasyon seçin",
     "Please select an organization to sign in": "Lütfen oturum açmak için bir organizasyon seçin",
     "Please type an organization to sign in": "Lütfen oturum açmak için bir organizasyon yazın",
-    "Redirecting, please wait.": "Yönlendiriliyor, lütfen bekleyiniz.",
-    "Refresh": "Yenile",
+    "Redirecting, please wait": {
+      "": "Yönlendiriliyor, lütfen bekleyiniz."
+    },
     "Select organization": "Organizasyon seç",
     "Sign In": "Oturum aç",
     "Sign in with Face ID": "Face ID ile oturum aç",
@@ -675,7 +777,13 @@
     "Sign in with WebAuthn": "WebAuthn ile giriş yap",
     "Sign in with {type}": "{type} ile giriş yap",
     "Signin button": "Oturum aç düğmesi",
-    "Signing in...": "Giriş yapılıyor...",
+    "Signing in": {
+      "": {
+        "": {
+          "": "Giriş yapılıyor..."
+        }
+      }
+    },
     "Successfully logged in with WebAuthn credentials": "WebAuthn kimlik bilgileri ile başarıyla giriş yapıldı",
     "The camera is currently in use by another webpage": "Kamera şu anda başka bir web sayfası tarafından kullanılıyor",
     "The input is not valid Email or phone number!": "Girdi geçerli bir E-posta veya telefon numarası değil!",
@@ -702,7 +810,9 @@
     "Please bind your email first, the system will automatically uses the mail for multi-factor authentication": "Lütfen önce e-postanızı bağlayın, sistem çok faktörlü kimlik doğrulama için otomatik olarak e-postayı kullanacaktır",
     "Please bind your phone first, the system automatically uses the phone for multi-factor authentication": "Lütfen önce telefonunuzu bağlayın, sistem çok faktörlü kimlik doğrulama için otomatik olarak telefonu kullanacaktır",
     "Please confirm the information below": "Lütfen aşağıdaki bilgileri onaylayın",
-    "Please save this recovery code. Once your device cannot provide an authentication code, you can reset mfa authentication by this recovery code": "Lütfen bu kurtarma kodunu kaydedin. Cihazınız bir doğrulama kodu sağlayamazsa, bu kurtarma kodu ile MFA kimlik doğrulamasını sıfırlayabilirsiniz",
+    "Please save this recovery code": {
+      " Once your device cannot provide an authentication code, you can reset mfa authentication by this recovery code": "Lütfen bu kurtarma kodunu kaydedin. Cihazınız bir doğrulama kodu sağlayamazsa, bu kurtarma kodu ile MFA kimlik doğrulamasını sıfırlayabilirsiniz"
+    },
     "Protect your account with Multi-factor authentication": "Hesabınızı çok faktörlü kimlik doğrulama ile koruyun",
     "Push notification receiver": "Push bildirim alıcısı",
     "Recovery code": "Kurtarma kodu",
@@ -770,14 +880,16 @@
     "Init score - Tooltip": "Kullanıcılara kayıt sırasında verilen başlangıç puanları",
     "Is profile public": "Profil genel mi",
     "Is profile public - Tooltip": "Kapatıldıktan sonra, yalnızca küresel yöneticiler veya aynı organizasyondaki kullanıcılar kullanıcının profil sayfasına erişebilir",
-    "Kerberos KDC host": "Kerberos KDC host",
-    "Kerberos KDC host - Tooltip": "The hostname of the Kerberos Key Distribution Center (e.g., kdc.example.com)",
+    "Kerberos KDC host": "Kerberos KDC sunucusu",
+    "Kerberos KDC host - Tooltip": "Kerberos anahtar dağıtım merkezinin ana bilgisayar adı (ör. kdc.example.com)",
     "Kerberos keytab": "Kerberos keytab",
-    "Kerberos keytab - Tooltip": "The base64-encoded keytab file for the service principal",
+    "Kerberos keytab - Tooltip": "Hizmet sorumlusu için Base64 kodlu keytab dosyası",
     "Kerberos realm": "Kerberos realm",
-    "Kerberos realm - Tooltip": "The Kerberos realm for IWA/SPNEGO authentication (e.g., EXAMPLE.COM)",
-    "Kerberos service name": "Kerberos service name",
-    "Kerberos service name - Tooltip": "The Kerberos service principal name (defaults to HTTP)",
+    "Kerberos realm - Tooltip": "IWA/SPNEGO kimlik doğrulaması için Kerberos realm (ör. EXAMPLE.COM)",
+    "Kerberos service name": "Kerberos hizmet adı",
+    "Kerberos service name - Tooltip": "Kerberos hizmet sorumlusu adı (varsayılan HTTP)",
+    "LDAP attributes": "LDAP öznitelikleri",
+    "LDAP attributes - Tooltip": "LDAP attributes - Tooltip",
     "Modify rule": "Kuralı Değiştir",
     "New Organization": "Yeni Organizasyon",
     "Optional": "İsteğe bağlı",
@@ -792,6 +904,8 @@
     "Tags": "Etiketler",
     "Use Email as username": "Kullanıcı adı olarak E-posta kullan",
     "Use Email as username - Tooltip": "Kullanıcı adı alanı kayıtta görünür değilse kullanıcı adı olarak E-posta kullan",
+    "Use permanent avatar": "Kalıcı avatar kullan",
+    "Use permanent avatar - Tooltip": "Use permanent avatar - Tooltip",
     "User balance": "Kullanıcı bakiyesi",
     "User balance - Tooltip": "Kullanıcı bakiyesi - Araç ipucu",
     "User navbar items": "Kullanıcı gezinme çubuğu öğeleri",
@@ -837,10 +951,19 @@
     "Person name - Tooltip": "Ödeyenin gerçek adı",
     "Person phone": "Kişi telefonu",
     "Person phone - Tooltip": "Ödeme yapanın telefon numarası",
-    "Please carefully check your invoice information. Once the invoice is issued, it cannot be withdrawn or modified.": "Lütfen fatura bilgilerinizi dikkatlice kontrol edin. Fatura çıkartıldıktan sonra geri alınamaz veya değiştirilemez.",
+    "Please carefully check your invoice information": {
+      " Once the invoice is issued, it cannot be withdrawn or modified": {
+        "": "Lütfen fatura bilgilerinizi dikkatlice kontrol edin. Fatura çıkartıldıktan sonra geri alınamaz veya değiştirilemez."
+      }
+    },
     "Please pay the order first!": "Lütfen önce siparişi ödeyin!",
-    "Processing...": "İşleniyor...",
-    "Products - Tooltip": "Ürünler - Araç ipucu",
+    "Processing": {
+      "": {
+        "": {
+          "": "İşleniyor..."
+        }
+      }
+    },
     "Recharged successfully": "Başarıyla yenilendi",
     "Result": "Sonuç",
     "The payment has been canceled": "Ödeme iptal edildi",
@@ -852,7 +975,13 @@
     "You have successfully completed the payment": "Ödemeyi başarıyla tamamladınız",
     "You have successfully recharged": "Başarıyla yenilendiniz",
     "Your current balance is": "Mevcut bakiyeniz",
-    "please wait for a few seconds...": "lütfen birkaç saniye bekleyin...",
+    "please wait for a few seconds": {
+      "": {
+        "": {
+          "": "lütfen birkaç saniye bekleyin..."
+        }
+      }
+    },
     "the current state is": "mevcut durum"
   },
   "permission": {
@@ -869,7 +998,6 @@
     "Effect": "Etkisi",
     "Effect - Tooltip": "İzin ver veya reddet",
     "New Permission": "Yeni İzin",
-    "Pending": "Beklemede",
     "Read": "Oku",
     "Resource type": "Kaynak türü",
     "Resource type - Tooltip": "Kaynak türü",
@@ -881,7 +1009,7 @@
   },
   "plan": {
     "Edit Plan": "Planı Düzenle",
-    "Is exclusive": "Is exclusive",
+    "Is exclusive": "Özel mi",
     "Is exclusive - Tooltip": "Is exclusive - Tooltip",
     "New Plan": "Yeni Plan",
     "Period": "Dönem",
@@ -913,7 +1041,7 @@
     "Amount": "Tutar",
     "Buy": "Satın Al",
     "Buy Product": "Ürün Satın Al",
-    "Cart contains invalid products, please delete them before placing an order": "Cart contains invalid products, please delete them before placing an order",
+    "Cart contains invalid products, please delete them before placing an order": "Sepette geçersiz ürünler var; sipariş vermeden önce silin",
     "Custom amount available": "Özel tutar kullanılabilir",
     "Custom price should be greater than zero": "Özel fiyat sıfırdan büyük olmalıdır",
     "Detail - Tooltip": "Ürün detayı",
@@ -926,29 +1054,41 @@
     "Image": "Resim",
     "Image - Tooltip": "Ürün resmi",
     "Information": "Bilgi",
-    "Invalid product": "Invalid product",
+    "Invalid product": "Geçersiz ürün",
     "Is recharge": "Yeniden yükleme mi",
     "Is recharge - Tooltip": "Mevcut ürün bakiye yeniden yüklemesi ise",
     "New Product": "Yeni Ürün",
-    "No recharge options available": "No recharge options available",
+    "No recharge options available": "Kullanılabilir yükleme seçeneği yok",
     "Order created successfully": "Sipariş başarıyla oluşturuldu",
     "PayPal": "PayPal",
     "Payment cancelled": "Ödeme iptal edildi",
     "Payment failed": "Ödeme başarısız",
     "Payment providers": "Ödeme sağlayıcıları",
     "Payment providers - Tooltip": "Ödeme hizmetleri sağlayıcıları",
-    "Placing order...": "Sipariş veriliyor...",
+    "Placing order": {
+      "": {
+        "": {
+          "": "Sipariş veriliyor..."
+        }
+      }
+    },
     "Please add at least one recharge option when custom amount is disabled": "Özel tutar devre dışıyken en az bir yeniden yükleme seçeneği ekleyin",
     "Please select a currency": "Lütfen bir para birimi seçin",
     "Please select at least one payment provider": "Lütfen en az bir ödeme sağlayıcısı seçin",
-    "Processing payment...": "Ödeme işleniyor...",
+    "Processing payment": {
+      "": {
+        "": {
+          "": "Ödeme işleniyor..."
+        }
+      }
+    },
     "Product list cannot be empty": "Ürün listesi boş olamaz",
-    "Product not found or invalid": "Product not found or invalid",
+    "Product not found or invalid": "Ürün bulunamadı veya geçersiz",
     "Quantity": "Miktar",
     "Quantity - Tooltip": "Ürün miktarı",
     "Recharge options": "Yeniden yükleme seçenekleri",
     "Recharge options - Tooltip": "Yeniden yükleme seçenekleri - Araç ipucu",
-    "Recharge products need to go to the product detail page to set custom amount": "Recharge products need to go to the product detail page to set custom amount",
+    "Recharge products need to go to the product detail page to set custom amount": "Yükleme ürünleri için özel tutar ürün detay sayfasında ayarlanmalıdır",
     "SKU": "SKU",
     "Select amount": "Tutar seç",
     "Sold": "Satılmış",
@@ -957,10 +1097,18 @@
     "Success URL": "Başarılı URL",
     "Success URL - Tooltip": "Satın almadan sonra dönülecek URL",
     "Tag - Tooltip": "Ürün etiketi",
-    "Test buy page..": "Test satın alım sayfası..",
+    "Test buy page": {
+      "": {
+        "": "Test satın alım sayfası.."
+      }
+    },
     "The currency of the product you are adding is different from the currency of the items in the cart": "Eklediğiniz ürünün para birimi sepetteki ürünlerin para biriminden farklı",
-    "There is no payment channel for this product.": "Bu ürün için ödeme kanalı yoktur.",
-    "This product is currently not in sale.": "Bu ürün şu anda satışta değil.",
+    "There is no payment channel for this product": {
+      "": "Bu ürün için ödeme kanalı yoktur."
+    },
+    "This product is currently not in sale": {
+      "": "Bu ürün şu anda satışta değil."
+    },
     "This product is currently not purchasable (No options available)": "Bu ürün şu anda satın alınamaz (seçenek yok)",
     "Total Price": "Toplam Fiyat",
     "View Product": "Ürünü Görüntüle",
@@ -985,14 +1133,17 @@
     "Auth URL - Tooltip": "Yetkilendirme URL'si",
     "Base URL": "Temel URL",
     "Base URL - Tooltip": "Temel URL - Araç ipucu",
-    "Bucket": "Bucket",
+    "Binding rule": "Bağlama kuralı",
+    "Bucket": "Kova",
     "Bucket - Tooltip": "Bucket adı",
     "Can not parse metadata": "Meta verileri ayrıştırılamıyor",
     "Can signin": "Giriş yapabilir",
     "Can signup": "Kayıt yapabilir",
     "Can unlink": "Bağlantıyı kesebilir",
-    "Channel No.": "Kanal Numarası",
-    "Channel No. - Tooltip": "Kanal Numarası",
+    "Channel No": {
+      "": "Kanal Numarası",
+      " - Tooltip": "Kanal Numarası"
+    },
     "Chat ID": "Sohbet Kimliği",
     "Chat ID - Tooltip": "Sohbet Kimliği - Araç ipucu",
     "Client ID": "İstemci ID'si",
@@ -1035,7 +1186,6 @@
     "HTTP body mapping - Tooltip": "HTTP gövde eşleştirmesi",
     "HTTP header": "HTTP başlığı",
     "HTTP header - Tooltip": "HTTP başlığı",
-    "Host": "Sunucu",
     "Host - Tooltip": "Ana bilgisayar adı",
     "IdP": "Kimlik Sağlayıcı",
     "IdP certificate": "IdP sertifikası",
@@ -1047,6 +1197,8 @@
     "Key text": "Anahtar metni",
     "Key text - Tooltip": "Anahtar metni",
     "LDAP port": "LDAP portu",
+    "Logout URL": "Çıkış URL'si",
+    "Logout URL - Tooltip": "Logout URL - Tooltip",
     "Metadata": "Meta veriler",
     "Metadata - Tooltip": "SAML meta verileri",
     "Metadata url": "Meta veri URL'si",
@@ -1061,7 +1213,6 @@
     "Path prefix": "Yol öneki",
     "Path prefix - Tooltip": "Nesne depolama için Bucket yol öneki",
     "Please use WeChat to scan the QR code and follow the official account for sign in": "Lütfen oturum açmak için WeChat ile QR kodu tarayın ve resmi hesabı takip edin",
-    "Port": "Port",
     "Port - Tooltip": "Portun açık olduğundan emin olun",
     "Private Key": "Özel Anahtar",
     "Private Key - Tooltip": "Özel Anahtar - Araç ipucu",
@@ -1080,7 +1231,9 @@
     "Region ID - Tooltip": "Hizmet sağlayıcısı için Bölge ID'si",
     "Region endpoint for Internet": "İnternet için Bölge uç noktası",
     "Region endpoint for Intranet": "İç ağ için Bölge uç noktası",
-    "SAML 2.0 Endpoint (HTTP)": "SAML 2.0 Uç noktası (HTTP)",
+    "SAML 2": {
+      "0 Endpoint (HTTP)": "SAML 2.0 Uç noktası (HTTP)"
+    },
     "SMS Test": "SMS Testi",
     "SMS Test - Tooltip": "Test SMS'i göndermek için telefon numarası",
     "SMS account": "SMS hesabı",
@@ -1089,7 +1242,8 @@
     "SP ACS URL": "SP ACS URL'si",
     "SP ACS URL - Tooltip": "SP ACS URL'si",
     "SP Entity ID": "SP Varlık ID'si",
-    "SSL mode": "SSL mode",
+    "SP Entity ID - Tooltip": "SP Entity ID - Tooltip",
+    "SSL mode": "SSL modu",
     "SSL mode - Tooltip": "SSL mode - Tooltip",
     "Scene": "Senaryo",
     "Scene - Tooltip": "Senaryo",
@@ -1137,7 +1291,7 @@
     "Team ID - Tooltip": "Takım Kimliği - Araç ipucu",
     "Template code": "Şablon kodu",
     "Template code - Tooltip": "Şablon kodu",
-    "Tenant ID": "Tenant ID",
+    "Tenant ID": "Kiracı kimliği",
     "Tenant ID - Tooltip": "Tenant ID",
     "Test Email": "Test E-postası",
     "Test Email - Tooltip": "Test e-postalarını almak için E-posta adresi",
@@ -1170,16 +1324,20 @@
   "record": {
     "Is triggered": "Tetiklendi mi",
     "Object": "Nesne",
-    "Response": "Yanıt",
-    "Status code": "Durum kodu"
+    "Response": "Yanıt"
   },
   "resource": {
     "Copy Link": "Bağlantıyı Kopyala",
     "File name": "Dosya adı",
     "File size": "Dosya boyutu",
     "Format": "Biçim",
-    "Parent": "Üst",
-    "Upload a file...": "Bir dosya yükleyin..."
+    "Upload a file": {
+      "": {
+        "": {
+          "": "Bir dosya yükleyin..."
+        }
+      }
+    }
   },
   "role": {
     "Edit Role": "Rolü Düzenle",
@@ -1192,6 +1350,40 @@
     "Sub roles - Tooltip": "Mevcut role dahil edilen roller",
     "Sub users": "Alt kullanıcılar",
     "Sub users - Tooltip": "Mevcut role dahil edilen kullanıcılar"
+  },
+  "rule": {
+    "Block": "Engelle",
+    "Block Duration": "Engelleme süresi",
+    "Compound": "Bileşik",
+    "Edit Rule": "Kuralı düzenle",
+    "Expression": "İfade",
+    "Expressions": "İfadeler",
+    "IP List": "IP listesi",
+    "IP Rate Limiting": "IP hız sınırlaması",
+    "Logic": "Mantık",
+    "Operator": "İşleç",
+    "Rate": "Oran",
+    "Reason": "Neden",
+    "Status code": "Durum kodu",
+    "Verbose mode": "Ayrıntılı mod",
+    "and": "ve",
+    "begin": "başlar",
+    "contains": "içerir",
+    "does not contain": "içermez",
+    "does not equal": "eşit değildir",
+    "equals": "eşittir",
+    "is in": "içinde",
+    "is not in": "içinde değil",
+    "or": "veya",
+    "regex match": "regex eşleşmesi"
+  },
+  "server": {
+    "Edit MCP Server": "MCP sunucusunu düzenle",
+    "New MCP Server": "Yeni MCP sunucusu",
+    "Please select at least one IP range": "Lütfen en az bir IP aralığı seçin",
+    "Please select at least one port": "Lütfen en az bir bağlantı noktası seçin",
+    "Production endpoint is empty": "Üretim uç noktası boş",
+    "Scan server": "Tarama sunucusu"
   },
   "signup": {
     "Accept": "Kabul Et",
@@ -1215,7 +1407,7 @@
     "Please input your last name!": "Lütfen soyadınızı girin!",
     "Please input your phone number!": "Lütfen telefon numaranızı girin!",
     "Please input your real name!": "Lütfen gerçek adınızı girin!",
-    "Please input your {label}!": "Please input your {label}!",
+    "Please input your {label}!": "Lütfen {label} girin!",
     "Please select your country code!": "Lütfen ülke kodunuzu seçin!",
     "Please select your country/region!": "Lütfen ülke/bölgenizi seçin!",
     "Regex": "Düzenli ifade",
@@ -1228,7 +1420,7 @@
     "Text 4": "Metin 4",
     "Text 5": "Metin 5",
     "The input Email doesn't match the signup item regex!": "Girilen e-posta kayıt öğesi düzenli ifadesiyle eşleşmiyor!",
-    "The input doesn't match the signup item regex!": "The input doesn't match the signup item regex!",
+    "The input doesn't match the signup item regex!": "Girdi, kayıt öğesi regex'i ile eşleşmiyor!",
     "The input is not invoice Tax ID!": "Girdi fatura Vergi ID'si değil!",
     "The input is not invoice title!": "Girdi fatura başlığı değil!",
     "The input is not valid Phone!": "Geçersiz telefon numarası!",
@@ -1238,39 +1430,54 @@
     "Your confirmed password is inconsistent with the password!": "Onayladığınız parola parolayla uyuşmuyor!",
     "sign in now": "şimdi giriş yap"
   },
+  "site": {
+    "Alert interval": "Uyarı aralığı",
+    "Alert providers": "Uyarı sağlayıcıları",
+    "Alert try times": "Uyarı deneme sayısı",
+    "Casdoor app": "Casdoor uygulaması",
+    "Challenges": "Meydan okumalar",
+    "Disable verbose": "Ayrıntılı modu kapat",
+    "Edit Site": "Siteyi düzenle",
+    "Enable alert": "Uyarıları etkinleştir",
+    "Hosts": "Sunucular",
+    "Mode": "Mod",
+    "Need redirect": "Yönlendirme gerekli",
+    "Node": "Düğüm",
+    "Nodes": "Düğümler",
+    "Public IP": "Genel IP"
+  },
   "subscription": {
     "Active": "Aktif",
     "Edit Subscription": "Aboneliği Düzenle",
     "End time": "Bitiş zamanı",
     "End time - Tooltip": "Bitiş zamanı - İpucu",
-    "Error": "Hata",
     "Expired": "Süresi doldu",
     "New Subscription": "Yeni Abonelik",
     "Start time": "Başlangıç zamanı",
     "Start time - Tooltip": "Başlangıç zamanı - İpucu",
-    "Subscription plan": "Subscription plan",
-    "Subscription pricing": "Subscription pricing",
+    "Subscription plan": "Abonelik planı",
+    "Subscription pricing": "Abonelik fiyatlandırması",
     "Suspended": "Askıya alındı",
     "Upcoming": "Yaklaşan",
-    "View Subscription": "View Subscription"
+    "View Subscription": "Aboneliği görüntüle"
   },
   "syncer": {
-    "API Token / Password": "API Token / Password",
-    "AWS Access Key ID": "AWS Access Key ID",
-    "AWS Region": "AWS Region",
-    "AWS Secret Access Key": "AWS Secret Access Key",
-    "Admin Email": "Admin Email",
+    "API Token / Password": "API jetonu / Parola",
+    "AWS Access Key ID": "AWS erişim anahtarı kimliği",
+    "AWS Region": "AWS bölgesi",
+    "AWS Secret Access Key": "AWS gizli erişim anahtarı",
+    "Admin Email": "Yönetici e-postası",
     "Affiliation table": "İlişki tablosu",
     "Affiliation table - Tooltip": "Çalışma biriminin veritabanı tablo adı",
     "Avatar base URL": "Avatar temel URL'si",
     "Avatar base URL - Tooltip": "Avatar resimleri için URL öneki",
-    "Bind DN": "Bind DN",
+    "Bind DN": "Bağlama DN",
     "Casdoor column": "Casdoor sütunu",
     "Column name": "Sütun adı",
     "Column type": "Sütun türü",
     "Connect successfully": "Bağlantı başarılı",
-    "Corp ID": "Corp ID",
-    "Corp secret": "Corp secret",
+    "Corp ID": "Kurumsal kimlik",
+    "Corp secret": "Kurumsal sır",
     "Database": "Veritabanı",
     "Database - Tooltip": "Orijinal veritabanı adı",
     "Database type": "Veritabanı türü",
@@ -1284,13 +1491,13 @@
     "Is read-only": "Salt okunur mu",
     "Is read-only - Tooltip": "Salt okunur mu - Araç ipucu",
     "New Syncer": "Yeni Senkronizatör",
-    "Paste your Google Workspace service account JSON key here": "Paste your Google Workspace service account JSON key here",
-    "SCIM Server URL": "SCIM Server URL",
+    "Paste your Google Workspace service account JSON key here": "Google Workspace hizmet hesabı JSON anahtarınızı buraya yapıştırın",
+    "SCIM Server URL": "SCIM sunucu URL'si",
     "SSH host": "SSH sunucusu",
     "SSH password": "SSH şifresi",
     "SSH port": "SSH portu",
     "SSH user": "SSH kullanıcısı",
-    "Service account key": "Service account key",
+    "Service account key": "Hizmet hesabı anahtarı",
     "Sync interval": "Senkronizasyon aralığı",
     "Sync interval - Tooltip": "Birimi saniye cinsinden",
     "Table": "Tablo",
@@ -1298,20 +1505,26 @@
     "Table columns": "Tablo sütunları",
     "Table columns - Tooltip": "Veri senkronizasyonunda yer alan tablo sütunları. Senkronizasyonda yer almayan sütunların eklenmesine gerek yoktur",
     "Test Connection": "Bağlantıyı Test Et",
-    "Test DB Connection": "Test DB Connection",
-    "Username (optional)": "Username (optional)"
+    "Test DB Connection": "Veritabanı bağlantısını test et",
+    "Username (optional)": "Kullanıcı adı (isteğe bağlı)"
   },
   "system": {
     "API Latency": "API Gecikmesi",
     "API Throughput": "API Verimliliği",
     "About Casdoor": "Casdoor Hakkında",
-    "An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2.0, OIDC, SAML and CAS": "OAuth 2.0, OIDC, SAML ve CAS'i destekleyen web arayüzüne sahip bir Kimlik ve Erişim Yönetimi (IAM) / Tek Sefer Giriş (SSO) platformu",
+    "An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2": {
+      "0, OIDC, SAML and CAS": "OAuth 2.0, OIDC, SAML ve CAS'i destekleyen web arayüzüne sahip bir Kimlik ve Erişim Yönetimi (IAM) / Tek Sefer Giriş (SSO) platformu"
+    },
     "CPU Usage": "CPU Kullanımı",
     "Community": "Topluluk",
     "Count": "Sayım",
+    "Disk Usage": "Disk kullanımı",
     "Latency": "Gecikme",
     "Memory Usage": "Bellek Kullanımı",
+    "Network Usage": "Ağ kullanımı",
     "Official website": "Resmi web sitesi",
+    "Received": "Alındı",
+    "Sent": "Gönderildi",
     "Throughput": "Verimlilik",
     "Total Throughput": "Toplam Verimlilik",
     "Unknown version": "Bilinmeyen sürüm",
@@ -1330,16 +1543,22 @@
     "Theme - Tooltip": "Uygulamanın stil teması"
   },
   "ticket": {
-    "Closed": "Closed",
-    "Edit Ticket": "Edit Ticket",
-    "In Progress": "In Progress",
-    "Messages": "Messages",
-    "New Ticket": "New Ticket",
-    "Open": "Open",
-    "Please enter a message": "Please enter a message",
-    "Press Ctrl+Enter to send": "Press Ctrl+Enter to send",
-    "Resolved": "Resolved",
-    "Type your message here...": "Type your message here..."
+    "Closed": "Kapalı",
+    "Edit Ticket": "Destek kaydını düzenle",
+    "In Progress": "Devam ediyor",
+    "Messages": "İletiler",
+    "New Ticket": "Yeni destek kaydı",
+    "Open": "Aç",
+    "Please enter a message": "Lütfen bir ileti girin",
+    "Press Ctrl+Enter to send": "Göndermek için Ctrl+Enter'a basın",
+    "Resolved": "Çözüldü",
+    "Type your message here": {
+      "": {
+        "": {
+          "": "İletinizi buraya yazın..."
+        }
+      }
+    }
   },
   "token": {
     "Access token": "Erişim jetonu",
@@ -1361,7 +1580,10 @@
     "Amount - Tooltip": "İşlem gören ürünlerin tutarı",
     "Edit Transaction": "İşlemi Düzenle",
     "New Transaction": "Yeni İşlem",
-    "Recharge": "Recharge"
+    "Recharge": "Yükle"
+  },
+  "usage": {
+    "seconds": "saniye"
   },
   "user": {
     "3rd-party logins": "Üçüncü taraf girişler",
@@ -1405,10 +1627,10 @@
     "ID card type": "Kimlik kartı türü",
     "ID card type - Tooltip": "Kimlik kartı türü - Araç ipucu",
     "ID card with person": "Kimlik kartı ve kişi",
-    "ID verification": "ID verification",
+    "ID verification": "Kimlik doğrulama",
     "ID verification - Tooltip": "Kimlik doğrulama - İpucu",
-    "Identity verification successful": "Identity verification successful",
-    "Identity verified": "Identity verified",
+    "Identity verification successful": "Kimlik doğrulama başarılı",
+    "Identity verified": "Kimlik doğrulandı",
     "Input your email": "E-postanızı girin",
     "Input your phone number": "Telefon numaranızı girin",
     "Is admin": "Yönetici mi",
@@ -1418,10 +1640,9 @@
     "Is forbidden": "Yasaklandı mı",
     "Is forbidden - Tooltip": "Yasaklanan kullanıcılar artık giriş yapamazlar",
     "Is online": "Çevrimiçi mi",
-    "Is verified": "Is verified",
+    "Is verified": "Doğrulandı mı",
     "Karma": "Karma",
     "Karma - Tooltip": "Karma - Araç ipucu",
-    "Keys": "Anahtarlar",
     "Language": "Dil",
     "Language - Tooltip": "Dil - Araç ipucu",
     "Last change password time": "Son şifre değiştirme zamanı",
@@ -1432,7 +1653,13 @@
     "Location - Tooltip": "Yaşadığı şehir",
     "MFA accounts": "MFA hesapları",
     "Managed accounts": "Yönetilen hesaplar",
-    "Modify password...": "Parolayı Değiştir...",
+    "Modify password": {
+      "": {
+        "": {
+          "": "Parolayı Değiştir..."
+        }
+      }
+    },
     "Need update password": "Şifre güncelleme gerekiyor",
     "Need update password - Tooltip": "Kullanıcı giriş yaptıktan sonra şifresini güncellemeye zorla",
     "New Email": "Yeni E-posta",
@@ -1443,9 +1670,9 @@
     "Other": "Diğer",
     "Password set successfully": "Parola başarıyla ayarlandı",
     "Phone cannot be empty": "Telefon numarası boş olamaz",
-    "Please enter your real name": "Please enter your real name",
-    "Please fill in ID card information first": "Please fill in ID card information first",
-    "Please fill in your real name first": "Please fill in your real name first",
+    "Please enter your real name": "Lütfen gerçek adınızı girin",
+    "Please fill in ID card information first": "Önce kimlik bilgilerini doldurun",
+    "Please fill in your real name first": "Önce gerçek adınızı girin",
     "Please select avatar from resources": "Lütfen kaynaklardan avatar seçin",
     "Properties": "Özellikler",
     "Properties - Tooltip": "Kullanıcının özellikleri",
@@ -1453,26 +1680,51 @@
     "Ranking - Tooltip": "Sıralama - Araç ipucu",
     "Re-enter New": "Yeniden Girin",
     "Real name - Tooltip": "Gerçek ad - İpucu",
-    "Register source": "Register source",
+    "Register source": "Kayıt kaynağı",
     "Register source - Tooltip": "Kullanıcının kaydedildiği kaynak",
-    "Register type": "Register type",
+    "Register type": "Kayıt türü",
     "Register type - Tooltip": "Kullanıcıyı kaydetmek için kullanılan yöntem",
-    "Reset Email...": "E-Posta adresini sıfırla...",
-    "Reset Phone...": "Telefon numarasınız sıfırla...",
+    "Reset Email": {
+      "": {
+        "": {
+          "": "E-Posta adresini sıfırla..."
+        }
+      }
+    },
+    "Reset Phone": {
+      "": {
+        "": {
+          "": "Telefon numarasınız sıfırla..."
+        }
+      }
+    },
     "Score": "Puan",
     "Score - Tooltip": "Puan - Araç ipucu",
-    "Select a photo...": "Bir fotoğraf seçin...",
+    "Select a photo": {
+      "": {
+        "": {
+          "": "Bir fotoğraf seçin..."
+        }
+      }
+    },
     "Set Password": "Parola Ayarla",
     "Set new profile picture": "Yeni profil fotoğrafı ayarla",
-    "Set password...": "Parola ayarla...",
-    "Tag": "Etiket",
+    "Set password": {
+      "": {
+        "": {
+          "": "Parola ayarla..."
+        }
+      }
+    },
     "The password must contain at least one special character": "Şifre en az bir özel karakter içermelidir",
     "The password must contain at least one uppercase letter, one lowercase letter and one digit": "Şifre en az bir büyük harf, bir küçük harf ve bir rakam içermelidir",
     "The password must have at least 6 characters": "Şifre en az 6 karakter uzunluğunda olmalıdır",
     "The password must have at least 8 characters": "Şifre en az 8 karakter uzunluğunda olmalıdır",
     "The password must not contain any repeated characters": "Şifre tekrarlayan karakter içermemelidir",
     "This field value doesn't match the pattern rule": "Bu alan değeri desen kuralıyla eşleşmiyor",
-    "Two passwords you typed do not match.": "İki şifre birbiri ile eşleşmiyor.",
+    "Two passwords you typed do not match": {
+      "": "İki şifre birbiri ile eşleşmiyor."
+    },
     "Unlink": "Bağlantıyı Kes",
     "Upload ID card back picture": "Kimlik kartı arka yüzünü yükle",
     "Upload ID card front picture": "Kimlik kartı ön yüzünü yükle",
@@ -1481,8 +1733,8 @@
     "User Profile": "Kullanıcı Profili",
     "Values": "Değerler",
     "Verification code sent": "Doğrulama kodu gönderildi",
-    "Verified": "Verified",
-    "Verify Identity": "Verify Identity",
+    "Verified": "Doğrulandı",
+    "Verify Identity": "Kimliği doğrula",
     "WebAuthn credentials": "WebAuthn kimlik bilgileri",
     "Work": "İş",
     "You have changed the username, please save your change first before modifying the password": "Kullanıcı adını değiştirdiniz, lütfen şifreyi değiştirmeden önce değişikliklerinizi kaydedin",
@@ -1494,6 +1746,7 @@
     "Receiver": "Alıcı"
   },
   "webhook": {
+    "Attempt Count": "Deneme sayısı",
     "Content type": "İçerik türü",
     "Content type - Tooltip": "İçerik türü",
     "Edit Webhook": "Webhook'u Düzenle",
@@ -1501,15 +1754,29 @@
     "Events - Tooltip": "Olaylar",
     "Extended user fields": "Genişletilmiş kullanıcı alanları",
     "Extended user fields - Tooltip": "Genişletilmiş kullanıcı alanları - Araç ipucu",
+    "Failed": "Başarısız",
+    "Failed to replay webhook event": "Webhook olayı yeniden oynatılamadı",
     "Headers": "Başlıklar",
     "Headers - Tooltip": "HTTP başlıkları (anahtar-değer çiftleri)",
     "Is user extended": "Kullanıcı genişletildi mi",
     "Is user extended - Tooltip": "Kullanıcının genişletilmiş alanları JSON'a dahil edilsin mi",
+    "Last Error": "Son hata",
     "New Webhook": "Yeni Webhook",
+    "Next Retry Time": "Sonraki yeniden deneme zamanı",
     "Object fields": "Nesne alanları",
     "Object fields - Tooltip": "Görüntülenebilir nesne alanları",
+    "Payload": "Yük",
+    "Pending": "Beklemede",
+    "Replay": "Yeniden oynat",
+    "Retrying": "Yeniden deneniyor",
     "Single org only": "Yalnızca tek organizasyon",
     "Single org only - Tooltip": "Webhook'un ait olduğu organizasyonda yalnızca tetiklenir",
-    "Value": "Değer"
+    "Success": "Başarılı",
+    "Unknown": "Bilinmiyor",
+    "Value": "Değer",
+    "Webhook Event Detail": "Webhook olay ayrıntısı",
+    "Webhook Event Logs": "Webhook olay günlükleri",
+    "Webhook Name": "Webhook adı",
+    "Webhook event replay triggered": "Webhook olayı yeniden oynatma tetiklendi"
   }
 }
