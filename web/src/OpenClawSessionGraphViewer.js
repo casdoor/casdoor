@@ -52,7 +52,7 @@ function getStatusTag(node) {
   return node.ok ? (
     <Tag color="success">{i18next.t("general:OK")}</Tag>
   ) : (
-    <Tag color="error">{i18next.t("entry:Failed", {defaultValue: "Failed"})}</Tag>
+    <Tag color="error">{i18next.t("entry:Failed")}</Tag>
   );
 }
 
@@ -209,7 +209,7 @@ class OpenClawSessionGraphViewer extends React.Component {
         } else {
           this.setState({
             loading: false,
-            error: `${i18next.t("entry:Failed to load session graph", {defaultValue: "Failed to load session graph"})}: ${res.msg}`,
+            error: `${i18next.t("entry:Failed to load session graph")}: ${res.msg}`,
             graph: null,
           });
         }
@@ -221,7 +221,7 @@ class OpenClawSessionGraphViewer extends React.Component {
 
         this.setState({
           loading: false,
-          error: `${i18next.t("entry:Failed to load session graph", {defaultValue: "Failed to load session graph"})}: ${error}`,
+          error: `${i18next.t("entry:Failed to load session graph")}: ${error}`,
           graph: null,
         });
       });
@@ -237,13 +237,13 @@ class OpenClawSessionGraphViewer extends React.Component {
       <div
         style={{display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 12}}
       >
-        <Tag color="default">{i18next.t("entry:Nodes", {defaultValue: "Nodes"})}: {stats.totalNodes}</Tag>
-        <Tag color="blue">{i18next.t("entry:Tasks", {defaultValue: "Tasks"})}: {stats.taskCount}</Tag>
-        <Tag color="orange">{i18next.t("entry:Tool calls", {defaultValue: "Tool calls"})}: {stats.toolCallCount}</Tag>
-        <Tag color="green">{i18next.t("entry:Results", {defaultValue: "Results"})}: {stats.toolResultCount}</Tag>
-        <Tag color="purple">{i18next.t("entry:Finals", {defaultValue: "Finals"})}: {stats.finalCount}</Tag>
+        <Tag color="default">{i18next.t("entry:Nodes")}: {stats.totalNodes}</Tag>
+        <Tag color="blue">{i18next.t("entry:Tasks")}: {stats.taskCount}</Tag>
+        <Tag color="orange">{i18next.t("entry:Tool calls")}: {stats.toolCallCount}</Tag>
+        <Tag color="green">{i18next.t("entry:Results")}: {stats.toolResultCount}</Tag>
+        <Tag color="purple">{i18next.t("entry:Finals")}: {stats.finalCount}</Tag>
         {stats.failedCount > 0 ? (
-          <Tag color="red">{i18next.t("entry:Failed", {defaultValue: "Failed"})}: {stats.failedCount}</Tag>
+          <Tag color="red">{i18next.t("entry:Failed")}: {stats.failedCount}</Tag>
         ) : null}
       </div>
     );
@@ -266,7 +266,7 @@ class OpenClawSessionGraphViewer extends React.Component {
 
     return (
       <Drawer
-        title={node?.summary || i18next.t("entry:Session graph node", {defaultValue: "Session graph node"})}
+        title={node?.summary || i18next.t("entry:Session graph node")}
         width={Setting.isMobile() ? "100%" : 720}
         placement="right"
         onClose={() => this.setState({selectedNode: null})}
@@ -287,43 +287,43 @@ class OpenClawSessionGraphViewer extends React.Component {
                 {getStatusTag(node)}
               </div>
             </Descriptions.Item>
-            <Descriptions.Item label={i18next.t("entry:Summary", {defaultValue: "Summary"})}>
+            <Descriptions.Item label={i18next.t("entry:Summary")}>
               {node.summary || "-"}
             </Descriptions.Item>
             <Descriptions.Item label={i18next.t("general:Timestamp")}>
               {node.timestamp || "-"}
             </Descriptions.Item>
-            <Descriptions.Item label={i18next.t("entry:Entry ID", {defaultValue: "Entry ID"})}>
+            <Descriptions.Item label={i18next.t("entry:Entry ID")}>
               {node.entryId || "-"}
             </Descriptions.Item>
-            <Descriptions.Item label={i18next.t("entry:Tool Call ID", {defaultValue: "Tool Call ID"})}>
+            <Descriptions.Item label={i18next.t("entry:Tool Call ID")}>
               {node.toolCallId || "-"}
             </Descriptions.Item>
             <Descriptions.Item label={`${i18next.t("general:Parent")} ${i18next.t("general:ID")}`}>
               {node.parentId || "-"}
             </Descriptions.Item>
-            <Descriptions.Item label={i18next.t("entry:Original Parent ID", {defaultValue: "Original Parent ID"})}>
+            <Descriptions.Item label={i18next.t("entry:Original Parent ID")}>
               {node.originalParentId || "-"}
             </Descriptions.Item>
-            <Descriptions.Item label={i18next.t("entry:Target", {defaultValue: "Target"})}>
+            <Descriptions.Item label={i18next.t("entry:Target")}>
               {getOpenClawNodeTarget(node) || "-"}
             </Descriptions.Item>
-            <Descriptions.Item label={i18next.t("entry:Tool", {defaultValue: "Tool"})}>
+            <Descriptions.Item label={i18next.t("entry:Tool")}>
               {node.tool || "-"}
             </Descriptions.Item>
-            <Descriptions.Item label={i18next.t("entry:Query", {defaultValue: "Query"})}>
+            <Descriptions.Item label={i18next.t("entry:Query")}>
               {this.renderNodeText(node.query)}
             </Descriptions.Item>
             <Descriptions.Item label={i18next.t("general:URL")}>
               {this.renderNodeText(node.url)}
             </Descriptions.Item>
-            <Descriptions.Item label={i18next.t("entry:Path", {defaultValue: "Path"})}>
+            <Descriptions.Item label={i18next.t("entry:Path")}>
               {this.renderNodeText(node.path)}
             </Descriptions.Item>
             <Descriptions.Item label={i18next.t("general:Error")}>
               {this.renderNodeText(node.error)}
             </Descriptions.Item>
-            <Descriptions.Item label={i18next.t("entry:Text", {defaultValue: "Text"})}>
+            <Descriptions.Item label={i18next.t("entry:Text")}>
               {this.renderNodeText(node.text)}
             </Descriptions.Item>
           </Descriptions>
@@ -369,7 +369,7 @@ class OpenClawSessionGraphViewer extends React.Component {
     return (
       <Row style={{marginTop: "20px"}}>
         <Col style={{marginTop: "5px"}} span={this.getLabelSpan()}>
-          {i18next.t("entry:Session graph", {defaultValue: "Session Graph"})}:
+          {i18next.t("entry:Session graph")}:
         </Col>
         <Col span={this.getContentSpan()}>
           <div data-testid="openclaw-session-graph">{this.renderContent()}</div>

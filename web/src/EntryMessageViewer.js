@@ -527,28 +527,28 @@ class EntryMessageViewer extends React.Component {
         ),
       },
       {
-        title: i18next.t("entry:Service", {defaultValue: "Service"}),
+        title: i18next.t("entry:Service"),
         dataIndex: "serviceName",
         key: "serviceName",
         width: 180,
         render: value => value || "-",
       },
       {
-        title: i18next.t("entry:Span ID", {defaultValue: "Span ID"}),
+        title: i18next.t("entry:Span ID"),
         dataIndex: ["span", "spanId"],
         key: "spanId",
         width: 180,
         render: value => value || "-",
       },
       {
-        title: i18next.t("entry:Start time", {defaultValue: "Start time"}),
+        title: i18next.t("entry:Start time"),
         dataIndex: ["span", "startTimeUnixNano"],
         key: "startTimeUnixNano",
         width: 220,
         render: value => this.formatTraceTimestamp(value),
       },
       {
-        title: i18next.t("entry:Duration", {defaultValue: "Duration"}),
+        title: i18next.t("entry:Duration"),
         key: "duration",
         width: 120,
         render: (_, record) => this.getSpanDuration(record.span),
@@ -569,12 +569,12 @@ class EntryMessageViewer extends React.Component {
       <>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={this.getLabelSpan()}>
-            {i18next.t("entry:Trace spans", {defaultValue: "Trace spans"})}:
+            {i18next.t("entry:Trace spans")}:
           </Col>
           <Col span={this.getContentSpan()} >
             {error ? (
               <Alert
-                message={`${i18next.t("entry:Failed to parse trace message", {defaultValue: "Failed to parse trace message"})}: ${error}`}
+                message={`${i18next.t("entry:Failed to parse trace message")}: ${error}`}
                 type="warning"
                 showIcon
               />
@@ -591,7 +591,7 @@ class EntryMessageViewer extends React.Component {
                   style: {cursor: "pointer"},
                 })}
                 pagination={spans.length > 10 ? {pageSize: 10, hideOnSinglePage: true} : false}
-                locale={{emptyText: i18next.t("entry:No spans", {defaultValue: "No spans"})}}
+                locale={{emptyText: i18next.t("entry:No spans")}}
               />
             )}
           </Col>
@@ -607,7 +607,7 @@ class EntryMessageViewer extends React.Component {
     if (!traceSpan) {
       return (
         <Drawer
-          title={i18next.t("entry:Span detail", {defaultValue: "Span detail"})}
+          title={i18next.t("entry:Span detail")}
           width={Setting.isMobile() ? "100%" : 760}
           placement="right"
           destroyOnClose
@@ -619,7 +619,7 @@ class EntryMessageViewer extends React.Component {
 
     return (
       <Drawer
-        title={`${i18next.t("entry:Span detail", {defaultValue: "Span detail"})}: ${span?.name || span?.spanId || "-"}`}
+        title={`${i18next.t("entry:Span detail")}: ${span?.name || span?.spanId || "-"}`}
         width={Setting.isMobile() ? "100%" : 760}
         placement="right"
         destroyOnClose
@@ -636,55 +636,55 @@ class EntryMessageViewer extends React.Component {
           <Descriptions.Item label={i18next.t("general:Name")}>
             {span?.name || "-"}
           </Descriptions.Item>
-          <Descriptions.Item label={i18next.t("entry:Service", {defaultValue: "Service"})}>
+          <Descriptions.Item label={i18next.t("entry:Service")}>
             {traceSpan.serviceName || "-"}
           </Descriptions.Item>
-          <Descriptions.Item label={i18next.t("provider:Scope", {defaultValue: "Scope"})}>
+          <Descriptions.Item label={i18next.t("provider:Scope")}>
             {this.getScopeName(traceSpan.scope)}
           </Descriptions.Item>
           <Descriptions.Item label={i18next.t("general:Type")}>
             {span?.kind || "-"}
           </Descriptions.Item>
-          <Descriptions.Item label={i18next.t("entry:Trace ID", {defaultValue: "Trace ID"})}>
+          <Descriptions.Item label={i18next.t("entry:Trace ID")}>
             {span?.traceId || "-"}
           </Descriptions.Item>
-          <Descriptions.Item label={i18next.t("entry:Span ID", {defaultValue: "Span ID"})}>
+          <Descriptions.Item label={i18next.t("entry:Span ID")}>
             {span?.spanId || "-"}
           </Descriptions.Item>
-          <Descriptions.Item label={i18next.t("entry:Parent Span ID", {defaultValue: "Parent Span ID"})}>
+          <Descriptions.Item label={i18next.t("entry:Parent Span ID")}>
             {span?.parentSpanId || "-"}
           </Descriptions.Item>
           <Descriptions.Item label={i18next.t("general:Status")}>
             {this.getSpanStatus(span)}
           </Descriptions.Item>
-          <Descriptions.Item label={i18next.t("entry:Start time", {defaultValue: "Start time"})}>
+          <Descriptions.Item label={i18next.t("entry:Start time")}>
             {this.formatTraceTimestamp(span?.startTimeUnixNano)}
           </Descriptions.Item>
-          <Descriptions.Item label={i18next.t("subscription:End time", {defaultValue: "End time"})}>
+          <Descriptions.Item label={i18next.t("subscription:End time")}>
             {this.formatTraceTimestamp(span?.endTimeUnixNano)}
           </Descriptions.Item>
-          <Descriptions.Item label={i18next.t("entry:Duration", {defaultValue: "Duration"})}>
+          <Descriptions.Item label={i18next.t("entry:Duration")}>
             {this.getSpanDuration(span)}
           </Descriptions.Item>
-          <Descriptions.Item label={i18next.t("entry:Resource schema URL", {defaultValue: "Resource schema URL"})}>
+          <Descriptions.Item label={i18next.t("entry:Resource schema URL")}>
             {traceSpan.resourceSchemaUrl || "-"}
           </Descriptions.Item>
-          <Descriptions.Item label={i18next.t("entry:Scope schema URL", {defaultValue: "Scope schema URL"})}>
+          <Descriptions.Item label={i18next.t("entry:Scope schema URL")}>
             {traceSpan.scopeSchemaUrl || "-"}
           </Descriptions.Item>
-          <Descriptions.Item label={i18next.t("entry:Resource attributes", {defaultValue: "Resource attributes"})}>
+          <Descriptions.Item label={i18next.t("entry:Resource attributes")}>
             {this.renderTraceAttributeTable(traceSpan.resourceAttributes)}
           </Descriptions.Item>
-          <Descriptions.Item label={i18next.t("entry:Span attributes", {defaultValue: "Span attributes"})}>
+          <Descriptions.Item label={i18next.t("entry:Span attributes")}>
             {this.renderTraceAttributeTable(span?.attributes)}
           </Descriptions.Item>
-          <Descriptions.Item label={i18next.t("webhook:Events", {defaultValue: "Events"})}>
+          <Descriptions.Item label={i18next.t("webhook:Events")}>
             {this.renderJsonEditor(span?.events)}
           </Descriptions.Item>
-          <Descriptions.Item label={i18next.t("entry:Links", {defaultValue: "Links"})}>
+          <Descriptions.Item label={i18next.t("entry:Links")}>
             {this.renderJsonEditor(span?.links)}
           </Descriptions.Item>
-          <Descriptions.Item label={i18next.t("entry:Raw span", {defaultValue: "Raw span"})}>
+          <Descriptions.Item label={i18next.t("entry:Raw span")}>
             {this.renderJsonEditor(span)}
           </Descriptions.Item>
         </Descriptions>
