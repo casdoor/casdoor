@@ -105,7 +105,7 @@ class EntryMessageViewer extends React.Component {
   }
 
   getEditorMaxWidth() {
-    return Setting.isMobile() ? window.innerWidth - 60 : 560;
+    return Setting.isMobile() ? window.innerWidth - 60 : 800;
   }
 
   getLabelSpan() {
@@ -499,6 +499,7 @@ class EntryMessageViewer extends React.Component {
         lang={lang}
         readOnly
         fillWidth
+        maxWidth={this.getEditorMaxWidth()}
         dark
         height={this.getMessageEditorHeight(message)}
       />
