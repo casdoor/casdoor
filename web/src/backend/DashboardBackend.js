@@ -15,15 +15,29 @@
 import * as Setting from "../Setting";
 
 function fetchDashboardApi(path, owner) {
-  return fetch(`${Setting.ServerUrl}/api/${path}?owner=${owner}`, {
+  const apiPath = `/api/${path}`;
+  const url = `${Setting.ServerUrl}${apiPath}?owner=${owner}`;
+  return fetch(url, {
     method: "GET",
     credentials: "include",
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => {
+  }).then(async res => {
     if (!res.ok) {
-      return {status: "error", msg: `${res.status} ${res.statusText}`};
+      const statusText = `${res.status} ${res.statusText}`;
+      let bodyMsg = "";
+      try {
+        const contentType = res.headers.get("content-type") || "";
+        if (contentType.includes("application/json")) {
+          const json = await res.json();
+          bodyMsg = json.msg || json.message || "";
+        }
+      } catch (e) {
+        bodyMsg = "";
+      }
+      const detail = bodyMsg ? `${statusText} - ${bodyMsg}` : statusText;
+      return {status: "error", msg: `${apiPath}: ${detail}`};
     }
     return res.json();
   });
