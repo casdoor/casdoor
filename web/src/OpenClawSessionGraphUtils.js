@@ -243,62 +243,64 @@ function computeTreeLayout(graph, nodeDisplayByID) {
   const {nodeMap, childrenMap, roots, incomingCount} = buildTreeIndexes(graph);
   const positions = new Map();
   const visited = new Set();
-  const verticalGap = 160;
   const widestNode = Object.values(nodeDisplayByID || {}).reduce((widest, display) => {
     if (!display?.width) {
       return widest;
     }
     return Math.max(widest, display.width);
   }, 250);
-  const horizontalGap = Math.max(320, widestNode + 120);
+  // Depth grows downward (y) so long chains are tall, not wide. Siblings spread on x.
+  const layerGap = Math.max(132, 96);
+  const siblingGap = Math.max(200, widestNode + 80);
   let cursor = 0;
 
   function placeNode(nodeId, depth, stack) {
     if (!nodeMap[nodeId]) {
-      return {top: cursor * verticalGap, bottom: cursor * verticalGap, center: cursor * verticalGap};
+      const x = cursor * siblingGap;
+      return {left: x, right: x, center: x};
     }
     if (positions.has(nodeId)) {
-      const y = positions.get(nodeId).y;
-      return {top: y, bottom: y, center: y};
+      const x = positions.get(nodeId).x;
+      return {left: x, right: x, center: x};
     }
     if (stack.has(nodeId)) {
-      const y = cursor * verticalGap;
+      const x = cursor * siblingGap;
       cursor += 1;
-      positions.set(nodeId, {x: depth * horizontalGap, y});
+      positions.set(nodeId, {x, y: depth * layerGap});
       visited.add(nodeId);
-      return {top: y, bottom: y, center: y};
+      return {left: x, right: x, center: x};
     }
 
     stack.add(nodeId);
     const childIds = (childrenMap.get(nodeId) || []).filter(childId => nodeMap[childId]);
     if (childIds.length === 0) {
-      const y = cursor * verticalGap;
+      const x = cursor * siblingGap;
       cursor += 1;
-      positions.set(nodeId, {x: depth * horizontalGap, y});
+      positions.set(nodeId, {x, y: depth * layerGap});
       visited.add(nodeId);
       stack.delete(nodeId);
-      return {top: y, bottom: y, center: y};
+      return {left: x, right: x, center: x};
     }
 
     const childBoxes = childIds.map((childId) => {
       // A join-style child can have multiple incoming edges. If we always center
       // every later parent on that already-placed child, sibling branches collapse
-      // onto the same row. Give repeated parents their own track while keeping the
+      // onto the same column. Give repeated parents their own x track while keeping the
       // shared child anchored in place.
       if ((incomingCount.get(childId) || 0) > 1 && positions.has(childId)) {
-        const y = cursor * verticalGap;
+        const x = cursor * siblingGap;
         cursor += 1;
-        return {top: y, bottom: y, center: y};
+        return {left: x, right: x, center: x};
       }
       return placeNode(childId, depth + 1, stack);
     });
-    const top = childBoxes[0].top;
-    const bottom = childBoxes[childBoxes.length - 1].bottom;
-    const center = childBoxes.length === 1 ? childBoxes[0].center : (top + bottom) / 2;
-    positions.set(nodeId, {x: depth * horizontalGap, y: center});
+    const left = childBoxes[0].left;
+    const right = childBoxes[childBoxes.length - 1].right;
+    const center = childBoxes.length === 1 ? childBoxes[0].center : (left + right) / 2;
+    positions.set(nodeId, {x: center, y: depth * layerGap});
     visited.add(nodeId);
     stack.delete(nodeId);
-    return {top, bottom, center};
+    return {left, right, center};
   }
 
   roots.forEach(rootId => placeNode(rootId, 0, new Set()));
@@ -413,6 +415,8 @@ export function buildOpenClawFlowElements(graph) {
       return {
         id: node.id,
         position,
+        sourcePosition: "bottom",
+        targetPosition: "top",
         data: {
           title: nodeDisplay.title,
           subtitle: nodeDisplay.subtitle,
