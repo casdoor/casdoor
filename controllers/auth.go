@@ -504,6 +504,23 @@ func getExistUserByBindingRule(providerItem *object.ProviderItem, application *o
 	return user, nil
 }
 
+func getUserByProvider(organization string, provider *object.Provider, providerId string) (*object.User, error) {
+	if object.IsFlexibleCustomProvider(provider.Type) {
+		return object.GetUserByThirdPartyLink(organization, provider.Name, providerId)
+	}
+	if provider.Category == "SAML" {
+		return object.GetUserByFields(organization, providerId)
+	}
+	return object.GetUserByField(organization, provider.Type, providerId)
+}
+
+func linkUserByProvider(user *object.User, provider *object.Provider, providerId string) (bool, error) {
+	if object.IsFlexibleCustomProvider(provider.Type) {
+		return object.LinkFlexibleCustomAccount(user, provider.Name, providerId)
+	}
+	return object.LinkUserAccount(user, provider.Type, providerId)
+}
+
 // Login ...
 // @Title Login
 // @Tag Login API
@@ -862,15 +879,15 @@ func (c *ApiController) Login() {
 
 		if authForm.Method == "signup" || authForm.Method == "signin" {
 			user := &object.User{}
-			if provider.Category == "SAML" {
+			if provider.Category == "SAML" && !object.IsFlexibleCustomProvider(provider.Type) {
 				// The userInfo.Id is the NameID in SAML response, it could be name / email / phone
 				user, err = object.GetUserByFields(application.Organization, userInfo.Id)
 				if err != nil {
 					c.ResponseError(err.Error())
 					return
 				}
-			} else if provider.Category == "OAuth" || provider.Category == "Web3" {
-				user, err = object.GetUserByField(application.Organization, provider.Type, userInfo.Id)
+			} else if provider.Category == "OAuth" || provider.Category == "Web3" || object.IsFlexibleCustomProvider(provider.Type) {
+				user, err = getUserByProvider(application.Organization, provider, userInfo.Id)
 				if err != nil {
 					c.ResponseError(err.Error())
 					return
@@ -1026,7 +1043,7 @@ func (c *ApiController) Login() {
 					return
 				}
 
-				_, err = object.LinkUserAccount(user, provider.Type, userInfo.Id)
+				_, err = linkUserByProvider(user, provider, userInfo.Id)
 				if err != nil {
 					c.ResponseError(err.Error())
 					return
@@ -1049,7 +1066,7 @@ func (c *ApiController) Login() {
 			}
 
 			var oldUser *object.User
-			oldUser, err = object.GetUserByField(application.Organization, provider.Type, userInfo.Id)
+			oldUser, err = getUserByProvider(application.Organization, provider, userInfo.Id)
 			if err != nil {
 				c.ResponseError(err.Error())
 				return
@@ -1075,7 +1092,7 @@ func (c *ApiController) Login() {
 			}
 
 			var isLinked bool
-			isLinked, err = object.LinkUserAccount(user, provider.Type, userInfo.Id)
+			isLinked, err = linkUserByProvider(user, provider, userInfo.Id)
 			if err != nil {
 				c.ResponseError(err.Error())
 				return

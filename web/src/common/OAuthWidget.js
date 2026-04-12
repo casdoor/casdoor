@@ -95,9 +95,10 @@ class OAuthWidget extends React.Component {
     return user.properties[key];
   }
 
-  unlinkUser(providerType, linkedValue) {
+  unlinkUser(providerType, linkedValue, providerName) {
     const body = {
       providerType: providerType,
+      providerName: providerName || "",
       // should add the unlink user's info, cause the user may not be logged in, but a admin want to unlink the user.
       user: this.props.user,
     };
@@ -133,7 +134,13 @@ class OAuthWidget extends React.Component {
 
   renderIdp(user, application, providerItem) {
     const provider = providerItem.provider;
-    const linkedValue = user[provider.type.toLowerCase()];
+    let linkedValue;
+    if (provider.type === "Custom Flexible") {
+      const link = (user.thirdPartyLinks || []).find(l => l.providerName === provider.name);
+      linkedValue = link ? link.providerId : "";
+    } else {
+      linkedValue = user[provider.type.toLowerCase()];
+    }
     const profileUrl = this.getProviderLink(user, provider);
     const id = this.getUserProperty(user, provider.type, "id");
     const username = this.getUserProperty(user, provider.type, "username");
@@ -217,7 +224,7 @@ class OAuthWidget extends React.Component {
                 )
               )
             ) : (
-              <Button disabled={!providerItem.canUnlink && !Setting.isAdminUser(account)} style={{marginLeft: "20px", width: linkButtonWidth}} onClick={() => this.unlinkUser(provider.type, linkedValue)}>{i18next.t("user:Unlink")}</Button>
+              <Button disabled={!providerItem.canUnlink && !Setting.isAdminUser(account)} style={{marginLeft: "20px", width: linkButtonWidth}} onClick={() => this.unlinkUser(provider.type, linkedValue, provider.name)}>{i18next.t("user:Unlink")}</Button>
             )
           }
         </Col>

@@ -104,7 +104,7 @@ func GetIdProvider(idpInfo *ProviderInfo, redirectUrl string) (IdProvider, error
 		return NewBaiduIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl), nil
 	case "Alipay":
 		return NewAlipayIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl), nil
-	case "Custom":
+	case "Custom", "Custom Flexible":
 		return NewCustomIdProvider(idpInfo, redirectUrl), nil
 	case "Infoflow":
 		if idpInfo.SubType == "Internal" {

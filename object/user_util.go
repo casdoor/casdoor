@@ -203,6 +203,10 @@ func GetUserOAuthRefreshToken(user *User, providerType string) string {
 }
 
 func SetUserOAuthProperties(organization *Organization, user *User, providerType string, userInfo *idp.UserInfo, token *oauth2.Token, userMapping ...map[string]string) (bool, error) {
+	if IsFlexibleCustomProvider(providerType) {
+		return true, nil
+	}
+
 	// Store the original OAuth provider token if available
 	if token != nil && token.AccessToken != "" {
 		// Store tokens per provider in Properties map

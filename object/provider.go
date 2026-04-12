@@ -242,7 +242,7 @@ func UpdateProvider(id string, provider *Provider) (bool, error) {
 	}
 
 	if name != provider.Name {
-		err := providerChangeTrigger(name, provider.Name)
+		err := providerChangeTrigger(owner, name, provider.Name)
 		if err != nil {
 			return false, err
 		}
@@ -553,7 +553,7 @@ func GetIdvProviderByApplication(applicationId, isCurrentProvider, lang string) 
 	return nil, nil
 }
 
-func providerChangeTrigger(oldName string, newName string) error {
+func providerChangeTrigger(owner string, oldName string, newName string) error {
 	session := ormer.Engine.NewSession()
 	defer session.Close()
 
@@ -584,6 +584,11 @@ func providerChangeTrigger(oldName string, newName string) error {
 	resource := new(Resource)
 	resource.Provider = newName
 	_, err = session.Where("provider=?", oldName).Update(resource)
+	if err != nil {
+		return err
+	}
+
+	_, err = session.Where("owner = ? AND provider_name = ?", owner, oldName).Cols("provider_name").Update(&ThirdPartyLink{ProviderName: newName})
 	if err != nil {
 		return err
 	}

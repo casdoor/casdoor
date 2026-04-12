@@ -40,6 +40,9 @@ func (application *Application) GetProviderItem(providerName string) *ProviderIt
 
 func (application *Application) GetProviderItemByType(providerType string) *ProviderItem {
 	for _, item := range application.Providers {
+		if item.Provider == nil {
+			continue
+		}
 		if item.Provider.Type == providerType {
 			return item
 		}

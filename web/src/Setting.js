@@ -246,6 +246,10 @@ export const OtherProviderInfo = {
       logo: `${StaticBaseUrl}/img/social_custom.png`,
       url: "https://door.casdoor.com/",
     },
+    "Custom Flexible": {
+      logo: `${StaticBaseUrl}/img/social_custom.png`,
+      url: "https://door.casdoor.com/",
+    },
   },
   Payment: {
     "Dummy": {
@@ -1312,6 +1316,7 @@ export function getProviderTypeOptions(category) {
         {id: "Custom8", name: "Custom8"},
         {id: "Custom9", name: "Custom9"},
         {id: "Custom10", name: "Custom10"},
+        {id: "Custom Flexible", name: "Custom Flexible"},
       ]
     );
   } else if (category === "Email") {
@@ -1369,6 +1374,7 @@ export function getProviderTypeOptions(category) {
       {id: "Aliyun IDaaS", name: "Aliyun IDaaS"},
       {id: "Keycloak", name: "Keycloak"},
       {id: "Custom", name: "Custom"},
+      {id: "Custom Flexible", name: "Custom Flexible"},
     ]);
   } else if (category === "Payment") {
     return ([

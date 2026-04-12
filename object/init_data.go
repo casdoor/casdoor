@@ -48,6 +48,8 @@ type InitData struct {
 	Sites         []*Site         `json:"sites"`
 	Rules         []*Rule         `json:"rules"`
 
+	ThirdPartyLinks []*ThirdPartyLink `json:"third_party_links"`
+
 	EnforcerPolicies map[string][][]string `json:"enforcerPolicies"`
 }
 
@@ -149,6 +151,9 @@ func InitFromFile() {
 		for _, site := range initData.Sites {
 			initDefinedSite(site)
 		}
+		for _, link := range initData.ThirdPartyLinks {
+			initThirdPartyLinks(link)
+		}
 	}
 }
 
@@ -187,6 +192,8 @@ func readInitDataFromFile(filePath string) (*InitData, error) {
 		Transactions:  []*Transaction{},
 		Sites:         []*Site{},
 		Rules:         []*Rule{},
+
+		ThirdPartyLinks: []*ThirdPartyLink{},
 
 		EnforcerPolicies: map[string][][]string{},
 	}
@@ -930,6 +937,30 @@ func initDefinedRule(rule *Rule) {
 	}
 	rule.CreatedTime = util.GetCurrentTime()
 	_, err = AddRule(rule)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func initThirdPartyLinks(link *ThirdPartyLink) {
+	existed, err := GetThirdPartyLink(link.Owner, link.UserName, link.ProviderName)
+	if err != nil {
+		panic(err)
+	}
+	if existed != nil {
+		if initDataNewOnly {
+			return
+		}
+		affected, err := DeleteThirdPartyLink(link.Owner, link.UserName, link.ProviderName)
+		if err != nil {
+			panic(err)
+		}
+		if !affected {
+			panic("Fail to delete third party link")
+		}
+	}
+	link.CreatedTime = util.GetCurrentTime()
+	_, err = AddThirdPartyLink(link)
 	if err != nil {
 		panic(err)
 	}
