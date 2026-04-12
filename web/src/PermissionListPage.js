@@ -428,7 +428,7 @@ class PermissionListPage extends BaseListPage {
         filterMultiple: false,
         filters: [
           {text: i18next.t("permission:Approved"), value: "Approved"},
-          {text: i18next.t("permission:Pending"), value: "Pending"},
+          {text: i18next.t("webhook:Pending"), value: "Pending"},
         ],
         width: "120px",
         sorter: true,
@@ -437,7 +437,7 @@ class PermissionListPage extends BaseListPage {
           case "Approved":
             return Setting.getTag("success", i18next.t("permission:Approved"));
           case "Pending":
-            return Setting.getTag("error", i18next.t("permission:Pending"));
+            return Setting.getTag("error", i18next.t("webhook:Pending"));
           default:
             return null;
           }

@@ -42,7 +42,7 @@ export function renderEmailProviderFields(provider, updateProviderField, renderE
       {provider.type === "Resend" ? null : (
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("provider:Host"), i18next.t("provider:Host - Tooltip"))} :
+            {Setting.getLabel(i18next.t("general:Host"), i18next.t("provider:Host - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Input prefix={<LinkOutlined />} value={provider.host} onChange={e => {
@@ -54,7 +54,7 @@ export function renderEmailProviderFields(provider, updateProviderField, renderE
       {["Azure ACS", "SendGrid", "Resend"].includes(provider.type) ? null : (
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("provider:Port"), i18next.t("provider:Port - Tooltip"))} :
+            {Setting.getLabel(i18next.t("general:Port"), i18next.t("provider:Port - Tooltip"))} :
           </Col>
           <Col span={22} >
             <InputNumber value={provider.port} onChange={value => {

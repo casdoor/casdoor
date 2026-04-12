@@ -85,7 +85,7 @@ class AddressTable extends React.Component {
   renderTable(table) {
     const columns = [
       {
-        title: i18next.t("user:Tag"),
+        title: i18next.t("general:Tag"),
         dataIndex: "tag",
         key: "tag",
         width: "100px",

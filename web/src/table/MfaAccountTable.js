@@ -80,7 +80,7 @@ class MfaAccountTable extends React.Component {
   renderTable(table) {
     const columns = [
       {
-        title: i18next.t("forget:Account"),
+        title: i18next.t("cert:Account"),
         dataIndex: "accountName",
         key: "accountName",
         width: "400px",

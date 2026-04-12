@@ -209,7 +209,7 @@ class SubscriptionListPage extends BaseListPage {
         render: (text, record, index) => {
           switch (text) {
           case "Pending":
-            return Setting.getTag("processing", i18next.t("permission:Pending"), <ExclamationCircleOutlined />);
+            return Setting.getTag("processing", i18next.t("webhook:Pending"), <ExclamationCircleOutlined />);
           case "Active":
             return Setting.getTag("success", i18next.t("subscription:Active"), <SyncOutlined spin />);
           case "Upcoming":
@@ -217,7 +217,7 @@ class SubscriptionListPage extends BaseListPage {
           case "Expired":
             return Setting.getTag("warning", i18next.t("subscription:Expired"), <ClockCircleOutlined />);
           case "Error":
-            return Setting.getTag("error", i18next.t("subscription:Error"), <CloseCircleOutlined />);
+            return Setting.getTag("error", i18next.t("general:Error"), <CloseCircleOutlined />);
           case "Suspended":
             return Setting.getTag("default", i18next.t("subscription:Suspended"), <MinusCircleOutlined />);
           default:

@@ -134,7 +134,7 @@ class RecordListPage extends BaseListPage {
         ...this.getColumnSearchProps("language"),
       },
       {
-        title: i18next.t("record:Status code"),
+        title: i18next.t("rule:Status code"),
         dataIndex: "statusCode",
         key: "statusCode",
         width: "140px",
@@ -265,7 +265,7 @@ class RecordListPage extends BaseListPage {
             <Descriptions.Item label={i18next.t("general:Method")}>{this.getDetailField("method")}</Descriptions.Item>
             <Descriptions.Item label={i18next.t("general:Request URI")}>{this.getDetailField("requestUri")}</Descriptions.Item>
             <Descriptions.Item label={i18next.t("user:Language")}>{this.getDetailField("language")}</Descriptions.Item>
-            <Descriptions.Item label={i18next.t("record:Status code")}>{this.getDetailField("statusCode")}</Descriptions.Item>
+            <Descriptions.Item label={i18next.t("rule:Status code")}>{this.getDetailField("statusCode")}</Descriptions.Item>
             <Descriptions.Item label={i18next.t("general:Action")}>{this.getDetailField("action")}</Descriptions.Item>
             <Descriptions.Item label={i18next.t("record:Response")}>
               <Editor

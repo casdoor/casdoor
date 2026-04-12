@@ -230,7 +230,7 @@ class ConsentPage extends React.Component {
                     disabled={granting || isScopeEmpty}
                     style={{minWidth: 120, height: 44, fontWeight: 500}}
                   >
-                    {i18next.t("consent:Allow")}
+                    {i18next.t("permission:Allow")}
                   </Button>
                   <Button
                     size="large"
@@ -239,7 +239,7 @@ class ConsentPage extends React.Component {
                     disabled={granting || isScopeEmpty}
                     style={{minWidth: 120, height: 44, fontWeight: 500}}
                   >
-                    {i18next.t("consent:Deny")}
+                    {i18next.t("permission:Deny")}
                   </Button>
                 </Space>
               </div>

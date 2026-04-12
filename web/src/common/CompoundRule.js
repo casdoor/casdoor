@@ -129,7 +129,7 @@ class CompoundRule extends React.Component {
         },
       },
       {
-        title: i18next.t("rule:Rule"),
+        title: i18next.t("application:Rule"),
         dataIndex: "value",
         key: "value",
         render: (text, record, index) => (

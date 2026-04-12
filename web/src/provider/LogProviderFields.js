@@ -26,7 +26,7 @@ export function renderLogProviderFields(provider, updateProviderField) {
         <React.Fragment>
           <Row style={{marginTop: "20px"}} >
             <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-              {Setting.getLabel(i18next.t("provider:Host"), i18next.t("provider:Host - Tooltip"))} :
+              {Setting.getLabel(i18next.t("general:Host"), i18next.t("provider:Host - Tooltip"))} :
             </Col>
             <Col span={22} >
               <Input value={provider.host} onChange={e => {

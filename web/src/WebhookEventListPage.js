@@ -211,7 +211,7 @@ class WebhookEventListPage extends React.Component {
         render: (text) => text ? <Link to={`/organizations/${text}`}>{text}</Link> : "-",
       },
       {
-        title: i18next.t("webhook:Status"),
+        title: i18next.t("general:Status"),
         dataIndex: "status",
         key: "status",
         width: 140,
@@ -331,7 +331,7 @@ class WebhookEventListPage extends React.Component {
                 </Link>
               ) : "-"}
             </Descriptions.Item>
-            <Descriptions.Item label={i18next.t("webhook:Status")}>
+            <Descriptions.Item label={i18next.t("general:Status")}>
               {this.getStatusTag(this.getDetailField("status"))}
             </Descriptions.Item>
             <Descriptions.Item label={i18next.t("webhook:Attempt Count")}>

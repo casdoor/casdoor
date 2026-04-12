@@ -210,7 +210,7 @@ class KeyEditPage extends React.Component {
         }
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("key:Access key"), i18next.t("key:Access key - Tooltip"))} :
+            {Setting.getLabel(i18next.t("general:Access key"), i18next.t("general:Access key - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Input value={this.state.key.accessKey} readOnly={true} />
@@ -218,7 +218,7 @@ class KeyEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("key:Access secret"), i18next.t("key:Access secret - Tooltip"))} :
+            {Setting.getLabel(i18next.t("cert:Access secret"), i18next.t("key:Access secret - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Input.Password value={this.state.key.accessSecret} readOnly={true} />

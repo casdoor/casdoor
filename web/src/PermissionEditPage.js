@@ -474,7 +474,7 @@ class PermissionEditPage extends React.Component {
             })}
             options={[
               {value: "Approved", name: i18next.t("permission:Approved")},
-              {value: "Pending", name: i18next.t("permission:Pending")},
+              {value: "Pending", name: i18next.t("webhook:Pending")},
             ].map((item) => Setting.getOption(item.name, item.value))}
             />
           </Col>

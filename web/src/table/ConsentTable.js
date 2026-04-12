@@ -99,7 +99,7 @@ class ConsentTable extends React.Component {
               cancelText={i18next.t("general:Cancel")}
             >
               <Button type="primary" danger size="small">
-                {i18next.t("consent:Delete")}
+                {i18next.t("general:Delete")}
               </Button>
             </Popconfirm>
           );

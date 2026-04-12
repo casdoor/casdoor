@@ -86,7 +86,7 @@ class WeChatLoginPanel extends React.Component {
           <QRCode style={{margin: "auto", marginTop: "20px", marginBottom: "20px"}} bordered={false} status={status} value={qrCode ?? " "} size={230} />
           <div style={{marginTop: 8}}>
             <a onClick={e => {e.preventDefault(); this.fetchQrCode();}}>
-              {i18next.t("login:Refresh")}
+              {i18next.t("general:Refresh")}
             </a>
           </div>
         </div>

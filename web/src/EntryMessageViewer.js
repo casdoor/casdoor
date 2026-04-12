@@ -223,7 +223,7 @@ class EntryMessageViewer extends React.Component {
 
     const columns = [
       {
-        title: i18next.t("user:Keys"),
+        title: i18next.t("general:Keys"),
         dataIndex: "name",
         key: "name",
         width: 220,

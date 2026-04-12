@@ -562,7 +562,7 @@ class ForgetPage extends React.Component {
                     current={this.state.current}
                     items={[
                       {
-                        title: i18next.t("forget:Account"),
+                        title: i18next.t("cert:Account"),
                         icon: <UserOutlined />,
                       },
                       {

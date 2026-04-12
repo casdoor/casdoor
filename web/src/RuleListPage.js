@@ -143,7 +143,7 @@ class RuleListPage extends BaseListPage {
         },
       },
       {
-        title: i18next.t("rule:Type"),
+        title: i18next.t("general:Type"),
         dataIndex: "type",
         key: "type",
         width: "100px",

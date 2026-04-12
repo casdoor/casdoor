@@ -432,7 +432,7 @@ class UserListPage extends BaseListPage {
         ...this.getColumnSearchProps("type"),
       },
       {
-        title: i18next.t("user:Tag"),
+        title: i18next.t("general:Tag"),
         dataIndex: "tag",
         key: "tag",
         width: "110px",

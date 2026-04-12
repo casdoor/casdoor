@@ -176,7 +176,7 @@ class SiteListPage extends BaseListPage {
         sorter: (a, b) => a.displayName.localeCompare(b.displayName),
       },
       {
-        title: i18next.t("site:Domain"),
+        title: i18next.t("provider:Domain"),
         dataIndex: "domain",
         key: "domain",
         width: "150px",
@@ -194,7 +194,7 @@ class SiteListPage extends BaseListPage {
         },
       },
       {
-        title: i18next.t("site:Other domains"),
+        title: i18next.t("application:Other domains"),
         dataIndex: "otherDomains",
         key: "otherDomains",
         width: "140px",
@@ -234,7 +234,7 @@ class SiteListPage extends BaseListPage {
         },
       },
       {
-        title: i18next.t("site:Host"),
+        title: i18next.t("general:Host"),
         dataIndex: "host",
         key: "host",
         width: "80px",
@@ -357,7 +357,7 @@ class SiteListPage extends BaseListPage {
       //   sorter: (a, b) => a.sslMode.localeCompare(b.sslMode),
       // },
       {
-        title: i18next.t("site:SSL cert"),
+        title: i18next.t("application:SSL cert"),
         dataIndex: "sslCert",
         key: "sslCert",
         width: "130px",

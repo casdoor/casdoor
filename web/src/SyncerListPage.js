@@ -166,7 +166,7 @@ class SyncerListPage extends BaseListPage {
         sorter: (a, b) => a.databaseType.localeCompare(b.databaseType),
       },
       {
-        title: i18next.t("provider:Host"),
+        title: i18next.t("general:Host"),
         dataIndex: "host",
         key: "host",
         width: "120px",
@@ -174,7 +174,7 @@ class SyncerListPage extends BaseListPage {
         ...this.getColumnSearchProps("host"),
       },
       {
-        title: i18next.t("provider:Port"),
+        title: i18next.t("general:Port"),
         dataIndex: "port",
         key: "port",
         width: "100px",

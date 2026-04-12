@@ -145,7 +145,7 @@ class KeyListPage extends BaseListPage {
         ],
       },
       {
-        title: i18next.t("key:Access key"),
+        title: i18next.t("general:Access key"),
         dataIndex: "accessKey",
         key: "accessKey",
         width: "300px",

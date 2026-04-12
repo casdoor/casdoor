@@ -74,7 +74,7 @@ class HttpHeaderTable extends React.Component {
   renderTable(table) {
     const columns = [
       {
-        title: i18next.t("user:Keys"),
+        title: i18next.t("general:Keys"),
         dataIndex: "name",
         width: "200px",
         render: (text, record, index) => {
