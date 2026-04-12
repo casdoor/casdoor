@@ -107,6 +107,7 @@ func deliverWebhookEvent(event *WebhookEvent) {
 	webhook, err := GetWebhook(event.Webhook)
 	if err != nil {
 		logs.Error(fmt.Sprintf("failed to get webhook %s: %v", event.Webhook, err))
+		UpdateWebhookEventState(event, WebhookEventStatusFailed, 0, "", fmt.Errorf("get webhook: %w", err))
 		return
 	}
 

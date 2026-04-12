@@ -22,7 +22,7 @@ import (
 	"github.com/xorm-io/xorm"
 )
 
-// WebhookEventStatus represents the delivery state of a webhook event (stored in DB column "status")
+// WebhookEventStatus represents the delivery state of a webhook event (stored in DB column "state")
 type WebhookEventStatus string
 
 const (
@@ -31,8 +31,6 @@ const (
 	WebhookEventStatusFailed   WebhookEventStatus = "Failed"
 	WebhookEventStatusRetrying WebhookEventStatus = "Retrying"
 )
-
-// Note: existing DB rows may still hold legacy lowercase values (pending, success, …); normalize with an UPDATE if needed.
 
 // WebhookEvent represents a webhook delivery event with retry and replay capability
 type WebhookEvent struct {
@@ -44,7 +42,7 @@ type WebhookEvent struct {
 	Webhook      string             `xorm:"varchar(200) index" json:"webhook"`
 	Organization string             `xorm:"varchar(100) index" json:"organization"`
 	EventType    string             `xorm:"varchar(100)" json:"eventType"`
-	State        WebhookEventStatus `xorm:"varchar(50)" json:"state"`
+	State        WebhookEventStatus `xorm:"varchar(50) index" json:"state"`
 
 	// Payload stores the event data (Record)
 	Payload string `xorm:"mediumtext" json:"payload"`
@@ -98,10 +96,10 @@ func getWebhookEventSession(owner, organization, webhook string, state WebhookEv
 		session = session.Where("organization = ?", organization)
 	}
 	if webhook != "" {
-		session = session.Where("webhook_name = ?", webhook)
+		session = session.Where("webhook = ?", webhook)
 	}
 	if state != "" {
-		session = session.Where("status = ?", state)
+		session = session.Where("state = ?", state)
 	}
 
 	if offset > 0 {
@@ -144,10 +142,10 @@ func GetWebhookEventCount(owner, organization, webhook string, state WebhookEven
 		session = session.Where("organization = ?", organization)
 	}
 	if webhook != "" {
-		session = session.Where("webhook_name = ?", webhook)
+		session = session.Where("webhook = ?", webhook)
 	}
 	if state != "" {
-		session = session.Where("status = ?", state)
+		session = session.Where("state = ?", state)
 	}
 
 	return session.Count(&WebhookEvent{})
@@ -158,7 +156,7 @@ func GetPendingWebhookEvents(limit int) ([]*WebhookEvent, error) {
 	currentTime := util.GetCurrentTime()
 
 	err := ormer.Engine.
-		Where("status = ? OR status = ?", WebhookEventStatusPending, WebhookEventStatusRetrying).
+		Where("state = ? OR state = ?", WebhookEventStatusPending, WebhookEventStatusRetrying).
 		And("(next_retry_time = '' OR next_retry_time <= ?)", currentTime).
 		Asc("created_time").
 		Limit(limit).
@@ -225,7 +223,7 @@ func UpdateWebhookEventState(event *WebhookEvent, state WebhookEventStatus, stat
 	}
 
 	affected, dbErr := ormer.Engine.ID(core.PK{event.Owner, event.Name}).
-		Cols("status", "last_status_code", "last_response", "last_error", "updated_time", "attempt_count", "max_retries", "next_retry_time").
+		Cols("state", "last_status_code", "last_response", "last_error", "updated_time", "attempt_count", "max_retries", "next_retry_time").
 		Update(event)
 
 	if dbErr != nil {
