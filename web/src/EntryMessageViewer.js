@@ -459,15 +459,48 @@ class EntryMessageViewer extends React.Component {
     );
   }
 
+  getMessageEditorHeight(text) {
+    const lineHeight = 22;
+    const lines = (text || "").split("\n").length;
+    const visibleRows = Math.min(30, Math.max(10, lines));
+    return `${visibleRows * lineHeight}px`;
+  }
+
+  getMessageEditorLang(rawMessage) {
+    if (rawMessage === undefined || rawMessage === null || rawMessage === "") {
+      return undefined;
+    }
+    const t = typeof rawMessage;
+    if (t === "object") {
+      return "json";
+    }
+    if (t === "number" || t === "boolean" || t === "bigint") {
+      return "json";
+    }
+    if (t === "string") {
+      try {
+        JSON.parse(rawMessage);
+        return "json";
+      } catch (e) {
+        return undefined;
+      }
+    }
+    return undefined;
+  }
+
   renderMessageEditor() {
-    const message = this.formatJsonValue(this.props.entry?.message) || "";
-    const lang = this.shouldRenderTraceViewer() ? "json" : undefined;
+    const rawMessage = this.props.entry?.message;
+    const message = this.formatJsonValue(rawMessage) || "";
+    const lang = this.getMessageEditorLang(rawMessage);
 
     return (
       <Editor
         value={message}
         lang={lang}
         readOnly
+        fillWidth
+        dark
+        height={this.getMessageEditorHeight(message)}
       />
     );
   }
