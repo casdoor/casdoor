@@ -13,8 +13,9 @@
 // limitations under the License.
 
 import React from "react";
-import {Select, Spin} from "antd";
+import {Select} from "antd";
 import * as Setting from "../Setting";
+import {AiDots} from "./Loading";
 
 const SCROLL_BOTTOM_OFFSET = 20;
 
@@ -256,7 +257,7 @@ function PaginateSelect(props) {
   }, [hasMore, loadPage, onPopupScrollProp]);
 
   const mergedLoading = selectLoading ?? loading;
-  const mergedNotFound = mergedLoading ? <Spin size="small" /> : notFoundContent;
+  const mergedNotFound = mergedLoading ? <AiDots size="small" /> : notFoundContent;
 
   return (
     <Select

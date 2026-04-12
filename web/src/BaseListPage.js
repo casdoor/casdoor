@@ -20,6 +20,7 @@ import i18next from "i18next";
 import * as Setting from "./Setting";
 import * as TourConfig from "./TourConfig";
 import * as FormBackend from "./backend/FormBackend";
+import Loading from "./common/Loading";
 
 class BaseListPage extends React.Component {
   constructor(props) {
@@ -27,7 +28,7 @@ class BaseListPage extends React.Component {
     this.state = {
       classes: props,
       organizationName: this.props.match?.params.organizationName || Setting.getRequestOrganization(this.props.account),
-      data: [],
+      data: null,
       pagination: {
         current: 1,
         pageSize: 10,
@@ -199,6 +200,10 @@ class BaseListPage extends React.Component {
     });
   };
 
+  getTableLoading = () => {
+    return this.state.loading ? {tip: i18next.t("login:Loading")} : false;
+  };
+
   setIsTourVisible = () => {
     TourConfig.setIsTourVisible(false);
     this.setState({isTourVisible: false});
@@ -240,6 +245,10 @@ class BaseListPage extends React.Component {
           extra={<a href="/"><Button type="primary">{i18next.t("general:Back Home")}</Button></a>}
         />
       );
+    }
+
+    if (this.state.loading && this.state.data === null) {
+      return <Loading type="page" tip={i18next.t("login:Loading")} />;
     }
 
     return (

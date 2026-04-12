@@ -20,6 +20,7 @@ import {setOrgIsTourVisible, setTourLogo} from "./TourConfig";
 import {StyleProvider, legacyLogicalPropertiesTransformer} from "@ant-design/cssinjs";
 import {GithubOutlined, InfoCircleFilled, ShareAltOutlined} from "@ant-design/icons";
 import {Alert, Button, ConfigProvider, Drawer, FloatButton, Layout, Result, Tooltip} from "antd";
+import {AiDots} from "./common/Loading";
 import {Route, Switch, withRouter} from "react-router-dom";
 import CustomGithubCorner from "./common/CustomGithubCorner";
 import * as Conf from "./Conf";
@@ -613,6 +614,7 @@ class App extends Component {
       return (
         <ConfigProvider
           locale={getAntdLocale(Setting.getLanguage())}
+          spin={{indicator: <AiDots />}}
           theme={{
             token: {
               ...shadcnThemeToken,
@@ -757,6 +759,7 @@ class App extends Component {
         }
         <ConfigProvider
           locale={getAntdLocale(Setting.getLanguage())}
+          spin={{indicator: <AiDots />}}
           theme={{
             token: {
               ...shadcnThemeToken,

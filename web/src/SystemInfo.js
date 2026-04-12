@@ -12,7 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {Card, Col, Progress, Row, Spin, Tour} from "antd";
+import {Card, Col, Progress, Row, Tour} from "antd";
+import Loading from "./common/Loading";
 import * as SystemBackend from "./backend/SystemInfo";
 import React from "react";
 import * as Setting from "./Setting";
@@ -185,9 +186,9 @@ class SystemInfo extends React.Component {
         </div>
       </div>;
 
-    const latencyUi = this.state.prometheusInfo?.apiLatency === null || this.state.prometheusInfo?.apiLatency?.length <= 0 ? <Spin size="large" /> :
+    const latencyUi = this.state.prometheusInfo?.apiLatency === null || this.state.prometheusInfo?.apiLatency?.length <= 0 ? <Loading /> :
       <PrometheusInfoTable prometheusInfo={this.state.prometheusInfo} table={"latency"} />;
-    const throughputUi = this.state.prometheusInfo?.apiThroughput === null || this.state.prometheusInfo?.apiThroughput?.length <= 0 ? <Spin size="large" /> :
+    const throughputUi = this.state.prometheusInfo?.apiThroughput === null || this.state.prometheusInfo?.apiThroughput?.length <= 0 ? <Loading /> :
       <PrometheusInfoTable prometheusInfo={this.state.prometheusInfo} table={"throughput"} />;
     const link = this.state.versionInfo?.version !== "" ? `https://github.com/casdoor/casdoor/releases/tag/${this.state.versionInfo?.version}` : "";
     let versionText = this.state.versionInfo?.version !== "" ? this.state.versionInfo?.version : i18next.t("system:Unknown version");
@@ -201,32 +202,32 @@ class SystemInfo extends React.Component {
           <Row gutter={[16, 16]}>
             <Col span={6}>
               <Card id="network-card" title={i18next.t("system:Network Usage")} bordered={true} style={{textAlign: "center", height: "100%"}}>
-                {this.state.loading ? <Spin size="large" /> : networkUi}
+                {this.state.loading ? <Loading /> : networkUi}
               </Card>
             </Col>
             <Col span={6}>
               <Card id="cpu-card" title={i18next.t("system:CPU Usage")} bordered={true} style={{textAlign: "center", height: "100%"}}>
-                {this.state.loading ? <Spin size="large" /> : cpuUi}
+                {this.state.loading ? <Loading /> : cpuUi}
               </Card>
             </Col>
             <Col span={6}>
               <Card id="memory-card" title={i18next.t("system:Memory Usage")} bordered={true} style={{textAlign: "center", height: "100%"}}>
-                {this.state.loading ? <Spin size="large" /> : memUi}
+                {this.state.loading ? <Loading /> : memUi}
               </Card>
             </Col>
             <Col span={6}>
               <Card id="disk-card" title={i18next.t("system:Disk Usage")} bordered={true} style={{textAlign: "center", height: "100%"}}>
-                {this.state.loading ? <Spin size="large" /> : diskUi}
+                {this.state.loading ? <Loading /> : diskUi}
               </Card>
             </Col>
             <Col span={12}>
               <Card id="latency-card" title={i18next.t("system:API Latency")} bordered={true} style={{textAlign: "center", height: "100%"}}>
-                {this.state.loading ? <Spin size="large" /> : latencyUi}
+                {this.state.loading ? <Loading /> : latencyUi}
               </Card>
             </Col>
             <Col span={12}>
               <Card id="throughput-card" title={i18next.t("system:API Throughput")} bordered={true} style={{textAlign: "center", height: "100%"}}>
-                {this.state.loading ? <Spin size="large" /> : throughputUi}
+                {this.state.loading ? <Loading /> : throughputUi}
               </Card>
             </Col>
             <Col span={24}>
@@ -260,22 +261,22 @@ class SystemInfo extends React.Component {
         <Row gutter={[16, 16]}>
           <Col span={24}>
             <Card title={i18next.t("system:Network Usage")} bordered={true} style={{textAlign: "center", width: "100%"}}>
-              {this.state.loading ? <Spin size="large" /> : networkUi}
+              {this.state.loading ? <Loading /> : networkUi}
             </Card>
           </Col>
           <Col span={24}>
             <Card title={i18next.t("system:CPU Usage")} bordered={true} style={{textAlign: "center", width: "100%"}}>
-              {this.state.loading ? <Spin size="large" /> : cpuUi}
+              {this.state.loading ? <Loading /> : cpuUi}
             </Card>
           </Col>
           <Col span={24}>
             <Card title={i18next.t("system:Memory Usage")} bordered={true} style={{textAlign: "center", width: "100%"}}>
-              {this.state.loading ? <Spin size="large" /> : memUi}
+              {this.state.loading ? <Loading /> : memUi}
             </Card>
           </Col>
           <Col span={24}>
             <Card title={i18next.t("system:Disk Usage")} bordered={true} style={{textAlign: "center", width: "100%"}}>
-              {this.state.loading ? <Spin size="large" /> : diskUi}
+              {this.state.loading ? <Loading /> : diskUi}
             </Card>
           </Col>
           <Col span={24}>

@@ -277,7 +277,7 @@ class WebhookEventListPage extends React.Component {
         rowKey={(record) => `${record.owner}/${record.name}`}
         columns={columns}
         dataSource={this.state.data}
-        loading={this.state.loading}
+        loading={this.getTableLoading()}
         pagination={{
           ...this.state.pagination,
           showTotal: (total) => i18next.t("general:{total} in total").replace("{total}", total),

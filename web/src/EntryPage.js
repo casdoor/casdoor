@@ -14,8 +14,8 @@
 
 import React from "react";
 import {Redirect, Route, Switch} from "react-router-dom";
-import {Spin} from "antd";
 import i18next from "i18next";
+import Loading from "./common/Loading";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
 import PricingPage from "./pricing/PricingPage";
 import * as Setting from "./Setting";
@@ -111,8 +111,11 @@ class EntryPage extends React.Component {
         <CustomHead headerHtml={this.state.application?.headerHtml} />
         <div className={`${isDarkMode ? "loginBackgroundDark" : "loginBackground"}`}
           style={{backgroundImage: Setting.inIframe() ? null : (Setting.isMobile() ? `url(${this.state.application?.formBackgroundUrlMobile})` : `url(${this.state.application?.formBackgroundUrl})`)}}>
-          <Spin size="large" spinning={this.state.application === undefined && this.state.pricing === undefined} tip={i18next.t("login:Loading")}
-            style={{width: "100%", margin: "0 auto", position: "absolute"}} />
+          <Loading
+            spinning={this.state.application === undefined && this.state.pricing === undefined}
+            tip={i18next.t("login:Loading")}
+            style={{position: "absolute", width: "100%", top: 0, bottom: 0}}
+          />
           <Switch>
             <Route exact path="/signup" render={(props) => this.renderHomeIfLoggedIn(<SignupPage {...this.props} application={this.state.application} applicationName={authConfig.appName} onUpdateApplication={onUpdateApplication} {...props} />)} />
             <Route exact path="/signup/:applicationName" render={(props) => this.renderHomeIfLoggedIn(<SignupPage {...this.props} application={this.state.application} onUpdateApplication={onUpdateApplication} {...props} />)} />

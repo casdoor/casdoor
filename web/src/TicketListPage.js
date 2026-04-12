@@ -207,7 +207,7 @@ class TicketListPage extends BaseListPage {
               <Button type="primary" size="small" onClick={this.addTicket.bind(this)}>{i18next.t("general:Add")}</Button>
             </div>
           )}
-          loading={this.state.loading}
+          loading={this.getTableLoading()}
           onChange={this.handleTableChange}
         />
       </div>

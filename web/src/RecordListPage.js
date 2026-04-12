@@ -236,7 +236,7 @@ class RecordListPage extends BaseListPage {
               {i18next.t("general:Records")}&nbsp;&nbsp;&nbsp;&nbsp;
             </div>
           )}
-          loading={this.state.loading}
+          loading={this.getTableLoading()}
           onChange={this.handleTableChange}
         />
         {/* TODO: Should be packaged as a component after confirm it run correctly.*/}

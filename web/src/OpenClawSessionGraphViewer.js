@@ -5,11 +5,11 @@ import {
   Descriptions,
   Drawer,
   Row,
-  Spin,
   Tag,
   Typography
 } from "antd";
 import i18next from "i18next";
+import Loading from "./common/Loading";
 import ReactFlow, {
   Background,
   Controls,
@@ -335,15 +335,7 @@ class OpenClawSessionGraphViewer extends React.Component {
   renderContent() {
     if (this.state.loading) {
       return (
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            padding: "48px 0",
-          }}
-        >
-          <Spin />
-        </div>
+        <Loading />
       );
     }
 

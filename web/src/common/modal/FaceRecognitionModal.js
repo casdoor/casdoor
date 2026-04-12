@@ -14,7 +14,8 @@
 
 import * as faceapi from "face-api.js";
 import React, {useState} from "react";
-import {Button, Modal, Progress, Space, Spin, message} from "antd";
+import {Button, Modal, Progress, Space, message} from "antd";
+import Loading from "../Loading";
 import i18next from "i18next";
 import Dragger from "antd/es/upload/Dragger";
 import * as Setting from "../../Setting";
@@ -240,10 +241,7 @@ const FaceRecognitionModal = (props) => {
                 </div>
                 :
                 <div>
-                  <Spin tip={i18next.t("login:Loading")} size="large"
-                    style={{display: "flex", justifyContent: "center", alignContent: "center"}}>
-                    <div className="content" />
-                  </Spin>
+                  <Loading tip={i18next.t("login:Loading")} />
                 </div>
             }
           </div>

@@ -13,7 +13,8 @@
 // limitations under the License.
 
 import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
-import {Card, Col, Progress, Row, Spin, Statistic, Tour} from "antd";
+import {Card, Col, Progress, Row, Statistic, Tour} from "antd";
+import Loading from "../common/Loading";
 import {ApartmentOutlined, AppstoreOutlined, ArrowUpOutlined, KeyOutlined, SafetyOutlined, TeamOutlined} from "@ant-design/icons";
 import * as echarts from "echarts";
 import i18next from "i18next";
@@ -340,9 +341,7 @@ const Dashboard = (props) => {
 
   if (loading && !dashboardData) {
     return (
-      <div style={{display: "flex", justifyContent: "center", alignItems: "center", height: "calc(100vh - 120px)"}}>
-        <Spin size="large" tip={i18next.t("login:Loading")} />
-      </div>
+      <Loading type="page" tip={i18next.t("login:Loading")} />
     );
   }
 

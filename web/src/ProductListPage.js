@@ -288,7 +288,7 @@ class ProductListPage extends BaseListPage {
               </div>
             );
           }}
-          loading={this.state.loading}
+          loading={this.getTableLoading()}
           onChange={this.handleTableChange}
         />
       </div>

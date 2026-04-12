@@ -218,7 +218,7 @@ class RuleListPage extends BaseListPage {
         columns={columns}
         rowKey="name"
         pagination={this.state.pagination}
-        loading={this.state.loading}
+        loading={this.getTableLoading()}
         onChange={this.handleTableChange}
         size="middle"
         bordered

@@ -13,7 +13,8 @@
 // limitations under the License.
 
 import React from "react";
-import {Card, Spin} from "antd";
+import {Card} from "antd";
+import Loading from "../common/Loading";
 import {withRouter} from "react-router-dom";
 import * as AuthBackend from "./AuthBackend";
 import * as Setting from "../Setting";
@@ -75,11 +76,7 @@ class CasLogout extends React.Component {
   render() {
     return (
       <Card>
-        <div style={{display: "flex", justifyContent: "center", alignItems: "center"}}>
-          {
-            <Spin size="large" tip={i18next.t("login:Logging out...")} style={{paddingTop: "10%"}} />
-          }
-        </div>
+        <Loading type="page" tip={i18next.t("login:Logging out...")} />
       </Card>
     );
   }

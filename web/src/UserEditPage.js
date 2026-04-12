@@ -15,10 +15,11 @@
 import React from "react";
 import {
   Button, Card, Col, Form, Input, InputNumber, Layout, List,
-  Menu, Result, Row, Select, Space, Spin, Switch, Tabs, Tag, Tooltip
+  Menu, Result, Row, Select, Space, Switch, Tabs, Tag, Tooltip
 } from "antd";
 import {withRouter} from "react-router-dom";
 import {TotpMfaType} from "./auth/MfaSetupPage";
+import Loading from "./common/Loading";
 import * as GroupBackend from "./backend/GroupBackend";
 import * as UserBackend from "./backend/UserBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
@@ -1593,7 +1594,7 @@ class UserEditPage extends React.Component {
     return (
       <div>
         {
-          this.state.loading ? <Spin size="large" style={{marginLeft: "50%", marginTop: "10%"}} /> : (
+          this.state.loading ? <Loading type="page" /> : (
             this.state.user !== null ? this.renderUser() :
               <Result
                 status="404"

@@ -1,5 +1,17 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
 
+/* AI-themed loading dots animation used by common/Loading.js */
+@keyframes casdoor-ai-bounce {
+  0%, 60%, 100% {
+    transform: translateY(0) scale(0.85);
+    opacity: 0.5;
+  }
+  30% {
+    transform: translateY(-10px) scale(1.1);
+    opacity: 1;
+  }
+}
+
 html {
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE/Edge */

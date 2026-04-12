@@ -244,7 +244,7 @@ class PolicyTable extends React.Component {
           current: this.state.page,
         }}
         columns={columns} dataSource={table} rowKey="key" size="middle" bordered
-        loading={this.state.loading}
+        loading={this.getTableLoading()}
         title={() => (
           <div>
             <Button disabled={this.state.editingIndex !== "" || this.props.enforcer.model === "" || this.props.enforcer.adapter === "" || Setting.builtInObject(this.props.enforcer)} style={{marginRight: "5px"}} type="primary" size="small" onClick={() => this.addRow(table)}>{i18next.t("general:Add")}</Button>

@@ -13,7 +13,8 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Empty, Input, Row, Select, Spin, Tag, Typography} from "antd";
+import {Button, Card, Col, Empty, Input, Row, Select, Tag, Typography} from "antd";
+import Loading from "./common/Loading";
 import moment from "moment";
 import * as Setting from "./Setting";
 import * as ServerBackend from "./backend/ServerBackend";
@@ -241,9 +242,7 @@ class ServerStorePage extends React.Component {
         </div>
         <Title level={4} style={{marginBottom: "12px"}}>{i18next.t("general:MCP Store")}</Title>
         {this.state.onlineListLoading ? (
-          <div style={{textAlign: "center", padding: "36px 0"}}>
-            <Spin />
-          </div>
+          <Loading />
         ) : filteredServers.length === 0 ? (
           <Empty description={i18next.t("general:No data")} />
         ) : (

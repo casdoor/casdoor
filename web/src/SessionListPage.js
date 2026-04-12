@@ -154,7 +154,7 @@ class SessionListPage extends BaseListPage {
               {i18next.t("general:Sessions")}&nbsp;&nbsp;&nbsp;&nbsp;
             </div>
           )}
-          loading={this.state.loading}
+          loading={this.getTableLoading()}
           onChange={this.handleTableChange}
         />
       </div>

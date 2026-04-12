@@ -13,7 +13,8 @@
 // limitations under the License.
 
 import React, {Suspense, lazy} from "react";
-import {Button, Checkbox, Col, Form, Input, Result, Spin, Tabs, message} from "antd";
+import {Button, Checkbox, Col, Form, Input, Result, Tabs, message} from "antd";
+import Loading from "../common/Loading";
 import {ArrowLeftOutlined, LockOutlined, UserOutlined} from "@ant-design/icons";
 import {withRouter} from "react-router-dom";
 import * as UserWebauthnBackend from "../backend/UserWebauthnBackend";
@@ -1552,9 +1553,7 @@ class LoginPage extends React.Component {
     if (this.props.preview !== "auto" && !Setting.isPasswordEnabled(application) && !Setting.isCodeSigninEnabled(application) && !Setting.isWebAuthnEnabled(application) && !Setting.isLdapEnabled(application) && visibleOAuthProviderItems.length === 1) {
       Setting.goToLink(Provider.getAuthUrl(application, visibleOAuthProviderItems[0].provider, this.state.mode ?? "signup"));
       return (
-        <div style={{display: "flex", justifyContent: "center", alignItems: "center", width: "100%"}}>
-          <Spin size="large" tip={i18next.t("login:Signing in...")} />
-        </div>
+        <Loading type="page" tip={i18next.t("login:Signing in...")} />
       );
     }
 

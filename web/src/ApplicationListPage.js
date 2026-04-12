@@ -300,13 +300,13 @@ class ApplicationListPage extends BaseListPage {
         title: i18next.t("general:Action"),
         dataIndex: "",
         key: "op",
-        width: "230px",
+        width: "280px",
         fixed: (Setting.isMobile()) ? "false" : "right",
         render: (text, record, index) => {
           return (
             <div>
+              <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} onClick={() => this.copyApplication(index)}>{i18next.t("general:Duplicate")}</Button>
               <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => this.props.history.push(`/applications/${record.organization}/${record.name}`)}>{i18next.t("general:Edit")}</Button>
-              <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} onClick={() => this.copyApplication(index)}>{i18next.t("general:Copy")}</Button>
               <PopconfirmModal
                 title={i18next.t("general:Sure to delete") + `: ${record.name} ?`}
                 onConfirm={() => this.deleteApplication(index)}
@@ -336,7 +336,7 @@ class ApplicationListPage extends BaseListPage {
               <Button type="primary" size="small" onClick={this.addApplication.bind(this)}>{i18next.t("general:Add")}</Button>
             </div>
           )}
-          loading={this.state.loading}
+          loading={this.getTableLoading()}
           onChange={this.handleTableChange}
         />
       </div>
