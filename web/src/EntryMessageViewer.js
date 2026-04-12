@@ -541,7 +541,7 @@ class EntryMessageViewer extends React.Component {
         render: value => value || "-",
       },
       {
-        title: i18next.t("entry:Start time"),
+        title: i18next.t("subscription:Start time"),
         dataIndex: ["span", "startTimeUnixNano"],
         key: "startTimeUnixNano",
         width: 220,
@@ -657,7 +657,7 @@ class EntryMessageViewer extends React.Component {
           <Descriptions.Item label={i18next.t("general:Status")}>
             {this.getSpanStatus(span)}
           </Descriptions.Item>
-          <Descriptions.Item label={i18next.t("entry:Start time")}>
+          <Descriptions.Item label={i18next.t("subscription:Start time")}>
             {this.formatTraceTimestamp(span?.startTimeUnixNano)}
           </Descriptions.Item>
           <Descriptions.Item label={i18next.t("subscription:End time")}>

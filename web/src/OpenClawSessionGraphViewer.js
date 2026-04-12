@@ -52,7 +52,7 @@ function getStatusTag(node) {
   return node.ok ? (
     <Tag color="success">{i18next.t("general:OK")}</Tag>
   ) : (
-    <Tag color="error">{i18next.t("entry:Failed")}</Tag>
+    <Tag color="error">{i18next.t("webhook:Failed")}</Tag>
   );
 }
 
@@ -237,13 +237,13 @@ class OpenClawSessionGraphViewer extends React.Component {
       <div
         style={{display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 12}}
       >
-        <Tag color="default">{i18next.t("entry:Nodes")}: {stats.totalNodes}</Tag>
+        <Tag color="default">{i18next.t("site:Nodes")}: {stats.totalNodes}</Tag>
         <Tag color="blue">{i18next.t("entry:Tasks")}: {stats.taskCount}</Tag>
         <Tag color="orange">{i18next.t("entry:Tool calls")}: {stats.toolCallCount}</Tag>
         <Tag color="green">{i18next.t("entry:Results")}: {stats.toolResultCount}</Tag>
         <Tag color="purple">{i18next.t("entry:Finals")}: {stats.finalCount}</Tag>
         {stats.failedCount > 0 ? (
-          <Tag color="red">{i18next.t("entry:Failed")}: {stats.failedCount}</Tag>
+          <Tag color="red">{i18next.t("webhook:Failed")}: {stats.failedCount}</Tag>
         ) : null}
       </div>
     );
@@ -308,7 +308,7 @@ class OpenClawSessionGraphViewer extends React.Component {
             <Descriptions.Item label={i18next.t("entry:Target")}>
               {getOpenClawNodeTarget(node) || "-"}
             </Descriptions.Item>
-            <Descriptions.Item label={i18next.t("entry:Tool")}>
+            <Descriptions.Item label={i18next.t("general:Tool")}>
               {node.tool || "-"}
             </Descriptions.Item>
             <Descriptions.Item label={i18next.t("entry:Query")}>
@@ -317,7 +317,7 @@ class OpenClawSessionGraphViewer extends React.Component {
             <Descriptions.Item label={i18next.t("general:URL")}>
               {this.renderNodeText(node.url)}
             </Descriptions.Item>
-            <Descriptions.Item label={i18next.t("entry:Path")}>
+            <Descriptions.Item label={i18next.t("general:Path")}>
               {this.renderNodeText(node.path)}
             </Descriptions.Item>
             <Descriptions.Item label={i18next.t("general:Error")}>
