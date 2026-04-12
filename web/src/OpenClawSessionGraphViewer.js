@@ -24,6 +24,7 @@ import * as EntryBackend from "./backend/EntryBackend";
 import * as Setting from "./Setting";
 import {
   buildOpenClawFlowElements,
+  formatOpenClawSessionGraphTimestamp,
   getOpenClawNodeColor,
   getOpenClawNodeTarget
 } from "./OpenClawSessionGraphUtils";
@@ -56,7 +57,7 @@ function OpenClawNodeHoverCard({node}) {
     {
       key: "timestamp",
       label: i18next.t("general:Timestamp"),
-      value: node.timestamp || "-",
+      value: formatOpenClawSessionGraphTimestamp(node.timestamp),
     },
   ];
 
@@ -87,11 +88,11 @@ function OpenClawNodeHoverCard({node}) {
   const title = node.summary || i18next.t("entry:Session graph node");
 
   return (
-    <div style={{maxWidth: 420}}>
-      <div style={{fontWeight: 600, marginBottom: 8, wordBreak: "break-word"}}>{title}</div>
-      <div style={{display: "grid", rowGap: 6}}>
+    <div style={{maxWidth: 760, fontSize: 12, lineHeight: 1.5}}>
+      <div style={{fontSize: 13, fontWeight: 600, marginBottom: 7, wordBreak: "break-word"}}>{title}</div>
+      <div style={{display: "grid", rowGap: 5}}>
         {rows.map((row) => (
-          <div key={row.key} style={{display: "grid", gridTemplateColumns: "92px minmax(0, 1fr)", columnGap: 8}}>
+          <div key={row.key} style={{display: "grid", gridTemplateColumns: "88px minmax(0, 1fr)", columnGap: 8}}>
             <span style={{color: "#94a3b8"}}>{row.label}</span>
             <span style={{wordBreak: "break-word", overflowWrap: "anywhere"}}>{row.value}</span>
           </div>
@@ -133,7 +134,10 @@ function OpenClawNodeLabel({title, subtitle, node}) {
     <Tooltip
       placement="top"
       mouseEnterDelay={0.12}
-      overlayInnerStyle={{maxWidth: 460}}
+      styles={{
+        root: {maxWidth: 800},
+        container: {maxWidth: 800},
+      }}
       title={<OpenClawNodeHoverCard node={node} />}
       destroyTooltipOnHide
     >
@@ -169,7 +173,7 @@ function OpenClawSessionGraphCanvas(props) {
   const {
     graph,
     onNodeSelect,
-    height = 460,
+    height = 640,
     fullscreen = false,
     onEnterFullscreen,
     onExitFullscreen,
@@ -560,7 +564,7 @@ class OpenClawSessionGraphViewer extends React.Component {
             <ReactFlowProvider>
               <OpenClawSessionGraphCanvas
                 graph={this.state.graph}
-                height={graphFullscreen ? "100%" : 460}
+                height={graphFullscreen ? "100%" : 640}
                 fullscreen={graphFullscreen}
                 topLeftOverlay={graphFullscreen ? this.renderStats() : null}
                 onEnterFullscreen={() => this.setState({graphFullscreen: true})}

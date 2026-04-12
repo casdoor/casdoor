@@ -206,6 +206,21 @@ function parseTimestampMillis(timestamp) {
   return milliseconds;
 }
 
+export function formatOpenClawSessionGraphTimestamp(timestamp) {
+  const ts = `${timestamp ?? ""}`.trim();
+  if (!ts) {
+    return "-";
+  }
+  const ms = parseTimestampMillis(ts);
+  if (ms === null) {
+    return ts;
+  }
+  const d = new Date(ms);
+  const pad = (n, len = 2) => `${n}`.padStart(len, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} `
+    + `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}.${pad(d.getMilliseconds(), 3)}`;
+}
+
 function buildTreeIndexes(graph) {
   const sourceNodes = Array.isArray(graph?.nodes) ? graph.nodes : [];
   const sourceEdges = Array.isArray(graph?.edges) ? graph.edges : [];
