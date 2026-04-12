@@ -63,8 +63,10 @@ type OpenClawSessionGraphStats struct {
 }
 
 type openClawSessionGraphBuilder struct {
-	graph *OpenClawSessionGraph
-	nodes map[string]*OpenClawSessionGraphNode
+	graph    *OpenClawSessionGraph
+	nodes    map[string]*OpenClawSessionGraphNode
+	edges    []*OpenClawSessionGraphEdge
+	edgeKeys map[string]struct{}
 }
 
 type openClawSessionGraphRecord struct {
@@ -73,10 +75,12 @@ type openClawSessionGraphRecord struct {
 }
 
 type openClawAssistantStepGroup struct {
-	ParentID  string
-	Timestamp string
-	ToolNames []string
-	Text      string
+	ParentID          string
+	Timestamp         string
+	ToolNames         []string
+	Text              string
+	ToolCallNodeIDs   []string
+	ToolResultNodeIDs []string
 }
 
 func GetOpenClawSessionGraph(id string) (*OpenClawSessionGraph, error) {
@@ -229,6 +233,7 @@ func buildOpenClawSessionGraphFromEntries(anchorPayload openClawBehaviorPayload,
 	assistantGroups := map[string]*openClawAssistantStepGroup{}
 	toolCallNodesByAssistant := map[string][]*OpenClawSessionGraphNode{}
 	toolCallNodeIDByToolCallID := map[string]string{}
+	toolCallNodeIDToAssistantID := map[string]string{}
 	allToolCallNodes := []*OpenClawSessionGraphNode{}
 	toolResultRecords := []openClawSessionGraphRecord{}
 
@@ -271,6 +276,9 @@ func buildOpenClawSessionGraphFromEntries(anchorPayload openClawBehaviorPayload,
 			if payload.ToolCallID != "" && toolCallNodeIDByToolCallID[payload.ToolCallID] == "" {
 				toolCallNodeIDByToolCallID[payload.ToolCallID] = nodeID
 			}
+			if toolCallNodeIDToAssistantID[nodeID] == "" {
+				toolCallNodeIDToAssistantID[nodeID] = payload.EntryID
+			}
 
 			group := assistantGroups[payload.EntryID]
 			if group == nil {
@@ -284,6 +292,7 @@ func buildOpenClawSessionGraphFromEntries(anchorPayload openClawBehaviorPayload,
 			group.Timestamp = chooseEarlierTimestamp(group.Timestamp, payload.Timestamp)
 			group.ToolNames = append(group.ToolNames, payload.Tool)
 			group.Text = firstNonEmpty(group.Text, payload.AssistantText)
+			group.ToolCallNodeIDs = appendUniqueString(group.ToolCallNodeIDs, nodeID)
 		case "tool_result":
 			toolResultRecords = append(toolResultRecords, record)
 		case "final":
@@ -356,10 +365,118 @@ func buildOpenClawSessionGraphFromEntries(anchorPayload openClawBehaviorPayload,
 			Text:             payload.Text,
 		})
 		appendGraphNodeEntryName(nodeIDsByEntryName, record.Entry, payload.EntryID)
+		if assistantID := findAssistantStepIDForToolResult(parentID, toolCallNodeIDToAssistantID); assistantID != "" {
+			if group := assistantGroups[assistantID]; group != nil {
+				group.ToolResultNodeIDs = appendUniqueString(group.ToolResultNodeIDs, payload.EntryID)
+			}
+		}
 	}
 
+	addOpenClawControlFlowEdges(builder, assistantIDs, assistantGroups)
 	markStoredGraphAnchor(builder, anchorPayload, anchorEntryName, nodeIDsByEntryName)
 	return builder.finalize()
+}
+
+func addOpenClawControlFlowEdges(builder *openClawSessionGraphBuilder, assistantIDs []string, assistantGroups map[string]*openClawAssistantStepGroup) {
+	if builder == nil {
+		return
+	}
+
+	for _, node := range builder.nodes {
+		if node == nil || node.Kind != "task" {
+			continue
+		}
+		builder.addEdge(node.ParentID, node.ID)
+	}
+
+	for _, assistantID := range assistantIDs {
+		group := assistantGroups[assistantID]
+		if group == nil {
+			continue
+		}
+		for _, toolCallNodeID := range group.ToolCallNodeIDs {
+			builder.addEdge(assistantID, toolCallNodeID)
+		}
+	}
+
+	for _, node := range builder.nodes {
+		if node == nil || node.Kind != "tool_result" {
+			continue
+		}
+		builder.addEdge(node.ParentID, node.ID)
+	}
+
+	downstreamRawParents := map[string][]string{}
+	for _, node := range builder.nodes {
+		if node == nil {
+			continue
+		}
+		if node.Kind != "assistant_step" && node.Kind != "final" {
+			continue
+		}
+		if parentID := strings.TrimSpace(node.ParentID); parentID != "" {
+			downstreamRawParents[parentID] = appendUniqueString(downstreamRawParents[parentID], node.ID)
+		}
+	}
+
+	joinedDownstreamNodeIDs := map[string]struct{}{}
+	for _, assistantID := range assistantIDs {
+		group := assistantGroups[assistantID]
+		if group == nil {
+			continue
+		}
+
+		toolCallNodeIDs := uniqueStrings(group.ToolCallNodeIDs)
+		toolResultNodeIDs := uniqueStrings(group.ToolResultNodeIDs)
+		if len(toolCallNodeIDs) <= 1 || len(toolResultNodeIDs) <= 1 {
+			continue
+		}
+
+		downstreamNodeIDs := []string{}
+		for _, toolResultNodeID := range toolResultNodeIDs {
+			downstreamNodeIDs = appendUniqueStrings(downstreamNodeIDs, downstreamRawParents[toolResultNodeID])
+		}
+		if len(downstreamNodeIDs) == 0 {
+			continue
+		}
+
+		joinID := fmt.Sprintf("join:%s", assistantID)
+		joinTimestamp := ""
+		for _, toolResultNodeID := range toolResultNodeIDs {
+			if node := builder.nodes[toolResultNodeID]; node != nil {
+				joinTimestamp = chooseLaterTimestamp(joinTimestamp, node.Timestamp)
+			}
+		}
+		builder.addNode(&OpenClawSessionGraphNode{
+			ID:        joinID,
+			Kind:      "join",
+			Timestamp: joinTimestamp,
+			Summary:   "join",
+		})
+		for _, toolResultNodeID := range toolResultNodeIDs {
+			builder.addEdge(toolResultNodeID, joinID)
+		}
+		for _, downstreamNodeID := range downstreamNodeIDs {
+			builder.addEdge(joinID, downstreamNodeID)
+			if downstreamNode := builder.nodes[downstreamNodeID]; downstreamNode != nil {
+				downstreamNode.ParentID = joinID
+			}
+			joinedDownstreamNodeIDs[downstreamNodeID] = struct{}{}
+		}
+	}
+
+	for _, node := range builder.nodes {
+		if node == nil {
+			continue
+		}
+		switch node.Kind {
+		case "assistant_step", "final":
+			if _, ok := joinedDownstreamNodeIDs[node.ID]; ok {
+				continue
+			}
+			builder.addEdge(node.ParentID, node.ID)
+		}
+	}
 }
 
 func appendGraphNodeEntryName(index map[string][]string, entry *Entry, nodeID string) {
@@ -507,7 +624,9 @@ func newOpenClawSessionGraphBuilder() *openClawSessionGraphBuilder {
 			Nodes: []*OpenClawSessionGraphNode{},
 			Edges: []*OpenClawSessionGraphEdge{},
 		},
-		nodes: map[string]*OpenClawSessionGraphNode{},
+		nodes:    map[string]*OpenClawSessionGraphNode{},
+		edges:    []*OpenClawSessionGraphEdge{},
+		edgeKeys: map[string]struct{}{},
 	}
 }
 
@@ -544,6 +663,28 @@ func (b *openClawSessionGraphBuilder) addNode(node *OpenClawSessionGraphNode) {
 	b.nodes[cloned.ID] = &cloned
 }
 
+func (b *openClawSessionGraphBuilder) addEdge(source, target string) {
+	if b == nil {
+		return
+	}
+
+	source = strings.TrimSpace(source)
+	target = strings.TrimSpace(target)
+	if source == "" || target == "" || source == target {
+		return
+	}
+
+	key := fmt.Sprintf("%s->%s", source, target)
+	if _, ok := b.edgeKeys[key]; ok {
+		return
+	}
+	b.edgeKeys[key] = struct{}{}
+	b.edges = append(b.edges, &OpenClawSessionGraphEdge{
+		Source: source,
+		Target: target,
+	})
+}
+
 func (b *openClawSessionGraphBuilder) finalize() *OpenClawSessionGraph {
 	if b == nil || b.graph == nil {
 		return nil
@@ -567,21 +708,15 @@ func (b *openClawSessionGraphBuilder) finalize() *OpenClawSessionGraph {
 		updateOpenClawSessionGraphStats(&b.graph.Stats, node)
 	}
 
-	edgeKeys := map[string]struct{}{}
-	b.graph.Edges = []*OpenClawSessionGraphEdge{}
-	for _, node := range b.graph.Nodes {
-		if node.ParentID == "" || b.nodes[node.ParentID] == nil {
+	b.graph.Edges = make([]*OpenClawSessionGraphEdge, 0, len(b.edges))
+	for _, edge := range b.edges {
+		if edge == nil {
 			continue
 		}
-		key := fmt.Sprintf("%s->%s", node.ParentID, node.ID)
-		if _, ok := edgeKeys[key]; ok {
+		if b.nodes[edge.Source] == nil || b.nodes[edge.Target] == nil {
 			continue
 		}
-		edgeKeys[key] = struct{}{}
-		b.graph.Edges = append(b.graph.Edges, &OpenClawSessionGraphEdge{
-			Source: node.ParentID,
-			Target: node.ID,
-		})
+		b.graph.Edges = append(b.graph.Edges, edge)
 	}
 
 	sort.Slice(b.graph.Edges, func(i, j int) bool {
@@ -637,6 +772,42 @@ func updateOpenClawSessionGraphStats(stats *OpenClawSessionGraphStats, node *Ope
 	case "final":
 		stats.FinalCount++
 	}
+}
+
+func findAssistantStepIDForToolResult(toolCallNodeID string, toolCallNodeIDToAssistantID map[string]string) string {
+	toolCallNodeID = strings.TrimSpace(toolCallNodeID)
+	if toolCallNodeID == "" {
+		return ""
+	}
+	return toolCallNodeIDToAssistantID[toolCallNodeID]
+}
+
+func appendUniqueString(values []string, value string) []string {
+	value = strings.TrimSpace(value)
+	if value == "" {
+		return values
+	}
+	for _, existing := range values {
+		if strings.TrimSpace(existing) == value {
+			return values
+		}
+	}
+	return append(values, value)
+}
+
+func appendUniqueStrings(values []string, additions []string) []string {
+	for _, addition := range additions {
+		values = appendUniqueString(values, addition)
+	}
+	return values
+}
+
+func uniqueStrings(values []string) []string {
+	result := make([]string, 0, len(values))
+	for _, value := range values {
+		result = appendUniqueString(result, value)
+	}
+	return result
 }
 
 func buildAssistantStepSummary(toolNames []string) string {
@@ -739,6 +910,21 @@ func chooseEarlierTimestamp(current, next string) string {
 		return current
 	}
 	if compareOpenClawGraphTimestamps(next, current) < 0 {
+		return next
+	}
+	return current
+}
+
+func chooseLaterTimestamp(current, next string) string {
+	current = strings.TrimSpace(current)
+	next = strings.TrimSpace(next)
+	if current == "" {
+		return next
+	}
+	if next == "" {
+		return current
+	}
+	if compareOpenClawGraphTimestamps(next, current) > 0 {
 		return next
 	}
 	return current

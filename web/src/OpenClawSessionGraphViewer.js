@@ -6,6 +6,7 @@ import {
   Drawer,
   Row,
   Tag,
+  Tooltip,
   Typography
 } from "antd";
 import i18next from "i18next";
@@ -27,16 +28,122 @@ import {
 
 const {Text} = Typography;
 
-function OpenClawNodeLabel({title, subtitle}) {
+function getNodeStatusText(node) {
+  if (node?.kind !== "tool_result" || node?.ok === undefined || node?.ok === null) {
+    return "";
+  }
+
+  return node.ok
+    ? i18next.t("general:OK")
+    : i18next.t("entry:Failed");
+}
+
+function OpenClawNodeHoverCard({node}) {
+  if (!node) {
+    return null;
+  }
+
+  const status = getNodeStatusText(node);
+  const target = getOpenClawNodeTarget(node);
+  const rows = [
+    {
+      key: "type",
+      label: i18next.t("general:Type"),
+      value: node.kind || "-",
+    },
+    {
+      key: "timestamp",
+      label: i18next.t("general:Timestamp"),
+      value: node.timestamp || "-",
+    },
+  ];
+
+  if (node.tool) {
+    rows.push({
+      key: "tool",
+      label: i18next.t("entry:Tool"),
+      value: node.tool,
+    });
+  }
+
+  if (target) {
+    rows.push({
+      key: "target",
+      label: i18next.t("entry:Target"),
+      value: target,
+    });
+  }
+
+  if (status) {
+    rows.push({
+      key: "status",
+      label: i18next.t("general:Status"),
+      value: status,
+    });
+  }
+
+  const title = node.summary || i18next.t("entry:Session graph node");
+
   return (
-    <div style={{display: "flex", flexDirection: "column", gap: "6px"}}>
-      <div style={{fontSize: 13, fontWeight: 600, lineHeight: 1.35}}>
-        {title || "-"}
-      </div>
-      <div style={{fontSize: 12, color: "#64748b", lineHeight: 1.35}}>
-        {subtitle || "-"}
+    <div style={{maxWidth: 420}}>
+      <div style={{fontWeight: 600, marginBottom: 8, wordBreak: "break-word"}}>{title}</div>
+      <div style={{display: "grid", rowGap: 6}}>
+        {rows.map((row) => (
+          <div key={row.key} style={{display: "grid", gridTemplateColumns: "92px minmax(0, 1fr)", columnGap: 8}}>
+            <span style={{color: "#94a3b8"}}>{row.label}</span>
+            <span style={{wordBreak: "break-word", overflowWrap: "anywhere"}}>{row.value}</span>
+          </div>
+        ))}
       </div>
     </div>
+  );
+}
+
+function OpenClawNodeLabel({title, subtitle, node}) {
+  const titleStyle = {
+    fontSize: 13,
+    fontWeight: 600,
+    lineHeight: 1.35,
+    whiteSpace: "normal",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    wordBreak: "break-word",
+    overflowWrap: "anywhere",
+    display: "-webkit-box",
+    WebkitLineClamp: 2,
+    WebkitBoxOrient: "vertical",
+  };
+  const subtitleStyle = {
+    fontSize: 12,
+    color: "#64748b",
+    lineHeight: 1.35,
+    whiteSpace: "normal",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    wordBreak: "break-word",
+    overflowWrap: "anywhere",
+    display: "-webkit-box",
+    WebkitLineClamp: 2,
+    WebkitBoxOrient: "vertical",
+  };
+
+  return (
+    <Tooltip
+      placement="top"
+      mouseEnterDelay={0.12}
+      overlayInnerStyle={{maxWidth: 460}}
+      title={<OpenClawNodeHoverCard node={node} />}
+      destroyTooltipOnHide
+    >
+      <div style={{display: "flex", flexDirection: "column", gap: "6px", width: "100%"}}>
+        <div style={titleStyle}>
+          {title || "-"}
+        </div>
+        <div style={subtitleStyle}>
+          {subtitle || "-"}
+        </div>
+      </div>
+    </Tooltip>
   );
 }
 
@@ -70,6 +177,7 @@ function OpenClawSessionGraphCanvas(props) {
             <OpenClawNodeLabel
               title={node.data.title}
               subtitle={node.data.subtitle}
+              node={node.data.rawNode}
             />
           ),
         },
@@ -90,9 +198,11 @@ function OpenClawSessionGraphCanvas(props) {
     }
 
     window.setTimeout(() => {
+      const anchorWidth = Number(anchorNode.style?.width) || 250;
+      const anchorHeight = Number(anchorNode.style?.minHeight) || 76;
       reactFlowInstance.setCenter(
-        anchorNode.position.x + 125,
-        anchorNode.position.y + 38,
+        anchorNode.position.x + anchorWidth / 2,
+        anchorNode.position.y + anchorHeight / 2,
         {zoom: 1.02, duration: 0}
       );
     }, 0);
