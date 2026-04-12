@@ -26,10 +26,11 @@ var (
 )
 
 type openClawTranscriptSyncWorker struct {
-	provider   *Provider
-	stopCh     chan struct{}
-	doneCh     chan struct{}
-	fileStates map[string]openClawTranscriptFileState
+	provider        *Provider
+	stopCh          chan struct{}
+	doneCh          chan struct{}
+	fileStates      map[string]openClawTranscriptFileState
+	pathErrLogged   bool
 }
 
 type openClawTranscriptFileState struct {
@@ -152,7 +153,16 @@ func (w *openClawTranscriptSyncWorker) syncOnce() {
 	}
 
 	if err := w.scanTranscriptDir(); err != nil {
-		fmt.Printf("OpenClaw transcript sync failed for provider %s: %v\n", w.provider.Name, err)
+		if os.IsNotExist(err) {
+			if !w.pathErrLogged {
+				fmt.Printf("OpenClaw transcript sync failed for provider %s: %v\n", w.provider.Name, err)
+				w.pathErrLogged = true
+			}
+		} else {
+			fmt.Printf("OpenClaw transcript sync failed for provider %s: %v\n", w.provider.Name, err)
+		}
+	} else {
+		w.pathErrLogged = false
 	}
 }
 
