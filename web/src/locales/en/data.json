@@ -670,6 +670,7 @@
     "Users under all organizations": "Users under all organizations",
     "Verifications": "Verifications",
     "View": "View",
+    "Webhook": "Webhook",
     "Webhook Events": "Webhook Events",
     "Webhooks": "Webhooks",
     "Website": "Website",
@@ -1672,7 +1673,7 @@
     "Receiver": "Receiver"
   },
   "webhook": {
-    "Attempt Count": "Attempt Count",
+    "Attempt Count": "Attempt count",
     "Content type": "Content type",
     "Content type - Tooltip": "HTTP content type for the Webhook request",
     "Edit Webhook": "Edit Webhook",
@@ -1686,9 +1687,9 @@
     "Headers - Tooltip": "HTTP headers (key-value pairs)",
     "Is user extended": "Is user extended",
     "Is user extended - Tooltip": "Whether to include the user's extended fields in the JSON",
-    "Last Error": "Last Error",
+    "Last Error": "Last error",
     "New Webhook": "New Webhook",
-    "Next Retry Time": "Next Retry Time",
+    "Next Retry Time": "Next retry time",
     "Object fields": "Object fields",
     "Object fields - Tooltip": "Displayable object fields",
     "Payload": "Payload",
@@ -1700,9 +1701,9 @@
     "Success": "Success",
     "Unknown": "Unknown",
     "Value": "Value",
-    "Webhook Event Detail": "Webhook Event Detail",
-    "Webhook Event Logs": "Webhook Event Logs",
-    "Webhook Name": "Webhook Name",
+    "Webhook Event Detail": "Webhook event detail",
+    "Webhook Event Logs": "Webhook event logs",
+    "Webhook Name": "Webhook name",
     "Webhook event replay triggered": "Webhook event replay triggered"
   }
 }

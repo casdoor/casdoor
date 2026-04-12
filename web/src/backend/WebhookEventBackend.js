@@ -14,14 +14,14 @@
 
 import * as Setting from "../Setting";
 
-export function getWebhookEvents(owner = "", organization = "", page = "", pageSize = "", webhookName = "", status = "", sortField = "", sortOrder = "") {
+export function getWebhookEvents(owner = "", organization = "", page = "", pageSize = "", webhook = "", state = "", sortField = "", sortOrder = "") {
   const params = new URLSearchParams({
     owner,
     organization,
     pageSize,
     p: page,
-    webhookName,
-    status,
+    webhook,
+    state,
     sortField,
     sortOrder,
   });

@@ -35,6 +35,10 @@ class PolicyTable extends React.Component {
   count = 0;
   pageSize = 100;
 
+  getTableLoading = () => {
+    return this.state.loading ? {tip: i18next.t("login:Loading")} : false;
+  };
+
   getIndex(index) {
     // Need to be used in all place when modify table. Parameter is the row index in table, need to calculate the index in dataSource.
     return index + (this.state.page - 1) * this.pageSize;

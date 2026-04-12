@@ -62,8 +62,8 @@ func (c *ApiController) checkWebhookEventAccess(event *object.WebhookEvent, orga
 // @Description get webhook events with filtering
 // @Param   owner     query    string  false       "The owner of webhook events"
 // @Param   organization     query    string  false       "The organization"
-// @Param   webhookName     query    string  false       "The webhook name"
-// @Param   status     query    string  false       "Event status (pending, success, failed, retrying)"
+// @Param   webhook     query    string  false       "The webhook id (owner/name)"
+// @Param   state     query    string  false       "Event state (Pending, Success, Failed, Retrying)"
 // @Success 200 {array} object.WebhookEvent The Response object
 // @router /get-webhook-events [get]
 func (c *ApiController) GetWebhookEvents() {
@@ -71,8 +71,8 @@ func (c *ApiController) GetWebhookEvents() {
 	if !ok {
 		return
 	}
-	webhookName := c.Ctx.Input.Query("webhookName")
-	status := c.Ctx.Input.Query("status")
+	webhook := c.Ctx.Input.Query("webhook")
+	state := c.Ctx.Input.Query("state")
 	limit := c.Ctx.Input.Query("pageSize")
 	page := c.Ctx.Input.Query("p")
 	sortField := c.Ctx.Input.Query("sortField")
@@ -80,14 +80,14 @@ func (c *ApiController) GetWebhookEvents() {
 
 	if limit != "" && page != "" {
 		limit := util.ParseInt(limit)
-		count, err := object.GetWebhookEventCount(owner, organization, webhookName, object.WebhookEventStatus(status))
+		count, err := object.GetWebhookEventCount(owner, organization, webhook, object.WebhookEventStatus(state))
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
 		}
 
 		paginator := pagination.NewPaginator(c.Ctx.Request, limit, count)
-		events, err := object.GetWebhookEvents(owner, organization, webhookName, object.WebhookEventStatus(status), paginator.Offset(), limit, sortField, sortOrder)
+		events, err := object.GetWebhookEvents(owner, organization, webhook, object.WebhookEventStatus(state), paginator.Offset(), limit, sortField, sortOrder)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
@@ -95,7 +95,7 @@ func (c *ApiController) GetWebhookEvents() {
 
 		c.ResponseOk(events, paginator.Nums())
 	} else {
-		events, err := object.GetWebhookEvents(owner, organization, webhookName, object.WebhookEventStatus(status), 0, defaultWebhookEventListLimit, sortField, sortOrder)
+		events, err := object.GetWebhookEvents(owner, organization, webhook, object.WebhookEventStatus(state), 0, defaultWebhookEventListLimit, sortField, sortOrder)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
