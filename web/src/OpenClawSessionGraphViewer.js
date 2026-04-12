@@ -202,7 +202,7 @@ function OpenClawSessionGraphCanvas(props) {
       return;
     }
 
-    reactFlowInstance.fitView({padding: 0.2, duration: 0});
+    reactFlowInstance.fitView({padding: 0.2, duration: 0, minZoom: 0.05});
     const anchorNode = elements.nodes.find((node) => node.data?.isAnchor);
     if (!anchorNode) {
       return;
@@ -236,6 +236,8 @@ function OpenClawSessionGraphCanvas(props) {
         nodes={elements.nodes}
         edges={elements.edges}
         fitView
+        fitViewOptions={{padding: 0.2, minZoom: 0.05}}
+        minZoom={0.05}
         nodesDraggable={false}
         nodesConnectable={false}
         onInit={setReactFlowInstance}
