@@ -1701,9 +1701,6 @@
     "Success": "Успіх",
     "Unknown": "Невідомо",
     "Value": "Значення",
-    "Webhook Event Detail": "Деталі події webhook",
-    "Webhook Event Logs": "Журнали подій webhook",
-    "Webhook Name": "Назва webhook",
     "Webhook event replay triggered": "Запущено повтор події webhook"
   }
 }

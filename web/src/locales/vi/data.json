@@ -1701,9 +1701,6 @@
     "Success": "Thành công",
     "Unknown": "Không xác định",
     "Value": "Giá trị",
-    "Webhook Event Detail": "Chi tiết sự kiện webhook",
-    "Webhook Event Logs": "Nhật ký sự kiện webhook",
-    "Webhook Name": "Tên webhook",
     "Webhook event replay triggered": "Đã kích hoạt phát lại sự kiện webhook"
   }
 }

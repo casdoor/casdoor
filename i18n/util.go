@@ -56,6 +56,9 @@ func readI18nFile(category string, language string) *I18nData {
 func writeI18nFile(category string, language string, data *I18nData) {
 	s := util.StructToJsonFormatted(data)
 	s = strings.ReplaceAll(s, "\\u0026", "&")
+	// json.Marshal escapes < > for HTML safety; keep readable arrows like "->" in locale files.
+	s = strings.ReplaceAll(s, "\\u003c", "<")
+	s = strings.ReplaceAll(s, "\\u003e", ">")
 	s += "\n"
 	println(s)
 

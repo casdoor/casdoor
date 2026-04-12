@@ -1701,9 +1701,6 @@
     "Success": "Éxito",
     "Unknown": "Desconocido",
     "Value": "Valor",
-    "Webhook Event Detail": "Detalle del evento webhook",
-    "Webhook Event Logs": "Registros de eventos webhook",
-    "Webhook Name": "Nombre del webhook",
     "Webhook event replay triggered": "Reproducción del evento webhook activada"
   }
 }

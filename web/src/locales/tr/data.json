@@ -1701,9 +1701,6 @@
     "Success": "Başarılı",
     "Unknown": "Bilinmiyor",
     "Value": "Değer",
-    "Webhook Event Detail": "Webhook olay ayrıntısı",
-    "Webhook Event Logs": "Webhook olay günlükleri",
-    "Webhook Name": "Webhook adı",
     "Webhook event replay triggered": "Webhook olayı yeniden oynatma tetiklendi"
   }
 }
