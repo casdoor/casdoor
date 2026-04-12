@@ -98,7 +98,7 @@
     "Header HTML": "En-tête HTML",
     "Header HTML - Edit": "En-tête HTML - Modifier",
     "Header HTML - Tooltip": "Personnaliser la balise head de la page d'entrée de votre application",
-    "Horizontal": "Horizontal",
+    "Horizontal": "Disposition horizontale",
     "Incremental": "Incrémentiel",
     "Inline": "En ligne",
     "Input": "Entrée",
@@ -115,7 +115,7 @@
     "Multiple Choices": "Choix multiples",
     "New Application": "Nouvelle application",
     "No verification": "Aucune vérification",
-    "Normal": "Normal",
+    "Normal": "Mode normal",
     "Only signup": "Inscription uniquement",
     "Order": "Ordre",
     "Order - Tooltip": "Plus la valeur est petite, plus elle est classée haut dans la page Applications",
@@ -184,7 +184,7 @@
     "Upstream host - Tooltip": "Adresse de l'hôte backend en amont en mode proxy inverse",
     "Use Email as NameID": "Utiliser l'e-mail comme NameID",
     "Use Email as NameID - Tooltip": "Utiliser l'e-mail comme NameID - Infobulle",
-    "Vertical": "Vertical",
+    "Vertical": "Disposition verticale",
     "You are unexpected to see this prompt page": "Il n'était pas prévu que vous voyez cette page de saisie"
   },
   "cert": {
@@ -265,8 +265,50 @@
     "New Enforcer": "Nouvel agent"
   },
   "entry": {
+    "Audit stamp": "Horodatage d'audit",
+    "Command": "Commande",
+    "Decision": "Décision",
+    "Device": "Appareil",
+    "Duration": "Durée",
     "Edit Entry": "Modifier l'entrée",
-    "New Entry": "Nouvelle entrée"
+    "Entry ID": "ID d'entrée",
+    "Executable": "Exécutable",
+    "Failed to load session graph": "Échec du chargement du graphe de session",
+    "Failed to parse trace message": "Échec de l'analyse du message de trace",
+    "Finals": "Finales",
+    "Inode": "Nœud d'index",
+    "Links": "Liens",
+    "New Entry": "Nouvelle entrée",
+    "No spans": "Aucun span",
+    "Original Parent ID": "ID parent d'origine",
+    "Parent Span ID": "ID du span parent",
+    "Permission": "Autorisation",
+    "Permissive": "Permissif",
+    "Process ID": "ID de processus",
+    "Query": "Requête",
+    "Raw span": "Span brut",
+    "Resource attributes": "Attributs de la ressource",
+    "Resource schema URL": "URL du schéma de ressource",
+    "Results": "Résultats",
+    "SELinux event": "Événement SELinux",
+    "Scope schema URL": "URL du schéma de portée",
+    "Service": "Service de traçage",
+    "Session graph": "Graphe de session",
+    "Session graph node": "Nœud du graphe de session",
+    "Source context": "Contexte source",
+    "Span ID": "ID de span",
+    "Span attributes": "Attributs du span",
+    "Span detail": "Détail du span",
+    "Summary": "Résumé",
+    "Target": "Cible",
+    "Target class": "Classe cible",
+    "Target context": "Contexte cible",
+    "Tasks": "Tâches",
+    "Text": "Texte",
+    "Tool Call ID": "ID d'appel d'outil",
+    "Tool calls": "Appels d'outils",
+    "Trace ID": "ID de trace",
+    "Trace spans": "Spans de trace"
   },
   "forget": {
     "Change Password": "Changer le mot de passe",
@@ -291,7 +333,7 @@
     "Access key": "Clé d'accès",
     "Access key - Tooltip": "Clé d'accès pour le service",
     "Access token is empty": "Le jeton d'accès est vide",
-    "Action": "Action",
+    "Action": "Opération",
     "Adapter": "Adaptateur",
     "Adapter - Tooltip": "Nom de la table du magasin de règle",
     "Adapters": "Adaptateurs",
@@ -300,23 +342,23 @@
     "Admin": "Administrateur",
     "Affiliation URL": "URL d'affiliation",
     "Affiliation URL - Tooltip": "URL du site web de l'affiliation",
-    "Agents": "Agents",
+    "Agents": "Agents d'IA",
     "All": "Tous",
-    "Application": "Application",
+    "Application": "Application cliente",
     "Application - Tooltip": "Application - Infobulle",
-    "Applications": "Applications",
+    "Applications": "Liste des applications",
     "Applications that require authentication": "Applications qui nécessitent une authentification",
     "Apps": "Applications",
     "Auditing": "Audit",
     "Authorization": "Autorisation",
     "Auto": "Automatique",
-    "Avatar": "Avatar",
+    "Avatar": "Photo de profil",
     "Avatar - Tooltip": "Image d'avatar publique pour le compte",
     "Back": "Retour",
     "Back Home": "Retour à l'accueil",
     "Business": "Affaires",
     "Cancel": "Annuler",
-    "Captcha": "Captcha",
+    "Captcha": "Vérification Captcha",
     "Cart": "Panier",
     "Category": "Catégorie",
     "Category - Tooltip": "La catégorie ou classification à laquelle appartient cet élément",
@@ -345,7 +387,7 @@
     "Default password": "Mot de passe par défaut",
     "Default password - Tooltip": "Mot de passe par défaut",
     "Delete": "Supprimer",
-    "Description": "Description",
+    "Description": "Libellé descriptif",
     "Description - Tooltip": "Description détaillée pour référence, Casdoor ne l'utilisera pas en soi",
     "Detail": "Détail",
     "Disable": "Désactiver",
@@ -390,7 +432,7 @@
     "Failed to upload": "Échec du téléchargement",
     "Failed to verify": "Échec de la vérification",
     "False": "Faux",
-    "Favicon": "Favicon",
+    "Favicon": "Icône de site",
     "Favicon - Tooltip": "L'URL de l'icône « favicon » utilisée dans toutes les pages Casdoor de l'organisation",
     "Filter": "Filtrer",
     "First name": "Prénom",
@@ -410,14 +452,14 @@
     "Home": "Accueil",
     "Home - Tooltip": "Page d'accueil de l'application",
     "Host": "Hôte",
-    "ID": "ID",
+    "ID": "Identifiant",
     "ID - Tooltip": "Chaîne unique aléatoire",
     "IP whitelist": "Liste blanche IP",
     "IP whitelist - Tooltip": "Liste blanche IP",
     "Identity": "Identité",
     "Impersonate": "Personnifier",
     "Invalid application": "Application invalide",
-    "Invitations": "Invitations",
+    "Invitations": "Invitations envoyées",
     "Is allowed": "Est autorisé",
     "Is enabled": "Est activé",
     "Is enabled - Tooltip": "Définir s'il peut être utilisé",
@@ -435,7 +477,7 @@
     "Listening URL": "URL d'écoute",
     "Listening URL - Tooltip": "URL sur laquelle le serveur MCP écoute les connexions entrantes",
     "Login page": "Page de connexion",
-    "Logo": "Logo",
+    "Logo": "Logo de marque",
     "Logo - Tooltip": "Icônes que l'application présente au monde extérieur",
     "Logo dark": "Logo sombre",
     "Logo dark - Tooltip": "Logo utilisé dans le thème sombre",
@@ -447,7 +489,7 @@
     "Master password - Tooltip": "Mot de passe qui peut être utilisé pour se connecter à tous les comptes sous cette organisation, ce qui facilite la connexion des administrateurs et administratrices en tant que ce compte pour résoudre les problèmes techniques",
     "Master verification code": "Code de vérification principal",
     "Master verification code - Tooltip": "Code de vérification maître",
-    "Menu": "Menu",
+    "Menu": "Menu de navigation",
     "Method": "Méthode",
     "Model": "Modèle",
     "Model - Tooltip": "Modèle de contrôle d'accès Casbin",
@@ -459,11 +501,11 @@
     "No products available": "Aucun produit disponible",
     "No sheets found in file": "Aucune feuille trouvée dans le fichier",
     "No verification method": "Aucune méthode de vérification",
-    "Non-LDAP": "Non-LDAP",
+    "Non-LDAP": "Autre qu'LDAP",
     "None": "Aucun",
     "OAuth providers": "Fournisseurs OAuth",
     "OFF": "DÉSACTIVÉ",
-    "OK": "OK",
+    "OK": "Valider",
     "ON": "ACTIVÉ",
     "Only 1 MFA method can be required": "Une seule méthode MFA peut être requise",
     "Or": "Ou",
@@ -473,7 +515,7 @@
     "Organization is null": "L'organisation est nulle",
     "Organizations": "Organisations",
     "Owner": "Propriétaire",
-    "Parent": "Parent",
+    "Parent": "Élément parent",
     "Password": "Mot de passe",
     "Password - Tooltip": "Assurez-vous que le mot de passe soit correct",
     "Password complexity options": "Options de complexité du mot de passe",
@@ -505,7 +547,7 @@
     "Please complete the captcha correctly": "Veuillez compléter correctement le captcha",
     "Please input your search": "Veuillez saisir votre recherche",
     "Please select at least 1 user first": "Veuillez d'abord sélectionner au moins 1 utilisateur",
-    "Port": "Port",
+    "Port": "Numéro de port",
     "Preview": "Aperçu",
     "Preview - Tooltip": "Prévisualisation des effets configurés",
     "Pricing": "Tarification",
@@ -545,7 +587,7 @@
     "Self": "Soi-même",
     "Send": "Envoyer",
     "Session ID": "Identifiant de session",
-    "Sessions": "Sessions",
+    "Sessions": "Sessions actives",
     "Severity": "Gravité",
     "Shortcuts": "Raccourcis",
     "Signin URL": "URL de connexion",
@@ -555,16 +597,10 @@
     "Signup application": "Application d'inscription",
     "Signup application - Tooltip": "L'application utilisée lors de la création du compte",
     "Signup link": "Lien d'inscription",
-    "Sites": "Sites",
-    "Sorry, the page you visited does not exist": {
-      "": "Désolé, la page que vous avez visitée n'existe pas."
-    },
-    "Sorry, the user you visited does not exist or you are not authorized to access this user": {
-      "": "Désolé, le compte que vous avez visité n'existe pas ou vous n'êtes pas autorisé à accéder à ce compte."
-    },
-    "Sorry, you do not have permission to access this page or logged in status invalid": {
-      "": "Désolé, vous n'avez pas la permission d'accéder à cette page ou votre statut de connexion est invalide."
-    },
+    "Sites": "Sites web",
+    "Sorry, the page you visited does not exist.": "Désolé, la page que vous avez visitée n'existe pas.",
+    "Sorry, the user you visited does not exist or you are not authorized to access this user.": "Désolé, le compte que vous avez visité n'existe pas ou vous n'êtes pas autorisé à accéder à ce compte.",
+    "Sorry, you do not have permission to access this page or logged in status invalid.": "Désolé, vous n'avez pas la permission d'accéder à cette page ou votre statut de connexion est invalide.",
     "State": "État",
     "State - Tooltip": "État",
     "Status": "Statut",
@@ -586,7 +622,7 @@
     "Sure to delete": "Certain⋅e de supprimer",
     "Sure to disable": "Êtes-vous sûr de vouloir désactiver",
     "Sure to remove": "Êtes-vous sûr de vouloir supprimer",
-    "Swagger": "Swagger",
+    "Swagger": "Interface Swagger",
     "Sync": "Synchronisation",
     "Syncers": "Synchroniseurs",
     "System Info": "Informations système",
@@ -595,13 +631,9 @@
     "The actions cannot be empty": "Les actions ne peuvent pas être vides",
     "The resources cannot be empty": "Les ressources ne peuvent pas être vides",
     "The users and roles cannot be empty at the same time": "Les utilisateurs et les rôles ne peuvent pas être vides en même temps",
-    "There was a problem signing you in": {
-      "": {
-        "": "Un problème est survenu lors de votre connexion.."
-      }
-    },
+    "There was a problem signing you in..": "Un problème est survenu lors de votre connexion..",
     "This is a read-only demo site!": "Ceci est un site de démonstration en lecture seule !",
-    "Tickets": "Tickets",
+    "Tickets": "Demandes d'assistance",
     "Timestamp": "Horodatage",
     "Title": "Titre",
     "Title - Tooltip": "Titre",
@@ -611,11 +643,11 @@
     "Tool": "Outil",
     "Tool - Tooltip": "L'outil ou utilitaire associé à cette configuration",
     "Tour": "Visite guidée",
-    "Transactions": "Transactions",
+    "Transactions": "Opérations",
     "True": "Vrai",
-    "Type": "Type",
+    "Type": "Type d'entrée",
     "Type - Tooltip": "La catégorie ou le type qui classifie le comportement de cet élément",
-    "URL": "URL",
+    "URL": "Adresse URL",
     "URL - Tooltip": "Lien de l'URL",
     "Unauthorized": "Non autorisé",
     "Unknown application name": "Nom d'application inconnu",
@@ -623,9 +655,7 @@
     "Up": "Monter",
     "Update time": "Heure de mise à jour",
     "Updated time": "Heure de mise à jour",
-    "Upload (": {
-      "xlsx)": "Télécharger (.xlsx)"
-    },
+    "Upload (.xlsx)": "Télécharger (.xlsx)",
     "Url": "URL",
     "User": "Compte",
     "User - Tooltip": "Assurez-vous que l'identifiant est correct",
@@ -641,7 +671,7 @@
     "Verifications": "Vérifications",
     "View": "Voir",
     "Webhook Events": "Événements Webhook",
-    "Webhooks": "Webhooks",
+    "Webhooks": "Points de terminaison webhook",
     "Website": "Site web",
     "You can only select one physical group": "Vous ne pouvez sélectionner qu'un seul groupe physique",
     "You must select a picture first": "Vous devez d'abord sélectionner une image",
@@ -657,9 +687,7 @@
     "Physical": "Physique",
     "Show all": "Afficher tout",
     "Virtual": "Virtuel",
-    "You need to delete all subgroups first": {
-      " You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Vous devez d'abord supprimer tous les sous-groupes. Vous pouvez voir les sous-groupes dans l'arborescence des groupes à gauche de la page [Organisations] -> [Groupes]"
-    }
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Vous devez d'abord supprimer tous les sous-groupes. Vous pouvez voir les sous-groupes dans l'arborescence des groupes à gauche de la page [Organisations] -> [Groupes]"
   },
   "home": {
     "New users / 30 days": "Nouveaux utilisateurs / 30 jours",
@@ -669,13 +697,13 @@
     "Total users": "Total des utilisateurs"
   },
   "invitation": {
-    "Code": "Code",
+    "Code": "Code d'invitation",
     "Code - Tooltip": "Code",
     "Default code": "Code par défaut",
     "Default code - Tooltip": "Lorsque le code d'invitation est une expression régulière, veuillez entrer le code d'invitation correspondant à la règle regex comme code d'invitation par défaut pour le lien d'invitation",
     "Edit Invitation": "Modifier l'invitation",
     "New Invitation": "Nouvelle invitation",
-    "Quota": "Quota",
+    "Quota": "Quota d'invitation",
     "Quota - Tooltip": "Quota",
     "Used count": "Nombre utilisé",
     "Used count - Tooltip": "Nombre d'utilisations",
@@ -697,7 +725,7 @@
     "Auto Sync - Tooltip": "Configuration de synchronisation automatique, désactivée à 0",
     "Base DN": "DN racine",
     "Base DN - Tooltip": "DN de base pour les recherches LDAP",
-    "CN": "CN",
+    "CN": "Nom distinctif (CN)",
     "Custom attributes": "Attributs personnalisés",
     "Custom attributes - Tooltip": "Attributs personnalisés",
     "Default group": "Groupe par défaut",
@@ -730,22 +758,16 @@
     "Click the button below to sign in with Telegram": "Cliquez sur le bouton ci-dessous pour vous connecter avec Telegram",
     "Continue with": "Continuer avec",
     "Email or phone": "Email ou téléphone",
-    "Face ID": "Face ID",
+    "Face ID": "Authentification Face ID",
     "Face Recognition": "Reconnaissance faciale",
     "Face recognition failed": "Échec de la reconnaissance faciale",
     "Failed to obtain MetaMask authorization": "Échec de l'obtention de l'autorisation MetaMask",
     "Failed to obtain Web3-Onboard authorization": "Échec de l'obtention de l'autorisation Web3-Onboard",
     "Forgot password?": "Mot de passe oublié ?",
-    "LDAP": "LDAP",
+    "LDAP": "Annuaire LDAP",
     "LDAP username, Email or phone": "Nom d'utilisateur LDAP, e-mail ou téléphone",
     "Loading": "Chargement",
-    "Logging out": {
-      "": {
-        "": {
-          "": "Déconnexion..."
-        }
-      }
-    },
+    "Logging out...": "Déconnexion...",
     "MetaMask plugin not detected": "Plugin MetaMask non détecté",
     "Model loading failure": "Échec du chargement du modèle",
     "No account?": "Pas de compte ?",
@@ -767,9 +789,7 @@
     "Please select an organization": "Veuillez sélectionner une organisation",
     "Please select an organization to sign in": "Veuillez sélectionner une organisation pour vous connecter",
     "Please type an organization to sign in": "Veuillez entrer une organisation pour vous connecter",
-    "Redirecting, please wait": {
-      "": "Redirection en cours, veuillez patienter."
-    },
+    "Redirecting, please wait.": "Redirection en cours, veuillez patienter.",
     "Select organization": "Sélectionner l'organisation",
     "Sign In": "Se connecter",
     "Sign in with Face ID": "Se connecter avec Face ID",
@@ -777,13 +797,7 @@
     "Sign in with WebAuthn": "Connectez-vous avec WebAuthn",
     "Sign in with {type}": "Connectez-vous avec {type}",
     "Signin button": "Bouton de connexion",
-    "Signing in": {
-      "": {
-        "": {
-          "": "Connexion en cours..."
-        }
-      }
-    },
+    "Signing in...": "Connexion en cours...",
     "Successfully logged in with WebAuthn credentials": "Connexion avec les identifiants WebAuthn réussie",
     "The camera is currently in use by another webpage": "L'appareil photo est actuellement utilisé par une autre page web",
     "The input is not valid Email or phone number!": "L'entrée n'est pas une adresse e-mail ou un numéro de téléphone valide !",
@@ -791,8 +805,8 @@
     "The input is not valid phone number!": "Le numéro de téléphone saisi n'est pas valide !",
     "To access": "Pour accéder à",
     "Verification code": "Code de vérification",
-    "WeChat": "WeChat",
-    "WebAuthn": "WebAuthn",
+    "WeChat": "Connexion WeChat",
+    "WebAuthn": "Authentification WebAuthn",
     "sign up now": "Inscrivez-vous maintenant",
     "username, Email or phone": "identifiant, adresse e-mail ou téléphone"
   },
@@ -810,9 +824,7 @@
     "Please bind your email first, the system will automatically uses the mail for multi-factor authentication": "Veuillez d'abord lier votre e-mail, le système utilisera automatiquement l'e-mail pour l'authentification multi-facteur",
     "Please bind your phone first, the system automatically uses the phone for multi-factor authentication": "Veuillez d'abord lier votre téléphone, le système utilisera automatiquement le téléphone pour l'authentification multi-facteur",
     "Please confirm the information below": "Veuillez confirmer les informations ci-dessous",
-    "Please save this recovery code": {
-      " Once your device cannot provide an authentication code, you can reset mfa authentication by this recovery code": "Veuillez enregistrer ce code de récupération. Si votre appareil ne peut pas fournir de code d'authentification, vous pouvez réinitialiser l'authentification MFA avec ce code"
-    },
+    "Please save this recovery code. Once your device cannot provide an authentication code, you can reset mfa authentication by this recovery code": "Veuillez enregistrer ce code de récupération. Si votre appareil ne peut pas fournir de code d'authentification, vous pouvez réinitialiser l'authentification MFA avec ce code",
     "Protect your account with Multi-factor authentication": "Protégez votre compte avec l'authentification multi-facteur",
     "Push notification receiver": "Destinataire de la notification push",
     "Recovery code": "Code de récupération",
@@ -913,7 +925,7 @@
     "User types": "Types de compte",
     "User types - Tooltip": "Types d'utilisateur - Infobulle",
     "View rule": "Règle d'affichage",
-    "Visible": "Visible",
+    "Visible": "Visible publiquement",
     "Website URL": "URL du site web",
     "Website URL - Tooltip": "URL du site web l'organisation. Ce champ n'est pas utilisé dans Casdoor",
     "Widget items": "Éléments du widget",
@@ -940,7 +952,7 @@
     "Invoice type": "Type de facture",
     "Invoice type - Tooltip": "Le type de facture peut être pour une personne physique ou une organisation",
     "Issue Invoice": "Émettre une facture",
-    "Message": "Message",
+    "Message": "Message de paiement",
     "Message - Tooltip": "Message de résultat de traitement de paiement",
     "New Payment": "Nouveau paiement",
     "Person Email": "E-mail de la personne",
@@ -951,19 +963,9 @@
     "Person name - Tooltip": "Vrai nom du payeur",
     "Person phone": "Téléphone personnel",
     "Person phone - Tooltip": "Le numéro de téléphone du payeur",
-    "Please carefully check your invoice information": {
-      " Once the invoice is issued, it cannot be withdrawn or modified": {
-        "": "Veuillez vérifier attentivement les informations de votre facture. Une fois émise, la facture ne peut pas être retirée ou modifiée."
-      }
-    },
+    "Please carefully check your invoice information. Once the invoice is issued, it cannot be withdrawn or modified.": "Veuillez vérifier attentivement les informations de votre facture. Une fois émise, la facture ne peut pas être retirée ou modifiée.",
     "Please pay the order first!": "Veuillez d'abord payer la commande !",
-    "Processing": {
-      "": {
-        "": {
-          "": "Traitement..."
-        }
-      }
-    },
+    "Processing...": "Traitement...",
     "Recharged successfully": "Rechargé avec succès",
     "Result": "Résultat",
     "The payment has been canceled": "Le paiement a été annulé",
@@ -975,17 +977,11 @@
     "You have successfully completed the payment": "Vous avez effectué le paiement avec succès",
     "You have successfully recharged": "Vous avez rechargé avec succès",
     "Your current balance is": "Votre solde actuel est",
-    "please wait for a few seconds": {
-      "": {
-        "": {
-          "": "Veuillez patienter quelques secondes..."
-        }
-      }
-    },
+    "please wait for a few seconds...": "Veuillez patienter quelques secondes...",
     "the current state is": "l'état actuel est"
   },
   "permission": {
-    "Actions": "Actions",
+    "Actions": "Actions autorisées",
     "Actions - Tooltip": "Actions autorisées - Infobulle",
     "Allow": "Autoriser",
     "Approve time": "Date d'approbation",
@@ -1036,8 +1032,8 @@
   },
   "product": {
     "Add to cart": "Ajouter au panier",
-    "AirWallex": "AirWallex",
-    "Alipay": "Alipay",
+    "AirWallex": "Paiement AirWallex",
+    "Alipay": "Paiement Alipay",
     "Amount": "Montant",
     "Buy": "Acheter",
     "Buy Product": "Acheter un produit",
@@ -1051,7 +1047,7 @@
     "Edit Product": "Modifier le produit",
     "Enter preset amounts": "Saisir des montants prédéfinis",
     "Failed to create order": "Échec de la création de la commande",
-    "Image": "Image",
+    "Image": "Image produit",
     "Image - Tooltip": "Image du produit",
     "Information": "Informations",
     "Invalid product": "Produit invalide",
@@ -1060,28 +1056,16 @@
     "New Product": "Nouveau produit",
     "No recharge options available": "Aucune option de recharge disponible",
     "Order created successfully": "Commande créée avec succès",
-    "PayPal": "PayPal",
+    "PayPal": "Paiement PayPal",
     "Payment cancelled": "Paiement annulé",
     "Payment failed": "Paiement échoué",
     "Payment providers": "Fournisseurs de paiement",
     "Payment providers - Tooltip": "Fournisseurs de services de paiement",
-    "Placing order": {
-      "": {
-        "": {
-          "": "Passer une commande..."
-        }
-      }
-    },
+    "Placing order...": "Passer une commande...",
     "Please add at least one recharge option when custom amount is disabled": "Veuillez ajouter au moins une option de recharge lorsque le montant personnalisé est désactivé",
     "Please select a currency": "Veuillez sélectionner une devise",
     "Please select at least one payment provider": "Veuillez sélectionner au moins un fournisseur de paiement",
-    "Processing payment": {
-      "": {
-        "": {
-          "": "Traitement du paiement..."
-        }
-      }
-    },
+    "Processing payment...": "Traitement du paiement...",
     "Product list cannot be empty": "La liste des produits ne peut pas être vide",
     "Product not found or invalid": "Produit introuvable ou invalide",
     "Quantity": "Quantité",
@@ -1089,30 +1073,22 @@
     "Recharge options": "Options de recharge",
     "Recharge options - Tooltip": "Recharge options - Tooltip",
     "Recharge products need to go to the product detail page to set custom amount": "Les produits de recharge doivent être configurés sur la page de détail du produit",
-    "SKU": "SKU",
+    "SKU": "Référence SKU",
     "Select amount": "Sélectionner un montant",
     "Sold": "Vendu",
     "Sold - Tooltip": "Quantité vendue",
-    "Stripe": "Stripe",
+    "Stripe": "Paiement Stripe",
     "Success URL": "URL de succès",
     "Success URL - Tooltip": "URL de retour après achat",
     "Tag - Tooltip": "Étiquette de produit",
-    "Test buy page": {
-      "": {
-        "": "Page d'achat de test."
-      }
-    },
+    "Test buy page..": "Page d'achat de test.",
     "The currency of the product you are adding is different from the currency of the items in the cart": "La devise du produit que vous ajoutez est différente de celle des articles du panier",
-    "There is no payment channel for this product": {
-      "": "Il n'y a aucun canal de paiement pour ce produit."
-    },
-    "This product is currently not in sale": {
-      "": "Ce produit n'est actuellement pas en vente."
-    },
+    "There is no payment channel for this product.": "Il n'y a aucun canal de paiement pour ce produit.",
+    "This product is currently not in sale.": "Ce produit n'est actuellement pas en vente.",
     "This product is currently not purchasable (No options available)": "Ce produit n'est actuellement pas achetable (aucune option disponible)",
     "Total Price": "Prix total",
     "View Product": "Voir le produit",
-    "WeChat Pay": "WeChat Pay"
+    "WeChat Pay": "Paiement WeChat Pay"
   },
   "provider": {
     "Agent ID": "Identifiant d'agent",
@@ -1140,10 +1116,8 @@
     "Can signin": "Pouvez-vous vous connecter?",
     "Can signup": "Peut s'inscrire",
     "Can unlink": "Peut annuler le lien",
-    "Channel No": {
-      "": "chaîne n°",
-      " - Tooltip": "Canal N°"
-    },
+    "Channel No.": "chaîne n°",
+    "Channel No. - Tooltip": "Canal N°",
     "Chat ID": "ID de chat",
     "Chat ID - Tooltip": "ID de chat - Infobulle",
     "Client ID": "ID du client",
@@ -1187,7 +1161,7 @@
     "HTTP header": "En-tête HTTP",
     "HTTP header - Tooltip": "En-tête HTTP",
     "Host - Tooltip": "Nom d'hôte",
-    "IdP": "IdP",
+    "IdP": "Fournisseur d'identité (IdP)",
     "IdP certificate": "Certificat IdP",
     "Internal": "Interne",
     "Issuer URL": "URL de l'émetteur",
@@ -1204,7 +1178,7 @@
     "Metadata url": "URL des métadonnées",
     "Metadata url - Tooltip": "URL des métadonnées - Infobulle",
     "Method - Tooltip": "Méthode de connexion, code QR ou connexion silencieuse",
-    "Mobile": "Mobile",
+    "Mobile": "Application mobile",
     "New Provider": "Nouveau fournisseur",
     "Parameter": "Paramètre",
     "Parameter - Tooltip": "Paramètre - Infobulle",
@@ -1231,9 +1205,7 @@
     "Region ID - Tooltip": "Identifiant de région pour le fournisseur de services",
     "Region endpoint for Internet": "Endpoint de zone géographique pour Internet",
     "Region endpoint for Intranet": "Endpoint de zone géographique pour Internet",
-    "SAML 2": {
-      "0 Endpoint (HTTP)": "Endpoint SAML 2.0 (HTTP)"
-    },
+    "SAML 2.0 Endpoint (HTTP)": "Endpoint SAML 2.0 (HTTP)",
     "SMS Test": "Test SMS",
     "SMS Test - Tooltip": "Numéro de téléphone pour l'envoi de SMS de test",
     "SMS account": "compte SMS",
@@ -1318,7 +1290,7 @@
     "UserInfo URL - Tooltip": "URL d'information du compte (UserInfo)",
     "Wallets": "Portefeuilles",
     "Wallets - Tooltip": "Portefeuilles - Infobulle",
-    "Web": "Web",
+    "Web": "Client web",
     "admin (Shared)": "admin (Partagé)"
   },
   "record": {
@@ -1330,14 +1302,8 @@
     "Copy Link": "Copier le lien",
     "File name": "Nom de fichier",
     "File size": "Taille de fichier",
-    "Format": "Format",
-    "Upload a file": {
-      "": {
-        "": {
-          "": "Télécharger un fichier..."
-        }
-      }
-    }
+    "Format": "Format de fichier",
+    "Upload a file...": "Télécharger un fichier..."
   },
   "role": {
     "Edit Role": "Modifier le rôle",
@@ -1356,8 +1322,8 @@
     "Block Duration": "Durée de blocage",
     "Compound": "Composé",
     "Edit Rule": "Modifier la règle",
-    "Expression": "Expression",
-    "Expressions": "Expressions",
+    "Expression": "Expression de règle",
+    "Expressions": "Expressions de règle",
     "IP List": "Liste IP",
     "IP Rate Limiting": "Limitation du débit IP",
     "Logic": "Logique",
@@ -1392,7 +1358,7 @@
     "Have account?": "Avez-vous un compte ?",
     "Label": "Étiquette",
     "Label HTML": "Étiquette HTML",
-    "Options": "Options",
+    "Options": "Options d'inscription",
     "Placeholder": "Espace réservé",
     "Please accept the agreement!": "Veuillez accepter l'accord !",
     "Please click the below button to sign in": "Veuillez cliquer sur le bouton ci-dessous pour vous connecter",
@@ -1440,7 +1406,7 @@
     "Edit Site": "Modifier le site",
     "Enable alert": "Activer les alertes",
     "Hosts": "Hôtes",
-    "Mode": "Mode",
+    "Mode": "Mode du site",
     "Need redirect": "Redirection nécessaire",
     "Node": "Nœud",
     "Nodes": "Nœuds",
@@ -1512,9 +1478,7 @@
     "API Latency": "Retard API",
     "API Throughput": "Débit API",
     "About Casdoor": "À propos de Casdoor",
-    "An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2": {
-      "0, OIDC, SAML and CAS": "Une plateforme de gestion d'identité et d'accès (IAM) / d'authentification unique (SSO) avec une interface utilisateur web prenant en charge OAuth 2.0, OIDC, SAML et CAS"
-    },
+    "An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2.0, OIDC, SAML and CAS": "Une plateforme de gestion d'identité et d'accès (IAM) / d'authentification unique (SSO) avec une interface utilisateur web prenant en charge OAuth 2.0, OIDC, SAML et CAS",
     "CPU Usage": "Utilisation du processeur",
     "Community": "Communauté",
     "Count": "Comptage",
@@ -1528,15 +1492,15 @@
     "Throughput": "Débit",
     "Total Throughput": "Débit total",
     "Unknown version": "Version inconnue",
-    "Version": "Version"
+    "Version": "Numéro de version"
   },
   "theme": {
     "Blossom": "Fleurir",
     "Border radius": "Rayon de bordure",
-    "Compact": "Compact",
+    "Compact": "Thème compact",
     "Customize theme": "Personnaliser le thème",
     "Dark": "Sombre",
-    "Document": "Document",
+    "Document": "Thème document",
     "Is compact": "Est compact",
     "Primary color": "Couleur primaire",
     "Theme": "Thème",
@@ -1546,19 +1510,13 @@
     "Closed": "Fermé",
     "Edit Ticket": "Modifier le ticket",
     "In Progress": "En cours",
-    "Messages": "Messages",
+    "Messages": "Messages du ticket",
     "New Ticket": "Nouveau ticket",
     "Open": "Ouvert",
     "Please enter a message": "Veuillez saisir un message",
     "Press Ctrl+Enter to send": "Appuyez sur Ctrl+Entrée pour envoyer",
     "Resolved": "Résolu",
-    "Type your message here": {
-      "": {
-        "": {
-          "": "Saisissez votre message ici..."
-        }
-      }
-    }
+    "Type your message here...": "Saisissez votre message ici..."
   },
   "token": {
     "Access token": "Token d'accès",
@@ -1592,11 +1550,11 @@
     "Address - Tooltip": "Adresse résidentielle",
     "Address line": "Adresse",
     "Addresses": "Adresses",
-    "Affiliation": "Affiliation",
+    "Affiliation": "Rattachement organisationnel",
     "Affiliation - Tooltip": "Employeur, tel que le nom de l'entreprise ou de l'organisation",
     "Balance": "Solde",
     "Balance - Tooltip": "Solde de l'utilisateur",
-    "Bio": "Bio",
+    "Bio": "Biographie",
     "Bio - Tooltip": "Biographie du compte",
     "Birthday": "Anniversaire",
     "Birthday - Tooltip": "Anniversaire - Infobulle",
@@ -1641,7 +1599,7 @@
     "Is forbidden - Tooltip": "Les comptes interdits ne peuvent plus se connecter",
     "Is online": "En ligne",
     "Is verified": "Est vérifié",
-    "Karma": "Karma",
+    "Karma": "Score de karma",
     "Karma - Tooltip": "Karma - Infobulle",
     "Language": "Langue",
     "Language - Tooltip": "Langue - Infobulle",
@@ -1653,13 +1611,7 @@
     "Location - Tooltip": "Ville de résidence",
     "MFA accounts": "Comptes MFA",
     "Managed accounts": "Comptes gérés",
-    "Modify password": {
-      "": {
-        "": {
-          "": "Modifier le mot de passe..."
-        }
-      }
-    },
+    "Modify password...": "Modifier le mot de passe...",
     "Need update password": "Besoin de mettre à jour le mot de passe",
     "Need update password - Tooltip": "Forcer l'utilisateur à mettre à jour le mot de passe après connexion",
     "New Email": "Nouvelle adresse e-mail",
@@ -1684,47 +1636,21 @@
     "Register source - Tooltip": "La source à partir de laquelle l'utilisateur a été enregistré",
     "Register type": "Type d'enregistrement",
     "Register type - Tooltip": "La méthode utilisée pour enregistrer l'utilisateur",
-    "Reset Email": {
-      "": {
-        "": {
-          "": "Modifier l'adresse e-mail..."
-        }
-      }
-    },
-    "Reset Phone": {
-      "": {
-        "": {
-          "": "Modifier le numéro de téléphone..."
-        }
-      }
-    },
-    "Score": "Score",
+    "Reset Email...": "Modifier l'adresse e-mail...",
+    "Reset Phone...": "Modifier le numéro de téléphone...",
+    "Score": "Score utilisateur",
     "Score - Tooltip": "Score - Infobulle",
-    "Select a photo": {
-      "": {
-        "": {
-          "": "Sélectionnez une image..."
-        }
-      }
-    },
+    "Select a photo...": "Sélectionnez une image...",
     "Set Password": "Définir le mot de passe",
     "Set new profile picture": "Modifier la photo de profil",
-    "Set password": {
-      "": {
-        "": {
-          "": "Définir le mot de passe..."
-        }
-      }
-    },
+    "Set password...": "Définir le mot de passe...",
     "The password must contain at least one special character": "Le mot de passe doit contenir au moins un caractère spécial",
     "The password must contain at least one uppercase letter, one lowercase letter and one digit": "Le mot de passe doit contenir au moins une majuscule, une minuscule et un chiffre",
     "The password must have at least 6 characters": "Le mot de passe doit contenir au moins 6 caractères",
     "The password must have at least 8 characters": "Le mot de passe doit contenir au moins 8 caractères",
     "The password must not contain any repeated characters": "Le mot de passe ne doit pas contenir de caractères répétés",
     "This field value doesn't match the pattern rule": "La valeur de ce champ ne correspond pas à la règle du motif",
-    "Two passwords you typed do not match": {
-      "": "Le mot de passe et la confirmation du mot de passe ne correspondent pas."
-    },
+    "Two passwords you typed do not match.": "Le mot de passe et la confirmation du mot de passe ne correspondent pas.",
     "Unlink": "Supprimer le lien",
     "Upload ID card back picture": "Télécharger l'image du verso de la carte d'identité",
     "Upload ID card front picture": "Télécharger l'image du recto de la carte d'identité",

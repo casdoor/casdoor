@@ -265,8 +265,50 @@
     "New Enforcer": "Новий Enforcer"
   },
   "entry": {
+    "Audit stamp": "Мітка часу аудиту",
+    "Command": "Команда",
+    "Decision": "Рішення",
+    "Device": "Пристрій",
+    "Duration": "Тривалість",
     "Edit Entry": "Редагувати запис",
-    "New Entry": "Новий запис"
+    "Entry ID": "ІД запису",
+    "Executable": "Виконуваний файл",
+    "Failed to load session graph": "Не вдалося завантажити граф сесії",
+    "Failed to parse trace message": "Не вдалося розібрати повідомлення трасування",
+    "Finals": "Підсумкові значення",
+    "Inode": "Інод",
+    "Links": "Посилання",
+    "New Entry": "Новий запис",
+    "No spans": "Немає проміжків",
+    "Original Parent ID": "Початковий ІД батька",
+    "Parent Span ID": "ІД батьківського проміжку",
+    "Permission": "Дозвіл",
+    "Permissive": "Дозвільний",
+    "Process ID": "ІД процесу",
+    "Query": "Запит",
+    "Raw span": "Сирий проміжок",
+    "Resource attributes": "Атрибути ресурсу",
+    "Resource schema URL": "URL схеми ресурсу",
+    "Results": "Результати",
+    "SELinux event": "Подія SELinux",
+    "Scope schema URL": "URL схеми області",
+    "Service": "Сервіс",
+    "Session graph": "Граф сесії",
+    "Session graph node": "Вузол графа сесії",
+    "Source context": "Контекст джерела",
+    "Span ID": "ІД проміжку",
+    "Span attributes": "Атрибути проміжку",
+    "Span detail": "Деталі проміжку",
+    "Summary": "Підсумок",
+    "Target": "Ціль",
+    "Target class": "Клас цілі",
+    "Target context": "Контекст цілі",
+    "Tasks": "Завдання",
+    "Text": "Текст",
+    "Tool Call ID": "ІД виклику інструмента",
+    "Tool calls": "Виклики інструментів",
+    "Trace ID": "ІД трасування",
+    "Trace spans": "Проміжки трасування"
   },
   "forget": {
     "Change Password": "Змінити пароль",
@@ -410,7 +452,7 @@
     "Home": "додому",
     "Home - Tooltip": "Домашня сторінка програми",
     "Host": "Хост",
-    "ID": "ID",
+    "ID": "ІД",
     "ID - Tooltip": "Унікальний випадковий рядок",
     "IP whitelist": "Белый список IP",
     "IP whitelist - Tooltip": "Белый список IP - підказка",
@@ -556,15 +598,9 @@
     "Signup application - Tooltip": "Через яку програму користувач зареєструвався під час реєстрації",
     "Signup link": "Посилання для реєстрації",
     "Sites": "Сайти",
-    "Sorry, the page you visited does not exist": {
-      "": "Вибачте, сторінка, яку ви відвідали, не існує."
-    },
-    "Sorry, the user you visited does not exist or you are not authorized to access this user": {
-      "": "Вибачте, користувач, якого ви відвідали, не існує або ви не авторизовані для доступу до цього користувача."
-    },
-    "Sorry, you do not have permission to access this page or logged in status invalid": {
-      "": "Вибачте, у вас немає дозволу на доступ до цієї сторінки або статус входу недійсний."
-    },
+    "Sorry, the page you visited does not exist.": "Вибачте, сторінка, яку ви відвідали, не існує.",
+    "Sorry, the user you visited does not exist or you are not authorized to access this user.": "Вибачте, користувач, якого ви відвідали, не існує або ви не авторизовані для доступу до цього користувача.",
+    "Sorry, you do not have permission to access this page or logged in status invalid.": "Вибачте, у вас немає дозволу на доступ до цієї сторінки або статус входу недійсний.",
     "State": "Держава",
     "State - Tooltip": "Держава",
     "Status": "Статус",
@@ -595,11 +631,7 @@
     "The actions cannot be empty": "Дії не можуть бути порожніми",
     "The resources cannot be empty": "Ресурси не можуть бути порожніми",
     "The users and roles cannot be empty at the same time": "Користувачі і ролі не можуть бути порожніми одночасно",
-    "There was a problem signing you in": {
-      "": {
-        "": "Під час входу виникла проблема."
-      }
-    },
+    "There was a problem signing you in..": "Під час входу виникла проблема.",
     "This is a read-only demo site!": "Це демо-сайт лише для читання!",
     "Tickets": "Квитки",
     "Timestamp": "Мітка часу",
@@ -615,7 +647,7 @@
     "True": "Так",
     "Type": "Тип",
     "Type - Tooltip": "Type - Tooltip",
-    "URL": "URL",
+    "URL": "URL-адреса",
     "URL - Tooltip": "URL-посилання",
     "Unauthorized": "Не авторизовано",
     "Unknown application name": "Невідома назва програми",
@@ -623,9 +655,7 @@
     "Up": "вгору",
     "Update time": "Час оновлення",
     "Updated time": "Оновлений час",
-    "Upload (": {
-      "xlsx)": "Завантажити (.xlsx)"
-    },
+    "Upload (.xlsx)": "Завантажити (.xlsx)",
     "Url": "URL",
     "User": "Користувач",
     "User - Tooltip": "Переконайтеся, що ім'я користувача правильне",
@@ -657,9 +687,7 @@
     "Physical": "фізичний",
     "Show all": "Покажи все",
     "Virtual": "Віртуальний",
-    "You need to delete all subgroups first": {
-      " You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Спочатку потрібно видалити всі підгрупи. Підгрупи можна переглянути у лівому дереві груп на сторінці [Організації] -> [Групи]"
-    }
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Спочатку потрібно видалити всі підгрупи. Підгрупи можна переглянути у лівому дереві груп на сторінці [Організації] -> [Групи]"
   },
   "home": {
     "New users / 30 days": "Нові користувачі / 30 днів",
@@ -730,22 +758,16 @@
     "Click the button below to sign in with Telegram": "Натисніть кнопку нижче, щоб увійти через Telegram",
     "Continue with": "Продовжити з",
     "Email or phone": "Електронна пошта або телефон",
-    "Face ID": "Face ID",
+    "Face ID": "Розпізнавання обличчя",
     "Face Recognition": "Розпізнавання обличчя",
     "Face recognition failed": "Помилка розпізнавання обличчя",
     "Failed to obtain MetaMask authorization": "Не вдалося отримати авторизацію MetaMask",
     "Failed to obtain Web3-Onboard authorization": "Не вдалося отримати авторизацію Web3-Onboard",
     "Forgot password?": "Забули пароль?",
-    "LDAP": "LDAP",
+    "LDAP": "LDAP-каталог",
     "LDAP username, Email or phone": "Ім’я користувача LDAP, електронна пошта або телефон",
     "Loading": "Завантаження",
-    "Logging out": {
-      "": {
-        "": {
-          "": "Вихід..."
-        }
-      }
-    },
+    "Logging out...": "Вихід...",
     "MetaMask plugin not detected": "Плагін MetaMask не виявлено",
     "Model loading failure": "Помилка завантаження моделі",
     "No account?": "Немає облікового запису?",
@@ -767,9 +789,7 @@
     "Please select an organization": "Виберіть організацію",
     "Please select an organization to sign in": "Виберіть організацію для входу",
     "Please type an organization to sign in": "Будь ласка, введіть організацію, щоб увійти",
-    "Redirecting, please wait": {
-      "": "Перенаправлення, будь ласка, зачекайте."
-    },
+    "Redirecting, please wait.": "Перенаправлення, будь ласка, зачекайте.",
     "Select organization": "Вибрати організацію",
     "Sign In": "Увійти",
     "Sign in with Face ID": "Увійдіть за допомогою Face ID",
@@ -777,13 +797,7 @@
     "Sign in with WebAuthn": "Увійдіть за допомогою WebAuthn",
     "Sign in with {type}": "Увійдіть за допомогою {type}",
     "Signin button": "Кнопка входу",
-    "Signing in": {
-      "": {
-        "": {
-          "": "Вхід..."
-        }
-      }
-    },
+    "Signing in...": "Вхід...",
     "Successfully logged in with WebAuthn credentials": "Успішно ввійшли за допомогою облікових даних WebAuthn",
     "The camera is currently in use by another webpage": "Камера зараз використовується іншою веб-сторінкою",
     "The input is not valid Email or phone number!": "Введено невірну адресу електронної пошти або номер телефону!",
@@ -792,7 +806,7 @@
     "To access": "Доступу",
     "Verification code": "Код підтвердження",
     "WeChat": "Вейчат",
-    "WebAuthn": "WebAuthn",
+    "WebAuthn": "Вхід WebAuthn",
     "sign up now": "Зареєструйся зараз",
     "username, Email or phone": "ім'я користувача, електронну пошту або телефон"
   },
@@ -810,9 +824,7 @@
     "Please bind your email first, the system will automatically uses the mail for multi-factor authentication": "Спочатку прив’яжіть свою електронну адресу, система автоматично використовуватиме її для багатофакторної автентифікації",
     "Please bind your phone first, the system automatically uses the phone for multi-factor authentication": "Спочатку прив’яжіть свій телефон, система автоматично використовує телефон для багатофакторної автентифікації",
     "Please confirm the information below": "Підтвердьте інформацію нижче",
-    "Please save this recovery code": {
-      " Once your device cannot provide an authentication code, you can reset mfa authentication by this recovery code": "Будь ласка, збережіть цей код відновлення. "
-    },
+    "Please save this recovery code. Once your device cannot provide an authentication code, you can reset mfa authentication by this recovery code": "Будь ласка, збережіть цей код відновлення. ",
     "Protect your account with Multi-factor authentication": "Захистіть свій обліковий запис за допомогою багатофакторної автентифікації",
     "Push notification receiver": "Отримувач push-сповіщень",
     "Recovery code": "Код відновлення",
@@ -951,19 +963,9 @@
     "Person name - Tooltip": "Справжнє ім'я платника",
     "Person phone": "Особистий телефон",
     "Person phone - Tooltip": "Номер телефону платника",
-    "Please carefully check your invoice information": {
-      " Once the invoice is issued, it cannot be withdrawn or modified": {
-        "": "Будь ласка, уважно перевірте інформацію про рахунок-фактуру. "
-      }
-    },
+    "Please carefully check your invoice information. Once the invoice is issued, it cannot be withdrawn or modified.": "Будь ласка, уважно перевірте інформацію про рахунок-фактуру. ",
     "Please pay the order first!": "Будь ласка, спочатку оплатите замовлення!",
-    "Processing": {
-      "": {
-        "": {
-          "": "Обробка..."
-        }
-      }
-    },
+    "Processing...": "Обробка...",
     "Recharged successfully": "Поповнення успішне",
     "Result": "Результат",
     "The payment has been canceled": "Платіж скасовано",
@@ -975,13 +977,7 @@
     "You have successfully completed the payment": "Ви успішно завершили оплату",
     "You have successfully recharged": "Ви успішно поповнили рахунок",
     "Your current balance is": "Ваш поточний баланс:",
-    "please wait for a few seconds": {
-      "": {
-        "": {
-          "": "зачекайте кілька секунд..."
-        }
-      }
-    },
+    "please wait for a few seconds...": "зачекайте кілька секунд...",
     "the current state is": "поточний стан є"
   },
   "permission": {
@@ -1065,23 +1061,11 @@
     "Payment failed": "Платіж не вдалося",
     "Payment providers": "Постачальники платежів",
     "Payment providers - Tooltip": "Провайдери платіжних послуг",
-    "Placing order": {
-      "": {
-        "": {
-          "": "Розміщення замовлення..."
-        }
-      }
-    },
+    "Placing order...": "Розміщення замовлення...",
     "Please add at least one recharge option when custom amount is disabled": "Додайте принаймні один варіант поповнення, коли довільну суму вимкнено",
     "Please select a currency": "Виберіть валюту",
     "Please select at least one payment provider": "Виберіть принаймні одного постачальника платежів",
-    "Processing payment": {
-      "": {
-        "": {
-          "": "Обробка оплати..."
-        }
-      }
-    },
+    "Processing payment...": "Обробка оплати...",
     "Product list cannot be empty": "Список товарів не може бути порожнім",
     "Product not found or invalid": "Товар не знайдено або недійсний",
     "Quantity": "Кількість",
@@ -1089,7 +1073,7 @@
     "Recharge options": "Варіанти поповнення",
     "Recharge options - Tooltip": "Варіанти поповнення - Підказка",
     "Recharge products need to go to the product detail page to set custom amount": "Для товарів поповнення потрібна сторінка товару, щоб задати довільну суму",
-    "SKU": "SKU",
+    "SKU": "Артикул",
     "Select amount": "Виберіть суму",
     "Sold": "Продано",
     "Sold - Tooltip": "Продана кількість",
@@ -1097,18 +1081,10 @@
     "Success URL": "URL успіху",
     "Success URL - Tooltip": "URL, на який буде перенаправлено після покупки",
     "Tag - Tooltip": "Тег товару",
-    "Test buy page": {
-      "": {
-        "": "Сторінка тестової покупки.."
-      }
-    },
+    "Test buy page..": "Сторінка тестової покупки..",
     "The currency of the product you are adding is different from the currency of the items in the cart": "Валюта товару, який ви додаєте, відрізняється від валюти товарів у кошику",
-    "There is no payment channel for this product": {
-      "": "Для цього продукту немає платіжного каналу."
-    },
-    "This product is currently not in sale": {
-      "": "Цей товар наразі відсутній у продажу."
-    },
+    "There is no payment channel for this product.": "Для цього продукту немає платіжного каналу.",
+    "This product is currently not in sale.": "Цей товар наразі відсутній у продажу.",
     "This product is currently not purchasable (No options available)": "Цей товар зараз недоступний для покупки (немає варіантів)",
     "Total Price": "Загальна ціна",
     "View Product": "Переглянути товар",
@@ -1140,10 +1116,8 @@
     "Can signin": "Можна ввійти",
     "Can signup": "Можна записатися",
     "Can unlink": "Можна від’єднати",
-    "Channel No": {
-      "": "Номер каналу",
-      " - Tooltip": "Унікальний номер, що ідентифікує канал зв'язку або передачі даних, використовується для розрізнення різних шляхів передачі"
-    },
+    "Channel No.": "Номер каналу",
+    "Channel No. - Tooltip": "Унікальний номер, що ідентифікує канал зв'язку або передачі даних, використовується для розрізнення різних шляхів передачі",
     "Chat ID": "Ідентифікатор чату",
     "Chat ID - Tooltip": "Унікальний ідентифікатор для сесії чату або каналу, що використовується для локалізації конкретних сценаріїв розмови",
     "Client ID": "ID клієнта",
@@ -1231,9 +1205,7 @@
     "Region ID - Tooltip": "ID регіону для постачальника послуг",
     "Region endpoint for Internet": "Кінцева точка регіону для Інтернету",
     "Region endpoint for Intranet": "Кінцева точка регіону для інтрамережі",
-    "SAML 2": {
-      "0 Endpoint (HTTP)": "Кінцева точка SAML 2.0 (HTTP)"
-    },
+    "SAML 2.0 Endpoint (HTTP)": "Кінцева точка SAML 2.0 (HTTP)",
     "SMS Test": "SMS Тест",
     "SMS Test - Tooltip": "Номер телефону для відправки тестових SMS",
     "SMS account": "обліковий запис SMS",
@@ -1331,13 +1303,7 @@
     "File name": "Ім'я файлу",
     "File size": "Розмір файлу",
     "Format": "Формат",
-    "Upload a file": {
-      "": {
-        "": {
-          "": "Завантажити файл..."
-        }
-      }
-    }
+    "Upload a file...": "Завантажити файл..."
   },
   "role": {
     "Edit Role": "Редагувати роль",
@@ -1512,9 +1478,7 @@
     "API Latency": "Затримка API",
     "API Throughput": "Пропускна здатність API",
     "About Casdoor": "Про Casdoor",
-    "An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2": {
-      "0, OIDC, SAML and CAS": "Платформа керування ідентифікацією та доступом (IAM)/системи єдиного входу (SSO) із веб-інтерфейсом користувача, який підтримує OAuth 2.0, OIDC, SAML і CAS"
-    },
+    "An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2.0, OIDC, SAML and CAS": "Платформа керування ідентифікацією та доступом (IAM)/системи єдиного входу (SSO) із веб-інтерфейсом користувача, який підтримує OAuth 2.0, OIDC, SAML і CAS",
     "CPU Usage": "Використання ЦП",
     "Community": "Спільнота",
     "Count": "Рахувати",
@@ -1552,13 +1516,7 @@
     "Please enter a message": "Введіть повідомлення",
     "Press Ctrl+Enter to send": "Натисніть Ctrl+Enter, щоб надіслати",
     "Resolved": "Вирішено",
-    "Type your message here": {
-      "": {
-        "": {
-          "": "Введіть повідомлення тут..."
-        }
-      }
-    }
+    "Type your message here...": "Введіть повідомлення тут..."
   },
   "token": {
     "Access token": "Маркер доступу",
@@ -1653,13 +1611,7 @@
     "Location - Tooltip": "Місто проживання",
     "MFA accounts": "Облікові записи MFA",
     "Managed accounts": "Керовані облікові записи",
-    "Modify password": {
-      "": {
-        "": {
-          "": "Змінити пароль..."
-        }
-      }
-    },
+    "Modify password...": "Змінити пароль...",
     "Need update password": "Потрібно оновити пароль",
     "Need update password - Tooltip": "Примусова зміна паролю користувача після входу",
     "New Email": "Нова електронна пошта",
@@ -1684,47 +1636,21 @@
     "Register source - Tooltip": "Джерело, з якого було зареєстровано користувача",
     "Register type": "Тип реєстрації",
     "Register type - Tooltip": "Метод, використаний для реєстрації користувача",
-    "Reset Email": {
-      "": {
-        "": {
-          "": "Скинути електронну адресу..."
-        }
-      }
-    },
-    "Reset Phone": {
-      "": {
-        "": {
-          "": "Скинути телефон..."
-        }
-      }
-    },
+    "Reset Email...": "Скинути електронну адресу...",
+    "Reset Phone...": "Скинути телефон...",
     "Score": "Оцінка",
     "Score - Tooltip": "Накопичувальні бали, отримані користувачами через операції або завдання, можуть використовуватися для отримання переваг або вимірювання рівня активності",
-    "Select a photo": {
-      "": {
-        "": {
-          "": "Виберіть фото..."
-        }
-      }
-    },
+    "Select a photo...": "Виберіть фото...",
     "Set Password": "Встановити пароль",
     "Set new profile picture": "Встановити нове зображення профілю",
-    "Set password": {
-      "": {
-        "": {
-          "": "Встановити пароль..."
-        }
-      }
-    },
+    "Set password...": "Встановити пароль...",
     "The password must contain at least one special character": "Пароль повинен містити хоча б один спеціальний символ",
     "The password must contain at least one uppercase letter, one lowercase letter and one digit": "Пароль повинен містити принаймні одну велику літеру, одну малу літеру та одну цифру",
     "The password must have at least 6 characters": "Пароль повинен містити не менше 6 символів",
     "The password must have at least 8 characters": "Пароль повинен містити не менше 8 символів",
     "The password must not contain any repeated characters": "Пароль не повинен містити повторюваних символів",
     "This field value doesn't match the pattern rule": "Це значення поля не відповідає правилу шаблону",
-    "Two passwords you typed do not match": {
-      "": "Два паролі, які ви ввели, не збігаються."
-    },
+    "Two passwords you typed do not match.": "Два паролі, які ви ввели, не збігаються.",
     "Unlink": "Від’єднати",
     "Upload ID card back picture": "Завантажити заднє зображення посвідчення особи",
     "Upload ID card front picture": "Завантажте переднє зображення посвідчення особи",

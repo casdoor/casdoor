@@ -265,8 +265,50 @@
     "New Enforcer": "新しいエンフォーサー"
   },
   "entry": {
+    "Audit stamp": "監査タイムスタンプ",
+    "Command": "コマンド",
+    "Decision": "決定",
+    "Device": "デバイス",
+    "Duration": "継続時間",
     "Edit Entry": "エントリを編集",
-    "New Entry": "新しいエントリ"
+    "Entry ID": "エントリ ID",
+    "Executable": "実行ファイル",
+    "Failed to load session graph": "セッショングラフの読み込みに失敗しました",
+    "Failed to parse trace message": "トレースメッセージの解析に失敗しました",
+    "Finals": "ファイナル",
+    "Inode": "iノード",
+    "Links": "リンク",
+    "New Entry": "新しいエントリ",
+    "No spans": "スパンなし",
+    "Original Parent ID": "元の親 ID",
+    "Parent Span ID": "親スパン ID",
+    "Permission": "権限",
+    "Permissive": "許容モード",
+    "Process ID": "プロセス ID",
+    "Query": "クエリ",
+    "Raw span": "生スパン",
+    "Resource attributes": "リソース属性",
+    "Resource schema URL": "リソーススキーマ URL",
+    "Results": "結果",
+    "SELinux event": "SELinux イベント",
+    "Scope schema URL": "スコープスキーマ URL",
+    "Service": "サービス",
+    "Session graph": "セッショングラフ",
+    "Session graph node": "セッショングラフノード",
+    "Source context": "ソースコンテキスト",
+    "Span ID": "スパン ID",
+    "Span attributes": "スパン属性",
+    "Span detail": "スパン詳細",
+    "Summary": "概要",
+    "Target": "ターゲット",
+    "Target class": "ターゲットクラス",
+    "Target context": "ターゲットコンテキスト",
+    "Tasks": "タスク",
+    "Text": "テキスト",
+    "Tool Call ID": "ツール呼び出し ID",
+    "Tool calls": "ツール呼び出し",
+    "Trace ID": "トレース ID",
+    "Trace spans": "トレーススパン"
   },
   "forget": {
     "Change Password": "パスワードを変更",
@@ -410,7 +452,7 @@
     "Home": "ホーム",
     "Home - Tooltip": "アプリケーションのホームページ",
     "Host": "ホスト",
-    "ID": "ID",
+    "ID": "識別子",
     "ID - Tooltip": "ユニークなランダム文字列",
     "IP whitelist": "IPホワイトリスト",
     "IP whitelist - Tooltip": "IPホワイトリスト",
@@ -426,7 +468,7 @@
     "Keys": "キー",
     "LDAPs": "LDAP",
     "LDAPs - Tooltip": "LDAPサーバー",
-    "LLM AI": "LLM AI",
+    "LLM AI": "大規模言語モデル AI",
     "Languages": "言語",
     "Languages - Tooltip": "利用可能な言語",
     "Last name": "苗字",
@@ -463,7 +505,7 @@
     "None": "なし",
     "OAuth providers": "OAuthプロバイダー",
     "OFF": "オフ",
-    "OK": "OK",
+    "OK": "了解",
     "ON": "オン",
     "Only 1 MFA method can be required": "必須にできるMFA方法は1つだけです",
     "Or": "または",
@@ -556,15 +598,9 @@
     "Signup application - Tooltip": "ユーザーが登録した際に、どのアプリケーションを使用しましたか？",
     "Signup link": "サインアップリンク",
     "Sites": "サイト",
-    "Sorry, the page you visited does not exist": {
-      "": "申し訳ありませんが、ご訪問いただいたページは存在しません。"
-    },
-    "Sorry, the user you visited does not exist or you are not authorized to access this user": {
-      "": "すみません、あなたが訪問したユーザーは存在しないか、またはそのユーザーにアクセスする権限がありません。"
-    },
-    "Sorry, you do not have permission to access this page or logged in status invalid": {
-      "": "申し訳ありませんが、このページにアクセスする権限がありません、またはログイン状態が無効です。"
-    },
+    "Sorry, the page you visited does not exist.": "申し訳ありませんが、ご訪問いただいたページは存在しません。",
+    "Sorry, the user you visited does not exist or you are not authorized to access this user.": "すみません、あなたが訪問したユーザーは存在しないか、またはそのユーザーにアクセスする権限がありません。",
+    "Sorry, you do not have permission to access this page or logged in status invalid.": "申し訳ありませんが、このページにアクセスする権限がありません、またはログイン状態が無効です。",
     "State": "州",
     "State - Tooltip": "状態",
     "Status": "状態",
@@ -595,11 +631,7 @@
     "The actions cannot be empty": "アクションを空にできません",
     "The resources cannot be empty": "リソースを空にできません",
     "The users and roles cannot be empty at the same time": "ユーザーとロールを同時に空にすることはできません",
-    "There was a problem signing you in": {
-      "": {
-        "": "サインインに問題が発生しました..."
-      }
-    },
+    "There was a problem signing you in..": "サインインに問題が発生しました...",
     "This is a read-only demo site!": "これは読み取り専用のデモサイトです！",
     "Tickets": "チケット",
     "Timestamp": "タイムスタンプ",
@@ -615,7 +647,7 @@
     "True": "真",
     "Type": "タイプ",
     "Type - Tooltip": "このアイテムの動作や設定を分類するカテゴリまたはタイプ",
-    "URL": "URL",
+    "URL": "URL アドレス",
     "URL - Tooltip": "URLリンク",
     "Unauthorized": "未承認",
     "Unknown application name": "不明なアプリケーション名",
@@ -623,9 +655,7 @@
     "Up": "アップ",
     "Update time": "更新時間",
     "Updated time": "更新日時",
-    "Upload (": {
-      "xlsx)": "アップロード (.xlsx)"
-    },
+    "Upload (.xlsx)": "アップロード (.xlsx)",
     "Url": "URL",
     "User": "ユーザー",
     "User - Tooltip": "ユーザー名が正しいことを確認してください",
@@ -657,9 +687,7 @@
     "Physical": "物理",
     "Show all": "すべて表示",
     "Virtual": "仮想",
-    "You need to delete all subgroups first": {
-      " You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "最初にすべてのサブグループを削除する必要があります。[組織] -> [グループ]ページの左側のグループツリーでサブグループを確認できます"
-    }
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "最初にすべてのサブグループを削除する必要があります。[組織] -> [グループ]ページの左側のグループツリーでサブグループを確認できます"
   },
   "home": {
     "New users / 30 days": "新規ユーザー / 30日間",
@@ -730,22 +758,16 @@
     "Click the button below to sign in with Telegram": "下のボタンをクリックしてTelegramでサインインしてください",
     "Continue with": "続ける",
     "Email or phone": "メールまたは電話",
-    "Face ID": "Face ID",
+    "Face ID": "顔認証（Face ID）",
     "Face Recognition": "顔認識",
     "Face recognition failed": "顔認識に失敗しました",
     "Failed to obtain MetaMask authorization": "MetaMask認証の取得に失敗しました",
     "Failed to obtain Web3-Onboard authorization": "Web3-Onboard認証の取得に失敗しました",
     "Forgot password?": "パスワードを忘れましたか？",
-    "LDAP": "LDAP",
+    "LDAP": "LDAP ディレクトリ",
     "LDAP username, Email or phone": "LDAPユーザー名、メールまたは電話",
     "Loading": "ローディング",
-    "Logging out": {
-      "": {
-        "": {
-          "": "ログアウト中..."
-        }
-      }
-    },
+    "Logging out...": "ログアウト中...",
     "MetaMask plugin not detected": "MetaMaskプラグインが検出されません",
     "Model loading failure": "モデル読み込みエラー",
     "No account?": "アカウントがありませんか？",
@@ -767,9 +789,7 @@
     "Please select an organization": "組織を選択してください",
     "Please select an organization to sign in": "サインインする組織を選択してください",
     "Please type an organization to sign in": "サインインする組織を入力してください",
-    "Redirecting, please wait": {
-      "": "リダイレクト中、お待ちください。"
-    },
+    "Redirecting, please wait.": "リダイレクト中、お待ちください。",
     "Select organization": "組織を選択",
     "Sign In": "サインイン",
     "Sign in with Face ID": "顔IDでサインイン",
@@ -777,13 +797,7 @@
     "Sign in with WebAuthn": "WebAuthnでサインインしてください",
     "Sign in with {type}": "{type}でサインインしてください",
     "Signin button": "サインインボタン",
-    "Signing in": {
-      "": {
-        "": {
-          "": "サインイン中..."
-        }
-      }
-    },
+    "Signing in...": "サインイン中...",
     "Successfully logged in with WebAuthn credentials": "WebAuthnの認証情報で正常にログインしました",
     "The camera is currently in use by another webpage": "カメラは現在別のウェブページで使用されています",
     "The input is not valid Email or phone number!": "入力されたのは有効なメールアドレスまたは電話番号ではありません",
@@ -810,9 +824,7 @@
     "Please bind your email first, the system will automatically uses the mail for multi-factor authentication": "最初にメールをバインドしてください。システムは自動的にメールを多要素認証に使用します",
     "Please bind your phone first, the system automatically uses the phone for multi-factor authentication": "最初に電話をバインドしてください。システムは自動的に電話を多要素認証に使用します",
     "Please confirm the information below": "以下の情報を確認してください",
-    "Please save this recovery code": {
-      " Once your device cannot provide an authentication code, you can reset mfa authentication by this recovery code": "このリカバリーコードを保存してください。デバイスが認証コードを提供できない場合、このリカバリーコードでMFA認証をリセットできます"
-    },
+    "Please save this recovery code. Once your device cannot provide an authentication code, you can reset mfa authentication by this recovery code": "このリカバリーコードを保存してください。デバイスが認証コードを提供できない場合、このリカバリーコードでMFA認証をリセットできます",
     "Protect your account with Multi-factor authentication": "多要素認証でアカウントを保護する",
     "Push notification receiver": "プッシュ通知受信者",
     "Recovery code": "リカバリーコード",
@@ -882,7 +894,7 @@
     "Is profile public - Tooltip": "閉鎖された後、グローバル管理者または同じ組織のユーザーだけがユーザーのプロファイルページにアクセスできます",
     "Kerberos KDC host": "Kerberos KDC ホスト",
     "Kerberos KDC host - Tooltip": "Kerberos鍵配布センターのホスト名",
-    "Kerberos keytab": "Kerberos keytab",
+    "Kerberos keytab": "Kerberos キータブ",
     "Kerberos keytab - Tooltip": "サービスプリンシパルのBase64エンコードされたkeytabファイル",
     "Kerberos realm": "Kerberos レルム",
     "Kerberos realm - Tooltip": "IWA/SPNEGO認証用のKerberosレルム",
@@ -951,19 +963,9 @@
     "Person name - Tooltip": "支払い者の実名",
     "Person phone": "人の電話",
     "Person phone - Tooltip": "支払い者の電話番号",
-    "Please carefully check your invoice information": {
-      " Once the invoice is issued, it cannot be withdrawn or modified": {
-        "": "請求書情報を慎重に確認してください。一度請求書が発行されると、取り下げまたは変更することはできません。"
-      }
-    },
+    "Please carefully check your invoice information. Once the invoice is issued, it cannot be withdrawn or modified.": "請求書情報を慎重に確認してください。一度請求書が発行されると、取り下げまたは変更することはできません。",
     "Please pay the order first!": "最初に注文をお支払いください！",
-    "Processing": {
-      "": {
-        "": {
-          "": "処理中... "
-        }
-      }
-    },
+    "Processing...": "処理中... ",
     "Recharged successfully": "正常にチャージされました",
     "Result": "結果",
     "The payment has been canceled": "支払いがキャンセルされました",
@@ -975,13 +977,7 @@
     "You have successfully completed the payment": "あなたは支払いを正常に完了しました",
     "You have successfully recharged": "正常にチャージされました",
     "Your current balance is": "現在の残高は",
-    "please wait for a few seconds": {
-      "": {
-        "": {
-          "": "数秒お待ちください..."
-        }
-      }
-    },
+    "please wait for a few seconds...": "数秒お待ちください...",
     "the current state is": "現在の状態は"
   },
   "permission": {
@@ -1065,23 +1061,11 @@
     "Payment failed": "支払い失敗",
     "Payment providers": "支払いプロバイダー",
     "Payment providers - Tooltip": "支払いサービスの提供者",
-    "Placing order": {
-      "": {
-        "": {
-          "": "注文をする..."
-        }
-      }
-    },
+    "Placing order...": "注文をする...",
     "Please add at least one recharge option when custom amount is disabled": "任意金額が無効な場合は、少なくとも1つのチャージオプションを追加してください",
     "Please select a currency": "通貨を選択してください",
     "Please select at least one payment provider": "少なくとも1つの支払いプロバイダーを選択してください",
-    "Processing payment": {
-      "": {
-        "": {
-          "": "支払い処理中..."
-        }
-      }
-    },
+    "Processing payment...": "支払い処理中...",
     "Product list cannot be empty": "商品リストを空にできません",
     "Product not found or invalid": "商品が見つからないか無効です",
     "Quantity": "量",
@@ -1089,7 +1073,7 @@
     "Recharge options": "チャージオプション",
     "Recharge options - Tooltip": "チャージオプション - ツールチップ",
     "Recharge products need to go to the product detail page to set custom amount": "チャージ商品は商品詳細ページでカスタム金額を設定する必要があります",
-    "SKU": "SKU",
+    "SKU": "SKU コード",
     "Select amount": "金額を選択",
     "Sold": "売れました",
     "Sold - Tooltip": "販売数量",
@@ -1097,18 +1081,10 @@
     "Success URL": "成功URL",
     "Success URL - Tooltip": "購入後に戻るURL",
     "Tag - Tooltip": "製品のタグ",
-    "Test buy page": {
-      "": {
-        "": "テスト購入ページ。"
-      }
-    },
+    "Test buy page..": "テスト購入ページ。",
     "The currency of the product you are adding is different from the currency of the items in the cart": "追加しようとしている商品の通貨がカート内の商品の通貨と異なります",
-    "There is no payment channel for this product": {
-      "": "この製品には支払いチャネルがありません。"
-    },
-    "This product is currently not in sale": {
-      "": "この製品は現在販売されていません。"
-    },
+    "There is no payment channel for this product.": "この製品には支払いチャネルがありません。",
+    "This product is currently not in sale.": "この製品は現在販売されていません。",
     "This product is currently not purchasable (No options available)": "この商品は現在購入できません（利用可能なオプションがありません）",
     "Total Price": "合計金額",
     "View Product": "商品を表示",
@@ -1140,10 +1116,8 @@
     "Can signin": "サインインできますか？",
     "Can signup": "サインアップできますか？",
     "Can unlink": "アンリンクすることができます",
-    "Channel No": {
-      "": "チャンネル番号",
-      " - Tooltip": "チャンネル番号"
-    },
+    "Channel No.": "チャンネル番号",
+    "Channel No. - Tooltip": "チャンネル番号",
     "Chat ID": "チャットID",
     "Chat ID - Tooltip": "チャットID - ツールチップ",
     "Client ID": "クライアントID",
@@ -1231,15 +1205,13 @@
     "Region ID - Tooltip": "サービスプロバイダの地域ID",
     "Region endpoint for Internet": "インターネットのリージョンエンドポイント",
     "Region endpoint for Intranet": "Intranetの地域エンドポイント",
-    "SAML 2": {
-      "0 Endpoint (HTTP)": "SAML 2.0 エンドポイント（HTTP）"
-    },
+    "SAML 2.0 Endpoint (HTTP)": "SAML 2.0 エンドポイント（HTTP）",
     "SMS Test": "SMSテスト",
     "SMS Test - Tooltip": "テストSMSの送信先電話番号",
     "SMS account": "SMSアカウント",
     "SMS account - Tooltip": "SMSアカウント",
     "SMTP connected successfully": "SMTP接続成功",
-    "SP ACS URL": "SP ACS URL",
+    "SP ACS URL": "SP の ACS URL",
     "SP ACS URL - Tooltip": "SP ACS URL - ツールチップ",
     "SP Entity ID": "SPエンティティID",
     "SP Entity ID - Tooltip": "SAMLサービスプロバイダーの一意の識別子",
@@ -1331,13 +1303,7 @@
     "File name": "ファイル名",
     "File size": "ファイルサイズ",
     "Format": "フォーマット",
-    "Upload a file": {
-      "": {
-        "": {
-          "": "ファイルをアップロードしてください..."
-        }
-      }
-    }
+    "Upload a file...": "ファイルをアップロードしてください..."
   },
   "role": {
     "Edit Role": "役割の編集",
@@ -1512,9 +1478,7 @@
     "API Latency": "API遅延",
     "API Throughput": "APIスループット",
     "About Casdoor": "Casdoorについて",
-    "An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2": {
-      "0, OIDC, SAML and CAS": "ウェブUIを備えたアイデンティティおよびアクセス管理（IAM）/シングルサインオン（SSO）プラットフォームで、OAuth 2.0、OIDC、SAML、およびCASをサポートしています"
-    },
+    "An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2.0, OIDC, SAML and CAS": "ウェブUIを備えたアイデンティティおよびアクセス管理（IAM）/シングルサインオン（SSO）プラットフォームで、OAuth 2.0、OIDC、SAML、およびCASをサポートしています",
     "CPU Usage": "CPU使用率",
     "Community": "コミュニティ",
     "Count": "カウント",
@@ -1552,13 +1516,7 @@
     "Please enter a message": "メッセージを入力してください",
     "Press Ctrl+Enter to send": "Ctrl+Enterで送信",
     "Resolved": "解決済み",
-    "Type your message here": {
-      "": {
-        "": {
-          "": "ここにメッセージを入力..."
-        }
-      }
-    }
+    "Type your message here...": "ここにメッセージを入力..."
   },
   "token": {
     "Access token": "アクセストークン",
@@ -1653,13 +1611,7 @@
     "Location - Tooltip": "居住都市",
     "MFA accounts": "MFAアカウント",
     "Managed accounts": "管理アカウント",
-    "Modify password": {
-      "": {
-        "": {
-          "": "パスワードを変更する..."
-        }
-      }
-    },
+    "Modify password...": "パスワードを変更する...",
     "Need update password": "パスワード更新が必要",
     "Need update password - Tooltip": "ログイン後にユーザーにパスワード更新を強制する",
     "New Email": "新しいメール",
@@ -1684,47 +1636,21 @@
     "Register source - Tooltip": "ユーザーが登録されたソース",
     "Register type": "登録方法",
     "Register type - Tooltip": "ユーザーを登録するために使用される方法",
-    "Reset Email": {
-      "": {
-        "": {
-          "": "リセットメール..."
-        }
-      }
-    },
-    "Reset Phone": {
-      "": {
-        "": {
-          "": "リセットします..."
-        }
-      }
-    },
+    "Reset Email...": "リセットメール...",
+    "Reset Phone...": "リセットします...",
     "Score": "スコア",
     "Score - Tooltip": "スコア - ツールチップ",
-    "Select a photo": {
-      "": {
-        "": {
-          "": "写真を選択してください..."
-        }
-      }
-    },
+    "Select a photo...": "写真を選択してください...",
     "Set Password": "パスワードを設定する",
     "Set new profile picture": "新しいプロフィール写真を設定する",
-    "Set password": {
-      "": {
-        "": {
-          "": "パスワードの設定..."
-        }
-      }
-    },
+    "Set password...": "パスワードの設定...",
     "The password must contain at least one special character": "パスワードには少なくとも1つの特殊文字が必要です",
     "The password must contain at least one uppercase letter, one lowercase letter and one digit": "パスワードには少なくとも1つの大文字、1つの小文字、1つの数字が必要です",
     "The password must have at least 6 characters": "パスワードは少なくとも6文字以上必要です",
     "The password must have at least 8 characters": "パスワードは少なくとも8文字以上必要です",
     "The password must not contain any repeated characters": "パスワードに繰り返し文字を含めないでください",
     "This field value doesn't match the pattern rule": "このフィールドの値はパターンルールに一致しません",
-    "Two passwords you typed do not match": {
-      "": "2つのパスワードが一致しません。"
-    },
+    "Two passwords you typed do not match.": "2つのパスワードが一致しません。",
     "Unlink": "アンリンク",
     "Upload ID card back picture": "身分証裏面画像をアップロード",
     "Upload ID card front picture": "身分証表面画像をアップロード",
