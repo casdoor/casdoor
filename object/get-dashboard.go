@@ -96,14 +96,28 @@ func GetDashboard(owner string) (*map[string][]int64, error) {
 	for i := 30; i >= 0; i-- {
 		cutTime := nowTime.AddDate(0, 0, -i)
 		for _, tableName := range tableNames {
-			item, exist := dashboardMap.Load(tableName)
+			item, exist := getDashboardMapItem(&dashboardMap, tableNamePrefix, tableName)
 			if !exist {
 				continue
 			}
-			dashboard[tableName+"Counts"][30-i] = countCreatedBefore(item.(DashboardMapItem), cutTime)
+			dashboard[tableName+"Counts"][30-i] = countCreatedBefore(item, cutTime)
 		}
 	}
 	return &dashboard, nil
+}
+
+func getDashboardMapItem(dashboardMap *sync.Map, tableNamePrefix, tableName string) (DashboardMapItem, bool) {
+	item, exist := dashboardMap.Load(tableNamePrefix + tableName)
+	if !exist {
+		return DashboardMapItem{}, false
+	}
+
+	dashboardItem, ok := item.(DashboardMapItem)
+	if !ok {
+		return DashboardMapItem{}, false
+	}
+
+	return dashboardItem, true
 }
 
 func countCreatedBefore(dashboardMapItem DashboardMapItem, before time.Time) int64 {
