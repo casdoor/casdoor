@@ -119,6 +119,7 @@ p, *, *, GET, /api/get-transactions, *, *
 p, *, *, GET, /api/get-transaction, *, *
 p, *, *, GET, /api/get-provider, *, *
 p, *, *, GET, /api/get-organization-names, *, *
+p, *, *, GET, /api/get-organizations, *, *
 p, *, *, GET, /api/get-all-objects, *, *
 p, *, *, GET, /api/get-all-actions, *, *
 p, *, *, GET, /api/get-all-roles, *, *
