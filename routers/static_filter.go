@@ -19,7 +19,10 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"net"
 	"net/http"
+	"net/http/httputil"
+	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
@@ -37,6 +40,11 @@ var (
 	newStaticBaseUrl = conf.GetConfigString("staticBaseUrl")
 	enableGzip       = conf.GetConfigBool("enableGzip")
 	frontendBaseDir  = conf.GetConfigString("frontendBaseDir")
+)
+
+const (
+	devFrontendAddr = "127.0.0.1:7001"
+	devFrontendURL  = "http://127.0.0.1:7001"
 )
 
 func getWebBuildFolder() string {
@@ -123,6 +131,39 @@ func fastAutoSignin(ctx *context.Context) (string, error) {
 	return res, nil
 }
 
+func isPortOpenWithTimeout(address string, timeout time.Duration) bool {
+	conn, err := net.DialTimeout("tcp", address, timeout)
+	if err != nil {
+		return false
+	}
+	_ = conn.Close()
+	return true
+}
+
+func tryProxyToDevFrontend(ctx *context.Context) bool {
+	if conf.GetConfigString("runmode") != "dev" {
+		return false
+	}
+
+	// In dev mode, only proxy when the frontend dev server is reachable.
+	if !isPortOpenWithTimeout(devFrontendAddr, 200*time.Millisecond) {
+		return false
+	}
+
+	target, err := url.Parse(devFrontendURL)
+	if err != nil {
+		logs.Error("failed to parse dev frontend URL: %v", err)
+		return false
+	}
+
+	proxy := httputil.NewSingleHostReverseProxy(target)
+	proxy.ErrorHandler = func(w http.ResponseWriter, r *http.Request, proxyErr error) {
+		logs.Warn("proxy request to dev frontend failed: %v", proxyErr)
+	}
+	proxy.ServeHTTP(ctx.ResponseWriter, ctx.Request)
+	return true
+}
+
 func StaticFilter(ctx *context.Context) {
 	urlPath := ctx.Request.URL.Path
 
@@ -164,6 +205,10 @@ func StaticFilter(ctx *context.Context) {
 	}
 
 	if serveAuthCallbackPage(ctx) {
+		return
+	}
+
+	if tryProxyToDevFrontend(ctx) {
 		return
 	}
 
