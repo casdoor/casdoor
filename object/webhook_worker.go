@@ -34,6 +34,15 @@ var (
 
 // StartWebhookDeliveryWorker starts the background worker for webhook delivery
 func StartWebhookDeliveryWorker() {
+	has, err := HasAnyWebhooks()
+	if err != nil {
+		logs.Error("failed to check webhooks, webhook delivery worker not started: " + err.Error())
+		return
+	}
+	if !has {
+		return
+	}
+
 	webhookWorkerMu.Lock()
 	defer webhookWorkerMu.Unlock()
 

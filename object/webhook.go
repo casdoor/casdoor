@@ -67,6 +67,16 @@ func GetWebhooks(owner string, organization string) ([]*Webhook, error) {
 	return webhooks, nil
 }
 
+// HasAnyWebhooks reports whether the database has at least one webhook configuration.
+// Used to avoid running the webhook delivery worker when the feature is unused.
+func HasAnyWebhooks() (bool, error) {
+	count, err := ormer.Engine.Count(&Webhook{})
+	if err != nil {
+		return false, err
+	}
+	return count > 0, nil
+}
+
 func GetPaginationWebhooks(owner, organization string, offset, limit int, field, value, sortField, sortOrder string) ([]*Webhook, error) {
 	webhooks := []*Webhook{}
 	session := GetSession(owner, offset, limit, field, value, sortField, sortOrder)
