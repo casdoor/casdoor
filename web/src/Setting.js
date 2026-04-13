@@ -477,6 +477,12 @@ export const OtherProviderInfo = {
       url: "https://github.com/SELinuxProject/selinux",
     },
   },
+  Scan: {
+    "MCP Scan": {
+      logo: `${StaticBaseUrl}/img/social_default.png`,
+      url: "",
+    },
+  },
 };
 
 export const UserFields = ["owner", "name", "password", "display_name", "id", "type", "email", "phone", "country_code",
@@ -1449,6 +1455,10 @@ export function getProviderTypeOptions(category) {
       {id: "System Log", name: "System Log"},
       {id: "Agent", name: "Agent"},
       {id: "SELinux Log", name: "SELinux Log"},
+    ]);
+  } else if (category === "Scan") {
+    return ([
+      {id: "MCP Scan", name: "MCP Scan"},
     ]);
   } else {
     return [];

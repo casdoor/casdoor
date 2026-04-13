@@ -18,6 +18,7 @@ import {Button, Table} from "antd";
 import moment from "moment";
 import * as Setting from "./Setting";
 import * as ServerBackend from "./backend/ServerBackend";
+import * as ProviderBackend from "./backend/ProviderBackend";
 import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
 import PopconfirmModal from "./common/modal/PopconfirmModal";
@@ -32,11 +33,8 @@ class ServerListPage extends BaseListPage {
       scanResult: null,
       scanServers: [],
       showScanModal: false,
-      scanFilters: {
-        cidrs: ["127.0.0.1/32"],
-        ports: ["1-65535"],
-        paths: ["/", "/mcp", "/sse", "/mcp/sse"],
-      },
+      scanProviders: [],
+      selectedScanProvider: null,
     };
   }
 
@@ -116,9 +114,9 @@ class ServerListPage extends BaseListPage {
       });
   };
 
-  scanIntranetServers = (scanRequest) => {
+  scanIntranetServers = (providerOwner, providerName) => {
     this.setState({scanLoading: true});
-    ServerBackend.syncIntranetServers(scanRequest)
+    ServerBackend.syncIntranetServers(providerOwner, providerName)
       .then((res) => {
         this.setState({scanLoading: false});
         if (res.status === "ok") {
@@ -136,8 +134,33 @@ class ServerListPage extends BaseListPage {
       });
   };
 
+  loadScanProviders = () => {
+    const owner = Setting.getRequestOrganization(this.props.account);
+    return ProviderBackend.getProviders(owner, 1, 200, "", "", "", "")
+      .then((res) => {
+        if (res.status !== "ok") {
+          Setting.showMessage("error", `${i18next.t("general:Failed to get")}: ${res.msg}`);
+          return [];
+        }
+
+        return (res.data || []).filter(provider => provider.category === "Scan" && provider.type === "MCP Scan" && provider.subType === "Intranet Scan");
+      })
+      .catch(error => {
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
+        return [];
+      });
+  };
+
   openScanModal = () => {
-    this.setState({showScanModal: true});
+    this.loadScanProviders().then((scanProviders) => {
+      this.setState({
+        showScanModal: true,
+        scanProviders: scanProviders,
+        selectedScanProvider: scanProviders.length > 0 ? `${scanProviders[0].owner}/${scanProviders[0].name}` : null,
+        scanResult: null,
+        scanServers: [],
+      });
+    });
   };
 
   closeScanModal = () => {
@@ -148,32 +171,14 @@ class ServerListPage extends BaseListPage {
   };
 
   submitScan = () => {
-    const cidr = this.state.scanFilters.cidrs
-      .map(item => item.trim())
-      .filter(item => item !== "");
-    const ports = this.state.scanFilters.ports
-      .map(item => `${item}`.trim())
-      .filter(item => item !== "");
-    const paths = this.state.scanFilters.paths
-      .map(item => item.trim())
-      .filter(item => item !== "");
-
-    if (cidr.length === 0) {
-      Setting.showMessage("error", i18next.t("server:Please select at least one IP range"));
-      return;
-    }
-    if (ports.length === 0) {
-      Setting.showMessage("error", i18next.t("server:Please select at least one port"));
+    if (!this.state.selectedScanProvider) {
+      Setting.showMessage("error", i18next.t("server:Please select a provider"));
       return;
     }
 
-    const invalidPort = ports.find(item => !/^\d+$|^\d+\s*-\s*\d+$/.test(item));
-    if (invalidPort !== undefined) {
-      Setting.showMessage("error", `Invalid port expression: ${invalidPort}`);
-      return;
-    }
+    const [providerOwner, providerName] = this.state.selectedScanProvider.split("/");
 
-    this.scanIntranetServers({cidr: cidr, ports: ports, paths: paths});
+    this.scanIntranetServers(providerOwner, providerName);
   };
 
   addScannedServer = (scanServer) => {
@@ -323,12 +328,13 @@ class ServerListPage extends BaseListPage {
         <ScanServerModal
           open={this.state.showScanModal}
           loading={this.state.scanLoading}
-          scanFilters={this.state.scanFilters}
+          scanProviders={this.state.scanProviders}
+          selectedScanProvider={this.state.selectedScanProvider}
           scanResult={this.state.scanResult}
           scanServers={this.state.scanServers}
           onSubmit={this.submitScan}
           onCancel={this.closeScanModal}
-          onChangeScanFilters={(patch) => this.setState(prevState => ({scanFilters: {...prevState.scanFilters, ...patch}}))}
+          onChangeSelectedProvider={(providerId) => this.setState({selectedScanProvider: providerId, scanResult: null, scanServers: []})}
           onAddScannedServer={this.addScannedServer}
         />
       </>

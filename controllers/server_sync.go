@@ -15,49 +15,20 @@
 package controllers
 
 import (
-	"context"
 	"encoding/json"
-	"net/http"
-	"slices"
+	"fmt"
 	"strings"
-	"sync"
-	"time"
 
-	"github.com/casdoor/casdoor/mcp"
+	"github.com/casdoor/casdoor/object"
+	"github.com/casdoor/casdoor/scan"
 )
-
-const (
-	defaultSyncTimeoutMs      = 1200
-	defaultSyncMaxConcurrency = 32
-	maxSyncHosts              = 1024
-)
-
-var (
-	defaultSyncPorts = []int{3000, 8080, 80}
-	defaultSyncPaths = []string{"/", "/mcp", "/sse", "/mcp/sse"}
-)
-
-type SyncInnerServersRequest struct {
-	CIDR           []string `json:"cidr"`
-	Scheme         string   `json:"scheme"`
-	Ports          []string `json:"ports"`
-	Paths          []string `json:"paths"`
-	TimeoutMs      int      `json:"timeoutMs"`
-	MaxConcurrency int      `json:"maxConcurrency"`
-}
-
-type SyncInnerServersResult struct {
-	CIDR         []string              `json:"cidr"`
-	ScannedHosts int                   `json:"scannedHosts"`
-	OnlineHosts  []string              `json:"onlineHosts"`
-	Servers      []*mcp.InnerMcpServer `json:"servers"`
-}
 
 // SyncIntranetServers
 // @Title SyncIntranetServers
 // @Tag Server API
 // @Description scan intranet IP/CIDR targets and detect MCP servers by probing common ports and paths
-// @Param   body    body   controllers.SyncInnerServersRequest  true  "Intranet MCP server scan request"
+// @Param   owner   query  string  true  "The provider owner"
+// @Param   name    query  string  true  "The provider name"
 // @Success 200 {object} controllers.Response The Response object
 // @router /sync-intranet-servers [post]
 func (c *ApiController) SyncIntranetServers() {
@@ -66,105 +37,62 @@ func (c *ApiController) SyncIntranetServers() {
 		return
 	}
 
-	var req SyncInnerServersRequest
-	if err := json.Unmarshal(c.Ctx.Input.RequestBody, &req); err != nil {
+	owner := strings.TrimSpace(c.GetString("owner"))
+	name := strings.TrimSpace(c.GetString("name"))
+	if owner == "" || name == "" {
+		c.ResponseError("provider owner and name are required")
+		return
+	}
+
+	providerId := fmt.Sprintf("%s/%s", owner, name)
+	configuredProvider, err := object.GetProvider(providerId)
+	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
-
-	for i := range req.CIDR {
-		req.CIDR[i] = strings.TrimSpace(req.CIDR[i])
-	}
-	if len(req.CIDR) == 0 {
-		c.ResponseError("scan target (CIDR/IP) is required")
+	if configuredProvider == nil {
+		c.ResponseError("provider does not exist")
 		return
 	}
 
-	hosts, err := mcp.ParseScanTargets(req.CIDR, maxSyncHosts)
+	provider, err := scan.GetScanProviderFromProvider(configuredProvider)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
 
-	timeout := mcp.SanitizeTimeout(req.TimeoutMs, defaultSyncTimeoutMs, 10000)
-	concurrency := mcp.SanitizeConcurrency(req.MaxConcurrency, defaultSyncMaxConcurrency, 256)
-	ports := mcp.SanitizePorts(req.Ports, defaultSyncPorts)
-	paths := mcp.SanitizePaths(req.Paths, defaultSyncPaths)
-	scheme := mcp.SanitizeScheme(req.Scheme)
-
-	client := &http.Client{
-		Timeout: timeout,
-		CheckRedirect: func(_ *http.Request, _ []*http.Request) error {
-			return http.ErrUseLastResponse
-		},
-	}
-
-	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
-	defer cancel()
-
-	onlineHostSet := map[string]struct{}{}
-	serverMap := map[string]*mcp.InnerMcpServer{}
-	mutex := sync.Mutex{}
-	waitGroup := sync.WaitGroup{}
-	sem := make(chan struct{}, concurrency)
-
-	for _, host := range hosts {
-		host := host.String()
-		waitGroup.Add(1)
-		go func() {
-			defer waitGroup.Done()
-
-			select {
-			case sem <- struct{}{}:
-			case <-ctx.Done():
-				return
-			}
-			defer func() { <-sem }()
-
-			isOnline, servers := mcp.ProbeHost(ctx, client, scheme, host, ports, paths, timeout)
-			if !isOnline {
-				return
-			}
-
-			mutex.Lock()
-			onlineHostSet[host] = struct{}{}
-			for _, server := range servers {
-				serverMap[server.Url] = server
-			}
-			mutex.Unlock()
-		}()
-	}
-
-	waitGroup.Wait()
-
-	onlineHosts := make([]string, 0, len(onlineHostSet))
-	for host := range onlineHostSet {
-		onlineHosts = append(onlineHosts, host)
-	}
-	slices.Sort(onlineHosts)
-
-	servers := make([]*mcp.InnerMcpServer, 0, len(serverMap))
-	for _, server := range serverMap {
-		servers = append(servers, server)
-	}
-	slices.SortFunc(servers, func(a, b *mcp.InnerMcpServer) int {
-		if a.Url < b.Url {
-			return -1
-		}
-		if a.Url > b.Url {
-			return 1
-		}
-		return 0
+	commandBytes, err := json.Marshal(&scan.SyncInnerServersRequest{
+		CIDR:  strings.Split(configuredProvider.Scopes, ","),
+		Ports: strings.Split(configuredProvider.Content, ","),
+		Paths: strings.Split(configuredProvider.Endpoint, ","),
 	})
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
 
-	c.ResponseOk(&SyncInnerServersResult{
-		CIDR:         req.CIDR,
-		ScannedHosts: len(hosts),
-		OnlineHosts:  onlineHosts,
-		Servers:      servers,
+	rawResult, err := provider.Scan("", string(commandBytes))
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	parsedResult, err := provider.ParseResult(rawResult)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	var result scan.SyncInnerServersResult
+	if err := json.Unmarshal([]byte(parsedResult), &result); err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	c.ResponseOk(&scan.SyncInnerServersResult{
+		CIDR:         result.CIDR,
+		ScannedHosts: result.ScannedHosts,
+		OnlineHosts:  result.OnlineHosts,
+		Servers:      result.Servers,
 	})
-}
-
-func (c *ApiController) SyncInnerServers() {
-	c.SyncIntranetServers()
 }

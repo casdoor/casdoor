@@ -71,10 +71,9 @@ export function deleteServer(server) {
   }).then(res => res.json());
 }
 
-export function syncIntranetServers(scanRequest) {
-  return fetch(`${Setting.ServerUrl}/api/sync-intranet-servers`, {
+export function syncIntranetServers(owner, name) {
+  return fetch(`${Setting.ServerUrl}/api/sync-intranet-servers?owner=${encodeURIComponent(owner)}&name=${encodeURIComponent(name)}`, {
     method: "POST",
     credentials: "include",
-    body: JSON.stringify(scanRequest),
   }).then(res => res.json());
 }

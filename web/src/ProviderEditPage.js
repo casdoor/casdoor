@@ -17,6 +17,7 @@ import Loading from "./common/Loading";
 import {Button, Card, Col, Input, Row, Select, Switch} from "antd";
 import {LinkOutlined} from "@ant-design/icons";
 import * as ProviderBackend from "./backend/ProviderBackend";
+import * as ServerBackend from "./backend/ServerBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as CertBackend from "./backend/CertBackend";
 import * as Setting from "./Setting";
@@ -34,6 +35,7 @@ import {renderStorageProviderFields} from "./provider/StorageProviderFields";
 import {renderFaceIdProviderFields} from "./provider/FaceIDProviderFields";
 import {renderIDVerificationProviderFields} from "./provider/IDVerificationProviderFields";
 import {renderLogProviderFields} from "./provider/LogProviderFields";
+import {renderScanProviderFields} from "./provider/ScanProviderFields";
 
 const {Option} = Select;
 const {TextArea} = Input;
@@ -105,6 +107,9 @@ class ProviderEditPage extends React.Component {
       mode: props.location.mode !== undefined ? props.location.mode : "edit",
       nameNotUserEdited: false,
       displayNameNotUserEdited: false,
+      scanLoading: false,
+      scanResult: null,
+      scanServers: [],
     };
   }
 
@@ -500,6 +505,10 @@ class ProviderEditPage extends React.Component {
       return ([
         {id: "OpenClaw", name: "OpenClaw"},
       ]);
+    } else if (type === "MCP Scan") {
+      return ([
+        {id: "Intranet Scan", name: "Intranet Scan"},
+      ]);
     } else if (type === "WeCom" || type === "Infoflow") {
       return (
         [
@@ -677,6 +686,32 @@ class ProviderEditPage extends React.Component {
     }
   }
 
+  submitProviderScan() {
+    const provider = this.state.provider;
+    if (!provider?.owner || !provider?.name) {
+      Setting.showMessage("error", i18next.t("provider:Provider owner and name are required"));
+      return;
+    }
+
+    this.setState({scanLoading: true});
+    ServerBackend.syncIntranetServers(provider.owner, provider.name)
+      .then((res) => {
+        this.setState({scanLoading: false});
+        if (res.status === "ok") {
+          const scanResult = res.data ?? {};
+          const scanServers = scanResult.servers ?? [];
+          this.setState({scanResult: scanResult, scanServers: scanServers});
+          Setting.showMessage("success", `${i18next.t("general:Successfully got")}: ${scanServers.length} server(s)`);
+        } else {
+          Setting.showMessage("error", `${i18next.t("general:Failed to get")}: ${res.msg}`);
+        }
+      })
+      .catch(error => {
+        this.setState({scanLoading: false});
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
+      });
+  }
+
   renderProvider() {
     return (
       <Card size="small" title={
@@ -783,6 +818,13 @@ class ProviderEditPage extends React.Component {
                 this.updateProviderField("port", 0);
                 this.updateProviderField("title", "");
                 this.updateProviderField("state", "Enabled");
+              } else if (value === "Scan") {
+                defaultType = "MCP Scan";
+                this.updateProviderField("type", defaultType);
+                this.updateProviderField("subType", "Intranet Scan");
+                this.updateProviderField("scopes", "127.0.0.1/32");
+                this.updateProviderField("content", "3000,8080,80");
+                this.updateProviderField("endpoint", "/,/mcp,/sse,/mcp/sse");
               }
               if (defaultType) {
                 if (this.state.nameNotUserEdited) {
@@ -804,6 +846,7 @@ class ProviderEditPage extends React.Component {
                   {id: "OAuth", name: "OAuth"},
                   {id: "Payment", name: "Payment"},
                   {id: "SAML", name: "SAML"},
+                  {id: "Scan", name: "Scan"},
                   {id: "SMS", name: "SMS"},
                   {id: "Storage", name: "Storage"},
                   {id: "Web3", name: "Web3"},
@@ -839,6 +882,17 @@ class ProviderEditPage extends React.Component {
               } else if (value === "Custom HTTP") {
                 this.updateProviderField("method", "GET");
                 this.updateProviderField("title", "");
+              } else if (value === "MCP Scan") {
+                this.updateProviderField("subType", "Intranet Scan");
+                if (!this.state.provider?.scopes) {
+                  this.updateProviderField("scopes", "127.0.0.1/32");
+                }
+                if (!this.state.provider?.content) {
+                  this.updateProviderField("content", "3000,8080,80");
+                }
+                if (!this.state.provider?.endpoint) {
+                  this.updateProviderField("endpoint", "/,/mcp,/sse,/mcp/sse");
+                }
               }
               if (this.state.nameNotUserEdited) {
                 this.updateProviderField("name", getAutoProviderName(this.state.provider.category, value, ""));
@@ -859,7 +913,7 @@ class ProviderEditPage extends React.Component {
           </Col>
         </Row>
         {
-          this.state.provider.type !== "WeCom" && this.state.provider.type !== "Infoflow" && this.state.provider.type !== "WeChat" && this.state.provider.type !== "Agent" ? null : (
+          this.getProviderSubTypeOptions(this.state.provider.type).length === 0 ? null : (
             <React.Fragment>
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={2}>
@@ -941,6 +995,7 @@ class ProviderEditPage extends React.Component {
           (this.state.provider.category === "Web3") ||
           (this.state.provider.category === "MFA") ||
           (this.state.provider.category === "Log") ||
+          (this.state.provider.category === "Scan") ||
           (this.state.provider.category === "Storage" && this.state.provider.type === "Local File System") ||
           (this.state.provider.category === "SMS" && this.state.provider.type === "Custom HTTP SMS") ||
           (this.state.provider.category === "Email" && this.state.provider.type === "Custom HTTP Email") ||
@@ -1035,6 +1090,16 @@ class ProviderEditPage extends React.Component {
           ) : this.state.provider.category === "Log" ? renderLogProviderFields(
             this.state.provider,
             this.updateProviderField.bind(this)
+          ) : this.state.provider.category === "Scan" ? renderScanProviderFields(
+            this.state.provider,
+            this.updateProviderField.bind(this),
+            {
+              mode: this.state.mode,
+              scanLoading: this.state.scanLoading,
+              scanResult: this.state.scanResult,
+              scanServers: this.state.scanServers,
+              onScan: this.submitProviderScan.bind(this),
+            }
           ) : this.state.provider.category === "SAML" ? renderSamlProviderFields(
             this.state.provider,
             this.updateProviderField.bind(this),
