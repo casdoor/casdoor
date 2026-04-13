@@ -41,6 +41,19 @@ type ObjectWithOrg struct {
 	Organization string `json:"organization"`
 }
 
+// ownerNameFromForm parses form or multipart body for authorization checks when the
+// request is not JSON (e.g. MFA APIs use FormData). RequestBodyFilter caches the raw
+// body but leaves Request.Body restorable for ParseForm/ParseMultipartForm.
+func ownerNameFromForm(ctx *context.Context) (string, string) {
+	ct := ctx.Request.Header.Get("Content-Type")
+	if strings.Contains(ct, "multipart/form-data") {
+		_ = ctx.Request.ParseMultipartForm(32 << 20)
+	} else {
+		_ = ctx.Request.ParseForm()
+	}
+	return ctx.Request.Form.Get("owner"), ctx.Request.Form.Get("name")
+}
+
 func getUsername(ctx *context.Context) (username string) {
 	username, ok := ctx.Input.Session("username").(string)
 	if !ok || username == "" {
@@ -166,15 +179,17 @@ func getObject(ctx *context.Context) (string, string, error) {
 			var objWithOrg ObjectWithOrg
 			err := json.Unmarshal(body, &objWithOrg)
 			if err != nil {
-				return "", "", nil
+				o, n := ownerNameFromForm(ctx)
+				return o, n, nil
 			}
 			return objWithOrg.Organization, objWithOrg.Name, nil
 		}
 
 		err := json.Unmarshal(body, &obj)
 		if err != nil {
-			// this is not error
-			return "", "", nil
+			// Form-urlencoded, multipart, or other non-JSON body (common for web FormData).
+			o, n := ownerNameFromForm(ctx)
+			return o, n, nil
 		}
 
 		if strings.HasSuffix(path, "-organization") {
