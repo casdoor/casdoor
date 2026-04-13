@@ -222,7 +222,7 @@ class MfaSetupPage extends React.Component {
               Setting.showMessage("error", i18next.t("general:Failed to verify") + ": " + res.msg);
             }}
           />
-          <Col span={24} style={{display: "flex", justifyContent: "left"}}>
+          <Col span={24} style={{display: "flex", justifyContent: "center", flexWrap: "wrap"}}>
             {this.renderMfaTypeSwitch()}
           </Col>
         </div>

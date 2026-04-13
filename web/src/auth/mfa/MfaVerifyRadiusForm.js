@@ -8,7 +8,7 @@ export const MfaVerifyRadiusForm = ({mfaProps, application, onFinish, method, us
   return (
     <Form
       form={form}
-      style={{width: "300px"}}
+      style={{width: "300px", margin: "0 auto"}}
       onFinish={onFinish}
       initialValues={{
         countryCode: mfaProps.countryCode,

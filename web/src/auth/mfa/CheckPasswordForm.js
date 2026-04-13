@@ -25,7 +25,7 @@ function CheckPasswordForm({user, onSuccess, onFail}) {
   return (
     <Form
       form={form}
-      style={{width: "300px", marginTop: "20px"}}
+      style={{width: "300px", margin: "20px auto 0"}}
       onFinish={onFinish}
     >
       <Form.Item

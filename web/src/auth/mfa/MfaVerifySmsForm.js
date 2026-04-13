@@ -50,7 +50,7 @@ export const MfaVerifySmsForm = ({mfaProps, application, onFinish, method, user}
   return (
     <Form
       form={form}
-      style={{width: "300px"}}
+      style={{width: "300px", margin: "0 auto"}}
       onFinish={onFinish}
       initialValues={{
         countryCode: mfaProps.countryCode,
@@ -58,16 +58,16 @@ export const MfaVerifySmsForm = ({mfaProps, application, onFinish, method, user}
       }}
     >
       {isShowText() ?
-        <div style={{marginBottom: 20, textAlign: "left", gap: 8}}>
+        <div style={{marginBottom: 20, textAlign: "center", gap: 8}}>
           {isEmail() ? i18next.t("mfa:Your email is") : i18next.t("mfa:Your phone is")} {dest}
         </div> :
         (
-          <p>{isEmail() ? i18next.t("mfa:Please bind your email first, the system will automatically uses the mail for multi-factor authentication") :
+          <p style={{textAlign: "center"}}>{isEmail() ? i18next.t("mfa:Please bind your email first, the system will automatically uses the mail for multi-factor authentication") :
             i18next.t("mfa:Please bind your phone first, the system automatically uses the phone for multi-factor authentication")}
           </p>
         )
       }
-      <Space.Compact style={{width: "300Px", marginBottom: "30px", display: isShowText() ? "none" : ""}}>
+      <Space.Compact style={{width: "300px", marginBottom: "30px", display: isShowText() ? "none" : ""}}>
         {isEmail() || isShowText() ? null :
           <Form.Item
             name="countryCode"
