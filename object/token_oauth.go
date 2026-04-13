@@ -81,7 +81,9 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 	case "urn:ietf:params:oauth:grant-type:jwt-bearer":
 		token, tokenError, err = GetJwtBearerToken(application, assertion, scope, nonce, host)
 	case "urn:ietf:params:oauth:grant-type:device_code":
-		token, tokenError, err = GetImplicitToken(application, username, password, scope, nonce, host)
+		// The user has already authenticated via browser in the device flow,
+		// so we skip password verification and mint a token directly.
+		token, tokenError, err = mintImplicitToken(application, username, scope, nonce, host)
 	case "urn:ietf:params:oauth:grant-type:token-exchange": // Token Exchange Grant (RFC 8693)
 		token, tokenError, err = GetTokenExchangeToken(application, clientSecret, subjectToken, subjectTokenType, audience, scope, host)
 	case "refresh_token":
