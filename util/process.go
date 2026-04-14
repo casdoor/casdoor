@@ -81,6 +81,13 @@ func StopOldInstance(port int) error {
 		return nil
 	}
 
+	// Don't kill ourselves - this can happen in containerized environments
+	// where the server runs as PID 1 and the port is already bound
+	currentPid := os.Getpid()
+	if pid == currentPid {
+		return nil
+	}
+
 	process, err := os.FindProcess(pid)
 	if err != nil {
 		return err

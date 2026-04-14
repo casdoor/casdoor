@@ -214,13 +214,16 @@ func StaticFilter(ctx *context.Context) {
 func serveFileWithReplace(w http.ResponseWriter, r *http.Request, name string, organizationThemeCookie *OrganizationThemeCookie) {
 	f, err := os.Open(filepath.Clean(name))
 	if err != nil {
-		panic(err)
+		// Log error and return 404 instead of panicking to avoid connection reset
+		http.Error(w, "File not found", http.StatusNotFound)
+		return
 	}
 	defer f.Close()
 
 	d, err := f.Stat()
 	if err != nil {
-		panic(err)
+		http.Error(w, "File stat error", http.StatusInternalServerError)
+		return
 	}
 
 	oldContent := util.ReadStringFromPath(name)
