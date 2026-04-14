@@ -26,6 +26,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/beego/beego/v2/core/logs"
@@ -43,8 +44,19 @@ var (
 )
 
 const (
-	devFrontendAddr = "127.0.0.1:7001"
-	devFrontendURL  = "http://127.0.0.1:7001"
+	devFrontendAddr            = "127.0.0.1:7001"
+	devFrontendURL             = "http://127.0.0.1:7001"
+	devFrontendReachabilityTTL = time.Second // TTL 缓存时间：1秒
+)
+
+// 全局变量声明：用于单例模式和探测缓存
+var (
+	devFrontendProxyOnce             sync.Once
+	devFrontendProxy                 *httputil.ReverseProxy
+	devFrontendProxyErr              error
+	devFrontendReachabilityLock      sync.Mutex
+	devFrontendReachable             bool
+	devFrontendReachabilityCheckedAt time.Time
 )
 
 func getWebBuildFolder() string {
@@ -131,6 +143,7 @@ func fastAutoSignin(ctx *context.Context) (string, error) {
 	return res, nil
 }
 
+// 底层 TCP 探测函数
 func isPortOpenWithTimeout(address string, timeout time.Duration) bool {
 	conn, err := net.DialTimeout("tcp", address, timeout)
 	if err != nil {
@@ -140,26 +153,63 @@ func isPortOpenWithTimeout(address string, timeout time.Duration) bool {
 	return true
 }
 
+// 带有 1 秒 TTL 缓存的探测函数（防止高并发下频繁创建 TCP 握手）
+func isDevFrontendReachable() bool {
+	devFrontendReachabilityLock.Lock()
+	defer devFrontendReachabilityLock.Unlock()
+
+	// 如果距离上次检查还没超过 1 秒，直接返回缓存的连通性状态
+	if !devFrontendReachabilityCheckedAt.IsZero() && time.Since(devFrontendReachabilityCheckedAt) < devFrontendReachabilityTTL {
+		return devFrontendReachable
+	}
+
+	// 超过 1 秒，重新进行底层 TCP 探测
+	devFrontendReachable = isPortOpenWithTimeout(devFrontendAddr, 200*time.Millisecond)
+	devFrontendReachabilityCheckedAt = time.Now()
+
+	return devFrontendReachable
+}
+
+// 单例模式获取 ReverseProxy 实例
+func getDevFrontendProxy() (*httputil.ReverseProxy, error) {
+	devFrontendProxyOnce.Do(func() {
+		target, err := url.Parse(devFrontendURL)
+		if err != nil {
+			devFrontendProxyErr = err
+			return
+		}
+
+		proxy := httputil.NewSingleHostReverseProxy(target)
+		// 完善 ErrorHandler：代理失败时返回 502 Bad Gateway，避免误导性的空白 200 OK
+		proxy.ErrorHandler = func(w http.ResponseWriter, r *http.Request, proxyErr error) {
+			logs.Warn("proxy request to dev frontend failed: %v", proxyErr)
+			http.Error(w, http.StatusText(http.StatusBadGateway), http.StatusBadGateway)
+		}
+		devFrontendProxy = proxy
+	})
+
+	return devFrontendProxy, devFrontendProxyErr
+}
+
+// 被 StaticFilter 调用的主函数
 func tryProxyToDevFrontend(ctx *context.Context) bool {
+	// 1. 非 dev 模式，直接跳过
 	if conf.GetConfigString("runmode") != "dev" {
 		return false
 	}
 
-	// In dev mode, only proxy when the frontend dev server is reachable.
-	if !isPortOpenWithTimeout(devFrontendAddr, 200*time.Millisecond) {
+	// 2. 使用带缓存的探测机制，如果不通，跳过代理直接回退到静态文件
+	if !isDevFrontendReachable() {
 		return false
 	}
 
-	target, err := url.Parse(devFrontendURL)
+	// 3. 获取单例 Proxy 并进行转发
+	proxy, err := getDevFrontendProxy()
 	if err != nil {
 		logs.Error("failed to parse dev frontend URL: %v", err)
 		return false
 	}
 
-	proxy := httputil.NewSingleHostReverseProxy(target)
-	proxy.ErrorHandler = func(w http.ResponseWriter, r *http.Request, proxyErr error) {
-		logs.Warn("proxy request to dev frontend failed: %v", proxyErr)
-	}
 	proxy.ServeHTTP(ctx.ResponseWriter, ctx.Request)
 	return true
 }
