@@ -588,7 +588,7 @@ func mintImplicitToken(application *Application, username string, scope string, 
 	}
 	scope = expandedScope
 
-	user, err := GetUserByFields(application.Organization, username)
+	user, err := GetUserByFieldsForSharedApp(application, application.Organization, username)
 	if err != nil {
 		return nil, nil, err
 	}

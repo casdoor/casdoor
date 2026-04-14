@@ -107,6 +107,38 @@ func GetUserByFields(organization string, field string) (*User, error) {
 	return nil, nil
 }
 
+// GetUserByFieldsForSharedApp looks up a user for a shared application login.
+// If the application is shared and the user is not found in the given organization,
+// it searches all organizations that have this app as their default application.
+// Returns the User directly to avoid a redundant lookup in the caller.
+func GetUserByFieldsForSharedApp(application *Application, organization string, field string) (*User, error) {
+	user, err := GetUserByFields(organization, field)
+	if err != nil || user != nil || application == nil || !application.IsShared {
+		return user, err
+	}
+
+	var orgs []*Organization
+	err = ormer.Engine.Where("default_application = ?", application.Name).Find(&orgs)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, org := range orgs {
+		if org.Name == organization {
+			continue
+		}
+		user, err = GetUserByFields(org.Name, field)
+		if err != nil {
+			return nil, err
+		}
+		if user != nil {
+			return user, nil
+		}
+	}
+
+	return nil, nil
+}
+
 func SetUserField(user *User, field string, value string) (bool, error) {
 	bean := make(map[string]interface{})
 	if field == "password" {

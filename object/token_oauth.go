@@ -263,7 +263,7 @@ func GetPasswordToken(application *Application, username string, password string
 	}
 	scope = expandedScope
 
-	user, err := GetUserByFields(application.Organization, username)
+	user, err := GetUserByFieldsForSharedApp(application, application.Organization, username)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -389,7 +389,7 @@ func GetClientCredentialsToken(application *Application, clientSecret string, sc
 
 // GetImplicitToken handles the Implicit Grant flow (requires password verification).
 func GetImplicitToken(application *Application, username string, password string, scope string, nonce string, host string) (*Token, *TokenError, error) {
-	user, err := GetUserByFields(application.Organization, username)
+	user, err := GetUserByFieldsForSharedApp(application, application.Organization, username)
 	if err != nil {
 		return nil, nil, err
 	}
