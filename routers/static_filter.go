@@ -159,6 +159,7 @@ func isDevFrontendReachable() bool {
 	defer devFrontendReachabilityLock.Unlock()
 
 	// 如果距离上次检查还没超过 1 秒，直接返回缓存的连通性状态
+		http.Error(w, http.StatusText(http.StatusBadGateway), http.StatusBadGateway)
 	if !devFrontendReachabilityCheckedAt.IsZero() && time.Since(devFrontendReachabilityCheckedAt) < devFrontendReachabilityTTL {
 		return devFrontendReachable
 	}
