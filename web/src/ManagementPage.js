@@ -69,6 +69,8 @@ import ProductStorePage from "./ProductStorePage";
 import ProductEditPage from "./ProductEditPage";
 import ProductBuyPage from "./ProductBuyPage";
 import CartListPage from "./CartListPage";
+import CouponListPage from "./CouponListPage";
+import CouponEditPage from "./CouponEditPage";
 import OrderListPage from "./OrderListPage";
 import OrderEditPage from "./OrderEditPage";
 import OrderPayPage from "./OrderPayPage";
@@ -130,7 +132,7 @@ function getMenuParentKey(uri) {
   if (uri.includes("/agents") || uri.includes("/servers") || uri.includes("/server-store") || uri.includes("/entries") || uri.includes("/sites") || uri.includes("/rules")) {return "/gateway";}
   if (uri.includes("/roles") || uri.includes("/permissions") || uri.includes("/models") || uri.includes("/adapters") || uri.includes("/enforcers")) {return "/auth";}
   if (uri.includes("/records") || uri.includes("/tokens") || uri.includes("/sessions") || uri.includes("/verifications")) {return "/logs";}
-  if (uri.includes("/product-store") || uri.includes("/products") || uri.includes("/orders") || uri.includes("/payments") || uri.includes("/plans") || uri.includes("/pricings") || uri.includes("/subscriptions") || uri.includes("/transactions") || uri.includes("/cart")) {return "/business";}
+  if (uri.includes("/product-store") || uri.includes("/products") || uri.includes("/coupons") || uri.includes("/orders") || uri.includes("/payments") || uri.includes("/plans") || uri.includes("/pricings") || uri.includes("/subscriptions") || uri.includes("/transactions") || uri.includes("/cart")) {return "/business";}
   if (uri.includes("/sysinfo") || uri.includes("/forms") || uri.includes("/syncers") || uri.includes("/webhooks") || uri.includes("/webhook-events") || uri.includes("/tickets")) {return "/admin";}
   return null;
 }
@@ -405,6 +407,7 @@ function ManagementPage(props) {
     res.push(Setting.getItem(<Link style={{color: textColor}} to="/products">{i18next.t("general:Business")}</Link>, "/business", <DollarOutlined />, [
       Setting.getItem(<Link to="/product-store">{i18next.t("general:Product Store")}</Link>, "/product-store"),
       Setting.getItem(<Link to="/products">{i18next.t("general:Products")}</Link>, "/products"),
+      Setting.getItem(<Link to="/coupons">{i18next.t("general:Coupons")}</Link>, "/coupons"),
       Setting.getItem(<Link to="/cart">{i18next.t("general:Cart")}</Link>, "/cart"),
       Setting.getItem(<Link to="/orders">{i18next.t("general:Orders")}</Link>, "/orders"),
       Setting.getItem(<Link to="/payments">{i18next.t("general:Payments")}</Link>, "/payments"),
@@ -565,6 +568,8 @@ function ManagementPage(props) {
         <Route exact path="/products" render={(props) => renderLoginIfNotLoggedIn(<ProductListPage account={account} {...props} />)} />
         <Route exact path="/products/:organizationName/:productName" render={(props) => renderLoginIfNotLoggedIn(<ProductEditPage account={account} {...props} />)} />
         <Route exact path="/products/:organizationName/:productName/buy" render={(props) => renderLoginIfNotLoggedIn(<ProductBuyPage account={account} {...props} />)} />
+        <Route exact path="/coupons" render={(props) => renderLoginIfNotLoggedIn(<CouponListPage account={account} {...props} />)} />
+        <Route exact path="/coupons/:organizationName/:couponName" render={(props) => renderLoginIfNotLoggedIn(<CouponEditPage account={account} {...props} />)} />
         <Route exact path="/cart" render={(props) => renderLoginIfNotLoggedIn(<CartListPage account={account} {...props} />)} />
         <Route exact path="/orders" render={(props) => renderLoginIfNotLoggedIn(<OrderListPage account={account} {...props} />)} />
         <Route exact path="/orders/:organizationName/:orderName" render={(props) => renderLoginIfNotLoggedIn(<OrderEditPage account={account} {...props} />)} />

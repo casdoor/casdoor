@@ -426,6 +426,16 @@ func (a *Ormer) createTable() {
 		panic(err)
 	}
 
+	err = a.Engine.Sync2(new(Coupon))
+	if err != nil {
+		panic(err)
+	}
+
+	err = a.Engine.Sync2(new(CouponUsage))
+	if err != nil {
+		panic(err)
+	}
+
 	err = a.Engine.Sync2(new(Syncer))
 	if err != nil {
 		panic(err)

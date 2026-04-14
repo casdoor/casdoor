@@ -418,6 +418,14 @@ func NotifyPayment(body []byte, owner string, paymentName string, lang string) (
 		if err != nil {
 			return nil, err
 		}
+
+		// Record coupon usage after successful external payment
+		if order.CouponName != "" {
+			err = ApplyCoupon(order.Owner, order.CouponName, order.User, order.Name, order.CouponDiscount)
+			if err != nil {
+				return nil, err
+			}
+		}
 	}
 	return payment, nil
 }

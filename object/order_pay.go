@@ -23,7 +23,7 @@ import (
 	"github.com/casdoor/casdoor/util"
 )
 
-func PlaceOrder(owner string, reqProductInfos []ProductInfo, user *User) (*Order, error) {
+func PlaceOrder(owner string, reqProductInfos []ProductInfo, user *User, couponCode string) (*Order, error) {
 	if len(reqProductInfos) == 0 {
 		return nil, fmt.Errorf("order has no products")
 	}
@@ -85,21 +85,39 @@ func PlaceOrder(owner string, reqProductInfos []ProductInfo, user *User) (*Order
 		orderPrice += productPrice * float64(productInfo.Quantity)
 	}
 
+	// Apply coupon discount if provided
+	var couponName string
+	var couponDiscount float64
+	if couponCode != "" {
+		coupon, err := ValidateCoupon(owner, couponCode, user.Name, productNames, orderPrice, orderCurrency)
+		if err != nil {
+			return nil, err
+		}
+		couponDiscount = CalculateDiscount(coupon, orderPrice)
+		couponName = coupon.Name
+		orderPrice -= couponDiscount
+		if orderPrice < 0 {
+			orderPrice = 0
+		}
+	}
+
 	orderName := fmt.Sprintf("order_%v", util.GenerateTimeId())
 	order := &Order{
-		Owner:        owner,
-		Name:         orderName,
-		DisplayName:  orderName,
-		CreatedTime:  util.GetCurrentTime(),
-		Products:     productNames,
-		ProductInfos: productInfos,
-		User:         user.Name,
-		Payment:      "", // Payment will be set when user pays
-		Price:        orderPrice,
-		Currency:     orderCurrency,
-		State:        "Created",
-		Message:      "",
-		UpdateTime:   "",
+		Owner:          owner,
+		Name:           orderName,
+		DisplayName:    orderName,
+		CreatedTime:    util.GetCurrentTime(),
+		Products:       productNames,
+		ProductInfos:   productInfos,
+		User:           user.Name,
+		Payment:        "", // Payment will be set when user pays
+		Price:          orderPrice,
+		Currency:       orderCurrency,
+		State:          "Created",
+		Message:        "",
+		UpdateTime:     "",
+		CouponName:     couponName,
+		CouponDiscount: couponDiscount,
 	}
 
 	affected, err := AddOrder(order)
@@ -368,6 +386,14 @@ func PayOrder(providerName, host, paymentEnv string, order *Order, lang string) 
 		err = UpdateProductStock(orderProductInfos)
 		if err != nil {
 			return nil, nil, err
+		}
+
+		// Record coupon usage after successful balance payment
+		if order.CouponName != "" {
+			err = ApplyCoupon(order.Owner, order.CouponName, order.User, order.Name, order.CouponDiscount)
+			if err != nil {
+				return nil, nil, err
+			}
 		}
 	}
 
