@@ -119,3 +119,29 @@ func GetConfigBatchSize() int {
 	}
 	return res
 }
+
+// IsRunningInK8s detects if the application is running in a Kubernetes environment.
+// It checks for the KUBERNETES_SERVICE_HOST environment variable (automatically set by K8s)
+// or the RUNNING_IN_K8S environment variable (can be manually set by users).
+func IsRunningInK8s() bool {
+	if os.Getenv("KUBERNETES_SERVICE_HOST") != "" {
+		return true
+	}
+	return os.Getenv("RUNNING_IN_K8S") == "true"
+}
+
+// GetRunMode returns the run mode for the application.
+// If running in Kubernetes and runmode is set to "dev", it automatically returns "prod"
+// to prevent issues where the backend tries to proxy requests to localhost:7001
+// (the frontend dev server) which doesn't exist in production.
+func GetRunMode() string {
+	runmode := GetConfigString("runmode")
+	// Allow override via FORCE_RUNMODE environment variable for debugging purposes
+	if forceRunMode := os.Getenv("FORCE_RUNMODE"); forceRunMode != "" {
+		return forceRunMode
+	}
+	if IsRunningInK8s() && runmode == "dev" {
+		return "prod"
+	}
+	return runmode
+}

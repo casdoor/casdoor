@@ -34,6 +34,12 @@ import (
 )
 
 func main() {
+	// Set run mode early to prevent issues in K8s deployments
+	// When runmode=dev is mistakenly set in Helm values, the backend tries to
+	// proxy static file requests to localhost:7001 (frontend dev server),
+	// which doesn't exist in production, causing connection reset and probe failures.
+	web.BConfig.RunMode = conf.GetRunMode()
+
 	web.BConfig.WebConfig.Session.SessionOn = true
 	web.BConfig.WebConfig.Session.SessionName = "casdoor_session_id"
 	if conf.GetConfigString("redisEndpoint") == "" {
