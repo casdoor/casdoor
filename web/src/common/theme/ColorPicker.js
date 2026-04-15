@@ -15,8 +15,9 @@
 /** @jsxImportSource @emotion/react */
 
 import {Input, Popover, Space, theme} from "antd";
-import React, {useEffect, useMemo, useState} from "react";
+import React, {useEffect, useMemo, useRef, useState} from "react";
 import {css} from "@emotion/react";
+import i18next from "i18next";
 import {TinyColor} from "@ctrl/tinycolor";
 import ColorPanel from "antd-token-previewer/es/ColorPanel";
 
@@ -81,17 +82,24 @@ const useStyle = () => {
 
 const DebouncedColorPanel = ({color, onChange}) => {
   const [value, setValue] = useState(color);
-
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      onChange?.(value);
-    }, 200);
-    return () => clearTimeout(timeout);
-  }, [value]);
+  const skipInitialDebounce = useRef(true);
+  const onChangeRef = useRef(onChange);
+  onChangeRef.current = onChange;
 
   useEffect(() => {
     setValue(color);
   }, [color]);
+
+  useEffect(() => {
+    if (skipInitialDebounce.current) {
+      skipInitialDebounce.current = false;
+      return;
+    }
+    const timeout = setTimeout(() => {
+      onChangeRef.current?.(value);
+    }, 200);
+    return () => clearTimeout(timeout);
+  }, [value]);
 
   return <ColorPanel color={value} onChange={setValue} />;
 };
@@ -132,7 +140,37 @@ export default function ColorPicker({value, onChange}) {
       />
       <Space size="middle">
         {matchColors.map(({color, active, picker}) => {
-          let colorNode = (
+          if (picker) {
+            return (
+              <Popover
+                key="custom-color-picker"
+                overlayInnerStyle={{padding: 0}}
+                content={
+                  <DebouncedColorPanel color={value || BLUE_COLOR} onChange={(c) => onChange?.(c)} />
+                }
+                trigger="click"
+                showArrow={false}
+              >
+                <span
+                  css={[style.color, active && style.colorActive]}
+                  style={{
+                    background: color,
+                  }}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={i18next.t("theme:Primary color")}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      e.currentTarget.click();
+                    }
+                  }}
+                />
+              </Popover>
+            );
+          }
+
+          return (
             <label
               key={color}
               css={[style.color, active && style.colorActive]}
@@ -140,32 +178,12 @@ export default function ColorPicker({value, onChange}) {
                 background: color,
               }}
               onClick={() => {
-                if (!picker) {
-                  onChange?.(color);
-                }
+                onChange?.(color);
               }}
             >
-              <input type="radio" name={picker ? "picker" : "color"} tabIndex={picker ? -1 : 0} />
+              <input type="radio" name="color" tabIndex={0} />
             </label>
           );
-
-          if (picker) {
-            colorNode = (
-              <Popover
-                key={color}
-                overlayInnerStyle={{padding: 0}}
-                content={
-                  <DebouncedColorPanel color={value || ""} onChange={(c) => onChange?.(c)} />
-                }
-                trigger="click"
-                showArrow={false}
-              >
-                {colorNode}
-              </Popover>
-            );
-          }
-
-          return colorNode;
         })}
       </Space>
     </Space>
