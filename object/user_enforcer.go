@@ -74,6 +74,10 @@ func (e *UserGroupEnforcer) GetGroupsForUser(user string) ([]string, error) {
 		return nil, err
 	}
 
+	if err = e.enforcer.LoadPolicy(); err != nil {
+		return nil, err
+	}
+
 	groups, err := e.enforcer.GetRolesForUser(user)
 	for i, group := range groups {
 		groups[i] = GetGroupWithoutPrefix(group)
@@ -84,6 +88,10 @@ func (e *UserGroupEnforcer) GetGroupsForUser(user string) ([]string, error) {
 func (e *UserGroupEnforcer) GetAllUsersByGroup(group string) ([]string, error) {
 	err := e.checkModel()
 	if err != nil {
+		return nil, err
+	}
+
+	if err = e.enforcer.LoadPolicy(); err != nil {
 		return nil, err
 	}
 
