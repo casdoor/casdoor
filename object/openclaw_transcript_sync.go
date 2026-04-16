@@ -18,6 +18,16 @@ import (
 
 const openClawTranscriptSyncInterval = 10 * time.Second
 
+const (
+	openClawTranscriptSummaryMax        = 100
+	openClawTranscriptTaskTextMax       = 2000
+	openClawTranscriptAssistantTextMax  = 2000
+	openClawTranscriptFinalTextMax      = 2000
+	openClawTranscriptToolCommandMax    = 500
+	openClawTranscriptToolResultTextMax = 64 * 1024
+	openClawTranscriptErrorTextMax      = 500
+)
+
 var (
 	openClawTranscriptWorkers   = map[string]*openClawTranscriptSyncWorker{}
 	openClawTranscriptWorkersMu sync.Mutex
@@ -48,13 +58,14 @@ type openClawTranscriptEntry struct {
 }
 
 type openClawMessage struct {
-	Role       string          `json:"role"`
-	Content    json.RawMessage `json:"content"`
-	StopReason string          `json:"stopReason"`
-	ToolCallID string          `json:"toolCallId"`
-	ToolName   string          `json:"toolName"`
-	IsError    bool            `json:"isError"`
-	Timestamp  int64           `json:"timestamp"`
+	Role       string                 `json:"role"`
+	Content    json.RawMessage        `json:"content"`
+	StopReason string                 `json:"stopReason"`
+	ToolCallID string                 `json:"toolCallId"`
+	ToolName   string                 `json:"toolName"`
+	IsError    bool                   `json:"isError"`
+	Timestamp  int64                  `json:"timestamp"`
+	Details    map[string]interface{} `json:"details"`
 }
 
 type openClawContentItem struct {
@@ -431,17 +442,17 @@ func buildOpenClawTranscriptEntries(provider *Provider, sessionID string, entry 
 		}
 
 		return []*Entry{newOpenClawTranscriptEntry(provider, sessionID, "task", entry.ID, openClawBehaviorPayload{
-			Summary:   truncateText(fmt.Sprintf("task: %s", text), 100),
+			Summary:   truncateText(fmt.Sprintf("task: %s", text), openClawTranscriptSummaryMax),
 			Kind:      "task",
 			SessionID: sessionID,
 			EntryID:   entry.ID,
 			ParentID:  entry.ParentID,
 			Timestamp: normalizeOpenClawTimestamp(entry.Timestamp, message.Timestamp),
-			Text:      truncateText(text, 2000),
+			Text:      truncateText(text, openClawTranscriptTaskTextMax),
 		})}
 	case "assistant":
 		items := parseContentItems(message.Content)
-		assistantText := truncateText(extractMessageText(message.Content), 2000)
+		assistantText := truncateText(extractMessageText(message.Content), openClawTranscriptAssistantTextMax)
 		toolEntries := []*Entry{}
 		storedAssistantText := false
 		for _, item := range items {
@@ -451,7 +462,7 @@ func buildOpenClawTranscriptEntries(provider *Provider, sessionID string, entry 
 			context := extractOpenClawToolContext(item)
 			toolContexts[item.ID] = context
 			payload := openClawBehaviorPayload{
-				Summary:    truncateText(buildToolCallSummary(context), 100),
+				Summary:    truncateText(buildToolCallSummary(context), openClawTranscriptSummaryMax),
 				Kind:       "tool_call",
 				SessionID:  sessionID,
 				EntryID:    entry.ID,
@@ -462,7 +473,7 @@ func buildOpenClawTranscriptEntries(provider *Provider, sessionID string, entry 
 				Query:      context.Query,
 				URL:        context.URL,
 				Path:       context.Path,
-				Text:       truncateText(context.Command, 500),
+				Text:       truncateText(context.Command, openClawTranscriptToolCommandMax),
 			}
 			if !storedAssistantText {
 				// Avoid duplicating the same assistant text on every tool-call row.
@@ -484,13 +495,13 @@ func buildOpenClawTranscriptEntries(provider *Provider, sessionID string, entry 
 			return nil
 		}
 		return []*Entry{newOpenClawTranscriptEntry(provider, sessionID, "final", entry.ID, openClawBehaviorPayload{
-			Summary:   truncateText(fmt.Sprintf("final: %s", text), 100),
+			Summary:   truncateText(fmt.Sprintf("final: %s", text), openClawTranscriptSummaryMax),
 			Kind:      "final",
 			SessionID: sessionID,
 			EntryID:   entry.ID,
 			ParentID:  entry.ParentID,
 			Timestamp: normalizeOpenClawTimestamp(entry.Timestamp, message.Timestamp),
-			Text:      truncateText(text, 2000),
+			Text:      truncateText(text, openClawTranscriptFinalTextMax),
 		})}
 	case "toolResult":
 		payload, ok := buildToolResultPayload(sessionID, entry, toolContexts[message.ToolCallID])
@@ -510,14 +521,15 @@ func buildToolResultPayload(sessionID string, entry openClawTranscriptEntry, too
 	}
 
 	okValue, errorText := resolveToolResultStatus(entry)
-	text := summarizeToolResultText(extractMessageText(message.Content), okValue)
+	rawText := extractMessageText(message.Content)
+	summaryText := summarizeToolResultText(rawText, okValue)
 	toolName := firstNonEmpty(toolContext.Tool, message.ToolName)
-	if toolName == "" && text == "" && errorText == "" {
+	if toolName == "" && rawText == "" && errorText == "" {
 		return openClawBehaviorPayload{}, false
 	}
 
 	return openClawBehaviorPayload{
-		Summary:    truncateText(buildToolResultSummary(toolName, toolContext, okValue, errorText, text), 100),
+		Summary:    truncateText(buildToolResultSummary(toolName, toolContext, okValue, errorText, summaryText), openClawTranscriptSummaryMax),
 		Kind:       "tool_result",
 		SessionID:  sessionID,
 		EntryID:    entry.ID,
@@ -527,10 +539,10 @@ func buildToolResultPayload(sessionID string, entry openClawTranscriptEntry, too
 		Tool:       toolName,
 		Query:      toolContext.Query,
 		URL:        toolContext.URL,
-		Path:       firstNonEmpty(toolContext.Path, extractWriteSuccessPath(text)),
+		Path:       firstNonEmpty(toolContext.Path, extractWriteSuccessPath(rawText)),
 		OK:         &okValue,
-		Error:      truncateText(errorText, 500),
-		Text:       truncateText(text, 2000),
+		Error:      truncateText(errorText, openClawTranscriptErrorTextMax),
+		Text:       truncateText(rawText, openClawTranscriptToolResultTextMax),
 	}, true
 }
 
@@ -547,7 +559,7 @@ func newOpenClawTranscriptEntry(provider *Provider, sessionID string, entryKind 
 		Name:        fmt.Sprintf("oc_%s", util.GetMd5Hash(nameSource)),
 		CreatedTime: createdTime,
 		UpdatedTime: createdTime,
-		DisplayName: truncateText(payload.Summary, 100),
+		DisplayName: truncateText(payload.Summary, openClawTranscriptSummaryMax),
 		Provider:    provider.Name,
 		Type:        "session",
 		Message:     string(body),
@@ -662,14 +674,20 @@ func buildToolCallSummary(context openClawToolContext) string {
 }
 
 func resolveToolResultStatus(entry openClawTranscriptEntry) (bool, string) {
-	if entry.Message != nil && entry.Message.IsError {
-		return false, stringifyOpenClawArg(entry.Details["error"])
+	message := entry.Message
+	details := mergeOpenClawTranscriptDetails(entry.Details, message)
+
+	if message != nil && message.IsError {
+		return false, stringifyOpenClawArg(details["error"])
 	}
-	if status, ok := entry.Details["status"].(string); ok && strings.EqualFold(status, "error") {
-		return false, stringifyOpenClawArg(entry.Details["error"])
+	if status, ok := details["status"].(string); ok && strings.EqualFold(status, "error") {
+		return false, stringifyOpenClawArg(details["error"])
 	}
 
-	text := strings.TrimSpace(extractMessageText(entry.Message.Content))
+	text := ""
+	if message != nil {
+		text = strings.TrimSpace(extractMessageText(message.Content))
+	}
 	if strings.HasPrefix(text, "{") {
 		var payload map[string]interface{}
 		if err := json.Unmarshal([]byte(text), &payload); err == nil {
@@ -679,7 +697,25 @@ func resolveToolResultStatus(entry openClawTranscriptEntry) (bool, string) {
 		}
 	}
 
-	return true, stringifyOpenClawArg(entry.Details["error"])
+	return true, stringifyOpenClawArg(details["error"])
+}
+
+func mergeOpenClawTranscriptDetails(entryDetails map[string]interface{}, message *openClawMessage) map[string]interface{} {
+	if message == nil || len(message.Details) == 0 {
+		return entryDetails
+	}
+	if len(entryDetails) == 0 {
+		return message.Details
+	}
+
+	details := map[string]interface{}{}
+	for key, value := range entryDetails {
+		details[key] = value
+	}
+	for key, value := range message.Details {
+		details[key] = value
+	}
+	return details
 }
 
 func summarizeToolResultText(text string, okValue bool) string {

@@ -31,6 +31,68 @@ import {
 
 const {Text} = Typography;
 
+function normalizeNodeKey(value) {
+  return `${value ?? ""}`.trim();
+}
+
+function isToolCallNode(node) {
+  return node?.kind === "tool_call";
+}
+
+function isToolResultNode(node) {
+  return node?.kind === "tool_result";
+}
+
+function findLinkedToolCallNode(nodes, toolResultNode) {
+  if (!isToolResultNode(toolResultNode)) {
+    return null;
+  }
+
+  const parentId = normalizeNodeKey(toolResultNode.parentId);
+  if (parentId) {
+    const directParent = nodes.find((candidate) => {
+      return isToolCallNode(candidate) && normalizeNodeKey(candidate.id) === parentId;
+    });
+    if (directParent) {
+      return directParent;
+    }
+  }
+
+  const toolCallId = normalizeNodeKey(toolResultNode.toolCallId);
+  if (!toolCallId) {
+    return null;
+  }
+
+  return nodes.find((candidate) => {
+    return isToolCallNode(candidate) && normalizeNodeKey(candidate.toolCallId) === toolCallId;
+  }) || null;
+}
+
+function findLinkedToolResultNode(nodes, toolCallNode) {
+  if (!isToolCallNode(toolCallNode)) {
+    return null;
+  }
+
+  const toolCallId = normalizeNodeKey(toolCallNode.toolCallId);
+  if (toolCallId) {
+    const byToolCallId = nodes.find((candidate) => {
+      return isToolResultNode(candidate) && normalizeNodeKey(candidate.toolCallId) === toolCallId;
+    });
+    if (byToolCallId) {
+      return byToolCallId;
+    }
+  }
+
+  const nodeId = normalizeNodeKey(toolCallNode.id);
+  if (!nodeId) {
+    return null;
+  }
+
+  return nodes.find((candidate) => {
+    return isToolResultNode(candidate) && normalizeNodeKey(candidate.parentId) === nodeId;
+  }) || null;
+}
+
 function getNodeStatusText(node) {
   if (node?.kind !== "tool_result" || node?.ok === undefined || node?.ok === null) {
     return "";
@@ -64,7 +126,7 @@ function OpenClawNodeHoverCard({node}) {
   if (node.tool) {
     rows.push({
       key: "tool",
-      label: i18next.t("entry:Tool"),
+      label: i18next.t("general:Tool"),
       value: node.tool,
     });
   }
@@ -435,20 +497,166 @@ class OpenClawSessionGraphViewer extends React.Component {
     );
   }
 
-  renderNodeText(value) {
+  renderNodeText(value, style = {}) {
     if (!value) {
       return "-";
     }
 
     return (
-      <div style={{whiteSpace: "pre-wrap", wordBreak: "break-word"}}>
+      <div style={{whiteSpace: "pre-wrap", wordBreak: "break-word", overflowWrap: "anywhere", maxWidth: "100%", ...style}}>
         {value}
+      </div>
+    );
+  }
+
+  getLinkedNodes(node) {
+    const nodes = Array.isArray(this.state.graph?.nodes) ? this.state.graph.nodes : [];
+    if (!node || nodes.length === 0) {
+      return {
+        linkedToolCallNode: null,
+        linkedToolResultNode: null,
+      };
+    }
+
+    if (isToolCallNode(node)) {
+      return {
+        linkedToolCallNode: null,
+        linkedToolResultNode: findLinkedToolResultNode(nodes, node),
+      };
+    }
+
+    if (isToolResultNode(node)) {
+      return {
+        linkedToolCallNode: findLinkedToolCallNode(nodes, node),
+        linkedToolResultNode: null,
+      };
+    }
+
+    return {
+      linkedToolCallNode: null,
+      linkedToolResultNode: null,
+    };
+  }
+
+  getToolPairNodes(node) {
+    const {linkedToolCallNode, linkedToolResultNode} = this.getLinkedNodes(node);
+    if (isToolCallNode(node)) {
+      return {
+        callNode: node,
+        resultNode: linkedToolResultNode,
+      };
+    }
+
+    if (isToolResultNode(node)) {
+      return {
+        callNode: linkedToolCallNode,
+        resultNode: node,
+      };
+    }
+
+    return {
+      callNode: null,
+      resultNode: null,
+    };
+  }
+
+  renderToolPairPanel(title, node, currentNode) {
+    const isCurrentNode = normalizeNodeKey(node?.id) === normalizeNodeKey(currentNode?.id);
+    const target = getOpenClawNodeTarget(node);
+    const displayTarget = target && target !== node?.tool ? target : "";
+    const panelMaxHeight = Setting.isMobile() ? 360 : 420;
+
+    return (
+      <div
+        style={{
+          display: "grid",
+          gridTemplateRows: "auto minmax(0, 1fr)",
+          gap: 10,
+          maxHeight: panelMaxHeight,
+          minHeight: 0,
+          minWidth: 0,
+          padding: 12,
+          border: "1px solid #dbe3ef",
+          borderRadius: 12,
+          background: "#fafcff",
+          overflow: "hidden",
+        }}
+      >
+        <div style={{display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12, minWidth: 0}}>
+          <div style={{display: "flex", alignItems: "center", gap: 8, minWidth: 0, flexWrap: "wrap"}}>
+            <Text strong>{title}</Text>
+            {node ? getStatusTag(node) : null}
+          </div>
+          {node && !isCurrentNode ? (
+            <Button
+              size="small"
+              style={{flex: "none"}}
+              onClick={() => this.setState({selectedNode: node})}
+            >
+              {i18next.t("entry:Open linked node")}
+            </Button>
+          ) : null}
+        </div>
+        {node ? (
+          <div style={{display: "grid", rowGap: 8, minHeight: 0, minWidth: 0, overflowY: "auto", overflowX: "hidden", paddingRight: 4}}>
+            <div style={{minWidth: 0}}>
+              <Text type="secondary">{i18next.t("entry:Summary")}: </Text>
+              <Text style={{wordBreak: "break-word", overflowWrap: "anywhere"}}>{node.summary || "-"}</Text>
+            </div>
+            <div style={{minWidth: 0}}>
+              <Text type="secondary">{i18next.t("general:Tool")}: </Text>
+              <Text>{node.tool || "-"}</Text>
+            </div>
+            {displayTarget ? (
+              <div style={{minWidth: 0}}>
+                <Text type="secondary">{i18next.t("entry:Target")}: </Text>
+                <Text style={{wordBreak: "break-word", overflowWrap: "anywhere"}}>{displayTarget}</Text>
+              </div>
+            ) : null}
+            {node.error ? (
+              <div style={{minWidth: 0}}>
+                <Text type="secondary">{i18next.t("general:Error")}: </Text>
+                {this.renderNodeText(node.error)}
+              </div>
+            ) : null}
+            {node.text ? (
+              <div style={{minWidth: 0}}>
+                <Text type="secondary">{i18next.t("entry:Text")}: </Text>
+                {this.renderNodeText(node.text)}
+              </div>
+            ) : null}
+          </div>
+        ) : (
+          <Text type="secondary">-</Text>
+        )}
+      </div>
+    );
+  }
+
+  renderToolPair(node) {
+    const {callNode, resultNode} = this.getToolPairNodes(node);
+    if (!callNode && !resultNode) {
+      return null;
+    }
+
+    return (
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: Setting.isMobile() ? "1fr" : "repeat(2, minmax(0, 1fr))",
+          gap: 12,
+          minWidth: 0,
+        }}
+      >
+        {this.renderToolPairPanel(i18next.t("entry:Call"), callNode, node)}
+        {this.renderToolPairPanel(i18next.t("entry:Result"), resultNode, node)}
       </div>
     );
   }
 
   renderNodeDrawer() {
     const node = this.state.selectedNode;
+    const toolPair = this.renderToolPair(node);
 
     return (
       <Drawer
@@ -497,6 +705,11 @@ class OpenClawSessionGraphViewer extends React.Component {
             <Descriptions.Item label={i18next.t("general:Tool")}>
               {node.tool || "-"}
             </Descriptions.Item>
+            {toolPair ? (
+              <Descriptions.Item label={i18next.t("entry:Call / Result")}>
+                {toolPair}
+              </Descriptions.Item>
+            ) : null}
             <Descriptions.Item label={i18next.t("entry:Query")}>
               {this.renderNodeText(node.query)}
             </Descriptions.Item>
