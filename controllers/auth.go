@@ -280,25 +280,25 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 		c.setExpireForSession(expireInHours)
 	}
 
-	if application.EnableExclusiveSignin {
-		sessions, err := object.GetUserAppSessions(user.Owner, user.Name, application.Name)
-		if err != nil {
-			c.ResponseError(err.Error(), nil)
-			return
-		}
+	if resp.Status == "ok" {
+		if application.EnableExclusiveSignin {
+			sessions, err := object.GetUserAppSessions(user.Owner, user.Name, application.Name)
+			if err != nil {
+				c.ResponseError(err.Error(), nil)
+				return
+			}
 
-		for _, session := range sessions {
-			for _, sid := range session.SessionId {
-				err := web.GlobalSessions.GetProvider().SessionDestroy(context.Background(), sid)
-				if err != nil {
-					c.ResponseError(err.Error(), nil)
-					return
+			for _, session := range sessions {
+				for _, sid := range session.SessionId {
+					err := web.GlobalSessions.GetProvider().SessionDestroy(context.Background(), sid)
+					if err != nil {
+						c.ResponseError(err.Error(), nil)
+						return
+					}
 				}
 			}
 		}
-	}
 
-	if resp.Status == "ok" {
 		_, err = object.AddSession(&object.Session{
 			Owner:       user.Owner,
 			Name:        user.Name,
