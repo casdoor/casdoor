@@ -388,8 +388,8 @@ func (c *ApiController) GetApplicationLogin() {
 	}
 }
 
-func setHttpClient(idProvider idp.IdProvider, providerType string) {
-	if isProxyProviderType(providerType) {
+func setHttpClient(idProvider idp.IdProvider, provider *object.Provider) {
+	if provider.EnableProxy || isProxyProviderType(provider.Type) {
 		idProvider.SetHttpClient(proxy.ProxyHttpClient)
 	} else {
 		idProvider.SetHttpClient(proxy.DefaultHttpClient)
@@ -852,7 +852,7 @@ func (c *ApiController) Login() {
 				return
 			}
 
-			setHttpClient(idProvider, provider.Type)
+			setHttpClient(idProvider, provider)
 
 			stateApplicationName := strings.Split(authForm.State, "-org-")[0]
 			if authForm.State != conf.GetConfigString("authState") && stateApplicationName != application.Name {

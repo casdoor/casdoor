@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Checkbox, Col, Row} from "antd";
+import {Checkbox, Col, Row, Switch} from "antd";
 import * as Setting from "../Setting";
 import i18next from "i18next";
 import * as Web3Auth from "../auth/Web3Auth";
@@ -28,21 +28,33 @@ export function renderWeb3ProviderFields(provider, updateProviderField) {
   };
 
   return (
-    provider.type === "Web3Onboard" ? (
+    <React.Fragment>
       <Row style={{marginTop: "20px"}} >
         <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-          {Setting.getLabel(i18next.t("provider:Wallets"), i18next.t("provider:Wallets - Tooltip"))} :
+          {Setting.getLabel(i18next.t("provider:Enable proxy"), i18next.t("provider:Enable proxy - Tooltip"))} :
         </Col>
-        <Col span={22}>
-          <Checkbox.Group
-            options={Web3Auth.getWeb3OnboardWalletsOptions()}
-            value={getWalletValue()}
-            onChange={options => {
-              updateProviderField("metadata", JSON.stringify(options));
-            }}
-          />
+        <Col span={1} >
+          <Switch checked={provider.enableProxy} onChange={checked => {
+            updateProviderField("enableProxy", checked);
+          }} />
         </Col>
       </Row>
-    ) : null
+      {provider.type === "Web3Onboard" ? (
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("provider:Wallets"), i18next.t("provider:Wallets - Tooltip"))} :
+          </Col>
+          <Col span={22}>
+            <Checkbox.Group
+              options={Web3Auth.getWeb3OnboardWalletsOptions()}
+              value={getWalletValue()}
+              onChange={options => {
+                updateProviderField("metadata", JSON.stringify(options));
+              }}
+            />
+          </Col>
+        </Row>
+      ) : null}
+    </React.Fragment>
   );
 }

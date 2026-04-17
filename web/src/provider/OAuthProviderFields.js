@@ -46,6 +46,16 @@ export function renderOAuthProviderFields(provider, updateProviderField, renderU
           }} />
         </Col>
       </Row>
+      <Row style={{marginTop: "20px"}} >
+        <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+          {Setting.getLabel(i18next.t("provider:Enable proxy"), i18next.t("provider:Enable proxy - Tooltip"))} :
+        </Col>
+        <Col span={1} >
+          <Switch checked={provider.enableProxy} onChange={checked => {
+            updateProviderField("enableProxy", checked);
+          }} />
+        </Col>
+      </Row>
       {
         provider.type !== "WeChat" ? null : (
           <React.Fragment>

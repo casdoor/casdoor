@@ -1145,7 +1145,7 @@
     "Enable PKCE": "启用PKCE",
     "Enable PKCE - Tooltip": "是否启用PKCE扩展协议",
     "Enable proxy": "启用代理",
-    "Enable proxy - Tooltip": "发送邮件或短信时启用socks5代理",
+    "Enable proxy - Tooltip": "启用后，本提供商对外的HTTP请求经app.conf中socks5Proxy的SOCKS5代理；适用于邮件、短信与OAuth登录等。",
     "Endpoint": "地域节点 (外网)",
     "Endpoint (Intranet)": "地域节点 (内网)",
     "Endpoint - Tooltip": "服务端点URL",

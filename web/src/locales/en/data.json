@@ -1145,7 +1145,7 @@
     "Enable PKCE": "Enable PKCE",
     "Enable PKCE - Tooltip": "Enable PKCE (Proof Key for Code Exchange) for enhanced OAuth 2.0 security",
     "Enable proxy": "Enable proxy",
-    "Enable proxy - Tooltip": "Enable socks5 Proxy when sending email or sms",
+    "Enable proxy - Tooltip": "Route this provider's outbound HTTP via SOCKS5 (app.conf socks5Proxy). Used for email/SMS/OAuth login API calls when enabled; some OAuth types also use proxy by default.",
     "Endpoint": "Endpoint",
     "Endpoint (Intranet)": "Endpoint (Intranet)",
     "Endpoint - Tooltip": "Service endpoint URL",
