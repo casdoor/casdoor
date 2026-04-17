@@ -1348,7 +1348,7 @@ class LoginPage extends React.Component {
               <SendCodeInput
                 disabled={this.state.username?.length === 0 || !this.state.validEmailOrPhone}
                 method={"login"}
-                onButtonClickArgs={[this.state.username, this.state.validEmail ? "email" : "phone", Setting.getApplicationName(application), this.state.username]}
+                onButtonClickArgs={[this.state.username, this.state.validEmail ? "email" : "phone", Setting.getApplicationName(application)]}
                 application={application}
                 captchaValue={this.state.captchaValues}
                 useInlineCaptcha={Setting.isInlineCaptchaEnabled(application)}
