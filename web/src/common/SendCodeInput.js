@@ -21,8 +21,6 @@ import * as Setting from "../Setting";
 import {SafetyOutlined} from "@ant-design/icons";
 import {CaptchaModal} from "./modal/CaptchaModal";
 
-const {Search} = Input;
-
 export const SendCodeInput = ({value, disabled, captchaValue, useInlineCaptcha, textBefore, onChange, onButtonClickArgs, application, method, countryCode, refreshCaptcha}) => {
   const [visible, setVisible] = React.useState(false);
   const [buttonLeftTime, setButtonLeftTime] = React.useState(0);
@@ -136,7 +134,7 @@ export const SendCodeInput = ({value, disabled, captchaValue, useInlineCaptcha, 
 
   return (
     <React.Fragment>
-      <Search
+      <Input
         addonBefore={textBefore}
         disabled={disabled}
         value={value}
@@ -144,12 +142,11 @@ export const SendCodeInput = ({value, disabled, captchaValue, useInlineCaptcha, 
         placeholder={i18next.t("code:Enter your code")}
         className="verification-code-input"
         onChange={e => onChange(e.target.value)}
-        enterButton={
-          <Button style={{fontSize: 14}} type={"primary"} disabled={disabled || buttonLeftTime > 0} loading={buttonLoading}>
+        addonAfter={
+          <Button style={{fontSize: 14}} type={"primary"} disabled={disabled || buttonLeftTime > 0} loading={buttonLoading} onClick={handleSearch}>
             {buttonLeftTime > 0 ? `${buttonLeftTime} s` : buttonLoading ? i18next.t("code:Sending") : i18next.t("code:Send Code")}
           </Button>
         }
-        onSearch={handleSearch}
         autoComplete="one-time-code"
       />
       {
