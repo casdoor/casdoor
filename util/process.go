@@ -40,9 +40,9 @@ func getPidByPort(port int) (int, error) {
 			if exitErr.ExitCode() == 1 {
 				return 0, nil
 			}
-		} else {
-			return 0, err
 		}
+
+		return 0, nil
 	}
 
 	lines := strings.Split(string(output), "\n")
