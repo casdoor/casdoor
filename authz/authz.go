@@ -80,6 +80,7 @@ p, *, *, POST, /api/notify-payment, *, *
 p, *, *, POST, /api/place-order, *, *
 p, *, *, POST, /api/cancel-order, *, *
 p, *, *, POST, /api/pay-order, *, *
+p, *, *, POST, /api/validate-coupon, *, *
 p, *, *, POST, /api/unlink, *, *
 p, *, *, POST, /api/set-password, *, *
 p, *, *, POST, /api/send-verification-code, *, *

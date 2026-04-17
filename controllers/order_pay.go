@@ -39,6 +39,7 @@ func (c *ApiController) PlaceOrder() {
 
 	var req struct {
 		ProductInfos []object.ProductInfo `json:"productInfos"`
+		CouponCode   string               `json:"couponCode"`
 	}
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &req)
 	if err != nil {
@@ -80,7 +81,7 @@ func (c *ApiController) PlaceOrder() {
 		return
 	}
 
-	order, err := object.PlaceOrder(owner, productInfos, user)
+	order, err := object.PlaceOrder(owner, productInfos, user, req.CouponCode)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

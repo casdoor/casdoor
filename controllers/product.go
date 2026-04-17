@@ -218,7 +218,9 @@ func (c *ApiController) BuyProduct() {
 		return
 	}
 
-	payment, attachInfo, err := object.BuyProduct(id, user, providerName, pricingName, planName, host, paymentEnv, customPrice, c.GetAcceptLanguage())
+	couponCode := c.Ctx.Input.Query("couponCode")
+
+	payment, attachInfo, err := object.BuyProduct(id, user, providerName, pricingName, planName, host, paymentEnv, customPrice, c.GetAcceptLanguage(), couponCode)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

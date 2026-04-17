@@ -253,6 +253,13 @@ func InitAPI() {
 	web.Router("/api/delete-product", &controllers.ApiController{}, "POST:DeleteProduct")
 	web.Router("/api/buy-product", &controllers.ApiController{}, "POST:BuyProduct")
 
+	web.Router("/api/get-coupons", &controllers.ApiController{}, "GET:GetCoupons")
+	web.Router("/api/get-coupon", &controllers.ApiController{}, "GET:GetCoupon")
+	web.Router("/api/update-coupon", &controllers.ApiController{}, "POST:UpdateCoupon")
+	web.Router("/api/add-coupon", &controllers.ApiController{}, "POST:AddCoupon")
+	web.Router("/api/delete-coupon", &controllers.ApiController{}, "POST:DeleteCoupon")
+	web.Router("/api/validate-coupon", &controllers.ApiController{}, "POST:ValidateCoupon")
+
 	web.Router("/api/get-orders", &controllers.ApiController{}, "GET:GetOrders")
 	web.Router("/api/get-user-orders", &controllers.ApiController{}, "GET:GetUserOrders")
 	web.Router("/api/get-order", &controllers.ApiController{}, "GET:GetOrder")

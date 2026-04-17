@@ -257,7 +257,7 @@ func (product *Product) getProvider(providerName string) (*Provider, error) {
 	return provider, nil
 }
 
-func BuyProduct(id string, user *User, providerName, pricingName, planName, host, paymentEnv string, customPrice float64, lang string) (payment *Payment, attachInfo map[string]interface{}, err error) {
+func BuyProduct(id string, user *User, providerName, pricingName, planName, host, paymentEnv string, customPrice float64, lang string, couponCode string) (payment *Payment, attachInfo map[string]interface{}, err error) {
 	owner, productName, err := util.GetOwnerAndNameFromIdWithError(id)
 	if err != nil {
 		return nil, nil, err
@@ -269,7 +269,7 @@ func BuyProduct(id string, user *User, providerName, pricingName, planName, host
 		Quantity:    1,
 		PricingName: pricingName,
 		PlanName:    planName,
-	}}, user)
+	}}, user, couponCode)
 	if err != nil {
 		return nil, nil, err
 	}
