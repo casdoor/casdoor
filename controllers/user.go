@@ -571,8 +571,6 @@ func (c *ApiController) SetPassword() {
 			c.ResponseError(c.T("general:Wrong userId"))
 			return
 		}
-		c.SetSession("verifiedCode", "")
-		c.SetSession("verifiedUserId", "")
 	}
 
 	targetUser, err := object.GetUser(userId)
@@ -635,6 +633,11 @@ func (c *ApiController) SetPassword() {
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
+	}
+
+	if code != "" {
+		c.SetSession("verifiedCode", "")
+		c.SetSession("verifiedUserId", "")
 	}
 
 	targetUser.Password = newPassword
