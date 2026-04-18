@@ -13,8 +13,8 @@
 // limitations under the License.
 
 import React, {useState} from "react";
-import {Button, Modal, Input} from "antd";
-import {DownloadOutlined, UploadOutlined} from "@ant-design/icons";
+import {Button, Input, Modal} from "antd";
+import {UploadOutlined} from "@ant-design/icons";
 import copy from "copy-to-clipboard";
 import i18next from "i18next";
 import * as Setting from "../Setting";

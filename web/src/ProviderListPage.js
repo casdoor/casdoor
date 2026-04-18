@@ -135,6 +135,10 @@ class ProviderListPage extends BaseListPage {
         filters: [
           {text: "Captcha", value: "Captcha"},
           {text: "Email", value: "Email"},
+          {text: "Face ID", value: "Face ID"},
+          {text: "ID Verification", value: "ID Verification"},
+          {text: "Log", value: "Log"},
+          {text: "MFA", value: "MFA"},
           {text: "Notification", value: "Notification"},
           {text: "OAuth", value: "OAuth"},
           {text: "Payment", value: "Payment"},
@@ -157,6 +161,10 @@ class ProviderListPage extends BaseListPage {
         filters: [
           {text: "Captcha", value: "Captcha", children: Setting.getProviderTypeOptions("Captcha").map((o) => {return {text: o.id, value: o.name};})},
           {text: "Email", value: "Email", children: Setting.getProviderTypeOptions("Email").map((o) => {return {text: o.id, value: o.name};})},
+          {text: "Face ID", value: "Face ID", children: Setting.getProviderTypeOptions("Face ID").map((o) => {return {text: o.id, value: o.name};})},
+          {text: "ID Verification", value: "ID Verification", children: Setting.getProviderTypeOptions("ID Verification").map((o) => {return {text: o.id, value: o.name};})},
+          {text: "Log", value: "Log", children: Setting.getProviderTypeOptions("Log").map((o) => {return {text: o.id, value: o.name};})},
+          {text: "MFA", value: "MFA", children: Setting.getProviderTypeOptions("MFA").map((o) => {return {text: o.id, value: o.name};})},
           {text: "Notification", value: "Notification", children: Setting.getProviderTypeOptions("Notification").map((o) => {return {text: o.id, value: o.name};})},
           {text: "OAuth", value: "OAuth", children: Setting.getProviderTypeOptions("OAuth").map((o) => {return {text: o.id, value: o.name};})},
           {text: "Payment", value: "Payment", children: Setting.getProviderTypeOptions("Payment").map((o) => {return {text: o.id, value: o.name};})},
