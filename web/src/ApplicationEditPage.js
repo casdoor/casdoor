@@ -33,8 +33,9 @@ import {
   Tabs,
   Upload, message
 } from "antd";
-import {CopyOutlined, HolderOutlined, LinkOutlined, UploadOutlined, UsergroupAddOutlined} from "@ant-design/icons";
+import {CopyOutlined, DownloadOutlined, HolderOutlined, LinkOutlined, UploadOutlined, UsergroupAddOutlined} from "@ant-design/icons";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
+import {ApplicationImportModal, exportApplicationJson} from "./common/ApplicationImportExport";
 import * as CertBackend from "./backend/CertBackend";
 import * as Setting from "./Setting";
 import * as Conf from "./Conf";
@@ -1509,6 +1510,18 @@ class ApplicationEditPage extends React.Component {
           <Button onClick={() => this.submitApplicationEdit(false)}>{i18next.t("general:Save")}</Button>
           <Button style={{marginLeft: "20px"}} type="primary" onClick={() => this.submitApplicationEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
           {this.state.mode === "add" ? <Button style={{marginLeft: "20px"}} onClick={() => this.deleteApplication()}>{i18next.t("general:Cancel")}</Button> : null}
+          {this.state.mode !== "add" && this.state.application ? <>
+            <Button style={{marginLeft: "20px"}} icon={<DownloadOutlined />} onClick={() => exportApplicationJson(this.state.application)}>
+              {i18next.t("application:Export JSON")}
+            </Button>
+            <ApplicationImportModal
+              application={this.state.application}
+              onImport={updates => {
+                const app = {...this.state.application, ...updates};
+                this.setState({application: app});
+              }}
+            />
+          </> : null}
         </div>
       } style={{margin: (Setting.isMobile()) ? "5px" : {}, height: "calc(100vh - 145px - 48px)", overflow: "hidden"}}
       styles={{body: {height: "100%"}}} type="inner">
