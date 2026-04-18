@@ -511,6 +511,43 @@ func (application *Application) IsFaceIdEnabled() bool {
 	return false
 }
 
+func (application *Application) IsOriginValid(origin string) bool {
+	isValid, err := util.IsValidOrigin(origin)
+	if err != nil {
+		panic(err)
+	}
+	if isValid {
+		return true
+	}
+
+	originObj, err := url.Parse(origin)
+	if err != nil || originObj.Host == "" {
+		return false
+	}
+
+	for _, redirectUri := range application.RedirectUris {
+		targetObj, err := url.Parse(redirectUri)
+		if err != nil || targetObj.Host == "" {
+			continue
+		}
+		// CORS Origin headers only contain scheme+host+port, no path.
+		// So we only compare those parts, not the path.
+		if originObj.Scheme != targetObj.Scheme {
+			continue
+		}
+		originHost := originObj.Hostname()
+		targetHost := targetObj.Hostname()
+		if originHost != targetHost && !strings.HasSuffix(originHost, "."+targetHost) {
+			continue
+		}
+		if originObj.Port() != targetObj.Port() {
+			continue
+		}
+		return true
+	}
+	return false
+}
+
 func IsOriginAllowed(origin string) (bool, error) {
 	applications, err := GetApplications("")
 	if err != nil {
@@ -518,7 +555,7 @@ func IsOriginAllowed(origin string) (bool, error) {
 	}
 
 	for _, application := range applications {
-		if application.IsRedirectUriValid(origin) {
+		if application.IsOriginValid(origin) {
 			return true, nil
 		}
 	}
