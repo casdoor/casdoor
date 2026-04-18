@@ -34,6 +34,7 @@ type Ldap struct {
 	Filter              string            `xorm:"varchar(200)" json:"filter"`
 	FilterFields        []string          `xorm:"varchar(100)" json:"filterFields"`
 	DefaultGroup        string            `xorm:"varchar(100)" json:"defaultGroup"`
+	DefaultGroups       []string          `xorm:"mediumtext" json:"defaultGroups"`
 	PasswordType        string            `xorm:"varchar(100)" json:"passwordType"`
 	CustomAttributes    map[string]string `json:"customAttributes"`
 
@@ -153,7 +154,7 @@ func UpdateLdap(ldap *Ldap) (bool, error) {
 	}
 
 	affected, err := ormer.Engine.ID(ldap.Id).Cols("owner", "server_name", "host",
-		"port", "enable_ssl", "username", "password", "base_dn", "filter", "filter_fields", "auto_sync", "default_group", "password_type", "allow_self_signed_cert", "custom_attributes", "enable_groups").Update(ldap)
+		"port", "enable_ssl", "username", "password", "base_dn", "filter", "filter_fields", "auto_sync", "default_group", "default_groups", "password_type", "allow_self_signed_cert", "custom_attributes", "enable_groups").Update(ldap)
 	if err != nil {
 		return false, nil
 	}

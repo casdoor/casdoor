@@ -512,7 +512,9 @@ func SyncLdapUsers(owner string, syncUsers []LdapUser, ldapId string) (existUser
 
 			// Assign user to groups based on memberOf attribute
 			userGroups := []string{}
-			if ldap.DefaultGroup != "" {
+			if len(ldap.DefaultGroups) > 0 {
+				userGroups = append(userGroups, ldap.DefaultGroups...)
+			} else if ldap.DefaultGroup != "" {
 				userGroups = append(userGroups, ldap.DefaultGroup)
 			}
 
