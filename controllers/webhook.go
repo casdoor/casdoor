@@ -77,8 +77,17 @@ func (c *ApiController) GetWebhooks() {
 // @router /get-webhook [get]
 func (c *ApiController) GetWebhook() {
 	id := c.Ctx.Input.Query("id")
+	organization := c.Ctx.Input.Query("organization")
 
-	webhook, err := object.GetWebhook(id)
+	var webhook *object.Webhook
+	var err error
+	isGlobalAdmin, _ := c.isGlobalAdmin()
+	if !isGlobalAdmin {
+		webhook, err = object.GetWebhookByOrganization(id, organization)
+	} else {
+		webhook, err = object.GetWebhook(id)
+	}
+
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

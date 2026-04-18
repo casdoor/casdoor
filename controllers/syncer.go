@@ -76,8 +76,19 @@ func (c *ApiController) GetSyncers() {
 // @router /get-syncer [get]
 func (c *ApiController) GetSyncer() {
 	id := c.Ctx.Input.Query("id")
+	organization := c.Ctx.Input.Query("organization")
 
-	syncer, err := object.GetMaskedSyncer(object.GetSyncer(id))
+	var syncer *object.Syncer
+	var err error
+
+	isGlobalAdmin, _ := c.isGlobalAdmin()
+	if isGlobalAdmin {
+		syncer, err = object.GetSyncer(id)
+	} else {
+		syncer, err = object.GetSyncerByOrganization(id, organization)
+	}
+
+	syncer, err = object.GetMaskedSyncer(syncer, err)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -155,7 +166,17 @@ func (c *ApiController) DeleteSyncer() {
 // @router /run-syncer [get]
 func (c *ApiController) RunSyncer() {
 	id := c.Ctx.Input.Query("id")
-	syncer, err := object.GetSyncer(id)
+	organization := c.Ctx.Input.Query("organization")
+
+	var syncer *object.Syncer
+	var err error
+
+	isGlobalAdmin, _ := c.isGlobalAdmin()
+	if isGlobalAdmin {
+		syncer, err = object.GetSyncer(id)
+	} else {
+		syncer, err = object.GetSyncerByOrganization(id, organization)
+	}
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

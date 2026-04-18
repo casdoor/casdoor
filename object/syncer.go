@@ -129,6 +129,19 @@ func GetSyncer(id string) (*Syncer, error) {
 	return getSyncer(owner, name)
 }
 
+func GetSyncerByOrganization(id string, organization string) (*Syncer, error) {
+	syncer, err := GetSyncer(id)
+	if err != nil {
+		return nil, err
+	}
+
+	if syncer == nil || syncer.Organization != organization {
+		return nil, nil
+	}
+
+	return syncer, nil
+}
+
 func GetMaskedSyncer(syncer *Syncer, errs ...error) (*Syncer, error) {
 	if len(errs) > 0 && errs[0] != nil {
 		return nil, errs[0]
@@ -177,7 +190,7 @@ func UpdateSyncer(id string, syncer *Syncer, isGlobalAdmin bool, lang string) (b
 	// Close old syncer connections before updating
 	_ = s.Close()
 
-	session := ormer.Engine.ID(core.PK{owner, name}).AllCols()
+	session := ormer.Engine.ID(core.PK{owner, name}).Where("organization = ?", s.Organization).AllCols()
 	if syncer.Password == "***" {
 		syncer.Password = s.Password
 	}

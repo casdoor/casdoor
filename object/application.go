@@ -438,7 +438,7 @@ func UpdateApplication(id string, application *Application, isGlobalAdmin bool, 
 		providerItem.Provider = nil
 	}
 
-	session := ormer.Engine.ID(core.PK{owner, name}).AllCols()
+	session := ormer.Engine.ID(core.PK{owner, name}).Where("organization = ?", oldApplication.Organization).AllCols()
 	if application.ClientSecret == "***" {
 		session.Omit("client_secret")
 	}

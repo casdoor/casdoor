@@ -86,7 +86,7 @@ class SyncerListPage extends BaseListPage {
 
   runSyncer(i) {
     this.setState({loading: true});
-    SyncerBackend.runSyncer("admin", this.state.data[i].name)
+    SyncerBackend.runSyncer("admin", this.state.data[i].name, this.state.data[i].organization)
       .then((res) => {
         if (res.status === "ok") {
           this.setState({loading: false});
@@ -115,7 +115,7 @@ class SyncerListPage extends BaseListPage {
         ...this.getColumnSearchProps("name"),
         render: (text, record, index) => {
           return (
-            <Link to={`/syncers/${text}`}>
+            <Link to={`/syncers/${record.organization}/${text}`}>
               {text}
             </Link>
           );
@@ -241,7 +241,7 @@ class SyncerListPage extends BaseListPage {
           return (
             <div>
               <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => this.runSyncer(index)}>{i18next.t("general:Sync")}</Button>
-              <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} onClick={() => this.props.history.push(`/syncers/${record.name}`)}>{i18next.t("general:Edit")}</Button>
+              <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} onClick={() => this.props.history.push(`/syncers/${record.organization}/${record.name}`)}>{i18next.t("general:Edit")}</Button>
               <PopconfirmModal
                 title={i18next.t("general:Sure to delete") + `: ${record.name} ?`}
                 onConfirm={() => this.deleteSyncer(index)}

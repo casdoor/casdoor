@@ -31,6 +31,14 @@ import (
 	"github.com/casdoor/casdoor/util"
 )
 
+var orgOwnerObject = []string{
+	"-organization",
+	"-syncer",
+	"-webhook",
+	"-application",
+	"-token",
+}
+
 type Object struct {
 	Owner string `json:"owner"`
 	Name  string `json:"name"`
@@ -52,6 +60,15 @@ func ownerNameFromForm(ctx *context.Context) (string, string) {
 		_ = ctx.Request.ParseForm()
 	}
 	return ctx.Request.Form.Get("owner"), ctx.Request.Form.Get("name")
+}
+
+func checkIsOrgOwnerObject(urlPath string) bool {
+	for _, suffix := range orgOwnerObject {
+		if strings.HasSuffix(urlPath, suffix) || strings.Contains(urlPath, suffix+"s") {
+			return true
+		}
+	}
+	return false
 }
 
 func getUsername(ctx *context.Context) (username string) {
@@ -132,15 +149,31 @@ func getObject(ctx *context.Context) (string, string, error) {
 			}
 		}
 
+		organization := ctx.Input.Query("organization")
+
 		if !(strings.HasPrefix(ctx.Request.URL.Path, "/api/get-") && strings.HasSuffix(ctx.Request.URL.Path, "s")) {
 			// query == "?id=built-in/admin"
 			id := ctx.Input.Query("id")
 			if id != "" {
-				return util.GetOwnerAndNameFromIdWithError(id)
+				owner, name, err := util.GetOwnerAndNameFromIdWithError(id)
+				if err != nil {
+					return owner, name, err
+				}
+				if organization != "" {
+					return organization, name, nil
+				}
+
+				if strings.HasSuffix(ctx.Request.URL.Path, "organization") {
+					return name, name, nil
+				}
+				return owner, name, nil
 			}
 		}
 
 		owner := ctx.Input.Query("owner")
+		if organization != "" {
+			return organization, "", nil
+		}
 		if owner != "" {
 			return owner, "", nil
 		}
@@ -154,13 +187,15 @@ func getObject(ctx *context.Context) (string, string, error) {
 			}
 		}
 
+		isOwnerObjPath := checkIsOrgOwnerObject(path)
+
 		// For non-GET requests, if the `id` query param is present it is the
 		// authoritative identifier of the object being operated on.  Use it
 		// instead of the request body so that an attacker cannot spoof the
 		// object owner by injecting "owner":"admin" (or any other value) into
 		// the request body while pointing the URL at a different organization's
 		// resource.
-		if id := ctx.Input.Query("id"); id != "" {
+		if id := ctx.Input.Query("id"); id != "" && (!isOwnerObjPath || strings.HasSuffix(path, "update-organization")) {
 			owner, name, err := util.GetOwnerAndNameFromIdWithError(id)
 			if err == nil {
 				return owner, name, nil
@@ -174,8 +209,7 @@ func getObject(ctx *context.Context) (string, string, error) {
 
 		var obj Object
 
-		if strings.HasSuffix(path, "-application") || strings.HasSuffix(path, "-token") ||
-			strings.HasSuffix(path, "-syncer") || strings.HasSuffix(path, "-webhook") {
+		if isOwnerObjPath && !strings.HasSuffix(path, "-organization") {
 			var objWithOrg ObjectWithOrg
 			err := json.Unmarshal(body, &objWithOrg)
 			if err != nil {

@@ -34,6 +34,7 @@ class SyncerEditPage extends React.Component {
       certs: [],
       classes: props,
       syncerName: props.match.params.syncerName,
+      organizationName: props.match.params.organizationName,
       syncer: null,
       organizations: [],
       mode: props.location.mode !== undefined ? props.location.mode : "edit",
@@ -47,7 +48,7 @@ class SyncerEditPage extends React.Component {
   }
 
   getSyncer() {
-    SyncerBackend.getSyncer("admin", this.state.syncerName)
+    SyncerBackend.getSyncer("admin", this.state.syncerName, this.state.organizationName)
       .then((res) => {
         if (res.data === null) {
           this.props.history.push("/404");
@@ -1211,7 +1212,7 @@ class SyncerEditPage extends React.Component {
           if (exitAfterSave) {
             this.props.history.push("/syncers");
           } else {
-            this.props.history.push(`/syncers/${this.state.syncer.name}`);
+            this.props.history.push(`/syncers/${this.state.syncer.organization}/${this.state.syncer.name}`);
           }
         } else {
           Setting.showMessage("error", `${i18next.t("general:Failed to save")}: ${res.msg}`);

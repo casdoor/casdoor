@@ -15,7 +15,7 @@
 import * as Setting from "../Setting";
 
 export function getSyncers(owner, organization, page = "", pageSize = "", field = "", value = "", sortField = "", sortOrder = "") {
-  return fetch(`${Setting.ServerUrl}/api/get-syncers?owner=${owner}&organization=${organization}&p=${page}&pageSize=${pageSize}&field=${field}&value=${value}&sortField=${sortField}&sortOrder=${sortOrder}`, {
+  return fetch(`${Setting.ServerUrl}/api/get-syncers?owner=${owner}&organization=${encodeURIComponent(organization)}&p=${page}&pageSize=${pageSize}&field=${field}&value=${value}&sortField=${sortField}&sortOrder=${sortOrder}`, {
     method: "GET",
     credentials: "include",
     headers: {
@@ -24,8 +24,8 @@ export function getSyncers(owner, organization, page = "", pageSize = "", field 
   }).then(res => res.json());
 }
 
-export function getSyncer(owner, name) {
-  return fetch(`${Setting.ServerUrl}/api/get-syncer?id=${owner}/${encodeURIComponent(name)}`, {
+export function getSyncer(owner, name, organization = owner) {
+  return fetch(`${Setting.ServerUrl}/api/get-syncer?id=${owner}/${encodeURIComponent(name)}&organization=${encodeURIComponent(organization)}`, {
     method: "GET",
     credentials: "include",
     headers: {
@@ -82,8 +82,8 @@ export function deleteSyncer(syncer) {
   }).then(res => res.json());
 }
 
-export function runSyncer(owner, name) {
-  return fetch(`${Setting.ServerUrl}/api/run-syncer?id=${owner}/${encodeURIComponent(name)}`, {
+export function runSyncer(owner, name, organization) {
+  return fetch(`${Setting.ServerUrl}/api/run-syncer?id=${owner}/${encodeURIComponent(name)}&organization=${encodeURIComponent(organization)}`, {
     method: "GET",
     credentials: "include",
     headers: {

@@ -78,9 +78,21 @@ func (c *ApiController) GetTokens() {
 // @router /get-token [get]
 func (c *ApiController) GetToken() {
 	id := c.Ctx.Input.Query("id")
+	organization := c.Ctx.Input.Query("organization")
 	token, err := object.GetToken(id)
 	if err != nil {
 		c.ResponseError(err.Error())
+		return
+	}
+
+	if token == nil {
+		c.ResponseError(fmt.Sprintf(c.T("general:The token: %s does not exist"), id))
+		return
+	}
+
+	isGlobalAdmin, _ := c.isGlobalAdmin()
+	if token.Organization != organization && !isGlobalAdmin {
+		c.ResponseError(c.T("auth:Unauthorized operation"))
 		return
 	}
 
