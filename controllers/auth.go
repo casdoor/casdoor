@@ -215,7 +215,22 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 		}
 
 		authCacheCast := authCache.(object.DeviceAuthCache)
-		if authCacheCast.RequestAt.Add(time.Second * 120).Before(time.Now()) {
+		if authCacheCast.Status == object.DeviceAuthStatusDenied {
+			if authCacheCast.UserName != "" {
+				object.DeviceAuthMap.Delete(authCacheCast.UserName)
+			}
+			c.ResponseError(c.T("auth:DeviceCode Invalid"))
+			return
+		}
+
+		expiresIn := authCacheCast.ExpiresIn
+		if expiresIn == 0 {
+			expiresIn = object.DeviceAuthExpiresIn
+		}
+		if authCacheCast.RequestAt.Add(time.Duration(expiresIn) * time.Second).Before(time.Now()) {
+			if authCacheCast.UserName != "" {
+				object.DeviceAuthMap.Delete(authCacheCast.UserName)
+			}
 			c.ResponseError(c.T("auth:UserCode Expired"))
 			return
 		}
@@ -229,6 +244,7 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 		deviceAuthCacheDeviceCodeCast := deviceAuthCacheDeviceCode.(object.DeviceAuthCache)
 		deviceAuthCacheDeviceCodeCast.UserName = user.Name
 		deviceAuthCacheDeviceCodeCast.UserSignIn = true
+		deviceAuthCacheDeviceCodeCast.Status = object.DeviceAuthStatusApproved
 
 		object.DeviceAuthMap.Store(authCacheCast.UserName, deviceAuthCacheDeviceCodeCast)
 
@@ -1468,6 +1484,15 @@ func (c *ApiController) DeviceAuth() {
 		return
 	}
 
+	if !application.HasSigninMethod("Device login") {
+		c.Data["json"] = object.TokenError{
+			Error:            object.UnauthorizedClient,
+			ErrorDescription: "device login is not enabled for this application",
+		}
+		c.ServeJSON()
+		return
+	}
+
 	deviceCode := util.GenerateId()
 	userCode := util.GetRandomName()
 
@@ -1489,12 +1514,22 @@ func (c *ApiController) DeviceAuth() {
 		generateTime++
 	}
 
+	cancelToken := util.GenerateId()
+
+	expiresIn := application.CodeResendTimeout
+	if expiresIn == 0 {
+		expiresIn = object.DeviceAuthExpiresIn
+	}
+
 	deviceAuthCache := object.DeviceAuthCache{
 		UserSignIn:    false,
 		UserName:      "",
 		Scope:         scope,
 		ApplicationId: application.GetId(),
+		ClientId:      application.ClientId,
 		RequestAt:     time.Now(),
+		Status:        object.DeviceAuthStatusPending,
+		ExpiresIn:     expiresIn,
 	}
 
 	userAuthCache := object.DeviceAuthCache{
@@ -1503,11 +1538,134 @@ func (c *ApiController) DeviceAuth() {
 		Scope:         scope,
 		ApplicationId: application.GetId(),
 		RequestAt:     time.Now(),
+		Status:        object.DeviceAuthStatusPending,
+		CancelToken:   cancelToken,
+		ExpiresIn:     expiresIn,
 	}
 
 	object.DeviceAuthMap.Store(deviceCode, deviceAuthCache)
 	object.DeviceAuthMap.Store(userCode, userAuthCache)
 
-	c.Data["json"] = object.GetDeviceAuthResponse(deviceCode, userCode, c.Ctx.Request.Host)
+	c.Data["json"] = object.GetDeviceAuthResponse(deviceCode, userCode, cancelToken, c.Ctx.Request.Host, expiresIn)
+	c.ServeJSON()
+}
+
+// CancelDeviceAuth
+// @Title CancelDeviceAuth
+// @Tag Device Authorization Endpoint
+// @Description cancel a pending device authorization flow
+// @router /cancel-device-auth [post]
+func (c *ApiController) CancelDeviceAuth() {
+	userCode := c.Ctx.Input.Query("userCode")
+	cancelToken := c.Ctx.Input.Query("cancelToken")
+
+	deviceAuthCache, ok := object.DeviceAuthMap.Load(userCode)
+	if !ok {
+		c.ResponseError(c.T("auth:UserCode Invalid"))
+		return
+	}
+
+	userCodeCache := deviceAuthCache.(object.DeviceAuthCache)
+	if userCodeCache.CancelToken == "" || userCodeCache.CancelToken != cancelToken {
+		c.ResponseError(c.T("auth:UserCode Invalid"))
+		return
+	}
+
+	object.DeviceAuthMap.Delete(userCode)
+
+	if userCodeCache.UserName != "" {
+		object.DeviceAuthMap.Delete(userCodeCache.UserName)
+	}
+
+	c.ResponseOk("Canceled")
+}
+
+// DeviceAuthComplete
+// @Title DeviceAuthComplete
+// @Tag Device Authorization Endpoint
+// @Description Complete device authorization by establishing a browser session after token issuance
+// @router /device-auth-complete [post]
+func (c *ApiController) DeviceAuthComplete() {
+	deviceCode := c.Ctx.Input.Query("deviceCode")
+	if deviceCode == "" {
+		c.ResponseError(c.T("auth:DeviceCode Invalid"))
+		return
+	}
+
+	deviceAuthCacheAny, ok := object.DeviceAuthMap.Load(deviceCode)
+	if !ok {
+		c.ResponseError(c.T("auth:DeviceCode Invalid"))
+		return
+	}
+
+	deviceAuthCache := deviceAuthCacheAny.(object.DeviceAuthCache)
+	if deviceAuthCache.Status != object.DeviceAuthStatusTokenIssued {
+		c.ResponseError(c.T("auth:DeviceCode Invalid"))
+		return
+	}
+
+	if deviceAuthCache.RequestAt.Add(time.Duration(deviceAuthCache.ExpiresIn) * time.Second).Before(time.Now()) {
+		object.DeviceAuthMap.Delete(deviceCode)
+		c.ResponseError(c.T("auth:UserCode Expired"))
+		return
+	}
+
+	application, err := object.GetApplication(deviceAuthCache.ApplicationId)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	if application == nil {
+		c.ResponseError(fmt.Sprintf(c.T("auth:The application: %s does not exist"), deviceAuthCache.ApplicationId))
+		return
+	}
+
+	user, err := object.GetUserByFields(application.Organization, deviceAuthCache.UserName)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	if user == nil {
+		c.ResponseError(fmt.Sprintf(c.T("general:The user: %s doesn't exist"), deviceAuthCache.UserName))
+		return
+	}
+
+	responseType := c.Ctx.Input.Query("responseType")
+	if responseType == "" {
+		responseType = "login"
+	}
+	if responseType != "login" {
+		requestClientId := c.Ctx.Input.Query("clientId")
+		if requestClientId != application.ClientId {
+			c.ResponseError(c.T("auth:The application does not match the device authorization request"))
+			return
+		}
+
+		if deviceAuthCache.Scope != "" {
+			requestScope := c.Ctx.Input.Query("scope")
+			if requestScope != "" {
+				allowedScopes := make(map[string]bool)
+				for _, s := range strings.Fields(deviceAuthCache.Scope) {
+					allowedScopes[s] = true
+				}
+				for _, s := range strings.Fields(requestScope) {
+					if !allowedScopes[s] {
+						c.ResponseError(c.T("auth:Requested scope exceeds original device authorization scope"))
+						return
+					}
+				}
+			}
+		}
+	}
+
+	object.DeviceAuthMap.Delete(deviceCode)
+
+	authForm := form.AuthForm{
+		Type: responseType,
+	}
+	resp := c.HandleLoggedIn(application, user, &authForm)
+
+	c.Ctx.Input.SetParam("recordUserId", user.GetId())
+	c.Data["json"] = resp
 	c.ServeJSON()
 }

@@ -73,6 +73,7 @@ func main() {
 	object.InitUserManager()
 	object.InitFromFile()
 	object.InitCleanupTokens()
+	object.InitCleanupDeviceAuthMap()
 
 	object.InitSiteMap()
 	if len(object.SiteMap) != 0 {

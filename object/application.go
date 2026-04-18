@@ -168,6 +168,20 @@ type Application struct {
 	CertObj *Cert `xorm:"-"`
 }
 
+func (application *Application) HasSigninMethod(name string) bool {
+	if application == nil {
+		return false
+	}
+
+	for _, signinMethod := range application.SigninMethods {
+		if signinMethod != nil && signinMethod.Name == name && signinMethod.Rule != "Hide password" {
+			return true
+		}
+	}
+
+	return false
+}
+
 func GetApplicationCount(owner, field, value string) (int64, error) {
 	session := GetSession(owner, -1, -1, field, value, "", "")
 	return session.Count(&Application{})

@@ -40,6 +40,7 @@ import {GoogleOneTapLoginVirtualButton} from "./GoogleLoginButton";
 import * as ProviderButton from "./ProviderButton";
 import {createFormAndSubmit, goToLink} from "../Setting";
 import WeChatLoginPanel from "./WeChatLoginPanel";
+import DeviceLoginPanel from "./DeviceLoginPanel";
 import {CountryCodeSelect} from "../common/select/CountryCodeSelect";
 const FaceRecognitionCommonModal = lazy(() => import("../common/modal/FaceRecognitionCommonModal"));
 const FaceRecognitionModal = lazy(() => import("../common/modal/FaceRecognitionModal"));
@@ -240,6 +241,11 @@ class LoginPage extends React.Component {
       case "WebAuthn": return "webAuthn";
       case "LDAP": return "ldap";
       case "Face ID": return "faceId";
+      case "Device login":
+        if (application?.signinMethods[0]?.rule === "Tab") {
+          return "device";
+        }
+        break;
       }
     }
 
@@ -257,6 +263,8 @@ class LoginPage extends React.Component {
       return "LDAP";
     } else if (this.state.loginMethod === "faceId") {
       return "Face ID";
+    } else if (this.state.loginMethod === "device") {
+      return "Device login";
     } else {
       return "Password";
     }
@@ -541,7 +549,7 @@ class LoginPage extends React.Component {
             } else if (responseType === "code") {
               this.postCodeLoginAction(res);
             } else if (responseType === "device") {
-              Setting.showMessage("success", "Successful login");
+              Setting.showMessage("success", i18next.t("application:Logged in successfully"));
               this.setState({
                 userCodeStatus: "success",
               });
@@ -714,6 +722,10 @@ class LoginPage extends React.Component {
         return (<WeChatLoginPanel application={application} loginMethod={this.state.loginMethod} />);
       }
 
+      if (this.state.loginMethod === "device") {
+        return (<DeviceLoginPanel application={application} onSuccess={(deviceCode) => this.handleDeviceLoginComplete(deviceCode)} />);
+      }
+
       if (this.state.loginMethod === "verificationCodePhone") {
         return <Form.Item className="signin-phone" required={true}>
           <Input.Group compact>
@@ -878,7 +890,7 @@ class LoginPage extends React.Component {
     } else if (signinItem.name === "Agreement") {
       return AgreementModal.isAgreementRequired(application) ? AgreementModal.renderAgreementFormItem(application, true, {}, this) : null;
     } else if (signinItem.name === "Login button") {
-      if (this.state.loginMethod === "wechat") {
+      if (this.state.loginMethod === "wechat" || this.state.loginMethod === "device") {
         return null;
       }
       return (
@@ -893,9 +905,34 @@ class LoginPage extends React.Component {
             {
               this.state.loginMethod === "webAuthn" ? i18next.t("login:Sign in with WebAuthn") :
                 this.state.loginMethod === "faceId" ? i18next.t("login:Sign in with Face ID") :
-                  signinItem.label ? signinItem.label : i18next.t("login:Sign In")
+                  this.state.type === "device" ? i18next.t("login:Approve and sign in") :
+                    signinItem.label ? signinItem.label : i18next.t("login:Sign In")
             }
           </Button>
+          {
+            this.state.type === "device" ? (
+              <Button
+                style={{marginTop: 12}}
+                block
+                onClick={() => {
+                  const cancelToken = new URLSearchParams(this.props.location.search).get("cancelToken") || "";
+                  AuthBackend.cancelDeviceLogin(this.state.userCode, cancelToken)
+                    .then((res) => {
+                      if (res.status === "ok") {
+                        this.setState({userCodeStatus: "canceled"});
+                      } else {
+                        Setting.showMessage("error", res.msg || i18next.t("general:Failed to cancel"));
+                      }
+                    })
+                    .catch(() => {
+                      Setting.showMessage("error", i18next.t("general:Failed to cancel"));
+                    });
+                }}
+              >
+                {i18next.t("general:Cancel")}
+              </Button>
+            ) : null
+          }
           {
             this.state.loginMethod === "faceId" ?
               this.state.haveFaceIdProvider ? <Suspense fallback={null}><FaceRecognitionCommonModal visible={this.state.openFaceRecognitionModal} onOk={(FaceIdImage) => {
@@ -1027,6 +1064,16 @@ class LoginPage extends React.Component {
       );
     }
 
+    if (this.state.userCodeStatus === "canceled") {
+      return (
+        <Result
+          status="warning"
+          title={i18next.t("login:Device login was canceled")}
+        >
+        </Result>
+      );
+    }
+
     const showForm = Setting.isPasswordEnabled(application) || Setting.isCodeSigninEnabled(application) || Setting.isWebAuthnEnabled(application) || Setting.isLdapEnabled(application) || Setting.isFaceIdEnabled(application);
     if (showForm) {
       let loginWidth = 320;
@@ -1055,6 +1102,7 @@ class LoginPage extends React.Component {
           size="large"
           ref={this.form}
         >
+          {this.renderDeviceLoginHeader(application)}
           <Form.Item
             hidden={true}
             name="application"
@@ -1183,6 +1231,41 @@ class LoginPage extends React.Component {
     }
   }
 
+  handleDeviceLoginComplete(deviceCode) {
+    const oAuthParams = Util.getOAuthGetParameters();
+    AuthBackend.completeDeviceLogin(deviceCode, oAuthParams).then((res) => {
+      if (res.status === "ok") {
+        const responseType = oAuthParams?.responseType ?? "login";
+        const responseTypes = responseType.split(" ");
+        const responseMode = oAuthParams?.responseMode || "query";
+        if (responseType === "code") {
+          this.postCodeLoginAction(res);
+        } else if (responseTypes.includes("token") || responseTypes.includes("id_token")) {
+          const amendatoryResponseType = responseType === "token" ? "access_token" : responseType;
+          const accessToken = res.data;
+          if (responseMode === "form_post") {
+            const params = {
+              token: responseTypes.includes("token") ? res.data : null,
+              id_token: responseTypes.includes("id_token") ? res.data : null,
+              token_type: "bearer",
+              state: oAuthParams?.state,
+            };
+            createFormAndSubmit(oAuthParams?.redirectUri, params);
+          } else {
+            Setting.goToLink(`${oAuthParams.redirectUri}#${amendatoryResponseType}=${accessToken}&state=${oAuthParams.state}&token_type=bearer`);
+          }
+        } else {
+          Setting.showMessage("success", i18next.t("application:Logged in successfully"));
+          this.props.onLoginSuccess();
+        }
+      } else {
+        Setting.showMessage("error", `${i18next.t("application:Failed to sign in")}: ${res.msg}`);
+      }
+    }).catch((err) => {
+      Setting.showMessage("error", err.message);
+    });
+  }
+
   renderSignedInBox() {
     if (this.props.account === undefined || this.props.account === null) {
       this.sendSilentSigninData("user-not-logged-in");
@@ -1205,7 +1288,7 @@ class LoginPage extends React.Component {
     return (
       <div>
         <div style={{fontSize: 16, textAlign: "left"}}>
-          {i18next.t("login:Continue with")}&nbsp;:
+          {this.state.type === "device" ? i18next.t("login:Continue with your current account to approve this sign-in") : i18next.t("login:Continue with")}&nbsp;:
         </div>
         <br />
         <div onClick={() => {
@@ -1220,6 +1303,36 @@ class LoginPage extends React.Component {
         <div style={{fontSize: 16, textAlign: "left"}}>
           {i18next.t("login:Or sign in with another account")}&nbsp;:
         </div>
+      </div>
+    );
+  }
+
+  renderDeviceLoginHeader(application) {
+    if (this.state.type !== "device" || !this.state.userCode) {
+      return null;
+    }
+
+    return (
+      <div style={{textAlign: "center", marginBottom: 16}}>
+        <h3 style={{marginBottom: 8}}>{i18next.t("login:Approve sign-in on this device")}</h3>
+        <div style={{marginBottom: 4}}>
+          <strong>{application.displayName}</strong>
+        </div>
+        <div style={{color: "#8c8c8c"}}>
+          {i18next.t("login:Confirmation code")}: {this.state.userCode}
+        </div>
+      </div>
+    );
+  }
+
+  renderDeviceLoginSidePanel(application) {
+    if (!application?.signinMethods?.some(signinMethod => signinMethod?.name === "Device login" && signinMethod.rule === "Login page") || this.state.type === "device") {
+      return null;
+    }
+
+    return (
+      <div style={{display: "flex", justifyContent: "center", alignItems: "center"}}>
+        <DeviceLoginPanel application={application} onSuccess={(deviceCode) => this.handleDeviceLoginComplete(deviceCode)} />
       </div>
     );
   }
@@ -1408,6 +1521,7 @@ class LoginPage extends React.Component {
       [generateItemKey("WebAuthn", "None"), {label: i18next.t("login:WebAuthn"), key: "webAuthn"}],
       [generateItemKey("LDAP", "None"), {label: i18next.t("login:LDAP"), key: "ldap"}],
       [generateItemKey("Face ID", "None"), {label: i18next.t("login:Face ID"), key: "faceId"}],
+      [generateItemKey("Device login", "Tab"), {label: i18next.t("login:Device login"), key: "device"}],
       [generateItemKey("WeChat", "Tab"), {label: i18next.t("login:WeChat"), key: "wechat"}],
       [generateItemKey("WeChat", "None"), {label: i18next.t("login:WeChat"), key: "wechat"}],
     ]);
@@ -1416,6 +1530,11 @@ class LoginPage extends React.Component {
       if (signinMethod.rule === "Hide password") {
         return;
       }
+
+      if (this.state.type === "device" && signinMethod.name === "Device login") {
+        return;
+      }
+
       const item = itemsMap.get(generateItemKey(signinMethod.name, signinMethod.rule));
       if (item) {
         let label = signinMethod.name === signinMethod.displayName ? item.label : signinMethod.displayName;
@@ -1572,6 +1691,24 @@ class LoginPage extends React.Component {
     }
 
     const wechatSigninMethods = application.signinMethods?.filter(method => method.name === "WeChat" && method.rule === "Login page");
+    const sidePanels = [];
+
+    if (wechatSigninMethods?.length > 0) {
+      sidePanels.push(
+        <div key="wechat-panel">
+          <h3 style={{textAlign: "center", width: 320}}>{i18next.t("provider:Please use WeChat to scan the QR code and follow the official account for sign in")}</h3>
+          <WeChatLoginPanel application={application} loginMethod={this.state.loginMethod} />
+        </div>
+      );
+    }
+
+    if (application.signinMethods?.some(method => method.name === "Device login" && method.rule === "Login page") && this.state.type !== "device") {
+      sidePanels.push(
+        <div key="device-panel">
+          {this.renderDeviceLoginSidePanel(application)}
+        </div>
+      );
+    }
 
     return (
       <React.Fragment>
@@ -1590,15 +1727,11 @@ class LoginPage extends React.Component {
                 }
               </div>
             </div>
-            {
-              wechatSigninMethods?.length > 0 ? (<div style={{display: "flex", justifyContent: "center", alignItems: "center"}}>
-                <div>
-                  <h3 style={{textAlign: "center", width: 320}}>{i18next.t("provider:Please use WeChat to scan the QR code and follow the official account for sign in")}</h3>
-                  <WeChatLoginPanel application={application} loginMethod={this.state.loginMethod} />
-                </div>
+            {sidePanels.length > 0 ? (
+              <div style={{display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column", gap: 24}}>
+                {sidePanels}
               </div>
-              ) : null
-            }
+            ) : null}
           </div>
         </div>
       </React.Fragment>

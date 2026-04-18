@@ -254,6 +254,9 @@ func (c *ApiController) GetOAuthToken() {
 	dpopProof := c.Ctx.Request.Header.Get("DPoP")
 
 	host := c.Ctx.Request.Host
+	var pendingDeviceCode string
+	var pendingDeviceAuthCache object.DeviceAuthCache
+
 	if deviceCode != "" {
 		deviceAuthCache, ok := object.DeviceAuthMap.Load(deviceCode)
 		if !ok {
@@ -263,11 +266,42 @@ func (c *ApiController) GetOAuthToken() {
 			}
 			c.SetTokenErrorHttpStatus()
 			c.ServeJSON()
-			c.SetTokenErrorHttpStatus()
 			return
 		}
 
 		deviceAuthCacheCast := deviceAuthCache.(object.DeviceAuthCache)
+
+		if deviceAuthCacheCast.RequestAt.Add(time.Second * object.DeviceAuthExpiresIn).Before(time.Now()) {
+			object.DeviceAuthMap.Delete(deviceCode)
+			c.Data["json"] = &object.TokenError{
+				Error:            "expired_token",
+				ErrorDescription: "token is expired",
+			}
+			c.SetTokenErrorHttpStatus()
+			c.ServeJSON()
+			return
+		}
+
+		if deviceAuthCacheCast.Status == object.DeviceAuthStatusDenied {
+			c.Data["json"] = &object.TokenError{
+				Error:            "access_denied",
+				ErrorDescription: "device login was denied",
+			}
+			c.SetTokenErrorHttpStatus()
+			c.ServeJSON()
+			return
+		}
+
+		if deviceAuthCacheCast.Status == object.DeviceAuthStatusTokenIssued {
+			c.Data["json"] = &object.TokenError{
+				Error:            "access_denied",
+				ErrorDescription: "device_code has already been used",
+			}
+			c.SetTokenErrorHttpStatus()
+			c.ServeJSON()
+			return
+		}
+
 		if !deviceAuthCacheCast.UserSignIn {
 			c.Data["json"] = &object.TokenError{
 				Error:            "authorization_pending",
@@ -275,29 +309,43 @@ func (c *ApiController) GetOAuthToken() {
 			}
 			c.SetTokenErrorHttpStatus()
 			c.ServeJSON()
-			c.SetTokenErrorHttpStatus()
 			return
 		}
-
-		if deviceAuthCacheCast.RequestAt.Add(time.Second * 120).Before(time.Now()) {
+		// Bind client_id to the application from the original device auth request.
+		if deviceAuthCacheCast.ClientId != "" && deviceAuthCacheCast.ClientId != clientId {
 			c.Data["json"] = &object.TokenError{
-				Error:            "expired_token",
-				ErrorDescription: "token is expired",
+				Error:            object.InvalidClient,
+				ErrorDescription: "client_id does not match the device authorization request",
 			}
 			c.SetTokenErrorHttpStatus()
 			c.ServeJSON()
-			c.SetTokenErrorHttpStatus()
 			return
 		}
-		object.DeviceAuthMap.Delete(deviceCode)
-
 		username = deviceAuthCacheCast.UserName
+		scope = deviceAuthCacheCast.Scope
+		pendingDeviceCode = deviceCode
+		pendingDeviceAuthCache = deviceAuthCacheCast
+	} else if grantType == "urn:ietf:params:oauth:grant-type:device_code" {
+		c.Data["json"] = &object.TokenError{
+			Error:            "invalid_request",
+			ErrorDescription: "device_code parameter is required for this grant type",
+		}
+		c.SetTokenErrorHttpStatus()
+		c.ServeJSON()
+		return
 	}
 
 	token, err := object.GetOAuthToken(grantType, clientId, clientSecret, code, verifier, scope, nonce, username, password, host, refreshToken, tag, avatar, c.GetAcceptLanguage(), subjectToken, subjectTokenType, assertion, clientAssertion, clientAssertionType, audience, resource, dpopProof)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
+	}
+
+	if pendingDeviceCode != "" {
+		if _, isTokenError := token.(*object.TokenError); !isTokenError {
+			pendingDeviceAuthCache.Status = object.DeviceAuthStatusTokenIssued
+			object.DeviceAuthMap.Store(pendingDeviceCode, pendingDeviceAuthCache)
+		}
 	}
 
 	c.Data["json"] = token

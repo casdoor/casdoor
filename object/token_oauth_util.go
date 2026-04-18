@@ -39,6 +39,13 @@ const (
 	UnsupportedGrantType = "unsupported_grant_type"
 	InvalidScope         = "invalid_scope"
 	EndpointError        = "endpoint_error"
+	DeviceAuthExpiresIn  = 120
+	DeviceAuthInterval   = 5
+
+	DeviceAuthStatusPending     = "pending"
+	DeviceAuthStatusApproved    = "approved"
+	DeviceAuthStatusDenied      = "denied"
+	DeviceAuthStatusTokenIssued = "token_issued"
 )
 
 var DeviceAuthMap = sync.Map{}
@@ -87,8 +94,33 @@ type DeviceAuthCache struct {
 	UserSignIn    bool
 	UserName      string
 	ApplicationId string
+	ClientId      string
 	Scope         string
 	RequestAt     time.Time
+	Status        string
+	CancelToken   string
+	ExpiresIn     int
+}
+
+func InitCleanupDeviceAuthMap() {
+	util.SafeGoroutine(func() {
+		ticker := time.NewTicker(time.Minute)
+		defer ticker.Stop()
+		for range ticker.C {
+			now := time.Now()
+			DeviceAuthMap.Range(func(key, value any) bool {
+				cache := value.(DeviceAuthCache)
+				expiresIn := cache.ExpiresIn
+				if expiresIn == 0 {
+					expiresIn = DeviceAuthExpiresIn
+				}
+				if cache.RequestAt.Add(time.Duration(expiresIn) * time.Second).Before(now) {
+					DeviceAuthMap.Delete(key)
+				}
+				return true
+			})
+		}
+	})
 }
 
 type DeviceAuthResponse struct {

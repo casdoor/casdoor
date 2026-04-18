@@ -82,6 +82,46 @@ export function getApplicationLogin(params) {
   }).then(res => res.json());
 }
 
+export function startDeviceLogin(clientId, scope) {
+  return fetch(`${authConfig.serverUrl}/api/device-auth?client_id=${encodeURIComponent(clientId)}&scope=${encodeURIComponent(scope)}`, {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}
+
+export function pollDeviceLoginToken(clientId, deviceCode) {
+  return fetch(`${authConfig.serverUrl}/api/login/oauth/access_token?client_id=${encodeURIComponent(clientId)}&grant_type=${encodeURIComponent("urn:ietf:params:oauth:grant-type:device_code")}&device_code=${encodeURIComponent(deviceCode)}`, {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}
+
+export function cancelDeviceLogin(userCode, cancelToken) {
+  return fetch(`${authConfig.serverUrl}/api/cancel-device-auth?userCode=${encodeURIComponent(userCode)}&cancelToken=${encodeURIComponent(cancelToken)}`, {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}
+
+export function completeDeviceLogin(deviceCode, oAuthParams) {
+  return fetch(`${authConfig.serverUrl}/api/device-auth-complete?deviceCode=${encodeURIComponent(deviceCode)}${oAuthParamsToQuery(oAuthParams).replace("?", "&")}`, {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}
+
 export function login(values, oAuthParams) {
   return fetch(`${authConfig.serverUrl}/api/login${oAuthParamsToQuery(oAuthParams)}`, {
     method: "POST",

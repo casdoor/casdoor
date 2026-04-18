@@ -19,6 +19,7 @@ import (
 	"encoding/pem"
 	"fmt"
 	"net"
+	"net/url"
 	"strings"
 
 	"github.com/casdoor/casdoor/conf"
@@ -272,13 +273,14 @@ func GetWebFinger(resource string, rels []string, host string, applicationName s
 	return wf, nil
 }
 
-func GetDeviceAuthResponse(deviceCode string, userCode string, host string) DeviceAuthResponse {
+func GetDeviceAuthResponse(deviceCode string, userCode string, cancelToken string, host string, expiresIn int) DeviceAuthResponse {
 	originFrontend, _ := getOriginFromHost(host)
 
 	return DeviceAuthResponse{
 		DeviceCode:      deviceCode,
 		UserCode:        userCode,
-		VerificationUri: fmt.Sprintf("%s/login/oauth/device/%s", originFrontend, userCode),
-		ExpiresIn:       120,
+		VerificationUri: fmt.Sprintf("%s/login/oauth/device/%s?cancelToken=%s", originFrontend, userCode, url.QueryEscape(cancelToken)),
+		ExpiresIn:       expiresIn,
+		Interval:        DeviceAuthInterval,
 	}
 }
