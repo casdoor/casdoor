@@ -80,12 +80,21 @@ func (c *ApiController) ProxyServer() {
 			return
 		}
 
-		for _, tool := range server.Tools {
-			if tool.Name == params.Name && !tool.IsAllowed {
-				c.McpResponseError(mcpReq.ID, -32600, "tool is forbidden", nil)
+		if len(server.Tools) > 0 {
+			toolAllowed := false
+			for _, tool := range server.Tools {
+				if tool.Name == params.Name {
+					if !tool.IsAllowed {
+						c.McpResponseError(mcpReq.ID, -32600, "tool is forbidden", nil)
+						return
+					}
+					toolAllowed = true
+					break
+				}
+			}
+			if !toolAllowed {
+				c.McpResponseError(mcpReq.ID, -32600, "tool is not in the allowlist", nil)
 				return
-			} else if tool.Name == params.Name {
-				break
 			}
 		}
 	}
