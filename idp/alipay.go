@@ -72,9 +72,17 @@ func (idp *AlipayIdProvider) getConfig(clientId string, clientSecret string, red
 	return config
 }
 
+type AlipayErrorResponse struct {
+	Code    string `json:"code"`
+	Msg     string `json:"msg"`
+	SubCode string `json:"sub_code"`
+	SubMsg  string `json:"sub_msg"`
+}
+
 type AlipayAccessToken struct {
-	Response AlipaySystemOauthTokenResponse `json:"alipay_system_oauth_token_response"`
-	Sign     string                         `json:"sign"`
+	Response      AlipaySystemOauthTokenResponse `json:"alipay_system_oauth_token_response"`
+	ErrorResponse AlipayErrorResponse            `json:"error_response"`
+	Sign          string                         `json:"sign"`
 }
 
 type AlipaySystemOauthTokenResponse struct {
@@ -115,11 +123,18 @@ func (idp *AlipayIdProvider) GetToken(code string) (*oauth2.Token, error) {
 	}
 
 	if pToken.Response.AccessToken == "" {
-		errMsg := pToken.Response.Msg
-		if pToken.Response.SubMsg != "" {
-			errMsg = pToken.Response.SubMsg
+		errResp := pToken.ErrorResponse
+		if errResp.Code == "" {
+			errResp.Code = pToken.Response.Code
+			errResp.SubCode = pToken.Response.SubCode
+			errResp.Msg = pToken.Response.Msg
+			errResp.SubMsg = pToken.Response.SubMsg
 		}
-		return nil, fmt.Errorf("alipay GetToken error: code=%s, msg=%s", pToken.Response.Code, errMsg)
+		errMsg := errResp.Msg
+		if errResp.SubMsg != "" {
+			errMsg = errResp.SubMsg
+		}
+		return nil, fmt.Errorf("alipay GetToken error: code=%s, sub_code=%s, msg=%s", errResp.Code, errResp.SubCode, errMsg)
 	}
 
 	token := &oauth2.Token{
