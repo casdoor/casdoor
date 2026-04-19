@@ -29,6 +29,24 @@ import (
 	dsig "github.com/russellhaering/goxmldsig"
 )
 
+// IsValidSamlRedirectURL checks that the redirect URL in the SAML RelayState
+// points to the same origin as this Casdoor instance, preventing open redirect attacks.
+func IsValidSamlRedirectURL(redirectURL, host string) bool {
+	if redirectURL == "" {
+		return false
+	}
+	parsed, err := url.Parse(redirectURL)
+	if err != nil || parsed.Host == "" {
+		return false
+	}
+	_, origin := getOriginFromHost(host)
+	originParsed, err := url.Parse(origin)
+	if err != nil {
+		return false
+	}
+	return parsed.Host == originParsed.Host
+}
+
 func ParseSamlResponse(samlResponse string, provider *Provider, host string) (*idp.UserInfo, error) {
 	samlResponse, _ = url.QueryUnescape(samlResponse)
 	sp, err := buildSp(provider, samlResponse, host)

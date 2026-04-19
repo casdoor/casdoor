@@ -1285,10 +1285,19 @@ func (c *ApiController) HandleSamlLogin() {
 		return
 	}
 	slice := strings.Split(string(decode), "&")
+	if len(slice) < 5 {
+		c.ResponseError("invalid RelayState format")
+		return
+	}
+	redirectTarget := slice[4]
+	if !object.IsValidSamlRedirectURL(redirectTarget, c.Ctx.Request.Host) {
+		c.ResponseError("invalid redirect URL in RelayState: must point to this Casdoor instance")
+		return
+	}
 	relayState = url.QueryEscape(relayState)
 	samlResponse = url.QueryEscape(samlResponse)
 	targetUrl := fmt.Sprintf("%s?relayState=%s&samlResponse=%s",
-		slice[4], relayState, samlResponse)
+		redirectTarget, relayState, samlResponse)
 	c.Redirect(targetUrl, http.StatusSeeOther)
 }
 
