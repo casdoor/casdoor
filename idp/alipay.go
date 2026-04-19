@@ -23,6 +23,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"encoding/pem"
+	"fmt"
 	"io"
 	"net/http"
 	"net/url"
@@ -77,6 +78,10 @@ type AlipayAccessToken struct {
 }
 
 type AlipaySystemOauthTokenResponse struct {
+	Code         string `json:"code"`
+	Msg          string `json:"msg"`
+	SubCode      string `json:"sub_code"`
+	SubMsg       string `json:"sub_msg"`
 	AccessToken  string `json:"access_token"`
 	AlipayUserId string `json:"alipay_user_id"`
 	ExpiresIn    int    `json:"expires_in"`
@@ -107,6 +112,14 @@ func (idp *AlipayIdProvider) GetToken(code string) (*oauth2.Token, error) {
 	err = json.Unmarshal(data, pToken)
 	if err != nil {
 		return nil, err
+	}
+
+	if pToken.Response.AccessToken == "" {
+		errMsg := pToken.Response.Msg
+		if pToken.Response.SubMsg != "" {
+			errMsg = pToken.Response.SubMsg
+		}
+		return nil, fmt.Errorf("alipay GetToken error: code=%s, msg=%s", pToken.Response.Code, errMsg)
 	}
 
 	token := &oauth2.Token{
@@ -166,11 +179,16 @@ func (idp *AlipayIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error)
 		return nil, err
 	}
 
+	resp := atUserInfo.AlipayUserInfoShareResponse
+	if resp.Code != "10000" {
+		return nil, fmt.Errorf("alipay GetUserInfo error: code=%s, msg=%s", resp.Code, resp.Msg)
+	}
+
 	userInfo := UserInfo{
-		Id:          atUserInfo.AlipayUserInfoShareResponse.UserId,
-		Username:    atUserInfo.AlipayUserInfoShareResponse.NickName,
-		DisplayName: atUserInfo.AlipayUserInfoShareResponse.NickName,
-		AvatarUrl:   atUserInfo.AlipayUserInfoShareResponse.Avatar,
+		Id:          resp.UserId,
+		Username:    resp.NickName,
+		DisplayName: resp.NickName,
+		AvatarUrl:   resp.Avatar,
 	}
 
 	return &userInfo, nil
