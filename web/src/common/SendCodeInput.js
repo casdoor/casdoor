@@ -90,12 +90,9 @@ export const SendCodeInput = ({value, disabled, captchaValue, useInlineCaptcha, 
     };
 
     const checkCaptchaStatusAndSend = () => {
-      if (!onButtonClickArgs?.[3]) {
-        return;
-      }
       const values = {
         organization: application?.organization,
-        username: onButtonClickArgs?.[3],
+        username: onButtonClickArgs?.[3] || onButtonClickArgs?.[0],
         application: application?.name,
       };
 
