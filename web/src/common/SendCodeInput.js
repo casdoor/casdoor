@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {Button, Input} from "antd";
+import {Button, Input, Space} from "antd";
 import React from "react";
 import i18next from "i18next";
 import * as UserBackend from "../backend/UserBackend";
@@ -134,21 +134,21 @@ export const SendCodeInput = ({value, disabled, captchaValue, useInlineCaptcha, 
 
   return (
     <React.Fragment>
-      <Input
-        addonBefore={textBefore}
-        disabled={disabled}
-        value={value}
-        prefix={<SafetyOutlined />}
-        placeholder={i18next.t("code:Enter your code")}
-        className="verification-code-input"
-        onChange={e => onChange(e.target.value)}
-        addonAfter={
-          <Button style={{fontSize: 14}} type={"primary"} disabled={disabled || buttonLeftTime > 0} loading={buttonLoading} onClick={handleSearch}>
-            {buttonLeftTime > 0 ? `${buttonLeftTime} s` : buttonLoading ? i18next.t("code:Sending") : i18next.t("code:Send Code")}
-          </Button>
-        }
-        autoComplete="one-time-code"
-      />
+      <Space.Compact style={{width: "100%"}}>
+        <Input
+          addonBefore={textBefore}
+          disabled={disabled}
+          value={value}
+          prefix={<SafetyOutlined />}
+          placeholder={i18next.t("code:Enter your code")}
+          className="verification-code-input"
+          onChange={e => onChange(e.target.value)}
+          autoComplete="one-time-code"
+        />
+        <Button style={{fontSize: 14}} type={"primary"} disabled={disabled || buttonLeftTime > 0} loading={buttonLoading} onClick={handleSearch}>
+          {buttonLeftTime > 0 ? `${buttonLeftTime} s` : buttonLoading ? i18next.t("code:Sending") : i18next.t("code:Send Code")}
+        </Button>
+      </Space.Compact>
       {
         useInlineCaptcha ? null : (
           <CaptchaModal
