@@ -59,8 +59,20 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 		}, nil
 	}
 
+	// Handle WeChat Mini Program flow separately — it does not use standard OAuth grant types
+	if tag == "wechat_miniprogram" {
+		token, tokenError, err := GetWechatMiniProgramToken(application, code, host, username, avatar, lang)
+		if err != nil {
+			return nil, err
+		}
+		if tokenError != nil {
+			return tokenError, nil
+		}
+		return token, nil
+	}
+
 	// Check if grantType is allowed in the current application
-	if !IsGrantTypeValid(grantType, application.GrantTypes) && tag == "" {
+	if !IsGrantTypeValid(grantType, application.GrantTypes) {
 		return &TokenError{
 			Error:            UnsupportedGrantType,
 			ErrorDescription: fmt.Sprintf("grant_type: %s is not supported in this application", grantType),
@@ -96,14 +108,6 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 
 	if err != nil {
 		return nil, err
-	}
-
-	if tag == "wechat_miniprogram" {
-		// Wechat Mini Program
-		token, tokenError, err = GetWechatMiniProgramToken(application, code, host, username, avatar, lang)
-		if err != nil {
-			return nil, err
-		}
 	}
 
 	if tokenError != nil {
