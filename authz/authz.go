@@ -76,7 +76,6 @@ p, *, *, GET, /api/get-order, *, *
 p, *, *, GET, /api/get-orders, *, *
 p, *, *, GET, /api/get-user-orders, *, *
 p, *, *, GET, /api/get-payment, *, *
-p, *, *, POST, /api/update-payment, *, *
 p, *, *, POST, /api/invoice-payment, *, *
 p, *, *, POST, /api/notify-payment, *, *
 p, *, *, POST, /api/place-order, *, *
