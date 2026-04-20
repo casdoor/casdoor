@@ -143,6 +143,11 @@ func getUsernameByClientIdSecret(ctx *context.Context) (string, error) {
 		return "", fmt.Errorf("Incorrect client secret for application: %s", application.Name)
 	}
 
+	for _, tag := range application.Tags {
+		if tag == "dcr" {
+			return fmt.Sprintf("app-dcr/%s", application.Name), nil
+		}
+	}
 	return fmt.Sprintf("app/%s", application.Name), nil
 }
 
