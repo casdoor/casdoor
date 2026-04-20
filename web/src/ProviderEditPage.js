@@ -987,7 +987,8 @@ class ProviderEditPage extends React.Component {
           this.state.provider.category === "OAuth" ? renderOAuthProviderFields(
             this.state.provider,
             this.updateProviderField.bind(this),
-            this.renderUserMappingInput.bind(this)
+            this.renderUserMappingInput.bind(this),
+            this.state.certs
           ) : null
         }
         {

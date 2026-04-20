@@ -51,6 +51,9 @@ type ProviderInfo struct {
 	AuthURL     string
 	UserInfoURL string
 	UserMapping map[string]string
+
+	AppCertificate  string
+	RootCertificate string
 }
 
 type IdProvider interface {
@@ -103,7 +106,7 @@ func GetIdProvider(idpInfo *ProviderInfo, redirectUrl string) (IdProvider, error
 	case "Baidu":
 		return NewBaiduIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl), nil
 	case "Alipay":
-		return NewAlipayIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl), nil
+		return NewAlipayIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl, idpInfo.AppCertificate, idpInfo.RootCertificate)
 	case "Custom", "Custom Flexible":
 		return NewCustomIdProvider(idpInfo, redirectUrl), nil
 	case "Infoflow":

@@ -13,14 +13,15 @@
 // limitations under the License.
 
 import React from "react";
-import {Col, Input, Radio, Row, Switch} from "antd";
+import {Col, Input, Radio, Row, Select, Switch} from "antd";
 import {LinkOutlined} from "@ant-design/icons";
 import * as Setting from "../Setting";
 import i18next from "i18next";
 
 const {TextArea} = Input;
+const {Option} = Select;
 
-export function renderOAuthProviderFields(provider, updateProviderField, renderUserMappingInput) {
+export function renderOAuthProviderFields(provider, updateProviderField, renderUserMappingInput, certs = []) {
   const getDomainLabel = provider => {
     switch (provider.category) {
     case "OAuth":
@@ -129,6 +130,36 @@ export function renderOAuthProviderFields(provider, updateProviderField, renderU
             </Col>
           </Row>
         )
+      }
+      {
+        provider.type === "Alipay" ? (
+          <React.Fragment>
+            <Row style={{marginTop: "20px"}} >
+              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                {Setting.getLabel(i18next.t("general:Cert"), i18next.t("general:Cert - Tooltip"))} :
+              </Col>
+              <Col span={22} >
+                <Select virtual={false} style={{width: "100%"}} value={provider.cert} onChange={(value => {updateProviderField("cert", value);})}>
+                  {
+                    certs.map((cert, index) => <Option key={index} value={cert.name}>{cert.name}</Option>)
+                  }
+                </Select>
+              </Col>
+            </Row>
+            <Row style={{marginTop: "20px"}} >
+              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                {Setting.getLabel(i18next.t("general:Root cert"), i18next.t("general:Root cert - Tooltip"))} :
+              </Col>
+              <Col span={22} >
+                <Select virtual={false} style={{width: "100%"}} value={provider.metadata} onChange={(value => {updateProviderField("metadata", value);})}>
+                  {
+                    certs.map((cert, index) => <Option key={index} value={cert.name}>{cert.name}</Option>)
+                  }
+                </Select>
+              </Col>
+            </Row>
+          </React.Fragment>
+        ) : null
       }
       {
         provider.type.startsWith("Custom") ? (

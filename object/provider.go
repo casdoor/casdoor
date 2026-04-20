@@ -621,7 +621,6 @@ func FromProviderToIdpInfo(ctx *context.Context, provider *Provider) (*idp.Provi
 	} else if provider.Type == "ADFS" || provider.Type == "AzureAD" || provider.Type == "AzureADB2C" || provider.Type == "Casdoor" || provider.Type == "Okta" {
 		providerInfo.HostUrl = provider.Domain
 	} else if provider.Type == "Alipay" && provider.Cert != "" {
-		// For Alipay with certificate mode, load private key from certificate
 		cert, err := GetCert(util.GetId(provider.Owner, provider.Cert))
 		if err != nil {
 			return nil, fmt.Errorf("failed to load certificate for Alipay provider %s: %w", provider.Name, err)
@@ -630,6 +629,17 @@ func FromProviderToIdpInfo(ctx *context.Context, provider *Provider) (*idp.Provi
 			return nil, fmt.Errorf("certificate not found for Alipay provider %s", provider.Name)
 		}
 		providerInfo.ClientSecret = cert.PrivateKey
+		providerInfo.AppCertificate = cert.Certificate
+		if provider.Metadata != "" {
+			rootCert, err := GetCert(util.GetId(provider.Owner, provider.Metadata))
+			if err != nil {
+				return nil, fmt.Errorf("failed to load root certificate for Alipay provider %s: %w", provider.Name, err)
+			}
+			if rootCert == nil {
+				return nil, fmt.Errorf("root certificate not found for Alipay provider %s", provider.Name)
+			}
+			providerInfo.RootCertificate = rootCert.Certificate
+		}
 	}
 
 	return providerInfo, nil

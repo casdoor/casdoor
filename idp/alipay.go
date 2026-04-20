@@ -31,22 +31,40 @@ import (
 	"strings"
 	"time"
 
+	"github.com/go-pay/gopay/alipay"
 	"golang.org/x/oauth2"
 )
 
 type AlipayIdProvider struct {
-	Client *http.Client
-	Config *oauth2.Config
+	Client     *http.Client
+	Config     *oauth2.Config
+	AppCertSN  string
+	RootCertSN string
 }
 
 // NewAlipayIdProvider ...
-func NewAlipayIdProvider(clientId string, clientSecret string, redirectUrl string) *AlipayIdProvider {
+func NewAlipayIdProvider(clientId string, clientSecret string, redirectUrl string, appCert string, rootCert string) (*AlipayIdProvider, error) {
 	idp := &AlipayIdProvider{}
 
 	config := idp.getConfig(clientId, clientSecret, redirectUrl)
 	idp.Config = config
 
-	return idp
+	if appCert != "" {
+		sn, err := alipay.GetCertSN([]byte(appCert))
+		if err != nil {
+			return nil, fmt.Errorf("failed to compute app_cert_sn: %w", err)
+		}
+		idp.AppCertSN = sn
+	}
+	if rootCert != "" {
+		sn, err := alipay.GetRootCertSN([]byte(rootCert))
+		if err != nil {
+			return nil, fmt.Errorf("failed to compute alipay_root_cert_sn: %w", err)
+		}
+		idp.RootCertSN = sn
+	}
+
+	return idp, nil
 }
 
 // SetHttpClient ...
@@ -224,6 +242,13 @@ func (idp *AlipayIdProvider) postWithBody(body interface{}, targetUrl string) ([
 	formData := url.Values{}
 	for k := range bodyJson {
 		formData.Set(k, bodyJson[k].(string))
+	}
+
+	if idp.AppCertSN != "" {
+		formData.Set("app_cert_sn", idp.AppCertSN)
+	}
+	if idp.RootCertSN != "" {
+		formData.Set("alipay_root_cert_sn", idp.RootCertSN)
 	}
 
 	sign, err := rsaSignWithRSA256(getStringToSign(formData), idp.Config.ClientSecret)
