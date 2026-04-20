@@ -227,7 +227,21 @@ class ServerEditPage extends React.Component {
           <Col span={22} >
             <Input.Password placeholder={"***"} value={this.state.server.token} onChange={e => {
               this.updateServerField("token", e.target.value);
-            }} />
+            }} addonAfter={
+              <Button size="small" type="link" disabled={!this.state.server.application} onClick={() => {
+                ServerBackend.getMcpAccessToken(this.state.server.owner, this.state.server.application)
+                  .then((res) => {
+                    if (res.status === "ok") {
+                      this.updateServerField("token", res.data);
+                      Setting.showMessage("success", i18next.t("general:Successfully got"));
+                    } else {
+                      Setting.showMessage("error", `${i18next.t("general:Failed to get")}: ${res.msg}`);
+                    }
+                  });
+              }}>
+                {i18next.t("token:Get access token")}
+              </Button>
+            } />
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >

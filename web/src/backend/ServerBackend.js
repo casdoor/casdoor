@@ -77,3 +77,10 @@ export function syncIntranetServers(owner, name) {
     credentials: "include",
   }).then(res => res.json());
 }
+
+export function getMcpAccessToken(owner, applicationName) {
+  return fetch(`${Setting.ServerUrl}/api/get-mcp-access-token?owner=${encodeURIComponent(owner)}&applicationName=${encodeURIComponent(applicationName)}`, {
+    method: "GET",
+    credentials: "include",
+  }).then(res => res.json());
+}

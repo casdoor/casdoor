@@ -147,6 +147,7 @@ func InitAPI() {
 	web.Router("/api/delete-server", &controllers.ApiController{}, "POST:DeleteServer")
 	web.Router("/api/server/:owner/:name", &controllers.ApiController{}, "GET:ProxyServer")
 	web.Router("/api/server/:owner/:name", &controllers.ApiController{}, "POST:ProxyServer")
+	web.Router("/api/get-mcp-access-token", &controllers.ApiController{}, "GET:GetMcpAccessToken")
 
 	web.Router("/api/get-entries", &controllers.ApiController{}, "GET:GetEntries")
 	web.Router("/api/get-entry", &controllers.ApiController{}, "GET:GetEntry")

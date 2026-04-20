@@ -16,6 +16,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/beego/beego/v2/server/web/pagination"
 	"github.com/casdoor/casdoor/object"
@@ -170,4 +171,41 @@ func (c *ApiController) DeleteServer() {
 
 	c.Data["json"] = wrapActionResponse(object.DeleteServer(&server))
 	c.ServeJSON()
+}
+
+// GetMcpAccessToken
+// @Title GetMcpAccessToken
+// @Tag Server API
+// @Description get an access token for the current session user to use with an MCP server
+// @Param   owner            query  string  true  "The owner of the application"
+// @Param   applicationName  query  string  true  "The name of the application"
+// @Success 200 {object} controllers.Response The Response object
+// @router /get-mcp-access-token [get]
+func (c *ApiController) GetMcpAccessToken() {
+	owner := c.Ctx.Input.Query("owner")
+	applicationName := c.Ctx.Input.Query("applicationName")
+
+	user := c.getCurrentUser()
+	if user == nil {
+		c.ResponseError("user is not logged in")
+		return
+	}
+
+	application, err := object.GetApplication(fmt.Sprintf("%s/%s", owner, applicationName))
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	if application == nil {
+		c.ResponseError(fmt.Sprintf("application %s/%s does not exist", owner, applicationName))
+		return
+	}
+
+	token, err := object.GetTokenByUser(application, user, "read", "", c.Ctx.Request.Host)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	c.ResponseOk(token.AccessToken)
 }
