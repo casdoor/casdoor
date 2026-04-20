@@ -638,7 +638,7 @@ func FromProviderToIdpInfo(ctx *context.Context, provider *Provider) (*idp.Provi
 			if rootCert == nil {
 				return nil, fmt.Errorf("root certificate not found for Alipay provider %s", provider.Name)
 			}
-			providerInfo.RootCertificate = rootCert.Certificate
+			providerInfo.RootCertificate = rootCert.PrivateKey
 		}
 	}
 
