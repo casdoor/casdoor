@@ -119,6 +119,7 @@ import ServerStorePage from "./ServerStorePage";
 import ServerEditPage from "./ServerEditPage";
 import EntryListPage from "./EntryListPage";
 import EntryEditPage from "./EntryEditPage";
+import OpenClawSessionTranscriptPage from "./OpenClawSessionTranscriptPage";
 import SiteListPage from "./SiteListPage";
 import SiteEditPage from "./SiteEditPage";
 import RuleListPage from "./RuleListPage";
@@ -545,6 +546,7 @@ function ManagementPage(props) {
         <Route exact path="/server-store" render={(props) => renderLoginIfNotLoggedIn(<ServerStorePage account={account} {...props} />)} />
         <Route exact path="/servers/:organizationName/:serverName" render={(props) => renderLoginIfNotLoggedIn(<ServerEditPage account={account} {...props} />)} />
         <Route exact path="/entries" render={(props) => renderLoginIfNotLoggedIn(<EntryListPage account={account} {...props} />)} />
+        <Route exact path="/entries/:organizationName/:entryName/transcript" render={(props) => renderLoginIfNotLoggedIn(<OpenClawSessionTranscriptPage account={account} {...props} />)} />
         <Route exact path="/entries/:organizationName/:entryName" render={(props) => renderLoginIfNotLoggedIn(<EntryEditPage account={account} {...props} />)} />
         <Route exact path="/sites" render={(props) => renderLoginIfNotLoggedIn(<SiteListPage account={account} {...props} />)} />
         <Route exact path="/sites/:organizationName/:siteName" render={(props) => renderLoginIfNotLoggedIn(<SiteEditPage account={account} {...props} />)} />

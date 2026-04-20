@@ -230,6 +230,11 @@ func (w *openClawTranscriptSyncWorker) scanTranscriptDir() error {
 		if err := w.scanTranscriptFile(path); err != nil {
 			return err
 		}
+		sessionID := strings.TrimSuffix(filepath.Base(path), ".jsonl")
+		if err := uploadOpenClawRawTranscript(w.provider, sessionID, path, nextState.Size); err != nil {
+			fmt.Printf("OpenClaw raw transcript storage failed for provider %s session %s: %v\n", w.provider.Name, sessionID, err)
+			continue
+		}
 		w.fileStates[path] = nextState
 	}
 

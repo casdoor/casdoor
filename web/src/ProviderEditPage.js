@@ -102,6 +102,7 @@ class ProviderEditPage extends React.Component {
       providerName: props.match.params.providerName,
       owner: props.organizationName !== undefined ? props.organizationName : props.match.params.organizationName,
       provider: null,
+      providers: [],
       certs: [],
       organizations: [],
       mode: props.location.mode !== undefined ? props.location.mode : "edit",
@@ -116,6 +117,7 @@ class ProviderEditPage extends React.Component {
   UNSAFE_componentWillMount() {
     this.getOrganizations();
     this.getProvider();
+    this.getProviders(this.state.owner);
     this.getCerts(this.state.owner);
   }
 
@@ -179,6 +181,17 @@ class ProviderEditPage extends React.Component {
     }
   }
 
+  getProviders(owner) {
+    ProviderBackend.getProviders(owner)
+      .then((res) => {
+        if (res.status === "ok") {
+          this.setState({
+            providers: res.data || [],
+          });
+        }
+      });
+  }
+
   getCerts(owner) {
     CertBackend.getCerts(owner)
       .then((res) => {
@@ -204,6 +217,10 @@ class ProviderEditPage extends React.Component {
     if (key === "owner" && provider["owner"] !== value) {
       // the provider change the owner, reset the cert
       provider["cert"] = "";
+      if (provider["category"] === "Log" && provider["type"] === "Agent" && provider["subType"] === "OpenClaw") {
+        provider["providerUrl"] = "";
+      }
+      this.getProviders(value);
       this.getCerts(value);
     }
 
@@ -1090,7 +1107,8 @@ class ProviderEditPage extends React.Component {
             this.updateProviderField.bind(this)
           ) : this.state.provider.category === "Log" ? renderLogProviderFields(
             this.state.provider,
-            this.updateProviderField.bind(this)
+            this.updateProviderField.bind(this),
+            this.state.providers
           ) : this.state.provider.category === "Scan" ? renderScanProviderFields(
             this.state.provider,
             this.updateProviderField.bind(this),

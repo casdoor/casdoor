@@ -19,7 +19,17 @@ import i18next from "i18next";
 
 const {Option} = Select;
 
-export function renderLogProviderFields(provider, updateProviderField) {
+function getStorageProviderOptions(providers, owner) {
+  return (providers || []).filter(provider =>
+    provider.category === "Storage" &&
+    (!owner || provider.owner === owner) &&
+    (typeof provider.state !== "string" || provider.state.toLowerCase() !== "disabled")
+  );
+}
+
+export function renderLogProviderFields(provider, updateProviderField, providers = []) {
+  const storageProviders = getStorageProviderOptions(providers, provider.owner);
+
   return (
     <React.Fragment>
       {provider.type === "Agent" && provider.subType === "OpenClaw" ? (
@@ -52,6 +62,23 @@ export function renderLogProviderFields(provider, updateProviderField) {
               <Input value={provider.endpoint} onChange={e => {
                 updateProviderField("endpoint", e.target.value);
               }} />
+            </Col>
+          </Row>
+          <Row style={{marginTop: "20px"}} >
+            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+              {i18next.t("provider:Storage provider")} :
+            </Col>
+            <Col span={22} >
+              <Select virtual={false} style={{width: "100%"}} value={provider.providerUrl || ""} onChange={value => {
+                updateProviderField("providerUrl", value);
+              }}>
+                <Option value="" />
+                {storageProviders.map(storageProvider => (
+                  <Option key={storageProvider.name} value={storageProvider.name}>
+                    {storageProvider.displayName || storageProvider.name}
+                  </Option>
+                ))}
+              </Select>
             </Col>
           </Row>
         </React.Fragment>

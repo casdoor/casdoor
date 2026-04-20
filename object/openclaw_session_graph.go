@@ -24,9 +24,10 @@ import (
 )
 
 type OpenClawSessionGraph struct {
-	Nodes []*OpenClawSessionGraphNode `json:"nodes"`
-	Edges []*OpenClawSessionGraphEdge `json:"edges"`
-	Stats OpenClawSessionGraphStats   `json:"stats"`
+	Nodes         []*OpenClawSessionGraphNode `json:"nodes"`
+	Edges         []*OpenClawSessionGraphEdge `json:"edges"`
+	Stats         OpenClawSessionGraphStats   `json:"stats"`
+	RawTranscript *OpenClawRawTranscriptRef   `json:"rawTranscript,omitempty"`
 }
 
 type OpenClawSessionGraphNode struct {
@@ -84,28 +85,12 @@ type openClawAssistantStepGroup struct {
 }
 
 func GetOpenClawSessionGraph(id string) (*OpenClawSessionGraph, error) {
-	entry, err := GetEntry(id)
-	if err != nil {
-		return nil, err
-	}
+	entry, _, anchorPayload, err := loadOpenClawSessionEntry(id)
 	if entry == nil {
-		return nil, nil
-	}
-	if strings.TrimSpace(entry.Type) != "session" {
-		return nil, fmt.Errorf("entry %s is not an OpenClaw session entry", id)
-	}
-
-	provider, err := GetProvider(util.GetId(entry.Owner, entry.Provider))
-	if err != nil {
 		return nil, err
 	}
-	if provider != nil && !isOpenClawLogProvider(provider) {
-		return nil, fmt.Errorf("entry %s is not an OpenClaw session entry", id)
-	}
-
-	anchorPayload, err := parseOpenClawSessionGraphPayload(entry)
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse anchor entry %s: %w", entry.Name, err)
+		return nil, err
 	}
 
 	records, err := collectOpenClawSessionGraphRecords(entry, anchorPayload)
@@ -113,7 +98,15 @@ func GetOpenClawSessionGraph(id string) (*OpenClawSessionGraph, error) {
 		return nil, fmt.Errorf("failed to load OpenClaw session entries from database: %w", err)
 	}
 
-	return buildOpenClawSessionGraphFromEntries(anchorPayload, entry.Name, records), nil
+	graph := buildOpenClawSessionGraphFromEntries(anchorPayload, entry.Name, records)
+	rawTranscript, err := getOpenClawRawTranscriptRef(entry.Owner, entry.Provider, anchorPayload.SessionID)
+	if err != nil {
+		fmt.Printf("GetOpenClawSessionGraph: failed to load raw transcript ref for provider %s session %s: %v\n", entry.Provider, anchorPayload.SessionID, err)
+		return graph, nil
+	}
+	graph.RawTranscript = rawTranscript
+
+	return graph, nil
 }
 
 func parseOpenClawSessionGraphPayload(entry *Entry) (openClawBehaviorPayload, error) {

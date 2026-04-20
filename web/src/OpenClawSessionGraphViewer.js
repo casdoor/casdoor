@@ -10,7 +10,7 @@ import {
   Tooltip,
   Typography
 } from "antd";
-import {FullscreenExitOutlined, FullscreenOutlined} from "@ant-design/icons";
+import {FileTextOutlined, FullscreenExitOutlined, FullscreenOutlined} from "@ant-design/icons";
 import i18next from "i18next";
 import Loading from "./common/Loading";
 import ReactFlow, {
@@ -483,17 +483,40 @@ class OpenClawSessionGraphViewer extends React.Component {
 
     return (
       <div
-        style={{display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 12}}
+        style={{display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 12, alignItems: "center"}}
       >
-        <Tag color="default">{i18next.t("site:Nodes")}: {stats.totalNodes}</Tag>
-        <Tag color="blue">{i18next.t("entry:Tasks")}: {stats.taskCount}</Tag>
-        <Tag color="orange">{i18next.t("entry:Tool calls")}: {stats.toolCallCount}</Tag>
-        <Tag color="green">{i18next.t("entry:Results")}: {stats.toolResultCount}</Tag>
-        <Tag color="purple">{i18next.t("entry:Finals")}: {stats.finalCount}</Tag>
-        {stats.failedCount > 0 ? (
-          <Tag color="red">{i18next.t("webhook:Failed")}: {stats.failedCount}</Tag>
-        ) : null}
+        <div style={{display: "flex", flexWrap: "wrap", gap: 8, flex: 1, minWidth: 0}}>
+          <Tag color="default">{i18next.t("site:Nodes")}: {stats.totalNodes}</Tag>
+          <Tag color="blue">{i18next.t("entry:Tasks")}: {stats.taskCount}</Tag>
+          <Tag color="orange">{i18next.t("entry:Tool calls")}: {stats.toolCallCount}</Tag>
+          <Tag color="green">{i18next.t("entry:Results")}: {stats.toolResultCount}</Tag>
+          <Tag color="purple">{i18next.t("entry:Finals")}: {stats.finalCount}</Tag>
+          {stats.failedCount > 0 ? (
+            <Tag color="red">{i18next.t("webhook:Failed")}: {stats.failedCount}</Tag>
+          ) : null}
+        </div>
+        {this.renderRawTranscriptButton()}
       </div>
+    );
+  }
+
+  renderRawTranscriptButton() {
+    if (!this.state.graph?.rawTranscript || !this.props.entry?.owner || !this.props.entry?.name) {
+      return null;
+    }
+
+    return (
+      <Tooltip title={i18next.t("entry:Raw JSONL")}>
+        <Button
+          size="small"
+          icon={<FileTextOutlined />}
+          onClick={() => {
+            window.location.href = `/entries/${this.props.entry.owner}/${encodeURIComponent(this.props.entry.name)}/transcript`;
+          }}
+        >
+          {i18next.t("entry:Raw JSONL")}
+        </Button>
+      </Tooltip>
     );
   }
 

@@ -35,6 +35,17 @@ export function getOpenClawSessionGraph(owner, name) {
   }).then(res => res.json());
 }
 
+export function getOpenClawSessionTranscriptUrl(owner, name) {
+  return `${Setting.ServerUrl}/api/get-openclaw-session-transcript?id=${owner}/${encodeURIComponent(name)}`;
+}
+
+export function getOpenClawSessionTranscript(owner, name) {
+  return fetch(getOpenClawSessionTranscriptUrl(owner, name), {
+    method: "GET",
+    credentials: "include",
+  }).then(res => res.json());
+}
+
 export function updateEntry(owner, name, entry) {
   const newEntry = Setting.deepCopy(entry);
   return fetch(`${Setting.ServerUrl}/api/update-entry?id=${owner}/${encodeURIComponent(name)}`, {
