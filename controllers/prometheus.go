@@ -42,13 +42,26 @@ func (c *ApiController) GetPrometheusInfo() {
 // GetMetrics
 // @Title GetMetrics
 // @Tag System API
-// @Description get Prometheus metrics
+// @Description get Prometheus metrics. Accessible either by an admin session or by
+// a valid Key (created at /keys) supplied via ?accessKey=...&accessSecret=... query params.
 // @Success 200 {string} Prometheus metrics in text format
 // @router /metrics [get]
 func (c *ApiController) GetMetrics() {
-	_, ok := c.RequireAdmin()
-	if !ok {
-		return
+	accessKey := c.Ctx.Input.Query("accessKey")
+	accessSecret := c.Ctx.Input.Query("accessSecret")
+
+	if accessKey != "" || accessSecret != "" {
+		_, err := object.ValidateKeyByType(accessKey, accessSecret, "Prometheus")
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+	} else {
+		_, ok := c.RequireAdmin()
+		if !ok {
+			return
+		}
 	}
+
 	promhttp.Handler().ServeHTTP(c.Ctx.ResponseWriter, c.Ctx.Request)
 }

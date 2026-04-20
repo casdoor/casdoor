@@ -16,6 +16,7 @@ package object
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/core"
@@ -188,6 +189,47 @@ func DeleteKey(key *Key) (bool, error) {
 
 func (key *Key) GetId() string {
 	return fmt.Sprintf("%s/%s", key.Owner, key.Name)
+}
+
+// ValidateKeyByType checks whether the given accessKey/accessSecret pair refers to a
+// valid, active, non-expired Key record of the specified type. It returns the matched
+// Key on success and an error describing the validation failure otherwise.
+func ValidateKeyByType(accessKey, accessSecret, keyType string) (*Key, error) {
+	if accessKey == "" || accessSecret == "" {
+		return nil, fmt.Errorf("accessKey and accessSecret must not be empty")
+	}
+
+	key, err := GetKeyByAccessKey(accessKey)
+	if err != nil {
+		return nil, err
+	}
+	if key == nil {
+		return nil, fmt.Errorf("access key not found: %s", accessKey)
+	}
+
+	if key.Type != keyType {
+		return nil, fmt.Errorf("access key type is not %s: %s", keyType, key.Name)
+	}
+
+	if key.AccessSecret != accessSecret {
+		return nil, fmt.Errorf("incorrect access secret for key: %s", key.Name)
+	}
+
+	if key.State != "Active" {
+		return nil, fmt.Errorf("access key is not active: %s", key.Name)
+	}
+
+	if key.ExpireTime != "" {
+		expireTime, err := time.Parse(time.RFC3339, key.ExpireTime)
+		if err != nil {
+			return nil, fmt.Errorf("invalid expire time format for key: %s", key.Name)
+		}
+		if time.Now().After(expireTime) {
+			return nil, fmt.Errorf("access key has expired, expireTime = %s", key.ExpireTime)
+		}
+	}
+
+	return key, nil
 }
 
 func GetKeyByAccessKey(accessKey string) (*Key, error) {
