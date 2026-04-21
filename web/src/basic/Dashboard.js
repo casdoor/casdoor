@@ -345,7 +345,7 @@ const Dashboard = (props) => {
     );
   }
 
-  const cardStyle = {borderRadius: 8, border: "1px solid #e8e8e8"};
+  const cardStyle = {borderRadius: 8, border: "1px solid #e8e8e8", minHeight: 140};
   const gutter = [16, 16];
 
   const userCounts = dashboardData?.userCounts ?? Array(31).fill(0);
