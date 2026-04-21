@@ -334,7 +334,7 @@ function ManagementPage(props) {
               initValue={Setting.getOrganization()}
               withAll={true}
               className="org-select"
-              style={{display: Setting.isMobile() ? "none" : "flex"}}
+              style={{display: Setting.isMobile() ? "none" : "flex", backgroundColor: isDark ? "black" : "white", color: textColor}}
               onChange={(value) => {
                 Setting.setOrganization(value);
               }}
@@ -684,7 +684,7 @@ function ManagementPage(props) {
         </Sider>
       )}
       <div style={{marginLeft: contentMarginLeft, transition: "margin-left 0.2s", display: "flex", flexDirection: "column", minHeight: "100vh"}}>
-        <Header style={{display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0", marginBottom: "4px", backgroundColor: isDark ? "black" : "white", position: "sticky", top: 0, zIndex: 99, boxShadow: "0 1px 4px rgba(0,0,0,0.08)", height: "52px", lineHeight: "52px"}}>
+        <Header style={{display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0", marginBottom: "4px", backgroundColor: isDark ? "black" : "white", color: textColor, position: "sticky", top: 0, zIndex: 99, boxShadow: "0 1px 4px rgba(0,0,0,0.08)", height: "52px", lineHeight: "52px"}}>
           <div style={{display: "flex", alignItems: "center"}}>
             {props.requiredEnableMfa ? null : (Setting.isMobile() ? (
               <React.Fragment>
@@ -708,7 +708,7 @@ function ManagementPage(props) {
                 icon={siderCollapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
                 onClick={toggleSider}
                 type="text"
-                style={{fontSize: 16, width: 40, height: 40}}
+                style={{fontSize: 16, width: 40, height: 40, color: textColor}}
               />
             ))}
             <BreadcrumbBar uri={currentUri} />
