@@ -19,7 +19,7 @@ import * as OrganizationBackend from "../../backend/OrganizationBackend";
 import * as Setting from "../../Setting";
 
 function OrganizationSelect(props) {
-  const {onChange, initValue, style, onSelect, withAll, className} = props;
+  const {onChange, initValue, style, onSelect, withAll, className, isDark} = props;
   const [organizations, setOrganizations] = React.useState([]);
   const [value, setValue] = React.useState(initValue);
 
@@ -75,7 +75,7 @@ function OrganizationSelect(props) {
       value={value}
       onChange={handleOnChange}
       filterOption={(input, option) => (option?.label ?? "").toLowerCase().includes(input.toLowerCase())}
-      style={style}
+      style={isDark ? {...style, backgroundColor: "#000", color: "#fff"} : style}
       onSelect={onSelect}
       className={className}
     >
