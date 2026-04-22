@@ -151,6 +151,21 @@ func NewSamlResponse(application *Application, user *User, host string, certific
 	return samlResponse, nil
 }
 
+func NewSamlSigningContext(application *Application, randomKeyStore *X509Key) *dsig.SigningContext {
+	ctx := dsig.NewDefaultSigningContext(randomKeyStore)
+	if application.SamlHashAlgorithm == "" || application.SamlHashAlgorithm == "SHA1" {
+		ctx.Hash = crypto.SHA1
+	} else if application.SamlHashAlgorithm == "SHA256" {
+		ctx.Hash = crypto.SHA256
+	} else if application.SamlHashAlgorithm == "SHA512" {
+		ctx.Hash = crypto.SHA512
+	}
+
+	ctx.Canonicalizer = dsig.MakeC14N10ExclusiveCanonicalizerWithPrefixList("")
+
+	return ctx
+}
+
 type X509Key struct {
 	X509Certificate string
 	PrivateKey      string
@@ -375,18 +390,7 @@ func GetSamlResponse(application *Application, user *User, samlRequest string, h
 		PrivateKey:      cert.PrivateKey,
 		X509Certificate: certificate,
 	}
-	ctx := dsig.NewDefaultSigningContext(randomKeyStore)
-	if application.SamlHashAlgorithm == "" || application.SamlHashAlgorithm == "SHA1" {
-		ctx.Hash = crypto.SHA1
-	} else if application.SamlHashAlgorithm == "SHA256" {
-		ctx.Hash = crypto.SHA256
-	} else if application.SamlHashAlgorithm == "SHA512" {
-		ctx.Hash = crypto.SHA512
-	}
-
-	if application.EnableSamlC14n10 {
-		ctx.Canonicalizer = dsig.MakeC14N10ExclusiveCanonicalizerWithPrefixList("xs")
-	}
+	ctx := NewSamlSigningContext(application, randomKeyStore)
 
 	// signedXML, err := ctx.SignEnvelopedLimix(samlResponse)
 	// if err != nil {
