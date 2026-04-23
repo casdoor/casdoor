@@ -121,12 +121,12 @@ func (c *ApiController) Enforce() {
 
 	permissions := []*object.Permission{}
 	if modelId != "" {
-		owner, modelName, err := util.GetOwnerAndNameFromIdWithError(modelId)
+		owner, _, err := util.GetOwnerAndNameFromIdWithError(modelId)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
 		}
-		permissions, err = object.GetPermissionsByModel(owner, modelName)
+		permissions, err = object.GetPermissionsByModel(owner, modelId)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
@@ -262,12 +262,12 @@ func (c *ApiController) BatchEnforce() {
 
 	permissions := []*object.Permission{}
 	if modelId != "" {
-		owner, modelName, err := util.GetOwnerAndNameFromIdWithError(modelId)
+		owner, _, err := util.GetOwnerAndNameFromIdWithError(modelId)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
 		}
-		permissions, err = object.GetPermissionsByModel(owner, modelName)
+		permissions, err = object.GetPermissionsByModel(owner, modelId)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
