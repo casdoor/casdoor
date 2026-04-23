@@ -161,7 +161,9 @@ func NewSamlSigningContext(application *Application, randomKeyStore *X509Key) *d
 		ctx.Hash = crypto.SHA512
 	}
 
-	ctx.Canonicalizer = dsig.MakeC14N10ExclusiveCanonicalizerWithPrefixList("")
+	if application.EnableSamlC14n10 {
+		ctx.Canonicalizer = dsig.MakeC14N10ExclusiveCanonicalizerWithPrefixList("")
+	}
 
 	return ctx
 }

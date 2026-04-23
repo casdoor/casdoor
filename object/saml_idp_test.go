@@ -47,11 +47,31 @@ func TestNewSamlSigningContextUsesExclusiveCanonicalization(t *testing.T) {
 	keyStore := testSamlSigningKeyStore(t)
 
 	tests := []struct {
-		name             string
-		enableSamlC14n10 bool
+		name              string
+		enableSamlC14n10  bool
+		expectedAlgorithm string
+		unexpected        []string
 	}{
-		{name: "disabled", enableSamlC14n10: false},
-		{name: "enabled", enableSamlC14n10: true},
+		{
+			name:              "disabled uses c14n11",
+			enableSamlC14n10:  false,
+			expectedAlgorithm: "http://www.w3.org/2006/12/xml-c14n11",
+			unexpected: []string{
+				"http://www.w3.org/2001/10/xml-exc-c14n#",
+				"InclusiveNamespaces",
+				"PrefixList=\"xs\"",
+			},
+		},
+		{
+			name:              "enabled uses exclusive c14n10",
+			enableSamlC14n10:  true,
+			expectedAlgorithm: "http://www.w3.org/2001/10/xml-exc-c14n#",
+			unexpected: []string{
+				"http://www.w3.org/2006/12/xml-c14n11",
+				"InclusiveNamespaces",
+				"PrefixList=\"xs\"",
+			},
+		},
 	}
 
 	for _, tt := range tests {
@@ -72,10 +92,10 @@ func TestNewSamlSigningContextUsesExclusiveCanonicalization(t *testing.T) {
 			require.NoError(t, err)
 
 			xml := string(signatureXML)
-			require.Contains(t, xml, "http://www.w3.org/2001/10/xml-exc-c14n#")
-			require.NotContains(t, xml, "http://www.w3.org/2006/12/xml-c14n11")
-			require.NotContains(t, xml, "InclusiveNamespaces")
-			require.NotContains(t, xml, "PrefixList=\"xs\"")
+			require.Contains(t, xml, tt.expectedAlgorithm)
+			for _, unexpected := range tt.unexpected {
+				require.NotContains(t, xml, unexpected)
+			}
 		})
 	}
 }
