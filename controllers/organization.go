@@ -173,6 +173,10 @@ func (c *ApiController) AddOrganization() {
 		organization.BalanceCurrency = "USD"
 	}
 
+	if len(organization.AccountItems) == 0 {
+		organization.AccountItems = object.GetDefaultAccountItems()
+	}
+
 	c.Data["json"] = wrapActionResponse(object.AddOrganization(&organization))
 	c.ServeJSON()
 }

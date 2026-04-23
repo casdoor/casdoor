@@ -47,7 +47,7 @@ func InitDb() {
 	initWebAuthn()
 }
 
-func getBuiltInAccountItems() []*AccountItem {
+func GetDefaultAccountItems() []*AccountItem {
 	return []*AccountItem{
 		{Name: "Organization", Visible: true, ViewRule: "Public", ModifyRule: "Admin"},
 		{Name: "ID", Visible: true, ViewRule: "Public", ModifyRule: "Immutable"},
@@ -96,6 +96,7 @@ func getBuiltInAccountItems() []*AccountItem {
 		{Name: "Consents", Visible: true, ViewRule: "Self", ModifyRule: "Self"},
 		{Name: "3rd-party logins", Visible: true, ViewRule: "Self", ModifyRule: "Self"},
 		{Name: "Properties", Visible: true, ViewRule: "Admin", ModifyRule: "Admin"},
+		{Name: "Is online", Visible: true, ViewRule: "Admin", ModifyRule: "Admin"},
 		{Name: "Is admin", Visible: true, ViewRule: "Admin", ModifyRule: "Admin"},
 		{Name: "Is forbidden", Visible: true, ViewRule: "Admin", ModifyRule: "Admin"},
 		{Name: "Is deleted", Visible: true, ViewRule: "Admin", ModifyRule: "Admin"},
@@ -136,7 +137,7 @@ func initBuiltInOrganization() bool {
 		Tags:               []string{},
 		Languages:          []string{"en", "es", "fr", "de", "ja", "zh", "vi", "pt", "tr", "pl", "uk"},
 		InitScore:          2000,
-		AccountItems:       getBuiltInAccountItems(),
+		AccountItems:       GetDefaultAccountItems(),
 		EnableSoftDeletion: false,
 		IsProfilePublic:    false,
 		UseEmailAsUsername: false,
