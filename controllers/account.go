@@ -389,6 +389,10 @@ func (c *ApiController) Logout() {
 		// Propagate logout to external Custom OAuth2 providers
 		object.InvokeCustomProviderLogout(application, sessionToken)
 
+		// Send OIDC Back-Channel Logout notifications (https://openid.net/specs/openid-connect-backchannel-1_0.html)
+		bcOwner, bcUsername := util.GetOwnerAndNameFromIdNoCheck(user)
+		object.SendBackchannelLogout(bcOwner, bcUsername, "", c.Ctx.Request.Host)
+
 		if application == nil || application.Name == "app-built-in" || application.HomepageUrl == "" {
 			c.ResponseOk(user)
 			return
@@ -435,6 +439,9 @@ func (c *ApiController) Logout() {
 
 		// Propagate logout to external Custom OAuth2 providers
 		object.InvokeCustomProviderLogout(application, accessToken)
+
+		// Send OIDC Back-Channel Logout notifications (https://openid.net/specs/openid-connect-backchannel-1_0.html)
+		object.SendBackchannelLogout(token.Organization, token.User, "", c.Ctx.Request.Host)
 
 		if redirectUri == "" {
 			c.ResponseOk()
@@ -560,6 +567,9 @@ func (c *ApiController) SsoLogout() {
 			return
 		}
 	}
+
+	// Send OIDC Back-Channel Logout notifications (https://openid.net/specs/openid-connect-backchannel-1_0.html)
+	object.SendBackchannelLogout(owner, username, currentSessionId, c.Ctx.Request.Host)
 
 	// Propagate logout to external Custom OAuth2 providers
 	object.InvokeCustomProviderLogout(ssoApplication, ssoSessionToken)
