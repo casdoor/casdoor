@@ -83,16 +83,16 @@ func (c *ApiController) SyncIntranetServers() {
 		return
 	}
 
-	var result scan.SyncInnerServersResult
-	if err := json.Unmarshal([]byte(parsedResult), &result); err != nil {
+	var intranetResult scan.SyncInnerServersResult
+	if err := json.Unmarshal([]byte(parsedResult), &intranetResult); err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
 
 	c.ResponseOk(&scan.SyncInnerServersResult{
-		CIDR:         result.CIDR,
-		ScannedHosts: result.ScannedHosts,
-		OnlineHosts:  result.OnlineHosts,
-		Servers:      result.Servers,
+		CIDR:         intranetResult.CIDR,
+		ScannedHosts: intranetResult.ScannedHosts,
+		OnlineHosts:  intranetResult.OnlineHosts,
+		Servers:      intranetResult.Servers,
 	})
 }

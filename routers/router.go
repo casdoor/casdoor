@@ -139,6 +139,7 @@ func InitAPI() {
 
 	web.Router("/api/get-servers", &controllers.ApiController{}, "GET:GetServers")
 	web.Router("/api/get-online-servers", &controllers.ApiController{}, "GET:GetOnlineServers")
+	web.Router("/api/scan", &controllers.ApiController{}, "GET:Scan")
 	web.Router("/api/sync-intranet-servers", &controllers.ApiController{}, "POST:SyncIntranetServers")
 	web.Router("/api/get-server", &controllers.ApiController{}, "GET:GetServer")
 	web.Router("/api/update-server", &controllers.ApiController{}, "POST:UpdateServer")

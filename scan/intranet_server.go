@@ -31,10 +31,6 @@ const (
 	defaultIntranetSyncTimeoutMs      = 1200
 	defaultIntranetSyncMaxConcurrency = 32
 	maxIntranetSyncHosts              = 1024
-
-	ScanProviderCategory        = "Scan"
-	McpScanProviderType         = "MCP Scan"
-	IntranetScanProviderSubType = "Intranet Scan"
 )
 
 var (

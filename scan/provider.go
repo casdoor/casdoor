@@ -31,8 +31,14 @@ func GetScanProviderFromProvider(provider *object.Provider) (ScanProvider, error
 		return nil, fmt.Errorf("provider is nil")
 	}
 
+	if provider.Category != "Scan" {
+		return nil, fmt.Errorf("provider %s is not supported", provider.Category)
+	}
+
 	switch {
-	case provider.Category == ScanProviderCategory && provider.Type == McpScanProviderType && provider.SubType == IntranetScanProviderSubType:
+	case provider.Type == "Security Scan":
+		return NewScanProviderFromProvider(provider), nil
+	case provider.Type == "MCP Scan" && provider.SubType == "Intranet Scan":
 		return NewIntranetServerProvider(), nil
 	}
 

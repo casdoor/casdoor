@@ -13,10 +13,13 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Col, Row, Select, Table} from "antd";
+import {Button, Col, Input, Row, Select, Table} from "antd";
 import * as Setting from "../Setting";
 import i18next from "i18next";
 import {scanColumns} from "../common/modal/ScanServerModal";
+import ScanTable from "../table/ScanTable";
+
+const {TextArea} = Input;
 
 const hostOptions = [
   {label: "127.0.0.1/32", value: "127.0.0.1/32"},
@@ -47,84 +50,122 @@ function normalizeAndJoin(values) {
 }
 
 export function renderScanProviderFields(provider, updateProviderField, options = {}) {
-  if (provider.type !== "MCP Scan" || provider.subType !== "Intranet Scan") {
-    return null;
-  }
-
   const canScan = options.mode !== "add";
-
-  return (
-    <React.Fragment>
-      <Row style={{marginTop: "20px"}}>
-        <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-          {i18next.t("general:Host")}:
-        </Col>
-        <Col span={22}>
-          <Select
-            mode="tags"
-            style={{width: "100%"}}
-            value={toList(provider.scopes)}
-            options={hostOptions}
-            onChange={value => updateProviderField("scopes", normalizeAndJoin(value))}
-          />
-        </Col>
-      </Row>
-      <Row style={{marginTop: "20px"}}>
-        <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-          {i18next.t("general:Port")}:
-        </Col>
-        <Col span={22}>
-          <Select
-            mode="tags"
-            style={{width: "100%"}}
-            value={toList(provider?.content)}
-            options={portOptions}
-            onChange={value => updateProviderField("content", normalizeAndJoin(value))}
-          />
-        </Col>
-      </Row>
-      <Row style={{marginTop: "20px"}}>
-        <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-          {i18next.t("general:Path")}:
-        </Col>
-        <Col span={22}>
-          <Select
-            mode="tags"
-            style={{width: "100%"}}
-            value={toList(provider?.endpoint)}
-            options={pathOptions}
-            onChange={value => updateProviderField("endpoint", normalizeAndJoin(value))}
-          />
-        </Col>
-      </Row>
-      <Row style={{marginTop: "20px"}}>
-        <Col span={22} offset={(Setting.isMobile()) ? 0 : 2}>
-          <Button type="primary" loading={options.scanLoading} disabled={!canScan} onClick={options.onScan}>
-            {i18next.t("server:Scan server")}
-          </Button>
-        </Col>
-      </Row>
-      {options.scanResult !== null ? (
+  if (provider.type === "MCP Scan" && provider.subType === "Intranet Scan") {
+    return (
+      <React.Fragment>
         <Row style={{marginTop: "20px"}}>
-          <Col span={22} offset={(Setting.isMobile()) ? 0 : 2}>
-            <Table
-              scroll={{x: "max-content", y: 320}}
-              dataSource={options.scanServers || []}
-              columns={scanColumns}
-              rowKey={(record, index) => `${record.url}-${index}`}
-              pagination={false}
-              size="middle"
-              bordered
-              title={() => {
-                const scannedHosts = i18next.t("server:Scanned hosts") + `:${options.scanResult?.scannedHosts ?? 0}`;
-                const onlineHosts = i18next.t("server:Online hosts") + `:${options.scanResult?.onlineHosts?.length ?? 0}`;
-                const foundServers = i18next.t("server:Found servers") + `:${options.scanServers.length}`;
-                return `${scannedHosts},${onlineHosts},${foundServers}`;
-              }}
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {i18next.t("general:Host")}:
+          </Col>
+          <Col span={22}>
+            <Select
+              mode="tags"
+              style={{width: "100%"}}
+              value={toList(provider.scopes)}
+              options={hostOptions}
+              onChange={value => updateProviderField("scopes", normalizeAndJoin(value))}
             />
           </Col>
         </Row>
-      ) : null}
-    </React.Fragment>
-  );
+        <Row style={{marginTop: "20px"}}>
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {i18next.t("general:Port")}:
+          </Col>
+          <Col span={22}>
+            <Select
+              mode="tags"
+              style={{width: "100%"}}
+              value={toList(provider?.content)}
+              options={portOptions}
+              onChange={value => updateProviderField("content", normalizeAndJoin(value))}
+            />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}}>
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {i18next.t("general:Path")}:
+          </Col>
+          <Col span={22}>
+            <Select
+              mode="tags"
+              style={{width: "100%"}}
+              value={toList(provider?.endpoint)}
+              options={pathOptions}
+              onChange={value => updateProviderField("endpoint", normalizeAndJoin(value))}
+            />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}}>
+          <Col span={22} offset={(Setting.isMobile()) ? 0 : 2}>
+            <Button type="primary" loading={options.scanLoading} disabled={!canScan} onClick={options.onScan}>
+              {i18next.t("server:Scan server")}
+            </Button>
+          </Col>
+        </Row>
+        {options.scanResult !== null ? (
+          <Row style={{marginTop: "20px"}}>
+            <Col span={22} offset={(Setting.isMobile()) ? 0 : 2}>
+              <Table
+                scroll={{x: "max-content", y: 320}}
+                dataSource={options.scanServers || []}
+                columns={scanColumns}
+                rowKey={(record, index) => `${record.url}-${index}`}
+                pagination={false}
+                size="middle"
+                bordered
+                title={() => {
+                  const scannedHosts = i18next.t("server:Scanned hosts") + `:${options.scanResult?.scannedHosts ?? 0}`;
+                  const onlineHosts = i18next.t("server:Online hosts") + `:${options.scanResult?.onlineHosts?.length ?? 0}`;
+                  const foundServers = i18next.t("server:Found servers") + `:${options.scanServers.length}`;
+                  return `${scannedHosts},${onlineHosts},${foundServers}`;
+                }}
+              />
+            </Col>
+          </Row>
+        ) : null}
+      </React.Fragment>
+    );
+  } else if (provider.type === "Security Scan") {
+    return (
+      <React.Fragment>
+        <Row style={{marginTop: "20px"}}>
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {i18next.t("provider:Online list")}:
+          </Col>
+          <Col span={22}>
+            <Input value={provider.endpoint} onChange={e => updateProviderField("endpoint", e.target.value)} />
+          </Col>
+        </Row>
+        {provider.subType === "Url" ? (
+          <Row style={{marginTop: "20px"}}>
+            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+              {i18next.t("general:URL")}:
+            </Col>
+            <Col span={22}>
+              <TextArea
+                autoSize={{minRows: 3, maxRows: 10}}
+                value={provider.content}
+                placeholder="https://example.com\nhttps://another.example.com"
+                onChange={e => updateProviderField("content", e.target.value)}
+              />
+            </Col>
+          </Row>
+        ) : null}
+        <Row style={{marginTop: "20px"}}>
+          <Col span={22} offset={(Setting.isMobile()) ? 0 : 2}>
+            <Button
+              type="primary"
+              loading={options.scanLoading}
+              disabled={!canScan}
+              onClick={() => options.onScan(provider.subType === "Url" ? provider.content : "")}
+            >
+              {i18next.t("general:Scan")}
+            </Button>
+          </Col>
+        </Row>
+        <ScanTable provider={provider} options={{...options, subType: provider.subType, owner: provider.owner}} />
+      </React.Fragment>
+    );
+  }
 }
