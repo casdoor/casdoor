@@ -44,7 +44,7 @@ type GodaddyConf struct {
 	Timeout   int    // Maximum waiting time for certificate application, in minutes
 }
 
-// getCert Verify domain ownership, then obtain a certificate, and finally store it locally.
+// getAliCert Verify domain ownership, then obtain a certificate, and finally store it locally.
 // Need to pass in an AliConf struct, some parameters are required, other parameters can be left blank
 func getAliCert(client *lego.Client, conf AliConf) (string, string, error) {
 	if conf.Timeout <= 0 {

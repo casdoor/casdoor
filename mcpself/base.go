@@ -139,7 +139,7 @@ func (c *McpController) McpResponseError(id interface{}, code int, message strin
 	c.ServeJSON()
 }
 
-// GetMcpResponse returns a McpResponse object
+// BuildMcpResponse returns a McpResponse object
 func BuildMcpResponse(id interface{}, result interface{}, err *McpError) McpResponse {
 	resp := McpResponse{
 		JSONRPC: "2.0",
