@@ -40,13 +40,19 @@ func (c *ApiController) GetOrganizations() {
 	organizationName := c.Ctx.Input.Query("organizationName")
 
 	isGlobalAdmin := c.IsGlobalAdmin()
+	currentUser := c.getCurrentUser()
+	if !isGlobalAdmin && currentUser == nil {
+		c.ResponseError(c.T("general:Please sign in first"))
+		return
+	}
+
 	if limit == "" || page == "" {
 		var organizations []*object.Organization
 		var err error
 		if isGlobalAdmin {
 			organizations, err = object.GetMaskedOrganizations(object.GetOrganizations(owner))
 		} else {
-			organizations, err = object.GetMaskedOrganizations(object.GetOrganizations(owner, c.getCurrentUser().Owner))
+			organizations, err = object.GetMaskedOrganizations(object.GetOrganizations(owner, currentUser.Owner))
 		}
 
 		if err != nil {
@@ -57,7 +63,7 @@ func (c *ApiController) GetOrganizations() {
 		c.ResponseOk(organizations)
 	} else {
 		if !isGlobalAdmin {
-			organizations, err := object.GetMaskedOrganizations(object.GetOrganizations(owner, c.getCurrentUser().Owner))
+			organizations, err := object.GetMaskedOrganizations(object.GetOrganizations(owner, currentUser.Owner))
 			if err != nil {
 				c.ResponseError(err.Error())
 				return

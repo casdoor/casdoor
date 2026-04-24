@@ -40,6 +40,10 @@ func (c *ApiController) GetTickets() {
 
 	user := c.getCurrentUser()
 	isAdmin := c.IsAdmin()
+	if !isAdmin && user == nil {
+		c.ResponseError(c.T("general:Please sign in first"))
+		return
+	}
 
 	var tickets []*object.Ticket
 	var err error
@@ -112,9 +116,15 @@ func (c *ApiController) GetTicket() {
 	user := c.getCurrentUser()
 	isAdmin := c.IsAdmin()
 
-	if ticket != nil && !isAdmin && ticket.User != user.GetId() {
-		c.ResponseError(c.T("auth:Unauthorized operation"))
-		return
+	if ticket != nil && !isAdmin {
+		if user == nil {
+			c.ResponseError(c.T("general:Please sign in first"))
+			return
+		}
+		if ticket.User != user.GetId() {
+			c.ResponseError(c.T("auth:Unauthorized operation"))
+			return
+		}
 	}
 
 	c.ResponseOk(ticket)
@@ -139,8 +149,12 @@ func (c *ApiController) UpdateTicket() {
 	}
 
 	// Check permission
-	user := c.getCurrentUser()
 	isAdmin := c.IsAdmin()
+	user := c.getCurrentUser()
+	if !isAdmin && user == nil {
+		c.ResponseError(c.T("general:Please sign in first"))
+		return
+	}
 
 	existingTicket, err := object.GetTicket(id)
 	if err != nil {
@@ -192,6 +206,10 @@ func (c *ApiController) AddTicket() {
 
 	// Set the user field to the current user
 	user := c.getCurrentUser()
+	if user == nil {
+		c.ResponseError(c.T("general:Please sign in first"))
+		return
+	}
 	ticket.User = user.GetId()
 
 	c.Data["json"] = wrapActionResponse(object.AddTicket(&ticket))
@@ -242,8 +260,12 @@ func (c *ApiController) AddTicketMessage() {
 	}
 
 	// Check permission
-	user := c.getCurrentUser()
 	isAdmin := c.IsAdmin()
+	user := c.getCurrentUser()
+	if !isAdmin && user == nil {
+		c.ResponseError(c.T("general:Please sign in first"))
+		return
+	}
 
 	ticket, err := object.GetTicket(id)
 	if err != nil {

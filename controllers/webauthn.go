@@ -227,6 +227,10 @@ func (c *ApiController) WebAuthnSigninFinish() {
 		c.ResponseError(err.Error())
 		return
 	}
+	if application == nil {
+		c.ResponseError(c.T("check:Application does not exist"))
+		return
+	}
 
 	var authForm form.AuthForm
 	authForm.Type = responseType
