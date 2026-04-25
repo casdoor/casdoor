@@ -111,6 +111,19 @@ func (a *SafeAdapter) UpdatePolicies(sec string, ptype string, oldRules [][]stri
 	return err
 }
 
+func (a *SafeAdapter) GetRules() ([]*xormadapter.CasbinRule, error) {
+	rules := []*xormadapter.CasbinRule{}
+	session := a.engine.NewSession()
+	defer session.Close()
+
+	if a.tableName != "" {
+		session = session.Table(a.tableName)
+	}
+
+	err := session.Find(&rules)
+	return rules, err
+}
+
 func (a *SafeAdapter) buildCasbinRule(ptype string, rule []string) *xormadapter.CasbinRule {
 	line := xormadapter.CasbinRule{Ptype: ptype}
 

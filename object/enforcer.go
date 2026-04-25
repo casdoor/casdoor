@@ -196,21 +196,27 @@ func GetInitializedEnforcer(enforcerId string) (*Enforcer, error) {
 }
 
 func GetPolicies(id string) ([]*xormadapter.CasbinRule, error) {
-	enforcer, err := GetInitializedEnforcer(id)
+	enforcer, err := GetEnforcer(id)
+	if err != nil {
+		return nil, err
+	}
+	if enforcer == nil {
+		return nil, fmt.Errorf("the enforcer: %s is not found", id)
+	}
+
+	a, err := GetAdapter(enforcer.Adapter)
+	if err != nil {
+		return nil, err
+	} else if a == nil {
+		return nil, fmt.Errorf("the adapter: %s for enforcer: %s is not found", enforcer.Adapter, enforcer.GetId())
+	}
+
+	err = a.InitAdapter()
 	if err != nil {
 		return nil, err
 	}
 
-	pRules := enforcer.GetPolicy()
-	res := util.MatrixToCasbinRules("p", pRules)
-
-	if enforcer.GetModel()["g"] != nil {
-		gRules := enforcer.GetGroupingPolicy()
-		res2 := util.MatrixToCasbinRules("g", gRules)
-		res = append(res, res2...)
-	}
-
-	return res, nil
+	return NewSafeAdapter(a).GetRules()
 }
 
 // Filter represents filter criteria with optional policy type
