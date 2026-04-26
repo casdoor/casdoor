@@ -212,7 +212,7 @@ func (c *ApiController) GetUser() {
 		if !organization.IsProfilePublic {
 			requestUserId := c.GetSessionUsername()
 			var hasPermission bool
-			hasPermission, err = object.CheckUserPermission(requestUserId, user.GetId(), false, c.GetAcceptLanguage())
+			hasPermission, err = object.CheckUserPermission(requestUserId, user.GetId(), true, c.GetAcceptLanguage())
 			if !hasPermission {
 				c.ResponseError(err.Error())
 				return
