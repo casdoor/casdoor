@@ -32,19 +32,22 @@ type Token struct {
 	Organization string `xorm:"varchar(100)" json:"organization"`
 	User         string `xorm:"varchar(100)" json:"user"`
 
-	Code             string `xorm:"varchar(100) index" json:"code"`
-	AccessToken      string `xorm:"mediumtext" json:"accessToken"`
-	RefreshToken     string `xorm:"mediumtext" json:"refreshToken"`
-	AccessTokenHash  string `xorm:"varchar(100) index" json:"accessTokenHash"`
-	RefreshTokenHash string `xorm:"varchar(100) index" json:"refreshTokenHash"`
-	ExpiresIn        int    `json:"expiresIn"`
-	Scope            string `xorm:"varchar(100)" json:"scope"`
-	TokenType        string `xorm:"varchar(100)" json:"tokenType"`
-	CodeChallenge    string `xorm:"varchar(100)" json:"codeChallenge"`
-	CodeIsUsed       bool   `json:"codeIsUsed"`
-	CodeExpireIn     int64  `json:"codeExpireIn"`
-	Resource         string `xorm:"varchar(255)" json:"resource"`           // RFC 8707 Resource Indicator
-	DPoPJkt          string `xorm:"varchar(255) 'dpop_jkt'" json:"dPoPJkt"` // RFC 9449 DPoP JWK thumbprint binding
+	Code                  string `xorm:"varchar(100) index" json:"code"`
+	AccessToken           string `xorm:"mediumtext" json:"accessToken"`
+	RefreshToken          string `xorm:"mediumtext" json:"refreshToken"`
+	AccessTokenHash       string `xorm:"varchar(100) index" json:"accessTokenHash"`
+	RefreshTokenHash      string `xorm:"varchar(100) index" json:"refreshTokenHash"`
+	DeviceSecretHash      string `xorm:"varchar(100) index" json:"deviceSecretHash"`
+	DeviceSecretExpiresIn int    `json:"deviceSecretExpiresIn"`
+	ExpiresIn             int    `json:"expiresIn"`
+	Scope                 string `xorm:"varchar(100)" json:"scope"`
+	TokenType             string `xorm:"varchar(100)" json:"tokenType"`
+	GrantType             string `xorm:"varchar(100)" json:"grantType"`
+	CodeChallenge         string `xorm:"varchar(100)" json:"codeChallenge"`
+	CodeIsUsed            bool   `json:"codeIsUsed"`
+	CodeExpireIn          int64  `json:"codeExpireIn"`
+	Resource              string `xorm:"varchar(255)" json:"resource"`           // RFC 8707 Resource Indicator
+	DPoPJkt               string `xorm:"varchar(255) 'dpop_jkt'" json:"dPoPJkt"` // RFC 9449 DPoP JWK thumbprint binding
 }
 
 func GetTokenCount(owner, organization, field, value string) (int64, error) {
@@ -147,7 +150,7 @@ func GetTokenByTokenValue(tokenValue, tokenTypeHint string) (*Token, error) {
 }
 
 func updateUsedByCode(token *Token) (bool, error) {
-	affected, err := ormer.Engine.Where("code=?", token.Code).Cols("code_is_used").Update(token)
+	affected, err := ormer.Engine.Where("code=?", token.Code).Cols("code_is_used", "device_secret_hash", "device_secret_expires_in").Update(token)
 	if err != nil {
 		return false, err
 	}

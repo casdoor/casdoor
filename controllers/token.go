@@ -190,6 +190,8 @@ func (c *ApiController) GetOAuthToken() {
 	deviceCode := c.Ctx.Input.Query("device_code")
 	subjectToken := c.Ctx.Input.Query("subject_token")
 	subjectTokenType := c.Ctx.Input.Query("subject_token_type")
+	actorToken := c.Ctx.Input.Query("actor_token")
+	actorTokenType := c.Ctx.Input.Query("actor_token_type")
 	audience := c.Ctx.Input.Query("audience")
 	resource := c.Ctx.Input.Query("resource")
 
@@ -249,6 +251,12 @@ func (c *ApiController) GetOAuthToken() {
 			}
 			if subjectTokenType == "" {
 				subjectTokenType = tokenRequest.SubjectTokenType
+			}
+			if actorToken == "" {
+				actorToken = tokenRequest.ActorToken
+			}
+			if actorTokenType == "" {
+				actorTokenType = tokenRequest.ActorTokenType
 			}
 			if audience == "" {
 				audience = tokenRequest.Audience
@@ -347,7 +355,7 @@ func (c *ApiController) GetOAuthToken() {
 		return
 	}
 
-	token, err := object.GetOAuthToken(grantType, clientId, clientSecret, code, verifier, scope, nonce, username, password, host, refreshToken, tag, avatar, c.GetAcceptLanguage(), subjectToken, subjectTokenType, assertion, clientAssertion, clientAssertionType, audience, resource, dpopProof)
+	token, err := object.GetOAuthToken(grantType, clientId, clientSecret, code, verifier, scope, nonce, username, password, host, refreshToken, tag, avatar, c.GetAcceptLanguage(), subjectToken, subjectTokenType, actorToken, actorTokenType, assertion, clientAssertion, clientAssertionType, audience, resource, dpopProof)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

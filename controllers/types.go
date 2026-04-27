@@ -32,6 +32,8 @@ type TokenRequest struct {
 	RefreshToken        string `json:"refresh_token"`
 	SubjectToken        string `json:"subject_token"`
 	SubjectTokenType    string `json:"subject_token_type"`
+	ActorToken          string `json:"actor_token"`
+	ActorTokenType      string `json:"actor_token_type"`
 	Audience            string `json:"audience"`
 	Resource            string `json:"resource"` // RFC 8707 Resource Indicator
 }

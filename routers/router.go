@@ -69,6 +69,7 @@ func InitAPI() {
 	web.Router("/api/device-auth", &controllers.ApiController{}, "POST:DeviceAuth")
 	web.Router("/api/cancel-device-auth", &controllers.ApiController{}, "POST:CancelDeviceAuth")
 	web.Router("/api/device-auth-complete", &controllers.ApiController{}, "POST:DeviceAuthComplete")
+	web.Router("/api/native-sso-complete", &controllers.ApiController{}, "POST:NativeSsoComplete")
 	web.Router("/api/kerberos-login", &controllers.ApiController{}, "GET:KerberosLogin")
 
 	web.Router("/api/get-organizations", &controllers.ApiController{}, "GET:GetOrganizations")

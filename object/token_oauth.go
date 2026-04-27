@@ -23,7 +23,7 @@ import (
 	"github.com/casdoor/casdoor/util"
 )
 
-func GetOAuthToken(grantType string, clientId string, clientSecret string, code string, verifier string, scope string, nonce string, username string, password string, host string, refreshToken string, tag string, avatar string, lang string, subjectToken string, subjectTokenType string, assertion string, clientAssertion string, clientAssertionType string, audience string, resource string, dpopProof string) (interface{}, error) {
+func GetOAuthToken(grantType string, clientId string, clientSecret string, code string, verifier string, scope string, nonce string, username string, password string, host string, refreshToken string, tag string, avatar string, lang string, subjectToken string, subjectTokenType string, actorToken string, actorTokenType string, assertion string, clientAssertion string, clientAssertionType string, audience string, resource string, dpopProof string) (interface{}, error) {
 	var (
 		application *Application
 		err         error
@@ -97,7 +97,7 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 		// so we skip password verification and mint a token directly.
 		token, tokenError, err = mintImplicitToken(application, username, scope, nonce, host)
 	case "urn:ietf:params:oauth:grant-type:token-exchange": // Token Exchange Grant (RFC 8693)
-		token, tokenError, err = GetTokenExchangeToken(application, clientSecret, subjectToken, subjectTokenType, audience, scope, host)
+		token, tokenError, err = GetTokenExchangeToken(application, clientSecret, subjectToken, subjectTokenType, actorToken, actorTokenType, audience, scope, host)
 	case "refresh_token":
 		refreshToken2, err := RefreshToken(application, grantType, refreshToken, scope, clientId, clientSecret, host, dpopProof)
 		if err != nil {
@@ -112,6 +112,11 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 
 	if tokenError != nil {
 		return tokenError, nil
+	}
+
+	var deviceSecret string
+	if grantType == "authorization_code" {
+		deviceSecret = addNativeSsoDeviceSecret(token)
 	}
 
 	// Apply DPoP binding (RFC 9449) if a DPoP proof was supplied by the client.
@@ -145,6 +150,7 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 		TokenType:    token.TokenType,
 		ExpiresIn:    token.ExpiresIn,
 		Scope:        token.Scope,
+		DeviceSecret: deviceSecret,
 	}
 
 	return tokenWrapper, nil
@@ -598,7 +604,11 @@ func GetWechatMiniProgramToken(application *Application, code string, host strin
 
 // GetTokenExchangeToken handles the Token Exchange Grant flow (RFC 8693).
 // Exchanges a subject token for a new token with different audience or scope.
-func GetTokenExchangeToken(application *Application, clientSecret string, subjectToken string, subjectTokenType string, audience string, scope string, host string) (*Token, *TokenError, error) {
+func GetTokenExchangeToken(application *Application, clientSecret string, subjectToken string, subjectTokenType string, actorToken string, actorTokenType string, audience string, scope string, host string) (*Token, *TokenError, error) {
+	if actorTokenType == "urn:openid:params:token-type:device-secret" {
+		return getNativeSsoTokenExchangeToken(application, clientSecret, subjectToken, subjectTokenType, actorToken, actorTokenType, scope, host)
+	}
+
 	if application.ClientSecret != clientSecret {
 		return nil, &TokenError{
 			Error:            InvalidClient,

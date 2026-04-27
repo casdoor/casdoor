@@ -122,6 +122,17 @@ export function completeDeviceLogin(deviceCode, oAuthParams) {
   }).then(res => res.json());
 }
 
+export function completeNativeSso(accessToken, oAuthParams) {
+  return fetch(`${authConfig.serverUrl}/api/native-sso-complete${oAuthParamsToQuery(oAuthParams)}`, {
+    method: "POST",
+    credentials: "include",
+    body: JSON.stringify({accessToken}),
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}
+
 export function login(values, oAuthParams) {
   return fetch(`${authConfig.serverUrl}/api/login${oAuthParamsToQuery(oAuthParams)}`, {
     method: "POST",
