@@ -23,6 +23,7 @@ import {Alert, Button, ConfigProvider, Drawer, FloatButton, Layout, Result, Tool
 import {AiDots} from "./common/Loading";
 import {Route, Switch, withRouter} from "react-router-dom";
 import CustomGithubCorner from "./common/CustomGithubCorner";
+import CustomHead from "./basic/CustomHead";
 import * as Conf from "./Conf";
 import {shadcnThemeComponents, shadcnThemeToken} from "./shadcnTheme";
 
@@ -626,6 +627,7 @@ class App extends Component {
           }}>
           <StyleProvider hashPriority="high" transformers={[legacyLogicalPropertiesTransformer]}>
             <Layout id="parent-area">
+              <CustomHead id="page" headerHtml={this.state.application?.pageHtml} />
               <Content style={{display: "flex", justifyContent: "center"}}>
                 {
                   this.isEntryPages() ?
@@ -668,6 +670,7 @@ class App extends Component {
         {/* { */}
         {/*   this.renderBanner() */}
         {/* } */}
+        <CustomHead id="page" headerHtml={this.state.application?.pageHtml} />
         <FloatButton.BackTop />
         <CustomGithubCorner />
         {

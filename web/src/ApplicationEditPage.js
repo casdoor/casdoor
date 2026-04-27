@@ -1337,6 +1337,30 @@ class ApplicationEditPage extends React.Component {
           </Row>
           <Row style={{marginTop: "20px"}} >
             <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
+              {Setting.getLabel(i18next.t("application:Page HTML"), i18next.t("application:Page HTML - Tooltip"))} :
+            </Col>
+            <Col span={21} >
+              <Popover placement="right" content={
+                <div style={{width: "900px", height: "300px"}} >
+                  <Editor
+                    value={this.state.application.pageHtml}
+                    lang="html"
+                    fillHeight
+                    dark
+                    onChange={value => {
+                      this.updateApplicationField("pageHtml", value);
+                    }}
+                  />
+                </div>
+              } title={i18next.t("application:Page HTML - Edit")} trigger="click">
+                <Input value={this.state.application.pageHtml} style={{marginBottom: "10px"}} onChange={e => {
+                  this.updateApplicationField("pageHtml", e.target.value);
+                }} />
+              </Popover>
+            </Col>
+          </Row>
+          <Row style={{marginTop: "20px"}} >
+            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
               {Setting.getLabel(i18next.t("application:Footer HTML"), i18next.t("application:Footer HTML - Tooltip"))} :
             </Col>
             <Col span={21} >

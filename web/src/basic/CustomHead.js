@@ -14,11 +14,12 @@
 
 import {useEffect} from "react";
 
-let customHeadLoaded = false;
+const customHeadLoadedIds = new Set();
 
 function CustomHead(props) {
+  const id = props.id ?? "default";
   useEffect(() => {
-    if (!customHeadLoaded) {
+    if (!customHeadLoadedIds.has(id)) {
       const suffix = new Date().getTime().toString();
 
       if (!props.headerHtml) {return;}
@@ -26,7 +27,7 @@ function CustomHead(props) {
       node.innerHTML = props.headerHtml;
 
       node.childNodes.forEach(el => {
-        if (el.nodeName === "#text") {
+        if (el.nodeType !== Node.ELEMENT_NODE) {
           return;
         }
         let innerNode = el;
@@ -42,7 +43,7 @@ function CustomHead(props) {
         }
         document.head.appendChild(innerNode);
       });
-      customHeadLoaded = true;
+      customHeadLoadedIds.add(id);
     }
   });
 }

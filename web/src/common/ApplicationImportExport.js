@@ -31,6 +31,7 @@ const UI_FIELDS = [
   "formSideHtml",
   "themeData",
   "headerHtml",
+  "pageHtml",
   "footerHtml",
   "signupHtml",
   "signinHtml",
