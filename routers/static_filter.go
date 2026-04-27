@@ -50,6 +50,18 @@ func getWebBuildFolder() string {
 	}
 
 	path = filepath.Join(frontendBaseDir, "web/build")
+	if util.FileExist(filepath.Join(path, "index.html")) {
+		return path
+	}
+
+	casdoorDir := filepath.Join(filepath.Dir(frontendBaseDir), "casdoor")
+	if util.FileExist(filepath.Join(casdoorDir, "index.html")) {
+		return casdoorDir
+	}
+	if util.FileExist(filepath.Join(casdoorDir, "web/build", "index.html")) {
+		return filepath.Join(casdoorDir, "web/build")
+	}
+
 	return path
 }
 
