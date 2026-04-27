@@ -209,9 +209,9 @@ function ManagementPage(props) {
   function renderAvatar() {
     if (props.account.avatar === "") {
       return (
-        <Avatar style={{backgroundColor: Setting.getAvatarColor(props.account.name), verticalAlign: "middle", marginLeft: 8}} size="large">
-          {Setting.getShortName(props.account.name)}
-        </Avatar>
+        <div style={{verticalAlign: "middle", marginLeft: 8, display: "inline-flex"}}>
+          {Setting.getAvatarPlaceholder(props.account.name, 40)}
+        </div>
       );
     } else {
       return (

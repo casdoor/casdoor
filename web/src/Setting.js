@@ -1164,6 +1164,26 @@ export function getAvatarColor(s) {
   return colorList[hash % 4];
 }
 
+export function getAvatarPlaceholder(name, size = 40) {
+  return (
+    <div style={{
+      alignItems: "center",
+      backgroundColor: getAvatarColor(name),
+      borderRadius: "50%",
+      color: "#fff",
+      display: "flex",
+      flexShrink: 0,
+      fontSize: Math.round(size * 0.44),
+      fontWeight: "bold",
+      height: size,
+      justifyContent: "center",
+      width: size,
+    }}>
+      {name.charAt(0).toUpperCase()}
+    </div>
+  );
+}
+
 export function getLanguageText(text) {
   if (!text) {
     return "";
