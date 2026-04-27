@@ -29,16 +29,17 @@ func init() {
 func getCronMap(name string) *cron.Cron {
 	m, ok := cronMap[name]
 	if !ok {
-		m = cron.New()
+		m = cron.New(cron.WithChain(cron.SkipIfStillRunning(cron.DefaultLogger)))
 		cronMap[name] = m
 	}
 	return m
 }
 
 func clearCron(name string) {
-	cron, ok := cronMap[name]
+	c, ok := cronMap[name]
 	if ok {
-		cron.Stop()
+		ctx := c.Stop()
+		<-ctx.Done()
 		delete(cronMap, name)
 	}
 }

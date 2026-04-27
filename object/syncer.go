@@ -219,7 +219,11 @@ func updateSyncerErrorText(syncer *Syncer, line string) (bool, error) {
 		return false, nil
 	}
 
+	const maxErrorTextLen = 65536
 	s.ErrorText = s.ErrorText + line
+	if len(s.ErrorText) > maxErrorTextLen {
+		s.ErrorText = s.ErrorText[len(s.ErrorText)-maxErrorTextLen:]
+	}
 
 	affected, err := ormer.Engine.ID(core.PK{s.Owner, s.Name}).Cols("error_text").Update(s)
 	if err != nil {
