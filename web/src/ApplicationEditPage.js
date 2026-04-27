@@ -15,6 +15,7 @@
 import React from "react";
 import Loading from "./common/Loading";
 import {
+  AutoComplete,
   Button,
   Card,
   Col,
@@ -889,6 +890,28 @@ class ApplicationEditPage extends React.Component {
               }} />
             </Col>
           </Row>
+          {
+            this.state.application.enableSamlC14n10 && (
+              <Row style={{marginTop: "20px"}} >
+                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
+                  {Setting.getLabel(i18next.t("application:SAML C14N10 prefix"), i18next.t("application:SAML C14N10 prefix - Tooltip"))} :
+                </Col>
+                <Col span={21} >
+                  <AutoComplete
+                    style={{width: "100%"}}
+                    value={this.state.application.samlC14nPrefix}
+                    options={[
+                      {value: "", label: "(empty)"},
+                      {value: "xs"},
+                    ]}
+                    onChange={value => {
+                      this.updateApplicationField("samlC14nPrefix", value);
+                    }}
+                  />
+                </Col>
+              </Row>
+            )
+          }
           <Row style={{marginTop: "20px"}}>
             <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2}>
               {Setting.getLabel(i18next.t("application:Use Email as NameID"), i18next.t("application:Use Email as NameID - Tooltip"))} :

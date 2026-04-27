@@ -120,6 +120,7 @@ type Application struct {
 	Tags                         []string        `xorm:"mediumtext" json:"tags"`
 	SamlAttributes               []*SamlItem     `xorm:"varchar(1000)" json:"samlAttributes"`
 	SamlHashAlgorithm            string          `xorm:"varchar(20)" json:"samlHashAlgorithm"`
+	SamlC14nPrefix               string          `xorm:"varchar(100)" json:"samlC14nPrefix"`
 	IsShared                     bool            `json:"isShared"`
 	IpRestriction                string          `json:"ipRestriction"`
 

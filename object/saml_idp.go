@@ -385,7 +385,7 @@ func GetSamlResponse(application *Application, user *User, samlRequest string, h
 	}
 
 	if application.EnableSamlC14n10 {
-		ctx.Canonicalizer = dsig.MakeC14N10ExclusiveCanonicalizerWithPrefixList("xs")
+		ctx.Canonicalizer = dsig.MakeC14N10ExclusiveCanonicalizerWithPrefixList(application.SamlC14nPrefix)
 	}
 
 	// signedXML, err := ctx.SignEnvelopedLimix(samlResponse)
