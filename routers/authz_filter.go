@@ -347,7 +347,11 @@ func ApiFilter(ctx *context.Context) {
 		urlPath = "/api/notify-payment"
 	}
 
-	isAllowed := authz.IsAllowed(subOwner, subName, method, urlPath, objOwner, objName, extraInfo)
+	isAllowed, err := authz.IsAllowed(subOwner, subName, method, urlPath, objOwner, objName, extraInfo)
+	if err != nil {
+		responseError(ctx, err.Error())
+		return
+	}
 
 	if method != "GET" && !strings.HasSuffix(urlPath, "-entry") {
 		util.SafeGoroutine(func() {
