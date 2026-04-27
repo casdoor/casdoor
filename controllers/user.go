@@ -310,6 +310,15 @@ func (c *ApiController) UpdateUser() {
 		return
 	}
 
+	if columnsStr != "" {
+		mergedUser := *oldUser
+		if err = json.Unmarshal(c.Ctx.Input.RequestBody, &mergedUser); err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+		user = mergedUser
+	}
+
 	if oldUser.Owner == "built-in" && oldUser.Name == "admin" && (user.Owner != "built-in" || user.Name != "admin") {
 		c.ResponseError(c.T("auth:Unauthorized operation"))
 		return
