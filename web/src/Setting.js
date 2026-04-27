@@ -1164,6 +1164,10 @@ export function getAvatarColor(s) {
   return colorList[hash % 4];
 }
 
+export function getEffectiveAvatarUrl(user) {
+  return user.avatar || user.permanentAvatar || "";
+}
+
 export function getAvatarPlaceholder(name, size = 40) {
   return (
     <div style={{

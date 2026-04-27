@@ -18,12 +18,13 @@ import * as Setting from "../Setting";
 
 class SelfLoginButton extends React.Component {
   generateIcon() {
-    const {avatar, name} = this.props.account;
+    const account = this.props.account;
+    const avatarUrl = Setting.getEffectiveAvatarUrl(account);
     return () => {
-      if (!avatar) {
-        return Setting.getAvatarPlaceholder(name, 36);
+      if (!avatarUrl) {
+        return Setting.getAvatarPlaceholder(account.name, 36);
       }
-      return <img width={36} height={36} src={avatar} alt={name} />;
+      return <img width={36} height={36} src={avatarUrl} alt={account.name} />;
     };
   }
 
