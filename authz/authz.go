@@ -169,13 +169,13 @@ func IsAllowed(subOwner string, subName string, method string, urlPath string, o
 		}
 	}
 
+	if subOwner == "app" {
+		return true
+	}
+
 	user, err := object.GetUser(util.GetId(subOwner, subName))
 	if err != nil {
 		panic(err)
-	}
-
-	if subOwner == "app" {
-		return true
 	}
 
 	if user != nil {
