@@ -358,7 +358,9 @@ func (c *ApiController) UpdateUser() {
 
 	columns := []string{}
 	if columnsStr != "" {
-		columns = strings.Split(columnsStr, ",")
+		for _, col := range strings.Split(columnsStr, ",") {
+			columns = append(columns, util.CamelToSnakeCase(col))
+		}
 	}
 
 	affected, err := object.UpdateUser(id, &user, columns, isAdmin)
