@@ -305,9 +305,11 @@ jobs:
           repository: casdoor/casdoor-helm
           ref: "master"
           token: ${{ secrets.GH_BOT_TOKEN }}
+          path: ./casdoor-helm
 
       - name: Update Helm Chart
         if: steps.should_push.outputs.push=='true'
+        working-directory: ./casdoor-helm
         run: |
           # Set the appVersion and version of the chart to the current tag
           sed -i "s/appVersion: .*/appVersion: ${{ needs.tag-release.outputs.new-release-version }}/g" ./charts/casdoor/Chart.yaml
