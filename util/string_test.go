@@ -189,24 +189,6 @@ func TestIsStrsEmpty(t *testing.T) {
 	}
 }
 
-func TestSnakeString(t *testing.T) {
-	scenarios := []struct {
-		description string
-		input       string
-		expected    interface{}
-	}{
-		{"Should be return casdor_is_the_best", "CasdoorIsTheBest", "casdoor_is_the_best"},
-		{"Should be return lorem_ipsum", "Lorem Ipsum", "lorem_ipsum"},
-		{"Should be return lorem_ipsum", "lorem Ipsum", "lorem_ipsum"},
-		{"Should be return loremipsum", "lorem ipsum", "loremipsum"},
-	}
-	for _, scenery := range scenarios {
-		t.Run(scenery.description, func(t *testing.T) {
-			actual := SnakeString(scenery.input)
-			assert.Equal(t, scenery.expected, actual, "The returned value not is expected")
-		})
-	}
-}
 
 func TestParseId(t *testing.T) {
 	scenarios := []struct {

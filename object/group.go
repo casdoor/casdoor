@@ -360,7 +360,7 @@ func GetPaginationGroupUsers(groupId string, offset, limit int, field, value, so
 		sortField = "created_time"
 	}
 
-	orderQuery := fmt.Sprintf("%s.%s", prefixedUserTable, util.SnakeString(sortField))
+	orderQuery := fmt.Sprintf("%s.%s", prefixedUserTable, util.CamelToSnakeCase(sortField))
 
 	if sortOrder == "ascend" {
 		session = session.Asc(orderQuery)

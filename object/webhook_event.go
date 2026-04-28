@@ -112,9 +112,9 @@ func getWebhookEventSession(owner, organization, webhook string, state WebhookEv
 		sortField = "created_time"
 	}
 	if sortOrder == "ascend" {
-		session = session.Asc(util.SnakeString(sortField))
+		session = session.Asc(util.CamelToSnakeCase(sortField))
 	} else {
-		session = session.Desc(util.SnakeString(sortField))
+		session = session.Desc(util.CamelToSnakeCase(sortField))
 	}
 
 	return session

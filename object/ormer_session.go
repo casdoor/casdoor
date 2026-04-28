@@ -32,16 +32,16 @@ func GetSession(owner string, offset, limit int, field, value, sortField, sortOr
 	}
 	if field != "" && value != "" {
 		if util.FilterField(field) {
-			session = session.And(fmt.Sprintf("%s like ?", util.SnakeString(field)), fmt.Sprintf("%%%s%%", value))
+			session = session.And(fmt.Sprintf("%s like ?", util.CamelToSnakeCase(field)), fmt.Sprintf("%%%s%%", value))
 		}
 	}
 	if sortField == "" || sortOrder == "" || !util.FilterField(sortField) {
 		sortField = "created_time"
 	}
 	if sortOrder == "ascend" {
-		session = session.Asc(util.SnakeString(sortField))
+		session = session.Asc(util.CamelToSnakeCase(sortField))
 	} else {
-		session = session.Desc(util.SnakeString(sortField))
+		session = session.Desc(util.CamelToSnakeCase(sortField))
 	}
 	return session
 }
@@ -63,7 +63,7 @@ func GetSessionForUser(owner string, offset, limit int, field, value, sortField,
 			if offset != -1 {
 				field = fmt.Sprintf("a.%s", field)
 			}
-			session = session.And(fmt.Sprintf("%s like ?", util.SnakeString(field)), fmt.Sprintf("%%%s%%", value))
+			session = session.And(fmt.Sprintf("%s like ?", util.CamelToSnakeCase(field)), fmt.Sprintf("%%%s%%", value))
 		}
 	}
 	if sortField == "" || sortOrder == "" || !util.FilterField(sortField) {
@@ -74,21 +74,21 @@ func GetSessionForUser(owner string, offset, limit int, field, value, sortField,
 	tableName := tableNamePrefix + "user"
 	if offset == -1 {
 		if sortOrder == "ascend" {
-			session = session.Asc(util.SnakeString(sortField))
+			session = session.Asc(util.CamelToSnakeCase(sortField))
 		} else {
-			session = session.Desc(util.SnakeString(sortField))
+			session = session.Desc(util.CamelToSnakeCase(sortField))
 		}
 	} else {
 		if sortOrder == "ascend" {
 			session = session.Alias("a").
 				Join("INNER", []string{tableName, "b"}, "a.owner = b.owner and a.name = b.name").
 				Select("b.*").
-				Asc("a." + util.SnakeString(sortField))
+				Asc("a." + util.CamelToSnakeCase(sortField))
 		} else {
 			session = session.Alias("a").
 				Join("INNER", []string{tableName, "b"}, "a.owner = b.owner and a.name = b.name").
 				Select("b.*").
-				Desc("a." + util.SnakeString(sortField))
+				Desc("a." + util.CamelToSnakeCase(sortField))
 		}
 	}
 
