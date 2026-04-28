@@ -26,7 +26,7 @@ class HttpHeaderTable extends React.Component {
     };
 
     // transfer the Object to object[]
-    if (this.props.httpHeaders !== null) {
+    if (this.props.httpHeaders !== null && this.props.httpHeaders !== undefined) {
       Object.entries(this.props.httpHeaders).map((item, index) => {
         this.state.httpHeaders.push({key: index, name: item[0], value: item[1]});
       });
@@ -35,7 +35,7 @@ class HttpHeaderTable extends React.Component {
 
   page = 1;
   pageSize = 10;
-  count = this.props.httpHeaders !== null ? Object.entries(this.props.httpHeaders).length : 0;
+  count = (this.props.httpHeaders !== null && this.props.httpHeaders !== undefined) ? Object.entries(this.props.httpHeaders).length : 0;
 
   updateTable(table) {
     this.setState({httpHeaders: table});
