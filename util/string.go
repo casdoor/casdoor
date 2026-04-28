@@ -224,7 +224,6 @@ func WriteStringToPath(s string, path string) {
 	}
 }
 
-
 func IsChinese(str string) bool {
 	var flag bool
 	for _, v := range str {

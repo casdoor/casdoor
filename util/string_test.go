@@ -189,7 +189,6 @@ func TestIsStrsEmpty(t *testing.T) {
 	}
 }
 
-
 func TestParseId(t *testing.T) {
 	scenarios := []struct {
 		description string
