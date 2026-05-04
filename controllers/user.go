@@ -230,7 +230,10 @@ func (c *ApiController) GetUser() {
 		return
 	}
 
-	isAdminOrSelf := c.IsAdminOrSelf(user)
+	requestUserId := c.GetSessionUsername()
+	isApplicationRequest := object.IsAppUser(requestUserId)
+	isAdmin := c.IsAdmin() || isApplicationRequest
+	isAdminOrSelf := c.IsAdminOrSelf(user) || isApplicationRequest
 	user, err = object.GetMaskedUser(user, isAdminOrSelf)
 	if err != nil {
 		c.ResponseError(err.Error())
@@ -238,7 +241,7 @@ func (c *ApiController) GetUser() {
 	}
 
 	if organization != nil && user != nil {
-		user, err = object.GetFilteredUser(user, c.IsAdmin(), c.IsAdminOrSelf(user), organization.AccountItems)
+		user, err = object.GetFilteredUser(user, isAdmin, isAdminOrSelf, organization.AccountItems)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return

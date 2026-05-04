@@ -970,7 +970,7 @@ func (user *User) IsAdminUser() bool {
 }
 
 func IsAppUser(userId string) bool {
-	if strings.HasPrefix(userId, "app/") {
+	if strings.HasPrefix(userId, "app/") || strings.HasPrefix(userId, "app-dcr/") {
 		return true
 	}
 	return false
