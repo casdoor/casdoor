@@ -272,6 +272,26 @@ func (c *ApiController) AddApplication() {
 		return
 	}
 
+	if len(application.GrantTypes) == 0 {
+		application.GrantTypes = []string{"authorization_code"}
+	}
+
+	if application.Tags == nil {
+		application.Tags = []string{}
+	}
+
+	if application.RedirectUris == nil {
+		application.RedirectUris = []string{}
+	}
+
+	if application.Providers == nil {
+		application.Providers = []*object.ProviderItem{}
+	}
+
+	if application.Scopes == nil {
+		application.Scopes = []*object.ScopeItem{}
+	}
+
 	c.Data["json"] = wrapActionResponse(object.AddApplication(&application))
 	c.ServeJSON()
 }

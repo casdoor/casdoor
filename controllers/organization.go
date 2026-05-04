@@ -183,6 +183,18 @@ func (c *ApiController) AddOrganization() {
 		organization.AccountItems = object.GetDefaultAccountItems()
 	}
 
+	if len(organization.PasswordOptions) == 0 {
+		organization.PasswordOptions = []string{"AtLeast6"}
+	}
+
+	if len(organization.CountryCodes) == 0 {
+		organization.CountryCodes = []string{"US", "ES", "FR", "DE", "GB", "CN", "JP", "KR", "VN", "ID", "SG", "IN"}
+	}
+
+	if len(organization.Languages) == 0 {
+		organization.Languages = []string{"en", "es", "fr", "de", "ja", "zh", "vi", "pt", "tr", "pl", "uk"}
+	}
+
 	c.Data["json"] = wrapActionResponse(object.AddOrganization(&organization))
 	c.ServeJSON()
 }
