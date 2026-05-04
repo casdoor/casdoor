@@ -61,6 +61,16 @@ func escapePath(path string) string {
 	return res
 }
 
+func escapePathForCOS(path string) string {
+	tokens := strings.Split(path, "/")
+	if len(tokens) > 0 {
+		tokens[len(tokens)-1] = strings.ReplaceAll(url.QueryEscape(tokens[len(tokens)-1]), "+", "%20")
+	}
+
+	res := strings.Join(tokens, "/")
+	return res
+}
+
 func GetTruncatedPath(provider *Provider, fullFilePath string, limit int) string {
 	pathPrefix := util.UrlJoin(util.GetUrlPath(provider.Domain), provider.PathPrefix)
 
@@ -111,7 +121,7 @@ func GetUploadFileUrl(provider *Provider, fullFilePath string, hasTimestamp bool
 	// }
 
 	if provider.Type == ProviderTypeTencentCloudCOS {
-		objectKey = escapePath(objectKey)
+		objectKey = escapePathForCOS(objectKey)
 	}
 
 	return fileUrl, objectKey
