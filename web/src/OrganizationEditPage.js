@@ -345,7 +345,7 @@ class OrganizationEditPage extends React.Component {
               virtual={false}
               style={{width: "100%"}}
               mode="multiple"
-              value={this.state.organization.passwordOptions}
+              value={this.state.organization.passwordOptions ?? []}
               onChange={(value => {
                 this.updateOrganizationField("passwordOptions", value);
               })}
