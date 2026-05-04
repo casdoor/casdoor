@@ -55,6 +55,8 @@ func UploadPermissions(owner string, path string) (bool, error) {
 		return false, err
 	}
 
+	uploadedPermissions = filterInvalidUploadedPermissions(uploadedPermissions)
+
 	oldPermissionMap, err := getPermissionMap(owner)
 	if err != nil {
 		return false, err
@@ -77,4 +79,21 @@ func UploadPermissions(owner string, path string) (bool, error) {
 	}
 
 	return affected, nil
+}
+
+func filterInvalidUploadedPermissions(permissions []*Permission) []*Permission {
+	res := make([]*Permission, 0, len(permissions))
+	for _, permission := range permissions {
+		if permission == nil {
+			continue
+		}
+
+		if strings.TrimSpace(permission.Owner) == "" || strings.TrimSpace(permission.Name) == "" {
+			continue
+		}
+
+		res = append(res, permission)
+	}
+
+	return res
 }
