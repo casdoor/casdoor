@@ -188,8 +188,8 @@ class UserListPage extends BaseListPage {
       });
   }
 
-  impersonateUser(user) {
-    UserBackend.impersonateUser(user).then((res) => {
+  impersonateUser(owner, name) {
+    UserBackend.impersonateUser(owner, name).then((res) => {
       if (res.status === "ok") {
         Setting.showMessage("success", i18next.t("general:Successfully executed"));
         Setting.goToLinkSoft(this, "/");
@@ -546,7 +546,7 @@ class UserListPage extends BaseListPage {
           return (
             <Space>
               <Button size={isTreePage ? "small" : "middle"} onClick={() => {
-                this.impersonateUser(`${record.owner}/${record.name}`);
+                this.impersonateUser(record.owner, record.name);
               }}>{i18next.t("general:Impersonate")}
               </Button>
               <Button size={isTreePage ? "small" : "middle"} type="primary" onClick={() => {

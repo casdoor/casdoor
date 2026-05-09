@@ -790,17 +790,13 @@ func (c *ApiController) ImpersonateUser() {
 		return
 	}
 
-	username := c.Ctx.Request.Form.Get("username")
-	if username == "" {
+	owner := c.Ctx.Request.Form.Get("owner")
+	name := c.Ctx.Request.Form.Get("name")
+	if owner == "" || name == "" {
 		c.ResponseError(c.T("general:Missing parameter"))
 		return
 	}
-
-	owner, _, err := util.GetOwnerAndNameFromIdWithError(username)
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
-	}
+	username := util.GetId(owner, name)
 
 	if !(owner == org || org == "") {
 		c.ResponseError(c.T("auth:Unauthorized operation"))
