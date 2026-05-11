@@ -46,7 +46,8 @@ type Group struct {
 	HaveChildren bool     `xorm:"-" json:"haveChildren"`
 	Children     []*Group `json:"children,omitempty"`
 
-	IsEnabled bool `json:"isEnabled"`
+	IsEnabled  bool              `json:"isEnabled"`
+	Properties map[string]string `xorm:"mediumtext" json:"properties"`
 }
 
 type GroupNode struct{}
