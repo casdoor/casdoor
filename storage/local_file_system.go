@@ -42,9 +42,10 @@ func NewLocalFileSystemStorageProvider() *LocalFileSystemProvider {
 
 // GetFullPath get full path from absolute/relative path
 func (sp LocalFileSystemProvider) GetFullPath(path string) string {
-	fullPath := path
-	if !strings.HasPrefix(path, sp.BaseDir) {
-		fullPath, _ = filepath.Abs(filepath.Join(sp.BaseDir, path))
+	fullPath := filepath.Clean(filepath.Join(sp.BaseDir, path))
+	sandboxRoot := sp.BaseDir + string(filepath.Separator)
+	if fullPath != sp.BaseDir && !strings.HasPrefix(fullPath, sandboxRoot) {
+		return sp.BaseDir
 	}
 	return fullPath
 }

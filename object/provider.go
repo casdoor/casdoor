@@ -237,6 +237,14 @@ func UpdateProvider(id string, provider *Provider) (bool, error) {
 		}
 	}
 
+	if provider.Type == ProviderTypeLocalFileSystem {
+		for _, component := range strings.Split(provider.PathPrefix, "/") {
+			if component == ".." {
+				return false, fmt.Errorf("the pathPrefix: %s is not allowed", provider.PathPrefix)
+			}
+		}
+	}
+
 	if err := fillOpenClawProviderDefaults(provider); err != nil {
 		return false, err
 	}
@@ -283,6 +291,14 @@ func AddProvider(provider *Provider) (bool, error) {
 		_, err := regexp.Compile(provider.EmailRegex)
 		if err != nil {
 			return false, err
+		}
+	}
+
+	if provider.Type == ProviderTypeLocalFileSystem {
+		for _, component := range strings.Split(provider.PathPrefix, "/") {
+			if component == ".." {
+				return false, fmt.Errorf("the pathPrefix: %s is not allowed", provider.PathPrefix)
+			}
 		}
 	}
 
