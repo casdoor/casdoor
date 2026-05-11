@@ -237,6 +237,10 @@ func UpdateProvider(id string, provider *Provider) (bool, error) {
 		}
 	}
 
+	if strings.Contains(provider.PathPrefix, "..") {
+		return false, fmt.Errorf("the pathPrefix: %s is not allowed", provider.PathPrefix)
+	}
+
 	if err := fillOpenClawProviderDefaults(provider); err != nil {
 		return false, err
 	}
@@ -284,6 +288,10 @@ func AddProvider(provider *Provider) (bool, error) {
 		if err != nil {
 			return false, err
 		}
+	}
+
+	if strings.Contains(provider.PathPrefix, "..") {
+		return false, fmt.Errorf("the pathPrefix: %s is not allowed", provider.PathPrefix)
 	}
 
 	if err := fillOpenClawProviderDefaults(provider); err != nil {
