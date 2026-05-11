@@ -22,6 +22,7 @@ import (
 	"strings"
 
 	"github.com/beego/beego/v2/core/logs"
+	"github.com/casdoor/casdoor/captcha"
 	"github.com/casdoor/casdoor/form"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
@@ -120,6 +121,34 @@ func (c *ApiController) Signup() {
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
+	}
+
+	var enableCaptcha bool
+	if enableCaptcha, err = object.CheckToEnableCaptcha(application, authForm.Organization, authForm.Username, clientIp); err != nil {
+		c.ResponseError(err.Error())
+		return
+	} else if enableCaptcha {
+		captchaProvider, err := object.GetCaptchaProviderByApplication(util.GetId(application.Owner, application.Name), "false", c.GetAcceptLanguage())
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		if captchaProvider.Type != "Default" {
+			authForm.ClientSecret = captchaProvider.ClientSecret
+		}
+
+		var isHuman bool
+		isHuman, err = captcha.VerifyCaptchaByCaptchaType(authForm.CaptchaType, authForm.CaptchaToken, captchaProvider.ClientId, authForm.ClientSecret, captchaProvider.ClientId2)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		if !isHuman {
+			c.ResponseError(c.T("verification:Turing test failed."))
+			return
+		}
 	}
 
 	msg := object.CheckUserSignup(application, organization, &authForm, c.GetAcceptLanguage())
