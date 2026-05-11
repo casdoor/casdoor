@@ -468,33 +468,39 @@ func (c *ApiController) GetEmailAndPhone() {
 		return
 	}
 
+	type EmailAndPhoneResp struct {
+		Name  string `json:"name"`
+		Email string `json:"email"`
+		Phone string `json:"phone"`
+	}
+
 	user, err := object.GetUserByFields(organization, username)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseOk(&EmailAndPhoneResp{Name: username})
 		return
 	}
 
 	if user == nil {
-		c.ResponseError(fmt.Sprintf(c.T("general:The user: %s doesn't exist"), util.GetId(organization, username)))
+		c.ResponseOk(&EmailAndPhoneResp{Name: username})
 		return
 	}
 
-	respUser := object.User{Name: user.Name}
+	resp := &EmailAndPhoneResp{Name: user.Name}
 	var contentType string
 	switch username {
 	case user.Email:
 		contentType = "email"
-		respUser.Email = user.Email
+		resp.Email = user.Email
 	case user.Phone:
 		contentType = "phone"
-		respUser.Phone = user.Phone
+		resp.Phone = user.Phone
 	case user.Name:
 		contentType = "username"
-		respUser.Email = util.GetMaskedEmail(user.Email)
-		respUser.Phone = util.GetMaskedPhone(user.Phone)
+		resp.Email = util.GetMaskedEmail(user.Email)
+		resp.Phone = util.GetMaskedPhone(user.Phone)
 	}
 
-	c.ResponseOk(respUser, contentType)
+	c.ResponseOk(resp, contentType)
 }
 
 // SetPassword
