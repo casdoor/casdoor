@@ -294,7 +294,7 @@ func getExtraInfo(ctx *context.Context, urlPath string) map[string]interface{} {
 	return extra
 }
 
-func getImpersonateUser(ctx *context.Context, subOwner, subName, username string) (string, string, string) {
+func getImpersonateUser(ctx *context.Context, subOwner, subName, username, urlPath string) (string, string, string) {
 	impersonateUser, ok := ctx.Input.Session("impersonateUser").(string)
 	impersonateUserCookie := ctx.GetCookie("impersonateUser")
 	if ok && impersonateUser != "" && impersonateUserCookie != "" {
@@ -309,8 +309,11 @@ func getImpersonateUser(ctx *context.Context, subOwner, subName, username string
 				panic(err)
 			}
 
-			if user.IsAdmin && impUserOwner == user.Owner {
+			if user.IsAdmin && (impUserOwner == user.Owner || user.IsGlobalAdmin()) {
 				ctx.Input.SetData("impersonating", true)
+				if urlPath == "/api/exit-impersonate-user" {
+					return subOwner, subName, username
+				}
 				return impUserOwner, impUserName, impersonateUser
 			}
 		}
@@ -323,14 +326,14 @@ func ApiFilter(ctx *context.Context) {
 	subOwner, subName := getSubject(ctx)
 	// stash current user info into request context for controllers
 	username := ""
+	urlPath := getUrlPath(ctx)
 	if !(subOwner == "anonymous" && subName == "anonymous") {
 		username = fmt.Sprintf("%s/%s", subOwner, subName)
-		subOwner, subName, username = getImpersonateUser(ctx, subOwner, subName, username)
+		subOwner, subName, username = getImpersonateUser(ctx, subOwner, subName, username, urlPath)
 	}
 	ctx.Input.SetData("currentUserId", username)
 
 	method := ctx.Request.Method
-	urlPath := getUrlPath(ctx)
 	extraInfo := getExtraInfo(ctx, urlPath)
 
 	objOwner, objName := "", ""
