@@ -88,7 +88,9 @@ func main() {
 	// web.SetStaticPath("/static", "web/build/static")
 
 	web.BConfig.WebConfig.DirectoryIndex = true
-	web.SetStaticPath("/swagger", "swagger")
+	if web.BConfig.RunMode == "dev" {
+		web.SetStaticPath("/swagger", "swagger")
+	}
 	web.SetStaticPath("/files", "files")
 	// https://studygolang.com/articles/2303
 	web.InsertFilter("*", web.BeforeStatic, routers.RequestBodyFilter)
