@@ -52,6 +52,7 @@ import SigninMethodTable from "./table/SigninMethodTable";
 import SignupTable from "./table/SignupTable";
 import SamlAttributeTable from "./table/SamlAttributeTable";
 import ScopeTable from "./table/ScopeTable";
+import CustomScopeTable from "./table/CustomScopeTable";
 import PromptPage from "./auth/PromptPage";
 import copy from "copy-to-clipboard";
 import ThemeEditor from "./common/theme/ThemeEditor";
@@ -788,6 +789,18 @@ class ApplicationEditPage extends React.Component {
               </Row>
             ) : null
           }
+          <Row style={{marginTop: "20px"}} >
+            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
+              {Setting.getLabel(i18next.t("general:Custom scopes"), i18next.t("general:Custom scopes - Tooltip"))} :
+            </Col>
+            <Col span={21} >
+              <CustomScopeTable
+                title={i18next.t("general:Custom scopes")}
+                table={this.state.application.customScopes}
+                onUpdateTable={(value) => {this.updateApplicationField("customScopes", value);}}
+              />
+            </Col>
+          </Row>
           <Row style={{marginTop: "20px"}} >
             <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
               {Setting.getLabel(i18next.t("application:Token format"), i18next.t("application:Token format - Tooltip"))} :
