@@ -96,6 +96,15 @@ var (
 			newStringParams("country", false, false),
 		}),
 	}
+	GroupStringField = []schema.SimpleParams{
+		newStringParams("displayName", true, false),
+	}
+	GroupComplexField = []schema.ComplexParams{
+		newComplexParams("members", false, true, []schema.SimpleParams{
+			newStringParams("value", false, false),
+			newStringParams("display", false, false),
+		}),
+	}
 	Server = GetScimServer()
 )
 
@@ -105,25 +114,52 @@ func GetScimServer() scim.Server {
 		SupportPatch: true,
 	}
 
-	codeAttrs := make([]schema.CoreAttribute, 0, len(UserStringField)+len(UserComplexField))
+	userAttrs := make([]schema.CoreAttribute, 0, len(UserStringField)+len(UserComplexField))
 	for _, field := range UserStringField {
-		codeAttrs = append(codeAttrs, schema.SimpleCoreAttribute(field))
+		userAttrs = append(userAttrs, schema.SimpleCoreAttribute(field))
 	}
 	for _, field := range UserComplexField {
-		codeAttrs = append(codeAttrs, schema.ComplexCoreAttribute(field))
+		userAttrs = append(userAttrs, schema.ComplexCoreAttribute(field))
 	}
 
 	userSchema := schema.Schema{
 		ID:          schema.UserSchema,
 		Name:        optional.NewString("User"),
 		Description: optional.NewString("User Account"),
-		Attributes:  codeAttrs,
+		Attributes:  userAttrs,
 	}
 
-	extension := schema.Schema{
+	userExtension := schema.Schema{
 		ID:          UserExtensionKey,
 		Name:        optional.NewString("EnterpriseUser"),
 		Description: optional.NewString("Enterprise User"),
+		Attributes: []schema.CoreAttribute{
+			schema.SimpleCoreAttribute(schema.SimpleStringParams(schema.StringParams{
+				Name:     "organization",
+				Required: true,
+			})),
+		},
+	}
+
+	groupAttrs := make([]schema.CoreAttribute, 0, len(GroupStringField)+len(GroupComplexField))
+	for _, field := range GroupStringField {
+		groupAttrs = append(groupAttrs, schema.SimpleCoreAttribute(field))
+	}
+	for _, field := range GroupComplexField {
+		groupAttrs = append(groupAttrs, schema.ComplexCoreAttribute(field))
+	}
+
+	groupSchema := schema.Schema{
+		ID:          schema.GroupSchema,
+		Name:        optional.NewString("Group"),
+		Description: optional.NewString("Group"),
+		Attributes:  groupAttrs,
+	}
+
+	groupExtension := schema.Schema{
+		ID:          GroupExtensionKey,
+		Name:        optional.NewString("EnterpriseGroup"),
+		Description: optional.NewString("Enterprise Group"),
 		Attributes: []schema.CoreAttribute{
 			schema.SimpleCoreAttribute(schema.SimpleStringParams(schema.StringParams{
 				Name:     "organization",
@@ -140,9 +176,20 @@ func GetScimServer() scim.Server {
 			Description: optional.NewString("User Account in Casdoor"),
 			Schema:      userSchema,
 			SchemaExtensions: []scim.SchemaExtension{
-				{Schema: extension},
+				{Schema: userExtension},
 			},
 			Handler: UserResourceHandler{},
+		},
+		{
+			ID:          optional.NewString("Group"),
+			Name:        "Group",
+			Endpoint:    "/Groups",
+			Description: optional.NewString("Group in Casdoor"),
+			Schema:      groupSchema,
+			SchemaExtensions: []scim.SchemaExtension{
+				{Schema: groupExtension},
+			},
+			Handler: GroupResourceHandler{},
 		},
 	}
 
