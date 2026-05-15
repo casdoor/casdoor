@@ -248,7 +248,7 @@ function ManagementPage(props) {
       } else if (e.key === "/logout") {
         logout();
       } else if (e.key === "/exit-impersonation") {
-        UserBackend.exitImpersonateUser().then((res) => {
+        UserBackend.exitImpersonateUser(props.account.owner, props.account.name).then((res) => {
           if (res.status === "ok") {
             Setting.showMessage("success", i18next.t("account:Exit impersonation"));
             Setting.goToLinkSoft({props}, "/");
