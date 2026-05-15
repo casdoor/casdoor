@@ -203,10 +203,14 @@ export function impersonateUser(owner, name) {
   }).then(res => res.json());
 }
 
-export function exitImpersonateUser() {
+export function exitImpersonateUser(owner, name) {
+  const formData = new FormData();
+  formData.append("owner", owner);
+  formData.append("name", name);
   return fetch(`${Setting.ServerUrl}/api/exit-impersonate-user`, {
     method: "POST",
     credentials: "include",
+    body: formData,
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
