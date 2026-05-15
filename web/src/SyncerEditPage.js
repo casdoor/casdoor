@@ -836,6 +836,9 @@ class SyncerEditPage extends React.Component {
               const syncer = this.state.syncer;
               syncer["tableColumns"] = this.getSyncerTableColumns(this.state.syncer);
               syncer.table = (value === "Keycloak") ? "user_entity" : this.state.syncer.table;
+              if (["WeCom", "DingTalk", "Lark", "Azure AD", "Google Workspace", "Okta", "SCIM", "AWS IAM"].includes(value)) {
+                syncer.host = "";
+              }
               this.setState({
                 syncer: syncer,
               });
