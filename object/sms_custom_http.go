@@ -72,6 +72,17 @@ func (c *HttpSmsClient) SendMessage(param map[string]string, targetPhoneNumber .
 		}
 	}
 
+	// Replace {mobile} and {code} placeholders in the endpoint URL
+	endpoint := c.endpoint
+	hasMobilePlaceholder := strings.Contains(endpoint, "{mobile}")
+	hasCodePlaceholder := strings.Contains(endpoint, "{code}")
+	if hasMobilePlaceholder {
+		endpoint = strings.ReplaceAll(endpoint, "{mobile}", phoneNumber)
+	}
+	if hasCodePlaceholder {
+		endpoint = strings.ReplaceAll(endpoint, "{code}", code)
+	}
+
 	var req *http.Request
 	var err error
 	if c.method == "POST" || c.method == "PUT" || c.method == "DELETE" {
@@ -85,13 +96,13 @@ func (c *HttpSmsClient) SendMessage(param map[string]string, targetPhoneNumber .
 			if err != nil {
 				return err
 			}
-			req, err = http.NewRequest(c.method, c.endpoint, bytes.NewBuffer(bodyBytes))
+			req, err = http.NewRequest(c.method, endpoint, bytes.NewBuffer(bodyBytes))
 		} else {
 			formValues := url.Values{}
 			for k, v := range bodyMap {
 				formValues.Add(k, v)
 			}
-			req, err = http.NewRequest(c.method, c.endpoint, strings.NewReader(formValues.Encode()))
+			req, err = http.NewRequest(c.method, endpoint, strings.NewReader(formValues.Encode()))
 		}
 
 		if err != nil {
@@ -100,15 +111,18 @@ func (c *HttpSmsClient) SendMessage(param map[string]string, targetPhoneNumber .
 
 		req.Header.Set("Content-Type", c.contentType)
 	} else if c.method == "GET" {
-		req, err = http.NewRequest(c.method, c.endpoint, nil)
+		req, err = http.NewRequest(c.method, endpoint, nil)
 		if err != nil {
 			return err
 		}
 
-		q := req.URL.Query()
-		q.Add(phoneNumberField, phoneNumber)
-		q.Add(contentField, content)
-		req.URL.RawQuery = q.Encode()
+		// Only append extra query params if the endpoint doesn't already use placeholders
+		if !hasMobilePlaceholder && !hasCodePlaceholder {
+			q := req.URL.Query()
+			q.Add(phoneNumberField, phoneNumber)
+			q.Add(contentField, content)
+			req.URL.RawQuery = q.Encode()
+		}
 	} else {
 		return fmt.Errorf("HttpSmsClient's SendMessage() error, unsupported method: %s", c.method)
 	}
