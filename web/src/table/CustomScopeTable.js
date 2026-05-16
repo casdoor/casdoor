@@ -27,6 +27,9 @@ const DefaultScopes = [
   {scope: "offline_access", displayName: "Offline Access", description: "Obtain refresh tokens for offline access"},
 ];
 
+const rowKeyMap = new WeakMap();
+let rowKeyCounter = 0;
+
 class CustomScopeTable extends React.Component {
   constructor(props) {
     super(props);
@@ -59,6 +62,20 @@ class CustomScopeTable extends React.Component {
     }
     const scope = (row.scope || "").trim();
     return scope === "";
+  }
+
+  getRowKey(row, index) {
+    if (!row || typeof row !== "object") {
+      return `scope_${index}`;
+    }
+
+    let key = rowKeyMap.get(row);
+    if (!key) {
+      key = `scope_${rowKeyCounter++}`;
+      rowKeyMap.set(row, key);
+    }
+
+    return key;
   }
 
   addRow(table) {
@@ -109,6 +126,7 @@ class CustomScopeTable extends React.Component {
           return (
             <AutoComplete
               status={this.isScopeMissing(record) ? "error" : ""}
+              style={{width: "100%"}}
               value={text}
               options={autoCompleteOptions}
               placeholder="Select or input scope"
@@ -123,9 +141,7 @@ class CustomScopeTable extends React.Component {
               onChange={(value) => {
                 this.updateField(table, index, "scope", value);
               }}
-            >
-              <Input />
-            </AutoComplete>
+            />
           );
         },
       },
@@ -185,7 +201,7 @@ class CustomScopeTable extends React.Component {
           <Button type="primary" size="small" onClick={() => this.addRow(table)}>{i18next.t("general:Add")}</Button>
         </div>
       )}
-      columns={columns} dataSource={table} rowKey={(record, index) => record.scope?.trim() || `temp_${index}`} size="middle" bordered pagination={false}
+      columns={columns} dataSource={table} rowKey={(record, index) => this.getRowKey(record, index)} size="middle" bordered pagination={false}
       />
     );
   }
