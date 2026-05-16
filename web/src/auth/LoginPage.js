@@ -384,8 +384,18 @@ class LoginPage extends React.Component {
 
     // Check if consent is required
     if (resp.data?.required === true) {
-      // Consent required, redirect to consent page
-      Setting.goToLinkSoft(ths, `/consent/${application.name}?${window.location.search.substring(1)}`);
+      AuthBackend.getAccount()
+        .then((res) => {
+          if (res.status === "ok") {
+            const account = res.data;
+            account.organization = res.data2;
+            this.onUpdateAccount(account);
+            // Consent required, redirect to consent page after the account state is synced.
+            Setting.goToLinkSoft(ths, `/consent/${application.name}?${window.location.search.substring(1)}`);
+          } else {
+            Setting.showMessage("error", `${i18next.t("application:Failed to sign in")}: ${res.msg}`);
+          }
+        });
       return;
     }
 
