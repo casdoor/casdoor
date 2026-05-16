@@ -173,23 +173,24 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 			return
 		}
 
+		needSigninSession := application.EnableSigninSession || application.HasPromptPage() || consentRequired
+		if needSigninSession {
+			// Prompt and consent pages need the user to be signed in.
+			c.SetSessionUsername(userId)
+		}
+
 		if consentRequired {
 			resp = &Response{Status: "ok", Data: map[string]bool{"required": true}}
 			resp.Data3 = user.NeedUpdatePassword
-			return
-		}
+		} else {
+			code, err := object.GetOAuthCode(userId, clientId, form.Provider, form.SigninMethod, responseType, redirectUri, scope, state, nonce, codeChallenge, resource, c.Ctx.Request.Host, c.GetAcceptLanguage())
+			if err != nil {
+				c.ResponseError(err.Error(), nil)
+				return
+			}
 
-		code, err := object.GetOAuthCode(userId, clientId, form.Provider, form.SigninMethod, responseType, redirectUri, scope, state, nonce, codeChallenge, resource, c.Ctx.Request.Host, c.GetAcceptLanguage())
-		if err != nil {
-			c.ResponseError(err.Error(), nil)
-			return
-		}
-
-		resp = codeToResponse(code)
-		resp.Data3 = user.NeedUpdatePassword
-		if application.EnableSigninSession || application.HasPromptPage() {
-			// The prompt page needs the user to be signed in
-			c.SetSessionUsername(userId)
+			resp = codeToResponse(code)
+			resp.Data3 = user.NeedUpdatePassword
 		}
 	} else if form.Type == ResponseTypeToken || form.Type == ResponseTypeIdToken { // implicit flow
 		if !object.IsGrantTypeValid(form.Type, application.GrantTypes) {
