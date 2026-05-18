@@ -163,6 +163,8 @@ func processArgsToTempFiles(args []string) ([]string, []string, error) {
 // @Title RunCasbinCommand
 // @Tag Enforcer API
 // @Description Call Casbin CLI commands
+// @Param   language query string false "The CLI language (default: go)"
+// @Param   args     query string true  "The CLI command arguments"
 // @Success 200 {object} controllers.Response The Response object
 // @router /run-casbin-command [get]
 func (c *ApiController) RunCasbinCommand() {
