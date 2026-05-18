@@ -1455,7 +1455,7 @@ func (c *ApiController) GetCaptchaStatus() {
 // Callback
 // @Title Callback
 // @Tag Callback API
-// @Description Get Login Error Counts
+// @Description Handle OAuth callback redirect
 // @router /Callback [post]
 // @Success 200 {object} object.Userinfo The Response object
 func (c *ApiController) Callback() {

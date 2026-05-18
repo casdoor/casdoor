@@ -39,8 +39,8 @@ const (
 // GetVerifications
 // @Title GetVerifications
 // @Tag Verification API
-// @Description get payments
-// @Param   owner     query    string  true        "The owner of payments"
+// @Description get verifications
+// @Param   owner     query    string  true        "The owner of verifications"
 // @Success 200 {array} object.Verification The Response object
 // @router /get-payments [get]
 func (c *ApiController) GetVerifications() {
@@ -93,7 +93,7 @@ func (c *ApiController) GetVerifications() {
 // GetUserVerifications
 // @Title GetUserVerifications
 // @Tag Verification API
-// @Description get payments for a user
+// @Description get verifications for a user
 // @Param   owner     query    string  true        "The owner of payments"
 // @Param   organization    query   string  true   "The organization of the user"
 // @Param   user    query   string  true           "The username of the user"
@@ -115,7 +115,7 @@ func (c *ApiController) GetUserVerifications() {
 // GetVerification
 // @Title GetVerification
 // @Tag Verification API
-// @Description get payment
+// @Description get verification
 // @Param   id     query    string  true        "The id ( owner/name ) of the payment"
 // @Success 200 {object} object.Verification The Response object
 // @router /get-payment [get]
