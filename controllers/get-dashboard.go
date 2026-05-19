@@ -20,6 +20,7 @@ import "github.com/casdoor/casdoor/object"
 // @Title GetDashboard
 // @Tag System API
 // @Description get information of dashboard
+// @Param   owner query string true "The owner (organization) name"
 // @Success 200 {object} controllers.Response The Response object
 // @router /get-dashboard [get]
 func (c *ApiController) GetDashboard() {
@@ -38,6 +39,7 @@ func (c *ApiController) GetDashboard() {
 // @Title GetDashboardProviderDistribution
 // @Tag System API
 // @Description get provider type distribution for dashboard
+// @Param   owner query string true "The owner (organization) name"
 // @Success 200 {object} controllers.Response The Response object
 // @router /get-dashboard-providers [get]
 func (c *ApiController) GetDashboardProviderDistribution() {
@@ -56,6 +58,7 @@ func (c *ApiController) GetDashboardProviderDistribution() {
 // @Title GetDashboardMfaCoverage
 // @Tag System API
 // @Description get MFA adoption coverage stats for dashboard
+// @Param   owner query string true "The owner (organization) name"
 // @Success 200 {object} controllers.Response The Response object
 // @router /get-dashboard-mfa [get]
 func (c *ApiController) GetDashboardMfaCoverage() {
@@ -74,6 +77,7 @@ func (c *ApiController) GetDashboardMfaCoverage() {
 // @Title GetDashboardLoginHeatmap
 // @Tag System API
 // @Description get system activity heatmap data for dashboard
+// @Param   owner query string true "The owner (organization) name"
 // @Success 200 {object} controllers.Response The Response object
 // @router /get-dashboard-heatmap [get]
 func (c *ApiController) GetDashboardLoginHeatmap() {
