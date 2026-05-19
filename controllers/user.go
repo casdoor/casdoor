@@ -679,6 +679,8 @@ func (c *ApiController) SetPassword() {
 
 // CheckUserPassword
 // @Title CheckUserPassword
+// @Description Check if user password is correct
+// @Param   body body object.User true "User object with password to check"
 // @router /check-user-password [post]
 // @Tag User API
 // @Success 200 {object} object.Userinfo The Response object
