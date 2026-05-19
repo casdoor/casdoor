@@ -78,8 +78,7 @@ type LaravelResponse struct {
 // @Tag Login API
 // @Title Signup
 // @Description sign up a new user
-// @Param   username     formData    string  true        "The username to sign up"
-// @Param   password     formData    string  true        "The password"
+// @Param   body    body   form.AuthForm  true        "Signup request"
 // @Success 200 {object} controllers.Response The Response object
 // @router /signup [post]
 func (c *ApiController) Signup() {

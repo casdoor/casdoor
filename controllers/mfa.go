@@ -25,9 +25,9 @@ import (
 // @Title MfaSetupInitiate
 // @Tag MFA API
 // @Description setup MFA
-// @param owner	form	string	true	"owner of user"
-// @param name	form	string	true	"name of user"
-// @param type	form	string	true	"MFA auth type"
+// @Param   mfaType formData string true "The type of MFA to set up (app/sms/email)"
+// @Param   owner   formData string true "The owner of the user"
+// @Param   name    formData string true "The name of the user"
 // @Success 200 {object} controllers.Response The Response object
 // @router /mfa/setup/initiate [post]
 func (c *ApiController) MfaSetupInitiate() {
@@ -88,8 +88,8 @@ func (c *ApiController) MfaSetupInitiate() {
 // @Title MfaSetupVerify
 // @Tag MFA API
 // @Description setup verify totp
-// @param	secret		form	string	true	"MFA secret"
-// @param	passcode	form 	string 	true	"MFA passcode"
+// @Param   secret   formData string true "The MFA secret"
+// @Param   passcode formData string true "The MFA passcode"
 // @Success 200 {object} controllers.Response The Response object
 // @router /mfa/setup/verify [post]
 func (c *ApiController) MfaSetupVerify() {
@@ -172,9 +172,9 @@ func (c *ApiController) MfaSetupVerify() {
 // @Title MfaSetupEnable
 // @Tag MFA API
 // @Description enable totp
-// @param owner	form	string	true	"owner of user"
-// @param name	form	string	true	"name of user"
-// @param type	form	string	true	"MFA auth type"
+// @Param   owner   formData string true "The owner of the user"
+// @Param   name    formData string true "The name of the user"
+// @Param   mfaType formData string true "The MFA auth type"
 // @Success 200 {object} controllers.Response The Response object
 // @router /mfa/setup/enable [post]
 func (c *ApiController) MfaSetupEnable() {
@@ -276,9 +276,9 @@ func (c *ApiController) MfaSetupEnable() {
 // DeleteMfa
 // @Title DeleteMfa
 // @Tag MFA API
-// @Description: Delete MFA
-// @param owner	form	string	true	"owner of user"
-// @param name	form	string	true	"name of user"
+// @Description Delete MFA
+// @Param   owner formData string true "The owner of the user"
+// @Param   name  formData string true "The name of the user"
 // @Success 200 {object} controllers.Response The Response object
 // @router /delete-mfa/ [post]
 func (c *ApiController) DeleteMfa() {
@@ -308,10 +308,10 @@ func (c *ApiController) DeleteMfa() {
 // SetPreferredMfa
 // @Title SetPreferredMfa
 // @Tag MFA API
-// @Description: Set specific Mfa Preferred
-// @param owner	form	string	true	"owner of user"
-// @param name	form	string	true	"name of user"
-// @param id	form	string	true	"id of user's MFA props"
+// @Description Set preferred MFA
+// @Param   mfaType formData string true "The MFA type to set as preferred"
+// @Param   owner   formData string true "The owner of the user"
+// @Param   name    formData string true "The name of the user"
 // @Success 200 {object} controllers.Response The Response object
 // @router /set-preferred-mfa [post]
 func (c *ApiController) SetPreferredMfa() {
