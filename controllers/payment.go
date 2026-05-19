@@ -107,6 +107,19 @@ func (c *ApiController) GetUserPayments() {
 	owner := c.Ctx.Input.Query("owner")
 	user := c.Ctx.Input.Query("user")
 
+	if !c.IsAdmin() {
+		sessionUser := c.GetSessionUsername()
+		sessionUserOwner, sessionUserName, err := util.GetOwnerAndNameFromIdWithError(sessionUser)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+		if sessionUserOwner != owner || sessionUserName != user {
+			c.ResponseError("Forbidden")
+			return
+		}
+	}
+
 	payments, err := object.GetUserPayments(owner, user)
 	if err != nil {
 		c.ResponseError(err.Error())
@@ -130,6 +143,19 @@ func (c *ApiController) GetPayment() {
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
+	}
+
+	if !c.IsAdmin() {
+		sessionUser := c.GetSessionUsername()
+		sessionUserOwner, sessionUserName, err := util.GetOwnerAndNameFromIdWithError(sessionUser)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+		if payment != nil && (payment.Owner != sessionUserOwner || payment.User != sessionUserName) {
+			c.ResponseError("Forbidden")
+			return
+		}
 	}
 
 	c.ResponseOk(payment)
