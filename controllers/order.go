@@ -106,6 +106,19 @@ func (c *ApiController) GetUserOrders() {
 	owner := c.Ctx.Input.Query("owner")
 	user := c.Ctx.Input.Query("user")
 
+	if !c.IsAdmin() {
+		sessionUser := c.GetSessionUsername()
+		sessionUserOwner, sessionUserName, err := util.GetOwnerAndNameFromIdWithError(sessionUser)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+		if sessionUserOwner != owner || sessionUserName != user {
+			c.ResponseError("Forbidden")
+			return
+		}
+	}
+
 	orders, err := object.GetUserOrders(owner, user)
 	if err != nil {
 		c.ResponseError(err.Error())
@@ -129,6 +142,19 @@ func (c *ApiController) GetOrder() {
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
+	}
+
+	if !c.IsAdmin() {
+		sessionUser := c.GetSessionUsername()
+		sessionUserOwner, sessionUserName, err := util.GetOwnerAndNameFromIdWithError(sessionUser)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+		if order != nil && (order.Owner != sessionUserOwner || order.User != sessionUserName) {
+			c.ResponseError("Forbidden")
+			return
+		}
 	}
 
 	c.ResponseOk(order)
