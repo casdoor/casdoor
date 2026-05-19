@@ -135,6 +135,8 @@ p, *, *, POST, /api/refresh-engines, *, *
 p, *, *, GET, /api/get-invitation-info, *, *
 p, *, *, GET, /api/faceid-signin-begin, *, *
 p, *, *, GET, /api/kerberos-login, *, *
+p, *, *, POST, /api/grant-consent, *, *
+p, *, *, POST, /api/revoke-consent, *, *
 `
 
 		sa := stringadapter.NewAdapter(ruleText)
