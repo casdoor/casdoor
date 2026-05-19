@@ -89,7 +89,6 @@ func AutoSigninFilter(ctx *context.Context) {
 			}
 		}
 
-		userId := util.GetId(token.Organization, token.User)
 		application, err := object.GetApplicationByUserId(fmt.Sprintf("app/%s", token.Application))
 		if err != nil {
 			responseError(ctx, err.Error())
@@ -100,6 +99,12 @@ func AutoSigninFilter(ctx *context.Context) {
 			return
 		}
 
+		var userId string
+		if token.GrantType == "client_credentials" {
+			userId = fmt.Sprintf("app/%s", token.Application)
+		} else {
+			userId = util.GetId(token.Organization, token.User)
+		}
 		setSessionUser(ctx, userId)
 		setSessionOidc(ctx, token.Scope, application.ClientId)
 		return

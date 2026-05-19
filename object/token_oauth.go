@@ -387,6 +387,7 @@ func GetClientCredentialsToken(application *Application, clientSecret string, sc
 		ExpiresIn:    int(application.ExpireInHours * float64(hourSeconds)),
 		Scope:        scope,
 		TokenType:    "Bearer",
+		GrantType:    "client_credentials",
 		CodeIsUsed:   true,
 	}
 	_, err = AddToken(token)
