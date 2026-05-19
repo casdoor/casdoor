@@ -161,7 +161,8 @@ func (c *ApiController) DeleteSyncer() {
 // @Title RunSyncer
 // @Tag Syncer API
 // @Description run syncer
-// @Param   body    body   object.Syncer  true        "The details of the syncer"
+// @Param   id           query  string  true        "The id (owner/name) of the syncer"
+// @Param   organization query  string  false       "The organization of the syncer"
 // @Success 200 {object} controllers.Response The Response object
 // @router /run-syncer [get]
 func (c *ApiController) RunSyncer() {
