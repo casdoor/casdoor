@@ -24,7 +24,7 @@ import {LinkOutlined} from "@ant-design/icons";
 const {Option} = Select;
 
 const SMS_PROVIDERS_WITHOUT_SIGN_NAME = ["Custom HTTP SMS", "Twilio SMS", "Amazon SNS", "Msg91 SMS", "Infobip SMS"];
-const SMS_PROVIDERS_WITHOUT_TEMPLATE_CODE = ["Infobip SMS", "Custom HTTP SMS"];
+const SMS_PROVIDERS_WITHOUT_TEMPLATE_CODE = ["Infobip SMS"];
 
 export function renderSmsProviderFields(provider, updateProviderField, renderSmsMappingInput, account) {
   return (

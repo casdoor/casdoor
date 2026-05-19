@@ -68,7 +68,9 @@ func (c *HttpSmsClient) SendMessage(param map[string]string, targetPhoneNumber .
 		case "phoneNumber":
 			phoneNumberField = v
 		case "content":
-			contentField = v
+			if contentField == "" {
+				contentField = v
+			}
 		}
 	}
 
