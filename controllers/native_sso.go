@@ -27,6 +27,8 @@ import (
 // @Title NativeSsoComplete
 // @Tag Native SSO
 // @Description Complete OAuth authorization after Native SSO token exchange
+// @Param   clientId     query string true  "The OAuth2 client ID"
+// @Param   responseType query string false "The response type (default: login)"
 // @router /native-sso-complete [post]
 func (c *ApiController) NativeSsoComplete() {
 	var request struct {

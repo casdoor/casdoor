@@ -1305,6 +1305,10 @@ func (c *ApiController) HandleSamlLogin() {
 // HandleOfficialAccountEvent ...
 // @Tag System API
 // @Title HandleOfficialAccountEvent
+// @Description Handle WeChat Official Account webhook event
+// @Param   signature query string false "WeChat signature"
+// @Param   timestamp query string false "WeChat timestamp"
+// @Param   nonce     query string false "WeChat nonce"
 // @router /webhook [POST]
 // @Success 200 {object} controllers.Response The Response object
 func (c *ApiController) HandleOfficialAccountEvent() {
@@ -1455,7 +1459,9 @@ func (c *ApiController) GetCaptchaStatus() {
 // Callback
 // @Title Callback
 // @Tag Callback API
-// @Description Get Login Error Counts
+// @Description Handle OAuth callback redirect
+// @Param   code  query string false "OAuth authorization code"
+// @Param   state query string false "OAuth state parameter"
 // @router /Callback [post]
 // @Success 200 {object} object.Userinfo The Response object
 func (c *ApiController) Callback() {
@@ -1470,6 +1476,8 @@ func (c *ApiController) Callback() {
 // @Title DeviceAuth
 // @Tag Device Authorization Endpoint
 // @Description Endpoint for the device authorization flow
+// @Param   client_id query string true  "The OAuth2 client ID"
+// @Param   scope     query string false "The requested scope"
 // @router /device-auth [post]
 // @Success 200 {object} object.DeviceAuthResponse The Response object
 func (c *ApiController) DeviceAuth() {
@@ -1564,6 +1572,8 @@ func (c *ApiController) DeviceAuth() {
 // @Title CancelDeviceAuth
 // @Tag Device Authorization Endpoint
 // @Description cancel a pending device authorization flow
+// @Param   userCode    query string true "The user code to cancel"
+// @Param   cancelToken query string true "The cancellation token"
 // @router /cancel-device-auth [post]
 func (c *ApiController) CancelDeviceAuth() {
 	userCode := c.Ctx.Input.Query("userCode")
@@ -1594,6 +1604,7 @@ func (c *ApiController) CancelDeviceAuth() {
 // @Title DeviceAuthComplete
 // @Tag Device Authorization Endpoint
 // @Description Complete device authorization by establishing a browser session after token issuance
+// @Param   deviceCode query string true "The device code to complete"
 // @router /device-auth-complete [post]
 func (c *ApiController) DeviceAuthComplete() {
 	deviceCode := c.Ctx.Input.Query("deviceCode")

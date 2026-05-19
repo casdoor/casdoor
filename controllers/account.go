@@ -610,6 +610,7 @@ func (c *ApiController) SsoLogout() {
 // @Title GetAccount
 // @Tag Account API
 // @Description get the details of the current account
+// @Param   managedAccounts query string false "Whether to include managed accounts"
 // @Success 200 {object} controllers.Response The Response object
 // @router /get-account [get]
 func (c *ApiController) GetAccount() {
@@ -739,6 +740,9 @@ func (c *ApiController) GetUserinfo2() {
 // GetCaptcha ...
 // @Tag Login API
 // @Title GetCaptcha
+// @Description Get captcha provider information for an application
+// @Param   applicationId     query string true  "The application id (owner/name)"
+// @Param   isCurrentProvider query string false "Whether to get the current provider"
 // @router /get-captcha [get]
 // @Success 200 {object} object.Userinfo The Response object
 func (c *ApiController) GetCaptcha() {

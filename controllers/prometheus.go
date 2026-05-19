@@ -44,6 +44,8 @@ func (c *ApiController) GetPrometheusInfo() {
 // @Tag System API
 // @Description get Prometheus metrics. Accessible either by an admin session or by
 // a valid Key (created at /keys) supplied via ?accessKey=...&accessSecret=... query params.
+// @Param   accessKey    query string false "The access key for authentication"
+// @Param   accessSecret query string false "The access secret for authentication"
 // @Success 200 {string} Prometheus metrics in text format
 // @router /metrics [get]
 func (c *ApiController) GetMetrics() {

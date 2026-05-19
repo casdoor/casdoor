@@ -134,6 +134,16 @@ func (c *ApiController) GetVerification() {
 // SendVerificationCode ...
 // @Title SendVerificationCode
 // @Tag Verification API
+// @Description Send verification code to email or phone
+// @Param   dest          formData string true  "The destination email or phone number"
+// @Param   type          formData string true  "The verification type (email/phone)"
+// @Param   countryCode   formData string false "The country code for phone verification"
+// @Param   applicationId formData string true  "The application id (owner/name)"
+// @Param   method        formData string true  "The verification method (signup/login/forget/reset/mfaSetup/mfaAuth)"
+// @Param   checkUser     formData string false "The username to check"
+// @Param   captchaType   formData string true  "The captcha provider type"
+// @Param   clientSecret  formData string false "The captcha client secret"
+// @Param   captchaToken  formData string false "The captcha verification token"
 // @router /send-verification-code [post]
 // @Success 200 {object} object.Userinfo The Response object
 func (c *ApiController) SendVerificationCode() {
@@ -401,6 +411,11 @@ func (c *ApiController) SendVerificationCode() {
 // VerifyCaptcha ...
 // @Title VerifyCaptcha
 // @Tag Verification API
+// @Description Verify a captcha token
+// @Param   captchaType   formData string true "The captcha provider type"
+// @Param   captchaToken  formData string true "The captcha verification token"
+// @Param   clientSecret  formData string true "The captcha client secret"
+// @Param   applicationId formData string true "The application id (owner/name)"
 // @router /verify-captcha [post]
 // @Success 200 {object} object.Userinfo The Response object
 func (c *ApiController) VerifyCaptcha() {
@@ -444,6 +459,10 @@ func (c *ApiController) VerifyCaptcha() {
 // ResetEmailOrPhone ...
 // @Tag Account API
 // @Title ResetEmailOrPhone
+// @Description Reset user email or phone with verification code
+// @Param   type formData string true "The destination type (email/phone)"
+// @Param   dest formData string true "The new email or phone number"
+// @Param   code formData string true "The verification code"
 // @router /reset-email-or-phone [post]
 // @Success 200 {object} object.Userinfo The Response object
 func (c *ApiController) ResetEmailOrPhone() {
@@ -552,6 +571,8 @@ func (c *ApiController) ResetEmailOrPhone() {
 // VerifyCode
 // @Tag Verification API
 // @Title VerifyCode
+// @Description Verify a verification code
+// @Param   body body form.AuthForm true "Verification request"
 // @router /verify-code [post]
 // @Success 200 {object} object.Userinfo The Response object
 func (c *ApiController) VerifyCode() {

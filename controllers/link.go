@@ -29,6 +29,8 @@ type LinkForm struct {
 // Unlink ...
 // @Tag Login API
 // @Title Unlink
+// @Description Unlink a third-party provider from user account
+// @Param   body body controllers.LinkForm true "Unlink request"
 // @router /unlink [post]
 // @Success 200 {object} object.Userinfo The Response object
 func (c *ApiController) Unlink() {
