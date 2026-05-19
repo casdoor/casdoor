@@ -43,8 +43,12 @@ func main() {
 		web.BConfig.WebConfig.Session.SessionProvider = "redis"
 		web.BConfig.WebConfig.Session.SessionProviderConfig = conf.GetConfigString("redisEndpoint")
 	}
-	web.BConfig.WebConfig.Session.SessionCookieLifeTime = 3600 * 24 * 30
-	web.BConfig.WebConfig.Session.SessionGCMaxLifetime = 3600 * 24 * 30
+	sessionCookieLifeTime := 3600 * 24 * 30
+	if val, err := conf.GetConfigInt64("sessionCookieLifeTime"); err == nil && val > 0 {
+		sessionCookieLifeTime = int(val)
+	}
+	web.BConfig.WebConfig.Session.SessionCookieLifeTime = sessionCookieLifeTime
+	web.BConfig.WebConfig.Session.SessionGCMaxLifetime = int64(sessionCookieLifeTime)
 	// web.BConfig.WebConfig.Session.SessionCookieSameSite = http.SameSiteNoneMode
 
 	routers.InitAPI()
