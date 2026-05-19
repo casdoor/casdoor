@@ -73,7 +73,7 @@ func getTokenRetentionInterval(days int) int {
 
 func InitCleanupTokens() {
 	schedule := "0 0 * * *"
-	interval := getTokenRetentionInterval(30)
+	interval := getTokenRetentionInterval(1)
 
 	if err := CleanupTokens(interval); err != nil {
 		fmt.Printf("Error cleaning up tokens at startup: %v\n", err)

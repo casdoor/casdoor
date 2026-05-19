@@ -35,7 +35,7 @@ import (
 
 func main() {
 	web.BConfig.WebConfig.Session.SessionOn = true
-	web.BConfig.WebConfig.Session.SessionName = "casdoor_session_id"
+	web.BConfig.WebConfig.Session.SessionName = conf.GetConfigString("sessionName") //"casdoor_session_id"
 	if conf.GetConfigString("redisEndpoint") == "" {
 		web.BConfig.WebConfig.Session.SessionProvider = "file"
 		web.BConfig.WebConfig.Session.SessionProviderConfig = "./tmp"
@@ -43,9 +43,9 @@ func main() {
 		web.BConfig.WebConfig.Session.SessionProvider = "redis"
 		web.BConfig.WebConfig.Session.SessionProviderConfig = conf.GetConfigString("redisEndpoint")
 	}
-	web.BConfig.WebConfig.Session.SessionCookieLifeTime = 3600 * 24 * 30
-	web.BConfig.WebConfig.Session.SessionGCMaxLifetime = 3600 * 24 * 30
-	// web.BConfig.WebConfig.Session.SessionCookieSameSite = http.SameSiteNoneMode1
+	web.BConfig.WebConfig.Session.SessionCookieLifeTime = conf.GetConfigString("sessionCookieLifeTime") //3600 * 24 * 30
+	web.BConfig.WebConfig.Session.SessionGCMaxLifetime = conf.GetConfigString("sessionGCMaxLifetime") //3600 * 24 * 30
+	// web.BConfig.WebConfig.Session.SessionCookieSameSite = http.SameSiteNoneMode
 
 	routers.InitAPI()
 	object.InitFlag()
