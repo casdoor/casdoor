@@ -315,9 +315,12 @@ func GetGroupUserCount(groupId string, field, value string) (int64, error) {
 	if err != nil {
 		return 0, err
 	}
-	names, err := userEnforcer.GetUserNamesByGroupName(groupId)
+	names, err := getGroupUserNames(groupId)
 	if err != nil {
 		return 0, err
+	}
+	if len(names) == 0 {
+		return 0, nil
 	}
 
 	if field == "" && value == "" {
@@ -339,9 +342,12 @@ func GetPaginationGroupUsers(groupId string, offset, limit int, field, value, so
 	if err != nil {
 		return nil, err
 	}
-	names, err := userEnforcer.GetUserNamesByGroupName(groupId)
+	names, err := getGroupUserNames(groupId)
 	if err != nil {
 		return nil, err
+	}
+	if len(names) == 0 {
+		return users, nil
 	}
 
 	tableNamePrefix := conf.GetConfigString("tableNamePrefix")
@@ -383,9 +389,12 @@ func GetGroupUsers(groupId string) ([]*User, error) {
 	if err != nil {
 		return nil, err
 	}
-	names, err := userEnforcer.GetUserNamesByGroupName(groupId)
+	names, err := getGroupUserNames(groupId)
 	if err != nil {
 		return nil, err
+	}
+	if len(names) == 0 {
+		return users, nil
 	}
 	err = ormer.Engine.Where("owner = ?", owner).In("name", names).Find(&users)
 	if err != nil {
@@ -405,8 +414,7 @@ func ExtendGroupWithUsers(group *Group) error {
 	}
 
 	groupId := group.GetId()
-	userIds := []string{}
-	userIds, err := userEnforcer.GetAllUsersByGroup(groupId)
+	userIds, err := getGroupUserIds(groupId)
 	if err != nil {
 		return err
 	}
@@ -417,7 +425,7 @@ func ExtendGroupWithUsers(group *Group) error {
 
 func ExtendGroupsWithUsers(groups []*Group) error {
 	for _, group := range groups {
-		users, err := userEnforcer.GetAllUsersByGroup(group.GetId())
+		users, err := getGroupUserIds(group.GetId())
 		if err != nil {
 			return err
 		}
@@ -425,6 +433,68 @@ func ExtendGroupsWithUsers(groups []*Group) error {
 		group.Users = users
 	}
 	return nil
+}
+
+func getGroupUserNames(groupId string) ([]string, error) {
+	userIds, err := getGroupUserIds(groupId)
+	if err != nil {
+		return nil, err
+	}
+
+	owner, _, err := util.GetOwnerAndNameFromIdWithError(groupId)
+	if err != nil {
+		return nil, err
+	}
+
+	names := []string{}
+	for _, userId := range userIds {
+		userOwner, name := util.GetOwnerAndNameFromIdNoCheck(userId)
+		if userOwner == owner {
+			names = append(names, name)
+		}
+	}
+	return names, nil
+}
+
+func getGroupUserIds(groupId string) ([]string, error) {
+	owner, _, err := util.GetOwnerAndNameFromIdWithError(groupId)
+	if err != nil {
+		return nil, err
+	}
+
+	userIdMap := map[string]bool{}
+	userIds := []string{}
+	addUserId := func(userId string) {
+		if userId == "" || userIdMap[userId] {
+			return
+		}
+		userIdMap[userId] = true
+		userIds = append(userIds, userId)
+	}
+
+	enforcerUserIds, err := userEnforcer.GetAllUsersByGroup(groupId)
+	if err != nil {
+		return nil, err
+	}
+	for _, userId := range enforcerUserIds {
+		addUserId(userId)
+	}
+
+	users := []*User{}
+	err = ormer.Engine.Cols("owner", "name", "groups").
+		Where("owner = ?", owner).
+		And(builder.Like{"`groups`", groupId}).
+		Find(&users)
+	if err != nil {
+		return nil, err
+	}
+	for _, user := range users {
+		if util.InSlice(user.Groups, groupId) {
+			addUserId(user.GetId())
+		}
+	}
+
+	return userIds, nil
 }
 
 func GroupChangeTrigger(oldName, newName string) error {
