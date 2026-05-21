@@ -182,7 +182,7 @@ func (p *LarkSyncerProvider) getLarkDepartments(accessToken string) ([]string, e
 	pageToken := ""
 
 	for {
-		apiUrl := fmt.Sprintf("%s/open-apis/contact/v3/departments?parent_department_id=0&fetch_child=true&page_size=50", domain)
+		apiUrl := fmt.Sprintf("%s/open-apis/contact/v3/departments?parent_department_id=0&department_id_type=department_id&fetch_child=true&page_size=50", domain)
 		if pageToken != "" {
 			apiUrl += fmt.Sprintf("&page_token=%s", pageToken)
 		}
@@ -223,7 +223,7 @@ func (p *LarkSyncerProvider) getLarkUsersFromDept(accessToken string, deptId str
 	pageToken := ""
 
 	for {
-		apiUrl := fmt.Sprintf("%s/open-apis/contact/v3/users/find_by_department?department_id=%s&page_size=50", domain, deptId)
+		apiUrl := fmt.Sprintf("%s/open-apis/contact/v3/users/find_by_department?department_id=%s&department_id_type=department_id&page_size=50", domain, deptId)
 		if pageToken != "" {
 			apiUrl += fmt.Sprintf("&page_token=%s", pageToken)
 		}
