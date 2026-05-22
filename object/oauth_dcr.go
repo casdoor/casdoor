@@ -120,6 +120,16 @@ func RegisterDynamicClient(req *DynamicClientRegistrationRequest, organization s
 	randomName := util.GetRandomName()
 	appName := fmt.Sprintf("dcr_%s", randomName)
 
+	// Inherit providers and signin methods from the organization's default application
+	// so that DCR-registered apps have at least one working sign-in method out of the box.
+	var inheritedProviders []*ProviderItem
+	var inheritedSigninMethods []*SigninMethod
+	defaultApp, err := GetDefaultApplication(util.GetId("admin", organization))
+	if err == nil && defaultApp != nil {
+		inheritedProviders = defaultApp.Providers
+		inheritedSigninMethods = defaultApp.SigninMethods
+	}
+
 	// Create Application object
 	// Note: DCR applications are created under "admin" owner by default
 	// This can be made configurable in future versions
@@ -142,7 +152,7 @@ func RegisterDynamicClient(req *DynamicClientRegistrationRequest, organization s
 		ClientSecret:         clientSecret,
 		RedirectUris:         req.RedirectUris,
 		GrantTypes:           req.GrantTypes,
-		EnablePassword:       false,
+		EnablePassword:       true,
 		EnableSignUp:         false,
 		DisableSignin:        false,
 		EnableSigninSession:  false,
@@ -155,6 +165,8 @@ func RegisterDynamicClient(req *DynamicClientRegistrationRequest, organization s
 		FormOffset:           2,
 		Tags:                 []string{"dcr"},
 		TermsOfUse:           req.TosUri,
+		Providers:            inheritedProviders,
+		SigninMethods:        inheritedSigninMethods,
 	}
 
 	// Add the application
