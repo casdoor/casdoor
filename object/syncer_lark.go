@@ -117,7 +117,7 @@ type LarkDeptListResp struct {
 	Msg  string `json:"msg"`
 	Data struct {
 		Items []struct {
-			DepartmentId string `json:"department_id"`
+			OpenDepartmentId string `json:"open_department_id"`
 		} `json:"items"`
 		HasMore   bool   `json:"has_more"`
 		PageToken string `json:"page_token"`
@@ -175,10 +175,10 @@ func (p *LarkSyncerProvider) getLarkAccessToken() (string, error) {
 	return tokenResp.TenantAccessToken, nil
 }
 
-// getLarkDepartments gets all department IDs from Lark API
+// getLarkDepartments gets all open department IDs from Lark API
 func (p *LarkSyncerProvider) getLarkDepartments(accessToken string) ([]string, error) {
 	domain := p.getLarkDomain()
-	allDeptIds := []string{"0"} // Start with root department
+	allOpenDeptIds := []string{"0"} // Start with root department
 	pageToken := ""
 
 	for {
@@ -204,7 +204,7 @@ func (p *LarkSyncerProvider) getLarkDepartments(accessToken string) ([]string, e
 		}
 
 		for _, dept := range deptResp.Data.Items {
-			allDeptIds = append(allDeptIds, dept.DepartmentId)
+			allOpenDeptIds = append(allOpenDeptIds, dept.OpenDepartmentId)
 		}
 
 		if !deptResp.Data.HasMore {
@@ -213,7 +213,7 @@ func (p *LarkSyncerProvider) getLarkDepartments(accessToken string) ([]string, e
 		pageToken = deptResp.Data.PageToken
 	}
 
-	return allDeptIds, nil
+	return allOpenDeptIds, nil
 }
 
 // getLarkUsersFromDept gets users from a specific department
