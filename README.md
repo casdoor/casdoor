@@ -76,6 +76,7 @@
 - [Security](#security)
 - [Community and support](#community-and-support)
 - [Contributing](#contributing)
+- [Donate](#donate)
 - [License](#license)
 
 ---
@@ -295,6 +296,17 @@ Please also read our [contribution guidelines](https://casdoor.ai/docs/contribut
 
 - **Crowdin** is used for translation workflows: [casdoor-site on Crowdin](https://crowdin.com/project/casdoor-site).
 - The web app uses **i18next**. When you add or change user-visible strings under [`web/`](https://github.com/casdoor/casdoor/tree/master/web), update the English catalog at [`web/src/locales/en/data.json`](web/src/locales/en/data.json) accordingly.
+
+---
+
+<a id="donate"></a>
+## ❤️ Donate
+
+If you find Casdoor useful, please consider supporting its development:
+
+<a href="https://opencollective.com/casdoor#sponsor"><img src="https://opencollective.com/casdoor/tiers/sponsor.svg?avatarHeight=74" alt="Sponsors on Open Collective"></a>
+
+<a href="https://opencollective.com/casdoor#backer"><img src="https://opencollective.com/casdoor/tiers/backer.svg?avatarHeight=36" alt="Backers on Open Collective"></a>
 
 ---
 
