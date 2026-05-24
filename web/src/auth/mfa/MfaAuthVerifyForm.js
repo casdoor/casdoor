@@ -77,7 +77,7 @@ export function MfaAuthVerifyForm({formValues, authParams, mfaProps, application
         {mfaProps.mfaType === SmsMfaType || mfaProps.mfaType === EmailMfaType ? (
           <Fragment>
             <div style={{marginBottom: 24}}>
-              {i18next.t("mfa:You have enabled Multi-Factor Authentication, Please click 'Send Code' to continue")}
+              {i18next.t("mfa:You have enabled Multi-Factor Authentication, Please click 'Get Code' to continue")}
             </div>
             <MfaVerifySmsForm
               mfaProps={mfaProps}
