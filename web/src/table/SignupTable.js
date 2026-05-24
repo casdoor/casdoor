@@ -38,6 +38,7 @@ export const SignupTableDefaultCssMap = {
   "Agreement": ".login-agreement{}",
   "Signup button": ".signup-button{}\n.signup-link{}",
   "Providers": ".provider-img {\n width: 30px;\n margin: 5px;\n }\n .provider-big-img {\n margin-bottom: 10px;\n }\n ",
+  "Languages": ".signup-languages {\n    top: 55px;\n    right: 5px;\n    position: absolute;\n}",
 };
 
 const {Option} = Select;
@@ -113,6 +114,7 @@ class SignupTable extends React.Component {
             {name: "Agreement", displayName: i18next.t("signup:Agreement")},
             {name: "Signup button", displayName: i18next.t("signup:Signup button")},
             {name: "Providers", displayName: i18next.t("application:Providers")},
+            {name: "Languages", displayName: i18next.t("general:Languages")},
             {name: "Text 1", displayName: i18next.t("signup:Text 1")},
             {name: "Text 2", displayName: i18next.t("signup:Text 2")},
             {name: "Text 3", displayName: i18next.t("signup:Text 3")},
@@ -170,7 +172,7 @@ class SignupTable extends React.Component {
         key: "required",
         width: "80px",
         render: (text, record, index) => {
-          if (!record.visible || ["Signup button", "Providers"].includes(record.name)) {
+          if (!record.visible || ["Signup button", "Providers", "Languages"].includes(record.name)) {
             return null;
           }
 
@@ -187,7 +189,7 @@ class SignupTable extends React.Component {
         key: "prompted",
         width: "80px",
         render: (text, record, index) => {
-          if (["ID", "Signup button", "Providers"].includes(record.name)) {
+          if (["ID", "Signup button", "Providers", "Languages"].includes(record.name)) {
             return null;
           }
 
@@ -320,7 +322,7 @@ class SignupTable extends React.Component {
         key: "regex",
         width: "180px",
         render: (text, record, index) => {
-          if (record.name.startsWith("Text ") || ["Password", "Confirm password", "Signup button", "Provider"].includes(record.name)) {
+          if (record.name.startsWith("Text ") || ["Password", "Confirm password", "Signup button", "Provider", "Providers", "Languages"].includes(record.name)) {
             return null;
           }
 
@@ -369,6 +371,11 @@ class SignupTable extends React.Component {
             options = [
               {id: "big", name: i18next.t("application:Big icon")},
               {id: "small", name: i18next.t("application:Small icon")},
+            ];
+          } else if (record.name === "Languages") {
+            options = [
+              {id: "None", name: i18next.t("general:Default")},
+              {id: "Label", name: i18next.t("signup:Label")},
             ];
           }
 
