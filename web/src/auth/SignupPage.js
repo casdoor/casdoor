@@ -261,6 +261,24 @@ class SignupPage extends React.Component {
     return languagesItem?.rule;
   }
 
+  renderLanguageSelect(application) {
+    const languages = application.organizationObj.languages;
+    if (languages && languages.length <= 1) {
+      const language = (languages.length === 1) ? languages[0] : "en";
+      if (Setting.getLanguage() !== language) {
+        Setting.setLanguage(language);
+      }
+      return null;
+    }
+    return (
+      <LanguageSelect
+        languages={languages}
+        mode={this.getLanguageSelectorMode(application)}
+        style={{top: "55px", right: "5px", position: "absolute"}}
+      />
+    );
+  }
+
   checkCaptchaStatus(values) {
     AuthBackend.getCaptchaStatus(values)
       .then((res) => {
@@ -1086,11 +1104,9 @@ class SignupPage extends React.Component {
               {
                 Setting.renderLogo(application)
               }
-              <LanguageSelect
-                languages={application.organizationObj.languages}
-                mode={this.getLanguageSelectorMode(application)}
-                style={{top: "55px", right: "5px", position: "absolute"}}
-              />
+              {
+                this.renderLanguageSelect(application)
+              }
               {
                 this.renderForm(application)
               }
