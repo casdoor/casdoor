@@ -256,12 +256,16 @@ class SignupPage extends React.Component {
     }
   }
 
-  getLanguageSelectorMode(application) {
-    const languagesItem = application.signinItems?.find((item) => item.name === "Languages");
-    return languagesItem?.rule;
+  getLanguagesItem(application) {
+    return application.signupItems?.find((item) => item.name === "Languages");
   }
 
   renderLanguageSelect(application) {
+    const languagesItem = this.getLanguagesItem(application);
+    if (languagesItem && !languagesItem.visible) {
+      return null;
+    }
+
     const languages = application.organizationObj.languages;
     if (languages && languages.length <= 1) {
       const language = (languages.length === 1) ? languages[0] : "en";
@@ -271,11 +275,14 @@ class SignupPage extends React.Component {
       return null;
     }
     return (
-      <LanguageSelect
-        languages={languages}
-        mode={this.getLanguageSelectorMode(application)}
-        style={{top: "55px", right: "5px", position: "absolute"}}
-      />
+      <div className="signup-languages">
+        {languagesItem?.customCss && <div dangerouslySetInnerHTML={{__html: ("<style>" + languagesItem.customCss.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />}
+        <LanguageSelect
+          languages={languages}
+          mode={languagesItem?.rule}
+          style={{top: "55px", right: "5px", position: "absolute"}}
+        />
+      </div>
     );
   }
 

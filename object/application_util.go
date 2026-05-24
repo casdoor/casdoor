@@ -206,6 +206,7 @@ func extendApplicationWithSignupItems(application *Application) (err error) {
 			{Name: "Email", Visible: true, Required: true, Prompted: false, Rule: "None"},
 			{Name: "Phone", Visible: true, Required: true, Prompted: false, Rule: "None"},
 			{Name: "Agreement", Visible: true, Required: true, Prompted: false, Rule: "None"},
+			{Name: "Languages", Visible: true, Required: false, Prompted: false, Rule: "None"},
 		}
 	}
 	return
