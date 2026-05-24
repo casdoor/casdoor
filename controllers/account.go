@@ -544,6 +544,10 @@ func (c *ApiController) SsoLogout() {
 		return
 	}
 
+	// Send OIDC Back-Channel Logout notifications BEFORE expiring tokens,
+	// because SendBackchannelLogout calls GetActiveTokensByUser (expires_in > 0).
+	object.SendBackchannelLogout(owner, username, currentSessionId, c.Ctx.Request.Host)
+
 	if logoutAllSessions {
 		// Logout from all sessions: expire all tokens and delete all sessions
 		_, err = object.ExpireTokenByUser(owner, username)
@@ -595,9 +599,6 @@ func (c *ApiController) SsoLogout() {
 			return
 		}
 	}
-
-	// Send OIDC Back-Channel Logout notifications (https://openid.net/specs/openid-connect-backchannel-1_0.html)
-	object.SendBackchannelLogout(owner, username, currentSessionId, c.Ctx.Request.Host)
 
 	// Propagate logout to external Custom OAuth2 providers
 	object.InvokeCustomProviderLogout(ssoApplication, ssoSessionToken)
