@@ -143,7 +143,7 @@ export const SendCodeInput = ({value, disabled, captchaValue, useInlineCaptcha, 
           autoComplete="one-time-code"
         />
         <Button style={{fontSize: 14}} type={"primary"} disabled={disabled || buttonLeftTime > 0} loading={buttonLoading} onClick={handleSearch}>
-          {buttonLeftTime > 0 ? `${buttonLeftTime} s` : buttonLoading ? i18next.t("code:Sending") : i18next.t("code:Send Code")}
+          {buttonLeftTime > 0 ? `${buttonLeftTime} s` : buttonLoading ? i18next.t("code:Getting") : i18next.t("code:Get Code")}
         </Button>
       </Space.Compact>
       {

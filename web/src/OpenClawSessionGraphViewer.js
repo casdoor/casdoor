@@ -100,7 +100,7 @@ function getNodeStatusText(node) {
 
   return node.ok
     ? i18next.t("general:OK")
-    : i18next.t("entry:Failed");
+    : i18next.t("webhook:Failed");
 }
 
 function OpenClawNodeHoverCard({node}) {
@@ -672,7 +672,7 @@ class OpenClawSessionGraphViewer extends React.Component {
         }}
       >
         {this.renderToolPairPanel(i18next.t("entry:Call"), callNode, node)}
-        {this.renderToolPairPanel(i18next.t("entry:Result"), resultNode, node)}
+        {this.renderToolPairPanel(i18next.t("payment:Result"), resultNode, node)}
       </div>
     );
   }

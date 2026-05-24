@@ -108,7 +108,7 @@ export default function ScanTable({provider, options}) {
       width: 160,
     },
     {
-      title: i18next.t("general:Version"),
+      title: i18next.t("system:Version"),
       dataIndex: "version",
       key: "version",
       width: 140,
