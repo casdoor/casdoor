@@ -29,12 +29,28 @@ const (
 	headerAllowMethods     = "Access-Control-Allow-Methods"
 	headerAllowHeaders     = "Access-Control-Allow-Headers"
 	headerAllowCredentials = "Access-Control-Allow-Credentials"
+
+	defaultCorsAllowHeaders = "Content-Type, Authorization"
 )
+
+// getCorsAllowHeaders returns the value to advertise in the
+// Access-Control-Allow-Headers response header. The list is read from the
+// optional "corsAllowHeaders" key in app.conf so deployments can permit
+// additional non-safelisted headers (e.g. X-Requested-With sent by Swagger
+// UI, X-CSRF-Token, X-Trace-Id) without forking. Empty / missing config
+// preserves the historical default.
+func getCorsAllowHeaders() string {
+	configured := conf.GetConfigString("corsAllowHeaders")
+	if configured == "" {
+		return defaultCorsAllowHeaders
+	}
+	return configured
+}
 
 func setCorsHeaders(ctx *context.Context, origin string) {
 	ctx.Output.Header(headerAllowOrigin, origin)
 	ctx.Output.Header(headerAllowMethods, "POST, GET, OPTIONS, DELETE")
-	ctx.Output.Header(headerAllowHeaders, "Content-Type, Authorization")
+	ctx.Output.Header(headerAllowHeaders, getCorsAllowHeaders())
 	ctx.Output.Header(headerAllowCredentials, "true")
 
 	if ctx.Input.Method() == "OPTIONS" {
