@@ -490,7 +490,7 @@ func (c *ApiController) ResetEmailOrPhone() {
 	}
 
 	if destType == object.VerifyTypePhone {
-		if object.HasUserByField(user.Owner, "phone", dest) {
+		if object.HasUserByPhoneAndCountryCode(user.Owner, dest, user.GetCountryCode("")) {
 			c.ResponseError(c.T("check:Phone already exists"))
 			return
 		}
