@@ -1639,6 +1639,7 @@ class LoginPage extends React.Component {
                 method={"login"}
                 onButtonClickArgs={[this.state.username, this.state.validEmail ? "email" : "phone", Setting.getApplicationName(application)]}
                 application={application}
+                countryCode={this.form.current?.getFieldValue("countryCode")}
                 captchaValue={this.state.captchaValues}
                 useInlineCaptcha={Setting.isInlineCaptchaEnabled(application)}
                 refreshCaptcha={this.refreshInlineCaptcha}
@@ -1668,6 +1669,7 @@ class LoginPage extends React.Component {
               method={"login"}
               onButtonClickArgs={[this.state.username, this.state.validEmail ? "email" : "phone", Setting.getApplicationName(application)]}
               application={application}
+              countryCode={this.form.current?.getFieldValue("countryCode")}
               captchaValue={this.state.captchaValues}
               useInlineCaptcha={Setting.isInlineCaptchaEnabled(application)}
               refreshCaptcha={this.refreshInlineCaptcha}
