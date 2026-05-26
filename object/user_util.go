@@ -62,6 +62,18 @@ func HasUserByField(organizationName string, field string, value string) bool {
 	return user != nil
 }
 
+func HasUserByPhoneAndCountryCode(organizationName string, phone string, countryCode string) bool {
+	if phone == "" {
+		return false
+	}
+	user := User{Owner: organizationName, Phone: phone, CountryCode: countryCode}
+	existed, err := ormer.Engine.Get(&user)
+	if err != nil {
+		panic(err)
+	}
+	return existed
+}
+
 func GetUserByFields(organization string, field string) (*User, error) {
 	isUsernameLowered := conf.GetConfigBool("isUsernameLowered")
 	if isUsernameLowered {
