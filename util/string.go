@@ -252,6 +252,22 @@ func GetSeperatedPhone(phone string) string {
 	return phone
 }
 
+// ParseE164Phone parses an E.164 international phone number (e.g. "+49768456789")
+// and returns the national number string and the ISO 3166-1 alpha-2 region code (e.g. "768456789", "DE").
+// If the phone does not start with "+" or cannot be parsed, it returns the original phone and an empty region code.
+func ParseE164Phone(phone string) (nationalNumber string, regionCode string) {
+	if !strings.HasPrefix(phone, "+") {
+		return phone, ""
+	}
+	phoneNumberParsed, err := phonenumbers.Parse(phone, "")
+	if err != nil {
+		return phone, ""
+	}
+	nationalNumber = fmt.Sprintf("%d", phoneNumberParsed.GetNationalNumber())
+	regionCode = phonenumbers.GetRegionCodeForNumber(phoneNumberParsed)
+	return nationalNumber, regionCode
+}
+
 func GetMaskedEmail(email string) string {
 	if email == "" {
 		return ""
