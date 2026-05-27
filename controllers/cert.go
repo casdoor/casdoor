@@ -121,7 +121,11 @@ func (c *ApiController) GetCert() {
 		return
 	}
 
-	c.ResponseOk(object.GetMaskedCert(cert))
+	if !c.IsAdmin() {
+		cert = object.GetMaskedCert(cert)
+	}
+
+	c.ResponseOk(cert)
 }
 
 // UpdateCert

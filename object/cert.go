@@ -52,6 +52,12 @@ func GetMaskedCert(cert *Cert) *Cert {
 		return nil
 	}
 
+	if cert.PrivateKey != "" {
+		cert.PrivateKey = "***"
+	}
+	if cert.AccessSecret != "" {
+		cert.AccessSecret = "***"
+	}
 	return cert
 }
 
