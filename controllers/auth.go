@@ -627,7 +627,17 @@ func (c *ApiController) Login() {
 				return
 			}
 
-			if user, err = object.GetUserByFieldsForSharedApp(application, authForm.Organization, authForm.Username); err != nil {
+			// If the username looks like a phone number and a countryCode is provided,
+			// normalise it to E.164 format before looking up the user so that users
+			// from different countries sharing the same local number are distinguished.
+			lookupUsername := authForm.Username
+			if !strings.Contains(authForm.Username, "@") && authForm.CountryCode != "" {
+				if e164, ok := util.GetE164Number(authForm.Username, authForm.CountryCode); ok {
+					lookupUsername = e164
+				}
+			}
+
+			if user, err = object.GetUserByFieldsForSharedApp(application, authForm.Organization, lookupUsername); err != nil {
 				c.ResponseError(err.Error(), nil)
 				return
 			} else if user == nil {
