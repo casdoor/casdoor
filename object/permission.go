@@ -306,6 +306,23 @@ func getPermissionsByUser(userId string) ([]*Permission, error) {
 	return res, nil
 }
 
+func getPermissionsByGroup(groupId string) ([]*Permission, error) {
+	permissions := []*Permission{}
+	err := ormer.Engine.Where("groups like ?", "%"+groupId+"\"%").Find(&permissions)
+	if err != nil {
+		return permissions, err
+	}
+
+	res := []*Permission{}
+	for _, permission := range permissions {
+		if util.InSlice(permission.Groups, groupId) {
+			res = append(res, permission)
+		}
+	}
+
+	return res, nil
+}
+
 func GetPermissionsByRole(roleId string) ([]*Permission, error) {
 	permissions := []*Permission{}
 	err := ormer.Engine.Where("roles like ?", "%"+roleId+"\"%").Find(&permissions)
@@ -353,6 +370,31 @@ func getPermissionsAndRolesByUser(userId string) ([]*Permission, []*Role, error)
 
 		if _, ok := existedPerms[perm.Name]; !ok {
 			existedPerms[perm.Name] = struct{}{}
+		}
+	}
+
+	user, err := GetUser(userId)
+	if err != nil {
+		return nil, nil, err
+	}
+	if user != nil {
+		groupIds := append([]string{}, user.Groups...)
+		if len(user.Groups) > 0 {
+			groupIds = append(groupIds, "*", util.GetId(user.Owner, "*"))
+		}
+
+		for _, groupId := range groupIds {
+			perms, err := getPermissionsByGroup(groupId)
+			if err != nil {
+				return nil, nil, err
+			}
+			for _, perm := range perms {
+				perm.Users = nil
+				if _, ok := existedPerms[perm.Name]; !ok {
+					existedPerms[perm.Name] = struct{}{}
+					permissions = append(permissions, perm)
+				}
+			}
 		}
 	}
 
@@ -454,6 +496,24 @@ func (p *Permission) isUserHit(name string) bool {
 			continue
 		}
 		if userOrg == targetOrg && (userName == "*" || userName == targetName) {
+			return true
+		}
+	}
+	return false
+}
+
+func (p *Permission) isGroupHit(userId string) bool {
+	user, err := GetUser(userId)
+	if err != nil || user == nil {
+		return false
+	}
+
+	for _, group := range p.Groups {
+		if group == "*" || group == util.GetId(p.Owner, "*") {
+			return len(user.Groups) > 0
+		}
+
+		if util.InSlice(user.Groups, group) {
 			return true
 		}
 	}
