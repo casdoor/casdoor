@@ -127,22 +127,39 @@ func getPolicies(permission *Permission) [][]string {
 	permissionId := permission.GetId()
 	domainExist := len(permission.Domains) > 0
 
-	usersAndRoles := append(permission.Users, permission.Roles...)
-	for _, userOrRole := range usersAndRoles {
+	subjects := make([]string, 0, len(permission.Users)+len(permission.Groups)+len(permission.Roles))
+	subjects = append(subjects, permission.Users...)
+	for _, group := range permission.Groups {
+		subjects = append(subjects, getPermissionGroupSubject(permission.Owner, group))
+	}
+	subjects = append(subjects, permission.Roles...)
+
+	for _, subject := range subjects {
 		for _, resource := range permission.Resources {
 			for _, action := range permission.Actions {
 				if domainExist {
 					for _, domain := range permission.Domains {
-						policies = append(policies, []string{userOrRole, domain, resource, action, strings.ToLower(permission.Effect), permissionId})
+						policies = append(policies, []string{subject, domain, resource, action, strings.ToLower(permission.Effect), permissionId})
 					}
 				} else {
-					policies = append(policies, []string{userOrRole, resource, action, strings.ToLower(permission.Effect), "", permissionId})
+					policies = append(policies, []string{subject, resource, action, strings.ToLower(permission.Effect), "", permissionId})
 				}
 			}
 		}
 	}
 
 	return policies
+}
+
+func getPermissionGroupId(permissionOwner string, groupId string) string {
+	if groupId == "*" {
+		return util.GetId(permissionOwner, "*")
+	}
+	return groupId
+}
+
+func getPermissionGroupSubject(permissionOwner string, groupId string) string {
+	return GetGroupWithPrefix(getPermissionGroupId(permissionOwner, groupId))
 }
 
 type permissionRoleResolver struct {
@@ -220,6 +237,81 @@ func (r *permissionRoleResolver) getRolesInRole(permissionOwner string, roleId s
 	return roles, nil
 }
 
+type permissionGroupResolver struct {
+	groupsByOwner map[string][]*Group
+	usersByGroup  map[string][]string
+}
+
+func newPermissionGroupResolver() *permissionGroupResolver {
+	return &permissionGroupResolver{
+		groupsByOwner: map[string][]*Group{},
+		usersByGroup:  map[string][]string{},
+	}
+}
+
+func (r *permissionGroupResolver) getGroups(owner string) ([]*Group, error) {
+	if groups, ok := r.groupsByOwner[owner]; ok {
+		return groups, nil
+	}
+
+	groups, err := GetGroups(owner)
+	if err != nil {
+		return nil, err
+	}
+
+	r.groupsByOwner[owner] = groups
+	return groups, nil
+}
+
+func (r *permissionGroupResolver) getUsersInGroup(permissionOwner string, groupId string) ([]string, error) {
+	groupId = getPermissionGroupId(permissionOwner, groupId)
+	if users, ok := r.usersByGroup[groupId]; ok {
+		return users, nil
+	}
+
+	groupOwner, groupName, err := util.GetOwnerAndNameFromIdWithError(groupId)
+	if err != nil {
+		return nil, err
+	}
+
+	if groupName == "*" {
+		groups, err := r.getGroups(groupOwner)
+		if err != nil {
+			return nil, err
+		}
+
+		usersByID := map[string]struct{}{}
+		for _, group := range groups {
+			groupUsers, err := r.getUsersInGroup(groupOwner, group.GetId())
+			if err != nil {
+				return nil, err
+			}
+			for _, user := range groupUsers {
+				usersByID[user] = struct{}{}
+			}
+		}
+
+		users := make([]string, 0, len(usersByID))
+		for user := range usersByID {
+			users = append(users, user)
+		}
+		r.usersByGroup[groupId] = users
+		return users, nil
+	}
+
+	if userEnforcer == nil {
+		return []string{}, nil
+	}
+
+	users, err := userEnforcer.GetAllUsersByGroup(groupId)
+	if err != nil {
+		return nil, err
+	}
+
+	r.usersByGroup[groupId] = users
+	return users, nil
+}
+
 func getPermissionEnforcerTargets(permission *Permission, permissionIDs ...string) ([]*Permission, error) {
 	if len(permissionIDs) == 0 {
 		return []*Permission{permission}, nil
@@ -266,9 +358,28 @@ func getRuntimeGroupingPolicies(permissions []*Permission) ([][]string, error) {
 	var groupingPolicies [][]string
 	visitedPolicies := map[string]struct{}{}
 	roleResolver := newPermissionRoleResolver()
+	groupResolver := newPermissionGroupResolver()
 
 	for _, permission := range permissions {
 		domainExist := len(permission.Domains) > 0
+		for _, groupId := range permission.Groups {
+			groupSubject := getPermissionGroupSubject(permission.Owner, groupId)
+			users, err := groupResolver.getUsersInGroup(permission.Owner, groupId)
+			if err != nil {
+				return nil, err
+			}
+
+			for _, user := range users {
+				if domainExist {
+					for _, domain := range permission.Domains {
+						appendRuntimeGroupingPolicy(&groupingPolicies, visitedPolicies, newRuntimeGroupingPolicy(user, groupSubject, domain))
+					}
+				} else {
+					appendRuntimeGroupingPolicy(&groupingPolicies, visitedPolicies, newRuntimeGroupingPolicy(user, groupSubject, ""))
+				}
+			}
+		}
+
 		for _, roleId := range permission.Roles {
 			visited := map[string]struct{}{}
 			rolesInRole, err := roleResolver.getRolesInRole(permission.Owner, roleId, visited)
@@ -285,6 +396,31 @@ func getRuntimeGroupingPolicies(permissions []*Permission) ([][]string, error) {
 						}
 					} else {
 						appendRuntimeGroupingPolicy(&groupingPolicies, visitedPolicies, newRuntimeGroupingPolicy(subUser, currentRoleID, ""))
+					}
+				}
+
+				for _, subGroup := range role.Groups {
+					groupSubject := getPermissionGroupSubject(role.Owner, subGroup)
+					if domainExist {
+						for _, domain := range permission.Domains {
+							appendRuntimeGroupingPolicy(&groupingPolicies, visitedPolicies, newRuntimeGroupingPolicy(groupSubject, currentRoleID, domain))
+						}
+					} else {
+						appendRuntimeGroupingPolicy(&groupingPolicies, visitedPolicies, newRuntimeGroupingPolicy(groupSubject, currentRoleID, ""))
+					}
+
+					users, err := groupResolver.getUsersInGroup(role.Owner, subGroup)
+					if err != nil {
+						return nil, err
+					}
+					for _, user := range users {
+						if domainExist {
+							for _, domain := range permission.Domains {
+								appendRuntimeGroupingPolicy(&groupingPolicies, visitedPolicies, newRuntimeGroupingPolicy(user, groupSubject, domain))
+							}
+						} else {
+							appendRuntimeGroupingPolicy(&groupingPolicies, visitedPolicies, newRuntimeGroupingPolicy(user, groupSubject, ""))
+						}
 					}
 				}
 
