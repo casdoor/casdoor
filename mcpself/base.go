@@ -102,6 +102,30 @@ type DeleteApplicationArgs struct {
 	Application object.Application `json:"application"`
 }
 
+type GetUsersArgs struct {
+	Owner string `json:"owner"`
+}
+
+type GetUserArgs struct {
+	Id    string `json:"id"`
+	Owner string `json:"owner"`
+	Email string `json:"email"`
+	Phone string `json:"phone"`
+}
+
+type AddUserArgs struct {
+	User object.User `json:"user"`
+}
+
+type UpdateUserArgs struct {
+	Id   string      `json:"id"`
+	User object.User `json:"user"`
+}
+
+type DeleteUserArgs struct {
+	User object.User `json:"user"`
+}
+
 type McpCallToolResult struct {
 	Content []TextContent `json:"content"`
 	IsError bool          `json:"isError,omitempty"`
@@ -363,6 +387,41 @@ func (c *McpController) handleToolsCall(req McpRequest) {
 			return
 		}
 		c.handleDeleteApplicationTool(req.ID, args)
+	case "get_users":
+		var args GetUsersArgs
+		if err := json.Unmarshal(params.Arguments, &args); err != nil {
+			c.sendInvalidParamsError(req.ID, err.Error())
+			return
+		}
+		c.handleGetUsersTool(req.ID, args)
+	case "get_user":
+		var args GetUserArgs
+		if err := json.Unmarshal(params.Arguments, &args); err != nil {
+			c.sendInvalidParamsError(req.ID, err.Error())
+			return
+		}
+		c.handleGetUserTool(req.ID, args)
+	case "add_user":
+		var args AddUserArgs
+		if err := json.Unmarshal(params.Arguments, &args); err != nil {
+			c.sendInvalidParamsError(req.ID, err.Error())
+			return
+		}
+		c.handleAddUserTool(req.ID, args)
+	case "update_user":
+		var args UpdateUserArgs
+		if err := json.Unmarshal(params.Arguments, &args); err != nil {
+			c.sendInvalidParamsError(req.ID, err.Error())
+			return
+		}
+		c.handleUpdateUserTool(req.ID, args)
+	case "delete_user":
+		var args DeleteUserArgs
+		if err := json.Unmarshal(params.Arguments, &args); err != nil {
+			c.sendInvalidParamsError(req.ID, err.Error())
+			return
+		}
+		c.handleDeleteUserTool(req.ID, args)
 	default:
 		c.McpResponseError(req.ID, -32602, "Invalid tool name", fmt.Sprintf("Tool '%s' not found", params.Name))
 	}
@@ -494,6 +553,91 @@ func (c *McpController) getAllTools() []McpTool {
 					},
 				},
 				"required": []string{"application"},
+			},
+		},
+		{
+			Name:        "get_users",
+			Description: "Get all users for a specific owner (organization)",
+			InputSchema: map[string]interface{}{
+				"type": "object",
+				"properties": map[string]interface{}{
+					"owner": map[string]interface{}{
+						"type":        "string",
+						"description": "The owner (organization name) of users",
+					},
+				},
+				"required": []string{"owner"},
+			},
+		},
+		{
+			Name:        "get_user",
+			Description: "Get the detail of a specific user by id, or by owner+email, or by owner+phone",
+			InputSchema: map[string]interface{}{
+				"type": "object",
+				"properties": map[string]interface{}{
+					"id": map[string]interface{}{
+						"type":        "string",
+						"description": "The id (owner/name) of the user",
+					},
+					"owner": map[string]interface{}{
+						"type":        "string",
+						"description": "The owner (organization name) — used together with email or phone",
+					},
+					"email": map[string]interface{}{
+						"type":        "string",
+						"description": "Look up user by email (requires owner)",
+					},
+					"phone": map[string]interface{}{
+						"type":        "string",
+						"description": "Look up user by phone (requires owner)",
+					},
+				},
+			},
+		},
+		{
+			Name:        "add_user",
+			Description: "Add a new user",
+			InputSchema: map[string]interface{}{
+				"type": "object",
+				"properties": map[string]interface{}{
+					"user": map[string]interface{}{
+						"type":        "object",
+						"description": "The user object to add",
+					},
+				},
+				"required": []string{"user"},
+			},
+		},
+		{
+			Name:        "update_user",
+			Description: "Update an existing user",
+			InputSchema: map[string]interface{}{
+				"type": "object",
+				"properties": map[string]interface{}{
+					"id": map[string]interface{}{
+						"type":        "string",
+						"description": "The id (owner/name) of the user to update",
+					},
+					"user": map[string]interface{}{
+						"type":        "object",
+						"description": "The updated user object",
+					},
+				},
+				"required": []string{"id", "user"},
+			},
+		},
+		{
+			Name:        "delete_user",
+			Description: "Delete a user",
+			InputSchema: map[string]interface{}{
+				"type": "object",
+				"properties": map[string]interface{}{
+					"user": map[string]interface{}{
+						"type":        "object",
+						"description": "The user object to delete",
+					},
+				},
+				"required": []string{"user"},
 			},
 		},
 	}
