@@ -308,7 +308,7 @@ func getPermissionsByUser(userId string) ([]*Permission, error) {
 
 func getPermissionsByGroup(groupId string) ([]*Permission, error) {
 	permissions := []*Permission{}
-	err := ormer.Engine.Where("groups like ?", "%"+groupId+"\"%").Find(&permissions)
+	err := ormer.Engine.Where("`groups` like ?", "%"+groupId+"\"%").Find(&permissions)
 	if err != nil {
 		return permissions, err
 	}
