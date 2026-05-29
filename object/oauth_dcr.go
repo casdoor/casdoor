@@ -120,14 +120,22 @@ func RegisterDynamicClient(req *DynamicClientRegistrationRequest, organization s
 	randomName := util.GetRandomName()
 	appName := fmt.Sprintf("dcr_%s", randomName)
 
-	// Inherit providers and signin methods from the organization's default application
-	// so that DCR-registered apps have at least one working sign-in method out of the box.
+	// Inherit providers, signin methods, and branding from the organization's default application
+	// so that DCR-registered apps have a working sign-in method and correct branding out of the box.
 	var inheritedProviders []*ProviderItem
 	var inheritedSigninMethods []*SigninMethod
+	var inheritedLogo, inheritedFooterHtml, inheritedFormCss string
+	var inheritedThemeData *ThemeData
+	var inheritedSigninItems []*SigninItem
 	defaultApp, err := GetDefaultApplication(util.GetId("admin", organization))
 	if err == nil && defaultApp != nil {
 		inheritedProviders = defaultApp.Providers
 		inheritedSigninMethods = defaultApp.SigninMethods
+		inheritedLogo = defaultApp.Logo
+		inheritedThemeData = defaultApp.ThemeData
+		inheritedFooterHtml = defaultApp.FooterHtml
+		inheritedFormCss = defaultApp.FormCss
+		inheritedSigninItems = defaultApp.SigninItems
 	}
 
 	// Create Application object
@@ -146,7 +154,11 @@ func RegisterDynamicClient(req *DynamicClientRegistrationRequest, organization s
 		Category:             "Agent",
 		Type:                 "MCP",
 		Scopes:               []*ScopeItem{},
-		Logo:                 req.LogoUri,
+		Logo:                 firstNonEmpty(req.LogoUri, inheritedLogo),
+		ThemeData:            inheritedThemeData,
+		FooterHtml:           inheritedFooterHtml,
+		FormCss:              inheritedFormCss,
+		SigninItems:          inheritedSigninItems,
 		HomepageUrl:          req.ClientUri,
 		ClientId:             clientId,
 		ClientSecret:         clientSecret,
