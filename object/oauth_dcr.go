@@ -127,6 +127,7 @@ func RegisterDynamicClient(req *DynamicClientRegistrationRequest, organization s
 	var inheritedLogo, inheritedFooterHtml, inheritedFormCss string
 	var inheritedThemeData *ThemeData
 	var inheritedSigninItems []*SigninItem
+	var inheritedEnableSigninSession, inheritedEnableWebAuthn bool
 	defaultApp, err := GetDefaultApplication(util.GetId("admin", organization))
 	if err == nil && defaultApp != nil {
 		inheritedProviders = defaultApp.Providers
@@ -136,6 +137,8 @@ func RegisterDynamicClient(req *DynamicClientRegistrationRequest, organization s
 		inheritedFooterHtml = defaultApp.FooterHtml
 		inheritedFormCss = defaultApp.FormCss
 		inheritedSigninItems = defaultApp.SigninItems
+		inheritedEnableSigninSession = defaultApp.EnableSigninSession
+		inheritedEnableWebAuthn = defaultApp.EnableWebAuthn
 	}
 
 	// Create Application object
@@ -167,9 +170,10 @@ func RegisterDynamicClient(req *DynamicClientRegistrationRequest, organization s
 		EnablePassword:       true,
 		EnableSignUp:         false,
 		DisableSignin:        false,
-		EnableSigninSession:  false,
+		EnableSigninSession:  inheritedEnableSigninSession,
 		EnableCodeSignin:     true,
 		EnableAutoSignin:     false,
+		EnableWebAuthn:       inheritedEnableWebAuthn,
 		TokenFormat:          "JWT",
 		ExpireInHours:        168,
 		RefreshExpireInHours: 168,
