@@ -447,6 +447,10 @@ func GroupChangeTrigger(oldName, newName string) error {
 		if err != nil {
 			return err
 		}
+		_, err = userEnforcer.UpdateGroupsForUser(user.GetId(), user.Groups)
+		if err != nil {
+			return err
+		}
 	}
 
 	groups := []*Group{}
