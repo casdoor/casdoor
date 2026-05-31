@@ -1084,6 +1084,14 @@ export function trim(str, ch) {
   return (start > 0 || end < str.length) ? str.substring(start, end) : str;
 }
 
+export function getStyleInnerCss(css) {
+  if (!css) {
+    return css;
+  }
+  const match = css.match(/^\s*<style[^>]*>([\s\S]*?)<\/style>\s*$/i);
+  return match ? match[1] : css;
+}
+
 export function isMobile() {
   // return getIsMobileView();
   return isMobileDevice;
