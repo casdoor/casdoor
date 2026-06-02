@@ -84,7 +84,7 @@ func (c *McpController) handleUpdateApplicationTool(id interface{}, args UpdateA
 		return
 	}
 
-	affected, err := object.UpdateApplication(args.Id, &args.Application, c.IsGlobalAdmin(), c.GetAcceptLanguage())
+	affected, err := object.UpdateApplication(args.Id, &args.Application, c.IsGlobalAdmin(), c.GetAcceptLanguage(), nil)
 	if err != nil {
 		c.SendToolErrorResult(id, err.Error())
 		return
