@@ -17,6 +17,7 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/beego/beego/v2/core/utils/pagination"
 	"github.com/casdoor/casdoor/object"
@@ -224,6 +225,7 @@ func (c *ApiController) GetOrganizationApplications() {
 // @router /update-application [post]
 func (c *ApiController) UpdateApplication() {
 	id := c.Ctx.Input.Query("id")
+	columnsStr := c.Ctx.Input.Query("columns")
 
 	var application object.Application
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &application)
@@ -237,7 +239,14 @@ func (c *ApiController) UpdateApplication() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.UpdateApplication(id, &application, c.IsGlobalAdmin(), c.GetAcceptLanguage()))
+	columns := []string{}
+	if columnsStr != "" {
+		for _, col := range strings.Split(columnsStr, ",") {
+			columns = append(columns, util.CamelToSnakeCase(col))
+		}
+	}
+
+	c.Data["json"] = wrapActionResponse(object.UpdateApplication(id, &application, c.IsGlobalAdmin(), c.GetAcceptLanguage(), columns))
 	c.ServeJSON()
 }
 
