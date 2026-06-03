@@ -476,9 +476,26 @@ func SyncLdapUsers(owner string, syncUsers []LdapUser, ldapId string) (existUser
 		_, found := existUuidSet[syncUser.Uuid]
 		if found {
 			existUsers = append(existUsers, syncUser)
-		}
 
-		if !found {
+			user, err := getUserByLdap(owner, syncUser.Uuid)
+			if err != nil {
+				return nil, nil, err
+			}
+			if user == nil {
+				failedUsers = append(failedUsers, syncUser)
+				continue
+			}
+
+			user.Groups = buildLdapUserGroups(organization.Name, ldap, syncUser.MemberOf)
+			affected, err := UpdateUser(user.GetId(), user, []string{"groups"}, false)
+			if err != nil {
+				return nil, nil, err
+			}
+			if !affected {
+				failedUsers = append(failedUsers, syncUser)
+			}
+
+		} else {
 			score, err := organization.GetInitScore()
 			if err != nil {
 				return nil, nil, err
@@ -510,21 +527,7 @@ func SyncLdapUsers(owner string, syncUsers []LdapUser, ldapId string) (existUser
 			}
 			formatUserPhone(newUser)
 
-			// Assign user to groups based on memberOf attribute
-			userGroups := []string{}
-			if len(ldap.DefaultGroups) > 0 {
-				userGroups = append(userGroups, ldap.DefaultGroups...)
-			} else if ldap.DefaultGroup != "" {
-				userGroups = append(userGroups, ldap.DefaultGroup)
-			}
-
-			// Extract group names from memberOf DNs
-			for _, memberDn := range syncUser.MemberOf {
-				groupName := dnToGroupName(owner, memberDn)
-				if groupName != "" {
-					userGroups = append(userGroups, groupName)
-				}
-			}
+			userGroups := buildLdapUserGroups(organization.Name, ldap, syncUser.MemberOf)
 
 			if len(userGroups) > 0 {
 				newUser.Groups = userGroups
@@ -546,6 +549,42 @@ func SyncLdapUsers(owner string, syncUsers []LdapUser, ldapId string) (existUser
 	}
 
 	return existUsers, failedUsers, err
+}
+
+func getUserByLdap(owner string, ldapUuid string) (*User, error) {
+	if owner == "" || ldapUuid == "" {
+		return nil, nil
+	}
+
+	user := User{}
+	existed, err := ormer.Engine.Where("owner = ? and ldap = ?", owner, ldapUuid).Get(&user)
+	if err != nil {
+		return nil, err
+	}
+
+	if existed {
+		return &user, nil
+	}
+
+	return nil, nil
+}
+
+func buildLdapUserGroups(owner string, ldap *Ldap, memberOf []string) []string {
+	userGroups := []string{}
+	if len(ldap.DefaultGroups) > 0 {
+		userGroups = append(userGroups, ldap.DefaultGroups...)
+	} else if ldap.DefaultGroup != "" {
+		userGroups = append(userGroups, ldap.DefaultGroup)
+	}
+
+	for _, memberDn := range memberOf {
+		groupName := dnToGroupName(owner, memberDn)
+		if groupName != "" {
+			userGroups = append(userGroups, strings.Join([]string{owner, groupName}, "/"))
+		}
+	}
+
+	return userGroups
 }
 
 // SyncLdapGroups syncs LDAP groups/OUs to Casdoor groups with hierarchy
