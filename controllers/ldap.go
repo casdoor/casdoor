@@ -200,7 +200,7 @@ func (c *ApiController) AddLdap() {
 func (c *ApiController) UpdateLdap() {
 	var ldap object.Ldap
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &ldap)
-	if err != nil || util.IsStringsEmpty(ldap.Owner, ldap.ServerName, ldap.Host, ldap.Username, ldap.Password, ldap.BaseDn) {
+	if err != nil || util.IsStringsEmpty(ldap.Id, ldap.Owner, ldap.ServerName, ldap.Host, ldap.Username, ldap.Password, ldap.BaseDn) {
 		c.ResponseError(c.T("general:Missing parameter"))
 		return
 	}
@@ -208,6 +208,10 @@ func (c *ApiController) UpdateLdap() {
 	prevLdap, err := object.GetLdap(ldap.Id)
 	if err != nil {
 		c.ResponseError(err.Error())
+		return
+	}
+	if prevLdap == nil {
+		c.ResponseError(c.T("general:The object does not exist"))
 		return
 	}
 
