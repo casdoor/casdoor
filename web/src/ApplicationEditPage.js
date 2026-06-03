@@ -512,6 +512,20 @@ class ApplicationEditPage extends React.Component {
           </Row>
           <Row style={{marginTop: "20px"}} >
             <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
+              {Setting.getLabel(i18next.t("application:Default tag"), i18next.t("application:Default tag - Tooltip"))} :
+            </Col>
+            <Col span={21} >
+              <Select virtual={false} allowClear style={{width: "100%"}} placeholder={i18next.t("general:Default")}
+                value={this.state.application.defaultTag || undefined}
+                onChange={(value) => {this.updateApplicationField("defaultTag", value || "");}}>
+                {
+                  this.state.application.tags?.map((item, index) => <Option key={index} value={item}>{item}</Option>)
+                }
+              </Select>
+            </Col>
+          </Row>
+          <Row style={{marginTop: "20px"}} >
+            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
               {Setting.getLabel(i18next.t("application:Order"), i18next.t("application:Order - Tooltip"))} :
             </Col>
             <Col span={21} >

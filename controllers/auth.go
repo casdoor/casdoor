@@ -1053,6 +1053,10 @@ func (c *ApiController) Login() {
 						user.Groups = []string{application.DefaultGroup}
 					}
 
+					if application.DefaultTag != "" && user.Tag == "" {
+						user.Tag = application.DefaultTag
+					}
+
 					var affected bool
 					affected, err = object.AddUser(user, c.GetAcceptLanguage())
 					if err != nil {

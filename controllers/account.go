@@ -287,6 +287,10 @@ func (c *ApiController) Signup() {
 		user.Groups = []string{application.DefaultGroup}
 	}
 
+	if application.DefaultTag != "" && user.Tag == "" {
+		user.Tag = application.DefaultTag
+	}
+
 	affected, err := object.AddUser(user, c.GetAcceptLanguage())
 	if err != nil {
 		c.ResponseError(err.Error())
