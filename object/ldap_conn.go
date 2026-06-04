@@ -661,64 +661,29 @@ func SyncLdapGroups(owner string, ldapGroups []LdapGroup, ldapId string) (newGro
 	return newGroups, updatedGroups, nil
 }
 
-// dnToGroupName converts an LDAP DN to a Casdoor group name
+// dnToGroupName converts an LDAP DN to a Casdoor group name.
+// It uses only the first RDN value (e.g. the CN= part) to preserve the original
+// group name including Unicode/CJK characters. Only '/' is replaced per checkGroupName.
 func dnToGroupName(owner, dn string) string {
 	if dn == "" {
 		return ""
 	}
 
-	// Parse DN to extract meaningful components
+	// Take only the first RDN (leftmost component), skipping DC parts
 	parts := strings.Split(dn, ",")
-
-	// Build a hierarchical name from DN components (excluding DC parts)
-	var nameComponents []string
 	for _, part := range parts {
 		part = strings.TrimSpace(part)
-		lowerPart := strings.ToLower(part)
-
-		// Skip DC (domain component) parts
-		if strings.HasPrefix(lowerPart, "dc=") {
+		if strings.HasPrefix(strings.ToLower(part), "dc=") {
 			continue
 		}
-
-		// Extract value after = sign
 		if idx := strings.Index(part, "="); idx != -1 {
 			value := part[idx+1:]
-			nameComponents = append(nameComponents, value)
+			// checkGroupName only forbids '/' — replace it, keep everything else (including Unicode)
+			return strings.ReplaceAll(value, "/", "_")
 		}
 	}
 
-	if len(nameComponents) == 0 {
-		return ""
-	}
-
-	// Reverse to get top-down hierarchy
-	for i, j := 0, len(nameComponents)-1; i < j; i, j = i+1, j-1 {
-		nameComponents[i], nameComponents[j] = nameComponents[j], nameComponents[i]
-	}
-
-	// Join with underscore to create a unique group name
-	groupName := strings.Join(nameComponents, "_")
-
-	// Sanitize group name - replace invalid characters with underscores
-	// Keep only alphanumeric characters, underscores, and hyphens
-	var sanitized strings.Builder
-	for _, r := range groupName {
-		if (r >= 'a' && r <= 'z') || (r >= 'A' && r <= 'Z') || (r >= '0' && r <= '9') || r == '_' || r == '-' {
-			sanitized.WriteRune(r)
-		} else {
-			sanitized.WriteRune('_')
-		}
-	}
-	groupName = sanitized.String()
-
-	// Remove consecutive underscores and trim
-	for strings.Contains(groupName, "__") {
-		groupName = strings.ReplaceAll(groupName, "__", "_")
-	}
-	groupName = strings.Trim(groupName, "_")
-
-	return groupName
+	return ""
 }
 
 func GetExistUuids(owner string, uuids []string) ([]string, error) {
