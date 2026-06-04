@@ -655,6 +655,32 @@ class SignupPage extends React.Component {
           }} />
         </Form.Item>
       );
+    } else if (signupItem.name === "Tag") {
+      return (
+        <Form.Item
+          name="tag"
+          className="signup-tag"
+          label={signupItem.label ? signupItem.label : i18next.t("general:Tag")}
+          rules={[
+            {
+              required: required,
+              message: i18next.t("signup:Please select your tag!"),
+            },
+          ]}
+        >
+          <Select
+            className="signup-tag-select"
+            placeholder={signupItem.placeholder || i18next.t("signup:Please select your tag!")}
+            allowClear={!required}
+          >
+            {
+              (signupItem.options?.length > 0 ? signupItem.options : application.tags ?? []).map((tag, index) => (
+                <Select.Option key={index} value={tag}>{tag}</Select.Option>
+              ))
+            }
+          </Select>
+        </Form.Item>
+      );
     } else if (signupItem.name === "Email" || signupItem.name === "Phone" || signupItem.name === "Email or Phone" || signupItem.name === "Phone or Email") {
       const renderEmailItem = () => {
         return (

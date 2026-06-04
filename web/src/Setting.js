@@ -2386,7 +2386,7 @@ export function getFormTypeItems(formType) {
       {name: "affiliation", label: "user:Affiliation", visible: true, width: "140"},
       {name: "region", label: "user:Country/Region", visible: true, width: "140"},
       {name: "type", label: "general:User type", visible: true, width: "120"},
-      {name: "tag", label: "user:Tag", visible: true, width: "110"},
+      {name: "tag", label: "general:Tag", visible: true, width: "110"},
       {name: "isAdmin", label: "user:Is admin", visible: true, width: "120"},
       {name: "isForbidden", label: "user:Is forbidden", visible: true, width: "110"},
       {name: "isDeleted", label: "user:Is deleted", visible: true, width: "110"},
