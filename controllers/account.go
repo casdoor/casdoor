@@ -264,7 +264,7 @@ func (c *ApiController) Signup() {
 		RegisterSource:    fmt.Sprintf("%s/%s", authForm.Organization, application.Name),
 	}
 
-	if len(organization.Tags) > 0 {
+	if user.Tag == "" && len(organization.Tags) > 0 {
 		tokens := strings.Split(organization.Tags[0], "|")
 		if len(tokens) > 0 {
 			user.Tag = tokens[0]
