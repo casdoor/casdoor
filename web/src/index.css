@@ -1,4 +1,8 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+/* Inter Variable font (self-hosted via @fontsource-variable/inter).
+   Replaces the previous Google Fonts CDN @import for GDPR compliance.
+   opsz + wght axes match the prior CDN URL — full variable font. */
+@import "@fontsource-variable/inter/opsz.css";
+@import "@fontsource-variable/inter/opsz-italic.css";
 
 /* AI-themed loading dots animation used by common/Loading.js */
 @keyframes casdoor-ai-bounce {
@@ -24,7 +28,7 @@ html::-webkit-scrollbar {
 body {
   margin: 0;
   font-family:
-    "Inter",
+    "Inter Variable",
     -apple-system,
     BlinkMacSystemFont,
     "Segoe UI",
@@ -270,5 +274,5 @@ a[href^="mailto:"]:active {
 .ant-message .ant-message-notice-content,
 .ant-message .ant-message-custom-content,
 .ant-message .ant-message-custom-content span {
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif !important;
+  font-family: "Inter Variable", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif !important;
 }
