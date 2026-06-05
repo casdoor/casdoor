@@ -130,7 +130,7 @@ func GetOidcDiscovery(host string, applicationName string) OidcDiscovery {
 	}
 
 	// Default OIDC scopes
-	scopes := []string{"openid", "email", "profile", "address", "phone", "offline_access", "device_sso"}
+	scopes := []string{"openid", "email", "profile", "address", "phone", "offline_access"}
 
 	// Merge application-specific custom scopes if application is provided
 	if applicationName != "" {
