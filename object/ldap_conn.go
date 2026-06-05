@@ -472,6 +472,17 @@ func SyncLdapUsers(owner string, syncUsers []LdapUser, ldapId string) (existUser
 		existUuidSet[uuid] = struct{}{}
 	}
 
+	// Build a set of group names that actually exist in Casdoor for this
+	// organization. memberOf groups that have no matching Casdoor group
+	// (e.g. a CJK group like "项目部" that was not synced) are skipped, so the
+	// user won't end up referencing an empty/non-existent group.
+	existingGroupNameSet := make(map[string]struct{})
+	if casdoorGroups, gErr := GetGroups(owner); gErr == nil {
+		for _, g := range casdoorGroups {
+			existingGroupNameSet[g.Name] = struct{}{}
+		}
+	}
+
 	for _, syncUser := range syncUsers {
 		_, found := existUuidSet[syncUser.Uuid]
 		if found {
@@ -512,18 +523,40 @@ func SyncLdapUsers(owner string, syncUsers []LdapUser, ldapId string) (existUser
 
 			// Assign user to groups based on memberOf attribute
 			userGroups := []string{}
-			if len(ldap.DefaultGroups) > 0 {
-				userGroups = append(userGroups, ldap.DefaultGroups...)
-			} else if ldap.DefaultGroup != "" {
-				userGroups = append(userGroups, ldap.DefaultGroup)
+			seenGroups := make(map[string]struct{})
+			addGroup := func(groupId string) {
+				if groupId == "" {
+					return
+				}
+				if _, ok := seenGroups[groupId]; ok {
+					return
+				}
+				seenGroups[groupId] = struct{}{}
+				userGroups = append(userGroups, groupId)
 			}
 
-			// Extract group names from memberOf DNs
+			if len(ldap.DefaultGroups) > 0 {
+				for _, g := range ldap.DefaultGroups {
+					addGroup(g)
+				}
+			} else if ldap.DefaultGroup != "" {
+				addGroup(ldap.DefaultGroup)
+			}
+
+			// Extract group names from memberOf DNs. Only attach groups that
+			// actually exist in Casdoor, and store them as full "owner/name"
+			// IDs (consistent with DefaultGroups) to avoid empty group refs.
 			for _, memberDn := range syncUser.MemberOf {
 				groupName := dnToGroupName(owner, memberDn)
-				if groupName != "" {
-					userGroups = append(userGroups, groupName)
+				if groupName == "" {
+					continue
 				}
+				if _, ok := existingGroupNameSet[groupName]; !ok {
+					// Group not present in Casdoor (e.g. a CJK group that
+					// wasn't synced); skip to avoid creating an empty group.
+					continue
+				}
+				addGroup(fmt.Sprintf("%s/%s", owner, groupName))
 			}
 
 			if len(userGroups) > 0 {
