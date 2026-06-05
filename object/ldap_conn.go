@@ -472,13 +472,41 @@ func SyncLdapUsers(owner string, syncUsers []LdapUser, ldapId string) (existUser
 		existUuidSet[uuid] = struct{}{}
 	}
 
+	// Build a set of group names that actually exist in Casdoor for this
+	// organization. memberOf groups that have no matching Casdoor group
+	// (e.g. a CJK group like "项目部" that was not synced) are skipped, so the
+	// user won't end up referencing an empty/non-existent group.
+	existingGroupNameSet := make(map[string]struct{})
+	if casdoorGroups, gErr := GetGroups(owner); gErr == nil {
+		for _, g := range casdoorGroups {
+			existingGroupNameSet[g.Name] = struct{}{}
+		}
+	}
+
 	for _, syncUser := range syncUsers {
 		_, found := existUuidSet[syncUser.Uuid]
 		if found {
 			existUsers = append(existUsers, syncUser)
-		}
 
-		if !found {
+			user, err := getUserByLdap(owner, syncUser.Uuid)
+			if err != nil {
+				return nil, nil, err
+			}
+			if user == nil {
+				failedUsers = append(failedUsers, syncUser)
+				continue
+			}
+
+			user.Groups = buildLdapUserGroups(organization.Name, ldap, syncUser.MemberOf, existingGroupNameSet)
+			affected, err := UpdateUser(user.GetId(), user, []string{"groups"}, false)
+			if err != nil {
+				return nil, nil, err
+			}
+			if !affected {
+				failedUsers = append(failedUsers, syncUser)
+			}
+
+		} else {
 			score, err := organization.GetInitScore()
 			if err != nil {
 				return nil, nil, err
@@ -510,21 +538,7 @@ func SyncLdapUsers(owner string, syncUsers []LdapUser, ldapId string) (existUser
 			}
 			formatUserPhone(newUser)
 
-			// Assign user to groups based on memberOf attribute
-			userGroups := []string{}
-			if len(ldap.DefaultGroups) > 0 {
-				userGroups = append(userGroups, ldap.DefaultGroups...)
-			} else if ldap.DefaultGroup != "" {
-				userGroups = append(userGroups, ldap.DefaultGroup)
-			}
-
-			// Extract group names from memberOf DNs
-			for _, memberDn := range syncUser.MemberOf {
-				groupName := dnToGroupName(owner, memberDn)
-				if groupName != "" {
-					userGroups = append(userGroups, groupName)
-				}
-			}
+			userGroups := buildLdapUserGroups(organization.Name, ldap, syncUser.MemberOf, existingGroupNameSet)
 
 			if len(userGroups) > 0 {
 				newUser.Groups = userGroups
@@ -546,6 +560,65 @@ func SyncLdapUsers(owner string, syncUsers []LdapUser, ldapId string) (existUser
 	}
 
 	return existUsers, failedUsers, err
+}
+
+func getUserByLdap(owner string, ldapUuid string) (*User, error) {
+	if owner == "" || ldapUuid == "" {
+		return nil, nil
+	}
+
+	user := User{}
+	existed, err := ormer.Engine.Where("owner = ? and ldap = ?", owner, ldapUuid).Get(&user)
+	if err != nil {
+		return nil, err
+	}
+
+	if existed {
+		return &user, nil
+	}
+
+	return nil, nil
+}
+
+func buildLdapUserGroups(owner string, ldap *Ldap, memberOf []string, existingGroupNameSet map[string]struct{}) []string {
+	userGroups := []string{}
+	seen := make(map[string]struct{})
+	addGroup := func(groupId string) {
+		if groupId == "" {
+			return
+		}
+		if _, ok := seen[groupId]; ok {
+			return
+		}
+		seen[groupId] = struct{}{}
+		userGroups = append(userGroups, groupId)
+	}
+
+	if len(ldap.DefaultGroups) > 0 {
+		for _, g := range ldap.DefaultGroups {
+			addGroup(g)
+		}
+	} else if ldap.DefaultGroup != "" {
+		addGroup(ldap.DefaultGroup)
+	}
+
+	// Extract group names from memberOf DNs. Only attach groups that
+	// actually exist in Casdoor, and store them as full "owner/name"
+	// IDs (consistent with DefaultGroups) to avoid empty group refs.
+	for _, memberDn := range memberOf {
+		groupName := dnToGroupName(owner, memberDn)
+		if groupName == "" {
+			continue
+		}
+		if _, ok := existingGroupNameSet[groupName]; !ok {
+			// Group not present in Casdoor (e.g. a CJK group that
+			// wasn't synced); skip to avoid creating an empty group ref.
+			continue
+		}
+		addGroup(strings.Join([]string{owner, groupName}, "/"))
+	}
+
+	return userGroups
 }
 
 // SyncLdapGroups syncs LDAP groups/OUs to Casdoor groups with hierarchy

@@ -140,16 +140,20 @@ type Ormer struct {
 
 // finalizer is the destructor for Ormer.
 func finalizer(a *Ormer) {
-	err := a.Engine.Close()
-	if err != nil {
-		panic(err)
-	}
-
-	if a.Db != nil {
-		err = a.Db.Close()
+	if a.Engine != nil {
+		err := a.Engine.Close()
 		if err != nil {
 			panic(err)
 		}
+		a.Engine = nil
+	}
+
+	if a.Db != nil {
+		err := a.Db.Close()
+		if err != nil {
+			panic(err)
+		}
+		a.Db = nil
 	}
 }
 
@@ -303,8 +307,8 @@ func (a *Ormer) openFromDb(db *sql.DB) error {
 }
 
 func (a *Ormer) close() {
-	_ = a.Engine.Close()
-	a.Engine = nil
+	runtime.SetFinalizer(a, nil)
+	finalizer(a)
 }
 
 func (a *Ormer) createTable() {
