@@ -16,7 +16,7 @@
 // Adapted from the "shadcn" preset on https://ant.design/
 
 export const shadcnThemeToken = {
-  fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif",
+  fontFamily: "'Inter Variable', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif",
   colorPrimary: "#262626",
   colorSuccess: "#22c55e",
   colorWarning: "#f97316",

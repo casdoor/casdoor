@@ -9,6 +9,7 @@
     "@crowdin/cli": "^3.7.10",
     "@ctrl/tinycolor": "^3.5.0",
     "@emotion/react": "^11.10.5",
+    "@fontsource-variable/inter": "^5.2.8",
     "@metamask/eth-sig-util": "^6.0.0",
     "@uiw/codemirror-extensions-langs": "^4.23.8",
     "@uiw/codemirror-theme-material": "^4.23.8",
