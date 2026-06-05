@@ -55,10 +55,18 @@ func (c *ApiController) GetCerts() {
 		}
 
 		paginator := pagination.NewPaginator(c.Ctx.Request, limit, count)
-		certs, err := object.GetMaskedCerts(object.GetPaginationCerts(owner, paginator.Offset(), limit, field, value, sortField, sortOrder))
+		certs, err := object.GetPaginationCerts(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
+		}
+
+		if !c.IsAdmin() {
+			certs, err = object.GetMaskedCerts(certs, err)
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
 		}
 
 		c.ResponseOk(certs, paginator.Nums())
