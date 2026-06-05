@@ -56,7 +56,6 @@ p, *, *, POST, /api/callback, *, *
 p, *, *, POST, /api/device-auth, *, *
 p, *, *, POST, /api/cancel-device-auth, *, *
 p, *, *, POST, /api/device-auth-complete, *, *
-p, *, *, POST, /api/native-sso-complete, *, *
 p, *, *, GET, /api/get-account, *, *
 p, *, *, GET, /api/userinfo, *, *
 p, *, *, GET, /api/user, *, *
