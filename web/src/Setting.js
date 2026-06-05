@@ -1243,7 +1243,7 @@ export function getClickable(text) {
 }
 
 export function getProviderLogoURL(provider) {
-  if (provider.type.startsWith("Custom") && provider.customLogo) {
+  if (provider.customLogo) {
     return provider.customLogo;
   }
   if (provider.category === "OAuth") {
