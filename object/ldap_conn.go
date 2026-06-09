@@ -445,6 +445,12 @@ func SyncLdapUsers(owner string, syncUsers []LdapUser, ldapId string) (existUser
 	}
 
 	ldap, err := GetLdap(ldapId)
+	if err != nil {
+		return nil, nil, err
+	}
+	if ldap == nil {
+		return nil, nil, fmt.Errorf("ldap: %s is not found", ldapId)
+	}
 
 	var dc []string
 	for _, basedn := range strings.Split(ldap.BaseDn, ",") {
@@ -476,10 +482,17 @@ func SyncLdapUsers(owner string, syncUsers []LdapUser, ldapId string) (existUser
 	// organization. memberOf groups that have no matching Casdoor group
 	// (e.g. a CJK group like "项目部" that was not synced) are skipped, so the
 	// user won't end up referencing an empty/non-existent group.
+	// Also record the type of every existing group by its ID. LDAP only owns
+	// the membership of groups it created itself (Type == "ldap-synced");
+	// memberships in any other group (e.g. virtual groups or manually
+	// assigned groups) are managed outside LDAP and must be preserved across
+	// auto-syncs, otherwise users would silently drop out of those groups.
 	existingGroupNameSet := make(map[string]struct{})
+	existingGroupTypeById := make(map[string]string)
 	if casdoorGroups, gErr := GetGroups(owner); gErr == nil {
 		for _, g := range casdoorGroups {
 			existingGroupNameSet[g.Name] = struct{}{}
+			existingGroupTypeById[g.GetId()] = g.Type
 		}
 	}
 
@@ -497,7 +510,15 @@ func SyncLdapUsers(owner string, syncUsers []LdapUser, ldapId string) (existUser
 				continue
 			}
 
-			user.Groups = buildLdapUserGroups(organization.Name, ldap, syncUser.MemberOf, existingGroupNameSet)
+			// Capture the user's current groups before overwriting, so the
+			// non-LDAP groups (managed manually, not by LDAP) can be preserved.
+			previousGroups := user.Groups
+			ldapGroups := buildLdapUserGroups(organization.Name, ldap, syncUser.MemberOf, existingGroupNameSet)
+			// LDAP only manages its own "ldap-synced" groups. Merge the freshly
+			// computed LDAP groups with any other group the user already
+			// belonged to (virtual groups, manually assigned groups, ...), so
+			// LDAP auto-sync never wipes out non-LDAP memberships.
+			user.Groups = mergeLdapAndPreservedGroups(ldapGroups, previousGroups, existingGroupTypeById)
 			affected, err := UpdateUser(user.GetId(), user, []string{"groups"}, false)
 			if err != nil {
 				return nil, nil, err
@@ -621,6 +642,42 @@ func buildLdapUserGroups(owner string, ldap *Ldap, memberOf []string, existingGr
 	return userGroups
 }
 
+// mergeLdapAndPreservedGroups combines the freshly computed LDAP groups with
+// the groups the user already belonged to that are not managed by LDAP.
+// LDAP owns only the groups it created itself (Type == "ldap-synced"): those
+// are fully recomputed every sync from the directory's memberOf data. Any
+// other existing membership (virtual groups, manually assigned groups, etc.)
+// is preserved so LDAP auto-sync does not silently remove users from them.
+func mergeLdapAndPreservedGroups(ldapGroups []string, previousGroups []string, existingGroupTypeById map[string]string) []string {
+	result := []string{}
+	seen := make(map[string]struct{})
+	for _, g := range ldapGroups {
+		if _, ok := seen[g]; ok {
+			continue
+		}
+		seen[g] = struct{}{}
+		result = append(result, g)
+	}
+	for _, g := range previousGroups {
+		if _, ok := seen[g]; ok {
+			continue
+		}
+		groupType, exists := existingGroupTypeById[g]
+		if !exists {
+			// Group no longer exists in Casdoor; drop the stale reference.
+			continue
+		}
+		if groupType == "ldap-synced" {
+			// LDAP-managed group: membership is recomputed from the directory,
+			// so don't preserve a stale membership here.
+			continue
+		}
+		seen[g] = struct{}{}
+		result = append(result, g)
+	}
+	return result
+}
+
 // SyncLdapGroups syncs LDAP groups/OUs to Casdoor groups with hierarchy
 func SyncLdapGroups(owner string, ldapGroups []LdapGroup, ldapId string) (newGroups int, updatedGroups int, err error) {
 	if len(ldapGroups) == 0 {
@@ -658,6 +715,12 @@ func SyncLdapGroups(owner string, ldapGroups []LdapGroup, ldapId string) (newGro
 			return nil
 		}
 
+		// Mark as processed up-front, before recursing into the parent, so a
+		// cyclic or self-referential parent chain (e.g. ParentDn == Dn, or
+		// A->B->A) can't trigger infinite recursion and crash the process with
+		// a stack overflow (which recover() cannot catch).
+		processedGroups[ldapGroup.Dn] = true
+
 		// Generate group name from DN
 		groupName := dnToGroupName(owner, ldapGroup.Dn)
 		if groupName == "" {
@@ -673,7 +736,7 @@ func SyncLdapGroups(owner string, ldapGroups []LdapGroup, ldapId string) (newGro
 			parentId = ""
 		} else {
 			// Process parent first
-			if parentGroup, exists := dnToGroup[ldapGroup.ParentDn]; exists {
+			if parentGroup, exists := dnToGroup[ldapGroup.ParentDn]; exists && ldapGroup.ParentDn != ldapGroup.Dn {
 				err := processGroup(parentGroup)
 				if err != nil {
 					return err
@@ -682,6 +745,16 @@ func SyncLdapGroups(owner string, ldapGroups []LdapGroup, ldapId string) (newGro
 			} else {
 				isTopGroup = true
 			}
+		}
+
+		// Guard against a self-referential group: distinct LDAP DNs can
+		// collapse to the same Casdoor group name (dnToGroupName uses only the
+		// first RDN), which would make ParentId == Name and later cause an
+		// infinite recursion / stack-overflow crash when the group tree is
+		// rendered. Treat such a group as a top group instead.
+		if parentId == groupName {
+			parentId = ""
+			isTopGroup = true
 		}
 
 		// Check if group already exists
@@ -718,7 +791,6 @@ func SyncLdapGroups(owner string, ldapGroups []LdapGroup, ldapId string) (newGro
 			}
 		}
 
-		processedGroups[ldapGroup.Dn] = true
 		return nil
 	}
 

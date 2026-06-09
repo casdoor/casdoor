@@ -290,17 +290,31 @@ func (group *Group) GetId() string {
 }
 
 func ConvertToTreeData(groups []*Group, parentId string) []*Group {
+	return convertToTreeData(groups, parentId, map[string]bool{})
+}
+
+// convertToTreeData builds the group tree recursively. visited tracks the
+// parentId values already descended into, so a self-referential group
+// (ParentId == Name) or a cyclic parent chain (A -> B -> A) can't cause
+// infinite recursion and crash the whole process with a stack overflow
+// (a fatal error that recover() cannot catch). Such bad hierarchies can be
+// produced by LDAP sync when distinct DNs collapse to the same group name.
+func convertToTreeData(groups []*Group, parentId string, visited map[string]bool) []*Group {
 	treeData := []*Group{}
+	if visited[parentId] {
+		return treeData
+	}
+	visited[parentId] = true
 
 	for _, group := range groups {
-		if group.ParentId == parentId {
+		if group.ParentId == parentId && group.Name != parentId {
 			node := &Group{
 				Title: group.DisplayName,
 				Key:   group.Name,
 				Type:  group.Type,
 				Owner: group.Owner,
 			}
-			children := ConvertToTreeData(groups, group.Name)
+			children := convertToTreeData(groups, group.Name, visited)
 			if len(children) > 0 {
 				node.Children = children
 			}

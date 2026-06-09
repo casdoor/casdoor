@@ -3,6 +3,7 @@ package object
 import (
 	errors2 "errors"
 	"fmt"
+	"sync"
 
 	"github.com/casbin/casbin/v2/errors"
 
@@ -13,6 +14,14 @@ import (
 type UserGroupEnforcer struct {
 	// use rbac model implement use group, the enforcer can also implement user role
 	enforcer *casbin.Enforcer
+	// The wrapped casbin.Enforcer is a plain (non-synced) enforcer and is NOT
+	// safe for concurrent use. Casdoor shares one global UserGroupEnforcer
+	// across all goroutines (many concurrent LDAP auto-sync routines plus web
+	// requests). Every access must be serialized; otherwise concurrent
+	// read/write of casbin's internal maps triggers Go's
+	// "fatal error: concurrent map read and map write", which recover() cannot
+	// catch and which crashes/restarts the whole process.
+	mu sync.Mutex
 }
 
 func NewUserGroupEnforcer(enforcer *casbin.Enforcer) *UserGroupEnforcer {
@@ -29,6 +38,9 @@ func (e *UserGroupEnforcer) checkModel() error {
 }
 
 func (e *UserGroupEnforcer) AddGroupForUser(user string, group string) (bool, error) {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+
 	err := e.checkModel()
 	if err != nil {
 		return false, err
@@ -38,6 +50,15 @@ func (e *UserGroupEnforcer) AddGroupForUser(user string, group string) (bool, er
 }
 
 func (e *UserGroupEnforcer) AddGroupsForUser(user string, groups []string) (bool, error) {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+
+	return e.addGroupsForUser(user, groups)
+}
+
+// addGroupsForUser mutates the enforcer without locking; callers must already
+// hold e.mu.
+func (e *UserGroupEnforcer) addGroupsForUser(user string, groups []string) (bool, error) {
 	err := e.checkModel()
 	if err != nil {
 		return false, err
@@ -51,6 +72,9 @@ func (e *UserGroupEnforcer) AddGroupsForUser(user string, groups []string) (bool
 }
 
 func (e *UserGroupEnforcer) DeleteGroupForUser(user string, group string) (bool, error) {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+
 	err := e.checkModel()
 	if err != nil {
 		return false, err
@@ -60,6 +84,15 @@ func (e *UserGroupEnforcer) DeleteGroupForUser(user string, group string) (bool,
 }
 
 func (e *UserGroupEnforcer) DeleteGroupsForUser(user string) (bool, error) {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+
+	return e.deleteGroupsForUser(user)
+}
+
+// deleteGroupsForUser mutates the enforcer without locking; callers must
+// already hold e.mu.
+func (e *UserGroupEnforcer) deleteGroupsForUser(user string) (bool, error) {
 	err := e.checkModel()
 	if err != nil {
 		return false, err
@@ -69,6 +102,9 @@ func (e *UserGroupEnforcer) DeleteGroupsForUser(user string) (bool, error) {
 }
 
 func (e *UserGroupEnforcer) GetGroupsForUser(user string) ([]string, error) {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+
 	err := e.checkModel()
 	if err != nil {
 		return nil, err
@@ -86,6 +122,15 @@ func (e *UserGroupEnforcer) GetGroupsForUser(user string) ([]string, error) {
 }
 
 func (e *UserGroupEnforcer) GetAllUsersByGroup(group string) ([]string, error) {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+
+	return e.getAllUsersByGroup(group)
+}
+
+// getAllUsersByGroup reads the enforcer without locking; callers must already
+// hold e.mu.
+func (e *UserGroupEnforcer) getAllUsersByGroup(group string) ([]string, error) {
 	err := e.checkModel()
 	if err != nil {
 		return nil, err
@@ -114,12 +159,15 @@ func GetGroupWithoutPrefix(group string) string {
 }
 
 func (e *UserGroupEnforcer) GetUserNamesByGroupName(groupName string) ([]string, error) {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+
 	err := e.checkModel()
 	if err != nil {
 		return nil, err
 	}
 
-	userIds, err := e.GetAllUsersByGroup(groupName)
+	userIds, err := e.getAllUsersByGroup(groupName)
 	if err != nil {
 		return nil, err
 	}
@@ -134,17 +182,20 @@ func (e *UserGroupEnforcer) GetUserNamesByGroupName(groupName string) ([]string,
 }
 
 func (e *UserGroupEnforcer) UpdateGroupsForUser(user string, groups []string) (bool, error) {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+
 	err := e.checkModel()
 	if err != nil {
 		return false, err
 	}
 
-	_, err = e.DeleteGroupsForUser(user)
+	_, err = e.deleteGroupsForUser(user)
 	if err != nil {
 		return false, err
 	}
 
-	affected, err := e.AddGroupsForUser(user, groups)
+	affected, err := e.addGroupsForUser(user, groups)
 	if err != nil {
 		return false, err
 	}
