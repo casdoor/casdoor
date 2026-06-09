@@ -24,6 +24,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/casbin/casbin/v2"
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/faceId"
 	"github.com/casdoor/casdoor/i18n"
@@ -49,7 +50,7 @@ func InitUserManager() {
 		panic(err)
 	}
 
-	userEnforcer = NewUserGroupEnforcer(enforcer.Enforcer)
+	userEnforcer = NewUserGroupEnforcer(&casbin.SyncedEnforcer{Enforcer: enforcer.Enforcer})
 }
 
 type User struct {
