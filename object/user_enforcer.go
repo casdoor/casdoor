@@ -12,10 +12,10 @@ import (
 
 type UserGroupEnforcer struct {
 	// use rbac model implement use group, the enforcer can also implement user role
-	enforcer *casbin.Enforcer
+	enforcer *casbin.SyncedEnforcer
 }
 
-func NewUserGroupEnforcer(enforcer *casbin.Enforcer) *UserGroupEnforcer {
+func NewUserGroupEnforcer(enforcer *casbin.SyncedEnforcer) *UserGroupEnforcer {
 	return &UserGroupEnforcer{
 		enforcer: enforcer,
 	}
