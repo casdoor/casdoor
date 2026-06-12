@@ -264,6 +264,7 @@ type Userinfo struct {
 	Roles         []string           `json:"roles,omitempty"`
 	Permissions   []string           `json:"permissions,omitempty"`
 	Subscriptions []SubscriptionInfo `json:"subscriptions,omitempty"`
+	CreatedTime   string             `json:"createdTime,omitempty"`
 }
 
 // SubscriptionInfo is a lightweight view of an active subscription, exposed in userinfo
@@ -1230,6 +1231,7 @@ func GetUserInfo(user *User, scope string, aud string, host string) (*Userinfo, 
 		resp.DisplayName = user.DisplayName
 		resp.Avatar = user.Avatar
 		resp.Groups = user.Groups
+		resp.CreatedTime = user.CreatedTime
 
 		err := ExtendUserWithRolesAndPermissions(user)
 		if err != nil {
@@ -1338,6 +1340,12 @@ func ExtendUserWithRolesAndPermissions(user *User) (err error) {
 		return
 	}
 
+	// Reconcile membership roles from the user's subscriptions BEFORE resolving roles, so the
+	// stored role membership (visible in the admin UI) stays consistent with paid membership and
+	// is included in the resolved token/userinfo roles. Best-effort: subscription lookup errors
+	// never block role resolution.
+	syncUserMembershipRoles(user)
+
 	user.Permissions, user.Roles, err = getPermissionsAndRolesByUser(user.GetId())
 	if err != nil {
 		return err
@@ -1347,29 +1355,24 @@ func ExtendUserWithRolesAndPermissions(user *User) (err error) {
 		user.Groups = []string{}
 	}
 
-	// Grant the role configured on each active subscription's plan, so that token/userinfo
-	// roles reflect a paid membership and expire automatically with the subscription.
-	// Best-effort: never fail role resolution because of subscription lookup errors.
-	extendUserWithSubscriptionRoles(user)
-
 	return
 }
 
-// extendUserWithSubscriptionRoles appends, to the user's roles, the role of every plan
-// the user currently has an active subscription for (deduplicated).
-func extendUserWithSubscriptionRoles(user *User) {
+// syncUserMembershipRoles reconciles a user's stored role membership with their subscriptions:
+// the role configured on a plan is granted while the user has an ACTIVE subscription for it and
+// removed once no active subscription grants it. This keeps membership visible in the admin UI and
+// auto-expiring, without a separate cron. Best-effort: errors never break role resolution.
+func syncUserMembershipRoles(user *User) {
 	subscriptions, err := GetSubscriptionsByUser(user.Owner, user.Name)
 	if err != nil {
 		return
 	}
 
-	existing := map[string]bool{}
-	for _, role := range user.Roles {
-		existing[role.GetId()] = true
-	}
-
+	userId := user.GetId()
+	activeRoles := map[string]bool{}
+	subRoles := map[string]bool{}
 	for _, sub := range subscriptions {
-		if sub.State != SubStateActive || sub.Plan == "" {
+		if sub.Plan == "" {
 			continue
 		}
 		plan, err := GetPlan(util.GetId(sub.Owner, sub.Plan))
@@ -1377,15 +1380,32 @@ func extendUserWithSubscriptionRoles(user *User) {
 			continue
 		}
 		roleId := util.GetId(plan.Owner, plan.Role)
-		if existing[roleId] {
-			continue
+		subRoles[roleId] = true
+		if sub.State == SubStateActive {
+			activeRoles[roleId] = true
 		}
+	}
+
+	// Only reconcile roles that this user's plans reference, so unrelated RBAC roles are untouched.
+	for roleId := range subRoles {
 		role, err := GetRole(roleId)
 		if err != nil || role == nil {
 			continue
 		}
-		user.Roles = append(user.Roles, role)
-		existing[roleId] = true
+		isMember := false
+		for _, u := range role.Users {
+			if u == userId {
+				isMember = true
+				break
+			}
+		}
+		if activeRoles[roleId] && !isMember {
+			role.Users = append(role.Users, userId)
+			_, _ = UpdateRole(roleId, role, true, "en")
+		} else if !activeRoles[roleId] && isMember {
+			role.Users = util.DeleteVal(role.Users, userId)
+			_, _ = UpdateRole(roleId, role, true, "en")
+		}
 	}
 }
 
