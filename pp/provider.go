@@ -33,6 +33,7 @@ func IsTerminalState(state PaymentState) bool {
 const (
 	PaymentEnvWechatBrowser = "WechatBrowser"
 	PaymentEnvWechatApp     = "WechatApp"
+	PaymentEnvAlipayApp     = "AlipayApp"
 )
 
 type PayReq struct {

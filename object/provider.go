@@ -352,8 +352,14 @@ func GetPaymentProvider(p *Provider) (pp.PaymentProvider, error) {
 		}
 		return pp, nil
 	} else if typ == "Alipay" {
+		var appCertificate, appPrivateKey string
+		if cert != nil {
+			appCertificate = cert.Certificate
+			appPrivateKey = cert.PrivateKey
+		}
+		var authorityPublicKey, authorityRootPublicKey string
 		if p.Metadata != "" {
-			// alipay provider store rootCert's name in metadata
+			// certificate mode: alipay provider stores the rootCert's name in metadata
 			rootCert, err := GetCert(util.GetId(p.Owner, p.Metadata))
 			if err != nil {
 				return nil, err
@@ -361,14 +367,15 @@ func GetPaymentProvider(p *Provider) (pp.PaymentProvider, error) {
 			if rootCert == nil {
 				return nil, fmt.Errorf("the cert: %s does not exist", p.Metadata)
 			}
-			pp, err := pp.NewAlipayPaymentProvider(p.ClientId, cert.Certificate, cert.PrivateKey, rootCert.Certificate, rootCert.PrivateKey)
-			if err != nil {
-				return nil, err
-			}
-			return pp, nil
-		} else {
-			return nil, fmt.Errorf("the metadata of alipay provider is empty")
+			authorityPublicKey = rootCert.Certificate
+			authorityRootPublicKey = rootCert.PrivateKey
 		}
+		// public-key mode uses p.Content as the Alipay public key (no rootCert required)
+		pp, err := pp.NewAlipayPaymentProvider(p.ClientId, appCertificate, appPrivateKey, authorityPublicKey, authorityRootPublicKey, p.Content)
+		if err != nil {
+			return nil, err
+		}
+		return pp, nil
 	} else if typ == "GC" {
 		return pp.NewGcPaymentProvider(p.ClientId, p.ClientSecret, p.Host), nil
 	} else if typ == "WeChat Pay" {
