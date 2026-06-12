@@ -110,6 +110,32 @@ func (pp *WechatPaymentProvider) Pay(r *PayReq) (*PayResp, error) {
 			},
 		}
 		return payResp, nil
+	} else if r.PaymentEnv == PaymentEnvWechatApp {
+		appRsp, err := pp.Client.V3TransactionApp(context.Background(), bm)
+		if err != nil {
+			return nil, err
+		}
+		if appRsp.Code != wechat.Success {
+			return nil, errors.New(appRsp.Error)
+		}
+		params, err := pp.Client.PaySignOfApp(pp.AppId, appRsp.Response.PrepayId)
+		if err != nil {
+			return nil, err
+		}
+		payResp := &PayResp{
+			PayUrl:  "",
+			OrderId: r.PaymentName,
+			AttachInfo: map[string]interface{}{
+				"appId":     params.Appid,
+				"partnerId": params.Partnerid,
+				"prepayId":  params.Prepayid,
+				"package":   params.Package,
+				"nonceStr":  params.Noncestr,
+				"timeStamp": params.Timestamp,
+				"sign":      params.Sign,
+			},
+		}
+		return payResp, nil
 	} else {
 		// In other case, we use NativeAPI
 		nativeRsp, err := pp.Client.V3TransactionNative(context.Background(), bm)
