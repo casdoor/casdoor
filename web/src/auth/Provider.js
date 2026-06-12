@@ -441,7 +441,8 @@ export function getAuthUrl(application, provider, method, code) {
   if (provider.scopes && provider.scopes.trim() !== "") {
     scope = provider.scopes;
   }
-  const isShortState = (provider.type === "WeChat" && navigator.userAgent.includes("MicroMessenger")) || (provider.type === "Twitter");
+  const isTelegramOIDC = provider.type === "Telegram" || (provider.type === "Custom" && provider.customAuthUrl && provider.customAuthUrl.includes("oauth.telegram.org"));
+  const isShortState = (provider.type === "WeChat" && navigator.userAgent.includes("MicroMessenger")) || (provider.type === "Twitter") || isTelegramOIDC;
   let applicationName = application.name;
   if (application?.isShared) {
     applicationName = `${application.name}-org-${application.organization}`;
