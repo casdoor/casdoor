@@ -84,6 +84,23 @@ func (pp *AlipayPaymentProvider) Pay(r *PayReq) (*PayResp, error) {
 		return payResp, nil
 	}
 
+	// QR-code payment (alipay.trade.precreate, 当面付): return the qr_code string so the
+	// frontend renders the QR itself, symmetric to WeChat Native's code_url.
+	if r.PaymentEnv == PaymentEnvAlipayQr {
+		aliRsp, err := pp.Client.TradePrecreate(context.Background(), bm)
+		if err != nil {
+			return nil, err
+		}
+		if aliRsp.Response == nil || aliRsp.Response.QrCode == "" {
+			return nil, fmt.Errorf("alipay precreate failed: %+v", aliRsp.Response)
+		}
+		payResp := &PayResp{
+			PayUrl:  aliRsp.Response.QrCode,
+			OrderId: r.PaymentName,
+		}
+		return payResp, nil
+	}
+
 	// Default: PC web page payment (alipay.trade.page.pay)
 	payUrl, err := pp.Client.TradePagePay(context.Background(), bm)
 	if err != nil {

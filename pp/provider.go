@@ -34,6 +34,7 @@ const (
 	PaymentEnvWechatBrowser = "WechatBrowser"
 	PaymentEnvWechatApp     = "WechatApp"
 	PaymentEnvAlipayApp     = "AlipayApp"
+	PaymentEnvAlipayQr      = "AlipayQr"
 )
 
 type PayReq struct {
