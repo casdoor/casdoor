@@ -1318,7 +1318,46 @@ func ExtendUserWithRolesAndPermissions(user *User) (err error) {
 		user.Groups = []string{}
 	}
 
+	// Grant the role configured on each active subscription's plan, so that token/userinfo
+	// roles reflect a paid membership and expire automatically with the subscription.
+	// Best-effort: never fail role resolution because of subscription lookup errors.
+	extendUserWithSubscriptionRoles(user)
+
 	return
+}
+
+// extendUserWithSubscriptionRoles appends, to the user's roles, the role of every plan
+// the user currently has an active subscription for (deduplicated).
+func extendUserWithSubscriptionRoles(user *User) {
+	subscriptions, err := GetSubscriptionsByUser(user.Owner, user.Name)
+	if err != nil {
+		return
+	}
+
+	existing := map[string]bool{}
+	for _, role := range user.Roles {
+		existing[role.GetId()] = true
+	}
+
+	for _, sub := range subscriptions {
+		if sub.State != SubStateActive || sub.Plan == "" {
+			continue
+		}
+		plan, err := GetPlan(util.GetId(sub.Owner, sub.Plan))
+		if err != nil || plan == nil || plan.Role == "" {
+			continue
+		}
+		roleId := util.GetId(plan.Owner, plan.Role)
+		if existing[roleId] {
+			continue
+		}
+		role, err := GetRole(roleId)
+		if err != nil || role == nil {
+			continue
+		}
+		user.Roles = append(user.Roles, role)
+		existing[roleId] = true
+	}
 }
 
 func DeleteGroupForUser(user string, group string) (bool, error) {

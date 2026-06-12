@@ -42,8 +42,9 @@ type Plan struct {
 }
 
 const (
-	PeriodMonthly = "Monthly"
-	PeriodYearly  = "Yearly"
+	PeriodMonthly  = "Monthly"
+	PeriodYearly   = "Yearly"
+	PeriodLifetime = "Lifetime"
 )
 
 func (plan *Plan) GetId() string {
@@ -58,6 +59,8 @@ func getDuration(period string) (string, string, error) {
 		endTime = startTime.AddDate(1, 0, 0)
 	} else if period == PeriodMonthly {
 		endTime = startTime.AddDate(0, 1, 0)
+	} else if period == PeriodLifetime {
+		endTime = startTime.AddDate(100, 0, 0)
 	} else {
 		return "", "", fmt.Errorf("invalid period: %s", period)
 	}
