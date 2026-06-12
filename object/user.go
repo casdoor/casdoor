@@ -248,21 +248,32 @@ type User struct {
 }
 
 type Userinfo struct {
-	Sub           string   `json:"sub"`
-	Iss           string   `json:"iss"`
-	Aud           string   `json:"aud"`
-	Name          string   `json:"preferred_username,omitempty"`
-	DisplayName   string   `json:"name,omitempty"`
-	Email         string   `json:"email,omitempty"`
-	EmailVerified bool     `json:"email_verified,omitempty"`
-	Avatar        string   `json:"picture,omitempty"`
-	Address       string   `json:"address,omitempty"`
-	Phone         string   `json:"phone,omitempty"`
-	RealName      string   `json:"real_name,omitempty"`
-	IsVerified    bool     `json:"is_verified,omitempty"`
-	Groups        []string `json:"groups,omitempty"`
-	Roles         []string `json:"roles,omitempty"`
-	Permissions   []string `json:"permissions,omitempty"`
+	Sub           string             `json:"sub"`
+	Iss           string             `json:"iss"`
+	Aud           string             `json:"aud"`
+	Name          string             `json:"preferred_username,omitempty"`
+	DisplayName   string             `json:"name,omitempty"`
+	Email         string             `json:"email,omitempty"`
+	EmailVerified bool               `json:"email_verified,omitempty"`
+	Avatar        string             `json:"picture,omitempty"`
+	Address       string             `json:"address,omitempty"`
+	Phone         string             `json:"phone,omitempty"`
+	RealName      string             `json:"real_name,omitempty"`
+	IsVerified    bool               `json:"is_verified,omitempty"`
+	Groups        []string           `json:"groups,omitempty"`
+	Roles         []string           `json:"roles,omitempty"`
+	Permissions   []string           `json:"permissions,omitempty"`
+	Subscriptions []SubscriptionInfo `json:"subscriptions,omitempty"`
+}
+
+// SubscriptionInfo is a lightweight view of an active subscription, exposed in userinfo
+// so a client can tell the billing tier (e.g. monthly vs yearly) and the expiry date.
+type SubscriptionInfo struct {
+	Plan      string `json:"plan"`
+	Period    string `json:"period"`
+	StartTime string `json:"startTime"`
+	EndTime   string `json:"endTime"`
+	State     string `json:"state"`
 }
 
 type ManagedAccount struct {
@@ -1233,6 +1244,24 @@ func GetUserInfo(user *User, scope string, aud string, host string) (*Userinfo, 
 		resp.Permissions = []string{}
 		for _, permission := range user.Permissions {
 			resp.Permissions = append(resp.Permissions, permission.Name)
+		}
+
+		// Active subscriptions, so the client can distinguish the billing tier
+		// (monthly/yearly/lifetime) and read the expiry date in one userinfo call.
+		resp.Subscriptions = []SubscriptionInfo{}
+		if subs, subErr := GetSubscriptionsByUser(user.Owner, user.Name); subErr == nil {
+			for _, sub := range subs {
+				if sub.State != SubStateActive {
+					continue
+				}
+				resp.Subscriptions = append(resp.Subscriptions, SubscriptionInfo{
+					Plan:      sub.Plan,
+					Period:    sub.Period,
+					StartTime: sub.StartTime,
+					EndTime:   sub.EndTime,
+					State:     string(sub.State),
+				})
+			}
 		}
 	}
 
