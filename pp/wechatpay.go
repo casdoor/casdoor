@@ -16,8 +16,11 @@ package pp
 
 import (
 	"context"
+	"crypto/x509"
+	"encoding/pem"
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/casdoor/casdoor/util"
 	"github.com/go-pay/gopay"
@@ -34,16 +37,28 @@ type WechatPaymentProvider struct {
 	AppId  string
 }
 
-func NewWechatPaymentProvider(mchId string, apiV3Key string, appId string, serialNo string, privateKey string) (*WechatPaymentProvider, error) {
+func NewWechatPaymentProvider(mchId string, apiV3Key string, appId string, certificate string, privateKey string, wxPublicKey string, wxPublicKeyId string) (*WechatPaymentProvider, error) {
 	// https://pay.weixin.qq.com/docs/merchant/products/native-payment/preparation.html
-	// clientId => mchId
-	// clientSecret => apiV3Key
-	// clientId2 => appId
-
-	// appCertificate => serialNo
-	// appPrivateKey => privateKey
-	if appId == "" || mchId == "" || serialNo == "" || apiV3Key == "" || privateKey == "" {
+	// clientId         => mchId
+	// clientSecret     => apiV3Key
+	// clientId2        => appId
+	// cert.certificate => merchant API certificate (its serial number is used for request signing)
+	// cert.privateKey  => merchant API private key
+	// content          => WeChat Pay public key (微信支付公钥, public-key mode only)
+	// clientSecret2    => WeChat Pay public key ID (PUB_KEY_ID_..., public-key mode only)
+	if appId == "" || mchId == "" || certificate == "" || apiV3Key == "" || privateKey == "" {
 		return &WechatPaymentProvider{}, nil
+	}
+
+	// The certificate field may hold the merchant API certificate (PEM), from which the
+	// serial number is extracted, or the certificate serial number string directly.
+	serialNo := strings.TrimSpace(certificate)
+	if strings.Contains(certificate, "BEGIN CERTIFICATE") {
+		sn, err := getCertSerialNumber(certificate)
+		if err != nil {
+			return nil, err
+		}
+		serialNo = sn
 	}
 
 	clientV3, err := wechat.NewClientV3(mchId, serialNo, apiV3Key, privateKey)
@@ -51,8 +66,14 @@ func NewWechatPaymentProvider(mchId string, apiV3Key string, appId string, seria
 		return nil, err
 	}
 
-	// AutoVerifySign: automatically fetch and verify platform certificate
-	err = clientV3.AutoVerifySign()
+	// Verify WeChat Pay responses/notifications:
+	// - public-key mode (微信支付公钥): set the configured public key locally (no network call)
+	// - platform-certificate mode (legacy): automatically fetch the platform certificates
+	if wxPublicKey != "" && wxPublicKeyId != "" {
+		err = clientV3.AutoVerifySignByPublicKey([]byte(wxPublicKey), wxPublicKeyId)
+	} else {
+		err = clientV3.AutoVerifySign()
+	}
 	if err != nil {
 		return nil, err
 	}
@@ -63,6 +84,19 @@ func NewWechatPaymentProvider(mchId string, apiV3Key string, appId string, seria
 	}
 
 	return pp, nil
+}
+
+// getCertSerialNumber extracts the certificate serial number (uppercase hex) from a PEM-encoded certificate.
+func getCertSerialNumber(certPem string) (string, error) {
+	block, _ := pem.Decode([]byte(certPem))
+	if block == nil {
+		return "", fmt.Errorf("failed to decode the WeChat Pay merchant certificate PEM")
+	}
+	cert, err := x509.ParseCertificate(block.Bytes)
+	if err != nil {
+		return "", err
+	}
+	return strings.ToUpper(cert.SerialNumber.Text(16)), nil
 }
 
 func (pp *WechatPaymentProvider) Pay(r *PayReq) (*PayResp, error) {

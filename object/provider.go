@@ -372,7 +372,7 @@ func GetPaymentProvider(p *Provider) (pp.PaymentProvider, error) {
 	} else if typ == "GC" {
 		return pp.NewGcPaymentProvider(p.ClientId, p.ClientSecret, p.Host), nil
 	} else if typ == "WeChat Pay" {
-		pp, err := pp.NewWechatPaymentProvider(p.ClientId, p.ClientSecret, p.ClientId2, cert.Certificate, cert.PrivateKey)
+		pp, err := pp.NewWechatPaymentProvider(p.ClientId, p.ClientSecret, p.ClientId2, cert.Certificate, cert.PrivateKey, p.Content, p.ClientSecret2)
 		if err != nil {
 			return nil, err
 		}
