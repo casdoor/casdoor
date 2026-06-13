@@ -86,7 +86,6 @@ class UserEditPage extends React.Component {
     if (Setting.isLocalAdminUser(this.props.account)) {
       this.getOrganizations();
     }
-    this.getApplicationsByOrganization(this.state.organizationName);
     this.getUserApplication();
     this.setReturnUrl();
   }
@@ -115,6 +114,8 @@ class UserEditPage extends React.Component {
           multiFactorAuths: res.data?.multiFactorAuths ?? [],
           consents: res.data?.applicationScopes ?? [],
           loading: false,
+        }, () => {
+          this.getApplicationsByOrganization(this.state.organizationName);
         });
 
         // Load user transactions
