@@ -183,7 +183,7 @@ func (c *ApiController) MfaSetupEnable() {
 	mfaType := c.Ctx.Request.Form.Get("mfaType")
 	secret := c.Ctx.Request.Form.Get("secret")
 	dest := c.Ctx.Request.Form.Get("dest")
-	countryCode := c.Ctx.Request.Form.Get("secret")
+	countryCode := c.Ctx.Request.Form.Get("countryCode")
 	recoveryCodes := c.Ctx.Request.Form.Get("recoveryCodes")
 
 	user, err := object.GetUser(util.GetId(owner, name))
