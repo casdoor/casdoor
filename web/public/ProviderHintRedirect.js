@@ -247,7 +247,7 @@
       if (provider.subType === "Internal") {
         if (provider.method === "Silent") {
           endpoint = authInfo[provider.type].silentEndpoint;
-          return endpoint + "?appid=" + provider.clientId + "&redirect_uri=" + redirectUri + "&state=" + state + "&scope=" + scope + "&response_type=code#wechat_redirect";
+          return endpoint + "?appid=" + provider.clientId + "&redirect_uri=" + redirectUri + "&state=" + state + "&scope=" + scope + "&response_type=code&agentid=" + provider.appId + "#wechat_redirect";
         }
 
         if (provider.method === "Normal") {
@@ -261,7 +261,7 @@
       if (provider.subType === "Third-party") {
         if (provider.method === "Silent") {
           endpoint = authInfo[provider.type].silentEndpoint;
-          return endpoint + "?appid=" + provider.clientId + "&redirect_uri=" + redirectUri + "&state=" + state + "&scope=" + scope + "&response_type=code#wechat_redirect";
+          return endpoint + "?appid=" + provider.clientId + "&redirect_uri=" + redirectUri + "&state=" + state + "&scope=" + scope + "&response_type=code&agentid=" + provider.appId + "#wechat_redirect";
         }
 
         if (provider.method === "Normal") {
