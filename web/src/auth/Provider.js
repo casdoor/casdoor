@@ -501,7 +501,7 @@ export function getAuthUrl(application, provider, method, code) {
     if (provider.subType === "Internal") {
       if (provider.method === "Silent") {
         endpoint = authInfo[provider.type].silentEndpoint;
-        return `${endpoint}?appid=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&scope=${scope}&response_type=code#wechat_redirect`;
+        return `${endpoint}?appid=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&scope=${scope}&response_type=code&agentid=${provider.appId}#wechat_redirect`;
       } else if (provider.method === "Normal") {
         endpoint = authInfo[provider.type].internalEndpoint;
         return `${endpoint}?login_type=CorpApp&appid=${provider.clientId}&agentid=${provider.appId}&redirect_uri=${redirectUri}&state=${state}`;
@@ -511,7 +511,7 @@ export function getAuthUrl(application, provider, method, code) {
     } else if (provider.subType === "Third-party") {
       if (provider.method === "Silent") {
         endpoint = authInfo[provider.type].silentEndpoint;
-        return `${endpoint}?appid=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&scope=${scope}&response_type=code#wechat_redirect`;
+        return `${endpoint}?appid=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&scope=${scope}&response_type=code&agentid=${provider.appId}#wechat_redirect`;
       } else if (provider.method === "Normal") {
         endpoint = authInfo[provider.type].endpoint;
         return `${endpoint}?login_type=ServiceApp&appid=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}`;
