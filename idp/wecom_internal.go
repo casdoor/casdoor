@@ -15,6 +15,7 @@
 package idp
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -102,10 +103,30 @@ func (idp *WeComInternalIdProvider) GetToken(code string) (*oauth2.Token, error)
 }
 
 type WecomInternalUserResp struct {
+	Errcode  int    `json:"errcode"`
+	Errmsg   string `json:"errmsg"`
+	UserId   string `json:"UserId"`
+	OpenId   string `json:"OpenId"`
+	DeviceId string `json:"DeviceId"`
+
+	// returned when scope is snsapi_userinfo
+	UserName     string `json:"name"`
+	UserAvatar   string `json:"avatar"`
+	UserPosition string `json:"position"`
+	UserEmail    string `json:"email"`
+
+	// returned when scope is snsapi_privateinfo
+	UserTicket string `json:"user_ticket"`
+}
+
+type WecomInternalUserDetail struct {
 	Errcode int    `json:"errcode"`
 	Errmsg  string `json:"errmsg"`
-	UserId  string `json:"UserId"`
-	OpenId  string `json:"OpenId"`
+	Name    string `json:"name"`
+	Email   string `json:"email"`
+	Avatar  string `json:"avatar"`
+	UserId  string `json:"userid"`
+	Mobile  string `json:"mobile"`
 }
 
 type WecomInternalUserInfo struct {
@@ -119,7 +140,6 @@ type WecomInternalUserInfo struct {
 }
 
 func (idp *WeComInternalIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
-	// Get userid first
 	accessToken := token.AccessToken
 	code := token.Extra("code").(string)
 	resp, err := idp.Client.Get(fmt.Sprintf("https://qyapi.weixin.qq.com/cgi-bin/user/getuserinfo?access_token=%s&code=%s", accessToken, code))
@@ -142,30 +162,61 @@ func (idp *WeComInternalIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo,
 	if userResp.OpenId != "" {
 		return nil, fmt.Errorf("not an internal user")
 	}
-	// Use userid and accesstoken to get user information
-	resp, err = idp.Client.Get(fmt.Sprintf("https://qyapi.weixin.qq.com/cgi-bin/user/get?access_token=%s&userid=%s", accessToken, userResp.UserId))
-	if err != nil {
-		return nil, err
+
+	userInfo := UserInfo{
+		Id: userResp.UserId,
 	}
 
-	data, err = io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-	infoResp := &WecomInternalUserInfo{}
-	err = json.Unmarshal(data, infoResp)
-	if err != nil {
-		return nil, err
-	}
-	if infoResp.Errcode != 0 {
-		return nil, fmt.Errorf("userInfoResp.errcode = %d, userInfoResp.errmsg = %s", infoResp.Errcode, infoResp.Errmsg)
-	}
-	userInfo := UserInfo{
-		Id:          infoResp.UserId,
-		Username:    infoResp.Name,
-		DisplayName: infoResp.Name,
-		Email:       infoResp.Email,
-		AvatarUrl:   infoResp.Avatar,
+	// snsapi_privateinfo scope returns user_ticket, use getuserdetail for full private info
+	if userResp.UserTicket != "" {
+		requestBody := map[string]string{"user_ticket": userResp.UserTicket}
+		bs, _ := json.Marshal(requestBody)
+		resp, err = idp.Client.Post(
+			fmt.Sprintf("https://qyapi.weixin.qq.com/cgi-bin/user/getuserdetail?access_token=%s", accessToken),
+			"application/json;charset=UTF-8",
+			bytes.NewReader(bs))
+		if err != nil {
+			return nil, err
+		}
+		data, err = io.ReadAll(resp.Body)
+		if err != nil {
+			return nil, err
+		}
+		detailResp := &WecomInternalUserDetail{}
+		err = json.Unmarshal(data, detailResp)
+		if err != nil {
+			return nil, err
+		}
+		if detailResp.Errcode != 0 {
+			return nil, fmt.Errorf("getuserdetail.Errcode = %d, getuserdetail.Errmsg = %s", detailResp.Errcode, detailResp.Errmsg)
+		}
+		userInfo.Username = detailResp.Name
+		userInfo.DisplayName = detailResp.Name
+		userInfo.Email = detailResp.Email
+		userInfo.AvatarUrl = detailResp.Avatar
+	} else {
+		// Fall back to user/get for basic info if no user_ticket
+		resp, err = idp.Client.Get(fmt.Sprintf("https://qyapi.weixin.qq.com/cgi-bin/user/get?access_token=%s&userid=%s", accessToken, userResp.UserId))
+		if err != nil {
+			return nil, err
+		}
+
+		data, err = io.ReadAll(resp.Body)
+		if err != nil {
+			return nil, err
+		}
+		infoResp := &WecomInternalUserInfo{}
+		err = json.Unmarshal(data, infoResp)
+		if err != nil {
+			return nil, err
+		}
+		if infoResp.Errcode != 0 {
+			return nil, fmt.Errorf("userInfoResp.errcode = %d, userInfoResp.errmsg = %s", infoResp.Errcode, infoResp.Errmsg)
+		}
+		userInfo.Username = infoResp.Name
+		userInfo.DisplayName = infoResp.Name
+		userInfo.Email = infoResp.Email
+		userInfo.AvatarUrl = infoResp.Avatar
 	}
 
 	if userInfo.Id == "" {
