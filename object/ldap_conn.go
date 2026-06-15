@@ -497,7 +497,10 @@ func SyncLdapUsers(owner string, syncUsers []LdapUser, ldapId string) (existUser
 				continue
 			}
 
-			user.Groups = buildLdapUserGroups(organization.Name, ldap, syncUser.MemberOf, existingGroupNameSet)
+			// Merge LDAP-derived groups with the user's existing groups so that
+			// manually-assigned groups (or groups from other sources) are not
+			// wiped out during synchronization.
+			user.Groups = buildLdapUserGroups(organization.Name, ldap, syncUser.MemberOf, existingGroupNameSet, user.Groups)
 			affected, err := UpdateUser(user.GetId(), user, []string{"groups"}, false)
 			if err != nil {
 				return nil, nil, err
@@ -538,7 +541,7 @@ func SyncLdapUsers(owner string, syncUsers []LdapUser, ldapId string) (existUser
 			}
 			formatUserPhone(newUser)
 
-			userGroups := buildLdapUserGroups(organization.Name, ldap, syncUser.MemberOf, existingGroupNameSet)
+			userGroups := buildLdapUserGroups(organization.Name, ldap, syncUser.MemberOf, existingGroupNameSet, nil)
 
 			if len(userGroups) > 0 {
 				newUser.Groups = userGroups
@@ -580,7 +583,7 @@ func getUserByLdap(owner string, ldapUuid string) (*User, error) {
 	return nil, nil
 }
 
-func buildLdapUserGroups(owner string, ldap *Ldap, memberOf []string, existingGroupNameSet map[string]struct{}) []string {
+func buildLdapUserGroups(owner string, ldap *Ldap, memberOf []string, existingGroupNameSet map[string]struct{}, existingUserGroups []string) []string {
 	userGroups := []string{}
 	seen := make(map[string]struct{})
 	addGroup := func(groupId string) {
@@ -592,6 +595,13 @@ func buildLdapUserGroups(owner string, ldap *Ldap, memberOf []string, existingGr
 		}
 		seen[groupId] = struct{}{}
 		userGroups = append(userGroups, groupId)
+	}
+
+	// Preserve the user's existing groups (e.g. manually-assigned groups or
+	// groups from other sources) so synchronization only adds LDAP groups
+	// instead of replacing the whole membership.
+	for _, g := range existingUserGroups {
+		addGroup(g)
 	}
 
 	if len(ldap.DefaultGroups) > 0 {
