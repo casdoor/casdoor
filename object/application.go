@@ -444,12 +444,12 @@ func UpdateApplication(id string, application *Application, isGlobalAdmin bool, 
 
 	session := ormer.Engine.ID(core.PK{owner, name}).Where("organization = ?", oldApplication.Organization)
 	if len(columns) > 0 {
-		session = session.Cols(columns...)
+		session = session.MustCols(columns...)
 	} else {
 		session = session.AllCols()
 	}
 	if application.ClientSecret == "***" {
-		session.Omit("client_secret")
+		session = session.Omit("client_secret")
 	}
 	affected, err := session.Update(application)
 	if err != nil {
