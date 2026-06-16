@@ -120,8 +120,10 @@ func GetOidcDiscovery(host string, applicationName string) OidcDiscovery {
 	// If application is provided, use application-specific URLs
 	var issuer, jwksUri string
 	if applicationName != "" {
-		// Application-specific issuer and endpoints (owner is always "admin")
-		issuer = fmt.Sprintf("%s/.well-known/%s", originBackend, applicationName)
+		// Application-specific endpoints (owner is always "admin")
+		// Issuer must match the `iss` claim in JWT tokens (always originBackend) so that
+		// clients using /.well-known/<app>/openid-configuration can validate tokens correctly.
+		issuer = originBackend
 		jwksUri = fmt.Sprintf("%s/.well-known/%s/jwks", originBackend, applicationName)
 	} else {
 		// Default global issuer and endpoints
