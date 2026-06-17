@@ -55,6 +55,8 @@ type Record struct {
 	Response   string `xorm:"mediumtext" json:"response"`
 	StatusCode int    `json:"statusCode"`
 
+	Detail string `xorm:"varchar(100)" json:"detail"`
+
 	IsTriggered bool `json:"isTriggered"`
 }
 
@@ -224,6 +226,7 @@ func CopyRecord(record *Record) *Record {
 		Language:     record.Language,
 		Object:       record.Object,
 		Response:     record.Response,
+		Detail:       record.Detail,
 		IsTriggered:  record.IsTriggered,
 	}
 	return res

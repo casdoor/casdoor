@@ -19,6 +19,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"encoding/xml"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -779,6 +780,10 @@ func (c *ApiController) Login() {
 		}
 
 		if err != nil {
+			var signinErr *object.SigninError
+			if errors.As(err, &signinErr) {
+				c.Ctx.Input.SetParam("recordDetail", signinErr.Reason)
+			}
 			c.ResponseError(err.Error())
 			return
 		} else {
@@ -1203,6 +1208,7 @@ func (c *ApiController) Login() {
 			if !passed {
 				err = mfaUtil.Verify(authForm.Passcode)
 				if err != nil {
+					c.Ctx.Input.SetParam("recordDetail", object.SigninReasonMfaFailed)
 					c.ResponseError(err.Error())
 					return
 				}
@@ -1223,6 +1229,7 @@ func (c *ApiController) Login() {
 		} else if authForm.RecoveryCode != "" {
 			err = object.MfaRecover(user, authForm.RecoveryCode)
 			if err != nil {
+				c.Ctx.Input.SetParam("recordDetail", object.SigninReasonMfaFailed)
 				c.ResponseError(err.Error())
 				return
 			}

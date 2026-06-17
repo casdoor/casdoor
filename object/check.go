@@ -211,7 +211,7 @@ func checkSigninErrorTimes(user *User, lang string) error {
 
 		// deny the login if the error times is greater than the limit and the last login time is less than the duration
 		if minutes > 0 {
-			return fmt.Errorf(i18n.Translate(lang, "check:You have entered the wrong password or code too many times, please wait for %d minutes and try again"), minutes)
+			return newSigninError(SigninReasonAccountFrozen, fmt.Sprintf(i18n.Translate(lang, "check:You have entered the wrong password or code too many times, please wait for %d minutes and try again"), minutes))
 		}
 
 		// reset the error times
@@ -374,16 +374,16 @@ func CheckUserPassword(organization string, username string, password string, la
 	}
 
 	if user == nil || user.IsDeleted {
-		return nil, fmt.Errorf(i18n.Translate(lang, "general:The user: %s doesn't exist"), util.GetId(organization, username))
+		return nil, newSigninError(SigninReasonUserNotFound, fmt.Sprintf(i18n.Translate(lang, "general:The user: %s doesn't exist"), util.GetId(organization, username)))
 	}
 
 	if user.IsForbidden {
-		return nil, errors.New(i18n.Translate(lang, "check:The user is forbidden to sign in, please contact the administrator"))
+		return nil, newSigninError(SigninReasonAccountDisabled, i18n.Translate(lang, "check:The user is forbidden to sign in, please contact the administrator"))
 	}
 
 	// Prevent direct login for guest users without upgrading
 	if user.Tag == "guest-user" {
-		return nil, errors.New(i18n.Translate(lang, "check:Guest users must upgrade their account by setting a username and password before they can sign in directly"))
+		return nil, newSigninError(SigninReasonAccountDisabled, i18n.Translate(lang, "check:Guest users must upgrade their account by setting a username and password before they can sign in directly"))
 	}
 
 	if isSigninViaLdap {
