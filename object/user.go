@@ -292,7 +292,7 @@ type Address struct {
 type FaceId struct {
 	Name       string    `xorm:"varchar(100) notnull pk" json:"name"`
 	FaceIdData []float64 `json:"faceIdData"`
-	ImageUrl   string    `json:"ImageUrl"`
+	ImageUrl   string    `json:"imageUrl"`
 }
 
 func GetUserFieldStringValue(user *User, fieldName string) (bool, string, error) {

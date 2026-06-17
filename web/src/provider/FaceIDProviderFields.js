@@ -21,7 +21,9 @@ import i18next from "i18next";
 export function renderFaceIdProviderFields(provider, updateProviderField) {
   return (
     <>
-      {["Alibaba Cloud Facebody"].includes(provider.type) ? null : (
+      {/* Only show the intranet endpoint field for provider types that use it.
+           Add new Face ID provider types here when they support intranet/extranet endpoint pairs. */}
+      {[].includes(provider.type) ? (
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={2}>
             {Setting.getLabel(i18next.t("provider:Endpoint (Intranet)"), i18next.t("provider:Region endpoint for Intranet"))} :
@@ -32,7 +34,7 @@ export function renderFaceIdProviderFields(provider, updateProviderField) {
             }} />
           </Col>
         </Row>
-      )}
+      ) : null}
       <Row style={{marginTop: "20px"}} >
         <Col style={{marginTop: "5px"}} span={2}>
           {Setting.getLabel(i18next.t("provider:Endpoint"), i18next.t("provider:Region endpoint for Internet"))} :

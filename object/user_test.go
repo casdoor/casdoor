@@ -15,6 +15,7 @@
 package object
 
 import (
+	"encoding/json"
 	"fmt"
 	"reflect"
 	"strings"
@@ -31,6 +32,35 @@ func updateUserColumn(column string, user *User) bool {
 	}
 
 	return affected != 0
+}
+
+func TestFaceIdUsesLowerCamelImageUrlJsonField(t *testing.T) {
+	var faceId FaceId
+	err := json.Unmarshal([]byte(`{"name":"face","imageUrl":"http://example.com/face.jpg","faceIdData":[]}`), &faceId)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if faceId.ImageUrl != "http://example.com/face.jpg" {
+		t.Fatalf("ImageUrl = %q, want %q", faceId.ImageUrl, "http://example.com/face.jpg")
+	}
+
+	data, err := json.Marshal(faceId)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	var fields map[string]interface{}
+	if err := json.Unmarshal(data, &fields); err != nil {
+		t.Fatal(err)
+	}
+
+	if _, ok := fields["imageUrl"]; !ok {
+		t.Fatalf("marshaled FaceId does not contain imageUrl: %s", string(data))
+	}
+	if _, ok := fields["ImageUrl"]; ok {
+		t.Fatalf("marshaled FaceId unexpectedly contains ImageUrl: %s", string(data))
+	}
 }
 
 func TestSyncAvatarsFromGitHub(t *testing.T) {

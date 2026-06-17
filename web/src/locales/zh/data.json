@@ -23,6 +23,7 @@
   },
   "application": {
     "Add Face ID": "添加人脸ID",
+    "Add Face ID with Camera": "拍照添加人脸ID",
     "Add Face ID with Image": "添加图片人脸ID",
     "Always": "始终开启",
     "Array": "数组",

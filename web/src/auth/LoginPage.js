@@ -951,9 +951,9 @@ class LoginPage extends React.Component {
           }
           {
             this.state.loginMethod === "faceId" ?
-              this.state.haveFaceIdProvider ? <Suspense fallback={null}><FaceRecognitionCommonModal visible={this.state.openFaceRecognitionModal} onOk={(FaceIdImage) => {
+              this.state.haveFaceIdProvider ? <Suspense fallback={null}><FaceRecognitionCommonModal visible={this.state.openFaceRecognitionModal} onOk={(faceIdImage) => {
                 const values = this.state.values;
-                values["FaceIdImage"] = FaceIdImage;
+                values["faceIdImage"] = faceIdImage;
                 this.login(values);
                 this.setState({openFaceRecognitionModal: false});
               }} onCancel={() => this.setState({openFaceRecognitionModal: false, loginLoading: false})} /></Suspense> :
