@@ -29,6 +29,7 @@ import (
 // See https://openid.net/specs/openid-connect-backchannel-1_0.html
 type LogoutTokenClaims struct {
 	Events map[string]interface{} `json:"events"`
+	Sid    string                 `json:"sid,omitempty"`
 	jwt.RegisteredClaims
 }
 
@@ -52,8 +53,7 @@ func generateLogoutToken(application *Application, user *User, sessionId string,
 	}
 
 	if sessionId != "" {
-		// sid claim carries the session ID per the spec
-		claims.RegisteredClaims.ID = sessionId
+		claims.Sid = sessionId
 	}
 
 	cert, err := getCertByApplication(application)
