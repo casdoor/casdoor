@@ -23,6 +23,7 @@
   },
   "application": {
     "Add Face ID": "Add Face ID",
+    "Add Face ID with Camera": "Add Face ID with Camera",
     "Add Face ID with Image": "Add Face ID with Image",
     "Always": "Always",
     "Array": "Array",

@@ -21,7 +21,7 @@ import i18next from "i18next";
 export function renderFaceIdProviderFields(provider, updateProviderField) {
   return (
     <>
-      {["Alibaba Cloud Facebody"].includes(provider.type) ? null : (
+      {["Alibaba Cloud Facebody", "Local UniFace"].includes(provider.type) ? null : (
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={2}>
             {Setting.getLabel(i18next.t("provider:Endpoint (Intranet)"), i18next.t("provider:Region endpoint for Intranet"))} :
