@@ -47,7 +47,7 @@ func checkPasswordExpired(user *User, lang string) error {
 	lastTime := util.String2Time(lastChangePasswordTime)
 	expireTime := lastTime.AddDate(0, 0, passwordExpireDays)
 	if time.Now().After(expireTime) {
-		return errors.New(i18n.Translate(lang, "check:Your password has expired. Please reset your password by clicking \"Forgot password\""))
+		return newSigninError(SigninReasonPasswordExpired, i18n.Translate(lang, "check:Your password has expired. Please reset your password by clicking \"Forgot password\""))
 	}
 	return nil
 }

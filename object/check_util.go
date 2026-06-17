@@ -15,7 +15,6 @@
 package object
 
 import (
-	"errors"
 	"fmt"
 	"regexp"
 	"strconv"
@@ -98,11 +97,11 @@ func recordSigninErrorInfo(user *User, lang string, options ...bool) error {
 
 	leftChances := failedSigninLimit - user.SigninWrongTimes
 	if leftChances == 0 && enableCaptcha {
-		return errors.New(i18n.Translate(lang, "check:password or code is incorrect"))
+		return newSigninError(SigninReasonWrongPassword, i18n.Translate(lang, "check:password or code is incorrect"))
 	} else if leftChances >= 0 {
-		return fmt.Errorf(i18n.Translate(lang, "check:password or code is incorrect, you have %s remaining chances"), strconv.Itoa(leftChances))
+		return newSigninError(SigninReasonWrongPassword, fmt.Sprintf(i18n.Translate(lang, "check:password or code is incorrect, you have %s remaining chances"), strconv.Itoa(leftChances)))
 	}
 
 	// don't show the chance error message if the user has no chance left
-	return fmt.Errorf(i18n.Translate(lang, "check:You have entered the wrong password or code too many times, please wait for %d minutes and try again"), failedSigninFrozenTime)
+	return newSigninError(SigninReasonAccountFrozen, fmt.Sprintf(i18n.Translate(lang, "check:You have entered the wrong password or code too many times, please wait for %d minutes and try again"), failedSigninFrozenTime))
 }

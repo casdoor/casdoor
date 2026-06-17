@@ -92,6 +92,10 @@ func AfterRecordMessage(ctx *context.Context) {
 
 	userId := ctx.Input.Params()["recordUserId"]
 	targetUserId := ctx.Input.Params()["recordTargetUserId"]
+	detail := ctx.Input.Params()["recordFailureReason"]
+	if detail != "" {
+		record.Detail = detail
+	}
 
 	// For set-password endpoint, use target user if available
 	// We use defensive error handling here (log instead of panic) because target user
