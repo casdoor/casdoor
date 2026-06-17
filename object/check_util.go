@@ -82,14 +82,12 @@ func recordSigninErrorInfo(user *User, lang string, options ...bool) error {
 		return errSignin
 	}
 
-	// increase failed login count
+	// increase failed login count, and record the lockout time only when first reaching the limit
 	if user.SigninWrongTimes < failedSigninLimit {
 		user.SigninWrongTimes++
-	}
-
-	if user.SigninWrongTimes >= failedSigninLimit {
-		// record the latest failed login time
-		user.LastSigninWrongTime = time.Now().UTC().Format(time.RFC3339)
+		if user.SigninWrongTimes >= failedSigninLimit {
+			user.LastSigninWrongTime = time.Now().UTC().Format(time.RFC3339)
+		}
 	}
 
 	// update user
