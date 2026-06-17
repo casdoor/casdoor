@@ -29,6 +29,7 @@ import (
 	"github.com/casdoor/casdoor/faceId"
 	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/proxy"
+	"github.com/casdoor/casdoor/storage"
 	"github.com/casdoor/casdoor/util"
 	"github.com/go-webauthn/webauthn/webauthn"
 	"github.com/xorm-io/builder"
@@ -1479,15 +1480,10 @@ func (user *User) IsGlobalAdmin() bool {
 
 func (user *User) CheckUserFace(faceIdImage []string, provider *Provider) (bool, error) {
 	faceIdChecker := faceId.GetFaceIdProvider(provider.Type, provider.ClientId, provider.ClientSecret, provider.Endpoint)
-	httpClient := proxy.DefaultHttpClient
 	errList := []error{}
 	for _, userFaceId := range user.FaceIds {
 		if userFaceId.ImageUrl != "" {
-			imgResp, err := httpClient.Get(userFaceId.ImageUrl)
-			if err != nil {
-				continue
-			}
-			imgByte, err := io.ReadAll(imgResp.Body)
+			imgByte, err := getFaceImageBytes(userFaceId.ImageUrl)
 			if err != nil {
 				continue
 			}
@@ -1509,6 +1505,58 @@ func (user *User) CheckUserFace(faceIdImage []string, provider *Provider) (bool,
 		return false, errList[0]
 	}
 	return false, nil
+}
+
+// getFaceImageBytes reads a registered face image referenced by imageUrl.
+// When the image is served by the Local File System storage provider, the file
+// is read directly from disk instead of being fetched over HTTP. This avoids the
+// host loopback round-trip that fails when Casdoor runs in a container whose
+// access domain is not reachable from inside the container. Remote storage
+// (S3/OSS/COS/...) and any read failure fall back to the original HTTP download.
+func getFaceImageBytes(imageUrl string) ([]byte, error) {
+	if imgByte, ok := readLocalFaceImage(imageUrl); ok {
+		return imgByte, nil
+	}
+
+	imgResp, err := proxy.DefaultHttpClient.Get(imageUrl)
+	if err != nil {
+		return nil, err
+	}
+	defer imgResp.Body.Close()
+	return io.ReadAll(imgResp.Body)
+}
+
+// readLocalFaceImage attempts to read a face image straight from the local
+// "files" directory. It returns ok=false when imageUrl does not look like a
+// local-storage URL or the file cannot be read, so the caller can fall back to
+// fetching it over HTTP.
+func readLocalFaceImage(imageUrl string) ([]byte, bool) {
+	// Local File System URLs are built as "{domain}/files/{objectKey}".
+	const marker = "/files/"
+	index := strings.Index(imageUrl, marker)
+	if index < 0 {
+		return nil, false
+	}
+
+	objectKey := imageUrl[index+len(marker):]
+	if objectKey == "" {
+		return nil, false
+	}
+
+	// LocalFileSystemProvider sandboxes paths under its base dir, so a crafted
+	// objectKey cannot escape the files directory.
+	storageProvider := storage.NewLocalFileSystemStorageProvider()
+	reader, err := storageProvider.GetStream(objectKey)
+	if err != nil {
+		return nil, false
+	}
+	defer reader.Close()
+
+	imgByte, err := io.ReadAll(reader)
+	if err != nil {
+		return nil, false
+	}
+	return imgByte, true
 }
 
 func (user *User) GetUserFullGroupPath() ([]string, error) {
