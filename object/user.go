@@ -1214,45 +1214,83 @@ func GetUserInfo(user *User, scope string, aud string, host string) (*Userinfo, 
 		Aud: aud,
 	}
 
+	// Build a TokenFields whitelist from the application config.
+	// If the application has no TokenFields configured (empty list), all fields are allowed.
+	application, err := GetApplicationByClientId(aud)
+	if err != nil {
+		return nil, err
+	}
+	allowedFields := make(map[string]bool)
+	hasWhitelist := application != nil && len(application.TokenFields) > 0
+	if hasWhitelist {
+		for _, f := range application.TokenFields {
+			allowedFields[f] = true
+		}
+	}
+	allowed := func(field string) bool {
+		if !hasWhitelist {
+			return true
+		}
+		return allowedFields[field]
+	}
+
 	if strings.Contains(scope, "profile") {
-		resp.Name = user.Name
-		resp.DisplayName = user.DisplayName
-		resp.Avatar = user.Avatar
-		resp.Groups = user.Groups
-
-		err := ExtendUserWithRolesAndPermissions(user)
-		if err != nil {
-			return nil, err
+		if allowed("Name") {
+			resp.Name = user.Name
+		}
+		if allowed("DisplayName") {
+			resp.DisplayName = user.DisplayName
+		}
+		if allowed("Avatar") {
+			resp.Avatar = user.Avatar
+		}
+		if allowed("Groups") {
+			resp.Groups = user.Groups
 		}
 
-		resp.Roles = []string{}
-		for _, role := range user.Roles {
-			resp.Roles = append(resp.Roles, role.Name)
-		}
+		if allowed("Roles") || allowed("Permissions") {
+			err := ExtendUserWithRolesAndPermissions(user)
+			if err != nil {
+				return nil, err
+			}
 
-		resp.Permissions = []string{}
-		for _, permission := range user.Permissions {
-			resp.Permissions = append(resp.Permissions, permission.Name)
+			if allowed("Roles") {
+				resp.Roles = []string{}
+				for _, role := range user.Roles {
+					resp.Roles = append(resp.Roles, role.Name)
+				}
+			}
+
+			if allowed("Permissions") {
+				resp.Permissions = []string{}
+				for _, permission := range user.Permissions {
+					resp.Permissions = append(resp.Permissions, permission.Name)
+				}
+			}
 		}
 	}
 
-	if strings.Contains(scope, "email") {
+	if strings.Contains(scope, "email") && allowed("Email") {
 		resp.Email = user.Email
 		// resp.EmailVerified = user.EmailVerified
 		resp.EmailVerified = true
 	}
 
-	if strings.Contains(scope, "address") {
+	if strings.Contains(scope, "address") && allowed("Location") {
 		resp.Address = user.Location
 	}
 
-	if strings.Contains(scope, "phone") {
+	if strings.Contains(scope, "phone") && allowed("Phone") {
 		resp.Phone = user.Phone
 	}
 
 	if strings.Contains(scope, "profile") {
-		resp.RealName = user.RealName
-		resp.IsVerified = user.IsVerified
+		if allowed("RealName") {
+			resp.RealName = user.RealName
+		}
+		if allowed("IsVerified") {
+			resp.IsVerified = user.IsVerified
+		}
 	}
 
 	return &resp, nil
