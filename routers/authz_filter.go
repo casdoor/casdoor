@@ -263,6 +263,10 @@ func getUrlPath(ctx *context.Context) string {
 		return "/api/login/oauth"
 	}
 
+	if strings.HasPrefix(urlPath, "/api/oauth/register") {
+		return "/api/oauth/register"
+	}
+
 	if strings.HasPrefix(urlPath, "/api/webauthn") {
 		return "/api/webauthn"
 	}
