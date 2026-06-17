@@ -19,5 +19,9 @@ type FaceIdProvider interface {
 }
 
 func GetFaceIdProvider(typ string, clientId string, clientSecret string, endPoint string) FaceIdProvider {
+	if typ == "Local UniFace" {
+		return NewLocalUniFaceProvider(endPoint, clientSecret)
+	}
+
 	return NewAliyunFaceIdProvider(clientId, clientSecret, endPoint)
 }

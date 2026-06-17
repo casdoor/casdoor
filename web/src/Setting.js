@@ -442,6 +442,10 @@ export const OtherProviderInfo = {
       logo: `${StaticBaseUrl}/img/social_aliyun.png`,
       url: "https://vision.aliyun.com/facebody",
     },
+    "Local UniFace": {
+      logo: `${StaticBaseUrl}/img/social_default.png`,
+      url: "https://github.com/yakhyo/uniface",
+    },
   },
   "MFA": {
     "RADIUS": {
@@ -1475,6 +1479,7 @@ export function getProviderTypeOptions(category) {
   } else if (category === "Face ID") {
     return ([
       {id: "Alibaba Cloud Facebody", name: "Alibaba Cloud Facebody"},
+      {id: "Local UniFace", name: "Local UniFace"},
     ]);
   } else if (category === "MFA") {
     return ([

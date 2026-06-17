@@ -20,8 +20,12 @@ import i18next from "i18next";
 import Dragger from "antd/es/upload/Dragger";
 import * as Setting from "../../Setting";
 
+// This modal has three modes controlled by props:
+//   withImage=false            → camera mode: captures face descriptor array (faceIdData) for recognition login
+//   withImage=true             → image-upload mode: user drags/drops a photo; camera is skipped
+//   withImage=true captureImage=true → camera-capture mode: captures a JPEG image URL for image-based enrollment
 const FaceRecognitionModal = (props) => {
-  const {visible, onOk, onCancel, withImage} = props;
+  const {visible, onOk, onCancel, withImage, captureImage} = props;
   const [modelsLoaded, setModelsLoaded] = React.useState(false);
   const [isCameraCaptured, setIsCameraCaptured] = useState(false);
 
@@ -59,7 +63,7 @@ const FaceRecognitionModal = (props) => {
   }, [visible, modelsLoaded]);
 
   React.useEffect(() => {
-    if (withImage) {
+    if (withImage && !captureImage) {
       return;
     }
     if (visible) {
@@ -87,7 +91,7 @@ const FaceRecognitionModal = (props) => {
   }, [visible, modelsLoaded]);
 
   React.useEffect(() => {
-    if (withImage) {
+    if (withImage && !captureImage) {
       return;
     }
     if (isCameraCaptured) {
@@ -113,7 +117,7 @@ const FaceRecognitionModal = (props) => {
   }, [isCameraCaptured]);
 
   const handleStreamVideo = () => {
-    if (withImage) {
+    if (withImage && !captureImage) {
       return;
     }
     let count = 0;
@@ -138,7 +142,16 @@ const FaceRecognitionModal = (props) => {
               goodCount++;
               if (face.detection.score > 0.99 || goodCount > 10) {
                 clearInterval(detection.current);
-                onOk(array);
+                if (captureImage) {
+                  const canvas = document.createElement("canvas");
+                  canvas.width = videoRef.current.videoWidth;
+                  canvas.height = videoRef.current.videoHeight;
+                  const context = canvas.getContext("2d");
+                  context.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
+                  onOk(canvas.toDataURL("image/jpeg", 0.92));
+                } else {
+                  onOk(array);
+                }
               }
             }
           } else {
@@ -175,7 +188,7 @@ const FaceRecognitionModal = (props) => {
     });
   };
 
-  if (!withImage) {
+  if (!withImage || captureImage) {
     return (
       <div>
         <Modal

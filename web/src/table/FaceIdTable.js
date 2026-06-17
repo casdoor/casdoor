@@ -16,7 +16,7 @@ import React, {Suspense, lazy} from "react";
 import {Button, Col, Input, Row, Table, Upload} from "antd";
 import i18next from "i18next";
 import * as Setting from "../Setting";
-import {UploadOutlined} from "@ant-design/icons";
+import {CameraOutlined, UploadOutlined} from "@ant-design/icons";
 import * as ResourceBackend from "../backend/ResourceBackend";
 const FaceRecognitionModal = lazy(() => import("../common/modal/FaceRecognitionModal"));
 
@@ -26,6 +26,7 @@ class FaceIdTable extends React.Component {
     this.state = {
       classes: props,
       openFaceRecognitionModal: false,
+      openFaceImageCameraModal: false,
     };
   }
 
@@ -66,6 +67,29 @@ class FaceIdTable extends React.Component {
     }
     table = Setting.addRow(table, faceId);
     this.updateTable(table);
+  }
+
+  async dataUrlToFile(dataUrl, filename) {
+    const res = await fetch(dataUrl);
+    const blob = await res.blob();
+    return new File([blob], filename, {type: blob.type || "image/jpeg"});
+  }
+
+  uploadFaceImage(table, file, loadingField) {
+    this.setState({[loadingField]: true});
+    const filename = file.name;
+    const fullFilePath = `resource/${this.props.account.owner}/${this.props.account.name}/${filename}`;
+    ResourceBackend.uploadResource(this.props.account.owner, this.props.account.name, "custom", "ResourceListPage", fullFilePath, file)
+      .then(res => {
+        if (res.status === "ok") {
+          Setting.showMessage("success", i18next.t("application:File uploaded successfully"));
+          this.addFaceImage(table, res.data);
+        } else {
+          Setting.showMessage("error", res.msg);
+        }
+      }).finally(() => {
+        this.setState({[loadingField]: false, openFaceImageCameraModal: false});
+      });
   }
 
   renderTable(table) {
@@ -116,21 +140,7 @@ class FaceIdTable extends React.Component {
     ];
 
     const handleUpload = (info) => {
-      this.setState({uploading: true});
-      const filename = info.fileList[0].name;
-      const fullFilePath = `resource/${this.props.account.owner}/${this.props.account.name}/${filename}`;
-      ResourceBackend.uploadResource(this.props.account.owner, this.props.account.name, "custom", "ResourceListPage", fullFilePath, info.file)
-        .then(res => {
-          if (res.status === "ok") {
-            Setting.showMessage("success", i18next.t("application:File uploaded successfully"));
-
-            this.addFaceImage(table, res.data);
-          } else {
-            Setting.showMessage("error", res.msg);
-          }
-        }).finally(() => {
-          this.setState({uploading: false});
-        });
+      this.uploadFaceImage(table, info.file, "uploading");
     };
 
     return (
@@ -143,6 +153,9 @@ class FaceIdTable extends React.Component {
             </Button>
             <Button disabled={this.props.table?.length >= 5} style={{marginRight: "10px"}} size="small" onClick={() => this.setState({openFaceRecognitionModal: true, withImage: true})}>
               {i18next.t("application:Add Face ID with Image")}
+            </Button>
+            <Button disabled={this.props.table?.length >= 5} style={{marginRight: "10px"}} icon={<CameraOutlined />} loading={this.state.uploadingCamera} size="small" onClick={() => this.setState({openFaceImageCameraModal: true})}>
+              {i18next.t("application:Add Face ID with Camera")}
             </Button>
             <Upload maxCount={1} accept="image/*" showUploadList={false}
               beforeUpload={file => {return false;}} onChange={info => {handleUpload(info);}}>
@@ -159,6 +172,16 @@ class FaceIdTable extends React.Component {
                   this.setState({openFaceRecognitionModal: false});
                 }}
                 onCancel={() => this.setState({openFaceRecognitionModal: false})}
+              />
+              <FaceRecognitionModal
+                visible={this.state.openFaceImageCameraModal}
+                withImage={true}
+                captureImage={true}
+                onOk={async(imageDataUrl) => {
+                  const file = await this.dataUrlToFile(imageDataUrl, `face-id-${Date.now()}.jpg`);
+                  this.uploadFaceImage(table, file, "uploadingCamera");
+                }}
+                onCancel={() => this.setState({openFaceImageCameraModal: false})}
               />
             </Suspense>
           </div>
