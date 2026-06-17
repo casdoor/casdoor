@@ -244,6 +244,34 @@ func ExpireTokenByUser(owner, username string) (bool, error) {
 	return affected != 0, nil
 }
 
+// expireActiveTokensByUserApplication expires every active token for the given
+// organization + user + application. Returns whether any row was affected and a
+// representative token (nil when there were none).
+func expireActiveTokensByUserApplication(organization, username, application string) (bool, *Token, error) {
+	tokens := []*Token{}
+	err := ormer.Engine.Where("organization = ? and user = ? and application = ? and expires_in > 0", organization, username, application).Find(&tokens)
+	if err != nil {
+		return false, nil, err
+	}
+	if len(tokens) == 0 {
+		return false, nil, nil
+	}
+
+	affected := false
+	for _, token := range tokens {
+		token.ExpiresIn = 0
+		n, err := ormer.Engine.ID(core.PK{token.Owner, token.Name}).Cols("expires_in").Update(token)
+		if err != nil {
+			return affected, tokens[0], err
+		}
+		if n != 0 {
+			affected = true
+		}
+	}
+
+	return affected, tokens[0], nil
+}
+
 // updateTokenDPoP updates the token_type and dpop_jkt columns for DPoP binding (RFC 9449).
 func updateTokenDPoP(token *Token) error {
 	_, err := ormer.Engine.ID(core.PK{token.Owner, token.Name}).Cols("token_type", "dpop_jkt").Update(token)

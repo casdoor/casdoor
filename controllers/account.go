@@ -442,7 +442,8 @@ func (c *ApiController) Logout() {
 			return
 		}
 
-		_, application, token, err := object.ExpireTokenByAccessToken(accessToken)
+		// id_token_hint can be an access token or an id token, so resolve both
+		_, application, token, err := object.ExpireTokenByLogoutHint(accessToken)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
