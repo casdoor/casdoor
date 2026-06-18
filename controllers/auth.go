@@ -597,6 +597,7 @@ func (c *ApiController) Login() {
 			faceIdProvider, err := object.GetFaceIdProviderByApplication(util.GetId(application.Owner, application.Name), "false", c.GetAcceptLanguage())
 			if err != nil {
 				c.ResponseError(err.Error())
+				return
 			}
 
 			if faceIdProvider == nil {
@@ -605,13 +606,19 @@ func (c *ApiController) Login() {
 					return
 				}
 			} else {
+				if !user.HasFaceIdImage() {
+					c.ResponseError(i18n.Translate(c.GetAcceptLanguage(), "check:Face data does not exist, cannot log in"))
+					return
+				}
+
 				ok, err := user.CheckUserFace(authForm.FaceIdImage, faceIdProvider)
 				if err != nil {
 					c.ResponseError(err.Error(), nil)
+					return
 				}
 
 				if !ok {
-					c.ResponseError(i18n.Translate(c.GetAcceptLanguage(), "check:Face data does not exist, cannot log in"))
+					c.ResponseError(i18n.Translate(c.GetAcceptLanguage(), "check:Face data mismatch"))
 					return
 				}
 			}
