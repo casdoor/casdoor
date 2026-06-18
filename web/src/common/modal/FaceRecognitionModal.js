@@ -157,7 +157,7 @@ const FaceRecognitionModal = (props) => {
       const image = canvas.toDataURL("image/jpeg", 0.92);
       const res = await FaceIdBackend.detectFaceIdImage(owner, name, application, image);
       if (res.status !== "ok") {
-        message.warning(res.msg || i18next.t("login:Face recognition failed"));
+        message.warning(res.msg || i18next.t("login:Please keep only one face in the recognition box"));
         return;
       }
       setCapturedImage(image);
@@ -238,7 +238,7 @@ const FaceRecognitionModal = (props) => {
           closable={false}
           maskClosable={false}
           destroyOnClose={true}
-          open={visible}
+          open={visible && isCameraCaptured}
           title={i18next.t("login:Face Recognition")}
           width={350}
           footer={[

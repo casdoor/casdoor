@@ -26,6 +26,7 @@ export function detectFaceIdImage(owner, name, application, image) {
     }),
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
+      "Content-Type": "application/json",
     },
   }).then(res => res.json());
 }
