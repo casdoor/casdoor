@@ -42,6 +42,19 @@ type localUniFaceCompareResponse struct {
 	Detail  string  `json:"detail"`
 }
 
+type LocalUniFaceFace struct {
+	Confidence float64   `json:"confidence"`
+	Bbox       []float64 `json:"bbox"`
+}
+
+type localUniFaceDetectRequest struct {
+	Image string `json:"image"`
+}
+
+type localUniFaceDetectResponse struct {
+	Faces []LocalUniFaceFace `json:"faces"`
+}
+
 func NewLocalUniFaceProvider(endpoint string, apiKey string) *LocalUniFaceProvider {
 	return &LocalUniFaceProvider{
 		Endpoint: strings.TrimRight(endpoint, "/"),
@@ -100,4 +113,51 @@ func (provider *LocalUniFaceProvider) Check(base64ImageA string, base64ImageB st
 	}
 
 	return compareResponse.Matched, nil
+}
+
+func (provider *LocalUniFaceProvider) Detect(base64Image string) ([]LocalUniFaceFace, error) {
+	if provider.Endpoint == "" {
+		return nil, fmt.Errorf("Local UniFace endpoint is empty")
+	}
+
+	body, err := json.Marshal(localUniFaceDetectRequest{Image: base64Image})
+	if err != nil {
+		return nil, err
+	}
+
+	request, err := http.NewRequest(http.MethodPost, fmt.Sprintf("%s/v1/detect", provider.Endpoint), bytes.NewReader(body))
+	if err != nil {
+		return nil, err
+	}
+	request.Header.Set("Content-Type", "application/json")
+	if provider.ApiKey != "" {
+		request.Header.Set("Authorization", fmt.Sprintf("Bearer %s", provider.ApiKey))
+	}
+
+	client := provider.Client
+	if client == nil {
+		client = http.DefaultClient
+	}
+
+	response, err := client.Do(request)
+	if err != nil {
+		return nil, err
+	}
+	defer response.Body.Close()
+
+	responseBody, err := io.ReadAll(response.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	if response.StatusCode < http.StatusOK || response.StatusCode >= http.StatusMultipleChoices {
+		return nil, fmt.Errorf("Local UniFace detect failed with status %d: %s", response.StatusCode, string(responseBody))
+	}
+
+	var detectResponse localUniFaceDetectResponse
+	if err = json.Unmarshal(responseBody, &detectResponse); err != nil {
+		return nil, err
+	}
+
+	return detectResponse.Faces, nil
 }

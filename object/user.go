@@ -1478,6 +1478,19 @@ func (user *User) IsGlobalAdmin() bool {
 	return user.Owner == "built-in"
 }
 
+func (user *User) HasFaceIdImage() bool {
+	if user == nil {
+		return false
+	}
+
+	for _, userFaceId := range user.FaceIds {
+		if userFaceId.ImageUrl != "" {
+			return true
+		}
+	}
+	return false
+}
+
 func (user *User) CheckUserFace(faceIdImage []string, provider *Provider) (bool, error) {
 	faceIdChecker := faceId.GetFaceIdProvider(provider.Type, provider.ClientId, provider.ClientSecret, provider.Endpoint)
 	errList := []error{}

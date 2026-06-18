@@ -18,11 +18,21 @@
 package controllers
 
 import (
+	"encoding/json"
 	"fmt"
+	"strings"
 
+	"github.com/casdoor/casdoor/faceId"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 )
+
+type faceIdDetectImageRequest struct {
+	Owner       string `json:"owner"`
+	Name        string `json:"name"`
+	Application string `json:"application"`
+	Image       string `json:"image"`
+}
 
 // FaceIDSigninBegin
 // @Title FaceIDSigninBegin
@@ -52,4 +62,70 @@ func (c *ApiController) FaceIDSigninBegin() {
 	}
 
 	c.ResponseOk()
+}
+
+// DetectFaceIdImage
+// @Title DetectFaceIdImage
+// @Tag Login API
+// @Description Detect whether a captured Face ID image is valid by using the configured Local UniFace provider
+// @Param   body     body    controllers.faceIdDetectImageRequest  true        "Face image detect request"
+// @Success 200 {object} controllers.Response The Response object
+// @router /detect-faceid-image [post]
+func (c *ApiController) DetectFaceIdImage() {
+	var request faceIdDetectImageRequest
+	if err := json.Unmarshal(c.Ctx.Input.RequestBody, &request); err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	if request.Image == "" {
+		c.ResponseError(c.T("check:Image cannot be empty"))
+		return
+	}
+
+	applicationName := request.Application
+	if applicationName == "" {
+		applicationName = "app-built-in"
+	}
+	applicationId := applicationName
+	if !strings.Contains(applicationId, "/") {
+		applicationId = fmt.Sprintf("admin/%s", applicationName)
+	}
+
+	application, err := object.GetApplication(applicationId)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	if application == nil {
+		c.ResponseError(fmt.Sprintf(c.T("auth:The application: %s does not exist"), applicationName))
+		return
+	}
+
+	provider, err := object.GetFaceIdProviderByApplication(util.GetId(application.Owner, application.Name), "false", c.GetAcceptLanguage())
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	if provider == nil || provider.Type != "Local UniFace" {
+		c.ResponseError("Local UniFace Face ID provider is not configured")
+		return
+	}
+
+	localProvider := faceId.NewLocalUniFaceProvider(provider.Endpoint, provider.ClientSecret)
+	faces, err := localProvider.Detect(request.Image)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	if len(faces) == 0 {
+		c.ResponseError(c.T("check:Please ensure sufficient lighting and align your face in the center of the recognition box"))
+		return
+	}
+	if len(faces) > 1 {
+		c.ResponseError(c.T("check:Please keep only one face in the recognition box"))
+		return
+	}
+
+	c.ResponseOk(map[string]interface{}{"faces": faces})
 }

@@ -271,6 +271,10 @@ func getUrlPath(ctx *context.Context) string {
 		return "/api/webauthn"
 	}
 
+	if urlPath == "/api/detect-faceid-image" {
+		return "/api/update-user"
+	}
+
 	if strings.HasPrefix(urlPath, "/api/saml/redirect") {
 		return "/api/saml/redirect"
 	}

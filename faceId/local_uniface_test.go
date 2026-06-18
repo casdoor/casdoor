@@ -90,3 +90,41 @@ func TestLocalUniFaceProviderCheckReturnsErrorForServiceError(t *testing.T) {
 		t.Fatal("expected error")
 	}
 }
+
+func TestLocalUniFaceProviderDetectCallsDetectEndpoint(t *testing.T) {
+	var requestBody map[string]interface{}
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/v1/detect" {
+			t.Fatalf("expected path /v1/detect, got %s", r.URL.Path)
+		}
+		if r.Method != http.MethodPost {
+			t.Fatalf("expected POST, got %s", r.Method)
+		}
+		if r.Header.Get("Authorization") != "Bearer secret" {
+			t.Fatalf("expected bearer token authorization, got %s", r.Header.Get("Authorization"))
+		}
+
+		err := json.NewDecoder(r.Body).Decode(&requestBody)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		_, _ = w.Write([]byte(`{"faces":[{"confidence":0.99,"bbox":[1,2,3,4]}]}`))
+	}))
+	defer server.Close()
+
+	provider := NewLocalUniFaceProvider(server.URL+"/", "secret")
+	faces, err := provider.Detect("probe-image")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(faces) != 1 {
+		t.Fatalf("expected one face, got %d", len(faces))
+	}
+	if faces[0].Confidence != 0.99 {
+		t.Fatalf("expected confidence 0.99, got %f", faces[0].Confidence)
+	}
+	if requestBody["image"] != "probe-image" {
+		t.Fatalf("expected image probe-image, got %#v", requestBody["image"])
+	}
+}
