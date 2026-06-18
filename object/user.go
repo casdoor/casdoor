@@ -1478,10 +1478,6 @@ func (user *User) IsGlobalAdmin() bool {
 }
 
 func (user *User) HasFaceIdImage() bool {
-	if user == nil {
-		return false
-	}
-
 	for _, userFaceId := range user.FaceIds {
 		if userFaceId.ImageUrl != "" {
 			return true
