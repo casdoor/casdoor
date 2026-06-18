@@ -63,6 +63,48 @@ func TestFaceIdUsesLowerCamelImageUrlJsonField(t *testing.T) {
 	}
 }
 
+func TestHasFaceIdImage(t *testing.T) {
+	tests := []struct {
+		name string
+		user *User
+		want bool
+	}{
+		{
+			name: "nil user",
+			user: nil,
+			want: false,
+		},
+		{
+			name: "no faces",
+			user: &User{},
+			want: false,
+		},
+		{
+			name: "legacy face descriptor only",
+			user: &User{FaceIds: []*FaceId{{FaceIdData: []float64{0.1, 0.2}}}},
+			want: false,
+		},
+		{
+			name: "empty image url",
+			user: &User{FaceIds: []*FaceId{{ImageUrl: ""}}},
+			want: false,
+		},
+		{
+			name: "image url exists",
+			user: &User{FaceIds: []*FaceId{{ImageUrl: "http://example.com/face.jpg"}}},
+			want: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := tt.user.HasFaceIdImage(); got != tt.want {
+				t.Fatalf("HasFaceIdImage() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
 func TestSyncAvatarsFromGitHub(t *testing.T) {
 	InitConfig()
 
