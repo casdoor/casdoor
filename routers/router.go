@@ -419,4 +419,5 @@ func InitAPI() {
 	web.Router("/api/mcp", &mcpself.McpController{}, "POST:HandleMcp")
 
 	web.Router("/api/faceid-signin-begin", &controllers.ApiController{}, "GET:FaceIDSigninBegin")
+	web.Router("/api/detect-faceid-image", &controllers.ApiController{}, "POST:DetectFaceIdImage")
 }
