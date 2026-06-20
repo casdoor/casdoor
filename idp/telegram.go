@@ -152,6 +152,12 @@ func (idp *TelegramIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, erro
 	username, _ := authData["username"].(string)
 	photoUrl, _ := authData["photo_url"].(string)
 
+	// Telegram usernames are optional. Generate a stable fallback so downstream
+	// user-record creation never receives an empty username.
+	if username == "" {
+		username = fmt.Sprintf("telegram_%d", userId)
+	}
+
 	// Build display name with fallback
 	displayName := strings.TrimSpace(firstName + " " + lastName)
 	if displayName == "" {
