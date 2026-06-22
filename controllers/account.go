@@ -388,6 +388,7 @@ func (c *ApiController) Signup() {
 // @Description logout the current user
 // @Param   id_token_hint   query        string  false        "id_token_hint"
 // @Param   post_logout_redirect_uri    query    string  false     "post_logout_redirect_uri"
+// @Param   client_id     query    string  false     "client_id"
 // @Param   state     query    string  false     "state"
 // @Success 200 {object} controllers.Response The Response object
 // @router /logout [post]
@@ -395,19 +396,33 @@ func (c *ApiController) Logout() {
 	// https://openid.net/specs/openid-connect-rpinitiated-1_0-final.html
 	accessToken := c.GetString("id_token_hint")
 	redirectUri := c.GetString("post_logout_redirect_uri")
+	clientId := c.GetString("client_id")
 	state := c.GetString("state")
 
 	user := c.GetSessionUsername()
 
-	if accessToken == "" && redirectUri == "" {
+	if accessToken == "" {
+		// "id_token_hint" is only RECOMMENDED (not REQUIRED) by the OIDC RP-Initiated Logout
+		// spec, so when it is absent we log the user out based on the current session. Some
+		// clients (e.g. Gitea) only send "post_logout_redirect_uri" (optionally with
+		// "client_id"), see: https://github.com/casdoor/casdoor/issues/5607
 		// TODO https://github.com/casdoor/casdoor/pull/1494#discussion_r1095675265
 		if user == "" {
 			c.ResponseOk()
 			return
 		}
 
-		// Retrieve application and token before clearing the session
+		// Retrieve application and token before clearing the session. Prefer the application
+		// bound to the session, and fall back to the "client_id" hint when available.
 		application := c.GetSessionApplication()
+		if application == nil && clientId != "" {
+			app, err := object.GetApplicationByClientId(clientId)
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
+			application = app
+		}
 		sessionToken := c.GetSessionToken()
 
 		c.ClearUserSession()
@@ -425,6 +440,12 @@ func (c *ApiController) Logout() {
 		bcOwner, bcUsername := util.GetOwnerAndNameFromIdNoCheck(user)
 		object.SendBackchannelLogout(bcOwner, bcUsername, "", c.Ctx.Request.Host)
 
+		// "post_logout_redirect_uri" has been made optional, see: https://github.com/casdoor/casdoor/issues/2151
+		if redirectUri != "" {
+			c.redirectToPostLogout(application, redirectUri, state)
+			return
+		}
+
 		if application == nil || application.Name == "app-built-in" || application.HomepageUrl == "" {
 			c.ResponseOk(user)
 			return
@@ -432,16 +453,6 @@ func (c *ApiController) Logout() {
 		c.ResponseOk(user, application.HomepageUrl)
 		return
 	} else {
-		// "post_logout_redirect_uri" has been made optional, see: https://github.com/casdoor/casdoor/issues/2151
-		// if redirectUri == "" {
-		// 	c.ResponseError(c.T("general:Missing parameter") + ": post_logout_redirect_uri")
-		// 	return
-		// }
-		if accessToken == "" {
-			c.ResponseError(c.T("general:Missing parameter") + ": id_token_hint")
-			return
-		}
-
 		_, application, token, err := object.ExpireTokenByAccessToken(accessToken)
 		if err != nil {
 			c.ResponseError(err.Error())
@@ -475,26 +486,33 @@ func (c *ApiController) Logout() {
 		// Send OIDC Back-Channel Logout notifications (https://openid.net/specs/openid-connect-backchannel-1_0.html)
 		object.SendBackchannelLogout(token.Organization, token.User, "", c.Ctx.Request.Host)
 
+		// "post_logout_redirect_uri" has been made optional, see: https://github.com/casdoor/casdoor/issues/2151
 		if redirectUri == "" {
 			c.ResponseOk()
 			return
+		}
+		c.redirectToPostLogout(application, redirectUri, state)
+		return
+	}
+}
+
+// redirectToPostLogout validates "post_logout_redirect_uri" against the application's allowed
+// redirect URI list and redirects the user agent to it, appending "state" when present.
+func (c *ApiController) redirectToPostLogout(application *object.Application, redirectUri string, state string) {
+	if application == nil || !application.IsRedirectUriValid(redirectUri) {
+		c.ResponseError(fmt.Sprintf(c.T("token:Redirect URI: %s doesn't exist in the allowed Redirect URI list"), redirectUri))
+		return
+	}
+
+	redirectUrl := redirectUri
+	if state != "" {
+		if strings.Contains(redirectUri, "?") {
+			redirectUrl = fmt.Sprintf("%s&state=%s", strings.TrimSuffix(redirectUri, "/"), state)
 		} else {
-			if application.IsRedirectUriValid(redirectUri) {
-				redirectUrl := redirectUri
-				if state != "" {
-					if strings.Contains(redirectUri, "?") {
-						redirectUrl = fmt.Sprintf("%s&state=%s", strings.TrimSuffix(redirectUri, "/"), state)
-					} else {
-						redirectUrl = fmt.Sprintf("%s?state=%s", strings.TrimSuffix(redirectUri, "/"), state)
-					}
-				}
-				c.Ctx.Redirect(http.StatusFound, redirectUrl)
-			} else {
-				c.ResponseError(fmt.Sprintf(c.T("token:Redirect URI: %s doesn't exist in the allowed Redirect URI list"), redirectUri))
-				return
-			}
+			redirectUrl = fmt.Sprintf("%s?state=%s", strings.TrimSuffix(redirectUri, "/"), state)
 		}
 	}
+	c.Ctx.Redirect(http.StatusFound, redirectUrl)
 }
 
 // SsoLogout
