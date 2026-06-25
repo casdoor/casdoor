@@ -22,7 +22,6 @@ import (
 	"regexp"
 	"slices"
 	"strings"
-	"sync"
 	"time"
 
 	"github.com/casdoor/casdoor/i18n"
@@ -47,8 +46,6 @@ const (
 	DeviceAuthStatusDenied      = "denied"
 	DeviceAuthStatusTokenIssued = "token_issued"
 )
-
-var DeviceAuthMap = sync.Map{}
 
 type Code struct {
 	Message string `xorm:"varchar(100)" json:"message"`
