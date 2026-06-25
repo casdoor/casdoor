@@ -22,7 +22,6 @@ import (
 	"regexp"
 	"slices"
 	"strings"
-	"sync"
 	"time"
 
 	"github.com/casdoor/casdoor/i18n"
@@ -48,7 +47,10 @@ const (
 	DeviceAuthStatusTokenIssued = "token_issued"
 )
 
-var DeviceAuthMap = sync.Map{}
+// DeviceAuthMap stores the transient state of the OAuth 2.0 Device Authorization Grant (RFC 8628).
+// It defaults to an in-memory store; call InitDeviceAuthStore() at startup to switch to Redis
+// when redisEndpoint is configured, enabling correct behaviour across multiple replicas.
+var DeviceAuthMap deviceAuthStore = &memoryDeviceAuthStore{}
 
 type Code struct {
 	Message string `xorm:"varchar(100)" json:"message"`
@@ -103,6 +105,7 @@ type DeviceAuthCache struct {
 }
 
 func InitCleanupDeviceAuthMap() {
+	InitDeviceAuthStore()
 	util.SafeGoroutine(func() {
 		ticker := time.NewTicker(time.Minute)
 		defer ticker.Stop()
