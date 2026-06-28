@@ -182,7 +182,7 @@ func GetOrganization(id string) (*Organization, error) {
 	return getOrganization(owner, name)
 }
 
-func GetMaskedOrganization(organization *Organization, errs ...error) (*Organization, error) {
+func GetMaskedOrganization(isAdmin bool, organization *Organization, errs ...error) (*Organization, error) {
 	if len(errs) > 0 && errs[0] != nil {
 		return nil, errs[0]
 	}
@@ -200,17 +200,25 @@ func GetMaskedOrganization(organization *Organization, errs ...error) (*Organiza
 	if organization.MasterVerificationCode != "" {
 		organization.MasterVerificationCode = "***"
 	}
+	if !isAdmin {
+		if organization.PasswordObfuscatorKey != "" {
+			organization.PasswordObfuscatorKey = "***"
+		}
+		if organization.PasswordSalt != "" {
+			organization.PasswordSalt = "***"
+		}
+	}
 	return organization, nil
 }
 
-func GetMaskedOrganizations(organizations []*Organization, errs ...error) ([]*Organization, error) {
+func GetMaskedOrganizations(isAdmin bool, organizations []*Organization, errs ...error) ([]*Organization, error) {
 	if len(errs) > 0 && errs[0] != nil {
 		return nil, errs[0]
 	}
 
 	var err error
 	for _, organization := range organizations {
-		organization, err = GetMaskedOrganization(organization)
+		organization, err = GetMaskedOrganization(isAdmin, organization)
 		if err != nil {
 			return nil, err
 		}
