@@ -50,9 +50,11 @@ func (c *ApiController) GetOrganizations() {
 		var organizations []*object.Organization
 		var err error
 		if isGlobalAdmin {
-			organizations, err = object.GetMaskedOrganizations(object.GetOrganizations(owner))
+			orgs, orgErr := object.GetOrganizations(owner)
+			organizations, err = object.GetMaskedOrganizations(true, orgs, orgErr)
 		} else {
-			organizations, err = object.GetMaskedOrganizations(object.GetOrganizations(owner, currentUser.Owner))
+			orgs, orgErr := object.GetOrganizations(owner, currentUser.Owner)
+			organizations, err = object.GetMaskedOrganizations(false, orgs, orgErr)
 		}
 
 		if err != nil {
@@ -63,7 +65,8 @@ func (c *ApiController) GetOrganizations() {
 		c.ResponseOk(organizations)
 	} else {
 		if !isGlobalAdmin {
-			organizations, err := object.GetMaskedOrganizations(object.GetOrganizations(owner, currentUser.Owner))
+			orgs, orgErr := object.GetOrganizations(owner, currentUser.Owner)
+			organizations, err := object.GetMaskedOrganizations(false, orgs, orgErr)
 			if err != nil {
 				c.ResponseError(err.Error())
 				return
@@ -78,7 +81,8 @@ func (c *ApiController) GetOrganizations() {
 			}
 
 			paginator := pagination.NewPaginator(c.Ctx.Request, limit, count)
-			organizations, err := object.GetMaskedOrganizations(object.GetPaginationOrganizations(owner, organizationName, paginator.Offset(), limit, field, value, sortField, sortOrder))
+			orgs, orgErr := object.GetPaginationOrganizations(owner, organizationName, paginator.Offset(), limit, field, value, sortField, sortOrder)
+			organizations, err := object.GetMaskedOrganizations(true, orgs, orgErr)
 			if err != nil {
 				c.ResponseError(err.Error())
 				return
@@ -98,7 +102,8 @@ func (c *ApiController) GetOrganizations() {
 // @router /get-organization [get]
 func (c *ApiController) GetOrganization() {
 	id := c.Ctx.Input.Query("id")
-	organization, err := object.GetMaskedOrganization(object.GetOrganization(id))
+	org, orgErr := object.GetOrganization(id)
+	organization, err := object.GetMaskedOrganization(c.IsGlobalAdmin(), org, orgErr)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

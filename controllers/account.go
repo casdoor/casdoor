@@ -668,7 +668,8 @@ func (c *ApiController) GetAccount() {
 		user.MultiFactorAuths = object.GetAllMfaProps(user, true)
 	}
 
-	organization, err := object.GetMaskedOrganization(object.GetOrganizationByUser(user))
+	org, orgErr := object.GetOrganizationByUser(user)
+	organization, err := object.GetMaskedOrganization(c.IsGlobalAdmin(), org, orgErr)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
