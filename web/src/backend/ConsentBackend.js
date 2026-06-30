@@ -33,6 +33,7 @@ export function grantConsent(consent, oAuthParams) {
     credentials: "include",
     body: JSON.stringify(request),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());
@@ -44,6 +45,7 @@ export function revokeConsent(consent) {
     credentials: "include",
     body: JSON.stringify(consent),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());

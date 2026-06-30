@@ -51,6 +51,7 @@ export function updatePermission(owner, name, permission) {
     credentials: "include",
     body: JSON.stringify(newPermission),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());
@@ -63,6 +64,7 @@ export function addPermission(permission) {
     credentials: "include",
     body: JSON.stringify(newPermission),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());
@@ -75,6 +77,7 @@ export function deletePermission(permission) {
     credentials: "include",
     body: JSON.stringify(newPermission),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());

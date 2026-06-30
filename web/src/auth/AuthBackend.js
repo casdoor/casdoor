@@ -31,6 +31,7 @@ export function signup(values, oAuthParams) {
     credentials: "include",
     body: JSON.stringify(values),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());
@@ -128,6 +129,7 @@ export function login(values, oAuthParams) {
     credentials: "include",
     body: JSON.stringify(values),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());
@@ -139,6 +141,7 @@ export function loginCas(values, params) {
     credentials: "include",
     body: JSON.stringify(values),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());
@@ -160,6 +163,7 @@ export function unlink(values) {
     credentials: "include",
     body: JSON.stringify(values),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());
@@ -181,6 +185,7 @@ export function loginWithSaml(values, param) {
     credentials: "include",
     body: JSON.stringify(values),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());

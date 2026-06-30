@@ -41,6 +41,7 @@ export function updateToken(owner, name, token) {
     credentials: "include",
     body: JSON.stringify(newToken),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());
@@ -53,6 +54,7 @@ export function addToken(token) {
     credentials: "include",
     body: JSON.stringify(newToken),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());
@@ -65,6 +67,7 @@ export function deleteToken(token) {
     credentials: "include",
     body: JSON.stringify(newToken),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());

@@ -51,6 +51,9 @@ export function updateEntry(owner, name, entry) {
   return fetch(`${Setting.ServerUrl}/api/update-entry?id=${owner}/${encodeURIComponent(name)}`, {
     method: "POST",
     credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify(newEntry),
   }).then(res => res.json());
 }
@@ -60,6 +63,9 @@ export function addEntry(entry) {
   return fetch(`${Setting.ServerUrl}/api/add-entry`, {
     method: "POST",
     credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify(newEntry),
   }).then(res => res.json());
 }
@@ -69,6 +75,9 @@ export function deleteEntry(entry) {
   return fetch(`${Setting.ServerUrl}/api/delete-entry`, {
     method: "POST",
     credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify(newEntry),
   }).then(res => res.json());
 }

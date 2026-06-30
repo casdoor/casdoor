@@ -51,6 +51,7 @@ export function updateProvider(owner, name, provider) {
     credentials: "include",
     body: JSON.stringify(newProvider),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());
@@ -63,6 +64,7 @@ export function addProvider(provider) {
     credentials: "include",
     body: JSON.stringify(newProvider),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());
@@ -75,6 +77,7 @@ export function deleteProvider(provider) {
     credentials: "include",
     body: JSON.stringify(newProvider),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());

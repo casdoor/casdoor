@@ -41,6 +41,7 @@ export function updateWebhook(owner, name, webhook) {
     credentials: "include",
     body: JSON.stringify(newWebhook),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());
@@ -53,6 +54,7 @@ export function addWebhook(webhook) {
     credentials: "include",
     body: JSON.stringify(newWebhook),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());
@@ -65,6 +67,7 @@ export function deleteWebhook(webhook) {
     credentials: "include",
     body: JSON.stringify(newWebhook),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());

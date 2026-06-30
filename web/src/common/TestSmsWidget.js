@@ -40,6 +40,9 @@ function testSmsProvider(provider, phone = "") {
   return fetch(`${Setting.ServerUrl}/api/send-sms?provider=` + provider.name, {
     method: "POST",
     credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify(SmsForm),
   }).then(res => res.json());
 }

@@ -35,6 +35,7 @@ export function deleteSession(session, sessionId = "") {
     credentials: "include",
     body: JSON.stringify(session),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());

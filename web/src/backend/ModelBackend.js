@@ -41,6 +41,7 @@ export function updateModel(owner, name, model) {
     credentials: "include",
     body: JSON.stringify(newModel),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());
@@ -53,6 +54,7 @@ export function addModel(model) {
     credentials: "include",
     body: JSON.stringify(newModel),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());
@@ -65,6 +67,7 @@ export function deleteModel(model) {
     credentials: "include",
     body: JSON.stringify(newModel),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());

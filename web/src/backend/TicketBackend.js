@@ -41,6 +41,7 @@ export function updateTicket(owner, name, ticket) {
     credentials: "include",
     body: JSON.stringify(newTicket),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());
@@ -53,6 +54,7 @@ export function addTicket(ticket) {
     credentials: "include",
     body: JSON.stringify(newTicket),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());
@@ -65,6 +67,7 @@ export function deleteTicket(ticket) {
     credentials: "include",
     body: JSON.stringify(newTicket),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());
@@ -76,6 +79,7 @@ export function addTicketMessage(owner, name, message) {
     credentials: "include",
     body: JSON.stringify(message),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());

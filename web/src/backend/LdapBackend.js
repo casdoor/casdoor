@@ -40,6 +40,7 @@ export function addLdap(body) {
     credentials: "include",
     body: JSON.stringify(body),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());
@@ -51,6 +52,7 @@ export function deleteLdap(body) {
     credentials: "include",
     body: JSON.stringify(body),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());
@@ -62,6 +64,7 @@ export function updateLdap(body) {
     credentials: "include",
     body: JSON.stringify(body),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());
@@ -83,6 +86,7 @@ export function syncUsers(owner, name, body) {
     credentials: "include",
     body: JSON.stringify(body),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());

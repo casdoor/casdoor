@@ -41,6 +41,7 @@ export function updateCoupon(owner, name, coupon) {
     credentials: "include",
     body: JSON.stringify(newCoupon),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());
@@ -53,6 +54,7 @@ export function addCoupon(coupon) {
     credentials: "include",
     body: JSON.stringify(newCoupon),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());
@@ -65,6 +67,7 @@ export function deleteCoupon(coupon) {
     credentials: "include",
     body: JSON.stringify(newCoupon),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());
@@ -76,6 +79,7 @@ export function validateCoupon(owner, couponCode, products, amount, currency) {
     credentials: "include",
     body: JSON.stringify({owner, couponCode, products, amount, currency}),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());

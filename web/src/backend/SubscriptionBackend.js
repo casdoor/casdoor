@@ -41,6 +41,7 @@ export function updateSubscription(owner, name, subscription) {
     credentials: "include",
     body: JSON.stringify(newSubscription),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());
@@ -53,6 +54,7 @@ export function addSubscription(subscription) {
     credentials: "include",
     body: JSON.stringify(newSubscription),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());
@@ -65,6 +67,7 @@ export function deleteSubscription(subscription) {
     credentials: "include",
     body: JSON.stringify(newSubscription),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());

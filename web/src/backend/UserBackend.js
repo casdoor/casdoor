@@ -52,6 +52,7 @@ export function updateUser(owner, name, user) {
     credentials: "include",
     body: JSON.stringify(newUser),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());
@@ -64,6 +65,7 @@ export function addUser(user) {
     credentials: "include",
     body: JSON.stringify(newUser),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());
@@ -76,6 +78,7 @@ export function deleteUser(user) {
     credentials: "include",
     body: JSON.stringify(newUser),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());
@@ -232,6 +235,7 @@ export function verifyCode(values) {
     credentials: "include",
     body: JSON.stringify(values),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());

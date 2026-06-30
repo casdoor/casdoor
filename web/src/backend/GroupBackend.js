@@ -41,6 +41,7 @@ export function updateGroup(owner, name, group) {
     credentials: "include",
     body: JSON.stringify(newGroup),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());
@@ -53,6 +54,7 @@ export function addGroup(group) {
     credentials: "include",
     body: JSON.stringify(newGroup),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());
@@ -65,6 +67,7 @@ export function deleteGroup(group) {
     credentials: "include",
     body: JSON.stringify(newGroup),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());

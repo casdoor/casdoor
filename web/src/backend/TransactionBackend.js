@@ -41,6 +41,7 @@ export function updateTransaction(owner, name, transaction) {
     credentials: "include",
     body: JSON.stringify(newTransaction),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());
@@ -53,6 +54,7 @@ export function addTransaction(transaction) {
     credentials: "include",
     body: JSON.stringify(newTransaction),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());
@@ -65,6 +67,7 @@ export function deleteTransaction(transaction) {
     credentials: "include",
     body: JSON.stringify(newTransaction),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());

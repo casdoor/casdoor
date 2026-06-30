@@ -61,6 +61,7 @@ export function updateOrder(owner, name, order) {
     credentials: "include",
     body: JSON.stringify(newOrder),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());
@@ -73,6 +74,7 @@ export function addOrder(order) {
     credentials: "include",
     body: JSON.stringify(newOrder),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());
@@ -85,6 +87,7 @@ export function deleteOrder(order) {
     credentials: "include",
     body: JSON.stringify(newOrder),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());
@@ -96,6 +99,7 @@ export function placeOrder(owner, productInfos, userName = "") {
     credentials: "include",
     body: JSON.stringify({productInfos}),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());

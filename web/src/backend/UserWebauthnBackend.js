@@ -52,6 +52,10 @@ export function registerWebauthnCredential() {
             clientDataJSON: webAuthnBufferEncode(clientDataJSON),
           },
         }),
+        headers: {
+          "Content-Type": "application/json",
+          "Accept-Language": Setting.getAcceptLanguage(),
+        },
       })
         .then(res => res.json());
     });

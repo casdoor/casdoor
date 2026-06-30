@@ -50,6 +50,7 @@ export function updateForm(owner, name, form) {
     method: "POST",
     credentials: "include",
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
     body: JSON.stringify(newForm),
@@ -62,6 +63,7 @@ export function addForm(form) {
     method: "POST",
     credentials: "include",
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
     body: JSON.stringify(newForm),
@@ -74,6 +76,7 @@ export function deleteForm(form) {
     method: "POST",
     credentials: "include",
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
     body: JSON.stringify(newForm),

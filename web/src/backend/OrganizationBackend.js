@@ -41,6 +41,7 @@ export function updateOrganization(owner, name, organization) {
     credentials: "include",
     body: JSON.stringify(newOrganization),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());
@@ -53,6 +54,7 @@ export function addOrganization(organization) {
     credentials: "include",
     body: JSON.stringify(newOrganization),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());
@@ -65,6 +67,7 @@ export function deleteOrganization(organization) {
     credentials: "include",
     body: JSON.stringify(newOrganization),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());

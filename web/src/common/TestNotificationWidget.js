@@ -39,6 +39,9 @@ function testNotificationProvider(provider) {
   return fetch(`${Setting.ServerUrl}/api/send-notification?provider=${provider.name}`, {
     method: "POST",
     credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify(notificationForm),
   }).then(res => res.json());
 }

@@ -32,6 +32,9 @@ export function addRule(rule) {
   return fetch(`${Setting.ServerUrl}/api/add-rule`, {
     method: "POST",
     credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify(rule),
   }).then(res => res.json());
 }
@@ -40,6 +43,9 @@ export function updateRule(owner, name, rule) {
   return fetch(`${Setting.ServerUrl}/api/update-rule?id=${owner}/${encodeURIComponent(name)}`, {
     method: "POST",
     credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify(rule),
   }).then(res => res.json());
 }
@@ -48,6 +54,9 @@ export function deleteRule(rule) {
   return fetch(`${Setting.ServerUrl}/api/delete-rule`, {
     method: "POST",
     credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify(rule),
   }).then(res => res.json());
 }

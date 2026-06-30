@@ -41,6 +41,7 @@ export function updateAdapter(owner, name, Adapter) {
     credentials: "include",
     body: JSON.stringify(newAdapter),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());
@@ -53,6 +54,7 @@ export function addAdapter(Adapter) {
     credentials: "include",
     body: JSON.stringify(newAdapter),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());
@@ -65,6 +67,7 @@ export function deleteAdapter(Adapter) {
     credentials: "include",
     body: JSON.stringify(newAdapter),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());
@@ -76,6 +79,7 @@ export function UpdatePolicy(owner, name, policy) {
     credentials: "include",
     body: JSON.stringify(policy),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());
@@ -87,6 +91,7 @@ export function AddPolicy(owner, name, policy) {
     credentials: "include",
     body: JSON.stringify(policy),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());
@@ -98,6 +103,7 @@ export function RemovePolicy(owner, name, policy) {
     credentials: "include",
     body: JSON.stringify(policy),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());

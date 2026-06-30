@@ -41,6 +41,7 @@ export function updateRole(owner, name, role) {
     credentials: "include",
     body: JSON.stringify(newRole),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());
@@ -53,6 +54,7 @@ export function addRole(role) {
     credentials: "include",
     body: JSON.stringify(newRole),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());
@@ -65,6 +67,7 @@ export function deleteRole(role) {
     credentials: "include",
     body: JSON.stringify(newRole),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());
