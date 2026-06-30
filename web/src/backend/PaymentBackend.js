@@ -41,6 +41,7 @@ export function updatePayment(owner, name, payment) {
     credentials: "include",
     body: JSON.stringify(newPayment),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());
@@ -53,6 +54,7 @@ export function addPayment(payment) {
     credentials: "include",
     body: JSON.stringify(newPayment),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());
@@ -65,6 +67,7 @@ export function deletePayment(payment) {
     credentials: "include",
     body: JSON.stringify(newPayment),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());

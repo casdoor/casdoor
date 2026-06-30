@@ -41,6 +41,7 @@ export function updateEnforcer(owner, name, enforcer) {
     credentials: "include",
     body: JSON.stringify(newEnforcer),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());
@@ -53,6 +54,7 @@ export function addEnforcer(enforcer) {
     credentials: "include",
     body: JSON.stringify(newEnforcer),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());
@@ -65,6 +67,7 @@ export function deleteEnforcer(enforcer) {
     credentials: "include",
     body: JSON.stringify(newEnforcer),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());

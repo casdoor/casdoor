@@ -42,6 +42,7 @@ export function updateResource(owner, name, resource) {
     credentials: "include",
     body: JSON.stringify(newResource),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());
@@ -54,6 +55,7 @@ export function addResource(resource) {
     credentials: "include",
     body: JSON.stringify(newResource),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());
@@ -66,6 +68,7 @@ export function deleteResource(resource, provider = "") {
     credentials: "include",
     body: JSON.stringify(newResource),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());

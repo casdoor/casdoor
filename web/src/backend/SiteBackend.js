@@ -40,6 +40,9 @@ export function updateSite(owner, name, site) {
   return fetch(`${Setting.ServerUrl}/api/update-site?id=${owner}/${encodeURIComponent(name)}`, {
     method: "POST",
     credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify(newSite),
   }).then(res => res.json());
 }
@@ -49,6 +52,9 @@ export function addSite(site) {
   return fetch(`${Setting.ServerUrl}/api/add-site`, {
     method: "POST",
     credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify(newSite),
   }).then(res => res.json());
 }
@@ -58,6 +64,9 @@ export function deleteSite(site) {
   return fetch(`${Setting.ServerUrl}/api/delete-site`, {
     method: "POST",
     credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify(newSite),
   }).then(res => res.json());
 }

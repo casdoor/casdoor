@@ -33,6 +33,9 @@ export function updateAgent(owner, name, agent) {
   return fetch(`${Setting.ServerUrl}/api/update-agent?id=${owner}/${encodeURIComponent(name)}`, {
     method: "POST",
     credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify(newAgent),
   }).then(res => res.json());
 }
@@ -42,6 +45,9 @@ export function addAgent(agent) {
   return fetch(`${Setting.ServerUrl}/api/add-agent`, {
     method: "POST",
     credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify(newAgent),
   }).then(res => res.json());
 }
@@ -51,6 +57,9 @@ export function deleteAgent(agent) {
   return fetch(`${Setting.ServerUrl}/api/delete-agent`, {
     method: "POST",
     credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify(newAgent),
   }).then(res => res.json());
 }

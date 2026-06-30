@@ -41,6 +41,7 @@ export function updateProduct(owner, name, product) {
     credentials: "include",
     body: JSON.stringify(newProduct),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());
@@ -53,6 +54,7 @@ export function addProduct(product) {
     credentials: "include",
     body: JSON.stringify(newProduct),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());
@@ -65,6 +67,7 @@ export function deleteProduct(product) {
     credentials: "include",
     body: JSON.stringify(newProduct),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());

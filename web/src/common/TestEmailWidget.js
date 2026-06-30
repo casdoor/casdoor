@@ -58,6 +58,9 @@ function testEmailProvider(provider, email = "") {
   return fetch(`${Setting.ServerUrl}/api/send-email`, {
     method: "POST",
     credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify(emailForm),
   }).then(res => res.json());
 }

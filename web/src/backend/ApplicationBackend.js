@@ -60,6 +60,7 @@ export function updateApplication(owner, name, application) {
     credentials: "include",
     body: JSON.stringify(application),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());
@@ -72,6 +73,7 @@ export function addApplication(application) {
     credentials: "include",
     body: JSON.stringify(newApplication),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());
@@ -84,6 +86,7 @@ export function deleteApplication(application) {
     credentials: "include",
     body: JSON.stringify(newApplication),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());

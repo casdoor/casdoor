@@ -41,6 +41,7 @@ export function updatePlan(owner, name, plan) {
     credentials: "include",
     body: JSON.stringify(newPlan),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());
@@ -53,6 +54,7 @@ export function addPlan(plan) {
     credentials: "include",
     body: JSON.stringify(newPlan),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());
@@ -65,6 +67,7 @@ export function deletePlan(plan) {
     credentials: "include",
     body: JSON.stringify(newPlan),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());

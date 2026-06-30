@@ -41,6 +41,7 @@ export function updateSyncer(owner, name, syncer) {
     credentials: "include",
     body: JSON.stringify(newSyncer),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());
@@ -53,6 +54,7 @@ export function addSyncer(syncer) {
     credentials: "include",
     body: JSON.stringify(newSyncer),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());
@@ -65,6 +67,7 @@ export function testSyncerDb(syncer) {
     credentials: "include",
     body: JSON.stringify(newSyncer),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());
@@ -77,6 +80,7 @@ export function deleteSyncer(syncer) {
     credentials: "include",
     body: JSON.stringify(newSyncer),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());

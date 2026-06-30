@@ -51,6 +51,7 @@ export function updateKey(owner, name, key) {
     credentials: "include",
     body: JSON.stringify(newKey),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());
@@ -63,6 +64,7 @@ export function addKey(key) {
     credentials: "include",
     body: JSON.stringify(newKey),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());
@@ -75,6 +77,7 @@ export function deleteKey(key) {
     credentials: "include",
     body: JSON.stringify(newKey),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());

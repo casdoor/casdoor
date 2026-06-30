@@ -1395,6 +1395,9 @@ class LoginPage extends React.Component {
         return fetch(finishUrl, {
           method: "POST",
           credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
           body: JSON.stringify({
             id: assertion.id,
             rawId: UserWebauthnBackend.webAuthnBufferEncode(rawId),

@@ -41,6 +41,7 @@ export function updatePricing(owner, name, pricing) {
     credentials: "include",
     body: JSON.stringify(newPricing),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());
@@ -53,6 +54,7 @@ export function addPricing(pricing) {
     credentials: "include",
     body: JSON.stringify(newPricing),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());
@@ -65,6 +67,7 @@ export function deletePricing(pricing) {
     credentials: "include",
     body: JSON.stringify(newPricing),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());

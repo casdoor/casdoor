@@ -40,6 +40,9 @@ export function updateServer(owner, name, server) {
   return fetch(`${Setting.ServerUrl}/api/update-server?id=${owner}/${encodeURIComponent(name)}`, {
     method: "POST",
     credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify(newServer),
   }).then(res => res.json());
 }
@@ -49,6 +52,9 @@ export function syncMcpTool(owner, name, server, isCleared = false) {
   return fetch(`${Setting.ServerUrl}/api/sync-mcp-tool?id=${owner}/${encodeURIComponent(name)}&isCleared=${isCleared ? "1" : "0"}`, {
     method: "POST",
     credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify(newServer),
   }).then(res => res.json());
 }
@@ -58,6 +64,9 @@ export function addServer(server) {
   return fetch(`${Setting.ServerUrl}/api/add-server`, {
     method: "POST",
     credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify(newServer),
   }).then(res => res.json());
 }
@@ -67,6 +76,9 @@ export function deleteServer(server) {
   return fetch(`${Setting.ServerUrl}/api/delete-server`, {
     method: "POST",
     credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify(newServer),
   }).then(res => res.json());
 }

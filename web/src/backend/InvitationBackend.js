@@ -51,6 +51,7 @@ export function updateInvitation(owner, name, invitation) {
     credentials: "include",
     body: JSON.stringify(newInvitation),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());
@@ -63,6 +64,7 @@ export function addInvitation(invitation) {
     credentials: "include",
     body: JSON.stringify(newInvitation),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());
@@ -75,6 +77,7 @@ export function deleteInvitation(invitation) {
     credentials: "include",
     body: JSON.stringify(newInvitation),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());
@@ -96,6 +99,7 @@ export function sendInvitation(invitation, destinations) {
     credentials: "include",
     body: JSON.stringify(destinations),
     headers: {
+      "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());
