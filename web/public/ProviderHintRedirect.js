@@ -198,7 +198,8 @@
       scope = provider.scopes;
     }
 
-    var isShortState = (provider.type === "WeChat" && navigator.userAgent.indexOf("MicroMessenger") !== -1) || provider.type === "Twitter";
+    var isTelegramOIDC = provider.type === "Telegram" || (provider.type === "Custom" && provider.customAuthUrl && provider.customAuthUrl.indexOf("oauth.telegram.org") !== -1);
+    var isShortState = (provider.type === "WeChat" && navigator.userAgent.indexOf("MicroMessenger") !== -1) || provider.type === "Twitter" || isTelegramOIDC;
     var applicationName = application.name;
     if (application.isShared) {
       applicationName = application.name + "-org-" + application.organization;
