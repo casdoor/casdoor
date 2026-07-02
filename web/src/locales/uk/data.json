@@ -23,6 +23,7 @@
   },
   "application": {
     "Add Face ID": "Додати Face ID",
+    "Add Face ID with Camera": "Add Face ID with Camera",
     "Add Face ID with Image": "Додати Face ID за допомогою зображення",
     "Always": "Завжди",
     "Array": "Масив",
@@ -66,8 +67,8 @@
     "Enable Email linking - Tooltip": "Під час входу за допомогою сторонніх провайдерів, якщо у організації є користувач з такою ж електронною поштою, метод входу стороннім провайдером автоматично асоціюється з цим користувачем",
     "Enable SAML C14N10": "Увімкнути SAML C14N10",
     "Enable SAML C14N10 - Tooltip": "Використовувати C14N10 замість C14N11 у SAML - Підказка",
-    "Enable SAML POST binding": "Увімкнути зв’язування SAML POST",
-    "Enable SAML POST binding - Tooltip": "Прив’язка HTTP POST використовує поля введення у формі HTML для надсилання повідомлень SAML. Увімкніть, якщо це використовує ваш SP",
+    "Enable SAML POST binding": "Увімкнути зв'язування SAML POST",
+    "Enable SAML POST binding - Tooltip": "Прив'язка HTTP POST використовує поля введення у формі HTML для надсилання повідомлень SAML. Увімкніть, якщо це використовує ваш SP",
     "Enable SAML assertion signature": "Увімкнути підпис утвердження SAML",
     "Enable SAML assertion signature - Tooltip": "Чи підписувати SAML утвердження - Підказка",
     "Enable SAML compression": "Увімкнути стиснення SAML",
