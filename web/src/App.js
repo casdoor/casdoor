@@ -181,7 +181,7 @@ class App extends Component {
       "/roles", "/permissions", "/models", "/adapters", "/enforcers", // Authorization
       "/agents", "/servers", "/server-store", "/entries", "/sites", "/rules", // LLM AI
       "/sessions", "/records", "/tokens", "/verifications", // Auditing
-      "/products", "/orders", "/payments", "/plans", "/pricings", "/subscriptions", "/transactions", // Business
+      "/product-store", "/products", "/coupons", "/cart", "/orders", "/payments", "/plans", "/pricings", "/subscriptions", "/transactions", // Business
       "/sysinfo", "/forms", "/syncers", "/webhooks", "/webhook-events", "/tickets", "/swagger", // Admin
     ];
 
