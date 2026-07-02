@@ -35,6 +35,7 @@ export const NavItemTree = ({disabled, checkedKeys, defaultExpandedKeys, onCheck
             {title: i18next.t("application:Providers"), key: "/providers"},
             {title: i18next.t("general:Resources"), key: "/resources"},
             {title: i18next.t("general:Certs"), key: "/certs"},
+            {title: i18next.t("general:Keys"), key: "/keys"},
           ],
         },
         {
@@ -74,7 +75,11 @@ export const NavItemTree = ({disabled, checkedKeys, defaultExpandedKeys, onCheck
           title: i18next.t("general:Business"),
           key: "/business-top",
           children: [
+            {title: i18next.t("general:Product Store"), key: "/product-store"},
             {title: i18next.t("general:Products"), key: "/products"},
+            {title: i18next.t("general:Coupons"), key: "/coupons"},
+            {title: i18next.t("general:Cart"), key: "/cart"},
+            {title: i18next.t("general:Orders"), key: "/orders"},
             {title: i18next.t("general:Payments"), key: "/payments"},
             {title: i18next.t("general:Plans"), key: "/plans"},
             {title: i18next.t("general:Pricings"), key: "/pricings"},
@@ -87,9 +92,11 @@ export const NavItemTree = ({disabled, checkedKeys, defaultExpandedKeys, onCheck
           key: "/admin-top",
           children: [
             {title: i18next.t("general:System Info"), key: "/sysinfo"},
+            {title: i18next.t("general:Forms"), key: "/forms"},
             {title: i18next.t("general:Syncers"), key: "/syncers"},
             {title: i18next.t("general:Webhooks"), key: "/webhooks"},
             {title: i18next.t("general:Webhook Events"), key: "/webhook-events"},
+            {title: i18next.t("general:Tickets"), key: "/tickets"},
             {title: i18next.t("general:Swagger"), key: "/swagger"},
           ],
         },

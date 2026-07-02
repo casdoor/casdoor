@@ -288,7 +288,17 @@ const Dashboard = (props) => {
 
   useEffect(() => {
     if (!Setting.isLocalAdminUser(props.account)) {
-      props.history.push("/apps");
+      const navItems = props.account?.organization?.userNavItems;
+      const isAllEnabled = !Array.isArray(navItems) || navItems.includes("all");
+      let target;
+      if (isAllEnabled || navItems.includes("/apps")) {
+        target = "/apps";
+      } else if (navItems.includes("/shortcuts")) {
+        target = "/shortcuts";
+      } else {
+        target = "/account";
+      }
+      props.history.push(target);
       return;
     }
     loadAllData();
