@@ -23,6 +23,7 @@
   },
   "application": {
     "Add Face ID": "Face ID Ekle",
+    "Add Face ID with Camera": "Add Face ID with Camera",
     "Add Face ID with Image": "Görüntü ile Face ID Ekle",
     "Always": "Her zaman",
     "Array": "Dizi",
