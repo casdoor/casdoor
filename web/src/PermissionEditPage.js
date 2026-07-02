@@ -151,6 +151,16 @@ class PermissionEditPage extends React.Component {
     return false;
   }
 
+  hasDomainDefinition(model) {
+    if (model !== null) {
+      const match = model.modelText.match(/request_definition\s*\]\s*r\s*=\s*([^\r\n]+)/);
+      if (match) {
+        return match[1].split(",").map((token) => token.trim()).includes("dom");
+      }
+    }
+    return false;
+  }
+
   renderPermission() {
     return (
       <Card size="small" title={
@@ -336,6 +346,7 @@ class PermissionEditPage extends React.Component {
           </Col>
           <Col span={22} >
             <Select virtual={false} mode="tags" style={{width: "100%"}} value={this.state.permission.domains}
+              disabled={!this.hasDomainDefinition(this.state.model)}
               onChange={(value => {
                 this.updatePermissionField("domains", value);
               })}
