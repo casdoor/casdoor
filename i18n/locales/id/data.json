@@ -1,0 +1,230 @@
+{
+  "account": {
+    "Failed to add user": "Gagal menambahkan pengguna",
+    "Get init score failed, error: %w": "Gagal mendapatkan nilai inisiasi, kesalahan: %w",
+    "The application does not allow to sign up new account": "Aplikasi tidak memperbolehkan pendaftaran akun baru"
+  },
+  "auth": {
+    "Challenge method should be S256": "Metode tantangan harus S256",
+    "DeviceCode Invalid": "Kode perangkat tidak valid",
+    "Failed to create user, user information is invalid: %s": "Gagal membuat pengguna, informasi pengguna tidak valid: %s",
+    "Failed to login in: %s": "Gagal masuk: %s",
+    "Invalid token": "Token tidak valid",
+    "State expected: %s, but got: %s": "Diharapkan: %s, tapi diperoleh: %s",
+    "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %s, please use another way to sign up": "Akun untuk penyedia: %s dan nama pengguna: %s (%s) tidak ada dan tidak diizinkan untuk mendaftar sebagai akun baru melalui %s, silakan gunakan cara lain untuk mendaftar",
+    "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "Akun untuk penyedia: %s dan nama pengguna: %s (%s) tidak ada dan tidak diizinkan untuk mendaftar sebagai akun baru, silakan hubungi dukungan IT Anda",
+    "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)": "Akun untuk penyedia: %s dan username: %s (%s) sudah terhubung dengan akun lain: %s (%s)",
+    "The application: %s does not exist": "Aplikasi: %s tidak ada",
+    "The application: %s has disabled users to signin": "Aplikasi: %s telah menonaktifkan pengguna untuk masuk",
+    "The group: %s does not exist": "Grup: %s tidak ada",
+    "The login method: login with LDAP is not enabled for the application": "Metode masuk: masuk dengan LDAP tidak diaktifkan untuk aplikasi ini",
+    "The login method: login with SMS is not enabled for the application": "Metode masuk: masuk dengan SMS tidak diaktifkan untuk aplikasi ini",
+    "The login method: login with email is not enabled for the application": "Metode masuk: masuk dengan email tidak diaktifkan untuk aplikasi ini",
+    "The login method: login with face is not enabled for the application": "Metode masuk: masuk dengan wajah tidak diaktifkan untuk aplikasi ini",
+    "The login method: login with password is not enabled for the application": "Metode login: login dengan sandi tidak diaktifkan untuk aplikasi tersebut",
+    "The order: %s does not exist": "The order: %s does not exist",
+    "The organization: %s does not exist": "Organisasi: %s tidak ada",
+    "The organization: %s has disabled users to signin": "Organisasi: %s telah menonaktifkan pengguna untuk masuk",
+    "The plan: %s does not exist": "Rencana: %s tidak ada",
+    "The pricing: %s does not exist": "Harga: %s tidak ada",
+    "The pricing: %s does not have plan: %s": "Harga: %s tidak memiliki rencana: %s",
+    "The provider: %s does not exist": "Penyedia: %s tidak ada",
+    "The provider: %s is not enabled for the application": "Penyedia: %s tidak diaktifkan untuk aplikasi ini",
+    "Unauthorized operation": "Operasi tidak sah",
+    "Unknown authentication type (not password or provider), form = %s": "Jenis otentikasi tidak diketahui (bukan sandi atau penyedia), formulir = %s",
+    "User's tag: %s is not listed in the application's tags": "Tag pengguna: %s tidak terdaftar dalam tag aplikasi",
+    "UserCode Expired": "Kode pengguna kedaluwarsa",
+    "UserCode Invalid": "Kode pengguna tidak valid",
+    "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing": "pengguna berbayar %s tidak memiliki langganan aktif atau tertunda dan aplikasi: %s tidak memiliki harga default",
+    "the application for user %s is not found": "aplikasi untuk pengguna %s tidak ditemukan",
+    "the organization: %s is not found": "organisasi: %s tidak ditemukan"
+  },
+  "cas": {
+    "Service %s and %s do not match": "Layanan %s dan %s tidak cocok"
+  },
+  "check": {
+    "%s does not meet the CIDR format requirements: %s": "%s tidak memenuhi persyaratan format CIDR: %s",
+    "Affiliation cannot be blank": "Keterkaitan tidak boleh kosong",
+    "CIDR for IP: %s should not be empty": "CIDR untuk IP: %s tidak boleh kosong",
+    "Default code does not match the code's matching rules": "Kode default tidak cocok dengan aturan pencocokan kode",
+    "DisplayName cannot be blank": "Nama Pengguna tidak boleh kosong",
+    "DisplayName is not valid real name": "DisplayName bukanlah nama asli yang valid",
+    "Email already exists": "Email sudah ada",
+    "Email cannot be empty": "Email tidak boleh kosong",
+    "Email is invalid": "Email tidak valid",
+    "Empty username.": "Nama pengguna kosong.",
+    "Face data does not exist, cannot log in": "Data wajah tidak ada, tidak dapat masuk",
+    "Face data mismatch": "Ketidakcocokan data wajah",
+    "Failed to parse client IP: %s": "Gagal mengurai IP klien: %s",
+    "FirstName cannot be blank": "Nama depan tidak boleh kosong",
+    "Guest users must upgrade their account by setting a username and password before they can sign in directly": "Guest users must upgrade their account by setting a username and password before they can sign in directly",
+    "Invitation code cannot be blank": "Kode undangan tidak boleh kosong",
+    "Invitation code exhausted": "Kode undangan habis",
+    "Invitation code is invalid": "Kode undangan tidak valid",
+    "Invitation code suspended": "Kode undangan ditangguhkan",
+    "LastName cannot be blank": "Nama belakang tidak boleh kosong",
+    "Multiple accounts with same uid, please check your ldap server": "Beberapa akun dengan uid yang sama, harap periksa server LDAP Anda",
+    "Organization does not exist": "Organisasi tidak ada",
+    "Password cannot be empty": "Kata sandi tidak boleh kosong",
+    "Phone already exists": "Telepon sudah ada",
+    "Phone cannot be empty": "Telepon tidak boleh kosong",
+    "Phone number is invalid": "Nomor telepon tidak valid",
+    "Please register using the email corresponding to the invitation code": "Silakan daftar menggunakan email yang sesuai dengan kode undangan",
+    "Please register using the phone  corresponding to the invitation code": "Silakan daftar menggunakan nomor telepon yang sesuai dengan kode undangan",
+    "Please register using the username corresponding to the invitation code": "Silakan daftar menggunakan nama pengguna yang sesuai dengan kode undangan",
+    "Session outdated, please login again": "Sesi kadaluwarsa, silakan masuk lagi",
+    "The invitation code has already been used": "Kode undangan sudah digunakan",
+    "The password must contain at least one special character": "Kata sandi harus berisi setidaknya satu karakter khusus",
+    "The password must contain at least one uppercase letter, one lowercase letter and one digit": "Kata sandi harus berisi setidaknya satu huruf besar, satu huruf kecil dan satu angka",
+    "The password must have at least 6 characters": "Kata sandi harus memiliki setidaknya 6 karakter",
+    "The password must have at least 8 characters": "Kata sandi harus memiliki setidaknya 8 karakter",
+    "The password must not contain any repeated characters": "Kata sandi tidak boleh berisi karakter yang berulang",
+    "The user has been deleted and cannot be used to sign in, please contact the administrator": "Pengguna telah dihapus dan tidak dapat digunakan untuk masuk, silakan hubungi administrator",
+    "The user is forbidden to sign in, please contact the administrator": "Pengguna dilarang masuk, silakan hubungi administrator",
+    "The user: %s doesn't exist in LDAP server": "Pengguna: %s tidak ada di server LDAP",
+    "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.": "Nama pengguna hanya bisa menggunakan karakter alfanumerik, garis bawah atau tanda hubung, tidak boleh memiliki dua tanda hubung atau garis bawah berurutan, dan tidak boleh diawali atau diakhiri dengan tanda hubung atau garis bawah.",
+    "The value \"%s\" for account field \"%s\" doesn't match the account item regex": "The value \"%s\" for account field \"%s\" doesn't match the account item regex",
+    "The value \"%s\" for signup field \"%s\" doesn't match the signup item regex of the application \"%s\"": "The value \"%s\" for signup field \"%s\" doesn't match the signup item regex of the application \"%s\"",
+    "Username already exists": "Nama pengguna sudah ada",
+    "Username cannot be an email address": "Username tidak bisa menjadi alamat email",
+    "Username cannot contain white spaces": "Username tidak boleh mengandung spasi",
+    "Username cannot start with a digit": "Username tidak dapat dimulai dengan angka",
+    "Username is too long (maximum is 255 characters).": "Nama pengguna terlalu panjang (maksimum 255 karakter).",
+    "Username must have at least 2 characters": "Nama pengguna harus memiliki setidaknya 2 karakter",
+    "Username supports email format. Also The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline. Also pay attention to the email format.": "Nama pengguna mendukung format email. Nama pengguna hanya boleh berisi karakter alfanumerik, garis bawah atau tanda hubung, tidak boleh memiliki garis bawah atau tanda hubung berturut-turut, dan tidak boleh diawali atau diakhiri dengan garis bawah atau tanda hubung. Perhatikan juga format email.",
+    "You have entered the wrong password or code too many times, please wait for %d minutes and try again": "Anda telah memasukkan sandi atau kode yang salah terlalu sering, mohon tunggu selama %d menit lalu coba kembali",
+    "Your IP address: %s has been banned according to the configuration of: ": "Alamat IP Anda: %s telah diblokir sesuai konfigurasi: ",
+    "Your password has expired. Please reset your password by clicking \"Forgot password\"": "Your password has expired. Please reset your password by clicking \"Forgot password\"",
+    "Your region is not allow to signup by phone": "Wilayah Anda tidak diizinkan untuk mendaftar melalui telepon",
+    "password or code is incorrect": "kata sandi atau kode salah",
+    "password or code is incorrect, you have %s remaining chances": "Sandi atau kode salah, Anda memiliki %s kesempatan tersisa",
+    "unsupported password type: %s": "jenis sandi tidak didukung: %s"
+  },
+  "enforcer": {
+    "the adapter: %s is not found": "adapter: %s tidak ditemukan"
+  },
+  "general": {
+    "Failed to import groups": "Gagal mengimpor grup",
+    "Failed to import users": "Gagal mengimpor pengguna",
+    "Insufficient balance: new balance %v would be below credit limit %v": "Insufficient balance: new balance %v would be below credit limit %v",
+    "Insufficient balance: new organization balance %v would be below credit limit %v": "Insufficient balance: new organization balance %v would be below credit limit %v",
+    "Missing parameter": "Parameter hilang",
+    "Only admin user can specify user": "Hanya pengguna admin yang dapat menentukan pengguna",
+    "Please login first": "Silahkan login terlebih dahulu",
+    "The LDAP: %s does not exist": "The LDAP: %s does not exist",
+    "The organization: %s should have one application at least": "Organisasi: %s harus memiliki setidaknya satu aplikasi",
+    "The syncer: %s does not exist": "The syncer: %s does not exist",
+    "The user: %s doesn't exist": "Pengguna: %s tidak ada",
+    "The user: %s is not found": "The user: %s is not found",
+    "User is required for User category transaction": "User is required for User category transaction",
+    "Wrong userId": "userId salah",
+    "don't support captchaProvider: ": "Jangan mendukung captchaProvider:",
+    "this operation is not allowed in demo mode": "operasi ini tidak diizinkan dalam mode demo",
+    "this operation requires administrator to perform": "operasi ini memerlukan administrator untuk melakukannya"
+  },
+  "invitation": {
+    "Invitation %s does not exist": "Undangan %s tidak ada"
+  },
+  "ldap": {
+    "Ldap server exist": "Server ldap ada"
+  },
+  "link": {
+    "Please link first": "Silahkan tautkan terlebih dahulu",
+    "This application has no providers": "Aplikasi ini tidak memiliki penyedia",
+    "This application has no providers of type": " Aplikasi ini tidak memiliki penyedia tipe ",
+    "This provider can't be unlinked": "Penyedia layanan ini tidak dapat dipisahkan",
+    "You are not the global admin, you can't unlink other users": "Anda bukan admin global, Anda tidak dapat memutuskan tautan pengguna lain",
+    "You can't unlink yourself, you are not a member of any application": "Anda tidak dapat memutuskan tautan diri sendiri, karena Anda bukan anggota dari aplikasi apa pun"
+  },
+  "organization": {
+    "Only admin can modify the %s.": "Hanya admin yang dapat memodifikasi %s.",
+    "The %s is immutable.": "%s tidak dapat diubah.",
+    "Unknown modify rule %s.": "Aturan modifikasi tidak diketahui %s.",
+    "adding a new user to the 'built-in' organization is currently disabled. Please note: all users in the 'built-in' organization are global administrators in Casdoor. Refer to the docs: https://casdoor.org/docs/basic/core-concepts#how-does-casdoor-manage-itself. If you still wish to create a user for the 'built-in' organization, go to the organization's settings page and enable the 'Has privilege consent' option.": "Penambahan pengguna baru ke organisasi 'built-in' (terintegrasi) saat ini dinonaktifkan. Perhatikan: Semua pengguna di organisasi 'built-in' adalah administrator global di Casdoor. Lihat dokumentasi: https://casdoor.org/docs/basic/core-concepts#how-does-casdoor-manage-itself. Jika Anda masih ingin membuat pengguna untuk organisasi 'built-in', buka halaman pengaturan organisasi dan aktifkan opsi 'Memiliki persetujuan hak istimewa'."
+  },
+  "permission": {
+    "The permission: \"%s\" doesn't exist": "The permission: \"%s\" doesn't exist"
+  },
+  "product": {
+    "Product list cannot be empty": "Product list cannot be empty"
+  },
+  "provider": {
+    "Failed to initialize ID Verification provider": "Failed to initialize ID Verification provider",
+    "Invalid application id": "ID aplikasi tidak valid",
+    "No ID Verification provider configured": "No ID Verification provider configured",
+    "Provider is not an ID Verification provider": "Provider is not an ID Verification provider",
+    "the provider: %s does not exist": "penyedia: %s tidak ada"
+  },
+  "resource": {
+    "User is nil for tag: avatar": "Pengguna kosong untuk tag: avatar",
+    "Username or fullFilePath is empty: username = %s, fullFilePath = %s": "Nama pengguna atau path lengkap file kosong: nama_pengguna = %s, path_lengkap_file = %s"
+  },
+  "saml": {
+    "Application %s not found": "Aplikasi %s tidak ditemukan"
+  },
+  "saml_sp": {
+    "provider %s's category is not SAML": "kategori penyedia %s bukan SAML"
+  },
+  "service": {
+    "Empty parameters for emailForm: %v": "Parameter kosong untuk emailForm: %v",
+    "Invalid Email receivers: %s": "Penerima email tidak valid: %s",
+    "Invalid phone receivers: %s": "Penerima telepon tidak valid: %s"
+  },
+  "session": {
+    "session id %s is the current session and cannot be deleted": "session id %s is the current session and cannot be deleted"
+  },
+  "storage": {
+    "The objectKey: %s is not allowed": "Kunci objek: %s tidak diizinkan",
+    "The provider type: %s is not supported": "Jenis penyedia: %s tidak didukung"
+  },
+  "subscription": {
+    "Error": "Kesalahan"
+  },
+  "ticket": {
+    "Ticket not found": "Ticket not found"
+  },
+  "token": {
+    "Grant_type: %s is not supported in this application": "Jenis grant (grant_type) %s tidak didukung dalam aplikasi ini",
+    "Invalid application or wrong clientSecret": "Aplikasi tidak valid atau clientSecret salah",
+    "Invalid client_id": "ID klien tidak valid",
+    "Redirect URI: %s doesn't exist in the allowed Redirect URI list": "URI pengalihan: %s tidak ada dalam daftar URI Pengalihan yang diizinkan",
+    "Token not found, invalid accessToken": "Token tidak ditemukan, accessToken tidak valid"
+  },
+  "user": {
+    "Display name cannot be empty": "Nama tampilan tidak boleh kosong",
+    "ID card information and real name are required": "ID card information and real name are required",
+    "Identity verification failed": "Identity verification failed",
+    "MFA email is enabled but email is empty": "Email MFA diaktifkan tetapi email kosong",
+    "MFA phone is enabled but phone number is empty": "Telepon MFA diaktifkan tetapi nomor telepon kosong",
+    "New password cannot contain blank space.": "Sandi baru tidak boleh mengandung spasi kosong.",
+    "No application found for user": "No application found for user",
+    "The new password must be different from your current password": "Kata sandi baru harus berbeda dari kata sandi Anda saat ini",
+    "User is already verified": "User is already verified",
+    "the user's owner and name should not be empty": "pemilik dan nama pengguna tidak boleh kosong"
+  },
+  "util": {
+    "No application is found for userId: %s": "Tidak ditemukan aplikasi untuk userId: %s",
+    "No provider for category: %s is found for application: %s": "Tidak ditemukan penyedia untuk kategori: %s untuk aplikasi: %s",
+    "The provider: %s is not found": "Penyedia: %s tidak ditemukan"
+  },
+  "verification": {
+    "Invalid captcha provider.": "Penyedia captcha tidak valid.",
+    "Phone number is invalid in your region %s": "Nomor telepon tidak valid di wilayah anda %s",
+    "The forgot password feature is disabled": "The forgot password feature is disabled",
+    "The verification code has already been used!": "Kode verifikasi sudah digunakan!",
+    "The verification code has not been sent yet!": "Kode verifikasi belum dikirim!",
+    "Turing test failed.": "Tes Turing gagal.",
+    "Unable to get the email modify rule.": "Tidak dapat memperoleh aturan modifikasi email.",
+    "Unable to get the phone modify rule.": "Tidak dapat memodifikasi aturan telepon.",
+    "Unknown type": "Tipe tidak diketahui",
+    "Wrong verification code!": "Kode verifikasi salah!",
+    "You should verify your code in %d min!": "Anda harus memverifikasi kode Anda dalam %d menit!",
+    "please add a SMS provider to the \"Providers\" list for the application: %s": "please add a SMS provider to the \"Providers\" list for the application: %s",
+    "please add an Email provider to the \"Providers\" list for the application: %s": "please add an Email provider to the \"Providers\" list for the application: %s",
+    "the user does not exist, please sign up first": "Pengguna tidak ada, silakan daftar terlebih dahulu"
+  },
+  "webauthn": {
+    "Found no credentials for this user": "Tidak ditemukan kredensial untuk pengguna ini",
+    "Please call WebAuthnSigninBegin first": "Harap panggil WebAuthnSigninBegin terlebih dahulu"
+  }
+}
