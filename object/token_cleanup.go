@@ -18,47 +18,41 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/golang-jwt/jwt/v5"
+	"github.com/casdoor/casdoor/util"
 	"github.com/robfig/cron/v3"
 )
 
 func CleanupTokens(tokenRetentionIntervalAfterExpiry int) error {
+	currentTime := time.Now()
+	// A token can only be eligible for cleanup if it was created before this cutoff,
+	// since createdTime + expiresIn (the token's expiry) must be even earlier than that
+	// for it to have been expired for longer than the retention interval.
+	cutoffTime := currentTime.Add(-time.Duration(tokenRetentionIntervalAfterExpiry) * time.Second).Format(time.RFC3339)
+
 	var sessions []*Token
-	err := ormer.Engine.Find(&sessions)
+	err := ormer.Engine.Where("created_time < ?", cutoffTime).Find(&sessions)
 	if err != nil {
 		return fmt.Errorf("failed to query expired tokens: %w", err)
 	}
 
-	currentTime := time.Now()
 	deletedCount := 0
 
 	for _, session := range sessions {
-		tokenString := session.AccessToken
-		token, _, err := new(jwt.Parser).ParseUnverified(tokenString, jwt.MapClaims{})
-		if err != nil {
-			fmt.Printf("Failed to parse token %s: %v\n", session.Name, err)
+		isExpired, expireTime := util.IsTokenExpired(session.CreatedTime, session.ExpiresIn)
+		if !isExpired {
 			continue
 		}
 
-		if claims, ok := token.Claims.(jwt.MapClaims); ok {
-			exp, ok := claims["exp"].(float64)
-			if !ok {
-				fmt.Printf("Token %s does not have an 'exp' claim\n", session.Name)
-				continue
+		expireTimeObj := util.String2Time(expireTime)
+		tokenAfterExpiry := currentTime.Sub(expireTimeObj).Seconds()
+		if tokenAfterExpiry > float64(tokenRetentionIntervalAfterExpiry) {
+			_, err = ormer.Engine.Delete(session)
+			if err != nil {
+				return fmt.Errorf("failed to delete expired token %s: %w", session.Name, err)
 			}
-			expireTime := time.Unix(int64(exp), 0)
-			tokenAfterExpiry := currentTime.Sub(expireTime).Seconds()
-			if tokenAfterExpiry > float64(tokenRetentionIntervalAfterExpiry) {
-				_, err = ormer.Engine.Delete(session)
-				if err != nil {
-					return fmt.Errorf("failed to delete expired token %s: %w", session.Name, err)
-				}
-				fmt.Printf("[%d] Deleted expired token: %s | Created: %s | Org: %s | App: %s | User: %s\n",
-					deletedCount, session.Name, session.CreatedTime, session.Organization, session.Application, session.User)
-				deletedCount++
-			}
-		} else {
-			fmt.Printf("Token %s is not valid\n", session.Name)
+			fmt.Printf("[%d] Deleted expired token: %s | Created: %s | Org: %s | App: %s | User: %s\n",
+				deletedCount, session.Name, session.CreatedTime, session.Organization, session.Application, session.User)
+			deletedCount++
 		}
 	}
 	return nil
@@ -75,9 +69,11 @@ func InitCleanupTokens() {
 	schedule := "0 0 * * *"
 	interval := getTokenRetentionInterval(30)
 
-	if err := CleanupTokens(interval); err != nil {
-		fmt.Printf("Error cleaning up tokens at startup: %v\n", err)
-	}
+	go func() {
+		if err := CleanupTokens(interval); err != nil {
+			fmt.Printf("Error cleaning up tokens at startup: %v\n", err)
+		}
+	}()
 
 	cronJob := cron.New()
 	_, err := cronJob.AddFunc(schedule, func() {
