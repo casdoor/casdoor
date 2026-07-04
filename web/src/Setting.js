@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import React from "react";
+import {useEffect, useRef} from "react";
 import {Link} from "react-router-dom";
 import {Button, Select, Tag, Tooltip, message, theme} from "antd";
 import {QuestionCircleOutlined} from "@ant-design/icons";
@@ -1702,6 +1703,30 @@ export function renderForgetLink(application, text) {
   return renderLink(url, text, storeSigninUrl);
 }
 
+export function RenderCustomHtml({html}) {
+  const containerRef = useRef(null);
+
+  useEffect(() => {
+    if (!containerRef.current) {
+      return;
+    }
+
+    // <script> tags inserted via dangerouslySetInnerHTML are not executed by the browser,
+    // so we need to re-create them manually to make embedded scripts run.
+    const oldScripts = containerRef.current.querySelectorAll("script");
+    oldScripts.forEach(oldScript => {
+      const newScript = document.createElement("script");
+      Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+      newScript.textContent = oldScript.textContent;
+      oldScript.parentNode.replaceChild(newScript, oldScript);
+    });
+  }, [html]);
+
+  return (
+    <div ref={containerRef} dangerouslySetInnerHTML={{__html: html}} />
+  );
+}
+
 export function renderHelmet(application) {
   if (application === undefined || application === null || application.organizationObj === undefined || application.organizationObj === null || application.organizationObj === "") {
     return null;
@@ -2333,7 +2358,7 @@ export function renderLoginPanel(application, getInnerComponent, componentThis) 
       {inIframe() || !isMobile() ? null : <div dangerouslySetInnerHTML={{__html: application.formCssMobile}} />}
       <div className={isDarkTheme(componentThis.props.themeAlgorithm) ? "login-panel-dark" : "login-panel"}>
         <div className="side-image" style={{display: application.formOffset !== 4 ? "none" : null}}>
-          <div dangerouslySetInnerHTML={{__html: application.formSideHtml}} />
+          <RenderCustomHtml html={application.formSideHtml} />
         </div>
         <div className="login-form">
           <div>
