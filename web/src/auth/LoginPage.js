@@ -1699,7 +1699,7 @@ class LoginPage extends React.Component {
 
     if (application.signinHtml !== "") {
       return (
-        <div dangerouslySetInnerHTML={{__html: application.signinHtml}} />
+        <Setting.RenderCustomHtml html={application.signinHtml} />
       );
     }
 
@@ -1739,7 +1739,7 @@ class LoginPage extends React.Component {
           {Setting.inIframe() || !Setting.isMobile() ? null : <style dangerouslySetInnerHTML={{__html: Setting.getStyleInnerCss(application.formCssMobile)}} />}
           <div className={Setting.isDarkTheme(this.props.themeAlgorithm) ? "login-panel-dark" : "login-panel"}>
             <div className="side-image" style={{display: application.formOffset !== 4 ? "none" : null}}>
-              <div dangerouslySetInnerHTML={{__html: application.formSideHtml}} />
+              <Setting.RenderCustomHtml html={application.formSideHtml} />
             </div>
             <div className="login-form">
               <div>
