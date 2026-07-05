@@ -36,14 +36,21 @@ func getNotificationClient(provider *Provider) (notify.Notifier, error) {
 	return client, nil
 }
 
-func SendNotification(provider *Provider, content string) error {
+type notificationRecipientSender interface {
+	SendWithRecipient(context.Context, string, string, string) error
+}
+
+func SendNotification(provider *Provider, content string, recipient string) error {
 	client, err := getNotificationClient(provider)
 	if err != nil {
 		return err
 	}
 
-	err = client.Send(context.Background(), "", content)
-	return err
+	if sender, ok := client.(notificationRecipientSender); ok {
+		return sender.SendWithRecipient(context.Background(), "", content, recipient)
+	}
+
+	return client.Send(context.Background(), "", content)
 }
 
 // SsoLogoutNotification represents the structure of a session-level SSO logout notification
@@ -171,7 +178,7 @@ func SendSsoLogoutNotifications(user *User, sessionIds []string, tokens []*Token
 		}
 
 		// Send the notification using the provider from the providerItem
-		err = SendNotification(providerItem.Provider, content)
+		err = SendNotification(providerItem.Provider, content, "")
 		if err != nil {
 			return fmt.Errorf("failed to send SSO logout notification to provider %s/%s: %w", providerItem.Provider.Owner, providerItem.Provider.Name, err)
 		}
