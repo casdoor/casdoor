@@ -42,7 +42,8 @@ type SmsForm struct {
 }
 
 type NotificationForm struct {
-	Content string `json:"content"`
+	Content   string `json:"content"`
+	Recipient string `json:"recipient"`
 }
 
 // SendEmail
@@ -224,7 +225,7 @@ func (c *ApiController) SendNotification() {
 		return
 	}
 
-	err = object.SendNotification(provider, notificationForm.Content)
+	err = object.SendNotification(provider, notificationForm.Content, notificationForm.Recipient)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
