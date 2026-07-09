@@ -2493,6 +2493,8 @@ export function getApiPaths() {
   // Auth and user session APIs
   res.push("signup", "login", "logout", "sso-logout", "unlink");
   res.push("new-user"); // Custom event for new user creation
+  res.push("new-user-ldap"); // Custom event for new user creation via LDAP sync
+  res.push("new-user-syncer"); // Custom event for new user creation via syncer
 
   // CRUD operations for objects
   objects.forEach(obj => {
