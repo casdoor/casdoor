@@ -670,7 +670,6 @@ class App extends Component {
         {/* { */}
         {/*   this.renderBanner() */}
         {/* } */}
-        <CustomHead id="page" headerHtml={this.state.application?.pageHtml} />
         <FloatButton.BackTop />
         <CustomGithubCorner />
         {
