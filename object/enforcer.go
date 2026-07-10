@@ -30,7 +30,7 @@ type Enforcer struct {
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 	UpdatedTime string `xorm:"varchar(100) updated" json:"updatedTime"`
 	DisplayName string `xorm:"varchar(100)" json:"displayName"`
-	Description string `xorm:"varchar(100)" json:"description"`
+	Description string `xorm:"mediumtext" json:"description"`
 
 	Model   string `xorm:"varchar(100)" json:"model"`
 	Adapter string `xorm:"varchar(100)" json:"adapter"`

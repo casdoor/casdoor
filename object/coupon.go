@@ -26,7 +26,7 @@ type Coupon struct {
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 	DisplayName string `xorm:"varchar(100)" json:"displayName"`
-	Description string `xorm:"varchar(500)" json:"description"`
+	Description string `xorm:"mediumtext" json:"description"`
 
 	// Coupon code (the redemption code users enter)
 	Code string `xorm:"varchar(100) unique" json:"code"`
