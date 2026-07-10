@@ -15,6 +15,7 @@
 import React from "react";
 import {Tooltip} from "antd";
 import CryptoJS from "crypto-js";
+import i18next from "i18next";
 import * as Util from "./Util";
 import * as Setting from "../Setting";
 
@@ -442,7 +443,7 @@ export function getAuthUrl(application, provider, method, code) {
     scope = provider.scopes;
   }
   const isTelegramOIDC = provider.type === "Telegram" || (provider.type === "Custom" && provider.customAuthUrl && provider.customAuthUrl.includes("oauth.telegram.org"));
-  const isShortState = (provider.type === "WeChat" && navigator.userAgent.includes("MicroMessenger")) || (provider.type === "Twitter") || isTelegramOIDC;
+  const isShortState = (provider.type === "WeChat" && navigator.userAgent.includes("MicroMessenger") && provider.clientId2) || (provider.type === "Twitter") || isTelegramOIDC;
   let applicationName = application.name;
   if (application?.isShared) {
     applicationName = `${application.name}-org-${application.organization}`;
@@ -490,6 +491,14 @@ export function getAuthUrl(application, provider, method, code) {
     return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=code&prompt=login%20consent&state=${state}`;
   } else if (provider.type === "WeChat") {
     if (navigator.userAgent.includes("MicroMessenger")) {
+      // Inside WeChat's built-in browser, only the Official Account (clientId2) OAuth flow can
+      // sign in without scanning. The QR-code (open platform) flow needs a second device to scan,
+      // so it is useless here. When clientId2 is missing, guide the user instead of building an
+      // OAuth URL with an empty appid (which triggers WeChat error 10012).
+      if (!provider.clientId2) {
+        Setting.showMessage("error", i18next.t("login:Please open the login page in an external browser to sign in with WeChat, or ask the administrator to configure a WeChat Official Account"));
+        return "#";
+      }
       return `${authInfo[provider.type].mpEndpoint}?appid=${provider.clientId2}&redirect_uri=${redirectUri}&state=${state}&scope=${authInfo[provider.type].mpScope}&response_type=code#wechat_redirect`;
     } else {
       if (provider.clientId2 && provider?.disableSsl && provider?.signName === "media") {
