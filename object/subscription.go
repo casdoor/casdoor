@@ -41,7 +41,7 @@ type Subscription struct {
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
 	DisplayName string `xorm:"varchar(100)" json:"displayName"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
-	Description string `xorm:"varchar(100)" json:"description"`
+	Description string `xorm:"mediumtext" json:"description"`
 
 	User    string `xorm:"varchar(100)" json:"user"`
 	Pricing string `xorm:"varchar(100)" json:"pricing"`

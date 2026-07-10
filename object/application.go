@@ -87,7 +87,7 @@ type Application struct {
 	Favicon                      string          `xorm:"varchar(200)" json:"favicon"`
 	Order                        int             `json:"order"`
 	HomepageUrl                  string          `xorm:"varchar(100)" json:"homepageUrl"`
-	Description                  string          `xorm:"varchar(100)" json:"description"`
+	Description                  string          `xorm:"mediumtext" json:"description"`
 	Organization                 string          `xorm:"varchar(100)" json:"organization"`
 	Cert                         string          `xorm:"varchar(100)" json:"cert"`
 	DefaultGroup                 string          `xorm:"varchar(100)" json:"defaultGroup"`
