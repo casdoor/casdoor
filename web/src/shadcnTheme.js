@@ -78,6 +78,71 @@ export const shadcnThemeToken = {
   boxShadowSecondary: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1)",
 };
 
+// Dark-mode variant of the shadcn preset above: same shape and typography
+// tokens, with the neutral color scale flipped for dark backgrounds.
+export const shadcnDarkThemeToken = {
+  fontFamily: "'Inter Variable', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif",
+  colorPrimary: "#fafafa",
+  colorSuccess: "#22c55e",
+  colorWarning: "#f97316",
+  colorError: "#ef4444",
+  colorInfo: "#fafafa",
+  colorTextBase: "#fafafa",
+  colorBgBase: "#0a0a0a",
+  colorSuccessBg: "#052e16",
+  colorSuccessBgHover: "#14532d",
+  colorSuccessBorder: "#166534",
+  colorSuccessBorderHover: "#15803d",
+  colorSuccessHover: "#4ade80",
+  colorSuccessActive: "#86efac",
+  colorSuccessText: "#4ade80",
+  colorSuccessTextHover: "#4ade80",
+  colorSuccessTextActive: "#86efac",
+  colorWarningBg: "#431407",
+  colorWarningBgHover: "#7c2d12",
+  colorWarningBorder: "#9a3412",
+  colorWarningBorderHover: "#c2410c",
+  colorWarningHover: "#fb923c",
+  colorWarningActive: "#fdba74",
+  colorWarningText: "#fb923c",
+  colorWarningTextHover: "#fb923c",
+  colorWarningTextActive: "#fdba74",
+  colorErrorBg: "#450a0a",
+  colorErrorBgHover: "#7f1d1d",
+  colorErrorBorder: "#991b1b",
+  colorErrorBorderHover: "#b91c1c",
+  colorErrorHover: "#f87171",
+  colorErrorActive: "#fca5a5",
+  colorErrorText: "#f87171",
+  colorErrorTextHover: "#f87171",
+  colorErrorTextActive: "#fca5a5",
+  colorLink: "#fafafa",
+  colorText: "#fafafa",
+  colorTextSecondary: "#d4d4d4",
+  colorTextTertiary: "#a3a3a3",
+  colorTextQuaternary: "#737373",
+  colorTextDisabled: "#737373",
+  colorBgContainer: "#0a0a0a",
+  colorBgElevated: "#171717",
+  colorBgLayout: "#000000",
+  colorBgSpotlight: "rgba(64, 64, 64, 0.85)",
+  colorBgMask: "rgba(0, 0, 0, 0.65)",
+  colorBorder: "#262626",
+  colorBorderSecondary: "#171717",
+  borderRadius: 10,
+  borderRadiusXS: 2,
+  borderRadiusSM: 6,
+  borderRadiusLG: 14,
+  padding: 16,
+  paddingSM: 12,
+  paddingLG: 24,
+  margin: 16,
+  marginSM: 12,
+  marginLG: 24,
+  boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.5), 0 1px 2px -1px rgba(0, 0, 0, 0.5)",
+  boxShadowSecondary: "0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -2px rgba(0, 0, 0, 0.5)",
+};
+
 export const shadcnThemeComponents = {
   Button: {
     primaryShadow: "none",
@@ -147,5 +212,84 @@ export const shadcnThemeComponents = {
     headerBg: "#fafafa",
     headerSplitColor: "#e5e5e5",
     fontWeightStrong: 600,
+  },
+};
+
+export const shadcnDarkThemeComponents = {
+  Button: {
+    primaryShadow: "none",
+    defaultShadow: "none",
+    dangerShadow: "none",
+    defaultBorderColor: "#27272a",
+    defaultColor: "#fafafa",
+    defaultBg: "#09090b",
+    defaultHoverBg: "#18181b",
+    defaultHoverBorderColor: "#3f3f46",
+    defaultHoverColor: "#fafafa",
+    defaultActiveBg: "#27272a",
+    defaultActiveBorderColor: "#3f3f46",
+    borderRadius: 6,
+  },
+  Input: {
+    activeShadow: "none",
+    hoverBorderColor: "#3f3f46",
+    activeBorderColor: "#d4d4d8",
+    borderRadius: 6,
+  },
+  Select: {
+    optionSelectedBg: "#27272a",
+    optionActiveBg: "#18181b",
+    optionSelectedFontWeight: 500,
+    borderRadius: 6,
+  },
+  Alert: {
+    borderRadiusLG: 8,
+  },
+  Modal: {
+    borderRadiusLG: 12,
+  },
+  Progress: {
+    defaultColor: "#fafafa",
+    remainingColor: "#27272a",
+  },
+  Steps: {
+    iconSize: 32,
+  },
+  Switch: {
+    trackHeight: 24,
+    trackMinWidth: 44,
+    innerMinMargin: 4,
+    innerMaxMargin: 24,
+  },
+  Checkbox: {
+    borderRadiusSM: 4,
+  },
+  Slider: {
+    trackBg: "#27272a",
+    trackHoverBg: "#3f3f46",
+    handleSize: 18,
+    handleSizeHover: 20,
+    railSize: 6,
+  },
+  ColorPicker: {
+    borderRadius: 6,
+  },
+  Menu: {
+    itemFontSize: 14,
+    groupTitleFontSize: 12,
+    itemHeight: 40,
+    fontWeightStrong: 600,
+  },
+  Table: {
+    headerBg: "#18181b",
+    headerSplitColor: "#27272a",
+    fontWeightStrong: 600,
+  },
+  // The organization theme's primary color (near-black by default) is kept
+  // as-is in dark mode, so selected tab labels need an explicit light color.
+  Tabs: {
+    itemSelectedColor: "#fafafa",
+    itemHoverColor: "#d4d4d4",
+    inkBarColor: "#fafafa",
   },
 };
