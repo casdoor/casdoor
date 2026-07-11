@@ -25,7 +25,7 @@ import {Route, Switch, withRouter} from "react-router-dom";
 import CustomGithubCorner from "./common/CustomGithubCorner";
 import CustomHead from "./basic/CustomHead";
 import * as Conf from "./Conf";
-import {shadcnThemeComponents, shadcnThemeToken} from "./shadcnTheme";
+import {shadcnDarkThemeComponents, shadcnDarkThemeToken, shadcnThemeComponents, shadcnThemeToken} from "./shadcnTheme";
 
 import * as Auth from "./auth/Auth";
 import EntryPage from "./EntryPage";
@@ -618,11 +618,11 @@ class App extends Component {
           spin={{indicator: <AiDots />}}
           theme={{
             token: {
-              ...shadcnThemeToken,
+              ...(Setting.isDarkTheme(this.state.themeAlgorithm) ? shadcnDarkThemeToken : shadcnThemeToken),
               colorPrimary: themeData.colorPrimary,
               borderRadius: themeData.borderRadius,
             },
-            components: shadcnThemeComponents,
+            components: Setting.isDarkTheme(this.state.themeAlgorithm) ? shadcnDarkThemeComponents : shadcnThemeComponents,
             algorithm: Setting.getAlgorithm(this.state.themeAlgorithm),
           }}>
           <StyleProvider hashPriority="high" transformers={[legacyLogicalPropertiesTransformer]}>
@@ -764,12 +764,12 @@ class App extends Component {
           spin={{indicator: <AiDots />}}
           theme={{
             token: {
-              ...shadcnThemeToken,
+              ...(Setting.isDarkTheme(this.state.themeAlgorithm) ? shadcnDarkThemeToken : shadcnThemeToken),
               colorPrimary: this.state.themeData.colorPrimary,
               colorInfo: this.state.themeData.colorPrimary,
               borderRadius: this.state.themeData.borderRadius,
             },
-            components: shadcnThemeComponents,
+            components: Setting.isDarkTheme(this.state.themeAlgorithm) ? shadcnDarkThemeComponents : shadcnThemeComponents,
             algorithm: Setting.getAlgorithm(this.state.themeAlgorithm),
           }}>
           <StyleProvider hashPriority="high" transformers={[legacyLogicalPropertiesTransformer]}>

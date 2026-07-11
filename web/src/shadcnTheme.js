@@ -78,6 +78,61 @@ export const shadcnThemeToken = {
   boxShadowSecondary: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1)",
 };
 
+// Dark-mode variant of the shadcn preset above. It inherits every token from
+// `shadcnThemeToken` and only overrides the ones that differ for dark
+// backgrounds (the neutral color scale flipped, plus stronger shadows). Shape,
+// typography and the success/warning/error base hues are shared, so they must
+// not be duplicated here — keep this list to genuine light/dark differences.
+export const shadcnDarkThemeToken = {
+  ...shadcnThemeToken,
+  colorPrimary: "#fafafa",
+  colorInfo: "#fafafa",
+  colorTextBase: "#fafafa",
+  colorBgBase: "#0a0a0a",
+  colorSuccessBg: "#052e16",
+  colorSuccessBgHover: "#14532d",
+  colorSuccessBorder: "#166534",
+  colorSuccessBorderHover: "#15803d",
+  colorSuccessHover: "#4ade80",
+  colorSuccessActive: "#86efac",
+  colorSuccessText: "#4ade80",
+  colorSuccessTextHover: "#4ade80",
+  colorSuccessTextActive: "#86efac",
+  colorWarningBg: "#431407",
+  colorWarningBgHover: "#7c2d12",
+  colorWarningBorder: "#9a3412",
+  colorWarningBorderHover: "#c2410c",
+  colorWarningHover: "#fb923c",
+  colorWarningActive: "#fdba74",
+  colorWarningText: "#fb923c",
+  colorWarningTextHover: "#fb923c",
+  colorWarningTextActive: "#fdba74",
+  colorErrorBg: "#450a0a",
+  colorErrorBgHover: "#7f1d1d",
+  colorErrorBorder: "#991b1b",
+  colorErrorBorderHover: "#b91c1c",
+  colorErrorHover: "#f87171",
+  colorErrorActive: "#fca5a5",
+  colorErrorText: "#f87171",
+  colorErrorTextHover: "#f87171",
+  colorErrorTextActive: "#fca5a5",
+  colorLink: "#fafafa",
+  colorText: "#fafafa",
+  colorTextSecondary: "#d4d4d4",
+  colorTextTertiary: "#a3a3a3",
+  colorTextQuaternary: "#737373",
+  colorTextDisabled: "#737373",
+  colorBgContainer: "#0a0a0a",
+  colorBgElevated: "#171717",
+  colorBgLayout: "#000000",
+  colorBgSpotlight: "rgba(64, 64, 64, 0.85)",
+  colorBgMask: "rgba(0, 0, 0, 0.65)",
+  colorBorder: "#262626",
+  colorBorderSecondary: "#171717",
+  boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.5), 0 1px 2px -1px rgba(0, 0, 0, 0.5)",
+  boxShadowSecondary: "0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -2px rgba(0, 0, 0, 0.5)",
+};
+
 export const shadcnThemeComponents = {
   Button: {
     primaryShadow: "none",
@@ -147,5 +202,56 @@ export const shadcnThemeComponents = {
     headerBg: "#fafafa",
     headerSplitColor: "#e5e5e5",
     fontWeightStrong: 600,
+  },
+};
+
+// Same inheritance approach as `shadcnDarkThemeToken`: each component spreads
+// its light-mode config and overrides only the colors that differ in dark mode.
+// Components with no color differences (Alert, Modal, Steps, Switch, Checkbox,
+// ColorPicker, Menu) are inherited untouched via the top-level spread.
+export const shadcnDarkThemeComponents = {
+  ...shadcnThemeComponents,
+  Button: {
+    ...shadcnThemeComponents.Button,
+    defaultBorderColor: "#27272a",
+    defaultColor: "#fafafa",
+    defaultBg: "#09090b",
+    defaultHoverBg: "#18181b",
+    defaultHoverBorderColor: "#3f3f46",
+    defaultHoverColor: "#fafafa",
+    defaultActiveBg: "#27272a",
+    defaultActiveBorderColor: "#3f3f46",
+  },
+  Input: {
+    ...shadcnThemeComponents.Input,
+    hoverBorderColor: "#3f3f46",
+    activeBorderColor: "#d4d4d8",
+  },
+  Select: {
+    ...shadcnThemeComponents.Select,
+    optionSelectedBg: "#27272a",
+    optionActiveBg: "#18181b",
+  },
+  Progress: {
+    ...shadcnThemeComponents.Progress,
+    defaultColor: "#fafafa",
+    remainingColor: "#27272a",
+  },
+  Slider: {
+    ...shadcnThemeComponents.Slider,
+    trackBg: "#27272a",
+    trackHoverBg: "#3f3f46",
+  },
+  Table: {
+    ...shadcnThemeComponents.Table,
+    headerBg: "#18181b",
+    headerSplitColor: "#27272a",
+  },
+  // The organization theme's primary color (near-black by default) is kept
+  // as-is in dark mode, so selected tab labels need an explicit light color.
+  Tabs: {
+    itemSelectedColor: "#fafafa",
+    itemHoverColor: "#d4d4d4",
+    inkBarColor: "#fafafa",
   },
 };
