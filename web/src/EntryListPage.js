@@ -304,7 +304,7 @@ class EntryListPage extends BaseListPage {
 
     return (
       <Table
-        scroll={{x: "max-content"}}
+        scroll={{x: true}}
         dataSource={entries}
         columns={filteredColumns}
         rowKey={record => `${record.owner}/${record.name}`}

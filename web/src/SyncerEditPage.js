@@ -1247,7 +1247,7 @@ class SyncerEditPage extends React.Component {
         {
           this.state.syncer !== null ? this.renderSyncer() : <Loading type="page" tip={i18next.t("login:Loading")} />
         }
-        <div style={{marginTop: "20px", marginLeft: "40px"}}>
+        <div style={{margin: "20px 40px"}}>
           <Button size="large" onClick={() => this.submitSyncerEdit(false)}>{i18next.t("general:Save")}</Button>
           <Button style={{marginLeft: "20px"}} type="primary" size="large" onClick={() => this.submitSyncerEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
           {this.state.mode === "add" ? <Button style={{marginLeft: "20px"}} size="large" onClick={() => this.deleteSyncer()}>{i18next.t("general:Cancel")}</Button> : null}

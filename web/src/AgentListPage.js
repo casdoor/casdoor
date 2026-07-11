@@ -196,7 +196,7 @@ class AgentListPage extends BaseListPage {
 
     return (
       <Table
-        scroll={{x: "max-content"}}
+        scroll={{x: true}}
         dataSource={agents}
         columns={filteredColumns}
         rowKey={record => `${record.owner}/${record.name}`}

@@ -193,7 +193,7 @@ class FormListPage extends BaseListPage {
 
     return (
       <div>
-        <Table scroll={{x: "max-content"}} columns={columns} dataSource={forms}
+        <Table scroll={{x: true}} columns={columns} dataSource={forms}
           rowKey={(record) => `${record.owner}/${record.name}`} size="middle" bordered
           pagination={paginationProps}
           title={() => (
