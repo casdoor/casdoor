@@ -86,6 +86,14 @@ const template = `.login-panel {
   border-radius: 7px;
   background-color: rgb(255 255 255);
   box-shadow: 0 0 20px rgb(0 0 0 / 20%);
+}
+.forget-content-dark {
+  padding: 10px 100px 20px;
+  margin: 30px auto;
+  border: 2px solid #333;
+  border-radius: 7px;
+  background-color: rgb(51 51 51);
+  box-shadow: 0 0 20px rgb(255 255 255 / 20%);
 }`;
 
 const previewGrid = Setting.isMobile() ? 22 : 11;
