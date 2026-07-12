@@ -288,7 +288,11 @@ func buildUserSearchEntry(user *object.User, baseDN string, attrs []string, org 
 	e.AddAttribute("objectClass", "posixAccount")
 	if IsLdapAttrAllowed(org, ldapMemberOfAttr) {
 		for _, group := range user.Groups {
-			e.AddAttribute(ldapMemberOfAttr, message.AttributeValue(group))
+			value := group
+			if org != nil && org.LdapMemberOfDn {
+				value = groupToDN(group, baseDN)
+			}
+			e.AddAttribute(ldapMemberOfAttr, message.AttributeValue(value))
 		}
 	}
 	for _, attr := range attrs {
@@ -338,6 +342,19 @@ func handleRootSearch(w ldap.ResponseWriter, r *message.SearchRequest, res *mess
 	}
 
 	w.Write(res)
+}
+
+// groupToDN converts a Casdoor group id "owner/name" into the group's LDAP
+// entry DN "cn=name,<baseDN>", the same DN a group search returns (see the
+// posixGroup branch in handleSearch). The "owner/" prefix is dropped from the
+// cn so standard LDAP clients, which parse memberOf as a DN and read the
+// leftmost RDN, get the bare group name for role mapping.
+func groupToDN(group, baseDN string) string {
+	name := group
+	if i := strings.Index(group, "/"); i >= 0 {
+		name = group[i+1:]
+	}
+	return fmt.Sprintf("cn=%s,%s", name, baseDN)
 }
 
 func hash(s string) uint32 {

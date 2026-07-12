@@ -96,6 +96,7 @@ type Organization struct {
 	DcrPolicy string `xorm:"varchar(100)" json:"dcrPolicy"`
 
 	LdapAttributes []string `xorm:"mediumtext" json:"ldapAttributes"`
+	LdapMemberOfDn bool     `xorm:"bool" json:"ldapMemberOfDn"`
 
 	KerberosRealm       string `xorm:"varchar(200)" json:"kerberosRealm"`
 	KerberosKdcHost     string `xorm:"varchar(200)" json:"kerberosKdcHost"`

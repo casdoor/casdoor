@@ -250,6 +250,11 @@ func buildUserFilterCondition(filter interface{}) (builder.Cond, error) {
 		if attr == ldapMemberOfAttr {
 			var names []string
 			groupId := string(f.AssertionValue())
+			if strings.Contains(groupId, "cn=") {
+				if name, org, err := getNameAndOrgFromDN(groupId); err == nil {
+					groupId = util.GetId(org, name)
+				}
+			}
 			users := object.GetGroupUsersWithoutError(groupId)
 			for _, user := range users {
 				names = append(names, user.Name)

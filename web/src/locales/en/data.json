@@ -967,6 +967,8 @@
     "Kerberos service name - Tooltip": "The Kerberos service principal name (defaults to HTTP)",
     "LDAP attributes": "LDAP attributes",
     "LDAP attributes - Tooltip": "Mapping of LDAP directory attributes to Casdoor user fields for directory synchronization",
+    "LDAP memberOf as DN": "LDAP memberOf as DN",
+    "LDAP memberOf as DN - Tooltip": "When enabled, the built-in LDAP server returns memberOf as a valid LDAP DN (cn=group,ou=org,...) instead of the raw \"owner/name\" group id, so standard LDAP clients can parse group membership. Disabled by default for backward compatibility",
     "Modify rule": "Modify rule",
     "New Organization": "New Organization",
     "Optional": "Optional",

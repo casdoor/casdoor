@@ -967,6 +967,8 @@
     "Kerberos service name - Tooltip": "Kerberos服务主体名称（默认为HTTP）",
     "LDAP attributes": "LDAP属性",
     "LDAP attributes - Tooltip": "LDAP目录属性到Casdoor用户字段的映射，用于目录同步",
+    "LDAP memberOf as DN": "LDAP memberOf 输出为 DN",
+    "LDAP memberOf as DN - Tooltip": "开启后，内置 LDAP server 的 memberOf 返回合法的 LDAP DN（cn=组,ou=组织,...），而非原始的 \"owner/name\" 组 id，便于标准 LDAP 客户端解析组成员关系。默认关闭以保持向后兼容",
     "Modify rule": "修改规则",
     "New Organization": "添加组织",
     "Optional": "可选",
