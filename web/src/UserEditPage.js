@@ -1606,7 +1606,7 @@ class UserEditPage extends React.Component {
         }
         {
           (this.state.user === null || this.props.account === null) ? null :
-            <div style={{marginTop: "20px", marginLeft: "40px"}}>
+            <div style={{margin: "20px 40px"}}>
               <Button size="large" onClick={() => this.submitUserEdit(false)}>{i18next.t("general:Save")}</Button>
               <Button style={{marginLeft: "20px"}} type="primary" size="large" onClick={() => this.submitUserEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
               {this.state.mode === "add" ? <Button style={{marginLeft: "20px"}} size="large" onClick={() => this.deleteUser()}>{i18next.t("general:Cancel")}</Button> : null}

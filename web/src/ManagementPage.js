@@ -683,7 +683,7 @@ function ManagementPage(props) {
           </div>
         </Sider>
       )}
-      <div style={{marginLeft: contentMarginLeft, transition: "margin-left 0.2s", display: "flex", flexDirection: "column", minHeight: "100vh"}}>
+      <div style={{marginLeft: contentMarginLeft, transition: "margin-left 0.2s", display: "flex", flexDirection: "column", flex: 1}}>
         <Header style={{display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0", marginBottom: "4px", backgroundColor: isDark ? "black" : "white", color: textColor, position: "sticky", top: 0, zIndex: 99, boxShadow: "0 1px 4px rgba(0,0,0,0.08)", height: "52px", lineHeight: "52px"}}>
           <div style={{display: "flex", alignItems: "center"}}>
             {props.requiredEnableMfa ? null : (Setting.isMobile() ? (

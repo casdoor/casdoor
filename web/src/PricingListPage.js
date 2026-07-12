@@ -217,7 +217,7 @@ class PricingListPage extends BaseListPage {
 
     return (
       <div>
-        <Table scroll={{x: "max-content"}} columns={columns} dataSource={pricings} rowKey={(record) => `${record.owner}/${record.name}`} size="middle" bordered pagination={paginationProps}
+        <Table scroll={{x: true}} columns={columns} dataSource={pricings} rowKey={(record) => `${record.owner}/${record.name}`} size="middle" bordered pagination={paginationProps}
           title={() => {
             const isAdmin = Setting.isLocalAdminUser(this.props.account);
             return (

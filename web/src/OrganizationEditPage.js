@@ -919,7 +919,7 @@ class OrganizationEditPage extends React.Component {
             <TransactionTable transactions={this.state.transactions} includeUser={true} />
           </Card>
         ) : null}
-        <div style={{marginTop: "20px", marginLeft: "40px"}}>
+        <div style={{margin: "20px 40px"}}>
           <Button size="large" onClick={() => this.submitOrganizationEdit(false)}>{i18next.t("general:Save")}</Button>
           <Button style={{marginLeft: "20px"}} type="primary" size="large" onClick={() => this.submitOrganizationEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
           {this.state.mode === "add" ? <Button style={{marginLeft: "20px"}} size="large" onClick={() => this.deleteOrganization()}>{i18next.t("general:Cancel")}</Button> : null}

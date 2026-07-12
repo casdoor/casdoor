@@ -290,7 +290,7 @@ class ResourceListPage extends BaseListPage {
 
     return (
       <div>
-        <Table scroll={{x: "max-content"}} columns={columns} dataSource={resources} rowKey="name" size="middle" bordered pagination={paginationProps}
+        <Table scroll={{x: true}} columns={columns} dataSource={resources} rowKey="name" size="middle" bordered pagination={paginationProps}
           title={() => (
             <div>
               {i18next.t("general:Resources")}&nbsp;&nbsp;&nbsp;&nbsp;

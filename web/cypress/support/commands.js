@@ -29,7 +29,12 @@ const selector = {
   loginButton: ".ant-btn",
 };
 Cypress.Commands.add('login', ()=>{
-  cy.visit("http://localhost:7001");
+  cy.visit("http://localhost:7001", {
+    onBeforeLoad(win) {
+      // Disable the page tour so its popover never covers elements the tests click
+      win.localStorage.setItem("isTourVisible", "false");
+    },
+  });
   cy.get(selector.username).type("admin");
   cy.get(selector.password).type("123");
   cy.get(selector.loginButton).click();

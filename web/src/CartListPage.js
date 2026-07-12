@@ -372,7 +372,7 @@ class CartListPage extends BaseListPage {
     return (
       <div>
         <Table
-          scroll={{x: "max-content"}}
+          scroll={{x: true}}
           columns={columns}
           dataSource={carts}
           rowKey={(record, index) => `${record.name}-${record.pricingName}-${record.planName}-${index}`}

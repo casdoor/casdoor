@@ -245,7 +245,7 @@ class LdapSyncPage extends React.Component {
         {
           this.renderTable(this.state.users)
         }
-        <div style={{marginTop: "20px", marginLeft: "40px"}}>
+        <div style={{margin: "20px 40px"}}>
           <Button style={{marginLeft: "20px"}} type="primary" size="large" onClick={() => {
             this.props.history.push(`/organizations/${this.state.organizationName}`);
           }}>

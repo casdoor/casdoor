@@ -36,3 +36,6 @@ server
 
 # include helm-chart
 !manifests/casdoor
+
+web/cypress/videos/
+web/cypress/screenshots/

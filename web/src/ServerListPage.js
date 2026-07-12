@@ -305,7 +305,7 @@ class ServerListPage extends BaseListPage {
     return (
       <>
         <Table
-          scroll={{x: "max-content"}}
+          scroll={{x: true}}
           dataSource={servers}
           columns={filteredColumns}
           rowKey={record => `${record.owner}/${record.name}`}

@@ -1,12 +1,17 @@
+/* stylelint-disable no-descending-specificity */
+
 @import "@fontsource-variable/inter/opsz.css";
 @import "@fontsource-variable/inter/opsz-italic.css";
 
 /* AI-themed loading dots animation used by common/Loading.js */
 @keyframes casdoor-ai-bounce {
-  0%, 60%, 100% {
+  0%,
+  60%,
+  100% {
     transform: translateY(0) scale(0.85);
     opacity: 0.5;
   }
+
   30% {
     transform: translateY(-10px) scale(1.1);
     opacity: 1;
@@ -49,7 +54,18 @@ code {
 }
 
 .ant-table.ant-table-medium .ant-table-title {
-  padding: 5px 8px !important;
+  padding: 8px 12px !important;
+}
+
+/* Size the small toolbar buttons in table title bars (Add, Upload, ...) like default buttons, matching the row action buttons */
+.ant-table-title .ant-btn-sm {
+  height: 32px;
+  padding-inline: 15px;
+}
+
+/* Edit page cards put 32px buttons in their 38px title bar; give them room to breathe */
+.ant-card-small > .ant-card-head {
+  min-height: 46px !important;
 }
 
 .ant-table.ant-table-medium .ant-table-footer,
@@ -103,19 +119,19 @@ a.ant-typography-link:active {
 }
 
 /* Raw <a> tags without Ant Design classes (table cell links, mailto, plain hrefs, etc.) */
-a:not([class]):not(.login-link),
+a:not([class], .login-link),
 a[class=""],
 a[href^="mailto:"] {
   transition: opacity 0.2s ease;
 }
 
-a:not([class]):not(.login-link):hover,
+a:not([class], .login-link):hover,
 a[class=""]:hover,
 a[href^="mailto:"]:hover {
   opacity: 0.65;
 }
 
-a:not([class]):not(.login-link):active,
+a:not([class], .login-link):active,
 a[class=""]:active,
 a[href^="mailto:"]:active {
   opacity: 0.4;
@@ -244,8 +260,8 @@ a[href^="mailto:"]:active {
 
 /* Sidebar menu: selected item - darker background */
 .ant-layout-sider .ant-menu-light .ant-menu-item-selected,
-.ant-layout-sider .ant-menu-light>.ant-menu .ant-menu-item-selected {
-  background-color: rgba(0, 0, 0, 0.15) !important;
+.ant-layout-sider .ant-menu-light > .ant-menu .ant-menu-item-selected {
+  background-color: rgb(0 0 0 / 15%) !important;
 }
 
 /* Sidebar menu container: hide scrollbar but keep scroll behavior */
@@ -253,6 +269,7 @@ a[href^="mailto:"]:active {
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE/Edge */
 }
+
 .sider-menu-container::-webkit-scrollbar {
   display: none; /* Chrome/Safari/WebKit */
 }
@@ -262,5 +279,18 @@ a[href^="mailto:"]:active {
 .ant-message .ant-message-notice-content,
 .ant-message .ant-message-custom-content,
 .ant-message .ant-message-custom-content span {
-  font-family: "Inter Variable", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif !important;
+  font-family:
+    "Inter Variable",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    "Helvetica Neue",
+    sans-serif !important;
+}
+
+/* Table cells never wrap (scroll.x handles overflow), so shrinking only absorbs column padding */
+.ant-table-tbody > tr > td,
+.ant-table-thead > tr > th {
+  white-space: nowrap;
 }

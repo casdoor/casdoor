@@ -186,7 +186,7 @@ class GroupListPage extends BaseListPage {
           onCancel={() => {this.setState({showUploadModal: false, uploadJsonData: [], uploadColumns: []});}}
         >
           <div style={{marginRight: "34px"}}>
-            <Table scroll={{x: "max-content"}} dataSource={this.state.uploadJsonData} columns={this.state.uploadColumns} />
+            <Table scroll={{x: true}} dataSource={this.state.uploadJsonData} columns={this.state.uploadColumns} />
           </div>
         </Modal>
       </>
@@ -333,7 +333,7 @@ class GroupListPage extends BaseListPage {
 
     return (
       <div>
-        <Table scroll={{x: "max-content"}} columns={columns} dataSource={data} rowKey={(record) => `${record.owner}/${record.name}`} size="middle" bordered pagination={paginationProps}
+        <Table scroll={{x: true}} columns={columns} dataSource={data} rowKey={(record) => `${record.owner}/${record.name}`} size="middle" bordered pagination={paginationProps}
           title={() => (
             <div>
               {i18next.t("general:Groups")}&nbsp;&nbsp;&nbsp;&nbsp;

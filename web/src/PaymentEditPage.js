@@ -505,7 +505,7 @@ class PaymentEditPage extends React.Component {
           this.renderModal()
         }
         {this.state.mode !== "view" && (
-          <div style={{marginTop: "20px", marginLeft: "40px"}}>
+          <div style={{margin: "20px 40px"}}>
             <Button size="large" onClick={() => this.submitPaymentEdit(false)}>{i18next.t("general:Save")}</Button>
             <Button style={{marginLeft: "20px"}} type="primary" size="large" onClick={() => this.submitPaymentEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
             {this.state.mode === "add" ? <Button style={{marginLeft: "20px"}} size="large" onClick={() => this.deletePayment()}>{i18next.t("general:Cancel")}</Button> : null}
