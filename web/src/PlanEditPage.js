@@ -302,7 +302,7 @@ class PlanEditPage extends React.Component {
           this.state.plan !== null ? this.renderPlan() : <Loading type="page" tip={i18next.t("login:Loading")} />
         }
         {this.state.mode !== "view" && (
-          <div style={{marginTop: "20px", marginLeft: "40px"}}>
+          <div style={{margin: "20px 40px"}}>
             <Button size="large" onClick={() => this.submitPlanEdit(false)}>{i18next.t("general:Save")}</Button>
             <Button style={{marginLeft: "20px"}} type="primary" size="large" onClick={() => this.submitPlanEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
             {this.state.mode === "add" ? <Button style={{marginLeft: "20px"}} size="large" onClick={() => this.deletePlan()}>{i18next.t("general:Cancel")}</Button> : null}

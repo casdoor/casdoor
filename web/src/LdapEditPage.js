@@ -338,7 +338,7 @@ class LdapEditPage extends React.Component {
         {
           this.state.ldap !== null ? this.renderLdap() : <Loading type="page" tip={i18next.t("login:Loading")} />
         }
-        <div style={{marginTop: "20px", marginLeft: "40px"}}>
+        <div style={{margin: "20px 40px"}}>
           <Button size="large" onClick={() => this.submitLdapEdit()}>{i18next.t("general:Save")}</Button>
           <Button style={{marginLeft: "20px"}} type="primary" size="large" onClick={() => this.submitLdapEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
         </div>
