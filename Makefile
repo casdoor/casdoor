@@ -114,3 +114,7 @@ dry-run: ## Dry run for helm install
 .PHONY: undeploy
 undeploy: ## Undeploy controller from the K8s cluster specified in ~/.kube/config. Call with ignore-not-found=true to ignore resource not found errors during deletion.
 	helm delete ${APP} -n ${NAMESPACE}
+
+.PHONY: dev
+dev: ## Deploy controller to the K8s cluster specified in ~/.kube/config.
+	go run ./main.go --config conf/dev.conf
