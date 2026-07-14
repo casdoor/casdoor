@@ -141,9 +141,12 @@ func getNameAndOrgFromDN(DN string) (string, string, error) {
 	DNFields := strings.Split(DN, ",")
 	params := make(map[string]string, len(DNFields))
 	for _, field := range DNFields {
-		if strings.Contains(field, "=") {
-			k := strings.Split(field, "=")
-			params[k[0]] = k[1]
+		if kv := strings.SplitN(field, "=", 2); len(kv) == 2 {
+			// Attribute names are case-insensitive in LDAP; normalize the key
+			// so cn=/CN=/Cn= all match. Values stay as-is (org names are
+			// case-sensitive in Casdoor).
+			key := strings.ToLower(strings.TrimSpace(kv[0]))
+			params[key] = strings.TrimSpace(kv[1])
 		}
 	}
 
@@ -250,6 +253,13 @@ func buildUserFilterCondition(filter interface{}) (builder.Cond, error) {
 		if attr == ldapMemberOfAttr {
 			var names []string
 			groupId := string(f.AssertionValue())
+			// Accept the DN form (cn=name,ou=owner,...) emitted by memberOf and
+			// map it back to the Casdoor group id "owner/name" for the lookup.
+			if strings.Contains(strings.ToLower(groupId), "cn=") {
+				if name, org, err := getNameAndOrgFromDN(groupId); err == nil {
+					groupId = util.GetId(org, name)
+				}
+			}
 			users := object.GetGroupUsersWithoutError(groupId)
 			for _, user := range users {
 				names = append(names, user.Name)
