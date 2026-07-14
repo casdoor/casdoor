@@ -39,6 +39,7 @@ class MfaSetupPage extends React.Component {
     this.state = {
       account: props.account,
       application: null,
+      applicationError: null,
       applicationName: props.account.signupApplication ?? localStorage.getItem("applicationName") ?? "",
       current: location.state?.from !== undefined ? 1 : 0,
       mfaProps: null,
@@ -70,20 +71,34 @@ class MfaSetupPage extends React.Component {
   }
 
   getApplication() {
-    ApplicationBackend.getApplication("admin", this.state.applicationName)
-      .then((res) => {
-        if (res !== null) {
-          if (res.status === "error") {
-            Setting.showMessage("error", res.msg);
-            return;
-          }
-          this.setState({
-            application: res.data,
-          });
-        } else {
-          Setting.showMessage("error", i18next.t("general:Failed to get"));
+    // LDAP-synced (and other externally-created) users may have an empty "signupApplication",
+    // so fall back to the user's organization application via the user-aware endpoint.
+    const promise = this.state.applicationName !== ""
+      ? ApplicationBackend.getApplication("admin", this.state.applicationName)
+      : ApplicationBackend.getUserApplication(this.state.account.owner, this.state.account.name);
+
+    promise.then((res) => {
+      if (res !== null) {
+        if (res.status === "error") {
+          this.setState({applicationError: res.msg});
+          Setting.showMessage("error", res.msg);
+          return;
         }
-      });
+        if (!res.data) {
+          const msg = i18next.t("general:Failed to get");
+          this.setState({applicationError: msg});
+          Setting.showMessage("error", msg);
+          return;
+        }
+        this.setState({
+          application: res.data,
+        });
+      } else {
+        const msg = i18next.t("general:Failed to get");
+        this.setState({applicationError: msg});
+        Setting.showMessage("error", msg);
+      }
+    });
   }
 
   initMfaProps() {
@@ -205,6 +220,15 @@ class MfaSetupPage extends React.Component {
         />
       );
     case 1:
+      if (this.state.applicationError) {
+        return (
+          <Result
+            status="error"
+            title={i18next.t("mfa:Failed to initiate MFA")}
+            subTitle={this.state.applicationError}
+          />
+        );
+      }
       return (
         <div>
           <MfaVerifyForm
