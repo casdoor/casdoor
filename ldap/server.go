@@ -288,7 +288,7 @@ func buildUserSearchEntry(user *object.User, baseDN string, attrs []string, org 
 	e.AddAttribute("objectClass", "posixAccount")
 	if IsLdapAttrAllowed(org, ldapMemberOfAttr) {
 		for _, group := range user.Groups {
-			e.AddAttribute(ldapMemberOfAttr, message.AttributeValue(group))
+			e.AddAttribute(ldapMemberOfAttr, message.AttributeValue(groupToDN(group, baseDN)))
 		}
 	}
 	for _, attr := range attrs {
@@ -298,6 +298,41 @@ func buildUserSearchEntry(user *object.User, baseDN string, attrs []string, org 
 		e.AddAttribute(message.AttributeDescription(attr), getAttribute(attr, user))
 	}
 	return e
+}
+
+// groupToDN converts a Casdoor group id "owner/name" into the group's LDAP
+// entry DN, matching the DN a group search returns (see the posixGroup branch
+// in handleSearch). The Casdoor group id "owner/name" is not a valid LDAP DN,
+// which breaks standard clients that parse memberOf as a DN, so memberOf is
+// always emitted in DN form.
+//
+// The ou is taken from the group's own owner (not the user search base) so the
+// DN stays correct even when a user belongs to a group in another organization.
+// A bare id without an "owner/" prefix falls back to the search base.
+func groupToDN(group, baseDN string) string {
+	i := strings.Index(group, "/")
+	if i < 0 {
+		return fmt.Sprintf("cn=%s,%s", group, baseDN)
+	}
+
+	owner, name := group[:i], group[i+1:]
+	if suffix := dcSuffix(baseDN); suffix != "" {
+		return fmt.Sprintf("cn=%s,ou=%s,%s", name, owner, suffix)
+	}
+	return fmt.Sprintf("cn=%s,ou=%s", name, owner)
+}
+
+// dcSuffix returns the dc components of a DN (e.g. "dc=example,dc=com"),
+// preserving order and dropping any ou=/cn= parts.
+func dcSuffix(baseDN string) string {
+	var dcs []string
+	for _, part := range strings.Split(baseDN, ",") {
+		part = strings.TrimSpace(part)
+		if strings.HasPrefix(strings.ToLower(part), "dc=") {
+			dcs = append(dcs, part)
+		}
+	}
+	return strings.Join(dcs, ",")
 }
 
 func handleRootSearch(w ldap.ResponseWriter, r *message.SearchRequest, res *message.SearchResultDone, m *ldap.Message) {
