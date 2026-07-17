@@ -79,6 +79,11 @@ class ForgetPage extends React.Component {
     return this.props.application;
   }
 
+  hasProviderOfCategory(category) {
+    const application = this.getApplicationObj();
+    return application?.providers?.some(providerItem => providerItem?.provider?.category === category) ?? false;
+  }
+
   onUpdateApplication(application) {
     this.props.onUpdateApplication(application);
   }
@@ -90,8 +95,11 @@ class ForgetPage extends React.Component {
       AuthBackend.getEmailAndPhone(forms.step1.getFieldValue("organization"), username)
         .then((res) => {
           if (res.status === "ok") {
-            const phone = res.data.phone;
-            const email = res.data.email;
+            // Only offer a verification method whose provider is configured for
+            // the application, otherwise the user hits an admin-only error when
+            // requesting the code (see issue #5647).
+            const phone = this.hasProviderOfCategory("SMS") ? res.data.phone : "";
+            const email = this.hasProviderOfCategory("Email") ? res.data.email : "";
 
             if (!phone && !email) {
               Setting.showMessage("error", i18next.t("general:No verification method"));
@@ -112,10 +120,10 @@ class ForgetPage extends React.Component {
 
               switch (res.data2) {
               case "email":
-                saveFields("email", email, true);
+                email !== "" ? saveFields("email", email, true) : saveFields("phone", phone, true);
                 break;
               case "phone":
-                saveFields("phone", phone, true);
+                phone !== "" ? saveFields("phone", phone, true) : saveFields("email", email, true);
                 break;
               case "username":
                 phone !== "" ? saveFields("phone", phone, false) : saveFields("email", email, false);
