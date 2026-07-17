@@ -299,6 +299,12 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 	}
 
 	if resp.Status == "ok" {
+		err = object.RecordUserSignin(user, clientIp)
+		if err != nil {
+			c.ResponseError(err.Error(), nil)
+			return
+		}
+
 		if application.EnableExclusiveSignin {
 			sessions, err := object.GetUserAppSessions(user.Owner, user.Name, application.Name)
 			if err != nil {

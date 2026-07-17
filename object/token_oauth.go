@@ -309,6 +309,11 @@ func GetPasswordToken(application *Application, username string, password string
 		return nil, nil, err
 	}
 
+	err = RecordUserSignin(user, "")
+	if err != nil {
+		return nil, nil, err
+	}
+
 	accessToken, refreshToken, tokenName, err := generateJwtToken(application, user, "", "", "", scope, "", host)
 	if err != nil {
 		return nil, &TokenError{

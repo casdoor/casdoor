@@ -21,6 +21,7 @@ import (
 	"time"
 
 	"github.com/casdoor/casdoor/i18n"
+	"github.com/casdoor/casdoor/util"
 )
 
 var reRealName *regexp.Regexp
@@ -45,6 +46,20 @@ func resetUserSigninErrorTimes(user *User) error {
 
 	user.SigninWrongTimes = 0
 	_, err := UpdateUser(user.GetId(), user, []string{"signin_wrong_times", "last_signin_wrong_time"}, false)
+	return err
+}
+
+// RecordUserSignin records the last successful signin time and IP of the user.
+// It is called after a user has been authenticated successfully so that the
+// "last_signin_time" / "last_signin_ip" fields (also exposed in the JWT token)
+// are actually populated. See https://github.com/casdoor/casdoor/issues/5646
+func RecordUserSignin(user *User, clientIp string) error {
+	user.LastSigninTime = util.GetCurrentTime()
+	if clientIp != "" {
+		user.LastSigninIp = clientIp
+	}
+
+	_, err := UpdateUser(user.GetId(), user, []string{"last_signin_time", "last_signin_ip"}, false)
 	return err
 }
 
