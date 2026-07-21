@@ -81,7 +81,10 @@ class ForgetPage extends React.Component {
 
   hasProviderOfCategory(category) {
     const application = this.getApplicationObj();
-    return application?.providers?.some(providerItem => providerItem?.provider?.category === category) ?? false;
+    // Keep the same matching rules as GetProviderByCategoryAndRule() in the backend,
+    // the method of the forget-password flow is "forget".
+    return application?.providers?.some(providerItem => providerItem?.provider?.category === category &&
+      ["forget", "", "All", "all", "None"].includes(providerItem.rule)) ?? false;
   }
 
   onUpdateApplication(application) {
