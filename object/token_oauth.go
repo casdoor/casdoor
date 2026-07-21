@@ -309,11 +309,6 @@ func GetPasswordToken(application *Application, username string, password string
 		return nil, nil, err
 	}
 
-	err = RecordUserSignin(user, "")
-	if err != nil {
-		return nil, nil, err
-	}
-
 	accessToken, refreshToken, tokenName, err := generateJwtToken(application, user, "", "", "", scope, "", host)
 	if err != nil {
 		return nil, &TokenError{
@@ -321,6 +316,14 @@ func GetPasswordToken(application *Application, username string, password string
 			ErrorDescription: fmt.Sprintf("generate jwt token error: %s", err.Error()),
 		}, nil
 	}
+
+	// Record the signin after the token is generated, so that the "lastSigninTime"
+	// claim in the token means the previous signin instead of the current one.
+	err = RecordUserSignin(user, "")
+	if err != nil {
+		return nil, nil, err
+	}
+
 	token := &Token{
 		Owner:        application.Owner,
 		Name:         tokenName,

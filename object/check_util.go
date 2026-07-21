@@ -50,9 +50,12 @@ func resetUserSigninErrorTimes(user *User) error {
 }
 
 // RecordUserSignin records the last successful signin time and IP of the user.
-// It is called after a user has been authenticated successfully so that the
-// "last_signin_time" / "last_signin_ip" fields (also exposed in the JWT token)
-// are actually populated. See https://github.com/casdoor/casdoor/issues/5646
+// It must be called after the token has been generated, so that the
+// "last_signin_time" / "last_signin_ip" claims in the token still hold the
+// previous signin rather than the current one (the current signin time is
+// always available in the token's "iat" claim).
+// See https://github.com/casdoor/casdoor/issues/5646 and
+// https://github.com/casdoor/casdoor/issues/5651
 func RecordUserSignin(user *User, clientIp string) error {
 	user.LastSigninTime = util.GetCurrentTime()
 	if clientIp != "" {
