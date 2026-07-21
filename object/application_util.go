@@ -265,8 +265,25 @@ func GetMaskedApplication(application *Application, userId string) *Application 
 
 	providerItems := []*ProviderItem{}
 	for _, providerItem := range application.Providers {
-		if providerItem.Provider != nil && (providerItem.Provider.Category == "OAuth" || providerItem.Provider.Category == "Web3" || providerItem.Provider.Category == "Captcha" || providerItem.Provider.Category == "SAML" || providerItem.Provider.Category == "Face ID") {
+		if providerItem.Provider == nil {
+			continue
+		}
+
+		category := providerItem.Provider.Category
+		if category == "OAuth" || category == "Web3" || category == "Captcha" || category == "SAML" || category == "Face ID" {
 			providerItems = append(providerItems, providerItem)
+		} else if category == "Email" || category == "SMS" {
+			// The login pages need to know whether an Email or SMS provider is available,
+			// e.g. the forget-password page hides the verification methods that have no
+			// provider. So keep the provider item, but only expose its category and rule
+			// and hide all the provider's own (sensitive) config.
+			providerItems = append(providerItems, &ProviderItem{
+				CountryCodes: providerItem.CountryCodes,
+				Rule:         providerItem.Rule,
+				Provider: &Provider{
+					Category: category,
+				},
+			})
 		}
 	}
 	application.Providers = providerItems
