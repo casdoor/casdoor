@@ -872,6 +872,8 @@
     "WeChat": "微信",
     "WebAuthn": "ウェブオーセン",
     "sign up now": "今すぐサインアップ",
+    "username or Email": "ユーザー名またはメールアドレス",
+    "username or phone": "ユーザー名または電話番号",
     "username, Email or phone": "ユーザー名、メールアドレス、または電話番号"
   },
   "mfa": {

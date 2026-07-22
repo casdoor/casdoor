@@ -872,6 +872,8 @@
     "WeChat": "Đăng nhập WeChat",
     "WebAuthn": "Xác thực WebAuthn",
     "sign up now": "Đăng ký ngay bây giờ",
+    "username or Email": "Tên đăng nhập hoặc Email",
+    "username or phone": "Tên đăng nhập hoặc điện thoại",
     "username, Email or phone": "Tên đăng nhập, Email hoặc điện thoại"
   },
   "mfa": {

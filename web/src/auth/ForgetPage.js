@@ -87,6 +87,22 @@ class ForgetPage extends React.Component {
       ["forget", "", "All", "all", "None"].includes(providerItem.rule)) ?? false;
   }
 
+  getPlaceholder() {
+    // Only advertise the identifiers that can actually be used: looking the user up by
+    // email or phone is a dead end when the matching provider is not configured for the
+    // application, because there is then no way to send the verification code.
+    const hasEmail = this.hasProviderOfCategory("Email");
+    const hasPhone = this.hasProviderOfCategory("SMS");
+
+    if (hasEmail && !hasPhone) {
+      return i18next.t("login:username or Email");
+    } else if (!hasEmail && hasPhone) {
+      return i18next.t("login:username or phone");
+    }
+
+    return i18next.t("login:username, Email or phone");
+  }
+
   onUpdateApplication(application) {
     this.props.onUpdateApplication(application);
   }
@@ -290,7 +306,7 @@ class ForgetPage extends React.Component {
             >
               <Input
                 prefix={<UserOutlined />}
-                placeholder={i18next.t("login:username, Email or phone")}
+                placeholder={this.getPlaceholder()}
               />
             </Form.Item>
             <br />

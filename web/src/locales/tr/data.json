@@ -872,6 +872,8 @@
     "WeChat": "WeChat oturumu",
     "WebAuthn": "WebAuthn kimlik doğrulama",
     "sign up now": "hemen kaydolun",
+    "username or Email": "kullanıcı adınız veya Eposta adresiniz",
+    "username or phone": "kullanıcı adınız veya telefon numaranız",
     "username, Email or phone": "kullanıcı adınız, Eposta adresiniz ve telefon numaranız"
   },
   "mfa": {

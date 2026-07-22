@@ -872,6 +872,8 @@
     "WeChat": "Вейчат",
     "WebAuthn": "Вхід WebAuthn",
     "sign up now": "Зареєструйся зараз",
+    "username or Email": "ім'я користувача або електронну пошту",
+    "username or phone": "ім'я користувача або телефон",
     "username, Email or phone": "ім'я користувача, електронну пошту або телефон"
   },
   "mfa": {
