@@ -873,6 +873,8 @@
     "WeChat": "微信",
     "WebAuthn": "Web身份验证",
     "sign up now": "立即注册",
+    "username or Email": "用户名或Email",
+    "username or phone": "用户名或手机号",
     "username, Email or phone": "用户名、Email或手机号"
   },
   "mfa": {

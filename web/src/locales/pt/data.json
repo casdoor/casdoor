@@ -872,6 +872,8 @@
     "WeChat": "Início de sessão WeChat",
     "WebAuthn": "Autenticação WebAuthn",
     "sign up now": "Inscreva-se agora",
+    "username or Email": "Nome de usuário ou email",
+    "username or phone": "Nome de usuário ou telefone",
     "username, Email or phone": "Nome de usuário, email ou telefone"
   },
   "mfa": {
