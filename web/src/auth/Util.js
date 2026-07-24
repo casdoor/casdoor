@@ -174,6 +174,13 @@ export function getStateFromQueryParams(applicationName, providerName, method, i
     query = `${query}&from=${window.location.pathname}`;
   }
 
+  // Device authorization flow: the userCode lives in the path (/login/oauth/device/:userCode),
+  // not in the query string, so carry it through the social login round-trip via the state.
+  const deviceMatch = window.location.pathname.match(/\/login\/oauth\/device\/([^/?]+)/);
+  if (deviceMatch) {
+    query = `${query}&userCode=${encodeURIComponent(deviceMatch[1])}`;
+  }
+
   if (!isShortState) {
     return btoa(query);
   } else {
