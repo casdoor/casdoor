@@ -23,6 +23,7 @@
   },
   "application": {
     "Add Face ID": "Face ID hinzufügen",
+    "Add Face ID with Camera": "Add Face ID with Camera",
     "Add Face ID with Image": "Face ID mit Bild hinzufügen",
     "Always": "Immer",
     "Array": "Feld (Array)",
@@ -1245,7 +1246,7 @@
     "Metadata url - Tooltip": "SAML-Metadaten-URL",
     "Method - Tooltip": "Anmeldeverfahren, QR-Code oder Silent-Login",
     "Mobile": "Mobil",
-    "New Provider": "Neuer Anbieter",
+    "New Provider": "Neuer Provider",
     "Online list": "Online-Liste",
     "Parameter": "Konfigurationsparameter",
     "Parameter - Tooltip": "Konfigurationsparameter",
