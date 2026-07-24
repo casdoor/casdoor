@@ -23,6 +23,7 @@
   },
   "application": {
     "Add Face ID": "Thêm Face ID",
+    "Add Face ID with Camera": "Add Face ID with Camera",
     "Add Face ID with Image": "Thêm Face ID với hình ảnh",
     "Always": "luôn luôn",
     "Array": "Mảng",
@@ -949,7 +950,7 @@
     "Balance credit - Tooltip": "Số dư tín dụng",
     "Balance currency": "Đơn vị tiền tệ",
     "Balance currency - Tooltip": "Đơn vị tiền tệ",
-    "Edit Organization": "Chỉnh sửa tổ chức",
+    "Edit Organization": "Sửa tổ chức",
     "Follow global theme": "Theo giao diện chung",
     "Has privilege consent": "Có sự đồng ý đặc quyền",
     "Has privilege consent - Tooltip": "Ngăn thêm người dùng cho tổ chức tích hợp nếu HasPrivilegeConsent là false",
