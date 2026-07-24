@@ -391,7 +391,7 @@ func (c *ApiController) Signup() {
 // @Param   client_id     query    string  false     "client_id"
 // @Param   state     query    string  false     "state"
 // @Success 200 {object} controllers.Response The Response object
-// @router /logout [post]
+// @router /logout [get,post]
 func (c *ApiController) Logout() {
 	// https://openid.net/specs/openid-connect-rpinitiated-1_0-final.html
 	accessToken := c.GetString("id_token_hint")
@@ -411,6 +411,9 @@ func (c *ApiController) Logout() {
 			c.ResponseOk()
 			return
 		}
+
+		// Prefer the resolved logout subject for audit/webhooks over the pre-handler session snapshot.
+		c.Ctx.Input.SetParam("recordUserId", user)
 
 		// Retrieve application and token before clearing the session. Prefer the application
 		// bound to the session, and fall back to the "client_id" hint when available.
@@ -470,6 +473,9 @@ func (c *ApiController) Logout() {
 		if user == "" {
 			user = util.GetId(token.Organization, token.User)
 		}
+
+		// RP-Initiated Logout may have no session cookie; take the subject from id_token_hint.
+		c.Ctx.Input.SetParam("recordUserId", user)
 
 		c.ClearUserSession()
 		c.ClearTokenSession()

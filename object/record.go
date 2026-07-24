@@ -78,7 +78,7 @@ func NewRecord(ctx *context.Context) (*Record, error) {
 		action = "notify-payment"
 	}
 
-	requestUri := util.FilterQuery(ctx.Request.RequestURI, []string{"accessToken"})
+	requestUri := util.FilterQuery(ctx.Request.RequestURI, []string{"accessToken", "id_token_hint"})
 	if len(requestUri) > 1000 {
 		requestUri = requestUri[0:1000]
 	}
@@ -141,11 +141,22 @@ func addRecord(record *Record) (int64, error) {
 	return affected, err
 }
 
+// shouldDiscardGetRecord reports whether the record should be skipped because
+// logPostOnly is enabled. GET /api/logout is kept: OIDC RP-Initiated Logout
+// commonly uses GET, and discarding it would drop audit rows and webhooks.
+func shouldDiscardGetRecord(record *Record) bool {
+	if !logPostOnly {
+		return false
+	}
+	if record.Method != "GET" {
+		return false
+	}
+	return record.Action != "logout"
+}
+
 func AddRecord(record *Record) bool {
-	if logPostOnly {
-		if record.Method == "GET" {
-			return false
-		}
+	if shouldDiscardGetRecord(record) {
+		return false
 	}
 
 	if record.Organization == "app" {
