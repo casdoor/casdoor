@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import React from "react";
+import {Result} from "antd";
 import {withRouter} from "react-router-dom";
 import Loading from "../common/Loading";
 import * as AuthBackend from "./AuthBackend";
@@ -101,6 +102,13 @@ class AuthCallback extends React.Component {
         Setting.showMessage("success", "Logged in successfully");
         const link = Setting.getFromLink();
         Setting.goToLink(link);
+      } else if (responseType === "device") {
+        // Device authorization flow: the backend has marked the device authorization
+        // as approved, so stay here and show success instead of redirecting to "/apps".
+        Setting.showMessage("success", "Logged in successfully");
+        this.setState({
+          deviceSuccess: true,
+        });
       } else if (responseType === "code") {
         if (res.data3) {
           sessionStorage.setItem("signinUrl", signinUrl);
@@ -183,6 +191,13 @@ class AuthCallback extends React.Component {
     const innerParams = this.getInnerParams();
     const method = innerParams.get("method");
     if (method === "signup" || method === "signin") {
+      // Device authorization flow: the social login was started from the device
+      // verification page, so complete the device approval instead of a normal login.
+      const userCode = innerParams.get("userCode");
+      if (userCode !== null && userCode !== undefined && userCode !== "") {
+        return "device";
+      }
+
       const realRedirectUri = innerParams.get("redirect_uri");
       // Casdoor's own login page, so "code" is not necessary
       if (realRedirectUri === null) {
@@ -293,6 +308,7 @@ class AuthCallback extends React.Component {
       invitationCode: innerParams.get("invitationCode") || "",
       redirectUri: redirectUri,
       method: method,
+      userCode: innerParams.get("userCode") || "",
       codeVerifier: codeVerifier, // Include PKCE code verifier
     };
 
@@ -341,6 +357,18 @@ class AuthCallback extends React.Component {
   render() {
     if (this.state.samlResponse !== "") {
       return <RedirectForm samlResponse={this.state.samlResponse} redirectUrl={this.state.redirectUrl} relayState={this.state.relayState} />;
+    }
+
+    if (this.state.deviceSuccess) {
+      return (
+        <div style={{display: "flex", justifyContent: "center", alignItems: "center"}}>
+          <Result
+            style={{margin: "0px auto"}}
+            status="success"
+            title={i18next.t("application:Logged in successfully")}
+          />
+        </div>
+      );
     }
 
     if (this.state.getVerifyTotp !== undefined) {

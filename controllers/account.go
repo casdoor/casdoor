@@ -428,10 +428,14 @@ func (c *ApiController) Logout() {
 		}
 		sessionToken := c.GetSessionToken()
 
+		// Capture the Beego session id before ClearUserSession(): SessionRegenerateID()
+		// replaces CruSession's id, so reading it afterwards would miss the id stored in the DB.
+		beegoSessionId := c.Ctx.Input.CruSession.SessionID(context.Background())
+
 		c.ClearUserSession()
 		c.ClearTokenSession()
 
-		if err := c.deleteUserSession(user); err != nil {
+		if err := c.deleteUserSession(user, beegoSessionId); err != nil {
 			c.ResponseError(err.Error())
 			return
 		}
@@ -477,11 +481,15 @@ func (c *ApiController) Logout() {
 		// RP-Initiated Logout may have no session cookie; take the subject from id_token_hint.
 		c.Ctx.Input.SetParam("recordUserId", user)
 
+		// Capture the Beego session id before ClearUserSession(): SessionRegenerateID()
+		// replaces CruSession's id, so reading it afterwards would miss the id stored in the DB.
+		beegoSessionId := c.Ctx.Input.CruSession.SessionID(context.Background())
+
 		c.ClearUserSession()
 		c.ClearTokenSession()
 
 		// TODO https://github.com/casdoor/casdoor/pull/1494#discussion_r1095675265
-		if err := c.deleteUserSession(user); err != nil {
+		if err := c.deleteUserSession(user, beegoSessionId); err != nil {
 			c.ResponseError(err.Error())
 			return
 		}
@@ -545,6 +553,10 @@ func (c *ApiController) SsoLogout() {
 	ssoApplication := c.GetSessionApplication()
 	ssoSessionToken := c.GetSessionToken()
 
+	// Capture the Beego session id before ClearUserSession(): SessionRegenerateID()
+	// replaces CruSession's id, so reading it afterwards would miss the id stored in the DB.
+	currentSessionId := c.Ctx.Input.CruSession.SessionID(context.Background())
+
 	c.ClearUserSession()
 	c.ClearTokenSession()
 	owner, username, err := util.GetOwnerAndNameFromIdWithError(user)
@@ -553,7 +565,6 @@ func (c *ApiController) SsoLogout() {
 		return
 	}
 
-	currentSessionId := c.Ctx.Input.CruSession.SessionID(context.Background())
 	_, err = object.DeleteSessionId(util.GetSessionId(owner, username, object.CasdoorApplication), currentSessionId)
 	if err != nil {
 		c.ResponseError(err.Error())
@@ -857,7 +868,7 @@ func (c *ApiController) GetCaptcha() {
 	c.ResponseOk(Captcha{Type: "none"})
 }
 
-func (c *ApiController) deleteUserSession(user string) error {
+func (c *ApiController) deleteUserSession(user string, beegoSessionId string) error {
 	owner, username, err := util.GetOwnerAndNameFromIdWithError(user)
 	if err != nil {
 		return err
@@ -865,9 +876,6 @@ func (c *ApiController) deleteUserSession(user string) error {
 
 	// Casdoor session ID derived from owner, username, and application
 	sessionId := util.GetSessionId(owner, username, object.CasdoorApplication)
-
-	// Explicitly get the Beego session ID from the context
-	beegoSessionId := c.Ctx.Input.CruSession.SessionID(context.Background())
 
 	_, err = object.DeleteSessionId(sessionId, beegoSessionId)
 	if err != nil {
