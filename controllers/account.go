@@ -246,6 +246,7 @@ func (c *ApiController) Signup() {
 		Email:             strings.ToLower(authForm.Email),
 		Phone:             authForm.Phone,
 		CountryCode:       authForm.CountryCode,
+		Language:          authForm.Language,
 		Address:           []string{},
 		Affiliation:       authForm.Affiliation,
 		IdCard:            authForm.IdCard,
