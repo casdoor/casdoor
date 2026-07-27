@@ -559,8 +559,9 @@ func (c *ApiController) SsoLogout() {
 		return
 	}
 
-	_, err = object.DeleteSessionId(util.GetSessionId(owner, username, object.CasdoorApplication), currentSessionId)
-	if err != nil {
+	// Remove the Beego session id from the Session row for whatever application
+	// was used at login (not only app-built-in).
+	if err := c.deleteUserSession(user, currentSessionId); err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
@@ -868,12 +869,22 @@ func (c *ApiController) deleteUserSession(user string, beegoSessionId string) er
 		return err
 	}
 
-	// Casdoor session ID derived from owner, username, and application
-	sessionId := util.GetSessionId(owner, username, object.CasdoorApplication)
-
-	_, err = object.DeleteSessionId(sessionId, beegoSessionId)
+	// Login stores the Beego session id under the application used to sign in
+	// (HandleLoggedIn -> AddSession), which is often not app-built-in. Remove this
+	// id from every matching Session row so logout clears the Sessions admin UI.
+	sessions, err := object.GetUserSessions(owner, username)
 	if err != nil {
 		return err
+	}
+
+	for _, session := range sessions {
+		if !util.InSlice(session.SessionId, beegoSessionId) {
+			continue
+		}
+		_, err = object.DeleteSessionId(session.GetId(), beegoSessionId)
+		if err != nil {
+			return err
+		}
 	}
 
 	util.LogInfo(c.Ctx, "API: [%s] logged out", user)
