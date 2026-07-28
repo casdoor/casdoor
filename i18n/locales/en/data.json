@@ -10,12 +10,10 @@
     "Failed to create user, user information is invalid: %s": "Failed to create user, user information is invalid: %s",
     "Failed to login in: %s": "Failed to login in: %s",
     "Invalid token": "Invalid token",
-    "Requested scope exceeds original device authorization scope": "Requested scope exceeds original device authorization scope",
     "State expected: %s, but got: %s": "State expected: %s, but got: %s",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %s, please use another way to sign up": "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %s, please use another way to sign up",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support",
     "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)": "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)",
-    "The application does not match the device authorization request": "The application does not match the device authorization request",
     "The application: %s does not exist": "The application: %s does not exist",
     "The application: %s has disabled users to signin": "The application: %s has disabled users to signin",
     "The group: %s does not exist": "The group: %s does not exist",
@@ -47,7 +45,6 @@
   "check": {
     "%s does not meet the CIDR format requirements: %s": "%s does not meet the CIDR format requirements: %s",
     "Affiliation cannot be blank": "Affiliation cannot be blank",
-    "Application does not exist": "Application does not exist",
     "CIDR for IP: %s should not be empty": "CIDR for IP: %s should not be empty",
     "Default code does not match the code's matching rules": "Default code does not match the code's matching rules",
     "DisplayName cannot be blank": "DisplayName cannot be blank",
@@ -107,29 +104,19 @@
     "the adapter: %s is not found": "the adapter: %s is not found"
   },
   "general": {
-    "Application cannot be empty": "Application cannot be empty",
     "Failed to import groups": "Failed to import groups",
     "Failed to import users": "Failed to import users",
-    "Granted scopes cannot be empty": "Granted scopes cannot be empty",
     "Insufficient balance: new balance %v would be below credit limit %v": "Insufficient balance: new balance %v would be below credit limit %v",
     "Insufficient balance: new organization balance %v would be below credit limit %v": "Insufficient balance: new organization balance %v would be below credit limit %v",
-    "Invalid application": "Invalid application",
-    "Invalid client_id": "Invalid client_id",
     "Missing parameter": "Missing parameter",
-    "Multiple captcha providers are not allowed in the same application: %s": "Multiple captcha providers are not allowed in the same application: %s",
     "Only admin user can specify user": "Only admin user can specify user",
     "Please login first": "Please login first",
-    "Please sign in first": "Please sign in first",
     "The LDAP: %s does not exist": "The LDAP: %s does not exist",
-    "The object does not exist": "The object does not exist",
     "The organization: %s should have one application at least": "The organization: %s should have one application at least",
     "The syncer: %s does not exist": "The syncer: %s does not exist",
-    "The token: %s does not exist": "The token: %s does not exist",
-    "The user doesn't exist": "The user doesn't exist",
     "The user: %s doesn't exist": "The user: %s doesn't exist",
     "The user: %s is not found": "The user: %s is not found",
     "User is required for User category transaction": "User is required for User category transaction",
-    "User not found": "User not found",
     "Wrong userId": "Wrong userId",
     "don't support captchaProvider: ": "don't support captchaProvider: ",
     "this operation is not allowed in demo mode": "this operation is not allowed in demo mode",
@@ -143,7 +130,6 @@
   },
   "link": {
     "Please link first": "Please link first",
-    "Provider name is required for Custom Flexible providers": "Provider name is required for Custom Flexible providers",
     "This application has no providers": "This application has no providers",
     "This application has no providers of type": "This application has no providers of type",
     "This provider can't be unlinked": "This provider can't be unlinked",
@@ -182,8 +168,7 @@
   "service": {
     "Empty parameters for emailForm: %v": "Empty parameters for emailForm: %v",
     "Invalid Email receivers: %s": "Invalid Email receivers: %s",
-    "Invalid phone receivers: %s": "Invalid phone receivers: %s",
-    "Too many requests, please try again later": "Too many requests, please try again later"
+    "Invalid phone receivers: %s": "Invalid phone receivers: %s"
   },
   "session": {
     "session id %s is the current session and cannot be deleted": "session id %s is the current session and cannot be deleted"
@@ -202,7 +187,6 @@
     "Grant_type: %s is not supported in this application": "Grant_type: %s is not supported in this application",
     "Invalid application or wrong clientSecret": "Invalid application or wrong clientSecret",
     "Invalid client_id": "Invalid client_id",
-    "Invalid scope": "Invalid scope",
     "Redirect URI: %s doesn't exist in the allowed Redirect URI list": "Redirect URI: %s doesn't exist in the allowed Redirect URI list",
     "Token not found, invalid accessToken": "Token not found, invalid accessToken"
   },

@@ -10,12 +10,10 @@
     "Failed to create user, user information is invalid: %s": "创建用户失败，用户信息无效: %s",
     "Failed to login in: %s": "登录失败: %s",
     "Invalid token": "无效token",
-    "Requested scope exceeds original device authorization scope": "Requested scope exceeds original device authorization scope",
     "State expected: %s, but got: %s": "期望状态为: %s, 实际状态为: %s",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %s, please use another way to sign up": "提供商账户: %s 与用户名: %s (%s) 不存在且 不允许通过 %s 注册新账户, 请使用其他方式注册",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "提供商账户: %s 与用户名: %s (%s) 不存在且 不允许注册新账户, 请联系IT支持",
     "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)": "提供商账户: %s与用户名: %s (%s)已经与其他账户绑定: %s (%s)",
-    "The application does not match the device authorization request": "The application does not match the device authorization request",
     "The application: %s does not exist": "应用%s不存在",
     "The application: %s has disabled users to signin": "应用: %s 禁止用户登录",
     "The group: %s does not exist": "组: %s不存在",
@@ -47,7 +45,6 @@
   "check": {
     "%s does not meet the CIDR format requirements: %s": "%s 不符合 CIDR 的格式要求: %s",
     "Affiliation cannot be blank": "工作单位不可为空",
-    "Application does not exist": "Application does not exist",
     "CIDR for IP: %s should not be empty": "IP 的 CIDR 格式：%s 不能为空",
     "Default code does not match the code's matching rules": "邀请码默认值和邀请码规则不匹配",
     "DisplayName cannot be blank": "显示名称不可为空",
@@ -107,29 +104,19 @@
     "the adapter: %s is not found": "适配器: %s 未找到"
   },
   "general": {
-    "Application cannot be empty": "Application cannot be empty",
     "Failed to import groups": "导入群组失败",
     "Failed to import users": "导入用户失败",
-    "Granted scopes cannot be empty": "Granted scopes cannot be empty",
     "Insufficient balance: new balance %v would be below credit limit %v": "余额不足：新余额 %v 将低于信用限额 %v",
     "Insufficient balance: new organization balance %v would be below credit limit %v": "余额不足：新组织余额 %v 将低于信用限额 %v",
-    "Invalid application": "Invalid application",
-    "Invalid client_id": "Invalid client_id",
     "Missing parameter": "缺少参数",
-    "Multiple captcha providers are not allowed in the same application: %s": "Multiple captcha providers are not allowed in the same application: %s",
     "Only admin user can specify user": "仅管理员用户可以指定用户",
     "Please login first": "请先登录",
-    "Please sign in first": "Please sign in first",
     "The LDAP: %s does not exist": "LDAP: %s 不存在",
-    "The object does not exist": "The object does not exist",
     "The organization: %s should have one application at least": "组织: %s 应该拥有至少一个应用",
     "The syncer: %s does not exist": "同步器: %s 不存在",
-    "The token: %s does not exist": "The token: %s does not exist",
-    "The user doesn't exist": "The user doesn't exist",
     "The user: %s doesn't exist": "用户: %s不存在",
     "The user: %s is not found": "用户: %s 未找到",
     "User is required for User category transaction": "用户类别交易需要用户",
-    "User not found": "User not found",
     "Wrong userId": "错误的 userId",
     "don't support captchaProvider: ": "不支持验证码提供商: ",
     "this operation is not allowed in demo mode": "demo模式下不允许该操作",
@@ -143,7 +130,6 @@
   },
   "link": {
     "Please link first": "请先绑定",
-    "Provider name is required for Custom Flexible providers": "Provider name is required for Custom Flexible providers",
     "This application has no providers": "该应用无可用的提供商",
     "This application has no providers of type": "应用没有该类型的提供商",
     "This provider can't be unlinked": "该提供商被禁止解绑",
@@ -182,8 +168,7 @@
   "service": {
     "Empty parameters for emailForm: %v": "邮件参数为空: %v",
     "Invalid Email receivers: %s": "无效的邮箱收件人: %s",
-    "Invalid phone receivers: %s": "无效的手机短信收信人: %s",
-    "Too many requests, please try again later": "Too many requests, please try again later"
+    "Invalid phone receivers: %s": "无效的手机短信收信人: %s"
   },
   "session": {
     "session id %s is the current session and cannot be deleted": "会话ID %s 是当前会话，无法删除"
@@ -202,7 +187,6 @@
     "Grant_type: %s is not supported in this application": "该应用不支持Grant_type: %s",
     "Invalid application or wrong clientSecret": "无效应用或错误的clientSecret",
     "Invalid client_id": "无效的ClientId",
-    "Invalid scope": "Invalid scope",
     "Redirect URI: %s doesn't exist in the allowed Redirect URI list": "重定向 URI：%s在许可跳转列表中未找到",
     "Token not found, invalid accessToken": "未查询到对应token, accessToken无效"
   },

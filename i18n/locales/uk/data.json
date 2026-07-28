@@ -10,12 +10,10 @@
     "Failed to create user, user information is invalid: %s": "Не вдалося створити користувача, інформація недійсна: %s",
     "Failed to login in: %s": "Не вдалося увійти: %s",
     "Invalid token": "Недійсний токен",
-    "Requested scope exceeds original device authorization scope": "Requested scope exceeds original device authorization scope",
     "State expected: %s, but got: %s": "Очікувалося стан: %s, але отримано: %s",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %s, please use another way to sign up": "Обліковий запис для провайдера: %s та імені користувача: %s (%s) не існує і не дозволяється реєструвати як новий через %s, використайте інший спосіб",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "Обліковий запис для провайдера: %s та імені користувача: %s (%s) не існує і не дозволяється реєструвати як новий, зверніться до IT-підтримки",
     "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)": "Обліковий запис для провайдера: %s та імені користувача: %s (%s) уже пов’язаний з іншим обліковим записом: %s (%s)",
-    "The application does not match the device authorization request": "The application does not match the device authorization request",
     "The application: %s does not exist": "Додаток: %s не існує",
     "The application: %s has disabled users to signin": "Додаток: %s вимкнув вхід користувачів",
     "The group: %s does not exist": "Група: %s не існує",
@@ -47,7 +45,6 @@
   "check": {
     "%s does not meet the CIDR format requirements: %s": "%s не відповідає формату CIDR: %s",
     "Affiliation cannot be blank": "Приналежність не може бути порожньою",
-    "Application does not exist": "Application does not exist",
     "CIDR for IP: %s should not be empty": "CIDR для IP: %s не повинен бути порожнім",
     "Default code does not match the code's matching rules": "Код за замовчуванням не відповідає правилам відповідності",
     "DisplayName cannot be blank": "Відображуване ім’я не може бути порожнім",
@@ -107,29 +104,19 @@
     "the adapter: %s is not found": "адаптер: %s не знайдено"
   },
   "general": {
-    "Application cannot be empty": "Application cannot be empty",
     "Failed to import groups": "Не вдалося імпортувати групи",
     "Failed to import users": "Не вдалося імпортувати користувачів",
-    "Granted scopes cannot be empty": "Granted scopes cannot be empty",
     "Insufficient balance: new balance %v would be below credit limit %v": "Недостатній баланс: новий баланс %v буде нижче кредитного ліміту %v",
     "Insufficient balance: new organization balance %v would be below credit limit %v": "Недостатній баланс: новий баланс організації %v буде нижче кредитного ліміту %v",
-    "Invalid application": "Invalid application",
-    "Invalid client_id": "Invalid client_id",
     "Missing parameter": "Відсутній параметр",
-    "Multiple captcha providers are not allowed in the same application: %s": "Multiple captcha providers are not allowed in the same application: %s",
     "Only admin user can specify user": "Лише адміністратор може вказати користувача",
     "Please login first": "Спочатку увійдіть",
-    "Please sign in first": "Please sign in first",
     "The LDAP: %s does not exist": "LDAP: %s не існує",
-    "The object does not exist": "The object does not exist",
     "The organization: %s should have one application at least": "Організація: %s має мати щонайменше один додаток",
     "The syncer: %s does not exist": "Синхронізатор: %s не існує",
-    "The token: %s does not exist": "The token: %s does not exist",
-    "The user doesn't exist": "The user doesn't exist",
     "The user: %s doesn't exist": "Користувач: %s не існує",
     "The user: %s is not found": "Користувач: %s не знайдено",
     "User is required for User category transaction": "Користувач обов'язковий для транзакції категорії користувача",
-    "User not found": "User not found",
     "Wrong userId": "Неправильний userId",
     "don't support captchaProvider: ": "не підтримується captchaProvider: ",
     "this operation is not allowed in demo mode": "ця операція недоступна в демо-режимі",
@@ -143,7 +130,6 @@
   },
   "link": {
     "Please link first": "Спочатку виконайте прив’язку",
-    "Provider name is required for Custom Flexible providers": "Provider name is required for Custom Flexible providers",
     "This application has no providers": "Цей додаток не має провайдерів",
     "This application has no providers of type": "Цей додаток не має провайдерів цього типу",
     "This provider can't be unlinked": "Цього провайдера не можна від’єднати",
@@ -182,8 +168,7 @@
   "service": {
     "Empty parameters for emailForm: %v": "Порожні параметри для emailForm: %v",
     "Invalid Email receivers: %s": "Недійсні отримувачі Email: %s",
-    "Invalid phone receivers: %s": "Недійсні отримувачі телефону: %s",
-    "Too many requests, please try again later": "Too many requests, please try again later"
+    "Invalid phone receivers: %s": "Недійсні отримувачі телефону: %s"
   },
   "session": {
     "session id %s is the current session and cannot be deleted": "ідентифікатор сесії %s є поточною сесією і не може бути видалений"
@@ -202,7 +187,6 @@
     "Grant_type: %s is not supported in this application": "Grant_type: %s не підтримується в цьому додатку",
     "Invalid application or wrong clientSecret": "Недійсний додаток або неправильний clientSecret",
     "Invalid client_id": "Недійсний client_id",
-    "Invalid scope": "Invalid scope",
     "Redirect URI: %s doesn't exist in the allowed Redirect URI list": "Redirect URI: %s відсутній у списку дозволених",
     "Token not found, invalid accessToken": "Токен не знайдено, недійсний accessToken"
   },
