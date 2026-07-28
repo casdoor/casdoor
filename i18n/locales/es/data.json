@@ -10,10 +10,12 @@
     "Failed to create user, user information is invalid: %s": "No se pudo crear el usuario, la información del usuario es inválida: %s",
     "Failed to login in: %s": "No se ha podido iniciar sesión en: %s",
     "Invalid token": "Token inválido",
+    "Requested scope exceeds original device authorization scope": "Requested scope exceeds original device authorization scope",
     "State expected: %s, but got: %s": "Estado esperado: %s, pero se obtuvo: %s",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %s, please use another way to sign up": "La cuenta para el proveedor: %s y nombre de usuario: %s (%s) no existe y no está permitido registrarse como una cuenta nueva a través de %s, por favor use otro método para registrarse",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "La cuenta para el proveedor: %s y el nombre de usuario: %s (%s) no existe y no se permite registrarse como una nueva cuenta, por favor contacte a su soporte de TI",
     "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)": "La cuenta para proveedor: %s y nombre de usuario: %s (%s) ya está vinculada a otra cuenta: %s (%s)",
+    "The application does not match the device authorization request": "The application does not match the device authorization request",
     "The application: %s does not exist": "La aplicación: %s no existe",
     "The application: %s has disabled users to signin": "La aplicación: %s ha desactivado el inicio de sesión de usuarios",
     "The group: %s does not exist": "El grupo: %s no existe",
@@ -45,6 +47,7 @@
   "check": {
     "%s does not meet the CIDR format requirements: %s": "%s no cumple con los requisitos del formato CIDR: %s",
     "Affiliation cannot be blank": "La afiliación no puede estar vacía",
+    "Application does not exist": "Application does not exist",
     "CIDR for IP: %s should not be empty": "El CIDR para la IP: %s no debe estar vacío",
     "Default code does not match the code's matching rules": "El código predeterminado no cumple con las reglas de validación del código",
     "DisplayName cannot be blank": "El nombre de visualización no puede estar en blanco",
@@ -104,19 +107,29 @@
     "the adapter: %s is not found": "no se encontró el adaptador: %s"
   },
   "general": {
+    "Application cannot be empty": "Application cannot be empty",
     "Failed to import groups": "Error al importar grupos",
     "Failed to import users": "Error al importar usuarios",
+    "Granted scopes cannot be empty": "Granted scopes cannot be empty",
     "Insufficient balance: new balance %v would be below credit limit %v": "Saldo insuficiente: el nuevo saldo %v estaría por debajo del límite de crédito %v",
     "Insufficient balance: new organization balance %v would be below credit limit %v": "Saldo insuficiente: el nuevo saldo de la organización %v estaría por debajo del límite de crédito %v",
+    "Invalid application": "Invalid application",
+    "Invalid client_id": "Invalid client_id",
     "Missing parameter": "Parámetro faltante",
+    "Multiple captcha providers are not allowed in the same application: %s": "Multiple captcha providers are not allowed in the same application: %s",
     "Only admin user can specify user": "Solo el usuario administrador puede especificar usuario",
     "Please login first": "Por favor, inicia sesión primero",
+    "Please sign in first": "Please sign in first",
     "The LDAP: %s does not exist": "El LDAP: %s no existe",
+    "The object does not exist": "The object does not exist",
     "The organization: %s should have one application at least": "La organización: %s debe tener al menos una aplicación",
     "The syncer: %s does not exist": "El sincronizador: %s no existe",
+    "The token: %s does not exist": "The token: %s does not exist",
+    "The user doesn't exist": "The user doesn't exist",
     "The user: %s doesn't exist": "El usuario: %s no existe",
     "The user: %s is not found": "El usuario: %s no encontrado",
     "User is required for User category transaction": "El usuario es obligatorio para la transacción de la categoría Usuario",
+    "User not found": "User not found",
     "Wrong userId": "ID de usuario incorrecto",
     "don't support captchaProvider: ": "No apoyo a captchaProvider",
     "this operation is not allowed in demo mode": "esta operación no está permitida en modo de demostración",
@@ -130,6 +143,7 @@
   },
   "link": {
     "Please link first": "Por favor, enlaza primero",
+    "Provider name is required for Custom Flexible providers": "Provider name is required for Custom Flexible providers",
     "This application has no providers": "Esta aplicación no tiene proveedores",
     "This application has no providers of type": "Esta aplicación no tiene proveedores del tipo",
     "This provider can't be unlinked": "Este proveedor no se puede desvincular",
@@ -168,7 +182,8 @@
   "service": {
     "Empty parameters for emailForm: %v": "Parámetros vacíos para el formulario de correo electrónico: %v",
     "Invalid Email receivers: %s": "Receptores de correo electrónico no válidos: %s",
-    "Invalid phone receivers: %s": "Receptores de teléfono no válidos: %s"
+    "Invalid phone receivers: %s": "Receptores de teléfono no válidos: %s",
+    "Too many requests, please try again later": "Too many requests, please try again later"
   },
   "session": {
     "session id %s is the current session and cannot be deleted": "session id %s is the current session and cannot be deleted"
@@ -187,6 +202,7 @@
     "Grant_type: %s is not supported in this application": "El tipo de subvención: %s no es compatible con esta aplicación",
     "Invalid application or wrong clientSecret": "Solicitud inválida o clientSecret incorrecto",
     "Invalid client_id": "Identificador de cliente no válido",
+    "Invalid scope": "Invalid scope",
     "Redirect URI: %s doesn't exist in the allowed Redirect URI list": "El URI de redirección: %s no existe en la lista de URI de redirección permitidos",
     "Token not found, invalid accessToken": "Token no encontrado, accessToken inválido"
   },
@@ -209,6 +225,7 @@
   },
   "verification": {
     "Invalid captcha provider.": "Proveedor de captcha no válido.",
+    "LDAP users cannot reset their password here. Please contact the administrator": "Los usuarios LDAP no pueden restablecer su contraseña aquí. Por favor, contacte al administrador",
     "Phone number is invalid in your region %s": "El número de teléfono es inválido en tu región %s",
     "The forgot password feature is disabled": "La función de contraseña olvidada está deshabilitada",
     "The verification code has already been used!": "¡El código de verificación ya ha sido utilizado!",

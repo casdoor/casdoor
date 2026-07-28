@@ -217,6 +217,11 @@ func (c *ApiController) SendVerificationCode() {
 			c.ResponseError(c.T("check:The user is forbidden to sign in, please contact the administrator"))
 			return
 		}
+
+		if vform.Method == ForgetVerification && user.Ldap != "" {
+			c.ResponseError(c.T("verification:LDAP users cannot reset their password here. Please contact the administrator"))
+			return
+		}
 	} else if mfaUserSession := c.getMfaUserSession(); mfaUserSession != "" {
 		// mfaUserSession != "", means method is MfaAuthVerification
 		user, err = object.GetUser(mfaUserSession)
@@ -324,6 +329,11 @@ func (c *ApiController) SendVerificationCode() {
 				c.ResponseError(c.T("verification:the user does not exist, please sign up first"))
 				return
 			}
+
+			if vform.Method == ForgetVerification && user.Ldap != "" {
+				c.ResponseError(c.T("verification:LDAP users cannot reset their password here. Please contact the administrator"))
+				return
+			}
 		} else if vform.Method == ResetVerification {
 			user = c.getCurrentUser()
 		} else if vform.Method == MfaAuthVerification {
@@ -359,6 +369,11 @@ func (c *ApiController) SendVerificationCode() {
 				return
 			} else if user == nil {
 				c.ResponseError(c.T("verification:the user does not exist, please sign up first"))
+				return
+			}
+
+			if vform.Method == ForgetVerification && user.Ldap != "" {
+				c.ResponseError(c.T("verification:LDAP users cannot reset their password here. Please contact the administrator"))
 				return
 			}
 

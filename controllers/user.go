@@ -479,6 +479,11 @@ func (c *ApiController) GetEmailAndPhone() {
 		return
 	}
 
+	if user.Ldap != "" {
+		c.ResponseError(c.T("verification:LDAP users cannot reset their password here. Please contact the administrator"))
+		return
+	}
+
 	respUser := object.User{Name: user.Name}
 	var contentType string
 	// object.GetUserByFields() looks the user up after trimming the input, lowering

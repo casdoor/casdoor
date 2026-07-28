@@ -10,10 +10,12 @@
     "Failed to create user, user information is invalid: %s": "Kullanıcı oluşturulamadı, kullanıcı bilgileri geçersiz: %s",
     "Failed to login in: %s": "Giriş yapılamadı: %s",
     "Invalid token": "Geçersiz token",
+    "Requested scope exceeds original device authorization scope": "Requested scope exceeds original device authorization scope",
     "State expected: %s, but got: %s": "Beklenen durum: %s, fakat alınan: %s",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %s, please use another way to sign up": "Provider: %s ve kullanıcı adı: %s (%s) için hesap mevcut değil ve %s ile yeni hesap açılmasına izin verilmiyor, lütfen başka yöntemle kaydolun",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "Provider: %s ve kullanıcı adı: %s (%s) için hesap mevcut değil ve yeni hesap açılmasına izin verilmiyor, lütfen BT destek ile iletişime geçin",
     "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)": "Provider: %s ve kullanıcı adı: %s (%s) zaten başka bir hesaba bağlı: %s (%s)",
+    "The application does not match the device authorization request": "The application does not match the device authorization request",
     "The application: %s does not exist": "Uygulama: %s bulunamadı",
     "The application: %s has disabled users to signin": "Uygulama: %s kullanıcıların oturum açmasını devre dışı bıraktı",
     "The group: %s does not exist": "Grup: %s mevcut değil",
@@ -45,6 +47,7 @@
   "check": {
     "%s does not meet the CIDR format requirements: %s": "%s, CIDR biçim gerekliliklerini karşılamıyor: %s",
     "Affiliation cannot be blank": "Kurum boş olamaz",
+    "Application does not exist": "Application does not exist",
     "CIDR for IP: %s should not be empty": "IP için CIDR: %s boş olmamalı",
     "Default code does not match the code's matching rules": "Varsayılan kod, kodun eşleşme kurallarıyla uyuşmuyor",
     "DisplayName cannot be blank": "Görünen ad boş olamaz",
@@ -104,19 +107,29 @@
     "the adapter: %s is not found": "bağdaştırıcı: %s bulunamadı"
   },
   "general": {
+    "Application cannot be empty": "Application cannot be empty",
     "Failed to import groups": "Gruplar içe aktarılamadı",
     "Failed to import users": "Kullanıcılar içe aktarılamadı",
+    "Granted scopes cannot be empty": "Granted scopes cannot be empty",
     "Insufficient balance: new balance %v would be below credit limit %v": "Yetersiz bakiye: yeni bakiye %v kredi limitinin altında olacak %v",
     "Insufficient balance: new organization balance %v would be below credit limit %v": "Yetersiz bakiye: yeni organizasyon bakiyesi %v kredi limitinin altında olacak %v",
+    "Invalid application": "Invalid application",
+    "Invalid client_id": "Invalid client_id",
     "Missing parameter": "Eksik parametre",
+    "Multiple captcha providers are not allowed in the same application: %s": "Multiple captcha providers are not allowed in the same application: %s",
     "Only admin user can specify user": "Yalnızca yönetici kullanıcı kullanıcı belirleyebilir",
     "Please login first": "Lütfen önce giriş yapın",
+    "Please sign in first": "Please sign in first",
     "The LDAP: %s does not exist": "LDAP: %s mevcut değil",
+    "The object does not exist": "The object does not exist",
     "The organization: %s should have one application at least": "Organizasyon: %s en az bir uygulamaya sahip olmalı",
     "The syncer: %s does not exist": "Senkronizasyon: %s mevcut değil",
+    "The token: %s does not exist": "The token: %s does not exist",
+    "The user doesn't exist": "The user doesn't exist",
     "The user: %s doesn't exist": "Kullanıcı: %s bulunamadı",
     "The user: %s is not found": "Kullanıcı: %s bulunamadı",
     "User is required for User category transaction": "Kullanıcı kategorisi işlemi için kullanıcı gerekli",
+    "User not found": "User not found",
     "Wrong userId": "Yanlış kullanıcı kimliği",
     "don't support captchaProvider: ": "captchaProvider desteklenmiyor: ",
     "this operation is not allowed in demo mode": "bu işlem demo modunda izin verilmiyor",
@@ -130,6 +143,7 @@
   },
   "link": {
     "Please link first": "Lütfen önce bağlayın",
+    "Provider name is required for Custom Flexible providers": "Provider name is required for Custom Flexible providers",
     "This application has no providers": "Bu uygulamanın provider'ı yok",
     "This application has no providers of type": "Bu uygulamanın bu türde provider'ı yok",
     "This provider can't be unlinked": "Bu provider bağlantısı kaldırılamaz",
@@ -168,7 +182,8 @@
   "service": {
     "Empty parameters for emailForm: %v": "emailForm için boş parametreler: %v",
     "Invalid Email receivers: %s": "Geçersiz e-posta alıcıları: %s",
-    "Invalid phone receivers: %s": "Geçersiz telefon alıcıları: %s"
+    "Invalid phone receivers: %s": "Geçersiz telefon alıcıları: %s",
+    "Too many requests, please try again later": "Too many requests, please try again later"
   },
   "session": {
     "session id %s is the current session and cannot be deleted": "oturum kimliği %s geçerli oturumdur ve silinemez"
@@ -187,6 +202,7 @@
     "Grant_type: %s is not supported in this application": "Grant_type: %s bu uygulamada desteklenmiyor",
     "Invalid application or wrong clientSecret": "Geçersiz uygulama veya yanlış clientSecret",
     "Invalid client_id": "Geçersiz client_id",
+    "Invalid scope": "Invalid scope",
     "Redirect URI: %s doesn't exist in the allowed Redirect URI list": "Redirect URI: %s izin verilen Redirect URI listesinde yok",
     "Token not found, invalid accessToken": "Token bulunamadı, geçersiz accessToken"
   },
@@ -209,6 +225,7 @@
   },
   "verification": {
     "Invalid captcha provider.": "Geçersiz captcha sağlayıcı.",
+    "LDAP users cannot reset their password here. Please contact the administrator": "LDAP kullanıcıları parolalarını burada sıfırlayamaz. Lütfen yöneticiyle iletişime geçin",
     "Phone number is invalid in your region %s": "Telefon numaranız bölgenizde geçersiz %s",
     "The forgot password feature is disabled": "Şifremi unuttum özelliği devre dışı",
     "The verification code has already been used!": "Doğrulama kodu zaten kullanılmış!",

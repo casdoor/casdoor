@@ -10,10 +10,12 @@
     "Failed to create user, user information is invalid: %s": "ユーザーの作成に失敗しました。ユーザー情報が無効です：%s",
     "Failed to login in: %s": "ログインできませんでした：%s",
     "Invalid token": "無効なトークン",
+    "Requested scope exceeds original device authorization scope": "Requested scope exceeds original device authorization scope",
     "State expected: %s, but got: %s": "期待される状態： %s、実際には：%s",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %s, please use another way to sign up": "プロバイダーのアカウント：%s とユーザー名：%s（%s）が存在せず、新しいアカウントを %s 経由でサインアップすることはできません。他の方法でサインアップしてください",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "プロバイダー名：%sとユーザー名：%s（%s）のアカウントは存在しません。新しいアカウントとしてサインアップすることはできません。 ITサポートに連絡してください",
     "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)": "プロバイダのアカウント：%s とユーザー名：%s (%s) は既に別のアカウント：%s (%s) にリンクされています",
+    "The application does not match the device authorization request": "The application does not match the device authorization request",
     "The application: %s does not exist": "アプリケーション: %sは存在しません",
     "The application: %s has disabled users to signin": "アプリケーション: %s はユーザーのサインインを無効にしました",
     "The group: %s does not exist": "グループ: %sは存在しません",
@@ -45,6 +47,7 @@
   "check": {
     "%s does not meet the CIDR format requirements: %s": "%s は CIDR フォーマットの要件を満たしていません: %s",
     "Affiliation cannot be blank": "所属は空白にできません",
+    "Application does not exist": "Application does not exist",
     "CIDR for IP: %s should not be empty": "IP「%s」の CIDR は空にできません",
     "Default code does not match the code's matching rules": "デフォルトコードがコードの一致ルールに一致しません",
     "DisplayName cannot be blank": "表示名は空白にできません",
@@ -104,19 +107,29 @@
     "the adapter: %s is not found": "アダプタ「%s」が見つかりません"
   },
   "general": {
+    "Application cannot be empty": "Application cannot be empty",
     "Failed to import groups": "グループのインポートに失敗しました",
     "Failed to import users": "ユーザーのインポートに失敗しました",
+    "Granted scopes cannot be empty": "Granted scopes cannot be empty",
     "Insufficient balance: new balance %v would be below credit limit %v": "残高不足：新しい残高 %v がクレジット制限 %v を下回ります",
     "Insufficient balance: new organization balance %v would be below credit limit %v": "残高不足：新しい組織残高 %v がクレジット制限 %v を下回ります",
+    "Invalid application": "Invalid application",
+    "Invalid client_id": "Invalid client_id",
     "Missing parameter": "不足しているパラメーター",
+    "Multiple captcha providers are not allowed in the same application: %s": "Multiple captcha providers are not allowed in the same application: %s",
     "Only admin user can specify user": "管理者ユーザーのみがユーザーを指定できます",
     "Please login first": "最初にログインしてください",
+    "Please sign in first": "Please sign in first",
     "The LDAP: %s does not exist": "LDAP：%s は存在しません",
+    "The object does not exist": "The object does not exist",
     "The organization: %s should have one application at least": "組織「%s」は少なくとも1つのアプリケーションを持っている必要があります",
     "The syncer: %s does not exist": "同期装置：%s は存在しません",
+    "The token: %s does not exist": "The token: %s does not exist",
+    "The user doesn't exist": "The user doesn't exist",
     "The user: %s doesn't exist": "そのユーザー：%sは存在しません",
     "The user: %s is not found": "ユーザー：%s が見つかりません",
     "User is required for User category transaction": "ユーザーカテゴリトランザクションにはユーザーが必要です",
+    "User not found": "User not found",
     "Wrong userId": "無効なユーザーIDです",
     "don't support captchaProvider: ": "captchaProviderをサポートしないでください",
     "this operation is not allowed in demo mode": "この操作はデモモードでは許可されていません",
@@ -130,6 +143,7 @@
   },
   "link": {
     "Please link first": "最初にリンクしてください",
+    "Provider name is required for Custom Flexible providers": "Provider name is required for Custom Flexible providers",
     "This application has no providers": "このアプリケーションにはプロバイダーがありません",
     "This application has no providers of type": "「このアプリケーションには、タイプのプロバイダーがありません」と翻訳されます",
     "This provider can't be unlinked": "このプロバイダーはリンク解除できません",
@@ -168,7 +182,8 @@
   "service": {
     "Empty parameters for emailForm: %v": "EmailFormの空のパラメーター：％v",
     "Invalid Email receivers: %s": "無効な電子メール受信者：%s",
-    "Invalid phone receivers: %s": "電話受信者が無効です：%s"
+    "Invalid phone receivers: %s": "電話受信者が無効です：%s",
+    "Too many requests, please try again later": "Too many requests, please try again later"
   },
   "session": {
     "session id %s is the current session and cannot be deleted": "セッションID %s は現在のセッションであり、削除できません"
@@ -187,6 +202,7 @@
     "Grant_type: %s is not supported in this application": "grant_type：%sはこのアプリケーションでサポートされていません",
     "Invalid application or wrong clientSecret": "無効なアプリケーションまたは誤ったクライアントシークレットです",
     "Invalid client_id": "client_idが無効です",
+    "Invalid scope": "Invalid scope",
     "Redirect URI: %s doesn't exist in the allowed Redirect URI list": "リダイレクトURI：%sは許可されたリダイレクトURIリストに存在しません",
     "Token not found, invalid accessToken": "トークンが見つかりません。無効なアクセストークンです"
   },
@@ -209,6 +225,7 @@
   },
   "verification": {
     "Invalid captcha provider.": "無効なCAPTCHAプロバイダー。",
+    "LDAP users cannot reset their password here. Please contact the administrator": "LDAPユーザーはここでパスワードをリセットできません。管理者にお問い合わせください",
     "Phone number is invalid in your region %s": "電話番号はあなたの地域で無効です %s",
     "The forgot password feature is disabled": "パスワードを忘れた機能は無効になっています",
     "The verification code has already been used!": "この検証コードは既に使用されています！",

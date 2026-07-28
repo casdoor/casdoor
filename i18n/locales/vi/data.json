@@ -10,10 +10,12 @@
     "Failed to create user, user information is invalid: %s": "Không thể tạo người dùng, thông tin người dùng không hợp lệ: %s",
     "Failed to login in: %s": "Đăng nhập không thành công: %s",
     "Invalid token": "Mã thông báo không hợp lệ",
+    "Requested scope exceeds original device authorization scope": "Requested scope exceeds original device authorization scope",
     "State expected: %s, but got: %s": "Trạng thái dự kiến: %s, nhưng nhận được: %s",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %s, please use another way to sign up": "Tài khoản cho nhà cung cấp: %s và tên người dùng: %s (%s) không tồn tại và không được phép đăng ký làm tài khoản mới qua %s, vui lòng sử dụng cách khác để đăng ký",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "Tài khoản cho nhà cung cấp: %s và tên người dùng: %s (%s) không tồn tại và không được phép đăng ký như một tài khoản mới, vui lòng liên hệ với bộ phận hỗ trợ công nghệ thông tin của bạn",
     "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)": "Tài khoản cho nhà cung cấp: %s và tên người dùng: %s (%s) đã được liên kết với tài khoản khác: %s (%s)",
+    "The application does not match the device authorization request": "The application does not match the device authorization request",
     "The application: %s does not exist": "Ứng dụng: %s không tồn tại",
     "The application: %s has disabled users to signin": "Ứng dụng: %s đã vô hiệu hóa đăng nhập của người dùng",
     "The group: %s does not exist": "Nhóm: %s không tồn tại",
@@ -45,6 +47,7 @@
   "check": {
     "%s does not meet the CIDR format requirements: %s": "%s không đáp ứng yêu cầu định dạng CIDR: %s",
     "Affiliation cannot be blank": "Tình trạng liên kết không thể để trống",
+    "Application does not exist": "Application does not exist",
     "CIDR for IP: %s should not be empty": "CIDR cho IP: %s không được để trống",
     "Default code does not match the code's matching rules": "Mã mặc định không khớp với quy tắc khớp mã",
     "DisplayName cannot be blank": "Tên hiển thị không thể để trống",
@@ -104,19 +107,29 @@
     "the adapter: %s is not found": "không tìm thấy adapter: %s"
   },
   "general": {
+    "Application cannot be empty": "Application cannot be empty",
     "Failed to import groups": "Không thể nhập nhóm",
     "Failed to import users": "Không thể nhập người dùng",
+    "Granted scopes cannot be empty": "Granted scopes cannot be empty",
     "Insufficient balance: new balance %v would be below credit limit %v": "Số dư không đủ: số dư mới %v sẽ thấp hơn giới hạn tín dụng %v",
     "Insufficient balance: new organization balance %v would be below credit limit %v": "Số dư không đủ: số dư tổ chức mới %v sẽ thấp hơn giới hạn tín dụng %v",
+    "Invalid application": "Invalid application",
+    "Invalid client_id": "Invalid client_id",
     "Missing parameter": "Thiếu tham số",
+    "Multiple captcha providers are not allowed in the same application: %s": "Multiple captcha providers are not allowed in the same application: %s",
     "Only admin user can specify user": "Chỉ người dùng quản trị mới có thể chỉ định người dùng",
     "Please login first": "Vui lòng đăng nhập trước",
+    "Please sign in first": "Please sign in first",
     "The LDAP: %s does not exist": "LDAP: %s không tồn tại",
+    "The object does not exist": "The object does not exist",
     "The organization: %s should have one application at least": "Tổ chức: %s cần có ít nhất một ứng dụng",
     "The syncer: %s does not exist": "Bộ đồng bộ: %s không tồn tại",
+    "The token: %s does not exist": "The token: %s does not exist",
+    "The user doesn't exist": "The user doesn't exist",
     "The user: %s doesn't exist": "Người dùng: %s không tồn tại",
     "The user: %s is not found": "Người dùng: %s không được tìm thấy",
     "User is required for User category transaction": "Người dùng được yêu cầu cho giao dịch danh mục Người dùng",
+    "User not found": "User not found",
     "Wrong userId": "ID người dùng sai",
     "don't support captchaProvider: ": "không hỗ trợ captchaProvider: ",
     "this operation is not allowed in demo mode": "thao tác này không được phép trong chế độ demo",
@@ -130,6 +143,7 @@
   },
   "link": {
     "Please link first": "Vui lòng kết nối trước tiên",
+    "Provider name is required for Custom Flexible providers": "Provider name is required for Custom Flexible providers",
     "This application has no providers": "Ứng dụng này không có nhà cung cấp",
     "This application has no providers of type": "Ứng dụng này không có nhà cung cấp loại nào",
     "This provider can't be unlinked": "Nhà cung cấp này không thể được tách ra",
@@ -168,7 +182,8 @@
   "service": {
     "Empty parameters for emailForm: %v": "Tham số trống cho emailForm: %v",
     "Invalid Email receivers: %s": "Người nhận Email không hợp lệ: %s",
-    "Invalid phone receivers: %s": "Người nhận điện thoại không hợp lệ: %s"
+    "Invalid phone receivers: %s": "Người nhận điện thoại không hợp lệ: %s",
+    "Too many requests, please try again later": "Too many requests, please try again later"
   },
   "session": {
     "session id %s is the current session and cannot be deleted": "id phiên %s là phiên hiện tại và không thể bị xóa"
@@ -187,6 +202,7 @@
     "Grant_type: %s is not supported in this application": "Loại cấp phép: %s không được hỗ trợ trong ứng dụng này",
     "Invalid application or wrong clientSecret": "Đơn đăng ký không hợp lệ hoặc sai clientSecret",
     "Invalid client_id": "Client_id không hợp lệ",
+    "Invalid scope": "Invalid scope",
     "Redirect URI: %s doesn't exist in the allowed Redirect URI list": "Đường dẫn chuyển hướng URI: %s không tồn tại trong danh sách URI được phép chuyển hướng",
     "Token not found, invalid accessToken": "Token không tìm thấy, accessToken không hợp lệ"
   },
@@ -209,6 +225,7 @@
   },
   "verification": {
     "Invalid captcha provider.": "Nhà cung cấp captcha không hợp lệ.",
+    "LDAP users cannot reset their password here. Please contact the administrator": "Người dùng LDAP không thể đặt lại mật khẩu tại đây. Vui lòng liên hệ quản trị viên",
     "Phone number is invalid in your region %s": "Số điện thoại không hợp lệ trong vùng của bạn %s",
     "The forgot password feature is disabled": "Tính năng quên mật khẩu đã bị tắt",
     "The verification code has already been used!": "Mã xác thực đã được sử dụng!",
