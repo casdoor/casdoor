@@ -184,7 +184,7 @@ func (idp *DingTalkIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, erro
 		return nil, err
 	}
 
-	corpMobile, corpEmail, unionId, err := idp.getUserCorpEmail(userId, corpAccessToken)
+	corpMobile, corpEmail, unionId, title, err := idp.getUserCorpInfo(userId, corpAccessToken)
 	if err == nil {
 		if corpMobile != "" {
 			userInfo.Phone = corpMobile
@@ -196,6 +196,13 @@ func (idp *DingTalkIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, erro
 
 		if unionId != "" {
 			userInfo.Username = unionId
+		}
+
+		if title != "" {
+			if userInfo.Extra == nil {
+				userInfo.Extra = map[string]string{}
+			}
+			userInfo.Extra["title"] = title
 		}
 	}
 
@@ -273,13 +280,13 @@ func (idp *DingTalkIdProvider) getUserId(unionId string, accessToken string) (st
 	return data.Result.UserId, nil
 }
 
-func (idp *DingTalkIdProvider) getUserCorpEmail(userId string, accessToken string) (string, string, string, error) {
+func (idp *DingTalkIdProvider) getUserCorpInfo(userId string, accessToken string) (string, string, string, string, error) {
 	// https://open.dingtalk.com/document/isvapp/query-user-details
 	body := make(map[string]string)
 	body["userid"] = userId
 	respBytes, err := idp.postWithBody(body, "https://oapi.dingtalk.com/topapi/v2/user/get?access_token="+accessToken)
 	if err != nil {
-		return "", "", "", err
+		return "", "", "", "", err
 	}
 
 	var data struct {
@@ -288,14 +295,15 @@ func (idp *DingTalkIdProvider) getUserCorpEmail(userId string, accessToken strin
 			Mobile  string `json:"mobile"`
 			Email   string `json:"email"`
 			UnionId string `json:"unionid"`
+			Title   string `json:"title"`
 		} `json:"result"`
 	}
 	err = json.Unmarshal(respBytes, &data)
 	if err != nil {
-		return "", "", "", err
+		return "", "", "", "", err
 	}
 	if data.ErrMessage != "ok" {
-		return "", "", "", errors.New(data.ErrMessage)
+		return "", "", "", "", errors.New(data.ErrMessage)
 	}
-	return data.Result.Mobile, data.Result.Email, data.Result.UnionId, nil
+	return data.Result.Mobile, data.Result.Email, data.Result.UnionId, data.Result.Title, nil
 }
