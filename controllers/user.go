@@ -479,6 +479,12 @@ func (c *ApiController) GetEmailAndPhone() {
 		return
 	}
 
+	err = object.CheckLdapPasswordForget(user)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
 	respUser := object.User{Name: user.Name}
 	var contentType string
 	// object.GetUserByFields() looks the user up after trimming the input, lowering
@@ -602,6 +608,15 @@ func (c *ApiController) SetPassword() {
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
+	}
+
+	// code != "" means the request comes from the forgot-password flow
+	if code != "" {
+		err = object.CheckLdapPasswordForget(targetUser)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
 	}
 
 	isAdmin := c.IsAdmin()

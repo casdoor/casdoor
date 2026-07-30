@@ -794,6 +794,21 @@ func GetExistUuids(owner string, uuids []string) ([]string, error) {
 	return existUuids, nil
 }
 
+// CheckLdapPasswordForget rejects the forgot-password flow for LDAP users. That flow ends
+// in ResetLdapPassword() with an empty old password, so the new password has to be written
+// with the bind account configured on the LDAP server, which usually is a read-only account
+// and makes the server answer with "Insufficient Access Rights". Checking it here keeps the
+// user from receiving a verification code and typing a new password before finding out.
+// Signing in, changing the password with the old one and an admin reset are not affected,
+// none of them depends on the bind account having write access.
+func CheckLdapPasswordForget(user *User) error {
+	if user == nil || user.Ldap == "" {
+		return nil
+	}
+
+	return fmt.Errorf("the password of the LDAP user: %s is managed by the LDAP server, please contact your administrator to reset it", user.Name)
+}
+
 func ResetLdapPassword(user *User, oldPassword string, newPassword string, lang string) error {
 	ldaps, err := GetLdaps(user.Owner)
 	if err != nil {
