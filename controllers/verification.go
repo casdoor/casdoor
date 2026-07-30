@@ -324,6 +324,13 @@ func (c *ApiController) SendVerificationCode() {
 				c.ResponseError(c.T("verification:the user does not exist, please sign up first"))
 				return
 			}
+
+			if vform.Method == ForgetVerification {
+				if err = object.CheckLdapPasswordForget(user); err != nil {
+					c.ResponseError(err.Error())
+					return
+				}
+			}
 		} else if vform.Method == ResetVerification {
 			user = c.getCurrentUser()
 		} else if vform.Method == MfaAuthVerification {
@@ -360,6 +367,13 @@ func (c *ApiController) SendVerificationCode() {
 			} else if user == nil {
 				c.ResponseError(c.T("verification:the user does not exist, please sign up first"))
 				return
+			}
+
+			if vform.Method == ForgetVerification {
+				if err = object.CheckLdapPasswordForget(user); err != nil {
+					c.ResponseError(err.Error())
+					return
+				}
 			}
 
 			vform.CountryCode = user.GetCountryCode(vform.CountryCode)
