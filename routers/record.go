@@ -58,29 +58,78 @@ func getUserByClientIdSecret(ctx *context.Context) string {
 }
 
 func RecordMessage(ctx *context.Context) {
-	if ctx.Request.URL.Path == "/api/login" || ctx.Request.URL.Path == "/api/signup" {
+	path := ctx.Request.URL.Path
+
+	if path == "/api/login" || path == "/api/signup" {
 		return
 	}
 
-	userId := getUser(ctx)
+	// User who performs the action.
+	ctx.Input.SetParam("recordUserId", getUser(ctx))
 
-	// Special handling for set-password endpoint to capture target user
-	if ctx.Request.URL.Path == "/api/set-password" {
-		// Parse form if not already parsed
-		if err := ctx.Request.ParseForm(); err != nil {
-			fmt.Printf("RecordMessage() error parsing form: %s\n", err.Error())
-		} else {
-			userOwner := ctx.Request.Form.Get("userOwner")
-			userName := ctx.Request.Form.Get("userName")
-
-			if userOwner != "" && userName != "" {
-				targetUserId := util.GetId(userOwner, userName)
-				ctx.Input.SetParam("recordTargetUserId", targetUserId)
-			}
+	// Resolve target user only for unauthenticated flows that pass identity in the form body.
+	switch path {
+	case "/api/set-password":
+		if targetUserId := getSetPasswordTargetUser(ctx); targetUserId != "" {
+			ctx.Input.SetParam("recordTargetUserId", targetUserId)
+		}
+	case "/api/send-verification-code":
+		if targetUserId := getVerificationCodeTargetUser(ctx); targetUserId != "" {
+			ctx.Input.SetParam("recordTargetUserId", targetUserId)
 		}
 	}
+}
 
-	ctx.Input.SetParam("recordUserId", userId)
+func parseRecordForm(ctx *context.Context) bool {
+	if err := ctx.Request.ParseForm(); err != nil {
+		fmt.Printf("RecordMessage() error parsing form: %s\n", err.Error())
+		return false
+	}
+	return true
+}
+
+func getSetPasswordTargetUser(ctx *context.Context) string {
+	if !parseRecordForm(ctx) {
+		return ""
+	}
+
+	userOwner := ctx.Request.Form.Get("userOwner")
+	userName := ctx.Request.Form.Get("userName")
+
+	if userOwner == "" || userName == "" {
+		return ""
+	}
+
+	return util.GetId(userOwner, userName)
+}
+
+func getVerificationCodeTargetUser(ctx *context.Context) string {
+	if !parseRecordForm(ctx) {
+		return ""
+	}
+
+	checkUser := ctx.Request.Form.Get("checkUser")
+	applicationId := ctx.Request.Form.Get("applicationId")
+
+	if checkUser == "" || applicationId == "" {
+		return ""
+	}
+
+	application, err := object.GetApplication(applicationId)
+	if err != nil {
+		fmt.Printf(
+			"RecordMessage() error getting application %s: %s\n",
+			applicationId,
+			err.Error(),
+		)
+		return ""
+	}
+
+	if application == nil {
+		return ""
+	}
+
+	return util.GetId(application.Organization, checkUser)
 }
 
 func AfterRecordMessage(ctx *context.Context) {
@@ -97,11 +146,10 @@ func AfterRecordMessage(ctx *context.Context) {
 		record.Detail = detail
 	}
 
-	// For set-password endpoint, use target user if available
-	// We use defensive error handling here (log instead of panic) because target user
-	// parsing is a new feature. If it fails, we gracefully fall back to the regular
-	// userId flow or empty user/org fields, maintaining backward compatibility.
-	if record.Action == "set-password" && targetUserId != "" {
+	// For unauthenticated flows (e.g. forgot password), use the target user resolved from the request body.
+	// We use defensive error handling here (log instead of panic) because target user parsing can fail;
+	// in that case we gracefully fall back to the session user or empty org/user fields.
+	if targetUserId != "" {
 		owner, user, err := util.GetOwnerAndNameFromIdWithError(targetUserId)
 		if err != nil {
 			fmt.Printf("AfterRecordMessage() error parsing target user %s: %s\n", targetUserId, err.Error())
