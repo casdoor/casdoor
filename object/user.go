@@ -1176,8 +1176,9 @@ func deleteUser(user *User) (bool, error) {
 }
 
 func DeleteUser(user *User) (bool, error) {
-	// Forced offline the user first
-	_, err := DeleteSession(util.GetSessionId(user.Owner, user.Name, CasdoorApplication), "")
+	// Forced offline the user first, the sessions are stored under the applications used at
+	// login, so all of them have to be dropped and not only the "app-built-in" one
+	_, err := DeleteAllUserSessions(user.Owner, user.Name)
 	if err != nil {
 		return false, err
 	}
