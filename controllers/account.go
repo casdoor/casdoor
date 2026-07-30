@@ -391,7 +391,7 @@ func (c *ApiController) Signup() {
 // @Param   client_id     query    string  false     "client_id"
 // @Param   state     query    string  false     "state"
 // @Success 200 {object} controllers.Response The Response object
-// @router /logout [post]
+// @router /logout [get,post]
 func (c *ApiController) Logout() {
 	// https://openid.net/specs/openid-connect-rpinitiated-1_0-final.html
 	accessToken := c.GetString("id_token_hint")
@@ -473,6 +473,12 @@ func (c *ApiController) Logout() {
 
 		if user == "" {
 			user = util.GetId(token.Organization, token.User)
+
+			// RecordMessage() captured "recordUserId" from the session before this handler ran,
+			// but RP-Initiated Logout may carry no session cookie. Overwrite it with the subject
+			// resolved from "id_token_hint" so the audit record and webhook are not left with an
+			// empty user and organization.
+			c.Ctx.Input.SetParam("recordUserId", user)
 		}
 
 		// Capture the Beego session id before ClearUserSession(): SessionRegenerateID()

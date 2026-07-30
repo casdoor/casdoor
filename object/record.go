@@ -31,6 +31,16 @@ var (
 	passwordRegex *regexp.Regexp
 )
 
+// alwaysLoggedActions lists the actions that are always recorded, even for GET
+// requests when "logPostOnly" is enabled. These endpoints accept GET by design
+// (OIDC RP-Initiated Logout navigates the browser to them), so filtering them
+// out would silently drop security-relevant audit rows and their webhooks.
+// Add an action here when losing its audit trail matters more than the noise.
+var alwaysLoggedActions = map[string]bool{
+	"logout":     true,
+	"sso-logout": true,
+}
+
 func init() {
 	logPostOnly = conf.GetConfigBool("logPostOnly")
 	passwordRegex = regexp.MustCompile("\"password\":\"([^\"]*?)\"")
@@ -78,7 +88,8 @@ func NewRecord(ctx *context.Context) (*Record, error) {
 		action = "notify-payment"
 	}
 
-	requestUri := util.FilterQuery(ctx.Request.RequestURI, []string{"accessToken"})
+	// "id_token_hint" carries a JWT, so it is dropped instead of being persisted in the audit row.
+	requestUri := util.FilterQuery(ctx.Request.RequestURI, []string{"accessToken", "id_token_hint"})
 	if len(requestUri) > 1000 {
 		requestUri = requestUri[0:1000]
 	}
@@ -143,7 +154,7 @@ func addRecord(record *Record) (int64, error) {
 
 func AddRecord(record *Record) bool {
 	if logPostOnly {
-		if record.Method == "GET" {
+		if record.Method == "GET" && !alwaysLoggedActions[record.Action] {
 			return false
 		}
 	}
