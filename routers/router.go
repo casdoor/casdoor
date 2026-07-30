@@ -88,6 +88,7 @@ func InitAPI() {
 
 	web.Router("/api/get-global-users", &controllers.ApiController{}, "GET:GetGlobalUsers")
 	web.Router("/api/get-users", &controllers.ApiController{}, "GET:GetUsers")
+	web.Router("/api/:owner/get-users", &controllers.ApiController{}, "GET:GetOrganizationUsers")
 	web.Router("/api/get-sorted-users", &controllers.ApiController{}, "GET:GetSortedUsers")
 	web.Router("/api/get-user-count", &controllers.ApiController{}, "GET:GetUserCount")
 	web.Router("/api/get-user", &controllers.ApiController{}, "GET:GetUser")

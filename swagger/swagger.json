@@ -4480,6 +4480,89 @@
                 }
             }
         },
+        "/api/{owner}/get-users": {
+            "get": {
+                "tags": [
+                    "User API"
+                ],
+                "description": "search users of an organization with multiple filters, sorting and pagination",
+                "operationId": "ApiController.GetOrganizationUsers",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "owner",
+                        "description": "The organization id",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "name",
+                        "description": "Filter by login (substring match)",
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "displayName",
+                        "description": "Filter by display name (substring match)",
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "email",
+                        "description": "Filter by email (substring match)",
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "phone",
+                        "description": "Filter by phone (substring match)",
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "affiliation",
+                        "description": "Filter by affiliation (substring match)",
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "pageSize",
+                        "description": "Page size",
+                        "type": "integer"
+                    },
+                    {
+                        "in": "query",
+                        "name": "p",
+                        "description": "Page number",
+                        "type": "integer"
+                    },
+                    {
+                        "in": "query",
+                        "name": "sortField",
+                        "description": "Sort field (same as GetUsers)",
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "sortOrder",
+                        "description": "Sort order (ascend or descend, same as GetUsers)",
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/object.User"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/get-version-info": {
             "get": {
                 "tags": [

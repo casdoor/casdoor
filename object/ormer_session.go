@@ -94,3 +94,82 @@ func GetSessionForUser(owner string, offset, limit int, field, value, sortField,
 
 	return session
 }
+
+// UserSearchFilters holds optional substring filters applied with AND semantics.
+type UserSearchFilters struct {
+	Name        string
+	DisplayName string
+	Email       string
+	Phone       string
+	Affiliation string
+}
+
+var userSearchFilterFields = []struct {
+	field string
+	value func(UserSearchFilters) string
+}{
+	{"name", func(f UserSearchFilters) string { return f.Name }},
+	{"displayName", func(f UserSearchFilters) string { return f.DisplayName }},
+	{"email", func(f UserSearchFilters) string { return f.Email }},
+	{"phone", func(f UserSearchFilters) string { return f.Phone }},
+	{"affiliation", func(f UserSearchFilters) string { return f.Affiliation }},
+}
+
+func applyUserSearchFilters(session *xorm.Session, filters UserSearchFilters, useAlias bool) *xorm.Session {
+	for _, item := range userSearchFilterFields {
+		value := item.value(filters)
+		if value == "" || !util.FilterField(item.field) {
+			continue
+		}
+		field := item.field
+		if useAlias {
+			field = fmt.Sprintf("a.%s", field)
+		}
+		session = session.And(fmt.Sprintf("%s like ?", util.CamelToSnakeCase(field)), fmt.Sprintf("%%%s%%", value))
+	}
+	return session
+}
+
+func GetSessionForUserSearch(owner string, offset, limit int, filters UserSearchFilters, sortField, sortOrder string) *xorm.Session {
+	session := ormer.Engine.Prepare()
+	paginated := offset != -1 && limit != -1
+	if paginated {
+		session.Limit(limit, offset)
+	}
+	if owner != "" {
+		if paginated {
+			session = session.And("a.owner=?", owner)
+		} else {
+			session = session.And("owner=?", owner)
+		}
+	}
+	session = applyUserSearchFilters(session, filters, paginated)
+
+	if sortField == "" || sortOrder == "" || !util.FilterField(sortField) {
+		sortField = "created_time"
+	}
+
+	tableNamePrefix := conf.GetConfigString("tableNamePrefix")
+	tableName := tableNamePrefix + "user"
+	if !paginated {
+		if sortOrder == "ascend" {
+			session = session.Asc(util.CamelToSnakeCase(sortField))
+		} else {
+			session = session.Desc(util.CamelToSnakeCase(sortField))
+		}
+	} else {
+		if sortOrder == "ascend" {
+			session = session.Alias("a").
+				Join("INNER", []string{tableName, "b"}, "a.owner = b.owner and a.name = b.name").
+				Select("b.*").
+				Asc("a." + util.CamelToSnakeCase(sortField))
+		} else {
+			session = session.Alias("a").
+				Join("INNER", []string{tableName, "b"}, "a.owner = b.owner and a.name = b.name").
+				Select("b.*").
+				Desc("a." + util.CamelToSnakeCase(sortField))
+		}
+	}
+
+	return session
+}

@@ -435,6 +435,31 @@ func GetPaginationUsers(owner string, offset, limit int, field, value, sortField
 	return users, nil
 }
 
+func GetUserCountWithSearchFilters(owner string, filters UserSearchFilters) (int64, error) {
+	session := GetSessionForUserSearch(owner, -1, -1, filters, "", "")
+	return session.Count(&User{})
+}
+
+func GetUsersWithSearchFilters(owner string, filters UserSearchFilters, sortField, sortOrder string) ([]*User, error) {
+	users := []*User{}
+	session := GetSessionForUserSearch(owner, -1, -1, filters, sortField, sortOrder)
+	err := session.Find(&users)
+	if err != nil {
+		return nil, err
+	}
+	return users, nil
+}
+
+func GetPaginationUsersWithSearchFilters(owner string, offset, limit int, filters UserSearchFilters, sortField, sortOrder string) ([]*User, error) {
+	users := []*User{}
+	session := GetSessionForUserSearch(owner, offset, limit, filters, sortField, sortOrder)
+	err := session.Find(&users)
+	if err != nil {
+		return nil, err
+	}
+	return users, nil
+}
+
 func getUser(owner string, name string) (*User, error) {
 	if owner == "" || name == "" {
 		return nil, nil
