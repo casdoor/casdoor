@@ -197,7 +197,7 @@ func (c *ApiController) AddOrganization() {
 	}
 
 	if len(organization.Languages) == 0 {
-		organization.Languages = []string{"en", "es", "fr", "de", "ja", "zh", "vi", "pt", "tr", "pl", "uk"}
+		organization.Languages = []string{"en", "es", "fr", "de", "ja", "zh", "vi", "pt", "tr", "pl", "uk", "ru"}
 	}
 
 	c.Data["json"] = wrapActionResponse(object.AddOrganization(&organization))

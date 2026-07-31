@@ -135,7 +135,7 @@ func initBuiltInOrganization() bool {
 		DefaultAvatar:      fmt.Sprintf("%s/img/casbin.svg", conf.GetConfigString("staticBaseUrl")),
 		UserTypes:          []string{},
 		Tags:               []string{},
-		Languages:          []string{"en", "es", "fr", "de", "ja", "zh", "vi", "pt", "tr", "pl", "uk"},
+		Languages:          []string{"en", "es", "fr", "de", "ja", "zh", "vi", "pt", "tr", "pl", "uk", "ru"},
 		InitScore:          2000,
 		AccountItems:       GetDefaultAccountItems(),
 		EnableSoftDeletion: false,

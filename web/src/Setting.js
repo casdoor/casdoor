@@ -50,6 +50,7 @@ export const Countries = [
   {label: "Türkçe", key: "tr", country: "TR", alt: "Türkçe"},
   {label: "Polski", key: "pl", country: "PL", alt: "Polski"},
   {label: "Українська", key: "uk", country: "UA", alt: "Українська"},
+  {label: "Русский", key: "ru", country: "RU", alt: "Русский"},
 ];
 
 export function getThemeData(organization, application) {
