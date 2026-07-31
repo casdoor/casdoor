@@ -14,6 +14,8 @@
 
 package object
 
+import "github.com/casdoor/casdoor/i18n"
+
 const (
 	SigninReasonUserNotFound    = "user-not-found"
 	SigninReasonAccountDisabled = "account-disabled"
@@ -33,4 +35,14 @@ func (e *SigninError) Error() string { return e.msg }
 
 func newSigninError(reason, msg string) *SigninError {
 	return &SigninError{Reason: reason, msg: msg}
+}
+
+// InvalidSigninCredentialsMsg is the generic client-facing sign-in failure text (OWASP anti-enumeration).
+func InvalidSigninCredentialsMsg(lang string) string {
+	return i18n.Translate(lang, "check:password or code is incorrect")
+}
+
+// NewSigninUserNotFoundError records user-not-found for audit logs while returning a generic message to the client.
+func NewSigninUserNotFoundError(lang string) *SigninError {
+	return newSigninError(SigninReasonUserNotFound, InvalidSigninCredentialsMsg(lang))
 }

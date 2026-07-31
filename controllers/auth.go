@@ -591,7 +591,7 @@ func (c *ApiController) Login() {
 				c.ResponseError(err.Error(), nil)
 				return
 			} else if user == nil {
-				c.ResponseError(fmt.Sprintf(c.T("general:The user: %s doesn't exist"), util.GetId(authForm.Organization, authForm.Username)))
+				c.ResponseError(object.InvalidSigninCredentialsMsg(c.GetAcceptLanguage()))
 				return
 			}
 
@@ -655,7 +655,7 @@ func (c *ApiController) Login() {
 				c.ResponseError(err.Error(), nil)
 				return
 			} else if user == nil {
-				c.ResponseError(fmt.Sprintf(c.T("general:The user: %s doesn't exist"), util.GetId(authForm.Organization, authForm.Username)))
+				c.ResponseError(object.InvalidSigninCredentialsMsg(c.GetAcceptLanguage()))
 				return
 			}
 

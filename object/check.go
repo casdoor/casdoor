@@ -374,7 +374,7 @@ func CheckUserPassword(organization string, username string, password string, la
 	}
 
 	if user == nil || user.IsDeleted {
-		return nil, newSigninError(SigninReasonUserNotFound, fmt.Sprintf(i18n.Translate(lang, "general:The user: %s doesn't exist"), util.GetId(organization, username)))
+		return nil, NewSigninUserNotFoundError(lang)
 	}
 
 	if user.IsForbidden {
@@ -388,7 +388,7 @@ func CheckUserPassword(organization string, username string, password string, la
 
 	if isSigninViaLdap {
 		if user.Ldap == "" {
-			return nil, fmt.Errorf(i18n.Translate(lang, "check:The user: %s doesn't exist in LDAP server"), username)
+			return nil, NewSigninUserNotFoundError(lang)
 		}
 	}
 
@@ -401,7 +401,7 @@ func CheckUserPassword(organization string, username string, password string, la
 		err = CheckLdapUserPassword(user, password, lang, enableCaptcha)
 		if err != nil {
 			if err.Error() == "user not exist" {
-				return nil, fmt.Errorf(i18n.Translate(lang, "check:The user: %s doesn't exist in LDAP server"), username)
+				return nil, NewSigninUserNotFoundError(lang)
 			}
 
 			return nil, err
