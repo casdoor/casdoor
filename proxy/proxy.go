@@ -44,7 +44,6 @@ func isAddressOpen(address string) bool {
 	timeout := time.Millisecond * 100
 	conn, err := net.DialTimeout("tcp", address, timeout)
 	if err != nil {
-		fmt.Printf("Cannot connect to address: %s, error: %v\n", address, err)
 		// cannot connect to address, proxy is not active
 		return false
 	}
