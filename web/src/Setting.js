@@ -1229,6 +1229,16 @@ export function setLanguage(language) {
   i18next.changeLanguage(language);
 }
 
+// The language chosen on the signin/signup page, remembered so it survives the
+// redirect through a provider and can be saved to the newly created user.
+export function setSigninLanguage(language) {
+  sessionStorage.setItem("signinLanguage", language);
+}
+
+export function getSigninLanguage() {
+  return sessionStorage.getItem("signinLanguage") ?? "";
+}
+
 export function getAcceptLanguage() {
   if (i18next.language === null || i18next.language === "") {
     return "en;q=0.9,en;q=0.8";
