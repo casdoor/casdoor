@@ -721,7 +721,7 @@ class LoginPage extends React.Component {
           <LanguageSelect
             languages={application.organizationObj.languages}
             mode={signinItem.rule}
-            onClick={key => {this.setState({userLang: key});}}
+            onClick={key => {this.setState({userLang: key}); Setting.setSigninLanguage(key);}}
           />
         </div>
       );

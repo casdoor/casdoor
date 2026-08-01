@@ -310,6 +310,8 @@ class AuthCallback extends React.Component {
       method: method,
       userCode: innerParams.get("userCode") || "",
       codeVerifier: codeVerifier, // Include PKCE code verifier
+      // The selector on the login page is gone by now, so use the language it stored
+      language: Setting.getSigninLanguage(),
     };
 
     // Clean up the stored code verifier after using it

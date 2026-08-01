@@ -1050,6 +1050,7 @@ func (c *ApiController) Login() {
 						Phone:             userInfo.Phone,
 						CountryCode:       userInfo.CountryCode,
 						Region:            userInfo.CountryCode,
+						Language:          authForm.Language,
 						Score:             initScore,
 						IsAdmin:           false,
 						IsForbidden:       false,
