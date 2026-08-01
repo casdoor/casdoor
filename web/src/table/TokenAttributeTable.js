@@ -25,7 +25,7 @@ class TokenAttributeTable extends React.Component {
       classes: props,
     };
     // List of available user fields for "Existing Field" category
-    this.userFields = ["Owner", "Name", "Id", "DisplayName", "Email", "Phone", "Tag", "Roles", "Permissions", "permissionNames", "Groups"];
+    this.userFields = ["Owner", "Name", "Id", "DisplayName", "Avatar", "Email", "Phone", "Tag", "Roles", "Permissions", "permissionNames", "Groups"];
   }
 
   updateTable(table) {
