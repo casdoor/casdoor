@@ -70,7 +70,7 @@ func getProxyHttpClient() *http.Client {
 
 	URL, err := url.Parse(socks5Proxy)
 	if err != nil {
-		fmt.Printf("Invalid socks5 proxy URL: %s\n", socks5Proxy)
+		fmt.Printf("Invalid socks5 proxy URL: %s, error: %v\n", socks5Proxy, err)
 		return &http.Client{}
 	}
 
