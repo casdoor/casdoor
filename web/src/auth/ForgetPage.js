@@ -485,8 +485,9 @@ class ForgetPage extends React.Component {
                     });
                   }}
                   onBlur={() => {
+                    const password = this.form.current?.getFieldValue("newPassword") ?? "";
                     this.setState({
-                      passwordPopoverOpen: false,
+                      passwordPopoverOpen: Setting.getPasswordPopoverOpen(password, application.organizationObj.passwordOptions),
                     });
                   }}
                 />

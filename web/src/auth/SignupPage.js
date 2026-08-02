@@ -904,8 +904,9 @@ class SignupPage extends React.Component {
               });
             }}
             onBlur={() => {
+              const password = this.form.current?.getFieldValue("password") ?? "";
               this.setState({
-                passwordPopoverOpen: false,
+                passwordPopoverOpen: Setting.getPasswordPopoverOpen(password, application.organizationObj.passwordOptions),
               });
             }} />
           </Form.Item>
