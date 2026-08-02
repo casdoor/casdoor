@@ -181,7 +181,7 @@ export const PasswordModal = (props) => {
                   setPasswordPopover(PasswordChecker.renderPasswordPopover(passwordOptions, newPassword));
                 }}
                 onBlur={() => {
-                  setPasswordPopoverOpen(false);
+                  setPasswordPopoverOpen(Setting.getPasswordPopoverOpen(newPassword, passwordOptions));
                 }}
                 status={(!newPasswordValid && newPasswordErrorMessage) ? "error" : undefined}
               />
