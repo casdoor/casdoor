@@ -191,6 +191,57 @@ func (c *ApiController) IsMaskedEnabled() (bool, bool) {
 	return true, isMaskEnabled
 }
 
+// checkKeyPermission prevents a privilege escalation in AddKey/UpdateKey.
+//
+// The authorization filter only authorizes the request against the key's
+// "owner" field, but access-key authentication derives the caller identity
+// from the separate Organization/User/Application fields (see
+// routers.getUsernameByAccessKey). Without this check, an administrator of one
+// organization could create a key with owner=<their-org> (passing authz) while
+// setting organization=built-in and user=admin, producing a key that
+// authenticates as the global administrator.
+//
+// For a non-global admin it therefore pins Owner and Organization to the
+// caller's own organization and rejects any attempt to point the key's
+// identity at another organization, a specific application, or (for updates) a
+// key that does not already belong to the caller's organization. It writes an
+// error response and returns false when the request is not allowed.
+func (c *ApiController) checkKeyPermission(oldKey, key *object.Key) bool {
+	if c.IsGlobalAdmin() {
+		return true
+	}
+
+	user := c.getCurrentUser()
+	if user == nil {
+		c.ResponseError(c.T("auth:Unauthorized operation"))
+		return false
+	}
+
+	// For updates, the key being modified must belong to the caller's org.
+	if oldKey != nil && oldKey.Owner != user.Owner {
+		c.ResponseError(c.T("auth:Unauthorized operation"))
+		return false
+	}
+
+	// An application-scoped key authenticates as "app/<application>", which is
+	// always treated as a global admin, so a non-global admin must never mint one.
+	if key.Application != "" {
+		c.ResponseError(c.T("auth:Unauthorized operation"))
+		return false
+	}
+
+	// The key's identity must stay within the caller's own organization.
+	if (key.Owner != "" && key.Owner != user.Owner) ||
+		(key.Organization != "" && key.Organization != user.Owner) {
+		c.ResponseError(c.T("auth:Unauthorized operation"))
+		return false
+	}
+
+	key.Owner = user.Owner
+	key.Organization = user.Owner
+	return true
+}
+
 func refineFullFilePath(fullFilePath string) (string, string) {
 	tokens := strings.Split(fullFilePath, "/")
 	if len(tokens) >= 2 && tokens[0] == "Direct" && tokens[1] != "" {

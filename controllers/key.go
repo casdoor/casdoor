@@ -174,8 +174,7 @@ func (c *ApiController) UpdateKey() {
 		return
 	}
 
-	if !c.IsGlobalAdmin() && oldKey.Owner != key.Owner {
-		c.ResponseError(c.T("auth:Unauthorized operation"))
+	if !c.checkKeyPermission(oldKey, &key) {
 		return
 	}
 
@@ -195,6 +194,10 @@ func (c *ApiController) AddKey() {
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &key)
 	if err != nil {
 		c.ResponseError(err.Error())
+		return
+	}
+
+	if !c.checkKeyPermission(nil, &key) {
 		return
 	}
 
