@@ -14,7 +14,8 @@
 
 import React from "react";
 import Loading from "./common/Loading";
-import {Button, Card, Col, Input, Row, Select, Switch} from "antd";
+import {Button, Card, Col, DatePicker, Input, Row, Select, Switch} from "antd";
+import dayjs from "dayjs";
 import PaginateSelect from "./common/PaginateSelect";
 import * as PermissionBackend from "./backend/PermissionBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
@@ -433,6 +434,22 @@ class PermissionEditPage extends React.Component {
             <Switch checked={this.state.permission.isEnabled} onChange={checked => {
               this.updatePermissionField("isEnabled", checked);
             }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("general:Expire time"), i18next.t("general:Expire time - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <DatePicker
+              showTime
+              allowClear
+              style={{width: "100%"}}
+              value={this.state.permission.expireTime ? dayjs(this.state.permission.expireTime) : null}
+              onChange={value => {
+                this.updatePermissionField("expireTime", value ? value.format() : "");
+              }}
+            />
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >

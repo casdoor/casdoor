@@ -43,6 +43,12 @@ type Permission struct {
 	Effect       string   `xorm:"varchar(100)" json:"effect"`
 	IsEnabled    bool     `json:"isEnabled"`
 
+	// ExpireTime is an optional RFC3339 timestamp. When set and reached, the permission
+	// is automatically revoked (its Casbin policies are removed and it is disabled) by the
+	// permission expiration job, providing time-limited access as required by standards
+	// such as ISO/IEC 27001 control 5.18. An empty value means the permission never expires.
+	ExpireTime string `xorm:"varchar(100)" json:"expireTime"`
+
 	Submitter   string `xorm:"varchar(100)" json:"submitter"`
 	Approver    string `xorm:"varchar(100)" json:"approver"`
 	ApproveTime string `xorm:"varchar(100)" json:"approveTime"`
