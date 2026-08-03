@@ -769,6 +769,16 @@ class ApplicationEditPage extends React.Component {
           </Row>
           <Row style={{marginTop: "20px"}} >
             <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
+              {Setting.getLabel(i18next.t("application:Backchannel logout URL"), i18next.t("application:Backchannel logout URL - Tooltip"))} :
+            </Col>
+            <Col span={21} >
+              <Input prefix={<LinkOutlined />} value={this.state.application.backchannelLogoutUri} onChange={e => {
+                this.updateApplicationField("backchannelLogoutUri", e.target.value);
+              }} />
+            </Col>
+          </Row>
+          <Row style={{marginTop: "20px"}} >
+            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
               {Setting.getLabel(i18next.t("application:Grant types"), i18next.t("application:Grant types - Tooltip"))} :
             </Col>
             <Col span={21} >

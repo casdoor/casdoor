@@ -34,6 +34,8 @@
     "Background URL - Tooltip": "登录页背景图的链接",
     "Background URL Mobile": "背景图URL（移动端）",
     "Background URL Mobile - Tooltip": "登录页背景图的链接（移动端）",
+    "Backchannel logout URL": "后端通道登出地址",
+    "Backchannel logout URL - Tooltip": "当用户登出时，Casdoor 会向该地址发送 OIDC 后端通道登出令牌（一个签名的 JWT），以便应用终止对应的会话。留空则不为该应用启用后端通道登出",
     "Basic": "基础",
     "Big icon": "大图标",
     "Binding providers": "绑定提供商",

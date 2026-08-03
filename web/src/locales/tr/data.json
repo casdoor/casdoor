@@ -33,6 +33,8 @@
     "Background URL - Tooltip": "Login sayfası için arkaplan resmi url'i",
     "Background URL Mobile": "Arka Plan URL'si (Mobil)",
     "Background URL Mobile - Tooltip": "Mobil cihazlar için arka plan resmi URL'si",
+    "Backchannel logout URL": "Arka kanal oturum kapatma URL'si",
+    "Backchannel logout URL - Tooltip": "Kullanıcı oturumu kapattığında Casdoor'un, uygulamanın ilgili oturumu sonlandırabilmesi için bir OIDC arka kanal oturum kapatma belirteci (imzalı bir JWT) gönderdiği uç nokta. Bu uygulama için arka kanal oturum kapatmayı devre dışı bırakmak üzere boş bırakın",
     "Basic": "Temel",
     "Big icon": "Büyük simge",
     "Binding providers": "Bağlama sağlayıcıları",

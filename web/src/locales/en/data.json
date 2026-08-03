@@ -34,6 +34,8 @@
     "Background URL - Tooltip": "URL of the background image used in the login page",
     "Background URL Mobile": "Background URL Mobile",
     "Background URL Mobile - Tooltip": "URL of the background image used in the login page (mobile)",
+    "Backchannel logout URL": "Backchannel logout URL",
+    "Backchannel logout URL - Tooltip": "The endpoint where Casdoor sends an OIDC Back-Channel Logout token (a signed JWT) when the user logs out, so the application can terminate the corresponding session. Leave empty to disable back-channel logout for this application",
     "Basic": "Basic",
     "Big icon": "Big icon",
     "Binding providers": "Binding providers",
