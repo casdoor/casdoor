@@ -78,6 +78,7 @@ func main() {
 	object.InitFromFile()
 	object.InitCleanupTokens()
 	object.InitCleanupDeviceAuthMap()
+	object.InitExpirePermissions()
 
 	object.InitSiteMap()
 	if len(object.SiteMap) != 0 {
