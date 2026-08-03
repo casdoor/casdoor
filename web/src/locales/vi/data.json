@@ -33,6 +33,8 @@
     "Background URL - Tooltip": "Đường dẫn URL của hình ảnh nền được sử dụng trong trang đăng nhập",
     "Background URL Mobile": "URL nền Mobile",
     "Background URL Mobile - Tooltip": "URL hình nền cho thiết bị di động",
+    "Backchannel logout URL": "URL đăng xuất qua kênh sau",
+    "Backchannel logout URL - Tooltip": "Điểm cuối mà Casdoor gửi mã thông báo đăng xuất qua kênh sau OIDC (một JWT đã ký) khi người dùng đăng xuất, để ứng dụng có thể kết thúc phiên tương ứng. Để trống để tắt đăng xuất qua kênh sau cho ứng dụng này",
     "Basic": "Cơ bản",
     "Big icon": "Biểu tượng lớn",
     "Binding providers": "Nhà cung cấp liên kết",

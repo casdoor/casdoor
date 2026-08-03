@@ -33,6 +33,8 @@
     "Background URL - Tooltip": "URL obrazu tła używanego na stronie logowania",
     "Background URL Mobile": "URL tła (wersja mobilna)",
     "Background URL Mobile - Tooltip": "URL obrazu tła dla urządzeń mobilnych",
+    "Backchannel logout URL": "URL wylogowania kanałem zwrotnym",
+    "Backchannel logout URL - Tooltip": "Punkt końcowy, do którego Casdoor wysyła token wylogowania kanałem zwrotnym OIDC (podpisany JWT) po wylogowaniu użytkownika, aby aplikacja mogła zakończyć odpowiednią sesję. Pozostaw puste, aby wyłączyć wylogowanie kanałem zwrotnym dla tej aplikacji",
     "Basic": "Podstawowy",
     "Big icon": "Duża ikona",
     "Binding providers": "Dostawcy powiązani",
