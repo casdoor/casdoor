@@ -1020,6 +1020,10 @@ func AddUser(user *User, lang string) (bool, error) {
 		}
 	}
 
+	if user.Avatar == "" {
+		user.Avatar = organization.DefaultAvatar
+	}
+
 	if organization.DefaultPassword != "" && user.Password == "123" {
 		user.Password = organization.DefaultPassword
 	}
