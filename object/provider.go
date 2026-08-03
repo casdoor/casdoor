@@ -52,7 +52,7 @@ type Provider struct {
 	CustomUserInfoUrl string            `xorm:"varchar(200)" json:"customUserInfoUrl"`
 	CustomLogoutUrl   string            `xorm:"varchar(200)" json:"customLogoutUrl"`
 	CustomLogo        string            `xorm:"varchar(200)" json:"customLogo"`
-	Scopes            string            `xorm:"varchar(100)" json:"scopes"`
+	Scopes            string            `xorm:"varchar(200)" json:"scopes"`
 	UserMapping       map[string]string `xorm:"varchar(500)" json:"userMapping"`
 	HttpHeaders       map[string]string `xorm:"varchar(500)" json:"httpHeaders"`
 
