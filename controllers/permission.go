@@ -145,6 +145,25 @@ func (c *ApiController) UpdatePermission() {
 	c.ServeJSON()
 }
 
+// UpdatePermissions
+// @Title UpdatePermissions
+// @Tag Permission API
+// @Description update permissions in batch
+// @Param   body    body   []object.Permission  true        "The details of the permissions"
+// @Success 200 {object} controllers.Response The Response object
+// @router /update-permissions [post]
+func (c *ApiController) UpdatePermissions() {
+	var permissions []*object.Permission
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, &permissions)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	c.Data["json"] = wrapActionResponse(object.UpdatePermissions(permissions))
+	c.ServeJSON()
+}
+
 // AddPermission
 // @Title AddPermission
 // @Tag Permission API
