@@ -493,6 +493,64 @@ func removePolicies(permission *Permission) error {
 	return err
 }
 
+// applyPermissionsPolicies adds or removes the Casbin policies of the given permissions.
+// Permissions that share the same model and adapter reuse a single enforcer, so the expensive
+// enforcer construction (adapter setup, filtered policy load and runtime grouping policy rebuild)
+// happens once per model/adapter group instead of once per permission.
+func applyPermissionsPolicies(permissions []*Permission, add bool) error {
+	if len(permissions) == 0 {
+		return nil
+	}
+
+	groups := map[string][]*Permission{}
+	order := []string{}
+	for _, permission := range permissions {
+		key := permission.GetModelAndAdapter()
+		if _, ok := groups[key]; !ok {
+			order = append(order, key)
+		}
+		groups[key] = append(groups[key], permission)
+	}
+
+	for _, key := range order {
+		group := groups[key]
+
+		permissionIds := make([]string, 0, len(group))
+		for _, permission := range group {
+			permissionIds = append(permissionIds, permission.GetId())
+		}
+
+		enforcer, err := getPermissionEnforcer(group[0], permissionIds...)
+		if err != nil {
+			return err
+		}
+
+		policies := [][]string{}
+		for _, permission := range group {
+			policies = append(policies, getPolicies(permission)...)
+		}
+
+		if add {
+			_, err = enforcer.AddPolicies(policies)
+		} else {
+			_, err = enforcer.RemovePolicies(policies)
+		}
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func addPermissionsPolicies(permissions []*Permission) error {
+	return applyPermissionsPolicies(permissions, true)
+}
+
+func removePermissionsPolicies(permissions []*Permission) error {
+	return applyPermissionsPolicies(permissions, false)
+}
+
 func Enforce(permission *Permission, request []interface{}, permissionIds ...string) (bool, error) {
 	enforcer, err := getPermissionEnforcer(permission, permissionIds...)
 	if err != nil {
