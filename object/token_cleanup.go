@@ -22,15 +22,56 @@ import (
 	"github.com/robfig/cron/v3"
 )
 
-func CleanupTokens(tokenRetentionIntervalAfterExpiry int) error {
+const defaultTokenRetentionDays = 30
+
+// getTokenRetentionInterval converts a retention period in days into seconds,
+// falling back to the default when the configured value is non-positive.
+func getTokenRetentionInterval(days int) int {
+	if days <= 0 {
+		days = defaultTokenRetentionDays
+	}
+	return days * 24 * 3600
+}
+
+// getOrgTokenRetentionIntervals returns a map from organization name to its
+// configured token retention interval (in seconds), so that each organization
+// can control how long its expired tokens are kept before cleanup.
+func getOrgTokenRetentionIntervals() (map[string]int, error) {
+	organizations, err := GetOrganizationsByFields("admin", "name", "token_retention_days")
+	if err != nil {
+		return nil, fmt.Errorf("failed to load organizations for token cleanup: %w", err)
+	}
+
+	intervals := make(map[string]int, len(organizations))
+	for _, organization := range organizations {
+		intervals[organization.Name] = getTokenRetentionInterval(organization.TokenRetentionDays)
+	}
+	return intervals, nil
+}
+
+func CleanupTokens() error {
 	currentTime := time.Now()
-	// A token can only be eligible for cleanup if it was created before this cutoff,
-	// since createdTime + expiresIn (the token's expiry) must be even earlier than that
-	// for it to have been expired for longer than the retention interval.
-	cutoffTime := currentTime.Add(-time.Duration(tokenRetentionIntervalAfterExpiry) * time.Second).Format(time.RFC3339)
+
+	orgIntervals, err := getOrgTokenRetentionIntervals()
+	if err != nil {
+		return err
+	}
+
+	// Use the smallest retention interval (across all organizations) to compute the
+	// query cutoff, so that no token eligible for cleanup under any organization's
+	// setting is missed. A token can only be eligible if it was created before this
+	// cutoff, since createdTime + expiresIn (the token's expiry) must be even earlier
+	// than that for it to have been expired for longer than the retention interval.
+	minInterval := getTokenRetentionInterval(defaultTokenRetentionDays)
+	for _, interval := range orgIntervals {
+		if interval < minInterval {
+			minInterval = interval
+		}
+	}
+	cutoffTime := currentTime.Add(-time.Duration(minInterval) * time.Second).Format(time.RFC3339)
 
 	var sessions []*Token
-	err := ormer.Engine.Where("created_time < ?", cutoffTime).Find(&sessions)
+	err = ormer.Engine.Where("created_time < ?", cutoffTime).Find(&sessions)
 	if err != nil {
 		return fmt.Errorf("failed to query expired tokens: %w", err)
 	}
@@ -43,9 +84,16 @@ func CleanupTokens(tokenRetentionIntervalAfterExpiry int) error {
 			continue
 		}
 
+		retentionInterval, ok := orgIntervals[session.Organization]
+		if !ok {
+			// The token's organization no longer exists (or has no configured value);
+			// fall back to the default retention period.
+			retentionInterval = getTokenRetentionInterval(defaultTokenRetentionDays)
+		}
+
 		expireTimeObj := util.String2Time(expireTime)
 		tokenAfterExpiry := currentTime.Sub(expireTimeObj).Seconds()
-		if tokenAfterExpiry > float64(tokenRetentionIntervalAfterExpiry) {
+		if tokenAfterExpiry > float64(retentionInterval) {
 			_, err = ormer.Engine.Delete(session)
 			if err != nil {
 				return fmt.Errorf("failed to delete expired token %s: %w", session.Name, err)
@@ -58,26 +106,18 @@ func CleanupTokens(tokenRetentionIntervalAfterExpiry int) error {
 	return nil
 }
 
-func getTokenRetentionInterval(days int) int {
-	if days <= 0 {
-		days = 30
-	}
-	return days * 24 * 3600
-}
-
 func InitCleanupTokens() {
 	schedule := "0 0 * * *"
-	interval := getTokenRetentionInterval(30)
 
 	go func() {
-		if err := CleanupTokens(interval); err != nil {
+		if err := CleanupTokens(); err != nil {
 			fmt.Printf("Error cleaning up tokens at startup: %v\n", err)
 		}
 	}()
 
 	cronJob := cron.New()
 	_, err := cronJob.AddFunc(schedule, func() {
-		if err := CleanupTokens(interval); err != nil {
+		if err := CleanupTokens(); err != nil {
 			fmt.Printf("Error cleaning up tokens: %v\n", err)
 		}
 	})

@@ -78,6 +78,7 @@ func fastAutoSignin(ctx *context.Context) (string, error) {
 	state := ctx.Input.Query("state")
 	nonce := ctx.Input.Query("nonce")
 	codeChallenge := ctx.Input.Query("code_challenge")
+	resource := ctx.Input.Query("resource")
 	if clientId == "" || responseType != "code" || redirectUri == "" {
 		return "", nil
 	}
@@ -120,7 +121,7 @@ func fastAutoSignin(ctx *context.Context) (string, error) {
 		return "", nil
 	}
 
-	code, err := object.GetOAuthCode(userId, clientId, "", "autoSignin", responseType, redirectUri, scope, state, nonce, codeChallenge, "", ctx.Request.Host, getAcceptLanguage(ctx))
+	code, err := object.GetOAuthCode(userId, clientId, "", "autoSignin", responseType, redirectUri, scope, state, nonce, codeChallenge, resource, ctx.Request.Host, getAcceptLanguage(ctx))
 	if err != nil {
 		return "", err
 	} else if code.Message != "" {
@@ -240,6 +241,14 @@ func serveFileWithReplace(w http.ResponseWriter, r *http.Request, name string, o
 	if organizationThemeCookie != nil {
 		newContent = strings.ReplaceAll(newContent, "https://cdn.casbin.org/img/favicon.png", organizationThemeCookie.Favicon)
 		newContent = strings.ReplaceAll(newContent, "<title>Casdoor</title>", fmt.Sprintf("<title>%s</title>", organizationThemeCookie.DisplayName))
+	}
+
+	// Set the correct <html lang="..."> on the initial HTML response so browsers
+	// do not mis-detect the page language (e.g. Chrome offering to translate a
+	// Chinese page into Chinese because the static shell declares lang="en").
+	if strings.HasSuffix(name, "index.html") {
+		lang := getIndexHtmlLanguage(r)
+		newContent = strings.ReplaceAll(newContent, `<html lang="en">`, fmt.Sprintf(`<html lang="%s">`, lang))
 	}
 
 	newContent = strings.ReplaceAll(newContent, oldStaticBaseUrl, newStaticBaseUrl)

@@ -33,6 +33,8 @@
     "Background URL - Tooltip": "URL de la imagen de fondo utilizada en la página de inicio de sesión",
     "Background URL Mobile": "URL de fondo para móvil",
     "Background URL Mobile - Tooltip": "URL de la imagen de fondo para dispositivos móviles",
+    "Backchannel logout URL": "URL de cierre de sesión por canal trasero",
+    "Backchannel logout URL - Tooltip": "El punto de conexión al que Casdoor envía un token de cierre de sesión por canal trasero de OIDC (un JWT firmado) cuando el usuario cierra sesión, para que la aplicación pueda finalizar la sesión correspondiente. Déjelo vacío para desactivar el cierre de sesión por canal trasero en esta aplicación",
     "Basic": "Básico",
     "Big icon": "Icono grande",
     "Binding providers": "Proveedores de vinculación",

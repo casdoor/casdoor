@@ -126,6 +126,7 @@ class SignupPage extends React.Component {
       isTermsOfUseVisible: false,
       termsOfUseContent: "",
       openCaptchaModal: false,
+      userLang: null,
     };
 
     this.form = React.createRef();
@@ -281,6 +282,7 @@ class SignupPage extends React.Component {
           languages={languages}
           mode={languagesItem?.rule}
           style={{top: "55px", right: "5px", position: "absolute"}}
+          onClick={key => {this.setState({userLang: key}); Setting.setSigninLanguage(key);}}
         />
       </div>
     );
@@ -381,6 +383,8 @@ class SignupPage extends React.Component {
 
   submitSignup(values) {
     const application = this.getApplicationObj();
+
+    values["language"] = this.state.userLang ?? "";
 
     // Get OAuth parameters if present
     const oAuthParams = Util.getOAuthGetParameters();
@@ -900,8 +904,9 @@ class SignupPage extends React.Component {
               });
             }}
             onBlur={() => {
+              const password = this.form.current?.getFieldValue("password") ?? "";
               this.setState({
-                passwordPopoverOpen: false,
+                passwordPopoverOpen: Setting.getPasswordPopoverOpen(password, application.organizationObj.passwordOptions),
               });
             }} />
           </Form.Item>

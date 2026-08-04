@@ -34,6 +34,8 @@
     "Background URL - Tooltip": "登录页背景图的链接",
     "Background URL Mobile": "背景图URL（移动端）",
     "Background URL Mobile - Tooltip": "登录页背景图的链接（移动端）",
+    "Backchannel logout URL": "后端通道登出地址",
+    "Backchannel logout URL - Tooltip": "当用户登出时，Casdoor 会向该地址发送 OIDC 后端通道登出令牌（一个签名的 JWT），以便应用终止对应的会话。留空则不为该应用启用后端通道登出",
     "Basic": "基础",
     "Big icon": "大图标",
     "Binding providers": "绑定提供商",
@@ -977,6 +979,8 @@
     "Password expire days": "密码过期天数",
     "Password expire days - Tooltip": "密码过期前的天数",
     "Prompt": "提示",
+    "Record retention days": "日志保留天数",
+    "Record retention days - Tooltip": "组织的日志（审计记录）保留天数，超期的日志会被每天执行的清理任务自动删除。留空或填0表示永久保留",
     "Required": "必须",
     "Soft deletion": "软删除",
     "Soft deletion - Tooltip": "启用后，删除一个用户时不会在数据库彻底清除，只会标记为已删除状态",
@@ -996,7 +1000,8 @@
     "Website URL": "主页地址",
     "Website URL - Tooltip": "组织的主页地址URL，该字段在Casdoor平台中未被使用",
     "Widget items": "功能按钮",
-    "Widget items - Tooltip": "小部件中显示的项目"
+    "Widget items - Tooltip": "小部件中显示的项目",
+    "days": "天"
   },
   "payment": {
     "Confirm your invoice information": "确认您的发票信息",

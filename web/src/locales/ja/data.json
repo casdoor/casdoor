@@ -33,6 +33,8 @@
     "Background URL - Tooltip": "ログインページで使用される背景画像のURL",
     "Background URL Mobile": "モバイル背景URL",
     "Background URL Mobile - Tooltip": "モバイルデバイス用の背景画像URL",
+    "Backchannel logout URL": "バックチャネルログアウトURL",
+    "Backchannel logout URL - Tooltip": "ユーザーがログアウトした際に、Casdoor が OIDC バックチャネルログアウトトークン（署名付き JWT）を送信するエンドポイントです。これによりアプリケーションは対応するセッションを終了できます。空欄にするとこのアプリケーションのバックチャネルログアウトが無効になります",
     "Basic": "基本",
     "Big icon": "大きいアイコン",
     "Binding providers": "バインディングプロバイダー",
