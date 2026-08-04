@@ -976,6 +976,8 @@
     "Org balance - Tooltip": "The total account balance of the organization",
     "Password expire days": "Password expire days",
     "Password expire days - Tooltip": "Number of days before password expires",
+    "Minimum password age (hours)": "Minimum password age (hours)",
+    "Minimum password age (hours) - Tooltip": "Minimum time in hours before a user can change their password again. 0 disables the restriction",
     "Prompt": "Prompt",
     "Required": "Required",
     "Soft deletion": "Soft deletion",

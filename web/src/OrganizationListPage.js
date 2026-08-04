@@ -39,6 +39,7 @@ class OrganizationListPage extends BaseListPage {
       passwordObfuscatorType: "Plain",
       passwordObfuscatorKey: "",
       passwordExpireDays: 0,
+      minimumPasswordAgeHours: 0,
       countryCodes: ["US"],
       defaultAvatar: `${Setting.StaticBaseUrl}/img/casbin.svg`,
       defaultApplication: "",

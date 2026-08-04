@@ -53,40 +53,41 @@ type Organization struct {
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 
-	DisplayName            string     `xorm:"varchar(100)" json:"displayName"`
-	WebsiteUrl             string     `xorm:"varchar(100)" json:"websiteUrl"`
-	Logo                   string     `xorm:"varchar(200)" json:"logo"`
-	LogoDark               string     `xorm:"varchar(200)" json:"logoDark"`
-	Favicon                string     `xorm:"varchar(200)" json:"favicon"`
-	HasPrivilegeConsent    bool       `xorm:"bool" json:"hasPrivilegeConsent"`
-	PasswordType           string     `xorm:"varchar(100)" json:"passwordType"`
-	PasswordSalt           string     `xorm:"varchar(100)" json:"passwordSalt"`
-	PasswordOptions        []string   `xorm:"varchar(100)" json:"passwordOptions"`
-	PasswordObfuscatorType string     `xorm:"varchar(100)" json:"passwordObfuscatorType"`
-	PasswordObfuscatorKey  string     `xorm:"varchar(100)" json:"passwordObfuscatorKey"`
-	PasswordExpireDays     int        `json:"passwordExpireDays"`
-	CountryCodes           []string   `xorm:"mediumtext"  json:"countryCodes"`
-	DefaultAvatar          string     `xorm:"varchar(200)" json:"defaultAvatar"`
-	UsePermanentAvatar     bool       `xorm:"bool" json:"usePermanentAvatar"`
-	DefaultApplication     string     `xorm:"varchar(100)" json:"defaultApplication"`
-	UserTypes              []string   `xorm:"mediumtext" json:"userTypes"`
-	Tags                   []string   `xorm:"mediumtext" json:"tags"`
-	Languages              []string   `xorm:"varchar(255)" json:"languages"`
-	ThemeData              *ThemeData `xorm:"json" json:"themeData"`
-	MasterPassword         string     `xorm:"varchar(200)" json:"masterPassword"`
-	DefaultPassword        string     `xorm:"varchar(200)" json:"defaultPassword"`
-	MasterVerificationCode string     `xorm:"varchar(100)" json:"masterVerificationCode"`
-	IpWhitelist            string     `xorm:"varchar(200)" json:"ipWhitelist"`
-	InitScore              int        `json:"initScore"`
-	EnableSoftDeletion     bool       `json:"enableSoftDeletion"`
-	IsProfilePublic        bool       `json:"isProfilePublic"`
-	UseEmailAsUsername     bool       `json:"useEmailAsUsername"`
-	EnableTour             bool       `json:"enableTour"`
-	DisableSignin          bool       `json:"disableSignin"`
-	IpRestriction          string     `json:"ipRestriction"`
-	NavItems               []string   `xorm:"mediumtext" json:"navItems"`
-	UserNavItems           []string   `xorm:"mediumtext" json:"userNavItems"`
-	WidgetItems            []string   `xorm:"mediumtext" json:"widgetItems"`
+	DisplayName              string     `xorm:"varchar(100)" json:"displayName"`
+	WebsiteUrl               string     `xorm:"varchar(100)" json:"websiteUrl"`
+	Logo                     string     `xorm:"varchar(200)" json:"logo"`
+	LogoDark                 string     `xorm:"varchar(200)" json:"logoDark"`
+	Favicon                  string     `xorm:"varchar(200)" json:"favicon"`
+	HasPrivilegeConsent      bool       `xorm:"bool" json:"hasPrivilegeConsent"`
+	PasswordType             string     `xorm:"varchar(100)" json:"passwordType"`
+	PasswordSalt             string     `xorm:"varchar(100)" json:"passwordSalt"`
+	PasswordOptions          []string   `xorm:"varchar(100)" json:"passwordOptions"`
+	PasswordObfuscatorType   string     `xorm:"varchar(100)" json:"passwordObfuscatorType"`
+	PasswordObfuscatorKey    string     `xorm:"varchar(100)" json:"passwordObfuscatorKey"`
+	PasswordExpireDays       int `json:"passwordExpireDays"`
+	MinimumPasswordAgeHours  int `json:"minimumPasswordAgeHours"`
+	CountryCodes             []string   `xorm:"mediumtext"  json:"countryCodes"`
+	DefaultAvatar            string     `xorm:"varchar(200)" json:"defaultAvatar"`
+	UsePermanentAvatar       bool       `xorm:"bool" json:"usePermanentAvatar"`
+	DefaultApplication       string     `xorm:"varchar(100)" json:"defaultApplication"`
+	UserTypes                []string   `xorm:"mediumtext" json:"userTypes"`
+	Tags                     []string   `xorm:"mediumtext" json:"tags"`
+	Languages                []string   `xorm:"varchar(255)" json:"languages"`
+	ThemeData                *ThemeData `xorm:"json" json:"themeData"`
+	MasterPassword           string     `xorm:"varchar(200)" json:"masterPassword"`
+	DefaultPassword          string     `xorm:"varchar(200)" json:"defaultPassword"`
+	MasterVerificationCode   string     `xorm:"varchar(100)" json:"masterVerificationCode"`
+	IpWhitelist              string     `xorm:"varchar(200)" json:"ipWhitelist"`
+	InitScore                int        `json:"initScore"`
+	EnableSoftDeletion       bool       `json:"enableSoftDeletion"`
+	IsProfilePublic          bool       `json:"isProfilePublic"`
+	UseEmailAsUsername       bool       `json:"useEmailAsUsername"`
+	EnableTour               bool       `json:"enableTour"`
+	DisableSignin            bool       `json:"disableSignin"`
+	IpRestriction            string     `json:"ipRestriction"`
+	NavItems                 []string   `xorm:"mediumtext" json:"navItems"`
+	UserNavItems             []string   `xorm:"mediumtext" json:"userNavItems"`
+	WidgetItems              []string   `xorm:"mediumtext" json:"widgetItems"`
 
 	MfaItems           []*MfaItem     `xorm:"varchar(300)" json:"mfaItems"`
 	MfaRememberInHours int            `json:"mfaRememberInHours"`

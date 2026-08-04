@@ -804,7 +804,19 @@ func getLastUser(owner string) (*User, error) {
 	return nil, nil
 }
 
-func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, error) {
+func UpdateUser(id string, user *User, columns []string, isAdmin bool, lang ...string) (bool, error) {
+	return updateUserWithOptions(id, user, columns, isAdmin, nil, lang...)
+}
+
+func UpdateUserAfterValidatedPasswordChange(id string, user *User, columns []string, isAdmin bool, lang ...string) (bool, error) {
+	return updateUserWithOptions(id, user, columns, isAdmin, &PasswordUpdateContext{Prevalidated: true}, lang...)
+}
+
+func UpdateUserForSystemPasswordRehash(id string, user *User, columns []string, isAdmin bool, lang ...string) (bool, error) {
+	return updateUserWithOptions(id, user, columns, isAdmin, &PasswordUpdateContext{SystemRehash: true}, lang...)
+}
+
+func updateUserWithOptions(id string, user *User, columns []string, isAdmin bool, pwCtx *PasswordUpdateContext, lang ...string) (bool, error) {
 	var err error
 	owner, name := util.GetOwnerAndNameFromIdNoCheck(id)
 	oldUser, err := getUser(owner, name)
@@ -841,6 +853,17 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 
 	if user.Password == "***" {
 		user.Password = oldUser.Password
+	}
+
+	langStr := "en"
+	if len(lang) > 0 && lang[0] != "" {
+		langStr = lang[0]
+	}
+	if shouldApplyPasswordChangePolicy(oldUser, user, pwCtx) {
+		columns, err = applyPasswordChangePolicy(oldUser, user, columns, langStr)
+		if err != nil {
+			return false, err
+		}
 	}
 
 	if user.Id != oldUser.Id && user.Id == "" {
@@ -1026,6 +1049,10 @@ func AddUser(user *User, lang string) (bool, error) {
 
 	if user.PasswordType == "" || user.PasswordType == "plain" {
 		user.UpdateUserPassword(organization)
+	}
+
+	if user.Password != "" && user.LastChangePasswordTime == "" {
+		MarkPasswordChanged(user)
 	}
 
 	if user.CreatedTime == "" {
