@@ -77,6 +77,7 @@ func main() {
 	object.InitUserManager()
 	object.InitFromFile()
 	object.InitCleanupTokens()
+	object.InitCleanupRecords()
 	object.InitCleanupDeviceAuthMap()
 	object.InitExpirePermissions()
 
