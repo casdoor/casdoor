@@ -19,14 +19,15 @@ import Loading from "../Loading";
 import i18next from "i18next";
 import Dragger from "antd/es/upload/Dragger";
 import * as Setting from "../../Setting";
+import * as FaceIdBackend from "../../backend/FaceIdBackend";
 
 // This modal has three modes controlled by props:
 //   withImage=false            → camera mode: captures face descriptor array (faceIdData) for recognition login
 //   withImage=true             → image-upload mode: user drags/drops a photo; camera is skipped
 //   withImage=true captureImage=true → camera-capture mode: captures a JPEG image URL for image-based enrollment
 const FaceRecognitionModal = (props) => {
-  const {visible, onOk, onCancel, withImage, captureImage} = props;
-  const [modelsLoaded, setModelsLoaded] = React.useState(false);
+  const {visible, onOk, onCancel, withImage, captureImage, owner, name, application} = props;
+  const [modelsLoadedFor, setModelsLoadedFor] = React.useState({detect: false, recognize: false});
   const [isCameraCaptured, setIsCameraCaptured] = useState(false);
 
   const videoRef = React.useRef();
@@ -34,10 +35,13 @@ const FaceRecognitionModal = (props) => {
   const detection = React.useRef(null);
   const mediaStreamRef = React.useRef(null);
   const [percent, setPercent] = useState(0);
+  const [capturedImage, setCapturedImage] = useState("");
+  const [checkingCapture, setCheckingCapture] = useState(false);
 
   const [files, setFiles] = useState([]);
   const [currentFaceId, setCurrentFaceId] = React.useState();
   const [currentFaceIndex, setCurrentFaceIndex] = React.useState();
+  const modelsLoaded = captureImage ? true : modelsLoadedFor.recognize;
 
   React.useEffect(() => {
     if (!visible || modelsLoaded) {
@@ -48,19 +52,28 @@ const FaceRecognitionModal = (props) => {
       // const MODEL_URL = "https://justadudewhohacks.github.io/face-api.js/models";
       const MODEL_URL = `${Setting.StaticBaseUrl}/casdoor/models`;
 
-      Promise.all([
-        faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
-        faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL),
-        faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL),
-      ]).then((val) => {
-        setModelsLoaded(true);
-      }).catch((err) => {
+      const loadTasks = [
+        modelsLoadedFor.detect ? Promise.resolve() : faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
+      ];
+      if (!captureImage) {
+        loadTasks.push(
+          faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL),
+          faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL)
+        );
+      }
+
+      Promise.all(loadTasks).then(() => {
+        setModelsLoadedFor(prev => ({
+          detect: true,
+          recognize: captureImage ? prev.recognize : true,
+        }));
+      }).catch(() => {
         message.error(i18next.t("login:Model loading failure"));
         onCancel();
       });
     };
     loadModels();
-  }, [visible, modelsLoaded]);
+  }, [visible, captureImage, modelsLoaded, modelsLoadedFor.detect]);
 
   React.useEffect(() => {
     if (withImage && !captureImage) {
@@ -82,6 +95,8 @@ const FaceRecognitionModal = (props) => {
       clearInterval(detection.current);
       detection.current = null;
       setIsCameraCaptured(false);
+      setCapturedImage("");
+      setCheckingCapture(false);
     }
     return () => {
       clearInterval(detection.current);
@@ -94,30 +109,65 @@ const FaceRecognitionModal = (props) => {
     if (withImage && !captureImage) {
       return;
     }
-    if (isCameraCaptured) {
-      let count = 0;
-      const interval = setInterval(() => {
-        count++;
-        if (videoRef.current) {
-          videoRef.current.srcObject = mediaStreamRef.current;
-          videoRef.current.play();
-          clearInterval(interval);
-        }
-        if (count >= 30) {
-          clearInterval(interval);
-          onCancel();
-        }
-      }, 100);
-    } else {
+    if (!isCameraCaptured) {
       mediaStreamRef.current?.getTracks().forEach(track => track.stop());
       if (videoRef.current) {
         videoRef.current.srcObject = null;
       }
+      return;
     }
-  }, [isCameraCaptured]);
+    if (captureImage && capturedImage) {
+      return;
+    }
+
+    let count = 0;
+    const interval = setInterval(() => {
+      count++;
+      if (videoRef.current) {
+        videoRef.current.srcObject = mediaStreamRef.current;
+        videoRef.current.play();
+        clearInterval(interval);
+      }
+      if (count >= 30) {
+        clearInterval(interval);
+        onCancel();
+      }
+    }, 100);
+    return () => clearInterval(interval);
+  }, [isCameraCaptured, captureImage, capturedImage]);
+
+  const captureFaceImage = async() => {
+    if (!videoRef.current || !modelsLoaded || checkingCapture) {
+      return;
+    }
+
+    const video = videoRef.current;
+    if (video.videoWidth === 0 || video.videoHeight === 0) {
+      message.warning(i18next.t("login:Please ensure sufficient lighting and align your face in the center of the recognition box"));
+      return;
+    }
+
+    setCheckingCapture(true);
+    try {
+      const canvas = document.createElement("canvas");
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      const context = canvas.getContext("2d");
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+      const image = canvas.toDataURL("image/jpeg", 0.92);
+      const res = await FaceIdBackend.detectFaceIdImage(owner, name, application, image);
+      if (res.status !== "ok") {
+        message.warning(res.msg || i18next.t("login:Please keep only one face in the recognition box"));
+        return;
+      }
+      setCapturedImage(image);
+    } finally {
+      setCheckingCapture(false);
+    }
+  };
 
   const handleStreamVideo = () => {
-    if (withImage && !captureImage) {
+    if (captureImage || (withImage && !captureImage)) {
       return;
     }
     let count = 0;
@@ -137,25 +187,18 @@ const FaceRecognitionModal = (props) => {
           if (faces.length === 1) {
             const face = faces[0];
             setPercent(Math.round(face.detection.score * 100));
-            const array = Array.from(face.descriptor);
             if (face.detection.score > 0.9) {
               goodCount++;
               if (face.detection.score > 0.99 || goodCount > 10) {
                 clearInterval(detection.current);
-                if (captureImage) {
-                  const canvas = document.createElement("canvas");
-                  canvas.width = videoRef.current.videoWidth;
-                  canvas.height = videoRef.current.videoHeight;
-                  const context = canvas.getContext("2d");
-                  context.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
-                  onOk(canvas.toDataURL("image/jpeg", 0.92));
-                } else {
-                  onOk(array);
-                }
+                onOk(Array.from(face.descriptor));
               }
+            } else {
+              goodCount = 0;
             }
           } else {
-            setPercent(Math.round(percent / 2));
+            goodCount = 0;
+            setPercent(prevPercent => Math.round(prevPercent / 2));
           }
         }
       }, 100);
@@ -199,12 +242,27 @@ const FaceRecognitionModal = (props) => {
           title={i18next.t("login:Face Recognition")}
           width={350}
           footer={[
+            captureImage && !capturedImage ? (
+              <Button key="capture" type="primary" loading={checkingCapture} disabled={!modelsLoaded || !isCameraCaptured} onClick={captureFaceImage}>
+                {i18next.t("general:Take photo")}
+              </Button>
+            ) : null,
+            captureImage && capturedImage ? (
+              <Button key="retake" onClick={() => setCapturedImage("")}>
+                {i18next.t("general:Retake photo")}
+              </Button>
+            ) : null,
+            captureImage && capturedImage ? (
+              <Button key="ok" type="primary" onClick={() => onOk(capturedImage)}>
+                {i18next.t("general:Confirm")}
+              </Button>
+            ) : null,
             <Button key="back" onClick={onCancel}>
-                  Cancel
+              {i18next.t("general:Cancel")}
             </Button>,
           ]}
         >
-          <Progress percent={percent} />
+          {captureImage ? null : <Progress percent={percent} />}
           <div style={{
             marginTop: "20px",
             marginBottom: "50px",
@@ -214,42 +272,60 @@ const FaceRecognitionModal = (props) => {
             flexDirection: "column",
           }}>
             {
-              modelsLoaded ?
-                <div style={{display: "flex", justifyContent: "center", alignContent: "center"}}>
-                  <video
-                    ref={videoRef}
-                    onPlay={handleStreamVideo}
-                    style={{
-                      borderRadius: "50%",
-                      height: "220px",
-                      verticalAlign: "middle",
-                      width: "220px",
-                      objectFit: "cover",
-                    }}
-                  ></video>
-                  <div style={{
-                    position: "absolute",
-                    width: "240px",
-                    height: "240px",
-                    top: "50%",
-                    left: "50%",
-                    transform: "translate(-50%, -50%)",
-                  }}>
-                    <svg width="240" height="240" fill="none">
-                      <circle
-                        strokeDasharray="700"
-                        strokeDashoffset={700 - 6.9115 * percent}
-                        strokeWidth="4"
-                        cx="120"
-                        cy="120"
-                        r="110"
-                        stroke="#5734d3"
-                        transform="rotate(-90, 120, 120)"
-                        strokeLinecap="round"
-                        style={{transition: "all .2s linear"}}
-                      ></circle>
-                    </svg>
-                  </div>
+              modelsLoaded && isCameraCaptured ?
+                <div style={{display: "flex", justifyContent: "center", alignContent: "center", position: "relative"}}>
+                  {
+                    capturedImage ?
+                      <img
+                        src={capturedImage}
+                        alt="captured face"
+                        style={{
+                          borderRadius: captureImage ? "6px" : "50%",
+                          height: "220px",
+                          verticalAlign: "middle",
+                          width: "220px",
+                          objectFit: "cover",
+                        }}
+                      /> :
+                      <video
+                        ref={videoRef}
+                        onPlay={handleStreamVideo}
+                        style={{
+                          borderRadius: captureImage ? "6px" : "50%",
+                          height: "220px",
+                          verticalAlign: "middle",
+                          width: "220px",
+                          objectFit: "cover",
+                        }}
+                      ></video>
+                  }
+                  {
+                    captureImage ? null : (
+                      <div style={{
+                        position: "absolute",
+                        width: "240px",
+                        height: "240px",
+                        top: "50%",
+                        left: "50%",
+                        transform: "translate(-50%, -50%)",
+                      }}>
+                        <svg width="240" height="240" fill="none">
+                          <circle
+                            strokeDasharray="700"
+                            strokeDashoffset={700 - 6.9115 * percent}
+                            strokeWidth="4"
+                            cx="120"
+                            cy="120"
+                            r="110"
+                            stroke="#5734d3"
+                            transform="rotate(-90, 120, 120)"
+                            strokeLinecap="round"
+                            style={{transition: "all .2s linear"}}
+                          ></circle>
+                        </svg>
+                      </div>
+                    )
+                  }
                   <canvas ref={canvasRef} style={{position: "absolute"}} />
                 </div>
                 :
