@@ -415,6 +415,23 @@ class OrganizationEditPage extends React.Component {
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2}>
+            {Setting.getLabel(i18next.t("organization:Record retention days"), i18next.t("organization:Record retention days - Tooltip"))} :
+          </Col>
+          <Col span={4} >
+            <AutoComplete
+              style={{width: "100%"}}
+              value={this.state.organization.recordRetentionDays ? this.state.organization.recordRetentionDays.toString() : ""}
+              options={[7, 30, 90, 180, 365].map(days => ({value: days.toString(), label: `${days} ${i18next.t("organization:days")}`}))}
+              filterOption={(inputValue, option) => option.value.startsWith(inputValue)}
+              onChange={value => {
+                const digits = (value || "").replace(/\D/g, "");
+                this.updateOrganizationField("recordRetentionDays", digits === "" ? 0 : Number(digits));
+              }}
+            />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("general:Supported country codes"), i18next.t("general:Supported country codes - Tooltip"))} :
           </Col>
