@@ -1068,6 +1068,17 @@ export function deepCopy(obj) {
   return Object.assign({}, obj);
 }
 
+// In "add" mode the object has already been created on the server before the edit page is
+// shown, so the "Cancel" button deletes it again. The deletion must use the owner and name
+// that the object was created with, otherwise renaming the object in the form would make
+// "Cancel" delete another, already existing object instead.
+export function getDeleteObj(obj, owner, name) {
+  const res = deepCopy(obj);
+  res.owner = owner;
+  res.name = name;
+  return res;
+}
+
 export function addRow(array, row, position = "end") {
   return position === "end" ? [...array, row] : [row, ...array];
 }

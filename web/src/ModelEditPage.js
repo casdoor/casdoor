@@ -163,6 +163,7 @@ class ModelEditPage extends React.Component {
         if (res.status === "ok") {
           Setting.showMessage("success", i18next.t("general:Successfully saved"));
           this.setState({
+            organizationName: this.state.model.owner,
             modelName: this.state.model.name,
           });
 
@@ -182,7 +183,7 @@ class ModelEditPage extends React.Component {
   }
 
   deleteModel() {
-    ModelBackend.deleteModel(this.state.model)
+    ModelBackend.deleteModel(Setting.getDeleteObj(this.state.model, this.state.organizationName, this.state.modelName))
       .then((res) => {
         if (res.status === "ok") {
           this.props.history.push("/models");

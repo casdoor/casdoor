@@ -1572,7 +1572,7 @@ class UserEditPage extends React.Component {
   }
 
   deleteUser() {
-    UserBackend.deleteUser(this.state.user)
+    UserBackend.deleteUser(Setting.getDeleteObj(this.state.user, this.state.organizationName, this.state.userName))
       .then((res) => {
         if (res.status === "ok") {
           const userListUrl = sessionStorage.getItem("userListUrl");

@@ -300,7 +300,7 @@ class AdapterEditPage extends React.Component {
   }
 
   deleteAdapter() {
-    AdapterBackend.deleteAdapter(this.state.adapter)
+    AdapterBackend.deleteAdapter(Setting.getDeleteObj(this.state.adapter, this.state.organizationName, this.state.adapterName))
       .then((res) => {
         if (res.status === "ok") {
           this.props.history.push("/adapters");

@@ -114,6 +114,7 @@ class TransactionEditPage extends React.Component {
         if (res.status === "ok") {
           Setting.showMessage("success", i18next.t("general:Successfully saved"));
           this.setState({
+            organizationName: this.state.transaction.owner,
             transactionName: this.state.transaction.name,
           });
 
@@ -136,7 +137,7 @@ class TransactionEditPage extends React.Component {
     if (this.state.transaction === null) {
       return;
     }
-    TransactionBackend.deleteTransaction(this.state.transaction)
+    TransactionBackend.deleteTransaction(Setting.getDeleteObj(this.state.transaction, this.state.organizationName, this.state.transactionName))
       .then((res) => {
         if (res.status === "ok") {
           this.props.history.push("/transactions");

@@ -206,6 +206,7 @@ class EnforcerEditPage extends React.Component {
         if (res.status === "ok") {
           Setting.showMessage("success", i18next.t("general:Successfully saved"));
           this.setState({
+            organizationName: this.state.enforcer.owner,
             enforcerName: this.state.enforcer.name,
           });
 
@@ -225,7 +226,7 @@ class EnforcerEditPage extends React.Component {
   }
 
   deleteEnforcer() {
-    EnforcerBackend.deleteEnforcer(this.state.enforcer)
+    EnforcerBackend.deleteEnforcer(Setting.getDeleteObj(this.state.enforcer, this.state.organizationName, this.state.enforcerName))
       .then((res) => {
         if (res.status === "ok") {
           this.props.history.push("/enforcers");

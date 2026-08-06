@@ -378,7 +378,7 @@ class WebhookEditPage extends React.Component {
   }
 
   deleteWebhook() {
-    WebhookBackend.deleteWebhook(this.state.webhook)
+    WebhookBackend.deleteWebhook(Setting.getDeleteObj(this.state.webhook, this.state.webhook.owner, this.state.webhookName))
       .then((res) => {
         if (res.status === "ok") {
           this.props.history.push("/webhooks");

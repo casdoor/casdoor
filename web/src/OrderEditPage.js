@@ -266,7 +266,7 @@ class OrderEditPage extends React.Component {
   }
 
   deleteOrder() {
-    OrderBackend.deleteOrder(this.state.order)
+    OrderBackend.deleteOrder(Setting.getDeleteObj(this.state.order, this.state.organizationName, this.state.orderName))
       .then((res) => {
         if (res.status === "ok") {
           this.props.history.push("/orders");

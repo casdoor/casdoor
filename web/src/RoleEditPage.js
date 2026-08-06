@@ -237,6 +237,7 @@ class RoleEditPage extends React.Component {
         if (res.status === "ok") {
           Setting.showMessage("success", i18next.t("general:Successfully saved"));
           this.setState({
+            organizationName: this.state.role.owner,
             roleName: this.state.role.name,
           });
 
@@ -256,7 +257,7 @@ class RoleEditPage extends React.Component {
   }
 
   deleteRole() {
-    RoleBackend.deleteRole(this.state.role)
+    RoleBackend.deleteRole(Setting.getDeleteObj(this.state.role, this.state.organizationName, this.state.roleName))
       .then((res) => {
         if (res.status === "ok") {
           this.props.history.push("/roles");

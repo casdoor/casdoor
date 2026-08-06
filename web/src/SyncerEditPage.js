@@ -1228,7 +1228,7 @@ class SyncerEditPage extends React.Component {
   }
 
   deleteSyncer() {
-    SyncerBackend.deleteSyncer(this.state.syncer)
+    SyncerBackend.deleteSyncer(Setting.getDeleteObj(this.state.syncer, this.state.organizationName, this.state.syncerName))
       .then((res) => {
         if (res.status === "ok") {
           this.props.history.push("/syncers");

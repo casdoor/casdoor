@@ -385,6 +385,7 @@ class CertEditPage extends React.Component {
         if (res.status === "ok") {
           Setting.showMessage("success", i18next.t("general:Successfully saved"));
           this.setState({
+            owner: this.state.cert.owner,
             certName: this.state.cert.name,
           }, () => {
             if (exitAfterSave) {
@@ -405,7 +406,7 @@ class CertEditPage extends React.Component {
   }
 
   deleteCert() {
-    CertBackend.deleteCert(this.state.cert)
+    CertBackend.deleteCert(Setting.getDeleteObj(this.state.cert, this.state.owner, this.state.certName))
       .then((res) => {
         if (res.status === "ok") {
           this.props.history.push("/certs");

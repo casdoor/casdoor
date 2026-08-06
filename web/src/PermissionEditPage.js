@@ -559,7 +559,7 @@ class PermissionEditPage extends React.Component {
   }
 
   deletePermission() {
-    PermissionBackend.deletePermission(this.state.permission)
+    PermissionBackend.deletePermission(Setting.getDeleteObj(this.state.permission, this.state.organizationName, this.state.permissionName))
       .then((res) => {
         if (res.status === "ok") {
           this.props.history.push("/permissions");

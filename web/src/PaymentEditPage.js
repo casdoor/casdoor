@@ -482,7 +482,7 @@ class PaymentEditPage extends React.Component {
   }
 
   deletePayment() {
-    PaymentBackend.deletePayment(this.state.payment)
+    PaymentBackend.deletePayment(Setting.getDeleteObj(this.state.payment, this.state.organizationName, this.state.paymentName))
       .then((res) => {
         if (res.status === "ok") {
           this.props.history.push("/payments");

@@ -1827,7 +1827,7 @@ class ApplicationEditPage extends React.Component {
   }
 
   deleteApplication() {
-    ApplicationBackend.deleteApplication(this.state.application)
+    ApplicationBackend.deleteApplication(Setting.getDeleteObj(this.state.application, this.state.owner, this.state.applicationName))
       .then((res) => {
         if (res.status === "ok") {
           this.props.history.push("/applications");
