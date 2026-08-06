@@ -151,3 +151,29 @@ func (e *UserGroupEnforcer) UpdateGroupsForUser(user string, groups []string) (b
 
 	return affected, nil
 }
+
+// RenameUser moves the group bindings of a user from the old user ID to the new one.
+// The group APIs read the members of a group from these bindings, so a rename that
+// doesn't move them would keep the old ID inside every group the user belonged to.
+func (e *UserGroupEnforcer) RenameUser(oldUser string, newUser string) error {
+	groups, err := e.GetGroupsForUser(oldUser)
+	if err != nil {
+		return err
+	}
+
+	if len(groups) == 0 {
+		return nil
+	}
+
+	_, err = e.DeleteGroupsForUser(oldUser)
+	if err != nil {
+		return err
+	}
+
+	_, err = e.UpdateGroupsForUser(newUser, groups)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
