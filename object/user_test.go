@@ -21,7 +21,9 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/util"
+	xormadapter "github.com/casdoor/xorm-adapter/v3"
 	"github.com/xorm-io/core"
 )
 
@@ -162,4 +164,60 @@ func TestGetEmailsForUsers(t *testing.T) {
 
 	text := strings.Join(emails, "\n")
 	println(text)
+}
+
+func TestUserChangeTriggerRenamesCasbinRule(t *testing.T) {
+	InitConfig()
+
+	const (
+		owner   = "built-in"
+		oldName = "test-rename-old"
+		newName = "test-rename-new"
+		group   = "group:test-rename-group"
+	)
+	oldId := util.GetId(owner, oldName)
+	newId := util.GetId(owner, newName)
+	tableName := conf.GetConfigString("tableNamePrefix") + "casbin_user_rule"
+
+	if _, err := xormadapter.NewAdapterByEngineWithTableName(ormer.Engine, "casbin_user_rule", conf.GetConfigString("tableNamePrefix")); err != nil {
+		t.Fatalf("create casbin user rule table: %v", err)
+	}
+
+	rule := &xormadapter.CasbinRule{Ptype: "g", V0: oldId, V1: group}
+	if _, err := ormer.Engine.Table(tableName).Insert(rule); err != nil {
+		t.Fatalf("seed g rule: %v", err)
+	}
+	t.Cleanup(func() {
+		_, _ = ormer.Engine.Table(tableName).
+			Where("ptype = ? AND v0 = ? AND v1 = ?", "g", newId, group).
+			Delete(&xormadapter.CasbinRule{})
+	})
+
+	if err := userChangeTrigger(owner, oldName, newName); err != nil {
+		t.Fatalf("userChangeTrigger: %v", err)
+	}
+
+	var rows []*xormadapter.CasbinRule
+	if err := ormer.Engine.Table(tableName).
+		Where("ptype = ? AND v1 = ?", "g", group).
+		Find(&rows); err != nil {
+		t.Fatalf("query g rules: %v", err)
+	}
+
+	var foundNew, foundOld bool
+	for _, r := range rows {
+		switch r.V0 {
+		case newId:
+			foundNew = true
+		case oldId:
+			foundOld = true
+		}
+	}
+
+	if !foundNew {
+		t.Errorf("expected g rule with v0=%q, none found (rows=%+v)", newId, rows)
+	}
+	if foundOld {
+		t.Errorf("expected old g rule with v0=%q to be renamed away, still present (rows=%+v)", oldId, rows)
+	}
 }

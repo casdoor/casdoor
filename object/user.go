@@ -1449,7 +1449,25 @@ func userChangeTrigger(owner string, oldName string, newName string) error {
 		return err
 	}
 
-	return session.Commit()
+	oldId := util.GetId(owner, oldName)
+	newId := util.GetId(owner, newName)
+	tableNamePrefix := conf.GetConfigString("tableNamePrefix")
+	affected, err := session.Table(tableNamePrefix+"casbin_user_rule").
+		Where("ptype = ? AND v0 = ?", "g", oldId).
+		Update(map[string]string{"v0": newId})
+	if err != nil {
+		return err
+	}
+
+	if err = session.Commit(); err != nil {
+		return err
+	}
+
+	if affected > 0 && userEnforcer != nil && userEnforcer.enforcer != nil {
+		_ = userEnforcer.enforcer.LoadPolicy()
+	}
+
+	return nil
 }
 
 func (user *User) IsMfaEnabled() bool {
