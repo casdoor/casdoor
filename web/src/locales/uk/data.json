@@ -23,6 +23,7 @@
   },
   "application": {
     "Add Face ID": "Додати Face ID",
+    "Add Face ID with Camera": "Add Face ID with Camera",
     "Add Face ID with Image": "Додати Face ID за допомогою зображення",
     "Always": "Завжди",
     "Array": "Масив",
@@ -68,8 +69,8 @@
     "Enable Email linking - Tooltip": "Під час входу за допомогою сторонніх провайдерів, якщо у організації є користувач з такою ж електронною поштою, метод входу стороннім провайдером автоматично асоціюється з цим користувачем",
     "Enable SAML C14N10": "Увімкнути SAML C14N10",
     "Enable SAML C14N10 - Tooltip": "Використовувати C14N10 замість C14N11 у SAML - Підказка",
-    "Enable SAML POST binding": "Увімкнути зв’язування SAML POST",
-    "Enable SAML POST binding - Tooltip": "Прив’язка HTTP POST використовує поля введення у формі HTML для надсилання повідомлень SAML. Увімкніть, якщо це використовує ваш SP",
+    "Enable SAML POST binding": "Увімкнути зв'язування SAML POST",
+    "Enable SAML POST binding - Tooltip": "Прив'язка HTTP POST використовує поля введення у формі HTML для надсилання повідомлень SAML. Увімкніть, якщо це використовує ваш SP",
     "Enable SAML assertion signature": "Увімкнути підпис утвердження SAML",
     "Enable SAML assertion signature - Tooltip": "Чи підписувати SAML утвердження - Підказка",
     "Enable SAML compression": "Увімкнути стиснення SAML",
@@ -978,6 +979,8 @@
     "Password expire days": "Днів до закінчення пароля",
     "Password expire days - Tooltip": "Кількість днів до закінчення терміну дії пароля",
     "Prompt": "Підказка",
+    "Record retention days": "Record retention days",
+    "Record retention days - Tooltip": "Number of days to keep the organization's records (audit logs) before they are automatically deleted by a daily cleanup job. Leave it empty or set it to 0 to keep the records forever",
     "Required": "Обов'язково",
     "Soft deletion": "М'яке видалення",
     "Soft deletion - Tooltip": "Коли увімкнено, видалення користувачів не видаляє їх повністю з бази даних. Натомість вони будуть позначені як видалені",
@@ -997,7 +1000,8 @@
     "Website URL": "URL вебсайту",
     "Website URL - Tooltip": "URL домашньої сторінки організації. Це поле не використовується в Casdoor",
     "Widget items": "Елементи віджета",
-    "Widget items - Tooltip": "Елементи, що відображаються у віджеті"
+    "Widget items - Tooltip": "Елементи, що відображаються у віджеті",
+    "days": "days"
   },
   "payment": {
     "Confirm your invoice information": "Підтвердьте інформацію про рахунок",

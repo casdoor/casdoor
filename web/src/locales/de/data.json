@@ -23,6 +23,7 @@
   },
   "application": {
     "Add Face ID": "Face ID hinzufügen",
+    "Add Face ID with Camera": "Add Face ID with Camera",
     "Add Face ID with Image": "Face ID mit Bild hinzufügen",
     "Always": "Immer",
     "Array": "Feld (Array)",
@@ -978,6 +979,8 @@
     "Password expire days": "Passwort läuft ab in Tagen",
     "Password expire days - Tooltip": "Anzahl der Tage vor dem Ablauf des Passworts",
     "Prompt": "Aufforderung",
+    "Record retention days": "Record retention days",
+    "Record retention days - Tooltip": "Number of days to keep the organization's records (audit logs) before they are automatically deleted by a daily cleanup job. Leave it empty or set it to 0 to keep the records forever",
     "Required": "Erforderlich",
     "Soft deletion": "Softe Löschung",
     "Soft deletion - Tooltip": "Wenn aktiviert, werden gelöschte Benutzer nicht vollständig aus der Datenbank entfernt. Stattdessen werden sie als gelöscht markiert",
@@ -997,7 +1000,8 @@
     "Website URL": "Website-URL",
     "Website URL - Tooltip": "Die Homepage-URL der Organisation. Dieses Feld wird in Casdoor nicht verwendet",
     "Widget items": "Widget-Elemente",
-    "Widget items - Tooltip": "Im Widget angezeigte Elemente"
+    "Widget items - Tooltip": "Im Widget angezeigte Elemente",
+    "days": "days"
   },
   "payment": {
     "Confirm your invoice information": "Bestätigen Sie Ihre Rechnungsinformationen",
@@ -1247,7 +1251,7 @@
     "Metadata url - Tooltip": "SAML-Metadaten-URL",
     "Method - Tooltip": "Anmeldeverfahren, QR-Code oder Silent-Login",
     "Mobile": "Mobil",
-    "New Provider": "Neuer Anbieter",
+    "New Provider": "Neuer Provider",
     "Online list": "Online-Liste",
     "Parameter": "Konfigurationsparameter",
     "Parameter - Tooltip": "Konfigurationsparameter",
