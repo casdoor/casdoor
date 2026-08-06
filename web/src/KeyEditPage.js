@@ -284,7 +284,7 @@ class KeyEditPage extends React.Component {
   }
 
   deleteKey() {
-    KeyBackend.deleteKey(this.state.key)
+    KeyBackend.deleteKey(Setting.getDeleteObj(this.state.key, this.state.organizationName, this.state.keyName))
       .then((res) => {
         if (res.status === "ok") {
           this.props.history.push("/keys");

@@ -252,7 +252,7 @@ class TokenEditPage extends React.Component {
   }
 
   deleteToken() {
-    TokenBackend.deleteToken(this.state.token)
+    TokenBackend.deleteToken(Setting.getDeleteObj(this.state.token, this.state.token.owner, this.state.tokenName))
       .then((res) => {
         if (res.status === "ok") {
           this.props.history.push("/tokens");

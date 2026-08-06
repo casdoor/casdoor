@@ -928,7 +928,7 @@ class OrganizationEditPage extends React.Component {
   }
 
   deleteOrganization() {
-    OrganizationBackend.deleteOrganization(this.state.organization)
+    OrganizationBackend.deleteOrganization(Setting.getDeleteObj(this.state.organization, this.state.organization.owner, this.state.organizationName))
       .then((res) => {
         if (res.status === "ok") {
           this.props.history.push("/organizations");

@@ -121,7 +121,7 @@ class AgentEditPage extends React.Component {
   }
 
   deleteAgent() {
-    AgentBackend.deleteAgent(this.state.agent)
+    AgentBackend.deleteAgent(Setting.getDeleteObj(this.state.agent, this.state.owner, this.state.agentName))
       .then((res) => {
         if (res.status === "ok") {
           Setting.showMessage("success", i18next.t("general:Successfully deleted"));

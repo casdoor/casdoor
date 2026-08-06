@@ -305,6 +305,7 @@ class SubscriptionEditPage extends React.Component {
         if (res.status === "ok") {
           Setting.showMessage("success", i18next.t("general:Successfully saved"));
           this.setState({
+            organizationName: this.state.subscription.owner,
             subscriptionName: this.state.subscription.name,
           });
 
@@ -324,7 +325,7 @@ class SubscriptionEditPage extends React.Component {
   }
 
   deleteSubscription() {
-    SubscriptionBackend.deleteSubscription(this.state.subscription)
+    SubscriptionBackend.deleteSubscription(Setting.getDeleteObj(this.state.subscription, this.state.organizationName, this.state.subscriptionName))
       .then((res) => {
         if (res.status === "ok") {
           this.props.history.push("/subscriptions");

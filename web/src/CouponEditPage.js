@@ -309,7 +309,7 @@ class CouponEditPage extends React.Component {
   }
 
   deleteCoupon() {
-    CouponBackend.deleteCoupon(this.state.coupon)
+    CouponBackend.deleteCoupon(Setting.getDeleteObj(this.state.coupon, this.state.coupon.owner, this.state.couponName))
       .then((res) => {
         if (res.status === "ok") {
           this.props.history.push("/coupons");

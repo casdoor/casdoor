@@ -350,6 +350,7 @@ class InvitationEditPage extends React.Component {
         if (res.status === "ok") {
           Setting.showMessage("success", i18next.t("general:Successfully saved"));
           this.setState({
+            organizationName: this.state.invitation.owner,
             invitationName: this.state.invitation.name,
           });
 
@@ -369,7 +370,7 @@ class InvitationEditPage extends React.Component {
   }
 
   deleteInvitation() {
-    InvitationBackend.deleteInvitation(this.state.invitation)
+    InvitationBackend.deleteInvitation(Setting.getDeleteObj(this.state.invitation, this.state.organizationName, this.state.invitationName))
       .then((res) => {
         if (res.status === "ok") {
           this.props.history.push("/invitations");
