@@ -1449,6 +1449,11 @@ func userChangeTrigger(owner string, oldName string, newName string) error {
 		return err
 	}
 
+	err = userEnforcer.RenameUser(util.GetId(owner, oldName), util.GetId(owner, newName))
+	if err != nil {
+		return err
+	}
+
 	return session.Commit()
 }
 
