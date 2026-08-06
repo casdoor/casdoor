@@ -23,6 +23,7 @@
   },
   "application": {
     "Add Face ID": "Thêm Face ID",
+    "Add Face ID with Camera": "Add Face ID with Camera",
     "Add Face ID with Image": "Thêm Face ID với hình ảnh",
     "Always": "luôn luôn",
     "Array": "Mảng",
@@ -951,7 +952,7 @@
     "Balance credit - Tooltip": "Số dư tín dụng",
     "Balance currency": "Đơn vị tiền tệ",
     "Balance currency - Tooltip": "Đơn vị tiền tệ",
-    "Edit Organization": "Chỉnh sửa tổ chức",
+    "Edit Organization": "Sửa tổ chức",
     "Follow global theme": "Theo giao diện chung",
     "Has privilege consent": "Có sự đồng ý đặc quyền",
     "Has privilege consent - Tooltip": "Ngăn thêm người dùng cho tổ chức tích hợp nếu HasPrivilegeConsent là false",
@@ -978,6 +979,8 @@
     "Password expire days": "Số ngày hết hạn mật khẩu",
     "Password expire days - Tooltip": "Gợi ý số ngày hết hạn mật khẩu",
     "Prompt": "Nhắc",
+    "Record retention days": "Record retention days",
+    "Record retention days - Tooltip": "Number of days to keep the organization's records (audit logs) before they are automatically deleted by a daily cleanup job. Leave it empty or set it to 0 to keep the records forever",
     "Required": "Bắt buộc",
     "Soft deletion": "Xóa mềm",
     "Soft deletion - Tooltip": "Khi được bật, việc xóa người dùng sẽ không hoàn toàn loại bỏ họ khỏi cơ sở dữ liệu. Thay vào đó, họ sẽ được đánh dấu là đã bị xóa",
@@ -997,7 +1000,8 @@
     "Website URL": "Địa chỉ trang web",
     "Website URL - Tooltip": "Địa chỉ trang chủ của tổ chức. Trường này không được sử dụng trong Casdoor",
     "Widget items": "Các mục tiện ích",
-    "Widget items - Tooltip": "Gợi ý các mục tiện ích"
+    "Widget items - Tooltip": "Gợi ý các mục tiện ích",
+    "days": "days"
   },
   "payment": {
     "Confirm your invoice information": "Xác nhận thông tin hóa đơn của bạn",
