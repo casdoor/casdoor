@@ -43,6 +43,8 @@ type Product struct {
 
 	State string `xorm:"varchar(100)" json:"state"`
 
+	Properties map[string]string `xorm:"mediumtext" json:"properties"`
+
 	ProviderObjs []*Provider `xorm:"-" json:"providerObjs"`
 }
 
