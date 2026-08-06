@@ -497,6 +497,11 @@ class LoginPage extends React.Component {
           return;
         }
       } else {
+        if (captchaRule === Setting.CaptchaRule.Always && !this.state?.captchaValues?.captchaToken) {
+          Setting.showMessage("error", i18next.t("general:Please complete the captcha correctly"));
+          this.setState({loginLoading: false});
+          return;
+        }
         values["captchaType"] = this.state?.captchaValues?.captchaType;
         values["captchaToken"] = this.state?.captchaValues?.captchaToken;
         values["clientSecret"] = this.state?.captchaValues?.clientSecret;

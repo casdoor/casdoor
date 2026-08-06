@@ -62,12 +62,12 @@ export const CaptchaModal = (props) => {
   useEffect(() => {
     if (innerRef) {
       innerRef.current = {
-        loadCaptcha: loadCaptcha,
+        loadCaptcha: () => loadCaptcha(true),
       };
     }
   }, [innerRef]);
 
-  const loadCaptcha = () => {
+  const loadCaptcha = (shouldFocus = false) => {
     UserBackend.getCaptcha(owner, name, isCurrentProvider).then((res) => {
       if (res.type === "none") {
         handleOk();
@@ -76,6 +76,14 @@ export const CaptchaModal = (props) => {
         setClientSecret(res.captchaId);
         setCaptchaImg(res.captchaImage);
         setCaptchaType("Default");
+        // the old captcha code is consumed by the last verification, so the stale input must be cleared
+        setCaptchaToken("");
+        if (noModal) {
+          onUpdateToken?.("Default", "", res.captchaId);
+        }
+        if (shouldFocus) {
+          defaultInputRef.current?.focus();
+        }
       } else {
         setOpen(true);
         setCaptchaType(res.type);
@@ -108,7 +116,7 @@ export const CaptchaModal = (props) => {
             }}
           >
             <img src={`data:image/png;base64,${captchaImg}`}
-              onClick={loadCaptcha}
+              onClick={() => loadCaptcha(true)}
               style={{
                 borderRadius: "5px",
                 border: "1px solid #ccc",
