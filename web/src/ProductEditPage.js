@@ -22,6 +22,7 @@ import {LinkOutlined} from "@ant-design/icons";
 import * as ProviderBackend from "./backend/ProviderBackend";
 import ProductBuyPage from "./ProductBuyPage";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
+import PropertyTable from "./table/propertyTable";
 
 const {Option} = Select;
 
@@ -333,6 +334,18 @@ class ProductEditPage extends React.Component {
                 ].map((item, index) => <Option key={index} value={item.id}>{item.name}</Option>)
               }
             </Select>
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("user:Properties"), i18next.t("user:Properties - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <PropertyTable
+              disabled={isViewMode}
+              properties={this.state.product.properties === null || this.state.product.properties === undefined ? {} : this.state.product.properties}
+              onUpdateTable={(value) => {this.updateProductField("properties", value);}}
+            />
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >

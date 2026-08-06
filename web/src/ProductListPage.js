@@ -41,6 +41,7 @@ class ProductListPage extends BaseListPage {
       isRecharge: false,
       providers: [],
       state: "Published",
+      properties: {},
     };
   }
 
