@@ -274,7 +274,7 @@ func CheckPassword(user *User, password string, lang string, options ...bool) er
 	if isOutdated {
 		user.Password = password
 		user.UpdateUserPassword(organization)
-		_, err = UpdateUser(user.GetId(), user, []string{"password", "password_type", "password_salt"}, true)
+		_, err = UpdateUserForSystemPasswordRehash(user.GetId(), user, []string{"password", "password_type", "password_salt"}, true, lang)
 		if err != nil {
 			return err
 		}

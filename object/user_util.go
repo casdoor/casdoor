@@ -172,9 +172,25 @@ func SetUserField(user *User, field string, value string) (bool, error) {
 			return false, err
 		}
 
+		oldUser, err := getUser(user.Owner, user.Name)
+		if err != nil {
+			return false, err
+		}
+		if oldUser == nil {
+			return false, fmt.Errorf("the user: %s/%s is not found", user.Owner, user.Name)
+		}
+
+		op := passwordChangeOperationForUpdate(oldUser)
+		if err = CheckMinimumPasswordAge(oldUser, organization, op, "en"); err != nil {
+			return false, err
+		}
+
 		user.UpdateUserPassword(organization)
+		MarkPasswordChanged(user)
 		bean[strings.ToLower(field)] = user.Password
 		bean["password_type"] = user.PasswordType
+		bean["password_salt"] = user.PasswordSalt
+		bean["last_change_password_time"] = user.LastChangePasswordTime
 	} else {
 		bean[strings.ToLower(field)] = value
 	}

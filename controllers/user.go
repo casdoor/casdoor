@@ -366,7 +366,7 @@ func (c *ApiController) UpdateUser() {
 		}
 	}
 
-	affected, err := object.UpdateUser(id, &user, columns, isAdmin)
+	affected, err := object.UpdateUser(id, &user, columns, isAdmin, c.GetAcceptLanguage())
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -648,6 +648,15 @@ func (c *ApiController) SetPassword() {
 		return
 	}
 
+	passwordOp := object.PasswordOpUserChange
+	if code != "" {
+		passwordOp = object.PasswordOpRecovery
+	}
+	if err = object.CheckMinimumPasswordAge(targetUser, organization, passwordOp, c.GetAcceptLanguage()); err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
 	// Check if the new password is the same as the current password
 	if !object.CheckPasswordNotSameAsCurrent(targetUser, newPassword, organization) {
 		c.ResponseError(c.T("user:The new password must be different from your current password"))
@@ -679,10 +688,10 @@ func (c *ApiController) SetPassword() {
 	targetUser.Password = newPassword
 	targetUser.UpdateUserPassword(organization)
 	targetUser.NeedUpdatePassword = false
-	targetUser.LastChangePasswordTime = util.GetCurrentTime()
+	object.MarkPasswordChanged(targetUser)
 
 	if user.Ldap == "" {
-		_, err = object.UpdateUser(userId, targetUser, []string{"password", "password_salt", "need_update_password", "password_type", "last_change_password_time"}, false)
+		_, err = object.UpdateUserAfterValidatedPasswordChange(userId, targetUser, []string{"password", "password_salt", "need_update_password", "password_type", "last_change_password_time"}, false, c.GetAcceptLanguage())
 	} else {
 		if isAdmin {
 			err = object.ResetLdapPassword(targetUser, "", newPassword, c.GetAcceptLanguage())

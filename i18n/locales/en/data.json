@@ -95,6 +95,7 @@
     "You have entered the wrong password or code too many times, please wait for %d minutes and try again": "You have entered the wrong password or code too many times, please wait for %d minutes and try again",
     "Your IP address: %s has been banned according to the configuration of: ": "Your IP address: %s has been banned according to the configuration of: ",
     "Your password has expired. Please reset your password by clicking \"Forgot password\"": "Your password has expired. Please reset your password by clicking \"Forgot password\"",
+    "Password cannot be changed yet. The minimum password age has not expired.": "Password cannot be changed yet. The minimum password age has not expired.",
     "Your region is not allow to signup by phone": "Your region is not allow to signup by phone",
     "password or code is incorrect": "password or code is incorrect",
     "password or code is incorrect, you have %s remaining chances": "password or code is incorrect, you have %s remaining chances",

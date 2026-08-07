@@ -978,6 +978,8 @@
     "Org balance - Tooltip": "The total account balance of the organization",
     "Password expire days": "Password expire days",
     "Password expire days - Tooltip": "Number of days before password expires",
+    "Minimum password age (hours)": "Minimum password age (hours)",
+    "Minimum password age (hours) - Tooltip": "Minimum time in hours before a user can change their password again. 0 disables the restriction",
     "Prompt": "Prompt",
     "Record retention days": "Record retention days",
     "Record retention days - Tooltip": "Number of days to keep the organization's records (audit logs) before they are automatically deleted by a daily cleanup job. Leave it empty or set it to 0 to keep the records forever",
