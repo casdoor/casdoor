@@ -44,18 +44,7 @@ class PlanListPage extends BaseListPage {
 
   addPlan() {
     const newPlan = this.newPlan();
-    PlanBackend.addPlan(newPlan)
-      .then((res) => {
-        if (res.status === "ok") {
-          this.props.history.push({pathname: `/plans/${newPlan.owner}/${newPlan.name}`, mode: "add"});
-          Setting.showMessage("success", i18next.t("general:Successfully added"));
-        } else {
-          Setting.showMessage("error", `${i18next.t("general:Failed to add")}: ${res.msg}`);
-        }
-      })
-      .catch(error => {
-        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
-      });
+    this.props.history.push({pathname: `/plans/${newPlan.owner}/${newPlan.name}`, mode: "add", plan: newPlan});
   }
 
   deletePlan(i) {

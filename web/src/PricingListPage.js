@@ -40,18 +40,7 @@ class PricingListPage extends BaseListPage {
 
   addPricing() {
     const newPricing = this.newPricing();
-    PricingBackend.addPricing(newPricing)
-      .then((res) => {
-        if (res.status === "ok") {
-          this.props.history.push({pathname: `/pricings/${newPricing.owner}/${newPricing.name}`, mode: "add"});
-          Setting.showMessage("success", i18next.t("general:Successfully added"));
-        } else {
-          Setting.showMessage("error", `${i18next.t("general:Failed to add")}: ${res.msg}`);
-        }
-      })
-      .catch(error => {
-        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
-      });
+    this.props.history.push({pathname: `/pricings/${newPricing.owner}/${newPricing.name}`, mode: "add", pricing: newPricing});
   }
 
   deletePricing(i) {

@@ -36,6 +36,7 @@ class RuleEditPage extends React.Component {
       ruleName: props.match.params.ruleName,
       rule: null,
       organizations: [],
+      mode: props.location.mode !== undefined ? props.location.mode : "edit",
     };
   }
 
@@ -45,11 +46,22 @@ class RuleEditPage extends React.Component {
   }
 
   getRule() {
+    if (this.state.mode === "add" && this.props.location.rule) {
+      this.setState({
+        rule: this.props.location.rule,
+      });
+      return;
+    }
+
     RuleBackend.getRule(this.state.owner, this.state.ruleName).then((res) => {
       this.setState({
         rule: res.data,
       });
     });
+  }
+
+  deleteRule() {
+    this.props.history.push("/rules");
   }
 
   updateRuleField(key, value) {
@@ -87,8 +99,9 @@ class RuleEditPage extends React.Component {
     return (
       <Card size="small" title={
         <div>
-          {i18next.t("rule:Edit Rule")}&nbsp;&nbsp;&nbsp;&nbsp;
+          {this.state.mode === "add" ? i18next.t("rule:New Rule") : i18next.t("rule:Edit Rule")}&nbsp;&nbsp;&nbsp;&nbsp;
           <Button type="primary" onClick={this.submitRuleEdit.bind(this)}>{i18next.t("general:Save")}</Button>
+          {this.state.mode === "add" ? <Button style={{marginLeft: "20px"}} onClick={() => this.deleteRule()}>{i18next.t("general:Cancel")}</Button> : null}
         </div>
       } style={{marginTop: 10}} type="inner">
         <Row style={{marginTop: "20px"}}>
@@ -280,6 +293,7 @@ class RuleEditPage extends React.Component {
           </Col>
           <Col span={18}>
             <Button type="primary" size="large" onClick={this.submitRuleEdit.bind(this)}>{i18next.t("general:Save")}</Button>
+            {this.state.mode === "add" ? <Button style={{marginLeft: "20px"}} size="large" onClick={() => this.deleteRule()}>{i18next.t("general:Cancel")}</Button> : null}
           </Col>
         </Row>
       </div>
@@ -288,13 +302,21 @@ class RuleEditPage extends React.Component {
 
   submitRuleEdit() {
     const rule = Setting.deepCopy(this.state.rule);
-    RuleBackend.updateRule(this.state.owner, this.state.ruleName, rule)
+    const isAdd = this.state.mode === "add";
+    const apiCall = isAdd
+      ? RuleBackend.addRule(rule)
+      : RuleBackend.updateRule(this.state.owner, this.state.ruleName, rule);
+    apiCall
       .then((res) => {
         if (res.status !== "error") {
           Setting.showMessage("success", "Rule updated successfully");
           this.setState({
             rule: rule,
+            owner: rule.owner,
+            ruleName: rule.name,
+            mode: "edit",
           });
+          this.props.history.push(`/rules/${rule.owner}/${rule.name}`);
         } else {
           Setting.showMessage("error", `Rule failed to update: ${res.msg}`);
           this.setState({

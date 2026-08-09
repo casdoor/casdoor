@@ -76,14 +76,19 @@ class UserListPage extends BaseListPage {
       phone: Setting.getRandomNumber(),
       countryCode: this.state.organization.countryCodes?.length > 0 ? this.state.organization.countryCodes[0] : "",
       address: [],
+      addresses: [],
       groups: this.props.groupName ? [`${owner}/${this.props.groupName}`] : [],
+      roles: [],
+      permissions: [],
+      managedAccounts: [],
+      mfaAccounts: [],
       affiliation: "Example Inc.",
       tag: "staff",
       region: "",
       realName: "",
       isVerified: false,
       isAdmin: (owner === "built-in"),
-      IsForbidden: false,
+      isForbidden: false,
       score: this.state.organization.initScore,
       isDeleted: false,
       properties: {},
@@ -96,19 +101,8 @@ class UserListPage extends BaseListPage {
 
   addUser() {
     const newUser = this.newUser();
-    UserBackend.addUser(newUser)
-      .then((res) => {
-        if (res.status === "ok") {
-          sessionStorage.setItem("userListUrl", window.location.pathname);
-          this.props.history.push({pathname: `/users/${newUser.owner}/${newUser.name}`, mode: "add"});
-          Setting.showMessage("success", i18next.t("general:Successfully added"));
-        } else {
-          Setting.showMessage("error", `${i18next.t("general:Failed to add")}: ${res.msg}`);
-        }
-      })
-      .catch(error => {
-        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
-      });
+    sessionStorage.setItem("userListUrl", window.location.pathname);
+    this.props.history.push({pathname: `/users/${newUser.owner}/${newUser.name}`, mode: "add", user: newUser});
   }
 
   deleteUser(i) {

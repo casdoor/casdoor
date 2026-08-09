@@ -54,18 +54,7 @@ class ModelListPage extends BaseListPage {
 
   addModel() {
     const newModel = this.newModel();
-    ModelBackend.addModel(newModel)
-      .then((res) => {
-        if (res.status === "ok") {
-          this.props.history.push({pathname: `/models/${newModel.owner}/${newModel.name}`, mode: "add"});
-          Setting.showMessage("success", i18next.t("general:Successfully added"));
-        } else {
-          Setting.showMessage("error", `${i18next.t("general:Failed to add")}: ${res.msg}`);
-        }
-      })
-      .catch(error => {
-        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
-      });
+    this.props.history.push({pathname: `/models/${newModel.owner}/${newModel.name}`, mode: "add", model: newModel});
   }
 
   deleteModel(i) {
