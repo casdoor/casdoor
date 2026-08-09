@@ -47,6 +47,14 @@ class ProductEditPage extends React.Component {
   }
 
   getProduct() {
+    if (this.state.mode === "add" && this.props.location.product) {
+      const product = this.props.location.product;
+      this.setState({
+        product: product,
+      });
+      return;
+    }
+
     ProductBackend.getProduct(this.state.organizationName, this.state.productName)
       .then((res) => {
         if (res.data === null) {
@@ -391,13 +399,18 @@ class ProductEditPage extends React.Component {
       return;
     }
 
-    ProductBackend.updateProduct(this.state.organizationName, this.state.productName, product)
+    const isAdd = this.state.mode === "add";
+    const apiCall = isAdd
+      ? ProductBackend.addProduct(product)
+      : ProductBackend.updateProduct(this.state.organizationName, this.state.productName, product);
+    apiCall
       .then((res) => {
         if (res.status === "ok") {
           Setting.showMessage("success", i18next.t("general:Successfully saved"));
           this.setState({
             organizationName: this.state.product.owner,
             productName: this.state.product.name,
+            mode: "edit",
           });
 
           if (exitAfterSave) {
@@ -407,7 +420,9 @@ class ProductEditPage extends React.Component {
           }
         } else {
           Setting.showMessage("error", `${i18next.t("general:Failed to save")}: ${res.msg}`);
-          this.updateProductField("name", this.state.productName);
+          if (!isAdd) {
+            this.updateProductField("name", this.state.productName);
+          }
         }
       })
       .catch(error => {
@@ -416,17 +431,7 @@ class ProductEditPage extends React.Component {
   }
 
   deleteProduct() {
-    ProductBackend.deleteProduct(Setting.getDeleteObj(this.state.product, this.state.organizationName, this.state.productName))
-      .then((res) => {
-        if (res.status === "ok") {
-          this.props.history.push("/products");
-        } else {
-          Setting.showMessage("error", `${i18next.t("general:Failed to delete")}: ${res.msg}`);
-        }
-      })
-      .catch(error => {
-        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
-      });
+    this.props.history.push("/products");
   }
 
   render() {

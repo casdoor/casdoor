@@ -71,22 +71,7 @@ class SiteListPage extends BaseListPage {
 
   addSite() {
     const newSite = this.newSite();
-    SiteBackend.addSite(newSite)
-      .then((res) => {
-        if (res.status === "error") {
-          Setting.showMessage("error", `Failed to add: ${res.msg}`);
-        } else {
-          Setting.showMessage("success", "Site added successfully");
-          this.setState({
-            data: Setting.prependRow(this.state.data, newSite),
-          });
-          this.fetch();
-        }
-      }
-      )
-      .catch(error => {
-        Setting.showMessage("error", `Site failed to add: ${error}`);
-      });
+    this.props.history.push({pathname: `/sites/${newSite.owner}/${newSite.name}`, mode: "add", site: newSite});
   }
 
   deleteSite(i) {

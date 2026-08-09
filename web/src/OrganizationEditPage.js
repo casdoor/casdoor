@@ -56,6 +56,15 @@ class OrganizationEditPage extends React.Component {
   }
 
   getOrganization() {
+    if (this.state.mode === "add" && this.props.location.organization) {
+      const organization = this.props.location.organization;
+      organization["enableDarkLogo"] = !!organization["logoDark"];
+      this.setState({
+        organization: organization,
+      });
+      return;
+    }
+
     OrganizationBackend.getOrganization("admin", this.state.organizationName)
       .then((res) => {
         if (res.status === "ok") {
@@ -898,7 +907,11 @@ class OrganizationEditPage extends React.Component {
       return;
     }
 
-    OrganizationBackend.updateOrganization(this.state.organization.owner, this.state.organizationName, organization)
+    const isAdd = this.state.mode === "add";
+    const apiCall = isAdd
+      ? OrganizationBackend.addOrganization(organization)
+      : OrganizationBackend.updateOrganization(this.state.organization.owner, this.state.organizationName, organization);
+    apiCall
       .then((res) => {
         if (res.status === "ok") {
           Setting.showMessage("success", i18next.t("general:Successfully saved"));
@@ -909,6 +922,7 @@ class OrganizationEditPage extends React.Component {
 
           this.setState({
             organizationName: this.state.organization.name,
+            mode: "edit",
           });
           window.dispatchEvent(new Event("storageOrganizationsChanged"));
 
@@ -919,7 +933,9 @@ class OrganizationEditPage extends React.Component {
           }
         } else {
           Setting.showMessage("error", `${i18next.t("general:Failed to save")}: ${res.msg}`);
-          this.updateOrganizationField("name", this.state.organizationName);
+          if (!isAdd) {
+            this.updateOrganizationField("name", this.state.organizationName);
+          }
         }
       })
       .catch(error => {
@@ -928,18 +944,7 @@ class OrganizationEditPage extends React.Component {
   }
 
   deleteOrganization() {
-    OrganizationBackend.deleteOrganization(Setting.getDeleteObj(this.state.organization, this.state.organization.owner, this.state.organizationName))
-      .then((res) => {
-        if (res.status === "ok") {
-          this.props.history.push("/organizations");
-          window.dispatchEvent(new Event("storageOrganizationsChanged"));
-        } else {
-          Setting.showMessage("error", `${i18next.t("general:Failed to delete")}: ${res.msg}`);
-        }
-      })
-      .catch(error => {
-        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
-      });
+    this.props.history.push("/organizations");
   }
 
   render() {

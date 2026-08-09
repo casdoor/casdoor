@@ -164,6 +164,25 @@ class ApplicationEditPage extends React.Component {
   }
 
   getApplication() {
+    if (this.state.mode === "add" && this.props.location.application) {
+      const application = this.props.location.application;
+      if (application.grantTypes === null || application.grantTypes === undefined || application.grantTypes.length === 0) {
+        application.grantTypes = ["authorization_code"];
+      }
+
+      if (application.tags === null || application.tags === undefined) {
+        application.tags = [];
+      }
+
+      this.setState({
+        application: application,
+      });
+
+      this.getProviders(application);
+      this.getCerts(application);
+      return;
+    }
+
     ApplicationBackend.getApplication("admin", this.state.applicationName)
       .then((res) => {
         if (res.data === null) {
@@ -1803,12 +1822,17 @@ class ApplicationEditPage extends React.Component {
       return;
     }
 
-    ApplicationBackend.updateApplication("admin", this.state.applicationName, application)
+    const isAdd = this.state.mode === "add";
+    const apiCall = isAdd
+      ? ApplicationBackend.addApplication(application)
+      : ApplicationBackend.updateApplication("admin", this.state.applicationName, application);
+    apiCall
       .then((res) => {
         if (res.status === "ok") {
           Setting.showMessage("success", i18next.t("general:Successfully saved"));
           this.setState({
             applicationName: this.state.application.name,
+            mode: "edit",
           });
 
           if (exitAfterSave) {
@@ -1818,7 +1842,9 @@ class ApplicationEditPage extends React.Component {
           }
         } else {
           Setting.showMessage("error", `${i18next.t("general:Failed to save")}: ${res.msg}`);
-          this.updateApplicationField("name", this.state.applicationName);
+          if (!isAdd) {
+            this.updateApplicationField("name", this.state.applicationName);
+          }
         }
       })
       .catch(error => {
@@ -1827,17 +1853,7 @@ class ApplicationEditPage extends React.Component {
   }
 
   deleteApplication() {
-    ApplicationBackend.deleteApplication(Setting.getDeleteObj(this.state.application, this.state.owner, this.state.applicationName))
-      .then((res) => {
-        if (res.status === "ok") {
-          this.props.history.push("/applications");
-        } else {
-          Setting.showMessage("error", `${i18next.t("general:Failed to delete")}: ${res.msg}`);
-        }
-      })
-      .catch(error => {
-        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
-      });
+    this.props.history.push("/applications");
   }
 
   render() {

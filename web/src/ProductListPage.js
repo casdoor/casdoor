@@ -47,18 +47,7 @@ class ProductListPage extends BaseListPage {
 
   addProduct() {
     const newProduct = this.newProduct();
-    ProductBackend.addProduct(newProduct)
-      .then((res) => {
-        if (res.status === "ok") {
-          this.props.history.push({pathname: `/products/${newProduct.owner}/${newProduct.name}`, mode: "add"});
-          Setting.showMessage("success", i18next.t("general:Successfully added"));
-        } else {
-          Setting.showMessage("error", `${i18next.t("general:Failed to add")}: ${res.msg}`);
-        }
-      })
-      .catch(error => {
-        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
-      });
+    this.props.history.push({pathname: `/products/${newProduct.owner}/${newProduct.name}`, mode: "add", product: newProduct});
   }
 
   deleteProduct(i) {

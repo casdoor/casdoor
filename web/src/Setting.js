@@ -2630,10 +2630,6 @@ export function getVersionInfo(text, siteName) {
   }
 }
 
-export function prependRow(array, row) {
-  return [row, ...array];
-}
-
 function getOriginalName(name) {
   const tokens = name.split("_");
   if (tokens.length > 0) {

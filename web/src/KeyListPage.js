@@ -45,18 +45,7 @@ class KeyListPage extends BaseListPage {
 
   addKey() {
     const newKey = this.newKey();
-    KeyBackend.addKey(newKey)
-      .then((res) => {
-        if (res.status === "ok") {
-          this.props.history.push({pathname: `/keys/${newKey.owner}/${newKey.name}`, mode: "add"});
-          Setting.showMessage("success", i18next.t("general:Successfully added"));
-        } else {
-          Setting.showMessage("error", `${i18next.t("general:Failed to add")}: ${res.msg}`);
-        }
-      })
-      .catch(error => {
-        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
-      });
+    this.props.history.push({pathname: `/keys/${newKey.owner}/${newKey.name}`, mode: "add", key: newKey});
   }
 
   deleteKey(i) {
