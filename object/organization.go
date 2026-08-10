@@ -72,7 +72,7 @@ type Organization struct {
 	DefaultAvatar           string     `xorm:"varchar(200)" json:"defaultAvatar"`
 	UsePermanentAvatar      bool       `xorm:"bool" json:"usePermanentAvatar"`
 	DefaultApplication      string     `xorm:"varchar(100)" json:"defaultApplication"`
-	DefaultTokenFormat     string     `xorm:"varchar(100)" json:"defaultTokenFormat"`
+	DefaultTokenFormat      string     `xorm:"varchar(100)" json:"defaultTokenFormat"`
 	UserTypes               []string   `xorm:"mediumtext" json:"userTypes"`
 	Tags                    []string   `xorm:"mediumtext" json:"tags"`
 	Languages               []string   `xorm:"varchar(255)" json:"languages"`
