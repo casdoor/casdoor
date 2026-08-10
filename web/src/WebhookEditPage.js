@@ -341,7 +341,8 @@ class WebhookEditPage extends React.Component {
             {Setting.getLabel(i18next.t("webhook:Single org only"), i18next.t("webhook:Single org only - Tooltip"))} :
           </Col>
           <Col span={1} >
-            <Switch checked={this.state.webhook.singleOrgOnly} onChange={checked => {
+            {/* turning this off makes the webhook receive the records of every organization, which is reserved for global admins */}
+            <Switch disabled={!Setting.isAdminUser(this.props.account)} checked={this.state.webhook.singleOrgOnly} onChange={checked => {
               this.updateWebhookField("singleOrgOnly", checked);
             }} />
           </Col>

@@ -134,6 +134,10 @@ func (c *ApiController) AddSyncer() {
 		return
 	}
 
+	if !c.requireOrganizationPermission(syncer.Organization) {
+		return
+	}
+
 	c.Data["json"] = wrapActionResponse(object.AddSyncer(&syncer))
 	c.ServeJSON()
 }

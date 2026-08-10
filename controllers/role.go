@@ -121,6 +121,10 @@ func (c *ApiController) AddRole() {
 		return
 	}
 
+	if !c.requireOrganizationPermission(role.Owner) {
+		return
+	}
+
 	c.Data["json"] = wrapActionResponse(object.AddRole(&role))
 	c.ServeJSON()
 }
