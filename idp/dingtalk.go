@@ -19,7 +19,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -178,7 +177,11 @@ func (idp *DingTalkIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, erro
 		AvatarUrl:   dtUserInfo.AvatarUrl,
 	}
 
-	corpAccessToken := idp.getInnerAppAccessToken()
+	corpAccessToken, err := idp.getInnerAppAccessToken()
+	if err != nil {
+		return nil, err
+	}
+
 	userId, err := idp.getUserId(userInfo.UnionId, corpAccessToken)
 	if err != nil {
 		return nil, err
@@ -212,10 +215,6 @@ func (idp *DingTalkIdProvider) postWithBody(body interface{}, url string) ([]byt
 	if err != nil {
 		return nil, err
 	}
-	data, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
 	defer func(Body io.ReadCloser) {
 		err := Body.Close()
 		if err != nil {
@@ -223,27 +222,47 @@ func (idp *DingTalkIdProvider) postWithBody(body interface{}, url string) ([]byt
 		}
 	}(resp.Body)
 
+	data, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	if resp.StatusCode < 200 || resp.StatusCode > 299 {
+		return nil, fmt.Errorf("postWithBody() error, url = %s, status = %s, response = %s", url, resp.Status, string(data))
+	}
+
 	return data, nil
 }
 
-func (idp *DingTalkIdProvider) getInnerAppAccessToken() string {
+func (idp *DingTalkIdProvider) getInnerAppAccessToken() (string, error) {
 	body := make(map[string]string)
 	body["appKey"] = idp.Config.ClientID
 	body["appSecret"] = idp.Config.ClientSecret
 	respBytes, err := idp.postWithBody(body, "https://api.dingtalk.com/v1.0/oauth2/accessToken")
 	if err != nil {
-		log.Println(err.Error())
+		return "", err
 	}
 
 	var data struct {
+		ErrCode     string `json:"code"`
+		ErrMsg      string `json:"message"`
 		ExpireIn    int    `json:"expireIn"`
 		AccessToken string `json:"accessToken"`
 	}
 	err = json.Unmarshal(respBytes, &data)
 	if err != nil {
-		log.Println(err.Error())
+		return "", err
 	}
-	return data.AccessToken
+
+	if data.ErrCode != "" {
+		return "", fmt.Errorf("getInnerAppAccessToken() error, code = %s, message = %s", data.ErrCode, data.ErrMsg)
+	}
+
+	if data.AccessToken == "" {
+		return "", fmt.Errorf("getInnerAppAccessToken() error, accessToken is empty, response = %s", string(respBytes))
+	}
+
+	return data.AccessToken, nil
 }
 
 func (idp *DingTalkIdProvider) getUserId(unionId string, accessToken string) (string, error) {
