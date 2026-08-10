@@ -263,6 +263,12 @@ class OrderEditPage extends React.Component {
           this.setState({
             orderName: this.state.order.name,
             mode: "edit",
+          }, () => {
+            if (isAdd && !exitAfterSave) {
+              // the product infos and the price are computed by the server,
+              // so the order has to be reloaded to pick them up
+              this.getOrder();
+            }
           });
           if (exitAfterSave) {
             this.props.history.push("/orders");

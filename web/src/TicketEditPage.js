@@ -328,7 +328,9 @@ class TicketEditPage extends React.Component {
         }
         <br />
         {
-          this.state.ticket !== null ? this.renderMessages() : <Loading type="page" tip={i18next.t("login:Loading")} />
+          // messages are appended to the saved ticket, so they can only be sent after the ticket is created
+          this.state.mode === "add" ? null :
+            this.state.ticket !== null ? this.renderMessages() : <Loading type="page" tip={i18next.t("login:Loading")} />
         }
       </div>
     );

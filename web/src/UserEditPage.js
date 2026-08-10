@@ -493,7 +493,13 @@ class UserEditPage extends React.Component {
           </Col>
           <Col span={22} >
             {
-              (this.state.user.name === this.state.userName) ? (
+              // PasswordModal calls the set-password API, which needs an existing user, so in
+              // "add" mode the initial password is edited directly on the user to be created
+              (this.state.mode === "add") ? (
+                <Input.Password value={this.state.user.password} disabled={disabled} onChange={e => {
+                  this.updateUserField("password", e.target.value);
+                }} />
+              ) : (this.state.user.name === this.state.userName) ? (
                 <PasswordModal user={this.state.user} userName={this.state.userName} organization={this.getUserOrganization()} account={this.props.account} disabled={disabled} />
               ) : (
                 <Tooltip placement={"topLeft"} title={i18next.t("user:You have changed the username, please save your change first before modifying the password")}>
@@ -719,7 +725,8 @@ class UserEditPage extends React.Component {
           <Col span={22} >
             <Button
               type="primary"
-              disabled={isVerified || disabled}
+              // the verification result is written back to the saved user, so it needs the user to exist
+              disabled={isVerified || disabled || this.state.mode === "add"}
               onClick={() => this.handleVerifyIdentification()}
             >
               {isVerified ? i18next.t("user:Verified") : i18next.t("user:Verify Identity")}
@@ -1346,7 +1353,9 @@ class UserEditPage extends React.Component {
             </Col>
         }
         {
-          (this.props.account === null) ? null : (
+          // the upload creates a resource owned by the user and then writes the URL back to it,
+          // so it can only be done after the user is created
+          (this.props.account === null || this.state.mode === "add") ? null : (
             <CropperDivModal disabled={disabled} tag={tag} setTitle={set} buttonText={`${title}...`} title={title} user={this.state.user} organization={this.getUserOrganization()} />
           )
         }
@@ -1557,6 +1566,11 @@ class UserEditPage extends React.Component {
             organizationName: this.state.user.owner,
             userName: this.state.user.name,
             mode: "edit",
+          }, () => {
+            if (isAdd && !exitAfterSave) {
+              // the user exists now, reload it so that its avatar, MFA and consents are available
+              this.getUser();
+            }
           });
           if (exitAfterSave) {
             if (this.state.returnUrl) {

@@ -260,7 +260,8 @@ class AdapterEditPage extends React.Component {
             {Setting.getLabel(i18next.t("provider:DB test"), i18next.t("provider:DB test - Tooltip"))} :
           </Col>
           <Col span={2} >
-            <Button disabled={this.state.organizationName !== this.state.adapter.owner} type={"primary"} onClick={() => {
+            {/* the test goes through the saved adapter record, so it is not available before the adapter is created */}
+            <Button disabled={this.state.mode === "add" || this.state.organizationName !== this.state.adapter.owner} type={"primary"} onClick={() => {
               AdapterBackend.getPolicies("", "", `${this.state.adapter.owner}/${this.state.adapter.name}`)
                 .then((res) => {
                   if (res.status === "ok") {

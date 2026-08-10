@@ -144,6 +144,16 @@ func UpdateModel(id string, modelObj *Model) (bool, error) {
 	return affected != 0, err
 }
 
+func AddModelWithCheck(modelObj *Model) (bool, error) {
+	// check model grammar
+	_, err := model.NewModelFromString(modelObj.ModelText)
+	if err != nil {
+		return false, err
+	}
+
+	return AddModel(modelObj)
+}
+
 func AddModel(model *Model) (bool, error) {
 	affected, err := ormer.Engine.Insert(model)
 	if err != nil {
