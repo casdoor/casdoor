@@ -44,6 +44,16 @@ class CouponEditPage extends React.Component {
   }
 
   getCoupon() {
+    if (this.state.mode === "add" && this.props.location.coupon) {
+      const coupon = this.props.location.coupon;
+      this.setState({
+        coupon: coupon,
+      });
+
+      this.getProducts(this.state.organizationName);
+      return;
+    }
+
     CouponBackend.getCoupon(this.state.organizationName, this.state.couponName)
       .then((res) => {
         if (res.data === null) {
@@ -287,12 +297,17 @@ class CouponEditPage extends React.Component {
 
   submitCouponEdit(willExist) {
     const coupon = Setting.deepCopy(this.state.coupon);
-    CouponBackend.updateCoupon(this.state.coupon.owner, this.state.couponName, coupon)
+    const isAdd = this.state.mode === "add";
+    const apiCall = isAdd
+      ? CouponBackend.addCoupon(coupon)
+      : CouponBackend.updateCoupon(this.state.coupon.owner, this.state.couponName, coupon);
+    apiCall
       .then((res) => {
         if (res.status === "ok") {
           Setting.showMessage("success", i18next.t("general:Successfully saved"));
           this.setState({
             couponName: this.state.coupon.name,
+            mode: "edit",
           });
           if (willExist) {
             this.props.history.push("/coupons");
@@ -309,7 +324,7 @@ class CouponEditPage extends React.Component {
   }
 
   deleteCoupon() {
-    CouponBackend.deleteCoupon(this.state.coupon)
+    CouponBackend.deleteCoupon(Setting.getDeleteObj(this.state.coupon, this.state.coupon.owner, this.state.couponName))
       .then((res) => {
         if (res.status === "ok") {
           this.props.history.push("/coupons");

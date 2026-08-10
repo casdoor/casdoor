@@ -951,6 +951,8 @@
     "Balance credit - Tooltip": "Guthaben (Credits) - Tooltip",
     "Balance currency": "Guthabenwährung",
     "Balance currency - Tooltip": "Guthabenwährung - Tooltip",
+    "Default token format": "Standard-Token-Format",
+    "Default token format - Tooltip": "Das Token-Format, das von neu erstellten Anwendungen dieser Organisation verwendet wird, bestehende Anwendungen sind nicht betroffen",
     "Edit Organization": "Organisation bearbeiten",
     "Follow global theme": "Folge dem globalen Theme",
     "Has privilege consent": "Privilegienzustimmung vorhanden",

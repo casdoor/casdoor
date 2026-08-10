@@ -97,6 +97,19 @@ class UserEditPage extends React.Component {
   }
 
   getUser() {
+    if (this.state.mode === "add" && this.props.location.user) {
+      const user = this.props.location.user;
+      this.setState({
+        user: user,
+        multiFactorAuths: [],
+        consents: [],
+        loading: false,
+      });
+
+      this.getApplicationsByOrganization(this.state.organizationName);
+      return;
+    }
+
     UserBackend.getUser(this.state.organizationName, this.state.userName)
       .then((res) => {
         if (res.data === null) {
@@ -1532,13 +1545,18 @@ class UserEditPage extends React.Component {
 
   submitUserEdit(exitAfterSave) {
     const user = Setting.deepCopy(this.state.user);
-    UserBackend.updateUser(this.state.organizationName, this.state.userName, user)
+    const isAdd = this.state.mode === "add";
+    const apiCall = isAdd
+      ? UserBackend.addUser(user)
+      : UserBackend.updateUser(this.state.organizationName, this.state.userName, user);
+    apiCall
       .then((res) => {
         if (res.status === "ok") {
           Setting.showMessage("success", i18next.t("general:Successfully saved"));
           this.setState({
             organizationName: this.state.user.owner,
             userName: this.state.user.name,
+            mode: "edit",
           });
           if (exitAfterSave) {
             if (this.state.returnUrl) {
@@ -1562,8 +1580,10 @@ class UserEditPage extends React.Component {
           }
         } else {
           Setting.showMessage("error", `${i18next.t("general:Failed to save")}: ${res.msg}`);
-          this.updateUserField("owner", this.state.organizationName);
-          this.updateUserField("name", this.state.userName);
+          if (!isAdd) {
+            this.updateUserField("owner", this.state.organizationName);
+            this.updateUserField("name", this.state.userName);
+          }
         }
       })
       .catch(error => {
@@ -1572,22 +1592,12 @@ class UserEditPage extends React.Component {
   }
 
   deleteUser() {
-    UserBackend.deleteUser(this.state.user)
-      .then((res) => {
-        if (res.status === "ok") {
-          const userListUrl = sessionStorage.getItem("userListUrl");
-          if (userListUrl !== null) {
-            this.props.history.push(userListUrl);
-          } else {
-            this.props.history.push("/users");
-          }
-        } else {
-          Setting.showMessage("error", `${i18next.t("general:Failed to delete")}: ${res.msg}`);
-        }
-      })
-      .catch(error => {
-        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
-      });
+    const userListUrl = sessionStorage.getItem("userListUrl");
+    if (userListUrl !== null) {
+      this.props.history.push(userListUrl);
+    } else {
+      this.props.history.push("/users");
+    }
   }
 
   render() {

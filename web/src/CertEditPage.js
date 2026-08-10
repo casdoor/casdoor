@@ -44,6 +44,14 @@ class CertEditPage extends React.Component {
   }
 
   getCert() {
+    if (this.state.mode === "add" && this.props.location.cert) {
+      const cert = this.props.location.cert;
+      this.setState({
+        cert: cert,
+      });
+      return;
+    }
+
     CertBackend.getCert(this.state.owner, this.state.certName)
       .then((res) => {
         if (res.data === null) {
@@ -380,12 +388,18 @@ class CertEditPage extends React.Component {
 
   submitCertEdit(exitAfterSave) {
     const cert = Setting.deepCopy(this.state.cert);
-    CertBackend.updateCert(this.state.owner, this.state.certName, cert)
+    const isAdd = this.state.mode === "add";
+    const apiCall = isAdd
+      ? CertBackend.addCert(cert)
+      : CertBackend.updateCert(this.state.owner, this.state.certName, cert);
+    apiCall
       .then((res) => {
         if (res.status === "ok") {
           Setting.showMessage("success", i18next.t("general:Successfully saved"));
           this.setState({
+            owner: this.state.cert.owner,
             certName: this.state.cert.name,
+            mode: "edit",
           }, () => {
             if (exitAfterSave) {
               this.props.history.push("/certs");
@@ -396,7 +410,9 @@ class CertEditPage extends React.Component {
           });
         } else {
           Setting.showMessage("error", `${i18next.t("general:Failed to save")}: ${res.msg}`);
-          this.updateCertField("name", this.state.certName);
+          if (!isAdd) {
+            this.updateCertField("name", this.state.certName);
+          }
         }
       })
       .catch(error => {
@@ -405,17 +421,7 @@ class CertEditPage extends React.Component {
   }
 
   deleteCert() {
-    CertBackend.deleteCert(this.state.cert)
-      .then((res) => {
-        if (res.status === "ok") {
-          this.props.history.push("/certs");
-        } else {
-          Setting.showMessage("error", `${i18next.t("general:Failed to delete")}: ${res.msg}`);
-        }
-      })
-      .catch(error => {
-        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
-      });
+    this.props.history.push("/certs");
   }
 
   render() {

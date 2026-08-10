@@ -47,6 +47,16 @@ class PlanEditPage extends React.Component {
   }
 
   getPlan() {
+    if (this.state.mode === "add" && this.props.location.plan) {
+      const plan = this.props.location.plan;
+      this.setState({
+        plan: plan,
+      });
+
+      this.getPaymentProviders(this.state.organizationName);
+      return;
+    }
+
     PlanBackend.getPlan(this.state.organizationName, this.state.planName)
       .then((res) => {
         if (res.data === null) {
@@ -258,12 +268,18 @@ class PlanEditPage extends React.Component {
 
   submitPlanEdit(exitAfterSave) {
     const plan = Setting.deepCopy(this.state.plan);
-    PlanBackend.updatePlan(this.state.organizationName, this.state.planName, plan)
+    const isAdd = this.state.mode === "add";
+    const apiCall = isAdd
+      ? PlanBackend.addPlan(plan)
+      : PlanBackend.updatePlan(this.state.organizationName, this.state.planName, plan);
+    apiCall
       .then((res) => {
         if (res.status === "ok") {
           Setting.showMessage("success", i18next.t("general:Successfully saved"));
           this.setState({
+            organizationName: this.state.plan.owner,
             planName: this.state.plan.name,
+            mode: "edit",
           });
 
           if (exitAfterSave) {
@@ -273,7 +289,9 @@ class PlanEditPage extends React.Component {
           }
         } else {
           Setting.showMessage("error", `${i18next.t("general:Failed to save")}: ${res.msg}`);
-          this.updatePlanField("name", this.state.planName);
+          if (!isAdd) {
+            this.updatePlanField("name", this.state.planName);
+          }
         }
       })
       .catch(error => {
@@ -282,17 +300,7 @@ class PlanEditPage extends React.Component {
   }
 
   deletePlan() {
-    PlanBackend.deletePlan(this.state.plan)
-      .then((res) => {
-        if (res.status === "ok") {
-          this.props.history.push("/plans");
-        } else {
-          Setting.showMessage("error", `${i18next.t("general:Failed to delete")}: ${res.msg}`);
-        }
-      })
-      .catch(error => {
-        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
-      });
+    this.props.history.push("/plans");
   }
 
   render() {

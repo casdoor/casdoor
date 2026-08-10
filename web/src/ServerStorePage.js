@@ -28,7 +28,6 @@ class ServerStorePage extends React.Component {
     this.state = {
       onlineListLoading: false,
       onlineServerList: [],
-      creatingOnlineServerId: "",
       onlineNameFilter: "",
       onlineCategoryFilter: [],
     };
@@ -90,21 +89,7 @@ class ServerStorePage extends React.Component {
       application: "",
     };
 
-    this.setState({creatingOnlineServerId: onlineServer.id});
-    ServerBackend.addServer(newServer)
-      .then((res) => {
-        this.setState({creatingOnlineServerId: ""});
-        if (res.status === "ok") {
-          this.props.history.push({pathname: `/servers/${newServer.owner}/${newServer.name}`, mode: "add"});
-          Setting.showMessage("success", i18next.t("general:Successfully added"));
-        } else {
-          Setting.showMessage("error", `${i18next.t("general:Failed to add")}: ${res.msg}`);
-        }
-      })
-      .catch(error => {
-        this.setState({creatingOnlineServerId: ""});
-        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
-      });
+    this.props.history.push({pathname: `/servers/${newServer.owner}/${newServer.name}`, mode: "add", server: newServer});
   };
 
   normalizeOnlineServers = (onlineServers) => {
@@ -175,7 +160,6 @@ class ServerStorePage extends React.Component {
             <Button
               type="primary"
               size="small"
-              loading={this.state.creatingOnlineServerId === server.id}
               onClick={(e) => {
                 e.stopPropagation();
                 this.createServerFromOnline(server);

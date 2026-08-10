@@ -51,6 +51,14 @@ class InvitationEditPage extends React.Component {
   }
 
   getInvitation() {
+    if (this.state.mode === "add" && this.props.location.invitation) {
+      const invitation = this.props.location.invitation;
+      this.setState({
+        invitation: invitation,
+      });
+      return;
+    }
+
     InvitationBackend.getInvitation(this.state.organizationName, this.state.invitationName)
       .then((res) => {
         if (res.data === null) {
@@ -345,12 +353,18 @@ class InvitationEditPage extends React.Component {
 
   submitInvitationEdit(exitAfterSave) {
     const invitation = Setting.deepCopy(this.state.invitation);
-    InvitationBackend.updateInvitation(this.state.organizationName, this.state.invitationName, invitation)
+    const isAdd = this.state.mode === "add";
+    const apiCall = isAdd
+      ? InvitationBackend.addInvitation(invitation)
+      : InvitationBackend.updateInvitation(this.state.organizationName, this.state.invitationName, invitation);
+    apiCall
       .then((res) => {
         if (res.status === "ok") {
           Setting.showMessage("success", i18next.t("general:Successfully saved"));
           this.setState({
+            organizationName: this.state.invitation.owner,
             invitationName: this.state.invitation.name,
+            mode: "edit",
           });
 
           if (exitAfterSave) {
@@ -360,7 +374,9 @@ class InvitationEditPage extends React.Component {
           }
         } else {
           Setting.showMessage("error", `${i18next.t("general:Failed to save")}: ${res.msg}`);
-          this.updateInvitationField("name", this.state.invitationName);
+          if (!isAdd) {
+            this.updateInvitationField("name", this.state.invitationName);
+          }
         }
       })
       .catch(error => {
@@ -369,17 +385,7 @@ class InvitationEditPage extends React.Component {
   }
 
   deleteInvitation() {
-    InvitationBackend.deleteInvitation(this.state.invitation)
-      .then((res) => {
-        if (res.status === "ok") {
-          this.props.history.push("/invitations");
-        } else {
-          Setting.showMessage("error", `${i18next.t("general:Failed to delete")}: ${res.msg}`);
-        }
-      })
-      .catch(error => {
-        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
-      });
+    this.props.history.push("/invitations");
   }
 
   render() {

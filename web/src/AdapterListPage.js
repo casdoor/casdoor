@@ -37,18 +37,7 @@ class AdapterListPage extends BaseListPage {
 
   addAdapter() {
     const newAdapter = this.newAdapter();
-    AdapterBackend.addAdapter(newAdapter)
-      .then((res) => {
-        if (res.status === "ok") {
-          this.props.history.push({pathname: `/adapters/${newAdapter.owner}/${newAdapter.name}`, mode: "add"});
-          Setting.showMessage("success", i18next.t("general:Successfully added"));
-        } else {
-          Setting.showMessage("error", `${i18next.t("general:Failed to add")}: ${res.msg}`);
-        }
-      })
-      .catch(error => {
-        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
-      });
+    this.props.history.push({pathname: `/adapters/${newAdapter.owner}/${newAdapter.name}`, mode: "add", adapter: newAdapter});
   }
 
   deleteAdapter(i) {

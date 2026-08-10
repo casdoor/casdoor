@@ -46,6 +46,17 @@ class KeyEditPage extends React.Component {
   }
 
   getKey() {
+    if (this.state.mode === "add" && this.props.location.key) {
+      const key = this.props.location.key;
+      this.setState({
+        key: key,
+      });
+
+      this.getApplicationsByOrganization(key.organization || this.state.organizationName);
+      this.getUsersByOrganization(key.organization || this.state.organizationName);
+      return;
+    }
+
     KeyBackend.getKey(this.state.organizationName, this.state.keyName)
       .then((res) => {
         if (res.data === null) {
@@ -258,13 +269,18 @@ class KeyEditPage extends React.Component {
 
   submitKeyEdit(exitAfterSave) {
     const key = Setting.deepCopy(this.state.key);
-    KeyBackend.updateKey(this.state.organizationName, this.state.keyName, key)
+    const isAdd = this.state.mode === "add";
+    const apiCall = isAdd
+      ? KeyBackend.addKey(key)
+      : KeyBackend.updateKey(this.state.organizationName, this.state.keyName, key);
+    apiCall
       .then((res) => {
         if (res.status === "ok") {
           Setting.showMessage("success", i18next.t("general:Successfully saved"));
           this.setState({
             organizationName: this.state.key.owner,
             keyName: this.state.key.name,
+            mode: "edit",
           });
 
           if (exitAfterSave) {
@@ -274,8 +290,10 @@ class KeyEditPage extends React.Component {
           }
         } else {
           Setting.showMessage("error", `${i18next.t("general:Failed to save")}: ${res.msg}`);
-          this.updateKeyField("owner", this.state.organizationName);
-          this.updateKeyField("name", this.state.keyName);
+          if (!isAdd) {
+            this.updateKeyField("owner", this.state.organizationName);
+            this.updateKeyField("name", this.state.keyName);
+          }
         }
       })
       .catch(error => {
@@ -284,17 +302,7 @@ class KeyEditPage extends React.Component {
   }
 
   deleteKey() {
-    KeyBackend.deleteKey(this.state.key)
-      .then((res) => {
-        if (res.status === "ok") {
-          this.props.history.push("/keys");
-        } else {
-          Setting.showMessage("error", `${i18next.t("general:Failed to delete")}: ${res.msg}`);
-        }
-      })
-      .catch(error => {
-        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
-      });
+    this.props.history.push("/keys");
   }
 
   render() {

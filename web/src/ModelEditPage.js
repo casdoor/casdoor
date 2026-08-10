@@ -43,6 +43,14 @@ class ModelEditPage extends React.Component {
   }
 
   getModel() {
+    if (this.state.mode === "add" && this.props.location.model) {
+      const model = this.props.location.model;
+      this.setState({
+        model: model,
+      });
+      return;
+    }
+
     ModelBackend.getModel(this.state.organizationName, this.state.modelName)
       .then((res) => {
         if (res.data === null) {
@@ -158,12 +166,18 @@ class ModelEditPage extends React.Component {
 
   submitModelEdit(exitAfterSave) {
     const model = Setting.deepCopy(this.state.model);
-    ModelBackend.updateModel(this.state.organizationName, this.state.modelName, model)
+    const isAdd = this.state.mode === "add";
+    const apiCall = isAdd
+      ? ModelBackend.addModel(model)
+      : ModelBackend.updateModel(this.state.organizationName, this.state.modelName, model);
+    apiCall
       .then((res) => {
         if (res.status === "ok") {
           Setting.showMessage("success", i18next.t("general:Successfully saved"));
           this.setState({
+            organizationName: this.state.model.owner,
             modelName: this.state.model.name,
+            mode: "edit",
           });
 
           if (exitAfterSave) {
@@ -173,7 +187,9 @@ class ModelEditPage extends React.Component {
           }
         } else {
           Setting.showMessage("error", `${i18next.t("general:Failed to save")}: ${res.msg}`);
-          this.updateModelField("name", this.state.modelName);
+          if (!isAdd) {
+            this.updateModelField("name", this.state.modelName);
+          }
         }
       })
       .catch(error => {
@@ -182,17 +198,7 @@ class ModelEditPage extends React.Component {
   }
 
   deleteModel() {
-    ModelBackend.deleteModel(this.state.model)
-      .then((res) => {
-        if (res.status === "ok") {
-          this.props.history.push("/models");
-        } else {
-          Setting.showMessage("error", `${i18next.t("general:Failed to delete")}: ${res.msg}`);
-        }
-      })
-      .catch(error => {
-        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
-      });
+    this.props.history.push("/models");
   }
 
   render() {

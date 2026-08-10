@@ -47,6 +47,14 @@ class OrderEditPage extends React.Component {
   }
 
   getOrder() {
+    if (this.state.mode === "add" && this.props.location.order) {
+      const order = this.props.location.order;
+      this.setState({
+        order: order,
+      });
+      return;
+    }
+
     OrderBackend.getOrder(this.state.organizationName, this.state.orderName)
       .then((res) => {
         if (res.data === null) {
@@ -244,12 +252,17 @@ class OrderEditPage extends React.Component {
 
   submitOrderEdit(exitAfterSave) {
     const order = Setting.deepCopy(this.state.order);
-    OrderBackend.updateOrder(this.state.organizationName, this.state.orderName, order)
+    const isAdd = this.state.mode === "add";
+    const apiCall = isAdd
+      ? OrderBackend.addOrder(order)
+      : OrderBackend.updateOrder(this.state.organizationName, this.state.orderName, order);
+    apiCall
       .then((res) => {
         if (res.status === "ok") {
           Setting.showMessage("success", i18next.t("general:Successfully saved"));
           this.setState({
             orderName: this.state.order.name,
+            mode: "edit",
           });
           if (exitAfterSave) {
             this.props.history.push("/orders");
@@ -266,17 +279,7 @@ class OrderEditPage extends React.Component {
   }
 
   deleteOrder() {
-    OrderBackend.deleteOrder(this.state.order)
-      .then((res) => {
-        if (res.status === "ok") {
-          this.props.history.push("/orders");
-        } else {
-          Setting.showMessage("error", `${i18next.t("general:Failed to delete")}: ${res.msg}`);
-        }
-      })
-      .catch(error => {
-        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
-      });
+    this.props.history.push("/orders");
   }
 
   render() {

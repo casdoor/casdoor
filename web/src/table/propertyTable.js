@@ -72,6 +72,7 @@ class PropertyTable extends React.Component {
   }
 
   renderTable(table) {
+    const disabled = this.props.disabled;
     const columns = [
       {
         title: i18next.t("general:Keys"),
@@ -79,7 +80,7 @@ class PropertyTable extends React.Component {
         width: "200px",
         render: (text, record, index) => {
           return (
-            <Input value={text} onChange={e => {
+            <Input value={text} disabled={disabled} onChange={e => {
               this.updateField(table, index, "name", e.target.value);
             }} />
           );
@@ -91,7 +92,7 @@ class PropertyTable extends React.Component {
         width: "200px",
         render: (text, record, index) => {
           return (
-            <Input value={text} onChange={e => {
+            <Input value={text} disabled={disabled} onChange={e => {
               this.updateField(table, index, "value", e.target.value);
             }} />
           );
@@ -103,7 +104,7 @@ class PropertyTable extends React.Component {
         width: "20px",
         render: (text, record, index) => {
           return (
-            <Button icon={<DeleteOutlined />} size="small" onClick={() => this.deleteRow(table, index)} />
+            <Button icon={<DeleteOutlined />} size="small" disabled={disabled} onClick={() => this.deleteRow(table, index)} />
           );
         },
       },
@@ -112,7 +113,7 @@ class PropertyTable extends React.Component {
     return (
       <Table title={() => (
         <div>
-          <Button style={{marginRight: "5px"}} type="primary" size="small" onClick={() => this.addRow(table)}>{i18next.t("general:Add")}</Button>
+          <Button style={{marginRight: "5px"}} type="primary" size="small" disabled={disabled} onClick={() => this.addRow(table)}>{i18next.t("general:Add")}</Button>
         </div>
       )}
       pagination={{

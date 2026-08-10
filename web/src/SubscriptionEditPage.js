@@ -49,6 +49,17 @@ class SubscriptionEditPage extends React.Component {
   }
 
   getSubscription() {
+    if (this.state.mode === "add" && this.props.location.subscription) {
+      const subscription = this.props.location.subscription;
+      this.setState({
+        subscription: subscription,
+      });
+
+      this.getPricings(this.state.organizationName);
+      this.getPlans(this.state.organizationName);
+      return;
+    }
+
     SubscriptionBackend.getSubscription(this.state.organizationName, this.state.subscriptionName)
       .then((res) => {
         if (res.data === null) {
@@ -300,12 +311,18 @@ class SubscriptionEditPage extends React.Component {
 
   submitSubscriptionEdit(exitAfterSave) {
     const subscription = Setting.deepCopy(this.state.subscription);
-    SubscriptionBackend.updateSubscription(this.state.organizationName, this.state.subscriptionName, subscription)
+    const isAdd = this.state.mode === "add";
+    const apiCall = isAdd
+      ? SubscriptionBackend.addSubscription(subscription)
+      : SubscriptionBackend.updateSubscription(this.state.organizationName, this.state.subscriptionName, subscription);
+    apiCall
       .then((res) => {
         if (res.status === "ok") {
           Setting.showMessage("success", i18next.t("general:Successfully saved"));
           this.setState({
+            organizationName: this.state.subscription.owner,
             subscriptionName: this.state.subscription.name,
+            mode: "edit",
           });
 
           if (exitAfterSave) {
@@ -315,7 +332,9 @@ class SubscriptionEditPage extends React.Component {
           }
         } else {
           Setting.showMessage("error", `${i18next.t("general:Failed to save")}: ${res.msg}`);
-          this.updateSubscriptionField("name", this.state.subscriptionName);
+          if (!isAdd) {
+            this.updateSubscriptionField("name", this.state.subscriptionName);
+          }
         }
       })
       .catch(error => {
@@ -324,17 +343,7 @@ class SubscriptionEditPage extends React.Component {
   }
 
   deleteSubscription() {
-    SubscriptionBackend.deleteSubscription(this.state.subscription)
-      .then((res) => {
-        if (res.status === "ok") {
-          this.props.history.push("/subscriptions");
-        } else {
-          Setting.showMessage("error", `${i18next.t("general:Failed to delete")}: ${res.msg}`);
-        }
-      })
-      .catch(error => {
-        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
-      });
+    this.props.history.push("/subscriptions");
   }
 
   render() {

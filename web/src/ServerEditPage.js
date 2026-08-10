@@ -46,6 +46,14 @@ class ServerEditPage extends React.Component {
   }
 
   getServer() {
+    if (this.state.mode === "add" && this.props.location.server) {
+      const server = this.props.location.server;
+      this.setState({
+        server: server,
+      });
+      return;
+    }
+
     ServerBackend.getServer(this.state.server?.owner || this.state.owner, this.state.serverName)
       .then((res) => {
         if (res.data === null) {
@@ -98,7 +106,11 @@ class ServerEditPage extends React.Component {
 
   submitServerEdit(willExit) {
     const server = Setting.deepCopy(this.state.server);
-    ServerBackend.updateServer(this.state.owner, this.state.serverName, server)
+    const isAdd = this.state.mode === "add";
+    const apiCall = isAdd
+      ? ServerBackend.addServer(server)
+      : ServerBackend.updateServer(this.state.owner, this.state.serverName, server);
+    apiCall
       .then((res) => {
         if (res.status === "ok") {
           Setting.showMessage("success", i18next.t("general:Successfully modified"));
@@ -154,18 +166,7 @@ class ServerEditPage extends React.Component {
   }
 
   deleteServer() {
-    ServerBackend.deleteServer(this.state.server)
-      .then((res) => {
-        if (res.status === "ok") {
-          Setting.showMessage("success", i18next.t("general:Successfully deleted"));
-          this.props.history.push("/servers");
-        } else {
-          Setting.showMessage("error", `${i18next.t("general:Failed to delete")}: ${res.msg}`);
-        }
-      })
-      .catch(error => {
-        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
-      });
+    this.props.history.push("/servers");
   }
 
   renderServer() {

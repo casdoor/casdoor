@@ -43,6 +43,14 @@ class GroupEditPage extends React.Component {
   }
 
   getGroup() {
+    if (this.state.mode === "add" && this.props.location.group) {
+      const group = this.props.location.group;
+      this.setState({
+        group: group,
+      });
+      return;
+    }
+
     GroupBackend.getGroup(this.state.organizationName, this.state.groupName)
       .then((res) => {
         if (res.status === "ok") {
@@ -218,12 +226,18 @@ class GroupEditPage extends React.Component {
     const group = Setting.deepCopy(this.state.group);
     group["isTopGroup"] = this.state.organizations.some((organization) => organization.name === group.parentId);
 
-    GroupBackend.updateGroup(this.state.organizationName, this.state.groupName, group)
+    const isAdd = this.state.mode === "add";
+    const apiCall = isAdd
+      ? GroupBackend.addGroup(group)
+      : GroupBackend.updateGroup(this.state.organizationName, this.state.groupName, group);
+    apiCall
       .then((res) => {
         if (res.status === "ok") {
           Setting.showMessage("success", i18next.t("general:Successfully saved"));
           this.setState({
+            organizationName: this.state.group.owner,
             groupName: this.state.group.name,
+            mode: "edit",
           });
 
           if (exitAfterSave) {
@@ -239,7 +253,9 @@ class GroupEditPage extends React.Component {
           }
         } else {
           Setting.showMessage("error", `${i18next.t("general:Failed to save")}: ${res.msg}`);
-          this.updateGroupField("name", this.state.groupName);
+          if (!isAdd) {
+            this.updateGroupField("name", this.state.groupName);
+          }
         }
       })
       .catch(error => {
@@ -248,23 +264,13 @@ class GroupEditPage extends React.Component {
   }
 
   deleteGroup() {
-    GroupBackend.deleteGroup(this.state.group)
-      .then((res) => {
-        if (res.status === "ok") {
-          const groupTreeUrl = sessionStorage.getItem("groupTreeUrl");
-          if (groupTreeUrl !== null) {
-            sessionStorage.removeItem("groupTreeUrl");
-            this.props.history.push(groupTreeUrl);
-          } else {
-            this.props.history.push("/groups");
-          }
-        } else {
-          Setting.showMessage("error", `${i18next.t("general:Failed to delete")}: ${res.msg}`);
-        }
-      })
-      .catch(error => {
-        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
-      });
+    const groupTreeUrl = sessionStorage.getItem("groupTreeUrl");
+    if (groupTreeUrl !== null) {
+      sessionStorage.removeItem("groupTreeUrl");
+      this.props.history.push(groupTreeUrl);
+    } else {
+      this.props.history.push("/groups");
+    }
   }
 
   render() {

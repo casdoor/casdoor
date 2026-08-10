@@ -952,6 +952,8 @@
     "Balance credit - Tooltip": "The credit balance of the organization used for billing or quota purposes",
     "Balance currency": "Balance currency",
     "Balance currency - Tooltip": "The currency unit used for the organization's account balance",
+    "Default token format": "Default token format",
+    "Default token format - Tooltip": "The token format used by newly created applications of this organization, existing applications are not affected",
     "Edit Organization": "Edit Organization",
     "Follow global theme": "Follow global theme",
     "Has privilege consent": "Has privilege consent",

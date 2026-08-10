@@ -72,6 +72,7 @@ type Organization struct {
 	DefaultAvatar           string     `xorm:"varchar(200)" json:"defaultAvatar"`
 	UsePermanentAvatar      bool       `xorm:"bool" json:"usePermanentAvatar"`
 	DefaultApplication      string     `xorm:"varchar(100)" json:"defaultApplication"`
+	DefaultTokenFormat     string     `xorm:"varchar(100)" json:"defaultTokenFormat"`
 	UserTypes               []string   `xorm:"mediumtext" json:"userTypes"`
 	Tags                    []string   `xorm:"mediumtext" json:"tags"`
 	Languages               []string   `xorm:"varchar(255)" json:"languages"`
@@ -319,6 +320,22 @@ func GetOrganizationByUser(user *User) (*Organization, error) {
 	}
 
 	return getOrganization("admin", user.Owner)
+}
+
+// GetDefaultTokenFormat returns the token format that newly created applications of the
+// organization should use. It falls back to "JWT" when the organization does not exist or
+// has no default token format configured yet.
+func GetDefaultTokenFormat(organizationName string) (string, error) {
+	organization, err := getOrganization("admin", organizationName)
+	if err != nil {
+		return "", err
+	}
+
+	if organization == nil || organization.DefaultTokenFormat == "" {
+		return "JWT", nil
+	}
+
+	return organization.DefaultTokenFormat, nil
 }
 
 func GetAccountItemByName(name string, organization *Organization) *AccountItem {

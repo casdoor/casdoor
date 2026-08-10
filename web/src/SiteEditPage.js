@@ -41,6 +41,7 @@ class SiteEditPage extends React.Component {
       certs: null,
       applications: null,
       organizations: [],
+      mode: props.location.mode !== undefined ? props.location.mode : "edit",
     };
   }
 
@@ -65,6 +66,13 @@ class SiteEditPage extends React.Component {
   }
 
   getSite() {
+    if (this.state.mode === "add" && this.props.location.site) {
+      this.setState({
+        site: this.props.location.site,
+      });
+      return;
+    }
+
     SiteBackend.getSite(this.state.site?.owner || this.state.owner, this.state.siteName)
       .then((res) => {
         if (res.status === "ok") {
@@ -153,12 +161,17 @@ class SiteEditPage extends React.Component {
     });
   }
 
+  deleteSite() {
+    this.props.history.push("/sites");
+  }
+
   renderSite() {
     return (
       <Card size="small" title={
         <div>
-          {i18next.t("site:Edit Site")}&nbsp;&nbsp;&nbsp;&nbsp;
+          {this.state.mode === "add" ? i18next.t("site:New Site") : i18next.t("site:Edit Site")}&nbsp;&nbsp;&nbsp;&nbsp;
           <Button type="primary" onClick={this.submitSiteEdit.bind(this)}>{i18next.t("general:Save")}</Button>
+          {this.state.mode === "add" ? <Button style={{marginLeft: "20px"}} onClick={() => this.deleteSite()}>{i18next.t("general:Cancel")}</Button> : null}
         </div>
       } style={{marginLeft: "5px"}} type="inner">
         <Row style={{marginTop: "10px"}} >
@@ -436,19 +449,27 @@ class SiteEditPage extends React.Component {
 
   submitSiteEdit() {
     const site = Setting.deepCopy(this.state.site);
-    SiteBackend.updateSite(this.state.owner, this.state.siteName, site)
+    const isAdd = this.state.mode === "add";
+    const apiCall = isAdd
+      ? SiteBackend.addSite(site)
+      : SiteBackend.updateSite(this.state.owner, this.state.siteName, site);
+    apiCall
       .then((res) => {
         if (res.status === "error") {
           Setting.showMessage("error", `Failed to save: ${res.msg}`);
-          this.updateSiteField("name", this.state.siteName);
+          if (!isAdd) {
+            this.updateSiteField("name", this.state.siteName);
+          }
         } else {
           Setting.showMessage("success", "Successfully saved");
           this.setState({
             owner: this.state.site.owner,
             siteName: this.state.site.name,
+            mode: "edit",
+          }, () => {
+            this.getSite();
           });
           this.props.history.push(`/sites/${this.state.site.owner}/${this.state.site.name}`);
-          this.getSite();
         }
       })
       .catch(error => {
@@ -475,6 +496,7 @@ class SiteEditPage extends React.Component {
           </Col>
           <Col span={18}>
             <Button type="primary" size="large" onClick={this.submitSiteEdit.bind(this)}>{i18next.t("general:Save")}</Button>
+            {this.state.mode === "add" ? <Button style={{marginLeft: "20px"}} size="large" onClick={() => this.deleteSite()}>{i18next.t("general:Cancel")}</Button> : null}
           </Col>
         </Row>
       </div>

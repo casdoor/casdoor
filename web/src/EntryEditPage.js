@@ -42,6 +42,14 @@ class EntryEditPage extends React.Component {
   }
 
   getEntry() {
+    if (this.state.mode === "add" && this.props.location.entry) {
+      const entry = this.props.location.entry;
+      this.setState({
+        entry: entry,
+      });
+      return;
+    }
+
     EntryBackend.getEntry(this.state.entry?.owner || this.state.owner, this.state.entryName)
       .then((res) => {
         if (res.data === null) {
@@ -87,7 +95,11 @@ class EntryEditPage extends React.Component {
 
   submitEntryEdit(willExit) {
     const entry = Setting.deepCopy(this.state.entry);
-    EntryBackend.updateEntry(this.state.owner, this.state.entryName, entry)
+    const isAdd = this.state.mode === "add";
+    const apiCall = isAdd
+      ? EntryBackend.addEntry(entry)
+      : EntryBackend.updateEntry(this.state.owner, this.state.entryName, entry);
+    apiCall
       .then((res) => {
         if (res.status === "ok") {
           Setting.showMessage("success", i18next.t("general:Successfully modified"));
@@ -111,18 +123,7 @@ class EntryEditPage extends React.Component {
   }
 
   deleteEntry() {
-    EntryBackend.deleteEntry(this.state.entry)
-      .then((res) => {
-        if (res.status === "ok") {
-          Setting.showMessage("success", i18next.t("general:Successfully deleted"));
-          this.props.history.push("/entries");
-        } else {
-          Setting.showMessage("error", `${i18next.t("general:Failed to delete")}: ${res.msg}`);
-        }
-      })
-      .catch(error => {
-        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
-      });
+    this.props.history.push("/entries");
   }
 
   renderEntry() {

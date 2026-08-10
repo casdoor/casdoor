@@ -44,6 +44,17 @@ class EnforcerEditPage extends React.Component {
   }
 
   getEnforcer() {
+    if (this.state.mode === "add" && this.props.location.enforcer) {
+      const enforcer = this.props.location.enforcer;
+      this.setState({
+        enforcer: enforcer,
+      });
+
+      this.getModels(this.state.organizationName);
+      this.getAdapters(this.state.organizationName);
+      return;
+    }
+
     EnforcerBackend.getEnforcer(this.state.organizationName, this.state.enforcerName, true)
       .then((res) => {
         if (res.data === null) {
@@ -201,12 +212,18 @@ class EnforcerEditPage extends React.Component {
 
   submitEnforcerEdit(exitAfterSave) {
     const enforcer = Setting.deepCopy(this.state.enforcer);
-    EnforcerBackend.updateEnforcer(this.state.organizationName, this.state.enforcerName, enforcer)
+    const isAdd = this.state.mode === "add";
+    const apiCall = isAdd
+      ? EnforcerBackend.addEnforcer(enforcer)
+      : EnforcerBackend.updateEnforcer(this.state.organizationName, this.state.enforcerName, enforcer);
+    apiCall
       .then((res) => {
         if (res.status === "ok") {
           Setting.showMessage("success", i18next.t("general:Successfully saved"));
           this.setState({
+            organizationName: this.state.enforcer.owner,
             enforcerName: this.state.enforcer.name,
+            mode: "edit",
           });
 
           if (exitAfterSave) {
@@ -216,7 +233,9 @@ class EnforcerEditPage extends React.Component {
           }
         } else {
           Setting.showMessage("error", `${i18next.t("general:Failed to save")}: ${res.msg}`);
-          this.updateEnforcerField("name", this.state.enforcerName);
+          if (!isAdd) {
+            this.updateEnforcerField("name", this.state.enforcerName);
+          }
         }
       })
       .catch(error => {
@@ -225,17 +244,7 @@ class EnforcerEditPage extends React.Component {
   }
 
   deleteEnforcer() {
-    EnforcerBackend.deleteEnforcer(this.state.enforcer)
-      .then((res) => {
-        if (res.status === "ok") {
-          this.props.history.push("/enforcers");
-        } else {
-          Setting.showMessage("error", `${i18next.t("general:Failed to delete")}: ${res.msg}`);
-        }
-      })
-      .catch(error => {
-        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
-      });
+    this.props.history.push("/enforcers");
   }
 
   render() {

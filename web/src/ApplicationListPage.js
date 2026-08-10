@@ -52,7 +52,7 @@ class ApplicationListPage extends BaseListPage {
       providers: [
         {name: "provider_captcha_default", canSignUp: false, canSignIn: false, canUnlink: false, prompted: false, signupGroup: "", rule: ""},
       ],
-      SigninMethods: [
+      signinMethods: [
         {name: "Password", displayName: "Password", rule: "All"},
         {name: "Verification code", displayName: "Verification code", rule: "All"},
         {name: "WebAuthn", displayName: "WebAuthn", rule: "None"},
@@ -73,7 +73,8 @@ class ApplicationListPage extends BaseListPage {
       grantTypes: ["authorization_code", "password", "client_credentials", "token", "id_token", "refresh_token"],
       cert: "cert-built-in",
       redirectUris: ["http://localhost:9000/callback"],
-      tokenFormat: "JWT",
+      // the empty tokenFormat will be filled with the organization's "defaultTokenFormat" by the backend
+      tokenFormat: "",
       tokenFields: [],
       expireInHours: 24 * 7,
       refreshExpireInHours: 24 * 7,
@@ -84,18 +85,7 @@ class ApplicationListPage extends BaseListPage {
 
   addApplication() {
     const newApplication = this.newApplication();
-    ApplicationBackend.addApplication(newApplication)
-      .then((res) => {
-        if (res.status === "ok") {
-          this.props.history.push({pathname: `/applications/${newApplication.organization}/${newApplication.name}`, mode: "add"});
-          Setting.showMessage("success", i18next.t("general:Successfully added"));
-        } else {
-          Setting.showMessage("error", `${i18next.t("general:Failed to add")}: ${res.msg}`);
-        }
-      })
-      .catch(error => {
-        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
-      });
+    this.props.history.push({pathname: `/applications/${newApplication.organization}/${newApplication.name}`, mode: "add", application: newApplication});
   }
 
   deleteApplication(i) {

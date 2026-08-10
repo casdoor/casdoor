@@ -164,6 +164,25 @@ class ApplicationEditPage extends React.Component {
   }
 
   getApplication() {
+    if (this.state.mode === "add" && this.props.location.application) {
+      const application = this.props.location.application;
+      if (application.grantTypes === null || application.grantTypes === undefined || application.grantTypes.length === 0) {
+        application.grantTypes = ["authorization_code"];
+      }
+
+      if (application.tags === null || application.tags === undefined) {
+        application.tags = [];
+      }
+
+      this.setState({
+        application: application,
+      });
+
+      this.getProviders(application);
+      this.getCerts(application);
+      return;
+    }
+
     ApplicationBackend.getApplication("admin", this.state.applicationName)
       .then((res) => {
         if (res.data === null) {
@@ -240,6 +259,17 @@ class ApplicationEditPage extends React.Component {
           Setting.showMessage("error", res.msg);
         }
       });
+  }
+
+  // a newly added application has an empty "tokenFormat", it will be filled with the
+  // organization's "defaultTokenFormat" by the backend when the application is created
+  getTokenFormat() {
+    if (this.state.application.tokenFormat) {
+      return this.state.application.tokenFormat;
+    }
+
+    const organization = this.state.organizations.filter(organization => organization.name === this.state.application.organization)[0];
+    return organization?.defaultTokenFormat || "JWT";
   }
 
   getSamlMetadata(checked) {
@@ -836,7 +866,7 @@ class ApplicationEditPage extends React.Component {
               {Setting.getLabel(i18next.t("application:Token format"), i18next.t("application:Token format - Tooltip"))} :
             </Col>
             <Col span={21} >
-              <Select virtual={false} style={{width: "100%"}} value={this.state.application.tokenFormat} onChange={(value => {this.updateApplicationField("tokenFormat", value);})}
+              <Select virtual={false} style={{width: "100%"}} value={this.getTokenFormat()} onChange={(value => {this.updateApplicationField("tokenFormat", value);})}
                 options={["JWT", "JWT-Empty", "JWT-Custom", "JWT-Standard"].map((item) => Setting.getOption(item, item))}
               />
             </Col>
@@ -856,7 +886,7 @@ class ApplicationEditPage extends React.Component {
               {Setting.getLabel(i18next.t("application:Token fields"), i18next.t("application:Token fields - Tooltip"))} :
             </Col>
             <Col span={21} >
-              <Select virtual={false} disabled={this.state.application.tokenFormat !== "JWT-Custom"} mode="tags" showSearch style={{width: "100%"}} value={this.state.application.tokenFields} onChange={(value => {this.updateApplicationField("tokenFields", value);})}>
+              <Select virtual={false} disabled={this.getTokenFormat() !== "JWT-Custom"} mode="tags" showSearch style={{width: "100%"}} value={this.state.application.tokenFields} onChange={(value => {this.updateApplicationField("tokenFields", value);})}>
                 <Option key={"signinMethod"} value={"signinMethod"}>{"SigninMethod"}</Option>
                 <Option key={"provider"} value={"provider"}>{"Provider"}</Option>
                 {
@@ -866,7 +896,7 @@ class ApplicationEditPage extends React.Component {
             </Col>
           </Row>
           {
-            this.state.application.tokenFormat === "JWT-Custom" ? (<Row style={{marginTop: "20px"}} >
+            this.getTokenFormat() === "JWT-Custom" ? (<Row style={{marginTop: "20px"}} >
               <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
                 {Setting.getLabel(i18next.t("general:Token attributes"), i18next.t("general:Token attributes - Tooltip"))} :
               </Col>
@@ -1803,12 +1833,17 @@ class ApplicationEditPage extends React.Component {
       return;
     }
 
-    ApplicationBackend.updateApplication("admin", this.state.applicationName, application)
+    const isAdd = this.state.mode === "add";
+    const apiCall = isAdd
+      ? ApplicationBackend.addApplication(application)
+      : ApplicationBackend.updateApplication("admin", this.state.applicationName, application);
+    apiCall
       .then((res) => {
         if (res.status === "ok") {
           Setting.showMessage("success", i18next.t("general:Successfully saved"));
           this.setState({
             applicationName: this.state.application.name,
+            mode: "edit",
           });
 
           if (exitAfterSave) {
@@ -1818,7 +1853,9 @@ class ApplicationEditPage extends React.Component {
           }
         } else {
           Setting.showMessage("error", `${i18next.t("general:Failed to save")}: ${res.msg}`);
-          this.updateApplicationField("name", this.state.applicationName);
+          if (!isAdd) {
+            this.updateApplicationField("name", this.state.applicationName);
+          }
         }
       })
       .catch(error => {
@@ -1827,17 +1864,7 @@ class ApplicationEditPage extends React.Component {
   }
 
   deleteApplication() {
-    ApplicationBackend.deleteApplication(this.state.application)
-      .then((res) => {
-        if (res.status === "ok") {
-          this.props.history.push("/applications");
-        } else {
-          Setting.showMessage("error", `${i18next.t("general:Failed to delete")}: ${res.msg}`);
-        }
-      })
-      .catch(error => {
-        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
-      });
+    this.props.history.push("/applications");
   }
 
   render() {

@@ -39,22 +39,8 @@ class FormListPage extends BaseListPage {
 
   addForm() {
     const newForm = this.newForm();
-    FormBackend.addForm(newForm)
-      .then((res) => {
-        if (res.status === "ok") {
-          sessionStorage.setItem("formListUrl", window.location.pathname);
-          this.props.history.push({
-            pathname: `/forms/${newForm.name}`,
-            mode: "add",
-          });
-          Setting.showMessage("success", i18next.t("general:Successfully added"));
-        } else {
-          Setting.showMessage("error", `${i18next.t("general:Failed to add")}: ${res.msg}`);
-        }
-      })
-      .catch(error => {
-        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
-      });
+    sessionStorage.setItem("formListUrl", window.location.pathname);
+    this.props.history.push({pathname: `/forms/${newForm.name}`, mode: "add", form: newForm});
   }
 
   deleteForm(record) {

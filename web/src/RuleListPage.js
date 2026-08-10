@@ -60,17 +60,7 @@ class RuleListPage extends BaseListPage {
 
   addRule() {
     const newRule = this.newRule();
-    RuleBackend.addRule(newRule).then((res) => {
-      if (res.status === "error") {
-        Setting.showMessage("error", `Failed to add: ${res.msg}`);
-      } else {
-        Setting.showMessage("success", "Rule added successfully");
-        this.setState({
-          data: Setting.prependRow(this.state.data, newRule),
-        });
-        this.fetch();
-      }
-    });
+    this.props.history.push({pathname: `/rules/${newRule.owner}/${newRule.name}`, mode: "add", rule: newRule});
   }
 
   deleteRule(i) {

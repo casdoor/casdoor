@@ -47,6 +47,16 @@ class PricingEditPage extends React.Component {
   }
 
   getPricing() {
+    if (this.state.mode === "add" && this.props.location.pricing) {
+      const pricing = this.props.location.pricing;
+      this.setState({
+        pricing: pricing,
+      });
+
+      this.getPlans(this.state.organizationName);
+      return;
+    }
+
     PricingBackend.getPricing(this.state.organizationName, this.state.pricingName)
       .then((res) => {
         if (res.data === null) {
@@ -233,12 +243,18 @@ class PricingEditPage extends React.Component {
 
   submitPricingEdit(exitAfterSave) {
     const pricing = Setting.deepCopy(this.state.pricing);
-    PricingBackend.updatePricing(this.state.organizationName, this.state.pricingName, pricing)
+    const isAdd = this.state.mode === "add";
+    const apiCall = isAdd
+      ? PricingBackend.addPricing(pricing)
+      : PricingBackend.updatePricing(this.state.organizationName, this.state.pricingName, pricing);
+    apiCall
       .then((res) => {
         if (res.status === "ok") {
           Setting.showMessage("success", i18next.t("general:Successfully saved"));
           this.setState({
+            organizationName: this.state.pricing.owner,
             pricingName: this.state.pricing.name,
+            mode: "edit",
           });
 
           if (exitAfterSave) {
@@ -248,7 +264,9 @@ class PricingEditPage extends React.Component {
           }
         } else {
           Setting.showMessage("error", `${i18next.t("general:Failed to save")}: ${res.msg}`);
-          this.updatePricingField("name", this.state.pricingName);
+          if (!isAdd) {
+            this.updatePricingField("name", this.state.pricingName);
+          }
         }
       })
       .catch(error => {
@@ -257,17 +275,7 @@ class PricingEditPage extends React.Component {
   }
 
   deletePricing() {
-    PricingBackend.deletePricing(this.state.pricing)
-      .then((res) => {
-        if (res.status === "ok") {
-          this.props.history.push("/pricings");
-        } else {
-          Setting.showMessage("error", `${i18next.t("general:Failed to delete")}: ${res.msg}`);
-        }
-      })
-      .catch(error => {
-        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
-      });
+    this.props.history.push("/pricings");
   }
 
   render() {

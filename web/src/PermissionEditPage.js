@@ -53,6 +53,17 @@ class PermissionEditPage extends React.Component {
   }
 
   getPermission() {
+    if (this.state.mode === "add" && this.props.location.permission) {
+      const permission = this.props.location.permission;
+      this.setState({
+        permission: permission,
+      });
+
+      this.getModels(permission.owner);
+      this.getResources(permission.owner);
+      return;
+    }
+
     PermissionBackend.getPermission(this.state.organizationName, this.state.permissionName)
       .then((res) => {
         const permission = res.data;
@@ -534,13 +545,18 @@ class PermissionEditPage extends React.Component {
     }
 
     const permission = Setting.deepCopy(this.state.permission);
-    PermissionBackend.updatePermission(this.state.organizationName, this.state.permissionName, permission)
+    const isAdd = this.state.mode === "add";
+    const apiCall = isAdd
+      ? PermissionBackend.addPermission(permission)
+      : PermissionBackend.updatePermission(this.state.organizationName, this.state.permissionName, permission);
+    apiCall
       .then((res) => {
         if (res.status === "ok") {
           Setting.showMessage("success", i18next.t("general:Successfully saved"));
           this.setState({
             organizationName: this.state.permission.owner,
             permissionName: this.state.permission.name,
+            mode: "edit",
           });
 
           if (exitAfterSave) {
@@ -550,7 +566,9 @@ class PermissionEditPage extends React.Component {
           }
         } else {
           Setting.showMessage("error", `${i18next.t("general:Failed to save")}: ${res.msg}`);
-          this.updatePermissionField("name", this.state.permissionName);
+          if (!isAdd) {
+            this.updatePermissionField("name", this.state.permissionName);
+          }
         }
       })
       .catch(error => {
@@ -559,17 +577,7 @@ class PermissionEditPage extends React.Component {
   }
 
   deletePermission() {
-    PermissionBackend.deletePermission(this.state.permission)
-      .then((res) => {
-        if (res.status === "ok") {
-          this.props.history.push("/permissions");
-        } else {
-          Setting.showMessage("error", `${i18next.t("general:Failed to delete")}: ${res.msg}`);
-        }
-      })
-      .catch(error => {
-        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
-      });
+    this.props.history.push("/permissions");
   }
 
   render() {

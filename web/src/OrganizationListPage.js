@@ -34,7 +34,7 @@ class OrganizationListPage extends BaseListPage {
       websiteUrl: "https://door.casdoor.com",
       favicon: `${Setting.StaticBaseUrl}/img/favicon.png`,
       passwordType: "bcrypt",
-      PasswordSalt: "",
+      passwordSalt: "",
       passwordOptions: ["AtLeast6"],
       passwordObfuscatorType: "Plain",
       passwordObfuscatorKey: "",
@@ -43,6 +43,7 @@ class OrganizationListPage extends BaseListPage {
       countryCodes: ["US"],
       defaultAvatar: `${Setting.StaticBaseUrl}/img/casbin.svg`,
       defaultApplication: "",
+      defaultTokenFormat: "JWT",
       tags: [],
       languages: Setting.Countries.map(item => item.key),
       masterPassword: "",
@@ -120,19 +121,7 @@ class OrganizationListPage extends BaseListPage {
 
   addOrganization() {
     const newOrganization = this.newOrganization();
-    OrganizationBackend.addOrganization(newOrganization)
-      .then((res) => {
-        if (res.status === "ok") {
-          this.props.history.push({pathname: `/organizations/${newOrganization.name}`, mode: "add"});
-          Setting.showMessage("success", i18next.t("general:Successfully added"));
-          window.dispatchEvent(new Event("storageOrganizationsChanged"));
-        } else {
-          Setting.showMessage("error", `${i18next.t("general:Failed to add")}: ${res.msg}`);
-        }
-      })
-      .catch(error => {
-        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
-      });
+    this.props.history.push({pathname: `/organizations/${newOrganization.name}`, mode: "add", organization: newOrganization});
   }
 
   deleteOrganization(i) {
