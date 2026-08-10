@@ -70,7 +70,7 @@ func (idp *DingTalkIdProvider) getConfig(clientId string, clientSecret string, r
 }
 
 type DingTalkAccessToken struct {
-	ErrCode     int    `json:"code"`
+	ErrCode     string `json:"code"`
 	ErrMsg      string `json:"message"`
 	AccessToken string `json:"accessToken"` // Interface call credentials
 	ExpiresIn   int64  `json:"expireIn"`    // access_token interface call credential timeout time, unit (seconds)
@@ -97,8 +97,8 @@ func (idp *DingTalkIdProvider) GetToken(code string) (*oauth2.Token, error) {
 		return nil, err
 	}
 
-	if pToken.ErrCode != 0 {
-		return nil, fmt.Errorf("pToken.Errcode = %d, pToken.Errmsg = %s", pToken.ErrCode, pToken.ErrMsg)
+	if pToken.ErrCode != "" {
+		return nil, fmt.Errorf("pToken.Errcode = %s, pToken.Errmsg = %s", pToken.ErrCode, pToken.ErrMsg)
 	}
 
 	token := &oauth2.Token{
