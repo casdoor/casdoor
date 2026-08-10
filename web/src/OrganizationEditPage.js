@@ -50,6 +50,17 @@ class OrganizationEditPage extends React.Component {
 
   UNSAFE_componentWillMount() {
     this.getOrganization();
+
+    // in "add" mode the organization does not exist in the DB yet, so it owns nothing
+    if (this.state.mode === "add") {
+      this.setState({ldaps: []});
+      return;
+    }
+
+    this.getRelatedResources();
+  }
+
+  getRelatedResources() {
     this.getApplications();
     this.getLdaps();
     this.getOrganizationTransactions();
@@ -848,21 +859,26 @@ class OrganizationEditPage extends React.Component {
             />
           </Col>
         </Row>
-        <Row style={{marginTop: "20px"}}>
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:LDAPs"), i18next.t("general:LDAPs - Tooltip"))} :
-          </Col>
-          <Col span={22}>
-            <LdapTable
-              title={i18next.t("general:LDAPs")}
-              table={this.state.ldaps}
-              organizationName={this.state.organizationName}
-              onUpdateTable={(value) => {
-                this.setState({ldaps: value});
-              }}
-            />
-          </Col>
-        </Row>
+        {
+          // LDAPs belong to an existing organization, so they can only be managed after the organization is saved
+          this.state.mode === "add" ? null : (
+            <Row style={{marginTop: "20px"}}>
+              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                {Setting.getLabel(i18next.t("general:LDAPs"), i18next.t("general:LDAPs - Tooltip"))} :
+              </Col>
+              <Col span={22}>
+                <LdapTable
+                  title={i18next.t("general:LDAPs")}
+                  table={this.state.ldaps}
+                  organizationName={this.state.organizationName}
+                  onUpdateTable={(value) => {
+                    this.setState({ldaps: value});
+                  }}
+                />
+              </Col>
+            </Row>
+          )
+        }
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("organization:Kerberos realm"), i18next.t("organization:Kerberos realm - Tooltip"))} :
@@ -933,6 +949,11 @@ class OrganizationEditPage extends React.Component {
           this.setState({
             organizationName: this.state.organization.name,
             mode: "edit",
+          }, () => {
+            if (isAdd) {
+              // the organization exists now, so its LDAPs and other sub-resources can be loaded
+              this.getRelatedResources();
+            }
           });
           window.dispatchEvent(new Event("storageOrganizationsChanged"));
 

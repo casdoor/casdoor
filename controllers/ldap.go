@@ -167,6 +167,16 @@ func (c *ApiController) AddLdap() {
 		return
 	}
 
+	organization, err := object.GetOrganization(util.GetId("admin", ldap.Owner))
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	if organization == nil {
+		c.ResponseError(fmt.Sprintf(c.T("auth:The organization: %s does not exist"), ldap.Owner))
+		return
+	}
+
 	if ok, err := object.CheckLdapExist(&ldap); err != nil {
 		c.ResponseError(err.Error())
 		return
