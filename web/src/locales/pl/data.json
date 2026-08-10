@@ -951,6 +951,8 @@
     "Balance credit - Tooltip": "Saldo kredytów - Podpowiedź",
     "Balance currency": "Waluta salda",
     "Balance currency - Tooltip": "Waluta salda - Podpowiedź",
+    "Default token format": "Domyślny format tokena",
+    "Default token format - Tooltip": "Format tokena używany przez nowo utworzone aplikacje tej organizacji, istniejące aplikacje nie są zmieniane",
     "Edit Organization": "Edytuj organizację",
     "Follow global theme": "Zastosuj motyw globalny",
     "Has privilege consent": "Ma zgodę na przywileje",

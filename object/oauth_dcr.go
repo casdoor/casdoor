@@ -175,7 +175,7 @@ func RegisterDynamicClient(req *DynamicClientRegistrationRequest, organization s
 		EnableCodeSignin:        true,
 		EnableAutoSignin:        false,
 		EnableWebAuthn:          inheritedEnableWebAuthn,
-		TokenFormat:             "JWT",
+		TokenFormat:             org.DefaultTokenFormat,
 		ExpireInHours:           168,
 		RefreshExpireInHours:    168,
 		CookieExpireInHours:     720,

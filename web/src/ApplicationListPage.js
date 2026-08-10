@@ -73,7 +73,8 @@ class ApplicationListPage extends BaseListPage {
       grantTypes: ["authorization_code", "password", "client_credentials", "token", "id_token", "refresh_token"],
       cert: "cert-built-in",
       redirectUris: ["http://localhost:9000/callback"],
-      tokenFormat: "JWT",
+      // the empty tokenFormat will be filled with the organization's "defaultTokenFormat" by the backend
+      tokenFormat: "",
       tokenFields: [],
       expireInHours: 24 * 7,
       refreshExpireInHours: 24 * 7,

@@ -951,6 +951,8 @@
     "Balance credit - Tooltip": "Dica: saldo de créditos",
     "Balance currency": "Moeda do saldo",
     "Balance currency - Tooltip": "Dica: moeda do saldo",
+    "Default token format": "Formato de token padrão",
+    "Default token format - Tooltip": "O formato de token usado pelas aplicações recém-criadas desta organização; as aplicações existentes não são afetadas",
     "Edit Organization": "Editar Organização",
     "Follow global theme": "Seguir tema global",
     "Has privilege consent": "Tem consentimento de privilégio",

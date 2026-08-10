@@ -474,6 +474,14 @@ func AddApplication(application *Application) (bool, error) {
 	if application.ClientSecret == "" {
 		application.ClientSecret = util.GenerateClientSecret()
 	}
+	if application.TokenFormat == "" {
+		tokenFormat, err := GetDefaultTokenFormat(application.Organization)
+		if err != nil {
+			return false, err
+		}
+
+		application.TokenFormat = tokenFormat
+	}
 
 	app, err := GetApplicationByClientId(application.ClientId)
 	if err != nil {
