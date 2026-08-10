@@ -345,7 +345,7 @@ func checkQuotaForUser() error {
 		return nil
 	}
 
-	count, err := object.GetUserCount("", "", "", "")
+	count, err := object.GetUserCount("", "", "", "", "")
 	if err != nil {
 		return err
 	}

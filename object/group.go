@@ -259,7 +259,7 @@ func DeleteGroup(group *Group) (bool, error) {
 		return false, errors.New("group has children group")
 	}
 
-	if count, err := GetGroupUserCount(group.GetId(), "", ""); err != nil {
+	if count, err := GetGroupUserCount(group.GetId(), "", "", ""); err != nil {
 		return false, err
 	} else if count > 0 {
 		return false, errors.New("group has users")
@@ -310,7 +310,7 @@ func ConvertToTreeData(groups []*Group, parentId string) []*Group {
 	return treeData
 }
 
-func GetGroupUserCount(groupId string, field, value string) (int64, error) {
+func GetGroupUserCount(groupId string, field, value string, search string) (int64, error) {
 	owner, _, err := util.GetOwnerAndNameFromIdWithError(groupId)
 	if err != nil {
 		return 0, err
@@ -320,20 +320,21 @@ func GetGroupUserCount(groupId string, field, value string) (int64, error) {
 		return 0, err
 	}
 
-	if field == "" && value == "" {
+	if field == "" && value == "" && search == "" {
 		return int64(len(names)), nil
 	} else {
 		tableNamePrefix := conf.GetConfigString("tableNamePrefix")
 		session := ormer.Engine.Table(tableNamePrefix+"user").
 			Where("owner = ?", owner).In("name", names)
-		if util.FilterField(field) {
+		if field != "" && value != "" && util.FilterField(field) {
 			session = session.And(fmt.Sprintf("user.%s like ?", util.CamelToSnakeCase(field)), "%"+value+"%")
 		}
+		session = applyUserSearchFilter(session, search, "")
 		return session.Count()
 	}
 }
 
-func GetPaginationGroupUsers(groupId string, offset, limit int, field, value, sortField, sortOrder string) ([]*User, error) {
+func GetPaginationGroupUsers(groupId string, offset, limit int, field, value, sortField, sortOrder string, search string) ([]*User, error) {
 	users := []*User{}
 	owner, _, err := util.GetOwnerAndNameFromIdWithError(groupId)
 	if err != nil {
@@ -356,6 +357,7 @@ func GetPaginationGroupUsers(groupId string, offset, limit int, field, value, so
 	if field != "" && value != "" && util.FilterField(field) {
 		session = session.And(fmt.Sprintf("%s.%s like ?", prefixedUserTable, util.CamelToSnakeCase(field)), "%"+value+"%")
 	}
+	session = applyUserSearchFilter(session, search, "")
 
 	if sortField == "" || sortOrder == "" || !util.FilterField(sortField) {
 		sortField = "created_time"
@@ -378,6 +380,10 @@ func GetPaginationGroupUsers(groupId string, offset, limit int, field, value, so
 }
 
 func GetGroupUsers(groupId string) ([]*User, error) {
+	return GetGroupUsersWithFilter(groupId, nil)
+}
+
+func GetGroupUsersWithFilter(groupId string, cond builder.Cond) ([]*User, error) {
 	users := []*User{}
 	owner, _, err := util.GetOwnerAndNameFromIdWithError(groupId)
 	if err != nil {
@@ -387,7 +393,11 @@ func GetGroupUsers(groupId string) ([]*User, error) {
 	if err != nil {
 		return nil, err
 	}
-	err = ormer.Engine.Where("owner = ?", owner).In("name", names).Find(&users)
+	session := ormer.Engine.Where("owner = ?", owner).In("name", names)
+	if cond != nil {
+		session = session.And(cond)
+	}
+	err = session.Find(&users)
 	if err != nil {
 		return nil, err
 	}

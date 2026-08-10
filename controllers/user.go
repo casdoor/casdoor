@@ -77,6 +77,7 @@ func (c *ApiController) GetGlobalUsers() {
 // @Tag User API
 // @Description
 // @Param   owner     query    string  true        "The owner of users"
+// @Param   search    query    string  false       "Global search by name, displayName and email"
 // @Success 200 {array} object.User The Response object
 // @router /get-users [get]
 func (c *ApiController) GetUsers() {
@@ -88,10 +89,12 @@ func (c *ApiController) GetUsers() {
 	value := c.Ctx.Input.Query("value")
 	sortField := c.Ctx.Input.Query("sortField")
 	sortOrder := c.Ctx.Input.Query("sortOrder")
+	search := c.Ctx.Input.Query("search")
 
 	if limit == "" || page == "" {
+		searchCond := object.BuildUserSearchCond(search, "")
 		if groupName != "" {
-			users, err := object.GetMaskedUsers(object.GetGroupUsers(util.GetId(owner, groupName)))
+			users, err := object.GetMaskedUsers(object.GetGroupUsersWithFilter(util.GetId(owner, groupName), searchCond))
 			if err != nil {
 				c.ResponseError(err.Error())
 				return
@@ -100,7 +103,7 @@ func (c *ApiController) GetUsers() {
 			return
 		}
 
-		users, err := object.GetMaskedUsers(object.GetUsers(owner))
+		users, err := object.GetMaskedUsers(object.GetUsersWithFilter(owner, searchCond))
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
@@ -109,14 +112,14 @@ func (c *ApiController) GetUsers() {
 		c.ResponseOk(users)
 	} else {
 		limit := util.ParseInt(limit)
-		count, err := object.GetUserCount(owner, field, value, groupName)
+		count, err := object.GetUserCount(owner, field, value, groupName, search)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
 		}
 
 		paginator := pagination.NewPaginator(c.Ctx.Request, limit, count)
-		users, err := object.GetPaginationUsers(owner, paginator.Offset(), limit, field, value, sortField, sortOrder, groupName)
+		users, err := object.GetPaginationUsers(owner, paginator.Offset(), limit, field, value, sortField, sortOrder, groupName, search)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
@@ -764,7 +767,7 @@ func (c *ApiController) GetUserCount() {
 	var count int64
 	var err error
 	if isOnline == "" {
-		count, err = object.GetUserCount(owner, "", "", "")
+		count, err = object.GetUserCount(owner, "", "", "", "")
 	} else {
 		count, err = object.GetOnlineUserCount(owner, util.ParseInt(isOnline))
 	}

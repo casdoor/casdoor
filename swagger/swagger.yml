@@ -2909,6 +2909,11 @@ paths:
         description: The owner of users
         required: true
         type: string
+      - in: query
+        name: search
+        description: Global search by name, displayName and email
+        required: false
+        type: string
       responses:
         "200":
           description: The Response object

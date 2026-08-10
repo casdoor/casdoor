@@ -355,11 +355,12 @@ func GetPaginationGlobalUsers(offset, limit int, field, value, sortField, sortOr
 	return users, nil
 }
 
-func GetUserCount(owner, field, value string, groupName string) (int64, error) {
+func GetUserCount(owner, field, value string, groupName string, search string) (int64, error) {
 	session := GetSession(owner, -1, -1, field, value, "", "")
+	session = applyUserSearchFilter(session, search, "")
 
 	if groupName != "" {
-		return GetGroupUserCount(util.GetId(owner, groupName), field, value)
+		return GetGroupUserCount(util.GetId(owner, groupName), field, value, search)
 	}
 
 	return session.Count(&User{})
@@ -420,14 +421,19 @@ func GetSortedUsers(owner string, sorter string, limit int) ([]*User, error) {
 	return users, nil
 }
 
-func GetPaginationUsers(owner string, offset, limit int, field, value, sortField, sortOrder string, groupName string) ([]*User, error) {
+func GetPaginationUsers(owner string, offset, limit int, field, value, sortField, sortOrder string, groupName string, search string) ([]*User, error) {
 	users := []*User{}
 
 	if groupName != "" {
-		return GetPaginationGroupUsers(util.GetId(owner, groupName), offset, limit, field, value, sortField, sortOrder)
+		return GetPaginationGroupUsers(util.GetId(owner, groupName), offset, limit, field, value, sortField, sortOrder, search)
 	}
 
 	session := GetSessionForUser(owner, offset, limit, field, value, sortField, sortOrder)
+	columnPrefix := ""
+	if offset != -1 {
+		columnPrefix = "a."
+	}
+	session = applyUserSearchFilter(session, search, columnPrefix)
 	err := session.Find(&users)
 	if err != nil {
 		return nil, err
@@ -1061,7 +1067,7 @@ func AddUser(user *User, lang string) (bool, error) {
 
 	rankingItem := GetAccountItemByName("Ranking", organization)
 	if rankingItem != nil {
-		count, err := GetUserCount(user.Owner, "", "", "")
+		count, err := GetUserCount(user.Owner, "", "", "", "")
 		if err != nil {
 			return false, err
 		}
