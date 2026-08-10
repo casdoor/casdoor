@@ -230,6 +230,19 @@ func GetMaskedOrganizations(isAdmin bool, organizations []*Organization, errs ..
 	return organizations, nil
 }
 
+// hashMasterPassword hashes the master password in place so that it is never stored in plaintext.
+// The masked value "***" means the password is unchanged, so it is left as-is.
+func (organization *Organization) hashMasterPassword() {
+	if organization.MasterPassword == "" || organization.MasterPassword == "***" {
+		return
+	}
+
+	credManager := cred.GetCredManager(organization.PasswordType)
+	if credManager != nil {
+		organization.MasterPassword = credManager.GetHashedPassword(organization.MasterPassword, organization.PasswordSalt)
+	}
+}
+
 func UpdateOrganization(id string, organization *Organization, isGlobalAdmin bool) (bool, error) {
 	owner, name, err := util.GetOwnerAndNameFromIdWithError(id)
 	if err != nil {
@@ -253,13 +266,7 @@ func UpdateOrganization(id string, organization *Organization, isGlobalAdmin boo
 		}
 	}
 
-	if organization.MasterPassword != "" && organization.MasterPassword != "***" {
-		credManager := cred.GetCredManager(organization.PasswordType)
-		if credManager != nil {
-			hashedPassword := credManager.GetHashedPassword(organization.MasterPassword, organization.PasswordSalt)
-			organization.MasterPassword = hashedPassword
-		}
-	}
+	organization.hashMasterPassword()
 
 	if !isGlobalAdmin {
 		organization.NavItems = org.NavItems
@@ -288,6 +295,19 @@ func UpdateOrganization(id string, organization *Organization, isGlobalAdmin boo
 }
 
 func AddOrganization(organization *Organization) (bool, error) {
+	// there is no previous record for a new organization, so the masked values mean "empty"
+	if organization.MasterPassword == "***" {
+		organization.MasterPassword = ""
+	}
+	if organization.DefaultPassword == "***" {
+		organization.DefaultPassword = ""
+	}
+	if organization.MasterVerificationCode == "***" {
+		organization.MasterVerificationCode = ""
+	}
+
+	organization.hashMasterPassword()
+
 	affected, err := ormer.Engine.Insert(organization)
 	if err != nil {
 		return false, err
