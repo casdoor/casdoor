@@ -187,18 +187,24 @@ func (idp *DingTalkIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, erro
 		return nil, err
 	}
 
-	corpMobile, corpEmail, unionId, err := idp.getUserCorpEmail(userId, corpAccessToken)
+	userDetail, err := idp.getUserCorpInfo(userId, corpAccessToken)
 	if err == nil {
-		if corpMobile != "" {
-			userInfo.Phone = corpMobile
+		if userDetail.Mobile != "" {
+			userInfo.Phone = userDetail.Mobile
 		}
 
-		if corpEmail != "" {
-			userInfo.Email = corpEmail
+		if userDetail.Email != "" {
+			userInfo.Email = userDetail.Email
 		}
 
-		if unionId != "" {
-			userInfo.Username = unionId
+		if userDetail.UnionId != "" {
+			userInfo.Username = userDetail.UnionId
+		}
+
+		if userDetail.Title != "" {
+			userInfo.Extra = map[string]string{
+				"title": userDetail.Title,
+			}
 		}
 	}
 
@@ -292,29 +298,32 @@ func (idp *DingTalkIdProvider) getUserId(unionId string, accessToken string) (st
 	return data.Result.UserId, nil
 }
 
-func (idp *DingTalkIdProvider) getUserCorpEmail(userId string, accessToken string) (string, string, string, error) {
+type DingTalkUserDetail struct {
+	Mobile  string `json:"mobile"`
+	Email   string `json:"email"`
+	UnionId string `json:"unionid"`
+	Title   string `json:"title"`
+}
+
+func (idp *DingTalkIdProvider) getUserCorpInfo(userId string, accessToken string) (*DingTalkUserDetail, error) {
 	// https://open.dingtalk.com/document/isvapp/query-user-details
 	body := make(map[string]string)
 	body["userid"] = userId
 	respBytes, err := idp.postWithBody(body, "https://oapi.dingtalk.com/topapi/v2/user/get?access_token="+accessToken)
 	if err != nil {
-		return "", "", "", err
+		return nil, err
 	}
 
 	var data struct {
-		ErrMessage string `json:"errmsg"`
-		Result     struct {
-			Mobile  string `json:"mobile"`
-			Email   string `json:"email"`
-			UnionId string `json:"unionid"`
-		} `json:"result"`
+		ErrMessage string             `json:"errmsg"`
+		Result     DingTalkUserDetail `json:"result"`
 	}
 	err = json.Unmarshal(respBytes, &data)
 	if err != nil {
-		return "", "", "", err
+		return nil, err
 	}
 	if data.ErrMessage != "ok" {
-		return "", "", "", errors.New(data.ErrMessage)
+		return nil, errors.New(data.ErrMessage)
 	}
-	return data.Result.Mobile, data.Result.Email, data.Result.UnionId, nil
+	return &data.Result, nil
 }
