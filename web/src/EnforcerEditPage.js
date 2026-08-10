@@ -198,14 +198,19 @@ class EnforcerEditPage extends React.Component {
             } />
           </Col>
         </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("adapter:Policies"), i18next.t("adapter:Policies - Tooltip"))} :
-          </Col>
-          <Col span={22}>
-            <PolicyTable enforcer={this.state.enforcer} modelCfg={this.state.enforcer?.modelCfg} mode={this.state.mode} />
-          </Col>
-        </Row>
+        {
+          // policies are stored in the adapter and looked up by the enforcer, so they can only be managed after the enforcer is saved
+          this.state.mode === "add" ? null : (
+            <Row style={{marginTop: "20px"}} >
+              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                {Setting.getLabel(i18next.t("adapter:Policies"), i18next.t("adapter:Policies - Tooltip"))} :
+              </Col>
+              <Col span={22}>
+                <PolicyTable enforcer={this.state.enforcer} modelCfg={this.state.enforcer?.modelCfg} mode={this.state.mode} />
+              </Col>
+            </Row>
+          )
+        }
       </Card>
     );
   }
@@ -224,6 +229,11 @@ class EnforcerEditPage extends React.Component {
             organizationName: this.state.enforcer.owner,
             enforcerName: this.state.enforcer.name,
             mode: "edit",
+          }, () => {
+            if (isAdd && !exitAfterSave) {
+              // the enforcer exists now, reload it so that its modelCfg and policies are available
+              this.getEnforcer();
+            }
           });
 
           if (exitAfterSave) {

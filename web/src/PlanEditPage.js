@@ -280,6 +280,11 @@ class PlanEditPage extends React.Component {
             organizationName: this.state.plan.owner,
             planName: this.state.plan.name,
             mode: "edit",
+          }, () => {
+            if (isAdd && !exitAfterSave) {
+              // the related product is created by the server, so the plan has to be reloaded to pick it up
+              this.getPlan();
+            }
           });
 
           if (exitAfterSave) {

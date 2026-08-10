@@ -189,6 +189,32 @@ func UpdateOrder(id string, order *Order) (bool, error) {
 }
 
 func AddOrder(order *Order) (bool, error) {
+	// orders created from the UI only carry the product names, so the product infos and
+	// the price need to be filled in here, the same way UpdateOrder() does it
+	if len(order.Products) > 0 && len(order.ProductInfos) == 0 {
+		products, err := getOrderProducts(order.Owner, order.Products)
+		if err != nil {
+			return false, err
+		}
+
+		productInfos := make([]ProductInfo, 0, len(products))
+		price := 0.0
+		for _, product := range products {
+			productInfos = append(productInfos, ProductInfo{
+				Name:        product.Name,
+				DisplayName: product.DisplayName,
+				Image:       product.Image,
+				Detail:      product.Detail,
+				Price:       product.Price,
+				IsRecharge:  product.IsRecharge,
+			})
+			price += product.Price
+		}
+
+		order.ProductInfos = productInfos
+		order.Price = price
+	}
+
 	affected, err := ormer.Engine.Insert(order)
 	if err != nil {
 		return false, err

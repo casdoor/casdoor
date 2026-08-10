@@ -492,6 +492,15 @@ func AddApplication(application *Application) (bool, error) {
 		return false, nil
 	}
 
+	if application.IsShared == true && application.Organization != "built-in" {
+		return false, fmt.Errorf("only applications belonging to built-in organization can be shared")
+	}
+
+	err = checkMultipleCaptchaProviders(application, "en")
+	if err != nil {
+		return false, err
+	}
+
 	// Initialize default values for required fields to prevent UI errors
 	err = extendApplicationWithSignupItems(application)
 	if err != nil {

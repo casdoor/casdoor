@@ -121,7 +121,7 @@ func (c *ApiController) AddModel() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.AddModel(&model))
+	c.Data["json"] = wrapActionResponse(object.AddModelWithCheck(&model))
 	c.ServeJSON()
 }
 

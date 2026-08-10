@@ -179,7 +179,7 @@ func (c *ApiController) AddPermission() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.AddPermission(&permission))
+	c.Data["json"] = wrapActionResponse(object.AddPermissionWithCheck(&permission))
 	c.ServeJSON()
 }
 

@@ -261,6 +261,18 @@ func UpdatePermissions(permissions []*Permission) (bool, error) {
 	return true, nil
 }
 
+// AddPermissionWithCheck also validates the permission's model, the same way UpdatePermission()
+// does it. AddPermission() itself cannot do this because it is used to create the built-in
+// permission before the built-in model exists.
+func AddPermissionWithCheck(permission *Permission) (bool, error) {
+	err := checkPermissionModel(permission)
+	if err != nil {
+		return false, err
+	}
+
+	return AddPermission(permission)
+}
+
 func AddPermission(permission *Permission) (bool, error) {
 	err := checkPermissionValid(permission)
 	if err != nil {
