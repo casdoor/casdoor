@@ -73,6 +73,23 @@ func (c *ApiController) IsAdminOrSelf(user2 *object.User) bool {
 	return false
 }
 
+// requireOrganizationPermission checks that the current user may create an object belonging
+// to the given organization. Global admins can use any organization, other admins are
+// restricted to their own one. It responds with an error and returns false when not allowed.
+func (c *ApiController) requireOrganizationPermission(organization string) bool {
+	isGlobalAdmin, user := c.isGlobalAdmin()
+	if isGlobalAdmin {
+		return true
+	}
+
+	if user == nil || user.Owner != organization {
+		c.ResponseError(c.T("auth:Unauthorized operation"))
+		return false
+	}
+
+	return true
+}
+
 func (c *ApiController) isGlobalAdmin() (bool, *object.User) {
 	username := c.GetSessionUsername()
 	if object.IsAppUser(username) {

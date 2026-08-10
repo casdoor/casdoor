@@ -114,6 +114,12 @@ func (c *ApiController) UpdateWebhook() {
 		return
 	}
 
+	if !c.IsGlobalAdmin() {
+		// a webhook with "singleOrgOnly" turned off receives the records of every
+		// organization, so only global admins are allowed to turn it off
+		webhook.SingleOrgOnly = true
+	}
+
 	c.Data["json"] = wrapActionResponse(object.UpdateWebhook(id, &webhook, c.IsGlobalAdmin(), c.GetAcceptLanguage()))
 	c.ServeJSON()
 }
@@ -131,6 +137,16 @@ func (c *ApiController) AddWebhook() {
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
+	}
+
+	if !c.requireOrganizationPermission(webhook.Organization) {
+		return
+	}
+
+	if !c.IsGlobalAdmin() {
+		// a webhook with "singleOrgOnly" turned off receives the records of every
+		// organization, so only global admins are allowed to turn it off
+		webhook.SingleOrgOnly = true
 	}
 
 	c.Data["json"] = wrapActionResponse(object.AddWebhook(&webhook))

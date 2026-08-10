@@ -163,6 +163,10 @@ func (c *ApiController) AddGroup() {
 		return
 	}
 
+	if !c.requireOrganizationPermission(group.Owner) {
+		return
+	}
+
 	c.Data["json"] = wrapActionResponse(object.AddGroup(&group))
 	c.ServeJSON()
 }
