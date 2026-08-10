@@ -42,6 +42,7 @@ class OrganizationListPage extends BaseListPage {
       countryCodes: ["US"],
       defaultAvatar: `${Setting.StaticBaseUrl}/img/casbin.svg`,
       defaultApplication: "",
+      defaultTokenFormat: "JWT",
       tags: [],
       languages: Setting.Countries.map(item => item.key),
       masterPassword: "",

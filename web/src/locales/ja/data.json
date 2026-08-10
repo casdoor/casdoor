@@ -951,6 +951,8 @@
     "Balance credit - Tooltip": "残高クレジット - ツールチップ",
     "Balance currency": "残高通貨",
     "Balance currency - Tooltip": "残高通貨 - ツールチップ",
+    "Default token format": "デフォルトのトークン形式",
+    "Default token format - Tooltip": "この組織で新しく作成されたアプリケーションが使用するトークン形式です。既存のアプリケーションには影響しません",
     "Edit Organization": "組織の編集",
     "Follow global theme": "グローバルテーマに従ってください",
     "Has privilege consent": "権限同意あり",

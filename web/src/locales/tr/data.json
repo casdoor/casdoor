@@ -951,6 +951,8 @@
     "Balance credit - Tooltip": "Bakiye kredisi - Araç ipucu",
     "Balance currency": "Bakiye para birimi",
     "Balance currency - Tooltip": "Bakiye para birimi - Araç ipucu",
+    "Default token format": "Varsayılan token biçimi",
+    "Default token format - Tooltip": "Bu organizasyonda yeni oluşturulan uygulamaların kullanacağı token biçimi, mevcut uygulamalar etkilenmez",
     "Edit Organization": "Organizasyonu Düzenle",
     "Follow global theme": "Küresel temayı takip et",
     "Has privilege consent": "Ayrıcalık onayı var",

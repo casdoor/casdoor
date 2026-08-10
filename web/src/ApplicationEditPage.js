@@ -261,6 +261,17 @@ class ApplicationEditPage extends React.Component {
       });
   }
 
+  // a newly added application has an empty "tokenFormat", it will be filled with the
+  // organization's "defaultTokenFormat" by the backend when the application is created
+  getTokenFormat() {
+    if (this.state.application.tokenFormat) {
+      return this.state.application.tokenFormat;
+    }
+
+    const organization = this.state.organizations.filter(organization => organization.name === this.state.application.organization)[0];
+    return organization?.defaultTokenFormat || "JWT";
+  }
+
   getSamlMetadata(checked) {
     ApplicationBackend.getSamlMetadata("admin", this.state.applicationName, checked)
       .then((data) => {
@@ -855,7 +866,7 @@ class ApplicationEditPage extends React.Component {
               {Setting.getLabel(i18next.t("application:Token format"), i18next.t("application:Token format - Tooltip"))} :
             </Col>
             <Col span={21} >
-              <Select virtual={false} style={{width: "100%"}} value={this.state.application.tokenFormat} onChange={(value => {this.updateApplicationField("tokenFormat", value);})}
+              <Select virtual={false} style={{width: "100%"}} value={this.getTokenFormat()} onChange={(value => {this.updateApplicationField("tokenFormat", value);})}
                 options={["JWT", "JWT-Empty", "JWT-Custom", "JWT-Standard"].map((item) => Setting.getOption(item, item))}
               />
             </Col>
@@ -875,7 +886,7 @@ class ApplicationEditPage extends React.Component {
               {Setting.getLabel(i18next.t("application:Token fields"), i18next.t("application:Token fields - Tooltip"))} :
             </Col>
             <Col span={21} >
-              <Select virtual={false} disabled={this.state.application.tokenFormat !== "JWT-Custom"} mode="tags" showSearch style={{width: "100%"}} value={this.state.application.tokenFields} onChange={(value => {this.updateApplicationField("tokenFields", value);})}>
+              <Select virtual={false} disabled={this.getTokenFormat() !== "JWT-Custom"} mode="tags" showSearch style={{width: "100%"}} value={this.state.application.tokenFields} onChange={(value => {this.updateApplicationField("tokenFields", value);})}>
                 <Option key={"signinMethod"} value={"signinMethod"}>{"SigninMethod"}</Option>
                 <Option key={"provider"} value={"provider"}>{"Provider"}</Option>
                 {
@@ -885,7 +896,7 @@ class ApplicationEditPage extends React.Component {
             </Col>
           </Row>
           {
-            this.state.application.tokenFormat === "JWT-Custom" ? (<Row style={{marginTop: "20px"}} >
+            this.getTokenFormat() === "JWT-Custom" ? (<Row style={{marginTop: "20px"}} >
               <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
                 {Setting.getLabel(i18next.t("general:Token attributes"), i18next.t("general:Token attributes - Tooltip"))} :
               </Col>
