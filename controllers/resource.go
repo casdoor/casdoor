@@ -364,6 +364,10 @@ func (c *ApiController) UploadResource() {
 			c.ResponseError(err.Error())
 			return
 		}
+		if applicationObj == nil {
+			c.ResponseError(fmt.Sprintf(c.T("auth:The application: %s does not exist"), applicationId))
+			return
+		}
 
 		applicationObj.TermsOfUse = fileUrl
 		_, err = object.UpdateApplication(applicationId, applicationObj, true, c.GetAcceptLanguage(), nil)

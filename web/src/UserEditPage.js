@@ -178,10 +178,41 @@ class UserEditPage extends React.Component {
             }
           }
         }
+
+        if (this.state.mode === "add") {
+          this.getSignupApplication();
+        }
+      });
+  }
+
+  // the form layout is derived from the application's organization, in "add" mode the user doesn't
+  // exist yet so its application has to be resolved from the organization's applications instead
+  getSignupApplication() {
+    const applicationName = this.state.user?.signupApplication;
+    if (!applicationName) {
+      return;
+    }
+
+    ApplicationBackend.getApplication("admin", applicationName)
+      .then((res) => {
+        if (res.status === "error") {
+          Setting.showMessage("error", res.msg);
+          return;
+        }
+
+        this.setState({
+          menuMode: res.data?.organizationObj?.accountMenu ?? "Horizontal",
+          application: res.data,
+        });
       });
   }
 
   getUserApplication() {
+    if (this.state.mode === "add") {
+      // the application is loaded by getApplicationsByOrganization() in "add" mode
+      return;
+    }
+
     ApplicationBackend.getUserApplication(this.state.organizationName, this.state.userName)
       .then((res) => {
         if (res.status === "error") {
@@ -1009,7 +1040,8 @@ class UserEditPage extends React.Component {
       );
     } else if (accountItem.name === "3rd-party logins") {
       return (
-        !this.isSelfOrAdmin() ? null : (
+        // linking and unlinking go through the saved user, so they need the user to exist
+        (!this.isSelfOrAdmin() || this.state.mode === "add") ? null : (
           <Row style={{marginTop: "20px"}} >
             <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
               {Setting.getLabel(i18next.t("user:3rd-party logins"), i18next.t("user:3rd-party logins - Tooltip"))} :
@@ -1126,7 +1158,8 @@ class UserEditPage extends React.Component {
       );
     } else if (accountItem.name === "Multi-factor authentication") {
       return (
-        !this.isSelfOrAdmin() ? null : (
+        // the MFA items are read from and written to the saved user, so they need the user to exist
+        (!this.isSelfOrAdmin() || this.state.mode === "add") ? null : (
           <Row style={{marginTop: "20px"}} >
             <Col style={{marginTop: "5px"}} span={Setting.isMobile() ? 22 : 2}>
               {Setting.getLabel(i18next.t("mfa:Multi-factor authentication"), i18next.t("mfa:Multi-factor authentication - Tooltip "))} :

@@ -330,7 +330,8 @@ func TestSyncer(syncer Syncer) error {
 		return err
 	}
 
-	if syncer.Password == "***" {
+	// the syncer may not be created yet when the connection is tested from the syncer add page
+	if syncer.Password == "***" && oldSyncer != nil {
 		syncer.Password = oldSyncer.Password
 	}
 

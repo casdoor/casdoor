@@ -389,7 +389,8 @@ class PaymentEditPage extends React.Component {
           <Col span={22} >
             {
               this.state.payment.invoiceUrl === "" ? (
-                <Button type={"primary"} loading={this.state.isInvoiceLoading} onClick={() => {
+                // the invoice is issued for the saved payment, so it needs the payment to exist
+                <Button type={"primary"} disabled={this.state.mode === "add"} loading={this.state.isInvoiceLoading} onClick={() => {
                   const errorText = this.checkError();
                   if (errorText !== "") {
                     Setting.showMessage("error", errorText);
