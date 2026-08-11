@@ -273,6 +273,11 @@ class ApplicationEditPage extends React.Component {
   }
 
   getSamlMetadata(checked) {
+    if (this.state.mode === "add") {
+      // the metadata is generated from the saved application, so it needs the application to exist
+      return;
+    }
+
     ApplicationBackend.getSamlMetadata("admin", this.state.applicationName, checked)
       .then((data) => {
         this.setState({
@@ -1064,22 +1069,27 @@ class ApplicationEditPage extends React.Component {
               </Row>
             ) : null
           }
-          <Row style={{marginTop: "20px"}} >
-            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
-              {Setting.getLabel(i18next.t("application:SAML metadata"), i18next.t("application:SAML metadata - Tooltip"))} :
-            </Col>
-            <Col span={21}>
-              <Editor value={this.state.samlMetadata?.toString() ?? ""} lang="xml" readOnly />
-              <br />
-              <Button style={{marginBottom: "10px"}} type="primary" shape="round" icon={<CopyOutlined />} onClick={() => {
-                copy(`${window.location.origin}/api/saml/metadata?application=admin/${encodeURIComponent(this.state.applicationName)}&enablePostBinding=${this.state.application.enableSamlPostBinding}`);
-                Setting.showMessage("success", i18next.t("general:Copied to clipboard successfully"));
-              }}
-              >
-                {i18next.t("application:Copy SAML metadata URL")}
-              </Button>
-            </Col>
-          </Row>
+          {
+            // the metadata is generated from the saved application, so it is only available after the application is created
+            this.state.mode === "add" ? null : (
+              <Row style={{marginTop: "20px"}} >
+                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
+                  {Setting.getLabel(i18next.t("application:SAML metadata"), i18next.t("application:SAML metadata - Tooltip"))} :
+                </Col>
+                <Col span={21}>
+                  <Editor value={this.state.samlMetadata?.toString() ?? ""} lang="xml" readOnly />
+                  <br />
+                  <Button style={{marginBottom: "10px"}} type="primary" shape="round" icon={<CopyOutlined />} onClick={() => {
+                    copy(`${window.location.origin}/api/saml/metadata?application=admin/${encodeURIComponent(this.state.applicationName)}&enablePostBinding=${this.state.application.enableSamlPostBinding}`);
+                    Setting.showMessage("success", i18next.t("general:Copied to clipboard successfully"));
+                  }}
+                  >
+                    {i18next.t("application:Copy SAML metadata URL")}
+                  </Button>
+                </Col>
+              </Row>
+            )
+          }
         </React.Fragment>
       )}
       {this.state.activeMenuKey === "providers" && (
@@ -1551,10 +1561,16 @@ class ApplicationEditPage extends React.Component {
               <Input prefix={<LinkOutlined />} value={this.state.application.termsOfUse} style={{marginBottom: "10px"}} onChange={e => {
                 this.updateApplicationField("termsOfUse", e.target.value);
               }} />
-              <Upload maxCount={1} accept=".html" showUploadList={false}
-                beforeUpload={file => {return false;}} onChange={info => {this.handleUpload(info);}}>
-                <Button icon={<UploadOutlined />} loading={this.state.uploading}>{i18next.t("general:Click to Upload")}</Button>
-              </Upload>
+              {
+                // the upload writes the uploaded URL back to the saved application,
+                // so it can only be done after the application is created
+                this.state.mode === "add" ? null : (
+                  <Upload maxCount={1} accept=".html" showUploadList={false}
+                    beforeUpload={file => {return false;}} onChange={info => {this.handleUpload(info);}}>
+                    <Button icon={<UploadOutlined />} loading={this.state.uploading}>{i18next.t("general:Click to Upload")}</Button>
+                  </Upload>
+                )
+              }
             </Col>
           </Row>
         </React.Fragment>

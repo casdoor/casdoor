@@ -251,7 +251,8 @@ class InvitationEditPage extends React.Component {
             <Input.TextArea autoSize={{minRows: 3, maxRows: 10}} value={this.state.emails} onChange={(value) => {
               this.setState({emails: value.target.value});
             }}></Input.TextArea>
-            <Button type="primary" style={{marginTop: "20px"}} onClick={() => this.setState({showSendModal: true})}>{i18next.t("general:Send")}</Button>
+            {/* the emails are sent through the saved invitation, so it needs the invitation to exist */}
+            <Button type="primary" disabled={this.state.mode === "add"} style={{marginTop: "20px"}} onClick={() => this.setState({showSendModal: true})}>{i18next.t("general:Send")}</Button>
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
