@@ -27,6 +27,10 @@ import (
 	"github.com/casdoor/casdoor/util"
 )
 
+func (p *DingtalkSyncerProvider) getCasdoorGroupId(deptId int64) string {
+	return util.GetId(p.Syncer.Organization, fmt.Sprintf("%d", deptId))
+}
+
 // DingtalkSyncerProvider implements SyncerProvider for DingTalk API-based syncers
 type DingtalkSyncerProvider struct {
 	Syncer *Syncer
@@ -465,7 +469,7 @@ func (p *DingtalkSyncerProvider) dingtalkUserToOriginalUser(dingtalkUser *Dingta
 
 	// Add department IDs to Groups field
 	for _, deptId := range dingtalkUser.Department {
-		user.Groups = append(user.Groups, fmt.Sprintf("%d", deptId))
+		user.Groups = append(user.Groups, p.getCasdoorGroupId(int64(deptId)))
 	}
 
 	// Set CreatedTime to current time if not set
@@ -540,7 +544,7 @@ func (p *DingtalkSyncerProvider) GetOriginalUserGroups(userId string) ([]string,
 	// Convert department IDs to strings
 	groupIds := []string{}
 	for _, deptId := range user.Department {
-		groupIds = append(groupIds, fmt.Sprintf("%d", deptId))
+		groupIds = append(groupIds, p.getCasdoorGroupId(int64(deptId)))
 	}
 
 	return groupIds, nil
