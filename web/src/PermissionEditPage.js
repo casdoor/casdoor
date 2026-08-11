@@ -244,7 +244,7 @@ class PermissionEditPage extends React.Component {
                 if (res.status !== "ok") {
                   return res;
                 }
-                const data = res.data.map((user) => Setting.getOption(`${user.owner}/${user.name}`, `${user.owner}/${user.name}`));
+                const data = res.data.map((user) => Setting.getOption(user.displayName ? `${user.displayName} (${user.owner}/${user.name})` : `${user.owner}/${user.name}`, `${user.owner}/${user.name}`));
                 if (args?.[1] === 1 && Array.isArray(res?.data)) {
                   res.data = [
                     Setting.getOption(i18next.t("general:All"), "*"),
@@ -281,7 +281,7 @@ class PermissionEditPage extends React.Component {
                 if (res.status !== "ok") {
                   return res;
                 }
-                const data = res.data.map((group) => Setting.getOption(`${group.owner}/${group.name}`, `${group.owner}/${group.name}`));
+                const data = res.data.map((group) => Setting.getOption(group.displayName ? `${group.displayName} (${group.owner}/${group.name})` : `${group.owner}/${group.name}`, `${group.owner}/${group.name}`));
                 if (args?.[2] === 1 && Array.isArray(res?.data)) {
                   res.data = [
                     Setting.getOption(i18next.t("general:All"), "*"),

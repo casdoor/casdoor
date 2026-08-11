@@ -151,7 +151,7 @@ class RoleEditPage extends React.Component {
                 return [this.state.role.owner, page, pageSize, field, searchText];
               }}
               reloadKey={this.state.role.owner}
-              optionMapper={(user) => Setting.getOption(`${user.owner}/${user.name}`, `${user.owner}/${user.name}`)}
+              optionMapper={(user) => Setting.getOption(user.displayName ? `${user.displayName} (${user.owner}/${user.name})` : `${user.owner}/${user.name}`, `${user.owner}/${user.name}`)}
               filterOption={false}
               onChange={(value => {this.updateRoleField("users", value);})}
             />
@@ -172,7 +172,7 @@ class RoleEditPage extends React.Component {
                 return [this.state.role.owner, false, page, pageSize, field, searchText, "", ""];
               }}
               reloadKey={this.state.role.owner}
-              optionMapper={(group) => Setting.getOption(`${group.owner}/${group.name}`, `${group.owner}/${group.name}`)}
+              optionMapper={(group) => Setting.getOption(group.displayName ? `${group.displayName} (${group.owner}/${group.name})` : `${group.owner}/${group.name}`, `${group.owner}/${group.name}`)}
               filterOption={false}
               onChange={(value => {this.updateRoleField("groups", value);})}
             />
