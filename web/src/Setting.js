@@ -1794,6 +1794,13 @@ export function getOption(label, value) {
   };
 }
 
+// getDisplayNameOption returns an option whose value is "owner/name" and whose label is
+// "displayName (owner/name)", so that the item can be recognized by both its display name and its ID.
+export function getDisplayNameOption(item) {
+  const id = `${item.owner}/${item.name}`;
+  return getOption(item.displayName ? `${item.displayName} (${id})` : id, id);
+}
+
 export function getArrayItem(array, key, value) {
   const res = array.filter(item => item[key] === value)[0];
   return res;

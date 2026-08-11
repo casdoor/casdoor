@@ -159,7 +159,7 @@ class RoleEditPage extends React.Component {
                 return [this.state.role.owner, page, pageSize, field, searchText];
               }}
               reloadKey={this.state.role.owner}
-              optionMapper={(user) => Setting.getOption(`${user.owner}/${user.name}`, `${user.owner}/${user.name}`)}
+              optionMapper={(user) => Setting.getDisplayNameOption(user)}
               filterOption={false}
               onChange={(value => {this.updateRoleField("users", value);})}
             />
@@ -180,7 +180,7 @@ class RoleEditPage extends React.Component {
                 return [this.state.role.owner, false, page, pageSize, field, searchText, "", ""];
               }}
               reloadKey={this.state.role.owner}
-              optionMapper={(group) => Setting.getOption(`${group.owner}/${group.name}`, `${group.owner}/${group.name}`)}
+              optionMapper={(group) => Setting.getDisplayNameOption(group)}
               filterOption={false}
               onChange={(value => {this.updateRoleField("groups", value);})}
             />
@@ -205,7 +205,7 @@ class RoleEditPage extends React.Component {
                 if (role.owner === this.state.role.owner && role.name === this.state.role.name) {
                   return null;
                 }
-                return Setting.getOption(`${role.owner}/${role.name}`, `${role.owner}/${role.name}`);
+                return Setting.getDisplayNameOption(role);
               }}
               filterOption={false}
               onChange={(value => {this.updateRoleField("roles", value);})}
