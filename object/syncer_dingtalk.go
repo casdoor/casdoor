@@ -75,16 +75,16 @@ type DingtalkAccessTokenResp struct {
 }
 
 type DingtalkUser struct {
-	UserId     string `json:"userid"`
-	UnionId    string `json:"unionid"`
-	Name       string `json:"name"`
-	Department []int  `json:"dept_id_list"`
-	Position   string `json:"title"`
-	Mobile     string `json:"mobile"`
-	Email      string `json:"email"`
-	Avatar     string `json:"avatar"`
-	JobNumber  string `json:"job_number"`
-	Active     bool   `json:"active"`
+	UserId     string  `json:"userid"`
+	UnionId    string  `json:"unionid"`
+	Name       string  `json:"name"`
+	Department []int64 `json:"dept_id_list"`
+	Position   string  `json:"title"`
+	Mobile     string  `json:"mobile"`
+	Email      string  `json:"email"`
+	Avatar     string  `json:"avatar"`
+	JobNumber  string  `json:"job_number"`
+	Active     bool    `json:"active"`
 }
 
 type DingtalkUserListResp struct {
@@ -465,7 +465,7 @@ func (p *DingtalkSyncerProvider) dingtalkUserToOriginalUser(dingtalkUser *Dingta
 
 	// Add department IDs to Groups field
 	for _, deptId := range dingtalkUser.Department {
-		user.Groups = append(user.Groups, fmt.Sprintf("%d", deptId))
+		user.Groups = append(user.Groups, p.getDingtalkGroupId(deptId))
 	}
 
 	// Set CreatedTime to current time if not set
@@ -507,13 +507,25 @@ func (p *DingtalkSyncerProvider) GetOriginalGroups() ([]*OriginalGroup, error) {
 	return originalGroups, nil
 }
 
+// getDingtalkGroupName returns the Casdoor group name of a DingTalk department. The
+// department ID is used as the name because DingTalk department names are not unique.
+func getDingtalkGroupName(deptId int64) string {
+	return fmt.Sprintf("%d", deptId)
+}
+
+// getDingtalkGroupId returns the Casdoor group ID ("organization/name") of a DingTalk
+// department. User.Groups holds full group IDs, so a bare department ID would not match
+// any group and the membership would be silently dropped by the group and permission APIs.
+func (p *DingtalkSyncerProvider) getDingtalkGroupId(deptId int64) string {
+	return util.GetId(p.Syncer.Organization, getDingtalkGroupName(deptId))
+}
+
 // dingtalkDepartmentToOriginalGroup converts DingTalk department to Casdoor OriginalGroup
 func (p *DingtalkSyncerProvider) dingtalkDepartmentToOriginalGroup(dept *DingtalkDepartment) *OriginalGroup {
-	// Convert department ID to string for group ID
-	deptIdStr := fmt.Sprintf("%d", dept.DeptId)
+	deptIdStr := getDingtalkGroupName(dept.DeptId)
 
 	return &OriginalGroup{
-		Id:          deptIdStr,
+		Id:          p.getDingtalkGroupId(dept.DeptId),
 		Name:        deptIdStr,    // Use ID as name for uniqueness
 		DisplayName: dept.Name,    // Use actual name as display name
 		Description: "",           // DingTalk doesn't provide description
@@ -537,10 +549,10 @@ func (p *DingtalkSyncerProvider) GetOriginalUserGroups(userId string) ([]string,
 		return nil, err
 	}
 
-	// Convert department IDs to strings
+	// Convert department IDs to Casdoor group IDs
 	groupIds := []string{}
 	for _, deptId := range user.Department {
-		groupIds = append(groupIds, fmt.Sprintf("%d", deptId))
+		groupIds = append(groupIds, p.getDingtalkGroupId(deptId))
 	}
 
 	return groupIds, nil
