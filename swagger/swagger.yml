@@ -1797,6 +1797,10 @@ paths:
         description: The id ( owner/name ) of the group
         required: true
         type: string
+      - in: query
+        name: withUsers
+        description: Whether to include group members (default true)
+        type: boolean
       responses:
         "200":
           description: The Response object
@@ -1814,6 +1818,10 @@ paths:
         description: The owner of groups
         required: true
         type: string
+      - in: query
+        name: withUsers
+        description: Whether to include group members (default true)
+        type: boolean
       responses:
         "200":
           description: The Response object

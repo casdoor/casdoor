@@ -2770,6 +2770,12 @@
                         "description": "The id ( owner/name ) of the group",
                         "required": true,
                         "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "withUsers",
+                        "description": "Whether to include group members (default true)",
+                        "type": "boolean"
                     }
                 ],
                 "responses": {
@@ -2796,6 +2802,12 @@
                         "description": "The owner of groups",
                         "required": true,
                         "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "withUsers",
+                        "description": "Whether to include group members (default true)",
+                        "type": "boolean"
                     }
                 ],
                 "responses": {

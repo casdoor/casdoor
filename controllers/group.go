@@ -27,6 +27,7 @@ import (
 // @Tag Group API
 // @Description get groups
 // @Param   owner     query    string  true        "The owner of groups"
+// @Param   withUsers query    bool    false       "Whether to include group members (default true)"
 // @Success 200 {array} object.Group The Response object
 // @router /get-groups [get]
 func (c *ApiController) GetGroups() {
@@ -38,6 +39,7 @@ func (c *ApiController) GetGroups() {
 	sortField := c.Ctx.Input.Query("sortField")
 	sortOrder := c.Ctx.Input.Query("sortOrder")
 	withTree := c.Ctx.Input.Query("withTree")
+	withUsers := c.Ctx.Input.Query("withUsers")
 
 	if limit == "" || page == "" {
 		groups, err := object.GetGroups(owner)
@@ -46,10 +48,12 @@ func (c *ApiController) GetGroups() {
 			return
 		}
 
-		err = object.ExtendGroupsWithUsers(groups)
-		if err != nil {
-			c.ResponseError(err.Error())
-			return
+		if util.ShouldExtendGroupWithUsers(withUsers) {
+			err = object.ExtendGroupsWithUsers(groups)
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
 		}
 
 		if withTree == "true" {
@@ -90,10 +94,12 @@ func (c *ApiController) GetGroups() {
 			}
 		}
 
-		err = object.ExtendGroupsWithUsers(groups)
-		if err != nil {
-			c.ResponseError(err.Error())
-			return
+		if util.ShouldExtendGroupWithUsers(withUsers) {
+			err = object.ExtendGroupsWithUsers(groups)
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
 		}
 
 		c.ResponseOk(groups, paginator.Nums())
@@ -106,10 +112,12 @@ func (c *ApiController) GetGroups() {
 // @Tag Group API
 // @Description get group
 // @Param   id     query    string  true        "The id ( owner/name ) of the group"
+// @Param   withUsers query bool    false       "Whether to include group members (default true)"
 // @Success 200 {object} object.Group The Response object
 // @router /get-group [get]
 func (c *ApiController) GetGroup() {
 	id := c.Ctx.Input.Query("id")
+	withUsers := c.Ctx.Input.Query("withUsers")
 
 	group, err := object.GetGroup(id)
 	if err != nil {
@@ -117,10 +125,12 @@ func (c *ApiController) GetGroup() {
 		return
 	}
 
-	err = object.ExtendGroupWithUsers(group)
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
+	if util.ShouldExtendGroupWithUsers(withUsers) {
+		err = object.ExtendGroupWithUsers(group)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
 	}
 
 	c.ResponseOk(group)
