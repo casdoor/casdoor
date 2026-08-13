@@ -753,6 +753,15 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, allowDis
 		}
 	}
 
+	if oldUser.UidNumber != newUser.UidNumber {
+		item := GetAccountItemByName("UID number", organization)
+		if !userVisible(isAdmin, item) {
+			newUser.UidNumber = oldUser.UidNumber
+		} else {
+			itemsChanged = append(itemsChanged, item)
+		}
+	}
+
 	if oldUser.Score != newUser.Score {
 		item := GetAccountItemByName("Score", organization)
 		if !userVisible(isAdmin, item) {

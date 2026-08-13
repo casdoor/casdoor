@@ -197,6 +197,8 @@ func (syncer *Syncer) setUserByKeyValue(user *User, key string, value string) {
 		user.Birthday = value
 	case "Education":
 		user.Education = value
+	case "UidNumber":
+		user.UidNumber = util.ParseInt(value)
 	case "Score":
 		user.Score = util.ParseInt(value)
 	case "Ranking":
@@ -404,6 +406,7 @@ func (syncer *Syncer) getMapFromOriginalUser(user *OriginalUser) map[string]stri
 	m["Gender"] = user.Gender
 	m["Birthday"] = user.Birthday
 	m["Education"] = user.Education
+	m["UidNumber"] = strconv.Itoa(user.UidNumber)
 	m["Score"] = strconv.Itoa(user.Score)
 	m["Ranking"] = strconv.Itoa(user.Ranking)
 	m["IsDefaultAvatar"] = util.BoolToString(user.IsDefaultAvatar)

@@ -20,6 +20,7 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/casdoor/casdoor/conf"
@@ -96,8 +97,19 @@ type LdapGroup struct {
 	Cn          string   `json:"cn"`
 	Name        string   `json:"name"`
 	Description string   `json:"description"`
+	GidNumber   string   `json:"gidNumber"`
 	Member      []string `json:"member"`
 	ParentDn    string   `json:"parentDn"`
+}
+
+// parsePosixNumber converts a POSIX uid/gid read from an LDAP server into the
+// form Casdoor stores. Anything absent or not a number leaves it unassigned.
+func parsePosixNumber(value string) int {
+	number, err := strconv.Atoi(strings.TrimSpace(value))
+	if err != nil || number < 0 {
+		return 0
+	}
+	return number
 }
 
 func (ldap *Ldap) GetLdapConn() (c *LdapConn, err error) {
@@ -305,7 +317,7 @@ func (l *LdapConn) GetLdapGroups(ldapServer *Ldap) ([]LdapGroup, error) {
 	}
 	filterBuilder.WriteString(")")
 
-	SearchAttributes := []string{"cn", "name", "description", "member", "uniqueMember", "memberUid"}
+	SearchAttributes := []string{"cn", "name", "description", "gidNumber", "member", "uniqueMember", "memberUid"}
 	searchReq := goldap.NewSearchRequest(ldapServer.BaseDn,
 		goldap.ScopeWholeSubtree, goldap.NeverDerefAliases, 0, 0, false,
 		filterBuilder.String(), SearchAttributes, nil)
@@ -330,6 +342,10 @@ func (l *LdapConn) GetLdapGroups(ldapServer *Ldap) ([]LdapGroup, error) {
 			case "description":
 				if len(attribute.Values) > 0 {
 					group.Description = attribute.Values[0]
+				}
+			case "gidNumber":
+				if len(attribute.Values) > 0 {
+					group.GidNumber = attribute.Values[0]
 				}
 			case "member", "uniqueMember", "memberUid":
 				group.Member = append(group.Member, attribute.Values...)
@@ -501,7 +517,17 @@ func SyncLdapUsers(owner string, syncUsers []LdapUser, ldapId string) (existUser
 			// manually-assigned groups (or groups from other sources) are not
 			// wiped out during synchronization.
 			user.Groups = buildLdapUserGroups(organization.Name, ldap, syncUser.MemberOf, existingGroupNameSet, user.Groups)
-			affected, err := UpdateUser(user.GetId(), user, []string{"groups"}, false)
+
+			columns := []string{"groups"}
+			// Adopt the LDAP uid without overwriting one already assigned in Casdoor.
+			if user.UidNumber == 0 {
+				if uidNumber := parsePosixNumber(syncUser.UidNumber); uidNumber != 0 {
+					user.UidNumber = uidNumber
+					columns = append(columns, "uid_number")
+				}
+			}
+
+			affected, err := UpdateUser(user.GetId(), user, columns, false)
 			if err != nil {
 				return nil, nil, err
 			}
@@ -537,6 +563,7 @@ func SyncLdapUsers(owner string, syncUsers []LdapUser, ldapId string) (existUser
 				Tag:               tag,
 				Score:             score,
 				Ldap:              syncUser.Uuid,
+				UidNumber:         parsePosixNumber(syncUser.UidNumber),
 				Properties:        syncUser.Attributes,
 			}
 			formatUserPhone(newUser)
@@ -702,6 +729,10 @@ func SyncLdapGroups(owner string, ldapGroups []LdapGroup, ldapId string) (newGro
 			existingGroup.IsTopGroup = isTopGroup
 			existingGroup.Type = "ldap-synced"
 			existingGroup.UpdatedTime = util.GetCurrentTime()
+			// Adopt the LDAP gid without overwriting one already assigned in Casdoor.
+			if existingGroup.GidNumber == 0 {
+				existingGroup.GidNumber = parsePosixNumber(ldapGroup.GidNumber)
+			}
 
 			_, err := UpdateGroup(existingGroup.GetId(), existingGroup, true, "")
 			if err == nil {
@@ -719,6 +750,7 @@ func SyncLdapGroups(owner string, ldapGroups []LdapGroup, ldapId string) (newGro
 				IsTopGroup:  isTopGroup,
 				Type:        "ldap-synced",
 				IsEnabled:   true,
+				GidNumber:   parsePosixNumber(ldapGroup.GidNumber),
 			}
 
 			_, err := AddGroup(newGroup)

@@ -225,7 +225,9 @@ type User struct {
 	FaceIds             []*FaceId             `json:"faceIds"`
 	Cart                []ProductInfo         `xorm:"mediumtext" json:"cart"`
 
-	Ldap       string            `xorm:"ldap varchar(100)" json:"ldap"`
+	Ldap string `xorm:"ldap varchar(100)" json:"ldap"`
+	// UidNumber is the POSIX uid published by the built-in LDAP server, 0 when unassigned.
+	UidNumber  int               `xorm:"index" json:"uidNumber"`
 	Properties map[string]string `json:"properties"`
 
 	ThirdPartyLinks []*ThirdPartyLink `xorm:"-" json:"thirdPartyLinks,omitempty"`
@@ -872,7 +874,7 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 	}
 	if isAdmin {
 		columns = append(columns, "name", "id", "email", "phone", "country_code", "type", "balance", "balance_credit", "balance_currency", "mfa_items", "register_type", "register_source",
-			"is_admin", "is_forbidden", "is_deleted")
+			"is_admin", "is_forbidden", "is_deleted", "uid_number")
 	}
 
 	columns = append(columns, "updated_time")

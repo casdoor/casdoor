@@ -99,6 +99,7 @@
         {"name": "Balance currency", "visible": true, "viewRule": "Self", "modifyRule": "Self"},
         {"name": "Cart", "visible": true, "viewRule": "Self", "modifyRule": "Self"},
         {"name": "Transactions", "visible": true, "viewRule": "Self", "modifyRule": "Self"},
+        {"name": "UID number", "visible": true, "viewRule": "Admin", "modifyRule": "Admin"},
         {"name": "Score", "visible": true, "viewRule": "Public", "modifyRule": "Self"},
         {"name": "Karma", "visible": true, "viewRule": "Public", "modifyRule": "Self"},
         {"name": "Ranking", "visible": true, "viewRule": "Public", "modifyRule": "Self"},
