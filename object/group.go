@@ -416,8 +416,19 @@ func ExtendGroupWithUsers(group *Group) error {
 }
 
 func ExtendGroupsWithUsers(groups []*Group) error {
+	if len(groups) == 0 {
+		return nil
+	}
+
+	// Load the policy once for the whole page, GetAllUsersByGroup() would
+	// otherwise read the entire policy table again for every group.
+	err := userEnforcer.LoadPolicy()
+	if err != nil {
+		return err
+	}
+
 	for _, group := range groups {
-		users, err := userEnforcer.GetAllUsersByGroup(group.GetId())
+		users, err := userEnforcer.getAllUsersByGroup(group.GetId())
 		if err != nil {
 			return err
 		}
