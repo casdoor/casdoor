@@ -568,6 +568,7 @@ export const GetTranslatedUserItems = () => {
     {name: "Balance credit", label: i18next.t("organization:Balance credit")},
     {name: "Cart", label: i18next.t("general:Cart")},
     {name: "Transactions", label: i18next.t("general:Transactions")},
+    {name: "UID number", label: i18next.t("general:UID number")},
     {name: "Score", label: i18next.t("user:Score")},
     {name: "Karma", label: i18next.t("user:Karma")},
     {name: "Ranking", label: i18next.t("user:Ranking")},
@@ -2130,7 +2131,7 @@ export function isAnonymousUserName(userName) {
 export function getUserCommonFields() {
   return ["Owner", "Name", "CreatedTime", "UpdatedTime", "DeletedTime", "Id", "ExternalId", "Type", "Password", "PasswordSalt", "PasswordType", "DisplayName", "FirstName", "LastName", "Avatar", "AvatarType", "PermanentAvatar",
     "Email", "EmailVerified", "Phone", "CountryCode", "Location", "Address", "Affiliation", "Title", "IdCardType", "IdCard", "RealName", "IsVerified", "Homepage", "Bio", "Tag", "Region",
-    "Language", "Gender", "Birthday", "Education", "Score", "Karma", "Ranking", "Balance", "BalanceCredit", "Currency", "BalanceCurrency", "IsDefaultAvatar", "IsOnline", "IsAdmin", "IsForbidden", "IsDeleted",
+    "Language", "Gender", "Birthday", "Education", "UidNumber", "Score", "Karma", "Ranking", "Balance", "BalanceCredit", "Currency", "BalanceCurrency", "IsDefaultAvatar", "IsOnline", "IsAdmin", "IsForbidden", "IsDeleted",
     "SignupApplication", "RegisterType", "RegisterSource", "CreatedIp", "LastSigninTime", "LastSigninIp",
     "PreferredMfaType", "TotpSecret", "RecoveryCodes", "MfaPhoneEnabled", "MfaEmailEnabled", "MfaRadiusEnabled", "MfaRadiusUsername", "MfaRadiusProvider", "MfaPushEnabled", "MfaPushReceiver", "MfaPushProvider",
     "WebauthnCredentials", "FaceIds", "Invitation", "InvitationCode", "Ldap", "Properties", "Groups"];

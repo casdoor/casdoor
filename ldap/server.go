@@ -164,13 +164,7 @@ func handleSearch(w ldap.ResponseWriter, m *ldap.Message) {
 		return
 	}
 
-	var isGroupSearch bool = false
-	filter := r.Filter()
-	if eq, ok := filter.(message.FilterEqualityMatch); ok && strings.EqualFold(string(eq.AttributeDesc()), "objectClass") && strings.EqualFold(string(eq.AssertionValue()), "posixGroup") {
-		isGroupSearch = true
-	}
-
-	if isGroupSearch {
+	if isPosixGroupFilter(r.Filter()) {
 		groups, code := GetFilteredGroups(m, string(r.BaseObject()), r.FilterString())
 		if code != ldap.LDAPResultSuccess {
 			res.SetResultCode(code)
@@ -179,14 +173,23 @@ func handleSearch(w ldap.ResponseWriter, m *ldap.Message) {
 		}
 
 		for _, group := range groups {
+			users := object.GetGroupUsersWithoutError(group.GetId())
+			memberUids := make([]string, 0, len(users))
+			for _, user := range users {
+				memberUids = append(memberUids, user.Name)
+			}
+
+			attributes := getGroupAttributes(group, memberUids)
+			if !matchGroupFilter(r.Filter(), attributes) {
+				continue
+			}
+
 			dn := fmt.Sprintf("cn=%s,%s", group.Name, string(r.BaseObject()))
 			e := ldap.NewSearchResultEntry(dn)
 			e.AddAttribute("cn", message.AttributeValue(group.Name))
-			gidNumberStr := fmt.Sprintf("%v", hash(group.Name))
-			e.AddAttribute("gidNumber", message.AttributeValue(gidNumberStr))
-			users := object.GetGroupUsersWithoutError(group.GetId())
-			for _, user := range users {
-				e.AddAttribute("memberUid", message.AttributeValue(user.Name))
+			e.AddAttribute("gidNumber", message.AttributeValue(getGidNumber(group)))
+			for _, memberUid := range memberUids {
+				e.AddAttribute("memberUid", message.AttributeValue(memberUid))
 			}
 			e.AddAttribute("objectClass", "posixGroup")
 			w.Write(e)
@@ -242,7 +245,7 @@ func resolveRequestAttributes(attrs message.AttributeSelection) []string {
 func buildUserSearchEntry(user *object.User, baseDN string, attrs []string, org *object.Organization) message.SearchResultEntry {
 	dn := fmt.Sprintf("uid=%s,cn=%s,%s", user.Id, user.Name, baseDN)
 	e := ldap.NewSearchResultEntry(dn)
-	uidNumberStr := fmt.Sprintf("%v", hash(user.Name))
+	uidNumberStr := getUidNumber(user)
 	if IsLdapAttrAllowed(org, "uidNumber") {
 		e.AddAttribute("uidNumber", message.AttributeValue(uidNumberStr))
 	}
@@ -250,7 +253,7 @@ func buildUserSearchEntry(user *object.User, baseDN string, attrs []string, org 
 		e.AddAttribute("gidNumber", message.AttributeValue(uidNumberStr))
 	}
 	if IsLdapAttrAllowed(org, "homeDirectory") {
-		e.AddAttribute("homeDirectory", message.AttributeValue("/home/"+user.Name))
+		e.AddAttribute("homeDirectory", message.AttributeValue(getHomeDirectory(user)))
 	}
 	if IsLdapAttrAllowed(org, "cn") {
 		e.AddAttribute("cn", message.AttributeValue(user.Name))

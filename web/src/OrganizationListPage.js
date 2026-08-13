@@ -84,6 +84,7 @@ class OrganizationListPage extends BaseListPage {
         {name: "Gender", visible: true, viewRule: "Public", modifyRule: "Admin"},
         {name: "Birthday", visible: true, viewRule: "Public", modifyRule: "Admin"},
         {name: "Education", visible: true, viewRule: "Public", modifyRule: "Admin"},
+        {name: "UID number", visible: true, viewRule: "Admin", modifyRule: "Admin"},
         {name: "Score", visible: true, viewRule: "Public", modifyRule: "Admin"},
         {name: "Karma", visible: true, viewRule: "Public", modifyRule: "Admin"},
         {name: "Ranking", visible: true, viewRule: "Public", modifyRule: "Admin"},

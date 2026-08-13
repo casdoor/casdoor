@@ -84,6 +84,7 @@ func GetDefaultAccountItems() []*AccountItem {
 		{Name: "Balance currency", Visible: true, ViewRule: "Self", ModifyRule: "Self"},
 		{Name: "Cart", Visible: true, ViewRule: "Self", ModifyRule: "Self"},
 		{Name: "Transactions", Visible: true, ViewRule: "Self", ModifyRule: "Self"},
+		{Name: "UID number", Visible: true, ViewRule: "Admin", ModifyRule: "Admin"},
 		{Name: "Score", Visible: true, ViewRule: "Public", ModifyRule: "Self"},
 		{Name: "Karma", Visible: true, ViewRule: "Public", ModifyRule: "Self"},
 		{Name: "Ranking", Visible: true, ViewRule: "Public", ModifyRule: "Self"},

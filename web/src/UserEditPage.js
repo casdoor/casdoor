@@ -948,6 +948,19 @@ class UserEditPage extends React.Component {
           </Col>
         </Row>
       );
+    } else if (accountItem.name === "UID number") {
+      return (
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("general:UID number"), i18next.t("general:UID number - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <InputNumber min={0} value={this.state.user.uidNumber} disabled={disabled} onChange={value => {
+              this.updateUserField("uidNumber", value ?? 0);
+            }} />
+          </Col>
+        </Row>
+      );
     } else if (accountItem.name === "Karma") {
       return (
         <Row style={{marginTop: "20px"}} >

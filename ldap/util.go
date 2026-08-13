@@ -17,6 +17,7 @@ package ldap
 import (
 	"fmt"
 	"log"
+	"strconv"
 	"strings"
 
 	"github.com/casdoor/casdoor/object"
@@ -126,6 +127,54 @@ var ldapAttributesMapping = map[string]FieldRelation{
 
 const ldapMemberOfAttr = "memberOf"
 
+// syntheticUserAttribute is a POSIX attribute the LDAP server computes, so a
+// filter on it is finished in memory. column holds the assigned value, if any.
+type syntheticUserAttribute struct {
+	column   string
+	getValue func(user *object.User) string
+}
+
+var syntheticUserAttributes = map[string]syntheticUserAttribute{
+	"uidnumber":     {column: "uid_number", getValue: getUidNumber},
+	"gidnumber":     {column: "uid_number", getValue: getUidNumber},
+	"homedirectory": {getValue: getHomeDirectory},
+}
+
+// buildCoarseCondition keeps the rows that can still match: those the value is
+// assigned to, plus the unassigned ones whose value is only known in memory.
+func (a syntheticUserAttribute) buildCoarseCondition(value string) builder.Cond {
+	if a.column == "" {
+		return builder.Expr("1 = 1")
+	}
+
+	unassigned := builder.Or(builder.Eq{a.column: 0}, builder.IsNull{a.column})
+	number, err := strconv.Atoi(value)
+	if err != nil {
+		return unassigned
+	}
+	return builder.Or(builder.Eq{a.column: number}, unassigned)
+}
+
+// getUidNumber derives the number from the name when none is assigned, so the
+// uid of an existing user stays stable across the upgrade.
+func getUidNumber(user *object.User) string {
+	if user.UidNumber != 0 {
+		return strconv.Itoa(user.UidNumber)
+	}
+	return fmt.Sprintf("%v", hash(user.Name))
+}
+
+func getHomeDirectory(user *object.User) string {
+	return "/home/" + user.Name
+}
+
+func getGidNumber(group *object.Group) string {
+	if group.GidNumber != 0 {
+		return strconv.Itoa(group.GidNumber)
+	}
+	return fmt.Sprintf("%v", hash(group.Name))
+}
+
 var AdditionalLdapAttributes []message.LDAPString
 
 func init() {
@@ -215,12 +264,56 @@ func IsLdapAttrAllowed(org *object.Organization, attr string) bool {
 	return false
 }
 
-func buildUserFilterCondition(filter interface{}) (builder.Cond, error) {
+// userSearchFilter is an LDAP filter translated for the user table: a SQL
+// condition, plus the terms that have to be applied to the rows it returned.
+type userSearchFilter struct {
+	condition  builder.Cond
+	predicates []func(user *object.User) bool
+}
+
+func (q *userSearchFilter) matches(user *object.User) bool {
+	for _, predicate := range q.predicates {
+		if !predicate(user) {
+			return false
+		}
+	}
+	return true
+}
+
+func (q *userSearchFilter) apply(users []*object.User) []*object.User {
+	if len(q.predicates) == 0 {
+		return users
+	}
+
+	res := make([]*object.User, 0, len(users))
+	for _, user := range users {
+		if q.matches(user) {
+			res = append(res, user)
+		}
+	}
+	return res
+}
+
+func buildUserFilter(filter interface{}) (*userSearchFilter, error) {
+	q := &userSearchFilter{}
+	condition, err := q.buildCondition(filter, true)
+	if err != nil {
+		return nil, err
+	}
+
+	q.condition = condition
+	return q, nil
+}
+
+// buildCondition translates the filter into a SQL condition. conjunctive means
+// the term is reached through AND branches only, the only place a synthetic
+// attribute can leave the query without changing the result.
+func (q *userSearchFilter) buildCondition(filter interface{}, conjunctive bool) (builder.Cond, error) {
 	switch f := filter.(type) {
 	case message.FilterAnd:
 		conditions := make([]builder.Cond, len(f))
 		for i, v := range f {
-			cond, err := buildUserFilterCondition(v)
+			cond, err := q.buildCondition(v, conjunctive)
 			if err != nil {
 				return nil, err
 			}
@@ -230,7 +323,7 @@ func buildUserFilterCondition(filter interface{}) (builder.Cond, error) {
 	case message.FilterOr:
 		conditions := make([]builder.Cond, len(f))
 		for i, v := range f {
-			cond, err := buildUserFilterCondition(v)
+			cond, err := q.buildCondition(v, false)
 			if err != nil {
 				return nil, err
 			}
@@ -238,7 +331,7 @@ func buildUserFilterCondition(filter interface{}) (builder.Cond, error) {
 		}
 		return builder.Or(conditions...), nil
 	case message.FilterNot:
-		cond, err := buildUserFilterCondition(f.Filter)
+		cond, err := q.buildCondition(f.Filter, false)
 		if err != nil {
 			return nil, err
 		}
@@ -248,6 +341,18 @@ func buildUserFilterCondition(filter interface{}) (builder.Cond, error) {
 
 		if strings.EqualFold(attr, "objectclass") && strings.EqualFold(string(f.AssertionValue()), "posixAccount") {
 			return builder.Expr("1 = 1"), nil
+		}
+
+		if attribute, ok := syntheticUserAttributes[strings.ToLower(attr)]; ok {
+			if !conjunctive {
+				return nil, fmt.Errorf("attribute %s is only supported in an AND filter", attr)
+			}
+
+			value := string(f.AssertionValue())
+			q.predicates = append(q.predicates, func(user *object.User) bool {
+				return attribute.getValue(user) == value
+			})
+			return attribute.buildCoarseCondition(value), nil
 		}
 
 		if attr == ldapMemberOfAttr {
@@ -274,6 +379,10 @@ func buildUserFilterCondition(filter interface{}) (builder.Cond, error) {
 		return builder.Eq{field: string(f.AssertionValue())}, nil
 	case message.FilterPresent:
 		if strings.EqualFold(string(f), "objectclass") {
+			return builder.Expr("1 = 1"), nil
+		}
+		// Synthetic attributes are computed for every user, so they always exist.
+		if _, ok := syntheticUserAttributes[strings.ToLower(string(f))]; ok {
 			return builder.Expr("1 = 1"), nil
 		}
 		field, err := getUserFieldFromAttribute(string(f))
@@ -318,13 +427,13 @@ func buildUserFilterCondition(filter interface{}) (builder.Cond, error) {
 	}
 }
 
-func buildSafeCondition(filter interface{}) builder.Cond {
-	condition, err := buildUserFilterCondition(filter)
+func buildSafeFilter(filter interface{}) *userSearchFilter {
+	q, err := buildUserFilter(filter)
 	if err != nil {
 		log.Printf("err = %v", err.Error())
-		return builder.And(builder.Expr("1 != 1"))
+		return &userSearchFilter{condition: builder.And(builder.Expr("1 != 1"))}
 	}
-	return condition
+	return q
 }
 
 func GetFilteredUsers(m *ldap.Message) (filteredUsers []*object.User, code int) {
@@ -336,21 +445,23 @@ func GetFilteredUsers(m *ldap.Message) (filteredUsers []*object.User, code int) 
 		return nil, code
 	}
 
+	filter := buildSafeFilter(r.Filter())
+
 	if name == "*" { // get all users from organization 'org'
 		if m.Client.IsGlobalAdmin && org == "*" {
-			filteredUsers, err = object.GetGlobalUsersWithFilter(buildSafeCondition(r.Filter()))
+			filteredUsers, err = object.GetGlobalUsersWithFilter(filter.condition)
 			if err != nil {
 				panic(err)
 			}
-			return filteredUsers, ldap.LDAPResultSuccess
+			return filter.apply(filteredUsers), ldap.LDAPResultSuccess
 		}
 		if m.Client.IsGlobalAdmin || (m.Client.IsOrgAdmin && org == m.Client.OrgName) {
-			filteredUsers, err = object.GetUsersWithFilter(org, buildSafeCondition(r.Filter()))
+			filteredUsers, err = object.GetUsersWithFilter(org, filter.condition)
 			if err != nil {
 				panic(err)
 			}
 
-			return filteredUsers, ldap.LDAPResultSuccess
+			return filter.apply(filteredUsers), ldap.LDAPResultSuccess
 		} else {
 			return nil, ldap.LDAPResultInsufficientAccessRights
 		}
@@ -370,6 +481,9 @@ func GetFilteredUsers(m *ldap.Message) (filteredUsers []*object.User, code int) 
 		}
 
 		if user != nil {
+			if !filter.matches(user) {
+				return nil, ldap.LDAPResultSuccess
+			}
 			filteredUsers = append(filteredUsers, user)
 			return filteredUsers, ldap.LDAPResultSuccess
 		}
@@ -387,18 +501,20 @@ func GetFilteredUsers(m *ldap.Message) (filteredUsers []*object.User, code int) 
 			return nil, ldap.LDAPResultNoSuchObject
 		}
 
-		users, err := object.GetUsersByTagWithFilter(org, name, buildSafeCondition(r.Filter()))
+		users, err := object.GetUsersByTagWithFilter(org, name, filter.condition)
 		if err != nil {
 			panic(err)
 		}
 
-		filteredUsers = append(filteredUsers, users...)
+		filteredUsers = append(filteredUsers, filter.apply(users)...)
 		return filteredUsers, ldap.LDAPResultSuccess
 	}
 }
 
+// GetFilteredGroups returns the groups of the organization the search is scoped
+// to. The filter itself is applied by matchGroupFilter on each candidate entry.
 func GetFilteredGroups(m *ldap.Message, baseDN string, filterStr string) ([]*object.Group, int) {
-	name, org, code := getNameAndOrgFromFilter(baseDN, filterStr)
+	_, org, code := getNameAndOrgFromFilter(baseDN, filterStr)
 	if code != ldap.LDAPResultSuccess {
 		return nil, code
 	}
@@ -406,25 +522,117 @@ func GetFilteredGroups(m *ldap.Message, baseDN string, filterStr string) ([]*obj
 	var groups []*object.Group
 	var err error
 
-	if name == "*" {
-		if m.Client.IsGlobalAdmin && org == "*" {
-			groups, err = object.GetGlobalGroups()
-			if err != nil {
-				panic(err)
-			}
-		} else if m.Client.IsGlobalAdmin || (m.Client.IsOrgAdmin && org == m.Client.OrgName) {
-			groups, err = object.GetGroups(org)
-			if err != nil {
-				panic(err)
-			}
-		} else {
-			return nil, ldap.LDAPResultInsufficientAccessRights
+	if m.Client.IsGlobalAdmin && org == "*" {
+		groups, err = object.GetGlobalGroups()
+		if err != nil {
+			panic(err)
+		}
+	} else if m.Client.IsGlobalAdmin || (m.Client.IsOrgAdmin && org == m.Client.OrgName) {
+		groups, err = object.GetGroups(org)
+		if err != nil {
+			panic(err)
 		}
 	} else {
-		return nil, ldap.LDAPResultNoSuchObject
+		return nil, ldap.LDAPResultInsufficientAccessRights
 	}
 
 	return groups, ldap.LDAPResultSuccess
+}
+
+// isPosixGroupFilter reports whether the filter asks for posixGroup entries,
+// on its own or combined, e.g. "(&(objectClass=posixGroup)(gidNumber=12345))".
+func isPosixGroupFilter(filter interface{}) bool {
+	switch f := filter.(type) {
+	case message.FilterAnd:
+		for _, v := range f {
+			if isPosixGroupFilter(v) {
+				return true
+			}
+		}
+	case message.FilterEqualityMatch:
+		return strings.EqualFold(string(f.AttributeDesc()), "objectClass") &&
+			strings.EqualFold(string(f.AssertionValue()), "posixGroup")
+	}
+	return false
+}
+
+// getGroupAttributes returns the attributes of the posixGroup entry published
+// for a Casdoor group, keyed by lowercased attribute name.
+func getGroupAttributes(group *object.Group, memberUids []string) map[string][]string {
+	return map[string][]string{
+		"cn":          {group.Name},
+		"gidnumber":   {getGidNumber(group)},
+		"memberuid":   memberUids,
+		"objectclass": {"posixGroup"},
+	}
+}
+
+// matchGroupFilter evaluates an LDAP filter against a group entry in memory,
+// since group entries have no table to query.
+func matchGroupFilter(filter interface{}, attributes map[string][]string) bool {
+	switch f := filter.(type) {
+	case message.FilterAnd:
+		for _, v := range f {
+			if !matchGroupFilter(v, attributes) {
+				return false
+			}
+		}
+		return true
+	case message.FilterOr:
+		for _, v := range f {
+			if matchGroupFilter(v, attributes) {
+				return true
+			}
+		}
+		return false
+	case message.FilterNot:
+		return !matchGroupFilter(f.Filter, attributes)
+	case message.FilterEqualityMatch:
+		for _, value := range attributes[strings.ToLower(string(f.AttributeDesc()))] {
+			if strings.EqualFold(value, string(f.AssertionValue())) {
+				return true
+			}
+		}
+		return false
+	case message.FilterPresent:
+		return len(attributes[strings.ToLower(string(f))]) > 0
+	case message.FilterSubstrings:
+		for _, value := range attributes[strings.ToLower(string(f.Type_()))] {
+			if matchSubstrings(value, f.Substrings()) {
+				return true
+			}
+		}
+		return false
+	default:
+		return false
+	}
+}
+
+func matchSubstrings(value string, substrings []message.Substring) bool {
+	rest := strings.ToLower(value)
+	for _, substring := range substrings {
+		switch s := substring.(type) {
+		case message.SubstringInitial:
+			prefix := strings.ToLower(string(s))
+			if !strings.HasPrefix(rest, prefix) {
+				return false
+			}
+			rest = rest[len(prefix):]
+		case message.SubstringAny:
+			any := strings.ToLower(string(s))
+			i := strings.Index(rest, any)
+			if i < 0 {
+				return false
+			}
+			rest = rest[i+len(any):]
+		case message.SubstringFinal:
+			if !strings.HasSuffix(rest, strings.ToLower(string(s))) {
+				return false
+			}
+			rest = ""
+		}
+	}
+	return true
 }
 
 func GetFilteredOrganizations(m *ldap.Message) ([]*object.Organization, int) {

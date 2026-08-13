@@ -14,7 +14,7 @@
 
 import React from "react";
 import Loading from "./common/Loading";
-import {Button, Card, Col, Input, Row, Select, Switch} from "antd";
+import {Button, Card, Col, Input, InputNumber, Row, Select, Switch} from "antd";
 import * as GroupBackend from "./backend/GroupBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as Setting from "./Setting";
@@ -195,6 +195,16 @@ class GroupEditPage extends React.Component {
             {
               Setting.getTags(this.state.group.users, "users")
             }
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("general:GID number"), i18next.t("general:GID number - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <InputNumber min={0} value={this.state.group.gidNumber} onChange={value => {
+              this.updateGroupField("gidNumber", value ?? 0);
+            }} />
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
