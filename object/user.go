@@ -896,6 +896,14 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 		return false, err
 	}
 
+	if affected != 0 && shouldTerminateUserAccess(oldUser, user, columns) {
+		// Use the pre-update identity: tokens/sessions are keyed by the current name.
+		err = TerminateUserAccess(oldUser.Owner, oldUser.Name, "")
+		if err != nil {
+			return false, err
+		}
+	}
+
 	return affected != 0, nil
 }
 
@@ -964,6 +972,13 @@ func UpdateUserForAllFields(id string, user *User) (bool, error) {
 	affected, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(user)
 	if err != nil {
 		return false, err
+	}
+
+	if affected != 0 && shouldTerminateUserAccess(oldUser, user, nil) {
+		err = TerminateUserAccess(oldUser.Owner, oldUser.Name, "")
+		if err != nil {
+			return false, err
+		}
 	}
 
 	return affected != 0, nil
