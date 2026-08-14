@@ -856,7 +856,8 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 		}
 	}
 
-	if len(columns) == 0 {
+	columnsWereEmpty := len(columns) == 0
+	if columnsWereEmpty {
 		columns = []string{
 			"owner", "display_name", "avatar", "first_name", "last_name",
 			"location", "address", "addresses", "country_code", "region", "language", "affiliation", "title", "id_card_type", "id_card", "homepage", "bio", "tag", "language", "gender", "birthday", "education", "score", "karma", "ranking", "signup_application", "register_type", "register_source",
@@ -872,7 +873,9 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 			"cart", "application_scopes",
 		}
 	}
-	if isAdmin {
+	// Only expand the admin-sensitive whitelist for full updates.
+	// When callers pass an explicit columns list, respect it as a partial-update whitelist.
+	if isAdmin && columnsWereEmpty {
 		columns = append(columns, "name", "id", "email", "phone", "country_code", "type", "balance", "balance_credit", "balance_currency", "mfa_items", "register_type", "register_source",
 			"is_admin", "is_forbidden", "is_deleted", "uid_number")
 	}
