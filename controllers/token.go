@@ -606,6 +606,16 @@ func (c *ApiController) IntrospectToken() {
 	}
 
 	if token != nil {
+		ownerActive, err := token.IsOwnerActive()
+		if err != nil {
+			c.ResponseTokenError(object.InvalidRequest, err.Error())
+			return
+		}
+		if !ownerActive {
+			respondWithInactiveToken()
+			return
+		}
+
 		application, err = object.GetApplication(fmt.Sprintf("%s/%s", token.Owner, token.Application))
 		if err != nil {
 			c.ResponseTokenError(object.InvalidClient, err.Error())

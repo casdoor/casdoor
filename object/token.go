@@ -111,6 +111,28 @@ func GetTokenByAccessToken(accessToken string) (*Token, error) {
 	return &token, nil
 }
 
+// IsOwnerActive reports whether the end-user for this token may still use it.
+// client_credentials tokens are not bound to a user account. Per RFC 7662, a
+// token for a forbidden/disabled user is treated as inactive.
+func (token *Token) IsOwnerActive() (bool, error) {
+	if token == nil {
+		return false, nil
+	}
+	if token.GrantType == "client_credentials" || token.User == "" {
+		return true, nil
+	}
+
+	user, err := getUser(token.Organization, token.User)
+	if err != nil {
+		return false, err
+	}
+	if user == nil || user.IsForbidden {
+		return false, nil
+	}
+
+	return true, nil
+}
+
 func GetTokenByRefreshToken(refreshToken string) (*Token, error) {
 	token := Token{RefreshTokenHash: getTokenHash(refreshToken)}
 	existed, err := ormer.Engine.Get(&token)

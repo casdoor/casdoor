@@ -154,6 +154,11 @@ func (c *McpController) GetClaimsFromToken() *object.Claims {
 		return nil
 	}
 
+	ownerActive, err := token.IsOwnerActive()
+	if err != nil || !ownerActive {
+		return nil
+	}
+
 	application, err := object.GetApplication(token.Application)
 	if err != nil || application == nil {
 		return nil
