@@ -310,23 +310,44 @@ jobs:
       - name: Update Helm Chart
         if: steps.should_push.outputs.push=='true'
         working-directory: ./casdoor-helm
+        env:
+          VERSION: ${{ needs.tag-release.outputs.new-release-version }}
         run: |
-          # Set the appVersion and version of the chart to the current tag
-          sed -i "s/appVersion: .*/appVersion: ${{ needs.tag-release.outputs.new-release-version }}/g" ./charts/casdoor/Chart.yaml
-          sed -i "s/version: .*/version: ${{ needs.tag-release.outputs.new-release-version }}/g" ./charts/casdoor/Chart.yaml
-
           REGISTRY=oci://registry-1.docker.io/casbin
-          cd charts/casdoor
-          helm package .
-          PKG_NAME=$(ls *.tgz)
-          helm repo index . --url $REGISTRY --merge index.yaml
-          helm push $PKG_NAME $REGISTRY
-          rm $PKG_NAME
 
-          # Commit and push the changes back to the repository
           git config --global user.name "casbin-bot"
           git config --global user.email "bot@casbin.org"
-          git add Chart.yaml index.yaml
-          git commit -m "chore(helm): bump helm charts appVersion to ${{ needs.tag-release.outputs.new-release-version }}"
-          git tag ${{ needs.tag-release.outputs.new-release-version }}
-          git push origin HEAD:master --follow-tags
+
+          cd charts/casdoor
+
+          # Set the appVersion and version of the chart to the current tag
+          sed -i "s/appVersion: .*/appVersion: $VERSION/g" ./Chart.yaml
+          sed -i "s/version: .*/version: $VERSION/g" ./Chart.yaml
+
+          helm package .
+          PKG_NAME=$(ls *.tgz)
+          helm push $PKG_NAME $REGISTRY
+
+          # Commit and push the changes back to the repository. The remote master may
+          # have moved on in the meantime, so re-apply the changes on top of the latest
+          # remote state and retry instead of failing the whole release.
+          for attempt in 1 2 3 4 5; do
+            helm repo index . --url $REGISTRY --merge index.yaml
+            git add Chart.yaml index.yaml
+            git commit -m "chore(helm): bump helm charts appVersion to $VERSION" || true
+            git tag -f "$VERSION"
+            if git push origin HEAD:master --follow-tags; then
+              rm -f $PKG_NAME
+              exit 0
+            fi
+
+            echo "Push to casdoor-helm was rejected, retrying on top of the latest master ($attempt/5)"
+            git fetch origin master
+            git reset --hard origin/master
+            sed -i "s/appVersion: .*/appVersion: $VERSION/g" ./Chart.yaml
+            sed -i "s/version: .*/version: $VERSION/g" ./Chart.yaml
+            sleep 5
+          done
+
+          echo "Failed to push the helm chart update to casdoor-helm after 5 attempts"
+          exit 1
