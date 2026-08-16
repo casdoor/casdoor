@@ -871,10 +871,11 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 			"yammer", "yandex", "zoom", "custom", "need_update_password", "ip_whitelist", "mfa_remember_deadline",
 			"cart", "application_scopes",
 		}
-	}
-	if isAdmin {
-		columns = append(columns, "name", "id", "email", "phone", "country_code", "type", "balance", "balance_credit", "balance_currency", "mfa_items", "register_type", "register_source",
-			"is_admin", "is_forbidden", "is_deleted", "uid_number")
+
+		if isAdmin {
+			columns = append(columns, "name", "id", "email", "phone", "country_code", "type", "balance", "balance_credit", "balance_currency", "mfa_items", "register_type", "register_source",
+				"is_admin", "is_forbidden", "is_deleted", "uid_number")
+		}
 	}
 
 	columns = append(columns, "updated_time")
