@@ -511,8 +511,17 @@ func (c *ApiController) ResetEmailOrPhone() {
 		return
 	}
 
+	countryCode := user.GetCountryCode("")
 	if destType == object.VerifyTypePhone {
-		if object.HasUserByPhoneAndCountryCode(user.Owner, dest, user.GetCountryCode("")) {
+		normalizedPhone, normalizedCountryCode, isValid := util.GetNormalizedPhone(dest, countryCode)
+		if !isValid {
+			c.ResponseError(fmt.Sprintf(c.T("verification:Phone number is invalid in your region %s"), countryCode))
+			return
+		}
+
+		dest, countryCode = normalizedPhone, normalizedCountryCode
+
+		if object.HasUserByPhoneAndCountryCode(user.Owner, dest, countryCode) {
 			c.ResponseError(c.T("check:Phone already exists"))
 			return
 		}
@@ -527,8 +536,8 @@ func (c *ApiController) ResetEmailOrPhone() {
 			c.ResponseError(errMsg)
 			return
 		}
-		if checkDest, ok = util.GetE164Number(dest, user.GetCountryCode("")); !ok {
-			c.ResponseError(fmt.Sprintf(c.T("verification:Phone number is invalid in your region %s"), user.CountryCode))
+		if checkDest, ok = util.GetE164Number(dest, countryCode); !ok {
+			c.ResponseError(fmt.Sprintf(c.T("verification:Phone number is invalid in your region %s"), countryCode))
 			return
 		}
 	} else if destType == object.VerifyTypeEmail {
@@ -568,7 +577,8 @@ func (c *ApiController) ResetEmailOrPhone() {
 		_, err = object.UpdateUser(id, user, columns, false)
 	case object.VerifyTypePhone:
 		user.Phone = dest
-		_, err = object.SetUserField(user, "phone", user.Phone)
+		user.CountryCode = countryCode
+		_, err = object.UpdateUser(user.GetId(), user, []string{"phone", "country_code"}, false)
 	default:
 		c.ResponseError(c.T("verification:Unknown type"))
 		return

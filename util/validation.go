@@ -84,6 +84,27 @@ func GetE164Number(phone string, countryCode string) (string, bool) {
 	return phonenumbers.Format(phoneNumber, phonenumbers.E164), phonenumbers.IsValidNumber(phoneNumber)
 }
 
+// GetNormalizedPhone converts a phone number like "+48 666 666 666" into the national number
+// in digits only (e.g. "666666666") and the region code (e.g. "PL"), it returns the input
+// unchanged when the phone number is invalid.
+func GetNormalizedPhone(phone string, countryCode string) (string, string, bool) {
+	phoneNumber, err := phonenumbers.Parse(phone, countryCode)
+	if err != nil || !phonenumbers.IsValidNumber(phoneNumber) {
+		return phone, countryCode, false
+	}
+
+	// Only take the region from the number itself when it is in the international format,
+	// so that a shared calling code like "+1" doesn't overwrite the chosen country code
+	normalizedCountryCode := countryCode
+	if normalizedCountryCode == "" || strings.HasPrefix(strings.TrimSpace(phone), "+") {
+		if regionCode := phonenumbers.GetRegionCodeForNumber(phoneNumber); regionCode != "" {
+			normalizedCountryCode = regionCode
+		}
+	}
+
+	return fmt.Sprintf("%d", phoneNumber.GetNationalNumber()), normalizedCountryCode, true
+}
+
 func GetCountryCode(prefix string, phone string) (string, error) {
 	if prefix == "" || phone == "" {
 		return "", nil
