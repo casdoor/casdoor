@@ -1749,6 +1749,8 @@
     "WebAuthn credentials": "WebAuthn credentials",
     "Work": "Work",
     "You have changed the username, please save your change first before modifying the password": "You have changed the username, please save your change first before modifying the password",
+    "You need to update your password": "You need to update your password",
+    "Your password must be updated before you can continue to use your account, please click the \"Modify password...\" button below": "Your password must be updated before you can continue to use your account, please click the \"Modify password...\" button below",
     "Zip code": "Zip code",
     "input password": "input password"
   },

@@ -130,7 +130,16 @@ export const PasswordModal = (props) => {
           Setting.showMessage("success", i18next.t("user:Password set successfully"));
           setVisible(false);
           if (account.owner === user.owner && account.name === userName) {
+            const wasForced = account.needUpdatePassword;
             account.needUpdatePassword = false;
+            props.onPasswordUpdated?.();
+
+            // continue the login that was interrupted by "Need update password"
+            const signinUrl = sessionStorage.getItem("signinUrl");
+            if (wasForced && signinUrl) {
+              sessionStorage.removeItem("signinUrl");
+              Setting.goToLink(signinUrl);
+            }
           }
         } else {
           Setting.showMessage("error", i18next.t(`user:${res.msg}`));

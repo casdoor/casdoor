@@ -14,7 +14,7 @@
 
 import React from "react";
 import {
-  Button, Card, Col, Form, Input, InputNumber, Layout, List,
+  Alert, Button, Card, Col, Form, Input, InputNumber, Layout, List,
   Menu, Result, Row, Select, Space, Switch, Tabs, Tag, Tooltip
 } from "antd";
 import {withRouter} from "react-router-dom";
@@ -531,7 +531,7 @@ class UserEditPage extends React.Component {
                   this.updateUserField("password", e.target.value);
                 }} />
               ) : (this.state.user.name === this.state.userName) ? (
-                <PasswordModal user={this.state.user} userName={this.state.userName} organization={this.getUserOrganization()} account={this.props.account} disabled={disabled} />
+                <PasswordModal user={this.state.user} userName={this.state.userName} organization={this.getUserOrganization()} account={this.props.account} disabled={disabled} onPasswordUpdated={() => this.updateUserField("needUpdatePassword", false)} />
               ) : (
                 <Tooltip placement={"topLeft"} title={i18next.t("user:You have changed the username, please save your change first before modifying the password")}>
                   <span>
@@ -1558,6 +1558,17 @@ class UserEditPage extends React.Component {
   renderUser() {
     return (
       <div>
+        {
+          (this.isSelf() && this.state.user.needUpdatePassword) ? (
+            <Alert
+              style={(Setting.isMobile()) ? {margin: "5px"} : {marginBottom: "10px"}}
+              type="warning"
+              showIcon
+              message={i18next.t("user:You need to update your password")}
+              description={i18next.t("user:Your password must be updated before you can continue to use your account, please click the \"Modify password...\" button below")}
+            />
+          ) : null
+        }
         <Card size="small" title={
           (this.props.account === null) ? i18next.t("user:User Profile") : (
             <div>

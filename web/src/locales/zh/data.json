@@ -1749,6 +1749,8 @@
     "WebAuthn credentials": "WebAuthn凭据",
     "Work": "工作",
     "You have changed the username, please save your change first before modifying the password": "你已经更改了你的用户名，请你再更改密码前保存更改",
+    "You need to update your password": "你需要更新密码",
+    "Your password must be updated before you can continue to use your account, please click the \"Modify password...\" button below": "你必须先更新密码才能继续使用账号，请点击下方的“修改密码...”按钮",
     "Zip code": "邮政编码",
     "input password": "输入密码"
   },

@@ -42,6 +42,8 @@ const (
 
 const UserEnforcerId = "built-in/user-enforcer-built-in"
 
+const RequiredUpdatePassword = "RequiredUpdatePassword"
+
 var userEnforcer *UserGroupEnforcer
 
 func InitUserManager() {
