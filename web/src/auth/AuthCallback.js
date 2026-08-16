@@ -89,16 +89,10 @@ class AuthCallback extends React.Component {
     const oAuthParams = Util.getOAuthGetParameters(innerParams);
     const concatChar = oAuthParams?.redirectUri?.includes("?") ? "&" : "?";
     const responseMode = oAuthParams?.responseMode || "query";
-    const signinUrl = localStorage.getItem("signinUrl");
     const responseTypes = responseType.split(" ");
 
     const handleLogin = (res) => {
       if (responseType === "login") {
-        if (res.data3) {
-          sessionStorage.setItem("signinUrl", signinUrl);
-          Setting.goToLink("/account");
-          return;
-        }
         Setting.showMessage("success", "Logged in successfully");
         const link = Setting.getFromLink();
         Setting.goToLink(link);
@@ -110,12 +104,6 @@ class AuthCallback extends React.Component {
           deviceSuccess: true,
         });
       } else if (responseType === "code") {
-        if (res.data3) {
-          sessionStorage.setItem("signinUrl", signinUrl);
-          Setting.goToLink("/account");
-          return;
-        }
-
         if (responseMode === "form_post") {
           const params = {
             code: res.data,
@@ -127,12 +115,6 @@ class AuthCallback extends React.Component {
           Setting.goToLink(`${oAuthParams.redirectUri}${concatChar}code=${encodeURIComponent(code)}&state=${encodeURIComponent(oAuthParams.state)}`);
         }
       } else if (responseTypes.includes("token") || responseTypes.includes("id_token")) {
-        if (res.data3) {
-          sessionStorage.setItem("signinUrl", signinUrl);
-          Setting.goToLink("/account");
-          return;
-        }
-
         if (responseMode === "form_post") {
           const params = {
             token: responseTypes.includes("token") ? res.data : null,
@@ -160,11 +142,6 @@ class AuthCallback extends React.Component {
             relayState: oAuthParams.relayState,
           });
         } else {
-          if (res.data3) {
-            sessionStorage.setItem("signinUrl", signinUrl);
-            Setting.goToLink("/account");
-            return;
-          }
           const SAMLResponse = res.data;
           const redirectUri = res.data2.redirectUrl;
           Setting.goToLink(`${redirectUri}${redirectUri.includes("?") ? "&" : "?"}SAMLResponse=${encodeURIComponent(SAMLResponse)}&RelayState=${oAuthParams.relayState}`);

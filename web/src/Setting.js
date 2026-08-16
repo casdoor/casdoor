@@ -958,6 +958,17 @@ export const MfaRuleRequired = "Required";
 export const MfaRulePrompted = "Prompted";
 export const MfaRuleOptional = "Optional";
 
+export const RequiredUpdatePassword = "RequiredUpdatePassword";
+
+export function goToUpdatePassword() {
+  // remember where the login was started from, to go back after the password is updated
+  const signinUrl = localStorage.getItem("signinUrl");
+  if (signinUrl) {
+    sessionStorage.setItem("signinUrl", signinUrl);
+  }
+  goToLink("/account");
+}
+
 export function isRequiredEnableMfa(user, organization) {
   if (!user || !organization || (!organization.mfaItems && !user.mfaItems)) {
     return false;
@@ -2307,7 +2318,9 @@ function getPreferredMfaProp(mfaProps) {
 }
 
 export function checkLoginMfa(res, body, params, handleLogin, componentThis, requireRedirect = null) {
-  if (res.data === RequiredMfa) {
+  if (res.data === RequiredUpdatePassword) {
+    goToUpdatePassword();
+  } else if (res.data === RequiredMfa) {
     if (!requireRedirect) {
       componentThis.props.onLoginSuccess(window.location.href);
     } else {

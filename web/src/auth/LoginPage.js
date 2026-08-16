@@ -361,9 +361,8 @@ class LoginPage extends React.Component {
       return;
     }
 
-    if (resp.data3) {
-      sessionStorage.setItem("signinUrl", window.location.pathname + window.location.search);
-      Setting.goToLink("/account");
+    if (resp.data === Setting.RequiredUpdatePassword) {
+      Setting.goToUpdatePassword();
       return;
     }
 
@@ -560,11 +559,6 @@ class LoginPage extends React.Component {
             const responseTypes = responseType.split(" ");
             const responseMode = oAuthParams?.responseMode || "query";
             if (responseType === "login") {
-              if (res.data3) {
-                sessionStorage.setItem("signinUrl", window.location.pathname + window.location.search);
-                Setting.goToLink("/account");
-                return;
-              }
               Setting.showMessage("success", i18next.t("application:Logged in successfully"));
               this.props.onLoginSuccess();
             } else if (responseType === "code") {
@@ -575,11 +569,6 @@ class LoginPage extends React.Component {
                 userCodeStatus: "success",
               });
             } else if (responseTypes.includes("token") || responseTypes.includes("id_token")) {
-              if (res.data3) {
-                sessionStorage.setItem("signinUrl", window.location.pathname + window.location.search);
-                Setting.goToLink("/account");
-                return;
-              }
               const amendatoryResponseType = responseType === "token" ? "access_token" : responseType;
               const accessToken = res.data;
               if (responseMode === "form_post") {
@@ -596,11 +585,6 @@ class LoginPage extends React.Component {
             } else if (responseType === "saml") {
               if (res.data === RequiredMfa) {
                 this.props.onLoginSuccess(window.location.href);
-                return;
-              }
-              if (res.data3) {
-                sessionStorage.setItem("signinUrl", window.location.pathname + window.location.search);
-                Setting.goToLink("/account");
                 return;
               }
               if (res.data2.method === "POST") {
