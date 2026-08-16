@@ -606,6 +606,17 @@ func (c *ApiController) IntrospectToken() {
 	}
 
 	if token != nil {
+		// The token's user may have been forbidden or deleted after the token was issued
+		isUserActive, err := token.IsUserActive()
+		if err != nil {
+			c.ResponseTokenError(object.InvalidRequest, err.Error())
+			return
+		}
+		if !isUserActive {
+			respondWithInactiveToken()
+			return
+		}
+
 		application, err = object.GetApplication(fmt.Sprintf("%s/%s", token.Owner, token.Application))
 		if err != nil {
 			c.ResponseTokenError(object.InvalidClient, err.Error())

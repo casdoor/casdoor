@@ -70,6 +70,17 @@ func AutoSigninFilter(ctx *context.Context) {
 			return
 		}
 
+		// The token's user may have been forbidden or deleted after the token was issued
+		isUserActive, err := token.IsUserActive()
+		if err != nil {
+			responseError(ctx, err.Error())
+			return
+		}
+		if !isUserActive {
+			responseError(ctx, "The user is forbidden to sign in, please contact the administrator")
+			return
+		}
+
 		// Validate DPoP proof for DPoP-bound tokens (RFC 9449).
 		if token.TokenType == "DPoP" {
 			dpopProof := ctx.Request.Header.Get("DPoP")
