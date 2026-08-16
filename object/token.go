@@ -111,6 +111,26 @@ func GetTokenByAccessToken(accessToken string) (*Token, error) {
 	return &token, nil
 }
 
+// IsUserActive checks whether the token's end user is still allowed to use it, a token issued to
+// a forbidden, soft-deleted or removed user is treated as inactive. The tokens of the
+// "client_credentials" grant are not bound to an end user, so they are always active.
+// Refs: https://datatracker.ietf.org/doc/html/rfc7662
+func (token *Token) IsUserActive() (bool, error) {
+	if token.GrantType == "client_credentials" || token.User == "" {
+		return true, nil
+	}
+
+	user, err := getUser(token.Organization, token.User)
+	if err != nil {
+		return false, err
+	}
+	if user == nil {
+		return false, nil
+	}
+
+	return !user.IsForbidden && !user.IsDeleted, nil
+}
+
 func GetTokenByRefreshToken(refreshToken string) (*Token, error) {
 	token := Token{RefreshTokenHash: getTokenHash(refreshToken)}
 	existed, err := ormer.Engine.Get(&token)

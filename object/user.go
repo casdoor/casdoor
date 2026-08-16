@@ -896,6 +896,14 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 		return false, err
 	}
 
+	if affected != 0 && isUserAccessRevoked(oldUser, user, columns) {
+		// The tokens and sessions are keyed by the old user name, it may have just been renamed
+		err = terminateUserAccess(oldUser)
+		if err != nil {
+			return true, fmt.Errorf("the user: %s is updated, but terminating its access failed: %w", id, err)
+		}
+	}
+
 	return affected != 0, nil
 }
 
@@ -964,6 +972,13 @@ func UpdateUserForAllFields(id string, user *User) (bool, error) {
 	affected, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(user)
 	if err != nil {
 		return false, err
+	}
+
+	if affected != 0 && isUserAccessRevoked(oldUser, user, nil) {
+		err = terminateUserAccess(oldUser)
+		if err != nil {
+			return true, fmt.Errorf("the user: %s is updated, but terminating its access failed: %w", id, err)
+		}
 	}
 
 	return affected != 0, nil
@@ -1181,10 +1196,77 @@ func deleteUser(user *User) (bool, error) {
 	return affected != 0, nil
 }
 
+// isUserAccessRevoked checks whether an update has just forbidden or soft-deleted the user, the
+// columns are the ones the update actually wrote, a nil value means that all of them were written
+func isUserAccessRevoked(oldUser *User, user *User, columns []string) bool {
+	if oldUser.IsForbidden || oldUser.IsDeleted {
+		return false
+	}
+
+	if user.IsForbidden && (columns == nil || util.InSlice(columns, "is_forbidden")) {
+		return true
+	}
+	if user.IsDeleted && (columns == nil || util.InSlice(columns, "is_deleted")) {
+		return true
+	}
+
+	return false
+}
+
+// terminateUserAccess forces the user offline, it expires the user's tokens and drops all of its
+// sessions, in the same way as the "logout from all applications" flow. It does nothing when the
+// user has neither active tokens nor sessions, so it is safe to call it more than once
+func terminateUserAccess(user *User) error {
+	tokens, err := GetActiveTokensByUser(user.Owner, user.Name)
+	if err != nil {
+		return err
+	}
+
+	sessions, err := GetUserSessions(user.Owner, user.Name)
+	if err != nil {
+		return err
+	}
+
+	if len(tokens) == 0 && len(sessions) == 0 {
+		return nil
+	}
+
+	// The ids are collected for the SSO logout notification below, the Beego sessions
+	// themselves are destroyed by DeleteAllUserSessions()
+	sessionIds := []string{}
+	for _, session := range sessions {
+		sessionIds = append(sessionIds, session.SessionId...)
+	}
+
+	// Send OIDC Back-Channel Logout notifications BEFORE expiring tokens,
+	// because SendBackchannelLogout calls GetActiveTokensByUser (expires_in > 0).
+	// The host is empty, so the issuer falls back to the configured origin
+	SendBackchannelLogout(user.Owner, user.Name, "", "")
+
+	_, err = ExpireTokenByUser(user.Owner, user.Name)
+	if err != nil {
+		return err
+	}
+
+	// The sessions are stored under the applications used at login, so all of them have to be
+	// dropped and not only the "app-built-in" one
+	_, err = DeleteAllUserSessions(user.Owner, user.Name)
+	if err != nil {
+		return err
+	}
+
+	// The notification is best-effort, the access has already been revoked at this point, so a
+	// slow or failing notification provider must not block or undo it
+	go func() {
+		_ = SendSsoLogoutNotifications(user, sessionIds, tokens)
+	}()
+
+	return nil
+}
+
 func DeleteUser(user *User) (bool, error) {
-	// Forced offline the user first, the sessions are stored under the applications used at
-	// login, so all of them have to be dropped and not only the "app-built-in" one
-	_, err := DeleteAllUserSessions(user.Owner, user.Name)
+	// Forced offline the user first, its tokens would otherwise outlive the user row
+	err := terminateUserAccess(user)
 	if err != nil {
 		return false, err
 	}
