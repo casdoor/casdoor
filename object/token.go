@@ -256,7 +256,7 @@ func GetActiveTokensByUser(organization, username string) ([]*Token, error) {
 }
 
 func ExpireTokenByUser(owner, username string) (bool, error) {
-	affected, err := ormer.Engine.Where("organization = ? and user = ?", owner, username).Cols("expires_in").Update(&Token{ExpiresIn: 0})
+	affected, err := ormer.Engine.Table(&Token{}).Where("organization = ? and user = ?", owner, username).Update(map[string]interface{}{"expires_in": 0})
 	if err != nil {
 		return false, err
 	}
