@@ -173,7 +173,7 @@ func ApplyCoupon(couponOwner, couponName, userName, orderName string, discountAm
 	if coupon.MaxUsagePerUser > 0 {
 		usageCount, err := session.
 			Where("coupon_owner = ? AND coupon_name = ?", couponOwner, couponName).
-			And("`user` = ?", userName).
+			And(fmt.Sprintf("%s = ?", quoteColumn("user")), userName).
 			Count(&CouponUsage{})
 		if err != nil {
 			_ = session.Rollback()
@@ -229,7 +229,7 @@ func ApplyCoupon(couponOwner, couponName, userName, orderName string, discountAm
 func GetUserCouponUsageCount(couponOwner, couponName, userName string) (int, error) {
 	count, err := ormer.Engine.
 		Where("coupon_owner = ? AND coupon_name = ?", couponOwner, couponName).
-		And("`user` = ?", userName).
+		And(fmt.Sprintf("%s = ?", quoteColumn("user")), userName).
 		Count(&CouponUsage{})
 	if err != nil {
 		return 0, err

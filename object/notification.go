@@ -80,7 +80,7 @@ type SsoLogoutNotification struct {
 // GetTokensByUser retrieves all tokens for a specific user
 func GetTokensByUser(owner, username string) ([]*Token, error) {
 	tokens := []*Token{}
-	err := ormer.Engine.Where("organization = ? and user = ?", owner, username).Find(&tokens)
+	err := ormer.Engine.Where(fmt.Sprintf("organization = ? and %s = ?", quoteColumn("user")), owner, username).Find(&tokens)
 	if err != nil {
 		return nil, err
 	}
