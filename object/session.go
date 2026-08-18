@@ -187,6 +187,11 @@ func DeleteSession(id, curSessionId string) (bool, error) {
 		return false, fmt.Errorf("session:session id %s is the current session and cannot be deleted", curSessionId)
 	}
 
+	_, err = ExpireTokensBySessionIds(session.SessionId)
+	if err != nil {
+		return false, err
+	}
+
 	DeleteBeegoSession(session.SessionId)
 
 	affected, err := ormer.Engine.ID(core.PK{owner, name, application}).Delete(&Session{})
@@ -227,6 +232,11 @@ func DeleteSessionId(id string, sessionId string) (bool, error) {
 	}
 	if session == nil {
 		return false, nil
+	}
+
+	_, err = ExpireTokensBySessionIds([]string{sessionId})
+	if err != nil {
+		return false, err
 	}
 
 	DeleteBeegoSession([]string{sessionId})

@@ -368,7 +368,7 @@ func (c *ApiController) Signup() {
 			return
 		}
 
-		code, err := object.GetOAuthCode(userId, clientId, "", "password", responseType, redirectUri, scope, state, nonce, codeChallenge, "", c.Ctx.Request.Host, c.GetAcceptLanguage())
+		code, err := object.GetOAuthCode(userId, clientId, "", "password", responseType, redirectUri, scope, state, nonce, codeChallenge, "", c.Ctx.Request.Host, c.GetAcceptLanguage(), c.Ctx.Input.CruSession.SessionID(context.Background()))
 		if err != nil {
 			c.ResponseError(err.Error(), nil)
 			return
@@ -613,6 +613,12 @@ func (c *ApiController) SsoLogout() {
 		// Logout from current session only
 		sessionIds = []string{currentSessionId}
 
+		_, err = object.ExpireTokensBySessionIds(sessionIds)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
 		// Only delete the current session's Beego session
 		object.DeleteBeegoSession(sessionIds)
 
@@ -711,7 +717,8 @@ func (c *ApiController) GetAccount() {
 
 	accessToken := c.GetSessionToken()
 	if accessToken == "" {
-		accessToken, err = object.GetAccessTokenByUser(user, c.Ctx.Request.Host)
+		beegoSessionId := c.Ctx.Input.CruSession.SessionID(context.Background())
+		accessToken, err = object.GetAccessTokenByUser(user, c.Ctx.Request.Host, beegoSessionId)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
@@ -876,6 +883,11 @@ func (c *ApiController) GetCaptcha() {
 
 func (c *ApiController) deleteUserSession(user string, beegoSessionId string) error {
 	owner, username, err := util.GetOwnerAndNameFromIdWithError(user)
+	if err != nil {
+		return err
+	}
+
+	_, err = object.ExpireTokensBySessionIds([]string{beegoSessionId})
 	if err != nil {
 		return err
 	}

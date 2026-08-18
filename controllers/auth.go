@@ -188,7 +188,7 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 		if consentRequired {
 			resp = &Response{Status: "ok", Data: map[string]bool{"required": true}}
 		} else {
-			code, err := object.GetOAuthCode(userId, clientId, form.Provider, form.SigninMethod, responseType, redirectUri, scope, state, nonce, codeChallenge, resource, c.Ctx.Request.Host, c.GetAcceptLanguage())
+			code, err := object.GetOAuthCode(userId, clientId, form.Provider, form.SigninMethod, responseType, redirectUri, scope, state, nonce, codeChallenge, resource, c.Ctx.Request.Host, c.GetAcceptLanguage(), c.Ctx.Input.CruSession.SessionID(context.Background()))
 			if err != nil {
 				c.ResponseError(err.Error(), nil)
 				return
@@ -206,7 +206,7 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 			if !valid {
 				resp = &Response{Status: "error", Msg: "error: invalid_scope", Data: ""}
 			} else {
-				token, _ := object.GetTokenByUser(application, user, expandedScope, nonce, c.Ctx.Request.Host)
+				token, _ := object.GetTokenByUser(application, user, expandedScope, nonce, c.Ctx.Request.Host, c.Ctx.Input.CruSession.SessionID(context.Background()))
 				resp = tokenToResponse(token)
 			}
 		}

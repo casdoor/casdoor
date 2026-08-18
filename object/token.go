@@ -46,6 +46,7 @@ type Token struct {
 	CodeExpireIn     int64  `json:"codeExpireIn"`
 	Resource         string `xorm:"varchar(255)" json:"resource"`           // RFC 8707 Resource Indicator
 	DPoPJkt          string `xorm:"varchar(255) 'dpop_jkt'" json:"dPoPJkt"` // RFC 9449 DPoP JWK thumbprint binding
+	SessionId        string `xorm:"varchar(100) index" json:"sessionId"`    // Beego session id that minted this token
 }
 
 func GetTokenCount(owner, organization, field, value string) (int64, error) {
@@ -262,6 +263,36 @@ func ExpireTokenByUser(owner, username string) (bool, error) {
 	}
 
 	return affected != 0, nil
+}
+
+func ExpireTokensBySessionIds(sessionIds []string) (bool, error) {
+	if len(sessionIds) == 0 {
+		return false, nil
+	}
+
+	affected, err := ormer.Engine.Table(&Token{}).In("session_id", sessionIds).Where("expires_in > 0").Update(map[string]interface{}{"expires_in": 0})
+	if err != nil {
+		return false, err
+	}
+
+	return affected != 0, nil
+}
+
+func BindTokenSessionIdByAccessToken(accessToken, sessionId string) error {
+	if accessToken == "" || sessionId == "" {
+		return nil
+	}
+
+	token, err := GetTokenByAccessToken(accessToken)
+	if err != nil {
+		return err
+	}
+	if token == nil || token.SessionId != "" {
+		return nil
+	}
+
+	_, err = ormer.Engine.Table(&Token{}).Where("owner = ? and name = ?", token.Owner, token.Name).Update(map[string]interface{}{"session_id": sessionId})
+	return err
 }
 
 // updateTokenDPoP updates the token_type and dpop_jkt columns for DPoP binding (RFC 9449).

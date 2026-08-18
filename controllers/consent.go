@@ -15,6 +15,7 @@
 package controllers
 
 import (
+	"context"
 	"encoding/json"
 
 	"github.com/casdoor/casdoor/object"
@@ -216,6 +217,7 @@ func (c *ApiController) GrantConsent() {
 		request.Resource,
 		c.Ctx.Request.Host,
 		c.GetAcceptLanguage(),
+		c.Ctx.Input.CruSession.SessionID(context.Background()),
 	)
 	if err != nil {
 		c.ResponseError(err.Error())

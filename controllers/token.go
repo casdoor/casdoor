@@ -15,6 +15,7 @@
 package controllers
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"time"
@@ -351,6 +352,16 @@ func (c *ApiController) GetOAuthToken() {
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
+	}
+
+	if grantType == "authorization_code" {
+		if tokenWrapper, ok := token.(*object.TokenWrapper); ok {
+			sessionId := c.Ctx.Input.CruSession.SessionID(context.Background())
+			if bindErr := object.BindTokenSessionIdByAccessToken(tokenWrapper.AccessToken, sessionId); bindErr != nil {
+				c.ResponseError(bindErr.Error())
+				return
+			}
+		}
 	}
 
 	if pendingDeviceCode != "" {
