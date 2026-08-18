@@ -251,12 +251,12 @@ func DeleteToken(token *Token) (bool, error) {
 
 func GetActiveTokensByUser(organization, username string) ([]*Token, error) {
 	tokens := []*Token{}
-	err := ormer.Engine.Where("organization = ? and user = ? and expires_in > 0", organization, username).Find(&tokens)
+	err := ormer.Engine.Where("expires_in > 0").Find(&tokens, &Token{Organization: organization, User: username})
 	return tokens, err
 }
 
 func ExpireTokenByUser(owner, username string) (bool, error) {
-	affected, err := ormer.Engine.Where("organization = ? and user = ?", owner, username).Cols("expires_in").Update(&Token{ExpiresIn: 0})
+	affected, err := ormer.Engine.Cols("expires_in").Update(&Token{ExpiresIn: 0}, &Token{Organization: owner, User: username})
 	if err != nil {
 		return false, err
 	}
