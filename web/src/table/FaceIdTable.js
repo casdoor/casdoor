@@ -13,11 +13,12 @@
 // limitations under the License.
 
 import React, {Suspense, lazy} from "react";
-import {Button, Col, Input, Row, Table, Upload} from "antd";
+import {Button, Col, Image, Input, Row, Table, Typography, Upload} from "antd";
 import i18next from "i18next";
 import * as Setting from "../Setting";
 import {CameraOutlined, UploadOutlined} from "@ant-design/icons";
 import * as ResourceBackend from "../backend/ResourceBackend";
+import * as Conf from "../Conf";
 const FaceRecognitionModal = lazy(() => import("../common/modal/FaceRecognitionModal"));
 
 class FaceIdTable extends React.Component {
@@ -92,7 +93,14 @@ class FaceIdTable extends React.Component {
       });
   }
 
+  hasLocalUniFaceProvider() {
+    return this.props.application?.providers?.some(providerItem =>
+      providerItem.provider?.category === "Face ID" && providerItem.provider?.type === "Local UniFace"
+    ) === true;
+  }
+
   renderTable(table) {
+    const showCameraCapture = this.hasLocalUniFaceProvider();
     const columns = [
       {
         title: i18next.t("general:Name"),
@@ -112,9 +120,22 @@ class FaceIdTable extends React.Component {
         dataIndex: "faceIdData",
         key: "faceIdData",
         render: (text, record, index) => {
+          if (!text || text.length === 0) {
+            return "-";
+          }
+
           const front = text.slice(0, 3).join(", ");
           const back = text.slice(-3).join(", ");
-          return "[" + front + " ... " + back + "]";
+          const summary = `[${front} ... ${back}]`;
+          const fullData = `[${text.join(", ")}]`;
+          return (
+            <Typography.Text
+              ellipsis={{tooltip: fullData}}
+              style={{display: "inline-block", maxWidth: "360px"}}
+            >
+              {summary}
+            </Typography.Text>
+          );
         },
       },
       {
@@ -122,7 +143,29 @@ class FaceIdTable extends React.Component {
         dataIndex: "imageUrl",
         key: "imageUrl",
         render: (text, record, index) => {
-          return text;
+          if (!text) {
+            return "-";
+          }
+
+          return (
+            <div style={{display: "flex", alignItems: "center", gap: "10px", minWidth: "260px"}}>
+              <Typography.Link
+                href={text}
+                target="_blank"
+                rel="noreferrer"
+                ellipsis={{tooltip: text}}
+                style={{maxWidth: "360px"}}
+              >
+                {text}
+              </Typography.Link>
+              <Image
+                src={text}
+                width={44}
+                height={44}
+                style={{objectFit: "cover", borderRadius: "4px", display: "block"}}
+              />
+            </div>
+          );
         },
       },
       {
@@ -154,9 +197,13 @@ class FaceIdTable extends React.Component {
             <Button disabled={this.props.table?.length >= 5} style={{marginRight: "10px"}} size="small" onClick={() => this.setState({openFaceRecognitionModal: true, withImage: true})}>
               {i18next.t("application:Add Face ID with Image")}
             </Button>
-            <Button disabled={this.props.table?.length >= 5} style={{marginRight: "10px"}} icon={<CameraOutlined />} loading={this.state.uploadingCamera} size="small" onClick={() => this.setState({openFaceImageCameraModal: true})}>
-              {i18next.t("application:Add Face ID with Camera")}
-            </Button>
+            {
+              showCameraCapture ? (
+                <Button disabled={this.props.table?.length >= 5} style={{marginRight: "10px"}} icon={<CameraOutlined />} loading={this.state.uploadingCamera} size="small" onClick={() => this.setState({openFaceImageCameraModal: true})}>
+                  {i18next.t("application:Add Face ID with Camera")}
+                </Button>
+              ) : null
+            }
             <Upload maxCount={1} accept="image/*" showUploadList={false}
               beforeUpload={file => {return false;}} onChange={info => {handleUpload(info);}}>
               <Button id="upload-button" icon={<UploadOutlined />} loading={this.state.uploading} size="small">
@@ -173,16 +220,23 @@ class FaceIdTable extends React.Component {
                 }}
                 onCancel={() => this.setState({openFaceRecognitionModal: false})}
               />
-              <FaceRecognitionModal
-                visible={this.state.openFaceImageCameraModal}
-                withImage={true}
-                captureImage={true}
-                onOk={async(imageDataUrl) => {
-                  const file = await this.dataUrlToFile(imageDataUrl, `face-id-${Date.now()}.jpg`);
-                  this.uploadFaceImage(table, file, "uploadingCamera");
-                }}
-                onCancel={() => this.setState({openFaceImageCameraModal: false})}
-              />
+              {
+                showCameraCapture ? (
+                  <FaceRecognitionModal
+                    visible={this.state.openFaceImageCameraModal}
+                    withImage={true}
+                    captureImage={true}
+                    owner={this.props.account?.owner}
+                    name={this.props.account?.name}
+                    application={this.props.application?.name || Conf.DefaultApplication}
+                    onOk={async(imageDataUrl) => {
+                      const file = await this.dataUrlToFile(imageDataUrl, `face-id-${Date.now()}.jpg`);
+                      this.uploadFaceImage(table, file, "uploadingCamera");
+                    }}
+                    onCancel={() => this.setState({openFaceImageCameraModal: false})}
+                  />
+                ) : null
+              }
             </Suspense>
           </div>
         )}
