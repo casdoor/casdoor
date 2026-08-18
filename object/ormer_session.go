@@ -22,6 +22,13 @@ import (
 	"github.com/xorm-io/xorm"
 )
 
+// quoteColumn quotes a column name with the current database dialect. It is needed
+// for reserved words like "user": left unquoted, PostgreSQL resolves them to the
+// session user instead of the table column, so the condition silently matches nothing.
+func quoteColumn(name string) string {
+	return ormer.Engine.Quote(name)
+}
+
 func GetSession(owner string, offset, limit int, field, value, sortField, sortOrder string) *xorm.Session {
 	session := ormer.Engine.Prepare()
 	if offset != -1 && limit != -1 {

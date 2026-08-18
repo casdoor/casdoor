@@ -1524,9 +1524,7 @@ func userChangeTrigger(owner string, oldName string, newName string) error {
 		}
 	}
 
-	resource := new(Resource)
-	resource.User = newName
-	_, err = session.Where("user=?", oldName).Update(resource)
+	_, err = session.Where(fmt.Sprintf("%s = ?", quoteColumn("user")), oldName).Cols("user").Update(&Resource{User: newName})
 	if err != nil {
 		return err
 	}
