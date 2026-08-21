@@ -251,7 +251,11 @@ func GetMaskedApplication(application *Application, userId string) *Application 
 	}
 
 	application.ClientSecret = "***"
+	application.ClientCert = "***"
 	application.Cert = "***"
+	application.RegistrationAccessToken = "***"
+	application.IpWhitelist = "***"
+	application.BackchannelLogoutUri = "***"
 	application.EnablePassword = false
 	application.EnableSigninSession = false
 	application.EnableCodeSignin = false
@@ -292,10 +296,20 @@ func GetMaskedApplication(application *Application, userId string) *Application 
 	application.RedirectUris = []string{}
 	application.TokenFormat = "***"
 	application.TokenFields = []string{}
+	application.TokenSigningMethod = "***"
+	application.TokenAttributes = []*JwtItem{}
 	application.ExpireInHours = -1
 	application.RefreshExpireInHours = -1
+	application.CookieExpireInHours = -1
 	application.FailedSigninLimit = -1
 	application.FailedSigninFrozenTime = -1
+
+	// the reverse proxy fields expose the internal deployment topology
+	application.Domain = "***"
+	application.OtherDomains = []string{}
+	application.UpstreamHost = "***"
+	application.SslMode = "***"
+	application.SslCert = "***"
 
 	if application.OrganizationObj != nil {
 		application.OrganizationObj.MasterPassword = "***"
@@ -303,8 +317,16 @@ func GetMaskedApplication(application *Application, userId string) *Application 
 		application.OrganizationObj.MasterVerificationCode = "***"
 		application.OrganizationObj.PasswordType = "***"
 		application.OrganizationObj.PasswordSalt = "***"
+		application.OrganizationObj.IpWhitelist = "***"
+		application.OrganizationObj.KerberosRealm = "***"
+		application.OrganizationObj.KerberosKdcHost = "***"
+		application.OrganizationObj.KerberosKeytab = "***"
+		application.OrganizationObj.KerberosServiceName = "***"
 		application.OrganizationObj.InitScore = -1
 		application.OrganizationObj.EnableSoftDeletion = false
+		application.OrganizationObj.OrgBalance = -1
+		application.OrganizationObj.UserBalance = -1
+		application.OrganizationObj.BalanceCredit = -1
 
 		if !isOrgUser {
 			application.OrganizationObj.MfaItems = nil
