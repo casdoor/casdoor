@@ -877,13 +877,13 @@ func ResetLdapPassword(user *User, oldPassword string, newPassword string, lang 
 		modifyPasswordRequest := goldap.NewModifyRequest(userDn, nil)
 		if conn.IsAD {
 			utf16 := unicode.UTF16(unicode.LittleEndian, unicode.IgnoreBOM)
-			pwdEncoded, err := utf16.NewEncoder().String("\"" + newPassword + "\"")
+			pwdEncoded, err = utf16.NewEncoder().String("\"" + newPassword + "\"")
 			if err != nil {
 				conn.Close()
 				return err
 			}
+			// don't touch "userAccountControl", it's a bitmask holding ACCOUNTDISABLE and other flags
 			modifyPasswordRequest.Replace("unicodePwd", []string{pwdEncoded})
-			modifyPasswordRequest.Replace("userAccountControl", []string{"512"})
 		} else if oldPassword != "" {
 			modifyPasswordRequestWithOldPassword := goldap.NewPasswordModifyRequest(userDn, oldPassword, newPassword)
 			_, err = conn.Conn.PasswordModify(modifyPasswordRequestWithOldPassword)
