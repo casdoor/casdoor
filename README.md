@@ -40,12 +40,29 @@
   </p>
 </div>
 
-<!--
-  MAINTAINERS: a screenshot or short GIF of the admin console belongs right here.
-  Casdoor is a UI-first product, but this README currently asks people to imagine the UI.
-  Suggested: upload to cdn.casbin.org and embed as
-  <img src="https://cdn.casbin.org/img/casdoor-console.png" alt="Casdoor admin console">
--->
+<div align="center">
+  <a href="https://door.casdoor.net">
+    <img src="https://cdn.casbin.org/img/casdoor-signin.png" alt="Casdoor sign-in page with password, code, WebAuthn and Face ID tabs and social login icons" width="900">
+  </a>
+  <p><sub>The sign-in page your users see: password, email/SMS code, WebAuthn and Face ID, plus every social provider you enable.</sub></p>
+</div>
+
+<table>
+  <tr>
+    <td width="33%" valign="top" align="center">
+      <a href="https://door.casdoor.net"><img src="https://cdn.casbin.org/img/casdoor-console.png" alt="Casdoor admin console dashboard with user, application and provider statistics"></a>
+      <sub><b>Admin console.</b> Users, tokens, organizations and providers at a glance.</sub>
+    </td>
+    <td width="33%" valign="top" align="center">
+      <a href="https://door.casdoor.net/applications"><img src="https://cdn.casbin.org/img/casdoor-applications.png" alt="Casdoor applications list showing several applications with their organizations and providers"></a>
+      <sub><b>Applications.</b> Every app that delegates login to Casdoor, across all organizations.</sub>
+    </td>
+    <td width="33%" valign="top" align="center">
+      <a href="https://door.casdoor.net/applications/admin/app-built-in"><img src="https://cdn.casbin.org/img/casdoor-application-providers.png" alt="Casdoor application settings, Providers tab, with per-provider signup, signin and unlink toggles"></a>
+      <sub><b>Application settings.</b> OAuth, SAML, providers and branding — no redeploy, no config file.</sub>
+    </td>
+  </tr>
+</table>
 
 ## 🚀 Try it in 30 seconds
 
@@ -70,7 +87,7 @@ Prefer not to install anything? Use the hosted demos:
 | Demo | URL | Notes |
 |------|-----|-------|
 | **Writable** | [demo.casdoor.com](https://demo.casdoor.com) | Full access, so you can click through everything. **All data resets about every 5 minutes.** |
-| **Read-only** | [door.casdoor.com](https://door.casdoor.com) | Stable global demo. **Every write operation fails by design.** |
+| **Read-only** | [door.casdoor.net](https://door.casdoor.net) | Stable global demo. **Every write operation fails by design.** |
 
 Both accept the same `built-in` / `admin` / `123` credentials.
 
@@ -206,7 +223,7 @@ At this point you have a running identity provider with nothing connected to it 
 
 - **REST API** — every console action is also an API call
 - **SDKs** — Go, Java, Python, Node.js, .NET, PHP, Rust and more
-- **Swagger UI** — [live API explorer](https://door.casdoor.com/swagger)
+- **Swagger UI** — [live API explorer](https://door.casdoor.net/swagger)
 - **Webhooks** — push user and sign-in events into your own systems
 - **Customizable UI** — theme the login page and console per organization
 
@@ -227,7 +244,7 @@ The full documentation lives at **[casdoor.ai/docs](https://casdoor.ai/docs/over
 |------------|-------|
 | Install Casdoor | [From source](https://casdoor.ai/docs/basic/server-installation) &middot; [Docker](https://casdoor.ai/docs/basic/try-with-docker) &middot; [Helm](https://casdoor.ai/docs/basic/try-with-helm) |
 | Connect my application | [How to connect to Casdoor](https://casdoor.ai/docs/how-to-connect/overview) |
-| Use the API | [Public API](https://casdoor.ai/docs/basic/public-api) &middot; [Swagger UI](https://door.casdoor.com/swagger) |
+| Use the API | [Public API](https://casdoor.ai/docs/basic/public-api) &middot; [Swagger UI](https://door.casdoor.net/swagger) |
 | Choose an SDK | [Integrations](https://casdoor.ai/docs/category/integrations) |
 | Deploy to production | [Deployment](https://casdoor.ai/docs/category/deployment) |
 
