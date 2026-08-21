@@ -1,0 +1,37 @@
+name: golangci-lint
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  GO_VERSION: "1.25.8"
+
+jobs:
+  golangci:
+    name: Go-Linter
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: false
+
+      - name: Sync vendor tree
+        run: go mod vendor
+
+      # Keep this in sync with the `linter` job in build.yml, which gates the
+      # release. This workflow exists so the README can show a lint-only status
+      # badge; build.yml still runs the same check as a release prerequisite.
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v9.2.0
+        with:
+          version: v2.11.4
+          args: --config .golangci.yml ./...
