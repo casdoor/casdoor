@@ -384,6 +384,7 @@ func (c *ApiController) RefreshToken() {
 	scope := c.Ctx.Input.Query("scope")
 	clientId := c.Ctx.Input.Query("client_id")
 	clientSecret := c.Ctx.Input.Query("client_secret")
+	resource := c.Ctx.Input.Query("resource")
 	host := c.Ctx.Request.Host
 
 	if clientId == "" {
@@ -395,6 +396,9 @@ func (c *ApiController) RefreshToken() {
 			grantType = tokenRequest.GrantType
 			scope = tokenRequest.Scope
 			refreshToken = tokenRequest.RefreshToken
+			if resource == "" {
+				resource = tokenRequest.Resource
+			}
 		}
 	}
 
@@ -404,7 +408,7 @@ func (c *ApiController) RefreshToken() {
 	}
 
 	dpopProof := c.Ctx.Request.Header.Get("DPoP")
-	refreshToken2, err := object.RefreshToken(application, grantType, refreshToken, scope, clientId, clientSecret, host, dpopProof)
+	refreshToken2, err := object.RefreshToken(application, grantType, refreshToken, scope, clientId, clientSecret, resource, host, dpopProof)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
