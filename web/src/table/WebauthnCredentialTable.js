@@ -45,6 +45,11 @@ class WebAuthnCredentialTable extends React.Component {
         dataIndex: "id",
         key: "id",
         ellipsis: true,
+        // the credential ID is stored as standard base64, convert it to base64url
+        // so that it matches the ID shown by the browser in the WebAuthn challenge
+        render: (text, record, index) => {
+          return text?.replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "");
+        },
       },
       {
         title: i18next.t("general:Action"),
