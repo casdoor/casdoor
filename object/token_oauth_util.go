@@ -390,7 +390,7 @@ func GetOAuthCode(userId string, clientId string, provider string, signinMethod 
 	}, nil
 }
 
-func RefreshToken(application *Application, grantType string, refreshToken string, scope string, clientId string, clientSecret string, host string, dpopProof string) (interface{}, error) {
+func RefreshToken(application *Application, grantType string, refreshToken string, scope string, clientId string, clientSecret string, resource string, host string, dpopProof string) (interface{}, error) {
 	if grantType != "refresh_token" {
 		return &TokenError{
 			Error:            UnsupportedGrantType,
@@ -436,6 +436,27 @@ func RefreshToken(application *Application, grantType string, refreshToken strin
 			ErrorDescription: "refresh token is expired",
 		}, nil
 	}
+
+	// The refresh token must belong to the authenticated client, exactly as the
+	// authorization_code exchange checks it. Without this a client may present a
+	// refresh token issued to a different application and, together with the
+	// audience restore below, mint a token carrying another grant's resource.
+	if application.Name != token.Application {
+		return &TokenError{
+			Error:            InvalidGrant,
+			ErrorDescription: fmt.Sprintf("the token is for wrong application (client_id), application.Name: [%s], token.Application: [%s]", application.Name, token.Application),
+		}, nil
+	}
+
+	// RFC 8707: the refreshed token must keep the audience of the original grant.
+	// The client MAY repeat the resource parameter; when it does, it has to match.
+	if resource != "" && resource != token.Resource {
+		return &TokenError{
+			Error:            InvalidGrant,
+			ErrorDescription: fmt.Sprintf("resource parameter does not match the original grant, expected: [%s], got: [%s]", token.Resource, resource),
+		}, nil
+	}
+	resource = token.Resource
 
 	cert, err := getCertByApplication(application)
 	if err != nil {
@@ -494,7 +515,7 @@ func RefreshToken(application *Application, grantType string, refreshToken strin
 		return nil, err
 	}
 
-	newAccessToken, newRefreshToken, tokenName, err := generateJwtToken(application, user, "", "", "", scope, "", host)
+	newAccessToken, newRefreshToken, tokenName, err := generateJwtToken(application, user, "", "", "", scope, resource, host)
 	if err != nil {
 		return &TokenError{
 			Error:            EndpointError,
@@ -515,6 +536,7 @@ func RefreshToken(application *Application, grantType string, refreshToken strin
 		ExpiresIn:    int(application.ExpireInHours * float64(hourSeconds)),
 		Scope:        scope,
 		TokenType:    "Bearer",
+		Resource:     resource,
 	}
 	_, err = AddToken(newToken)
 	if err != nil {
