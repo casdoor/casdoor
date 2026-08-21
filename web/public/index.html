@@ -25,10 +25,61 @@
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
     <title>Casdoor</title>
+    <script>
+      // Show a readable message instead of a blank white page when the app bundle
+      // cannot be loaded or executed, for example in an outdated browser or in the
+      // embedded webview that some clients open for SSO login. Keep this script
+      // ES5-only, it has to run in those environments too.
+      (function() {
+        var shown = false;
+
+        function show(title, detail) {
+          var box = document.getElementById("casdoor-boot-fallback");
+          if (!box || shown) {
+            return;
+          }
+          shown = true;
+
+          var titleEl = document.getElementById("casdoor-boot-title");
+          var hintEl = document.getElementById("casdoor-boot-hint");
+          var detailEl = document.getElementById("casdoor-boot-detail");
+
+          titleEl.innerHTML = title;
+          hintEl.style.display = "block";
+          if (detail) {
+            detailEl.innerHTML = detail;
+            detailEl.style.display = "block";
+          }
+        }
+
+        window.addEventListener("error", function(event) {
+          if (event && event.target && event.target !== window && event.target.tagName === "SCRIPT") {
+            show("Casdoor failed to load", "Could not load: " + (event.target.src || ""));
+            return;
+          }
+          show("Casdoor failed to load", event && event.message ? String(event.message) : "");
+        }, true);
+
+        window.addEventListener("load", function() {
+          window.setTimeout(function() {
+            show("Casdoor is taking too long to load", "");
+          }, 20000);
+        });
+      })();
+    </script>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
+    <div id="root">
+      <div id="casdoor-boot-fallback" style="max-width: 560px; margin: 15vh auto 0 auto; padding: 0 24px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #262626; text-align: center; line-height: 1.6;">
+        <div id="casdoor-boot-title" style="font-size: 20px; font-weight: 600;">Loading Casdoor...</div>
+        <div id="casdoor-boot-hint" style="display: none; margin-top: 12px; font-size: 14px; color: #595959;">
+          Your browser may be too old to run Casdoor. Please open this page in a recent version of Chrome, Edge, Firefox or Safari.
+          If this page was opened inside an app's built-in login window, sign in with your system browser instead.
+        </div>
+        <div id="casdoor-boot-detail" style="display: none; margin-top: 12px; padding: 8px 12px; font-size: 12px; font-family: Consolas, Menlo, monospace; color: #8c8c8c; background: #fafafa; border: 1px solid #f0f0f0; border-radius: 5px; word-break: break-all; text-align: left;"></div>
+      </div>
+    </div>
     <!--
       This HTML file is a template.
       If you open it directly in the browser, you will see an empty page.

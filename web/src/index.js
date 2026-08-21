@@ -22,6 +22,7 @@ import "./App.less";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 import {BrowserRouter} from "react-router-dom";
+import ErrorBoundary from "./common/ErrorBoundary";
 import "./backend/FetchFilter";
 
 if (!String.prototype.replaceAll) {
@@ -32,11 +33,20 @@ if (!String.prototype.replaceAll) {
 
 const container = document.getElementById("root");
 
+// The static fallback in index.html is only there to explain a blank page when the
+// bundle fails to load, the app has started so it is no longer needed.
+const bootFallback = document.getElementById("casdoor-boot-fallback");
+if (bootFallback !== null) {
+  bootFallback.parentNode.removeChild(bootFallback);
+}
+
 const app = createRoot(container);
 
-app.render(<BrowserRouter>
-  <App />
-</BrowserRouter>);
+app.render(<ErrorBoundary>
+  <BrowserRouter>
+    <App />
+  </BrowserRouter>
+</ErrorBoundary>);
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
