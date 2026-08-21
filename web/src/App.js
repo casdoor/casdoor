@@ -380,6 +380,10 @@ class App extends Component {
   }
 
   setLanguage(account) {
+    if (Conf.ForceLanguage !== "") {
+      return;
+    }
+
     const language = account?.language;
     if (language !== null && language !== "" && language !== i18next.language) {
       Setting.setLanguage(language);
