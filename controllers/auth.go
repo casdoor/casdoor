@@ -148,6 +148,16 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 		}
 	}
 
+	// Revoke the tokens of the displaced login before the response is built, otherwise the
+	// token that this login creates below would be revoked too
+	if application.EnableExclusiveSignin {
+		_, err = object.ExpireTokenByUserAndApplication(user.Owner, user.Name, application.Name)
+		if err != nil {
+			c.ResponseError(err.Error(), nil)
+			return
+		}
+	}
+
 	if user.NeedUpdatePassword {
 		// no credential may be issued here, otherwise the requirement could be bypassed
 		// by reading the credential from the response of this API directly
