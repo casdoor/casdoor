@@ -3,24 +3,24 @@
     <img src="https://cdn.casbin.org/img/casdoor-logo_1185x256.png" alt="Casdoor" width="500">
   </a>
 
-  <h3>Casdoor: AI-First Identity and Access Management (IAM) / AI MCP Gateway</h3>
+  <h3>An open-source, self-hosted identity and access management platform</h3>
 
-  <p align="center">
-    <strong>An open-source, AI-first IAM / MCP gateway and authentication server with a web UI.</strong><br>
-    Supporting MCP, A2A, OAuth&nbsp;2.0, OIDC (OAuth&nbsp;2.x), SAML, CAS, LDAP, SCIM, WebAuthn, TOTP, MFA, Face ID,<br>
-    Google Workspace, Azure AD, and more.
-  </p>
-
-  <p align="center">
-    <a href="https://casdoor.ai/"><strong>Documentation and guides: casdoor.ai</strong></a>
+  <p>
+    Casdoor is a single sign-on (SSO) and authentication server with a web console.<br>
+    It speaks <strong>OAuth&nbsp;2.0</strong>, <strong>OIDC</strong>, <strong>SAML&nbsp;2.0</strong>, <strong>CAS</strong>, <strong>LDAP</strong>, <strong>SCIM&nbsp;2.0</strong>, <strong>WebAuthn</strong>, <strong>TOTP/MFA</strong> and <strong>MCP</strong>,<br>
+    and connects to Google Workspace, Microsoft Entra ID (Azure AD), GitHub and many other identity providers.
   </p>
 
   <p>
-    <a href="https://casdoor.ai/docs/overview">
-      <img src="https://img.shields.io/badge/documentation-casdoor.ai%2Fdocs-1890ff?style=flat-square&logo=readthedocs&logoColor=white" alt="Documentation">
-    </a>
+    <a href="https://casdoor.ai"><strong>Website</strong></a> &middot;
+    <a href="https://casdoor.ai/docs/overview"><strong>Documentation</strong></a> &middot;
+    <a href="https://demo.casdoor.com"><strong>Live demo</strong></a> &middot;
+    <a href="https://discord.gg/5rPsrAzK7S"><strong>Discord</strong></a>
+  </p>
+
+  <p>
     <a href="https://github.com/casdoor/casdoor/releases/latest">
-      <img src="https://img.shields.io/github/v/release/casdoor/casdoor?style=flat-square&color=blue" alt="GitHub Release">
+      <img src="https://img.shields.io/github/v/release/casdoor/casdoor?style=flat-square&color=blue" alt="Release">
     </a>
     <a href="https://hub.docker.com/r/casbin/casdoor">
       <img src="https://img.shields.io/docker/pulls/casbin/casdoor?style=flat-square&color=brightgreen" alt="Docker Pulls">
@@ -28,301 +28,270 @@
     <a href="https://github.com/casdoor/casdoor/actions/workflows/build.yml">
       <img src="https://img.shields.io/github/actions/workflow/status/casdoor/casdoor/build.yml?style=flat-square&label=build" alt="Build Status">
     </a>
-    <a href="https://goreportcard.com/report/github.com/casdoor/casdoor">
-      <img src="https://goreportcard.com/badge/github.com/casdoor/casdoor?style=flat-square" alt="Go Report Card">
+    <a href="https://github.com/casdoor/casdoor/actions/workflows/golangci-lint.yml">
+      <img src="https://img.shields.io/github/actions/workflow/status/casdoor/casdoor/golangci-lint.yml?style=flat-square&label=golangci-lint&logo=go&logoColor=white" alt="golangci-lint">
+    </a>
+    <a href="https://discord.gg/5rPsrAzK7S">
+      <img src="https://img.shields.io/discord/1022748306096537660?style=flat-square&logo=discord&label=Discord&color=5865F2" alt="Discord">
     </a>
     <a href="https://github.com/casdoor/casdoor/blob/master/LICENSE">
       <img src="https://img.shields.io/github/license/casdoor/casdoor?style=flat-square&color=orange" alt="License">
     </a>
   </p>
-
-  <p>
-    <a href="https://github.com/casdoor/casdoor/stargazers">
-      <img src="https://img.shields.io/github/stars/casdoor/casdoor?style=flat-square&color=yellow" alt="GitHub Stars">
-    </a>
-    <a href="https://github.com/casdoor/casdoor/network/members">
-      <img src="https://img.shields.io/github/forks/casdoor/casdoor?style=flat-square" alt="GitHub Forks">
-    </a>
-    <a href="https://github.com/casdoor/casdoor/issues">
-      <img src="https://img.shields.io/github/issues/casdoor/casdoor?style=flat-square&color=red" alt="GitHub Issues">
-    </a>
-    <a href="https://discord.gg/5rPsrAzK7S">
-      <img src="https://img.shields.io/discord/1022748306096537660?style=flat-square&logo=discord&label=Discord&color=5865F2" alt="Discord">
-    </a>
-    <a href="https://crowdin.com/project/casdoor-site">
-      <img src="https://badges.crowdin.net/casdoor-site/localized.svg" alt="Crowdin">
-    </a>
-  </p>
-
-  <p align="center">
-    <a href="https://casdoor.ai"><strong>Website</strong></a> ·
-    <a href="https://casdoor.ai/docs/overview"><strong>Documentation</strong></a> ·
-    <a href="https://door.casdoor.com"><strong>Live demo</strong></a> ·
-    <a href="https://discord.gg/5rPsrAzK7S"><strong>Discord</strong></a>
-  </p>
 </div>
 
----
+<!--
+  MAINTAINERS: a screenshot or short GIF of the admin console belongs right here.
+  Casdoor is a UI-first product, but this README currently asks people to imagine the UI.
+  Suggested: upload to cdn.casbin.org and embed as
+  <img src="https://cdn.casbin.org/img/casdoor-console.png" alt="Casdoor admin console">
+-->
 
-## Table of contents
+## 🚀 Try it in 30 seconds
 
-- [Why Casdoor](#why-casdoor)
-- [Live demos](#live-demos)
-- [Quick start](#quick-start)
-- [Features](#features)
-- [Technology stack](#technology-stack)
-- [Documentation](#documentation)
-- [Integrations](#integrations)
-- [Security](#security)
-- [Community and support](#community-and-support)
-- [Contributing](#contributing)
-- [Donate](#donate)
-- [License](#license)
+No database and no config file needed. This runs Casdoor on SQLite with sample data:
 
----
+```bash
+docker run -p 8000:8000 casbin/casdoor-all-in-one
+```
 
-<a id="why-casdoor"></a>
-## Why Casdoor
+Open <http://localhost:8000> and sign in:
 
-Casdoor is a **UI-first** identity provider and access management platform: one place to manage users, organizations, applications, and providers, with a modern web console. Authorization policies can be expressed with **[Casbin](https://casbin.org/)** (ACL, RBAC, ABAC, and more). Unlike reverse-proxy-centric auth companions, Casdoor is a dedicated auth server with broad protocol support, designed to be straightforward to self-host and integrate—see **[casdoor.ai](https://casdoor.ai)** for documentation.
+| Field | Value |
+|-------|-------|
+| Organization | `built-in` |
+| Username | `admin` |
+| Password | `123` |
 
----
+> The sign-in form has separate **organization** and **username** fields. Docs sometimes write this pair as `built-in/admin` — that is the same thing, not a username containing a slash.
 
-<a id="live-demos"></a>
-## 🌐 Live demos
+Prefer not to install anything? Use the hosted demos:
 
-| Environment | URL | Description |
-|-------------|-----|-------------|
-| **Read-only** | [door.casdoor.com](https://door.casdoor.com) | Global demo; **any modification or write operation will fail** (read-only). |
-| **Writable** | [demo.casdoor.com](https://demo.casdoor.com) | Full access for testing; **data is reset about every 5 minutes**. |
+| Demo | URL | Notes |
+|------|-----|-------|
+| **Writable** | [demo.casdoor.com](https://demo.casdoor.com) | Full access, so you can click through everything. **All data resets about every 5 minutes.** |
+| **Read-only** | [door.casdoor.com](https://door.casdoor.com) | Stable global demo. **Every write operation fails by design.** |
 
-Default demo admin login (where applicable): `admin` / `123` — use only for demos; change credentials on your own deployment.
+Both accept the same `built-in` / `admin` / `123` credentials.
 
----
+## 🤔 Why Casdoor
 
-<a id="quick-start"></a>
-## 🚀 Quick start
+Casdoor is a **complete identity provider**, not an authentication proxy and not a library you embed. It stores your users, issues the tokens, and gives you an admin console to manage all of it — so your applications can delegate login entirely and never handle a password themselves.
 
-Pick one deployment method below. To keep behavior consistent with upstream, the steps are aligned with official docs.
+- **One server, many protocols.** The same user directory is reachable over OAuth 2.0, OIDC, SAML 2.0, CAS, LDAP and SCIM, so a modern SPA and a legacy CAS-only app can share one set of accounts.
+- **Everything is editable in the UI.** Organizations, applications, providers, sign-in methods, email and SMS templates, and login-page branding are configured in the web console instead of in files you have to redeploy.
+- **Policy-based authorization built in.** Access rules are expressed with [Casbin](https://casbin.org/) — ACL, RBAC, ABAC and custom models — rather than a fixed permission scheme.
+- **Straightforward to self-host.** A single Go binary plus a database. No JVM, no operator, no cluster required.
 
-### 🛠️ Source code (default)
+If all you need is a login screen in front of an existing reverse proxy, a smaller tool may suit you better. Casdoor is for when you want to own the user directory itself.
 
-1. Install dependencies: **Go 1.25** (follow `go.mod`), **Node.js LTS (20)**, **Yarn 1.x**, and a supported database.
-2. Clone the repository:
+## 📦 Installation
+
+Four supported paths, fastest first. All of them end up at <http://localhost:8000>.
+
+### Docker — all-in-one (evaluation)
+
+```bash
+docker run -p 8000:8000 casbin/casdoor-all-in-one
+```
+
+Bundles SQLite and demo data into a single container. Ideal for a first look, but **not intended for production**: the data lives inside the container and disappears with it.
+
+Guide: [Try with Docker](https://casdoor.ai/docs/basic/try-with-docker)
+
+### Docker Compose — Casdoor with MySQL
+
+[`docker-compose.yml`](docker-compose.yml) starts Casdoor next to a MySQL 8 container.
+
+> **Two things to know before running it:**
+>
+> 1. Compose **builds the image from source** (Go backend plus React frontend). The first `docker compose up` takes several minutes, so it is not the quick-trial path — use the all-in-one image above for that.
+> 2. You have to point Casdoor at the bundled database first.
+
+Set the MySQL settings in [`conf/app.conf`](conf/app.conf) to match the `db` service:
+
+```ini
+driverName = mysql
+dataSourceName = root:123456@tcp(localhost:3306)/
+dbName = casdoor
+```
+
+Use `localhost` here even though MySQL runs in a separate container: the compose file sets `RUNNING_IN_DOCKER=true`, and Casdoor rewrites `localhost` to the Docker host address at startup (see [`conf/conf.go`](conf/conf.go)). Then start everything:
+
+```bash
+docker compose up
+```
+
+The compose entrypoint already passes `--createDatabase=true`, so the `casdoor` database is created for you.
+
+Guide: [Try with Docker](https://casdoor.ai/docs/basic/try-with-docker)
+
+### Kubernetes — Helm
+
+Requires Helm v3 and a running cluster:
+
+```bash
+helm install casdoor oci://registry-1.docker.io/casbin/casdoor-helm-charts
+```
+
+The chart does not expose Casdoor outside the cluster by default. To reach it, find the service and forward a port:
+
+```bash
+kubectl get svc
+```
+
+```bash
+kubectl port-forward svc/<service-name-from-above> 8000:8000
+```
+
+For a real deployment, configure an Ingress and an external database through the chart's values. [`k8s.yaml`](k8s.yaml) in this repo is a minimal plain-manifest example if you would rather not use Helm.
+
+Guide: [Try with Helm](https://casdoor.ai/docs/basic/try-with-helm)
+
+### From source — for development
+
+Use this if you intend to modify Casdoor. Prerequisites: **Go 1.25+** (see [`go.mod`](go.mod)), **Node.js 20 LTS**, **Yarn 1.x**, and a supported database (MySQL, PostgreSQL, SQLite, SQL Server and others).
 
 ```bash
 git clone https://github.com/casdoor/casdoor.git
 cd casdoor
 ```
 
-3. Configure database in `conf/app.conf` (at minimum set `driverName`, `dataSourceName`, and `dbName`; for MySQL create database `casdoor` first).
-4. Build frontend and start backend:
+Set `driverName`, `dataSourceName` and `dbName` in [`conf/app.conf`](conf/app.conf). For MySQL, create the `casdoor` database first, or start the server with `--createDatabase=true`. Then build the frontend and run the server:
 
 ```bash
-cd web
-yarn install
-yarn build
-cd ..
-go run main.go
+cd web && yarn install && yarn build && cd .. && go run main.go
 ```
 
-5. Open [http://localhost:8000](http://localhost:8000) and sign in with `built-in/admin` / `123` on a fresh install (change password immediately in production).
+While working on the frontend, run `yarn start` in [`web/`](web) instead of `yarn build` to get hot reload on port 7001, with `go run main.go` serving the API from a second terminal.
 
-Official guide: [Server installation](https://casdoor.ai/docs/basic/server-installation)
+Guide: [Server installation](https://casdoor.ai/docs/basic/server-installation)
 
-### 🐳 Docker
+## 👉 After you sign in
 
-Use one of the official Docker paths:
+At this point you have a running identity provider with nothing connected to it yet. Next:
 
-- **All-in-one (SQLite quick trial)**:
+1. **Change the `admin` password.** `123` is a demo credential and must not survive contact with production.
+2. **[Connect your first application](https://casdoor.ai/docs/how-to-connect/overview)** — create an Application in the console, copy its Client ID and Client Secret, and point your app's OAuth/OIDC client at Casdoor.
+3. **[Add an identity provider](https://casdoor.ai/docs/provider/overview)** if you want Google, GitHub or Entra ID sign-in.
+4. **[Pick an SDK](https://casdoor.ai/docs/category/integrations)** for your language, or call the [Public API](https://casdoor.ai/docs/basic/public-api) directly.
 
-```bash
-docker run -p 8000:8000 casbin/casdoor-all-in-one
-```
-
-- **Docker Compose** (with your `conf/app.conf` next to `docker-compose.yml`):
-
-```bash
-docker compose up
-```
-
-Then open [http://localhost:8000](http://localhost:8000) and sign in with `built-in/admin` / `123` on a fresh install.
-
-Official guide: [Try with Docker](https://casdoor.ai/docs/basic/try-with-docker)
-
-### ☸️ Kubernetes Helm
-
-With Helm v3 and a running Kubernetes cluster:
-
-```bash
-helm install casdoor oci://registry-1.docker.io/casbin/casdoor-helm-charts
-```
-
-After installation, access Casdoor through your cluster service/ingress. The official guide covers chart versions (including optional `--version`) and cluster-specific settings.
-
-Official guide: [Try with Helm](https://casdoor.ai/docs/basic/try-with-helm)
-
----
-
-<a id="features"></a>
 ## ✨ Features
 
-<table>
-<tr>
-<td width="50%">
+**🔐 Authentication**
 
-### 🔐 Authentication
+- **OAuth 2.0 / OIDC** — full authorization server and OpenID Connect provider
+- **SAML 2.0** — enterprise SSO, as both IdP and SP
+- **CAS** — Central Authentication Service for legacy applications
+- **LDAP** — sync from a directory, or serve as one
+- **WebAuthn / passkeys** — passwordless sign-in
+- **TOTP / MFA** — multi-factor authentication, including email and SMS codes
+- **Face ID** — biometric sign-in
 
-- **OAuth 2.0 / OIDC** — OpenID Connect and OAuth 2.x authorization
-- **SAML 2.0** — Enterprise SSO integration
-- **CAS** — Central Authentication Service
-- **LDAP** — Directory service integration
-- **WebAuthn / Passkeys** — Passwordless authentication
-- **TOTP / MFA** — Multi-factor authentication
-- **Face ID** — Biometric authentication
+**🏢 Organizations and access control**
 
-</td>
-<td width="50%">
+- **Multi-tenancy** — independent organizations, each with its own users and branding
+- **RBAC and beyond** — roles, permissions and Casbin policy models
+- **SCIM 2.0** — automated user provisioning and de-provisioning
+- **Social login** — Google, GitHub, Entra ID (Azure AD) and many more
+- **Custom providers** — plug in your own identity, email, SMS, storage or payment backends
+- **Audit logs** — a record of sign-ins and administrative changes
 
-### 🏢 Enterprise
+**🤖 AI and agents**
 
-- **SCIM 2.0** — User provisioning
-- **RBAC** — Role-based access control
-- **Social Login** — Google, GitHub, Azure AD, and more
-- **Custom providers** — Extensible identity providers
-- **User management** — Web UI for administration
-- **Audit logs** — Comprehensive logging
-- **Multi-tenancy** — Organization support
+- **MCP gateway** — expose Model Context Protocol servers and control access to them
+- **A2A** — agent-to-agent communication support
 
-</td>
-</tr>
-<tr>
-<td width="50%">
+**🛠️ Developer experience**
 
-### 🤖 AI & MCP
+- **REST API** — every console action is also an API call
+- **SDKs** — Go, Java, Python, Node.js, .NET, PHP, Rust and more
+- **Swagger UI** — [live API explorer](https://door.casdoor.com/swagger)
+- **Webhooks** — push user and sign-in events into your own systems
+- **Customizable UI** — theme the login page and console per organization
 
-- **MCP Gateway** — Model Context Protocol support
-- **A2A Protocol** — Agent-to-Agent communication
-- **AI-First Design** — Built for AI applications
+## 🧱 Technology stack
 
-</td>
-<td width="50%">
+Casdoor is a frontend–backend separated application:
 
-### 🛠️ Developer Experience
+- **Backend** — Go with the [Beego](https://github.com/beego/beego) framework, exposing REST APIs ([repository root](https://github.com/casdoor/casdoor))
+- **Frontend** — React 18 with Ant Design ([`web/`](web))
+- **Database** — MySQL, PostgreSQL, SQLite, SQL Server and others through [XORM](https://xorm.io/)
+- **Cache** — Redis, optional; needed if you run more than one Casdoor replica
 
-- **RESTful API** — Complete API coverage
-- **SDKs** — Go, Java, Python, Node.js, and more
-- **Swagger UI** — Interactive API documentation
-- **Webhooks** — Event-driven integrations
-- **Customizable UI** — Brand theming support
-
-</td>
-</tr>
-</table>
-
----
-
-<a id="technology-stack"></a>
-## Technology stack
-
-Casdoor is built as a **frontend–backend separated** project:
-
-- **Web UI**: JavaScript and **React** ([`web/`](https://github.com/casdoor/casdoor/tree/master/web))
-- **API server**: **Go** with **Beego**, RESTful APIs ([repository root](https://github.com/casdoor/casdoor))
-- **Data**: mainstream databases including **MySQL**, **PostgreSQL**, and others ([overview](https://casdoor.ai/docs/overview))
-- **Cache**: optional **Redis** for session/cache-style deployments (configure as needed)
-
----
-
-<a id="documentation"></a>
 ## 📖 Documentation
 
-**All product documentation, installation, and tutorials live at [casdoor.ai/docs/overview](https://casdoor.ai/docs/overview).** Start here, then use the sections below.
+The full documentation lives at **[casdoor.ai/docs](https://casdoor.ai/docs/overview)**. Common starting points:
 
-**Install**
+| I want to… | Go to |
+|------------|-------|
+| Install Casdoor | [From source](https://casdoor.ai/docs/basic/server-installation) &middot; [Docker](https://casdoor.ai/docs/basic/try-with-docker) &middot; [Helm](https://casdoor.ai/docs/basic/try-with-helm) |
+| Connect my application | [How to connect to Casdoor](https://casdoor.ai/docs/how-to-connect/overview) |
+| Use the API | [Public API](https://casdoor.ai/docs/basic/public-api) &middot; [Swagger UI](https://door.casdoor.com/swagger) |
+| Choose an SDK | [Integrations](https://casdoor.ai/docs/category/integrations) |
+| Deploy to production | [Deployment](https://casdoor.ai/docs/category/deployment) |
 
-- [Install from source](https://casdoor.ai/docs/basic/server-installation)
-- [Install with Docker](https://casdoor.ai/docs/basic/try-with-docker)
-- [Install with Kubernetes Helm](https://casdoor.ai/docs/basic/try-with-helm)
+## 🔌 SDKs and integrations
 
-**Connect applications**
+Official SDKs and framework integrations, by language:
 
-- [How to connect to Casdoor](https://casdoor.ai/docs/how-to-connect/overview)
+- **Go** — [casdoor-go-sdk](https://github.com/casdoor/casdoor-go-sdk)
+- **Java** — [casdoor-java-sdk](https://github.com/casdoor/casdoor-java-sdk) &middot; [Spring Boot starter](https://github.com/casdoor/casdoor-spring-boot-starter)
+- **Python** — [casdoor-python-sdk](https://github.com/casdoor/casdoor-python-sdk)
+- **Node.js** — [casdoor-nodejs-sdk](https://github.com/casdoor/casdoor-nodejs-sdk)
+- **JavaScript** — [casdoor-js-sdk](https://github.com/casdoor/casdoor-js-sdk) &middot; [React](https://github.com/casdoor/casdoor-react-sdk) &middot; [Vue](https://github.com/casdoor/casdoor-vue-sdk) &middot; [Angular](https://github.com/casdoor/casdoor-angular-sdk)
+- **.NET** — [casdoor-dotnet-sdk](https://github.com/casdoor-net/casdoor-dotnet-sdk)
+- **PHP** — [casdoor-php-sdk](https://github.com/casdoor/casdoor-php-sdk)
+- **Rust** — [casdoor-rust-sdk](https://github.com/casdoor/casdoor-rust-sdk)
 
-**APIs**
+The complete list, including reverse proxies and third-party applications, is in the [Integrations](https://casdoor.ai/docs/category/integrations) documentation.
 
-- [Public API](https://casdoor.ai/docs/basic/public-api)
-- [Swagger UI](https://door.casdoor.com/swagger) (live API explorer)
+## 🔒 Security
 
----
+**Please do not report security vulnerabilities in public GitHub issues.** Email <admin@casdoor.org> instead — [SECURITY.md](SECURITY.md) has the full policy and disclosure process.
 
-<a id="integrations"></a>
-## 🔌 Integrations
+Before exposing a Casdoor instance to the internet:
 
-Casdoor integrates with common languages and frameworks:
+- Change the built-in `admin` password. Never ship the demo credential `123`.
+- Serve Casdoor over HTTPS only, and set `origin` in [`conf/app.conf`](conf/app.conf) to your public URL.
+- Review [`conf/app.conf`](conf/app.conf) for values inherited from the sample file, especially `dataSourceName` and any provider secrets.
+- Set `runmode = prod` and keep `showSql = false` in production.
 
-<p align="center">
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/go/go-original.svg" width="40" alt="Go">
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg" width="40" alt="Java">
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" width="40" alt="Python">
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg" width="40" alt="Node.js">
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" width="40" alt="React">
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vuejs/vuejs-original.svg" width="40" alt="Vue">
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/angularjs/angularjs-original.svg" width="40" alt="Angular">
-</p>
-
-Browse the full list: [Integrations](https://casdoor.ai/docs/category/integrations).
-
----
-
-<a id="community-and-support"></a>
 ## 🤝 Community and support
 
-- **Discord**: [Join our community](https://discord.gg/5rPsrAzK7S)
-- **Contact**: [casdoor.ai/help](https://casdoor.ai/help)
-- **Issues**: [GitHub Issues](https://github.com/casdoor/casdoor/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/casdoor/casdoor/discussions)
+- **Discord** — [join the community](https://discord.gg/5rPsrAzK7S) for questions and help
+- **GitHub Discussions** — [ask and search here](https://github.com/casdoor/casdoor/discussions)
+- **GitHub Issues** — [bug reports and feature requests](https://github.com/casdoor/casdoor/issues)
+- **Commercial support** — [casdoor.ai/help](https://casdoor.ai/help)
 
----
-
-<a id="contributing"></a>
 ## 🌍 Contributing
 
-If you have questions about Casdoor, you can **[open an issue](https://github.com/casdoor/casdoor/issues)**. Pull requests are welcome; **we recommend opening an issue first** so you can align with maintainers and the community before larger changes.
+Contributions are welcome. For anything larger than a small fix, **please open an issue first** so you can agree on the approach with the maintainers before writing code.
 
-Please also read our [contribution guidelines](https://casdoor.ai/docs/contributing/) before contributing.
+Read the [contribution guidelines](https://casdoor.ai/docs/contributing/) before you start.
 
-### Translation and i18n
+**Translations.** User-facing strings in the web console go through [i18next](https://www.i18next.com/). When you add or change one under [`web/`](web), update the English catalog at [`web/src/locales/en/data.json`](web/src/locales/en/data.json). The other languages are translated on [Crowdin](https://crowdin.com/project/casdoor-site) and should not be edited by hand.
 
-- **Crowdin** is used for translation workflows: [casdoor-site on Crowdin](https://crowdin.com/project/casdoor-site).
-- The web app uses **i18next**. When you add or change user-visible strings under [`web/`](https://github.com/casdoor/casdoor/tree/master/web), update the English catalog at [`web/src/locales/en/data.json`](web/src/locales/en/data.json) accordingly.
+## ❤️ Sponsors
 
----
-
-<a id="donate"></a>
-## ❤️ Donate
-
-If you find Casdoor useful, please consider supporting its development:
+Casdoor is free and open source. If it saves you time, consider supporting its development on [Open Collective](https://opencollective.com/casdoor).
 
 <a href="https://opencollective.com/casdoor#sponsor"><img src="https://opencollective.com/casdoor/tiers/sponsor.svg?avatarHeight=74" alt="Sponsors on Open Collective"></a>
 
 <a href="https://opencollective.com/casdoor#backer"><img src="https://opencollective.com/casdoor/tiers/backer.svg?avatarHeight=36" alt="Backers on Open Collective"></a>
 
----
-
-<a id="license"></a>
 ## 📄 License
 
-Casdoor is licensed under the [Apache License 2.0](https://github.com/casdoor/casdoor/blob/master/LICENSE).
+Casdoor is licensed under the [Apache License 2.0](LICENSE).
 
 ---
 
 <div align="center">
 
-[![Made with ❤️](https://img.shields.io/badge/Made_with-%E2%9D%A4%EF%B8%8F-ff6b6b?style=flat-square&logoColor=white)](https://casdoor.ai) [![By Casdoor](https://img.shields.io/badge/by-Casdoor-4ecdc4?style=flat-square)](https://casdoor.ai)
+If Casdoor is useful to you, a star helps other people find it.
 
 <a href="https://github.com/casdoor/casdoor/stargazers"><img src="https://img.shields.io/github/stars/casdoor/casdoor?style=social&logo=github&label=Star" alt="GitHub Stars"></a>
 
-<sub>© 2026 <a href="https://casdoor.ai">Casdoor</a>. Licensed under <a href="https://github.com/casdoor/casdoor/blob/master/LICENSE">Apache License 2.0</a>.</sub>
+<sub>© 2026 <a href="https://casdoor.ai">Casdoor</a> &middot; <a href="LICENSE">Apache License 2.0</a></sub>
 
 </div>
