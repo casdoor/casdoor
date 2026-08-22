@@ -177,12 +177,13 @@ func (c *ApiController) DeleteServer() {
 // @Title GetMcpAccessToken
 // @Tag Server API
 // @Description get an access token for the current session user to use with an MCP server
-// @Param   owner            query  string  true  "The owner of the application"
+// @Param   owner            query  string  true  "The organization name of the MCP server"
 // @Param   applicationName  query  string  true  "The name of the application"
 // @Success 200 {object} controllers.Response The Response object
 // @router /get-mcp-access-token [get]
 func (c *ApiController) GetMcpAccessToken() {
-	owner := c.Ctx.Input.Query("owner")
+	// the "owner" of a server is its organization name, while all applications are owned by "admin"
+	organizationName := c.Ctx.Input.Query("owner")
 	applicationName := c.Ctx.Input.Query("applicationName")
 
 	user := c.getCurrentUser()
@@ -191,13 +192,17 @@ func (c *ApiController) GetMcpAccessToken() {
 		return
 	}
 
-	application, err := object.GetApplication(fmt.Sprintf("%s/%s", owner, applicationName))
+	application, err := object.GetApplication(fmt.Sprintf("admin/%s", applicationName))
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
 	if application == nil {
-		c.ResponseError(fmt.Sprintf("application %s/%s does not exist", owner, applicationName))
+		c.ResponseError(fmt.Sprintf(c.T("auth:The application: %s does not exist"), applicationName))
+		return
+	}
+	if organizationName != "" && !application.IsShared && application.Organization != organizationName {
+		c.ResponseError(fmt.Sprintf("the application: %s does not belong to the organization: %s", applicationName, organizationName))
 		return
 	}
 
