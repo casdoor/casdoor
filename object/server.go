@@ -37,9 +37,27 @@ type Server struct {
 	DisplayName string `xorm:"varchar(100)" json:"displayName"`
 
 	Url         string  `xorm:"varchar(500)" json:"url"`
-	Token       string  `xorm:"varchar(500)" json:"-"`
+	Token       string  `xorm:"mediumtext" json:"token"`
 	Application string  `xorm:"varchar(100)" json:"application"`
 	Tools       []*Tool `xorm:"mediumtext" json:"tools"`
+}
+
+// GetMaskedServer clears the token used to access the upstream MCP server, so that it is
+// never returned to the frontend. An empty token means "keep the old one" in UpdateServer().
+func GetMaskedServer(server *Server) *Server {
+	if server == nil {
+		return nil
+	}
+
+	server.Token = ""
+	return server
+}
+
+func GetMaskedServers(servers []*Server) []*Server {
+	for _, server := range servers {
+		server = GetMaskedServer(server)
+	}
+	return servers
 }
 
 func GetServers(owner string) ([]*Server, error) {
