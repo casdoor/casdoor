@@ -186,6 +186,7 @@ type AlipayUserInfoShareResponse struct {
 	Avatar   string `json:"avatar"`
 	NickName string `json:"nick_name"`
 	UserId   string `json:"user_id"`
+	OpenId   string `json:"open_id"`
 }
 
 // GetUserInfo Use access_token to get UserInfo
@@ -217,8 +218,17 @@ func (idp *AlipayIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error)
 		return nil, fmt.Errorf("alipay GetUserInfo error: code=%s, msg=%s", resp.Code, resp.Msg)
 	}
 
+	// Alipay apps created after the openid migration no longer return user_id
+	id := resp.UserId
+	if id == "" {
+		id = resp.OpenId
+	}
+	if id == "" {
+		return nil, fmt.Errorf("alipay GetUserInfo error: both user_id and open_id are empty")
+	}
+
 	userInfo := UserInfo{
-		Id:          resp.UserId,
+		Id:          id,
 		Username:    resp.NickName,
 		DisplayName: resp.NickName,
 		AvatarUrl:   resp.Avatar,
