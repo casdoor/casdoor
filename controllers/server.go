@@ -49,7 +49,7 @@ func (c *ApiController) GetServers() {
 			c.ResponseError(err.Error())
 			return
 		}
-		c.ResponseOk(servers)
+		c.ResponseOk(object.GetMaskedServers(servers))
 		return
 	}
 
@@ -67,7 +67,7 @@ func (c *ApiController) GetServers() {
 		return
 	}
 
-	c.ResponseOk(servers, paginator.Nums())
+	c.ResponseOk(object.GetMaskedServers(servers), paginator.Nums())
 }
 
 // GetServer
@@ -86,7 +86,7 @@ func (c *ApiController) GetServer() {
 		return
 	}
 
-	c.ResponseOk(server)
+	c.ResponseOk(object.GetMaskedServer(server))
 }
 
 // UpdateServer
