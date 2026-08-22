@@ -181,11 +181,12 @@ type AlipayUserResponse struct {
 }
 
 type AlipayUserInfoShareResponse struct {
-	Code     string `json:"code"`
-	Msg      string `json:"msg"`
-	Avatar   string `json:"avatar"`
-	NickName string `json:"nick_name"`
-	UserId   string `json:"user_id"`
+	Code         string `json:"code"`
+	Msg          string `json:"msg"`
+	Avatar       string `json:"avatar"`
+	NickName     string `json:"nick_name"`
+	UserId       string `json:"user_id"`
+	AlipayOpenId string `json:"alipay_open_id"`
 }
 
 // GetUserInfo Use access_token to get UserInfo
@@ -217,8 +218,13 @@ func (idp *AlipayIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error)
 		return nil, fmt.Errorf("alipay GetUserInfo error: code=%s, msg=%s", resp.Code, resp.Msg)
 	}
 
+	id := resp.UserId
+	if id == "" {
+		id = resp.AlipayOpenId
+	}
+
 	userInfo := UserInfo{
-		Id:          resp.UserId,
+		Id:          id,
 		Username:    resp.NickName,
 		DisplayName: resp.NickName,
 		AvatarUrl:   resp.Avatar,
