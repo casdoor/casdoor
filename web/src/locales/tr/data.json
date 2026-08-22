@@ -23,6 +23,7 @@
   },
   "application": {
     "Add Face ID": "Face ID Ekle",
+    "Add Face ID with Camera": "Add Face ID with Camera",
     "Add Face ID with Image": "Görüntü ile Face ID Ekle",
     "Always": "Her zaman",
     "Array": "Dizi",
@@ -488,6 +489,8 @@
     "Forget URL - Tooltip": "\"Parolayı unuttum\" sayfası için özel URL. Ayarlanmamışsa, varsayılan Casdoor \"Parolayı unuttum\" sayfası kullanılacaktır. Ayarlanırsa, giriş sayfasındaki \"Parolayı unuttum\" bağlantısı bu URL'ye yönlendirilecektir",
     "Forms": "Formlar",
     "Found some texts still not translated? Please help us translate at": "Henüz çevrilmemiş bazı metinler buldunuz mu? Lütfen aşağıdaki adreste bize çeviri yaparak yardım edin",
+    "GID number": "GID number",
+    "GID number - Tooltip": "The POSIX group ID published by the built-in LDAP server. Leave it as 0 to derive the number from the group name",
     "General": "Genel",
     "Generate": "Oluştur",
     "Go to enable": "Etkinleştirmek için git",
@@ -695,6 +698,8 @@
     "True": "Doğru",
     "Type": "Tür",
     "Type - Tooltip": "Bu öğenin davranışını veya yapılandırmasını sınıflandıran kategori veya tür",
+    "UID number": "UID number",
+    "UID number - Tooltip": "The POSIX user ID published by the built-in LDAP server. Leave it as 0 to derive the number from the username",
     "URL": "URL adresi",
     "URL - Tooltip": "URL bağlantısı",
     "Unauthorized": "Yetkisiz",
@@ -980,6 +985,8 @@
     "Password expire days": "Şifre son kullanma günleri",
     "Password expire days - Tooltip": "Şifre son kullanma günleri - Araç ipucu",
     "Prompt": "İstem",
+    "Record retention days": "Record retention days",
+    "Record retention days - Tooltip": "Number of days to keep the organization's records (audit logs) before they are automatically deleted by a daily cleanup job. Leave it empty or set it to 0 to keep the records forever",
     "Required": "Gerekli",
     "Soft deletion": "Yumuşak silme",
     "Soft deletion - Tooltip": "Etkinleştirildiğinde, kullanıcıların silinmesi onları veritabanından tamamen kaldırmayacaktır. Bunun yerine silinmiş olarak işaretlenecekler",
@@ -999,7 +1006,8 @@
     "Website URL": "Web Sitesi URL'si",
     "Website URL - Tooltip": "Organizasyonun ana sayfa URL'si. Bu alan Casdoor'da kullanılmamaktadır",
     "Widget items": "Widget öğeleri",
-    "Widget items - Tooltip": "Widget öğeleri - Araç ipucu"
+    "Widget items - Tooltip": "Widget öğeleri - Araç ipucu",
+    "days": "days"
   },
   "payment": {
     "Confirm your invoice information": "Fatura bilgilerinizi onaylayın",
@@ -1741,6 +1749,8 @@
     "WebAuthn credentials": "WebAuthn kimlik bilgileri",
     "Work": "İş",
     "You have changed the username, please save your change first before modifying the password": "Kullanıcı adını değiştirdiniz, lütfen şifreyi değiştirmeden önce değişikliklerinizi kaydedin",
+    "You need to update your password": "You need to update your password",
+    "Your password must be updated before you can continue to use your account, please click the \"Modify password...\" button below": "Your password must be updated before you can continue to use your account, please click the \"Modify password...\" button below",
     "Zip code": "Posta kodu",
     "input password": "şifreyi girin"
   },
