@@ -39,11 +39,16 @@ type Response struct {
 	Data2  interface{} `json:"data2"`
 }
 
+func isMcpRequest(urlPath string) bool {
+	// "/api/mcp" is Casdoor's own MCP server, "/api/server/:owner/:name" is the MCP server proxy
+	return urlPath == "/api/mcp" || strings.HasPrefix(urlPath, "/api/server/")
+}
+
 func responseError(ctx *context.Context, error string, data ...interface{}) {
 	// ctx.ResponseWriter.WriteHeader(http.StatusForbidden)
 	urlPath := ctx.Request.URL.Path
-	if urlPath == "/api/mcp" {
-		denyMcpRequest(ctx)
+	if isMcpRequest(urlPath) {
+		denyMcpRequest(ctx, error)
 		return
 	}
 
@@ -75,11 +80,25 @@ func denyRequest(ctx *context.Context) {
 	responseError(ctx, T(ctx, "auth:Unauthorized operation"))
 }
 
-func denyMcpRequest(ctx *context.Context) {
+func denyMcpRequest(ctx *context.Context, message string) {
+	// Add WWW-Authenticate header per MCP Authorization spec (RFC 9728), so that the MCP
+	// client knows it should start the OAuth flow instead of treating the error as fatal
+	// Use the same logic as getOriginFromHost to determine the scheme
+	host := ctx.Request.Host
+	scheme := "https"
+	if !strings.Contains(host, ".") {
+		// localhost:8000 or computer-name:80
+		scheme = "http"
+	}
+	resourceMetadataUrl := fmt.Sprintf("%s://%s/.well-known/oauth-protected-resource", scheme, host)
+	ctx.Output.Header("WWW-Authenticate", fmt.Sprintf("Bearer realm=\"casdoor\", resource_metadata=\"%s\"", resourceMetadataUrl))
+
 	req := mcpself.McpRequest{}
 	err := json.Unmarshal(ctx.Input.RequestBody, &req)
 	if err != nil {
-		ctx.Output.SetStatus(http.StatusBadRequest)
+		// the request body is not a JSON-RPC request, e.g., the GET request of the MCP proxy
+		ctx.Output.SetStatus(http.StatusUnauthorized)
+		ctx.Output.Body([]byte{})
 		return
 	}
 
@@ -92,19 +111,8 @@ func denyMcpRequest(ctx *context.Context) {
 	resp := mcpself.BuildMcpResponse(req.ID, nil, &mcpself.McpError{
 		Code:    -32001,
 		Message: "Unauthorized",
-		Data:    T(ctx, "auth:Unauthorized operation"),
+		Data:    message,
 	})
-
-	// Add WWW-Authenticate header per MCP Authorization spec (RFC 9728)
-	// Use the same logic as getOriginFromHost to determine the scheme
-	host := ctx.Request.Host
-	scheme := "https"
-	if !strings.Contains(host, ".") {
-		// localhost:8000 or computer-name:80
-		scheme = "http"
-	}
-	resourceMetadataUrl := fmt.Sprintf("%s://%s/.well-known/oauth-protected-resource", scheme, host)
-	ctx.Output.Header("WWW-Authenticate", fmt.Sprintf("Bearer realm=\"casdoor\", resource_metadata=\"%s\"", resourceMetadataUrl))
 
 	ctx.Output.SetStatus(http.StatusUnauthorized)
 	_ = ctx.Output.JSON(resp, true, false)
