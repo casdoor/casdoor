@@ -467,6 +467,11 @@ func (c *ApiController) GetEmailAndPhone() {
 		c.ResponseError("Error")
 		return
 	}
+	if conf.GetConfigBool("enableErrorMask") {
+		c.prepareMaskedPasswordRecovery(organization, username)
+		c.ResponseOk(getMaskedPasswordRecoveryPublicUser(username), "username")
+		return
+	}
 
 	user, err := object.GetUserByFields(organization, username)
 	if err != nil {
@@ -533,6 +538,11 @@ func (c *ApiController) SetPassword() {
 	// }
 
 	userId := util.GetId(userOwner, userName)
+	if conf.GetConfigBool("enableErrorMask") && code != "" {
+		if verifiedUserId := c.getSessionString("verifiedUserId"); verifiedUserId != "" {
+			userId = verifiedUserId
+		}
+	}
 
 	user, err := object.GetUser(userId)
 	if err != nil {

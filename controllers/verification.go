@@ -171,6 +171,7 @@ func (c *ApiController) SendVerificationCode() {
 		c.ResponseError(fmt.Sprintf(c.T("auth:The application: %s does not exist"), vform.ApplicationId))
 		return
 	}
+	maskedPasswordRecovery := isMaskedPasswordRecovery(vform.Method)
 
 	// Check if "Forgot password?" signin item is visible when using forget verification
 	if vform.Method == ForgetVerification {
@@ -201,7 +202,7 @@ func (c *ApiController) SendVerificationCode() {
 	var user *object.User
 	// Try to resolve user for CAPTCHA rule checking
 	// checkUser != "", means method is ForgetVerification
-	if vform.CheckUser != "" {
+	if vform.CheckUser != "" && !maskedPasswordRecovery {
 		owner := application.Organization
 		user, err = object.GetUser(util.GetId(owner, vform.CheckUser))
 		if err != nil {
@@ -256,10 +257,15 @@ func (c *ApiController) SendVerificationCode() {
 	}
 
 	// Check if CAPTCHA should be enabled based on the rule (Dynamic/Always/Internet-Only)
-	enableCaptcha, err := object.CheckToEnableCaptcha(application, organization.Name, username, clientIp)
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
+	var enableCaptcha bool
+	if maskedPasswordRecovery {
+		enableCaptcha = shouldEnableMaskedPasswordRecoveryCaptcha(application, clientIp)
+	} else {
+		enableCaptcha, err = object.CheckToEnableCaptcha(application, organization.Name, username, clientIp)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
 	}
 
 	if vform.CaptchaToken != "" {
@@ -297,6 +303,12 @@ func (c *ApiController) SendVerificationCode() {
 				}
 			}
 		}
+	}
+
+	if maskedPasswordRecovery {
+		c.sendMaskedPasswordRecoveryCode(application, organization, vform.Type, clientIp)
+		c.ResponseOk()
+		return
 	}
 
 	sendResp := errors.New("invalid dest type")
@@ -612,6 +624,10 @@ func (c *ApiController) VerifyCode() {
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &authForm)
 	if err != nil {
 		c.ResponseError(err.Error())
+		return
+	}
+	if c.isMaskedPasswordRecoveryVerification(&authForm) {
+		c.verifyMaskedPasswordRecoveryCode(&authForm)
 		return
 	}
 

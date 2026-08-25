@@ -1512,10 +1512,15 @@ func (c *ApiController) GetCaptchaStatus() {
 	}
 
 	clientIp := util.GetClientIpFromRequest(c.Ctx.Request)
-	captchaEnabled, err := object.CheckToEnableCaptcha(application, organization, userId, clientIp)
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
+	var captchaEnabled bool
+	if c.isMaskedPasswordRecoveryCaptchaRequest(organization, userId) {
+		captchaEnabled = shouldEnableMaskedPasswordRecoveryCaptcha(application, clientIp)
+	} else {
+		captchaEnabled, err = object.CheckToEnableCaptcha(application, organization, userId, clientIp)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
 	}
 	c.ResponseOk(captchaEnabled)
 	return
