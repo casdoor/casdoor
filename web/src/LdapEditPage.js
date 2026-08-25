@@ -289,6 +289,16 @@ class LdapEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{lineHeight: "32px", textAlign: "right", paddingRight: "25px"}} span={3}>
+            {Setting.getLabel(i18next.t("ldap:Enable groups"), i18next.t("ldap:Enable groups - Tooltip"))} :
+          </Col>
+          <Col span={21} >
+            <Switch checked={this.state.ldap.enableGroups} onChange={checked => {
+              this.updateLdapField("enableGroups", checked);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{lineHeight: "32px", textAlign: "right", paddingRight: "25px"}} span={3}>
             {Setting.getLabel(i18next.t("ldap:Custom attributes"), i18next.t("ldap:Custom attributes - Tooltip"))} :
           </Col>
           <Col span={21} >
