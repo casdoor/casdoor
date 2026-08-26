@@ -483,7 +483,7 @@ func (application *Application) IsPasswordEnabled() bool {
 		return application.EnablePassword
 	} else {
 		for _, signinMethod := range application.SigninMethods {
-			if signinMethod.Name == "Password" {
+			if signinMethod.Name == "Password" && signinMethod.Rule != "Hide password" {
 				return true
 			}
 		}
@@ -533,7 +533,7 @@ func (application *Application) IsCodeSigninViaSmsEnabled() bool {
 func (application *Application) IsLdapEnabled() bool {
 	if len(application.SigninMethods) > 0 {
 		for _, signinMethod := range application.SigninMethods {
-			if signinMethod.Name == "LDAP" {
+			if signinMethod.Name == "LDAP" && signinMethod.Rule != "Hide password" {
 				return true
 			}
 		}
@@ -544,7 +544,7 @@ func (application *Application) IsLdapEnabled() bool {
 func (application *Application) IsFaceIdEnabled() bool {
 	if len(application.SigninMethods) > 0 {
 		for _, signinMethod := range application.SigninMethods {
-			if signinMethod.Name == "Face ID" {
+			if signinMethod.Name == "Face ID" && signinMethod.Rule != "Hide password" {
 				return true
 			}
 		}
