@@ -330,6 +330,10 @@ class LoginPage extends React.Component {
       values["samlRequest"] = oAuthParams.samlRequest;
       values["type"] = "saml";
       values["relayState"] = oAuthParams.relayState;
+    } else if (values["type"] === "saml") {
+      // IdP-initiated SSO, the SP doesn't send any SAMLRequest to Casdoor
+      values["samlRequest"] = "";
+      values["relayState"] = Util.getRelayState();
     }
   }
 
@@ -591,12 +595,12 @@ class LoginPage extends React.Component {
                 this.setState({
                   samlResponse: res.data,
                   redirectUrl: res.data2.redirectUrl,
-                  relayState: oAuthParams.relayState,
+                  relayState: values["relayState"] ?? "",
                 });
               } else {
                 const SAMLResponse = res.data;
                 const redirectUri = res.data2.redirectUrl;
-                Setting.goToLink(`${redirectUri}${redirectUri.includes("?") ? "&" : "?"}SAMLResponse=${encodeURIComponent(SAMLResponse)}&RelayState=${encodeURIComponent(oAuthParams.relayState)}`);
+                Setting.goToLink(`${redirectUri}${redirectUri.includes("?") ? "&" : "?"}SAMLResponse=${encodeURIComponent(SAMLResponse)}&RelayState=${encodeURIComponent(values["relayState"] ?? "")}`);
               }
             }
           };

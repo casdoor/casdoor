@@ -56,7 +56,10 @@ func NewSamlResponse(application *Application, user *User, host string, certific
 	samlResponse.CreateAttr("Version", "2.0")
 	samlResponse.CreateAttr("IssueInstant", now)
 	samlResponse.CreateAttr("Destination", destination)
-	samlResponse.CreateAttr("InResponseTo", requestId)
+	// the "InResponseTo" attribute must be omitted for IdP-initiated SSO, as there is no AuthnRequest to respond to
+	if requestId != "" {
+		samlResponse.CreateAttr("InResponseTo", requestId)
+	}
 	samlResponse.CreateElement("saml:Issuer").SetText(host)
 
 	samlResponse.CreateElement("samlp:Status").CreateElement("samlp:StatusCode").CreateAttr("Value", "urn:oasis:names:tc:SAML:2.0:status:Success")
@@ -84,7 +87,9 @@ func NewSamlResponse(application *Application, user *User, host string, certific
 	subjectConfirmation := subject.CreateElement("saml:SubjectConfirmation")
 	subjectConfirmation.CreateAttr("Method", "urn:oasis:names:tc:SAML:2.0:cm:bearer")
 	subjectConfirmationData := subjectConfirmation.CreateElement("saml:SubjectConfirmationData")
-	subjectConfirmationData.CreateAttr("InResponseTo", requestId)
+	if requestId != "" {
+		subjectConfirmationData.CreateAttr("InResponseTo", requestId)
+	}
 	subjectConfirmationData.CreateAttr("Recipient", destination)
 	subjectConfirmationData.CreateAttr("NotOnOrAfter", expireTime)
 	condition := assertion.CreateElement("saml:Conditions")
@@ -293,16 +298,15 @@ func GetSamlMeta(application *Application, host string, enablePostBinding bool) 
 	return &d, nil
 }
 
-// GetSamlResponse generates a SAML2.0 response
-// parameter samlRequest is saml request in base64 format
-func GetSamlResponse(application *Application, user *User, samlRequest string, host string) (string, string, string, error) {
-	// request type
-	method := "GET"
+// getAuthnRequest parses the AuthnRequest sent by the SP, parameter samlRequest is the SAML request in base64 format
+func getAuthnRequest(application *Application, samlRequest string) (saml.AuthNRequest, error) {
+	var authnRequest saml.AuthNRequest
+
 	samlRequest = strings.ReplaceAll(samlRequest, " ", "+")
 	// base64 decode
 	defated, err := base64.StdEncoding.DecodeString(samlRequest)
 	if err != nil {
-		return "", "", "", fmt.Errorf("err: Failed to decode SAML request, %s", err.Error())
+		return authnRequest, fmt.Errorf("err: Failed to decode SAML request, %s", err.Error())
 	}
 
 	var requestByte []byte
@@ -321,22 +325,68 @@ func GetSamlResponse(application *Application, user *User, samlRequest string, h
 				if err == io.EOF {
 					break
 				}
-				return "", "", "", err
+				return authnRequest, err
 			}
 		}
 
 		requestByte = buffer.Bytes()
 	}
 
-	var authnRequest saml.AuthNRequest
 	err = xml.Unmarshal(requestByte, &authnRequest)
 	if err != nil {
-		return "", "", "", fmt.Errorf("err: Failed to unmarshal AuthnRequest, please check the SAML request, %s", err.Error())
+		return authnRequest, fmt.Errorf("err: Failed to unmarshal AuthnRequest, please check the SAML request, %s", err.Error())
 	}
 
 	// verify samlRequest
 	if isValid := application.IsRedirectUriValid(authnRequest.Issuer); !isValid {
-		return "", "", "", fmt.Errorf("err: Issuer URI: %s doesn't exist in the allowed Redirect URI list", authnRequest.Issuer)
+		return authnRequest, fmt.Errorf("err: Issuer URI: %s doesn't exist in the allowed Redirect URI list", authnRequest.Issuer)
+	}
+
+	return authnRequest, nil
+}
+
+// getIdpInitiatedAuthnRequest builds the AuthnRequest for IdP-initiated SSO, where the SP doesn't send any AuthnRequest to Casdoor,
+// so the ACS URL and the SP's entity ID are taken from the application's SAML config instead
+func getIdpInitiatedAuthnRequest(application *Application) (saml.AuthNRequest, error) {
+	var authnRequest saml.AuthNRequest
+
+	if application.SamlReplyUrl == "" {
+		return authnRequest, fmt.Errorf("err: the SAML reply URL should not be empty for IdP-initiated SSO")
+	}
+
+	entityId := ""
+	for _, redirectUri := range application.RedirectUris {
+		if redirectUri != "" {
+			entityId = redirectUri
+			break
+		}
+	}
+	if entityId == "" {
+		return authnRequest, fmt.Errorf("err: the Redirect URIs should contain the SP's entity ID for IdP-initiated SSO")
+	}
+
+	authnRequest.AssertionConsumerServiceURL = application.SamlReplyUrl
+	authnRequest.Issuer = entityId
+	authnRequest.ProtocolBinding = "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+
+	return authnRequest, nil
+}
+
+// GetSamlResponse generates a SAML2.0 response
+// parameter samlRequest is saml request in base64 format, it is empty for IdP-initiated SSO
+func GetSamlResponse(application *Application, user *User, samlRequest string, host string) (string, string, string, error) {
+	// request type
+	method := "GET"
+
+	var authnRequest saml.AuthNRequest
+	var err error
+	if samlRequest == "" {
+		authnRequest, err = getIdpInitiatedAuthnRequest(application)
+	} else {
+		authnRequest, err = getAuthnRequest(application, samlRequest)
+	}
+	if err != nil {
+		return "", "", "", err
 	}
 
 	// get certificate string
