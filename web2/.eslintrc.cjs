@@ -1,0 +1,31 @@
+module.exports = {
+  root: true,
+  env: {browser: true, es2022: true, node: true},
+  parser: "@typescript-eslint/parser",
+  parserOptions: {ecmaVersion: "latest", sourceType: "module", ecmaFeatures: {jsx: true}},
+  plugins: ["@typescript-eslint", "react", "react-hooks"],
+  extends: [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:react/recommended",
+    "plugin:react-hooks/recommended",
+  ],
+  settings: {react: {version: "detect"}},
+  ignorePatterns: ["build", "build-temp", "node_modules", "src/locales"],
+  rules: {
+    // Same house style as the antd frontend.
+    "quotes": ["error", "double"],
+    "semi": ["error", "always"],
+    "indent": ["error", 2, {SwitchCase: 0}],
+    "comma-dangle": ["error", "always-multiline"],
+    "object-curly-spacing": ["error", "never"],
+    "react/react-in-jsx-scope": "off",
+    "react/prop-types": "off",
+    "react/no-unescaped-entities": "off",
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/no-unused-vars": ["warn", {argsIgnorePattern: "^_", caughtErrors: "none"}],
+    "@typescript-eslint/no-empty-function": "off",
+    "@typescript-eslint/no-empty-interface": "off",
+    "no-unused-vars": "off",
+  },
+};
