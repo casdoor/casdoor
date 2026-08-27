@@ -111,6 +111,16 @@ export function getCasLoginParameters(owner, name) {
   };
 }
 
+// getRelayState returns the RelayState in the URL, it is used by the SAML IdP-initiated SSO,
+// where there is no SAMLRequest and getOAuthGetParameters() returns null
+export function getRelayState() {
+  const queries = new URLSearchParams(window.location.search);
+  const lowercaseQueries = {};
+  queries.forEach((val, key) => {lowercaseQueries[key.toLowerCase()] = val;});
+
+  return getRefinedValue(lowercaseQueries["RelayState".toLowerCase()]);
+}
+
 export function getOAuthGetParameters(params) {
   const queries = (params !== undefined) ? params : new URLSearchParams(window.location.search);
   const lowercaseQueries = {};

@@ -329,6 +329,10 @@ class ApplicationEditPage extends React.Component {
     });
   }
 
+  getIdpInitiatedSsoUrl() {
+    return `${window.location.origin}/login/saml/authorize/${this.state.application.owner}/${encodeURIComponent(this.state.applicationName)}`;
+  }
+
   handleUpload(info) {
     if (info.file.type !== "text/html") {
       Setting.showMessage("error", i18next.t("application:Please select a HTML file"));
@@ -1085,6 +1089,27 @@ class ApplicationEditPage extends React.Component {
                   }}
                   >
                     {i18next.t("application:Copy SAML metadata URL")}
+                  </Button>
+                </Col>
+              </Row>
+            )
+          }
+          {
+            // the IdP-initiated SSO URL points to the saved application, so it is only available after the application is created
+            this.state.mode === "add" ? null : (
+              <Row style={{marginTop: "20px"}} >
+                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
+                  {Setting.getLabel(i18next.t("application:IdP-initiated SSO URL"), i18next.t("application:IdP-initiated SSO URL - Tooltip"))} :
+                </Col>
+                <Col span={21}>
+                  <Input prefix={<LinkOutlined />} value={this.getIdpInitiatedSsoUrl()} readOnly />
+                  <br />
+                  <Button style={{marginTop: "10px", marginBottom: "10px"}} type="primary" shape="round" icon={<CopyOutlined />} onClick={() => {
+                    copy(this.getIdpInitiatedSsoUrl());
+                    Setting.showMessage("success", i18next.t("general:Copied to clipboard successfully"));
+                  }}
+                  >
+                    {i18next.t("application:Copy IdP-initiated SSO URL")}
                   </Button>
                 </Col>
               </Row>
