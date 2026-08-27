@@ -71,7 +71,7 @@ class EntryPage extends React.Component {
         application: application,
       });
       const themeData = application !== null ? Setting.getThemeData(application.organizationObj, application) : Conf.ThemeDefault;
-      this.props.updataThemeData(themeData);
+      this.props.updataThemeData(themeData, Conf.InitThemeAlgorithm);
       this.props.updateApplication(application);
 
       if (application) {
