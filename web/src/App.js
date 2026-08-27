@@ -474,7 +474,7 @@ class App extends Component {
           if (!localStorage.getItem("language")) {
             this.setLanguage(account);
           }
-          this.setTheme(Setting.getThemeData(account.organization), Conf.InitThemeAlgorithm);
+          this.setTheme(Setting.getThemeData(account.organization, this.state.application), Conf.InitThemeAlgorithm);
           setTourLogo(account.organization.logo);
           setOrgIsTourVisible(account.organization.enableTour);
         } else {
