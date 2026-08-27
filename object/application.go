@@ -29,6 +29,22 @@ type SigninMethod struct {
 	Rule        string `json:"rule"`
 }
 
+const (
+	// SigninMethodRuleHidePassword disables a signin method instead of only hiding it
+	// in the login page. The rule was named "Hide-Password" when it was added, so the
+	// applications configured before the rename still store the legacy value.
+	SigninMethodRuleHidePassword       = "Hide password"
+	SigninMethodRuleHidePasswordLegacy = "Hide-Password"
+)
+
+func (signinMethod *SigninMethod) IsHidden() bool {
+	if signinMethod == nil {
+		return false
+	}
+
+	return signinMethod.Rule == SigninMethodRuleHidePassword || signinMethod.Rule == SigninMethodRuleHidePasswordLegacy
+}
+
 type SignupItem struct {
 	Name        string   `json:"name"`
 	Visible     bool     `json:"visible"`
@@ -180,7 +196,7 @@ func (application *Application) HasSigninMethod(name string) bool {
 	}
 
 	for _, signinMethod := range application.SigninMethods {
-		if signinMethod != nil && signinMethod.Name == name && signinMethod.Rule != "Hide password" {
+		if signinMethod != nil && signinMethod.Name == name && !signinMethod.IsHidden() {
 			return true
 		}
 	}

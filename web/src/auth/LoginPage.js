@@ -1537,7 +1537,7 @@ class LoginPage extends React.Component {
     ]);
 
     application?.signinMethods?.forEach((signinMethod) => {
-      if (signinMethod.rule === "Hide password") {
+      if (Setting.isSigninMethodHidden(signinMethod)) {
         return;
       }
 
