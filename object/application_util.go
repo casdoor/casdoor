@@ -187,9 +187,12 @@ func extendApplicationWithSigninMethods(application *Application) (err error) {
 		application.SigninMethods = append(application.SigninMethods, signinMethod)
 	}
 
-	if len(application.SigninMethods) == 0 {
-		signinMethod := &SigninMethod{Name: "Password", DisplayName: "Password", Rule: "All"}
-		application.SigninMethods = append(application.SigninMethods, signinMethod)
+	// The "Hide password" rule used to be named "Hide-Password", normalize the legacy
+	// value so that the frontend and the backend agree on what is hidden
+	for _, signinMethod := range application.SigninMethods {
+		if signinMethod != nil && signinMethod.Rule == SigninMethodRuleHidePasswordLegacy {
+			signinMethod.Rule = SigninMethodRuleHidePassword
+		}
 	}
 
 	return
@@ -481,14 +484,9 @@ func redirectUriMatchesTarget(redirectUri, targetUri *url.URL) bool {
 func (application *Application) IsPasswordEnabled() bool {
 	if len(application.SigninMethods) == 0 {
 		return application.EnablePassword
-	} else {
-		for _, signinMethod := range application.SigninMethods {
-			if signinMethod.Name == "Password" {
-				return true
-			}
-		}
-		return false
 	}
+
+	return application.HasSigninMethod("Password")
 }
 
 func (application *Application) IsPasswordWithLdapEnabled() bool {
@@ -531,25 +529,11 @@ func (application *Application) IsCodeSigninViaSmsEnabled() bool {
 }
 
 func (application *Application) IsLdapEnabled() bool {
-	if len(application.SigninMethods) > 0 {
-		for _, signinMethod := range application.SigninMethods {
-			if signinMethod.Name == "LDAP" {
-				return true
-			}
-		}
-	}
-	return false
+	return application.HasSigninMethod("LDAP")
 }
 
 func (application *Application) IsFaceIdEnabled() bool {
-	if len(application.SigninMethods) > 0 {
-		for _, signinMethod := range application.SigninMethods {
-			if signinMethod.Name == "Face ID" {
-				return true
-			}
-		}
-	}
-	return false
+	return application.HasSigninMethod("Face ID")
 }
 
 func (application *Application) IsOriginValid(origin string) bool {

@@ -1580,9 +1580,15 @@ export function renderLogo(application) {
   }
 }
 
+export function isSigninMethodHidden(signinMethod) {
+  // the "Hide password" rule used to be named "Hide-Password", the applications
+  // configured before the rename still store the legacy value
+  return signinMethod?.rule === "Hide password" || signinMethod?.rule === "Hide-Password";
+}
+
 function isSigninMethodEnabled(application, signinMethod) {
   if (application && application.signinMethods) {
-    return application.signinMethods.filter(item => item.name === signinMethod && item.rule !== "Hide password").length > 0;
+    return application.signinMethods.filter(item => item.name === signinMethod && !isSigninMethodHidden(item)).length > 0;
   } else {
     return false;
   }

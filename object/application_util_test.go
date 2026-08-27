@@ -77,3 +77,122 @@ func TestRedirectUriMatchesPattern(t *testing.T) {
 		}
 	}
 }
+
+// A signinMethods entry with Rule "Hide password" must not make the
+// corresponding IsXEnabled() check return true — that rule exists
+// specifically so an application can keep a method configured (e.g. to
+// remember its settings) while actually disabling it. Before this fix,
+// IsPasswordEnabled/IsLdapEnabled/IsFaceIdEnabled only checked whether an
+// entry with the right Name existed, ignoring Rule entirely.
+func TestSigninMethodHiddenByRuleIsNotEnabled(t *testing.T) {
+	tests := []struct {
+		name          string
+		signinMethods []*SigninMethod
+		enabledMethod func(*Application) bool
+		wantEnabled   bool
+	}{
+		{
+			name:          "Password hidden via rule is not enabled",
+			signinMethods: []*SigninMethod{{Name: "Password", DisplayName: "Password", Rule: "Hide password"}},
+			enabledMethod: (*Application).IsPasswordEnabled,
+			wantEnabled:   false,
+		},
+		{
+			name:          "Password with rule All is enabled",
+			signinMethods: []*SigninMethod{{Name: "Password", DisplayName: "Password", Rule: "All"}},
+			enabledMethod: (*Application).IsPasswordEnabled,
+			wantEnabled:   true,
+		},
+		{
+			name:          "LDAP hidden via rule is not enabled",
+			signinMethods: []*SigninMethod{{Name: "LDAP", DisplayName: "LDAP", Rule: "Hide password"}},
+			enabledMethod: (*Application).IsLdapEnabled,
+			wantEnabled:   false,
+		},
+		{
+			name:          "LDAP without hide rule is enabled",
+			signinMethods: []*SigninMethod{{Name: "LDAP", DisplayName: "LDAP", Rule: "None"}},
+			enabledMethod: (*Application).IsLdapEnabled,
+			wantEnabled:   true,
+		},
+		{
+			name:          "Face ID hidden via rule is not enabled",
+			signinMethods: []*SigninMethod{{Name: "Face ID", DisplayName: "Face ID", Rule: "Hide password"}},
+			enabledMethod: (*Application).IsFaceIdEnabled,
+			wantEnabled:   false,
+		},
+		{
+			name:          "Face ID without hide rule is enabled",
+			signinMethods: []*SigninMethod{{Name: "Face ID", DisplayName: "Face ID", Rule: "None"}},
+			enabledMethod: (*Application).IsFaceIdEnabled,
+			wantEnabled:   true,
+		},
+		{
+			name:          "Password hidden via the legacy rule value is not enabled",
+			signinMethods: []*SigninMethod{{Name: "Password", DisplayName: "Password", Rule: "Hide-Password"}},
+			enabledMethod: (*Application).IsPasswordEnabled,
+			wantEnabled:   false,
+		},
+		{
+			name:          "LDAP hidden via the legacy rule value is not enabled",
+			signinMethods: []*SigninMethod{{Name: "LDAP", DisplayName: "LDAP", Rule: "Hide-Password"}},
+			enabledMethod: (*Application).IsLdapEnabled,
+			wantEnabled:   false,
+		},
+		{
+			name:          "Face ID hidden via the legacy rule value is not enabled",
+			signinMethods: []*SigninMethod{{Name: "Face ID", DisplayName: "Face ID", Rule: "Hide-Password"}},
+			enabledMethod: (*Application).IsFaceIdEnabled,
+			wantEnabled:   false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			application := &Application{SigninMethods: tt.signinMethods}
+			got := tt.enabledMethod(application)
+			if got != tt.wantEnabled {
+				t.Errorf("got enabled=%v, want %v", got, tt.wantEnabled)
+			}
+		})
+	}
+}
+
+// IsPasswordEnabled() falls back to the deprecated EnablePassword field when the
+// application has no signin method at all, the reuse of HasSigninMethod() must not
+// break that fallback.
+func TestIsPasswordEnabledFallsBackToEnablePassword(t *testing.T) {
+	application := &Application{EnablePassword: true}
+	if !application.IsPasswordEnabled() {
+		t.Errorf("got enabled=false, want true")
+	}
+
+	application = &Application{EnablePassword: false}
+	if application.IsPasswordEnabled() {
+		t.Errorf("got enabled=true, want false")
+	}
+}
+
+// The "Hide password" rule was named "Hide-Password" when it was added, the legacy
+// value stored by the applications configured before the rename is normalized on
+// read so that the frontend and the backend agree on what is hidden.
+func TestExtendApplicationWithSigninMethodsNormalizesLegacyHideRule(t *testing.T) {
+	application := &Application{
+		SigninMethods: []*SigninMethod{
+			{Name: "Password", DisplayName: "Password", Rule: "Hide-Password"},
+			{Name: "Verification code", DisplayName: "Verification code", Rule: "All"},
+		},
+	}
+
+	err := extendApplicationWithSigninMethods(application)
+	if err != nil {
+		t.Fatalf("extendApplicationWithSigninMethods() error = %v", err)
+	}
+
+	if application.SigninMethods[0].Rule != "Hide password" {
+		t.Errorf("got rule=%s, want %s", application.SigninMethods[0].Rule, "Hide password")
+	}
+	if application.SigninMethods[1].Rule != "All" {
+		t.Errorf("got rule=%s, want %s", application.SigninMethods[1].Rule, "All")
+	}
+}
