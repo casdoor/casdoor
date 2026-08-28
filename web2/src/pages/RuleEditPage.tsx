@@ -1,22 +1,19 @@
 import i18next from "i18next";
 import {useParams} from "react-router-dom";
-import {Input} from "@/components/ui/input";
-import {SelectField} from "@/components/common/SelectField";
-import {EditableTable} from "@/components/crud/EditableTable";
+import {SearchableSelect} from "@/components/common/SearchableSelect";
+import {RuleExpressionEditor} from "@/components/rule/RuleExpressionEditor";
 import {SimpleEditPage, type EditField} from "@/components/crud/SimpleEditPage";
 import {useAccount} from "@/hooks/use-account";
 import {useOrganizationOptions} from "@/hooks/use-options";
 import * as RuleBackend from "@/backend/RuleBackend";
 import * as Setting from "@/lib/setting";
 
-const TYPES = ["User-Agent", "IP", "IP Rate", "WAF", "URL"];
-const ACTIONS = ["Block", "Allow", "Captcha", "Verify"];
-const OPERATORS = ["Contains", "Equals", "Starts with", "Ends with", "Matches"];
-
 export default function RuleEditPage() {
   const {organizationName = "", ruleName = ""} = useParams();
   const {account} = useAccount();
   const organizations = useOrganizationOptions();
+
+  const notWaf = (ctx: {record: any}) => ctx.record.type !== "WAF";
 
   const fields: EditField[] = [
     {
@@ -28,10 +25,26 @@ export default function RuleEditPage() {
     },
     {type: "text", name: "name", labelKey: "general:Name"},
     {
-      type: "select",
+      type: "custom",
       name: "type",
       labelKey: "general:Type",
-      options: () => TYPES.map((item) => ({value: item, label: item})),
+      render: (ctx, update) => (
+        <SearchableSelect
+          value={ctx.record.type ?? ""}
+          onChange={(value) => {
+            // each type has its own expression shape, so the old rows cannot carry over
+            update("type", value);
+            update("expressions", []);
+          }}
+          options={[
+            {value: "WAF", label: "WAF"},
+            {value: "IP", label: "IP"},
+            {value: "User-Agent", label: "User-Agent"},
+            {value: "IP Rate Limiting", label: i18next.t("rule:IP Rate Limiting")},
+            {value: "Compound", label: i18next.t("rule:Compound")},
+          ]}
+        />
+      ),
     },
     {
       type: "custom",
@@ -39,31 +52,10 @@ export default function RuleEditPage() {
       labelKey: "rule:Expressions",
       block: true,
       render: (ctx, update) => (
-        <EditableTable
-          rows={ctx.record.expressions ?? []}
+        <RuleExpressionEditor
+          rule={ctx.record}
+          owner={ctx.record.owner ?? organizationName}
           onChange={(rows) => update("expressions", rows)}
-          newRow={() => ({operator: "Contains", value: ""})}
-          columns={[
-            {
-              key: "operator",
-              title: i18next.t("rule:Operator"),
-              width: 180,
-              render: (row: any, _i, patch) => (
-                <SelectField
-                  value={row.operator}
-                  onChange={(v) => patch({operator: v})}
-                  options={OPERATORS.map((item) => ({id: item, name: item}))}
-                />
-              ),
-            },
-            {
-              key: "value",
-              title: i18next.t("webhook:Value"),
-              render: (row: any, _i, patch) => (
-                <Input value={row.value ?? ""} onChange={(e) => patch({value: e.target.value})} />
-              ),
-            },
-          ]}
         />
       ),
     },
@@ -71,11 +63,20 @@ export default function RuleEditPage() {
       type: "select",
       name: "action",
       labelKey: "general:Action",
-      options: () => ACTIONS.map((item) => ({value: item, label: item})),
+      when: notWaf,
+      options: () => [
+        {value: "Allow", label: i18next.t("permission:Allow")},
+        {value: "Block", label: i18next.t("rule:Block")},
+      ],
     },
-    {type: "number", name: "statusCode", labelKey: "rule:Status code"},
+    {
+      type: "number",
+      name: "statusCode",
+      labelKey: "rule:Status code",
+      when: (ctx) => notWaf(ctx) && ["Allow", "Block"].includes(ctx.record.action),
+    },
     {type: "text", name: "reason", labelKey: "rule:Reason"},
-    {type: "switch", name: "isVerbose", labelKey: "rule:Is verbose"},
+    {type: "switch", name: "isVerbose", labelKey: "rule:Verbose mode"},
   ];
 
   return (

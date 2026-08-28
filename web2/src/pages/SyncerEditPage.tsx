@@ -12,7 +12,13 @@ import * as SyncerBackend from "@/backend/SyncerBackend";
 import * as Setting from "@/lib/setting";
 
 const TYPES = ["Database", "LDAP", "Keycloak", "Casdoor", "WeCom", "Lark", "DingTalk"];
-const DATABASE_TYPES = ["mysql", "postgres", "mssql", "oracle", "sqlite3", "tidb"];
+const DATABASE_TYPES = [
+  {id: "mysql", name: "MySQL"},
+  {id: "postgres", name: "PostgreSQL"},
+  {id: "mssql", name: "SQL Server"},
+  {id: "oracle", name: "Oracle"},
+  {id: "sqlite3", name: "Sqlite 3"},
+];
 const SSL_MODES = ["Default", "SSL", "TLS", "SSH"];
 const SYNCER_TABLE_TYPES = ["string", "integer", "boolean"];
 
@@ -44,7 +50,7 @@ export default function SyncerEditPage() {
       name: "databaseType",
       labelKey: "syncer:Database type",
       when: isDatabase,
-      options: () => DATABASE_TYPES.map((item) => ({value: item, label: item})),
+      options: () => DATABASE_TYPES.map((item) => ({value: item.id, label: item.name})),
     },
     {type: "text", name: "host", labelKey: "general:Host"},
     {type: "number", name: "port", labelKey: "general:Port"},
