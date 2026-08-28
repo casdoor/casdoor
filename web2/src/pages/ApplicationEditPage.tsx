@@ -12,6 +12,7 @@ import {SearchableSelect} from "@/components/common/SearchableSelect";
 import {SelectField} from "@/components/common/SelectField";
 import {TagsInput} from "@/components/common/TagsInput";
 import {ThemeEditor} from "@/components/common/ThemeEditor";
+import {ApplicationExportButton, ApplicationImportModal} from "@/components/application/ApplicationImportExport";
 import {EditPageShell} from "@/components/crud/EditPageShell";
 import {EditableTable} from "@/components/crud/EditableTable";
 import {FormRow} from "@/components/crud/FormRow";
@@ -106,7 +107,7 @@ export default function ApplicationEditPage() {
   const certs = useCertOptions(organizationName);
   const providers = useProviderOptions(organizationName);
 
-  const {record: application, updateField, loading, mode, setMode} = useEditRecord<any>({
+  const {record: application, updateField, setRecord, loading, mode, setMode} = useEditRecord<any>({
     fetch: () => ApplicationBackend.getApplication("admin", applicationName),
     deps: [applicationName],
   });
@@ -142,9 +143,20 @@ export default function ApplicationEditPage() {
       onSave={save}
       saving={saving}
       extraActions={
-        <Button variant="outline" onClick={() => Setting.goToLink(Setting.getLoginLink(application))}>
-          {i18next.t("general:Preview")}
-        </Button>
+        <>
+          <Button variant="outline" onClick={() => Setting.goToLink(Setting.getLoginLink(application))}>
+            {i18next.t("general:Preview")}
+          </Button>
+          {mode !== "add" ? (
+            <>
+              <ApplicationExportButton application={application} />
+              <ApplicationImportModal
+                application={application}
+                onImport={(updates) => setRecord((prev: any) => (prev === null ? prev : {...prev, ...updates}))}
+              />
+            </>
+          ) : null}
+        </>
       }
     >
       <Tabs defaultValue="basic">

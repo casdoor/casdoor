@@ -1,4 +1,5 @@
 import {useParams} from "react-router-dom";
+import {CasbinEditor} from "@/components/casbin/CasbinEditor";
 import {SimpleEditPage, type EditField} from "@/components/crud/SimpleEditPage";
 import {useAccount} from "@/hooks/use-account";
 import {useOrganizationOptions} from "@/hooks/use-options";
@@ -10,18 +11,28 @@ export default function ModelEditPage() {
   const {account} = useAccount();
   const organizations = useOrganizationOptions();
 
+  const isBuiltIn = (ctx: {record: any}) => Setting.builtInObject(ctx.record);
+
   const fields: EditField[] = [
     {
       type: "select",
       name: "owner",
       labelKey: "general:Organization",
       options: () => organizations,
-      disabled: () => !Setting.isAdminUser(account),
+      disabled: (ctx) => !Setting.isAdminUser(account) || Setting.builtInObject(ctx.record),
     },
-    {type: "text", name: "name", labelKey: "general:Name"},
+    {type: "text", name: "name", labelKey: "general:Name", disabled: isBuiltIn},
     {type: "text", name: "displayName", labelKey: "general:Display name"},
     {type: "text", name: "description", labelKey: "general:Description"},
-    {type: "code", name: "modelText", labelKey: "model:Model text", height: 360},
+    {
+      type: "custom",
+      name: "modelText",
+      labelKey: "model:Model text",
+      block: true,
+      render: (ctx, update) => (
+        <CasbinEditor model={ctx.record} onModelTextChange={(value) => update("modelText", value)} />
+      ),
+    },
   ];
 
   return (
