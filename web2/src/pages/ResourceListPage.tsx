@@ -44,6 +44,18 @@ export default function ResourceListPage() {
     },
     {
       dataIndex: "url",
+      title: i18next.t("general:URL"),
+      width: 200,
+      render: (value) =>
+        value ? (
+          <a href={value} target="_blank" rel="noreferrer" className="underline-offset-4 hover:underline">
+            {Setting.getShortText(value)}
+          </a>
+        ) : null,
+    },
+    {
+      key: "preview",
+      dataIndex: "url",
       title: i18next.t("general:Preview"),
       width: 130,
       render: (value, record) =>

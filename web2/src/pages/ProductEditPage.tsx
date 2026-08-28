@@ -1,5 +1,7 @@
 import i18next from "i18next";
 import {useParams} from "react-router-dom";
+import {Input} from "@/components/ui/input";
+import {EditableTable} from "@/components/crud/EditableTable";
 import {SimpleEditPage, type EditField} from "@/components/crud/SimpleEditPage";
 import {useAccount} from "@/hooks/use-account";
 import {useOrganizationOptions, useProviderOptions} from "@/hooks/use-options";
@@ -52,6 +54,55 @@ export default function ProductEditPage() {
     {type: "number", name: "quantity", labelKey: "product:Quantity"},
     {type: "number", name: "sold", labelKey: "product:Sold"},
     {type: "switch", name: "isRecharge", labelKey: "product:Is recharge"},
+    {
+      type: "switch",
+      name: "disableCustomRecharge",
+      labelKey: "product:Disable custom recharge",
+      when: (ctx) => !!ctx.record.isRecharge,
+    },
+    {
+      type: "tags",
+      name: "rechargeOptions",
+      labelKey: "product:Recharge options",
+      when: (ctx) => !!ctx.record.isRecharge,
+    },
+    {type: "text", name: "successUrl", labelKey: "product:Success URL"},
+    {
+      type: "custom",
+      name: "properties",
+      labelKey: "user:Properties",
+      block: true,
+      render: (ctx, update) => (
+        <EditableTable
+          rows={Object.entries(ctx.record.properties ?? {}).map(([key, value]) => ({key, value}))}
+          onChange={(rows) =>
+            update(
+              "properties",
+              Object.fromEntries(rows.filter((row: any) => row.key).map((row: any) => [row.key, row.value])),
+            )
+          }
+          newRow={() => ({key: "", value: ""})}
+          reorderable={false}
+          columns={[
+            {
+              key: "key",
+              title: i18next.t("general:Name"),
+              width: 240,
+              render: (row: any, _i, patch) => (
+                <Input value={row.key ?? ""} onChange={(e) => patch({key: e.target.value})} />
+              ),
+            },
+            {
+              key: "value",
+              title: i18next.t("webhook:Value"),
+              render: (row: any, _i, patch) => (
+                <Input value={row.value ?? ""} onChange={(e) => patch({value: e.target.value})} />
+              ),
+            },
+          ]}
+        />
+      ),
+    },
     {
       type: "multiselect",
       name: "providers",

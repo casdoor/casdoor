@@ -2,7 +2,12 @@ import i18next from "i18next";
 import {useParams} from "react-router-dom";
 import {SimpleEditPage, type EditField} from "@/components/crud/SimpleEditPage";
 import {useAccount} from "@/hooks/use-account";
-import {useOrganizationOptions, usePlanOptions, useUserNameOptions} from "@/hooks/use-options";
+import {
+  useOrganizationOptions,
+  usePlanOptions,
+  usePricingOptions,
+  useUserNameOptions,
+} from "@/hooks/use-options";
 import * as SubscriptionBackend from "@/backend/SubscriptionBackend";
 import * as Setting from "@/lib/setting";
 
@@ -15,6 +20,7 @@ export default function SubscriptionEditPage() {
   const organizations = useOrganizationOptions();
   const users = useUserNameOptions(organizationName);
   const plans = usePlanOptions(organizationName);
+  const pricings = usePricingOptions(organizationName);
 
   const fields: EditField[] = [
     {
@@ -35,6 +41,10 @@ export default function SubscriptionEditPage() {
       labelKey: "plan:Period",
       options: () => PERIODS.map((item) => ({value: item, label: i18next.t(`plan:${item}`)})),
     },
+    {type: "select", name: "pricing", labelKey: "general:Pricing", options: () => pricings},
+    {type: "text", name: "payment", labelKey: "general:Payment"},
+    {type: "text", name: "approver", labelKey: "permission:Approver", disabled: () => true},
+    {type: "text", name: "approveTime", labelKey: "permission:Approve time", disabled: () => true},
     {type: "text", name: "startTime", labelKey: "subscription:Start time"},
     {type: "text", name: "endTime", labelKey: "subscription:End time"},
     {

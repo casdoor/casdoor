@@ -7,7 +7,7 @@ import {SelectField} from "@/components/common/SelectField";
 import {EditableTable} from "@/components/crud/EditableTable";
 import {SimpleEditPage, type EditField} from "@/components/crud/SimpleEditPage";
 import {useAccount} from "@/hooks/use-account";
-import {useOrganizationOptions} from "@/hooks/use-options";
+import {useCertOptions, useOrganizationOptions} from "@/hooks/use-options";
 import * as SyncerBackend from "@/backend/SyncerBackend";
 import * as Setting from "@/lib/setting";
 
@@ -20,6 +20,7 @@ export default function SyncerEditPage() {
   const {organizationName = "", syncerName = ""} = useParams();
   const {account} = useAccount();
   const organizations = useOrganizationOptions();
+  const certs = useCertOptions(organizationName);
 
   const isDatabase = (ctx: {record: any}) => ctx.record.type === "Database";
 
@@ -60,6 +61,15 @@ export default function SyncerEditPage() {
     {type: "text", name: "sshHost", labelKey: "syncer:SSH host", when: (ctx) => ctx.record.sslMode === "SSH"},
     {type: "number", name: "sshPort", labelKey: "syncer:SSH port", when: (ctx) => ctx.record.sslMode === "SSH"},
     {type: "text", name: "sshUser", labelKey: "syncer:SSH user", when: (ctx) => ctx.record.sslMode === "SSH"},
+    {
+      type: "select",
+      name: "sshType",
+      labelKey: "syncer:SSH type",
+      when: (ctx) => ctx.record.sslMode === "SSH",
+      options: () => ["password", "key"].map((item) => ({value: item, label: item})),
+    },
+    {type: "select", name: "cert", labelKey: "general:Cert", options: () => certs},
+    {type: "textarea", name: "errorText", labelKey: "syncer:Error text", rows: 4, disabled: () => true},
     {type: "text", name: "affiliationTable", labelKey: "syncer:Affiliation table", when: isDatabase},
     {type: "text", name: "avatarBaseUrl", labelKey: "syncer:Avatar base URL"},
     {type: "number", name: "syncInterval", labelKey: "syncer:Sync interval"},

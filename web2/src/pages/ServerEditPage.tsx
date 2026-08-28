@@ -25,6 +25,7 @@ export default function ServerEditPage() {
     {type: "text", name: "displayName", labelKey: "general:Display name"},
     {type: "text", name: "description", labelKey: "general:Description"},
     {type: "text", name: "url", labelKey: "general:URL"},
+    {type: "text", name: "token", labelKey: "general:Token"},
     {type: "select", name: "application", labelKey: "general:Application", options: () => applications},
   ];
 
