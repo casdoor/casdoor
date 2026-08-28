@@ -1,12 +1,13 @@
 import * as React from "react";
 import i18next from "i18next";
-import {useNavigate, useParams} from "react-router-dom";
+import {Link, useNavigate, useParams} from "react-router-dom";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 import {Badge} from "@/components/ui/badge";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Switch} from "@/components/ui/switch";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
+import {ConfirmButton} from "@/components/common/ConfirmButton";
 import {Loading} from "@/components/common/Loading";
 import {MultiSelect} from "@/components/common/MultiSelect";
 import {SearchableSelect} from "@/components/common/SearchableSelect";
@@ -22,6 +23,7 @@ import {
 } from "@/hooks/use-options";
 import {submitEdit} from "@/lib/crud";
 import * as OrganizationBackend from "@/backend/OrganizationBackend";
+import * as MfaBackend from "@/backend/MfaBackend";
 import * as UserBackend from "@/backend/UserBackend";
 import * as Setting from "@/lib/setting";
 
@@ -38,6 +40,8 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
   const [saving, setSaving] = React.useState(false);
   const [organization, setOrganization] = React.useState<any>({});
   const [newPassword, setNewPassword] = React.useState("");
+  const [mfaItems, setMfaItems] = React.useState<any[]>([]);
+  const [removingMfa, setRemovingMfa] = React.useState(false);
 
   const organizations = useOrganizationOptions();
   const applications = useApplicationOptions(organizationName);
@@ -47,6 +51,10 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
     fetch: () => UserBackend.getUser(organizationName, userName),
     deps: [organizationName, userName],
   });
+
+  React.useEffect(() => {
+    setMfaItems(user?.multiFactorAuths ?? []);
+  }, [user]);
 
   React.useEffect(() => {
     OrganizationBackend.getOrganization("admin", organizationName).then((res: any) => {
@@ -83,6 +91,30 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
       },
     });
     setSaving(false);
+  };
+
+  const setPreferredMfa = (mfaType: string) => {
+    MfaBackend.SetPreferredMfa({owner: user.owner, name: user.name, mfaType}).then((res: any) => {
+      if (res.status === "ok") {
+        setMfaItems(res.data ?? []);
+      } else {
+        Setting.showMessage("error", res.msg);
+      }
+    });
+  };
+
+  const deleteMfa = () => {
+    setRemovingMfa(true);
+    return MfaBackend.DeleteMfa({owner: user.owner, name: user.name})
+      .then((res: any) => {
+        if (res.status === "ok") {
+          Setting.showMessage("success", i18next.t("general:Successfully deleted"));
+          setMfaItems(res.data ?? []);
+        } else {
+          Setting.showMessage("error", i18next.t("general:Failed to delete"));
+        }
+      })
+      .finally(() => setRemovingMfa(false));
   };
 
   const setPassword = () => {
@@ -332,20 +364,62 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
           <FormRow labelKey="user:Last change password time">
             <Input value={Setting.getFormattedDate(user.lastChangePasswordTime) ?? ""} disabled />
           </FormRow>
-          <FormRow labelKey="user:Multi-factor authentication">
-            <div className="flex flex-wrap gap-1">
-              {(user.multiFactorAuths ?? []).filter((item: any) => item.enabled).length === 0 ? (
-                <span className="text-sm text-muted-foreground">{i18next.t("general:No data")}</span>
-              ) : (
-                (user.multiFactorAuths ?? [])
-                  .filter((item: any) => item.enabled)
-                  .map((item: any) => (
-                    <Badge key={item.mfaType} variant="success">
-                      {item.mfaType}
-                      {item.isPreferred ? " ★" : ""}
-                    </Badge>
+          <FormRow labelKey="mfa:Multi-factor authentication" block>
+            <div className="space-y-2">
+              <div className="divide-y rounded-lg border">
+                {mfaItems.length === 0 ? (
+                  <div className="p-4 text-center text-sm text-muted-foreground">
+                    {i18next.t("general:No data")}
+                  </div>
+                ) : (
+                  mfaItems.map((item: any) => (
+                    <div key={item.mfaType} className="flex flex-wrap items-center gap-2 p-3">
+                      <span className="text-sm font-medium">{item.mfaType}</span>
+                      {item.secret ? (
+                        <span className="truncate text-xs text-muted-foreground">{item.secret}</span>
+                      ) : null}
+                      <span className="flex-1" />
+                      {item.enabled ? (
+                        <>
+                          <Badge variant="success">{i18next.t("general:Enabled")}</Badge>
+                          {item.isPreferred ? (
+                            <Badge>{i18next.t("mfa:preferred")}</Badge>
+                          ) : (
+                            <Button size="sm" onClick={() => setPreferredMfa(item.mfaType)}>
+                              {i18next.t("mfa:Set preferred")}
+                            </Button>
+                          )}
+                        </>
+                      ) : (
+                        <Badge variant="secondary">{i18next.t("general:Disabled")}</Badge>
+                      )}
+                      {isSelf ? (
+                        <Button variant="outline" size="sm" asChild>
+                          <Link to={`/mfa/setup?mfaType=${item.mfaType}`}>{i18next.t("general:Edit")}</Link>
+                        </Button>
+                      ) : null}
+                    </div>
                   ))
-              )}
+                )}
+              </div>
+              <div className="flex gap-2">
+                {isSelf ? (
+                  <Button variant="outline" size="sm" asChild>
+                    <Link to="/mfa/setup">{i18next.t("general:Enable")}</Link>
+                  </Button>
+                ) : null}
+                {mfaItems.some((item: any) => item.enabled) ? (
+                  <ConfirmButton
+                    variant="destructive"
+                    size="sm"
+                    loading={removingMfa}
+                    description={i18next.t("mfa:Multi-factor authentication")}
+                    onConfirm={deleteMfa}
+                  >
+                    {i18next.t("general:Delete")}
+                  </ConfirmButton>
+                ) : null}
+              </div>
             </div>
           </FormRow>
         </TabsContent>

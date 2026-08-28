@@ -7,13 +7,16 @@ import {Label} from "@/components/ui/label";
 import {SendCodeInput} from "@/components/auth/SendCodeInput";
 import * as AuthBackend from "@/backend/AuthBackend";
 import * as Setting from "@/lib/setting";
+import {EmailMfaType, SmsMfaType} from "@/components/auth/mfa/constants";
 
-export const NextMfa = "NextMfa";
-export const RequiredMfa = "RequiredMfa";
-export const SmsMfaType = "sms";
-export const EmailMfaType = "email";
-export const TotpMfaType = "app";
-export const RecoveryMfaType = "recovery";
+export {
+  NextMfa,
+  RequiredMfa,
+  SmsMfaType,
+  EmailMfaType,
+  TotpMfaType,
+  RecoveryMfaType,
+} from "@/components/auth/mfa/constants";
 
 interface MfaVerifyProps {
   /** the login values that produced the "NextMfa" answer */
@@ -83,11 +86,12 @@ export function MfaVerify({formValues, authParams, mfaProps, application, onSucc
           <SendCodeInput
             value={passcode}
             onChange={setPasscode}
-            method={mfaProps.mfaType === EmailMfaType ? "email" : "phone"}
+            method="mfaAuth"
+            destType={mfaProps.mfaType === EmailMfaType ? "email" : "phone"}
             dest={mfaProps?.secret ?? ""}
             countryCode={mfaProps?.countryCode ?? ""}
-            type="mfaAuth"
-            applicationId={`${application?.owner}/${application?.name}`}
+            application={application}
+            applicationId={Setting.getApplicationName(application)}
           />
         </>
       ) : (

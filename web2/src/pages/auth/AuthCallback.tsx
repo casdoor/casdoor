@@ -174,6 +174,8 @@ export default function AuthCallback() {
       if (res.data === Setting.RequiredUpdatePassword) {
         Setting.goToUpdatePassword();
       } else if (res.data === "RequiredMfa") {
+        // the account reload in the console then bounces to /mfa/setup
+        localStorage.setItem("mfaRedirectUrl", window.location.origin);
         Setting.goToLink(window.location.origin);
       } else if (res.data === "NextMfa") {
         // The second factor is collected on the login page, which owns the form state.
