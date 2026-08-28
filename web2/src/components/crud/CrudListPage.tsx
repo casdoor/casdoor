@@ -7,8 +7,10 @@ import {ConfirmButton} from "@/components/common/ConfirmButton";
 import {DataTable} from "@/components/crud/DataTable";
 import {PageHeader} from "@/components/crud/PageHeader";
 import type {ColumnDef, CasdoorListResponse, TableQuery} from "@/components/crud/types";
+import {useFormItems} from "@/hooks/use-form-items";
 import {useTableData} from "@/hooks/use-table-data";
 import {submitAdd, submitDelete} from "@/lib/crud";
+import * as Setting from "@/lib/setting";
 
 export interface CrudListPageProps<T extends Record<string, any>> {
   title: React.ReactNode;
@@ -29,11 +31,18 @@ export interface CrudListPageProps<T extends Record<string, any>> {
   /** where the "Add" flow and the name links point at */
   editUrl?: (record: T) => string;
   addButtonLabel?: React.ReactNode;
-  toolbar?: React.ReactNode;
+  /** extra buttons next to Refresh/Add; a function form gets `refresh` to re-fetch the list */
+  toolbar?: React.ReactNode | ((ctx: {refresh: () => void}) => React.ReactNode);
   rowKey?: (row: T, index: number) => string;
   initialQuery?: Partial<TableQuery>;
   /** appended to the built-in Action column */
   rowActions?: (record: T, index: number) => React.ReactNode;
+  /**
+   * Name of the Form that customizes this list ("users", "applications", ...).
+   * When the organization saved one, it decides which columns show and in which
+   * order — see /forms.
+   */
+  formType?: string;
   /** set to false for read-only lists such as Sessions or Records */
   showActionColumn?: boolean;
   actionColumnWidth?: number | string;
@@ -54,6 +63,7 @@ export function CrudListPage<T extends Record<string, any>>({
   rowKey,
   initialQuery,
   rowActions,
+  formType,
   showActionColumn = true,
   actionColumnWidth = 180,
 }: CrudListPageProps<T>) {
@@ -102,12 +112,15 @@ export function CrudListPage<T extends Record<string, any>>({
     });
   };
 
+  const formItems = useFormItems(formType);
+
   const allColumns = React.useMemo<ColumnDef<T>[]>(() => {
+    const visibleColumns = Setting.filterTableColumns(columns, formItems) as ColumnDef<T>[];
     if (!showActionColumn) {
-      return columns;
+      return visibleColumns;
     }
     return [
-      ...columns,
+      ...visibleColumns,
       {
         key: "op",
         dataIndex: "op",
@@ -136,7 +149,7 @@ export function CrudListPage<T extends Record<string, any>>({
       },
     ];
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [columns, editUrl, remove, rowActions, showActionColumn, rows, query.page]);
+  }, [columns, formItems, editUrl, remove, rowActions, showActionColumn, rows, query.page]);
 
   return (
     <div className="space-y-4">
@@ -145,7 +158,7 @@ export function CrudListPage<T extends Record<string, any>>({
         description={description}
         actions={
           <>
-            {toolbar}
+            {typeof toolbar === "function" ? toolbar({refresh}) : toolbar}
             <Button variant="outline" size="iconSm" onClick={refresh} aria-label="Refresh" disabled={loading}>
               <RefreshCw className={loading ? "animate-spin" : undefined} />
             </Button>

@@ -24,6 +24,7 @@ export default function AgentListPage() {
     <CrudListPage
       title={i18next.t("general:Agents")}
       columns={columns}
+      formType="agents"
       deps={[organizationName]}
       fetch={(q) =>
         AgentBackend.getAgents(organizationName, q.page, q.pageSize, q.searchedColumn, q.searchText, q.sortField, q.sortOrder)

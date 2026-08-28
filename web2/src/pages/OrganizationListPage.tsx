@@ -83,6 +83,7 @@ export default function OrganizationListPage() {
     <CrudListPage
       title={i18next.t("general:Organizations")}
       columns={columns}
+      formType="organizations"
       rowKey={(row) => row.name}
       fetch={(query) =>
         OrganizationBackend.getOrganizations(
