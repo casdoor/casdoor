@@ -11,6 +11,8 @@ import {SearchableSelect} from "@/components/common/SearchableSelect";
 import {AuthLayout} from "@/components/auth/AuthLayout";
 import {ProviderButtons} from "@/components/auth/ProviderButtons";
 import {SendCodeInput} from "@/components/auth/SendCodeInput";
+import {CaptchaModal} from "@/components/common/CaptchaModal";
+import {getCaptchaProvider} from "@/lib/captcha";
 import {authConfig} from "@/auth/Auth";
 import * as Util from "@/auth/Util";
 import * as ApplicationBackend from "@/backend/ApplicationBackend";
@@ -41,6 +43,8 @@ export default function SignupPage() {
   const [values, setValues] = React.useState<Record<string, any>>({});
   const [agreed, setAgreed] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
+  const [captchaVisible, setCaptchaVisible] = React.useState(false);
+  const [pendingValues, setPendingValues] = React.useState<any>(null);
 
   const applicationName = params.applicationName ?? authConfig.appName;
 
@@ -97,6 +101,7 @@ export default function SignupPage() {
     );
   }
 
+  const captchaProvider = getCaptchaProvider(application);
   const items = (application.signupItems ?? []).filter((item: any) => item.visible);
   const agreementItem = items.find((item: any) => item.name === "Agreement");
 
@@ -116,6 +121,34 @@ export default function SignupPage() {
       agreement: agreed,
     };
 
+    const captchaRule = Setting.getCaptchaRule(application);
+    if (captchaRule === Setting.CaptchaRule.Always) {
+      setPendingValues(payload);
+      setCaptchaVisible(true);
+      return;
+    }
+    if (captchaRule === Setting.CaptchaRule.Dynamic || captchaRule === Setting.CaptchaRule.InternetOnly) {
+      AuthBackend.getCaptchaStatus({
+        organization: application.organization,
+        username: payload.username,
+        application: application.name,
+      })
+        .then((res: any) => {
+          if (res.status === "ok" && res.data) {
+            setPendingValues(payload);
+            setCaptchaVisible(true);
+          } else {
+            submitSignup(payload);
+          }
+        })
+        .catch(() => submitSignup(payload));
+      return;
+    }
+
+    submitSignup(payload);
+  };
+
+  const submitSignup = (payload: Record<string, any>) => {
     setLoading(true);
     const oAuthParams = Util.getOAuthGetParameters();
     AuthBackend.signup(payload, oAuthParams)
@@ -219,10 +252,11 @@ export default function SignupPage() {
               <SendCodeInput
                 value={values.emailCode ?? ""}
                 onChange={(v) => set("emailCode", v)}
-                method="email"
+                method="signup"
+                destType="email"
                 dest={values.email ?? ""}
-                type="signup"
-                applicationId={`${application.owner}/${application.name}`}
+                application={application}
+                applicationId={Setting.getApplicationName(application)}
               />
             </div>
           ) : null}
@@ -259,11 +293,12 @@ export default function SignupPage() {
               <SendCodeInput
                 value={values.phoneCode ?? ""}
                 onChange={(v) => set("phoneCode", v)}
-                method="phone"
+                method="signup"
+                destType="phone"
                 dest={values.phone ?? ""}
                 countryCode={values.countryCode ?? ""}
-                type="signup"
-                applicationId={`${application.owner}/${application.name}`}
+                application={application}
+                applicationId={Setting.getApplicationName(application)}
               />
             </div>
           ) : null}
@@ -332,6 +367,19 @@ export default function SignupPage() {
           <Button type="submit" className="w-full" loading={loading}>
             {i18next.t("account:Sign Up")}
           </Button>
+        ) : null}
+        {captchaProvider ? (
+          <CaptchaModal
+            owner={captchaProvider.owner}
+            name={captchaProvider.name}
+            visible={captchaVisible}
+            isCurrentProvider
+            onOk={(captchaType, captchaToken, clientSecret) => {
+              setCaptchaVisible(false);
+              submitSignup({...pendingValues, captchaType, captchaToken, clientSecret});
+            }}
+            onCancel={() => setCaptchaVisible(false)}
+          />
         ) : null}
         <p className="text-center text-sm text-muted-foreground">
           {i18next.t("signup:Have account?")}{" "}

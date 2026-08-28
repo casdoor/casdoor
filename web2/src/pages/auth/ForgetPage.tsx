@@ -160,11 +160,12 @@ export default function ForgetPage() {
             <SendCodeInput
               value={code}
               onChange={setCode}
-              method={method}
+              method="forget"
+              destType={method}
               dest={method === "email" ? dest.email : dest.phone}
               countryCode={dest.countryCode}
-              type="login"
-              applicationId={`${application.owner}/${application.name}`}
+              application={application}
+              applicationId={Setting.getApplicationName(application)}
               checkUser={username}
             />
             <Button className="w-full" loading={loading} onClick={verifyCode}>

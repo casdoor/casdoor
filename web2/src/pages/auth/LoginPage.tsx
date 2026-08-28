@@ -12,7 +12,9 @@ import {AuthLayout} from "@/components/auth/AuthLayout";
 import {MfaVerify, NextMfa, RequiredMfa} from "@/components/auth/MfaVerify";
 import {ProviderButtons} from "@/components/auth/ProviderButtons";
 import {RedirectForm} from "@/components/auth/RedirectForm";
-import {SendCodeInput} from "@/components/auth/SendCodeInput";
+import {SendCodeInput, type CaptchaValues} from "@/components/auth/SendCodeInput";
+import {CaptchaModal, type CaptchaHandle} from "@/components/common/CaptchaModal";
+import {getCaptchaProvider} from "@/lib/captcha";
 import {useAccount} from "@/hooks/use-account";
 import {authConfig} from "@/auth/Auth";
 import * as Util from "@/auth/Util";
@@ -74,6 +76,10 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
   const [autoSignin, setAutoSignin] = React.useState(true);
   const [loading, setLoading] = React.useState(false);
   const [mfa, setMfa] = React.useState<{props: any; values: any; authParams: any} | null>(null);
+  const [captchaVisible, setCaptchaVisible] = React.useState(false);
+  const [pendingValues, setPendingValues] = React.useState<any>(null);
+  const [captchaValues, setCaptchaValues] = React.useState<CaptchaValues | undefined>(undefined);
+  const captchaRef = React.useRef<CaptchaHandle | null>(null);
   const [saml, setSaml] = React.useState<{response: string; redirectUrl: string; relayState: string} | null>(null);
 
   const owner = params.owner;
@@ -247,7 +253,8 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
     if (res.data === Setting.RequiredUpdatePassword) {
       Setting.goToUpdatePassword();
     } else if (res.data === RequiredMfa) {
-      reload().then(() => navigate("/mfa/setup"));
+      localStorage.setItem("mfaRedirectUrl", window.location.href);
+      reload().then(() => navigate("/mfa/setup", {state: {from: "/login"}}));
     } else if (res.data === NextMfa) {
       setMfa({props: res.data2?.[0] ?? res.data2, values: {...values, providerBack: values.provider, provider: ""}, authParams});
     } else if (res.data === "SelectPlan") {
@@ -312,14 +319,19 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
     return values;
   };
 
-  const submit = (e?: React.FormEvent) => {
-    e?.preventDefault();
-    const values = buildValues();
-    if (values === null) {
-      return;
-    }
+  const refreshInlineCaptcha = () => captchaRef.current?.loadCaptcha();
+
+  const doLogin = (values: any) => {
     setLoading(true);
     Setting.setSigninLanguage(Setting.getLanguage());
+
+    // a widget captcha is single-use, so a rejected sign-in needs a fresh one
+    const usedInlineCaptcha = Setting.isInlineCaptchaEnabled(application) && captchaValues !== undefined;
+    const onRejected = () => {
+      if (usedInlineCaptcha && !String(values.signinMethod).includes("Verification code")) {
+        refreshInlineCaptcha();
+      }
+    };
 
     if (type === "cas") {
       const casParams = Util.getCasParameters();
@@ -329,6 +341,7 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
             checkMfa(res, values, casParams, (ok) => handleCasLoginResult(ok, casParams));
           } else {
             Setting.showMessage("error", `${i18next.t("application:Failed to sign in")}: ${res.msg}`);
+            onRejected();
           }
         })
         .finally(() => setLoading(false));
@@ -342,12 +355,57 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
           checkMfa(res, values, oAuthParams, (ok) => handleLoginResult(ok, values, oAuthParams));
         } else {
           Setting.showMessage("error", `${i18next.t("application:Failed to sign in")}: ${res.msg}`);
+          onRejected();
         }
       })
       .finally(() => {
         localStorage.setItem("lastLoginOrg", values?.organization || "");
         setLoading(false);
       });
+  };
+
+  const submit = (e?: React.FormEvent) => {
+    e?.preventDefault();
+    const values = buildValues();
+    if (values === null) {
+      return;
+    }
+
+    // Password/LDAP sign-in may need a captcha first; the code flow is already
+    // rate-limited by the code itself.
+    if (loginMethod === "password" || loginMethod === "ldap") {
+      const captchaRule = Setting.getCaptchaRule(application);
+      if (Setting.isInlineCaptchaEnabled(application)) {
+        if (captchaRule === Setting.CaptchaRule.Always && !captchaValues?.captchaToken) {
+          Setting.showMessage("error", i18next.t("general:Please complete the captcha correctly"));
+          return;
+        }
+        values.captchaType = captchaValues?.captchaType;
+        values.captchaToken = captchaValues?.captchaToken;
+        values.clientSecret = captchaValues?.clientSecret;
+      } else if (captchaRule === Setting.CaptchaRule.Always) {
+        setPendingValues(values);
+        setCaptchaVisible(true);
+        return;
+      } else if (
+        captchaRule === Setting.CaptchaRule.Dynamic ||
+        captchaRule === Setting.CaptchaRule.InternetOnly
+      ) {
+        AuthBackend.getCaptchaStatus(values)
+          .then((res: any) => {
+            if (res.status === "ok" && res.data) {
+              setPendingValues(values);
+              setCaptchaVisible(true);
+            } else {
+              doLogin(values);
+            }
+          })
+          .catch(() => doLogin(values));
+        return;
+      }
+    }
+
+    doLogin(values);
   };
 
   if (saml !== null) {
@@ -396,6 +454,7 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
     );
   }
 
+  const captchaProvider = getCaptchaProvider(application);
   const passwordEnabled = Setting.isPasswordEnabled(application);
   const codeEnabled = Setting.isCodeSigninEnabled(application);
   const ldapEnabled = Setting.isLdapEnabled(application);
@@ -441,10 +500,14 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
               <SendCodeInput
                 value={code}
                 onChange={setCode}
-                method={username.includes("@") ? "email" : "phone"}
+                method="login"
+                destType={username.includes("@") ? "email" : "phone"}
                 dest={username}
-                type="login"
-                applicationId={`${application.owner}/${application.name}`}
+                application={application}
+                applicationId={Setting.getApplicationName(application)}
+                useInlineCaptcha={Setting.isInlineCaptchaEnabled(application)}
+                captchaValue={captchaValues}
+                refreshCaptcha={refreshInlineCaptcha}
               />
             </div>
           ) : (
@@ -468,6 +531,19 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
             </div>
           )}
 
+          {captchaProvider && Setting.isInlineCaptchaEnabled(application) ? (
+            <CaptchaModal
+              noModal
+              owner={captchaProvider.owner}
+              name={captchaProvider.name}
+              isCurrentProvider
+              innerRef={captchaRef}
+              onUpdateToken={(captchaType, captchaToken, clientSecret) =>
+                setCaptchaValues({captchaType, captchaToken, clientSecret})
+              }
+            />
+          ) : null}
+
           <div className="flex items-center gap-2">
             <Checkbox id="autoSignin" checked={autoSignin} onCheckedChange={(v) => setAutoSignin(v === true)} />
             <Label htmlFor="autoSignin" className="text-sm font-normal">
@@ -490,6 +566,24 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
         ) : null}
 
         <ProviderButtons application={application} method="signin" />
+
+        {captchaProvider && !Setting.isInlineCaptchaEnabled(application) ? (
+          <CaptchaModal
+            owner={captchaProvider.owner}
+            name={captchaProvider.name}
+            visible={captchaVisible}
+            isCurrentProvider
+            innerRef={captchaRef}
+            onOk={(captchaType, captchaToken, clientSecret) => {
+              setCaptchaVisible(false);
+              doLogin({...pendingValues, captchaType, captchaToken, clientSecret});
+            }}
+            onCancel={() => {
+              setCaptchaVisible(false);
+              setLoading(false);
+            }}
+          />
+        ) : null}
       </div>
     </AuthLayout>
   );

@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import * as React from "react";
-import {Navigate, Route, Routes, useLocation} from "react-router-dom";
+import {Navigate, Route, Routes, useLocation, useNavigate} from "react-router-dom";
 import {Loading} from "@/components/common/Loading";
 import {AppLayout} from "@/components/layout/AppLayout";
 import {useAccount} from "@/hooks/use-account";
@@ -27,6 +27,7 @@ const NotFoundPage = React.lazy(() => import("@/pages/NotFoundPage"));
 const AppListPage = React.lazy(() => import("@/pages/AppListPage"));
 const ShortcutsPage = React.lazy(() => import("@/pages/ShortcutsPage"));
 const AccountPage = React.lazy(() => import("@/pages/AccountPage"));
+const MfaSetupPage = React.lazy(() => import("@/pages/auth/MfaSetupPage"));
 const SystemInfoPage = React.lazy(() => import("@/pages/SystemInfoPage"));
 
 const OrganizationListPage = React.lazy(() => import("@/pages/OrganizationListPage"));
@@ -121,6 +122,31 @@ Auth.initAuthWithConfig({
   appName: Conf.DefaultApplication,
 });
 
+/**
+ * When the organization marks an MFA item as "Required" and the user has not set
+ * it up yet, Casdoor parks them on the setup wizard right after sign-in.
+ */
+function useRequiredMfaRedirect() {
+  const {account} = useAccount();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  React.useEffect(() => {
+    if (!account || location.pathname.startsWith("/mfa/setup")) {
+      return;
+    }
+    if (!Setting.isRequiredEnableMfa(account, account.organization)) {
+      return;
+    }
+    const mfaType = Setting.getMfaItemsByRules(account, account.organization, [Setting.MfaRuleRequired]).find(
+      (item: any) => item.rule === Setting.MfaRuleRequired,
+    )?.name;
+    if (mfaType !== undefined) {
+      navigate(`/mfa/setup?mfaType=${mfaType}`, {state: {from: "/login"}});
+    }
+  }, [account, navigate, location.pathname]);
+}
+
 /** Sends anonymous visitors to the sign-in page of their organization. */
 function RequireAuth({children}: {children: React.ReactNode}) {
   const {account, loading} = useAccount();
@@ -138,6 +164,8 @@ function RequireAuth({children}: {children: React.ReactNode}) {
 }
 
 export default function App() {
+  useRequiredMfaRedirect();
+
   return (
     <React.Suspense fallback={<Loading className="min-h-screen" />}>
       <Routes>
@@ -173,6 +201,7 @@ export default function App() {
           <Route path="/apps" element={<AppListPage />} />
           <Route path="/shortcuts" element={<ShortcutsPage />} />
           <Route path="/account" element={<AccountPage />} />
+          <Route path="/mfa/setup" element={<MfaSetupPage />} />
           <Route path="/sysinfo" element={<SystemInfoPage />} />
 
           <Route path="/organizations" element={<OrganizationListPage />} />
