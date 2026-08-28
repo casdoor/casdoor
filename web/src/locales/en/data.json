@@ -786,6 +786,8 @@
     "Default group": "Default group",
     "Default group - Tooltip": "Group to which users belong after synchronization",
     "Edit LDAP": "Edit LDAP",
+    "Enable password reset": "Enable password reset",
+    "Enable password reset - Tooltip": "Allow LDAP users to reset their passwords via the Casdoor forgot-password flow. Enable it only if the bind account has permission to reset passwords on the LDAP server (e.g. Microsoft AD over LDAPS)",
     "Enable SSL": "Enable SSL",
     "Enable SSL - Tooltip": "Whether to enable SSL",
     "Filter fields": "Filter fields",

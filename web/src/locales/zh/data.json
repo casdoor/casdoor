@@ -786,6 +786,8 @@
     "Default group": "默认群组",
     "Default group - Tooltip": "同步用户后用户所在的群组",
     "Edit LDAP": "编辑LDAP",
+    "Enable password reset": "启用密码重置",
+    "Enable password reset - Tooltip": "允许LDAP用户通过Casdoor的忘记密码流程重置密码。仅当LDAP服务器上配置的绑定账号有重置用户密码的权限时才启用（例如通过LDAPS连接的Microsoft AD）",
     "Enable SSL": "启用SSL",
     "Enable SSL - Tooltip": "是否启用SSL",
     "Filter fields": "过滤字段",

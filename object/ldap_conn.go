@@ -833,9 +833,22 @@ func GetExistUuids(owner string, uuids []string) ([]string, error) {
 // user from receiving a verification code and typing a new password before finding out.
 // Signing in, changing the password with the old one and an admin reset are not affected,
 // none of them depends on the bind account having write access.
+// The check is skipped if an LDAP server of the organization sets EnablePasswordReset,
+// meaning its bind account is confirmed to have the permission to reset user passwords.
 func CheckLdapPasswordForget(user *User) error {
 	if user == nil || user.Ldap == "" {
 		return nil
+	}
+
+	ldaps, err := GetLdaps(user.Owner)
+	if err != nil {
+		return err
+	}
+
+	for _, ldapServer := range ldaps {
+		if ldapServer.EnablePasswordReset {
+			return nil
+		}
 	}
 
 	return fmt.Errorf("the password of the LDAP user: %s is managed by the LDAP server, please contact your administrator to reset it", user.Name)

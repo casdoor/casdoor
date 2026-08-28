@@ -182,6 +182,16 @@ class LdapEditPage extends React.Component {
             }} />
           </Col>
         </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{lineHeight: "32px", textAlign: "right", paddingRight: "25px"}} span={3}>
+            {Setting.getLabel(i18next.t("ldap:Enable password reset"), i18next.t("ldap:Enable password reset - Tooltip"))} :
+          </Col>
+          <Col span={21} >
+            <Switch checked={this.state.ldap.enablePasswordReset ?? false} onChange={checked => {
+              this.updateLdapField("enablePasswordReset", checked);
+            }} />
+          </Col>
+        </Row>
         <Row style={{marginTop: "20px"}}>
           <Col style={{lineHeight: "32px", textAlign: "right", paddingRight: "25px"}} span={3}>
             {Setting.getLabel(i18next.t("ldap:Base DN"), i18next.t("ldap:Base DN - Tooltip"))} :

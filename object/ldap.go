@@ -41,6 +41,8 @@ type Ldap struct {
 	AutoSync     int    `json:"autoSync"`
 	LastSync     string `xorm:"varchar(100)" json:"lastSync"`
 	EnableGroups bool   `xorm:"bool" json:"enableGroups"`
+
+	EnablePasswordReset bool `xorm:"bool" json:"enablePasswordReset"`
 }
 
 func AddLdap(ldap *Ldap) (bool, error) {
@@ -154,7 +156,7 @@ func UpdateLdap(ldap *Ldap) (bool, error) {
 	}
 
 	affected, err := ormer.Engine.ID(ldap.Id).Cols("owner", "server_name", "host",
-		"port", "enable_ssl", "username", "password", "base_dn", "filter", "filter_fields", "auto_sync", "default_group", "default_groups", "password_type", "allow_self_signed_cert", "custom_attributes", "enable_groups").Update(ldap)
+		"port", "enable_ssl", "username", "password", "base_dn", "filter", "filter_fields", "auto_sync", "default_group", "default_groups", "password_type", "allow_self_signed_cert", "custom_attributes", "enable_groups", "enable_password_reset").Update(ldap)
 	if err != nil {
 		return false, nil
 	}
