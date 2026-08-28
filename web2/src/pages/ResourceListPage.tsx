@@ -1,5 +1,8 @@
+import * as React from "react";
 import i18next from "i18next";
+import {Upload} from "lucide-react";
 import {Link} from "react-router-dom";
+import {Button} from "@/components/ui/button";
 import {CrudListPage} from "@/components/crud/CrudListPage";
 import {dateColumn, organizationColumn, textColumn} from "@/components/crud/columns";
 import type {ColumnDef} from "@/components/crud/types";
@@ -11,6 +14,33 @@ import * as Setting from "@/lib/setting";
 export default function ResourceListPage() {
   const {account} = useAccount();
   const organizationName = useRequestOrganization();
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = React.useState(false);
+
+  // same call as the antd page: tag "custom", parent "ResourceListPage",
+  // path "resource/<owner>/<user>/<filename>"
+  const handleUpload = (file: File, refresh: () => void) => {
+    if (!account) {
+      return;
+    }
+    setUploading(true);
+    const fullFilePath = `resource/${account.owner}/${account.name}/${file.name}`;
+    ResourceBackend.uploadResource(account.owner, account.name, "custom", "ResourceListPage", fullFilePath, file)
+      .then((res: any) => {
+        if (res.status === "ok") {
+          Setting.showMessage("success", i18next.t("application:File uploaded successfully"));
+          refresh();
+        } else {
+          Setting.showMessage("error", res.msg);
+        }
+      })
+      .catch((error: any) => {
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
+      })
+      .finally(() => {
+        setUploading(false);
+      });
+  };
 
   const columns: ColumnDef<any>[] = [
     textColumn({dataIndex: "provider", title: i18next.t("general:Provider"), width: 150, searchable: true}),
@@ -77,6 +107,27 @@ export default function ResourceListPage() {
       columns={columns}
       deps={[organizationName, account?.name]}
       showActionColumn
+      toolbar={({refresh}) => (
+        <>
+          <input
+            ref={fileInputRef}
+            type="file"
+            className="hidden"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) {
+                handleUpload(file, refresh);
+              }
+              // let the same file be picked again
+              e.target.value = "";
+            }}
+          />
+          <Button loading={uploading} onClick={() => fileInputRef.current?.click()}>
+            <Upload />
+            {i18next.t("resource:Upload a file...")}
+          </Button>
+        </>
+      )}
       fetch={(q) =>
         ResourceBackend.getResources(
           organizationName,

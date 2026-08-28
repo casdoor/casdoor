@@ -28,6 +28,7 @@ export default function EntryListPage() {
     <CrudListPage
       title={i18next.t("general:Entries")}
       columns={columns}
+      formType="entries"
       deps={[organizationName]}
       fetch={(q) =>
         EntryBackend.getEntries(organizationName, q.page, q.pageSize, q.searchedColumn, q.searchText, q.sortField, q.sortOrder)

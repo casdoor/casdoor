@@ -125,6 +125,7 @@ export default function UserListPage() {
       title={i18next.t("general:Users")}
       description={groupName ? `${i18next.t("general:Groups")}: ${groupName}` : undefined}
       columns={columns}
+      formType="users"
       deps={[organizationName, groupName, isGlobal]}
       fetch={(q) =>
         isGlobal

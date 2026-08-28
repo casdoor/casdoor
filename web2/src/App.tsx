@@ -65,6 +65,7 @@ const AgentListPage = React.lazy(() => import("@/pages/AgentListPage"));
 const AgentEditPage = React.lazy(() => import("@/pages/AgentEditPage"));
 const ServerListPage = React.lazy(() => import("@/pages/ServerListPage"));
 const ServerEditPage = React.lazy(() => import("@/pages/ServerEditPage"));
+const ServerStorePage = React.lazy(() => import("@/pages/ServerStorePage"));
 const EntryListPage = React.lazy(() => import("@/pages/EntryListPage"));
 const EntryEditPage = React.lazy(() => import("@/pages/EntryEditPage"));
 const SiteListPage = React.lazy(() => import("@/pages/SiteListPage"));
@@ -96,6 +97,7 @@ const TransactionListPage = React.lazy(() => import("@/pages/TransactionListPage
 const TransactionEditPage = React.lazy(() => import("@/pages/TransactionEditPage"));
 
 const FormListPage = React.lazy(() => import("@/pages/FormListPage"));
+const FormEditPage = React.lazy(() => import("@/pages/FormEditPage"));
 const SyncerListPage = React.lazy(() => import("@/pages/SyncerListPage"));
 const SyncerEditPage = React.lazy(() => import("@/pages/SyncerEditPage"));
 const WebhookListPage = React.lazy(() => import("@/pages/WebhookListPage"));
@@ -241,6 +243,7 @@ export default function App() {
           <Route path="/agents/:organizationName/:agentName" element={<AgentEditPage />} />
           <Route path="/servers" element={<ServerListPage />} />
           <Route path="/servers/:organizationName/:serverName" element={<ServerEditPage />} />
+          <Route path="/server-store" element={<ServerStorePage />} />
           <Route path="/entries" element={<EntryListPage />} />
           <Route path="/entries/:organizationName/:entryName" element={<EntryEditPage />} />
           <Route path="/sites" element={<SiteListPage />} />
@@ -272,6 +275,7 @@ export default function App() {
           <Route path="/transactions/:organizationName/:transactionName" element={<TransactionEditPage />} />
 
           <Route path="/forms" element={<FormListPage />} />
+          <Route path="/forms/:formName" element={<FormEditPage />} />
           <Route path="/syncers" element={<SyncerListPage />} />
           <Route path="/syncers/:organizationName/:syncerName" element={<SyncerEditPage />} />
           <Route path="/webhooks" element={<WebhookListPage />} />

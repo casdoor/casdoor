@@ -1027,6 +1027,18 @@ export function getShortText(s, maxLength = 35) {
   }
 }
 
+export function getFriendlyUserName(account) {
+  if (account.firstName !== "" && account.lastName !== "") {
+    return `${account.firstName}, ${account.lastName}`;
+  } else if (account.displayName !== "") {
+    return account.displayName;
+  } else if (account.name !== "") {
+    return account.name;
+  } else {
+    return account.id;
+  }
+}
+
 export function getFriendlyFileSize(size) {
   if (size < 1024) {
     return size + " B";
@@ -1907,6 +1919,32 @@ export function getCurrencyText(currency) {
 
 export function isDarkTheme(themeAlgorithm) {
   return themeAlgorithm && themeAlgorithm.includes("dark");
+}
+
+/**
+ * Applies a saved Form to a list page: keeps only the visible items, in the
+ * order the form lists them. The action column is appended by CrudListPage, so
+ * unlike the antd version this only deals with the data columns.
+ */
+export function filterTableColumns(columns, formItems) {
+  if (!formItems || formItems.length === 0) {
+    return columns;
+  }
+
+  return formItems
+    .filter(item => item.visible !== false)
+    .map(item => {
+      const matchedColumn = columns.find(column => (column.key ?? column.dataIndex) === item.name);
+      if (!matchedColumn) {
+        return null;
+      }
+      return {
+        ...matchedColumn,
+        width: item.width !== undefined ? `${item.width}px` : matchedColumn.width,
+        title: item.width !== undefined ? i18next.t(item.label) : matchedColumn.title,
+      };
+    })
+    .filter(column => column !== null);
 }
 
 export function getFormTypeOptions() {

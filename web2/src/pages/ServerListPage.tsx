@@ -24,6 +24,7 @@ export default function ServerListPage() {
     <CrudListPage
       title={i18next.t("general:MCP Servers")}
       columns={columns}
+      formType="servers"
       deps={[organizationName]}
       fetch={(q) =>
         ServerBackend.getServers(organizationName, q.page, q.pageSize, q.searchedColumn, q.searchText, q.sortField, q.sortOrder)

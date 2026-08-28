@@ -49,6 +49,7 @@ export default function ProviderListPage() {
     <CrudListPage
       title={i18next.t("application:Providers")}
       columns={columns}
+      formType="providers"
       deps={[organizationName, isGlobal]}
       fetch={(q) =>
         isGlobal

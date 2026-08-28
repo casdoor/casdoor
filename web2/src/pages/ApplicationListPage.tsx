@@ -70,6 +70,7 @@ export default function ApplicationListPage() {
     <CrudListPage
       title={i18next.t("general:Applications")}
       columns={columns}
+      formType="applications"
       deps={[organizationName, isGlobal]}
       fetch={(q) =>
         isGlobal
