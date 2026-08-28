@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//      http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,6 +19,7 @@ import (
 	"strings"
 )
 
+// DeleteVal returns a new slice with all occurrences of val removed.
 func DeleteVal(values []string, val string) []string {
 	newValues := []string{}
 	for _, v := range values {
@@ -29,6 +30,7 @@ func DeleteVal(values []string, val string) []string {
 	return newValues
 }
 
+// ReplaceVal returns a new slice with all occurrences of oldVal replaced by newVal.
 func ReplaceVal(values []string, oldVal string, newVal string) []string {
 	newValues := []string{}
 	for _, v := range values {
@@ -41,10 +43,12 @@ func ReplaceVal(values []string, oldVal string, newVal string) []string {
 	return newValues
 }
 
+// InSlice returns true if slice contains elem.
 func InSlice(slice []string, elem string) bool {
 	return slices.Contains(slice, elem)
 }
 
+// ReturnAnyNotEmpty returns the first non-empty string in strs, or an empty string if all are empty.
 func ReturnAnyNotEmpty(strs ...string) string {
 	for _, str := range strs {
 		if str != "" {
@@ -54,19 +58,17 @@ func ReturnAnyNotEmpty(strs ...string) string {
 	return ""
 }
 
+// HaveIntersection returns true if arr1 and arr2 share at least one common element.
 func HaveIntersection(arr1 []string, arr2 []string) bool {
 	elements := make(map[string]bool)
-
 	for _, str := range arr1 {
 		elements[str] = true
 	}
-
 	for _, str := range arr2 {
 		if elements[str] {
 			return true
 		}
 	}
-
 	return false
 }
 
@@ -86,6 +88,5 @@ func HasTagInSlice(slice []string, userTag string) bool {
 			return true
 		}
 	}
-
 	return false
 }
