@@ -48,6 +48,22 @@ export default function PaymentEditPage() {
       options: () => STATES.map((item) => ({value: item, label: i18next.t(`payment:${item}`)})),
     },
     {type: "text", name: "message", labelKey: "payment:Message"},
+    {
+      type: "select",
+      name: "invoiceType",
+      labelKey: "payment:Invoice type",
+      options: () => [
+        {value: "Individual", label: i18next.t("payment:Individual")},
+        {value: "Organization", label: i18next.t("general:Organization")},
+      ],
+    },
+    {type: "text", name: "invoiceTitle", labelKey: "payment:Invoice title"},
+    {type: "text", name: "invoiceTaxId", labelKey: "payment:Invoice tax ID"},
+    {type: "text", name: "invoiceRemark", labelKey: "payment:Invoice remark"},
+    {type: "text", name: "personName", labelKey: "payment:Person name"},
+    {type: "text", name: "personIdCard", labelKey: "payment:Person ID card"},
+    {type: "email", name: "personEmail", labelKey: "payment:Person Email"},
+    {type: "text", name: "personPhone", labelKey: "payment:Person phone"},
   ];
 
   return (

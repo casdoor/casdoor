@@ -12,6 +12,7 @@ export default function RecordListPage() {
   const organizationName = useRequestOrganization();
 
   const columns: ColumnDef<any>[] = [
+    textColumn({dataIndex: "name", title: i18next.t("general:Name"), width: 140, searchable: true}),
     textColumn({dataIndex: "id", title: i18next.t("general:ID"), width: 90}),
     textColumn({dataIndex: "clientIp", title: i18next.t("general:Client IP"), width: 140, searchable: true}),
     {

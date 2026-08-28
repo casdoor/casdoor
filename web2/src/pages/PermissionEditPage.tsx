@@ -75,6 +75,8 @@ export default function PermissionEditPage() {
     {type: "switch", name: "isEnabled", labelKey: "general:Is enabled"},
     {type: "text", name: "submitter", labelKey: "permission:Submitter", disabled: () => true},
     {type: "text", name: "approver", labelKey: "permission:Approver", disabled: () => true},
+    {type: "text", name: "approveTime", labelKey: "permission:Approve time", disabled: () => true},
+    {type: "text", name: "expireTime", labelKey: "general:Expire time"},
     {
       type: "select",
       name: "state",

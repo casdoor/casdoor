@@ -50,6 +50,10 @@ export default function CertEditPage() {
       options: () => [1024, 2048, 4096].map((item) => ({value: String(item), label: String(item)})),
     },
     {type: "number", name: "expireInYears", labelKey: "cert:Expire in years"},
+    {type: "text", name: "accessKey", labelKey: "general:Access key", when: (ctx) => ctx.record.type !== "x509"},
+    {type: "password", name: "accessSecret", labelKey: "general:Access secret", when: (ctx) => ctx.record.type !== "x509"},
+    {type: "text", name: "expireTime", labelKey: "general:Expire time", disabled: () => true},
+    {type: "text", name: "domainExpireTime", labelKey: "cert:Domain expire time", disabled: () => true},
     {type: "code", name: "certificate", labelKey: "cert:Certificate", height: 260},
     {type: "code", name: "privateKey", labelKey: "cert:Private key", height: 260},
   ];

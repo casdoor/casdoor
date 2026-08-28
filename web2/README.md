@@ -97,10 +97,12 @@ These exist in `../web` and still need work here:
 - **Editors/viewers**: form editor (`/forms/:name`), Casbin policy editor on the
   adapter page, enforcer tester, OpenClaw session graph & transcript viewers,
   SELinux entry viewer.
-- **Edit-page extras**: application import/export, resource upload, organization
-  theme editor and navbar/widget item trees, and some sub-tables (token
-  attributes, custom scopes, IP/WAF/UA rules, managed & MFA accounts, addresses,
-  WebAuthn credentials).
+- **Edit-page extras**: application import/export, resource upload, and the
+  IP/WAF/UA rule sub-tables of the rule pages. Every other field of every ported
+  edit page is present (509/509), and the list pages carry every column the antd
+  ones did — the navbar/widget item trees are multi-selects rather than trees,
+  and the theme editor is a colour/radius/compact form rather than
+  antd-token-previewer.
 - **Chrome**: the product tour, the AI assistant drawer, and the GitHub corner.
 
 Everything above degrades to a normal 404 inside the console rather than

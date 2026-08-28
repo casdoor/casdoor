@@ -8,6 +8,7 @@ import {Loading} from "@/components/common/Loading";
 import {SelectField} from "@/components/common/SelectField";
 import {TagsInput} from "@/components/common/TagsInput";
 import {EditPageShell} from "@/components/crud/EditPageShell";
+import {EditableTable} from "@/components/crud/EditableTable";
 import {FormRow} from "@/components/crud/FormRow";
 import * as LdapBackend from "@/backend/LdapBackend";
 import * as Setting from "@/lib/setting";
@@ -98,7 +99,7 @@ export default function LdapEditPage() {
       extraActions={
         !isNew ? (
           <Button variant="outline" onClick={() => navigate(`/ldap/sync/${organizationName}/${ldap.id}`)}>
-            {i18next.t("ldap:Sync")}
+            {i18next.t("general:Sync")}
           </Button>
         ) : null
       }
@@ -106,7 +107,7 @@ export default function LdapEditPage() {
       <FormRow labelKey="general:Organization">
         <Input value={ldap.owner ?? organizationName} disabled />
       </FormRow>
-      <FormRow labelKey="ldap:Server Name">
+      <FormRow labelKey="ldap:Server name">
         <Input value={ldap.serverName ?? ""} onChange={(e) => update("serverName", e.target.value)} />
       </FormRow>
       <FormRow labelKey="ldap:Server Host">
@@ -161,6 +162,34 @@ export default function LdapEditPage() {
       </FormRow>
       <FormRow labelKey="ldap:Enable groups">
         <Switch checked={!!ldap.enableGroups} onCheckedChange={(v) => update("enableGroups", v)} />
+      </FormRow>
+      <FormRow labelKey="ldap:Custom attributes" block>
+        <EditableTable
+          rows={ldap.customAttributes ?? []}
+          onChange={(rows) => update("customAttributes", rows)}
+          newRow={() => ({attributeName: "", userPropertyName: ""})}
+          reorderable={false}
+          columns={[
+            {
+              key: "attributeName",
+              title: i18next.t("ldap:LDAP attribute name"),
+              width: 260,
+              render: (row: any, _i, patch) => (
+                <Input value={row.attributeName ?? ""} onChange={(e) => patch({attributeName: e.target.value})} />
+              ),
+            },
+            {
+              key: "userPropertyName",
+              title: i18next.t("ldap:User property name"),
+              render: (row: any, _i, patch) => (
+                <Input
+                  value={row.userPropertyName ?? ""}
+                  onChange={(e) => patch({userPropertyName: e.target.value})}
+                />
+              ),
+            },
+          ]}
+        />
       </FormRow>
       <FormRow labelKey="ldap:Default groups">
         <TagsInput value={ldap.defaultGroups ?? []} onChange={(v) => update("defaultGroups", v)} />

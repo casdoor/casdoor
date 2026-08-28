@@ -22,6 +22,12 @@ export default function SyncerListPage() {
     textColumn({dataIndex: "host", title: i18next.t("general:Host"), width: 130}),
     textColumn({dataIndex: "port", title: i18next.t("general:Port"), width: 90}),
     textColumn({dataIndex: "user", title: i18next.t("general:User"), width: 110}),
+    {
+      dataIndex: "password",
+      title: i18next.t("general:Password"),
+      width: 110,
+      render: (value) => (value ? "••••••" : null),
+    },
     textColumn({dataIndex: "database", title: i18next.t("syncer:Database"), width: 130}),
     textColumn({dataIndex: "table", title: i18next.t("syncer:Table"), width: 130}),
     textColumn({dataIndex: "syncInterval", title: i18next.t("syncer:Sync interval"), width: 130}),

@@ -76,6 +76,20 @@ export default function WebhookEditPage() {
         />
       ),
     },
+    {
+      type: "multiselect",
+      name: "objectFields",
+      labelKey: "webhook:Object fields",
+      creatable: true,
+      options: () => Setting.getUserCommonFields().map((item: string) => ({value: item, label: item})),
+    },
+    {
+      type: "multiselect",
+      name: "tokenFields",
+      labelKey: "application:Token fields",
+      creatable: true,
+      options: () => Setting.getUserCommonFields().map((item: string) => ({value: item, label: item})),
+    },
     {type: "switch", name: "isUserExtended", labelKey: "webhook:Is user extended"},
     {type: "switch", name: "singleOrgOnly", labelKey: "webhook:Single org only"},
     {type: "switch", name: "isEnabled", labelKey: "general:Is enabled"},

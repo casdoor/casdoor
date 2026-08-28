@@ -11,6 +11,7 @@ import {MultiSelect} from "@/components/common/MultiSelect";
 import {SearchableSelect} from "@/components/common/SearchableSelect";
 import {SelectField} from "@/components/common/SelectField";
 import {TagsInput} from "@/components/common/TagsInput";
+import {ThemeEditor} from "@/components/common/ThemeEditor";
 import {EditPageShell} from "@/components/crud/EditPageShell";
 import {EditableTable} from "@/components/crud/EditableTable";
 import {FormRow} from "@/components/crud/FormRow";
@@ -19,6 +20,7 @@ import {submitEdit} from "@/lib/crud";
 import * as ApplicationBackend from "@/backend/ApplicationBackend";
 import * as LdapBackend from "@/backend/LdapBackend";
 import * as OrganizationBackend from "@/backend/OrganizationBackend";
+import {NavItemKeys, WidgetItemKeys} from "@/lib/nav-items";
 import * as Setting from "@/lib/setting";
 
 const PASSWORD_TYPES = ["plain", "salt", "sha512-salt", "md5-salt", "bcrypt", "pbkdf2-salt", "argon2id", "pbkdf2-django"];
@@ -489,13 +491,86 @@ export default function OrganizationEditPage() {
               onChange={(e) => update("tokenRetentionDays", Setting.myParseInt(e.target.value))}
             />
           </FormRow>
+          <FormRow labelKey="organization:Org balance">
+            <Input
+              type="number"
+              value={organization.orgBalance ?? 0}
+              onChange={(e) => update("orgBalance", Number(e.target.value))}
+            />
+          </FormRow>
+          <FormRow labelKey="organization:Account menu">
+            <SelectField
+              value={organization.accountMenu || "Horizontal"}
+              onChange={(value) => update("accountMenu", value)}
+              options={[
+                {id: "Horizontal", name: i18next.t("application:Horizontal")},
+                {id: "Vertical", name: i18next.t("application:Vertical")},
+              ]}
+            />
+          </FormRow>
+          <FormRow labelKey="organization:LDAP attributes">
+            <MultiSelect
+              creatable
+              value={organization.ldapAttributes ?? []}
+              onChange={(value) => update("ldapAttributes", value)}
+              options={Setting.getUserCommonFields().map((item: string) => ({value: item, label: item}))}
+            />
+          </FormRow>
+          <FormRow labelKey="organization:Admin navbar items">
+            <MultiSelect
+              value={organization.navItems ?? ["all"]}
+              onChange={(value) => update("navItems", value)}
+              options={NavItemKeys.map((item) => ({value: item, label: item}))}
+            />
+          </FormRow>
+          <FormRow labelKey="organization:User navbar items">
+            <MultiSelect
+              value={organization.userNavItems ?? ["all"]}
+              onChange={(value) => update("userNavItems", value)}
+              options={NavItemKeys.map((item) => ({value: item, label: item}))}
+            />
+          </FormRow>
+          <FormRow labelKey="organization:Widget items">
+            <MultiSelect
+              value={organization.widgetItems ?? ["all"]}
+              onChange={(value) => update("widgetItems", value)}
+              options={WidgetItemKeys.map((item) => ({value: item, label: item}))}
+            />
+          </FormRow>
+          <FormRow labelKey="organization:Kerberos realm">
+            <Input
+              value={organization.kerberosRealm ?? ""}
+              onChange={(e) => update("kerberosRealm", e.target.value)}
+            />
+          </FormRow>
+          <FormRow labelKey="organization:Kerberos KDC host">
+            <Input
+              value={organization.kerberosKdcHost ?? ""}
+              onChange={(e) => update("kerberosKdcHost", e.target.value)}
+            />
+          </FormRow>
+          <FormRow labelKey="organization:Kerberos service name">
+            <Input
+              value={organization.kerberosServiceName ?? ""}
+              onChange={(e) => update("kerberosServiceName", e.target.value)}
+            />
+          </FormRow>
+          <FormRow labelKey="organization:Kerberos keytab">
+            <Input
+              value={organization.kerberosKeytab ?? ""}
+              onChange={(e) => update("kerberosKeytab", e.target.value)}
+            />
+          </FormRow>
+          <FormRow labelKey="theme:Customize theme" block>
+            <ThemeEditor themeData={organization.themeData} onChange={(next) => update("themeData", next)} />
+          </FormRow>
           <FormRow labelKey="general:LDAPs" block>
             <div className="space-y-2">
               <div className="rounded-lg border">
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b text-xs uppercase text-muted-foreground">
-                      <th className="px-3 py-2 text-left">{i18next.t("ldap:Server Name")}</th>
+                      <th className="px-3 py-2 text-left">{i18next.t("ldap:Server name")}</th>
                       <th className="px-3 py-2 text-left">{i18next.t("ldap:Server")}</th>
                       <th className="px-3 py-2 text-left">{i18next.t("ldap:Base DN")}</th>
                       <th className="px-3 py-2 text-left">{i18next.t("general:Action")}</th>
@@ -525,7 +600,7 @@ export default function OrganizationEditPage() {
                           <td className="px-3 py-2">{ldap.baseDn}</td>
                           <td className="px-3 py-2">
                             <Button variant="outline" size="sm" asChild>
-                              <Link to={`/ldap/sync/${organization.name}/${ldap.id}`}>{i18next.t("ldap:Sync")}</Link>
+                              <Link to={`/ldap/sync/${organization.name}/${ldap.id}`}>{i18next.t("general:Sync")}</Link>
                             </Button>
                           </td>
                         </tr>

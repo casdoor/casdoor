@@ -45,6 +45,15 @@ export default function ProviderEditPage() {
     {type: "text", name: "displayName", labelKey: "general:Display name"},
     {
       type: "select",
+      name: "state",
+      labelKey: "general:State",
+      options: () => [
+        {value: "Active", label: i18next.t("subscription:Active")},
+        {value: "Inactive", label: i18next.t("key:Inactive")},
+      ],
+    },
+    {
+      type: "select",
       name: "category",
       labelKey: "general:Category",
       options: () => CATEGORIES.map((item) => ({value: item, label: item})),

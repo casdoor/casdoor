@@ -1,7 +1,14 @@
+import i18next from "i18next";
 import {useParams} from "react-router-dom";
 import {SimpleEditPage, type EditField} from "@/components/crud/SimpleEditPage";
 import {useAccount} from "@/hooks/use-account";
-import {useApplicationOptions, useCertOptions, useOrganizationOptions} from "@/hooks/use-options";
+import {
+  useApplicationOptions,
+  useCertOptions,
+  useOrganizationOptions,
+  useProviderOptions,
+  useRuleOptions,
+} from "@/hooks/use-options";
 import * as SiteBackend from "@/backend/SiteBackend";
 import * as Setting from "@/lib/setting";
 
@@ -13,6 +20,8 @@ export default function SiteEditPage() {
   const organizations = useOrganizationOptions();
   const applications = useApplicationOptions(organizationName);
   const certs = useCertOptions(organizationName);
+  const rules = useRuleOptions(organizationName);
+  const notificationProviders = useProviderOptions(organizationName, "Notification");
 
   const fields: EditField[] = [
     {
@@ -43,9 +52,27 @@ export default function SiteEditPage() {
     },
     {type: "select", name: "sslCert", labelKey: "application:SSL cert", options: () => certs},
     {type: "select", name: "casdoorApplication", labelKey: "site:Casdoor app", options: () => applications},
+    {
+      type: "select",
+      name: "status",
+      labelKey: "general:State",
+      options: () => [
+        {value: "Active", label: i18next.t("subscription:Active")},
+        {value: "Inactive", label: i18next.t("key:Inactive")},
+      ],
+    },
+    {type: "tags", name: "challenges", labelKey: "site:Challenges"},
+    {type: "multiselect", name: "rules", labelKey: "general:Rules", options: () => rules},
     {type: "switch", name: "enableAlert", labelKey: "site:Enable alert"},
     {type: "number", name: "alertInterval", labelKey: "site:Alert interval", when: (ctx) => !!ctx.record.enableAlert},
     {type: "number", name: "alertTryTimes", labelKey: "site:Alert try times", when: (ctx) => !!ctx.record.enableAlert},
+    {
+      type: "multiselect",
+      name: "alertProviders",
+      labelKey: "site:Alert providers",
+      when: (ctx) => !!ctx.record.enableAlert,
+      options: () => notificationProviders,
+    },
   ];
 
   return (

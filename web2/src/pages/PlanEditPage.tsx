@@ -42,6 +42,7 @@ export default function PlanEditPage() {
     {type: "multiselect", name: "paymentProviders", labelKey: "product:Payment providers", options: () => paymentProviders},
     {type: "select", name: "role", labelKey: "general:Role", options: () => roles},
     {type: "tags", name: "options", labelKey: "plan:Options"},
+    {type: "switch", name: "isExclusive", labelKey: "plan:Is exclusive"},
     {type: "switch", name: "isEnabled", labelKey: "general:Is enabled"},
   ];
 

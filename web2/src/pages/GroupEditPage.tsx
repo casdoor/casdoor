@@ -1,5 +1,7 @@
 import i18next from "i18next";
 import {useParams} from "react-router-dom";
+import {Input} from "@/components/ui/input";
+import {EditableTable} from "@/components/crud/EditableTable";
 import {SimpleEditPage, type EditField} from "@/components/crud/SimpleEditPage";
 import {useAccount} from "@/hooks/use-account";
 import {useGroupOptions, useOrganizationOptions} from "@/hooks/use-options";
@@ -43,6 +45,43 @@ export default function GroupEditPage() {
       ],
     },
     {type: "text", name: "contactEmail", labelKey: "group:Contact email"},
+    {type: "number", name: "gidNumber", labelKey: "group:GID number"},
+    {
+      type: "custom",
+      name: "properties",
+      labelKey: "user:Properties",
+      block: true,
+      render: (ctx, update) => (
+        <EditableTable
+          rows={Object.entries(ctx.record.properties ?? {}).map(([key, value]) => ({key, value}))}
+          onChange={(rows) =>
+            update(
+              "properties",
+              Object.fromEntries(rows.filter((row: any) => row.key).map((row: any) => [row.key, row.value])),
+            )
+          }
+          newRow={() => ({key: "", value: ""})}
+          reorderable={false}
+          columns={[
+            {
+              key: "key",
+              title: i18next.t("general:Name"),
+              width: 240,
+              render: (row: any, _i, patch) => (
+                <Input value={row.key ?? ""} onChange={(e) => patch({key: e.target.value})} />
+              ),
+            },
+            {
+              key: "value",
+              title: i18next.t("webhook:Value"),
+              render: (row: any, _i, patch) => (
+                <Input value={row.value ?? ""} onChange={(e) => patch({value: e.target.value})} />
+              ),
+            },
+          ]}
+        />
+      ),
+    },
     {type: "switch", name: "isEnabled", labelKey: "general:Is enabled"},
   ];
 

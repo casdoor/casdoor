@@ -62,11 +62,11 @@ export default function LdapSyncPage() {
   return (
     <div className="space-y-4">
       <PageHeader
-        title={i18next.t("ldap:Sync")}
+        title={i18next.t("general:Sync")}
         description={`${organizationName} / ${ldapId}`}
         actions={
           <Button loading={syncing} disabled={selected.length === 0} onClick={sync}>
-            {i18next.t("ldap:Sync")} ({selected.length})
+            {i18next.t("general:Sync")} ({selected.length})
           </Button>
         }
       />
@@ -85,7 +85,7 @@ export default function LdapSyncPage() {
                 <TableHead>{i18next.t("ldap:UidNumber / Uid")}</TableHead>
                 <TableHead>{i18next.t("general:Email")}</TableHead>
                 <TableHead>{i18next.t("general:Phone")}</TableHead>
-                <TableHead>{i18next.t("general:Address")}</TableHead>
+                <TableHead>{i18next.t("user:Address")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
