@@ -10,6 +10,7 @@ import {
   Wallet,
   type LucideIcon,
 } from "lucide-react";
+import * as Conf from "@/Conf";
 import * as Setting from "@/lib/setting";
 import type {Account} from "@/hooks/use-account";
 
@@ -167,5 +168,63 @@ export function getNavGroups(account: Account | null | undefined): NavGroup[] {
     items: adminItems,
   });
 
-  return groups;
+  return applyNavItems(groups, account);
+}
+
+/**
+ * The organization can hide navbar entries: `navItems` for admins,
+ * `userNavItems` for everyone else. Either being absent, not an array, or
+ * containing "all" means "show everything" — the value Casdoor stores by default.
+ */
+function getNavItemFilter(account: Account): string[] | null {
+  const organization = account.organization;
+  const navItems = Setting.isLocalAdminUser(account) ? organization?.navItems : organization?.userNavItems ?? [];
+  if (!Array.isArray(navItems) || navItems.includes("all")) {
+    return null;
+  }
+  return navItems;
+}
+
+function applyNavItems(groups: NavGroup[], account: Account): NavGroup[] {
+  const navItems = getNavItemFilter(account);
+  if (navItems === null) {
+    return groups;
+  }
+
+  return groups
+    .map((group) => ({...group, items: group.items.filter((item) => navItems.includes(item.key))}))
+    .filter((group) => group.items.length > 0)
+    .map((group) => {
+      // the group header links somewhere that may have just been filtered out;
+      // re-point it at a remaining entry, skipping the external-link ones
+      if (group.items.some((item) => item.key === group.to && !item.href)) {
+        return group;
+      }
+      const target = group.items.find((item) => !item.href);
+      return target ? {...group, to: target.key} : group;
+    });
+}
+
+/**
+ * With only a handful of entries left after filtering, the antd frontend drops
+ * the group headers and shows one flat list. Mirrored here so a trimmed-down
+ * organization gets the same shape of menu.
+ */
+export function shouldFlattenNav(groups: NavGroup[], account: Account | null | undefined): boolean {
+  if (!account || getNavItemFilter(account) === null) {
+    return false;
+  }
+  return groups.reduce((count, group) => count + group.items.length, 0) <= Conf.MaxItemsForFlatMenu;
+}
+
+/**
+ * The header widgets an organization can hide through `widgetItems`; same
+ * "absent or contains all" rule as the navbar entries.
+ */
+export function isWidgetVisible(account: Account | null | undefined, key: string): boolean {
+  const widgetItems = account?.organization?.widgetItems;
+  if (!Array.isArray(widgetItems) || widgetItems.includes("all")) {
+    return true;
+  }
+  return widgetItems.includes(key);
 }

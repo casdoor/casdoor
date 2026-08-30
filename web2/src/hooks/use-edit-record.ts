@@ -15,6 +15,8 @@ export interface UseEditRecordResult<T> {
   record: T | null;
   setRecord: React.Dispatch<React.SetStateAction<T | null>>;
   updateField: (field: string, value: any) => void;
+  /** patches several fields in one render, for fields that must move together */
+  updateFields: (patch: Record<string, any>) => void;
   loading: boolean;
   notFound: boolean;
   mode: EditMode;
@@ -95,10 +97,15 @@ export function useEditRecord<T extends Record<string, any>>({
     setRecord((prev) => (prev === null ? prev : ({...prev, [field]: value} as T)));
   }, []);
 
+  const updateFields = React.useCallback((patch: Record<string, any>) => {
+    setRecord((prev) => (prev === null ? prev : ({...prev, ...patch} as T)));
+  }, []);
+
   return {
     record,
     setRecord,
     updateField,
+    updateFields,
     loading,
     notFound,
     mode,

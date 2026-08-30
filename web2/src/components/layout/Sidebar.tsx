@@ -4,7 +4,7 @@ import {ChevronDown, PanelLeftClose, PanelLeftOpen} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import {ScrollArea} from "@/components/ui/scroll-area";
 import {Tooltip, TooltipContent, TooltipTrigger} from "@/components/ui/tooltip";
-import {getNavGroups} from "@/lib/nav";
+import {getNavGroups, shouldFlattenNav} from "@/lib/nav";
 import * as Setting from "@/lib/setting";
 import {useAccount} from "@/hooks/use-account";
 import {cn} from "@/lib/utils";
@@ -33,6 +33,8 @@ export function Sidebar({collapsed, onCollapsedChange, onNavigate, className}: S
   // recomputed every render on purpose: the labels come from i18next, which
   // changes language without re-rendering this component's inputs
   const groups = getNavGroups(account);
+  // an organization trimmed down to a handful of entries gets a flat list
+  const flatten = shouldFlattenNav(groups, account);
 
   const activeGroupKey = React.useMemo(() => {
     const match = groups.find((group) =>
@@ -104,79 +106,107 @@ export function Sidebar({collapsed, onCollapsedChange, onNavigate, className}: S
 
       <ScrollArea className="flex-1">
         <nav className="space-y-1 p-2">
-          {collapsed
-            ? groups.map((group) => {
-              const Icon = group.icon;
-              return (
-                <Tooltip key={group.key}>
-                  <TooltipTrigger asChild>
-                    <Link
-                      to={group.to}
-                      onClick={onNavigate}
-                      className={cn(
-                        "flex h-9 items-center justify-center rounded-md hover:bg-sidebar-accent",
-                        activeGroupKey === group.key && "bg-sidebar-accent text-sidebar-accent-foreground",
-                      )}
-                    >
-                      <Icon className="h-4 w-4" />
-                    </Link>
-                  </TooltipTrigger>
-                  <TooltipContent side="right">{group.label}</TooltipContent>
-                </Tooltip>
-              );
-            })
-            : groups.map((group) => {
-              const Icon = group.icon;
-              const open = openGroups.includes(group.key);
-              return (
-                <div key={group.key}>
-                  <button
-                    type="button"
-                    onClick={() => toggleGroup(group.key)}
+          {flatten && !collapsed
+            ? groups.flatMap((group) =>
+              group.items.map((item) =>
+                item.href ? (
+                  <a
+                    key={item.key}
+                    href={item.href}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="block truncate rounded-md px-2 py-1.5 text-sm hover:bg-sidebar-accent"
+                  >
+                    {item.label}
+                  </a>
+                ) : (
+                  <Link
+                    key={item.key}
+                    to={item.key}
+                    onClick={onNavigate}
                     className={cn(
-                      "flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium hover:bg-sidebar-accent",
-                      activeGroupKey === group.key && "text-foreground",
+                      "block truncate rounded-md px-2 py-1.5 text-sm hover:bg-sidebar-accent",
+                      isItemActive(item.key) && "bg-sidebar-accent font-medium text-sidebar-accent-foreground",
                     )}
                   >
-                    <Icon className="h-4 w-4 shrink-0" />
-                    <span className="flex-1 truncate text-left">{group.label}</span>
-                    <ChevronDown className={cn("h-3.5 w-3.5 transition-transform", open && "rotate-180")} />
-                  </button>
-                  {open && (
-                    <ul className="ml-[15px] mt-0.5 space-y-0.5 border-l pl-3">
-                      {group.items.map((item) =>
-                        item.href ? (
-                          <li key={item.key}>
-                            <a
-                              href={item.href}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="block truncate rounded-md px-2 py-1.5 text-sm hover:bg-sidebar-accent"
-                            >
-                              {item.label}
-                            </a>
-                          </li>
-                        ) : (
-                          <li key={item.key}>
-                            <Link
-                              to={item.key}
-                              onClick={onNavigate}
-                              className={cn(
-                                "block truncate rounded-md px-2 py-1.5 text-sm hover:bg-sidebar-accent",
-                                isItemActive(item.key) &&
-                                    "bg-sidebar-accent font-medium text-sidebar-accent-foreground",
-                              )}
-                            >
-                              {item.label}
-                            </Link>
-                          </li>
-                        ),
+                    {item.label}
+                  </Link>
+                ),
+              ),
+            )
+            : collapsed
+              ? groups.map((group) => {
+                const Icon = group.icon;
+                return (
+                  <Tooltip key={group.key}>
+                    <TooltipTrigger asChild>
+                      <Link
+                        to={group.to}
+                        onClick={onNavigate}
+                        className={cn(
+                          "flex h-9 items-center justify-center rounded-md hover:bg-sidebar-accent",
+                          activeGroupKey === group.key && "bg-sidebar-accent text-sidebar-accent-foreground",
+                        )}
+                      >
+                        <Icon className="h-4 w-4" />
+                      </Link>
+                    </TooltipTrigger>
+                    <TooltipContent side="right">{group.label}</TooltipContent>
+                  </Tooltip>
+                );
+              })
+              : groups.map((group) => {
+                const Icon = group.icon;
+                const open = openGroups.includes(group.key);
+                return (
+                  <div key={group.key}>
+                    <button
+                      type="button"
+                      onClick={() => toggleGroup(group.key)}
+                      className={cn(
+                        "flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium hover:bg-sidebar-accent",
+                        activeGroupKey === group.key && "text-foreground",
                       )}
-                    </ul>
-                  )}
-                </div>
-              );
-            })}
+                    >
+                      <Icon className="h-4 w-4 shrink-0" />
+                      <span className="flex-1 truncate text-left">{group.label}</span>
+                      <ChevronDown className={cn("h-3.5 w-3.5 transition-transform", open && "rotate-180")} />
+                    </button>
+                    {open && (
+                      <ul className="ml-[15px] mt-0.5 space-y-0.5 border-l pl-3">
+                        {group.items.map((item) =>
+                          item.href ? (
+                            <li key={item.key}>
+                              <a
+                                href={item.href}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="block truncate rounded-md px-2 py-1.5 text-sm hover:bg-sidebar-accent"
+                              >
+                                {item.label}
+                              </a>
+                            </li>
+                          ) : (
+                            <li key={item.key}>
+                              <Link
+                                to={item.key}
+                                onClick={onNavigate}
+                                className={cn(
+                                  "block truncate rounded-md px-2 py-1.5 text-sm hover:bg-sidebar-accent",
+                                  isItemActive(item.key) &&
+                                    "bg-sidebar-accent font-medium text-sidebar-accent-foreground",
+                                )}
+                              >
+                                {item.label}
+                              </Link>
+                            </li>
+                          ),
+                        )}
+                      </ul>
+                    )}
+                  </div>
+                );
+              })}
         </nav>
       </ScrollArea>
 

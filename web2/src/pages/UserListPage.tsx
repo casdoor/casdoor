@@ -5,6 +5,7 @@ import {Badge} from "@/components/ui/badge";
 import {Button} from "@/components/ui/button";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 import {CrudListPage} from "@/components/crud/CrudListPage";
+import {XlsxImport} from "@/components/crud/XlsxImport";
 import {boolColumn, dateColumn, linkColumn, organizationColumn, textColumn} from "@/components/crud/columns";
 import type {ColumnDef} from "@/components/crud/types";
 import {useAccount} from "@/hooks/use-account";
@@ -126,6 +127,15 @@ export default function UserListPage() {
       description={groupName ? `${i18next.t("general:Groups")}: ${groupName}` : undefined}
       columns={columns}
       formType="users"
+      toolbar={({refresh}) => (
+        <XlsxImport
+          columns={Setting.getUserColumns()}
+          templateName="import-user.xlsx"
+          uploadApi="upload-users"
+          successMessage="Users uploaded successfully, refreshing the page"
+          onUploaded={refresh}
+        />
+      )}
       deps={[organizationName, groupName, isGlobal]}
       fetch={(q) =>
         isGlobal

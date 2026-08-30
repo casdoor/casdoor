@@ -13,11 +13,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {AiAssistant} from "@/components/common/AiAssistant";
 import {LanguageSelect} from "@/components/common/LanguageSelect";
 import {OrganizationSelect} from "@/components/common/OrganizationSelect";
 import {OpenTour} from "@/components/common/ConsoleTour";
 import {ThemeToggle} from "@/components/common/ThemeToggle";
 import {useAccount} from "@/hooks/use-account";
+import {isWidgetVisible} from "@/lib/nav";
 import * as AuthBackend from "@/backend/AuthBackend";
 import * as UserBackend from "@/backend/UserBackend";
 import * as Setting from "@/lib/setting";
@@ -93,9 +95,10 @@ export function Header({onOpenMobileNav}: {onOpenMobileNav: () => void}) {
             }}
           />
         )}
-        <LanguageSelect languages={account.organization?.languages} />
-        <ThemeToggle />
-        <OpenTour />
+        {isWidgetVisible(account, "language") && <LanguageSelect languages={account.organization?.languages} />}
+        {isWidgetVisible(account, "theme") && <ThemeToggle />}
+        {isWidgetVisible(account, "ai-assistant") && <AiAssistant />}
+        {isWidgetVisible(account, "tour") && <OpenTour />}
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

@@ -650,6 +650,161 @@ export const PermissionFields = ["owner", "name", "created_time", "display_name"
   "users", "groups", "roles", "domains", "model", "adapter", "resource_type",
   "resources", "actions", "effect", "is_enabled", "submitter", "approver", "approve_time", "state"];
 
+
+// The "<translated label>#<field>" column list behind the .xlsx import templates,
+// ported verbatim from web/src/Setting.js.
+export const GetTranslatedUserItems = () => {
+  return [
+    {name: "Organization", label: i18next.t("general:Organization")},
+    {name: "ID", label: i18next.t("general:ID")},
+    {name: "Name", label: i18next.t("general:Name")},
+    {name: "Display name", label: i18next.t("general:Display name")},
+    {name: "First name", label: i18next.t("general:First name")},
+    {name: "Last name", label: i18next.t("general:Last name")},
+    {name: "Avatar", label: i18next.t("general:Avatar")},
+    {name: "User type", label: i18next.t("general:User type")},
+    {name: "Password", label: i18next.t("general:Password")},
+    {name: "Email", label: i18next.t("general:Email")},
+    {name: "Phone", label: i18next.t("general:Phone")},
+    {name: "Country code", label: i18next.t("user:Country code")},
+    {name: "Country/Region", label: i18next.t("user:Country/Region")},
+    {name: "Location", label: i18next.t("user:Location")},
+    {name: "Address", label: i18next.t("user:Address")},
+    {name: "Addresses", label: i18next.t("user:Addresses")},
+    {name: "Affiliation", label: i18next.t("user:Affiliation")},
+    {name: "Title", label: i18next.t("general:Title")},
+    {name: "ID card type", label: i18next.t("user:ID card type")},
+    {name: "ID card", label: i18next.t("user:ID card")},
+    {name: "ID card info", label: i18next.t("user:ID card info")},
+    {name: "Real name", label: i18next.t("application:Real name")},
+    {name: "ID verification", label: i18next.t("user:ID verification")},
+    {name: "Homepage", label: i18next.t("user:Homepage")},
+    {name: "Bio", label: i18next.t("user:Bio")},
+    {name: "Tag", label: i18next.t("general:Tag")},
+    {name: "Language", label: i18next.t("user:Language")},
+    {name: "Gender", label: i18next.t("user:Gender")},
+    {name: "Birthday", label: i18next.t("user:Birthday")},
+    {name: "Education", label: i18next.t("user:Education")},
+    {name: "Balance", label: i18next.t("user:Balance")},
+    {name: "Balance currency", label: i18next.t("organization:Balance currency")},
+    {name: "Balance credit", label: i18next.t("organization:Balance credit")},
+    {name: "Cart", label: i18next.t("general:Cart")},
+    {name: "Transactions", label: i18next.t("general:Transactions")},
+    {name: "UID number", label: i18next.t("general:UID number")},
+    {name: "Score", label: i18next.t("user:Score")},
+    {name: "Karma", label: i18next.t("user:Karma")},
+    {name: "Ranking", label: i18next.t("user:Ranking")},
+    {name: "Signup application", label: i18next.t("general:Signup application")},
+    {name: "Register type", label: i18next.t("user:Register type")},
+    {name: "Register source", label: i18next.t("user:Register source")},
+    {name: "API key", label: i18next.t("general:API key")},
+    {name: "Groups", label: i18next.t("general:Groups")},
+    {name: "Roles", label: i18next.t("general:Roles")},
+    {name: "Permissions", label: i18next.t("general:Permissions")},
+    {name: "3rd-party logins", label: i18next.t("user:3rd-party logins")},
+    {name: "Properties", label: i18next.t("user:Properties")},
+    {name: "Is online", label: i18next.t("user:Is online")},
+    {name: "Is admin", label: i18next.t("user:Is admin")},
+    {name: "Is forbidden", label: i18next.t("user:Is forbidden")},
+    {name: "Is deleted", label: i18next.t("user:Is deleted")},
+    {name: "Need update password", label: i18next.t("user:Need update password")},
+    {name: "IP whitelist", label: i18next.t("general:IP whitelist")},
+    {name: "Multi-factor authentication", label: i18next.t("mfa:Multi-factor authentication")},
+    {name: "WebAuthn credentials", label: i18next.t("user:WebAuthn credentials")},
+    {name: "Last change password time", label: i18next.t("user:Last change password time")},
+    {name: "Managed accounts", label: i18next.t("user:Managed accounts")},
+    {name: "Face ID", label: i18next.t("login:Face ID")},
+    {name: "MFA accounts", label: i18next.t("user:MFA accounts")},
+    {name: "MFA items", label: i18next.t("general:MFA items")},
+  ];
+};
+
+export function getUserColumns() {
+  const items = GetTranslatedUserItems();
+  return UserFields.map((field: string) => {
+    let transField = "";
+    if (field === "webauthnCredentials") {
+      transField = "WebAuthn credentials";
+    } else if (field === "region") {
+      transField = "Country/Region";
+    } else if (field === "mfaAccounts") {
+      transField = "MFA accounts";
+    } else if (field === "mfaItems") {
+      transField = "MFA items";
+    } else if (field === "face_ids") {
+      transField = "Face ID";
+    } else if (field === "managedAccounts") {
+      transField = "Managed accounts";
+    } else {
+      transField = field.toLowerCase().split("_").join(" ");
+      transField = transField.charAt(0).toUpperCase() + transField.slice(1);
+      transField = transField.replace("ip", "IP")
+        .replace("Ip", "IP")
+        .replace("Id", "ID")
+        .replace("id", "ID");
+    }
+    if (transField === "Owner") {
+      transField = "Organization";
+    }
+    const transFieldItem = items.find((item: any) => item.name === transField);
+    if (transFieldItem === undefined) {
+      const toTranslateList = ["general", "user", "organization"].map((ns: string) => `${ns}:${transField}`);
+      const transResult = toTranslateList.map((item: string) => i18next.t(item) === transField ? null : i18next.t(item))
+        .find((item: any) => item !== null);
+      transField = transResult ? transResult : transField;
+    }
+    return `${transFieldItem ? transFieldItem.label : transField}#${field}`;
+  });
+}
+
+export function getGroupColumns() {
+  return GroupFields.map((field: string) => {
+    let transField = field.toLowerCase().split("_").join(" ");
+    transField = transField.charAt(0).toUpperCase() + transField.slice(1);
+    transField = transField.replace("Id", "ID");
+    if (transField === "Owner") {
+      transField = "Organization";
+    }
+    const toTranslateList = ["general", "group"].map((ns: string) => `${ns}:${transField}`);
+    const transResult = toTranslateList.map((item: string) => i18next.t(item) === transField ? null : i18next.t(item))
+      .find((item: any) => item !== null);
+    transField = transResult ? transResult : transField;
+    return `${transField}#${field}`;
+  });
+}
+
+export function getRoleColumns() {
+  return RoleFields.map((field: string) => {
+    let transField = field.toLowerCase().split("_").join(" ");
+    transField = transField.charAt(0).toUpperCase() + transField.slice(1);
+    transField = transField.replace("Id", "ID");
+    if (transField === "Owner") {
+      transField = "Organization";
+    }
+    const toTranslateList = ["general", "role"].map((ns: string) => `${ns}:${transField}`);
+    const transResult = toTranslateList.map((item: string) => i18next.t(item) === transField ? null : i18next.t(item))
+      .find((item: any) => item !== null);
+    transField = transResult ? transResult : transField;
+    return `${transField}#${field}`;
+  });
+}
+
+export function getPermissionColumns() {
+  return PermissionFields.map((field: string) => {
+    let transField = field.toLowerCase().split("_").join(" ");
+    transField = transField.charAt(0).toUpperCase() + transField.slice(1);
+    transField = transField.replace("Id", "ID");
+    if (transField === "Owner") {
+      transField = "Organization";
+    }
+    const toTranslateList = ["general", "permission"].map((ns: string) => `${ns}:${transField}`);
+    const transResult = toTranslateList.map((item: string) => i18next.t(item) === transField ? null : i18next.t(item))
+      .find((item: any) => item !== null);
+    transField = transResult ? transResult : transField;
+    return `${transField}#${field}`;
+  });
+}
+
 export function getCountryCode(country) {
   if (phoneNumber.isSupportedCountry(country)) {
     return phoneNumber.getCountryCallingCode(country as any);
