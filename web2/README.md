@@ -100,28 +100,36 @@ collapse the sidebar into a flat list once few enough are left), and
 role and permission list pages, posting to `upload-users` / `upload-groups` /
 `upload-roles` / `upload-permissions`.
 
-## Not ported yet
+**Theme** — the organization/application `themeData` editor covers the same four
+values the antd one did (theme preset, primary colour, border radius, compact),
+rendered as shadcn controls rather than antd-token-previewer. `themeType: "dark"`
+forces the dark palette on the branded surfaces and `isCompact` tightens the root
+rem size, which is this frontend's equivalent of antd's dark/compact algorithms.
+The navbar and widget item pickers are checkable trees (`CheckboxTree`) with
+antd's check semantics, so the stored `navItems` / `userNavItems` / `widgetItems`
+are byte-compatible with the antd frontend.
 
-These exist in `../web` and still need work here:
+## Deliberately not ported
 
 - **Entry viewers**: the rich entry message viewer, the SELinux entry viewer, and
-  the OpenClaw session graph and transcript pages
-  (`/entries/:org/:name/transcript` has no route yet). The entry edit page shows
-  the raw message instead.
+  the OpenClaw session graph and transcript pages. The entry edit page shows the
+  raw message instead, and the entry list no longer offers a "Transcript" action.
 - **Web3**: `auth/Web3Auth.ts` talks to `window.ethereum` directly rather than
   going through `@web3-onboard`, so the extra wallets that library bundles
-  (Coinbase, Phantom, Trust, Gnosis, ...) are not offered.
-- **Theme editor**: a colour/radius/compact form rather than
-  antd-token-previewer, and the navbar/widget item pickers are multi-selects
-  rather than trees.
+  (Coinbase, Phantom, Trust, Gnosis, ...) are not offered. MetaMask works.
+
+## Still to do
+
+- **i18n**: about 67 keys used by the pages here are missing from
+  `src/locales/*/data.json`, so those labels render as the raw key. Most are a
+  wrong namespace (`application:Client ID` where the string lives under
+  `provider:`), a few are genuinely new strings.
 - **Deployment**: the Go backend still serves `web/build`
-  (`routers/static_filter.go`), `public/` has none of the standalone scripts
+  (`routers/static_filter.go` returns it before it ever looks at
+  `frontendBaseDir`), `public/` has none of the standalone scripts
   `routers/lightweight_auth_filter.go` serves, `index.html` is missing the
   boot-failure fallback, and the Dockerfile / Makefile / CI still build `../web`.
   There are no Cypress e2e tests here either.
-
-Everything above degrades to a normal 404 inside the console rather than
-breaking another page.
 
 ## Adding a page
 

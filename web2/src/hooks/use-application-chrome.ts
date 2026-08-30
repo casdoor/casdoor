@@ -1,11 +1,14 @@
 import * as React from "react";
 import * as Cookie from "cookie";
 import * as Conf from "@/Conf";
+import {useTheme} from "@/hooks/use-theme";
 import * as Setting from "@/lib/setting";
 
 interface ThemeData {
+  themeType?: string;
   colorPrimary?: string;
   borderRadius?: number;
+  isCompact?: boolean;
 }
 
 /** "#262626" -> "0 0% 15%", the triplet shadcn's CSS variables expect. */
@@ -49,6 +52,10 @@ function hexToHslTriplet(hex: string): {triplet: string; lightness: number} | nu
 
 /** Pushes a `themeData` object into the shadcn CSS variables for as long as it is mounted. */
 export function useThemeData(themeData: ThemeData | undefined | null) {
+  // the provider owns the `dark` class, so re-assert a forced dark theme whenever
+  // it writes, otherwise the two would fight over the root element
+  const {resolvedTheme} = useTheme();
+
   React.useEffect(() => {
     const root = document.documentElement;
     const primary = themeData?.colorPrimary ? hexToHslTriplet(themeData.colorPrimary) : null;
@@ -66,8 +73,26 @@ export function useThemeData(themeData: ThemeData | undefined | null) {
       touched.push("--radius");
     }
 
-    return () => touched.forEach((name) => root.style.removeProperty(name));
-  }, [themeData]);
+    // "dark" is antd's darkAlgorithm and "compact" its compactAlgorithm
+    const forceDark = themeData?.themeType === "dark" && resolvedTheme !== "dark";
+    if (forceDark) {
+      root.classList.add("dark");
+    }
+    const compact = themeData?.isCompact === true;
+    if (compact) {
+      root.classList.add("compact");
+    }
+
+    return () => {
+      touched.forEach((name) => root.style.removeProperty(name));
+      if (forceDark) {
+        root.classList.remove("dark");
+      }
+      if (compact) {
+        root.classList.remove("compact");
+      }
+    };
+  }, [themeData, resolvedTheme]);
 }
 
 /**

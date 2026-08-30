@@ -210,6 +210,9 @@ export default function ApplicationEditPage() {
               ) : null}
             </div>
           </FormRow>
+          <FormRow labelKey="general:Title">
+            <Input value={application.title ?? ""} onChange={(e) => updateField("title", e.target.value)} />
+          </FormRow>
           <FormRow labelKey="general:Favicon">
             <Input value={application.favicon ?? ""} onChange={(e) => updateField("favicon", e.target.value)} />
           </FormRow>
@@ -218,6 +221,15 @@ export default function ApplicationEditPage() {
           </FormRow>
           <FormRow labelKey="general:Tags">
             <TagsInput value={application.tags ?? []} onChange={(v) => updateField("tags", v)} />
+          </FormRow>
+          <FormRow labelKey="application:Order">
+            <Input
+              type="number"
+              min={0}
+              step={1}
+              value={application.order ?? 0}
+              onChange={(e) => updateField("order", Setting.myParseInt(e.target.value))}
+            />
           </FormRow>
           <FormRow labelKey="application:Is shared">
             <Switch checked={!!application.isShared} onCheckedChange={(v) => updateField("isShared", v)} />
@@ -623,11 +635,15 @@ export default function ApplicationEditPage() {
         </TabsContent>
 
         <TabsContent value="oauth">
-          <FormRow labelKey="application:Client ID">
-            <Input value={application.clientId ?? ""} disabled />
+          {/* both are editable so that an admin can rotate the pair, as in the antd page */}
+          <FormRow labelKey="provider:Client ID">
+            <Input value={application.clientId ?? ""} onChange={(e) => updateField("clientId", e.target.value)} />
           </FormRow>
-          <FormRow labelKey="application:Client secret">
-            <Input value={application.clientSecret ?? ""} disabled />
+          <FormRow labelKey="provider:Client secret">
+            <Input
+              value={application.clientSecret ?? ""}
+              onChange={(e) => updateField("clientSecret", e.target.value)}
+            />
           </FormRow>
           <FormRow labelKey="application:Redirect URLs">
             <TagsInput value={application.redirectUris ?? []} onChange={(v) => updateField("redirectUris", v)} />

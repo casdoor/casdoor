@@ -6,6 +6,7 @@ import {Badge} from "@/components/ui/badge";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Switch} from "@/components/ui/switch";
+import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import {ConfirmButton} from "@/components/common/ConfirmButton";
 import {Loading} from "@/components/common/Loading";
@@ -18,6 +19,7 @@ import {EditableTable} from "@/components/crud/EditableTable";
 import {FormRow} from "@/components/crud/FormRow";
 import {AffiliationAddressSelect, AffiliationField, useAffiliation} from "@/components/user/AffiliationSelect";
 import {CartTable} from "@/components/user/CartTable";
+import {CasdoorAppQrCode, CasdoorAppUrl} from "@/components/user/CasdoorAppConnector";
 import {ConsentTable} from "@/components/user/ConsentTable";
 import {FaceIdTable} from "@/components/user/FaceIdTable";
 import {CropperDivModal, UserImageField} from "@/components/user/CropperDivModal";
@@ -57,7 +59,7 @@ const ADDRESS_TAGS = [
 export default function UserEditPage({self}: {self?: boolean} = {}) {
   const params = useParams();
   const navigate = useNavigate();
-  const {account, reload: reloadAccount} = useAccount();
+  const {account, accessToken, reload: reloadAccount} = useAccount();
   // "/account" edits the signed-in user, every other route takes the name from the URL
   const organizationName = self ? account?.owner ?? "" : params.organizationName ?? "";
   const userName = self ? account?.name ?? "" : params.userName ?? "";
@@ -720,45 +722,75 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
             />
           </FormRow>
           <FormRow labelKey="user:MFA accounts" block>
-            <EditableTable
-              rows={user.mfaAccounts ?? []}
-              onChange={(rows) => updateField("mfaAccounts", rows)}
-              newRow={() => ({accountName: "", issuer: "", secretKey: "", origin: ""})}
-              reorderable={false}
-              columns={[
-                {
-                  key: "accountName",
-                  title: i18next.t("user:MFA account name"),
-                  width: 180,
-                  render: (row: any, _i, patch) => (
-                    <Input value={row.accountName ?? ""} onChange={(e) => patch({accountName: e.target.value})} />
-                  ),
-                },
-                {
-                  key: "issuer",
-                  title: i18next.t("user:MFA account issuer"),
-                  width: 180,
-                  render: (row: any, _i, patch) => (
-                    <Input value={row.issuer ?? ""} onChange={(e) => patch({issuer: e.target.value})} />
-                  ),
-                },
-                {
-                  key: "origin",
-                  title: i18next.t("general:URL"),
-                  width: 180,
-                  render: (row: any, _i, patch) => (
-                    <Input value={row.origin ?? ""} onChange={(e) => patch({origin: e.target.value})} />
-                  ),
-                },
-                {
-                  key: "secretKey",
-                  title: i18next.t("user:MFA account secret key"),
-                  render: (row: any, _i, patch) => (
-                    <Input value={row.secretKey ?? ""} onChange={(e) => patch({secretKey: e.target.value})} />
-                  ),
-                },
-              ]}
-            />
+            <div className="space-y-2">
+              {/* the Casdoor Authenticator app takes these over by scanning the QR / opening the link */}
+              <div className="flex flex-wrap gap-2">
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" size="sm">{i18next.t("general:QR Code")}</Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto">
+                    <CasdoorAppQrCode accessToken={accessToken ?? undefined} icon={user.avatar} />
+                  </PopoverContent>
+                </Popover>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" size="sm">{i18next.t("general:URL")}</Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-96">
+                    <CasdoorAppUrl accessToken={accessToken ?? undefined} />
+                  </PopoverContent>
+                </Popover>
+              </div>
+              <EditableTable
+                rows={user.mfaAccounts ?? []}
+                onChange={(rows) => updateField("mfaAccounts", rows)}
+                newRow={() => ({accountName: "", issuer: "", secretKey: "", origin: ""})}
+                columns={[
+                  {
+                    key: "accountName",
+                    title: i18next.t("user:MFA account name"),
+                    width: 180,
+                    render: (row: any, _i, patch) => (
+                      <Input value={row.accountName ?? ""} onChange={(e) => patch({accountName: e.target.value})} />
+                    ),
+                  },
+                  {
+                    key: "issuer",
+                    title: i18next.t("user:MFA account issuer"),
+                    width: 180,
+                    render: (row: any, _i, patch) => (
+                      <Input value={row.issuer ?? ""} onChange={(e) => patch({issuer: e.target.value})} />
+                    ),
+                  },
+                  {
+                    key: "origin",
+                    title: i18next.t("general:URL"),
+                    width: 180,
+                    render: (row: any, _i, patch) => (
+                      <Input value={row.origin ?? ""} onChange={(e) => patch({origin: e.target.value})} />
+                    ),
+                  },
+                  {
+                    key: "secretKey",
+                    title: i18next.t("user:MFA account secret key"),
+                    render: (row: any, _i, patch) => (
+                      <Input
+                        type="password"
+                        value={row.secretKey ?? ""}
+                        onChange={(e) => patch({secretKey: e.target.value})}
+                      />
+                    ),
+                  },
+                  {
+                    key: "logo",
+                    title: i18next.t("general:Logo"),
+                    width: 70,
+                    render: (row: any) => <IssuerLogo issuer={row.issuer} />,
+                  },
+                ]}
+              />
+            </div>
           </FormRow>
           <FormRow labelKey="user:WebAuthn credentials" block>
             <div className="divide-y rounded-lg border">
@@ -899,5 +931,22 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
         </TabsContent>
       </Tabs>
     </EditPageShell>
+  );
+}
+
+/** the well-known logo of an MFA issuer, falling back to a generic one */
+function IssuerLogo({issuer}: {issuer?: string}) {
+  const src = issuer
+    ? `${Setting.StaticBaseUrl}/img/social_${issuer.toLowerCase()}.png`
+    : `${Setting.StaticBaseUrl}/img/social_default.png`;
+  return (
+    <img
+      className="h-9 w-9 rounded"
+      src={src}
+      alt={issuer ?? "default"}
+      onError={(e) => {
+        (e.currentTarget as HTMLImageElement).src = `${Setting.StaticBaseUrl}/img/social_default.png`;
+      }}
+    />
   );
 }

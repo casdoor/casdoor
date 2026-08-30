@@ -8,6 +8,7 @@ import {Switch} from "@/components/ui/switch";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import {Loading} from "@/components/common/Loading";
 import {MultiSelect} from "@/components/common/MultiSelect";
+import {NavItemTree, WidgetItemTree} from "@/components/common/NavItemTree";
 import {SearchableSelect} from "@/components/common/SearchableSelect";
 import {SelectField} from "@/components/common/SelectField";
 import {TagsInput} from "@/components/common/TagsInput";
@@ -15,12 +16,12 @@ import {ThemeEditor} from "@/components/common/ThemeEditor";
 import {EditPageShell} from "@/components/crud/EditPageShell";
 import {EditableTable} from "@/components/crud/EditableTable";
 import {FormRow} from "@/components/crud/FormRow";
+import {useAccount} from "@/hooks/use-account";
 import {useEditRecord} from "@/hooks/use-edit-record";
 import {submitEdit} from "@/lib/crud";
 import * as ApplicationBackend from "@/backend/ApplicationBackend";
 import * as LdapBackend from "@/backend/LdapBackend";
 import * as OrganizationBackend from "@/backend/OrganizationBackend";
-import {NavItemKeys, WidgetItemKeys} from "@/lib/nav-items";
 import * as Setting from "@/lib/setting";
 
 const PASSWORD_TYPES = ["plain", "salt", "sha512-salt", "md5-salt", "bcrypt", "pbkdf2-salt", "argon2id", "pbkdf2-django"];
@@ -48,6 +49,7 @@ function passwordOptions() {
 export default function OrganizationEditPage() {
   const {organizationName = ""} = useParams();
   const navigate = useNavigate();
+  const {account} = useAccount();
   const [saving, setSaving] = React.useState(false);
   const [applications, setApplications] = React.useState<any[]>([]);
   const [ldaps, setLdaps] = React.useState<any[] | null>(null);
@@ -516,25 +518,25 @@ export default function OrganizationEditPage() {
               options={Setting.getUserCommonFields().map((item: string) => ({value: item, label: item}))}
             />
           </FormRow>
-          <FormRow labelKey="organization:Admin navbar items">
-            <MultiSelect
-              value={organization.navItems ?? ["all"]}
-              onChange={(value) => update("navItems", value)}
-              options={NavItemKeys.map((item) => ({value: item, label: item}))}
+          <FormRow labelKey="organization:Admin navbar items" block>
+            <NavItemTree
+              disabled={!Setting.isAdminUser(account)}
+              checkedKeys={organization.navItems ?? ["all"]}
+              onCheck={(value) => update("navItems", value)}
             />
           </FormRow>
-          <FormRow labelKey="organization:User navbar items">
-            <MultiSelect
-              value={organization.userNavItems ?? ["all"]}
-              onChange={(value) => update("userNavItems", value)}
-              options={NavItemKeys.map((item) => ({value: item, label: item}))}
+          <FormRow labelKey="organization:User navbar items" block>
+            <NavItemTree
+              disabled={!Setting.isAdminUser(account)}
+              checkedKeys={organization.userNavItems ?? []}
+              onCheck={(value) => update("userNavItems", value)}
             />
           </FormRow>
-          <FormRow labelKey="organization:Widget items">
-            <MultiSelect
-              value={organization.widgetItems ?? ["all"]}
-              onChange={(value) => update("widgetItems", value)}
-              options={WidgetItemKeys.map((item) => ({value: item, label: item}))}
+          <FormRow labelKey="organization:Widget items" block>
+            <WidgetItemTree
+              disabled={!Setting.isAdminUser(account)}
+              checkedKeys={organization.widgetItems ?? ["all"]}
+              onCheck={(value) => update("widgetItems", value)}
             />
           </FormRow>
           <FormRow labelKey="organization:Kerberos realm">

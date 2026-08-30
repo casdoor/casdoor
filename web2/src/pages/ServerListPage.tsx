@@ -2,6 +2,7 @@ import i18next from "i18next";
 import {CrudListPage} from "@/components/crud/CrudListPage";
 import {dateColumn, linkColumn, organizationColumn, textColumn} from "@/components/crud/columns";
 import type {ColumnDef} from "@/components/crud/types";
+import {ScanServerDialog} from "@/components/server/ScanServerDialog";
 import {useAccount} from "@/hooks/use-account";
 import {useRequestOrganization} from "@/hooks/use-organization";
 import * as ServerBackend from "@/backend/ServerBackend";
@@ -29,6 +30,7 @@ export default function ServerListPage() {
       fetch={(q) =>
         ServerBackend.getServers(organizationName, q.page, q.pageSize, q.searchedColumn, q.searchText, q.sortField, q.sortOrder)
       }
+      toolbar={({refresh}) => <ScanServerDialog organizationName={organizationName} onAdded={refresh} />}
       newRecord={account ? () => newServer(account) : undefined}
       editUrl={(r) => `/servers/${r.owner}/${r.name}`}
       remove={(r) => ServerBackend.deleteServer(r)}
