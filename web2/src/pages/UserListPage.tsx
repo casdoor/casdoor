@@ -4,6 +4,7 @@ import {Link, useNavigate, useParams, useSearchParams} from "react-router-dom";
 import {Badge} from "@/components/ui/badge";
 import {Button} from "@/components/ui/button";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
+import {ConfirmButton} from "@/components/common/ConfirmButton";
 import {CrudListPage} from "@/components/crud/CrudListPage";
 import {XlsxImport} from "@/components/crud/XlsxImport";
 import {boolColumn, dateColumn, linkColumn, organizationColumn, textColumn} from "@/components/crud/columns";
@@ -154,27 +155,53 @@ export default function UserListPage() {
       newRecord={account ? () => newUser(account, organization, organizationName, groupName) : undefined}
       editUrl={(r) => `/users/${r.owner}/${r.name}`}
       remove={(r) => UserBackend.deleteUser(r)}
-      rowActions={(record) =>
-        Setting.isLocalAdminUser(account) && record.name !== account?.name ? (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => {
-              UserBackend.impersonateUser(record.owner, record.name).then((res: any) => {
-                if (res.status === "ok") {
-                  navigate("/");
-                  window.location.reload();
-                } else {
-                  Setting.showMessage("error", res.msg);
-                }
-              });
-            }}
-          >
-            {i18next.t("general:Impersonate")}
-          </Button>
-        ) : null
-      }
-      actionColumnWidth={260}
+      rowActions={(record, _index, {refresh}) => (
+        <>
+          {Setting.isLocalAdminUser(account) && record.name !== account?.name ? (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                UserBackend.impersonateUser(record.owner, record.name).then((res: any) => {
+                  if (res.status === "ok") {
+                    navigate("/");
+                    window.location.reload();
+                  } else {
+                    Setting.showMessage("error", res.msg);
+                  }
+                });
+              }}
+            >
+              {i18next.t("general:Impersonate")}
+            </Button>
+          ) : null}
+          {/* only offered while the list is scoped to a group, as on the group tree page */}
+          {groupName ? (
+            <ConfirmButton
+              variant="outline"
+              size="sm"
+              description={`${record.name ?? ""}`}
+              onConfirm={() =>
+                UserBackend.removeUserFromGroup({groupName, owner: record.owner, name: record.name})
+                  .then((res: any) => {
+                    if (res.status === "ok") {
+                      Setting.showMessage("success", i18next.t("general:Successfully removed"));
+                      refresh();
+                    } else {
+                      Setting.showMessage("error", `${i18next.t("general:Failed to remove")}: ${res.msg}`);
+                    }
+                  })
+                  .catch((error) =>
+                    Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`),
+                  )
+              }
+            >
+              {i18next.t("general:remove")}
+            </ConfirmButton>
+          ) : null}
+        </>
+      )}
+      actionColumnWidth={groupName ? 340 : 260}
     />
   );
 }

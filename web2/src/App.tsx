@@ -118,6 +118,7 @@ const LoginPage = React.lazy(() => import("@/pages/auth/LoginPage"));
 const SignupPage = React.lazy(() => import("@/pages/auth/SignupPage"));
 const ForgetPage = React.lazy(() => import("@/pages/auth/ForgetPage"));
 const AuthCallback = React.lazy(() => import("@/pages/auth/AuthCallback"));
+const SamlCallback = React.lazy(() => import("@/pages/auth/SamlCallback"));
 const ResultPage = React.lazy(() => import("@/pages/auth/ResultPage"));
 const ConsentPage = React.lazy(() => import("@/pages/auth/ConsentPage"));
 const PricingPage = React.lazy(() => import("@/pages/PricingPage"));
@@ -196,7 +197,7 @@ export default function App() {
         <Route path="/forget" element={<ForgetPage />} />
         <Route path="/forget/:applicationName" element={<ForgetPage />} />
         <Route path="/callback" element={<AuthCallback />} />
-        <Route path="/callback/saml" element={<AuthCallback />} />
+        <Route path="/callback/saml" element={<SamlCallback />} />
         <Route path="/telegram-login" element={<TelegramLogin />} />
         <Route path="/captcha" element={<CaptchaPage />} />
         <Route path="/.well-known/openid-configuration" element={<OidcDiscoveryPage />} />

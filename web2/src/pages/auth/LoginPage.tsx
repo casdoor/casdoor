@@ -384,6 +384,22 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
       });
   };
 
+  /** the user rejected this device-code sign-in from the approval page */
+  const [deviceCanceled, setDeviceCanceled] = React.useState(false);
+
+  const cancelDeviceLogin = () => {
+    const cancelToken = new URLSearchParams(location.search).get("cancelToken") || "";
+    AuthBackend.cancelDeviceLogin(params.userCode, cancelToken)
+      .then((res: any) => {
+        if (res.status === "ok") {
+          setDeviceCanceled(true);
+        } else {
+          Setting.showMessage("error", res.msg || i18next.t("general:Failed to cancel"));
+        }
+      })
+      .catch(() => Setting.showMessage("error", i18next.t("general:Failed to cancel")));
+  };
+
   /** another signed-in device approved the device code, finish the OAuth flow here */
   const completeDeviceLogin = (deviceCode: string) => {
     const oAuthParams = Util.getOAuthGetParameters();
@@ -524,6 +540,16 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
     );
   }
 
+  if (deviceCanceled) {
+    return (
+      <AuthLayout application={application}>
+        <Alert variant="warning">
+          <AlertDescription>{i18next.t("login:Device login was canceled")}</AlertDescription>
+        </Alert>
+      </AuthLayout>
+    );
+  }
+
   if (application.disableSignin || application.organizationObj?.disableSignin) {
     return (
       <AuthLayout application={application}>
@@ -658,8 +684,16 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
                 ? i18next.t("login:Sign in with WebAuthn")
                 : loginMethod === "faceId"
                   ? i18next.t("login:Sign in with Face ID")
-                  : i18next.t("login:Sign In")}
+                  : type === "device"
+                    ? i18next.t("login:Approve and sign in")
+                    : i18next.t("login:Sign In")}
             </Button>
+
+            {type === "device" ? (
+              <Button type="button" variant="outline" className="w-full" onClick={cancelDeviceLogin}>
+                {i18next.t("general:Cancel")}
+              </Button>
+            ) : null}
           </form>
         )}
 

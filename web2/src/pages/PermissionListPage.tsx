@@ -17,6 +17,9 @@ const stateVariant = (state: string) =>
 export default function PermissionListPage() {
   const {account} = useAccount();
   const organizationName = useRequestOrganization();
+  // a normal user may only list the permissions they submitted themselves
+  const isAdmin = Setting.isLocalAdminUser(account);
+  const isGlobal = account ? Setting.isDefaultOrganizationSelected(account) : false;
 
   const columns: ColumnDef<any>[] = [
     linkColumn({dataIndex: "name", to: (r) => `/permissions/${r.owner}/${r.name}`}),
@@ -75,10 +78,10 @@ export default function PermissionListPage() {
           onUploaded={refresh}
         />
       )}
-      deps={[organizationName]}
+      deps={[organizationName, isAdmin, isGlobal]}
       fetch={(q) =>
-        PermissionBackend.getPermissions(
-          organizationName,
+        (isAdmin ? PermissionBackend.getPermissions : PermissionBackend.getPermissionsBySubmitter)(
+          isGlobal ? "" : organizationName,
           q.page,
           q.pageSize,
           q.searchedColumn,

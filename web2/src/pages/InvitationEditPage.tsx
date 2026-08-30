@@ -1,8 +1,11 @@
+import * as React from "react";
 import i18next from "i18next";
 import {useParams} from "react-router-dom";
 import {SimpleEditPage, type EditField} from "@/components/crud/SimpleEditPage";
 import {useAccount} from "@/hooks/use-account";
 import {useApplicationOptions, useGroupOptions, useOrganizationOptions} from "@/hooks/use-options";
+import {InvitationSend} from "@/components/user/InvitationSend";
+import * as OrganizationBackend from "@/backend/OrganizationBackend";
 import * as InvitationBackend from "@/backend/InvitationBackend";
 import * as Setting from "@/lib/setting";
 
@@ -14,6 +17,20 @@ export default function InvitationEditPage() {
   const organizations = useOrganizationOptions();
   const applications = useApplicationOptions(organizationName);
   const groups = useGroupOptions(organizationName);
+  // copySignupLink needs each organization's defaultApplication, which the option
+  // list does not carry, so the raw objects are fetched alongside it
+  const [organizationObjs, setOrganizationObjs] = React.useState<any[]>([]);
+
+  React.useEffect(() => {
+    if (!Setting.isAdminUser(account)) {
+      return;
+    }
+    OrganizationBackend.getOrganizations("admin").then((res: any) => {
+      if (res.status === "ok") {
+        setOrganizationObjs(res.data ?? []);
+      }
+    });
+  }, [account]);
 
   const fields: EditField[] = [
     {
@@ -39,6 +56,15 @@ export default function InvitationEditPage() {
     {type: "text", name: "username", labelKey: "signup:Username"},
     {type: "email", name: "email", labelKey: "general:Email"},
     {type: "text", name: "phone", labelKey: "general:Phone"},
+    {
+      type: "custom",
+      name: "send",
+      labelKey: "general:Send",
+      block: true,
+      render: (ctx) => (
+        <InvitationSend invitation={ctx.record} organizations={organizationObjs} isAdd={ctx.mode === "add"} />
+      ),
+    },
     {
       type: "select",
       name: "state",

@@ -15,7 +15,7 @@ import {useEditRecord} from "@/hooks/use-edit-record";
 import {submitEdit, type CasdoorResponse, type EditMode} from "@/lib/crud";
 import * as Setting from "@/lib/setting";
 
-type Ctx = {record: any; mode: EditMode};
+type Ctx = {record: any; mode: EditMode; reload: () => void};
 
 /** patches several fields at once, for values that have to move together */
 type UpdateFields = (patch: Record<string, any>) => void;
@@ -60,7 +60,10 @@ export interface SimpleEditPageProps {
   /** where to go after "Save" (not "Save & Exit") when the name changed */
   editUrl?: (record: any) => string;
   transform?: (record: any) => any;
-  /** last chance to adjust the payload before it is sent */
+  /**
+   * Last chance to adjust the payload before it is sent. Returning `null` aborts
+   * the save, which is how a page rejects a record its own validation refuses.
+   */
   beforeSave?: (record: any) => any;
   extraActions?: (ctx: Ctx) => React.ReactNode;
   children?: (ctx: Ctx, update: (field: string, value: any) => void) => React.ReactNode;
@@ -87,16 +90,19 @@ export function SimpleEditPage({
 }: SimpleEditPageProps) {
   const navigate = useNavigate();
   const [saving, setSaving] = React.useState(false);
-  const {record, updateField, updateFields, loading, mode, setMode} = useEditRecord<any>({fetch, transform, deps});
+  const {record, updateField, updateFields, loading, mode, setMode, reload} = useEditRecord<any>({fetch, transform, deps});
 
   if (loading || record === null) {
     return <Loading />;
   }
 
-  const ctx: Ctx = {record, mode};
+  const ctx: Ctx = {record, mode, reload};
 
   const save = async(exitAfterSave: boolean) => {
     const payload = beforeSave ? beforeSave(Setting.deepCopy(record)) : Setting.deepCopy(record);
+    if (payload === null) {
+      return;
+    }
     setSaving(true);
     await submitEdit({
       mode,

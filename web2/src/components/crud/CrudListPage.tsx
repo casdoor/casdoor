@@ -35,8 +35,8 @@ export interface CrudListPageProps<T extends Record<string, any>> {
   toolbar?: React.ReactNode | ((ctx: {refresh: () => void}) => React.ReactNode);
   rowKey?: (row: T, index: number) => string;
   initialQuery?: Partial<TableQuery>;
-  /** appended to the built-in Action column */
-  rowActions?: (record: T, index: number) => React.ReactNode;
+  /** appended to the built-in Action column; `refresh` re-fetches the current page */
+  rowActions?: (record: T, index: number, ctx: {refresh: () => void}) => React.ReactNode;
   /**
    * Name of the Form that customizes this list ("users", "applications", ...).
    * When the organization saved one, it decides which columns show and in which
@@ -128,7 +128,7 @@ export function CrudListPage<T extends Record<string, any>>({
         width: actionColumnWidth,
         render: (_: any, record: T, index: number) => (
           <div className="flex flex-wrap items-center gap-1">
-            {rowActions?.(record, index)}
+            {rowActions?.(record, index, {refresh})}
             {editUrl ? (
               <Button variant="outline" size="sm" onClick={() => navigate(editUrl(record))}>
                 {i18next.t("general:Edit")}
@@ -149,7 +149,7 @@ export function CrudListPage<T extends Record<string, any>>({
       },
     ];
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [columns, formItems, editUrl, remove, rowActions, showActionColumn, rows, query.page]);
+  }, [columns, formItems, editUrl, remove, rowActions, showActionColumn, rows, query.page, refresh]);
 
   return (
     <div className="space-y-4">
