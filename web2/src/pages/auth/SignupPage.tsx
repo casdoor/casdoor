@@ -9,6 +9,7 @@ import {Label} from "@/components/ui/label";
 import {Loading} from "@/components/common/Loading";
 import {SearchableSelect} from "@/components/common/SearchableSelect";
 import {AuthLayout} from "@/components/auth/AuthLayout";
+import {AgreementCheckbox} from "@/components/auth/AgreementModal";
 import {ProviderButtons} from "@/components/auth/ProviderButtons";
 import {SendCodeInput} from "@/components/auth/SendCodeInput";
 import {CaptchaModal} from "@/components/common/CaptchaModal";
@@ -312,6 +313,12 @@ export default function SignupPage() {
         </div>
       );
     case "Agreement":
+      // the application's own terms document opens in a dialog, as in the antd page
+      if (application.termsOfUse) {
+        return (
+          <AgreementCheckbox key={item.name} application={application} checked={agreed} onChange={setAgreed} />
+        );
+      }
       return (
         <div key={item.name} className="flex items-start gap-2">
           <Checkbox id="agreement" checked={agreed} onCheckedChange={(v) => setAgreed(v === true)} />

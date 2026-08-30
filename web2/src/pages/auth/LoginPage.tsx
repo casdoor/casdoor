@@ -10,7 +10,11 @@ import {Alert, AlertDescription} from "@/components/ui/alert";
 import {Loading} from "@/components/common/Loading";
 import {AuthLayout} from "@/components/auth/AuthLayout";
 import {MfaVerify, NextMfa, RequiredMfa} from "@/components/auth/MfaVerify";
+import {AgreementCheckbox, getAgreementDefaultValue, isAgreementRequired} from "@/components/auth/AgreementModal";
+import {DeviceLoginPanel} from "@/components/auth/DeviceLoginPanel";
+import {GoogleOneTap} from "@/components/auth/GoogleOneTap";
 import {ProviderButtons} from "@/components/auth/ProviderButtons";
+import {WeChatLoginPanel} from "@/components/auth/WeChatLoginPanel";
 import {RedirectForm} from "@/components/auth/RedirectForm";
 import {SendCodeInput, type CaptchaValues} from "@/components/auth/SendCodeInput";
 import {CaptchaModal, type CaptchaHandle} from "@/components/common/CaptchaModal";
@@ -18,6 +22,7 @@ import {getCaptchaProvider} from "@/lib/captcha";
 import {useAccount} from "@/hooks/use-account";
 import {authConfig} from "@/auth/Auth";
 import * as Util from "@/auth/Util";
+import {signInWithWebAuthn} from "@/auth/webauthn";
 import * as Obfuscator from "@/auth/Obfuscator";
 import * as ApplicationBackend from "@/backend/ApplicationBackend";
 import * as AuthBackend from "@/backend/AuthBackend";
@@ -25,7 +30,7 @@ import * as OrganizationBackend from "@/backend/OrganizationBackend";
 import * as Setting from "@/lib/setting";
 
 type LoginType = "login" | "code" | "cas" | "saml" | "device";
-type LoginMethod = "password" | "verificationCode" | "verificationCodeEmail" | "verificationCodePhone" | "ldap";
+type LoginMethod = "password" | "verificationCode" | "verificationCodeEmail" | "verificationCodePhone" | "ldap" | "webAuthn" | "wechat";
 
 function getDefaultLoginMethod(application: any): LoginMethod {
   const first = application?.signinMethods?.[0];
@@ -44,6 +49,8 @@ function getDefaultLoginMethod(application: any): LoginMethod {
     break;
   case "LDAP":
     return "ldap";
+  case "WebAuthn":
+    return "webAuthn";
   }
   return "password";
 }
@@ -57,6 +64,9 @@ function getSigninMethodName(method: LoginMethod) {
   }
   if (method === "ldap") {
     return "LDAP";
+  }
+  if (method === "webAuthn") {
+    return "WebAuthn";
   }
   return "Password";
 }
@@ -78,6 +88,7 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
   const [mfa, setMfa] = React.useState<{props: any; values: any; authParams: any} | null>(null);
   const [captchaVisible, setCaptchaVisible] = React.useState(false);
   const [pendingValues, setPendingValues] = React.useState<any>(null);
+  const [agreed, setAgreed] = React.useState(false);
   const [captchaValues, setCaptchaValues] = React.useState<CaptchaValues | undefined>(undefined);
   const captchaRef = React.useRef<CaptchaHandle | null>(null);
   const [saml, setSaml] = React.useState<{response: string; redirectUrl: string; relayState: string} | null>(null);
@@ -93,6 +104,7 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
       }
       setApplication(app);
       setLoginMethod(getDefaultLoginMethod(app));
+      setAgreed(getAgreementDefaultValue(app));
     };
 
     if (type === "code" || type === "cas" || type === "device") {
@@ -291,7 +303,7 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
       }
       values.password = cipher;
       values.loginMethod = loginMethod;
-    } else {
+    } else if (loginMethod !== "webAuthn") {
       values.code = code;
       values.username = username;
       values.password = "";
@@ -364,10 +376,50 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
       });
   };
 
+  /** another signed-in device approved the device code, finish the OAuth flow here */
+  const completeDeviceLogin = (deviceCode: string) => {
+    const oAuthParams = Util.getOAuthGetParameters();
+    AuthBackend.completeDeviceLogin(deviceCode, oAuthParams)
+      .then((res: any) => {
+        if (res.status === "ok") {
+          handleLoginResult(res, {type: oAuthParams?.responseType ?? "login"}, oAuthParams);
+        } else {
+          Setting.showMessage("error", `${i18next.t("application:Failed to sign in")}: ${res.msg}`);
+        }
+      })
+      .catch((err: any) => Setting.showMessage("error", err.message));
+  };
+
+  const doWebAuthnLogin = (values: any) => {
+    const oAuthParams = Util.getOAuthGetParameters();
+    setLoading(true);
+    signInWithWebAuthn(application, username, values, oAuthParams)
+      .then((res: any) => {
+        if (res?.status === "ok") {
+          handleLoginResult(res, values, oAuthParams);
+        } else {
+          Setting.showMessage("error", res?.msg);
+        }
+      })
+      .catch((error: any) => {
+        Setting.showMessage("error", error.message);
+      })
+      .finally(() => setLoading(false));
+  };
+
   const submit = (e?: React.FormEvent) => {
     e?.preventDefault();
+    if (isAgreementRequired(application) && !agreed) {
+      Setting.showMessage("error", i18next.t("signup:Please accept the agreement!"));
+      return;
+    }
     const values = buildValues();
     if (values === null) {
+      return;
+    }
+
+    if (loginMethod === "webAuthn") {
+      doWebAuthnLogin(values);
       return;
     }
 
@@ -458,8 +510,19 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
   const passwordEnabled = Setting.isPasswordEnabled(application);
   const codeEnabled = Setting.isCodeSigninEnabled(application);
   const ldapEnabled = Setting.isLdapEnabled(application);
-  const showTabs = [passwordEnabled, codeEnabled, ldapEnabled].filter(Boolean).length > 1;
+  const webAuthnEnabled = Setting.isWebAuthnEnabled(application);
+  const wechatEnabled = (application.providers ?? []).some(
+    (item: any) => item.provider?.type === "WeChat" && Setting.isProviderVisibleForSignIn(item),
+  );
+  const tabs = [passwordEnabled, codeEnabled, ldapEnabled, webAuthnEnabled, wechatEnabled].filter(Boolean).length;
+  const showTabs = tabs > 1;
   const isCodeMethod = (loginMethod ?? "").startsWith("verificationCode");
+  // the QR panels replace the credential form entirely
+  const isPanelMethod = loginMethod === "wechat";
+  // device login is offered next to the form when the application asks for it
+  const deviceLoginOnLoginPage = type !== "device" && (application.signinMethods ?? []).some(
+    (item: any) => item.name === "Device login" && item.rule === "Login page",
+  );
 
   return (
     <AuthLayout application={application}>
@@ -470,91 +533,105 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
 
         {showTabs ? (
           <Tabs value={loginMethod} onValueChange={(v) => setLoginMethod(v as LoginMethod)}>
-            <TabsList className="grid w-full" style={{gridTemplateColumns: `repeat(${[passwordEnabled, codeEnabled, ldapEnabled].filter(Boolean).length}, minmax(0, 1fr))`}}>
+            <TabsList className="grid w-full" style={{gridTemplateColumns: `repeat(${tabs}, minmax(0, 1fr))`}}>
               {passwordEnabled ? <TabsTrigger value="password">{i18next.t("general:Password")}</TabsTrigger> : null}
               {codeEnabled ? (
                 <TabsTrigger value="verificationCode">{i18next.t("login:Verification code")}</TabsTrigger>
               ) : null}
               {ldapEnabled ? <TabsTrigger value="ldap">LDAP</TabsTrigger> : null}
+              {webAuthnEnabled ? <TabsTrigger value="webAuthn">WebAuthn</TabsTrigger> : null}
+              {wechatEnabled ? <TabsTrigger value="wechat">{i18next.t("login:WeChat")}</TabsTrigger> : null}
             </TabsList>
           </Tabs>
         ) : null}
 
-        <form className="space-y-4" onSubmit={submit}>
-          <div className="space-y-2">
-            <Label htmlFor="username">
-              {isCodeMethod ? i18next.t("login:Email or phone") : i18next.t("signup:Username")}
-            </Label>
-            <Input
-              id="username"
-              autoFocus
-              autoComplete="username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-            />
-          </div>
-
-          {isCodeMethod ? (
+        {isPanelMethod ? <WeChatLoginPanel application={application} /> : (
+          <form className="space-y-4" onSubmit={submit}>
             <div className="space-y-2">
-              <Label>{i18next.t("login:Verification code")}</Label>
-              <SendCodeInput
-                value={code}
-                onChange={setCode}
-                method="login"
-                destType={username.includes("@") ? "email" : "phone"}
-                dest={username}
-                application={application}
-                applicationId={Setting.getApplicationName(application)}
-                useInlineCaptcha={Setting.isInlineCaptchaEnabled(application)}
-                captchaValue={captchaValues}
-                refreshCaptcha={refreshInlineCaptcha}
-              />
-            </div>
-          ) : (
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="password">{i18next.t("general:Password")}</Label>
-                <Link
-                  to={`/forget/${application.name}`}
-                  className="text-xs text-muted-foreground underline-offset-4 hover:underline"
-                >
-                  {i18next.t("login:Forgot password?")}
-                </Link>
-              </div>
+              <Label htmlFor="username">
+                {isCodeMethod ? i18next.t("login:Email or phone") : i18next.t("signup:Username")}
+              </Label>
               <Input
-                id="password"
-                type="password"
-                autoComplete="current-password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                id="username"
+                autoFocus
+                autoComplete="username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
               />
             </div>
-          )}
 
-          {captchaProvider && Setting.isInlineCaptchaEnabled(application) ? (
-            <CaptchaModal
-              noModal
-              owner={captchaProvider.owner}
-              name={captchaProvider.name}
-              isCurrentProvider
-              innerRef={captchaRef}
-              onUpdateToken={(captchaType, captchaToken, clientSecret) =>
-                setCaptchaValues({captchaType, captchaToken, clientSecret})
-              }
-            />
-          ) : null}
+            {isCodeMethod ? (
+              <div className="space-y-2">
+                <Label>{i18next.t("login:Verification code")}</Label>
+                <SendCodeInput
+                  value={code}
+                  onChange={setCode}
+                  method="login"
+                  destType={username.includes("@") ? "email" : "phone"}
+                  dest={username}
+                  application={application}
+                  applicationId={Setting.getApplicationName(application)}
+                  useInlineCaptcha={Setting.isInlineCaptchaEnabled(application)}
+                  captchaValue={captchaValues}
+                  refreshCaptcha={refreshInlineCaptcha}
+                />
+              </div>
+            ) : loginMethod === "webAuthn" ? null : (
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="password">{i18next.t("general:Password")}</Label>
+                  <Link
+                    to={`/forget/${application.name}`}
+                    className="text-xs text-muted-foreground underline-offset-4 hover:underline"
+                  >
+                    {i18next.t("login:Forgot password?")}
+                  </Link>
+                </div>
+                <Input
+                  id="password"
+                  type="password"
+                  autoComplete="current-password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </div>
+            )}
 
-          <div className="flex items-center gap-2">
-            <Checkbox id="autoSignin" checked={autoSignin} onCheckedChange={(v) => setAutoSignin(v === true)} />
-            <Label htmlFor="autoSignin" className="text-sm font-normal">
-              {i18next.t("login:Auto sign in")}
-            </Label>
+            {captchaProvider && Setting.isInlineCaptchaEnabled(application) ? (
+              <CaptchaModal
+                noModal
+                owner={captchaProvider.owner}
+                name={captchaProvider.name}
+                isCurrentProvider
+                innerRef={captchaRef}
+                onUpdateToken={(captchaType, captchaToken, clientSecret) =>
+                  setCaptchaValues({captchaType, captchaToken, clientSecret})
+                }
+              />
+            ) : null}
+
+            <div className="flex items-center gap-2">
+              <Checkbox id="autoSignin" checked={autoSignin} onCheckedChange={(v) => setAutoSignin(v === true)} />
+              <Label htmlFor="autoSignin" className="text-sm font-normal">
+                {i18next.t("login:Auto sign in")}
+              </Label>
+            </div>
+
+            {application.termsOfUse ? (
+              <AgreementCheckbox application={application} checked={agreed} onChange={setAgreed} />
+            ) : null}
+
+            <Button type="submit" className="w-full" loading={loading}>
+              {loginMethod === "webAuthn" ? i18next.t("login:Sign in with WebAuthn") : i18next.t("login:Sign In")}
+            </Button>
+          </form>
+        )}
+
+        {deviceLoginOnLoginPage ? (
+          <div className="border-t pt-4">
+            <DeviceLoginPanel application={application} onSuccess={completeDeviceLogin} />
           </div>
-
-          <Button type="submit" className="w-full" loading={loading}>
-            {i18next.t("login:Sign In")}
-          </Button>
-        </form>
+        ) : null}
 
         {application.enableSignUp ? (
           <p className="text-center text-sm text-muted-foreground">
@@ -566,6 +643,8 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
         ) : null}
 
         <ProviderButtons application={application} method="signin" />
+
+        <GoogleOneTap application={application} />
 
         {captchaProvider && !Setting.isInlineCaptchaEnabled(application) ? (
           <CaptchaModal
