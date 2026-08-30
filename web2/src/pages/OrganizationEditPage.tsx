@@ -137,7 +137,7 @@ export default function OrganizationEditPage() {
     >
       <Tabs defaultValue="basic">
         <TabsList className="mb-2 flex-wrap">
-          <TabsTrigger value="basic">{i18next.t("general:Basic info")}</TabsTrigger>
+          <TabsTrigger value="basic">{i18next.t("application:Basic")}</TabsTrigger>
           <TabsTrigger value="password">{i18next.t("general:Password type")}</TabsTrigger>
           <TabsTrigger value="account">{i18next.t("organization:Account items")}</TabsTrigger>
           <TabsTrigger value="advanced">{i18next.t("provider:Advanced")}</TabsTrigger>
@@ -431,7 +431,7 @@ export default function OrganizationEditPage() {
           <FormRow labelKey="organization:Is profile public">
             <Switch checked={!!organization.isProfilePublic} onCheckedChange={(v) => update("isProfilePublic", v)} />
           </FormRow>
-          <FormRow labelKey="organization:Use email as username">
+          <FormRow labelKey="organization:Use Email as username">
             <Switch
               checked={!!organization.useEmailAsUsername}
               onCheckedChange={(v) => update("useEmailAsUsername", v)}

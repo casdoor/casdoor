@@ -44,8 +44,8 @@ export default function GroupEditPage() {
           .map((option) => ({...option, value: option.value.split("/")[1]})),
       ],
     },
-    {type: "text", name: "contactEmail", labelKey: "group:Contact email"},
-    {type: "number", name: "gidNumber", labelKey: "group:GID number"},
+    {type: "text", name: "contactEmail", labelKey: "general:Email"},
+    {type: "number", name: "gidNumber", labelKey: "general:GID number"},
     {
       type: "custom",
       name: "properties",

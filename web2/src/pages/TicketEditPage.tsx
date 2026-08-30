@@ -26,7 +26,7 @@ export default function TicketEditPage() {
     {type: "text", name: "displayName", labelKey: "general:Display name"},
     {type: "select", name: "user", labelKey: "general:User", options: () => users},
     {type: "text", name: "title", labelKey: "general:Title"},
-    {type: "textarea", name: "content", labelKey: "ticket:Content", rows: 8},
+    {type: "textarea", name: "content", labelKey: "provider:Content", rows: 8},
     {
       type: "select",
       name: "state",

@@ -161,7 +161,7 @@ export default function ApplicationEditPage() {
     >
       <Tabs defaultValue="basic">
         <TabsList className="mb-2 flex-wrap">
-          <TabsTrigger value="basic">{i18next.t("general:Basic info")}</TabsTrigger>
+          <TabsTrigger value="basic">{i18next.t("application:Basic")}</TabsTrigger>
           <TabsTrigger value="signin">{i18next.t("application:Signin methods")}</TabsTrigger>
           <TabsTrigger value="signup">{i18next.t("application:Signup items")}</TabsTrigger>
           <TabsTrigger value="providers">{i18next.t("application:Providers")}</TabsTrigger>
@@ -216,10 +216,10 @@ export default function ApplicationEditPage() {
           <FormRow labelKey="general:Favicon">
             <Input value={application.favicon ?? ""} onChange={(e) => updateField("favicon", e.target.value)} />
           </FormRow>
-          <FormRow labelKey="application:Home">
+          <FormRow labelKey="general:Home">
             <Input value={application.homepageUrl ?? ""} onChange={(e) => updateField("homepageUrl", e.target.value)} />
           </FormRow>
-          <FormRow labelKey="general:Tags">
+          <FormRow labelKey="organization:Tags">
             <TagsInput value={application.tags ?? []} onChange={(v) => updateField("tags", v)} />
           </FormRow>
           <FormRow labelKey="application:Order">
@@ -231,7 +231,7 @@ export default function ApplicationEditPage() {
               onChange={(e) => updateField("order", Setting.myParseInt(e.target.value))}
             />
           </FormRow>
-          <FormRow labelKey="application:Is shared">
+          <FormRow labelKey="general:Is shared">
             <Switch checked={!!application.isShared} onCheckedChange={(v) => updateField("isShared", v)} />
           </FormRow>
           <FormRow labelKey="application:Disable signin">
@@ -343,19 +343,13 @@ export default function ApplicationEditPage() {
               ]}
             />
           </FormRow>
-          <FormRow labelKey="application:Enable code signin">
-            <Switch
-              checked={!!application.enableCodeSignin}
-              onCheckedChange={(v) => updateField("enableCodeSignin", v)}
-            />
-          </FormRow>
-          <FormRow labelKey="application:Enable signin session">
+          <FormRow labelKey="application:Signin session">
             <Switch
               checked={!!application.enableSigninSession}
               onCheckedChange={(v) => updateField("enableSigninSession", v)}
             />
           </FormRow>
-          <FormRow labelKey="application:Enable auto signin">
+          <FormRow labelKey="application:Auto signin">
             <Switch
               checked={!!application.enableAutoSignin}
               onCheckedChange={(v) => updateField("enableAutoSignin", v)}
@@ -375,16 +369,16 @@ export default function ApplicationEditPage() {
               onChange={(e) => updateField("failedSigninFrozenTime", Setting.myParseInt(e.target.value))}
             />
           </FormRow>
-          <FormRow labelKey="application:Signin URL">
+          <FormRow labelKey="general:Signin URL">
             <Input value={application.signinUrl ?? ""} onChange={(e) => updateField("signinUrl", e.target.value)} />
           </FormRow>
-          <FormRow labelKey="application:Signup URL">
+          <FormRow labelKey="general:Signup URL">
             <Input value={application.signupUrl ?? ""} onChange={(e) => updateField("signupUrl", e.target.value)} />
           </FormRow>
-          <FormRow labelKey="application:Forget URL">
+          <FormRow labelKey="general:Forget URL">
             <Input value={application.forgetUrl ?? ""} onChange={(e) => updateField("forgetUrl", e.target.value)} />
           </FormRow>
-          <FormRow labelKey="application:Affiliation URL">
+          <FormRow labelKey="general:Affiliation URL">
             <Input
               value={application.affiliationUrl ?? ""}
               onChange={(e) => updateField("affiliationUrl", e.target.value)}
@@ -553,16 +547,16 @@ export default function ApplicationEditPage() {
               ]}
             />
           </FormRow>
-          <FormRow labelKey="application:Terms of Use">
+          <FormRow labelKey="signup:Terms of Use">
             <Input value={application.termsOfUse ?? ""} onChange={(e) => updateField("termsOfUse", e.target.value)} />
           </FormRow>
-          <FormRow labelKey="application:Default group">
+          <FormRow labelKey="ldap:Default group">
             <Input value={application.defaultGroup ?? ""} onChange={(e) => updateField("defaultGroup", e.target.value)} />
           </FormRow>
           <FormRow labelKey="application:Default tag">
             <Input value={application.defaultTag ?? ""} onChange={(e) => updateField("defaultTag", e.target.value)} />
           </FormRow>
-          <FormRow labelKey="application:Enable link with email">
+          <FormRow labelKey="application:Enable Email linking">
             <Switch
               checked={!!application.enableLinkWithEmail}
               onCheckedChange={(v) => updateField("enableLinkWithEmail", v)}
@@ -705,7 +699,7 @@ export default function ApplicationEditPage() {
               onChange={(e) => updateField("cookieExpireInHours", Setting.myParseInt(e.target.value))}
             />
           </FormRow>
-          <FormRow labelKey="application:Scopes">
+          <FormRow labelKey="general:Scopes">
             <TagsInput value={application.scopes ?? []} onChange={(v) => updateField("scopes", v)} />
           </FormRow>
           <FormRow labelKey="application:Client cert">
@@ -721,7 +715,7 @@ export default function ApplicationEditPage() {
               onChange={(e) => updateField("forcedRedirectOrigin", e.target.value)}
             />
           </FormRow>
-          <FormRow labelKey="application:Backchannel logout URI">
+          <FormRow labelKey="application:Backchannel logout URL">
             <Input
               value={application.backchannelLogoutUri ?? ""}
               onChange={(e) => updateField("backchannelLogoutUri", e.target.value)}
@@ -811,7 +805,7 @@ export default function ApplicationEditPage() {
           <FormRow labelKey="application:SAML reply URL">
             <Input value={application.samlReplyUrl ?? ""} onChange={(e) => updateField("samlReplyUrl", e.target.value)} />
           </FormRow>
-          <FormRow labelKey="application:Enable SAML compress">
+          <FormRow labelKey="application:Enable SAML compression">
             <Switch
               checked={!!application.enableSamlCompress}
               onCheckedChange={(v) => updateField("enableSamlCompress", v)}
@@ -863,7 +857,7 @@ export default function ApplicationEditPage() {
               onCheckedChange={(v) => updateField("disableSamlAttributes", v)}
             />
           </FormRow>
-          <FormRow labelKey="application:SAML attributes" block>
+          <FormRow labelKey="general:SAML attributes" block>
             <EditableTable
               rows={application.samlAttributes ?? []}
               onChange={(rows) => updateField("samlAttributes", rows)}
@@ -899,14 +893,14 @@ export default function ApplicationEditPage() {
         </TabsContent>
 
         <TabsContent value="appearance">
-          <FormRow labelKey="application:Form CSS" block>
+          <FormRow labelKey="application:Custom CSS" block>
             <CodeEditor
               language="css"
               value={application.formCss ?? ""}
               onChange={(v) => updateField("formCss", v)}
             />
           </FormRow>
-          <FormRow labelKey="application:Form CSS Mobile" block>
+          <FormRow labelKey="application:Custom CSS Mobile" block>
             <CodeEditor
               language="css"
               value={application.formCssMobile ?? ""}

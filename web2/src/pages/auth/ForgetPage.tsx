@@ -104,7 +104,7 @@ export default function ForgetPage() {
     UserBackend.setPassword(application.organization, username, "", password, code)
       .then((res: any) => {
         if (res.status === "ok") {
-          Setting.showMessage("success", i18next.t("forget:Reset password successfully"));
+          Setting.showMessage("success", i18next.t("user:Password set successfully"));
           navigate(`/login/${application.organization}`);
         } else {
           Setting.showMessage("error", res.msg);
@@ -121,7 +121,7 @@ export default function ForgetPage() {
         {step === "account" ? (
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="account">{i18next.t("forget:Account")}</Label>
+              <Label htmlFor="account">{i18next.t("cert:Account")}</Label>
               <Input
                 id="account"
                 autoFocus

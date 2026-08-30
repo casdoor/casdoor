@@ -41,7 +41,7 @@ export default function ProductEditPage() {
         </div>
       ),
     },
-    {type: "text", name: "detail", labelKey: "product:Detail"},
+    {type: "text", name: "detail", labelKey: "general:Detail"},
     {type: "text", name: "description", labelKey: "general:Description"},
     {type: "text", name: "tag", labelKey: "general:Tag"},
     {
@@ -57,7 +57,7 @@ export default function ProductEditPage() {
     {
       type: "switch",
       name: "disableCustomRecharge",
-      labelKey: "product:Disable custom recharge",
+      labelKey: "product:Disable custom amount",
       when: (ctx) => !!ctx.record.isRecharge,
     },
     {

@@ -48,7 +48,7 @@ export default function KeyEditPage() {
       options: () => users,
     },
     {type: "text", name: "accessKey", labelKey: "general:Access key", disabled: () => true},
-    {type: "text", name: "accessSecret", labelKey: "general:Access secret", disabled: () => true},
+    {type: "text", name: "accessSecret", labelKey: "cert:Access secret", disabled: () => true},
     {type: "text", name: "expireTime", labelKey: "general:Expire time"},
     {
       type: "select",

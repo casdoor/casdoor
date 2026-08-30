@@ -46,7 +46,7 @@ export default function GroupListPage() {
       toolbar={({refresh}) => (
         <>
           <Button variant="outline" asChild>
-            <Link to={`/trees/${organizationName}`}>{i18next.t("group:Tree")}</Link>
+            <Link to={`/trees/${organizationName}`}>{i18next.t("general:Groups")}</Link>
           </Button>
           <XlsxImport
             columns={Setting.getGroupColumns()}

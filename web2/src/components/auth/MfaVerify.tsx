@@ -117,7 +117,7 @@ export function MfaVerify({formValues, authParams, mfaProps, application, onSucc
       <div className="flex items-center gap-2">
         <Checkbox id="mfa-remember" checked={remember} onCheckedChange={(v) => setRemember(v === true)} />
         <Label htmlFor="mfa-remember" className="text-sm font-normal">
-          {i18next.t("mfa:Remember this account for")}
+          {i18next.t("mfa:Remember this account for {hour} hours").replace("{hour}", mfaProps?.mfaRememberInHours)}
         </Label>
       </div>
 

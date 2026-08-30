@@ -57,7 +57,7 @@ export default function CouponEditPage() {
       options: () => users,
     },
     {type: "number", name: "quantity", labelKey: "product:Quantity"},
-    {type: "number", name: "usedCount", labelKey: "coupon:Used count", disabled: () => true},
+    {type: "number", name: "usedCount", labelKey: "invitation:Used count", disabled: () => true},
     {type: "number", name: "maxUsagePerUser", labelKey: "coupon:Max usage per user"},
     {type: "number", name: "minOrderAmount", labelKey: "coupon:Min order amount", step: "0.01"},
     {

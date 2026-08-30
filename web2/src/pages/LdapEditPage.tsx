@@ -110,10 +110,10 @@ export default function LdapEditPage() {
       <FormRow labelKey="ldap:Server name">
         <Input value={ldap.serverName ?? ""} onChange={(e) => update("serverName", e.target.value)} />
       </FormRow>
-      <FormRow labelKey="ldap:Server Host">
+      <FormRow labelKey="ldap:Server host">
         <Input value={ldap.host ?? ""} onChange={(e) => update("host", e.target.value)} />
       </FormRow>
-      <FormRow labelKey="ldap:Server Port">
+      <FormRow labelKey="ldap:Server port">
         <Input
           type="number"
           value={ldap.port ?? 389}
@@ -140,13 +140,13 @@ export default function LdapEditPage() {
       <FormRow labelKey="ldap:Filter fields">
         <TagsInput value={ldap.filterFields ?? []} onChange={(v) => update("filterFields", v)} />
       </FormRow>
-      <FormRow labelKey="ldap:Admin">
+      <FormRow labelKey="general:Admin">
         <Input value={ldap.username ?? ""} onChange={(e) => update("username", e.target.value)} />
       </FormRow>
       <FormRow labelKey="ldap:Admin Password">
         <Input type="password" value={ldap.password ?? ""} onChange={(e) => update("password", e.target.value)} />
       </FormRow>
-      <FormRow labelKey="ldap:Password type">
+      <FormRow labelKey="general:Password type">
         <SelectField
           value={ldap.passwordType ?? "Plain"}
           onChange={(v) => update("passwordType", v)}
@@ -191,7 +191,7 @@ export default function LdapEditPage() {
           ]}
         />
       </FormRow>
-      <FormRow labelKey="ldap:Default groups">
+      <FormRow labelKey="ldap:Default group">
         <TagsInput value={ldap.defaultGroups ?? []} onChange={(v) => update("defaultGroups", v)} />
       </FormRow>
     </EditPageShell>

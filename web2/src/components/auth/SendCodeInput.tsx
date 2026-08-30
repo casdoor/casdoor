@@ -92,7 +92,7 @@ export function SendCodeInput({
     )
       .then((res: any) => {
         if (res.status === "ok") {
-          Setting.showMessage("success", i18next.t("code:Code Sent"));  // falls back to "Code Sent" when untranslated
+          Setting.showMessage("success", i18next.t("user:Verification code sent"));  // falls back to "Code Sent" when untranslated
           setSeconds(resendTimeout);
         } else {
           Setting.showMessage("error", res.msg);

@@ -212,9 +212,9 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
     >
       <Tabs defaultValue="account">
         <TabsList className="mb-2 flex-wrap">
-          <TabsTrigger value="account">{i18next.t("user:Account")}</TabsTrigger>
+          <TabsTrigger value="account">{i18next.t("cert:Account")}</TabsTrigger>
           <TabsTrigger value="profile">{i18next.t("user:User Profile")}</TabsTrigger>
-          <TabsTrigger value="security">{i18next.t("user:Security")}</TabsTrigger>
+          <TabsTrigger value="security">{i18next.t("application:Security")}</TabsTrigger>
           <TabsTrigger value="authorization">{i18next.t("general:Authorization")}</TabsTrigger>
         </TabsList>
 
@@ -425,7 +425,7 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
               }
             />
           </FormRow>
-          <FormRow labelKey="user:Title">
+          <FormRow labelKey="general:Title">
             <Input value={user.title ?? ""} onChange={(e) => updateField("title", e.target.value)} />
           </FormRow>
           <FormRow labelKey="user:Homepage">
@@ -505,7 +505,7 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
               onChange={(e) => updateField("score", Setting.myParseInt(e.target.value))}
             />
           </FormRow>
-          <FormRow labelKey="user:UID number">
+          <FormRow labelKey="general:UID number">
             <Input value={user.uidNumber ?? ""} onChange={(e) => updateField("uidNumber", e.target.value)} />
           </FormRow>
           <FormRow labelKey="user:Ranking">
@@ -749,7 +749,7 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
                 columns={[
                   {
                     key: "accountName",
-                    title: i18next.t("user:MFA account name"),
+                    title: i18next.t("cert:Account"),
                     width: 180,
                     render: (row: any, _i, patch) => (
                       <Input value={row.accountName ?? ""} onChange={(e) => patch({accountName: e.target.value})} />
@@ -757,7 +757,7 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
                   },
                   {
                     key: "issuer",
-                    title: i18next.t("user:MFA account issuer"),
+                    title: "Issuer",
                     width: 180,
                     render: (row: any, _i, patch) => (
                       <Input value={row.issuer ?? ""} onChange={(e) => patch({issuer: e.target.value})} />
@@ -773,7 +773,7 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
                   },
                   {
                     key: "secretKey",
-                    title: i18next.t("user:MFA account secret key"),
+                    title: i18next.t("provider:Secret key"),
                     render: (row: any, _i, patch) => (
                       <Input
                         type="password"
