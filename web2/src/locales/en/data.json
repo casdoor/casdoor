@@ -368,6 +368,7 @@
     "Edit Form": "Edit Form",
     "Form items": "Form items",
     "Form items - Tooltip": "Form items",
+    "New Form": "New Form",
     "Width": "Width"
   },
   "general": {
@@ -788,6 +789,7 @@
     "Edit LDAP": "Edit LDAP",
     "Enable SSL": "Enable SSL",
     "Enable SSL - Tooltip": "Whether to enable SSL",
+    "Enable groups": "Enable groups",
     "Filter fields": "Filter fields",
     "Filter fields - Tooltip": "Fields used to search for LDAP users when logging into Casdoor with LDAP credentials",
     "Group ID": "Group ID",
@@ -853,6 +855,7 @@
     "Please input your password!": "Please input your password!",
     "Please input your push notification receiver!": "Please input your push notification receiver!",
     "Please load the webpage using HTTPS, otherwise the camera cannot be accessed": "Please load the webpage using HTTPS, otherwise the camera cannot be accessed",
+    "Please open the login page in an external browser to sign in with WeChat, or ask the administrator to configure a WeChat Official Account": "Please open the login page in an external browser to sign in with WeChat, or ask the administrator to configure a WeChat Official Account",
     "Please provide permission to access the camera": "Please provide permission to access the camera",
     "Please select an organization": "Please select an organization",
     "Please select an organization to sign in": "Please select an organization to sign in",
@@ -991,6 +994,7 @@
     "Soft deletion": "Soft deletion",
     "Soft deletion - Tooltip": "When enabled, deleting users will not completely remove them from the database. Instead, they will be marked as deleted",
     "Tags": "Tags",
+    "Token retention days": "Token retention days",
     "Use Email as username": "Use Email as username",
     "Use Email as username - Tooltip": "Use Email as username if the username field is not visible at signup",
     "Use permanent avatar": "Use permanent avatar",
@@ -1169,6 +1173,7 @@
     "WeChat Pay": "WeChat Pay"
   },
   "provider": {
+    "Advanced": "Advanced",
     "Agent ID": "Agent ID",
     "Agent ID - Tooltip": "Unique identifier for the agent, used to distinguish different agent entities",
     "Api Key": "Api Key",
@@ -1616,6 +1621,7 @@
     "New Token": "New Token",
     "Parsed result": "Parsed result",
     "Parsed result - Tooltip": "JWT parsing result of the access token",
+    "Refresh token": "Refresh token",
     "Token type": "Token type",
     "Token type - Tooltip": "Type of the token"
   },
@@ -1650,6 +1656,7 @@
     "Country code - Tooltip": "Phone country code",
     "Country/Region": "Country/Region",
     "Country/Region - Tooltip": "Country or region",
+    "Deleted time": "Deleted time",
     "Edit User": "Edit User",
     "Education": "Education",
     "Education - Tooltip": "Educational background",
@@ -1689,6 +1696,8 @@
     "Language": "Language",
     "Language - Tooltip": "Language setting used for system interface or content display",
     "Last change password time": "Last change password time",
+    "Last signin IP": "Last signin IP",
+    "Last signin time": "Last signin time",
     "Line 1": "Line 1",
     "Line 2": "Line 2",
     "Link": "Link",

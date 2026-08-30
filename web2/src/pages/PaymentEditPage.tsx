@@ -29,8 +29,8 @@ export default function PaymentEditPage() {
     {type: "select", name: "provider", labelKey: "general:Provider", options: () => providers},
     {type: "text", name: "type", labelKey: "general:Type"},
     {type: "select", name: "user", labelKey: "general:User", options: () => users},
-    {type: "text", name: "productsDisplayName", labelKey: "payment:Products display name"},
-    {type: "text", name: "detail", labelKey: "payment:Detail"},
+    {type: "text", name: "productsDisplayName", labelKey: "general:Products"},
+    {type: "text", name: "detail", labelKey: "general:Detail"},
     {type: "text", name: "tag", labelKey: "general:Tag"},
     {
       type: "select",
@@ -39,7 +39,7 @@ export default function PaymentEditPage() {
       options: () => (Setting.CurrencyOptions as any[]).map((item) => ({value: item.id, label: item.name})),
     },
     {type: "number", name: "price", labelKey: "order:Price", step: "0.01"},
-    {type: "text", name: "payUrl", labelKey: "payment:Pay url"},
+    {type: "text", name: "payUrl", labelKey: "general:URL"},
     {type: "text", name: "invoiceUrl", labelKey: "payment:Invoice URL", disabled: () => true},
     {
       type: "select",

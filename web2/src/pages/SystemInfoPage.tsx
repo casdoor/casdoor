@@ -147,7 +147,7 @@ export default function SystemInfoPage() {
           </CardHeader>
           <CardContent className="space-y-3">
             {cpuUsage.length === 0 ? (
-              <p className="text-sm text-muted-foreground">{i18next.t("system:Failed to get CPU usage")}</p>
+              <p className="text-sm text-muted-foreground">{i18next.t("general:Failed to get")}</p>
             ) : (
               cpuUsage.map((usage, index) => <Usage key={index} label={`CPU ${index + 1}`} value={usage} />)
             )}
@@ -241,7 +241,7 @@ export default function SystemInfoPage() {
             </div>
           </div>
           <div>
-            <div className="text-sm text-muted-foreground">{i18next.t("system:Total")}</div>
+            <div className="text-sm text-muted-foreground">{i18next.t("system:Total Throughput")}</div>
             <div className="text-xl font-semibold tabular-nums">
               {Setting.getFriendlyFileSize(systemInfo.networkTotal)}
             </div>

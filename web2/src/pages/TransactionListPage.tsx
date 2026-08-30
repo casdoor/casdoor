@@ -36,7 +36,7 @@ export default function TransactionListPage() {
     },
     {
       dataIndex: "amount",
-      title: i18next.t("transaction:Amount"),
+      title: i18next.t("product:Amount"),
       width: 130,
       sortable: true,
       render: (value, record) => Setting.getPriceDisplay(value, record.currency),

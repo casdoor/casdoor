@@ -217,7 +217,7 @@ export default function SignupPage() {
     case "Confirm password":
       return (
         <div key={item.name} className="space-y-2">
-          <Label htmlFor="confirm">{i18next.t("signup:Confirm")}</Label>
+          <Label htmlFor="confirm">{i18next.t("general:Confirm")}</Label>
           <Input
             id="confirm"
             type="password"

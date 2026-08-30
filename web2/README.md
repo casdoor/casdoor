@@ -43,7 +43,7 @@ instead, either point that path at `web2/build` or copy `web2/build` over
 | `src/backend/*.js` | `src/backend/*.ts` — same functions, same endpoints, `any`-typed params |
 | `src/Setting.js` | `src/lib/setting.tsx` — the pure logic is ported verbatim; antd renderers replaced |
 | `src/auth/Util.js`, `Provider.js`, `Obfuscator.js` | `src/auth/*.ts` — ported verbatim (PKCE, OAuth/CAS/SAML query handling) |
-| `src/locales/**` | copied unchanged — same keys, same 11 bundled languages |
+| `src/locales/**` | copied from `web`, same 11 bundled languages, plus 9 strings for rows `web` does not render |
 | `BaseListPage` | `components/crud/CrudListPage` + `hooks/use-table-data` |
 | antd `<Table>` | `components/crud/DataTable` (server-side paging, per-column search, sort) |
 | `<Row><Col>` label rows | `components/crud/FormRow` |
@@ -120,10 +120,6 @@ are byte-compatible with the antd frontend.
 
 ## Still to do
 
-- **i18n**: about 67 keys used by the pages here are missing from
-  `src/locales/*/data.json`, so those labels render as the raw key. Most are a
-  wrong namespace (`application:Client ID` where the string lives under
-  `provider:`), a few are genuinely new strings.
 - **Deployment**: the Go backend still serves `web/build`
   (`routers/static_filter.go` returns it before it ever looks at
   `frontendBaseDir`), `public/` has none of the standalone scripts

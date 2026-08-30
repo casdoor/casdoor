@@ -28,11 +28,11 @@ export default function TransactionEditPage() {
     {type: "text", name: "domain", labelKey: "provider:Domain"},
     {type: "text", name: "category", labelKey: "general:Category"},
     {type: "text", name: "type", labelKey: "general:Type"},
-    {type: "text", name: "subtype", labelKey: "transaction:Subtype"},
+    {type: "text", name: "subtype", labelKey: "provider:Subtype"},
     {type: "text", name: "provider", labelKey: "general:Provider"},
     {type: "select", name: "user", labelKey: "general:User", options: () => users},
     {type: "text", name: "tag", labelKey: "general:Tag"},
-    {type: "number", name: "amount", labelKey: "transaction:Amount", step: "0.01"},
+    {type: "number", name: "amount", labelKey: "product:Amount", step: "0.01"},
     {
       type: "select",
       name: "currency",

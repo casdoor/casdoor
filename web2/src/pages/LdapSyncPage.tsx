@@ -82,7 +82,7 @@ export default function LdapSyncPage() {
                   />
                 </TableHead>
                 <TableHead>{i18next.t("ldap:CN")}</TableHead>
-                <TableHead>{i18next.t("ldap:UidNumber / Uid")}</TableHead>
+                <TableHead>UidNumber / Uid</TableHead>
                 <TableHead>{i18next.t("general:Email")}</TableHead>
                 <TableHead>{i18next.t("general:Phone")}</TableHead>
                 <TableHead>{i18next.t("user:Address")}</TableHead>

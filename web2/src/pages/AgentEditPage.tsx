@@ -22,7 +22,7 @@ export default function AgentEditPage() {
     {type: "text", name: "name", labelKey: "general:Name"},
     {type: "text", name: "displayName", labelKey: "general:Display name"},
     {type: "text", name: "url", labelKey: "general:Listening URL"},
-    {type: "text", name: "token", labelKey: "general:Token"},
+    {type: "text", name: "token", labelKey: "token:Access token"},
     {type: "select", name: "application", labelKey: "general:Application", options: () => applications},
   ];
 

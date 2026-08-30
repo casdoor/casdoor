@@ -35,7 +35,7 @@ export default function InvitationEditPage() {
       labelKey: "general:Application",
       options: () => [{value: "All", label: i18next.t("general:All")}, ...applications],
     },
-    {type: "select", name: "signupGroup", labelKey: "invitation:Signup group", options: () => groups},
+    {type: "select", name: "signupGroup", labelKey: "provider:Signup group", options: () => groups},
     {type: "text", name: "username", labelKey: "signup:Username"},
     {type: "email", name: "email", labelKey: "general:Email"},
     {type: "text", name: "phone", labelKey: "general:Phone"},
