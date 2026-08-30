@@ -309,6 +309,11 @@ func (c *ApiController) SendVerificationCode() {
 			return
 		}
 
+		if vform.Method == SignupVerification && object.HasUserByField(organization.Name, "email", strings.ToLower(vform.Dest)) {
+			c.ResponseError(c.T("check:Email already exists"))
+			return
+		}
+
 		if vform.Method == LoginVerification || vform.Method == ForgetVerification {
 			if user != nil && util.GetMaskedEmail(user.Email) == vform.Dest {
 				vform.Dest = user.Email
@@ -364,6 +369,14 @@ func (c *ApiController) SendVerificationCode() {
 
 		sendResp = object.SendVerificationCodeToEmail(organization, user, provider, clientIp, vform.Dest, vform.Method, c.Ctx.Request.Host, application.Name, application)
 	case object.VerifyTypePhone:
+		if vform.Method == SignupVerification {
+			phone, countryCode, _ := util.GetNormalizedPhone(vform.Dest, vform.CountryCode)
+			if object.HasUserByPhoneAndCountryCode(organization.Name, phone, countryCode) {
+				c.ResponseError(c.T("check:Phone already exists"))
+				return
+			}
+		}
+
 		if vform.Method == LoginVerification || vform.Method == ForgetVerification {
 			if user != nil && util.GetMaskedPhone(user.Phone) == vform.Dest {
 				vform.Dest = user.Phone
