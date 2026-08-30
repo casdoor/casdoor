@@ -15,6 +15,12 @@ import {TagsInput} from "@/components/common/TagsInput";
 import {EditPageShell} from "@/components/crud/EditPageShell";
 import {EditableTable} from "@/components/crud/EditableTable";
 import {FormRow} from "@/components/crud/FormRow";
+import {CartTable} from "@/components/user/CartTable";
+import {ConsentTable} from "@/components/user/ConsentTable";
+import {CropperDivModal, UserImageField} from "@/components/user/CropperDivModal";
+import {ThirdPartyLogins} from "@/components/user/OAuthWidget";
+import {ResetModal} from "@/components/user/ResetModal";
+import {TransactionTable} from "@/components/user/TransactionTable";
 import {useAccount} from "@/hooks/use-account";
 import {useEditRecord} from "@/hooks/use-edit-record";
 import {
@@ -23,12 +29,20 @@ import {
   useOrganizationOptions,
 } from "@/hooks/use-options";
 import {submitEdit} from "@/lib/crud";
+import * as ApplicationBackend from "@/backend/ApplicationBackend";
 import * as OrganizationBackend from "@/backend/OrganizationBackend";
 import * as MfaBackend from "@/backend/MfaBackend";
+import * as TransactionBackend from "@/backend/TransactionBackend";
 import * as UserBackend from "@/backend/UserBackend";
 import * as Setting from "@/lib/setting";
 
 const GENDERS = ["Male", "Female", "Other"];
+/** the three ID card pictures, stored as user properties and uploaded under the same tag */
+const ID_CARD_IMAGES = [
+  {field: "idCardFront", uploadKey: "user:Upload ID card front picture", setKey: "user:ID card front"},
+  {field: "idCardBack", uploadKey: "user:Upload ID card back picture", setKey: "user:ID card back"},
+  {field: "idCardWithPerson", uploadKey: "user:Upload ID card with person picture", setKey: "user:ID card with person"},
+];
 const ID_CARD_TYPES = ["ID card", "Passport", "Driver license"];
 
 export default function UserEditPage({self}: {self?: boolean} = {}) {
@@ -43,12 +57,15 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
   const [newPassword, setNewPassword] = React.useState("");
   const [mfaItems, setMfaItems] = React.useState<any[]>([]);
   const [removingMfa, setRemovingMfa] = React.useState(false);
+  // the signup application drives the 3rd-party login rows and the reset-code flow
+  const [application, setApplication] = React.useState<any>(null);
+  const [transactions, setTransactions] = React.useState<any[]>([]);
 
   const organizations = useOrganizationOptions();
   const applications = useApplicationOptions(organizationName);
   const groups = useGroupOptions(organizationName);
 
-  const {record: user, updateField, loading, mode, setMode} = useEditRecord<any>({
+  const {record: user, updateField, loading, mode, setMode, reload} = useEditRecord<any>({
     fetch: () => UserBackend.getUser(organizationName, userName),
     deps: [organizationName, userName],
   });
@@ -64,6 +81,22 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
       }
     });
   }, [organizationName]);
+
+  React.useEffect(() => {
+    if (!organizationName || !userName) {
+      return;
+    }
+    ApplicationBackend.getUserApplication(organizationName, userName).then((res: any) => {
+      if (res.status === "ok") {
+        setApplication(res.data ?? null);
+      }
+    });
+    TransactionBackend.getTransactions(organizationName, "", "", "user", userName).then((res: any) => {
+      if (res.status === "ok") {
+        setTransactions(res.data ?? []);
+      }
+    });
+  }, [organizationName, userName]);
 
   if (loading || user === null || (self && !account)) {
     return <Loading />;
@@ -116,6 +149,26 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
         }
       })
       .finally(() => setRemovingMfa(false));
+  };
+
+  const verifyIdentification = () => {
+    if (!user.idCard || !user.idCardType) {
+      Setting.showMessage("error", i18next.t("user:Please fill in ID card information first"));
+      return;
+    }
+    if (!user.realName) {
+      Setting.showMessage("error", i18next.t("user:Please fill in your real name first"));
+      return;
+    }
+    // the backend picks the provider and the logged-in user itself
+    UserBackend.verifyIdentification(user.owner, user.name, "").then((res: any) => {
+      if (res.status === "ok") {
+        Setting.showMessage("success", i18next.t("user:Identity verification successful"));
+        reload();
+      } else {
+        Setting.showMessage("error", res.msg);
+      }
+    });
   };
 
   const setPassword = () => {
@@ -182,10 +235,28 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
                 </AvatarFallback>
               </Avatar>
               <Input value={user.avatar ?? ""} onChange={(e) => updateField("avatar", e.target.value)} />
+              {/* the upload creates a resource owned by the user, so it needs the user to exist */}
+              {mode === "add" ? null : (
+                <CropperDivModal
+                  tag="avatar"
+                  title={i18next.t("user:Upload a photo")}
+                  setTitle={i18next.t("user:Set new profile picture")}
+                  buttonText={`${i18next.t("user:Upload a photo")}...`}
+                  user={user}
+                  organization={organization}
+                  onUploaded={reload}
+                />
+              )}
             </div>
           </FormRow>
           <FormRow labelKey="general:Email">
-            <Input type="email" value={user.email ?? ""} onChange={(e) => updateField("email", e.target.value)} />
+            <div className="flex gap-2">
+              <Input type="email" value={user.email ?? ""} disabled={!isAdmin} onChange={(e) => updateField("email", e.target.value)} />
+              {/* the backend resolves the current user itself, so only the user can reset their own */}
+              {isSelf ? (
+                <ResetModal application={application} destType="email" buttonText={i18next.t("user:Reset Email...")} />
+              ) : null}
+            </div>
           </FormRow>
           <FormRow labelKey="general:Phone">
             <div className="flex gap-2">
@@ -200,7 +271,15 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
                   }))}
                 />
               </div>
-              <Input value={user.phone ?? ""} onChange={(e) => updateField("phone", e.target.value)} />
+              <Input value={user.phone ?? ""} disabled={!isAdmin} onChange={(e) => updateField("phone", e.target.value)} />
+              {isSelf ? (
+                <ResetModal
+                  application={application}
+                  destType="phone"
+                  countryCode={user.countryCode ?? ""}
+                  buttonText={i18next.t("user:Reset Phone...")}
+                />
+              ) : null}
             </div>
           </FormRow>
           <FormRow labelKey="general:User type">
@@ -310,7 +389,42 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
             <Input value={user.idCard ?? ""} onChange={(e) => updateField("idCard", e.target.value)} />
           </FormRow>
           <FormRow labelKey="application:Real name">
-            <Input value={user.realName ?? ""} onChange={(e) => updateField("realName", e.target.value)} />
+            <Input
+              value={user.realName ?? ""}
+              placeholder={i18next.t("user:Please enter your real name")}
+              onChange={(e) => updateField("realName", e.target.value)}
+            />
+          </FormRow>
+          <FormRow labelKey="user:ID card info" block>
+            <div className="flex flex-wrap gap-4">
+              {ID_CARD_IMAGES.map((entry) => (
+                <UserImageField
+                  key={entry.field}
+                  imageUrl={user.properties?.[entry.field] ?? ""}
+                  title={i18next.t(entry.uploadKey)}
+                  setTitle={i18next.t(entry.setKey)}
+                  tag={entry.field}
+                  user={user}
+                  organization={organization}
+                  canUpload={mode !== "add"}
+                  onUploaded={reload}
+                />
+              ))}
+            </div>
+          </FormRow>
+          <FormRow labelKey="user:ID verification">
+            <div className="flex items-center gap-2">
+              <Button
+                // the verification result is written back to the saved user, so it needs the user to exist
+                disabled={!!user.isVerified || mode === "add"}
+                onClick={verifyIdentification}
+              >
+                {user.isVerified ? i18next.t("user:Verified") : i18next.t("user:Verify Identity")}
+              </Button>
+              {user.isVerified ? (
+                <Badge variant="success">{i18next.t("user:Identity verified")}</Badge>
+              ) : null}
+            </div>
           </FormRow>
           <FormRow labelKey="user:Language">
             <Input value={user.language ?? ""} onChange={(e) => updateField("language", e.target.value)} />
@@ -393,6 +507,12 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
                 />
               </div>
             </div>
+          </FormRow>
+          <FormRow labelKey="general:Cart" block>
+            <CartTable cart={user.cart ?? []} />
+          </FormRow>
+          <FormRow labelKey="general:Transactions" block>
+            <TransactionTable transactions={transactions} />
           </FormRow>
         </TabsContent>
 
@@ -700,6 +820,20 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
           </FormRow>
           <FormRow labelKey="user:Last signin IP">
             <Input value={user.lastSigninIp ?? ""} disabled />
+          </FormRow>
+          {/* linking and unlinking go through the saved user, so they need the user to exist */}
+          {mode === "add" || application === null ? null : (
+            <FormRow labelKey="user:3rd-party logins" block>
+              <ThirdPartyLogins
+                user={user}
+                application={application}
+                account={account}
+                onUnlinked={reload}
+              />
+            </FormRow>
+          )}
+          <FormRow labelKey="consent:Consents" block>
+            <ConsentTable table={user.applicationScopes ?? []} onUpdateTable={reload} />
           </FormRow>
         </TabsContent>
       </Tabs>
