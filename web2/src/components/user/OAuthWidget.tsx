@@ -1,8 +1,10 @@
 import * as React from "react";
 import i18next from "i18next";
 import {Button} from "@/components/ui/button";
+import {WeChatQrDialog, needsWeChatQrDialog} from "@/components/auth/WeChatQrDialog";
 import * as AuthBackend from "@/backend/AuthBackend";
 import * as Provider from "@/auth/Provider";
+import {authViaMetaMask} from "@/auth/Web3Auth";
 import * as Setting from "@/lib/setting";
 
 const BLANK_AVATAR =
@@ -60,6 +62,7 @@ function SamlWidget({user, providerItem}: {user: any; providerItem: any}) {
  */
 function OAuthRow({user, application, providerItem, account, onUnlinked}: WidgetProps) {
   const provider = providerItem.provider;
+  const [wechatOpen, setWechatOpen] = React.useState(false);
 
   let linkedValue: string;
   if (provider.type === "Custom Flexible") {
@@ -82,6 +85,20 @@ function OAuthRow({user, application, providerItem, account, onUnlinked}: Widget
   }
 
   const isSelf = user.id === account?.id;
+
+  const link = () => {
+    if (provider.category === "Web3") {
+      if (provider.type === "MetaMask") {
+        authViaMetaMask(application, provider, "link");
+      }
+      return;
+    }
+    if (needsWeChatQrDialog(provider)) {
+      setWechatOpen(true);
+      return;
+    }
+    Setting.goToLink(Provider.getAuthUrl(application, provider, "link"));
+  };
 
   const unlink = () => {
     if (provider.type === "MetaMask" || provider.type === "Web3Onboard") {
@@ -116,18 +133,25 @@ function OAuthRow({user, application, providerItem, account, onUnlinked}: Widget
         )}
       </span>
       {linkedValue === "" || linkedValue === undefined ? (
-        provider.category === "Web3" ? (
-          // the Web3 signature flow is not ported yet, so linking a wallet is not offered here
-          <Button size="sm" disabled>{i18next.t("user:Link")}</Button>
-        ) : (
+        <>
           <Button
             size="sm"
-            disabled={!isSelf}
-            onClick={() => Setting.goToLink(Provider.getAuthUrl(application, provider, "link"))}
+            // Web3Onboard needs the @web3-onboard wallet modules, which are not ported yet
+            disabled={!isSelf || provider.type === "Web3Onboard"}
+            onClick={link}
           >
             {i18next.t("user:Link")}
           </Button>
-        )
+          {wechatOpen ? (
+            <WeChatQrDialog
+              application={application}
+              provider={provider}
+              method="link"
+              open={wechatOpen}
+              onClose={() => setWechatOpen(false)}
+            />
+          ) : null}
+        </>
       ) : (
         <Button
           variant="outline"

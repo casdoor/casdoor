@@ -15,6 +15,10 @@
 // Query-string helpers for the sign-in flows (OAuth / CAS / SAML), ported
 // verbatim from web/src/auth/Util.js minus its antd renderers.
 
+import * as AuthBackend from "@/backend/AuthBackend";
+import * as Provider from "@/auth/Provider";
+import * as Setting from "@/lib/setting";
+
 function getRefinedValue(value) {
   return value ?? "";
 }
@@ -157,4 +161,17 @@ export function getQueryParamsFromState(state) {
   } else {
     return query;
   }
+}
+
+/**
+ * Polls the WeChat official account for the scan event and, once the user has
+ * scanned (or subscribed), continues into the normal OAuth redirect with the
+ * code the backend handed back. Ported from web/src/auth/Util.js.
+ */
+export function getEvent(application, provider, ticket, method) {
+  return AuthBackend.getWechatMessageEvent(ticket).then((res: any) => {
+    if (res.data === "SCAN" || res.data === "subscribe") {
+      Setting.goToLink(Provider.getAuthUrl(application, provider, method ?? "signup", res.data2));
+    }
+  });
 }

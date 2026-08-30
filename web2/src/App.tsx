@@ -123,6 +123,10 @@ const ConsentPage = React.lazy(() => import("@/pages/auth/ConsentPage"));
 const PricingPage = React.lazy(() => import("@/pages/PricingPage"));
 const QrCodePage = React.lazy(() => import("@/pages/QrCodePage"));
 const PromptPage = React.lazy(() => import("@/pages/auth/PromptPage"));
+const TelegramLogin = React.lazy(() => import("@/pages/auth/TelegramLogin"));
+const CasLogout = React.lazy(() => import("@/pages/auth/CasLogout"));
+const CaptchaPage = React.lazy(() => import("@/pages/auth/CaptchaPage"));
+const OidcDiscoveryPage = React.lazy(() => import("@/pages/auth/OidcDiscoveryPage"));
 
 Setting.initServerUrl();
 Setting.initWebConfig();
@@ -185,6 +189,7 @@ export default function App() {
         <Route path="/login/oauth/device/:userCode" element={<LoginPage type="device" />} />
         <Route path="/login/saml/authorize/:owner/:applicationName" element={<LoginPage type="saml" />} />
         <Route path="/cas/:owner/:casApplicationName/login" element={<LoginPage type="cas" />} />
+        <Route path="/cas/:owner/:casApplicationName/logout" element={<CasLogout />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/signup/:applicationName" element={<SignupPage />} />
         <Route path="/signup/oauth/authorize" element={<SignupPage />} />
@@ -192,6 +197,9 @@ export default function App() {
         <Route path="/forget/:applicationName" element={<ForgetPage />} />
         <Route path="/callback" element={<AuthCallback />} />
         <Route path="/callback/saml" element={<AuthCallback />} />
+        <Route path="/telegram-login" element={<TelegramLogin />} />
+        <Route path="/captcha" element={<CaptchaPage />} />
+        <Route path="/.well-known/openid-configuration" element={<OidcDiscoveryPage />} />
         <Route path="/consent/:applicationName" element={<ConsentPage />} />
         <Route path="/prompt" element={<PromptPage />} />
         <Route path="/prompt/:applicationName" element={<PromptPage />} />
