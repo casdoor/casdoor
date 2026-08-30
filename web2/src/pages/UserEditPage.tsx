@@ -10,11 +10,13 @@ import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import {ConfirmButton} from "@/components/common/ConfirmButton";
 import {Loading} from "@/components/common/Loading";
 import {MultiSelect} from "@/components/common/MultiSelect";
+import {RegionSelect} from "@/components/common/RegionSelect";
 import {SearchableSelect} from "@/components/common/SearchableSelect";
 import {TagsInput} from "@/components/common/TagsInput";
 import {EditPageShell} from "@/components/crud/EditPageShell";
 import {EditableTable} from "@/components/crud/EditableTable";
 import {FormRow} from "@/components/crud/FormRow";
+import {AffiliationAddressSelect, AffiliationField, useAffiliation} from "@/components/user/AffiliationSelect";
 import {CartTable} from "@/components/user/CartTable";
 import {ConsentTable} from "@/components/user/ConsentTable";
 import {FaceIdTable} from "@/components/user/FaceIdTable";
@@ -45,6 +47,12 @@ const ID_CARD_IMAGES = [
   {field: "idCardWithPerson", uploadKey: "user:Upload ID card with person picture", setKey: "user:ID card with person"},
 ];
 const ID_CARD_TYPES = ["ID card", "Passport", "Driver license"];
+/** the rows of `user.addresses` are object.Address: tag/line1/line2/city/state/zipCode/region */
+const ADDRESS_TAGS = [
+  {value: "Home", labelKey: "general:Home"},
+  {value: "Work", labelKey: "user:Work"},
+  {value: "Other", labelKey: "user:Other"},
+];
 
 export default function UserEditPage({self}: {self?: boolean} = {}) {
   const params = useParams();
@@ -66,10 +74,11 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
   const applications = useApplicationOptions(organizationName);
   const groups = useGroupOptions(organizationName);
 
-  const {record: user, updateField, loading, mode, setMode, reload} = useEditRecord<any>({
+  const {record: user, updateField, updateFields, loading, mode, setMode, reload} = useEditRecord<any>({
     fetch: () => UserBackend.getUser(organizationName, userName),
     deps: [organizationName, userName],
   });
+  const affiliation = useAffiliation(application, user);
 
   React.useEffect(() => {
     setMfaItems(user?.multiFactorAuths ?? []);
@@ -321,42 +330,98 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
             <Input value={user.location ?? ""} onChange={(e) => updateField("location", e.target.value)} />
           </FormRow>
           <FormRow labelKey="user:Address">
-            <TagsInput value={user.address ?? []} onChange={(v) => updateField("address", v)} />
+            {affiliation.enabled ? (
+              <AffiliationAddressSelect
+                value={user.address}
+                options={affiliation.addressOptions}
+                onChange={(value) => {
+                  // a new address invalidates the affiliation picked under the old one
+                  updateFields({address: value, affiliation: "", score: 0});
+                  affiliation.loadAffiliationOptions(value);
+                }}
+              />
+            ) : (
+              <TagsInput value={user.address ?? []} onChange={(v) => updateField("address", v)} />
+            )}
           </FormRow>
           <FormRow labelKey="user:Addresses" block>
             <EditableTable
               rows={user.addresses ?? []}
               onChange={(rows) => updateField("addresses", rows)}
-              newRow={() => ({name: "", address: "", isDefault: false})}
+              newRow={() => ({tag: "", line1: "", line2: "", city: "", state: "", zipCode: "", region: ""})}
               columns={[
                 {
-                  key: "name",
-                  title: i18next.t("general:Name"),
-                  width: 200,
+                  key: "tag",
+                  title: i18next.t("general:Tag"),
+                  width: 130,
                   render: (row: any, _i, patch) => (
-                    <Input value={row.name ?? ""} onChange={(e) => patch({name: e.target.value})} />
+                    <SearchableSelect
+                      value={row.tag ?? ""}
+                      onChange={(v) => patch({tag: v})}
+                      options={ADDRESS_TAGS.map((item) => ({value: item.value, label: i18next.t(item.labelKey)}))}
+                    />
                   ),
                 },
                 {
-                  key: "address",
-                  title: i18next.t("user:Address"),
+                  key: "line1",
+                  title: i18next.t("user:Line 1"),
+                  width: 160,
                   render: (row: any, _i, patch) => (
-                    <Input value={row.address ?? ""} onChange={(e) => patch({address: e.target.value})} />
+                    <Input value={row.line1 ?? ""} onChange={(e) => patch({line1: e.target.value})} />
                   ),
                 },
                 {
-                  key: "isDefault",
-                  title: i18next.t("general:Default"),
-                  width: 110,
+                  key: "line2",
+                  title: i18next.t("user:Line 2"),
+                  width: 160,
                   render: (row: any, _i, patch) => (
-                    <Switch checked={!!row.isDefault} onCheckedChange={(v) => patch({isDefault: v})} />
+                    <Input value={row.line2 ?? ""} onChange={(e) => patch({line2: e.target.value})} />
+                  ),
+                },
+                {
+                  key: "city",
+                  title: i18next.t("user:City"),
+                  width: 130,
+                  render: (row: any, _i, patch) => (
+                    <Input value={row.city ?? ""} onChange={(e) => patch({city: e.target.value})} />
+                  ),
+                },
+                {
+                  key: "state",
+                  title: i18next.t("general:State"),
+                  width: 120,
+                  render: (row: any, _i, patch) => (
+                    <Input value={row.state ?? ""} onChange={(e) => patch({state: e.target.value})} />
+                  ),
+                },
+                {
+                  key: "zipCode",
+                  title: i18next.t("user:Zip code"),
+                  width: 120,
+                  render: (row: any, _i, patch) => (
+                    <Input value={row.zipCode ?? ""} onChange={(e) => patch({zipCode: e.target.value})} />
+                  ),
+                },
+                {
+                  key: "region",
+                  title: i18next.t("provider:Region"),
+                  width: 170,
+                  render: (row: any, _i, patch) => (
+                    <RegionSelect value={row.region ?? ""} onChange={(v) => patch({region: v})} />
                   ),
                 },
               ]}
             />
           </FormRow>
           <FormRow labelKey="user:Affiliation">
-            <Input value={user.affiliation ?? ""} onChange={(e) => updateField("affiliation", e.target.value)} />
+            <AffiliationField
+              enabled={affiliation.enabled}
+              value={user.affiliation}
+              options={affiliation.affiliationOptions}
+              onChange={(name, score) =>
+                score === undefined ? updateField("affiliation", name) : updateFields({affiliation: name, score})
+              }
+            />
           </FormRow>
           <FormRow labelKey="user:Title">
             <Input value={user.title ?? ""} onChange={(e) => updateField("title", e.target.value)} />

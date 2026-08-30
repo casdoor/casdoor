@@ -5,11 +5,17 @@ import {ConsoleTour} from "@/components/common/ConsoleTour";
 import {GithubCorner} from "@/components/common/GithubCorner";
 import {Header} from "@/components/layout/Header";
 import {Sidebar} from "@/components/layout/Sidebar";
+import {useAccount} from "@/hooks/use-account";
+import {useThemeData} from "@/hooks/use-application-chrome";
 import * as Conf from "@/Conf";
+import * as Setting from "@/lib/setting";
 
 export function AppLayout() {
   const [collapsed, setCollapsed] = React.useState(() => localStorage.getItem("siderCollapsed") === "true");
   const [mobileOpen, setMobileOpen] = React.useState(false);
+  const {account} = useAccount();
+  // the console follows the signed-in user's organization theme
+  useThemeData(Setting.getThemeData(account?.organization, null));
 
   const handleCollapsed = (next: boolean) => {
     setCollapsed(next);

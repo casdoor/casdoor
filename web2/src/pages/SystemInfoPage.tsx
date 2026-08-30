@@ -1,6 +1,7 @@
 import * as React from "react";
 import i18next from "i18next";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import {Loading} from "@/components/common/Loading";
 import {PageHeader} from "@/components/crud/PageHeader";
 import * as SystemBackend from "@/backend/SystemInfo";
@@ -34,9 +35,48 @@ function Usage({label, value, detail}: {label: string; value: number; detail?: s
   );
 }
 
+/** The per-API rows of `/api/get-prometheus-info`, port of table/PrometheusInfoTable.js. */
+function PrometheusTable({
+  rows,
+  columns,
+}: {
+  rows: any[] | null | undefined;
+  columns: {key: string; title: string}[];
+}) {
+  if (rows === null || rows === undefined || rows.length === 0) {
+    return <Loading />;
+  }
+
+  return (
+    <div className="max-h-[300px] overflow-auto rounded-lg border">
+      <Table>
+        <TableHeader>
+          <TableRow className="hover:bg-transparent">
+            {columns.map((column) => (
+              <TableHead key={column.key}>{column.title}</TableHead>
+            ))}
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {rows.map((row, index) => (
+            <TableRow key={index}>
+              {columns.map((column) => (
+                <TableCell key={column.key} className="tabular-nums">
+                  {row[column.key]}
+                </TableCell>
+              ))}
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
+  );
+}
+
 export default function SystemInfoPage() {
   const [systemInfo, setSystemInfo] = React.useState<any>(null);
   const [versionInfo, setVersionInfo] = React.useState<any>(null);
+  const [prometheusInfo, setPrometheusInfo] = React.useState<any>(null);
   const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
@@ -50,6 +90,11 @@ export default function SystemInfoPage() {
           }
           if (res.status === "ok") {
             setSystemInfo(res.data);
+            SystemBackend.getPrometheusInfo().then((prometheusRes: any) => {
+              if (!stopped && prometheusRes.status === "ok") {
+                setPrometheusInfo(prometheusRes.data);
+              }
+            });
           } else {
             Setting.showMessage("error", res.msg);
             stopped = true;
@@ -135,6 +180,44 @@ export default function SystemInfoPage() {
               detail={`${Setting.getFriendlyFileSize(systemInfo.diskUsed)} / ${Setting.getFriendlyFileSize(
                 systemInfo.diskTotal,
               )}`}
+            />
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="grid gap-4 lg:grid-cols-2">
+        <Card id="latency-card">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base">{i18next.t("system:API Latency")}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <PrometheusTable
+              rows={prometheusInfo?.apiLatency}
+              columns={[
+                {key: "name", title: i18next.t("general:Name")},
+                {key: "method", title: i18next.t("general:Method")},
+                {key: "count", title: i18next.t("system:Count")},
+                {key: "latency", title: `${i18next.t("system:Latency")}(ms)`},
+              ]}
+            />
+          </CardContent>
+        </Card>
+
+        <Card id="throughput-card">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base">{i18next.t("system:API Throughput")}</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            <div className="text-sm text-muted-foreground">
+              {i18next.t("system:Total Throughput")}: {prometheusInfo?.totalThroughput ?? "-"}
+            </div>
+            <PrometheusTable
+              rows={prometheusInfo?.apiThroughput}
+              columns={[
+                {key: "name", title: i18next.t("general:Name")},
+                {key: "method", title: i18next.t("general:Method")},
+                {key: "throughput", title: i18next.t("system:Throughput")},
+              ]}
             />
           </CardContent>
         </Card>

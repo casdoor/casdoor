@@ -1,7 +1,16 @@
 import * as React from "react";
+import i18next from "i18next";
+import {AlertCircle} from "lucide-react";
+import {Button} from "@/components/ui/button";
 import {Card, CardContent} from "@/components/ui/card";
 import {LanguageSelect} from "@/components/common/LanguageSelect";
 import {ThemeToggle} from "@/components/common/ThemeToggle";
+import {
+  getOrganizationCookieChrome,
+  useApplicationHelmet,
+  useApplicationTheme,
+  useCustomHead,
+} from "@/hooks/use-application-chrome";
 import * as Setting from "@/lib/setting";
 import * as Conf from "@/Conf";
 import {cn} from "@/lib/utils";
@@ -14,9 +23,40 @@ interface AuthLayoutProps {
   wide?: boolean;
 }
 
+/** The "we cannot sign you in" panel, port of auth/Util.js renderMessageLarge(). */
+function BlockedMessage({message}: {message: string}) {
+  return (
+    <div className="flex min-h-screen flex-col items-center justify-center gap-4 px-4 text-center">
+      <AlertCircle className="h-12 w-12 text-destructive" />
+      <h1 className="text-xl font-semibold">{i18next.t("general:There was a problem signing you in..")}</h1>
+      <p className="max-w-lg text-sm text-muted-foreground">{message}</p>
+      <Button onClick={() => window.history.go(-2)}>{i18next.t("general:Back")}</Button>
+    </div>
+  );
+}
+
 /** Centered panel shared by the sign-in, sign-up, forget-password and result pages. */
 export function AuthLayout({application, children, className, wide}: AuthLayoutProps) {
-  const logo = application?.logo || `${Setting.StaticBaseUrl}/img/casdoor-logo_1185x256.png`;
+  useApplicationTheme(application);
+  useApplicationHelmet(application);
+  // headerHtml is the organization/application chrome, pageHtml is the per-page one
+  useCustomHead(application?.headerHtml, "header");
+  useCustomHead(application?.pageHtml, "page");
+
+  // the backend hands us the organization's branding in cookies so the first
+  // paint is already branded, before /api/get-application has come back
+  const cookieChrome = React.useMemo(() => getOrganizationCookieChrome(), []);
+
+  // an IP restriction on either the application or its organization blocks the
+  // whole sign-in surface, the same way EntryPage does in the antd frontend
+  const ipRestriction = application?.ipRestriction || application?.organizationObj?.ipRestriction;
+  if (ipRestriction) {
+    return <BlockedMessage message={ipRestriction} />;
+  }
+
+  const logo =
+    application?.logo || cookieChrome.logo || `${Setting.StaticBaseUrl}/img/casdoor-logo_1185x256.png`;
+  const footerHtml = application?.footerHtml || cookieChrome.footerHtml;
 
   return (
     <div className="flex min-h-screen flex-col bg-muted/30">
@@ -39,10 +79,10 @@ export function AuthLayout({application, children, className, wide}: AuthLayoutP
           <Card className="shadow-md">
             <CardContent className="p-6">{children}</CardContent>
           </Card>
-          {application?.footerHtml ? (
+          {footerHtml ? (
             <div
               className="mt-6 text-center text-xs text-muted-foreground"
-              dangerouslySetInnerHTML={{__html: application.footerHtml}}
+              dangerouslySetInnerHTML={{__html: footerHtml}}
             />
           ) : (
             <div className="mt-6 text-center text-xs text-muted-foreground">
