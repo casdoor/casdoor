@@ -147,7 +147,7 @@ export function DataTable<T = any>({
 
   return (
     <div className={cn("space-y-3", className)}>
-      <div className="rounded-lg border bg-card">
+      <div className="rounded-lg border bg-card" data-tour="table">
         <Table>
           <TableHeader>
             <TableRow className="hover:bg-transparent">

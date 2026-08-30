@@ -122,7 +122,7 @@ export default function ResourceListPage() {
               e.target.value = "";
             }}
           />
-          <Button loading={uploading} onClick={() => fileInputRef.current?.click()}>
+          <Button id="upload-button" loading={uploading} onClick={() => fileInputRef.current?.click()}>
             <Upload />
             {i18next.t("resource:Upload a file...")}
           </Button>

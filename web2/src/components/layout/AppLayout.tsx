@@ -1,6 +1,8 @@
 import * as React from "react";
 import {Outlet} from "react-router-dom";
 import {Sheet, SheetContent} from "@/components/ui/sheet";
+import {ConsoleTour} from "@/components/common/ConsoleTour";
+import {GithubCorner} from "@/components/common/GithubCorner";
 import {Header} from "@/components/layout/Header";
 import {Sidebar} from "@/components/layout/Sidebar";
 import * as Conf from "@/Conf";
@@ -16,6 +18,8 @@ export function AppLayout() {
 
   return (
     <div className="flex h-screen overflow-hidden bg-background">
+      <GithubCorner />
+      <ConsoleTour />
       <Sidebar className="hidden lg:flex" collapsed={collapsed} onCollapsedChange={handleCollapsed} />
 
       <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>

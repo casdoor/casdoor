@@ -47,6 +47,7 @@
     "cropperjs": "^1.6.2",
     "crypto-js": "^4.2.0",
     "dayjs": "^1.11.13",
+    "face-api.js": "^0.22.2",
     "file-saver": "^2.0.5",
     "i18n-iso-countries": "^7.13.0",
     "i18next": "^23.16.8",

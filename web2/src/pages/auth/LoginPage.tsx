@@ -13,6 +13,8 @@ import {MfaVerify, NextMfa, RequiredMfa} from "@/components/auth/MfaVerify";
 import {AgreementCheckbox, getAgreementDefaultValue, isAgreementRequired} from "@/components/auth/AgreementModal";
 import {DeviceLoginPanel} from "@/components/auth/DeviceLoginPanel";
 import {GoogleOneTap} from "@/components/auth/GoogleOneTap";
+import {FaceRecognitionCommonModal} from "@/components/common/FaceRecognitionCommonModal";
+import {FaceRecognitionModal} from "@/components/common/FaceRecognitionModal";
 import {ProviderButtons} from "@/components/auth/ProviderButtons";
 import {WeChatLoginPanel} from "@/components/auth/WeChatLoginPanel";
 import {RedirectForm} from "@/components/auth/RedirectForm";
@@ -30,7 +32,7 @@ import * as OrganizationBackend from "@/backend/OrganizationBackend";
 import * as Setting from "@/lib/setting";
 
 type LoginType = "login" | "code" | "cas" | "saml" | "device";
-type LoginMethod = "password" | "verificationCode" | "verificationCodeEmail" | "verificationCodePhone" | "ldap" | "webAuthn" | "wechat";
+type LoginMethod = "password" | "verificationCode" | "verificationCodeEmail" | "verificationCodePhone" | "ldap" | "webAuthn" | "wechat" | "faceId";
 
 function getDefaultLoginMethod(application: any): LoginMethod {
   const first = application?.signinMethods?.[0];
@@ -51,6 +53,8 @@ function getDefaultLoginMethod(application: any): LoginMethod {
     return "ldap";
   case "WebAuthn":
     return "webAuthn";
+  case "Face ID":
+    return "faceId";
   }
   return "password";
 }
@@ -67,6 +71,9 @@ function getSigninMethodName(method: LoginMethod) {
   }
   if (method === "webAuthn") {
     return "WebAuthn";
+  }
+  if (method === "faceId") {
+    return "Face ID";
   }
   return "Password";
 }
@@ -89,6 +96,7 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
   const [captchaVisible, setCaptchaVisible] = React.useState(false);
   const [pendingValues, setPendingValues] = React.useState<any>(null);
   const [agreed, setAgreed] = React.useState(false);
+  const [faceValues, setFaceValues] = React.useState<any>(null);
   const [captchaValues, setCaptchaValues] = React.useState<CaptchaValues | undefined>(undefined);
   const captchaRef = React.useRef<CaptchaHandle | null>(null);
   const [saml, setSaml] = React.useState<{response: string; redirectUrl: string; relayState: string} | null>(null);
@@ -303,7 +311,7 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
       }
       values.password = cipher;
       values.loginMethod = loginMethod;
-    } else if (loginMethod !== "webAuthn") {
+    } else if (loginMethod !== "webAuthn" && loginMethod !== "faceId") {
       values.code = code;
       values.username = username;
       values.password = "";
@@ -423,6 +431,26 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
       return;
     }
 
+    if (loginMethod === "faceId") {
+      // the backend checks the user exists and picks the provider before the camera opens
+      setLoading(true);
+      fetch(`${Setting.ServerUrl}/api/faceid-signin-begin?owner=${application.organization}&name=${encodeURIComponent(username)}`, {
+        method: "GET",
+        credentials: "include",
+        headers: {"Accept-Language": Setting.getAcceptLanguage()},
+      })
+        .then((res) => res.json())
+        .then((res: any) => {
+          if (res.status === "error") {
+            setLoading(false);
+            Setting.showMessage("error", res.msg);
+            return;
+          }
+          setFaceValues(values);
+        });
+      return;
+    }
+
     // Password/LDAP sign-in may need a captcha first; the code flow is already
     // rate-limited by the code itself.
     if (loginMethod === "password" || loginMethod === "ldap") {
@@ -511,10 +539,13 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
   const codeEnabled = Setting.isCodeSigninEnabled(application);
   const ldapEnabled = Setting.isLdapEnabled(application);
   const webAuthnEnabled = Setting.isWebAuthnEnabled(application);
+  const faceIdEnabled = Setting.isFaceIdEnabled(application);
+  // an application with a Face ID provider lets the backend do the recognition
+  const hasFaceIdProvider = (application.providers ?? []).some((item: any) => item.provider?.category === "Face ID");
   const wechatEnabled = (application.providers ?? []).some(
     (item: any) => item.provider?.type === "WeChat" && Setting.isProviderVisibleForSignIn(item),
   );
-  const tabs = [passwordEnabled, codeEnabled, ldapEnabled, webAuthnEnabled, wechatEnabled].filter(Boolean).length;
+  const tabs = [passwordEnabled, codeEnabled, ldapEnabled, webAuthnEnabled, faceIdEnabled, wechatEnabled].filter(Boolean).length;
   const showTabs = tabs > 1;
   const isCodeMethod = (loginMethod ?? "").startsWith("verificationCode");
   // the QR panels replace the credential form entirely
@@ -540,6 +571,7 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
               ) : null}
               {ldapEnabled ? <TabsTrigger value="ldap">LDAP</TabsTrigger> : null}
               {webAuthnEnabled ? <TabsTrigger value="webAuthn">WebAuthn</TabsTrigger> : null}
+              {faceIdEnabled ? <TabsTrigger value="faceId">{i18next.t("login:Face ID")}</TabsTrigger> : null}
               {wechatEnabled ? <TabsTrigger value="wechat">{i18next.t("login:WeChat")}</TabsTrigger> : null}
             </TabsList>
           </Tabs>
@@ -576,7 +608,7 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
                   refreshCaptcha={refreshInlineCaptcha}
                 />
               </div>
-            ) : loginMethod === "webAuthn" ? null : (
+            ) : loginMethod === "webAuthn" || loginMethod === "faceId" ? null : (
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <Label htmlFor="password">{i18next.t("general:Password")}</Label>
@@ -622,7 +654,11 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
             ) : null}
 
             <Button type="submit" className="w-full" loading={loading}>
-              {loginMethod === "webAuthn" ? i18next.t("login:Sign in with WebAuthn") : i18next.t("login:Sign In")}
+              {loginMethod === "webAuthn"
+                ? i18next.t("login:Sign in with WebAuthn")
+                : loginMethod === "faceId"
+                  ? i18next.t("login:Sign in with Face ID")
+                  : i18next.t("login:Sign In")}
             </Button>
           </form>
         )}
@@ -645,6 +681,34 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
         <ProviderButtons application={application} method="signin" />
 
         <GoogleOneTap application={application} />
+
+        {faceValues !== null ? (
+          hasFaceIdProvider ? (
+            <FaceRecognitionCommonModal
+              visible={true}
+              onOk={(faceIdImage) => {
+                doLogin({...faceValues, faceIdImage});
+                setFaceValues(null);
+              }}
+              onCancel={() => {
+                setFaceValues(null);
+                setLoading(false);
+              }}
+            />
+          ) : (
+            <FaceRecognitionModal
+              visible={true}
+              onOk={(faceId) => {
+                doLogin({...faceValues, faceId});
+                setFaceValues(null);
+              }}
+              onCancel={() => {
+                setFaceValues(null);
+                setLoading(false);
+              }}
+            />
+          )
+        ) : null}
 
         {captchaProvider && !Setting.isInlineCaptchaEnabled(application) ? (
           <CaptchaModal

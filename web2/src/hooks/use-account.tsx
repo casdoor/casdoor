@@ -2,6 +2,7 @@ import * as React from "react";
 import i18next from "i18next";
 import * as AuthBackend from "@/backend/AuthBackend";
 import * as Setting from "@/lib/setting";
+import * as TourConfig from "@/lib/tour-config";
 
 export interface Account {
   owner: string;
@@ -89,6 +90,9 @@ export function AccountProvider({children}: {children: React.ReactNode}) {
         if (!localStorage.getItem("language") && next.language) {
           Setting.setLanguage(next.language);
         }
+        // the organization decides whether the product tour runs at all
+        TourConfig.setTourLogo(next.organization?.logo ?? "");
+        TourConfig.setOrgIsTourVisible(next.organization?.enableTour);
       } else {
         setAccountState(null);
         if (res.data !== "Please login first" && res.msg) {

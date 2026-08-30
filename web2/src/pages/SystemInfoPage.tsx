@@ -96,7 +96,7 @@ export default function SystemInfoPage() {
       />
 
       <div className="grid gap-4 md:grid-cols-3">
-        <Card>
+        <Card id="cpu-card">
           <CardHeader className="pb-3">
             <CardTitle className="text-base">{i18next.t("system:CPU Usage")}</CardTitle>
           </CardHeader>
@@ -109,7 +109,7 @@ export default function SystemInfoPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card id="memory-card">
           <CardHeader className="pb-3">
             <CardTitle className="text-base">{i18next.t("system:Memory Usage")}</CardTitle>
           </CardHeader>
