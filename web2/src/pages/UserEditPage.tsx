@@ -17,6 +17,7 @@ import {EditableTable} from "@/components/crud/EditableTable";
 import {FormRow} from "@/components/crud/FormRow";
 import {CartTable} from "@/components/user/CartTable";
 import {ConsentTable} from "@/components/user/ConsentTable";
+import {FaceIdTable} from "@/components/user/FaceIdTable";
 import {CropperDivModal, UserImageField} from "@/components/user/CropperDivModal";
 import {ThirdPartyLogins} from "@/components/user/OAuthWidget";
 import {ResetModal} from "@/components/user/ResetModal";
@@ -83,7 +84,8 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
   }, [organizationName]);
 
   React.useEffect(() => {
-    if (!organizationName || !userName) {
+    // in "add" mode the user is not persisted yet, so both requests would fail
+    if (mode === "add" || !organizationName || !userName) {
       return;
     }
     ApplicationBackend.getUserApplication(organizationName, userName).then((res: any) => {
@@ -96,7 +98,7 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
         setTransactions(res.data ?? []);
       }
     });
-  }, [organizationName, userName]);
+  }, [mode, organizationName, userName]);
 
   if (loading || user === null || (self && !account)) {
     return <Loading />;
@@ -707,17 +709,11 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
             </div>
           </FormRow>
           <FormRow labelKey="user:Face IDs" block>
-            <div className="divide-y rounded-lg border">
-              {(user.faceIds ?? []).length === 0 ? (
-                <div className="p-4 text-center text-sm text-muted-foreground">{i18next.t("general:No data")}</div>
-              ) : (
-                (user.faceIds ?? []).map((item: any, index: number) => (
-                  <div key={index} className="flex items-center gap-2 p-3 text-sm">
-                    <span className="truncate">{item.name}</span>
-                  </div>
-                ))
-              )}
-            </div>
+            <FaceIdTable
+              table={user.faceIds ?? []}
+              account={account}
+              onUpdateTable={(rows) => updateField("faceIds", rows)}
+            />
           </FormRow>
           <FormRow labelKey="user:Last change password time">
             <Input value={Setting.getFormattedDate(user.lastChangePasswordTime) ?? ""} disabled />

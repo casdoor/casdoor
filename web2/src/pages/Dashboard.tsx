@@ -109,7 +109,7 @@ export default function Dashboard() {
     <div className="space-y-5">
       <PageHeader title={i18next.t("general:Dashboard")} />
 
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-5">
+      <div id="statistic" className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-5">
         {series
           .filter((s) => !s.hidden)
           .map((s, index) => {

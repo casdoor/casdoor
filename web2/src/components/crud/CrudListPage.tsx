@@ -163,7 +163,7 @@ export function CrudListPage<T extends Record<string, any>>({
               <RefreshCw className={loading ? "animate-spin" : undefined} />
             </Button>
             {newRecord ? (
-              <Button onClick={handleAdd} loading={adding}>
+              <Button id="add-button" onClick={handleAdd} loading={adding}>
                 <Plus />
                 {addButtonLabel ?? i18next.t("general:Add")}
               </Button>

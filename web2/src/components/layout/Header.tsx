@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import {LanguageSelect} from "@/components/common/LanguageSelect";
 import {OrganizationSelect} from "@/components/common/OrganizationSelect";
+import {OpenTour} from "@/components/common/ConsoleTour";
 import {ThemeToggle} from "@/components/common/ThemeToggle";
 import {useAccount} from "@/hooks/use-account";
 import * as AuthBackend from "@/backend/AuthBackend";
@@ -94,6 +95,7 @@ export function Header({onOpenMobileNav}: {onOpenMobileNav: () => void}) {
         )}
         <LanguageSelect languages={account.organization?.languages} />
         <ThemeToggle />
+        <OpenTour />
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
