@@ -50,7 +50,7 @@ class SyncerListPage extends BaseListPage {
 
   addSyncer() {
     const newSyncer = this.newSyncer();
-    this.props.history.push({pathname: `/syncers/${newSyncer.name}`, mode: "add", syncer: newSyncer});
+    this.props.history.push({pathname: `/syncers/${newSyncer.organization}/${newSyncer.name}`, mode: "add", syncer: newSyncer});
   }
 
   deleteSyncer(i) {
