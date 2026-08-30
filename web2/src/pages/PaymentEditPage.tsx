@@ -1,13 +1,16 @@
 import i18next from "i18next";
 import {useParams} from "react-router-dom";
-import {Button} from "@/components/ui/button";
 import {SimpleEditPage, type EditField} from "@/components/crud/SimpleEditPage";
+import {InvoiceActions, checkInvoiceError} from "@/components/product/InvoiceActions";
 import {useAccount} from "@/hooks/use-account";
 import {useOrganizationOptions, useProviderOptions, useUserNameOptions} from "@/hooks/use-options";
 import * as PaymentBackend from "@/backend/PaymentBackend";
 import * as Setting from "@/lib/setting";
 
 const STATES = ["Paid", "Created", "Canceled", "Timeout", "Error"];
+
+/** every invoice field freezes once the invoice has been issued */
+const issued = (ctx: {record: any}) => !!ctx.record.invoiceUrl;
 
 export default function PaymentEditPage() {
   const {organizationName = "", paymentName = ""} = useParams();
@@ -56,14 +59,52 @@ export default function PaymentEditPage() {
         {value: "Individual", label: i18next.t("payment:Individual")},
         {value: "Organization", label: i18next.t("general:Organization")},
       ],
+      disabled: issued,
+      // an individual invoice is always made out to the payer, with no tax ID
+      onChange: (value, ctx, updateFields) =>
+        updateFields(
+          value === "Individual"
+            ? {invoiceType: value, invoiceTitle: ctx.record.personName, invoiceTaxId: ""}
+            : {invoiceType: value},
+        ),
     },
-    {type: "text", name: "invoiceTitle", labelKey: "payment:Invoice title"},
-    {type: "text", name: "invoiceTaxId", labelKey: "payment:Invoice tax ID"},
-    {type: "text", name: "invoiceRemark", labelKey: "payment:Invoice remark"},
-    {type: "text", name: "personName", labelKey: "payment:Person name"},
-    {type: "text", name: "personIdCard", labelKey: "payment:Person ID card"},
-    {type: "email", name: "personEmail", labelKey: "payment:Person Email"},
-    {type: "text", name: "personPhone", labelKey: "payment:Person phone"},
+    {
+      type: "text",
+      name: "invoiceTitle",
+      labelKey: "payment:Invoice title",
+      disabled: (ctx) => issued(ctx) || ctx.record.invoiceType === "Individual",
+    },
+    {
+      type: "text",
+      name: "invoiceTaxId",
+      labelKey: "payment:Invoice tax ID",
+      disabled: (ctx) => issued(ctx) || ctx.record.invoiceType === "Individual",
+    },
+    {type: "text", name: "invoiceRemark", labelKey: "payment:Invoice remark", disabled: issued},
+    {
+      type: "text",
+      name: "personName",
+      labelKey: "payment:Person name",
+      disabled: issued,
+      onChange: (value, ctx, updateFields) =>
+        updateFields(
+          ctx.record.invoiceType === "Individual"
+            ? {personName: value, invoiceTitle: value, invoiceTaxId: ""}
+            : {personName: value},
+        ),
+    },
+    {type: "text", name: "personIdCard", labelKey: "payment:Person ID card", disabled: issued},
+    {type: "email", name: "personEmail", labelKey: "payment:Person Email", disabled: issued},
+    {type: "text", name: "personPhone", labelKey: "payment:Person phone", disabled: issued},
+    {
+      type: "custom",
+      name: "invoiceActions",
+      labelKey: "payment:Invoice actions",
+      block: true,
+      render: (ctx) => (
+        <InvoiceActions payment={ctx.record} isAdd={ctx.mode === "add"} onIssued={ctx.reload} />
+      ),
+    },
   ];
 
   return (
@@ -75,23 +116,16 @@ export default function PaymentEditPage() {
       fetch={() => PaymentBackend.getPayment(organizationName, paymentName)}
       add={(record) => PaymentBackend.addPayment(record)}
       update={(record) => PaymentBackend.updatePayment(organizationName, paymentName, record)}
+      beforeSave={(record) => {
+        // antd refuses to save a payment whose invoice details do not validate
+        const errorText = checkInvoiceError(record);
+        if (errorText !== "") {
+          Setting.showMessage("error", errorText);
+          return null;
+        }
+        return record;
+      }}
       editUrl={(record) => `/payments/${record.owner}/${record.name}`}
-      extraActions={(ctx) => (
-        <Button
-          variant="outline"
-          onClick={() => {
-            PaymentBackend.invoicePayment(ctx.record.owner, ctx.record.name).then((res: any) => {
-              if (res.status === "ok") {
-                Setting.goToLink(res.data);
-              } else {
-                Setting.showMessage("error", res.msg);
-              }
-            });
-          }}
-        >
-          {i18next.t("payment:Download Invoice")}
-        </Button>
-      )}
     />
   );
 }

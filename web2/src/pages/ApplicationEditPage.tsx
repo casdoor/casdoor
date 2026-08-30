@@ -1,5 +1,7 @@
 import * as React from "react";
 import i18next from "i18next";
+import copy from "copy-to-clipboard";
+import {Copy, Link as LinkIcon} from "lucide-react";
 import {useNavigate, useParams} from "react-router-dom";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
@@ -112,9 +114,45 @@ export default function ApplicationEditPage() {
     deps: [applicationName],
   });
 
+  const [samlMetadata, setSamlMetadata] = React.useState("");
+  const enableSamlPostBinding = !!application?.enableSamlPostBinding;
+
+  React.useEffect(() => {
+    // the metadata is generated from the saved application, so it needs it to exist
+    if (mode === "add" || !applicationName) {
+      return;
+    }
+    ApplicationBackend.getSamlMetadata("admin", applicationName, enableSamlPostBinding).then((data: any) => {
+      setSamlMetadata(data?.toString() ?? "");
+    });
+  }, [mode, applicationName, enableSamlPostBinding]);
+
   if (loading || application === null) {
     return <Loading />;
   }
+
+  const copyToClipboard = (text: string) => {
+    copy(text);
+    Setting.showMessage("success", i18next.t("general:Copied to clipboard successfully"));
+  };
+
+  const idpInitiatedSsoUrl =
+    `${window.location.origin}/login/saml/authorize/${application.owner}/${encodeURIComponent(applicationName)}`;
+  const samlMetadataUrl =
+    `${window.location.origin}/api/saml/metadata?application=admin/${encodeURIComponent(applicationName)}` +
+    `&enablePostBinding=${enableSamlPostBinding}`;
+
+  // the sign-in link antd shows next to its login preview
+  const redirectUri = application.redirectUris?.length > 0
+    ? application.redirectUris[0]
+    : "\"ERROR: You must specify at least one Redirect URL in 'Redirect URLs'\"";
+  const clientId = application.isShared ? `${application.clientId}-org-${account?.owner}` : application.clientId;
+  const signInUrl =
+    `/login/oauth/authorize?client_id=${clientId}&response_type=code&redirect_uri=${redirectUri}&scope=read&state=casdoor`;
+  const signUpUrl = Setting.isPasswordEnabled(application)
+    ? `/signup/${application.name}`
+    : signInUrl.replace("/login/oauth/authorize", "/signup/oauth/authorize");
+  const promptUrl = `/prompt/${application.name}`;
 
   const save = async(exitAfterSave: boolean) => {
     setSaving(true);
@@ -171,6 +209,28 @@ export default function ApplicationEditPage() {
         </TabsList>
 
         <TabsContent value="basic">
+          {/* antd puts these next to its live sign-in previews; this frontend has no
+              previews, so the links live on their own row at the top of the tab */}
+          {mode === "add" ? null : (
+            <FormRow labelKey="general:Login page" block>
+              <div className="flex flex-wrap gap-2">
+                <Button variant="outline" size="sm" onClick={() => copyToClipboard(`${window.location.origin}${signInUrl}`)}>
+                  <Copy />
+                  {i18next.t("application:Copy signin page URL")}
+                </Button>
+                <Button variant="outline" size="sm" onClick={() => copyToClipboard(`${window.location.origin}${signUpUrl}`)}>
+                  <Copy />
+                  {i18next.t("application:Copy signup page URL")}
+                </Button>
+                {Setting.hasPromptPage(application) ? (
+                  <Button variant="outline" size="sm" onClick={() => copyToClipboard(`${window.location.origin}${promptUrl}`)}>
+                    <Copy />
+                    {i18next.t("application:Copy prompt page URL")}
+                  </Button>
+                ) : null}
+              </div>
+            </FormRow>
+          )}
           <FormRow labelKey="general:Organization">
             <SearchableSelect
               value={application.organization}
@@ -890,6 +950,32 @@ export default function ApplicationEditPage() {
               ]}
             />
           </FormRow>
+          {/* both are generated from the saved application, so only after it exists */}
+          {mode === "add" ? null : (
+            <>
+              <FormRow labelKey="application:SAML metadata" block>
+                <div className="space-y-2">
+                  <CodeEditor language="xml" value={samlMetadata} readOnly onChange={() => undefined} />
+                  <Button variant="outline" size="sm" onClick={() => copyToClipboard(samlMetadataUrl)}>
+                    <Copy />
+                    {i18next.t("application:Copy SAML metadata URL")}
+                  </Button>
+                </div>
+              </FormRow>
+              <FormRow labelKey="application:IdP-initiated SSO URL" block>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <LinkIcon className="h-4 w-4 shrink-0 text-muted-foreground" />
+                    <Input value={idpInitiatedSsoUrl} readOnly />
+                  </div>
+                  <Button variant="outline" size="sm" onClick={() => copyToClipboard(idpInitiatedSsoUrl)}>
+                    <Copy />
+                    {i18next.t("application:Copy IdP-initiated SSO URL")}
+                  </Button>
+                </div>
+              </FormRow>
+            </>
+          )}
         </TabsContent>
 
         <TabsContent value="appearance">

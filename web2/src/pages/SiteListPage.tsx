@@ -5,11 +5,14 @@ import type {ColumnDef} from "@/components/crud/types";
 import {useAccount} from "@/hooks/use-account";
 import {useRequestOrganization} from "@/hooks/use-organization";
 import * as SiteBackend from "@/backend/SiteBackend";
+import * as Setting from "@/lib/setting";
 import {newSite} from "@/pages/defaults";
 
 export default function SiteListPage() {
   const {account} = useAccount();
   const organizationName = useRequestOrganization();
+  // with the default organization selected an admin sees every organization's sites
+  const isGlobal = account ? Setting.isDefaultOrganizationSelected(account) : false;
 
   const columns: ColumnDef<any>[] = [
     organizationColumn(),
@@ -34,9 +37,11 @@ export default function SiteListPage() {
     <CrudListPage
       title={i18next.t("general:Sites")}
       columns={columns}
-      deps={[organizationName]}
+      deps={[organizationName, isGlobal]}
       fetch={(q) =>
-        SiteBackend.getSites(organizationName, q.page, q.pageSize, q.searchedColumn, q.searchText, q.sortField, q.sortOrder)
+        isGlobal
+          ? SiteBackend.getGlobalSites()
+          : SiteBackend.getSites(organizationName, q.page, q.pageSize, q.searchedColumn, q.searchText, q.sortField, q.sortOrder)
       }
       newRecord={account ? () => newSite(account) : undefined}
       editUrl={(r) => `/sites/${r.owner}/${r.name}`}

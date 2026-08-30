@@ -1,12 +1,13 @@
 import i18next from "i18next";
 import {useParams} from "react-router-dom";
 import {SimpleEditPage, type EditField} from "@/components/crud/SimpleEditPage";
+import {TicketMessages} from "@/components/user/TicketMessages";
 import {useAccount} from "@/hooks/use-account";
 import {useOrganizationOptions, useUserNameOptions} from "@/hooks/use-options";
 import * as TicketBackend from "@/backend/TicketBackend";
 import * as Setting from "@/lib/setting";
 
-const STATES = ["Open", "Closed"];
+const STATES = ["Open", "In Progress", "Resolved", "Closed"];
 
 export default function TicketEditPage() {
   const {organizationName = "", ticketName = ""} = useParams();
@@ -32,6 +33,25 @@ export default function TicketEditPage() {
       name: "state",
       labelKey: "general:State",
       options: () => STATES.map((item) => ({value: item, label: i18next.t(`ticket:${item}`)})),
+      // once a ticket is closed only an admin can move it back
+      disabled: (ctx) => !Setting.isAdminUser(account) && ctx.record.state === "Closed",
+    },
+    {
+      type: "custom",
+      name: "messages",
+      labelKey: "ticket:Messages",
+      block: true,
+      // messages are appended to the saved ticket, so not while it is being created
+      when: (ctx) => ctx.mode !== "add",
+      render: (ctx) => (
+        <TicketMessages
+          organizationName={organizationName}
+          ticketName={ticketName}
+          messages={ctx.record.messages ?? []}
+          account={account}
+          onSent={ctx.reload}
+        />
+      ),
     },
   ];
 

@@ -2,6 +2,7 @@ import i18next from "i18next";
 import {Link} from "react-router-dom";
 import {Badge} from "@/components/ui/badge";
 import {Button} from "@/components/ui/button";
+import {ConfirmButton} from "@/components/common/ConfirmButton";
 import {CrudListPage} from "@/components/crud/CrudListPage";
 import {dateColumn, linkColumn, organizationColumn, tagsColumn} from "@/components/crud/columns";
 import type {ColumnDef} from "@/components/crud/types";
@@ -63,14 +64,40 @@ export default function OrderListPage() {
       newRecord={account ? () => newOrder(account) : undefined}
       editUrl={(r) => `/orders/${r.owner}/${r.name}`}
       remove={(r) => OrderBackend.deleteOrder(r)}
-      rowActions={(record) =>
-        record.state === "Created" ? (
-          <Button variant="ghost" size="sm" asChild>
-            <Link to={`/orders/${record.owner}/${record.name}/pay`}>{i18next.t("order:Pay")}</Link>
-          </Button>
-        ) : null
-      }
-      actionColumnWidth={240}
+      rowActions={(record, _index, {refresh}) => (
+        <>
+          {record.state === "Created" ? (
+            <Button variant="ghost" size="sm" asChild>
+              <Link to={`/orders/${record.owner}/${record.name}/pay`}>{i18next.t("order:Pay")}</Link>
+            </Button>
+          ) : null}
+          {/* only an admin may cancel, and only an order nobody has paid for yet */}
+          {record.state === "Created" && Setting.isLocalAdminUser(account) ? (
+            <ConfirmButton
+              variant="outline"
+              size="sm"
+              description={`${record.name ?? ""}`}
+              onConfirm={() =>
+                OrderBackend.cancelOrder(record.owner, record.name)
+                  .then((res: any) => {
+                    if (res.status === "ok") {
+                      Setting.showMessage("success", i18next.t("general:Successfully canceled"));
+                      refresh();
+                    } else {
+                      Setting.showMessage("error", `${i18next.t("general:Failed to cancel")}: ${res.msg}`);
+                    }
+                  })
+                  .catch((error) =>
+                    Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`),
+                  )
+              }
+            >
+              {i18next.t("general:Cancel")}
+            </ConfirmButton>
+          ) : null}
+        </>
+      )}
+      actionColumnWidth={300}
     />
   );
 }

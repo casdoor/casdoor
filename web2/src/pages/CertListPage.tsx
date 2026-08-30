@@ -1,4 +1,5 @@
 import i18next from "i18next";
+import {Button} from "@/components/ui/button";
 import {CrudListPage} from "@/components/crud/CrudListPage";
 import {dateColumn, linkColumn, organizationColumn, textColumn} from "@/components/crud/columns";
 import type {ColumnDef} from "@/components/crud/types";
@@ -38,6 +39,27 @@ export default function CertListPage() {
       newRecord={account ? () => newCert(account, organizationName) : undefined}
       editUrl={(r) => `/certs/${r.owner}/${r.name}`}
       remove={(r) => CertBackend.deleteCert(r)}
+      actionColumnWidth={260}
+      rowActions={(record, _index, {refresh}) => (
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => {
+            CertBackend.refreshDomainExpire(record.owner, record.name)
+              .then((res: any) => {
+                if (res.status === "error") {
+                  Setting.showMessage("error", `Failed to refresh domain expire: ${res.msg}`);
+                } else {
+                  Setting.showMessage("success", "Domain expire refreshed successfully");
+                  refresh();
+                }
+              })
+              .catch((error) => Setting.showMessage("error", `Domain expire failed to refresh: ${error}`));
+          }}
+        >
+          {i18next.t("general:Refresh")}
+        </Button>
+      )}
     />
   );
 }
