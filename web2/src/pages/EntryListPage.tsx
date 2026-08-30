@@ -1,6 +1,4 @@
 import i18next from "i18next";
-import {Link} from "react-router-dom";
-import {Button} from "@/components/ui/button";
 import {CrudListPage} from "@/components/crud/CrudListPage";
 import {dateColumn, linkColumn, organizationColumn, textColumn} from "@/components/crud/columns";
 import type {ColumnDef} from "@/components/crud/types";
@@ -36,12 +34,6 @@ export default function EntryListPage() {
       newRecord={account ? () => newEntry(account) : undefined}
       editUrl={(r) => `/entries/${r.owner}/${r.name}`}
       remove={(r) => EntryBackend.deleteEntry(r)}
-      rowActions={(record) => (
-        <Button variant="ghost" size="sm" asChild>
-          <Link to={`/entries/${record.owner}/${record.name}/transcript`}>{i18next.t("entry:Transcript")}</Link>
-        </Button>
-      )}
-      actionColumnWidth={260}
     />
   );
 }

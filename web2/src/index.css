@@ -126,3 +126,10 @@
   outline: none;
   @apply ring-1 ring-ring;
 }
+
+/* antd's compactAlgorithm equivalent. The class goes on <html>, and because the
+   Tailwind spacing scale is in rem, shrinking the root size tightens padding,
+   gaps and type together the way the antd compact tokens did. */
+html.compact {
+  font-size: 14px;
+}

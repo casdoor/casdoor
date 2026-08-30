@@ -17,20 +17,30 @@ import * as Setting from "@/lib/setting";
 
 type Ctx = {record: any; mode: EditMode};
 
+/** patches several fields at once, for values that have to move together */
+type UpdateFields = (patch: Record<string, any>) => void;
+
 interface BaseField {
   name: string;
-  labelKey?: string;
-  label?: React.ReactNode;
+  /** an i18n key, or a function of the record when the label depends on the type */
+  labelKey?: string | ((ctx: Ctx) => string);
+  label?: React.ReactNode | ((ctx: Ctx) => React.ReactNode);
   /** hide the row unless this returns true */
   when?: (ctx: Ctx) => boolean;
   disabled?: (ctx: Ctx) => boolean;
   block?: boolean;
+  /**
+   * Runs instead of the plain `updateField` when the control changes, for the
+   * fields that have to reset or derive their neighbours (the syncer type
+   * rewriting the table columns, the cert type clearing the SSL credentials...).
+   */
+  onChange?: (value: any, ctx: Ctx, updateFields: UpdateFields) => void;
 }
 
 export type EditField =
   | (BaseField & {type: "text" | "password" | "email" | "url"})
   | (BaseField & {type: "number"; step?: string})
-  | (BaseField & {type: "textarea"; rows?: number})
+  | (BaseField & {type: "textarea"; rows?: number; placeholder?: string})
   | (BaseField & {type: "switch"})
   | (BaseField & {type: "tags"})
   | (BaseField & {type: "select"; options: (ctx: Ctx) => SearchableOption[]})
@@ -77,7 +87,7 @@ export function SimpleEditPage({
 }: SimpleEditPageProps) {
   const navigate = useNavigate();
   const [saving, setSaving] = React.useState(false);
-  const {record, updateField, loading, mode, setMode} = useEditRecord<any>({fetch, transform, deps});
+  const {record, updateField, updateFields, loading, mode, setMode} = useEditRecord<any>({fetch, transform, deps});
 
   if (loading || record === null) {
     return <Loading />;
@@ -114,6 +124,8 @@ export function SimpleEditPage({
     }
     const value = record[field.name];
     const disabled = field.disabled ? field.disabled(ctx) : false;
+    const set = (next: any) =>
+      field.onChange ? field.onChange(next, ctx, updateFields) : updateField(field.name, next);
 
     let control: React.ReactNode;
     switch (field.type) {
@@ -122,8 +134,9 @@ export function SimpleEditPage({
         <Textarea
           rows={field.rows ?? 4}
           disabled={disabled}
+          placeholder={field.placeholder}
           value={value ?? ""}
-          onChange={(e) => updateField(field.name, e.target.value)}
+          onChange={(e) => set(e.target.value)}
         />
       );
       break;
@@ -134,18 +147,18 @@ export function SimpleEditPage({
           step={field.step}
           disabled={disabled}
           value={value ?? 0}
-          onChange={(e) => updateField(field.name, field.step ? Number(e.target.value) : Setting.myParseInt(e.target.value))}
+          onChange={(e) => set(field.step ? Number(e.target.value) : Setting.myParseInt(e.target.value))}
         />
       );
       break;
     case "switch":
       control = (
-        <Switch disabled={disabled} checked={!!value} onCheckedChange={(v) => updateField(field.name, v)} />
+        <Switch disabled={disabled} checked={!!value} onCheckedChange={(v) => set(v)} />
       );
       break;
     case "tags":
       control = (
-        <TagsInput disabled={disabled} value={value ?? []} onChange={(v) => updateField(field.name, v)} />
+        <TagsInput disabled={disabled} value={value ?? []} onChange={(v) => set(v)} />
       );
       break;
     case "select":
@@ -153,7 +166,7 @@ export function SimpleEditPage({
         <SearchableSelect
           disabled={disabled}
           value={value ?? ""}
-          onChange={(v) => updateField(field.name, v)}
+          onChange={(v) => set(v)}
           options={field.options(ctx)}
         />
       );
@@ -164,7 +177,7 @@ export function SimpleEditPage({
           disabled={disabled}
           creatable={field.creatable}
           value={value ?? []}
-          onChange={(v) => updateField(field.name, v)}
+          onChange={(v) => set(v)}
           options={field.options(ctx)}
         />
       );
@@ -175,7 +188,7 @@ export function SimpleEditPage({
           language={field.language}
           height={field.height}
           value={value ?? ""}
-          onChange={(v) => updateField(field.name, v)}
+          onChange={(v) => set(v)}
         />
       );
       break;
@@ -188,7 +201,7 @@ export function SimpleEditPage({
           type={field.type === "text" ? "text" : field.type}
           disabled={disabled}
           value={value ?? ""}
-          onChange={(e) => updateField(field.name, e.target.value)}
+          onChange={(e) => set(e.target.value)}
         />
       );
     }
@@ -196,8 +209,8 @@ export function SimpleEditPage({
     return (
       <FormRow
         key={field.name}
-        labelKey={field.labelKey}
-        label={field.label}
+        labelKey={typeof field.labelKey === "function" ? field.labelKey(ctx) : field.labelKey}
+        label={typeof field.label === "function" ? field.label(ctx) : field.label}
         block={field.block || field.type === "code"}
       >
         {control}
