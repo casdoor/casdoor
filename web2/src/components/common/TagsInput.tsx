@@ -15,7 +15,10 @@ interface TagsInputProps {
 /** Free-form list of strings, replacing antd's `<Select mode="tags" />`. */
 export function TagsInput({value, onChange, placeholder, disabled, className}: TagsInputProps) {
   const [draft, setDraft] = React.useState("");
-  const items = value ?? [];
+  // Defensive: several Casdoor columns that look like lists are plain strings on
+  // the wire. Rendering nothing beats taking the whole edit page down with
+  // "items.map is not a function".
+  const items = Array.isArray(value) ? value : [];
 
   const commit = () => {
     const next = draft.trim();

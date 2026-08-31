@@ -301,7 +301,11 @@ export default function ApplicationEditPage() {
             <Switch checked={!!application.enableSignUp} onCheckedChange={(v) => updateField("enableSignUp", v)} />
           </FormRow>
           <FormRow labelKey="general:IP whitelist">
-            <TagsInput value={application.ipWhitelist ?? []} onChange={(v) => updateField("ipWhitelist", v)} />
+            <Input
+              placeholder={application.organizationObj?.ipWhitelist}
+              value={application.ipWhitelist ?? ""}
+              onChange={(e) => updateField("ipWhitelist", e.target.value)}
+            />
           </FormRow>
           <FormRow labelKey="application:Org choice mode">
             <SelectField
@@ -759,8 +763,52 @@ export default function ApplicationEditPage() {
               onChange={(e) => updateField("cookieExpireInHours", Setting.myParseInt(e.target.value))}
             />
           </FormRow>
-          <FormRow labelKey="general:Scopes">
-            <TagsInput value={application.scopes ?? []} onChange={(v) => updateField("scopes", v)} />
+          {/* scopes are ScopeItem objects (name / displayName / description), the
+              same three columns antd's ScopeTable edits */}
+          <FormRow labelKey="general:Scopes" block>
+            <EditableTable
+              rows={application.scopes ?? []}
+              onChange={(rows) => updateField("scopes", rows)}
+              newRow={() => ({name: "", displayName: "", description: ""})}
+              columns={[
+                {
+                  key: "name",
+                  title: i18next.t("general:Name"),
+                  width: "25%",
+                  render: (row: any, index, update) => (
+                    <Input
+                      value={row.name ?? ""}
+                      placeholder="e.g., files:read"
+                      onChange={(e) => update({name: e.target.value})}
+                    />
+                  ),
+                },
+                {
+                  key: "displayName",
+                  title: i18next.t("general:Display name"),
+                  width: "25%",
+                  render: (row: any, index, update) => (
+                    <Input
+                      value={row.displayName ?? ""}
+                      placeholder="e.g., Read Files"
+                      onChange={(e) => update({displayName: e.target.value})}
+                    />
+                  ),
+                },
+                {
+                  key: "description",
+                  title: i18next.t("general:Description"),
+                  width: "40%",
+                  render: (row: any, index, update) => (
+                    <Input
+                      value={row.description ?? ""}
+                      placeholder="e.g., Allow reading your files and documents"
+                      onChange={(e) => update({description: e.target.value})}
+                    />
+                  ),
+                },
+              ]}
+            />
           </FormRow>
           <FormRow labelKey="application:Client cert">
             <SearchableSelect

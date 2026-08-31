@@ -7,3 +7,6 @@ build-temp
 .env.*
 !.env.example
 yarn-error.log
+cypress/screenshots
+cypress/videos
+cypress/downloads

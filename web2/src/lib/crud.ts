@@ -84,3 +84,35 @@ export async function submitAdd<T>(options: {
     return false;
   }
 }
+
+/**
+ * Several Casdoor columns are `map[string]string` on the wire but are edited as
+ * a two-column table (LDAP custom attributes, provider HTTP headers, user
+ * properties). These convert between the two; the antd frontend did the same
+ * inside `AttributesMapperTable` / `HttpHeaderTable`.
+ *
+ * Feeding the map straight to `EditableTable` would crash the page on `.map`,
+ * and saving the rows back would replace the object with an array.
+ */
+export function mapToRows(
+  map: Record<string, string> | null | undefined,
+  keyName: string,
+  valueName: string,
+): Record<string, string>[] {
+  if (!map || typeof map !== "object" || Array.isArray(map)) {
+    return [];
+  }
+  return Object.entries(map).map(([key, value]) => ({[keyName]: key, [valueName]: `${value ?? ""}`}));
+}
+
+export function rowsToMap(
+  rows: Record<string, any>[] | null | undefined,
+  keyName: string,
+  valueName: string,
+): Record<string, string> {
+  const map: Record<string, string> = {};
+  (rows ?? []).forEach((row) => {
+    map[row?.[keyName] ?? ""] = row?.[valueName] ?? "";
+  });
+  return map;
+}
