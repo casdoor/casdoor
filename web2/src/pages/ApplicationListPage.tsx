@@ -1,6 +1,8 @@
+import * as React from "react";
 import i18next from "i18next";
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {Badge} from "@/components/ui/badge";
+import {Button} from "@/components/ui/button";
 import {CrudListPage} from "@/components/crud/CrudListPage";
 import {dateColumn, linkColumn, textColumn} from "@/components/crud/columns";
 import type {ColumnDef} from "@/components/crud/types";
@@ -12,8 +14,38 @@ import {newApplication} from "@/pages/defaults";
 
 export default function ApplicationListPage() {
   const {account} = useAccount();
+  const navigate = useNavigate();
   const organizationName = useRequestOrganization();
   const isGlobal = account ? Setting.isDefaultOrganizationSelected(account) : false;
+  const [copying, setCopying] = React.useState("");
+
+  /**
+   * "Duplicate" saves a copy right away and opens it, as the antd page does.
+   * The client credentials are dropped so the copy gets its own pair.
+   */
+  const duplicate = (record: any) => {
+    const name = `${record.name}_${Setting.getRandomName()}`;
+    const copy = {
+      ...record,
+      name,
+      createdTime: new Date().toISOString(),
+      displayName: `Copy Application - ${name}`,
+      clientId: "",
+      clientSecret: "",
+    };
+    setCopying(record.name);
+    ApplicationBackend.addApplication(copy)
+      .then((res: any) => {
+        if (res.status === "ok") {
+          Setting.showMessage("success", i18next.t("general:Successfully copied"));
+          navigate(`/applications/${copy.organization}/${name}`);
+        } else {
+          Setting.showMessage("error", `${i18next.t("general:Failed to copy")}: ${res.msg}`);
+        }
+      })
+      .catch((error: any) => Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`))
+      .finally(() => setCopying(""));
+  };
 
   const columns: ColumnDef<any>[] = [
     linkColumn({dataIndex: "name", to: (r) => `/applications/${r.organization}/${r.name}`, width: 170}),
@@ -86,6 +118,11 @@ export default function ApplicationListPage() {
             q.sortOrder,
           )
       }
+      rowActions={(record) => (
+        <Button variant="outline" size="sm" loading={copying === record.name} onClick={() => duplicate(record)}>
+          {i18next.t("general:Duplicate")}
+        </Button>
+      )}
       newRecord={account ? () => newApplication(account) : undefined}
       editUrl={(r) => `/applications/${r.organization}/${r.name}`}
       remove={(r) => ApplicationBackend.deleteApplication(r)}

@@ -97,6 +97,26 @@ export default function PermissionEditPage() {
 
   return (
     <SimpleEditPage
+      beforeSave={(permission) => {
+        // the same checks the antd page runs before it POSTs
+        if ((permission.users?.length ?? 0) === 0 && (permission.roles?.length ?? 0) === 0) {
+          Setting.showMessage("error", i18next.t("general:The users and roles cannot be empty at the same time"));
+          return null;
+        }
+        if ((permission.resources?.length ?? 0) === 0) {
+          Setting.showMessage("error", i18next.t("general:The resources cannot be empty"));
+          return null;
+        }
+        if ((permission.actions?.length ?? 0) === 0) {
+          Setting.showMessage("error", i18next.t("general:The actions cannot be empty"));
+          return null;
+        }
+        if (!Setting.isLocalAdminUser(account) && permission.submitter !== account?.name) {
+          Setting.showMessage("error", i18next.t("general:A normal user can only modify the permission submitted by itself"));
+          return null;
+        }
+        return permission;
+      }}
       titleKey="permission:Edit Permission"
       backTo="/permissions"
       deps={[organizationName, permissionName]}

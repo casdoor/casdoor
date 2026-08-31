@@ -2,6 +2,7 @@ import i18next from "i18next";
 import {useParams} from "react-router-dom";
 import {Input} from "@/components/ui/input";
 import {EditableTable} from "@/components/crud/EditableTable";
+import {Button} from "@/components/ui/button";
 import {SimpleEditPage, type EditField} from "@/components/crud/SimpleEditPage";
 import {useAccount} from "@/hooks/use-account";
 import {useOrganizationOptions, useProviderOptions} from "@/hooks/use-options";
@@ -119,6 +120,34 @@ export default function ProductEditPage() {
 
   return (
     <SimpleEditPage
+      extraActions={(ctx) =>
+        ctx.mode === "add" ? null : (
+          <Button variant="outline" asChild>
+            <a href={`/products/${ctx.record.owner}/${ctx.record.name}/buy`} target="_blank" rel="noreferrer">
+              {i18next.t("product:Test buy page..")}
+            </a>
+          </Button>
+        )
+      }
+      beforeSave={(product) => {
+        // the same three checks the antd page runs before it POSTs
+        if (!product.currency) {
+          Setting.showMessage("error", i18next.t("product:Please select a currency"));
+          return null;
+        }
+        if (!product.isCreatedByPlan && (!product.providers || product.providers.length === 0)) {
+          Setting.showMessage("error", i18next.t("product:Please select at least one payment provider"));
+          return null;
+        }
+        if (product.isRecharge && product.disableCustomRecharge && (!product.rechargeOptions || product.rechargeOptions.length === 0)) {
+          Setting.showMessage(
+            "error",
+            i18next.t("product:Please add at least one recharge option when custom amount is disabled"),
+          );
+          return null;
+        }
+        return product;
+      }}
       titleKey="product:Edit Product"
       backTo="/products"
       deps={[organizationName, productName]}

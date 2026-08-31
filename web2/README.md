@@ -53,9 +53,9 @@ Three kinds of spec, because they catch different things:
   real row** of a list, so the edit page meets values the backend actually
   stores — which is how the `ipWhitelist` and `scopes` mis-bindings surfaced.
 - `entry-viewers`, `map-fields`, `edit-page-details`, `mfa-signin`,
-  `mfa-notification`, `callback-mfa`, `list-columns` and `view-mode` stub the
-  relevant endpoint with `cy.intercept`, for the states a real database rarely
-  holds — an OpenClaw session, a plan-created invitation, an account with two MFA
+  `mfa-notification`, `callback-mfa`, `list-columns`, `view-mode` and
+  `page-actions` stub the relevant endpoint with `cy.intercept`, for the states a
+  real database rarely holds — an OpenClaw session, a plan-created invitation, an account with two MFA
   factors, a provider login that comes back asking for one, a non-admin account.
 
 `DataTable` puts `data-column="<dataIndex>"` on each header cell, which is how a
@@ -138,6 +138,13 @@ orders, payments, plans, pricings, products, subscriptions) open read-only for
 anyone who is not a local admin — "View" instead of "Edit", no Add, no Delete, a
 locked form and no Save. Edit pages title themselves "New X" / "View X" /
 "Edit X" after their mode.
+
+The per-page actions are there too: duplicating an application, uploading the
+Terms of Use HTML, resetting the footer HTML, previewing a webhook's payload,
+copying a pricing page URL, the "Test buy page" link, the save-time checks on
+permissions and products, the block on deleting a group that still has
+subgroups, "Show all" on the group tree, and the LDAP sync page's synced /
+unsynced marks, group ids and per-user results.
 
 Dashboard, apps, shortcuts, my account, system info, breadcrumbs,
 and list + edit pages for: organizations, users, groups (incl. tree), invitations,
