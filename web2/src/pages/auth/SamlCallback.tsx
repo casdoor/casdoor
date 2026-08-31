@@ -4,7 +4,9 @@ import {useLocation, useNavigate} from "react-router-dom";
 import {Alert, AlertDescription} from "@/components/ui/alert";
 import {Loading} from "@/components/common/Loading";
 import {AuthLayout} from "@/components/auth/AuthLayout";
+import {MfaVerify, NextMfa} from "@/components/auth/MfaVerify";
 import {authConfig} from "@/auth/Auth";
+import * as ApplicationBackend from "@/backend/ApplicationBackend";
 import * as AuthBackend from "@/backend/AuthBackend";
 import * as Conf from "@/Conf";
 import * as Setting from "@/lib/setting";
@@ -18,10 +20,22 @@ import * as Setting from "@/lib/setting";
  * `/api/login` needs to turn the assertion into a session (or an OAuth code).
  * Ported from `web/src/auth/SamlCallback.js`.
  */
+/** A login the backend answered with "NextMfa", waiting on the second factor. */
+interface PendingMfa {
+  props: any;
+  values: Record<string, any>;
+  authParams: any;
+  onSuccess: (res: any) => void;
+}
+
 export default function SamlCallback() {
   const location = useLocation();
   const navigate = useNavigate();
   const [msg, setMsg] = React.useState<string | null>(null);
+  // The assertion is single-use, so the second factor is collected here rather
+  // than by sending the user back to /login with the pending login dropped.
+  const [mfa, setMfa] = React.useState<PendingMfa | null>(null);
+  const [application, setApplication] = React.useState<any>(null);
   const startedRef = React.useRef(false);
 
   React.useEffect(() => {
@@ -43,7 +57,7 @@ export default function SamlCallback() {
     }
 
     const clientId = messages[0] === "" ? "" : messages[0];
-    const application = messages[0] === "" ? Conf.DefaultApplication : "";
+    const applicationName = messages[0] === "" ? Conf.DefaultApplication : "";
     const state = messages[1];
     const providerName = messages[2];
     const redirectUri = messages[3];
@@ -70,7 +84,7 @@ export default function SamlCallback() {
       clientId: clientId,
       provider: providerName,
       state: state,
-      application: application,
+      application: applicationName,
       redirectUri: `${window.location.origin}/callback`,
       method: "signup",
       relayState: relayState,
@@ -100,10 +114,21 @@ export default function SamlCallback() {
       } else if (res.data === "RequiredMfa") {
         localStorage.setItem("mfaRedirectUrl", window.location.origin);
         Setting.goToLink(window.location.origin);
-      } else if (res.data === "NextMfa") {
-        // The second factor is collected on the login page, which owns the form state.
-        setMsg(i18next.t("mfa:Multi-factor authentication"));
-        navigate("/login");
+      } else if (res.data === NextMfa) {
+        // the panel needs the application for its branding and the captcha rule
+        // behind "Get Code"; with only a clientId there is no name to fetch by
+        if (applicationName) {
+          ApplicationBackend.getApplication("admin", applicationName).then((appRes: any) => {
+            setApplication(appRes.status === "ok" ? appRes.data : null);
+          });
+        }
+        setMfa({
+          props: res.data2,
+          values: {...body, providerBack: body.provider, provider: ""},
+          // the same params antd hands MfaAuthVerifyForm, so the re-post keeps the OAuth context
+          authParams: {clientId, responseType, redirectUri, state},
+          onSuccess: onDone,
+        });
       } else if (res.data === "SelectPlan") {
         const pricing = res.data2;
         Setting.goToLink(`/select-plan/${pricing.owner}/${pricing.name}`);
@@ -126,6 +151,20 @@ export default function SamlCallback() {
       .catch((error) => setMsg(`${i18next.t("general:Failed to connect to server")}: ${error}`));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  if (mfa !== null) {
+    return (
+      <AuthLayout application={application}>
+        <MfaVerify
+          formValues={mfa.values}
+          authParams={mfa.authParams}
+          mfaProps={mfa.props}
+          application={application}
+          onSuccess={(res) => mfa.onSuccess(res)}
+        />
+      </AuthLayout>
+    );
+  }
 
   if (msg !== null) {
     return (

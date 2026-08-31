@@ -1,7 +1,8 @@
 import i18next from "i18next";
-import {useParams} from "react-router-dom";
+import {Link, useParams} from "react-router-dom";
 import {Input} from "@/components/ui/input";
 import {EditableTable} from "@/components/crud/EditableTable";
+import {Badge} from "@/components/ui/badge";
 import {SimpleEditPage, type EditField} from "@/components/crud/SimpleEditPage";
 import {useAccount} from "@/hooks/use-account";
 import {useGroupOptions, useOrganizationOptions} from "@/hooks/use-options";
@@ -43,6 +44,27 @@ export default function GroupEditPage() {
           .filter((option) => option.value !== `${ctx.record.owner}/${ctx.record.name}`)
           .map((option) => ({...option, value: option.value.split("/")[1]})),
       ],
+    },
+    {
+      // read-only: membership is edited from the user page, as in the antd frontend
+      type: "custom",
+      name: "users",
+      labelKey: "general:Users",
+      render: (ctx) => {
+        const users: string[] = ctx.record.users ?? [];
+        if (users.length === 0) {
+          return <span className="text-sm text-muted-foreground">-</span>;
+        }
+        return (
+          <div className="flex flex-wrap gap-1">
+            {users.map((user) => (
+              <Link key={user} to={`/users/${user}`}>
+                <Badge variant="secondary" className="font-normal hover:bg-secondary/70">{user}</Badge>
+              </Link>
+            ))}
+          </div>
+        );
+      },
     },
     {type: "text", name: "contactEmail", labelKey: "general:Email"},
     {type: "number", name: "gidNumber", labelKey: "general:GID number"},
