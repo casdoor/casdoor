@@ -18,6 +18,7 @@ export default function ModelListPage() {
     textColumn({dataIndex: "displayName", title: i18next.t("general:Display name"), searchable: true, width: 180}),
     {
       dataIndex: "modelText",
+      sortable: true,
       title: i18next.t("model:Model text"),
       render: (value) => (
         <pre className="max-h-24 max-w-xl overflow-auto rounded-md bg-muted p-2 text-xs">{value}</pre>

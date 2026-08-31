@@ -12,12 +12,16 @@ import {
   useUserOptions,
 } from "@/hooks/use-options";
 import * as PermissionBackend from "@/backend/PermissionBackend";
+import {
+  enumOptions,
+  PERMISSION_ACTIONS,
+  PERMISSION_API_ACTIONS,
+  PERMISSION_EFFECTS,
+  PERMISSION_RESOURCE_TYPES,
+  PERMISSION_STATES,
+} from "@/lib/enum-labels";
 import * as Setting from "@/lib/setting";
 
-const RESOURCE_TYPES = ["Application", "TreeNode", "Custom"];
-const ACTIONS = ["Read", "Write", "Admin"];
-const EFFECTS = ["Allow", "Deny"];
-const STATES = ["Approved", "Pending", "Rejected"];
 
 export default function PermissionEditPage() {
   const {organizationName = "", permissionName = ""} = useParams();
@@ -51,26 +55,31 @@ export default function PermissionEditPage() {
       type: "select",
       name: "resourceType",
       labelKey: "permission:Resource type",
-      options: () => RESOURCE_TYPES.map((item) => ({value: item, label: item})),
+      options: () => enumOptions(PERMISSION_RESOURCE_TYPES),
     },
     {
       type: "multiselect",
       name: "resources",
       labelKey: "general:Resources",
       creatable: true,
-      options: (ctx) => (ctx.record.resourceType === "Application" ? applications : []),
+      // an API permission is scoped to backend paths; everything else to applications
+      options: (ctx) =>
+        ctx.record.resourceType === "API"
+          ? Setting.getApiPaths().map((path: string) => ({value: path, label: path}))
+          : [{value: "*", label: i18next.t("general:All")}, ...applications],
     },
     {
       type: "multiselect",
       name: "actions",
       labelKey: "permission:Actions",
-      options: () => ACTIONS.map((item) => ({value: item, label: i18next.t(`permission:${item}`)})),
+      options: (ctx) =>
+        enumOptions(ctx.record.resourceType === "API" ? PERMISSION_API_ACTIONS : PERMISSION_ACTIONS),
     },
     {
       type: "select",
       name: "effect",
       labelKey: "permission:Effect",
-      options: () => EFFECTS.map((item) => ({value: item, label: i18next.t(`permission:${item}`)})),
+      options: () => enumOptions(PERMISSION_EFFECTS),
     },
     {type: "switch", name: "isEnabled", labelKey: "general:Is enabled"},
     {type: "text", name: "submitter", labelKey: "permission:Submitter", disabled: () => true},
@@ -81,7 +90,7 @@ export default function PermissionEditPage() {
       type: "select",
       name: "state",
       labelKey: "general:State",
-      options: () => STATES.map((item) => ({value: item, label: i18next.t(`permission:${item}`)})),
+      options: () => enumOptions(PERMISSION_STATES),
       disabled: () => !Setting.isLocalAdminUser(account),
     },
   ];

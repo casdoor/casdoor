@@ -1,13 +1,11 @@
-import i18next from "i18next";
 import {useParams} from "react-router-dom";
 import {SimpleEditPage, type EditField} from "@/components/crud/SimpleEditPage";
 import {TicketMessages} from "@/components/user/TicketMessages";
 import {useAccount} from "@/hooks/use-account";
 import {useOrganizationOptions, useUserNameOptions} from "@/hooks/use-options";
 import * as TicketBackend from "@/backend/TicketBackend";
+import {enumOptions, TICKET_STATES} from "@/lib/enum-labels";
 import * as Setting from "@/lib/setting";
-
-const STATES = ["Open", "In Progress", "Resolved", "Closed"];
 
 export default function TicketEditPage() {
   const {organizationName = "", ticketName = ""} = useParams();
@@ -32,7 +30,7 @@ export default function TicketEditPage() {
       type: "select",
       name: "state",
       labelKey: "general:State",
-      options: () => STATES.map((item) => ({value: item, label: i18next.t(`ticket:${item}`)})),
+      options: () => enumOptions(TICKET_STATES),
       // once a ticket is closed only an admin can move it back
       disabled: (ctx) => !Setting.isAdminUser(account) && ctx.record.state === "Closed",
     },

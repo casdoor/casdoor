@@ -18,10 +18,10 @@ export default function RoleListPage() {
     organizationColumn(),
     dateColumn(),
     textColumn({dataIndex: "displayName", title: i18next.t("general:Display name"), searchable: true, width: 160}),
-    refsColumn({dataIndex: "users", title: i18next.t("role:Sub users"), urlPrefix: "/users", width: 200}),
-    refsColumn({dataIndex: "groups", title: i18next.t("role:Sub groups"), urlPrefix: "/groups", width: 180}),
-    refsColumn({dataIndex: "roles", title: i18next.t("role:Sub roles"), urlPrefix: "/roles", width: 180}),
-    tagsColumn({dataIndex: "domains", title: i18next.t("role:Sub domains"), width: 160}),
+    refsColumn({dataIndex: "users", title: i18next.t("role:Sub users"), urlPrefix: "/users", width: 200, sortable: true, searchable: true}),
+    refsColumn({dataIndex: "groups", title: i18next.t("role:Sub groups"), urlPrefix: "/groups", width: 180, sortable: true, searchable: true}),
+    refsColumn({dataIndex: "roles", title: i18next.t("role:Sub roles"), urlPrefix: "/roles", width: 180, sortable: true, searchable: true}),
+    tagsColumn({dataIndex: "domains", title: i18next.t("role:Sub domains"), width: 160, sortable: true, searchable: true}),
     boolColumn({dataIndex: "isEnabled", title: i18next.t("general:Is enabled")}),
   ];
 

@@ -45,6 +45,12 @@ export interface CrudListPageProps<T extends Record<string, any>> {
   formType?: string;
   /** set to false for read-only lists such as Sessions or Records */
   showActionColumn?: boolean;
+  /**
+   * The signed-in user may look but not touch: the row action becomes "View"
+   * and opens the edit page in its read-only mode, and Add and Delete are
+   * disabled. The antd list pages do this for anyone who is not a local admin.
+   */
+  readOnly?: boolean;
   actionColumnWidth?: number | string;
 }
 
@@ -66,6 +72,7 @@ export function CrudListPage<T extends Record<string, any>>({
   formType,
   showActionColumn = true,
   actionColumnWidth = 180,
+  readOnly = false,
 }: CrudListPageProps<T>) {
   const navigate = useNavigate();
   const {rows, total, loading, query, setQuery, refresh} = useTableData<T>(fetch, deps, initialQuery);
@@ -130,14 +137,21 @@ export function CrudListPage<T extends Record<string, any>>({
           <div className="flex flex-wrap items-center gap-1">
             {rowActions?.(record, index, {refresh})}
             {editUrl ? (
-              <Button variant="outline" size="sm" onClick={() => navigate(editUrl(record))}>
-                {i18next.t("general:Edit")}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() =>
+                  navigate(editUrl(record), readOnly ? {state: {mode: "view"}} : undefined)
+                }
+              >
+                {i18next.t(readOnly ? "general:View" : "general:Edit")}
               </Button>
             ) : null}
             {remove ? (
               <ConfirmButton
                 variant="destructive"
                 size="sm"
+                disabled={readOnly}
                 description={`${record.name ?? ""}`}
                 onConfirm={() => handleDelete(record)}
               >
@@ -149,7 +163,7 @@ export function CrudListPage<T extends Record<string, any>>({
       },
     ];
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [columns, formItems, editUrl, remove, rowActions, showActionColumn, rows, query.page, refresh]);
+  }, [columns, formItems, editUrl, remove, rowActions, showActionColumn, readOnly, rows, query.page, refresh]);
 
   return (
     <div className="space-y-4">
@@ -163,7 +177,7 @@ export function CrudListPage<T extends Record<string, any>>({
               <RefreshCw className={loading ? "animate-spin" : undefined} />
             </Button>
             {newRecord ? (
-              <Button id="add-button" onClick={handleAdd} loading={adding}>
+              <Button id="add-button" onClick={handleAdd} loading={adding} disabled={readOnly}>
                 <Plus />
                 {addButtonLabel ?? i18next.t("general:Add")}
               </Button>

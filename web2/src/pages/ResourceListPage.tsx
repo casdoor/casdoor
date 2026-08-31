@@ -59,12 +59,12 @@ export default function ResourceListPage() {
           </Link>
         ) : null,
     },
-    textColumn({dataIndex: "parent", title: i18next.t("general:Parent"), width: 130}),
+    textColumn({dataIndex: "parent", title: i18next.t("general:Parent"), width: 130, searchable: true}),
     textColumn({dataIndex: "name", title: i18next.t("general:Name"), width: 200, searchable: true}),
     dateColumn(),
-    textColumn({dataIndex: "tag", title: i18next.t("general:Tag"), width: 110}),
-    textColumn({dataIndex: "fileType", title: i18next.t("general:Type"), width: 110}),
-    textColumn({dataIndex: "fileFormat", title: i18next.t("resource:Format"), width: 110}),
+    textColumn({dataIndex: "tag", title: i18next.t("general:Tag"), width: 110, searchable: true}),
+    textColumn({dataIndex: "fileType", title: i18next.t("general:Type"), width: 110, searchable: true}),
+    textColumn({dataIndex: "fileFormat", title: i18next.t("resource:Format"), width: 110, searchable: true}),
     {
       dataIndex: "fileSize",
       title: i18next.t("resource:File size"),

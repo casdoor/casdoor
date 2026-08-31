@@ -53,10 +53,13 @@ Three kinds of spec, because they catch different things:
   real row** of a list, so the edit page meets values the backend actually
   stores — which is how the `ipWhitelist` and `scopes` mis-bindings surfaced.
 - `entry-viewers`, `map-fields`, `edit-page-details`, `mfa-signin`,
-  `mfa-notification` and `callback-mfa` stub the relevant endpoint with
-  `cy.intercept`, for the states a real database rarely holds — an OpenClaw
-  session, a plan-created invitation, an account with two MFA factors, a
-  provider login that comes back asking for one.
+  `mfa-notification`, `callback-mfa`, `list-columns` and `view-mode` stub the
+  relevant endpoint with `cy.intercept`, for the states a real database rarely
+  holds — an OpenClaw session, a plan-created invitation, an account with two MFA
+  factors, a provider login that comes back asking for one, a non-admin account.
+
+`DataTable` puts `data-column="<dataIndex>"` on each header cell, which is how a
+spec reaches one column's sort or search control.
 
 Two things worth knowing when writing a spec:
 
@@ -127,7 +130,16 @@ The same panel appears on `/callback` and `/callback/saml`, because a provider's
 authorization code is single-use — sending the user back to `/login` would drop
 the pending sign-in.
 
-**Console** — dashboard, apps, shortcuts, my account, system info, breadcrumbs,
+**Console** — every list page carries the same per-column search and sorting the
+antd tables offer, stored enum values (ticket and subscription states, permission
+actions and effects, coupon discount types, ...) render as translated badges from
+one map per enum in `lib/enum-labels.tsx`, and the billing objects (coupons,
+orders, payments, plans, pricings, products, subscriptions) open read-only for
+anyone who is not a local admin — "View" instead of "Edit", no Add, no Delete, a
+locked form and no Save. Edit pages title themselves "New X" / "View X" /
+"Edit X" after their mode.
+
+Dashboard, apps, shortcuts, my account, system info, breadcrumbs,
 and list + edit pages for: organizations, users, groups (incl. tree), invitations,
 applications, providers, resources, certs, keys, roles, permissions, models,
 adapters, enforcers, agents, MCP servers, entries, sites, rules, sessions,

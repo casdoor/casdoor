@@ -6,6 +6,7 @@ import {Input} from "@/components/ui/input";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import {SelectField} from "@/components/common/SelectField";
 import * as AdapterBackend from "@/backend/AdapterBackend";
+import type {EditMode} from "@/lib/crud";
 import * as Setting from "@/lib/setting";
 
 const COLUMN_KEYS = ["V0", "V1", "V2", "V3", "V4", "V5"];
@@ -21,7 +22,7 @@ interface PolicyTableProps {
   enforcer: any;
   /** the model's sections, e.g. {p: "sub,obj,act", g: "_,_"} — the column titles come from `p` */
   modelCfg?: Record<string, string>;
-  mode: "add" | "edit";
+  mode: EditMode;
 }
 
 /**

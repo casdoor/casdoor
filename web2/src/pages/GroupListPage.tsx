@@ -22,9 +22,11 @@ export default function GroupListPage() {
     dateColumn("updatedTime", i18next.t("general:Updated time")),
     textColumn({dataIndex: "displayName", title: i18next.t("general:Display name"), searchable: true, width: 170}),
     textColumn({dataIndex: "type", title: i18next.t("general:Type"), width: 110}),
-    textColumn({dataIndex: "parentId", title: i18next.t("group:Parent group"), width: 150}),
+    textColumn({dataIndex: "parentId", title: i18next.t("group:Parent group"), width: 150, searchable: true}),
     {
       dataIndex: "users",
+      sortable: true,
+      searchable: true,
       title: i18next.t("general:Users"),
       width: 110,
       align: "center",

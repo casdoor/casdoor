@@ -31,12 +31,13 @@ export function linkColumn<T extends Record<string, any>>(options: {
   };
 }
 
-export function dateColumn<T>(dataIndex = "createdTime", title?: React.ReactNode): ColumnDef<T> {
+export function dateColumn<T>(dataIndex = "createdTime", title?: React.ReactNode, options?: {sortable?: boolean; searchable?: boolean}): ColumnDef<T> {
   return {
     dataIndex,
     title: title ?? i18next.t("general:Created time"),
     width: 165,
-    sortable: true,
+    sortable: options?.sortable ?? true,
+    searchable: options?.searchable ?? false,
     render: (value) => (
       <span className="whitespace-nowrap tabular-nums text-muted-foreground">{Setting.getFormattedDate(value)}</span>
     ),
@@ -68,13 +69,17 @@ export function tagsColumn<T>(options: {
   dataIndex: string;
   title: React.ReactNode;
   width?: number | string;
+  sortable?: boolean;
+  searchable?: boolean;
   to?: (value: string) => string;
 }): ColumnDef<T> {
-  const {dataIndex, title, width, to} = options;
+  const {dataIndex, title, width, sortable = false, searchable = false, to} = options;
   return {
     dataIndex,
     title,
     width,
+    sortable,
+    searchable,
     render: (value: string[]) => {
       if (!value || value.length === 0) {
         return null;
@@ -104,13 +109,17 @@ export function refsColumn<T>(options: {
   title: React.ReactNode;
   urlPrefix: string;
   width?: number | string;
+  sortable?: boolean;
+  searchable?: boolean;
   max?: number;
 }): ColumnDef<T> {
-  const {dataIndex, title, urlPrefix, width, max = 6} = options;
+  const {dataIndex, title, urlPrefix, width, sortable = false, searchable = false, max = 6} = options;
   return {
     dataIndex,
     title,
     width,
+    sortable,
+    searchable,
     render: (value: any[]) => {
       if (!value || value.length === 0) {
         return null;
@@ -136,9 +145,9 @@ export function refsColumn<T>(options: {
   };
 }
 
-export function organizationColumn<T>(width: number | string = 140): ColumnDef<T> {
+export function organizationColumn<T>(width: number | string = 140, dataIndex = "owner"): ColumnDef<T> {
   return {
-    dataIndex: "owner",
+    dataIndex,
     title: i18next.t("general:Organization"),
     width,
     sortable: true,

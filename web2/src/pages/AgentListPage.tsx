@@ -16,8 +16,8 @@ export default function AgentListPage() {
     organizationColumn(),
     dateColumn(),
     textColumn({dataIndex: "displayName", title: i18next.t("general:Display name"), searchable: true, width: 180}),
-    textColumn({dataIndex: "url", title: i18next.t("general:Listening URL"), width: 240}),
-    textColumn({dataIndex: "application", title: i18next.t("general:Application"), width: 160}),
+    textColumn({dataIndex: "url", title: i18next.t("general:Listening URL"), width: 240, searchable: true}),
+    textColumn({dataIndex: "application", title: i18next.t("general:Application"), width: 160, searchable: true}),
   ];
 
   return (

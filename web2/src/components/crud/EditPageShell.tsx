@@ -36,15 +36,20 @@ export function EditPageShell({
 }: EditPageShellProps) {
   const navigate = useNavigate();
 
+  // a read-only page offers no way to save; the antd pages hide the same buttons
   const footer = (
     <div className="flex flex-wrap items-center gap-2">
       {extraActions}
-      <Button variant="outline" loading={saving} onClick={() => onSave(false)}>
-        {i18next.t("general:Save")}
-      </Button>
-      <Button loading={saving} onClick={() => onSave(true)}>
-        {i18next.t("general:Save & Exit")}
-      </Button>
+      {mode !== "view" ? (
+        <>
+          <Button variant="outline" loading={saving} onClick={() => onSave(false)}>
+            {i18next.t("general:Save")}
+          </Button>
+          <Button loading={saving} onClick={() => onSave(true)}>
+            {i18next.t("general:Save & Exit")}
+          </Button>
+        </>
+      ) : null}
       {mode === "add" ? (
         <Button variant="ghost" onClick={() => (onCancel ? onCancel() : navigate(backTo))}>
           {i18next.t("general:Cancel")}

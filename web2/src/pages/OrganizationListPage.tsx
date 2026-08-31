@@ -39,7 +39,7 @@ export default function OrganizationListPage() {
         ) : null,
     },
     textColumn({dataIndex: "passwordType", title: i18next.t("general:Password type"), width: 140}),
-    textColumn({dataIndex: "passwordSalt", title: i18next.t("general:Password salt"), width: 130}),
+    textColumn({dataIndex: "passwordSalt", title: i18next.t("general:Password salt"), width: 130, searchable: true}),
     {
       dataIndex: "defaultAvatar",
       title: i18next.t("general:Default avatar"),

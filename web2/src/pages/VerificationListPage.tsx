@@ -13,7 +13,7 @@ export default function VerificationListPage() {
     organizationColumn(),
     textColumn({dataIndex: "name", title: i18next.t("general:Name"), width: 180, searchable: true}),
     dateColumn(),
-    textColumn({dataIndex: "type", title: i18next.t("general:Type"), width: 110}),
+    textColumn({dataIndex: "type", title: i18next.t("general:Type"), width: 110, searchable: true}),
     {
       dataIndex: "user",
       title: i18next.t("general:User"),
@@ -26,10 +26,10 @@ export default function VerificationListPage() {
         </Link>
       ),
     },
-    textColumn({dataIndex: "provider", title: i18next.t("general:Provider"), width: 160}),
-    textColumn({dataIndex: "remoteAddr", title: i18next.t("general:Client IP"), width: 140}),
+    textColumn({dataIndex: "provider", title: i18next.t("general:Provider"), width: 160, searchable: true}),
+    textColumn({dataIndex: "remoteAddr", title: i18next.t("general:Client IP"), width: 140, searchable: true}),
     textColumn({dataIndex: "receiver", title: i18next.t("verification:Receiver"), width: 180, searchable: true}),
-    textColumn({dataIndex: "code", title: i18next.t("login:Verification code"), width: 130, mono: true}),
+    textColumn({dataIndex: "code", title: i18next.t("login:Verification code"), width: 130, mono: true, searchable: true}),
     boolColumn({dataIndex: "isUsed", title: i18next.t("verification:Is used")}),
   ];
 

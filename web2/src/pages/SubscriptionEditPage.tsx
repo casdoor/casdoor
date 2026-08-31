@@ -9,10 +9,10 @@ import {
   useUserNameOptions,
 } from "@/hooks/use-options";
 import * as SubscriptionBackend from "@/backend/SubscriptionBackend";
+import {enumOptions, SUBSCRIPTION_STATES} from "@/lib/enum-labels";
 import * as Setting from "@/lib/setting";
 
 const PERIODS = ["Monthly", "Yearly"];
-const STATES = ["Pending", "Active", "Upcoming", "Expired", "Error", "Suspended"];
 
 export default function SubscriptionEditPage() {
   const {organizationName = "", subscriptionName = ""} = useParams();
@@ -51,7 +51,7 @@ export default function SubscriptionEditPage() {
       type: "select",
       name: "state",
       labelKey: "general:State",
-      options: () => STATES.map((item) => ({value: item, label: i18next.t(`subscription:${item}`)})),
+      options: () => enumOptions(SUBSCRIPTION_STATES),
     },
   ];
 

@@ -31,9 +31,11 @@ export default function ProviderListPage() {
         </span>
       ),
     },
-    textColumn({dataIndex: "clientId", title: i18next.t("provider:Client ID"), width: 180, mono: true}),
+    textColumn({dataIndex: "clientId", title: i18next.t("provider:Client ID"), width: 180, mono: true, searchable: true}),
     {
       dataIndex: "providerUrl",
+      sortable: true,
+      searchable: true,
       title: i18next.t("provider:Provider URL"),
       width: 220,
       render: (value) =>

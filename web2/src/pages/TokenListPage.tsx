@@ -54,18 +54,22 @@ export default function TokenListPage() {
     },
     {
       dataIndex: "code",
+      sortable: true,
+      searchable: true,
       title: i18next.t("token:Authorization code"),
       width: 160,
       render: (value) => (value ? Setting.getClickable(Setting.getShortText(value)) : null),
     },
     {
       dataIndex: "accessToken",
+      sortable: true,
+      searchable: true,
       title: i18next.t("token:Access token"),
       width: 160,
       render: (value) => (value ? Setting.getClickable(Setting.getShortText(value)) : null),
     },
-    textColumn({dataIndex: "expiresIn", title: i18next.t("token:Expires in"), width: 120}),
-    textColumn({dataIndex: "scope", title: i18next.t("provider:Scope"), width: 110}),
+    textColumn({dataIndex: "expiresIn", title: i18next.t("token:Expires in"), width: 120, searchable: true}),
+    textColumn({dataIndex: "scope", title: i18next.t("provider:Scope"), width: 110, searchable: true}),
   ];
 
   return (

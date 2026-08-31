@@ -13,6 +13,8 @@ import {newTransaction} from "@/pages/defaults";
 export default function TransactionListPage() {
   const {account} = useAccount();
   const organizationName = useRequestOrganization();
+  // the antd list pages let a non-admin look but not touch these
+  const readOnly = !Setting.isLocalAdminUser(account);
 
   const columns: ColumnDef<any>[] = [
     linkColumn({dataIndex: "name", to: (r) => `/transactions/${r.owner}/${r.name}`, width: 190}),
@@ -67,6 +69,7 @@ export default function TransactionListPage() {
         )
       }
       newRecord={account ? () => newTransaction(account) : undefined}
+      readOnly={readOnly}
       editUrl={(r) => `/transactions/${r.owner}/${r.name}`}
       remove={(r) => TransactionBackend.deleteTransaction(r)}
     />

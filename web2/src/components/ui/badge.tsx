@@ -12,6 +12,8 @@ const badgeVariants = cva(
         destructive: "border-destructive/30 bg-destructive/10 text-destructive",
         success: "border-success/30 bg-success/10 text-success",
         warning: "border-warning/30 bg-warning/10 text-warning",
+        // antd's "processing" blue, for states that are in flight
+        info: "border-blue-500/30 bg-blue-500/10 text-blue-600 dark:text-blue-400",
         outline: "text-foreground",
       },
     },

@@ -14,6 +14,8 @@ import {newProduct} from "@/pages/defaults";
 export default function ProductListPage() {
   const {account} = useAccount();
   const organizationName = useRequestOrganization();
+  // the antd list pages let a non-admin look but not touch these
+  const readOnly = !Setting.isLocalAdminUser(account);
 
   const columns: ColumnDef<any>[] = [
     linkColumn({dataIndex: "name", to: (r) => `/products/${r.owner}/${r.name}`}),
@@ -31,18 +33,20 @@ export default function ProductListPage() {
           </a>
         ) : null,
     },
-    textColumn({dataIndex: "tag", title: i18next.t("general:Tag"), width: 130}),
+    textColumn({dataIndex: "tag", title: i18next.t("general:Tag"), width: 130, searchable: true}),
     {
       dataIndex: "price",
+      searchable: true,
       title: i18next.t("order:Price"),
       width: 120,
       sortable: true,
       render: (value, record) => Setting.getPriceDisplay(value, record.currency),
     },
-    textColumn({dataIndex: "quantity", title: i18next.t("product:Quantity"), width: 110}),
-    textColumn({dataIndex: "sold", title: i18next.t("product:Sold"), width: 100}),
+    textColumn({dataIndex: "quantity", title: i18next.t("product:Quantity"), width: 110, searchable: true}),
+    textColumn({dataIndex: "sold", title: i18next.t("product:Sold"), width: 100, searchable: true}),
     {
       dataIndex: "state",
+      searchable: true,
       title: i18next.t("general:State"),
       width: 120,
       sortable: true,
@@ -60,6 +64,7 @@ export default function ProductListPage() {
         ProductBackend.getProducts(organizationName, q.page, q.pageSize, q.searchedColumn, q.searchText, q.sortField, q.sortOrder)
       }
       newRecord={account ? () => newProduct(account) : undefined}
+      readOnly={readOnly}
       editUrl={(r) => `/products/${r.owner}/${r.name}`}
       remove={(r) => ProductBackend.deleteProduct(r)}
       rowActions={(record) => (

@@ -21,7 +21,7 @@ import {FormRow} from "@/components/crud/FormRow";
 import {useAccount} from "@/hooks/use-account";
 import {useEditRecord} from "@/hooks/use-edit-record";
 import {useCertOptions, useOrganizationOptions, useProviderOptions} from "@/hooks/use-options";
-import {submitEdit} from "@/lib/crud";
+import {getModeTitleKey, submitEdit} from "@/lib/crud";
 import {SigninTableDefaultCssMap} from "@/lib/signin-css";
 import {SignupTableDefaultCssMap} from "@/lib/signup-css";
 import * as ApplicationBackend from "@/backend/ApplicationBackend";
@@ -175,7 +175,7 @@ export default function ApplicationEditPage() {
 
   return (
     <EditPageShell
-      title={`${i18next.t("application:Edit Application")} - ${application.displayName || application.name}`}
+      title={`${i18next.t(getModeTitleKey("application:Edit Application", mode))} - ${application.displayName || application.name}`}
       mode={mode}
       backTo="/applications"
       onSave={save}

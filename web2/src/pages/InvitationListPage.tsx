@@ -1,8 +1,8 @@
 import i18next from "i18next";
-import {Badge} from "@/components/ui/badge";
 import {CrudListPage} from "@/components/crud/CrudListPage";
 import {dateColumn, linkColumn, organizationColumn, textColumn} from "@/components/crud/columns";
 import type {ColumnDef} from "@/components/crud/types";
+import {enumColumn, INVITATION_STATES} from "@/lib/enum-labels";
 import {useAccount} from "@/hooks/use-account";
 import {useRequestOrganization} from "@/hooks/use-organization";
 import * as InvitationBackend from "@/backend/InvitationBackend";
@@ -18,19 +18,13 @@ export default function InvitationListPage() {
     dateColumn(),
     dateColumn("updatedTime", i18next.t("general:Updated time")),
     textColumn({dataIndex: "displayName", title: i18next.t("general:Display name"), searchable: true, width: 170}),
-    textColumn({dataIndex: "code", title: i18next.t("invitation:Code"), width: 150, mono: true}),
-    textColumn({dataIndex: "quota", title: i18next.t("invitation:Quota"), width: 100}),
-    textColumn({dataIndex: "usedCount", title: i18next.t("invitation:Used count"), width: 120}),
-    textColumn({dataIndex: "application", title: i18next.t("general:Application"), width: 150}),
-    textColumn({dataIndex: "email", title: i18next.t("general:Email"), width: 170}),
-    textColumn({dataIndex: "phone", title: i18next.t("general:Phone"), width: 130}),
-    {
-      dataIndex: "state",
-      title: i18next.t("general:State"),
-      width: 110,
-      sortable: true,
-      render: (value) => <Badge variant={value === "Active" ? "success" : "secondary"}>{value}</Badge>,
-    },
+    textColumn({dataIndex: "code", title: i18next.t("invitation:Code"), width: 150, mono: true, searchable: true}),
+    textColumn({dataIndex: "quota", title: i18next.t("invitation:Quota"), width: 100, searchable: true}),
+    textColumn({dataIndex: "usedCount", title: i18next.t("invitation:Used count"), width: 120, searchable: true}),
+    textColumn({dataIndex: "application", title: i18next.t("general:Application"), width: 150, searchable: true}),
+    textColumn({dataIndex: "email", title: i18next.t("general:Email"), width: 170, searchable: true}),
+    textColumn({dataIndex: "phone", title: i18next.t("general:Phone"), width: 130, searchable: true}),
+    enumColumn({dataIndex: "state", title: i18next.t("general:State"), map: INVITATION_STATES}),
   ];
 
   return (

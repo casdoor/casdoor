@@ -13,7 +13,7 @@ export default function RecordListPage() {
 
   const columns: ColumnDef<any>[] = [
     textColumn({dataIndex: "name", title: i18next.t("general:Name"), width: 140, searchable: true}),
-    textColumn({dataIndex: "id", title: i18next.t("general:ID"), width: 90}),
+    textColumn({dataIndex: "id", title: i18next.t("general:ID"), width: 90, searchable: true}),
     textColumn({dataIndex: "clientIp", title: i18next.t("general:Client IP"), width: 140, searchable: true}),
     {
       dataIndex: "createdTime",
@@ -50,9 +50,10 @@ export default function RecordListPage() {
     },
     textColumn({dataIndex: "method", title: i18next.t("general:Method"), width: 100}),
     textColumn({dataIndex: "requestUri", title: i18next.t("general:Request URI"), width: 240, searchable: true}),
-    textColumn({dataIndex: "language", title: i18next.t("user:Language"), width: 100}),
+    textColumn({dataIndex: "language", title: i18next.t("user:Language"), width: 100, searchable: true}),
     {
       dataIndex: "statusCode",
+      searchable: true,
       title: i18next.t("rule:Status code"),
       width: 110,
       sortable: true,
@@ -61,9 +62,11 @@ export default function RecordListPage() {
           <Badge variant={String(value).startsWith("2") ? "success" : "destructive"}>{value}</Badge>
         ) : null,
     },
-    textColumn({dataIndex: "response", title: i18next.t("record:Response"), width: 200}),
+    textColumn({dataIndex: "response", title: i18next.t("record:Response"), width: 200, searchable: true}),
     {
       dataIndex: "object",
+      sortable: true,
+      searchable: true,
       title: i18next.t("record:Object"),
       render: (value) =>
         value ? <pre className="max-h-24 max-w-xl overflow-auto rounded-md bg-muted p-2 text-xs">{value}</pre> : null,

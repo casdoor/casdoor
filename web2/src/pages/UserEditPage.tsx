@@ -37,7 +37,7 @@ import {
   useGroupOptions,
   useOrganizationOptions,
 } from "@/hooks/use-options";
-import {submitEdit} from "@/lib/crud";
+import {getModeTitleKey, submitEdit} from "@/lib/crud";
 import * as ApplicationBackend from "@/backend/ApplicationBackend";
 import * as OrganizationBackend from "@/backend/OrganizationBackend";
 import * as MfaBackend from "@/backend/MfaBackend";
@@ -212,7 +212,7 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
 
   return (
     <EditPageShell
-      title={`${i18next.t("user:Edit User")} - ${user.displayName || user.name}`}
+      title={`${i18next.t(getModeTitleKey("user:Edit User", mode))} - ${user.displayName || user.name}`}
       mode={mode}
       backTo={self ? "/" : "/users"}
       onSave={save}
