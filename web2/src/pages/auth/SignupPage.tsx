@@ -7,6 +7,7 @@ import {Checkbox} from "@/components/ui/checkbox";
 import {Input} from "@/components/ui/input";
 import {Label} from "@/components/ui/label";
 import {Loading} from "@/components/common/Loading";
+import {MultiSelect} from "@/components/common/MultiSelect";
 import {SearchableSelect} from "@/components/common/SearchableSelect";
 import {AuthLayout} from "@/components/auth/AuthLayout";
 import {AgreementCheckbox} from "@/components/auth/AgreementModal";
@@ -19,6 +20,7 @@ import * as Util from "@/auth/Util";
 import * as ApplicationBackend from "@/backend/ApplicationBackend";
 import * as InvitationBackend from "@/backend/InvitationBackend";
 import * as AuthBackend from "@/backend/AuthBackend";
+import {getSignupItemField, validateSignupItems} from "@/lib/signup-validation";
 import * as Setting from "@/lib/setting";
 
 /** The signup items Casdoor can render; anything else falls back to a text input. */
@@ -44,6 +46,7 @@ export default function SignupPage() {
   const [msg, setMsg] = React.useState<string | null>(null);
   const [values, setValues] = React.useState<Record<string, any>>({});
   const [agreed, setAgreed] = React.useState(false);
+  const [errors, setErrors] = React.useState<Record<string, string>>({});
   const [loading, setLoading] = React.useState(false);
   const [captchaVisible, setCaptchaVisible] = React.useState(false);
   const [pendingValues, setPendingValues] = React.useState<any>(null);
@@ -57,7 +60,7 @@ export default function SignupPage() {
       : ApplicationBackend.getApplication("admin", applicationName);
     load
       .then((res: any) => {
-        if (res.status === "ok") {
+        if (res.status === "ok" && res.data) {
           setApplication(res.data);
           const invitationCode = searchParams.get("invitationCode") ?? "";
           setValues((prev) => ({
@@ -82,7 +85,7 @@ export default function SignupPage() {
           }
         } else {
           setApplication(null);
-          setMsg(res.msg);
+          setMsg(res.msg || i18next.t("general:Unknown application name"));
         }
       })
       .catch((error) => {
@@ -92,7 +95,15 @@ export default function SignupPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [applicationName]);
 
-  const set = (key: string, value: any) => setValues((prev) => ({...prev, [key]: value}));
+  const set = (key: string, value: any) => {
+    setValues((prev) => ({...prev, [key]: value}));
+    // antd re-validates on change; clearing the message as the user types matches that
+    setErrors((prev) => (prev[key] ? {...prev, [key]: ""} : prev));
+  };
+
+  /** the inline message under a field, as the antd Form.Item shows it */
+  const fieldError = (field: string) =>
+    errors[field] ? <p className="text-xs text-destructive">{errors[field]}</p> : null;
 
   if (application === undefined) {
     return <Loading className="min-h-screen" />;
@@ -120,12 +131,17 @@ export default function SignupPage() {
 
   const captchaProvider = getCaptchaProvider(application);
   const items = (application.signupItems ?? []).filter((item: any) => item.visible);
-  const agreementItem = items.find((item: any) => item.name === "Agreement");
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (agreementItem?.required && !agreed) {
-      Setting.showMessage("error", i18next.t("signup:Please accept the agreement!"));
+
+    // the antd form runs these as Form rules; without them an organization's
+    // signup-item regex and the phone / email / password checks are ignored
+    const found = validateSignupItems(items, {...values, agreement: agreed}, application);
+    setErrors(found);
+    const firstError = Object.values(found)[0];
+    if (firstError) {
+      Setting.showMessage("error", firstError);
       return;
     }
 
@@ -208,6 +224,7 @@ export default function SignupPage() {
             value={values.username ?? ""}
             onChange={(e) => set("username", e.target.value)}
           />
+          {fieldError("username")}
         </div>
       );
     case "Display name":
@@ -215,6 +232,7 @@ export default function SignupPage() {
         <div key={item.name} className="space-y-2">
           <Label htmlFor="name">{i18next.t("general:Display name")}</Label>
           <Input id="name" required={required} value={values.name ?? ""} onChange={(e) => set("name", e.target.value)} />
+          {fieldError("name")}
         </div>
       );
     case "Password":
@@ -228,6 +246,7 @@ export default function SignupPage() {
             value={values.password ?? ""}
             onChange={(e) => set("password", e.target.value)}
           />
+          {fieldError("password")}
         </div>
       );
     case "Confirm password":
@@ -257,11 +276,13 @@ export default function SignupPage() {
             <Label htmlFor="email">{i18next.t("general:Email")}</Label>
             <Input
               id="email"
-              type="email"
+              // not type="email": the browser's own bubble would pre-empt the
+              // translated message and skip the signup item's regex
               required={required}
               value={values.email ?? ""}
               onChange={(e) => set("email", e.target.value)}
             />
+            {fieldError("email")}
           </div>
           {item.rule !== "No verification" ? (
             <div className="space-y-2">
@@ -303,6 +324,7 @@ export default function SignupPage() {
                 onChange={(e) => set("phone", e.target.value)}
               />
             </div>
+            {fieldError("phone")}
           </div>
           {item.rule !== "No verification" ? (
             <div className="space-y-2">
@@ -363,16 +385,27 @@ export default function SignupPage() {
       return null;
     default: {
       const labelKey = SIMPLE_TEXT_ITEMS[item.name];
-      const field = item.name.replace(/\s+/g, "").replace(/^./, (c: string) => c.toLowerCase());
+      const field = getSignupItemField(item.name);
+      const label = labelKey ? i18next.t(labelKey) : item.label || item.name;
+      const options = (item.options ?? []).map((option: string) => ({value: option, label: option}));
       return (
         <div key={item.name} className="space-y-2">
-          <Label htmlFor={field}>{labelKey ? i18next.t(labelKey) : item.label || item.name}</Label>
-          <Input
-            id={field}
-            required={required}
-            value={values[field] ?? ""}
-            onChange={(e) => set(field, e.target.value)}
-          />
+          <Label htmlFor={field}>{label}</Label>
+          {/* an item can be a choice list rather than a text box, as in the antd form */}
+          {item.type === "Single Choice" ? (
+            <SearchableSelect value={values[field] ?? ""} onChange={(v) => set(field, v)} options={options} />
+          ) : item.type === "Multiple Choices" ? (
+            <MultiSelect value={values[field] ?? []} onChange={(v) => set(field, v)} options={options} />
+          ) : (
+            <Input
+              id={field}
+              required={required}
+              placeholder={item.placeholder}
+              value={values[field] ?? ""}
+              onChange={(e) => set(field, e.target.value)}
+            />
+          )}
+          {fieldError(field)}
         </div>
       );
     }

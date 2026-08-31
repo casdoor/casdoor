@@ -53,8 +53,8 @@ Three kinds of spec, because they catch different things:
   real row** of a list, so the edit page meets values the backend actually
   stores — which is how the `ipWhitelist` and `scopes` mis-bindings surfaced.
 - `entry-viewers`, `map-fields`, `edit-page-details`, `mfa-signin`,
-  `mfa-notification`, `callback-mfa`, `list-columns`, `view-mode` and
-  `page-actions` stub the relevant endpoint with `cy.intercept`, for the states a
+  `mfa-notification`, `callback-mfa`, `list-columns`, `view-mode`,
+  `page-actions`, `signup-validation` and `login-page` stub the relevant endpoint with `cy.intercept`, for the states a
   real database rarely holds — an OpenClaw session, a plan-created invitation, an account with two MFA
   factors, a provider login that comes back asking for one, a non-admin account.
 
@@ -109,6 +109,13 @@ selector broadcasting `storageOrganizationChanged`, and the sign-in payloads
 sign up from `signupItems`, forgot password, `/callback` (OAuth, OIDC, SAML POST
 binding, CAS, Telegram, Steam, Web3 token key), MFA second factor + recovery
 code, consent, prompt, result.
+
+The sign-in page honours `orgChoiceMode`, so an application can ask which
+organization the visitor belongs to first; a visitor already signed in to that
+organization gets a one-click "continue as" panel above the form, which is how
+an OAuth or device request is approved. Sign-up runs the same client-side rules
+the antd Form does — each signup item's own `regex` included — and reports them
+in Casdoor's own wording rather than the browser's.
 
 **Captcha** — the full rule handling of the antd frontend (`Never` / `Always` /
 `Dynamic` / `Internet-Only`), as a dialog or inline in the sign-in form, for both
