@@ -18,9 +18,14 @@ const selector = {
   loginButton: "form button[type=submit]",
 };
 
-/** Disables the product tour so its popover never covers what a test clicks. */
-function suppressTour(win) {
+/**
+ * Puts the app in a deterministic state before it boots: no product tour popover
+ * covering what a test clicks, and English so specs can assert on copy whatever
+ * the machine's browser language is.
+ */
+function prepareApp(win) {
   win.localStorage.setItem("isTourVisible", "false");
+  win.localStorage.setItem("language", "en");
 }
 
 /**
@@ -29,7 +34,7 @@ function suppressTour(win) {
  * behind, which is what triggers the "enable MFA" prompt.
  */
 Cypress.Commands.add("login", () => {
-  cy.visit("/", {onBeforeLoad: suppressTour});
+  cy.visit("/", {onBeforeLoad: prepareApp});
   cy.get(selector.username).type(ADMIN.username);
   cy.get(selector.password).type(ADMIN.password);
   cy.get(selector.loginButton).click();
@@ -51,8 +56,8 @@ Cypress.Commands.add("openConsole", () => {
     },
     {cacheAcrossSpecs: true},
   );
-  // localStorage is cleared between tests, so the tour has to be muted per test
-  cy.visit("/", {onBeforeLoad: suppressTour});
+  // localStorage is cleared between tests, so this has to be set per test
+  cy.visit("/", {onBeforeLoad: prepareApp});
   cy.location("pathname", {timeout: 20000}).should("eq", "/");
 });
 

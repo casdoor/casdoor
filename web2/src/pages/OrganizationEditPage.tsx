@@ -516,6 +516,10 @@ export default function OrganizationEditPage() {
               onChange={(e) => update("orgBalance", Number(e.target.value))}
             />
           </FormRow>
+          <FormRow labelKey="organization:User balance">
+            {/* maintained by the backend, the antd page shows it read-only too */}
+            <Input type="number" value={organization.userBalance ?? 0} disabled />
+          </FormRow>
           <FormRow labelKey="organization:Account menu">
             <SelectField
               value={organization.accountMenu || "Horizontal"}

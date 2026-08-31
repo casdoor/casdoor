@@ -52,8 +52,11 @@ Three kinds of spec, because they catch different things:
 - The per-feature specs (`application`, `certs`, `user`, ...) open the **first
   real row** of a list, so the edit page meets values the backend actually
   stores — which is how the `ipWhitelist` and `scopes` mis-bindings surfaced.
-- `entry-viewers`, `map-fields` and `mfa-notification` stub the relevant
-  endpoint with `cy.intercept`, for the shapes a real database rarely holds.
+- `entry-viewers`, `map-fields`, `edit-page-details`, `mfa-signin`,
+  `mfa-notification` and `callback-mfa` stub the relevant endpoint with
+  `cy.intercept`, for the states a real database rarely holds — an OpenClaw
+  session, a plan-created invitation, an account with two MFA factors, a
+  provider login that comes back asking for one.
 
 Two things worth knowing when writing a spec:
 
@@ -116,8 +119,16 @@ and push. An organization that marks a factor `Required` redirects the user ther
 right after sign-in, and the user page can set the preferred factor or remove
 MFA.
 
-**Console** — dashboard, apps, shortcuts, my account, system info, and list +
-edit pages for: organizations, users, groups (incl. tree), invitations,
+At sign-in the second factor opens on the factor the user marked preferred and
+offers the others as links; each one asks for what it actually needs (a "Get
+Code" field for SMS/email, an authenticator code, the code from a push
+notification, or the RADIUS password), and a recovery code always works instead.
+The same panel appears on `/callback` and `/callback/saml`, because a provider's
+authorization code is single-use — sending the user back to `/login` would drop
+the pending sign-in.
+
+**Console** — dashboard, apps, shortcuts, my account, system info, breadcrumbs,
+and list + edit pages for: organizations, users, groups (incl. tree), invitations,
 applications, providers, resources, certs, keys, roles, permissions, models,
 adapters, enforcers, agents, MCP servers, entries, sites, rules, sessions,
 records, tokens, verifications, products, coupons, orders, payments, plans,

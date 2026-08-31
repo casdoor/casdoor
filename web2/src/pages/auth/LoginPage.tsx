@@ -276,7 +276,8 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
       localStorage.setItem("mfaRedirectUrl", window.location.href);
       reload().then(() => navigate("/mfa/setup", {state: {from: "/login"}}));
     } else if (res.data === NextMfa) {
-      setMfa({props: res.data2?.[0] ?? res.data2, values: {...values, providerBack: values.provider, provider: ""}, authParams});
+      // hand over every enabled factor: MfaVerify starts on the preferred one and lets the user switch
+      setMfa({props: res.data2, values: {...values, providerBack: values.provider, provider: ""}, authParams});
     } else if (res.data === "SelectPlan") {
       const pricing = res.data2;
       Setting.goToLink(`/select-plan/${pricing.owner}/${pricing.name}?user=${values.username}`);

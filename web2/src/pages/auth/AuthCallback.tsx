@@ -4,10 +4,12 @@ import {useLocation, useNavigate} from "react-router-dom";
 import {Alert, AlertDescription} from "@/components/ui/alert";
 import {Loading} from "@/components/common/Loading";
 import {AuthLayout} from "@/components/auth/AuthLayout";
+import {MfaVerify, NextMfa} from "@/components/auth/MfaVerify";
 import {RedirectForm} from "@/components/auth/RedirectForm";
 import {authConfig} from "@/auth/Auth";
 import * as Provider from "@/auth/Provider";
 import * as Util from "@/auth/Util";
+import * as ApplicationBackend from "@/backend/ApplicationBackend";
 import * as AuthBackend from "@/backend/AuthBackend";
 import * as Setting from "@/lib/setting";
 
@@ -16,11 +18,24 @@ import * as Setting from "@/lib/setting";
  * code to /api/login and then performs whatever redirect the original request asked
  * for — the same contract the antd AuthCallback implemented.
  */
+/** A login the backend answered with "NextMfa", waiting on the second factor. */
+interface PendingMfa {
+  props: any;
+  values: Record<string, any>;
+  authParams: any;
+  onSuccess: (res: any) => void;
+}
+
 export default function AuthCallback() {
   const location = useLocation();
   const navigate = useNavigate();
   const [msg, setMsg] = React.useState<string | null>(null);
   const [saml, setSaml] = React.useState<{response: string; redirectUrl: string; relayState: string} | null>(null);
+  // The provider's authorization code is single-use, so the second factor has to
+  // be collected here; sending the user back to /login would drop the pending
+  // login and leave them unable to finish.
+  const [mfa, setMfa] = React.useState<PendingMfa | null>(null);
+  const [application, setApplication] = React.useState<any>(null);
   const startedRef = React.useRef(false);
 
   React.useEffect(() => {
@@ -170,17 +185,27 @@ export default function AuthCallback() {
       }
     };
 
-    const checkMfa = (res: any, onDone: (res: any) => void) => {
+    const checkMfa = (res: any, authParams: any, onDone: (res: any) => void) => {
       if (res.data === Setting.RequiredUpdatePassword) {
         Setting.goToUpdatePassword();
       } else if (res.data === "RequiredMfa") {
         // the account reload in the console then bounces to /mfa/setup
         localStorage.setItem("mfaRedirectUrl", window.location.origin);
         Setting.goToLink(window.location.origin);
-      } else if (res.data === "NextMfa") {
-        // The second factor is collected on the login page, which owns the form state.
-        setMsg(i18next.t("mfa:Multi-factor authentication"));
-        navigate("/login");
+      } else if (res.data === NextMfa) {
+        // the panel needs the application for its branding and the captcha rule
+        // behind "Get Code"
+        if (applicationName) {
+          ApplicationBackend.getApplication("admin", applicationName).then((appRes: any) => {
+            setApplication(appRes.status === "ok" ? appRes.data : null);
+          });
+        }
+        setMfa({
+          props: res.data2,
+          values: {...body, providerBack: body.provider, provider: ""},
+          authParams,
+          onSuccess: onDone,
+        });
       } else if (res.data === "SelectPlan") {
         const pricing = res.data2;
         Setting.goToLink(`/select-plan/${pricing.owner}/${pricing.name}?user=${body.username}`);
@@ -195,7 +220,7 @@ export default function AuthCallback() {
     if (responseType === "cas") {
       AuthBackend.loginCas(body, {service: casService}).then((res: any) => {
         if (res.status === "ok") {
-          checkMfa(res, (ok) => {
+          checkMfa(res, {service: casService}, (ok) => {
             let message = "Logged in successfully.";
             if (casService === "") {
               message += " Now you can visit apps protected by Casdoor.";
@@ -218,7 +243,7 @@ export default function AuthCallback() {
     AuthBackend.login(body, oAuthParams)
       .then((res: any) => {
         if (res.status === "ok") {
-          checkMfa(res, handleOAuth);
+          checkMfa(res, oAuthParams, handleOAuth);
         } else {
           setMsg(res.msg);
         }
@@ -229,6 +254,20 @@ export default function AuthCallback() {
 
   if (saml !== null) {
     return <RedirectForm samlResponse={saml.response} redirectUrl={saml.redirectUrl} relayState={saml.relayState} />;
+  }
+
+  if (mfa !== null) {
+    return (
+      <AuthLayout application={application}>
+        <MfaVerify
+          formValues={mfa.values}
+          authParams={mfa.authParams}
+          mfaProps={mfa.props}
+          application={application}
+          onSuccess={(res) => mfa.onSuccess(res)}
+        />
+      </AuthLayout>
+    );
   }
 
   if (msg !== null) {

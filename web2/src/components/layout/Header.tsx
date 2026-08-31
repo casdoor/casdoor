@@ -14,6 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {AiAssistant} from "@/components/common/AiAssistant";
+import {BreadcrumbBar} from "@/components/layout/BreadcrumbBar";
 import {LanguageSelect} from "@/components/common/LanguageSelect";
 import {OrganizationSelect} from "@/components/common/OrganizationSelect";
 import {OpenTour} from "@/components/common/ConsoleTour";
@@ -82,6 +83,7 @@ export function Header({onOpenMobileNav}: {onOpenMobileNav: () => void}) {
       <Button variant="ghost" size="iconSm" className="lg:hidden" onClick={onOpenMobileNav} aria-label="Menu">
         <Menu />
       </Button>
+      <BreadcrumbBar />
 
       <div className="ml-auto flex items-center gap-1.5">
         {showOrganizationSelect && (
