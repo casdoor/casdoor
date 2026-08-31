@@ -30,7 +30,12 @@ const TOKEN_FORMATS = ["JWT", "JWT-Empty", "JWT-Custom", "JWT-Standard"];
 const OBFUSCATOR_TYPES = ["Plain", "AES", "DES"];
 const VIEW_RULES = ["Public", "Self", "Admin"];
 const MODIFY_RULES = ["Self", "Admin", "Immutable"];
-const MFA_RULES = ["Optional", "Prompted", "Required"];
+/** `general:Optional` and friends do not exist; the antd table uses these. */
+const MFA_RULES: Record<string, string> = {
+  "Optional": "organization:Optional",
+  "Prompted": "organization:Prompt",
+  "Required": "organization:Required",
+};
 
 function passwordOptions() {
   return [
@@ -370,8 +375,18 @@ export default function OrganizationEditPage() {
                   render: (row: any, _index, patch) => (
                     <SelectField
                       value={row.rule}
-                      onChange={(value) => patch({rule: value})}
-                      options={MFA_RULES.map((item) => ({id: item, name: i18next.t(`general:${item}`)}))}
+                      onChange={(value) => {
+                        // exactly one factor may be mandatory, as the antd table enforces
+                        const required = (organization.mfaItems ?? []).filter(
+                          (item: any) => item.rule === "Required",
+                        ).length;
+                        if (value === "Required" && required >= 1 && row.rule !== "Required") {
+                          Setting.showMessage("error", i18next.t("general:Only 1 MFA method can be required"));
+                          return;
+                        }
+                        patch({rule: value});
+                      }}
+                      options={Object.entries(MFA_RULES).map(([id, key]) => ({id, name: i18next.t(key)}))}
                     />
                   ),
                 },

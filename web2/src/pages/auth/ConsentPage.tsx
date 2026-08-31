@@ -149,6 +149,10 @@ export default function ConsentPage() {
             {i18next.t("general:OK")}
           </Button>
         </div>
+
+        <p className="rounded-lg border bg-muted/40 px-4 py-3 text-center text-xs text-muted-foreground">
+          {i18next.t("consent:By clicking Allow, you allow this app to use your information")}
+        </p>
       </div>
     </AuthLayout>
   );

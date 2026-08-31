@@ -96,16 +96,22 @@ export function MfaVerify({formValues, authParams, mfaProps, application, onSucc
   if (useRecovery) {
     return (
       <div className="space-y-4">
-        <h2 className="text-center text-lg font-semibold">{i18next.t("mfa:Multi-factor authentication")}</h2>
+        <h2 className="text-center text-lg font-semibold">{i18next.t("mfa:Multi-factor recover")}</h2>
+        <p className="text-sm text-muted-foreground">{i18next.t("mfa:Multi-factor recover description")}</p>
         <div className="space-y-2">
           <Label htmlFor="recoveryCode">{i18next.t("mfa:Recovery code")}</Label>
-          <Input id="recoveryCode" value={recoveryCode} onChange={(e) => setRecoveryCode(e.target.value)} />
+          <Input
+            id="recoveryCode"
+            placeholder={i18next.t("mfa:Recovery code")}
+            value={recoveryCode}
+            onChange={(e) => setRecoveryCode(e.target.value)}
+          />
         </div>
         <Button className="w-full" loading={loading} onClick={() => post({recoveryCode})}>
-          {i18next.t("mfa:Verify Code")}
+          {i18next.t("forget:Verify")}
         </Button>
         <Button variant="link" className="w-full" onClick={() => setUseRecovery(false)}>
-          {i18next.t("general:Back")}
+          {i18next.t("mfa:Have problems?")} {i18next.t("mfa:Use SMS verification code")}
         </Button>
       </div>
     );
@@ -202,7 +208,7 @@ export function MfaVerify({formValues, authParams, mfaProps, application, onSucc
         ))}
 
       <Button variant="link" className="w-full" onClick={() => setUseRecovery(true)}>
-        {i18next.t("mfa:Have problems?")}
+        {i18next.t("mfa:Have problems?")} {i18next.t("mfa:Use a recovery code")}
       </Button>
     </div>
   );

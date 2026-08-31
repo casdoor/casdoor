@@ -54,7 +54,8 @@ Three kinds of spec, because they catch different things:
   stores — which is how the `ipWhitelist` and `scopes` mis-bindings surfaced.
 - `entry-viewers`, `map-fields`, `edit-page-details`, `mfa-signin`,
   `mfa-notification`, `callback-mfa`, `list-columns`, `view-mode`,
-  `page-actions`, `signup-validation` and `login-page` stub the relevant endpoint with `cy.intercept`, for the states a
+  `page-actions`, `signup-validation`, `login-page`, `application-tables` and
+  `misc-parity` stub the relevant endpoint with `cy.intercept`, for the states a
   real database rarely holds — an OpenClaw session, a plan-created invitation, an account with two MFA
   factors, a provider login that comes back asking for one, a non-admin account.
 
@@ -136,6 +137,13 @@ notification, or the RADIUS password), and a recovery code always works instead.
 The same panel appears on `/callback` and `/callback/saml`, because a provider's
 authorization code is single-use — sending the user back to `/login` would drop
 the pending sign-in.
+
+The application and organization edit pages carry the same sub-tables the antd
+frontend has, down to the option list each row offers: a provider row's category,
+type, country codes, binding rule, signup group and the rule its own kind calls
+for; a signup item's type, custom CSS and choice options; a token attribute's
+"Static Value" / "Existing Field" pair; and the rule that only lets one MFA
+factor be `Required`.
 
 **Console** — every list page carries the same per-column search and sorting the
 antd tables offer, stored enum values (ticket and subscription states, permission
