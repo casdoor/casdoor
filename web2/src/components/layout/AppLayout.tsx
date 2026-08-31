@@ -1,6 +1,7 @@
 import * as React from "react";
 import {Outlet} from "react-router-dom";
 import {Sheet, SheetContent} from "@/components/ui/sheet";
+import {EnableMfaNotification} from "@/components/auth/EnableMfaNotification";
 import {ConsoleTour} from "@/components/common/ConsoleTour";
 import {GithubCorner} from "@/components/common/GithubCorner";
 import {Header} from "@/components/layout/Header";
@@ -26,6 +27,7 @@ export function AppLayout() {
     <div className="flex h-screen overflow-hidden bg-background">
       <GithubCorner />
       <ConsoleTour />
+      <EnableMfaNotification />
       <Sidebar className="hidden lg:flex" collapsed={collapsed} onCollapsedChange={handleCollapsed} />
 
       <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>

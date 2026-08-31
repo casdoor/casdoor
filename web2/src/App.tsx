@@ -68,6 +68,7 @@ const ServerEditPage = React.lazy(() => import("@/pages/ServerEditPage"));
 const ServerStorePage = React.lazy(() => import("@/pages/ServerStorePage"));
 const EntryListPage = React.lazy(() => import("@/pages/EntryListPage"));
 const EntryEditPage = React.lazy(() => import("@/pages/EntryEditPage"));
+const OpenClawSessionTranscriptPage = React.lazy(() => import("@/pages/OpenClawSessionTranscriptPage"));
 const SiteListPage = React.lazy(() => import("@/pages/SiteListPage"));
 const SiteEditPage = React.lazy(() => import("@/pages/SiteEditPage"));
 const RuleListPage = React.lazy(() => import("@/pages/RuleListPage"));
@@ -268,6 +269,7 @@ export default function App() {
           <Route path="/server-store" element={<ServerStorePage />} />
           <Route path="/entries" element={<EntryListPage />} />
           <Route path="/entries/:organizationName/:entryName" element={<EntryEditPage />} />
+          <Route path="/entries/:organizationName/:entryName/transcript" element={<OpenClawSessionTranscriptPage />} />
           <Route path="/sites" element={<SiteListPage />} />
           <Route path="/sites/:organizationName/:siteName" element={<SiteEditPage />} />
           <Route path="/rules" element={<RuleListPage />} />
