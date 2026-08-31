@@ -1,6 +1,8 @@
 import * as React from "react";
 import i18next from "i18next";
 import {useParams} from "react-router-dom";
+import {Button} from "@/components/ui/button";
+import {Input} from "@/components/ui/input";
 import {SimpleEditPage, type EditField} from "@/components/crud/SimpleEditPage";
 import {useAccount} from "@/hooks/use-account";
 import {useApplicationOptions, useGroupOptions, useOrganizationOptions} from "@/hooks/use-options";
@@ -39,6 +41,28 @@ export default function InvitationEditPage() {
     });
   }, [account]);
 
+  /**
+   * The invite link antd's "Copy signup page URL" builds: the organization's
+   * default application's signup page, carrying this invitation's default code.
+   */
+  const copySignupUrl = (record: any) => {
+    let defaultApplication = record.application;
+    if (!defaultApplication || defaultApplication === "All") {
+      const organization = organizationObjs.find((item: any) => item.name === record.owner);
+      defaultApplication = organization?.defaultApplication;
+      if (!defaultApplication) {
+        Setting.showMessage(
+          "error",
+          i18next.t("invitation:You need to first specify a default application for organization: ") + record.owner,
+        );
+        return;
+      }
+    }
+    Setting.copyToClipboard(
+      `${window.location.origin}/signup/${defaultApplication}?invitationCode=${record.defaultCode ?? ""}`,
+    );
+  };
+
   const fields: EditField[] = [
     {
       type: "select",
@@ -50,7 +74,22 @@ export default function InvitationEditPage() {
     {type: "text", name: "name", labelKey: "general:Name", disabled: isCreatedByPlan},
     {type: "text", name: "displayName", labelKey: "general:Display name"},
     {type: "text", name: "code", labelKey: "invitation:Code"},
-    {type: "text", name: "defaultCode", labelKey: "invitation:Default code"},
+    {
+      type: "custom",
+      name: "defaultCode",
+      labelKey: "invitation:Default code",
+      render: (ctx, update) => (
+        <div className="flex items-center gap-2">
+          <Input
+            value={ctx.record.defaultCode ?? ""}
+            onChange={(e) => update("defaultCode", e.target.value)}
+          />
+          <Button variant="outline" className="shrink-0" onClick={() => copySignupUrl(ctx.record)}>
+            {i18next.t("application:Copy signup page URL")}
+          </Button>
+        </div>
+      ),
+    },
     {type: "number", name: "quota", labelKey: "invitation:Quota"},
     {type: "number", name: "usedCount", labelKey: "invitation:Used count", disabled: () => true},
     {

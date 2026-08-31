@@ -55,7 +55,7 @@ export default function SiteEditPage() {
     {
       type: "select",
       name: "status",
-      labelKey: "general:State",
+      labelKey: "general:Status",
       options: () => [
         {value: "Active", label: i18next.t("subscription:Active")},
         {value: "Inactive", label: i18next.t("key:Inactive")},
@@ -64,7 +64,13 @@ export default function SiteEditPage() {
     {type: "tags", name: "challenges", labelKey: "site:Challenges"},
     {type: "multiselect", name: "rules", labelKey: "general:Rules", options: () => rules},
     {type: "switch", name: "enableAlert", labelKey: "site:Enable alert"},
-    {type: "number", name: "alertInterval", labelKey: "site:Alert interval", when: (ctx) => !!ctx.record.enableAlert},
+    {
+      type: "number",
+      name: "alertInterval",
+      labelKey: "site:Alert interval",
+      suffix: i18next.t("usage:seconds"),
+      when: (ctx) => !!ctx.record.enableAlert,
+    },
     {type: "number", name: "alertTryTimes", labelKey: "site:Alert try times", when: (ctx) => !!ctx.record.enableAlert},
     {
       type: "multiselect",

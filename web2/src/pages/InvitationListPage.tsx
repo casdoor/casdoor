@@ -21,8 +21,8 @@ export default function InvitationListPage() {
     textColumn({dataIndex: "code", title: i18next.t("invitation:Code"), width: 150, mono: true, searchable: true}),
     textColumn({dataIndex: "quota", title: i18next.t("invitation:Quota"), width: 100, searchable: true}),
     textColumn({dataIndex: "usedCount", title: i18next.t("invitation:Used count"), width: 120, searchable: true}),
-    textColumn({dataIndex: "application", title: i18next.t("general:Application"), width: 150, searchable: true}),
-    textColumn({dataIndex: "email", title: i18next.t("general:Email"), width: 170, searchable: true}),
+    textColumn({dataIndex: "application", title: i18next.t("general:Application"), width: 150, searchable: true, link: (v, r: any) => `/applications/${r.owner}/${v}`}),
+    textColumn({dataIndex: "email", title: i18next.t("general:Email"), width: 170, searchable: true, link: (v) => `mailto:${v}`, linkExternal: true}),
     textColumn({dataIndex: "phone", title: i18next.t("general:Phone"), width: 130, searchable: true}),
     enumColumn({dataIndex: "state", title: i18next.t("general:State"), map: INVITATION_STATES}),
   ];

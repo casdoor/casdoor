@@ -1,6 +1,6 @@
 import i18next from "i18next";
 import {CrudListPage} from "@/components/crud/CrudListPage";
-import {dateColumn, linkColumn, organizationColumn, textColumn} from "@/components/crud/columns";
+import {dateColumn, linkColumn, organizationColumn, textColumn, urlColumn} from "@/components/crud/columns";
 import type {ColumnDef} from "@/components/crud/types";
 import {ScanServerDialog} from "@/components/server/ScanServerDialog";
 import {useAccount} from "@/hooks/use-account";
@@ -17,7 +17,7 @@ export default function ServerListPage() {
     organizationColumn(),
     dateColumn(),
     textColumn({dataIndex: "displayName", title: i18next.t("general:Display name"), searchable: true, width: 180}),
-    textColumn({dataIndex: "url", title: i18next.t("general:URL"), width: 260, searchable: true}),
+    urlColumn({dataIndex: "url", title: i18next.t("general:URL"), width: 260, max: 40}),
     textColumn({dataIndex: "application", title: i18next.t("general:Application"), width: 160, searchable: true}),
   ];
 

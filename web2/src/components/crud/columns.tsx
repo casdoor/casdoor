@@ -226,10 +226,15 @@ export function textColumn<T>(options: {
   searchable?: boolean;
   /** the header filter menu the antd column declared as `filters` */
   filters?: ColumnFilterOption[];
+  /** turns the cell into a link, keeping the search highlight inside it */
+  link?: (value: any, record: T) => string | undefined;
+  /** the link leaves Casdoor, so use an `<a target="_blank">` */
+  linkExternal?: boolean;
   mono?: boolean;
   className?: string;
 }): ColumnDef<T> {
-  const {dataIndex, title, width, sortable = true, searchable = false, filters, mono, className} = options;
+  const {dataIndex, title, width, sortable = true, searchable = false, filters, link, linkExternal, mono, className} =
+    options;
   return {
     dataIndex,
     title,
@@ -237,7 +242,45 @@ export function textColumn<T>(options: {
     sortable,
     searchable,
     filters,
+    link,
+    linkExternal,
     className: cn(mono && "font-mono text-xs", className),
+  };
+}
+
+/**
+ * A cell holding a URL: shortened, and opening in a new tab. The antd tables cut
+ * these to 40-ish characters because a webhook or agent URL is far longer than
+ * its column.
+ */
+export function urlColumn<T>(options: {
+  dataIndex: string;
+  title: React.ReactNode;
+  width?: number | string;
+  searchable?: boolean;
+  /** what to open; defaults to the cell value */
+  href?: (value: string, record: T) => string;
+  /** characters to keep, as `Setting.getShortText` counts them */
+  max?: number;
+}): ColumnDef<T> {
+  const {dataIndex, title, width, searchable = true, href, max} = options;
+  return {
+    dataIndex,
+    title,
+    width,
+    sortable: true,
+    searchable,
+    render: (value: string, record: T) =>
+      value ? (
+        <a
+          href={href ? href(value, record) : value}
+          target="_blank"
+          rel="noreferrer"
+          className="underline-offset-4 hover:underline"
+        >
+          {max === undefined ? Setting.getShortText(value) : Setting.getShortText(value, max)}
+        </a>
+      ) : null,
   };
 }
 

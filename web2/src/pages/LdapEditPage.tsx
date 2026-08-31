@@ -196,6 +196,11 @@ export default function LdapEditPage() {
           ]}
         />
       </FormRow>
+      {ldap.autoSync > 0 ? (
+        <p className="pl-1 text-sm text-warning">
+          {i18next.t("ldap:The Auto Sync option will sync all users to specify organization")}
+        </p>
+      ) : null}
       <FormRow labelKey="ldap:Default group">
         <MultiSelect
           value={ldap.defaultGroups ?? []}

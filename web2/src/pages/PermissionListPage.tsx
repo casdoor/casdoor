@@ -45,8 +45,8 @@ export default function PermissionListPage() {
     tagsColumn({dataIndex: "actions", title: i18next.t("permission:Actions"), width: 140}),
     enumColumn({dataIndex: "effect", title: i18next.t("permission:Effect"), map: PERMISSION_EFFECTS, width: 100, filters: true}),
     boolColumn({dataIndex: "isEnabled", title: i18next.t("general:Is enabled")}),
-    textColumn({dataIndex: "submitter", title: i18next.t("permission:Submitter"), width: 130}),
-    textColumn({dataIndex: "approver", title: i18next.t("permission:Approver"), width: 130}),
+    textColumn({dataIndex: "submitter", title: i18next.t("permission:Submitter"), width: 130, link: (v, r: any) => `/users/${r.owner}/${encodeURIComponent(v)}`}),
+    textColumn({dataIndex: "approver", title: i18next.t("permission:Approver"), width: 130, link: (v, r: any) => `/users/${r.owner}/${encodeURIComponent(v)}`}),
     {
       dataIndex: "approveTime",
       title: i18next.t("permission:Approve time"),

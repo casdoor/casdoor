@@ -18,7 +18,7 @@ export default function TicketListPage() {
     dateColumn("updatedTime", i18next.t("general:Updated time")),
     textColumn({dataIndex: "displayName", title: i18next.t("general:Display name"), searchable: true, width: 170}),
     textColumn({dataIndex: "title", title: i18next.t("general:Title"), searchable: true, width: 240}),
-    textColumn({dataIndex: "user", title: i18next.t("general:User"), width: 130, searchable: true}),
+    textColumn({dataIndex: "user", title: i18next.t("general:User"), width: 130, searchable: true, link: (v) => `/users/${v}`}),
     enumColumn({dataIndex: "state", title: i18next.t("general:State"), map: TICKET_STATES}),
   ];
 

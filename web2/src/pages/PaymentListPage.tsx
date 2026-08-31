@@ -23,7 +23,7 @@ export default function PaymentListPage() {
   const columns: ColumnDef<any>[] = [
     linkColumn({dataIndex: "name", to: (r) => `/payments/${r.owner}/${r.name}`, width: 180}),
     organizationColumn(),
-    textColumn({dataIndex: "provider", title: i18next.t("general:Provider"), width: 170, searchable: true}),
+    textColumn({dataIndex: "provider", title: i18next.t("general:Provider"), width: 170, searchable: true, link: (v, r: any) => `/providers/${r.owner}/${v}`}),
     {
       dataIndex: "user",
       title: i18next.t("general:User"),
@@ -38,12 +38,22 @@ export default function PaymentListPage() {
         ) : null,
     },
     dateColumn(),
-    textColumn({
-      dataIndex: "type",
-      title: i18next.t("general:Type"),
-      width: 120,
-      filters: Setting.getProviderTypeOptions("Payment").map((option: any) => ({value: option.name, label: option.id})),
-    }),
+    {
+      ...textColumn({
+        dataIndex: "type",
+        title: i18next.t("general:Type"),
+        width: 140,
+        filters: Setting.getProviderTypeOptions("Payment").map((option: any) => ({value: option.name, label: option.id})),
+      }),
+      // antd shows the payment provider's logo here; the type stays next to it
+      render: (value: string, record: any) =>
+        value ? (
+          <span className="flex items-center gap-2">
+            {Setting.getProviderLogo({...record, category: "Payment"})}
+            <span>{value}</span>
+          </span>
+        ) : null,
+    },
     tagsColumn({dataIndex: "products", title: i18next.t("general:Products"), width: 200}),
     {
       dataIndex: "price",

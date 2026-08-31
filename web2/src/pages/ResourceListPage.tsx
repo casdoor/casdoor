@@ -43,9 +43,9 @@ export default function ResourceListPage() {
   };
 
   const columns: ColumnDef<any>[] = [
-    textColumn({dataIndex: "provider", title: i18next.t("general:Provider"), width: 150, searchable: true}),
+    textColumn({dataIndex: "provider", title: i18next.t("general:Provider"), width: 150, searchable: true, link: (v, r: any) => `/providers/${r.owner}/${v}`}),
     organizationColumn(),
-    textColumn({dataIndex: "application", title: i18next.t("general:Application"), width: 150, searchable: true}),
+    textColumn({dataIndex: "application", title: i18next.t("general:Application"), width: 150, searchable: true, link: (v, r: any) => `/applications/${r.owner}/${v}`}),
     {
       dataIndex: "user",
       title: i18next.t("general:User"),
@@ -81,6 +81,18 @@ export default function ResourceListPage() {
           <a href={value} target="_blank" rel="noreferrer" className="underline-offset-4 hover:underline">
             {Setting.getShortText(value)}
           </a>
+        ) : null,
+    },
+    {
+      key: "copyUrl",
+      dataIndex: "url",
+      title: "",
+      width: 120,
+      render: (value: string) =>
+        value ? (
+          <Button variant="outline" size="sm" onClick={() => Setting.copyToClipboard(value)}>
+            {i18next.t("resource:Copy Link")}
+          </Button>
         ) : null,
     },
     {

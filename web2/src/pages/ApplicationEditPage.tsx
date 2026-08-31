@@ -350,10 +350,19 @@ export default function ApplicationEditPage() {
   const promptUrl = `/prompt/${application.name}`;
 
   const save = async(exitAfterSave: boolean) => {
+    // antd refuses to save a custom scope without a name, and drops the empty rows
+    const customScopes = (application.customScopes ?? []).filter(
+      (scope: any) => scope && Object.values(scope).some((value) => value !== "" && value !== undefined),
+    );
+    if (customScopes.some((scope: any) => !scope.name)) {
+      Setting.showMessage("error", `${i18next.t("general:Name")}: ${i18next.t("provider:This field is required")}`);
+      return;
+    }
+
     setSaving(true);
     await submitEdit({
       mode,
-      record: Setting.deepCopy(application),
+      record: {...Setting.deepCopy(application), customScopes},
       add: (record) => ApplicationBackend.addApplication(record),
       update: (record) => ApplicationBackend.updateApplication("admin", applicationName, record),
       onSaved: () => {
@@ -478,7 +487,14 @@ export default function ApplicationEditPage() {
             <Input value={application.title ?? ""} onChange={(e) => updateField("title", e.target.value)} />
           </FormRow>
           <FormRow labelKey="general:Favicon">
-            <Input value={application.favicon ?? ""} onChange={(e) => updateField("favicon", e.target.value)} />
+            <div className="space-y-2">
+              <Input value={application.favicon ?? ""} onChange={(e) => updateField("favicon", e.target.value)} />
+              {application.favicon ? (
+                <a href={application.favicon} target="_blank" rel="noreferrer">
+                  <img src={application.favicon} alt="favicon" className="h-10 w-10 object-contain" />
+                </a>
+              ) : null}
+            </div>
           </FormRow>
           <FormRow labelKey="general:Home">
             <Input value={application.homepageUrl ?? ""} onChange={(e) => updateField("homepageUrl", e.target.value)} />
@@ -554,7 +570,17 @@ export default function ApplicationEditPage() {
           <FormRow labelKey="application:Auto signin">
             <Switch
               checked={!!application.enableAutoSignin}
-              onCheckedChange={(v) => updateField("enableAutoSignin", v)}
+              onCheckedChange={(v) => {
+                // auto signin reuses the Casdoor session, so it needs one to exist
+                if (v && !application.enableSigninSession) {
+                  Setting.showMessage(
+                    "error",
+                    i18next.t("application:Please enable \"Signin session\" first before enabling \"Auto signin\""),
+                  );
+                  return;
+                }
+                updateField("enableAutoSignin", v);
+              }}
             />
           </FormRow>
           <FormRow labelKey="application:Enable Email linking">

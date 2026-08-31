@@ -16,7 +16,6 @@ import {Loading} from "@/components/common/Loading";
 import {MultiSelect} from "@/components/common/MultiSelect";
 import {RegionSelect} from "@/components/common/RegionSelect";
 import {SearchableSelect} from "@/components/common/SearchableSelect";
-import {TagsInput} from "@/components/common/TagsInput";
 import {EditPageShell} from "@/components/crud/EditPageShell";
 import {EditableTable} from "@/components/crud/EditableTable";
 import {FormRow} from "@/components/crud/FormRow";
@@ -383,7 +382,24 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
                   }}
                 />
               ) : (
-                <TagsInput value={user.address ?? []} onChange={(v) => updateField("address", v)} />
+                // antd edits the two lines of `address` as their own inputs
+                <div className="space-y-2">
+                  {[0, 1].map((line) => (
+                    <div key={line} className="flex items-center gap-2">
+                      <span className="w-28 shrink-0 text-sm text-muted-foreground">
+                        {`${i18next.t("user:Address line")} ${line + 1}`}
+                      </span>
+                      <Input
+                        value={user.address?.[line] ?? ""}
+                        onChange={(e) => {
+                          const next = [...(user.address ?? [])];
+                          next[line] = e.target.value;
+                          updateField("address", next);
+                        }}
+                      />
+                    </div>
+                  ))}
+                </div>
               )}
             </AccountItemRow>
             <AccountItemRow name="Addresses" labelKey="user:Addresses" block>
