@@ -308,6 +308,32 @@ export default function SyncerEditPage() {
     },
     {type: "switch", name: "isReadOnly", labelKey: "syncer:Is read-only"},
     {type: "switch", name: "isEnabled", labelKey: "general:Is enabled"},
+    {
+      // the antd page gives the test its own labelled row rather than a header button
+      type: "custom",
+      name: "syncerTest",
+      labelKey: "provider:Syncer test",
+      render: (ctx) => (
+        <Button
+          variant="outline"
+          onClick={() => {
+            SyncerBackend.testSyncerDb(ctx.record)
+              .then((res: any) => {
+                if (res.status === "ok") {
+                  Setting.showMessage("success", i18next.t("syncer:Connect successfully"));
+                } else {
+                  Setting.showMessage("error", `${i18next.t("syncer:Failed to connect")}: ${res.msg}`);
+                }
+              })
+              .catch((error: any) => {
+                Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
+              });
+          }}
+        >
+          {i18next.t("syncer:Test Connection")}
+        </Button>
+      ),
+    },
   ];
 
   return (
@@ -322,24 +348,6 @@ export default function SyncerEditPage() {
       editUrl={(record) => `/syncers/${record.organization}/${record.name}`}
       extraActions={(ctx) => (
         <>
-          <Button
-            variant="outline"
-            onClick={() => {
-              SyncerBackend.testSyncerDb(ctx.record)
-                .then((res: any) => {
-                  if (res.status === "ok") {
-                    Setting.showMessage("success", i18next.t("syncer:Connect successfully"));
-                  } else {
-                    Setting.showMessage("error", `${i18next.t("syncer:Failed to connect")}: ${res.msg}`);
-                  }
-                })
-                .catch((error: any) => {
-                  Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
-                });
-            }}
-          >
-            {i18next.t("provider:Syncer test")}
-          </Button>
           <Button
             variant="outline"
             onClick={() => {

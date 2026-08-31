@@ -155,6 +155,76 @@ jobs:
           name: cypress-videos
           path: ./web/cypress/videos
 
+  # web2 is the shadcn/ui port of the frontend. It is not served in production
+  # yet, but its Cypress suite guards the port against the antd frontend, so it
+  # runs against the same backend as the suite above.
+  e2e-web2:
+    name: e2e-test-web2
+    runs-on: ubuntu-latest
+    needs: [go-tests]
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_DATABASE: casdoor
+          MYSQL_ROOT_PASSWORD: 123456
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v4
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache-dependency-path: ./go.mod
+      - name: start backend
+        run: nohup go run ./main.go > /tmp/backend.log 2>&1 &
+        working-directory: ./
+      - name: Wait for backend to be ready
+        run: |
+          echo "Waiting for backend server to start on port 8000..."
+          for i in {1..60}; do
+            if curl -s http://localhost:8000 > /dev/null 2>&1; then
+              echo "Backend is ready!"
+              break
+            fi
+            if [ $i -eq 60 ]; then
+              echo "Backend failed to start within 60 seconds"
+              echo "Backend logs:"
+              cat /tmp/backend.log || echo "No backend logs available"
+              exit 1
+            fi
+            echo "Waiting... ($i/60)"
+            sleep 1
+          done
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          cache: "yarn"
+          cache-dependency-path: ./web2/yarn.lock
+      - run: yarn install
+        working-directory: ./web2
+      - run: yarn typecheck && yarn lint
+        working-directory: ./web2
+      - uses: cypress-io/github-action@v5
+        with:
+          browser: chrome
+          start: yarn start
+          wait-on: "http://localhost:7002"
+          wait-on-timeout: 210
+          working-directory: ./web2
+
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: cypress-screenshots-web2
+          path: ./web2/cypress/screenshots
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cypress-videos-web2
+          path: ./web2/cypress/videos
+
   tag-release:
     name: Create Tag
     runs-on: ubuntu-latest

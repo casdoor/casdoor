@@ -51,10 +51,6 @@ export function ProviderButtons({application, method}: ProviderButtonsProps) {
     method === "signup" ? Setting.isProviderVisibleForSignUp(item) : Setting.isProviderVisibleForSignIn(item),
   );
 
-  if (items.length === 0) {
-    return null;
-  }
-
   const goTo = (providerItem: any) => {
     const provider = providerItem.provider;
 
@@ -82,6 +78,30 @@ export function ProviderButtons({application, method}: ProviderButtonsProps) {
       Setting.goToLink(url);
     }
   };
+
+  /**
+   * `?provider_hint=<name>` skips the picker and goes straight to that provider.
+   * `routers/lightweight_auth_filter.go` serves a static page that makes the same
+   * hop without downloading the bundle; this is what happens when that page is
+   * unavailable or hands the request back, and it is what the antd login page did
+   * inline while rendering the buttons.
+   */
+  const hint = method === "link" ? null : new URLSearchParams(location.search).get("provider_hint");
+  const hintedName = items.find((item: any) => item.provider?.name === hint)?.provider?.name;
+  const goToRef = React.useRef(goTo);
+  goToRef.current = goTo;
+
+  React.useEffect(() => {
+    if (!hintedName) {
+      return;
+    }
+    goToRef.current(items.find((item: any) => item.provider?.name === hintedName));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hintedName]);
+
+  if (items.length === 0) {
+    return null;
+  }
 
   const dialog = wechatItem ? (
     <WeChatQrDialog

@@ -18,6 +18,61 @@ import * as Setting from "@/lib/setting";
  * code to /api/login and then performs whatever redirect the original request asked
  * for — the same contract the antd AuthCallback implemented.
  */
+/**
+ * `routers/lightweight_auth_filter.go` answers `/callback?state=...` with a tiny
+ * static page that posts the provider's code itself, so the browser does not have
+ * to download the whole bundle first. When that page meets something it cannot
+ * finish — an MFA challenge, a plan to pick — it stores what it already got and
+ * sends the browser here with `__casdoor_callback_react=1`.
+ *
+ * The authorization code is single-use, so this page must continue from that
+ * stored response instead of POSTing the code a second time.
+ */
+const REACT_FALLBACK_KEY = "__casdoor_callback_react";
+const REACT_FALLBACK_PAYLOAD_KEY = "casdoor_callback_react_fallback";
+
+interface ReactFallbackPayload {
+  search: string;
+  res: any;
+  body?: Record<string, any>;
+  flow?: "cas" | "oauth";
+  casService?: string;
+  responseType?: string;
+  /** the decoded `state` query string, so the payload survives a lost sessionStorage entry */
+  innerParams?: string;
+  queryString?: string;
+}
+
+/** The callback URL without the marker the static page adds, for comparing the two. */
+function normalizedSearch(search: string): string {
+  const url = new URL(`${window.location.origin}/callback${search || ""}`);
+  url.searchParams.delete(REACT_FALLBACK_KEY);
+  return url.search;
+}
+
+/**
+ * Reads and clears the handover, but only when it belongs to *this* callback —
+ * a stale payload from an earlier sign-in must not be replayed onto a new code.
+ */
+function consumeReactFallbackPayload(currentSearch: string): ReactFallbackPayload | null {
+  const raw = sessionStorage.getItem(REACT_FALLBACK_PAYLOAD_KEY);
+  if (!raw) {
+    return null;
+  }
+
+  try {
+    const payload = JSON.parse(raw) as ReactFallbackPayload;
+    if (normalizedSearch(payload.search) !== normalizedSearch(currentSearch)) {
+      return null;
+    }
+    sessionStorage.removeItem(REACT_FALLBACK_PAYLOAD_KEY);
+    return payload;
+  } catch {
+    sessionStorage.removeItem(REACT_FALLBACK_PAYLOAD_KEY);
+    return null;
+  }
+}
+
 /** A login the backend answered with "NextMfa", waiting on the second factor. */
 interface PendingMfa {
   props: any;
@@ -130,16 +185,18 @@ export default function AuthCallback() {
       Provider.clearCodeVerifier(state);
     }
 
-    const handleOAuth = (res: any) => {
-      const oAuthParams = Util.getOAuthGetParameters(innerParams);
+    // the fallback hands over its own `state`, so these are arguments rather than
+    // closures over the ones this page decoded
+    const handleOAuth = (res: any, params: URLSearchParams = innerParams, type: string = responseType) => {
+      const oAuthParams = Util.getOAuthGetParameters(params);
       const concatChar = oAuthParams?.redirectUri?.includes("?") ? "&" : "?";
       const responseMode = oAuthParams?.responseMode || "query";
-      const responseTypes = responseType.split(" ");
+      const responseTypes = type.split(" ");
 
-      if (responseType === "login" || responseType === "device") {
+      if (type === "login" || type === "device") {
         Setting.showMessage("success", i18next.t("application:Logged in successfully"));
         navigate(Setting.getFromLink());
-      } else if (responseType === "code") {
+      } else if (type === "code") {
         if (responseMode === "form_post") {
           Setting.createFormAndSubmit(oAuthParams?.redirectUri, {code: res.data, state: oAuthParams?.state});
         } else {
@@ -159,19 +216,19 @@ export default function AuthCallback() {
           });
         } else {
           Setting.goToLink(
-            `${oAuthParams.redirectUri}${concatChar}${responseType}=${encodeURIComponent(
+            `${oAuthParams.redirectUri}${concatChar}${type}=${encodeURIComponent(
               res.data,
             )}&state=${encodeURIComponent(oAuthParams.state)}&token_type=bearer`,
           );
         }
-      } else if (responseType === "link") {
-        let from = innerParams.get("from") ?? "/";
-        const oauth = innerParams.get("oauth");
+      } else if (type === "link") {
+        let from = params.get("from") ?? "/";
+        const oauth = params.get("oauth");
         if (oauth) {
           from += `?oauth=${oauth}`;
         }
         navigate(from);
-      } else if (responseType === "saml") {
+      } else if (type === "saml") {
         if (res.data2?.method === "POST") {
           setSaml({response: res.data, redirectUrl: res.data2.redirectUrl, relayState: oAuthParams.relayState});
         } else {
@@ -217,21 +274,42 @@ export default function AuthCallback() {
       }
     };
 
+    const handleCas = (ok: any, service: string) => {
+      let message = "Logged in successfully.";
+      if (service === "") {
+        message += " Now you can visit apps protected by Casdoor.";
+      }
+      Setting.showMessage("success", message);
+      if (service !== "") {
+        const newUrl = new URL(service);
+        newUrl.searchParams.append("ticket", ok.data);
+        window.location.href = newUrl.toString();
+      }
+    };
+
+    // The static callback page already spent the authorization code and handed the
+    // answer over, so continue from it instead of signing in again.
+    const fallback = consumeReactFallbackPayload(location.search);
+    if (fallback !== null) {
+      if (fallback.flow === "cas") {
+        const service = fallback.casService ?? casService;
+        checkMfa(fallback.res, {service}, (ok) => handleCas(ok, service));
+      } else {
+        const fallbackParams = new URLSearchParams(
+          fallback.innerParams || Util.getQueryParamsFromState(state),
+        );
+        const fallbackType = fallback.responseType || responseType;
+        checkMfa(fallback.res, Util.getOAuthGetParameters(fallbackParams), (ok) =>
+          handleOAuth(ok, fallbackParams, fallbackType),
+        );
+      }
+      return;
+    }
+
     if (responseType === "cas") {
       AuthBackend.loginCas(body, {service: casService}).then((res: any) => {
         if (res.status === "ok") {
-          checkMfa(res, {service: casService}, (ok) => {
-            let message = "Logged in successfully.";
-            if (casService === "") {
-              message += " Now you can visit apps protected by Casdoor.";
-            }
-            Setting.showMessage("success", message);
-            if (casService !== "") {
-              const newUrl = new URL(casService);
-              newUrl.searchParams.append("ticket", ok.data);
-              window.location.href = newUrl.toString();
-            }
-          });
+          checkMfa(res, {service: casService}, (ok) => handleCas(ok, casService));
         } else {
           setMsg(res.msg);
         }
