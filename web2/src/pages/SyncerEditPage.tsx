@@ -338,7 +338,7 @@ export default function SyncerEditPage() {
                 });
             }}
           >
-            {i18next.t("syncer:Test Connection")}
+            {i18next.t("provider:Syncer test")}
           </Button>
           <Button
             variant="outline"

@@ -1,12 +1,18 @@
 import i18next from "i18next";
 import {CrudListPage} from "@/components/crud/CrudListPage";
-import {dateColumn, linkColumn, organizationColumn, textColumn} from "@/components/crud/columns";
+import {dateColumn, linkColumn, organizationColumn, textColumn, valueFilters} from "@/components/crud/columns";
 import type {ColumnDef} from "@/components/crud/types";
 import {useAccount} from "@/hooks/use-account";
 import {useRequestOrganization} from "@/hooks/use-organization";
 import * as ProviderBackend from "@/backend/ProviderBackend";
 import * as Setting from "@/lib/setting";
 import {newProvider} from "@/pages/defaults";
+
+/** the provider categories the antd list offers as filters, in its order */
+const PROVIDER_CATEGORIES = [
+  "Captcha", "Email", "Face ID", "ID Verification", "Log", "MFA", "Notification",
+  "OAuth", "Payment", "SAML", "Scan", "SMS", "Storage", "Web3",
+];
 
 export default function ProviderListPage() {
   const {account} = useAccount();
@@ -18,12 +24,18 @@ export default function ProviderListPage() {
     organizationColumn(),
     dateColumn(),
     textColumn({dataIndex: "displayName", title: i18next.t("general:Display name"), searchable: true, width: 170}),
-    textColumn({dataIndex: "category", title: i18next.t("general:Category"), width: 120}),
+    textColumn({dataIndex: "category", title: i18next.t("general:Category"), width: 120, filters: valueFilters(PROVIDER_CATEGORIES)}),
     {
       dataIndex: "type",
       title: i18next.t("general:Type"),
       width: 150,
       sortable: true,
+      // antd's two-level type filter: the provider types grouped by their category
+      filters: PROVIDER_CATEGORIES.map((category) => ({
+        value: category,
+        label: category,
+        children: Setting.getProviderTypeOptions(category).map((option: any) => ({value: option.name, label: option.id})),
+      })),
       render: (_value, record) => (
         <span className="flex items-center gap-2">
           {Setting.getProviderLogo(record)}

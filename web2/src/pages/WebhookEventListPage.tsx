@@ -96,6 +96,7 @@ export default function WebhookEventListPage() {
       title: i18next.t("general:State"),
       width: 110,
       sortable: true,
+      filters: Object.keys(STATE_VARIANTS).map((state) => ({value: state, label: i18next.t("webhook:" + state)})),
       render: (value) => <StateBadge state={value} />,
     },
   ];

@@ -83,8 +83,8 @@ describe("Map- and string-typed fields", () => {
     // the whole CIDR sits in one input, not split into tag badges
     cy.get('input[value="10.0.0.0/8"]').should("exist");
 
-    // scopes live on the OAuth tab, and Radix unmounts the inactive ones
-    cy.contains('[role=tab]', "OAuth").click();
+    // scopes live on the OIDC/OAuth tab, and Radix unmounts the inactive ones
+    cy.contains('[role=tab]', "OIDC/OAuth").click();
 
     // scopes are objects, so they render as the three-column table
     cy.get('input[value="files:read"]').should("exist");

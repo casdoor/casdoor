@@ -2,7 +2,7 @@ import i18next from "i18next";
 import dayjs from "dayjs";
 import {Badge} from "@/components/ui/badge";
 import {CrudListPage} from "@/components/crud/CrudListPage";
-import {boolColumn, dateColumn, linkColumn, textColumn} from "@/components/crud/columns";
+import {boolColumn, dateColumn, linkColumn, textColumn, valueFilters} from "@/components/crud/columns";
 import type {ColumnDef} from "@/components/crud/types";
 import * as OrganizationBackend from "@/backend/OrganizationBackend";
 import * as Setting from "@/lib/setting";
@@ -38,7 +38,7 @@ export default function OrganizationListPage() {
           </a>
         ) : null,
     },
-    textColumn({dataIndex: "passwordType", title: i18next.t("general:Password type"), width: 140}),
+    textColumn({dataIndex: "passwordType", title: i18next.t("general:Password type"), width: 140, filters: valueFilters(["plain", "salt", "md5-salt"])}),
     textColumn({dataIndex: "passwordSalt", title: i18next.t("general:Password salt"), width: 130, searchable: true}),
     {
       dataIndex: "defaultAvatar",

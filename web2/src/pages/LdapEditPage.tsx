@@ -5,11 +5,13 @@ import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Switch} from "@/components/ui/switch";
 import {Loading} from "@/components/common/Loading";
+import {MultiSelect} from "@/components/common/MultiSelect";
 import {SelectField} from "@/components/common/SelectField";
 import {TagsInput} from "@/components/common/TagsInput";
 import {EditPageShell} from "@/components/crud/EditPageShell";
 import {EditableTable} from "@/components/crud/EditableTable";
 import {FormRow} from "@/components/crud/FormRow";
+import {dropExtraPhysicalGroups, useGroupList, useGroupOptions} from "@/hooks/use-options";
 import * as LdapBackend from "@/backend/LdapBackend";
 import {getModeTitleKey, mapToRows, rowsToMap} from "@/lib/crud";
 import {enumSelectOptions, LDAP_PASSWORD_TYPES} from "@/lib/enum-labels";
@@ -21,6 +23,8 @@ export default function LdapEditPage() {
   const {organizationName = "", ldapId = ""} = useParams();
   const navigate = useNavigate();
   const isNew = ldapId === "new";
+  const groups = useGroupOptions(organizationName);
+  const groupList = useGroupList(organizationName);
 
   const [ldap, setLdap] = React.useState<any>(
     isNew
@@ -193,7 +197,20 @@ export default function LdapEditPage() {
         />
       </FormRow>
       <FormRow labelKey="ldap:Default group">
-        <TagsInput value={ldap.defaultGroups ?? []} onChange={(v) => update("defaultGroups", v)} />
+        <MultiSelect
+          value={ldap.defaultGroups ?? []}
+          onChange={(values) => {
+            // at most one Physical group may be a default; the extras are dropped
+            const trimmed = dropExtraPhysicalGroups(values, groupList);
+            if (trimmed) {
+              Setting.showMessage("warning", i18next.t("ldap:Only one physical group can be selected as default"));
+              update("defaultGroups", trimmed);
+              return;
+            }
+            update("defaultGroups", values);
+          }}
+          options={groups}
+        />
       </FormRow>
     </EditPageShell>
   );

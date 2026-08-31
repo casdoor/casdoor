@@ -1,6 +1,7 @@
 import * as React from "react";
 import i18next from "i18next";
 import {useNavigate, useParams} from "react-router-dom";
+import {UnauthorizedPage} from "@/components/common/UnauthorizedPage";
 import {Input} from "@/components/ui/input";
 import {Loading} from "@/components/common/Loading";
 import {SearchableSelect} from "@/components/common/SearchableSelect";
@@ -31,7 +32,7 @@ export default function EnforcerEditPage() {
   const [saving, setSaving] = React.useState(false);
 
   // loadModelCfg=true so the policy table knows the model's p/g sections
-  const {record: enforcer, updateField, loading, mode, setMode, reload} = useEditRecord<any>({
+  const {record: enforcer, updateField, loading, denied, mode, setMode, reload} = useEditRecord<any>({
     fetch: () => EnforcerBackend.getEnforcer(organizationName, enforcerName, true),
     deps: [organizationName, enforcerName],
   });
@@ -92,6 +93,10 @@ export default function EnforcerEditPage() {
     });
     setSaving(false);
   };
+
+  if (denied) {
+    return <UnauthorizedPage />;
+  }
 
   if (loading || enforcer === null) {
     return <Loading />;

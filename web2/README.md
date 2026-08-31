@@ -53,14 +53,15 @@ Three kinds of spec, because they catch different things:
   real row** of a list, so the edit page meets values the backend actually
   stores — which is how the `ipWhitelist` and `scopes` mis-bindings surfaced.
 - `entry-viewers`, `map-fields`, `edit-page-details`, `mfa-signin`,
-  `mfa-notification`, `callback-mfa`, `list-columns`, `view-mode`,
-  `page-actions`, `signup-validation`, `login-page`, `application-tables` and
-  `misc-parity` stub the relevant endpoint with `cy.intercept`, for the states a
+  `mfa-notification`, `callback-mfa`, `list-columns`, `list-filters`,
+  `view-mode`, `page-actions`, `signup-validation`, `login-page`,
+  `application-tables` and `misc-parity` stub the relevant endpoint with `cy.intercept`, for the states a
   real database rarely holds — an OpenClaw session, a plan-created invitation, an account with two MFA
   factors, a provider login that comes back asking for one, a non-admin account.
 
 `DataTable` puts `data-column="<dataIndex>"` on each header cell, which is how a
-spec reaches one column's sort or search control.
+spec reaches one column's sort, search or filter control; an open filter menu is
+`[data-column-filter="<dataIndex>"]` and its entries are `[role=menuitemradio]`.
 
 Two things worth knowing when writing a spec:
 
@@ -87,7 +88,8 @@ instead, either point that path at `web2/build` or copy `web2/build` over
 | `src/auth/Util.js`, `Provider.js`, `Obfuscator.js` | `src/auth/*.ts` — ported verbatim (PKCE, OAuth/CAS/SAML query handling) |
 | `src/locales/**` | copied from `web`, same 11 bundled languages, plus 9 strings for rows `web` does not render |
 | `BaseListPage` | `components/crud/CrudListPage` + `hooks/use-table-data` |
-| antd `<Table>` | `components/crud/DataTable` (server-side paging, per-column search, sort) |
+| antd `<Table>` | `components/crud/DataTable` (server-side paging, per-column search, sort, filter menus) |
+| antd `<Result status="403">` | `components/common/UnauthorizedPage` |
 | `<Row><Col>` label rows | `components/crud/FormRow` |
 | antd `message` | `sonner` toasts (`Setting.showMessage` keeps the same signature) |
 | antd `ConfigProvider` dark algorithm | Tailwind `dark` class; the theme is stored under the same `themeAlgorithm` localStorage key, so it survives switching between the two frontends |
@@ -138,6 +140,11 @@ The same panel appears on `/callback` and `/callback/saml`, because a provider's
 authorization code is single-use — sending the user back to `/login` would drop
 the pending sign-in.
 
+The application edit page keeps the antd page's own shape: the same eight tabs
+(Basic, Authentication, OIDC/OAuth, SAML, Providers, UI Customization, Security,
+Reverse Proxy) holding the same fields, the open one kept in the URL hash, and
+the "Menu mode" switch that lays those tabs across the top or down the side.
+
 The application and organization edit pages carry the same sub-tables the antd
 frontend has, down to the option list each row offers: a provider row's category,
 type, country codes, binding rule, signup group and the rule its own kind calls
@@ -145,8 +152,15 @@ for; a signup item's type, custom CSS and choice options; a token attribute's
 "Static Value" / "Existing Field" pair; and the rule that only lets one MFA
 factor be `Required`.
 
-**Console** — every list page carries the same per-column search and sorting the
-antd tables offer, stored enum values (ticket and subscription states, permission
+**Console** — every list page carries the same per-column search, sorting and
+filter menus the antd tables offer. A filter is a canned search: antd turned the
+picked value into the `field`/`value` pair of the list API, and so does
+`ColumnDef.filters` here, which is why the provider type filter can keep its
+two-level "category → type" menu. A read the backend refuses with "Unauthorized
+operation" replaces the page with the 403 `UnauthorizedPage`, as `BaseListPage`
+did, rather than showing an empty table; the same check drives the read-only
+demo site's "go to the writable demo" prompt in `lib/fetch-filter.ts`. Stored
+enum values (ticket and subscription states, permission
 actions and effects, coupon discount types, ...) render as translated badges from
 one map per enum in `lib/enum-labels.tsx`, and the billing objects (coupons,
 orders, payments, plans, pricings, products, subscriptions) open read-only for
@@ -159,7 +173,11 @@ Terms of Use HTML, resetting the footer HTML, previewing a webhook's payload,
 copying a pricing page URL, the "Test buy page" link, the save-time checks on
 permissions and products, the block on deleting a group that still has
 subgroups, "Show all" on the group tree, and the LDAP sync page's synced /
-unsynced marks, group ids and per-user results.
+unsynced marks, group ids and per-user results. A record opens in a drawer with
+its whole response and object, because the row is far too wide to read in the
+table; a payment links to its result page; a transaction can be a "Recharge",
+which is POSTed before the edit page opens it under that title; and a Client IP
+links to db-ip.com, as in the antd tables.
 
 Dashboard, apps, shortcuts, my account, system info, breadcrumbs,
 and list + edit pages for: organizations, users, groups (incl. tree), invitations,

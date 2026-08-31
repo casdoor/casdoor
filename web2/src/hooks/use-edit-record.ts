@@ -19,6 +19,11 @@ export interface UseEditRecordResult<T> {
   updateFields: (patch: Record<string, any>) => void;
   loading: boolean;
   notFound: boolean;
+  /**
+   * The backend refused the read with "Unauthorized operation"; the antd
+   * application/user edit pages render a 403 page instead of the form.
+   */
+  denied: boolean;
   mode: EditMode;
   setMode: (mode: EditMode) => void;
   reload: () => void;
@@ -45,6 +50,7 @@ export function useEditRecord<T extends Record<string, any>>({
   );
   const [loading, setLoading] = React.useState(mode !== "add");
   const [notFound, setNotFound] = React.useState(false);
+  const [denied, setDenied] = React.useState(false);
   const [nonce, setNonce] = React.useState(0);
 
   const fetchRef = React.useRef(fetch);
@@ -73,6 +79,10 @@ export function useEditRecord<T extends Record<string, any>>({
             const next = transformRef.current ? transformRef.current(res.data as T) : (res.data as T);
             setRecord(next);
           }
+        } else if (Setting.isResponseDenied(res)) {
+          // the 403 page says it; a toast on top of it would be noise
+          setDenied(true);
+          setRecord(null);
         } else {
           Setting.showMessage("error", res.msg ?? "");
           setNotFound(true);
@@ -110,6 +120,7 @@ export function useEditRecord<T extends Record<string, any>>({
     updateFields,
     loading,
     notFound,
+    denied,
     mode,
     setMode,
     reload: () => setNonce((n) => n + 1),

@@ -1,6 +1,7 @@
 import * as React from "react";
 import i18next from "i18next";
-import {ArrowDown, ArrowUp, ChevronLeft, ChevronRight, ChevronsUpDown, Search, X} from "lucide-react";
+import {Link} from "react-router-dom";
+import {ArrowDown, ArrowUp, ChevronLeft, ChevronRight, ChevronsUpDown, Filter, Search, X} from "lucide-react";
 import {cn} from "@/lib/utils";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
@@ -14,7 +15,7 @@ import {
 } from "@/components/ui/select";
 import {Skeleton} from "@/components/ui/skeleton";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
-import type {ColumnDef, TableQuery} from "@/components/crud/types";
+import type {ColumnDef, ColumnFilterOption, TableQuery} from "@/components/crud/types";
 
 const PAGE_SIZE_OPTIONS = [10, 20, 50, 100];
 
@@ -126,6 +127,89 @@ function ColumnSearch({
   );
 }
 
+/**
+ * The header filter menu, antd's `filters` with `filterMultiple: false`. Picking
+ * an option filters the list on this column, which the Casdoor list APIs express
+ * as the same `field`/`value` pair the per-column search uses.
+ */
+function ColumnFilter({
+  column,
+  query,
+  onQueryChange,
+}: {
+  column: ColumnDef;
+  query: TableQuery;
+  onQueryChange: (patch: Partial<TableQuery>) => void;
+}) {
+  const [open, setOpen] = React.useState(false);
+  const selected = query.searchedColumn === column.dataIndex ? query.searchText : "";
+  const active = selected !== "";
+
+  const pick = (value: string) => {
+    onQueryChange({searchText: value, searchedColumn: column.dataIndex, page: 1});
+    setOpen(false);
+  };
+
+  const reset = () => {
+    onQueryChange({searchText: "", searchedColumn: "", page: 1});
+    setOpen(false);
+  };
+
+  const renderOption = (option: ColumnFilterOption) => {
+    if (option.children?.length) {
+      return (
+        <div key={option.value} role="group" aria-label={String(option.value)} className="py-1">
+          <div className="px-2 py-1 text-xs font-semibold text-muted-foreground">{option.label}</div>
+          {option.children.map((child) => renderOption(child))}
+        </div>
+      );
+    }
+    return (
+      <button
+        key={option.value}
+        type="button"
+        role="menuitemradio"
+        aria-checked={selected === option.value}
+        className={cn(
+          "flex w-full items-center rounded px-2 py-1.5 text-left text-sm hover:bg-accent",
+          selected === option.value && "bg-accent font-medium text-foreground",
+        )}
+        onClick={() => pick(option.value)}
+      >
+        {option.label}
+      </button>
+    );
+  };
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <button
+          type="button"
+          className={cn(
+            "ml-1 inline-flex h-6 w-6 items-center justify-center rounded hover:bg-accent",
+            active && "text-primary",
+          )}
+          aria-label={i18next.t("general:Filter")}
+        >
+          <Filter className="h-3.5 w-3.5" />
+        </button>
+      </PopoverTrigger>
+      <PopoverContent align="start" className="w-56 p-1" data-column-filter={column.dataIndex}>
+        <div role="menu" className="max-h-72 overflow-y-auto">
+          {(column.filters ?? []).map((option) => renderOption(option))}
+        </div>
+        <div className="border-t p-1">
+          <Button size="sm" variant="ghost" className="w-full" disabled={!active} onClick={reset}>
+            <X />
+            {i18next.t("forget:Reset")}
+          </Button>
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
+}
+
 export function DataTable<T = any>({
   columns,
   rows,
@@ -194,6 +278,9 @@ export function DataTable<T = any>({
                       {column.searchable && (
                         <ColumnSearch column={column} query={query} onQueryChange={onQueryChange} />
                       )}
+                      {column.filters?.length ? (
+                        <ColumnFilter column={column} query={query} onQueryChange={onQueryChange} />
+                      ) : null}
                     </span>
                   </TableHead>
                 );
@@ -223,12 +310,30 @@ export function DataTable<T = any>({
                   <TableRow key={rowKey ? rowKey(row, index) : `${row.owner ?? ""}/${row.name ?? index}`}>
                     {visibleColumns.map((column) => {
                       const value = row[column.dataIndex];
-                      const highlighted =
-                          query.searchedColumn === column.dataIndex && typeof value === "string" ? (
+                      // only a typed search highlights; a filter pick would paint whole cells
+                      let highlighted: React.ReactNode =
+                          column.searchable && query.searchedColumn === column.dataIndex && typeof value === "string" ? (
                             <Highlight text={value} keyword={query.searchText} />
                           ) : (
                             value
                           );
+                      const href = column.link?.(value, row);
+                      if (href) {
+                        highlighted = column.linkExternal ? (
+                          <a
+                            href={href}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="underline-offset-4 hover:underline"
+                          >
+                            {highlighted}
+                          </a>
+                        ) : (
+                          <Link to={href} className="underline-offset-4 hover:underline">
+                            {highlighted}
+                          </Link>
+                        );
+                      }
                       return (
                         <TableCell
                           key={column.key ?? column.dataIndex}

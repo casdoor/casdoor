@@ -1,7 +1,7 @@
 import * as React from "react";
 import i18next from "i18next";
 import {Badge} from "@/components/ui/badge";
-import type {ColumnDef} from "@/components/crud/types";
+import type {ColumnDef, ColumnFilterOption} from "@/components/crud/types";
 
 /**
  * Translated labels and colours for the stored enum values Casdoor shows in
@@ -169,14 +169,22 @@ export function enumColumn<T>(options: {
   width?: number | string;
   sortable?: boolean;
   searchable?: boolean;
+  /** render the header filter menu; pass `true` to build it from `map` */
+  filters?: boolean | ColumnFilterOption[];
 }): ColumnDef<T> {
-  const {dataIndex, title, map, width = 110, sortable = true, searchable = false} = options;
+  const {dataIndex, title, map, width = 110, sortable = true, searchable = false, filters} = options;
   return {
     dataIndex,
     title,
     width,
     sortable,
     searchable,
+    filters: filters === true ? enumFilters(map) : filters || undefined,
     render: (value) => <EnumBadge map={map} value={value} />,
   };
+}
+
+/** the values of an enum map as a column filter menu, in declaration order */
+export function enumFilters(map: EnumMap): ColumnFilterOption[] {
+  return Object.keys(map).map((value) => ({value, label: enumLabel(map, value)}));
 }

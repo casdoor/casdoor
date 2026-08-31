@@ -21,7 +21,15 @@ export default function GroupListPage() {
     dateColumn(),
     dateColumn("updatedTime", i18next.t("general:Updated time")),
     textColumn({dataIndex: "displayName", title: i18next.t("general:Display name"), searchable: true, width: 170}),
-    textColumn({dataIndex: "type", title: i18next.t("general:Type"), width: 110}),
+    textColumn({
+      dataIndex: "type",
+      title: i18next.t("general:Type"),
+      width: 110,
+      filters: [
+        {value: "Virtual", label: i18next.t("group:Virtual")},
+        {value: "Physical", label: i18next.t("group:Physical")},
+      ],
+    }),
     textColumn({dataIndex: "parentId", title: i18next.t("group:Parent group"), width: 150, searchable: true}),
     {
       dataIndex: "users",
