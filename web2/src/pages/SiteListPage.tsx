@@ -1,6 +1,6 @@
 import i18next from "i18next";
 import {CrudListPage} from "@/components/crud/CrudListPage";
-import {dateColumn, linkColumn, organizationColumn, tagsColumn, textColumn} from "@/components/crud/columns";
+import {linkColumn, organizationColumn, tagsColumn, textColumn} from "@/components/crud/columns";
 import type {ColumnDef} from "@/components/crud/types";
 import {useAccount} from "@/hooks/use-account";
 import {useRequestOrganization} from "@/hooks/use-organization";
@@ -18,7 +18,6 @@ export default function SiteListPage() {
     organizationColumn(110, "owner", i18next.t("general:Owner")),
     textColumn({dataIndex: "tag", title: i18next.t("general:Tag"), width: 110}),
     linkColumn({dataIndex: "name", to: (r) => `/sites/${r.owner}/${r.name}`}),
-    dateColumn(),
     textColumn({dataIndex: "displayName", title: i18next.t("general:Display name"), searchable: true, width: 170}),
     textColumn({dataIndex: "domain", title: i18next.t("provider:Domain"), width: 190, searchable: true}),
     tagsColumn({dataIndex: "otherDomains", title: i18next.t("application:Other domains"), width: 190}),

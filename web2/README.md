@@ -53,9 +53,9 @@ Three kinds of spec, because they catch different things:
   real row** of a list, so the edit page meets values the backend actually
   stores — which is how the `ipWhitelist` and `scopes` mis-bindings surfaced.
 - `entry-viewers`, `map-fields`, `edit-page-details`, `mfa-signin`,
-  `mfa-notification`, `callback-mfa`, `list-columns`, `list-filters`,
-  `view-mode`, `page-actions`, `signup-validation`, `login-page`,
-  `application-tables` and `misc-parity` stub the relevant endpoint with `cy.intercept`, for the states a
+  `mfa-notification`, `callback-mfa`, `lightweight-callback`, `list-columns`,
+  `list-filters`, `view-mode`, `page-actions`, `signup-validation`,
+  `login-page`, `application-tables` and `misc-parity` stub the relevant endpoint with `cy.intercept`, for the states a
   real database rarely holds — an OpenClaw session, a plan-created invitation, an account with two MFA
   factors, a provider login that comes back asking for one, a non-admin account.
 
@@ -139,6 +139,17 @@ notification, or the RADIUS password), and a recovery code always works instead.
 The same panel appears on `/callback` and `/callback/saml`, because a provider's
 authorization code is single-use — sending the user back to `/login` would drop
 the pending sign-in.
+
+**The static callback page** — `routers/lightweight_auth_filter.go` answers
+`/callback?state=...` with a small page that posts the provider's code itself,
+so a returning visitor does not wait for the bundle. When it meets something it
+cannot finish it stores what it already got under
+`casdoor_callback_react_fallback` and comes here with
+`__casdoor_callback_react=1`; `AuthCallback` continues from that stored response
+rather than spending the single-use code again, and ignores a payload whose
+`search` does not match this callback. `?provider_hint=<name>` likewise jumps
+straight to that provider, which is what happens when the static redirect page
+is unavailable or hands the request back.
 
 The application edit page keeps the antd page's own shape: the same eight tabs
 (Basic, Authentication, OIDC/OAuth, SAML, Providers, UI Customization, Security,
@@ -231,13 +242,23 @@ marked `Required` gets a warning and the redirect to `/mfa/setup`.
 
 ## Still to do
 
-- **Deployment**: the Go backend still serves `web/build`
-  (`routers/static_filter.go` returns it before it ever looks at
-  `frontendBaseDir`), `public/` has none of the standalone scripts
-  `routers/lightweight_auth_filter.go` serves, `index.html` is missing the
-  boot-failure fallback, and the Dockerfile / Makefile / CI still build `../web`.
-- **CI**: `.github/workflows/build.yml` runs Cypress against `./web`; the web2
-  suite exists but nothing runs it yet.
+- **i18n**: nine strings this frontend adds (`form:New Form`,
+  `organization:Token retention days`, `provider:Advanced`, ...) are English in
+  all ten non-English locales.
+- **Deployment**: `routers/static_filter.go` returns `web/build` whenever that
+  directory holds an `index.html`, so serving this frontend means either
+  removing it and pointing `frontendBaseDir` at `web2/build`, or copying the
+  build over it — there is no switch for it yet. `public/` also has none of the
+  standalone scripts `routers/lightweight_auth_filter.go` serves (they fall back
+  to `web/public`, which a Docker image does not carry), `index.html` lacks the
+  boot-failure fallback and the `cdn.casbin.org` favicon literal the backend
+  rewrites for organization branding, `deployment/deploy.go` uploads CRA's
+  `static/{js,css}` rather than Vite's `assets/`, and the Dockerfile, Makefile,
+  `.goreleaser.yaml` and the release build all still use `../web`.
+- **Release gating**: `.github/workflows/build.yml` has an `e2e-test-web2` job
+  that typechecks, lints and runs this suite against the same backend, but
+  `tag-release` does not depend on it yet — web2 is not served in production, so
+  a red run there should not hold a release back.
 
 ## Adding a page
 

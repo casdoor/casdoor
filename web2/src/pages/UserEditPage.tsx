@@ -215,7 +215,10 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
 
   return (
     <EditPageShell
-      title={`${i18next.t(getModeTitleKey("user:Edit User", mode))} - ${user.displayName || user.name}`}
+      // the antd page calls it "My Account" when you are looking at yourself
+      title={`${i18next.t(
+        mode === "add" ? "user:New User" : isSelf ? "account:My Account" : getModeTitleKey("user:Edit User", mode),
+      )} - ${user.displayName || user.name}`}
       mode={mode}
       backTo={self ? "/" : "/users"}
       onSave={save}
