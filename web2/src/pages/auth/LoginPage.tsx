@@ -5,6 +5,7 @@ import {Button} from "@/components/ui/button";
 import {Checkbox} from "@/components/ui/checkbox";
 import {Input} from "@/components/ui/input";
 import {Label} from "@/components/ui/label";
+import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 import {Tabs, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import {Alert, AlertDescription} from "@/components/ui/alert";
 import {Loading} from "@/components/common/Loading";
@@ -17,6 +18,7 @@ import {FaceRecognitionCommonModal} from "@/components/common/FaceRecognitionCom
 import {FaceRecognitionModal} from "@/components/common/FaceRecognitionModal";
 import {ProviderButtons} from "@/components/auth/ProviderButtons";
 import {WeChatLoginPanel} from "@/components/auth/WeChatLoginPanel";
+import {OrganizationSelect} from "@/components/common/OrganizationSelect";
 import {RedirectForm} from "@/components/auth/RedirectForm";
 import {SendCodeInput, type CaptchaValues} from "@/components/auth/SendCodeInput";
 import {CaptchaModal, type CaptchaHandle} from "@/components/common/CaptchaModal";
@@ -76,6 +78,47 @@ function getSigninMethodName(method: LoginMethod) {
     return "Face ID";
   }
   return "Password";
+}
+
+/**
+ * Port of the antd `renderOrganizationChoiceBox`: before the sign-in form an
+ * application may ask which organization the visitor belongs to, either by
+ * picking one or by typing its name.
+ */
+function OrganizationChoiceBox({mode}: {mode: string}) {
+  const [name, setName] = React.useState("");
+  const go = (organization: string) => {
+    if (!organization) {
+      Setting.showMessage("error", i18next.t("login:Please input your organization name!"));
+      return;
+    }
+    Setting.goToLink(`/login/${organization}?orgChoiceMode=None`);
+  };
+
+  if (mode === "Select") {
+    return (
+      <div className="space-y-3">
+        <p className="text-base">{i18next.t("login:Please select an organization to sign in")}</p>
+        <OrganizationSelect value="" onChange={go} />
+      </div>
+    );
+  }
+
+  return (
+    <form
+      className="space-y-3"
+      onSubmit={(e) => {
+        e.preventDefault();
+        go(name.trim());
+      }}
+    >
+      <p className="text-base">{i18next.t("login:Please type an organization to sign in")}</p>
+      <Input autoFocus value={name} onChange={(e) => setName(e.target.value)} />
+      <Button type="submit" className="w-full">
+        {i18next.t("general:Confirm")}
+      </Button>
+    </form>
+  );
 }
 
 export default function LoginPage({type = "login"}: {type?: LoginType}) {
@@ -289,6 +332,42 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
     }
   };
 
+  /** Stamps the payload with what the current request is: CAS, SAML, OAuth or a plain login. */
+  const applyRequestType = (values: Record<string, any>) => {
+    if (type === "cas") {
+      values.type = type;
+      return values;
+    }
+
+    const oAuthParams = Util.getOAuthGetParameters();
+    values.type = oAuthParams?.responseType ?? (type === "device" ? "device" : "login");
+    if (params.userCode) {
+      values.userCode = params.userCode;
+    }
+    if (oAuthParams?.samlRequest) {
+      values.samlRequest = oAuthParams.samlRequest;
+      values.type = "saml";
+      values.relayState = oAuthParams.relayState;
+    } else if (type === "saml") {
+      values.samlRequest = "";
+      values.type = "saml";
+      values.relayState = Util.getRelayState();
+    }
+    return values;
+  };
+
+  /**
+   * "Continue with <current account>": the session cookie already identifies the
+   * user, so the payload carries no credentials — the antd page posts the same.
+   */
+  const loginAsCurrentAccount = () => {
+    doLogin(applyRequestType({
+      application: application.name,
+      organization: application.organization,
+      language: Setting.getLanguage(),
+    }));
+  };
+
   const buildValues = () => {
     const values: Record<string, any> = {
       application: application.name,
@@ -318,26 +397,7 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
       values.password = "";
     }
 
-    if (type === "cas") {
-      values.type = type;
-      return values;
-    }
-
-    const oAuthParams = Util.getOAuthGetParameters();
-    values.type = oAuthParams?.responseType ?? (type === "device" ? "device" : "login");
-    if (params.userCode) {
-      values.userCode = params.userCode;
-    }
-    if (oAuthParams?.samlRequest) {
-      values.samlRequest = oAuthParams.samlRequest;
-      values.type = "saml";
-      values.relayState = oAuthParams.relayState;
-    } else if (type === "saml") {
-      values.samlRequest = "";
-      values.type = "saml";
-      values.relayState = Util.getRelayState();
-    }
-    return values;
+    return applyRequestType(values);
   };
 
   const refreshInlineCaptcha = () => captchaRef.current?.loadCaptcha();
@@ -582,12 +642,69 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
     (item: any) => item.name === "Device login" && item.rule === "Login page",
   );
 
+  // An application can ask the visitor which organization they belong to before
+  // showing the form. Choosing one reloads /login/<org> with the box turned off,
+  // exactly as the antd page does.
+  const orgChoiceMode = new URLSearchParams(location.search).get("orgChoiceMode") === "None"
+    ? "None"
+    : application.orgChoiceMode;
+  if (type === "login" && (orgChoiceMode === "Select" || orgChoiceMode === "Input")) {
+    return (
+      <AuthLayout application={application}>
+        <OrganizationChoiceBox mode={orgChoiceMode} />
+      </AuthLayout>
+    );
+  }
+
+  // Already signed in to this organization: offer the one-click path before the
+  // form, which is how an OAuth or device request gets approved.
+  const showSignedInBox =
+    !!account && account.owner === application.organization && !(type === "device" && deviceCanceled);
+
   return (
     <AuthLayout application={application}>
       <div className="space-y-5">
         <h1 className="text-center text-xl font-semibold">
           {application.displayName || i18next.t("login:Sign In")}
         </h1>
+
+        {type === "device" && params.userCode ? (
+          <div className="space-y-1 text-center">
+            <h2 className="text-base font-semibold">{i18next.t("login:Approve sign-in on this device")}</h2>
+            <div className="font-medium">{application.displayName}</div>
+            <div className="text-sm text-muted-foreground">
+              {i18next.t("login:Confirmation code")}: {params.userCode}
+            </div>
+          </div>
+        ) : null}
+
+        {showSignedInBox ? (
+          <div className="space-y-3">
+            <div className="text-sm">
+              {type === "device"
+                ? i18next.t("login:Continue with your current account to approve this sign-in")
+                : i18next.t("login:Continue with")}
+              &nbsp;:
+            </div>
+            <Button
+              type="button"
+              variant="outline"
+              className="h-12 w-full justify-center gap-3"
+              onClick={loginAsCurrentAccount}
+            >
+              <Avatar className="h-8 w-8">
+                {Setting.getEffectiveAvatarUrl(account) ? (
+                  <AvatarImage src={Setting.getEffectiveAvatarUrl(account)} alt={account.name} />
+                ) : null}
+                <AvatarFallback style={{backgroundColor: Setting.getAvatarColor(account.name), color: "#fff"}}>
+                  {(account.name || "?").charAt(0).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+              {account.displayName ? `${account.name} (${account.displayName})` : account.name}
+            </Button>
+            <div className="text-sm">{i18next.t("login:Or sign in with another account")}&nbsp;:</div>
+          </div>
+        ) : null}
 
         {showTabs ? (
           <Tabs value={loginMethod} onValueChange={(v) => setLoginMethod(v as LoginMethod)}>
@@ -596,8 +713,8 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
               {codeEnabled ? (
                 <TabsTrigger value="verificationCode">{i18next.t("login:Verification code")}</TabsTrigger>
               ) : null}
-              {ldapEnabled ? <TabsTrigger value="ldap">LDAP</TabsTrigger> : null}
-              {webAuthnEnabled ? <TabsTrigger value="webAuthn">WebAuthn</TabsTrigger> : null}
+              {ldapEnabled ? <TabsTrigger value="ldap">{i18next.t("login:LDAP")}</TabsTrigger> : null}
+              {webAuthnEnabled ? <TabsTrigger value="webAuthn">{i18next.t("login:WebAuthn")}</TabsTrigger> : null}
               {faceIdEnabled ? <TabsTrigger value="faceId">{i18next.t("login:Face ID")}</TabsTrigger> : null}
               {wechatEnabled ? <TabsTrigger value="wechat">{i18next.t("login:WeChat")}</TabsTrigger> : null}
             </TabsList>
