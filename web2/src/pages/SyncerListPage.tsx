@@ -15,7 +15,7 @@ export default function SyncerListPage() {
 
   const columns: ColumnDef<any>[] = [
     linkColumn({dataIndex: "name", to: (r) => `/syncers/${r.organization}/${r.name}`, width: 170}),
-    textColumn({dataIndex: "organization", title: i18next.t("general:Organization"), width: 140, searchable: true}),
+    textColumn({dataIndex: "organization", title: i18next.t("general:Organization"), width: 140, searchable: true, link: (v) => `/organizations/${v}`}),
     dateColumn(),
     textColumn({dataIndex: "type", title: i18next.t("general:Type"), width: 120, filters: valueFilters(["Database", "LDAP"])}),
     textColumn({dataIndex: "databaseType", title: i18next.t("syncer:Database type"), width: 140}),

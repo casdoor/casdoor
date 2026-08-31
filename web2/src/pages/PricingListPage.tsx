@@ -19,7 +19,7 @@ export default function PricingListPage() {
     organizationColumn(),
     dateColumn(),
     textColumn({dataIndex: "displayName", title: i18next.t("general:Display name"), searchable: true, width: 170}),
-    textColumn({dataIndex: "application", title: i18next.t("general:Application"), width: 160, searchable: true}),
+    textColumn({dataIndex: "application", title: i18next.t("general:Application"), width: 160, searchable: true, link: (v, r: any) => `/applications/${r.owner}/${v}`}),
     refsColumn({dataIndex: "plans", title: i18next.t("general:Plans"), urlPrefix: "/plans", width: 220}),
     boolColumn({dataIndex: "isEnabled", title: i18next.t("general:Is enabled")}),
   ];

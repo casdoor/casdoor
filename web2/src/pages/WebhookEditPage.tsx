@@ -83,7 +83,11 @@ export default function WebhookEditPage() {
       name: "objectFields",
       labelKey: "webhook:Object fields",
       creatable: true,
-      options: () => Setting.getUserCommonFields().map((item: string) => ({value: item, label: item})),
+      // antd offers "All" above the field list as a catch-all
+      options: () => [
+        {value: "All", label: i18next.t("general:All")},
+        ...Setting.getUserCommonFields().map((item: string) => ({value: item, label: item})),
+      ],
     },
     {
       type: "multiselect",

@@ -63,13 +63,21 @@ export default function UserListPage() {
       align: "center",
       render: (_value, record) => {
         const url = Setting.getEffectiveAvatarUrl(record);
-        return (
+        // antd links the avatar to the image itself
+        const avatar = (
           <Avatar className="mx-auto h-9 w-9">
             {url ? <AvatarImage src={url} alt={record.name} /> : null}
             <AvatarFallback style={{backgroundColor: Setting.getAvatarColor(record.name), color: "#fff"}}>
               {(record.name || "?").charAt(0).toUpperCase()}
             </AvatarFallback>
           </Avatar>
+        );
+        return url ? (
+          <a href={url} target="_blank" rel="noreferrer">
+            {avatar}
+          </a>
+        ) : (
+          avatar
         );
       },
     },

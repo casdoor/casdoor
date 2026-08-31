@@ -1,6 +1,6 @@
 import i18next from "i18next";
 import {CrudListPage} from "@/components/crud/CrudListPage";
-import {dateColumn, linkColumn, organizationColumn, textColumn} from "@/components/crud/columns";
+import {dateColumn, linkColumn, organizationColumn, textColumn, urlColumn} from "@/components/crud/columns";
 import type {ColumnDef} from "@/components/crud/types";
 import {useAccount} from "@/hooks/use-account";
 import {useRequestOrganization} from "@/hooks/use-organization";
@@ -16,7 +16,7 @@ export default function AgentListPage() {
     organizationColumn(),
     dateColumn(),
     textColumn({dataIndex: "displayName", title: i18next.t("general:Display name"), searchable: true, width: 180}),
-    textColumn({dataIndex: "url", title: i18next.t("general:Listening URL"), width: 240, searchable: true}),
+    urlColumn({dataIndex: "url", title: i18next.t("general:Listening URL"), width: 240, max: 40}),
     textColumn({dataIndex: "application", title: i18next.t("general:Application"), width: 160, searchable: true}),
   ];
 

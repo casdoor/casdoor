@@ -40,7 +40,7 @@ interface BaseField {
 
 export type EditField =
   | (BaseField & {type: "text" | "password" | "email" | "url"})
-  | (BaseField & {type: "number"; step?: string})
+  | (BaseField & {type: "number"; step?: string; suffix?: React.ReactNode})
   | (BaseField & {type: "textarea"; rows?: number; placeholder?: string})
   | (BaseField & {type: "switch"})
   | (BaseField & {type: "tags"; placeholder?: string})
@@ -154,13 +154,17 @@ export function SimpleEditPage({
       break;
     case "number":
       control = (
-        <Input
-          type="number"
-          step={field.step}
-          disabled={disabled}
-          value={value ?? 0}
-          onChange={(e) => set(field.step ? Number(e.target.value) : Setting.myParseInt(e.target.value))}
-        />
+        <div className="flex items-center gap-2">
+          <Input
+            type="number"
+            step={field.step}
+            disabled={disabled}
+            value={value ?? 0}
+            onChange={(e) => set(field.step ? Number(e.target.value) : Setting.myParseInt(e.target.value))}
+          />
+          {/* antd's `addonAfter`, for the fields whose unit matters */}
+          {field.suffix ? <span className="shrink-0 text-sm text-muted-foreground">{field.suffix}</span> : null}
+        </div>
       );
       break;
     case "switch":

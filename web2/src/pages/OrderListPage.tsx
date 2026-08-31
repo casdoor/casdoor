@@ -31,7 +31,17 @@ export default function OrderListPage() {
       title: i18next.t("order:Price"),
       width: 120,
       sortable: true,
-      render: (value, record) => Setting.getPriceDisplay(value, record.currency),
+      // a paid order links to the payment that settled it
+      render: (value, record) => {
+        const price = Setting.getPriceDisplay(value, record.currency);
+        return record.payment ? (
+          <Link to={`/payments/${record.owner}/${record.payment}`} className="underline-offset-4 hover:underline">
+            {price}
+          </Link>
+        ) : (
+          price
+        );
+      },
     },
     {
       dataIndex: "user",

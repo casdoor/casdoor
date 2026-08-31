@@ -81,7 +81,7 @@ export default function WebhookEventListPage() {
           "-"
         ),
     },
-    textColumn({dataIndex: "organization", title: i18next.t("general:Organization"), width: 140}),
+    textColumn({dataIndex: "organization", title: i18next.t("general:Organization"), width: 140, link: (v) => `/organizations/${v}`}),
     dateColumn(),
     textColumn({dataIndex: "attemptCount", title: i18next.t("webhook:Attempt Count"), width: 130}),
     {

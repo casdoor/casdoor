@@ -30,7 +30,19 @@ export default function GroupListPage() {
         {value: "Physical", label: i18next.t("group:Physical")},
       ],
     }),
-    textColumn({dataIndex: "parentId", title: i18next.t("group:Parent group"), width: 150, searchable: true}),
+    {
+      ...textColumn({dataIndex: "parentId", title: i18next.t("group:Parent group"), width: 150, searchable: true}),
+      // a top group's parent is its organization, everyone else's is another group
+      render: (value: string, record: any) =>
+        value ? (
+          <Link
+            to={record.isTopGroup ? `/organizations/${value}` : `/groups/${record.owner}/${value}`}
+            className="underline-offset-4 hover:underline"
+          >
+            {record.isTopGroup ? value : record.parentName || value}
+          </Link>
+        ) : null,
+    },
     {
       dataIndex: "users",
       sortable: true,

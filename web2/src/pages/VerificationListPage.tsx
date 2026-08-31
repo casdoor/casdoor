@@ -26,7 +26,7 @@ export default function VerificationListPage() {
         </Link>
       ),
     },
-    textColumn({dataIndex: "provider", title: i18next.t("general:Provider"), width: 160, searchable: true}),
+    textColumn({dataIndex: "provider", title: i18next.t("general:Provider"), width: 160, searchable: true, link: (v, r: any) => `/providers/${r.owner}/${v}`}),
     clientIpColumn({
       dataIndex: "remoteAddr",
       // the backend stores it as "1.2.3.4: " when the port is unknown

@@ -89,6 +89,7 @@ instead, either point that path at `web2/build` or copy `web2/build` over
 | `src/locales/**` | copied from `web`, same 11 bundled languages, plus 9 strings for rows `web` does not render |
 | `BaseListPage` | `components/crud/CrudListPage` + `hooks/use-table-data` |
 | antd `<Table>` | `components/crud/DataTable` (server-side paging, per-column search, sort, filter menus) |
+| a column's `render` that only wraps the cell in a link | `ColumnDef.link` / `linkExternal`, which keeps the search highlight inside the link |
 | antd `<Result status="403">` | `components/common/UnauthorizedPage` |
 | `<Row><Col>` label rows | `components/crud/FormRow` |
 | antd `message` | `sonner` toasts (`Setting.showMessage` keeps the same signature) |

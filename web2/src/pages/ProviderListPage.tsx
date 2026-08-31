@@ -43,7 +43,10 @@ export default function ProviderListPage() {
         </span>
       ),
     },
-    textColumn({dataIndex: "clientId", title: i18next.t("provider:Client ID"), width: 180, mono: true, searchable: true}),
+    {
+      ...textColumn({dataIndex: "clientId", title: i18next.t("provider:Client ID"), width: 180, mono: true, searchable: true}),
+      render: (value: string) => (value ? Setting.getShortText(value) : null),
+    },
     {
       dataIndex: "providerUrl",
       sortable: true,
