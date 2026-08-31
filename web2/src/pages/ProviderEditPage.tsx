@@ -21,7 +21,7 @@ import * as CertBackend from "@/backend/CertBackend";
 import * as OrganizationBackend from "@/backend/OrganizationBackend";
 import * as ProviderBackend from "@/backend/ProviderBackend";
 import * as ServerBackend from "@/backend/ServerBackend";
-import {submitEdit} from "@/lib/crud";
+import {mapToRows, rowsToMap, submitEdit} from "@/lib/crud";
 import * as ProviderTest from "@/lib/provider-test";
 import * as Setting from "@/lib/setting";
 import {authConfig} from "@/auth/Auth";
@@ -797,8 +797,8 @@ export default function ProviderEditPage() {
 
   const renderHttpHeaderTable = () => (
     <EditableTable
-      rows={provider.httpHeaders}
-      onChange={(rows) => updateProviderField("httpHeaders", rows)}
+      rows={mapToRows(provider.httpHeaders, "name", "value")}
+      onChange={(rows) => updateProviderField("httpHeaders", rowsToMap(rows, "name", "value"))}
       newRow={() => ({name: "", value: ""})}
       reorderable={false}
       columns={[

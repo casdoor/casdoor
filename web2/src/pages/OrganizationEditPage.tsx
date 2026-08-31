@@ -469,7 +469,10 @@ export default function OrganizationEditPage() {
             />
           </FormRow>
           <FormRow labelKey="general:IP whitelist">
-            <TagsInput value={organization.ipWhitelist ?? []} onChange={(value) => update("ipWhitelist", value)} />
+            <Input
+              value={organization.ipWhitelist ?? ""}
+              onChange={(e) => update("ipWhitelist", e.target.value)}
+            />
           </FormRow>
           <FormRow labelKey="organization:Init score">
             <Input

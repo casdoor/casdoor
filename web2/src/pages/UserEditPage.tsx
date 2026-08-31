@@ -674,7 +674,10 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
               <Switch checked={!!user.isVerified} onCheckedChange={(v) => updateField("isVerified", v)} />
             </FormRow>
             <AccountItemRow name="IP whitelist" labelKey="general:IP whitelist">
-              <TagsInput value={user.ipWhitelist ?? []} onChange={(v) => updateField("ipWhitelist", v)} />
+              <Input
+                value={user.ipWhitelist ?? ""}
+                onChange={(e) => updateField("ipWhitelist", e.target.value)}
+              />
             </AccountItemRow>
             <FormRow labelKey="user:Deleted time">
               <Input value={Setting.getFormattedDate(user.deletedTime) ?? ""} disabled />

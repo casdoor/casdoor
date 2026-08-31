@@ -30,6 +30,41 @@ yarn postbuild      # renames build-temp/ -> build/
 
 Other scripts: `yarn lint` / `yarn fix` (ESLint) and `yarn typecheck` (`tsc --noEmit`).
 
+## End-to-end tests
+
+Cypress specs live in `cypress/e2e`. They need the Go backend on `:8000` and the
+dev server on `:7002`, then:
+
+```bash
+yarn e2e            # headless
+yarn e2e:open       # interactive runner
+```
+
+The suite signs in as `admin` / `123` and only reads: every "Add" it presses
+hands the new object to the edit page through the router state, which is not
+POSTed until the user saves, so no rows are created.
+
+Three kinds of spec, because they catch different things:
+
+- `console-pages.cy.js` sweeps every list page and every "Add" edit page. It is
+  broad but works from `pages/defaults.ts`, where optional fields are still
+  `undefined`.
+- The per-feature specs (`application`, `certs`, `user`, ...) open the **first
+  real row** of a list, so the edit page meets values the backend actually
+  stores — which is how the `ipWhitelist` and `scopes` mis-bindings surfaced.
+- `entry-viewers`, `map-fields` and `mfa-notification` stub the relevant
+  endpoint with `cy.intercept`, for the shapes a real database rarely holds.
+
+Two things worth knowing when writing a spec:
+
+- Match intercepts on `pathname`, not a URL glob. Casdoor's query string is
+  `?id=<owner>/<name>`, and the `/` in it makes minimatch read the object name as
+  another path segment, so `**/api/get-entry*` never matches.
+- On Windows, Vite binds `localhost` to `::1` only, while Cypress's Node-side
+  `cy.request` resolves it to `127.0.0.1` and gets `ECONNREFUSED`. Start the dev
+  server with `yarn start --host 127.0.0.1` (and point `CYPRESS_BASE_URL` at the
+  same address) when that happens.
+
 ### Serving it from the Go backend
 
 The backend serves `web/build` (see `routers/static_filter.go`). To serve `web2`
@@ -138,7 +173,8 @@ marked `Required` gets a warning and the redirect to `/mfa/setup`.
   `frontendBaseDir`), `public/` has none of the standalone scripts
   `routers/lightweight_auth_filter.go` serves, `index.html` is missing the
   boot-failure fallback, and the Dockerfile / Makefile / CI still build `../web`.
-  There are no Cypress e2e tests here either.
+- **CI**: `.github/workflows/build.yml` runs Cypress against `./web`; the web2
+  suite exists but nothing runs it yet.
 
 ## Adding a page
 

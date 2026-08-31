@@ -11,6 +11,7 @@ import {EditPageShell} from "@/components/crud/EditPageShell";
 import {EditableTable} from "@/components/crud/EditableTable";
 import {FormRow} from "@/components/crud/FormRow";
 import * as LdapBackend from "@/backend/LdapBackend";
+import {mapToRows, rowsToMap} from "@/lib/crud";
 import * as Setting from "@/lib/setting";
 
 const PASSWORD_TYPES = ["Plain", "SSHA", "MD5"];
@@ -165,8 +166,8 @@ export default function LdapEditPage() {
       </FormRow>
       <FormRow labelKey="ldap:Custom attributes" block>
         <EditableTable
-          rows={ldap.customAttributes ?? []}
-          onChange={(rows) => update("customAttributes", rows)}
+          rows={mapToRows(ldap.customAttributes, "attributeName", "userPropertyName")}
+          onChange={(rows) => update("customAttributes", rowsToMap(rows, "attributeName", "userPropertyName"))}
           newRow={() => ({attributeName: "", userPropertyName: ""})}
           reorderable={false}
           columns={[
