@@ -65,6 +65,7 @@ export default function ProductEditPage() {
       type: "tags",
       name: "rechargeOptions",
       labelKey: "product:Recharge options",
+      placeholder: i18next.t("product:Enter preset amounts"),
       when: (ctx) => !!ctx.record.isRecharge,
     },
     {type: "text", name: "successUrl", labelKey: "product:Success URL"},

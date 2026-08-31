@@ -572,6 +572,30 @@ export function newTransaction(account: Account) {
   };
 }
 
+/**
+ * The object the transaction list's "Recharge" button POSTs straight away: a
+ * paid top-up for the signed-in user, which the backend names and hands back so
+ * the edit page can open it in recharge mode.
+ */
+export function newRechargeTransaction(account: Account) {
+  return {
+    owner: Setting.getRequestOrganization(account),
+    createdTime: now(),
+    application: account.signupApplication || "",
+    domain: "",
+    category: "Recharge",
+    type: "",
+    subtype: "",
+    provider: "",
+    user: account.name || "",
+    tag: "User",
+    amount: 100,
+    currency: "USD",
+    payment: "",
+    state: "Paid",
+  };
+}
+
 export function newUser(account: Account, organization: Record<string, any>, organizationName: string, groupName?: string) {
   const randomName = Setting.getRandomName();
   const owner =

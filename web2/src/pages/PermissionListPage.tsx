@@ -2,7 +2,7 @@ import i18next from "i18next";
 import {Link} from "react-router-dom";
 import {CrudListPage} from "@/components/crud/CrudListPage";
 import {XlsxImport} from "@/components/crud/XlsxImport";
-import {boolColumn, dateColumn, linkColumn, organizationColumn, refsColumn, tagsColumn, textColumn} from "@/components/crud/columns";
+import {boolColumn, dateColumn, linkColumn, organizationColumn, refsColumn, tagsColumn, textColumn, valueFilters} from "@/components/crud/columns";
 import type {ColumnDef} from "@/components/crud/types";
 import {enumColumn, PERMISSION_EFFECTS, PERMISSION_STATES} from "@/lib/enum-labels";
 import {useAccount} from "@/hooks/use-account";
@@ -40,10 +40,10 @@ export default function PermissionListPage() {
     refsColumn({dataIndex: "groups", title: i18next.t("role:Sub groups"), urlPrefix: "/groups", width: 160, sortable: true, searchable: true}),
     refsColumn({dataIndex: "roles", title: i18next.t("role:Sub roles"), urlPrefix: "/roles", width: 160, sortable: true, searchable: true}),
     tagsColumn({dataIndex: "domains", title: i18next.t("role:Sub domains"), width: 140, sortable: true, searchable: true}),
-    textColumn({dataIndex: "resourceType", title: i18next.t("permission:Resource type"), width: 130}),
+    textColumn({dataIndex: "resourceType", title: i18next.t("permission:Resource type"), width: 130, filters: valueFilters(["Application"])}),
     tagsColumn({dataIndex: "resources", title: i18next.t("general:Resources"), width: 180, sortable: true, searchable: true}),
     tagsColumn({dataIndex: "actions", title: i18next.t("permission:Actions"), width: 140}),
-    enumColumn({dataIndex: "effect", title: i18next.t("permission:Effect"), map: PERMISSION_EFFECTS, width: 100}),
+    enumColumn({dataIndex: "effect", title: i18next.t("permission:Effect"), map: PERMISSION_EFFECTS, width: 100, filters: true}),
     boolColumn({dataIndex: "isEnabled", title: i18next.t("general:Is enabled")}),
     textColumn({dataIndex: "submitter", title: i18next.t("permission:Submitter"), width: 130}),
     textColumn({dataIndex: "approver", title: i18next.t("permission:Approver"), width: 130}),
@@ -54,7 +54,7 @@ export default function PermissionListPage() {
       sortable: true,
       render: (value) => Setting.getFormattedDate(value),
     },
-    enumColumn({dataIndex: "state", title: i18next.t("general:State"), map: PERMISSION_STATES}),
+    enumColumn({dataIndex: "state", title: i18next.t("general:State"), map: PERMISSION_STATES, filters: true}),
   ];
 
   return (

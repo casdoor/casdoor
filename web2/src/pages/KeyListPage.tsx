@@ -19,7 +19,17 @@ export default function KeyListPage() {
     organizationColumn(),
     dateColumn(),
     textColumn({dataIndex: "displayName", title: i18next.t("general:Display name"), searchable: true, width: 170}),
-    textColumn({dataIndex: "type", title: i18next.t("general:Type"), width: 130}),
+    textColumn({
+      dataIndex: "type",
+      title: i18next.t("general:Type"),
+      width: 130,
+      filters: [
+        {value: "Organization", label: i18next.t("general:Organization")},
+        {value: "Application", label: i18next.t("general:Application")},
+        {value: "User", label: i18next.t("general:User")},
+        {value: "General", label: i18next.t("general:General")},
+      ],
+    }),
     {
       dataIndex: "accessKey",
       sortable: true,

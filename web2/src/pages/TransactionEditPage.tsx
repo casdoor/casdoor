@@ -1,4 +1,5 @@
-import {useParams} from "react-router-dom";
+import * as React from "react";
+import {useLocation, useParams} from "react-router-dom";
 import {SimpleEditPage, type EditField} from "@/components/crud/SimpleEditPage";
 import {useAccount} from "@/hooks/use-account";
 import {useApplicationOptions, useOrganizationOptions, useUserNameOptions} from "@/hooks/use-options";
@@ -9,10 +10,15 @@ const STATES = ["Paid", "Created", "Canceled", "Error"];
 
 export default function TransactionEditPage() {
   const {organizationName = "", transactionName = ""} = useParams();
+  const location = useLocation();
   const {account} = useAccount();
+  // "Recharge" on the list page opens the row it just added under its own title
+  const isRecharge = Boolean((location.state as any)?.recharge);
+  // the application and user pickers follow the organization the form currently holds
+  const [owner, setOwner] = React.useState(organizationName);
   const organizations = useOrganizationOptions();
-  const applications = useApplicationOptions(organizationName);
-  const users = useUserNameOptions(organizationName);
+  const applications = useApplicationOptions(owner);
+  const users = useUserNameOptions(owner);
 
   const fields: EditField[] = [
     {
@@ -21,6 +27,11 @@ export default function TransactionEditPage() {
       labelKey: "general:Organization",
       options: () => organizations,
       disabled: () => !Setting.isAdminUser(account),
+      onChange: (value, _ctx, updateFields) => {
+        setOwner(value);
+        // the old application belongs to the old organization
+        updateFields({owner: value, application: ""});
+      },
     },
     {type: "text", name: "name", labelKey: "general:Name"},
     {type: "text", name: "displayName", labelKey: "general:Display name"},
@@ -50,7 +61,7 @@ export default function TransactionEditPage() {
 
   return (
     <SimpleEditPage
-      titleKey="transaction:Edit Transaction"
+      titleKey={isRecharge ? "transaction:Recharge" : "transaction:Edit Transaction"}
       backTo="/transactions"
       deps={[organizationName, transactionName]}
       fields={fields}

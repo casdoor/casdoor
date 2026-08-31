@@ -2,7 +2,8 @@ import * as React from "react";
 import i18next from "i18next";
 import {Link} from "react-router-dom";
 import {Badge} from "@/components/ui/badge";
-import type {ColumnDef} from "@/components/crud/types";
+import {Switch} from "@/components/ui/switch";
+import type {ColumnDef, ColumnFilterOption} from "@/components/crud/types";
 import * as Setting from "@/lib/setting";
 import {cn} from "@/lib/utils";
 
@@ -44,6 +45,11 @@ export function dateColumn<T>(dataIndex = "createdTime", title?: React.ReactNode
   };
 }
 
+/**
+ * A read-only boolean cell. The antd tables show a disabled `<Switch>` labelled
+ * ON / OFF, so this pairs the same switch with that wording; `invertColor` paints
+ * the "on" state as a warning, for flags like `isForbidden` where on is the bad one.
+ */
 export function boolColumn<T>(options: {
   dataIndex: string;
   title: React.ReactNode;
@@ -58,9 +64,17 @@ export function boolColumn<T>(options: {
     sortable: true,
     align: "center",
     render: (value) => (
-      <Badge variant={value ? (invertColor ? "destructive" : "success") : "secondary"}>
-        {value ? i18next.t("general:True") : i18next.t("general:False")}
-      </Badge>
+      <span className="inline-flex items-center gap-1.5">
+        <Switch
+          checked={Boolean(value)}
+          disabled
+          aria-readonly
+          className={cn("opacity-100", value && invertColor && "data-[state=checked]:bg-destructive")}
+        />
+        <span className="text-xs text-muted-foreground">
+          {value ? i18next.t("general:ON") : i18next.t("general:OFF")}
+        </span>
+      </span>
     ),
   };
 }
@@ -145,10 +159,15 @@ export function refsColumn<T>(options: {
   };
 }
 
-export function organizationColumn<T>(width: number | string = 140, dataIndex = "owner"): ColumnDef<T> {
+export function organizationColumn<T>(
+  width: number | string = 140,
+  dataIndex = "owner",
+  /** the rule and site lists head the same column "Owner" instead */
+  title: React.ReactNode = i18next.t("general:Organization"),
+): ColumnDef<T> {
   return {
     dataIndex,
-    title: i18next.t("general:Organization"),
+    title,
     width,
     sortable: true,
     searchable: true,
@@ -160,22 +179,69 @@ export function organizationColumn<T>(width: number | string = 140, dataIndex = 
   };
 }
 
+/**
+ * The Client IP cell, which the antd tables link to db-ip.com so an admin can
+ * look up where a sign-in or a request came from.
+ */
+export function clientIpColumn<T>(options?: {
+  dataIndex?: string;
+  title?: React.ReactNode;
+  width?: number | string;
+  /**
+   * Cleans the stored value before it is shown and looked up. The verification
+   * rows keep the address as "1.2.3.4: ", which the antd column trims.
+   */
+  normalize?: (value: string) => string;
+}): ColumnDef<T> {
+  const {dataIndex = "clientIp", title, width = 140, normalize} = options ?? {};
+  const column: ColumnDef<T> = {
+    dataIndex,
+    title: title ?? i18next.t("general:Client IP"),
+    width,
+    sortable: true,
+    searchable: true,
+  };
+  if (!normalize) {
+    // no rewriting, so the plain cell keeps its search highlight inside the link
+    column.link = (value) => (value ? `https://db-ip.com/${value}` : undefined);
+    column.linkExternal = true;
+    return column;
+  }
+  column.render = (value) => {
+    const ip = normalize(String(value ?? ""));
+    return ip ? (
+      <a href={`https://db-ip.com/${ip}`} target="_blank" rel="noreferrer" className="underline-offset-4 hover:underline">
+        {ip}
+      </a>
+    ) : null;
+  };
+  return column;
+}
+
 export function textColumn<T>(options: {
   dataIndex: string;
   title: React.ReactNode;
   width?: number | string;
   sortable?: boolean;
   searchable?: boolean;
+  /** the header filter menu the antd column declared as `filters` */
+  filters?: ColumnFilterOption[];
   mono?: boolean;
   className?: string;
 }): ColumnDef<T> {
-  const {dataIndex, title, width, sortable = true, searchable = false, mono, className} = options;
+  const {dataIndex, title, width, sortable = true, searchable = false, filters, mono, className} = options;
   return {
     dataIndex,
     title,
     width,
     sortable,
     searchable,
+    filters,
     className: cn(mono && "font-mono text-xs", className),
   };
+}
+
+/** turns a plain list of stored values into a filter menu that shows them as-is */
+export function valueFilters(values: string[]): ColumnFilterOption[] {
+  return values.map((value) => ({value, label: value}));
 }

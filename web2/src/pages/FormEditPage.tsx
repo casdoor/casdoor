@@ -2,6 +2,7 @@ import * as React from "react";
 import i18next from "i18next";
 import {ExternalLink} from "lucide-react";
 import {useNavigate, useParams} from "react-router-dom";
+import {UnauthorizedPage} from "@/components/common/UnauthorizedPage";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Switch} from "@/components/ui/switch";
@@ -31,7 +32,7 @@ export default function FormEditPage() {
   const [name, setName] = React.useState(formName);
   const [saving, setSaving] = React.useState(false);
 
-  const {record: form, updateField, setRecord, loading, mode, setMode} = useEditRecord<any>({
+  const {record: form, updateField, setRecord, loading, denied, mode, setMode} = useEditRecord<any>({
     fetch: () => FormBackend.getForm(account?.owner ?? "", formName),
     deps: [account?.owner, formName],
   });
@@ -63,6 +64,10 @@ export default function FormEditPage() {
     });
     setSaving(false);
   };
+
+  if (denied) {
+    return <UnauthorizedPage />;
+  }
 
   if (loading || form === null) {
     return <Loading />;

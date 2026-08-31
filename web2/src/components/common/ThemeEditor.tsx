@@ -48,9 +48,12 @@ const THEME_TYPES = [
 export function ThemeEditor({
   themeData,
   onChange,
+  followLabelKey = "organization:Follow global theme",
 }: {
   themeData?: ThemeData | null;
   onChange: (next: ThemeData) => void;
+  /** what the object inherits from when it does not override: the global theme, or its organization's */
+  followLabelKey?: string;
 }) {
   const current: ThemeData = themeData ?? {...Conf.ThemeDefault, isEnabled: false};
   const update = (patch: Partial<ThemeData>) => onChange({...current, ...patch});
@@ -65,7 +68,7 @@ export function ThemeEditor({
 
   return (
     <div className="space-y-1 rounded-lg border p-4">
-      <FormRow label={i18next.t("organization:Follow global theme")}>
+      <FormRow label={i18next.t(followLabelKey)}>
         <Switch checked={!current.isEnabled} onCheckedChange={(v) => update({isEnabled: !v})} />
       </FormRow>
       {current.isEnabled ? (

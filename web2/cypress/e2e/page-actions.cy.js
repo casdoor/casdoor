@@ -67,13 +67,13 @@ describe("Application edit", () => {
   });
 
   it("offers an upload for the Terms of Use HTML", () => {
-    // Terms of Use lives on the signup tab
-    cy.contains('[role=tab]', "Signup items").click();
+    // Terms of Use lives on the security tab
+    cy.contains('[role=tab]', "Security").click();
     cy.contains("button", "Click to Upload").should("be.visible");
   });
 
   it("resets the footer HTML to the default and to empty", () => {
-    cy.contains('[role=tab]', "Customize theme").click();
+    cy.contains('[role=tab]', "UI Customization").click();
     cy.contains("button", "Reset to Default").click();
     cy.contains("Powered by").should("be.visible");
     cy.contains("button", "Reset to Empty").click();

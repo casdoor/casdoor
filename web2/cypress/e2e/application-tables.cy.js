@@ -80,7 +80,7 @@ describe("Application signup items table", () => {
 
   it("has the Type, Custom CSS and Options columns", () => {
     openApplication({signupItems: [{name: "Username", visible: true, required: true, rule: "None", type: "Input"}]});
-    cy.contains('[role=tab]', "Signup items").click();
+    cy.contains('[role=tab]', "UI Customization").click();
 
     ["Type", "Custom CSS", "Options"].forEach((title) => {
       cy.contains("th", title).should("exist");
@@ -91,7 +91,7 @@ describe("Application signup items table", () => {
     openApplication({
       signupItems: [{name: "Display name", visible: true, required: true, rule: "None", type: "Input"}],
     });
-    cy.contains('[role=tab]', "Signup items").click();
+    cy.contains('[role=tab]', "UI Customization").click();
 
     // "Display name" offers None / Real name / First, last — not the old flat list
     cy.contains("tbody tr", "Display name").find("[role=combobox]").eq(2).click();
@@ -107,7 +107,7 @@ describe("Application token attributes table", () => {
       tokenFormat: "JWT-Custom",
       tokenAttributes: [{name: "roles", category: "Existing Field", value: "Roles", type: "Array"}],
     });
-    cy.contains('[role=tab]', "OAuth").click();
+    cy.contains('[role=tab]', "OIDC/OAuth").click();
 
     // the cells are inputs and selects, so reach the row through its name field
     cy.get('input[value="roles"]').closest("tr").within(() => {
@@ -155,7 +155,7 @@ describe("Application signin items table", () => {
     openApplication({
       signinItems: [{name: "Logo", visible: true, label: "", placeholder: "", rule: "None"}],
     });
-    cy.contains('[role=tab]', "Signin methods").click();
+    cy.contains('[role=tab]', "UI Customization").click();
 
     cy.contains("th", "Custom CSS").should("exist");
 

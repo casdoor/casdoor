@@ -15,7 +15,7 @@ export default function SiteListPage() {
   const isGlobal = account ? Setting.isDefaultOrganizationSelected(account) : false;
 
   const columns: ColumnDef<any>[] = [
-    organizationColumn(),
+    organizationColumn(110, "owner", i18next.t("general:Owner")),
     textColumn({dataIndex: "tag", title: i18next.t("general:Tag"), width: 110}),
     linkColumn({dataIndex: "name", to: (r) => `/sites/${r.owner}/${r.name}`}),
     dateColumn(),

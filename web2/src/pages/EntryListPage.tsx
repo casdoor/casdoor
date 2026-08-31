@@ -1,7 +1,7 @@
 import * as React from "react";
 import i18next from "i18next";
 import {CrudListPage} from "@/components/crud/CrudListPage";
-import {dateColumn, linkColumn, organizationColumn, textColumn} from "@/components/crud/columns";
+import {clientIpColumn, dateColumn, linkColumn, organizationColumn, textColumn} from "@/components/crud/columns";
 import type {ColumnDef} from "@/components/crud/types";
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
 import {EntryMessageViewer} from "@/components/entry/EntryMessageViewer";
@@ -87,9 +87,12 @@ export default function EntryListPage() {
     organizationColumn(),
     linkColumn({dataIndex: "name", to: (r) => `/entries/${r.owner}/${r.name}`, width: 180}),
     dateColumn(),
-    textColumn({dataIndex: "provider", title: i18next.t("general:Provider"), width: 150, searchable: true}),
+    {
+      ...textColumn({dataIndex: "provider", title: i18next.t("general:Provider"), width: 150, searchable: true}),
+      link: (value, record: any) => (value ? `/providers/${record.owner}/${value}` : undefined),
+    },
     textColumn({dataIndex: "type", title: i18next.t("general:Type"), width: 120, searchable: true}),
-    textColumn({dataIndex: "clientIp", title: i18next.t("general:Client IP"), width: 140, searchable: true}),
+    clientIpColumn(),
     textColumn({dataIndex: "userAgent", title: i18next.t("general:User agent"), width: 200, searchable: true}),
     {
       dataIndex: "message",

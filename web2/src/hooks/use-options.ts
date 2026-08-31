@@ -82,12 +82,34 @@ export function useUserNameOptions(organizationName: string): SearchableOption[]
   return React.useMemo(() => toNameOptions(items), [items]);
 }
 
-export function useGroupOptions(organizationName: string): SearchableOption[] {
-  const items = useList(
+/**
+ * The groups themselves, not just their options: the user and LDAP pages have to
+ * look at each group's `type`, because only one Physical group may be picked.
+ */
+export function useGroupList(organizationName: string): any[] {
+  return useList(
     () => (organizationName ? GroupBackend.getGroups(organizationName, false, 1, PAGE_SIZE) : null),
     [organizationName],
   );
+}
+
+export function useGroupOptions(organizationName: string): SearchableOption[] {
+  const items = useGroupList(organizationName);
   return React.useMemo(() => toIdOptions(items), [items]);
+}
+
+/**
+ * Keeps at most one Physical group in a selection, the rule both the antd user
+ * page and LDAP page enforce. Returns null when the selection is fine as it is.
+ */
+export function dropExtraPhysicalGroups(values: string[], groups: any[]): string[] | null {
+  const isPhysical = (value: string) =>
+    groups.find((group: any) => `${group.owner}/${group.name}` === value)?.type === "Physical";
+  const physical = values.filter(isPhysical);
+  if (physical.length <= 1) {
+    return null;
+  }
+  return values.filter((value) => !isPhysical(value) || value === physical[0]);
 }
 
 export function useRoleOptions(organizationName: string, exclude?: string): SearchableOption[] {

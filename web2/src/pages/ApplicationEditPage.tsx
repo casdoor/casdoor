@@ -3,9 +3,11 @@ import i18next from "i18next";
 import copy from "copy-to-clipboard";
 import {Copy, Link as LinkIcon, Upload} from "lucide-react";
 import {useNavigate, useParams} from "react-router-dom";
+import {UnauthorizedPage} from "@/components/common/UnauthorizedPage";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Switch} from "@/components/ui/switch";
+import {RadioGroup, RadioGroupItem} from "@/components/ui/radio-group";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import {CodeEditor} from "@/components/common/CodeEditor";
 import {Loading} from "@/components/common/Loading";
@@ -215,6 +217,21 @@ const SIGNUP_ITEM_NAMES = [
   "Signup button", "Providers", "Text 1", "Text 2", "Text 3", "Text 4", "Text 5", "Languages",
 ];
 
+/** how the edit page lays its tabs out: across the top, or down the left side */
+type MenuMode = "horizontal" | "vertical";
+
+/** the tabs, in the antd page's order; also what the URL hash may name */
+const TAB_KEYS = [
+  "basic",
+  "authentication",
+  "oidc-oauth",
+  "saml",
+  "providers",
+  "ui-customization",
+  "security",
+  "reverse-proxy",
+];
+
 export default function ApplicationEditPage() {
   const {organizationName = "", applicationName = ""} = useParams();
   const navigate = useNavigate();
@@ -226,11 +243,22 @@ export default function ApplicationEditPage() {
   const providers = useProviderOptions(organizationName);
   const providerObjs = useProviderList(organizationName);
 
-  const {record: application, updateField, setRecord, loading, mode, setMode} = useEditRecord<any>({
+  const {record: application, updateField, setRecord, loading, denied, mode, setMode} = useEditRecord<any>({
     fetch: () => ApplicationBackend.getApplication("admin", applicationName),
     deps: [applicationName],
   });
 
+  // antd keeps the open tab in the URL hash and lets the user lay the tabs out
+  // across the top or down the side; both are page state, not application fields
+  const [activeTab, setActiveTab] = React.useState(() => {
+    const hash = window.location.hash.replace("#", "");
+    return TAB_KEYS.includes(hash) ? hash : "basic";
+  });
+  const [menuMode, setMenuMode] = React.useState<MenuMode>("horizontal");
+  const selectTab = (key: string) => {
+    setActiveTab(key);
+    window.location.hash = key;
+  };
   const [samlMetadata, setSamlMetadata] = React.useState("");
   const [uploadingTerms, setUploadingTerms] = React.useState(false);
   const termsFileRef = React.useRef<HTMLInputElement>(null);
@@ -245,6 +273,10 @@ export default function ApplicationEditPage() {
       setSamlMetadata(data?.toString() ?? "");
     });
   }, [mode, applicationName, enableSamlPostBinding]);
+
+  if (denied) {
+    return <UnauthorizedPage />;
+  }
 
   if (loading || application === null) {
     return <Loading />;
@@ -360,18 +392,24 @@ export default function ApplicationEditPage() {
         </>
       }
     >
-      <Tabs defaultValue="basic">
-        <TabsList className="mb-2 flex-wrap">
+      <Tabs
+        value={activeTab}
+        onValueChange={selectTab}
+        orientation={menuMode === "vertical" ? "vertical" : "horizontal"}
+        className={menuMode === "vertical" ? "flex items-start gap-4" : undefined}
+      >
+        <TabsList className={menuMode === "vertical" ? "sticky top-0 h-auto flex-col items-stretch" : "mb-2 flex-wrap"}>
           <TabsTrigger value="basic">{i18next.t("application:Basic")}</TabsTrigger>
-          <TabsTrigger value="signin">{i18next.t("application:Signin methods")}</TabsTrigger>
-          <TabsTrigger value="signup">{i18next.t("application:Signup items")}</TabsTrigger>
-          <TabsTrigger value="providers">{i18next.t("application:Providers")}</TabsTrigger>
-          <TabsTrigger value="oauth">OAuth</TabsTrigger>
+          <TabsTrigger value="authentication">{i18next.t("application:Authentication")}</TabsTrigger>
+          <TabsTrigger value="oidc-oauth">OIDC/OAuth</TabsTrigger>
           <TabsTrigger value="saml">SAML</TabsTrigger>
-          <TabsTrigger value="appearance">{i18next.t("theme:Customize theme")}</TabsTrigger>
+          <TabsTrigger value="providers">{i18next.t("application:Providers")}</TabsTrigger>
+          <TabsTrigger value="ui-customization">{i18next.t("application:UI Customization")}</TabsTrigger>
+          <TabsTrigger value="security">{i18next.t("application:Security")}</TabsTrigger>
+          <TabsTrigger value="reverse-proxy">{i18next.t("application:Reverse Proxy")}</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="basic">
+        <TabsContent value="basic" className={menuMode === "vertical" ? "mt-0 min-w-0 flex-1" : undefined}>
           {/* antd puts these next to its live sign-in previews; this frontend has no
               previews, so the links live on their own row at the top of the tab */}
           {mode === "add" ? null : (
@@ -425,6 +463,9 @@ export default function ApplicationEditPage() {
               options={APPLICATION_TYPES.map((item) => ({id: item, name: item}))}
             />
           </FormRow>
+          <FormRow labelKey="general:Is shared">
+            <Switch checked={!!application.isShared} onCheckedChange={(v) => updateField("isShared", v)} />
+          </FormRow>
           <FormRow labelKey="general:Logo">
             <div className="space-y-2">
               <Input value={application.logo ?? ""} onChange={(e) => updateField("logo", e.target.value)} />
@@ -445,6 +486,9 @@ export default function ApplicationEditPage() {
           <FormRow labelKey="organization:Tags">
             <TagsInput value={application.tags ?? []} onChange={(v) => updateField("tags", v)} />
           </FormRow>
+          <FormRow labelKey="application:Default tag">
+            <Input value={application.defaultTag ?? ""} onChange={(e) => updateField("defaultTag", e.target.value)} />
+          </FormRow>
           <FormRow labelKey="application:Order">
             <Input
               type="number"
@@ -454,32 +498,40 @@ export default function ApplicationEditPage() {
               onChange={(e) => updateField("order", Setting.myParseInt(e.target.value))}
             />
           </FormRow>
-          <FormRow labelKey="general:Is shared">
-            <Switch checked={!!application.isShared} onCheckedChange={(v) => updateField("isShared", v)} />
+          <FormRow labelKey="application:Menu mode">
+            <RadioGroup
+              className="flex gap-4"
+              value={menuMode}
+              onValueChange={(value) => setMenuMode(value as MenuMode)}
+            >
+              {(["horizontal", "vertical"] as MenuMode[]).map((value) => (
+                <div key={value} className="flex items-center gap-2">
+                  <RadioGroupItem value={value} id={`menu-mode-${value}`} />
+                  <label htmlFor={`menu-mode-${value}`} className="text-sm">
+                    {i18next.t(value === "horizontal" ? "application:Horizontal" : "application:Vertical")}
+                  </label>
+                </div>
+              ))}
+            </RadioGroup>
           </FormRow>
-          <FormRow labelKey="application:Disable signin">
-            <Switch checked={!!application.disableSignin} onCheckedChange={(v) => updateField("disableSignin", v)} />
+        </TabsContent>
+
+        <TabsContent value="authentication" className={menuMode === "vertical" ? "mt-0 min-w-0 flex-1" : undefined}>
+          <FormRow labelKey="application:Cookie expire">
+            <Input
+              type="number"
+              value={application.cookieExpireInHours ?? 720}
+              onChange={(e) => updateField("cookieExpireInHours", Setting.myParseInt(e.target.value))}
+            />
+          </FormRow>
+          <FormRow labelKey="ldap:Default group">
+            <Input value={application.defaultGroup ?? ""} onChange={(e) => updateField("defaultGroup", e.target.value)} />
           </FormRow>
           <FormRow labelKey="application:Enable signup">
             <Switch checked={!!application.enableSignUp} onCheckedChange={(v) => updateField("enableSignUp", v)} />
           </FormRow>
-          <FormRow labelKey="general:IP whitelist">
-            <Input
-              placeholder={application.organizationObj?.ipWhitelist}
-              value={application.ipWhitelist ?? ""}
-              onChange={(e) => updateField("ipWhitelist", e.target.value)}
-            />
-          </FormRow>
-          <FormRow labelKey="application:Org choice mode">
-            <SelectField
-              value={application.orgChoiceMode ?? "None"}
-              onChange={(v) => updateField("orgChoiceMode", v)}
-              options={[
-                {id: "None", name: i18next.t("general:None")},
-                {id: "Select", name: i18next.t("application:Select")},
-                {id: "Input", name: i18next.t("application:Input")},
-              ]}
-            />
+          <FormRow labelKey="application:Disable signin">
+            <Switch checked={!!application.disableSignin} onCheckedChange={(v) => updateField("disableSignin", v)} />
           </FormRow>
           <FormRow labelKey="application:Enable guest signin">
             <Switch
@@ -491,83 +543,6 @@ export default function ApplicationEditPage() {
             <Switch
               checked={!!application.enableExclusiveSignin}
               onCheckedChange={(v) => updateField("enableExclusiveSignin", v)}
-            />
-          </FormRow>
-          <FormRow labelKey="provider:Domain">
-            <Input
-              value={application.domain ?? ""}
-              placeholder="e.g., blog.example.com"
-              onChange={(e) => updateField("domain", e.target.value)}
-            />
-          </FormRow>
-          <FormRow labelKey="application:Other domains">
-            <TagsInput value={application.otherDomains ?? []} onChange={(v) => updateField("otherDomains", v)} />
-          </FormRow>
-          <FormRow labelKey="application:Upstream host">
-            <Input
-              value={application.upstreamHost ?? ""}
-              placeholder="e.g., localhost:8080 or 192.168.1.100:3000"
-              onChange={(e) => updateField("upstreamHost", e.target.value)}
-            />
-          </FormRow>
-          <FormRow labelKey="provider:SSL mode">
-            <SelectField
-              value={application.sslMode ?? ""}
-              onChange={(v) => updateField("sslMode", v)}
-              options={SSL_MODES.map((item) => ({id: item, name: item === "" ? i18next.t("general:None") : item}))}
-            />
-          </FormRow>
-          <FormRow labelKey="application:SSL cert">
-            <SearchableSelect
-              value={application.sslCert ?? ""}
-              onChange={(v) => updateField("sslCert", v)}
-              options={[{value: "", label: i18next.t("general:None")}, ...certs]}
-            />
-          </FormRow>
-        </TabsContent>
-
-        <TabsContent value="signin">
-          <FormRow labelKey="application:Signin methods" block>
-            <EditableTable
-              rows={application.signinMethods ?? []}
-              onChange={(rows) => updateField("signinMethods", rows)}
-              newRow={() => ({name: "Password", displayName: "Password", rule: "All"})}
-              columns={[
-                {
-                  key: "name",
-                  title: i18next.t("general:Name"),
-                  width: 200,
-                  render: (row: any, _i, patch) => (
-                    <SelectField
-                      value={row.name}
-                      onChange={(v) => patch({name: v, displayName: v})}
-                      options={["Password", "Verification code", "WebAuthn", "LDAP", "Face ID", "Device login"].map(
-                        (item) => ({id: item, name: item}),
-                      )}
-                    />
-                  ),
-                },
-                {
-                  key: "displayName",
-                  title: i18next.t("general:Display name"),
-                  width: 200,
-                  render: (row: any, _i, patch) => (
-                    <Input value={row.displayName ?? ""} onChange={(e) => patch({displayName: e.target.value})} />
-                  ),
-                },
-                {
-                  key: "rule",
-                  title: i18next.t("application:Rule"),
-                  width: 180,
-                  render: (row: any, _i, patch) => (
-                    <SelectField
-                      value={row.rule}
-                      onChange={(v) => patch({rule: v})}
-                      options={enumSelectOptions(SIGNIN_METHOD_RULES[row.name] ?? {})}
-                    />
-                  ),
-                },
-              ]}
             />
           </FormRow>
           <FormRow labelKey="application:Signin session">
@@ -582,25 +557,17 @@ export default function ApplicationEditPage() {
               onCheckedChange={(v) => updateField("enableAutoSignin", v)}
             />
           </FormRow>
-          <FormRow labelKey="application:Failed signin limit">
-            <Input
-              type="number"
-              value={application.failedSigninLimit ?? 5}
-              onChange={(e) => updateField("failedSigninLimit", Setting.myParseInt(e.target.value))}
+          <FormRow labelKey="application:Enable Email linking">
+            <Switch
+              checked={!!application.enableLinkWithEmail}
+              onCheckedChange={(v) => updateField("enableLinkWithEmail", v)}
             />
-          </FormRow>
-          <FormRow labelKey="application:Failed signin frozen time">
-            <Input
-              type="number"
-              value={application.failedSigninFrozenTime ?? 15}
-              onChange={(e) => updateField("failedSigninFrozenTime", Setting.myParseInt(e.target.value))}
-            />
-          </FormRow>
-          <FormRow labelKey="general:Signin URL">
-            <Input value={application.signinUrl ?? ""} onChange={(e) => updateField("signinUrl", e.target.value)} />
           </FormRow>
           <FormRow labelKey="general:Signup URL">
             <Input value={application.signupUrl ?? ""} onChange={(e) => updateField("signupUrl", e.target.value)} />
+          </FormRow>
+          <FormRow labelKey="general:Signin URL">
+            <Input value={application.signinUrl ?? ""} onChange={(e) => updateField("signinUrl", e.target.value)} />
           </FormRow>
           <FormRow labelKey="general:Forget URL">
             <Input value={application.forgetUrl ?? ""} onChange={(e) => updateField("forgetUrl", e.target.value)} />
@@ -611,279 +578,335 @@ export default function ApplicationEditPage() {
               onChange={(e) => updateField("affiliationUrl", e.target.value)}
             />
           </FormRow>
-          <FormRow labelKey="application:Code resend timeout">
+        </TabsContent>
+
+        <TabsContent value="oidc-oauth" className={menuMode === "vertical" ? "mt-0 min-w-0 flex-1" : undefined}>
+          {/* both are editable so that an admin can rotate the pair, as in the antd page */}
+          <FormRow labelKey="provider:Client ID">
+            <Input value={application.clientId ?? ""} onChange={(e) => updateField("clientId", e.target.value)} />
+          </FormRow>
+          <FormRow labelKey="provider:Client secret">
+            <Input
+              value={application.clientSecret ?? ""}
+              onChange={(e) => updateField("clientSecret", e.target.value)}
+            />
+          </FormRow>
+          <FormRow labelKey="application:Redirect URLs">
+            <TagsInput value={application.redirectUris ?? []} onChange={(v) => updateField("redirectUris", v)} />
+          </FormRow>
+          <FormRow labelKey="application:Forced redirect origin">
+            <Input
+              value={application.forcedRedirectOrigin ?? ""}
+              onChange={(e) => updateField("forcedRedirectOrigin", e.target.value)}
+            />
+          </FormRow>
+          <FormRow labelKey="application:Backchannel logout URL">
+            <Input
+              value={application.backchannelLogoutUri ?? ""}
+              onChange={(e) => updateField("backchannelLogoutUri", e.target.value)}
+            />
+          </FormRow>
+          <FormRow labelKey="application:Grant types">
+            <MultiSelect
+              value={application.grantTypes ?? []}
+              onChange={(v) => updateField("grantTypes", v)}
+              options={GRANT_TYPES.map((item) => ({value: item, label: item}))}
+            />
+          </FormRow>
+          {/* scopes are ScopeItem objects (name / displayName / description), the
+              same three columns antd's ScopeTable edits */}
+          <FormRow labelKey="general:Scopes" block>
+            <EditableTable
+              rows={application.scopes ?? []}
+              onChange={(rows) => updateField("scopes", rows)}
+              newRow={() => ({name: "", displayName: "", description: ""})}
+              columns={[
+                {
+                  key: "name",
+                  title: i18next.t("general:Name"),
+                  width: "25%",
+                  render: (row: any, index, update) => (
+                    <Input
+                      value={row.name ?? ""}
+                      placeholder="e.g., files:read"
+                      onChange={(e) => update({name: e.target.value})}
+                    />
+                  ),
+                },
+                {
+                  key: "displayName",
+                  title: i18next.t("general:Display name"),
+                  width: "25%",
+                  render: (row: any, index, update) => (
+                    <Input
+                      value={row.displayName ?? ""}
+                      placeholder="e.g., Read Files"
+                      onChange={(e) => update({displayName: e.target.value})}
+                    />
+                  ),
+                },
+                {
+                  key: "description",
+                  title: i18next.t("general:Description"),
+                  width: "40%",
+                  render: (row: any, index, update) => (
+                    <Input
+                      value={row.description ?? ""}
+                      placeholder="e.g., Allow reading your files and documents"
+                      onChange={(e) => update({description: e.target.value})}
+                    />
+                  ),
+                },
+              ]}
+            />
+          </FormRow>
+          <FormRow labelKey="general:Custom scopes" block>
+            <EditableTable
+              rows={application.customScopes ?? []}
+              onChange={(rows) => updateField("customScopes", rows)}
+              newRow={() => ({scope: "", displayName: "", description: ""})}
+              columns={[
+                {
+                  key: "scope",
+                  title: i18next.t("general:Name"),
+                  width: 200,
+                  render: (row: any, _i, patch) => (
+                    <Input value={row.scope ?? ""} onChange={(e) => patch({scope: e.target.value})} />
+                  ),
+                },
+                {
+                  key: "displayName",
+                  title: i18next.t("general:Display name"),
+                  width: 200,
+                  render: (row: any, _i, patch) => (
+                    <Input value={row.displayName ?? ""} onChange={(e) => patch({displayName: e.target.value})} />
+                  ),
+                },
+                {
+                  key: "description",
+                  title: i18next.t("general:Description"),
+                  render: (row: any, _i, patch) => (
+                    <Input value={row.description ?? ""} onChange={(e) => patch({description: e.target.value})} />
+                  ),
+                },
+              ]}
+            />
+          </FormRow>
+          <FormRow labelKey="application:Token format">
+            <SelectField
+              value={application.tokenFormat ?? "JWT"}
+              onChange={(v) => updateField("tokenFormat", v)}
+              options={TOKEN_FORMATS.map((item) => ({id: item, name: item}))}
+            />
+          </FormRow>
+          <FormRow labelKey="application:Token signing method">
+            <SelectField
+              value={application.tokenSigningMethod ?? "RS256"}
+              onChange={(v) => updateField("tokenSigningMethod", v)}
+              options={TOKEN_SIGNING_METHODS.map((item) => ({id: item, name: item}))}
+            />
+          </FormRow>
+          <FormRow labelKey="application:Token fields">
+            <MultiSelect
+              value={application.tokenFields ?? []}
+              onChange={(v) => updateField("tokenFields", v)}
+              creatable
+              options={Setting.UserFields.map((item: string) => ({value: item, label: item}))}
+            />
+          </FormRow>
+          {application.tokenFormat === "JWT-Custom" ? (
+            <FormRow labelKey="general:Token attributes" block>
+              <EditableTable
+                rows={application.tokenAttributes ?? []}
+                onChange={(rows) => updateField("tokenAttributes", rows)}
+                newRow={() => ({name: "", category: "Static Value", value: "", type: "Array"})}
+                columns={[
+                  {
+                    key: "name",
+                    title: i18next.t("general:Name"),
+                    width: 180,
+                    render: (row: any, _i, patch) => (
+                      <Input value={row.name ?? ""} onChange={(e) => patch({name: e.target.value})} />
+                    ),
+                  },
+                  {
+                    key: "category",
+                    title: i18next.t("general:Category"),
+                    width: 160,
+                    render: (row: any, _i, patch) => (
+                      <SelectField
+                        value={row.category ?? "Static Value"}
+                        onChange={(v) => patch({category: v, value: ""})}
+                        options={enumSelectOptions(TOKEN_ATTRIBUTE_CATEGORIES)}
+                      />
+                    ),
+                  },
+                  {
+                    key: "value",
+                    title: i18next.t("webhook:Value"),
+                    // an "Existing Field" attribute copies one of the user's own
+                    // fields, so the value is picked rather than typed
+                    render: (row: any, _i, patch) =>
+                      row.category === "Existing Field" ? (
+                        <SelectField
+                          value={row.value ?? ""}
+                          onChange={(v) => patch({value: v})}
+                          options={TOKEN_ATTRIBUTE_USER_FIELDS.map((field) => ({id: field, name: field}))}
+                        />
+                      ) : (
+                        <Input value={row.value ?? ""} onChange={(e) => patch({value: e.target.value})} />
+                      ),
+                  },
+                  {
+                    key: "type",
+                    title: i18next.t("general:Type"),
+                    width: 140,
+                    render: (row: any, _i, patch) => (
+                      <SelectField
+                        value={row.type}
+                        onChange={(v) => patch({type: v})}
+                        options={TOKEN_ATTRIBUTE_TYPES.map((item) => ({id: item, name: item}))}
+                      />
+                    ),
+                  },
+                ]}
+              />
+            </FormRow>
+          ) : null}
+          <FormRow labelKey="application:Token expire">
             <Input
               type="number"
-              value={application.codeResendTimeout ?? 60}
-              onChange={(e) => updateField("codeResendTimeout", Setting.myParseInt(e.target.value))}
+              value={application.expireInHours ?? 168}
+              onChange={(e) => updateField("expireInHours", Setting.myParseInt(e.target.value))}
             />
           </FormRow>
-          <FormRow labelKey="application:Signin items" block>
-            <EditableTable
-              title={
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() =>
-                    updateField("signinItems", [
-                      ...(application.signinItems ?? []),
-                      // a custom item is a free-form HTML block, named so it stays unique
-                      {name: `Text ${Date.now()}`, visible: true, isCustom: true, label: "", placeholder: "", rule: "None"},
-                    ])
-                  }
-                >
-                  {i18next.t("general:Add custom item")}
-                </Button>
-              }
-              rows={application.signinItems ?? []}
-              onChange={(rows) => updateField("signinItems", rows)}
-              newRow={() => ({
-                name: "Logo",
-                visible: true,
-                label: "",
-                customCss: SigninTableDefaultCssMap["Logo"],
-                placeholder: "",
-                rule: "None",
-              })}
-              columns={[
-                {
-                  key: "name",
-                  title: i18next.t("general:Name"),
-                  width: 190,
-                  render: (row: any, _i, patch) => (
-                    <SelectField
-                      value={row.name}
-                      onChange={(v) => patch({name: v, customCss: SigninTableDefaultCssMap[v] ?? ""})}
-                      options={SIGNIN_ITEM_NAMES.map((item) => ({id: item.name, name: i18next.t(item.labelKey)}))}
-                    />
-                  ),
-                },
-                {
-                  key: "visible",
-                  title: i18next.t("organization:Visible"),
-                  width: 90,
-                  render: (row: any, _i, patch) => (
-                    <Switch checked={!!row.visible} onCheckedChange={(v) => patch({visible: v, required: v})} />
-                  ),
-                },
-                {
-                  key: "label",
-                  title: i18next.t("signup:Label"),
-                  width: 170,
-                  render: (row: any, _i, patch) => (
-                    <Input value={row.label ?? ""} onChange={(e) => patch({label: e.target.value})} />
-                  ),
-                },
-                {
-                  key: "placeholder",
-                  title: i18next.t("signup:Placeholder"),
-                  width: 170,
-                  render: (row: any, _i, patch) => (
-                    <Input value={row.placeholder ?? ""} onChange={(e) => patch({placeholder: e.target.value})} />
-                  ),
-                },
-                {
-                  key: "customCss",
-                  title: i18next.t("application:Custom CSS"),
-                  width: 200,
-                  render: (row: any, _i, patch) => (
-                    <Input
-                      value={row.customCss ?? SigninTableDefaultCssMap[row.name] ?? ""}
-                      onChange={(e) => patch({customCss: e.target.value || SigninTableDefaultCssMap[row.name]})}
-                    />
-                  ),
-                },
-                {
-                  key: "rule",
-                  title: i18next.t("application:Rule"),
-                  width: 170,
-                  render: (row: any, _i, patch) => {
-                    const options = getSigninItemRuleOptions(row.name);
-                    if (options.length === 0) {
-                      return null;
-                    }
-                    return <SelectField value={row.rule} onChange={(v) => patch({rule: v})} options={options} />;
-                  },
-                },
-              ]}
+          <FormRow labelKey="application:Refresh token expire">
+            <Input
+              type="number"
+              value={application.refreshExpireInHours ?? 168}
+              onChange={(e) => updateField("refreshExpireInHours", Setting.myParseInt(e.target.value))}
             />
           </FormRow>
         </TabsContent>
 
-        <TabsContent value="signup">
-          <FormRow labelKey="application:Signup items" block>
-            <EditableTable
-              rows={application.signupItems ?? []}
-              onChange={(rows) => updateField("signupItems", rows)}
-              newRow={() => ({name: "Username", visible: true, required: true, rule: "None"})}
-              columns={[
-                {
-                  key: "name",
-                  title: i18next.t("general:Name"),
-                  width: 190,
-                  render: (row: any, _i, patch) => (
-                    <SelectField
-                      value={row.name}
-                      onChange={(v) => patch({name: v, customCss: SignupTableDefaultCssMap[v] ?? ""})}
-                      options={SIGNUP_ITEM_NAMES.map((item) => ({id: item, name: item}))}
-                    />
-                  ),
-                },
-                {
-                  key: "visible",
-                  title: i18next.t("organization:Visible"),
-                  width: 90,
-                  render: (row: any, _i, patch) => (
-                    <Switch checked={!!row.visible} onCheckedChange={(v) => patch({visible: v})} />
-                  ),
-                },
-                {
-                  key: "required",
-                  title: i18next.t("organization:Required"),
-                  width: 90,
-                  render: (row: any, _i, patch) => (
-                    <Switch
-                      checked={!!row.required}
-                      disabled={!row.visible}
-                      onCheckedChange={(v) => patch({required: v})}
-                    />
-                  ),
-                },
-                {
-                  key: "prompted",
-                  title: i18next.t("provider:Prompted"),
-                  width: 90,
-                  render: (row: any, _i, patch) => (
-                    <Switch
-                      checked={!!row.prompted}
-                      disabled={row.visible}
-                      onCheckedChange={(v) => patch({prompted: v})}
-                    />
-                  ),
-                },
-                {
-                  key: "type",
-                  title: i18next.t("general:Type"),
-                  width: 160,
-                  render: (row: any, _i, patch) => (
-                    <SelectField
-                      value={row.type ?? "Input"}
-                      onChange={(v) => patch({type: v})}
-                      options={enumSelectOptions(SIGNUP_ITEM_TYPES)}
-                    />
-                  ),
-                },
-                {
-                  key: "rule",
-                  title: i18next.t("application:Rule"),
-                  width: 160,
-                  render: (row: any, _i, patch) => {
-                    const map = SIGNUP_ITEM_RULES[row.name];
-                    if (!map) {
-                      return null;
-                    }
-                    return (
-                      <SelectField
-                        value={row.rule}
-                        onChange={(v) => patch({rule: v})}
-                        options={enumSelectOptions(map)}
-                      />
-                    );
-                  },
-                },
-                {
-                  key: "label",
-                  title: i18next.t("signup:Label"),
-                  width: 180,
-                  render: (row: any, _i, patch) => (
-                    <Input value={row.label ?? ""} onChange={(e) => patch({label: e.target.value})} />
-                  ),
-                },
-                {
-                  key: "placeholder",
-                  title: i18next.t("signup:Placeholder"),
-                  width: 180,
-                  render: (row: any, _i, patch) => (
-                    <Input value={row.placeholder ?? ""} onChange={(e) => patch({placeholder: e.target.value})} />
-                  ),
-                },
-                {
-                  key: "customCss",
-                  title: i18next.t("application:Custom CSS"),
-                  width: 200,
-                  render: (row: any, _i, patch) => (
-                    <Input
-                      value={row.customCss ?? SignupTableDefaultCssMap[row.name] ?? ""}
-                      onChange={(e) => patch({customCss: e.target.value || SignupTableDefaultCssMap[row.name]})}
-                    />
-                  ),
-                },
-                {
-                  key: "options",
-                  title: i18next.t("signup:Options"),
-                  width: 200,
-                  // only a choice item has options to offer
-                  render: (row: any, _i, patch) =>
-                    row.type === "Single Choice" || row.type === "Multiple Choices" ? (
-                      <TagsInput value={row.options ?? []} onChange={(v) => patch({options: v})} />
-                    ) : null,
-                },
-                {
-                  key: "regex",
-                  title: i18next.t("signup:Regex"),
-                  width: 180,
-                  render: (row: any, _i, patch) => (
-                    <Input value={row.regex ?? ""} onChange={(e) => patch({regex: e.target.value})} />
-                  ),
-                },
-              ]}
-            />
+        <TabsContent value="saml" className={menuMode === "vertical" ? "mt-0 min-w-0 flex-1" : undefined}>
+          <FormRow labelKey="application:SAML reply URL">
+            <Input value={application.samlReplyUrl ?? ""} onChange={(e) => updateField("samlReplyUrl", e.target.value)} />
           </FormRow>
-          <FormRow labelKey="signup:Terms of Use">
-            <div className="flex flex-wrap items-center gap-2">
-              <Input
-                className="min-w-[16rem] flex-1"
-                value={application.termsOfUse ?? ""}
-                onChange={(e) => updateField("termsOfUse", e.target.value)}
-              />
-              {/* the upload writes the stored URL back onto the application, so it
-                  can only be done once the application exists */}
-              {mode === "add" ? null : (
-                <>
-                  <input
-                    ref={termsFileRef}
-                    type="file"
-                    accept=".html"
-                    className="hidden"
-                    onChange={(e) => uploadTermsOfUse(e.target.files?.[0])}
-                  />
-                  <Button
-                    variant="outline"
-                    loading={uploadingTerms}
-                    onClick={() => termsFileRef.current?.click()}
-                  >
-                    <Upload />
-                    {i18next.t("general:Click to Upload")}
-                  </Button>
-                </>
-              )}
-            </div>
-          </FormRow>
-          <FormRow labelKey="ldap:Default group">
-            <Input value={application.defaultGroup ?? ""} onChange={(e) => updateField("defaultGroup", e.target.value)} />
-          </FormRow>
-          <FormRow labelKey="application:Default tag">
-            <Input value={application.defaultTag ?? ""} onChange={(e) => updateField("defaultTag", e.target.value)} />
-          </FormRow>
-          <FormRow labelKey="application:Enable Email linking">
+          <FormRow labelKey="application:Enable SAML compression">
             <Switch
-              checked={!!application.enableLinkWithEmail}
-              onCheckedChange={(v) => updateField("enableLinkWithEmail", v)}
+              checked={!!application.enableSamlCompress}
+              onCheckedChange={(v) => updateField("enableSamlCompress", v)}
             />
           </FormRow>
+          <FormRow labelKey="application:Enable SAML C14N10">
+            <Switch
+              checked={!!application.enableSamlC14n10}
+              onCheckedChange={(v) => updateField("enableSamlC14n10", v)}
+            />
+          </FormRow>
+          {application.enableSamlC14n10 ? (
+            <FormRow labelKey="application:SAML C14N10 prefix">
+              <Input
+                value={application.samlC14nPrefix ?? ""}
+                placeholder="xs"
+                onChange={(e) => updateField("samlC14nPrefix", e.target.value)}
+              />
+            </FormRow>
+          ) : null}
+          <FormRow labelKey="application:Use Email as NameID">
+            <Switch
+              checked={!!application.useEmailAsSamlNameId}
+              onCheckedChange={(v) => updateField("useEmailAsSamlNameId", v)}
+            />
+          </FormRow>
+          <FormRow labelKey="application:Enable SAML POST binding">
+            <Switch
+              checked={!!application.enableSamlPostBinding}
+              onCheckedChange={(v) => updateField("enableSamlPostBinding", v)}
+            />
+          </FormRow>
+          <FormRow labelKey="application:SAML hash algorithm">
+            <SelectField
+              value={application.samlHashAlgorithm ?? "SHA256"}
+              onChange={(v) => updateField("samlHashAlgorithm", v)}
+              options={SAML_HASH_ALGORITHMS.map((item) => ({id: item, name: item}))}
+            />
+          </FormRow>
+          <FormRow labelKey="application:Disable SAML attributes">
+            <Switch
+              checked={!!application.disableSamlAttributes}
+              onCheckedChange={(v) => updateField("disableSamlAttributes", v)}
+            />
+          </FormRow>
+          <FormRow labelKey="application:Enable SAML assertion signature">
+            <Switch
+              checked={!!application.enableSamlAssertionSignature}
+              onCheckedChange={(v) => updateField("enableSamlAssertionSignature", v)}
+            />
+          </FormRow>
+          <FormRow labelKey="general:SAML attributes" block>
+            <EditableTable
+              rows={application.samlAttributes ?? []}
+              onChange={(rows) => updateField("samlAttributes", rows)}
+              newRow={() => ({name: "", nameFormat: "", value: ""})}
+              reorderable={false}
+              columns={[
+                {
+                  key: "name",
+                  title: i18next.t("general:Name"),
+                  width: 220,
+                  render: (row: any, _i, patch) => (
+                    <Input value={row.name ?? ""} onChange={(e) => patch({name: e.target.value})} />
+                  ),
+                },
+                {
+                  key: "nameFormat",
+                  title: i18next.t("general:Name format"),
+                  width: 220,
+                  render: (row: any, _i, patch) => (
+                    <Input value={row.nameFormat ?? ""} onChange={(e) => patch({nameFormat: e.target.value})} />
+                  ),
+                },
+                {
+                  key: "value",
+                  title: i18next.t("webhook:Value"),
+                  render: (row: any, _i, patch) => (
+                    <Input value={row.value ?? ""} onChange={(e) => patch({value: e.target.value})} />
+                  ),
+                },
+              ]}
+            />
+          </FormRow>
+          {/* both are generated from the saved application, so only after it exists */}
+          {mode === "add" ? null : (
+            <>
+              <FormRow labelKey="application:SAML metadata" block>
+                <div className="space-y-2">
+                  <CodeEditor language="xml" value={samlMetadata} readOnly onChange={() => undefined} />
+                  <Button variant="outline" size="sm" onClick={() => copyToClipboard(samlMetadataUrl)}>
+                    <Copy />
+                    {i18next.t("application:Copy SAML metadata URL")}
+                  </Button>
+                </div>
+              </FormRow>
+              <FormRow labelKey="application:IdP-initiated SSO URL" block>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <LinkIcon className="h-4 w-4 shrink-0 text-muted-foreground" />
+                    <Input value={idpInitiatedSsoUrl} readOnly />
+                  </div>
+                  <Button variant="outline" size="sm" onClick={() => copyToClipboard(idpInitiatedSsoUrl)}>
+                    <Copy />
+                    {i18next.t("application:Copy IdP-initiated SSO URL")}
+                  </Button>
+                </div>
+              </FormRow>
+            </>
+          )}
         </TabsContent>
 
-        <TabsContent value="providers">
+        <TabsContent value="providers" className={menuMode === "vertical" ? "mt-0 min-w-0 flex-1" : undefined}>
           <FormRow labelKey="application:Providers" block>
             <EditableTable
               rows={application.providers ?? []}
@@ -1037,155 +1060,36 @@ export default function ApplicationEditPage() {
           </FormRow>
         </TabsContent>
 
-        <TabsContent value="oauth">
-          {/* both are editable so that an admin can rotate the pair, as in the antd page */}
-          <FormRow labelKey="provider:Client ID">
-            <Input value={application.clientId ?? ""} onChange={(e) => updateField("clientId", e.target.value)} />
-          </FormRow>
-          <FormRow labelKey="provider:Client secret">
-            <Input
-              value={application.clientSecret ?? ""}
-              onChange={(e) => updateField("clientSecret", e.target.value)}
-            />
-          </FormRow>
-          <FormRow labelKey="application:Redirect URLs">
-            <TagsInput value={application.redirectUris ?? []} onChange={(v) => updateField("redirectUris", v)} />
-          </FormRow>
-          <FormRow labelKey="application:Grant types">
-            <MultiSelect
-              value={application.grantTypes ?? []}
-              onChange={(v) => updateField("grantTypes", v)}
-              options={GRANT_TYPES.map((item) => ({value: item, label: item}))}
-            />
-          </FormRow>
-          <FormRow labelKey="general:Cert">
-            <SearchableSelect
-              value={application.cert ?? ""}
-              onChange={(v) => updateField("cert", v)}
-              options={certs}
-            />
-          </FormRow>
-          <FormRow labelKey="application:Token format">
+        <TabsContent value="ui-customization" className={menuMode === "vertical" ? "mt-0 min-w-0 flex-1" : undefined}>
+          <FormRow labelKey="application:Org choice mode">
             <SelectField
-              value={application.tokenFormat ?? "JWT"}
-              onChange={(v) => updateField("tokenFormat", v)}
-              options={TOKEN_FORMATS.map((item) => ({id: item, name: item}))}
+              value={application.orgChoiceMode ?? "None"}
+              onChange={(v) => updateField("orgChoiceMode", v)}
+              options={[
+                {id: "None", name: i18next.t("general:None")},
+                {id: "Select", name: i18next.t("application:Select")},
+                {id: "Input", name: i18next.t("application:Input")},
+              ]}
             />
           </FormRow>
-          <FormRow labelKey="application:Token signing method">
-            <SelectField
-              value={application.tokenSigningMethod ?? "RS256"}
-              onChange={(v) => updateField("tokenSigningMethod", v)}
-              options={TOKEN_SIGNING_METHODS.map((item) => ({id: item, name: item}))}
-            />
-          </FormRow>
-          <FormRow labelKey="application:Token fields">
-            <MultiSelect
-              value={application.tokenFields ?? []}
-              onChange={(v) => updateField("tokenFields", v)}
-              creatable
-              options={Setting.UserFields.map((item: string) => ({value: item, label: item}))}
-            />
-          </FormRow>
-          <FormRow labelKey="application:Token expire">
-            <Input
-              type="number"
-              value={application.expireInHours ?? 168}
-              onChange={(e) => updateField("expireInHours", Setting.myParseInt(e.target.value))}
-            />
-          </FormRow>
-          <FormRow labelKey="application:Refresh token expire">
-            <Input
-              type="number"
-              value={application.refreshExpireInHours ?? 168}
-              onChange={(e) => updateField("refreshExpireInHours", Setting.myParseInt(e.target.value))}
-            />
-          </FormRow>
-          <FormRow labelKey="application:Cookie expire">
-            <Input
-              type="number"
-              value={application.cookieExpireInHours ?? 720}
-              onChange={(e) => updateField("cookieExpireInHours", Setting.myParseInt(e.target.value))}
-            />
-          </FormRow>
-          {/* scopes are ScopeItem objects (name / displayName / description), the
-              same three columns antd's ScopeTable edits */}
-          <FormRow labelKey="general:Scopes" block>
+          <FormRow labelKey="application:Signin methods" block>
             <EditableTable
-              rows={application.scopes ?? []}
-              onChange={(rows) => updateField("scopes", rows)}
-              newRow={() => ({name: "", displayName: "", description: ""})}
+              rows={application.signinMethods ?? []}
+              onChange={(rows) => updateField("signinMethods", rows)}
+              newRow={() => ({name: "Password", displayName: "Password", rule: "All"})}
               columns={[
                 {
                   key: "name",
                   title: i18next.t("general:Name"),
-                  width: "25%",
-                  render: (row: any, index, update) => (
-                    <Input
-                      value={row.name ?? ""}
-                      placeholder="e.g., files:read"
-                      onChange={(e) => update({name: e.target.value})}
-                    />
-                  ),
-                },
-                {
-                  key: "displayName",
-                  title: i18next.t("general:Display name"),
-                  width: "25%",
-                  render: (row: any, index, update) => (
-                    <Input
-                      value={row.displayName ?? ""}
-                      placeholder="e.g., Read Files"
-                      onChange={(e) => update({displayName: e.target.value})}
-                    />
-                  ),
-                },
-                {
-                  key: "description",
-                  title: i18next.t("general:Description"),
-                  width: "40%",
-                  render: (row: any, index, update) => (
-                    <Input
-                      value={row.description ?? ""}
-                      placeholder="e.g., Allow reading your files and documents"
-                      onChange={(e) => update({description: e.target.value})}
-                    />
-                  ),
-                },
-              ]}
-            />
-          </FormRow>
-          <FormRow labelKey="application:Client cert">
-            <SearchableSelect
-              value={application.clientCert ?? ""}
-              onChange={(v) => updateField("clientCert", v)}
-              options={certs}
-            />
-          </FormRow>
-          <FormRow labelKey="application:Forced redirect origin">
-            <Input
-              value={application.forcedRedirectOrigin ?? ""}
-              onChange={(e) => updateField("forcedRedirectOrigin", e.target.value)}
-            />
-          </FormRow>
-          <FormRow labelKey="application:Backchannel logout URL">
-            <Input
-              value={application.backchannelLogoutUri ?? ""}
-              onChange={(e) => updateField("backchannelLogoutUri", e.target.value)}
-            />
-          </FormRow>
-          <FormRow labelKey="general:Custom scopes" block>
-            <EditableTable
-              rows={application.customScopes ?? []}
-              onChange={(rows) => updateField("customScopes", rows)}
-              newRow={() => ({scope: "", displayName: "", description: ""})}
-              columns={[
-                {
-                  key: "scope",
-                  title: i18next.t("general:Name"),
                   width: 200,
                   render: (row: any, _i, patch) => (
-                    <Input value={row.scope ?? ""} onChange={(e) => patch({scope: e.target.value})} />
+                    <SelectField
+                      value={row.name}
+                      onChange={(v) => patch({name: v, displayName: v})}
+                      options={["Password", "Verification code", "WebAuthn", "LDAP", "Face ID", "Device login"].map(
+                        (item) => ({id: item, name: item}),
+                      )}
+                    />
                   ),
                 },
                 {
@@ -1197,206 +1101,250 @@ export default function ApplicationEditPage() {
                   ),
                 },
                 {
-                  key: "description",
-                  title: i18next.t("general:Description"),
+                  key: "rule",
+                  title: i18next.t("application:Rule"),
+                  width: 180,
                   render: (row: any, _i, patch) => (
-                    <Input value={row.description ?? ""} onChange={(e) => patch({description: e.target.value})} />
+                    <SelectField
+                      value={row.rule}
+                      onChange={(v) => patch({rule: v})}
+                      options={enumSelectOptions(SIGNIN_METHOD_RULES[row.name] ?? {})}
+                    />
                   ),
                 },
               ]}
             />
           </FormRow>
-          {application.tokenFormat === "JWT-Custom" ? (
-            <FormRow labelKey="general:Token attributes" block>
-              <EditableTable
-                rows={application.tokenAttributes ?? []}
-                onChange={(rows) => updateField("tokenAttributes", rows)}
-                newRow={() => ({name: "", category: "Static Value", value: "", type: "Array"})}
-                columns={[
-                  {
-                    key: "name",
-                    title: i18next.t("general:Name"),
-                    width: 180,
-                    render: (row: any, _i, patch) => (
-                      <Input value={row.name ?? ""} onChange={(e) => patch({name: e.target.value})} />
-                    ),
-                  },
-                  {
-                    key: "category",
-                    title: i18next.t("general:Category"),
-                    width: 160,
-                    render: (row: any, _i, patch) => (
-                      <SelectField
-                        value={row.category ?? "Static Value"}
-                        onChange={(v) => patch({category: v, value: ""})}
-                        options={enumSelectOptions(TOKEN_ATTRIBUTE_CATEGORIES)}
-                      />
-                    ),
-                  },
-                  {
-                    key: "value",
-                    title: i18next.t("webhook:Value"),
-                    // an "Existing Field" attribute copies one of the user's own
-                    // fields, so the value is picked rather than typed
-                    render: (row: any, _i, patch) =>
-                      row.category === "Existing Field" ? (
-                        <SelectField
-                          value={row.value ?? ""}
-                          onChange={(v) => patch({value: v})}
-                          options={TOKEN_ATTRIBUTE_USER_FIELDS.map((field) => ({id: field, name: field}))}
-                        />
-                      ) : (
-                        <Input value={row.value ?? ""} onChange={(e) => patch({value: e.target.value})} />
-                      ),
-                  },
-                  {
-                    key: "type",
-                    title: i18next.t("general:Type"),
-                    width: 140,
-                    render: (row: any, _i, patch) => (
-                      <SelectField
-                        value={row.type}
-                        onChange={(v) => patch({type: v})}
-                        options={TOKEN_ATTRIBUTE_TYPES.map((item) => ({id: item, name: item}))}
-                      />
-                    ),
-                  },
-                ]}
-              />
-            </FormRow>
-          ) : null}
-        </TabsContent>
-
-        <TabsContent value="saml">
-          <FormRow labelKey="application:SAML reply URL">
-            <Input value={application.samlReplyUrl ?? ""} onChange={(e) => updateField("samlReplyUrl", e.target.value)} />
-          </FormRow>
-          <FormRow labelKey="application:Enable SAML compression">
-            <Switch
-              checked={!!application.enableSamlCompress}
-              onCheckedChange={(v) => updateField("enableSamlCompress", v)}
+          <FormRow labelKey="provider:Signup HTML" block>
+            <CodeEditor
+              language="html"
+              value={application.signupHtml ?? ""}
+              onChange={(v) => updateField("signupHtml", v)}
             />
           </FormRow>
-          <FormRow labelKey="application:Enable SAML POST binding">
-            <Switch
-              checked={!!application.enableSamlPostBinding}
-              onCheckedChange={(v) => updateField("enableSamlPostBinding", v)}
+          <FormRow labelKey="provider:Signin HTML" block>
+            <CodeEditor
+              language="html"
+              value={application.signinHtml ?? ""}
+              onChange={(v) => updateField("signinHtml", v)}
             />
           </FormRow>
-          <FormRow labelKey="application:SAML hash algorithm">
-            <SelectField
-              value={application.samlHashAlgorithm ?? "SHA256"}
-              onChange={(v) => updateField("samlHashAlgorithm", v)}
-              options={SAML_HASH_ALGORITHMS.map((item) => ({id: item, name: item}))}
-            />
-          </FormRow>
-          <FormRow labelKey="application:Enable SAML C14N10">
-            <Switch
-              checked={!!application.enableSamlC14n10}
-              onCheckedChange={(v) => updateField("enableSamlC14n10", v)}
-            />
-          </FormRow>
-          {application.enableSamlC14n10 ? (
-            <FormRow labelKey="application:SAML C14N10 prefix">
-              <Input
-                value={application.samlC14nPrefix ?? ""}
-                placeholder="xs"
-                onChange={(e) => updateField("samlC14nPrefix", e.target.value)}
-              />
-            </FormRow>
-          ) : null}
-          <FormRow labelKey="application:Enable SAML assertion signature">
-            <Switch
-              checked={!!application.enableSamlAssertionSignature}
-              onCheckedChange={(v) => updateField("enableSamlAssertionSignature", v)}
-            />
-          </FormRow>
-          <FormRow labelKey="application:Use Email as NameID">
-            <Switch
-              checked={!!application.useEmailAsSamlNameId}
-              onCheckedChange={(v) => updateField("useEmailAsSamlNameId", v)}
-            />
-          </FormRow>
-          <FormRow labelKey="application:Disable SAML attributes">
-            <Switch
-              checked={!!application.disableSamlAttributes}
-              onCheckedChange={(v) => updateField("disableSamlAttributes", v)}
-            />
-          </FormRow>
-          <FormRow labelKey="general:SAML attributes" block>
+          <FormRow labelKey="application:Signin items" block>
             <EditableTable
-              rows={application.samlAttributes ?? []}
-              onChange={(rows) => updateField("samlAttributes", rows)}
-              newRow={() => ({name: "", nameFormat: "", value: ""})}
-              reorderable={false}
+              title={
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() =>
+                    updateField("signinItems", [
+                      ...(application.signinItems ?? []),
+                      // a custom item is a free-form HTML block, named so it stays unique
+                      {name: `Text ${Date.now()}`, visible: true, isCustom: true, label: "", placeholder: "", rule: "None"},
+                    ])
+                  }
+                >
+                  {i18next.t("general:Add custom item")}
+                </Button>
+              }
+              rows={application.signinItems ?? []}
+              onChange={(rows) => updateField("signinItems", rows)}
+              newRow={() => ({
+                name: "Logo",
+                visible: true,
+                label: "",
+                customCss: SigninTableDefaultCssMap["Logo"],
+                placeholder: "",
+                rule: "None",
+              })}
               columns={[
                 {
                   key: "name",
                   title: i18next.t("general:Name"),
-                  width: 220,
+                  width: 190,
                   render: (row: any, _i, patch) => (
-                    <Input value={row.name ?? ""} onChange={(e) => patch({name: e.target.value})} />
+                    <SelectField
+                      value={row.name}
+                      onChange={(v) => patch({name: v, customCss: SigninTableDefaultCssMap[v] ?? ""})}
+                      options={SIGNIN_ITEM_NAMES.map((item) => ({id: item.name, name: i18next.t(item.labelKey)}))}
+                    />
                   ),
                 },
                 {
-                  key: "nameFormat",
-                  title: i18next.t("general:Name format"),
-                  width: 220,
+                  key: "visible",
+                  title: i18next.t("organization:Visible"),
+                  width: 90,
                   render: (row: any, _i, patch) => (
-                    <Input value={row.nameFormat ?? ""} onChange={(e) => patch({nameFormat: e.target.value})} />
+                    <Switch checked={!!row.visible} onCheckedChange={(v) => patch({visible: v, required: v})} />
                   ),
                 },
                 {
-                  key: "value",
-                  title: i18next.t("webhook:Value"),
+                  key: "label",
+                  title: i18next.t("signup:Label"),
+                  width: 170,
                   render: (row: any, _i, patch) => (
-                    <Input value={row.value ?? ""} onChange={(e) => patch({value: e.target.value})} />
+                    <Input value={row.label ?? ""} onChange={(e) => patch({label: e.target.value})} />
                   ),
+                },
+                {
+                  key: "placeholder",
+                  title: i18next.t("signup:Placeholder"),
+                  width: 170,
+                  render: (row: any, _i, patch) => (
+                    <Input value={row.placeholder ?? ""} onChange={(e) => patch({placeholder: e.target.value})} />
+                  ),
+                },
+                {
+                  key: "customCss",
+                  title: i18next.t("application:Custom CSS"),
+                  width: 200,
+                  render: (row: any, _i, patch) => (
+                    <Input
+                      value={row.customCss ?? SigninTableDefaultCssMap[row.name] ?? ""}
+                      onChange={(e) => patch({customCss: e.target.value || SigninTableDefaultCssMap[row.name]})}
+                    />
+                  ),
+                },
+                {
+                  key: "rule",
+                  title: i18next.t("application:Rule"),
+                  width: 170,
+                  render: (row: any, _i, patch) => {
+                    const options = getSigninItemRuleOptions(row.name);
+                    if (options.length === 0) {
+                      return null;
+                    }
+                    return <SelectField value={row.rule} onChange={(v) => patch({rule: v})} options={options} />;
+                  },
                 },
               ]}
             />
           </FormRow>
-          {/* both are generated from the saved application, so only after it exists */}
-          {mode === "add" ? null : (
-            <>
-              <FormRow labelKey="application:SAML metadata" block>
-                <div className="space-y-2">
-                  <CodeEditor language="xml" value={samlMetadata} readOnly onChange={() => undefined} />
-                  <Button variant="outline" size="sm" onClick={() => copyToClipboard(samlMetadataUrl)}>
-                    <Copy />
-                    {i18next.t("application:Copy SAML metadata URL")}
-                  </Button>
-                </div>
-              </FormRow>
-              <FormRow labelKey="application:IdP-initiated SSO URL" block>
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <LinkIcon className="h-4 w-4 shrink-0 text-muted-foreground" />
-                    <Input value={idpInitiatedSsoUrl} readOnly />
-                  </div>
-                  <Button variant="outline" size="sm" onClick={() => copyToClipboard(idpInitiatedSsoUrl)}>
-                    <Copy />
-                    {i18next.t("application:Copy IdP-initiated SSO URL")}
-                  </Button>
-                </div>
-              </FormRow>
-            </>
-          )}
-        </TabsContent>
-
-        <TabsContent value="appearance">
-          <FormRow labelKey="application:Custom CSS" block>
-            <CodeEditor
-              language="css"
-              value={application.formCss ?? ""}
-              onChange={(v) => updateField("formCss", v)}
-            />
-          </FormRow>
-          <FormRow labelKey="application:Custom CSS Mobile" block>
-            <CodeEditor
-              language="css"
-              value={application.formCssMobile ?? ""}
-              onChange={(v) => updateField("formCssMobile", v)}
+          <FormRow labelKey="application:Signup items" block>
+            <EditableTable
+              rows={application.signupItems ?? []}
+              onChange={(rows) => updateField("signupItems", rows)}
+              newRow={() => ({name: "Username", visible: true, required: true, rule: "None"})}
+              columns={[
+                {
+                  key: "name",
+                  title: i18next.t("general:Name"),
+                  width: 190,
+                  render: (row: any, _i, patch) => (
+                    <SelectField
+                      value={row.name}
+                      onChange={(v) => patch({name: v, customCss: SignupTableDefaultCssMap[v] ?? ""})}
+                      options={SIGNUP_ITEM_NAMES.map((item) => ({id: item, name: item}))}
+                    />
+                  ),
+                },
+                {
+                  key: "visible",
+                  title: i18next.t("organization:Visible"),
+                  width: 90,
+                  render: (row: any, _i, patch) => (
+                    <Switch checked={!!row.visible} onCheckedChange={(v) => patch({visible: v})} />
+                  ),
+                },
+                {
+                  key: "required",
+                  title: i18next.t("organization:Required"),
+                  width: 90,
+                  render: (row: any, _i, patch) => (
+                    <Switch
+                      checked={!!row.required}
+                      disabled={!row.visible}
+                      onCheckedChange={(v) => patch({required: v})}
+                    />
+                  ),
+                },
+                {
+                  key: "prompted",
+                  title: i18next.t("provider:Prompted"),
+                  width: 90,
+                  render: (row: any, _i, patch) => (
+                    <Switch
+                      checked={!!row.prompted}
+                      disabled={row.visible}
+                      onCheckedChange={(v) => patch({prompted: v})}
+                    />
+                  ),
+                },
+                {
+                  key: "type",
+                  title: i18next.t("general:Type"),
+                  width: 160,
+                  render: (row: any, _i, patch) => (
+                    <SelectField
+                      value={row.type ?? "Input"}
+                      onChange={(v) => patch({type: v})}
+                      options={enumSelectOptions(SIGNUP_ITEM_TYPES)}
+                    />
+                  ),
+                },
+                {
+                  key: "rule",
+                  title: i18next.t("application:Rule"),
+                  width: 160,
+                  render: (row: any, _i, patch) => {
+                    const map = SIGNUP_ITEM_RULES[row.name];
+                    if (!map) {
+                      return null;
+                    }
+                    return (
+                      <SelectField
+                        value={row.rule}
+                        onChange={(v) => patch({rule: v})}
+                        options={enumSelectOptions(map)}
+                      />
+                    );
+                  },
+                },
+                {
+                  key: "label",
+                  title: i18next.t("signup:Label"),
+                  width: 180,
+                  render: (row: any, _i, patch) => (
+                    <Input value={row.label ?? ""} onChange={(e) => patch({label: e.target.value})} />
+                  ),
+                },
+                {
+                  key: "placeholder",
+                  title: i18next.t("signup:Placeholder"),
+                  width: 180,
+                  render: (row: any, _i, patch) => (
+                    <Input value={row.placeholder ?? ""} onChange={(e) => patch({placeholder: e.target.value})} />
+                  ),
+                },
+                {
+                  key: "customCss",
+                  title: i18next.t("application:Custom CSS"),
+                  width: 200,
+                  render: (row: any, _i, patch) => (
+                    <Input
+                      value={row.customCss ?? SignupTableDefaultCssMap[row.name] ?? ""}
+                      onChange={(e) => patch({customCss: e.target.value || SignupTableDefaultCssMap[row.name]})}
+                    />
+                  ),
+                },
+                {
+                  key: "options",
+                  title: i18next.t("signup:Options"),
+                  width: 200,
+                  // only a choice item has options to offer
+                  render: (row: any, _i, patch) =>
+                    row.type === "Single Choice" || row.type === "Multiple Choices" ? (
+                      <TagsInput value={row.options ?? []} onChange={(v) => patch({options: v})} />
+                    ) : null,
+                },
+                {
+                  key: "regex",
+                  title: i18next.t("signup:Regex"),
+                  width: 180,
+                  render: (row: any, _i, patch) => (
+                    <Input value={row.regex ?? ""} onChange={(e) => patch({regex: e.target.value})} />
+                  ),
+                },
+              ]}
             />
           </FormRow>
           <FormRow labelKey="application:Background URL">
@@ -1409,6 +1357,20 @@ export default function ApplicationEditPage() {
             <Input
               value={application.formBackgroundUrlMobile ?? ""}
               onChange={(e) => updateField("formBackgroundUrlMobile", e.target.value)}
+            />
+          </FormRow>
+          <FormRow labelKey="application:Custom CSS" block>
+            <CodeEditor
+              language="css"
+              value={application.formCss ?? ""}
+              onChange={(v) => updateField("formCss", v)}
+            />
+          </FormRow>
+          <FormRow labelKey="application:Custom CSS Mobile" block>
+            <CodeEditor
+              language="css"
+              value={application.formCssMobile ?? ""}
+              onChange={(v) => updateField("formCssMobile", v)}
             />
           </FormRow>
           <FormRow labelKey="application:Form position">
@@ -1431,31 +1393,21 @@ export default function ApplicationEditPage() {
               ))}
             </div>
           </FormRow>
-          <FormRow labelKey="provider:Signin HTML" block>
-            <CodeEditor
-              language="html"
-              value={application.signinHtml ?? ""}
-              onChange={(v) => updateField("signinHtml", v)}
-            />
-          </FormRow>
-          <FormRow labelKey="provider:Signup HTML" block>
-            <CodeEditor
-              language="html"
-              value={application.signupHtml ?? ""}
-              onChange={(v) => updateField("signupHtml", v)}
-            />
-          </FormRow>
-          <FormRow labelKey="application:Page HTML" block>
-            <CodeEditor
-              language="html"
-              value={application.pageHtml ?? ""}
-              onChange={(v) => updateField("pageHtml", v)}
-            />
-          </FormRow>
+          {/* formOffset 4 is "Enable side panel", the only position that shows it */}
+          {application.formOffset === 4 ? (
+            <FormRow labelKey="application:Side panel HTML" block>
+              <CodeEditor
+                language="html"
+                value={application.formSideHtml ?? ""}
+                onChange={(v) => updateField("formSideHtml", v)}
+              />
+            </FormRow>
+          ) : null}
           <FormRow labelKey="theme:Customize theme" block>
             <ThemeEditor
               themeData={application.themeData}
               onChange={(next) => updateField("themeData", next)}
+              followLabelKey="application:Follow organization theme"
             />
           </FormRow>
           <FormRow labelKey="application:Header HTML" block>
@@ -1463,6 +1415,13 @@ export default function ApplicationEditPage() {
               language="html"
               value={application.headerHtml ?? ""}
               onChange={(v) => updateField("headerHtml", v)}
+            />
+          </FormRow>
+          <FormRow labelKey="application:Page HTML" block>
+            <CodeEditor
+              language="html"
+              value={application.pageHtml ?? ""}
+              onChange={(v) => updateField("pageHtml", v)}
             />
           </FormRow>
           <FormRow labelKey="application:Footer HTML" block>
@@ -1480,11 +1439,113 @@ export default function ApplicationEditPage() {
               </Button>
             </div>
           </FormRow>
-          <FormRow labelKey="application:Side panel HTML" block>
-            <CodeEditor
-              language="html"
-              value={application.formSideHtml ?? ""}
-              onChange={(v) => updateField("formSideHtml", v)}
+        </TabsContent>
+
+        <TabsContent value="security" className={menuMode === "vertical" ? "mt-0 min-w-0 flex-1" : undefined}>
+          <FormRow labelKey="application:Token cert">
+            <SearchableSelect
+              value={application.cert ?? ""}
+              onChange={(v) => updateField("cert", v)}
+              options={certs}
+            />
+          </FormRow>
+          <FormRow labelKey="application:Client cert">
+            <SearchableSelect
+              value={application.clientCert ?? ""}
+              onChange={(v) => updateField("clientCert", v)}
+              options={certs}
+            />
+          </FormRow>
+          <FormRow labelKey="application:Failed signin limit">
+            <Input
+              type="number"
+              value={application.failedSigninLimit ?? 5}
+              onChange={(e) => updateField("failedSigninLimit", Setting.myParseInt(e.target.value))}
+            />
+          </FormRow>
+          <FormRow labelKey="application:Failed signin frozen time">
+            <Input
+              type="number"
+              value={application.failedSigninFrozenTime ?? 15}
+              onChange={(e) => updateField("failedSigninFrozenTime", Setting.myParseInt(e.target.value))}
+            />
+          </FormRow>
+          <FormRow labelKey="application:Code resend timeout">
+            <Input
+              type="number"
+              value={application.codeResendTimeout ?? 60}
+              onChange={(e) => updateField("codeResendTimeout", Setting.myParseInt(e.target.value))}
+            />
+          </FormRow>
+          <FormRow labelKey="general:IP whitelist">
+            <Input
+              placeholder={application.organizationObj?.ipWhitelist}
+              value={application.ipWhitelist ?? ""}
+              onChange={(e) => updateField("ipWhitelist", e.target.value)}
+            />
+          </FormRow>
+          <FormRow labelKey="signup:Terms of Use">
+            <div className="flex flex-wrap items-center gap-2">
+              <Input
+                className="min-w-[16rem] flex-1"
+                value={application.termsOfUse ?? ""}
+                onChange={(e) => updateField("termsOfUse", e.target.value)}
+              />
+              {/* the upload writes the stored URL back onto the application, so it
+                  can only be done once the application exists */}
+              {mode === "add" ? null : (
+                <>
+                  <input
+                    ref={termsFileRef}
+                    type="file"
+                    accept=".html"
+                    className="hidden"
+                    onChange={(e) => uploadTermsOfUse(e.target.files?.[0])}
+                  />
+                  <Button
+                    variant="outline"
+                    loading={uploadingTerms}
+                    onClick={() => termsFileRef.current?.click()}
+                  >
+                    <Upload />
+                    {i18next.t("general:Click to Upload")}
+                  </Button>
+                </>
+              )}
+            </div>
+          </FormRow>
+        </TabsContent>
+
+        <TabsContent value="reverse-proxy" className={menuMode === "vertical" ? "mt-0 min-w-0 flex-1" : undefined}>
+          <FormRow labelKey="provider:Domain">
+            <Input
+              value={application.domain ?? ""}
+              placeholder="e.g., blog.example.com"
+              onChange={(e) => updateField("domain", e.target.value)}
+            />
+          </FormRow>
+          <FormRow labelKey="application:Other domains">
+            <TagsInput value={application.otherDomains ?? []} onChange={(v) => updateField("otherDomains", v)} />
+          </FormRow>
+          <FormRow labelKey="application:Upstream host">
+            <Input
+              value={application.upstreamHost ?? ""}
+              placeholder="e.g., localhost:8080 or 192.168.1.100:3000"
+              onChange={(e) => updateField("upstreamHost", e.target.value)}
+            />
+          </FormRow>
+          <FormRow labelKey="provider:SSL mode">
+            <SelectField
+              value={application.sslMode ?? ""}
+              onChange={(v) => updateField("sslMode", v)}
+              options={SSL_MODES.map((item) => ({id: item, name: item === "" ? i18next.t("general:None") : item}))}
+            />
+          </FormRow>
+          <FormRow labelKey="application:SSL cert">
+            <SearchableSelect
+              value={application.sslCert ?? ""}
+              onChange={(v) => updateField("sslCert", v)}
+              options={[{value: "", label: i18next.t("general:None")}, ...certs]}
             />
           </FormRow>
         </TabsContent>

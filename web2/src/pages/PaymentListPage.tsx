@@ -1,6 +1,7 @@
 import i18next from "i18next";
 import {Link} from "react-router-dom";
 import {Badge} from "@/components/ui/badge";
+import {Button} from "@/components/ui/button";
 import {CrudListPage} from "@/components/crud/CrudListPage";
 import {dateColumn, linkColumn, organizationColumn, tagsColumn, textColumn} from "@/components/crud/columns";
 import type {ColumnDef} from "@/components/crud/types";
@@ -37,7 +38,12 @@ export default function PaymentListPage() {
         ) : null,
     },
     dateColumn(),
-    textColumn({dataIndex: "type", title: i18next.t("general:Type"), width: 120}),
+    textColumn({
+      dataIndex: "type",
+      title: i18next.t("general:Type"),
+      width: 120,
+      filters: Setting.getProviderTypeOptions("Payment").map((option: any) => ({value: option.name, label: option.id})),
+    }),
     tagsColumn({dataIndex: "products", title: i18next.t("general:Products"), width: 200}),
     {
       dataIndex: "price",
@@ -67,6 +73,12 @@ export default function PaymentListPage() {
       }
       newRecord={account ? () => newPayment(account) : undefined}
       readOnly={readOnly}
+      actionColumnWidth={240}
+      rowActions={(record) => (
+        <Button variant="outline" size="sm" asChild>
+          <Link to={`/payments/${record.owner}/${record.name}/result`}>{i18next.t("payment:Result")}</Link>
+        </Button>
+      )}
       editUrl={(r) => `/payments/${r.owner}/${r.name}`}
       remove={(r) => PaymentBackend.deletePayment(r)}
     />

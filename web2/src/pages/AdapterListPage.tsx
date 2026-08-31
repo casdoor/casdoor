@@ -1,6 +1,6 @@
 import i18next from "i18next";
 import {CrudListPage} from "@/components/crud/CrudListPage";
-import {boolColumn, dateColumn, linkColumn, organizationColumn, textColumn} from "@/components/crud/columns";
+import {boolColumn, dateColumn, linkColumn, organizationColumn, textColumn, valueFilters} from "@/components/crud/columns";
 import type {ColumnDef} from "@/components/crud/types";
 import {useAccount} from "@/hooks/use-account";
 import {useRequestOrganization} from "@/hooks/use-organization";
@@ -17,7 +17,7 @@ export default function AdapterListPage() {
     dateColumn(),
     textColumn({dataIndex: "table", title: i18next.t("syncer:Table"), width: 140, searchable: true}),
     boolColumn({dataIndex: "useSameDb", title: i18next.t("adapter:Use same DB"), width: 130}),
-    textColumn({dataIndex: "type", title: i18next.t("general:Type"), width: 110}),
+    textColumn({dataIndex: "type", title: i18next.t("general:Type"), width: 110, filters: valueFilters(["Database"])}),
     textColumn({dataIndex: "databaseType", title: i18next.t("syncer:Database type"), width: 130}),
     textColumn({dataIndex: "host", title: i18next.t("general:Host"), width: 130, searchable: true}),
     textColumn({dataIndex: "port", title: i18next.t("general:Port"), width: 90, searchable: true}),

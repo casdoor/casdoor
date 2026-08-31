@@ -12,10 +12,10 @@ export default function RuleListPage() {
   const organizationName = useRequestOrganization();
 
   const columns: ColumnDef<any>[] = [
-    organizationColumn(),
+    organizationColumn(150, "owner", i18next.t("general:Owner")),
     linkColumn({dataIndex: "name", to: (r) => `/rules/${r.owner}/${r.name}`}),
-    dateColumn(),
-    dateColumn("updatedTime", i18next.t("general:Updated time")),
+    dateColumn("createdTime", i18next.t("general:Create time")),
+    dateColumn("updatedTime", i18next.t("general:Update time")),
     textColumn({dataIndex: "type", title: i18next.t("general:Type"), width: 130}),
     {
       dataIndex: "expressions",

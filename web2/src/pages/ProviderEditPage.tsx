@@ -1,6 +1,7 @@
 import * as React from "react";
 import i18next from "i18next";
 import {useNavigate, useParams} from "react-router-dom";
+import {UnauthorizedPage} from "@/components/common/UnauthorizedPage";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Switch} from "@/components/ui/switch";
@@ -408,7 +409,7 @@ export default function ProviderEditPage() {
     return provider;
   }, []);
 
-  const {record: provider, setRecord, loading, mode, setMode} = useEditRecord<any>({
+  const {record: provider, setRecord, loading, denied, mode, setMode} = useEditRecord<any>({
     fetch: () => ProviderBackend.getProvider(organizationName, providerName),
     transform,
     deps: [organizationName, providerName],
@@ -639,6 +640,10 @@ export default function ProviderEditPage() {
         Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
   };
+
+  if (denied) {
+    return <UnauthorizedPage />;
+  }
 
   if (loading || provider === null) {
     return <Loading />;

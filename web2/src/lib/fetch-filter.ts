@@ -15,17 +15,12 @@
 import i18next from "i18next";
 import {toast} from "sonner";
 import * as Conf from "@/Conf";
+import * as Setting from "@/lib/setting";
 
 // The demo site is read-only: when the backend refuses a write, offer to jump to the
-// writable demo instead. Same behaviour as the antd frontend, rendered with sonner.
-const DENIED_MESSAGES = [
-  "this operation is not allowed in demo mode",
-];
-
-function isResponseDenied(data: any) {
-  return data?.status === "error" && DENIED_MESSAGES.includes(data?.msg);
-}
-
+// writable demo instead. The refusal is the same "Unauthorized operation" the console
+// pages turn into a 403 page (`Setting.isResponseDenied`), rendered here with sonner
+// rather than antd's Modal.confirm.
 const originalFetch = window.fetch.bind(window);
 
 if (Conf.IsDemoMode) {
@@ -37,8 +32,9 @@ if (Conf.IsDemoMode) {
         .clone()
         .json()
         .then((data) => {
-          if (isResponseDenied(data)) {
+          if (Setting.isResponseDenied(data)) {
             toast.error(i18next.t("general:This is a read-only demo site!"), {
+              description: i18next.t("general:Go to writable demo site?"),
               action: {
                 label: i18next.t("general:OK"),
                 onClick: () => {

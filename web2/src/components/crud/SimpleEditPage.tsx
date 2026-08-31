@@ -5,6 +5,7 @@ import {Input} from "@/components/ui/input";
 import {Switch} from "@/components/ui/switch";
 import {Textarea} from "@/components/ui/textarea";
 import {Loading} from "@/components/common/Loading";
+import {UnauthorizedPage} from "@/components/common/UnauthorizedPage";
 import {MultiSelect, type MultiSelectOption} from "@/components/common/MultiSelect";
 import {SearchableSelect, type SearchableOption} from "@/components/common/SearchableSelect";
 import {TagsInput} from "@/components/common/TagsInput";
@@ -42,7 +43,7 @@ export type EditField =
   | (BaseField & {type: "number"; step?: string})
   | (BaseField & {type: "textarea"; rows?: number; placeholder?: string})
   | (BaseField & {type: "switch"})
-  | (BaseField & {type: "tags"})
+  | (BaseField & {type: "tags"; placeholder?: string})
   | (BaseField & {type: "select"; options: (ctx: Ctx) => SearchableOption[]})
   | (BaseField & {type: "multiselect"; options: (ctx: Ctx) => MultiSelectOption[]; creatable?: boolean})
   | (BaseField & {type: "code"; language?: string; height?: number})
@@ -90,7 +91,11 @@ export function SimpleEditPage({
 }: SimpleEditPageProps) {
   const navigate = useNavigate();
   const [saving, setSaving] = React.useState(false);
-  const {record, updateField, updateFields, loading, mode, setMode, reload} = useEditRecord<any>({fetch, transform, deps});
+  const {record, updateField, updateFields, loading, denied, mode, setMode, reload} = useEditRecord<any>({fetch, transform, deps});
+
+  if (denied) {
+    return <UnauthorizedPage />;
+  }
 
   if (loading || record === null) {
     return <Loading />;
@@ -165,7 +170,12 @@ export function SimpleEditPage({
       break;
     case "tags":
       control = (
-        <TagsInput disabled={disabled} value={value ?? []} onChange={(v) => set(v)} />
+        <TagsInput
+          disabled={disabled}
+          value={value ?? []}
+          onChange={(v) => set(v)}
+          placeholder={field.placeholder}
+        />
       );
       break;
     case "select":

@@ -2,6 +2,7 @@ import * as React from "react";
 import i18next from "i18next";
 import {Link, useNavigate, useParams} from "react-router-dom";
 import {Link as LinkIcon} from "lucide-react";
+import {UnauthorizedPage} from "@/components/common/UnauthorizedPage";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Switch} from "@/components/ui/switch";
@@ -60,7 +61,7 @@ export default function OrganizationEditPage() {
   const [applications, setApplications] = React.useState<any[]>([]);
   const [ldaps, setLdaps] = React.useState<any[] | null>(null);
 
-  const {record: organization, setRecord, updateField, loading, mode, setMode} = useEditRecord<any>({
+  const {record: organization, setRecord, updateField, loading, denied, mode, setMode} = useEditRecord<any>({
     fetch: () => OrganizationBackend.getOrganization("admin", organizationName),
     transform: (org) => ({...org, enableDarkLogo: !!org.logoDark}),
     deps: [organizationName],
@@ -96,6 +97,10 @@ export default function OrganizationEditPage() {
         }
       })
       .catch((error) => Setting.showMessage("error", `${i18next.t("general:Failed to delete")}: ${error}`));
+
+  if (denied) {
+    return <UnauthorizedPage />;
+  }
 
   if (loading || organization === null) {
     return <Loading />;

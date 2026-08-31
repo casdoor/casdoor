@@ -5,6 +5,7 @@ import {useNavigate} from "react-router-dom";
 import {Button} from "@/components/ui/button";
 import {Tooltip, TooltipContent, TooltipTrigger} from "@/components/ui/tooltip";
 import {ConfirmButton} from "@/components/common/ConfirmButton";
+import {UnauthorizedPage} from "@/components/common/UnauthorizedPage";
 import {DataTable} from "@/components/crud/DataTable";
 import {PageHeader} from "@/components/crud/PageHeader";
 import type {ColumnDef, CasdoorListResponse, TableQuery} from "@/components/crud/types";
@@ -82,7 +83,7 @@ export function CrudListPage<T extends Record<string, any>>({
   deleteDisabled,
 }: CrudListPageProps<T>) {
   const navigate = useNavigate();
-  const {rows, total, loading, query, setQuery, refresh} = useTableData<T>(fetch, deps, initialQuery);
+  const {rows, total, loading, denied, query, setQuery, refresh} = useTableData<T>(fetch, deps, initialQuery);
   const [adding, setAdding] = React.useState(false);
 
   const handleAdd = async() => {
@@ -188,6 +189,10 @@ export function CrudListPage<T extends Record<string, any>>({
     ];
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [columns, formItems, editUrl, remove, rowActions, showActionColumn, readOnly, deleteDisabled, rows, query.page, refresh]);
+
+  if (denied) {
+    return <UnauthorizedPage />;
+  }
 
   return (
     <div className="space-y-4">

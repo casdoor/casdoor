@@ -70,11 +70,14 @@ export default function OrderListPage() {
       remove={(r) => OrderBackend.deleteOrder(r)}
       rowActions={(record, _index, {refresh}) => (
         <>
-          {record.state === "Created" ? (
-            <Button variant="ghost" size="sm" asChild>
-              <Link to={`/orders/${record.owner}/${record.name}/pay`}>{i18next.t("order:Pay")}</Link>
-            </Button>
-          ) : null}
+          {/* the same page pays an unpaid order and shows a paid one */}
+          <Button variant="ghost" size="sm" asChild>
+            <Link to={`/orders/${record.owner}/${record.name}/pay`}>
+              {record.state === "Created" || record.state === "Failed"
+                ? i18next.t("order:Pay")
+                : i18next.t("general:Detail")}
+            </Link>
+          </Button>
           {/* only an admin may cancel, and only an order nobody has paid for yet */}
           {record.state === "Created" && Setting.isLocalAdminUser(account) ? (
             <ConfirmButton

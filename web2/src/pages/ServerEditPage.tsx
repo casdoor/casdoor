@@ -1,6 +1,7 @@
 import * as React from "react";
 import i18next from "i18next";
 import {useNavigate, useParams} from "react-router-dom";
+import {UnauthorizedPage} from "@/components/common/UnauthorizedPage";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Switch} from "@/components/ui/switch";
@@ -71,7 +72,7 @@ export default function ServerEditPage() {
   const [name, setName] = React.useState(serverName);
   const [saving, setSaving] = React.useState(false);
 
-  const {record: server, updateField, setRecord, loading, mode, setMode, reload} = useEditRecord<any>({
+  const {record: server, updateField, setRecord, loading, denied, mode, setMode, reload} = useEditRecord<any>({
     fetch: () => ServerBackend.getServer(organizationName, serverName),
     deps: [organizationName, serverName],
   });
@@ -147,6 +148,10 @@ export default function ServerEditPage() {
       }
     });
   };
+
+  if (denied) {
+    return <UnauthorizedPage />;
+  }
 
   if (loading || server === null) {
     return <Loading />;

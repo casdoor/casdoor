@@ -15,8 +15,13 @@ export interface UseTableDataResult<T> {
   rows: T[] | null;
   total: number;
   loading: boolean;
-  /** set when the backend answered with an authorization error */
+  /** set when the backend answered with an error */
   errorMessage: string;
+  /**
+   * The backend refused the read with "Unauthorized operation". The antd
+   * BaseListPage renders a 403 page instead of the table in that case.
+   */
+  denied: boolean;
   query: TableQuery;
   setQuery: (patch: Partial<TableQuery>) => void;
   refresh: () => void;
@@ -37,6 +42,7 @@ export function useTableData<T = any>(
   const [total, setTotal] = React.useState(0);
   const [loading, setLoading] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState("");
+  const [denied, setDenied] = React.useState(false);
   const [nonce, setNonce] = React.useState(0);
 
   const fetcherRef = React.useRef(fetcher);
@@ -46,6 +52,7 @@ export function useTableData<T = any>(
     let cancelled = false;
     setLoading(true);
     setErrorMessage("");
+    setDenied(false);
     fetcherRef
       .current(query)
       .then((res) => {
@@ -60,6 +67,10 @@ export function useTableData<T = any>(
           setTotal(0);
           if ((res.data as any) === "Please login first" || (res.msg ?? "").includes("Please login first")) {
             setErrorMessage("Please login first");
+          } else if (Setting.isResponseDenied(res)) {
+            // the 403 page says it; a toast on top of it would be noise
+            setErrorMessage(res.msg ?? "");
+            setDenied(true);
           } else {
             setErrorMessage(res.msg ?? "");
             Setting.showMessage("error", res.msg ?? "");
@@ -98,5 +109,5 @@ export function useTableData<T = any>(
 
   const refresh = React.useCallback(() => setNonce((n) => n + 1), []);
 
-  return {rows, total, loading, errorMessage, query, setQuery, refresh};
+  return {rows, total, loading, errorMessage, denied, query, setQuery, refresh};
 }

@@ -1,7 +1,7 @@
 import i18next from "i18next";
 import {Link} from "react-router-dom";
 import {CrudListPage} from "@/components/crud/CrudListPage";
-import {boolColumn, dateColumn, organizationColumn, textColumn} from "@/components/crud/columns";
+import {boolColumn, clientIpColumn, dateColumn, organizationColumn, textColumn} from "@/components/crud/columns";
 import type {ColumnDef} from "@/components/crud/types";
 import {useRequestOrganization} from "@/hooks/use-organization";
 import * as VerificationBackend from "@/backend/VerificationBackend";
@@ -27,7 +27,11 @@ export default function VerificationListPage() {
       ),
     },
     textColumn({dataIndex: "provider", title: i18next.t("general:Provider"), width: 160, searchable: true}),
-    textColumn({dataIndex: "remoteAddr", title: i18next.t("general:Client IP"), width: 140, searchable: true}),
+    clientIpColumn({
+      dataIndex: "remoteAddr",
+      // the backend stores it as "1.2.3.4: " when the port is unknown
+      normalize: (value) => (value.endsWith(": ") ? value.slice(0, -2) : value),
+    }),
     textColumn({dataIndex: "receiver", title: i18next.t("verification:Receiver"), width: 180, searchable: true}),
     textColumn({dataIndex: "code", title: i18next.t("login:Verification code"), width: 130, mono: true, searchable: true}),
     boolColumn({dataIndex: "isUsed", title: i18next.t("verification:Is used")}),
