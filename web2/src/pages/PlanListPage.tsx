@@ -12,6 +12,8 @@ import {newPlan} from "@/pages/defaults";
 export default function PlanListPage() {
   const {account} = useAccount();
   const organizationName = useRequestOrganization();
+  // the antd list pages let a non-admin look but not touch these
+  const readOnly = !Setting.isLocalAdminUser(account);
 
   const columns: ColumnDef<any>[] = [
     linkColumn({dataIndex: "name", to: (r) => `/plans/${r.owner}/${r.name}`}),
@@ -20,14 +22,16 @@ export default function PlanListPage() {
     textColumn({dataIndex: "displayName", title: i18next.t("general:Display name"), searchable: true, width: 170}),
     {
       dataIndex: "price",
+      searchable: true,
       title: i18next.t("order:Price"),
       width: 120,
       sortable: true,
       render: (value, record) => Setting.getPriceDisplay(value, record.currency),
     },
-    textColumn({dataIndex: "period", title: i18next.t("plan:Period"), width: 120}),
+    textColumn({dataIndex: "period", title: i18next.t("plan:Period"), width: 120, searchable: true}),
     {
       dataIndex: "role",
+      searchable: true,
       title: i18next.t("general:Role"),
       width: 150,
       sortable: true,
@@ -40,6 +44,7 @@ export default function PlanListPage() {
     },
     {
       dataIndex: "product",
+      searchable: true,
       title: i18next.t("plan:Related product"),
       width: 170,
       render: (value, record) =>
@@ -61,6 +66,7 @@ export default function PlanListPage() {
         PlanBackend.getPlans(organizationName, q.page, q.pageSize, q.searchedColumn, q.searchText, q.sortField, q.sortOrder)
       }
       newRecord={account ? () => newPlan(account) : undefined}
+      readOnly={readOnly}
       editUrl={(r) => `/plans/${r.owner}/${r.name}`}
       remove={(r) => PlanBackend.deletePlan(r)}
     />

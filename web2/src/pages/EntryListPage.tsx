@@ -88,9 +88,9 @@ export default function EntryListPage() {
     linkColumn({dataIndex: "name", to: (r) => `/entries/${r.owner}/${r.name}`, width: 180}),
     dateColumn(),
     textColumn({dataIndex: "provider", title: i18next.t("general:Provider"), width: 150, searchable: true}),
-    textColumn({dataIndex: "type", title: i18next.t("general:Type"), width: 120}),
-    textColumn({dataIndex: "clientIp", title: i18next.t("general:Client IP"), width: 140}),
-    textColumn({dataIndex: "userAgent", title: i18next.t("general:User agent"), width: 200}),
+    textColumn({dataIndex: "type", title: i18next.t("general:Type"), width: 120, searchable: true}),
+    textColumn({dataIndex: "clientIp", title: i18next.t("general:Client IP"), width: 140, searchable: true}),
+    textColumn({dataIndex: "userAgent", title: i18next.t("general:User agent"), width: 200, searchable: true}),
     {
       dataIndex: "message",
       title: i18next.t("payment:Message"),

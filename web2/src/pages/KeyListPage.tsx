@@ -22,6 +22,8 @@ export default function KeyListPage() {
     textColumn({dataIndex: "type", title: i18next.t("general:Type"), width: 130}),
     {
       dataIndex: "accessKey",
+      sortable: true,
+      searchable: true,
       title: i18next.t("general:Access key"),
       width: 200,
       render: (value) => (value ? Setting.getClickable(Setting.getShortText(value)) : null),
@@ -35,6 +37,7 @@ export default function KeyListPage() {
     },
     {
       dataIndex: "state",
+      searchable: true,
       title: i18next.t("general:State"),
       width: 110,
       sortable: true,

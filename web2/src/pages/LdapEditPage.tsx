@@ -11,10 +11,10 @@ import {EditPageShell} from "@/components/crud/EditPageShell";
 import {EditableTable} from "@/components/crud/EditableTable";
 import {FormRow} from "@/components/crud/FormRow";
 import * as LdapBackend from "@/backend/LdapBackend";
-import {mapToRows, rowsToMap} from "@/lib/crud";
+import {getModeTitleKey, mapToRows, rowsToMap} from "@/lib/crud";
+import {enumSelectOptions, LDAP_PASSWORD_TYPES} from "@/lib/enum-labels";
 import * as Setting from "@/lib/setting";
 
-const PASSWORD_TYPES = ["Plain", "SSHA", "MD5"];
 
 /** Create or edit one LDAP server of an organization. */
 export default function LdapEditPage() {
@@ -92,7 +92,7 @@ export default function LdapEditPage() {
 
   return (
     <EditPageShell
-      title={`${i18next.t("ldap:Edit LDAP")} - ${ldap.serverName || organizationName}`}
+      title={`${i18next.t(getModeTitleKey("ldap:Edit LDAP", isNew ? "add" : "edit"))} - ${ldap.serverName || organizationName}`}
       mode={isNew ? "add" : "edit"}
       backTo={`/organizations/${organizationName}`}
       onSave={save}
@@ -151,7 +151,7 @@ export default function LdapEditPage() {
         <SelectField
           value={ldap.passwordType ?? "Plain"}
           onChange={(v) => update("passwordType", v)}
-          options={PASSWORD_TYPES.map((item) => ({id: item, name: item}))}
+          options={enumSelectOptions(LDAP_PASSWORD_TYPES)}
         />
       </FormRow>
       <FormRow labelKey="ldap:Auto Sync">

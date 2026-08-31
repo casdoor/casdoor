@@ -156,6 +156,7 @@ export function DataTable<T = any>({
                 return (
                   <TableHead
                     key={column.key ?? column.dataIndex}
+                    data-column={column.dataIndex}
                     style={column.width ? {width: column.width, minWidth: column.width} : undefined}
                     className={cn(
                       column.align === "center" && "text-center",

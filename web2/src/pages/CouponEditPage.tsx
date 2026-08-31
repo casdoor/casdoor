@@ -3,11 +3,9 @@ import {SimpleEditPage, type EditField} from "@/components/crud/SimpleEditPage";
 import {useAccount} from "@/hooks/use-account";
 import {useOrganizationOptions, useProductOptions, useUserNameOptions} from "@/hooks/use-options";
 import * as CouponBackend from "@/backend/CouponBackend";
+import {COUPON_DISCOUNT_TYPES, COUPON_SCOPES, COUPON_STATES, enumOptions} from "@/lib/enum-labels";
 import * as Setting from "@/lib/setting";
 
-const DISCOUNT_TYPES = ["percentage", "fixed"];
-const SCOPES = ["universal", "product", "user"];
-const STATES = ["Active", "Suspended"];
 
 export default function CouponEditPage() {
   const {organizationName = "", couponName = ""} = useParams();
@@ -32,7 +30,7 @@ export default function CouponEditPage() {
       type: "select",
       name: "discountType",
       labelKey: "coupon:Discount type",
-      options: () => DISCOUNT_TYPES.map((item) => ({value: item, label: item})),
+      options: () => enumOptions(COUPON_DISCOUNT_TYPES),
     },
     {type: "number", name: "discount", labelKey: "coupon:Discount", step: "0.01"},
     {type: "number", name: "maxDiscount", labelKey: "coupon:Max discount", step: "0.01"},
@@ -40,7 +38,7 @@ export default function CouponEditPage() {
       type: "select",
       name: "scope",
       labelKey: "provider:Scope",
-      options: () => SCOPES.map((item) => ({value: item, label: item})),
+      options: () => enumOptions(COUPON_SCOPES),
     },
     {
       type: "multiselect",
@@ -72,7 +70,7 @@ export default function CouponEditPage() {
       type: "select",
       name: "state",
       labelKey: "general:State",
-      options: () => STATES.map((item) => ({value: item, label: item})),
+      options: () => enumOptions(COUPON_STATES),
     },
   ];
 

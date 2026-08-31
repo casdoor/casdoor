@@ -17,8 +17,8 @@ export default function ServerListPage() {
     organizationColumn(),
     dateColumn(),
     textColumn({dataIndex: "displayName", title: i18next.t("general:Display name"), searchable: true, width: 180}),
-    textColumn({dataIndex: "url", title: i18next.t("general:URL"), width: 260}),
-    textColumn({dataIndex: "application", title: i18next.t("general:Application"), width: 160}),
+    textColumn({dataIndex: "url", title: i18next.t("general:URL"), width: 260, searchable: true}),
+    textColumn({dataIndex: "application", title: i18next.t("general:Application"), width: 160, searchable: true}),
   ];
 
   return (

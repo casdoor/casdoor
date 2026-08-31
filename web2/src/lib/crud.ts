@@ -1,7 +1,24 @@
 import i18next from "i18next";
 import * as Setting from "@/lib/setting";
 
-export type EditMode = "add" | "edit";
+/** "view" is the read-only page a non-admin gets, as in the antd frontend. */
+export type EditMode = "add" | "edit" | "view";
+
+/**
+ * The antd pages title themselves "New X" / "View X" / "Edit X" depending on the
+ * mode, and the three keys always differ by that one word — so the "Edit X" key
+ * a page declares is enough to reach the other two. A locale missing "New X"
+ * falls back to the key text, which is what the antd frontend shows too.
+ */
+export function getModeTitleKey(editTitleKey: string, mode: EditMode): string {
+  if (mode === "add") {
+    return editTitleKey.replace(":Edit ", ":New ");
+  }
+  if (mode === "view") {
+    return editTitleKey.replace(":Edit ", ":View ");
+  }
+  return editTitleKey;
+}
 
 export interface CasdoorResponse<T = any> {
   status: "ok" | "error";

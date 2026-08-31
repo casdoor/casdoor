@@ -3,10 +3,9 @@ import {SimpleEditPage, type EditField} from "@/components/crud/SimpleEditPage";
 import {useAccount} from "@/hooks/use-account";
 import {useApplicationOptions, useOrganizationOptions, useUserNameOptions} from "@/hooks/use-options";
 import * as KeyBackend from "@/backend/KeyBackend";
+import {enumOptions, KEY_STATES, KEY_TYPES} from "@/lib/enum-labels";
 import * as Setting from "@/lib/setting";
 
-const TYPES = ["Organization", "Application", "User"];
-const STATES = ["Active", "Suspended"];
 
 export default function KeyEditPage() {
   const {organizationName = "", keyName = ""} = useParams();
@@ -31,7 +30,7 @@ export default function KeyEditPage() {
       type: "select",
       name: "type",
       labelKey: "general:Type",
-      options: () => TYPES.map((item) => ({value: item, label: item})),
+      options: () => enumOptions(KEY_TYPES),
     },
     {
       type: "select",
@@ -54,7 +53,7 @@ export default function KeyEditPage() {
       type: "select",
       name: "state",
       labelKey: "general:State",
-      options: () => STATES.map((item) => ({value: item, label: item})),
+      options: () => enumOptions(KEY_STATES),
     },
   ];
 

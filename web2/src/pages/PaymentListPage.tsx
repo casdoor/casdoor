@@ -16,6 +16,8 @@ const stateVariant = (state: string) =>
 export default function PaymentListPage() {
   const {account} = useAccount();
   const organizationName = useRequestOrganization();
+  // the antd list pages let a non-admin look but not touch these
+  const readOnly = !Setting.isLocalAdminUser(account);
 
   const columns: ColumnDef<any>[] = [
     linkColumn({dataIndex: "name", to: (r) => `/payments/${r.owner}/${r.name}`, width: 180}),
@@ -39,6 +41,7 @@ export default function PaymentListPage() {
     tagsColumn({dataIndex: "products", title: i18next.t("general:Products"), width: 200}),
     {
       dataIndex: "price",
+      searchable: true,
       title: i18next.t("order:Price"),
       width: 120,
       sortable: true,
@@ -46,6 +49,7 @@ export default function PaymentListPage() {
     },
     {
       dataIndex: "state",
+      searchable: true,
       title: i18next.t("general:State"),
       width: 110,
       sortable: true,
@@ -62,6 +66,7 @@ export default function PaymentListPage() {
         PaymentBackend.getPayments(organizationName, q.page, q.pageSize, q.searchedColumn, q.searchText, q.sortField, q.sortOrder)
       }
       newRecord={account ? () => newPayment(account) : undefined}
+      readOnly={readOnly}
       editUrl={(r) => `/payments/${r.owner}/${r.name}`}
       remove={(r) => PaymentBackend.deletePayment(r)}
     />

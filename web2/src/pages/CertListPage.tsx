@@ -22,8 +22,8 @@ export default function CertListPage() {
     textColumn({dataIndex: "scope", title: i18next.t("provider:Scope"), width: 110}),
     textColumn({dataIndex: "type", title: i18next.t("general:Type"), width: 110}),
     textColumn({dataIndex: "cryptoAlgorithm", title: i18next.t("cert:Crypto algorithm"), width: 150}),
-    textColumn({dataIndex: "bitSize", title: i18next.t("cert:Bit size"), width: 110}),
-    textColumn({dataIndex: "expireInYears", title: i18next.t("cert:Expire in years"), width: 140}),
+    textColumn({dataIndex: "bitSize", title: i18next.t("cert:Bit size"), width: 110, searchable: true}),
+    textColumn({dataIndex: "expireInYears", title: i18next.t("cert:Expire in years"), width: 140, searchable: true}),
   ];
 
   return (

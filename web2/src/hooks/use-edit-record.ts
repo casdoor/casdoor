@@ -37,7 +37,9 @@ export function useEditRecord<T extends Record<string, any>>({
   const location = useLocation();
   const state = (location.state ?? {}) as {mode?: EditMode; record?: T};
 
-  const [mode, setMode] = React.useState<EditMode>(state.mode === "add" ? "add" : "edit");
+  const [mode, setMode] = React.useState<EditMode>(
+    state.mode === "add" || state.mode === "view" ? state.mode : "edit",
+  );
   const [record, setRecord] = React.useState<T | null>(() =>
     state.mode === "add" && state.record ? (transform ? transform(state.record) : state.record) : null,
   );

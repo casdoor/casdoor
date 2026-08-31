@@ -18,7 +18,7 @@ import {EditableTable} from "@/components/crud/EditableTable";
 import {FormRow} from "@/components/crud/FormRow";
 import {useAccount} from "@/hooks/use-account";
 import {useEditRecord} from "@/hooks/use-edit-record";
-import {submitEdit} from "@/lib/crud";
+import {getModeTitleKey, submitEdit} from "@/lib/crud";
 import * as ApplicationBackend from "@/backend/ApplicationBackend";
 import * as LdapBackend from "@/backend/LdapBackend";
 import {ConfirmButton} from "@/components/common/ConfirmButton";
@@ -142,7 +142,7 @@ export default function OrganizationEditPage() {
 
   return (
     <EditPageShell
-      title={`${i18next.t("organization:Edit Organization")} - ${organization.displayName || organization.name}`}
+      title={`${i18next.t(getModeTitleKey("organization:Edit Organization", mode))} - ${organization.displayName || organization.name}`}
       mode={mode}
       backTo="/organizations"
       onSave={save}

@@ -90,8 +90,8 @@ export default function UserListPage() {
     textColumn({dataIndex: "affiliation", title: i18next.t("user:Affiliation"), width: 140, searchable: true}),
     textColumn({dataIndex: "realName", title: i18next.t("application:Real name"), width: 130, searchable: true}),
     boolColumn({dataIndex: "isVerified", title: i18next.t("user:Is verified")}),
-    textColumn({dataIndex: "region", title: i18next.t("user:Country/Region"), width: 120}),
-    textColumn({dataIndex: "type", title: i18next.t("general:User type"), width: 130}),
+    textColumn({dataIndex: "region", title: i18next.t("user:Country/Region"), width: 120, searchable: true}),
+    textColumn({dataIndex: "type", title: i18next.t("general:User type"), width: 130, searchable: true}),
     {
       dataIndex: "tag",
       title: i18next.t("general:Tag"),
@@ -100,8 +100,8 @@ export default function UserListPage() {
       searchable: true,
       render: (value) => (value ? <Badge variant="secondary">{value}</Badge> : null),
     },
-    textColumn({dataIndex: "registerType", title: i18next.t("user:Register type"), width: 130}),
-    textColumn({dataIndex: "registerSource", title: i18next.t("user:Register source"), width: 160}),
+    textColumn({dataIndex: "registerType", title: i18next.t("user:Register type"), width: 130, searchable: true}),
+    textColumn({dataIndex: "registerSource", title: i18next.t("user:Register source"), width: 160, searchable: true}),
     {
       dataIndex: "balance",
       title: i18next.t("user:Balance"),

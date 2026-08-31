@@ -19,6 +19,7 @@ export default function EnforcerListPage() {
     textColumn({dataIndex: "displayName", title: i18next.t("general:Display name"), searchable: true, width: 170}),
     {
       dataIndex: "model",
+      searchable: true,
       title: i18next.t("general:Model"),
       width: 180,
       sortable: true,
@@ -31,6 +32,7 @@ export default function EnforcerListPage() {
     },
     {
       dataIndex: "adapter",
+      searchable: true,
       title: i18next.t("general:Adapter"),
       width: 180,
       sortable: true,

@@ -12,7 +12,7 @@ import {CodeEditor} from "@/components/common/CodeEditor";
 import {EditPageShell} from "@/components/crud/EditPageShell";
 import {FormRow} from "@/components/crud/FormRow";
 import {useEditRecord} from "@/hooks/use-edit-record";
-import {submitEdit, type CasdoorResponse, type EditMode} from "@/lib/crud";
+import {getModeTitleKey, submitEdit, type CasdoorResponse, type EditMode} from "@/lib/crud";
 import * as Setting from "@/lib/setting";
 
 type Ctx = {record: any; mode: EditMode; reload: () => void};
@@ -129,7 +129,8 @@ export function SimpleEditPage({
       return null;
     }
     const value = record[field.name];
-    const disabled = field.disabled ? field.disabled(ctx) : false;
+    // a read-only page locks the whole form, whatever each field asked for
+    const disabled = mode === "view" || (field.disabled ? field.disabled(ctx) : false);
     const set = (next: any) =>
       field.onChange ? field.onChange(next, ctx, updateFields) : updateField(field.name, next);
 
@@ -226,7 +227,7 @@ export function SimpleEditPage({
 
   return (
     <EditPageShell
-      title={`${i18next.t(titleKey)} - ${record.displayName || record.name}`}
+      title={`${i18next.t(getModeTitleKey(titleKey, mode))} - ${record.displayName || record.name}`}
       mode={mode}
       backTo={backTo}
       onSave={save}

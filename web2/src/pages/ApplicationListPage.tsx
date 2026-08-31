@@ -19,8 +19,8 @@ export default function ApplicationListPage() {
     linkColumn({dataIndex: "name", to: (r) => `/applications/${r.organization}/${r.name}`, width: 170}),
     dateColumn(),
     textColumn({dataIndex: "displayName", title: i18next.t("general:Display name"), searchable: true, width: 180}),
-    textColumn({dataIndex: "category", title: i18next.t("general:Category"), width: 120}),
-    textColumn({dataIndex: "type", title: i18next.t("general:Type"), width: 110}),
+    textColumn({dataIndex: "category", title: i18next.t("general:Category"), width: 120, searchable: true}),
+    textColumn({dataIndex: "type", title: i18next.t("general:Type"), width: 110, searchable: true}),
     {
       dataIndex: "logo",
       title: "Logo",
