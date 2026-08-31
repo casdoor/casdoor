@@ -1,4 +1,8 @@
+import i18next from "i18next";
 import {useParams} from "react-router-dom";
+import copy from "copy-to-clipboard";
+import {Copy} from "lucide-react";
+import {Button} from "@/components/ui/button";
 import {SimpleEditPage, type EditField} from "@/components/crud/SimpleEditPage";
 import {useAccount} from "@/hooks/use-account";
 import {useApplicationOptions, useOrganizationOptions, usePlanOptions} from "@/hooks/use-options";
@@ -31,6 +35,18 @@ export default function PricingEditPage() {
 
   return (
     <SimpleEditPage
+      extraActions={(ctx) => (
+        <Button
+          variant="outline"
+          onClick={() => {
+            copy(`${window.location.origin}/select-plan/${ctx.record.owner}/${ctx.record.name}`);
+            Setting.showMessage("success", i18next.t("general:Copied to clipboard successfully"));
+          }}
+        >
+          <Copy />
+          {i18next.t("pricing:Copy pricing page URL")}
+        </Button>
+      )}
       titleKey="pricing:Edit Pricing"
       backTo="/pricings"
       deps={[organizationName, pricingName]}

@@ -463,10 +463,20 @@ export default function OrganizationEditPage() {
             />
           </FormRow>
           <FormRow labelKey="organization:Has privilege consent">
-            <Switch
-              checked={!!organization.hasPrivilegeConsent}
-              onCheckedChange={(v) => update("hasPrivilegeConsent", v)}
-            />
+            {/* granting it is the dangerous direction, so only that one asks */}
+            {organization.hasPrivilegeConsent ? (
+              <Switch checked onCheckedChange={(v) => update("hasPrivilegeConsent", v)} />
+            ) : (
+              <ConfirmButton
+                variant="ghost"
+                size="iconSm"
+                destructive={false}
+                title={i18next.t("organization:Has privilege consent warning")}
+                onConfirm={() => update("hasPrivilegeConsent", true)}
+              >
+                <Switch checked={false} className="pointer-events-none" />
+              </ConfirmButton>
+            )}
           </FormRow>
           <FormRow labelKey="general:IP whitelist">
             <Input

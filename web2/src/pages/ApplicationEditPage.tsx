@@ -1,7 +1,7 @@
 import * as React from "react";
 import i18next from "i18next";
 import copy from "copy-to-clipboard";
-import {Copy, Link as LinkIcon} from "lucide-react";
+import {Copy, Link as LinkIcon, Upload} from "lucide-react";
 import {useNavigate, useParams} from "react-router-dom";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
@@ -25,6 +25,7 @@ import {getModeTitleKey, submitEdit} from "@/lib/crud";
 import {SigninTableDefaultCssMap} from "@/lib/signin-css";
 import {SignupTableDefaultCssMap} from "@/lib/signup-css";
 import * as ApplicationBackend from "@/backend/ApplicationBackend";
+import * as ResourceBackend from "@/backend/ResourceBackend";
 import * as Setting from "@/lib/setting";
 
 const GRANT_TYPES = [
@@ -115,6 +116,8 @@ export default function ApplicationEditPage() {
   });
 
   const [samlMetadata, setSamlMetadata] = React.useState("");
+  const [uploadingTerms, setUploadingTerms] = React.useState(false);
+  const termsFileRef = React.useRef<HTMLInputElement>(null);
   const enableSamlPostBinding = !!application?.enableSamlPostBinding;
 
   React.useEffect(() => {
@@ -130,6 +133,43 @@ export default function ApplicationEditPage() {
   if (loading || application === null) {
     return <Loading />;
   }
+
+  /** the application name ends up in URLs, so these characters are rejected outright */
+  const updateName = (value: string) => {
+    if (/[/?:@#&%=+;]/.test(value)) {
+      Setting.showMessage(
+        "error",
+        `${i18next.t("application:Invalid characters in application name")}: / ? : @ # & % = + ;`,
+      );
+      return;
+    }
+    updateField("name", value);
+  };
+
+  const uploadTermsOfUse = (file: File | undefined) => {
+    if (termsFileRef.current) {
+      termsFileRef.current.value = "";
+    }
+    if (!file) {
+      return;
+    }
+    if (file.type !== "text/html") {
+      Setting.showMessage("error", i18next.t("application:Please select a HTML file"));
+      return;
+    }
+    setUploadingTerms(true);
+    const fullFilePath = `termsOfUse/${application.owner}/${application.name}.html`;
+    ResourceBackend.uploadResource(account?.owner, account?.name, "termsOfUse", "ApplicationEditPage", fullFilePath, file)
+      .then((res: any) => {
+        if (res.status === "ok") {
+          Setting.showMessage("success", i18next.t("application:File uploaded successfully"));
+          updateField("termsOfUse", res.data);
+        } else {
+          Setting.showMessage("error", `${i18next.t("general:Failed to save")}: ${res.msg}`);
+        }
+      })
+      .finally(() => setUploadingTerms(false));
+  };
 
   const copyToClipboard = (text: string) => {
     copy(text);
@@ -240,7 +280,7 @@ export default function ApplicationEditPage() {
             />
           </FormRow>
           <FormRow labelKey="general:Name">
-            <Input value={application.name ?? ""} onChange={(e) => updateField("name", e.target.value)} />
+            <Input value={application.name ?? ""} onChange={(e) => updateName(e.target.value)} />
           </FormRow>
           <FormRow labelKey="general:Display name">
             <Input value={application.displayName ?? ""} onChange={(e) => updateField("displayName", e.target.value)} />
@@ -612,7 +652,34 @@ export default function ApplicationEditPage() {
             />
           </FormRow>
           <FormRow labelKey="signup:Terms of Use">
-            <Input value={application.termsOfUse ?? ""} onChange={(e) => updateField("termsOfUse", e.target.value)} />
+            <div className="flex flex-wrap items-center gap-2">
+              <Input
+                className="min-w-[16rem] flex-1"
+                value={application.termsOfUse ?? ""}
+                onChange={(e) => updateField("termsOfUse", e.target.value)}
+              />
+              {/* the upload writes the stored URL back onto the application, so it
+                  can only be done once the application exists */}
+              {mode === "add" ? null : (
+                <>
+                  <input
+                    ref={termsFileRef}
+                    type="file"
+                    accept=".html"
+                    className="hidden"
+                    onChange={(e) => uploadTermsOfUse(e.target.files?.[0])}
+                  />
+                  <Button
+                    variant="outline"
+                    loading={uploadingTerms}
+                    onClick={() => termsFileRef.current?.click()}
+                  >
+                    <Upload />
+                    {i18next.t("general:Click to Upload")}
+                  </Button>
+                </>
+              )}
+            </div>
           </FormRow>
           <FormRow labelKey="ldap:Default group">
             <Input value={application.defaultGroup ?? ""} onChange={(e) => updateField("defaultGroup", e.target.value)} />
@@ -1113,6 +1180,14 @@ export default function ApplicationEditPage() {
               value={application.footerHtml ?? ""}
               onChange={(v) => updateField("footerHtml", v)}
             />
+            <div className="mt-2 flex flex-wrap gap-2">
+              <Button variant="outline" size="sm" onClick={() => updateField("footerHtml", Setting.getDefaultFooterContent())}>
+                {i18next.t("general:Reset to Default")}
+              </Button>
+              <Button variant="outline" size="sm" onClick={() => updateField("footerHtml", Setting.getEmptyFooterContent())}>
+                {i18next.t("application:Reset to Empty")}
+              </Button>
+            </div>
           </FormRow>
           <FormRow labelKey="application:Side panel HTML" block>
             <CodeEditor

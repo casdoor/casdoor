@@ -1,6 +1,7 @@
 import * as React from "react";
 import i18next from "i18next";
-import {useNavigate, useParams} from "react-router-dom";
+import {Link, useNavigate, useParams} from "react-router-dom";
+import {Badge} from "@/components/ui/badge";
 import {Button} from "@/components/ui/button";
 import {Card, CardContent} from "@/components/ui/card";
 import {Checkbox} from "@/components/ui/checkbox";
@@ -40,6 +41,10 @@ export default function LdapSyncPage() {
   const syncable = users.filter((user) => !existUuids.includes(user.uuid));
 
   const sync = () => {
+    if (selected.length === 0) {
+      Setting.showMessage("error", i18next.t("general:Please select at least 1 user first"));
+      return;
+    }
     setSyncing(true);
     LdapBackend.syncUsers(
       organizationName,
@@ -47,12 +52,21 @@ export default function LdapSyncPage() {
       users.filter((user) => selected.includes(user.uuid)),
     )
       .then((res: any) => {
-        if (res.status === "ok") {
-          Setting.showMessage("success", i18next.t("general:Successfully synced"));
-          navigate(`/organizations/${organizationName}`);
-        } else {
+        if (res.status !== "ok") {
           Setting.showMessage("error", res.msg);
+          return;
         }
+        Setting.showMessage("success", i18next.t("general:Successfully synced"));
+        // the backend reports the users it skipped and the ones it could not add
+        const exist = res.data?.exist ?? [];
+        const failed = res.data?.failed ?? [];
+        if (exist.length > 0) {
+          Setting.showMessage("error", `${i18next.t("general:User already exists")}: [${exist.map((u: any) => u.cn)}]`);
+        }
+        if (failed.length > 0) {
+          Setting.showMessage("error", `${i18next.t("general:Failed to sync")}: [${failed.map((u: any) => u.cn)}]`);
+        }
+        navigate(`/organizations/${organizationName}`);
       })
       .finally(() => setSyncing(false));
   };
@@ -65,7 +79,7 @@ export default function LdapSyncPage() {
         title={i18next.t("general:Sync")}
         description={`${organizationName} / ${ldapId}`}
         actions={
-          <Button loading={syncing} disabled={selected.length === 0} onClick={sync}>
+          <Button loading={syncing} onClick={sync}>
             {i18next.t("general:Sync")} ({selected.length})
           </Button>
         }
@@ -83,6 +97,7 @@ export default function LdapSyncPage() {
                 </TableHead>
                 <TableHead>{i18next.t("ldap:CN")}</TableHead>
                 <TableHead>UidNumber / Uid</TableHead>
+                <TableHead>{i18next.t("ldap:Group ID")}</TableHead>
                 <TableHead>{i18next.t("general:Email")}</TableHead>
                 <TableHead>{i18next.t("general:Phone")}</TableHead>
                 <TableHead>{i18next.t("user:Address")}</TableHead>
@@ -91,7 +106,7 @@ export default function LdapSyncPage() {
             <TableBody>
               {users.length === 0 ? (
                 <TableRow className="hover:bg-transparent">
-                  <TableCell colSpan={6} className="h-24 text-center text-muted-foreground">
+                  <TableCell colSpan={7} className="h-24 text-center text-muted-foreground">
                     {i18next.t("general:No data")}
                   </TableCell>
                 </TableRow>
@@ -111,10 +126,28 @@ export default function LdapSyncPage() {
                           }
                         />
                       </TableCell>
-                      <TableCell>{user.cn}</TableCell>
                       <TableCell>
-                        {user.uidNumber} / {user.uid}
+                        <div className="flex items-center justify-between gap-2">
+                          <span>{user.cn}</span>
+                          <Badge variant={exists ? "success" : "destructive"}>
+                            {i18next.t(exists ? "ldap:synced" : "ldap:unsynced")}
+                          </Badge>
+                        </div>
                       </TableCell>
+                      <TableCell>
+                        {user.uidNumber} /{" "}
+                        {exists ? (
+                          <Link
+                            to={`/users/${organizationName}/${user.uid}`}
+                            className="underline-offset-4 hover:underline"
+                          >
+                            {user.uid}
+                          </Link>
+                        ) : (
+                          user.uid
+                        )}
+                      </TableCell>
+                      <TableCell>{user.groupId}</TableCell>
                       <TableCell>{user.email}</TableCell>
                       <TableCell>{user.phone}</TableCell>
                       <TableCell>{user.address}</TableCell>

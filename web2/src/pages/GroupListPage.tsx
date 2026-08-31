@@ -74,6 +74,12 @@ export default function GroupListPage() {
       newRecord={account ? () => newGroup(account) : undefined}
       editUrl={(r) => `/groups/${r.owner}/${r.name}`}
       remove={(r) => GroupBackend.deleteGroup(r)}
+      deleteDisabled={(r) =>
+        r.haveChildren &&
+        i18next.t(
+          "group:You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page",
+        )
+      }
     />
   );
 }

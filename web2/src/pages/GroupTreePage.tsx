@@ -112,9 +112,20 @@ export default function GroupTreePage() {
         title={i18next.t("general:Groups")}
         description={organizationName}
         actions={
-          <Button variant="outline" asChild>
-            <Link to="/groups">{i18next.t("general:Groups")}</Link>
-          </Button>
+          <>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setSelected(null);
+                navigate(`/trees/${organizationName}`);
+              }}
+            >
+              {i18next.t("group:Show all")}
+            </Button>
+            <Button variant="outline" asChild>
+              <Link to="/groups">{i18next.t("general:Groups")}</Link>
+            </Button>
+          </>
         }
       />
       <div className="grid gap-4 lg:grid-cols-[320px_1fr]">

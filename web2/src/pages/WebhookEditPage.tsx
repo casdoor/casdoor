@@ -2,10 +2,12 @@ import i18next from "i18next";
 import {useParams} from "react-router-dom";
 import {Input} from "@/components/ui/input";
 import {EditableTable} from "@/components/crud/EditableTable";
+import {CodeEditor} from "@/components/common/CodeEditor";
 import {SimpleEditPage, type EditField} from "@/components/crud/SimpleEditPage";
 import {useAccount} from "@/hooks/use-account";
 import {useOrganizationOptions} from "@/hooks/use-options";
 import * as WebhookBackend from "@/backend/WebhookBackend";
+import {buildWebhookPreview} from "@/lib/webhook-preview";
 import * as Setting from "@/lib/setting";
 
 const METHODS = ["POST", "GET", "PUT", "DELETE"];
@@ -86,9 +88,24 @@ export default function WebhookEditPage() {
     {
       type: "multiselect",
       name: "tokenFields",
-      labelKey: "application:Token fields",
+      labelKey: "webhook:Extended user fields",
       creatable: true,
       options: () => Setting.getUserCommonFields().map((item: string) => ({value: item, label: item})),
+    },
+    {
+      type: "custom",
+      name: "preview",
+      labelKey: "general:Preview",
+      block: true,
+      render: (ctx) => (
+        <CodeEditor
+          language="json"
+          readOnly
+          height={300}
+          value={buildWebhookPreview(ctx.record)}
+          onChange={() => {}}
+        />
+      ),
     },
     {type: "switch", name: "isUserExtended", labelKey: "webhook:Is user extended"},
     {type: "switch", name: "singleOrgOnly", labelKey: "webhook:Single org only"},
