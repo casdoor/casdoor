@@ -173,7 +173,7 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
   // Already signed in on a plain /login: go to the console.
   React.useEffect(() => {
     if (type === "login" && account && !location.search.includes("silentSignin")) {
-      navigate("/", {replace: true});
+      navigate("/", {replace: true, state: {from: "/login"}});
     }
   }, [account, type, navigate, location.search]);
 
@@ -225,7 +225,7 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
 
     if (responseType === "login") {
       Setting.showMessage("success", i18next.t("application:Logged in successfully"));
-      reload().then(() => navigate(Setting.getFromLink()));
+      reload().then(() => navigate(Setting.getFromLink(), {state: {from: "/login"}}));
     } else if (responseType === "code") {
       postCodeLoginAction(res);
     } else if (responseTypes.includes("token") || responseTypes.includes("id_token")) {

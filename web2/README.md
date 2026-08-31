@@ -5,7 +5,7 @@
 over the same REST endpoints, so the two frontends are interchangeable.
 
 ```
-Vite 5 · React 18 · TypeScript · Tailwind CSS 3 · shadcn/ui (Radix) · react-router 6 · i18next
+Vite 5 · React 18 · TypeScript · Tailwind CSS 3 · shadcn/ui (Radix) · react-router 6 · i18next · reactflow
 ```
 
 ## Getting started
@@ -51,6 +51,10 @@ instead, either point that path at `web2/build` or copy `web2/build` over
 | antd `ConfigProvider` dark algorithm | Tailwind `dark` class; the theme is stored under the same `themeAlgorithm` localStorage key, so it survives switching between the two frontends |
 | `common/Editor.js` (CodeMirror) | `components/common/CodeEditor` |
 | `table/*.js` sub-tables | `components/crud/EditableTable` |
+| antd `<Descriptions bordered>` | `components/common/DescriptionList` |
+| antd `<Drawer>` | `components/ui/sheet` |
+| `OpenClawSessionGraphUtils.js` | `lib/openclaw-graph.ts` — same layout, still `reactflow` |
+| trace helpers inside `EntryMessageViewer.js` | `lib/otlp-trace.ts` |
 
 Behaviour deliberately preserved: the `newXxx()` default objects
 (`src/pages/defaults.ts`), the "add" flow (list page hands the object to the edit
@@ -109,11 +113,20 @@ The navbar and widget item pickers are checkable trees (`CheckboxTree`) with
 antd's check semantics, so the stored `navItems` / `userNavItems` / `widgetItems`
 are byte-compatible with the antd frontend.
 
+**Entry viewers** — an entry renders with a viewer chosen by what produced it:
+the SELinux audit fields of a `SELinux Log` provider, the spans of an OTLP
+`trace` message (with a per-span drawer), or the OpenClaw session graph — a
+react-flow tree with a node drawer that pairs each tool call with its result,
+fullscreen, and a link to the raw JSONL transcript at
+`/entries/:organizationName/:entryName/transcript`. The list page's message cell
+opens the same viewer in a popover.
+
+**MFA reminders** — after sign-in, an organization that marks an MFA item
+`Prompted` gets a toast recommending it, with "Later" and "Go to enable"; one
+marked `Required` gets a warning and the redirect to `/mfa/setup`.
+
 ## Deliberately not ported
 
-- **Entry viewers**: the rich entry message viewer, the SELinux entry viewer, and
-  the OpenClaw session graph and transcript pages. The entry edit page shows the
-  raw message instead, and the entry list no longer offers a "Transcript" action.
 - **Web3**: `auth/Web3Auth.ts` talks to `window.ethereum` directly rather than
   going through `@web3-onboard`, so the extra wallets that library bundles
   (Coinbase, Phantom, Trust, Gnosis, ...) are not offered. MetaMask works.
