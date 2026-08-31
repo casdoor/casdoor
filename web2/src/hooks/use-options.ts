@@ -132,6 +132,17 @@ export function useProviderOptions(organizationName: string, category?: string):
   );
 }
 
+/**
+ * The provider objects themselves, not just their names — the application's
+ * provider table decides which columns apply from each one's category and type.
+ */
+export function useProviderList(organizationName: string): any[] {
+  return useList(
+    () => (organizationName ? ProviderBackend.getProviders(organizationName, 1, PAGE_SIZE) : null),
+    [organizationName],
+  );
+}
+
 export function useCertOptions(organizationName: string, scope?: string): SearchableOption[] {
   const items = useList(() => (organizationName ? CertBackend.getCerts(organizationName, 1, PAGE_SIZE) : null), [organizationName]);
   return React.useMemo(

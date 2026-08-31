@@ -20,13 +20,53 @@ import {EditableTable} from "@/components/crud/EditableTable";
 import {FormRow} from "@/components/crud/FormRow";
 import {useAccount} from "@/hooks/use-account";
 import {useEditRecord} from "@/hooks/use-edit-record";
-import {useCertOptions, useOrganizationOptions, useProviderOptions} from "@/hooks/use-options";
+import {useCertOptions, useOrganizationOptions, useProviderList, useProviderOptions} from "@/hooks/use-options";
 import {getModeTitleKey, submitEdit} from "@/lib/crud";
+import {
+  enumOptions,
+  enumSelectOptions,
+  type EnumMap,
+  PROVIDER_BINDING_RULES,
+  PROVIDER_CAPTCHA_RULES,
+  PROVIDER_CODE_RULES,
+  PROVIDER_GOOGLE_RULES,
+} from "@/lib/enum-labels";
 import {SigninTableDefaultCssMap} from "@/lib/signin-css";
 import {SignupTableDefaultCssMap} from "@/lib/signup-css";
 import * as ApplicationBackend from "@/backend/ApplicationBackend";
 import * as ResourceBackend from "@/backend/ResourceBackend";
 import * as Setting from "@/lib/setting";
+
+/** the provider kinds a user account can be linked to */
+const LINKABLE_PROVIDER_CATEGORIES = ["OAuth", "Web3", "SAML"];
+
+/** The rule options a provider row offers, or null when it has no rule at all. */
+function getProviderRuleMap(provider: any) {
+  if (provider?.type === "Google") {
+    return PROVIDER_GOOGLE_RULES;
+  }
+  if (provider?.category === "Captcha") {
+    return PROVIDER_CAPTCHA_RULES;
+  }
+  if (provider?.category === "SMS" || provider?.category === "Email") {
+    return PROVIDER_CODE_RULES;
+  }
+  return null;
+}
+
+/** antd rewrites the stored "None" to each kind's own default before showing it. */
+function normalizeProviderRule(provider: any, rule: string) {
+  if (rule !== "None") {
+    return rule;
+  }
+  if (provider?.type === "Google") {
+    return "Default";
+  }
+  if (provider?.category === "SMS" || provider?.category === "Email") {
+    return "all";
+  }
+  return rule;
+}
 
 const GRANT_TYPES = [
   "authorization_code",
@@ -39,8 +79,83 @@ const GRANT_TYPES = [
 ];
 const TOKEN_FORMATS = ["JWT", "JWT-Empty", "JWT-Custom", "JWT-Standard"];
 const TOKEN_SIGNING_METHODS = ["RS256", "RS512", "ES256", "ES512", "ES384"];
-const SIGNIN_RULES = ["All", "Email only", "Phone only", "None"];
-const SIGNUP_RULES = ["None", "Normal", "No verification", "Random", "Personal"];
+/**
+ * A signin method's "Rule" also depends on the method, as in the antd
+ * SigninMethodTable. Methods not listed have no rule.
+ */
+const SIGNIN_METHOD_RULES: Record<string, EnumMap> = {
+  "Verification code": {
+    "All": {i18nKey: "general:All"},
+    "Email only": {i18nKey: "general:Email only"},
+    "Phone only": {i18nKey: "general:Phone only"},
+  },
+  "Password": {
+    "All": {i18nKey: "general:All"},
+    "Non-LDAP": {i18nKey: "general:Non-LDAP"},
+    "Hide password": {i18nKey: "general:Hide password"},
+  },
+  "WeChat": {
+    "Tab": {i18nKey: "general:Tab"},
+    "Login page": {i18nKey: "general:Login page"},
+  },
+  "Device login": {
+    "Tab": {i18nKey: "general:Tab"},
+    "Login page": {i18nKey: "general:Login page"},
+  },
+};
+const TOKEN_ATTRIBUTE_CATEGORIES: EnumMap = {
+  "Static Value": {i18nKey: "application:Static Value"},
+  "Existing Field": {i18nKey: "application:Existing Field"},
+};
+
+/** the user fields an "Existing Field" token attribute may copy */
+const TOKEN_ATTRIBUTE_USER_FIELDS = [
+  "Owner", "Name", "Id", "DisplayName", "Avatar", "Email", "Phone",
+  "Tag", "Roles", "Permissions", "permissionNames", "Groups",
+];
+
+const SIGNUP_ITEM_TYPES: EnumMap = {
+  "Input": {i18nKey: "application:Input"},
+  "Single Choice": {i18nKey: "application:Single Choice"},
+  "Multiple Choices": {i18nKey: "application:Multiple Choices"},
+};
+
+/**
+ * A signup item's "Rule" means something different for each item, so the antd
+ * table picks the options from the item name. Items not listed have no rule.
+ */
+const SIGNUP_ITEM_RULES: Record<string, EnumMap> = {
+  "ID": {
+    "Random": {i18nKey: "application:Random"},
+    "Incremental": {i18nKey: "application:Incremental"},
+  },
+  "Display name": {
+    "None": {i18nKey: "general:None"},
+    "Real name": {i18nKey: "application:Real name"},
+    "First, last": {i18nKey: "application:First, last"},
+  },
+  "Email": {
+    "Normal": {i18nKey: "application:Normal"},
+    "No verification": {i18nKey: "application:No verification"},
+  },
+  "Phone": {
+    "Normal": {i18nKey: "application:Normal"},
+    "No verification": {i18nKey: "application:No verification"},
+  },
+  "Agreement": {
+    "None": {i18nKey: "application:Only signup"},
+    "Signin": {i18nKey: "application:Signin"},
+    "Signin (Default True)": {i18nKey: "application:Signin (Default True)"},
+  },
+  "Providers": {
+    "big": {i18nKey: "application:Big icon"},
+    "small": {i18nKey: "application:Small icon"},
+  },
+  "Languages": {
+    "None": {i18nKey: "general:Default"},
+    "Label": {i18nKey: "signup:Label"},
+  },
+};
 const APPLICATION_TYPES = ["All", "Web", "Native", "SPA"];
 const APPLICATION_CATEGORIES = ["Default", "OAuth", "SAML", "CAS"];
 const SSL_MODES = ["", "HTTP", "HTTPS and HTTP", "HTTPS Only"];
@@ -109,6 +224,7 @@ export default function ApplicationEditPage() {
   const organizations = useOrganizationOptions();
   const certs = useCertOptions(organizationName);
   const providers = useProviderOptions(organizationName);
+  const providerObjs = useProviderList(organizationName);
 
   const {record: application, updateField, setRecord, loading, mode, setMode} = useEditRecord<any>({
     fetch: () => ApplicationBackend.getApplication("admin", applicationName),
@@ -170,6 +286,13 @@ export default function ApplicationEditPage() {
       })
       .finally(() => setUploadingTerms(false));
   };
+
+  /**
+   * The provider a row points at. The backend embeds it on the row, but a row
+   * the user just added only has a name, so fall back to the fetched list.
+   */
+  const resolveProvider = (row: any) =>
+    row?.provider ?? providerObjs.find((item: any) => item.name === row?.name);
 
   const copyToClipboard = (text: string) => {
     copy(text);
@@ -440,7 +563,7 @@ export default function ApplicationEditPage() {
                     <SelectField
                       value={row.rule}
                       onChange={(v) => patch({rule: v})}
-                      options={[...SIGNIN_RULES, "Hide password"].map((item) => ({id: item, name: item}))}
+                      options={enumSelectOptions(SIGNIN_METHOD_RULES[row.name] ?? {})}
                     />
                   ),
                 },
@@ -497,6 +620,21 @@ export default function ApplicationEditPage() {
           </FormRow>
           <FormRow labelKey="application:Signin items" block>
             <EditableTable
+              title={
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() =>
+                    updateField("signinItems", [
+                      ...(application.signinItems ?? []),
+                      // a custom item is a free-form HTML block, named so it stays unique
+                      {name: `Text ${Date.now()}`, visible: true, isCustom: true, label: "", placeholder: "", rule: "None"},
+                    ])
+                  }
+                >
+                  {i18next.t("general:Add custom item")}
+                </Button>
+              }
               rows={application.signinItems ?? []}
               onChange={(rows) => updateField("signinItems", rows)}
               newRow={() => ({
@@ -542,6 +680,17 @@ export default function ApplicationEditPage() {
                   width: 170,
                   render: (row: any, _i, patch) => (
                     <Input value={row.placeholder ?? ""} onChange={(e) => patch({placeholder: e.target.value})} />
+                  ),
+                },
+                {
+                  key: "customCss",
+                  title: i18next.t("application:Custom CSS"),
+                  width: 200,
+                  render: (row: any, _i, patch) => (
+                    <Input
+                      value={row.customCss ?? SigninTableDefaultCssMap[row.name] ?? ""}
+                      onChange={(e) => patch({customCss: e.target.value || SigninTableDefaultCssMap[row.name]})}
+                    />
                   ),
                 },
                 {
@@ -613,16 +762,34 @@ export default function ApplicationEditPage() {
                   ),
                 },
                 {
-                  key: "rule",
-                  title: i18next.t("application:Rule"),
+                  key: "type",
+                  title: i18next.t("general:Type"),
                   width: 160,
                   render: (row: any, _i, patch) => (
                     <SelectField
-                      value={row.rule}
-                      onChange={(v) => patch({rule: v})}
-                      options={SIGNUP_RULES.map((item) => ({id: item, name: item}))}
+                      value={row.type ?? "Input"}
+                      onChange={(v) => patch({type: v})}
+                      options={enumSelectOptions(SIGNUP_ITEM_TYPES)}
                     />
                   ),
+                },
+                {
+                  key: "rule",
+                  title: i18next.t("application:Rule"),
+                  width: 160,
+                  render: (row: any, _i, patch) => {
+                    const map = SIGNUP_ITEM_RULES[row.name];
+                    if (!map) {
+                      return null;
+                    }
+                    return (
+                      <SelectField
+                        value={row.rule}
+                        onChange={(v) => patch({rule: v})}
+                        options={enumSelectOptions(map)}
+                      />
+                    );
+                  },
                 },
                 {
                   key: "label",
@@ -639,6 +806,27 @@ export default function ApplicationEditPage() {
                   render: (row: any, _i, patch) => (
                     <Input value={row.placeholder ?? ""} onChange={(e) => patch({placeholder: e.target.value})} />
                   ),
+                },
+                {
+                  key: "customCss",
+                  title: i18next.t("application:Custom CSS"),
+                  width: 200,
+                  render: (row: any, _i, patch) => (
+                    <Input
+                      value={row.customCss ?? SignupTableDefaultCssMap[row.name] ?? ""}
+                      onChange={(e) => patch({customCss: e.target.value || SignupTableDefaultCssMap[row.name]})}
+                    />
+                  ),
+                },
+                {
+                  key: "options",
+                  title: i18next.t("signup:Options"),
+                  width: 200,
+                  // only a choice item has options to offer
+                  render: (row: any, _i, patch) =>
+                    row.type === "Single Choice" || row.type === "Multiple Choices" ? (
+                      <TagsInput value={row.options ?? []} onChange={(v) => patch({options: v})} />
+                    ) : null,
                 },
                 {
                   key: "regex",
@@ -750,9 +938,99 @@ export default function ApplicationEditPage() {
                   key: "prompted",
                   title: i18next.t("provider:Prompted"),
                   width: 110,
-                  render: (row: any, _i, patch) => (
-                    <Switch checked={!!row.prompted} onCheckedChange={(v) => patch({prompted: v})} />
-                  ),
+                  // only an identity provider can prompt for a link
+                  render: (row: any, _i, patch) =>
+                    LINKABLE_PROVIDER_CATEGORIES.includes(resolveProvider(row)?.category) ? (
+                      <Switch checked={!!row.prompted} onCheckedChange={(v) => patch({prompted: v})} />
+                    ) : null,
+                },
+                {
+                  key: "category",
+                  title: i18next.t("general:Category"),
+                  width: 110,
+                  render: (row: any) => {
+                    const provider = resolveProvider(row);
+                    if (!provider?.category) {
+                      return null;
+                    }
+                    return (
+                      <a
+                        href={`/providers/${provider.owner}/${provider.name}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="underline-offset-4 hover:underline"
+                      >
+                        {provider.category}
+                      </a>
+                    );
+                  },
+                },
+                {
+                  key: "type",
+                  title: i18next.t("general:Type"),
+                  width: 110,
+                  render: (row: any) => resolveProvider(row)?.type ?? null,
+                },
+                {
+                  key: "countryCodes",
+                  title: i18next.t("user:Country/Region"),
+                  width: 200,
+                  // an SMS provider can be limited to the countries it serves
+                  render: (row: any, _i, patch) =>
+                    resolveProvider(row)?.category === "SMS" ? (
+                      <MultiSelect
+                        value={row.countryCodes ?? ["All"]}
+                        onChange={(v) => patch({countryCodes: v})}
+                        options={[
+                          {value: "All", label: i18next.t("general:All")},
+                          ...Setting.getCountryCodeData(application.organizationObj?.countryCodes).map((country: any) => ({
+                            value: country.code,
+                            label: `${country.name} (+${country.phone})`,
+                          })),
+                        ]}
+                      />
+                    ) : null,
+                },
+                {
+                  key: "bindingRule",
+                  title: i18next.t("provider:Binding rule"),
+                  width: 200,
+                  render: (row: any, _i, patch) =>
+                    LINKABLE_PROVIDER_CATEGORIES.includes(resolveProvider(row)?.category) ? (
+                      <MultiSelect
+                        value={row.bindingRule?.length ? row.bindingRule : ["Email", "Phone", "Name"]}
+                        onChange={(v) => patch({bindingRule: v})}
+                        options={enumOptions(PROVIDER_BINDING_RULES)}
+                      />
+                    ) : null,
+                },
+                {
+                  key: "signupGroup",
+                  title: i18next.t("provider:Signup group"),
+                  width: 150,
+                  render: (row: any, _i, patch) =>
+                    ["OAuth", "Web3"].includes(resolveProvider(row)?.category) ? (
+                      <Input value={row.signupGroup ?? ""} onChange={(e) => patch({signupGroup: e.target.value})} />
+                    ) : null,
+                },
+                {
+                  key: "rule",
+                  title: i18next.t("application:Rule"),
+                  width: 170,
+                  // the rule means something different for each kind of provider
+                  render: (row: any, _i, patch) => {
+                    const map = getProviderRuleMap(resolveProvider(row));
+                    if (!map) {
+                      return null;
+                    }
+                    return (
+                      <SelectField
+                        value={normalizeProviderRule(resolveProvider(row), row.rule)}
+                        onChange={(v) => patch({rule: v})}
+                        options={enumSelectOptions(map)}
+                      />
+                    );
+                  },
                 },
               ]}
             />
@@ -933,7 +1211,7 @@ export default function ApplicationEditPage() {
               <EditableTable
                 rows={application.tokenAttributes ?? []}
                 onChange={(rows) => updateField("tokenAttributes", rows)}
-                newRow={() => ({name: "", category: "", value: "", type: "String"})}
+                newRow={() => ({name: "", category: "Static Value", value: "", type: "Array"})}
                 columns={[
                   {
                     key: "name",
@@ -948,15 +1226,28 @@ export default function ApplicationEditPage() {
                     title: i18next.t("general:Category"),
                     width: 160,
                     render: (row: any, _i, patch) => (
-                      <Input value={row.category ?? ""} onChange={(e) => patch({category: e.target.value})} />
+                      <SelectField
+                        value={row.category ?? "Static Value"}
+                        onChange={(v) => patch({category: v, value: ""})}
+                        options={enumSelectOptions(TOKEN_ATTRIBUTE_CATEGORIES)}
+                      />
                     ),
                   },
                   {
                     key: "value",
                     title: i18next.t("webhook:Value"),
-                    render: (row: any, _i, patch) => (
-                      <Input value={row.value ?? ""} onChange={(e) => patch({value: e.target.value})} />
-                    ),
+                    // an "Existing Field" attribute copies one of the user's own
+                    // fields, so the value is picked rather than typed
+                    render: (row: any, _i, patch) =>
+                      row.category === "Existing Field" ? (
+                        <SelectField
+                          value={row.value ?? ""}
+                          onChange={(v) => patch({value: v})}
+                          options={TOKEN_ATTRIBUTE_USER_FIELDS.map((field) => ({id: field, name: field}))}
+                        />
+                      ) : (
+                        <Input value={row.value ?? ""} onChange={(e) => patch({value: e.target.value})} />
+                      ),
                   },
                   {
                     key: "type",

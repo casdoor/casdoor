@@ -71,6 +71,11 @@ function ColumnSearch({
     setOpen(false);
   };
 
+  /** antd's third button: apply the term but leave the popover open to refine it */
+  const filter = () => {
+    onQueryChange({searchText: value, searchedColumn: column.dataIndex, page: 1});
+  };
+
   const reset = () => {
     setValue("");
     onQueryChange({searchText: "", searchedColumn: "", page: 1});
@@ -111,6 +116,9 @@ function ColumnSearch({
           <Button size="sm" variant="outline" className="flex-1" onClick={reset}>
             <X />
             {i18next.t("forget:Reset")}
+          </Button>
+          <Button size="sm" variant="link" onClick={filter}>
+            {i18next.t("general:Filter")}
           </Button>
         </div>
       </PopoverContent>

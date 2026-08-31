@@ -128,16 +128,15 @@ export default function SystemInfoPage() {
   const cpuUsage: number[] = systemInfo.cpuUsage ?? [];
   const memoryPercent = systemInfo.memoryTotal ? (systemInfo.memoryUsed / systemInfo.memoryTotal) * 100 : 0;
   const diskPercent = systemInfo.diskTotal ? (systemInfo.diskUsed / systemInfo.diskTotal) * 100 : 0;
+  const versionText = versionInfo?.version
+    ? `${versionInfo.version}${versionInfo.commitOffset > 0 ? ` (ahead+${versionInfo.commitOffset})` : ""}`
+    : i18next.t("system:Unknown version");
 
   return (
     <div className="space-y-4">
       <PageHeader
         title={i18next.t("general:System Info")}
-        description={
-          versionInfo?.version
-            ? `${versionInfo.version}${versionInfo.commitOffset > 0 ? ` (ahead+${versionInfo.commitOffset})` : ""}`
-            : undefined
-        }
+        description={versionInfo?.version ? versionText : undefined}
       />
 
       <div className="grid gap-4 md:grid-cols-3">
@@ -245,6 +244,55 @@ export default function SystemInfoPage() {
             <div className="text-xl font-semibold tabular-nums">
               {Setting.getFriendlyFileSize(systemInfo.networkTotal)}
             </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card id="about-card">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base">{i18next.t("system:About Casdoor")}</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-1 text-sm">
+          <p className="text-muted-foreground">
+            {i18next.t("system:An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2.0, OIDC, SAML and CAS")}
+          </p>
+          <div>
+            GitHub:{" "}
+            <a href="https://github.com/casdoor/casdoor" target="_blank" rel="noreferrer" className="underline-offset-4 hover:underline">
+              Casdoor
+            </a>
+          </div>
+          <div>
+            {i18next.t("system:Version")}:{" "}
+            {versionInfo?.version ? (
+              <a
+                href={`https://github.com/casdoor/casdoor/releases/tag/${versionInfo.version}`}
+                target="_blank"
+                rel="noreferrer"
+                className="underline-offset-4 hover:underline"
+              >
+                {versionText}
+              </a>
+            ) : (
+              versionText
+            )}
+          </div>
+          <div>
+            {i18next.t("system:Official website")}:{" "}
+            <a href="https://casdoor.org" target="_blank" rel="noreferrer" className="underline-offset-4 hover:underline">
+              https://casdoor.org
+            </a>
+          </div>
+          <div>
+            {i18next.t("system:Community")}:{" "}
+            <a
+              href="https://casdoor.org/#:~:text=Casdoor%20API-,Community,-GitHub"
+              target="_blank"
+              rel="noreferrer"
+              className="underline-offset-4 hover:underline"
+            >
+              Get in Touch!
+            </a>
           </div>
         </CardContent>
       </Card>

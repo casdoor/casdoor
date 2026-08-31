@@ -95,6 +95,36 @@ export const KEY_TYPES: EnumMap = {
   "Prometheus": {i18nKey: "Prometheus"},
 };
 
+/** what a provider row's "Rule" means depends on the provider it points at */
+export const PROVIDER_CAPTCHA_RULES: EnumMap = {
+  "None": {i18nKey: "general:None"},
+  "Dynamic": {i18nKey: "application:Dynamic"},
+  "Always": {i18nKey: "application:Always"},
+  "Internet-Only": {i18nKey: "application:Internet-Only"},
+};
+
+export const PROVIDER_GOOGLE_RULES: EnumMap = {
+  "Default": {i18nKey: "general:Default"},
+  "OneTap": {i18nKey: "One Tap"},
+};
+
+export const PROVIDER_CODE_RULES: EnumMap = {
+  "all": {i18nKey: "All"},
+  "signup": {i18nKey: "Signup"},
+  "login": {i18nKey: "Login"},
+  "forget": {i18nKey: "Forget Password"},
+  "reset": {i18nKey: "Reset Password"},
+  "mfaSetup": {i18nKey: "Set MFA"},
+  "mfaAuth": {i18nKey: "MFA Auth"},
+};
+
+/** which of the user's identifiers an external account may bind to */
+export const PROVIDER_BINDING_RULES: EnumMap = {
+  "Email": {i18nKey: "general:Email"},
+  "Name": {i18nKey: "general:Name"},
+  "Phone": {i18nKey: "general:Phone"},
+};
+
 export const LDAP_PASSWORD_TYPES: EnumMap = {
   "Plain": {i18nKey: "general:Plain"},
   "SSHA": {i18nKey: "SSHA"},

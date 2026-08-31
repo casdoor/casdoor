@@ -112,7 +112,7 @@ export function EditableTable<T>({
                               variant="ghost"
                               size="iconSm"
                               disabled={index === 0}
-                              aria-label="Move up"
+                              aria-label={i18next.t("general:Up")}
                               onClick={() => swap(index, index - 1)}
                             >
                               <ArrowUp />
@@ -121,7 +121,7 @@ export function EditableTable<T>({
                               variant="ghost"
                               size="iconSm"
                               disabled={index === items.length - 1}
-                              aria-label="Move down"
+                              aria-label={i18next.t("general:Down")}
                               onClick={() => swap(index, index + 1)}
                             >
                               <ArrowDown />
