@@ -78,9 +78,12 @@ Cypress.Commands.add("assertEditPageLoaded", () => {
  * Following the link instead of hard-coding an object id keeps the spec working
  * on any database — and covers the list page's own links, which a hard-coded
  * URL never would.
+ *
+ * Only for lists Casdoor seeds itself: the empty state is a `tbody tr` too, so
+ * the name link is what tells a real row from it.
  */
 Cypress.Commands.add("openFirstRow", () => {
-  cy.get("tbody tr", {timeout: 20000}).should("have.length.greaterThan", 0);
+  cy.get("tbody tr td a", {timeout: 20000}).should("have.length.greaterThan", 0);
   cy.get("tbody tr").first().find("a").first().click();
   cy.assertEditPageLoaded();
 });
