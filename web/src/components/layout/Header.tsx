@@ -20,40 +20,21 @@ import {OrganizationSelect} from "@/components/common/OrganizationSelect";
 import {OpenTour} from "@/components/common/ConsoleTour";
 import {ThemeToggle} from "@/components/common/ThemeToggle";
 import {useAccount} from "@/hooks/use-account";
+import {useLogout} from "@/hooks/use-logout";
 import {isWidgetVisible} from "@/lib/nav";
-import * as AuthBackend from "@/backend/AuthBackend";
 import * as UserBackend from "@/backend/UserBackend";
 import * as Setting from "@/lib/setting";
 
 export function Header({onOpenMobileNav}: {onOpenMobileNav: () => void}) {
-  const {account, setAccount} = useAccount();
+  const {account} = useAccount();
   const navigate = useNavigate();
   const location = useLocation();
   const [organization, setOrganizationState] = React.useState(() => Setting.getOrganization());
+  const logout = useLogout();
 
   if (!account) {
     return null;
   }
-
-  const logout = () => {
-    AuthBackend.logout().then((res: any) => {
-      if (res.status === "ok") {
-        const owner = account.owner;
-        setAccount(null);
-        Setting.showMessage("success", i18next.t("application:Logged out successfully"));
-        const redirectUri = res.data2;
-        if (redirectUri !== null && redirectUri !== undefined && redirectUri !== "") {
-          Setting.goToLink(redirectUri);
-        } else if (owner !== "built-in") {
-          Setting.goToLink(`${window.location.origin}/login/${owner}`);
-        } else {
-          navigate("/");
-        }
-      } else {
-        Setting.showMessage("error", `${i18next.t("general:Failed to log out")}: ${res.msg}`);
-      }
-    });
-  };
 
   const exitImpersonation = () => {
     UserBackend.exitImpersonateUser(account.owner, account.name).then((res: any) => {
