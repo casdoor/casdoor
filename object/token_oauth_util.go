@@ -299,7 +299,7 @@ func CheckOAuthLogin(clientId string, responseType string, redirectUri string, s
 	return "", application, nil
 }
 
-func GetOAuthCode(userId string, clientId string, provider string, signinMethod string, responseType string, redirectUri string, scope string, state string, nonce string, challenge string, resource string, host string, lang string) (*Code, error) {
+func GetOAuthCode(userId string, clientId string, provider string, signinMethod string, responseType string, redirectUri string, scope string, state string, nonce string, challenge string, resource string, sessionId string, host string, lang string) (*Code, error) {
 	user, err := GetUser(userId)
 	if err != nil {
 		return nil, err
@@ -378,6 +378,7 @@ func GetOAuthCode(userId string, clientId string, provider string, signinMethod 
 		CodeIsUsed:    false,
 		CodeExpireIn:  time.Now().Add(time.Minute * 5).Unix(),
 		Resource:      resource,
+		SessionId:     sessionId,
 	}
 	_, err = AddToken(token)
 	if err != nil {
@@ -537,6 +538,8 @@ func RefreshToken(application *Application, grantType string, refreshToken strin
 		Scope:        scope,
 		TokenType:    "Bearer",
 		Resource:     resource,
+		// the refreshed token stays bound to the login session that minted the original one
+		SessionId: token.SessionId,
 	}
 	_, err = AddToken(newToken)
 	if err != nil {
@@ -662,7 +665,7 @@ func mintImplicitToken(application *Application, username string, scope string, 
 		}, nil
 	}
 
-	token, err := GetTokenByUser(application, user, scope, nonce, host)
+	token, err := GetTokenByUser(application, user, scope, nonce, "", host)
 	if err != nil {
 		return nil, nil, err
 	}

@@ -456,7 +456,7 @@ func GetJwtBearerToken(application *Application, assertion string, scope string,
 }
 
 // GetTokenByUser mints a token for the given user (Implicit flow helper).
-func GetTokenByUser(application *Application, user *User, scope string, nonce string, host string) (*Token, error) {
+func GetTokenByUser(application *Application, user *User, scope string, nonce string, sessionId string, host string) (*Token, error) {
 	err := ExtendUserWithRolesAndPermissions(user)
 	if err != nil {
 		return nil, err
@@ -481,6 +481,7 @@ func GetTokenByUser(application *Application, user *User, scope string, nonce st
 		Scope:        scope,
 		TokenType:    "Bearer",
 		CodeIsUsed:   true,
+		SessionId:    sessionId,
 	}
 	_, err = AddToken(token)
 	if err != nil {
@@ -749,7 +750,7 @@ func GetAccessTokenByUser(user *User, host string) (string, error) {
 		return "", fmt.Errorf("the application for user %s is not found", user.Id)
 	}
 
-	token, err := GetTokenByUser(application, user, "profile", "", host)
+	token, err := GetTokenByUser(application, user, "profile", "", "", host)
 	if err != nil {
 		return "", err
 	}

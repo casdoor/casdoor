@@ -46,6 +46,7 @@ type Token struct {
 	CodeExpireIn     int64  `json:"codeExpireIn"`
 	Resource         string `xorm:"varchar(255)" json:"resource"`           // RFC 8707 Resource Indicator
 	DPoPJkt          string `xorm:"varchar(255) 'dpop_jkt'" json:"dPoPJkt"` // RFC 9449 DPoP JWK thumbprint binding
+	SessionId        string `xorm:"varchar(100) index" json:"sessionId"`    // the Beego session id that minted the token
 }
 
 func GetTokenCount(owner, organization, field, value string) (int64, error) {
@@ -257,6 +258,27 @@ func GetActiveTokensByUser(organization, username string) ([]*Token, error) {
 
 func ExpireTokenByUser(owner, username string) (bool, error) {
 	affected, err := ormer.Engine.Where(fmt.Sprintf("organization = ? and %s = ?", quoteColumn("user")), owner, username).Cols("expires_in").Update(&Token{ExpiresIn: 0})
+	if err != nil {
+		return false, err
+	}
+
+	return affected != 0, nil
+}
+
+// ExpireTokensBySessionIds expires the tokens minted under the given Beego session ids, so that
+// ending a login session (admin delete, single-session logout) also revokes its OAuth tokens
+func ExpireTokensBySessionIds(sessionIds []string) (bool, error) {
+	ids := []string{}
+	for _, sessionId := range sessionIds {
+		if sessionId != "" {
+			ids = append(ids, sessionId)
+		}
+	}
+	if len(ids) == 0 {
+		return false, nil
+	}
+
+	affected, err := ormer.Engine.In("session_id", ids).Where("expires_in > 0").Cols("expires_in").Update(&Token{ExpiresIn: 0})
 	if err != nil {
 		return false, err
 	}
