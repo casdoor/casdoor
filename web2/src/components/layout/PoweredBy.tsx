@@ -1,5 +1,5 @@
 import * as Conf from "@/Conf";
-import {useTheme} from "@/hooks/use-theme";
+import {useIsDark} from "@/hooks/use-theme";
 import * as Setting from "@/lib/setting";
 
 /**
@@ -9,7 +9,7 @@ import * as Setting from "@/lib/setting";
  * `Conf.CustomFooter` or an organization's `footerHtml`.
  */
 export function PoweredBy() {
-  const {resolvedTheme} = useTheme();
+  const isDark = useIsDark();
 
   if (Conf.CustomFooter !== null) {
     return <>{Conf.CustomFooter}</>;
@@ -20,7 +20,7 @@ export function PoweredBy() {
       Powered by
       <a href="https://casdoor.org" target="_blank" rel="noreferrer">
         <img
-          src={Setting.getLogo([resolvedTheme])}
+          src={Setting.getLogo([isDark ? "dark" : "light"])}
           alt="Casdoor"
           height={20}
           className="h-5 w-auto pb-[3px]"

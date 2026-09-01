@@ -202,6 +202,36 @@ export function getLogo(themes) {
   }
 }
 
+/**
+ * Casdoor's own wordmark, which `object/init.go` stores as the built-in
+ * organization's and application's logo. It is nearly black, so it disappears on
+ * a dark sidebar — but it has a `_dark` twin, which `getLogo` returns.
+ */
+function isDefaultCasdoorLogo(logo: string | undefined | null) {
+  return typeof logo === "string" && logo.endsWith("/img/casdoor-logo_1185x256.png");
+}
+
+/**
+ * The logo to paint for the current theme: an explicit `logoDark` wins in dark
+ * mode, an organization that never replaced Casdoor's default gets the dark
+ * twin of it, and a real custom logo is left alone — the deployment chose it.
+ */
+export function getThemedLogo(
+  logo: string | undefined | null,
+  logoDark: string | undefined | null,
+  themes: string[],
+) {
+  if (themes.includes("dark")) {
+    if (logoDark) {
+      return logoDark;
+    }
+    if (!logo || isDefaultCasdoorLogo(logo)) {
+      return getLogo(themes);
+    }
+  }
+  return logo || getLogo(themes);
+}
+
 
 export const Countries = [
   {label: "English", key: "en", country: "US", alt: "English"},
