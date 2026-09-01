@@ -80,10 +80,13 @@ describe("Map- and string-typed fields", () => {
     cy.wait("@getApplication");
     cy.assertEditPageLoaded();
 
+    // ipWhitelist lives on the Security tab, and Radix unmounts the inactive ones
+    cy.contains('[role=tab]', "Security").click();
+
     // the whole CIDR sits in one input, not split into tag badges
     cy.get('input[value="10.0.0.0/8"]').should("exist");
 
-    // scopes live on the OIDC/OAuth tab, and Radix unmounts the inactive ones
+    // scopes are on the OIDC/OAuth tab, same story
     cy.contains('[role=tab]', "OIDC/OAuth").click();
 
     // scopes are objects, so they render as the three-column table
