@@ -17,6 +17,7 @@ package object
 import (
 	"errors"
 	"fmt"
+	"sort"
 	"strings"
 
 	"github.com/casdoor/casdoor/conf"
@@ -37,6 +38,9 @@ type Role struct {
 	Roles     []string `xorm:"mediumtext" json:"roles"`
 	Domains   []string `xorm:"mediumtext" json:"domains"`
 	IsEnabled bool     `json:"isEnabled"`
+
+	// SourceGroups is only set when the role is resolved for a user, empty means it was assigned directly
+	SourceGroups []string `xorm:"-" json:"sourceGroups,omitempty"`
 }
 
 func GetRoleCount(owner, field, value string) (int64, error) {
@@ -226,13 +230,13 @@ func (role *Role) GetId() string {
 	return fmt.Sprintf("%s/%s", role.Owner, role.Name)
 }
 
-func getRolesByUserInternal(userId string) ([]*Role, error) {
+func getRolesByUserInternal(userId string) ([]*Role, map[string][]string, error) {
 	user, err := GetUser(userId)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	if user == nil {
-		return nil, fmt.Errorf("The user: %s doesn't exist", userId)
+		return nil, nil, fmt.Errorf("The user: %s doesn't exist", userId)
 	}
 
 	query := ormer.Engine.Alias("r").Where("r.users like ?", fmt.Sprintf("%%%s%%", userId))
@@ -243,20 +247,74 @@ func getRolesByUserInternal(userId string) ([]*Role, error) {
 	roles := []*Role{}
 	err = query.Find(&roles)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	res := []*Role{}
+	// a source is the group that granted the role, "" means it was assigned directly
+	sources := map[string][]string{}
 	for _, role := range roles {
-		if util.InSlice(role.Users, userId) || util.HaveIntersection(role.Groups, user.Groups) {
+		roleSources := []string{}
+		if util.InSlice(role.Users, userId) {
+			roleSources = append(roleSources, "")
+		}
+		for _, group := range role.Groups {
+			if util.InSlice(user.Groups, group) {
+				roleSources = append(roleSources, group)
+			}
+		}
+
+		if len(roleSources) != 0 {
 			res = append(res, role)
+			sources[role.GetId()] = roleSources
 		}
 	}
-	return res, nil
+	return res, sources, nil
+}
+
+func fillSourceGroups(roles []*Role, sources map[string][]string) {
+	resolved := map[string]map[string]bool{}
+	for _, role := range roles {
+		roleId := role.GetId()
+		resolved[roleId] = map[string]bool{}
+		for _, source := range sources[roleId] {
+			resolved[roleId][source] = true
+		}
+	}
+
+	for changed := true; changed; {
+		changed = false
+		for _, role := range roles {
+			roleId := role.GetId()
+			for _, subRoleId := range role.Roles {
+				for source := range resolved[subRoleId] {
+					if !resolved[roleId][source] {
+						resolved[roleId][source] = true
+						changed = true
+					}
+				}
+			}
+		}
+	}
+
+	for _, role := range roles {
+		roleSources := resolved[role.GetId()]
+		if roleSources[""] {
+			role.SourceGroups = nil
+			continue
+		}
+
+		sourceGroups := []string{}
+		for source := range roleSources {
+			sourceGroups = append(sourceGroups, source)
+		}
+		sort.Strings(sourceGroups)
+		role.SourceGroups = sourceGroups
+	}
 }
 
 func getRolesByUser(userId string) ([]*Role, error) {
-	roles, err := getRolesByUserInternal(userId)
+	roles, sources, err := getRolesByUserInternal(userId)
 	if err != nil {
 		return nil, err
 	}
@@ -270,6 +328,8 @@ func getRolesByUser(userId string) ([]*Role, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	fillSourceGroups(allRoles, sources)
 
 	for i := range allRoles {
 		allRoles[i].Users = nil
