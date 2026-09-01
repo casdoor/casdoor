@@ -832,10 +832,24 @@ func GetExistUuids(owner string, uuids []string) ([]string, error) {
 // and makes the server answer with "Insufficient Access Rights". Checking it here keeps the
 // user from receiving a verification code and typing a new password before finding out.
 // Signing in, changing the password with the old one and an admin reset are not affected,
-// none of them depends on the bind account having write access.
+// none of them depends on the bind account having write access. A bind account that does
+// have it, a Microsoft AD one over LDAPS for example, is opted in with EnablePasswordReset.
 func CheckLdapPasswordForget(user *User) error {
 	if user == nil || user.Ldap == "" {
 		return nil
+	}
+
+	ldaps, err := GetLdaps(user.Owner)
+	if err != nil {
+		return err
+	}
+
+	// ResetLdapPassword() looks the user up in every LDAP server of the organization, so the
+	// reset is only bound to fail when none of them allows it
+	for _, ldapServer := range ldaps {
+		if ldapServer.EnablePasswordReset {
+			return nil
+		}
 	}
 
 	return fmt.Errorf("the password of the LDAP user: %s is managed by the LDAP server, please contact your administrator to reset it", user.Name)
