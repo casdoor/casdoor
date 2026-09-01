@@ -14,6 +14,7 @@
 
 import * as React from "react";
 import {Navigate, Route, Routes, useLocation, useNavigate} from "react-router-dom";
+import {ConsoleDisabledPage} from "@/components/common/ConsoleDisabledPage";
 import {Loading} from "@/components/common/Loading";
 import {AppLayout} from "@/components/layout/AppLayout";
 import {useAccount} from "@/hooks/use-account";
@@ -178,6 +179,26 @@ function RequireAuth({children}: {children: React.ReactNode}) {
   return <>{children}</>;
 }
 
+/**
+ * "IdP-only" mode: an organization can keep its regular users out of the console
+ * entirely, leaving them the sign-in pages and nothing else. The MFA setup wizard
+ * stays reachable because a required-MFA organization parks users there right
+ * after sign-in.
+ */
+function RequireConsoleAccess({children}: {children: React.ReactNode}) {
+  const {account} = useAccount();
+  const location = useLocation();
+
+  if (
+    account?.organization?.disableConsole &&
+    !Setting.isLocalAdminUser(account) &&
+    !location.pathname.startsWith("/mfa/setup")
+  ) {
+    return <ConsoleDisabledPage />;
+  }
+  return <>{children}</>;
+}
+
 export default function App() {
   useRequiredMfaRedirect();
 
@@ -218,7 +239,9 @@ export default function App() {
         <Route
           element={
             <RequireAuth>
-              <AppLayout />
+              <RequireConsoleAccess>
+                <AppLayout />
+              </RequireConsoleAccess>
             </RequireAuth>
           }
         >
