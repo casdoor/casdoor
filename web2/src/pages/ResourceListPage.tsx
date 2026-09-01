@@ -88,6 +88,7 @@ export default function ResourceListPage() {
       dataIndex: "url",
       title: "",
       width: 120,
+      fixed: "right",
       render: (value: string) =>
         value ? (
           <Button variant="outline" size="sm" onClick={() => Setting.copyToClipboard(value)}>
@@ -100,6 +101,7 @@ export default function ResourceListPage() {
       dataIndex: "url",
       title: i18next.t("general:Preview"),
       width: 130,
+      fixed: "right",
       render: (value, record) =>
         value && record.fileType === "image" ? (
           <a href={value} target="_blank" rel="noreferrer">

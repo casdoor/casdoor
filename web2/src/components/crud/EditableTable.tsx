@@ -68,8 +68,9 @@ export function EditableTable<T>({
       {(title || newRow) && (
         <div className="flex items-center justify-between gap-2">
           {title ? <div className="text-sm font-medium">{title}</div> : <span />}
+          {/* antd fills the sub-table's Add with the brand colour */}
           {newRow && !disabled ? (
-            <Button variant="outline" size="sm" onClick={() => onChange([...items, newRow()])}>
+            <Button size="sm" onClick={() => onChange([...items, newRow()])}>
               <Plus />
               {addLabel ?? i18next.t("general:Add")}
             </Button>

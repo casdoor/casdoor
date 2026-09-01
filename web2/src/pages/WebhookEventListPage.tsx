@@ -65,7 +65,7 @@ export default function WebhookEventListPage() {
   };
 
   const columns: ColumnDef<any>[] = [
-    textColumn({dataIndex: "name", title: i18next.t("general:Name"), width: 180, searchable: true, mono: true}),
+    textColumn({dataIndex: "name", title: i18next.t("general:Name"), width: 180, searchable: true, mono: true, fixed: "left"}),
     {
       dataIndex: "webhook",
       title: i18next.t("general:Webhook"),
@@ -128,7 +128,6 @@ export default function WebhookEventListPage() {
             {/* a delivery that already succeeded has nothing to replay */}
             {record.state !== "Success" ? (
               <Button
-                variant="outline"
                 size="sm"
                 loading={replayingId === `${record.owner}/${record.name}`}
                 onClick={() => replay(record, refresh)}

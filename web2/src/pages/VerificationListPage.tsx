@@ -10,8 +10,8 @@ export default function VerificationListPage() {
   const organizationName = useRequestOrganization();
 
   const columns: ColumnDef<any>[] = [
-    organizationColumn(),
-    textColumn({dataIndex: "name", title: i18next.t("general:Name"), width: 180, searchable: true}),
+    organizationColumn(140, "owner", undefined, "left"),
+    textColumn({dataIndex: "name", title: i18next.t("general:Name"), width: 180, searchable: true, fixed: "left"}),
     dateColumn(),
     textColumn({dataIndex: "type", title: i18next.t("general:Type"), width: 110, searchable: true}),
     {

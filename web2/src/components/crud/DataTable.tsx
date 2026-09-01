@@ -210,6 +210,74 @@ function ColumnFilter({
   );
 }
 
+/**
+ * antd's `fixed` columns, as sticky cells. Only a leading run of `fixed: "left"`
+ * columns and a trailing run of `fixed: "right"` ones can be pinned — a pinned
+ * column in the middle would sit on top of its neighbours — and every one of
+ * them needs a numeric width so the offsets can be summed. Anything that does
+ * not qualify is simply left unpinned.
+ */
+interface StickyOffset {
+  side: "left" | "right";
+  offset: number;
+  /** the innermost pinned column, which carries the divider shadow */
+  edge: boolean;
+}
+
+function getStickyOffsets(columns: ColumnDef[]): Map<number, StickyOffset> {
+  const result = new Map<number, StickyOffset>();
+  const widthOf = (column: ColumnDef) => (typeof column.width === "number" ? column.width : null);
+
+  let offset = 0;
+  let lastLeft = -1;
+  for (let i = 0; i < columns.length; i++) {
+    const width = widthOf(columns[i]);
+    if (columns[i].fixed !== "left" || width === null) {
+      break;
+    }
+    result.set(i, {side: "left", offset, edge: false});
+    offset += width;
+    lastLeft = i;
+  }
+  if (lastLeft >= 0) {
+    result.get(lastLeft)!.edge = true;
+  }
+
+  offset = 0;
+  let lastRight = -1;
+  for (let i = columns.length - 1; i > lastLeft; i--) {
+    const width = widthOf(columns[i]);
+    if (columns[i].fixed !== "right" || width === null) {
+      break;
+    }
+    result.set(i, {side: "right", offset, edge: false});
+    offset += width;
+    lastRight = i;
+  }
+  if (lastRight >= 0) {
+    result.get(lastRight)!.edge = true;
+  }
+
+  return result;
+}
+
+/** the class and inline offset a pinned cell needs; `null` when it is not pinned */
+function stickyCell(sticky: StickyOffset | undefined, background: string) {
+  if (!sticky) {
+    return {className: undefined as string | undefined, style: undefined as React.CSSProperties | undefined};
+  }
+  return {
+    className: cn(
+      "sticky z-20",
+      background,
+      sticky.edge && (sticky.side === "left"
+        ? "after:absolute after:inset-y-0 after:-right-px after:w-px after:bg-border"
+        : "before:absolute before:inset-y-0 before:-left-px before:w-px before:bg-border"),
+    ),
+    style: sticky.side === "left" ? {left: sticky.offset} : {right: sticky.offset},
+  };
+}
+
 export function DataTable<T = any>({
   columns,
   rows,
@@ -222,6 +290,7 @@ export function DataTable<T = any>({
   className,
 }: DataTableProps<T>) {
   const visibleColumns = columns.filter((c) => !c.hidden);
+  const stickyOffsets = React.useMemo(() => getStickyOffsets(visibleColumns), [visibleColumns]);
   const pageCount = Math.max(1, Math.ceil(total / query.pageSize));
   const from = total === 0 ? 0 : (query.page - 1) * query.pageSize + 1;
   const to = Math.min(query.page * query.pageSize, total);
@@ -243,16 +312,21 @@ export function DataTable<T = any>({
         <Table>
           <TableHeader>
             <TableRow className="hover:bg-transparent">
-              {visibleColumns.map((column) => {
+              {visibleColumns.map((column, columnIndex) => {
                 const sorted = query.sortField === column.dataIndex ? query.sortOrder : "";
+                const sticky = stickyCell(stickyOffsets.get(columnIndex), "bg-card");
                 return (
                   <TableHead
                     key={column.key ?? column.dataIndex}
                     data-column={column.dataIndex}
-                    style={column.width ? {width: column.width, minWidth: column.width} : undefined}
+                    style={{
+                      ...(column.width ? {width: column.width, minWidth: column.width} : null),
+                      ...sticky.style,
+                    }}
                     className={cn(
                       column.align === "center" && "text-center",
                       column.align === "right" && "text-right",
+                      sticky.className,
                       column.className,
                     )}
                   >
@@ -290,12 +364,19 @@ export function DataTable<T = any>({
           <TableBody>
             {loading && rows === null
               ? Array.from({length: 5}).map((_, i) => (
-                <TableRow key={`skeleton-${i}`}>
-                  {visibleColumns.map((column) => (
-                    <TableCell key={column.key ?? column.dataIndex}>
-                      <Skeleton className="h-4 w-full" />
-                    </TableCell>
-                  ))}
+                <TableRow key={`skeleton-${i}`} className="bg-card">
+                  {visibleColumns.map((column, columnIndex) => {
+                    const sticky = stickyCell(stickyOffsets.get(columnIndex), "bg-inherit");
+                    return (
+                      <TableCell
+                        key={column.key ?? column.dataIndex}
+                        style={sticky.style}
+                        className={sticky.className}
+                      >
+                        <Skeleton className="h-4 w-full" />
+                      </TableCell>
+                    );
+                  })}
                 </TableRow>
               ))
               : (rows ?? []).length === 0
@@ -307,8 +388,12 @@ export function DataTable<T = any>({
                   </TableRow>
                 )
                 : (rows ?? []).map((row: any, index) => (
-                  <TableRow key={rowKey ? rowKey(row, index) : `${row.owner ?? ""}/${row.name ?? index}`}>
-                    {visibleColumns.map((column) => {
+                  <TableRow
+                    key={rowKey ? rowKey(row, index) : `${row.owner ?? ""}/${row.name ?? index}`}
+                    // pinned cells inherit this, so it has to stay fully opaque
+                    className="bg-card hover:bg-muted"
+                  >
+                    {visibleColumns.map((column, columnIndex) => {
                       const value = row[column.dataIndex];
                       // only a typed search highlights; a filter pick would paint whole cells
                       let highlighted: React.ReactNode =
@@ -334,12 +419,17 @@ export function DataTable<T = any>({
                           </Link>
                         );
                       }
+                      // the row's own hover/stripe background must show through, so
+                      // the pinned cell inherits it rather than painting its own
+                      const sticky = stickyCell(stickyOffsets.get(columnIndex), "bg-inherit");
                       return (
                         <TableCell
                           key={column.key ?? column.dataIndex}
+                          style={sticky.style}
                           className={cn(
                             column.align === "center" && "text-center",
                             column.align === "right" && "text-right",
+                            sticky.className,
                             column.className,
                           )}
                         >

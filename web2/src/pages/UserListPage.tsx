@@ -45,11 +45,12 @@ export default function UserListPage() {
   const isGlobal = account ? Setting.isDefaultOrganizationSelected(account) && !params.organizationName : false;
 
   const columns: ColumnDef<any>[] = [
-    organizationColumn(),
+    organizationColumn(140, "owner", undefined, "left"),
     {
       dataIndex: "signupApplication",
       title: i18next.t("general:Application"),
       width: 140,
+      fixed: "left",
       sortable: true,
       searchable: true,
       render: (value, record) =>
@@ -174,7 +175,7 @@ export default function UserListPage() {
         <>
           {Setting.isLocalAdminUser(account) && record.name !== account?.name ? (
             <Button
-              variant="ghost"
+              variant="outline"
               size="sm"
               onClick={() => {
                 UserBackend.impersonateUser(record.owner, record.name).then((res: any) => {

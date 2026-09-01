@@ -100,13 +100,15 @@ export default function OrganizationListPage() {
         )
       }
       newRecord={() => newOrganization(dayjs().format())}
+      // Groups and Users are the primary actions here, not Edit
+      editIsPrimary={false}
       actionColumnWidth={330}
       rowActions={(record) => (
         <>
-          <Button variant="outline" size="sm" asChild>
+          <Button size="sm" asChild>
             <Link to={`/trees/${record.name}`}>{i18next.t("general:Groups")}</Link>
           </Button>
-          <Button variant="outline" size="sm" asChild>
+          <Button size="sm" asChild>
             <Link to={`/organizations/${record.name}/users`}>{i18next.t("general:Users")}</Link>
           </Button>
         </>

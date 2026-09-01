@@ -26,7 +26,7 @@ export default function WebhookListPage() {
     tagsColumn({dataIndex: "events", title: i18next.t("webhook:Events"), width: 220, sortable: true, searchable: true}),
     boolColumn({dataIndex: "isUserExtended", title: i18next.t("webhook:Is user extended")}),
     boolColumn({dataIndex: "singleOrgOnly", title: i18next.t("webhook:Single org only")}),
-    boolColumn({dataIndex: "isEnabled", title: i18next.t("general:Is enabled")}),
+    {...boolColumn({dataIndex: "isEnabled", title: i18next.t("general:Is enabled")}), fixed: "right" as const},
   ];
 
   return (

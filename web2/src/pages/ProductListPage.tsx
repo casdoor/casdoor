@@ -68,7 +68,7 @@ export default function ProductListPage() {
       editUrl={(r) => `/products/${r.owner}/${r.name}`}
       remove={(r) => ProductBackend.deleteProduct(r)}
       rowActions={(record) => (
-        <Button variant="ghost" size="sm" asChild>
+        <Button variant="outline" size="sm" asChild>
           <Link to={`/products/${record.owner}/${record.name}/buy`}>{i18next.t("product:Buy")}</Link>
         </Button>
       )}
