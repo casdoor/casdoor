@@ -28,7 +28,7 @@ import (
 
 type Group struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
-	Name        string `xorm:"varchar(100) notnull pk unique index" json:"name"`
+	Name        string `xorm:"varchar(100) notnull pk index" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 	UpdatedTime string `xorm:"varchar(100)" json:"updatedTime"`
 
@@ -166,7 +166,7 @@ func UpdateGroup(id string, group *Group, isGlobalAdmin bool, lang string) (bool
 	}
 
 	if name != group.Name {
-		err := GroupChangeTrigger(name, group.Name)
+		err := GroupChangeTrigger(owner, name, group.Name)
 		if err != nil {
 			return false, err
 		}
@@ -255,7 +255,7 @@ func DeleteGroup(group *Group) (bool, error) {
 		return false, err
 	}
 
-	if count, err := ormer.Engine.Where("parent_id = ?", group.Name).Count(&Group{}); err != nil {
+	if count, err := ormer.Engine.Where("owner = ?", group.Owner).And("parent_id = ?", group.Name).Count(&Group{}); err != nil {
 		return false, err
 	} else if count > 0 {
 		return false, errors.New("group has children group")
@@ -440,7 +440,7 @@ func ExtendGroupsWithUsers(groups []*Group) error {
 	return nil
 }
 
-func GroupChangeTrigger(oldName, newName string) error {
+func GroupChangeTrigger(owner string, oldName string, newName string) error {
 	session := ormer.Engine.NewSession()
 	defer session.Close()
 	err := session.Begin()
@@ -448,14 +448,17 @@ func GroupChangeTrigger(oldName, newName string) error {
 		return err
 	}
 
+	oldGroupId := util.GetId(owner, oldName)
+	newGroupId := util.GetId(owner, newName)
+
 	users := []*User{}
-	err = session.Where(builder.Like{"`groups`", oldName}).Find(&users)
+	err = session.Where("owner = ?", owner).And(builder.Like{"`groups`", oldGroupId}).Find(&users)
 	if err != nil {
 		return err
 	}
 
 	for _, user := range users {
-		user.Groups = util.ReplaceVal(user.Groups, oldName, newName)
+		user.Groups = util.ReplaceVal(user.Groups, oldGroupId, newGroupId)
 		_, err := updateUser(user.GetId(), user, []string{"groups"})
 		if err != nil {
 			return err
@@ -467,7 +470,7 @@ func GroupChangeTrigger(oldName, newName string) error {
 	}
 
 	groups := []*Group{}
-	err = session.Where("parent_id = ?", oldName).Find(&groups)
+	err = session.Where("owner = ?", owner).And("parent_id = ?", oldName).Find(&groups)
 	if err != nil {
 		return err
 	}
