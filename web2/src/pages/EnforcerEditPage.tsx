@@ -126,13 +126,13 @@ export default function EnforcerEditPage() {
       <FormRow labelKey="general:Name">
         <Input disabled={isBuiltIn} value={enforcer.name ?? ""} onChange={(e) => updateField("name", e.target.value)} />
       </FormRow>
-      <FormRow labelKey="general:Display name">
+      <FormRow block labelKey="general:Display name">
         <Input value={enforcer.displayName ?? ""} onChange={(e) => updateField("displayName", e.target.value)} />
       </FormRow>
-      <FormRow labelKey="general:Description">
+      <FormRow block labelKey="general:Description">
         <Input value={enforcer.description ?? ""} onChange={(e) => updateField("description", e.target.value)} />
       </FormRow>
-      <FormRow labelKey="general:Model">
+      <FormRow block labelKey="general:Model">
         <SearchableSelect
           disabled={isBuiltIn}
           value={enforcer.model ?? ""}
@@ -140,7 +140,7 @@ export default function EnforcerEditPage() {
           options={toIdOptions(models)}
         />
       </FormRow>
-      <FormRow labelKey="general:Adapter">
+      <FormRow block labelKey="general:Adapter">
         <SearchableSelect
           disabled={isBuiltIn}
           value={enforcer.adapter ?? ""}

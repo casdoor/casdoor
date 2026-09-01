@@ -114,7 +114,7 @@ export default function FormEditPage() {
           options={Setting.getFormTypeOptions().map((option: any) => ({id: option.id, name: i18next.t(option.name)}))}
         />
       </FormRow>
-      <FormRow label={i18next.t("general:Tag")} tooltip={i18next.t("product:Tag - Tooltip")}>
+      <FormRow block label={i18next.t("general:Tag")} tooltip={i18next.t("product:Tag - Tooltip")}>
         <Input
           value={form.tag ?? ""}
           onChange={(e) => {
@@ -123,7 +123,7 @@ export default function FormEditPage() {
           }}
         />
       </FormRow>
-      <FormRow labelKey="general:Tag">
+      <FormRow block labelKey="general:Tag">
         <Input
           value={form.tag ?? ""}
           onChange={(e) => {

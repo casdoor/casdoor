@@ -60,7 +60,7 @@ function getSeverityVariant(severity: string) {
 }
 
 /** Port of `web/src/SELinuxEntryViewer.js`. */
-export function SELinuxEntryViewer({entry, block}: {entry: any; block?: boolean}) {
+export function SELinuxEntryViewer({entry}: {entry: any}) {
   const details = parseSELinuxMessage(entry?.message);
 
   const value = (text: string, render?: (value: string) => React.ReactNode) => {
@@ -92,7 +92,7 @@ export function SELinuxEntryViewer({entry, block}: {entry: any; block?: boolean}
   ];
 
   return (
-    <FormRow label={`${i18next.t("entry:SELinux event")}:`} block={block}>
+    <FormRow label={`${i18next.t("entry:SELinux event")}:`} block>
       <DescriptionList items={items} columns={2} />
     </FormRow>
   );

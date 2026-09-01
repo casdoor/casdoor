@@ -33,7 +33,13 @@ describe("List page column filters", () => {
     cy.intercept({method: "GET", pathname: "/api/get-records"}).as("getRecords");
     cy.visitListPage("/records");
 
-    cy.get('th[data-column="method"] button[aria-label=Filter]').click();
+    // The Action column is pinned to the right edge, and a bare scrollIntoView
+    // parks the target header directly underneath it. The extra offset scrolls a
+    // little further so the button is clear of the pin, which is what a person
+    // scrolling the table by hand ends up with anyway.
+    cy.get('th[data-column="method"] button[aria-label=Filter]')
+      .scrollIntoView({offset: {left: 240, top: 0}})
+      .click();
     cy.get('[data-column-filter=method]').contains("[role=menuitemradio]", "POST").click();
 
     expectRequest("@getRecords", (url) => param(url, "field") === "method" && param(url, "value") === "POST");

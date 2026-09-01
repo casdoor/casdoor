@@ -90,7 +90,6 @@ interface EntryMessageViewerProps {
   /** already-resolved Log provider; when omitted it is fetched from the entry */
   provider?: any;
   /** stack labels above their content (used inside the list-page popover) */
-  block?: boolean;
 }
 
 /**
@@ -98,7 +97,7 @@ interface EntryMessageViewerProps {
  * viewer specialised on what produced it — SELinux audit fields, OTLP trace
  * spans, or the OpenClaw session graph.
  */
-export function EntryMessageViewer({entry, provider: providerProp, block}: EntryMessageViewerProps) {
+export function EntryMessageViewer({entry, provider: providerProp}: EntryMessageViewerProps) {
   const [fetchedProvider, setFetchedProvider] = React.useState<any>(null);
   const [selectedTraceSpan, setSelectedTraceSpan] = React.useState<TraceSpanRow | null>(null);
 
@@ -199,7 +198,7 @@ export function EntryMessageViewer({entry, provider: providerProp, block}: Entry
 
     return (
       <>
-        <FormRow label={`${i18next.t("entry:Trace spans")}:`} block={block}>
+        <FormRow label={`${i18next.t("entry:Trace spans")}:`} block>
           {error ? (
             <Alert variant="warning">{`${i18next.t("entry:Failed to parse trace message")}: ${error}`}</Alert>
           ) : (
@@ -267,13 +266,13 @@ export function EntryMessageViewer({entry, provider: providerProp, block}: Entry
 
   const renderSpecializedViewer = () => {
     if (isSELinux) {
-      return <SELinuxEntryViewer entry={entry} block={block} />;
+      return <SELinuxEntryViewer entry={entry} />;
     }
     if (isTrace) {
       return renderTraceSpans();
     }
     if (isOpenClawSessionEntry(entry, provider)) {
-      return <OpenClawSessionGraphViewer entry={entry} provider={provider} block={block} />;
+      return <OpenClawSessionGraphViewer entry={entry} provider={provider} />;
     }
     return null;
   };
@@ -284,7 +283,7 @@ export function EntryMessageViewer({entry, provider: providerProp, block}: Entry
   return (
     <>
       {renderSpecializedViewer()}
-      <FormRow label={`${i18next.t("payment:Message")}:`} block={block}>
+      <FormRow label={`${i18next.t("payment:Message")}:`} block>
         <CodeEditor
           value={message}
           language={getMessageEditorLang(entry?.message)}

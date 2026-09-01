@@ -22,11 +22,12 @@ import {useAccount} from "@/hooks/use-account";
 import * as DashboardBackend from "@/backend/DashboardBackend";
 import * as Setting from "@/lib/setting";
 
-// Same multi-hue palette the antd dashboard used.
-const CHART_COLORS = [
-  "#1677ff", "#0ea5e9", "#06b6d4", "#14b8a6", "#6366f1", "#8b5cf6", "#0958d9",
-  "#0284c7", "#0891b2", "#0f766e", "#5734d3", "#7c3aed", "#38bdf8", "#5eead4",
-];
+/**
+ * The eight `--chart-*` hues of the theme, which are redefined for dark mode, so
+ * a series keeps its identity while the palette brightens. More series than hues
+ * simply wrap around.
+ */
+const CHART_COLORS = Array.from({length: 8}, (_, i) => `hsl(var(--chart-${i + 1}))`);
 
 function buildDateArray(): string[] {
   const arr: string[] = [];
@@ -50,19 +51,20 @@ interface Series {
   hidden?: boolean;
 }
 
-function StatCard({title, value, color, to}: {title: string; value: number; color: string; to: string}) {
+/**
+ * Eight of these sit in a row, so each one paints a single accent hairline rather
+ * than colouring its number — eight coloured numerals read as eight warnings.
+ */
+function StatCard({title, value, accent, to}: {title: string; value: number; accent: string; to: string}) {
   return (
-    <Link to={to}>
-      <Card className="h-full transition-colors hover:border-foreground/20">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-            {title}
-          </CardTitle>
+    <Link to={to} className="group rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+      <Card className="relative h-full overflow-hidden transition-colors group-hover:border-foreground/25">
+        <span aria-hidden className="absolute inset-x-0 top-0 h-0.5" style={{background: accent}} />
+        <CardHeader className="pb-1.5 pt-4">
+          <CardTitle className="truncate text-xs font-medium text-muted-foreground">{title}</CardTitle>
         </CardHeader>
-        <CardContent>
-          <span className="text-2xl font-semibold tabular-nums" style={{color}}>
-            {value}
-          </span>
+        <CardContent className="pb-4">
+          <span className="text-2xl font-semibold tabular-nums">{value}</span>
         </CardContent>
       </Card>
     </Link>
@@ -170,30 +172,32 @@ export default function Dashboard() {
       <PageHeader title={i18next.t("general:Dashboard")} />
 
       {/* Key metrics */}
-      <div id="statistic" className="grid grid-cols-2 gap-3 md:grid-cols-4 xl:grid-cols-8">
-        <StatCard title={i18next.t("home:Total users")} value={userCounts[30] ?? 0} color="#1677ff" to="/users" />
+      {/* Eight across only once there is room for the labels; below that they
+          truncate to "New users / 30..." and stop meaning anything */}
+      <div id="statistic" className="grid grid-cols-2 gap-3 md:grid-cols-4 2xl:grid-cols-8">
+        <StatCard title={i18next.t("home:Total users")} value={userCounts[30] ?? 0} accent={CHART_COLORS[0]} to="/users" />
         <StatCard
           title={i18next.t("home:New users today")}
           value={Math.max(0, (userCounts[30] ?? 0) - (userCounts[29] ?? 0))}
-          color="#0958d9"
+          accent={CHART_COLORS[1]}
           to="/users"
         />
         <StatCard
           title={i18next.t("home:New users / 7 days")}
           value={Math.max(0, (userCounts[30] ?? 0) - (userCounts[23] ?? 0))}
-          color="#0958d9"
+          accent={CHART_COLORS[1]}
           to="/users"
         />
         <StatCard
           title={i18next.t("home:New users / 30 days")}
           value={Math.max(0, (userCounts[30] ?? 0) - (userCounts[0] ?? 0))}
-          color="#0958d9"
+          accent={CHART_COLORS[1]}
           to="/users"
         />
-        <StatCard title={i18next.t("general:Organizations")} value={at("organizationCounts", 30)} color="#6366f1" to="/organizations" />
-        <StatCard title={i18next.t("general:Tokens")} value={at("tokenCounts", 30)} color="#14b8a6" to="/tokens" />
-        <StatCard title={i18next.t("general:Applications")} value={at("applicationCounts", 30)} color="#5734d3" to="/applications" />
-        <StatCard title={i18next.t("application:Providers")} value={at("providerCounts", 30)} color="#0891b2" to="/providers" />
+        <StatCard title={i18next.t("general:Organizations")} value={at("organizationCounts", 30)} accent={CHART_COLORS[3]} to="/organizations" />
+        <StatCard title={i18next.t("general:Tokens")} value={at("tokenCounts", 30)} accent={CHART_COLORS[2]} to="/tokens" />
+        <StatCard title={i18next.t("general:Applications")} value={at("applicationCounts", 30)} accent={CHART_COLORS[4]} to="/applications" />
+        <StatCard title={i18next.t("application:Providers")} value={at("providerCounts", 30)} accent={CHART_COLORS[1]} to="/providers" />
       </div>
 
       {/* 30-day trend + provider distribution */}

@@ -148,27 +148,27 @@ export default function LdapEditPage() {
       <FormRow labelKey="ldap:Filter fields">
         <TagsInput value={ldap.filterFields ?? []} onChange={(v) => update("filterFields", v)} />
       </FormRow>
-      <FormRow labelKey="general:Admin">
+      <FormRow block labelKey="general:Admin">
         <Input value={ldap.username ?? ""} onChange={(e) => update("username", e.target.value)} />
       </FormRow>
-      <FormRow labelKey="ldap:Admin Password">
+      <FormRow block labelKey="ldap:Admin Password">
         <Input type="password" value={ldap.password ?? ""} onChange={(e) => update("password", e.target.value)} />
       </FormRow>
-      <FormRow labelKey="general:Password type">
+      <FormRow block labelKey="general:Password type">
         <SelectField
           value={ldap.passwordType ?? "Plain"}
           onChange={(v) => update("passwordType", v)}
           options={enumSelectOptions(LDAP_PASSWORD_TYPES)}
         />
       </FormRow>
-      <FormRow labelKey="ldap:Auto Sync">
+      <FormRow block labelKey="ldap:Auto Sync">
         <Input
           type="number"
           value={ldap.autoSync ?? 0}
           onChange={(e) => update("autoSync", Setting.myParseInt(e.target.value))}
         />
       </FormRow>
-      <FormRow labelKey="ldap:Enable groups">
+      <FormRow block labelKey="ldap:Enable groups">
         <Switch checked={!!ldap.enableGroups} onCheckedChange={(v) => update("enableGroups", v)} />
       </FormRow>
       <FormRow labelKey="ldap:Custom attributes" block>

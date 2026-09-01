@@ -14,15 +14,27 @@ interface FormRowProps {
   tooltip?: React.ReactNode;
   children: React.ReactNode;
   className?: string;
-  /** stack the control under the label (for tables and editors) */
+  /**
+   * This row's content wants the full width of the card — a table, a code editor,
+   * a transfer list. Everything else is capped at a readable measure.
+   */
   block?: boolean;
   htmlFor?: string;
 }
 
 /**
- * The label/control row used by every Casdoor edit page. The antd version was a
- * `<Row><Col span={2}>label</Col><Col span={22}>control</Col></Row>`; here it is a
- * responsive grid that collapses to a single column on small screens.
+ * The label/control row used by every Casdoor edit page.
+ *
+ * The antd version was a `<Row><Col span={2}>label</Col><Col span={22}>control
+ * </Col></Row>`, and the first port kept that shape: a right-aligned label in a
+ * fixed 190px column and a control filling the rest. In a 1600px page that
+ * stretched every text field to well over a thousand pixels, which is both ugly
+ * and unreadable — the eye has to travel the whole width to get from the label to
+ * the end of the value.
+ *
+ * So the label now sits above its control and the control is capped at a
+ * comfortable measure. `block` rows (tables, code editors, transfer lists) opt out
+ * of the cap because they genuinely want the width.
  */
 export function FormRow({label, labelKey, tooltip, children, className, block, htmlFor}: FormRowProps) {
   let resolvedLabel = label;
@@ -38,30 +50,21 @@ export function FormRow({label, labelKey, tooltip, children, className, block, h
   }
 
   return (
-    <div
-      className={cn(
-        "grid items-start gap-x-4 gap-y-1.5 py-3",
-        block ? "grid-cols-1" : "grid-cols-1 md:grid-cols-[minmax(150px,190px)_1fr]",
-        className,
-      )}
-    >
-      <label
-        htmlFor={htmlFor}
-        className="flex items-center gap-1 pt-2 text-sm font-medium text-muted-foreground md:justify-end md:text-right"
-      >
+    <div className={cn("space-y-1.5 py-2.5", className)}>
+      <label htmlFor={htmlFor} className="flex items-center gap-1.5 text-sm font-medium leading-none">
         <span>{resolvedLabel}</span>
         {resolvedTooltip ? (
           <Tooltip>
             <TooltipTrigger asChild>
-              <span className="cursor-help text-muted-foreground/70">
+              <button type="button" tabIndex={-1} className="text-muted-foreground/60 hover:text-foreground">
                 <HelpCircle className="h-3.5 w-3.5" />
-              </span>
+              </button>
             </TooltipTrigger>
-            <TooltipContent>{resolvedTooltip}</TooltipContent>
+            <TooltipContent className="max-w-sm">{resolvedTooltip}</TooltipContent>
           </Tooltip>
         ) : null}
       </label>
-      <div className="min-w-0">{children}</div>
+      <div className={cn("min-w-0", !block && "max-w-xl")}>{children}</div>
     </div>
   );
 }
@@ -78,14 +81,16 @@ export function FormSection({
   className?: string;
 }) {
   return (
-    <section className={cn("space-y-1", className)}>
+    <section className={cn("space-y-2", className)}>
       {title ? (
-        <header className="border-b pb-2">
-          <h3 className="text-sm font-semibold">{title}</h3>
-          {description ? <p className="text-xs text-muted-foreground">{description}</p> : null}
+        <header className="space-y-0.5">
+          <h3 className="text-sm font-semibold tracking-tight">{title}</h3>
+          {description ? <p className="text-sm text-muted-foreground">{description}</p> : null}
         </header>
       ) : null}
-      <div className="divide-y divide-border/60">{children}</div>
+      {/* the rows carry their own rhythm now; a rule between each one turned the
+          form into a spreadsheet */}
+      <div>{children}</div>
     </section>
   );
 }

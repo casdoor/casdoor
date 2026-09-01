@@ -335,11 +335,10 @@ interface ViewerProps {
   entry: any;
   provider?: any;
   /** stack the label above the graph (used inside the list-page popover) */
-  block?: boolean;
 }
 
 /** Port of `web/src/OpenClawSessionGraphViewer.js`. */
-export function OpenClawSessionGraphViewer({entry, provider, block}: ViewerProps) {
+export function OpenClawSessionGraphViewer({entry, provider}: ViewerProps) {
   const navigate = useNavigate();
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState("");
@@ -565,7 +564,7 @@ export function OpenClawSessionGraphViewer({entry, provider, block}: ViewerProps
   }
 
   return (
-    <FormRow label={`${i18next.t("entry:Session graph")}:`} block={block}>
+    <FormRow label={`${i18next.t("entry:Session graph")}:`} block>
       <div data-testid="openclaw-session-graph">{renderContent()}</div>
     </FormRow>
   );

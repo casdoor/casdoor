@@ -67,12 +67,14 @@ export function ActivityHeatmap({
   const max = Math.max(maxCount ?? 0, 1);
   // five buckets, matching the five-stop colour ramp the antd dashboard uses
   const level = (count: number) => (count === 0 ? 0 : Math.min(4, Math.ceil((count / max) * 4)));
+  // the ramp rides --chart-1, not --primary: the chrome is deliberately neutral,
+  // so a greyscale heatmap would read as disabled rather than as data
   const LEVEL_CLASS = [
     "bg-muted",
-    "bg-primary/20",
-    "bg-primary/40",
-    "bg-primary/65",
-    "bg-primary",
+    "bg-chart-1/25",
+    "bg-chart-1/45",
+    "bg-chart-1/70",
+    "bg-chart-1",
   ];
 
   return (

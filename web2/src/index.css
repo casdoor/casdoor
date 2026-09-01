@@ -1,3 +1,7 @@
+/* Self-hosted so the console keeps its typography offline and behind a firewall,
+   which a Google Fonts <link> would not. The variable file covers 100..900. */
+@import "@fontsource-variable/inter/index.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -5,88 +9,117 @@
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 0 0% 15%;
+    --foreground: 0 0% 9%;
 
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 15%;
+    --card-foreground: 0 0% 9%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 15%;
+    --popover-foreground: 0 0% 9%;
 
-    --primary: 0 0% 15%;
+    --primary: 0 0% 9%;
     --primary-foreground: 0 0% 98%;
 
     --secondary: 0 0% 96%;
-    --secondary-foreground: 0 0% 15%;
+    --secondary-foreground: 0 0% 9%;
 
     --muted: 0 0% 96%;
-    --muted-foreground: 0 0% 45%;
+    --muted-foreground: 0 0% 44%;
 
     --accent: 0 0% 96%;
-    --accent-foreground: 0 0% 15%;
+    --accent-foreground: 0 0% 9%;
 
-    --destructive: 0 84% 60%;
+    --destructive: 0 72% 46%;
     --destructive-foreground: 0 0% 98%;
 
-    --success: 142 71% 45%;
+    --success: 142 71% 40%;
     --success-foreground: 0 0% 100%;
 
-    --warning: 25 95% 53%;
+    --warning: 32 95% 44%;
     --warning-foreground: 0 0% 100%;
 
     --border: 0 0% 90%;
-    --input: 0 0% 90%;
-    --ring: 0 0% 15%;
+    /* a shade darker than --border so a field reads as a field next to a divider */
+    --input: 0 0% 87%;
+    --ring: 0 0% 9%;
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 0 0% 26%;
-    --sidebar-accent: 0 0% 94%;
-    --sidebar-accent-foreground: 0 0% 10%;
+    --sidebar-primary: 0 0% 9%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 0 0% 93%;
+    --sidebar-accent-foreground: 0 0% 9%;
     --sidebar-border: 0 0% 91%;
+    --sidebar-ring: 0 0% 9%;
 
-    --radius: 0.625rem;
+    /* The chrome is deliberately neutral, so charts are where colour lives. Eight
+       hues far enough apart to stay legible next to each other in a legend. */
+    --chart-1: 215 90% 52%;
+    --chart-2: 199 89% 44%;
+    --chart-3: 173 58% 37%;
+    --chart-4: 258 70% 58%;
+    --chart-5: 322 65% 53%;
+    --chart-6: 25 85% 51%;
+    --chart-7: 142 60% 36%;
+    --chart-8: 240 5% 45%;
+
+    --radius: 0.5rem;
   }
 
   .dark {
-    --background: 0 0% 9%;
-    --foreground: 0 0% 98%;
+    /* the page sits *below* the cards rather than level with them, so panels read
+       as panels without needing a border to prove it */
+    --background: 0 0% 7%;
+    --foreground: 0 0% 96%;
 
-    --card: 0 0% 11%;
-    --card-foreground: 0 0% 98%;
+    --card: 0 0% 10.5%;
+    --card-foreground: 0 0% 96%;
 
-    --popover: 0 0% 11%;
-    --popover-foreground: 0 0% 98%;
+    --popover: 0 0% 12%;
+    --popover-foreground: 0 0% 96%;
 
     --primary: 0 0% 98%;
     --primary-foreground: 0 0% 9%;
 
-    --secondary: 0 0% 15%;
-    --secondary-foreground: 0 0% 98%;
+    --secondary: 0 0% 16%;
+    --secondary-foreground: 0 0% 96%;
 
     --muted: 0 0% 15%;
     --muted-foreground: 0 0% 64%;
 
-    --accent: 0 0% 18%;
+    --accent: 0 0% 19%;
     --accent-foreground: 0 0% 98%;
 
-    --destructive: 0 63% 45%;
+    --destructive: 0 62% 50%;
     --destructive-foreground: 0 0% 98%;
 
-    --success: 142 64% 38%;
+    --success: 142 60% 42%;
     --success-foreground: 0 0% 100%;
 
-    --warning: 25 85% 45%;
+    --warning: 32 88% 50%;
     --warning-foreground: 0 0% 100%;
 
-    --border: 0 0% 20%;
-    --input: 0 0% 20%;
-    --ring: 0 0% 83%;
+    --border: 0 0% 19%;
+    --input: 0 0% 24%;
+    --ring: 0 0% 70%;
 
-    --sidebar-background: 0 0% 11%;
-    --sidebar-foreground: 0 0% 85%;
-    --sidebar-accent: 0 0% 18%;
+    --sidebar-background: 0 0% 9%;
+    --sidebar-foreground: 0 0% 78%;
+    --sidebar-primary: 0 0% 98%;
+    --sidebar-primary-foreground: 0 0% 9%;
+    --sidebar-accent: 0 0% 17%;
     --sidebar-accent-foreground: 0 0% 98%;
-    --sidebar-border: 0 0% 20%;
+    --sidebar-border: 0 0% 17%;
+    --sidebar-ring: 0 0% 70%;
+
+    --chart-1: 213 85% 62%;
+    --chart-2: 199 85% 55%;
+    --chart-3: 172 55% 48%;
+    --chart-4: 258 75% 68%;
+    --chart-5: 322 70% 63%;
+    --chart-6: 25 88% 60%;
+    --chart-7: 142 55% 48%;
+    --chart-8: 240 5% 65%;
   }
 }
 
@@ -101,7 +134,16 @@
   }
   body {
     @apply bg-background text-foreground antialiased;
-    font-feature-settings: "rlig" 1, "calt" 1;
+    /* "cv11" is Inter's single-storey a/g, "ss01" its disambiguated I/l — both
+       matter in a console full of IDs and secrets */
+    font-feature-settings: "rlig" 1, "calt" 1, "cv11" 1, "ss01" 1;
+  }
+  /* IDs, secrets, counts and timestamps line up column-to-column */
+  code,
+  kbd,
+  samp,
+  pre {
+    @apply font-mono;
   }
 }
 

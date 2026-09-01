@@ -37,16 +37,17 @@ export function EditPageShell({
   const navigate = useNavigate();
 
   // a read-only page offers no way to save; the antd pages hide the same buttons
-  const footer = (
+  const actions = (
     <div className="flex flex-wrap items-center gap-2">
       {extraActions}
       {mode !== "view" ? (
         <>
-          <Button variant="outline" loading={saving} onClick={() => onSave(false)}>
-            {i18next.t("general:Save")}
-          </Button>
-          <Button loading={saving} onClick={() => onSave(true)}>
+          {/* Save is the one people press over and over, so it is the filled one */}
+          <Button variant="outline" loading={saving} onClick={() => onSave(true)}>
             {i18next.t("general:Save & Exit")}
+          </Button>
+          <Button loading={saving} onClick={() => onSave(false)}>
+            {i18next.t("general:Save")}
           </Button>
         </>
       ) : null}
@@ -60,22 +61,28 @@ export function EditPageShell({
 
   return (
     <div className={cn("space-y-4", className)}>
-      <PageHeader
-        title={
-          <span className="flex items-center gap-2">
-            <Button variant="ghost" size="iconSm" onClick={() => navigate(backTo)} aria-label={i18next.t("general:Back")}>
-              <ArrowLeft />
-            </Button>
-            {title}
-          </span>
-        }
-        description={description}
-        actions={footer}
-      />
+      {/* One action bar, not two. It used to render the identical Save / Save & Exit
+          pair above and below the card; sticking the single bar to the top of the
+          scroll area keeps it reachable on a long form without the duplicate.
+          The negative insets cancel AppLayout's page padding so the bar spans the
+          full width and nothing shows through above it. */}
+      <div className="sticky top-0 z-20 -mx-4 -mt-4 border-b bg-background px-4 py-3 md:-mx-6 md:-mt-6 md:px-6">
+        <PageHeader
+          title={
+            <span className="flex items-center gap-2">
+              <Button variant="ghost" size="iconSm" onClick={() => navigate(backTo)} aria-label={i18next.t("general:Back")}>
+                <ArrowLeft />
+              </Button>
+              {title}
+            </span>
+          }
+          description={description}
+          actions={actions}
+        />
+      </div>
       <Card>
         <CardContent className="pt-6">{children}</CardContent>
       </Card>
-      <div className="flex justify-end pb-8">{footer}</div>
     </div>
   );
 }
