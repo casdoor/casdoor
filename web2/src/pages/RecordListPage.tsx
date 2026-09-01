@@ -160,6 +160,7 @@ export default function RecordListPage() {
       dataIndex: "isTriggered",
       title: i18next.t("record:Is triggered"),
       width: 110,
+      fixed: "right",
       sortable: true,
       align: "center",
       // only the account lifecycle actions carry the flag; the rest leave the cell empty

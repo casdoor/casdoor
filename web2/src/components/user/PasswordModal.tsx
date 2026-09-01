@@ -129,7 +129,7 @@ export function PasswordModal({user, userName, organization, account, disabled, 
 
   return (
     <>
-      <Button variant="outline" disabled={disabled} onClick={() => setOpen(true)}>
+      <Button disabled={disabled} onClick={() => setOpen(true)}>
         {buttonText}
       </Button>
       <Dialog open={open} onOpenChange={(next) => (next ? setOpen(true) : close())}>

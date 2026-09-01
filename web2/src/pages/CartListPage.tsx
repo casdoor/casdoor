@@ -259,14 +259,18 @@ export default function CartListPage() {
             <Table>
               <TableHeader>
                 <TableRow className="hover:bg-transparent">
-                  <TableHead className="w-[140px]">{i18next.t("general:Name")}</TableHead>
+                  <TableHead className="sticky left-0 z-20 w-[140px] bg-card after:absolute after:inset-y-0 after:-right-px after:w-px after:bg-border">
+                    {i18next.t("general:Name")}
+                  </TableHead>
                   <TableHead className="w-[170px]">{i18next.t("general:Display name")}</TableHead>
                   <TableHead className="w-[170px]">{i18next.t("product:Image")}</TableHead>
                   <TableHead className="w-[160px]">{i18next.t("order:Price")}</TableHead>
                   <TableHead className="w-[140px]">{i18next.t("pricing:Pricing name")}</TableHead>
                   <TableHead className="w-[140px]">{i18next.t("plan:Plan name")}</TableHead>
                   <TableHead className="w-[130px]">{i18next.t("product:Quantity")}</TableHead>
-                  <TableHead className="w-[180px]">{i18next.t("general:Action")}</TableHead>
+                  <TableHead className="sticky right-0 z-20 w-[180px] bg-card before:absolute before:inset-y-0 before:-left-px before:w-px before:bg-border">
+                    {i18next.t("general:Action")}
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -280,8 +284,8 @@ export default function CartListPage() {
                   rows.map((record, index) => {
                     const key = rowKey(record);
                     return (
-                      <TableRow key={`${key}-${index}`}>
-                        <TableCell>
+                      <TableRow key={`${key}-${index}`} className="bg-card hover:bg-muted">
+                        <TableCell className="sticky left-0 z-20 bg-inherit after:absolute after:inset-y-0 after:-right-px after:w-px after:bg-border">
                           {record.isInvalid ? (
                             <span className="text-destructive">{record.name}</span>
                           ) : (
@@ -331,7 +335,7 @@ export default function CartListPage() {
                             onDecrease={() => updateQuantity(record, record.quantity - 1)}
                           />
                         </TableCell>
-                        <TableCell>
+                        <TableCell className="sticky right-0 z-20 bg-inherit before:absolute before:inset-y-0 before:-left-px before:w-px before:bg-border">
                           <div className="flex flex-wrap gap-2">
                             <Button
                               size="sm"

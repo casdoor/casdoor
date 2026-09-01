@@ -54,6 +54,11 @@ export interface CrudListPageProps<T extends Record<string, any>> {
    */
   readOnly?: boolean;
   /**
+   * antd fills the row's Edit with the brand colour, except on the two lists
+   * whose primary action is something else (Organizations, Syncers).
+   */
+  editIsPrimary?: boolean;
+  /**
    * Blocks Delete for one row. A string is shown as a tooltip explaining why
    * (the group list uses it for a group that still has subgroups); `true` just
    * disables the button, the way antd does for the built-in objects.
@@ -82,6 +87,7 @@ export function CrudListPage<T extends Record<string, any>>({
   actionColumnWidth = 180,
   readOnly = false,
   deleteDisabled,
+  editIsPrimary = true,
 }: CrudListPageProps<T>) {
   const navigate = useNavigate();
   const {rows, total, loading, denied, query, setQuery, refresh} = useTableData<T>(fetch, deps, initialQuery);
@@ -169,12 +175,14 @@ export function CrudListPage<T extends Record<string, any>>({
         dataIndex: "op",
         title: i18next.t("general:Action"),
         width: actionColumnWidth,
+        // antd pins it so the row's actions stay reachable on a wide table
+        fixed: "right",
         render: (_: any, record: T, index: number) => (
           <div className="flex flex-wrap items-center gap-1">
             {rowActions?.(record, index, {refresh})}
             {editUrl ? (
               <Button
-                variant="outline"
+                variant={editIsPrimary ? "default" : "outline"}
                 size="sm"
                 onClick={() =>
                   navigate(editUrl(record), readOnly ? {state: {mode: "view"}} : undefined)
@@ -189,7 +197,7 @@ export function CrudListPage<T extends Record<string, any>>({
       },
     ];
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [columns, formItems, editUrl, remove, rowActions, showActionColumn, readOnly, deleteDisabled, rows, query.page, refresh]);
+  }, [columns, formItems, editUrl, remove, rowActions, showActionColumn, readOnly, deleteDisabled, editIsPrimary, rows, query.page, refresh]);
 
   if (denied) {
     return <UnauthorizedPage />;

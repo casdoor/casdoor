@@ -38,6 +38,13 @@ export interface ColumnDef<T = any> {
   /** renders a filter menu in the header cell; picking one filters on this column */
   filters?: ColumnFilterOption[];
   align?: "left" | "center" | "right";
+  /**
+   * Pins the column while the table scrolls sideways, antd's `fixed`. Only a
+   * leading run of "left" columns and a trailing run of "right" ones can be
+   * pinned, and each needs a numeric `width` so the offsets can be added up —
+   * `DataTable` quietly ignores the flag otherwise.
+   */
+  fixed?: "left" | "right";
   className?: string;
   /** hide the column entirely (used by the Forms feature) */
   hidden?: boolean;

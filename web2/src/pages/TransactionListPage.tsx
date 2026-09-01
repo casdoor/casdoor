@@ -102,7 +102,7 @@ export default function TransactionListPage() {
       newRecord={account ? () => newTransaction(account) : undefined}
       readOnly={readOnly}
       toolbar={({refresh}) => (
-        <Button variant="outline" disabled={readOnly} loading={recharging} onClick={() => recharge(refresh)}>
+        <Button disabled={readOnly} loading={recharging} onClick={() => recharge(refresh)}>
           {i18next.t("transaction:Recharge")}
         </Button>
       )}

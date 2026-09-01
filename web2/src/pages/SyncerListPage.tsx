@@ -39,6 +39,8 @@ export default function SyncerListPage() {
   return (
     <CrudListPage
       title={i18next.t("general:Syncers")}
+      // Sync is the primary action here, not Edit
+      editIsPrimary={false}
       columns={columns}
       deps={[organizationName]}
       fetch={(q) =>
@@ -58,7 +60,6 @@ export default function SyncerListPage() {
       remove={(r) => SyncerBackend.deleteSyncer(r)}
       rowActions={(record) => (
         <Button
-          variant="ghost"
           size="sm"
           onClick={() => {
             SyncerBackend.runSyncer("admin", record.name, record.organization).then((res: any) => {

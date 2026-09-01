@@ -79,18 +79,22 @@ export function AuthLayout({application, children, className, wide}: AuthLayoutP
           <Card className="shadow-md">
             <CardContent className="p-6">{children}</CardContent>
           </Card>
-          {footerHtml ? (
-            <div
-              className="mt-6 text-center text-xs text-muted-foreground"
-              dangerouslySetInnerHTML={{__html: footerHtml}}
-            />
-          ) : (
-            <div className="mt-6 text-center text-xs text-muted-foreground">
-              <PoweredBy />
-            </div>
-          )}
         </div>
       </div>
+
+      {/* below the centred card and at the bottom of the viewport, as antd's
+          Layout.Footer is a sibling of the Content it follows */}
+      {footerHtml ? (
+        <footer
+          id="footer"
+          className="shrink-0 py-4 text-center text-xs text-muted-foreground"
+          dangerouslySetInnerHTML={{__html: footerHtml}}
+        />
+      ) : (
+        <footer id="footer" className="shrink-0 py-4 text-center text-xs text-muted-foreground">
+          <PoweredBy />
+        </footer>
+      )}
     </div>
   );
 }

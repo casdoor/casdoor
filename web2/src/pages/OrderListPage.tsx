@@ -81,7 +81,7 @@ export default function OrderListPage() {
       rowActions={(record, _index, {refresh}) => (
         <>
           {/* the same page pays an unpaid order and shows a paid one */}
-          <Button variant="ghost" size="sm" asChild>
+          <Button variant="outline" size="sm" asChild>
             <Link to={`/orders/${record.owner}/${record.name}/pay`}>
               {record.state === "Created" || record.state === "Failed"
                 ? i18next.t("order:Pay")
@@ -91,7 +91,7 @@ export default function OrderListPage() {
           {/* only an admin may cancel, and only an order nobody has paid for yet */}
           {record.state === "Created" && Setting.isLocalAdminUser(account) ? (
             <ConfirmButton
-              variant="outline"
+              variant="destructive"
               size="sm"
               description={`${record.name ?? ""}`}
               onConfirm={() =>

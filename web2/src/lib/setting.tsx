@@ -1875,7 +1875,13 @@ export function getCurrencyFlag(currency) {
   }
 
   return (
-    <img src={`${StaticBaseUrl}/flag-icons/${countryCode}.svg`} alt={`${currency} flag`} height={20} style={{marginRight: 5}} />
+    // Tailwind's preflight sets `img { height: auto }`, which beats the `height`
+    // attribute the antd frontend relies on — so the size has to be a class
+    <img
+      src={`${StaticBaseUrl}/flag-icons/${countryCode}.svg`}
+      alt={`${currency} flag`}
+      className="mr-1.5 inline-block h-5 w-auto align-text-bottom"
+    />
   );
 }
 
@@ -1891,7 +1897,11 @@ export function getCurrencyWithFlag(currency) {
 
   return (
     <span>
-      <img src={`${StaticBaseUrl}/flag-icons/${countryCode}.svg`} alt={`${currency} flag`} height={20} style={{marginRight: 5}} />
+      <img
+        src={`${StaticBaseUrl}/flag-icons/${countryCode}.svg`}
+        alt={`${currency} flag`}
+        className="mr-1.5 inline-block h-5 w-auto align-text-bottom"
+      />
       {currencyText}
     </span>
   );
@@ -1917,7 +1927,9 @@ export function getUserCommonFields() {
 }
 
 export function getDefaultFooterContent() {
-  return `Powered by <a target="_blank" href="https://casdoor.org" rel="noreferrer"><img style="padding-bottom: 3px" height="20" alt="Casdoor" src="${StaticBaseUrl}/img/casdoor-logo_1185x256.png"/></a>`;
+  // the height is inline rather than an attribute: this HTML is injected into the
+  // page, where Tailwind's preflight would otherwise reset it to `height: auto`
+  return `Powered by <a target="_blank" href="https://casdoor.org" rel="noreferrer"><img style="display: inline-block; height: 20px; width: auto; padding-bottom: 3px" alt="Casdoor" src="${StaticBaseUrl}/img/casdoor-logo_1185x256.png"/></a>`;
 }
 
 export function getEmptyFooterContent() {

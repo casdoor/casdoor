@@ -36,6 +36,7 @@ export default function SessionListPage() {
       dataIndex: "name",
       title: i18next.t("general:Name"),
       width: 180,
+      fixed: "left",
       sortable: true,
       searchable: true,
       render: (value, record) => (
