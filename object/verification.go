@@ -292,10 +292,7 @@ func CheckVerificationCode(dest string, code string, lang string) (*VerifyResult
 		return &VerifyResult{noRecordError, i18n.Translate(lang, "verification:The verification code has already been used!")}, nil
 	}
 
-	timeoutInMinutes, err := conf.GetConfigInt64("verificationCodeTimeout")
-	if err != nil {
-		return nil, err
-	}
+	timeoutInMinutes := conf.GetVerificationCodeTimeout()
 
 	now := time.Now().Unix()
 	if now-record.Time > timeoutInMinutes*60 {

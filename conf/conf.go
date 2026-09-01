@@ -78,6 +78,16 @@ func GetConfigInt64(key string) (int64, error) {
 	return num, nil
 }
 
+// GetVerificationCodeTimeout falls back to 10 minutes when the config item is missing or invalid
+func GetVerificationCodeTimeout() int64 {
+	timeoutInMinutes, err := GetConfigInt64("verificationCodeTimeout")
+	if err != nil || timeoutInMinutes <= 0 {
+		return 10
+	}
+
+	return timeoutInMinutes
+}
+
 func GetConfigDataSourceName() string {
 	dataSourceName := GetConfigString("dataSourceName")
 	return ReplaceDataSourceNameByDocker(dataSourceName)
