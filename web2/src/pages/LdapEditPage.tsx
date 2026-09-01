@@ -112,6 +112,9 @@ export default function LdapEditPage() {
       <FormRow labelKey="general:Organization">
         <Input value={ldap.owner ?? organizationName} disabled />
       </FormRow>
+      <FormRow labelKey="general:ID">
+        <Input value={ldap.id ?? ""} disabled />
+      </FormRow>
       <FormRow labelKey="ldap:Server name">
         <Input value={ldap.serverName ?? ""} onChange={(e) => update("serverName", e.target.value)} />
       </FormRow>

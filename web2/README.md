@@ -199,6 +199,15 @@ records, tokens, verifications, products, coupons, orders, payments, plans,
 pricings, subscriptions, transactions, forms, syncers, webhooks, webhook events,
 tickets, LDAP (edit + sync).
 
+**Branding** — the console takes its tab title and favicon from the signed-in
+user's organization, brands the sidebar with that organization's logo (its
+`logoDark` in dark mode, its favicon when the sidebar is collapsed), and both the
+console and the sign-in pages close with the Casdoor wordmark rather than the
+word — the same footer image the antd frontend renders, and the one
+`Setting.getDefaultFooterContent()` writes into an application's `footerHtml`.
+`index.html` ships the `https://cdn.casbin.org/img/favicon.png` literal that
+`routers/static_filter.go` rewrites, so the first paint is branded too.
+
 **Organization branding** — the sign-in pages apply the organization/application
 `themeData` to the shadcn CSS variables, set the tab title and favicon, inject
 `headerHtml` / `pageHtml` into `<head>`, and block the whole surface when an
@@ -252,8 +261,7 @@ marked `Required` gets a warning and the redirect to `/mfa/setup`.
   build over it — there is no switch for it yet. `public/` also has none of the
   standalone scripts `routers/lightweight_auth_filter.go` serves (they fall back
   to `web/public`, which a Docker image does not carry), `index.html` lacks the
-  boot-failure fallback and the `cdn.casbin.org` favicon literal the backend
-  rewrites for organization branding, `deployment/deploy.go` uploads CRA's
+  boot-failure fallback, `deployment/deploy.go` uploads CRA's
   `static/{js,css}` rather than Vite's `assets/`, and the Dockerfile, Makefile,
   `.goreleaser.yaml` and the release build all still use `../web`.
 - **Release gating**: `.github/workflows/build.yml` has an `e2e-test-web2` job

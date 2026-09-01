@@ -38,7 +38,11 @@ export default function ProductEditPage() {
             value={ctx.record.image ?? ""}
             onChange={(e) => update("image", e.target.value)}
           />
-          {ctx.record.image ? <img src={ctx.record.image} alt="product" className="h-24 object-contain" /> : null}
+          {ctx.record.image ? (
+            <a href={ctx.record.image} target="_blank" rel="noreferrer">
+              <img src={ctx.record.image} alt="product" className="h-24 object-contain" />
+            </a>
+          ) : null}
         </div>
       ),
     },

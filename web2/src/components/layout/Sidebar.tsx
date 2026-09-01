@@ -7,6 +7,7 @@ import {Tooltip, TooltipContent, TooltipTrigger} from "@/components/ui/tooltip";
 import {getNavGroups, shouldFlattenNav} from "@/lib/nav";
 import * as Setting from "@/lib/setting";
 import {useAccount} from "@/hooks/use-account";
+import {useTheme} from "@/hooks/use-theme";
 import {cn} from "@/lib/utils";
 
 const OPEN_GROUPS_KEY = "web2.openNavGroups";
@@ -30,6 +31,13 @@ interface SidebarProps {
 export function Sidebar({collapsed, onCollapsedChange, onNavigate, className}: SidebarProps) {
   const {account} = useAccount();
   const location = useLocation();
+  const {resolvedTheme} = useTheme();
+  const organization = account?.organization;
+  // the organization brands its own console, and may brand light and dark apart
+  const siderLogo =
+    (resolvedTheme === "dark" ? organization?.logoDark : "") ||
+    organization?.logo ||
+    Setting.getLogo([resolvedTheme]);
   // recomputed every render on purpose: the labels come from i18next, which
   // changes language without re-rendering this component's inputs
   const groups = getNavGroups(account);
@@ -88,8 +96,12 @@ export function Sidebar({collapsed, onCollapsedChange, onNavigate, className}: S
     >
       <div className={cn("flex h-14 shrink-0 items-center gap-2 border-b px-3", collapsed && "justify-center px-0")}>
         <Link to="/" className="flex items-center gap-2 overflow-hidden" onClick={onNavigate}>
-          <img src={`${Setting.StaticBaseUrl}/img/casdoor.png`} alt="Casdoor" className="h-7 w-7 rounded" />
-          {!collapsed && <span className="truncate text-base font-semibold text-foreground">Casdoor</span>}
+          {/* collapsed the organization's favicon fits where its wordmark does not */}
+          <img
+            src={collapsed ? organization?.favicon || siderLogo : siderLogo}
+            alt={organization?.displayName || "Casdoor"}
+            className={cn("object-contain", collapsed ? "h-7 w-7 rounded" : "h-9 max-w-[160px]")}
+          />
         </Link>
         {!collapsed && (
           <Button

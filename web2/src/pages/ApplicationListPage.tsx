@@ -131,6 +131,8 @@ export default function ApplicationListPage() {
         </Button>
       )}
       newRecord={account ? () => newApplication(account) : undefined}
+      // antd refuses to delete the built-in application
+      deleteDisabled={(record) => record.name === "app-built-in"}
       editUrl={(r) => `/applications/${r.organization}/${r.name}`}
       remove={(r) => ApplicationBackend.deleteApplication(r)}
     />

@@ -340,7 +340,7 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
             <AccountItemRow name="Tag" labelKey="general:Tag">
               <Input value={user.tag ?? ""} onChange={(e) => updateField("tag", e.target.value)} />
             </AccountItemRow>
-            <AccountItemRow name="Signup application" labelKey="general:Application">
+            <AccountItemRow name="Signup application" labelKey="general:Signup application">
               <SearchableSelect
                 value={user.signupApplication ?? ""}
                 onChange={(v) => updateField("signupApplication", v)}

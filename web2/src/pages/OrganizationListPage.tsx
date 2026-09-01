@@ -1,6 +1,8 @@
 import i18next from "i18next";
+import {Link} from "react-router-dom";
 import dayjs from "dayjs";
 import {Badge} from "@/components/ui/badge";
+import {Button} from "@/components/ui/button";
 import {CrudListPage} from "@/components/crud/CrudListPage";
 import {boolColumn, dateColumn, linkColumn, textColumn, valueFilters} from "@/components/crud/columns";
 import type {ColumnDef} from "@/components/crud/types";
@@ -98,6 +100,19 @@ export default function OrganizationListPage() {
         )
       }
       newRecord={() => newOrganization(dayjs().format())}
+      actionColumnWidth={330}
+      rowActions={(record) => (
+        <>
+          <Button variant="outline" size="sm" asChild>
+            <Link to={`/trees/${record.name}`}>{i18next.t("general:Groups")}</Link>
+          </Button>
+          <Button variant="outline" size="sm" asChild>
+            <Link to={`/organizations/${record.name}/users`}>{i18next.t("general:Users")}</Link>
+          </Button>
+        </>
+      )}
+      // antd refuses to delete the built-in organization
+      deleteDisabled={(record) => record.name === "built-in"}
       editUrl={(record) => `/organizations/${record.name}`}
       remove={(record) =>
         OrganizationBackend.deleteOrganization(record).then((res: any) => {

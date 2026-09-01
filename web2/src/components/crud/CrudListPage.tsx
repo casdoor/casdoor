@@ -54,10 +54,11 @@ export interface CrudListPageProps<T extends Record<string, any>> {
    */
   readOnly?: boolean;
   /**
-   * Blocks Delete for one row and explains why, shown as a tooltip. The antd
-   * group list uses it for a group that still has subgroups.
+   * Blocks Delete for one row. A string is shown as a tooltip explaining why
+   * (the group list uses it for a group that still has subgroups); `true` just
+   * disables the button, the way antd does for the built-in objects.
    */
-  deleteDisabled?: (record: T) => string | false | undefined;
+  deleteDisabled?: (record: T) => string | boolean | undefined;
   actionColumnWidth?: number | string;
 }
 
@@ -142,7 +143,7 @@ export function CrudListPage<T extends Record<string, any>>({
         {i18next.t("general:Delete")}
       </ConfirmButton>
     );
-    if (!blockedReason) {
+    if (typeof blockedReason !== "string" || blockedReason === "") {
       return button;
     }
     // a disabled button swallows pointer events, so the tooltip hangs off a wrapper

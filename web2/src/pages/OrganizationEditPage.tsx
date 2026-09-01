@@ -225,7 +225,9 @@ export default function OrganizationEditPage() {
             <div className="space-y-2">
               <Input value={organization.favicon ?? ""} onChange={(e) => update("favicon", e.target.value)} />
               {organization.favicon ? (
-                <img src={organization.favicon} alt="favicon" className="h-10 w-10 object-contain" />
+                <a href={organization.favicon} target="_blank" rel="noreferrer">
+                  <img src={organization.favicon} alt="favicon" className="h-10 w-10 object-contain" />
+                </a>
               ) : null}
             </div>
           </FormRow>
@@ -239,7 +241,9 @@ export default function OrganizationEditPage() {
                 onChange={(e) => update("defaultAvatar", e.target.value)}
               />
               {organization.defaultAvatar ? (
-                <img src={organization.defaultAvatar} alt="default avatar" className="h-20 w-20 rounded-full object-cover" />
+                <a href={organization.defaultAvatar} target="_blank" rel="noreferrer">
+                  <img src={organization.defaultAvatar} alt="default avatar" className="h-20 w-20 rounded-full object-cover" />
+                </a>
               ) : null}
             </div>
           </FormRow>

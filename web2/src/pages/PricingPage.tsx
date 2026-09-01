@@ -40,17 +40,28 @@ function PlanCard({plan, link}: {plan: any; link: string}) {
  * web/src/pricing/PricingPage.js — a signed-in visitor goes to /buy-plan, an
  * anonymous one to the application's sign-up page carrying plan and pricing.
  */
-export default function PricingPage() {
+interface PricingPageProps {
+  /**
+   * The pricing to render. The edit page passes the object it is editing so the
+   * page previews unsaved changes; on its own route it is loaded from the URL.
+   */
+  pricing?: any;
+  owner?: string;
+  /** the edit page embeds it inside its form, so it should not fill the viewport */
+  embedded?: boolean;
+}
+
+export default function PricingPage({pricing: pricingProp, owner: ownerProp, embedded}: PricingPageProps = {}) {
   const params = useParams();
   const [search] = useSearchParams();
   const navigate = useNavigate();
   const {account} = useAccount();
 
-  const owner = params.owner ?? "";
+  const owner = ownerProp ?? params.owner ?? "";
   const pricingName = params.pricingName ?? "";
   const userName = search.get("user");
 
-  const [pricing, setPricing] = React.useState<any>(null);
+  const [pricing, setPricing] = React.useState<any>(pricingProp ?? null);
   const [plans, setPlans] = React.useState<any[] | null>(null);
   const [periods, setPeriods] = React.useState<string[]>([]);
   const [selectedPeriod, setSelectedPeriod] = React.useState<string | undefined>(undefined);
@@ -64,6 +75,10 @@ export default function PricingPage() {
   }, []);
 
   React.useEffect(() => {
+    if (pricingProp) {
+      setPricing(pricingProp);
+      return;
+    }
     if (!owner || !pricingName) {
       return;
     }
@@ -74,7 +89,7 @@ export default function PricingPage() {
       }
       setPricing(res.data);
     });
-  }, [owner, pricingName]);
+  }, [owner, pricingName, pricingProp]);
 
   React.useEffect(() => {
     if (pricing === null) {
@@ -98,7 +113,7 @@ export default function PricingPage() {
   }, [pricing, owner]);
 
   if (pricing === null || plans === null) {
-    return <Loading className="min-h-screen" />;
+    return <Loading className={embedded ? "py-10" : "min-h-screen"} />;
   }
 
   const getUrlByPlan = (planName: string) => {
@@ -110,9 +125,9 @@ export default function PricingPage() {
   };
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-12 text-center">
-      <h1 className="mb-4 text-5xl font-bold">{pricing.displayName}</h1>
-      <p className="text-xl text-muted-foreground">{pricing.description}</p>
+    <div className={embedded ? "w-full text-center" : "mx-auto max-w-6xl px-4 py-12 text-center"}>
+      <h1 className={embedded ? "mb-2 text-2xl font-bold" : "mb-4 text-5xl font-bold"}>{pricing.displayName}</h1>
+      <p className={embedded ? "text-muted-foreground" : "text-xl text-muted-foreground"}>{pricing.description}</p>
 
       {periods.length > 1 ? (
         <div className="mt-10 flex justify-center gap-2">

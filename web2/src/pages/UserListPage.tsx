@@ -23,6 +23,12 @@ export default function UserListPage() {
   const navigate = useNavigate();
   const groupName = searchParams.get("groupName") ?? "";
   const organizationName = useRequestOrganization(params.organizationName);
+
+  // antd stops you removing or deleting yourself, or the built-in admin
+  const isProtected = (record: any) =>
+    (record.owner === account?.owner && record.name === account?.name) ||
+    (record.owner === "built-in" && record.name === "admin");
+
   const [organization, setOrganization] = React.useState<any>({});
 
   React.useEffect(() => {
@@ -161,6 +167,7 @@ export default function UserListPage() {
           )
       }
       newRecord={account ? () => newUser(account, organization, organizationName, groupName) : undefined}
+      deleteDisabled={isProtected}
       editUrl={(r) => `/users/${r.owner}/${r.name}`}
       remove={(r) => UserBackend.deleteUser(r)}
       rowActions={(record, _index, {refresh}) => (
@@ -188,7 +195,10 @@ export default function UserListPage() {
             <ConfirmButton
               variant="outline"
               size="sm"
+              // "remove from group", not "delete", so it asks its own question
+              title={i18next.t("general:Sure to remove")}
               description={`${record.name ?? ""}`}
+              disabled={isProtected(record)}
               onConfirm={() =>
                 UserBackend.removeUserFromGroup({groupName, owner: record.owner, name: record.name})
                   .then((res: any) => {
