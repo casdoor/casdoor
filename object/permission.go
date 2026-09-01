@@ -35,6 +35,10 @@ type Permission struct {
 	Roles   []string `xorm:"mediumtext" json:"roles"`
 	Domains []string `xorm:"mediumtext" json:"domains"`
 
+	// SourceGroups and SourceRoles are only set when the permission is resolved for a user, both being empty means it was assigned directly
+	SourceGroups []string `xorm:"-" json:"sourceGroups,omitempty"`
+	SourceRoles  []string `xorm:"-" json:"sourceRoles,omitempty"`
+
 	Model        string   `xorm:"varchar(100)" json:"model"`
 	Adapter      string   `xorm:"varchar(100)" json:"adapter"`
 	ResourceType string   `xorm:"varchar(100)" json:"resourceType"`
@@ -178,11 +182,6 @@ func UpdatePermission(id string, permission *Permission) (bool, error) {
 	}
 
 	if affected != 0 {
-		err = removePolicies(oldPermission)
-		if err != nil {
-			return false, err
-		}
-
 		// if oldPermission.Adapter != "" && oldPermission.Adapter != permission.Adapter {
 		// 	isEmpty, _ := ormer.Engine.IsTableEmpty(oldPermission.Adapter)
 		// 	if isEmpty {
@@ -193,7 +192,7 @@ func UpdatePermission(id string, permission *Permission) (bool, error) {
 		// 	}
 		// }
 
-		err = addPolicies(permission)
+		err = updatePermissionsPolicies([]*Permission{oldPermission}, []*Permission{permission})
 		if err != nil {
 			return false, err
 		}
@@ -248,12 +247,7 @@ func UpdatePermissions(permissions []*Permission) (bool, error) {
 		return false, nil
 	}
 
-	err := removePermissionsPolicies(oldPermissions)
-	if err != nil {
-		return false, err
-	}
-
-	err = addPermissionsPolicies(newPermissions)
+	err := updatePermissionsPolicies(oldPermissions, newPermissions)
 	if err != nil {
 		return false, err
 	}
@@ -458,14 +452,28 @@ func getPermissionsAndRolesByUser(userId string) ([]*Permission, []*Role, error)
 		return nil, nil, err
 	}
 
-	existedPerms := map[string]struct{}{}
+	existedPerms := map[string]*Permission{}
+	directPerms := map[string]bool{}
 
 	for _, perm := range permissions {
 		perm.Users = nil
 
 		if _, ok := existedPerms[perm.Name]; !ok {
-			existedPerms[perm.Name] = struct{}{}
+			existedPerms[perm.Name] = perm
 		}
+		directPerms[perm.Name] = true
+	}
+
+	addPermission := func(perm *Permission) *Permission {
+		perm.Users = nil
+
+		existedPerm, ok := existedPerms[perm.Name]
+		if !ok {
+			existedPerms[perm.Name] = perm
+			permissions = append(permissions, perm)
+			return perm
+		}
+		return existedPerm
 	}
 
 	user, err := GetUser(userId)
@@ -484,16 +492,13 @@ func getPermissionsAndRolesByUser(userId string) ([]*Permission, []*Role, error)
 				return nil, nil, err
 			}
 			for _, perm := range perms {
-				perm.Users = nil
-				if _, ok := existedPerms[perm.Name]; !ok {
-					existedPerms[perm.Name] = struct{}{}
-					permissions = append(permissions, perm)
+				existedPerm := addPermission(perm)
+				if !util.InSlice(existedPerm.SourceGroups, groupId) {
+					existedPerm.SourceGroups = append(existedPerm.SourceGroups, groupId)
 				}
 			}
 		}
 	}
-
-	permFromRoles := []*Permission{}
 
 	roles, err := getRolesByUser(userId)
 	if err != nil {
@@ -501,18 +506,23 @@ func getPermissionsAndRolesByUser(userId string) ([]*Permission, []*Role, error)
 	}
 
 	for _, role := range roles {
-		perms, err := GetPermissionsByRole(role.GetId())
+		roleId := role.GetId()
+		perms, err := GetPermissionsByRole(roleId)
 		if err != nil {
 			return nil, nil, err
 		}
-		permFromRoles = append(permFromRoles, perms...)
+		for _, perm := range perms {
+			existedPerm := addPermission(perm)
+			if !util.InSlice(existedPerm.SourceRoles, roleId) {
+				existedPerm.SourceRoles = append(existedPerm.SourceRoles, roleId)
+			}
+		}
 	}
 
-	for _, perm := range permFromRoles {
-		perm.Users = nil
-		if _, ok := existedPerms[perm.Name]; !ok {
-			existedPerms[perm.Name] = struct{}{}
-			permissions = append(permissions, perm)
+	for _, perm := range permissions {
+		if directPerms[perm.Name] {
+			perm.SourceGroups = nil
+			perm.SourceRoles = nil
 		}
 	}
 

@@ -469,6 +469,138 @@ func loadRuntimeGroupingPolicies(enforcer *casbin.Enforcer, permission *Permissi
 	return nil
 }
 
+func getPolicyKey(policy []string) string {
+	return fmt.Sprintf("%q", policy)
+}
+
+// getPoliciesDiff returns the policies that only exist in oldPolicies and the ones that only exist
+// in newPolicies.
+func getPoliciesDiff(oldPolicies [][]string, newPolicies [][]string) ([][]string, [][]string) {
+	oldPolicySet := make(map[string]struct{}, len(oldPolicies))
+	for _, policy := range oldPolicies {
+		oldPolicySet[getPolicyKey(policy)] = struct{}{}
+	}
+
+	newPolicySet := make(map[string]struct{}, len(newPolicies))
+	for _, policy := range newPolicies {
+		newPolicySet[getPolicyKey(policy)] = struct{}{}
+	}
+
+	removedPolicies := [][]string{}
+	visitedPolicies := map[string]struct{}{}
+	for _, policy := range oldPolicies {
+		key := getPolicyKey(policy)
+		if _, ok := newPolicySet[key]; ok {
+			continue
+		}
+		if _, ok := visitedPolicies[key]; ok {
+			continue
+		}
+		visitedPolicies[key] = struct{}{}
+		removedPolicies = append(removedPolicies, policy)
+	}
+
+	addedPolicies := [][]string{}
+	visitedPolicies = map[string]struct{}{}
+	for _, policy := range newPolicies {
+		key := getPolicyKey(policy)
+		if _, ok := oldPolicySet[key]; ok {
+			continue
+		}
+		if _, ok := visitedPolicies[key]; ok {
+			continue
+		}
+		visitedPolicies[key] = struct{}{}
+		addedPolicies = append(addedPolicies, policy)
+	}
+
+	return removedPolicies, addedPolicies
+}
+
+type permissionPolicyDiff struct {
+	permission      *Permission
+	permissionIds   []string
+	removedPolicies [][]string
+	addedPolicies   [][]string
+}
+
+// updatePermissionsPolicies replaces the Casbin policies of the old permissions by the ones of the
+// new permissions. Only the difference between the old and the new policies is written, so adding a
+// single role to a permission that already holds thousands of them no longer deletes and re-inserts
+// every policy row of that permission.
+func updatePermissionsPolicies(oldPermissions []*Permission, newPermissions []*Permission) error {
+	if len(oldPermissions) != len(newPermissions) {
+		return fmt.Errorf("updatePermissionsPolicies: the old permission count: %d doesn't match the new permission count: %d", len(oldPermissions), len(newPermissions))
+	}
+
+	movedOldPermissions := []*Permission{}
+	movedNewPermissions := []*Permission{}
+
+	diffs := map[string]*permissionPolicyDiff{}
+	order := []string{}
+
+	for i, newPermission := range newPermissions {
+		oldPermission := oldPermissions[i]
+
+		// The policies of the old and the new permission are stored in different enforcers.
+		if oldPermission.GetModelAndAdapter() != newPermission.GetModelAndAdapter() {
+			movedOldPermissions = append(movedOldPermissions, oldPermission)
+			movedNewPermissions = append(movedNewPermissions, newPermission)
+			continue
+		}
+
+		removedPolicies, addedPolicies := getPoliciesDiff(getPolicies(oldPermission), getPolicies(newPermission))
+		if len(removedPolicies) == 0 && len(addedPolicies) == 0 {
+			continue
+		}
+
+		key := newPermission.GetModelAndAdapter()
+		diff, ok := diffs[key]
+		if !ok {
+			diff = &permissionPolicyDiff{permission: newPermission}
+			diffs[key] = diff
+			order = append(order, key)
+		}
+
+		diff.permissionIds = append(diff.permissionIds, newPermission.GetId())
+		if oldPermission.GetId() != newPermission.GetId() {
+			diff.permissionIds = append(diff.permissionIds, oldPermission.GetId())
+		}
+		diff.removedPolicies = append(diff.removedPolicies, removedPolicies...)
+		diff.addedPolicies = append(diff.addedPolicies, addedPolicies...)
+	}
+
+	for _, key := range order {
+		diff := diffs[key]
+
+		enforcer, err := getPermissionEnforcer(diff.permission, diff.permissionIds...)
+		if err != nil {
+			return err
+		}
+
+		if len(diff.removedPolicies) != 0 {
+			_, err = enforcer.RemovePolicies(diff.removedPolicies)
+			if err != nil {
+				return err
+			}
+		}
+
+		if len(diff.addedPolicies) != 0 {
+			_, err = enforcer.AddPolicies(diff.addedPolicies)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	err := removePermissionsPolicies(movedOldPermissions)
+	if err != nil {
+		return err
+	}
+
+	return addPermissionsPolicies(movedNewPermissions)
+}
+
 func addPolicies(permission *Permission) error {
 	enforcer, err := getPermissionEnforcer(permission)
 	if err != nil {
