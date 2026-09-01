@@ -20,6 +20,10 @@ interface FormRowProps {
    */
   block?: boolean;
   htmlFor?: string;
+  /** marks the label, so the asterisk is not the control's problem to draw */
+  required?: boolean;
+  /** shown under the control; the row is only in error while this is set */
+  error?: React.ReactNode;
 }
 
 /**
@@ -43,7 +47,7 @@ export function FormGrid({children, className}: {children: React.ReactNode; clas
  * </Col></Row>`. Here the label sits above its control and the row is a cell of
  * the enclosing `FormGrid`, which is what decides how many fit side by side.
  */
-export function FormRow({label, labelKey, tooltip, children, className, block, htmlFor}: FormRowProps) {
+export function FormRow({label, labelKey, tooltip, children, className, block, htmlFor, required, error}: FormRowProps) {
   let resolvedLabel = label;
   let resolvedTooltip = tooltip;
   if (labelKey) {
@@ -59,7 +63,10 @@ export function FormRow({label, labelKey, tooltip, children, className, block, h
   return (
     <div className={cn("min-w-0 space-y-1.5 py-2.5", block && "xl:col-span-2", className)}>
       <label htmlFor={htmlFor} className="flex items-center gap-1.5 text-sm font-medium leading-none">
-        <span>{resolvedLabel}</span>
+        <span>
+          {resolvedLabel}
+          {required ? <span className="ml-0.5 text-destructive">*</span> : null}
+        </span>
         {resolvedTooltip ? (
           <Tooltip>
             <TooltipTrigger asChild>
@@ -71,7 +78,13 @@ export function FormRow({label, labelKey, tooltip, children, className, block, h
           </Tooltip>
         ) : null}
       </label>
-      <div className="min-w-0">{children}</div>
+      {/* the ring is painted on a wrapper rather than the control, so every kind of
+          control a page puts in a row — input, select, switch, code editor — shows
+          the same error state without having to thread a prop through */}
+      <div className={cn("min-w-0", error && "rounded-md ring-1 ring-destructive ring-offset-2 ring-offset-background")}>
+        {children}
+      </div>
+      {error ? <p className="text-xs text-destructive">{error}</p> : null}
     </div>
   );
 }

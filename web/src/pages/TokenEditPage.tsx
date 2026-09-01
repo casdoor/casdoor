@@ -94,7 +94,7 @@ export default function TokenEditPage() {
   const {tokenName = ""} = useParams();
 
   const fields: EditField[] = [
-    {type: "text", name: "name", labelKey: "general:Name"},
+    {type: "text", name: "name", labelKey: "general:Name", required: true},
     {type: "text", name: "application", labelKey: "general:Application"},
     {type: "text", name: "organization", labelKey: "general:Organization"},
     {type: "text", name: "user", labelKey: "general:User"},

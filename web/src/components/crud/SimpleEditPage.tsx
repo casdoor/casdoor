@@ -30,6 +30,14 @@ interface BaseField {
   when?: (ctx: Ctx) => boolean;
   disabled?: (ctx: Ctx) => boolean;
   block?: boolean;
+  /** the backend rejects an empty value, so say so before the round trip */
+  required?: boolean;
+  /**
+   * Returns a message when the value is not acceptable, or undefined when it is.
+   * Only for what the frontend can decide on its own — the authority is still the
+   * Go backend, and its rejection still arrives as a message on save.
+   */
+  validate?: (value: any, ctx: Ctx) => string | undefined;
   /**
    * Runs instead of the plain `updateField` when the control changes, for the
    * fields that have to reset or derive their neighbours (the syncer type
@@ -91,6 +99,7 @@ export function SimpleEditPage({
 }: SimpleEditPageProps) {
   const navigate = useNavigate();
   const [saving, setSaving] = React.useState(false);
+  const [errors, setErrors] = React.useState<Record<string, string>>({});
   const {record, updateField, updateFields, loading, denied, mode, setMode, reload} = useEditRecord<any>({fetch, transform, deps});
 
   if (denied) {
@@ -103,7 +112,39 @@ export function SimpleEditPage({
 
   const ctx: Ctx = {record, mode, reload};
 
+  const isEmpty = (value: any) =>
+    value === undefined || value === null || value === "" || (Array.isArray(value) && value.length === 0);
+
+  /** a hidden or locked row is not the reader's to fix, so it is not checked */
+  const applies = (field: EditField) =>
+    (!field.when || field.when(ctx)) && mode !== "view" && !(field.disabled ? field.disabled(ctx) : false);
+
+  const checkField = (field: EditField, value: any): string | undefined => {
+    if (!applies(field)) {
+      return undefined;
+    }
+    if (field.required && isEmpty(value)) {
+      return i18next.t("general:This field is required");
+    }
+    return field.validate?.(value, ctx);
+  };
+
   const save = async(exitAfterSave: boolean) => {
+    const found: Record<string, string> = {};
+    fields.forEach((field) => {
+      const message = checkField(field, record[field.name]);
+      if (message) {
+        found[field.name] = message;
+      }
+    });
+    if (Object.keys(found).length > 0) {
+      setErrors(found);
+      // every offending row is marked; the page scrolls to the first one
+      document.querySelector(`[data-field="${Object.keys(found)[0]}"]`)?.scrollIntoView({block: "center"});
+      return;
+    }
+    setErrors({});
+
     const payload = beforeSave ? beforeSave(Setting.deepCopy(record)) : Setting.deepCopy(record);
     if (payload === null) {
       return;
@@ -136,8 +177,21 @@ export function SimpleEditPage({
     const value = record[field.name];
     // a read-only page locks the whole form, whatever each field asked for
     const disabled = mode === "view" || (field.disabled ? field.disabled(ctx) : false);
-    const set = (next: any) =>
-      field.onChange ? field.onChange(next, ctx, updateFields) : updateField(field.name, next);
+    const set = (next: any) => {
+      if (errors[field.name]) {
+        const message = checkField(field, next);
+        setErrors((previous) => {
+          const rest = {...previous};
+          delete rest[field.name];
+          return message ? {...rest, [field.name]: message} : rest;
+        });
+      }
+      if (field.onChange) {
+        field.onChange(next, ctx, updateFields);
+      } else {
+        updateField(field.name, next);
+      }
+    };
 
     let control: React.ReactNode;
     switch (field.type) {
@@ -230,11 +284,14 @@ export function SimpleEditPage({
     return (
       <FormRow
         key={field.name}
+        className="scroll-mt-24"
         labelKey={typeof field.labelKey === "function" ? field.labelKey(ctx) : field.labelKey}
         label={typeof field.label === "function" ? field.label(ctx) : field.label}
         block={field.block || field.type === "code"}
+        required={field.required && applies(field)}
+        error={errors[field.name]}
       >
-        {control}
+        <div data-field={field.name}>{control}</div>
       </FormRow>
     );
   };

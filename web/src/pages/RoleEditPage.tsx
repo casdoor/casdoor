@@ -21,7 +21,7 @@ export default function RoleEditPage() {
       options: () => organizations,
       disabled: () => !Setting.isAdminUser(account),
     },
-    {type: "text", name: "name", labelKey: "general:Name"},
+    {type: "text", name: "name", labelKey: "general:Name", required: true},
     {type: "text", name: "displayName", labelKey: "general:Display name"},
     {type: "text", name: "description", labelKey: "general:Description"},
     {type: "multiselect", name: "users", labelKey: "role:Sub users", options: () => users},

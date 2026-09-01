@@ -33,7 +33,7 @@ export default function TransactionEditPage() {
         updateFields({owner: value, application: ""});
       },
     },
-    {type: "text", name: "name", labelKey: "general:Name"},
+    {type: "text", name: "name", labelKey: "general:Name", required: true},
     {type: "text", name: "displayName", labelKey: "general:Display name"},
     {type: "select", name: "application", labelKey: "general:Application", options: () => applications},
     {type: "text", name: "domain", labelKey: "provider:Domain"},

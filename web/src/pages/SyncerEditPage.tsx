@@ -100,7 +100,7 @@ export default function SyncerEditPage() {
       onChange: (value, ctx, updateFields) =>
         updateFields(value === ctx.record.organization ? {organization: value} : {organization: value, cert: ""}),
     },
-    {type: "text", name: "name", labelKey: "general:Name"},
+    {type: "text", name: "name", labelKey: "general:Name", required: true},
     {
       type: "select",
       name: "type",

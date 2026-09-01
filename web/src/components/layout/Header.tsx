@@ -1,10 +1,10 @@
 import * as React from "react";
 import i18next from "i18next";
 import * as Cookie from "cookie";
-import {ChevronDown, LogOut, Menu, Settings} from "lucide-react";
+import {ChevronDown, LogOut, Settings} from "lucide-react";
 import {useLocation, useNavigate} from "react-router-dom";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
-import {Button} from "@/components/ui/button";
+import {SidebarTrigger} from "@/components/ui/sidebar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,6 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {AiAssistant} from "@/components/common/AiAssistant";
+import {CommandPaletteTrigger} from "@/components/common/CommandPalette";
 import {BreadcrumbBar} from "@/components/layout/BreadcrumbBar";
 import {LanguageSelect} from "@/components/common/LanguageSelect";
 import {OrganizationSelect} from "@/components/common/OrganizationSelect";
@@ -25,7 +26,7 @@ import {isWidgetVisible} from "@/lib/nav";
 import * as UserBackend from "@/backend/UserBackend";
 import * as Setting from "@/lib/setting";
 
-export function Header({onOpenMobileNav}: {onOpenMobileNav: () => void}) {
+export function Header({onOpenPalette}: {onOpenPalette: () => void}) {
   const {account} = useAccount();
   const navigate = useNavigate();
   const location = useLocation();
@@ -61,12 +62,12 @@ export function Header({onOpenMobileNav}: {onOpenMobileNav: () => void}) {
 
   return (
     <header className="sticky top-0 z-30 flex h-14 shrink-0 items-center gap-2 border-b bg-background/95 px-3 backdrop-blur supports-[backdrop-filter]:bg-background/80">
-      <Button variant="ghost" size="iconSm" className="lg:hidden" onClick={onOpenMobileNav} aria-label="Menu">
-        <Menu />
-      </Button>
+      {/* toggles the rail on a desktop and opens the sheet on a phone */}
+      <SidebarTrigger className="-ml-1" />
       <BreadcrumbBar />
 
       <div className="ml-auto flex items-center gap-1.5">
+        <CommandPaletteTrigger onOpen={onOpenPalette} />
         {showOrganizationSelect && (
           <OrganizationSelect
             withAll

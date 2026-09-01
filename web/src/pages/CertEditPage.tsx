@@ -51,7 +51,7 @@ export default function CertEditPage() {
           ? [{value: "admin", label: i18next.t("provider:admin (Shared)")}, ...organizations]
           : organizations,
     },
-    {type: "text", name: "name", labelKey: "general:Name"},
+    {type: "text", name: "name", labelKey: "general:Name", required: true},
     {type: "text", name: "displayName", labelKey: "general:Display name"},
     {
       type: "select",
