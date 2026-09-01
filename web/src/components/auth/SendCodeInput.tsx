@@ -90,15 +90,12 @@ export function SendCodeInput({
       applicationId,
       checkUser ?? "",
     )
-      .then((res: any) => {
-        if (res.status === "ok") {
-          Setting.showMessage("success", i18next.t("user:Verification code sent"));  // falls back to "Code Sent" when untranslated
+      .then((sent: boolean) => {
+        // UserBackend.sendCode() already showed the success or the error message
+        if (sent) {
           setSeconds(resendTimeout);
-        } else {
-          Setting.showMessage("error", res.msg);
-          if (useInlineCaptcha) {
-            refreshCaptcha?.();
-          }
+        } else if (useInlineCaptcha) {
+          refreshCaptcha?.();
         }
       })
       .catch(() => {
