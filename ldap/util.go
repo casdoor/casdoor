@@ -127,6 +127,19 @@ var ldapAttributesMapping = map[string]FieldRelation{
 
 const ldapMemberOfAttr = "memberOf"
 
+// userObjectClasses are carried by every published user entry: posixAccount for
+// Unix logins, the Samba ones for SMB clients such as Synology DSM and TrueNAS.
+var userObjectClasses = []string{"posixAccount", "sambaSamAccount", "sambaIdmapEntry"}
+
+func isUserObjectClass(objectClass string) bool {
+	for _, name := range userObjectClasses {
+		if strings.EqualFold(objectClass, name) {
+			return true
+		}
+	}
+	return false
+}
+
 // syntheticUserAttribute is a POSIX attribute the LDAP server computes, so a
 // filter on it is finished in memory. column holds the assigned value, if any.
 type syntheticUserAttribute struct {
@@ -135,9 +148,14 @@ type syntheticUserAttribute struct {
 }
 
 var syntheticUserAttributes = map[string]syntheticUserAttribute{
-	"uidnumber":     {column: "uid_number", getValue: getUidNumber},
-	"gidnumber":     {column: "uid_number", getValue: getUidNumber},
-	"homedirectory": {getValue: getHomeDirectory},
+	"uidnumber":            {column: "uid_number", getValue: getUidNumber},
+	"gidnumber":            {column: "uid_number", getValue: getUidNumber},
+	"homedirectory":        {getValue: getHomeDirectory},
+	"sambasid":             {getValue: getSambaSid},
+	"sambaprimarygroupsid": {getValue: getSambaPrimaryGroupSid},
+	"sambaacctflags":       {getValue: getSambaAcctFlags},
+	"sambadomainname":      {getValue: func(user *object.User) string { return user.Owner }},
+	"sambapwdlastset":      {getValue: getSambaPwdLastSet},
 }
 
 // buildCoarseCondition keeps the rows that can still match: those the value is
@@ -339,7 +357,7 @@ func (q *userSearchFilter) buildCondition(filter interface{}, conjunctive bool) 
 	case message.FilterEqualityMatch:
 		attr := string(f.AttributeDesc())
 
-		if strings.EqualFold(attr, "objectclass") && strings.EqualFold(string(f.AssertionValue()), "posixAccount") {
+		if strings.EqualFold(attr, "objectclass") && isUserObjectClass(string(f.AssertionValue())) {
 			return builder.Expr("1 = 1"), nil
 		}
 

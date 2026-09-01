@@ -245,57 +245,59 @@ func resolveRequestAttributes(attrs message.AttributeSelection) []string {
 func buildUserSearchEntry(user *object.User, baseDN string, attrs []string, org *object.Organization) message.SearchResultEntry {
 	dn := fmt.Sprintf("uid=%s,cn=%s,%s", user.Id, user.Name, baseDN)
 	e := ldap.NewSearchResultEntry(dn)
-	uidNumberStr := getUidNumber(user)
-	if IsLdapAttrAllowed(org, "uidNumber") {
-		e.AddAttribute("uidNumber", message.AttributeValue(uidNumberStr))
-	}
-	if IsLdapAttrAllowed(org, "gidNumber") {
-		e.AddAttribute("gidNumber", message.AttributeValue(uidNumberStr))
-	}
-	if IsLdapAttrAllowed(org, "homeDirectory") {
-		e.AddAttribute("homeDirectory", message.AttributeValue(getHomeDirectory(user)))
-	}
-	if IsLdapAttrAllowed(org, "cn") {
-		e.AddAttribute("cn", message.AttributeValue(user.Name))
-	}
-	if IsLdapAttrAllowed(org, "uid") {
-		e.AddAttribute("uid", message.AttributeValue(user.Id))
-	}
-	if IsLdapAttrAllowed(org, "mail") {
-		e.AddAttribute("mail", message.AttributeValue(user.Email))
-	}
-	if IsLdapAttrAllowed(org, "mobile") {
-		e.AddAttribute("mobile", message.AttributeValue(user.Phone))
-	}
-	if IsLdapAttrAllowed(org, "sn") {
-		e.AddAttribute("sn", message.AttributeValue(user.LastName))
-	}
-	if IsLdapAttrAllowed(org, "givenName") {
-		e.AddAttribute("givenName", message.AttributeValue(user.FirstName))
-	}
-	// Add POSIX attributes for Linux machine login support
-	if IsLdapAttrAllowed(org, "loginShell") {
-		e.AddAttribute("loginShell", getAttribute("loginShell", user))
-	}
-	if IsLdapAttrAllowed(org, "gecos") {
-		e.AddAttribute("gecos", getAttribute("gecos", user))
-	}
-	// Add SSH public key if available
-	if IsLdapAttrAllowed(org, "sshPublicKey") {
-		sshKey := getAttribute("sshPublicKey", user)
-		if sshKey != "" {
-			e.AddAttribute("sshPublicKey", sshKey)
+
+	added := make(map[string]bool)
+	addAttribute := func(name string, value string) {
+		if !IsLdapAttrAllowed(org, name) {
+			return
 		}
+		added[strings.ToLower(name)] = true
+		e.AddAttribute(message.AttributeDescription(name), message.AttributeValue(value))
 	}
-	// Add objectClass for posixAccount
-	e.AddAttribute("objectClass", "posixAccount")
+
+	uidNumberStr := getUidNumber(user)
+	addAttribute("uidNumber", uidNumberStr)
+	addAttribute("gidNumber", uidNumberStr)
+	addAttribute("homeDirectory", getHomeDirectory(user))
+	addAttribute("cn", user.Name)
+	addAttribute("uid", user.Id)
+	addAttribute("mail", user.Email)
+	addAttribute("mobile", user.Phone)
+	addAttribute("sn", user.LastName)
+	addAttribute("givenName", user.FirstName)
+	// Add POSIX attributes for Linux machine login support
+	addAttribute("loginShell", string(getAttribute("loginShell", user)))
+	addAttribute("gecos", string(getAttribute("gecos", user)))
+	// Add SSH public key if available
+	if sshKey := string(getAttribute("sshPublicKey", user)); sshKey != "" {
+		addAttribute("sshPublicKey", sshKey)
+	}
+	// Add Samba attributes so the entry also works as an SMB account
+	addAttribute("sambaSID", getSambaSid(user))
+	addAttribute("sambaPrimaryGroupSID", getSambaPrimaryGroupSid(user))
+	addAttribute("sambaAcctFlags", getSambaAcctFlags(user))
+	addAttribute("sambaPwdLastSet", getSambaPwdLastSet(user))
+	addAttribute("sambaDomainName", user.Owner)
+	addAttribute("sambaLMPassword", sambaLmPasswordPlaceholder)
+	addAttribute("sambaPasswordHistory", sambaPasswordHistoryPlaceholder)
+	if ntPassword := getSambaNtPassword(user, org); ntPassword != "" {
+		addAttribute("sambaNTPassword", ntPassword)
+	}
+	objectClasses := make([]message.AttributeValue, 0, len(userObjectClasses))
+	for _, objectClass := range userObjectClasses {
+		objectClasses = append(objectClasses, message.AttributeValue(objectClass))
+	}
+	e.AddAttribute("objectClass", objectClasses...)
 	if IsLdapAttrAllowed(org, ldapMemberOfAttr) {
 		for _, group := range user.Groups {
 			e.AddAttribute(ldapMemberOfAttr, message.AttributeValue(groupToDN(group, baseDN)))
 		}
 	}
 	for _, attr := range attrs {
-		if !IsLdapAttrAllowed(org, attr) {
+		if added[strings.ToLower(attr)] || !IsLdapAttrAllowed(org, attr) {
+			continue
+		}
+		if _, ok := ldapAttributesMapping[attr]; !ok {
 			continue
 		}
 		e.AddAttribute(message.AttributeDescription(attr), getAttribute(attr, user))
@@ -371,6 +373,8 @@ func handleRootSearch(w ldap.ResponseWriter, r *message.SearchRequest, res *mess
 		e.AddAttribute("objectClasses", []message.AttributeValue{
 			"( 1.3.6.1.1.1.2.0 NAME 'posixAccount' DESC 'Abstraction of an account with POSIX attributes' SUP top AUXILIARY MUST ( cn $ uid $ uidNumber $ gidNumber $ homeDirectory ) MAY ( userPassword $ loginShell $ gecos $ description ) )",
 			"( 1.3.6.1.1.1.2.2 NAME 'posixGroup' DESC 'Abstraction of a group of accounts' SUP top STRUCTURAL MUST ( cn $ gidNumber ) MAY ( userPassword $ memberUid $ description ) )",
+			"( 1.3.6.1.4.1.7165.2.2.6 NAME 'sambaSamAccount' DESC 'Samba 3.0 Auxiliary SAM Account' SUP top AUXILIARY MUST ( uid $ sambaSID ) MAY ( cn $ sambaLMPassword $ sambaNTPassword $ sambaPwdLastSet $ sambaAcctFlags $ displayName $ sambaPrimaryGroupSID $ sambaDomainName $ sambaPasswordHistory $ description ) )",
+			"( 1.3.6.1.4.1.7165.2.2.8 NAME 'sambaIdmapEntry' DESC 'Mapping from a SID to an ID' SUP top AUXILIARY MUST ( sambaSID ) MAY ( uidNumber $ gidNumber ) )",
 		}...)
 		w.Write(e)
 	}
