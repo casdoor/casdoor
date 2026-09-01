@@ -14,6 +14,12 @@
 
 package object
 
+import (
+	"reflect"
+
+	"github.com/casdoor/casdoor/form"
+)
+
 func (application *Application) GetProviderByCategory(category string) (*Provider, error) {
 	providers, err := GetProviders(application.Organization)
 	if err != nil {
@@ -176,4 +182,56 @@ func (application *Application) HasPromptPage() bool {
 	}
 
 	return application.isAffiliationPrompted()
+}
+
+// the auth form fields each signup item owns
+var signupItemFields = map[string][]string{
+	"Username":       {"Username"},
+	"Display name":   {"Name", "FirstName", "LastName"},
+	"First name":     {"FirstName"},
+	"Last name":      {"LastName"},
+	"Password":       {"Password"},
+	"Email":          {"Email", "EmailCode"},
+	"Email or Phone": {"Email", "EmailCode", "Phone", "CountryCode", "PhoneCode"},
+	"Phone or Email": {"Email", "EmailCode", "Phone", "CountryCode", "PhoneCode"},
+	"Phone":          {"Phone", "CountryCode", "PhoneCode"},
+	"Country/Region": {"Region"},
+	"ID card":        {"IdCard"},
+	"Affiliation":    {"Affiliation"},
+	"Bio":            {"Bio"},
+	"Tag":            {"Tag"},
+	"Education":      {"Education"},
+	"Gender":         {"Gender"},
+	"Languages":      {"Language"},
+}
+
+func (application *Application) ClearHiddenSignupFields(authForm *form.AuthForm) {
+	if application == nil || authForm == nil {
+		return
+	}
+
+	visibleFields := map[string]bool{}
+	for _, signupItem := range application.SignupItems {
+		if signupItem == nil || !signupItem.Visible {
+			continue
+		}
+
+		for _, field := range signupItemFields[signupItem.Name] {
+			visibleFields[field] = true
+		}
+	}
+
+	authFormValue := reflect.ValueOf(authForm).Elem()
+	for _, fields := range signupItemFields {
+		for _, field := range fields {
+			if visibleFields[field] {
+				continue
+			}
+
+			fieldValue := authFormValue.FieldByName(field)
+			if fieldValue.IsValid() && fieldValue.Kind() == reflect.String && fieldValue.CanSet() {
+				fieldValue.SetString("")
+			}
+		}
+	}
 }
