@@ -1,5 +1,4 @@
 import i18next from "i18next";
-import {Button} from "@/components/ui/button";
 import {CrudListPage} from "@/components/crud/CrudListPage";
 import {boolColumn, dateColumn, linkColumn, textColumn, valueFilters} from "@/components/crud/columns";
 import type {ColumnDef} from "@/components/crud/types";
@@ -57,10 +56,11 @@ export default function SyncerListPage() {
       newRecord={account ? () => newSyncer(account) : undefined}
       editUrl={(r) => `/syncers/${r.organization}/${r.name}`}
       remove={(r) => SyncerBackend.deleteSyncer(r)}
-      rowActions={(record) => (
-        <Button
-          size="sm"
-          onClick={() => {
+      rowActions={(record) => [
+        {
+          key: "sync",
+          label: i18next.t("general:Sync"),
+          onSelect: () => {
             SyncerBackend.runSyncer("admin", record.name, record.organization).then((res: any) => {
               if (res.status === "ok") {
                 Setting.showMessage("success", i18next.t("general:Successfully synced"));
@@ -68,11 +68,9 @@ export default function SyncerListPage() {
                 Setting.showMessage("error", res.msg);
               }
             });
-          }}
-        >
-          {i18next.t("general:Sync")}
-        </Button>
-      )}
+          },
+        },
+      ]}
       actionColumnWidth={250}
     />
   );

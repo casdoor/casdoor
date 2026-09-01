@@ -19,7 +19,7 @@ import {ThemeEditor} from "@/components/common/ThemeEditor";
 import {ApplicationExportButton, ApplicationImportModal} from "@/components/application/ApplicationImportExport";
 import {EditPageShell} from "@/components/crud/EditPageShell";
 import {EditableTable} from "@/components/crud/EditableTable";
-import {FormRow} from "@/components/crud/FormRow";
+import {FormRow, formGridClass} from "@/components/crud/FormRow";
 import {useAccount} from "@/hooks/use-account";
 import {useEditRecord} from "@/hooks/use-edit-record";
 import {useCertOptions, useOrganizationOptions, useProviderList, useProviderOptions} from "@/hooks/use-options";
@@ -38,6 +38,7 @@ import {SignupTableDefaultCssMap} from "@/lib/signup-css";
 import * as ApplicationBackend from "@/backend/ApplicationBackend";
 import * as ResourceBackend from "@/backend/ResourceBackend";
 import * as Setting from "@/lib/setting";
+import {cn} from "@/lib/utils";
 
 /** the provider kinds a user account can be linked to */
 const LINKABLE_PROVIDER_CATEGORIES = ["OAuth", "Web3", "SAML"];
@@ -418,7 +419,7 @@ export default function ApplicationEditPage() {
           <TabsTrigger value="reverse-proxy">{i18next.t("application:Reverse Proxy")}</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="basic" className={menuMode === "vertical" ? "mt-0 min-w-0 flex-1" : undefined}>
+        <TabsContent value="basic" className={cn(formGridClass, menuMode === "vertical" && "mt-0 min-w-0 flex-1")}>
           {/* antd puts these next to its live sign-in previews; this frontend has no
               previews, so the links live on their own row at the top of the tab */}
           {mode === "add" ? null : (
@@ -534,7 +535,7 @@ export default function ApplicationEditPage() {
           </FormRow>
         </TabsContent>
 
-        <TabsContent value="authentication" className={menuMode === "vertical" ? "mt-0 min-w-0 flex-1" : undefined}>
+        <TabsContent value="authentication" className={cn(formGridClass, menuMode === "vertical" && "mt-0 min-w-0 flex-1")}>
           <FormRow labelKey="application:Cookie expire">
             <Input
               type="number"
@@ -608,7 +609,7 @@ export default function ApplicationEditPage() {
           </FormRow>
         </TabsContent>
 
-        <TabsContent value="oidc-oauth" className={menuMode === "vertical" ? "mt-0 min-w-0 flex-1" : undefined}>
+        <TabsContent value="oidc-oauth" className={cn(formGridClass, menuMode === "vertical" && "mt-0 min-w-0 flex-1")}>
           {/* both are editable so that an admin can rotate the pair, as in the antd page */}
           <FormRow labelKey="provider:Client ID">
             <Input value={application.clientId ?? ""} onChange={(e) => updateField("clientId", e.target.value)} />
@@ -817,7 +818,7 @@ export default function ApplicationEditPage() {
           </FormRow>
         </TabsContent>
 
-        <TabsContent value="saml" className={menuMode === "vertical" ? "mt-0 min-w-0 flex-1" : undefined}>
+        <TabsContent value="saml" className={cn(formGridClass, menuMode === "vertical" && "mt-0 min-w-0 flex-1")}>
           <FormRow labelKey="application:SAML reply URL">
             <Input value={application.samlReplyUrl ?? ""} onChange={(e) => updateField("samlReplyUrl", e.target.value)} />
           </FormRow>
@@ -934,7 +935,7 @@ export default function ApplicationEditPage() {
           )}
         </TabsContent>
 
-        <TabsContent value="providers" className={menuMode === "vertical" ? "mt-0 min-w-0 flex-1" : undefined}>
+        <TabsContent value="providers" className={cn(formGridClass, menuMode === "vertical" && "mt-0 min-w-0 flex-1")}>
           <FormRow labelKey="application:Providers" block>
             <EditableTable
               rows={application.providers ?? []}
@@ -1088,7 +1089,7 @@ export default function ApplicationEditPage() {
           </FormRow>
         </TabsContent>
 
-        <TabsContent value="ui-customization" className={menuMode === "vertical" ? "mt-0 min-w-0 flex-1" : undefined}>
+        <TabsContent value="ui-customization" className={cn(formGridClass, menuMode === "vertical" && "mt-0 min-w-0 flex-1")}>
           <FormRow block labelKey="application:Org choice mode">
             <SelectField
               value={application.orgChoiceMode ?? "None"}
@@ -1469,7 +1470,7 @@ export default function ApplicationEditPage() {
           </FormRow>
         </TabsContent>
 
-        <TabsContent value="security" className={menuMode === "vertical" ? "mt-0 min-w-0 flex-1" : undefined}>
+        <TabsContent value="security" className={cn(formGridClass, menuMode === "vertical" && "mt-0 min-w-0 flex-1")}>
           <FormRow labelKey="application:Token cert">
             <SearchableSelect
               value={application.cert ?? ""}
@@ -1544,7 +1545,7 @@ export default function ApplicationEditPage() {
           </FormRow>
         </TabsContent>
 
-        <TabsContent value="reverse-proxy" className={menuMode === "vertical" ? "mt-0 min-w-0 flex-1" : undefined}>
+        <TabsContent value="reverse-proxy" className={cn(formGridClass, menuMode === "vertical" && "mt-0 min-w-0 flex-1")}>
           <FormRow labelKey="provider:Domain">
             <Input
               value={application.domain ?? ""}

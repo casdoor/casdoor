@@ -109,6 +109,7 @@ export default function EnforcerEditPage() {
 
   return (
     <EditPageShell
+      grid
       title={mode === "add" ? i18next.t("enforcer:New Enforcer") : i18next.t("enforcer:Edit Enforcer")}
       mode={mode}
       backTo="/enforcers"

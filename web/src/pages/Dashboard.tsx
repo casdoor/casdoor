@@ -1,5 +1,6 @@
 import * as React from "react";
 import i18next from "i18next";
+import {AppWindow, Building2, KeyRound, Plug, UserPlus, Users} from "lucide-react";
 import {Link} from "react-router-dom";
 import {
   Cell,
@@ -52,19 +53,25 @@ interface Series {
 }
 
 /**
- * Eight of these sit in a row, so each one paints a single accent hairline rather
- * than colouring its number — eight coloured numerals read as eight warnings.
+ * Eight of these sit in a row, so the metric is carried by an icon rather than a
+ * colour: eight accent hues across the top of the dashboard read as eight
+ * unrelated warnings, and none of them meant anything.
  */
-function StatCard({title, value, accent, to}: {title: string; value: number; accent: string; to: string}) {
+function StatCard({title, value, icon, to}: {title: string; value: number; icon: React.ReactNode; to: string}) {
   return (
     <Link to={to} className="group rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-      <Card className="relative h-full overflow-hidden transition-colors group-hover:border-foreground/25">
-        <span aria-hidden className="absolute inset-x-0 top-0 h-0.5" style={{background: accent}} />
-        <CardHeader className="pb-1.5 pt-4">
-          <CardTitle className="truncate text-xs font-medium text-muted-foreground">{title}</CardTitle>
-        </CardHeader>
-        <CardContent className="pb-4">
-          <span className="text-2xl font-semibold tabular-nums">{value}</span>
+      <Card className="h-full transition-colors group-hover:border-foreground/25">
+        <CardContent className="flex items-center gap-3 p-4">
+          <span
+            aria-hidden
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground transition-colors group-hover:text-foreground [&_svg]:size-[18px]"
+          >
+            {icon}
+          </span>
+          <span className="min-w-0">
+            <span className="block truncate text-xs text-muted-foreground">{title}</span>
+            <span className="block text-2xl font-semibold leading-tight tabular-nums">{value}</span>
+          </span>
         </CardContent>
       </Card>
     </Link>
@@ -175,29 +182,29 @@ export default function Dashboard() {
       {/* Eight across only once there is room for the labels; below that they
           truncate to "New users / 30..." and stop meaning anything */}
       <div id="statistic" className="grid grid-cols-2 gap-3 md:grid-cols-4 2xl:grid-cols-8">
-        <StatCard title={i18next.t("home:Total users")} value={userCounts[30] ?? 0} accent={CHART_COLORS[0]} to="/users" />
+        <StatCard title={i18next.t("home:Total users")} value={userCounts[30] ?? 0} icon={<Users />} to="/users" />
         <StatCard
           title={i18next.t("home:New users today")}
           value={Math.max(0, (userCounts[30] ?? 0) - (userCounts[29] ?? 0))}
-          accent={CHART_COLORS[1]}
+          icon={<UserPlus />}
           to="/users"
         />
         <StatCard
           title={i18next.t("home:New users / 7 days")}
           value={Math.max(0, (userCounts[30] ?? 0) - (userCounts[23] ?? 0))}
-          accent={CHART_COLORS[1]}
+          icon={<UserPlus />}
           to="/users"
         />
         <StatCard
           title={i18next.t("home:New users / 30 days")}
           value={Math.max(0, (userCounts[30] ?? 0) - (userCounts[0] ?? 0))}
-          accent={CHART_COLORS[1]}
+          icon={<UserPlus />}
           to="/users"
         />
-        <StatCard title={i18next.t("general:Organizations")} value={at("organizationCounts", 30)} accent={CHART_COLORS[3]} to="/organizations" />
-        <StatCard title={i18next.t("general:Tokens")} value={at("tokenCounts", 30)} accent={CHART_COLORS[2]} to="/tokens" />
-        <StatCard title={i18next.t("general:Applications")} value={at("applicationCounts", 30)} accent={CHART_COLORS[4]} to="/applications" />
-        <StatCard title={i18next.t("application:Providers")} value={at("providerCounts", 30)} accent={CHART_COLORS[1]} to="/providers" />
+        <StatCard title={i18next.t("general:Organizations")} value={at("organizationCounts", 30)} icon={<Building2 />} to="/organizations" />
+        <StatCard title={i18next.t("general:Tokens")} value={at("tokenCounts", 30)} icon={<KeyRound />} to="/tokens" />
+        <StatCard title={i18next.t("general:Applications")} value={at("applicationCounts", 30)} icon={<AppWindow />} to="/applications" />
+        <StatCard title={i18next.t("application:Providers")} value={at("providerCounts", 30)} icon={<Plug />} to="/providers" />
       </div>
 
       {/* 30-day trend + provider distribution */}
@@ -274,7 +281,13 @@ export default function Dashboard() {
                   </PieChart>
                 </ResponsiveContainer>
               ) : (
-                <span className="text-muted-foreground">{i18next.t("general:None")}</span>
+                <div className="flex flex-col items-center gap-2 text-muted-foreground">
+                  <Plug className="h-8 w-8 opacity-40" strokeWidth={1.5} />
+                  <span className="text-sm">{i18next.t("general:No data")}</span>
+                  <Link to="/providers" className="text-sm underline underline-offset-4 hover:text-foreground">
+                    {i18next.t("application:Providers")}
+                  </Link>
+                </div>
               )}
             </div>
           </CardContent>
@@ -304,7 +317,13 @@ export default function Dashboard() {
                   </div>
                 </>
               ) : (
-                <span className="text-muted-foreground">{i18next.t("general:None")}</span>
+                <div className="flex flex-col items-center gap-2 text-muted-foreground">
+                  <Plug className="h-8 w-8 opacity-40" strokeWidth={1.5} />
+                  <span className="text-sm">{i18next.t("general:No data")}</span>
+                  <Link to="/providers" className="text-sm underline underline-offset-4 hover:text-foreground">
+                    {i18next.t("application:Providers")}
+                  </Link>
+                </div>
               )}
             </div>
           </CardContent>

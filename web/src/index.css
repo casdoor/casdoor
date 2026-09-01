@@ -75,7 +75,10 @@
     --card: 0 0% 10.5%;
     --card-foreground: 0 0% 96%;
 
-    --popover: 0 0% 12%;
+    /* a menu or a dialog floats above a card, so it has to out-step the card the
+       way the card out-steps the page — at 12% it was four levels off --card and
+       read as translucent */
+    --popover: 0 0% 16.5%;
     --popover-foreground: 0 0% 96%;
 
     --primary: 0 0% 98%;

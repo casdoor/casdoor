@@ -1,8 +1,6 @@
 import i18next from "i18next";
 import {Link} from "react-router-dom";
 import {Badge} from "@/components/ui/badge";
-import {Button} from "@/components/ui/button";
-import {ConfirmButton} from "@/components/common/ConfirmButton";
 import {CrudListPage} from "@/components/crud/CrudListPage";
 import {dateColumn, linkColumn, organizationColumn, tagsColumn} from "@/components/crud/columns";
 import type {ColumnDef} from "@/components/crud/types";
@@ -78,42 +76,38 @@ export default function OrderListPage() {
       readOnly={readOnly}
       editUrl={(r) => `/orders/${r.owner}/${r.name}`}
       remove={(r) => OrderBackend.deleteOrder(r)}
-      rowActions={(record, _index, {refresh}) => (
-        <>
-          {/* the same page pays an unpaid order and shows a paid one */}
-          <Button variant="outline" size="sm" asChild>
-            <Link to={`/orders/${record.owner}/${record.name}/pay`}>
-              {record.state === "Created" || record.state === "Failed"
-                ? i18next.t("order:Pay")
-                : i18next.t("general:Detail")}
-            </Link>
-          </Button>
-          {/* only an admin may cancel, and only an order nobody has paid for yet */}
-          {record.state === "Created" && Setting.isLocalAdminUser(account) ? (
-            <ConfirmButton
-              variant="destructive"
-              size="sm"
-              description={`${record.name ?? ""}`}
-              onConfirm={() =>
-                OrderBackend.cancelOrder(record.owner, record.name)
-                  .then((res: any) => {
-                    if (res.status === "ok") {
-                      Setting.showMessage("success", i18next.t("general:Successfully canceled"));
-                      refresh();
-                    } else {
-                      Setting.showMessage("error", `${i18next.t("general:Failed to cancel")}: ${res.msg}`);
-                    }
-                  })
-                  .catch((error) =>
-                    Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`),
-                  )
-              }
-            >
-              {i18next.t("general:Cancel")}
-            </ConfirmButton>
-          ) : null}
-        </>
-      )}
+      rowActions={(record, _index, {refresh}) => [
+        // the same page pays an unpaid order and shows a paid one
+        {
+          key: "pay",
+          label: record.state === "Created" || record.state === "Failed"
+            ? i18next.t("order:Pay")
+            : i18next.t("general:Detail"),
+          href: `/orders/${record.owner}/${record.name}/pay`,
+        },
+        // only an admin may cancel, and only an order nobody has paid for yet
+        record.state === "Created" && Setting.isLocalAdminUser(account)
+          ? {
+            key: "cancel",
+            label: i18next.t("general:Cancel"),
+            destructive: true,
+            confirm: {description: `${record.name ?? ""}`},
+            onSelect: () =>
+              OrderBackend.cancelOrder(record.owner, record.name)
+                .then((res: any) => {
+                  if (res.status === "ok") {
+                    Setting.showMessage("success", i18next.t("general:Successfully canceled"));
+                    refresh();
+                  } else {
+                    Setting.showMessage("error", `${i18next.t("general:Failed to cancel")}: ${res.msg}`);
+                  }
+                })
+                .catch((error) =>
+                  Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`),
+                ),
+          }
+          : null,
+      ]}
       actionColumnWidth={300}
     />
   );

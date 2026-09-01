@@ -2,7 +2,6 @@ import * as React from "react";
 import i18next from "i18next";
 import {Link, useNavigate} from "react-router-dom";
 import {Badge} from "@/components/ui/badge";
-import {Button} from "@/components/ui/button";
 import {CrudListPage} from "@/components/crud/CrudListPage";
 import {dateColumn, linkColumn, textColumn} from "@/components/crud/columns";
 import type {ColumnDef} from "@/components/crud/types";
@@ -125,11 +124,14 @@ export default function ApplicationListPage() {
             q.sortOrder,
           )
       }
-      rowActions={(record) => (
-        <Button variant="outline" size="sm" loading={copying === record.name} onClick={() => duplicate(record)}>
-          {i18next.t("general:Duplicate")}
-        </Button>
-      )}
+      rowActions={(record) => [
+        {
+          key: "duplicate",
+          label: i18next.t("general:Duplicate"),
+          loading: copying === record.name,
+          onSelect: () => duplicate(record),
+        },
+      ]}
       newRecord={account ? () => newApplication(account) : undefined}
       // antd refuses to delete the built-in application
       deleteDisabled={(record) => record.name === "app-built-in"}

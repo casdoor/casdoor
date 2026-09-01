@@ -341,7 +341,7 @@ export function DataTable<T = any>({
   emptyText,
   className,
 }: DataTableProps<T>) {
-  const visibleColumns = columns.filter((c) => !c.hidden);
+  const visibleColumns = React.useMemo(() => columns.filter((c) => !c.hidden), [columns]);
   const stickyOffsets = React.useMemo(() => getStickyOffsets(visibleColumns), [visibleColumns]);
   const pageCount = Math.max(1, Math.ceil(total / query.pageSize));
   const from = total === 0 ? 0 : (query.page - 1) * query.pageSize + 1;

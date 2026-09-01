@@ -16,25 +16,32 @@ interface FormRowProps {
   className?: string;
   /**
    * This row's content wants the full width of the card — a table, a code editor,
-   * a transfer list. Everything else is capped at a readable measure.
+   * a transfer list. Inside a `FormGrid` it takes both columns instead of one.
    */
   block?: boolean;
   htmlFor?: string;
 }
 
 /**
+ * Lays a run of `FormRow`s out in two columns once the card is wide enough for
+ * each one to keep a readable measure (~500px at the `xl` breakpoint, where the
+ * content area clears 1000px). Below that it stays a single column.
+ *
+ * The Casdoor edit pages carry 20-60 fields each, so a single column turned them
+ * into a fifteen-screen scroll while two thirds of the card sat empty.
+ */
+export const formGridClass = "grid grid-cols-1 gap-x-10 xl:grid-cols-2";
+
+export function FormGrid({children, className}: {children: React.ReactNode; className?: string}) {
+  return <div className={cn(formGridClass, className)}>{children}</div>;
+}
+
+/**
  * The label/control row used by every Casdoor edit page.
  *
  * The antd version was a `<Row><Col span={2}>label</Col><Col span={22}>control
- * </Col></Row>`, and the first port kept that shape: a right-aligned label in a
- * fixed 190px column and a control filling the rest. In a 1600px page that
- * stretched every text field to well over a thousand pixels, which is both ugly
- * and unreadable — the eye has to travel the whole width to get from the label to
- * the end of the value.
- *
- * So the label now sits above its control and the control is capped at a
- * comfortable measure. `block` rows (tables, code editors, transfer lists) opt out
- * of the cap because they genuinely want the width.
+ * </Col></Row>`. Here the label sits above its control and the row is a cell of
+ * the enclosing `FormGrid`, which is what decides how many fit side by side.
  */
 export function FormRow({label, labelKey, tooltip, children, className, block, htmlFor}: FormRowProps) {
   let resolvedLabel = label;
@@ -50,7 +57,7 @@ export function FormRow({label, labelKey, tooltip, children, className, block, h
   }
 
   return (
-    <div className={cn("space-y-1.5 py-2.5", className)}>
+    <div className={cn("min-w-0 space-y-1.5 py-2.5", block && "xl:col-span-2", className)}>
       <label htmlFor={htmlFor} className="flex items-center gap-1.5 text-sm font-medium leading-none">
         <span>{resolvedLabel}</span>
         {resolvedTooltip ? (
@@ -64,7 +71,7 @@ export function FormRow({label, labelKey, tooltip, children, className, block, h
           </Tooltip>
         ) : null}
       </label>
-      <div className={cn("min-w-0", !block && "max-w-xl")}>{children}</div>
+      <div className="min-w-0">{children}</div>
     </div>
   );
 }
@@ -81,7 +88,7 @@ export function FormSection({
   className?: string;
 }) {
   return (
-    <section className={cn("space-y-2", className)}>
+    <section className={cn("space-y-2 xl:col-span-2", className)}>
       {title ? (
         <header className="space-y-0.5">
           <h3 className="text-sm font-semibold tracking-tight">{title}</h3>
@@ -90,7 +97,7 @@ export function FormSection({
       ) : null}
       {/* the rows carry their own rhythm now; a rule between each one turned the
           form into a spreadsheet */}
-      <div>{children}</div>
+      <FormGrid>{children}</FormGrid>
     </section>
   );
 }

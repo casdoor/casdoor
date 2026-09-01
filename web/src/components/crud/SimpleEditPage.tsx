@@ -11,7 +11,7 @@ import {SearchableSelect, type SearchableOption} from "@/components/common/Searc
 import {TagsInput} from "@/components/common/TagsInput";
 import {CodeEditor} from "@/components/common/CodeEditor";
 import {EditPageShell} from "@/components/crud/EditPageShell";
-import {FormRow} from "@/components/crud/FormRow";
+import {FormGrid, FormRow} from "@/components/crud/FormRow";
 import {useEditRecord} from "@/hooks/use-edit-record";
 import {getModeTitleKey, submitEdit, type CasdoorResponse, type EditMode} from "@/lib/crud";
 import * as Setting from "@/lib/setting";
@@ -248,7 +248,7 @@ export function SimpleEditPage({
       saving={saving}
       extraActions={extraActions?.(ctx)}
     >
-      {fields.map(renderField)}
+      <FormGrid>{fields.map(renderField)}</FormGrid>
       {children?.(ctx, updateField)}
     </EditPageShell>
   );

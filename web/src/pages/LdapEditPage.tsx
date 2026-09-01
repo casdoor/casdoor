@@ -97,6 +97,7 @@ export default function LdapEditPage() {
 
   return (
     <EditPageShell
+      grid
       title={`${i18next.t(getModeTitleKey("ldap:Edit LDAP", isNew ? "add" : "edit"))} - ${ldap.serverName || organizationName}`}
       mode={isNew ? "add" : "edit"}
       backTo={`/organizations/${organizationName}`}

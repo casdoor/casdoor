@@ -2,7 +2,6 @@ import * as React from "react";
 import i18next from "i18next";
 import {Link} from "react-router-dom";
 import {Badge} from "@/components/ui/badge";
-import {Button} from "@/components/ui/button";
 import {Dialog, DialogContent, DialogHeader, DialogTitle} from "@/components/ui/dialog";
 import {CodeEditor} from "@/components/common/CodeEditor";
 import {CrudListPage} from "@/components/crud/CrudListPage";
@@ -120,23 +119,18 @@ export default function WebhookEventListPage() {
             q.sortOrder,
           )
         }
-        rowActions={(record, _index, {refresh}) => (
-          <>
-            <Button variant="outline" size="sm" onClick={() => setDetail(record)}>
-              {i18next.t("general:View")}
-            </Button>
-            {/* a delivery that already succeeded has nothing to replay */}
-            {record.state !== "Success" ? (
-              <Button
-                size="sm"
-                loading={replayingId === `${record.owner}/${record.name}`}
-                onClick={() => replay(record, refresh)}
-              >
-                {i18next.t("webhook:Replay")}
-              </Button>
-            ) : null}
-          </>
-        )}
+        rowActions={(record, _index, {refresh}) => [
+          {key: "view", label: i18next.t("general:View"), onSelect: () => setDetail(record)},
+          // a delivery that already succeeded has nothing to replay
+          record.state !== "Success"
+            ? {
+              key: "replay",
+              label: i18next.t("webhook:Replay"),
+              loading: replayingId === `${record.owner}/${record.name}`,
+              onSelect: () => replay(record, refresh),
+            }
+            : null,
+        ]}
       />
 
       <Dialog open={detail !== null} onOpenChange={(open) => (open ? undefined : setDetail(null))}>
