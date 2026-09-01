@@ -371,7 +371,7 @@ func (c *ApiController) Signup() {
 			return
 		}
 
-		code, err := object.GetOAuthCode(userId, clientId, "", "password", responseType, redirectUri, scope, state, nonce, codeChallenge, "", c.Ctx.Request.Host, c.GetAcceptLanguage())
+		code, err := object.GetOAuthCode(userId, clientId, "", "password", responseType, redirectUri, scope, state, nonce, codeChallenge, "", c.Ctx.Input.CruSession.SessionID(context.Background()), c.Ctx.Request.Host, c.GetAcceptLanguage())
 		if err != nil {
 			c.ResponseError(err.Error(), nil)
 			return
