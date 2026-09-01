@@ -26,7 +26,7 @@ var (
 	defaultLanguage = conf.GetConfigString("defaultLanguage")
 )
 
-// supportedLanguages mirrors the list used by the frontend in web/src/i18n.js.
+// supportedLanguages mirrors the list used by the frontend in web/src/i18n.ts.
 // It is used to normalize the language written into the <html lang="..."> attribute
 // of the served index.html, so browsers do not mis-detect the page language and
 // offer to translate a page that already matches the user's language.
@@ -64,7 +64,7 @@ func parseAcceptLanguage(header string) string {
 }
 
 // getIndexHtmlLanguage determines the language for the <html lang="..."> attribute
-// of index.html, mirroring the frontend precedence in web/src/i18n.js as closely as
+// of index.html, mirroring the frontend precedence in web/src/i18n.ts as closely as
 // the server can (localStorage is not visible to the server): forceLanguage first,
 // then the browser's Accept-Language, then defaultLanguage, falling back to "en".
 func getIndexHtmlLanguage(r *http.Request) string {

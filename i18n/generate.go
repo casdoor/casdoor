@@ -122,7 +122,9 @@ func parseAllWords(category string) *I18nData {
 	if category == "backend" {
 		paths = getAllFilePathsInFolder("../", ".go")
 	} else {
-		paths = getAllFilePathsInFolder("../web/src", ".js")
+		// the console is TypeScript, so ".js" alone would walk right past it
+		paths = getAllFilePathsInFolder("../web/src", ".tsx")
+		paths = append(paths, getAllFilePathsInFolder("../web/src", ".ts")...)
 	}
 
 	allWords := []string{}
