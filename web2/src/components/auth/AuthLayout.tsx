@@ -12,6 +12,7 @@ import {
   useApplicationTheme,
   useCustomHead,
 } from "@/hooks/use-application-chrome";
+import {useIsDark} from "@/hooks/use-theme";
 import * as Setting from "@/lib/setting";
 import {cn} from "@/lib/utils";
 
@@ -38,6 +39,9 @@ function BlockedMessage({message}: {message: string}) {
 /** Centered panel shared by the sign-in, sign-up, forget-password and result pages. */
 export function AuthLayout({application, children, className, wide}: AuthLayoutProps) {
   useApplicationTheme(application);
+  // an application can force the dark palette regardless of the visitor's own
+  // preference, and the logo has to follow the palette that is actually painted
+  const isDark = useIsDark();
   useApplicationHelmet(application);
   // headerHtml is the organization/application chrome, pageHtml is the per-page one
   useCustomHead(application?.headerHtml, "header");
@@ -54,8 +58,11 @@ export function AuthLayout({application, children, className, wide}: AuthLayoutP
     return <BlockedMessage message={ipRestriction} />;
   }
 
-  const logo =
-    application?.logo || cookieChrome.logo || `${Setting.StaticBaseUrl}/img/casdoor-logo_1185x256.png`;
+  const logo = Setting.getThemedLogo(
+    application?.logo || cookieChrome.logo,
+    application?.logoDark || application?.organizationObj?.logoDark,
+    [isDark ? "dark" : "light"],
+  );
   const footerHtml = application?.footerHtml || cookieChrome.footerHtml;
 
   return (

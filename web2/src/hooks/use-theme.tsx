@@ -77,3 +77,27 @@ export function ThemeProvider({children}: {children: React.ReactNode}) {
 export function useTheme() {
   return React.useContext(ThemeContext);
 }
+
+/**
+ * Whether the dark palette is actually painted right now. That is not always the
+ * viewer's own preference: an organization or application whose `themeData` sets
+ * `themeType: "dark"` forces the class on too (see `useThemeData`), and anything
+ * that swaps a light asset for a dark one has to follow what is on screen.
+ */
+export function useIsDark() {
+  const {resolvedTheme} = useTheme();
+  const [forced, setForced] = React.useState(() =>
+    typeof document !== "undefined" && document.documentElement.classList.contains("dark"),
+  );
+
+  React.useEffect(() => {
+    const root = document.documentElement;
+    const sync = () => setForced(root.classList.contains("dark"));
+    sync();
+    const observer = new MutationObserver(sync);
+    observer.observe(root, {attributes: true, attributeFilter: ["class"]});
+    return () => observer.disconnect();
+  }, []);
+
+  return resolvedTheme === "dark" || forced;
+}

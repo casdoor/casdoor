@@ -7,7 +7,7 @@ import {Tooltip, TooltipContent, TooltipTrigger} from "@/components/ui/tooltip";
 import {getNavGroups, shouldFlattenNav} from "@/lib/nav";
 import * as Setting from "@/lib/setting";
 import {useAccount} from "@/hooks/use-account";
-import {useTheme} from "@/hooks/use-theme";
+import {useIsDark} from "@/hooks/use-theme";
 import {cn} from "@/lib/utils";
 
 const OPEN_GROUPS_KEY = "web2.openNavGroups";
@@ -31,13 +31,10 @@ interface SidebarProps {
 export function Sidebar({collapsed, onCollapsedChange, onNavigate, className}: SidebarProps) {
   const {account} = useAccount();
   const location = useLocation();
-  const {resolvedTheme} = useTheme();
+  const isDark = useIsDark();
   const organization = account?.organization;
   // the organization brands its own console, and may brand light and dark apart
-  const siderLogo =
-    (resolvedTheme === "dark" ? organization?.logoDark : "") ||
-    organization?.logo ||
-    Setting.getLogo([resolvedTheme]);
+  const siderLogo = Setting.getThemedLogo(organization?.logo, organization?.logoDark, [isDark ? "dark" : "light"]);
   // recomputed every render on purpose: the labels come from i18next, which
   // changes language without re-rendering this component's inputs
   const groups = getNavGroups(account);
