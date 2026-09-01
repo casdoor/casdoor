@@ -17,7 +17,7 @@ package object
 import (
 	"context"
 	"encoding/json"
-	"strconv"
+	"io"
 	"strings"
 	"sync"
 	"time"
@@ -28,7 +28,7 @@ import (
 )
 
 // deviceAuthStore mirrors the sync.Map methods used by the device authorization flow.
-// The default implementation is in-memory; when redisEndpoint is configured, a Redis-backed
+// The default implementation is in-memory; when Redis is configured, a Redis-backed
 // implementation is used so the flow works correctly across multiple Casdoor replicas.
 type deviceAuthStore interface {
 	Load(key any) (any, bool)
@@ -40,52 +40,49 @@ type deviceAuthStore interface {
 
 const deviceAuthRedisPrefix = "casdoor:device_auth:"
 
-// InitDeviceAuthStore switches DeviceAuthMap to a Redis-backed store when redisEndpoint is
+// InitDeviceAuthStore switches DeviceAuthMap to a Redis-backed store when Redis is
 // configured. It must be called after configuration is loaded and before serving requests.
 // On failure it logs a warning and keeps the default in-memory store.
 func InitDeviceAuthStore() {
-	endpoint := conf.GetConfigString("redisEndpoint")
-	if endpoint == "" {
+	config := conf.GetRedisConfig()
+	if config == nil {
 		return
 	}
 
-	client, err := newRedisClient(endpoint)
+	addrs := strings.Join(config.Addrs, ";")
+	client, err := newRedisClient(config)
 	if err != nil {
-		logs.Warn("device_auth_store: failed to connect to Redis (%s), falling back to in-memory store: %v", endpoint, err)
+		logs.Warn("device_auth_store: failed to connect to Redis (%s), falling back to in-memory store: %v", addrs, err)
 		return
 	}
 
 	DeviceAuthMap = &redisDeviceAuthStore{client: client}
-	logs.Info("device_auth_store: using Redis backend at %s", endpoint)
+	logs.Info("device_auth_store: using Redis backend at %s", addrs)
 }
 
-// newRedisClient parses the same "host:port[,db[,password]]" format that the beego session
-// Redis provider uses, so users do not need a separate configuration key.
-func newRedisClient(endpoint string) (*redis.Client, error) {
-	addr := endpoint
-	db := 0
-	password := ""
-
-	if i := strings.Index(endpoint, ","); i >= 0 {
-		addr = endpoint[:i]
-		rest := endpoint[i+1:]
-		parts := strings.SplitN(rest, ",", 2)
-		if d, err := strconv.Atoi(strings.TrimSpace(parts[0])); err == nil {
-			db = d
-		}
-		if len(parts) > 1 {
-			password = strings.TrimSpace(parts[1])
-		}
+// newRedisClient returns a cluster client when redisEndpoint lists several addresses,
+// otherwise a single-node client. Both satisfy redis.Cmdable.
+func newRedisClient(config *conf.RedisConfig) (redis.Cmdable, error) {
+	var client redis.Cmdable
+	if config.IsCluster {
+		client = redis.NewClusterClient(&redis.ClusterOptions{
+			Addrs:    config.Addrs,
+			Password: config.Password,
+			PoolSize: config.PoolSize,
+		})
+	} else {
+		client = redis.NewClient(&redis.Options{
+			Addr:     config.Addrs[0],
+			Password: config.Password,
+			PoolSize: config.PoolSize,
+			DB:       config.Db,
+		})
 	}
 
-	client := redis.NewClient(&redis.Options{
-		Addr:     addr,
-		DB:       db,
-		Password: password,
-	})
-
 	if err := client.Ping(context.Background()).Err(); err != nil {
-		_ = client.Close()
+		if closer, ok := client.(io.Closer); ok {
+			_ = closer.Close()
+		}
 		return nil, err
 	}
 
@@ -107,7 +104,7 @@ func (s *memoryDeviceAuthStore) Range(f func(key, value any) bool) { s.m.Range(f
 // ── Redis implementation ─────────────────────────────────────────────────────
 
 type redisDeviceAuthStore struct {
-	client *redis.Client
+	client redis.Cmdable
 }
 
 func (s *redisDeviceAuthStore) redisKey(key any) (string, bool) {
