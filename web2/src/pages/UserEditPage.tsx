@@ -709,7 +709,7 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
                 onCheckedChange={(v) => updateField("isDeleted", v)}
               />
             </AccountItemRow>
-            <FormRow labelKey="user:Is verified">
+            <FormRow block labelKey="user:Is verified">
               <Switch checked={!!user.isVerified} onCheckedChange={(v) => updateField("isVerified", v)} />
             </FormRow>
             <AccountItemRow name="IP whitelist" labelKey="general:IP whitelist">
@@ -718,7 +718,7 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
                 onChange={(e) => updateField("ipWhitelist", e.target.value)}
               />
             </AccountItemRow>
-            <FormRow labelKey="user:Deleted time">
+            <FormRow block labelKey="user:Deleted time">
               <Input value={Setting.getFormattedDate(user.deletedTime) ?? ""} disabled />
             </FormRow>
             <AccountItemRow name="MFA items" labelKey="general:MFA items" block>
@@ -988,10 +988,10 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
             <AccountItemRow name="Register source" labelKey="user:Register source">
               <Input value={user.registerSource ?? ""} disabled />
             </AccountItemRow>
-            <FormRow labelKey="user:Last signin time">
+            <FormRow block labelKey="user:Last signin time">
               <Input value={Setting.getFormattedDate(user.lastSigninTime) ?? ""} disabled />
             </FormRow>
-            <FormRow labelKey="user:Last signin IP">
+            <FormRow block labelKey="user:Last signin IP">
               <Input value={user.lastSigninIp ?? ""} disabled />
             </FormRow>
             {/* linking and unlinking go through the saved user, so they need the user to exist */}

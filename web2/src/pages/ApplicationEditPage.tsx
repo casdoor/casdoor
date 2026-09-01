@@ -480,7 +480,7 @@ export default function ApplicationEditPage() {
               <Input value={application.logo ?? ""} onChange={(e) => updateField("logo", e.target.value)} />
               {application.logo ? (
                 <a href={application.logo} target="_blank" rel="noreferrer">
-                  <img src={application.logo} alt="logo" className="h-16 rounded bg-white object-contain p-1" />
+                  <img src={application.logo} alt="logo" className="h-14 max-w-[240px] rounded-md border bg-white object-contain p-1.5" />
                 </a>
               ) : null}
             </div>
@@ -619,22 +619,22 @@ export default function ApplicationEditPage() {
               onChange={(e) => updateField("clientSecret", e.target.value)}
             />
           </FormRow>
-          <FormRow labelKey="application:Redirect URLs">
+          <FormRow block labelKey="application:Redirect URLs">
             <TagsInput value={application.redirectUris ?? []} onChange={(v) => updateField("redirectUris", v)} />
           </FormRow>
-          <FormRow labelKey="application:Forced redirect origin">
+          <FormRow block labelKey="application:Forced redirect origin">
             <Input
               value={application.forcedRedirectOrigin ?? ""}
               onChange={(e) => updateField("forcedRedirectOrigin", e.target.value)}
             />
           </FormRow>
-          <FormRow labelKey="application:Backchannel logout URL">
+          <FormRow block labelKey="application:Backchannel logout URL">
             <Input
               value={application.backchannelLogoutUri ?? ""}
               onChange={(e) => updateField("backchannelLogoutUri", e.target.value)}
             />
           </FormRow>
-          <FormRow labelKey="application:Grant types">
+          <FormRow block labelKey="application:Grant types">
             <MultiSelect
               value={application.grantTypes ?? []}
               onChange={(v) => updateField("grantTypes", v)}
@@ -720,21 +720,21 @@ export default function ApplicationEditPage() {
               ]}
             />
           </FormRow>
-          <FormRow labelKey="application:Token format">
+          <FormRow block labelKey="application:Token format">
             <SelectField
               value={application.tokenFormat ?? "JWT"}
               onChange={(v) => updateField("tokenFormat", v)}
               options={TOKEN_FORMATS.map((item) => ({id: item, name: item}))}
             />
           </FormRow>
-          <FormRow labelKey="application:Token signing method">
+          <FormRow block labelKey="application:Token signing method">
             <SelectField
               value={application.tokenSigningMethod ?? "RS256"}
               onChange={(v) => updateField("tokenSigningMethod", v)}
               options={TOKEN_SIGNING_METHODS.map((item) => ({id: item, name: item}))}
             />
           </FormRow>
-          <FormRow labelKey="application:Token fields">
+          <FormRow block labelKey="application:Token fields">
             <MultiSelect
               value={application.tokenFields ?? []}
               onChange={(v) => updateField("tokenFields", v)}
@@ -854,20 +854,20 @@ export default function ApplicationEditPage() {
               onCheckedChange={(v) => updateField("enableSamlPostBinding", v)}
             />
           </FormRow>
-          <FormRow labelKey="application:SAML hash algorithm">
+          <FormRow block labelKey="application:SAML hash algorithm">
             <SelectField
               value={application.samlHashAlgorithm ?? "SHA256"}
               onChange={(v) => updateField("samlHashAlgorithm", v)}
               options={SAML_HASH_ALGORITHMS.map((item) => ({id: item, name: item}))}
             />
           </FormRow>
-          <FormRow labelKey="application:Disable SAML attributes">
+          <FormRow block labelKey="application:Disable SAML attributes">
             <Switch
               checked={!!application.disableSamlAttributes}
               onCheckedChange={(v) => updateField("disableSamlAttributes", v)}
             />
           </FormRow>
-          <FormRow labelKey="application:Enable SAML assertion signature">
+          <FormRow block labelKey="application:Enable SAML assertion signature">
             <Switch
               checked={!!application.enableSamlAssertionSignature}
               onCheckedChange={(v) => updateField("enableSamlAssertionSignature", v)}
@@ -1089,7 +1089,7 @@ export default function ApplicationEditPage() {
         </TabsContent>
 
         <TabsContent value="ui-customization" className={menuMode === "vertical" ? "mt-0 min-w-0 flex-1" : undefined}>
-          <FormRow labelKey="application:Org choice mode">
+          <FormRow block labelKey="application:Org choice mode">
             <SelectField
               value={application.orgChoiceMode ?? "None"}
               onChange={(v) => updateField("orgChoiceMode", v)}
@@ -1375,13 +1375,13 @@ export default function ApplicationEditPage() {
               ]}
             />
           </FormRow>
-          <FormRow labelKey="application:Background URL">
+          <FormRow block labelKey="application:Background URL">
             <Input
               value={application.formBackgroundUrl ?? ""}
               onChange={(e) => updateField("formBackgroundUrl", e.target.value)}
             />
           </FormRow>
-          <FormRow labelKey="application:Background URL Mobile">
+          <FormRow block labelKey="application:Background URL Mobile">
             <Input
               value={application.formBackgroundUrlMobile ?? ""}
               onChange={(e) => updateField("formBackgroundUrlMobile", e.target.value)}
@@ -1401,7 +1401,7 @@ export default function ApplicationEditPage() {
               onChange={(v) => updateField("formCssMobile", v)}
             />
           </FormRow>
-          <FormRow labelKey="application:Form position">
+          <FormRow block labelKey="application:Form position">
             <div className="flex flex-wrap gap-2">
               {[
                 {value: 1, labelKey: "application:Left"},

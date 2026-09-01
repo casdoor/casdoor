@@ -189,7 +189,7 @@ export default function OrganizationEditPage() {
               </div>
               {organization.logo ? (
                 <a href={organization.logo} target="_blank" rel="noreferrer">
-                  <img src={organization.logo} alt="logo" className="h-20 rounded-md bg-white object-contain p-1" />
+                  <img src={organization.logo} alt="logo" className="h-14 max-w-[240px] rounded-md border bg-white object-contain p-1.5" />
                 </a>
               ) : null}
             </div>
@@ -214,7 +214,7 @@ export default function OrganizationEditPage() {
                     <img
                       src={organization.logoDark}
                       alt="logo dark"
-                      className="h-20 rounded-md bg-black object-contain p-1"
+                      className="h-14 max-w-[240px] rounded-md border bg-black object-contain p-1.5"
                     />
                   </a>
                 ) : null}
@@ -339,27 +339,27 @@ export default function OrganizationEditPage() {
               onChange={(e) => update("defaultPassword", e.target.value)}
             />
           </FormRow>
-          <FormRow labelKey="general:Master verification code">
+          <FormRow block labelKey="general:Master verification code">
             <Input
               value={organization.masterVerificationCode ?? ""}
               onChange={(e) => update("masterVerificationCode", e.target.value)}
             />
           </FormRow>
-          <FormRow labelKey="organization:Password expire days">
+          <FormRow block labelKey="organization:Password expire days">
             <Input
               type="number"
               value={organization.passwordExpireDays ?? 0}
               onChange={(e) => update("passwordExpireDays", Setting.myParseInt(e.target.value))}
             />
           </FormRow>
-          <FormRow labelKey="application:MFA remember time">
+          <FormRow block labelKey="application:MFA remember time">
             <Input
               type="number"
               value={organization.mfaRememberInHours ?? 12}
               onChange={(e) => update("mfaRememberInHours", Setting.myParseInt(e.target.value))}
             />
           </FormRow>
-          <FormRow labelKey="general:MFA items">
+          <FormRow block labelKey="general:MFA items">
             <EditableTable
               rows={organization.mfaItems ?? []}
               onChange={(rows) => update("mfaItems", rows)}
@@ -550,11 +550,11 @@ export default function OrganizationEditPage() {
               onChange={(e) => update("orgBalance", Number(e.target.value))}
             />
           </FormRow>
-          <FormRow labelKey="organization:User balance">
+          <FormRow block labelKey="organization:User balance">
             {/* maintained by the backend, the antd page shows it read-only too */}
             <Input type="number" value={organization.userBalance ?? 0} disabled />
           </FormRow>
-          <FormRow labelKey="organization:Account menu">
+          <FormRow block labelKey="organization:Account menu">
             <SelectField
               value={organization.accountMenu || "Horizontal"}
               onChange={(value) => update("accountMenu", value)}
@@ -564,7 +564,7 @@ export default function OrganizationEditPage() {
               ]}
             />
           </FormRow>
-          <FormRow labelKey="organization:LDAP attributes">
+          <FormRow block labelKey="organization:LDAP attributes">
             <MultiSelect
               creatable
               value={organization.ldapAttributes ?? []}
@@ -593,25 +593,25 @@ export default function OrganizationEditPage() {
               onCheck={(value) => update("widgetItems", value)}
             />
           </FormRow>
-          <FormRow labelKey="organization:Kerberos realm">
+          <FormRow block labelKey="organization:Kerberos realm">
             <Input
               value={organization.kerberosRealm ?? ""}
               onChange={(e) => update("kerberosRealm", e.target.value)}
             />
           </FormRow>
-          <FormRow labelKey="organization:Kerberos KDC host">
+          <FormRow block labelKey="organization:Kerberos KDC host">
             <Input
               value={organization.kerberosKdcHost ?? ""}
               onChange={(e) => update("kerberosKdcHost", e.target.value)}
             />
           </FormRow>
-          <FormRow labelKey="organization:Kerberos service name">
+          <FormRow block labelKey="organization:Kerberos service name">
             <Input
               value={organization.kerberosServiceName ?? ""}
               onChange={(e) => update("kerberosServiceName", e.target.value)}
             />
           </FormRow>
-          <FormRow labelKey="organization:Kerberos keytab">
+          <FormRow block labelKey="organization:Kerberos keytab">
             <Input
               value={organization.kerberosKeytab ?? ""}
               onChange={(e) => update("kerberosKeytab", e.target.value)}

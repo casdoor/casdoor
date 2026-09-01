@@ -72,7 +72,7 @@ function MessageCell({text, record, provider}: {text: string; record: any; provi
         </button>
       </PopoverTrigger>
       <PopoverContent align="end" className="max-h-[70vh] w-[min(90vw,720px)] overflow-y-auto">
-        <EntryMessageViewer entry={record} provider={provider} block />
+        <EntryMessageViewer entry={record} provider={provider} />
       </PopoverContent>
     </Popover>
   );

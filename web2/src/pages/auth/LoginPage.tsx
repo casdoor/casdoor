@@ -7,6 +7,7 @@ import {Input} from "@/components/ui/input";
 import {Label} from "@/components/ui/label";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 import {Tabs, TabsList, TabsTrigger} from "@/components/ui/tabs";
+import {cn} from "@/lib/utils";
 import {Alert, AlertDescription} from "@/components/ui/alert";
 import {Loading} from "@/components/common/Loading";
 import {AuthLayout} from "@/components/auth/AuthLayout";
@@ -708,7 +709,20 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
 
         {showTabs ? (
           <Tabs value={loginMethod} onValueChange={(v) => setLoginMethod(v as LoginMethod)}>
-            <TabsList className="grid w-full" style={{gridTemplateColumns: `repeat(${tabs}, minmax(0, 1fr))`}}>
+            {/* Equal grid tracks only work while the labels fit. With five sign-in
+                methods enabled each track is ~60px in a max-w-sm card, and the
+                triggers are whitespace-nowrap, so the labels overflowed their
+                track and painted on top of one another. Past three, the strip
+                keeps each label at its natural width and scrolls instead. */}
+            <TabsList
+              className={cn(
+                "w-full",
+                tabs <= 3
+                  ? "grid"
+                  : "flex justify-start overflow-x-auto scrollbar-thin [&>button]:shrink-0",
+              )}
+              style={tabs <= 3 ? {gridTemplateColumns: `repeat(${tabs}, minmax(0, 1fr))`} : undefined}
+            >
               {passwordEnabled ? <TabsTrigger value="password">{i18next.t("general:Password")}</TabsTrigger> : null}
               {codeEnabled ? (
                 <TabsTrigger value="verificationCode">{i18next.t("login:Verification code")}</TabsTrigger>

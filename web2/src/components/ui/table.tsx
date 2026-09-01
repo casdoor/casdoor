@@ -45,7 +45,7 @@ const TableHead = React.forwardRef<HTMLTableCellElement, React.ThHTMLAttributes<
     <th
       ref={ref}
       className={cn(
-        "h-10 whitespace-nowrap px-3 text-left align-middle text-xs font-semibold uppercase tracking-wide text-muted-foreground",
+        "h-9 whitespace-nowrap px-3 text-left align-middle text-xs font-medium text-muted-foreground",
         className,
       )}
       {...props}
@@ -56,7 +56,14 @@ TableHead.displayName = "TableHead";
 
 const TableCell = React.forwardRef<HTMLTableCellElement, React.TdHTMLAttributes<HTMLTableCellElement>>(
   ({className, ...props}, ref) => (
-    <td ref={ref} className={cn("px-3 py-2.5 align-middle", className)} {...props} />
+    // One line per row. Long opaque values (UUID names, client secrets, redirect
+    // URIs) used to wrap and leave every row a different height, which is what
+    // made the lists look ragged. Deliberately no `truncate` here: clipping the
+    // cell hides data with no way to get at it, and the overflow it needs also
+    // swallows anything that has to escape the cell. The table scrolls sideways
+    // instead, with the name and action columns pinned. A column that genuinely
+    // wants to wrap opts back in with `className: "whitespace-normal"`.
+    <td ref={ref} className={cn("whitespace-nowrap px-3 py-2 align-middle", className)} {...props} />
   ),
 );
 TableCell.displayName = "TableCell";

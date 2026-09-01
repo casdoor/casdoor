@@ -198,7 +198,7 @@ export default function ServerEditPage() {
           </Button>
         </div>
       </FormRow>
-      <FormRow labelKey="general:Application">
+      <FormRow block labelKey="general:Application">
         <SearchableSelect
           value={server.application ?? ""}
           onChange={(value) => updateServerField("application", value)}

@@ -40,7 +40,6 @@ export default function SyncerListPage() {
     <CrudListPage
       title={i18next.t("general:Syncers")}
       // Sync is the primary action here, not Edit
-      editIsPrimary={false}
       columns={columns}
       deps={[organizationName]}
       fetch={(q) =>

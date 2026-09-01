@@ -1,8 +1,9 @@
 import * as React from "react";
 import i18next from "i18next";
 import {Link} from "react-router-dom";
-import {ArrowDown, ArrowUp, ChevronLeft, ChevronRight, ChevronsUpDown, Filter, Search, X} from "lucide-react";
+import {ArrowDown, ArrowUp, ChevronLeft, ChevronRight, ChevronsUpDown, Filter, Inbox, Search, X} from "lucide-react";
 import {cn} from "@/lib/utils";
+import {Badge} from "@/components/ui/badge";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
@@ -89,8 +90,8 @@ function ColumnSearch({
         <button
           type="button"
           className={cn(
-            "ml-1 inline-flex h-6 w-6 items-center justify-center rounded hover:bg-accent",
-            active && "text-primary",
+            "ml-1 inline-flex h-6 w-6 items-center justify-center rounded text-muted-foreground/40 transition-colors hover:bg-accent hover:text-foreground group-hover/th:text-muted-foreground",
+            active && "bg-accent text-foreground group-hover/th:text-foreground",
           )}
           aria-label={i18next.t("general:Search")}
         >
@@ -187,8 +188,8 @@ function ColumnFilter({
         <button
           type="button"
           className={cn(
-            "ml-1 inline-flex h-6 w-6 items-center justify-center rounded hover:bg-accent",
-            active && "text-primary",
+            "ml-1 inline-flex h-6 w-6 items-center justify-center rounded text-muted-foreground/40 transition-colors hover:bg-accent hover:text-foreground group-hover/th:text-muted-foreground",
+            active && "bg-accent text-foreground group-hover/th:text-foreground",
           )}
           aria-label={i18next.t("general:Filter")}
         >
@@ -278,6 +279,57 @@ function stickyCell(sticky: StickyOffset | undefined, background: string) {
   };
 }
 
+/**
+ * The Casdoor list APIs filter on a single `field`/`value` pair, so at most one
+ * column search or filter menu can be in effect. Rather than leave the only clue
+ * inside a header icon, it surfaces here as a chip that says what is applied and
+ * clears it in one click.
+ */
+function ActiveFilter({
+  columns,
+  query,
+  onQueryChange,
+}: {
+  columns: ColumnDef[];
+  query: TableQuery;
+  onQueryChange: (patch: Partial<TableQuery>) => void;
+}) {
+  if (query.searchedColumn === "" || query.searchText === "") {
+    return null;
+  }
+  const column = columns.find((c) => c.dataIndex === query.searchedColumn);
+  // a filter menu stores the raw API value, so show the option's label when it has one
+  const optionLabel = (options: ColumnFilterOption[] | undefined): React.ReactNode => {
+    for (const option of options ?? []) {
+      if (option.value === query.searchText) {
+        return option.label;
+      }
+      const nested = optionLabel(option.children);
+      if (nested !== undefined) {
+        return nested;
+      }
+    }
+    return undefined;
+  };
+
+  return (
+    <div className="flex flex-wrap items-center gap-2">
+      <Badge variant="secondary" className="h-7 gap-1.5 rounded-md pl-2.5 pr-1 font-normal">
+        <span className="text-muted-foreground">{column?.title ?? query.searchedColumn}</span>
+        <span className="font-medium">{optionLabel(column?.filters) ?? query.searchText}</span>
+        <button
+          type="button"
+          aria-label={i18next.t("forget:Reset")}
+          className="ml-0.5 rounded-sm p-0.5 text-muted-foreground hover:bg-background hover:text-foreground"
+          onClick={() => onQueryChange({searchText: "", searchedColumn: "", page: 1})}
+        >
+          <X className="h-3 w-3" />
+        </button>
+      </Badge>
+    </div>
+  );
+}
+
 export function DataTable<T = any>({
   columns,
   rows,
@@ -308,13 +360,17 @@ export function DataTable<T = any>({
 
   return (
     <div className={cn("space-y-3", className)}>
-      <div className="rounded-lg border bg-card" data-tour="table">
+      <ActiveFilter columns={visibleColumns} query={query} onQueryChange={onQueryChange} />
+      <div className="overflow-hidden rounded-lg border bg-card" data-tour="table">
         <Table>
           <TableHeader>
-            <TableRow className="hover:bg-transparent">
+            <TableRow className="bg-muted/60 hover:bg-muted/60">
               {visibleColumns.map((column, columnIndex) => {
                 const sorted = query.sortField === column.dataIndex ? query.sortOrder : "";
-                const sticky = stickyCell(stickyOffsets.get(columnIndex), "bg-card");
+                // a pinned cell leaves the row's stacking context, so it needs the
+                // band painted on itself — and fully opaque, or the columns it
+                // scrolls over would show through
+                const sticky = stickyCell(stickyOffsets.get(columnIndex), "bg-muted");
                 return (
                   <TableHead
                     key={column.key ?? column.dataIndex}
@@ -324,6 +380,7 @@ export function DataTable<T = any>({
                       ...sticky.style,
                     }}
                     className={cn(
+                      "group/th",
                       column.align === "center" && "text-center",
                       column.align === "right" && "text-right",
                       sticky.className,
@@ -334,7 +391,10 @@ export function DataTable<T = any>({
                       {column.sortable ? (
                         <button
                           type="button"
-                          className="inline-flex items-center gap-1 rounded px-1 py-0.5 hover:text-foreground"
+                          className={cn(
+                            "-mx-1 inline-flex items-center gap-1 rounded px-1 py-0.5 transition-colors hover:text-foreground",
+                            sorted !== "" && "text-foreground",
+                          )}
                           onClick={() => toggleSort(column)}
                         >
                           {column.title}
@@ -382,8 +442,11 @@ export function DataTable<T = any>({
               : (rows ?? []).length === 0
                 ? (
                   <TableRow className="hover:bg-transparent">
-                    <TableCell colSpan={visibleColumns.length} className="h-32 text-center text-muted-foreground">
-                      {emptyText ?? i18next.t("general:No data")}
+                    <TableCell colSpan={visibleColumns.length} className="h-48">
+                      <div className="flex flex-col items-center justify-center gap-2 text-muted-foreground">
+                        <Inbox className="h-8 w-8 opacity-40" strokeWidth={1.5} />
+                        <span className="text-sm">{emptyText ?? i18next.t("general:No data")}</span>
+                      </div>
                     </TableCell>
                   </TableRow>
                 )
@@ -441,53 +504,53 @@ export function DataTable<T = any>({
                 ))}
           </TableBody>
         </Table>
-      </div>
 
-      <div className="flex flex-wrap items-center justify-between gap-3 text-sm text-muted-foreground">
-        <div>
-          {total > 0
-            ? `${from}-${to} / ${total}`
-            : loading
-              ? ""
-              : "0 / 0"}
-        </div>
-        <div className="flex items-center gap-2">
-          <Select
-            value={String(query.pageSize)}
-            onValueChange={(v) => onQueryChange({pageSize: Number(v), page: 1})}
-          >
-            <SelectTrigger className="h-8 w-[110px]">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {PAGE_SIZE_OPTIONS.map((size) => (
-                <SelectItem key={size} value={String(size)}>
-                  {size} / page
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Button
-            variant="outline"
-            size="iconSm"
-            aria-label="Previous page"
-            disabled={query.page <= 1 || loading}
-            onClick={() => onQueryChange({page: query.page - 1})}
-          >
-            <ChevronLeft />
-          </Button>
-          <span className="min-w-[70px] text-center tabular-nums">
-            {query.page} / {pageCount}
-          </span>
-          <Button
-            variant="outline"
-            size="iconSm"
-            aria-label="Next page"
-            disabled={query.page >= pageCount || loading}
-            onClick={() => onQueryChange({page: query.page + 1})}
-          >
-            <ChevronRight />
-          </Button>
+        <div className="flex flex-wrap items-center justify-between gap-3 border-t px-3 py-2 text-sm text-muted-foreground">
+          <div className="tabular-nums">
+            {total > 0
+              ? `${from}-${to} / ${total}`
+              : loading
+                ? ""
+                : "0 / 0"}
+          </div>
+          <div className="flex items-center gap-2">
+            <Select
+              value={String(query.pageSize)}
+              onValueChange={(v) => onQueryChange({pageSize: Number(v), page: 1})}
+            >
+              <SelectTrigger className="h-8 w-[110px] border-0 bg-transparent shadow-none hover:bg-accent focus:ring-0">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {PAGE_SIZE_OPTIONS.map((size) => (
+                  <SelectItem key={size} value={String(size)}>
+                    {size} / page
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Button
+              variant="ghost"
+              size="iconSm"
+              aria-label="Previous page"
+              disabled={query.page <= 1 || loading}
+              onClick={() => onQueryChange({page: query.page - 1})}
+            >
+              <ChevronLeft />
+            </Button>
+            <span className="min-w-[70px] text-center tabular-nums">
+              {query.page} / {pageCount}
+            </span>
+            <Button
+              variant="ghost"
+              size="iconSm"
+              aria-label="Next page"
+              disabled={query.page >= pageCount || loading}
+              onClick={() => onQueryChange({page: query.page + 1})}
+            >
+              <ChevronRight />
+            </Button>
+          </div>
         </div>
       </div>
     </div>

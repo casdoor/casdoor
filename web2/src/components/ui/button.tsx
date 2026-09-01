@@ -14,6 +14,10 @@ const buttonVariants = cva(
         outline: "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",
         secondary: "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
+        // for a destructive action that repeats on every row of a table: a wall of
+        // solid red is noise, so it only commits to the colour under the pointer
+        destructiveGhost:
+          "text-destructive hover:bg-destructive hover:text-destructive-foreground focus-visible:ring-destructive",
         link: "text-primary underline-offset-4 hover:underline",
       },
       size: {

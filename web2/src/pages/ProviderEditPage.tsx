@@ -993,7 +993,7 @@ export default function ProviderEditPage() {
           ) : null}
         </React.Fragment>
       ) : null}
-      <FormRow labelKey="provider:Email title">
+      <FormRow block labelKey="provider:Email title">
         <Input value={provider.title ?? ""} onChange={(e) => updateProviderField("title", e.target.value)} />
       </FormRow>
       <FormRow labelKey="provider:Email content" block>
@@ -1321,7 +1321,7 @@ export default function ProviderEditPage() {
               options={SCAN_PORT_OPTIONS.map((item) => ({value: item, label: item}))}
             />
           </FormRow>
-          <FormRow label={i18next.t("general:Path")}>
+          <FormRow block label={i18next.t("general:Path")}>
             <MultiSelect
               creatable
               value={toList(provider.endpoint)}
@@ -1377,11 +1377,11 @@ export default function ProviderEditPage() {
       const findings = parseFindings(provider, scanResult);
       return (
         <React.Fragment>
-          <FormRow label={i18next.t("provider:Online list")}>
+          <FormRow block label={i18next.t("provider:Online list")}>
             <Input value={provider.endpoint ?? ""} onChange={(e) => updateProviderField("endpoint", e.target.value)} />
           </FormRow>
           {provider.subType === "Url" ? (
-            <FormRow label={i18next.t("general:URL")}>
+            <FormRow block label={i18next.t("general:URL")}>
               <Textarea
                 rows={3}
                 value={provider.content ?? ""}
@@ -1729,13 +1729,13 @@ export default function ProviderEditPage() {
       {provider.category === "ID Verification" ? renderEndpointOnlyField() : null}
 
       {provider.category !== "Log" ? (
-        <FormRow labelKey="provider:Provider URL">
+        <FormRow block labelKey="provider:Provider URL">
           <Input value={provider.providerUrl ?? ""} onChange={(e) => updateProviderField("providerUrl", e.target.value)} />
         </FormRow>
       ) : null}
 
       {provider.category === "Captcha" ? (
-        <FormRow labelKey="general:Preview">
+        <FormRow block labelKey="general:Preview">
           <CaptchaPreview
             owner={provider.owner}
             name={name}
