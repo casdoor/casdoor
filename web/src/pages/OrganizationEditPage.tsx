@@ -16,7 +16,7 @@ import {TagsInput} from "@/components/common/TagsInput";
 import {ThemeEditor} from "@/components/common/ThemeEditor";
 import {EditPageShell} from "@/components/crud/EditPageShell";
 import {EditableTable} from "@/components/crud/EditableTable";
-import {FormRow} from "@/components/crud/FormRow";
+import {FormRow, formGridClass} from "@/components/crud/FormRow";
 import {useAccount} from "@/hooks/use-account";
 import {useEditRecord} from "@/hooks/use-edit-record";
 import {getModeTitleKey, submitEdit} from "@/lib/crud";
@@ -166,7 +166,7 @@ export default function OrganizationEditPage() {
           <TabsTrigger value="advanced">{i18next.t("provider:Advanced")}</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="basic">
+        <TabsContent value="basic" className={formGridClass}>
           <FormRow labelKey="general:Name">
             <Input
               value={organization.name ?? ""}
@@ -296,7 +296,7 @@ export default function OrganizationEditPage() {
           </FormRow>
         </TabsContent>
 
-        <TabsContent value="password">
+        <TabsContent value="password" className={formGridClass}>
           <FormRow labelKey="general:Password type">
             <SelectField
               value={organization.passwordType}
@@ -407,7 +407,7 @@ export default function OrganizationEditPage() {
           </FormRow>
         </TabsContent>
 
-        <TabsContent value="account">
+        <TabsContent value="account" className={formGridClass}>
           <FormRow labelKey="organization:Account items" block>
             <EditableTable
               rows={organization.accountItems ?? []}
@@ -460,7 +460,7 @@ export default function OrganizationEditPage() {
           </FormRow>
         </TabsContent>
 
-        <TabsContent value="advanced">
+        <TabsContent value="advanced" className={formGridClass}>
           <FormRow labelKey="organization:Default token format">
             <SelectField
               value={organization.defaultTokenFormat || "JWT"}

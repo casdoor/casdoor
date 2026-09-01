@@ -2,7 +2,6 @@ import * as React from "react";
 import i18next from "i18next";
 import {Link} from "react-router-dom";
 import {Badge} from "@/components/ui/badge";
-import {Button} from "@/components/ui/button";
 import {Sheet, SheetContent, SheetHeader, SheetTitle} from "@/components/ui/sheet";
 import {Switch} from "@/components/ui/switch";
 import {CodeEditor} from "@/components/common/CodeEditor";
@@ -183,11 +182,9 @@ export default function RecordListPage() {
         columns={columns}
         deps={[organizationName]}
         actionColumnWidth={110}
-        rowActions={(record) => (
-          <Button variant="outline" size="sm" onClick={() => setDetail(record)}>
-            {i18next.t("general:View")}
-          </Button>
-        )}
+        rowActions={(record) => [
+          {key: "view", label: i18next.t("general:View"), onSelect: () => setDetail(record)},
+        ]}
         fetch={(q) =>
           RecordBackend.getRecords(
             organizationName,

@@ -4,6 +4,7 @@ import {ArrowLeft} from "lucide-react";
 import {useNavigate} from "react-router-dom";
 import {Button} from "@/components/ui/button";
 import {Card, CardContent, CardHeader} from "@/components/ui/card";
+import {FormGrid} from "@/components/crud/FormRow";
 import {PageHeader} from "@/components/crud/PageHeader";
 import type {EditMode} from "@/lib/crud";
 import {cn} from "@/lib/utils";
@@ -17,6 +18,8 @@ interface EditPageShellProps {
   /** in "add" mode Cancel simply leaves the page, dropping the unsaved object */
   onCancel?: () => void;
   extraActions?: React.ReactNode;
+  /** lay a flat run of `FormRow` children out in the two-column `FormGrid` */
+  grid?: boolean;
   children: React.ReactNode;
   saving?: boolean;
   className?: string;
@@ -30,6 +33,7 @@ export function EditPageShell({
   onSave,
   onCancel,
   extraActions,
+  grid,
   children,
   saving,
   className,
@@ -81,7 +85,7 @@ export function EditPageShell({
         />
       </div>
       <Card>
-        <CardContent className="pt-6">{children}</CardContent>
+        <CardContent className="pt-6">{grid ? <FormGrid>{children}</FormGrid> : children}</CardContent>
       </Card>
     </div>
   );

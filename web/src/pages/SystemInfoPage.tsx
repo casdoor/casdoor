@@ -139,20 +139,10 @@ export default function SystemInfoPage() {
         description={versionInfo?.version ? versionText : undefined}
       />
 
-      <div className="grid gap-4 md:grid-cols-3">
-        <Card id="cpu-card">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base">{i18next.t("system:CPU Usage")}</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {cpuUsage.length === 0 ? (
-              <p className="text-sm text-muted-foreground">{i18next.t("general:Failed to get")}</p>
-            ) : (
-              cpuUsage.map((usage, index) => <Usage key={index} label={`CPU ${index + 1}`} value={usage} />)
-            )}
-          </CardContent>
-        </Card>
-
+      {/* Memory and disk are one meter each; the CPU card is as many meters as the
+          machine has cores, so it gets its own full-width row rather than being
+          squeezed into a third of one and running thirty rows deep. */}
+      <div className="grid gap-4 md:grid-cols-2">
         <Card id="memory-card">
           <CardHeader className="pb-3">
             <CardTitle className="text-base">{i18next.t("system:Memory Usage")}</CardTitle>
@@ -183,6 +173,28 @@ export default function SystemInfoPage() {
           </CardContent>
         </Card>
       </div>
+
+      <Card id="cpu-card">
+        <CardHeader className="flex-row items-baseline justify-between gap-3 space-y-0 pb-3">
+          <CardTitle className="text-base">{i18next.t("system:CPU Usage")}</CardTitle>
+          {cpuUsage.length > 0 ? (
+            <span className="text-sm text-muted-foreground tabular-nums">
+              {cpuUsage.length} × {(cpuUsage.reduce((sum, usage) => sum + usage, 0) / cpuUsage.length).toFixed(1)}%
+            </span>
+          ) : null}
+        </CardHeader>
+        <CardContent>
+          {cpuUsage.length === 0 ? (
+            <p className="text-sm text-muted-foreground">{i18next.t("general:Failed to get")}</p>
+          ) : (
+            <div className="grid gap-x-8 gap-y-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+              {cpuUsage.map((usage, index) => (
+                <Usage key={index} label={`CPU ${index + 1}`} value={usage} />
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       <div className="grid gap-4 lg:grid-cols-2">
         <Card id="latency-card">

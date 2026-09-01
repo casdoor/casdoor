@@ -87,6 +87,7 @@ export default function FormEditPage() {
 
   return (
     <EditPageShell
+      grid
       title={mode === "add" ? i18next.t("form:New Form") : i18next.t("form:Edit Form")}
       mode={mode}
       backTo="/forms"

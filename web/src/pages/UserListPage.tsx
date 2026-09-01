@@ -2,9 +2,7 @@ import * as React from "react";
 import i18next from "i18next";
 import {Link, useNavigate, useParams, useSearchParams} from "react-router-dom";
 import {Badge} from "@/components/ui/badge";
-import {Button} from "@/components/ui/button";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
-import {ConfirmButton} from "@/components/common/ConfirmButton";
 import {CrudListPage} from "@/components/crud/CrudListPage";
 import {XlsxImport} from "@/components/crud/XlsxImport";
 import {boolColumn, dateColumn, linkColumn, organizationColumn, textColumn} from "@/components/crud/columns";
@@ -171,55 +169,47 @@ export default function UserListPage() {
       deleteDisabled={isProtected}
       editUrl={(r) => `/users/${r.owner}/${r.name}`}
       remove={(r) => UserBackend.deleteUser(r)}
-      rowActions={(record, _index, {refresh}) => (
-        <>
-          {Setting.isLocalAdminUser(account) && record.name !== account?.name ? (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                UserBackend.impersonateUser(record.owner, record.name).then((res: any) => {
+      rowActions={(record, _index, {refresh}) => [
+        Setting.isLocalAdminUser(account) && record.name !== account?.name
+          ? {
+            key: "impersonate",
+            label: i18next.t("general:Impersonate"),
+            onSelect: () => {
+              UserBackend.impersonateUser(record.owner, record.name).then((res: any) => {
+                if (res.status === "ok") {
+                  navigate("/");
+                  window.location.reload();
+                } else {
+                  Setting.showMessage("error", res.msg);
+                }
+              });
+            },
+          }
+          : null,
+        // only offered while the list is scoped to a group, as on the group tree page
+        groupName
+          ? {
+            key: "remove",
+            label: i18next.t("general:remove"),
+            disabled: isProtected(record),
+            // "remove from group", not "delete", so it asks its own question
+            confirm: {title: i18next.t("general:Sure to remove"), description: `${record.name ?? ""}`},
+            onSelect: () =>
+              UserBackend.removeUserFromGroup({groupName, owner: record.owner, name: record.name})
+                .then((res: any) => {
                   if (res.status === "ok") {
-                    navigate("/");
-                    window.location.reload();
+                    Setting.showMessage("success", i18next.t("general:Successfully removed"));
+                    refresh();
                   } else {
-                    Setting.showMessage("error", res.msg);
+                    Setting.showMessage("error", `${i18next.t("general:Failed to remove")}: ${res.msg}`);
                   }
-                });
-              }}
-            >
-              {i18next.t("general:Impersonate")}
-            </Button>
-          ) : null}
-          {/* only offered while the list is scoped to a group, as on the group tree page */}
-          {groupName ? (
-            <ConfirmButton
-              variant="outline"
-              size="sm"
-              // "remove from group", not "delete", so it asks its own question
-              title={i18next.t("general:Sure to remove")}
-              description={`${record.name ?? ""}`}
-              disabled={isProtected(record)}
-              onConfirm={() =>
-                UserBackend.removeUserFromGroup({groupName, owner: record.owner, name: record.name})
-                  .then((res: any) => {
-                    if (res.status === "ok") {
-                      Setting.showMessage("success", i18next.t("general:Successfully removed"));
-                      refresh();
-                    } else {
-                      Setting.showMessage("error", `${i18next.t("general:Failed to remove")}: ${res.msg}`);
-                    }
-                  })
-                  .catch((error) =>
-                    Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`),
-                  )
-              }
-            >
-              {i18next.t("general:remove")}
-            </ConfirmButton>
-          ) : null}
-        </>
-      )}
+                })
+                .catch((error) =>
+                  Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`),
+                ),
+          }
+          : null,
+      ]}
       actionColumnWidth={groupName ? 340 : 260}
     />
   );

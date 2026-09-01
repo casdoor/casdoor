@@ -49,6 +49,13 @@ export interface ColumnDef<T = any> {
   /** hide the column entirely (used by the Forms feature) */
   hidden?: boolean;
   /**
+   * Overrides where this column sits relative to `DataTable`'s default cap on how
+   * many optional columns a list opens with. `true` parks it in the column menu
+   * however early it is declared; `false` keeps it on the table however late.
+   * Leave it unset to let the cap decide.
+   */
+  defaultHidden?: boolean;
+  /**
    * Wraps the cell content in a link, keeping the search highlight the plain
    * cell has. Return undefined to leave the cell unlinked. Ignored when `render`
    * is set, which owns the whole cell.
@@ -64,4 +71,26 @@ export interface CasdoorListResponse<T = any> {
   msg?: string;
   data: T[];
   data2?: number | string;
+}
+
+/**
+ * One button in a list row's action column.
+ *
+ * Every list page used to spell these out as JSX, which meant each one repeated
+ * the same variant, size, confirmation dialog and disabled-with-a-reason tooltip
+ * by hand. They are descriptors now, so `RowActions` renders the lot uniformly.
+ */
+export interface RowAction {
+  key?: string;
+  label: React.ReactNode;
+  /** why a disabled action is unavailable, shown as a tooltip */
+  description?: React.ReactNode;
+  /** an internal route; the action becomes a link instead of a button */
+  href?: string;
+  onSelect?: () => void | Promise<void>;
+  disabled?: boolean;
+  loading?: boolean;
+  destructive?: boolean;
+  /** ask before running. `true` uses the default "Sure to delete?" wording. */
+  confirm?: boolean | {title?: React.ReactNode; description?: React.ReactNode; confirmText?: React.ReactNode};
 }

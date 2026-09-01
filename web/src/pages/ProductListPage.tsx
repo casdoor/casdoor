@@ -1,7 +1,5 @@
 import i18next from "i18next";
-import {Link} from "react-router-dom";
 import {Badge} from "@/components/ui/badge";
-import {Button} from "@/components/ui/button";
 import {CrudListPage} from "@/components/crud/CrudListPage";
 import {dateColumn, linkColumn, organizationColumn, tagsColumn, textColumn} from "@/components/crud/columns";
 import type {ColumnDef} from "@/components/crud/types";
@@ -67,11 +65,9 @@ export default function ProductListPage() {
       readOnly={readOnly}
       editUrl={(r) => `/products/${r.owner}/${r.name}`}
       remove={(r) => ProductBackend.deleteProduct(r)}
-      rowActions={(record) => (
-        <Button variant="outline" size="sm" asChild>
-          <Link to={`/products/${record.owner}/${record.name}/buy`}>{i18next.t("product:Buy")}</Link>
-        </Button>
-      )}
+      rowActions={(record) => [
+        {key: "buy", label: i18next.t("product:Buy"), href: `/products/${record.owner}/${record.name}/buy`},
+      ]}
       actionColumnWidth={240}
     />
   );

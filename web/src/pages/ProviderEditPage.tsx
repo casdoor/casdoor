@@ -1604,6 +1604,7 @@ export default function ProviderEditPage() {
 
   return (
     <EditPageShell
+      grid
       title={mode === "add" ? i18next.t("provider:New Provider") : i18next.t("provider:Edit Provider")}
       mode={mode}
       backTo="/providers"

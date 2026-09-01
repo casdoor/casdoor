@@ -23,7 +23,7 @@ export function ThemeToggle({className}: {className?: string}) {
       <DropdownMenuContent align="end">
         <DropdownMenuItem className={cn(theme === "light" && "font-semibold")} onSelect={() => setTheme("light")}>
           <Sun />
-          Light
+          {i18next.t("theme:Light")}
         </DropdownMenuItem>
         <DropdownMenuItem className={cn(theme === "dark" && "font-semibold")} onSelect={() => setTheme("dark")}>
           <Moon />
@@ -31,7 +31,7 @@ export function ThemeToggle({className}: {className?: string}) {
         </DropdownMenuItem>
         <DropdownMenuItem className={cn(theme === "system" && "font-semibold")} onSelect={() => setTheme("system")}>
           <Monitor />
-          System
+          {i18next.t("theme:System")}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

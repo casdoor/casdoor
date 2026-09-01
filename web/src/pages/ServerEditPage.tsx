@@ -159,6 +159,7 @@ export default function ServerEditPage() {
 
   return (
     <EditPageShell
+      grid
       title={mode === "add" ? i18next.t("server:New MCP Server") : i18next.t("server:Edit MCP Server")}
       mode={mode}
       backTo="/servers"
