@@ -262,6 +262,7 @@ func (c *ApiController) InvoicePayment() {
 	invoiceUrl, err := object.InvoicePayment(payment)
 	if err != nil {
 		c.ResponseError(err.Error())
+		return
 	}
 	c.ResponseOk(invoiceUrl)
 }

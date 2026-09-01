@@ -44,6 +44,7 @@ func (c *ApiController) MfaSetupInitiate() {
 	MfaUtil := object.GetMfaUtil(mfaType, nil)
 	if MfaUtil == nil {
 		c.ResponseError("Invalid auth type")
+		return
 	}
 
 	user, err := object.GetUser(userId)
