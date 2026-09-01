@@ -3,6 +3,7 @@ import {useParams} from "react-router-dom";
 import copy from "copy-to-clipboard";
 import {Copy} from "lucide-react";
 import {Button} from "@/components/ui/button";
+import PricingPage from "@/pages/PricingPage";
 import {SimpleEditPage, type EditField} from "@/components/crud/SimpleEditPage";
 import {useAccount} from "@/hooks/use-account";
 import {useApplicationOptions, useOrganizationOptions, usePlanOptions} from "@/hooks/use-options";
@@ -31,6 +32,20 @@ export default function PricingEditPage() {
     {type: "multiselect", name: "plans", labelKey: "general:Plans", options: () => plans},
     {type: "number", name: "trialDuration", labelKey: "pricing:Trial duration"},
     {type: "switch", name: "isEnabled", labelKey: "general:Is enabled"},
+    {
+      // antd renders the real pricing page here, so the plan cards can be checked
+      // against the pricing being edited without leaving the form
+      type: "custom",
+      name: "preview",
+      labelKey: "general:Preview",
+      block: true,
+      when: (ctx) => (ctx.record.plans ?? []).length > 0,
+      render: (ctx) => (
+        <div className="rounded-lg border p-4">
+          <PricingPage pricing={ctx.record} owner={ctx.record.owner} embedded />
+        </div>
+      ),
+    },
   ];
 
   return (

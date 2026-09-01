@@ -479,7 +479,9 @@ export default function ApplicationEditPage() {
             <div className="space-y-2">
               <Input value={application.logo ?? ""} onChange={(e) => updateField("logo", e.target.value)} />
               {application.logo ? (
-                <img src={application.logo} alt="logo" className="h-16 rounded bg-white object-contain p-1" />
+                <a href={application.logo} target="_blank" rel="noreferrer">
+                  <img src={application.logo} alt="logo" className="h-16 rounded bg-white object-contain p-1" />
+                </a>
               ) : null}
             </div>
           </FormRow>

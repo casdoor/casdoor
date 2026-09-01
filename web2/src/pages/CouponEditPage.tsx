@@ -1,4 +1,6 @@
-import {useParams} from "react-router-dom";
+import i18next from "i18next";
+import {useNavigate, useParams} from "react-router-dom";
+import {ConfirmButton} from "@/components/common/ConfirmButton";
 import {SimpleEditPage, type EditField} from "@/components/crud/SimpleEditPage";
 import {useAccount} from "@/hooks/use-account";
 import {useOrganizationOptions, useProductOptions, useUserNameOptions} from "@/hooks/use-options";
@@ -8,6 +10,7 @@ import * as Setting from "@/lib/setting";
 
 
 export default function CouponEditPage() {
+  const navigate = useNavigate();
   const {organizationName = "", couponName = ""} = useParams();
   const {account} = useAccount();
   const organizations = useOrganizationOptions();
@@ -84,6 +87,30 @@ export default function CouponEditPage() {
       add={(record) => CouponBackend.addCoupon(record)}
       update={(record) => CouponBackend.updateCoupon(organizationName, couponName, record)}
       editUrl={(record) => `/coupons/${record.owner}/${record.name}`}
+      // the antd page keeps a Delete next to Save, so a coupon can be dropped
+      // without going back to the list
+      extraActions={(ctx) =>
+        ctx.mode === "edit" ? (
+          <ConfirmButton
+            variant="outline"
+            description={ctx.record.name}
+            onConfirm={() =>
+              CouponBackend.deleteCoupon(Setting.getDeleteObj(ctx.record, organizationName, couponName)).then(
+                (res: any) => {
+                  if (res.status === "ok") {
+                    Setting.showMessage("success", i18next.t("general:Successfully deleted"));
+                    navigate("/coupons");
+                  } else {
+                    Setting.showMessage("error", `${i18next.t("general:Failed to delete")}: ${res.msg}`);
+                  }
+                },
+              )
+            }
+          >
+            {i18next.t("general:Delete")}
+          </ConfirmButton>
+        ) : null
+      }
     />
   );
 }

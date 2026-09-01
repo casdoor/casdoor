@@ -123,6 +123,16 @@ export default function FormEditPage() {
           }}
         />
       </FormRow>
+      <FormRow labelKey="general:Tag">
+        <Input
+          value={form.tag ?? ""}
+          onChange={(e) => {
+            const tag = e.target.value;
+            // the name is derived from type and tag, so a form stays addressable
+            patch({tag, name: tag ? `${form.type}-tag-${tag}` : form.type});
+          }}
+        />
+      </FormRow>
       <FormRow labelKey="form:Form items" block>
         <EditableTable<FormItem>
           title={

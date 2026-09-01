@@ -1,6 +1,7 @@
 import * as React from "react";
 import i18next from "i18next";
 import {AlertCircle} from "lucide-react";
+import {PoweredBy} from "@/components/layout/PoweredBy";
 import {Button} from "@/components/ui/button";
 import {Card, CardContent} from "@/components/ui/card";
 import {LanguageSelect} from "@/components/common/LanguageSelect";
@@ -12,7 +13,6 @@ import {
   useCustomHead,
 } from "@/hooks/use-application-chrome";
 import * as Setting from "@/lib/setting";
-import * as Conf from "@/Conf";
 import {cn} from "@/lib/utils";
 
 interface AuthLayoutProps {
@@ -86,14 +86,7 @@ export function AuthLayout({application, children, className, wide}: AuthLayoutP
             />
           ) : (
             <div className="mt-6 text-center text-xs text-muted-foreground">
-              {Conf.CustomFooter ?? (
-                <>
-                  Powered by{" "}
-                  <a href="https://casdoor.org" target="_blank" rel="noreferrer" className="hover:underline">
-                    Casdoor
-                  </a>
-                </>
-              )}
+              <PoweredBy />
             </div>
           )}
         </div>

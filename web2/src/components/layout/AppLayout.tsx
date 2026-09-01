@@ -5,18 +5,19 @@ import {EnableMfaNotification} from "@/components/auth/EnableMfaNotification";
 import {ConsoleTour} from "@/components/common/ConsoleTour";
 import {GithubCorner} from "@/components/common/GithubCorner";
 import {Header} from "@/components/layout/Header";
+import {PoweredBy} from "@/components/layout/PoweredBy";
 import {Sidebar} from "@/components/layout/Sidebar";
 import {useAccount} from "@/hooks/use-account";
-import {useThemeData} from "@/hooks/use-application-chrome";
-import * as Conf from "@/Conf";
+import {useAccountHelmet, useThemeData} from "@/hooks/use-application-chrome";
 import * as Setting from "@/lib/setting";
 
 export function AppLayout() {
   const [collapsed, setCollapsed] = React.useState(() => localStorage.getItem("siderCollapsed") === "true");
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const {account} = useAccount();
-  // the console follows the signed-in user's organization theme
+  // the console follows the signed-in user's organization theme, title and favicon
   useThemeData(Setting.getThemeData(account?.organization, null));
+  useAccountHelmet(account);
 
   const handleCollapsed = (next: boolean) => {
     setCollapsed(next);
@@ -42,20 +43,8 @@ export function AppLayout() {
           <div className="mx-auto w-full max-w-[1600px] p-4 md:p-6">
             <Outlet />
           </div>
-          <footer className="pb-6 text-center text-xs text-muted-foreground">
-            {Conf.CustomFooter ?? (
-              <span>
-                Powered by{" "}
-                <a
-                  href="https://casdoor.org"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="underline-offset-4 hover:underline"
-                >
-                  Casdoor
-                </a>
-              </span>
-            )}
+          <footer id="footer" className="pb-6 text-center text-xs text-muted-foreground">
+            <PoweredBy />
           </footer>
         </main>
       </div>

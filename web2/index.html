@@ -2,7 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" href="/favicon.ico" />
+    <!-- routers/static_filter.go rewrites this exact URL to the organization's own
+         favicon, so the first paint is already branded; keep it byte-identical -->
+    <link rel="icon" href="https://cdn.casbin.org/img/favicon.png" />
+    <link rel="apple-touch-icon" href="https://cdn.casbin.org/img/favicon.png" />
+    <link rel="manifest" href="https://cdn.casbin.org/site/casdoor/manifest.json" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
     <meta name="description" content="Casdoor - An open-source Identity and Access Management (IAM) / Single-Sign-On (SSO) platform" />
