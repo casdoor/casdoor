@@ -21,7 +21,7 @@ export default function ModelEditPage() {
       options: () => organizations,
       disabled: (ctx) => !Setting.isAdminUser(account) || Setting.builtInObject(ctx.record),
     },
-    {type: "text", name: "name", labelKey: "general:Name", disabled: isBuiltIn},
+    {type: "text", name: "name", labelKey: "general:Name", required: true, disabled: isBuiltIn},
     {type: "text", name: "displayName", labelKey: "general:Display name"},
     {type: "text", name: "description", labelKey: "general:Description"},
     {

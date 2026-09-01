@@ -53,7 +53,7 @@ export default function AdapterEditPage() {
       options: () => organizations,
       disabled: (ctx) => !Setting.isAdminUser(account) || Setting.builtInObject(ctx.record),
     },
-    {type: "text", name: "name", labelKey: "general:Name", disabled: isBuiltIn},
+    {type: "text", name: "name", labelKey: "general:Name", required: true, disabled: isBuiltIn},
     {type: "text", name: "table", labelKey: "syncer:Table", disabled: isBuiltIn},
     {
       type: "custom",

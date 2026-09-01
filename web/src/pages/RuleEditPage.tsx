@@ -23,7 +23,7 @@ export default function RuleEditPage() {
       options: () => organizations,
       disabled: () => !Setting.isAdminUser(account),
     },
-    {type: "text", name: "name", labelKey: "general:Name"},
+    {type: "text", name: "name", labelKey: "general:Name", required: true},
     {
       type: "custom",
       name: "type",

@@ -80,6 +80,46 @@ export async function submitDelete<T>(options: {
   }
 }
 
+/**
+ * Deletes a selection one record at a time.
+ *
+ * There is no batch delete endpoint, so this is the same call the row action
+ * makes, repeated in order — sequentially rather than in parallel, so a hundred
+ * selected rows do not open a hundred connections at once. It reports one
+ * summary instead of one toast per record.
+ */
+export async function submitDeleteMany<T>(options: {
+  records: T[];
+  remove: (record: T) => Promise<CasdoorResponse>;
+  onDeleted?: (deleted: number) => void;
+}): Promise<number> {
+  const {records, remove, onDeleted} = options;
+  let deleted = 0;
+  const failures: string[] = [];
+
+  for (const record of records) {
+    try {
+      const res = await remove(record);
+      if (res.status === "ok") {
+        deleted++;
+      } else {
+        failures.push(res.msg ?? "");
+      }
+    } catch (error: any) {
+      failures.push(String(error));
+    }
+  }
+
+  if (deleted > 0) {
+    Setting.showMessage("success", `${i18next.t("general:Successfully deleted")}: ${deleted}`);
+  }
+  if (failures.length > 0) {
+    Setting.showMessage("error", `${i18next.t("general:Failed to delete")}: ${failures.length} - ${failures[0]}`);
+  }
+  onDeleted?.(deleted);
+  return deleted;
+}
+
 /** Shared "Add" behaviour: create the record and jump to its edit page. */
 export async function submitAdd<T>(options: {
   record: T;

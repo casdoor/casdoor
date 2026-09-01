@@ -23,7 +23,7 @@ export default function OrderEditPage() {
       options: () => organizations,
       disabled: () => !Setting.isAdminUser(account),
     },
-    {type: "text", name: "name", labelKey: "general:Name"},
+    {type: "text", name: "name", labelKey: "general:Name", required: true},
     {type: "text", name: "displayName", labelKey: "general:Display name"},
     {type: "multiselect", name: "products", labelKey: "general:Products", options: () => products},
     {type: "select", name: "user", labelKey: "general:User", options: () => users},

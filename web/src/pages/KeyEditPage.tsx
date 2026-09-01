@@ -24,7 +24,7 @@ export default function KeyEditPage() {
       // the key stores the organization twice, and the backend reads `organization`
       onChange: (value, _ctx, updateFields) => updateFields({owner: value, organization: value}),
     },
-    {type: "text", name: "name", labelKey: "general:Name"},
+    {type: "text", name: "name", labelKey: "general:Name", required: true},
     {type: "text", name: "displayName", labelKey: "general:Display name"},
     {
       type: "select",

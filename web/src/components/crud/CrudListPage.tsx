@@ -4,6 +4,7 @@ import {Plus, RefreshCw} from "lucide-react";
 import {useLocation, useNavigate} from "react-router-dom";
 import {Button} from "@/components/ui/button";
 import {UnauthorizedPage} from "@/components/common/UnauthorizedPage";
+import {ConfirmButton} from "@/components/common/ConfirmButton";
 import {ColumnMenu, columnKey, useColumnVisibility} from "@/components/crud/ColumnMenu";
 import {DataTable} from "@/components/crud/DataTable";
 import {PageHeader} from "@/components/crud/PageHeader";
@@ -11,7 +12,7 @@ import {RowActions} from "@/components/crud/RowActions";
 import type {ColumnDef, CasdoorListResponse, RowAction, TableQuery} from "@/components/crud/types";
 import {useFormItems} from "@/hooks/use-form-items";
 import {useTableData} from "@/hooks/use-table-data";
-import {submitAdd, submitDelete} from "@/lib/crud";
+import {submitAdd, submitDelete, submitDeleteMany} from "@/lib/crud";
 import * as Setting from "@/lib/setting";
 
 export interface CrudListPageProps<T extends Record<string, any>> {
@@ -96,6 +97,16 @@ export function CrudListPage<T extends Record<string, any>>({
   const location = useLocation();
   const {rows, total, loading, denied, query, setQuery, refresh} = useTableData<T>(fetch, deps, initialQuery);
   const [adding, setAdding] = React.useState(false);
+  const [selected, setSelected] = React.useState<Set<string>>(new Set());
+  const [deletingMany, setDeletingMany] = React.useState(false);
+
+  const keyOf = React.useCallback(
+    (row: any, index: number) => (rowKey ? rowKey(row, index) : `${row.owner ?? ""}/${row.name ?? index}`),
+    [rowKey],
+  );
+
+  // the selection is of rows, and a page change or a re-fetch replaces them
+  React.useEffect(() => setSelected(new Set()), [query.page, query.pageSize, query.searchText, query.searchedColumn]);
 
   const handleAdd = async() => {
     if (!newRecord) {
@@ -188,6 +199,20 @@ export function CrudListPage<T extends Record<string, any>>({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [columns, formItems, editUrl, remove, rowActions, showActionColumn, readOnly, deleteDisabled, rows, query.page, refresh]);
 
+  const deleteSelected = async() => {
+    const records = (rows ?? []).filter((row, index) => selected.has(keyOf(row, index)) && !deleteDisabled?.(row));
+    setDeletingMany(true);
+    await submitDeleteMany({records, remove: remove!, onDeleted: () => {
+      setSelected(new Set());
+      refresh();
+    }});
+    setDeletingMany(false);
+  };
+
+  // a read-only viewer has nothing to do with a selection, and neither does a
+  // list that cannot delete
+  const selectable = Boolean(remove) && !readOnly && showActionColumn;
+
   const visibility = useColumnVisibility(allColumns, tableId ?? location.pathname);
   const shownColumns = React.useMemo(
     () => allColumns.filter((column) => !visibility.hidden.has(columnKey(column))),
@@ -227,6 +252,25 @@ export function CrudListPage<T extends Record<string, any>>({
         query={query}
         onQueryChange={setQuery}
         rowKey={rowKey}
+        selection={
+          selectable
+            ? {
+              selected,
+              onChange: setSelected,
+              actions: (
+                <ConfirmButton
+                  variant="destructive"
+                  size="sm"
+                  loading={deletingMany}
+                  description={`${selected.size}`}
+                  onConfirm={deleteSelected}
+                >
+                  {i18next.t("general:Delete")}
+                </ConfirmButton>
+              ),
+            }
+            : undefined
+        }
       />
     </div>
   );

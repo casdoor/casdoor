@@ -4,6 +4,7 @@ import {Link} from "react-router-dom";
 import {ArrowDown, ArrowUp, ChevronLeft, ChevronRight, ChevronsUpDown, Filter, Inbox, Search, X} from "lucide-react";
 import {cn} from "@/lib/utils";
 import {Badge} from "@/components/ui/badge";
+import {Checkbox} from "@/components/ui/checkbox";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
@@ -30,6 +31,16 @@ interface DataTableProps<T> {
   rowKey?: (row: T, index: number) => string;
   emptyText?: React.ReactNode;
   className?: string;
+  /**
+   * Turns on the leading checkbox column. Selection is held by the caller, since
+   * it is the caller that acts on it.
+   */
+  selection?: {
+    selected: Set<string>;
+    onChange: (selected: Set<string>) => void;
+    /** shown in place of the row count while anything is selected */
+    actions?: React.ReactNode;
+  };
 }
 
 function Highlight({text, keyword}: {text: string; keyword: string}) {
@@ -340,8 +351,83 @@ export function DataTable<T = any>({
   rowKey,
   emptyText,
   className,
+  selection,
 }: DataTableProps<T>) {
-  const visibleColumns = React.useMemo(() => columns.filter((c) => !c.hidden), [columns]);
+  const keyOf = React.useCallback(
+    (row: any, index: number) => (rowKey ? rowKey(row, index) : `${row.owner ?? ""}/${row.name ?? index}`),
+    [rowKey],
+  );
+  const pageKeys = React.useMemo(() => (rows ?? []).map(keyOf), [rows, keyOf]);
+  const selectedOnPage = pageKeys.filter((key) => selection?.selected.has(key)).length;
+
+  const toggleRow = (key: string) => {
+    if (!selection) {
+      return;
+    }
+    const next = new Set(selection.selected);
+    if (next.has(key)) {
+      next.delete(key);
+    } else {
+      next.add(key);
+    }
+    selection.onChange(next);
+  };
+
+  const togglePage = () => {
+    if (!selection) {
+      return;
+    }
+    const next = new Set(selection.selected);
+    // a half-selected page fills up rather than clearing, which is what the
+    // indeterminate box looks like it should do
+    if (selectedOnPage === pageKeys.length) {
+      pageKeys.forEach((key) => next.delete(key));
+    } else {
+      pageKeys.forEach((key) => next.add(key));
+    }
+    selection.onChange(next);
+  };
+
+  const visibleColumns = React.useMemo<ColumnDef[]>(() => {
+    const declared = columns.filter((c) => !c.hidden);
+    if (!selection) {
+      return declared as ColumnDef[];
+    }
+    const selectColumn: ColumnDef = {
+      key: "select",
+      dataIndex: "select",
+      width: 44,
+      fixed: "left",
+      className: "pr-0",
+      title: (
+        <Checkbox
+          aria-label={i18next.t("general:Select all")}
+          // Radix spells the third state as a `checked` value, not a flag
+          checked={
+            pageKeys.length > 0 && selectedOnPage === pageKeys.length
+              ? true
+              : selectedOnPage > 0
+                ? "indeterminate"
+                : false
+          }
+          onCheckedChange={togglePage}
+        />
+      ),
+      render: (_: any, row: any, index: number) => {
+        const key = keyOf(row, index);
+        return (
+          <Checkbox
+            aria-label={key}
+            checked={selection.selected.has(key)}
+            onCheckedChange={() => toggleRow(key)}
+          />
+        );
+      },
+    };
+    return [selectColumn, ...declared] as ColumnDef[];
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [columns, selection, pageKeys, selectedOnPage, keyOf]);
+
   const stickyOffsets = React.useMemo(() => getStickyOffsets(visibleColumns), [visibleColumns]);
   const pageCount = Math.max(1, Math.ceil(total / query.pageSize));
   const from = total === 0 ? 0 : (query.page - 1) * query.pageSize + 1;
@@ -452,7 +538,7 @@ export function DataTable<T = any>({
                 )
                 : (rows ?? []).map((row: any, index) => (
                   <TableRow
-                    key={rowKey ? rowKey(row, index) : `${row.owner ?? ""}/${row.name ?? index}`}
+                    key={keyOf(row, index)}
                     // pinned cells inherit this, so it has to stay fully opaque
                     className="bg-card hover:bg-muted"
                   >
@@ -506,13 +592,25 @@ export function DataTable<T = any>({
         </Table>
 
         <div className="flex flex-wrap items-center justify-between gap-3 border-t px-3 py-2 text-sm text-muted-foreground">
-          <div className="tabular-nums">
-            {total > 0
-              ? `${from}-${to} / ${total}`
-              : loading
-                ? ""
-                : "0 / 0"}
-          </div>
+          {selection && selection.selected.size > 0 ? (
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="tabular-nums text-foreground">
+                {i18next.t("general:Selected")}: {selection.selected.size}
+              </span>
+              {selection.actions}
+              <Button variant="ghost" size="sm" onClick={() => selection.onChange(new Set())}>
+                {i18next.t("forget:Reset")}
+              </Button>
+            </div>
+          ) : (
+            <div className="tabular-nums">
+              {total > 0
+                ? `${from}-${to} / ${total}`
+                : loading
+                  ? ""
+                  : "0 / 0"}
+            </div>
+          )}
           <div className="flex items-center gap-2">
             <Select
               value={String(query.pageSize)}

@@ -71,7 +71,7 @@ export default function InvitationEditPage() {
       options: () => organizations,
       disabled: (ctx) => !Setting.isAdminUser(account) || isCreatedByPlan(ctx),
     },
-    {type: "text", name: "name", labelKey: "general:Name", disabled: isCreatedByPlan},
+    {type: "text", name: "name", labelKey: "general:Name", required: true, disabled: isCreatedByPlan},
     {type: "text", name: "displayName", labelKey: "general:Display name"},
     {type: "text", name: "code", labelKey: "invitation:Code"},
     {
