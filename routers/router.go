@@ -120,6 +120,7 @@ func InitAPI() {
 	web.Router("/api/get-providers", &controllers.ApiController{}, "GET:GetProviders")
 	web.Router("/api/get-provider", &controllers.ApiController{}, "GET:GetProvider")
 	web.Router("/api/get-global-providers", &controllers.ApiController{}, "GET:GetGlobalProviders")
+	web.Router("/api/get-idp-discovery", &controllers.ApiController{}, "GET:GetIdpDiscovery")
 	web.Router("/api/update-provider", &controllers.ApiController{}, "POST:UpdateProvider")
 	web.Router("/api/add-provider", &controllers.ApiController{}, "POST:AddProvider")
 	web.Router("/api/delete-provider", &controllers.ApiController{}, "POST:DeleteProvider")

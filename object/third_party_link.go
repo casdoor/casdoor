@@ -15,6 +15,8 @@
 package object
 
 import (
+	"strings"
+
 	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/core"
 )
@@ -29,6 +31,10 @@ type ThirdPartyLink struct {
 
 func IsFlexibleCustomProvider(providerType string) bool {
 	return providerType == "Custom Flexible"
+}
+
+func IsCustomOAuthProvider(providerType string) bool {
+	return strings.HasPrefix(providerType, "Custom") || providerType == "OIDC"
 }
 
 func GetThirdPartyLinksByUser(owner string, userName string) ([]*ThirdPartyLink, error) {
