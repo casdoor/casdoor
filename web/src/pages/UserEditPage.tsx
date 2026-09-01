@@ -1,6 +1,7 @@
 import * as React from "react";
 import i18next from "i18next";
 import {Link, useNavigate, useParams} from "react-router-dom";
+import {Users} from "lucide-react";
 import {UnauthorizedPage} from "@/components/common/UnauthorizedPage";
 import {Alert, AlertDescription, AlertTitle} from "@/components/ui/alert";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
@@ -961,11 +962,28 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
                 {(user.roles ?? []).length === 0 ? (
                   <span className="text-sm text-muted-foreground">{i18next.t("general:No data")}</span>
                 ) : (
-                  (user.roles ?? []).map((role: any) => (
-                    <Badge key={`${role.owner}/${role.name}`} variant="secondary">
-                      {role.name}
-                    </Badge>
-                  ))
+                  (user.roles ?? []).map((role: any) => {
+                    const sourceGroups: string[] = role.sourceGroups ?? [];
+                    const key = `${role.owner}/${role.name}`;
+                    if (sourceGroups.length === 0) {
+                      return (
+                        <Badge key={key} variant="secondary">
+                          {role.name}
+                        </Badge>
+                      );
+                    }
+                    return (
+                      <Tooltip key={key}>
+                        <TooltipTrigger asChild>
+                          <Badge variant="outline" className="cursor-default">
+                            <Users className="h-3 w-3" />
+                            {role.name}
+                          </Badge>
+                        </TooltipTrigger>
+                        <TooltipContent>{`${i18next.t("general:Groups")}: ${sourceGroups.join(", ")}`}</TooltipContent>
+                      </Tooltip>
+                    );
+                  })
                 )}
               </div>
             </AccountItemRow>
