@@ -226,7 +226,7 @@ func getVerificationRecord(dest string) (*VerificationRecord, error) {
 	record := &VerificationRecord{}
 	record.Receiver = dest
 
-	has, err := ormer.Engine.Desc("time").Where("is_used = false").Get(record)
+	has, err := ormer.Engine.Desc("time").Where("is_used = ?", false).Get(record)
 	if err != nil {
 		return nil, err
 	}
@@ -264,7 +264,7 @@ func getUnusedVerificationRecord(dest string) (*VerificationRecord, error) {
 	record := &VerificationRecord{}
 	record.Receiver = dest
 
-	has, err := ormer.Engine.Desc("time").Where("is_used = false").Get(record)
+	has, err := ormer.Engine.Desc("time").Where("is_used = ?", false).Get(record)
 	if err != nil {
 		return nil, err
 	}
