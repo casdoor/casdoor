@@ -7,6 +7,8 @@ on:
   push:
     branches:
       - master
+    tags:
+      - "v*"
   pull_request:
 
 jobs:
@@ -168,35 +170,14 @@ jobs:
           name: cypress-screenshots
           path: ./web/cypress/screenshots
 
-  tag-release:
-    name: Create Tag
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      issues: write
-    if: github.repository == 'casdoor/casdoor' && github.event_name == 'push'
-    needs: [frontend, backend, linter, e2e]
-    outputs:
-      new-release-published: ${{ steps.semantic.outputs.new_release_published }}
-      new-release-version: ${{ steps.semantic.outputs.new_release_version }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Create Tag with Semantic Release
-        id: semantic
-        uses: cycjimmy/semantic-release-action@v4
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
   github-release:
     name: GitHub Release
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      issues: write
-    if: github.repository == 'casdoor/casdoor' && github.event_name == 'push' && needs.tag-release.outputs.new-release-published == 'true'
-    needs: [tag-release]
+    # Releases are cut by hand: push a `vX.Y.Z` tag and this job publishes it.
+    if: github.repository == 'casdoor/casdoor' && startsWith(github.ref, 'refs/tags/v')
+    needs: [frontend, backend, linter, e2e]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -243,37 +224,25 @@ jobs:
     name: Docker Release
     runs-on: ubuntu-latest
     permissions:
-      contents: write
-      issues: write
-    if: github.repository == 'casdoor/casdoor' && github.event_name == 'push' && needs.tag-release.outputs.new-release-published == 'true'
-    needs: [tag-release]
+      contents: read
+    if: github.repository == 'casdoor/casdoor' && startsWith(github.ref, 'refs/tags/v')
+    needs: [frontend, backend, linter, e2e]
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-        with:
-          fetch-depth: -1
 
-      - name: Fetch Previous version
-        id: get-previous-tag
-        uses: actions-ecosystem/action-get-latest-tag@v1.6.0
-
-      - name: Decide Should_Push Or Not
-        id: should_push
+      # Registry versions keep the historical, un-prefixed form: tag `v1.2.3`
+      # publishes `1.2.3`. `latest` is skipped for pre-release tags such as
+      # `v1.2.3-beta.1`.
+      - name: Resolve the released version
+        id: version
         run: |
-          old_version=${{steps.get-previous-tag.outputs.tag}}
-          new_version=${{ needs.tag-release.outputs.new-release-version }}
-
-          old_array=(${old_version//\./ })
-          new_array=(${new_version//\./ })
-
-          if [ ${old_array[0]} != ${new_array[0]} ]
-          then 
-              echo ::set-output name=push::'true'
-          elif [ ${old_array[1]} != ${new_array[1]} ]
-          then 
-              echo ::set-output name=push::'true'
+          version=${GITHUB_REF_NAME#v}
+          echo "version=$version" >> $GITHUB_OUTPUT
+          if [[ "$version" == *-* ]]; then
+            echo "prerelease=true" >> $GITHUB_OUTPUT
           else
-              echo ::set-output name=push::'false'
+            echo "prerelease=false" >> $GITHUB_OUTPUT
           fi
 
       - name: Set up QEMU
@@ -287,33 +256,33 @@ jobs:
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v1
-        if: github.repository == 'casdoor/casdoor' && github.event_name == 'push' && steps.should_push.outputs.push=='true'
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
       - name: Push to Docker Hub
         uses: docker/build-push-action@v3
-        if: github.repository == 'casdoor/casdoor' && github.event_name == 'push' && steps.should_push.outputs.push=='true'
         with:
           context: .
           target: STANDARD
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: casbin/casdoor:${{ needs.tag-release.outputs.new-release-version }},casbin/casdoor:latest
+          tags: |
+            casbin/casdoor:${{ steps.version.outputs.version }}
+            ${{ steps.version.outputs.prerelease == 'false' && 'casbin/casdoor:latest' || '' }}
 
       - name: Push All In One Version to Docker Hub
         uses: docker/build-push-action@v3
-        if: github.repository == 'casdoor/casdoor' && github.event_name == 'push' && steps.should_push.outputs.push=='true'
         with:
           context: .
           target: ALLINONE
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: casbin/casdoor-all-in-one:${{ needs.tag-release.outputs.new-release-version }},casbin/casdoor-all-in-one:latest
+          tags: |
+            casbin/casdoor-all-in-one:${{ steps.version.outputs.version }}
+            ${{ steps.version.outputs.prerelease == 'false' && 'casbin/casdoor-all-in-one:latest' || '' }}
 
       - uses: actions/checkout@v3
-        if: steps.should_push.outputs.push=='true'
         with:
           repository: casdoor/casdoor-helm
           ref: "master"
@@ -321,10 +290,9 @@ jobs:
           path: ./casdoor-helm
 
       - name: Update Helm Chart
-        if: steps.should_push.outputs.push=='true'
         working-directory: ./casdoor-helm
         env:
-          VERSION: ${{ needs.tag-release.outputs.new-release-version }}
+          VERSION: ${{ steps.version.outputs.version }}
         run: |
           REGISTRY=oci://registry-1.docker.io/casbin
 
