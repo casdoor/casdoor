@@ -22,7 +22,10 @@ import (
 	"github.com/robfig/cron/v3"
 )
 
-const defaultTokenRetentionDays = 30
+const (
+	defaultTokenRetentionDays = 30
+	tokenCleanupBatchSize     = 1000
+)
 
 // getTokenRetentionInterval converts a retention period in days into seconds,
 // falling back to the default when the configured value is non-positive.
@@ -70,39 +73,64 @@ func CleanupTokens() error {
 	}
 	cutoffTime := currentTime.Add(-time.Duration(minInterval) * time.Second).Format(time.RFC3339)
 
-	var sessions []*Token
-	err = ormer.Engine.Where("created_time < ?", cutoffTime).Find(&sessions)
-	if err != nil {
-		return fmt.Errorf("failed to query expired tokens: %w", err)
-	}
-
+	defaultInterval := getTokenRetentionInterval(defaultTokenRetentionDays)
 	deletedCount := 0
 
-	for _, session := range sessions {
-		isExpired, expireTime := util.IsTokenExpired(session.CreatedTime, session.ExpiresIn)
-		if !isExpired {
-			continue
+	// Walk the tokens in primary key order, so that a huge token table is never loaded into memory at once.
+	lastOwner, lastName := "", ""
+	for {
+		sessions := []*Token{}
+		query := ormer.Engine.Where("created_time < ?", cutoffTime)
+		if lastOwner != "" || lastName != "" {
+			query = query.And("(owner > ? or (owner = ? and name > ?))", lastOwner, lastOwner, lastName)
 		}
 
-		retentionInterval, ok := orgIntervals[session.Organization]
-		if !ok {
-			// The token's organization no longer exists (or has no configured value);
-			// fall back to the default retention period.
-			retentionInterval = getTokenRetentionInterval(defaultTokenRetentionDays)
+		err = query.Asc("owner", "name").Limit(tokenCleanupBatchSize).Find(&sessions)
+		if err != nil {
+			return fmt.Errorf("failed to query expired tokens: %w", err)
+		}
+		if len(sessions) == 0 {
+			break
 		}
 
-		expireTimeObj := util.String2Time(expireTime)
-		tokenAfterExpiry := currentTime.Sub(expireTimeObj).Seconds()
-		if tokenAfterExpiry > float64(retentionInterval) {
-			_, err = ormer.Engine.Delete(session)
-			if err != nil {
-				return fmt.Errorf("failed to delete expired token %s: %w", session.Name, err)
+		expiredNames := map[string][]string{}
+		for _, session := range sessions {
+			isExpired, expireTime := util.IsTokenExpired(session.CreatedTime, session.ExpiresIn)
+			if !isExpired {
+				continue
 			}
-			fmt.Printf("[%d] Deleted expired token: %s | Created: %s | Org: %s | App: %s | User: %s\n",
-				deletedCount, session.Name, session.CreatedTime, session.Organization, session.Application, session.User)
-			deletedCount++
+
+			retentionInterval, ok := orgIntervals[session.Organization]
+			if !ok {
+				// The token's organization no longer exists (or has no configured value);
+				// fall back to the default retention period.
+				retentionInterval = defaultInterval
+			}
+
+			expireTimeObj := util.String2Time(expireTime)
+			tokenAfterExpiry := currentTime.Sub(expireTimeObj).Seconds()
+			if tokenAfterExpiry > float64(retentionInterval) {
+				expiredNames[session.Owner] = append(expiredNames[session.Owner], session.Name)
+				fmt.Printf("[%d] Deleting expired token: %s | Created: %s | Org: %s | App: %s | User: %s\n",
+					deletedCount, session.Name, session.CreatedTime, session.Organization, session.Application, session.User)
+				deletedCount++
+			}
+		}
+
+		for owner, names := range expiredNames {
+			_, err = ormer.Engine.Where("owner = ?", owner).In("name", names).Delete(&Token{})
+			if err != nil {
+				return fmt.Errorf("failed to delete expired tokens of owner %s: %w", owner, err)
+			}
+		}
+
+		lastSession := sessions[len(sessions)-1]
+		lastOwner, lastName = lastSession.Owner, lastSession.Name
+		if len(sessions) < tokenCleanupBatchSize {
+			break
 		}
 	}
+
 	return nil
 }
 
