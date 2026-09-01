@@ -36,7 +36,6 @@ func forwardHandler(targetUrl string, writer http.ResponseWriter, request *http.
 
 	if nil != err {
 		panic(err)
-		return
 	}
 
 	proxy := httputil.NewSingleHostReverseProxy(target)
@@ -276,6 +275,7 @@ func handleRequest(w http.ResponseWriter, r *http.Request) {
 		return
 	default:
 		responseError(w, "Error in CasWAF: %s", reason)
+		return
 	}
 	nextHandle(w, r)
 }

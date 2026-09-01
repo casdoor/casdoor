@@ -832,6 +832,7 @@ func (c *ApiController) Login() {
 			organization, err = object.GetOrganizationByUser(user)
 			if err != nil {
 				c.ResponseError(err.Error())
+				return
 			}
 
 			if checkMfaEnable(c, user, organization, verificationType) {
@@ -867,6 +868,7 @@ func (c *ApiController) Login() {
 		organization, err = object.GetOrganization(util.GetId("admin", application.Organization))
 		if err != nil {
 			c.ResponseError(c.T(err.Error()))
+			return
 		}
 
 		var provider *object.Provider
@@ -947,6 +949,7 @@ func (c *ApiController) Login() {
 				}
 				if !reg.MatchString(userInfo.Email) {
 					c.ResponseError(c.T("check:Email is invalid"))
+					return
 				}
 			}
 		}
@@ -1215,6 +1218,7 @@ func (c *ApiController) Login() {
 		organization, err = object.GetOrganization(util.GetId("admin", application.Organization))
 		if err != nil {
 			c.ResponseError(c.T(err.Error()))
+			return
 		}
 
 		if authForm.Passcode != "" {
