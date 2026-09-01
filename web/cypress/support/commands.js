@@ -1,5 +1,5 @@
 // Custom commands shared by the console e2e specs. The antd frontend's equivalent
-// lives in `web/cypress/support/commands.js`; the selectors differ because this
+// lives in `web-old/cypress/support/commands.js`; the selectors differ because this
 // frontend is shadcn/ui, so it targets the ids the app renders rather than antd
 // class names.
 
@@ -12,12 +12,6 @@ const ADMIN = {
   type: "login",
 };
 
-const selector = {
-  username: "#username",
-  password: "#password",
-  loginButton: "form button[type=submit]",
-};
-
 /**
  * Puts the app in a deterministic state before it boots: no product tour popover
  * covering what a test clicks, and English so specs can assert on copy whatever
@@ -27,19 +21,6 @@ function prepareApp(win) {
   win.localStorage.setItem("isTourVisible", "false");
   win.localStorage.setItem("language", "en");
 }
-
-/**
- * Signs in through the form. Use this when the sign-in flow itself is under
- * test — it is also the only path that leaves `location.state.from === "/login"`
- * behind, which is what triggers the "enable MFA" prompt.
- */
-Cypress.Commands.add("login", () => {
-  cy.visit("/", {onBeforeLoad: prepareApp});
-  cy.get(selector.username).type(ADMIN.username);
-  cy.get(selector.password).type(ADMIN.password);
-  cy.get(selector.loginButton).click();
-  cy.location("pathname", {timeout: 20000}).should("eq", "/");
-});
 
 /**
  * Signs in over the API and caches the session, so a spec with many tests pays

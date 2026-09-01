@@ -44,7 +44,11 @@ jobs:
           node-version: 20
           cache: "yarn"
           cache-dependency-path: ./web/yarn.lock
-      - run: yarn install && CI=false yarn run build
+      - run: yarn install
+        working-directory: ./web
+      - run: yarn typecheck && yarn lint
+        working-directory: ./web
+      - run: CI=false yarn run build
         working-directory: ./web
       - name: Upload build artifacts
         if: github.repository == 'casdoor/casdoor' && github.event_name == 'push'
@@ -94,6 +98,9 @@ jobs:
     name: e2e-test
     runs-on: ubuntu-latest
     needs: [go-tests]
+    # The suite is a few minutes' work. Anything near this is hung, not slow,
+    # and is worth failing rather than leaving to sit for the six-hour default.
+    timeout-minutes: 20
     services:
       mysql:
         image: mysql:5.7
@@ -109,9 +116,25 @@ jobs:
         with:
           go-version: ${{ env.GO_VERSION }}
           cache-dependency-path: ./go.mod
+      # Started before the front-end steps so the backend compiles while yarn
+      # installs; it is waited on further down, once it is needed.
       - name: start backend
         run: nohup go run ./main.go > /tmp/backend.log 2>&1 &
         working-directory: ./
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          cache: "yarn"
+          cache-dependency-path: ./web/yarn.lock
+      # Restored before `yarn install`, whose Cypress postinstall is what fills
+      # this directory.
+      - name: Cache the Cypress binary
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/Cypress
+          key: cypress-${{ runner.os }}-${{ hashFiles('web/yarn.lock') }}
+      - run: yarn install
+        working-directory: ./web
       - name: Wait for backend to be ready
         run: |
           echo "Waiting for backend server to start on port 8000..."
@@ -129,18 +152,11 @@ jobs:
             echo "Waiting... ($i/60)"
             sleep 1
           done
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 20
-          cache: "yarn"
-          cache-dependency-path: ./web/yarn.lock
-      - run: yarn install
-        working-directory: ./web
-      - run: yarn typecheck && yarn lint
-        working-directory: ./web
       - uses: cypress-io/github-action@v5
         with:
           browser: chrome
+          # `yarn install` above already installed everything, Cypress included.
+          install: false
           start: yarn start
           wait-on: "http://localhost:7001"
           wait-on-timeout: 210
@@ -151,11 +167,6 @@ jobs:
         with:
           name: cypress-screenshots
           path: ./web/cypress/screenshots
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: cypress-videos
-          path: ./web/cypress/videos
 
   tag-release:
     name: Create Tag
