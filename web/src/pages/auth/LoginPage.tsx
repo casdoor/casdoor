@@ -157,6 +157,7 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
       setApplication(app);
       setLoginMethod(getDefaultLoginMethod(app));
       setAgreed(getAgreementDefaultValue(app));
+      setAutoSignin(Setting.getAutoSigninDefaultValue(app));
     };
 
     if (type === "code" || type === "cas" || type === "device") {
@@ -636,6 +637,8 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
   const tabs = [passwordEnabled, codeEnabled, ldapEnabled, webAuthnEnabled, faceIdEnabled, wechatEnabled].filter(Boolean).length;
   const showTabs = tabs > 1;
   const isCodeMethod = (loginMethod ?? "").startsWith("verificationCode");
+  // each block of the form can be hidden from "Signin items" in the application
+  const isVisible = (name: string) => Setting.isSigninItemVisible(application, name);
   // the QR panels replace the credential form entirely
   const isPanelMethod = loginMethod === "wechat";
   // device login is offered next to the form when the application asks for it
@@ -707,7 +710,7 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
           </div>
         ) : null}
 
-        {showTabs ? (
+        {showTabs && isVisible("Signin methods") ? (
           <Tabs value={loginMethod} onValueChange={(v) => setLoginMethod(v as LoginMethod)}>
             {/* Equal grid tracks only work while the labels fit. With five sign-in
                 methods enabled each track is ~60px in a max-w-sm card, and the
@@ -737,20 +740,22 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
 
         {isPanelMethod ? <WeChatLoginPanel application={application} /> : (
           <form className="space-y-4" onSubmit={submit}>
-            <div className="space-y-2">
-              <Label htmlFor="username">
-                {isCodeMethod ? i18next.t("login:Email or phone") : i18next.t("signup:Username")}
-              </Label>
-              <Input
-                id="username"
-                autoFocus
-                autoComplete="username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-              />
-            </div>
+            {isVisible("Username") ? (
+              <div className="space-y-2">
+                <Label htmlFor="username">
+                  {isCodeMethod ? i18next.t("login:Email or phone") : i18next.t("signup:Username")}
+                </Label>
+                <Input
+                  id="username"
+                  autoFocus
+                  autoComplete="username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                />
+              </div>
+            ) : null}
 
-            {isCodeMethod ? (
+            {isCodeMethod && isVisible("Verification code") ? (
               <div className="space-y-2">
                 <Label>{i18next.t("login:Verification code")}</Label>
                 <SendCodeInput
@@ -766,16 +771,20 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
                   refreshCaptcha={refreshInlineCaptcha}
                 />
               </div>
-            ) : loginMethod === "webAuthn" || loginMethod === "faceId" ? null : (
+            ) : null}
+
+            {!isCodeMethod && loginMethod !== "webAuthn" && loginMethod !== "faceId" && isVisible("Password") ? (
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <Label htmlFor="password">{i18next.t("general:Password")}</Label>
-                  <Link
-                    to={`/forget/${application.name}`}
-                    className="text-xs text-muted-foreground underline-offset-4 hover:underline"
-                  >
-                    {i18next.t("login:Forgot password?")}
-                  </Link>
+                  {isVisible("Forgot password?") ? (
+                    <Link
+                      to={`/forget/${application.name}`}
+                      className="text-xs text-muted-foreground underline-offset-4 hover:underline"
+                    >
+                      {i18next.t("login:Forgot password?")}
+                    </Link>
+                  ) : null}
                 </div>
                 <Input
                   id="password"
@@ -785,7 +794,7 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
                   onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
-            )}
+            ) : null}
 
             {captchaProvider && Setting.isInlineCaptchaEnabled(application) ? (
               <CaptchaModal
@@ -800,26 +809,30 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
               />
             ) : null}
 
-            <div className="flex items-center gap-2">
-              <Checkbox id="autoSignin" checked={autoSignin} onCheckedChange={(v) => setAutoSignin(v === true)} />
-              <Label htmlFor="autoSignin" className="text-sm font-normal">
-                {i18next.t("login:Auto sign in")}
-              </Label>
-            </div>
+            {isVisible("Auto sign in") ? (
+              <div className="flex items-center gap-2">
+                <Checkbox id="autoSignin" checked={autoSignin} onCheckedChange={(v) => setAutoSignin(v === true)} />
+                <Label htmlFor="autoSignin" className="text-sm font-normal">
+                  {i18next.t("login:Auto sign in")}
+                </Label>
+              </div>
+            ) : null}
 
-            {application.termsOfUse ? (
+            {application.termsOfUse && isVisible("Agreement") ? (
               <AgreementCheckbox application={application} checked={agreed} onChange={setAgreed} />
             ) : null}
 
-            <Button type="submit" className="w-full" loading={loading}>
-              {loginMethod === "webAuthn"
-                ? i18next.t("login:Sign in with WebAuthn")
-                : loginMethod === "faceId"
-                  ? i18next.t("login:Sign in with Face ID")
-                  : type === "device"
-                    ? i18next.t("login:Approve and sign in")
-                    : i18next.t("login:Sign In")}
-            </Button>
+            {isVisible("Login button") ? (
+              <Button type="submit" className="w-full" loading={loading}>
+                {loginMethod === "webAuthn"
+                  ? i18next.t("login:Sign in with WebAuthn")
+                  : loginMethod === "faceId"
+                    ? i18next.t("login:Sign in with Face ID")
+                    : type === "device"
+                      ? i18next.t("login:Approve and sign in")
+                      : i18next.t("login:Sign In")}
+              </Button>
+            ) : null}
 
             {type === "device" ? (
               <Button type="button" variant="outline" className="w-full" onClick={cancelDeviceLogin}>
@@ -835,7 +848,7 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
           </div>
         ) : null}
 
-        {application.enableSignUp ? (
+        {application.enableSignUp && isVisible("Signup link") ? (
           <p className="text-center text-sm text-muted-foreground">
             {i18next.t("login:No account?")}{" "}
             <Link to={`/signup/${application.name}`} className="text-foreground underline-offset-4 hover:underline">
@@ -844,7 +857,7 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
           </p>
         ) : null}
 
-        <ProviderButtons application={application} method="signin" />
+        {isVisible("Providers") ? <ProviderButtons application={application} method="signin" /> : null}
 
         <GoogleOneTap application={application} />
 

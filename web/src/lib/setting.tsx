@@ -1624,6 +1624,19 @@ export function getCaptchaRule(application) {
   return CaptchaRule.Never;
 }
 
+export function getSigninItem(application, name) {
+  return application?.signinItems?.find(signinItem => signinItem.name === name);
+}
+
+// An item the application does not list at all keeps its default place on the page.
+export function isSigninItemVisible(application, name) {
+  return getSigninItem(application, name)?.visible !== false;
+}
+
+export function getAutoSigninDefaultValue(application) {
+  return getSigninItem(application, "Forgot password?")?.rule !== "Auto sign in - False";
+}
+
 export function isInlineCaptchaEnabled(application) {
   return application?.signinItems?.some(signinItem => signinItem.name === "Captcha" && signinItem.rule === "inline") || false;
 }
