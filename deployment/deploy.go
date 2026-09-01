@@ -46,39 +46,38 @@ func deployStaticFiles(provider *object.Provider) {
 		panic(fmt.Sprintf("the provider type: %s is not supported", provider.Type))
 	}
 
-	uploadFolder(storageProvider, "js")
-	uploadFolder(storageProvider, "css")
+	// Vite emits every hashed chunk and stylesheet into one "assets" directory,
+	// where create-react-app used to split them into static/js and static/css.
+	uploadFolder(storageProvider)
 	updateHtml(provider.Domain)
 }
 
-func uploadFolder(storageProvider oss.StorageInterface, folder string) {
-	path := fmt.Sprintf("../web/build/static/%s/", folder)
+const buildAssetsDir = "assets"
+
+func uploadFolder(storageProvider oss.StorageInterface) {
+	path := fmt.Sprintf("../web/build/%s/", buildAssetsDir)
 	filenames := util.ListFiles(path)
 
 	for _, filename := range filenames {
-		if !strings.HasSuffix(filename, folder) {
-			continue
-		}
-
 		file, err := os.Open(filepath.Clean(path + filename))
 		if err != nil {
 			panic(err)
 		}
 
-		objectKey := fmt.Sprintf("static/%s/%s", folder, filename)
+		objectKey := fmt.Sprintf("%s/%s", buildAssetsDir, filename)
 		_, err = storageProvider.Put(objectKey, file)
 		if err != nil {
 			panic(err)
 		}
 
-		fmt.Printf("Uploaded [%s] to [%s]\n", path, objectKey)
+		fmt.Printf("Uploaded [%s] to [%s]\n", path+filename, objectKey)
 	}
 }
 
 func updateHtml(domainPath string) {
 	htmlPath := "../web/build/index.html"
 	html := util.ReadStringFromPath(htmlPath)
-	html = strings.Replace(html, "\"/static/", fmt.Sprintf("\"%s", domainPath), -1)
+	html = strings.Replace(html, fmt.Sprintf("\"/%s/", buildAssetsDir), fmt.Sprintf("\"%s%s/", domainPath, buildAssetsDir), -1)
 	util.WriteStringToPath(html, htmlPath)
 
 	fmt.Printf("Updated HTML to [%s]\n", html)

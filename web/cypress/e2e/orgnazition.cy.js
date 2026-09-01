@@ -1,14 +1,14 @@
-describe('Test Orgnazition', () => {
-    beforeEach(()=>{
-        cy.login();
-    })
-    it("test org", () => {
-        cy.visit("http://localhost:7001");
-        cy.visit("http://localhost:7001/organizations");
-        cy.url().should("eq", "http://localhost:7001/organizations");
-        cy.visit("http://localhost:7001/organizations/built-in");
-        cy.url().should("eq", "http://localhost:7001/organizations/built-in");
-        cy.visit("http://localhost:7001/organizations/built-in/users");
-        cy.url().should("eq", "http://localhost:7001/organizations/built-in/users");
-    });
-})
+describe("Test organization", () => {
+  beforeEach(() => {
+    cy.openConsole();
+  });
+
+  it("test organization", () => {
+    cy.visitListPage("/organizations");
+    cy.openFirstRow();
+    cy.visitPath("/organizations/built-in");
+    cy.assertEditPageLoaded();
+    // the org-scoped user list, a different route from /users
+    cy.visitListPage("/organizations/built-in/users");
+  });
+});

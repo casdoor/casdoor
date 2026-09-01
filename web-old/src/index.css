@@ -1,0 +1,296 @@
+/* stylelint-disable no-descending-specificity */
+
+@import "@fontsource-variable/inter/opsz.css";
+@import "@fontsource-variable/inter/opsz-italic.css";
+
+/* AI-themed loading dots animation used by common/Loading.js */
+@keyframes casdoor-ai-bounce {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0) scale(0.85);
+    opacity: 0.5;
+  }
+
+  30% {
+    transform: translateY(-10px) scale(1.1);
+    opacity: 1;
+  }
+}
+
+body {
+  margin: 0;
+  font-family:
+    "Inter Variable",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Oxygen,
+    Ubuntu,
+    Cantarell,
+    "Fira Sans",
+    "Droid Sans",
+    "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family:
+    source-code-pro,
+    Menlo,
+    Monaco,
+    Consolas,
+    "Courier New",
+    monospace;
+}
+
+.logo {
+  height: 27px;
+  margin: 17px 0 16px 15px;
+  float: left;
+}
+
+.ant-table.ant-table-medium .ant-table-title {
+  padding: 8px 12px !important;
+}
+
+/* Size the small toolbar buttons in table title bars (Add, Upload, ...) like default buttons, matching the row action buttons */
+.ant-table-title .ant-btn-sm {
+  height: 32px;
+  padding-inline: 15px;
+}
+
+/* Edit page cards put 32px buttons in their 38px title bar; give them room to breathe */
+.ant-card-small > .ant-card-head {
+  min-height: 46px !important;
+}
+
+.ant-table.ant-table-medium .ant-table-footer,
+.ant-table.ant-table-medium .ant-table-cell {
+  padding: 1px 8px !important;
+}
+
+.ant-table.ant-table-medium .ant-table-thead .ant-table-cell {
+  padding: 10px 8px !important;
+}
+
+.ant-list-sm .ant-list-item {
+  padding: 2px !important;
+}
+
+.ant-drawer-body {
+  padding: 0 !important;
+  overflow: hidden !important;
+}
+
+.custom-link {
+  transition: opacity 0.2s ease, color 0.2s ease;
+}
+
+.custom-link:hover {
+  opacity: 0.65 !important;
+  color: rgb(80 80 80) !important;
+}
+
+.custom-link:active {
+  opacity: 0.4 !important;
+  color: rgb(40 40 40) !important;
+  transition: opacity 0.08s ease, color 0.08s ease;
+}
+
+/* Ant Design Typography links */
+.ant-typography a,
+a.ant-typography-link {
+  transition: opacity 0.2s ease;
+}
+
+.ant-typography a:hover,
+a.ant-typography-link:hover {
+  opacity: 0.7 !important;
+}
+
+.ant-typography a:active,
+a.ant-typography-link:active {
+  opacity: 0.45 !important;
+  transition: opacity 0.08s ease;
+}
+
+/* Raw <a> tags without Ant Design classes (table cell links, mailto, plain hrefs, etc.) */
+a:not([class], .login-link),
+a[class=""],
+a[href^="mailto:"] {
+  transition: opacity 0.2s ease;
+}
+
+a:not([class], .login-link):hover,
+a[class=""]:hover,
+a[href^="mailto:"]:hover {
+  opacity: 0.65;
+}
+
+a:not([class], .login-link):active,
+a[class=""]:active,
+a[href^="mailto:"]:active {
+  opacity: 0.4;
+  transition: opacity 0.08s ease;
+}
+
+/* Login page signin method tabs: Password / Code / WebAuthn etc. */
+.signin-methods .ant-tabs-tab .ant-tabs-tab-btn {
+  transition: opacity 0.2s ease, filter 0.2s ease;
+}
+
+.signin-methods .ant-tabs-tab:not(.ant-tabs-tab-active):hover .ant-tabs-tab-btn {
+  opacity: 0.65;
+  filter: brightness(1.2);
+}
+
+.signin-methods .ant-tabs-tab .ant-tabs-tab-btn:active {
+  opacity: 0.4;
+  filter: brightness(0.85);
+  transition: opacity 0.08s ease, filter 0.08s ease;
+}
+
+/* Login page text links: Forgot password? / sign up now */
+.login-link {
+  transition: opacity 0.2s ease, filter 0.2s ease;
+  text-decoration: none;
+}
+
+.login-link:hover {
+  opacity: 0.7;
+  filter: brightness(1.2);
+}
+
+.login-link:active {
+  opacity: 0.45;
+  filter: brightness(0.85);
+  transition: opacity 0.08s ease, filter 0.08s ease;
+}
+
+/* Login page: Auto sign in checkbox label */
+.login-auto-signin {
+  transition: opacity 0.2s ease;
+}
+
+.login-auto-signin:hover {
+  opacity: 0.7;
+}
+
+.login-auto-signin:active {
+  opacity: 0.45;
+  transition: opacity 0.08s ease;
+}
+
+.full-height-editor {
+  height: 100%;
+}
+
+.full-height-editor [class*="CodeMirror"] {
+  height: 100%;
+}
+
+.no-horizontal-scroll-editor [class*="CodeMirror-hscrollbar"] {
+  display: none !important;
+}
+
+.no-horizontal-scroll-editor [class*="CodeMirror-scroll"] {
+  overflow-x: hidden !important;
+}
+
+/* Bold overrides for key UI elements */
+
+/* Sidebar menu: item labels */
+.ant-menu .ant-menu-item,
+.ant-menu .ant-menu-item a,
+.ant-menu .ant-menu-submenu-title {
+  font-weight: 600 !important;
+}
+
+/* Sidebar menu: group titles */
+.ant-menu .ant-menu-item-group-title {
+  font-weight: 700 !important;
+  letter-spacing: 0.04em;
+}
+
+/* Table: column headers (thead) */
+.ant-table .ant-table-thead > tr > th,
+.ant-table .ant-table-thead > tr > td {
+  font-weight: 600 !important;
+}
+
+/* Table: footer */
+.ant-table .ant-table-footer {
+  font-weight: 600 !important;
+}
+
+/* Table: title bar */
+.ant-table .ant-table-title {
+  font-weight: 700 !important;
+}
+
+/* Card: header title */
+.ant-card .ant-card-head-title {
+  font-weight: 600 !important;
+}
+
+/* Descriptions: item labels */
+.ant-descriptions .ant-descriptions-item-label {
+  font-weight: 600 !important;
+}
+
+/* Tabs: tab button labels */
+.ant-tabs .ant-tabs-tab .ant-tabs-tab-btn {
+  font-weight: 600 !important;
+}
+
+/* Layout sider: menu item and submenu labels */
+.ant-layout-sider .ant-menu-item,
+.ant-layout-sider .ant-menu-submenu-title {
+  font-weight: 600 !important;
+}
+
+/* Table loading spinner - give the overlay enough height so spinner appears centered (antd v6) */
+.ant-table-wrapper .ant-spin.ant-spin-spinning {
+  min-height: 420px;
+}
+
+/* Sidebar menu: selected item - darker background */
+.ant-layout-sider .ant-menu-light .ant-menu-item-selected,
+.ant-layout-sider .ant-menu-light > .ant-menu .ant-menu-item-selected {
+  background-color: rgb(0 0 0 / 15%) !important;
+}
+
+/* Sidebar menu container: hide scrollbar but keep scroll behavior */
+.sider-menu-container {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+}
+
+.sider-menu-container::-webkit-scrollbar {
+  display: none; /* Chrome/Safari/WebKit */
+}
+
+/* Message popups: static API renders outside ConfigProvider, override font explicitly */
+.ant-message,
+.ant-message .ant-message-notice-content,
+.ant-message .ant-message-custom-content,
+.ant-message .ant-message-custom-content span {
+  font-family:
+    "Inter Variable",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    "Helvetica Neue",
+    sans-serif !important;
+}
+
+/* Table cells never wrap (scroll.x handles overflow), so shrinking only absorbs column padding */
+.ant-table-tbody > tr > td,
+.ant-table-thead > tr > th {
+  white-space: nowrap;
+}

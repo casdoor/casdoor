@@ -1,8 +1,12 @@
-const fs = require("fs");
-const path = require("path");
+// Vite writes to build-temp so that a failed build never leaves a half-written
+// "build" directory behind; this renames it into place, like web/mv.js does.
+import fs from "fs";
+import path from "path";
+import {fileURLToPath} from "url";
 
-const sourceDir = path.join(__dirname, "build-temp");
-const targetDir = path.join(__dirname, "build");
+const dirname = path.dirname(fileURLToPath(import.meta.url));
+const sourceDir = path.join(dirname, "build-temp");
+const targetDir = path.join(dirname, "build");
 
 if (!fs.existsSync(sourceDir)) {
   // eslint-disable-next-line no-console

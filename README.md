@@ -232,7 +232,7 @@ At this point you have a running identity provider with nothing connected to it 
 Casdoor is a frontend–backend separated application:
 
 - **Backend** — Go with the [Beego](https://github.com/beego/beego) framework, exposing REST APIs ([repository root](https://github.com/casdoor/casdoor))
-- **Frontend** — React 18 with Ant Design ([`web/`](web))
+- **Frontend** — React 18 with [shadcn/ui](https://ui.shadcn.com/) on Tailwind CSS, built with Vite ([`web/`](web)). The previous Ant Design console is kept for reference at [`web-old/`](web-old) and is no longer built or served.
 - **Database** — MySQL, PostgreSQL, SQLite, SQL Server and others through [XORM](https://xorm.io/)
 - **Cache** — Redis, optional; needed if you run more than one Casdoor replica
 
