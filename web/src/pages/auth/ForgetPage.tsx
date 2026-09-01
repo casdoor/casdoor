@@ -25,6 +25,7 @@ export default function ForgetPage() {
   const [application, setApplication] = React.useState<any>(undefined);
   const [step, setStep] = React.useState<Step>("account");
   const [username, setUsername] = React.useState("");
+  const [account, setAccount] = React.useState("");
   const [dest, setDest] = React.useState({email: "", phone: "", countryCode: ""});
   const [method, setMethod] = React.useState<"email" | "phone">("email");
   const [code, setCode] = React.useState("");
@@ -54,21 +55,32 @@ export default function ForgetPage() {
     );
   }
 
+  // same matching rules as GetProviderByCategoryAndRule() in the backend, for the "forget" method
+  const hasProviderOfCategory = (category: string) =>
+    application?.providers?.some((providerItem: any) => providerItem?.provider?.category === category &&
+      ["forget", "", "All", "all", "None"].includes(providerItem.rule)) ?? false;
+
   const findAccount = () => {
     setLoading(true);
     AuthBackend.getEmailAndPhone(application.organization, username)
       .then((res: any) => {
-        if (res.status === "ok") {
-          setDest({
-            email: res.data?.email ?? "",
-            phone: res.data?.phone ?? "",
-            countryCode: res.data?.countryCode ?? "",
-          });
-          setMethod(res.data?.email ? "email" : "phone");
-          setStep("verify");
-        } else {
+        if (res.status !== "ok") {
           Setting.showMessage("error", res.msg);
+          return;
         }
+
+        // only offer a method whose provider is configured for the application
+        const email = hasProviderOfCategory("Email") ? (res.data?.email ?? "") : "";
+        const phone = hasProviderOfCategory("SMS") ? (res.data?.phone ?? "") : "";
+        if (!email && !phone) {
+          Setting.showMessage("error", i18next.t("general:No verification method"));
+          return;
+        }
+
+        setAccount(res.data?.name ?? username);
+        setDest({email, phone, countryCode: res.data?.countryCode ?? ""});
+        setMethod(email ? "email" : "phone");
+        setStep("verify");
       })
       .finally(() => setLoading(false));
   };
@@ -78,11 +90,11 @@ export default function ForgetPage() {
     UserBackend.verifyCode({
       application: application.name,
       organization: application.organization,
-      username,
-      name: username,
+      // the backend derives the code type from "username", so it must be the destination
+      username: method === "email" ? dest.email : dest.phone,
+      name: account,
       code,
       type: "login",
-      dest: method === "email" ? dest.email : dest.phone,
       countryCode: dest.countryCode,
     })
       .then((res: any) => {
@@ -101,7 +113,7 @@ export default function ForgetPage() {
       return;
     }
     setLoading(true);
-    UserBackend.setPassword(application.organization, username, "", password, code)
+    UserBackend.setPassword(application.organization, account, "", password, code)
       .then((res: any) => {
         if (res.status === "ok") {
           Setting.showMessage("success", i18next.t("user:Password set successfully"));
@@ -166,7 +178,7 @@ export default function ForgetPage() {
               countryCode={dest.countryCode}
               application={application}
               applicationId={Setting.getApplicationName(application)}
-              checkUser={username}
+              checkUser={account}
             />
             <Button className="w-full" loading={loading} onClick={verifyCode}>
               {i18next.t("forget:Next Step")}
