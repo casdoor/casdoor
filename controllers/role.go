@@ -84,6 +84,31 @@ func (c *ApiController) GetRole() {
 	c.ResponseOk(role)
 }
 
+// GetUserRoles
+// @Title GetUserRoles
+// @Tag Role API
+// @Description get the user's direct roles and roles assigned through groups
+// @Param   owner  query    string  true        "The owner of the user"
+// @Param   name   query    string  true        "The name of the user"
+// @Success 200 {object} object.UserRoles The Response object
+// @router /get-user-roles [get]
+func (c *ApiController) GetUserRoles() {
+	owner := c.Ctx.Input.Query("owner")
+	name := c.Ctx.Input.Query("name")
+	if util.IsStringsEmpty(owner, name) {
+		c.ResponseError(c.T("general:Missing parameter"))
+		return
+	}
+
+	roles, err := object.GetUserRoles(owner, name)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	c.ResponseOk(roles)
+}
+
 // UpdateRole
 // @Title UpdateRole
 // @Tag Role API

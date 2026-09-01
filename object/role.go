@@ -17,6 +17,7 @@ package object
 import (
 	"errors"
 	"fmt"
+	"sort"
 	"strings"
 
 	"github.com/casdoor/casdoor/conf"
@@ -37,6 +38,11 @@ type Role struct {
 	Roles     []string `xorm:"mediumtext" json:"roles"`
 	Domains   []string `xorm:"mediumtext" json:"domains"`
 	IsEnabled bool     `json:"isEnabled"`
+}
+
+type UserRoles struct {
+	DirectRoles []string `json:"directRoles"`
+	GroupRoles  []string `json:"groupRoles"`
 }
 
 func GetRoleCount(owner, field, value string) (int64, error) {
@@ -86,6 +92,52 @@ func getRole(owner string, name string) (*Role, error) {
 func GetRole(id string) (*Role, error) {
 	owner, name := util.GetOwnerAndNameFromIdNoCheck(id)
 	return getRole(owner, name)
+}
+
+// GetUserRoles returns enabled roles assigned directly to the user and through groups.
+func GetUserRoles(owner string, name string) (*UserRoles, error) {
+	user, err := getUser(owner, name)
+	if err != nil {
+		return nil, err
+	}
+	if user == nil {
+		return nil, fmt.Errorf("The user: %s doesn't exist", util.GetId(owner, name))
+	}
+
+	userId := user.GetId()
+	query := ormer.Engine.Alias("r").Cols("name", "users", "groups", "is_enabled").
+		Where("r.owner = ?", owner).
+		And("r.users like ?", fmt.Sprintf("%%%s%%", userId))
+	for _, group := range user.Groups {
+		query = query.Or("r.owner = ? AND r.groups like ?", owner, fmt.Sprintf("%%%s%%", group))
+	}
+
+	roles := []*Role{}
+	if err = query.Find(&roles); err != nil {
+		return nil, err
+	}
+
+	result := &UserRoles{
+		DirectRoles: []string{},
+		GroupRoles:  []string{},
+	}
+	for _, role := range roles {
+		if role == nil || !role.IsEnabled {
+			continue
+		}
+
+		if util.InSlice(role.Users, userId) {
+			result.DirectRoles = append(result.DirectRoles, role.Name)
+		}
+
+		if util.HaveIntersection(role.Groups, user.Groups) {
+			result.GroupRoles = append(result.GroupRoles, role.Name)
+		}
+	}
+	sort.Strings(result.DirectRoles)
+	sort.Strings(result.GroupRoles)
+
+	return result, nil
 }
 
 func UpdateRole(id string, role *Role, isGlobalAdmin bool, lang string) (bool, error) {

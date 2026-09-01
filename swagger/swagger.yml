@@ -2510,6 +2510,28 @@ paths:
             type: array
             items:
               $ref: '#/definitions/object.Role'
+  /api/get-user-roles:
+    get:
+      tags:
+      - Role API
+      description: get the user's direct roles and roles assigned through groups
+      operationId: ApiController.GetUserRoles
+      parameters:
+      - in: query
+        name: owner
+        description: The owner of the user
+        required: true
+        type: string
+      - in: query
+        name: name
+        description: The name of the user
+        required: true
+        type: string
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/object.UserRoles'
   /api/get-session:
     get:
       tags:
@@ -6026,6 +6048,18 @@ definitions:
         items:
           type: string
       users:
+        type: array
+        items:
+          type: string
+  object.UserRoles:
+    title: UserRoles
+    type: object
+    properties:
+      directRoles:
+        type: array
+        items:
+          type: string
+      groupRoles:
         type: array
         items:
           type: string
