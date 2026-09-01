@@ -1309,12 +1309,16 @@ export function getAcceptLanguage() {
 }
 
 
+export function isCustomOAuthType(type) {
+  return typeof type === "string" && (type.startsWith("Custom") || type === "OIDC");
+}
+
 export function getProviderLogoURL(provider) {
-  if (provider.type.startsWith("Custom") && provider.customLogo) {
+  if (isCustomOAuthType(provider.type) && provider.customLogo) {
     return provider.customLogo;
   }
   if (provider.category === "OAuth") {
-    const type = provider.type.startsWith("Custom") ? "Custom" : provider.type;
+    const type = isCustomOAuthType(provider.type) ? "Custom" : provider.type;
     return `${StaticBaseUrl}/img/social_${type.toLowerCase()}.png`;
   } else {
     const info = OtherProviderInfo[provider.category][provider.type];
@@ -1407,6 +1411,7 @@ export function getProviderTypeOptions(category) {
         {id: "Yammer", name: "Yammer"},
         {id: "Yandex", name: "Yandex"},
         {id: "Zoom", name: "Zoom"},
+        {id: "OIDC", name: "OIDC"},
         {id: "Custom", name: "Custom"},
         {id: "Custom2", name: "Custom2"},
         {id: "Custom3", name: "Custom3"},

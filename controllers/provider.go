@@ -18,6 +18,7 @@ import (
 	"encoding/json"
 
 	"github.com/beego/beego/v2/core/utils/pagination"
+	"github.com/casdoor/casdoor/idp"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 )
@@ -139,6 +140,25 @@ func (c *ApiController) GetProvider() {
 	}
 
 	c.ResponseOk(object.GetMaskedProvider(provider, isMaskEnabled))
+}
+
+// GetIdpDiscovery
+// @Title GetIdpDiscovery
+// @Tag Provider API
+// @Description get the OIDC discovery document of an upstream identity provider
+// @Param   issuer     query    string  true        "The issuer URL of the upstream OIDC identity provider"
+// @Success 200 {object} idp.OidcDiscovery The Response object
+// @router /get-idp-discovery [get]
+func (c *ApiController) GetIdpDiscovery() {
+	issuer := c.Ctx.Input.Query("issuer")
+
+	discovery, err := idp.GetOidcDiscovery(issuer)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	c.ResponseOk(discovery)
 }
 
 func (c *ApiController) requireProviderPermission(provider *object.Provider) bool {

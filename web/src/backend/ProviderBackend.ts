@@ -44,6 +44,16 @@ export function getProvider(owner, name) {
   }).then(res => res.json());
 }
 
+export function getIdpDiscovery(issuer) {
+  return fetch(`${Setting.ServerUrl}/api/get-idp-discovery?issuer=${encodeURIComponent(issuer)}`, {
+    method: "GET",
+    credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}
+
 export function updateProvider(owner, name, provider) {
   const newProvider = Setting.deepCopy(provider);
   return fetch(`${Setting.ServerUrl}/api/update-provider?id=${owner}/${encodeURIComponent(name)}`, {

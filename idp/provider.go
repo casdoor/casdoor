@@ -109,6 +109,8 @@ func GetIdProvider(idpInfo *ProviderInfo, redirectUrl string) (IdProvider, error
 		return NewAlipayIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl, idpInfo.AppCertificate, idpInfo.RootCertificate)
 	case "Custom", "Custom Flexible":
 		return NewCustomIdProvider(idpInfo, redirectUrl), nil
+	case "OIDC":
+		return NewOidcIdProvider(idpInfo, redirectUrl), nil
 	case "Infoflow":
 		if idpInfo.SubType == "Internal" {
 			return NewInfoflowInternalIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, idpInfo.AppId, redirectUrl), nil

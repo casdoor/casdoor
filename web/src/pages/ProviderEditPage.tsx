@@ -389,6 +389,7 @@ export default function ProviderEditPage() {
 
   const [requestUrl, setRequestUrl] = React.useState("");
   const [metadataLoading, setMetadataLoading] = React.useState(false);
+  const [discoveryLoading, setDiscoveryLoading] = React.useState(false);
 
   const [scanLoading, setScanLoading] = React.useState(false);
   const [scanResult, setScanResult] = React.useState<any>(null);
@@ -597,6 +598,33 @@ export default function ProviderEditPage() {
       });
   };
 
+  const fetchOidcDiscovery = () => {
+    setDiscoveryLoading(true);
+    ProviderBackend.getIdpDiscovery(provider.domain ?? "")
+      .then((res: any) => {
+        if (res.status !== "ok") {
+          Setting.showMessage("error", res.msg);
+          return;
+        }
+
+        const discovery = res.data;
+        patchProvider({
+          domain: discovery.issuer || provider.domain,
+          customAuthUrl: discovery.authorization_endpoint ?? "",
+          customTokenUrl: discovery.token_endpoint ?? "",
+          customUserInfoUrl: discovery.userinfo_endpoint ?? "",
+          customLogoutUrl: discovery.end_session_endpoint ?? "",
+        });
+        Setting.showMessage("success", i18next.t("general:Successfully added"));
+      })
+      .catch((err: any) => {
+        Setting.showMessage("error", err.message);
+      })
+      .finally(() => {
+        setDiscoveryLoading(false);
+      });
+  };
+
   const submitProviderScan = (target = "") => {
     if (provider === null) {
       return;
@@ -719,6 +747,8 @@ export default function ProviderEditPage() {
     const patch: Record<string, any> = {type: value};
     if (value === "Local File System") {
       patch.domain = Setting.getFullServerUrl();
+    } else if (value === "OIDC") {
+      patch.scopes = "openid profile email";
     } else if (value.startsWith("Custom") && provider.category === "OAuth") {
       patch.customAuthUrl = "https://door.casdoor.com/login/oauth/authorize";
       patch.scopes = "openid profile email";
@@ -912,7 +942,17 @@ export default function ProviderEditPage() {
           </FormRow>
         </React.Fragment>
       ) : null}
-      {String(provider.type ?? "").startsWith("Custom") ? (
+      {provider.type === "OIDC" ? (
+        <FormRow labelKey="provider:Issuer URL">
+          <div className="flex flex-wrap items-center gap-2">
+            <Input className="w-96 max-w-full" value={provider.domain ?? ""} onChange={(e) => updateProviderField("domain", e.target.value)} />
+            <Button loading={discoveryLoading} disabled={!provider.domain} onClick={fetchOidcDiscovery}>
+              {i18next.t("general:Request")}
+            </Button>
+          </div>
+        </FormRow>
+      ) : null}
+      {Setting.isCustomOAuthType(provider.type) ? (
         <React.Fragment>
           <FormRow labelKey="provider:Auth URL">
             <Input value={provider.customAuthUrl ?? ""} onChange={(e) => updateProviderField("customAuthUrl", e.target.value)} />
