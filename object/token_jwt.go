@@ -695,6 +695,11 @@ func ParseJwtToken(token string, cert *Cert) (*Claims, error) {
 
 	if t != nil {
 		if claims, ok := t.Claims.(*Claims); ok && t.Valid {
+			// the embedded *User is nil when the token carries no user claims,
+			// e.g. the JWT-Custom format with no tokenFields selected
+			if claims.User == nil {
+				claims.User = &User{}
+			}
 			return claims, nil
 		}
 	}

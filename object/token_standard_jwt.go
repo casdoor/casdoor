@@ -117,6 +117,9 @@ func ParseStandardJwtToken(token string, cert *Cert) (*ClaimsStandard, error) {
 
 	if t != nil {
 		if claims, ok := t.Claims.(*ClaimsStandard); ok && t.Valid {
+			if claims.UserStandard == nil {
+				claims.UserStandard = &UserStandard{}
+			}
 			return claims, nil
 		}
 	}
