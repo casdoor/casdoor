@@ -22,12 +22,16 @@ import App from "./App";
 import ErrorBoundary from "./components/common/ErrorBoundary";
 import {ThemeProvider} from "./hooks/use-theme";
 import {AccountProvider} from "./hooks/use-account";
+import {useLanguageVersion} from "./hooks/use-language";
 import {TooltipProvider} from "./components/ui/tooltip";
 import {Toaster} from "./components/ui/sonner";
 
-const container = document.getElementById("root")!;
-createRoot(container).render(
-  <React.StrictMode>
+// re-rendered from the root on a language change, so every screen picks up the new
+// bundle right away instead of waiting for a reload
+function Root() {
+  useLanguageVersion();
+
+  return (
     <ErrorBoundary>
       <ThemeProvider>
         <TooltipProvider delayDuration={200}>
@@ -40,5 +44,12 @@ createRoot(container).render(
         </TooltipProvider>
       </ThemeProvider>
     </ErrorBoundary>
+  );
+}
+
+const container = document.getElementById("root")!;
+createRoot(container).render(
+  <React.StrictMode>
+    <Root />
   </React.StrictMode>,
 );
