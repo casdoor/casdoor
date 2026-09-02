@@ -171,7 +171,7 @@ func (c *ApiController) Signup() {
 
 	userEmailVerified := false
 
-	if application.IsSignupItemVisible("Email") && application.GetSignupItemRule("Email") != "No verification" && authForm.Email != "" {
+	if application.IsSignupFieldVisible("Email") && application.GetSignupFieldRule("Email") != "No verification" && authForm.Email != "" {
 		var checkResult *object.VerifyResult
 		checkResult, err = object.CheckVerificationCode(authForm.Email, authForm.EmailCode, c.GetAcceptLanguage())
 		if err != nil {
@@ -187,7 +187,7 @@ func (c *ApiController) Signup() {
 	}
 
 	var checkPhone string
-	if application.IsSignupItemVisible("Phone") && application.GetSignupItemRule("Phone") != "No verification" && authForm.Phone != "" {
+	if application.IsSignupFieldVisible("Phone") && application.GetSignupFieldRule("Phone") != "No verification" && authForm.Phone != "" {
 		checkPhone, _ = util.GetE164Number(authForm.Phone, authForm.CountryCode)
 
 		var checkResult *object.VerifyResult
@@ -210,7 +210,7 @@ func (c *ApiController) Signup() {
 
 	username := authForm.Username
 	if !application.IsSignupItemVisible("Username") {
-		if organization.UseEmailAsUsername && application.IsSignupItemVisible("Email") {
+		if organization.UseEmailAsUsername && application.IsSignupFieldVisible("Email") {
 			username = authForm.Email
 		} else {
 			username = id

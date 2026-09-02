@@ -119,6 +119,44 @@ func (application *Application) IsSignupItemVisible(itemName string) bool {
 	return signupItem.Visible
 }
 
+// getSignupItemForField returns the signup item that renders the "Email" or "Phone"
+// field, which is the combined item when the application uses one.
+func (application *Application) getSignupItemForField(fieldName string) *SignupItem {
+	if signupItem := application.getSignupItem(fieldName); signupItem != nil {
+		return signupItem
+	}
+
+	if fieldName != "Email" && fieldName != "Phone" {
+		return nil
+	}
+
+	for _, itemName := range []string{"Email or Phone", "Phone or Email"} {
+		if signupItem := application.getSignupItem(itemName); signupItem != nil {
+			return signupItem
+		}
+	}
+
+	return nil
+}
+
+func (application *Application) IsSignupFieldVisible(fieldName string) bool {
+	signupItem := application.getSignupItemForField(fieldName)
+	if signupItem == nil {
+		return false
+	}
+
+	return signupItem.Visible
+}
+
+func (application *Application) GetSignupFieldRule(fieldName string) string {
+	signupItem := application.getSignupItemForField(fieldName)
+	if signupItem == nil {
+		return ""
+	}
+
+	return signupItem.Rule
+}
+
 func (application *Application) IsSignupItemRequired(itemName string) bool {
 	signupItem := application.getSignupItem(itemName)
 	if signupItem == nil {

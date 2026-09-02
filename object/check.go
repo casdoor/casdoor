@@ -89,7 +89,7 @@ func CheckUserSignup(application *Application, organization *Organization, authF
 		}
 	}
 
-	if application.IsSignupItemVisible("Email") {
+	if application.IsSignupFieldVisible("Email") {
 		if authForm.Email == "" {
 			if application.IsSignupItemRequired("Email") {
 				return i18n.Translate(lang, "check:Email cannot be empty")
@@ -104,7 +104,7 @@ func CheckUserSignup(application *Application, organization *Organization, authF
 		}
 	}
 
-	if application.IsSignupItemVisible("Phone") {
+	if application.IsSignupFieldVisible("Phone") {
 		if authForm.Phone == "" {
 			if application.IsSignupItemRequired("Phone") {
 				return i18n.Translate(lang, "check:Phone cannot be empty")
