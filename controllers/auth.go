@@ -1017,6 +1017,36 @@ func (c *ApiController) Login() {
 						invitationName = invitation.Name
 					}
 
+					userInfo.Email = strings.ToLower(userInfo.Email)
+
+					// an organization must not end up with two users sharing an email or a phone,
+					// the binding rule of the provider decides whether they are the same person
+					if userInfo.Email != "" {
+						var emailUser *object.User
+						emailUser, err = object.GetUserByField(application.Organization, "email", userInfo.Email)
+						if err != nil {
+							c.ResponseError(err.Error())
+							return
+						}
+						if emailUser != nil {
+							c.ResponseError(c.T("check:Email already exists"))
+							return
+						}
+					}
+
+					if userInfo.Phone != "" {
+						var phoneUser *object.User
+						phoneUser, err = object.GetUserByPhoneAndCountryCode(application.Organization, userInfo.Phone, userInfo.CountryCode)
+						if err != nil {
+							c.ResponseError(err.Error())
+							return
+						}
+						if phoneUser != nil {
+							c.ResponseError(c.T("check:Phone already exists"))
+							return
+						}
+					}
+
 					// Handle UseEmailAsUsername for OAuth and Web3
 					if organization.UseEmailAsUsername && userInfo.Email != "" {
 						userInfo.Username = userInfo.Email
