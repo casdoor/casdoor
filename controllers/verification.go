@@ -131,6 +131,23 @@ func (c *ApiController) GetVerification() {
 	c.ResponseOk(payment)
 }
 
+// getUserByEmail resolves the address the way object.GetUserByFields() does for the
+// sign-in and forget-password flows: signup stores the email in lowercase, so on a
+// case-sensitive database only a lowered lookup matches what the user typed.
+func getUserByEmail(owner string, email string) (*object.User, error) {
+	user, err := object.GetUserByEmail(owner, email)
+	if err != nil || user != nil {
+		return user, err
+	}
+
+	lowered := strings.ToLower(email)
+	if lowered == email {
+		return nil, nil
+	}
+
+	return object.GetUserByEmail(owner, lowered)
+}
+
 // SendVerificationCode ...
 // @Title SendVerificationCode
 // @Tag Verification API
@@ -153,6 +170,8 @@ func (c *ApiController) SendVerificationCode() {
 		c.ResponseError(err.Error())
 		return
 	}
+
+	vform.Dest = strings.TrimSpace(vform.Dest)
 
 	clientIp := util.GetClientIpFromRequest(c.Ctx.Request)
 
@@ -232,7 +251,7 @@ func (c *ApiController) SendVerificationCode() {
 		// For login verification, try to find user by email/phone for CAPTCHA check
 		// This is a preliminary lookup; the actual validation happens later in the switch statement
 		if vform.Type == object.VerifyTypeEmail && util.IsEmailValid(vform.Dest) {
-			user, err = object.GetUserByEmail(organization.Name, vform.Dest)
+			user, err = getUserByEmail(organization.Name, vform.Dest)
 			if err != nil {
 				c.ResponseError(err.Error())
 				return
@@ -320,7 +339,7 @@ func (c *ApiController) SendVerificationCode() {
 				vform.Dest = user.Email
 			}
 
-			user, err = object.GetUserByEmail(organization.Name, vform.Dest)
+			user, err = getUserByEmail(organization.Name, vform.Dest)
 			if err != nil {
 				c.ResponseError(err.Error())
 				return
