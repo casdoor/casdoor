@@ -72,6 +72,8 @@ func (application *Application) GetProviderByCategoryAndRule(category string, me
 		m[provider.Name] = provider
 	}
 
+	// a row whose rule names the method wins over a generic ("All") row, whatever order they are listed in
+	var fallback *Provider
 	for _, providerItem := range application.Providers {
 		if providerItem.Provider != nil && providerItem.Provider.Category == "SMS" {
 			if !isProviderItemCountryCodeMatched(providerItem, countryCode) {
@@ -79,14 +81,21 @@ func (application *Application) GetProviderByCategoryAndRule(category string, me
 			}
 		}
 
-		if providerItem.Rule == method || providerItem.Rule == "" || providerItem.Rule == "All" || providerItem.Rule == "all" || providerItem.Rule == "None" {
-			if provider, ok := m[providerItem.Name]; ok {
-				return provider, nil
-			}
+		provider, ok := m[providerItem.Name]
+		if !ok {
+			continue
+		}
+
+		if providerItem.Rule == method {
+			return provider, nil
+		}
+
+		if fallback == nil && (providerItem.Rule == "" || providerItem.Rule == "All" || providerItem.Rule == "all" || providerItem.Rule == "None") {
+			fallback = provider
 		}
 	}
 
-	return nil, nil
+	return fallback, nil
 }
 
 func (application *Application) GetEmailProvider(method string) (*Provider, error) {
