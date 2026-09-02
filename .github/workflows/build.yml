@@ -230,6 +230,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+        with:
+          # The image build stamps the version by walking the git history, so it
+          # needs the full history and the tags, not the default shallow clone.
+          fetch-depth: 0
 
       # Registry versions keep the historical, un-prefixed form: tag `v1.2.3`
       # publishes `1.2.3`. `latest` is skipped for pre-release tags such as
