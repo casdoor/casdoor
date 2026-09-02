@@ -356,7 +356,7 @@ export default function ApplicationEditPage() {
       (scope: any) => scope && Object.values(scope).some((value) => value !== "" && value !== undefined),
     );
     if (customScopes.some((scope: any) => !scope.name)) {
-      Setting.showMessage("error", `${i18next.t("general:Name")}: ${i18next.t("provider:This field is required")}`);
+      Setting.showMessage("error", `${i18next.t("general:Name")}: ${i18next.t("general:This field is required")}`);
       return;
     }
 
