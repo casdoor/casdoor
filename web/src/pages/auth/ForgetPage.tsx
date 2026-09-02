@@ -117,7 +117,8 @@ export default function ForgetPage() {
       .then((res: any) => {
         if (res.status === "ok") {
           Setting.showMessage("success", i18next.t("user:Password set successfully"));
-          navigate(`/login/${application.organization}`);
+          // back to where the sign-in started, so the OAuth flow can carry on to the application
+          navigate(Setting.getStoredSigninUrl() || `/login/${application.organization}`);
         } else {
           Setting.showMessage("error", res.msg);
         }

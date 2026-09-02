@@ -55,6 +55,11 @@ export default function SignupPage() {
 
   React.useEffect(() => {
     const oAuthParams = Util.getOAuthGetParameters();
+    if (oAuthParams) {
+      // the OAuth params live on the signin path, remember it to get back there after the signup
+      const signinUrl = window.location.pathname.replace("/signup/oauth/authorize", "/login/oauth/authorize");
+      sessionStorage.setItem("signinUrl", signinUrl + window.location.search);
+    }
     const load = oAuthParams
       ? AuthBackend.getApplicationLogin(oAuthParams)
       : ApplicationBackend.getApplication("admin", applicationName);
@@ -439,7 +444,10 @@ export default function SignupPage() {
         ) : null}
         <p className="text-center text-sm text-muted-foreground">
           {i18next.t("signup:Have account?")}{" "}
-          <Link to={`/login/${application.organization}`} className="text-foreground underline-offset-4 hover:underline">
+          <Link
+            to={Setting.getStoredSigninUrl() || `/login/${application.organization}`}
+            className="text-foreground underline-offset-4 hover:underline"
+          >
             {i18next.t("signup:sign in now")}
           </Link>
         </p>
