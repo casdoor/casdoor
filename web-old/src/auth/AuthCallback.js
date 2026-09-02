@@ -92,6 +92,14 @@ class AuthCallback extends React.Component {
     const responseTypes = responseType.split(" ");
 
     const handleLogin = (res) => {
+      // Check if consent is required
+      if (res.data && typeof res.data === "object" && res.data.required === true) {
+        // Consent required, redirect to consent page with the original OAuth parameters,
+        // which the state carries rather than the callback URL
+        Setting.goToLink(`/consent/${applicationName}?${innerParams.toString()}`);
+        return;
+      }
+
       if (responseType === "login") {
         Setting.showMessage("success", "Logged in successfully");
         const link = Setting.getFromLink();

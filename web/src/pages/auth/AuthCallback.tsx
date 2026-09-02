@@ -193,6 +193,15 @@ export default function AuthCallback() {
       const responseMode = oAuthParams?.responseMode || "query";
       const responseTypes = type.split(" ");
 
+      // The backend answers with `data: {required: true}` instead of an authorization
+      // code when the user still has to consent. The consent page issues the real code,
+      // and reads the original authorization request from the query string, which the
+      // state carries rather than the callback URL.
+      if (res.data?.required === true) {
+        Setting.goToLink(`/consent/${params.get("application") ?? applicationName}?${params.toString()}`);
+        return;
+      }
+
       if (type === "login" || type === "device") {
         Setting.showMessage("success", i18next.t("application:Logged in successfully"));
         navigate(Setting.getFromLink());
