@@ -13,7 +13,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {AiAssistant} from "@/components/common/AiAssistant";
 import {CommandPaletteTrigger} from "@/components/common/CommandPalette";
 import {BreadcrumbBar} from "@/components/layout/BreadcrumbBar";
 import {LanguageSelect} from "@/components/common/LanguageSelect";
@@ -81,7 +80,6 @@ export function Header({onOpenPalette}: {onOpenPalette: () => void}) {
         )}
         {isWidgetVisible(account, "language") && <LanguageSelect languages={account.organization?.languages} />}
         {isWidgetVisible(account, "theme") && <ThemeToggle />}
-        {isWidgetVisible(account, "ai-assistant") && <AiAssistant />}
         {isWidgetVisible(account, "tour") && <OpenTour />}
 
         <DropdownMenu>

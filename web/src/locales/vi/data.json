@@ -371,7 +371,6 @@
   },
   "general": {
     "A normal user can only modify the permission submitted by itself": "Người dùng thường chỉ có thể sửa đổi quyền do chính họ gửi",
-    "AI Assistant": "Trợ lý AI",
     "API key": "Khóa API",
     "Access key": "Khóa truy cập",
     "Access key - Tooltip": "Khóa truy cập cho dịch vụ",
@@ -410,7 +409,6 @@
     "Certs": "Chứng chỉ",
     "Clear": "Xóa",
     "Click to Upload": "Nhấp để tải lên",
-    "Click to open AI assistant": "Nhấn để mở trợ lý AI",
     "Click to open tour": "Nhấn để mở hướng dẫn",
     "Client IP": "IP khách hàng",
     "Close": "Đóng lại",

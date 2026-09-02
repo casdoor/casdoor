@@ -371,7 +371,6 @@
   },
   "general": {
     "A normal user can only modify the permission submitted by itself": "通常ユーザーは自分が提出した権限のみ変更できます",
-    "AI Assistant": "AIアシスタント",
     "API key": "APIキー",
     "Access key": "アクセスキー",
     "Access key - Tooltip": "サービスのアクセスキー",
@@ -410,7 +409,6 @@
     "Certs": "証明書",
     "Clear": "クリア",
     "Click to Upload": "アップロードするにはクリックしてください",
-    "Click to open AI assistant": "AIアシスタントを開く",
     "Click to open tour": "ガイドツアーを開く",
     "Client IP": "クライアントIP",
     "Close": "閉じる",

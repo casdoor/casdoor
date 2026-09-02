@@ -371,7 +371,6 @@
   },
   "general": {
     "A normal user can only modify the permission submitted by itself": "Звичайний користувач може змінювати лише дозвіл, поданий ним самим",
-    "AI Assistant": "AI Асистент",
     "API key": "Ключ API",
     "Access key": "Ключ доступу",
     "Access key - Tooltip": "Ключ доступу для сервісу",
@@ -410,7 +409,6 @@
     "Certs": "Сертифікати",
     "Clear": "Очистити",
     "Click to Upload": "Натисніть, щоб завантажити",
-    "Click to open AI assistant": "Натисніть, щоб відкрити ШІ-асистента",
     "Click to open tour": "Натисніть, щоб відкрити тур",
     "Client IP": "IP клієнта",
     "Close": "Закрити",

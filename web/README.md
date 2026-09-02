@@ -219,7 +219,7 @@ word — the same footer image the antd frontend renders, and the one
 
 **Organization menus** — `navItems` / `userNavItems` hide navbar entries (and
 collapse the sidebar into a flat list once few enough are left), and
-`widgetItems` hides the header's theme, language, AI assistant and tour buttons.
+`widgetItems` hides the header's theme, language and tour buttons.
 
 **Bulk import** — "Download template" and "Upload (.xlsx)" on the user, group,
 role and permission list pages, posting to `upload-users` / `upload-groups` /

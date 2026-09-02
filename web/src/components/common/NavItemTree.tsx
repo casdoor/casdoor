@@ -118,7 +118,6 @@ function getWidgetItemNodes(): TreeNode[] {
       title: i18next.t("general:All"),
       children: [
         {key: "tour", title: i18next.t("general:Tour")},
-        {key: "ai-assistant", title: i18next.t("general:AI Assistant")},
         {key: "language", title: i18next.t("user:Language")},
         {key: "theme", title: i18next.t("theme:Theme")},
       ],
