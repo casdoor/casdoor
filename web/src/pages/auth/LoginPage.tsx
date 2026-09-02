@@ -6,11 +6,10 @@ import {Checkbox} from "@/components/ui/checkbox";
 import {Input} from "@/components/ui/input";
 import {Label} from "@/components/ui/label";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
-import {Tabs, TabsList, TabsTrigger} from "@/components/ui/tabs";
-import {cn} from "@/lib/utils";
 import {Alert, AlertDescription} from "@/components/ui/alert";
 import {Loading} from "@/components/common/Loading";
 import {AuthLayout} from "@/components/auth/AuthLayout";
+import {SigninMethodTabs} from "@/components/auth/SigninMethodTabs";
 import {MfaVerify, NextMfa, RequiredMfa} from "@/components/auth/MfaVerify";
 import {AgreementCheckbox, getAgreementDefaultValue, isAgreementRequired} from "@/components/auth/AgreementModal";
 import {DeviceLoginPanel} from "@/components/auth/DeviceLoginPanel";
@@ -634,9 +633,18 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
   const wechatEnabled = (application.providers ?? []).some(
     (item: any) => item.provider?.type === "WeChat" && Setting.isProviderVisibleForSignIn(item),
   );
-  const tabs = [passwordEnabled, codeEnabled, ldapEnabled, webAuthnEnabled, faceIdEnabled, wechatEnabled].filter(Boolean).length;
-  const showTabs = tabs > 1;
   const isCodeMethod = (loginMethod ?? "").startsWith("verificationCode");
+  // "Email only" and "Phone only" share the "Verification code" tab
+  const activeTab = isCodeMethod ? "verificationCode" : loginMethod;
+  const methods = [
+    passwordEnabled ? {value: "password", label: i18next.t("general:Password")} : null,
+    codeEnabled ? {value: "verificationCode", label: i18next.t("login:Verification code")} : null,
+    ldapEnabled ? {value: "ldap", label: i18next.t("login:LDAP")} : null,
+    webAuthnEnabled ? {value: "webAuthn", label: i18next.t("login:WebAuthn")} : null,
+    faceIdEnabled ? {value: "faceId", label: i18next.t("login:Face ID")} : null,
+    wechatEnabled ? {value: "wechat", label: i18next.t("login:WeChat")} : null,
+  ].filter(Boolean) as {value: LoginMethod; label: string}[];
+  const showTabs = methods.length > 1;
   // each block of the form can be hidden from "Signin items" in the application
   const isVisible = (name: string) => Setting.isSigninItemVisible(application, name);
   // the QR panels replace the credential form entirely
@@ -711,31 +719,11 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
         ) : null}
 
         {showTabs && isVisible("Signin methods") ? (
-          <Tabs value={loginMethod} onValueChange={(v) => setLoginMethod(v as LoginMethod)}>
-            {/* Equal grid tracks only work while the labels fit. With five sign-in
-                methods enabled each track is ~60px in a max-w-sm card, and the
-                triggers are whitespace-nowrap, so the labels overflowed their
-                track and painted on top of one another. Past three, the strip
-                keeps each label at its natural width and scrolls instead. */}
-            <TabsList
-              className={cn(
-                "w-full",
-                tabs <= 3
-                  ? "grid"
-                  : "flex justify-start overflow-x-auto scrollbar-thin [&>button]:shrink-0",
-              )}
-              style={tabs <= 3 ? {gridTemplateColumns: `repeat(${tabs}, minmax(0, 1fr))`} : undefined}
-            >
-              {passwordEnabled ? <TabsTrigger value="password">{i18next.t("general:Password")}</TabsTrigger> : null}
-              {codeEnabled ? (
-                <TabsTrigger value="verificationCode">{i18next.t("login:Verification code")}</TabsTrigger>
-              ) : null}
-              {ldapEnabled ? <TabsTrigger value="ldap">{i18next.t("login:LDAP")}</TabsTrigger> : null}
-              {webAuthnEnabled ? <TabsTrigger value="webAuthn">{i18next.t("login:WebAuthn")}</TabsTrigger> : null}
-              {faceIdEnabled ? <TabsTrigger value="faceId">{i18next.t("login:Face ID")}</TabsTrigger> : null}
-              {wechatEnabled ? <TabsTrigger value="wechat">{i18next.t("login:WeChat")}</TabsTrigger> : null}
-            </TabsList>
-          </Tabs>
+          <SigninMethodTabs
+            methods={methods}
+            value={activeTab}
+            onChange={(v) => setLoginMethod(v as LoginMethod)}
+          />
         ) : null}
 
         {isPanelMethod ? <WeChatLoginPanel application={application} /> : (
