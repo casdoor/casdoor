@@ -245,6 +245,19 @@
     return code;
   }
 
+  // The backend answers a login that still needs the user's consent with
+  // `data: {required: true}` instead of an authorization code.
+  function isConsentRequired(res) {
+    return !!(res.data && typeof res.data === "object" && res.data.required === true);
+  }
+
+  function goToConsentPage(applicationName, queryString) {
+    var url = new URL(getReactCallbackOrigin());
+    url.pathname = "/consent/" + encodeURIComponent(applicationName);
+    url.search = queryString || "";
+    window.location.replace(url.toString());
+  }
+
   function shouldFallbackToReact(res) {
     return res.data === "RequiredMfa" || res.data === "NextMfa" || res.data === "SelectPlan" || res.data === "BuyPlanResult" || res.data3;
   }
@@ -345,6 +358,13 @@
     var res = await response.json();
     if (res.status !== "ok") {
       setStatus(res.msg || "Failed to sign in.", true);
+      return;
+    }
+
+    // The consent page issues the real code, so it needs the original
+    // authorization request, which is what the state carries.
+    if (isConsentRequired(res)) {
+      goToConsentPage(applicationName, queryString);
       return;
     }
 
