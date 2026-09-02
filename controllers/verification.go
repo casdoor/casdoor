@@ -36,6 +36,16 @@ const (
 	MfaAuthVerification  = "mfaAuth"
 )
 
+// an unknown method would skip every method-specific check below, so reject it up front
+func isValidVerificationMethod(method string) bool {
+	switch method {
+	case SignupVerification, ResetVerification, LoginVerification, ForgetVerification, MfaSetupVerification, MfaAuthVerification:
+		return true
+	default:
+		return false
+	}
+}
+
 // GetVerifications
 // @Title GetVerifications
 // @Tag Verification API
@@ -177,6 +187,11 @@ func (c *ApiController) SendVerificationCode() {
 
 	if msg := vform.CheckParameter(form.SendVerifyCode, c.GetAcceptLanguage()); msg != "" {
 		c.ResponseError(msg)
+		return
+	}
+
+	if !isValidVerificationMethod(vform.Method) {
+		c.ResponseError(c.T("verification:Wrong parameter") + ": method.")
 		return
 	}
 
