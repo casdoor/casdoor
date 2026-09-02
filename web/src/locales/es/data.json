@@ -1347,7 +1347,6 @@
     "Test Email - Tooltip": "Dirección de correo electrónico para recibir mensajes de prueba",
     "Test SMTP Connection": "Prueba de conexión SMTP",
     "Third-party": "Terceros",
-    "This field is required": "Este campo es obligatorio",
     "To address": "Dirección del destinatario",
     "To address - Tooltip": "Dirección de correo del campo \"Para\"",
     "Token URL": "URL del token",
