@@ -29,6 +29,42 @@ import (
 	"github.com/casdoor/casdoor/util"
 )
 
+// checkResourcePermission checks whether the current user can operate on a resource
+// of the given owner and user. "/api/upload-resource" is a public API in authz/authz.go
+// because ordinary users upload their own avatar with it, so it has to check here.
+func (c *ApiController) checkResourcePermission(owner string, username string) bool {
+	userId, ok := c.RequireSignedIn()
+	if !ok {
+		return false
+	}
+
+	if object.IsAppUser(userId) {
+		return true
+	}
+
+	user, err := object.GetUser(userId)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return false
+	}
+	if user == nil {
+		c.ClearUserSession()
+		c.ResponseError(fmt.Sprintf(c.T("general:The user: %s doesn't exist"), userId))
+		return false
+	}
+
+	if user.IsGlobalAdmin() {
+		return true
+	}
+
+	if user.Owner == owner && (user.IsAdmin || user.Name == username) {
+		return true
+	}
+
+	c.ResponseError(c.T("auth:Unauthorized operation"))
+	return false
+}
+
 // GetResources
 // @Tag Resource API
 // @Title GetResources
@@ -120,6 +156,15 @@ func (c *ApiController) GetResource() {
 		return
 	}
 
+	owner, _ := util.GetOwnerAndNameFromIdNoCheck(id)
+	username := ""
+	if resource != nil {
+		owner, username = resource.Owner, resource.User
+	}
+	if !c.checkResourcePermission(owner, username) {
+		return
+	}
+
 	c.ResponseOk(resource)
 }
 
@@ -141,6 +186,15 @@ func (c *ApiController) UpdateResource() {
 		return
 	}
 
+	// check the old and the new resource, so that it cannot be moved to another organization
+	owner, _ := util.GetOwnerAndNameFromIdNoCheck(id)
+	if !c.checkResourcePermission(owner, "") {
+		return
+	}
+	if !c.checkResourcePermission(resource.Owner, resource.User) {
+		return
+	}
+
 	c.Data["json"] = wrapActionResponse(object.UpdateResource(id, &resource))
 	c.ServeJSON()
 }
@@ -159,6 +213,10 @@ func (c *ApiController) AddResource() {
 		return
 	}
 
+	if !c.checkResourcePermission(resource.Owner, resource.User) {
+		return
+	}
+
 	c.Data["json"] = wrapActionResponse(object.AddResource(&resource))
 	c.ServeJSON()
 }
@@ -174,6 +232,10 @@ func (c *ApiController) DeleteResource() {
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &resource)
 	if err != nil {
 		c.ResponseError(err.Error())
+		return
+	}
+
+	if !c.checkResourcePermission(resource.Owner, resource.User) {
 		return
 	}
 
@@ -228,6 +290,10 @@ func (c *ApiController) UploadResource() {
 	fullFilePath := c.Ctx.Input.Query("fullFilePath")
 	createdTime := c.Ctx.Input.Query("createdTime")
 	description := c.Ctx.Input.Query("description")
+
+	if !c.checkResourcePermission(owner, username) {
+		return
+	}
 
 	file, header, err := c.GetFile("file")
 	if err != nil {
