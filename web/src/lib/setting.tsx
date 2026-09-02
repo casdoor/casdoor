@@ -2383,6 +2383,28 @@ export function createFormAndSubmit(url, params) {
   setTimeout(() => {form.remove();}, 500);
 }
 
+/** The "Forgot password?" target, which an application may override with its own `forgetUrl`. */
+export function getForgetLink(application) {
+  if (!application) {
+    return null;
+  } else if (authConfig.appName === application.name) {
+    return "/forget";
+  } else if (!application.forgetUrl) {
+    return `/forget/${application.name}`;
+  }
+  return application.forgetUrl;
+}
+
+/** The sign-in URL carries the OAuth params, so remember it before leaving for the signup or forget page. */
+export function storeSigninUrl() {
+  sessionStorage.setItem("signinUrl", window.location.pathname + window.location.search);
+}
+
+export function getStoredSigninUrl() {
+  const signinUrl = sessionStorage.getItem("signinUrl");
+  return signinUrl?.startsWith("/") ? signinUrl : "";
+}
+
 export function getLoginLink(application) {
   let url;
   if (application === null) {

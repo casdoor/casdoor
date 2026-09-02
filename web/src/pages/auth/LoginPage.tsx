@@ -121,6 +121,25 @@ function OrganizationChoiceBox({mode}: {mode: string}) {
   );
 }
 
+/**
+ * "Forgot password?" link. The application may point it at a page of its own via
+ * `forgetUrl`, and the sign-in URL is remembered so the OAuth flow can resume
+ * once the password has been reset.
+ */
+function ForgetLink({application}: {application: any}) {
+  const url = Setting.getForgetLink(application);
+  const className = "text-xs text-muted-foreground underline-offset-4 hover:underline";
+  const text = i18next.t("login:Forgot password?");
+
+  if (url?.startsWith("/")) {
+    return <Link to={url} onClick={Setting.storeSigninUrl} className={className}>{text}</Link>;
+  }
+  if (url?.startsWith("http")) {
+    return <a href={url} onClick={Setting.storeSigninUrl} className={className}>{text}</a>;
+  }
+  return null;
+}
+
 export default function LoginPage({type = "login"}: {type?: LoginType}) {
   const params = useParams();
   const location = useLocation();
@@ -146,6 +165,12 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
 
   const owner = params.owner;
   const applicationName = params.applicationName ?? authConfig.appName;
+
+  // remember where the sign-in started, for the flows that have to come back to it
+  React.useEffect(() => {
+    localStorage.setItem("signinUrl", location.pathname + location.search);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   React.useEffect(() => {
     let cancelled = false;
@@ -765,14 +790,7 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <Label htmlFor="password">{i18next.t("general:Password")}</Label>
-                  {isVisible("Forgot password?") ? (
-                    <Link
-                      to={`/forget/${application.name}`}
-                      className="text-xs text-muted-foreground underline-offset-4 hover:underline"
-                    >
-                      {i18next.t("login:Forgot password?")}
-                    </Link>
-                  ) : null}
+                  {isVisible("Forgot password?") ? <ForgetLink application={application} /> : null}
                 </div>
                 <Input
                   id="password"

@@ -5,6 +5,7 @@ import {useLocation, useParams} from "react-router-dom";
 import {Button} from "@/components/ui/button";
 import {Loading} from "@/components/common/Loading";
 import {AuthLayout} from "@/components/auth/AuthLayout";
+import {useAccount} from "@/hooks/use-account";
 import {authConfig} from "@/auth/Auth";
 import * as ApplicationBackend from "@/backend/ApplicationBackend";
 import * as Setting from "@/lib/setting";
@@ -12,6 +13,7 @@ import * as Setting from "@/lib/setting";
 export default function ResultPage() {
   const params = useParams();
   const location = useLocation();
+  const {account} = useAccount();
   const [application, setApplication] = React.useState<any>(undefined);
   const username = (location.state as any)?.username ?? "";
 
@@ -29,7 +31,9 @@ export default function ResultPage() {
     return <Loading className="min-h-screen" />;
   }
 
-  const signinUrl = application ? Setting.getLoginLink(application) : "/login";
+  // the stored URL carries the OAuth params of the application the signup started from
+  const signinUrl = Setting.getStoredSigninUrl() ||
+    (account ? "/" : (application ? Setting.getLoginLink(application) : "/login"));
 
   return (
     <AuthLayout application={application}>
