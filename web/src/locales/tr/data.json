@@ -371,7 +371,6 @@
   },
   "general": {
     "A normal user can only modify the permission submitted by itself": "Normal bir kullanıcı yalnızca kendi gönderdiği izni değiştirebilir",
-    "AI Assistant": "Yapay Zeka Asistanı",
     "API key": "API anahtarı",
     "Access key": "Erişim anahtarı",
     "Access key - Tooltip": "Hizmet için erişim anahtarı",
@@ -410,7 +409,6 @@
     "Certs": "Sertifikalar",
     "Clear": "Temizle",
     "Click to Upload": "Yüklemek için tıklayın",
-    "Click to open AI assistant": "Yapay zeka asistanını açmak için tıklayın",
     "Click to open tour": "Turu açmak için tıklayın",
     "Client IP": "İstemci IP'si",
     "Close": "Kapat",

@@ -371,7 +371,6 @@
   },
   "general": {
     "A normal user can only modify the permission submitted by itself": "Um usuário comum só pode modificar a permissão enviada por ele mesmo",
-    "AI Assistant": "Assistente de IA",
     "API key": "Chave da API",
     "Access key": "Chave de acesso",
     "Access key - Tooltip": "Chave de acesso para o serviço",
@@ -410,7 +409,6 @@
     "Certs": "Certificados",
     "Clear": "Limpar",
     "Click to Upload": "Clique para Enviar",
-    "Click to open AI assistant": "Clique para abrir o assistente de IA",
     "Click to open tour": "Clique para abrir o tour",
     "Client IP": "IP do cliente",
     "Close": "Fechar",

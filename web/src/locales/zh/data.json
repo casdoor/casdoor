@@ -372,7 +372,6 @@
   },
   "general": {
     "A normal user can only modify the permission submitted by itself": "普通用户只能修改自己提交的权限",
-    "AI Assistant": "AI助理",
     "API key": "API密钥",
     "Access key": "访问密钥",
     "Access key - Tooltip": "服务的访问密钥",
@@ -411,7 +410,6 @@
     "Certs": "证书",
     "Clear": "清空",
     "Click to Upload": "点击上传",
-    "Click to open AI assistant": "点击打开AI助手",
     "Click to open tour": "点击开启引导",
     "Client IP": "客户端IP",
     "Close": "关闭",

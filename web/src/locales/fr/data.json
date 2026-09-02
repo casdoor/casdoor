@@ -371,7 +371,6 @@
   },
   "general": {
     "A normal user can only modify the permission submitted by itself": "Un utilisateur normal ne peut modifier que l'autorisation qu'il a lui-même soumise",
-    "AI Assistant": "Assistant IA",
     "API key": "Clé API",
     "Access key": "Clé d'accès",
     "Access key - Tooltip": "Clé d'accès pour le service",
@@ -410,7 +409,6 @@
     "Certs": "Certificats",
     "Clear": "Effacer",
     "Click to Upload": "Cliquer pour télécharger",
-    "Click to open AI assistant": "Cliquer pour ouvrir l'assistant IA",
     "Click to open tour": "Cliquer pour ouvrir la visite guidée",
     "Client IP": "IP client",
     "Close": "Fermer",

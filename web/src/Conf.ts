@@ -33,9 +33,6 @@ export const ThemeDefault = {
 
 export const CustomFooter = null;
 
-// Blank or null to hide Ai Assistant button
-export let AiAssistantUrl = "https://ai.casbin.com";
-
 // Maximum number of navbar items before switching from flat to grouped menu
 export let MaxItemsForFlatMenu = 7;
 
@@ -58,9 +55,6 @@ export function setConfig(config: Record<string, any>) {
   }
   if (config.staticBaseUrl !== undefined) {
     StaticBaseUrl = config.staticBaseUrl;
-  }
-  if (config.aiAssistantUrl !== undefined) {
-    AiAssistantUrl = config.aiAssistantUrl;
   }
   if (config.defaultApplication !== undefined) {
     DefaultApplication = config.defaultApplication;
