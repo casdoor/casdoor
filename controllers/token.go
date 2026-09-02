@@ -552,10 +552,17 @@ func (c *ApiController) IntrospectToken() {
 			return
 		}
 
+		// UserStandard is embedded as a pointer and is nil when the token
+		// carries no user claims, so Name must not be promoted unguarded.
+		username := ""
+		if jwtToken.UserStandard != nil {
+			username = jwtToken.Name
+		}
+
 		introspectionResponse = object.IntrospectionResponse{
 			Active:    true,
 			Scope:     jwtToken.Scope,
-			Username:  jwtToken.Name,
+			Username:  username,
 			TokenType: jwtToken.TokenType,
 			Exp:       jwtToken.ExpiresAt.Unix(),
 			Iat:       jwtToken.IssuedAt.Unix(),
@@ -589,7 +596,10 @@ func (c *ApiController) IntrospectToken() {
 		if jwtToken.Scope != "" {
 			introspectionResponse.Scope = jwtToken.Scope
 		}
-		if jwtToken.Name != "" {
+		// Claims embeds *User, which is nil when the application's token format
+		// omits the user claims (e.g. JWT-Custom with no tokenFields). Promoting
+		// Name through the nil pointer panics.
+		if jwtToken.User != nil && jwtToken.Name != "" {
 			introspectionResponse.Username = jwtToken.Name
 		}
 		if jwtToken.TokenType != "" {
