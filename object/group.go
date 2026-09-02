@@ -297,10 +297,12 @@ func ConvertToTreeData(groups []*Group, parentId string) []*Group {
 	for _, group := range groups {
 		if group.ParentId == parentId {
 			node := &Group{
-				Title: group.DisplayName,
-				Key:   group.Name,
-				Type:  group.Type,
-				Owner: group.Owner,
+				Title:       group.DisplayName,
+				Key:         group.Name,
+				Type:        group.Type,
+				Owner:       group.Owner,
+				Name:        group.Name,
+				DisplayName: group.DisplayName,
 			}
 			children := ConvertToTreeData(groups, group.Name)
 			if len(children) > 0 {

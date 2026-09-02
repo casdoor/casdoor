@@ -14,13 +14,22 @@ import * as UserBackend from "@/backend/UserBackend";
 import * as Setting from "@/lib/setting";
 import {newUser} from "@/pages/defaults";
 
-export default function UserListPage() {
+/**
+ * Also embedded by the group tree page, which scopes the list to the selected
+ * group through props instead of the route.
+ */
+export default function UserListPage({
+  organizationName: organizationNameProp,
+  groupName: groupNameProp,
+}: {organizationName?: string; groupName?: string}) {
   const {account} = useAccount();
   const params = useParams();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const groupName = searchParams.get("groupName") ?? "";
-  const organizationName = useRequestOrganization(params.organizationName);
+  const embedded = groupNameProp !== undefined;
+  const groupName = groupNameProp ?? searchParams.get("groupName") ?? "";
+  const scopedOrganizationName = organizationNameProp ?? params.organizationName;
+  const organizationName = useRequestOrganization(scopedOrganizationName);
 
   // antd stops you removing or deleting yourself, or the built-in admin
   const isProtected = (record: any) =>
@@ -40,7 +49,7 @@ export default function UserListPage() {
     });
   }, [organizationName]);
 
-  const isGlobal = account ? Setting.isDefaultOrganizationSelected(account) && !params.organizationName : false;
+  const isGlobal = account ? Setting.isDefaultOrganizationSelected(account) && !scopedOrganizationName : false;
 
   const columns: ColumnDef<any>[] = [
     organizationColumn(140, "owner", undefined, "left"),
@@ -211,6 +220,8 @@ export default function UserListPage() {
           : null,
       ]}
       actionColumnWidth={groupName ? 340 : 260}
+      // the tree page has one route per group, so pin the column choices to the page
+      tableId={embedded ? "/trees" : undefined}
     />
   );
 }
