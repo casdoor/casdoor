@@ -6,6 +6,7 @@ import {EnableMfaNotification} from "@/components/auth/EnableMfaNotification";
 import {CommandPalette, useCommandPalette} from "@/components/common/CommandPalette";
 import {ConsoleTour} from "@/components/common/ConsoleTour";
 import {GithubCorner} from "@/components/common/GithubCorner";
+import {Loading} from "@/components/common/Loading";
 import {Header} from "@/components/layout/Header";
 import {PoweredBy} from "@/components/layout/PoweredBy";
 import {AppSidebar} from "@/components/layout/Sidebar";
@@ -50,7 +51,10 @@ export function AppLayout() {
           <Header onOpenPalette={() => palette.setOpen(true)} />
           <main className="min-h-0 flex-1 overflow-y-auto scrollbar-thin">
             <div className="mx-auto w-full max-w-[1600px] p-4 md:p-6">
-              <Outlet />
+              {/* keeps a lazy page's suspension from tearing down the console chrome */}
+              <React.Suspense fallback={<Loading />}>
+                <Outlet />
+              </React.Suspense>
             </div>
           </main>
         </SidebarInset>
