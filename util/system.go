@@ -15,6 +15,8 @@
 package util
 
 import (
+	"errors"
+	"io"
 	"os"
 	"path"
 	"path/filepath"
@@ -23,7 +25,6 @@ import (
 
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
-	"github.com/go-git/go-git/v5/plumbing/object"
 	"github.com/shirou/gopsutil/v4/cpu"
 	"github.com/shirou/gopsutil/v4/disk"
 	"github.com/shirou/gopsutil/v4/mem"
@@ -187,6 +188,11 @@ func GetVersionInfo() (*VersionInfo, error) {
 		// This technique should work for both lightweight and annotated tags.
 		revHash, err := r.ResolveRevision(plumbing.Revision(t.Name()))
 		if err != nil {
+			// A shallow clone can hold a tag whose target object was never
+			// fetched. Skip it rather than failing the whole lookup.
+			if errors.Is(err, plumbing.ErrObjectNotFound) {
+				return nil
+			}
 			return err
 		}
 		tagMap[*revHash] = t.Name().Short()
@@ -201,10 +207,23 @@ func GetVersionInfo() (*VersionInfo, error) {
 		return res, err
 	}
 
+	defer cIter.Close()
+
 	commitOffset := 0
 	version := ""
 	// iterates over the commits
-	err = cIter.ForEach(func(c *object.Commit) error {
+	for {
+		c, err := cIter.Next()
+		if err != nil {
+			// The parents of a shallow clone's boundary commit are not in the
+			// object database, so walk as far as the history actually goes
+			// instead of reporting the truncation as a failure.
+			if errors.Is(err, io.EOF) || errors.Is(err, plumbing.ErrObjectNotFound) {
+				break
+			}
+			return res, err
+		}
+
 		tag, ok := tagMap[c.Hash]
 		if ok {
 			if version == "" {
@@ -214,10 +233,6 @@ func GetVersionInfo() (*VersionInfo, error) {
 		if version == "" {
 			commitOffset++
 		}
-		return nil
-	})
-	if err != nil {
-		return res, err
 	}
 
 	res = &VersionInfo{
