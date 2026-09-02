@@ -2,6 +2,7 @@ import * as React from "react";
 import i18next from "i18next";
 import * as OrganizationBackend from "@/backend/OrganizationBackend";
 import {SearchableSelect} from "@/components/common/SearchableSelect";
+import {useLanguageVersion} from "@/hooks/use-language";
 
 interface OrganizationSelectProps {
   value?: string;
@@ -24,6 +25,8 @@ export function OrganizationSelect({
   organizations: preloaded,
 }: OrganizationSelectProps) {
   const [organizations, setOrganizations] = React.useState<{name: string; displayName: string}[]>(preloaded ?? []);
+  // the "All" label is translated, so the options have to be rebuilt on a language change
+  const languageVersion = useLanguageVersion();
 
   const load = React.useCallback(() => {
     if (preloaded !== undefined) {
@@ -57,7 +60,8 @@ export function OrganizationSelect({
       items.unshift({value: "All", label: i18next.t("general:All")});
     }
     return items;
-  }, [organizations, withAll]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [organizations, withAll, languageVersion]);
 
   return (
     <SearchableSelect

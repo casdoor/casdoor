@@ -1,4 +1,3 @@
-import * as React from "react";
 import {Languages} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import {
@@ -7,6 +6,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {useLanguage} from "@/hooks/use-language";
 import * as Setting from "@/lib/setting";
 import {cn} from "@/lib/utils";
 
@@ -17,8 +17,7 @@ interface LanguageSelectProps {
 }
 
 export function LanguageSelect({languages, className}: LanguageSelectProps) {
-  const [, force] = React.useReducer((x) => x + 1, 0);
-  const current = Setting.getLanguage();
+  const current = useLanguage();
 
   const items = (Setting.Countries as any[]).filter(
     (country) => !languages || languages.length === 0 || languages.includes(country.key),
@@ -40,10 +39,7 @@ export function LanguageSelect({languages, className}: LanguageSelectProps) {
           <DropdownMenuItem
             key={country.key}
             className={cn(current === country.key && "font-semibold")}
-            onSelect={() => {
-              Setting.setLanguage(country.key);
-              force();
-            }}
+            onSelect={() => Setting.setLanguage(country.key)}
           >
             <img
               src={`${Setting.StaticBaseUrl}/flag-icons/${country.country}.svg`}
