@@ -34,8 +34,9 @@ commentsRouter*.go
 casdoor
 /server
 
-# include helm-chart
+# include helm-chart, but not its packaged output
 !manifests/casdoor
+*.tgz
 
 # the console has its own .gitignore for these; web-old does not
 web/cypress/videos/

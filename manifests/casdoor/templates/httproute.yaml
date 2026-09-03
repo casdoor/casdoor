@@ -1,0 +1,58 @@
+{{- if .Values.gatewayApi.enabled -}}
+{{- $fullName := include "casdoor.fullname" . -}}
+{{- $svcPort := .Values.service.port -}}
+{{- $gatewayName := default $fullName .Values.gatewayApi.gateway.name -}}
+{{- $redirectEnabled := .Values.gatewayApi.httpsRedirect.enabled -}}
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: {{ $fullName }}
+  labels:
+    {{- include "casdoor.labels" . | nindent 4 }}
+    {{- with .Values.gatewayApi.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- with .Values.gatewayApi.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- if .Values.gatewayApi.parentRefs }}
+  parentRefs:
+    {{- toYaml .Values.gatewayApi.parentRefs | nindent 4 }}
+  {{- else if .Values.gatewayApi.createGateway }}
+  parentRefs:
+    - name: {{ $gatewayName }}
+      {{- if $redirectEnabled }}
+      sectionName: {{ .Values.gatewayApi.httpsRedirect.httpsListenerName }}
+      {{- end }}
+  {{- else }}
+  {{- fail "gatewayApi.parentRefs is required when gatewayApi.enabled=true and gatewayApi.createGateway=false" }}
+  {{- end }}
+  {{- with .Values.gatewayApi.hostnames }}
+  hostnames:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- if lt (len .Values.gatewayApi.rules) 1 }}
+  {{- fail "gatewayApi.rules must contain at least one rule when gatewayApi.enabled=true" }}
+  {{- end }}
+  rules:
+    {{- range .Values.gatewayApi.rules }}
+    - {{- with .matches }}
+      matches:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .filters }}
+      filters:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if .backendRefs }}
+      backendRefs:
+        {{- toYaml .backendRefs | nindent 8 }}
+      {{- else }}
+      backendRefs:
+        - name: {{ $fullName }}
+          port: {{ $svcPort }}
+      {{- end }}
+    {{- end }}
+{{- end }}

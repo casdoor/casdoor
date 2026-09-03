@@ -1,0 +1,55 @@
+{{- if and .Values.gatewayApi.enabled .Values.gatewayApi.createGateway -}}
+{{- if not .Values.gatewayApi.gateway.gatewayClassName -}}
+{{- fail "gatewayApi.gateway.gatewayClassName is required when gatewayApi.createGateway=true" -}}
+{{- end -}}
+{{- if and .Values.gatewayApi.httpsRedirect.enabled (lt (len .Values.gatewayApi.gateway.listeners) 2) -}}
+{{- fail "gatewayApi.gateway.listeners must include both HTTP and HTTPS listeners when gatewayApi.httpsRedirect.enabled=true" -}}
+{{- end -}}
+{{- if .Values.gatewayApi.httpsRedirect.enabled -}}
+{{- $httpsRedirectValidation := dict "httpFound" false "httpsFound" false "httpProtocolValid" false "httpsProtocolValid" false -}}
+{{- range .Values.gatewayApi.gateway.listeners -}}
+{{- if eq .name $.Values.gatewayApi.httpsRedirect.httpListenerName -}}
+{{- $_ := set $httpsRedirectValidation "httpFound" true -}}
+{{- if eq .protocol "HTTP" -}}
+{{- $_ := set $httpsRedirectValidation "httpProtocolValid" true -}}
+{{- end -}}
+{{- end -}}
+{{- if eq .name $.Values.gatewayApi.httpsRedirect.httpsListenerName -}}
+{{- $_ := set $httpsRedirectValidation "httpsFound" true -}}
+{{- if eq .protocol "HTTPS" -}}
+{{- $_ := set $httpsRedirectValidation "httpsProtocolValid" true -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+{{- if not (get $httpsRedirectValidation "httpFound") -}}
+{{- fail (printf "gatewayApi.gateway.listeners must include a listener named %q when gatewayApi.httpsRedirect.enabled=true" .Values.gatewayApi.httpsRedirect.httpListenerName) -}}
+{{- end -}}
+{{- if not (get $httpsRedirectValidation "httpsFound") -}}
+{{- fail (printf "gatewayApi.gateway.listeners must include a listener named %q when gatewayApi.httpsRedirect.enabled=true" .Values.gatewayApi.httpsRedirect.httpsListenerName) -}}
+{{- end -}}
+{{- if not (get $httpsRedirectValidation "httpProtocolValid") -}}
+{{- fail (printf "gatewayApi.gateway.listeners listener %q must use protocol HTTP when gatewayApi.httpsRedirect.enabled=true" .Values.gatewayApi.httpsRedirect.httpListenerName) -}}
+{{- end -}}
+{{- if not (get $httpsRedirectValidation "httpsProtocolValid") -}}
+{{- fail (printf "gatewayApi.gateway.listeners listener %q must use protocol HTTPS when gatewayApi.httpsRedirect.enabled=true" .Values.gatewayApi.httpsRedirect.httpsListenerName) -}}
+{{- end -}}
+{{- end -}}
+{{- $gatewayName := default (include "casdoor.fullname" .) .Values.gatewayApi.gateway.name -}}
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: {{ $gatewayName }}
+  labels:
+    {{- include "casdoor.labels" . | nindent 4 }}
+    {{- with .Values.gatewayApi.gateway.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- with .Values.gatewayApi.gateway.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  gatewayClassName: {{ .Values.gatewayApi.gateway.gatewayClassName }}
+  listeners:
+    {{- toYaml .Values.gatewayApi.gateway.listeners | nindent 4 }}
+{{- end }}

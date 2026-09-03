@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "casdoor.fullname" . }}
+  labels:
+    {{- include "casdoor.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+    {{- if .Values.service.nodePort }}
+      nodePort: {{ .Values.service.nodePort }}
+    {{- end }}
+      name: http
+    {{- if .Values.ldap.enabled }}
+    - port: {{ .Values.ldap.service.port }}
+      targetPort: 10389
+      protocol: TCP
+      name: ldap
+    {{- end }}
+  selector:
+    {{- include "casdoor.selectorLabels" . | nindent 4 }}

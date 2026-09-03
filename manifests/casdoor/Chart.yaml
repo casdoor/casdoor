@@ -1,0 +1,19 @@
+apiVersion: v2
+name: casdoor-helm-charts
+description: A Helm chart for Kubernetes
+
+# A chart can be either an 'application' or a 'library' chart.
+#
+# Application charts are a collection of templates that can be packaged into versioned archives
+# to be deployed.
+#
+# Library charts provide useful utilities or functions for the chart developer. They're included as
+# a dependency of application charts to inject those utilities and functions into the rendering
+# pipeline. Library charts do not define any templates and therefore cannot be deployed.
+type: application
+
+# version and appVersion are placeholders here: the release workflow overrides both
+# via `helm package --version/--app-version` at packaging time, so this file never
+# needs a commit per release.
+version: 0.0.0
+appVersion: 0.0.0

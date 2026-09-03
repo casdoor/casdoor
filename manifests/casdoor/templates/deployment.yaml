@@ -1,0 +1,126 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "casdoor.fullname" . }}
+  labels:
+    {{- include "casdoor.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "casdoor.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ tpl .Values.config . | toYaml | sha256sum }}
+        {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      labels:
+        {{- include "casdoor.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "casdoor.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+        {{ if .Values.initContainersEnabled }}
+      initContainers:
+          {{- tpl .Values.initContainers . | nindent 8 }}
+        {{- end }}
+      {{- if .Values.priorityClassName }}
+      priorityClassName: {{ .Values.priorityClassName | quote }}
+      {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}/{{ .Values.image.name }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          # command: ["sleep", "100000000"]
+          env:
+            - name: RUNNING_IN_DOCKER
+              value: "true"
+          {{- if .Values.envFromSecret }}
+            {{ include "casdoor.envFromSecret" .Values.envFromSecret | indent 12 | trim }}
+          {{- end -}}
+          {{ if .Values.envFromConfigmap }}
+            {{ include "casdoor.envFromConfigmap" .Values.envFromConfigmap | indent 12 | trim }}
+          {{- end }}
+          {{- if .Values.envFrom }}
+          envFrom:
+            {{ include "casdoor.envFrom" .Values.envFrom | indent 12 | trim }}
+          {{- end }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+            {{- if .Values.ldap.enabled }}
+            - name: ldap
+              containerPort: 10389
+              protocol: TCP
+            {{- end }}
+          {{ if .Values.probe.liveness.enabled }}
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          {{ end }}
+          {{ if .Values.probe.readiness.enabled }}
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          {{ end }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            {{- if .Values.defaultConfigVolumeEnabled }}
+            - name: config-volume
+              mountPath: /conf
+            {{- end }}
+            {{- if .Values.extraVolumeMounts }}
+            {{- toYaml .Values.extraVolumeMounts | nindent 12 }}
+            {{- end }}
+        {{ if .Values.extraContainersEnabled }}
+          {{- .Values.extraContainers | nindent 8 }}
+        {{- end }}
+      volumes:
+        {{- if .Values.defaultConfigVolumeEnabled }}
+        - name: config-volume
+          projected:
+            defaultMode: 420
+            sources:
+            {{- if .Values.configFromSecret }}
+              - secret:
+                  name: {{ .Values.configFromSecret }}
+                  items:
+                    - key: app.conf
+                      path: app.conf
+            {{- else }}
+              - configMap:
+                  name: {{ printf "%s-config" (include "casdoor.fullname" .) }}
+                  items:
+                    - key: app.conf
+                      path: app.conf
+            {{- end }}
+        {{- end }}
+        {{- if .Values.extraVolumes }}
+        {{- toYaml .Values.extraVolumes | nindent 8 }}
+        {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

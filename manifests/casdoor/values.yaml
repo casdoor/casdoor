@@ -1,0 +1,266 @@
+# Default values for casdoor.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: casbin
+  name: casdoor
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+
+# ref: https://casdoor.org/docs/basic/server-installation#via-ini-file
+config: |
+  appname = casdoor
+  httpport = {{ .Values.service.port }}
+  runmode = dev
+  SessionOn = true
+  copyrequestbody = true
+  driverName = {{ .Values.database.driver }}
+  dataSourceName = {{ include "casdoor.dataSourceName" . }}
+  dbName = {{ include "casdoor.dbName" . }}
+  redisEndpoint =
+  defaultStorageProvider =
+  isCloudIntranet = false
+  authState = "casdoor"
+  socks5Proxy = ""
+  verificationCodeTimeout = 10
+  initScore = 0
+  logPostOnly = true
+  origin =
+  enableGzip = true
+  ldapServerPort = 10389
+
+# Use secret to mount app.conf file for who don't want user,pass on git  
+# encode base64 on Value.config or create your own secret with anything you prefer
+# if you use your own secret, leave Value.config: ""
+# configFromSecret: casdoor
+
+database:
+  # Supports mysql, postgres, cockroachdb, sqlite
+  driver: sqlite
+
+  user: ""
+  password: ""
+  host: ""
+  # If port is empty, default port will be used.
+  # mysql: 3306, postgres: 5432, cockroachdb: 26257
+  port: ""
+  databaseName: casdoor
+
+  sslMode: disable
+
+ldap:
+  enabled: false
+  service:
+    port: 389
+
+imagePullSecrets: []
+nameOverride: casdoor
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+probe:
+  readiness:
+    enabled: true
+  liveness:
+    enabled: true
+
+service:
+  type: ClusterIP
+  port: 8000
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+# -- Expose the service via Kubernetes Gateway API HTTPRoute.
+# Requires Gateway API CRDs (gateway.networking.k8s.io/v1) and a compatible
+# controller (e.g. Istio, Envoy Gateway, Kong, NGINX Gateway Fabric).
+# See: https://gateway-api.sigs.k8s.io/guides/
+gatewayApi:
+  # -- Enable HTTPRoute resource creation.
+  enabled: false
+  # -- Create a Gateway for this chart when no existing Gateway is available.
+  createGateway: false
+  # -- Annotations to add to the HTTPRoute resource.
+  annotations: {}
+  # -- Labels to add to the HTTPRoute resource (in addition to default chart labels).
+  labels: {}
+  # -- Configure the Gateway resource when gatewayApi.createGateway=true.
+  gateway:
+    # -- Gateway name. Defaults to chart fullname when empty.
+    name: ""
+    # -- GatewayClass used by the created Gateway.
+    gatewayClassName: ""
+    # -- Annotations to add to the created Gateway.
+    annotations: {}
+    # -- Labels to add to the created Gateway (in addition to default chart labels).
+    labels: {}
+    # -- Gateway listeners.
+    listeners:
+      - name: http
+        protocol: HTTP
+        port: 80
+        # hostname: casdoor.example.com
+        allowedRoutes:
+          namespaces:
+            from: Same
+      # - name: https
+      #   protocol: HTTPS
+      #   port: 443
+      #   hostname: casdoor.example.com
+      #   tls:
+      #     certificateRef:
+      #       group: ''
+      #       name: casdoor-tls
+      #       kind: Secret
+      #   allowedRoutes:
+      #     namespaces:
+      #       from: Same
+  # -- List of Gateway parentRefs this route attaches to.
+  # At least one entry is required when enabled.
+  parentRefs: []
+    # - name: my-gateway
+    #   namespace: gateway-system
+    #   sectionName: http
+  # -- Optional: list of hostnames to match (Host header).
+  # If omitted, matches all hostnames accepted by the parent Gateway listener.
+  hostnames: []
+    # - casdoor.example.com
+  # -- Routing rules. Each rule can have matches, filters, and backendRefs.
+  # If backendRefs is omitted in a rule, traffic is forwarded to the chart's own Service.
+  # -- Routing rules. Each entry supports matches, filters, and backendRefs.
+  # When backendRefs is omitted, traffic is forwarded to the chart's own Service automatically.
+  # At least one rule is required when gatewayApi.enabled=true.
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      # Uncomment to override the default backend (chart's own Service):
+      # backendRefs:
+      #   - name: casdoor
+      #     port: 8000
+      #     weight: 1
+      # Uncomment to add request/response filters (e.g. header rewrites):
+      # filters:
+      #   - type: RequestHeaderModifier
+      #     requestHeaderModifier:
+      #       add:
+      #         - name: X-Forwarded-Proto
+      #           value: https
+  # -- Optional HTTP -> HTTPS redirect route.
+  httpsRedirect:
+    # -- Enable HTTP to HTTPS redirect via a dedicated HTTPRoute.
+    enabled: false
+    # -- HTTP listener sectionName used by the redirect route when createGateway=true.
+    httpListenerName: http
+    # -- HTTPS listener sectionName used by app route when createGateway=true and parentRefs is empty.
+    httpsListenerName: https
+    # -- Optional hostnames for redirect route. Falls back to gatewayApi.hostnames when empty.
+    hostnames: []
+    # -- Redirect response status code.
+    statusCode: 301
+    # -- Override parentRefs for redirect route. If empty, createGateway=true will auto-wire it.
+    parentRefs: []
+      # - name: my-gateway
+      #   sectionName: http
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+# -- Optionally add init containers.
+initContainersEnabled: false
+initContainers: ""
+# initContainers: |
+#  - name: ...
+#    image: ...
+
+# -- Optionally add extra sidecar containers.
+extraContainersEnabled: false
+extraContainers: ""
+# extraContainers: |
+#  - name: ...
+#    image: ...
+extraVolumeMounts: []
+extraVolumes: []
+
+envFromSecret: []
+  # - name: ENV_NAME
+  #   secretName: test-secret
+  #   key: key_name
+
+envFromConfigmap: []
+  # - name: ENV_NAME
+  #   configmapName: test-cm
+  #   key: key_name
+
+envFrom: []
+  # - type: configmap
+  #   name: test-cm
+  # - type: secret
+  #   name: test-secret
+
+priorityClassName: ""
+
+# -- Enable/disable the default config volume mount to /conf
+# Set to false if you want to provide your own config volume via extraVolumes/extraVolumeMounts
+defaultConfigVolumeEnabled: true
