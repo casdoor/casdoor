@@ -1,0 +1,41 @@
+{{- if and .Values.gatewayApi.enabled .Values.gatewayApi.httpsRedirect.enabled -}}
+{{- $fullName := include "casdoor.fullname" . -}}
+{{- $gatewayName := default $fullName .Values.gatewayApi.gateway.name -}}
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: {{ printf "%s-redirect" $fullName }}
+  labels:
+    {{- include "casdoor.labels" . | nindent 4 }}
+    {{- with .Values.gatewayApi.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- with .Values.gatewayApi.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- if .Values.gatewayApi.httpsRedirect.parentRefs }}
+  parentRefs:
+    {{- toYaml .Values.gatewayApi.httpsRedirect.parentRefs | nindent 4 }}
+  {{- else if .Values.gatewayApi.createGateway }}
+  parentRefs:
+    - name: {{ $gatewayName }}
+      sectionName: {{ .Values.gatewayApi.httpsRedirect.httpListenerName }}
+  {{- else }}
+  {{- fail "gatewayApi.httpsRedirect.parentRefs is required when httpsRedirect.enabled=true and gatewayApi.createGateway=false" }}
+  {{- end }}
+  {{- if .Values.gatewayApi.httpsRedirect.hostnames }}
+  hostnames:
+    {{- toYaml .Values.gatewayApi.httpsRedirect.hostnames | nindent 4 }}
+  {{- else if .Values.gatewayApi.hostnames }}
+  hostnames:
+    {{- toYaml .Values.gatewayApi.hostnames | nindent 4 }}
+  {{- end }}
+  rules:
+    - filters:
+        - type: RequestRedirect
+          requestRedirect:
+            scheme: https
+            statusCode: {{ .Values.gatewayApi.httpsRedirect.statusCode }}
+{{- end }}

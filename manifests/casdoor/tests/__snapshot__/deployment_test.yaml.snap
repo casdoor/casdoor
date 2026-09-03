@@ -1,0 +1,128 @@
+has extraVolume and extraVolumeMounts:
+  1: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      labels:
+        app.kubernetes.io/instance: RELEASE-NAME
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: casdoor
+        app.kubernetes.io/version: 1.2.3
+        helm.sh/chart: casdoor-helm-charts-1.0.0
+      name: RELEASE-NAME-casdoor
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          app.kubernetes.io/instance: RELEASE-NAME
+          app.kubernetes.io/name: casdoor
+      template:
+        metadata:
+          annotations:
+            checksum/config: 30da232af74c6bcdbfb47b671168ed266d93e4e70fefc069867b171d5bc88a87
+          labels:
+            app.kubernetes.io/instance: RELEASE-NAME
+            app.kubernetes.io/name: casdoor
+        spec:
+          containers:
+            - env:
+                - name: RUNNING_IN_DOCKER
+                  value: "true"
+              image: casbin/casdoor:1.2.3
+              imagePullPolicy: IfNotPresent
+              livenessProbe:
+                httpGet:
+                  path: /
+                  port: http
+              name: casdoor-helm-charts
+              ports:
+                - containerPort: 8000
+                  name: http
+                  protocol: TCP
+              readinessProbe:
+                httpGet:
+                  path: /
+                  port: http
+              resources: {}
+              securityContext: {}
+              volumeMounts:
+                - mountPath: /conf
+                  name: config-volume
+                - mountPath: /extra-volume
+                  name: extra-volume
+          securityContext: {}
+          serviceAccountName: RELEASE-NAME-casdoor
+          volumes:
+            - name: config-volume
+              projected:
+                defaultMode: 420
+                sources:
+                  - configMap:
+                      items:
+                        - key: app.conf
+                          path: app.conf
+                      name: RELEASE-NAME-casdoor-config
+            - emptyDir: {}
+              name: extra-volume
+manifest should match snapshot:
+  1: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      labels:
+        app.kubernetes.io/instance: RELEASE-NAME
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: casdoor
+        app.kubernetes.io/version: 1.2.3
+        helm.sh/chart: casdoor-helm-charts-1.0.0
+      name: RELEASE-NAME-casdoor
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          app.kubernetes.io/instance: RELEASE-NAME
+          app.kubernetes.io/name: casdoor
+      template:
+        metadata:
+          annotations:
+            checksum/config: 30da232af74c6bcdbfb47b671168ed266d93e4e70fefc069867b171d5bc88a87
+          labels:
+            app.kubernetes.io/instance: RELEASE-NAME
+            app.kubernetes.io/name: casdoor
+        spec:
+          containers:
+            - env:
+                - name: RUNNING_IN_DOCKER
+                  value: "true"
+              image: casbin/casdoor:1.2.3
+              imagePullPolicy: IfNotPresent
+              livenessProbe:
+                httpGet:
+                  path: /
+                  port: http
+              name: casdoor-helm-charts
+              ports:
+                - containerPort: 8000
+                  name: http
+                  protocol: TCP
+              readinessProbe:
+                httpGet:
+                  path: /
+                  port: http
+              resources: {}
+              securityContext: {}
+              volumeMounts:
+                - mountPath: /conf
+                  name: config-volume
+          securityContext: {}
+          serviceAccountName: RELEASE-NAME-casdoor
+          volumes:
+            - name: config-volume
+              projected:
+                defaultMode: 420
+                sources:
+                  - configMap:
+                      items:
+                        - key: app.conf
+                          path: app.conf
+                      name: RELEASE-NAME-casdoor-config
