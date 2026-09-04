@@ -140,11 +140,10 @@ func (idp *WeChatIdProvider) GetToken(code string) (*oauth2.Token, error) {
 		Expiry:       time.Time{},
 	}
 
-	raw := make(map[string]string)
+	raw := make(map[string]interface{})
 	raw["Openid"] = wechatAccessToken.Openid
-	token.WithExtra(raw)
 
-	return &token, nil
+	return token.WithExtra(raw), nil
 }
 
 //{
