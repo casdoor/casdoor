@@ -51,6 +51,15 @@ export default function UserListPage({
 
   const isGlobal = account ? Setting.isDefaultOrganizationSelected(account) && !scopedOrganizationName : false;
 
+  const tagLabels = React.useMemo(() => {
+    const map: Record<string, string> = {};
+    ((organization?.tags ?? []) as string[]).forEach((tag) => {
+      const tokens = tag.split("|");
+      map[tokens[0]] = Setting.getLanguage() !== "zh" ? tokens[0] : tokens[1] ?? tokens[0];
+    });
+    return map;
+  }, [organization]);
+
   const columns: ColumnDef<any>[] = [
     organizationColumn(140, "owner", undefined, "left"),
     {
@@ -112,7 +121,16 @@ export default function UserListPage({
     textColumn({dataIndex: "affiliation", title: i18next.t("user:Affiliation"), width: 140, searchable: true}),
     textColumn({dataIndex: "realName", title: i18next.t("application:Real name"), width: 130, searchable: true}),
     boolColumn({dataIndex: "isVerified", title: i18next.t("user:Is verified")}),
-    textColumn({dataIndex: "region", title: i18next.t("user:Country/Region"), width: 120, searchable: true}),
+    {
+      dataIndex: "region",
+      title: i18next.t("user:Country/Region"),
+      width: 140,
+      sortable: true,
+      searchable: true,
+      // the column stores the ISO code, antd shows the country's own name
+      render: (value) =>
+        value ? Setting.initCountries().getName(value, Setting.getLanguage(), {select: "official"}) ?? value : null,
+    },
     textColumn({dataIndex: "type", title: i18next.t("general:User type"), width: 130, searchable: true}),
     {
       dataIndex: "tag",
@@ -120,7 +138,8 @@ export default function UserListPage({
       width: 110,
       sortable: true,
       searchable: true,
-      render: (value) => (value ? <Badge variant="secondary">{value}</Badge> : null),
+      // an organization stores its tags as "<name>|<zh name>"; show the localized one
+      render: (value) => (value ? <Badge variant="secondary">{tagLabels[value] ?? value}</Badge> : null),
     },
     textColumn({dataIndex: "registerType", title: i18next.t("user:Register type"), width: 130, searchable: true}),
     textColumn({dataIndex: "registerSource", title: i18next.t("user:Register source"), width: 160, searchable: true}),

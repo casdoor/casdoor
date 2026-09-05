@@ -92,11 +92,25 @@ export default function ApplicationEditPage() {
     `&enablePostBinding=${enableSamlPostBinding}`;
 
   const save = async(exitAfterSave: boolean) => {
-    // antd refuses to save a custom scope without a name, and drops the empty rows
-    const customScopes = (application.customScopes ?? []).filter(
-      (scope: any) => scope && Object.values(scope).some((value) => value !== "" && value !== undefined),
+    // a provider row whose provider has since been deleted, or a sign-in method
+    // this Casdoor does not know, would be posted back as a dangling reference
+    const knownProviders = providerObjs.map((item: any) => item.name);
+    const applicationProviders = (application.providers ?? []).filter((item: any) =>
+      knownProviders.includes(item.name),
     );
-    if (customScopes.some((scope: any) => !scope.name)) {
+    const signinMethods = (application.signinMethods ?? []).filter((item: any) =>
+      ["Password", "Verification code", "WebAuthn", "LDAP", "Face ID", "Device login", "WeChat"].includes(item.name),
+    );
+
+    // antd trims every custom scope and refuses to save one without a scope name,
+    // which is also what the backend's validateCustomScopes() enforces
+    const customScopes = (application.customScopes ?? []).map((item: any) => ({
+      ...item,
+      scope: (item?.scope ?? "").trim(),
+      displayName: (item?.displayName ?? "").trim(),
+      description: (item?.description ?? "").trim(),
+    }));
+    if (customScopes.some((scope: any) => scope.scope === "")) {
       Setting.showMessage("error", `${i18next.t("general:Name")}: ${i18next.t("general:This field is required")}`);
       return;
     }
@@ -105,7 +119,7 @@ export default function ApplicationEditPage() {
     setSaving(true);
     await submitEdit({
       mode,
-      record: {...Setting.deepCopy(application), customScopes},
+      record: {...Setting.deepCopy(application), providers: applicationProviders, signinMethods, customScopes},
       add: (record) => ApplicationBackend.addApplication(record),
       update: (record) => ApplicationBackend.updateApplication("admin", applicationName, record),
       onSaved: () => {

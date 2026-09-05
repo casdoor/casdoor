@@ -20,6 +20,7 @@ import {FormRow, formGridClass} from "@/components/crud/FormRow";
 import {useAccount} from "@/hooks/use-account";
 import {useEditRecord} from "@/hooks/use-edit-record";
 import {getModeTitleKey, submitEdit} from "@/lib/crud";
+import * as Obfuscator from "@/auth/Obfuscator";
 import * as ApplicationBackend from "@/backend/ApplicationBackend";
 import * as LdapBackend from "@/backend/LdapBackend";
 import {ConfirmButton} from "@/components/common/ConfirmButton";
@@ -112,10 +113,11 @@ export default function OrganizationEditPage() {
 
   const updatePasswordObfuscator = (key: "type" | "key", value: string) => {
     if (key === "type") {
+      // a new type needs a key of its own length, so antd generates one for it
       setRecord((prev: any) => ({
         ...prev,
         passwordObfuscatorType: value,
-        passwordObfuscatorKey: value === "Plain" || value === "" ? "" : prev.passwordObfuscatorKey,
+        passwordObfuscatorKey: Obfuscator.getRandomKeyForObfuscator(value),
       }));
     } else {
       update("passwordObfuscatorKey", value);
@@ -127,6 +129,17 @@ export default function OrganizationEditPage() {
     payload.accountItems = payload.accountItems?.filter(
       (item: any) => item.name !== "Please select an account item",
     );
+
+    // a key that does not match its obfuscator would break every password sign-in
+    // of the organization, and the backend does not re-check it
+    const obfuscatorError = Obfuscator.checkPasswordObfuscator(
+      payload.passwordObfuscatorType,
+      payload.passwordObfuscatorKey,
+    );
+    if (obfuscatorError.length > 0) {
+      Setting.showMessage("error", obfuscatorError);
+      return;
+    }
 
     setSaving(true);
     await submitEdit({
