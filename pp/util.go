@@ -26,16 +26,48 @@ func getPriceString(price float64) string {
 	return priceString
 }
 
-func joinAttachString(tokens []string) string {
-	return strings.Join(tokens, "|")
+// The attach string packs product and provider info into the one opaque field a
+// gateway echoes back. Both ends go through AttachInfo, so the token order is
+// fixed here and cannot be swapped at a call site.
+const attachStringSeparator = "|"
+
+var (
+	attachTokenEscaper   = strings.NewReplacer("%", "%25", attachStringSeparator, "%7C")
+	attachTokenUnescaper = strings.NewReplacer("%7C", attachStringSeparator, "%25", "%")
+)
+
+type AttachInfo struct {
+	ProductName        string
+	ProductDisplayName string
+	ProviderName       string
 }
 
-func parseAttachString(s string) (string, string, string, error) {
-	tokens := strings.Split(s, "|")
-	if len(tokens) != 3 {
-		return "", "", "", fmt.Errorf("parseAttachString() error: len(tokens) expected 3, got: %d", len(tokens))
+func joinAttachString(r *PayReq) string {
+	tokens := []string{r.ProductName, r.ProductDisplayName, r.ProviderName}
+	for i, token := range tokens {
+		tokens[i] = attachTokenEscaper.Replace(token)
 	}
-	return tokens[0], tokens[1], tokens[2], nil
+	return strings.Join(tokens, attachStringSeparator)
+}
+
+// An empty input means the gateway echoed nothing back, which is not an error.
+func parseAttachString(s string) (*AttachInfo, error) {
+	if s == "" {
+		return &AttachInfo{}, nil
+	}
+
+	tokens := strings.Split(s, attachStringSeparator)
+	if len(tokens) != 3 {
+		return nil, fmt.Errorf("parseAttachString() error: len(tokens) expected 3, got: %d", len(tokens))
+	}
+	for i, token := range tokens {
+		tokens[i] = attachTokenUnescaper.Replace(token)
+	}
+	return &AttachInfo{
+		ProductName:        tokens[0],
+		ProductDisplayName: tokens[1],
+		ProviderName:       tokens[2],
+	}, nil
 }
 
 func priceInt64ToFloat64(price int64) float64 {

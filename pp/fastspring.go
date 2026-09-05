@@ -94,7 +94,7 @@ type fastSpringOrderItem struct {
 }
 
 func (pp *FastSpringPaymentProvider) Pay(r *PayReq) (*PayResp, error) {
-	description := joinAttachString([]string{r.ProductName, r.ProductDisplayName, r.ProviderName})
+	description := joinAttachString(r)
 
 	// Create session request
 	sessionReq := fastSpringSessionRequest{

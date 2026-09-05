@@ -55,7 +55,7 @@ func (pp *LemonSqueezyPaymentProvider) Pay(r *PayReq) (*PayResp, error) {
 	}
 
 	// Store product info in custom data for later retrieval
-	description := joinAttachString([]string{r.ProductName, r.ProductDisplayName, r.ProviderName})
+	description := joinAttachString(r)
 
 	customData := map[string]any{
 		"payment_name":         r.PaymentName,

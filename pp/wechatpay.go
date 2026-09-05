@@ -67,8 +67,7 @@ func NewWechatPaymentProvider(mchId string, apiV3Key string, appId string, seria
 
 func (pp *WechatPaymentProvider) Pay(r *PayReq) (*PayResp, error) {
 	bm := gopay.BodyMap{}
-	desc := joinAttachString([]string{r.ProductDisplayName, r.ProductName, r.ProviderName})
-	bm.Set("attach", desc)
+	bm.Set("attach", joinAttachString(r))
 	bm.Set("appid", pp.AppId)
 	bm.Set("description", r.ProductDisplayName)
 	bm.Set("notify_url", r.NotifyUrl)
@@ -151,11 +150,15 @@ func (pp *WechatPaymentProvider) Notify(body []byte, orderId string) (*NotifyRes
 		notifyResult.NotifyMessage = fmt.Sprintf("unexpected wechat trade state: %v", queryRsp.Response.TradeState)
 		return notifyResult, nil
 	}
-	productDisplayName, productName, providerName, _ := parseAttachString(queryRsp.Response.Attach)
+	attachInfo, err := parseAttachString(queryRsp.Response.Attach)
+	if err != nil {
+		return nil, err
+	}
+
 	notifyResult = &NotifyResult{
-		ProductName:        productName,
-		ProductDisplayName: productDisplayName,
-		ProviderName:       providerName,
+		ProductName:        attachInfo.ProductName,
+		ProductDisplayName: attachInfo.ProductDisplayName,
+		ProviderName:       attachInfo.ProviderName,
 		OrderId:            orderId,
 		Price:              priceInt64ToFloat64(int64(queryRsp.Response.Amount.Total)),
 		PaymentStatus:      PaymentStatePaid,

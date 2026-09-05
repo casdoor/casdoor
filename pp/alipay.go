@@ -54,7 +54,8 @@ func (pp *AlipayPaymentProvider) Pay(r *PayReq) (*PayResp, error) {
 	bm := gopay.BodyMap{}
 	pp.Client.SetReturnUrl(r.ReturnUrl)
 	pp.Client.SetNotifyUrl(r.NotifyUrl)
-	bm.Set("subject", joinAttachString([]string{r.ProductName, r.ProductDisplayName, r.ProviderName}))
+	bm.Set("subject", r.ProductDisplayName)
+	bm.Set("passback_params", joinAttachString(r))
 	bm.Set("out_trade_no", r.PaymentName)
 	bm.Set("total_amount", priceFloat64ToString(r.Price))
 
@@ -100,11 +101,21 @@ func (pp *AlipayPaymentProvider) Notify(body []byte, orderId string) (*NotifyRes
 		notifyResult.NotifyMessage = fmt.Sprintf("unexpected alipay trade state: %v", aliRsp.Response.TradeStatus)
 		return notifyResult, nil
 	}
-	productName, productDisplayName, providerName, _ := parseAttachString(aliRsp.Response.Subject)
+	attachInfo, err := parseAttachString(aliRsp.Response.PassbackParams)
+	if err != nil {
+		return nil, err
+	}
+	if attachInfo.ProductName == "" {
+		// Payments created before the move to passback_params still attach via subject
+		if legacyInfo, legacyErr := parseAttachString(aliRsp.Response.Subject); legacyErr == nil {
+			attachInfo = legacyInfo
+		}
+	}
+
 	notifyResult = &NotifyResult{
-		ProductName:        productName,
-		ProductDisplayName: productDisplayName,
-		ProviderName:       providerName,
+		ProductName:        attachInfo.ProductName,
+		ProductDisplayName: attachInfo.ProductDisplayName,
+		ProviderName:       attachInfo.ProviderName,
 		OrderId:            orderId,
 		PaymentStatus:      PaymentStatePaid,
 		Price:              priceStringToFloat64(aliRsp.Response.TotalAmount),
