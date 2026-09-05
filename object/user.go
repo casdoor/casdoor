@@ -198,6 +198,7 @@ type User struct {
 	Zoom            string `xorm:"zoom varchar(100)" json:"zoom"`
 	MetaMask        string `xorm:"metamask varchar(100)" json:"metamask"`
 	Web3Onboard     string `xorm:"web3onboard varchar(100)" json:"web3onboard"`
+	Oidc            string `xorm:"oidc varchar(100)" json:"oidc"`
 	Custom          string `xorm:"custom varchar(100)" json:"custom"`
 	Custom2         string `xorm:"custom2 text" json:"custom2"`
 	Custom3         string `xorm:"custom3 text" json:"custom3"`
@@ -870,7 +871,7 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 			"eveonline", "fitbit", "gitea", "heroku", "influxcloud", "instagram", "intercom", "kakao", "lastfm", "mailru", "meetup",
 			"microsoftonline", "naver", "nextcloud", "onedrive", "oura", "patreon", "paypal", "salesforce", "shopify", "soundcloud",
 			"spotify", "strava", "stripe", "type", "telegram", "tiktok", "tumblr", "twitch", "twitter", "typetalk", "uber", "vk", "wepay", "xero", "yahoo",
-			"yammer", "yandex", "zoom", "custom", "need_update_password", "ip_whitelist", "mfa_remember_deadline",
+			"yammer", "yandex", "zoom", "oidc", "custom", "need_update_password", "ip_whitelist", "mfa_remember_deadline",
 			"cart", "application_scopes",
 		}
 

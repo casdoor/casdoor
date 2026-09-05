@@ -663,7 +663,7 @@ export const UserFields = ["owner", "name", "password", "display_name", "id", "t
   "eveonline", "fitbit", "gitea", "heroku", "influxcloud", "instagram", "intercom", "kakao", "lastfm", "mailru",
   "meetup", "microsoftonline", "naver", "nextcloud", "onedrive", "oura", "patreon", "paypal", "salesforce", "shopify",
   "soundcloud", "spotify", "strava", "stripe", "tiktok", "tumblr", "twitch", "twitter", "typetalk", "uber", "vk",
-  "wepay", "xero", "yahoo", "yammer", "yandex", "zoom", "metamask", "web3onboard", "custom", "webauthnCredentials",
+  "wepay", "xero", "yahoo", "yammer", "yandex", "zoom", "metamask", "web3onboard", "oidc", "custom", "webauthnCredentials",
   "preferred_mfa_type", "recovery_codes", "totp_secret", "mfa_phone_enabled", "mfa_email_enabled", "invitation",
   "invitation_code", "face_ids", "ldap", "properties", "roles", "permissions", "groups", "last_change_password_time",
   "last_signin_wrong_time", "signin_wrong_times", "managedAccounts", "mfaAccounts", "mfaItems", "need_update_password",
