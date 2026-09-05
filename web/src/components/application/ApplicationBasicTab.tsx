@@ -12,8 +12,9 @@ import {FormRow} from "@/components/crud/FormRow";
 import type {ApplicationTabProps, MenuMode} from "@/components/application/types";
 import * as Setting from "@/lib/setting";
 
-const APPLICATION_TYPES = ["All", "Web", "Native", "SPA"];
-const APPLICATION_CATEGORIES = ["Default", "OAuth", "SAML", "CAS"];
+const APPLICATION_CATEGORIES = ["Default", "Agent"];
+const APPLICATION_TYPES = ["All", "OIDC", "OAuth", "SAML", "CAS"];
+const AGENT_APPLICATION_TYPES = ["MCP", "A2A"];
 
 interface ApplicationBasicTabProps extends ApplicationTabProps {
   mode: string;
@@ -99,16 +100,20 @@ export function ApplicationBasicTab({
       </FormRow>
       <FormRow labelKey="general:Category">
         <SelectField
-          value={application.category ?? "Default"}
-          onChange={(v) => updateField("category", v)}
+          value={application.category || "Default"}
+          onChange={(v) => {
+            updateField("category", v);
+            // the two categories have no type in common, so the old one cannot be kept
+            updateField("type", v === "Agent" ? "MCP" : "All");
+          }}
           options={APPLICATION_CATEGORIES.map((item) => ({id: item, name: item}))}
         />
       </FormRow>
       <FormRow labelKey="general:Type">
         <SelectField
-          value={application.type ?? "All"}
+          value={application.type || "All"}
           onChange={(v) => updateField("type", v)}
-          options={APPLICATION_TYPES.map((item) => ({id: item, name: item}))}
+          options={(application.category === "Agent" ? AGENT_APPLICATION_TYPES : APPLICATION_TYPES).map((item) => ({id: item, name: item}))}
         />
       </FormRow>
       <FormRow labelKey="general:Is shared">

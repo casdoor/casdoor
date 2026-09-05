@@ -68,6 +68,12 @@ export interface SimpleEditPageProps {
   deps?: React.DependencyList;
   /** where to go after "Save" (not "Save & Exit") when the name changed */
   editUrl?: (record: any) => string;
+  /**
+   * Fields the server decided while adding the record, as a patch to apply to it.
+   * Only for what a reload cannot reach: a record the server renamed is no longer
+   * where the page would look for it.
+   */
+  onAdded?: (record: any, res: CasdoorResponse) => Record<string, any> | undefined;
   transform?: (record: any) => any;
   /**
    * Last chance to adjust the payload before it is sent. Returning `null` aborts
@@ -92,6 +98,7 @@ export function SimpleEditPage({
   update,
   deps = [],
   editUrl,
+  onAdded,
   transform,
   beforeSave,
   extraActions,
@@ -149,21 +156,30 @@ export function SimpleEditPage({
     if (payload === null) {
       return;
     }
+    const isAdd = mode === "add";
     setSaving(true);
     await submitEdit({
       mode,
       record: payload,
       add,
       update,
-      onSaved: () => {
+      onSaved: (saved, res) => {
         setMode("edit");
+        const patch = isAdd ? onAdded?.(saved, res) : undefined;
+        if (patch) {
+          updateFields(patch);
+        }
         if (exitAfterSave) {
           navigate(backTo);
-        } else if (editUrl) {
-          const next = editUrl(record);
-          if (next !== window.location.pathname) {
-            navigate(next, {replace: true});
-          }
+          return;
+        }
+        const next = editUrl ? editUrl({...record, ...patch}) : null;
+        if (next && next !== window.location.pathname) {
+          navigate(next, {replace: true});
+        } else if (isAdd) {
+          // the server fills in what the form could not know: generated ids and
+          // secrets, computed prices, defaults taken from the organization
+          reload();
         }
       },
     });

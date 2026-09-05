@@ -10,14 +10,17 @@ import type {ApplicationTabProps} from "@/components/application/types";
 import {enumSelectOptions, type EnumMap} from "@/lib/enum-labels";
 import * as Setting from "@/lib/setting";
 
+/** the values the token endpoint matches on, so the RFC URNs are stored as such */
 const GRANT_TYPES = [
-  "authorization_code",
-  "password",
-  "client_credentials",
-  "token",
-  "id_token",
-  "refresh_token",
-  "device_code",
+  {value: "authorization_code", label: "Authorization Code"},
+  {value: "password", label: "Password"},
+  {value: "client_credentials", label: "Client Credentials"},
+  {value: "token", label: "Token"},
+  {value: "id_token", label: "ID Token"},
+  {value: "refresh_token", label: "Refresh Token"},
+  {value: "urn:ietf:params:oauth:grant-type:device_code", label: "Device Code"},
+  {value: "urn:ietf:params:oauth:grant-type:jwt-bearer", label: "JWT Bearer"},
+  {value: "urn:ietf:params:oauth:grant-type:token-exchange", label: "Token Exchange"},
 ];
 const TOKEN_FORMATS = ["JWT", "JWT-Empty", "JWT-Custom", "JWT-Standard"];
 const TOKEN_SIGNING_METHODS = ["RS256", "RS512", "ES256", "ES512", "ES384"];
@@ -35,6 +38,10 @@ const TOKEN_ATTRIBUTE_USER_FIELDS = [
 
 /** The "OIDC/OAuth" tab: the client credentials, the token format, and what goes into a token. */
 export function ApplicationOidcOauthTab({application, updateField}: ApplicationTabProps) {
+  // an empty token format means "whatever the organization defaults to", which is
+  // what the tokens will actually carry, so that is what the page shows
+  const tokenFormat = application.tokenFormat || application.organizationObj?.defaultTokenFormat || "JWT";
+
   return (
     <>
       {/* both are editable so that an admin can rotate the pair, as in the antd page */}
@@ -66,7 +73,7 @@ export function ApplicationOidcOauthTab({application, updateField}: ApplicationT
         <MultiSelect
           value={application.grantTypes ?? []}
           onChange={(v) => updateField("grantTypes", v)}
-          options={GRANT_TYPES.map((item) => ({value: item, label: item}))}
+          options={GRANT_TYPES}
         />
       </FormRow>
       {/* scopes are ScopeItem objects (name / displayName / description), the
@@ -150,14 +157,14 @@ export function ApplicationOidcOauthTab({application, updateField}: ApplicationT
       </FormRow>
       <FormRow block labelKey="application:Token format">
         <SelectField
-          value={application.tokenFormat ?? "JWT"}
+          value={tokenFormat}
           onChange={(v) => updateField("tokenFormat", v)}
           options={TOKEN_FORMATS.map((item) => ({id: item, name: item}))}
         />
       </FormRow>
       <FormRow block labelKey="application:Token signing method">
         <SelectField
-          value={application.tokenSigningMethod ?? "RS256"}
+          value={application.tokenSigningMethod || "RS256"}
           onChange={(v) => updateField("tokenSigningMethod", v)}
           options={TOKEN_SIGNING_METHODS.map((item) => ({id: item, name: item}))}
         />
@@ -167,10 +174,13 @@ export function ApplicationOidcOauthTab({application, updateField}: ApplicationT
           value={application.tokenFields ?? []}
           onChange={(v) => updateField("tokenFields", v)}
           creatable
-          options={Setting.UserFields.map((item: string) => ({value: item, label: item}))}
+          disabled={tokenFormat !== "JWT-Custom"}
+          // the claims are read off the user by Go field name, plus these two extras
+          options={["signinMethod", "provider", ...Setting.getUserCommonFields(), "permissionNames"]
+            .map((item: string) => ({value: item, label: item}))}
         />
       </FormRow>
-      {application.tokenFormat === "JWT-Custom" ? (
+      {tokenFormat === "JWT-Custom" ? (
         <FormRow labelKey="general:Token attributes" block>
           <EditableTable
             rows={application.tokenAttributes ?? []}
@@ -191,7 +201,7 @@ export function ApplicationOidcOauthTab({application, updateField}: ApplicationT
                 width: 160,
                 render: (row: any, _i, patch) => (
                   <SelectField
-                    value={row.category ?? "Static Value"}
+                    value={row.category || "Static Value"}
                     onChange={(v) => patch({category: v, value: ""})}
                     options={enumSelectOptions(TOKEN_ATTRIBUTE_CATEGORIES)}
                   />

@@ -12,7 +12,7 @@ import {
 import * as SiteBackend from "@/backend/SiteBackend";
 import * as Setting from "@/lib/setting";
 
-const SSL_MODES = ["HTTP", "HTTPS Only", "HTTP and HTTPS"];
+const SSL_MODES = ["HTTP", "HTTPS and HTTP", "HTTPS Only", "Static Folder"];
 
 export default function SiteEditPage() {
   const {organizationName = "", siteName = ""} = useParams();

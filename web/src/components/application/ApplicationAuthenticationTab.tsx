@@ -13,7 +13,7 @@ export function ApplicationAuthenticationTab({application, updateField}: Applica
       <FormRow labelKey="application:Cookie expire">
         <Input
           type="number"
-          value={application.cookieExpireInHours ?? 720}
+          value={application.cookieExpireInHours || 720}
           onChange={(e) => updateField("cookieExpireInHours", Setting.myParseInt(e.target.value))}
         />
       </FormRow>

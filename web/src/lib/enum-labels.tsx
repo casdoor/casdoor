@@ -43,9 +43,16 @@ export const INVITATION_STATES: EnumMap = {
   "Suspended": {i18nKey: "subscription:Suspended", variant: "secondary"},
 };
 
-/** coupons and API keys reuse the invitation wording for their two states */
-export const COUPON_STATES = INVITATION_STATES;
-export const KEY_STATES = INVITATION_STATES;
+export const COUPON_STATES: EnumMap = {
+  "Active": {i18nKey: "subscription:Active", variant: "success"},
+  "Inactive": {i18nKey: "key:Inactive", variant: "secondary"},
+  "Expired": {i18nKey: "subscription:Expired", variant: "destructive"},
+};
+
+export const KEY_STATES: EnumMap = {
+  "Active": {i18nKey: "subscription:Active", variant: "success"},
+  "Inactive": {i18nKey: "key:Inactive", variant: "secondary"},
+};
 
 export const PERMISSION_EFFECTS: EnumMap = {
   "Allow": {i18nKey: "permission:Allow", variant: "success"},

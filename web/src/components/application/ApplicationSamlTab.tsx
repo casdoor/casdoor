@@ -69,7 +69,8 @@ export function ApplicationSamlTab({
       </FormRow>
       <FormRow block labelKey="application:SAML hash algorithm">
         <SelectField
-          value={application.samlHashAlgorithm ?? "SHA256"}
+          // an empty algorithm is SHA1 in the SAML response, so that is what the page shows
+          value={application.samlHashAlgorithm || "SHA1"}
           onChange={(v) => updateField("samlHashAlgorithm", v)}
           options={SAML_HASH_ALGORITHMS.map((item) => ({id: item, name: item}))}
         />

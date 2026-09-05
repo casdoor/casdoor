@@ -6,7 +6,7 @@ import {useOrganizationOptions, useProductOptions, useUserNameOptions} from "@/h
 import * as OrderBackend from "@/backend/OrderBackend";
 import * as Setting from "@/lib/setting";
 
-const STATES = ["Created", "Paid", "Canceled", "Error"];
+const STATES = ["Created", "Paid", "Delivered", "Completed", "Canceled", "Expired"];
 
 export default function OrderEditPage() {
   const {organizationName = "", orderName = ""} = useParams();

@@ -146,10 +146,28 @@ func UpdateKey(id string, key *Key) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	if k, err := getKey(owner, name); err != nil {
+	oldKey, err := getKey(owner, name)
+	if err != nil {
 		return false, err
-	} else if k == nil {
+	} else if oldKey == nil {
 		return false, nil
+	}
+
+	// a client that does not carry the credentials must not blank out the ones of a
+	// live key, and a key that lost them gets new ones
+	if key.AccessKey == "" {
+		if oldKey.AccessKey != "" {
+			key.AccessKey = oldKey.AccessKey
+		} else {
+			key.AccessKey = util.GenerateId()
+		}
+	}
+	if key.AccessSecret == "" {
+		if oldKey.AccessSecret != "" {
+			key.AccessSecret = oldKey.AccessSecret
+		} else {
+			key.AccessSecret = util.GenerateId()
+		}
 	}
 
 	key.UpdatedTime = util.GetCurrentTime()
