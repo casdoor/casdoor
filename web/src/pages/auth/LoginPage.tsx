@@ -1015,15 +1015,26 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
           ) : null}
         </div>
       );
-    case "Signup link":
-      return application.enableSignUp ? (
+    case "Signup link": {
+      if (!application.enableSignUp) {
+        return null;
+      }
+      // the application can point the link at a page of its own, and the sign-in
+      // URL is remembered so the OAuth flow can resume after the signup
+      const signupUrl = Setting.getSignupLink(application) ?? "/signup";
+      const signupText = item.label || i18next.t("login:sign up now");
+      const signupClass = "text-foreground underline-offset-4 hover:underline";
+      return (
         <p key={key} className="login-signup-link text-center text-sm text-muted-foreground">
           {item.label ? null : <span className="mr-1">{i18next.t("login:No account?")}</span>}
-          <Link to={`/signup/${application.name}`} className="text-foreground underline-offset-4 hover:underline">
-            {item.label || i18next.t("login:sign up now")}
-          </Link>
+          {signupUrl.startsWith("/") ? (
+            <Link to={signupUrl} onClick={Setting.storeSigninUrl} className={signupClass}>{signupText}</Link>
+          ) : (
+            <a href={signupUrl} onClick={Setting.storeSigninUrl} className={signupClass}>{signupText}</a>
+          )}
         </p>
-      ) : null;
+      );
+    }
     case "Providers":
       return (
         <ProviderButtons

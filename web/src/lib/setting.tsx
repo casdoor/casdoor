@@ -2449,6 +2449,31 @@ export function getForgetLink(application) {
   return application.forgetUrl;
 }
 
+/**
+ * Where "sign up now" goes, port of Setting.js renderSignupLink(). The OAuth
+ * params have to survive the hop, otherwise the signup cannot hand a code back
+ * to the application and the user is stranded on Casdoor.
+ */
+export function getSignupLink(application) {
+  if (!application) {
+    return null;
+  }
+
+  let url;
+  if (window.location.pathname.includes("/login/oauth/authorize")) {
+    url = window.location.pathname.replace("/login/oauth/authorize", "/signup/oauth/authorize");
+  } else if (authConfig.appName === application.name) {
+    url = "/signup";
+  } else if (!application.signupUrl) {
+    url = application.isShared
+      ? `/signup/${application.name}-org-${application.organization}`
+      : `/signup/${application.name}`;
+  } else {
+    url = application.signupUrl;
+  }
+  return url + window.location.search;
+}
+
 /** The sign-in URL carries the OAuth params, so remember it before leaving for the signup or forget page. */
 export function storeSigninUrl() {
   sessionStorage.setItem("signinUrl", window.location.pathname + window.location.search);
