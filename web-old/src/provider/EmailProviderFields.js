@@ -39,7 +39,7 @@ export function renderEmailProviderFields(provider, updateProviderField, renderE
             </Col>
           </Row>) : null
       }
-      {provider.type === "Resend" ? null : (
+      {["Resend", "MailKite"].includes(provider.type) ? null : (
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("general:Host"), i18next.t("provider:Host - Tooltip"))} :
@@ -51,7 +51,7 @@ export function renderEmailProviderFields(provider, updateProviderField, renderE
           </Col>
         </Row>
       )}
-      {["Azure ACS", "SendGrid", "Resend"].includes(provider.type) ? null : (
+      {["Azure ACS", "SendGrid", "Resend", "MailKite"].includes(provider.type) ? null : (
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("general:Port"), i18next.t("provider:Port - Tooltip"))} :
@@ -63,7 +63,7 @@ export function renderEmailProviderFields(provider, updateProviderField, renderE
           </Col>
         </Row>
       )}
-      {["Azure ACS", "SendGrid", "Resend"].includes(provider.type) ? null : (
+      {["Azure ACS", "SendGrid", "Resend", "MailKite"].includes(provider.type) ? null : (
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("provider:SSL mode"), i18next.t("provider:SSL mode - Tooltip"))} :
@@ -241,7 +241,7 @@ export function renderEmailProviderFields(provider, updateProviderField, renderE
               updateProviderField("receiver", e.target.value);
             }} />
         </Col>
-        {["Azure ACS", "SendGrid", "Resend"].includes(provider.type) ? null : (
+        {["Azure ACS", "SendGrid", "Resend", "MailKite"].includes(provider.type) ? null : (
           <Button style={{marginLeft: "10px", marginBottom: "5px"}} onClick={() => ProviderEditTestEmail.connectSmtpServer(provider)} >
             {i18next.t("provider:Test SMTP Connection")}
           </Button>

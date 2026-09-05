@@ -194,6 +194,10 @@ export const OtherProviderInfo = {
       logo: `${StaticBaseUrl}/img/email_resend.png`,
       url: "https://resend.com/",
     },
+    "MailKite": {
+      logo: `${StaticBaseUrl}/img/social_default.png`,
+      url: "https://mailkite.dev/",
+    },
   },
   Storage: {
     "Local File System": {
@@ -1416,6 +1420,7 @@ export function getProviderTypeOptions(category) {
         {id: "SendGrid", name: "SendGrid"},
         {id: "Custom HTTP Email", name: "Custom HTTP Email"},
         {id: "Resend", name: "Resend"},
+        {id: "MailKite", name: "MailKite"},
       ]
     );
   } else if (category === "SMS") {

@@ -28,6 +28,8 @@ func GetEmailProvider(typ string, clientId string, clientSecret string, host str
 		return NewSendgridEmailProvider(clientSecret, host, endpoint)
 	case "Resend":
 		return NewResendEmailProvider(clientSecret)
+	case "MailKite":
+		return NewMailKiteEmailProvider(clientSecret)
 	default:
 		return NewSmtpEmailProvider(clientId, clientSecret, host, port, typ, sslMode, enableProxy)
 	}

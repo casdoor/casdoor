@@ -189,7 +189,7 @@ function getClientSecretLabel(provider: any): Label {
       ? label(i18next.t("provider:Service account JSON"), i18next.t("provider:Service account JSON - Tooltip"))
       : label(i18next.t("provider:Client secret"), i18next.t("provider:Client secret - Tooltip"));
   } else if (provider.category === "Email") {
-    return ["Azure ACS", "SendGrid", "Resend"].includes(provider.type)
+    return ["Azure ACS", "SendGrid", "Resend", "MailKite"].includes(provider.type)
       ? label(i18next.t("provider:Secret key"), i18next.t("provider:Secret key - Tooltip"))
       : label(i18next.t("general:Password"), i18next.t("general:Password - Tooltip"));
   } else if (provider.category === "SMS") {
@@ -306,7 +306,7 @@ function getReceiverLabel(provider: any): Label | null {
 
 function hasClientIdRow(provider: any) {
   if ((provider.category === "Storage" && provider.type === "Google Cloud Storage") ||
-      (provider.category === "Email" && ["Azure ACS", "SendGrid", "Resend"].includes(provider.type)) ||
+      (provider.category === "Email" && ["Azure ACS", "SendGrid", "Resend", "MailKite"].includes(provider.type)) ||
       (provider.category === "Face ID" && provider.type === "Local UniFace") ||
       (provider.category === "Notification" && ["Line", "Telegram", "Bark", "Discord", "Slack", "Pushbullet", "Pushover", "Lark", "Microsoft Teams", "WeCom"].includes(provider.type))) {
     return false;
@@ -998,12 +998,12 @@ export default function ProviderEditPage() {
           <Input value={provider.endpoint ?? ""} onChange={(e) => updateProviderField("endpoint", e.target.value)} />
         </FormRow>
       ) : null}
-      {provider.type !== "Resend" ? (
+      {!["Resend", "MailKite"].includes(provider.type) ? (
         <FormRow label={i18next.t("general:Host")} tooltip={i18next.t("provider:Host - Tooltip")}>
           <Input value={provider.host ?? ""} onChange={(e) => updateProviderField("host", e.target.value)} />
         </FormRow>
       ) : null}
-      {!["Azure ACS", "SendGrid", "Resend"].includes(provider.type) ? (
+      {!["Azure ACS", "SendGrid", "Resend", "MailKite"].includes(provider.type) ? (
         <React.Fragment>
           <FormRow label={i18next.t("general:Port")} tooltip={i18next.t("provider:Port - Tooltip")}>
             <Input type="number" value={provider.port ?? 0} onChange={(e) => updateProviderField("port", e.target.value)} />
@@ -1107,7 +1107,7 @@ export default function ProviderEditPage() {
             placeholder={i18next.t("user:Input your email")}
             onChange={(e) => updateProviderField("receiver", e.target.value)}
           />
-          {!["Azure ACS", "SendGrid", "Resend"].includes(provider.type) ? (
+          {!["Azure ACS", "SendGrid", "Resend", "MailKite"].includes(provider.type) ? (
             <Button variant="outline" onClick={() => ProviderTest.connectSmtpServer(provider)}>
               {i18next.t("provider:Test SMTP Connection")}
             </Button>
