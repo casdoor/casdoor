@@ -12,6 +12,7 @@ import {Switch} from "@/components/ui/switch";
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import {Tooltip, TooltipContent, TooltipTrigger} from "@/components/ui/tooltip";
+import {CountryCodeSelect} from "@/components/common/CountryCodeSelect";
 import {ConfirmButton} from "@/components/common/ConfirmButton";
 import {Loading} from "@/components/common/Loading";
 import {MultiSelect} from "@/components/common/MultiSelect";
@@ -307,14 +308,10 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
             <AccountItemRow name="Phone" labelKey="general:Phone">
               <div className="flex gap-2">
                 <div className="w-32 shrink-0">
-                  <SearchableSelect
+                  <CountryCodeSelect
                     value={user.countryCode ?? ""}
                     onChange={(v) => updateField("countryCode", v)}
-                    options={Setting.getCountryCodeData(userOrganization.countryCodes).map((country: any) => ({
-                      value: country.code,
-                      label: `+${country.phone}`,
-                      keywords: `${country.name} ${country.code} ${country.phone}`,
-                    }))}
+                    countryCodes={userOrganization.countryCodes}
                   />
                 </div>
                 <Input value={user.phone ?? ""} disabled={!isAdmin} onChange={(e) => updateField("phone", e.target.value)} />

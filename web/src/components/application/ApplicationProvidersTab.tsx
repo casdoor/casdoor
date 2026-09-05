@@ -236,6 +236,7 @@ export function ApplicationProvidersTab({
                       ...Setting.getCountryCodeData(application.organizationObj?.countryCodes).map((country: any) => ({
                         value: country.code,
                         label: `${country.name} (+${country.phone})`,
+                        keywords: `${country.name} ${country.code} ${country.phone}`,
                       })),
                     ]}
                   />

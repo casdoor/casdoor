@@ -5,7 +5,7 @@ import {QRCodeSVG} from "qrcode.react";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Label} from "@/components/ui/label";
-import {SearchableSelect} from "@/components/common/SearchableSelect";
+import {CountryCodeSelect} from "@/components/common/CountryCodeSelect";
 import {SendCodeInput} from "@/components/auth/SendCodeInput";
 import {
   EmailMfaType,
@@ -36,7 +36,9 @@ export function MfaVerifySetupForm({mfaProps, application, user, onSuccess, onFa
 
   const [passcode, setPasscode] = React.useState("");
   const [dest, setDest] = React.useState("");
-  const [countryCode, setCountryCode] = React.useState(mfaProps?.countryCode ?? "");
+  const [countryCode, setCountryCode] = React.useState(
+    mfaProps?.countryCode || user?.countryCode || application?.organizationObj?.countryCodes?.[0] || "",
+  );
   const [submitting, setSubmitting] = React.useState(false);
 
   React.useEffect(() => {
@@ -118,16 +120,10 @@ export function MfaVerifySetupForm({mfaProps, application, user, onSuccess, onFa
               <div className="flex gap-2">
                 {isEmail ? null : (
                   <div className="w-28 shrink-0">
-                    <SearchableSelect
+                    <CountryCodeSelect
                       value={countryCode}
                       onChange={setCountryCode}
-                      options={Setting.getCountryCodeData(application.organizationObj?.countryCodes).map(
-                        (country: any) => ({
-                          value: country.code,
-                          label: `+${country.phone}`,
-                          keywords: `${country.name} ${country.code} ${country.phone}`,
-                        }),
-                      )}
+                      countryCodes={application.organizationObj?.countryCodes}
                     />
                   </div>
                 )}

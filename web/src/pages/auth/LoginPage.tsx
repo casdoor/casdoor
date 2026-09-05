@@ -21,6 +21,7 @@ import {ProviderButtons} from "@/components/auth/ProviderButtons";
 import {WeChatLoginPanel} from "@/components/auth/WeChatLoginPanel";
 import {OrganizationSelect} from "@/components/common/OrganizationSelect";
 import {RedirectForm} from "@/components/auth/RedirectForm";
+import {CountryCodeSelect} from "@/components/common/CountryCodeSelect";
 import {SendCodeInput, type CaptchaValues} from "@/components/auth/SendCodeInput";
 import {CaptchaModal, type CaptchaHandle} from "@/components/common/CaptchaModal";
 import {getCaptchaProvider} from "@/lib/captcha";
@@ -60,6 +61,36 @@ function getDefaultLoginMethod(application: any): LoginMethod {
     return "faceId";
   }
   return "password";
+}
+
+/** The antd page's getPlaceholder(): what the single credential field accepts. */
+function getUsernameLabel(method: LoginMethod | undefined) {
+  switch (method) {
+  case "verificationCode":
+    return i18next.t("login:Email or phone");
+  case "verificationCodeEmail":
+    return i18next.t("general:Email");
+  case "verificationCodePhone":
+    return i18next.t("general:Phone");
+  case "ldap":
+    return i18next.t("login:LDAP username, Email or phone");
+  default:
+    return i18next.t("login:username, Email or phone");
+  }
+}
+
+/** Which of the three verification-code methods the "Verification code" tab stands for. */
+function getCodeLoginMethod(application: any): LoginMethod {
+  const rule = (application?.signinMethods ?? []).find(
+    (item: any) => item.name === "Verification code" && !Setting.isSigninMethodHidden(item),
+  )?.rule;
+  if (rule === "Email only") {
+    return "verificationCodeEmail";
+  }
+  if (rule === "Phone only") {
+    return "verificationCodePhone";
+  }
+  return "verificationCode";
 }
 
 function getSigninMethodName(method: LoginMethod) {
@@ -151,6 +182,7 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
   const [msg, setMsg] = React.useState<string | null>(null);
   const [loginMethod, setLoginMethod] = React.useState<LoginMethod | undefined>(undefined);
   const [username, setUsername] = React.useState("");
+  const [countryCode, setCountryCode] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [code, setCode] = React.useState("");
   const [autoSignin, setAutoSignin] = React.useState(true);
@@ -180,6 +212,7 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
         return;
       }
       setApplication(app);
+      setCountryCode(app?.organizationObj?.countryCodes?.[0] ?? "");
       setLoginMethod(getDefaultLoginMethod(app));
       setAgreed(getAgreementDefaultValue(app));
       setAutoSignin(Setting.getAutoSigninDefaultValue(app));
@@ -422,6 +455,9 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
       values.code = code;
       values.username = username;
       values.password = "";
+      if (loginMethod === "verificationCodePhone") {
+        values.countryCode = countryCode;
+      }
     }
 
     return applyRequestType(values);
@@ -660,11 +696,14 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
     (item: any) => item.provider?.type === "WeChat" && Setting.isProviderVisibleForSignIn(item),
   );
   const isCodeMethod = (loginMethod ?? "").startsWith("verificationCode");
-  // "Email only" and "Phone only" share the "Verification code" tab
-  const activeTab = isCodeMethod ? "verificationCode" : loginMethod;
+  // "Email only" and "Phone only" share the "Verification code" tab, but they are
+  // different methods: the tab has to lead back to the one the application configured
+  const codeMethod = getCodeLoginMethod(application);
+  const isPhoneCodeMethod = loginMethod === "verificationCodePhone";
+  const activeTab = isCodeMethod ? codeMethod : loginMethod;
   const methods = [
     passwordEnabled ? {value: "password", label: i18next.t("general:Password")} : null,
-    codeEnabled ? {value: "verificationCode", label: i18next.t("login:Verification code")} : null,
+    codeEnabled ? {value: codeMethod, label: i18next.t("login:Verification code")} : null,
     ldapEnabled ? {value: "ldap", label: i18next.t("login:LDAP")} : null,
     webAuthnEnabled ? {value: "webAuthn", label: i18next.t("login:WebAuthn")} : null,
     faceIdEnabled ? {value: "faceId", label: i18next.t("login:Face ID")} : null,
@@ -751,17 +790,42 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
       if (isPanelMethod) {
         return <WeChatLoginPanel key={key} application={application} />;
       }
+      if (isPhoneCodeMethod) {
+        return (
+          <div key={key} className="signin-phone space-y-2">
+            <Label htmlFor="username">{item.label || i18next.t("general:Phone")}</Label>
+            <div className="flex gap-2">
+              <div className="w-32 shrink-0">
+                <CountryCodeSelect
+                  value={countryCode}
+                  onChange={setCountryCode}
+                  countryCodes={application.organizationObj?.countryCodes}
+                />
+              </div>
+              <Input
+                id="username"
+                className="login-username-input"
+                autoFocus
+                autoComplete="tel"
+                placeholder={item.placeholder || i18next.t("general:Phone")}
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+              />
+            </div>
+          </div>
+        );
+      }
       return (
         <div key={key} className="login-username space-y-2">
           <Label htmlFor="username">
-            {item.label || (isCodeMethod ? i18next.t("login:Email or phone") : i18next.t("signup:Username"))}
+            {item.label || (isCodeMethod ? getUsernameLabel(loginMethod) : i18next.t("signup:Username"))}
           </Label>
           <Input
             id="username"
             className="login-username-input"
             autoFocus
             autoComplete="username"
-            placeholder={item.placeholder}
+            placeholder={item.placeholder || getUsernameLabel(loginMethod)}
             value={username}
             onChange={(e) => setUsername(e.target.value)}
           />
@@ -779,8 +843,9 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
             value={code}
             onChange={setCode}
             method="login"
-            destType={username.includes("@") ? "email" : "phone"}
+            destType={loginMethod === "verificationCodeEmail" || (!isPhoneCodeMethod && username.includes("@")) ? "email" : "phone"}
             dest={username}
+            countryCode={isPhoneCodeMethod ? countryCode : ""}
             placeholder={item.placeholder}
             application={application}
             applicationId={Setting.getApplicationName(application)}
