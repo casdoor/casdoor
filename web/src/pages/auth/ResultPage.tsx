@@ -31,16 +31,21 @@ export default function ResultPage() {
     return <Loading className="min-h-screen" />;
   }
 
-  // the stored URL carries the OAuth params of the application the signup started from
+  // the stored URL carries the OAuth params of the application the signup started
+  // from; without one, send the user back to that application rather than to
+  // Casdoor's own console, which a freshly created user has no business in
   const signinUrl = Setting.getStoredSigninUrl() ||
-    (account ? "/" : (application ? Setting.getLoginLink(application) : "/login"));
+    (application && authConfig.appName !== application.name
+      ? Setting.getLoginLink(application)
+      : (account ? "/" : "/login"));
 
   return (
     <AuthLayout application={application}>
       <div className="space-y-4 text-center">
         <CheckCircle2 className="mx-auto h-12 w-12 text-success" />
         <h1 className="text-xl font-semibold">{i18next.t("signup:Your account has been created!")}</h1>
-        {username ? <p className="text-sm text-muted-foreground">{username}</p> : null}
+        <p className="text-sm text-muted-foreground">{i18next.t("signup:Please click the below button to sign in")}</p>
+        {username ? <p className="text-sm font-medium">{username}</p> : null}
         <Button className="w-full" onClick={() => Setting.goToLink(signinUrl)}>
           {i18next.t("login:Sign In")}
         </Button>
