@@ -133,18 +133,18 @@ func (idp *WeChatIdProvider) GetToken(code string) (*oauth2.Token, error) {
 		return nil, err
 	}
 
-	token := oauth2.Token{
+	token := &oauth2.Token{
 		AccessToken:  wechatAccessToken.AccessToken,
 		TokenType:    "WeChatAccessToken",
 		RefreshToken: wechatAccessToken.RefreshToken,
 		Expiry:       time.Time{},
 	}
 
-	raw := make(map[string]string)
+	raw := make(map[string]interface{})
 	raw["Openid"] = wechatAccessToken.Openid
-	token.WithExtra(raw)
+	token = token.WithExtra(raw)
 
-	return &token, nil
+	return token, nil
 }
 
 //{
@@ -231,7 +231,7 @@ func (idp *WeChatIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error)
 	}
 
 	extra := make(map[string]string)
-	extra["wechat_unionid"] = wechatUserInfo.Openid
+	extra["wechat_unionid"] = wechatUserInfo.Unionid
 	// For WeChat, different appId corresponds to different openId
 	extra[BuildWechatOpenIdKey(idp.Config.ClientID)] = wechatUserInfo.Openid
 	userInfo := UserInfo{
