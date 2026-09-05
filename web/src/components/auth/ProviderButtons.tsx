@@ -13,6 +13,8 @@ interface ProviderButtonsProps {
   application: any;
   /** "signup" | "signin" | "link" */
   method: "signup" | "signin" | "link";
+  /** the item rule: "big" for a labelled button per provider, "small" for a logo grid */
+  rule?: string;
 }
 
 /** SAML sign-in goes through /api/get-saml-login, which answers with a redirect or a POST form. */
@@ -43,7 +45,7 @@ function goToSamlUrl(provider: any, search: string) {
  * /callback keeps working unchanged. SAML, Web3 and the WeChat media platform
  * take their own paths, as in web/src/auth/ProviderButton.js.
  */
-export function ProviderButtons({application, method}: ProviderButtonsProps) {
+export function ProviderButtons({application, method, rule}: ProviderButtonsProps) {
   const location = useLocation();
   const [wechatItem, setWechatItem] = React.useState<any>(null);
 
@@ -113,8 +115,10 @@ export function ProviderButtons({application, method}: ProviderButtonsProps) {
     />
   ) : null;
 
-  // A short list gets full-width buttons, a long one gets a grid of logos.
-  if (items.length <= 3) {
+  // "big" is a labelled button per provider, "small" a grid of logos; without a
+  // rule a short list still gets the buttons and a long one the grid.
+  const big = rule === "big" || (rule !== "small" && items.length <= 3);
+  if (big) {
     return (
       <div className="space-y-2">
         {items.map((item: any) => (
@@ -122,7 +126,7 @@ export function ProviderButtons({application, method}: ProviderButtonsProps) {
             key={item.name}
             type="button"
             variant="outline"
-            className="w-full justify-center gap-2"
+            className="provider-big-img w-full justify-center gap-2"
             onClick={() => goTo(item)}
           >
             <img
@@ -151,7 +155,7 @@ export function ProviderButtons({application, method}: ProviderButtonsProps) {
               <img
                 src={Setting.getProviderLogoURL(item.provider)}
                 alt={item.provider.displayName}
-                className="h-6 w-6 object-contain"
+                className="provider-img h-6 w-6 object-contain"
               />
             </button>
           </TooltipTrigger>

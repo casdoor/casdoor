@@ -14,10 +14,11 @@ const PADDING = 8;
  * The sign-in method strip: it shows as many methods as fit on one row and
  * moves the rest into a "More" menu.
  */
-export function SigninMethodTabs({methods, value, onChange}: {
+export function SigninMethodTabs({methods, value, onChange, className}: {
   methods: SigninMethod[];
   value?: string;
   onChange: (value: string) => void;
+  className?: string;
 }) {
   const stripRef = React.useRef<HTMLDivElement>(null);
   const measureRef = React.useRef<HTMLDivElement>(null);
@@ -77,7 +78,7 @@ export function SigninMethodTabs({methods, value, onChange}: {
   const overflow = methods.filter((item) => !visible.includes(item));
 
   return (
-    <Tabs value={value} onValueChange={onChange}>
+    <Tabs value={value} onValueChange={onChange} className={className}>
       {/* the track is drawn here so the "More" button can share it with the tabs */}
       <div ref={stripRef} className="relative flex h-9 w-full items-center gap-1 overflow-hidden rounded-lg bg-muted p-1">
         <TabsList className="h-7 min-w-0 flex-1 gap-1 rounded-none bg-transparent p-0 [&>button]:h-7 [&>button]:min-w-max [&>button]:flex-1 [&>button]:basis-0 [&>button]:px-1.5 [&>button]:text-xs">

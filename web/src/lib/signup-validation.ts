@@ -60,11 +60,37 @@ function isBlank(value: any): boolean {
 
 /** One item's error message, or "" when it is fine. */
 export function validateSignupItem(item: any, values: Record<string, any>, application: any): string {
+  // a "Text N" item is decoration, it edits nothing
+  if (Setting.isCustomFormItem(item)) {
+    return "";
+  }
+
   const field = getSignupItemField(item.name);
   const value = values[field];
   const required = !!item.required;
 
   switch (item.name) {
+  case "Display name": {
+    // the "First, last" rule replaces the single field with two of its own
+    if (item.rule === "First, last" && Setting.getLanguage() !== "zh") {
+      if (required && isBlank(values.firstName)) {
+        return i18next.t("signup:Please input your first name!");
+      }
+      if (required && isBlank(values.lastName)) {
+        return i18next.t("signup:Please input your last name!");
+      }
+      return "";
+    }
+    if (required && isBlank(value)) {
+      return item.rule === "Real name"
+        ? i18next.t("signup:Please input your real name!")
+        : i18next.t("signup:Please input your display name!");
+    }
+    if (!isBlank(value) && item.regex && !new RegExp(item.regex).test(value)) {
+      return i18next.t("signup:The input doesn't match the signup item regex!");
+    }
+    return "";
+  }
   case "Email":
   case "Email or Phone":
   case "Phone or Email": {

@@ -7,6 +7,7 @@ import {CaptchaModal} from "@/components/common/CaptchaModal";
 import * as AuthBackend from "@/backend/AuthBackend";
 import * as UserBackend from "@/backend/UserBackend";
 import * as Setting from "@/lib/setting";
+import {cn} from "@/lib/utils";
 
 export interface CaptchaValues {
   captchaType?: string;
@@ -35,6 +36,9 @@ interface SendCodeInputProps {
   captchaValue?: CaptchaValues;
   useInlineCaptcha?: boolean;
   refreshCaptcha?: () => void;
+  /** the signin/signup item can override the field placeholder and add its own class */
+  placeholder?: string;
+  className?: string;
 }
 
 /**
@@ -57,6 +61,8 @@ export function SendCodeInput({
   captchaValue,
   useInlineCaptcha,
   refreshCaptcha,
+  placeholder,
+  className,
 }: SendCodeInputProps) {
   const [seconds, setSeconds] = React.useState(0);
   const [sending, setSending] = React.useState(false);
@@ -161,11 +167,11 @@ export function SendCodeInput({
         <div className="relative flex-1">
           <ShieldCheck className="pointer-events-none absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
-            className="pl-8"
+            className={cn("pl-8", className)}
             value={value}
             disabled={disabled}
             autoComplete="one-time-code"
-            placeholder={i18next.t("code:Enter your code")}
+            placeholder={placeholder || i18next.t("code:Enter your code")}
             onChange={(e) => onChange(e.target.value)}
           />
         </div>
