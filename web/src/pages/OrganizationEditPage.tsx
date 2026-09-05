@@ -31,6 +31,8 @@ const TOKEN_FORMATS = ["JWT", "JWT-Empty", "JWT-Custom", "JWT-Standard"];
 const OBFUSCATOR_TYPES = ["Plain", "AES", "DES"];
 const VIEW_RULES = ["Public", "Self", "Admin"];
 const MODIFY_RULES = ["Self", "Admin", "Immutable"];
+/** an item only an admin may see is not one the user can be allowed to modify */
+const ADMIN_MODIFY_RULES = ["Admin", "Immutable"];
 /** `general:Optional` and friends do not exist; the antd table uses these. */
 const MFA_RULES: Record<string, string> = {
   "Optional": "organization:Optional",
@@ -451,7 +453,8 @@ export default function OrganizationEditPage() {
                       value={row.modifyRule}
                       disabled={!row.visible}
                       onChange={(value) => patch({modifyRule: value})}
-                      options={MODIFY_RULES.map((item) => ({id: item, name: item}))}
+                      options={(row.viewRule === "Admin" || row.name === "Is admin" ? ADMIN_MODIFY_RULES : MODIFY_RULES)
+                        .map((item) => ({id: item, name: item}))}
                     />
                   ),
                 },

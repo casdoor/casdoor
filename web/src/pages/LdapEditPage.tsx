@@ -158,7 +158,7 @@ export default function LdapEditPage() {
       </FormRow>
       <FormRow block labelKey="general:Password type">
         <SelectField
-          value={ldap.passwordType ?? "Plain"}
+          value={ldap.passwordType || "Plain"}
           onChange={(v) => update("passwordType", v)}
           options={enumSelectOptions(LDAP_PASSWORD_TYPES)}
         />
