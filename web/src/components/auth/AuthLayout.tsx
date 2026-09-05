@@ -29,6 +29,12 @@ interface AuthLayoutProps {
   hideLanguages?: boolean;
   /** told which language the visitor picked, so the signup page can save it */
   onLanguageChange?: (key: string) => void;
+  /**
+   * Rendered inside the application editor's preview: the application's theme,
+   * title, favicon and custom head belong to the visitor's page, not to the
+   * console the preview is embedded in.
+   */
+  preview?: boolean;
 }
 
 /** The "we cannot sign you in" panel, port of auth/Util.js renderMessageLarge(). */
@@ -44,16 +50,16 @@ function BlockedMessage({message}: {message: string}) {
 }
 
 /** Centered panel shared by the sign-in, sign-up, forget-password and result pages. */
-export function AuthLayout({application, children, className, wide, hideLogo, hideLanguages, onLanguageChange}: AuthLayoutProps) {
-  useApplicationTheme(application);
+export function AuthLayout({application, children, className, wide, hideLogo, hideLanguages, onLanguageChange, preview}: AuthLayoutProps) {
+  useApplicationTheme(application, !preview);
   // an application can force the dark palette regardless of the visitor's own
   // preference, and the logo has to follow the palette that is actually painted
   const isDark = useIsDark();
   const isMobile = useIsMobile();
-  useApplicationHelmet(application);
+  useApplicationHelmet(preview ? null : application);
   // headerHtml is the organization/application chrome, pageHtml is the per-page one
-  useCustomHead(application?.headerHtml, "header");
-  useCustomHead(application?.pageHtml, "page");
+  useCustomHead(preview ? undefined : application?.headerHtml, "header");
+  useCustomHead(preview ? undefined : application?.pageHtml, "page");
 
   // the backend hands us the organization's branding in cookies so the first
   // paint is already branded, before /api/get-application has come back

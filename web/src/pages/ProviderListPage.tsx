@@ -14,7 +14,7 @@ const PROVIDER_CATEGORIES = [
   "OAuth", "Payment", "SAML", "Scan", "SMS", "Storage", "Web3",
 ];
 
-export default function ProviderListPage() {
+export default function ProviderListPage({formItems}: {formItems?: any[]} = {}) {
   const {account} = useAccount();
   const organizationName = useRequestOrganization();
   const isGlobal = account ? Setting.isDefaultOrganizationSelected(account) : false;
@@ -67,6 +67,7 @@ export default function ProviderListPage() {
       title={i18next.t("application:Providers")}
       columns={columns}
       formType="providers"
+      formItems={formItems}
       deps={[organizationName, isGlobal]}
       fetch={(q) =>
         isGlobal

@@ -21,7 +21,8 @@ import {newUser} from "@/pages/defaults";
 export default function UserListPage({
   organizationName: organizationNameProp,
   groupName: groupNameProp,
-}: {organizationName?: string; groupName?: string}) {
+  formItems,
+}: {organizationName?: string; groupName?: string; formItems?: any[]} = {}) {
   const {account} = useAccount();
   const params = useParams();
   const [searchParams] = useSearchParams();
@@ -169,6 +170,7 @@ export default function UserListPage({
       description={groupName ? `${i18next.t("general:Groups")}: ${groupName}` : undefined}
       columns={columns}
       formType="users"
+      formItems={formItems}
       toolbar={({refresh}) => (
         <XlsxImport
           columns={Setting.getUserColumns()}

@@ -64,13 +64,14 @@ export default function WebhookEventListPage() {
   };
 
   const columns: ColumnDef<any>[] = [
-    textColumn({dataIndex: "name", title: i18next.t("general:Name"), width: 180, searchable: true, mono: true, fixed: "left"}),
+    // get-webhook-events has no free-text search, only the webhook and state
+    // filters below, so no column offers one
+    textColumn({dataIndex: "name", title: i18next.t("general:Name"), width: 180, mono: true, fixed: "left"}),
     {
       dataIndex: "webhook",
       title: i18next.t("general:Webhook"),
       width: 180,
       sortable: true,
-      searchable: true,
       render: (value) =>
         value ? (
           <Link to={`/webhooks/${Setting.getShortName(value)}`} className="underline-offset-4 hover:underline">
@@ -109,12 +110,13 @@ export default function WebhookEventListPage() {
         actionColumnWidth={200}
         fetch={(q) =>
           WebhookEventBackend.getWebhookEvents(
-            "admin",
+            "",
             organizationName,
             q.page,
             q.pageSize,
             "",
-            "",
+            // the state column's filter menu is the only filter the endpoint takes
+            q.searchedColumn === "state" ? q.searchText : "",
             q.sortField,
             q.sortOrder,
           )
