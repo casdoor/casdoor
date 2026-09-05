@@ -65,6 +65,20 @@ function getDefaultLoginMethod(application: any): LoginMethod {
 }
 
 /** The antd page's getPlaceholder(): what the single credential field accepts. */
+/** The message the antd form showed for an empty username, per sign-in method. */
+function getUsernameRequiredMessage(method: LoginMethod | undefined) {
+  switch (method) {
+  case "verificationCodeEmail":
+    return i18next.t("login:Please input your Email!");
+  case "verificationCodePhone":
+    return i18next.t("login:Please input your Phone!");
+  case "ldap":
+    return i18next.t("login:Please input your LDAP username!");
+  default:
+    return i18next.t("login:Please input your Email or Phone!");
+  }
+}
+
 function getUsernameLabel(method: LoginMethod | undefined) {
   switch (method) {
   case "verificationCode":
@@ -186,6 +200,7 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
   const [countryCode, setCountryCode] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [code, setCode] = React.useState("");
+  const [signinErrors, setSigninErrors] = React.useState<Record<string, string>>({});
   const [autoSignin, setAutoSignin] = React.useState(true);
   const [loading, setLoading] = React.useState(false);
   const [mfa, setMfa] = React.useState<{props: any; values: any; authParams: any} | null>(null);
@@ -464,6 +479,51 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
     return applyRequestType(values);
   };
 
+  /**
+   * The checks the antd form ran as Form rules. Without them an empty form is
+   * posted and the backend answers with a raw "unknown authentication type" dump.
+   */
+  const validateSignin = () => {
+    const found: Record<string, string> = {};
+    if (isPanelMethod) {
+      return found;
+    }
+
+    const value = username.trim();
+    if (isPhoneCodeMethod) {
+      if (countryCode === "" && !application.organizationObj?.countryCodes?.[0]) {
+        found.countryCode = i18next.t("signup:Please select your country code!");
+      } else if (value === "") {
+        found.username = i18next.t("signup:Please input your phone number!");
+      } else if (!Setting.isValidPhone(value, countryCode)) {
+        found.username = i18next.t("signup:The input is not valid Phone!");
+      }
+    } else if (value === "") {
+      if (loginMethod !== "webAuthn") {
+        found.username = getUsernameRequiredMessage(loginMethod);
+      }
+    } else if (loginMethod === "verificationCode" && !Setting.isValidEmail(value) && !Setting.isValidPhone(value)) {
+      found.username = i18next.t("login:The input is not valid Email or phone number!");
+    } else if (loginMethod === "verificationCodeEmail" && !Setting.isValidEmail(value)) {
+      found.username = i18next.t("login:The input is not valid Email!");
+    }
+
+    if ((loginMethod === "password" || loginMethod === "ldap") && password === "") {
+      found.password = i18next.t("login:Please input your password!");
+    }
+    if (isCodeMethod && code === "") {
+      found.code = i18next.t("login:Please input your code!");
+    }
+    return found;
+  };
+
+  /** the inline message under a field, as the antd Form.Item showed it */
+  const fieldError = (field: string) =>
+    signinErrors[field] ? <p className="text-xs text-destructive">{signinErrors[field]}</p> : null;
+
+  const clearError = (field: string) =>
+    setSigninErrors((prev) => (prev[field] ? {...prev, [field]: ""} : prev));
+
   const refreshInlineCaptcha = () => captchaRef.current?.loadCaptcha();
 
   const doLogin = (values: any) => {
@@ -558,6 +618,13 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
 
   const submit = (e?: React.FormEvent) => {
     e?.preventDefault();
+    const found = validateSignin();
+    setSigninErrors(found);
+    const firstError = Object.values(found)[0];
+    if (firstError) {
+      Setting.showMessage("error", firstError);
+      return;
+    }
     if (isAgreementRequired(application) && !agreed) {
       Setting.showMessage("error", i18next.t("signup:Please accept the agreement!"));
       return;
@@ -811,9 +878,14 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
                 autoComplete="tel"
                 placeholder={item.placeholder || i18next.t("general:Phone")}
                 value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                onChange={(e) => {
+                  setUsername(e.target.value);
+                  clearError("username");
+                }}
               />
             </div>
+            {fieldError("countryCode")}
+            {fieldError("username")}
           </div>
         );
       }
@@ -829,8 +901,12 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
             autoComplete="username"
             placeholder={item.placeholder || getUsernameLabel(loginMethod)}
             value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            onChange={(e) => {
+              setUsername(e.target.value);
+              clearError("username");
+            }}
           />
+          {fieldError("username")}
         </div>
       );
     case "Verification code":
@@ -843,7 +919,10 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
           <SendCodeInput
             className="verification-code-input"
             value={code}
-            onChange={setCode}
+            onChange={(v) => {
+              setCode(v);
+              clearError("code");
+            }}
             method="login"
             destType={loginMethod === "verificationCodeEmail" || (!isPhoneCodeMethod && username.includes("@")) ? "email" : "phone"}
             dest={username}
@@ -855,6 +934,7 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
             captchaValue={captchaValues}
             refreshCaptcha={refreshInlineCaptcha}
           />
+          {fieldError("code")}
         </div>
       );
     case "Password":
@@ -870,8 +950,12 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
             autoComplete="current-password"
             placeholder={item.placeholder}
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e) => {
+              setPassword(e.target.value);
+              clearError("password");
+            }}
           />
+          {fieldError("password")}
         </div>
       );
     case "Forgot password?":
