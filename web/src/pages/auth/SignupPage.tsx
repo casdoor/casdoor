@@ -6,6 +6,7 @@ import {Button} from "@/components/ui/button";
 import {Checkbox} from "@/components/ui/checkbox";
 import {Input} from "@/components/ui/input";
 import {Label} from "@/components/ui/label";
+import {CountryCodeSelect} from "@/components/common/CountryCodeSelect";
 import {Loading} from "@/components/common/Loading";
 import {MultiSelect} from "@/components/common/MultiSelect";
 import {SearchableSelect} from "@/components/common/SearchableSelect";
@@ -76,6 +77,9 @@ export default function SignupPage() {
             application: res.data.name,
             organization: res.data.organization,
             invitationCode,
+            // the antd CountryCodeSelect seeded the form with it, so the phone
+            // code request and the signup payload carry it even if untouched
+            countryCode: prev.countryCode ?? res.data.organizationObj?.countryCodes?.[0] ?? "",
           }));
           // an invitation can pin the email or phone the account must be created with
           if (invitationCode !== "") {
@@ -274,14 +278,10 @@ export default function SignupPage() {
         <Label htmlFor="phone">{item.label || i18next.t("general:Phone")}</Label>
         <div className="flex gap-2">
           <div className="w-32 shrink-0">
-            <SearchableSelect
-              value={values.countryCode ?? application.organizationObj?.countryCodes?.[0] ?? ""}
+            <CountryCodeSelect
+              value={values.countryCode ?? ""}
               onChange={(v) => set("countryCode", v)}
-              options={Setting.getCountryCodeData(application.organizationObj?.countryCodes).map((country: any) => ({
-                value: country.code,
-                label: `+${country.phone}`,
-                keywords: `${country.name} ${country.code} ${country.phone}`,
-              }))}
+              countryCodes={application.organizationObj?.countryCodes}
             />
           </div>
           <Input

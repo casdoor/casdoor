@@ -8,6 +8,7 @@ import {Switch} from "@/components/ui/switch";
 import {Textarea} from "@/components/ui/textarea";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import {Loading} from "@/components/common/Loading";
+import {CountryCodeSelect} from "@/components/common/CountryCodeSelect";
 import {CodeEditor} from "@/components/common/CodeEditor";
 import {MultiSelect} from "@/components/common/MultiSelect";
 import {SearchableSelect} from "@/components/common/SearchableSelect";
@@ -1156,14 +1157,10 @@ export default function ProviderEditPage() {
       <FormRow labelKey="provider:SMS Test">
         <div className="flex flex-wrap items-center gap-2">
           <div className="w-32 shrink-0">
-            <SearchableSelect
+            <CountryCodeSelect
               value={provider.content ?? ""}
               onChange={(v) => updateProviderField("content", v)}
-              options={Setting.getCountryCodeData(account?.organization?.countryCodes).map((country: any) => ({
-                value: country.code,
-                label: `+${country.phone}`,
-                keywords: `${country.name} ${country.code} ${country.phone}`,
-              }))}
+              countryCodes={account?.organization?.countryCodes}
             />
           </div>
           <Input

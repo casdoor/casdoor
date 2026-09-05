@@ -16,6 +16,8 @@ import {cn} from "@/lib/utils";
 export interface SearchableOption {
   value: string;
   label: React.ReactNode;
+  /** shown in the dropdown instead of `label`, which stays on the trigger */
+  itemLabel?: React.ReactNode;
   keywords?: string;
   disabled?: boolean;
 }
@@ -98,7 +100,7 @@ export function SearchableSelect({
                   }}
                 >
                   <Check className={cn("mr-2 h-4 w-4", value === option.value ? "opacity-100" : "opacity-0")} />
-                  {option.label}
+                  {option.itemLabel ?? option.label}
                 </CommandItem>
               ))}
             </CommandGroup>

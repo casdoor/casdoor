@@ -24,7 +24,17 @@ import copy from "copy-to-clipboard";
 import {toast} from "sonner";
 import * as phoneNumber from "libphonenumber-js";
 import countriesLib from "i18n-iso-countries";
+import deCountries from "i18n-iso-countries/langs/de.json";
 import enCountries from "i18n-iso-countries/langs/en.json";
+import esCountries from "i18n-iso-countries/langs/es.json";
+import frCountries from "i18n-iso-countries/langs/fr.json";
+import jaCountries from "i18n-iso-countries/langs/ja.json";
+import plCountries from "i18n-iso-countries/langs/pl.json";
+import ptCountries from "i18n-iso-countries/langs/pt.json";
+import trCountries from "i18n-iso-countries/langs/tr.json";
+import ukCountries from "i18n-iso-countries/langs/uk.json";
+import viCountries from "i18n-iso-countries/langs/vi.json";
+import zhCountries from "i18n-iso-countries/langs/zh.json";
 import * as Conf from "@/Conf";
 import {authConfig} from "@/auth/Auth";
 import "@/i18n";
@@ -103,12 +113,20 @@ export function getNameAtLeast(s) {
   return s.padEnd(6, " ");
 }
 
-let countriesInited = false;
+// only the languages that ship a UI bundle, see bundledLanguages in src/i18n.ts
+const countryLocales: Record<string, any> = {
+  de: deCountries, en: enCountries, es: esCountries, fr: frCountries, ja: jaCountries, pl: plCountries,
+  pt: ptCountries, tr: trCountries, uk: ukCountries, vi: viCountries, zh: zhCountries,
+};
+
+const registeredCountryLocales = new Set<string>();
 
 export function initCountries() {
-  if (!countriesInited) {
-    countriesLib.registerLocale(enCountries as any);
-    countriesInited = true;
+  for (const locale of ["en", getLanguage()]) {
+    if (!registeredCountryLocales.has(locale) && countryLocales[locale] !== undefined) {
+      countriesLib.registerLocale(countryLocales[locale]);
+      registeredCountryLocales.add(locale);
+    }
   }
   return countriesLib;
 }
@@ -846,9 +864,11 @@ export function getCountryCodeData(countryCodes: any = phoneNumber.getCountries(
   if (countryCodes?.includes("All")) {
     countryCodes = phoneNumber.getCountries();
   }
+  const countries = initCountries() as any;
   return countryCodes?.map((countryCode) => {
     if (phoneNumber.isSupportedCountry(countryCode)) {
-      const name = (initCountries() as any).getName(countryCode, getLanguage());
+      // fall back to English so an unregistered locale never empties the list
+      const name = countries.getName(countryCode, getLanguage()) || countries.getName(countryCode, "en");
       return {
         code: countryCode,
         name: name || "",
@@ -857,6 +877,25 @@ export function getCountryCodeData(countryCodes: any = phoneNumber.getCountries(
     }
   }).filter(item => item && item.name !== "")
     .sort((a, b) => Number(a.phone) - Number(b.phone));
+}
+
+// the trigger only has room for the calling code, but many countries share one
+// (+1 alone covers 20+), so the list itself has to show the country
+export function getCountryCodeOptions(countryCodes: any = undefined): any[] {
+  return getCountryCodeData(countryCodes).map((country: any) => ({
+    value: country.code,
+    label: `+${country.phone}`,
+    itemLabel: (
+      <span className="flex w-full items-center justify-between gap-2">
+        <span className="flex items-center truncate">
+          {getCountryImage(country)}
+          {country.name}
+        </span>
+        <span className="shrink-0 text-muted-foreground">{`+${country.phone}`}</span>
+      </span>
+    ),
+    keywords: `${country.name} ${country.code} ${country.phone}`,
+  }));
 }
 
 export function isProviderVisible(providerItem) {

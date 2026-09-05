@@ -1,5 +1,6 @@
 import * as React from "react";
 import {SearchableSelect} from "@/components/common/SearchableSelect";
+import {useLanguageVersion} from "@/hooks/use-language";
 import * as Setting from "@/lib/setting";
 
 /**
@@ -18,6 +19,8 @@ export function RegionSelect({
   disabled?: boolean;
   className?: string;
 }) {
+  // the country names are translated, so they have to be rebuilt on a language change
+  const languageVersion = useLanguageVersion();
   const options = React.useMemo(
     () =>
       Setting.getCountryCodeData()
@@ -32,7 +35,8 @@ export function RegionSelect({
           ),
         }))
         .sort((a: any, b: any) => a.keywords.localeCompare(b.keywords)),
-    [],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [languageVersion],
   );
 
   return (
