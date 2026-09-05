@@ -39,6 +39,22 @@ var orgOwnerObject = []string{
 	"-token",
 }
 
+// organizationParamObject lists the APIs whose controllers scope the returned or
+// modified objects by the "organization" query param, which makes that param the
+// object to authorize against.
+var organizationParamObject = []string{
+	"/api/get-applications",
+	"/api/get-organization-applications",
+	"/api/get-syncers",
+	"/api/get-syncer",
+	"/api/run-syncer",
+	"/api/get-tokens",
+	"/api/get-token",
+	"/api/get-webhooks",
+	"/api/get-webhook",
+	"/api/get-webhook-events",
+}
+
 type Object struct {
 	Owner string `json:"owner"`
 	Name  string `json:"name"`
@@ -135,21 +151,28 @@ func getObject(ctx *context.Context) (string, string, error) {
 
 	if method == http.MethodGet {
 		if ctx.Request.URL.Path == "/api/get-policies" {
-			if ctx.Input.Query("id") == "/" {
-				adapterId := ctx.Input.Query("adapterId")
-				if adapterId != "" {
-					return util.GetOwnerAndNameFromIdWithError(adapterId)
-				}
-			} else {
-				// query == "?id=built-in/admin"
-				id := ctx.Input.Query("id")
-				if id != "" {
-					return util.GetOwnerAndNameFromIdWithError(id)
-				}
+			// GetPolicies() works on the adapter as soon as "adapterId" is given and
+			// falls back to the enforcer of "id", so authorize the same way.
+			adapterId := ctx.Input.Query("adapterId")
+			if adapterId != "" {
+				return util.GetOwnerAndNameFromIdWithError(adapterId)
+			}
+
+			// query == "?id=built-in/admin"
+			id := ctx.Input.Query("id")
+			if id != "" && id != "/" {
+				return util.GetOwnerAndNameFromIdWithError(id)
 			}
 		}
 
-		organization := ctx.Input.Query("organization")
+		// The "organization" query param may decide the authorized object only for the
+		// APIs whose controllers really scope the operation by it. Anywhere else it is
+		// an unverified claim that would let a client get a request authorized against
+		// its own organization and executed against another organization's object.
+		organization := ""
+		if util.InSlice(organizationParamObject, path) {
+			organization = ctx.Input.Query("organization")
+		}
 
 		if !(strings.HasPrefix(ctx.Request.URL.Path, "/api/get-") && strings.HasSuffix(ctx.Request.URL.Path, "s")) || ctx.Request.URL.Path == "/api/get-ldap-users" {
 			// query == "?id=built-in/admin"
@@ -202,43 +225,80 @@ func getObject(ctx *context.Context) (string, string, error) {
 			}
 		}
 
-		body := ctx.Input.RequestBody
-		if len(body) == 0 {
-			return ctx.Request.Form.Get("owner"), ctx.Request.Form.Get("name"), nil
-		}
-
-		var obj Object
-
-		if isOwnerObjPath && !strings.HasSuffix(path, "-organization") {
-			var objWithOrg ObjectWithOrg
-			err := json.Unmarshal(body, &objWithOrg)
-			if err != nil {
-				o, n := ownerNameFromForm(ctx)
-				return o, n, nil
-			}
-			return objWithOrg.Organization, objWithOrg.Name, nil
-		}
-
-		err := json.Unmarshal(body, &obj)
-		if err != nil {
-			// Form-urlencoded, multipart, or other non-JSON body (common for web FormData).
-			o, n := ownerNameFromForm(ctx)
-			return o, n, nil
-		}
-
-		if strings.HasSuffix(path, "-organization") {
-			return obj.Name, obj.Name, nil
-		}
-
-		if path == "/api/delete-resource" {
-			tokens := strings.Split(obj.Name, "/")
-			if len(tokens) >= 5 {
-				obj.Name = tokens[4]
-			}
-		}
-
-		return obj.Owner, obj.Name, nil
+		owner, name := getObjectFromBody(ctx, path)
+		return owner, name, nil
 	}
+}
+
+// getObjectFromBody returns the object described by the request body, which is the
+// object most controllers actually operate on.
+func getObjectFromBody(ctx *context.Context, path string) (string, string) {
+	body := ctx.Input.RequestBody
+	if len(body) == 0 {
+		return ctx.Request.Form.Get("owner"), ctx.Request.Form.Get("name")
+	}
+
+	if checkIsOrgOwnerObject(path) && !strings.HasSuffix(path, "-organization") {
+		var objWithOrg ObjectWithOrg
+		err := json.Unmarshal(body, &objWithOrg)
+		if err != nil {
+			return ownerNameFromForm(ctx)
+		}
+		return objWithOrg.Organization, objWithOrg.Name
+	}
+
+	var obj Object
+	err := json.Unmarshal(body, &obj)
+	if err != nil {
+		// Form-urlencoded, multipart, or other non-JSON body (common for web FormData).
+		return ownerNameFromForm(ctx)
+	}
+
+	if strings.HasSuffix(path, "-organization") {
+		return obj.Name, obj.Name
+	}
+
+	if path == "/api/delete-resource" {
+		tokens := strings.Split(obj.Name, "/")
+		if len(tokens) >= 5 {
+			obj.Name = tokens[4]
+		}
+	}
+
+	return obj.Owner, obj.Name
+}
+
+// getObjects returns every object the request may act on. The authorization layer
+// resolves the object from the "?id=" query param, while many controllers ignore it
+// and act on the owner and name carried by the request body, so both objects must be
+// authorized. Otherwise an org admin can have a request authorized against an object
+// of their own organization and executed against another organization's object.
+func getObjects(ctx *context.Context) ([]Object, error) {
+	owner, name, err := getObject(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	path := ctx.Request.URL.Path
+	objects := []Object{{Owner: owner, Name: name}}
+
+	if ctx.Request.Method == http.MethodGet {
+		// Some APIs accept both "?id=" and "?owner=" and read the latter, e.g.
+		// /api/get-user-count and /api/get-dashboard, so authorize it as well. The
+		// APIs scoped by "?organization=" are left out, their row owner is "admin".
+		queryOwner := ctx.Input.Query("owner")
+		if queryOwner != "" && queryOwner != owner && !util.InSlice(organizationParamObject, path) {
+			objects = append(objects, Object{Owner: queryOwner})
+		}
+		return objects, nil
+	}
+
+	bodyOwner, bodyName := getObjectFromBody(ctx, path)
+	if bodyOwner != "" && (bodyOwner != owner || bodyName != name) {
+		objects = append(objects, Object{Owner: bodyOwner, Name: bodyName})
+	}
+
+	return objects, nil
 }
 
 func willLog(subOwner string, subName string, method string, urlPath string, objOwner string, objName string) bool {
@@ -341,24 +401,34 @@ func ApiFilter(ctx *context.Context) {
 	urlPath := getUrlPath(ctx)
 	extraInfo := getExtraInfo(ctx, urlPath)
 
-	objOwner, objName := "", ""
+	objects := []Object{{}}
 	if urlPath != "/api/get-app-login" && urlPath != "/api/get-resource" {
 		var err error
-		objOwner, objName, err = getObject(ctx)
+		objects, err = getObjects(ctx)
 		if err != nil {
 			responseError(ctx, err.Error())
 			return
 		}
 	}
+	objOwner, objName := objects[0].Owner, objects[0].Name
 
 	if strings.HasPrefix(urlPath, "/api/notify-payment") {
 		urlPath = "/api/notify-payment"
 	}
 
-	isAllowed, err := authz.IsAllowed(subOwner, subName, method, urlPath, objOwner, objName, extraInfo)
-	if err != nil {
-		responseError(ctx, err.Error())
-		return
+	isAllowed := true
+	for _, obj := range objects {
+		allowed, err := authz.IsAllowed(subOwner, subName, method, urlPath, obj.Owner, obj.Name, extraInfo)
+		if err != nil {
+			responseError(ctx, err.Error())
+			return
+		}
+
+		if !allowed {
+			isAllowed = false
+			objOwner, objName = obj.Owner, obj.Name
+			break
+		}
 	}
 
 	if method != "GET" && !strings.HasSuffix(urlPath, "-entry") {
