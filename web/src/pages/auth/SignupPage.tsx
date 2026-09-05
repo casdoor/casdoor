@@ -661,9 +661,6 @@ export default function SignupPage() {
         {signupItems.map((item: any) => (
           <CustomStyle key={`css-${item.name}`} css={item.customCss} />
         ))}
-        <h1 className="text-center text-xl font-semibold">
-          {i18next.t("account:Sign Up")} {application.displayName ? `- ${application.displayName}` : ""}
-        </h1>
         {items.map(renderItem)}
         {hasSignupButtonItem ? null : (
           <Button type="submit" className="signup-button w-full" loading={loading}>

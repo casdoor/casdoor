@@ -966,10 +966,6 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
           Setting.isCustomFormItem(item) ? null : <CustomStyle key={`css-${item.name}`} css={item.customCss} />,
         )}
 
-        <h1 className="text-center text-xl font-semibold">
-          {application.displayName || i18next.t("login:Sign In")}
-        </h1>
-
         {type === "device" && params.userCode ? (
           <div className="space-y-1 text-center">
             <h2 className="text-base font-semibold">{i18next.t("login:Approve sign-in on this device")}</h2>
