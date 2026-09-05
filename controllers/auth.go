@@ -941,6 +941,15 @@ func (c *ApiController) Login() {
 				return
 			}
 
+			// Apple's name only arrives in the form_post callback, and unsigned, so it
+			// may set the display name but never the username or email used for binding
+			if provider.Type == "Apple" {
+				appleDisplayName := takeAppleDisplayNameCookie(c.Ctx)
+				if appleDisplayName != "" {
+					userInfo.DisplayName = appleDisplayName
+				}
+			}
+
 			if provider.EmailRegex != "" {
 				reg, err := regexp.Compile(provider.EmailRegex)
 				if err != nil {
@@ -1571,6 +1580,8 @@ func (c *ApiController) GetCaptchaStatus() {
 func (c *ApiController) Callback() {
 	code := c.GetString("code")
 	state := c.GetString("state")
+
+	setAppleDisplayNameCookie(c.Ctx, getAppleDisplayName(c.GetString("user")))
 
 	frontendCallbackUrl := fmt.Sprintf("/callback?code=%s&state=%s", url.QueryEscape(code), url.QueryEscape(state))
 	c.Ctx.Redirect(http.StatusFound, frontendCallbackUrl)
