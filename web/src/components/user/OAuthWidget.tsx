@@ -167,8 +167,11 @@ function OAuthRow({user, application, providerItem, account, onUnlinked}: Widget
 }
 
 /** The whole "3rd-party logins" block of the user page. */
-export function ThirdPartyLogins({user, application, account, onUnlinked}: Omit<WidgetProps, "providerItem">) {
-  const items = (application?.providers ?? []).filter((item: any) => Setting.isProviderVisible(item));
+export function ThirdPartyLogins({user, application, account, onUnlinked, filter}: Omit<WidgetProps, "providerItem"> & {
+  /** the prompt page only lists the providers the application asks to be bound */
+  filter?: (providerItem: any) => boolean;
+}) {
+  const items = (application?.providers ?? []).filter(filter ?? ((item: any) => Setting.isProviderVisible(item)));
 
   if (items.length === 0) {
     return null;
