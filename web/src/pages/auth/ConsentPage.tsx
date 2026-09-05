@@ -119,6 +119,16 @@ export default function ConsentPage() {
           <h1 className="text-lg font-semibold">{i18next.t("consent:Authorization Request")}</h1>
           <p className="text-sm font-medium">{application.displayName || application.name}</p>
           <p className="text-sm text-muted-foreground">{i18next.t("consent:wants to access your account")}</p>
+          {application.homepageUrl ? (
+            <a
+              href={application.homepageUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs text-primary underline-offset-4 hover:underline"
+            >
+              {application.homepageUrl}
+            </a>
+          ) : null}
         </div>
 
         {scopeDescriptions.length === 0 ? (
@@ -143,10 +153,10 @@ export default function ConsentPage() {
 
         <div className="flex gap-2">
           <Button variant="outline" className="flex-1" onClick={deny} disabled={granting}>
-            {i18next.t("general:Cancel")}
+            {i18next.t("permission:Deny")}
           </Button>
-          <Button className="flex-1" loading={granting} onClick={grant}>
-            {i18next.t("general:OK")}
+          <Button className="flex-1" loading={granting} onClick={grant} disabled={granting || scopeDescriptions.length === 0}>
+            {i18next.t("permission:Allow")}
           </Button>
         </div>
 

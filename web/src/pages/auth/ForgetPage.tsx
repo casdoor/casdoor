@@ -8,7 +8,9 @@ import {Label} from "@/components/ui/label";
 import {Loading} from "@/components/common/Loading";
 import {AuthLayout} from "@/components/auth/AuthLayout";
 import {SendCodeInput} from "@/components/auth/SendCodeInput";
+import {PasswordRequirements, checkPasswordComplexity} from "@/lib/password-checker";
 import {authConfig} from "@/auth/Auth";
+import * as Obfuscator from "@/auth/Obfuscator";
 import * as ApplicationBackend from "@/backend/ApplicationBackend";
 import * as AuthBackend from "@/backend/AuthBackend";
 import * as UserBackend from "@/backend/UserBackend";
@@ -22,15 +24,21 @@ export default function ForgetPage() {
   const navigate = useNavigate();
   const applicationName = params.applicationName ?? authConfig.appName;
 
+  // A reset link mails the code in the query string, which skips straight to the
+  // last step; the code is then verified together with the new password.
+  const queryParams = React.useMemo(() => new URLSearchParams(window.location.search), []);
+  const linkCode = queryParams.get("code") ?? "";
+
   const [application, setApplication] = React.useState<any>(undefined);
-  const [step, setStep] = React.useState<Step>("account");
-  const [username, setUsername] = React.useState("");
-  const [account, setAccount] = React.useState("");
+  const [step, setStep] = React.useState<Step>(linkCode ? "password" : "account");
+  const [username, setUsername] = React.useState(queryParams.get("username") ?? "");
+  const [account, setAccount] = React.useState(queryParams.get("username") ?? "");
   const [dest, setDest] = React.useState({email: "", phone: "", countryCode: ""});
   const [method, setMethod] = React.useState<"email" | "phone">("email");
-  const [code, setCode] = React.useState("");
+  const [code, setCode] = React.useState(linkCode);
   const [password, setPassword] = React.useState("");
   const [confirm, setConfirm] = React.useState("");
+  const [passwordFocused, setPasswordFocused] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
 
   React.useEffect(() => {
@@ -59,6 +67,20 @@ export default function ForgetPage() {
   const hasProviderOfCategory = (category: string) =>
     application?.providers?.some((providerItem: any) => providerItem?.provider?.category === category &&
       ["forget", "", "All", "all", "None"].includes(providerItem.rule)) ?? false;
+
+  // only advertise the identifiers that can be used: a lookup by email or phone is
+  // a dead end when the matching provider is not configured for the application
+  const accountPlaceholder = () => {
+    const hasEmail = hasProviderOfCategory("Email");
+    const hasPhone = hasProviderOfCategory("SMS");
+    if (hasEmail && !hasPhone) {
+      return i18next.t("login:username or Email");
+    }
+    if (!hasEmail && hasPhone) {
+      return i18next.t("login:username or phone");
+    }
+    return i18next.t("login:username, Email or phone");
+  };
 
   const findAccount = () => {
     setLoading(true);
@@ -107,13 +129,52 @@ export default function ForgetPage() {
       .finally(() => setLoading(false));
   };
 
-  const resetPassword = () => {
+  const resetPassword = async() => {
+    const complexityError = checkPasswordComplexity(password, application.organizationObj?.passwordOptions);
+    if (complexityError !== "") {
+      Setting.showMessage("error", complexityError);
+      return;
+    }
     if (password !== confirm) {
       Setting.showMessage("error", i18next.t("signup:Your confirmed password is inconsistent with the password!"));
       return;
     }
+
     setLoading(true);
-    UserBackend.setPassword(application.organization, account, "", password, code)
+    // a code that arrived through the link has not been checked yet
+    if (linkCode) {
+      const verifyRes: any = await UserBackend.verifyCode({
+        application: application.name,
+        organization: application.organization,
+        username: queryParams.get("dest") ?? "",
+        name: account,
+        code: linkCode,
+        type: "login",
+      });
+      if (verifyRes.status !== "ok") {
+        Setting.showMessage("error", verifyRes.msg);
+        setLoading(false);
+        return;
+      }
+    }
+
+    const organization = application.organizationObj;
+    let newPassword = password;
+    if (organization?.passwordObfuscatorType && organization.passwordObfuscatorType !== "Plain") {
+      const [cipher, errorMessage] = Obfuscator.encryptByPasswordObfuscator(
+        organization.passwordObfuscatorType,
+        organization.passwordObfuscatorKey,
+        password,
+      );
+      if (errorMessage.length > 0) {
+        Setting.showMessage("error", errorMessage);
+        setLoading(false);
+        return;
+      }
+      newPassword = cipher;
+    }
+
+    UserBackend.setPassword(application.organization, account, "", newPassword, code)
       .then((res: any) => {
         if (res.status === "ok") {
           Setting.showMessage("success", i18next.t("user:Password set successfully"));
@@ -145,6 +206,7 @@ export default function ForgetPage() {
               <Input
                 id="account"
                 autoFocus
+                placeholder={accountPlaceholder()}
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && findAccount()}
@@ -201,7 +263,14 @@ export default function ForgetPage() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                onFocus={() => setPasswordFocused(true)}
               />
+              {passwordFocused ? (
+                <PasswordRequirements
+                  options={application.organizationObj?.passwordOptions}
+                  password={password}
+                />
+              ) : null}
             </div>
             <div className="space-y-2">
               <Label htmlFor="confirmPassword">{i18next.t("user:Re-enter New")}</Label>

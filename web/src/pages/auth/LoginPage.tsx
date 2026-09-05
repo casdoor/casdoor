@@ -29,6 +29,7 @@ import {getCaptchaProvider} from "@/lib/captcha";
 import {useAccount} from "@/hooks/use-account";
 import {authConfig} from "@/auth/Auth";
 import * as Util from "@/auth/Util";
+import * as Provider from "@/auth/Provider";
 import {signInWithWebAuthn} from "@/auth/webauthn";
 import * as Obfuscator from "@/auth/Obfuscator";
 import * as ApplicationBackend from "@/backend/ApplicationBackend";
@@ -37,7 +38,7 @@ import * as OrganizationBackend from "@/backend/OrganizationBackend";
 import * as Setting from "@/lib/setting";
 
 type LoginType = "login" | "code" | "cas" | "saml" | "device";
-type LoginMethod = "password" | "verificationCode" | "verificationCodeEmail" | "verificationCodePhone" | "ldap" | "webAuthn" | "wechat" | "faceId";
+type LoginMethod = "password" | "verificationCode" | "verificationCodeEmail" | "verificationCodePhone" | "ldap" | "webAuthn" | "wechat" | "faceId" | "device";
 
 function getDefaultLoginMethod(application: any): LoginMethod {
   const first = application?.signinMethods?.[0];
@@ -60,8 +61,76 @@ function getDefaultLoginMethod(application: any): LoginMethod {
     return "webAuthn";
   case "Face ID":
     return "faceId";
+  case "Device login":
+    if (first?.rule === "Tab") {
+      return "device";
+    }
+    break;
   }
   return "password";
+}
+
+/**
+ * The method strip of the antd page: the application lists its sign-in methods in
+ * the order they should appear, each with its own rule and display name.
+ */
+const SIGNIN_METHOD_KEYS = new Map<string, LoginMethod>([
+  ["Password-All", "password"],
+  ["Password-Non-LDAP", "password"],
+  ["Verification code-All", "verificationCode"],
+  ["Verification code-Email only", "verificationCodeEmail"],
+  ["Verification code-Phone only", "verificationCodePhone"],
+  ["WebAuthn-None", "webAuthn"],
+  ["LDAP-None", "ldap"],
+  ["Face ID-None", "faceId"],
+  ["Device login-Tab", "device"],
+  ["WeChat-Tab", "wechat"],
+  ["WeChat-None", "wechat"],
+]);
+
+function getSigninMethods(application: any, type: string) {
+  const methods: {value: LoginMethod; label: string}[] = [];
+  const signinMethods = (application?.signinMethods ?? []) as any[];
+
+  signinMethods.forEach((signinMethod) => {
+    if (Setting.isSigninMethodHidden(signinMethod)) {
+      return;
+    }
+    // on the device-approval page the device tab would loop back to itself
+    if (type === "device" && signinMethod.name === "Device login") {
+      return;
+    }
+    const value = SIGNIN_METHOD_KEYS.get(`${signinMethod.name}-${signinMethod.rule}`);
+    if (!value) {
+      return;
+    }
+    let label = signinMethod.name === signinMethod.displayName ? getSigninMethodLabel(value) : signinMethod.displayName;
+    if (signinMethods.length >= 4 && label === "Verification code") {
+      label = "Code";
+    }
+    methods.push({value, label});
+  });
+
+  return methods;
+}
+
+function getSigninMethodLabel(method: LoginMethod) {
+  switch (method) {
+  case "password":
+    return i18next.t("general:Password");
+  case "ldap":
+    return i18next.t("login:LDAP");
+  case "webAuthn":
+    return i18next.t("login:WebAuthn");
+  case "faceId":
+    return i18next.t("login:Face ID");
+  case "device":
+    return i18next.t("login:Device login");
+  case "wechat":
+    return i18next.t("login:WeChat");
+  default:
+    return i18next.t("login:Verification code");
+  }
 }
 
 /** The antd page's getPlaceholder(): what the single credential field accepts. */
@@ -210,6 +279,8 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
   const [captchaValues, setCaptchaValues] = React.useState<CaptchaValues | undefined>(undefined);
   const captchaRef = React.useRef<CaptchaHandle | null>(null);
   const [saml, setSaml] = React.useState<{response: string; redirectUrl: string; relayState: string} | null>(null);
+  // the device-code flow ends on the page itself: "" while it runs, then the outcome
+  const [userCodeStatus, setUserCodeStatus] = React.useState<"" | "expired" | "canceled" | "success">("");
 
   const owner = params.owner;
   const applicationName = params.applicationName ?? authConfig.appName;
@@ -245,6 +316,9 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
           if (res.status === "ok") {
             onLoaded(res.data);
           } else {
+            if (type === "device") {
+              setUserCodeStatus("expired");
+            }
             setApplication(null);
             setMsg(res.msg);
           }
@@ -295,6 +369,26 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
     }
   }, [account, type, navigate, location.search]);
 
+  /** An iframe-embedded sign-in reports its progress to the host page. */
+  const sendSilentSigninData = (data: string) => {
+    if (Setting.inIframe()) {
+      window.parent.postMessage({tag: "Casdoor", type: "SilentSignin", data}, "*");
+    }
+  };
+
+  /** A sign-in opened as a popup hands the result back instead of redirecting. */
+  const sendPopupData = (message: any, redirectUri: string) => {
+    const searchParams = new URLSearchParams(location.search);
+    if (searchParams.get("popup") !== "1") {
+      return;
+    }
+    if ((searchParams.get("popup_type") || "window") === "iframe") {
+      window.parent.postMessage(message, new URL(redirectUri).origin);
+    } else {
+      window.opener?.postMessage(message, redirectUri);
+    }
+  };
+
   const postCodeLoginAction = (res: any) => {
     const oAuthParams = Util.getOAuthGetParameters();
     const codeValue = res.data;
@@ -333,7 +427,12 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
       window.open(redirectUrl);
       return;
     }
-    Setting.goToLink(redirectUrl);
+    const searchParams = new URLSearchParams(location.search);
+    const isIframePopup = searchParams.get("popup") === "1" && (searchParams.get("popup_type") || "window") === "iframe";
+    if (!isIframePopup) {
+      Setting.goToLink(redirectUrl);
+    }
+    sendPopupData({type: "loginSuccess", data: {code: codeValue, state: oAuthParams.state}}, oAuthParams.redirectUri);
   };
 
   const handleLoginResult = (res: any, values: any, authParams: any) => {
@@ -344,6 +443,9 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
     if (responseType === "login") {
       Setting.showMessage("success", i18next.t("application:Logged in successfully"));
       reload().then(() => navigate(Setting.getFromLink(), {state: {from: "/login"}}));
+    } else if (responseType === "device") {
+      Setting.showMessage("success", i18next.t("application:Logged in successfully"));
+      setUserCodeStatus("success");
     } else if (responseType === "code") {
       postCodeLoginAction(res);
     } else if (responseTypes.includes("token") || responseTypes.includes("id_token")) {
@@ -587,14 +689,12 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
   };
 
   /** the user rejected this device-code sign-in from the approval page */
-  const [deviceCanceled, setDeviceCanceled] = React.useState(false);
-
   const cancelDeviceLogin = () => {
     const cancelToken = new URLSearchParams(location.search).get("cancelToken") || "";
     AuthBackend.cancelDeviceLogin(params.userCode, cancelToken)
       .then((res: any) => {
         if (res.status === "ok") {
-          setDeviceCanceled(true);
+          setUserCodeStatus("canceled");
         } else {
           Setting.showMessage("error", res.msg || i18next.t("general:Failed to cancel"));
         }
@@ -713,8 +813,60 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
     doLogin(values);
   };
 
+  // A popup host wants to know when the visitor closes the window without signing in.
+  React.useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    if (searchParams.get("popup") !== "1") {
+      return;
+    }
+    const onUnload = () => sendPopupData({type: "windowClosed"}, searchParams.get("redirect_uri") ?? "");
+    window.addEventListener("beforeunload", onUnload);
+    return () => window.removeEventListener("beforeunload", onUnload);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.search]);
+
+  /**
+   * The antd page's componentDidUpdate: a visitor already signed in to this
+   * organization does not have to touch the form. A silent sign-in reports back to
+   * the embedding page, and `enableAutoSignin` submits on its own.
+   */
+  const autoSignedIn = React.useRef(false);
+  React.useEffect(() => {
+    if (account === undefined) {
+      return;
+    }
+    if (account === null) {
+      sendSilentSigninData("user-not-logged-in");
+      return;
+    }
+    if (!application || account.owner !== application.organization || autoSignedIn.current) {
+      return;
+    }
+
+    const silentSignin = new URLSearchParams(location.search).get("silentSignin");
+    if (silentSignin !== null) {
+      autoSignedIn.current = true;
+      sendSilentSigninData("signing-in");
+      loginAsCurrentAccount();
+    } else if (application.enableAutoSignin) {
+      autoSignedIn.current = true;
+      loginAsCurrentAccount();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [account, application, location.search]);
+
   if (saml !== null) {
     return <RedirectForm samlResponse={saml.response} redirectUrl={saml.redirectUrl} relayState={saml.relayState} />;
+  }
+
+  if (userCodeStatus === "expired") {
+    return (
+      <AuthLayout>
+        <Alert variant="destructive">
+          <AlertDescription>{`Code ${i18next.t("subscription:Expired")}`}</AlertDescription>
+        </Alert>
+      </AuthLayout>
+    );
   }
 
   if (application === undefined) {
@@ -749,11 +901,21 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
     );
   }
 
-  if (deviceCanceled) {
+  if (userCodeStatus === "canceled") {
     return (
       <AuthLayout application={application}>
         <Alert variant="warning">
           <AlertDescription>{i18next.t("login:Device login was canceled")}</AlertDescription>
+        </Alert>
+      </AuthLayout>
+    );
+  }
+
+  if (userCodeStatus === "success") {
+    return (
+      <AuthLayout application={application}>
+        <Alert>
+          <AlertDescription>{i18next.t("application:Logged in successfully")}</AlertDescription>
         </Alert>
       </AuthLayout>
     );
@@ -777,32 +939,39 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
   const faceIdEnabled = Setting.isFaceIdEnabled(application);
   // an application with a Face ID provider lets the backend do the recognition
   const hasFaceIdProvider = (application.providers ?? []).some((item: any) => item.provider?.category === "Face ID");
-  const wechatEnabled = (application.providers ?? []).some(
-    (item: any) => item.provider?.type === "WeChat" && Setting.isProviderVisibleForSignIn(item),
-  );
   const isCodeMethod = (loginMethod ?? "").startsWith("verificationCode");
   // "Email only" and "Phone only" share the "Verification code" tab, but they are
   // different methods: the tab has to lead back to the one the application configured
   const codeMethod = getCodeLoginMethod(application);
   const isPhoneCodeMethod = loginMethod === "verificationCodePhone";
   const activeTab = isCodeMethod ? codeMethod : loginMethod;
-  const methods = [
-    passwordEnabled ? {value: "password", label: i18next.t("general:Password")} : null,
-    codeEnabled ? {value: codeMethod, label: i18next.t("login:Verification code")} : null,
-    ldapEnabled ? {value: "ldap", label: i18next.t("login:LDAP")} : null,
-    webAuthnEnabled ? {value: "webAuthn", label: i18next.t("login:WebAuthn")} : null,
-    faceIdEnabled ? {value: "faceId", label: i18next.t("login:Face ID")} : null,
-    wechatEnabled ? {value: "wechat", label: i18next.t("login:WeChat")} : null,
-  ].filter(Boolean) as {value: LoginMethod; label: string}[];
+  // the application lists its methods in the order it wants them shown, each with
+  // its own rule and display name
+  const methods = getSigninMethods(application, type);
   const showTabs = methods.length > 1;
   // each block of the form can be hidden from "Signin items" in the application
   const isVisible = (name: string) => Setting.isSigninItemVisible(application, name);
   // the QR panels replace the credential form entirely
-  const isPanelMethod = loginMethod === "wechat";
+  const isPanelMethod = loginMethod === "wechat" || loginMethod === "device";
   // device login is offered next to the form when the application asks for it
   const deviceLoginOnLoginPage = type !== "device" && (application.signinMethods ?? []).some(
     (item: any) => item.name === "Device login" && item.rule === "Login page",
   );
+  // the WeChat QR code can sit next to the form instead of replacing it
+  const wechatOnLoginPage = (application.signinMethods ?? []).some(
+    (item: any) => item.name === "WeChat" && item.rule === "Login page",
+  );
+  // without any credential method there is no form, only the providers
+  const showForm = passwordEnabled || codeEnabled || webAuthnEnabled || ldapEnabled || faceIdEnabled;
+
+  // With no form and a single third-party provider there is nothing to choose.
+  const visibleOAuthProviderItems = (application.providers ?? []).filter(
+    (item: any) => Setting.isProviderVisibleForSignIn(item) && item.provider?.category !== "SAML",
+  );
+  if (!passwordEnabled && !codeEnabled && !webAuthnEnabled && !ldapEnabled && visibleOAuthProviderItems.length === 1) {
+    Setting.goToLink(Provider.getAuthUrl(application, visibleOAuthProviderItems[0].provider, "signin"));
+    return <Loading className="min-h-screen" />;
+  }
 
   // An application can ask the visitor which organization they belong to before
   // showing the form. Choosing one reloads /login/<org> with the box turned off,
@@ -820,8 +989,7 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
 
   // Already signed in to this organization: offer the one-click path before the
   // form, which is how an OAuth or device request gets approved.
-  const showSignedInBox =
-    !!account && account.owner === application.organization && !(type === "device" && deviceCanceled);
+  const showSignedInBox = !!account && account.owner === application.organization;
 
   // The whole page can be replaced by the application's own markup.
   if (application.signinHtml) {
@@ -829,12 +997,49 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
   }
 
   const signinItems = (application.signinItems ?? []) as any[];
+  const hasCodeSigninItem = signinItems.some((item: any) => item.name === "Verification code");
 
   /**
    * One entry of the application's "Signin items", rendered in the configured
    * order. An item carries its own label, placeholder and custom CSS, and the
    * "Text N" ones carry raw HTML instead of a widget.
    */
+  /**
+   * The verification-code field. The application may place it as its own signin
+   * item; when it does not, the antd page renders it in the password slot, so a
+   * code-based sign-in still has somewhere to type the code.
+   */
+  const renderCodeInput = (item: any) => (
+    <div key={item.name} className="verification-code space-y-2">
+      <Label>{item.label || i18next.t("login:Verification code")}</Label>
+      <SendCodeInput
+        className="verification-code-input"
+        value={code}
+        onChange={(v) => {
+          setCode(v);
+          clearError("code");
+        }}
+        method="login"
+        destType={loginMethod === "verificationCodeEmail" || (!isPhoneCodeMethod && username.includes("@")) ? "email" : "phone"}
+        dest={username}
+        // the antd page only enabled the button once the identifier parsed
+        disabled={isPhoneCodeMethod
+          ? !Setting.isValidPhone(username, countryCode)
+          : loginMethod === "verificationCodeEmail"
+            ? !Setting.isValidEmail(username)
+            : !Setting.isValidEmail(username) && !Setting.isValidPhone(username)}
+        countryCode={isPhoneCodeMethod ? countryCode : ""}
+        placeholder={item.placeholder}
+        application={application}
+        applicationId={Setting.getApplicationName(application)}
+        useInlineCaptcha={Setting.isInlineCaptchaEnabled(application)}
+        captchaValue={captchaValues}
+        refreshCaptcha={refreshInlineCaptcha}
+      />
+      {fieldError("code")}
+    </div>
+  );
+
   const renderSigninItem = (item: any) => {
     const key = item.name;
     if (Setting.isCustomFormItem(item)) {
@@ -869,8 +1074,11 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
         </div>
       );
     case "Username":
-      if (isPanelMethod) {
+      if (loginMethod === "wechat") {
         return <WeChatLoginPanel key={key} application={application} />;
+      }
+      if (loginMethod === "device") {
+        return <DeviceLoginPanel key={key} application={application} onSuccess={completeDeviceLogin} />;
       }
       if (isPhoneCodeMethod) {
         return (
@@ -927,33 +1135,13 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
       if (isPanelMethod || !isCodeMethod) {
         return null;
       }
-      return (
-        <div key={key} className="verification-code space-y-2">
-          <Label>{item.label || i18next.t("login:Verification code")}</Label>
-          <SendCodeInput
-            className="verification-code-input"
-            value={code}
-            onChange={(v) => {
-              setCode(v);
-              clearError("code");
-            }}
-            method="login"
-            destType={loginMethod === "verificationCodeEmail" || (!isPhoneCodeMethod && username.includes("@")) ? "email" : "phone"}
-            dest={username}
-            countryCode={isPhoneCodeMethod ? countryCode : ""}
-            placeholder={item.placeholder}
-            application={application}
-            applicationId={Setting.getApplicationName(application)}
-            useInlineCaptcha={Setting.isInlineCaptchaEnabled(application)}
-            captchaValue={captchaValues}
-            refreshCaptcha={refreshInlineCaptcha}
-          />
-          {fieldError("code")}
-        </div>
-      );
+      return renderCodeInput(item);
     case "Password":
-      if (isPanelMethod || isCodeMethod || loginMethod === "webAuthn" || loginMethod === "faceId") {
+      if (isPanelMethod || loginMethod === "webAuthn" || loginMethod === "faceId") {
         return null;
+      }
+      if (isCodeMethod) {
+        return hasCodeSigninItem ? null : renderCodeInput(item);
       }
       return (
         <div key={key} className="login-password space-y-2">
@@ -1110,9 +1298,38 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
           </div>
         ) : null}
 
-        <form className="space-y-4" onSubmit={submit}>
-          {signinItems.map(renderSigninItem)}
-        </form>
+        {showForm ? (
+          <form className="space-y-4" onSubmit={submit}>
+            {signinItems.map(renderSigninItem)}
+          </form>
+        ) : (
+          <div className="space-y-4">
+            <div className="text-base">
+              {i18next.t("login:To access")}&nbsp;
+              <a
+                target="_blank"
+                rel="noreferrer"
+                href={application.homepageUrl}
+                className="font-bold underline-offset-4 hover:underline"
+              >
+                {application.displayName}
+              </a>
+              :
+            </div>
+            {signinItems
+              .filter((item: any) => item.name === "Providers" || item.name === "Signup link")
+              .map(renderSigninItem)}
+          </div>
+        )}
+
+        {wechatOnLoginPage ? (
+          <div className="space-y-2 border-t pt-4">
+            <h3 className="text-center text-sm font-medium">
+              {i18next.t("provider:Please use WeChat to scan the QR code and follow the official account for sign in")}
+            </h3>
+            <WeChatLoginPanel application={application} />
+          </div>
+        ) : null}
 
         {deviceLoginOnLoginPage ? (
           <div className="border-t pt-4">
