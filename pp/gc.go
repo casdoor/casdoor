@@ -251,7 +251,7 @@ func (pp *GcPaymentProvider) Notify(body []byte, orderId string) (*NotifyResult,
 	price := notifyRespInfo.Amount
 
 	if notifyRespInfo.OrderState != "1" {
-		return nil, fmt.Errorf("error order state: %s", notifyRespInfo.OrderDate)
+		return nil, fmt.Errorf("error order state: %s", notifyRespInfo.OrderState)
 	}
 	notifyResult := &NotifyResult{
 		ProductName:        productName,
