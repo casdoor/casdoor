@@ -8,6 +8,7 @@ import {Label} from "@/components/ui/label";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 import {Alert, AlertDescription} from "@/components/ui/alert";
 import {Loading} from "@/components/common/Loading";
+import {CustomHtml, CustomStyle} from "@/components/common/CustomHtml";
 import {AuthLayout} from "@/components/auth/AuthLayout";
 import {SigninMethodTabs} from "@/components/auth/SigninMethodTabs";
 import {MfaVerify, NextMfa, RequiredMfa} from "@/components/auth/MfaVerify";
@@ -126,10 +127,10 @@ function OrganizationChoiceBox({mode}: {mode: string}) {
  * `forgetUrl`, and the sign-in URL is remembered so the OAuth flow can resume
  * once the password has been reset.
  */
-function ForgetLink({application}: {application: any}) {
+function ForgetLink({application, label}: {application: any; label?: string}) {
   const url = Setting.getForgetLink(application);
   const className = "text-xs text-muted-foreground underline-offset-4 hover:underline";
-  const text = i18next.t("login:Forgot password?");
+  const text = label || i18next.t("login:Forgot password?");
 
   if (url?.startsWith("/")) {
     return <Link to={url} onClick={Setting.storeSigninUrl} className={className}>{text}</Link>;
@@ -698,9 +699,205 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
   const showSignedInBox =
     !!account && account.owner === application.organization && !(type === "device" && deviceCanceled);
 
+  // The whole page can be replaced by the application's own markup.
+  if (application.signinHtml) {
+    return <CustomHtml html={application.signinHtml} />;
+  }
+
+  const signinItems = (application.signinItems ?? []) as any[];
+
+  /**
+   * One entry of the application's "Signin items", rendered in the configured
+   * order. An item carries its own label, placeholder and custom CSS, and the
+   * "Text N" ones carry raw HTML instead of a widget.
+   */
+  const renderSigninItem = (item: any) => {
+    const key = item.name;
+    if (Setting.isCustomFormItem(item)) {
+      return item.visible ? <CustomHtml key={key} html={item.customCss} /> : null;
+    }
+    // the antd page keeps the auto sign-in checkbox even when the link is hidden
+    if (!item.visible && item.name !== "Forgot password?") {
+      return null;
+    }
+
+    switch (item.name) {
+    // Logo and Languages are rendered by AuthLayout, which is told about their
+    // visibility, and the browser's own back gesture replaces the back button
+    case "Logo":
+    case "Languages":
+    case "Back button":
+      return null;
+    case "Signin methods":
+      return showTabs ? (
+        <SigninMethodTabs
+          key={key}
+          className="signin-methods"
+          methods={methods}
+          value={activeTab}
+          onChange={(v) => setLoginMethod(v as LoginMethod)}
+        />
+      ) : null;
+    case "Select organization":
+      return (
+        <div key={key} className="login-organization-select">
+          <OrganizationSelect
+            value={application.organization}
+            onChange={(value) => Setting.goToLink(`/login/${value}?orgChoiceMode=None`)}
+          />
+        </div>
+      );
+    case "Username":
+      if (isPanelMethod) {
+        return <WeChatLoginPanel key={key} application={application} />;
+      }
+      return (
+        <div key={key} className="login-username space-y-2">
+          <Label htmlFor="username">
+            {item.label || (isCodeMethod ? i18next.t("login:Email or phone") : i18next.t("signup:Username"))}
+          </Label>
+          <Input
+            id="username"
+            className="login-username-input"
+            autoFocus
+            autoComplete="username"
+            placeholder={item.placeholder}
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
+        </div>
+      );
+    case "Verification code":
+      if (isPanelMethod || !isCodeMethod) {
+        return null;
+      }
+      return (
+        <div key={key} className="verification-code space-y-2">
+          <Label>{item.label || i18next.t("login:Verification code")}</Label>
+          <SendCodeInput
+            className="verification-code-input"
+            value={code}
+            onChange={setCode}
+            method="login"
+            destType={username.includes("@") ? "email" : "phone"}
+            dest={username}
+            placeholder={item.placeholder}
+            application={application}
+            applicationId={Setting.getApplicationName(application)}
+            useInlineCaptcha={Setting.isInlineCaptchaEnabled(application)}
+            captchaValue={captchaValues}
+            refreshCaptcha={refreshInlineCaptcha}
+          />
+        </div>
+      );
+    case "Password":
+      if (isPanelMethod || isCodeMethod || loginMethod === "webAuthn" || loginMethod === "faceId") {
+        return null;
+      }
+      return (
+        <div key={key} className="login-password space-y-2">
+          <Label htmlFor="password">{item.label || i18next.t("general:Password")}</Label>
+          <Input
+            id="password"
+            className="login-password-input"
+            type="password"
+            autoComplete="current-password"
+            placeholder={item.placeholder}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </div>
+      );
+    case "Forgot password?":
+      return (
+        <div key={key} className="login-forget-password flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <Checkbox id="autoSignin" checked={autoSignin} onCheckedChange={(v) => setAutoSignin(v === true)} />
+            <Label htmlFor="autoSignin" className="login-auto-signin text-sm font-normal">
+              {i18next.t("login:Auto sign in")}
+            </Label>
+          </div>
+          {item.visible ? <ForgetLink application={application} label={item.label} /> : null}
+        </div>
+      );
+    case "Agreement":
+      return application.termsOfUse ? (
+        <AgreementCheckbox key={key} application={application} checked={agreed} onChange={setAgreed} />
+      ) : null;
+    case "Captcha":
+      if (item.rule !== "inline" || !captchaProvider) {
+        return null;
+      }
+      return (
+        <CaptchaModal
+          key={key}
+          noModal
+          owner={captchaProvider.owner}
+          name={captchaProvider.name}
+          isCurrentProvider
+          innerRef={captchaRef}
+          onUpdateToken={(captchaType, captchaToken, clientSecret) =>
+            setCaptchaValues({captchaType, captchaToken, clientSecret})
+          }
+        />
+      );
+    case "Login button":
+      if (isPanelMethod) {
+        return null;
+      }
+      return (
+        <div key={key} className="login-button-box space-y-3">
+          <Button type="submit" className="login-button w-full" loading={loading}>
+            {loginMethod === "webAuthn"
+              ? i18next.t("login:Sign in with WebAuthn")
+              : loginMethod === "faceId"
+                ? i18next.t("login:Sign in with Face ID")
+                : type === "device"
+                  ? i18next.t("login:Approve and sign in")
+                  : item.label || i18next.t("login:Sign In")}
+          </Button>
+          {type === "device" ? (
+            <Button type="button" variant="outline" className="w-full" onClick={cancelDeviceLogin}>
+              {i18next.t("general:Cancel")}
+            </Button>
+          ) : null}
+        </div>
+      );
+    case "Signup link":
+      return application.enableSignUp ? (
+        <p key={key} className="login-signup-link text-center text-sm text-muted-foreground">
+          {item.label ? null : <span className="mr-1">{i18next.t("login:No account?")}</span>}
+          <Link to={`/signup/${application.name}`} className="text-foreground underline-offset-4 hover:underline">
+            {item.label || i18next.t("login:sign up now")}
+          </Link>
+        </p>
+      ) : null;
+    case "Providers":
+      return (
+        <ProviderButtons
+          key={key}
+          application={application}
+          method="signin"
+          rule={Setting.getProvidersRule(application, item)}
+        />
+      );
+    default:
+      return null;
+    }
+  };
+
   return (
-    <AuthLayout application={application}>
+    <AuthLayout
+      application={application}
+      hideLogo={!isVisible("Logo")}
+      hideLanguages={!isVisible("Languages")}
+    >
       <div className="space-y-5">
+        {/* each item styles itself; a "Text N" item holds HTML, not CSS */}
+        {signinItems.map((item: any) =>
+          Setting.isCustomFormItem(item) ? null : <CustomStyle key={`css-${item.name}`} css={item.customCss} />,
+        )}
+
         <h1 className="text-center text-xl font-semibold">
           {application.displayName || i18next.t("login:Sign In")}
         </h1>
@@ -743,127 +940,15 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
           </div>
         ) : null}
 
-        {showTabs && isVisible("Signin methods") ? (
-          <SigninMethodTabs
-            methods={methods}
-            value={activeTab}
-            onChange={(v) => setLoginMethod(v as LoginMethod)}
-          />
-        ) : null}
-
-        {isPanelMethod ? <WeChatLoginPanel application={application} /> : (
-          <form className="space-y-4" onSubmit={submit}>
-            {isVisible("Username") ? (
-              <div className="space-y-2">
-                <Label htmlFor="username">
-                  {isCodeMethod ? i18next.t("login:Email or phone") : i18next.t("signup:Username")}
-                </Label>
-                <Input
-                  id="username"
-                  autoFocus
-                  autoComplete="username"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                />
-              </div>
-            ) : null}
-
-            {isCodeMethod && isVisible("Verification code") ? (
-              <div className="space-y-2">
-                <Label>{i18next.t("login:Verification code")}</Label>
-                <SendCodeInput
-                  value={code}
-                  onChange={setCode}
-                  method="login"
-                  destType={username.includes("@") ? "email" : "phone"}
-                  dest={username}
-                  application={application}
-                  applicationId={Setting.getApplicationName(application)}
-                  useInlineCaptcha={Setting.isInlineCaptchaEnabled(application)}
-                  captchaValue={captchaValues}
-                  refreshCaptcha={refreshInlineCaptcha}
-                />
-              </div>
-            ) : null}
-
-            {!isCodeMethod && loginMethod !== "webAuthn" && loginMethod !== "faceId" && isVisible("Password") ? (
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="password">{i18next.t("general:Password")}</Label>
-                  {isVisible("Forgot password?") ? <ForgetLink application={application} /> : null}
-                </div>
-                <Input
-                  id="password"
-                  type="password"
-                  autoComplete="current-password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </div>
-            ) : null}
-
-            {captchaProvider && Setting.isInlineCaptchaEnabled(application) ? (
-              <CaptchaModal
-                noModal
-                owner={captchaProvider.owner}
-                name={captchaProvider.name}
-                isCurrentProvider
-                innerRef={captchaRef}
-                onUpdateToken={(captchaType, captchaToken, clientSecret) =>
-                  setCaptchaValues({captchaType, captchaToken, clientSecret})
-                }
-              />
-            ) : null}
-
-            {isVisible("Auto sign in") ? (
-              <div className="flex items-center gap-2">
-                <Checkbox id="autoSignin" checked={autoSignin} onCheckedChange={(v) => setAutoSignin(v === true)} />
-                <Label htmlFor="autoSignin" className="text-sm font-normal">
-                  {i18next.t("login:Auto sign in")}
-                </Label>
-              </div>
-            ) : null}
-
-            {application.termsOfUse && isVisible("Agreement") ? (
-              <AgreementCheckbox application={application} checked={agreed} onChange={setAgreed} />
-            ) : null}
-
-            {isVisible("Login button") ? (
-              <Button type="submit" className="w-full" loading={loading}>
-                {loginMethod === "webAuthn"
-                  ? i18next.t("login:Sign in with WebAuthn")
-                  : loginMethod === "faceId"
-                    ? i18next.t("login:Sign in with Face ID")
-                    : type === "device"
-                      ? i18next.t("login:Approve and sign in")
-                      : i18next.t("login:Sign In")}
-              </Button>
-            ) : null}
-
-            {type === "device" ? (
-              <Button type="button" variant="outline" className="w-full" onClick={cancelDeviceLogin}>
-                {i18next.t("general:Cancel")}
-              </Button>
-            ) : null}
-          </form>
-        )}
+        <form className="space-y-4" onSubmit={submit}>
+          {signinItems.map(renderSigninItem)}
+        </form>
 
         {deviceLoginOnLoginPage ? (
           <div className="border-t pt-4">
             <DeviceLoginPanel application={application} onSuccess={completeDeviceLogin} />
           </div>
         ) : null}
-
-        {application.enableSignUp && isVisible("Signup link") ? (
-          <p className="text-center text-sm text-muted-foreground">
-            {i18next.t("login:No account?")}{" "}
-            <Link to={`/signup/${application.name}`} className="text-foreground underline-offset-4 hover:underline">
-              {i18next.t("login:sign up now")}
-            </Link>
-          </p>
-        ) : null}
-
-        {isVisible("Providers") ? <ProviderButtons application={application} method="signin" /> : null}
 
         <GoogleOneTap application={application} />
 

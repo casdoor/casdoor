@@ -6,12 +6,14 @@ import {Button} from "@/components/ui/button";
 import {Card, CardContent} from "@/components/ui/card";
 import {LanguageSelect} from "@/components/common/LanguageSelect";
 import {ThemeToggle} from "@/components/common/ThemeToggle";
+import {CustomHtml, CustomStyle} from "@/components/common/CustomHtml";
 import {
   getOrganizationCookieChrome,
   useApplicationHelmet,
   useApplicationTheme,
   useCustomHead,
 } from "@/hooks/use-application-chrome";
+import {useIsMobile} from "@/hooks/use-mobile";
 import {useIsDark} from "@/hooks/use-theme";
 import * as Setting from "@/lib/setting";
 import {cn} from "@/lib/utils";
@@ -22,6 +24,9 @@ interface AuthLayoutProps {
   className?: string;
   /** widen the card for the signup form */
   wide?: boolean;
+  /** the sign-in page drives these two slots from its own signinItems */
+  hideLogo?: boolean;
+  hideLanguages?: boolean;
 }
 
 /** The "we cannot sign you in" panel, port of auth/Util.js renderMessageLarge(). */
@@ -37,11 +42,12 @@ function BlockedMessage({message}: {message: string}) {
 }
 
 /** Centered panel shared by the sign-in, sign-up, forget-password and result pages. */
-export function AuthLayout({application, children, className, wide}: AuthLayoutProps) {
+export function AuthLayout({application, children, className, wide, hideLogo, hideLanguages}: AuthLayoutProps) {
   useApplicationTheme(application);
   // an application can force the dark palette regardless of the visitor's own
   // preference, and the logo has to follow the palette that is actually painted
   const isDark = useIsDark();
+  const isMobile = useIsMobile();
   useApplicationHelmet(application);
   // headerHtml is the organization/application chrome, pageHtml is the per-page one
   useCustomHead(application?.headerHtml, "header");
@@ -65,27 +71,54 @@ export function AuthLayout({application, children, className, wide}: AuthLayoutP
   );
   const footerHtml = application?.footerHtml || cookieChrome.footerHtml;
 
+  // the customized form styling is meant for the standalone page, an embedded
+  // one keeps the host page's own look, as the antd pages did
+  const embedded = Setting.inIframe();
+  const backgroundUrl = embedded
+    ? undefined
+    : (isMobile ? application?.formBackgroundUrlMobile : application?.formBackgroundUrl);
+  // formOffset: 1 left, 2 center, 3 right, 4 center with the side panel
+  const offset = embedded || isMobile ? 2 : (application?.formOffset ?? 2);
+  const sidePanel = offset === 4 && application?.formSideHtml;
+
   return (
-    <div className="flex min-h-screen flex-col bg-muted/30">
+    <div
+      className={cn("login-background flex min-h-screen flex-col bg-muted/30", backgroundUrl && "bg-cover bg-fixed bg-center")}
+      style={backgroundUrl ? {backgroundImage: `url(${backgroundUrl})`} : undefined}
+    >
+      {embedded ? null : <CustomStyle css={isMobile ? application?.formCssMobile : application?.formCss} />}
+
       <div className="flex items-center justify-end gap-1 p-3">
-        <LanguageSelect languages={application?.organizationObj?.languages} />
+        {hideLanguages ? null : <LanguageSelect languages={application?.organizationObj?.languages} />}
         <ThemeToggle />
       </div>
 
-      <div className="flex flex-1 items-start justify-center px-4 pb-10 pt-4 sm:items-center sm:pt-0">
-        <div className={cn("w-full", wide ? "max-w-xl" : "max-w-sm", className)}>
-          <div className="mb-6 flex justify-center">
-            {application?.homepageUrl ? (
-              <a href={application.homepageUrl} target="_blank" rel="noreferrer">
-                <img src={logo} alt={application?.displayName ?? "Casdoor"} className="h-12 object-contain" />
-              </a>
-            ) : (
-              <img src={logo} alt={application?.displayName ?? "Casdoor"} className="h-12 object-contain" />
+      <div
+        className={cn(
+          "login-content flex flex-1 items-start px-4 pb-10 pt-4 sm:items-center sm:pt-0",
+          offset === 1 ? "justify-start sm:pl-[10%]" : offset === 3 ? "justify-end sm:pr-[10%]" : "justify-center",
+        )}
+      >
+        <div className={cn("login-panel flex w-full items-center gap-8", sidePanel ? "max-w-4xl" : wide ? "max-w-xl" : "max-w-sm")}>
+          {sidePanel ? (
+            <CustomHtml html={application.formSideHtml} className="side-image hidden w-[420px] shrink-0 lg:block" />
+          ) : null}
+          <div className={cn("login-form w-full", className)}>
+            {hideLogo ? null : (
+              <div className="login-logo-box mb-6 flex justify-center">
+                {application?.homepageUrl ? (
+                  <a href={application.homepageUrl} target="_blank" rel="noreferrer">
+                    <img src={logo} alt={application?.displayName ?? "Casdoor"} className="h-12 object-contain" />
+                  </a>
+                ) : (
+                  <img src={logo} alt={application?.displayName ?? "Casdoor"} className="h-12 object-contain" />
+                )}
+              </div>
             )}
+            <Card className="shadow-md">
+              <CardContent className="p-6">{children}</CardContent>
+            </Card>
           </div>
-          <Card className="shadow-md">
-            <CardContent className="p-6">{children}</CardContent>
-          </Card>
         </div>
       </div>
 
