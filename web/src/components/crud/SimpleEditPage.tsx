@@ -53,7 +53,12 @@ export type EditField =
   | (BaseField & {type: "switch"})
   | (BaseField & {type: "tags"; placeholder?: string})
   | (BaseField & {type: "select"; options: (ctx: Ctx) => SearchableOption[]})
-  | (BaseField & {type: "multiselect"; options: (ctx: Ctx) => MultiSelectOption[]; creatable?: boolean})
+  | (BaseField & {
+    type: "multiselect";
+    options: (ctx: Ctx) => MultiSelectOption[];
+    /** a predicate when only some records may invent their own values */
+    creatable?: boolean | ((ctx: Ctx) => boolean);
+  })
   | (BaseField & {type: "code"; language?: string; height?: number})
   | (BaseField & {type: "custom"; render: (ctx: Ctx, update: (field: string, value: any) => void) => React.ReactNode});
 
@@ -108,6 +113,12 @@ export function SimpleEditPage({
   const [saving, setSaving] = React.useState(false);
   const [errors, setErrors] = React.useState<Record<string, string>>({});
   const {record, updateField, updateFields, loading, denied, mode, setMode, reload} = useEditRecord<any>({fetch, transform, deps});
+  const savedIdentity = React.useRef<{owner: any; name: any} | null>(null);
+
+  React.useEffect(() => {
+    savedIdentity.current = null;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, deps);
 
   if (denied) {
     return <UnauthorizedPage />;
@@ -118,6 +129,12 @@ export function SimpleEditPage({
   }
 
   const ctx: Ctx = {record, mode, reload};
+
+  // the identity the record was last loaded or saved under: a rejected rename has
+  // to be rolled back, or the next save would address an object that never existed
+  if (savedIdentity.current === null && mode !== "add") {
+    savedIdentity.current = {owner: record.owner, name: record.name};
+  }
 
   const isEmpty = (value: any) =>
     value === undefined || value === null || value === "" || (Array.isArray(value) && value.length === 0);
@@ -180,6 +197,13 @@ export function SimpleEditPage({
           // the server fills in what the form could not know: generated ids and
           // secrets, computed prices, defaults taken from the organization
           reload();
+        }
+        savedIdentity.current = {owner: record.owner, name: record.name};
+      },
+      onFailed: () => {
+        // the antd pages put the name back when the backend rejects the save
+        if (!isAdd && savedIdentity.current) {
+          updateFields(savedIdentity.current);
         }
       },
     });
@@ -266,7 +290,7 @@ export function SimpleEditPage({
       control = (
         <MultiSelect
           disabled={disabled}
-          creatable={field.creatable}
+          creatable={typeof field.creatable === "function" ? field.creatable(ctx) : field.creatable}
           value={value ?? []}
           onChange={(v) => set(v)}
           options={field.options(ctx)}

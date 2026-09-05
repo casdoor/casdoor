@@ -1,16 +1,17 @@
+import * as React from "react";
 import i18next from "i18next";
 import {useParams} from "react-router-dom";
 import {SimpleEditPage, type EditField} from "@/components/crud/SimpleEditPage";
 import {useAccount} from "@/hooks/use-account";
 import {
-  useAdapterOptions,
   useApplicationOptions,
   useGroupOptions,
-  useModelOptions,
   useOrganizationOptions,
   useRoleOptions,
   useUserOptions,
 } from "@/hooks/use-options";
+import * as AdapterBackend from "@/backend/AdapterBackend";
+import * as ModelBackend from "@/backend/ModelBackend";
 import * as PermissionBackend from "@/backend/PermissionBackend";
 import {
   enumOptions,
@@ -30,9 +31,38 @@ export default function PermissionEditPage() {
   const users = useUserOptions(organizationName);
   const groups = useGroupOptions(organizationName);
   const roles = useRoleOptions(organizationName);
-  const models = useModelOptions(organizationName);
-  const adapters = useAdapterOptions(organizationName);
   const applications = useApplicationOptions(organizationName);
+  // the backend resolves both through GetModel()/GetAdapter(), which take "owner/name"
+  const [models, setModels] = React.useState<any[]>([]);
+  const [adapters, setAdapters] = React.useState<any[]>([]);
+
+  React.useEffect(() => {
+    if (!organizationName) {
+      return;
+    }
+    ModelBackend.getModels(organizationName, 1, 1000).then((res: any) => {
+      if (res.status === "ok") {
+        setModels(res.data ?? []);
+      }
+    });
+    AdapterBackend.getAdapters(organizationName, 1, 1000).then((res: any) => {
+      if (res.status === "ok") {
+        setAdapters(res.data ?? []);
+      }
+    });
+  }, [organizationName]);
+
+  const toIdOptions = (items: any[]) =>
+    items.map((item) => ({value: `${item.owner}/${item.name}`, label: `${item.owner}/${item.name}`}));
+
+  /** the Casbin model decides whether roles and domains mean anything for this permission */
+  const modelTextOf = (modelId: string) =>
+    models.find((item) => `${item.owner}/${item.name}` === modelId)?.modelText ?? "";
+  const hasRoleDefinition = (modelId: string) => modelTextOf(modelId).includes("role_definition");
+  const hasDomainDefinition = (modelId: string) => {
+    const match = modelTextOf(modelId).match(/request_definition\s*\]\s*r\s*=\s*([^\r\n]+)/);
+    return match ? match[1].split(",").map((token: string) => token.trim()).includes("dom") : false;
+  };
 
   const fields: EditField[] = [
     {
@@ -47,10 +77,21 @@ export default function PermissionEditPage() {
     {type: "text", name: "description", labelKey: "general:Description"},
     {type: "multiselect", name: "users", labelKey: "role:Sub users", options: () => users},
     {type: "multiselect", name: "groups", labelKey: "role:Sub groups", options: () => groups},
-    {type: "multiselect", name: "roles", labelKey: "role:Sub roles", options: () => roles},
-    {type: "tags", name: "domains", labelKey: "role:Sub domains"},
-    {type: "select", name: "model", labelKey: "general:Model", options: () => models},
-    {type: "select", name: "adapter", labelKey: "general:Adapter", options: () => adapters},
+    {
+      type: "multiselect",
+      name: "roles",
+      labelKey: "role:Sub roles",
+      options: () => roles,
+      disabled: (ctx) => !hasRoleDefinition(ctx.record.model),
+    },
+    {
+      type: "tags",
+      name: "domains",
+      labelKey: "role:Sub domains",
+      disabled: (ctx) => !hasDomainDefinition(ctx.record.model),
+    },
+    {type: "select", name: "model", labelKey: "general:Model", options: () => toIdOptions(models)},
+    {type: "select", name: "adapter", labelKey: "general:Adapter", options: () => toIdOptions(adapters)},
     {
       type: "select",
       name: "resourceType",
@@ -61,7 +102,8 @@ export default function PermissionEditPage() {
       type: "multiselect",
       name: "resources",
       labelKey: "general:Resources",
-      creatable: true,
+      // antd only lets a "Custom" permission invent its own resource names
+      creatable: (ctx) => ctx.record.resourceType === "Custom",
       // an API permission is scoped to backend paths; everything else to applications
       options: (ctx) =>
         ctx.record.resourceType === "API"
@@ -72,6 +114,7 @@ export default function PermissionEditPage() {
       type: "multiselect",
       name: "actions",
       labelKey: "permission:Actions",
+      creatable: (ctx) => ctx.record.resourceType === "Custom",
       options: (ctx) =>
         enumOptions(ctx.record.resourceType === "API" ? PERMISSION_API_ACTIONS : PERMISSION_ACTIONS),
     },
