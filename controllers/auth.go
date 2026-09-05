@@ -904,6 +904,7 @@ func (c *ApiController) Login() {
 				return
 			}
 			idpInfo.CodeVerifier = authForm.CodeVerifier
+			idpInfo.State = authForm.State
 			var idProvider idp.IdProvider
 			idProvider, err = idp.GetIdProvider(idpInfo, authForm.RedirectUri)
 			if err != nil {
@@ -1571,6 +1572,32 @@ func (c *ApiController) GetCaptchaStatus() {
 func (c *ApiController) Callback() {
 	code := c.GetString("code")
 	state := c.GetString("state")
+
+	// Apple's one-time form_post callback: ONLY when the "name"/"email"
+	// scopes were requested (see the "Apple" case in idp.NewGothIdProvider),
+	// and ONLY on the account's very FIRST authorization ever, Apple includes
+	// a `user` field here carrying the real name/email as JSON. It is never
+	// sent again on any later sign-in, and goth's Apple session has no field
+	// for it -- FetchUser only decodes the ID token, which carries email but
+	// never a name -- so it is lost forever unless captured right here.
+	// Stashed by `state` for idp.GetUserInfo to consume exactly once, moments
+	// later in the same login attempt (see idp.AppleUserInfoCache).
+	if rawUser := c.GetString("user"); rawUser != "" && state != "" {
+		var payload struct {
+			Name struct {
+				FirstName string `json:"firstName"`
+				LastName  string `json:"lastName"`
+			} `json:"name"`
+			Email string `json:"email"`
+		}
+		if err := json.Unmarshal([]byte(rawUser), &payload); err == nil {
+			idp.AppleUserInfoCache.Store(state, idp.AppleUserInfo{
+				FirstName: payload.Name.FirstName,
+				LastName:  payload.Name.LastName,
+				Email:     payload.Email,
+			})
+		}
+	}
 
 	frontendCallbackUrl := fmt.Sprintf("/callback?code=%s&state=%s", url.QueryEscape(code), url.QueryEscape(state))
 	c.Ctx.Redirect(http.StatusFound, frontendCallbackUrl)

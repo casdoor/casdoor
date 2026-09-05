@@ -21,6 +21,7 @@ import (
 	"net/url"
 	"reflect"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/casdoor/casdoor/util"
@@ -90,9 +91,14 @@ type GothIdProvider struct {
 	Provider     goth.Provider
 	Session      goth.Session
 	CodeVerifier string
+	// The OAuth `state` for this login attempt, threaded in from
+	// ProviderInfo.State. Only read by the "apple" branch of getUser, to pick
+	// up the one-time real name/email cached under this same value by
+	// controllers.Callback -- see AppleUserInfoCache.
+	State string
 }
 
-func NewGothIdProvider(providerType string, clientId string, clientSecret string, clientId2 string, clientSecret2 string, redirectUrl string, hostUrl string) (*GothIdProvider, error) {
+func NewGothIdProvider(providerType string, clientId string, clientSecret string, clientId2 string, clientSecret2 string, redirectUrl string, hostUrl string, state string) (*GothIdProvider, error) {
 	var idp GothIdProvider
 	switch providerType {
 	case "Amazon":
@@ -121,7 +127,13 @@ func NewGothIdProvider(providerType string, clientId string, clientSecret string
 		}
 
 		idp = GothIdProvider{
-			Provider: apple.New(clientId, *secret, redirectUrl, nil),
+			// Request the "name"/"email" scopes so Apple actually sends
+			// something to ask for: without them, goth never sets
+			// formPostResponseMode, Apple never uses response_mode=form_post,
+			// and the one-time `user` payload (the only place Apple ever
+			// puts the real name) never arrives at all. See
+			// controllers.Callback for where that payload is then captured.
+			Provider: apple.New(clientId, *secret, redirectUrl, nil, apple.ScopeName, apple.ScopeEmail),
 			Session:  &apple.Session{},
 		}
 	case "AzureAD":
@@ -420,6 +432,7 @@ func NewGothIdProvider(providerType string, clientId string, clientSecret string
 		return nil, fmt.Errorf("OAuth Goth provider type: %s is not supported", providerType)
 	}
 
+	idp.State = state
 	return &idp, nil
 }
 
@@ -481,10 +494,29 @@ func (idp *GothIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
 	if err != nil {
 		return nil, err
 	}
-	return getUser(gothUser, idp.Provider.Name()), nil
+	return getUser(gothUser, idp.Provider.Name(), idp.State), nil
 }
 
-func getUser(gothUser goth.User, provider string) *UserInfo {
+// AppleUserInfo is the real name/email Apple includes in its one-time
+// form_post callback, captured by controllers.Callback and consumed exactly
+// once here, moments later in the same login attempt.
+type AppleUserInfo struct {
+	FirstName string
+	LastName  string
+	Email     string
+}
+
+// AppleUserInfoCache holds AppleUserInfo keyed by the OAuth `state` it
+// arrived under. A sync.Map rather than a request-scoped value because the
+// data is captured by a DIFFERENT HTTP request (Apple's own POST straight to
+// /api/callback) than the one that later calls GetUserInfo (the frontend's
+// subsequent login call) -- there is no request context to carry it on.
+// LoadAndDelete makes each entry single-use, matching Apple's own behavior:
+// it never resends this payload, so nothing here should ever be read twice
+// or linger past the login attempt it was captured for.
+var AppleUserInfoCache sync.Map
+
+func getUser(gothUser goth.User, provider string, state string) *UserInfo {
 	user := UserInfo{
 		Id:          gothUser.UserID,
 		Username:    gothUser.Name,
@@ -547,7 +579,24 @@ func getUser(gothUser goth.User, provider string) *UserInfo {
 		user.Username = user.Id
 		user.Email = ""
 	} else if provider == "apple" {
+		// goth's Apple FetchUser never has a name to give us -- its Session
+		// only decodes the ID token, which carries email but never a name --
+		// so this used to unconditionally invent a username from the email,
+		// even for a first, name-and-email-scoped authorization where Apple's
+		// one-time form_post callback actually had the real name. Prefer
+		// that, when this login attempt has it cached.
 		user.Username = util.GetUsernameFromEmail(user.Email)
+		if cached, ok := AppleUserInfoCache.LoadAndDelete(state); ok {
+			info := cached.(AppleUserInfo)
+			if info.Email != "" {
+				user.Email = info.Email
+			}
+			if info.FirstName != "" || info.LastName != "" {
+				name := getName(info.FirstName, info.LastName)
+				user.DisplayName = name
+				user.Username = name
+			}
+		}
 	}
 	return &user
 }
