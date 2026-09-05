@@ -1,13 +1,30 @@
 import * as React from "react";
 import i18next from "i18next";
 import {Badge} from "@/components/ui/badge";
+import {Button} from "@/components/ui/button";
 import {GridCards, type GridCardItem} from "@/components/common/GridCards";
 import {Loading} from "@/components/common/Loading";
 import {PageHeader} from "@/components/crud/PageHeader";
 import {useAccount} from "@/hooks/use-account";
 import * as ApplicationBackend from "@/backend/ApplicationBackend";
-import * as Setting from "@/lib/setting";
 import {cn} from "@/lib/utils";
+
+/** the antd page's generateTagColor(): a djb2 hash into a fixed palette */
+const TAG_COLORS = [
+  "#ff4d4f", "#f5222d", "#ff7a45", "#fa541c",
+  "#ffa940", "#fa8c16", "#ffc53d", "#faad14",
+  "#ffec3d", "#fadb14", "#bae637", "#a0d911",
+  "#73d13d", "#52c41a", "#36cfc9", "#13c2c2",
+  "#40a9ff", "#1890ff", "#f759ab", "#eb2f96",
+];
+
+function tagColor(tag: string) {
+  let hash = 5381;
+  for (let i = 0; i < tag.length; i++) {
+    hash = (hash * 33) ^ tag.charCodeAt(i);
+  }
+  return TAG_COLORS[Math.abs(hash) % TAG_COLORS.length];
+}
 
 export default function AppListPage() {
   const {account} = useAccount();
@@ -40,11 +57,15 @@ export default function AppListPage() {
       );
 
   const items: GridCardItem[] = filtered.map((application: any) => ({
-    link: Setting.getLoginLink(application),
+    // the card opens the application itself, not Casdoor's sign-in page
+    link: application.homepageUrl === "<custom-url>" ? account?.homepage ?? "" : application.homepageUrl,
     name: application.displayName || application.name,
     description: application.description,
     logo: application.logo,
-    createdTime: application.createdTime,
+    tags: (Array.isArray(application.tags) ? application.tags : []).map((tag: string) => ({
+      name: tag,
+      color: tagColor(tag),
+    })),
     isExternal: true,
   }));
 
@@ -69,6 +90,11 @@ export default function AppListPage() {
               </button>
             );
           })}
+          {selectedTags.length > 0 ? (
+            <Button variant="ghost" size="sm" className="h-6" onClick={() => setSelectedTags([])}>
+              {i18next.t("forget:Reset")}
+            </Button>
+          ) : null}
         </div>
       ) : null}
       <GridCards items={items} />
