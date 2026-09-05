@@ -243,6 +243,11 @@ func (c *ApiController) UpdatePolicy() {
 		return
 	}
 
+	if len(policies) < 2 {
+		c.ResponseError("The request body should contain at least two policies (old and new)")
+		return
+	}
+
 	affected, err := object.UpdatePolicy(id, policies[0].Ptype, util.CasbinToSlice(policies[0]), util.CasbinToSlice(policies[1]))
 	if err != nil {
 		c.ResponseError(err.Error())
