@@ -65,7 +65,6 @@ function getDefaultLoginMethod(application: any): LoginMethod {
 }
 
 /** The antd page's getPlaceholder(): what the single credential field accepts. */
-/** The message the antd form showed for an empty username, per sign-in method. */
 function getUsernameRequiredMessage(method: LoginMethod | undefined) {
   switch (method) {
   case "verificationCodeEmail":
@@ -479,10 +478,7 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
     return applyRequestType(values);
   };
 
-  /**
-   * The checks the antd form ran as Form rules. Without them an empty form is
-   * posted and the backend answers with a raw "unknown authentication type" dump.
-   */
+  /** the checks the antd form ran as Form rules; without them an empty form is posted */
   const validateSignin = () => {
     const found: Record<string, string> = {};
     if (isPanelMethod) {
@@ -517,12 +513,33 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
     return found;
   };
 
-  /** the inline message under a field, as the antd Form.Item showed it */
   const fieldError = (field: string) =>
     signinErrors[field] ? <p className="text-xs text-destructive">{signinErrors[field]}</p> : null;
 
   const clearError = (field: string) =>
     setSigninErrors((prev) => (prev[field] ? {...prev, [field]: ""} : prev));
+
+  /** the organization is encoded in the client id or the path, so keep the query string */
+  const switchLoginOrganization = (name: string) => {
+    const searchParams = new URLSearchParams(window.location.search);
+
+    const clientId = searchParams.get("client_id");
+    if (clientId) {
+      searchParams.set("client_id", `${clientId.split("-org-")[0]}-org-${name}`);
+      Setting.goToLink(`/login/oauth/authorize?${searchParams.toString()}`);
+      return;
+    }
+    if (window.location.pathname.startsWith("/login/saml/authorize")) {
+      Setting.goToLink(`/login/saml/authorize/${name}/${application.name}-org-${name}?${searchParams.toString()}`);
+      return;
+    }
+    if (window.location.pathname.startsWith("/cas")) {
+      Setting.goToLink(`/cas/${application.name}-org-${name}/${name}/login?${searchParams.toString()}`);
+      return;
+    }
+    searchParams.set("orgChoiceMode", "None");
+    Setting.goToLink(`/login/${name}?${searchParams.toString()}`);
+  };
 
   const refreshInlineCaptcha = () => captchaRef.current?.loadCaptcha();
 
@@ -848,10 +865,7 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
     case "Select organization":
       return (
         <div key={key} className="login-organization-select">
-          <OrganizationSelect
-            value={application.organization}
-            onChange={(value) => Setting.goToLink(`/login/${value}?orgChoiceMode=None`)}
-          />
+          <OrganizationSelect value={application.organization} onChange={switchLoginOrganization} />
         </div>
       );
     case "Username":
@@ -959,8 +973,7 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
         </div>
       );
     case "Forgot password?":
-      // the item's default CSS pins this row at 320px, which the panel can be
-      // narrower than, so the width is capped and the row may wrap
+      // the item's default CSS pins this row at 320px, wider than some panels
       return (
         <div key={key} className="login-forget-password flex max-w-full flex-wrap items-center justify-between gap-x-2 gap-y-1">
           <div className="flex items-center gap-2">
@@ -1019,8 +1032,6 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
       if (!application.enableSignUp) {
         return null;
       }
-      // the application can point the link at a page of its own, and the sign-in
-      // URL is remembered so the OAuth flow can resume after the signup
       const signupUrl = Setting.getSignupLink(application) ?? "/signup";
       const signupText = item.label || i18next.t("login:sign up now");
       const signupClass = "text-foreground underline-offset-4 hover:underline";

@@ -117,8 +117,15 @@ export default function ForgetPage() {
       .then((res: any) => {
         if (res.status === "ok") {
           Setting.showMessage("success", i18next.t("user:Password set successfully"));
-          // back to where the sign-in started, so the OAuth flow can carry on to the application
-          navigate(Setting.getStoredSigninUrl() || `/login/${application.organization}`);
+          // back to where the sign-in started, so the OAuth flow can carry on to
+          // the application; without a stored URL the application's own sign-in
+          // page is the destination, not Casdoor's
+          const link = Setting.getStoredSigninUrl() || Setting.getLoginLink(application) || "/login";
+          if (link.startsWith("/")) {
+            navigate(link);
+          } else {
+            Setting.goToLink(link);
+          }
         } else {
           Setting.showMessage("error", res.msg);
         }

@@ -101,8 +101,7 @@ export function AuthLayout({application, children, className, wide, hideLogo, hi
           offset === 1 ? "justify-start sm:pl-[10%]" : offset === 3 ? "justify-end sm:pr-[10%]" : "justify-center",
         )}
       >
-        {/* one box, as in the antd layout: an application's own `.login-panel`
-            rules style the card itself instead of framing a second one */}
+        {/* one box: an application's own `.login-panel` styles the card itself */}
         <Card
           className={cn(
             "login-panel flex w-full items-center overflow-hidden shadow-md",

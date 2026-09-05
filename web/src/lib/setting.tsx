@@ -2449,11 +2449,7 @@ export function getForgetLink(application) {
   return application.forgetUrl;
 }
 
-/**
- * Where "sign up now" goes, port of Setting.js renderSignupLink(). The OAuth
- * params have to survive the hop, otherwise the signup cannot hand a code back
- * to the application and the user is stranded on Casdoor.
- */
+/** The OAuth params have to survive the hop, or the signup cannot hand back a code. */
 export function getSignupLink(application) {
   if (!application) {
     return null;

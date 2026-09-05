@@ -31,9 +31,7 @@ export default function ResultPage() {
     return <Loading className="min-h-screen" />;
   }
 
-  // the stored URL carries the OAuth params of the application the signup started
-  // from; without one, send the user back to that application rather than to
-  // Casdoor's own console, which a freshly created user has no business in
+  // the stored URL carries the OAuth params; without one, back to the application
   const signinUrl = Setting.getStoredSigninUrl() ||
     (application && authConfig.appName !== application.name
       ? Setting.getLoginLink(application)
