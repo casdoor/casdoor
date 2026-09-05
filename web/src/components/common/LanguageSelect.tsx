@@ -14,9 +14,11 @@ interface LanguageSelectProps {
   /** restrict the list, as the organization setting does */
   languages?: string[];
   className?: string;
+  /** the signup page saves the picked language on the new user */
+  onLanguageChange?: (key: string) => void;
 }
 
-export function LanguageSelect({languages, className}: LanguageSelectProps) {
+export function LanguageSelect({languages, className, onLanguageChange}: LanguageSelectProps) {
   const current = useLanguage();
 
   const items = (Setting.Countries as any[]).filter(
@@ -39,7 +41,10 @@ export function LanguageSelect({languages, className}: LanguageSelectProps) {
           <DropdownMenuItem
             key={country.key}
             className={cn(current === country.key && "font-semibold")}
-            onSelect={() => Setting.setLanguage(country.key)}
+            onSelect={() => {
+              Setting.setLanguage(country.key);
+              onLanguageChange?.(country.key);
+            }}
           >
             <img
               src={`${Setting.StaticBaseUrl}/flag-icons/${country.country}.svg`}

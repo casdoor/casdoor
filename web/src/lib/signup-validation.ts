@@ -79,6 +79,14 @@ export function validateSignupItem(item: any, values: Record<string, any>, appli
       if (required && isBlank(values.lastName)) {
         return i18next.t("signup:Please input your last name!");
       }
+      // the antd form put the item's regex on both halves of the name
+      if (item.regex) {
+        const regex = new RegExp(item.regex);
+        if ((!isBlank(values.firstName) && !regex.test(values.firstName)) ||
+            (!isBlank(values.lastName) && !regex.test(values.lastName))) {
+          return i18next.t("signup:The input doesn't match the signup item regex!");
+        }
+      }
       return "";
     }
     if (required && isBlank(value)) {
@@ -147,6 +155,15 @@ export function validateSignupItem(item: any, values: Record<string, any>, appli
     }
     if (!isBlank(value) && !ID_CARD_REGEX.test(value)) {
       return i18next.t("signup:Please input the correct ID card number!");
+    }
+    return "";
+  }
+  case "Affiliation": {
+    if (required && isBlank(value)) {
+      return i18next.t("signup:Please input your affiliation!");
+    }
+    if (!isBlank(value) && item.regex && !new RegExp(item.regex).test(value)) {
+      return i18next.t("signup:The input doesn't match the signup item regex!");
     }
     return "";
   }

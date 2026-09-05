@@ -22,6 +22,7 @@ import {WeChatLoginPanel} from "@/components/auth/WeChatLoginPanel";
 import {OrganizationSelect} from "@/components/common/OrganizationSelect";
 import {RedirectForm} from "@/components/auth/RedirectForm";
 import {CountryCodeSelect} from "@/components/common/CountryCodeSelect";
+import {PasswordInput} from "@/components/common/PasswordInput";
 import {SendCodeInput, type CaptchaValues} from "@/components/auth/SendCodeInput";
 import {CaptchaModal, type CaptchaHandle} from "@/components/common/CaptchaModal";
 import {getCaptchaProvider} from "@/lib/captcha";
@@ -795,8 +796,9 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
           <div key={key} className="signin-phone space-y-2">
             <Label htmlFor="username">{item.label || i18next.t("general:Phone")}</Label>
             <div className="flex gap-2">
-              <div className="w-32 shrink-0">
+              <div className="w-28 max-w-[50%] shrink-0">
                 <CountryCodeSelect
+                  className="px-2"
                   value={countryCode}
                   onChange={setCountryCode}
                   countryCodes={application.organizationObj?.countryCodes}
@@ -804,7 +806,7 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
               </div>
               <Input
                 id="username"
-                className="login-username-input"
+                className="login-username-input min-w-0 flex-1"
                 autoFocus
                 autoComplete="tel"
                 placeholder={item.placeholder || i18next.t("general:Phone")}
@@ -862,10 +864,9 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
       return (
         <div key={key} className="login-password space-y-2">
           <Label htmlFor="password">{item.label || i18next.t("general:Password")}</Label>
-          <Input
+          <PasswordInput
             id="password"
             className="login-password-input"
-            type="password"
             autoComplete="current-password"
             placeholder={item.placeholder}
             value={password}
@@ -874,8 +875,10 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
         </div>
       );
     case "Forgot password?":
+      // the item's default CSS pins this row at 320px, which the panel can be
+      // narrower than, so the width is capped and the row may wrap
       return (
-        <div key={key} className="login-forget-password flex items-center justify-between gap-2">
+        <div key={key} className="login-forget-password flex max-w-full flex-wrap items-center justify-between gap-x-2 gap-y-1">
           <div className="flex items-center gap-2">
             <Checkbox id="autoSignin" checked={autoSignin} onCheckedChange={(v) => setAutoSignin(v === true)} />
             <Label htmlFor="autoSignin" className="login-auto-signin text-sm font-normal">
