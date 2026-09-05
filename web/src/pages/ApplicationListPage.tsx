@@ -11,7 +11,7 @@ import * as ApplicationBackend from "@/backend/ApplicationBackend";
 import * as Setting from "@/lib/setting";
 import {newApplication} from "@/pages/defaults";
 
-export default function ApplicationListPage() {
+export default function ApplicationListPage({formItems}: {formItems?: any[]} = {}) {
   const {account} = useAccount();
   const navigate = useNavigate();
   const organizationName = useRequestOrganization();
@@ -109,6 +109,7 @@ export default function ApplicationListPage() {
       title={i18next.t("general:Applications")}
       columns={columns}
       formType="applications"
+      formItems={formItems}
       deps={[organizationName, isGlobal]}
       fetch={(q) =>
         isGlobal

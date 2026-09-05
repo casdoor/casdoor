@@ -20,7 +20,7 @@ import * as Setting from "@/lib/setting";
  * accounts it wants bound plus the profile fields it still needs — then continues
  * the OAuth redirect it was interrupted from.
  */
-export default function PromptPage() {
+export default function PromptPage({application: applicationProp}: {application?: any} = {}) {
   const params = useParams();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -32,10 +32,15 @@ export default function PromptPage() {
   const [saving, setSaving] = React.useState(false);
 
   React.useEffect(() => {
+    // the application editor's preview hands its own object over
+    if (applicationProp) {
+      setApplication(applicationProp);
+      return;
+    }
     ApplicationBackend.getApplication("admin", applicationName)
       .then((res: any) => setApplication(res.status === "ok" ? res.data : null))
       .catch(() => setApplication(null));
-  }, [applicationName]);
+  }, [applicationName, applicationProp]);
 
   const loadUser = React.useCallback(() => {
     if (!account) {
@@ -84,7 +89,7 @@ export default function PromptPage() {
   // Nothing is prompted, so the visitor should never have landed here.
   if (application && !Setting.hasPromptPage(application)) {
     return (
-      <AuthLayout application={application}>
+      <AuthLayout preview={!!applicationProp} application={application}>
         <div className="space-y-4">
           <Alert variant="warning">
             <AlertDescription>{i18next.t("application:You are unexpected to see this prompt page")}</AlertDescription>
@@ -119,7 +124,7 @@ export default function PromptPage() {
   const hasPromptedProviders = (application?.providers ?? []).some((item: any) => Setting.isProviderPrompted(item));
 
   return (
-    <AuthLayout application={application}>
+    <AuthLayout preview={!!applicationProp} application={application}>
       <div className="space-y-5">
         <h1 className="text-center text-lg font-semibold">{i18next.t("application:Binding providers")}</h1>
 

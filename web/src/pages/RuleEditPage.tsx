@@ -31,11 +31,7 @@ export default function RuleEditPage() {
       render: (ctx, update) => (
         <SearchableSelect
           value={ctx.record.type ?? ""}
-          onChange={(value) => {
-            // each type has its own expression shape, so the old rows cannot carry over
-            update("type", value);
-            update("expressions", []);
-          }}
+          onChange={(value) => update("type", value)}
           options={[
             {value: "WAF", label: "WAF"},
             {value: "IP", label: "IP"},
@@ -73,6 +69,8 @@ export default function RuleEditPage() {
       type: "number",
       name: "statusCode",
       labelKey: "rule:Status code",
+      min: 100,
+      max: 599,
       when: (ctx) => notWaf(ctx) && ["Allow", "Block"].includes(ctx.record.action),
     },
     {type: "text", name: "reason", labelKey: "rule:Reason"},

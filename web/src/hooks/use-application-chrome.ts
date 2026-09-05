@@ -100,8 +100,11 @@ export function useThemeData(themeData: ThemeData | undefined | null) {
  * Before the application has loaded, the backend's `organizationTheme` cookie
  * (set by routers/theme_filter.go) supplies the same values, which is what keeps
  * a branded sign-in page from flashing the default palette first.
+ *
+ * `enabled` is false for the application editor's preview: the previewed
+ * application must not restyle the console it is embedded in.
  */
-export function useApplicationTheme(application: any) {
+export function useApplicationTheme(application: any, enabled = true) {
   const themeData: ThemeData = React.useMemo(() => {
     if (application) {
       return Setting.getThemeData(application.organizationObj, application);
@@ -117,7 +120,7 @@ export function useApplicationTheme(application: any) {
     return Conf.ThemeDefault;
   }, [application]);
 
-  useThemeData(themeData);
+  useThemeData(enabled ? themeData : undefined);
   return themeData;
 }
 

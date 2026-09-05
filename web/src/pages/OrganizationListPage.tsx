@@ -8,7 +8,7 @@ import * as OrganizationBackend from "@/backend/OrganizationBackend";
 import * as Setting from "@/lib/setting";
 import {newOrganization} from "@/pages/organization-defaults";
 
-export default function OrganizationListPage() {
+export default function OrganizationListPage({formItems}: {formItems?: any[]} = {}) {
   const columns: ColumnDef<any>[] = [
     linkColumn({dataIndex: "name", to: (record) => `/organizations/${record.name}`, width: 140}),
     dateColumn(),
@@ -84,6 +84,7 @@ export default function OrganizationListPage() {
       title={i18next.t("general:Organizations")}
       columns={columns}
       formType="organizations"
+      formItems={formItems}
       rowKey={(row) => row.name}
       fetch={(query) =>
         OrganizationBackend.getOrganizations(

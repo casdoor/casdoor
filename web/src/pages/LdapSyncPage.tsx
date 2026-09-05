@@ -5,11 +5,14 @@ import {Badge} from "@/components/ui/badge";
 import {Button} from "@/components/ui/button";
 import {Card, CardContent} from "@/components/ui/card";
 import {Checkbox} from "@/components/ui/checkbox";
+import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
+import {Filter, X} from "lucide-react";
 import {Loading} from "@/components/common/Loading";
 import {PageHeader} from "@/components/crud/PageHeader";
 import * as LdapBackend from "@/backend/LdapBackend";
 import * as Setting from "@/lib/setting";
+import {cn} from "@/lib/utils";
 
 /** Preview the users an LDAP server exposes and import the selected ones. */
 export default function LdapSyncPage() {
@@ -20,6 +23,8 @@ export default function LdapSyncPage() {
   const [selected, setSelected] = React.useState<string[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [syncing, setSyncing] = React.useState(false);
+  // the antd table offers a filter menu built from the group ids in the result
+  const [groupFilter, setGroupFilter] = React.useState("");
 
   React.useEffect(() => {
     LdapBackend.getLdapUser(organizationName, ldapId)
@@ -37,8 +42,6 @@ export default function LdapSyncPage() {
   if (loading) {
     return <Loading />;
   }
-
-  const syncable = users.filter((user) => !existUuids.includes(user.uuid));
 
   const sync = () => {
     if (selected.length === 0) {
@@ -66,12 +69,21 @@ export default function LdapSyncPage() {
         if (failed.length > 0) {
           Setting.showMessage("error", `${i18next.t("general:Failed to sync")}: [${failed.map((u: any) => u.cn)}]`);
         }
-        navigate(`/organizations/${organizationName}`);
+        // only a clean run leaves the page: the skipped and failed rows are worth
+        // reading against the list that produced them
+        if (exist.length === 0 && failed.length === 0) {
+          navigate(`/organizations/${organizationName}/users`);
+        }
       })
       .finally(() => setSyncing(false));
   };
 
-  const allSelected = syncable.length > 0 && selected.length === syncable.length;
+  const groupIds = Array.from(new Set(users.map((user) => user.groupId).filter(Boolean))) as string[];
+  const shownUsers = groupFilter === ""
+    ? users
+    : users.filter((user) => `${user.groupId ?? ""}`.indexOf(groupFilter) === 0);
+  const shownSyncable = shownUsers.filter((user) => !existUuids.includes(user.uuid));
+  const allSelected = shownSyncable.length > 0 && shownSyncable.every((user) => selected.includes(user.uuid));
 
   return (
     <div className="space-y-4">
@@ -92,26 +104,54 @@ export default function LdapSyncPage() {
                 <TableHead className="w-10">
                   <Checkbox
                     checked={allSelected}
-                    onCheckedChange={(v) => setSelected(v === true ? syncable.map((u) => u.uuid) : [])}
+                    onCheckedChange={(v) => setSelected(v === true ? shownSyncable.map((u) => u.uuid) : [])}
                   />
                 </TableHead>
                 <TableHead>{i18next.t("ldap:CN")}</TableHead>
                 <TableHead>UidNumber / Uid</TableHead>
-                <TableHead>{i18next.t("ldap:Group ID")}</TableHead>
+                <TableHead>
+                  <span className="inline-flex items-center gap-1">
+                    {i18next.t("ldap:Group ID")}
+                    {groupIds.length > 0 ? (
+                      <DropdownMenu>
+                        <DropdownMenuTrigger
+                          aria-label={i18next.t("general:Filter")}
+                          className={cn(
+                            "inline-flex h-6 w-6 items-center justify-center rounded text-muted-foreground/50 hover:bg-accent hover:text-foreground",
+                            groupFilter !== "" && "bg-accent text-foreground",
+                          )}
+                        >
+                          <Filter className="h-3.5 w-3.5" />
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="start">
+                          {groupIds.map((groupId) => (
+                            <DropdownMenuItem key={groupId} onSelect={() => setGroupFilter(groupId)}>
+                              {groupId}
+                            </DropdownMenuItem>
+                          ))}
+                          <DropdownMenuItem disabled={groupFilter === ""} onSelect={() => setGroupFilter("")}>
+                            <X className="mr-1 h-3.5 w-3.5" />
+                            {i18next.t("forget:Reset")}
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    ) : null}
+                  </span>
+                </TableHead>
                 <TableHead>{i18next.t("general:Email")}</TableHead>
                 <TableHead>{i18next.t("general:Phone")}</TableHead>
                 <TableHead>{i18next.t("user:Address")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {users.length === 0 ? (
+              {shownUsers.length === 0 ? (
                 <TableRow className="hover:bg-transparent">
                   <TableCell colSpan={7} className="h-24 text-center text-muted-foreground">
                     {i18next.t("general:No data")}
                   </TableCell>
                 </TableRow>
               ) : (
-                users.map((user) => {
+                shownUsers.map((user) => {
                   const exists = existUuids.includes(user.uuid);
                   return (
                     <TableRow key={user.uuid} className={exists ? "opacity-50" : undefined}>
@@ -149,7 +189,8 @@ export default function LdapSyncPage() {
                       </TableCell>
                       <TableCell>{user.groupId}</TableCell>
                       <TableCell>{user.email}</TableCell>
-                      <TableCell>{user.phone}</TableCell>
+                      {/* the LDAP user's phone arrives as "mobile", see object/ldap_conn.go */}
+                      <TableCell>{user.mobile}</TableCell>
                       <TableCell>{user.address}</TableCell>
                     </TableRow>
                   );

@@ -55,7 +55,8 @@ function fieldClass(field: string): string {
   return `signup-${FIELD_CLASS_NAMES[field] ?? field}`;
 }
 
-export default function SignupPage() {
+/** the application editor's live preview hands the form's own object over */
+export default function SignupPage({application: applicationProp}: {application?: any} = {}) {
   const params = useParams();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -77,6 +78,18 @@ export default function SignupPage() {
   const applicationName = params.applicationName ?? authConfig.appName;
 
   React.useEffect(() => {
+    if (applicationProp) {
+      setApplication(applicationProp);
+      setAgreed(getAgreementDefaultValue(applicationProp));
+      setValues((prev) => ({
+        ...prev,
+        application: applicationProp.name,
+        organization: applicationProp.organization,
+        countryCode: prev.countryCode ?? applicationProp.organizationObj?.countryCodes?.[0] ?? "",
+      }));
+      return;
+    }
+
     const oAuthParams = Util.getOAuthGetParameters();
     if (oAuthParams) {
       // the OAuth params live on the signin path, remember it to get back there after the signup
@@ -127,7 +140,7 @@ export default function SignupPage() {
         setMsg(`${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [applicationName]);
+  }, [applicationName, applicationProp]);
 
   const signupItems = (application?.signupItems ?? []) as any[];
   const languagesItem = signupItems.find((item: any) => item.name === "Languages");
@@ -167,7 +180,7 @@ export default function SignupPage() {
 
   if (application === null) {
     return (
-      <AuthLayout>
+      <AuthLayout preview={!!applicationProp}>
         <Alert variant="destructive">
           <AlertDescription>{msg ?? i18next.t("application:Failed to sign in")}</AlertDescription>
         </Alert>
@@ -179,7 +192,7 @@ export default function SignupPage() {
 
   if (!application.enableSignUp) {
     return (
-      <AuthLayout application={application}>
+      <AuthLayout preview={!!applicationProp} application={application}>
         <div className="space-y-4">
           <Alert variant="warning">
             <AlertDescription>{i18next.t("application:The application does not allow to sign up new account")}</AlertDescription>
@@ -639,6 +652,7 @@ export default function SignupPage() {
 
   return (
     <AuthLayout
+      preview={!!applicationProp}
       application={application}
       wide
       hideLanguages={(languagesItem && !languagesItem.visible) || forcedLanguage !== ""}

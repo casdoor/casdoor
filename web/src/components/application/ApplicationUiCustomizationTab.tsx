@@ -8,6 +8,7 @@ import {SelectField} from "@/components/common/SelectField";
 import {TagsInput} from "@/components/common/TagsInput";
 import {ThemeEditor} from "@/components/common/ThemeEditor";
 import {EditableTable} from "@/components/crud/EditableTable";
+import {ApplicationPromptPreview, ApplicationSignupSigninPreview} from "@/components/application/ApplicationPreview";
 import {FormRow} from "@/components/crud/FormRow";
 import type {ApplicationTabProps} from "@/components/application/types";
 import {enumSelectOptions, type EnumMap} from "@/lib/enum-labels";
@@ -427,6 +428,9 @@ export function ApplicationUiCustomizationTab({application, updateField}: Applic
           ]}
         />
       </FormRow>
+      <FormRow labelKey="general:Preview" block>
+        <ApplicationSignupSigninPreview application={application} />
+      </FormRow>
       <FormRow block labelKey="application:Background URL">
         <Input
           value={application.formBackgroundUrl ?? ""}
@@ -519,6 +523,11 @@ export function ApplicationUiCustomizationTab({application, updateField}: Applic
           </Button>
         </div>
       </FormRow>
+      {Setting.hasPromptPage(application) ? (
+        <FormRow labelKey="general:Preview" block>
+          <ApplicationPromptPreview application={application} />
+        </FormRow>
+      ) : null}
     </>
   );
 }

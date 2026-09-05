@@ -48,7 +48,7 @@ interface BaseField {
 
 export type EditField =
   | (BaseField & {type: "text" | "password" | "email" | "url"})
-  | (BaseField & {type: "number"; step?: string; suffix?: React.ReactNode})
+  | (BaseField & {type: "number"; step?: string; min?: number; max?: number; suffix?: React.ReactNode})
   | (BaseField & {type: "textarea"; rows?: number; placeholder?: string})
   | (BaseField & {type: "switch"})
   | (BaseField & {type: "tags"; placeholder?: string})
@@ -252,6 +252,8 @@ export function SimpleEditPage({
           <Input
             type="number"
             step={field.step}
+            min={field.min}
+            max={field.max}
             disabled={disabled}
             value={value ?? 0}
             onChange={(e) => set(field.step ? Number(e.target.value) : Setting.myParseInt(e.target.value))}

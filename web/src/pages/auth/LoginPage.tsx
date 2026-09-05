@@ -255,7 +255,18 @@ function ForgetLink({application, label}: {application: any; label?: string}) {
   return null;
 }
 
-export default function LoginPage({type = "login"}: {type?: LoginType}) {
+interface LoginPageProps {
+  type?: LoginType;
+  /**
+   * Renders the page for the application editor's live preview: the application
+   * comes from the form being edited instead of the route, and the flows that
+   * would leave the page are turned off.
+   */
+  application?: any;
+  preview?: string;
+}
+
+export default function LoginPage({type = "login", application: applicationProp, preview}: LoginPageProps) {
   const params = useParams();
   const location = useLocation();
   const navigate = useNavigate();
@@ -287,6 +298,9 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
 
   // remember where the sign-in started, for the flows that have to come back to it
   React.useEffect(() => {
+    if (preview) {
+      return;
+    }
     localStorage.setItem("signinUrl", location.pathname + location.search);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -303,6 +317,14 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
       setAgreed(getAgreementDefaultValue(app));
       setAutoSignin(Setting.getAutoSigninDefaultValue(app));
     };
+
+    // the preview is handed the application the editor is holding, live
+    if (applicationProp) {
+      onLoaded(applicationProp);
+      return () => {
+        cancelled = true;
+      };
+    }
 
     if (type === "code" || type === "cas" || type === "device") {
       const loginParams =
@@ -360,14 +382,14 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
       cancelled = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [type, owner, params.applicationName, params.casApplicationName, params.userCode]);
+  }, [type, owner, params.applicationName, params.casApplicationName, params.userCode, applicationProp]);
 
   // Already signed in on a plain /login: go to the console.
   React.useEffect(() => {
-    if (type === "login" && account && !location.search.includes("silentSignin")) {
+    if (!preview && type === "login" && account && !location.search.includes("silentSignin")) {
       navigate("/", {replace: true, state: {from: "/login"}});
     }
-  }, [account, type, navigate, location.search]);
+  }, [account, type, navigate, location.search, preview]);
 
   /** An iframe-embedded sign-in reports its progress to the host page. */
   const sendSilentSigninData = (data: string) => {
@@ -816,7 +838,7 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
   // A popup host wants to know when the visitor closes the window without signing in.
   React.useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
-    if (searchParams.get("popup") !== "1") {
+    if (preview || searchParams.get("popup") !== "1") {
       return;
     }
     const onUnload = () => sendPopupData({type: "windowClosed"}, searchParams.get("redirect_uri") ?? "");
@@ -832,7 +854,7 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
    */
   const autoSignedIn = React.useRef(false);
   React.useEffect(() => {
-    if (account === undefined) {
+    if (preview || account === undefined) {
       return;
     }
     if (account === null) {
@@ -861,7 +883,7 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
 
   if (userCodeStatus === "expired") {
     return (
-      <AuthLayout>
+      <AuthLayout preview={!!preview}>
         <Alert variant="destructive">
           <AlertDescription>{`Code ${i18next.t("subscription:Expired")}`}</AlertDescription>
         </Alert>
@@ -875,7 +897,7 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
 
   if (application === null) {
     return (
-      <AuthLayout>
+      <AuthLayout preview={!!preview}>
         <Alert variant="destructive">
           <AlertDescription>{msg ?? i18next.t("application:Failed to sign in")}</AlertDescription>
         </Alert>
@@ -885,7 +907,7 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
 
   if (mfa !== null) {
     return (
-      <AuthLayout application={application}>
+      <AuthLayout preview={!!preview} application={application}>
         <MfaVerify
           formValues={mfa.values}
           authParams={mfa.authParams}
@@ -903,7 +925,7 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
 
   if (userCodeStatus === "canceled") {
     return (
-      <AuthLayout application={application}>
+      <AuthLayout preview={!!preview} application={application}>
         <Alert variant="warning">
           <AlertDescription>{i18next.t("login:Device login was canceled")}</AlertDescription>
         </Alert>
@@ -913,7 +935,7 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
 
   if (userCodeStatus === "success") {
     return (
-      <AuthLayout application={application}>
+      <AuthLayout preview={!!preview} application={application}>
         <Alert>
           <AlertDescription>{i18next.t("application:Logged in successfully")}</AlertDescription>
         </Alert>
@@ -923,7 +945,7 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
 
   if (application.disableSignin || application.organizationObj?.disableSignin) {
     return (
-      <AuthLayout application={application}>
+      <AuthLayout preview={!!preview} application={application}>
         <Alert variant="warning">
           <AlertDescription>{i18next.t("application:Disable signin")}</AlertDescription>
         </Alert>
@@ -968,7 +990,7 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
   const visibleOAuthProviderItems = (application.providers ?? []).filter(
     (item: any) => Setting.isProviderVisibleForSignIn(item) && item.provider?.category !== "SAML",
   );
-  if (!passwordEnabled && !codeEnabled && !webAuthnEnabled && !ldapEnabled && visibleOAuthProviderItems.length === 1) {
+  if (preview !== "auto" && !passwordEnabled && !codeEnabled && !webAuthnEnabled && !ldapEnabled && visibleOAuthProviderItems.length === 1) {
     Setting.goToLink(Provider.getAuthUrl(application, visibleOAuthProviderItems[0].provider, "signin"));
     return <Loading className="min-h-screen" />;
   }
@@ -981,7 +1003,7 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
     : application.orgChoiceMode;
   if (type === "login" && (orgChoiceMode === "Select" || orgChoiceMode === "Input")) {
     return (
-      <AuthLayout application={application}>
+      <AuthLayout preview={!!preview} application={application}>
         <OrganizationChoiceBox mode={orgChoiceMode} />
       </AuthLayout>
     );
@@ -1250,6 +1272,7 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
 
   return (
     <AuthLayout
+      preview={!!preview}
       application={application}
       hideLogo={!isVisible("Logo")}
       hideLanguages={!isVisible("Languages")}
@@ -1337,7 +1360,7 @@ export default function LoginPage({type = "login"}: {type?: LoginType}) {
           </div>
         ) : null}
 
-        <GoogleOneTap application={application} />
+        {preview === "auto" ? null : <GoogleOneTap application={application} />}
 
         {faceValues !== null ? (
           hasFaceIdProvider ? (

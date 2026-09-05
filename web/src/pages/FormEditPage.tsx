@@ -6,7 +6,6 @@ import {UnauthorizedPage} from "@/components/common/UnauthorizedPage";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Switch} from "@/components/ui/switch";
-import {Table, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import {Loading} from "@/components/common/Loading";
 import {SelectField} from "@/components/common/SelectField";
 import {EditableTable} from "@/components/crud/EditableTable";
@@ -23,6 +22,33 @@ interface FormItem {
   label: string;
   visible: boolean;
   width?: string;
+}
+
+const PREVIEW_PAGES: Record<string, React.ComponentType<{formItems?: any[]}>> = {
+  users: React.lazy(() => import("@/pages/UserListPage")),
+  applications: React.lazy(() => import("@/pages/ApplicationListPage")),
+  providers: React.lazy(() => import("@/pages/ProviderListPage")),
+  organizations: React.lazy(() => import("@/pages/OrganizationListPage")),
+};
+
+/** The list page this form customizes, rendered with the items being edited. */
+function FormListPreview({type, formItems}: {type: string; formItems: any[]}) {
+  const ListPage = PREVIEW_PAGES[type];
+  if (!ListPage) {
+    return null;
+  }
+
+  return (
+    <div className="relative h-[600px] overflow-auto rounded-lg border">
+      <div className="pointer-events-none p-4">
+        <React.Suspense fallback={null}>
+          <ListPage formItems={formItems} />
+        </React.Suspense>
+      </div>
+      {/* the preview is to look at, not to use */}
+      <div className="absolute inset-0 z-10 cursor-not-allowed bg-foreground/5" />
+    </div>
+  );
 }
 
 export default function FormEditPage() {
@@ -196,20 +222,7 @@ export default function FormEditPage() {
       </FormRow>
       <FormRow labelKey="general:Preview" block>
         <div className="space-y-2">
-          <div className="overflow-x-auto rounded-lg border">
-            <Table>
-              <TableHeader>
-                <TableRow className="hover:bg-transparent">
-                  {items.filter((item) => item.visible !== false).map((item, index) => (
-                    <TableHead key={`${item.name}-${index}`} style={item.width ? {width: `${item.width}px`} : undefined}>
-                      {labelOf(item)}
-                    </TableHead>
-                  ))}
-                  <TableHead>{i18next.t("general:Action")}</TableHead>
-                </TableRow>
-              </TableHeader>
-            </Table>
-          </div>
+          <FormListPreview type={form.type} formItems={items} />
           {form.type ? (
             <Button variant="outline" size="sm" onClick={() => Setting.openLink(`/${form.type}`)}>
               <ExternalLink />

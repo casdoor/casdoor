@@ -49,6 +49,11 @@ export interface CrudListPageProps<T extends Record<string, any>> {
    * order — see /forms.
    */
   formType?: string;
+  /**
+   * Renders the list with these items instead of the saved Form's, which is how
+   * the form editor previews the columns it is editing.
+   */
+  formItems?: any[];
   /** set to false for read-only lists such as Sessions or Records */
   showActionColumn?: boolean;
   /**
@@ -87,6 +92,7 @@ export function CrudListPage<T extends Record<string, any>>({
   initialQuery,
   rowActions,
   formType,
+  formItems: formItemsProp,
   showActionColumn = true,
   actionColumnWidth = 180,
   readOnly = false,
@@ -149,7 +155,8 @@ export function CrudListPage<T extends Record<string, any>>({
     });
   };
 
-  const formItems = useFormItems(formType);
+  const savedFormItems = useFormItems(formItemsProp ? undefined : formType);
+  const formItems = formItemsProp ?? savedFormItems;
 
   const deleteAction = (record: T): RowAction => {
     const blockedReason = deleteDisabled?.(record);
