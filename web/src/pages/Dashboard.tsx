@@ -1,7 +1,7 @@
 import * as React from "react";
 import i18next from "i18next";
 import {AppWindow, Building2, KeyRound, Plug, UserPlus, Users} from "lucide-react";
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {
   Cell,
   CartesianGrid,
@@ -78,19 +78,38 @@ function StatCard({title, value, icon, to}: {title: string; value: number; icon:
   );
 }
 
+/**
+ * The organization the dashboard counts. A global admin looking at "All" asks for
+ * every organization (an empty owner), which `getRequestOrganization` cannot
+ * express — it falls back to the admin's own organization. Port of
+ * `getOrganizationName()` in web/src/basic/Dashboard.js.
+ */
+function getDashboardOrganization(account: any): string {
+  if (!Setting.isAdminUser(account) && Setting.isLocalAdminUser(account)) {
+    return account.owner;
+  }
+  const stored = Setting.getOrganization();
+  return stored === "All" ? "" : stored || "";
+}
+
 export default function Dashboard() {
   const {account} = useAccount();
+  const navigate = useNavigate();
   const [data, setData] = React.useState<any>(null);
   const [providerData, setProviderData] = React.useState<any[] | null>(null);
   const [mfaData, setMfaData] = React.useState<any>(null);
   const [heatmapData, setHeatmapData] = React.useState<any>(null);
   const [loading, setLoading] = React.useState(true);
 
+  // a regular user has no dashboard; antd sends them to the first page their
+  // organization leaves them
+  const isConsoleAdmin = Setting.isLocalAdminUser(account);
+
   const load = React.useCallback(() => {
-    if (!account) {
+    if (!account || !Setting.isLocalAdminUser(account)) {
       return;
     }
-    const org = Setting.getRequestOrganization(account);
+    const org = getDashboardOrganization(account);
     setLoading(true);
 
     const apply = (settled: PromiseSettledResult<any>, setter: (value: any) => void) => {
@@ -122,8 +141,20 @@ export default function Dashboard() {
   }, [account]);
 
   React.useEffect(() => {
-    load();
-  }, [load]);
+    if (!account || isConsoleAdmin) {
+      load();
+      return;
+    }
+    const navItems = account.organization?.userNavItems;
+    const isAllEnabled = !Array.isArray(navItems) || navItems.includes("all");
+    if (isAllEnabled || navItems.includes("/apps")) {
+      navigate("/apps", {replace: true});
+    } else if (navItems.includes("/shortcuts")) {
+      navigate("/shortcuts", {replace: true});
+    } else {
+      navigate("/account", {replace: true});
+    }
+  }, [account, isConsoleAdmin, load, navigate]);
 
   React.useEffect(() => {
     window.addEventListener("storageOrganizationChanged", load);
@@ -150,7 +181,7 @@ export default function Dashboard() {
     {key: "groupCounts", name: i18next.t("general:Groups"), data: data.groupCounts, to: "/groups"},
     {key: "resourceCounts", name: i18next.t("general:Resources"), data: data.resourceCounts, to: "/resources"},
     {key: "certCounts", name: i18next.t("general:Certs"), data: data.certCounts, to: "/certs"},
-    {key: "subscriptionCounts", name: i18next.t("general:Subscriptions"), data: data.subscriptionCounts, to: "/subscriptions"},
+    {key: "subscriptionCounts", name: i18next.t("general:Subscriptions"), data: data.subscriptionCounts, to: "/subscriptions", hidden: true},
     {key: "modelCounts", name: i18next.t("general:Models"), data: data.modelCounts, to: "/models", hidden: true},
     {key: "transactionCounts", name: i18next.t("general:Transactions"), data: data.transactionCounts, to: "/transactions"},
     {key: "adapterCounts", name: i18next.t("general:Adapters"), data: data.adapterCounts, to: "/adapters", hidden: true},

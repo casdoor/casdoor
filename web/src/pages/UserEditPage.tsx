@@ -29,6 +29,8 @@ import {FaceIdTable} from "@/components/user/FaceIdTable";
 import {CropperDivModal, UserImageField} from "@/components/user/CropperDivModal";
 import {ThirdPartyLogins} from "@/components/user/OAuthWidget";
 import {AccountItemRow, AccountItemsProvider} from "@/components/user/AccountItemRow";
+import {EnableMfaButton} from "@/components/user/EnableMfaButton";
+import {TotpMfaType} from "@/components/auth/mfa/constants";
 import {isAccountItemVisible} from "@/lib/account-items";
 import {PasswordModal} from "@/components/user/PasswordModal";
 import {ResetModal} from "@/components/user/ResetModal";
@@ -1027,9 +1029,16 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
                   ) : (
                     <Badge variant="secondary">{i18next.t("general:Disabled")}</Badge>
                   )}
+                  {/* an admin can turn on another user's email/SMS factor without
+                      their code; TOTP always needs the user's own authenticator */}
+                  {!item.enabled && !isSelf && isAdmin && item.mfaType !== TotpMfaType ? (
+                    <EnableMfaButton user={user} mfaType={item.mfaType} onSuccess={reload} />
+                  ) : null}
                   {isSelf ? (
                     <Button variant="outline" size="sm" asChild>
-                      <Link to={`/mfa/setup?mfaType=${item.mfaType}`}>{i18next.t("general:Edit")}</Link>
+                      <Link to={`/mfa/setup?mfaType=${item.mfaType}`}>
+                        {i18next.t(item.enabled ? "general:Edit" : "mfa:Setup")}
+                      </Link>
                     </Button>
                   ) : null}
                 </div>
@@ -1037,20 +1046,16 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
             )}
           </div>
           <div className="flex gap-2">
-            {isSelf ? (
-              <Button variant="outline" size="sm" asChild>
-                <Link to="/mfa/setup">{i18next.t("general:Enable")}</Link>
-              </Button>
-            ) : null}
             {mfaItems.some((item: any) => item.enabled) ? (
               <ConfirmButton
                 variant="destructive"
                 size="sm"
                 loading={removingMfa}
+                title={`${i18next.t("general:Sure to disable")}?`}
                 description={i18next.t("mfa:Multi-factor authentication")}
                 onConfirm={deleteMfa}
               >
-                {i18next.t("general:Delete")}
+                {i18next.t("general:Disable")}
               </ConfirmButton>
             ) : null}
           </div>

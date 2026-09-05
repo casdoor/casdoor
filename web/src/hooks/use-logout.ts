@@ -2,6 +2,7 @@ import i18next from "i18next";
 import {useNavigate} from "react-router-dom";
 import {useAccount} from "@/hooks/use-account";
 import * as AuthBackend from "@/backend/AuthBackend";
+import {clearWeb3AuthToken} from "@/auth/Web3Auth";
 import * as Setting from "@/lib/setting";
 
 /** Signs the current user out, honouring the application's post-logout redirect. */
@@ -14,6 +15,9 @@ export function useLogout() {
       if (res.status === "ok") {
         const owner = account?.owner;
         setAccount(null);
+        // a Web3 sign-in leaves a signed token behind, which would sign the user
+        // straight back in
+        clearWeb3AuthToken();
         Setting.showMessage("success", i18next.t("application:Logged out successfully"));
         const redirectUri = res.data2;
         if (redirectUri !== null && redirectUri !== undefined && redirectUri !== "") {

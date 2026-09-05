@@ -10,6 +10,18 @@ export interface GridCardItem {
   logo?: string;
   createdTime?: string;
   isExternal?: boolean;
+  tags?: {name: string; color: string}[];
+}
+
+/**
+ * An application opened from this grid signs the visitor in without asking again,
+ * which is what `wrappedAsSilentSigninLink()` does in web/src/basic/SingleCard.js.
+ */
+function silentSigninLink(link: string) {
+  if (!link.startsWith("http")) {
+    return link;
+  }
+  return link + (link.includes("?") ? "&silentSignin=1" : "?silentSignin=1");
 }
 
 /** Card grid used by the Home > Apps and Home > Shortcuts pages. */
@@ -32,6 +44,19 @@ export function GridCards({items}: {items: GridCardItem[]}) {
                 {item.description ? (
                   <p className="mt-0.5 line-clamp-2 text-sm text-muted-foreground">{item.description}</p>
                 ) : null}
+                {item.tags?.length ? (
+                  <div className="mt-1.5 flex flex-wrap gap-1">
+                    {item.tags.map((tag) => (
+                      <span
+                        key={tag.name}
+                        className="rounded px-1.5 py-0.5 text-xs text-white"
+                        style={{backgroundColor: tag.color}}
+                      >
+                        {tag.name}
+                      </span>
+                    ))}
+                  </div>
+                ) : null}
                 {item.createdTime ? (
                   <p className="mt-1 text-xs text-muted-foreground">{Setting.getFormattedDate(item.createdTime)}</p>
                 ) : null}
@@ -41,7 +66,7 @@ export function GridCards({items}: {items: GridCardItem[]}) {
         );
 
         return item.isExternal ? (
-          <a key={item.link + item.name} href={item.link} target="_blank" rel="noreferrer">
+          <a key={item.link + item.name} href={silentSigninLink(item.link)} target="_blank" rel="noreferrer">
             {body}
           </a>
         ) : (
