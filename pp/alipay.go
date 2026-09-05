@@ -100,7 +100,7 @@ func (pp *AlipayPaymentProvider) Notify(body []byte, orderId string) (*NotifyRes
 		notifyResult.NotifyMessage = fmt.Sprintf("unexpected alipay trade state: %v", aliRsp.Response.TradeStatus)
 		return notifyResult, nil
 	}
-	productDisplayName, productName, providerName, _ := parseAttachString(aliRsp.Response.Subject)
+	productName, productDisplayName, providerName, _ := parseAttachString(aliRsp.Response.Subject)
 	notifyResult = &NotifyResult{
 		ProductName:        productName,
 		ProductDisplayName: productDisplayName,
