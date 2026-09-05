@@ -48,15 +48,18 @@ func NewStripePaymentProvider(PublishableKey, SecretKey string) (*StripePaymentP
 
 func (pp *StripePaymentProvider) Pay(r *PayReq) (*PayResp, error) {
 	// Create a temp product
-	description := joinAttachString([]string{r.ProductName, r.ProductDisplayName, r.ProviderName})
+	attachString := joinAttachString(r)
 	productParams := &stripe.ProductParams{
-		Name:        stripe.String(r.ProductDisplayName),
-		Description: stripe.String(description),
+		Name: stripe.String(r.ProductDisplayName),
 		DefaultPriceData: &stripe.ProductDefaultPriceDataParams{
 			UnitAmount: stripe.Int64(priceFloat64ToInt64(r.Price)),
 			Currency:   stripe.String(r.Currency),
 		},
 	}
+	if r.ProductDescription != "" {
+		productParams.Description = stripe.String(r.ProductDescription)
+	}
+
 	sProduct, err := stripeProduct.New(productParams)
 	if err != nil {
 		return nil, err
@@ -85,7 +88,7 @@ func (pp *StripePaymentProvider) Pay(r *PayReq) (*PayResp, error) {
 		ClientReferenceID: stripe.String(r.PaymentName),
 		ExpiresAt:         stripe.Int64(time.Now().Add(30 * time.Minute).Unix()),
 	}
-	checkoutParams.AddMetadata("product_description", description)
+	checkoutParams.AddMetadata("product_description", attachString)
 	sCheckout, err := stripeCheckout.New(checkoutParams)
 	if err != nil {
 		return nil, err
@@ -135,21 +138,17 @@ func (pp *StripePaymentProvider) Notify(body []byte, orderId string) (*NotifyRes
 	if err != nil {
 		return nil, err
 	}
-	var (
-		productName        string
-		productDisplayName string
-		providerName       string
-	)
-	if description, ok := sCheckout.Metadata["product_description"]; ok {
-		productName, productDisplayName, providerName, _ = parseAttachString(description)
+	attachInfo, err := parseAttachString(sCheckout.Metadata["product_description"])
+	if err != nil {
+		return nil, err
 	}
 	notifyResult = &NotifyResult{
 		PaymentName:   sCheckout.ClientReferenceID,
 		PaymentStatus: PaymentStatePaid,
 
-		ProductName:        productName,
-		ProductDisplayName: productDisplayName,
-		ProviderName:       providerName,
+		ProductName:        attachInfo.ProductName,
+		ProductDisplayName: attachInfo.ProductDisplayName,
+		ProviderName:       attachInfo.ProviderName,
 
 		Price:    priceInt64ToFloat64(sIntent.Amount),
 		Currency: string(sIntent.Currency),

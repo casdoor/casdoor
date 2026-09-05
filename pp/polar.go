@@ -41,7 +41,7 @@ func (pp *PolarPaymentProvider) Pay(r *PayReq) (*PayResp, error) {
 	ctx := context.Background()
 
 	// Store product info in metadata for later retrieval
-	description := joinAttachString([]string{r.ProductName, r.ProductDisplayName, r.ProviderName})
+	description := joinAttachString(r)
 
 	metadata := map[string]components.CheckoutCreateMetadata{
 		"payment_name":         components.CreateCheckoutCreateMetadataStr(r.PaymentName),

@@ -94,17 +94,18 @@ func (pp *AirwallexPaymentProvider) Notify(body []byte, orderId string) (*Notify
 		}
 	}
 	// The Payment has succeeded.
-	var productDisplayName, productName, providerName string
-	if description, ok := intent.Metadata["description"]; ok {
-		productName, productDisplayName, providerName, _ = parseAttachString(description.(string))
+	attachString, _ := intent.Metadata["description"].(string)
+	attachInfo, err := parseAttachString(attachString)
+	if err != nil {
+		return nil, err
 	}
 	orderId = intent.MerchantOrderId
 	return &NotifyResult{
 		PaymentName:        orderId,
 		PaymentStatus:      PaymentStatePaid,
-		ProductName:        productName,
-		ProductDisplayName: productDisplayName,
-		ProviderName:       providerName,
+		ProductName:        attachInfo.ProductName,
+		ProductDisplayName: attachInfo.ProductDisplayName,
+		ProviderName:       attachInfo.ProviderName,
 		Price:              priceStringToFloat64(intent.Amount.String()),
 		Currency:           intent.Currency,
 		OrderId:            orderId,
@@ -201,7 +202,7 @@ func (c *AirwallexClient) authRequest(method, url string, body interface{}) (map
 }
 
 func (c *AirwallexClient) CreateIntent(r *PayReq) (*AirWallexIntentResp, error) {
-	description := joinAttachString([]string{r.ProductName, r.ProductDisplayName, r.ProviderName})
+	description := joinAttachString(r)
 	orderId := r.PaymentName
 	intentReq := map[string]interface{}{
 		"currency":          r.Currency,

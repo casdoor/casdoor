@@ -51,7 +51,7 @@ func (pp *PaddlePaymentProvider) Pay(r *PayReq) (*PayResp, error) {
 	ctx := context.Background()
 
 	// Store product info in custom_data for later retrieval
-	description := joinAttachString([]string{r.ProductName, r.ProductDisplayName, r.ProviderName})
+	description := joinAttachString(r)
 
 	customData := paddle.CustomData{
 		"payment_name":         r.PaymentName,
@@ -72,7 +72,7 @@ func (pp *PaddlePaymentProvider) Pay(r *PayReq) (*PayResp, error) {
 		*paddle.NewCreateTransactionItemsNonCatalogPriceAndProduct(&paddle.NonCatalogPriceAndProduct{
 			Quantity: 1,
 			Price: paddle.TransactionPriceCreateWithProduct{
-				Description: description,
+				Description: r.ProductDisplayName,
 				Name:        &r.ProductDisplayName,
 				TaxMode:     paddle.TaxModeAccountSetting,
 				UnitPrice: paddle.Money{
