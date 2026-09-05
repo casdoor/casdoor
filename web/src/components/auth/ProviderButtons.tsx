@@ -15,8 +15,7 @@ interface ProviderButtonsProps {
   method: "signup" | "signin" | "link";
   /** the item rule: "big" for a labelled button per provider, "small" for a logo grid */
   rule?: string;
-  /** return false to swallow the click, as the antd signup page did while the
-   *  agreement is still unchecked */
+  /** return false to swallow the click, e.g. on an unaccepted agreement */
   onBeforeClick?: () => boolean;
 }
 
@@ -104,7 +103,6 @@ export function ProviderButtons({application, method, rule, onBeforeClick}: Prov
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hintedName]);
 
-  // the hint jump is not a click, so it is not gated by `onBeforeClick`
   const onClick = (providerItem: any) => {
     if (onBeforeClick && onBeforeClick() === false) {
       return;

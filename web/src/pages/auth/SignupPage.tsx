@@ -43,10 +43,7 @@ const SIMPLE_TEXT_ITEMS: Record<string, string> = {
   "Invitation code": "application:Invitation code",
 };
 
-/**
- * The class the antd form gave a field when it differs from the field name, so
- * that an application's `customCss` keeps matching after the rewrite.
- */
+/** Where the antd class name differs from the field, so `customCss` keeps matching. */
 const FIELD_CLASS_NAMES: Record<string, string> = {
   firstName: "first-name",
   lastName: "last-name",
@@ -75,7 +72,6 @@ export default function SignupPage() {
   const [emailOrPhoneMode, setEmailOrPhoneMode] = React.useState("");
   const [invitation, setInvitation] = React.useState<any>(undefined);
   const [passwordFocused, setPasswordFocused] = React.useState(false);
-  // only a language the visitor picked here is saved on the new user, as in the antd page
   const [userLang, setUserLang] = React.useState("");
 
   const applicationName = params.applicationName ?? authConfig.appName;
@@ -158,7 +154,6 @@ export default function SignupPage() {
   const fieldError = (field: string) =>
     errors[field] ? <p className="text-xs text-destructive">{errors[field]}</p> : null;
 
-  /** the label of a field, with the red asterisk antd put in front of a required one */
   const renderLabel = (text: React.ReactNode, required?: boolean, htmlFor?: string) => (
     <Label htmlFor={htmlFor}>
       {required ? <span className="mr-1 text-destructive">*</span> : null}
@@ -213,7 +208,7 @@ export default function SignupPage() {
 
   const agreementItem = signupItems.find((item: any) => item.name === "Agreement" && item.visible);
 
-  /** The antd page swallowed a provider click while a required agreement was unchecked. */
+  /** the agreement gates the provider buttons too */
   const checkAgreement = () => {
     if (agreementItem?.required && !agreed) {
       Setting.showMessage("error", i18next.t("signup:Please accept the agreement!"));
@@ -281,7 +276,6 @@ export default function SignupPage() {
     submitSignup(payload);
   };
 
-  /** Where the signup lands, port of the antd page's getResultPath(). */
   const getResultPath = (payload: Record<string, any>, username: string) => {
     if (payload.plan && payload.pricing) {
       // the prompt page needs the user to be signed in, so a paid signup goes to buy-plan
@@ -375,8 +369,6 @@ export default function SignupPage() {
       <div className="signup-phone space-y-2">
         {renderLabel(item.label || i18next.t("general:Phone"), item.required, "phone")}
         <div className="flex gap-2">
-          {/* the calling code takes a share of the row, never a fixed width that
-              would squeeze the number out of a narrow panel */}
           <div className="w-28 max-w-[50%] shrink-0">
             <CountryCodeSelect
               className="px-2"
@@ -448,7 +440,6 @@ export default function SignupPage() {
         onChange={(e) => set(field, e.target.value)}
         onFocus={field === "password" ? () => setPasswordFocused(true) : undefined}
       />
-      {/* the antd page opened the same checklist in a popover while typing */}
       {field === "password" && passwordFocused ? (
         <PasswordRequirements
           options={application.organizationObj?.passwordOptions}
