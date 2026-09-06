@@ -63,14 +63,16 @@ export function AgreementModal({
 
   return (
     <Dialog open={open} onOpenChange={(next) => (next ? undefined : onCancel())}>
-      <DialogContent className="max-w-[55vw]">
+      {/* 55vw is a readable column on a desktop but a squeezed one on a phone,
+          where the dialog has to take the width it can get */}
+      <DialogContent className="max-w-[calc(100vw-2rem)] rounded-lg p-4 sm:max-w-[55vw] sm:p-6">
         <DialogHeader>
           <DialogTitle>{i18next.t("signup:Terms of Use")}</DialogTitle>
         </DialogHeader>
-        <iframe title="terms" srcDoc={doc} className="h-[60vh] w-full border-0" />
+        <iframe title="terms" srcDoc={doc} className="h-[55vh] w-full border-0 sm:h-[60vh]" />
         <DialogFooter>
-          <Button variant="outline" onClick={onCancel}>{i18next.t("signup:Decline")}</Button>
-          <Button onClick={onOk}>{i18next.t("signup:Accept")}</Button>
+          <Button variant="outline" className="max-sm:h-11" onClick={onCancel}>{i18next.t("signup:Decline")}</Button>
+          <Button className="max-sm:h-11" onClick={onOk}>{i18next.t("signup:Accept")}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
