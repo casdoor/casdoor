@@ -60,7 +60,9 @@ function useObjectSearch(term: string, open: boolean) {
 
       Promise.allSettled([
         UserBackend.getUsers(organization, 1, PER_KIND, "name", query),
-        ApplicationBackend.getApplications("admin", 1, PER_KIND, "name", query),
+        Setting.isDefaultOrganizationSelected(account)
+          ? ApplicationBackend.getApplications("admin", 1, PER_KIND, "name", query)
+          : ApplicationBackend.getApplicationsByOrganization("admin", organization, 1, PER_KIND, "name", query),
         Setting.isAdminUser(account)
           ? OrganizationBackend.getOrganizations("admin", "", 1, PER_KIND, "name", query)
           : Promise.resolve(null),

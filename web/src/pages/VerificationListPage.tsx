@@ -3,11 +3,16 @@ import {Link} from "react-router-dom";
 import {CrudListPage} from "@/components/crud/CrudListPage";
 import {boolColumn, clientIpColumn, dateColumn, organizationColumn, textColumn} from "@/components/crud/columns";
 import type {ColumnDef} from "@/components/crud/types";
+import {useAccount} from "@/hooks/use-account";
 import {useRequestOrganization} from "@/hooks/use-organization";
 import * as VerificationBackend from "@/backend/VerificationBackend";
+import * as Setting from "@/lib/setting";
 
 export default function VerificationListPage() {
+  const {account} = useAccount();
   const organizationName = useRequestOrganization();
+  // GetVerifications() filters by "owner", an empty one means every organization
+  const owner = account && Setting.isDefaultOrganizationSelected(account) ? "" : organizationName;
 
   const columns: ColumnDef<any>[] = [
     organizationColumn(140, "owner", undefined, "left"),
@@ -41,12 +46,11 @@ export default function VerificationListPage() {
     <CrudListPage
       title={i18next.t("general:Verifications")}
       columns={columns}
-      deps={[organizationName]}
+      deps={[owner]}
       showActionColumn={false}
       fetch={(q) =>
         VerificationBackend.getVerifications(
-          "admin",
-          organizationName,
+          owner,
           q.page,
           q.pageSize,
           q.searchedColumn,
