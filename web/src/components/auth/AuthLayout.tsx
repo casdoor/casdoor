@@ -191,7 +191,6 @@ export function AuthLayout({
   // white text on white once the visitor is on the dark palette
   const formCss = isMobile ? application?.formCssMobile : application?.formCss;
   const panelBackground = React.useMemo(() => getPanelBackground(formCss), [formCss]);
-  const panelIsLight = isDark && !!panelBackground && isLightColor(panelBackground);
 
   // an IP restriction on either the application or its organization blocks the
   // whole sign-in surface, the same way EntryPage does in the antd frontend
@@ -199,13 +198,6 @@ export function AuthLayout({
   if (ipRestriction) {
     return <BlockedMessage message={ipRestriction} />;
   }
-
-  const logo = Setting.getThemedLogo(
-    application?.logo || cookieChrome.logo,
-    application?.logoDark || application?.organizationObj?.logoDark,
-    [isDark && !panelIsLight ? "dark" : "light"],
-  );
-  const footerHtml = application?.footerHtml || cookieChrome.footerHtml;
 
   // the customized form styling is meant for the standalone page, an embedded
   // one keeps the host page's own look, as the antd pages did
@@ -219,6 +211,16 @@ export function AuthLayout({
   // on a phone the panel *is* the page, so its border and shadow only add noise
   // — unless it has to hold itself off a background image
   const bleed = isPhone && !backgroundUrl;
+  // a bled panel paints no background of its own — index.css drops the one the
+  // application's form CSS asked for along with the rest of its card
+  const panelIsLight = isDark && !bleed && !!panelBackground && isLightColor(panelBackground);
+
+  const logo = Setting.getThemedLogo(
+    application?.logo || cookieChrome.logo,
+    application?.logoDark || application?.organizationObj?.logoDark,
+    [isDark && !panelIsLight ? "dark" : "light"],
+  );
+  const footerHtml = application?.footerHtml || cookieChrome.footerHtml;
 
   return (
     <div
@@ -268,7 +270,7 @@ export function AuthLayout({
             className={cn(
               "login-panel flex w-full items-center overflow-hidden text-card-foreground",
               panelIsLight && "theme-scope-light",
-              bleed ? "bg-transparent" : "rounded-xl border bg-card shadow-sm",
+              bleed ? "login-panel-bleed bg-transparent" : "rounded-xl border bg-card shadow-sm",
               // the padding sits on the element an application restyles, so its own
               // `.login-panel { padding }` replaces this one instead of adding to it
               sidePanel ? null : bleed ? "px-1 pt-4" : "px-6 pt-6 sm:px-8 sm:pt-8",
