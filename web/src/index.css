@@ -244,6 +244,16 @@ html.compact {
     padding-left: 1.25rem;
     padding-right: 1.25rem;
   }
+  /* and the card an application drew — the stock formCss draws one — has nothing
+     left to lift itself off, so it goes with the padding */
+  .login-content .login-panel.login-panel-bleed {
+    padding-top: 1rem;
+    padding-bottom: 0;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
   .login-content .login-form > *,
   .login-content .login-form form > * {
     max-width: 100%;
