@@ -165,7 +165,7 @@ export function SendCodeInput({
     <>
       <div className="flex gap-2">
         <div className="relative flex-1">
-          <ShieldCheck className="pointer-events-none absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+          <ShieldCheck className="pointer-events-none absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             className={cn("pl-8", className)}
             value={value}
@@ -178,7 +178,7 @@ export function SendCodeInput({
         <Button
           type="button"
           variant="outline"
-          className="shrink-0"
+          className="shrink-0 max-sm:h-11"
           loading={sending}
           disabled={disabled || seconds > 0}
           onClick={handleClick}

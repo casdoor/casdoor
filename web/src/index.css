@@ -178,3 +178,37 @@
 html.compact {
   font-size: 14px;
 }
+
+/* The AuthLayout pages on a phone. An application's own form CSS is written
+   against the desktop panel, which grows with its content; here the panel is
+   the viewport, so paddings and fixed widths meant for a wide card have to be
+   reined in. The selectors stay one step more specific than the ones an
+   application writes, since its <style> is injected after this sheet. */
+.login-background {
+  /* dvh, so the footer is not left under the phone browser's own toolbar */
+  min-height: 100dvh;
+}
+
+@media (max-width: 639.98px) {
+  .login-content .login-panel {
+    max-width: 100%;
+    padding-left: 0;
+    padding-right: 0;
+  }
+  .login-content .login-form > *,
+  .login-content .login-form form > * {
+    max-width: 100%;
+  }
+  /* 16px keeps iOS Safari from zooming the page when a field takes focus, and
+     44px is the smallest comfortable tap target */
+  .login-form input:not([type="checkbox"]):not([type="radio"]) {
+    height: 44px;
+    font-size: 16px;
+  }
+  /* a full-width button is the page's primary action, and role=combobox covers
+     the country code, organization and select fields */
+  .login-form button.w-full,
+  .login-form [role="combobox"] {
+    height: 44px;
+  }
+}

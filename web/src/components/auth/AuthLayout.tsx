@@ -91,7 +91,12 @@ export function AuthLayout({application, children, className, wide, hideLogo, hi
 
   return (
     <div
-      className={cn("login-background flex min-h-screen flex-col bg-muted/30", backgroundUrl && "bg-cover bg-fixed bg-center")}
+      className={cn(
+        "login-background flex min-h-screen flex-col bg-muted/30",
+        // a phone browser sizes a fixed background against the whole document,
+        // not the viewport, so it only stays attached on the desktop
+        backgroundUrl && cn("bg-cover bg-center", isMobile ? "bg-scroll" : "bg-fixed"),
+      )}
       style={backgroundUrl ? {backgroundImage: `url(${backgroundUrl})`} : undefined}
     >
       {embedded ? null : <CustomStyle css={isMobile ? application?.formCssMobile : application?.formCss} />}
@@ -103,14 +108,16 @@ export function AuthLayout({application, children, className, wide, hideLogo, hi
 
       <div
         className={cn(
-          "login-content flex flex-1 items-start px-4 pb-10 pt-4 sm:items-center sm:pt-0",
+          "login-content flex flex-1 items-start px-4 py-6",
           offset === 1 ? "justify-start sm:pl-[10%]" : offset === 3 ? "justify-end sm:pr-[10%]" : "justify-center",
         )}
       >
-        {/* one box: an application's own `.login-panel` styles the card itself */}
+        {/* one box: an application's own `.login-panel` styles the card itself.
+            my-auto centres it rather than items-center, which would clip the top
+            of a card taller than the viewport */}
         <Card
           className={cn(
-            "login-panel flex w-full items-center overflow-hidden shadow-md",
+            "login-panel my-auto flex w-full items-center overflow-hidden shadow-md",
             sidePanel ? "max-w-4xl" : wide ? "max-w-xl" : "max-w-md",
           )}
         >
