@@ -322,6 +322,12 @@ class LoginPage extends React.Component {
     const oAuthParams = Util.getOAuthGetParameters();
 
     values["type"] = oAuthParams?.responseType ?? this.state.type;
+    // A code handed to Casdoor's own /callback would be read there as a social-login
+    // round trip and the client's "state" as one of Casdoor's own, so such a request
+    // signs the user in instead, the same way AuthCallback treats this redirect URI.
+    if (values["type"] !== "device" && Setting.isSelfRedirectUri(oAuthParams?.redirectUri)) {
+      values["type"] = "login";
+    }
     if (this.state.userCode) {
       values["userCode"] = this.state.userCode;
     }

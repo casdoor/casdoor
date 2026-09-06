@@ -6,7 +6,6 @@ import {Loading} from "@/components/common/Loading";
 import {AuthLayout} from "@/components/auth/AuthLayout";
 import {MfaVerify, NextMfa} from "@/components/auth/MfaVerify";
 import {RedirectForm} from "@/components/auth/RedirectForm";
-import {authConfig} from "@/auth/Auth";
 import * as Provider from "@/auth/Provider";
 import * as Util from "@/auth/Util";
 import * as ApplicationBackend from "@/backend/ApplicationBackend";
@@ -122,8 +121,7 @@ export default function AuthCallback() {
           }
           return "login";
         }
-        const realRedirectUrl = new URL(realRedirectUri).origin;
-        if (authConfig.serverUrl === realRedirectUrl) {
+        if (Setting.isSelfRedirectUri(realRedirectUri)) {
           return "login";
         }
         return innerParams.get("response_type") ?? "code";

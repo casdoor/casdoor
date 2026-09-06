@@ -540,6 +540,12 @@ export default function LoginPage({type = "login", application: applicationProp,
 
     const oAuthParams = Util.getOAuthGetParameters();
     values.type = oAuthParams?.responseType ?? (type === "device" ? "device" : "login");
+    // A code handed to Casdoor's own /callback would be read there as a social-login
+    // round trip and the client's "state" as one of Casdoor's own, so such a request
+    // signs the user in instead, the same way AuthCallback treats this redirect URI.
+    if (values.type !== "device" && Setting.isSelfRedirectUri(oAuthParams?.redirectUri)) {
+      values.type = "login";
+    }
     if (params.userCode) {
       values.userCode = params.userCode;
     }

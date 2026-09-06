@@ -755,6 +755,21 @@ export function getFullServerUrl() {
   return fullServerUrl;
 }
 
+// An OAuth redirect URI on Casdoor's own origin belongs to Casdoor itself: the whole
+// origin serves the frontend, so no client application can live there. Such a request
+// is signed in directly instead of being answered with a code nobody can collect.
+export function isSelfRedirectUri(redirectUri) {
+  if (!redirectUri) {
+    return false;
+  }
+
+  try {
+    return new URL(redirectUri).origin === getFullServerUrl();
+  } catch {
+    return false;
+  }
+}
+
 export function isProviderVisible(providerItem) {
   if (providerItem.provider === undefined || providerItem.provider === null) {
     return false;

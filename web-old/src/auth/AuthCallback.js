@@ -19,7 +19,6 @@ import Loading from "../common/Loading";
 import * as AuthBackend from "./AuthBackend";
 import * as Util from "./Util";
 import * as Provider from "./Provider";
-import {authConfig} from "./Auth";
 import * as Setting from "../Setting";
 import i18next from "i18next";
 import RedirectForm from "../common/RedirectForm";
@@ -170,9 +169,6 @@ class AuthCallback extends React.Component {
   }
 
   getResponseType() {
-    // "http://localhost:8000"
-    const authServerUrl = authConfig.serverUrl;
-
     const innerParams = this.getInnerParams();
     const method = innerParams.get("method");
     if (method === "signup" || method === "signin") {
@@ -197,10 +193,8 @@ class AuthCallback extends React.Component {
         return "login";
       }
 
-      const realRedirectUrl = new URL(realRedirectUri).origin;
-
       // For Casdoor itself, we use "login" directly
-      if (authServerUrl === realRedirectUrl) {
+      if (Setting.isSelfRedirectUri(realRedirectUri)) {
         return "login";
       } else {
         const responseType = innerParams.get("response_type");
