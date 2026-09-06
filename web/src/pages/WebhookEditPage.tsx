@@ -6,6 +6,7 @@ import {CodeEditor} from "@/components/common/CodeEditor";
 import {SimpleEditPage, type EditField} from "@/components/crud/SimpleEditPage";
 import {useAccount} from "@/hooks/use-account";
 import {useOrganizationOptions} from "@/hooks/use-options";
+import {useRequestOrganization} from "@/hooks/use-organization";
 import * as WebhookBackend from "@/backend/WebhookBackend";
 import {buildWebhookPreview} from "@/lib/webhook-preview";
 import * as Setting from "@/lib/setting";
@@ -17,6 +18,8 @@ export default function WebhookEditPage() {
   const {webhookName = ""} = useParams();
   const {account} = useAccount();
   const organizations = useOrganizationOptions();
+  // GetWebhook() looks the webhook up inside this organization for a non-global admin
+  const organizationName = useRequestOrganization();
 
   const fields: EditField[] = [
     {
@@ -120,9 +123,9 @@ export default function WebhookEditPage() {
     <SimpleEditPage
       titleKey="webhook:Edit Webhook"
       backTo="/webhooks"
-      deps={[webhookName]}
+      deps={[webhookName, organizationName]}
       fields={fields}
-      fetch={() => WebhookBackend.getWebhook("admin", webhookName)}
+      fetch={() => WebhookBackend.getWebhook("admin", webhookName, organizationName)}
       add={(record) => WebhookBackend.addWebhook(record)}
       update={(record) => WebhookBackend.updateWebhook("admin", webhookName, record)}
       editUrl={(record) => `/webhooks/${record.name}`}

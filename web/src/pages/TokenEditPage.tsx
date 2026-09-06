@@ -5,6 +5,7 @@ import {Button} from "@/components/ui/button";
 import {Textarea} from "@/components/ui/textarea";
 import {CodeEditor} from "@/components/common/CodeEditor";
 import {SimpleEditPage, type EditField} from "@/components/crud/SimpleEditPage";
+import {useRequestOrganization} from "@/hooks/use-organization";
 import * as TokenBackend from "@/backend/TokenBackend";
 import * as Setting from "@/lib/setting";
 
@@ -92,6 +93,8 @@ function TokenPanel({token, update}: {token: any; update: (field: string, value:
 
 export default function TokenEditPage() {
   const {tokenName = ""} = useParams();
+  // GetToken() refuses a token outside the organization passed to it
+  const organizationName = useRequestOrganization();
 
   const fields: EditField[] = [
     {type: "text", name: "name", labelKey: "general:Name", required: true},
@@ -117,9 +120,9 @@ export default function TokenEditPage() {
     <SimpleEditPage
       titleKey="token:Edit Token"
       backTo="/tokens"
-      deps={[tokenName]}
+      deps={[tokenName, organizationName]}
       fields={fields}
-      fetch={() => TokenBackend.getToken("admin", tokenName)}
+      fetch={() => TokenBackend.getToken("admin", tokenName, organizationName)}
       add={(record) => TokenBackend.addToken(record)}
       update={(record) => TokenBackend.updateToken("admin", tokenName, record)}
       editUrl={(record) => `/tokens/${record.name}`}
