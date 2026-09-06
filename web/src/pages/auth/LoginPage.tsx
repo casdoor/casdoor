@@ -9,7 +9,7 @@ import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 import {Alert, AlertDescription} from "@/components/ui/alert";
 import {Loading} from "@/components/common/Loading";
 import {CustomHtml, CustomStyle} from "@/components/common/CustomHtml";
-import {AuthLayout} from "@/components/auth/AuthLayout";
+import {AuthDivider, AuthLayout} from "@/components/auth/AuthLayout";
 import {SigninMethodTabs} from "@/components/auth/SigninMethodTabs";
 import {MfaVerify, NextMfa, RequiredMfa} from "@/components/auth/MfaVerify";
 import {AgreementCheckbox, getAgreementDefaultValue, isAgreementRequired} from "@/components/auth/AgreementModal";
@@ -17,7 +17,7 @@ import {DeviceLoginPanel} from "@/components/auth/DeviceLoginPanel";
 import {GoogleOneTap} from "@/components/auth/GoogleOneTap";
 import {FaceRecognitionCommonModal} from "@/components/common/FaceRecognitionCommonModal";
 import {FaceRecognitionModal} from "@/components/common/FaceRecognitionModal";
-import {ProviderButtons} from "@/components/auth/ProviderButtons";
+import {ProviderButtons, getVisibleProviders} from "@/components/auth/ProviderButtons";
 import {WeChatLoginPanel} from "@/components/auth/WeChatLoginPanel";
 import {OrganizationSelect} from "@/components/common/OrganizationSelect";
 import {RedirectForm} from "@/components/auth/RedirectForm";
@@ -212,8 +212,8 @@ function OrganizationChoiceBox({mode}: {mode: string}) {
 
   if (mode === "Select") {
     return (
-      <div className="space-y-3">
-        <p className="text-base">{i18next.t("login:Please select an organization to sign in")}</p>
+      <div className="space-y-4">
+        <p className="text-sm text-muted-foreground">{i18next.t("login:Please select an organization to sign in")}</p>
         <OrganizationSelect value="" onChange={go} />
       </div>
     );
@@ -221,13 +221,13 @@ function OrganizationChoiceBox({mode}: {mode: string}) {
 
   return (
     <form
-      className="space-y-3"
+      className="space-y-4"
       onSubmit={(e) => {
         e.preventDefault();
         go(name.trim());
       }}
     >
-      <p className="text-base">{i18next.t("login:Please type an organization to sign in")}</p>
+      <p className="text-sm text-muted-foreground">{i18next.t("login:Please type an organization to sign in")}</p>
       <Input autoFocus value={name} onChange={(e) => setName(e.target.value)} />
       <Button type="submit" className="w-full">
         {i18next.t("general:Confirm")}
@@ -243,7 +243,7 @@ function OrganizationChoiceBox({mode}: {mode: string}) {
  */
 function ForgetLink({application, label}: {application: any; label?: string}) {
   const url = Setting.getForgetLink(application);
-  const className = "text-xs text-muted-foreground underline-offset-4 hover:underline";
+  const className = "text-sm font-medium text-foreground underline-offset-4 hover:underline";
   const text = label || i18next.t("login:Forgot password?");
 
   if (url?.startsWith("/")) {
@@ -1191,10 +1191,10 @@ export default function LoginPage({type = "login", application: applicationProp,
     case "Forgot password?":
       // the item's default CSS pins this row at 320px, wider than some panels
       return (
-        <div key={key} className="login-forget-password flex max-w-full flex-wrap items-center justify-between gap-x-2 gap-y-1">
+        <div key={key} className="login-forget-password flex max-w-full flex-wrap items-center justify-between gap-x-3 gap-y-2">
           <div className="flex items-center gap-2">
             <Checkbox id="autoSignin" checked={autoSignin} onCheckedChange={(v) => setAutoSignin(v === true)} />
-            <Label htmlFor="autoSignin" className="login-auto-signin text-sm font-normal">
+            <Label htmlFor="autoSignin" className="login-auto-signin cursor-pointer text-sm font-normal text-muted-foreground">
               {i18next.t("login:Auto sign in")}
             </Label>
           </div>
@@ -1250,9 +1250,9 @@ export default function LoginPage({type = "login", application: applicationProp,
       }
       const signupUrl = Setting.getSignupLink(application) ?? "/signup";
       const signupText = item.label || i18next.t("login:sign up now");
-      const signupClass = "text-foreground underline-offset-4 hover:underline";
+      const signupClass = "font-medium text-foreground underline-offset-4 hover:underline";
       return (
-        <p key={key} className="login-signup-link text-center text-sm text-muted-foreground">
+        <p key={key} className="login-signup-link pt-1 text-center text-sm text-muted-foreground">
           {item.label ? null : <span className="mr-1">{i18next.t("login:No account?")}</span>}
           {signupUrl.startsWith("/") ? (
             <Link to={signupUrl} onClick={Setting.storeSigninUrl} className={signupClass}>{signupText}</Link>
@@ -1263,13 +1263,18 @@ export default function LoginPage({type = "login", application: applicationProp,
       );
     }
     case "Providers":
+      if (getVisibleProviders(application, "signin").length === 0) {
+        return null;
+      }
       return (
-        <ProviderButtons
-          key={key}
-          application={application}
-          method="signin"
-          rule={Setting.getProvidersRule(application, item)}
-        />
+        <div key={key} className="space-y-4">
+          {showForm ? <AuthDivider /> : null}
+          <ProviderButtons
+            application={application}
+            method="signin"
+            rule={Setting.getProvidersRule(application, item)}
+          />
+        </div>
       );
     default:
       return null;
@@ -1283,34 +1288,30 @@ export default function LoginPage({type = "login", application: applicationProp,
       hideLogo={!isVisible("Logo")}
       hideLanguages={!isVisible("Languages")}
     >
-      <div className="space-y-5">
+      <div className="space-y-6">
         {/* each item styles itself; a "Text N" item holds HTML, not CSS */}
         {signinItems.map((item: any) =>
           Setting.isCustomFormItem(item) ? null : <CustomStyle key={`css-${item.name}`} css={item.customCss} />,
         )}
 
         {type === "device" && params.userCode ? (
-          <div className="space-y-1 text-center">
-            <h2 className="text-base font-semibold">{i18next.t("login:Approve sign-in on this device")}</h2>
-            <div className="font-medium">{application.displayName}</div>
-            <div className="text-sm text-muted-foreground">
-              {i18next.t("login:Confirmation code")}: {params.userCode}
-            </div>
+          <div className="space-y-1 rounded-lg border bg-muted/50 p-4 text-center">
+            <div className="text-sm text-muted-foreground">{i18next.t("login:Confirmation code")}</div>
+            <div className="font-mono text-2xl font-semibold tracking-[0.2em]">{params.userCode}</div>
           </div>
         ) : null}
 
         {showSignedInBox ? (
           <div className="space-y-3">
-            <div className="text-sm">
+            <p className="text-sm text-muted-foreground">
               {type === "device"
                 ? i18next.t("login:Continue with your current account to approve this sign-in")
                 : i18next.t("login:Continue with")}
-              &nbsp;:
-            </div>
+            </p>
             <Button
               type="button"
               variant="outline"
-              className="h-12 w-full justify-center gap-3"
+              className="h-14 w-full justify-start gap-3 px-3 text-left"
               onClick={loginAsCurrentAccount}
             >
               <Avatar className="h-8 w-8">
@@ -1321,9 +1322,11 @@ export default function LoginPage({type = "login", application: applicationProp,
                   {(account.name || "?").charAt(0).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
-              {account.displayName ? `${account.name} (${account.displayName})` : account.name}
+              <span className="min-w-0 flex-1 truncate">
+                {account.displayName ? `${account.name} (${account.displayName})` : account.name}
+              </span>
             </Button>
-            <div className="text-sm">{i18next.t("login:Or sign in with another account")}&nbsp;:</div>
+            <AuthDivider label={i18next.t("login:Or sign in with another account")} />
           </div>
         ) : null}
 
@@ -1333,18 +1336,17 @@ export default function LoginPage({type = "login", application: applicationProp,
           </form>
         ) : (
           <div className="space-y-4">
-            <div className="text-base">
+            <p className="text-sm text-muted-foreground">
               {i18next.t("login:To access")}&nbsp;
               <a
                 target="_blank"
                 rel="noreferrer"
                 href={application.homepageUrl}
-                className="font-bold underline-offset-4 hover:underline"
+                className="font-medium text-foreground underline-offset-4 hover:underline"
               >
                 {application.displayName}
               </a>
-              :
-            </div>
+            </p>
             {signinItems
               .filter((item: any) => item.name === "Providers" || item.name === "Signup link")
               .map(renderSigninItem)}
@@ -1352,16 +1354,18 @@ export default function LoginPage({type = "login", application: applicationProp,
         )}
 
         {wechatOnLoginPage ? (
-          <div className="space-y-2 border-t pt-4">
-            <h3 className="text-center text-sm font-medium">
+          <div className="space-y-4">
+            <AuthDivider />
+            <p className="text-center text-sm text-muted-foreground">
               {i18next.t("provider:Please use WeChat to scan the QR code and follow the official account for sign in")}
-            </h3>
+            </p>
             <WeChatLoginPanel application={application} />
           </div>
         ) : null}
 
         {deviceLoginOnLoginPage ? (
-          <div className="border-t pt-4">
+          <div className="space-y-4">
+            <AuthDivider />
             <DeviceLoginPanel application={application} onSuccess={completeDeviceLogin} />
           </div>
         ) : null}

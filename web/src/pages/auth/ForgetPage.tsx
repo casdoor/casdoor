@@ -1,9 +1,11 @@
 import * as React from "react";
 import i18next from "i18next";
-import {useNavigate, useParams} from "react-router-dom";
+import {ArrowLeft} from "lucide-react";
+import {Link, useNavigate, useParams} from "react-router-dom";
 import {Alert, AlertDescription} from "@/components/ui/alert";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
+import {PasswordInput} from "@/components/common/PasswordInput";
 import {Label} from "@/components/ui/label";
 import {Loading} from "@/components/common/Loading";
 import {AuthLayout} from "@/components/auth/AuthLayout";
@@ -15,6 +17,7 @@ import * as ApplicationBackend from "@/backend/ApplicationBackend";
 import * as AuthBackend from "@/backend/AuthBackend";
 import * as UserBackend from "@/backend/UserBackend";
 import * as Setting from "@/lib/setting";
+import {cn} from "@/lib/utils";
 
 type Step = "account" | "verify" | "password";
 
@@ -194,73 +197,160 @@ export default function ForgetPage() {
       .finally(() => setLoading(false));
   };
 
+  const steps: {key: Step; label: string}[] = [
+    {key: "account", label: i18next.t("cert:Account")},
+    {key: "verify", label: i18next.t("forget:Verify")},
+    {key: "password", label: i18next.t("forget:Reset")},
+  ];
+  const stepIndex = steps.findIndex((item) => item.key === step);
+
+  // a code that arrived through a reset link lands on the last step with nothing
+  // behind it, so there is nowhere to go back to
+  const back = linkCode
+    ? undefined
+    : step === "verify"
+      ? () => setStep("account")
+      : step === "password"
+        ? () => setStep("verify")
+        : undefined;
+
+  const signinLink = Setting.getLoginLink(application) || "/login";
+  const backToSigninClass = "inline-flex items-center gap-1.5 font-medium text-foreground underline-offset-4 hover:underline";
+
   return (
-    <AuthLayout application={application}>
-      <div className="space-y-5">
-        <h1 className="text-center text-xl font-semibold">{i18next.t("forget:Reset password")}</h1>
+    <AuthLayout
+      application={application}
+      onBack={back}
+      footer={
+        signinLink.startsWith("/") ? (
+          <Link to={signinLink} className={backToSigninClass}>
+            <ArrowLeft className="h-4 w-4" />
+            {i18next.t("login:Sign In")}
+          </Link>
+        ) : (
+          <a href={signinLink} className={backToSigninClass}>
+            <ArrowLeft className="h-4 w-4" />
+            {i18next.t("login:Sign In")}
+          </a>
+        )
+      }
+    >
+      <div className="space-y-6">
+        {linkCode ? null : (
+          <ol className="flex items-center gap-2">
+            {steps.map((item, index) => (
+              <li key={item.key} className="flex min-w-0 flex-1 flex-col gap-1.5">
+                <span
+                  className={cn(
+                    "h-1 rounded-full transition-colors",
+                    index <= stepIndex ? "bg-primary" : "bg-muted",
+                  )}
+                />
+                <span
+                  className={cn(
+                    "truncate text-xs",
+                    index === stepIndex ? "font-medium text-foreground" : "text-muted-foreground",
+                  )}
+                >
+                  {item.label}
+                </span>
+              </li>
+            ))}
+          </ol>
+        )}
 
         {step === "account" ? (
-          <div className="space-y-4">
+          <form
+            className="space-y-4"
+            onSubmit={(e) => {
+              e.preventDefault();
+              findAccount();
+            }}
+          >
             <div className="space-y-2">
               <Label htmlFor="account">{i18next.t("cert:Account")}</Label>
               <Input
                 id="account"
                 autoFocus
+                autoComplete="username"
                 placeholder={accountPlaceholder()}
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && findAccount()}
               />
             </div>
-            <Button className="w-full" loading={loading} onClick={findAccount}>
+            <Button type="submit" className="w-full" loading={loading}>
               {i18next.t("forget:Next Step")}
             </Button>
-          </div>
+          </form>
         ) : step === "verify" ? (
-          <div className="space-y-4">
-            <div className="flex gap-2">
-              {dest.email ? (
-                <Button
-                  variant={method === "email" ? "default" : "outline"}
-                  className="flex-1"
-                  onClick={() => setMethod("email")}
-                >
-                  {i18next.t("general:Email")}
-                </Button>
-              ) : null}
-              {dest.phone ? (
-                <Button
-                  variant={method === "phone" ? "default" : "outline"}
-                  className="flex-1"
-                  onClick={() => setMethod("phone")}
-                >
-                  {i18next.t("general:Phone")}
-                </Button>
-              ) : null}
+          <form
+            className="space-y-4"
+            onSubmit={(e) => {
+              e.preventDefault();
+              verifyCode();
+            }}
+          >
+            {dest.email && dest.phone ? (
+              // both are configured, so which one gets the code is a real choice
+              <div className="grid grid-cols-2 gap-1 rounded-lg bg-muted p-1">
+                {(["email", "phone"] as const).map((option) => (
+                  <button
+                    key={option}
+                    type="button"
+                    onClick={() => setMethod(option)}
+                    className={cn(
+                      "rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
+                      method === option
+                        ? "bg-background text-foreground shadow-sm"
+                        : "text-muted-foreground hover:text-foreground",
+                    )}
+                  >
+                    {i18next.t(option === "email" ? "general:Email" : "general:Phone")}
+                  </button>
+                ))}
+              </div>
+            ) : null}
+
+            <div className="rounded-lg border bg-muted/50 px-3 py-2.5 text-sm">
+              <span className="text-muted-foreground">
+                {i18next.t(method === "email" ? "general:Email" : "general:Phone")}
+              </span>
+              <span className="ml-2 break-all font-medium">{method === "email" ? dest.email : dest.phone}</span>
             </div>
-            <p className="text-sm text-muted-foreground">{method === "email" ? dest.email : dest.phone}</p>
-            <SendCodeInput
-              value={code}
-              onChange={setCode}
-              method="forget"
-              destType={method}
-              dest={method === "email" ? dest.email : dest.phone}
-              countryCode={dest.countryCode}
-              application={application}
-              applicationId={Setting.getApplicationName(application)}
-              checkUser={account}
-            />
-            <Button className="w-full" loading={loading} onClick={verifyCode}>
+
+            <div className="space-y-2">
+              <Label>{i18next.t("login:Verification code")}</Label>
+              <SendCodeInput
+                value={code}
+                onChange={setCode}
+                method="forget"
+                destType={method}
+                dest={method === "email" ? dest.email : dest.phone}
+                countryCode={dest.countryCode}
+                application={application}
+                applicationId={Setting.getApplicationName(application)}
+                checkUser={account}
+              />
+            </div>
+
+            <Button type="submit" className="w-full" loading={loading}>
               {i18next.t("forget:Next Step")}
             </Button>
-          </div>
+          </form>
         ) : (
-          <div className="space-y-4">
+          <form
+            className="space-y-4"
+            onSubmit={(e) => {
+              e.preventDefault();
+              resetPassword();
+            }}
+          >
             <div className="space-y-2">
               <Label htmlFor="newPassword">{i18next.t("user:New Password")}</Label>
-              <Input
+              <PasswordInput
                 id="newPassword"
-                type="password"
+                autoFocus
+                autoComplete="new-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 onFocus={() => setPasswordFocused(true)}
@@ -274,17 +364,17 @@ export default function ForgetPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="confirmPassword">{i18next.t("user:Re-enter New")}</Label>
-              <Input
+              <PasswordInput
                 id="confirmPassword"
-                type="password"
+                autoComplete="new-password"
                 value={confirm}
                 onChange={(e) => setConfirm(e.target.value)}
               />
             </div>
-            <Button className="w-full" loading={loading} onClick={resetPassword}>
+            <Button type="submit" className="w-full" loading={loading}>
               {i18next.t("forget:Change Password")}
             </Button>
-          </div>
+          </form>
         )}
       </div>
     </AuthLayout>

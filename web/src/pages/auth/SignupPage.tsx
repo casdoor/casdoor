@@ -13,9 +13,9 @@ import {PasswordInput} from "@/components/common/PasswordInput";
 import {SearchableSelect} from "@/components/common/SearchableSelect";
 import {RegionSelect} from "@/components/common/RegionSelect";
 import {CustomHtml, CustomStyle} from "@/components/common/CustomHtml";
-import {AuthLayout} from "@/components/auth/AuthLayout";
+import {AuthDivider, AuthLayout} from "@/components/auth/AuthLayout";
 import {AgreementCheckbox, getAgreementDefaultValue} from "@/components/auth/AgreementModal";
-import {ProviderButtons} from "@/components/auth/ProviderButtons";
+import {ProviderButtons, getVisibleProviders} from "@/components/auth/ProviderButtons";
 import {SendCodeInput} from "@/components/auth/SendCodeInput";
 import {CaptchaModal} from "@/components/common/CaptchaModal";
 import {getCaptchaProvider} from "@/lib/captcha";
@@ -28,6 +28,7 @@ import * as InvitationBackend from "@/backend/InvitationBackend";
 import * as AuthBackend from "@/backend/AuthBackend";
 import {getSignupItemField, validateSignupItems} from "@/lib/signup-validation";
 import * as Setting from "@/lib/setting";
+import {cn} from "@/lib/utils";
 
 /** The signup items Casdoor can render; anything else falls back to a text input. */
 const SIMPLE_TEXT_ITEMS: Record<string, string> = {
@@ -169,8 +170,8 @@ export default function SignupPage({application: applicationProp}: {application?
 
   const renderLabel = (text: React.ReactNode, required?: boolean, htmlFor?: string) => (
     <Label htmlFor={htmlFor}>
-      {required ? <span className="mr-1 text-destructive">*</span> : null}
       {text}
+      {required ? <span className="ml-0.5 text-destructive">*</span> : null}
     </Label>
   );
 
@@ -515,17 +516,21 @@ export default function SignupPage({application: applicationProp}: {application?
       const choices = item.name === "Email or Phone" ? ["Email", "Phone"] : ["Phone", "Email"];
       return (
         <React.Fragment key={item.name}>
-          <div className="signup-email-or-phone flex gap-2">
+          <div className="signup-email-or-phone grid grid-cols-2 gap-1 rounded-lg bg-muted p-1">
             {choices.map((choice) => (
-              <Button
+              <button
                 key={choice}
                 type="button"
-                size="sm"
-                variant={mode === choice ? "default" : "outline"}
                 onClick={() => setEmailOrPhoneMode(choice)}
+                className={cn(
+                  "rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
+                  mode === choice
+                    ? "bg-background text-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground",
+                )}
               >
                 {i18next.t(choice === "Email" ? "general:Email" : "general:Phone")}
-              </Button>
+              </button>
             ))}
           </div>
           {mode === "Email" ? renderEmail(item) : renderPhone(item)}
@@ -590,14 +595,19 @@ export default function SignupPage({application: applicationProp}: {application?
         </div>
       );
     case "Providers":
+      if (getVisibleProviders(application, "signup").length === 0) {
+        return null;
+      }
       return (
-        <ProviderButtons
-          key={item.name}
-          application={application}
-          method="signup"
-          rule={Setting.getProvidersRule(application, item)}
-          onBeforeClick={checkAgreement}
-        />
+        <div key={item.name} className="space-y-4">
+          <AuthDivider />
+          <ProviderButtons
+            application={application}
+            method="signup"
+            rule={Setting.getProvidersRule(application, item)}
+            onBeforeClick={checkAgreement}
+          />
+        </div>
       );
     case "Signup button":
       return (
@@ -660,6 +670,20 @@ export default function SignupPage({application: applicationProp}: {application?
         setUserLang(key);
         Setting.setSigninLanguage(key);
       }}
+      footer={
+        <>
+          {i18next.t("signup:Have account?")}{" "}
+          {signinLink.startsWith("/") ? (
+            <Link to={signinLink} className="signup-link font-medium text-foreground underline-offset-4 hover:underline">
+              {i18next.t("signup:sign in now")}
+            </Link>
+          ) : (
+            <a href={signinLink} className="signup-link font-medium text-foreground underline-offset-4 hover:underline">
+              {i18next.t("signup:sign in now")}
+            </a>
+          )}
+        </>
+      }
     >
       <form className="space-y-4" onSubmit={submit}>
         {/* each item styles itself; a "Text N" item holds the HTML, not the CSS */}
@@ -685,18 +709,6 @@ export default function SignupPage({application: applicationProp}: {application?
             onCancel={() => setCaptchaVisible(false)}
           />
         ) : null}
-        <p className="text-center text-sm text-muted-foreground">
-          {i18next.t("signup:Have account?")}{" "}
-          {signinLink.startsWith("/") ? (
-            <Link to={signinLink} className="signup-link text-foreground underline-offset-4 hover:underline">
-              {i18next.t("signup:sign in now")}
-            </Link>
-          ) : (
-            <a href={signinLink} className="signup-link text-foreground underline-offset-4 hover:underline">
-              {i18next.t("signup:sign in now")}
-            </a>
-          )}
-        </p>
       </form>
     </AuthLayout>
   );

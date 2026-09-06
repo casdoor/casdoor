@@ -96,7 +96,7 @@ export function MfaVerify({formValues, authParams, mfaProps, application, onSucc
   if (useRecovery) {
     return (
       <div className="space-y-4">
-        <h2 className="text-center text-lg font-semibold">{i18next.t("mfa:Multi-factor recover")}</h2>
+        <h2 className="text-center text-xl font-semibold tracking-tight">{i18next.t("mfa:Multi-factor recover")}</h2>
         <p className="text-sm text-muted-foreground">{i18next.t("mfa:Multi-factor recover description")}</p>
         <div className="space-y-2">
           <Label htmlFor="recoveryCode">{i18next.t("mfa:Recovery code")}</Label>
@@ -143,7 +143,7 @@ export function MfaVerify({formValues, authParams, mfaProps, application, onSucc
 
   return (
     <div className="space-y-4">
-      <h2 className="text-center text-lg font-semibold">{i18next.t("mfa:Multi-factor authentication")}</h2>
+      <h2 className="text-center text-xl font-semibold tracking-tight">{i18next.t("mfa:Multi-factor authentication")}</h2>
       {isCodeType ? (
         <>
           <p className="text-sm text-muted-foreground">

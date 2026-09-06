@@ -179,36 +179,82 @@ html.compact {
   font-size: 14px;
 }
 
-/* The AuthLayout pages on a phone. An application's own form CSS is written
-   against the desktop panel, which grows with its content; here the panel is
-   the viewport, so paddings and fixed widths meant for a wide card have to be
-   reined in. The selectors stay one step more specific than the ones an
-   application writes, since its <style> is injected after this sheet. */
+/* ---------------------------------------------------------------------------
+   The auth surface: sign-in, sign-up and password reset.
+
+   An application ships its own form CSS, written against the desktop panel, so
+   everything here stays one step less specific than the selectors it uses, and
+   its <style> is injected after this sheet anyway.
+   --------------------------------------------------------------------------- */
+
 .login-background {
   /* dvh, so the footer is not left under the phone browser's own toolbar */
   min-height: 100dvh;
 }
 
+/* An application may paint its own panel through `formCss`, and a panel painted
+   light inside a dark page would otherwise render white text on white. The
+   layout reads that colour out of the application's stylesheet and puts this
+   class on the panel: the light tokens come back for that subtree only, and the
+   brand colour comes back un-darkened from the `--primary-base` that
+   useApplicationTheme keeps around for this. */
+.theme-scope-light {
+  color-scheme: light;
+
+  --background: 0 0% 100%;
+  --foreground: 0 0% 9%;
+  --card: 0 0% 100%;
+  --card-foreground: 0 0% 9%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 0 0% 9%;
+  --primary: var(--primary-base, 0 0% 9%);
+  --primary-foreground: var(--primary-base-foreground, 0 0% 98%);
+  --secondary: 0 0% 96%;
+  --secondary-foreground: 0 0% 9%;
+  --muted: 0 0% 96%;
+  --muted-foreground: 0 0% 44%;
+  --accent: 0 0% 96%;
+  --accent-foreground: 0 0% 9%;
+  --destructive: 0 72% 46%;
+  --destructive-foreground: 0 0% 98%;
+  --success: 142 71% 40%;
+  --success-foreground: 0 0% 100%;
+  --warning: 32 95% 44%;
+  --warning-foreground: 0 0% 100%;
+  --border: 0 0% 90%;
+  --input: 0 0% 87%;
+  --ring: var(--primary-base, 0 0% 9%);
+
+  color: hsl(var(--foreground));
+}
+
+/* The fields are the whole point of these pages, so they run a step taller than
+   the console's, and grow again to a comfortable tap target on a phone. */
+.login-form input:not([type="checkbox"]):not([type="radio"]),
+.login-form [role="combobox"],
+.login-form button.w-full {
+  min-height: 2.5rem;
+}
+
 @media (max-width: 639.98px) {
+  /* here the panel is the viewport, so a padding meant for a wide desktop card —
+     an application's or our own — comes back to a phone-sized one */
   .login-content .login-panel {
     max-width: 100%;
-    padding-left: 0;
-    padding-right: 0;
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
   }
   .login-content .login-form > *,
   .login-content .login-form form > * {
     max-width: 100%;
   }
-  /* 16px keeps iOS Safari from zooming the page when a field takes focus, and
-     44px is the smallest comfortable tap target */
-  .login-form input:not([type="checkbox"]):not([type="radio"]) {
-    height: 44px;
-    font-size: 16px;
+  .login-form input:not([type="checkbox"]):not([type="radio"]),
+  .login-form [role="combobox"],
+  .login-form button.w-full {
+    min-height: 2.75rem;
   }
-  /* a full-width button is the page's primary action, and role=combobox covers
-     the country code, organization and select fields */
-  .login-form button.w-full,
-  .login-form [role="combobox"] {
-    height: 44px;
+  /* 16px keeps iOS Safari from zooming the page when a field takes focus */
+  .login-form input:not([type="checkbox"]):not([type="radio"]) {
+    font-size: 16px;
   }
 }

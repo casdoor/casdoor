@@ -19,6 +19,13 @@ interface ProviderButtonsProps {
   onBeforeClick?: () => boolean;
 }
 
+/** The providers an application offers for that method, in the order it lists them. */
+export function getVisibleProviders(application: any, method: "signup" | "signin" | "link") {
+  return (application?.providers ?? []).filter((item: any) =>
+    method === "signup" ? Setting.isProviderVisibleForSignUp(item) : Setting.isProviderVisibleForSignIn(item),
+  );
+}
+
 /** SAML sign-in goes through /api/get-saml-login, which answers with a redirect or a POST form. */
 function goToSamlUrl(provider: any, search: string) {
   const params = new URLSearchParams(search);
@@ -51,9 +58,7 @@ export function ProviderButtons({application, method, rule, onBeforeClick}: Prov
   const location = useLocation();
   const [wechatItem, setWechatItem] = React.useState<any>(null);
 
-  const items = (application?.providers ?? []).filter((item: any) =>
-    method === "signup" ? Setting.isProviderVisibleForSignUp(item) : Setting.isProviderVisibleForSignIn(item),
-  );
+  const items = getVisibleProviders(application, method);
 
   const goTo = (providerItem: any) => {
     const provider = providerItem.provider;
@@ -135,15 +140,19 @@ export function ProviderButtons({application, method, rule, onBeforeClick}: Prov
             key={item.name}
             type="button"
             variant="outline"
-            className="provider-big-img w-full justify-center gap-2"
+            className="provider-big-img w-full justify-start gap-3 px-4 font-normal"
             onClick={() => onClick(item)}
           >
             <img
               src={Setting.getProviderLogoURL(item.provider)}
               alt={item.provider.displayName}
-              className="h-5 w-5 object-contain"
+              className="h-5 w-5 shrink-0 object-contain"
             />
-            {i18next.t("login:Sign in with {type}").replace("{type}", item.provider.displayName || item.provider.type)}
+            <span className="min-w-0 flex-1 truncate text-center">
+              {i18next.t("login:Sign in with {type}").replace("{type}", item.provider.displayName || item.provider.type)}
+            </span>
+            {/* balances the logo, so the label stays centred in the button */}
+            <span className="h-5 w-5 shrink-0" aria-hidden />
           </Button>
         ))}
         {dialog}
@@ -159,7 +168,7 @@ export function ProviderButtons({application, method, rule, onBeforeClick}: Prov
             <button
               type="button"
               onClick={() => onClick(item)}
-              className="flex h-10 w-10 items-center justify-center rounded-md border transition-colors hover:bg-accent"
+              className="flex h-11 w-11 items-center justify-center rounded-lg border bg-background transition-colors hover:bg-accent"
             >
               <img
                 src={Setting.getProviderLogoURL(item.provider)}

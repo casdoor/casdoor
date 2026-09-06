@@ -11,8 +11,14 @@ interface ThemeData {
   isCompact?: boolean;
 }
 
-/** "#262626" -> "0 0% 15%", the triplet shadcn's CSS variables expect. */
-function hexToHslTriplet(hex: string): {triplet: string; lightness: number} | null {
+interface Hsl {
+  h: number;
+  s: number;
+  l: number;
+}
+
+/** "#262626" -> {h: 0, s: 0, l: 0.149}. */
+function hexToHsl(hex: string): Hsl | null {
   const match = /^#?([\da-f]{3}|[\da-f]{6})$/i.exec(hex.trim());
   if (!match) {
     return null;
@@ -43,11 +49,33 @@ function hexToHslTriplet(hex: string): {triplet: string; lightness: number} | nu
     }
   }
 
+  return {h: h * 360, s, l};
+}
+
+/** The triplet shadcn's CSS variables expect: "0 0% 14.9%". */
+function formatHsl({h, s, l}: Hsl): string {
   const round = (n: number) => Math.round(n * 10) / 10;
-  return {
-    triplet: `${round(h * 360)} ${round(s * 100)}% ${round(l * 100)}%`,
-    lightness: l,
-  };
+  return `${round(h)} ${round(s * 100)}% ${round(l * 100)}%`;
+}
+
+/** Black or white, whichever stays readable on top of that lightness. */
+function foregroundFor(lightness: number): string {
+  return lightness > 0.6 ? "0 0% 9%" : "0 0% 98%";
+}
+
+/**
+ * A brand colour picked against a white page is usually far too dark to sit on a
+ * dark one — Casdoor's own default, #262626, disappears into the panel it is
+ * painted on. antd handled this in its `darkAlgorithm`, which derived a lighter
+ * primary from the same hue; this keeps to the one step that matters: a colourful
+ * brand is lifted to a usable lightness, and a neutral one (a black or a grey)
+ * hands over to the palette's own near-white primary.
+ */
+function adaptPrimaryForDark(color: Hsl): Hsl {
+  if (color.s < 0.15) {
+    return {...color, l: 0.98};
+  }
+  return {...color, l: Math.max(color.l, 0.62)};
 }
 
 /** Pushes a `themeData` object into the shadcn CSS variables for as long as it is mounted. */
@@ -58,15 +86,24 @@ export function useThemeData(themeData: ThemeData | undefined | null) {
 
   React.useEffect(() => {
     const root = document.documentElement;
-    const primary = themeData?.colorPrimary ? hexToHslTriplet(themeData.colorPrimary) : null;
+    const primary = themeData?.colorPrimary ? hexToHsl(themeData.colorPrimary) : null;
     const touched: string[] = [];
+    // `themeType: "dark"` forces the dark palette on below, so the brand colour
+    // has to be adapted for it even when the visitor asked for the light one
+    const dark = themeData?.themeType === "dark" || resolvedTheme === "dark";
 
     if (primary) {
-      root.style.setProperty("--primary", primary.triplet);
+      // the un-adapted colour stays available to a subtree painted light inside a
+      // dark page, see `.theme-scope-light` in index.css
+      root.style.setProperty("--primary-base", formatHsl(primary));
+      root.style.setProperty("--primary-base-foreground", foregroundFor(primary.l));
+
+      const painted = dark ? adaptPrimaryForDark(primary) : primary;
+      root.style.setProperty("--primary", formatHsl(painted));
       // keep the label readable whichever end of the scale the brand colour sits on
-      root.style.setProperty("--primary-foreground", primary.lightness > 0.6 ? "0 0% 9%" : "0 0% 98%");
-      root.style.setProperty("--ring", primary.triplet);
-      touched.push("--primary", "--primary-foreground", "--ring");
+      root.style.setProperty("--primary-foreground", foregroundFor(painted.l));
+      root.style.setProperty("--ring", formatHsl(painted));
+      touched.push("--primary-base", "--primary-base-foreground", "--primary", "--primary-foreground", "--ring");
     }
     if (typeof themeData?.borderRadius === "number") {
       root.style.setProperty("--radius", `${themeData.borderRadius / 16}rem`);
