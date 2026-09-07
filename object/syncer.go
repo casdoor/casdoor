@@ -321,6 +321,13 @@ func RunSyncer(syncer *Syncer) error {
 		return err
 	}
 
+	// Sync groups first so that the groups referenced by the synced users already exist
+	err = syncer.syncGroups()
+	if err != nil {
+		// Log error but don't fail the entire sync
+		fmt.Printf("Warning: syncGroups() error: %s\n", err.Error())
+	}
+
 	return syncer.syncUsers()
 }
 
