@@ -433,6 +433,10 @@ func (c *ApiController) Logout() {
 		// replaces CruSession's id, so reading it afterwards would miss the id stored in the DB.
 		beegoSessionId := c.Ctx.Input.CruSession.SessionID(context.Background())
 
+		// Sent before deleteUserSession(), which expires the tokens that SendBackchannelLogout() looks up
+		bcOwner, bcUsername := util.GetOwnerAndNameFromIdNoCheck(user)
+		object.SendBackchannelLogout(bcOwner, bcUsername, "", c.Ctx.Request.Host)
+
 		c.ClearUserSession()
 		c.ClearTokenSession()
 
@@ -443,10 +447,6 @@ func (c *ApiController) Logout() {
 
 		// Propagate logout to external Custom OAuth2 providers
 		object.InvokeCustomProviderLogout(application, sessionToken)
-
-		// Send OIDC Back-Channel Logout notifications (https://openid.net/specs/openid-connect-backchannel-1_0.html)
-		bcOwner, bcUsername := util.GetOwnerAndNameFromIdNoCheck(user)
-		object.SendBackchannelLogout(bcOwner, bcUsername, "", c.Ctx.Request.Host)
 
 		// "post_logout_redirect_uri" has been made optional, see: https://github.com/casdoor/casdoor/issues/2151
 		if redirectUri != "" {
@@ -461,13 +461,19 @@ func (c *ApiController) Logout() {
 		c.ResponseOk(user, application.HomepageUrl)
 		return
 	} else {
-		_, application, token, err := object.ExpireTokenByAccessToken(accessToken)
+		token, err := object.GetTokenByAccessToken(accessToken)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
 		}
 		if token == nil {
 			c.ResponseError(c.T("token:Token not found, invalid accessToken"))
+			return
+		}
+
+		application, err := object.GetApplication(util.GetId(token.Owner, token.Application))
+		if err != nil {
+			c.ResponseError(err.Error())
 			return
 		}
 		if application == nil {
@@ -485,6 +491,15 @@ func (c *ApiController) Logout() {
 			c.Ctx.Input.SetParam("recordUserId", user)
 		}
 
+		// Sent before the tokens are expired, SendBackchannelLogout() only sees active ones
+		object.SendBackchannelLogout(token.Organization, token.User, "", c.Ctx.Request.Host)
+
+		_, err = object.ExpireToken(token)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
 		// Capture the Beego session id before ClearUserSession(): SessionRegenerateID()
 		// replaces CruSession's id, so reading it afterwards would miss the id stored in the DB.
 		beegoSessionId := c.Ctx.Input.CruSession.SessionID(context.Background())
@@ -500,9 +515,6 @@ func (c *ApiController) Logout() {
 
 		// Propagate logout to external Custom OAuth2 providers
 		object.InvokeCustomProviderLogout(application, accessToken)
-
-		// Send OIDC Back-Channel Logout notifications (https://openid.net/specs/openid-connect-backchannel-1_0.html)
-		object.SendBackchannelLogout(token.Organization, token.User, "", c.Ctx.Request.Host)
 
 		// "post_logout_redirect_uri" has been made optional, see: https://github.com/casdoor/casdoor/issues/2151
 		if redirectUri == "" {

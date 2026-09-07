@@ -249,27 +249,14 @@ func IsScopeValid(scope string, application *Application) bool {
 	return ok
 }
 
-func ExpireTokenByAccessToken(accessToken string) (bool, *Application, *Token, error) {
-	token, err := GetTokenByAccessToken(accessToken)
-	if err != nil {
-		return false, nil, nil, err
-	}
-	if token == nil {
-		return false, nil, nil, nil
-	}
-
+func ExpireToken(token *Token) (bool, error) {
 	token.ExpiresIn = 0
 	affected, err := ormer.Engine.ID(core.PK{token.Owner, token.Name}).Cols("expires_in").Update(token)
 	if err != nil {
-		return false, nil, nil, err
+		return false, err
 	}
 
-	application, err := getApplication(token.Owner, token.Application)
-	if err != nil {
-		return false, nil, nil, err
-	}
-
-	return affected != 0, application, token, nil
+	return affected != 0, nil
 }
 
 func CheckOAuthLogin(clientId string, responseType string, redirectUri string, scope string, state string, lang string) (string, *Application, error) {
