@@ -35,7 +35,12 @@ func (syncer *Syncer) createGroupFromOriginalGroup(originalGroup *OriginalGroup)
 		Type:        originalGroup.Type,
 		Manager:     originalGroup.Manager,
 		IsEnabled:   true,
-		IsTopGroup:  true,
+		ParentId:    originalGroup.ParentId,
+		IsTopGroup:  originalGroup.ParentId == "",
+	}
+
+	if group.IsTopGroup {
+		group.ParentId = syncer.Organization
 	}
 
 	if originalGroup.Email != "" {
@@ -88,10 +93,13 @@ func (syncer *Syncer) syncGroups() error {
 		} else {
 			// Group already exists, could update it here if needed
 			existingGroup := myGroups[oGroup.Name]
+			newGroup := syncer.createGroupFromOriginalGroup(oGroup)
 
 			// Update group display name and other fields if they've changed
-			if existingGroup.DisplayName != oGroup.DisplayName {
-				existingGroup.DisplayName = oGroup.DisplayName
+			if existingGroup.DisplayName != newGroup.DisplayName || existingGroup.ParentId != newGroup.ParentId {
+				existingGroup.DisplayName = newGroup.DisplayName
+				existingGroup.ParentId = newGroup.ParentId
+				existingGroup.IsTopGroup = newGroup.IsTopGroup
 				existingGroup.UpdatedTime = util.GetCurrentTime()
 				_, err = UpdateGroup(existingGroup.GetId(), existingGroup, true, "")
 				if err != nil {
