@@ -15,6 +15,7 @@
 package object
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -99,6 +100,18 @@ type WecomUserGetResp struct {
 	*WecomUser
 }
 
+type WecomDeptUser struct {
+	UserId     string `json:"userid"`
+	Department int    `json:"department"`
+}
+
+type WecomUserListIdResp struct {
+	Errcode    int              `json:"errcode"`
+	Errmsg     string           `json:"errmsg"`
+	NextCursor string           `json:"next_cursor"`
+	DeptUser   []*WecomDeptUser `json:"dept_user"`
+}
+
 type WecomDepartment struct {
 	Id       int    `json:"id"`
 	Name     string `json:"name"`
@@ -134,6 +147,33 @@ func (p *WecomSyncerProvider) getWecomApi(apiUrl string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	client := &http.Client{Timeout: 30 * time.Second}
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	return io.ReadAll(resp.Body)
+}
+
+// postWecomApi sends a POST request with a JSON body to the WeCom API and returns the response body
+func (p *WecomSyncerProvider) postWecomApi(apiUrl string, data map[string]interface{}) ([]byte, error) {
+	jsonData, err := json.Marshal(data)
+	if err != nil {
+		return nil, err
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	req, err := http.NewRequestWithContext(ctx, "POST", apiUrl, bytes.NewReader(jsonData))
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Set("Content-Type", "application/json")
 
 	client := &http.Client{Timeout: 30 * time.Second}
 	resp, err := client.Do(req)
@@ -295,6 +335,82 @@ func (p *WecomSyncerProvider) getWecomUsersFromDept(accessToken string, deptId i
 	return userResp.Userlist, nil
 }
 
+// getWecomUsersFromDepts gets the users of all departments, deduplicated by userid
+func (p *WecomSyncerProvider) getWecomUsersFromDepts(accessToken string, depts []*WecomDepartment) (map[string]*WecomUser, error) {
+	userMap := map[string]*WecomUser{}
+	for _, dept := range depts {
+		users, err := p.getWecomUsersFromDept(accessToken, dept.Id)
+		if err != nil {
+			return nil, err
+		}
+
+		for _, user := range users {
+			if _, exists := userMap[user.UserId]; !exists {
+				userMap[user.UserId] = user
+			}
+		}
+	}
+
+	return userMap, nil
+}
+
+// getWecomUsersByListId gets all user IDs and then the details of each user
+func (p *WecomSyncerProvider) getWecomUsersByListId(accessToken string) (map[string]*WecomUser, error) {
+	apiUrl := fmt.Sprintf("https://qyapi.weixin.qq.com/cgi-bin/user/list_id?access_token=%s",
+		url.QueryEscape(accessToken))
+
+	userMap := map[string]*WecomUser{}
+	visited := map[string]bool{}
+	cursor := ""
+	var lastErr error
+
+	for {
+		data, err := p.postWecomApi(apiUrl, map[string]interface{}{"cursor": cursor, "limit": 10000})
+		if err != nil {
+			return nil, err
+		}
+
+		var userResp WecomUserListIdResp
+		err = json.Unmarshal(data, &userResp)
+		if err != nil {
+			return nil, err
+		}
+
+		if userResp.Errcode != 0 {
+			return nil, fmt.Errorf("failed to get user IDs: errcode=%d, errmsg=%s",
+				userResp.Errcode, userResp.Errmsg)
+		}
+
+		// A user belonging to several departments is returned once per department
+		for _, deptUser := range userResp.DeptUser {
+			if visited[deptUser.UserId] {
+				continue
+			}
+			visited[deptUser.UserId] = true
+
+			user, err := p.getWecomUserDetails(accessToken, deptUser.UserId)
+			if err != nil {
+				fmt.Printf("Warning: failed to get details for user %s: %v\n", deptUser.UserId, err)
+				lastErr = err
+				continue
+			}
+
+			userMap[user.UserId] = user
+		}
+
+		if userResp.NextCursor == "" {
+			break
+		}
+		cursor = userResp.NextCursor
+	}
+
+	if len(userMap) == 0 && lastErr != nil {
+		return nil, lastErr
+	}
+
+	return userMap, nil
+}
+
 // getWecomUserDetails gets detailed user information
 func (p *WecomSyncerProvider) getWecomUserDetails(accessToken string, userId string) (*WecomUser, error) {
 	apiUrl := fmt.Sprintf("https://qyapi.weixin.qq.com/cgi-bin/user/get?access_token=%s&userid=%s",
@@ -331,26 +447,23 @@ func (p *WecomSyncerProvider) getWecomUsers() ([]*OriginalUser, error) {
 		return nil, err
 	}
 
-	// Get all departments
+	// Get users from all departments (deduplicate by userid)
+	userMap := map[string]*WecomUser{}
+
 	depts, err := p.getWecomDepartments(accessToken)
-	if err != nil {
-		return nil, err
+	if err == nil {
+		userMap, err = p.getWecomUsersFromDepts(accessToken, depts)
 	}
 
-	// Get users from all departments (deduplicate by userid)
-	userMap := make(map[string]*WecomUser)
-	for _, dept := range depts {
-		users, err := p.getWecomUsersFromDept(accessToken, dept.Id)
-		if err != nil {
+	if err != nil {
+		// user/list is not available to apps created after 2022-08-15, fall back to
+		// user/list_id + user/get, which every app can call
+		fallbackUserMap, err2 := p.getWecomUsersByListId(accessToken)
+		if err2 != nil {
 			return nil, err
 		}
 
-		for _, user := range users {
-			// Deduplicate users by userid
-			if _, exists := userMap[user.UserId]; !exists {
-				userMap[user.UserId] = user
-			}
-		}
+		userMap = fallbackUserMap
 	}
 
 	// Convert WeCom users to Casdoor OriginalUser
