@@ -20,6 +20,7 @@ export function newOrganization(createdTime: string) {
     passwordObfuscatorType: "Plain",
     passwordObfuscatorKey: "",
     passwordExpireDays: 0,
+    passwordHistoryCount: 0,
     countryCodes: ["US"],
     defaultAvatar: `${Setting.StaticBaseUrl}/img/casbin.svg`,
     defaultApplication: "",
