@@ -8398,6 +8398,10 @@
                     "type": "integer",
                     "format": "int64"
                 },
+                "passwordHistoryCount": {
+                    "type": "integer",
+                    "format": "int64"
+                },
                 "passwordObfuscatorKey": {
                     "type": "string"
                 },
