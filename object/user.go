@@ -46,6 +46,12 @@ const RequiredUpdatePassword = "RequiredUpdatePassword"
 
 var userEnforcer *UserGroupEnforcer
 
+type PasswordHistoryEntry struct {
+	Hash string `json:"hash"`
+	Type string `json:"type"`
+	Salt string `json:"salt"`
+}
+
 func InitUserManager() {
 	enforcer, err := GetInitializedEnforcer(UserEnforcerId)
 	if err != nil {
@@ -68,6 +74,7 @@ type User struct {
 	Password             string     `xorm:"varchar(150)" json:"password"`
 	PasswordSalt         string     `xorm:"varchar(100)" json:"passwordSalt"`
 	PasswordType         string     `xorm:"varchar(100)" json:"passwordType"`
+	PasswordHistory      []PasswordHistoryEntry `xorm:"mediumtext" json:"-"`
 	DisplayName          string     `xorm:"varchar(100)" json:"displayName"`
 	FirstName            string     `xorm:"varchar(100)" json:"firstName"`
 	LastName             string     `xorm:"varchar(100)" json:"lastName"`
