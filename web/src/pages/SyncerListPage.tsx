@@ -10,7 +10,7 @@ import {newSyncer} from "@/pages/defaults";
 
 export default function SyncerListPage() {
   const {account} = useAccount();
-  const organizationName = useRequestOrganization();
+  const organizationName = useRequestOrganization(undefined, true);
 
   const columns: ColumnDef<any>[] = [
     linkColumn({dataIndex: "name", to: (r) => `/syncers/${r.organization}/${r.name}`, width: 170}),

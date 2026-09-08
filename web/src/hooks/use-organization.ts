@@ -6,12 +6,21 @@ import {useAccount} from "@/hooks/use-account";
  * The organization the console is currently scoped to. Admins can switch it from
  * the header; the antd frontend broadcast the change through a
  * "storageOrganizationChanged" window event and this hook keeps that contract.
+ * With includeAll, a global admin's "All" selection yields an empty filter.
  */
-export function useRequestOrganization(overrideName?: string): string {
+export function useRequestOrganization(overrideName?: string, includeAll = false): string {
   const {account} = useAccount();
   const compute = React.useCallback(
-    () => overrideName ?? (account ? Setting.getRequestOrganization(account) : ""),
-    [account, overrideName],
+    () => {
+      if (overrideName !== undefined && overrideName !== null) {
+        return overrideName;
+      }
+      if (!account || (includeAll && Setting.isDefaultOrganizationSelected(account))) {
+        return "";
+      }
+      return Setting.getRequestOrganization(account);
+    },
+    [account, overrideName, includeAll],
   );
   const [organizationName, setOrganizationName] = React.useState(compute);
 
