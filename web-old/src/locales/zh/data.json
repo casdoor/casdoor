@@ -984,6 +984,8 @@
     "Org balance - Tooltip": "组织的余额信息",
     "Password expire days": "密码过期天数",
     "Password expire days - Tooltip": "密码过期前的天数",
+    "Password history count": "密码历史数量",
+    "Password history count - Tooltip": "设置新密码时不能重复使用的最近密码数量。设为 0 表示禁用。",
     "Prompt": "提示",
     "Record retention days": "日志保留天数",
     "Record retention days - Tooltip": "组织的日志（审计记录）保留天数，超期的日志会被每天执行的清理任务自动删除。留空或填0表示永久保留",

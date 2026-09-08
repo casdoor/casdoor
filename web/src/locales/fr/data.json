@@ -982,6 +982,8 @@
     "Org balance - Tooltip": "Solde de l'organisation - Infobulle",
     "Password expire days": "Jours d'expiration du mot de passe",
     "Password expire days - Tooltip": "Jours d'expiration du mot de passe - Infobulle",
+    "Password history count": "Historique des mots de passe (nombre)",
+    "Password history count - Tooltip": "Nombre de mots de passe récents qui ne peuvent pas être réutilisés lors de la définition d'un nouveau mot de passe. Définissez 0 pour désactiver.",
     "Prompt": "Invite",
     "Required": "Requis",
     "Soft deletion": "Suppression douce",

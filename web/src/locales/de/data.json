@@ -982,6 +982,8 @@
     "Org balance - Tooltip": "Organisationsguthaben - Tooltip",
     "Password expire days": "Passwort läuft ab in Tagen",
     "Password expire days - Tooltip": "Anzahl der Tage vor dem Ablauf des Passworts",
+    "Password history count": "Passwort-Historie (Anzahl)",
+    "Password history count - Tooltip": "Anzahl der letzten Passwörter, die bei einer neuen Vergabe nicht wiederverwendet werden können. Zum Deaktivieren auf 0 setzen.",
     "Prompt": "Aufforderung",
     "Required": "Erforderlich",
     "Soft deletion": "Softe Löschung",

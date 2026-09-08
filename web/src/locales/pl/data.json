@@ -982,6 +982,8 @@
     "Org balance - Tooltip": "Saldo organizacji - Podpowiedź",
     "Password expire days": "Dni ważności hasła",
     "Password expire days - Tooltip": "Dni ważności hasła - Podpowiedź",
+    "Password history count": "Liczba historii haseł",
+    "Password history count - Tooltip": "Liczba ostatnich haseł, których nie można ponownie użyć podczas ustawiania nowego hasła. Ustaw 0, aby wyłączyć.",
     "Prompt": "Monit",
     "Required": "Wymagane",
     "Soft deletion": "Miękkie usuwanie",

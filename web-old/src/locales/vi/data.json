@@ -979,6 +979,8 @@
     "Org balance - Tooltip": "Số dư tổ chức - Gợi ý",
     "Password expire days": "Số ngày hết hạn mật khẩu",
     "Password expire days - Tooltip": "Gợi ý số ngày hết hạn mật khẩu",
+    "Password history count": "Số lượng lịch sử mật khẩu",
+    "Password history count - Tooltip": "Số mật khẩu gần đây không thể tái sử dụng khi đặt mật khẩu mới. Đặt 0 để tắt.",
     "Prompt": "Nhắc",
     "Required": "Bắt buộc",
     "Soft deletion": "Xóa mềm",
