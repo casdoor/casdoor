@@ -983,7 +983,7 @@
     "Password expire days": "Días de expiración de contraseña",
     "Password expire days - Tooltip": "Días de expiración de contraseña - Información adicional",
     "Password history count": "Historial de contraseñas (cantidad)",
-    "Password history count - Tooltip": "Número de contraseñas recientes que no se pueden reutilizar al establecer una nueva contraseña. Establezca 0 para desactivar.",
+    "Password history count - Tooltip": "Cuántas contraseñas recientes no se pueden reutilizar, incluida la actual. 0 o 1: solo la contraseña actual.",
     "Prompt": "Sugerencia",
     "Required": "Requerido",
     "Soft deletion": "Eliminación suave",

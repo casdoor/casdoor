@@ -980,7 +980,7 @@
     "Password expire days": "Dni ważności hasła",
     "Password expire days - Tooltip": "Dni ważności hasła - Podpowiedź",
     "Password history count": "Liczba historii haseł",
-    "Password history count - Tooltip": "Liczba ostatnich haseł, których nie można ponownie użyć podczas ustawiania nowego hasła. Ustaw 0, aby wyłączyć.",
+    "Password history count - Tooltip": "Ile ostatnich haseł nie można ponownie użyć, w tym bieżącego. 0 lub 1: tylko bieżące hasło.",
     "Prompt": "Monit",
     "Required": "Wymagane",
     "Soft deletion": "Miękkie usuwanie",

@@ -983,7 +983,7 @@
     "Password expire days": "Số ngày hết hạn mật khẩu",
     "Password expire days - Tooltip": "Gợi ý số ngày hết hạn mật khẩu",
     "Password history count": "Số lượng lịch sử mật khẩu",
-    "Password history count - Tooltip": "Số mật khẩu gần đây không thể tái sử dụng khi đặt mật khẩu mới. Đặt 0 để tắt.",
+    "Password history count - Tooltip": "Số mật khẩu gần đây không thể tái sử dụng, bao gồm mật khẩu hiện tại. 0 hoặc 1: chỉ mật khẩu hiện tại.",
     "Prompt": "Nhắc",
     "Required": "Bắt buộc",
     "Soft deletion": "Xóa mềm",

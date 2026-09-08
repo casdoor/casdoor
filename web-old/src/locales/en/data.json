@@ -985,7 +985,7 @@
     "Password expire days": "Password expire days",
     "Password expire days - Tooltip": "Number of days before password expires",
     "Password history count": "Password history count",
-    "Password history count - Tooltip": "Number of recent passwords that cannot be reused when setting a new password. Set to 0 to disable.",
+    "Password history count - Tooltip": "How many recent passwords cannot be reused, including the current one. 0 or 1: current password only.",
     "Prompt": "Prompt",
     "Record retention days": "Record retention days",
     "Record retention days - Tooltip": "Number of days to keep the organization's records (audit logs) before they are automatically deleted by a daily cleanup job. Leave it empty or set it to 0 to keep the records forever",

@@ -39,14 +39,15 @@ func isPasswordMatchingHash(plainPassword, hashedPassword, passwordType, primary
 }
 
 func CheckPasswordHistory(user *User, newPassword string, organization *Organization, lang string) error {
-	if user == nil || organization == nil || organization.PasswordHistoryCount <= 0 {
+	if user == nil || organization == nil {
 		return nil
 	}
 	if user.Password == "" {
 		return nil
 	}
 
-	reuseMessage := i18n.Translate(lang, "user:The new password must not match any of your recent passwords")
+	currentReuseMessage := i18n.Translate(lang, "user:The new password must be different from your current password")
+	historyReuseMessage := i18n.Translate(lang, "user:The new password must not match any of your recent passwords")
 
 	currentType := resolvePasswordType(user.PasswordType, organization.PasswordType)
 	matched, typeUnsupported := isPasswordMatchingHash(newPassword, user.Password, currentType, organization.PasswordSalt, user.PasswordSalt)
@@ -54,7 +55,11 @@ func CheckPasswordHistory(user *User, newPassword string, organization *Organiza
 		return fmt.Errorf(i18n.Translate(lang, "check:unsupported password type: %s"), currentType)
 	}
 	if matched {
-		return fmt.Errorf("%s", reuseMessage)
+		return fmt.Errorf("%s", currentReuseMessage)
+	}
+
+	if organization.PasswordHistoryCount <= 1 {
+		return nil
 	}
 
 	for _, entry := range user.PasswordHistory {
@@ -67,7 +72,7 @@ func CheckPasswordHistory(user *User, newPassword string, organization *Organiza
 			return fmt.Errorf(i18n.Translate(lang, "check:unsupported password type: %s"), entryType)
 		}
 		if matched {
-			return fmt.Errorf("%s", reuseMessage)
+			return fmt.Errorf("%s", historyReuseMessage)
 		}
 	}
 
@@ -76,7 +81,7 @@ func CheckPasswordHistory(user *User, newPassword string, organization *Organiza
 
 // UpdatePasswordHistory snapshots the current stored hash before UpdateUserPassword replaces it.
 func UpdatePasswordHistory(user *User, organization *Organization) {
-	if user == nil || organization == nil || organization.PasswordHistoryCount <= 0 {
+	if user == nil || organization == nil || organization.PasswordHistoryCount <= 1 {
 		return
 	}
 	if user.Password == "" {
@@ -91,10 +96,6 @@ func UpdatePasswordHistory(user *User, organization *Organization) {
 	history := append([]PasswordHistoryEntry{entry}, user.PasswordHistory...)
 
 	maxHistory := organization.PasswordHistoryCount - 1
-	if maxHistory <= 0 {
-		user.PasswordHistory = nil
-		return
-	}
 	if len(history) > maxHistory {
 		history = history[:maxHistory]
 	}

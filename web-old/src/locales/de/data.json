@@ -980,7 +980,7 @@
     "Password expire days": "Passwort läuft ab in Tagen",
     "Password expire days - Tooltip": "Anzahl der Tage vor dem Ablauf des Passworts",
     "Password history count": "Passwort-Historie (Anzahl)",
-    "Password history count - Tooltip": "Anzahl der letzten Passwörter, die bei einer neuen Vergabe nicht wiederverwendet werden können. Zum Deaktivieren auf 0 setzen.",
+    "Password history count - Tooltip": "Wie viele letzte Passwörter nicht wiederverwendet werden dürfen, einschließlich des aktuellen. 0 oder 1: nur das aktuelle Passwort.",
     "Prompt": "Aufforderung",
     "Required": "Erforderlich",
     "Soft deletion": "Softe Löschung",

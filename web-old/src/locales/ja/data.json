@@ -980,7 +980,7 @@
     "Password expire days": "パスワード有効期限（日）",
     "Password expire days - Tooltip": "パスワード有効期限（日） - ツールチップ",
     "Password history count": "パスワード履歴数",
-    "Password history count - Tooltip": "新しいパスワードを設定する際に再利用できない直近のパスワードの数。0 に設定すると無効になります。",
+    "Password history count - Tooltip": "再利用できない直近のパスワード数（現在のパスワードを含む）。0 または 1 は現在のパスワードのみ。",
     "Prompt": "プロンプト",
     "Required": "必須",
     "Soft deletion": "ソフト削除",
