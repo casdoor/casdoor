@@ -199,6 +199,7 @@
     "New password cannot contain blank space.": "A nova senha não pode conter espaços em branco.",
     "No application found for user": "Nenhum aplicativo encontrado para o usuário",
     "The new password must be different from your current password": "A nova senha deve ser diferente da senha atual",
+    "The new password must not match any of your recent passwords": "A nova senha não deve coincidir com nenhuma das suas senhas recentes.",
     "User is already verified": "Usuário já está verificado",
     "the user's owner and name should not be empty": "O proprietário e o nome do usuário não devem estar vazios"
   },

@@ -46,7 +46,7 @@ func CheckPasswordHistory(user *User, newPassword string, organization *Organiza
 		return nil
 	}
 
-	reuseMessage := i18n.Translate(lang, "user:The new password must be different from your current password")
+	reuseMessage := i18n.Translate(lang, "user:The new password must not match any of your recent passwords")
 
 	currentType := resolvePasswordType(user.PasswordType, organization.PasswordType)
 	matched, typeUnsupported := isPasswordMatchingHash(newPassword, user.Password, currentType, organization.PasswordSalt, user.PasswordSalt)
