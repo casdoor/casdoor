@@ -16,10 +16,10 @@ package xlsx
 
 import "github.com/tealeg/xlsx"
 
-func ReadXlsxFile(path string) [][]string {
+func ReadXlsxFile(path string) ([][]string, error) {
 	file, err := xlsx.OpenFile(path)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	res := [][]string{}
@@ -35,5 +35,5 @@ func ReadXlsxFile(path string) [][]string {
 		break
 	}
 
-	return res
+	return res, nil
 }

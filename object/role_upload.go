@@ -37,7 +37,10 @@ func getRoleMap(owner string) (map[string]*Role, error) {
 }
 
 func UploadRoles(owner string, path string) (bool, error) {
-	table := xlsx.ReadXlsxFile(path)
+	table, err := xlsx.ReadXlsxFile(path)
+	if err != nil {
+		return false, err
+	}
 
 	if len(table) == 0 {
 		return false, fmt.Errorf("empty table")

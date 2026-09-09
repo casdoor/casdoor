@@ -34,7 +34,10 @@ func getGroupMap(owner string) (map[string]*Group, error) {
 }
 
 func UploadGroups(owner string, path string) (bool, error) {
-	table := xlsx.ReadXlsxFile(path)
+	table, err := xlsx.ReadXlsxFile(path)
+	if err != nil {
+		return false, err
+	}
 
 	oldGroupMap, err := getGroupMap(owner)
 	if err != nil {

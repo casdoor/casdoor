@@ -15,6 +15,7 @@
 package object
 
 import (
+	"errors"
 	"fmt"
 	"sort"
 	"strings"
@@ -75,11 +76,23 @@ func parseListItem(lines *[]string, i int) []string {
 	return trimmedItems
 }
 
+func isEmptyLine(line []string) bool {
+	for _, cell := range line {
+		if strings.TrimSpace(cell) != "" {
+			return false
+		}
+	}
+	return true
+}
+
 func UploadUsers(owner string, path string, userObj *User, lang string) (bool, error) {
-	table := xlsx.ReadXlsxFile(path)
+	table, err := xlsx.ReadXlsxFile(path)
+	if err != nil {
+		return false, err
+	}
 
 	if len(table) == 0 {
-		return false, fmt.Errorf("empty table")
+		return false, errors.New(i18n.Translate(lang, "general:The uploaded file is empty"))
 	}
 
 	for idx, row := range table[0] {
@@ -89,12 +102,24 @@ func UploadUsers(owner string, path string, userObj *User, lang string) (bool, e
 		}
 	}
 
-	uploadedUsers, err := StringArrayToStruct[User](table)
+	parsedUsers, err := StringArrayToStruct[User](table)
 	if err != nil {
 		return false, err
 	}
+
+	// Excel keeps blank rows in the sheet, they would otherwise be imported as users with an empty name
+	uploadedUsers := []*User{}
+	lines := []int{}
+	for idx, user := range parsedUsers {
+		if isEmptyLine(table[idx+1]) {
+			continue
+		}
+
+		uploadedUsers = append(uploadedUsers, user)
+		lines = append(lines, idx+2)
+	}
 	if len(uploadedUsers) == 0 {
-		return false, fmt.Errorf("no users are provided")
+		return false, errors.New(i18n.Translate(lang, "general:The uploaded file contains no user"))
 	}
 
 	organizationName := uploadedUsers[0].Owner
@@ -116,48 +141,67 @@ func UploadUsers(owner string, path string, userObj *User, lang string) (bool, e
 	}
 
 	newUsers := []*User{}
-	for _, user := range uploadedUsers {
-		if _, ok := oldUserMap[user.GetId()]; !ok {
-			user.Owner = organizationName
-			if user.CreatedTime == "" {
-				user.CreatedTime = util.GetCurrentTime()
-			}
-			if user.Id == "" {
-				user.Id = util.GenerateId()
-			}
-			if user.Type == "" {
-				user.Type = "normal-user"
-			}
-			user.PasswordType = "plain"
-			if user.DisplayName == "" {
-				user.DisplayName = user.Name
-			}
-			user.Avatar = organization.DefaultAvatar
-			if user.Region == "" {
-				user.Region = userObj.Region
-			}
-			if user.Address == nil {
-				user.Address = []string{}
-			}
-			if user.CountryCode == "" {
-				user.CountryCode = userObj.CountryCode
-			}
-			if user.SignupApplication == "" {
-				user.SignupApplication = organization.DefaultApplication
-			}
-			if user.RegisterType == "" {
-				user.RegisterType = "Upload Users"
-			}
-			if user.RegisterSource == "" {
-				user.RegisterSource = userObj.GetId()
-			}
+	existingNames := []string{}
+	uploadedLineMap := map[string]int{}
+	for idx, user := range uploadedUsers {
+		line := lines[idx]
 
-			newUsers = append(newUsers, user)
+		user.Owner = organizationName
+		user.Name = strings.TrimSpace(user.Name)
+		if user.Name == "" {
+			return false, fmt.Errorf(i18n.Translate(lang, "general:The user name in line %d is empty"), line)
 		}
+		if oldLine, ok := uploadedLineMap[user.Name]; ok {
+			return false, fmt.Errorf(i18n.Translate(lang, "general:The user: %s in line %d is duplicated with line %d"), user.Name, line, oldLine)
+		}
+		uploadedLineMap[user.Name] = line
+
+		if _, ok := oldUserMap[user.GetId()]; ok {
+			existingNames = append(existingNames, user.Name)
+			continue
+		}
+
+		if user.CreatedTime == "" {
+			user.CreatedTime = util.GetCurrentTime()
+		}
+		if user.Id == "" {
+			user.Id = util.GenerateId()
+		}
+		if user.Type == "" {
+			user.Type = "normal-user"
+		}
+		user.PasswordType = "plain"
+		if user.DisplayName == "" {
+			user.DisplayName = user.Name
+		}
+		user.Avatar = organization.DefaultAvatar
+		if user.Region == "" {
+			user.Region = userObj.Region
+		}
+		if user.Address == nil {
+			user.Address = []string{}
+		}
+		if user.CountryCode == "" {
+			user.CountryCode = userObj.CountryCode
+		}
+		if user.SignupApplication == "" {
+			user.SignupApplication = organization.DefaultApplication
+		}
+		if user.RegisterType == "" {
+			user.RegisterType = "Upload Users"
+		}
+		if user.RegisterSource == "" {
+			user.RegisterSource = userObj.GetId()
+		}
+
+		newUsers = append(newUsers, user)
 	}
 
 	if len(newUsers) == 0 {
-		return false, fmt.Errorf("no users are modified")
+		if len(existingNames) > 10 {
+			existingNames = append(existingNames[:10], "...")
+		}
+		return false, fmt.Errorf(i18n.Translate(lang, "general:The users already exist: %s"), strings.Join(existingNames, ", "))
 	}
 
 	return AddUsersInBatch(newUsers)

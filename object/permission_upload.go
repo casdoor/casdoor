@@ -37,7 +37,10 @@ func getPermissionMap(owner string) (map[string]*Permission, error) {
 }
 
 func UploadPermissions(owner string, path string) (bool, error) {
-	table := xlsx.ReadXlsxFile(path)
+	table, err := xlsx.ReadXlsxFile(path)
+	if err != nil {
+		return false, err
+	}
 
 	if len(table) == 0 {
 		return false, fmt.Errorf("empty table")
