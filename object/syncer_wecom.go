@@ -23,6 +23,7 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/casdoor/casdoor/util"
@@ -31,6 +32,9 @@ import (
 // WecomSyncerProvider implements SyncerProvider for WeCom (WeChat Work) API-based syncers
 type WecomSyncerProvider struct {
 	Syncer *Syncer
+	// the last error met while reading department names, so that GetOriginalGroups() can tell
+	// why some groups fall back to the department ID as their display name
+	deptNameError error
 }
 
 // InitAdapter initializes the WeCom syncer (no database adapter needed)
@@ -213,6 +217,7 @@ func (p *WecomSyncerProvider) getWecomAccessToken() (string, error) {
 func (p *WecomSyncerProvider) getWecomDepartments(accessToken string) ([]*WecomDepartment, error) {
 	depts, err := p.getWecomDepartmentsByList(accessToken)
 	if err == nil {
+		p.fillWecomDepartmentNames(accessToken, depts)
 		return depts, nil
 	}
 
@@ -277,6 +282,7 @@ func (p *WecomSyncerProvider) getWecomDepartmentsBySimpleList(accessToken string
 		if err != nil {
 			// Keep the name-less department so that the department tree stays complete
 			fmt.Printf("Warning: failed to get details for department %d: %v\n", simpleDept.Id, err)
+			p.deptNameError = err
 			depts = append(depts, simpleDept)
 			continue
 		}
@@ -285,6 +291,55 @@ func (p *WecomSyncerProvider) getWecomDepartmentsBySimpleList(accessToken string
 	}
 
 	return depts, nil
+}
+
+// fillWecomDepartmentNames reads the names that department/list did not return. Apps without
+// the contact permission get departments with an empty name, while department/get may still
+// return the name of the departments inside the app's visible scope.
+func (p *WecomSyncerProvider) fillWecomDepartmentNames(accessToken string, depts []*WecomDepartment) {
+	for _, dept := range depts {
+		if dept.Name != "" || dept.NameEn != "" {
+			continue
+		}
+
+		detail, err := p.getWecomDepartmentDetails(accessToken, dept.Id)
+		if err != nil {
+			fmt.Printf("Warning: failed to get details for department %d: %v\n", dept.Id, err)
+			p.deptNameError = err
+			continue
+		}
+
+		dept.Name = detail.Name
+		dept.NameEn = detail.NameEn
+	}
+}
+
+// reportNamelessWecomDepts records why some departments have no name. Their groups are still
+// synced, using the department ID as display name, so the sync looks successful and the real
+// reason would otherwise never reach the user.
+func (p *WecomSyncerProvider) reportNamelessWecomDepts(depts []*WecomDepartment) {
+	namelessDepts := []string{}
+	for _, dept := range depts {
+		if dept.Name == "" && dept.NameEn == "" {
+			namelessDepts = append(namelessDepts, getWecomGroupName(dept.Id))
+		}
+	}
+
+	if len(namelessDepts) == 0 {
+		return
+	}
+
+	reason := "WeCom returned no department name"
+	if p.deptNameError != nil {
+		reason = p.deptNameError.Error()
+	}
+
+	line := fmt.Sprintf("[%s] failed to get the names of the WeCom departments [%s], their groups use the department ID as display name, please make sure the departments are inside the app's visible scope and the app has the contact permission: %s\n",
+		util.GetCurrentTime(), strings.Join(namelessDepts, ", "), reason)
+	_, err := updateSyncerErrorText(p.Syncer, line)
+	if err != nil {
+		fmt.Printf("reportNamelessWecomDepts() error: %s\n", err.Error())
+	}
 }
 
 // getWecomDepartmentDetails gets detailed department information
@@ -306,6 +361,10 @@ func (p *WecomSyncerProvider) getWecomDepartmentDetails(accessToken string, dept
 	if deptResp.Errcode != 0 {
 		return nil, fmt.Errorf("failed to get department details for %d: errcode=%d, errmsg=%s",
 			deptId, deptResp.Errcode, deptResp.Errmsg)
+	}
+
+	if deptResp.Department == nil {
+		return nil, fmt.Errorf("failed to get department details for %d: the response is empty", deptId)
 	}
 
 	return deptResp.Department, nil
@@ -586,6 +645,8 @@ func (p *WecomSyncerProvider) GetOriginalGroups() ([]*OriginalGroup, error) {
 		// A department whose parent is out of the app's scope becomes a top group
 		originalGroups = append(originalGroups, p.wecomDepartmentToOriginalGroup(dept, deptIds[dept.ParentId]))
 	}
+
+	p.reportNamelessWecomDepts(depts)
 
 	return originalGroups, nil
 }
