@@ -19,6 +19,9 @@ package xlsx
 import "testing"
 
 func TestReadSheet(t *testing.T) {
-	ticket := ReadXlsxFile("../../tmpFiles/example")
-	println(ticket)
+	ticket, err := ReadXlsxFile("../../tmpFiles/example")
+	if err != nil {
+		t.Fatal(err)
+	}
+	println(len(ticket))
 }
