@@ -5,13 +5,13 @@ import {boolColumn, dateColumn, linkColumn, organizationColumn, refsColumn, tags
 import type {ColumnDef} from "@/components/crud/types";
 import {useAccount} from "@/hooks/use-account";
 import * as Setting from "@/lib/setting";
-import {useRequestOrganization} from "@/hooks/use-organization";
+import {useOrganizationFilter} from "@/hooks/use-organization";
 import * as RoleBackend from "@/backend/RoleBackend";
 import {newRole} from "@/pages/defaults";
 
 export default function RoleListPage() {
   const {account} = useAccount();
-  const organizationName = useRequestOrganization();
+  const organizationName = useOrganizationFilter();
 
   const columns: ColumnDef<any>[] = [
     linkColumn({dataIndex: "name", to: (r) => `/roles/${r.owner}/${r.name}`}),

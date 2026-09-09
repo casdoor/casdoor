@@ -3,14 +3,14 @@ import {CrudListPage} from "@/components/crud/CrudListPage";
 import {boolColumn, dateColumn, linkColumn, textColumn, valueFilters} from "@/components/crud/columns";
 import type {ColumnDef} from "@/components/crud/types";
 import {useAccount} from "@/hooks/use-account";
-import {useRequestOrganization} from "@/hooks/use-organization";
+import {useOrganizationFilter} from "@/hooks/use-organization";
 import * as SyncerBackend from "@/backend/SyncerBackend";
 import * as Setting from "@/lib/setting";
 import {newSyncer} from "@/pages/defaults";
 
 export default function SyncerListPage() {
   const {account} = useAccount();
-  const organizationName = useRequestOrganization();
+  const organizationName = useOrganizationFilter();
 
   const columns: ColumnDef<any>[] = [
     linkColumn({dataIndex: "name", to: (r) => `/syncers/${r.organization}/${r.name}`, width: 170}),

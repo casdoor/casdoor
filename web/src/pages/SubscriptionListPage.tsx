@@ -5,14 +5,14 @@ import {dateColumn, linkColumn, organizationColumn, textColumn} from "@/componen
 import type {ColumnDef} from "@/components/crud/types";
 import {enumColumn, SUBSCRIPTION_STATES} from "@/lib/enum-labels";
 import {useAccount} from "@/hooks/use-account";
-import {useRequestOrganization} from "@/hooks/use-organization";
+import {useOrganizationFilter} from "@/hooks/use-organization";
 import * as SubscriptionBackend from "@/backend/SubscriptionBackend";
 import * as Setting from "@/lib/setting";
 import {newSubscription} from "@/pages/defaults";
 
 export default function SubscriptionListPage() {
   const {account} = useAccount();
-  const organizationName = useRequestOrganization();
+  const organizationName = useOrganizationFilter();
   // the antd list pages let a non-admin look but not touch these
   const readOnly = !Setting.isLocalAdminUser(account);
 

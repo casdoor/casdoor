@@ -6,7 +6,7 @@ import {XlsxImport} from "@/components/crud/XlsxImport";
 import {dateColumn, linkColumn, organizationColumn, textColumn} from "@/components/crud/columns";
 import type {ColumnDef} from "@/components/crud/types";
 import {useAccount} from "@/hooks/use-account";
-import {useRequestOrganization} from "@/hooks/use-organization";
+import {useOrganizationFilter, useRequestOrganization} from "@/hooks/use-organization";
 import * as GroupBackend from "@/backend/GroupBackend";
 import * as Setting from "@/lib/setting";
 import {newGroup} from "@/pages/defaults";
@@ -14,6 +14,7 @@ import {newGroup} from "@/pages/defaults";
 export default function GroupListPage() {
   const {account} = useAccount();
   const organizationName = useRequestOrganization();
+  const organizationFilter = useOrganizationFilter();
 
   const columns: ColumnDef<any>[] = [
     linkColumn({dataIndex: "name", to: (r) => `/groups/${r.owner}/${r.name}`}),
@@ -64,7 +65,7 @@ export default function GroupListPage() {
     <CrudListPage
       title={i18next.t("general:Groups")}
       columns={columns}
-      deps={[organizationName]}
+      deps={[organizationFilter]}
       toolbar={({refresh}) => (
         <>
           <Button variant="outline" asChild>
@@ -81,7 +82,7 @@ export default function GroupListPage() {
       )}
       fetch={(q) =>
         GroupBackend.getGroups(
-          organizationName,
+          organizationFilter,
           false,
           q.page,
           q.pageSize,

@@ -9,7 +9,7 @@ import {DescriptionList} from "@/components/common/DescriptionList";
 import {CrudListPage} from "@/components/crud/CrudListPage";
 import {clientIpColumn, textColumn, valueFilters} from "@/components/crud/columns";
 import type {ColumnDef} from "@/components/crud/types";
-import {useRequestOrganization} from "@/hooks/use-organization";
+import {useOrganizationFilter} from "@/hooks/use-organization";
 import * as RecordBackend from "@/backend/RecordBackend";
 import * as Setting from "@/lib/setting";
 
@@ -86,7 +86,7 @@ function RecordDetailSheet({record, onClose}: {record: any; onClose: () => void}
 }
 
 export default function RecordListPage() {
-  const organizationName = useRequestOrganization();
+  const organizationName = useOrganizationFilter();
   const [detail, setDetail] = React.useState<any>(null);
 
   const columns: ColumnDef<any>[] = [

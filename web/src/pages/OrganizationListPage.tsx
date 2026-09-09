@@ -4,11 +4,14 @@ import {Badge} from "@/components/ui/badge";
 import {CrudListPage} from "@/components/crud/CrudListPage";
 import {boolColumn, dateColumn, linkColumn, textColumn, valueFilters} from "@/components/crud/columns";
 import type {ColumnDef} from "@/components/crud/types";
+import {useOrganizationFilter} from "@/hooks/use-organization";
 import * as OrganizationBackend from "@/backend/OrganizationBackend";
 import * as Setting from "@/lib/setting";
 import {newOrganization} from "@/pages/organization-defaults";
 
 export default function OrganizationListPage({formItems}: {formItems?: any[]} = {}) {
+  const organizationName = useOrganizationFilter();
+
   const columns: ColumnDef<any>[] = [
     linkColumn({dataIndex: "name", to: (record) => `/organizations/${record.name}`, width: 140}),
     dateColumn(),
@@ -86,10 +89,11 @@ export default function OrganizationListPage({formItems}: {formItems?: any[]} = 
       formType="organizations"
       formItems={formItems}
       rowKey={(row) => row.name}
+      deps={[organizationName]}
       fetch={(query) =>
         OrganizationBackend.getOrganizations(
           "admin",
-          "",
+          organizationName,
           query.page,
           query.pageSize,
           query.searchedColumn,

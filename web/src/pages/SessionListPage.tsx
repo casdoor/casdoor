@@ -7,12 +7,12 @@ import {ConfirmButton} from "@/components/common/ConfirmButton";
 import {CrudListPage} from "@/components/crud/CrudListPage";
 import {dateColumn} from "@/components/crud/columns";
 import type {ColumnDef} from "@/components/crud/types";
-import {useRequestOrganization} from "@/hooks/use-organization";
+import {useOrganizationFilter} from "@/hooks/use-organization";
 import * as SessionBackend from "@/backend/SessionBackend";
 import * as Setting from "@/lib/setting";
 
 export default function SessionListPage() {
-  const organizationName = useRequestOrganization();
+  const organizationName = useOrganizationFilter();
   // signing one id out changes a row rather than the page, so the list is
   // re-fetched by bumping a dep
   const [nonce, setNonce] = React.useState(0);

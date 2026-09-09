@@ -3,13 +3,13 @@ import {CrudListPage} from "@/components/crud/CrudListPage";
 import {boolColumn, dateColumn, linkColumn, organizationColumn, textColumn, valueFilters} from "@/components/crud/columns";
 import type {ColumnDef} from "@/components/crud/types";
 import {useAccount} from "@/hooks/use-account";
-import {useRequestOrganization} from "@/hooks/use-organization";
+import {useOrganizationFilter} from "@/hooks/use-organization";
 import * as AdapterBackend from "@/backend/AdapterBackend";
 import {newAdapter} from "@/pages/defaults";
 
 export default function AdapterListPage() {
   const {account} = useAccount();
-  const organizationName = useRequestOrganization();
+  const organizationName = useOrganizationFilter();
 
   const columns: ColumnDef<any>[] = [
     linkColumn({dataIndex: "name", to: (r) => `/adapters/${r.owner}/${r.name}`}),

@@ -4,14 +4,14 @@ import {CrudListPage} from "@/components/crud/CrudListPage";
 import {dateColumn, linkColumn, textColumn} from "@/components/crud/columns";
 import type {ColumnDef} from "@/components/crud/types";
 import {useAccount} from "@/hooks/use-account";
-import {useRequestOrganization} from "@/hooks/use-organization";
+import {useOrganizationFilter} from "@/hooks/use-organization";
 import * as TokenBackend from "@/backend/TokenBackend";
 import * as Setting from "@/lib/setting";
 import {newToken} from "@/pages/defaults";
 
 export default function TokenListPage() {
   const {account} = useAccount();
-  const organizationName = useRequestOrganization();
+  const organizationName = useOrganizationFilter();
 
   const columns: ColumnDef<any>[] = [
     linkColumn({dataIndex: "name", to: (r) => `/tokens/${r.name}`, width: 170}),

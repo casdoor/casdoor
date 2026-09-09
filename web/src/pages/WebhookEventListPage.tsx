@@ -7,7 +7,7 @@ import {CodeEditor} from "@/components/common/CodeEditor";
 import {CrudListPage} from "@/components/crud/CrudListPage";
 import {dateColumn, textColumn} from "@/components/crud/columns";
 import type {ColumnDef} from "@/components/crud/types";
-import {useRequestOrganization} from "@/hooks/use-organization";
+import {useOrganizationFilter} from "@/hooks/use-organization";
 import * as WebhookEventBackend from "@/backend/WebhookEventBackend";
 import * as Setting from "@/lib/setting";
 
@@ -38,7 +38,7 @@ function formatJson(text: any): string {
 }
 
 export default function WebhookEventListPage() {
-  const organizationName = useRequestOrganization();
+  const organizationName = useOrganizationFilter();
   const [detail, setDetail] = React.useState<any>(null);
   const [replayingId, setReplayingId] = React.useState("");
 

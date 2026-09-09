@@ -5,7 +5,7 @@ import {CrudListPage} from "@/components/crud/CrudListPage";
 import {dateColumn, linkColumn, organizationColumn, tagsColumn, textColumn} from "@/components/crud/columns";
 import type {ColumnDef} from "@/components/crud/types";
 import {useAccount} from "@/hooks/use-account";
-import {useRequestOrganization} from "@/hooks/use-organization";
+import {useOrganizationFilter} from "@/hooks/use-organization";
 import * as PaymentBackend from "@/backend/PaymentBackend";
 import * as Setting from "@/lib/setting";
 import {newPayment} from "@/pages/defaults";
@@ -15,7 +15,7 @@ const stateVariant = (state: string) =>
 
 export default function PaymentListPage() {
   const {account} = useAccount();
-  const organizationName = useRequestOrganization();
+  const organizationName = useOrganizationFilter();
   // the antd list pages let a non-admin look but not touch these
   const readOnly = !Setting.isLocalAdminUser(account);
 
