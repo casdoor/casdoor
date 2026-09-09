@@ -19,8 +19,8 @@ import {FormRow} from "@/components/crud/FormRow";
 import {CaptchaPreview} from "@/components/provider/CaptchaPreview";
 import {useAccount} from "@/hooks/use-account";
 import {useEditRecord} from "@/hooks/use-edit-record";
+import {useOrganizationOptions} from "@/hooks/use-options";
 import * as CertBackend from "@/backend/CertBackend";
-import * as OrganizationBackend from "@/backend/OrganizationBackend";
 import * as ProviderBackend from "@/backend/ProviderBackend";
 import * as ServerBackend from "@/backend/ServerBackend";
 import {mapToRows, rowsToMap, submitEdit} from "@/lib/crud";
@@ -380,7 +380,7 @@ export default function ProviderEditPage() {
 
   const [owner, setOwner] = React.useState(organizationName);
   const [name, setName] = React.useState(providerName);
-  const [organizations, setOrganizations] = React.useState<any[]>([]);
+  const organizations = useOrganizationOptions();
   const [providers, setProviders] = React.useState<any[]>([]);
   const [certs, setCerts] = React.useState<any[]>([]);
   const [saving, setSaving] = React.useState(false);
@@ -432,14 +432,6 @@ export default function ProviderEditPage() {
       }
     });
   }, []);
-
-  React.useEffect(() => {
-    if (Setting.isAdminUser(account)) {
-      OrganizationBackend.getOrganizations("admin").then((res: any) => {
-        setOrganizations(res.data ?? []);
-      });
-    }
-  }, [account]);
 
   React.useEffect(() => {
     getProviders(owner);
@@ -1633,7 +1625,7 @@ export default function ProviderEditPage() {
           onChange={(v) => updateProviderField("owner", v)}
           options={[
             ...(Setting.isAdminUser(account) ? [{value: "admin", label: i18next.t("provider:admin (Shared)")}] : []),
-            ...organizations.map((organization: any) => ({value: organization.name, label: organization.name})),
+            ...organizations,
           ]}
         />
       </FormRow>
