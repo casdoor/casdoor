@@ -86,8 +86,19 @@ jobs:
           go-version: ${{ env.GO_VERSION }}
           cache: false
 
+      # HTTP/1.1 and retries: proxy.golang.org resets HTTP/2 streams mid-download.
       - name: Sync vendor tree
-        run: go mod vendor
+        env:
+          GODEBUG: http2client=0
+        run: |
+          for i in 1 2 3; do
+            if go mod vendor; then
+              exit 0
+            fi
+            echo "go mod vendor failed (attempt $i), retrying in $((i * 10))s..."
+            sleep $((i * 10))
+          done
+          exit 1
 
       # CI and local `make lint` both use the repo's gofumpt-only golangci-lint config.
       - name: golangci-lint
