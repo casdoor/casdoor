@@ -101,9 +101,13 @@ func (l *LdapAutoSynchronizer) syncOnce(ldap *Ldap) {
 		}
 	}()
 
-	err := UpdateLdapSyncTime(ldap.Id)
+	claimed, err := claimSyncCycle(ldap.Id, ldap.AutoSync)
 	if err != nil {
-		logs.Warning(fmt.Sprintf("autoSync failed to update the sync time for %s, error %s", ldap.Id, err))
+		logs.Warning(fmt.Sprintf("autoSync failed to claim the sync cycle for %s, error %s", ldap.Id, err))
+		return
+	}
+	if !claimed {
+		logs.Info(fmt.Sprintf("autoSync skipped for %s, another instance is running this cycle", ldap.Id))
 		return
 	}
 
@@ -173,6 +177,53 @@ func (l *LdapAutoSynchronizer) LdapAutoSynchronizerStartUpAll() error {
 		}
 	}
 	return nil
+}
+
+// claimSyncCycle reserves the cycle for this instance, so that a multi-node deployment
+// doesn't sync the same LDAP from every node at once. It is a compare-and-swap on last_sync:
+// only the node whose UPDATE still matches the value it just read owns the cycle.
+func claimSyncCycle(ldapId string, autoSync int) (bool, error) {
+	ldap, err := GetLdap(ldapId)
+	if err != nil {
+		return false, err
+	}
+	if ldap == nil {
+		return false, fmt.Errorf("ldap %s doesn't exist", ldapId)
+	}
+
+	if !isSyncDue(ldap.LastSync, autoSync) {
+		return false, nil
+	}
+
+	session := ormer.Engine.ID(ldapId)
+	if ldap.LastSync == "" {
+		session = session.Where("last_sync = '' or last_sync is null")
+	} else {
+		session = session.Where("last_sync = ?", ldap.LastSync)
+	}
+
+	affected, err := session.Cols("last_sync").Update(&Ldap{LastSync: util.GetCurrentTime()})
+	if err != nil {
+		return false, err
+	}
+
+	return affected != 0, nil
+}
+
+// isSyncDue reports whether a whole interval has passed since the last sync. The tolerance
+// absorbs the drift between the tickers of different nodes.
+func isSyncDue(lastSync string, autoSync int) bool {
+	if lastSync == "" {
+		return true
+	}
+
+	lastSyncTime, err := time.Parse(time.RFC3339, lastSync)
+	if err != nil {
+		return true
+	}
+
+	interval := time.Duration(autoSync) * time.Minute
+	return time.Since(lastSyncTime) >= interval-interval/10
 }
 
 func UpdateLdapSyncTime(ldapId string) error {
