@@ -23,6 +23,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/beego/beego/v2/core/logs"
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/util"
@@ -144,9 +145,11 @@ func (l *LdapConn) Close() {
 		return
 	}
 
+	// The server may have dropped the connection already, e.g. after a long sync,
+	// and failing to unbind a connection we are discarding anyway is harmless.
 	err := l.Conn.Unbind()
 	if err != nil {
-		panic(err)
+		logs.Warning(fmt.Sprintf("failed to close the ldap connection, error %s", err.Error()))
 	}
 }
 
