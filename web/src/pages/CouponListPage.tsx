@@ -4,14 +4,14 @@ import {linkColumn, organizationColumn, textColumn} from "@/components/crud/colu
 import type {ColumnDef} from "@/components/crud/types";
 import {COUPON_DISCOUNT_TYPES, COUPON_SCOPES, COUPON_STATES, enumColumn} from "@/lib/enum-labels";
 import {useAccount} from "@/hooks/use-account";
-import {useRequestOrganization} from "@/hooks/use-organization";
+import {useOrganizationFilter} from "@/hooks/use-organization";
 import * as CouponBackend from "@/backend/CouponBackend";
 import * as Setting from "@/lib/setting";
 import {newCoupon} from "@/pages/defaults";
 
 export default function CouponListPage() {
   const {account} = useAccount();
-  const organizationName = useRequestOrganization();
+  const organizationName = useOrganizationFilter();
   // the antd list pages let a non-admin look but not touch these
   const readOnly = !Setting.isLocalAdminUser(account);
 

@@ -4,13 +4,13 @@ import {dateColumn, linkColumn, textColumn} from "@/components/crud/columns";
 import type {ColumnDef} from "@/components/crud/types";
 import {enumColumn, TICKET_STATES} from "@/lib/enum-labels";
 import {useAccount} from "@/hooks/use-account";
-import {useRequestOrganization} from "@/hooks/use-organization";
+import {useOrganizationFilter} from "@/hooks/use-organization";
 import * as TicketBackend from "@/backend/TicketBackend";
 import {newTicket} from "@/pages/defaults";
 
 export default function TicketListPage() {
   const {account} = useAccount();
-  const organizationName = useRequestOrganization();
+  const organizationName = useOrganizationFilter();
 
   const columns: ColumnDef<any>[] = [
     linkColumn({dataIndex: "name", to: (r) => `/tickets/${r.owner}/${r.name}`, width: 170}),

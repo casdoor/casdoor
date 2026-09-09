@@ -6,17 +6,16 @@ import {boolColumn, dateColumn, linkColumn, organizationColumn, refsColumn, tags
 import type {ColumnDef} from "@/components/crud/types";
 import {enumColumn, PERMISSION_EFFECTS, PERMISSION_STATES} from "@/lib/enum-labels";
 import {useAccount} from "@/hooks/use-account";
-import {useRequestOrganization} from "@/hooks/use-organization";
+import {useOrganizationFilter} from "@/hooks/use-organization";
 import * as PermissionBackend from "@/backend/PermissionBackend";
 import * as Setting from "@/lib/setting";
 import {newPermission} from "@/pages/defaults";
 
 export default function PermissionListPage() {
   const {account} = useAccount();
-  const organizationName = useRequestOrganization();
+  const organizationName = useOrganizationFilter();
   // a normal user may only list the permissions they submitted themselves
   const isAdmin = Setting.isLocalAdminUser(account);
-  const isGlobal = account ? Setting.isDefaultOrganizationSelected(account) : false;
 
   const columns: ColumnDef<any>[] = [
     linkColumn({dataIndex: "name", to: (r) => `/permissions/${r.owner}/${r.name}`}),
@@ -70,10 +69,10 @@ export default function PermissionListPage() {
           onUploaded={refresh}
         />
       )}
-      deps={[organizationName, isAdmin, isGlobal]}
+      deps={[organizationName, isAdmin]}
       fetch={(q) =>
         (isAdmin ? PermissionBackend.getPermissions : PermissionBackend.getPermissionsBySubmitter)(
-          isGlobal ? "" : organizationName,
+          organizationName,
           q.page,
           q.pageSize,
           q.searchedColumn,

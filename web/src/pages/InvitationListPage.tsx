@@ -4,13 +4,13 @@ import {dateColumn, linkColumn, organizationColumn, textColumn} from "@/componen
 import type {ColumnDef} from "@/components/crud/types";
 import {enumColumn, INVITATION_STATES} from "@/lib/enum-labels";
 import {useAccount} from "@/hooks/use-account";
-import {useRequestOrganization} from "@/hooks/use-organization";
+import {useOrganizationFilter} from "@/hooks/use-organization";
 import * as InvitationBackend from "@/backend/InvitationBackend";
 import {newInvitation} from "@/pages/defaults";
 
 export default function InvitationListPage() {
   const {account} = useAccount();
-  const organizationName = useRequestOrganization();
+  const organizationName = useOrganizationFilter();
 
   const columns: ColumnDef<any>[] = [
     linkColumn({dataIndex: "name", to: (r) => `/invitations/${r.owner}/${r.name}`}),
