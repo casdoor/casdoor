@@ -20,6 +20,7 @@ import {RegionSelect} from "@/components/common/RegionSelect";
 import {SearchableSelect} from "@/components/common/SearchableSelect";
 import {EditPageShell} from "@/components/crud/EditPageShell";
 import {EditableTable} from "@/components/crud/EditableTable";
+import {PropertiesTable} from "@/components/crud/PropertiesTable";
 import {FormRow, formGridClass} from "@/components/crud/FormRow";
 import {AffiliationAddressSelect, AffiliationField, useAffiliation} from "@/components/user/AffiliationSelect";
 import {CartTable} from "@/components/user/CartTable";
@@ -246,7 +247,6 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
 
   const avatarUrl = Setting.getEffectiveAvatarUrl(user);
   // `properties` is a plain map on the wire, the table edits it as rows
-  const propertyRows = Object.entries(user.properties ?? {}).map(([key, value]) => ({key, value}));
 
   const rows: Record<string, React.ReactNode> = {
     "Organization": (
@@ -666,33 +666,9 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
     ),
     "Properties": (
       <AccountItemRow name="Properties" labelKey="user:Properties" block>
-        <EditableTable
-          rows={propertyRows}
-          onChange={(rows) =>
-            updateField(
-              "properties",
-              Object.fromEntries(rows.filter((row: any) => row.key).map((row: any) => [row.key, row.value])),
-            )
-          }
-          newRow={() => ({key: "", value: ""})}
-          reorderable={false}
-          columns={[
-            {
-              key: "key",
-              title: i18next.t("general:Name"),
-              width: 240,
-              render: (row: any, _i, patch) => (
-                <Input value={row.key ?? ""} onChange={(e) => patch({key: e.target.value})} />
-              ),
-            },
-            {
-              key: "value",
-              title: i18next.t("webhook:Value"),
-              render: (row: any, _i, patch) => (
-                <Input value={row.value ?? ""} onChange={(e) => patch({value: e.target.value})} />
-              ),
-            },
-          ]}
+        <PropertiesTable
+          properties={user.properties}
+          onChange={(properties) => updateField("properties", properties)}
         />
       </AccountItemRow>
     ),
