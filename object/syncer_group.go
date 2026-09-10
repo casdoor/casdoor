@@ -56,22 +56,12 @@ func (syncer *Syncer) syncGroups() error {
 	// Get existing groups from Casdoor
 	groups, err := GetGroups(syncer.Organization)
 	if err != nil {
-		line := fmt.Sprintf("[%s] %s\n", util.GetCurrentTime(), err.Error())
-		_, err2 := updateSyncerErrorText(syncer, line)
-		if err2 != nil {
-			panic(err2)
-		}
 		return err
 	}
 
 	// Get groups from the external system
 	oGroups, err := syncer.getOriginalGroups()
 	if err != nil {
-		line := fmt.Sprintf("[%s] %s\n", util.GetCurrentTime(), err.Error())
-		_, err2 := updateSyncerErrorText(syncer, line)
-		if err2 != nil {
-			panic(err2)
-		}
 		return err
 	}
 
@@ -124,6 +114,7 @@ func (syncer *Syncer) syncGroups() error {
 func (syncer *Syncer) syncGroupsNoError() {
 	err := syncer.syncGroups()
 	if err != nil {
+		recordSyncerError(syncer, err)
 		fmt.Printf("syncGroupsNoError() error: %s\n", err.Error())
 	}
 }

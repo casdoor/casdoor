@@ -15,6 +15,7 @@
 package object
 
 import (
+	"fmt"
 	"strings"
 	"time"
 
@@ -124,13 +125,15 @@ func (syncer *Syncer) initAdapter() error {
 func RunSyncUsersJob() {
 	syncers, err := GetSyncers("admin")
 	if err != nil {
-		panic(err)
+		fmt.Printf("RunSyncUsersJob() error: %s\n", err.Error())
+		return
 	}
 
+	// A failing syncer must not stop the others; its error is already in its error text
 	for _, syncer := range syncers {
 		err = addSyncerJob(syncer)
 		if err != nil {
-			panic(err)
+			fmt.Printf("RunSyncUsersJob() failed to start syncer [%s]: %s\n", syncer.GetId(), err.Error())
 		}
 	}
 
