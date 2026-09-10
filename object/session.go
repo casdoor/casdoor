@@ -187,7 +187,7 @@ func DeleteSession(id, curSessionId string) (bool, error) {
 		return false, fmt.Errorf("session:session id %s is the current session and cannot be deleted", curSessionId)
 	}
 
-	_, err = ExpireTokensBySessionIds(session.SessionId)
+	_, err = ExpireTokensBySessionIds(owner, name, session.SessionId)
 	if err != nil {
 		return false, err
 	}
@@ -215,7 +215,7 @@ func DeleteAllUserSessions(owner string, name string) (bool, error) {
 		sessionIds = append(sessionIds, session.SessionId...)
 	}
 
-	_, err = ExpireTokensBySessionIds(sessionIds)
+	_, err = ExpireTokensBySessionIds(owner, name, sessionIds)
 	if err != nil {
 		return false, err
 	}
@@ -239,7 +239,7 @@ func DeleteSessionId(id string, sessionId string) (bool, error) {
 		return false, nil
 	}
 
-	_, err = ExpireTokensBySessionIds([]string{sessionId})
+	_, err = ExpireTokensBySessionIds(session.Owner, session.Name, []string{sessionId})
 	if err != nil {
 		return false, err
 	}
@@ -261,7 +261,7 @@ func DeleteSessionId(id string, sessionId string) (bool, error) {
 func DeleteUserSessionId(owner string, name string, beegoSessionId string) error {
 	// The tokens are expired here too, because no Session row holds the id when the login
 	// happened without one (e.g. "app-built-in" sign-in), and DeleteSessionId is skipped then
-	_, err := ExpireTokensBySessionIds([]string{beegoSessionId})
+	_, err := ExpireTokensBySessionIds(owner, name, []string{beegoSessionId})
 	if err != nil {
 		return err
 	}
