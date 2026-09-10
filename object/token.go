@@ -265,9 +265,9 @@ func ExpireTokenByUser(owner, username string) (bool, error) {
 	return affected != 0, nil
 }
 
-// ExpireTokensBySessionIds expires the tokens minted under the given Beego session ids, so that
+// ExpireTokensBySessionIds expires the user's tokens minted under the given Beego session ids, so that
 // ending a login session (admin delete, single-session logout) also revokes its OAuth tokens
-func ExpireTokensBySessionIds(sessionIds []string) (bool, error) {
+func ExpireTokensBySessionIds(owner string, username string, sessionIds []string) (bool, error) {
 	ids := []string{}
 	for _, sessionId := range sessionIds {
 		if sessionId != "" {
@@ -278,7 +278,7 @@ func ExpireTokensBySessionIds(sessionIds []string) (bool, error) {
 		return false, nil
 	}
 
-	affected, err := ormer.Engine.In("session_id", ids).Where("expires_in > 0").Cols("expires_in").Update(&Token{ExpiresIn: 0})
+	affected, err := ormer.Engine.In("session_id", ids).Where(fmt.Sprintf("organization = ? and %s = ? and expires_in > 0", quoteColumn("user")), owner, username).Cols("expires_in").Update(&Token{ExpiresIn: 0})
 	if err != nil {
 		return false, err
 	}
