@@ -95,7 +95,8 @@ export function newApplication(account: Account) {
     grantTypes: ["authorization_code", "password", "client_credentials", "token", "id_token", "refresh_token"],
     cert: "cert-built-in",
     redirectUris: ["http://localhost:9000/callback"],
-    // the empty tokenFormat will be filled with the organization's "defaultTokenFormat" by the backend
+    // the empty tokenFormat and tokenFields will be filled with the organization's
+    // "defaultTokenFormat" and "defaultTokenFields" by the backend
     tokenFormat: "",
     tokenFields: [],
     expireInHours: 24 * 7,

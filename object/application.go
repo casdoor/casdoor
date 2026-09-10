@@ -498,6 +498,14 @@ func AddApplication(application *Application) (bool, error) {
 
 		application.TokenFormat = tokenFormat
 	}
+	if len(application.TokenFields) == 0 {
+		tokenFields, err := GetDefaultTokenFields(application.Organization)
+		if err != nil {
+			return false, err
+		}
+
+		application.TokenFields = tokenFields
+	}
 
 	app, err := GetApplicationByClientId(application.ClientId)
 	if err != nil {

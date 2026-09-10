@@ -24,6 +24,7 @@ export function newOrganization(createdTime: string) {
     defaultAvatar: `${Setting.StaticBaseUrl}/img/casbin.svg`,
     defaultApplication: "",
     defaultTokenFormat: "JWT",
+    defaultTokenFields: [],
     tags: [],
     languages: Setting.Countries.map(item => item.key),
     masterPassword: "",

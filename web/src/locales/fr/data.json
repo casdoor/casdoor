@@ -954,6 +954,8 @@
     "Balance credit - Tooltip": "Solde (crédits) - Infobulle",
     "Balance currency": "Devise du solde",
     "Balance currency - Tooltip": "Devise du solde - Infobulle",
+    "Default token fields": "Champs du jeton par défaut",
+    "Default token fields - Tooltip": "Les champs du jeton utilisés par les applications nouvellement créées de cette organisation, les applications existantes ne sont pas affectées",
     "Default token format": "Format de jeton par défaut",
     "Default token format - Tooltip": "Le format de jeton utilisé par les applications nouvellement créées de cette organisation, les applications existantes ne sont pas affectées",
     "Edit Organization": "Modifier l'organisation",

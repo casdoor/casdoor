@@ -135,6 +135,7 @@ func initBuiltInOrganization() bool {
 		CountryCodes:       []string{"US", "ES", "FR", "DE", "GB", "CN", "JP", "KR", "VN", "ID", "SG", "IN"},
 		DefaultAvatar:      fmt.Sprintf("%s/img/casbin.svg", conf.GetConfigString("staticBaseUrl")),
 		DefaultTokenFormat: "JWT",
+		DefaultTokenFields: []string{},
 		UserTypes:          []string{},
 		Tags:               []string{},
 		Languages:          []string{"en", "es", "fr", "de", "ja", "zh", "vi", "pt", "tr", "pl", "uk"},

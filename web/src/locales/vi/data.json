@@ -954,6 +954,8 @@
     "Balance credit - Tooltip": "Số dư tín dụng",
     "Balance currency": "Đơn vị tiền tệ",
     "Balance currency - Tooltip": "Đơn vị tiền tệ",
+    "Default token fields": "Trường token mặc định",
+    "Default token fields - Tooltip": "Các trường token được sử dụng bởi các ứng dụng mới tạo của tổ chức này, các ứng dụng hiện có không bị ảnh hưởng",
     "Default token format": "Định dạng token mặc định",
     "Default token format - Tooltip": "Định dạng token được sử dụng bởi các ứng dụng mới tạo của tổ chức này, các ứng dụng hiện có không bị ảnh hưởng",
     "Edit Organization": "Chỉnh sửa tổ chức",
