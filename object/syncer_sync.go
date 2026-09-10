@@ -16,8 +16,6 @@ package object
 
 import (
 	"fmt"
-
-	"github.com/casdoor/casdoor/util"
 )
 
 func (syncer *Syncer) syncUsers() error {
@@ -29,23 +27,11 @@ func (syncer *Syncer) syncUsers() error {
 
 	users, err := GetUsers(syncer.Organization)
 	if err != nil {
-		line := fmt.Sprintf("[%s] %s\n", util.GetCurrentTime(), err.Error())
-		_, err2 := updateSyncerErrorText(syncer, line)
-		if err2 != nil {
-			panic(err2)
-		}
-
 		return err
 	}
 
 	oUsers, err := syncer.getOriginalUsers()
 	if err != nil {
-		line := fmt.Sprintf("[%s] %s\n", util.GetCurrentTime(), err.Error())
-		_, err2 := updateSyncerErrorText(syncer, line)
-		if err2 != nil {
-			panic(err2)
-		}
-
 		return err
 	}
 
@@ -55,12 +41,6 @@ func (syncer *Syncer) syncUsers() error {
 	if syncer.AffiliationTable != "" {
 		_, affiliationMap, err = syncer.getAffiliationMap()
 		if err != nil {
-			line := fmt.Sprintf("[%s] %s\n", util.GetCurrentTime(), err.Error())
-			_, err2 := updateSyncerErrorText(syncer, line)
-			if err2 != nil {
-				panic(err2)
-			}
-
 			return err
 		}
 	}
@@ -175,6 +155,7 @@ func (syncer *Syncer) syncUsers() error {
 func (syncer *Syncer) syncUsersNoError() {
 	err := syncer.syncUsers()
 	if err != nil {
+		recordSyncerError(syncer, err)
 		fmt.Printf("syncUsersNoError() error: %s\n", err.Error())
 	}
 }

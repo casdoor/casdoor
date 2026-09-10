@@ -233,6 +233,14 @@ func updateSyncerErrorText(syncer *Syncer, line string) (bool, error) {
 	return affected != 0, nil
 }
 
+func recordSyncerError(syncer *Syncer, err error) {
+	line := fmt.Sprintf("[%s] %s\n", util.GetCurrentTime(), err.Error())
+	_, err2 := updateSyncerErrorText(syncer, line)
+	if err2 != nil {
+		fmt.Printf("recordSyncerError() error: %s\n", err2.Error())
+	}
+}
+
 func AddSyncer(syncer *Syncer) (bool, error) {
 	affected, err := ormer.Engine.Insert(syncer)
 	if err != nil {
