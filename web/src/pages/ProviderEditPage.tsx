@@ -13,7 +13,7 @@ import {CodeEditor} from "@/components/common/CodeEditor";
 import {MultiSelect} from "@/components/common/MultiSelect";
 import {SearchableSelect} from "@/components/common/SearchableSelect";
 import {SelectField} from "@/components/common/SelectField";
-import {EditableTable} from "@/components/crud/EditableTable";
+import {MapTable} from "@/components/crud/MapTable";
 import {EditPageShell} from "@/components/crud/EditPageShell";
 import {FormRow} from "@/components/crud/FormRow";
 import {CaptchaPreview} from "@/components/provider/CaptchaPreview";
@@ -23,7 +23,7 @@ import {useOrganizationOptions} from "@/hooks/use-options";
 import * as CertBackend from "@/backend/CertBackend";
 import * as ProviderBackend from "@/backend/ProviderBackend";
 import * as ServerBackend from "@/backend/ServerBackend";
-import {mapToRows, rowsToMap, submitEdit} from "@/lib/crud";
+import {submitEdit} from "@/lib/crud";
 import * as ProviderTest from "@/lib/provider-test";
 import * as Setting from "@/lib/setting";
 import {authConfig} from "@/auth/Auth";
@@ -824,27 +824,11 @@ export default function ProviderEditPage() {
   ]);
 
   const renderHttpHeaderTable = () => (
-    <EditableTable
-      rows={mapToRows(provider.httpHeaders, "name", "value")}
-      onChange={(rows) => updateProviderField("httpHeaders", rowsToMap(rows, "name", "value"))}
-      newRow={() => ({name: "", value: ""})}
-      reorderable={false}
-      columns={[
-        {
-          key: "name",
-          title: i18next.t("general:Keys"),
-          render: (row: any, _index, update) => (
-            <Input value={row.name ?? ""} onChange={(e) => update({name: e.target.value})} />
-          ),
-        },
-        {
-          key: "value",
-          title: i18next.t("user:Values"),
-          render: (row: any, _index, update) => (
-            <Input value={row.value ?? ""} onChange={(e) => update({value: e.target.value})} />
-          ),
-        },
-      ]}
+    <MapTable
+      value={provider.httpHeaders}
+      onChange={(value) => updateProviderField("httpHeaders", value)}
+      keyTitle={i18next.t("general:Keys")}
+      valueTitle={i18next.t("user:Values")}
     />
   );
 

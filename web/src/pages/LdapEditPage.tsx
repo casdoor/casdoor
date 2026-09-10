@@ -9,11 +9,11 @@ import {MultiSelect} from "@/components/common/MultiSelect";
 import {SelectField} from "@/components/common/SelectField";
 import {TagsInput} from "@/components/common/TagsInput";
 import {EditPageShell} from "@/components/crud/EditPageShell";
-import {EditableTable} from "@/components/crud/EditableTable";
 import {FormRow} from "@/components/crud/FormRow";
+import {MapTable} from "@/components/crud/MapTable";
 import {dropExtraPhysicalGroups, useGroupList, useGroupOptions} from "@/hooks/use-options";
 import * as LdapBackend from "@/backend/LdapBackend";
-import {getModeTitleKey, mapToRows, rowsToMap} from "@/lib/crud";
+import {getModeTitleKey} from "@/lib/crud";
 import {enumSelectOptions, LDAP_PASSWORD_TYPES} from "@/lib/enum-labels";
 import * as Setting from "@/lib/setting";
 
@@ -180,31 +180,12 @@ export default function LdapEditPage() {
         />
       </FormRow>
       <FormRow labelKey="ldap:Custom attributes" block>
-        <EditableTable
-          rows={mapToRows(ldap.customAttributes, "attributeName", "userPropertyName")}
-          onChange={(rows) => update("customAttributes", rowsToMap(rows, "attributeName", "userPropertyName"))}
-          newRow={() => ({attributeName: "", userPropertyName: ""})}
-          reorderable={false}
-          columns={[
-            {
-              key: "attributeName",
-              title: i18next.t("ldap:LDAP attribute name"),
-              width: 260,
-              render: (row: any, _i, patch) => (
-                <Input value={row.attributeName ?? ""} onChange={(e) => patch({attributeName: e.target.value})} />
-              ),
-            },
-            {
-              key: "userPropertyName",
-              title: i18next.t("ldap:User property name"),
-              render: (row: any, _i, patch) => (
-                <Input
-                  value={row.userPropertyName ?? ""}
-                  onChange={(e) => patch({userPropertyName: e.target.value})}
-                />
-              ),
-            },
-          ]}
+        <MapTable
+          value={ldap.customAttributes}
+          onChange={(value) => update("customAttributes", value)}
+          keyTitle={i18next.t("ldap:LDAP attribute name")}
+          valueTitle={i18next.t("ldap:User property name")}
+          keyWidth={260}
         />
       </FormRow>
       {ldap.autoSync > 0 ? (
