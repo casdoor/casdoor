@@ -28,10 +28,13 @@ type UserInfo struct {
 	DisplayName string
 	UnionId     string
 	Email       string
-	Phone       string
-	CountryCode string
-	AvatarUrl   string
-	Extra       map[string]string
+	// EmailVerified reports whether the provider itself vouches for Email.
+	// Providers that make no such assertion leave it false.
+	EmailVerified bool
+	Phone         string
+	CountryCode   string
+	AvatarUrl     string
+	Extra         map[string]string
 }
 
 type ProviderInfo struct {
