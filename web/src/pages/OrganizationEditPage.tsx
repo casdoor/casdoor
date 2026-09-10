@@ -484,6 +484,16 @@ export default function OrganizationEditPage() {
               options={TOKEN_FORMATS.map((item) => ({id: item, name: item}))}
             />
           </FormRow>
+          <FormRow labelKey="organization:Default token fields">
+            <MultiSelect
+              value={organization.defaultTokenFields ?? []}
+              onChange={(value) => update("defaultTokenFields", value)}
+              creatable
+              // the same claim list as the application's "Token fields"
+              options={["signinMethod", "provider", ...Setting.getUserCommonFields(), "permissionNames"]
+                .map((item: string) => ({value: item, label: item}))}
+            />
+          </FormRow>
           <FormRow labelKey="organization:Is profile public">
             <Switch checked={!!organization.isProfilePublic} onCheckedChange={(v) => update("isProfilePublic", v)} />
           </FormRow>

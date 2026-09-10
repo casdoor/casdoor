@@ -43,6 +43,7 @@
       "defaultAvatar": "",
       "defaultApplication": "",
       "defaultTokenFormat": "JWT",
+      "defaultTokenFields": [],
       "tags": [],
       "languages": [
         "en",

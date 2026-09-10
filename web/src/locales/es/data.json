@@ -954,6 +954,8 @@
     "Balance credit - Tooltip": "Saldo (créditos) - Tooltip",
     "Balance currency": "Moneda del saldo",
     "Balance currency - Tooltip": "Moneda del saldo - Tooltip",
+    "Default token fields": "Campos del token predeterminados",
+    "Default token fields - Tooltip": "Los campos del token utilizados por las aplicaciones recién creadas de esta organización, las aplicaciones existentes no se ven afectadas",
     "Default token format": "Formato de token predeterminado",
     "Default token format - Tooltip": "El formato de token utilizado por las aplicaciones recién creadas de esta organización, las aplicaciones existentes no se ven afectadas",
     "Edit Organization": "Editar organización",
