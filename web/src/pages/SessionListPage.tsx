@@ -10,6 +10,7 @@ import type {ColumnDef} from "@/components/crud/types";
 import {useOrganizationFilter} from "@/hooks/use-organization";
 import * as SessionBackend from "@/backend/SessionBackend";
 import * as Setting from "@/lib/setting";
+import {DeviceIcon, parseUserAgent} from "@/lib/user-agent";
 
 export default function SessionListPage() {
   const organizationName = useOrganizationFilter();
@@ -30,6 +31,48 @@ export default function SessionListPage() {
       .catch((error: any) =>
         Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`),
       );
+
+  const renderSessionId = (record: any, id: string) => {
+    // ids recorded before the infos existed have no info
+    const info = (record.sessionInfos ?? []).find((i: any) => i?.sessionId === id);
+    const ua = info?.userAgent ? parseUserAgent(info.userAgent) : null;
+    const expired = info?.expireTime ? new Date(info.expireTime).getTime() < Date.now() : null;
+
+    return (
+      <div key={id} className="flex items-start gap-2 rounded-md border px-2 py-1.5 text-xs">
+        {ua ? <DeviceIcon device={ua.device} /> : null}
+        <div className="min-w-0 flex-1 space-y-0.5">
+          {info ? (
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
+              {ua ? <span className="font-medium" title={info.userAgent}>{ua.label}</span> : null}
+              {info.ip ? <span className="font-mono text-muted-foreground">{info.ip}</span> : null}
+              {expired === null ? null : (
+                <Badge variant={expired ? "secondary" : "success"} className="py-0 text-[10px] font-normal">
+                  {expired ? i18next.t("general:Expired") : i18next.t("general:Active")}
+                </Badge>
+              )}
+            </div>
+          ) : null}
+          {info?.lastActiveTime ? (
+            <div className="text-muted-foreground">
+              {i18next.t("general:Last active")}: {Setting.getFormattedDate(info.lastActiveTime)}
+            </div>
+          ) : null}
+          <div className="break-all font-mono text-[11px] text-muted-foreground">{id}</div>
+        </div>
+        <ConfirmButton
+          variant="ghost"
+          size="iconSm"
+          className="h-5 w-5 shrink-0"
+          title={i18next.t("general:Sure to delete")}
+          description={`${i18next.t("general:Session ID")}: ${id}`}
+          onConfirm={() => deleteSession(record, id)}
+        >
+          <X className="h-3 w-3" />
+        </ConfirmButton>
+      </div>
+    );
+  };
 
   const columns: ColumnDef<any>[] = [
     {
@@ -61,26 +104,13 @@ export default function SessionListPage() {
     {
       dataIndex: "sessionId",
       title: i18next.t("general:Session ID"),
+      width: 420,
       // each id can be signed out on its own, which is what the antd tag's
       // close button did; removing the last one deletes the row
       render: (value: string[], record: any) =>
         !value || value.length === 0 ? null : (
-          <div className="flex flex-wrap gap-1">
-            {value.map((id) => (
-              <Badge key={id} variant="secondary" className="gap-1 py-0.5 font-mono text-[11px] font-normal">
-                {id}
-                <ConfirmButton
-                  variant="ghost"
-                  size="iconSm"
-                  className="h-4 w-4 shrink-0"
-                  title={i18next.t("general:Sure to delete")}
-                  description={`${i18next.t("general:Session ID")}: ${id}`}
-                  onConfirm={() => deleteSession(record, id)}
-                >
-                  <X className="h-3 w-3" />
-                </ConfirmButton>
-              </Badge>
-            ))}
+          <div className="flex flex-col gap-1.5">
+            {value.map((id) => renderSessionId(record, id))}
           </div>
         ),
     },

@@ -334,11 +334,24 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 			}
 		}
 
+		sessionId := c.Ctx.Input.CruSession.SessionID(context.Background())
+		sessionInfo := &object.SessionInfo{
+			SessionId:      sessionId,
+			CreatedTime:    util.GetCurrentTime(),
+			LastActiveTime: util.GetCurrentTime(),
+			Ip:             clientIp,
+			UserAgent:      c.Ctx.Request.UserAgent(),
+		}
+		if sessionData := c.GetSessionData(); sessionData != nil && sessionData.ExpireTime != 0 {
+			sessionInfo.ExpireTime = time.Unix(sessionData.ExpireTime, 0).Format(time.RFC3339)
+		}
+
 		_, err = object.AddSession(&object.Session{
-			Owner:       user.Owner,
-			Name:        user.Name,
-			Application: application.Name,
-			SessionId:   []string{c.Ctx.Input.CruSession.SessionID(context.Background())},
+			Owner:        user.Owner,
+			Name:         user.Name,
+			Application:  application.Name,
+			SessionId:    []string{sessionId},
+			SessionInfos: []*object.SessionInfo{sessionInfo},
 
 			ExclusiveSignin: application.EnableExclusiveSignin,
 		})

@@ -9,6 +9,9 @@
 the UI layer, `web` should behave exactly like `web-old` — same validations, same
 field formats, same conditions. When the two differ, `web-old` is the reference.
 
+`web-old` is deprecated and read-only: never modify it (code or locales). New
+features and fixes go into `web` only.
+
 Not migrated on purpose:
 
 - **AI assistant.** The `aiAssistantUrl` config, its header button and the iframe
