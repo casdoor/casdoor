@@ -397,6 +397,18 @@ func ApiFilter(ctx *context.Context) {
 	}
 	ctx.Input.SetData("currentUserId", username)
 
+	// the Session row belongs to the signed-in user, not to the impersonated one
+	if sessionUser := getSessionUser(ctx); sessionUser != "" {
+		sessionOwner, sessionName := util.GetOwnerAndNameFromIdNoCheck(sessionUser)
+		beegoSessionId := ctx.Input.CruSession.SessionID(stdcontext.Background())
+		util.SafeGoroutine(func() {
+			err := object.UpdateSessionLastActiveTime(sessionOwner, sessionName, beegoSessionId)
+			if err != nil {
+				logs.Error("UpdateSessionLastActiveTime failed, error: %s", err)
+			}
+		})
+	}
+
 	method := ctx.Request.Method
 	urlPath := getUrlPath(ctx)
 	extraInfo := getExtraInfo(ctx, urlPath)
