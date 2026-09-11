@@ -336,9 +336,15 @@ func GetApplicationByOrganizationName(organization string) (*Application, error)
 func GetApplicationByUser(user *User) (*Application, error) {
 	if user.SignupApplication != "" {
 		return getApplication("admin", user.SignupApplication)
-	} else {
+	}
+
+	// users without a signup application should get the organization's default one
+	application, err := GetDefaultApplication(util.GetId("admin", user.Owner))
+	if err != nil {
 		return GetApplicationByOrganizationName(user.Owner)
 	}
+
+	return application, nil
 }
 
 func GetApplicationByUserId(userId string) (application *Application, err error) {

@@ -291,6 +291,18 @@ func GetMaskedApplication(application *Application, userId string) *Application 
 					Category: category,
 				},
 			})
+		} else if category == "MFA" || category == "Notification" {
+			// the MFA setup page needs the provider's ID, but not its config
+			providerItems = append(providerItems, &ProviderItem{
+				CountryCodes: providerItem.CountryCodes,
+				Rule:         providerItem.Rule,
+				Provider: &Provider{
+					Owner:    providerItem.Provider.Owner,
+					Name:     providerItem.Provider.Name,
+					Category: category,
+					Type:     providerItem.Provider.Type,
+				},
+			})
 		}
 	}
 	application.Providers = providerItems
