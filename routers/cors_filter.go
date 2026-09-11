@@ -32,10 +32,12 @@ const (
 )
 
 func setCorsHeaders(ctx *context.Context, origin string) {
-	ctx.Output.Header(headerAllowOrigin, origin)
-	ctx.Output.Header(headerAllowMethods, "POST, GET, OPTIONS, DELETE")
-	ctx.Output.Header(headerAllowHeaders, "Content-Type, Authorization")
-	ctx.Output.Header(headerAllowCredentials, "true")
+	if origin != "" {
+		ctx.Output.Header(headerAllowOrigin, origin)
+		ctx.Output.Header(headerAllowMethods, "POST, GET, OPTIONS, DELETE")
+		ctx.Output.Header(headerAllowHeaders, "Content-Type, Authorization")
+		ctx.Output.Header(headerAllowCredentials, "true")
+	}
 
 	if ctx.Input.Method() == "OPTIONS" {
 		ctx.ResponseWriter.WriteHeader(http.StatusOK)
