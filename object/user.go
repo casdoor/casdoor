@@ -228,6 +228,8 @@ type User struct {
 	FaceIds             []*FaceId             `json:"faceIds"`
 	Cart                []ProductInfo         `xorm:"mediumtext" json:"cart"`
 
+	PasswordHistory []*PasswordHistoryEntry `xorm:"mediumtext" json:"-"`
+
 	Ldap string `xorm:"ldap varchar(100)" json:"ldap"`
 	// UidNumber is the POSIX uid published by the built-in LDAP server, 0 when unassigned.
 	UidNumber  int               `xorm:"index" json:"uidNumber"`

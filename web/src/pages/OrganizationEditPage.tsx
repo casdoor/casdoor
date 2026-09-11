@@ -370,6 +370,15 @@ export default function OrganizationEditPage() {
               onChange={(e) => update("passwordExpireDays", Setting.myParseInt(e.target.value))}
             />
           </FormRow>
+          <FormRow block labelKey="organization:Password history count">
+            <Input
+              type="number"
+              min={0}
+              max={24}
+              value={organization.passwordHistoryCount ?? 0}
+              onChange={(e) => update("passwordHistoryCount", Setting.myParseInt(e.target.value))}
+            />
+          </FormRow>
           <FormRow block labelKey="application:MFA remember time">
             <Input
               type="number"
