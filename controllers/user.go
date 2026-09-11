@@ -648,9 +648,9 @@ func (c *ApiController) SetPassword() {
 		return
 	}
 
-	// Check if the new password is the same as the current password
-	if !object.CheckPasswordNotSameAsCurrent(targetUser, newPassword, organization) {
-		c.ResponseError(c.T("user:The new password must be different from your current password"))
+	msg = object.CheckPasswordReuse(targetUser, newPassword, organization, c.GetAcceptLanguage())
+	if msg != "" {
+		c.ResponseError(msg)
 		return
 	}
 
@@ -676,13 +676,14 @@ func (c *ApiController) SetPassword() {
 		c.SetSession("verifiedUserId", "")
 	}
 
+	targetUser.AddPasswordHistory(organization)
 	targetUser.Password = newPassword
 	targetUser.UpdateUserPassword(organization)
 	targetUser.NeedUpdatePassword = false
 	targetUser.LastChangePasswordTime = util.GetCurrentTime()
 
 	if user.Ldap == "" {
-		_, err = object.UpdateUser(userId, targetUser, []string{"password", "password_salt", "need_update_password", "password_type", "last_change_password_time"}, false)
+		_, err = object.UpdateUser(userId, targetUser, []string{"password", "password_salt", "need_update_password", "password_type", "last_change_password_time", "password_history"}, false)
 	} else {
 		if isAdmin {
 			err = object.ResetLdapPassword(targetUser, "", newPassword, c.GetAcceptLanguage())
