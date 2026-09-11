@@ -1105,6 +1105,7 @@ func (c *ApiController) Login() {
 						Avatar:            userInfo.AvatarUrl,
 						Address:           []string{},
 						Email:             userInfo.Email,
+						EmailVerified:     userInfo.EmailVerified,
 						Phone:             userInfo.Phone,
 						CountryCode:       userInfo.CountryCode,
 						Region:            userInfo.CountryCode,
