@@ -86,14 +86,12 @@ func forwardHandler(targetUrl string, writer http.ResponseWriter, request *http.
 		allowOrigin := resp.Header.Get("Access-Control-Allow-Origin")
 		allowCredentials := resp.Header.Get("Access-Control-Allow-Credentials")
 
-		// Remove CORS headers when the combination is present:
-		// 1. Access-Control-Allow-Credentials: true with Access-Control-Allow-Origin: *
-		//    This is actually blocked by browsers but we sanitize it anyway
-		// 2. Access-Control-Allow-Credentials: true with any origin
-		//    Without a configured allowlist, we cannot safely validate if the origin
-		//    is trusted or if it's being reflected from the request, so we remove all
-		//    CORS headers for credential-bearing responses to prevent theft
-		if strings.EqualFold(allowCredentials, "true") && allowOrigin != "" {
+		// Only "Allow-Credentials: true" together with a wildcard or "null" origin is
+		// unsafe, since it would let any site read credentialed responses. A concrete
+		// origin is the upstream's own allowlist decision (Casdoor validates it in
+		// CorsFilter), so it must be preserved, otherwise every cross-origin login
+		// through the proxy fails its preflight.
+		if strings.EqualFold(allowCredentials, "true") && (allowOrigin == "*" || strings.EqualFold(allowOrigin, "null")) {
 			// Remove CORS headers to prevent credential theft
 			resp.Header.Del("Access-Control-Allow-Origin")
 			resp.Header.Del("Access-Control-Allow-Credentials")
