@@ -72,19 +72,22 @@ func (c *ApiController) GetGroups() {
 			c.ResponseError(err.Error())
 			return
 		}
-		groupsHaveChildrenMap, err := object.GetGroupsHaveChildrenMap(groups)
+		groupsParentMap, err := object.GetGroupsParentMap(groups)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		groupIdsHaveChildren, err := object.GetGroupIdsHaveChildren(groups)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
 		}
 
 		for _, group := range groups {
-			_, ok := groupsHaveChildrenMap[group.GetId()]
-			if ok {
-				group.HaveChildren = true
-			}
+			group.HaveChildren = groupIdsHaveChildren[group.GetId()]
 
-			parent, ok := groupsHaveChildrenMap[fmt.Sprintf("%s/%s", group.Owner, group.ParentId)]
+			parent, ok := groupsParentMap[fmt.Sprintf("%s/%s", group.Owner, group.ParentId)]
 			if ok {
 				group.ParentName = parent.DisplayName
 			}
