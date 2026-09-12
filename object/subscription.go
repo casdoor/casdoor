@@ -16,6 +16,7 @@ package object
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/casdoor/casdoor/pp"
@@ -44,6 +45,7 @@ type Subscription struct {
 	Description string `xorm:"mediumtext" json:"description"`
 
 	User    string `xorm:"varchar(100)" json:"user"`
+	Group   string `xorm:"varchar(100)" json:"group"`
 	Pricing string `xorm:"varchar(100)" json:"pricing"`
 	Plan    string `xorm:"varchar(100)" json:"plan"`
 	Payment string `xorm:"varchar(100)" json:"payment"`
@@ -159,9 +161,80 @@ func GetSubscriptions(owner string) ([]*Subscription, error) {
 	return subscriptions, nil
 }
 
+// getUserSubscriptionGroups returns the groups a user inherits subscriptions from:
+// the ones they belong to plus all of their ancestors, since a subscription bought
+// for a parent group covers its subgroups too.
+func getUserSubscriptionGroups(owner string, userName string) ([]string, error) {
+	user, err := getUser(owner, userName)
+	if err != nil {
+		return nil, err
+	}
+	if user == nil || len(user.Groups) == 0 {
+		return nil, nil
+	}
+
+	groups, err := GetGroups(owner)
+	if err != nil {
+		return nil, err
+	}
+
+	groupMap := map[string]*Group{}
+	for _, group := range groups {
+		groupMap[group.Name] = group
+	}
+
+	groupNames := []string{}
+	visited := map[string]bool{}
+	for _, groupId := range user.Groups {
+		groupOwner, groupName := util.GetOwnerAndNameFromIdNoCheck(groupId)
+		if groupOwner != owner {
+			continue
+		}
+
+		for {
+			group, ok := groupMap[groupName]
+			if !ok || visited[groupName] {
+				break
+			}
+			visited[groupName] = true
+			groupNames = append(groupNames, groupName)
+			if group.IsTopGroup {
+				break
+			}
+			groupName = group.ParentId
+		}
+	}
+	return groupNames, nil
+}
+
+// getSubscriptionUserCond builds the condition matching the subscriptions a user
+// benefits from: the ones bought for them and the ones bought for their groups.
+func getSubscriptionUserCond(owner string, userName string) (string, []interface{}, error) {
+	groupNames, err := getUserSubscriptionGroups(owner, userName)
+	if err != nil {
+		return "", nil, err
+	}
+
+	cond := fmt.Sprintf("%s = ?", quoteColumn("user"))
+	args := []interface{}{userName}
+	if len(groupNames) > 0 {
+		placeholders := strings.TrimSuffix(strings.Repeat("?, ", len(groupNames)), ", ")
+		cond = fmt.Sprintf("(%s or %s in (%s))", cond, quoteColumn("group"), placeholders)
+		for _, groupName := range groupNames {
+			args = append(args, groupName)
+		}
+	}
+	return cond, args, nil
+}
+
 func GetSubscriptionsByUser(owner, userName string) ([]*Subscription, error) {
 	subscriptions := []*Subscription{}
-	err := ormer.Engine.Desc("created_time").Find(&subscriptions, &Subscription{Owner: owner, User: userName})
+	cond, args, err := getSubscriptionUserCond(owner, userName)
+	if err != nil {
+		return subscriptions, err
+	}
+
+	err = ormer.Engine.Desc("created_time").Where("owner = ?", owner).And(cond, args...).Find(&subscriptions)
 	if err != nil {
 		return subscriptions, err
 	}
@@ -170,6 +243,37 @@ func GetSubscriptionsByUser(owner, userName string) ([]*Subscription, error) {
 		err = sub.UpdateState()
 		if err != nil {
 			return subscriptions, err
+		}
+	}
+	return subscriptions, nil
+}
+
+func GetSubscriptionCountByUser(owner, userName, field, value string) (int64, error) {
+	cond, args, err := getSubscriptionUserCond(owner, userName)
+	if err != nil {
+		return 0, err
+	}
+
+	session := GetSession(owner, -1, -1, field, value, "", "")
+	return session.And(cond, args...).Count(&Subscription{})
+}
+
+func GetPaginationSubscriptionsByUser(owner, userName string, offset, limit int, field, value, sortField, sortOrder string) ([]*Subscription, error) {
+	subscriptions := []*Subscription{}
+	cond, args, err := getSubscriptionUserCond(owner, userName)
+	if err != nil {
+		return subscriptions, err
+	}
+
+	session := GetSession(owner, offset, limit, field, value, sortField, sortOrder)
+	err = session.And(cond, args...).Find(&subscriptions)
+	if err != nil {
+		return subscriptions, err
+	}
+	for _, sub := range subscriptions {
+		err = sub.UpdateState()
+		if err != nil {
+			return nil, err
 		}
 	}
 	return subscriptions, nil
@@ -217,9 +321,9 @@ func GetSubscription(id string) (*Subscription, error) {
 	return getSubscription(owner, name)
 }
 
-func HasActiveSubscriptionForPlan(owner, userName, planName string) (bool, error) {
+func hasActiveSubscriptionForPlan(owner, planName, cond string, args []interface{}) (bool, error) {
 	subscriptions := []*Subscription{}
-	err := ormer.Engine.Find(&subscriptions, &Subscription{Owner: owner, User: userName, Plan: planName})
+	err := ormer.Engine.Where("owner = ? and plan = ?", owner, planName).And(cond, args...).Find(&subscriptions)
 	if err != nil {
 		return false, err
 	}
@@ -235,6 +339,21 @@ func HasActiveSubscriptionForPlan(owner, userName, planName string) (bool, error
 		}
 	}
 	return false, nil
+}
+
+// HasActiveSubscriptionForPlan reports whether the user is already covered by the
+// plan, either directly or through one of their groups.
+func HasActiveSubscriptionForPlan(owner, userName, planName string) (bool, error) {
+	cond, args, err := getSubscriptionUserCond(owner, userName)
+	if err != nil {
+		return false, err
+	}
+	return hasActiveSubscriptionForPlan(owner, planName, cond, args)
+}
+
+func HasActiveSubscriptionForPlanByGroup(owner, groupName, planName string) (bool, error) {
+	cond := fmt.Sprintf("%s = ?", quoteColumn("group"))
+	return hasActiveSubscriptionForPlan(owner, planName, cond, []interface{}{groupName})
 }
 
 func UpdateSubscription(id string, subscription *Subscription) (bool, error) {

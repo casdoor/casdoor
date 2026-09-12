@@ -3,6 +3,7 @@ import {useParams} from "react-router-dom";
 import {SimpleEditPage, type EditField} from "@/components/crud/SimpleEditPage";
 import {useAccount} from "@/hooks/use-account";
 import {
+  useGroupNameOptions,
   useOrganizationOptions,
   usePlanOptions,
   usePricingOptions,
@@ -19,6 +20,7 @@ export default function SubscriptionEditPage() {
   const {account} = useAccount();
   const organizations = useOrganizationOptions();
   const users = useUserNameOptions(organizationName);
+  const groups = useGroupNameOptions(organizationName);
   const plans = usePlanOptions(organizationName);
   const pricings = usePricingOptions(organizationName);
 
@@ -34,6 +36,7 @@ export default function SubscriptionEditPage() {
     {type: "text", name: "displayName", labelKey: "general:Display name"},
     {type: "text", name: "description", labelKey: "general:Description"},
     {type: "select", name: "user", labelKey: "general:User", options: () => users},
+    {type: "select", name: "group", labelKey: "subscription:Group", options: () => groups},
     {type: "select", name: "plan", labelKey: "general:Plan", options: () => plans},
     {
       type: "select",

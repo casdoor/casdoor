@@ -75,9 +75,24 @@ func (c *ApiController) GetSubscriptions() {
 				c.ResponseError(userErr.Error())
 				return
 			}
-			field = "user"
-			value = userName
+
+			count, err := object.GetSubscriptionCountByUser(owner, userName, field, value)
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
+
+			paginator := pagination.NewPaginator(c.Ctx.Request, limit, count)
+			subscriptions, err := object.GetPaginationSubscriptionsByUser(owner, userName, paginator.Offset(), limit, field, value, sortField, sortOrder)
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
+
+			c.ResponseOk(subscriptions, paginator.Nums())
+			return
 		}
+
 		count, err := object.GetSubscriptionCount(owner, field, value)
 		if err != nil {
 			c.ResponseError(err.Error())
@@ -159,14 +174,27 @@ func (c *ApiController) AddSubscription() {
 			return
 		}
 		if plan != nil && plan.IsExclusive {
-			hasSubscription, err := object.HasActiveSubscriptionForPlan(subscription.Owner, subscription.User, subscription.Plan)
-			if err != nil {
-				c.ResponseError(err.Error())
-				return
+			if subscription.User != "" {
+				hasSubscription, err := object.HasActiveSubscriptionForPlan(subscription.Owner, subscription.User, subscription.Plan)
+				if err != nil {
+					c.ResponseError(err.Error())
+					return
+				}
+				if hasSubscription {
+					c.ResponseError(fmt.Sprintf("User already has an active subscription for plan: %s", subscription.Plan))
+					return
+				}
 			}
-			if hasSubscription {
-				c.ResponseError(fmt.Sprintf("User already has an active subscription for plan: %s", subscription.Plan))
-				return
+			if subscription.Group != "" {
+				hasSubscription, err := object.HasActiveSubscriptionForPlanByGroup(subscription.Owner, subscription.Group, subscription.Plan)
+				if err != nil {
+					c.ResponseError(err.Error())
+					return
+				}
+				if hasSubscription {
+					c.ResponseError(fmt.Sprintf("Group already has an active subscription for plan: %s", subscription.Plan))
+					return
+				}
 			}
 		}
 	}

@@ -509,6 +509,19 @@ func GroupChangeTrigger(owner string, oldName string, newName string) error {
 		}
 	}
 
+	subscriptions := []*Subscription{}
+	err = session.Where("owner = ?", owner).And(fmt.Sprintf("%s = ?", quoteColumn("group")), oldName).Find(&subscriptions)
+	if err != nil {
+		return err
+	}
+	for _, subscription := range subscriptions {
+		subscription.Group = newName
+		_, err := session.ID(core.PK{subscription.Owner, subscription.Name}).Cols("group").Update(subscription)
+		if err != nil {
+			return err
+		}
+	}
+
 	err = session.Commit()
 	if err != nil {
 		return err
