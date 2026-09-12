@@ -63,6 +63,18 @@ export default function SubscriptionListPage() {
         ) : null,
     },
     {
+      dataIndex: "group",
+      title: i18next.t("subscription:Group"),
+      width: 130,
+      searchable: true,
+      render: (value, record) =>
+        value ? (
+          <Link to={`/groups/${record.owner}/${value}`} className="underline-offset-4 hover:underline">
+            {value}
+          </Link>
+        ) : null,
+    },
+    {
       dataIndex: "payment",
       searchable: true,
       title: i18next.t("general:Payment"),

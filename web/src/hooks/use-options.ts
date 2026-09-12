@@ -98,6 +98,11 @@ export function useGroupOptions(organizationName: string): SearchableOption[] {
   return React.useMemo(() => toIdOptions(items), [items]);
 }
 
+export function useGroupNameOptions(organizationName: string): SearchableOption[] {
+  const items = useGroupList(organizationName);
+  return React.useMemo(() => toNameOptions(items), [items]);
+}
+
 /**
  * Keeps at most one Physical group in a selection, the rule both the antd user
  * page and LDAP page enforce. Returns null when the selection is fine as it is.

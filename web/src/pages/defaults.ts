@@ -486,6 +486,7 @@ export function newSubscription(account: Account) {
     period: "Monthly",
     description: "",
     user: "",
+    group: "",
     plan: "",
     state: "Active",
   };
