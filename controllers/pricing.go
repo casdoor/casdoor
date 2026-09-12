@@ -16,6 +16,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/beego/beego/v2/core/utils/pagination"
 	"github.com/casdoor/casdoor/object"
@@ -79,6 +80,14 @@ func (c *ApiController) GetPricing() {
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
+	}
+
+	if pricing != nil && pricing.IsInviteOnly {
+		isGlobalAdmin, user := c.isGlobalAdmin()
+		if !isGlobalAdmin && (user == nil || !user.IsAdmin) && !pricing.IsUserAllowed(user) {
+			c.ResponseError(fmt.Sprintf(c.T("auth:The pricing: %s is invite-only, only invited users can use it"), pricing.Name))
+			return
+		}
 	}
 
 	c.ResponseOk(pricing)

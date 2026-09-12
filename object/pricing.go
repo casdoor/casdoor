@@ -31,12 +31,30 @@ type Pricing struct {
 
 	Plans         []string `xorm:"mediumtext" json:"plans"`
 	IsEnabled     bool     `json:"isEnabled"`
+	IsInviteOnly  bool     `json:"isInviteOnly"`
+	Users         []string `xorm:"mediumtext" json:"users"`
 	TrialDuration int      `json:"trialDuration"`
 	Application   string   `xorm:"varchar(100)" json:"application"`
 }
 
 func (pricing *Pricing) GetId() string {
 	return fmt.Sprintf("%s/%s", pricing.Owner, pricing.Name)
+}
+
+// IsUserAllowed reports whether the user may see and buy this pricing. An
+// invite-only pricing is limited to the users of Users, or to the whole owner
+// organization when that list is empty.
+func (pricing *Pricing) IsUserAllowed(user *User) bool {
+	if !pricing.IsInviteOnly {
+		return true
+	}
+	if user == nil || user.Owner != pricing.Owner {
+		return false
+	}
+	if len(pricing.Users) == 0 {
+		return true
+	}
+	return util.InSlice(pricing.Users, user.Name)
 }
 
 func (pricing *Pricing) HasPlan(planName string, lang string) (bool, error) {
@@ -105,14 +123,14 @@ func GetPricing(id string) (*Pricing, error) {
 	return getPricing(owner, name)
 }
 
-func GetApplicationDefaultPricing(owner, appName string) (*Pricing, error) {
+func GetApplicationDefaultPricing(owner, appName string, user *User) (*Pricing, error) {
 	pricings := make([]*Pricing, 0, 1)
 	err := ormer.Engine.Asc("created_time").Find(&pricings, &Pricing{Owner: owner, Application: appName})
 	if err != nil {
 		return nil, err
 	}
 	for _, pricing := range pricings {
-		if pricing.IsEnabled {
+		if pricing.IsEnabled && pricing.IsUserAllowed(user) {
 			return pricing, nil
 		}
 	}
@@ -163,6 +181,10 @@ func CheckPricingAndPlan(owner, pricingName, planName string, lang string) error
 		}
 		return err
 	}
+	if pricing.IsInviteOnly {
+		return fmt.Errorf(i18n.Translate(lang, "auth:The pricing: %s is invite-only, only invited users can use it"), pricingName)
+	}
+
 	ok, err := pricing.HasPlan(planName, lang)
 	if err != nil {
 		return err
