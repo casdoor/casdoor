@@ -130,7 +130,7 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 				}
 			}
 			// paid-user does not have active or pending subscription, find the default pricing of application
-			pricing, err := object.GetApplicationDefaultPricing(application.Organization, application.Name)
+			pricing, err := object.GetApplicationDefaultPricing(application.Organization, application.Name, user)
 			if err != nil {
 				c.ResponseError(err.Error())
 				return

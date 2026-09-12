@@ -353,6 +353,8 @@ export function newPricing(account: Account) {
     plans: [],
     displayName: `New Pricing - ${randomName}`,
     isEnabled: true,
+    isInviteOnly: false,
+    users: [],
     trialDuration: 7,
   };
 }

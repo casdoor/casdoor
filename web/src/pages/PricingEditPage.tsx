@@ -6,7 +6,7 @@ import {Button} from "@/components/ui/button";
 import PricingPage from "@/pages/PricingPage";
 import {SimpleEditPage, type EditField} from "@/components/crud/SimpleEditPage";
 import {useAccount} from "@/hooks/use-account";
-import {useApplicationOptions, useOrganizationOptions, usePlanOptions} from "@/hooks/use-options";
+import {useApplicationOptions, useOrganizationOptions, usePlanOptions, useUserNameOptions} from "@/hooks/use-options";
 import * as PricingBackend from "@/backend/PricingBackend";
 import * as Setting from "@/lib/setting";
 
@@ -16,6 +16,7 @@ export default function PricingEditPage() {
   const organizations = useOrganizationOptions();
   const applications = useApplicationOptions(organizationName);
   const plans = usePlanOptions(organizationName);
+  const users = useUserNameOptions(organizationName);
 
   const fields: EditField[] = [
     {
@@ -31,6 +32,14 @@ export default function PricingEditPage() {
     {type: "select", name: "application", labelKey: "general:Application", options: () => applications},
     {type: "multiselect", name: "plans", labelKey: "general:Plans", options: () => plans},
     {type: "number", name: "trialDuration", labelKey: "pricing:Trial duration"},
+    {type: "switch", name: "isInviteOnly", labelKey: "pricing:Is invite only"},
+    {
+      type: "multiselect",
+      name: "users",
+      labelKey: "pricing:Invited users",
+      options: () => users,
+      when: (ctx) => ctx.record.isInviteOnly === true,
+    },
     {type: "switch", name: "isEnabled", labelKey: "general:Is enabled"},
     {
       // antd renders the real pricing page here, so the plan cards can be checked

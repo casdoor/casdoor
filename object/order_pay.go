@@ -24,6 +24,24 @@ import (
 	"github.com/casdoor/casdoor/util"
 )
 
+func checkPricingIsAllowed(owner string, pricingName string, user *User) error {
+	if pricingName == "" {
+		return nil
+	}
+
+	pricing, err := GetPricing(util.GetId(owner, pricingName))
+	if err != nil {
+		return err
+	}
+	if pricing == nil {
+		return fmt.Errorf("the pricing: %s does not exist", pricingName)
+	}
+	if !pricing.IsUserAllowed(user) {
+		return fmt.Errorf("the pricing: %s is invite-only, only invited users can use it", pricingName)
+	}
+	return nil
+}
+
 func PlaceOrder(owner string, reqProductInfos []ProductInfo, user *User, couponCode string) (*Order, error) {
 	if len(reqProductInfos) == 0 {
 		return nil, fmt.Errorf("order has no products")
@@ -33,6 +51,10 @@ func PlaceOrder(owner string, reqProductInfos []ProductInfo, user *User, couponC
 	for _, reqInfo := range reqProductInfos {
 		if reqInfo.Name == "" {
 			return nil, fmt.Errorf("product name cannot be empty")
+		}
+		err := checkPricingIsAllowed(owner, reqInfo.PricingName, user)
+		if err != nil {
+			return nil, err
 		}
 		productNames = append(productNames, reqInfo.Name)
 	}
