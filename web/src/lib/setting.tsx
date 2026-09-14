@@ -534,6 +534,10 @@ export const OtherProviderInfo = {
       logo: `${StaticBaseUrl}/img/social_openai.svg`,
       url: "https://platform.openai.com",
     },
+    "Atlas Cloud": {
+      logo: `${StaticBaseUrl}/img/social_atlascloud.svg`,
+      url: "https://www.atlascloud.ai",
+    },
   },
   Web3: {
     "MetaMask": {
@@ -1610,6 +1614,11 @@ export function getProviderTypeOptions(category) {
       {id: "System Log", name: "System Log"},
       {id: "Agent", name: "Agent"},
       {id: "SELinux Log", name: "SELinux Log"},
+    ]);
+  } else if (category === "AI") {
+    return ([
+      {id: "OpenAI API - GPT", name: "OpenAI API - GPT"},
+      {id: "Atlas Cloud", name: "Atlas Cloud"},
     ]);
   } else if (category === "Scan") {
     return ([

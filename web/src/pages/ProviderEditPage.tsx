@@ -59,7 +59,7 @@ const defaultSmsMapping: Record<string, string> = {
 };
 
 const CATEGORIES = [
-  "Captcha", "Email", "Face ID", "ID Verification", "Log", "MFA", "Notification",
+  "AI", "Captcha", "Email", "Face ID", "ID Verification", "Log", "MFA", "Notification",
   "OAuth", "Payment", "SAML", "Scan", "SMS", "Storage", "Web3",
 ].sort((a, b) => a.localeCompare(b));
 
@@ -716,6 +716,8 @@ export default function ProviderEditPage() {
       patch.port = 0;
       patch.title = "";
       patch.state = "Enabled";
+    } else if (value === "AI") {
+      defaultType = "OpenAI API - GPT";
     } else if (value === "Scan") {
       defaultType = "MCP Scan";
       patch.subType = "Intranet Scan";
