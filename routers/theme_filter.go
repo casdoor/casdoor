@@ -26,6 +26,7 @@ import (
 type OrganizationThemeCookie struct {
 	ThemeData   *object.ThemeData
 	LogoUrl     string
+	LogoDarkUrl string
 	FooterHtml  string
 	Favicon     string
 	DisplayName string
@@ -106,9 +107,10 @@ func getOrganizationThemeCookieFromUrlPath(ctx *context.Context, urlPath string)
 	}
 
 	organizationThemeCookie := &OrganizationThemeCookie{
-		ThemeData:  application.ThemeData,
-		LogoUrl:    application.Logo,
-		FooterHtml: application.FooterHtml,
+		ThemeData:   application.ThemeData,
+		LogoUrl:     application.Logo,
+		LogoDarkUrl: application.LogoDark,
+		FooterHtml:  application.FooterHtml,
 	}
 
 	if organization != nil {
@@ -126,6 +128,7 @@ func setThemeDataCookie(ctx *context.Context, organizationThemeCookie *Organizat
 	}
 	ctx.SetCookie("organizationTheme", string(themeDataString))
 	ctx.SetCookie("organizationLogo", organizationThemeCookie.LogoUrl)
+	ctx.SetCookie("organizationLogoDark", organizationThemeCookie.LogoDarkUrl)
 	ctx.SetCookie("organizationFootHtml", organizationThemeCookie.FooterHtml)
 	return nil
 }

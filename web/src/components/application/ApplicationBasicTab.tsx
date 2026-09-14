@@ -129,6 +129,33 @@ export function ApplicationBasicTab({
           ) : null}
         </div>
       </FormRow>
+      <FormRow labelKey="general:Enable dark logo">
+        <Switch
+          checked={!!application.enableDarkLogo}
+          onCheckedChange={(checked) => {
+            updateField("enableDarkLogo", checked);
+            if (!checked) {
+              updateField("logoDark", "");
+            }
+          }}
+        />
+      </FormRow>
+      {application.enableDarkLogo ? (
+        <FormRow labelKey="general:Logo dark">
+          <div className="space-y-2">
+            <Input value={application.logoDark ?? ""} onChange={(e) => updateField("logoDark", e.target.value)} />
+            {application.logoDark ? (
+              <a href={application.logoDark} target="_blank" rel="noreferrer">
+                <img
+                  src={application.logoDark}
+                  alt="logo dark"
+                  className="h-14 max-w-[240px] rounded-md border bg-black object-contain p-1.5"
+                />
+              </a>
+            ) : null}
+          </div>
+        </FormRow>
+      ) : null}
       <FormRow labelKey="general:Title">
         <Input value={application.title ?? ""} onChange={(e) => updateField("title", e.target.value)} />
       </FormRow>

@@ -50,6 +50,7 @@ export default function ApplicationEditPage() {
 
   const {record: application, updateField, setRecord, loading, denied, mode, setMode, reload} = useEditRecord<any>({
     fetch: () => ApplicationBackend.getApplication("admin", applicationName),
+    transform: (app) => ({...app, enableDarkLogo: !!app.logoDark}),
     deps: [applicationName],
   });
 
