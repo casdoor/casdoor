@@ -172,9 +172,11 @@ function readCookie(name: string): string | undefined {
 /** The logo/footer the backend put in a cookie, used until the application loads. */
 export function getOrganizationCookieChrome() {
   const logo = readCookie("organizationLogo");
+  const logoDark = readCookie("organizationLogoDark");
   const footerHtml = readCookie("organizationFootHtml");
   return {
     logo: logo ? logo : undefined,
+    logoDark: logoDark ? logoDark : undefined,
     footerHtml: footerHtml ? footerHtml : undefined,
   };
 }

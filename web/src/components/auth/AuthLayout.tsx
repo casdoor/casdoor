@@ -215,9 +215,11 @@ export function AuthLayout({
   // application's form CSS asked for along with the rest of its card
   const panelIsLight = isDark && !bleed && !!panelBackground && isLightColor(panelBackground);
 
+  // the application's logo and the organization's are different things, so the
+  // dark twin painted here is the application's own, never the organization's
   const logo = Setting.getThemedLogo(
     application?.logo || cookieChrome.logo,
-    application?.logoDark || application?.organizationObj?.logoDark,
+    application?.logoDark || cookieChrome.logoDark,
     [isDark && !panelIsLight ? "dark" : "light"],
   );
   const footerHtml = application?.footerHtml || cookieChrome.footerHtml;
