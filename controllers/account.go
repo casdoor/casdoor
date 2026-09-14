@@ -19,6 +19,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 	"strings"
 
 	"github.com/beego/beego/v2/core/logs"
@@ -537,9 +538,9 @@ func (c *ApiController) redirectToPostLogout(application *object.Application, re
 	redirectUrl := redirectUri
 	if state != "" {
 		if strings.Contains(redirectUri, "?") {
-			redirectUrl = fmt.Sprintf("%s&state=%s", strings.TrimSuffix(redirectUri, "/"), state)
+			redirectUrl = fmt.Sprintf("%s&state=%s", strings.TrimSuffix(redirectUri, "/"), url.QueryEscape(state))
 		} else {
-			redirectUrl = fmt.Sprintf("%s?state=%s", strings.TrimSuffix(redirectUri, "/"), state)
+			redirectUrl = fmt.Sprintf("%s?state=%s", strings.TrimSuffix(redirectUri, "/"), url.QueryEscape(state))
 		}
 	}
 	c.Ctx.Redirect(http.StatusFound, redirectUrl)

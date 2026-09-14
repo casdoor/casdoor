@@ -93,7 +93,11 @@ export default function ConsentPage() {
       .then((res: any) => {
         if (res.status === "ok") {
           const concatChar = oAuthParams?.redirectUri?.includes("?") ? "&" : "?";
-          Setting.goToLink(`${oAuthParams.redirectUri}${concatChar}code=${res.data}&state=${oAuthParams.state}`);
+          Setting.goToLink(
+            `${oAuthParams.redirectUri}${concatChar}code=${encodeURIComponent(res.data)}&state=${encodeURIComponent(
+              oAuthParams.state,
+            )}`,
+          );
         } else {
           Setting.showMessage("error", res.msg);
           setGranting(false);
@@ -108,7 +112,9 @@ export default function ConsentPage() {
   const deny = () => {
     const concatChar = oAuthParams?.redirectUri?.includes("?") ? "&" : "?";
     Setting.goToLink(
-      `${oAuthParams.redirectUri}${concatChar}error=access_denied&error_description=User denied consent&state=${oAuthParams.state}`,
+      `${oAuthParams.redirectUri}${concatChar}error=access_denied&error_description=${encodeURIComponent(
+        "User denied consent",
+      )}&state=${encodeURIComponent(oAuthParams.state)}`,
     );
   };
 
