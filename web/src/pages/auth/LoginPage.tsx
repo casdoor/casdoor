@@ -415,7 +415,9 @@ export default function LoginPage({type = "login", application: applicationProp,
     const oAuthParams = Util.getOAuthGetParameters();
     const codeValue = res.data;
     const concatChar = oAuthParams?.redirectUri?.includes("?") ? "&" : "?";
-    const redirectUrl = `${oAuthParams.redirectUri}${concatChar}code=${codeValue}&state=${oAuthParams.state}`;
+    const redirectUrl = `${oAuthParams.redirectUri}${concatChar}code=${encodeURIComponent(
+      codeValue,
+    )}&state=${encodeURIComponent(oAuthParams.state)}`;
 
     if (res.data === Setting.RequiredUpdatePassword) {
       Setting.goToUpdatePassword();
@@ -435,7 +437,9 @@ export default function LoginPage({type = "login", application: applicationProp,
             Setting.goToLink(redirectUrl);
           } else {
             navigate(
-              `/prompt/${application.name}?redirectUri=${oAuthParams.redirectUri}&code=${codeValue}&state=${oAuthParams.state}`,
+              `/prompt/${application.name}?redirectUri=${encodeURIComponent(
+                oAuthParams.redirectUri,
+              )}&code=${encodeURIComponent(codeValue)}&state=${encodeURIComponent(oAuthParams.state)}`,
             );
           }
         } else {
@@ -481,7 +485,9 @@ export default function LoginPage({type = "login", application: applicationProp,
         });
       } else {
         Setting.goToLink(
-          `${authParams.redirectUri}#${amendatoryResponseType}=${res.data}&state=${authParams.state}&token_type=bearer`,
+          `${authParams.redirectUri}#${amendatoryResponseType}=${encodeURIComponent(
+            res.data,
+          )}&state=${encodeURIComponent(authParams.state)}&token_type=bearer`,
         );
       }
     } else if (responseType === "saml") {

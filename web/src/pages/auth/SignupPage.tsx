@@ -317,7 +317,7 @@ export default function SignupPage({application: applicationProp}: {application?
         if (oAuthParams && typeof res.data === "string" && !res.data.includes("/")) {
           const redirectUrl = `${oAuthParams.redirectUri}${
             oAuthParams.redirectUri.includes("?") ? "&" : "?"
-          }code=${res.data}&state=${oAuthParams.state}`;
+          }code=${encodeURIComponent(res.data)}&state=${encodeURIComponent(oAuthParams.state)}`;
           Setting.goToLink(redirectUrl);
           return;
         }
