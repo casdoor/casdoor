@@ -86,7 +86,7 @@ export function CaptchaModal({
             defaultInputRef.current?.focus();
           }
         } else {
-          setOpen(true);
+          setOpen(!(res.type === "Aliyun Captcha" && res.subType === "Popup"));
           setCaptchaType(res.type);
           setClientId(res.clientId);
           setClientSecret(res.clientSecret);
@@ -199,28 +199,36 @@ export function CaptchaModal({
   }
 
   const okDisabled = captchaType === "Default" && !/^\d{5}$/.test(captchaToken);
+  const isAliyunPopup = captchaType === "Aliyun Captcha" && subType === "Popup";
 
   return (
-    <Dialog
-      open={open}
-      onOpenChange={(next) => {
-        if (!next) {
-          handleCancel();
-        }
-        setOpen(next);
-      }}
-    >
-      <DialogContent className="sm:max-w-[350px]">
-        <DialogHeader>
-          <DialogTitle>{i18next.t("general:Captcha")}</DialogTitle>
-        </DialogHeader>
-        <div className="py-2">{renderCaptcha()}</div>
-        {captchaType === "Default" ? (
-          <Button disabled={okDisabled} onClick={() => handleOk()}>
-            {i18next.t("general:OK")}
-          </Button>
-        ) : null}
-      </DialogContent>
-    </Dialog>
+    <React.Fragment>
+      {visible && isAliyunPopup ? (
+        <div className="fixed -left-[10000px] top-0 h-px w-px overflow-hidden" aria-hidden="true">
+          {renderCaptcha()}
+        </div>
+      ) : null}
+      <Dialog
+        open={open}
+        onOpenChange={(next) => {
+          if (!next) {
+            handleCancel();
+          }
+          setOpen(next);
+        }}
+      >
+        <DialogContent className="sm:max-w-[350px]">
+          <DialogHeader>
+            <DialogTitle>{i18next.t("general:Captcha")}</DialogTitle>
+          </DialogHeader>
+          <div className="py-2">{renderCaptcha()}</div>
+          {captchaType === "Default" ? (
+            <Button disabled={okDisabled} onClick={() => handleOk()}>
+              {i18next.t("general:OK")}
+            </Button>
+          ) : null}
+        </DialogContent>
+      </Dialog>
+    </React.Fragment>
   );
 }

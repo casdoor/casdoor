@@ -67,6 +67,7 @@ export function SendCodeInput({
   const [seconds, setSeconds] = React.useState(0);
   const [sending, setSending] = React.useState(false);
   const [captchaVisible, setCaptchaVisible] = React.useState(false);
+  const [captchaAttempt, setCaptchaAttempt] = React.useState(0);
 
   const resendTimeout = application?.codeResendTimeout > 0 ? application.codeResendTimeout : 60;
 
@@ -117,6 +118,7 @@ export function SendCodeInput({
 
     const sendWithCaptcha = () => {
       if (!useInlineCaptcha) {
+        setCaptchaAttempt((attempt) => attempt + 1);
         setCaptchaVisible(true);
         return;
       }
@@ -188,6 +190,7 @@ export function SendCodeInput({
       </div>
       {!useInlineCaptcha && application ? (
         <CaptchaModal
+          key={captchaAttempt}
           owner={application.owner}
           name={application.name}
           visible={captchaVisible}

@@ -125,7 +125,12 @@ function normalizeAndJoin(values: string[]) {
 }
 
 function getProviderSubTypeOptions(type: string) {
-  if (type === "Agent") {
+  if (type === "Aliyun Captcha") {
+    return [
+      {id: "Popup", name: "Popup"},
+      {id: "Embed", name: "Embed"},
+    ];
+  } else if (type === "Agent") {
     return [{id: "OpenClaw", name: "OpenClaw"}];
   } else if (type === "Security Scan") {
     return [{id: "Site", name: "Site"}, {id: "Url", name: "Url"}];
@@ -757,6 +762,8 @@ export default function ProviderEditPage() {
     } else if (value === "Custom HTTP") {
       patch.method = "GET";
       patch.title = "";
+    } else if (value === "Aliyun Captcha") {
+      patch.subType = "Popup";
     } else if (value === "MCP Scan") {
       patch.subType = "Intranet Scan";
       if (!provider.scopes) {

@@ -38,6 +38,7 @@ export function CaptchaWidget({
   React.useEffect(() => {
     const emit = (token: string) => onChangeRef.current(token);
     let timer: number | undefined;
+    let destroyCaptcha: (() => void) | undefined;
 
     switch (captchaType) {
     case "reCAPTCHA":
@@ -102,21 +103,39 @@ export function CaptchaWidget({
     }
     case "Aliyun Captcha": {
       (window as any).AliyunCaptchaConfig = {region: "cn", prefix: clientSecret2};
+      const isPopup = subType === "Popup";
       timer = window.setInterval(() => {
         if (!(window as any).initAliyunCaptcha) {
           loadScript("https://o.alicdn.com/captcha-frontend/aliyunCaptcha/AliyunCaptcha.js");
         }
         if ((window as any).initAliyunCaptcha) {
           if (clientSecret2 && clientSecret2 !== "***") {
-            (window as any).initAliyunCaptcha({
+            const options: Record<string, any> = {
               SceneId: clientId2,
-              mode: "embed",
+              mode: isPopup ? "popup" : "embed",
               element: "#captcha",
-              captchaVerifyCallback: (data: any) => emit(data.toString()),
               slideStyle: {width: 320, height: 40},
               language: "cn",
-              immediate: true,
-            });
+            };
+
+            if (isPopup) {
+              options.button = "#aliyun-captcha-button";
+              options.success = (data: any) => emit(data.toString());
+              options.fail = () => undefined;
+              options.getInstance = (instance: any) => {
+                destroyCaptcha = () => instance.destroyCaptcha?.();
+                if (typeof instance.startTracelessVerification === "function") {
+                  instance.startTracelessVerification();
+                } else {
+                  document.getElementById("aliyun-captcha-button")?.click();
+                }
+              };
+            } else {
+              options.captchaVerifyCallback = (data: any) => emit(data.toString());
+              options.immediate = true;
+            }
+
+            (window as any).initAliyunCaptcha(options);
           }
           window.clearInterval(timer);
         }
@@ -167,8 +186,15 @@ export function CaptchaWidget({
       if (timer !== undefined) {
         window.clearInterval(timer);
       }
+      destroyCaptcha?.();
     };
   }, [captchaType, subType, siteKey, clientSecret, clientId2, clientSecret2]);
 
-  return <div id="captcha" />;
+  return (
+    <div id="captcha">
+      {captchaType === "Aliyun Captcha" && subType === "Popup" ? (
+        <button id="aliyun-captcha-button" type="button" hidden tabIndex={-1} aria-hidden="true" />
+      ) : null}
+    </div>
+  );
 }
