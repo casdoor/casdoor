@@ -119,14 +119,21 @@ export function CaptchaWidget({
             };
 
             if (isPopup) {
+              let verificationStarted = false;
               options.button = "#aliyun-captcha-button";
               options.success = (data: any) => emit(data.toString());
               options.fail = () => undefined;
               options.getInstance = (instance: any) => {
+                if (!instance || verificationStarted) {
+                  return;
+                }
+
                 destroyCaptcha = () => instance.destroyCaptcha?.();
                 if (typeof instance.startTracelessVerification === "function") {
+                  verificationStarted = true;
                   instance.startTracelessVerification();
                 } else {
+                  verificationStarted = true;
                   document.getElementById("aliyun-captcha-button")?.click();
                 }
               };
