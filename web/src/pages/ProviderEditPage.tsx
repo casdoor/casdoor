@@ -125,7 +125,12 @@ function normalizeAndJoin(values: string[]) {
 }
 
 function getProviderSubTypeOptions(type: string) {
-  if (type === "Agent") {
+  if (type === "Aliyun Captcha") {
+    return [
+      {id: "Embed", name: "Embed"},
+      {id: "Popup", name: "Popup"},
+    ];
+  } else if (type === "Agent") {
     return [{id: "OpenClaw", name: "OpenClaw"}];
   } else if (type === "Security Scan") {
     return [{id: "Site", name: "Site"}, {id: "Url", name: "Url"}];
@@ -770,6 +775,9 @@ export default function ProviderEditPage() {
       }
     } else if (value === "Security Scan") {
       patch.subType = "Site";
+    } else if (value === "Aliyun Captcha") {
+      // Popup stays opt-in: only Alibaba Cloud's traceless scenes require it
+      patch.subType = "Embed";
     }
     if (nameNotUserEdited) {
       patch.name = getAutoProviderName(provider.category, value, "");
