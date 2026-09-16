@@ -8,6 +8,7 @@ import {Checkbox} from "@/components/ui/checkbox";
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import {Filter, X} from "lucide-react";
+import {ConfirmButton} from "@/components/common/ConfirmButton";
 import {Loading} from "@/components/common/Loading";
 import {PageHeader} from "@/components/crud/PageHeader";
 import * as LdapBackend from "@/backend/LdapBackend";
@@ -91,9 +92,20 @@ export default function LdapSyncPage() {
         title={i18next.t("general:Sync")}
         description={`${organizationName} / ${ldapId}`}
         actions={
-          <Button loading={syncing} onClick={sync}>
-            {i18next.t("general:Sync")} ({selected.length})
-          </Button>
+          <>
+            <ConfirmButton
+              loading={syncing}
+              disabled={selected.length === 0}
+              title="Please confirm to sync selected users"
+              destructive={false}
+              onConfirm={sync}
+            >
+              {i18next.t("general:Sync")} ({selected.length})
+            </ConfirmButton>
+            <Button variant="outline" asChild>
+              <Link to={`/ldap/${organizationName}/${ldapId}`}>{i18next.t("general:Edit")} LDAP</Link>
+            </Button>
+          </>
         }
       />
       <Card>
