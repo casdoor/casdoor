@@ -688,6 +688,14 @@ func GetTokenExchangeToken(application *Application, clientSecret string, subjec
 		}, nil
 	}
 
+	// the same as signing in: only a shared application serves the users of other organizations
+	if user.Owner != application.Organization && !application.IsShared {
+		return nil, &TokenError{
+			Error:            InvalidGrant,
+			ErrorDescription: fmt.Sprintf("user from subject_token: %s does not belong to the organization of the application: %s", user.GetId(), application.Organization),
+		}, nil
+	}
+
 	// If scope is not provided, use the scope from the subject token.
 	// If scope is provided, it should be a subset of the subject token's scope (downscoping).
 	if scope == "" {

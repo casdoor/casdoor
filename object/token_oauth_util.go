@@ -689,35 +689,36 @@ func parseAndValidateSubjectToken(subjectToken string, requestingClientId string
 		return "", "", "", &TokenError{Error: EndpointError, ErrorDescription: fmt.Sprintf("cert for issuing application %s cannot be found", unverifiedClaims.Azp)}, nil
 	}
 
+	var audience []string
 	if issuingApp.TokenFormat == "JWT-Standard" {
 		standardClaims, err := ParseStandardJwtToken(subjectToken, cert)
 		if err != nil {
 			return "", "", "", &TokenError{Error: InvalidGrant, ErrorDescription: fmt.Sprintf("invalid subject_token: %s", err.Error())}, nil
 		}
-		return standardClaims.Owner, standardClaims.Name, standardClaims.Scope, nil, nil
-	}
-
-	claims, err := ParseJwtToken(subjectToken, cert)
-	if err != nil {
-		return "", "", "", &TokenError{Error: InvalidGrant, ErrorDescription: fmt.Sprintf("invalid subject_token: %s", err.Error())}, nil
+		if standardClaims.UserStandard == nil {
+			return "", "", "", &TokenError{Error: InvalidGrant, ErrorDescription: "subject_token has no user"}, nil
+		}
+		owner, name, scope = standardClaims.Owner, standardClaims.Name, standardClaims.Scope
+		audience = standardClaims.Audience
+	} else {
+		claims, err := ParseJwtToken(subjectToken, cert)
+		if err != nil {
+			return "", "", "", &TokenError{Error: InvalidGrant, ErrorDescription: fmt.Sprintf("invalid subject_token: %s", err.Error())}, nil
+		}
+		if claims.User == nil {
+			return "", "", "", &TokenError{Error: InvalidGrant, ErrorDescription: "subject_token has no user"}, nil
+		}
+		owner, name, scope = claims.Owner, claims.Name, claims.Scope
+		audience = claims.Audience
 	}
 
 	// Audience binding: requesting client must be the issuer itself or appear in token's aud.
 	// Prevents an attacker from exchanging App A's token to obtain an App B token (RFC 8693 §2.1).
-	if issuingApp.ClientId != requestingClientId {
-		audienceMatched := false
-		for _, aud := range claims.Audience {
-			if aud == requestingClientId {
-				audienceMatched = true
-				break
-			}
-		}
-		if !audienceMatched {
-			return "", "", "", &TokenError{Error: InvalidGrant, ErrorDescription: fmt.Sprintf("subject_token audience does not include the requesting client '%s'", requestingClientId)}, nil
-		}
+	if issuingApp.ClientId != requestingClientId && !util.InSlice(audience, requestingClientId) {
+		return "", "", "", &TokenError{Error: InvalidGrant, ErrorDescription: fmt.Sprintf("subject_token audience does not include the requesting client '%s'", requestingClientId)}, nil
 	}
 
-	return claims.Owner, claims.Name, claims.Scope, nil, nil
+	return owner, name, scope, nil, nil
 }
 
 // createGuestUserToken creates a new guest user and returns a token for them.
