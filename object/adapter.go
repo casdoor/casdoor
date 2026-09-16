@@ -106,7 +106,7 @@ func UpdateAdapter(id string, adapter *Adapter) (bool, error) {
 	}
 
 	if name != adapter.Name {
-		err := adapterChangeTrigger(name, adapter.Name)
+		err := adapterChangeTrigger(owner, name, adapter.Name)
 		if err != nil {
 			return false, err
 		}
@@ -215,7 +215,7 @@ func (adapter *Adapter) InitAdapter() error {
 	return nil
 }
 
-func adapterChangeTrigger(oldName string, newName string) error {
+func adapterChangeTrigger(owner string, oldName string, newName string) error {
 	session := ormer.Engine.NewSession()
 	defer session.Close()
 
@@ -224,9 +224,10 @@ func adapterChangeTrigger(oldName string, newName string) error {
 		return err
 	}
 
+	// enforcer.Adapter stores the full "owner/name" id
 	enforcer := new(Enforcer)
-	enforcer.Adapter = newName
-	_, err = session.Where("adapter=?", oldName).Update(enforcer)
+	enforcer.Adapter = util.GetId(owner, newName)
+	_, err = session.Where("adapter=?", util.GetId(owner, oldName)).Update(enforcer)
 	if err != nil {
 		session.Rollback()
 		return err
