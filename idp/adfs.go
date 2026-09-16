@@ -154,6 +154,8 @@ func (idp *AdfsIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
 		Username:    name.(string),
 		DisplayName: name.(string),
 		Email:       upn.(string),
+		// the UPN is the directory account itself
+		EmailVerified: upn.(string) != "",
 	}
 	return userinfo, nil
 }

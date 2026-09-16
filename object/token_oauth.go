@@ -657,6 +657,19 @@ func GetTokenExchangeToken(application *Application, clientSecret string, subjec
 		return nil, tokenError, nil
 	}
 
+	// A valid signature is not enough: the subject token must still be active, the same
+	// way the refresh_token grant checks it, or a revoked token can be exchanged forever.
+	subjectTokenRecord, err := GetTokenByAccessToken(subjectToken)
+	if err != nil {
+		return nil, nil, err
+	}
+	if subjectTokenRecord == nil || subjectTokenRecord.ExpiresIn <= 0 {
+		return nil, &TokenError{
+			Error:            InvalidGrant,
+			ErrorDescription: "subject_token is revoked or unknown",
+		}, nil
+	}
+
 	user, err := getUser(subjectOwner, subjectName)
 	if err != nil {
 		return nil, nil, err
