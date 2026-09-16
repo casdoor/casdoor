@@ -20,6 +20,7 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"syscall"
 	"time"
 )
 
@@ -58,6 +59,40 @@ func IsHostIntranet(ip string) bool {
 	}
 
 	return parsedIP.IsPrivate() || parsedIP.IsLoopback() || parsedIP.IsLinkLocalUnicast() || parsedIP.IsLinkLocalMulticast()
+}
+
+// NewInternetOnlyHttpClient returns a client that refuses to connect to intranet, loopback,
+// link-local (e.g. cloud metadata) and unspecified addresses. The check runs on the resolved
+// IP of every connection, so DNS rebinding and redirects to such addresses are refused too.
+func NewInternetOnlyHttpClient(timeout time.Duration) *http.Client {
+	dialer := &net.Dialer{
+		Timeout: timeout,
+		Control: func(network, address string, _ syscall.RawConn) error {
+			if IsHostIntranet(address) || isUnspecifiedIp(address) {
+				return fmt.Errorf("the address: %s is not allowed, only Internet addresses can be requested", address)
+			}
+			return nil
+		},
+	}
+
+	return &http.Client{
+		Timeout: timeout,
+		Transport: &http.Transport{
+			// a proxy would be dialed instead of the target, bypassing the check
+			Proxy:       nil,
+			DialContext: dialer.DialContext,
+		},
+	}
+}
+
+func isUnspecifiedIp(address string) bool {
+	host, _, err := net.SplitHostPort(address)
+	if err != nil {
+		host = address
+	}
+
+	parsedIP := net.ParseIP(host)
+	return parsedIP != nil && parsedIP.IsUnspecified()
 }
 
 func ResolveDomainToIp(domain string) string {
