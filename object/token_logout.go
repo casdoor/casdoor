@@ -94,6 +94,17 @@ func SendBackchannelLogout(organization, username, sessionId, host string) {
 		return
 	}
 
+	user, err := GetUser(util.GetId(organization, username))
+	if err != nil || user == nil {
+		return
+	}
+
+	sendBackchannelLogoutForTokens(user, tokens, sessionId, host)
+}
+
+// sendBackchannelLogoutForTokens is the body of SendBackchannelLogout for callers that already
+// hold the user and its active tokens, so that the token table is not queried a second time
+func sendBackchannelLogoutForTokens(user *User, tokens []*Token, sessionId string, host string) {
 	// Deduplicate applications
 	seen := map[string]bool{}
 	for _, token := range tokens {
@@ -105,11 +116,6 @@ func SendBackchannelLogout(organization, username, sessionId, host string) {
 
 		application, err := GetApplication(appId)
 		if err != nil || application == nil || application.BackchannelLogoutUri == "" {
-			continue
-		}
-
-		user, err := GetUser(util.GetId(organization, username))
-		if err != nil || user == nil {
 			continue
 		}
 

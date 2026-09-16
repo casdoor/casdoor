@@ -1242,10 +1242,8 @@ func terminateUserAccess(user *User) error {
 		sessionIds = append(sessionIds, session.SessionId...)
 	}
 
-	// Send OIDC Back-Channel Logout notifications BEFORE expiring tokens,
-	// because SendBackchannelLogout calls GetActiveTokensByUser (expires_in > 0).
 	// The host is empty, so the issuer falls back to the configured origin
-	SendBackchannelLogout(user.Owner, user.Name, "", "")
+	sendBackchannelLogoutForTokens(user, tokens, "", "")
 
 	_, err = ExpireTokenByUser(user.Owner, user.Name)
 	if err != nil {
