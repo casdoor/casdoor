@@ -904,11 +904,13 @@ func (c *ApiController) Login() {
 		var token *oauth2.Token
 		if provider.Category == "SAML" {
 			// SAML
-			userInfo, err = object.ParseSamlResponse(authForm.SamlResponse, provider, c.Ctx.Request.Host)
+			samlRequestId, _ := c.GetSession(SamlRequestIdSessionKey).(string)
+			userInfo, err = object.ParseSamlResponse(authForm.SamlResponse, provider, c.Ctx.Request.Host, samlRequestId)
 			if err != nil {
 				c.ResponseError(err.Error())
 				return
 			}
+			c.DelSession(SamlRequestIdSessionKey)
 		} else if provider.Category == "OAuth" || provider.Category == "Web3" {
 			// OAuth
 			idpInfo, err := object.FromProviderToIdpInfo(c.Ctx, provider)
@@ -1393,14 +1395,19 @@ func (c *ApiController) Login() {
 	c.ServeJSON()
 }
 
+// SamlRequestIdSessionKey holds the ID of the AuthnRequest the browser was sent to the
+// IdP with, so that only the response to it can complete the login.
+const SamlRequestIdSessionKey = "samlRequestId"
+
 func (c *ApiController) GetSamlLogin() {
 	providerId := c.Ctx.Input.Query("id")
 	relayState := c.Ctx.Input.Query("relayState")
-	authURL, method, err := object.GenerateSamlRequest(providerId, relayState, c.Ctx.Request.Host, c.GetAcceptLanguage())
+	authURL, method, requestId, err := object.GenerateSamlRequest(providerId, relayState, c.Ctx.Request.Host, c.GetAcceptLanguage())
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
+	c.SetSession(SamlRequestIdSessionKey, requestId)
 	c.ResponseOk(authURL, method)
 }
 

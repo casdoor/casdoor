@@ -21,6 +21,7 @@ import (
 	"encoding/pem"
 	"fmt"
 	"net/url"
+	"time"
 
 	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/idp"
@@ -47,7 +48,10 @@ func IsValidSamlRedirectURL(redirectURL, host string) bool {
 	return parsed.Host == originParsed.Host
 }
 
-func ParseSamlResponse(samlResponse string, provider *Provider, host string) (*idp.UserInfo, error) {
+// ParseSamlResponse validates the SAMLResponse of the provider and returns the user it
+// asserts. requestId is the ID of the AuthnRequest this login started with, the
+// response must answer it.
+func ParseSamlResponse(samlResponse string, provider *Provider, host string, requestId string) (*idp.UserInfo, error) {
 	samlResponse, _ = url.QueryUnescape(samlResponse)
 	sp, err := buildSp(provider, samlResponse, host)
 	if err != nil {
@@ -55,6 +59,11 @@ func ParseSamlResponse(samlResponse string, provider *Provider, host string) (*i
 	}
 
 	assertionInfo, err := sp.RetrieveAssertionInfo(samlResponse)
+	if err != nil {
+		return nil, err
+	}
+
+	err = checkSamlAssertion(assertionInfo, requestId)
 	if err != nil {
 		return nil, err
 	}
@@ -94,35 +103,91 @@ func ParseSamlResponse(samlResponse string, provider *Provider, host string) (*i
 	return userInfo, err
 }
 
-func GenerateSamlRequest(id, relayState, host, lang string) (auth string, method string, err error) {
+// checkSamlAssertion enforces what gosaml2 only reports in WarningInfo: the assertion
+// must be within its validity window, be issued to this SP, answer the AuthnRequest
+// this login started with, and not have been consumed before.
+func checkSamlAssertion(assertionInfo *saml2.AssertionInfo, requestId string) error {
+	warningInfo := assertionInfo.WarningInfo
+	if warningInfo != nil {
+		if warningInfo.InvalidTime {
+			return fmt.Errorf("the SAML assertion is not within its validity period (NotBefore / NotOnOrAfter)")
+		}
+		if warningInfo.NotInAudience {
+			return fmt.Errorf("the SAML assertion is not issued for this service provider (AudienceRestriction mismatch)")
+		}
+	}
+
+	if len(assertionInfo.Assertions) == 0 {
+		return fmt.Errorf("the SAML response contains no assertion")
+	}
+	assertion := assertionInfo.Assertions[0]
+
+	inResponseTo := ""
+	if assertion.Subject != nil && assertion.Subject.SubjectConfirmation != nil && assertion.Subject.SubjectConfirmation.SubjectConfirmationData != nil {
+		inResponseTo = assertion.Subject.SubjectConfirmation.SubjectConfirmationData.InResponseTo
+	}
+	if requestId == "" || inResponseTo != requestId {
+		return fmt.Errorf("the SAML assertion does not answer the AuthnRequest of this login (InResponseTo: %s)", inResponseTo)
+	}
+
+	if assertion.ID == "" {
+		return fmt.Errorf("the SAML assertion has no ID")
+	}
+	ttl := time.Hour
+	if assertion.Conditions != nil {
+		notOnOrAfter, err := time.Parse(time.RFC3339, assertion.Conditions.NotOnOrAfter)
+		if err == nil && notOnOrAfter.After(time.Now()) {
+			ttl = time.Until(notOnOrAfter)
+		}
+	}
+	isReplayed, err := SamlAssertionStore.MarkUsed(assertion.ID, ttl)
+	if err != nil {
+		return err
+	}
+	if isReplayed {
+		return fmt.Errorf("the SAML assertion has already been used: %s", assertion.ID)
+	}
+
+	return nil
+}
+
+// GenerateSamlRequest builds the AuthnRequest for the provider and returns, with the
+// URL or POST body carrying it, the request ID the response must answer.
+func GenerateSamlRequest(id, relayState, host, lang string) (auth string, method string, requestId string, err error) {
 	provider, err := GetProvider(id)
 	if err != nil {
-		return "", "", err
+		return "", "", "", err
 	}
 	if provider.Category != "SAML" {
-		return "", "", fmt.Errorf(i18n.Translate(lang, "saml_sp:provider %s's category is not SAML"), provider.Name)
+		return "", "", "", fmt.Errorf(i18n.Translate(lang, "saml_sp:provider %s's category is not SAML"), provider.Name)
 	}
 
 	sp, err := buildSp(provider, "", host)
 	if err != nil {
-		return "", "", err
+		return "", "", "", err
 	}
 
+	doc, err := sp.BuildAuthRequestDocument()
+	if err != nil {
+		return "", "", "", err
+	}
+	requestId = doc.Root().SelectAttrValue("ID", "")
+
 	if provider.EnableSignAuthnRequest {
-		post, err := sp.BuildAuthBodyPost(relayState)
+		post, err := sp.BuildAuthBodyPostFromDocument(relayState, doc)
 		if err != nil {
-			return "", "", err
+			return "", "", "", err
 		}
 		auth = string(post[:])
 		method = "POST"
 	} else {
-		auth, err = sp.BuildAuthURL(relayState)
+		auth, err = sp.BuildAuthURLFromDocument(relayState, doc)
 		if err != nil {
-			return "", "", err
+			return "", "", "", err
 		}
 		method = "GET"
 	}
-	return auth, method, nil
+	return auth, method, requestId, nil
 }
 
 func buildSp(provider *Provider, samlResponse string, host string) (*saml2.SAMLServiceProvider, error) {
@@ -136,6 +201,7 @@ func buildSp(provider *Provider, samlResponse string, host string) (*saml2.SAMLS
 	sp := &saml2.SAMLServiceProvider{
 		ServiceProviderIssuer:       fmt.Sprintf("%s/api/acs", origin),
 		AssertionConsumerServiceURL: fmt.Sprintf("%s/api/acs", origin),
+		AudienceURI:                 fmt.Sprintf("%s/api/acs", origin),
 		SignAuthnRequests:           false,
 		IDPCertificateStore:         &certStore,
 		SPKeyStore:                  dsig.RandomKeyStoreForTest(),
