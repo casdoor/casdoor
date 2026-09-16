@@ -228,8 +228,6 @@ type User struct {
 	FaceIds             []*FaceId             `json:"faceIds"`
 	Cart                []ProductInfo         `xorm:"mediumtext" json:"cart"`
 
-	PasswordHistory []*PasswordHistoryEntry `xorm:"mediumtext" json:"-"`
-
 	Ldap string `xorm:"ldap varchar(100)" json:"ldap"`
 	// UidNumber is the POSIX uid published by the built-in LDAP server, 0 when unassigned.
 	UidNumber  int               `xorm:"index" json:"uidNumber"`
@@ -1287,6 +1285,11 @@ func DeleteUser(user *User) (bool, error) {
 		return false, err
 	}
 
+	err = DeletePasswordHistoryByUser(user.Owner, user.Name)
+	if err != nil {
+		return false, err
+	}
+
 	organization, err := GetOrganizationByUser(user)
 	if err != nil {
 		return false, err
@@ -1533,6 +1536,11 @@ func userChangeTrigger(owner string, oldName string, newName string) error {
 	}
 
 	_, err = session.Where("owner = ? AND user_name = ?", owner, oldName).Cols("user_name").Update(&ThirdPartyLink{UserName: newName})
+	if err != nil {
+		return err
+	}
+
+	_, err = session.Where("owner = ? AND name = ?", owner, oldName).Cols("name").Update(&PasswordHistory{Name: newName})
 	if err != nil {
 		return err
 	}
