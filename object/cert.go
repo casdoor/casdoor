@@ -61,17 +61,6 @@ func GetMaskedCert(cert *Cert) *Cert {
 	return cert
 }
 
-func GetMaskedCerts(certs []*Cert, err error) ([]*Cert, error) {
-	if err != nil {
-		return nil, err
-	}
-
-	for _, cert := range certs {
-		cert = GetMaskedCert(cert)
-	}
-	return certs, nil
-}
-
 func GetCertCount(owner, field, value string) (int64, error) {
 	session := GetSession("", -1, -1, field, value, "", "")
 	return session.Where("owner = ? or owner = ? ", "admin", owner).Count(&Cert{})
