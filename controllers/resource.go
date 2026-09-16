@@ -95,9 +95,17 @@ func (c *ApiController) GetResources() {
 			return
 		}
 		user = ""
+	} else if !c.checkResourcePermission(owner, user) {
+		return
 	}
 
 	if sortField == "Direct" {
+		// lists the storage bucket itself, which isn't scoped by owner or user
+		if !isOrgAdmin {
+			c.ResponseError(c.T("auth:Unauthorized operation"))
+			return
+		}
+
 		provider, err := c.GetProviderFromContext("Storage")
 		if err != nil {
 			c.ResponseError(err.Error())
