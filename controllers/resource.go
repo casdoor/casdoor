@@ -38,11 +38,7 @@ func (c *ApiController) checkResourcePermission(owner string, username string) b
 		return false
 	}
 
-	if object.IsAppUser(userId) {
-		return true
-	}
-
-	user, err := object.GetUser(userId)
+	user, err := object.GetUserOrAppUser(userId)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return false
@@ -95,6 +91,9 @@ func (c *ApiController) GetResources() {
 	}
 
 	if isOrgAdmin {
+		if !c.requireOrganizationPermission(owner) {
+			return
+		}
 		user = ""
 	}
 

@@ -146,11 +146,6 @@ func getObject(ctx *context.Context) (string, string, error) {
 	method := ctx.Request.Method
 	path := ctx.Request.URL.Path
 
-	// Special handling for MCP requests
-	if path == "/api/mcp" && method == http.MethodPost {
-		return getMcpObject(ctx)
-	}
-
 	if strings.HasPrefix(path, "/api/server/") {
 		return ctx.Input.Param(":owner"), ctx.Input.Param(":name"), nil
 	}
@@ -226,6 +221,15 @@ func getObject(ctx *context.Context) (string, string, error) {
 			}
 		}
 
+		if path == "/api/enforce" || path == "/api/batch-enforce" {
+			// the body is the casbin request, the object is the permission, model or enforcer
+			for _, param := range []string{"permissionId", "modelId", "enforcerId"} {
+				if id := ctx.Input.Query(param); id != "" {
+					return util.GetOwnerAndNameFromIdWithError(id)
+				}
+			}
+		}
+
 		isOwnerObjPath := checkIsOrgOwnerObject(path)
 
 		// For non-GET requests, if the `id` query param is present it is the
@@ -290,12 +294,23 @@ func getObjectFromBody(ctx *context.Context, path string) (string, string) {
 // authorized. Otherwise an org admin can have a request authorized against an object
 // of their own organization and executed against another organization's object.
 func getObjects(ctx *context.Context) ([]Object, error) {
+	path := ctx.Request.URL.Path
+	if path == "/api/mcp" && ctx.Request.Method == http.MethodPost {
+		objects, err := getMcpObjects(ctx)
+		if err != nil {
+			return nil, err
+		}
+		if len(objects) == 0 {
+			objects = []Object{{}}
+		}
+		return objects, nil
+	}
+
 	owner, name, err := getObject(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	path := ctx.Request.URL.Path
 	objects := []Object{{Owner: owner, Name: name}}
 
 	if ctx.Request.Method == http.MethodGet {

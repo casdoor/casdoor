@@ -1434,8 +1434,16 @@ func (user *User) GetFriendlyName() string {
 	}
 }
 
-func isUserIdGlobalAdmin(userId string) bool {
-	return strings.HasPrefix(userId, "built-in/") || IsAppUser(userId)
+func isUserIdGlobalAdmin(userId string) (bool, error) {
+	if strings.HasPrefix(userId, "built-in/") {
+		return true, nil
+	}
+
+	appUser, err := GetAppUser(userId)
+	if err != nil {
+		return false, err
+	}
+	return appUser.IsGlobalAdmin(), nil
 }
 
 func ExtendUserWithRolesAndPermissions(user *User) (err error) {

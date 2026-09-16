@@ -234,11 +234,15 @@ func GetMaskedApplication(application *Application, userId string) *Application 
 
 	isOrgUser := false
 	if userId != "" {
-		if isUserIdGlobalAdmin(userId) {
+		isGlobalAdmin, err := isUserIdGlobalAdmin(userId)
+		if err != nil {
+			panic(err)
+		}
+		if isGlobalAdmin {
 			return application
 		}
 
-		user, err := GetUser(userId)
+		user, err := GetUserOrAppUser(userId)
 		if err != nil {
 			panic(err)
 		}
@@ -355,7 +359,11 @@ func GetMaskedApplication(application *Application, userId string) *Application 
 }
 
 func GetMaskedApplications(applications []*Application, userId string) []*Application {
-	if isUserIdGlobalAdmin(userId) {
+	isGlobalAdmin, err := isUserIdGlobalAdmin(userId)
+	if err != nil {
+		panic(err)
+	}
+	if isGlobalAdmin {
 		return applications
 	}
 
@@ -370,11 +378,15 @@ func GetAllowedApplications(applications []*Application, userId string, lang str
 		return nil, errors.New(i18n.Translate(lang, "auth:Unauthorized operation"))
 	}
 
-	if isUserIdGlobalAdmin(userId) {
+	isGlobalAdmin, err := isUserIdGlobalAdmin(userId)
+	if err != nil {
+		return nil, err
+	}
+	if isGlobalAdmin {
 		return applications, nil
 	}
 
-	user, err := GetUser(userId)
+	user, err := GetUserOrAppUser(userId)
 	if err != nil {
 		return nil, err
 	}

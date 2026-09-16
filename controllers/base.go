@@ -57,9 +57,20 @@ func (c *ApiController) IsAdmin() bool {
 	return isGlobalAdmin || user.IsAdmin
 }
 
+// IsAdminOf checks that the current user administers user2: a global admin does, an
+// org admin only for the users of their own organization.
+func (c *ApiController) IsAdminOf(user2 *object.User) bool {
+	isGlobalAdmin, user := c.isGlobalAdmin()
+	if isGlobalAdmin {
+		return true
+	}
+
+	return user != nil && user2 != nil && user.IsAdmin && user.Owner == user2.Owner
+}
+
 func (c *ApiController) IsAdminOrSelf(user2 *object.User) bool {
 	isGlobalAdmin, user := c.isGlobalAdmin()
-	if isGlobalAdmin || (user != nil && user.IsAdmin) {
+	if isGlobalAdmin {
 		return true
 	}
 
@@ -67,10 +78,7 @@ func (c *ApiController) IsAdminOrSelf(user2 *object.User) bool {
 		return false
 	}
 
-	if user.Owner == user2.Owner && user.Name == user2.Name {
-		return true
-	}
-	return false
+	return user.Owner == user2.Owner && (user.IsAdmin || user.Name == user2.Name)
 }
 
 // requireOrganizationPermission checks that the current user may create an object belonging
@@ -93,8 +101,13 @@ func (c *ApiController) requireOrganizationPermission(organization string) bool 
 func (c *ApiController) isGlobalAdmin() (bool, *object.User) {
 	username := c.GetSessionUsername()
 	if object.IsAppUser(username) {
-		// e.g., "app/app-casnode"
-		return true, nil
+		// e.g., "app/app-casnode", an admin of the application's organization
+		appUser, err := object.GetAppUser(username)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return false, nil
+		}
+		return appUser.IsGlobalAdmin(), appUser
 	}
 
 	user := c.getCurrentUser()
