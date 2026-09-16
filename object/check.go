@@ -456,28 +456,25 @@ func CheckUserPermission(requestUserId, userId string, strict bool, lang string)
 		userOwner = targetUser.Owner
 	}
 
-	hasPermission := false
-	if IsAppUser(requestUserId) {
-		hasPermission = true
-	} else {
-		requestUser, err := GetUser(requestUserId)
-		if err != nil {
-			return false, err
-		}
+	requestUser, err := GetUserOrAppUser(requestUserId)
+	if err != nil {
+		return false, err
+	}
 
-		if requestUser == nil {
-			return false, errors.New(i18n.Translate(lang, "check:Session outdated, please login again"))
-		}
-		if requestUser.IsGlobalAdmin() {
+	if requestUser == nil {
+		return false, errors.New(i18n.Translate(lang, "check:Session outdated, please login again"))
+	}
+
+	hasPermission := false
+	if requestUser.IsGlobalAdmin() {
+		hasPermission = true
+	} else if requestUserId == userId {
+		hasPermission = true
+	} else if userOwner == requestUser.Owner {
+		if strict {
+			hasPermission = requestUser.IsAdmin
+		} else {
 			hasPermission = true
-		} else if requestUserId == userId {
-			hasPermission = true
-		} else if userOwner == requestUser.Owner {
-			if strict {
-				hasPermission = requestUser.IsAdmin
-			} else {
-				hasPermission = true
-			}
 		}
 	}
 

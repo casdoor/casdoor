@@ -1024,6 +1024,33 @@ func IsAppUser(userId string) bool {
 	return false
 }
 
+// GetAppUser returns the virtual user an application credential ("app/<name>" or
+// "app-dcr/<name>") acts as: an admin of the application's organization, hence a
+// global admin only when the application belongs to the built-in organization. It
+// returns nil when userId is not an app user or the application doesn't exist.
+func GetAppUser(userId string) (*User, error) {
+	if !IsAppUser(userId) {
+		return nil, nil
+	}
+
+	_, name := util.GetOwnerAndNameFromIdNoCheck(userId)
+	application, err := getApplication("admin", name)
+	if err != nil || application == nil {
+		return nil, err
+	}
+
+	return &User{Owner: application.Organization, Name: userId, IsAdmin: true}, nil
+}
+
+// GetUserOrAppUser returns the real user for userId, or the virtual user of an
+// application credential, see GetAppUser().
+func GetUserOrAppUser(userId string) (*User, error) {
+	if IsAppUser(userId) {
+		return GetAppUser(userId)
+	}
+	return GetUser(userId)
+}
+
 func setReflectAttr[T any](fieldValue *reflect.Value, fieldString string) error {
 	unmarshalValue := new(T)
 	err := json.Unmarshal([]byte(fieldString), unmarshalValue)

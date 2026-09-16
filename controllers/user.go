@@ -230,10 +230,8 @@ func (c *ApiController) GetUser() {
 		return
 	}
 
-	requestUserId := c.GetSessionUsername()
-	isApplicationRequest := object.IsAppUser(requestUserId)
-	isAdmin := c.IsAdmin() || isApplicationRequest
-	isAdminOrSelf := c.IsAdminOrSelf(user) || isApplicationRequest
+	isAdmin := c.IsAdminOf(user)
+	isAdminOrSelf := c.IsAdminOrSelf(user)
 	user, err = object.GetMaskedUser(user, isAdminOrSelf)
 	if err != nil {
 		c.ResponseError(err.Error())

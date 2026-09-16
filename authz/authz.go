@@ -39,7 +39,6 @@ func InitApi() {
 	if true {
 		ruleText := `
 p, built-in, *, *, *, *, *
-p, app, *, *, *, *, *
 p, app-dcr, *, *, /api/login/oauth/*, *, *
 p, app-dcr, *, *, /api/get-oauth-token, *, *
 p, app-dcr, *, *, /api/userinfo, *, *
@@ -171,7 +170,19 @@ func IsAllowed(subOwner string, subName string, method string, urlPath string, o
 	}
 
 	if subOwner == "app" {
-		return true, nil
+		// An application credential is an admin of its own organization only, and a
+		// global admin only when the application belongs to the built-in organization.
+		appUser, err := object.GetAppUser(util.GetId(subOwner, subName))
+		if err != nil {
+			return false, err
+		}
+		if appUser == nil {
+			return false, nil
+		}
+
+		if appUser.IsGlobalAdmin() || appUser.Owner == objOwner {
+			return true, nil
+		}
 	}
 
 	user, err := object.GetUser(util.GetId(subOwner, subName))

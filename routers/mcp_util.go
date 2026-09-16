@@ -18,6 +18,7 @@ import (
 	"encoding/json"
 
 	"github.com/beego/beego/v2/server/web/context"
+	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 )
 
@@ -28,10 +29,18 @@ type applicationStub struct {
 	Organization string `json:"organization"`
 }
 
-func getMcpObject(ctx *context.Context) (string, string, error) {
+// userStub is a lightweight struct for extracting owner/name from user data
+type userStub struct {
+	Owner string `json:"owner"`
+	Name  string `json:"name"`
+}
+
+// getMcpObjects returns every object an MCP tool call acts on, so that the tool
+// arguments are authorized the same way as the query params and body of the REST APIs.
+func getMcpObjects(ctx *context.Context) ([]Object, error) {
 	body := ctx.Input.RequestBody
 	if len(body) == 0 {
-		return "", "", nil
+		return nil, nil
 	}
 
 	// Parse MCP request to determine tool name
@@ -58,28 +67,51 @@ func getMcpObject(ctx *context.Context) (string, string, error) {
 	}
 
 	type updateApplicationArgs struct {
-		Id string `json:"id"`
+		Id          string          `json:"id"`
+		Application applicationStub `json:"application"`
 	}
 
 	type deleteApplicationArgs struct {
 		Application applicationStub `json:"application"`
 	}
 
+	type getUsersArgs struct {
+		Owner string `json:"owner"`
+	}
+
+	type getUserArgs struct {
+		Id    string `json:"id"`
+		Owner string `json:"owner"`
+	}
+
+	type addUserArgs struct {
+		User userStub `json:"user"`
+	}
+
+	type updateUserArgs struct {
+		Id   string   `json:"id"`
+		User userStub `json:"user"`
+	}
+
+	type deleteUserArgs struct {
+		User userStub `json:"user"`
+	}
+
 	var mcpReq mcpRequest
 	err := json.Unmarshal(body, &mcpReq)
 	if err != nil {
-		return "", "", nil
+		return nil, nil
 	}
 
 	// Only extract object for tool calls
 	if mcpReq.Method != "tools/call" {
-		return "", "", nil
+		return nil, nil
 	}
 
 	var params mcpCallToolParams
 	err = json.Unmarshal(mcpReq.Params, &params)
 	if err != nil {
-		return "", "", nil
+		return nil, nil
 	}
 
 	// Extract owner/id from arguments based on tool
@@ -87,43 +119,104 @@ func getMcpObject(ctx *context.Context) (string, string, error) {
 	case "get_applications":
 		var args getApplicationsArgs
 		if err := json.Unmarshal(params.Arguments, &args); err == nil {
-			return args.Owner, "", nil
+			return []Object{{Owner: args.Owner}}, nil
 		}
 	case "get_application":
 		var args getApplicationArgs
 		if err := json.Unmarshal(params.Arguments, &args); err == nil {
-			return util.GetOwnerAndNameFromIdWithError(args.Id)
+			obj, err := getMcpApplicationObject(args.Id)
+			return []Object{obj}, err
 		}
 	case "update_application":
 		var args updateApplicationArgs
 		if err := json.Unmarshal(params.Arguments, &args); err == nil {
-			return util.GetOwnerAndNameFromIdWithError(args.Id)
+			obj, err := getMcpApplicationObject(args.Id)
+			if err != nil {
+				return nil, err
+			}
+			return appendMcpObject([]Object{obj}, extractOwnerNameFromAppStub(args.Application)), nil
 		}
 	case "add_application":
 		var args addApplicationArgs
 		if err := json.Unmarshal(params.Arguments, &args); err == nil {
-			return extractOwnerNameFromAppStub(args.Application)
+			return []Object{extractOwnerNameFromAppStub(args.Application)}, nil
 		}
 	case "delete_application":
 		var args deleteApplicationArgs
 		if err := json.Unmarshal(params.Arguments, &args); err == nil {
-			return extractOwnerNameFromAppStub(args.Application)
+			return []Object{extractOwnerNameFromAppStub(args.Application)}, nil
+		}
+	case "get_users":
+		var args getUsersArgs
+		if err := json.Unmarshal(params.Arguments, &args); err == nil {
+			return []Object{{Owner: args.Owner}}, nil
+		}
+	case "get_user":
+		var args getUserArgs
+		if err := json.Unmarshal(params.Arguments, &args); err == nil {
+			if args.Id != "" {
+				owner, name, err := util.GetOwnerAndNameFromIdWithError(args.Id)
+				return []Object{{Owner: owner, Name: name}}, err
+			}
+			return []Object{{Owner: args.Owner}}, nil
+		}
+	case "add_user":
+		var args addUserArgs
+		if err := json.Unmarshal(params.Arguments, &args); err == nil {
+			return []Object{{Owner: args.User.Owner, Name: args.User.Name}}, nil
+		}
+	case "update_user":
+		var args updateUserArgs
+		if err := json.Unmarshal(params.Arguments, &args); err == nil {
+			owner, name, err := util.GetOwnerAndNameFromIdWithError(args.Id)
+			if err != nil {
+				return nil, err
+			}
+			return appendMcpObject([]Object{{Owner: owner, Name: name}}, Object{Owner: args.User.Owner, Name: args.User.Name}), nil
+		}
+	case "delete_user":
+		var args deleteUserArgs
+		if err := json.Unmarshal(params.Arguments, &args); err == nil {
+			return []Object{{Owner: args.User.Owner, Name: args.User.Name}}, nil
 		}
 	}
 
-	return "", "", nil
+	return nil, nil
+}
+
+// getMcpApplicationObject resolves an application id to its organization, which is
+// the object the REST application APIs are authorized against.
+func getMcpApplicationObject(id string) (Object, error) {
+	owner, name, err := util.GetOwnerAndNameFromIdWithError(id)
+	if err != nil {
+		return Object{}, err
+	}
+
+	application, err := object.GetApplication(id)
+	if err != nil {
+		return Object{}, err
+	}
+	if application != nil {
+		owner = application.Organization
+	}
+
+	return Object{Owner: owner, Name: name}, nil
+}
+
+func appendMcpObject(objects []Object, obj Object) []Object {
+	if obj.Owner != "" && obj != objects[0] {
+		objects = append(objects, obj)
+	}
+	return objects
 }
 
 // extractOwnerNameFromAppStub extracts owner and name from application stub
 // Prioritizes organization field over owner field for consistency
-func extractOwnerNameFromAppStub(app applicationStub) (string, string, error) {
+func extractOwnerNameFromAppStub(app applicationStub) Object {
 	// Try organization field first (used in application APIs)
 	if app.Organization != "" {
-		return app.Organization, app.Name, nil
+		return Object{Owner: app.Organization, Name: app.Name}
 	}
 	// Fall back to owner field
-	if app.Owner != "" {
-		return app.Owner, app.Name, nil
-	}
-	return "", "", nil
+	return Object{Owner: app.Owner, Name: app.Name}
 }
