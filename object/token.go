@@ -29,8 +29,8 @@ type Token struct {
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 
 	Application  string `xorm:"varchar(100)" json:"application"`
-	Organization string `xorm:"varchar(100)" json:"organization"`
-	User         string `xorm:"varchar(100)" json:"user"`
+	Organization string `xorm:"varchar(100) index(org_user)" json:"organization"`
+	User         string `xorm:"varchar(100) index(org_user)" json:"user"`
 
 	Code             string `xorm:"varchar(100) index" json:"code"`
 	AccessToken      string `xorm:"mediumtext" json:"accessToken"`
@@ -257,7 +257,7 @@ func GetActiveTokensByUser(organization, username string) ([]*Token, error) {
 }
 
 func ExpireTokenByUser(owner, username string) (bool, error) {
-	affected, err := ormer.Engine.Where(fmt.Sprintf("organization = ? and %s = ?", quoteColumn("user")), owner, username).Cols("expires_in").Update(&Token{ExpiresIn: 0})
+	affected, err := ormer.Engine.Where(fmt.Sprintf("organization = ? and %s = ? and expires_in > 0", quoteColumn("user")), owner, username).Cols("expires_in").Update(&Token{ExpiresIn: 0})
 	if err != nil {
 		return false, err
 	}
