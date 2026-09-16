@@ -55,6 +55,12 @@ var organizationParamObject = []string{
 	"/api/get-webhook-events",
 }
 
+var sessionOwnerObject = []string{
+	"/api/upload-groups",
+	"/api/upload-roles",
+	"/api/upload-permissions",
+}
+
 type Object struct {
 	Owner string `json:"owner"`
 	Name  string `json:"name"`
@@ -203,6 +209,16 @@ func getObject(ctx *context.Context) (string, string, error) {
 
 		return "", "", nil
 	} else {
+		// The xlsx import controllers ignore the request body and import into the
+		// signed-in user's organization, so that organization is the object.
+		if util.InSlice(sessionOwnerObject, path) {
+			if userId, ok := ctx.Input.GetData("currentUserId").(string); ok && userId != "" {
+				owner, _, err := util.GetOwnerAndNameFromIdWithError(userId)
+				return owner, "", err
+			}
+			return "", "", nil
+		}
+
 		if path == "/api/add-policy" || path == "/api/remove-policy" || path == "/api/update-policy" || path == "/api/send-invitation" {
 			id := ctx.Input.Query("id")
 			if id != "" {
@@ -290,6 +306,10 @@ func getObjects(ctx *context.Context) ([]Object, error) {
 		if queryOwner != "" && queryOwner != owner && !util.InSlice(organizationParamObject, path) {
 			objects = append(objects, Object{Owner: queryOwner})
 		}
+		return objects, nil
+	}
+
+	if util.InSlice(sessionOwnerObject, path) {
 		return objects, nil
 	}
 
