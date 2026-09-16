@@ -22,6 +22,7 @@
     "The login method: login with email is not enabled for the application": "Phương thức đăng nhập bằng email chưa được bật cho ứng dụng",
     "The login method: login with face is not enabled for the application": "Phương thức đăng nhập bằng khuôn mặt chưa được bật cho ứng dụng",
     "The login method: login with password is not enabled for the application": "Phương thức đăng nhập: đăng nhập bằng mật khẩu không được kích hoạt cho ứng dụng",
+    "The login method: magic link is not enabled for the application": "The login method: magic link is not enabled for the application",
     "The order: %s does not exist": "Đơn hàng: %s không tồn tại",
     "The organization: %s does not exist": "Tổ chức: %s không tồn tại",
     "The organization: %s has disabled users to signin": "Tổ chức: %s đã vô hiệu hóa đăng nhập của người dùng",

@@ -22,6 +22,7 @@
     "The login method: login with email is not enabled for the application": "Die Anmeldemethode: Anmeldung per E-Mail ist für die Anwendung nicht aktiviert",
     "The login method: login with face is not enabled for the application": "Die Anmeldemethode: Anmeldung per Gesicht ist für die Anwendung nicht aktiviert",
     "The login method: login with password is not enabled for the application": "Die Anmeldeart \"Anmeldung mit Passwort\" ist für die Anwendung nicht aktiviert",
+    "The login method: magic link is not enabled for the application": "The login method: magic link is not enabled for the application",
     "The order: %s does not exist": "Die Bestellung: %s existiert nicht",
     "The organization: %s does not exist": "Die Organisation: %s existiert nicht",
     "The organization: %s has disabled users to signin": "Die Organisation: %s hat die Anmeldung von Benutzern deaktiviert",

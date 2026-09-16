@@ -118,6 +118,8 @@ type Application struct {
 	EnableSigninSession          bool            `json:"enableSigninSession"`
 	EnableAutoSignin             bool            `json:"enableAutoSignin"`
 	EnableCodeSignin             bool            `json:"enableCodeSignin"`
+	EnableMagicLink              bool            `json:"enableMagicLink"`
+	EnableMagicLinkSignup        bool            `json:"enableMagicLinkSignup"`
 	EnableExclusiveSignin        bool            `json:"enableExclusiveSignin"`
 	EnableSamlCompress           bool            `json:"enableSamlCompress"`
 	EnableSamlC14n10             bool            `json:"enableSamlC14n10"`
@@ -173,9 +175,13 @@ type Application struct {
 	FormBackgroundUrl       string     `xorm:"varchar(200)" json:"formBackgroundUrl"`
 	FormBackgroundUrlMobile string     `xorm:"varchar(200)" json:"formBackgroundUrlMobile"`
 
-	FailedSigninLimit      int `json:"failedSigninLimit"`
-	FailedSigninFrozenTime int `json:"failedSigninFrozenTime"`
-	CodeResendTimeout      int `json:"codeResendTimeout"`
+	FailedSigninLimit             int `json:"failedSigninLimit"`
+	FailedSigninFrozenTime        int `json:"failedSigninFrozenTime"`
+	CodeResendTimeout             int `json:"codeResendTimeout"`
+	MagicLinkExpireMinutes        int `json:"magicLinkExpireMinutes"`
+	MagicLinkRateLimitEmail       int `json:"magicLinkRateLimitEmail"`
+	MagicLinkRateLimitIp          int `json:"magicLinkRateLimitIp"`
+	MagicLinkRateLimitApplication int `json:"magicLinkRateLimitApplication"`
 
 	CustomScopes []*ScopeDescription `xorm:"mediumtext" json:"customScopes"`
 
@@ -467,6 +473,11 @@ func UpdateApplication(id string, application *Application, isGlobalAdmin bool, 
 		return false, err
 	}
 
+	err = ValidateMagicLinkConfig(application)
+	if err != nil {
+		return false, err
+	}
+
 	for _, providerItem := range application.Providers {
 		providerItem.Provider = nil
 	}
@@ -553,6 +564,11 @@ func AddApplication(application *Application) (bool, error) {
 	}
 
 	err = validateCustomScopes(application.CustomScopes, "en")
+	if err != nil {
+		return false, err
+	}
+
+	err = ValidateMagicLinkConfig(application)
 	if err != nil {
 		return false, err
 	}

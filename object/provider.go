@@ -62,7 +62,11 @@ type Provider struct {
 	SslMode    string `xorm:"varchar(100)" json:"sslMode"` // "Auto" (empty means Auto), "Enable", "Disable"
 	Title      string `xorm:"varchar(100)" json:"title"`
 	Content    string `xorm:"mediumtext" json:"content"` // If provider type is WeChat, Content means QRCode string by Base64 encoding
-	Receiver   string `xorm:"varchar(100)" json:"receiver"`
+	// MagicLinkContent is the mail body of a magic link, "%link" is the sign-in
+	// link and "%expireTime" the moment it stops working. Empty means the
+	// built-in template.
+	MagicLinkContent string `xorm:"mediumtext" json:"magicLinkContent"`
+	Receiver         string `xorm:"varchar(100)" json:"receiver"`
 
 	RegionId     string `xorm:"varchar(100)" json:"regionId"`
 	SignName     string `xorm:"varchar(100)" json:"signName"`

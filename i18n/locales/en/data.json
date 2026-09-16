@@ -22,6 +22,7 @@
     "The login method: login with email is not enabled for the application": "The login method: login with email is not enabled for the application",
     "The login method: login with face is not enabled for the application": "The login method: login with face is not enabled for the application",
     "The login method: login with password is not enabled for the application": "The login method: login with password is not enabled for the application",
+    "The login method: magic link is not enabled for the application": "The login method: magic link is not enabled for the application",
     "The order: %s does not exist": "The order: %s does not exist",
     "The organization: %s does not exist": "The organization: %s does not exist",
     "The organization: %s has disabled users to signin": "The organization: %s has disabled users to signin",
