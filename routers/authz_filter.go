@@ -55,10 +55,30 @@ var organizationParamObject = []string{
 	"/api/get-webhook-events",
 }
 
-var sessionOwnerObject = []string{
-	"/api/upload-groups",
-	"/api/upload-roles",
-	"/api/upload-permissions",
+// sessionObject lists the APIs whose controllers ignore the request parameters and
+// act on the signed-in user's organization (false) or on the user themselves (true),
+// which makes that the object to authorize against.
+var sessionObject = map[string]bool{
+	"/api/upload-groups":                false,
+	"/api/upload-roles":                 false,
+	"/api/upload-permissions":           false,
+	"/api/get-permissions-by-submitter": true,
+}
+
+func getSessionObject(ctx *context.Context, withName bool) (string, string, error) {
+	userId, ok := ctx.Input.GetData("currentUserId").(string)
+	if !ok || userId == "" {
+		return "", "", nil
+	}
+
+	owner, name, err := util.GetOwnerAndNameFromIdWithError(userId)
+	if err != nil {
+		return "", "", err
+	}
+	if !withName {
+		name = ""
+	}
+	return owner, name, nil
 }
 
 type Object struct {
@@ -150,6 +170,10 @@ func getObject(ctx *context.Context) (string, string, error) {
 		return ctx.Input.Param(":owner"), ctx.Input.Param(":name"), nil
 	}
 
+	if withName, ok := sessionObject[path]; ok {
+		return getSessionObject(ctx, withName)
+	}
+
 	if method == http.MethodGet {
 		if ctx.Request.URL.Path == "/api/get-policies" {
 			// GetPolicies() works on the adapter as soon as "adapterId" is given and
@@ -204,16 +228,6 @@ func getObject(ctx *context.Context) (string, string, error) {
 
 		return "", "", nil
 	} else {
-		// The xlsx import controllers ignore the request body and import into the
-		// signed-in user's organization, so that organization is the object.
-		if util.InSlice(sessionOwnerObject, path) {
-			if userId, ok := ctx.Input.GetData("currentUserId").(string); ok && userId != "" {
-				owner, _, err := util.GetOwnerAndNameFromIdWithError(userId)
-				return owner, "", err
-			}
-			return "", "", nil
-		}
-
 		if path == "/api/add-policy" || path == "/api/remove-policy" || path == "/api/update-policy" || path == "/api/send-invitation" {
 			id := ctx.Input.Query("id")
 			if id != "" {
@@ -324,7 +338,7 @@ func getObjects(ctx *context.Context) ([]Object, error) {
 		return objects, nil
 	}
 
-	if util.InSlice(sessionOwnerObject, path) {
+	if _, ok := sessionObject[path]; ok {
 		return objects, nil
 	}
 
