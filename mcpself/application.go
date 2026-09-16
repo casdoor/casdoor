@@ -68,6 +68,10 @@ func (c *McpController) handleAddApplicationTool(id interface{}, args AddApplica
 		return
 	}
 
+	if !c.IsGlobalAdmin() {
+		object.KeepApplicationCustomHtml(&args.Application, nil)
+	}
+
 	affected, err := object.AddApplication(&args.Application)
 	if err != nil {
 		c.SendToolErrorResult(id, err.Error())
