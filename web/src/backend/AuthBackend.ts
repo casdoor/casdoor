@@ -220,3 +220,29 @@ export function getCaptchaStatus(values) {
     },
   }).then(res => res.json());
 }
+
+/** Asks for a one-time sign-in link; the OAuth params ride along so the link can finish the flow. */
+export function sendMagicLink(values, oAuthParams) {
+  return fetch(`${authConfig.serverUrl}/api/send-magic-link${oAuthParamsToQuery(oAuthParams)}`, {
+    method: "POST",
+    credentials: "include",
+    body: JSON.stringify(values),
+    headers: {
+      "Content-Type": "application/json",
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}
+
+/** Exchanges a magic link token for a session, a code or a token, as the OAuth params ask. */
+export function verifyMagicLink(token, oAuthParams) {
+  const query = oAuthParamsToQuery(oAuthParams);
+  const joiner = query === "" ? "?" : "&";
+  return fetch(`${authConfig.serverUrl}/api/verify-magic-link${query}${joiner}token=${encodeURIComponent(token)}`, {
+    method: "GET",
+    credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}

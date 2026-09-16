@@ -167,7 +167,7 @@ export function ApplicationUiCustomizationTab({application, updateField}: Applic
                 <SelectField
                   value={row.name}
                   onChange={(v) => patch({name: v, displayName: v})}
-                  options={["Password", "Verification code", "WebAuthn", "LDAP", "Face ID", "Device login"].map(
+                  options={["Password", "Verification code", "WebAuthn", "LDAP", "Face ID", "Magic link", "Device login"].map(
                     (item) => ({id: item, name: item}),
                   )}
                 />

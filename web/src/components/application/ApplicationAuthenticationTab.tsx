@@ -63,6 +63,63 @@ export function ApplicationAuthenticationTab({application, updateField}: Applica
           }}
         />
       </FormRow>
+      <FormRow labelKey="application:Enable magic link">
+        <Switch
+          checked={!!application.enableMagicLink}
+          onCheckedChange={(v) => {
+            updateField("enableMagicLink", v);
+            // sign-up by magic link needs sign-in by magic link
+            if (!v) {
+              updateField("enableMagicLinkSignup", false);
+            }
+          }}
+        />
+      </FormRow>
+      <FormRow labelKey="application:Enable magic link signup">
+        <Switch
+          checked={!!application.enableMagicLinkSignup}
+          onCheckedChange={(v) => {
+            if (v && !application.enableMagicLink) {
+              updateField("enableMagicLink", true);
+            }
+            updateField("enableMagicLinkSignup", v);
+          }}
+        />
+      </FormRow>
+      {/* the bounds mirror object.ValidateMagicLinkConfig() in the backend */}
+      <FormRow labelKey="application:Magic link expire minutes">
+        <Input
+          type="number"
+          min={2}
+          max={43200}
+          value={application.magicLinkExpireMinutes || 10}
+          onChange={(e) => updateField("magicLinkExpireMinutes", Setting.myParseInt(e.target.value))}
+        />
+      </FormRow>
+      <FormRow labelKey="application:Magic link email limit">
+        <Input
+          type="number"
+          min={1}
+          value={application.magicLinkRateLimitEmail || 3}
+          onChange={(e) => updateField("magicLinkRateLimitEmail", Setting.myParseInt(e.target.value))}
+        />
+      </FormRow>
+      <FormRow labelKey="application:Magic link IP limit">
+        <Input
+          type="number"
+          min={1}
+          value={application.magicLinkRateLimitIp || 10}
+          onChange={(e) => updateField("magicLinkRateLimitIp", Setting.myParseInt(e.target.value))}
+        />
+      </FormRow>
+      <FormRow labelKey="application:Magic link application limit">
+        <Input
+          type="number"
+          min={1}
+          value={application.magicLinkRateLimitApplication || 100}
+          onChange={(e) => updateField("magicLinkRateLimitApplication", Setting.myParseInt(e.target.value))}
+        />
+      </FormRow>
       <FormRow labelKey="application:Enable Email linking">
         <Switch
           checked={!!application.enableLinkWithEmail}

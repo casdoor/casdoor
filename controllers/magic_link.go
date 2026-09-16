@@ -299,7 +299,6 @@ func (c *ApiController) VerifyMagicLink() {
 	if resp.Status != "ok" {
 		_ = object.UpdateMagicLinkStatus(magicLink, object.MagicLinkStatusFailed, resp.Msg)
 	} else {
-		magicLink.AuthAction = getMagicLinkAuthAction(isNewUser)
 		_ = object.UpdateMagicLinkStatus(magicLink, object.MagicLinkStatusUsed, "")
 	}
 

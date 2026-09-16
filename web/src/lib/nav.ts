@@ -119,6 +119,7 @@ export function getNavGroups(account: Account | null | undefined): NavGroup[] {
       {key: "/records", label: i18next.t("general:Records")},
       {key: "/tokens", label: i18next.t("general:Tokens")},
       {key: "/verifications", label: i18next.t("general:Verifications")},
+      {key: "/magic-links", label: i18next.t("general:Magic Links")},
     ],
   });
 

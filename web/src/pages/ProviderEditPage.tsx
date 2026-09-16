@@ -1051,6 +1051,24 @@ export default function ProviderEditPage() {
           </div>
         </div>
       </FormRow>
+      <FormRow labelKey="provider:Magic link content" block>
+        <div className="space-y-2">
+          <div className="grid gap-4 lg:grid-cols-2">
+            <CodeEditor
+              language="html"
+              height={300}
+              value={provider.magicLinkContent ?? ""}
+              onChange={(v) => updateProviderField("magicLinkContent", v)}
+            />
+            <div
+              className="overflow-auto rounded-md border bg-background p-3"
+              dangerouslySetInnerHTML={{
+                __html: String(provider.magicLinkContent ?? "").split("%link").join("https://example.com/magic-link/callback"),
+              }}
+            />
+          </div>
+        </div>
+      </FormRow>
       <FormRow
         label={`${i18next.t("provider:Email content")}-${i18next.t("general:Invitations")}`}
         tooltip={i18next.t("provider:Email content - Tooltip")}

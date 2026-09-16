@@ -1734,6 +1734,11 @@ export function isFaceIdEnabled(application) {
   return isSigninMethodEnabled(application, "Face ID");
 }
 
+// the application can list the "Magic link" signin method but keep the feature switched off
+export function isMagicLinkEnabled(application) {
+  return !!application?.enableMagicLink && isSigninMethodEnabled(application, "Magic link");
+}
+
 
 export function getOption(label, value) {
   return {

@@ -80,6 +80,7 @@ const RecordListPage = React.lazy(() => import("@/pages/RecordListPage"));
 const TokenListPage = React.lazy(() => import("@/pages/TokenListPage"));
 const TokenEditPage = React.lazy(() => import("@/pages/TokenEditPage"));
 const VerificationListPage = React.lazy(() => import("@/pages/VerificationListPage"));
+const MagicLinkListPage = React.lazy(() => import("@/pages/MagicLinkListPage"));
 
 const ProductListPage = React.lazy(() => import("@/pages/ProductListPage"));
 const ProductStorePage = React.lazy(() => import("@/pages/ProductStorePage"));
@@ -121,6 +122,7 @@ const SignupPage = React.lazy(() => import("@/pages/auth/SignupPage"));
 const ForgetPage = React.lazy(() => import("@/pages/auth/ForgetPage"));
 const AuthCallback = React.lazy(() => import("@/pages/auth/AuthCallback"));
 const SamlCallback = React.lazy(() => import("@/pages/auth/SamlCallback"));
+const MagicLinkCallback = React.lazy(() => import("@/pages/auth/MagicLinkCallback"));
 const ResultPage = React.lazy(() => import("@/pages/auth/ResultPage"));
 const ConsentPage = React.lazy(() => import("@/pages/auth/ConsentPage"));
 const PricingPage = React.lazy(() => import("@/pages/PricingPage"));
@@ -220,6 +222,7 @@ export default function App() {
         <Route path="/forget/:applicationName" element={<ForgetPage />} />
         <Route path="/callback" element={<AuthCallback />} />
         <Route path="/callback/saml" element={<SamlCallback />} />
+        <Route path="/magic-link/callback" element={<MagicLinkCallback />} />
         <Route path="/telegram-login" element={<TelegramLogin />} />
         <Route path="/captcha" element={<CaptchaPage />} />
         <Route path="/.well-known/openid-configuration" element={<OidcDiscoveryPage />} />
@@ -303,6 +306,7 @@ export default function App() {
           <Route path="/tokens" element={<TokenListPage />} />
           <Route path="/tokens/:tokenName" element={<TokenEditPage />} />
           <Route path="/verifications" element={<VerificationListPage />} />
+          <Route path="/magic-links" element={<MagicLinkListPage />} />
 
           <Route path="/product-store" element={<ProductStorePage />} />
           <Route path="/products" element={<ProductListPage />} />
