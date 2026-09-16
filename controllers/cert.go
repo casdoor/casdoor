@@ -22,6 +22,23 @@ import (
 	"github.com/casdoor/casdoor/util"
 )
 
+// getMaskedCerts hides the private keys of the certs the current user doesn't
+// administer: a global admin sees them all, an org admin only those of their own
+// organization, never the global "admin" certs listed alongside them.
+func (c *ApiController) getMaskedCerts(certs []*object.Cert) []*object.Cert {
+	isGlobalAdmin, user := c.isGlobalAdmin()
+	if isGlobalAdmin {
+		return certs
+	}
+
+	for _, cert := range certs {
+		if user == nil || !user.IsAdmin || cert.Owner != user.Owner {
+			object.GetMaskedCert(cert)
+		}
+	}
+	return certs
+}
+
 // GetCerts
 // @Title GetCerts
 // @Tag Cert API
@@ -45,15 +62,7 @@ func (c *ApiController) GetCerts() {
 			return
 		}
 
-		if !c.IsAdmin() {
-			certs, err = object.GetMaskedCerts(certs, nil)
-			if err != nil {
-				c.ResponseError(err.Error())
-				return
-			}
-		}
-
-		c.ResponseOk(certs)
+		c.ResponseOk(c.getMaskedCerts(certs))
 	} else {
 		limit := util.ParseInt(limit)
 		count, err := object.GetCertCount(owner, field, value)
@@ -69,15 +78,7 @@ func (c *ApiController) GetCerts() {
 			return
 		}
 
-		if !c.IsAdmin() {
-			certs, err = object.GetMaskedCerts(certs, err)
-			if err != nil {
-				c.ResponseError(err.Error())
-				return
-			}
-		}
-
-		c.ResponseOk(certs, paginator.Nums())
+		c.ResponseOk(c.getMaskedCerts(certs), paginator.Nums())
 	}
 }
 
@@ -102,15 +103,7 @@ func (c *ApiController) GetGlobalCerts() {
 			return
 		}
 
-		if !c.IsAdmin() {
-			certs, err = object.GetMaskedCerts(certs, nil)
-			if err != nil {
-				c.ResponseError(err.Error())
-				return
-			}
-		}
-
-		c.ResponseOk(certs)
+		c.ResponseOk(c.getMaskedCerts(certs))
 	} else {
 		limit := util.ParseInt(limit)
 		count, err := object.GetGlobalCertsCount(field, value)
@@ -126,15 +119,7 @@ func (c *ApiController) GetGlobalCerts() {
 			return
 		}
 
-		if !c.IsAdmin() {
-			certs, err = object.GetMaskedCerts(certs, nil)
-			if err != nil {
-				c.ResponseError(err.Error())
-				return
-			}
-		}
-
-		c.ResponseOk(certs, paginator.Nums())
+		c.ResponseOk(c.getMaskedCerts(certs), paginator.Nums())
 	}
 }
 
@@ -153,8 +138,10 @@ func (c *ApiController) GetCert() {
 		return
 	}
 
-	if !c.IsAdmin() {
-		cert = object.GetMaskedCert(cert)
+	if cert != nil {
+		// GetCert() falls back to the global "admin" cert of the same name, mask it
+		// unless the caller administers it
+		cert = c.getMaskedCerts([]*object.Cert{cert})[0]
 	}
 
 	c.ResponseOk(cert)
