@@ -578,28 +578,40 @@ func providerChangeTrigger(owner string, oldName string, newName string) error {
 		return err
 	}
 
+	// global ("admin") providers are visible to every organization, others only to their own
 	var applications []*Application
-	err = ormer.Engine.Find(&applications)
+	if owner == "admin" {
+		err = ormer.Engine.Find(&applications)
+	} else {
+		err = ormer.Engine.Where("organization=?", owner).Find(&applications)
+	}
 	if err != nil {
 		return err
 	}
 	for i := 0; i < len(applications); i++ {
+		changed := false
 		providers := applications[i].Providers
 		for j := 0; j < len(providers); j++ {
 			if providers[j].Name == oldName {
 				providers[j].Name = newName
+				changed = true
 			}
 		}
+		if !changed {
+			continue
+		}
 		applications[i].Providers = providers
-		_, err = session.Where("name=?", applications[i].Name).Update(applications[i])
+		_, err = session.Where("owner=?", applications[i].Owner).And("name=?", applications[i].Name).Cols("providers").Update(applications[i])
 		if err != nil {
 			return err
 		}
 	}
 
-	resource := new(Resource)
-	resource.Provider = newName
-	_, err = session.Where("provider=?", oldName).Update(resource)
+	resourceSession := session.Where("provider=?", oldName)
+	if owner != "admin" {
+		resourceSession = resourceSession.And("owner=?", owner)
+	}
+	_, err = resourceSession.Cols("provider").Update(&Resource{Provider: newName})
 	if err != nil {
 		return err
 	}

@@ -17,6 +17,7 @@ package object
 import (
 	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/cred"
@@ -489,6 +490,27 @@ func organizationChangeTrigger(oldName string, newName string) error {
 		return err
 	}
 
+	users := []*User{}
+	err = ormer.Engine.Where("owner=?", oldName).And(builder.Like{"`groups`", oldName + "/"}).Find(&users)
+	if err != nil {
+		return err
+	}
+	for _, user := range users {
+		user.Groups, _ = replaceIdOwner(user.Groups, oldName, newName, false)
+		_, err = session.Where("owner=?", oldName).And("name=?", user.Name).Cols("groups").Update(user)
+		if err != nil {
+			return err
+		}
+		_, err = userEnforcer.DeleteGroupsForUser(user.GetId())
+		if err != nil {
+			return err
+		}
+		_, err = userEnforcer.UpdateGroupsForUser(util.GetId(newName, user.Name), user.Groups)
+		if err != nil {
+			return err
+		}
+	}
+
 	user := new(User)
 	user.Owner = newName
 	_, err = session.Where("owner=?", oldName).Update(user)
@@ -510,64 +532,73 @@ func organizationChangeTrigger(oldName string, newName string) error {
 		return err
 	}
 
-	role := new(Role)
-	_, err = ormer.Engine.Where("owner=?", oldName).Get(role)
+	// members are stored as "organization/name" ids, so every list that may
+	// reference the renamed organization has to be rewritten, not only its own rows
+	var roles []*Role
+	err = ormer.Engine.Find(&roles)
 	if err != nil {
 		return err
 	}
-	for i, u := range role.Users {
-		// u = organization/username
-		owner, name, err := util.GetOwnerAndNameFromIdWithError(u)
+	for _, role := range roles {
+		changed := false
+		role.Users, changed = replaceIdOwner(role.Users, oldName, newName, changed)
+		role.Groups, changed = replaceIdOwner(role.Groups, oldName, newName, changed)
+		role.Roles, changed = replaceIdOwner(role.Roles, oldName, newName, changed)
+		if !changed {
+			continue
+		}
+		_, err = session.Where("owner=?", role.Owner).And("name=?", role.Name).Cols("users", "groups", "roles").Update(role)
 		if err != nil {
 			return err
 		}
-		if name == oldName {
-			role.Users[i] = util.GetId(owner, newName)
-		}
 	}
-	for i, u := range role.Roles {
-		// u = organization/username
-		owner, name, err := util.GetOwnerAndNameFromIdWithError(u)
-		if err != nil {
-			return err
-		}
-		if name == oldName {
-			role.Roles[i] = util.GetId(owner, newName)
-		}
-	}
-	role.Owner = newName
-	_, err = session.Where("owner=?", oldName).Update(role)
+	_, err = session.Where("owner=?", oldName).Cols("owner").Update(&Role{Owner: newName})
 	if err != nil {
 		return err
 	}
 
-	permission := new(Permission)
-	_, err = ormer.Engine.Where("owner=?", oldName).Get(permission)
+	var permissions []*Permission
+	err = ormer.Engine.Find(&permissions)
 	if err != nil {
 		return err
 	}
-	for i, u := range permission.Users {
-		// u = organization/username
-		owner, name, err := util.GetOwnerAndNameFromIdWithError(u)
+	for _, permission := range permissions {
+		changed := false
+		permission.Users, changed = replaceIdOwner(permission.Users, oldName, newName, changed)
+		permission.Groups, changed = replaceIdOwner(permission.Groups, oldName, newName, changed)
+		permission.Roles, changed = replaceIdOwner(permission.Roles, oldName, newName, changed)
+		permission.Model, changed = replaceIdOwnerInId(permission.Model, oldName, newName, changed)
+		if !changed {
+			continue
+		}
+		_, err = session.Where("owner=?", permission.Owner).And("name=?", permission.Name).Cols("users", "groups", "roles", "model").Update(permission)
 		if err != nil {
 			return err
 		}
-		if name == oldName {
-			permission.Users[i] = util.GetId(owner, newName)
-		}
 	}
-	for i, u := range permission.Roles {
-		// u = organization/username
-		owner, name, err := util.GetOwnerAndNameFromIdWithError(u)
+	_, err = session.Where("owner=?", oldName).Cols("owner").Update(&Permission{Owner: newName})
+	if err != nil {
+		return err
+	}
+
+	var enforcers []*Enforcer
+	err = ormer.Engine.Find(&enforcers)
+	if err != nil {
+		return err
+	}
+	for _, enforcer := range enforcers {
+		changed := false
+		enforcer.Model, changed = replaceIdOwnerInId(enforcer.Model, oldName, newName, changed)
+		enforcer.Adapter, changed = replaceIdOwnerInId(enforcer.Adapter, oldName, newName, changed)
+		if !changed {
+			continue
+		}
+		_, err = session.Where("owner=?", enforcer.Owner).And("name=?", enforcer.Name).Cols("model", "adapter").Update(enforcer)
 		if err != nil {
 			return err
 		}
-		if name == oldName {
-			permission.Roles[i] = util.GetId(owner, newName)
-		}
 	}
-	permission.Owner = newName
-	_, err = session.Where("owner=?", oldName).Update(permission)
+	_, err = session.Where("owner=?", oldName).Cols("owner").Update(&Enforcer{Owner: newName})
 	if err != nil {
 		return err
 	}
@@ -639,6 +670,23 @@ func organizationChangeTrigger(oldName string, newName string) error {
 	}
 
 	return session.Commit()
+}
+
+// replaceIdOwner rewrites the owner part of every "owner/name" id in ids that
+// belongs to oldOwner; the returned bool is true if changed was already true or
+// any id was rewritten.
+func replaceIdOwner(ids []string, oldOwner string, newOwner string, changed bool) ([]string, bool) {
+	for i, id := range ids {
+		ids[i], changed = replaceIdOwnerInId(id, oldOwner, newOwner, changed)
+	}
+	return ids, changed
+}
+
+func replaceIdOwnerInId(id string, oldOwner string, newOwner string, changed bool) (string, bool) {
+	if strings.HasPrefix(id, oldOwner+"/") {
+		return newOwner + strings.TrimPrefix(id, oldOwner), true
+	}
+	return id, changed
 }
 
 func IsNeedPromptMfa(org *Organization, user *User) bool {

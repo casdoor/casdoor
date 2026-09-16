@@ -124,7 +124,7 @@ func UpdateRole(id string, role *Role, isGlobalAdmin bool, lang string) (bool, e
 	}
 
 	if renameRole {
-		err := roleChangeTrigger(name, role.Name)
+		err := roleChangeTrigger(owner, name, role.Name)
 		if err != nil {
 			return false, err
 		}
@@ -338,7 +338,7 @@ func getRolesByUser(userId string) ([]*Role, error) {
 	return allRoles, nil
 }
 
-func roleChangeTrigger(oldName string, newName string) error {
+func roleChangeTrigger(owner string, oldName string, newName string) error {
 	session := ormer.Engine.NewSession()
 	defer session.Close()
 
@@ -354,18 +354,23 @@ func roleChangeTrigger(oldName string, newName string) error {
 	}
 
 	for _, role := range roles {
+		changed := false
 		for j, u := range role.Roles {
 			if u == "*" {
 				continue
 			}
 
-			owner, name, err := util.GetOwnerAndNameFromIdWithError(u)
+			subOwner, subName, err := util.GetOwnerAndNameFromIdWithError(u)
 			if err != nil {
 				return err
 			}
-			if name == oldName {
-				role.Roles[j] = util.GetId(owner, newName)
+			if subOwner == owner && subName == oldName {
+				role.Roles[j] = util.GetId(subOwner, newName)
+				changed = true
 			}
+		}
+		if !changed {
+			continue
 		}
 		_, err = session.Where("name=?", role.Name).And("owner=?", role.Owner).Update(role)
 		if err != nil {
@@ -380,19 +385,24 @@ func roleChangeTrigger(oldName string, newName string) error {
 	}
 
 	for _, permission := range permissions {
+		changed := false
 		for j, u := range permission.Roles {
-			// u = organization/username
+			// u = organization/rolename
 			if u == "*" {
 				continue
 			}
 
-			owner, name, err := util.GetOwnerAndNameFromIdWithError(u)
+			roleOwner, roleName, err := util.GetOwnerAndNameFromIdWithError(u)
 			if err != nil {
 				return err
 			}
-			if name == oldName {
-				permission.Roles[j] = util.GetId(owner, newName)
+			if roleOwner == owner && roleName == oldName {
+				permission.Roles[j] = util.GetId(roleOwner, newName)
+				changed = true
 			}
+		}
+		if !changed {
+			continue
 		}
 		_, err = session.Where("name=?", permission.Name).And("owner=?", permission.Owner).Update(permission)
 		if err != nil {

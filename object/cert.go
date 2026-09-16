@@ -178,7 +178,7 @@ func UpdateCert(id string, cert *Cert) (bool, error) {
 	}
 
 	if name != cert.Name {
-		err = certChangeTrigger(name, cert.Name)
+		err = certChangeTrigger(owner, name, cert.Name)
 		if err != nil {
 			return false, err
 		}
@@ -325,7 +325,7 @@ func GetDefaultCert() (*Cert, error) {
 	return getCert("admin", "cert-built-in")
 }
 
-func certChangeTrigger(oldName string, newName string) error {
+func certChangeTrigger(owner string, oldName string, newName string) error {
 	session := ormer.Engine.NewSession()
 	defer session.Close()
 
@@ -334,9 +334,21 @@ func certChangeTrigger(oldName string, newName string) error {
 		return err
 	}
 
-	application := new(Application)
-	application.Cert = newName
-	_, err = session.Where("cert=?", oldName).Update(application)
+	// global ("admin") certs are visible to every organization, others only to their own
+	appSession := session.Where("cert=?", oldName)
+	if owner != "admin" {
+		appSession = appSession.And("organization=?", owner)
+	}
+	_, err = appSession.Cols("cert").Update(&Application{Cert: newName})
+	if err != nil {
+		return err
+	}
+
+	providerSession := session.Where("cert=?", oldName)
+	if owner != "admin" {
+		providerSession = providerSession.And("owner=?", owner)
+	}
+	_, err = providerSession.Cols("cert").Update(&Provider{Cert: newName})
 	if err != nil {
 		return err
 	}
