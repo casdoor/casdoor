@@ -76,7 +76,7 @@ export default function MagicLinkListPage() {
     },
     textColumn({dataIndex: "authAction", title: i18next.t("magicLink:Auth action"), width: 170, searchable: true}),
     dateColumn(),
-    dateColumn("expireTime", i18next.t("magicLink:Expire time")),
+    dateColumn("expireTime", i18next.t("general:Expire time")),
     dateColumn("usedTime", i18next.t("magicLink:Used time")),
     clientIpColumn({dataIndex: "remoteAddr"}),
     {
