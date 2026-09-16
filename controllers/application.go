@@ -311,6 +311,10 @@ func (c *ApiController) AddApplication() {
 		application.Scopes = []*object.ScopeItem{}
 	}
 
+	if !c.IsGlobalAdmin() {
+		object.KeepApplicationCustomHtml(&application, nil)
+	}
+
 	c.Data["json"] = wrapActionResponse(object.AddApplication(&application))
 	c.ServeJSON()
 }

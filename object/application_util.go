@@ -428,6 +428,56 @@ func checkMultipleCaptchaProviders(application *Application, lang string) error 
 	return nil
 }
 
+// KeepApplicationCustomHtml restores the custom HTML of application from oldApplication (nil
+// for a new application). The HTML runs as script on Casdoor's own origin, where it acts as
+// whoever opens the page, e.g., a global admin, so only a global admin may change it.
+func KeepApplicationCustomHtml(application *Application, oldApplication *Application) {
+	if oldApplication == nil {
+		oldApplication = &Application{}
+	}
+
+	application.HeaderHtml = oldApplication.HeaderHtml
+	application.PageHtml = oldApplication.PageHtml
+	application.FooterHtml = oldApplication.FooterHtml
+	application.FormSideHtml = oldApplication.FormSideHtml
+	application.SigninHtml = oldApplication.SigninHtml
+	application.SignupHtml = oldApplication.SignupHtml
+
+	// a custom sign-in item renders its customCss as HTML
+	oldSigninHtmls := map[string]string{}
+	for _, item := range oldApplication.SigninItems {
+		if isCustomSigninItem(item) {
+			oldSigninHtmls[item.Name] = item.CustomCss
+		}
+	}
+	for _, item := range application.SigninItems {
+		if isCustomSigninItem(item) {
+			item.CustomCss = oldSigninHtmls[item.Name]
+		}
+	}
+
+	// a custom sign-up item ("Text N") renders its label as HTML
+	oldSignupHtmls := map[string]string{}
+	for _, item := range oldApplication.SignupItems {
+		if isCustomSignupItem(item) {
+			oldSignupHtmls[item.Name] = item.Label
+		}
+	}
+	for _, item := range application.SignupItems {
+		if isCustomSignupItem(item) {
+			item.Label = oldSignupHtmls[item.Name]
+		}
+	}
+}
+
+func isCustomSigninItem(item *SigninItem) bool {
+	return item != nil && (item.IsCustom || strings.HasPrefix(item.Name, "Text "))
+}
+
+func isCustomSignupItem(item *SignupItem) bool {
+	return item != nil && strings.HasPrefix(item.Name, "Text ")
+}
+
 func (application *Application) GetId() string {
 	return fmt.Sprintf("%s/%s", application.Owner, application.Name)
 }

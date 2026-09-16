@@ -429,6 +429,10 @@ func UpdateApplication(id string, application *Application, isGlobalAdmin bool, 
 		return false, errors.New(i18n.Translate(lang, "auth:Unauthorized operation"))
 	}
 
+	if !isGlobalAdmin {
+		KeepApplicationCustomHtml(application, oldApplication)
+	}
+
 	if name == "app-built-in" {
 		application.Name = name
 	}
