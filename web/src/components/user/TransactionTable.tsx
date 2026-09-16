@@ -4,11 +4,21 @@ import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/c
 import * as Setting from "@/lib/setting";
 
 /**
- * The user's transactions, read-only. Ported from web/src/table/TransactionTable.js
- * with `hideTag` and no user/action columns, which is how the user page uses it.
+ * A read-only transaction list. Ported from web/src/table/TransactionTable.js
+ * without the action column: the user page hides the tag, the organization page
+ * adds the user.
  */
-export function TransactionTable({transactions}: {transactions: any[]}) {
+export function TransactionTable({
+  transactions,
+  includeTag = false,
+  includeUser = false,
+}: {
+  transactions: any[];
+  includeTag?: boolean;
+  includeUser?: boolean;
+}) {
   const rows = transactions ?? [];
+  const columnCount = 9 + (includeTag ? 1 : 0) + (includeUser ? 1 : 0);
 
   return (
     <div className="max-h-[420px] overflow-auto rounded-lg border">
@@ -17,6 +27,8 @@ export function TransactionTable({transactions}: {transactions: any[]}) {
           <TableRow className="hover:bg-transparent">
             <TableHead className="w-[220px]">{i18next.t("general:Name")}</TableHead>
             <TableHead className="w-[160px]">{i18next.t("general:Created time")}</TableHead>
+            {includeTag ? <TableHead className="w-[120px]">{i18next.t("general:Tag")}</TableHead> : null}
+            {includeUser ? <TableHead className="w-[120px]">{i18next.t("general:User")}</TableHead> : null}
             <TableHead className="w-[150px]">{i18next.t("general:Application")}</TableHead>
             <TableHead className="w-[120px]">{i18next.t("general:Category")}</TableHead>
             <TableHead className="w-[140px]">{i18next.t("general:Type")}</TableHead>
@@ -29,7 +41,7 @@ export function TransactionTable({transactions}: {transactions: any[]}) {
         <TableBody>
           {rows.length === 0 ? (
             <TableRow className="hover:bg-transparent">
-              <TableCell colSpan={9} className="h-20 text-center text-muted-foreground">
+              <TableCell colSpan={columnCount} className="h-20 text-center text-muted-foreground">
                 {i18next.t("general:No data")}
               </TableCell>
             </TableRow>
@@ -42,6 +54,18 @@ export function TransactionTable({transactions}: {transactions: any[]}) {
                   </Link>
                 </TableCell>
                 <TableCell>{Setting.getFormattedDate(record.createdTime)}</TableCell>
+                {includeTag ? <TableCell>{record.tag}</TableCell> : null}
+                {includeUser ? (
+                  <TableCell>
+                    {record.user && !/^u-[0-9a-f]{8}$/i.test(record.user) ? (
+                      <Link to={`/users/${record.owner}/${record.user}`} className="underline-offset-4 hover:underline">
+                        {record.user}
+                      </Link>
+                    ) : (
+                      record.user
+                    )}
+                  </TableCell>
+                ) : null}
                 <TableCell>
                   {record.application ? (
                     <Link to={`/applications/${record.owner}/${record.application}`} className="underline-offset-4 hover:underline">

@@ -1,4 +1,6 @@
 import i18next from "i18next";
+import {Link} from "react-router-dom";
+import {Button} from "@/components/ui/button";
 import {CrudListPage} from "@/components/crud/CrudListPage";
 import {dateColumn, linkColumn, organizationColumn, textColumn, urlColumn} from "@/components/crud/columns";
 import type {ColumnDef} from "@/components/crud/types";
@@ -30,7 +32,14 @@ export default function ServerListPage() {
       fetch={(q) =>
         ServerBackend.getServers(organizationName, q.page, q.pageSize, q.searchedColumn, q.searchText, q.sortField, q.sortOrder)
       }
-      toolbar={({refresh}) => <ScanServerDialog organizationName={organizationName} onAdded={refresh} />}
+      toolbar={({refresh}) => (
+        <>
+          <ScanServerDialog organizationName={organizationName} onAdded={refresh} />
+          <Button variant="outline" asChild>
+            <Link to="/server-store">{i18next.t("general:MCP Store")}</Link>
+          </Button>
+        </>
+      )}
       newRecord={account ? () => newServer(account) : undefined}
       editUrl={(r) => `/servers/${r.owner}/${r.name}`}
       remove={(r) => ServerBackend.deleteServer(r)}
