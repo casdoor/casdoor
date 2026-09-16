@@ -512,8 +512,9 @@ func getExistUserByBindingRule(providerItem *object.ProviderItem, application *o
 	}
 
 	for _, rule := range *providerItem.BindingRule {
-		// Find existing user with Email
-		if rule == "Email" {
+		// Find existing user with Email, only one the provider vouches for: a provider
+		// account with someone else's unverified email must not take over their account
+		if rule == "Email" && userInfo.EmailVerified {
 			user, err = object.GetUserByField(application.Organization, "email", userInfo.Email)
 			if err != nil {
 				return nil, err
@@ -1018,6 +1019,7 @@ func (c *ApiController) Login() {
 					c.ResponseError(err.Error())
 					return
 				}
+				isBoundUser := user != nil
 
 				if user == nil {
 					if !application.EnableSignUp {
@@ -1183,6 +1185,11 @@ func (c *ApiController) Login() {
 				_, err = linkUserByProvider(user, provider, userInfo.Id)
 				if err != nil {
 					c.ResponseError(err.Error())
+					return
+				}
+
+				// binding to an existing account is a sign-in to it, so its MFA applies
+				if isBoundUser && checkMfaEnable(c, user, organization, verificationType) {
 					return
 				}
 

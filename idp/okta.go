@@ -156,6 +156,7 @@ func (idp *OktaIdProvider) GetToken(code string) (*oauth2.Token, error) {
 
 type OktaUserInfo struct {
 	Email             string `json:"email"`
+	EmailVerified     bool   `json:"email_verified"`
 	Name              string `json:"name"`
 	PreferredUsername string `json:"preferred_username"`
 	Picture           string `json:"picture"`
@@ -218,12 +219,13 @@ func (idp *OktaIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
 	}
 
 	userInfo := UserInfo{
-		Id:          oktaUserInfo.Sub,
-		Username:    oktaUserInfo.PreferredUsername,
-		DisplayName: oktaUserInfo.Name,
-		Email:       oktaUserInfo.Email,
-		AvatarUrl:   oktaUserInfo.Picture,
-		Extra:       extra,
+		Id:            oktaUserInfo.Sub,
+		Username:      oktaUserInfo.PreferredUsername,
+		DisplayName:   oktaUserInfo.Name,
+		Email:         oktaUserInfo.Email,
+		EmailVerified: oktaUserInfo.EmailVerified,
+		AvatarUrl:     oktaUserInfo.Picture,
+		Extra:         extra,
 	}
 	return &userInfo, nil
 }

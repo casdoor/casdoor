@@ -302,7 +302,9 @@ func (idp *LinkedInIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, erro
 		DisplayName: username,
 		Username:    username,
 		Email:       linkedInUserEmail.Elements[0].Handle.EmailAddress,
-		AvatarUrl:   linkedInUserInfo.ProfilePicture.DisplayImage1.Elements[0].Identifiers[0].Identifier,
+		// the primary email of a LinkedIn account is verified
+		EmailVerified: linkedInUserEmail.Elements[0].Handle.EmailAddress != "",
+		AvatarUrl:     linkedInUserInfo.ProfilePicture.DisplayImage1.Elements[0].Identifiers[0].Identifier,
 	}
 	return &userInfo, nil
 }

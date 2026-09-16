@@ -180,6 +180,8 @@ func (idp *InfoflowIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, erro
 		Username:    infoResp.Name,
 		DisplayName: infoResp.Name,
 		Email:       infoResp.Email,
+		// enterprise directory email
+		EmailVerified: infoResp.Email != "",
 	}
 
 	if userInfo.Id == "" {

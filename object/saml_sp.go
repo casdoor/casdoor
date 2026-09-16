@@ -88,7 +88,9 @@ func ParseSamlResponse(samlResponse string, provider *Provider, host string, req
 		Username:    customUserInfo.Username,
 		DisplayName: customUserInfo.DisplayName,
 		Email:       customUserInfo.Email,
-		AvatarUrl:   customUserInfo.AvatarUrl,
+		// asserted by the IdP's directory
+		EmailVerified: customUserInfo.Email != "",
+		AvatarUrl:     customUserInfo.AvatarUrl,
 	}
 
 	// Fallback: if Username is empty, use Email or NameID

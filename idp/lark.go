@@ -235,9 +235,11 @@ func (idp *LarkIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
 		DisplayName: larkUserInfo.Data.Name,
 		Username:    username,
 		Email:       email,
-		AvatarUrl:   larkUserInfo.Data.AvatarUrl,
-		Phone:       phoneNumber,
-		CountryCode: countryCode,
+		// enterprise directory email
+		EmailVerified: email != "",
+		AvatarUrl:     larkUserInfo.Data.AvatarUrl,
+		Phone:         phoneNumber,
+		CountryCode:   countryCode,
 	}
 	return &userInfo, nil
 }

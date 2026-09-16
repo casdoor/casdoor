@@ -266,7 +266,9 @@ func (idp *GithubIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error)
 		Username:    githubUserInfo.Login,
 		DisplayName: githubUserInfo.Name,
 		Email:       githubUserInfo.Email,
-		AvatarUrl:   githubUserInfo.AvatarUrl,
+		// a public email must be verified on GitHub, and getEmailFromEmailsResult() only picks verified ones
+		EmailVerified: githubUserInfo.Email != "",
+		AvatarUrl:     githubUserInfo.AvatarUrl,
 	}
 	return &userInfo, nil
 }

@@ -225,6 +225,8 @@ func (idp *GitlabIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error)
 		DisplayName: guser.Name,
 		AvatarUrl:   guser.AvatarUrl,
 		Email:       guser.Email,
+		// GitLab's "email" is the confirmed primary email
+		EmailVerified: guser.Email != "",
 	}
 	return &userInfo, nil
 }

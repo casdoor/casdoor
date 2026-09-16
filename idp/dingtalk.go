@@ -172,9 +172,11 @@ func (idp *DingTalkIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, erro
 		DisplayName: dtUserInfo.Nick,
 		UnionId:     dtUserInfo.UnionId,
 		Email:       dtUserInfo.Email,
-		Phone:       dtUserInfo.Mobile,
-		CountryCode: countryCode,
-		AvatarUrl:   dtUserInfo.AvatarUrl,
+		// enterprise directory email
+		EmailVerified: dtUserInfo.Email != "",
+		Phone:         dtUserInfo.Mobile,
+		CountryCode:   countryCode,
+		AvatarUrl:     dtUserInfo.AvatarUrl,
 	}
 
 	corpAccessToken, err := idp.getInnerAppAccessToken()

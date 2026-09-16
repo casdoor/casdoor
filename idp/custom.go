@@ -119,12 +119,13 @@ var oidcProtocolClaims = map[string]bool{
 
 // oidcClaimFallbacks are used when userMapping doesn't cover the user field
 var oidcClaimFallbacks = map[string][]string{
-	"id":          {"sub"},
-	"username":    {"preferred_username", "name", "sub"},
-	"displayName": {"name", "preferred_username"},
-	"email":       {"email"},
-	"phone":       {"phone_number"},
-	"avatarUrl":   {"picture"},
+	"id":            {"sub"},
+	"username":      {"preferred_username", "name", "sub"},
+	"displayName":   {"name", "preferred_username"},
+	"email":         {"email"},
+	"emailVerified": {"email_verified"},
+	"phone":         {"phone_number"},
+	"avatarUrl":     {"picture"},
 }
 
 func parseIdTokenClaims(token *oauth2.Token) (map[string]interface{}, error) {
@@ -280,12 +281,13 @@ func (idp *CustomIdProvider) mapUserInfo(claims map[string]interface{}) (*UserIn
 	}
 
 	userInfo := &UserInfo{
-		Id:          getField("id"),
-		Username:    getField("username"),
-		DisplayName: getField("displayName"),
-		Email:       getField("email"),
-		Phone:       getField("phone"),
-		AvatarUrl:   getField("avatarUrl"),
+		Id:            getField("id"),
+		Username:      getField("username"),
+		DisplayName:   getField("displayName"),
+		Email:         getField("email"),
+		EmailVerified: getField("emailVerified") == "true",
+		Phone:         getField("phone"),
+		AvatarUrl:     getField("avatarUrl"),
 	}
 	if userInfo.Id == "" {
 		return nil, fmt.Errorf("cannot get the user ID from custom provider, please check the \"id\" field in userMapping")
