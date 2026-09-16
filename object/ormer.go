@@ -519,4 +519,9 @@ func (a *Ormer) createTable() {
 	if err != nil {
 		panic(err)
 	}
+
+	err = a.Engine.Sync2(new(PasswordHistory))
+	if err != nil {
+		panic(err)
+	}
 }

@@ -496,6 +496,13 @@ func organizationChangeTrigger(oldName string, newName string) error {
 		return err
 	}
 
+	passwordHistory := new(PasswordHistory)
+	passwordHistory.Owner = newName
+	_, err = session.Where("owner=?", oldName).Update(passwordHistory)
+	if err != nil {
+		return err
+	}
+
 	group := new(Group)
 	group.Owner = newName
 	_, err = session.Where("owner=?", oldName).Update(group)
