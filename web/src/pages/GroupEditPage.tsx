@@ -1,5 +1,6 @@
+import * as React from "react";
 import i18next from "i18next";
-import {Link, useParams} from "react-router-dom";
+import {Link, useLocation, useParams} from "react-router-dom";
 import {MapTable} from "@/components/crud/MapTable";
 import {Badge} from "@/components/ui/badge";
 import {SimpleEditPage, type EditField} from "@/components/crud/SimpleEditPage";
@@ -13,6 +14,10 @@ export default function GroupEditPage() {
   const {account} = useAccount();
   const organizations = useOrganizationOptions();
   const groups = useGroupOptions(organizationName);
+  const location = useLocation();
+  // the group tree hands over where to return to; kept in a ref because "Save"
+  // re-navigates to the saved name and drops the router state
+  const backTo = React.useRef<string>((location.state as {backTo?: string} | null)?.backTo ?? "/groups");
 
   const fields: EditField[] = [
     {
@@ -88,7 +93,7 @@ export default function GroupEditPage() {
   return (
     <SimpleEditPage
       titleKey="group:Edit Group"
-      backTo="/groups"
+      backTo={backTo.current}
       deps={[organizationName, groupName]}
       fields={fields}
       fetch={() => GroupBackend.getGroup(organizationName, groupName)}
