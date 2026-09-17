@@ -166,6 +166,8 @@
     "Side panel HTML - Edit": "Бічна панель HTML - Редагувати",
     "Side panel HTML - Tooltip": "Налаштуйте HTML-код для бічної панелі сторінки входу",
     "Sign Up Error": "Помилка реєстрації",
+    "Sign in only": "Лише вхід",
+    "Sign in or sign up": "Вхід або реєстрація",
     "Signin": "Увійти",
     "Signin (Default True)": "Вхід (за умовчанням True)",
     "Signin items": "Елементи входу",
@@ -807,6 +809,7 @@
     "unsynced": "несинхронізований"
   },
   "login": {
+    "A sign-in link has been sent to your email, it can only be opened in this browser": "Посилання для входу надіслано на вашу пошту, його можна відкрити лише в цьому браузері",
     "Approve and sign in": "Схвалити та увійти",
     "Approve sign-in on this device": "Схвалити вхід на цьому пристрої",
     "Auto sign in": "Автоматичний вхід",
@@ -831,6 +834,8 @@
     "LDAP username, Email or phone": "Ім’я користувача LDAP, електронна пошта або телефон",
     "Loading": "Завантаження",
     "Logging out...": "Вихід...",
+    "Magic link": "Магічне посилання",
+    "Magic link sent": "Магічне посилання надіслано",
     "MetaMask plugin not detected": "Плагін MetaMask не виявлено",
     "Model loading failure": "Помилка завантаження моделі",
     "Native SSO": "Native SSO",
@@ -858,6 +863,7 @@
     "Redirecting, please wait.": "Перенаправлення, будь ласка, зачекайте.",
     "Scan this QR code with a signed-in device to continue": "Відскануйте цей QR-код з авторизованого пристрою, щоб продовжити",
     "Select organization": "Вибрати організацію",
+    "Send sign-in link": "Надіслати посилання для входу",
     "Sign In": "Увійти",
     "Sign in with Face ID": "Увійдіть за допомогою Face ID",
     "Sign in with Telegram": "Увійти через Telegram",

@@ -21,6 +21,7 @@
     "The login method: login with SMS is not enabled for the application": "该应用禁止采用短信登录方式",
     "The login method: login with email is not enabled for the application": "该应用禁止采用邮箱登录方式",
     "The login method: login with face is not enabled for the application": "该应用禁止采用人脸登录",
+    "The login method: login with magic link is not enabled for the application": "该应用禁止使用魔法链接的登录方式",
     "The login method: login with password is not enabled for the application": "该应用禁止采用密码登录方式",
     "The order: %s does not exist": "订单: %s 不存在",
     "The organization: %s does not exist": "组织: %s 不存在",
@@ -215,7 +216,12 @@
   "verification": {
     "Invalid captcha provider.": "非法的验证码提供商",
     "Phone number is invalid in your region %s": "您所在地区的电话号码无效 %s",
+    "Please open the magic link in the browser you requested it from": "请在申请该魔法链接的浏览器中打开它",
     "The forgot password feature is disabled": "忘记密码功能已被禁用",
+    "The magic link has already been used": "该魔法链接已被使用",
+    "The magic link has expired": "该魔法链接已过期",
+    "The magic link is invalid": "魔法链接无效",
+    "The signup item: %s is required, so the magic link cannot sign up a new user": "注册项: %s 为必填, 因此魔法链接无法注册新用户",
     "The verification code has already been used!": "验证码已使用过!",
     "The verification code has not been sent yet!": "验证码未发送！",
     "Turing test failed.": "验证码还未发送",
@@ -226,6 +232,7 @@
     "You should verify your code in %d min!": "请在 %d 分钟内输入正确验证码",
     "please add a SMS provider to the \"Providers\" list for the application: %s": "请添加一个SMS提供商到应用： %s 的 \"提供商 \"列表",
     "please add an Email provider to the \"Providers\" list for the application: %s": "请添加一个Email提供商到应用： %s 的 \"提供商 \"列表",
+    "please set \"origin\" in conf/app.conf to send magic links": "发送魔法链接前，请先在 conf/app.conf 中设置 \"origin\"",
     "the user does not exist, please sign up first": "用户不存在，请先注册"
   },
   "webauthn": {

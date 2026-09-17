@@ -31,6 +31,10 @@ const SIGNIN_METHOD_RULES: Record<string, EnumMap> = {
     "Non-LDAP": {i18nKey: "general:Non-LDAP"},
     "Hide password": {i18nKey: "general:Hide password"},
   },
+  "Magic link": {
+    "Sign in only": {i18nKey: "application:Sign in only"},
+    "Sign in or sign up": {i18nKey: "application:Sign in or sign up"},
+  },
   "WeChat": {
     "Tab": {i18nKey: "general:Tab"},
     "Login page": {i18nKey: "general:Login page"},
@@ -173,7 +177,7 @@ export function ApplicationUiCustomizationTab({application, updateField}: Applic
                 <SelectField
                   value={row.name}
                   onChange={(v) => patch({name: v, displayName: v, rule: getDefaultSigninMethodRule(v)})}
-                  options={["Password", "Verification code", "WebAuthn", "LDAP", "Face ID", "Device login"].map(
+                  options={["Password", "Verification code", "Magic link", "WebAuthn", "LDAP", "Face ID", "Device login"].map(
                     (item) => ({id: item, name: item}),
                   )}
                 />

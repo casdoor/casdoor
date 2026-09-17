@@ -167,6 +167,8 @@
     "Side panel HTML - Edit": "侧面板HTML - 编辑",
     "Side panel HTML - Tooltip": "自定义登录页面侧面板的HTML代码",
     "Sign Up Error": "注册错误",
+    "Sign in only": "仅登录",
+    "Sign in or sign up": "登录或注册",
     "Signin": "登录",
     "Signin (Default True)": "登录 (默认同意)",
     "Signin items": "登录项",
@@ -812,6 +814,7 @@
     "unsynced": "未同步"
   },
   "login": {
+    "A sign-in link has been sent to your email, it can only be opened in this browser": "登录链接已发送到你的邮箱, 该链接只能在当前浏览器中打开",
     "Approve and sign in": "批准并登录",
     "Approve sign-in on this device": "在此设备上批准登录",
     "Auto sign in": "下次自动登录",
@@ -836,6 +839,8 @@
     "LDAP username, Email or phone": "LDAP用户名, Email或手机号",
     "Loading": "加载中",
     "Logging out...": "正在退出登录...",
+    "Magic link": "魔法链接",
+    "Magic link sent": "魔法链接已发送",
     "MetaMask plugin not detected": "未检测到MetaMask插件",
     "Model loading failure": "人脸识别模型加载失败",
     "Native SSO": "原生SSO",
@@ -863,6 +868,7 @@
     "Redirecting, please wait.": "正在跳转, 请稍等.",
     "Scan this QR code with a signed-in device to continue": "使用已登录的设备扫描此二维码以继续",
     "Select organization": "选择组织",
+    "Send sign-in link": "发送登录链接",
     "Sign In": "登录",
     "Sign in with Face ID": "人脸登录",
     "Sign in with Telegram": "使用Telegram登录",

@@ -116,7 +116,7 @@ export function setPassword(userOwner, userName, oldPassword, newPassword, code:
   }).then(res => res.json());
 }
 
-export function sendCode(captchaType, captchaToken, clientSecret, method, countryCode: any = "", dest, type, applicationId, checkUser: any = "") {
+export function sendCode(captchaType, captchaToken, clientSecret, method, countryCode: any = "", dest, type, applicationId, checkUser: any = "", signinPath: any = "") {
   if (Setting.isValidEmail(dest) && type !== "email") {
     type = "email";
   }
@@ -131,6 +131,8 @@ export function sendCode(captchaType, captchaToken, clientSecret, method, countr
   formData.append("type", type);
   formData.append("applicationId", applicationId);
   formData.append("checkUser", checkUser);
+  // the magic link comes back to the sign-in page it was asked for, with its OAuth request
+  formData.append("signinPath", signinPath);
   return fetch(`${Setting.ServerUrl}/api/send-verification-code`, {
     method: "POST",
     credentials: "include",
@@ -140,7 +142,7 @@ export function sendCode(captchaType, captchaToken, clientSecret, method, countr
     },
   }).then(res => res.json()).then(res => {
     if (res.status === "ok") {
-      Setting.showMessage("success", i18next.t("user:Verification code sent"));
+      Setting.showMessage("success", method === "magicLink" ? i18next.t("login:Magic link sent") : i18next.t("user:Verification code sent"));
       return true;
     } else {
       Setting.showMessage("error", res.msg);

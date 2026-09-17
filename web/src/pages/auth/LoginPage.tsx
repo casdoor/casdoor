@@ -34,11 +34,12 @@ import {signInWithWebAuthn} from "@/auth/webauthn";
 import * as Obfuscator from "@/auth/Obfuscator";
 import * as ApplicationBackend from "@/backend/ApplicationBackend";
 import * as AuthBackend from "@/backend/AuthBackend";
+import * as UserBackend from "@/backend/UserBackend";
 import * as OrganizationBackend from "@/backend/OrganizationBackend";
 import * as Setting from "@/lib/setting";
 
 type LoginType = "login" | "code" | "cas" | "saml" | "device";
-type LoginMethod = "password" | "verificationCode" | "verificationCodeEmail" | "verificationCodePhone" | "ldap" | "webAuthn" | "wechat" | "faceId" | "device";
+type LoginMethod = "password" | "verificationCode" | "verificationCodeEmail" | "verificationCodePhone" | "ldap" | "webAuthn" | "wechat" | "faceId" | "magicLink" | "device";
 
 function getDefaultLoginMethod(application: any): LoginMethod {
   const first = application?.signinMethods?.[0];
@@ -61,6 +62,8 @@ function getDefaultLoginMethod(application: any): LoginMethod {
     return "webAuthn";
   case "Face ID":
     return "faceId";
+  case "Magic link":
+    return "magicLink";
   case "Device login":
     if (first?.rule === "Tab") {
       return "device";
@@ -100,7 +103,10 @@ function getSigninMethods(application: any, type: string) {
     if (type === "device" && signinMethod.name === "Device login") {
       return;
     }
-    const value = SIGNIN_METHOD_KEYS.get(`${signinMethod.name}-${signinMethod.rule}`);
+    // the magic link's rule says whether it may sign up, both rules share one tab
+    const value = signinMethod.name === "Magic link"
+      ? "magicLink"
+      : SIGNIN_METHOD_KEYS.get(`${signinMethod.name}-${signinMethod.rule}`);
     if (!value) {
       return;
     }
@@ -124,6 +130,8 @@ function getSigninMethodLabel(method: LoginMethod) {
     return i18next.t("login:WebAuthn");
   case "faceId":
     return i18next.t("login:Face ID");
+  case "magicLink":
+    return i18next.t("login:Magic link");
   case "device":
     return i18next.t("login:Device login");
   case "wechat":
@@ -136,6 +144,7 @@ function getSigninMethodLabel(method: LoginMethod) {
 /** The antd page's getPlaceholder(): what the single credential field accepts. */
 function getUsernameRequiredMessage(method: LoginMethod | undefined) {
   switch (method) {
+  case "magicLink":
   case "verificationCodeEmail":
     return i18next.t("login:Please input your Email!");
   case "verificationCodePhone":
@@ -151,6 +160,7 @@ function getUsernameLabel(method: LoginMethod | undefined) {
   switch (method) {
   case "verificationCode":
     return i18next.t("login:Email or phone");
+  case "magicLink":
   case "verificationCodeEmail":
     return i18next.t("general:Email");
   case "verificationCodePhone":
@@ -191,6 +201,9 @@ function getSigninMethodName(method: LoginMethod) {
   }
   if (method === "faceId") {
     return "Face ID";
+  }
+  if (method === "magicLink") {
+    return "Magic link";
   }
   return "Password";
 }
@@ -292,6 +305,10 @@ export default function LoginPage({type = "login", application: applicationProp,
   const [saml, setSaml] = React.useState<{response: string; redirectUrl: string; relayState: string} | null>(null);
   // the device-code flow ends on the page itself: "" while it runs, then the outcome
   const [userCodeStatus, setUserCodeStatus] = React.useState<"" | "expired" | "canceled" | "success">("");
+  // the magic-link method ends on "check your email" instead of signing in right away
+  const [magicLinkSent, setMagicLinkSent] = React.useState(false);
+  const [magicLinkVerifying, setMagicLinkVerifying] = React.useState(false);
+  const [captchaForMagicLink, setCaptchaForMagicLink] = React.useState(false);
 
   const owner = params.owner;
   const applicationName = params.applicationName ?? authConfig.appName;
@@ -636,7 +653,7 @@ export default function LoginPage({type = "login", application: applicationProp,
       }
     } else if (loginMethod === "verificationCode" && !Setting.isValidEmail(value) && !Setting.isValidPhone(value)) {
       found.username = i18next.t("login:The input is not valid Email or phone number!");
-    } else if (loginMethod === "verificationCodeEmail" && !Setting.isValidEmail(value)) {
+    } else if ((loginMethod === "verificationCodeEmail" || loginMethod === "magicLink") && !Setting.isValidEmail(value)) {
       found.username = i18next.t("login:The input is not valid Email!");
     }
 
@@ -678,6 +695,72 @@ export default function LoginPage({type = "login", application: applicationProp,
   };
 
   const refreshInlineCaptcha = () => captchaRef.current?.loadCaptcha();
+
+  /**
+   * The magic-link method has no credential to post: the address is mailed a one-time
+   * sign-in link that comes back to this page, carrying the request it was asked for.
+   */
+  const sendMagicLink = (captchaValue?: CaptchaValues) => {
+    setLoading(true);
+    UserBackend.sendCode(
+      captchaValue?.captchaType ?? "none",
+      captchaValue?.captchaToken ?? "",
+      captchaValue?.clientSecret ?? "",
+      "magicLink",
+      "",
+      username.trim(),
+      "email",
+      Setting.getApplicationName(application),
+      "",
+      location.pathname + location.search,
+    )
+      .then((sent: boolean) => {
+        if (sent) {
+          setMagicLinkSent(true);
+        } else if (Setting.isInlineCaptchaEnabled(application)) {
+          refreshInlineCaptcha();
+        }
+      })
+      .finally(() => setLoading(false));
+  };
+
+  /** the captcha rules of SendCodeInput, the link is sent the same way a code is */
+  const requestMagicLink = () => {
+    const sendWithCaptcha = () => {
+      // the application asks for a captcha but has no provider to draw one
+      if (!getCaptchaProvider(application)) {
+        sendMagicLink();
+        return;
+      }
+      if (Setting.isInlineCaptchaEnabled(application)) {
+        if (!captchaValues?.captchaType || !captchaValues?.captchaToken) {
+          Setting.showMessage("error", i18next.t("general:Please complete the captcha correctly"));
+          return;
+        }
+        sendMagicLink(captchaValues);
+        return;
+      }
+      setCaptchaForMagicLink(true);
+      setCaptchaVisible(true);
+    };
+
+    const captchaRule = Setting.getCaptchaRule(application);
+    if (captchaRule === Setting.CaptchaRule.Always) {
+      sendWithCaptcha();
+      return;
+    }
+    if (captchaRule === Setting.CaptchaRule.Dynamic || captchaRule === Setting.CaptchaRule.InternetOnly) {
+      AuthBackend.getCaptchaStatus({
+        organization: application.organization,
+        username: username.trim(),
+        application: application.name,
+      })
+        .then((res: any) => (res.status === "ok" && res.data ? sendWithCaptcha() : sendMagicLink()))
+        .catch(() => sendMagicLink());
+      return;
+    }
+    sendMagicLink();
+  };
 
   const doLogin = (values: any) => {
     setLoading(true);
@@ -785,6 +868,11 @@ export default function LoginPage({type = "login", application: applicationProp,
       return;
     }
 
+    if (loginMethod === "magicLink") {
+      requestMagicLink();
+      return;
+    }
+
     if (loginMethod === "webAuthn") {
       doWebAuthnLogin(values);
       return;
@@ -847,6 +935,40 @@ export default function LoginPage({type = "login", application: applicationProp,
     doLogin(values);
   };
 
+  /**
+   * The visitor came back from the link in the email: the token is posted as the
+   * credential of this sign-in, so MFA, the consent page and every OAuth response type
+   * behave exactly as they do for a password sign-in.
+   */
+  const magicLinkHandled = React.useRef(false);
+  React.useEffect(() => {
+    if (preview || !application || magicLinkHandled.current) {
+      return;
+    }
+    const searchParams = new URLSearchParams(location.search);
+    const token = searchParams.get("magicLinkToken");
+    if (!token) {
+      return;
+    }
+
+    magicLinkHandled.current = true;
+    // the token is single use, it has no business staying in the address bar
+    searchParams.delete("magicLinkToken");
+    const query = searchParams.toString();
+    window.history.replaceState(null, "", `${location.pathname}${query ? `?${query}` : ""}`);
+
+    setMagicLinkVerifying(true);
+    doLogin(applyRequestType({
+      application: application.name,
+      organization: application.organization,
+      signinMethod: "Magic link",
+      code: token,
+      autoSignin: true,
+      language: Setting.getLanguage(),
+    }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [application, location.search, preview]);
+
   // A popup host wants to know when the visitor closes the window without signing in.
   React.useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
@@ -896,7 +1018,7 @@ export default function LoginPage({type = "login", application: applicationProp,
     if (!application || preview === "auto" || application.disableSignin || application.organizationObj?.disableSignin) {
       return null;
     }
-    if (Setting.isPasswordEnabled(application) || Setting.isCodeSigninEnabled(application) || Setting.isWebAuthnEnabled(application) || Setting.isLdapEnabled(application)) {
+    if (Setting.isPasswordEnabled(application) || Setting.isCodeSigninEnabled(application) || Setting.isWebAuthnEnabled(application) || Setting.isLdapEnabled(application) || Setting.isMagicLinkEnabled(application)) {
       return null;
     }
     const visibleOAuthProviderItems = (application.providers ?? []).filter(
@@ -939,6 +1061,25 @@ export default function LoginPage({type = "login", application: applicationProp,
       <AuthLayout preview={!!preview}>
         <Alert variant="destructive">
           <AlertDescription>{msg ?? i18next.t("application:Failed to sign in")}</AlertDescription>
+        </Alert>
+      </AuthLayout>
+    );
+  }
+
+  // the token is exchanged as soon as the page has the application, the form is only
+  // shown again when that sign-in failed
+  const magicLinkPending = !preview && (magicLinkVerifying
+    ? loading
+    : new URLSearchParams(window.location.search).has("magicLinkToken"));
+  if (magicLinkPending) {
+    return <Loading className="min-h-screen" />;
+  }
+
+  if (magicLinkSent) {
+    return (
+      <AuthLayout preview={!!preview} application={application}>
+        <Alert>
+          <AlertDescription>{i18next.t("login:A sign-in link has been sent to your email, it can only be opened in this browser")}</AlertDescription>
         </Alert>
       </AuthLayout>
     );
@@ -998,6 +1139,7 @@ export default function LoginPage({type = "login", application: applicationProp,
   const ldapEnabled = Setting.isLdapEnabled(application);
   const webAuthnEnabled = Setting.isWebAuthnEnabled(application);
   const faceIdEnabled = Setting.isFaceIdEnabled(application);
+  const magicLinkEnabled = Setting.isMagicLinkEnabled(application);
   // an application with a Face ID provider lets the backend do the recognition
   const hasFaceIdProvider = (application.providers ?? []).some((item: any) => item.provider?.category === "Face ID");
   const isCodeMethod = (loginMethod ?? "").startsWith("verificationCode");
@@ -1023,7 +1165,7 @@ export default function LoginPage({type = "login", application: applicationProp,
     (item: any) => item.name === "WeChat" && item.rule === "Login page",
   );
   // without any credential method there is no form, only the providers
-  const showForm = passwordEnabled || codeEnabled || webAuthnEnabled || ldapEnabled || faceIdEnabled;
+  const showForm = passwordEnabled || codeEnabled || webAuthnEnabled || ldapEnabled || faceIdEnabled || magicLinkEnabled;
 
   if (singleProviderAuthUrl !== null) {
     return <Loading className="min-h-screen" />;
@@ -1170,13 +1312,13 @@ export default function LoginPage({type = "login", application: applicationProp,
       return (
         <div key={key} className="login-username space-y-2">
           <Label htmlFor="username">
-            {item.label || (isCodeMethod ? getUsernameLabel(loginMethod) : i18next.t("signup:Username"))}
+            {item.label || (isCodeMethod || loginMethod === "magicLink" ? getUsernameLabel(loginMethod) : i18next.t("signup:Username"))}
           </Label>
           <Input
             id="username"
             className="login-username-input"
             autoFocus
-            autoComplete="username"
+            autoComplete={loginMethod === "magicLink" ? "email" : "username"}
             placeholder={item.placeholder || getUsernameLabel(loginMethod)}
             value={username}
             onChange={(e) => {
@@ -1193,7 +1335,7 @@ export default function LoginPage({type = "login", application: applicationProp,
       }
       return renderCodeInput(item);
     case "Password":
-      if (isPanelMethod || loginMethod === "webAuthn" || loginMethod === "faceId") {
+      if (isPanelMethod || loginMethod === "webAuthn" || loginMethod === "faceId" || loginMethod === "magicLink") {
         return null;
       }
       if (isCodeMethod) {
@@ -1217,6 +1359,9 @@ export default function LoginPage({type = "login", application: applicationProp,
         </div>
       );
     case "Forgot password?":
+      if (loginMethod === "magicLink") {
+        return null;
+      }
       // the item's default CSS pins this row at 320px, wider than some panels
       return (
         <div key={key} className="login-forget-password flex max-w-full flex-wrap items-center justify-between gap-x-3 gap-y-2">
@@ -1261,9 +1406,11 @@ export default function LoginPage({type = "login", application: applicationProp,
               ? i18next.t("login:Sign in with WebAuthn")
               : loginMethod === "faceId"
                 ? i18next.t("login:Sign in with Face ID")
-                : type === "device"
-                  ? i18next.t("login:Approve and sign in")
-                  : item.label || i18next.t("login:Sign In")}
+                : loginMethod === "magicLink"
+                  ? i18next.t("login:Send sign-in link")
+                  : type === "device"
+                    ? i18next.t("login:Approve and sign in")
+                    : item.label || i18next.t("login:Sign In")}
           </Button>
           {type === "device" ? (
             <Button type="button" variant="outline" className="w-full" onClick={cancelDeviceLogin}>
@@ -1437,10 +1584,16 @@ export default function LoginPage({type = "login", application: applicationProp,
             innerRef={captchaRef}
             onOk={(captchaType, captchaToken, clientSecret) => {
               setCaptchaVisible(false);
+              if (captchaForMagicLink) {
+                setCaptchaForMagicLink(false);
+                sendMagicLink({captchaType, captchaToken, clientSecret});
+                return;
+              }
               doLogin({...pendingValues, captchaType, captchaToken, clientSecret});
             }}
             onCancel={() => {
               setCaptchaVisible(false);
+              setCaptchaForMagicLink(false);
               setLoading(false);
             }}
           />

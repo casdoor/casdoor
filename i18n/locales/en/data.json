@@ -21,6 +21,7 @@
     "The login method: login with SMS is not enabled for the application": "The login method: login with SMS is not enabled for the application",
     "The login method: login with email is not enabled for the application": "The login method: login with email is not enabled for the application",
     "The login method: login with face is not enabled for the application": "The login method: login with face is not enabled for the application",
+    "The login method: login with magic link is not enabled for the application": "The login method: login with magic link is not enabled for the application",
     "The login method: login with password is not enabled for the application": "The login method: login with password is not enabled for the application",
     "The order: %s does not exist": "The order: %s does not exist",
     "The organization: %s does not exist": "The organization: %s does not exist",
@@ -215,7 +216,12 @@
   "verification": {
     "Invalid captcha provider.": "Invalid captcha provider.",
     "Phone number is invalid in your region %s": "Phone number is invalid in your region %s",
+    "Please open the magic link in the browser you requested it from": "Please open the magic link in the browser you requested it from",
     "The forgot password feature is disabled": "The forgot password feature is disabled",
+    "The magic link has already been used": "The magic link has already been used",
+    "The magic link has expired": "The magic link has expired",
+    "The magic link is invalid": "The magic link is invalid",
+    "The signup item: %s is required, so the magic link cannot sign up a new user": "The signup item: %s is required, so the magic link cannot sign up a new user",
     "The verification code has already been used!": "The verification code has already been used!",
     "The verification code has not been sent yet!": "The verification code has not been sent yet!",
     "Turing test failed.": "Turing test failed.",
@@ -226,6 +232,7 @@
     "You should verify your code in %d min!": "You should verify your code in %d min!",
     "please add a SMS provider to the \"Providers\" list for the application: %s": "please add a SMS provider to the \"Providers\" list for the application: %s",
     "please add an Email provider to the \"Providers\" list for the application: %s": "please add an Email provider to the \"Providers\" list for the application: %s",
+    "please set \"origin\" in conf/app.conf to send magic links": "please set \"origin\" in conf/app.conf to send magic links",
     "the user does not exist, please sign up first": "the user does not exist, please sign up first"
   },
   "webauthn": {

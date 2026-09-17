@@ -21,6 +21,7 @@
     "The login method: login with SMS is not enabled for the application": "Phương thức đăng nhập bằng SMS chưa được bật cho ứng dụng",
     "The login method: login with email is not enabled for the application": "Phương thức đăng nhập bằng email chưa được bật cho ứng dụng",
     "The login method: login with face is not enabled for the application": "Phương thức đăng nhập bằng khuôn mặt chưa được bật cho ứng dụng",
+    "The login method: login with magic link is not enabled for the application": "Phương thức đăng nhập: đăng nhập bằng liên kết ma thuật chưa được bật cho ứng dụng",
     "The login method: login with password is not enabled for the application": "Phương thức đăng nhập: đăng nhập bằng mật khẩu không được kích hoạt cho ứng dụng",
     "The order: %s does not exist": "Đơn hàng: %s không tồn tại",
     "The organization: %s does not exist": "Tổ chức: %s không tồn tại",
@@ -215,7 +216,12 @@
   "verification": {
     "Invalid captcha provider.": "Nhà cung cấp captcha không hợp lệ.",
     "Phone number is invalid in your region %s": "Số điện thoại không hợp lệ trong vùng của bạn %s",
+    "Please open the magic link in the browser you requested it from": "Vui lòng mở liên kết ma thuật trong trình duyệt mà bạn đã yêu cầu nó",
     "The forgot password feature is disabled": "Tính năng quên mật khẩu đã bị tắt",
+    "The magic link has already been used": "Liên kết ma thuật đã được sử dụng",
+    "The magic link has expired": "Liên kết ma thuật đã hết hạn",
+    "The magic link is invalid": "Liên kết ma thuật không hợp lệ",
+    "The signup item: %s is required, so the magic link cannot sign up a new user": "Mục đăng ký: %s là bắt buộc, vì vậy liên kết ma thuật không thể đăng ký người dùng mới",
     "The verification code has already been used!": "Mã xác thực đã được sử dụng!",
     "The verification code has not been sent yet!": "Mã xác thực chưa được gửi!",
     "Turing test failed.": "Kiểm định Turing thất bại.",
@@ -226,6 +232,7 @@
     "You should verify your code in %d min!": "Bạn nên kiểm tra mã của mình trong %d phút!",
     "please add a SMS provider to the \"Providers\" list for the application: %s": "vui lòng thêm nhà cung cấp SMS vào danh sách \"Providers\" cho ứng dụng: %s",
     "please add an Email provider to the \"Providers\" list for the application: %s": "vui lòng thêm nhà cung cấp Email vào danh sách \"Providers\" cho ứng dụng: %s",
+    "please set \"origin\" in conf/app.conf to send magic links": "Vui lòng đặt \"origin\" trong conf/app.conf để gửi liên kết ma thuật",
     "the user does not exist, please sign up first": "Người dùng không tồn tại, vui lòng đăng ký trước"
   },
   "webauthn": {

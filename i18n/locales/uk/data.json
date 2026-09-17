@@ -21,6 +21,7 @@
     "The login method: login with SMS is not enabled for the application": "Метод входу через SMS не увімкнено для цього додатка",
     "The login method: login with email is not enabled for the application": "Метод входу через email не увімкнено для цього додатка",
     "The login method: login with face is not enabled for the application": "Метод входу через обличчя не увімкнено для цього додатка",
+    "The login method: login with magic link is not enabled for the application": "Метод входу: вхід за магічним посиланням не увімкнено для цього застосунку",
     "The login method: login with password is not enabled for the application": "Метод входу через пароль не увімкнено для цього додатка",
     "The order: %s does not exist": "Замовлення: %s не існує",
     "The organization: %s does not exist": "Організація: %s не існує",
@@ -215,7 +216,12 @@
   "verification": {
     "Invalid captcha provider.": "Недійсний провайдер captcha.",
     "Phone number is invalid in your region %s": "Номер телефону недійсний у вашому регіоні %s",
+    "Please open the magic link in the browser you requested it from": "Відкрийте магічне посилання в тому браузері, з якого ви його запросили",
     "The forgot password feature is disabled": "Функція відновлення пароля вимкнена",
+    "The magic link has already been used": "Магічне посилання вже використано",
+    "The magic link has expired": "Термін дії магічного посилання минув",
+    "The magic link is invalid": "Магічне посилання недійсне",
+    "The signup item: %s is required, so the magic link cannot sign up a new user": "Поле реєстрації: %s є обов'язковим, тому магічне посилання не може зареєструвати нового користувача",
     "The verification code has already been used!": "Код підтвердження вже використано!",
     "The verification code has not been sent yet!": "Код підтвердження ще не надіслано!",
     "Turing test failed.": "Тест Тюрінга не пройдено.",
@@ -226,6 +232,7 @@
     "You should verify your code in %d min!": "Ви маєте підтвердити код за %d хв!",
     "please add a SMS provider to the \"Providers\" list for the application: %s": "будь ласка, додайте SMS-провайдера до списку \"Провайдери\" для додатка: %s",
     "please add an Email provider to the \"Providers\" list for the application: %s": "будь ласка, додайте Email-провайдера до списку \"Провайдери\" для додатка: %s",
+    "please set \"origin\" in conf/app.conf to send magic links": "Щоб надсилати магічні посилання, укажіть \"origin\" у conf/app.conf",
     "the user does not exist, please sign up first": "користувача не існує, спочатку зареєструйтесь"
   },
   "webauthn": {

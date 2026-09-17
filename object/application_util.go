@@ -602,6 +602,26 @@ func (application *Application) IsCodeSigninViaSmsEnabled() bool {
 	}
 }
 
+func (application *Application) IsMagicLinkEnabled() bool {
+	return application.HasSigninMethod("Magic link")
+}
+
+// IsMagicLinkSignupEnabled tells whether a link may also create the account, the
+// application has to allow the signup itself as well.
+func (application *Application) IsMagicLinkSignupEnabled() bool {
+	if !application.EnableSignUp {
+		return false
+	}
+
+	for _, signinMethod := range application.SigninMethods {
+		if signinMethod != nil && signinMethod.Name == "Magic link" && signinMethod.Rule == SigninMethodRuleMagicLinkSignup && !signinMethod.IsHidden() {
+			return true
+		}
+	}
+
+	return false
+}
+
 func (application *Application) IsLdapEnabled() bool {
 	return application.HasSigninMethod("LDAP")
 }
