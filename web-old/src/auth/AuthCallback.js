@@ -289,6 +289,8 @@ class AuthCallback extends React.Component {
       method: method,
       userCode: innerParams.get("userCode") || "",
       codeVerifier: codeVerifier, // Include PKCE code verifier
+      // VK ID returns device_id next to the code and requires it when exchanging the code
+      deviceId: params.get("device_id") ?? "",
       // The selector on the login page is gone by now, so use the language it stored
       language: Setting.getSigninLanguage(),
     };

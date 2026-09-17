@@ -1372,7 +1372,11 @@ export function getProviderLogoURL(provider) {
     return provider.customLogo;
   }
   if (provider.category === "OAuth") {
-    const type = isCustomOAuthType(provider.type) ? "Custom" : provider.type;
+    let type = isCustomOAuthType(provider.type) ? "Custom" : provider.type;
+    // VK ID reuses the VK icon until a dedicated one is published
+    if (type === "VKID") {
+      type = "VK";
+    }
     return `${StaticBaseUrl}/img/social_${type.toLowerCase()}.png`;
   } else {
     const info = OtherProviderInfo[provider.category][provider.type];
@@ -1464,6 +1468,7 @@ export function getProviderTypeOptions(category) {
         {id: "Yahoo", name: "Yahoo"},
         {id: "Yammer", name: "Yammer"},
         {id: "Yandex", name: "Yandex"},
+        {id: "VKID", name: "VK ID"},
         {id: "Zoom", name: "Zoom"},
         {id: "OIDC", name: "OIDC"},
         {id: "Custom", name: "Custom"},

@@ -1307,7 +1307,11 @@ export function getProviderLogoURL(provider) {
     return provider.customLogo;
   }
   if (provider.category === "OAuth") {
-    const type = provider.type.startsWith("Custom") ? "Custom" : provider.type;
+    let type = provider.type.startsWith("Custom") ? "Custom" : provider.type;
+    // VK ID reuses the VK icon until a dedicated one is published
+    if (type === "VKID") {
+      type = "VK";
+    }
     return `${StaticBaseUrl}/img/social_${type.toLowerCase()}.png`;
   } else {
     const info = OtherProviderInfo[provider.category][provider.type];

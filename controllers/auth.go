@@ -917,6 +917,7 @@ func (c *ApiController) Login() {
 				return
 			}
 			idpInfo.CodeVerifier = authForm.CodeVerifier
+			idpInfo.DeviceId = authForm.DeviceId
 			var idProvider idp.IdProvider
 			idProvider, err = idp.GetIdProvider(idpInfo, authForm.RedirectUri)
 			if err != nil {

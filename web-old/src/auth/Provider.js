@@ -341,6 +341,10 @@ const authInfo = {
     scope: "profile",
     endpoint: "https://login.uber.com/oauth/v2/authorize",
   },
+  VKID: {
+    scope: "vkid.personal_info email",
+    endpoint: "https://id.vk.ru/authorize",
+  },
   VK: {
     scope: "email",
     endpoint: "https://oauth.vk.com/authorize",
@@ -561,6 +565,9 @@ export function getAuthUrl(application, provider, method, code) {
       authUrl += `&code_challenge=${codeChallenge}&code_challenge_method=S256`;
     }
     return authUrl;
+  } else if (provider.type === "VKID") {
+    // VK ID is OAuth 2.1: PKCE is mandatory and the state must be at least 32 characters
+    return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(scope)}&response_type=code&state=${encodeURIComponent(state)}&code_challenge=${codeChallenge}&code_challenge_method=S256`;
   } else if (provider.type === "Bilibili") {
     return `${endpoint}#/?client_id=${provider.clientId}&return_url=${redirectUri}&state=${state}&response_type=code`;
   } else if (provider.type === "Deezer") {

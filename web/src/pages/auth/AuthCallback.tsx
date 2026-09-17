@@ -176,6 +176,8 @@ export default function AuthCallback() {
       method: innerParams.get("method"),
       userCode: innerParams.get("userCode") || "",
       codeVerifier,
+      // VK ID returns device_id next to the code and requires it when exchanging the code
+      deviceId: params.get("device_id") ?? "",
       language: Setting.getSigninLanguage(),
     };
 
