@@ -73,17 +73,18 @@ export function MfaVerifySetupForm({mfaProps, application, user, onSuccess, onFa
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
+    const secret = resolveSecret();
     MfaBackend.MfaSetupVerify({
       passcode,
       mfaType: mfaProps.mfaType,
-      secret: resolveSecret(),
+      secret,
       dest,
       countryCode,
       ...user,
     })
       .then((res: any) => {
         if (res.status === "ok") {
-          onSuccess({...res, dest, countryCode});
+          onSuccess({...res, dest, countryCode, secret});
         } else {
           onFail(res);
         }

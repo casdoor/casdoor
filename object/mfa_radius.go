@@ -49,6 +49,10 @@ func (mfa *RadiusMfa) SetupVerify(passCode string) error {
 }
 
 func (mfa *RadiusMfa) Enable(user *User) error {
+	if mfa.provider == nil {
+		return fmt.Errorf("RADIUS provider not found: %s", mfa.URL)
+	}
+
 	columns := []string{"recovery_codes", "preferred_mfa_type", "mfa_radius_enabled", "mfa_radius_username", "mfa_radius_provider"}
 
 	user.RecoveryCodes = append(user.RecoveryCodes, mfa.RecoveryCodes...)
