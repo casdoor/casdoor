@@ -56,6 +56,17 @@
     return query;
   }
 
+  function getParameterIgnoreCase(params, key) {
+    var target = key.toLowerCase();
+    var result = null;
+    params.forEach(function(val, name) {
+      if (result === null && name.toLowerCase() === target) {
+        result = val;
+      }
+    });
+    return result;
+  }
+
   function getInnerParams() {
     var params = new URLSearchParams(window.location.search);
     var state = params.get("state");
@@ -72,7 +83,7 @@
     if (method === "signup" || method === "signin") {
       var realRedirectUri = innerParams.get("redirect_uri");
       if (realRedirectUri === null) {
-        var samlRequest = innerParams.get("SAMLRequest");
+        var samlRequest = getParameterIgnoreCase(innerParams, "SAMLRequest");
         var casService = innerParams.get("service");
         if (samlRequest) {
           return "saml";
@@ -293,7 +304,7 @@
     var applicationName = innerParams.get("application");
     var providerName = innerParams.get("provider");
     var method = innerParams.get("method");
-    var samlRequest = innerParams.get("SAMLRequest");
+    var samlRequest = getParameterIgnoreCase(innerParams, "SAMLRequest");
     var code = extractCallbackCode(params);
     var responseType = getResponseType(innerParams);
     var redirectUri = window.location.origin + "/callback";

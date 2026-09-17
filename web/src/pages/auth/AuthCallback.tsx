@@ -111,7 +111,7 @@ export default function AuthCallback() {
         }
         const realRedirectUri = innerParams.get("redirect_uri");
         if (realRedirectUri === null) {
-          const samlRequest = innerParams.get("SAMLRequest");
+          const samlRequest = Util.getParameterIgnoreCase(innerParams, "SAMLRequest");
           const casService = innerParams.get("service");
           if (samlRequest) {
             return "saml";
@@ -169,7 +169,7 @@ export default function AuthCallback() {
       application: applicationName,
       provider: innerParams.get("provider"),
       code,
-      samlRequest: innerParams.get("SAMLRequest"),
+      samlRequest: Util.getParameterIgnoreCase(innerParams, "SAMLRequest"),
       state: applicationName,
       invitationCode: innerParams.get("invitationCode") || "",
       redirectUri: `${window.location.origin}/callback`,

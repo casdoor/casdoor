@@ -65,6 +65,18 @@ export function getCasLoginParameters(owner, name) {
   };
 }
 
+// the SAML HTTP-Redirect and HTTP-POST bindings spell "SAMLRequest" differently
+export function getParameterIgnoreCase(params: URLSearchParams, key: string): string | null {
+  const target = key.toLowerCase();
+  let result: string | null = null;
+  params.forEach((val, name) => {
+    if (result === null && name.toLowerCase() === target) {
+      result = val;
+    }
+  });
+  return result;
+}
+
 // getRelayState returns the RelayState in the URL, it is used by the SAML IdP-initiated SSO,
 // where there is no SAMLRequest and getOAuthGetParameters() returns null
 export function getRelayState() {
