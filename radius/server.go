@@ -22,6 +22,7 @@ import (
 
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/object"
+	"github.com/casdoor/casdoor/radius/authenticator"
 	"github.com/casdoor/casdoor/util"
 	"layeh.com/radius"
 	"layeh.com/radius/rfc2865"
@@ -52,12 +53,27 @@ func StartRadiusServer() {
 func handlerRadius(w radius.ResponseWriter, r *radius.Request) {
 	switch r.Code {
 	case radius.CodeAccessRequest:
-		handleAccessRequest(w, r)
+		secureWriter, err := prepareAccessRequest(w, r.Packet)
+		if err != nil {
+			log.Printf("RADIUS Access-Request rejected: %v", err)
+			return
+		}
+		handleAccessRequest(secureWriter, r)
 	case radius.CodeAccountingRequest:
 		handleAccountingRequest(w, r)
 	default:
 		log.Printf("radius message, code = %d", r.Code)
 	}
+}
+
+func prepareAccessRequest(w radius.ResponseWriter, request *radius.Packet) (radius.ResponseWriter, error) {
+	if !authenticator.MessageAuthenticatorPresent(request) {
+		return w, nil
+	}
+	if err := authenticator.VerifyAccessRequest(request); err != nil {
+		return nil, err
+	}
+	return authenticator.NewMessageAuthenticatorResponseWriter(w, request), nil
 }
 
 func handleAccessRequest(w radius.ResponseWriter, r *radius.Request) {

@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/casdoor/casdoor/radius/authenticator"
 	"layeh.com/radius"
 	"layeh.com/radius/rfc2865"
 )
@@ -111,7 +112,7 @@ func (mfa *RadiusMfa) authenticateWithRadius(username, password string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	response, err := radius.Exchange(ctx, packet, address)
+	response, err := authenticator.ExchangeWithMessageAuthenticator(ctx, packet, address)
 	if err != nil {
 		return fmt.Errorf("RADIUS authentication failed: %v", err)
 	}
