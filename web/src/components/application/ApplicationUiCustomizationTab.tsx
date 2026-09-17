@@ -41,6 +41,12 @@ const SIGNIN_METHOD_RULES: Record<string, EnumMap> = {
   },
 };
 
+// a rule left over from another method (e.g. "All" on WebAuthn) hides the method on the login page
+function getDefaultSigninMethodRule(name: string): string {
+  const rules = Object.keys(SIGNIN_METHOD_RULES[name] ?? {});
+  return rules.length > 0 ? rules[0] : "None";
+}
+
 const SIGNUP_ITEM_TYPES: EnumMap = {
   "Input": {i18nKey: "application:Input"},
   "Single Choice": {i18nKey: "application:Single Choice"},
@@ -166,7 +172,7 @@ export function ApplicationUiCustomizationTab({application, updateField}: Applic
               render: (row: any, _i, patch) => (
                 <SelectField
                   value={row.name}
-                  onChange={(v) => patch({name: v, displayName: v})}
+                  onChange={(v) => patch({name: v, displayName: v, rule: getDefaultSigninMethodRule(v)})}
                   options={["Password", "Verification code", "WebAuthn", "LDAP", "Face ID", "Device login"].map(
                     (item) => ({id: item, name: item}),
                   )}
