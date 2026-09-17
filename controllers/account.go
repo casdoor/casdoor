@@ -412,11 +412,6 @@ func (c *ApiController) Logout() {
 		// clients (e.g. Gitea) only send "post_logout_redirect_uri" (optionally with
 		// "client_id"), see: https://github.com/casdoor/casdoor/issues/5607
 		// TODO https://github.com/casdoor/casdoor/pull/1494#discussion_r1095675265
-		if user == "" {
-			c.ResponseOk()
-			return
-		}
-
 		// Retrieve application and token before clearing the session. Prefer the application
 		// bound to the session, and fall back to the "client_id" hint when available.
 		application := c.GetSessionApplication()
@@ -427,6 +422,19 @@ func (c *ApiController) Logout() {
 				return
 			}
 			application = app
+		}
+
+		if user == "" {
+			// The session is already gone (expired, or ended from another tab), so there is
+			// nothing to log out of, but the user agent still has to be sent back to the RP
+			// instead of being left on a JSON response. "client_id" is what lets the redirect
+			// URI be validated without an "id_token_hint".
+			if redirectUri != "" && application != nil {
+				c.redirectToPostLogout(application, redirectUri, state)
+				return
+			}
+			c.ResponseOk()
+			return
 		}
 		sessionToken := c.GetSessionToken()
 
