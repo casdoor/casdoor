@@ -54,6 +54,10 @@ func (mfa *PushMfa) SetupVerify(passCode string) error {
 }
 
 func (mfa *PushMfa) Enable(user *User) error {
+	if mfa.provider == nil {
+		return fmt.Errorf("push notification provider not found: %s", mfa.URL)
+	}
+
 	columns := []string{"recovery_codes", "preferred_mfa_type", "mfa_push_enabled", "mfa_push_receiver", "mfa_push_provider"}
 
 	user.RecoveryCodes = append(user.RecoveryCodes, mfa.RecoveryCodes...)

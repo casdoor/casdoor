@@ -49,7 +49,7 @@ export default function MfaSetupPage() {
   const [applicationError, setApplicationError] = React.useState<string | null>(null);
   const [mfaProps, setMfaProps] = React.useState<any>(null);
   const [initiating, setInitiating] = React.useState(false);
-  const [verified, setVerified] = React.useState<{dest?: string; countryCode?: string}>({});
+  const [verified, setVerified] = React.useState<{dest?: string; countryCode?: string; secret?: string}>({});
 
   React.useEffect(() => {
     if (!account) {
@@ -155,7 +155,7 @@ export default function MfaSetupPage() {
             application={application}
             user={account}
             onSuccess={(res) => {
-              setVerified({dest: res.dest, countryCode: res.countryCode});
+              setVerified({dest: res.dest, countryCode: res.countryCode, secret: res.secret});
               setCurrent(2);
             }}
             onFail={(res) =>
@@ -178,7 +178,7 @@ export default function MfaSetupPage() {
         <MfaEnableForm
           user={account}
           mfaType={mfaType}
-          secret={mfaProps?.secret}
+          secret={verified.secret ?? mfaProps?.secret}
           recoveryCodes={mfaProps?.recoveryCodes}
           dest={verified.dest}
           countryCode={verified.countryCode}
