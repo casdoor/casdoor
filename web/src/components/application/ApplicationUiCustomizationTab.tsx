@@ -12,7 +12,7 @@ import {ApplicationPromptPreview, ApplicationSignupSigninPreview} from "@/compon
 import {FormRow} from "@/components/crud/FormRow";
 import type {ApplicationTabProps} from "@/components/application/types";
 import {enumSelectOptions, type EnumMap} from "@/lib/enum-labels";
-import {SigninTableDefaultCssMap} from "@/lib/signin-css";
+import {SigninTableDefaultCssMap, UpdatePasswordTableDefaultCssMap} from "@/lib/signin-css";
 import {SignupTableDefaultCssMap} from "@/lib/signup-css";
 import * as Setting from "@/lib/setting";
 
@@ -113,6 +113,17 @@ const SIGNIN_ITEM_NAMES: {name: string; labelKey: string}[] = [
   {name: "Select organization", labelKey: "login:Select organization"},
 ];
 
+/** The blocks of the page a sign-in lands on when the account must update its password. */
+const UPDATE_PASSWORD_ITEM_NAMES: {name: string; labelKey: string}[] = [
+  {name: "Logo", labelKey: "general:Logo"},
+  {name: "Languages", labelKey: "general:Languages"},
+  {name: "Title", labelKey: "general:Title"},
+  {name: "Old password", labelKey: "user:Old Password"},
+  {name: "New password", labelKey: "user:New Password"},
+  {name: "Confirm password", labelKey: "user:Re-enter New"},
+  {name: "Submit button", labelKey: "application:Submit button"},
+];
+
 const SIGNUP_ITEM_NAMES = [
   "Username", "ID", "Display name", "First name", "Last name", "Affiliation", "Gender", "Bio", "Tag",
   "Education", "Country/Region", "ID card", "Password", "Confirm password", "Email", "Phone",
@@ -149,6 +160,109 @@ function getSigninItemRuleOptions(name: string) {
 }
 
 /** The "UI Customization" tab: the blocks the sign-in and sign-up pages are built from. */
+interface PageItemsTableProps {
+  rows: any[];
+  onChange: (rows: any[]) => void;
+  itemNames: {name: string; labelKey: string}[];
+  cssMap: Record<string, string>;
+  /** only some items take a rule, and each has its own option set */
+  ruleOptions?: (name: string) => {id: string; name: string}[];
+}
+
+/** The ordered blocks a page is built from; the sign-in and update-password pages share it. */
+function PageItemsTable({rows, onChange, itemNames, cssMap, ruleOptions}: PageItemsTableProps) {
+  return (
+    <EditableTable
+      title={
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() =>
+            onChange([
+              ...rows,
+              // a custom item is a free-form HTML block, named so it stays unique
+              {name: `Text ${Date.now()}`, visible: true, isCustom: true, label: "", placeholder: "", rule: "None"},
+            ])
+          }
+        >
+          {i18next.t("general:Add custom item")}
+        </Button>
+      }
+      rows={rows}
+      onChange={onChange}
+      newRow={() => ({
+        name: "Logo",
+        visible: true,
+        label: "",
+        customCss: cssMap["Logo"],
+        placeholder: "",
+        rule: "None",
+      })}
+      columns={[
+        {
+          key: "name",
+          title: i18next.t("general:Name"),
+          width: 190,
+          render: (row: any, _i, patch) => (
+            <SelectField
+              value={row.name}
+              onChange={(v) => patch({name: v, customCss: cssMap[v] ?? ""})}
+              options={itemNames.map((item) => ({id: item.name, name: i18next.t(item.labelKey)}))}
+            />
+          ),
+        },
+        {
+          key: "visible",
+          title: i18next.t("organization:Visible"),
+          width: 90,
+          render: (row: any, _i, patch) => (
+            <Switch checked={!!row.visible} onCheckedChange={(v) => patch({visible: v, required: v})} />
+          ),
+        },
+        {
+          key: "label",
+          title: i18next.t("signup:Label"),
+          width: 170,
+          render: (row: any, _i, patch) => (
+            <Input value={row.label ?? ""} onChange={(e) => patch({label: e.target.value})} />
+          ),
+        },
+        {
+          key: "placeholder",
+          title: i18next.t("signup:Placeholder"),
+          width: 170,
+          render: (row: any, _i, patch) => (
+            <Input value={row.placeholder ?? ""} onChange={(e) => patch({placeholder: e.target.value})} />
+          ),
+        },
+        {
+          key: "customCss",
+          title: i18next.t("application:Custom CSS"),
+          width: 200,
+          render: (row: any, _i, patch) => (
+            <Input
+              value={row.customCss ?? cssMap[row.name] ?? ""}
+              onChange={(e) => patch({customCss: e.target.value || cssMap[row.name]})}
+            />
+          ),
+        },
+        {
+          key: "rule",
+          title: i18next.t("application:Rule"),
+          width: 170,
+          render: (row: any, _i, patch) => {
+            const options = ruleOptions?.(row.name) ?? [];
+            if (options.length === 0) {
+              return null;
+            }
+            return <SelectField value={row.rule} onChange={(v) => patch({rule: v})} options={options} />;
+          },
+        },
+      ]}
+    />
+  );
+}
+
 export function ApplicationUiCustomizationTab({application, updateField}: ApplicationTabProps) {
   return (
     <>
@@ -221,93 +335,20 @@ export function ApplicationUiCustomizationTab({application, updateField}: Applic
         />
       </FormRow>
       <FormRow labelKey="application:Signin items" block>
-        <EditableTable
-          title={
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() =>
-                updateField("signinItems", [
-                  ...(application.signinItems ?? []),
-                  // a custom item is a free-form HTML block, named so it stays unique
-                  {name: `Text ${Date.now()}`, visible: true, isCustom: true, label: "", placeholder: "", rule: "None"},
-                ])
-              }
-            >
-              {i18next.t("general:Add custom item")}
-            </Button>
-          }
+        <PageItemsTable
           rows={application.signinItems ?? []}
           onChange={(rows) => updateField("signinItems", rows)}
-          newRow={() => ({
-            name: "Logo",
-            visible: true,
-            label: "",
-            customCss: SigninTableDefaultCssMap["Logo"],
-            placeholder: "",
-            rule: "None",
-          })}
-          columns={[
-            {
-              key: "name",
-              title: i18next.t("general:Name"),
-              width: 190,
-              render: (row: any, _i, patch) => (
-                <SelectField
-                  value={row.name}
-                  onChange={(v) => patch({name: v, customCss: SigninTableDefaultCssMap[v] ?? ""})}
-                  options={SIGNIN_ITEM_NAMES.map((item) => ({id: item.name, name: i18next.t(item.labelKey)}))}
-                />
-              ),
-            },
-            {
-              key: "visible",
-              title: i18next.t("organization:Visible"),
-              width: 90,
-              render: (row: any, _i, patch) => (
-                <Switch checked={!!row.visible} onCheckedChange={(v) => patch({visible: v, required: v})} />
-              ),
-            },
-            {
-              key: "label",
-              title: i18next.t("signup:Label"),
-              width: 170,
-              render: (row: any, _i, patch) => (
-                <Input value={row.label ?? ""} onChange={(e) => patch({label: e.target.value})} />
-              ),
-            },
-            {
-              key: "placeholder",
-              title: i18next.t("signup:Placeholder"),
-              width: 170,
-              render: (row: any, _i, patch) => (
-                <Input value={row.placeholder ?? ""} onChange={(e) => patch({placeholder: e.target.value})} />
-              ),
-            },
-            {
-              key: "customCss",
-              title: i18next.t("application:Custom CSS"),
-              width: 200,
-              render: (row: any, _i, patch) => (
-                <Input
-                  value={row.customCss ?? SigninTableDefaultCssMap[row.name] ?? ""}
-                  onChange={(e) => patch({customCss: e.target.value || SigninTableDefaultCssMap[row.name]})}
-                />
-              ),
-            },
-            {
-              key: "rule",
-              title: i18next.t("application:Rule"),
-              width: 170,
-              render: (row: any, _i, patch) => {
-                const options = getSigninItemRuleOptions(row.name);
-                if (options.length === 0) {
-                  return null;
-                }
-                return <SelectField value={row.rule} onChange={(v) => patch({rule: v})} options={options} />;
-              },
-            },
-          ]}
+          itemNames={SIGNIN_ITEM_NAMES}
+          cssMap={SigninTableDefaultCssMap}
+          ruleOptions={getSigninItemRuleOptions}
+        />
+      </FormRow>
+      <FormRow labelKey="application:Update password items" block>
+        <PageItemsTable
+          rows={application.updatePasswordItems ?? []}
+          onChange={(rows) => updateField("updatePasswordItems", rows)}
+          itemNames={UPDATE_PASSWORD_ITEM_NAMES}
+          cssMap={UpdatePasswordTableDefaultCssMap}
         />
       </FormRow>
       <FormRow labelKey="application:Signup items" block>

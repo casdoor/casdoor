@@ -165,7 +165,32 @@ func extendApplicationWithSigninItems(application *Application) (err error) {
 			application.SigninItems[idx].Label = ""
 		}
 	}
+	extendApplicationWithUpdatePasswordItems(application)
 	return
+}
+
+// The blocks of the "update password" page a sign-in lands on when the account is
+// flagged "need update password"; same shape as the signin items so the same editor applies.
+func extendApplicationWithUpdatePasswordItems(application *Application) {
+	if len(application.UpdatePasswordItems) != 0 {
+		return
+	}
+	for _, item := range []struct{ name, css string }{
+		{"Logo", ".login-logo-box {}"},
+		{"Languages", ".login-languages {\n    top: 55px;\n    right: 5px;\n    position: absolute;\n}"},
+		{"Title", ".update-password-title {}"},
+		{"Old password", ".update-password-old {}\n.update-password-old-input{}"},
+		{"New password", ".update-password-new {}\n.update-password-new-input{}"},
+		{"Confirm password", ".update-password-confirm {}\n.update-password-confirm-input{}"},
+		{"Submit button", ".update-password-button-box {}\n.update-password-button {\n    width: 100%;\n}"},
+	} {
+		application.UpdatePasswordItems = append(application.UpdatePasswordItems, &SigninItem{
+			Name:      item.name,
+			Visible:   true,
+			CustomCss: item.css,
+			Rule:      "None",
+		})
+	}
 }
 
 func extendApplicationWithSigninMethods(application *Application) (err error) {

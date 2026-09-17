@@ -200,7 +200,9 @@
     "Use Email as NameID": "Use Email as NameID",
     "Use Email as NameID - Tooltip": "Use Email as NameID",
     "Vertical": "Vertical",
-    "You are unexpected to see this prompt page": "You are unexpected to see this prompt page"
+    "You are unexpected to see this prompt page": "You are unexpected to see this prompt page",
+    "Update password items": "Update password items",
+    "Submit button": "Submit button"
   },
   "cert": {
     "Access secret": "Access secret",

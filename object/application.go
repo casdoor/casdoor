@@ -137,6 +137,7 @@ type Application struct {
 	SigninMethods                []*SigninMethod `xorm:"varchar(2000)" json:"signinMethods"`
 	SignupItems                  []*SignupItem   `xorm:"varchar(3000)" json:"signupItems"`
 	SigninItems                  []*SigninItem   `xorm:"mediumtext" json:"signinItems"`
+	UpdatePasswordItems          []*SigninItem   `xorm:"mediumtext" json:"updatePasswordItems"`
 	GrantTypes                   []string        `xorm:"varchar(1000)" json:"grantTypes"`
 	OrganizationObj              *Organization   `xorm:"-" json:"organizationObj"`
 	CertPublicKey                string          `xorm:"-" json:"certPublicKey"`

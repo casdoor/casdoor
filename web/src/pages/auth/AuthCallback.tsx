@@ -251,7 +251,7 @@ export default function AuthCallback() {
 
     const checkMfa = (res: any, authParams: any, onDone: (res: any) => void) => {
       if (res.data === Setting.RequiredUpdatePassword) {
-        Setting.goToUpdatePassword();
+        Setting.goToUpdatePassword(application?.name);
       } else if (res.data === "RequiredMfa") {
         // the account reload in the console then bounces to /mfa/setup
         localStorage.setItem("mfaRedirectUrl", window.location.origin);

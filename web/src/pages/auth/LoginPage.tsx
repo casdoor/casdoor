@@ -437,7 +437,7 @@ export default function LoginPage({type = "login", application: applicationProp,
     )}&state=${encodeURIComponent(oAuthParams.state)}`;
 
     if (res.data === Setting.RequiredUpdatePassword) {
-      Setting.goToUpdatePassword();
+      Setting.goToUpdatePassword(application?.name);
       return;
     }
     // The backend asks for an explicit consent before handing out the code.
@@ -536,7 +536,7 @@ export default function LoginPage({type = "login", application: applicationProp,
 
   const checkMfa = (res: any, values: any, authParams: any, onDone: (res: any) => void) => {
     if (res.data === Setting.RequiredUpdatePassword) {
-      Setting.goToUpdatePassword();
+      Setting.goToUpdatePassword(application?.name);
     } else if (res.data === RequiredMfa) {
       localStorage.setItem("mfaRedirectUrl", window.location.href);
       reload().then(() => navigate("/mfa/setup", {state: {from: "/login"}}));

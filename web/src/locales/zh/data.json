@@ -200,7 +200,9 @@
     "Use Email as NameID": "使用邮箱作为NameID",
     "Use Email as NameID - Tooltip": "使用邮箱作为NameID",
     "Vertical": "垂直",
-    "You are unexpected to see this prompt page": "错误：该提醒页面不应出现"
+    "You are unexpected to see this prompt page": "错误：该提醒页面不应出现",
+    "Update password items": "更新密码项",
+    "Submit button": "提交按钮"
   },
   "cert": {
     "Access secret": "访问密钥",

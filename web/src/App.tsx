@@ -119,6 +119,7 @@ const LdapSyncPage = React.lazy(() => import("@/pages/LdapSyncPage"));
 const LoginPage = React.lazy(() => import("@/pages/auth/LoginPage"));
 const SignupPage = React.lazy(() => import("@/pages/auth/SignupPage"));
 const ForgetPage = React.lazy(() => import("@/pages/auth/ForgetPage"));
+const UpdatePasswordPage = React.lazy(() => import("@/pages/auth/UpdatePasswordPage"));
 const AuthCallback = React.lazy(() => import("@/pages/auth/AuthCallback"));
 const SamlCallback = React.lazy(() => import("@/pages/auth/SamlCallback"));
 const ResultPage = React.lazy(() => import("@/pages/auth/ResultPage"));
@@ -218,6 +219,8 @@ export default function App() {
         <Route path="/signup/oauth/authorize" element={<SignupPage />} />
         <Route path="/forget" element={<ForgetPage />} />
         <Route path="/forget/:applicationName" element={<ForgetPage />} />
+        <Route path="/update-password" element={<UpdatePasswordPage />} />
+        <Route path="/update-password/:applicationName" element={<UpdatePasswordPage />} />
         <Route path="/callback" element={<AuthCallback />} />
         <Route path="/callback/saml" element={<SamlCallback />} />
         <Route path="/telegram-login" element={<TelegramLogin />} />
