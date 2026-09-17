@@ -167,6 +167,8 @@
     "Side panel HTML - Edit": "Side panel HTML - Edit",
     "Side panel HTML - Tooltip": "Customize the HTML code for the side panel of the login page",
     "Sign Up Error": "Sign Up Error",
+    "Sign in only": "Sign in only",
+    "Sign in or sign up": "Sign in or sign up",
     "Signin": "Signin",
     "Signin (Default True)": "Signin (Default True)",
     "Signin items": "Signin items",
@@ -814,6 +816,7 @@
     "unsynced": "unsynced"
   },
   "login": {
+    "A sign-in link has been sent to your email, it can only be opened in this browser": "A sign-in link has been sent to your email, it can only be opened in this browser",
     "Approve and sign in": "Approve and sign in",
     "Approve sign-in on this device": "Approve sign-in on this device",
     "Auto sign in": "Auto sign in",
@@ -838,6 +841,8 @@
     "LDAP username, Email or phone": "LDAP username, Email or phone",
     "Loading": "Loading",
     "Logging out...": "Logging out...",
+    "Magic link": "Magic link",
+    "Magic link sent": "Magic link sent",
     "MetaMask plugin not detected": "MetaMask plugin not detected",
     "Model loading failure": "Model loading failure",
     "Native SSO": "Native SSO",
@@ -866,6 +871,7 @@
     "Redirecting, please wait.": "Redirecting, please wait.",
     "Scan this QR code with a signed-in device to continue": "Scan this QR code with a signed-in device to continue",
     "Select organization": "Select organization",
+    "Send sign-in link": "Send sign-in link",
     "Sign In": "Sign In",
     "Sign in with Face ID": "Sign in with Face ID",
     "Sign in with Telegram": "Sign in with Telegram",

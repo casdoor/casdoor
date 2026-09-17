@@ -100,7 +100,7 @@ export default function ApplicationEditPage() {
       knownProviders.includes(item.name),
     );
     const signinMethods = (application.signinMethods ?? []).filter((item: any) =>
-      ["Password", "Verification code", "WebAuthn", "LDAP", "Face ID", "Device login", "WeChat"].includes(item.name),
+      ["Password", "Verification code", "Magic link", "WebAuthn", "LDAP", "Face ID", "Device login", "WeChat"].includes(item.name),
     );
 
     // antd trims every custom scope and refuses to save one without a scope name,

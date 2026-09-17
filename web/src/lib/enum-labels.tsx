@@ -123,6 +123,7 @@ export const PROVIDER_CODE_RULES: EnumMap = {
   "reset": {i18nKey: "Reset Password"},
   "mfaSetup": {i18nKey: "Set MFA"},
   "mfaAuth": {i18nKey: "MFA Auth"},
+  "magicLink": {i18nKey: "login:Magic link"},
 };
 
 /** which of the user's identifiers an external account may bind to */

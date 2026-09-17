@@ -28,18 +28,19 @@ import (
 )
 
 const (
-	SignupVerification   = "signup"
-	ResetVerification    = "reset"
-	LoginVerification    = "login"
-	ForgetVerification   = "forget"
-	MfaSetupVerification = "mfaSetup"
-	MfaAuthVerification  = "mfaAuth"
+	SignupVerification    = "signup"
+	ResetVerification     = "reset"
+	LoginVerification     = "login"
+	ForgetVerification    = "forget"
+	MfaSetupVerification  = "mfaSetup"
+	MfaAuthVerification   = "mfaAuth"
+	MagicLinkVerification = "magicLink"
 )
 
 // an unknown method would skip every method-specific check below, so reject it up front
 func isValidVerificationMethod(method string) bool {
 	switch method {
-	case SignupVerification, ResetVerification, LoginVerification, ForgetVerification, MfaSetupVerification, MfaAuthVerification:
+	case SignupVerification, ResetVerification, LoginVerification, ForgetVerification, MfaSetupVerification, MfaAuthVerification, MagicLinkVerification:
 		return true
 	default:
 		return false
@@ -195,6 +196,12 @@ func (c *ApiController) SendVerificationCode() {
 		return
 	}
 
+	// a magic link is a link in an email, there is nothing to send to a phone
+	if vform.Method == MagicLinkVerification && vform.Type != object.VerifyTypeEmail {
+		c.ResponseError(c.T("verification:Wrong parameter") + ": type.")
+		return
+	}
+
 	application, err := object.GetApplication(vform.ApplicationId)
 	if err != nil {
 		c.ResponseError(err.Error())
@@ -262,7 +269,7 @@ func (c *ApiController) SendVerificationCode() {
 	} else if vform.Method == ResetVerification {
 		// For reset verification, get the current logged-in user
 		user = c.getCurrentUser()
-	} else if vform.Method == LoginVerification {
+	} else if vform.Method == LoginVerification || vform.Method == MagicLinkVerification {
 		// For login verification, try to find user by email/phone for CAPTCHA check
 		// This is a preliminary lookup; the actual validation happens later in the switch statement
 		if vform.Type == object.VerifyTypeEmail && util.IsEmailValid(vform.Dest) {
@@ -371,6 +378,34 @@ func (c *ApiController) SendVerificationCode() {
 					return
 				}
 			}
+		} else if vform.Method == MagicLinkVerification {
+			if !application.IsMagicLinkEnabled() {
+				c.ResponseError(c.T("auth:The login method: login with magic link is not enabled for the application"))
+				return
+			}
+
+			user, err = getUserByEmail(organization.Name, vform.Dest)
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
+
+			if user == nil {
+				// the address has no account yet, the link may only create one when the
+				// application's signin method says so
+				if !application.IsMagicLinkSignupEnabled() {
+					c.ResponseError(c.T("verification:the user does not exist, please sign up first"))
+					return
+				}
+
+				if err = object.CheckMagicLinkSignup(application, c.GetAcceptLanguage()); err != nil {
+					c.ResponseError(err.Error())
+					return
+				}
+			} else if user.IsDeleted || user.IsForbidden {
+				c.ResponseError(c.T("check:The user is forbidden to sign in, please contact the administrator"))
+				return
+			}
 		} else if vform.Method == ResetVerification {
 			user = c.getCurrentUser()
 		} else if vform.Method == MfaAuthVerification {
@@ -402,7 +437,11 @@ func (c *ApiController) SendVerificationCode() {
 			provider.HttpHeaders["Accept-Language"] = c.GetAcceptLanguage()
 		}
 
-		sendResp = object.SendVerificationCodeToEmail(organization, user, provider, clientIp, vform.Dest, vform.Method, c.Ctx.Request.Host, application.Name, application)
+		if vform.Method == MagicLinkVerification {
+			sendResp = object.SendMagicLinkToEmail(organization, user, provider, clientIp, vform.Dest, c.Ctx.Request.Host, vform.SigninPath, application, c.newMagicLinkSessionHash(), c.GetAcceptLanguage())
+		} else {
+			sendResp = object.SendVerificationCodeToEmail(organization, user, provider, clientIp, vform.Dest, vform.Method, c.Ctx.Request.Host, application.Name, application)
+		}
 	case object.VerifyTypePhone:
 		if vform.Method == SignupVerification {
 			phone, countryCode, _ := util.GetNormalizedPhone(vform.Dest, vform.CountryCode)

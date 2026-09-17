@@ -27,6 +27,9 @@ type VerificationForm struct {
 	ApplicationId string `form:"applicationId"`
 	Method        string `form:"method"`
 	CheckUser     string `form:"checkUser"`
+	// SigninPath is the sign-in page a magic link comes back to, it carries the OAuth
+	// request the sign-in was started from
+	SigninPath string `form:"signinPath"`
 
 	CaptchaType  string `form:"captchaType"`
 	ClientSecret string `form:"clientSecret"`

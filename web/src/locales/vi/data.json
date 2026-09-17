@@ -166,6 +166,8 @@
     "Side panel HTML - Edit": "Bảng Panel Bên - Chỉnh sửa HTML",
     "Side panel HTML - Tooltip": "Tùy chỉnh mã HTML của bảng bên trang đăng nhập - Gợi ý",
     "Sign Up Error": "Lỗi đăng ký",
+    "Sign in only": "Chỉ đăng nhập",
+    "Sign in or sign up": "Đăng nhập hoặc đăng ký",
     "Signin": "Đăng nhập",
     "Signin (Default True)": "Đăng nhập (Mặc định True)",
     "Signin items": "Các mục đăng nhập",
@@ -807,6 +809,7 @@
     "unsynced": "chưa đồng bộ"
   },
   "login": {
+    "A sign-in link has been sent to your email, it can only be opened in this browser": "Liên kết đăng nhập đã được gửi tới email của bạn, chỉ có thể mở trong trình duyệt này",
     "Approve and sign in": "Phê duyệt và đăng nhập",
     "Approve sign-in on this device": "Phê duyệt đăng nhập trên thiết bị này",
     "Auto sign in": "Tự động đăng nhập",
@@ -831,6 +834,8 @@
     "LDAP username, Email or phone": "Tên người dùng LDAP, Email hoặc điện thoại",
     "Loading": "Đang tải",
     "Logging out...": "Đăng xuất ...",
+    "Magic link": "Liên kết ma thuật",
+    "Magic link sent": "Đã gửi liên kết ma thuật",
     "MetaMask plugin not detected": "Không phát hiện plugin MetaMask",
     "Model loading failure": "Tải mô hình thất bại",
     "Native SSO": "Native SSO",
@@ -858,6 +863,7 @@
     "Redirecting, please wait.": "Đang chuyển hướng, vui lòng đợi.",
     "Scan this QR code with a signed-in device to continue": "Quét mã QR này bằng thiết bị đã đăng nhập để tiếp tục",
     "Select organization": "Chọn tổ chức",
+    "Send sign-in link": "Gửi liên kết đăng nhập",
     "Sign In": "Đăng nhập",
     "Sign in with Face ID": "Đăng nhập bằng Face ID",
     "Sign in with Telegram": "Đăng nhập bằng Telegram",

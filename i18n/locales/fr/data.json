@@ -21,6 +21,7 @@
     "The login method: login with SMS is not enabled for the application": "La méthode de connexion : connexion par SMS n'est pas activée pour l'application",
     "The login method: login with email is not enabled for the application": "La méthode de connexion : connexion par e-mail n'est pas activée pour l'application",
     "The login method: login with face is not enabled for the application": "La méthode de connexion : connexion par visage n'est pas activée pour l'application",
+    "The login method: login with magic link is not enabled for the application": "La méthode de connexion : connexion par lien magique n'est pas activée pour l'application",
     "The login method: login with password is not enabled for the application": "La méthode de connexion : connexion avec mot de passe n'est pas activée pour l'application",
     "The order: %s does not exist": "La commande : %s n'existe pas",
     "The organization: %s does not exist": "L'organisation : %s n'existe pas",
@@ -215,7 +216,12 @@
   "verification": {
     "Invalid captcha provider.": "Fournisseur de captcha invalide.",
     "Phone number is invalid in your region %s": "Le numéro de téléphone n'est pas valide dans votre région %s",
+    "Please open the magic link in the browser you requested it from": "Veuillez ouvrir le lien magique dans le navigateur depuis lequel vous l'avez demandé",
     "The forgot password feature is disabled": "La fonction de mot de passe oublié est désactivée",
+    "The magic link has already been used": "Le lien magique a déjà été utilisé",
+    "The magic link has expired": "Le lien magique a expiré",
+    "The magic link is invalid": "Le lien magique n'est pas valide",
+    "The signup item: %s is required, so the magic link cannot sign up a new user": "L'élément d'inscription : %s est obligatoire, le lien magique ne peut donc pas inscrire un nouvel utilisateur",
     "The verification code has already been used!": "Le code de vérification a déjà été utilisé !",
     "The verification code has not been sent yet!": "Le code de vérification n'a pas encore été envoyé !",
     "Turing test failed.": "Le test de Turing a échoué.",
@@ -226,6 +232,7 @@
     "You should verify your code in %d min!": "Vous devriez vérifier votre code en %d min !",
     "please add a SMS provider to the \"Providers\" list for the application: %s": "veuillez ajouter un fournisseur SMS à la liste \"Providers\" pour l'application : %s",
     "please add an Email provider to the \"Providers\" list for the application: %s": "veuillez ajouter un fournisseur d'e-mail à la liste \"Providers\" pour l'application : %s",
+    "please set \"origin\" in conf/app.conf to send magic links": "Veuillez définir « origin » dans conf/app.conf pour envoyer des liens magiques",
     "the user does not exist, please sign up first": "L'utilisateur n'existe pas, veuillez vous inscrire d'abord"
   },
   "webauthn": {

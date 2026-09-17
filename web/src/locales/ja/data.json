@@ -166,6 +166,8 @@
     "Side panel HTML - Edit": "サイドパネルのHTML - 編集",
     "Side panel HTML - Tooltip": "ログインページのサイドパネルのHTMLコードをカスタマイズします - ヒント",
     "Sign Up Error": "サインアップエラー",
+    "Sign in only": "ログインのみ",
+    "Sign in or sign up": "ログインまたは登録",
     "Signin": "サインイン",
     "Signin (Default True)": "サインイン（デフォルトは有効）",
     "Signin items": "サインイン項目",
@@ -807,6 +809,7 @@
     "unsynced": "未同期"
   },
   "login": {
+    "A sign-in link has been sent to your email, it can only be opened in this browser": "ログインリンクをメールに送信しました。このリンクはこのブラウザーでのみ開けます",
     "Approve and sign in": "承認してサインイン",
     "Approve sign-in on this device": "このデバイスでのサインインを承認",
     "Auto sign in": "自動サインイン",
@@ -831,6 +834,8 @@
     "LDAP username, Email or phone": "LDAPユーザー名、メールまたは電話",
     "Loading": "ローディング",
     "Logging out...": "ログアウト中...",
+    "Magic link": "マジックリンク",
+    "Magic link sent": "マジックリンクを送信しました",
     "MetaMask plugin not detected": "MetaMaskプラグインが検出されません",
     "Model loading failure": "モデル読み込みエラー",
     "Native SSO": "Native SSO",
@@ -858,6 +863,7 @@
     "Redirecting, please wait.": "リダイレクト中、お待ちください。",
     "Scan this QR code with a signed-in device to continue": "続行するには、サインイン済みのデバイスでこのQRコードをスキャンしてください",
     "Select organization": "組織を選択",
+    "Send sign-in link": "ログインリンクを送信",
     "Sign In": "サインイン",
     "Sign in with Face ID": "顔IDでサインイン",
     "Sign in with Telegram": "Telegramでサインイン",

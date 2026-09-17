@@ -166,6 +166,8 @@
     "Side panel HTML - Edit": "Editar HTML do painel lateral",
     "Side panel HTML - Tooltip": "Personalize o código HTML do painel lateral da página de login - Dica",
     "Sign Up Error": "Erro ao Registrar",
+    "Sign in only": "Somente login",
+    "Sign in or sign up": "Login ou cadastro",
     "Signin": "Entrar",
     "Signin (Default True)": "Login (Padrão: Verdadeiro)",
     "Signin items": "Itens de login",
@@ -807,6 +809,7 @@
     "unsynced": "não sincronizado"
   },
   "login": {
+    "A sign-in link has been sent to your email, it can only be opened in this browser": "Um link de login foi enviado para o seu e-mail, ele só pode ser aberto neste navegador",
     "Approve and sign in": "Aprovar e fazer login",
     "Approve sign-in on this device": "Aprovar login neste dispositivo",
     "Auto sign in": "Entrar automaticamente",
@@ -831,6 +834,8 @@
     "LDAP username, Email or phone": "Nome de usuário LDAP, e-mail ou telefone",
     "Loading": "Carregando",
     "Logging out...": "Saindo...",
+    "Magic link": "Link mágico",
+    "Magic link sent": "Link mágico enviado",
     "MetaMask plugin not detected": "Plugin MetaMask não detectado",
     "Model loading failure": "Falha ao carregar modelo",
     "Native SSO": "Native SSO",
@@ -858,6 +863,7 @@
     "Redirecting, please wait.": "Redirecionando, por favor aguarde.",
     "Scan this QR code with a signed-in device to continue": "Escaneie este código QR com um dispositivo logado para continuar",
     "Select organization": "Selecionar organização",
+    "Send sign-in link": "Enviar link de login",
     "Sign In": "Entrar",
     "Sign in with Face ID": "Entrar com Face ID",
     "Sign in with Telegram": "Entrar com Telegram",

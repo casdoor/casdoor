@@ -1734,6 +1734,10 @@ export function isFaceIdEnabled(application) {
   return isSigninMethodEnabled(application, "Face ID");
 }
 
+export function isMagicLinkEnabled(application) {
+  return isSigninMethodEnabled(application, "Magic link");
+}
+
 
 export function getOption(label, value) {
   return {

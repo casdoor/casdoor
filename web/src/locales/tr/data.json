@@ -166,6 +166,8 @@
     "Side panel HTML - Edit": "Yan panel HTML - Düzenle",
     "Side panel HTML - Tooltip": "Giriş sayfasının yan paneli için HTML kodunu özelleştirin - İpucu",
     "Sign Up Error": "Kayıt Hatası",
+    "Sign in only": "Yalnızca oturum açma",
+    "Sign in or sign up": "Oturum aç veya kaydol",
     "Signin": "Oturum aç",
     "Signin (Default True)": "Oturum aç (Varsayılan True)",
     "Signin items": "Oturum açma öğeleri",
@@ -807,6 +809,7 @@
     "unsynced": "senkronize edilmedi"
   },
   "login": {
+    "A sign-in link has been sent to your email, it can only be opened in this browser": "E-postanıza bir oturum açma bağlantısı gönderildi, yalnızca bu tarayıcıda açılabilir",
     "Approve and sign in": "Onayla ve giriş yap",
     "Approve sign-in on this device": "Bu cihazda girişi onayla",
     "Auto sign in": "Otomatik Oturum Aç",
@@ -831,6 +834,8 @@
     "LDAP username, Email or phone": "LDAP kullanıcı adı, E-posta veya telefon",
     "Loading": "Yükleniyor",
     "Logging out...": "Çıkış yapılıyor...",
+    "Magic link": "Sihirli bağlantı",
+    "Magic link sent": "Sihirli bağlantı gönderildi",
     "MetaMask plugin not detected": "MetaMask eklentisi algılanmadı",
     "Model loading failure": "Model yükleme hatası",
     "Native SSO": "Native SSO",
@@ -858,6 +863,7 @@
     "Redirecting, please wait.": "Yönlendiriliyor, lütfen bekleyiniz.",
     "Scan this QR code with a signed-in device to continue": "Devam etmek için giriş yapılmış bir cihazla bu QR kodunu tarayın",
     "Select organization": "Organizasyon seç",
+    "Send sign-in link": "Oturum açma bağlantısı gönder",
     "Sign In": "Oturum aç",
     "Sign in with Face ID": "Face ID ile oturum aç",
     "Sign in with Telegram": "Telegram ile giriş yap",

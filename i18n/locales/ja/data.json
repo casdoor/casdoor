@@ -21,6 +21,7 @@
     "The login method: login with SMS is not enabled for the application": "このアプリケーションでは SMS ログインは有効になっていません",
     "The login method: login with email is not enabled for the application": "このアプリケーションではメールログインは有効になっていません",
     "The login method: login with face is not enabled for the application": "このアプリケーションでは顔認証ログインは有効になっていません",
+    "The login method: login with magic link is not enabled for the application": "このアプリケーションではマジックリンクによるログインが有効になっていません",
     "The login method: login with password is not enabled for the application": "ログイン方法：パスワードでのログインはアプリケーションで有効になっていません",
     "The order: %s does not exist": "注文：%s は存在しません",
     "The organization: %s does not exist": "組織「%s」は存在しません",
@@ -215,7 +216,12 @@
   "verification": {
     "Invalid captcha provider.": "無効なCAPTCHAプロバイダー。",
     "Phone number is invalid in your region %s": "電話番号はあなたの地域で無効です %s",
+    "Please open the magic link in the browser you requested it from": "マジックリンクは、リクエストしたブラウザーで開いてください",
     "The forgot password feature is disabled": "パスワードを忘れた機能は無効になっています",
+    "The magic link has already been used": "このマジックリンクはすでに使用されています",
+    "The magic link has expired": "このマジックリンクは期限切れです",
+    "The magic link is invalid": "マジックリンクが無効です",
+    "The signup item: %s is required, so the magic link cannot sign up a new user": "サインアップ項目: %s は必須のため、マジックリンクでは新規ユーザーを登録できません",
     "The verification code has already been used!": "この検証コードは既に使用されています！",
     "The verification code has not been sent yet!": "検証コードはまだ送信されていません！",
     "Turing test failed.": "チューリングテストは失敗しました。",
@@ -226,6 +232,7 @@
     "You should verify your code in %d min!": "あなたは%d分であなたのコードを確認する必要があります！",
     "please add a SMS provider to the \"Providers\" list for the application: %s": "アプリケーション「%s」の「Providers」リストに SMS プロバイダを追加してください",
     "please add an Email provider to the \"Providers\" list for the application: %s": "アプリケーション「%s」の「Providers」リストにメールプロバイダを追加してください",
+    "please set \"origin\" in conf/app.conf to send magic links": "マジックリンクを送信するには、conf/app.conf に \"origin\" を設定してください",
     "the user does not exist, please sign up first": "ユーザーは存在しません。まず登録してください"
   },
   "webauthn": {

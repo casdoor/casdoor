@@ -35,6 +35,10 @@ const (
 	// applications configured before the rename still store the legacy value.
 	SigninMethodRuleHidePassword       = "Hide password"
 	SigninMethodRuleHidePasswordLegacy = "Hide-Password"
+
+	// SigninMethodRuleMagicLinkSignup lets a magic link sent to an address without an
+	// account create that account, the "Sign in only" rule signs existing users in.
+	SigninMethodRuleMagicLinkSignup = "Sign in or sign up"
 )
 
 func (signinMethod *SigninMethod) IsHidden() bool {

@@ -21,6 +21,7 @@
     "The login method: login with SMS is not enabled for the application": "Uygulama için SMS ile giriş yöntemi etkin değil",
     "The login method: login with email is not enabled for the application": "Uygulama için e-posta ile giriş yöntemi etkin değil",
     "The login method: login with face is not enabled for the application": "Uygulama için yüz ile giriş yöntemi etkin değil",
+    "The login method: login with magic link is not enabled for the application": "Oturum açma yöntemi: sihirli bağlantı ile oturum açma bu uygulama için etkin değil",
     "The login method: login with password is not enabled for the application": "Şifre ile giriş yöntemi bu uygulama için etkin değil",
     "The order: %s does not exist": "Sipariş: %s mevcut değil",
     "The organization: %s does not exist": "Organizasyon: %s mevcut değil",
@@ -215,7 +216,12 @@
   "verification": {
     "Invalid captcha provider.": "Geçersiz captcha sağlayıcı.",
     "Phone number is invalid in your region %s": "Telefon numaranız bölgenizde geçersiz %s",
+    "Please open the magic link in the browser you requested it from": "Sihirli bağlantıyı, talep ettiğiniz tarayıcıda açın",
     "The forgot password feature is disabled": "Şifremi unuttum özelliği devre dışı",
+    "The magic link has already been used": "Sihirli bağlantı zaten kullanılmış",
+    "The magic link has expired": "Sihirli bağlantının süresi doldu",
+    "The magic link is invalid": "Sihirli bağlantı geçersiz",
+    "The signup item: %s is required, so the magic link cannot sign up a new user": "Kayıt alanı: %s zorunlu olduğundan sihirli bağlantı yeni kullanıcı kaydedemez",
     "The verification code has already been used!": "Doğrulama kodu zaten kullanılmış!",
     "The verification code has not been sent yet!": "Doğrulama kodu henüz gönderilmedi!",
     "Turing test failed.": "Turing testi başarısız.",
@@ -226,6 +232,7 @@
     "You should verify your code in %d min!": "Kodunuzu %d dakika içinde doğrulamalısınız!",
     "please add a SMS provider to the \"Providers\" list for the application: %s": "lütfen uygulama için \"Sağlayıcılar\" listesine bir SMS sağlayıcı ekleyin: %s",
     "please add an Email provider to the \"Providers\" list for the application: %s": "lütfen uygulama için \"Sağlayıcılar\" listesine bir E-posta sağlayıcı ekleyin: %s",
+    "please set \"origin\" in conf/app.conf to send magic links": "Sihirli bağlantı göndermek için conf/app.conf içinde \"origin\" ayarlayın",
     "the user does not exist, please sign up first": "kullanıcı mevcut değil, lütfen önce kaydolun"
   },
   "webauthn": {
