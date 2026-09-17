@@ -889,6 +889,33 @@ export default function LoginPage({type = "login", application: applicationProp,
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account, application, location.search]);
 
+  // With no form and a single third-party provider there is nothing to choose.
+  // The redirect runs once from an effect: doing it in render fired one upstream
+  // authorization request per re-render, and the provider consumed the first one.
+  const singleProviderAuthUrl = React.useMemo(() => {
+    if (!application || preview === "auto" || application.disableSignin || application.organizationObj?.disableSignin) {
+      return null;
+    }
+    if (Setting.isPasswordEnabled(application) || Setting.isCodeSigninEnabled(application) || Setting.isWebAuthnEnabled(application) || Setting.isLdapEnabled(application)) {
+      return null;
+    }
+    const visibleOAuthProviderItems = (application.providers ?? []).filter(
+      (item: any) => Setting.isProviderVisibleForSignIn(item) && item.provider?.category !== "SAML",
+    );
+    if (visibleOAuthProviderItems.length !== 1) {
+      return null;
+    }
+    return Provider.getAuthUrl(application, visibleOAuthProviderItems[0].provider, "signin");
+  }, [application, preview]);
+  const singleProviderRedirected = React.useRef(false);
+  React.useEffect(() => {
+    if (singleProviderAuthUrl === null || singleProviderRedirected.current) {
+      return;
+    }
+    singleProviderRedirected.current = true;
+    Setting.goToLink(singleProviderAuthUrl);
+  }, [singleProviderAuthUrl]);
+
   if (saml !== null) {
     return <RedirectForm samlResponse={saml.response} redirectUrl={saml.redirectUrl} relayState={saml.relayState} />;
   }
@@ -998,12 +1025,7 @@ export default function LoginPage({type = "login", application: applicationProp,
   // without any credential method there is no form, only the providers
   const showForm = passwordEnabled || codeEnabled || webAuthnEnabled || ldapEnabled || faceIdEnabled;
 
-  // With no form and a single third-party provider there is nothing to choose.
-  const visibleOAuthProviderItems = (application.providers ?? []).filter(
-    (item: any) => Setting.isProviderVisibleForSignIn(item) && item.provider?.category !== "SAML",
-  );
-  if (preview !== "auto" && !passwordEnabled && !codeEnabled && !webAuthnEnabled && !ldapEnabled && visibleOAuthProviderItems.length === 1) {
-    Setting.goToLink(Provider.getAuthUrl(application, visibleOAuthProviderItems[0].provider, "signin"));
+  if (singleProviderAuthUrl !== null) {
     return <Loading className="min-h-screen" />;
   }
 
