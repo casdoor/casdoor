@@ -8325,6 +8325,9 @@
                 "displayName": {
                     "type": "string"
                 },
+                "enableExclusiveSignin": {
+                    "type": "boolean"
+                },
                 "enableSoftDeletion": {
                     "type": "boolean"
                 },

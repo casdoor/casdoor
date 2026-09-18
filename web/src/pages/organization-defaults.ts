@@ -34,6 +34,7 @@ export function newOrganization(createdTime: string) {
     isProfilePublic: true,
     enableTour: true,
     disableSignin: false,
+    enableExclusiveSignin: false,
     disableConsole: false,
     mfaRememberInHours: DefaultMfaRememberInHours,
     balanceCurrency: "USD",

@@ -376,6 +376,79 @@ func DeleteUserSessionId(owner string, name string, beegoSessionId string) error
 	return nil
 }
 
+// EnforceSingleBrowserSession keeps only the current Beego session id for the
+// user across every application. Other browser sessions and the OAuth tokens
+// minted under them are dropped. The same id reused by SSO is not a second session.
+func EnforceSingleBrowserSession(owner string, name string, currentSessionId string, host string) error {
+	if currentSessionId == "" {
+		return nil
+	}
+
+	sessions, err := GetUserSessions(owner, name)
+	if err != nil {
+		return err
+	}
+
+	oldIds := []string{}
+	seen := map[string]struct{}{}
+	for _, session := range sessions {
+		for _, sid := range session.SessionId {
+			if sid == "" || sid == currentSessionId {
+				continue
+			}
+			if _, ok := seen[sid]; ok {
+				continue
+			}
+			seen[sid] = struct{}{}
+			oldIds = append(oldIds, sid)
+		}
+	}
+	if len(oldIds) == 0 {
+		return nil
+	}
+
+	user, err := GetUser(util.GetId(owner, name))
+	if err != nil {
+		return err
+	}
+
+	tokens, err := GetActiveTokensByUser(owner, name)
+	if err != nil {
+		return err
+	}
+	kickedTokens := []*Token{}
+	for _, token := range tokens {
+		if slices.Contains(oldIds, token.SessionId) {
+			kickedTokens = append(kickedTokens, token)
+		}
+	}
+
+	for _, oldId := range oldIds {
+		if user != nil {
+			oldTokens := []*Token{}
+			for _, token := range kickedTokens {
+				if token.SessionId == oldId {
+					oldTokens = append(oldTokens, token)
+				}
+			}
+			sendBackchannelLogoutForTokens(user, oldTokens, oldId, host)
+		}
+
+		err = DeleteUserSessionId(owner, name, oldId)
+		if err != nil {
+			return err
+		}
+	}
+
+	if user != nil {
+		go func() {
+			_ = SendSsoLogoutNotifications(user, oldIds, kickedTokens)
+		}()
+	}
+
+	return nil
+}
+
 func DeleteBeegoSession(sessionIds []string) {
 	for _, sessionId := range sessionIds {
 		// The error is ignored on purpose: an already expired or destroyed session id

@@ -359,6 +359,22 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 			c.ResponseError(err.Error(), nil)
 			return
 		}
+
+		org := application.OrganizationObj
+		if org == nil || org.Name != user.Owner {
+			org, err = object.GetOrganizationByUser(user)
+			if err != nil {
+				c.ResponseError(err.Error(), nil)
+				return
+			}
+		}
+		if org != nil && org.EnableExclusiveSignin {
+			err = object.EnforceSingleBrowserSession(user.Owner, user.Name, sessionId, c.Ctx.Request.Host)
+			if err != nil {
+				c.ResponseError(err.Error(), nil)
+				return
+			}
+		}
 	}
 
 	return resp

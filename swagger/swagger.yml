@@ -5467,6 +5467,8 @@ definitions:
         type: boolean
       displayName:
         type: string
+      enableExclusiveSignin:
+        type: boolean
       enableSoftDeletion:
         type: boolean
       enableTour:
