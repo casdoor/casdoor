@@ -141,6 +141,7 @@ func handleAccessRequest(w radius.ResponseWriter, r *radius.Request) {
 
 		r.Packet.Code = radius.CodeAccessChallenge
 		w.Write(r.Packet)
+		return
 	}
 
 	w.Write(r.Response(radius.CodeAccessAccept))
