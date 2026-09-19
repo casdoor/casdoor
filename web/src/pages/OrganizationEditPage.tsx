@@ -316,6 +316,9 @@ export default function OrganizationEditPage() {
           <FormRow labelKey="application:Disable signin">
             <Switch checked={!!organization.disableSignin} onCheckedChange={(v) => update("disableSignin", v)} />
           </FormRow>
+          <FormRow labelKey="organization:Enable exclusive signin across applications">
+            <Switch checked={!!organization.enableExclusiveSignin} onCheckedChange={(v) => update("enableExclusiveSignin", v)} />
+          </FormRow>
           <FormRow labelKey="organization:Disable console">
             <Switch checked={!!organization.disableConsole} onCheckedChange={(v) => update("disableConsole", v)} />
           </FormRow>

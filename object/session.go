@@ -376,6 +376,67 @@ func DeleteUserSessionId(owner string, name string, beegoSessionId string) error
 	return nil
 }
 
+// EnforceSingleBrowserSession keeps only the current Beego session id of the user and drops
+// every other one across all applications, together with the tokens minted under them. An SSO
+// sign-in into another application reuses the same id, so it is not treated as a second session.
+func EnforceSingleBrowserSession(user *User, currentSessionId string, host string) error {
+	if user == nil || currentSessionId == "" {
+		return nil
+	}
+
+	sessions, err := GetUserSessions(user.Owner, user.Name)
+	if err != nil {
+		return err
+	}
+
+	oldIds := []string{}
+	for _, session := range sessions {
+		for _, sid := range session.SessionId {
+			if sid != "" && sid != currentSessionId && !slices.Contains(oldIds, sid) {
+				oldIds = append(oldIds, sid)
+			}
+		}
+	}
+	if len(oldIds) == 0 {
+		return nil
+	}
+
+	// The back-channel logout has to go out before the tokens are expired below, because it is
+	// built from the still active ones
+	tokens, err := GetActiveTokensByUser(user.Owner, user.Name)
+	if err != nil {
+		return err
+	}
+	oldTokens := []*Token{}
+	for _, token := range tokens {
+		if slices.Contains(oldIds, token.SessionId) {
+			oldTokens = append(oldTokens, token)
+		}
+	}
+	for _, oldId := range oldIds {
+		sessionTokens := []*Token{}
+		for _, token := range oldTokens {
+			if token.SessionId == oldId {
+				sessionTokens = append(sessionTokens, token)
+			}
+		}
+		sendBackchannelLogoutForTokens(user, sessionTokens, oldId, host)
+	}
+
+	for _, oldId := range oldIds {
+		err = DeleteUserSessionId(user.Owner, user.Name, oldId)
+		if err != nil {
+			return err
+		}
+	}
+
+	go func() {
+		_ = SendSsoLogoutNotifications(user, oldIds, oldTokens)
+	}()
+
+	return nil
+}
+
 func DeleteBeegoSession(sessionIds []string) {
 	for _, sessionId := range sessionIds {
 		// The error is ignored on purpose: an already expired or destroyed session id
