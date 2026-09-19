@@ -22,6 +22,7 @@ import (
 
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/object"
+	"github.com/casdoor/casdoor/radius/authenticator"
 	"github.com/casdoor/casdoor/util"
 	"layeh.com/radius"
 	"layeh.com/radius/rfc2865"
@@ -52,6 +53,15 @@ func StartRadiusServer() {
 func handlerRadius(w radius.ResponseWriter, r *radius.Request) {
 	switch r.Code {
 	case radius.CodeAccessRequest:
+		// RFC 2869: a request carrying a Message-Authenticator must be silently
+		// discarded if it is wrong, and its responses must carry one too.
+		if authenticator.Present(r.Packet) {
+			if err := authenticator.VerifyRequest(r.Packet); err != nil {
+				log.Printf("handlerRadius() dropped Access-Request: %v", err)
+				return
+			}
+			w = authenticator.NewResponseWriter(w)
+		}
 		handleAccessRequest(w, r)
 	case radius.CodeAccountingRequest:
 		handleAccountingRequest(w, r)

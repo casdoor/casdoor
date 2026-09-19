@@ -712,6 +712,7 @@ export default function ProviderEditPage() {
       defaultType = "RADIUS";
       patch.host = "";
       patch.port = 1812;
+      patch.requireMessageAuthenticator = true;
     } else if (value === "ID Verification") {
       defaultType = "Jumio";
       patch.endpoint = "";
@@ -1223,6 +1224,9 @@ export default function ProviderEditPage() {
       </FormRow>
       <FormRow label={i18next.t("provider:Client secret")} tooltip={i18next.t("provider:RADIUS Shared Secret - Tooltip")}>
         <Input value={provider.clientSecret ?? ""} placeholder="Shared secret" onChange={(e) => updateProviderField("clientSecret", e.target.value)} />
+      </FormRow>
+      <FormRow label={i18next.t("provider:Require Message-Authenticator")} tooltip={i18next.t("provider:Require Message-Authenticator - Tooltip")}>
+        <Switch checked={!!provider.requireMessageAuthenticator} onCheckedChange={(v) => updateProviderField("requireMessageAuthenticator", v)} />
       </FormRow>
     </React.Fragment>
   );

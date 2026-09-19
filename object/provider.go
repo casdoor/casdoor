@@ -85,6 +85,8 @@ type Provider struct {
 	EnableProxy bool   `json:"enableProxy"`
 	EnablePkce  bool   `json:"enablePkce"`
 
+	RequireMessageAuthenticator bool `json:"requireMessageAuthenticator"`
+
 	State string `xorm:"varchar(100)" json:"state"`
 }
 
