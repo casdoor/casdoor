@@ -1118,13 +1118,13 @@ export const MfaRuleOptional = "Optional";
 
 export const RequiredUpdatePassword = "RequiredUpdatePassword";
 
-export function goToUpdatePassword() {
+export function goToUpdatePassword(applicationName?: string) {
   // remember where the login was started from, to go back after the password is updated
   const signinUrl = localStorage.getItem("signinUrl");
   if (signinUrl) {
     sessionStorage.setItem("signinUrl", signinUrl);
   }
-  goToLink("/account");
+  goToLink(applicationName ? `/update-password/${encodeURIComponent(applicationName)}` : "/update-password");
 }
 
 export function isRequiredEnableMfa(user, organization) {

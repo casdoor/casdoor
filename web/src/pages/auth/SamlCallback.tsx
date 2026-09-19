@@ -110,7 +110,7 @@ export default function SamlCallback() {
     // Same second-factor / password-update handling the OAuth callback does.
     const checkMfa = (res: any, onDone: (res: any) => void) => {
       if (res.data === Setting.RequiredUpdatePassword) {
-        Setting.goToUpdatePassword();
+        Setting.goToUpdatePassword(applicationName || undefined);
       } else if (res.data === "RequiredMfa") {
         localStorage.setItem("mfaRedirectUrl", window.location.origin);
         Setting.goToLink(window.location.origin);
