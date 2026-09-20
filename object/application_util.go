@@ -405,10 +405,16 @@ func GetAllowedApplications(applications []*Application, userId string, lang str
 		if err != nil {
 			return nil, err
 		}
-
-		if allowed {
-			res = append(res, application)
+		if !allowed {
+			continue
 		}
+
+		// same tag rule as the login check in controllers/auth.go
+		if len(application.Tags) > 0 && !util.HasTagInSlice(application.Tags, user.Tag) {
+			continue
+		}
+
+		res = append(res, application)
 	}
 	return res, nil
 }
