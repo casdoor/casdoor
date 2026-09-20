@@ -147,6 +147,31 @@ func NewRecord(ctx *context.Context) (*Record, error) {
 	return &record, nil
 }
 
+// SetUser sets the record's organization and user from the subject's user ID. An M2M
+// credential ("app/<name>") is recorded in the application's organization, because the
+// pseudo organization "app" is shown by no organization's audit log.
+func (record *Record) SetUser(userId string) error {
+	if IsAppUser(userId) {
+		appUser, err := GetAppUser(userId)
+		if err != nil {
+			return err
+		}
+
+		if appUser != nil {
+			record.Organization, record.User = appUser.Owner, appUser.Name
+			return nil
+		}
+	}
+
+	owner, name, err := util.GetOwnerAndNameFromIdWithError(userId)
+	if err != nil {
+		return err
+	}
+
+	record.Organization, record.User = owner, name
+	return nil
+}
+
 func addRecord(record *Record) (int64, error) {
 	affected, err := ormer.Engine.Insert(record)
 	return affected, err
@@ -157,10 +182,6 @@ func AddRecord(record *Record) bool {
 		if record.Method == "GET" && !alwaysLoggedActions[record.Action] {
 			return false
 		}
-	}
-
-	if record.Organization == "app" {
-		return false
 	}
 
 	record.Owner = record.Organization

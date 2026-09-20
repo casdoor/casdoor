@@ -22,39 +22,17 @@ import (
 	"github.com/casdoor/casdoor/util"
 )
 
-func getUser(ctx *context.Context) (username string) {
-	defer func() {
-		if r := recover(); r != nil {
-			username = getUserByClientIdSecret(ctx)
-		}
-	}()
-
-	username = ctx.Input.Session("username").(string)
-
-	if username == "" {
-		username = getUserByClientIdSecret(ctx)
+func getUser(ctx *context.Context) string {
+	if username, ok := ctx.Input.Session("username").(string); ok && username != "" {
+		return username
 	}
 
-	return
-}
-
-func getUserByClientIdSecret(ctx *context.Context) string {
-	clientId := ctx.Input.Query("clientId")
-	clientSecret := ctx.Input.Query("clientSecret")
-	if clientId == "" || clientSecret == "" {
-		return ""
-	}
-
-	application, err := object.GetApplicationByClientId(clientId)
+	username, err := getUsernameByClientIdSecret(ctx)
 	if err != nil {
-		panic(err)
-	}
-
-	if application == nil || application.ClientSecret != clientSecret {
 		return ""
 	}
 
-	return util.GetId(application.Organization, application.Name)
+	return username
 }
 
 func RecordMessage(ctx *context.Context) {
@@ -109,11 +87,10 @@ func AfterRecordMessage(ctx *context.Context) {
 			record.Organization, record.User = owner, user
 		}
 	} else if userId != "" {
-		owner, user, err := util.GetOwnerAndNameFromIdWithError(userId)
+		err = record.SetUser(userId)
 		if err != nil {
 			panic(err)
 		}
-		record.Organization, record.User = owner, user
 	}
 
 	var record2 *object.Record

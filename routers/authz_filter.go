@@ -521,8 +521,10 @@ func ApiFilter(ctx *context.Context) {
 			return
 		}
 
-		record.Organization = subOwner
-		record.User = subName // auth:Unauthorized operation
+		err = record.SetUser(util.GetId(subOwner, subName))
+		if err != nil {
+			return
+		}
 		record.Response = fmt.Sprintf("{status:\"error\", msg:\"%s\"}", T(ctx, "auth:Unauthorized operation"))
 
 		util.SafeGoroutine(func() {
