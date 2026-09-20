@@ -30,6 +30,14 @@ const MFA_TYPE_LABELS: {type: string; labelKey: string}[] = [
   {type: PushMfaType, labelKey: "mfa:Use Push Notification"},
 ];
 
+/** The factor the organization marks as "Required", used when the URL carries no "mfaType". */
+function getRequiredMfaType(account: any) {
+  if (!account) {
+    return undefined;
+  }
+  return Setting.getMfaItemsByRules(account, account.organization, [Setting.MfaRuleRequired])[0]?.name;
+}
+
 /**
  * Three-step wizard that turns on a second factor: verify the password, verify
  * the factor, then enable it and hand over the recovery code. Ported from
@@ -44,7 +52,11 @@ export default function MfaSetupPage() {
   // Coming from a "RequiredMfa" sign-in the password was just entered, so skip step 1.
   const cameFromLogin = (location.state as any)?.from !== undefined;
   const [current, setCurrent] = React.useState(cameFromLogin ? 1 : 0);
-  const [mfaType, setMfaType] = React.useState(searchParams.get("mfaType") ?? SmsMfaType);
+  // A "RequiredMfa" sign-in lands here without a "mfaType", so fall back to the
+  // required factor: plain SMS would ask for a phone code the organization never asked for.
+  const [mfaType, setMfaType] = React.useState(
+    () => searchParams.get("mfaType") ?? getRequiredMfaType(account) ?? SmsMfaType,
+  );
   const [application, setApplication] = React.useState<any>(undefined);
   const [applicationError, setApplicationError] = React.useState<string | null>(null);
   const [mfaProps, setMfaProps] = React.useState<any>(null);
