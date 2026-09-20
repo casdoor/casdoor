@@ -16,6 +16,18 @@ import * as Setting from "@/lib/setting";
 /** the actions for which the backend keeps an `isTriggered` flag worth showing */
 const TRIGGERABLE_ACTIONS = ["signup", "login", "logout", "update-user", "new-user"];
 
+/** an M2M row's subject is an application credential ("app/<name>"), not a user */
+function RecordUserLink({organization, user}: {organization: string; user: string}) {
+  const appPrefix = ["app/", "app-dcr/"].find((prefix) => user.startsWith(prefix));
+  const to = appPrefix ? `/applications/admin/${user.slice(appPrefix.length)}` : `/users/${organization}/${user}`;
+
+  return (
+    <Link to={to} className="underline-offset-4 hover:underline">
+      {user}
+    </Link>
+  );
+}
+
 /** pretty-prints the stored object, leaving it alone when it is not JSON */
 function jsonStrFormatter(value: any): string {
   if (!value) {
@@ -50,11 +62,7 @@ function RecordDetailSheet({record, onClose}: {record: any; onClose: () => void}
     },
     {
       label: i18next.t("general:User"),
-      children: field("user") ? (
-        <Link to={`/users/${field("organization")}/${field("user")}`} className="underline-offset-4 hover:underline">
-          {field("user")}
-        </Link>
-      ) : null,
+      children: field("user") ? <RecordUserLink organization={field("organization")} user={field("user")} /> : null,
     },
     {label: i18next.t("general:Method"), children: field("method")},
     {label: i18next.t("general:Request URI"), children: field("requestUri")},
@@ -120,11 +128,7 @@ export default function RecordListPage() {
       width: 130,
       sortable: true,
       searchable: true,
-      render: (value, record) => (
-        <Link to={`/users/${record.organization}/${value}`} className="underline-offset-4 hover:underline">
-          {value}
-        </Link>
-      ),
+      render: (value, record) => <RecordUserLink organization={record.organization} user={String(value ?? "")} />,
     },
     textColumn({
       dataIndex: "method",
