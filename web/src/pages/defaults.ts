@@ -614,7 +614,7 @@ export function newUser(account: Account, organization: Record<string, any>, org
     displayName: `New User - ${randomName}`,
     avatar: organization?.defaultAvatar ?? `${Setting.StaticBaseUrl}/img/casbin.svg`,
     email: `${randomName}@example.com`,
-    phone: Setting.getRandomNumber(),
+    phone: "",
     countryCode: organization?.countryCodes?.length > 0 ? organization.countryCodes[0] : "",
     address: [],
     addresses: [],

@@ -1799,10 +1799,6 @@ export function getRandomName() {
   return Math.random().toString(36).slice(-6);
 }
 
-export function getRandomNumber() {
-  return Math.random().toString(10).slice(-11);
-}
-
 export function getFromLink() {
   const from = sessionStorage.getItem("from");
   if (from === null) {
