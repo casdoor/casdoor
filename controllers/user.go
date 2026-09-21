@@ -281,7 +281,12 @@ func (c *ApiController) UpdateUser() {
 	}
 
 	var userFromUserId *object.User
-	if userId != "" && owner != "" {
+	if userId != "" {
+		if owner == "" {
+			c.ResponseError(c.T("general:Missing parameter"))
+			return
+		}
+
 		userFromUserId, err = object.GetUserByUserId(owner, userId)
 		if err != nil {
 			c.ResponseError(err.Error())
@@ -292,7 +297,12 @@ func (c *ApiController) UpdateUser() {
 			return
 		}
 
-		id = util.GetId(userFromUserId.Owner, userFromUserId.Name)
+		resolvedId := userFromUserId.GetId()
+		if id != "" && id != resolvedId {
+			c.ResponseError(c.T("auth:Unauthorized operation"))
+			return
+		}
+		id = resolvedId
 	}
 
 	var oldUser *object.User
@@ -308,6 +318,12 @@ func (c *ApiController) UpdateUser() {
 
 	if oldUser == nil {
 		c.ResponseError(fmt.Sprintf(c.T("general:The user: %s doesn't exist"), id))
+		return
+	}
+
+	// Authorize the resolved user before merging any fields from the request.
+	if hasPermission, err := object.CheckUserPermission(c.GetSessionUsername(), oldUser.GetId(), true, c.GetAcceptLanguage()); !hasPermission {
+		c.ResponseError(err.Error())
 		return
 	}
 
