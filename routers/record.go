@@ -15,6 +15,7 @@
 package routers
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/beego/beego/v2/server/web/context"
@@ -61,6 +62,55 @@ func RecordMessage(ctx *context.Context) {
 	ctx.Input.SetParam("recordUserId", userId)
 }
 
+// getOrganizationFromRequest derives the organization of a request that has no authenticated
+// subject, from the organization or application that the request names.
+func getOrganizationFromRequest(ctx *context.Context) string {
+	var body struct {
+		Organization string `json:"organization"`
+		Application  string `json:"application"`
+		ClientId     string `json:"clientId"`
+	}
+	if len(ctx.Input.RequestBody) != 0 {
+		_ = json.Unmarshal(ctx.Input.RequestBody, &body)
+	}
+
+	// the name is caller-controlled, so a made-up one must not become an owner
+	for _, name := range []string{body.Organization, ctx.Input.Query("organization")} {
+		if name == "" {
+			continue
+		}
+
+		organization, err := object.GetOrganization(util.GetId("admin", name))
+		if err == nil && organization != nil {
+			return organization.Name
+		}
+	}
+
+	applicationId := ctx.Input.Query("applicationId")
+	if body.Application != "" {
+		applicationId = util.GetId("admin", body.Application)
+	}
+	if applicationId != "" {
+		application, err := object.GetApplication(applicationId)
+		if err == nil && application != nil {
+			return application.Organization
+		}
+	}
+
+	clientId := body.ClientId
+	if clientId == "" {
+		clientId = ctx.Input.Query("clientId")
+	}
+	if clientId != "" {
+		application, err := object.GetApplicationByClientId(clientId)
+		if err == nil && application != nil {
+			return application.Organization
+		}
+	}
+
+	return ""
+}
+
 func AfterRecordMessage(ctx *context.Context) {
 	record, err := object.NewRecord(ctx)
 	if err != nil {
@@ -91,6 +141,10 @@ func AfterRecordMessage(ctx *context.Context) {
 		if err != nil {
 			panic(err)
 		}
+	}
+
+	if record.Organization == "" {
+		record.Organization = getOrganizationFromRequest(ctx)
 	}
 
 	var record2 *object.Record

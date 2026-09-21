@@ -525,9 +525,15 @@ func ApiFilter(ctx *context.Context) {
 			return
 		}
 
-		err = record.SetUser(util.GetId(subOwner, subName))
-		if err != nil {
-			return
+		// "anonymous" is the sentinel subject of an unauthenticated request, not a real user
+		if subOwner == "anonymous" {
+			record.User = subName
+			record.Organization = getOrganizationFromRequest(ctx)
+		} else {
+			err = record.SetUser(util.GetId(subOwner, subName))
+			if err != nil {
+				return
+			}
 		}
 		record.Response = fmt.Sprintf("{status:\"error\", msg:\"%s\"}", T(ctx, "auth:Unauthorized operation"))
 
