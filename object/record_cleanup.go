@@ -79,11 +79,28 @@ func cleanupOrgRecords(owner string, cutoffTime string) (int64, error) {
 	return deletedCount, nil
 }
 
+// owners of the rows written before unauthenticated requests were attributed, see AddRecord()
+var legacyOrphanRecordOwners = []string{"", "anonymous"}
+
+func addLegacyOrphanRetentionDays(retentionDaysMap map[string]int) {
+	retentionDays, ok := retentionDaysMap["built-in"]
+	if !ok {
+		return
+	}
+
+	for _, owner := range legacyOrphanRecordOwners {
+		if _, ok := retentionDaysMap[owner]; !ok {
+			retentionDaysMap[owner] = retentionDays
+		}
+	}
+}
+
 func CleanupRecords() error {
 	retentionDaysMap, err := getOrgRecordRetentionDays()
 	if err != nil {
 		return err
 	}
+	addLegacyOrphanRetentionDays(retentionDaysMap)
 
 	currentTime := time.Now()
 	for owner, retentionDays := range retentionDaysMap {

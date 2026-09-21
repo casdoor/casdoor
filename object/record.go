@@ -184,6 +184,10 @@ func AddRecord(record *Record) bool {
 		}
 	}
 
+	// an empty owner matches no audit log query and no retention policy
+	if record.Organization == "" {
+		record.Organization = "built-in"
+	}
 	record.Owner = record.Organization
 	record.Object = maskPassword(record.Object)
 
