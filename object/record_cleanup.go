@@ -79,6 +79,24 @@ func cleanupOrgRecords(owner string, cutoffTime string) (int64, error) {
 	return deletedCount, nil
 }
 
+// getRetentionCutoffs maps each record owner to the time before which its rows
+// expire. Rows written for unauthenticated requests carry an empty owner (see
+// AddRecord()), so they are swept with the strictest configured retention.
+func getRetentionCutoffs(retentionDaysMap map[string]int, currentTime time.Time) map[string]string {
+	res := map[string]string{}
+	minDays := 0
+	for owner, retentionDays := range retentionDaysMap {
+		res[owner] = currentTime.AddDate(0, 0, -retentionDays).Format(time.RFC3339)
+		if minDays == 0 || retentionDays < minDays {
+			minDays = retentionDays
+		}
+	}
+	if minDays > 0 {
+		res[""] = currentTime.AddDate(0, 0, -minDays).Format(time.RFC3339)
+	}
+	return res
+}
+
 func CleanupRecords() error {
 	retentionDaysMap, err := getOrgRecordRetentionDays()
 	if err != nil {
@@ -86,11 +104,9 @@ func CleanupRecords() error {
 	}
 
 	currentTime := time.Now()
-	for owner, retentionDays := range retentionDaysMap {
+	for owner, cutoffTime := range getRetentionCutoffs(retentionDaysMap, currentTime) {
 		// "record"'s "owner" column is the organization that the record belongs to,
 		// see AddRecord().
-		cutoffTime := currentTime.AddDate(0, 0, -retentionDays).Format(time.RFC3339)
-
 		deletedCount, err := cleanupOrgRecords(owner, cutoffTime)
 		if err != nil {
 			return err
