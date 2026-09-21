@@ -255,6 +255,10 @@ func getObject(ctx *context.Context) (string, string, error) {
 		if id := ctx.Input.Query("id"); id != "" && (!isOwnerObjPath || strings.HasSuffix(path, "update-organization")) {
 			owner, name, err := util.GetOwnerAndNameFromIdWithError(id)
 			if err == nil {
+				// an organization row is owned by "admin", authorize it by its own name
+				if strings.HasSuffix(path, "-organization") {
+					return name, name, nil
+				}
 				return owner, name, nil
 			}
 		}
