@@ -440,7 +440,7 @@ func (c *ApiController) SendVerificationCode() {
 		if vform.Method == MagicLinkVerification {
 			sendResp = object.SendMagicLinkToEmail(organization, user, provider, clientIp, vform.Dest, c.Ctx.Request.Host, vform.SigninPath, application, c.newMagicLinkSessionHash(), c.GetAcceptLanguage())
 		} else {
-			sendResp = object.SendVerificationCodeToEmail(organization, user, provider, clientIp, vform.Dest, vform.Method, c.Ctx.Request.Host, application.Name, application)
+			sendResp = object.SendVerificationCodeToEmail(organization, user, provider, clientIp, vform.Dest, vform.Method, c.Ctx.Request.Host, application.Name, application, c.GetAcceptLanguage())
 		}
 	case object.VerifyTypePhone:
 		if vform.Method == SignupVerification {
@@ -506,7 +506,7 @@ func (c *ApiController) SendVerificationCode() {
 			c.ResponseError(fmt.Sprintf(c.T("verification:Phone number is invalid in your region %s"), vform.CountryCode))
 			return
 		} else {
-			sendResp = object.SendVerificationCodeToPhone(organization, user, provider, clientIp, phone, application)
+			sendResp = object.SendVerificationCodeToPhone(organization, user, provider, clientIp, phone, application, c.GetAcceptLanguage())
 		}
 	}
 

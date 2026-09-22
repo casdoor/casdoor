@@ -233,7 +233,8 @@
     "please add a SMS provider to the \"Providers\" list for the application: %s": "будь ласка, додайте SMS-провайдера до списку \"Провайдери\" для додатка: %s",
     "please add an Email provider to the \"Providers\" list for the application: %s": "будь ласка, додайте Email-провайдера до списку \"Провайдери\" для додатка: %s",
     "please set \"origin\" in conf/app.conf to send magic links": "Щоб надсилати магічні посилання, укажіть \"origin\" у conf/app.conf",
-    "the user does not exist, please sign up first": "користувача не існує, спочатку зареєструйтесь"
+    "the user does not exist, please sign up first": "користувача не існує, спочатку зареєструйтесь",
+    "you can only send one code in %ds": "ви можете надсилати лише один код раз на %d секунд"
   },
   "webauthn": {
     "Found no credentials for this user": "Облікові дані для цього користувача не знайдено",

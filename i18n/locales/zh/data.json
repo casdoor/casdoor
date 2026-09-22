@@ -233,7 +233,8 @@
     "please add a SMS provider to the \"Providers\" list for the application: %s": "请添加一个SMS提供商到应用： %s 的 \"提供商 \"列表",
     "please add an Email provider to the \"Providers\" list for the application: %s": "请添加一个Email提供商到应用： %s 的 \"提供商 \"列表",
     "please set \"origin\" in conf/app.conf to send magic links": "发送魔法链接前，请先在 conf/app.conf 中设置 \"origin\"",
-    "the user does not exist, please sign up first": "用户不存在，请先注册"
+    "the user does not exist, please sign up first": "用户不存在，请先注册",
+    "you can only send one code in %ds": "您在 %d 秒内只能发送一次验证码"
   },
   "webauthn": {
     "Found no credentials for this user": "无法找到此用户的证书",

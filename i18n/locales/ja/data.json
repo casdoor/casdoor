@@ -233,7 +233,8 @@
     "please add a SMS provider to the \"Providers\" list for the application: %s": "アプリケーション「%s」の「Providers」リストに SMS プロバイダを追加してください",
     "please add an Email provider to the \"Providers\" list for the application: %s": "アプリケーション「%s」の「Providers」リストにメールプロバイダを追加してください",
     "please set \"origin\" in conf/app.conf to send magic links": "マジックリンクを送信するには、conf/app.conf に \"origin\" を設定してください",
-    "the user does not exist, please sign up first": "ユーザーは存在しません。まず登録してください"
+    "the user does not exist, please sign up first": "ユーザーは存在しません。まず登録してください",
+    "you can only send one code in %ds": "%d秒に1回しかコードを送信できません"
   },
   "webauthn": {
     "Found no credentials for this user": "このユーザーの認証情報が見つかりませんでした",

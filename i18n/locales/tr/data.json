@@ -233,7 +233,8 @@
     "please add a SMS provider to the \"Providers\" list for the application: %s": "lütfen uygulama için \"Sağlayıcılar\" listesine bir SMS sağlayıcı ekleyin: %s",
     "please add an Email provider to the \"Providers\" list for the application: %s": "lütfen uygulama için \"Sağlayıcılar\" listesine bir E-posta sağlayıcı ekleyin: %s",
     "please set \"origin\" in conf/app.conf to send magic links": "Sihirli bağlantı göndermek için conf/app.conf içinde \"origin\" ayarlayın",
-    "the user does not exist, please sign up first": "kullanıcı mevcut değil, lütfen önce kaydolun"
+    "the user does not exist, please sign up first": "kullanıcı mevcut değil, lütfen önce kaydolun",
+    "you can only send one code in %ds": "%d saniyede yalnızca bir kod gönderebilirsiniz"
   },
   "webauthn": {
     "Found no credentials for this user": "Bu kullanıcı için kimlik bilgisi bulunamadı",

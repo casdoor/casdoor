@@ -233,7 +233,8 @@
     "please add a SMS provider to the \"Providers\" list for the application: %s": "vui lòng thêm nhà cung cấp SMS vào danh sách \"Providers\" cho ứng dụng: %s",
     "please add an Email provider to the \"Providers\" list for the application: %s": "vui lòng thêm nhà cung cấp Email vào danh sách \"Providers\" cho ứng dụng: %s",
     "please set \"origin\" in conf/app.conf to send magic links": "Vui lòng đặt \"origin\" trong conf/app.conf để gửi liên kết ma thuật",
-    "the user does not exist, please sign up first": "Người dùng không tồn tại, vui lòng đăng ký trước"
+    "the user does not exist, please sign up first": "Người dùng không tồn tại, vui lòng đăng ký trước",
+    "you can only send one code in %ds": "bạn chỉ có thể gửi một mã mỗi %ds"
   },
   "webauthn": {
     "Found no credentials for this user": "Không tìm thấy thông tin xác thực cho người dùng này",
