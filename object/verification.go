@@ -80,15 +80,19 @@ type VerificationRecord struct {
 	IsUsed     bool   `xorm:"notnull" json:"isUsed"`
 }
 
-func IsAllowSend(user *User, remoteAddr, recordType string, application *Application) error {
-	var record VerificationRecord
-	record.RemoteAddr = remoteAddr
-	record.Type = recordType
+func IsAllowSend(user *User, remoteAddr, recordType string, application *Application, lang string) error {
+	userId := ""
 	if user != nil {
-		record.User = user.GetId()
+		userId = user.GetId()
 	}
 
-	has, err := ormer.Engine.Desc("created_time").Get(&record)
+	// the "user" condition has to be spelled out: as a struct field an empty user is
+	// dropped from the WHERE, and an anonymous send is then throttled by every other
+	// user's record coming from the same address
+	record := VerificationRecord{}
+	has, err := ormer.Engine.Where("remote_addr = ? and type = ?", remoteAddr, recordType).
+		And(fmt.Sprintf("%s = ?", quoteColumn("user")), userId).
+		Desc("created_time").Get(&record)
 	if err != nil {
 		return err
 	}
@@ -101,13 +105,13 @@ func IsAllowSend(user *User, remoteAddr, recordType string, application *Applica
 
 	now := time.Now().Unix()
 	if has && now-record.Time < resendTimeoutInSeconds {
-		return fmt.Errorf("you can only send one code in %ds", resendTimeoutInSeconds)
+		return fmt.Errorf(i18n.Translate(lang, "verification:you can only send one code in %ds"), resendTimeoutInSeconds)
 	}
 
 	return nil
 }
 
-func SendVerificationCodeToEmail(organization *Organization, user *User, provider *Provider, remoteAddr string, dest string, method string, host string, applicationName string, application *Application) error {
+func SendVerificationCodeToEmail(organization *Organization, user *User, provider *Provider, remoteAddr string, dest string, method string, host string, applicationName string, application *Application, lang string) error {
 	sender := organization.DisplayName
 	title := provider.Title
 
@@ -142,7 +146,7 @@ func SendVerificationCodeToEmail(organization *Organization, user *User, provide
 	}
 	content = strings.Replace(content, "%{user.friendlyName}", userString, 1)
 
-	err := IsAllowSend(user, remoteAddr, provider.Category, application)
+	err := IsAllowSend(user, remoteAddr, provider.Category, application, lang)
 	if err != nil {
 		return err
 	}
@@ -160,8 +164,8 @@ func SendVerificationCodeToEmail(organization *Organization, user *User, provide
 	return nil
 }
 
-func SendVerificationCodeToPhone(organization *Organization, user *User, provider *Provider, remoteAddr string, dest string, application *Application) error {
-	err := IsAllowSend(user, remoteAddr, provider.Category, application)
+func SendVerificationCodeToPhone(organization *Organization, user *User, provider *Provider, remoteAddr string, dest string, application *Application, lang string) error {
+	err := IsAllowSend(user, remoteAddr, provider.Category, application, lang)
 	if err != nil {
 		return err
 	}

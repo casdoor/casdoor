@@ -153,7 +153,7 @@ func getDefaultMagicLinkEmailContent() string {
 
 // isAllowSendMagicLink throttles the links the same way IsAllowSend() throttles the
 // verification codes, an issued link leaves no verification record of its own.
-func isAllowSendMagicLink(application *Application, email string, remoteAddr string) error {
+func isAllowSendMagicLink(application *Application, email string, remoteAddr string, lang string) error {
 	resendTimeoutInSeconds := int64(60)
 	if application != nil && application.CodeResendTimeout > 0 {
 		resendTimeoutInSeconds = int64(application.CodeResendTimeout)
@@ -171,7 +171,7 @@ func isAllowSendMagicLink(application *Application, email string, remoteAddr str
 		}
 
 		if has && now-magicLink.Time < resendTimeoutInSeconds {
-			return fmt.Errorf("you can only send one code in %ds", resendTimeoutInSeconds)
+			return fmt.Errorf(i18n.Translate(lang, "verification:you can only send one code in %ds"), resendTimeoutInSeconds)
 		}
 	}
 
@@ -209,12 +209,12 @@ func SendMagicLinkToEmail(organization *Organization, user *User, provider *Prov
 		return errors.New(i18n.Translate(lang, "verification:Please open the magic link in the browser you requested it from"))
 	}
 
-	err = IsAllowSend(user, remoteAddr, provider.Category, application)
+	err = IsAllowSend(user, remoteAddr, provider.Category, application, lang)
 	if err != nil {
 		return err
 	}
 
-	err = isAllowSendMagicLink(application, dest, remoteAddr)
+	err = isAllowSendMagicLink(application, dest, remoteAddr, lang)
 	if err != nil {
 		return err
 	}

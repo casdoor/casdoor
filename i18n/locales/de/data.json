@@ -233,7 +233,8 @@
     "please add a SMS provider to the \"Providers\" list for the application: %s": "Bitte fügen Sie einen SMS-Anbieter zur \"Providers\"-Liste für die Anwendung hinzu: %s",
     "please add an Email provider to the \"Providers\" list for the application: %s": "Bitte fügen Sie einen E-Mail-Anbieter zur \"Providers\"-Liste für die Anwendung hinzu: %s",
     "please set \"origin\" in conf/app.conf to send magic links": "Bitte setzen Sie \"origin\" in conf/app.conf, um Magic Links zu senden",
-    "the user does not exist, please sign up first": "Der Benutzer existiert nicht, bitte zuerst anmelden"
+    "the user does not exist, please sign up first": "Der Benutzer existiert nicht, bitte zuerst anmelden",
+    "you can only send one code in %ds": "Sie können nur einen Code alle %ds senden"
   },
   "webauthn": {
     "Found no credentials for this user": "Für diesen Benutzer wurden keine Anmeldeinformationen gefunden",
