@@ -696,6 +696,34 @@ func GetTokenExchangeToken(application *Application, clientSecret string, subjec
 		}, nil
 	}
 
+	// RFC 8693: "audience" is the target service the new token is for, by client ID or by application name
+	targetAudience := ""
+	if audience != "" {
+		targetApplication, err := GetApplicationByClientId(audience)
+		if err != nil {
+			return nil, nil, err
+		}
+		if targetApplication == nil {
+			targetApplication, err = getApplication(application.Owner, audience)
+			if err != nil {
+				return nil, nil, err
+			}
+		}
+		if targetApplication == nil {
+			return nil, &TokenError{
+				Error:            InvalidTarget,
+				ErrorDescription: fmt.Sprintf("the requested audience is not a known application: %s", audience),
+			}, nil
+		}
+		if user.Owner != targetApplication.Organization && !targetApplication.IsShared {
+			return nil, &TokenError{
+				Error:            InvalidTarget,
+				ErrorDescription: fmt.Sprintf("the requested audience: %s does not serve the organization of the user: %s", audience, user.GetId()),
+			}, nil
+		}
+		targetAudience = targetApplication.ClientId
+	}
+
 	// If scope is not provided, use the scope from the subject token.
 	// If scope is provided, it should be a subset of the subject token's scope (downscoping).
 	if scope == "" {
@@ -730,7 +758,7 @@ func GetTokenExchangeToken(application *Application, clientSecret string, subjec
 		return nil, nil, err
 	}
 
-	accessToken, refreshToken, tokenName, err := generateJwtToken(application, user, "", "", "", scope, "", host)
+	accessToken, refreshToken, tokenName, err := generateJwtToken(application, user, "", "", "", scope, targetAudience, host)
 	if err != nil {
 		return nil, &TokenError{
 			Error:            EndpointError,
@@ -752,6 +780,7 @@ func GetTokenExchangeToken(application *Application, clientSecret string, subjec
 		Scope:        scope,
 		TokenType:    "Bearer",
 		CodeIsUsed:   true,
+		Resource:     targetAudience,
 	}
 
 	_, err = AddToken(token)

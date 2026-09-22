@@ -37,6 +37,7 @@ const (
 	UnauthorizedClient   = "unauthorized_client"
 	UnsupportedGrantType = "unsupported_grant_type"
 	InvalidScope         = "invalid_scope"
+	InvalidTarget        = "invalid_target"
 	EndpointError        = "endpoint_error"
 	DeviceAuthExpiresIn  = 120
 	DeviceAuthInterval   = 5
