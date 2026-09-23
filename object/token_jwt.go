@@ -513,6 +513,11 @@ func generateJwtToken(application *Application, user *User, provider string, sig
 		refreshExpireTime = expireTime
 	}
 
+	// the claims are shaped from a copy, so that refineUser() below does not clear the
+	// password of the user object the caller keeps using
+	userCopy := *user
+	user = &userCopy
+
 	if conf.GetConfigBool("useGroupPathInToken") {
 		groupPath, err := user.GetUserFullGroupPath()
 		if err != nil {
