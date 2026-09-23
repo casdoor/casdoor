@@ -460,14 +460,23 @@ export default function OrganizationEditPage() {
             <EditableTable
               rows={organization.accountItems ?? []}
               onChange={(rows) => update("accountItems", rows)}
-              newRow={() => ({name: "Please select an account item", visible: true, viewRule: "Public", modifyRule: "Self"})}
+              newRow={() => ({name: "Please select an account item", visible: true, viewRule: "Public", modifyRule: "Self", tab: ""})}
               rowKey={(row: any, index) => `${row.name}-${index}`}
               columns={[
                 {
                   key: "name",
                   title: i18next.t("general:Name"),
                   width: 260,
-                  render: (row: any) => <span className="text-sm">{row.name}</span>,
+                  render: (row: any, _index, patch) => (
+                    <SelectField
+                      value={row.name}
+                      onChange={(value) => patch({name: value})}
+                      options={Setting.GetTranslatedUserItems()
+                        .filter((item) => item.name === row.name ||
+                          !(organization.accountItems ?? []).some((other: any) => other.name === item.name))
+                        .map((item) => ({id: item.name, name: item.label}))}
+                    />
+                  ),
                 },
                 {
                   key: "visible",
