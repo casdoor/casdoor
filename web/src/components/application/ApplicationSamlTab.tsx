@@ -12,6 +12,12 @@ import type {ApplicationTabProps} from "@/components/application/types";
 import * as Setting from "@/lib/setting";
 
 const SAML_HASH_ALGORITHMS = ["SHA1", "SHA256", "SHA512"];
+const SAML_NAME_FORMATS = [
+  {id: "urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified", name: "Unspecified"},
+  {id: "urn:oasis:names:tc:SAML:2.0:attrname-format:basic", name: "Basic"},
+  {id: "urn:oasis:names:tc:SAML:2.0:attrname-format:uri", name: "UriReference"},
+  {id: "urn:oasis:names:tc:SAML:2.0:attrname-format:X500", name: "x500AttributeName"},
+];
 
 interface ApplicationSamlTabProps extends ApplicationTabProps {
   mode: string;
@@ -107,7 +113,11 @@ export function ApplicationSamlTab({
               title: i18next.t("general:Name format"),
               width: 220,
               render: (row: any, _i, patch) => (
-                <Input value={row.nameFormat ?? ""} onChange={(e) => patch({nameFormat: e.target.value})} />
+                <SelectField
+                  value={row.nameFormat}
+                  onChange={(v) => patch({nameFormat: v})}
+                  options={SAML_NAME_FORMATS}
+                />
               ),
             },
             {

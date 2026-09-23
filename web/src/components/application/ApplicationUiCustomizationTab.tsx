@@ -51,6 +51,17 @@ function getDefaultSigninMethodRule(name: string): string {
   return rules.length > 0 ? rules[0] : "None";
 }
 
+const SIGNIN_METHOD_NAMES: {name: string; labelKey: string}[] = [
+  {name: "Password", labelKey: "general:Password"},
+  {name: "Verification code", labelKey: "login:Verification code"},
+  {name: "Magic link", labelKey: "login:Magic link"},
+  {name: "WebAuthn", labelKey: "login:WebAuthn"},
+  {name: "LDAP", labelKey: "login:LDAP"},
+  {name: "Face ID", labelKey: "login:Face ID"},
+  {name: "Device login", labelKey: "login:Device login"},
+  {name: "WeChat", labelKey: "login:WeChat"},
+];
+
 const SIGNUP_ITEM_TYPES: EnumMap = {
   "Input": {i18nKey: "application:Input"},
   "Single Choice": {i18nKey: "application:Single Choice"},
@@ -113,12 +124,49 @@ const SIGNIN_ITEM_NAMES: {name: string; labelKey: string}[] = [
   {name: "Select organization", labelKey: "login:Select organization"},
 ];
 
-const SIGNUP_ITEM_NAMES = [
-  "Username", "ID", "Display name", "First name", "Last name", "Affiliation", "Gender", "Bio", "Tag",
-  "Education", "Country/Region", "ID card", "Password", "Confirm password", "Email", "Phone",
-  "Email or Phone", "Phone or Email", "Invitation code", "Agreement", "Signup button", "Providers",
-  "Languages", "Text 1", "Text 2", "Text 3", "Text 4", "Text 5",
+const SIGNUP_ITEM_NAMES: {name: string; labelKey: string}[] = [
+  {name: "Username", labelKey: "signup:Username"},
+  {name: "ID", labelKey: "general:ID"},
+  {name: "Display name", labelKey: "general:Display name"},
+  {name: "First name", labelKey: "general:First name"},
+  {name: "Last name", labelKey: "general:Last name"},
+  {name: "Affiliation", labelKey: "user:Affiliation"},
+  {name: "Gender", labelKey: "user:Gender"},
+  {name: "Bio", labelKey: "user:Bio"},
+  {name: "Tag", labelKey: "general:Tag"},
+  {name: "Education", labelKey: "user:Education"},
+  {name: "Country/Region", labelKey: "user:Country/Region"},
+  {name: "ID card", labelKey: "user:ID card"},
+  {name: "Password", labelKey: "general:Password"},
+  {name: "Confirm password", labelKey: "general:Confirm"},
+  {name: "Email", labelKey: "general:Email"},
+  {name: "Phone", labelKey: "general:Phone"},
+  {name: "Email or Phone", labelKey: "general:Email or Phone"},
+  {name: "Phone or Email", labelKey: "general:Phone or Email"},
+  {name: "Invitation code", labelKey: "application:Invitation code"},
+  {name: "Agreement", labelKey: "signup:Agreement"},
+  {name: "Signup button", labelKey: "signup:Signup button"},
+  {name: "Providers", labelKey: "application:Providers"},
+  {name: "Languages", labelKey: "general:Languages"},
+  {name: "Text 1", labelKey: "signup:Text 1"},
+  {name: "Text 2", labelKey: "signup:Text 2"},
+  {name: "Text 3", labelKey: "signup:Text 3"},
+  {name: "Text 4", labelKey: "signup:Text 4"},
+  {name: "Text 5", labelKey: "signup:Text 5"},
 ];
+
+/** the signin items whose text the antd table lets you relabel */
+const LABELED_SIGNIN_ITEMS = ["Username", "Password", "Verification code", "Signup link", "Forgot password?", "Login button"];
+/** signup items that are page furniture rather than fields, so they cannot be required or prompted */
+const NON_FIELD_SIGNUP_ITEMS = ["Signup button", "Providers", "Languages"];
+const NO_REGEX_SIGNUP_ITEMS = ["Password", "Confirm password", "Signup button", "Provider", "Providers", "Languages"];
+
+/** a picked item cannot be picked again by another row */
+function getUnusedItemOptions(names: {name: string; labelKey: string}[], rows: any[], index: number) {
+  return names
+    .filter((item) => !rows.some((other: any, i: number) => i !== index && other.name === item.name))
+    .map((item) => ({id: item.name, name: i18next.t(item.labelKey)}));
+}
 
 /** Only a few signin items take a rule, and each has its own option set. */
 function getSigninItemRuleOptions(name: string) {
@@ -167,19 +215,24 @@ export function ApplicationUiCustomizationTab({application, updateField}: Applic
         <EditableTable
           rows={application.signinMethods ?? []}
           onChange={(rows) => updateField("signinMethods", rows)}
-          newRow={() => ({name: "Password", displayName: "Password", rule: "All"})}
+          newRow={(application.signinMethods ?? []).length < SIGNIN_METHOD_NAMES.length ? () => ({
+            name: Setting.getNewRowNameForTable(application.signinMethods ?? [], "Please select a signin method"),
+            displayName: "",
+            rule: "None",
+          }) : undefined}
+          canDelete={() => (application.signinMethods ?? []).length > 1}
           columns={[
             {
               key: "name",
               title: i18next.t("general:Name"),
               width: 200,
-              render: (row: any, _i, patch) => (
+              render: (row: any, index, patch) => (
                 <SelectField
                   value={row.name}
                   onChange={(v) => patch({name: v, displayName: v, rule: getDefaultSigninMethodRule(v)})}
-                  options={["Password", "Verification code", "Magic link", "WebAuthn", "LDAP", "Face ID", "Device login"].map(
-                    (item) => ({id: item, name: item}),
-                  )}
+                  options={SIGNIN_METHOD_NAMES
+                    .filter((item) => !(application.signinMethods ?? []).some((other: any, i: number) => i !== index && other.name === item.name))
+                    .map((item) => ({id: item.name, name: i18next.t(item.labelKey)}))}
                 />
               ),
             },
@@ -195,13 +248,14 @@ export function ApplicationUiCustomizationTab({application, updateField}: Applic
               key: "rule",
               title: i18next.t("application:Rule"),
               width: 180,
-              render: (row: any, _i, patch) => (
-                <SelectField
-                  value={row.rule}
-                  onChange={(v) => patch({rule: v})}
-                  options={enumSelectOptions(SIGNIN_METHOD_RULES[row.name] ?? {})}
-                />
-              ),
+              render: (row: any, _i, patch) =>
+                SIGNIN_METHOD_RULES[row.name] ? (
+                  <SelectField
+                    value={row.rule}
+                    onChange={(v) => patch({rule: v})}
+                    options={enumSelectOptions(SIGNIN_METHOD_RULES[row.name])}
+                  />
+                ) : null,
             },
           ]}
         />
@@ -240,11 +294,9 @@ export function ApplicationUiCustomizationTab({application, updateField}: Applic
           rows={application.signinItems ?? []}
           onChange={(rows) => updateField("signinItems", rows)}
           newRow={() => ({
-            name: "Logo",
+            name: Setting.getNewRowNameForTable(application.signinItems ?? [], "Please select a signin item"),
             visible: true,
-            label: "",
-            customCss: SigninTableDefaultCssMap["Logo"],
-            placeholder: "",
+            required: true,
             rule: "None",
           })}
           columns={[
@@ -252,13 +304,16 @@ export function ApplicationUiCustomizationTab({application, updateField}: Applic
               key: "name",
               title: i18next.t("general:Name"),
               width: 190,
-              render: (row: any, _i, patch) => (
-                <SelectField
-                  value={row.name}
-                  onChange={(v) => patch({name: v, customCss: SigninTableDefaultCssMap[v] ?? ""})}
-                  options={SIGNIN_ITEM_NAMES.map((item) => ({id: item.name, name: i18next.t(item.labelKey)}))}
-                />
-              ),
+              render: (row: any, index, patch) =>
+                Setting.isCustomFormItem(row) ? (
+                  <Input value={row.name ?? ""} disabled />
+                ) : (
+                  <SelectField
+                    value={row.name}
+                    onChange={(v) => patch({name: v, customCss: SigninTableDefaultCssMap[v] ?? ""})}
+                    options={getUnusedItemOptions(SIGNIN_ITEM_NAMES, application.signinItems ?? [], index)}
+                  />
+                ),
             },
             {
               key: "visible",
@@ -272,28 +327,37 @@ export function ApplicationUiCustomizationTab({application, updateField}: Applic
               key: "label",
               title: i18next.t("signup:Label"),
               width: 170,
-              render: (row: any, _i, patch) => (
-                <Input value={row.label ?? ""} onChange={(e) => patch({label: e.target.value})} />
-              ),
+              // a custom item's HTML lives in customCss, which is what the login page renders
+              render: (row: any, _i, patch) => {
+                if (Setting.isCustomFormItem(row)) {
+                  return <Input value={row.customCss ?? ""} onChange={(e) => patch({customCss: e.target.value})} />;
+                }
+                if (!LABELED_SIGNIN_ITEMS.includes(row.name)) {
+                  return null;
+                }
+                return <Input value={row.label ?? ""} onChange={(e) => patch({label: e.target.value})} />;
+              },
             },
             {
               key: "placeholder",
               title: i18next.t("signup:Placeholder"),
               width: 170,
-              render: (row: any, _i, patch) => (
-                <Input value={row.placeholder ?? ""} onChange={(e) => patch({placeholder: e.target.value})} />
-              ),
+              render: (row: any, _i, patch) =>
+                row.name === "Username" || row.name === "Password" ? (
+                  <Input value={row.placeholder ?? ""} onChange={(e) => patch({placeholder: e.target.value})} />
+                ) : null,
             },
             {
               key: "customCss",
               title: i18next.t("application:Custom CSS"),
               width: 200,
-              render: (row: any, _i, patch) => (
-                <Input
-                  value={row.customCss ?? SigninTableDefaultCssMap[row.name] ?? ""}
-                  onChange={(e) => patch({customCss: e.target.value || SigninTableDefaultCssMap[row.name]})}
-                />
-              ),
+              render: (row: any, _i, patch) =>
+                Setting.isCustomFormItem(row) ? null : (
+                  <Input
+                    value={row.customCss ?? SigninTableDefaultCssMap[row.name] ?? ""}
+                    onChange={(e) => patch({customCss: e.target.value || SigninTableDefaultCssMap[row.name]})}
+                  />
+                ),
             },
             {
               key: "rule",
@@ -314,17 +378,25 @@ export function ApplicationUiCustomizationTab({application, updateField}: Applic
         <EditableTable
           rows={application.signupItems ?? []}
           onChange={(rows) => updateField("signupItems", rows)}
-          newRow={() => ({name: "Username", visible: true, required: true, rule: "None"})}
+          newRow={() => ({
+            name: Setting.getNewRowNameForTable(application.signupItems ?? [], "Please select a signup item"),
+            visible: true,
+            required: true,
+            options: [],
+            rule: "None",
+            customCss: "",
+          })}
+          canDelete={(row: any) => row.name !== "Signup button"}
           columns={[
             {
               key: "name",
               title: i18next.t("general:Name"),
               width: 190,
-              render: (row: any, _i, patch) => (
+              render: (row: any, index, patch) => (
                 <SelectField
                   value={row.name}
                   onChange={(v) => patch({name: v, customCss: SignupTableDefaultCssMap[v] ?? ""})}
-                  options={SIGNUP_ITEM_NAMES.map((item) => ({id: item, name: item}))}
+                  options={getUnusedItemOptions(SIGNUP_ITEM_NAMES, application.signupItems ?? [], index)}
                 />
               ),
             },
@@ -332,33 +404,38 @@ export function ApplicationUiCustomizationTab({application, updateField}: Applic
               key: "visible",
               title: i18next.t("organization:Visible"),
               width: 90,
-              render: (row: any, _i, patch) => (
-                <Switch checked={!!row.visible} onCheckedChange={(v) => patch({visible: v})} />
-              ),
+              render: (row: any, _i, patch) =>
+                row.name === "ID" ? null : (
+                  <Switch checked={!!row.visible} onCheckedChange={(v) => patch({visible: v, required: v})} />
+                ),
             },
             {
               key: "required",
               title: i18next.t("organization:Required"),
               width: 90,
-              render: (row: any, _i, patch) => (
-                <Switch
-                  checked={!!row.required}
-                  disabled={!row.visible}
-                  onCheckedChange={(v) => patch({required: v})}
-                />
-              ),
+              render: (row: any, _i, patch) =>
+                !row.visible || NON_FIELD_SIGNUP_ITEMS.includes(row.name) ? null : (
+                  <Switch
+                    checked={!!row.required}
+                    disabled={row.name === "Password"}
+                    onCheckedChange={(v) => patch({required: v})}
+                  />
+                ),
             },
             {
               key: "prompted",
               title: i18next.t("provider:Prompted"),
               width: 90,
-              render: (row: any, _i, patch) => (
-                <Switch
-                  checked={!!row.prompted}
-                  disabled={row.visible}
-                  onCheckedChange={(v) => patch({prompted: v})}
-                />
-              ),
+              // a hidden item can be asked for after signup; Country/Region even when shown
+              render: (row: any, _i, patch) => {
+                if (row.name === "ID" || NON_FIELD_SIGNUP_ITEMS.includes(row.name)) {
+                  return null;
+                }
+                if (row.visible && row.name !== "Country/Region") {
+                  return null;
+                }
+                return <Switch checked={!!row.prompted} onCheckedChange={(v) => patch({prompted: v})} />;
+              },
             },
             {
               key: "type",
@@ -402,9 +479,10 @@ export function ApplicationUiCustomizationTab({application, updateField}: Applic
               key: "placeholder",
               title: i18next.t("signup:Placeholder"),
               width: 180,
-              render: (row: any, _i, patch) => (
-                <Input value={row.placeholder ?? ""} onChange={(e) => patch({placeholder: e.target.value})} />
-              ),
+              render: (row: any, _i, patch) =>
+                row.name?.startsWith("Text ") ? null : (
+                  <Input value={row.placeholder ?? ""} onChange={(e) => patch({placeholder: e.target.value})} />
+                ),
             },
             {
               key: "customCss",
@@ -431,9 +509,10 @@ export function ApplicationUiCustomizationTab({application, updateField}: Applic
               key: "regex",
               title: i18next.t("signup:Regex"),
               width: 180,
-              render: (row: any, _i, patch) => (
-                <Input value={row.regex ?? ""} onChange={(e) => patch({regex: e.target.value})} />
-              ),
+              render: (row: any, _i, patch) =>
+                row.name?.startsWith("Text ") || NO_REGEX_SIGNUP_ITEMS.includes(row.name) ? null : (
+                  <Input value={row.regex ?? ""} onChange={(e) => patch({regex: e.target.value})} />
+                ),
             },
           ]}
         />

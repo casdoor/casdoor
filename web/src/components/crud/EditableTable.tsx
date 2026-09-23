@@ -22,6 +22,7 @@ interface EditableTableProps<T> {
   /** hide the up/down buttons for tables where order does not matter */
   reorderable?: boolean;
   rowKey?: (row: T, index: number) => string;
+  canDelete?: (row: T, index: number) => boolean;
   className?: string;
   emptyText?: React.ReactNode;
   disabled?: boolean;
@@ -40,6 +41,7 @@ export function EditableTable<T>({
   addLabel,
   reorderable = true,
   rowKey,
+  canDelete,
   className,
   emptyText,
   disabled,
@@ -133,6 +135,7 @@ export function EditableTable<T>({
                           variant="ghost"
                           size="iconSm"
                           className="text-destructive"
+                          disabled={canDelete ? !canDelete(row, index) : false}
                           aria-label={i18next.t("general:Delete")}
                           onClick={() => remove(index)}
                         >

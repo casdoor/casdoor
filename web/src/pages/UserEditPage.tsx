@@ -32,6 +32,7 @@ import {ThirdPartyLogins} from "@/components/user/OAuthWidget";
 import {AccountItemRow, AccountItemsProvider} from "@/components/user/AccountItemRow";
 import {EnableMfaButton} from "@/components/user/EnableMfaButton";
 import {TotpMfaType} from "@/components/auth/mfa/constants";
+import {MfaItemsTable} from "@/components/auth/mfa/MfaItemsTable";
 import {isAccountItemVisible} from "@/lib/account-items";
 import {PasswordModal} from "@/components/user/PasswordModal";
 import {ResetModal} from "@/components/user/ResetModal";
@@ -793,40 +794,7 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
     ),
     "MFA items": (
       <AccountItemRow name="MFA items" labelKey="general:MFA items" block>
-        <EditableTable
-          rows={user.mfaItems ?? []}
-          onChange={(rows) => updateField("mfaItems", rows)}
-          newRow={() => ({name: "Email", rule: "Optional"})}
-          columns={[
-            {
-              key: "name",
-              title: i18next.t("general:Name"),
-              width: 220,
-              render: (row: any, _i, patch) => (
-                <SearchableSelect
-                  value={row.name}
-                  onChange={(v) => patch({name: v})}
-                  options={["Email", "SMS", "TOTP"].map((item) => ({value: item, label: item}))}
-                />
-              ),
-            },
-            {
-              key: "rule",
-              title: i18next.t("application:Rule"),
-              width: 220,
-              render: (row: any, _i, patch) => (
-                <SearchableSelect
-                  value={row.rule}
-                  onChange={(v) => patch({rule: v})}
-                  options={["Optional", "Prompted", "Required"].map((item) => ({
-                    value: item,
-                    label: i18next.t(`general:${item}`),
-                  }))}
-                />
-              ),
-            },
-          ]}
-        />
+        <MfaItemsTable rows={user.mfaItems} onChange={(rows) => updateField("mfaItems", rows)} />
       </AccountItemRow>
     ),
     "Managed accounts": (
