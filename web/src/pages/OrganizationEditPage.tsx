@@ -9,6 +9,7 @@ import {Switch} from "@/components/ui/switch";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import {Loading} from "@/components/common/Loading";
 import {MultiSelect} from "@/components/common/MultiSelect";
+import {EmailMfaType, PushMfaType, SmsMfaType, TotpMfaType} from "@/components/auth/mfa/constants";
 import {NavItemTree, WidgetItemTree} from "@/components/common/NavItemTree";
 import {SearchableSelect} from "@/components/common/SearchableSelect";
 import {SelectField} from "@/components/common/SelectField";
@@ -42,6 +43,13 @@ const MFA_RULES: Record<string, string> = {
   "Prompted": "organization:Prompt",
   "Required": "organization:Required",
 };
+/** The stored name is the backend's MFA type, not the label shown in the dropdown. */
+const MFA_ITEMS = [
+  {id: SmsMfaType, name: "Phone"},
+  {id: EmailMfaType, name: "Email"},
+  {id: TotpMfaType, name: "App"},
+  {id: PushMfaType, name: "Push"},
+];
 
 function passwordOptions() {
   return [
@@ -403,7 +411,10 @@ export default function OrganizationEditPage() {
             <EditableTable
               rows={organization.mfaItems ?? []}
               onChange={(rows) => update("mfaItems", rows)}
-              newRow={() => ({name: "Email", rule: "Optional"})}
+              newRow={() => ({
+                name: Setting.getNewRowNameForTable(organization.mfaItems ?? [], "Please select a MFA method"),
+                rule: "Optional",
+              })}
               columns={[
                 {
                   key: "name",
@@ -413,7 +424,7 @@ export default function OrganizationEditPage() {
                     <SelectField
                       value={row.name}
                       onChange={(value) => patch({name: value})}
-                      options={["Email", "SMS", "TOTP"].map((item) => ({id: item, name: item}))}
+                      options={MFA_ITEMS}
                     />
                   ),
                 },
