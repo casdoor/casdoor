@@ -9,7 +9,7 @@ import {Switch} from "@/components/ui/switch";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import {Loading} from "@/components/common/Loading";
 import {MultiSelect} from "@/components/common/MultiSelect";
-import {EmailMfaType, PushMfaType, SmsMfaType, TotpMfaType} from "@/components/auth/mfa/constants";
+import {MfaItemsTable} from "@/components/auth/mfa/MfaItemsTable";
 import {NavItemTree, WidgetItemTree} from "@/components/common/NavItemTree";
 import {SearchableSelect} from "@/components/common/SearchableSelect";
 import {SelectField} from "@/components/common/SelectField";
@@ -37,19 +37,8 @@ const VIEW_RULES = ["Public", "Self", "Admin"];
 const MODIFY_RULES = ["Self", "Admin", "Immutable"];
 /** an item only an admin may see is not one the user can be allowed to modify */
 const ADMIN_MODIFY_RULES = ["Admin", "Immutable"];
-/** `general:Optional` and friends do not exist; the antd table uses these. */
-const MFA_RULES: Record<string, string> = {
-  "Optional": "organization:Optional",
-  "Prompted": "organization:Prompt",
-  "Required": "organization:Required",
-};
-/** The stored name is the backend's MFA type, not the label shown in the dropdown. */
-const MFA_ITEMS = [
-  {id: SmsMfaType, name: "Phone"},
-  {id: EmailMfaType, name: "Email"},
-  {id: TotpMfaType, name: "App"},
-  {id: PushMfaType, name: "Push"},
-];
+const REGEX_ACCOUNT_ITEMS = ["Display name", "Password", "Email", "Phone", "Location", "Title", "Homepage", "Bio",
+  "Gender", "Birthday", "Education", "ID card", "ID card type"];
 
 function passwordOptions() {
   return [
@@ -408,50 +397,7 @@ export default function OrganizationEditPage() {
             />
           </FormRow>
           <FormRow block labelKey="general:MFA items">
-            <EditableTable
-              rows={organization.mfaItems ?? []}
-              onChange={(rows) => update("mfaItems", rows)}
-              newRow={() => ({
-                name: Setting.getNewRowNameForTable(organization.mfaItems ?? [], "Please select a MFA method"),
-                rule: "Optional",
-              })}
-              columns={[
-                {
-                  key: "name",
-                  title: i18next.t("general:Name"),
-                  width: 220,
-                  render: (row: any, _index, patch) => (
-                    <SelectField
-                      value={row.name}
-                      onChange={(value) => patch({name: value})}
-                      options={MFA_ITEMS}
-                    />
-                  ),
-                },
-                {
-                  key: "rule",
-                  title: i18next.t("application:Rule"),
-                  width: 220,
-                  render: (row: any, _index, patch) => (
-                    <SelectField
-                      value={row.rule}
-                      onChange={(value) => {
-                        // exactly one factor may be mandatory, as the antd table enforces
-                        const required = (organization.mfaItems ?? []).filter(
-                          (item: any) => item.rule === "Required",
-                        ).length;
-                        if (value === "Required" && required >= 1 && row.rule !== "Required") {
-                          Setting.showMessage("error", i18next.t("general:Only 1 MFA method can be required"));
-                          return;
-                        }
-                        patch({rule: value});
-                      }}
-                      options={Object.entries(MFA_RULES).map(([id, key]) => ({id, name: i18next.t(key)}))}
-                    />
-                  ),
-                },
-              ]}
-            />
+            <MfaItemsTable rows={organization.mfaItems} onChange={(rows) => update("mfaItems", rows)} />
           </FormRow>
         </TabsContent>
 
@@ -485,6 +431,27 @@ export default function OrganizationEditPage() {
                   render: (row: any, _index, patch) => (
                     <Switch checked={!!row.visible} onCheckedChange={(v) => patch({visible: v})} />
                   ),
+                },
+                {
+                  key: "tab",
+                  title: i18next.t("general:Tab"),
+                  width: 150,
+                  render: (row: any, _index, patch) => (
+                    <Input
+                      value={row.tab ?? ""}
+                      placeholder={i18next.t("general:Default")}
+                      onChange={(e) => patch({tab: e.target.value})}
+                    />
+                  ),
+                },
+                {
+                  key: "regex",
+                  title: i18next.t("signup:Regex"),
+                  width: 200,
+                  render: (row: any, _index, patch) =>
+                    REGEX_ACCOUNT_ITEMS.includes(row.name) ? (
+                      <Input value={row.regex ?? ""} onChange={(e) => patch({regex: e.target.value})} />
+                    ) : null,
                 },
                 {
                   key: "viewRule",

@@ -229,7 +229,11 @@ export default function SyncerEditPage() {
         <EditableTable
           rows={ctx.record.tableColumns ?? []}
           onChange={(rows) => update("tableColumns", rows)}
-          newRow={() => ({name: "", type: "string", casdoorName: "id", isKey: false, isHashed: true, values: []})}
+          newRow={() => {
+            const columns = ctx.record.tableColumns ?? [];
+            return {name: `column${columns.length}`, type: "string", values: [], isKey: !columns.some((row: any) => row.isKey)};
+          }}
+          canDelete={(row: any) => !row.isKey || (ctx.record.tableColumns ?? []).length <= 1}
           columns={[
             {
               key: "name",
@@ -267,8 +271,16 @@ export default function SyncerEditPage() {
               key: "isKey",
               title: i18next.t("syncer:Is key"),
               width: 90,
-              render: (row: any, _i, patch) => (
-                <Switch checked={!!row.isKey} onCheckedChange={(v) => patch({isKey: v})} />
+              // exactly one column is the key, so it can only be moved, never unset
+              render: (row: any, index) => (
+                <Switch
+                  checked={!!row.isKey}
+                  onCheckedChange={(v) => {
+                    if (v) {
+                      update("tableColumns", (ctx.record.tableColumns ?? []).map((item: any, i: number) => ({...item, isKey: i === index})));
+                    }
+                  }}
+                />
               ),
             },
             {

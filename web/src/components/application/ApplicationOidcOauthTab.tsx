@@ -24,7 +24,11 @@ const GRANT_TYPES = [
 ];
 const TOKEN_FORMATS = ["JWT", "JWT-Empty", "JWT-Custom", "JWT-Standard"];
 const TOKEN_SIGNING_METHODS = ["RS256", "RS512", "ES256", "ES512", "ES384"];
-const TOKEN_ATTRIBUTE_TYPES = ["String", "Number", "Boolean"];
+/** the backend only tells "String" (first value) from everything else (the whole list) */
+const TOKEN_ATTRIBUTE_TYPES: EnumMap = {
+  "Array": {i18nKey: "application:Array"},
+  "String": {i18nKey: "application:String"},
+};
 const TOKEN_ATTRIBUTE_CATEGORIES: EnumMap = {
   "Static Value": {i18nKey: "application:Static Value"},
   "Existing Field": {i18nKey: "application:Existing Field"},
@@ -34,6 +38,16 @@ const TOKEN_ATTRIBUTE_CATEGORIES: EnumMap = {
 const TOKEN_ATTRIBUTE_USER_FIELDS = [
   "Owner", "Name", "Id", "DisplayName", "Avatar", "Email", "Phone",
   "Tag", "Roles", "Permissions", "permissionNames", "Groups",
+];
+
+/** picking one of these fills in its display name and description, as antd's CustomScopeTable */
+const DEFAULT_CUSTOM_SCOPES = [
+  {scope: "openid", displayName: "OpenID", description: "Authenticate the user and obtain an ID token"},
+  {scope: "profile", displayName: "Profile", description: "Read all user profile data"},
+  {scope: "email", displayName: "Email", description: "Access user email addresses (read-only)"},
+  {scope: "address", displayName: "Address", description: "Access the user's address information"},
+  {scope: "phone", displayName: "Phone", description: "Access the user's phone number information"},
+  {scope: "offline_access", displayName: "Offline Access", description: "Obtain refresh tokens for offline access"},
 ];
 
 /** The "OIDC/OAuth" tab: the client credentials, the token format, and what goes into a token. */
@@ -133,9 +147,29 @@ export function ApplicationOidcOauthTab({application, updateField}: ApplicationT
               key: "scope",
               title: i18next.t("general:Name"),
               width: 200,
-              render: (row: any, _i, patch) => (
-                <Input value={row.scope ?? ""} onChange={(e) => patch({scope: e.target.value})} />
-              ),
+              render: (row: any, index, patch) => {
+                const used = new Set((application.customScopes ?? [])
+                  .filter((_: any, i: number) => i !== index)
+                  .map((item: any) => (item?.scope ?? "").trim().toLowerCase()));
+                const available = DEFAULT_CUSTOM_SCOPES.filter((item) => !used.has(item.scope));
+                return (
+                  <>
+                    <Input
+                      value={row.scope ?? ""}
+                      list={`custom-scope-options-${index}`}
+                      placeholder="Select or input scope"
+                      aria-invalid={!(row.scope ?? "").trim()}
+                      onChange={(e) => {
+                        const picked = available.find((item) => item.scope === e.target.value);
+                        patch(picked ?? {scope: e.target.value});
+                      }}
+                    />
+                    <datalist id={`custom-scope-options-${index}`}>
+                      {available.map((item) => <option key={item.scope} value={item.scope} />)}
+                    </datalist>
+                  </>
+                );
+              },
             },
             {
               key: "displayName",
@@ -229,9 +263,9 @@ export function ApplicationOidcOauthTab({application, updateField}: ApplicationT
                 width: 140,
                 render: (row: any, _i, patch) => (
                   <SelectField
-                    value={row.type}
+                    value={row.type || "Array"}
                     onChange={(v) => patch({type: v})}
-                    options={TOKEN_ATTRIBUTE_TYPES.map((item) => ({id: item, name: item}))}
+                    options={enumSelectOptions(TOKEN_ATTRIBUTE_TYPES)}
                   />
                 ),
               },

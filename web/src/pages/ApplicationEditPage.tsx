@@ -102,6 +102,9 @@ export default function ApplicationEditPage() {
     const signinMethods = (application.signinMethods ?? []).filter((item: any) =>
       ["Password", "Verification code", "Magic link", "WebAuthn", "LDAP", "Face ID", "Device login", "WeChat"].includes(item.name),
     );
+    // a row added but never given a name would show up on the signup page as a text box
+    const signinItems = application.signinItems?.filter((item: any) => !item.name?.startsWith("Please select a signin item"));
+    const signupItems = application.signupItems?.filter((item: any) => !item.name?.startsWith("Please select a signup item"));
 
     // antd trims every custom scope and refuses to save one without a scope name,
     // which is also what the backend's validateCustomScopes() enforces
@@ -120,7 +123,7 @@ export default function ApplicationEditPage() {
     setSaving(true);
     await submitEdit({
       mode,
-      record: {...Setting.deepCopy(application), providers: applicationProviders, signinMethods, customScopes},
+      record: {...Setting.deepCopy(application), providers: applicationProviders, signinMethods, signinItems, signupItems, customScopes},
       add: (record) => ApplicationBackend.addApplication(record),
       update: (record) => ApplicationBackend.updateApplication("admin", applicationName, record),
       onSaved: () => {
