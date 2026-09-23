@@ -29,6 +29,7 @@ const (
 	headerAllowMethods     = "Access-Control-Allow-Methods"
 	headerAllowHeaders     = "Access-Control-Allow-Headers"
 	headerAllowCredentials = "Access-Control-Allow-Credentials"
+	headerVary             = "Vary"
 )
 
 func setCorsHeaders(ctx *context.Context, origin string) {
@@ -45,6 +46,9 @@ func setCorsHeaders(ctx *context.Context, origin string) {
 }
 
 func CorsFilter(ctx *context.Context) {
+	// The CORS headers vary by Origin, so caches in front of Casdoor must key on it.
+	ctx.ResponseWriter.Header().Add(headerVary, headerOrigin)
+
 	origin := ctx.Input.Header(headerOrigin)
 	originConf := conf.GetConfigString("origin")
 	originHostname := getHostname(origin)
@@ -105,6 +109,7 @@ func CorsFilter(ctx *context.Context) {
 				return
 			}
 		}
+		return
 	}
 
 	if ctx.Input.Method() == "OPTIONS" {
