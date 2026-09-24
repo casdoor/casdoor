@@ -445,6 +445,7 @@ func (c *ApiController) Logout() {
 		// Sent before deleteUserSession(), which expires the tokens that SendBackchannelLogout() looks up
 		bcOwner, bcUsername := util.GetOwnerAndNameFromIdNoCheck(user)
 		object.SendBackchannelLogout(bcOwner, bcUsername, "", c.Ctx.Request.Host)
+		object.SendSamlLogout(bcOwner, bcUsername, []string{beegoSessionId}, c.Ctx.Request.Host)
 
 		c.ClearUserSession()
 		c.ClearTokenSession()
@@ -512,6 +513,9 @@ func (c *ApiController) Logout() {
 		// Capture the Beego session id before ClearUserSession(): SessionRegenerateID()
 		// replaces CruSession's id, so reading it afterwards would miss the id stored in the DB.
 		beegoSessionId := c.Ctx.Input.CruSession.SessionID(context.Background())
+
+		samlOwner, samlUsername := util.GetOwnerAndNameFromIdNoCheck(user)
+		object.SendSamlLogout(samlOwner, samlUsername, []string{beegoSessionId}, c.Ctx.Request.Host)
 
 		c.ClearUserSession()
 		c.ClearTokenSession()
@@ -608,6 +612,8 @@ func (c *ApiController) SsoLogout() {
 
 	if logoutAllSessions {
 		// Logout from all sessions: expire all tokens and delete all sessions
+		object.SendSamlLogout(owner, username, nil, c.Ctx.Request.Host)
+
 		_, err = object.ExpireTokenByUser(owner, username)
 		if err != nil {
 			c.ResponseError(err.Error())
@@ -636,6 +642,7 @@ func (c *ApiController) SsoLogout() {
 	} else {
 		// Logout from current session only
 		sessionIds = []string{currentSessionId}
+		object.SendSamlLogout(owner, username, sessionIds, c.Ctx.Request.Host)
 
 		// Only delete the current session's Beego session
 		object.DeleteBeegoSession(sessionIds)

@@ -133,6 +133,7 @@ type Application struct {
 	EnableLinkWithEmail          bool            `json:"enableLinkWithEmail"`
 	OrgChoiceMode                string          `json:"orgChoiceMode"`
 	SamlReplyUrl                 string          `xorm:"varchar(500)" json:"samlReplyUrl"`
+	SamlSingleLogoutUrl          string          `xorm:"mediumtext" json:"samlSingleLogoutUrl"`
 	Providers                    []*ProviderItem `xorm:"mediumtext" json:"providers"`
 	SigninMethods                []*SigninMethod `xorm:"varchar(2000)" json:"signinMethods"`
 	SignupItems                  []*SignupItem   `xorm:"varchar(3000)" json:"signupItems"`

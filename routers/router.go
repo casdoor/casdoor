@@ -61,6 +61,7 @@ func InitAPI() {
 	web.Router("/api/acs", &controllers.ApiController{}, "POST:HandleSamlLogin")
 	web.Router("/api/saml/metadata", &controllers.ApiController{}, "GET:GetSamlMeta")
 	web.Router("/api/saml/redirect/:owner/:application", &controllers.ApiController{}, "*:HandleSamlRedirect")
+	web.Router("/api/saml/logout/:owner/:application", &controllers.ApiController{}, "GET,POST:HandleSamlLogout")
 	web.Router("/api/webhook", &controllers.ApiController{}, "*:HandleOfficialAccountEvent")
 	web.Router("/api/get-qrcode", &controllers.ApiController{}, "GET:GetQRCode")
 	web.Router("/api/get-webhook-event", &controllers.ApiController{}, "GET:GetWebhookEventType")

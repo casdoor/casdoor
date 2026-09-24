@@ -40,6 +40,12 @@ export function ApplicationSamlTab({
       <FormRow labelKey="application:SAML reply URL">
         <Input value={application.samlReplyUrl ?? ""} onChange={(e) => updateField("samlReplyUrl", e.target.value)} />
       </FormRow>
+      <FormRow labelKey="application:SAML single logout URL">
+        <Input
+          value={application.samlSingleLogoutUrl ?? ""}
+          onChange={(e) => updateField("samlSingleLogoutUrl", e.target.value)}
+        />
+      </FormRow>
       <FormRow labelKey="application:Enable SAML compression">
         <Switch
           checked={!!application.enableSamlCompress}

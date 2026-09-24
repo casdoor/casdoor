@@ -273,6 +273,7 @@ func GetMaskedApplication(application *Application, userId string) *Application 
 	application.EnableWebAuthn = false
 	application.EnableLinkWithEmail = false
 	application.SamlReplyUrl = "***"
+	application.SamlSingleLogoutUrl = "***"
 
 	providerItems := []*ProviderItem{}
 	for _, providerItem := range application.Providers {
