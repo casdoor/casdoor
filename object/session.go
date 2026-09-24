@@ -422,6 +422,7 @@ func EnforceSingleBrowserSession(user *User, currentSessionId string, host strin
 		}
 		sendBackchannelLogoutForTokens(user, sessionTokens, oldId, host)
 	}
+	SendSamlLogout(user.Owner, user.Name, oldIds, host)
 
 	for _, oldId := range oldIds {
 		err = DeleteUserSessionId(user.Owner, user.Name, oldId)

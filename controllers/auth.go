@@ -263,7 +263,7 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 
 		resp = &Response{Status: "ok", Msg: "", Data: userId}
 	} else if form.Type == ResponseTypeSaml { // saml flow
-		res, redirectUrl, method, err := object.GetSamlResponse(application, user, form.SamlRequest, c.Ctx.Request.Host)
+		res, redirectUrl, method, err := object.GetSamlResponse(application, user, form.SamlRequest, c.Ctx.Request.Host, c.Ctx.Input.CruSession.SessionID(context.Background()))
 		if err != nil {
 			c.ResponseError(err.Error(), nil)
 			return

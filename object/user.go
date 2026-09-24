@@ -1244,6 +1244,7 @@ func terminateUserAccess(user *User) error {
 
 	// The host is empty, so the issuer falls back to the configured origin
 	sendBackchannelLogoutForTokens(user, tokens, "", "")
+	SendSamlLogout(user.Owner, user.Name, nil, "")
 
 	_, err = ExpireTokenByUser(user.Owner, user.Name)
 	if err != nil {
