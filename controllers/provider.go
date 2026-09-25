@@ -150,6 +150,10 @@ func (c *ApiController) GetProvider() {
 // @Success 200 {object} idp.OidcDiscovery The Response object
 // @router /get-idp-discovery [get]
 func (c *ApiController) GetIdpDiscovery() {
+	if _, ok := c.RequireAdmin(); !ok {
+		return
+	}
+
 	issuer := c.Ctx.Input.Query("issuer")
 
 	discovery, err := idp.GetOidcDiscovery(issuer)
