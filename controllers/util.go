@@ -234,6 +234,11 @@ func (c *ApiController) checkKeyPermission(oldKey, key *object.Key) bool {
 		return false
 	}
 
+	if !user.IsAdmin && (key.User != user.Name || oldKey != nil && oldKey.User != user.Name) {
+		c.ResponseError(c.T("auth:Unauthorized operation"))
+		return false
+	}
+
 	// An application-scoped key authenticates as "app/<application>", which is
 	// always treated as a global admin, so a non-global admin must never mint one.
 	if key.Application != "" {

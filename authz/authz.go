@@ -206,6 +206,7 @@ func IsAllowed(subOwner string, subName string, method string, urlPath string, o
 	}
 
 	objOwner, objName = dropAnonymousSelfObject(subOwner, subName, objOwner, objName)
+	objName = dropNonUserSelfObject(subOwner, subName, urlPath, objOwner, objName)
 
 	res, err := Enforcer.Enforce(subOwner, subName, method, urlPath, objOwner, objName)
 	if err != nil {
@@ -227,6 +228,45 @@ func dropAnonymousSelfObject(subOwner string, subName string, objOwner string, o
 		return "", ""
 	}
 	return objOwner, objName
+}
+
+var nonUserObjectTypes = []string{
+	"organization", "group", "invitation", "application", "provider", "agent", "server", "entry",
+	"site", "rule", "cert", "key", "role", "permission", "model", "adapter", "enforcer", "token",
+	"product", "coupon", "order", "payment", "plan", "pricing", "subscription", "transaction",
+	"form", "syncer", "webhook", "ldap", "record",
+}
+
+var nonUserObjectApis = []string{
+	"/api/update-permissions",
+	"/api/delete-webhook-event",
+	"/api/update-cert-domain-expire",
+	"/api/add-policy",
+	"/api/update-policy",
+	"/api/remove-policy",
+	"/api/run-syncer",
+	"/api/test-syncer-db",
+	"/api/sync-ldap-users",
+}
+
+func dropNonUserSelfObject(subOwner string, subName string, urlPath string, objOwner string, objName string) string {
+	if subOwner == objOwner && subName == objName && isNonUserObjectApi(urlPath) {
+		return ""
+	}
+	return objName
+}
+
+func isNonUserObjectApi(urlPath string) bool {
+	if util.InSlice(nonUserObjectApis, urlPath) {
+		return true
+	}
+
+	for _, verb := range []string{"/api/add-", "/api/update-", "/api/delete-", "/api/get-"} {
+		if objectType, ok := strings.CutPrefix(urlPath, verb); ok {
+			return util.InSlice(nonUserObjectTypes, objectType)
+		}
+	}
+	return false
 }
 
 func isAllowedInDemoMode(subOwner string, subName string, method string, urlPath string, objOwner string, objName string) bool {
