@@ -175,6 +175,16 @@ func IsGrantTypeValid(method string, grantTypes []string) bool {
 	return false
 }
 
+func isScopeSubset(scope string, grantedScope string) bool {
+	granted := strings.Fields(grantedScope)
+	for _, s := range strings.Fields(scope) {
+		if !util.InSlice(granted, s) {
+			return false
+		}
+	}
+	return true
+}
+
 // isRegexScope returns true if the scope string contains regex metacharacters.
 func isRegexScope(scope string) bool {
 	return strings.ContainsAny(scope, ".*+?^${}()|[]\\")
@@ -482,15 +492,20 @@ func RefreshToken(application *Application, grantType string, refreshToken strin
 
 	if scope == "" {
 		scope = oldTokenScope
+	} else if !isScopeSubset(scope, oldTokenScope) {
+		return &TokenError{
+			Error:            InvalidScope,
+			ErrorDescription: "the requested scope exceeds the scope of the original grant",
+		}, nil
 	}
 
 	// generate a new token
-	user, err := getUser(application.Organization, token.User)
+	user, err := getUser(token.Organization, token.User)
 	if err != nil {
 		return nil, err
 	}
 	if user == nil {
-		return "", fmt.Errorf("The user: %s doesn't exist", util.GetId(application.Organization, token.User))
+		return "", fmt.Errorf("The user: %s doesn't exist", util.GetId(token.Organization, token.User))
 	}
 
 	if user.IsForbidden {

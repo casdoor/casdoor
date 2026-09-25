@@ -362,6 +362,13 @@ func (c *ApiController) UpdateUser() {
 		for _, col := range strings.Split(columnsStr, ",") {
 			columns = append(columns, util.CamelToSnakeCase(col))
 		}
+		if !isAdmin {
+			columns = object.FilterUserSelfColumns(columns)
+			if len(columns) == 0 {
+				c.ResponseError(c.T("auth:Unauthorized operation"))
+				return
+			}
+		}
 	}
 
 	affected, err := object.UpdateUser(id, &user, columns, isAdmin)

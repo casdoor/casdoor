@@ -56,6 +56,57 @@ func tokenToResponse(token *object.Token) *Response {
 	return &Response{Status: "ok", Msg: "", Data: token.AccessToken, Data2: token.RefreshToken, Data3: token.IdToken}
 }
 
+func (c *ApiController) checkUserOfApplication(user *object.User, application *object.Application) bool {
+	isUserOfApplication, err := object.IsUserOfApplication(user, application)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return false
+	}
+	if !isUserOfApplication {
+		c.ResponseError(c.T("auth:Unauthorized operation"))
+		return false
+	}
+	return true
+}
+
+func (c *ApiController) checkUserOfApplicationId(user *object.User, applicationId string) bool {
+	application, err := object.GetApplication(applicationId)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return false
+	}
+	if application == nil {
+		c.ResponseError(fmt.Sprintf(c.T("auth:The application: %s does not exist"), applicationId))
+		return false
+	}
+	return c.checkUserOfApplication(user, application)
+}
+
+func (c *ApiController) checkCredentialApplication(user *object.User, application *object.Application, form *form.AuthForm) bool {
+	if form.Type == ResponseTypeLogin {
+		return true
+	}
+
+	if !c.checkUserOfApplication(user, application) {
+		return false
+	}
+
+	if form.Type != ResponseTypeCode {
+		return true
+	}
+
+	codeApplication, err := object.GetApplicationByClientId(c.Ctx.Input.Query("clientId"))
+	if err != nil {
+		c.ResponseError(err.Error())
+		return false
+	}
+	if codeApplication == nil || codeApplication.Name != application.Name {
+		c.ResponseError(c.T("auth:Unauthorized operation"))
+		return false
+	}
+	return true
+}
+
 // HandleLoggedIn ...
 func (c *ApiController) HandleLoggedIn(application *object.Application, user *object.User, form *form.AuthForm) (resp *Response) {
 	if user.IsForbidden {
@@ -94,6 +145,10 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 	}
 	if !allowed {
 		c.ResponseError(c.T("auth:Unauthorized operation"))
+		return
+	}
+
+	if !c.checkCredentialApplication(user, application, form) {
 		return
 	}
 
@@ -255,6 +310,9 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 		}
 
 		deviceAuthCacheDeviceCodeCast := deviceAuthCacheDeviceCode.(object.DeviceAuthCache)
+		if !c.checkUserOfApplicationId(user, deviceAuthCacheDeviceCodeCast.ApplicationId) {
+			return
+		}
 		deviceAuthCacheDeviceCodeCast.UserName = user.Name
 		deviceAuthCacheDeviceCodeCast.UserSignIn = true
 		deviceAuthCacheDeviceCodeCast.Status = object.DeviceAuthStatusApproved

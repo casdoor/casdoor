@@ -603,6 +603,18 @@ func CheckApiPermission(userId string, organization string, path string, method 
 	return false, nil
 }
 
+func IsUserOfApplication(user *User, application *Application) (bool, error) {
+	if user.IsGlobalAdmin() || user.Owner == application.Organization || application.IsShared {
+		return true, nil
+	}
+
+	organization, err := getOrganization("admin", user.Owner)
+	if err != nil {
+		return false, err
+	}
+	return organization != nil && organization.DefaultApplication == application.Name, nil
+}
+
 func CheckLoginPermission(userId string, application *Application) (bool, error) {
 	owner, _, err := util.GetOwnerAndNameFromIdWithError(userId)
 	if err != nil {
