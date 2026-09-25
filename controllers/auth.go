@@ -998,7 +998,7 @@ func (c *ApiController) Login() {
 				return
 			}
 			c.DelSession(SamlRequestIdSessionKey)
-		} else if provider.Category == "OAuth" || provider.Category == "Web3" {
+		} else if provider.Category == "OAuth" {
 			// OAuth
 			idpInfo, err := object.FromProviderToIdpInfo(c.Ctx, provider)
 			if err != nil {
@@ -1074,7 +1074,7 @@ func (c *ApiController) Login() {
 					c.ResponseError(err.Error())
 					return
 				}
-			} else if provider.Category == "OAuth" || provider.Category == "Web3" || object.IsFlexibleCustomProvider(provider.Type) {
+			} else if provider.Category == "OAuth" || object.IsFlexibleCustomProvider(provider.Type) {
 				user, err = getUserByProvider(application.Organization, provider, userInfo.Id)
 				if err != nil {
 					c.ResponseError(err.Error())
@@ -1098,7 +1098,7 @@ func (c *ApiController) Login() {
 				resp = c.HandleLoggedIn(application, user, &authForm)
 
 				c.Ctx.Input.SetParam("recordUserId", user.GetId())
-			} else if provider.Category == "OAuth" || provider.Category == "Web3" || provider.Category == "SAML" {
+			} else if provider.Category == "OAuth" || provider.Category == "SAML" {
 				// Sign up via OAuth
 				user, err = getExistUserByBindingRule(providerItem, application, userInfo)
 				if err != nil {
@@ -1159,7 +1159,7 @@ func (c *ApiController) Login() {
 						}
 					}
 
-					// Handle UseEmailAsUsername for OAuth and Web3
+					// Handle UseEmailAsUsername for OAuth
 					if organization.UseEmailAsUsername && userInfo.Email != "" {
 						userInfo.Username = userInfo.Email
 					}

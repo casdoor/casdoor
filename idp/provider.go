@@ -132,10 +132,6 @@ func GetIdProvider(idpInfo *ProviderInfo, redirectUrl string) (IdProvider, error
 		return NewKwaiIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl), nil
 	case "Bilibili":
 		return NewBilibiliIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl), nil
-	case "MetaMask":
-		return NewMetaMaskIdProvider(), nil
-	case "Web3Onboard":
-		return NewWeb3OnboardIdProvider(), nil
 	case "Twitter":
 		provider := NewTwitterIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl)
 		provider.CodeVerifier = idpInfo.CodeVerifier

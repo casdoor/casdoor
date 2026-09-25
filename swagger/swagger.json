@@ -10039,9 +10039,6 @@
                 "meetup": {
                     "type": "string"
                 },
-                "metamask": {
-                    "type": "string"
-                },
                 "mfaAccounts": {
                     "type": "array",
                     "items": {
@@ -10258,9 +10255,6 @@
                     "type": "string"
                 },
                 "vk": {
-                    "type": "string"
-                },
-                "web3onboard": {
                     "type": "string"
                 },
                 "webauthnCredentials": {

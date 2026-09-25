@@ -4,7 +4,6 @@ import {Button} from "@/components/ui/button";
 import {WeChatQrDialog, needsWeChatQrDialog} from "@/components/auth/WeChatQrDialog";
 import * as AuthBackend from "@/backend/AuthBackend";
 import * as Provider from "@/auth/Provider";
-import {authViaMetaMask} from "@/auth/Web3Auth";
 import * as Setting from "@/lib/setting";
 
 const BLANK_AVATAR =
@@ -87,12 +86,6 @@ function OAuthRow({user, application, providerItem, account, onUnlinked}: Widget
   const isSelf = user.id === account?.id;
 
   const link = () => {
-    if (provider.category === "Web3") {
-      if (provider.type === "MetaMask") {
-        authViaMetaMask(application, provider, "link");
-      }
-      return;
-    }
     if (needsWeChatQrDialog(provider)) {
       setWechatOpen(true);
       return;
@@ -101,10 +94,6 @@ function OAuthRow({user, application, providerItem, account, onUnlinked}: Widget
   };
 
   const unlink = () => {
-    if (provider.type === "MetaMask" || provider.type === "Web3Onboard") {
-      // the signed token is kept per address in localStorage, see web/src/auth/Web3Auth.js
-      localStorage.removeItem(`Web3AuthToken_${linkedValue}`);
-    }
     AuthBackend.unlink({providerType: provider.type, providerName: provider.name || "", user}).then((res: any) => {
       if (res.status === "ok") {
         Setting.showMessage("success", "Unlinked successfully");
@@ -136,8 +125,7 @@ function OAuthRow({user, application, providerItem, account, onUnlinked}: Widget
         <>
           <Button
             size="sm"
-            // Web3Onboard needs the @web3-onboard wallet modules, which are not ported yet
-            disabled={!isSelf || provider.type === "Web3Onboard"}
+            disabled={!isSelf}
             onClick={link}
           >
             {i18next.t("user:Link")}
@@ -180,7 +168,7 @@ export function ThirdPartyLogins({user, application, account, onUnlinked, filter
   return (
     <div className="divide-y divide-border/60">
       {items.map((providerItem: any) =>
-        providerItem.provider.category === "OAuth" || providerItem.provider.category === "Web3" ? (
+        providerItem.provider.category === "OAuth" ? (
           <OAuthRow
             key={providerItem.name}
             user={user}

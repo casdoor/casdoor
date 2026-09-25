@@ -535,16 +535,6 @@ export const OtherProviderInfo = {
       url: "https://platform.openai.com",
     },
   },
-  Web3: {
-    "MetaMask": {
-      logo: `${StaticBaseUrl}/img/social_metamask.svg`,
-      url: "https://metamask.io/",
-    },
-    "Web3Onboard": {
-      logo: `${StaticBaseUrl}/img/social_web3onboard.svg`,
-      url: "https://onboard.blocknative.com/",
-    },
-  },
   Notification: {
     "Telegram": {
       logo: `${StaticBaseUrl}/img/social_telegram.png`,
@@ -696,7 +686,7 @@ export const UserFields = ["owner", "name", "password", "display_name", "id", "t
   "eveonline", "fitbit", "gitea", "heroku", "influxcloud", "instagram", "intercom", "kakao", "lastfm", "mailru",
   "meetup", "microsoftonline", "naver", "nextcloud", "onedrive", "oura", "patreon", "paypal", "salesforce", "shopify",
   "soundcloud", "spotify", "strava", "stripe", "tiktok", "tumblr", "twitch", "twitter", "typetalk", "uber", "vk",
-  "wepay", "xero", "yahoo", "yammer", "yandex", "zoom", "metamask", "web3onboard", "oidc", "custom", "webauthnCredentials",
+  "wepay", "xero", "yahoo", "yammer", "yandex", "zoom", "oidc", "custom", "webauthnCredentials",
   "preferred_mfa_type", "recovery_codes", "totp_secret", "mfa_phone_enabled", "mfa_email_enabled", "invitation",
   "invitation_code", "face_ids", "ldap", "properties", "roles", "permissions", "groups", "last_change_password_time",
   "last_signin_wrong_time", "signin_wrong_times", "managedAccounts", "mfaAccounts", "mfaItems", "need_update_password",
@@ -918,7 +908,7 @@ export function isProviderVisible(providerItem) {
     return false;
   }
 
-  if (!["OAuth", "SAML", "Web3"].includes(providerItem.provider.category)) {
+  if (!["OAuth", "SAML"].includes(providerItem.provider.category)) {
     return false;
   }
 
@@ -1561,11 +1551,6 @@ export function getProviderTypeOptions(category) {
       {id: "Aliyun Captcha", name: "Aliyun Captcha"},
       {id: "GEETEST", name: "GEETEST"},
       {id: "Cloudflare Turnstile", name: "Cloudflare Turnstile"},
-    ]);
-  } else if (category === "Web3") {
-    return ([
-      {id: "MetaMask", name: "MetaMask"},
-      {id: "Web3Onboard", name: "Web3-Onboard"},
     ]);
   } else if (category === "Notification") {
     return ([

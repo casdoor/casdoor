@@ -34,7 +34,7 @@
       return false;
     }
 
-    if (["OAuth", "SAML", "Web3"].indexOf(providerItem.provider.category) === -1) {
+    if (["OAuth", "SAML"].indexOf(providerItem.provider.category) === -1) {
       return false;
     }
 
@@ -158,9 +158,7 @@
     Yahoo: {scope: "openid%20profile%20email", endpoint: "https://api.login.yahoo.com/oauth2/request_auth"},
     Yammer: {scope: "user", endpoint: "https://www.yammer.com/oauth2/authorize"},
     Yandex: {scope: "login:email", endpoint: "https://oauth.yandex.com/authorize"},
-    Zoom: {scope: "user:read", endpoint: "https://zoom.us/oauth/authorize"},
-    MetaMask: {scope: "", endpoint: ""},
-    Web3Onboard: {scope: "", endpoint: ""}
+    Zoom: {scope: "user:read", endpoint: "https://zoom.us/oauth/authorize"}
   };
 
   function getStateFromQueryParams(applicationName, providerName, method, isShortState) {
@@ -318,8 +316,6 @@
       return endpoint + "?client_id=" + provider.clientId + "&redirect_uri=" + redirectUri + "&state=" + state + "&response_type=code&scope=" + scope + "&code_challenge=" + codeChallenge + "&code_challenge_method=S256";
     } else if (provider.type === "Telegram") {
       return redirectOrigin + "/telegram-login?state=" + state;
-    } else if (provider.type === "MetaMask" || provider.type === "Web3Onboard") {
-      return redirectUri + "?state=" + state;
     }
 
     return "";
