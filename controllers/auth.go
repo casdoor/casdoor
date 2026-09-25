@@ -53,7 +53,7 @@ func tokenToResponse(token *object.Token) *Response {
 	if token.AccessToken == "" {
 		return &Response{Status: "error", Msg: "fail to get accessToken", Data: token.AccessToken}
 	}
-	return &Response{Status: "ok", Msg: "", Data: token.AccessToken, Data2: token.RefreshToken}
+	return &Response{Status: "ok", Msg: "", Data: token.AccessToken, Data2: token.RefreshToken, Data3: token.IdToken}
 }
 
 // HandleLoggedIn ...

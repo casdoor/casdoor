@@ -60,7 +60,7 @@ type Code struct {
 
 type TokenWrapper struct {
 	AccessToken  string `json:"access_token"`
-	IdToken      string `json:"id_token"`
+	IdToken      string `json:"id_token,omitempty"`
 	RefreshToken string `json:"refresh_token"`
 	TokenType    string `json:"token_type"`
 	ExpiresIn    int    `json:"expires_in"`
@@ -340,7 +340,7 @@ func GetOAuthCode(userId string, clientId string, provider string, signinMethod 
 	if err != nil {
 		return nil, err
 	}
-	accessToken, refreshToken, tokenName, err := generateJwtToken(application, user, provider, signinMethod, nonce, scope, resource, host)
+	accessToken, refreshToken, idToken, tokenName, err := generateJwtToken(application, user, provider, signinMethod, nonce, scope, resource, host)
 	if err != nil {
 		return nil, err
 	}
@@ -359,6 +359,7 @@ func GetOAuthCode(userId string, clientId string, provider string, signinMethod 
 		Code:          util.GenerateClientId(),
 		AccessToken:   accessToken,
 		RefreshToken:  refreshToken,
+		IdToken:       idToken,
 		ExpiresIn:     int(application.ExpireInHours * float64(hourSeconds)),
 		Scope:         scope,
 		TokenType:     "Bearer",
@@ -504,7 +505,7 @@ func RefreshToken(application *Application, grantType string, refreshToken strin
 		return nil, err
 	}
 
-	newAccessToken, newRefreshToken, tokenName, err := generateJwtToken(application, user, "", "", "", scope, resource, host)
+	newAccessToken, newRefreshToken, newIdToken, tokenName, err := generateJwtToken(application, user, "", "", "", scope, resource, host)
 	if err != nil {
 		return &TokenError{
 			Error:            EndpointError,
@@ -522,6 +523,7 @@ func RefreshToken(application *Application, grantType string, refreshToken strin
 		Code:         util.GenerateClientId(),
 		AccessToken:  newAccessToken,
 		RefreshToken: newRefreshToken,
+		IdToken:      newIdToken,
 		ExpiresIn:    int(application.ExpireInHours * float64(hourSeconds)),
 		Scope:        scope,
 		TokenType:    "Bearer",
@@ -558,7 +560,7 @@ func RefreshToken(application *Application, grantType string, refreshToken strin
 
 	tokenWrapper := &TokenWrapper{
 		AccessToken:  newToken.AccessToken,
-		IdToken:      newToken.AccessToken,
+		IdToken:      newToken.IdToken,
 		RefreshToken: newToken.RefreshToken,
 		TokenType:    newToken.TokenType,
 		ExpiresIn:    newToken.ExpiresIn,
@@ -806,7 +808,7 @@ func createGuestUserToken(application *Application, clientSecret string, verifie
 		}, nil
 	}
 
-	accessToken, refreshToken, tokenName, err := generateJwtToken(application, guestUser, "", "", "", "", "", "")
+	accessToken, refreshToken, idToken, tokenName, err := generateJwtToken(application, guestUser, "", "", "", "", "", "")
 	if err != nil {
 		return nil, &TokenError{
 			Error:            EndpointError,
@@ -824,6 +826,7 @@ func createGuestUserToken(application *Application, clientSecret string, verifie
 		Code:          util.GenerateClientId(),
 		AccessToken:   accessToken,
 		RefreshToken:  refreshToken,
+		IdToken:       idToken,
 		ExpiresIn:     int(application.ExpireInHours * float64(hourSeconds)),
 		Scope:         "",
 		TokenType:     "Bearer",

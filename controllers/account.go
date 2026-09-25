@@ -399,14 +399,14 @@ func (c *ApiController) Signup() {
 // @router /logout [get,post]
 func (c *ApiController) Logout() {
 	// https://openid.net/specs/openid-connect-rpinitiated-1_0-final.html
-	accessToken := c.GetString("id_token_hint")
+	idTokenHint := c.GetString("id_token_hint")
 	redirectUri := c.GetString("post_logout_redirect_uri")
 	clientId := c.GetString("client_id")
 	state := c.GetString("state")
 
 	user := c.GetSessionUsername()
 
-	if accessToken == "" {
+	if idTokenHint == "" {
 		// "id_token_hint" is only RECOMMENDED (not REQUIRED) by the OIDC RP-Initiated Logout
 		// spec, so when it is absent we log the user out based on the current session. Some
 		// clients (e.g. Gitea) only send "post_logout_redirect_uri" (optionally with
@@ -471,10 +471,18 @@ func (c *ApiController) Logout() {
 		c.ResponseOk(user, application.HomepageUrl)
 		return
 	} else {
-		token, err := object.GetTokenByAccessToken(accessToken)
+		token, err := object.GetTokenByIdToken(idTokenHint)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
+		}
+		// RPs still holding a hint issued before ID tokens were split from access tokens
+		if token == nil {
+			token, err = object.GetTokenByAccessToken(idTokenHint)
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
 		}
 		if token == nil {
 			c.ResponseError(c.T("token:Token not found, invalid accessToken"))
@@ -527,7 +535,7 @@ func (c *ApiController) Logout() {
 		}
 
 		// Propagate logout to external Custom OAuth2 providers
-		object.InvokeCustomProviderLogout(application, accessToken)
+		object.InvokeCustomProviderLogout(application, token.AccessToken)
 
 		// "post_logout_redirect_uri" has been made optional, see: https://github.com/casdoor/casdoor/issues/2151
 		if redirectUri == "" {

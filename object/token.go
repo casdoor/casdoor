@@ -35,8 +35,10 @@ type Token struct {
 	Code             string `xorm:"varchar(100) index" json:"code"`
 	AccessToken      string `xorm:"mediumtext" json:"accessToken"`
 	RefreshToken     string `xorm:"mediumtext" json:"refreshToken"`
+	IdToken          string `xorm:"mediumtext" json:"idToken"`
 	AccessTokenHash  string `xorm:"varchar(100) index" json:"accessTokenHash"`
 	RefreshTokenHash string `xorm:"varchar(100) index" json:"refreshTokenHash"`
+	IdTokenHash      string `xorm:"varchar(100) index" json:"idTokenHash"`
 	ExpiresIn        int    `json:"expiresIn"`
 	Scope            string `xorm:"varchar(300)" json:"scope"`
 	TokenType        string `xorm:"varchar(100)" json:"tokenType"`
@@ -145,6 +147,19 @@ func GetTokenByRefreshToken(refreshToken string) (*Token, error) {
 	return &token, nil
 }
 
+func GetTokenByIdToken(idToken string) (*Token, error) {
+	token := Token{IdTokenHash: getTokenHash(idToken)}
+	existed, err := ormer.Engine.Get(&token)
+	if err != nil {
+		return nil, err
+	}
+
+	if !existed {
+		return nil, nil
+	}
+	return &token, nil
+}
+
 func GetTokenByTokenValue(tokenValue, tokenTypeHint string) (*Token, error) {
 	switch tokenTypeHint {
 	case "access_token", "access-token":
@@ -204,6 +219,9 @@ func (token *Token) popularHashes() {
 	}
 	if token.RefreshTokenHash == "" && token.RefreshToken != "" {
 		token.RefreshTokenHash = getTokenHash(token.RefreshToken)
+	}
+	if token.IdTokenHash == "" && token.IdToken != "" {
+		token.IdTokenHash = getTokenHash(token.IdToken)
 	}
 }
 
