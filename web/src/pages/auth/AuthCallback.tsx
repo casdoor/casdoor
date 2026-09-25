@@ -135,12 +135,6 @@ export default function AuthCallback() {
     // Providers disagree on the parameter name for the authorization code.
     let code =
       params.get("code") ?? params.get("auth_code") ?? params.get("authCode") ?? null;
-    if (code === null) {
-      const web3Key = params.get("web3AuthTokenKey");
-      if (web3Key) {
-        code = localStorage.getItem(web3Key);
-      }
-    }
     const isSteam = params.get("openid.mode");
     if (isSteam !== null && code === null) {
       code = location.search;

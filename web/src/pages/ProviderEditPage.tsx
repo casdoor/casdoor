@@ -60,7 +60,7 @@ const defaultSmsMapping: Record<string, string> = {
 
 const CATEGORIES = [
   "Captcha", "Email", "Face ID", "ID Verification", "Log", "MFA", "Notification",
-  "OAuth", "Payment", "SAML", "Scan", "SMS", "Storage", "Web3",
+  "OAuth", "Payment", "SAML", "Scan", "SMS", "Storage",
 ].sort((a, b) => a.localeCompare(b));
 
 const HTTP_METHODS = ["GET", "POST", "PUT", "DELETE"];
@@ -72,19 +72,6 @@ const SMS_PROVIDERS_WITHOUT_TEMPLATE_CODE = ["Infobip SMS"];
 const SCAN_HOST_OPTIONS = ["127.0.0.1/32", "10.0.0.0/24", "172.16.0.0/24", "192.168.1.0/24"];
 const SCAN_PORT_OPTIONS = ["80", "3000", "8080"];
 const SCAN_PATH_OPTIONS = ["/", "/mcp", "/sse", "/mcp/sse"];
-
-/** the keys of web3Wallets in web/src/auth/Web3Auth.js — the values the backend stores in `metadata` */
-const WEB3_ONBOARD_WALLETS = [
-  {value: "injected", label: "Injected"},
-  {value: "phantom", label: "Phantom"},
-  {value: "coinbase", label: "Coinbase"},
-  {value: "trust", label: "Trust"},
-  {value: "gnosis", label: "Gnosis"},
-  {value: "sequence", label: "Sequence"},
-  {value: "taho", label: "Taho"},
-  {value: "frontier", label: "Frontier"},
-  {value: "infinityWallet", label: "Infinity Wallet"},
-];
 
 function isDefaultProviderName(name: string) {
   return /^provider_[a-z0-9]+$/.test(name ?? "");
@@ -321,7 +308,6 @@ function hasClientIdRow(provider: any) {
 
 function hasCredentialRows(provider: any) {
   if ((provider.category === "Captcha" && provider.type === "Default") ||
-      provider.category === "Web3" ||
       provider.category === "MFA" ||
       provider.category === "Log" ||
       provider.category === "Scan" ||
@@ -702,8 +688,6 @@ export default function ProviderEditPage() {
       defaultType = "PayPal";
     } else if (value === "Captcha") {
       defaultType = "Default";
-    } else if (value === "Web3") {
-      defaultType = "MetaMask";
     } else if (value === "Notification") {
       defaultType = "Telegram";
     } else if (value === "Face ID") {
@@ -1505,32 +1489,6 @@ export default function ProviderEditPage() {
     </React.Fragment>
   );
 
-  const getWalletValue = () => {
-    try {
-      const parsed = JSON.parse(provider.metadata);
-      return Array.isArray(parsed) ? parsed : ["injected"];
-    } catch {
-      return ["injected"];
-    }
-  };
-
-  const renderWeb3Fields = () => (
-    <React.Fragment>
-      <FormRow labelKey="provider:Enable proxy">
-        <Switch checked={!!provider.enableProxy} onCheckedChange={(v) => updateProviderField("enableProxy", v)} />
-      </FormRow>
-      {provider.type === "Web3Onboard" ? (
-        <FormRow labelKey="provider:Wallets">
-          <MultiSelect
-            value={getWalletValue()}
-            onChange={(options) => updateProviderField("metadata", JSON.stringify(options))}
-            options={WEB3_ONBOARD_WALLETS}
-          />
-        </FormRow>
-      ) : null}
-    </React.Fragment>
-  );
-
   const renderStorageFields = () => (
     <React.Fragment>
       {!["Local File System", "MinIO", "Tencent Cloud COS", "Google Cloud Storage", "Qiniu Cloud Kodo", "Synology", "Casdoor"].includes(provider.type) ? (
@@ -1749,7 +1707,6 @@ export default function ProviderEditPage() {
       {provider.category === "Scan" ? renderScanFields() : null}
       {provider.category === "SAML" ? renderSamlFields() : null}
       {provider.category === "Payment" ? renderPaymentFields() : null}
-      {provider.category === "Web3" ? renderWeb3Fields() : null}
       {provider.category === "Storage" ? renderStorageFields() : null}
       {provider.category === "Face ID" ? renderEndpointOnlyField() : null}
       {provider.category === "ID Verification" ? renderEndpointOnlyField() : null}

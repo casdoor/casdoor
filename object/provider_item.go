@@ -54,7 +54,7 @@ func (pi *ProviderItem) IsProviderVisible() bool {
 	if pi.Provider == nil {
 		return false
 	}
-	return pi.Provider.Category == "OAuth" || pi.Provider.Category == "SAML" || pi.Provider.Category == "Web3"
+	return pi.Provider.Category == "OAuth" || pi.Provider.Category == "SAML"
 }
 
 func (pi *ProviderItem) isProviderPrompted() bool {

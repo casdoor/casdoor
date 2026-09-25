@@ -6622,8 +6622,6 @@ definitions:
           $ref: '#/definitions/object.ManagedAccount'
       meetup:
         type: string
-      metamask:
-        type: string
       mfaAccounts:
         type: array
         items:
@@ -6769,8 +6767,6 @@ definitions:
       updatedTime:
         type: string
       vk:
-        type: string
-      web3onboard:
         type: string
       webauthnCredentials:
         type: array

@@ -282,7 +282,7 @@ func GetMaskedApplication(application *Application, userId string) *Application 
 		}
 
 		category := providerItem.Provider.Category
-		if category == "OAuth" || category == "Web3" || category == "Captcha" || category == "SAML" || category == "Face ID" {
+		if category == "OAuth" || category == "Captcha" || category == "SAML" || category == "Face ID" {
 			providerItems = append(providerItems, providerItem)
 		} else if category == "Email" || category == "SMS" {
 			// The login pages need to know whether an Email or SMS provider is available,

@@ -113,7 +113,7 @@ selector broadcasting `storageOrganizationChanged`, and the sign-in payloads
 
 **Authentication** — sign in (self / OAuth authorize / CAS / SAML / device code),
 sign up from `signupItems`, forgot password, `/callback` (OAuth, OIDC, SAML POST
-binding, CAS, Telegram, Steam, Web3 token key), MFA second factor + recovery
+binding, CAS, Telegram, Steam), MFA second factor + recovery
 code, consent, prompt, result.
 
 The sign-in page honours `orgChoiceMode`, so an application can ask which
@@ -248,9 +248,8 @@ marked `Required` gets a warning and the redirect to `/mfa/setup`.
 
 ## Deliberately not ported
 
-- **Web3**: `auth/Web3Auth.ts` talks to `window.ethereum` directly rather than
-  going through `@web3-onboard`, so the extra wallets that library bundles
-  (Coinbase, Phantom, Trust, Gnosis, ...) are not offered. MetaMask works.
+- **Web3** (MetaMask / Web3-Onboard): the whole `Web3` provider category was
+  removed from Casdoor, backend included.
 
 ## Still to do
 

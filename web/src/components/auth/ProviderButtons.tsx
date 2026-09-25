@@ -6,7 +6,6 @@ import {Tooltip, TooltipContent, TooltipTrigger} from "@/components/ui/tooltip";
 import {WeChatQrDialog, needsWeChatQrDialog} from "@/components/auth/WeChatQrDialog";
 import * as AuthBackend from "@/backend/AuthBackend";
 import * as Provider from "@/auth/Provider";
-import {authViaMetaMask} from "@/auth/Web3Auth";
 import * as Setting from "@/lib/setting";
 
 interface ProviderButtonsProps {
@@ -51,7 +50,7 @@ function goToSamlUrl(provider: any, search: string) {
 /**
  * The third-party login buttons of an application. The visibility rules and the
  * authorize URL are the ones the antd frontend used, so the round-trip through
- * /callback keeps working unchanged. SAML, Web3 and the WeChat media platform
+ * /callback keeps working unchanged. SAML and the WeChat media platform
  * take their own paths, as in web/src/auth/ProviderButton.js.
  */
 export function ProviderButtons({application, method, rule, onBeforeClick}: ProviderButtonsProps) {
@@ -65,15 +64,6 @@ export function ProviderButtons({application, method, rule, onBeforeClick}: Prov
 
     if (provider.category === "SAML") {
       goToSamlUrl(provider, location.search);
-      return;
-    }
-    if (provider.category === "Web3") {
-      if (provider.type === "MetaMask") {
-        authViaMetaMask(application, provider, method);
-      } else {
-        // Web3Onboard needs the @web3-onboard wallet modules, which are not ported yet
-        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${provider.type}`);
-      }
       return;
     }
     if (needsWeChatQrDialog(provider)) {

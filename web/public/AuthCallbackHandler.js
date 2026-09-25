@@ -220,13 +220,6 @@
     var isSteam = params.get("openid.mode");
     var code = params.get("code") || params.get("auth_code") || params.get("authCode");
 
-    if (code === null) {
-      var web3AuthTokenKey = params.get("web3AuthTokenKey");
-      if (web3AuthTokenKey !== null) {
-        code = localStorage.getItem(web3AuthTokenKey);
-      }
-    }
-
     if (isSteam !== null && code === null) {
       code = window.location.search;
     }

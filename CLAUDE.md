@@ -17,3 +17,5 @@ Not migrated on purpose:
 - **AI assistant.** The `aiAssistantUrl` config, its header button and the iframe
   drawer (`Conf.AiAssistantUrl` / `renderAiAssistant()` in `web-old/src/App.js`,
   the `ai-assistant` entry of `WidgetItemTree`) are dropped. Do not port them.
+- **Web3 providers.** The `Web3` category (MetaMask, Web3-Onboard) was removed
+  from the backend and `web`. Do not port `web-old`'s wallet sign-in code.
