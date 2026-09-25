@@ -147,7 +147,7 @@ export function getStateFromQueryParams(applicationName, providerName, method, i
   let query = window.location.search;
   query = `${query}&application=${encodeURIComponent(applicationName)}&provider=${encodeURIComponent(providerName)}&method=${method}`;
   if (method === "link") {
-    query = `${query}&from=${window.location.pathname}`;
+    query = `${query}&from=${window.location.pathname}&linkNonce=${newLinkNonce()}`;
   }
 
   // Device authorization flow: the userCode lives in the path (/login/oauth/device/:userCode),
@@ -164,6 +164,28 @@ export function getStateFromQueryParams(applicationName, providerName, method, i
     sessionStorage.setItem(state, query);
     return state;
   }
+}
+
+// Keep in sync with public/AuthCallbackHandler.js
+const LINK_NONCE_KEY = "casdoor_link_nonce";
+
+function newLinkNonce(): string {
+  const bytes = new Uint8Array(16);
+  crypto.getRandomValues(bytes);
+  const nonce = Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join("");
+  sessionStorage.setItem(LINK_NONCE_KEY, nonce);
+  return nonce;
+}
+
+/**
+ * Tells whether this tab started the account linking the callback comes back from. The
+ * state is not bound to the session, so a callback URL crafted by someone else would
+ * otherwise link their provider account to the signed-in user.
+ */
+export function consumeLinkNonce(nonce: string | null): boolean {
+  const expected = sessionStorage.getItem(LINK_NONCE_KEY);
+  sessionStorage.removeItem(LINK_NONCE_KEY);
+  return !!nonce && nonce === expected;
 }
 
 export function getQueryParamsFromState(state) {

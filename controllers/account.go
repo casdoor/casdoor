@@ -173,14 +173,9 @@ func (c *ApiController) Signup() {
 	userEmailVerified := false
 
 	if application.IsSignupFieldVisible("Email") && application.GetSignupFieldRule("Email") != "No verification" && authForm.Email != "" {
-		var checkResult *object.VerifyResult
-		checkResult, err = object.CheckVerificationCode(authForm.Email, authForm.EmailCode, c.GetAcceptLanguage())
+		err = object.CheckVerifyCodeWithLimitAndIp(nil, clientIp, authForm.Email, authForm.EmailCode, c.GetAcceptLanguage())
 		if err != nil {
-			c.ResponseError(c.T(err.Error()))
-			return
-		}
-		if checkResult.Code != object.VerificationSuccess {
-			c.ResponseError(checkResult.Msg)
+			c.ResponseError(err.Error())
 			return
 		}
 
@@ -191,14 +186,9 @@ func (c *ApiController) Signup() {
 	if application.IsSignupFieldVisible("Phone") && application.GetSignupFieldRule("Phone") != "No verification" && authForm.Phone != "" {
 		checkPhone, _ = util.GetE164Number(authForm.Phone, authForm.CountryCode)
 
-		var checkResult *object.VerifyResult
-		checkResult, err = object.CheckVerificationCode(checkPhone, authForm.PhoneCode, c.GetAcceptLanguage())
+		err = object.CheckVerifyCodeWithLimitAndIp(nil, clientIp, checkPhone, authForm.PhoneCode, c.GetAcceptLanguage())
 		if err != nil {
-			c.ResponseError(c.T(err.Error()))
-			return
-		}
-		if checkResult.Code != object.VerificationSuccess {
-			c.ResponseError(checkResult.Msg)
+			c.ResponseError(err.Error())
 			return
 		}
 	}

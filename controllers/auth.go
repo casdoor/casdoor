@@ -262,8 +262,11 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 			resp = codeToResponse(code)
 		}
 	} else if form.Type == ResponseTypeToken || form.Type == ResponseTypeIdToken { // implicit flow
+		redirectUri := c.Ctx.Input.Query("redirectUri")
 		if !object.IsGrantTypeValid(form.Type, application.GrantTypes) {
 			resp = &Response{Status: "error", Msg: fmt.Sprintf("error: grant_type: %s is not supported in this application", form.Type), Data: ""}
+		} else if redirectUri != "" && !application.IsRedirectUriValid(redirectUri) {
+			resp = &Response{Status: "error", Msg: fmt.Sprintf(c.T("token:Redirect URI: %s doesn't exist in the allowed Redirect URI list"), redirectUri), Data: ""}
 		} else {
 			scope := c.Ctx.Input.Query("scope")
 			nonce := c.Ctx.Input.Query("nonce")
@@ -337,6 +340,11 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 		service := c.Ctx.Input.Query("service")
 		resp = wrapErrorResponse(nil)
 		if service != "" {
+			if err = object.CheckCasLogin(application, c.GetAcceptLanguage(), service); err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
+
 			st, err := object.GenerateCasToken(userId, service)
 			if err != nil {
 				resp = wrapErrorResponse(err)
@@ -1588,7 +1596,7 @@ func (c *ApiController) HandleOfficialAccountEvent() {
 		return
 	}
 
-	if !idp.VerifyWechatSignature(provider.Content, nonce, timestamp, signature) {
+	if provider.Type != "WeChat" || provider.Content == "" || !idp.VerifyWechatSignature(provider.Content, nonce, timestamp, signature) {
 		c.ResponseError("invalid signature")
 		return
 	}

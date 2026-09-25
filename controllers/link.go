@@ -16,6 +16,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/casdoor/casdoor/object"
 )
@@ -49,15 +50,19 @@ func (c *ApiController) Unlink() {
 	providerName := form.ProviderName
 
 	// the user will be unlinked from the provider
-	unlinkedUser := form.User
+	unlinkedUser, ok := c.getUnlinkedUser(&form.User)
+	if !ok {
+		return
+	}
 
-	if user.Id != unlinkedUser.Id && !user.IsGlobalAdmin() {
+	isSelf := user.GetId() == unlinkedUser.GetId()
+	if !isSelf && !user.IsGlobalAdmin() {
 		// if the user is not the same as the one we are unlinking, we need to make sure the user is the global admin.
 		c.ResponseError(c.T("link:You are not the global admin, you can't unlink other users"))
 		return
 	}
 
-	if user.Id == unlinkedUser.Id && !user.IsGlobalAdmin() {
+	if isSelf && !user.IsGlobalAdmin() {
 		// if the user is unlinking themselves, should check the provider can be unlinked, if not, we should return an error.
 		application, err := object.GetApplicationByUser(user)
 		if err != nil {
@@ -132,24 +137,39 @@ func (c *ApiController) Unlink() {
 		return
 	}
 
-	value := object.GetUserField(&unlinkedUser, providerType)
+	value := object.GetUserField(unlinkedUser, providerType)
 
 	if value == "" {
 		c.ResponseError(c.T("link:Please link first"), value)
 		return
 	}
 
-	_, err = object.ClearUserOAuthProperties(&unlinkedUser, providerType)
+	_, err = object.ClearUserOAuthProperties(unlinkedUser, providerType)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
 
-	_, err = object.LinkUserAccount(&unlinkedUser, providerType, "")
+	_, err = object.LinkUserAccount(unlinkedUser, providerType, "")
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
 
 	c.ResponseOk()
+}
+
+// getUnlinkedUser loads the user named by the request from the database: the other fields of
+// the posted user are written back when its OAuth properties are cleared, so they can't be trusted
+func (c *ApiController) getUnlinkedUser(formUser *object.User) (*object.User, bool) {
+	unlinkedUser, err := object.GetUser(formUser.GetId())
+	if err != nil {
+		c.ResponseError(err.Error())
+		return nil, false
+	}
+	if unlinkedUser == nil {
+		c.ResponseError(fmt.Sprintf(c.T("general:The user: %s doesn't exist"), formUser.GetId()))
+		return nil, false
+	}
+	return unlinkedUser, true
 }

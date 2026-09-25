@@ -359,6 +359,27 @@ func getAuthnRequest(application *Application, samlRequest string) (saml.AuthNRe
 	return authnRequest, nil
 }
 
+// isSamlAcsUrlValid checks the ACS URL of an AuthnRequest, which isn't signed: the signed
+// assertion is posted there, so it must be a registered URL or on the host of one of them
+func (application *Application) isSamlAcsUrlValid(acsUrl string) bool {
+	if application.IsRedirectUriValid(acsUrl) {
+		return true
+	}
+
+	acsUrlObj, err := url.Parse(acsUrl)
+	if err != nil || acsUrlObj.Host == "" {
+		return false
+	}
+
+	for _, redirectUri := range application.RedirectUris {
+		redirectUriObj, err := url.Parse(redirectUri)
+		if err == nil && redirectUriObj.Host != "" && redirectUriObj.Scheme == acsUrlObj.Scheme && redirectUriObj.Host == acsUrlObj.Host {
+			return true
+		}
+	}
+	return false
+}
+
 // getIdpInitiatedAuthnRequest builds the AuthnRequest for IdP-initiated SSO, where the SP doesn't send any AuthnRequest to Casdoor,
 // so the ACS URL and the SP's entity ID are taken from the application's SAML config instead
 func getIdpInitiatedAuthnRequest(application *Application) (saml.AuthNRequest, error) {
@@ -423,6 +444,8 @@ func GetSamlResponse(application *Application, user *User, samlRequest string, h
 		authnRequest.AssertionConsumerServiceURL = application.SamlReplyUrl
 	} else if authnRequest.AssertionConsumerServiceURL == "" {
 		return "", "", "", fmt.Errorf("err: SAML request don't has attribute 'AssertionConsumerServiceURL' in <samlp:AuthnRequest>")
+	} else if !application.isSamlAcsUrlValid(authnRequest.AssertionConsumerServiceURL) {
+		return "", "", "", fmt.Errorf("err: AssertionConsumerServiceURL: %s doesn't match the SAML reply URL or the allowed Redirect URI list", authnRequest.AssertionConsumerServiceURL)
 	}
 	if authnRequest.ProtocolBinding == "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" {
 		method = "POST"

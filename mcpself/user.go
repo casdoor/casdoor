@@ -108,6 +108,11 @@ func (c *McpController) handleUpdateUserTool(id interface{}, args UpdateUserArgs
 		return
 	}
 
+	if !c.IsGlobalAdmin() && args.User.Owner != oldUser.Owner {
+		c.SendToolErrorResult(id, "only the global admin can move a user to another organization")
+		return
+	}
+
 	if msg := object.CheckUpdateUser(oldUser, &args.User, c.GetAcceptLanguage()); msg != "" {
 		c.SendToolErrorResult(id, msg)
 		return

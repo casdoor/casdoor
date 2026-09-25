@@ -52,6 +52,9 @@ func PlaceOrder(owner string, reqProductInfos []ProductInfo, user *User, couponC
 		if reqInfo.Name == "" {
 			return nil, fmt.Errorf("product name cannot be empty")
 		}
+		if reqInfo.Quantity < 1 {
+			return nil, fmt.Errorf("the quantity of product: %s should be at least 1", reqInfo.Name)
+		}
 		err := checkPricingIsAllowed(owner, reqInfo.PricingName, user)
 		if err != nil {
 			return nil, err
@@ -192,6 +195,11 @@ func PayOrder(providerName, host, paymentEnv string, order *Order, lang string) 
 	}
 
 	pProvider, err := GetPaymentProvider(provider)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	err = checkBalanceForPayment(provider, order, lang)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -420,6 +428,22 @@ func PayOrder(providerName, host, paymentEnv string, order *Order, lang string) 
 	}
 
 	return payment, payResp.AttachInfo, nil
+}
+
+// checkBalanceForPayment refuses a balance payment the user can't afford before anything is
+// recorded: the payment is stored as paid right away, which activates its subscription
+func checkBalanceForPayment(provider *Provider, order *Order, lang string) error {
+	if provider.Type != "Balance" {
+		return nil
+	}
+
+	transaction := &Transaction{
+		Owner:    order.Owner,
+		Currency: order.Currency,
+		Tag:      "User",
+		User:     order.User,
+	}
+	return validateBalanceForTransaction(transaction, -order.Price, lang)
 }
 
 func CancelOrder(order *Order) (bool, error) {
