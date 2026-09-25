@@ -30,36 +30,40 @@ type UserResourceHandler struct{}
 
 func (h UserResourceHandler) Create(r *http.Request, attrs scim.ResourceAttributes) (scim.Resource, error) {
 	resource := &scim.Resource{Attributes: attrs}
-	err := AddScimUser(resource)
+	err := AddScimUser(r, resource)
 	return *resource, err
 }
 
 func (h UserResourceHandler) Get(r *http.Request, id string) (scim.Resource, error) {
-	resource, err := GetScimUser(id)
+	resource, err := GetScimUser(r, id)
 	if err != nil {
 		return scim.Resource{}, err
-	}
-	if resource == nil {
-		return scim.Resource{}, errors.ScimErrorResourceNotFound(id)
 	}
 	return *resource, nil
 }
 
 func (h UserResourceHandler) Delete(r *http.Request, id string) error {
-	user, err := object.GetUserByUserIdOnly(id)
+	user, err := getScopedUser(r, id)
 	if err != nil {
 		return err
-	}
-	if user == nil {
-		return errors.ScimErrorResourceNotFound(id)
 	}
 	_, err = object.DeleteUser(user)
 	return err
 }
 
 func (h UserResourceHandler) GetAll(r *http.Request, params scim.ListRequestParams) (scim.Page, error) {
+	organization, err := getOrganization(r)
+	if err != nil {
+		return scim.Page{}, err
+	}
+
 	if params.Count == 0 {
-		count, err := object.GetGlobalUserCount("", "")
+		var count int64
+		if organization == "" {
+			count, err = object.GetGlobalUserCount("", "")
+		} else {
+			count, err = object.GetUserCount(organization, "", "", "")
+		}
 		if err != nil {
 			return scim.Page{}, err
 		}
@@ -68,7 +72,12 @@ func (h UserResourceHandler) GetAll(r *http.Request, params scim.ListRequestPara
 
 	resources := make([]scim.Resource, 0)
 	// startIndex is 1-based index
-	users, err := object.GetPaginationGlobalUsers(params.StartIndex-1, params.Count, "", "", "", "")
+	var users []*object.User
+	if organization == "" {
+		users, err = object.GetPaginationGlobalUsers(params.StartIndex-1, params.Count, "", "", "", "")
+	} else {
+		users, err = object.GetPaginationUsers(organization, params.StartIndex-1, params.Count, "", "", "", "", "")
+	}
 	if err != nil {
 		return scim.Page{}, err
 	}
@@ -82,44 +91,42 @@ func (h UserResourceHandler) GetAll(r *http.Request, params scim.ListRequestPara
 }
 
 func (h UserResourceHandler) Patch(r *http.Request, id string, operations []scim.PatchOperation) (scim.Resource, error) {
-	user, err := object.GetUserByUserIdOnly(id)
-	if err != nil {
-		return scim.Resource{}, err
-	}
-	if user == nil {
-		return scim.Resource{}, errors.ScimErrorResourceNotFound(id)
-	}
-	return UpdateScimUserByPatchOperation(id, operations)
+	return UpdateScimUserByPatchOperation(r, id, operations)
 }
 
 func (h UserResourceHandler) Replace(r *http.Request, id string, attrs scim.ResourceAttributes) (scim.Resource, error) {
-	user, err := object.GetUserByUserIdOnly(id)
-	if err != nil {
-		return scim.Resource{}, err
-	}
-	if user == nil {
-		return scim.Resource{}, errors.ScimErrorResourceNotFound(id)
-	}
 	resource := &scim.Resource{Attributes: attrs}
-	err = UpdateScimUser(id, resource)
+	err := UpdateScimUser(r, id, resource)
 	return *resource, err
 }
 
-func GetScimUser(id string) (*scim.Resource, error) {
+// getScopedUser returns the user of the SCIM id, as not found when it is outside the
+// organization the request is limited to.
+func getScopedUser(r *http.Request, id string) (*object.User, error) {
 	user, err := object.GetUserByUserIdOnly(id)
 	if err != nil {
 		return nil, err
 	}
-	if user == nil {
-		return nil, nil
+	if user == nil || !isOrganizationAllowed(r, user.Owner) {
+		return nil, errors.ScimErrorResourceNotFound(id)
 	}
-	r := user2resource(user)
-	return r, nil
+	return user, nil
 }
 
-func AddScimUser(r *scim.Resource) error {
+func GetScimUser(r *http.Request, id string) (*scim.Resource, error) {
+	user, err := getScopedUser(r, id)
+	if err != nil {
+		return nil, err
+	}
+	return user2resource(user), nil
+}
+
+func AddScimUser(req *http.Request, r *scim.Resource) error {
 	newUser, err := resource2user(r.Attributes)
 	if err != nil {
+		return err
+	}
+	if err = checkOrganization(req, newUser.Owner); err != nil {
 		return err
 	}
 
@@ -147,16 +154,16 @@ func AddScimUser(r *scim.Resource) error {
 	return nil
 }
 
-func UpdateScimUser(id string, r *scim.Resource) error {
-	oldUser, err := object.GetUserByUserIdOnly(id)
+func UpdateScimUser(req *http.Request, id string, r *scim.Resource) error {
+	oldUser, err := getScopedUser(req, id)
 	if err != nil {
 		return err
 	}
-	if oldUser == nil {
-		return errors.ScimErrorResourceNotFound(id)
-	}
 	newUser, err := resource2user(r.Attributes)
 	if err != nil {
+		return err
+	}
+	if err = checkOrganization(req, newUser.Owner); err != nil {
 		return err
 	}
 	_, err = object.UpdateUser(oldUser.GetId(), newUser, nil, true)
@@ -171,13 +178,10 @@ func UpdateScimUser(id string, r *scim.Resource) error {
 }
 
 // https://datatracker.ietf.org/doc/html/rfc7644#section-3.5.2 Modifying with PATCH
-func UpdateScimUserByPatchOperation(id string, ops []scim.PatchOperation) (r scim.Resource, err error) {
-	user, err := object.GetUserByUserIdOnly(id)
+func UpdateScimUserByPatchOperation(req *http.Request, id string, ops []scim.PatchOperation) (r scim.Resource, err error) {
+	user, err := getScopedUser(req, id)
 	if err != nil {
 		return scim.Resource{}, err
-	}
-	if user == nil {
-		return scim.Resource{}, errors.ScimErrorResourceNotFound(id)
 	}
 	defer func() {
 		if r := recover(); r != nil {
@@ -250,6 +254,9 @@ func UpdateScimUserByPatchOperation(id string, ops []scim.PatchOperation) (r sci
 		case fmt.Sprintf("%v.%v", UserExtensionKey, "organization"):
 			user.Owner = ToString(value, user.Owner)
 		}
+	}
+	if err = checkOrganization(req, user.Owner); err != nil {
+		return scim.Resource{}, err
 	}
 	_, err = object.UpdateUser(old, user, nil, true)
 	if err != nil {

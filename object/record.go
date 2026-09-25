@@ -211,9 +211,9 @@ func GetRecordCount(field, value string, filterRecord *Record) (int64, error) {
 	return session.Count(filterRecord)
 }
 
-func GetRecords() ([]*Record, error) {
+func GetRecords(organization string) ([]*Record, error) {
 	records := []*Record{}
-	err := ormer.Engine.Desc("id").Find(&records)
+	err := ormer.Engine.Desc("id").Find(&records, &Record{Organization: organization})
 	if err != nil {
 		return records, err
 	}

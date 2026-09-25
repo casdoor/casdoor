@@ -126,7 +126,7 @@ func writeInitDataToFile(filePath string) error {
 		return err
 	}
 
-	records, err := GetRecords()
+	records, err := GetRecords("")
 	if err != nil {
 		return err
 	}

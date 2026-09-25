@@ -21,12 +21,12 @@ import (
 )
 
 func (c *RootController) HandleScim() {
-	_, ok := c.RequireAdmin()
+	organization, ok := c.RequireAdmin()
 	if !ok {
 		return
 	}
 
 	path := c.Ctx.Request.URL.Path
 	c.Ctx.Request.URL.Path = strings.TrimPrefix(path, "/scim")
-	scim.Server.ServeHTTP(c.Ctx.ResponseWriter, c.Ctx.Request)
+	scim.Server.ServeHTTP(c.Ctx.ResponseWriter, scim.WithOrganization(c.Ctx.Request, organization))
 }

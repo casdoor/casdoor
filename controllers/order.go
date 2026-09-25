@@ -42,7 +42,7 @@ func (c *ApiController) GetOrders() {
 		var orders []*object.Order
 		var err error
 
-		if c.IsAdmin() {
+		if c.IsAdminOfOrganization(owner) {
 			// If field is "user", filter by that user even for admins
 			if field == "user" && value != "" {
 				orders, err = object.GetUserOrders(owner, value)
@@ -50,10 +50,8 @@ func (c *ApiController) GetOrders() {
 				orders, err = object.GetOrders(owner)
 			}
 		} else {
-			user := c.GetSessionUsername()
-			_, userName, userErr := util.GetOwnerAndNameFromIdWithError(user)
-			if userErr != nil {
-				c.ResponseError(userErr.Error())
+			userName, ok := c.requireSessionUserNameOf(owner)
+			if !ok {
 				return
 			}
 			orders, err = object.GetUserOrders(owner, userName)
@@ -67,11 +65,9 @@ func (c *ApiController) GetOrders() {
 		c.ResponseOk(orders)
 	} else {
 		limit := util.ParseInt(limit)
-		if !c.IsAdmin() {
-			user := c.GetSessionUsername()
-			_, userName, userErr := util.GetOwnerAndNameFromIdWithError(user)
-			if userErr != nil {
-				c.ResponseError(userErr.Error())
+		if !c.IsAdminOfOrganization(owner) {
+			userName, ok := c.requireSessionUserNameOf(owner)
+			if !ok {
 				return
 			}
 			field = "user"
@@ -106,7 +102,7 @@ func (c *ApiController) GetUserOrders() {
 	owner := c.Ctx.Input.Query("owner")
 	user := c.Ctx.Input.Query("user")
 
-	if !c.IsAdmin() {
+	if !c.IsAdminOfOrganization(owner) {
 		sessionUser := c.GetSessionUsername()
 		sessionUserOwner, sessionUserName, err := util.GetOwnerAndNameFromIdWithError(sessionUser)
 		if err != nil {
@@ -144,14 +140,14 @@ func (c *ApiController) GetOrder() {
 		return
 	}
 
-	if !c.IsAdmin() {
+	if order != nil && !c.IsAdminOfOrganization(order.Owner) {
 		sessionUser := c.GetSessionUsername()
 		sessionUserOwner, sessionUserName, err := util.GetOwnerAndNameFromIdWithError(sessionUser)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
 		}
-		if order != nil && (order.Owner != sessionUserOwner || order.User != sessionUserName) {
+		if order.Owner != sessionUserOwner || order.User != sessionUserName {
 			c.ResponseError("Forbidden")
 			return
 		}

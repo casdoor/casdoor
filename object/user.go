@@ -1601,7 +1601,7 @@ func (user *User) IsApplicationAdmin(application *Application) bool {
 		return false
 	}
 
-	return (user.Owner == application.Organization && user.IsAdmin) || user.IsGlobalAdmin() || (user.IsAdmin && application.IsShared)
+	return (user.Owner == application.Organization && user.IsAdmin) || user.IsGlobalAdmin()
 }
 
 func (user *User) IsGlobalAdmin() bool {
