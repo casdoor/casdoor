@@ -450,7 +450,7 @@ func CheckFaceId(user *User, faceId []float64, lang string) error {
 	}
 
 	for _, userFaceId := range user.FaceIds {
-		if faceId == nil || len(userFaceId.FaceIdData) != len(faceId) {
+		if len(faceId) == 0 || len(userFaceId.FaceIdData) != len(faceId) {
 			continue
 		}
 		var sumOfSquares float64
