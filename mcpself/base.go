@@ -294,23 +294,9 @@ func (c *McpController) handlePing(req McpRequest) {
 func (c *McpController) handleToolsList(req McpRequest) {
 	allTools := c.getAllTools()
 
-	// Get JWT claims from the request
-	claims := c.GetClaimsFromToken()
-
-	// If no token is present, check session authentication
-	if claims == nil {
-		username := c.GetSessionUsername()
-		// If user is authenticated via session, return all tools (backward compatibility)
-		if username != "" {
-			result := McpListToolsResult{
-				Tools: allTools,
-			}
-			c.McpResponseOk(req.ID, result)
-			return
-		}
-
-		// Unauthenticated request - return all tools for discovery
-		// This allows clients to see what tools are available before authenticating
+	grantedScopes, isScoped := c.GetGrantedScopes()
+	if !isScoped {
+		// Session-authenticated and unauthenticated requests both see all tools for discovery
 		result := McpListToolsResult{
 			Tools: allTools,
 		}
@@ -318,8 +304,6 @@ func (c *McpController) handleToolsList(req McpRequest) {
 		return
 	}
 
-	// Token-based authentication - filter tools by scopes
-	grantedScopes := GetScopesFromClaims(claims)
 	allowedTools := GetToolsForScopes(grantedScopes, BuiltinScopes)
 
 	// Filter tools based on allowed scopes
@@ -430,15 +414,10 @@ func (c *McpController) handleToolsCall(req McpRequest) {
 // checkToolPermission validates that the current token has the required scope for the tool
 // Returns false and sends an error response if permission is denied
 func (c *McpController) checkToolPermission(id interface{}, toolName string) bool {
-	// Get JWT claims from the request
-	claims := c.GetClaimsFromToken()
-
-	// If no token is present, check if the user is authenticated via session
-	if claims == nil {
-		username := c.GetSessionUsername()
-		// If user is authenticated via session (e.g., session cookie), allow access
-		// This maintains backward compatibility with existing session-based auth
-		if username != "" {
+	grantedScopes, isScoped := c.GetGrantedScopes()
+	if !isScoped {
+		// A session signed in interactively (not via an access token) keeps full access
+		if c.GetSessionUsername() != "" {
 			return true
 		}
 
@@ -446,9 +425,6 @@ func (c *McpController) checkToolPermission(id interface{}, toolName string) boo
 		c.sendInsufficientScopeError(id, toolName, []string{})
 		return false
 	}
-
-	// Extract scopes from claims
-	grantedScopes := GetScopesFromClaims(claims)
 
 	// Get allowed tools for the granted scopes
 	allowedTools := GetToolsForScopes(grantedScopes, BuiltinScopes)
