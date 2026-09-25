@@ -490,6 +490,7 @@ func clearUserSecrets(user *User) {
 	user.PreHash = ""
 	user.TotpSecret = ""
 	user.RecoveryCodes = nil
+	user.FaceIds = nil
 
 	if user.ManagedAccounts != nil {
 		managedAccounts := make([]ManagedAccount, len(user.ManagedAccounts))

@@ -689,6 +689,7 @@ func GetMaskedUser(user *User, isAdminOrSelf bool, errs ...error) (*User, error)
 		if user.OriginalRefreshToken != "" {
 			user.OriginalRefreshToken = "***"
 		}
+		user.FaceIds = nil
 		// Mask per-provider OAuth tokens in Properties
 		if user.Properties != nil {
 			for key := range user.Properties {
@@ -869,6 +870,10 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 
 	if user.Password == "***" {
 		user.Password = oldUser.Password
+	}
+
+	if user.FaceIds == nil {
+		user.FaceIds = oldUser.FaceIds
 	}
 
 	if user.Id != oldUser.Id && user.Id == "" {

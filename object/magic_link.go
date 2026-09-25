@@ -278,7 +278,7 @@ func ConsumeMagicLink(token string, sessionHash string, application *Application
 // CheckMagicLinkSignup rejects a magic link signup for an application that asks the
 // signup page for more than the link itself can answer.
 func CheckMagicLinkSignup(application *Application, lang string) error {
-	if !application.EnableSignUp {
+	if !application.EnableSignUp || !application.IsSignupAllowedFor(application.Organization) {
 		return errors.New(i18n.Translate(lang, "account:The application does not allow to sign up new account"))
 	}
 

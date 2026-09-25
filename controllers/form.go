@@ -29,6 +29,10 @@ import (
 // @Success 200 {array} object.Form The Response object
 // @router /get-global-forms [get]
 func (c *ApiController) GetGlobalForms() {
+	if !c.requireGlobalAdmin() {
+		return
+	}
+
 	forms, err := object.GetGlobalForms()
 	if err != nil {
 		c.ResponseError(err.Error())

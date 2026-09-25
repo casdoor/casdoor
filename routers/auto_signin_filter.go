@@ -152,13 +152,7 @@ func AutoSigninFilter(ctx *context.Context) {
 	userId = ctx.Input.Query("username")
 	password := ctx.Input.Query("password")
 	if userId != "" && password != "" && ctx.Input.Query("grant_type") == "" {
-		owner, name, err := util.GetOwnerAndNameFromIdWithError(userId)
-		if err != nil {
-			responseError(ctx, err.Error())
-			return
-		}
-
-		_, err = object.CheckUserPassword(owner, name, password, "en")
+		err = checkUserPasswordWithoutMfa(userId, password)
 		if err != nil {
 			responseError(ctx, err.Error())
 			return
@@ -166,4 +160,21 @@ func AutoSigninFilter(ctx *context.Context) {
 
 		setSessionUser(ctx, userId)
 	}
+}
+
+func checkUserPasswordWithoutMfa(userId string, password string) error {
+	owner, name, err := util.GetOwnerAndNameFromIdWithError(userId)
+	if err != nil {
+		return err
+	}
+
+	user, err := object.CheckUserPassword(owner, name, password, "en")
+	if err != nil {
+		return err
+	}
+
+	if user.IsMfaEnabled() {
+		return fmt.Errorf("the user: %s has MFA enabled and cannot sign in with a password in the URL", userId)
+	}
+	return nil
 }

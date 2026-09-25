@@ -100,7 +100,7 @@ func (c *ApiController) Signup() {
 		return
 	}
 
-	if !application.EnableSignUp {
+	if !application.EnableSignUp || !application.IsSignupAllowedFor(authForm.Organization) {
 		c.ResponseError(c.T("account:The application does not allow to sign up new account"))
 		return
 	}
