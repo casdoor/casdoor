@@ -55,6 +55,11 @@ var organizationParamObject = []string{
 	"/api/get-webhook-events",
 }
 
+var sessionPkIdObject = []string{
+	"/api/get-session",
+	"/api/is-session-duplicated",
+}
+
 // sessionObject lists the APIs whose controllers ignore the request parameters and
 // act on the signed-in user's organization (false) or on the user themselves (true),
 // which makes that the object to authorize against.
@@ -79,6 +84,15 @@ func getSessionObject(ctx *context.Context, withName bool) (string, string, erro
 		name = ""
 	}
 	return owner, name, nil
+}
+
+func getSessionPkIdObject(ctx *context.Context) (string, string, error) {
+	sessionPkId := ctx.Input.Query("sessionPkId")
+	tokens := strings.Split(sessionPkId, "/")
+	if len(tokens) != 3 || tokens[0] == "" || tokens[1] == "" {
+		return "", "", fmt.Errorf("invalid sessionPkId: %s", sessionPkId)
+	}
+	return tokens[0], tokens[1], nil
 }
 
 type Object struct {
@@ -175,6 +189,10 @@ func getObject(ctx *context.Context) (string, string, error) {
 	}
 
 	if method == http.MethodGet {
+		if util.InSlice(sessionPkIdObject, path) {
+			return getSessionPkIdObject(ctx)
+		}
+
 		if ctx.Request.URL.Path == "/api/get-policies" {
 			// GetPolicies() works on the adapter as soon as "adapterId" is given and
 			// falls back to the enforcer of "id", so authorize the same way.
