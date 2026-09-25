@@ -109,7 +109,42 @@ func GetMaskedProvider(provider *Provider, isMaskEnabled bool) *Provider {
 		}
 	}
 
+	provider.HttpHeaders = getMaskedHttpHeaders(provider.HttpHeaders)
+
 	return provider
+}
+
+func getMaskedHttpHeaders(headers map[string]string) map[string]string {
+	if headers == nil {
+		return nil
+	}
+
+	res := map[string]string{}
+	for key, value := range headers {
+		if value != "" {
+			value = "***"
+		}
+		res[key] = value
+	}
+	return res
+}
+
+func IsHttpHeadersMasked(headers map[string]string) bool {
+	for _, value := range headers {
+		if value == "***" {
+			return true
+		}
+	}
+	return false
+}
+
+func RestoreMaskedHttpHeaders(headers map[string]string, oldHeaders map[string]string) map[string]string {
+	for key, value := range headers {
+		if value == "***" {
+			headers[key] = oldHeaders[key]
+		}
+	}
+	return headers
 }
 
 func GetMaskedProviders(providers []*Provider, isMaskEnabled bool) []*Provider {
@@ -226,11 +261,14 @@ func UpdateProvider(id string, provider *Provider) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	if p, err := getProvider(owner, name); err != nil {
+	p, err := getProvider(owner, name)
+	if err != nil {
 		return false, err
 	} else if p == nil {
 		return false, nil
 	}
+
+	provider.HttpHeaders = RestoreMaskedHttpHeaders(provider.HttpHeaders, p.HttpHeaders)
 
 	if provider.EmailRegex != "" {
 		_, err := regexp.Compile(provider.EmailRegex)

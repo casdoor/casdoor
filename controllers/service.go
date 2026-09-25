@@ -119,12 +119,15 @@ func (c *ApiController) SendEmail() {
 	}
 
 	if emailForm.ProviderObject.Name != "" {
-		if emailForm.ProviderObject.ClientSecret == "***" {
+		if emailForm.ProviderObject.ClientSecret == "***" || object.IsHttpHeadersMasked(emailForm.ProviderObject.HttpHeaders) {
 			// the real secret is sent to the host of providerObject, so only for the provider's own organization
 			if !c.checkServiceProvider(provider, "Email", true) {
 				return
 			}
-			emailForm.ProviderObject.ClientSecret = provider.ClientSecret
+			if emailForm.ProviderObject.ClientSecret == "***" {
+				emailForm.ProviderObject.ClientSecret = provider.ClientSecret
+			}
+			emailForm.ProviderObject.HttpHeaders = object.RestoreMaskedHttpHeaders(emailForm.ProviderObject.HttpHeaders, provider.HttpHeaders)
 		}
 		provider = &emailForm.ProviderObject
 	}

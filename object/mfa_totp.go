@@ -94,6 +94,10 @@ func (mfa *TotpMfa) Enable(user *User) error {
 }
 
 func (mfa *TotpMfa) Verify(passcode string) error {
+	if mfa.Secret == "" {
+		return errors.New("totp is not enabled")
+	}
+
 	result, err := totp.ValidateCustom(passcode, mfa.Secret, time.Now().UTC(), totp.ValidateOpts{
 		Period:    MfaTotpPeriodInSeconds,
 		Skew:      1,
