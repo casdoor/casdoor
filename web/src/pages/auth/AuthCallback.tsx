@@ -217,14 +217,14 @@ export default function AuthCallback() {
         if (responseMode === "form_post") {
           Setting.createFormAndSubmit(oAuthParams?.redirectUri, {
             token: responseTypes.includes("token") ? res.data : null,
-            id_token: responseTypes.includes("id_token") ? res.data : null,
+            id_token: responseTypes.includes("id_token") ? res.data3 : null,
             token_type: "bearer",
             state: oAuthParams?.state,
           });
         } else {
           Setting.goToLink(
             `${oAuthParams.redirectUri}${concatChar}${type}=${encodeURIComponent(
-              res.data,
+              type === "id_token" ? res.data3 : res.data,
             )}&state=${encodeURIComponent(oAuthParams.state)}&token_type=bearer`,
           );
         }

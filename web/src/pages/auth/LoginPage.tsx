@@ -496,14 +496,14 @@ export default function LoginPage({type = "login", application: applicationProp,
       if (responseMode === "form_post") {
         Setting.createFormAndSubmit(authParams?.redirectUri, {
           token: responseTypes.includes("token") ? res.data : null,
-          id_token: responseTypes.includes("id_token") ? res.data : null,
+          id_token: responseTypes.includes("id_token") ? res.data3 : null,
           token_type: "bearer",
           state: authParams?.state,
         });
       } else {
         Setting.goToLink(
           `${authParams.redirectUri}#${amendatoryResponseType}=${encodeURIComponent(
-            res.data,
+            responseType === "id_token" ? res.data3 : res.data,
           )}&state=${encodeURIComponent(authParams.state)}&token_type=bearer`,
         );
       }
