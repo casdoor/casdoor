@@ -205,6 +205,8 @@ func IsAllowed(subOwner string, subName string, method string, urlPath string, o
 		}
 	}
 
+	objOwner, objName = dropAnonymousSelfObject(subOwner, subName, objOwner, objName)
+
 	res, err := Enforcer.Enforce(subOwner, subName, method, urlPath, objOwner, objName)
 	if err != nil {
 		return false, err
@@ -218,6 +220,13 @@ func IsAllowed(subOwner string, subName string, method string, urlPath string, o
 	}
 
 	return res, nil
+}
+
+func dropAnonymousSelfObject(subOwner string, subName string, objOwner string, objName string) (string, string) {
+	if subOwner == "anonymous" && subName == "anonymous" && objOwner == "anonymous" && objName == "anonymous" {
+		return "", ""
+	}
+	return objOwner, objName
 }
 
 func isAllowedInDemoMode(subOwner string, subName string, method string, urlPath string, objOwner string, objName string) bool {

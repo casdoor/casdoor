@@ -55,6 +55,14 @@ var organizationParamObject = []string{
 	"/api/get-webhook-events",
 }
 
+var ownerParamObject = []string{
+	"/api/get-dashboard",
+	"/api/get-dashboard-providers",
+	"/api/get-dashboard-mfa",
+	"/api/get-dashboard-heatmap",
+	"/api/get-user-count",
+}
+
 var sessionPkIdObject = []string{
 	"/api/get-session",
 	"/api/is-session-duplicated",
@@ -191,6 +199,10 @@ func getObject(ctx *context.Context) (string, string, error) {
 	if method == http.MethodGet {
 		if util.InSlice(sessionPkIdObject, path) {
 			return getSessionPkIdObject(ctx)
+		}
+
+		if util.InSlice(ownerParamObject, path) {
+			return ctx.Input.Query("owner"), "", nil
 		}
 
 		if ctx.Request.URL.Path == "/api/get-policies" {
@@ -365,11 +377,25 @@ func getObjects(ctx *context.Context) ([]Object, error) {
 	}
 
 	bodyOwner, bodyName := getObjectFromBody(ctx, path)
-	if bodyOwner != "" && (bodyOwner != owner || bodyName != name) {
-		objects = append(objects, Object{Owner: bodyOwner, Name: bodyName})
-	}
+	objects = appendObject(objects, bodyOwner, bodyName)
+
+	formOwner, formName := ownerNameFromForm(ctx)
+	objects = appendObject(objects, formOwner, formName)
 
 	return objects, nil
+}
+
+func appendObject(objects []Object, owner string, name string) []Object {
+	if owner == "" {
+		return objects
+	}
+
+	for _, obj := range objects {
+		if obj.Owner == owner && obj.Name == name {
+			return objects
+		}
+	}
+	return append(objects, Object{Owner: owner, Name: name})
 }
 
 func willLog(subOwner string, subName string, method string, urlPath string, objOwner string, objName string) bool {
