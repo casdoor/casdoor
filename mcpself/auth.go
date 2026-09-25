@@ -177,6 +177,27 @@ func (c *McpController) GetClaimsFromToken() *object.Claims {
 	return claims
 }
 
+// GetSessionScopes returns the scopes of the access token that AutoSigninFilter signed this session in with.
+// The session outlives the bearer request, so a cookie-only request must stay bound to the same scopes.
+func (c *McpController) GetSessionScopes() ([]string, bool) {
+	scope, ok := c.GetSession("scope").(string)
+	if !ok {
+		return nil, false
+	}
+
+	return strings.Fields(scope), true
+}
+
+// GetGrantedScopes returns the scopes the request is limited to, and false if it is not scope-limited
+func (c *McpController) GetGrantedScopes() ([]string, bool) {
+	claims := c.GetClaimsFromToken()
+	if claims != nil {
+		return GetScopesFromClaims(claims), true
+	}
+
+	return c.GetSessionScopes()
+}
+
 // GetScopesFromClaims extracts the scopes from JWT claims and returns them as a slice
 func GetScopesFromClaims(claims *object.Claims) []string {
 	if claims == nil || claims.Scope == "" {

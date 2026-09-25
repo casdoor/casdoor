@@ -238,6 +238,13 @@ func (c *ApiController) GetSessionOidc() (string, string) {
 // SetSessionUsername ...
 func (c *ApiController) SetSessionUsername(user string) {
 	c.SetSession("username", user)
+	c.clearSessionOidc()
+}
+
+// clearSessionOidc drops the access token scope left by AutoSigninFilter, which would otherwise limit an interactive sign-in
+func (c *ApiController) clearSessionOidc() {
+	c.DelSession("scope")
+	c.DelSession("aud")
 }
 
 func (c *ApiController) SetSessionToken(accessToken string) {
