@@ -46,6 +46,7 @@ func (c *ApiController) GetSessions() {
 			c.ResponseError(err.Error())
 			return
 		}
+		object.MaskSessionIds(sessions...)
 
 		c.ResponseOk(sessions)
 	} else {
@@ -61,6 +62,7 @@ func (c *ApiController) GetSessions() {
 			c.ResponseError(err.Error())
 			return
 		}
+		object.MaskSessionIds(sessions...)
 
 		c.ResponseOk(sessions, paginator.Nums())
 	}
@@ -81,6 +83,7 @@ func (c *ApiController) GetSingleSession() {
 		c.ResponseError(err.Error())
 		return
 	}
+	object.MaskSessionIds(session)
 
 	c.ResponseOk(session)
 }
@@ -141,7 +144,7 @@ func (c *ApiController) DeleteSession() {
 	curSessionId := c.Ctx.Input.CruSession.SessionID(context.Background())
 
 	sessionId := c.Ctx.Input.Query("sessionId")
-	if curSessionId == sessionId && sessionId != "" {
+	if sessionId != "" && (sessionId == curSessionId || sessionId == object.GetSessionIdHash(curSessionId)) {
 		c.ResponseError(fmt.Sprintf(c.T("session:session id %s is the current session and cannot be deleted"), curSessionId))
 		return
 	}

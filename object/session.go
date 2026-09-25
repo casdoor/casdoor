@@ -16,6 +16,8 @@ package object
 
 import (
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
 	"slices"
 	"sync"
@@ -287,6 +289,11 @@ func DeleteSessionId(id string, sessionId string) (bool, error) {
 		return false, nil
 	}
 
+	sessionId = resolveSessionId(session, sessionId)
+	if sessionId == "" {
+		return false, nil
+	}
+
 	_, err = ExpireTokensBySessionIds(session.Owner, session.Name, []string{sessionId})
 	if err != nil {
 		return false, err
@@ -443,6 +450,36 @@ func DeleteBeegoSession(sessionIds []string) {
 		// The error is ignored on purpose: an already expired or destroyed session id
 		// must not stop the remaining ones from being destroyed
 		_ = web.GlobalSessions.GetProvider().SessionDestroy(context.Background(), sessionId)
+	}
+}
+
+func GetSessionIdHash(sessionId string) string {
+	hash := sha256.Sum256([]byte(sessionId))
+	return hex.EncodeToString(hash[:])
+}
+
+func resolveSessionId(session *Session, sessionId string) string {
+	for _, id := range session.SessionId {
+		if id == sessionId || GetSessionIdHash(id) == sessionId {
+			return id
+		}
+	}
+	return ""
+}
+
+func MaskSessionIds(sessions ...*Session) {
+	for _, session := range sessions {
+		if session == nil {
+			continue
+		}
+		for i, id := range session.SessionId {
+			session.SessionId[i] = GetSessionIdHash(id)
+		}
+		for _, info := range session.SessionInfos {
+			if info != nil {
+				info.SessionId = GetSessionIdHash(info.SessionId)
+			}
+		}
 	}
 }
 
