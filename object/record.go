@@ -27,9 +27,19 @@ import (
 )
 
 var (
-	logPostOnly   bool
-	passwordRegex *regexp.Regexp
+	logPostOnly          bool
+	secretJsonRegex      *regexp.Regexp
+	secretFormRegex      *regexp.Regexp
+	secretMultipartRegex *regexp.Regexp
 )
+
+var secretRecordKeys = []string{
+	"password", "oldPassword", "newPassword", "masterPassword", "defaultPassword",
+	"clientSecret", "client_secret", "accessSecret", "refreshToken", "refresh_token",
+	"code_verifier", "passcode", "recoveryCode",
+}
+
+var secretRecordQueries = append([]string{"accessToken", "access_token", "id_token_hint"}, secretRecordKeys...)
 
 // alwaysLoggedActions lists the actions that are always recorded, even for GET
 // requests when "logPostOnly" is enabled. These endpoints accept GET by design
@@ -43,7 +53,10 @@ var alwaysLoggedActions = map[string]bool{
 
 func init() {
 	logPostOnly = conf.GetConfigBool("logPostOnly")
-	passwordRegex = regexp.MustCompile("\"password\":\"([^\"]*?)\"")
+	keys := strings.Join(secretRecordKeys, "|")
+	secretJsonRegex = regexp.MustCompile(`"(` + keys + `)"\s*:\s*"(?:[^"\\]|\\.)*"`)
+	secretFormRegex = regexp.MustCompile(`(^|&)(` + keys + `)=[^&]*`)
+	secretMultipartRegex = regexp.MustCompile(`(name="(?:` + keys + `)"\r?\n\r?\n)[^\r\n]*`)
 }
 
 type Record struct {
@@ -77,8 +90,10 @@ type Response struct {
 	Data interface{} `json:"data"`
 }
 
-func maskPassword(recordString string) string {
-	return passwordRegex.ReplaceAllString(recordString, "\"password\":\"***\"")
+func maskSecrets(recordString string) string {
+	recordString = secretJsonRegex.ReplaceAllString(recordString, `"$1":"***"`)
+	recordString = secretFormRegex.ReplaceAllString(recordString, "${1}${2}=***")
+	return secretMultipartRegex.ReplaceAllString(recordString, "${1}***")
 }
 
 func NewRecord(ctx *context.Context) (*Record, error) {
@@ -89,7 +104,7 @@ func NewRecord(ctx *context.Context) (*Record, error) {
 	}
 
 	// "id_token_hint" carries a JWT, so it is dropped instead of being persisted in the audit row.
-	requestUri := util.FilterQuery(ctx.Request.RequestURI, []string{"accessToken", "id_token_hint"})
+	requestUri := util.FilterQuery(ctx.Request.RequestURI, secretRecordQueries)
 	if len(requestUri) > 1000 {
 		requestUri = requestUri[0:1000]
 	}
@@ -97,7 +112,7 @@ func NewRecord(ctx *context.Context) (*Record, error) {
 	object := ""
 	if ctx.Input.RequestBody != nil && len(ctx.Input.RequestBody) != 0 {
 		object = string(ctx.Input.RequestBody)
-		object = maskPassword(object)
+		object = maskSecrets(object)
 	}
 
 	respBytes, err := json.Marshal(ctx.Input.Data()["json"])
@@ -189,7 +204,7 @@ func AddRecord(record *Record) bool {
 		record.Organization = "built-in"
 	}
 	record.Owner = record.Organization
-	record.Object = maskPassword(record.Object)
+	record.Object = maskSecrets(record.Object)
 
 	errWebhook := SendWebhooks(record)
 	if errWebhook == nil {

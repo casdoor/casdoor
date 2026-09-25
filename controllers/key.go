@@ -82,6 +82,10 @@ func (c *ApiController) GetKeys() {
 // @Success 200 {array} object.Key The Response object
 // @router /get-global-keys [get]
 func (c *ApiController) GetGlobalKeys() {
+	if !c.requireGlobalAdmin() {
+		return
+	}
+
 	limit := c.Ctx.Input.Query("pageSize")
 	page := c.Ctx.Input.Query("p")
 	field := c.Ctx.Input.Query("field")

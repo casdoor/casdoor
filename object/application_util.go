@@ -629,6 +629,13 @@ func (application *Application) IsMagicLinkSignupEnabled() bool {
 	return false
 }
 
+func (application *Application) IsSignupAllowedFor(organization string) bool {
+	if application.IsShared {
+		return organization != "built-in"
+	}
+	return organization == application.Organization
+}
+
 func (application *Application) IsLdapEnabled() bool {
 	return application.HasSigninMethod("LDAP")
 }

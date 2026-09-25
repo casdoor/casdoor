@@ -29,6 +29,10 @@ import (
 // @Success 200 {array} object.Site The Response object
 // @router /get-global-sites [get]
 func (c *ApiController) GetGlobalSites() {
+	if !c.requireGlobalAdmin() {
+		return
+	}
+
 	sites, err := object.GetGlobalSites()
 	if err != nil {
 		c.ResponseError(err.Error())

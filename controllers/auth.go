@@ -616,7 +616,7 @@ func getExistUserByBindingRule(providerItem *object.ProviderItem, application *o
 		// existing users when usernames match, particularly useful for enterprise
 		// scenarios where signup is disabled and users already exist in Casdoor
 		if rule == "Name" {
-			user, err = object.GetUserByFields(application.Organization, userInfo.Username)
+			user, err = object.GetUserByName(application.Organization, userInfo.Username)
 			if err != nil {
 				return nil, err
 			}
@@ -1108,7 +1108,7 @@ func (c *ApiController) Login() {
 				isBoundUser := user != nil
 
 				if user == nil {
-					if !application.EnableSignUp {
+					if !application.EnableSignUp || !application.IsSignupAllowedFor(application.Organization) {
 						c.ResponseError(fmt.Sprintf(c.T("auth:The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support"), provider.Type, userInfo.Username, userInfo.DisplayName))
 						return
 					}

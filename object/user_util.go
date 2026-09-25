@@ -88,6 +88,13 @@ func HasUserByPhoneAndCountryCode(organizationName string, phone string, country
 	return user != nil
 }
 
+func GetUserByName(organization string, name string) (*User, error) {
+	if conf.GetConfigBool("isUsernameLowered") {
+		name = strings.ToLower(name)
+	}
+	return GetUserByField(organization, "name", strings.TrimSpace(name))
+}
+
 func GetUserByFields(organization string, field string) (*User, error) {
 	isUsernameLowered := conf.GetConfigBool("isUsernameLowered")
 	if isUsernameLowered {

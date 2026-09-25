@@ -109,6 +109,14 @@ func (c *ApiController) requireOrganizationPermission(organization string) bool 
 	return true
 }
 
+func (c *ApiController) requireGlobalAdmin() bool {
+	if !c.IsGlobalAdmin() {
+		c.ResponseError(c.T("auth:Unauthorized operation"))
+		return false
+	}
+	return true
+}
+
 func (c *ApiController) isGlobalAdmin() (bool, *object.User) {
 	username := c.GetSessionUsername()
 	if object.IsAppUser(username) {
