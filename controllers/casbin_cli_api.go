@@ -131,12 +131,29 @@ func getCLIVersion(language string) (string, error) {
 	return version, nil
 }
 
+var cliFileFlags = map[string]string{"-m": "-m", "-p": "-p", "--model": "-m", "--policy": "-p"}
+
+// isCliFilePathArg reports a model or policy flag carrying its value in the same argument, e.g.
+// "--model=/etc/passwd": that value would reach the CLI as a path to read on the server
+func isCliFilePathArg(arg string) bool {
+	for flag := range cliFileFlags {
+		if arg != flag && strings.HasPrefix(arg, flag) {
+			return true
+		}
+	}
+	return false
+}
+
 func processArgsToTempFiles(args []string) ([]string, []string, error) {
 	tempFiles := []string{}
 	newArgs := []string{}
 	for i := 0; i < len(args); i++ {
-		if (args[i] == "-m" || args[i] == "-p") && i+1 < len(args) {
-			pattern := fmt.Sprintf("casbin_temp_%s_*.conf", args[i])
+		if isCliFilePathArg(args[i]) {
+			return tempFiles, nil, fmt.Errorf("the argument: %s is not allowed, pass the model or policy text after a separate flag", args[i])
+		}
+
+		if flag, ok := cliFileFlags[args[i]]; ok && i+1 < len(args) {
+			pattern := fmt.Sprintf("casbin_temp_%s_*.conf", flag)
 			tempFile, err := os.CreateTemp("", pattern)
 			if err != nil {
 				return nil, nil, fmt.Errorf("failed to create temp file: %v", err)
@@ -150,7 +167,7 @@ func processArgsToTempFiles(args []string) ([]string, []string, error) {
 
 			tempFile.Close()
 			tempFiles = append(tempFiles, tempFile.Name())
-			newArgs = append(newArgs, args[i], tempFile.Name())
+			newArgs = append(newArgs, flag, tempFile.Name())
 			i++
 		} else {
 			newArgs = append(newArgs, args[i])

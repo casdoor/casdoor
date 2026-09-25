@@ -466,6 +466,20 @@ func CheckFaceId(user *User, faceId []float64, lang string) error {
 	return errors.New(i18n.Translate(lang, "check:Face data mismatch"))
 }
 
+// IsUserVerifyDest checks that dest, the email or E.164 phone a code is checked against, is the
+// user's own: the user is looked up by name first, so it may not be the owner of the typed address
+func IsUserVerifyDest(user *User, dest string, countryCode string) bool {
+	if strings.Contains(dest, "@") {
+		return user.Email != "" && strings.EqualFold(user.Email, dest)
+	}
+
+	if user.CountryCode != "" {
+		countryCode = user.CountryCode
+	}
+	phone, _ := util.GetE164Number(user.Phone, countryCode)
+	return user.Phone != "" && phone == dest
+}
+
 func GetVerifyType(username string) (verificationCodeType string) {
 	if strings.Contains(username, "@") {
 		return VerifyTypeEmail

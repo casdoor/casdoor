@@ -750,6 +750,11 @@ func (c *ApiController) VerifyCode() {
 		}
 	}
 
+	if !object.IsUserVerifyDest(user, checkDest, authForm.CountryCode) {
+		c.ResponseError(fmt.Sprintf(c.T("general:The user: %s doesn't exist"), util.GetId(authForm.Organization, authForm.Username)))
+		return
+	}
+
 	passed, err := c.checkOrgMasterVerificationCode(user, authForm.Code)
 	if err != nil {
 		c.ResponseError(c.T(err.Error()))

@@ -69,6 +69,28 @@ func GetMfaUtil(mfaType string, config *MfaProps) MfaInterface {
 	return nil
 }
 
+// mfaErrorKey counts the failed MFA passcodes and recovery codes of a user apart from the
+// password failures, which a correct password resets before every new MFA attempt
+const mfaErrorKey = "mfa"
+
+func VerifyMfaWithLimit(user *User, verify func() error, lang string) error {
+	err := checkVerifyCodeErrorTimes(user, mfaErrorKey, lang)
+	if err != nil {
+		return err
+	}
+
+	err = verify()
+	if err != nil {
+		if limitErr := recordVerifyCodeErrorInfo(user, mfaErrorKey, lang); limitErr != nil {
+			return fmt.Errorf("%s, %s", err.Error(), limitErr.Error())
+		}
+		return err
+	}
+
+	resetVerifyCodeErrorTimes(user, mfaErrorKey)
+	return nil
+}
+
 func MfaRecover(user *User, recoveryCode string) error {
 	hit := false
 

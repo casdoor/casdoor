@@ -313,7 +313,7 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 		if !c.checkUserOfApplicationId(user, deviceAuthCacheDeviceCodeCast.ApplicationId) {
 			return
 		}
-		deviceAuthCacheDeviceCodeCast.UserName = user.Name
+		deviceAuthCacheDeviceCodeCast.UserName = user.GetId()
 		deviceAuthCacheDeviceCodeCast.UserSignIn = true
 		deviceAuthCacheDeviceCodeCast.Status = object.DeviceAuthStatusApproved
 
@@ -790,6 +790,11 @@ func (c *ApiController) Login() {
 				}
 			} else if verificationCodeType == object.VerifyTypeEmail {
 				checkDest = authForm.Username
+			}
+
+			if !object.IsUserVerifyDest(user, checkDest, authForm.CountryCode) {
+				c.ResponseError(fmt.Sprintf(c.T("general:The user: %s doesn't exist"), util.GetId(authForm.Organization, authForm.Username)))
+				return
 			}
 
 			// check result through Email or Phone
@@ -1386,19 +1391,11 @@ func (c *ApiController) Login() {
 				return
 			}
 
-			passed, err := c.checkOrgMasterVerificationCode(user, authForm.Passcode)
+			err = object.VerifyMfaWithLimit(user, func() error { return c.verifyMfaPasscode(user, mfaUtil, authForm.Passcode) }, c.GetAcceptLanguage())
 			if err != nil {
+				c.Ctx.Input.SetParam("recordDetail", object.SigninReasonMfaFailed)
 				c.ResponseError(err.Error())
 				return
-			}
-
-			if !passed {
-				err = mfaUtil.Verify(authForm.Passcode)
-				if err != nil {
-					c.Ctx.Input.SetParam("recordDetail", object.SigninReasonMfaFailed)
-					c.ResponseError(err.Error())
-					return
-				}
 			}
 
 			if authForm.EnableMfaRemember {
@@ -1414,7 +1411,7 @@ func (c *ApiController) Login() {
 			}
 			c.SetSession("verificationCodeType", "")
 		} else if authForm.RecoveryCode != "" {
-			err = object.MfaRecover(user, authForm.RecoveryCode)
+			err = object.VerifyMfaWithLimit(user, func() error { return object.MfaRecover(user, authForm.RecoveryCode) }, c.GetAcceptLanguage())
 			if err != nil {
 				c.Ctx.Input.SetParam("recordDetail", object.SigninReasonMfaFailed)
 				c.ResponseError(err.Error())
@@ -1875,7 +1872,7 @@ func (c *ApiController) DeviceAuthComplete() {
 		return
 	}
 
-	user, err := object.GetUserByFields(application.Organization, deviceAuthCache.UserName)
+	user, err := object.GetUser(deviceAuthCache.UserName)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
