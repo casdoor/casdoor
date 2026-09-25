@@ -1043,11 +1043,22 @@ func GetAppUser(userId string) (*User, error) {
 
 	_, name := util.GetOwnerAndNameFromIdNoCheck(userId)
 	application, err := getApplication("admin", name)
-	if err != nil || application == nil {
+	if err != nil || application == nil || application.IsDynamicClient() {
 		return nil, err
 	}
 
 	return &User{Owner: application.Organization, Name: userId, IsAdmin: true}, nil
+}
+
+func (application *Application) IsDynamicClient() bool {
+	return util.InSlice(application.Tags, "dcr")
+}
+
+func GetAppUserId(application *Application) string {
+	if application.IsDynamicClient() {
+		return fmt.Sprintf("app-dcr/%s", application.Name)
+	}
+	return fmt.Sprintf("app/%s", application.Name)
 }
 
 // GetUserOrAppUser returns the real user for userId, or the virtual user of an

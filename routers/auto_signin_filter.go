@@ -117,7 +117,7 @@ func AutoSigninFilter(ctx *context.Context) {
 
 		var userId string
 		if token.GrantType == "client_credentials" {
-			userId = fmt.Sprintf("app/%s", token.Application)
+			userId = object.GetAppUserId(application)
 		} else {
 			userId = util.GetId(token.Organization, token.User)
 		}

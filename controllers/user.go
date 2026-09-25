@@ -296,6 +296,11 @@ func (c *ApiController) UpdateUser() {
 			return
 		}
 
+		if !c.IsAdminOrSelf(userFromUserId) {
+			c.ResponseError(c.T("auth:Unauthorized operation"))
+			return
+		}
+
 		id = util.GetId(userFromUserId.Owner, userFromUserId.Name)
 	}
 

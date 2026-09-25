@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"log"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/casdoor/casdoor/conf"
@@ -29,12 +30,43 @@ import (
 	"layeh.com/radius/rfc2866"
 )
 
-var StateMap map[string]AccessStateContent
+var (
+	StateMap     = map[string]AccessStateContent{}
+	stateMapLock sync.Mutex
+)
 
 const StateExpiredTime = time.Second * 120
 
 type AccessStateContent struct {
-	ExpiredAt time.Time
+	ExpiredAt    time.Time
+	Organization string
+	Username     string
+}
+
+func addAccessState(organization string, username string) string {
+	state := util.GenerateId()
+
+	stateMapLock.Lock()
+	defer stateMapLock.Unlock()
+	StateMap[state] = AccessStateContent{
+		ExpiredAt:    time.Now().Add(StateExpiredTime),
+		Organization: organization,
+		Username:     username,
+	}
+	return state
+}
+
+func takeAccessState(state string, organization string, username string) bool {
+	stateMapLock.Lock()
+	defer stateMapLock.Unlock()
+
+	stateContent, ok := StateMap[state]
+	if !ok {
+		return false
+	}
+	delete(StateMap, state)
+
+	return stateContent.ExpiredAt.After(time.Now()) && stateContent.Organization == organization && stateContent.Username == username
 }
 
 func StartRadiusServer() {
@@ -75,7 +107,7 @@ func handleAccessRequest(w radius.ResponseWriter, r *radius.Request) {
 	password := rfc2865.UserPassword_GetString(r.Packet)
 	organization := rfc2865.Class_GetString(r.Packet)
 	state := rfc2865.State_GetString(r.Packet)
-	log.Printf("handleAccessRequest() username=%v, org=%v, password=%v", username, organization, password)
+	log.Printf("handleAccessRequest() username=%v, org=%v", username, organization)
 
 	if organization == "" {
 		organization = conf.GetConfigString("radiusDefaultOrganization")
@@ -84,58 +116,19 @@ func handleAccessRequest(w radius.ResponseWriter, r *radius.Request) {
 		}
 	}
 
-	var user *object.User
-	var err error
-
-	if state == "" {
-		user, err = object.CheckUserPassword(organization, username, password, "en")
-	} else {
-		user, err = object.GetUser(fmt.Sprintf("%s/%s", organization, username))
+	if state != "" {
+		handleOtpResponse(w, r, organization, username, state, password)
+		return
 	}
 
+	user, err := object.CheckUserPassword(organization, username, password, "en")
 	if err != nil {
 		w.Write(r.Response(radius.CodeAccessReject))
 		return
 	}
 
 	if user.IsMfaEnabled() {
-		mfaProp := user.GetMfaProps(object.TotpType, false)
-		if mfaProp == nil {
-			w.Write(r.Response(radius.CodeAccessReject))
-			return
-		}
-
-		if StateMap == nil {
-			StateMap = map[string]AccessStateContent{}
-		}
-
-		if state != "" {
-			stateContent, ok := StateMap[state]
-			if !ok {
-				w.Write(r.Response(radius.CodeAccessReject))
-				return
-			}
-
-			delete(StateMap, state)
-			if stateContent.ExpiredAt.Before(time.Now()) {
-				w.Write(r.Response(radius.CodeAccessReject))
-				return
-			}
-
-			mfaUtil := object.GetMfaUtil(mfaProp.MfaType, mfaProp)
-			if mfaUtil.Verify(password) != nil {
-				w.Write(r.Response(radius.CodeAccessReject))
-				return
-			}
-
-			w.Write(r.Response(radius.CodeAccessAccept))
-			return
-		}
-
-		responseState := util.GenerateId()
-		StateMap[responseState] = AccessStateContent{
-			time.Now().Add(StateExpiredTime),
-		}
+		responseState := addAccessState(organization, username)
 
 		err = rfc2865.State_Set(r.Packet, []byte(responseState))
 		if err != nil {
@@ -151,6 +144,27 @@ func handleAccessRequest(w radius.ResponseWriter, r *radius.Request) {
 
 		r.Packet.Code = radius.CodeAccessChallenge
 		w.Write(r.Packet)
+		return
+	}
+
+	w.Write(r.Response(radius.CodeAccessAccept))
+}
+
+func handleOtpResponse(w radius.ResponseWriter, r *radius.Request, organization string, username string, state string, passcode string) {
+	if !takeAccessState(state, organization, username) {
+		w.Write(r.Response(radius.CodeAccessReject))
+		return
+	}
+
+	user, err := object.GetUser(util.GetId(organization, username))
+	if err != nil || user == nil || user.IsForbidden || user.IsDeleted {
+		w.Write(r.Response(radius.CodeAccessReject))
+		return
+	}
+
+	mfaProp := user.GetMfaProps(object.TotpType, false)
+	if !mfaProp.Enabled || object.GetMfaUtil(mfaProp.MfaType, mfaProp).Verify(passcode) != nil {
+		w.Write(r.Response(radius.CodeAccessReject))
 		return
 	}
 
