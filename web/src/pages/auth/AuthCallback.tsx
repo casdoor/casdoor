@@ -318,6 +318,11 @@ export default function AuthCallback() {
       return;
     }
 
+    if (responseType === "link" && !Util.consumeLinkNonce(innerParams.get("linkNonce"))) {
+      setMsg(i18next.t("general:Unauthorized"));
+      return;
+    }
+
     const oAuthParams = Util.getOAuthGetParameters(innerParams);
     AuthBackend.login(body, oAuthParams)
       .then((res: any) => {

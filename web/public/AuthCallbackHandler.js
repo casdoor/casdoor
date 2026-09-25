@@ -56,6 +56,13 @@
     return query;
   }
 
+  // Keep in sync with consumeLinkNonce() in src/auth/Util.ts
+  function consumeLinkNonce(nonce) {
+    var expected = sessionStorage.getItem("casdoor_link_nonce");
+    sessionStorage.removeItem("casdoor_link_nonce");
+    return !!nonce && nonce === expected;
+  }
+
   function getParameterIgnoreCase(params, key) {
     var target = key.toLowerCase();
     var result = null;
@@ -300,6 +307,11 @@
     var samlRequest = getParameterIgnoreCase(innerParams, "SAMLRequest");
     var code = extractCallbackCode(params);
     var responseType = getResponseType(innerParams);
+    if (responseType === "link" && !consumeLinkNonce(innerParams.get("linkNonce"))) {
+      setStatus("Unauthorized", true);
+      return;
+    }
+
     var redirectUri = window.location.origin + "/callback";
     var codeVerifier = getCodeVerifier(params.get("state"));
     var body = {

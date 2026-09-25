@@ -17,6 +17,7 @@ package idp
 import (
 	"bytes"
 	"crypto/sha1"
+	"crypto/subtle"
 	"encoding/hex"
 	"encoding/json"
 	"errors"
@@ -338,5 +339,5 @@ func VerifyWechatSignature(token string, nonce string, timestamp string, signatu
 
 	b := sha1.Sum([]byte(tmpStr))
 	res := hex.EncodeToString(b[:])
-	return res == signature
+	return subtle.ConstantTimeCompare([]byte(res), []byte(signature)) == 1
 }

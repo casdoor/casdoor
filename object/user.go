@@ -813,14 +813,21 @@ var userSelfColumns = []string{
 	"location", "address", "addresses", "country_code", "region", "language", "affiliation", "title", "id_card_type", "id_card", "homepage", "bio", "tag", "language", "gender", "birthday", "education", "score", "karma", "ranking", "signup_application", "register_type", "register_source",
 	"hash", "is_default_avatar", "properties", "webauthnCredentials", "mfa_items", "last_change_password_time", "managedAccounts", "face_ids", "mfaAccounts",
 	"signin_wrong_times", "last_signin_wrong_time", "groups", "mfa_phone_enabled", "mfa_email_enabled",
+	"type", "need_update_password", "ip_whitelist", "mfa_remember_deadline",
+	"cart", "application_scopes",
+}
+
+// userProviderColumns hold the IDs the sign-in by a provider looks the user up with, only the
+// link and unlink flows or an admin may set them, a user choosing their own would take over
+// the sign-in of whoever owns that provider account
+var userProviderColumns = []string{
 	"github", "google", "qq", "wechat", "facebook", "dingtalk", "weibo", "gitee", "linkedin", "wecom", "lark", "gitlab", "adfs",
 	"baidu", "alipay", "casdoor", "infoflow", "apple", "azuread", "azureadb2c", "slack", "steam", "bilibili", "okta", "douyin", "kwai", "line", "amazon",
 	"auth0", "battlenet", "bitbucket", "box", "cloudfoundry", "dailymotion", "deezer", "digitalocean", "discord", "dropbox",
 	"eveonline", "fitbit", "gitea", "heroku", "influxcloud", "instagram", "intercom", "kakao", "lastfm", "mailru", "meetup",
 	"microsoftonline", "naver", "nextcloud", "onedrive", "oura", "patreon", "paypal", "salesforce", "shopify", "soundcloud",
-	"spotify", "strava", "stripe", "type", "telegram", "tiktok", "tumblr", "twitch", "twitter", "typetalk", "uber", "vk", "wepay", "xero", "yahoo",
-	"yammer", "yandex", "zoom", "oidc", "custom", "need_update_password", "ip_whitelist", "mfa_remember_deadline",
-	"cart", "application_scopes",
+	"spotify", "strava", "stripe", "telegram", "tiktok", "tumblr", "twitch", "twitter", "typetalk", "uber", "vk", "wepay", "xero", "yahoo",
+	"yammer", "yandex", "zoom", "oidc", "custom",
 }
 
 func FilterUserSelfColumns(columns []string) []string {
@@ -893,6 +900,7 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 		if isAdmin {
 			columns = append(columns, "name", "id", "email", "phone", "country_code", "type", "balance", "balance_credit", "balance_currency", "mfa_items", "register_type", "register_source",
 				"is_admin", "is_forbidden", "is_deleted", "uid_number", "email_verified")
+			columns = append(columns, userProviderColumns...)
 		}
 	}
 
