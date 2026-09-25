@@ -148,9 +148,12 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 		}
 	}
 
+	// With a limit above one, the displaced logins are evicted by EnforceBrowserSessionLimit below
+	exclusiveSignin := application.EnableExclusiveSignin && application.MaxSessions <= 1
+
 	// Revoke the tokens of the displaced login before the response is built, otherwise the
 	// token that this login creates below would be revoked too
-	if application.EnableExclusiveSignin {
+	if exclusiveSignin {
 		_, err = object.ExpireTokenByUserAndApplication(user.Owner, user.Name, application.Name)
 		if err != nil {
 			c.ResponseError(err.Error(), nil)
@@ -316,7 +319,7 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 			return
 		}
 
-		if application.EnableExclusiveSignin {
+		if exclusiveSignin {
 			sessions, err := object.GetUserAppSessions(user.Owner, user.Name, application.Name)
 			if err != nil {
 				c.ResponseError(err.Error(), nil)
@@ -353,11 +356,19 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 			SessionId:    []string{sessionId},
 			SessionInfos: []*object.SessionInfo{sessionInfo},
 
-			ExclusiveSignin: application.EnableExclusiveSignin,
+			ExclusiveSignin: exclusiveSignin,
 		})
 		if err != nil {
 			c.ResponseError(err.Error(), nil)
 			return
+		}
+
+		if application.EnableExclusiveSignin && application.MaxSessions > 1 {
+			err = object.EnforceBrowserSessionLimit(user, sessionId, application.Name, application.MaxSessions, c.Ctx.Request.Host)
+			if err != nil {
+				c.ResponseError(err.Error(), nil)
+				return
+			}
 		}
 
 		// The policy comes from the user's organization, a shared application must not impose
@@ -371,7 +382,7 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 			}
 		}
 		if organization != nil && organization.EnableExclusiveSignin {
-			err = object.EnforceSingleBrowserSession(user, sessionId, c.Ctx.Request.Host)
+			err = object.EnforceBrowserSessionLimit(user, sessionId, "", max(1, organization.MaxSessions), c.Ctx.Request.Host)
 			if err != nil {
 				c.ResponseError(err.Error(), nil)
 				return

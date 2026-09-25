@@ -376,10 +376,12 @@ func DeleteUserSessionId(owner string, name string, beegoSessionId string) error
 	return nil
 }
 
-// EnforceSingleBrowserSession keeps only the current Beego session id of the user and drops
-// every other one across all applications, together with the tokens minted under them. An SSO
-// sign-in into another application reuses the same id, so it is not treated as a second session.
-func EnforceSingleBrowserSession(user *User, currentSessionId string, host string) error {
+// EnforceBrowserSessionLimit keeps the current Beego session id of the user plus the limit-1 most
+// recently active other live ones, and drops every other id together with the tokens minted under
+// them. An SSO sign-in into another application reuses the same id, so it is not treated as a
+// second session. A non-empty application only counts the ids signed in to it, but a dropped id is
+// still signed out of every application, as its Beego session is shared by all of them.
+func EnforceBrowserSessionLimit(user *User, currentSessionId string, application string, limit int, host string) error {
 	if user == nil || currentSessionId == "" {
 		return nil
 	}
@@ -391,11 +393,17 @@ func EnforceSingleBrowserSession(user *User, currentSessionId string, host strin
 
 	oldIds := []string{}
 	for _, session := range sessions {
+		if application != "" && session.Application != application {
+			continue
+		}
 		for _, sid := range session.SessionId {
 			if sid != "" && sid != currentSessionId && !slices.Contains(oldIds, sid) {
 				oldIds = append(oldIds, sid)
 			}
 		}
+	}
+	if limit > 1 {
+		oldIds = getEvictedSessionIds(sessions, oldIds, limit-1)
 	}
 	if len(oldIds) == 0 {
 		return nil
@@ -436,6 +444,51 @@ func EnforceSingleBrowserSession(user *User, currentSessionId string, host strin
 	}()
 
 	return nil
+}
+
+// getEvictedSessionIds returns the ids that are not among the keep most recently active live ones.
+// A dead id is evicted too: its Beego session is gone, but the tokens minted under it may not be.
+func getEvictedSessionIds(sessions []*Session, sessionIds []string, keep int) []string {
+	// The same id is held by the row of every application it signed in to, and each row only
+	// sees the activity and expiry of its own sign-in, so the latest values across rows count
+	lastActiveTimes := map[string]time.Time{}
+	expireTimes := map[string]time.Time{}
+	for _, session := range sessions {
+		for _, info := range session.SessionInfos {
+			if info == nil {
+				continue
+			}
+			// Rows older than SessionInfos have no times, they parse to zero and sort as oldest
+			if t, err := time.Parse(time.RFC3339, info.LastActiveTime); err == nil && t.After(lastActiveTimes[info.SessionId]) {
+				lastActiveTimes[info.SessionId] = t
+			}
+			if t, err := time.Parse(time.RFC3339, info.ExpireTime); err == nil && t.After(expireTimes[info.SessionId]) {
+				expireTimes[info.SessionId] = t
+			}
+		}
+	}
+
+	// The expire time is only enforced on the next request of the session, so its Beego
+	// session can still exist after it, both have to be checked
+	liveIds := []string{}
+	for _, sessionId := range sessionIds {
+		exists, err := web.GlobalSessions.GetProvider().SessionExist(context.Background(), sessionId)
+		expireTime, ok := expireTimes[sessionId]
+		if err == nil && exists && (!ok || expireTime.After(time.Now())) {
+			liveIds = append(liveIds, sessionId)
+		}
+	}
+
+	slices.SortStableFunc(liveIds, func(a, b string) int {
+		return lastActiveTimes[b].Compare(lastActiveTimes[a])
+	})
+	if len(liveIds) > keep {
+		liveIds = liveIds[:keep]
+	}
+
+	return slices.DeleteFunc(slices.Clone(sessionIds), func(sessionId string) bool {
+		return slices.Contains(liveIds, sessionId)
+	})
 }
 
 func DeleteBeegoSession(sessionIds []string) {
