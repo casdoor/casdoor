@@ -483,8 +483,35 @@ func getClaimsCustom(claims Claims, tokenField []string, tokenAttributes []*JwtI
 	return res
 }
 
-func refineUser(user *User) *User {
+func clearUserSecrets(user *User) {
 	user.Password = ""
+	user.PasswordSalt = ""
+	user.Hash = ""
+	user.PreHash = ""
+	user.TotpSecret = ""
+	user.RecoveryCodes = nil
+
+	if user.ManagedAccounts != nil {
+		managedAccounts := make([]ManagedAccount, len(user.ManagedAccounts))
+		for i, account := range user.ManagedAccounts {
+			account.Password = ""
+			managedAccounts[i] = account
+		}
+		user.ManagedAccounts = managedAccounts
+	}
+
+	if user.MfaAccounts != nil {
+		mfaAccounts := make([]MfaAccount, len(user.MfaAccounts))
+		for i, account := range user.MfaAccounts {
+			account.SecretKey = ""
+			mfaAccounts[i] = account
+		}
+		user.MfaAccounts = mfaAccounts
+	}
+}
+
+func refineUser(user *User) *User {
+	clearUserSecrets(user)
 
 	if user.Address == nil {
 		user.Address = []string{}
