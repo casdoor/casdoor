@@ -197,7 +197,7 @@ func StaticFilter(ctx *context.Context) {
 		fmt.Println(err)
 	}
 
-	if strings.Contains(path, "/../") || !util.FileExist(path) {
+	if !filepath.IsLocal(strings.TrimPrefix(urlPath, "/")) || !util.FileExist(path) {
 		path = webBuildFolder + "/index.html"
 	}
 	if strings.HasSuffix(path, "/index.html") {
