@@ -644,6 +644,24 @@ func ValidateClientAssertion(clientAssertion string, host string) (bool, *Applic
 // mintImplicitToken mints a token for an already-authenticated user.
 // Callers must verify user identity before calling this function.
 func mintImplicitToken(application *Application, username string, scope string, nonce string, host string) (*Token, *TokenError, error) {
+	user, err := GetUserByFieldsForSharedApp(application, application.Organization, username)
+	if err != nil {
+		return nil, nil, err
+	}
+	return mintTokenForUser(application, user, scope, nonce, host)
+}
+
+// GetDeviceCodeToken takes the full user ID recorded by the browser approval: looking a bare name
+// up again in the application's organization may resolve to another organization's namesake.
+func GetDeviceCodeToken(application *Application, userId string, scope string, nonce string, host string) (*Token, *TokenError, error) {
+	user, err := GetUser(userId)
+	if err != nil {
+		return nil, nil, err
+	}
+	return mintTokenForUser(application, user, scope, nonce, host)
+}
+
+func mintTokenForUser(application *Application, user *User, scope string, nonce string, host string) (*Token, *TokenError, error) {
 	expandedScope, ok := IsScopeValidAndExpand(scope, application)
 	if !ok {
 		return nil, &TokenError{
@@ -653,10 +671,6 @@ func mintImplicitToken(application *Application, username string, scope string, 
 	}
 	scope = expandedScope
 
-	user, err := GetUserByFieldsForSharedApp(application, application.Organization, username)
-	if err != nil {
-		return nil, nil, err
-	}
 	if user == nil {
 		return nil, &TokenError{
 			Error:            InvalidGrant,

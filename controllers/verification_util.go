@@ -34,3 +34,11 @@ func (c *ApiController) checkOrgMasterVerificationCode(user *object.User, code s
 	}
 	return false, nil
 }
+
+func (c *ApiController) verifyMfaPasscode(user *object.User, mfaUtil object.MfaInterface, passcode string) error {
+	passed, err := c.checkOrgMasterVerificationCode(user, passcode)
+	if err != nil || passed {
+		return err
+	}
+	return mfaUtil.Verify(passcode)
+}

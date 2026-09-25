@@ -95,7 +95,7 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 	case "urn:ietf:params:oauth:grant-type:device_code":
 		// The user has already authenticated via browser in the device flow,
 		// so we skip password verification and mint a token directly.
-		token, tokenError, err = mintImplicitToken(application, username, scope, nonce, host)
+		token, tokenError, err = GetDeviceCodeToken(application, username, scope, nonce, host)
 	case "urn:ietf:params:oauth:grant-type:token-exchange": // Token Exchange Grant (RFC 8693)
 		token, tokenError, err = GetTokenExchangeToken(application, clientSecret, subjectToken, subjectTokenType, audience, scope, host)
 	case "refresh_token":
@@ -297,6 +297,10 @@ func GetPasswordToken(application *Application, username string, password string
 		}, nil
 	}
 
+	if tokenError := getMfaUserTokenError(user); tokenError != nil {
+		return nil, tokenError, nil
+	}
+
 	if user.IsForbidden {
 		return nil, &TokenError{
 			Error:            InvalidGrant,
@@ -432,7 +436,24 @@ func GetImplicitToken(application *Application, username string, password string
 		}, nil
 	}
 
-	return mintImplicitToken(application, username, scope, nonce, host)
+	if tokenError := getMfaUserTokenError(user); tokenError != nil {
+		return nil, tokenError, nil
+	}
+
+	return mintTokenForUser(application, user, scope, nonce, host)
+}
+
+// getMfaUserTokenError refuses a password-only grant for an MFA-enabled user, the same as
+// the password in the URL of AutoSigninFilter, or the password alone would skip the second factor
+func getMfaUserTokenError(user *User) *TokenError {
+	if !user.IsMfaEnabled() {
+		return nil
+	}
+
+	return &TokenError{
+		Error:            InvalidGrant,
+		ErrorDescription: "the user has MFA enabled and cannot sign in with a password grant, please use the authorization code flow",
+	}
 }
 
 // GetJwtBearerToken handles the JWT Bearer Grant flow (RFC 7523).

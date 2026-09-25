@@ -47,11 +47,12 @@ func (mfa *PushMfa) SetupVerify(passCode string) error {
 		return errors.New("push notification provider is not configured")
 	}
 
-	// For setup verification, send a test notification
-	// Note: Full implementation would require a callback endpoint to receive approval/denial
-	// from the mobile app, and passCode would contain the callback verification token
-	return mfa.sendPushNotification("MFA Setup Verification", "Please approve this setup request on your device")
+	return errPushMfaUnverifiable
 }
+
+// errPushMfaUnverifiable: nothing brings the approval of a push notification back to Casdoor
+// yet, so treating the sent notification as a passed factor would let any passcode through
+var errPushMfaUnverifiable = errors.New("push notification MFA cannot verify the approval on the device yet, please use another MFA method or a recovery code")
 
 func (mfa *PushMfa) Enable(user *User) error {
 	if mfa.provider == nil {
@@ -86,13 +87,7 @@ func (mfa *PushMfa) Verify(passCode string) error {
 		return errors.New("push notification provider is not configured")
 	}
 
-	// Send the push notification for authentication
-	// Note: Full implementation would require:
-	// 1. A callback endpoint to receive approval/denial from the mobile app
-	// 2. Persistent storage of challengeId to validate the callback
-	// 3. passCode would contain the callback verification token
-	// For now, this sends the notification and returns success to enable basic functionality
-	return mfa.sendPushNotification("MFA Verification", "Authentication request. Please approve or deny.")
+	return errPushMfaUnverifiable
 }
 
 func (mfa *PushMfa) sendPushNotification(title string, message string) error {

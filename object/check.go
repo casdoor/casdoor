@@ -844,7 +844,21 @@ func CheckUpdateUser(oldUser, user *User, lang string) string {
 			return err.Error()
 		}
 	}
+	if msg := checkUserGroups(oldUser, user, lang); msg != "" {
+		return msg
+	}
 
+	return ""
+}
+
+// checkUserGroups keeps a user out of the groups of other organizations: a group grants the
+// roles and permissions of the organization owning it
+func checkUserGroups(oldUser, user *User, lang string) string {
+	for _, group := range user.Groups {
+		if !util.InSlice(oldUser.Groups, group) && !strings.HasPrefix(group, user.Owner+"/") {
+			return i18n.Translate(lang, "auth:Unauthorized operation")
+		}
+	}
 	return ""
 }
 

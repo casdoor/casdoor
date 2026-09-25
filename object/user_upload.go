@@ -193,6 +193,9 @@ func UploadUsers(owner string, path string, userObj *User, lang string) (bool, e
 		if user.RegisterSource == "" {
 			user.RegisterSource = userObj.GetId()
 		}
+		if msg := checkUserGroups(&User{}, user, lang); msg != "" {
+			return false, fmt.Errorf("%s: line %d", msg, line)
+		}
 
 		newUsers = append(newUsers, user)
 	}
