@@ -117,6 +117,10 @@ func (c *ApiController) UpdateToken() {
 		return
 	}
 
+	if !c.requireTokenPermission(&token, true) {
+		return
+	}
+
 	c.Data["json"] = wrapActionResponse(object.UpdateToken(id, &token, c.IsGlobalAdmin()))
 	c.ServeJSON()
 }
@@ -133,6 +137,10 @@ func (c *ApiController) AddToken() {
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &token)
 	if err != nil {
 		c.ResponseError(err.Error())
+		return
+	}
+
+	if !c.requireTokenPermission(&token, true) {
 		return
 	}
 
@@ -155,8 +163,40 @@ func (c *ApiController) DeleteToken() {
 		return
 	}
 
+	if !c.requireTokenPermission(&token, false) {
+		return
+	}
+
 	c.Data["json"] = wrapActionResponse(object.DeleteToken(&token))
 	c.ServeJSON()
+}
+
+func (c *ApiController) requireTokenPermission(token *object.Token, checkApplication bool) bool {
+	isGlobalAdmin, user := c.isGlobalAdmin()
+	if isGlobalAdmin {
+		return true
+	}
+
+	if user == nil || !user.IsAdmin || user.Owner != token.Organization {
+		c.ResponseError(c.T("auth:Unauthorized operation"))
+		return false
+	}
+
+	if !checkApplication {
+		return true
+	}
+
+	application, err := object.GetApplication(util.GetId("admin", token.Application))
+	if err != nil {
+		c.ResponseError(err.Error())
+		return false
+	}
+	if application == nil || application.Organization != token.Organization {
+		c.ResponseError(c.T("auth:Unauthorized operation"))
+		return false
+	}
+
+	return true
 }
 
 // GetOAuthToken
