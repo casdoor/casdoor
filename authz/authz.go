@@ -230,43 +230,36 @@ func dropAnonymousSelfObject(subOwner string, subName string, objOwner string, o
 	return objOwner, objName
 }
 
-var nonUserObjectTypes = []string{
-	"organization", "group", "invitation", "application", "provider", "agent", "server", "entry",
-	"site", "rule", "cert", "key", "role", "permission", "model", "adapter", "enforcer", "token",
-	"product", "coupon", "order", "payment", "plan", "pricing", "subscription", "transaction",
-	"form", "syncer", "webhook", "ldap", "record",
-}
-
-var nonUserObjectApis = []string{
-	"/api/update-permissions",
-	"/api/delete-webhook-event",
-	"/api/update-cert-domain-expire",
-	"/api/add-policy",
-	"/api/update-policy",
-	"/api/remove-policy",
-	"/api/run-syncer",
-	"/api/test-syncer-db",
-	"/api/sync-ldap-users",
+// userObjectApis lists the APIs whose object is a user (or a row keyed by the user), the
+// only ones the self-match of the API model may authorize. Any other API only reads the
+// owner and name of the request to authorize it, so a client could put its own ones there
+// and have the request run on another object, e.g. an MCP tool call or a sent email.
+var userObjectApis = []string{
+	"/api/get-user",
+	"/api/update-user",
+	"/api/delete-user",
+	"/api/check-user-password",
+	"/api/remove-user-from-group",
+	"/api/verify-identification",
+	"/api/mfa/setup/initiate",
+	"/api/mfa/setup/verify",
+	"/api/mfa/setup/enable",
+	"/api/delete-mfa",
+	"/api/set-preferred-mfa",
+	"/api/get-session",
+	"/api/is-session-duplicated",
+	"/api/add-session",
+	"/api/update-session",
+	"/api/delete-session",
+	"/api/get-permissions-by-submitter",
+	"/api/delete-resource",
 }
 
 func dropNonUserSelfObject(subOwner string, subName string, urlPath string, objOwner string, objName string) string {
-	if subOwner == objOwner && subName == objName && isNonUserObjectApi(urlPath) {
+	if subOwner == objOwner && subName == objName && !util.InSlice(userObjectApis, urlPath) {
 		return ""
 	}
 	return objName
-}
-
-func isNonUserObjectApi(urlPath string) bool {
-	if util.InSlice(nonUserObjectApis, urlPath) {
-		return true
-	}
-
-	for _, verb := range []string{"/api/add-", "/api/update-", "/api/delete-", "/api/get-"} {
-		if objectType, ok := strings.CutPrefix(urlPath, verb); ok {
-			return util.InSlice(nonUserObjectTypes, objectType)
-		}
-	}
-	return false
 }
 
 func isAllowedInDemoMode(subOwner string, subName string, method string, urlPath string, objOwner string, objName string) bool {

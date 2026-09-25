@@ -68,6 +68,17 @@ func (c *ApiController) IsAdminOf(user2 *object.User) bool {
 	return user != nil && user2 != nil && user.IsAdmin && user.Owner == user2.Owner
 }
 
+// IsAdminOfOrganization checks that the current user administers the organization: a
+// global admin does, an org admin only their own organization.
+func (c *ApiController) IsAdminOfOrganization(organization string) bool {
+	isGlobalAdmin, user := c.isGlobalAdmin()
+	if isGlobalAdmin {
+		return true
+	}
+
+	return user != nil && user.IsAdmin && user.Owner == organization
+}
+
 func (c *ApiController) IsAdminOrSelf(user2 *object.User) bool {
 	isGlobalAdmin, user := c.isGlobalAdmin()
 	if isGlobalAdmin {

@@ -45,7 +45,7 @@ func (c *ApiController) GetRecords() {
 	organizationName := c.Ctx.Input.Query("organizationName")
 
 	if limit == "" || page == "" {
-		records, err := object.GetRecords()
+		records, err := object.GetRecords(organization)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
@@ -83,7 +83,7 @@ func (c *ApiController) GetRecords() {
 // @Success 200 {object} object.Record The Response object
 // @router /get-records-filter [post]
 func (c *ApiController) GetRecordsByFilter() {
-	_, ok := c.RequireAdmin()
+	organization, ok := c.RequireAdmin()
 	if !ok {
 		return
 	}
@@ -95,6 +95,10 @@ func (c *ApiController) GetRecordsByFilter() {
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
+	}
+
+	if organization != "" {
+		record.Owner, record.Organization = organization, organization
 	}
 
 	records, err := object.GetRecordsByField(record)

@@ -56,7 +56,7 @@ func (c *ApiController) PlaceOrder() {
 	var userId string
 	if paidUserName != "" {
 		userId = util.GetId(owner, paidUserName)
-		if userId != c.GetSessionUsername() && !c.IsAdmin() && userId != c.GetPaidUsername() {
+		if userId != c.GetSessionUsername() && !c.IsAdminOfOrganization(owner) && userId != c.GetPaidUsername() {
 			c.ResponseError(c.T("general:Only admin user can specify user"))
 			return
 		}
@@ -116,7 +116,7 @@ func (c *ApiController) PayOrder() {
 
 	userId := c.GetSessionUsername()
 	orderUserId := util.GetId(order.Owner, order.User)
-	if userId != orderUserId && !c.IsAdmin() {
+	if userId != orderUserId && !c.IsAdminOfOrganization(order.Owner) {
 		c.ResponseError(c.T("auth:Unauthorized operation"))
 		return
 	}
@@ -151,7 +151,7 @@ func (c *ApiController) CancelOrder() {
 
 	userId := c.GetSessionUsername()
 	orderUserId := util.GetId(order.Owner, order.User)
-	if userId != orderUserId && !c.IsAdmin() {
+	if userId != orderUserId && !c.IsAdminOfOrganization(order.Owner) {
 		c.ResponseError(c.T("auth:Unauthorized operation"))
 		return
 	}

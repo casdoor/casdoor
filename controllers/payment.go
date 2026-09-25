@@ -42,7 +42,7 @@ func (c *ApiController) GetPayments() {
 		var payments []*object.Payment
 		var err error
 
-		if c.IsAdmin() {
+		if c.IsAdminOfOrganization(owner) {
 			// If field is "user", filter by that user even for admins
 			if field == "user" && value != "" {
 				payments, err = object.GetUserPayments(owner, value)
@@ -50,10 +50,8 @@ func (c *ApiController) GetPayments() {
 				payments, err = object.GetPayments(owner)
 			}
 		} else {
-			user := c.GetSessionUsername()
-			_, userName, userErr := util.GetOwnerAndNameFromIdWithError(user)
-			if userErr != nil {
-				c.ResponseError(userErr.Error())
+			userName, ok := c.requireSessionUserNameOf(owner)
+			if !ok {
 				return
 			}
 			payments, err = object.GetUserPayments(owner, userName)
@@ -67,11 +65,9 @@ func (c *ApiController) GetPayments() {
 		c.ResponseOk(payments)
 	} else {
 		limit := util.ParseInt(limit)
-		if !c.IsAdmin() {
-			user := c.GetSessionUsername()
-			_, userName, userErr := util.GetOwnerAndNameFromIdWithError(user)
-			if userErr != nil {
-				c.ResponseError(userErr.Error())
+		if !c.IsAdminOfOrganization(owner) {
+			userName, ok := c.requireSessionUserNameOf(owner)
+			if !ok {
 				return
 			}
 			field = "user"
@@ -107,7 +103,7 @@ func (c *ApiController) GetUserPayments() {
 	owner := c.Ctx.Input.Query("owner")
 	user := c.Ctx.Input.Query("user")
 
-	if !c.IsAdmin() {
+	if !c.IsAdminOfOrganization(owner) {
 		sessionUser := c.GetSessionUsername()
 		sessionUserOwner, sessionUserName, err := util.GetOwnerAndNameFromIdWithError(sessionUser)
 		if err != nil {
@@ -145,14 +141,14 @@ func (c *ApiController) GetPayment() {
 		return
 	}
 
-	if !c.IsAdmin() {
+	if payment != nil && !c.IsAdminOfOrganization(payment.Owner) {
 		sessionUser := c.GetSessionUsername()
 		sessionUserOwner, sessionUserName, err := util.GetOwnerAndNameFromIdWithError(sessionUser)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
 		}
-		if payment != nil && (payment.Owner != sessionUserOwner || payment.User != sessionUserName) {
+		if payment.Owner != sessionUserOwner || payment.User != sessionUserName {
 			c.ResponseError("Forbidden")
 			return
 		}
@@ -260,14 +256,14 @@ func (c *ApiController) InvoicePayment() {
 	}
 
 	// the same check as GetPayment()
-	if !c.IsAdmin() {
+	if payment != nil && !c.IsAdminOfOrganization(payment.Owner) {
 		sessionUser := c.GetSessionUsername()
 		sessionUserOwner, sessionUserName, err := util.GetOwnerAndNameFromIdWithError(sessionUser)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
 		}
-		if payment != nil && (payment.Owner != sessionUserOwner || payment.User != sessionUserName) {
+		if payment.Owner != sessionUserOwner || payment.User != sessionUserName {
 			c.ResponseError("Forbidden")
 			return
 		}

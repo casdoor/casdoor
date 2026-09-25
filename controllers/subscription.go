@@ -43,7 +43,7 @@ func (c *ApiController) GetSubscriptions() {
 		var subscriptions []*object.Subscription
 		var err error
 
-		if c.IsAdmin() {
+		if c.IsAdminOfOrganization(owner) {
 			// If field is "user", filter by that user even for admins
 			if field == "user" && value != "" {
 				subscriptions, err = object.GetSubscriptionsByUser(owner, value)
@@ -51,10 +51,8 @@ func (c *ApiController) GetSubscriptions() {
 				subscriptions, err = object.GetSubscriptions(owner)
 			}
 		} else {
-			user := c.GetSessionUsername()
-			_, userName, userErr := util.GetOwnerAndNameFromIdWithError(user)
-			if userErr != nil {
-				c.ResponseError(userErr.Error())
+			userName, ok := c.requireSessionUserNameOf(owner)
+			if !ok {
 				return
 			}
 			subscriptions, err = object.GetSubscriptionsByUser(owner, userName)
@@ -68,11 +66,9 @@ func (c *ApiController) GetSubscriptions() {
 		c.ResponseOk(subscriptions)
 	} else {
 		limit := util.ParseInt(limit)
-		if !c.IsAdmin() {
-			user := c.GetSessionUsername()
-			_, userName, userErr := util.GetOwnerAndNameFromIdWithError(user)
-			if userErr != nil {
-				c.ResponseError(userErr.Error())
+		if !c.IsAdminOfOrganization(owner) {
+			userName, ok := c.requireSessionUserNameOf(owner)
+			if !ok {
 				return
 			}
 
@@ -124,6 +120,17 @@ func (c *ApiController) GetSubscription() {
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
+	}
+
+	if subscription != nil && !c.IsAdminOfOrganization(subscription.Owner) {
+		userName, ok := c.requireSessionUserNameOf(subscription.Owner)
+		if !ok {
+			return
+		}
+		if subscription.User != userName {
+			c.ResponseError(c.T("auth:Unauthorized operation"))
+			return
+		}
 	}
 
 	c.ResponseOk(subscription)

@@ -194,7 +194,7 @@ func (c *ApiController) BuyProduct() {
 	var userId string
 	if paidUserName != "" {
 		userId = util.GetId(owner, paidUserName)
-		if userId != c.GetSessionUsername() && !c.IsAdmin() && userId != c.GetPaidUsername() {
+		if userId != c.GetSessionUsername() && !c.IsAdminOfOrganization(owner) && userId != c.GetPaidUsername() {
 			c.ResponseError(c.T("general:Only admin user can specify user"))
 			return
 		}

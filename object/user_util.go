@@ -1024,12 +1024,13 @@ func IsAppUser(userId string) bool {
 	return false
 }
 
-// GetAppUser returns the virtual user an application credential ("app/<name>" or
-// "app-dcr/<name>") acts as: an admin of the application's organization, hence a
-// global admin only when the application belongs to the built-in organization. It
-// returns nil when userId is not an app user or the application doesn't exist.
+// GetAppUser returns the virtual user an application credential ("app/<name>") acts as:
+// an admin of the application's organization, hence a global admin only when the
+// application belongs to the built-in organization. It returns nil when userId is not
+// such an app user or the application doesn't exist. A dynamically registered client
+// ("app-dcr/<name>") is created by anyone, so it never acts as an admin.
 func GetAppUser(userId string) (*User, error) {
-	if !IsAppUser(userId) {
+	if !strings.HasPrefix(userId, "app/") {
 		return nil, nil
 	}
 

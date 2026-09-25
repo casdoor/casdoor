@@ -42,7 +42,7 @@ func (c *ApiController) GetTransactions() {
 		var transactions []*object.Transaction
 		var err error
 
-		if c.IsAdmin() {
+		if c.IsAdminOfOrganization(owner) {
 			// If field is "user", filter by that user even for admins
 			if field == "user" && value != "" {
 				transactions, err = object.GetUserTransactions(owner, value)
@@ -50,10 +50,8 @@ func (c *ApiController) GetTransactions() {
 				transactions, err = object.GetTransactions(owner)
 			}
 		} else {
-			user := c.GetSessionUsername()
-			_, userName, userErr := util.GetOwnerAndNameFromIdWithError(user)
-			if userErr != nil {
-				c.ResponseError(userErr.Error())
+			userName, ok := c.requireSessionUserNameOf(owner)
+			if !ok {
 				return
 			}
 			transactions, err = object.GetUserTransactions(owner, userName)
@@ -69,11 +67,9 @@ func (c *ApiController) GetTransactions() {
 		limit := util.ParseInt(limit)
 
 		// Apply user filter for non-admin users
-		if !c.IsAdmin() {
-			user := c.GetSessionUsername()
-			_, userName, userErr := util.GetOwnerAndNameFromIdWithError(user)
-			if userErr != nil {
-				c.ResponseError(userErr.Error())
+		if !c.IsAdminOfOrganization(owner) {
+			userName, ok := c.requireSessionUserNameOf(owner)
+			if !ok {
 				return
 			}
 			field = "user"
@@ -119,11 +115,9 @@ func (c *ApiController) GetTransaction() {
 	}
 
 	// Check if non-admin user is trying to access someone else's transaction
-	if !c.IsAdmin() {
-		user := c.GetSessionUsername()
-		_, userName, userErr := util.GetOwnerAndNameFromIdWithError(user)
-		if userErr != nil {
-			c.ResponseError(userErr.Error())
+	if !c.IsAdminOfOrganization(transaction.Owner) {
+		userName, ok := c.requireSessionUserNameOf(transaction.Owner)
+		if !ok {
 			return
 		}
 
