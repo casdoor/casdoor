@@ -19,6 +19,7 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"net/url"
+	"time"
 
 	"github.com/casdoor/casdoor/mcpself"
 	"github.com/casdoor/casdoor/object"
@@ -100,6 +101,9 @@ func (c *ApiController) ProxyServer() {
 	}
 
 	proxy := httputil.NewSingleHostReverseProxy(targetUrl)
+	if server.Owner != "built-in" {
+		proxy.Transport = util.NewNonLocalHttpTransport(30 * time.Second)
+	}
 	proxy.ErrorHandler = func(writer http.ResponseWriter, request *http.Request, proxyErr error) {
 		c.Ctx.Output.SetStatus(http.StatusBadGateway)
 		c.McpResponseError(mcpReq.ID, -32603, "failed to proxy server request: %s", proxyErr.Error())
