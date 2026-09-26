@@ -619,6 +619,43 @@ func IsUserOfApplication(user *User, application *Application) (bool, error) {
 	return organization != nil && organization.DefaultApplication == application.Name, nil
 }
 
+func CheckApplicationSignin(application *Application, user *User, clientIp string, lang string) error {
+	if user.IsForbidden {
+		return errors.New(i18n.Translate(lang, "check:The user is forbidden to sign in, please contact the administrator"))
+	}
+
+	if user.IsDeleted {
+		return errors.New(i18n.Translate(lang, "check:The user has been deleted and cannot be used to sign in, please contact the administrator"))
+	}
+
+	err := CheckEntryIp(clientIp, user, application, application.OrganizationObj, lang)
+	if err != nil {
+		return err
+	}
+
+	if application.DisableSignin {
+		return fmt.Errorf(i18n.Translate(lang, "auth:The application: %s has disabled users to signin"), application.Name)
+	}
+
+	if application.OrganizationObj != nil && application.OrganizationObj.DisableSignin {
+		return fmt.Errorf(i18n.Translate(lang, "auth:The organization: %s has disabled users to signin"), application.Organization)
+	}
+
+	allowed, err := CheckLoginPermission(user.GetId(), application)
+	if err != nil {
+		return err
+	}
+	if !allowed {
+		return errors.New(i18n.Translate(lang, "auth:Unauthorized operation"))
+	}
+
+	if !user.IsGlobalAdmin() && !user.IsAdmin && len(application.Tags) > 0 && !util.HasTagInSlice(application.Tags, user.Tag) {
+		return fmt.Errorf(i18n.Translate(lang, "auth:User's tag: %s is not listed in the application's tags"), user.Tag)
+	}
+
+	return nil
+}
+
 func CheckLoginPermission(userId string, application *Application) (bool, error) {
 	owner, _, err := util.GetOwnerAndNameFromIdWithError(userId)
 	if err != nil {

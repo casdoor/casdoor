@@ -22,6 +22,7 @@ import (
 	"encoding/xml"
 	"fmt"
 	"math"
+	"net/url"
 	"strings"
 	"sync"
 	"time"
@@ -100,6 +101,7 @@ type CasAuthenticationSuccessWrapper struct {
 	AuthenticationSuccess *CasAuthenticationSuccess // the token we issued
 	Service               string                    // to which service this token is issued
 	UserId                string
+	Application           string
 }
 
 type CasProxySuccess struct {
@@ -139,12 +141,13 @@ func CheckCasLogin(application *Application, lang string, service string) error 
 	return nil
 }
 
-func StoreCasTokenForPgt(token *CasAuthenticationSuccess, service, userId string) string {
+func StoreCasTokenForPgt(token *CasAuthenticationSuccess, service, userId string, application string) string {
 	pgt := fmt.Sprintf("PGT-%s", util.GenerateId())
 	pgtToServiceResponse.Store(pgt, &CasAuthenticationSuccessWrapper{
 		AuthenticationSuccess: token,
 		Service:               service,
 		UserId:                userId,
+		Application:           application,
 	})
 	return pgt
 }
@@ -153,42 +156,34 @@ func GenerateId() {
 	panic("unimplemented")
 }
 
-// GetCasTokenByPgt
-/**
-@ret1: whether a token is found
-@ret2: token, nil if not found
-@ret3: the service URL who requested to issue this token
-@ret4: userIf of user who requested to issue this token
-*/
-func GetCasTokenByPgt(pgt string) (bool, *CasAuthenticationSuccess, string, string) {
+// GetCasTokenByPgt returns the token of the proxy granting ticket, nil if not found
+func GetCasTokenByPgt(pgt string) *CasAuthenticationSuccessWrapper {
 	if responseWrapperType, ok := pgtToServiceResponse.LoadAndDelete(pgt); ok {
-		responseWrapperTypeCast := responseWrapperType.(*CasAuthenticationSuccessWrapper)
-		return true, responseWrapperTypeCast.AuthenticationSuccess, responseWrapperTypeCast.Service, responseWrapperTypeCast.UserId
+		return responseWrapperType.(*CasAuthenticationSuccessWrapper)
 	}
-	return false, nil, "", ""
+	return nil
 }
 
-// GetCasTokenByTicket
-/**
-@ret1: whether a token is found
-@ret2: token, nil if not found
-@ret3: the service URL who requested to issue this token
-@ret4: userIf of user who requested to issue this token
-*/
-func GetCasTokenByTicket(ticket string) (bool, *CasAuthenticationSuccess, string, string) {
+// GetCasTokenByTicket returns the token of the service or proxy ticket, nil if not found
+func GetCasTokenByTicket(ticket string) *CasAuthenticationSuccessWrapper {
 	if responseWrapperType, ok := stToServiceResponse.LoadAndDelete(ticket); ok {
-		responseWrapperTypeCast := responseWrapperType.(*CasAuthenticationSuccessWrapper)
-		return true, responseWrapperTypeCast.AuthenticationSuccess, responseWrapperTypeCast.Service, responseWrapperTypeCast.UserId
+		return responseWrapperType.(*CasAuthenticationSuccessWrapper)
 	}
-	return false, nil, "", ""
+	return nil
 }
 
-func StoreCasTokenForProxyTicket(token *CasAuthenticationSuccess, targetService, userId string) string {
+func IsCasServiceMatched(service string, issuedService string) bool {
+	unescapedService, err := url.QueryUnescape(service)
+	return service == issuedService || (err == nil && unescapedService == issuedService)
+}
+
+func StoreCasTokenForProxyTicket(token *CasAuthenticationSuccess, targetService, userId string, application string) string {
 	proxyTicket := fmt.Sprintf("PT-%s", util.GenerateId())
 	stToServiceResponse.Store(proxyTicket, &CasAuthenticationSuccessWrapper{
 		AuthenticationSuccess: token,
 		Service:               targetService,
 		UserId:                userId,
+		Application:           application,
 	})
 	return proxyTicket
 }
@@ -202,7 +197,7 @@ func escapeXMLText(input string) (string, error) {
 	return sb.String(), nil
 }
 
-func GenerateCasToken(userId string, service string) (string, error) {
+func GenerateCasToken(userId string, service string, application string) (string, error) {
 	user, err := GetUser(userId)
 	if err != nil {
 		return "", err
@@ -278,6 +273,7 @@ func GenerateCasToken(userId string, service string) (string, error) {
 		AuthenticationSuccess: &authenticationSuccess,
 		Service:               service,
 		UserId:                userId,
+		Application:           application,
 	})
 	return st, nil
 }
@@ -300,10 +296,11 @@ func GetValidationBySaml(samlRequest string, host string) (string, string, error
 		return "", "", fmt.Errorf("request.AssertionArtifact.InnerXML error, AssertionArtifact field not found")
 	}
 
-	ok, _, service, userId := GetCasTokenByTicket(ticket)
-	if !ok {
+	casToken := GetCasTokenByTicket(ticket)
+	if casToken == nil {
 		return "", "", fmt.Errorf("the CAS token for ticket %s is not found", ticket)
 	}
+	service, userId := casToken.Service, casToken.UserId
 
 	user, err := GetUser(userId)
 	if err != nil {

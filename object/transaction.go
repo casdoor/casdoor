@@ -54,9 +54,9 @@ type Transaction struct {
 	State string `xorm:"varchar(100)" json:"state"`
 }
 
-func GetTransactionCount(owner, field, value string) (int64, error) {
+func GetTransactionCount(owner, user, field, value string) (int64, error) {
 	session := GetSession(owner, -1, -1, field, value, "", "")
-	return session.Count(&Transaction{Owner: owner})
+	return session.Count(&Transaction{Owner: owner, User: user})
 }
 
 func GetTransactions(owner string) ([]*Transaction, error) {
@@ -79,10 +79,10 @@ func GetUserTransactions(owner, user string) ([]*Transaction, error) {
 	return transactions, nil
 }
 
-func GetPaginationTransactions(owner string, offset, limit int, field, value, sortField, sortOrder string) ([]*Transaction, error) {
+func GetPaginationTransactions(owner, user string, offset, limit int, field, value, sortField, sortOrder string) ([]*Transaction, error) {
 	transactions := []*Transaction{}
 	session := GetSession(owner, offset, limit, field, value, sortField, sortOrder)
-	err := session.Find(&transactions, &Transaction{Owner: owner})
+	err := session.Find(&transactions, &Transaction{Owner: owner, User: user})
 	if err != nil {
 		return nil, err
 	}

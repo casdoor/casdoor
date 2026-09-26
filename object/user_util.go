@@ -15,6 +15,7 @@
 package object
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"reflect"
@@ -559,10 +560,44 @@ func getAccountItemForUpdate(name string, organization *Organization) *AccountIt
 	return item
 }
 
+func restoreAdminOnlyUserFields(oldUser, newUser *User) {
+	newUser.MfaPhoneEnabled = oldUser.MfaPhoneEnabled
+	newUser.MfaEmailEnabled = oldUser.MfaEmailEnabled
+	newUser.MfaItems = oldUser.MfaItems
+	newUser.MfaRememberDeadline = oldUser.MfaRememberDeadline
+	newUser.SigninWrongTimes = oldUser.SigninWrongTimes
+	newUser.LastSigninWrongTime = oldUser.LastSigninWrongTime
+	newUser.LastChangePasswordTime = oldUser.LastChangePasswordTime
+	newUser.RegisterType = oldUser.RegisterType
+	newUser.RegisterSource = oldUser.RegisterSource
+	newUser.WebauthnCredentials = getKeptWebauthnCredentials(oldUser.WebauthnCredentials, newUser.WebauthnCredentials)
+}
+
+func getKeptWebauthnCredentials(oldCredentials, newCredentials []webauthn.Credential) []webauthn.Credential {
+	if newCredentials == nil {
+		return oldCredentials
+	}
+
+	res := []webauthn.Credential{}
+	for _, oldCredential := range oldCredentials {
+		for _, newCredential := range newCredentials {
+			if bytes.Equal(oldCredential.ID, newCredential.ID) {
+				res = append(res, oldCredential)
+				break
+			}
+		}
+	}
+	return res
+}
+
 func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, allowDisplayNameEmpty bool, lang string) (bool, string) {
 	organization, err := GetOrganizationByUser(oldUser)
 	if err != nil {
 		return false, err.Error()
+	}
+
+	if !isAdmin {
+		restoreAdminOnlyUserFields(oldUser, newUser)
 	}
 
 	var itemsChanged []*AccountItem
