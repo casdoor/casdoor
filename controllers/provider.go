@@ -183,6 +183,10 @@ func (c *ApiController) requireProviderPermission(provider *object.Provider) boo
 	return true
 }
 
+func isProviderVisibleToUser(provider *object.Provider, user *object.User) bool {
+	return provider.Owner == "admin" || provider.Owner == user.Owner
+}
+
 func (c *ApiController) getMaskedProviders(providers []*object.Provider, isMaskEnabled bool) []*object.Provider {
 	if isMaskEnabled {
 		return object.GetMaskedProviders(providers, true)

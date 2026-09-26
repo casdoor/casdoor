@@ -995,6 +995,11 @@ func (c *ApiController) VerifyIdentification() {
 			c.ResponseError(c.T("provider:Provider is not an ID Verification provider"))
 			return
 		}
+
+		if !isProviderVisibleToUser(provider, user) {
+			c.ResponseError(c.T("auth:Unauthorized operation"))
+			return
+		}
 	}
 
 	idvProvider := object.GetIdvProviderFromProvider(provider)
