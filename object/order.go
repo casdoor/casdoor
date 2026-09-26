@@ -65,9 +65,9 @@ type ProductInfo struct {
 	PlanName    string  `json:"planName,omitempty"`
 }
 
-func GetOrderCount(owner, field, value string) (int64, error) {
+func GetOrderCount(owner, user, field, value string) (int64, error) {
 	session := GetSession(owner, -1, -1, field, value, "", "")
-	return session.Count(&Order{Owner: owner})
+	return session.Count(&Order{Owner: owner, User: user})
 }
 
 func GetOrders(owner string) ([]*Order, error) {
@@ -90,10 +90,10 @@ func GetUserOrders(owner, user string) ([]*Order, error) {
 	return orders, nil
 }
 
-func GetPaginationOrders(owner string, offset, limit int, field, value, sortField, sortOrder string) ([]*Order, error) {
+func GetPaginationOrders(owner, user string, offset, limit int, field, value, sortField, sortOrder string) ([]*Order, error) {
 	orders := []*Order{}
 	session := GetSession(owner, offset, limit, field, value, sortField, sortOrder)
-	err := session.Find(&orders, &Order{Owner: owner})
+	err := session.Find(&orders, &Order{Owner: owner, User: user})
 	if err != nil {
 		return nil, err
 	}

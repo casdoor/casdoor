@@ -297,6 +297,21 @@ func CheckOAuthLogin(clientId string, responseType string, redirectUri string, s
 	return "", application, nil
 }
 
+func checkOAuthCodeUser(user *User, application *Application, lang string) (string, error) {
+	if user.IsDeleted {
+		return i18n.Translate(lang, "check:The user has been deleted and cannot be used to sign in, please contact the administrator"), nil
+	}
+
+	isUserOfApplication, err := IsUserOfApplication(user, application)
+	if err != nil {
+		return "", err
+	}
+	if !isUserOfApplication {
+		return i18n.Translate(lang, "auth:Unauthorized operation"), nil
+	}
+	return "", nil
+}
+
 func GetOAuthCode(userId string, clientId string, provider string, signinMethod string, responseType string, redirectUri string, scope string, state string, nonce string, challenge string, resource string, sessionId string, host string, lang string) (*Code, error) {
 	user, err := GetUser(userId)
 	if err != nil {
@@ -321,6 +336,17 @@ func GetOAuthCode(userId string, clientId string, provider string, signinMethod 
 		return nil, err
 	}
 
+	if msg != "" {
+		return &Code{
+			Message: msg,
+			Code:    "",
+		}, nil
+	}
+
+	msg, err = checkOAuthCodeUser(user, application, lang)
+	if err != nil {
+		return nil, err
+	}
 	if msg != "" {
 		return &Code{
 			Message: msg,
@@ -643,10 +669,15 @@ func ValidateClientAssertion(clientAssertion string, host string) (bool, *Applic
 
 // mintImplicitToken mints a token for an already-authenticated user.
 // Callers must verify user identity before calling this function.
-func mintImplicitToken(application *Application, username string, scope string, nonce string, host string) (*Token, *TokenError, error) {
+func mintImplicitToken(application *Application, username string, scope string, nonce string, host string, clientIp string, lang string) (*Token, *TokenError, error) {
 	user, err := GetUserByFieldsForSharedApp(application, application.Organization, username)
 	if err != nil {
 		return nil, nil, err
+	}
+	if user != nil {
+		if tokenError := checkGrantUserSignin(application, user, clientIp, lang); tokenError != nil {
+			return nil, tokenError, nil
+		}
 	}
 	return mintTokenForUser(application, user, scope, nonce, host)
 }

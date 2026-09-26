@@ -20,6 +20,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 
 	"github.com/casdoor/casdoor/object"
 )
@@ -35,11 +36,6 @@ const (
 	UnauthorizedService      string = "UNAUTHORIZED_SERVICE"
 )
 
-func queryUnescape(service string) string {
-	s, _ := url.QueryUnescape(service)
-	return s
-}
-
 func (c *RootController) CasValidate() {
 	ticket := c.Ctx.Input.Query("ticket")
 	service := c.Ctx.Input.Query("service")
@@ -48,10 +44,10 @@ func (c *RootController) CasValidate() {
 		c.Ctx.Output.Body([]byte("no\n"))
 		return
 	}
-	if ok, response, issuedService, _ := object.GetCasTokenByTicket(ticket); ok {
+	if casToken := object.GetCasTokenByTicket(ticket); casToken != nil {
 		// check whether service is the one for which we previously issued token
-		if issuedService == service {
-			c.Ctx.Output.Body([]byte(fmt.Sprintf("yes\n%s\n", response.User)))
+		if object.IsCasServiceMatched(service, casToken.Service) {
+			c.Ctx.Output.Body([]byte(fmt.Sprintf("yes\n%s\n", casToken.AuthenticationSuccess.User)))
 			return
 		}
 	}
@@ -100,15 +96,15 @@ func (c *RootController) CasP3ProxyValidate() {
 		c.sendCasAuthenticationResponseErr(InvalidRequest, "service and ticket must exist", format)
 		return
 	}
-	ok, response, issuedService, userId := object.GetCasTokenByTicket(ticket)
+	casToken := object.GetCasTokenByTicket(ticket)
 	// find the token
-	if ok {
+	if casToken != nil {
 		// check whether service is the one for which we previously issued token
-		if strings.HasPrefix(service, issuedService) || strings.HasPrefix(queryUnescape(service), issuedService) {
-			serviceResponse.Success = response
+		if object.IsCasServiceMatched(service, casToken.Service) {
+			serviceResponse.Success = casToken.AuthenticationSuccess
 		} else {
 			// service not match
-			c.sendCasAuthenticationResponseErr(InvalidService, fmt.Sprintf("service %s and %s does not match", service, issuedService), format)
+			c.sendCasAuthenticationResponseErr(InvalidService, fmt.Sprintf("service %s and %s does not match", service, casToken.Service), format)
 			return
 		}
 	} else {
@@ -119,7 +115,7 @@ func (c *RootController) CasP3ProxyValidate() {
 
 	if pgtUrl != "" && serviceResponse.Failure == nil {
 		// that means we are in proxy web flow
-		pgt := object.StoreCasTokenForPgt(serviceResponse.Success, service, userId)
+		pgt := object.StoreCasTokenForPgt(serviceResponse.Success, service, casToken.UserId, casToken.Application)
 		pgtiou := serviceResponse.Success.ProxyGrantingTicket
 		// todo: check whether it is https
 		pgtUrlObj, err := url.Parse(pgtUrl)
@@ -162,7 +158,13 @@ func (c *RootController) CasP3ProxyValidate() {
 }
 
 func sendCasPgtCallback(request *http.Request) error {
-	resp, err := http.DefaultClient.Do(request)
+	client := &http.Client{
+		Timeout: 10 * time.Second,
+		CheckRedirect: func(req *http.Request, via []*http.Request) error {
+			return http.ErrUseLastResponse
+		},
+	}
+	resp, err := client.Do(request)
 	if err != nil {
 		return err
 	}
@@ -183,18 +185,23 @@ func (c *RootController) CasProxy() {
 		return
 	}
 
-	ok, authenticationSuccess, issuedService, userId := object.GetCasTokenByPgt(pgt)
-	if !ok {
+	casToken := object.GetCasTokenByPgt(pgt)
+	if casToken == nil {
 		c.sendCasProxyResponseErr(UnauthorizedService, "service not authorized", format)
 		return
 	}
 
-	newAuthenticationSuccess := authenticationSuccess.DeepCopy()
+	if !c.isCasProxyTargetAllowed(casToken.Application, targetService) {
+		c.sendCasProxyResponseErr(UnauthorizedService, fmt.Sprintf("the target service: %s is not authorized", targetService), format)
+		return
+	}
+
+	newAuthenticationSuccess := casToken.AuthenticationSuccess.DeepCopy()
 	if newAuthenticationSuccess.Proxies == nil {
 		newAuthenticationSuccess.Proxies = &object.CasProxies{}
 	}
-	newAuthenticationSuccess.Proxies.Proxies = append(newAuthenticationSuccess.Proxies.Proxies, issuedService)
-	proxyTicket := object.StoreCasTokenForProxyTicket(&newAuthenticationSuccess, targetService, userId)
+	newAuthenticationSuccess.Proxies.Proxies = append(newAuthenticationSuccess.Proxies.Proxies, casToken.Service)
+	proxyTicket := object.StoreCasTokenForProxyTicket(&newAuthenticationSuccess, targetService, casToken.UserId, casToken.Application)
 
 	serviceResponse := object.CasServiceResponse{
 		Xmlns: "http://www.yale.edu/tp/cas",
@@ -210,6 +217,14 @@ func (c *RootController) CasProxy() {
 		c.Data["xml"] = serviceResponse
 		c.ServeXML()
 	}
+}
+
+func (c *RootController) isCasProxyTargetAllowed(applicationId string, targetService string) bool {
+	application, err := object.GetApplication(applicationId)
+	if err != nil || application == nil {
+		return false
+	}
+	return object.CheckCasLogin(application, c.GetAcceptLanguage(), targetService) == nil
 }
 
 func (c *RootController) SamlValidate() {
@@ -236,7 +251,7 @@ func (c *RootController) SamlValidate() {
 		return
 	}
 
-	if !strings.HasPrefix(target, service) {
+	if !object.IsCasServiceMatched(target, service) {
 		c.ResponseError(fmt.Sprintf(c.T("cas:Service %s and %s do not match"), target, service))
 		return
 	}

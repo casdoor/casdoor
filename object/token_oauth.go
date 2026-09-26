@@ -23,7 +23,7 @@ import (
 	"github.com/casdoor/casdoor/util"
 )
 
-func GetOAuthToken(grantType string, clientId string, clientSecret string, code string, verifier string, scope string, nonce string, username string, password string, host string, refreshToken string, tag string, avatar string, lang string, subjectToken string, subjectTokenType string, assertion string, clientAssertion string, clientAssertionType string, audience string, resource string, dpopProof string) (interface{}, error) {
+func GetOAuthToken(grantType string, clientId string, clientSecret string, code string, verifier string, scope string, nonce string, username string, password string, host string, refreshToken string, tag string, avatar string, lang string, subjectToken string, subjectTokenType string, assertion string, clientAssertion string, clientAssertionType string, audience string, resource string, dpopProof string, clientIp string) (interface{}, error) {
 	var (
 		application *Application
 		err         error
@@ -85,13 +85,13 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 	case "authorization_code": // Authorization Code Grant
 		token, tokenError, err = GetAuthorizationCodeToken(application, clientSecret, code, verifier, resource)
 	case "password": // Resource Owner Password Credentials Grant
-		token, tokenError, err = GetPasswordToken(application, username, password, scope, host)
+		token, tokenError, err = GetPasswordToken(application, username, password, scope, host, clientIp, lang)
 	case "client_credentials": // Client Credentials Grant
 		token, tokenError, err = GetClientCredentialsToken(application, clientSecret, scope, host)
 	case "token", "id_token": // Implicit Grant
-		token, tokenError, err = GetImplicitToken(application, username, password, scope, nonce, host)
+		token, tokenError, err = GetImplicitToken(application, username, password, scope, nonce, host, clientIp, lang)
 	case "urn:ietf:params:oauth:grant-type:jwt-bearer":
-		token, tokenError, err = GetJwtBearerToken(application, assertion, scope, nonce, host)
+		token, tokenError, err = GetJwtBearerToken(application, assertion, scope, nonce, host, clientIp, lang)
 	case "urn:ietf:params:oauth:grant-type:device_code":
 		// The user has already authenticated via browser in the device flow,
 		// so we skip password verification and mint a token directly.
@@ -257,7 +257,7 @@ func GetAuthorizationCodeToken(application *Application, clientSecret string, co
 }
 
 // GetPasswordToken handles the Resource Owner Password Credentials Grant flow.
-func GetPasswordToken(application *Application, username string, password string, scope string, host string) (*Token, *TokenError, error) {
+func GetPasswordToken(application *Application, username string, password string, scope string, host string, clientIp string, lang string) (*Token, *TokenError, error) {
 	expandedScope, ok := IsScopeValidAndExpand(scope, application)
 	if !ok {
 		return nil, &TokenError{
@@ -301,11 +301,8 @@ func GetPasswordToken(application *Application, username string, password string
 		return nil, tokenError, nil
 	}
 
-	if user.IsForbidden {
-		return nil, &TokenError{
-			Error:            InvalidGrant,
-			ErrorDescription: "the user is forbidden to sign in, please contact the administrator",
-		}, nil
+	if tokenError := checkGrantUserSignin(application, user, clientIp, lang); tokenError != nil {
+		return nil, tokenError, nil
 	}
 
 	err = ExtendUserWithRolesAndPermissions(user)
@@ -406,7 +403,7 @@ func GetClientCredentialsToken(application *Application, clientSecret string, sc
 }
 
 // GetImplicitToken handles the Implicit Grant flow (requires password verification).
-func GetImplicitToken(application *Application, username string, password string, scope string, nonce string, host string) (*Token, *TokenError, error) {
+func GetImplicitToken(application *Application, username string, password string, scope string, nonce string, host string, clientIp string, lang string) (*Token, *TokenError, error) {
 	user, err := GetUserByFieldsForSharedApp(application, application.Organization, username)
 	if err != nil {
 		return nil, nil, err
@@ -440,7 +437,22 @@ func GetImplicitToken(application *Application, username string, password string
 		return nil, tokenError, nil
 	}
 
+	if tokenError := checkGrantUserSignin(application, user, clientIp, lang); tokenError != nil {
+		return nil, tokenError, nil
+	}
+
 	return mintTokenForUser(application, user, scope, nonce, host)
+}
+
+func checkGrantUserSignin(application *Application, user *User, clientIp string, lang string) *TokenError {
+	err := CheckApplicationSignin(application, user, clientIp, lang)
+	if err != nil {
+		return &TokenError{
+			Error:            InvalidGrant,
+			ErrorDescription: err.Error(),
+		}
+	}
+	return nil
 }
 
 // getMfaUserTokenError refuses a password-only grant for an MFA-enabled user, the same as
@@ -457,7 +469,7 @@ func getMfaUserTokenError(user *User) *TokenError {
 }
 
 // GetJwtBearerToken handles the JWT Bearer Grant flow (RFC 7523).
-func GetJwtBearerToken(application *Application, assertion string, scope string, nonce string, host string) (*Token, *TokenError, error) {
+func GetJwtBearerToken(application *Application, assertion string, scope string, nonce string, host string, clientIp string, lang string) (*Token, *TokenError, error) {
 	ok, claims, err := ValidateJwtAssertion(assertion, application, host)
 	if err != nil || !ok {
 		if err != nil {
@@ -474,7 +486,7 @@ func GetJwtBearerToken(application *Application, assertion string, scope string,
 	}
 
 	// JWT assertion has already been validated above; skip password re-verification
-	return mintImplicitToken(application, claims.Subject, scope, nonce, host)
+	return mintImplicitToken(application, claims.Subject, scope, nonce, host, clientIp, lang)
 }
 
 // GetTokenByUser mints a token for the given user (Implicit flow helper).
@@ -550,7 +562,7 @@ func GetWechatMiniProgramToken(application *Application, code string, host strin
 	}
 
 	if user == nil {
-		if !application.EnableSignUp {
+		if !application.EnableSignUp || !application.IsSignupAllowedFor(application.Organization) {
 			return nil, &TokenError{
 				Error:            InvalidGrant,
 				ErrorDescription: "the application does not allow to sign up new account",

@@ -65,6 +65,7 @@ func (c *ApiController) GetTransactions() {
 		c.ResponseOk(transactions)
 	} else {
 		limit := util.ParseInt(limit)
+		user := ""
 
 		// Apply user filter for non-admin users
 		if !c.IsAdminOfOrganization(owner) {
@@ -72,18 +73,17 @@ func (c *ApiController) GetTransactions() {
 			if !ok {
 				return
 			}
-			field = "user"
-			value = userName
+			user = userName
 		}
 
-		count, err := object.GetTransactionCount(owner, field, value)
+		count, err := object.GetTransactionCount(owner, user, field, value)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
 		}
 
 		paginator := pagination.NewPaginator(c.Ctx.Request, limit, count)
-		transactions, err := object.GetPaginationTransactions(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
+		transactions, err := object.GetPaginationTransactions(owner, user, paginator.Offset(), limit, field, value, sortField, sortOrder)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return

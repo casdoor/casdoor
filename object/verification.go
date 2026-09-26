@@ -443,6 +443,23 @@ func CheckVerifyCodeWithLimit(user *User, dest, code, lang string) error {
 	}
 }
 
+func CheckFaceIdWithLimit(user *User, check func() error, lang string) error {
+	err := checkSigninErrorTimes(user, lang)
+	if err != nil {
+		return err
+	}
+
+	err = check()
+	if err != nil {
+		if recordErr := recordSigninErrorInfo(user, lang); recordErr != nil {
+			return fmt.Errorf("%s, %s", err.Error(), recordErr.Error())
+		}
+		return err
+	}
+
+	return resetUserSigninErrorTimes(user)
+}
+
 func CheckFaceId(user *User, faceId []float64, lang string) error {
 	if len(user.FaceIds) == 0 {
 		return errors.New(i18n.Translate(lang, "check:Face data does not exist, cannot log in"))

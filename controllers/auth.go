@@ -108,53 +108,11 @@ func (c *ApiController) checkCredentialApplication(user *object.User, applicatio
 }
 
 func (c *ApiController) checkApplicationSignin(application *object.Application, user *object.User) bool {
-	if user.IsForbidden {
-		c.ResponseError(c.T("check:The user is forbidden to sign in, please contact the administrator"))
-		return false
-	}
-
-	if user.IsDeleted {
-		c.ResponseError(c.T("check:The user has been deleted and cannot be used to sign in, please contact the administrator"))
-		return false
-	}
-
-	clientIp := util.GetClientIpFromRequest(c.Ctx.Request)
-	err := object.CheckEntryIp(clientIp, user, application, application.OrganizationObj, c.GetAcceptLanguage())
+	err := object.CheckApplicationSignin(application, user, util.GetClientIpFromRequest(c.Ctx.Request), c.GetAcceptLanguage())
 	if err != nil {
 		c.ResponseError(err.Error())
 		return false
 	}
-
-	if application.DisableSignin {
-		c.ResponseError(fmt.Sprintf(c.T("auth:The application: %s has disabled users to signin"), application.Name))
-		return false
-	}
-
-	if application.OrganizationObj != nil && application.OrganizationObj.DisableSignin {
-		c.ResponseError(fmt.Sprintf(c.T("auth:The organization: %s has disabled users to signin"), application.Organization))
-		return false
-	}
-
-	allowed, err := object.CheckLoginPermission(user.GetId(), application)
-	if err != nil {
-		c.ResponseError(err.Error(), nil)
-		return false
-	}
-	if !allowed {
-		c.ResponseError(c.T("auth:Unauthorized operation"))
-		return false
-	}
-
-	// check user's tag
-	if !user.IsGlobalAdmin() && !user.IsAdmin && len(application.Tags) > 0 {
-		// only users with the tag that is listed in the application tags can login
-		// supports comma-separated tags in user.Tag (e.g., "default-policy,project-admin")
-		if !util.HasTagInSlice(application.Tags, user.Tag) {
-			c.ResponseError(fmt.Sprintf(c.T("auth:User's tag: %s is not listed in the application's tags"), user.Tag))
-			return false
-		}
-	}
-
 	return true
 }
 
@@ -351,7 +309,7 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 				return
 			}
 
-			st, err := object.GenerateCasToken(userId, service)
+			st, err := object.GenerateCasToken(userId, service, application.GetId())
 			if err != nil {
 				resp = wrapErrorResponse(err)
 			} else {
@@ -653,6 +611,25 @@ func getUserByProvider(organization string, provider *object.Provider, providerI
 	return object.GetUserByField(organization, provider.Type, providerId)
 }
 
+func checkUserFace(user *object.User, authForm *form.AuthForm, faceIdProvider *object.Provider, lang string) error {
+	if faceIdProvider == nil {
+		return object.CheckFaceId(user, authForm.FaceId, lang)
+	}
+
+	if !user.HasFaceIdImage() {
+		return errors.New(i18n.Translate(lang, "check:Face data does not exist, cannot log in"))
+	}
+
+	ok, err := user.CheckUserFace(authForm.FaceIdImage, faceIdProvider)
+	if err != nil {
+		return err
+	}
+	if !ok {
+		return errors.New(i18n.Translate(lang, "check:Face data mismatch"))
+	}
+	return nil
+}
+
 func linkUserByProvider(user *object.User, provider *object.Provider, providerId string) (bool, error) {
 	if object.IsFlexibleCustomProvider(provider.Type) {
 		return object.LinkFlexibleCustomAccount(user, provider.Name, providerId)
@@ -731,27 +708,10 @@ func (c *ApiController) Login() {
 				return
 			}
 
-			if faceIdProvider == nil {
-				if err := object.CheckFaceId(user, authForm.FaceId, c.GetAcceptLanguage()); err != nil {
-					c.ResponseError(err.Error(), nil)
-					return
-				}
-			} else {
-				if !user.HasFaceIdImage() {
-					c.ResponseError(i18n.Translate(c.GetAcceptLanguage(), "check:Face data does not exist, cannot log in"))
-					return
-				}
-
-				ok, err := user.CheckUserFace(authForm.FaceIdImage, faceIdProvider)
-				if err != nil {
-					c.ResponseError(err.Error(), nil)
-					return
-				}
-
-				if !ok {
-					c.ResponseError(i18n.Translate(c.GetAcceptLanguage(), "check:Face data mismatch"))
-					return
-				}
+			err = object.CheckFaceIdWithLimit(user, func() error { return checkUserFace(user, &authForm, faceIdProvider, c.GetAcceptLanguage()) }, c.GetAcceptLanguage())
+			if err != nil {
+				c.ResponseError(err.Error(), nil)
+				return
 			}
 		} else if authForm.Password == "" {
 			var application *object.Application
