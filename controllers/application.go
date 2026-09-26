@@ -275,6 +275,10 @@ func (c *ApiController) AddApplication() {
 		return
 	}
 
+	if !c.requireOrganizationPermission(application.Organization) {
+		return
+	}
+
 	count, err := object.GetApplicationCount("", "", "")
 	if err != nil {
 		c.ResponseError(err.Error())
