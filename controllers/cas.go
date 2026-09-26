@@ -64,6 +64,7 @@ func (c *RootController) CasServiceValidate() {
 	format := c.Ctx.Input.Query("format")
 	if !strings.HasPrefix(ticket, "ST") {
 		c.sendCasAuthenticationResponseErr(InvalidTicket, fmt.Sprintf("Ticket %s not recognized", ticket), format)
+		return
 	}
 	c.CasP3ProxyValidate()
 }
@@ -79,6 +80,7 @@ func (c *RootController) CasP3ServiceValidate() {
 	format := c.Ctx.Input.Query("format")
 	if !strings.HasPrefix(ticket, "ST") {
 		c.sendCasAuthenticationResponseErr(InvalidTicket, fmt.Sprintf("Ticket %s not recognized", ticket), format)
+		return
 	}
 	c.CasP3ProxyValidate()
 }
@@ -143,9 +145,8 @@ func (c *RootController) CasP3ProxyValidate() {
 			return
 		}
 
-		resp, err := http.DefaultClient.Do(request)
-		if err != nil || !(resp.StatusCode >= 200 && resp.StatusCode < 400) {
-			// failed to send request
+		err = sendCasPgtCallback(request)
+		if err != nil {
 			c.sendCasAuthenticationResponseErr(InvalidProxyCallback, err.Error(), format)
 			return
 		}
@@ -158,6 +159,19 @@ func (c *RootController) CasP3ProxyValidate() {
 		c.Data["xml"] = serviceResponse
 		c.ServeXML()
 	}
+}
+
+func sendCasPgtCallback(request *http.Request) error {
+	resp, err := http.DefaultClient.Do(request)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode < 200 || resp.StatusCode >= 400 {
+		return fmt.Errorf("the proxy callback responded with status: %d", resp.StatusCode)
+	}
+	return nil
 }
 
 func (c *RootController) CasProxy() {

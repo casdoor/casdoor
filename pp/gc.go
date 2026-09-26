@@ -16,6 +16,7 @@ package pp
 
 import (
 	"bytes"
+	"crypto/subtle"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
@@ -179,8 +180,7 @@ func (pp *GcPaymentProvider) Pay(r *PayReq) (*PayResp, error) {
 		RequestTime: util.GenerateSimpleTimeId(),
 	}
 
-	params := fmt.Sprintf("data=%s&op=%s&requesttime=%s&version=%s&xmpch=%s%s", body.Data, body.Op, body.RequestTime, body.Version, body.Xmpch, pp.SecretKey)
-	body.Sign = strings.ToUpper(util.GetMd5Hash(params))
+	body.Sign = pp.getSign(body)
 
 	bodyBytes, err := json.Marshal(body)
 	if err != nil {
@@ -218,6 +218,18 @@ func (pp *GcPaymentProvider) Pay(r *PayReq) (*PayResp, error) {
 	return payResp, nil
 }
 
+func (pp *GcPaymentProvider) getSign(body GcRequestBody) string {
+	params := fmt.Sprintf("data=%s&op=%s&requesttime=%s&version=%s&xmpch=%s%s", body.Data, body.Op, body.RequestTime, body.Version, body.Xmpch, pp.SecretKey)
+	return strings.ToUpper(util.GetMd5Hash(params))
+}
+
+func (pp *GcPaymentProvider) isNotifySignValid(body GcRequestBody) bool {
+	if body.Sign == "" || body.Xmpch != pp.Xmpch {
+		return false
+	}
+	return subtle.ConstantTimeCompare([]byte(strings.ToUpper(body.Sign)), []byte(pp.getSign(body))) == 1
+}
+
 func (pp *GcPaymentProvider) Notify(body []byte, orderId string) (*NotifyResult, error) {
 	reqBody := GcRequestBody{}
 	m, err := url.ParseQuery(string(body))
@@ -225,12 +237,16 @@ func (pp *GcPaymentProvider) Notify(body []byte, orderId string) (*NotifyResult,
 		return nil, err
 	}
 
-	reqBody.Op = m["op"][0]
-	reqBody.Xmpch = m["xmpch"][0]
-	reqBody.Version = m["version"][0]
-	reqBody.Data = m["data"][0]
-	reqBody.RequestTime = m["requesttime"][0]
-	reqBody.Sign = m["sign"][0]
+	reqBody.Op = m.Get("op")
+	reqBody.Xmpch = m.Get("xmpch")
+	reqBody.Version = m.Get("version")
+	reqBody.Data = m.Get("data")
+	reqBody.RequestTime = m.Get("requesttime")
+	reqBody.Sign = m.Get("sign")
+
+	if !pp.isNotifySignValid(reqBody) {
+		return nil, fmt.Errorf("the notification sign of the GC payment is invalid")
+	}
 
 	notifyReqInfoBytes, err := base64.StdEncoding.DecodeString(reqBody.Data)
 	if err != nil {
@@ -295,8 +311,7 @@ func (pp *GcPaymentProvider) GetInvoice(paymentName string, personName string, p
 		RequestTime: util.GenerateSimpleTimeId(),
 	}
 
-	params := fmt.Sprintf("data=%s&op=%s&requesttime=%s&version=%s&xmpch=%s%s", body.Data, body.Op, body.RequestTime, body.Version, body.Xmpch, pp.SecretKey)
-	body.Sign = strings.ToUpper(util.GetMd5Hash(params))
+	body.Sign = pp.getSign(body)
 
 	bodyBytes, err := json.Marshal(body)
 	if err != nil {

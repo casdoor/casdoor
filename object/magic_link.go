@@ -78,16 +78,25 @@ func isLoopbackHost(host string) bool {
 	return hostname == "localhost" || hostname == "127.0.0.1" || hostname == "::1" || strings.HasSuffix(hostname, ".localhost")
 }
 
-// getMagicLinkOrigin is the site the sign-in link points at. It is never taken from
-// the request's "Host" header alone: a forged header would mail the one-time token to
-// the attacker's own site, so without a configured origin only a loopback host, which
-// nobody else can receive, is trusted.
-func getMagicLinkOrigin(host string, lang string) (string, error) {
+// getTrustedOriginFrontend is the site a link mailed to a user may point at. It is never
+// taken from the request's "Host" header alone: a forged header would mail the one-time
+// token or code in the link to the attacker's own site, so without a configured origin
+// only a loopback host, which nobody else can receive, is trusted.
+func getTrustedOriginFrontend(host string) (string, bool) {
 	if conf.GetConfigString("origin") == "" && conf.GetConfigString("originFrontend") == "" && !isLoopbackHost(host) {
-		return "", errors.New(i18n.Translate(lang, "verification:please set \"origin\" in conf/app.conf to send magic links"))
+		return "", false
 	}
 
 	originFrontend, _ := getOriginFromHost(host)
+	return originFrontend, true
+}
+
+func getMagicLinkOrigin(host string, lang string) (string, error) {
+	originFrontend, ok := getTrustedOriginFrontend(host)
+	if !ok {
+		return "", errors.New(i18n.Translate(lang, "verification:please set \"origin\" in conf/app.conf to send magic links"))
+	}
+
 	return originFrontend, nil
 }
 

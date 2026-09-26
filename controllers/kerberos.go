@@ -91,6 +91,10 @@ func (c *ApiController) KerberosLogin() {
 
 	application.OrganizationObj = organization
 
+	if checkMfaEnable(c, user, organization, "") {
+		return
+	}
+
 	authForm := &form.AuthForm{
 		Type:         "code",
 		Application:  applicationName,

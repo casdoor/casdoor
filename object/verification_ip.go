@@ -15,6 +15,7 @@
 package object
 
 import (
+	"crypto/subtle"
 	"errors"
 	"fmt"
 	"strconv"
@@ -117,36 +118,51 @@ func resetVerifyCodeIpErrorTimes(remoteAddr, dest string) {
 // CheckVerifyCodeWithLimitAndIp enforces both per-user and per-IP attempt limits for verification codes.
 // It is intended for security-sensitive flows like password reset.
 func CheckVerifyCodeWithLimitAndIp(user *User, remoteAddr, dest, code, lang string) error {
+	_, err := CheckVerifyCodeOrMasterCodeWithLimitAndIp(user, "", remoteAddr, dest, code, lang)
+	return err
+}
+
+func CheckVerifyCodeOrMasterCodeWithLimitAndIp(user *User, masterCode, remoteAddr, dest, code, lang string) (bool, error) {
 	if err := checkVerifyCodeIpErrorTimes(remoteAddr, dest, lang); err != nil {
-		return err
+		return false, err
 	}
 
 	if user != nil {
 		if err := checkVerifyCodeErrorTimes(user, dest, lang); err != nil {
-			return err
+			return false, err
 		}
+	}
+
+	if masterCode != "" && subtle.ConstantTimeCompare([]byte(code), []byte(masterCode)) == 1 {
+		resetVerifyCodeLimit(user, remoteAddr, dest)
+		return true, nil
 	}
 
 	result, err := CheckVerificationCode(dest, code, lang)
 	if err != nil {
-		return err
+		return false, err
 	}
 
-	switch result.Code {
-	case VerificationSuccess:
-		resetVerifyCodeIpErrorTimes(remoteAddr, dest)
-		if user != nil {
-			resetVerifyCodeErrorTimes(user, dest)
-		}
-		return nil
-	case wrongCodeError:
+	isMasterCodeMiss := masterCode != "" && result.Code != VerificationSuccess
+	switch {
+	case result.Code == VerificationSuccess:
+		resetVerifyCodeLimit(user, remoteAddr, dest)
+		return false, nil
+	case result.Code == wrongCodeError || isMasterCodeMiss:
 		ipErr := recordVerifyCodeIpErrorInfo(remoteAddr, dest, lang)
 		if user != nil {
 			// Keep existing user-level error semantics when user is known.
-			return recordVerifyCodeErrorInfo(user, dest, lang)
+			return false, recordVerifyCodeErrorInfo(user, dest, lang)
 		}
-		return ipErr
+		return false, ipErr
 	default:
-		return errors.New(result.Msg)
+		return false, errors.New(result.Msg)
+	}
+}
+
+func resetVerifyCodeLimit(user *User, remoteAddr, dest string) {
+	resetVerifyCodeIpErrorTimes(remoteAddr, dest)
+	if user != nil {
+		resetVerifyCodeErrorTimes(user, dest)
 	}
 }
