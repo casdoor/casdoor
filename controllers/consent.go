@@ -161,6 +161,10 @@ func (c *ApiController) GrantConsent() {
 		return
 	}
 
+	if !c.checkApplicationSignin(application, userObj) || !c.checkUserOfApplication(userObj, application) {
+		return
+	}
+
 	appId := application.GetId()
 	found := false
 	// Insert new scope into existing applicationScopes

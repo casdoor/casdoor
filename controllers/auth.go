@@ -107,49 +107,42 @@ func (c *ApiController) checkCredentialApplication(user *object.User, applicatio
 	return true
 }
 
-// HandleLoggedIn ...
-func (c *ApiController) HandleLoggedIn(application *object.Application, user *object.User, form *form.AuthForm) (resp *Response) {
+func (c *ApiController) checkApplicationSignin(application *object.Application, user *object.User) bool {
 	if user.IsForbidden {
 		c.ResponseError(c.T("check:The user is forbidden to sign in, please contact the administrator"))
-		return
+		return false
 	}
 
 	if user.IsDeleted {
 		c.ResponseError(c.T("check:The user has been deleted and cannot be used to sign in, please contact the administrator"))
-		return
+		return false
 	}
-
-	userId := user.GetId()
 
 	clientIp := util.GetClientIpFromRequest(c.Ctx.Request)
 	err := object.CheckEntryIp(clientIp, user, application, application.OrganizationObj, c.GetAcceptLanguage())
 	if err != nil {
 		c.ResponseError(err.Error())
-		return
+		return false
 	}
 
 	if application.DisableSignin {
 		c.ResponseError(fmt.Sprintf(c.T("auth:The application: %s has disabled users to signin"), application.Name))
-		return
+		return false
 	}
 
 	if application.OrganizationObj != nil && application.OrganizationObj.DisableSignin {
 		c.ResponseError(fmt.Sprintf(c.T("auth:The organization: %s has disabled users to signin"), application.Organization))
-		return
+		return false
 	}
 
-	allowed, err := object.CheckLoginPermission(userId, application)
+	allowed, err := object.CheckLoginPermission(user.GetId(), application)
 	if err != nil {
 		c.ResponseError(err.Error(), nil)
-		return
+		return false
 	}
 	if !allowed {
 		c.ResponseError(c.T("auth:Unauthorized operation"))
-		return
-	}
-
-	if !c.checkCredentialApplication(user, application, form) {
-		return
+		return false
 	}
 
 	// check user's tag
@@ -158,9 +151,22 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 		// supports comma-separated tags in user.Tag (e.g., "default-policy,project-admin")
 		if !util.HasTagInSlice(application.Tags, user.Tag) {
 			c.ResponseError(fmt.Sprintf(c.T("auth:User's tag: %s is not listed in the application's tags"), user.Tag))
-			return
+			return false
 		}
 	}
+
+	return true
+}
+
+// HandleLoggedIn ...
+func (c *ApiController) HandleLoggedIn(application *object.Application, user *object.User, form *form.AuthForm) (resp *Response) {
+	if !c.checkApplicationSignin(application, user) || !c.checkCredentialApplication(user, application, form) {
+		return
+	}
+
+	userId := user.GetId()
+	clientIp := util.GetClientIpFromRequest(c.Ctx.Request)
+	var err error
 
 	// check whether paid-user have active subscription, admins are never locked out by it
 	if user.Type == "paid-user" && !user.IsGlobalAdmin() && !user.IsAdmin {

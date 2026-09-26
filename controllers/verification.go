@@ -755,20 +755,13 @@ func (c *ApiController) VerifyCode() {
 		return
 	}
 
-	passed, err := c.checkOrgMasterVerificationCode(user, authForm.Code)
+	isMasterCode, err := c.checkVerifyCodeOrOrgMasterCode(user, checkDest, authForm.Code)
 	if err != nil {
-		c.ResponseError(c.T(err.Error()))
+		c.ResponseError(err.Error())
 		return
 	}
 
-	if !passed {
-		clientIp := util.GetClientIpFromRequest(c.Ctx.Request)
-		err = object.CheckVerifyCodeWithLimitAndIp(user, clientIp, checkDest, authForm.Code, c.GetAcceptLanguage())
-		if err != nil {
-			c.ResponseError(err.Error())
-			return
-		}
-
+	if !isMasterCode {
 		err = object.DisableVerificationCode(checkDest)
 		if err != nil {
 			c.ResponseError(err.Error())
