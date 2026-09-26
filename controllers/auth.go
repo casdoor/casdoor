@@ -516,6 +516,16 @@ func isProxyProviderType(providerType string) bool {
 	return false
 }
 
+func (c *ApiController) setMfaRememberCookie(user *object.User, maxAge int) error {
+	token, err := object.GetMfaRememberToken(user, user.MfaRememberDeadline)
+	if err != nil {
+		return err
+	}
+
+	c.Ctx.SetCookie(object.MfaRememberCookieName, token, maxAge, "/", "", c.Ctx.Input.Scheme() == "https", true, "Lax")
+	return nil
+}
+
 func checkMfaEnable(c *ApiController, user *object.User, organization *object.Organization, verificationType string) bool {
 	if object.IsNeedPromptMfa(organization, user) {
 		// The prompt page needs the user to be signed in
@@ -526,9 +536,7 @@ func checkMfaEnable(c *ApiController, user *object.User, organization *object.Or
 	}
 
 	if user.IsMfaEnabled() {
-		currentTime := util.String2Time(util.GetCurrentTime())
-		mfaRememberDeadline := util.String2Time(user.MfaRememberDeadline)
-		if user.MfaRememberDeadline != "" && mfaRememberDeadline.After(currentTime) {
+		if object.IsMfaRemembered(user, c.Ctx.GetCookie(object.MfaRememberCookieName)) {
 			return false
 		}
 		c.setMfaUserSession(user.GetId())
@@ -1380,6 +1388,11 @@ func (c *ApiController) Login() {
 				duration := time.Duration(mfaRememberInSeconds) * time.Second
 				user.MfaRememberDeadline = util.Time2String(currentTime.Add(duration))
 				_, err = object.UpdateUser(user.GetId(), user, []string{"mfa_remember_deadline"}, user.IsAdmin)
+				if err != nil {
+					c.ResponseError(err.Error())
+					return
+				}
+				err = c.setMfaRememberCookie(user, mfaRememberInSeconds)
 				if err != nil {
 					c.ResponseError(err.Error())
 					return
