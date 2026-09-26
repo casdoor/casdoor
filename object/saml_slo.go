@@ -238,11 +238,23 @@ func newSamlLogoutRequest(application *Application, samlSession *SamlSession, ho
 }
 
 func postSamlLogoutRequest(logoutUrl string, logoutRequest string) {
-	resp, err := http.PostForm(logoutUrl, url.Values{"SAMLRequest": {logoutRequest}})
+	client := &http.Client{
+		Timeout: 30 * time.Second,
+		CheckRedirect: func(req *http.Request, via []*http.Request) error {
+			return http.ErrUseLastResponse
+		},
+	}
+
+	resp, err := client.PostForm(logoutUrl, url.Values{"SAMLRequest": {logoutRequest}})
 	if err != nil {
+		fmt.Printf("postSamlLogoutRequest() error: %v\n", err)
 		return
 	}
 	defer resp.Body.Close()
+
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		fmt.Printf("postSamlLogoutRequest() error: unexpected status %s from %s\n", resp.Status, logoutUrl)
+	}
 }
 
 // GetSamlLogoutResponse builds the LogoutResponse for an SP-initiated LogoutRequest. Over the HTTP-POST
