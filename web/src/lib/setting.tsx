@@ -1163,13 +1163,28 @@ export function myParseInt(i) {
   return isNaN(res) ? 0 : res;
 }
 
+export function isScriptUrl(link) {
+  try {
+    const protocol = new URL(link, window.location.href).protocol;
+    return protocol === "javascript:" || protocol === "data:" || protocol === "vbscript:";
+  } catch (e) {
+    return false;
+  }
+}
+
 export function openLink(link) {
+  if (isScriptUrl(link)) {
+    return;
+  }
   // this.props.history.push(link);
   const w = window.open("about:blank");
   w.location.href = link;
 }
 
 export function openLinkSafe(link) {
+  if (isScriptUrl(link)) {
+    return;
+  }
   // Javascript window.open issue in safari
   // https://stackoverflow.com/questions/45569893/javascript-window-open-issue-in-safari
   const a = document.createElement("a");
@@ -1179,6 +1194,9 @@ export function openLinkSafe(link) {
 }
 
 export function goToLink(link) {
+  if (isScriptUrl(link)) {
+    return;
+  }
   window.location.href = link;
 }
 

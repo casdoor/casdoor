@@ -1027,11 +1027,11 @@ export default function ProviderEditPage() {
               value={provider.content ?? ""}
               onChange={(v) => updateProviderField("content", v)}
             />
-            <div
-              className="overflow-auto rounded-md border bg-background p-3"
-              dangerouslySetInnerHTML={{
-                __html: String(provider.content ?? "").replace("%s", "123456").replace("%{user.friendlyName}", account ? Setting.getFriendlyUserName(account) : ""),
-              }}
+            <iframe
+              title="email-content-preview"
+              sandbox=""
+              className="h-[300px] w-full rounded-md border bg-background"
+              srcDoc={String(provider.content ?? "").replace("%s", "123456").replace("%{user.friendlyName}", account ? Setting.getFriendlyUserName(account) : "")}
             />
           </div>
         </div>
@@ -1061,9 +1061,11 @@ export default function ProviderEditPage() {
               value={provider.metadata ?? ""}
               onChange={(v) => updateProviderField("metadata", v)}
             />
-            <div
-              className="overflow-auto rounded-md border bg-background p-3"
-              dangerouslySetInnerHTML={{__html: String(provider.metadata ?? "").replace("%code", "123456").replace("%s", "123456")}}
+            <iframe
+              title="invitation-email-content-preview"
+              sandbox=""
+              className="h-[300px] w-full rounded-md border bg-background"
+              srcDoc={String(provider.metadata ?? "").replace("%code", "123456").replace("%s", "123456")}
             />
           </div>
         </div>

@@ -254,6 +254,17 @@ func (c *ApiController) GetSessionOidc() (string, string) {
 	return scope, aud
 }
 
+func (c *ApiController) renewSessionIdForUser(userId string) {
+	if sessionUser, _ := c.GetSession("username").(string); sessionUser == userId {
+		return
+	}
+
+	err := c.SessionRegenerateID()
+	if err != nil {
+		logs.Error("SessionRegenerateID failed, error: %s", err)
+	}
+}
+
 // SetSessionUsername ...
 func (c *ApiController) SetSessionUsername(user string) {
 	c.SetSession("username", user)
