@@ -238,7 +238,7 @@ func notifyPayment(body []byte, owner string, paymentName string) (*Payment, *pp
 
 	notifyResult, err := pProvider.Notify(body, payment.OutOrderId)
 	if err != nil {
-		return payment, nil, err
+		return nil, nil, err
 	}
 	if notifyResult.PaymentStatus != pp.PaymentStatePaid {
 		return payment, notifyResult, nil
@@ -260,6 +260,9 @@ func notifyPayment(body []byte, owner string, paymentName string) (*Payment, *pp
 func NotifyPayment(body []byte, owner string, paymentName string, lang string) (*Payment, error) {
 	payment, notifyResult, err := notifyPayment(body, owner, paymentName)
 	if payment == nil {
+		if err != nil {
+			return nil, err
+		}
 		return nil, fmt.Errorf("the payment: %s does not exist", paymentName)
 	}
 

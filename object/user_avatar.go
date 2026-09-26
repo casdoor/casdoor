@@ -21,8 +21,10 @@ import (
 	"mime"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/casdoor/casdoor/proxy"
+	"github.com/casdoor/casdoor/util"
 )
 
 func downloadImage(client *http.Client, url string) (*bytes.Buffer, string, error) {
@@ -102,7 +104,7 @@ func (user *User) refreshAvatar() (bool, error) {
 
 	// Favicon
 	if fileBuffer == nil && (user.AvatarType == "Auto" || user.AvatarType == "Favicon") {
-		client := proxy.ProxyHttpClient
+		client := util.NewInternetOnlyHttpClient(30 * time.Second)
 
 		fileBuffer, ext, err = getFaviconFileBuffer(client, user.Email)
 		if err != nil {

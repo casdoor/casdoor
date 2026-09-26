@@ -18,9 +18,14 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"net/http"
+	"net/url"
+	"strings"
+	"time"
 
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/proxy"
+	"github.com/casdoor/casdoor/util"
 )
 
 var defaultStorageProvider *Provider = nil
@@ -36,8 +41,20 @@ func InitDefaultStorageProvider() {
 	}
 }
 
+func getAvatarHttpClient(avatarUrl string) *http.Client {
+	urlObj, err := url.Parse(avatarUrl)
+	if err == nil {
+		hostname := urlObj.Hostname()
+		if strings.HasSuffix(hostname, ".githubusercontent.com") || strings.HasSuffix(hostname, ".googleusercontent.com") {
+			return proxy.ProxyHttpClient
+		}
+	}
+
+	return util.NewInternetOnlyHttpClient(30 * time.Second)
+}
+
 func downloadFile(url string) (*bytes.Buffer, error) {
-	httpClient := proxy.GetHttpClient(url)
+	httpClient := getAvatarHttpClient(url)
 
 	resp, err := httpClient.Get(url)
 	if err != nil {
