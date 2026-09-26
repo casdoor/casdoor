@@ -65,24 +65,56 @@ func IsHostIntranet(ip string) bool {
 // link-local (e.g. cloud metadata) and unspecified addresses. The check runs on the resolved
 // IP of every connection, so DNS rebinding and redirects to such addresses are refused too.
 func NewInternetOnlyHttpClient(timeout time.Duration) *http.Client {
+	isRefused := func(address string) bool {
+		return IsHostIntranet(address) || isUnspecifiedIp(address) || isSharedAddressSpaceIp(address)
+	}
+
+	return &http.Client{
+		Timeout:   timeout,
+		Transport: newRestrictedHttpTransport(timeout, isRefused, "only Internet addresses can be requested"),
+	}
+}
+
+func NewNonLocalHttpTransport(timeout time.Duration) *http.Transport {
+	isRefused := func(address string) bool {
+		ip := parseDialIp(address)
+		return ip != nil && (ip.IsLoopback() || ip.IsLinkLocalUnicast() || ip.IsLinkLocalMulticast() || ip.IsUnspecified() || isSharedAddressSpaceIp(address))
+	}
+
+	return newRestrictedHttpTransport(timeout, isRefused, "loopback, link-local and metadata addresses cannot be requested")
+}
+
+func newRestrictedHttpTransport(timeout time.Duration, isRefused func(address string) bool, reason string) *http.Transport {
 	dialer := &net.Dialer{
 		Timeout: timeout,
 		Control: func(network, address string, _ syscall.RawConn) error {
-			if IsHostIntranet(address) || isUnspecifiedIp(address) {
-				return fmt.Errorf("the address: %s is not allowed, only Internet addresses can be requested", address)
+			if isRefused(address) {
+				return fmt.Errorf("the address: %s is not allowed, %s", address, reason)
 			}
 			return nil
 		},
 	}
 
-	return &http.Client{
-		Timeout: timeout,
-		Transport: &http.Transport{
-			// a proxy would be dialed instead of the target, bypassing the check
-			Proxy:       nil,
-			DialContext: dialer.DialContext,
-		},
+	return &http.Transport{
+		// a proxy would be dialed instead of the target, bypassing the check
+		Proxy:       nil,
+		DialContext: dialer.DialContext,
 	}
+}
+
+func parseDialIp(address string) net.IP {
+	host, _, err := net.SplitHostPort(address)
+	if err != nil {
+		host = address
+	}
+	return net.ParseIP(host)
+}
+
+var sharedAddressSpace = &net.IPNet{IP: net.IPv4(100, 64, 0, 0), Mask: net.CIDRMask(10, 32)}
+
+func isSharedAddressSpaceIp(address string) bool {
+	ip := parseDialIp(address)
+	return ip != nil && sharedAddressSpace.Contains(ip)
 }
 
 func isUnspecifiedIp(address string) bool {

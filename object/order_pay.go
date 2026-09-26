@@ -42,6 +42,29 @@ func checkPricingIsAllowed(owner string, pricingName string, user *User) error {
 	return nil
 }
 
+func checkOrderPlan(owner string, productInfo ProductInfo, product Product) error {
+	if productInfo.PricingName == "" || productInfo.PlanName == "" {
+		return nil
+	}
+
+	pricing, err := GetPricing(util.GetId(owner, productInfo.PricingName))
+	if err != nil {
+		return err
+	}
+	if pricing == nil || !util.InSlice(pricing.Plans, productInfo.PlanName) {
+		return fmt.Errorf("the plan: %s does not belong to the pricing: %s", productInfo.PlanName, productInfo.PricingName)
+	}
+
+	plan, err := GetPlan(util.GetId(owner, productInfo.PlanName))
+	if err != nil {
+		return err
+	}
+	if plan == nil || plan.Product != product.Name {
+		return fmt.Errorf("the plan: %s is not sold by the product: %s", productInfo.PlanName, product.Name)
+	}
+	return nil
+}
+
 func PlaceOrder(owner string, reqProductInfos []ProductInfo, user *User, couponCode string) (*Order, error) {
 	if len(reqProductInfos) == 0 {
 		return nil, fmt.Errorf("order has no products")
@@ -84,6 +107,11 @@ func PlaceOrder(owner string, reqProductInfos []ProductInfo, user *User, couponC
 	orderPrice := 0.0
 	for _, productInfo := range reqProductInfos {
 		product := productMap[productInfo.Name]
+
+		err = checkOrderPlan(owner, productInfo, product)
+		if err != nil {
+			return nil, err
+		}
 
 		var productPrice float64
 		if product.IsRecharge {
@@ -157,6 +185,21 @@ func PlaceOrder(owner string, reqProductInfos []ProductInfo, user *User, couponC
 	return order, nil
 }
 
+func getOrderProvider(products []Product, providerName string) (*Provider, error) {
+	provider, err := products[0].getProvider(providerName)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, product := range products[1:] {
+		err = product.isValidProvider(provider)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return provider, nil
+}
+
 func PayOrder(providerName, host, paymentEnv string, order *Order, lang string) (payment *Payment, attachInfo map[string]interface{}, err error) {
 	if order.State != "Created" {
 		return nil, nil, fmt.Errorf("cannot pay for order: %s, current state is %s", order.GetId(), order.State)
@@ -189,7 +232,7 @@ func PayOrder(providerName, host, paymentEnv string, order *Order, lang string) 
 
 	// For multi-product orders, the payment provider is determined by the first product
 	baseProduct := products[0]
-	provider, err := baseProduct.getProvider(providerName)
+	provider, err := getOrderProvider(products, providerName)
 	if err != nil {
 		return nil, nil, err
 	}

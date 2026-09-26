@@ -22,6 +22,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/casdoor/casdoor/util"
 	"golang.org/x/oauth2"
 )
 
@@ -36,6 +37,17 @@ type OidcDiscovery struct {
 }
 
 func GetOidcDiscovery(issuer string) (*OidcDiscovery, error) {
+	return getOidcDiscovery(issuer, &http.Client{Timeout: 10 * time.Second})
+}
+
+func GetOidcDiscoveryByAdmin(issuer string, isGlobalAdmin bool) (*OidcDiscovery, error) {
+	if isGlobalAdmin {
+		return GetOidcDiscovery(issuer)
+	}
+	return getOidcDiscovery(issuer, util.NewInternetOnlyHttpClient(10*time.Second))
+}
+
+func getOidcDiscovery(issuer string, client *http.Client) (*OidcDiscovery, error) {
 	issuer = strings.TrimSuffix(strings.TrimSpace(issuer), "/")
 	if issuer == "" {
 		return nil, fmt.Errorf("the issuer is empty")
@@ -49,7 +61,6 @@ func GetOidcDiscovery(issuer string) (*OidcDiscovery, error) {
 		discoveryUrl = fmt.Sprintf("%s/.well-known/openid-configuration", discoveryUrl)
 	}
 
-	client := &http.Client{Timeout: 10 * time.Second}
 	resp, err := client.Get(discoveryUrl)
 	if err != nil {
 		return nil, err
