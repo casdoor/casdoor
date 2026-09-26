@@ -312,6 +312,9 @@ export default function LoginPage({type = "login", application: applicationProp,
 
   const owner = params.owner;
   const applicationName = params.applicationName ?? authConfig.appName;
+  // OIDC prompt=none: sign in with the existing session or send the reason back, never show a page
+  const promptNone = !preview && type === "code" &&
+    (new URLSearchParams(location.search).get("prompt") ?? "").split(" ").includes("none");
 
   // remember where the sign-in started, for the flows that have to come back to it
   React.useEffect(() => {
@@ -428,6 +431,23 @@ export default function LoginPage({type = "login", application: applicationProp,
     }
   };
 
+  /** An OAuth error goes back the same way the response would have (RFC 6749 §4.1.2.1). */
+  const redirectWithOAuthError = (error: string, description = "") => {
+    const oAuthParams = Util.getOAuthGetParameters();
+    const payload: Record<string, string> = {error, state: oAuthParams.state};
+    if (description) {
+      payload.error_description = description;
+    }
+    if (oAuthParams.responseMode === "form_post") {
+      Setting.createFormAndSubmit(oAuthParams.redirectUri, payload);
+      return;
+    }
+    const inFragment = oAuthParams.responseMode === "fragment" ||
+      (oAuthParams.responseMode !== "query" && oAuthParams.responseType !== "code");
+    const concatChar = inFragment ? "#" : oAuthParams.redirectUri.includes("?") ? "&" : "?";
+    Setting.goToLink(`${oAuthParams.redirectUri}${concatChar}${new URLSearchParams(payload)}`);
+  };
+
   const postCodeLoginAction = (res: any) => {
     const oAuthParams = Util.getOAuthGetParameters();
     const codeValue = res.data;
@@ -452,6 +472,8 @@ export default function LoginPage({type = "login", application: applicationProp,
           nextAccount.organization = accountRes.data2;
           if (Setting.isPromptAnswered(nextAccount, application)) {
             Setting.goToLink(redirectUrl);
+          } else if (promptNone) {
+            redirectWithOAuthError("interaction_required");
           } else {
             navigate(
               `/prompt/${application.name}?redirectUri=${encodeURIComponent(
@@ -459,6 +481,8 @@ export default function LoginPage({type = "login", application: applicationProp,
               )}&code=${encodeURIComponent(codeValue)}&state=${encodeURIComponent(oAuthParams.state)}`,
             );
           }
+        } else if (promptNone) {
+          redirectWithOAuthError("server_error", accountRes.msg);
         } else {
           Setting.showMessage("error", `${i18next.t("application:Failed to sign in")}: ${accountRes.msg}`);
         }
@@ -988,7 +1012,7 @@ export default function LoginPage({type = "login", application: applicationProp,
    */
   const autoSignedIn = React.useRef(false);
   React.useEffect(() => {
-    if (preview || account === undefined) {
+    if (preview || promptNone || account === undefined) {
       return;
     }
     if (account === null) {
@@ -1011,11 +1035,45 @@ export default function LoginPage({type = "login", application: applicationProp,
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account, application, location.search]);
 
+  // Only runs once the application is loaded: getApplicationLogin has then vouched for redirect_uri.
+  const promptNoneHandled = React.useRef(false);
+  React.useEffect(() => {
+    if (!promptNone || !application || account === undefined || promptNoneHandled.current) {
+      return;
+    }
+    promptNoneHandled.current = true;
+    if (account === null || account.owner !== application.organization) {
+      redirectWithOAuthError("login_required");
+      return;
+    }
+
+    const values = applyRequestType({
+      application: application.name,
+      organization: application.organization,
+      language: Setting.getLanguage(),
+    });
+    const oAuthParams = Util.getOAuthGetParameters();
+    AuthBackend.login(values, oAuthParams)
+      .then((res: any) => {
+        if (res.status !== "ok") {
+          redirectWithOAuthError("access_denied", res.msg);
+        } else if (res.data?.required === true) {
+          redirectWithOAuthError("consent_required");
+        } else if ([Setting.RequiredUpdatePassword, RequiredMfa, NextMfa, "SelectPlan", "BuyPlanResult"].includes(res.data)) {
+          redirectWithOAuthError("interaction_required");
+        } else {
+          handleLoginResult(res, values, oAuthParams);
+        }
+      })
+      .catch(() => redirectWithOAuthError("server_error"));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [promptNone, application, account]);
+
   // With no form and a single third-party provider there is nothing to choose.
   // The redirect runs once from an effect: doing it in render fired one upstream
   // authorization request per re-render, and the provider consumed the first one.
   const singleProviderAuthUrl = React.useMemo(() => {
-    if (!application || preview === "auto" || application.disableSignin || application.organizationObj?.disableSignin) {
+    if (!application || preview === "auto" || promptNone || application.disableSignin || application.organizationObj?.disableSignin) {
       return null;
     }
     if (Setting.isPasswordEnabled(application) || Setting.isCodeSigninEnabled(application) || Setting.isWebAuthnEnabled(application) || Setting.isLdapEnabled(application) || Setting.isMagicLinkEnabled(application)) {
@@ -1028,7 +1086,7 @@ export default function LoginPage({type = "login", application: applicationProp,
       return null;
     }
     return Provider.getAuthUrl(application, visibleOAuthProviderItems[0].provider, "signin");
-  }, [application, preview]);
+  }, [application, preview, promptNone]);
   const singleProviderRedirected = React.useRef(false);
   React.useEffect(() => {
     if (singleProviderAuthUrl === null || singleProviderRedirected.current) {
@@ -1064,6 +1122,10 @@ export default function LoginPage({type = "login", application: applicationProp,
         </Alert>
       </AuthLayout>
     );
+  }
+
+  if (promptNone) {
+    return <Loading className="min-h-screen" />;
   }
 
   // the token is exchanged as soon as the page has the application, the form is only
