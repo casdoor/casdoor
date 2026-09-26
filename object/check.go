@@ -482,6 +482,10 @@ func CheckUserPermission(requestUserId, userId string, strict bool, lang string)
 }
 
 func CheckApiPermission(userId string, organization string, path string, method string) (bool, error) {
+	if organization == "" {
+		return false, nil
+	}
+
 	permissions, err := GetPermissions(organization)
 	if err != nil {
 		return false, err
