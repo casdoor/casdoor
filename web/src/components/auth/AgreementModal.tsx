@@ -69,7 +69,7 @@ export function AgreementModal({
         <DialogHeader>
           <DialogTitle>{i18next.t("signup:Terms of Use")}</DialogTitle>
         </DialogHeader>
-        <iframe title="terms" srcDoc={doc} className="h-[55vh] w-full border-0 sm:h-[60vh]" />
+        <iframe title="terms" srcDoc={doc} sandbox="allow-popups allow-popups-to-escape-sandbox" className="h-[55vh] w-full border-0 sm:h-[60vh]" />
         <DialogFooter>
           <Button variant="outline" className="max-sm:h-11" onClick={onCancel}>{i18next.t("signup:Decline")}</Button>
           <Button className="max-sm:h-11" onClick={onOk}>{i18next.t("signup:Accept")}</Button>

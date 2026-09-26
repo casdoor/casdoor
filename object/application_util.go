@@ -691,7 +691,7 @@ func IsOriginAllowed(origin string) (bool, error) {
 	}
 
 	for _, application := range applications {
-		if application.IsOriginValid(origin) {
+		if !application.IsDynamicClient() && application.IsOriginValid(origin) {
 			return true, nil
 		}
 	}

@@ -89,6 +89,10 @@ func ValidateKerberosToken(organization *Organization, spnegoTokenBase64 string)
 		return "", fmt.Errorf("no username found in Kerberos ticket")
 	}
 
+	if !strings.EqualFold(creds.Realm(), organization.KerberosRealm) {
+		return "", fmt.Errorf("the Kerberos realm: %s doesn't match the realm: %s of organization: %s", creds.Realm(), organization.KerberosRealm, organization.Name)
+	}
+
 	return username, nil
 }
 

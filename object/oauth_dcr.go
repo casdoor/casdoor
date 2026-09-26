@@ -16,6 +16,8 @@ package object
 
 import (
 	"fmt"
+	"net/url"
+	"strings"
 	"time"
 
 	"github.com/casdoor/casdoor/util"
@@ -93,6 +95,9 @@ func RegisterDynamicClient(req *DynamicClientRegistrationRequest, organization s
 			Error:            "invalid_redirect_uri",
 			ErrorDescription: "redirect_uris is required and must contain at least one URI",
 		}, nil
+	}
+	if dcrErr := checkDcrClientMetadata(req); dcrErr != nil {
+		return nil, dcrErr, nil
 	}
 
 	// Set defaults
@@ -268,6 +273,9 @@ func UpdateDynamicClient(app *Application, req *DynamicClientRegistrationRequest
 			ErrorDescription: "redirect_uris is required and must contain at least one URI",
 		}, nil
 	}
+	if dcrErr := checkDcrClientMetadata(req); dcrErr != nil {
+		return nil, dcrErr, nil
+	}
 
 	app.DisplayName = firstNonEmpty(req.ClientName, app.DisplayName)
 	app.RedirectUris = req.RedirectUris
@@ -302,4 +310,54 @@ func DeleteDynamicClient(app *Application) *DcrError {
 		return &DcrError{Error: "server_error", ErrorDescription: "failed to delete client"}
 	}
 	return nil
+}
+
+var dcrGrantTypes = []string{"authorization_code", "refresh_token", "urn:ietf:params:oauth:grant-type:device_code"}
+
+func checkDcrClientMetadata(req *DynamicClientRegistrationRequest) *DcrError {
+	for _, redirectUri := range req.RedirectUris {
+		if isScriptUrl(redirectUri) {
+			return &DcrError{
+				Error:            "invalid_redirect_uri",
+				ErrorDescription: fmt.Sprintf("the redirect URI: %s is not allowed", redirectUri),
+			}
+		}
+	}
+
+	for _, uri := range []string{req.LogoUri, req.ClientUri, req.PolicyUri, req.TosUri} {
+		if uri != "" && !isHttpUrl(uri) {
+			return &DcrError{
+				Error:            "invalid_client_metadata",
+				ErrorDescription: fmt.Sprintf("the URI: %s must be an http or https URL", uri),
+			}
+		}
+	}
+
+	grantTypes := []string{}
+	for _, grantType := range req.GrantTypes {
+		if util.InSlice(dcrGrantTypes, grantType) {
+			grantTypes = append(grantTypes, grantType)
+		}
+	}
+	req.GrantTypes = grantTypes
+	return nil
+}
+
+func isScriptUrl(rawUrl string) bool {
+	u, err := url.Parse(strings.TrimSpace(rawUrl))
+	if err != nil {
+		return true
+	}
+
+	scheme := strings.ToLower(u.Scheme)
+	return scheme == "javascript" || scheme == "data" || scheme == "vbscript"
+}
+
+func isHttpUrl(rawUrl string) bool {
+	u, err := url.Parse(rawUrl)
+	if err != nil {
+		return false
+	}
+
+	return (u.Scheme == "http" || u.Scheme == "https") && u.Host != ""
 }
