@@ -55,6 +55,10 @@ func (c *ApiController) SyncIntranetServers() {
 		return
 	}
 
+	if !c.requireProviderPermission(configuredProvider) {
+		return
+	}
+
 	provider, err := scan.GetScanProviderFromProvider(configuredProvider)
 	if err != nil {
 		c.ResponseError(err.Error())
