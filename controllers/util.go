@@ -138,6 +138,19 @@ func (c *ApiController) RequireSignedInUser() (*object.User, bool) {
 	return user, true
 }
 
+// checkCredentialedOrigin refuses a browser request sent from a site CORS does not trust with the
+// session cookie: its CORS response is unreadable, but the request itself would still run as the
+// signed-in user, e.g. a cross-site form posting the attacker's own provider code to be linked.
+func (c *ApiController) checkCredentialedOrigin() bool {
+	origin := c.Ctx.Request.Header.Get("Origin")
+	if origin == "" || util.IsCredentialedOrigin(origin, conf.GetConfigString("origin"), c.Ctx.Request.Host) {
+		return true
+	}
+
+	c.ResponseError(c.T("auth:Unauthorized operation"))
+	return false
+}
+
 // requireSessionUserNameOf returns the name of the signed-in user, who must belong to
 // the organization, for a non-admin listing their own objects of it.
 func (c *ApiController) requireSessionUserNameOf(organization string) (string, bool) {
