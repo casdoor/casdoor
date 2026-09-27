@@ -233,7 +233,7 @@ func getNameAndOrgFromFilter(baseDN, filter string) (string, string, int) {
 
 	name, org, err := getNameAndOrgFromDN(fmt.Sprintf("cn=%s,", getUsername(filter)) + baseDN)
 	if err != nil {
-		panic(err)
+		return "", "", ldap.LDAPResultInvalidDNSyntax
 	}
 
 	return name, org, ldap.LDAPResultSuccess

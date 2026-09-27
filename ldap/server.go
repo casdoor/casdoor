@@ -35,8 +35,8 @@ func StartLdapServer() {
 	serverSsl := ldap.NewServer()
 	routes := ldap.NewRouteMux()
 
-	routes.Bind(handleBind)
-	routes.Search(handleSearch).Label(" SEARCH****")
+	routes.Bind(withRecover(handleBind, func() message.ProtocolOp { return ldap.NewBindResponse(ldap.LDAPResultOperationsError) }))
+	routes.Search(withRecover(handleSearch, func() message.ProtocolOp { return ldap.NewSearchResultDoneResponse(ldap.LDAPResultOperationsError) })).Label(" SEARCH****")
 
 	server.Handle(routes)
 	serverSsl.Handle(routes)
@@ -71,6 +71,18 @@ func StartLdapServer() {
 			log.Printf("StartLdapsServer() failed, err = %s", err.Error())
 		}
 	}()
+}
+
+func withRecover(handler ldap.HandlerFunc, newErrorResponse func() message.ProtocolOp) ldap.HandlerFunc {
+	return func(w ldap.ResponseWriter, m *ldap.Message) {
+		defer func() {
+			if r := recover(); r != nil {
+				log.Printf("LDAP request failed, panic: %v", r)
+				w.Write(newErrorResponse())
+			}
+		}()
+		handler(w, m)
+	}
 }
 
 func getTLSconfig(ldapsCertId string) (*tls.Config, error) {
