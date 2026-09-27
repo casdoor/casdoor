@@ -169,7 +169,7 @@ func handleOtpResponse(w radius.ResponseWriter, r *radius.Request, organization 
 	}
 
 	mfaUtil := object.GetMfaUtil(mfaProp.MfaType, mfaProp)
-	if object.VerifyMfaWithLimit(user, func() error { return mfaUtil.Verify(passcode) }, "en") != nil {
+	if object.VerifyMfaWithLimit(user, func() error { return mfaUtil.Verify(passcode, "en") }, "en") != nil {
 		w.Write(r.Response(radius.CodeAccessReject))
 		return
 	}

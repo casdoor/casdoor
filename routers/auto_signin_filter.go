@@ -152,7 +152,7 @@ func AutoSigninFilter(ctx *context.Context) {
 	userId = ctx.Input.Query("username")
 	password := ctx.Input.Query("password")
 	if userId != "" && password != "" && ctx.Input.Query("grant_type") == "" {
-		err = checkUserPasswordWithoutMfa(userId, password)
+		err = checkUserPasswordWithoutMfa(userId, password, getAcceptLanguage(ctx))
 		if err != nil {
 			responseError(ctx, err.Error())
 			return
@@ -162,13 +162,13 @@ func AutoSigninFilter(ctx *context.Context) {
 	}
 }
 
-func checkUserPasswordWithoutMfa(userId string, password string) error {
+func checkUserPasswordWithoutMfa(userId string, password string, lang string) error {
 	owner, name, err := util.GetOwnerAndNameFromIdWithError(userId)
 	if err != nil {
 		return err
 	}
 
-	user, err := object.CheckUserPassword(owner, name, password, "en")
+	user, err := object.CheckUserPassword(owner, name, password, lang)
 	if err != nil {
 		return err
 	}

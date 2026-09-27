@@ -300,7 +300,7 @@ func (c *ApiController) SyncLdapUsers() {
 		return
 	}
 
-	exist, failed, err := object.SyncLdapUsers(owner, users, ldapId)
+	exist, failed, err := object.SyncLdapUsers(owner, users, ldapId, c.GetAcceptLanguage())
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

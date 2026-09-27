@@ -22,6 +22,7 @@ import (
 	"strings"
 
 	"github.com/casdoor/casdoor-go-sdk/casdoorsdk"
+	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 )
@@ -92,7 +93,7 @@ func handleAuthCallback(w http.ResponseWriter, r *http.Request) {
 	//	return
 	//}
 
-	token, tokenError, err := object.GetAuthorizationCodeToken(application, application.ClientSecret, code, "", "")
+	token, tokenError, err := object.GetAuthorizationCodeToken(application, application.ClientSecret, code, "", "", conf.GetAcceptLanguage(r.Header.Get("Accept-Language")))
 	if tokenError != nil {
 		responseError(w, "CasWAF error: casdoorClient.GetOAuthToken() error: %s", tokenError.Error)
 		return

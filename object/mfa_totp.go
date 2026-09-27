@@ -58,7 +58,7 @@ func (mfa *TotpMfa) Initiate(userId string, issuer string) (*MfaProps, error) {
 	return &mfaProps, nil
 }
 
-func (mfa *TotpMfa) SetupVerify(passcode string) error {
+func (mfa *TotpMfa) SetupVerify(passcode string, lang string) error {
 	result, err := totp.ValidateCustom(passcode, mfa.Secret, time.Now().UTC(), totp.ValidateOpts{
 		Period:    MfaTotpPeriodInSeconds,
 		Skew:      1,
@@ -93,7 +93,7 @@ func (mfa *TotpMfa) Enable(user *User) error {
 	return nil
 }
 
-func (mfa *TotpMfa) Verify(passcode string) error {
+func (mfa *TotpMfa) Verify(passcode string, lang string) error {
 	if mfa.Secret == "" {
 		return errors.New("totp is not enabled")
 	}

@@ -37,7 +37,7 @@ func (mfa *RadiusMfa) Initiate(userId string, issuer string) (*MfaProps, error) 
 	return &mfaProps, nil
 }
 
-func (mfa *RadiusMfa) SetupVerify(passCode string) error {
+func (mfa *RadiusMfa) SetupVerify(passCode string, lang string) error {
 	if mfa.Secret == "" {
 		return errors.New("RADIUS username is required")
 	}
@@ -73,7 +73,7 @@ func (mfa *RadiusMfa) Enable(user *User) error {
 	return nil
 }
 
-func (mfa *RadiusMfa) Verify(passCode string) error {
+func (mfa *RadiusMfa) Verify(passCode string, lang string) error {
 	if mfa.Secret == "" {
 		return errors.New("RADIUS username is required")
 	}

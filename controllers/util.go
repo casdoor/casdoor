@@ -65,11 +65,7 @@ func (c *ApiController) T(error string) string {
 
 // GetAcceptLanguage ...
 func (c *ApiController) GetAcceptLanguage() string {
-	language := c.Ctx.Request.Header.Get("Accept-Language")
-	if len(language) > 2 {
-		language = language[0:2]
-	}
-	return conf.GetLanguage(language)
+	return conf.GetAcceptLanguage(c.Ctx.Request.Header.Get("Accept-Language"))
 }
 
 // SetTokenErrorHttpStatus ...

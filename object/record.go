@@ -139,11 +139,7 @@ func NewRecord(ctx *context.Context) (*Record, error) {
 		dataResp = fmt.Sprintf(", data:%s", string(dataByte))
 	}
 
-	language := ctx.Request.Header.Get("Accept-Language")
-	if len(language) > 2 {
-		language = language[0:2]
-	}
-	languageCode := conf.GetLanguage(language)
+	languageCode := conf.GetAcceptLanguage(ctx.Request.Header.Get("Accept-Language"))
 
 	record := Record{
 		Name:        util.GenerateId(),

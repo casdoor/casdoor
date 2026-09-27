@@ -18,6 +18,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 )
@@ -124,11 +125,7 @@ func (c *McpController) getCurrentUser() *object.User {
 
 // GetAcceptLanguage returns the Accept-Language header value
 func (c *McpController) GetAcceptLanguage() string {
-	language := c.Ctx.Request.Header.Get("Accept-Language")
-	if len(language) > 2 {
-		language = language[0:2]
-	}
-	return language
+	return conf.GetAcceptLanguage(c.Ctx.Request.Header.Get("Accept-Language"))
 }
 
 // GetTokenFromRequest extracts the Bearer token from the Authorization header

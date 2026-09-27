@@ -31,12 +31,12 @@ func (mfa *SmsMfa) Initiate(userId string, issuer string) (*MfaProps, error) {
 	return &mfaProps, nil
 }
 
-func (mfa *SmsMfa) SetupVerify(passCode string) error {
+func (mfa *SmsMfa) SetupVerify(passCode string, lang string) error {
 	if !util.IsEmailValid(mfa.Secret) {
 		mfa.Secret, _ = util.GetE164Number(mfa.Secret, mfa.CountryCode)
 	}
 
-	result, err := CheckVerificationCode(mfa.Secret, passCode, "en")
+	result, err := CheckVerificationCode(mfa.Secret, passCode, lang)
 	if err != nil {
 		return err
 	}
@@ -72,12 +72,12 @@ func (mfa *SmsMfa) Enable(user *User) error {
 	return nil
 }
 
-func (mfa *SmsMfa) Verify(passCode string) error {
+func (mfa *SmsMfa) Verify(passCode string, lang string) error {
 	if !util.IsEmailValid(mfa.Secret) {
 		mfa.Secret, _ = util.GetE164Number(mfa.Secret, mfa.CountryCode)
 	}
 
-	result, err := CheckVerificationCode(mfa.Secret, passCode, "en")
+	result, err := CheckVerificationCode(mfa.Secret, passCode, lang)
 	if err != nil {
 		return err
 	}
