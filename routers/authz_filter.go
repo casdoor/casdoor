@@ -603,11 +603,19 @@ var dynamicClientApis = []string{
 	"/api/login/oauth",
 }
 
+// crossOrgClientApis are the only APIs a session signed in with the access token of another
+// organization's application may call: its admin gets the token of any global admin signing in to it
+var crossOrgClientApis = []string{
+	"/api/userinfo",
+	"/api/user",
+	"/api/login/oauth",
+}
+
 // checkDynamicClientSession keys on the "aud" that AutoSigninFilter stores in the session, so the
 // session cookie returned with a token-authenticated response is limited the same as the token
 func checkDynamicClientSession(ctx *context.Context, urlPath string) bool {
 	aud, ok := ctx.Input.Session("aud").(string)
-	if !ok || aud == "" || util.InSlice(dynamicClientApis, urlPath) || strings.HasPrefix(urlPath, "/api/server/") {
+	if !ok || aud == "" {
 		return true
 	}
 
@@ -616,11 +624,30 @@ func checkDynamicClientSession(ctx *context.Context, urlPath string) bool {
 		responseError(ctx, err.Error())
 		return false
 	}
-	if application != nil && application.IsDynamicClient() {
-		denyRequest(ctx)
-		return false
+	if application == nil || isClientSessionApiAllowed(application, getSessionUser(ctx), urlPath) {
+		return true
+	}
+
+	denyRequest(ctx)
+	return false
+}
+
+func isClientSessionApiAllowed(application *object.Application, userId string, urlPath string) bool {
+	if isCrossOrgClient(application, userId) {
+		return util.InSlice(crossOrgClientApis, urlPath)
+	}
+	if application.IsDynamicClient() {
+		return util.InSlice(dynamicClientApis, urlPath) || strings.HasPrefix(urlPath, "/api/server/")
 	}
 	return true
+}
+
+func isCrossOrgClient(application *object.Application, userId string) bool {
+	if application.Organization == "built-in" || userId == "" || object.IsAppUser(userId) {
+		return false
+	}
+	owner, _ := util.GetOwnerAndNameFromIdNoCheck(userId)
+	return owner != application.Organization
 }
 
 func writePermissionLog(objOwner, subOwner, subName, method, urlPath string, allowed bool) {
