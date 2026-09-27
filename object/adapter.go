@@ -164,19 +164,24 @@ func (adapter *Adapter) InitAdapter() error {
 		if driverName == "sqlite3" {
 			driverName = "sqlite"
 		}
+		if driverName != "sqlite" {
+			err := checkDataSourceFields(map[string]string{"host": adapter.Host, "user": adapter.User, "database": adapter.Database})
+			if err != nil {
+				return err
+			}
+		}
 		switch driverName {
 		case "mssql":
-			dataSourceName = fmt.Sprintf("sqlserver://%s:%s@%s:%d?database=%s", adapter.User,
-				adapter.Password, adapter.Host, adapter.Port, adapter.Database)
+			dataSourceName = getMssqlDataSourceName(adapter.User, adapter.Password, adapter.Host, adapter.Port, adapter.Database)
 		case "mysql":
 			dataSourceName = fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", adapter.User,
 				adapter.Password, adapter.Host, adapter.Port, adapter.Database)
 		case "postgres":
 			dataSourceName = fmt.Sprintf("user=%s password=%s host=%s port=%d sslmode=disable dbname=%s", adapter.User,
-				adapter.Password, adapter.Host, adapter.Port, adapter.Database)
+				quotePostgresDataSourceValue(adapter.Password), adapter.Host, adapter.Port, adapter.Database)
 		case "CockroachDB":
 			dataSourceName = fmt.Sprintf("user=%s password=%s host=%s port=%d sslmode=disable dbname=%s serial_normalization=virtual_sequence",
-				adapter.User, adapter.Password, adapter.Host, adapter.Port, adapter.Database)
+				adapter.User, quotePostgresDataSourceValue(adapter.Password), adapter.Host, adapter.Port, adapter.Database)
 		case "sqlite":
 			dataSourceName = fmt.Sprintf("file:%s", adapter.Host)
 		default:
@@ -234,6 +239,40 @@ func adapterChangeTrigger(owner string, oldName string, newName string) error {
 	}
 
 	return session.Commit()
+}
+
+func getSameDbAdapterTable(adapter *Adapter) string {
+	if adapter.Table == "" {
+		return "casbin_rule"
+	}
+	return adapter.Table
+}
+
+func CheckSameDbAdapterTable(adapter *Adapter) error {
+	if !adapter.UseSameDb {
+		return nil
+	}
+
+	table := getSameDbAdapterTable(adapter)
+	existed, err := ormer.Engine.IsTableExist(table)
+	if err != nil {
+		return err
+	}
+	if !existed {
+		return nil
+	}
+
+	adapters, err := GetAdapters(adapter.Owner)
+	if err != nil {
+		return err
+	}
+	for _, ownAdapter := range adapters {
+		if ownAdapter.UseSameDb && strings.EqualFold(getSameDbAdapterTable(ownAdapter), table) {
+			return nil
+		}
+	}
+
+	return fmt.Errorf("the table: %s is already used by Casdoor or another organization", table)
 }
 
 func (adapter *Adapter) isBuiltIn() bool {

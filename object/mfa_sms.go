@@ -85,7 +85,7 @@ func (mfa *SmsMfa) Verify(passCode string) error {
 		return errors.New(result.Msg)
 	}
 
-	return nil
+	return DisableVerificationCode(mfa.Secret)
 }
 
 func NewSmsMfaUtil(config *MfaProps) *SmsMfa {

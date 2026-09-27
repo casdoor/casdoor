@@ -23,6 +23,7 @@ import (
 	"time"
 
 	"github.com/casdoor/casdoor/object"
+	"github.com/casdoor/casdoor/util"
 )
 
 const (
@@ -129,6 +130,11 @@ func (c *RootController) CasP3ProxyValidate() {
 			return
 		}
 
+		if !c.isCasProxyTargetAllowed(casToken.Application, pgtUrl) {
+			c.sendCasAuthenticationResponseErr(InvalidProxyCallback, fmt.Sprintf("the proxy callback: %s is not authorized", pgtUrl), format)
+			return
+		}
+
 		// make a request to pgturl passing pgt and pgtiou
 		param := pgtUrlObj.Query()
 		param.Add("pgtId", pgt)
@@ -141,7 +147,7 @@ func (c *RootController) CasP3ProxyValidate() {
 			return
 		}
 
-		err = sendCasPgtCallback(request)
+		err = sendCasPgtCallback(request, casToken.Application)
 		if err != nil {
 			c.sendCasAuthenticationResponseErr(InvalidProxyCallback, err.Error(), format)
 			return
@@ -157,12 +163,18 @@ func (c *RootController) CasP3ProxyValidate() {
 	}
 }
 
-func sendCasPgtCallback(request *http.Request) error {
-	client := &http.Client{
-		Timeout: 10 * time.Second,
-		CheckRedirect: func(req *http.Request, via []*http.Request) error {
-			return http.ErrUseLastResponse
-		},
+func getCasPgtCallbackClient(applicationId string) *http.Client {
+	application, err := object.GetApplication(applicationId)
+	if err == nil && application != nil && application.Organization == "built-in" {
+		return &http.Client{Timeout: 10 * time.Second}
+	}
+	return util.NewInternetOnlyHttpClient(10 * time.Second)
+}
+
+func sendCasPgtCallback(request *http.Request, applicationId string) error {
+	client := getCasPgtCallbackClient(applicationId)
+	client.CheckRedirect = func(req *http.Request, via []*http.Request) error {
+		return http.ErrUseLastResponse
 	}
 	resp, err := client.Do(request)
 	if err != nil {

@@ -155,3 +155,21 @@ func GetDPoPHtu(host, path string) string {
 	_, originBackend := getOriginFromHost(host)
 	return originBackend + path
 }
+
+func getRefreshDPoPJkt(token *Token, dpopProof string, host string) (string, *TokenError) {
+	if dpopProof == "" {
+		if token.DPoPJkt != "" {
+			return "", &TokenError{Error: "invalid_dpop_proof", ErrorDescription: "a DPoP proof is required to refresh a DPoP-bound token"}
+		}
+		return "", nil
+	}
+
+	jkt, err := ValidateDPoPProof(dpopProof, "POST", GetDPoPHtu(host, "/api/login/oauth/access_token"), "")
+	if err != nil {
+		return "", &TokenError{Error: "invalid_dpop_proof", ErrorDescription: err.Error()}
+	}
+	if token.DPoPJkt != "" && jkt != token.DPoPJkt {
+		return "", &TokenError{Error: "invalid_dpop_proof", ErrorDescription: "the DPoP proof key does not match the key the refresh token is bound to"}
+	}
+	return jkt, nil
+}

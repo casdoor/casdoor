@@ -144,6 +144,10 @@ func CheckUserSignup(application *Application, organization *Organization, authF
 		}
 	}
 
+	if msg := checkSignupTag(application, authForm.Tag, lang); msg != "" {
+		return msg
+	}
+
 	for _, signupItem := range application.SignupItems {
 		if signupItem.Regex == "" {
 			continue
@@ -165,6 +169,22 @@ func CheckUserSignup(application *Application, organization *Organization, authF
 		}
 	}
 
+	return ""
+}
+
+func checkSignupTag(application *Application, tag string, lang string) string {
+	signupItem := application.getSignupItem("Tag")
+	if tag == "" || signupItem == nil {
+		return ""
+	}
+
+	options := signupItem.Options
+	if len(options) == 0 {
+		options = application.Tags
+	}
+	if !util.InSlice(options, tag) {
+		return fmt.Sprintf(i18n.Translate(lang, "auth:User's tag: %s is not listed in the application's tags"), tag)
+	}
 	return ""
 }
 

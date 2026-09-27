@@ -484,6 +484,11 @@ func RefreshToken(application *Application, grantType string, refreshToken strin
 	}
 	resource = token.Resource
 
+	dpopJkt, tokenError := getRefreshDPoPJkt(token, dpopProof, host)
+	if tokenError != nil {
+		return tokenError, nil
+	}
+
 	cert, err := getCertByApplication(application)
 	if err != nil {
 		return nil, err
@@ -578,17 +583,9 @@ func RefreshToken(application *Application, grantType string, refreshToken strin
 	}
 
 	// Apply DPoP binding to the refreshed token if a DPoP proof was provided.
-	if dpopProof != "" {
-		dpopHtu := GetDPoPHtu(host, "/api/login/oauth/access_token")
-		jkt, err := ValidateDPoPProof(dpopProof, "POST", dpopHtu, "")
-		if err != nil {
-			return &TokenError{
-				Error:            "invalid_dpop_proof",
-				ErrorDescription: err.Error(),
-			}, nil
-		}
+	if dpopJkt != "" {
 		newToken.TokenType = "DPoP"
-		newToken.DPoPJkt = jkt
+		newToken.DPoPJkt = dpopJkt
 		if err = updateTokenDPoP(newToken); err != nil {
 			return nil, err
 		}
