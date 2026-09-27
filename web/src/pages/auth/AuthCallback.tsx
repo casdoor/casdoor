@@ -284,7 +284,7 @@ export default function AuthCallback() {
       if (service !== "") {
         const newUrl = new URL(service);
         newUrl.searchParams.append("ticket", ok.data);
-        window.location.href = newUrl.toString();
+        Setting.goToLink(newUrl.toString());
       }
     };
 
