@@ -90,6 +90,7 @@ type Organization struct {
 	EnableTour             bool       `json:"enableTour"`
 	DisableSignin          bool       `json:"disableSignin"`
 	EnableExclusiveSignin  bool       `json:"enableExclusiveSignin"`
+	MaxSessions            int        `json:"maxSessions"`
 	DisableConsole         bool       `json:"disableConsole"`
 	IpRestriction          string     `json:"ipRestriction"`
 	NavItems               []string   `xorm:"mediumtext" json:"navItems"`

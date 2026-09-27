@@ -29,7 +29,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/beego/beego/v2/server/web"
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/form"
 	"github.com/casdoor/casdoor/i18n"
@@ -169,7 +168,7 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 
 	// Revoke the tokens of the displaced login before the response is built, otherwise the
 	// token that this login creates below would be revoked too
-	if application.EnableExclusiveSignin {
+	if application.EnableExclusiveSignin && application.MaxSessions <= 1 {
 		_, err = object.ExpireTokenByUserAndApplication(user.Owner, user.Name, application.Name)
 		if err != nil {
 			c.ResponseError(err.Error(), nil)
@@ -346,24 +345,6 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 			return
 		}
 
-		if application.EnableExclusiveSignin {
-			sessions, err := object.GetUserAppSessions(user.Owner, user.Name, application.Name)
-			if err != nil {
-				c.ResponseError(err.Error(), nil)
-				return
-			}
-
-			for _, session := range sessions {
-				for _, sid := range session.SessionId {
-					err := web.GlobalSessions.GetProvider().SessionDestroy(context.Background(), sid)
-					if err != nil {
-						c.ResponseError(err.Error(), nil)
-						return
-					}
-				}
-			}
-		}
-
 		sessionId := c.Ctx.Input.CruSession.SessionID(context.Background())
 		sessionInfo := &object.SessionInfo{
 			SessionId:      sessionId,
@@ -382,12 +363,18 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 			Application:  application.Name,
 			SessionId:    []string{sessionId},
 			SessionInfos: []*object.SessionInfo{sessionInfo},
-
-			ExclusiveSignin: application.EnableExclusiveSignin,
 		})
 		if err != nil {
 			c.ResponseError(err.Error(), nil)
 			return
+		}
+
+		if application.EnableExclusiveSignin {
+			err = object.EnforceApplicationSessionLimit(user, application.Name, sessionId, application.MaxSessions)
+			if err != nil {
+				c.ResponseError(err.Error(), nil)
+				return
+			}
 		}
 
 		// The policy comes from the user's organization, a shared application must not impose
@@ -401,7 +388,7 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 			}
 		}
 		if organization != nil && organization.EnableExclusiveSignin {
-			err = object.EnforceSingleBrowserSession(user, sessionId, c.Ctx.Request.Host)
+			err = object.EnforceBrowserSessionLimit(user, sessionId, organization.MaxSessions, c.Ctx.Request.Host)
 			if err != nil {
 				c.ResponseError(err.Error(), nil)
 				return

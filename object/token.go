@@ -304,6 +304,19 @@ func ExpireTokensBySessionIds(owner string, username string, sessionIds []string
 	return affected != 0, nil
 }
 
+func ExpireTokensByApplicationAndSessionIds(owner string, username string, application string, sessionIds []string) (bool, error) {
+	if len(sessionIds) == 0 {
+		return false, nil
+	}
+
+	affected, err := ormer.Engine.In("session_id", sessionIds).Where(fmt.Sprintf("organization = ? and %s = ? and application = ? and expires_in > 0", quoteColumn("user")), owner, username, application).Cols("expires_in").Update(&Token{ExpiresIn: 0})
+	if err != nil {
+		return false, err
+	}
+
+	return affected != 0, nil
+}
+
 // ExpireTokenByUserAndApplication expires the user's tokens in one application, "owner" is the organization of the user
 func ExpireTokenByUserAndApplication(owner string, username string, application string) (bool, error) {
 	affected, err := ormer.Engine.Where(fmt.Sprintf("organization = ? and %s = ? and application = ? and expires_in > 0", quoteColumn("user")), owner, username, application).Cols("expires_in").Update(&Token{ExpiresIn: 0})
