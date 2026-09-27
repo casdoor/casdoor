@@ -45,6 +45,13 @@ func getTenantHttpClient(provider *Provider) *http.Client {
 	return util.NewInternetOnlyHttpClient(30 * time.Second)
 }
 
+func getProviderHttpClient(provider *Provider) *http.Client {
+	if client := getTenantHttpClient(provider); client != nil {
+		return client
+	}
+	return &http.Client{Timeout: 30 * time.Second}
+}
+
 func restrictTenantEmailProvider(provider *Provider, emailProvider email.EmailProvider) {
 	if httpProvider, ok := emailProvider.(*email.HttpEmailProvider); ok {
 		httpProvider.SetHttpClient(getTenantHttpClient(provider))

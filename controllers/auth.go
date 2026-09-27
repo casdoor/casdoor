@@ -568,7 +568,7 @@ func checkMfaEnable(c *ApiController, user *object.User, organization *object.Or
 
 func getExistUserByBindingRule(providerItem *object.ProviderItem, application *object.Application, userInfo *idp.UserInfo) (user *object.User, err error) {
 	if providerItem.BindingRule == nil {
-		providerItem.BindingRule = &[]string{"Email", "Phone", "Name"}
+		providerItem.BindingRule = &[]string{"Email", "Phone"}
 	}
 	if len(*providerItem.BindingRule) == 0 {
 		return nil, nil

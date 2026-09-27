@@ -22,6 +22,7 @@ import (
 	"html"
 	"io"
 	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
@@ -134,7 +135,7 @@ func fastAutoSignin(ctx *context.Context) (string, error) {
 	if strings.Contains(redirectUri, "?") {
 		sep = "&"
 	}
-	res := fmt.Sprintf("%s%scode=%s&state=%s", redirectUri, sep, code.Code, state)
+	res := fmt.Sprintf("%s%scode=%s&state=%s", redirectUri, sep, url.QueryEscape(code.Code), url.QueryEscape(state))
 	return res, nil
 }
 

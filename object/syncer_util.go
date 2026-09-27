@@ -18,6 +18,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"net/http"
 	"reflect"
 	"strconv"
 	"strings"
@@ -29,6 +30,13 @@ import (
 type Credential struct {
 	Value string `json:"value"`
 	Salt  string `json:"salt"`
+}
+
+func (syncer *Syncer) getHttpClient() *http.Client {
+	if syncer.Organization != "built-in" {
+		return util.NewInternetOnlyHttpClient(30 * time.Second)
+	}
+	return &http.Client{Timeout: 30 * time.Second}
 }
 
 // Helper function to unmarshal JSON string into a target interface

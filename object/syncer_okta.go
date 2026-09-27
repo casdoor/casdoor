@@ -155,7 +155,7 @@ func (p *OktaSyncerProvider) getOktaUsers(nextLink string) ([]*OktaUser, string,
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("Content-Type", "application/json")
 
-	client := &http.Client{Timeout: 30 * time.Second}
+	client := p.Syncer.getHttpClient()
 	resp, err := client.Do(req)
 	if err != nil {
 		return nil, "", err
