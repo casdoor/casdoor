@@ -33,9 +33,9 @@ type MfaProps struct {
 
 type MfaInterface interface {
 	Initiate(userId string, issuer string) (*MfaProps, error)
-	SetupVerify(passcode string) error
+	SetupVerify(passcode string, lang string) error
 	Enable(user *User) error
-	Verify(passcode string) error
+	Verify(passcode string, lang string) error
 }
 
 const (

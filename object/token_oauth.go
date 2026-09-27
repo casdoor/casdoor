@@ -83,7 +83,7 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 	var tokenError *TokenError
 	switch grantType {
 	case "authorization_code": // Authorization Code Grant
-		token, tokenError, err = GetAuthorizationCodeToken(application, clientSecret, code, verifier, resource)
+		token, tokenError, err = GetAuthorizationCodeToken(application, clientSecret, code, verifier, resource, lang)
 	case "password": // Resource Owner Password Credentials Grant
 		token, tokenError, err = GetPasswordToken(application, username, password, scope, host, clientIp, lang)
 	case "client_credentials": // Client Credentials Grant
@@ -151,7 +151,7 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 }
 
 // GetAuthorizationCodeToken handles the Authorization Code Grant flow.
-func GetAuthorizationCodeToken(application *Application, clientSecret string, code string, verifier string, resource string) (*Token, *TokenError, error) {
+func GetAuthorizationCodeToken(application *Application, clientSecret string, code string, verifier string, resource string, lang string) (*Token, *TokenError, error) {
 	if code == "" {
 		return nil, &TokenError{
 			Error:            InvalidRequest,
@@ -179,7 +179,7 @@ func GetAuthorizationCodeToken(application *Application, clientSecret string, co
 				ErrorDescription: "sign up is not enabled for this application",
 			}, nil
 		}
-		return createGuestUserToken(application, clientSecret, verifier)
+		return createGuestUserToken(application, clientSecret, verifier, lang)
 	}
 
 	token, err := getTokenByCode(code)
@@ -279,7 +279,7 @@ func GetPasswordToken(application *Application, username string, password string
 	}
 
 	if user.Ldap != "" {
-		err = CheckLdapUserPassword(user, password, "en")
+		err = CheckLdapUserPassword(user, password, lang)
 	} else {
 		// For OAuth users who don't have a password set, they cannot use password grant type
 		if user.Password == "" {
@@ -288,7 +288,7 @@ func GetPasswordToken(application *Application, username string, password string
 				ErrorDescription: "OAuth users cannot use password grant type, please use authorization code flow",
 			}, nil
 		}
-		err = CheckPassword(user, password, "en")
+		err = CheckPassword(user, password, lang)
 	}
 	if err != nil {
 		return nil, &TokenError{
@@ -416,7 +416,7 @@ func GetImplicitToken(application *Application, username string, password string
 	}
 
 	if user.Ldap != "" {
-		err = CheckLdapUserPassword(user, password, "en")
+		err = CheckLdapUserPassword(user, password, lang)
 	} else {
 		if user.Password == "" {
 			return nil, &TokenError{
@@ -424,7 +424,7 @@ func GetImplicitToken(application *Application, username string, password string
 				ErrorDescription: "OAuth users cannot use implicit grant type, please use authorization code flow",
 			}, nil
 		}
-		err = CheckPassword(user, password, "en")
+		err = CheckPassword(user, password, lang)
 	}
 	if err != nil {
 		return nil, &TokenError{
@@ -600,7 +600,7 @@ func GetWechatMiniProgramToken(application *Application, code string, host strin
 				UserPropertiesWechatUnionId: unionId,
 			},
 		}
-		_, err = AddUser(user, "en")
+		_, err = AddUser(user, lang)
 		if err != nil {
 			return nil, nil, err
 		}

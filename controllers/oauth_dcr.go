@@ -67,7 +67,7 @@ func (c *ApiController) DynamicClientRegister() {
 		organization = "built-in"
 	}
 
-	response, dcrErr, err := object.RegisterDynamicClient(&req, organization, c.getRegistrationBaseUri())
+	response, dcrErr, err := object.RegisterDynamicClient(&req, organization, c.getRegistrationBaseUri(), c.GetAcceptLanguage())
 	if err != nil {
 		c.Ctx.Output.Status = http.StatusInternalServerError
 		c.Data["json"] = object.DcrError{

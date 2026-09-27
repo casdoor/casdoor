@@ -77,7 +77,7 @@ func (c *McpController) handleAddApplicationTool(id interface{}, args AddApplica
 		object.KeepApplicationCustomHtml(&args.Application, nil)
 	}
 
-	affected, err := object.AddApplication(&args.Application)
+	affected, err := object.AddApplication(&args.Application, c.GetAcceptLanguage())
 	if err != nil {
 		c.SendToolErrorResult(id, err.Error())
 		return

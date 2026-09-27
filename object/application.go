@@ -494,7 +494,7 @@ func UpdateApplication(id string, application *Application, isGlobalAdmin bool, 
 	return affected != 0, nil
 }
 
-func AddApplication(application *Application) (bool, error) {
+func AddApplication(application *Application, lang string) (bool, error) {
 	if application.Owner == "" {
 		application.Owner = "admin"
 	}
@@ -537,7 +537,7 @@ func AddApplication(application *Application) (bool, error) {
 		return false, fmt.Errorf("only applications belonging to built-in organization can be shared")
 	}
 
-	err = checkMultipleCaptchaProviders(application, "en")
+	err = checkMultipleCaptchaProviders(application, lang)
 	if err != nil {
 		return false, err
 	}
@@ -558,7 +558,7 @@ func AddApplication(application *Application) (bool, error) {
 		return false, err
 	}
 
-	err = validateCustomScopes(application.CustomScopes, "en")
+	err = validateCustomScopes(application.CustomScopes, lang)
 	if err != nil {
 		return false, err
 	}

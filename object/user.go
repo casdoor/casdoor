@@ -1033,7 +1033,7 @@ func AddUser(user *User, lang string) (bool, error) {
 
 	user.Groups = getOrganizationGroups(user.Owner, user.Groups)
 
-	if CheckUsernameWithEmail(user.Name, "en") != "" {
+	if CheckUsernameWithEmail(user.Name, lang) != "" {
 		user.Name = util.GetRandomName()
 	}
 

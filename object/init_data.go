@@ -335,7 +335,7 @@ func initDefinedApplication(application *Application) {
 		}
 	}
 	application.CreatedTime = util.GetCurrentTime()
-	_, err = AddApplication(application)
+	_, err = AddApplication(application, "en")
 	if err != nil {
 		panic(err)
 	}

@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/object"
 	"github.com/elimity-com/scim"
 	"github.com/elimity-com/scim/errors"
@@ -139,7 +140,7 @@ func AddScimUser(req *http.Request, r *scim.Resource) error {
 		return errors.ScimErrorUniqueness
 	}
 
-	affect, err := object.AddUser(newUser, "en")
+	affect, err := object.AddUser(newUser, conf.GetAcceptLanguage(req.Header.Get("Accept-Language")))
 	if err != nil {
 		return err
 	}

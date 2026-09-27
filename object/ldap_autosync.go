@@ -140,7 +140,7 @@ func (l *LdapAutoSynchronizer) syncOnce(ldap *Ldap) {
 		return
 	}
 
-	existed, failed, err := SyncLdapUsers(ldap.Owner, AutoAdjustLdapUser(users), ldap.Id)
+	existed, failed, err := SyncLdapUsers(ldap.Owner, AutoAdjustLdapUser(users), ldap.Id, "en")
 	if err != nil {
 		logs.Warning(fmt.Sprintf("autoSync failed for %s, error %s", ldap.Id, err))
 		return

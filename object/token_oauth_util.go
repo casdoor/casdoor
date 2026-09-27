@@ -782,7 +782,7 @@ func parseAndValidateSubjectToken(subjectToken string, requestingClientId string
 }
 
 // createGuestUserToken creates a new guest user and returns a token for them.
-func createGuestUserToken(application *Application, clientSecret string, verifier string) (*Token, *TokenError, error) {
+func createGuestUserToken(application *Application, clientSecret string, verifier string, lang string) (*Token, *TokenError, error) {
 	if clientSecret != "" && application.ClientSecret != clientSecret {
 		return nil, &TokenError{
 			Error:            InvalidClient,
@@ -843,7 +843,7 @@ func createGuestUserToken(application *Application, clientSecret string, verifie
 		RegisterSource:    fmt.Sprintf("%s/%s", application.Organization, application.Name),
 	}
 
-	affected, err := AddUser(guestUser, "en")
+	affected, err := AddUser(guestUser, lang)
 	if err != nil {
 		return nil, &TokenError{
 			Error:            EndpointError,

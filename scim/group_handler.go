@@ -19,6 +19,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 	"github.com/elimity-com/scim"
@@ -118,7 +119,7 @@ func (h GroupResourceHandler) Replace(r *http.Request, id string, attrs scim.Res
 		return scim.Resource{}, err
 	}
 	resource := &scim.Resource{Attributes: attrs}
-	err = updateScimGroup(id, group, resource)
+	err = updateScimGroup(r, id, group, resource)
 	return *resource, err
 }
 
@@ -199,7 +200,7 @@ func addScimGroup(req *http.Request, r *scim.Resource) error {
 	return nil
 }
 
-func updateScimGroup(id string, oldGroup *object.Group, r *scim.Resource) error {
+func updateScimGroup(req *http.Request, id string, oldGroup *object.Group, r *scim.Resource) error {
 	newGroup, err := resource2group(r.Attributes)
 	if err != nil {
 		return err
@@ -208,7 +209,7 @@ func updateScimGroup(id string, oldGroup *object.Group, r *scim.Resource) error 
 	newGroup.Name = oldGroup.Name
 	newGroup.UpdatedTime = util.GetCurrentTime()
 
-	_, err = object.UpdateGroup(id, newGroup, true, "en")
+	_, err = object.UpdateGroup(id, newGroup, true, conf.GetAcceptLanguage(req.Header.Get("Accept-Language")))
 	if err != nil {
 		return err
 	}
@@ -298,7 +299,7 @@ func updateScimGroupByPatch(req *http.Request, id string, group *object.Group, o
 	}
 
 	group.UpdatedTime = util.GetCurrentTime()
-	_, err = object.UpdateGroup(id, group, true, "en")
+	_, err = object.UpdateGroup(id, group, true, conf.GetAcceptLanguage(req.Header.Get("Accept-Language")))
 	if err != nil {
 		return scim.Resource{}, err
 	}

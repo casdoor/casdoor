@@ -452,7 +452,7 @@ func AutoAdjustLdapUser(users []LdapUser) []LdapUser {
 	return res
 }
 
-func SyncLdapUsers(owner string, syncUsers []LdapUser, ldapId string) (existUsers []LdapUser, failedUsers []LdapUser, err error) {
+func SyncLdapUsers(owner string, syncUsers []LdapUser, ldapId string, lang string) (existUsers []LdapUser, failedUsers []LdapUser, err error) {
 	var uuids []string
 	for _, user := range syncUsers {
 		uuids = append(uuids, user.Uuid)
@@ -577,7 +577,7 @@ func SyncLdapUsers(owner string, syncUsers []LdapUser, ldapId string) (existUser
 				newUser.Groups = userGroups
 			}
 
-			affected, err := AddUser(newUser, "en")
+			affected, err := AddUser(newUser, lang)
 			if err != nil {
 				return nil, nil, err
 			}

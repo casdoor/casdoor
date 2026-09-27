@@ -68,7 +68,7 @@ type DcrError struct {
 }
 
 // RegisterDynamicClient creates a new application based on DCR request (RFC 7591)
-func RegisterDynamicClient(req *DynamicClientRegistrationRequest, organization string, registrationClientUri string) (*DynamicClientRegistrationResponse, *DcrError, error) {
+func RegisterDynamicClient(req *DynamicClientRegistrationRequest, organization string, registrationClientUri string, lang string) (*DynamicClientRegistrationResponse, *DcrError, error) {
 	// Validate organization exists and has DCR enabled
 	org, err := GetOrganization(util.GetId("admin", organization))
 	if err != nil {
@@ -194,7 +194,7 @@ func RegisterDynamicClient(req *DynamicClientRegistrationRequest, organization s
 	}
 
 	// Add the application
-	affected, err := AddApplication(application)
+	affected, err := AddApplication(application, lang)
 	if err != nil {
 		return nil, nil, err
 	}

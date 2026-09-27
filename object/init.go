@@ -251,7 +251,7 @@ func initBuiltInApplication() {
 
 		CookieExpireInHours: 720,
 	}
-	_, err = AddApplication(application)
+	_, err = AddApplication(application, "en")
 	if err != nil {
 		panic(err)
 	}
