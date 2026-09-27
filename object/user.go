@@ -33,6 +33,7 @@ import (
 	"github.com/go-webauthn/webauthn/webauthn"
 	"github.com/xorm-io/builder"
 	"github.com/xorm-io/core"
+	"github.com/xorm-io/xorm"
 )
 
 const (
@@ -1781,12 +1782,26 @@ func UpdateUserBalance(owner string, name string, balance float64, currency stri
 		}
 	}
 
-	// Validate new balance against credit limit
-	if newBalance < balanceCredit {
+	affected, err := incrBalance(ormer.Engine.ID(core.PK{owner, name}), "balance", convertedBalance, balanceCredit, &User{UpdatedTime: util.GetCurrentTime()})
+	if err != nil {
+		return err
+	}
+	if !affected {
 		return fmt.Errorf(i18n.Translate(lang, "general:Insufficient balance: new balance %v would be below credit limit %v"), newBalance, balanceCredit)
 	}
+	return nil
+}
 
-	user.Balance = newBalance
-	_, err = UpdateUser(user.GetId(), user, []string{"balance"}, true)
-	return err
+// incrBalance adds amount to the column in one statement, a spending is only applied while the
+// column stays at or above the credit, so concurrent payments cannot both spend the same balance
+func incrBalance(session *xorm.Session, column string, amount float64, credit float64, bean interface{}) (bool, error) {
+	if amount == 0 {
+		return true, nil
+	}
+	if amount < 0 {
+		session = session.Where(fmt.Sprintf("%s + ? >= ?", column), amount, credit)
+	}
+
+	affected, err := session.Incr(column, amount).Update(bean)
+	return affected != 0, err
 }

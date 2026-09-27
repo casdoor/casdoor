@@ -753,23 +753,20 @@ func UpdateOrganizationBalance(owner string, name string, balance float64, curre
 	}
 	convertedBalance := ConvertCurrency(balance, currency, balanceCurrency)
 
-	var columns []string
-	var newBalance float64
-	if isOrgBalance {
-		newBalance = AddPrices(organization.OrgBalance, convertedBalance)
-		// Check organization balance credit limit
-		if newBalance < organization.BalanceCredit {
-			return fmt.Errorf(i18n.Translate(lang, "general:Insufficient balance: new organization balance %v would be below credit limit %v"), newBalance, organization.BalanceCredit)
-		}
-		organization.OrgBalance = newBalance
-		columns = []string{"org_balance"}
-	} else {
+	if !isOrgBalance {
 		// User balance is just a sum of all users' balances, no credit limit check here
 		// Individual user credit limits are checked in UpdateUserBalance
-		organization.UserBalance = AddPrices(organization.UserBalance, convertedBalance)
-		columns = []string{"user_balance"}
+		_, err = ormer.Engine.ID(core.PK{owner, name}).Incr("user_balance", convertedBalance).Update(&Organization{})
+		return err
 	}
 
-	_, err = ormer.Engine.ID(core.PK{owner, name}).Cols(columns...).Update(organization)
-	return err
+	affected, err := incrBalance(ormer.Engine.ID(core.PK{owner, name}), "org_balance", convertedBalance, organization.BalanceCredit, &Organization{})
+	if err != nil {
+		return err
+	}
+	if !affected {
+		newBalance := AddPrices(organization.OrgBalance, convertedBalance)
+		return fmt.Errorf(i18n.Translate(lang, "general:Insufficient balance: new organization balance %v would be below credit limit %v"), newBalance, organization.BalanceCredit)
+	}
+	return nil
 }

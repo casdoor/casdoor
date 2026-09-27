@@ -31,6 +31,7 @@ type HttpEmailProvider struct {
 	httpHeaders map[string]string
 	bodyMapping map[string]string
 	contentType string
+	httpClient  *http.Client
 }
 
 func NewHttpEmailProvider(endpoint string, method string, httpHeaders map[string]string, bodyMapping map[string]string, contentType string) *HttpEmailProvider {
@@ -46,6 +47,11 @@ func NewHttpEmailProvider(endpoint string, method string, httpHeaders map[string
 		contentType: contentType,
 	}
 	return client
+}
+
+// SetHttpClient replaces the default client, nil keeps it
+func (c *HttpEmailProvider) SetHttpClient(httpClient *http.Client) {
+	c.httpClient = httpClient
 }
 
 func (c *HttpEmailProvider) Send(fromAddress string, fromName string, toAddress []string, subject string, content string) error {
@@ -137,6 +143,9 @@ func (c *HttpEmailProvider) Send(fromAddress string, fromName string, toAddress 
 	}
 
 	httpClient := proxy.DefaultHttpClient
+	if c.httpClient != nil {
+		httpClient = c.httpClient
+	}
 	resp, err := httpClient.Do(req)
 	if err != nil {
 		return err

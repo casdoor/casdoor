@@ -143,6 +143,10 @@ func PlaceOrder(owner string, reqProductInfos []ProductInfo, user *User, couponC
 	var couponName string
 	var couponDiscount float64
 	if couponCode != "" {
+		if hasRechargeProduct(productInfos) {
+			return nil, fmt.Errorf("a coupon cannot be used for an order containing a recharge product")
+		}
+
 		coupon, err := ValidateCoupon(owner, couponCode, user.Name, productNames, orderPrice, orderCurrency)
 		if err != nil {
 			return nil, err
@@ -372,15 +376,6 @@ func PayOrder(providerName, host, paymentEnv string, order *Order, lang string) 
 		payment.State = pp.PaymentStatePaid
 	}
 
-	affected, err := AddPayment(payment)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	if !affected {
-		return nil, nil, fmt.Errorf("failed to add payment: %s", util.StructToJson(payment))
-	}
-
 	if provider.Type == "Balance" {
 		transaction := &Transaction{
 			Owner:       payment.Owner,
@@ -398,7 +393,7 @@ func PayOrder(providerName, host, paymentEnv string, order *Order, lang string) 
 			State:       string(pp.PaymentStatePaid),
 		}
 
-		affected, err = AddInternalPaymentTransaction(transaction, lang)
+		affected, err := AddInternalPaymentTransaction(transaction, lang)
 		if err != nil {
 			return nil, nil, err
 		}
@@ -440,6 +435,16 @@ func PayOrder(providerName, host, paymentEnv string, order *Order, lang string) 
 				return nil, nil, fmt.Errorf("failed to add recharge transaction: %s", util.StructToJson(rechargeTransaction))
 			}
 		}
+	}
+
+	// the balance is spent before the payment is recorded as paid, so a refused spending leaves no paid payment behind
+	affected, err := AddPayment(payment)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	if !affected {
+		return nil, nil, fmt.Errorf("failed to add payment: %s", util.StructToJson(payment))
 	}
 
 	order.Payment = payment.Name
@@ -498,4 +503,15 @@ func CancelOrder(order *Order) (bool, error) {
 	order.Message = "Canceled by user"
 	order.UpdateTime = util.GetCurrentTime()
 	return UpdateOrder(order.GetId(), order)
+}
+
+// hasRechargeProduct reports an order that credits the balance with the price of its recharge
+// products, a coupon would let it credit more than it is paid
+func hasRechargeProduct(productInfos []ProductInfo) bool {
+	for _, productInfo := range productInfos {
+		if productInfo.IsRecharge {
+			return true
+		}
+	}
+	return false
 }

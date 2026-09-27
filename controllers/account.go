@@ -23,7 +23,6 @@ import (
 	"strings"
 
 	"github.com/beego/beego/v2/core/logs"
-	"github.com/casdoor/casdoor/captcha"
 	"github.com/casdoor/casdoor/form"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
@@ -137,12 +136,8 @@ func (c *ApiController) Signup() {
 			return
 		}
 
-		if captchaProvider.Type != "Default" {
-			authForm.ClientSecret = captchaProvider.ClientSecret
-		}
-
 		var isHuman bool
-		isHuman, err = captcha.VerifyCaptchaByCaptchaType(authForm.CaptchaType, authForm.CaptchaToken, captchaProvider.ClientId, authForm.ClientSecret, captchaProvider.ClientId2)
+		isHuman, err = verifyAuthFormCaptcha(captchaProvider, &authForm)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return

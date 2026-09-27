@@ -512,6 +512,9 @@ func ApiFilter(ctx *context.Context) {
 
 	method := ctx.Request.Method
 	urlPath := getUrlPath(ctx)
+	if !checkDynamicClientSession(ctx, urlPath) {
+		return
+	}
 	extraInfo := getExtraInfo(ctx, urlPath)
 
 	objects := []Object{{}}
@@ -589,6 +592,35 @@ func ApiFilter(ctx *context.Context) {
 			object.AddRecord(record)
 		})
 	}
+}
+
+// dynamicClientApis are the only APIs a session signed in with the access token of a dynamically
+// registered client may call: anyone can register such a client and get users to authorize it
+var dynamicClientApis = []string{
+	"/api/userinfo",
+	"/api/user",
+	"/api/mcp",
+	"/api/login/oauth",
+}
+
+// checkDynamicClientSession keys on the "aud" that AutoSigninFilter stores in the session, so the
+// session cookie returned with a token-authenticated response is limited the same as the token
+func checkDynamicClientSession(ctx *context.Context, urlPath string) bool {
+	aud, ok := ctx.Input.Session("aud").(string)
+	if !ok || aud == "" || util.InSlice(dynamicClientApis, urlPath) || strings.HasPrefix(urlPath, "/api/server/") {
+		return true
+	}
+
+	application, err := object.GetApplicationByClientId(aud)
+	if err != nil {
+		responseError(ctx, err.Error())
+		return false
+	}
+	if application != nil && application.IsDynamicClient() {
+		denyRequest(ctx)
+		return false
+	}
+	return true
 }
 
 func writePermissionLog(objOwner, subOwner, subName, method, urlPath string, allowed bool) {

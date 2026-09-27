@@ -163,18 +163,12 @@ func AddTransaction(transaction *Transaction, lang string, dryRun bool) (bool, s
 		return true, "", nil
 	}
 
-	affected, err := ormer.Engine.Insert(transaction)
+	affected, err := insertTransactionWithBalance(transaction, lang)
 	if err != nil {
-		return false, "", err
+		return false, transactionId, err
 	}
 
-	if affected != 0 {
-		if err := updateBalanceForTransaction(transaction, transaction.Amount, lang); err != nil {
-			return false, transactionId, err
-		}
-	}
-
-	return affected != 0, transactionId, nil
+	return affected, transactionId, nil
 }
 
 func AddInternalPaymentTransaction(transaction *Transaction, lang string) (bool, error) {
@@ -187,18 +181,23 @@ func AddInternalPaymentTransaction(transaction *Transaction, lang string) (bool,
 		return false, err
 	}
 
+	return insertTransactionWithBalance(transaction, lang)
+}
+
+// insertTransactionWithBalance removes the inserted transaction again when the balance refuses its
+// amount, e.g. a concurrent payment has spent the balance after the validation passed
+func insertTransactionWithBalance(transaction *Transaction, lang string) (bool, error) {
 	affected, err := ormer.Engine.Insert(transaction)
-	if err != nil {
+	if err != nil || affected == 0 {
 		return false, err
 	}
 
-	if affected != 0 {
-		if err := updateBalanceForTransaction(transaction, transaction.Amount, lang); err != nil {
-			return false, err
-		}
+	err = updateBalanceForTransaction(transaction, transaction.Amount, lang)
+	if err != nil {
+		_, _ = ormer.Engine.ID(core.PK{transaction.Owner, transaction.Name}).Delete(&Transaction{})
+		return false, err
 	}
-
-	return affected != 0, nil
+	return true, nil
 }
 
 func AddExternalPaymentTransaction(transaction *Transaction, lang string) (bool, error) {

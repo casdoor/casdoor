@@ -63,6 +63,15 @@ func (c *ApiController) checkServiceProvider(provider *object.Provider, category
 	return false
 }
 
+// pinProviderObjectOwner makes a provider posted by a non-global admin one of their own organization,
+// so that its hosts are checked like the saved providers of that organization
+func (c *ApiController) pinProviderObjectOwner(providerObject *object.Provider) {
+	isGlobalAdmin, user := c.isGlobalAdmin()
+	if !isGlobalAdmin && user != nil {
+		providerObject.Owner = user.Owner
+	}
+}
+
 // SendEmail
 // @Title SendEmail
 // @Tag Service API
@@ -129,6 +138,7 @@ func (c *ApiController) SendEmail() {
 			}
 			emailForm.ProviderObject.HttpHeaders = object.RestoreMaskedHttpHeaders(emailForm.ProviderObject.HttpHeaders, provider.HttpHeaders)
 		}
+		c.pinProviderObjectOwner(&emailForm.ProviderObject)
 		provider = &emailForm.ProviderObject
 	}
 

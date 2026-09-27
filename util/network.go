@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"net"
 	"net/http"
+	"net/url"
 	"os"
 	"strings"
 	"syscall"
@@ -65,14 +66,45 @@ func IsHostIntranet(ip string) bool {
 // link-local (e.g. cloud metadata) and unspecified addresses. The check runs on the resolved
 // IP of every connection, so DNS rebinding and redirects to such addresses are refused too.
 func NewInternetOnlyHttpClient(timeout time.Duration) *http.Client {
-	isRefused := func(address string) bool {
-		return IsHostIntranet(address) || isUnspecifiedIp(address) || isSharedAddressSpaceIp(address)
-	}
-
 	return &http.Client{
 		Timeout:   timeout,
-		Transport: newRestrictedHttpTransport(timeout, isRefused, "only Internet addresses can be requested"),
+		Transport: newRestrictedHttpTransport(timeout, isNonInternetAddress, "only Internet addresses can be requested"),
 	}
+}
+
+func isNonInternetAddress(address string) bool {
+	return IsHostIntranet(address) || isUnspecifiedIp(address) || isSharedAddressSpaceIp(address)
+}
+
+// CheckInternetHost refuses a host (a hostname, "host:port" or URL) that resolves to an address
+// NewInternetOnlyHttpClient would refuse, for the clients that cannot dial through it, e.g. SMTP.
+// A bare path such as "/v3/mail/send" names no host and passes.
+func CheckInternetHost(host string) error {
+	if strings.Contains(host, "://") {
+		urlObj, err := url.Parse(host)
+		if err != nil {
+			return err
+		}
+		host = urlObj.Hostname()
+	} else if hostname, _, err := net.SplitHostPort(host); err == nil {
+		host = hostname
+	}
+
+	host = strings.Trim(host, "[]")
+	if host == "" || strings.HasPrefix(host, "/") {
+		return nil
+	}
+
+	ips, err := net.LookupIP(host)
+	if err != nil {
+		return err
+	}
+	for _, ip := range ips {
+		if isNonInternetAddress(ip.String()) {
+			return fmt.Errorf("the host: %s is not allowed, only Internet addresses can be requested", host)
+		}
+	}
+	return nil
 }
 
 func NewNonLocalHttpTransport(timeout time.Duration) *http.Transport {

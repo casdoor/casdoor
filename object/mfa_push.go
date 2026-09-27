@@ -134,6 +134,8 @@ func (mfa *PushMfa) sendPushNotification(title string, message string) error {
 	if notifier == nil {
 		return errors.New("notification provider is not supported")
 	}
+	// the receiver is the user's own MFA secret, for a Custom HTTP provider the URL requested
+	restrictNotificationClient(notifier, util.NewInternetOnlyHttpClient(30*time.Second))
 
 	// Send the push notification
 	// Note: The challengeId is kept server-side and not exposed in the message
