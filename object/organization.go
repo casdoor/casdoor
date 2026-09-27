@@ -208,6 +208,9 @@ func GetMaskedOrganization(isAdmin bool, organization *Organization, errs ...err
 	if organization.MasterVerificationCode != "" {
 		organization.MasterVerificationCode = "***"
 	}
+	if organization.KerberosKeytab != "" {
+		organization.KerberosKeytab = "***"
+	}
 	if !isAdmin {
 		if organization.PasswordObfuscatorKey != "" {
 			organization.PasswordObfuscatorKey = "***"
@@ -277,6 +280,10 @@ func UpdateOrganization(id string, organization *Organization, isGlobalAdmin boo
 		organization.NavItems = org.NavItems
 		organization.UserNavItems = org.UserNavItems
 		organization.WidgetItems = org.WidgetItems
+		organization.OrgBalance = org.OrgBalance
+		organization.UserBalance = org.UserBalance
+		organization.BalanceCredit = org.BalanceCredit
+		organization.BalanceCurrency = org.BalanceCurrency
 	}
 
 	session := ormer.Engine.ID(core.PK{owner, name}).AllCols()
@@ -289,6 +296,9 @@ func UpdateOrganization(id string, organization *Organization, isGlobalAdmin boo
 	}
 	if organization.MasterVerificationCode == "***" {
 		session.Omit("master_verification_code")
+	}
+	if organization.KerberosKeytab == "***" {
+		session.Omit("kerberos_keytab")
 	}
 
 	affected, err := session.Update(organization)
@@ -309,6 +319,9 @@ func AddOrganization(organization *Organization) (bool, error) {
 	}
 	if organization.MasterVerificationCode == "***" {
 		organization.MasterVerificationCode = ""
+	}
+	if organization.KerberosKeytab == "***" {
+		organization.KerberosKeytab = ""
 	}
 
 	organization.hashMasterPassword()

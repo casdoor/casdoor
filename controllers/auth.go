@@ -486,11 +486,17 @@ func (c *ApiController) GetApplicationLogin() {
 }
 
 func setHttpClient(idProvider idp.IdProvider, provider *object.Provider) {
-	if provider.EnableProxy || isProxyProviderType(provider.Type) {
+	if isTenantUrlProvider(provider) {
+		idProvider.SetHttpClient(util.NewInternetOnlyHttpClient(30 * time.Second))
+	} else if provider.EnableProxy || isProxyProviderType(provider.Type) {
 		idProvider.SetHttpClient(proxy.ProxyHttpClient)
 	} else {
 		idProvider.SetHttpClient(proxy.DefaultHttpClient)
 	}
+}
+
+func isTenantUrlProvider(provider *object.Provider) bool {
+	return provider.Owner != "admin" && provider.Owner != "built-in" && !isProxyProviderType(provider.Type)
 }
 
 func isProxyProviderType(providerType string) bool {
@@ -1011,6 +1017,11 @@ func (c *ApiController) Login() {
 			stateApplicationName := strings.Split(authForm.State, "-org-")[0]
 			if authForm.State != conf.GetConfigString("authState") && stateApplicationName != application.Name {
 				c.ResponseError(fmt.Sprintf(c.T("auth:State expected: %s, but got: %s"), conf.GetConfigString("authState"), authForm.State))
+				return
+			}
+
+			if provider.Type == "WeChat" && !idp.IsWechatTicketOfProvider(authForm.Code, provider.Name) {
+				c.ResponseError(c.T("auth:Invalid token"))
 				return
 			}
 
@@ -1589,6 +1600,7 @@ func (c *ApiController) HandleOfficialAccountEvent() {
 	idp.WechatCacheMap[data.Ticket] = idp.WechatCacheMapValue{
 		IsScanned:     true,
 		WechatUnionId: data.FromUserName,
+		ProviderName:  provider.Name,
 	}
 	idp.Lock.Unlock()
 

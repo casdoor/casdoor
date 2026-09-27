@@ -68,6 +68,11 @@ func (c *McpController) handleAddApplicationTool(id interface{}, args AddApplica
 		return
 	}
 
+	if !c.isOrganizationAllowed(args.Application.Organization) {
+		c.SendToolErrorResult(id, "unauthorized operation")
+		return
+	}
+
 	if !c.IsGlobalAdmin() {
 		object.KeepApplicationCustomHtml(&args.Application, nil)
 	}

@@ -129,7 +129,7 @@ var secretFields = []string{
 	"defaultpassword", "passwordobfuscatorkey", "sshpassword", "webauthncredentials", "faceids",
 	"refreshtoken", "refreshtokenhash", "idtoken", "idtokenhash", "originaltoken",
 	"originalrefreshtoken", "registrationaccesstoken", "codechallenge", "accesstokenhash",
-	"managedaccounts", "mfaaccounts",
+	"managedaccounts", "mfaaccounts", "httpheaders", "kerberoskeytab",
 }
 
 func FilterField(field string) bool {

@@ -173,8 +173,15 @@ func GetMaskedProviders(providers []*Provider, isMaskEnabled bool) []*Provider {
 	return providers
 }
 
+func getProviderFilterField(field string) string {
+	if strings.EqualFold(field, "content") || strings.EqualFold(field, "metadata") {
+		return ""
+	}
+	return field
+}
+
 func GetProviderCount(owner, field, value string) (int64, error) {
-	session := GetSession("", -1, -1, field, value, "", "")
+	session := GetSession("", -1, -1, getProviderFilterField(field), value, "", "")
 	return session.Where("owner = ? or owner = ? ", "admin", owner).Count(&Provider{})
 }
 
@@ -215,7 +222,7 @@ func GetGlobalProviders() ([]*Provider, error) {
 
 func GetPaginationProviders(owner string, offset, limit int, field, value, sortField, sortOrder string) ([]*Provider, error) {
 	providers := []*Provider{}
-	session := GetSession("", offset, limit, field, value, sortField, sortOrder)
+	session := GetSession("", offset, limit, getProviderFilterField(field), value, sortField, sortOrder)
 	err := session.Where("owner = ? or owner = ? ", "admin", owner).Find(&providers)
 	if err != nil {
 		return providers, err

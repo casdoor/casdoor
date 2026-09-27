@@ -69,6 +69,11 @@ func (c *ApiController) checkStorageProvider(provider *object.Provider, owner st
 		return true
 	}
 
+	if isDirect && provider.Type == object.ProviderTypeLocalFileSystem {
+		c.ResponseError(c.T("auth:Unauthorized operation"))
+		return false
+	}
+
 	if provider.Category == "Storage" && (provider.Owner == owner || (!isDirect && provider.Owner == "admin")) {
 		return true
 	}
