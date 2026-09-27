@@ -574,9 +574,9 @@ func getExistUserByBindingRule(providerItem *object.ProviderItem, application *o
 			}
 		}
 
-		// Find existing user with phone number
-		if rule == "Phone" {
-			user, err = object.GetUserByField(application.Organization, "phone", userInfo.Phone)
+		// Find existing user with phone number, only one the provider vouches for, like the email
+		if rule == "Phone" && userInfo.PhoneVerified {
+			user, err = object.GetUserByPhoneAndCountryCode(application.Organization, userInfo.Phone, userInfo.CountryCode)
 			if err != nil {
 				return nil, err
 			}

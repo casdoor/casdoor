@@ -1089,12 +1089,19 @@ func GetAppUser(userId string) (*User, error) {
 	}
 
 	_, name := util.GetOwnerAndNameFromIdNoCheck(userId)
-	application, err := getApplication("admin", name)
+	application, err := getAppUserApplication(name)
 	if err != nil || application == nil || application.IsDynamicClient() {
 		return nil, err
 	}
 
 	return &User{Owner: application.Organization, Name: userId, IsAdmin: true}, nil
+}
+
+func getAppUserApplication(name string) (*Application, error) {
+	if realName, _ := util.GetSharedOrgFromApp(name); realName != name {
+		return nil, nil
+	}
+	return getApplication("admin", name)
 }
 
 func (application *Application) IsDynamicClient() bool {

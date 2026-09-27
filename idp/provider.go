@@ -32,6 +32,7 @@ type UserInfo struct {
 	// Providers that make no such assertion leave it false.
 	EmailVerified bool
 	Phone         string
+	PhoneVerified bool
 	CountryCode   string
 	AvatarUrl     string
 	Extra         map[string]string

@@ -125,6 +125,7 @@ var oidcClaimFallbacks = map[string][]string{
 	"email":         {"email"},
 	"emailVerified": {"email_verified"},
 	"phone":         {"phone_number"},
+	"phoneVerified": {"phone_number_verified"},
 	"avatarUrl":     {"picture"},
 }
 
@@ -287,6 +288,7 @@ func (idp *CustomIdProvider) mapUserInfo(claims map[string]interface{}) (*UserIn
 		Email:         getField("email"),
 		EmailVerified: getField("emailVerified") == "true",
 		Phone:         getField("phone"),
+		PhoneVerified: getField("phoneVerified") == "true",
 		AvatarUrl:     getField("avatarUrl"),
 	}
 	if userInfo.Id == "" {

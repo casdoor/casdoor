@@ -175,6 +175,7 @@ func (idp *DingTalkIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, erro
 		// enterprise directory email
 		EmailVerified: dtUserInfo.Email != "",
 		Phone:         dtUserInfo.Mobile,
+		PhoneVerified: dtUserInfo.Mobile != "",
 		CountryCode:   countryCode,
 		AvatarUrl:     dtUserInfo.AvatarUrl,
 	}
