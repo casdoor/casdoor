@@ -70,22 +70,8 @@ func CorsFilter(ctx *context.Context) {
 		responseError(ctx, err.Error())
 		return
 	}
-	if isValid {
-		setCorsHeaders(ctx, origin)
-		return
-	}
 
 	if originHostname == "appleid.apple.com" {
-		setCorsHeaders(ctx, origin)
-		return
-	}
-
-	if ctx.Request.Method == "POST" && ctx.Request.RequestURI == "/api/login/oauth/access_token" {
-		setCorsHeaders(ctx, origin)
-		return
-	}
-
-	if ctx.Request.Method == "POST" && ctx.Request.RequestURI == "/api/acs" {
 		setCorsHeaders(ctx, origin)
 		return
 	}
@@ -96,24 +82,22 @@ func CorsFilter(ctx *context.Context) {
 	}
 
 	if origin != "" {
-		if origin == originConf {
+		if origin == originConf || originHostname == host || util.IsHostIntranet(host) && util.IsHostIntranet(originHostname) {
 			setCorsHeaders(ctx, origin)
-		} else if originHostname == host {
-			setCorsHeaders(ctx, origin)
-		} else if util.IsHostIntranet(host) && util.IsHostIntranet(originHostname) {
-			setCorsHeaders(ctx, origin)
-		} else {
-			ok, err := object.IsOriginAllowed(origin)
-			if err != nil {
-				panic(err)
-			}
+			return
+		}
 
-			if ok {
-				setCorsHeaders(ctx, origin)
-			} else {
-				ctx.ResponseWriter.WriteHeader(http.StatusForbidden)
-				return
-			}
+		ok, err := isOriginAllowedWithoutCredentials(ctx, origin, isValid)
+		if err != nil {
+			ctx.ResponseWriter.WriteHeader(http.StatusForbidden)
+			responseError(ctx, err.Error())
+			return
+		}
+
+		if ok {
+			setCorsHeadersWithCredentials(ctx, origin, false)
+		} else {
+			ctx.ResponseWriter.WriteHeader(http.StatusForbidden)
 		}
 		return
 	}
@@ -124,4 +108,16 @@ func CorsFilter(ctx *context.Context) {
 		ctx.ResponseWriter.WriteHeader(http.StatusOK)
 		return
 	}
+}
+
+func isOriginAllowedWithoutCredentials(ctx *context.Context, origin string, isValidOrigin bool) (bool, error) {
+	if isValidOrigin {
+		return true, nil
+	}
+
+	if ctx.Request.Method == "POST" && (ctx.Request.RequestURI == "/api/login/oauth/access_token" || ctx.Request.RequestURI == "/api/acs") {
+		return true, nil
+	}
+
+	return object.IsOriginAllowed(origin)
 }

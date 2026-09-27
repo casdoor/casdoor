@@ -17,6 +17,7 @@ package object
 import (
 	"errors"
 	"fmt"
+	"net"
 	"net/url"
 	"regexp"
 	"strings"
@@ -490,14 +491,6 @@ func (application *Application) GetId() string {
 }
 
 func (application *Application) IsRedirectUriValid(redirectUri string) bool {
-	isValid, err := util.IsValidOrigin(redirectUri)
-	if err != nil {
-		panic(err)
-	}
-	if isValid {
-		return true
-	}
-
 	for _, targetUri := range application.RedirectUris {
 		if redirectUriMatchesPattern(redirectUri, targetUri) {
 			return true
@@ -548,7 +541,7 @@ func redirectUriMatchesTarget(redirectUri, targetUri *url.URL) bool {
 	if redirectUri.Scheme != targetUri.Scheme {
 		return false
 	}
-	if redirectUri.Port() != targetUri.Port() {
+	if redirectUri.Port() != targetUri.Port() && !isSameLoopbackHost(redirectUri, targetUri) {
 		return false
 	}
 	redirectHost := redirectUri.Hostname()
@@ -648,14 +641,6 @@ func (application *Application) IsFaceIdEnabled() bool {
 }
 
 func (application *Application) IsOriginValid(origin string) bool {
-	isValid, err := util.IsValidOrigin(origin)
-	if err != nil {
-		panic(err)
-	}
-	if isValid {
-		return true
-	}
-
 	originObj, err := url.Parse(origin)
 	if err != nil || originObj.Host == "" {
 		return false
@@ -676,12 +661,20 @@ func (application *Application) IsOriginValid(origin string) bool {
 		if originHost != targetHost && !strings.HasSuffix(originHost, "."+targetHost) {
 			continue
 		}
-		if originObj.Port() != targetObj.Port() {
+		if originObj.Port() != targetObj.Port() && !isSameLoopbackHost(originObj, targetObj) {
 			continue
 		}
 		return true
 	}
 	return false
+}
+
+func isSameLoopbackHost(uri *url.URL, targetUri *url.URL) bool {
+	host := uri.Hostname()
+	if host != targetUri.Hostname() {
+		return false
+	}
+	return host == "localhost" || net.ParseIP(host).IsLoopback()
 }
 
 func IsOriginAllowed(origin string) (bool, error) {
