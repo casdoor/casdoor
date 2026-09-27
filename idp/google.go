@@ -21,12 +21,15 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
 	"github.com/casdoor/casdoor/util"
 	"github.com/nyaruka/phonenumbers"
 	"golang.org/x/oauth2"
+	"google.golang.org/api/idtoken"
+	"google.golang.org/api/option"
 )
 
 const GoogleIdTokenKey = "GoogleIdToken"
@@ -88,9 +91,8 @@ func (idp *GoogleIdProvider) getConfig() *oauth2.Config {
 func (idp *GoogleIdProvider) GetToken(code string) (*oauth2.Token, error) {
 	// Obtained the GoogleIdToken through Google OneTap authorization.
 	if strings.HasPrefix(code, GoogleIdTokenKey) {
-		code = strings.TrimPrefix(code, GoogleIdTokenKey+"-")
-		var googleIdToken GoogleIdToken
-		if err := json.Unmarshal([]byte(code), &googleIdToken); err != nil {
+		googleIdToken, err := idp.validateOneTapResponse(strings.TrimPrefix(code, GoogleIdTokenKey+"-"))
+		if err != nil {
 			return nil, err
 		}
 		expiry := int64(util.ParseInt(googleIdToken.Exp))
@@ -107,6 +109,61 @@ func (idp *GoogleIdProvider) GetToken(code string) (*oauth2.Token, error) {
 
 	ctx := context.WithValue(context.Background(), oauth2.HTTPClient, idp.Client)
 	return idp.Config.Exchange(ctx, code)
+}
+
+type GoogleOneTapResponse struct {
+	Credential string `json:"credential"`
+}
+
+func (idp *GoogleIdProvider) validateOneTapResponse(response string) (*GoogleIdToken, error) {
+	var oneTapResponse GoogleOneTapResponse
+	if err := json.Unmarshal([]byte(response), &oneTapResponse); err != nil {
+		return nil, err
+	}
+	if oneTapResponse.Credential == "" || idp.Config.ClientID == "" {
+		return nil, errors.New("the Google One Tap credential is missing")
+	}
+
+	client := idp.Client
+	if client == nil {
+		client = http.DefaultClient
+	}
+
+	ctx := context.Background()
+	validator, err := idtoken.NewValidator(ctx, option.WithHTTPClient(client))
+	if err != nil {
+		return nil, err
+	}
+
+	payload, err := validator.Validate(ctx, oneTapResponse.Credential, idp.Config.ClientID)
+	if err != nil {
+		return nil, err
+	}
+	if payload.Issuer != "accounts.google.com" && payload.Issuer != "https://accounts.google.com" {
+		return nil, fmt.Errorf("the Google ID token has an invalid issuer: %s", payload.Issuer)
+	}
+
+	getClaim := func(name string) string {
+		if value, ok := payload.Claims[name]; ok && value != nil {
+			return fmt.Sprint(value)
+		}
+		return ""
+	}
+
+	return &GoogleIdToken{
+		Iss:           payload.Issuer,
+		Sub:           payload.Subject,
+		Aud:           payload.Audience,
+		Iat:           strconv.FormatInt(payload.IssuedAt, 10),
+		Exp:           strconv.FormatInt(payload.Expires, 10),
+		Email:         getClaim("email"),
+		EmailVerified: getClaim("email_verified"),
+		Name:          getClaim("name"),
+		Picture:       getClaim("picture"),
+		GivenName:     getClaim("given_name"),
+		FamilyName:    getClaim("family_name"),
+		Locale:        getClaim("locale"),
+	}, nil
 }
 
 //{
@@ -132,7 +189,8 @@ type GoogleUserInfo struct {
 }
 
 type GooglePeopleApiPhoneNumberMetaData struct {
-	Primary bool `json:"primary"`
+	Primary  bool `json:"primary"`
+	Verified bool `json:"verified"`
 }
 
 type GooglePeopleApiPhoneNumber struct {
@@ -205,11 +263,13 @@ func (idp *GoogleIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error)
 	}
 
 	var phoneNumber string
+	var phoneVerified bool
 	var countryCode string
 	if len(googlePeopleResult.PhoneNumbers) != 0 {
 		for _, phoneData := range googlePeopleResult.PhoneNumbers {
 			if phoneData.MetaData.Primary {
 				phoneNumber = phoneData.CanonicalForm
+				phoneVerified = phoneData.MetaData.Verified
 				break
 			}
 		}
@@ -229,6 +289,7 @@ func (idp *GoogleIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error)
 		EmailVerified: googleUserInfo.VerifiedEmail,
 		AvatarUrl:     googleUserInfo.Picture,
 		Phone:         phoneNumber,
+		PhoneVerified: phoneVerified,
 		CountryCode:   countryCode,
 	}
 	return &userInfo, nil
