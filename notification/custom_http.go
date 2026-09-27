@@ -28,9 +28,10 @@ import (
 const customHttpNotificationTimeout = 30 * time.Second
 
 type HttpNotificationClient struct {
-	endpoint  string
-	method    string
-	paramName string
+	endpoint   string
+	method     string
+	paramName  string
+	httpClient *http.Client
 }
 
 func NewCustomHttpProvider(endpoint string, method string, paramName string) (*HttpNotificationClient, error) {
@@ -40,6 +41,11 @@ func NewCustomHttpProvider(endpoint string, method string, paramName string) (*H
 		paramName: paramName,
 	}
 	return client, nil
+}
+
+// SetHttpClient replaces the default client, nil keeps it
+func (c *HttpNotificationClient) SetHttpClient(httpClient *http.Client) {
+	c.httpClient = httpClient
 }
 
 func (c *HttpNotificationClient) Send(ctx context.Context, subject string, content string) error {
@@ -82,6 +88,9 @@ func (c *HttpNotificationClient) SendWithRecipient(ctx context.Context, subject 
 	}
 
 	httpClient := getCustomHttpNotificationClient()
+	if c.httpClient != nil {
+		httpClient = c.httpClient
+	}
 	resp, err := httpClient.Do(req)
 	if err != nil {
 		return err

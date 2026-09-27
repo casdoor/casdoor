@@ -34,9 +34,10 @@ type HttpSmsClient struct {
 	bodyMapping map[string]string
 	contentType string
 	enableProxy bool
+	httpClient  *http.Client
 }
 
-func newHttpSmsClient(endpoint, method, paramName, template string, httpHeaders map[string]string, bodyMapping map[string]string, contentType string, enableProxy bool) (*HttpSmsClient, error) {
+func newHttpSmsClient(endpoint, method, paramName, template string, httpHeaders map[string]string, bodyMapping map[string]string, contentType string, enableProxy bool, httpClient *http.Client) (*HttpSmsClient, error) {
 	if template == "" {
 		template = "%s"
 	}
@@ -52,6 +53,7 @@ func newHttpSmsClient(endpoint, method, paramName, template string, httpHeaders 
 		bodyMapping: bodyMapping,
 		contentType: contentType,
 		enableProxy: enableProxy,
+		httpClient:  httpClient,
 	}
 	return client, nil
 }
@@ -136,6 +138,9 @@ func (c *HttpSmsClient) SendMessage(param map[string]string, targetPhoneNumber .
 	httpClient := proxy.DefaultHttpClient
 	if c.enableProxy {
 		httpClient = proxy.ProxyHttpClient
+	}
+	if c.httpClient != nil {
+		httpClient = c.httpClient
 	}
 	resp, err := httpClient.Do(req)
 	if err != nil {

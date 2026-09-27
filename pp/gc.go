@@ -213,7 +213,8 @@ func (pp *GcPaymentProvider) Pay(r *PayReq) (*PayResp, error) {
 		return nil, err
 	}
 	payResp := &PayResp{
-		PayUrl: payRespInfo.PayUrl,
+		PayUrl:  payRespInfo.PayUrl,
+		OrderId: r.PaymentName,
 	}
 	return payResp, nil
 }
@@ -268,6 +269,9 @@ func (pp *GcPaymentProvider) Notify(body []byte, orderId string) (*NotifyResult,
 
 	if notifyRespInfo.OrderState != "1" {
 		return nil, fmt.Errorf("error order state: %s", notifyRespInfo.OrderState)
+	}
+	if orderId == "" || notifyRespInfo.OrderNo != orderId {
+		return nil, fmt.Errorf("the GC notification is for order: %s, not for order: %s", notifyRespInfo.OrderNo, orderId)
 	}
 	notifyResult := &NotifyResult{
 		ProductName:        productName,

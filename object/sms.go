@@ -29,7 +29,7 @@ func getSmsClient(provider *Provider) (sender.SmsClient, error) {
 	if provider.Type == sender.HuaweiCloud || provider.Type == sender.AzureACS {
 		client, err = sender.NewSmsClient(provider.Type, provider.ClientId, provider.ClientSecret, provider.SignName, provider.TemplateCode, provider.ProviderUrl, provider.AppId)
 	} else if provider.Type == "Custom HTTP SMS" {
-		client, err = newHttpSmsClient(provider.Endpoint, provider.Method, provider.Title, provider.TemplateCode, provider.HttpHeaders, provider.UserMapping, provider.IssuerUrl, provider.EnableProxy)
+		client, err = newHttpSmsClient(provider.Endpoint, provider.Method, provider.Title, provider.TemplateCode, provider.HttpHeaders, provider.UserMapping, provider.IssuerUrl, provider.EnableProxy, getTenantHttpClient(provider))
 	} else if provider.Type == "Alibaba Cloud PNVS SMS" {
 		client, err = newPnvsSmsClient(provider.ClientId, provider.ClientSecret, provider.SignName, provider.TemplateCode, provider.RegionId)
 	} else if provider.Type == sender.Twilio {

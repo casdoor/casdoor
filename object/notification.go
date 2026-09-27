@@ -33,6 +33,7 @@ func getNotificationClient(provider *Provider) (notify.Notifier, error) {
 		return nil, err
 	}
 
+	restrictNotificationClient(client, getTenantHttpClient(provider))
 	return client, nil
 }
 

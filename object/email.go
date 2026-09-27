@@ -20,6 +20,10 @@ import "github.com/casdoor/casdoor/email"
 
 // TestSmtpServer Test the SMTP server
 func TestSmtpServer(provider *Provider) error {
+	if err := checkTenantProviderHost(provider, provider.Host); err != nil {
+		return err
+	}
+
 	sslMode := getSslMode(provider)
 	smtpEmailProvider := email.NewSmtpEmailProvider(provider.ClientId, provider.ClientSecret, provider.Host, provider.Port, provider.Type, sslMode, provider.EnableProxy)
 	sender, err := smtpEmailProvider.Dialer.Dial()
@@ -32,8 +36,13 @@ func TestSmtpServer(provider *Provider) error {
 }
 
 func SendEmail(provider *Provider, title string, content string, dest []string, sender string) error {
+	if err := checkTenantProviderHost(provider, provider.Host); err != nil {
+		return err
+	}
+
 	sslMode := getSslMode(provider)
 	emailProvider := email.GetEmailProvider(provider.Type, provider.ClientId, provider.ClientSecret, provider.Host, provider.Port, sslMode, provider.Endpoint, provider.Method, provider.HttpHeaders, provider.UserMapping, provider.IssuerUrl, provider.EnableProxy)
+	restrictTenantEmailProvider(provider, emailProvider)
 
 	fromAddress := provider.ClientId2
 	if fromAddress == "" {
