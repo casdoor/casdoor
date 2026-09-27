@@ -65,7 +65,7 @@ func (p *SCIMSyncerProvider) TestConnection() error {
 		return err
 	}
 
-	client := &http.Client{Timeout: 30 * time.Second}
+	client := p.Syncer.getHttpClient()
 	resp, err := client.Do(req)
 	if err != nil {
 		return err
@@ -200,7 +200,7 @@ func (p *SCIMSyncerProvider) getSCIMUsers() ([]*OriginalUser, error) {
 			return nil, err
 		}
 
-		client := &http.Client{Timeout: 30 * time.Second}
+		client := p.Syncer.getHttpClient()
 		resp, err := client.Do(req)
 		if err != nil {
 			return nil, err

@@ -636,7 +636,7 @@ func IsUserOfApplication(user *User, application *Application) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	return organization != nil && organization.DefaultApplication == application.Name, nil
+	return organization != nil && organization.DefaultApplication == application.Name && application.Organization == "built-in", nil
 }
 
 func CheckApplicationSignin(application *Application, user *User, clientIp string, lang string) error {
@@ -921,6 +921,20 @@ func checkUserGroups(oldUser, user *User, lang string) string {
 		}
 	}
 	return ""
+}
+
+func getOrganizationGroups(owner string, groups []string) []string {
+	if len(groups) == 0 {
+		return groups
+	}
+
+	res := []string{}
+	for _, group := range groups {
+		if strings.HasPrefix(group, owner+"/") {
+			res = append(res, group)
+		}
+	}
+	return res
 }
 
 func CheckToEnableCaptcha(application *Application, organization, username string, clientIp string) (bool, error) {

@@ -1031,6 +1031,8 @@ func AddUser(user *User, lang string) (bool, error) {
 		return false, errors.New(i18n.Translate(lang, "user:the user's owner and name should not be empty"))
 	}
 
+	user.Groups = getOrganizationGroups(user.Owner, user.Groups)
+
 	if CheckUsernameWithEmail(user.Name, "en") != "" {
 		user.Name = util.GetRandomName()
 	}

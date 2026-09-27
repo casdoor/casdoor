@@ -17,7 +17,6 @@ package object
 import (
 	"errors"
 	"fmt"
-	"net/http"
 	"net/url"
 	"regexp"
 	"strings"
@@ -829,7 +828,7 @@ func callProviderLogoutUrl(provider *Provider, accessToken string) {
 	params.Set("client_id", provider.ClientId)
 	params.Set("client_secret", provider.ClientSecret)
 
-	resp, err := http.PostForm(provider.CustomLogoutUrl, params)
+	resp, err := getProviderHttpClient(provider).PostForm(provider.CustomLogoutUrl, params)
 	if err != nil {
 		util.LogWarning(nil, "InvokeCustomProviderLogout: failed to call logout URL %s for provider %s: %v", provider.CustomLogoutUrl, provider.Name, err)
 		return

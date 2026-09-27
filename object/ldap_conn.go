@@ -635,11 +635,13 @@ func buildLdapUserGroups(owner string, ldap *Ldap, memberOf []string, existingGr
 	}
 
 	if len(ldap.DefaultGroups) > 0 {
-		for _, g := range ldap.DefaultGroups {
+		for _, g := range getOrganizationGroups(owner, ldap.DefaultGroups) {
 			addGroup(g)
 		}
 	} else if ldap.DefaultGroup != "" {
-		addGroup(ldap.DefaultGroup)
+		for _, g := range getOrganizationGroups(owner, []string{ldap.DefaultGroup}) {
+			addGroup(g)
+		}
 	}
 
 	// Extract group names from memberOf DNs. Only attach groups that
