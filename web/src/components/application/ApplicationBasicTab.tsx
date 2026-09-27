@@ -176,7 +176,14 @@ export function ApplicationBasicTab({
         <TagsInput value={application.tags ?? []} onChange={(v) => updateField("tags", v)} />
       </FormRow>
       <FormRow labelKey="application:Default tag">
-        <Input value={application.defaultTag ?? ""} onChange={(e) => updateField("defaultTag", e.target.value)} />
+        <SearchableSelect
+          value={application.defaultTag ?? ""}
+          onChange={(v) => updateField("defaultTag", v)}
+          options={[
+            {value: "", label: i18next.t("general:Default")},
+            ...(application.tags ?? []).map((tag: string) => ({value: tag, label: tag})),
+          ]}
+        />
       </FormRow>
       <FormRow labelKey="application:Order">
         <Input

@@ -1241,10 +1241,13 @@ export default function ProviderEditPage() {
               <SearchableSelect
                 value={provider.providerUrl ?? ""}
                 onChange={(v) => updateProviderField("providerUrl", v)}
-                options={storageProviders.map((item: any) => ({
-                  value: item.name,
-                  label: item.displayName || item.name,
-                }))}
+                options={[
+                  {value: "", label: i18next.t("general:None")},
+                  ...storageProviders.map((item: any) => ({
+                    value: item.name,
+                    label: item.displayName || item.name,
+                  })),
+                ]}
               />
             </FormRow>
           </React.Fragment>
