@@ -811,7 +811,7 @@ func (c *ApiController) RemoveUserFromGroup() {
 	if err != nil {
 		return
 	}
-	item := object.GetAccountItemByName("Groups", organization)
+	item := object.GetAccountItemForUpdate("Groups", organization)
 	res, msg := object.CheckAccountItemModifyRule(item, c.IsAdmin(), c.GetAcceptLanguage())
 	if !res {
 		c.ResponseError(msg)

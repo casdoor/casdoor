@@ -552,7 +552,7 @@ func userVisible(isAdmin bool, item *AccountItem) bool {
 // leave one of them out must not hand it to its users
 var adminOnlyAccountItems = []string{"User type", "Tag", "Properties", "Groups", "Need update password", "IP whitelist"}
 
-func getAccountItemForUpdate(name string, organization *Organization) *AccountItem {
+func GetAccountItemForUpdate(name string, organization *Organization) *AccountItem {
 	item := GetAccountItemByName(name, organization)
 	if item == nil && util.InSlice(adminOnlyAccountItems, name) {
 		return &AccountItem{Name: name, ViewRule: "Admin", ModifyRule: "Admin"}
@@ -647,7 +647,7 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, allowDis
 		}
 	}
 	if oldUser.Type != newUser.Type {
-		item := getAccountItemForUpdate("User type", organization)
+		item := GetAccountItemForUpdate("User type", organization)
 		if !userVisible(isAdmin, item) {
 			newUser.Type = oldUser.Type
 		} else {
@@ -736,7 +736,7 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, allowDis
 		}
 	}
 	if oldUser.Tag != newUser.Tag {
-		item := getAccountItemForUpdate("Tag", organization)
+		item := GetAccountItemForUpdate("Tag", organization)
 		if !userVisible(isAdmin, item) {
 			newUser.Tag = oldUser.Tag
 		} else {
@@ -890,7 +890,7 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, allowDis
 	}
 	newUserPropertiesJson, _ := json.Marshal(newUser.Properties)
 	if string(oldUserPropertiesJson) != string(newUserPropertiesJson) {
-		item := getAccountItemForUpdate("Properties", organization)
+		item := GetAccountItemForUpdate("Properties", organization)
 		if !userVisible(isAdmin, item) {
 			newUser.Properties = oldUser.Properties
 		} else {
@@ -917,7 +917,7 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, allowDis
 	}
 	newUserGroupsJson, _ := json.Marshal(newUser.Groups)
 	if string(oldUserGroupsJson) != string(newUserGroupsJson) {
-		item := getAccountItemForUpdate("Groups", organization)
+		item := GetAccountItemForUpdate("Groups", organization)
 		if !userVisible(isAdmin, item) {
 			newUser.Groups = oldUser.Groups
 		} else {
@@ -978,7 +978,7 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, allowDis
 		}
 	}
 	if oldUser.NeedUpdatePassword != newUser.NeedUpdatePassword {
-		item := getAccountItemForUpdate("Need update password", organization)
+		item := GetAccountItemForUpdate("Need update password", organization)
 		if !userVisible(isAdmin, item) {
 			newUser.NeedUpdatePassword = oldUser.NeedUpdatePassword
 		} else {
@@ -986,7 +986,7 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, allowDis
 		}
 	}
 	if oldUser.IpWhitelist != newUser.IpWhitelist {
-		item := getAccountItemForUpdate("IP whitelist", organization)
+		item := GetAccountItemForUpdate("IP whitelist", organization)
 		if !userVisible(isAdmin, item) {
 			newUser.IpWhitelist = oldUser.IpWhitelist
 		} else {

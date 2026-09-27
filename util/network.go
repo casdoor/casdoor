@@ -62,6 +62,27 @@ func IsHostIntranet(ip string) bool {
 	return parsedIP.IsPrivate() || parsedIP.IsLoopback() || parsedIP.IsLinkLocalUnicast() || parsedIP.IsLinkLocalMulticast()
 }
 
+// IsCredentialedOrigin reports whether the browser origin may act with the Casdoor session cookie,
+// the same origins CorsFilter answers with "Access-Control-Allow-Credentials"
+func IsCredentialedOrigin(origin string, originConf string, host string) bool {
+	if origin == originConf {
+		return true
+	}
+
+	originUrl, err := url.Parse(origin)
+	if err != nil || originUrl.Host == "" {
+		return false
+	}
+
+	hostname, _, err := net.SplitHostPort(host)
+	if err != nil {
+		hostname = host
+	}
+
+	originHostname := originUrl.Hostname()
+	return originHostname == hostname || IsHostIntranet(hostname) && IsHostIntranet(originHostname)
+}
+
 // NewInternetOnlyHttpClient returns a client that refuses to connect to intranet, loopback,
 // link-local (e.g. cloud metadata) and unspecified addresses. The check runs on the resolved
 // IP of every connection, so DNS rebinding and redirects to such addresses are refused too.

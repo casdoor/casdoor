@@ -82,7 +82,7 @@ func CorsFilter(ctx *context.Context) {
 	}
 
 	if origin != "" {
-		if origin == originConf || originHostname == host || util.IsHostIntranet(host) && util.IsHostIntranet(originHostname) {
+		if util.IsCredentialedOrigin(origin, originConf, host) {
 			setCorsHeaders(ctx, origin)
 			return
 		}

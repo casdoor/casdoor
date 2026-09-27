@@ -1289,6 +1289,10 @@ func (c *ApiController) Login() {
 			}
 			// resp = &Response{Status: "ok", Msg: "", Data: res}
 		} else { // authForm.Method == "link"
+			if !c.checkCredentialedOrigin() {
+				return
+			}
+
 			userId := c.GetSessionUsername()
 			if userId == "" {
 				c.ResponseError(fmt.Sprintf(c.T("general:The user: %s doesn't exist"), util.GetId(application.Organization, userInfo.Id)), userInfo)
