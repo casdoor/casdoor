@@ -6,7 +6,7 @@ started as a port of the Ant Design console, which is kept for reference at
 over the same REST endpoints.
 
 ```
-Vite 5 · React 18 · TypeScript · Tailwind CSS 3 · shadcn/ui (Radix) · react-router 6 · i18next · reactflow
+Vite 5 · React 19 · TypeScript · Tailwind CSS 3 · shadcn/ui (Radix) · react-router 6 · i18next · reactflow
 ```
 
 ## Getting started
