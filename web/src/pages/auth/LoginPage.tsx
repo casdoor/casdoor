@@ -1166,9 +1166,11 @@ export default function LoginPage({type = "login", application: applicationProp,
           mfaProps={mfa.props}
           application={application}
           onSuccess={(res) =>
-            type === "cas"
-              ? handleCasLoginResult(res, mfa.authParams)
-              : handleLoginResult(res, mfa.values, mfa.authParams)
+            checkMfa(res, mfa.values, mfa.authParams, (doneRes) =>
+              type === "cas"
+                ? handleCasLoginResult(doneRes, mfa.authParams)
+                : handleLoginResult(doneRes, mfa.values, mfa.authParams),
+            )
           }
         />
       </AuthLayout>
