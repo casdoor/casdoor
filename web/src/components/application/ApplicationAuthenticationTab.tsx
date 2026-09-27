@@ -41,6 +41,17 @@ export function ApplicationAuthenticationTab({application, updateField}: Applica
           onCheckedChange={(v) => updateField("enableExclusiveSignin", v)}
         />
       </FormRow>
+      {application.enableExclusiveSignin ? (
+        <FormRow labelKey="application:Max sessions">
+          <Input
+            type="number"
+            min={1}
+            placeholder="1"
+            value={application.maxSessions || ""}
+            onChange={(e) => updateField("maxSessions", Setting.myParseInt(e.target.value))}
+          />
+        </FormRow>
+      ) : null}
       <FormRow labelKey="application:Signin session">
         <Switch
           checked={!!application.enableSigninSession}

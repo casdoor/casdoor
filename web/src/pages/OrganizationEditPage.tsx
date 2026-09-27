@@ -316,6 +316,17 @@ export default function OrganizationEditPage() {
           <FormRow labelKey="organization:Enable exclusive signin across applications">
             <Switch checked={!!organization.enableExclusiveSignin} onCheckedChange={(v) => update("enableExclusiveSignin", v)} />
           </FormRow>
+          {organization.enableExclusiveSignin ? (
+            <FormRow labelKey="application:Max sessions">
+              <Input
+                type="number"
+                min={1}
+                placeholder="1"
+                value={organization.maxSessions || ""}
+                onChange={(e) => update("maxSessions", Setting.myParseInt(e.target.value))}
+              />
+            </FormRow>
+          ) : null}
           <FormRow labelKey="organization:Disable console">
             <Switch checked={!!organization.disableConsole} onCheckedChange={(v) => update("disableConsole", v)} />
           </FormRow>

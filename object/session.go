@@ -50,8 +50,6 @@ type Session struct {
 
 	SessionId    []string       `json:"sessionId"`
 	SessionInfos []*SessionInfo `xorm:"mediumtext" json:"sessionInfos"`
-
-	ExclusiveSignin bool `xorm:"-"`
 }
 
 func GetSessions(owner string) ([]*Session, error) {
@@ -205,10 +203,6 @@ func AddSession(session *Session) (bool, error) {
 		}
 
 		removeExtraSessionIds(dbSession)
-
-		if session.ExclusiveSignin {
-			dbSession.SessionId = []string{session.SessionId[0]}
-		}
 
 		dbSession.SessionInfos = mergeSessionInfos(dbSession.SessionInfos, session.SessionInfos)
 		pruneSessionInfos(dbSession)
@@ -383,10 +377,11 @@ func DeleteUserSessionId(owner string, name string, beegoSessionId string) error
 	return nil
 }
 
-// EnforceSingleBrowserSession keeps only the current Beego session id of the user and drops
-// every other one across all applications, together with the tokens minted under them. An SSO
-// sign-in into another application reuses the same id, so it is not treated as a second session.
-func EnforceSingleBrowserSession(user *User, currentSessionId string, host string) error {
+// EnforceBrowserSessionLimit keeps the current Beego session id of the user plus the limit-1 most
+// recently active other live ones across all applications, and drops the rest together with the
+// tokens minted under them. An SSO sign-in into another application reuses the same id, so it is
+// not treated as a second session.
+func EnforceBrowserSessionLimit(user *User, currentSessionId string, limit int, host string) error {
 	if user == nil || currentSessionId == "" {
 		return nil
 	}
@@ -396,14 +391,7 @@ func EnforceSingleBrowserSession(user *User, currentSessionId string, host strin
 		return err
 	}
 
-	oldIds := []string{}
-	for _, session := range sessions {
-		for _, sid := range session.SessionId {
-			if sid != "" && sid != currentSessionId && !slices.Contains(oldIds, sid) {
-				oldIds = append(oldIds, sid)
-			}
-		}
-	}
+	oldIds := getEvictedSessionIds(sessions, getOtherSessionIds(sessions, currentSessionId), limit)
 	if len(oldIds) == 0 {
 		return nil
 	}
@@ -443,6 +431,95 @@ func EnforceSingleBrowserSession(user *User, currentSessionId string, host strin
 	}()
 
 	return nil
+}
+
+func EnforceApplicationSessionLimit(user *User, application string, currentSessionId string, limit int) error {
+	if user == nil || currentSessionId == "" {
+		return nil
+	}
+
+	sessions, err := GetUserSessions(user.Owner, user.Name)
+	if err != nil {
+		return err
+	}
+
+	index := slices.IndexFunc(sessions, func(session *Session) bool { return session.Application == application })
+	if index < 0 {
+		return nil
+	}
+	session := sessions[index]
+
+	oldIds := getEvictedSessionIds(sessions, getOtherSessionIds([]*Session{session}, currentSessionId), limit)
+	if len(oldIds) == 0 {
+		return nil
+	}
+
+	_, err = ExpireTokensByApplicationAndSessionIds(user.Owner, user.Name, application, oldIds)
+	if err != nil {
+		return err
+	}
+
+	DeleteBeegoSession(oldIds)
+
+	session.SessionId = slices.DeleteFunc(session.SessionId, func(sessionId string) bool { return slices.Contains(oldIds, sessionId) })
+	pruneSessionInfos(session)
+	_, err = updateSessionIds(session)
+	return err
+}
+
+func getOtherSessionIds(sessions []*Session, currentSessionId string) []string {
+	sessionIds := []string{}
+	for _, session := range sessions {
+		for _, sessionId := range session.SessionId {
+			if sessionId != "" && sessionId != currentSessionId && !slices.Contains(sessionIds, sessionId) {
+				sessionIds = append(sessionIds, sessionId)
+			}
+		}
+	}
+	return sessionIds
+}
+
+func getEvictedSessionIds(sessions []*Session, sessionIds []string, limit int) []string {
+	if limit <= 1 {
+		return sessionIds
+	}
+
+	lastActiveTimes, expireTimes := getSessionTimes(sessions)
+	liveIds := slices.DeleteFunc(slices.Clone(sessionIds), func(sessionId string) bool {
+		return !isSessionLive(sessionId, expireTimes[sessionId])
+	})
+	slices.SortStableFunc(liveIds, func(a, b string) int {
+		return lastActiveTimes[b].Compare(lastActiveTimes[a])
+	})
+	keptIds := liveIds[:min(len(liveIds), limit-1)]
+
+	return slices.DeleteFunc(slices.Clone(sessionIds), func(sessionId string) bool {
+		return slices.Contains(keptIds, sessionId)
+	})
+}
+
+func getSessionTimes(sessions []*Session) (map[string]time.Time, map[string]time.Time) {
+	lastActiveTimes := map[string]time.Time{}
+	expireTimes := map[string]time.Time{}
+	for _, session := range sessions {
+		for _, info := range session.SessionInfos {
+			if info == nil {
+				continue
+			}
+			if t, err := time.Parse(time.RFC3339, info.LastActiveTime); err == nil && t.After(lastActiveTimes[info.SessionId]) {
+				lastActiveTimes[info.SessionId] = t
+			}
+			if t, err := time.Parse(time.RFC3339, info.ExpireTime); err == nil && t.After(expireTimes[info.SessionId]) {
+				expireTimes[info.SessionId] = t
+			}
+		}
+	}
+	return lastActiveTimes, expireTimes
+}
+
+func isSessionLive(sessionId string, expireTime time.Time) bool {
+	exists, err := web.GlobalSessions.GetProvider().SessionExist(context.Background(), sessionId)
+	return err == nil && exists && (expireTime.IsZero() || expireTime.After(time.Now()))
 }
 
 func DeleteBeegoSession(sessionIds []string) {
