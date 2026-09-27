@@ -633,7 +633,13 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
     ),
     "UID number": (
       <AccountItemRow name="UID number" labelKey="general:UID number">
-        <Input value={user.uidNumber ?? ""} onChange={(e) => updateField("uidNumber", e.target.value)} />
+        <Input
+          type="number"
+          min={0}
+          step={1}
+          value={user.uidNumber ?? 0}
+          onChange={(e) => updateField("uidNumber", Setting.myParseInt(e.target.value))}
+        />
       </AccountItemRow>
     ),
     "Ranking": (
