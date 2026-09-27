@@ -80,7 +80,17 @@ func IsCredentialedOrigin(origin string, originConf string, host string) bool {
 	}
 
 	originHostname := originUrl.Hostname()
-	return originHostname == hostname || IsHostIntranet(hostname) && IsHostIntranet(originHostname)
+	return originHostname == hostname || isLoopbackHostname(hostname) && isLoopbackHostname(originHostname)
+}
+
+func isLoopbackHostname(hostname string) bool {
+	hostname = strings.Trim(hostname, "[]")
+	if strings.EqualFold(hostname, "localhost") {
+		return true
+	}
+
+	parsedIP := net.ParseIP(hostname)
+	return parsedIP != nil && parsedIP.IsLoopback()
 }
 
 // NewInternetOnlyHttpClient returns a client that refuses to connect to intranet, loopback,
