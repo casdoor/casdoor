@@ -102,6 +102,11 @@ func (c *McpController) isGlobalAdmin() (bool, *object.User) {
 	return user.IsGlobalAdmin(), user
 }
 
+func (c *McpController) isOrganizationAllowed(organization string) bool {
+	isGlobalAdmin, user := c.isGlobalAdmin()
+	return isGlobalAdmin || (user != nil && user.Owner == organization)
+}
+
 func (c *McpController) getCurrentUser() *object.User {
 	var user *object.User
 	var err error

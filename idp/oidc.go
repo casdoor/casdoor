@@ -118,7 +118,11 @@ func (idp *OidcIdProvider) resolveEndpoints() error {
 		return nil
 	}
 
-	discovery, err := GetOidcDiscovery(idp.Issuer)
+	client := idp.Client
+	if client == nil {
+		client = &http.Client{Timeout: 10 * time.Second}
+	}
+	discovery, err := getOidcDiscovery(idp.Issuer, client)
 	if err != nil {
 		return err
 	}
