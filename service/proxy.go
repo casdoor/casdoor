@@ -230,7 +230,7 @@ func handleRequest(w http.ResponseWriter, r *http.Request) {
 			redirectToCasdoor(casdoorClient, w, r)
 			return
 		} else {
-			_, err = casdoorClient.ParseJwtToken(cookie.Value)
+			err = checkSiteAccessToken(casdoorClient, cookie.Value)
 			if err != nil {
 				responseError(w, "CasWAF error: casdoorClient.ParseJwtToken() error: %s", err.Error())
 				return
@@ -282,23 +282,26 @@ func nextHandle(w http.ResponseWriter, r *http.Request) {
 	site := getSiteByDomainWithWww(r.Host)
 	host := site.GetHost()
 	if site.SslMode == "Static Folder" {
-		var path string
-		if r.RequestURI != "/" {
-			path = filepath.Join(host, r.RequestURI)
-		} else {
-			path = filepath.Join(host, "/index.htm")
-			if !util.FileExist(path) {
-				path = filepath.Join(host, "/index.html")
-				if !util.FileExist(path) {
-					path = filepath.Join(host, r.RequestURI)
-				}
-			}
-		}
-		http.ServeFile(w, r, path)
+		http.ServeFile(w, r, getStaticFolderPath(host, r.URL.Path))
 	} else {
 		targetUrl := joinPath(site.GetHost(), r.RequestURI)
 		forwardHandler(targetUrl, w, r)
 	}
+}
+
+func getStaticFolderPath(folder string, urlPath string) string {
+	if urlPath != "/" {
+		return filepath.Join(folder, urlPath)
+	}
+
+	path := filepath.Join(folder, "/index.htm")
+	if !util.FileExist(path) {
+		path = filepath.Join(folder, "/index.html")
+		if !util.FileExist(path) {
+			path = filepath.Join(folder, urlPath)
+		}
+	}
+	return path
 }
 
 func Start() {

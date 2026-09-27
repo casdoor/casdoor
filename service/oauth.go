@@ -18,6 +18,8 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"slices"
+	"strings"
 
 	"github.com/casdoor/casdoor-go-sdk/casdoorsdk"
 	"github.com/casdoor/casdoor/object"
@@ -37,6 +39,28 @@ func redirectToCasdoor(casdoorClient *casdoorsdk.Client, w http.ResponseWriter, 
 	originalPath := r.RequestURI
 	signinUrl := getSigninUrl(casdoorClient, callbackUrl, originalPath)
 	http.Redirect(w, r, signinUrl, http.StatusFound)
+}
+
+func checkSiteAccessToken(casdoorClient *casdoorsdk.Client, accessToken string) error {
+	claims, err := casdoorClient.ParseJwtToken(accessToken)
+	if err != nil {
+		return err
+	}
+
+	if claims.IsRefreshToken() || claims.TokenType == "refresh-token" {
+		return fmt.Errorf("a refresh token cannot be used as the access token")
+	}
+	if !slices.Contains(claims.Audience, casdoorClient.ClientId) {
+		return fmt.Errorf("the access token is not issued to the application: %s", casdoorClient.ApplicationName)
+	}
+	return nil
+}
+
+func getSafeRedirectPath(state string) string {
+	if !strings.HasPrefix(state, "/") || strings.HasPrefix(state, "//") || strings.HasPrefix(state, "/\\") {
+		return "/"
+	}
+	return state
 }
 
 func handleAuthCallback(w http.ResponseWriter, r *http.Request) {
@@ -85,6 +109,5 @@ func handleAuthCallback(w http.ResponseWriter, r *http.Request) {
 	}
 	http.SetCookie(w, cookie)
 
-	originalPath := state
-	http.Redirect(w, r, originalPath, http.StatusFound)
+	http.Redirect(w, r, getSafeRedirectPath(state), http.StatusFound)
 }

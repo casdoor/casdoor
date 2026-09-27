@@ -117,6 +117,10 @@ func (c *ApiController) GetSite() {
 // @Success 200 {object} controllers.Response The Response object
 // @router /update-site [post]
 func (c *ApiController) UpdateSite() {
+	if !c.requireGlobalAdmin() {
+		return
+	}
+
 	id := c.Ctx.Input.Query("id")
 
 	var site object.Site
@@ -138,6 +142,10 @@ func (c *ApiController) UpdateSite() {
 // @Success 200 {object} controllers.Response The Response object
 // @router /add-site [post]
 func (c *ApiController) AddSite() {
+	if !c.requireGlobalAdmin() {
+		return
+	}
+
 	var site object.Site
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &site)
 	if err != nil {
