@@ -125,6 +125,14 @@ func handleBind(w ldap.ResponseWriter, m *ldap.Message) {
 			return
 		}
 
+		if bindUser.IsMfaEnabled() {
+			log.Printf("Bind failed User=%s, ErrMsg=the user has MFA enabled", string(r.Name()))
+			res.SetResultCode(ldap.LDAPResultInvalidCredentials)
+			res.SetDiagnosticMessage("the user has MFA enabled and cannot bind with a password")
+			w.Write(res)
+			return
+		}
+
 		if bindOrg == "built-in" || bindUser.IsGlobalAdmin() {
 			m.Client.IsGlobalAdmin, m.Client.IsOrgAdmin = true, true
 		} else if bindUser.IsAdmin {

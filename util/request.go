@@ -18,23 +18,84 @@ import (
 	"net"
 	"net/http"
 	"strings"
+
+	"github.com/casdoor/casdoor/conf"
 )
 
 func GetClientIp(r *http.Request) string {
-	forwarded := r.Header.Get("X-Forwarded-For")
-	if forwarded != "" {
-		clientIP := strings.Split(forwarded, ",")[0]
-		return strings.TrimSpace(clientIP)
-	}
+	return GetClientIpFromRequest(r)
+}
 
-	realIP := r.Header.Get("X-Real-IP")
-	if realIP != "" {
-		return realIP
-	}
-
-	ip, _, err := net.SplitHostPort(r.RemoteAddr)
+func getRemoteIp(r *http.Request) string {
+	host, _, err := net.SplitHostPort(r.RemoteAddr)
 	if err != nil {
-		return r.RemoteAddr
+		host = r.RemoteAddr
 	}
-	return ip
+	return strings.Trim(host, "[]")
+}
+
+func isTrustedProxy(ip string) bool {
+	parsedIp := net.ParseIP(ip)
+	if parsedIp == nil {
+		return false
+	}
+
+	trustedProxies := strings.TrimSpace(conf.GetConfigString("trustedProxies"))
+	if trustedProxies == "" {
+		return parsedIp.IsLoopback() || parsedIp.IsPrivate()
+	}
+
+	for _, proxy := range strings.Split(trustedProxies, ",") {
+		proxy = strings.TrimSpace(proxy)
+		if proxy == "*" {
+			return true
+		}
+		if _, ipNet, err := net.ParseCIDR(proxy); err == nil {
+			if ipNet.Contains(parsedIp) {
+				return true
+			}
+		} else if proxyIp := net.ParseIP(proxy); proxyIp != nil && proxyIp.Equal(parsedIp) {
+			return true
+		}
+	}
+	return false
+}
+
+func parseForwardedIp(value string) string {
+	value = strings.TrimSpace(value)
+	if host, _, err := net.SplitHostPort(value); err == nil {
+		value = host
+	}
+	return strings.Trim(value, "[]")
+}
+
+func getForwardedClientIp(r *http.Request) string {
+	forwardedIps := []string{}
+	for _, header := range r.Header.Values("X-Forwarded-For") {
+		for _, value := range strings.Split(header, ",") {
+			if ip := parseForwardedIp(value); ip != "" {
+				forwardedIps = append(forwardedIps, ip)
+			}
+		}
+	}
+
+	for i := len(forwardedIps) - 1; i >= 0; i-- {
+		if !isTrustedProxy(forwardedIps[i]) || i == 0 {
+			return forwardedIps[i]
+		}
+	}
+
+	return parseForwardedIp(r.Header.Get("X-Real-IP"))
+}
+
+func GetClientIpFromRequest(r *http.Request) string {
+	remoteIp := getRemoteIp(r)
+	if !isTrustedProxy(remoteIp) {
+		return remoteIp
+	}
+
+	if clientIp := getForwardedClientIp(r); clientIp != "" {
+		return clientIp
+	}
+	return remoteIp
 }

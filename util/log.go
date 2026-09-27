@@ -16,43 +16,10 @@ package util
 
 import (
 	"fmt"
-	"net"
-	"net/http"
-	"strings"
 
 	"github.com/beego/beego/v2/core/logs"
 	"github.com/beego/beego/v2/server/web/context"
 )
-
-func getIpInfo(clientIp string) string {
-	if clientIp == "" {
-		return ""
-	}
-
-	first := strings.TrimSpace(strings.Split(clientIp, ",")[0])
-	if host, _, err := net.SplitHostPort(first); err == nil {
-		return strings.Trim(host, "[]")
-	}
-
-	return strings.Trim(first, "[]")
-}
-
-func GetClientIpFromRequest(req *http.Request) string {
-	clientIp := req.Header.Get("x-forwarded-for")
-	if clientIp == "" {
-		ipPort := strings.Split(req.RemoteAddr, ":")
-		if len(ipPort) >= 1 && len(ipPort) <= 2 {
-			clientIp = ipPort[0]
-		} else if len(ipPort) > 2 {
-			idx := strings.LastIndex(req.RemoteAddr, ":")
-			clientIp = req.RemoteAddr[0:idx]
-			clientIp = strings.TrimLeft(clientIp, "[")
-			clientIp = strings.TrimRight(clientIp, "]")
-		}
-	}
-
-	return getIpInfo(clientIp)
-}
 
 func LogInfo(ctx *context.Context, f string, v ...interface{}) {
 	ipString := fmt.Sprintf("(%s) ", GetClientIpFromRequest(ctx.Request))
