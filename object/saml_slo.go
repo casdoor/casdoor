@@ -21,7 +21,6 @@ import (
 	"encoding/pem"
 	"encoding/xml"
 	"fmt"
-	"net/http"
 	"net/url"
 	"strings"
 	"time"
@@ -209,7 +208,7 @@ func SendSamlLogout(owner string, name string, sessionIds []string, host string)
 			continue
 		}
 
-		go postSamlLogoutRequest(application.SamlSingleLogoutUrl, logoutRequest)
+		go postLogoutForm(application, application.SamlSingleLogoutUrl, url.Values{"SAMLRequest": {logoutRequest}})
 	}
 }
 
@@ -235,14 +234,6 @@ func newSamlLogoutRequest(application *Application, samlSession *SamlSession, ho
 	}
 
 	return signSamlPostMessage(ctx, request)
-}
-
-func postSamlLogoutRequest(logoutUrl string, logoutRequest string) {
-	resp, err := http.PostForm(logoutUrl, url.Values{"SAMLRequest": {logoutRequest}})
-	if err != nil {
-		return
-	}
-	defer resp.Body.Close()
 }
 
 // GetSamlLogoutResponse builds the LogoutResponse for an SP-initiated LogoutRequest. Over the HTTP-POST
