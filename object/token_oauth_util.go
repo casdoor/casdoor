@@ -439,13 +439,6 @@ func RefreshToken(application *Application, grantType string, refreshToken strin
 		}
 	}
 
-	if clientSecret != "" && application.ClientSecret != clientSecret {
-		return &TokenError{
-			Error:            InvalidClient,
-			ErrorDescription: "client_secret is invalid",
-		}, nil
-	}
-
 	// check whether the refresh token is valid, and has not expired.
 	token, err := GetTokenByRefreshToken(refreshToken)
 	if err != nil || token == nil {
@@ -453,6 +446,10 @@ func RefreshToken(application *Application, grantType string, refreshToken strin
 			Error:            InvalidGrant,
 			ErrorDescription: "refresh token is invalid or revoked",
 		}, nil
+	}
+
+	if tokenError := checkRefreshClientSecret(application, token, clientSecret); tokenError != nil {
+		return tokenError, nil
 	}
 
 	// check if the token has been invalidated (e.g., by SSO logout)
@@ -574,6 +571,7 @@ func RefreshToken(application *Application, grantType string, refreshToken strin
 		Scope:        scope,
 		TokenType:    "Bearer",
 		Resource:     resource,
+		GrantType:    token.GrantType,
 		// the refreshed token stays bound to the login session that minted the original one
 		SessionId: token.SessionId,
 	}
@@ -605,6 +603,24 @@ func RefreshToken(application *Application, grantType string, refreshToken strin
 		Scope:        newToken.Scope,
 	}
 	return tokenWrapper, nil
+}
+
+// clientAuthenticatedGrantTypes mark the tokens of a client that authenticated with its secret,
+// their refresh tokens are of no use without the secret either
+var clientAuthenticatedGrantTypes = []string{"authorization_code", "urn:ietf:params:oauth:grant-type:token-exchange"}
+
+func checkRefreshClientSecret(application *Application, token *Token, clientSecret string) *TokenError {
+	if clientSecret == "" && !util.InSlice(clientAuthenticatedGrantTypes, token.GrantType) {
+		return nil
+	}
+
+	if application.ClientSecret != clientSecret {
+		return &TokenError{
+			Error:            InvalidClient,
+			ErrorDescription: "client_secret is invalid",
+		}
+	}
+	return nil
 }
 
 func ValidateJwtAssertion(clientAssertion string, application *Application, host string) (bool, *Claims, error) {

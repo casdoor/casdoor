@@ -442,7 +442,7 @@ func (c *ApiController) RefreshToken() {
 		}
 	}
 
-	ok, application, clientId, _, err := c.ValidateOAuth(true)
+	ok, application, clientId, clientSecret, err := c.ValidateOAuth(true)
 	if err != nil || !ok {
 		return
 	}

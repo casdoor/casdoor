@@ -440,10 +440,12 @@ func (c *ApiController) GetApplicationLogin() {
 			return
 		}
 
-		err = object.CheckCasLogin(application, c.GetAcceptLanguage(), redirectUri)
-		if err != nil {
-			c.ResponseError(err.Error())
-			return
+		if redirectUri != "" {
+			err = object.CheckCasLogin(application, c.GetAcceptLanguage(), redirectUri)
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
 		}
 	} else if loginType == "device" {
 		deviceAuthCache, ok := object.DeviceAuthMap.Load(userCode)

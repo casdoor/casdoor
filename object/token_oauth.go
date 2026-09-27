@@ -253,6 +253,10 @@ func GetAuthorizationCodeToken(application *Application, clientSecret string, co
 			ErrorDescription: fmt.Sprintf("authorization code has expired, nowUnix: [%s], token.CodeExpireIn: [%s]", time.Unix(nowUnix, 0).Format(time.RFC3339), time.Unix(token.CodeExpireIn, 0).Format(time.RFC3339)),
 		}, nil
 	}
+
+	if clientSecret != "" {
+		token.GrantType = "authorization_code"
+	}
 	return token, nil, nil
 }
 
@@ -823,6 +827,7 @@ func GetTokenExchangeToken(application *Application, clientSecret string, subjec
 		TokenType:    "Bearer",
 		CodeIsUsed:   true,
 		Resource:     targetAudience,
+		GrantType:    "urn:ietf:params:oauth:grant-type:token-exchange",
 	}
 
 	_, err = AddToken(token)

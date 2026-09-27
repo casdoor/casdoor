@@ -20,15 +20,18 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"net/url"
+	"os"
+	"path/filepath"
 	"reflect"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/casbin/casbin/v2"
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/faceId"
 	"github.com/casdoor/casdoor/i18n"
-	"github.com/casdoor/casdoor/proxy"
 	"github.com/casdoor/casdoor/util"
 	"github.com/go-webauthn/webauthn/webauthn"
 	"github.com/xorm-io/builder"
@@ -1634,17 +1637,45 @@ func (user *User) HasFaceIdImage() bool {
 	return false
 }
 
+const maxFaceIdImageSize = 10 << 20
+
+// getFaceIdImage fetches a face image the user set the URL of, so it must not reach the intranet,
+// except for the files uploaded to the "Local File System" storage, which are read from disk
+func getFaceIdImage(imageUrl string) ([]byte, error) {
+	if data, ok := readLocalUploadedFile(imageUrl); ok {
+		return data, nil
+	}
+
+	resp, err := util.NewInternetOnlyHttpClient(30 * time.Second).Get(imageUrl)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	return io.ReadAll(io.LimitReader(resp.Body, maxFaceIdImageSize))
+}
+
+func readLocalUploadedFile(fileUrl string) ([]byte, bool) {
+	urlObj, err := url.Parse(fileUrl)
+	if err != nil {
+		return nil, false
+	}
+
+	filePath := strings.TrimPrefix(urlObj.Path, "/files/")
+	if filePath == urlObj.Path || !filepath.IsLocal(filePath) {
+		return nil, false
+	}
+
+	data, err := os.ReadFile(filepath.Join("files", filePath))
+	return data, err == nil
+}
+
 func (user *User) CheckUserFace(faceIdImage []string, provider *Provider) (bool, error) {
 	faceIdChecker := faceId.GetFaceIdProvider(provider.Type, provider.ClientId, provider.ClientSecret, provider.Endpoint)
-	httpClient := proxy.DefaultHttpClient
 	errList := []error{}
 	for _, userFaceId := range user.FaceIds {
 		if userFaceId.ImageUrl != "" {
-			imgResp, err := httpClient.Get(userFaceId.ImageUrl)
-			if err != nil {
-				continue
-			}
-			imgByte, err := io.ReadAll(imgResp.Body)
+			imgByte, err := getFaceIdImage(userFaceId.ImageUrl)
 			if err != nil {
 				continue
 			}

@@ -184,7 +184,7 @@ func GetTokenByTokenValue(tokenValue, tokenTypeHint string) (*Token, error) {
 }
 
 func updateUsedByCode(token *Token) (bool, error) {
-	affected, err := ormer.Engine.Where("code=?", token.Code).Cols("code_is_used").Update(token)
+	affected, err := ormer.Engine.Where("code=?", token.Code).Cols("code_is_used", "grant_type").Update(token)
 	if err != nil {
 		return false, err
 	}
