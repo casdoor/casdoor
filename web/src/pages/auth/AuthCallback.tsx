@@ -262,7 +262,7 @@ export default function AuthCallback() {
           props: res.data2,
           values: {...body, providerBack: body.provider, provider: ""},
           authParams,
-          onSuccess: onDone,
+          onSuccess: (mfaRes: any) => checkMfa(mfaRes, authParams, onDone),
         });
       } else if (res.data === "SelectPlan") {
         const pricing = res.data2;

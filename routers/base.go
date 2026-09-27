@@ -188,6 +188,13 @@ func getUsernameByAccessKey(ctx *context.Context) (string, error) {
 	}
 
 	if key.User != "" {
+		isUserActive, err := key.IsUserActive()
+		if err != nil {
+			return "", err
+		}
+		if !isUserActive {
+			return "", fmt.Errorf("The user of access key: %s is forbidden or deleted", key.Name)
+		}
 		return util.GetId(key.Organization, key.User), nil
 	}
 

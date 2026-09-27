@@ -209,6 +209,22 @@ func (key *Key) GetId() string {
 	return fmt.Sprintf("%s/%s", key.Owner, key.Name)
 }
 
+func (key *Key) IsUserActive() (bool, error) {
+	if key.User == "" {
+		return true, nil
+	}
+
+	user, err := getUser(key.Organization, key.User)
+	if err != nil {
+		return false, err
+	}
+	if user == nil {
+		return false, nil
+	}
+
+	return !user.IsForbidden && !user.IsDeleted, nil
+}
+
 // ValidateKeyByType checks whether the given accessKey/accessSecret pair refers to a
 // valid, active, non-expired Key record of the specified type. It returns the matched
 // Key on success and an error describing the validation failure otherwise.

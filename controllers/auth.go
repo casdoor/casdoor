@@ -520,19 +520,35 @@ func (c *ApiController) setMfaRememberCookie(user *object.User, maxAge int) erro
 	return nil
 }
 
-func checkMfaEnable(c *ApiController, user *object.User, organization *object.Organization, verificationType string) bool {
-	if object.IsNeedPromptMfa(organization, user) {
-		// The prompt page needs the user to be signed in
-		c.renewSessionIdForUser(user.GetId())
-		c.SetSessionUsername(user.GetId())
-		c.ResponseOk(object.RequiredMfa)
+func (c *ApiController) promptMfaSetup(user *object.User, organization *object.Organization) bool {
+	if !object.IsNeedPromptMfa(organization, user) {
+		return false
+	}
+
+	// The prompt page needs the user to be signed in
+	c.renewSessionIdForUser(user.GetId())
+	c.SetSessionUsername(user.GetId())
+	c.ResponseOk(object.RequiredMfa)
+	return true
+}
+
+func (c *ApiController) promptMfaSetupAfterMfa(user *object.User) bool {
+	organization, err := object.GetOrganizationByUser(user)
+	if err != nil {
+		c.ResponseError(err.Error())
 		return true
 	}
 
-	if user.IsMfaEnabled() {
-		if object.IsMfaRemembered(user, c.Ctx.GetCookie(object.MfaRememberCookieName)) {
-			return false
-		}
+	if !c.promptMfaSetup(user, organization) {
+		return false
+	}
+
+	c.setMfaUserSession("")
+	return true
+}
+
+func checkMfaEnable(c *ApiController, user *object.User, organization *object.Organization, verificationType string) bool {
+	if user.IsMfaEnabled() && !object.IsMfaRemembered(user, c.Ctx.GetCookie(object.MfaRememberCookieName)) {
 		c.setMfaUserSession(user.GetId())
 		mfaList := object.GetAllMfaProps(user, true)
 		mfaAllowList := []*object.MfaProps{}
@@ -552,7 +568,7 @@ func checkMfaEnable(c *ApiController, user *object.User, organization *object.Or
 		}
 	}
 
-	return false
+	return c.promptMfaSetup(user, organization)
 }
 
 func getExistUserByBindingRule(providerItem *object.ProviderItem, application *object.Application, userInfo *idp.UserInfo) (user *object.User, err error) {
@@ -1403,6 +1419,10 @@ func (c *ApiController) Login() {
 			}
 		} else {
 			c.ResponseError("missing passcode or recovery code")
+			return
+		}
+
+		if c.promptMfaSetupAfterMfa(user) {
 			return
 		}
 
