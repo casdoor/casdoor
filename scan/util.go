@@ -9,7 +9,6 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/beego/beego/v2/core/logs"
 	"github.com/casdoor/casdoor/object"
@@ -118,13 +117,12 @@ func normalizeScanBaseURL(rawURL string) (string, string, error) {
 	return rawURL, baseURL, nil
 }
 
-func getOnlineScanLists(link string) ([]CVE, []Fingerprint, error) {
+func getOnlineScanLists(client *http.Client, link string) ([]CVE, []Fingerprint, error) {
 	request, err := http.NewRequest(http.MethodGet, strings.TrimSpace(link), nil)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	client := &http.Client{Timeout: 10 * time.Second}
 	response, err := client.Do(request)
 	if err != nil {
 		return nil, nil, err

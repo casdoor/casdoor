@@ -38,6 +38,19 @@ type LdapSyncResp struct {
 	Failed []object.LdapUser `json:"failed"`
 }
 
+func (c *ApiController) requireLdapOfOwner(owner string, ldapId string) bool {
+	ldap, err := object.GetLdapOfOwner(owner, ldapId)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return false
+	}
+	if ldap == nil {
+		c.ResponseError(fmt.Sprintf(c.T("general:The LDAP: %s does not exist"), ldapId))
+		return false
+	}
+	return true
+}
+
 // GetLdapUsers
 // @Title GetLdapser
 // @Tag Account API
@@ -48,12 +61,12 @@ type LdapSyncResp struct {
 func (c *ApiController) GetLdapUsers() {
 	id := c.Ctx.Input.Query("id")
 
-	_, ldapId, err := util.GetOwnerAndNameFromIdWithError(id)
+	owner, ldapId, err := util.GetOwnerAndNameFromIdWithError(id)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
-	ldapServer, err := object.GetLdap(ldapId)
+	ldapServer, err := object.GetLdapOfOwner(owner, ldapId)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -134,12 +147,12 @@ func (c *ApiController) GetLdap() {
 		return
 	}
 
-	_, name, err := util.GetOwnerAndNameFromIdWithError(id)
+	owner, name, err := util.GetOwnerAndNameFromIdWithError(id)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
-	ldap, err := object.GetLdap(name)
+	ldap, err := object.GetLdapOfOwner(owner, name)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -215,7 +228,7 @@ func (c *ApiController) UpdateLdap() {
 		return
 	}
 
-	prevLdap, err := object.GetLdap(ldap.Id)
+	prevLdap, err := object.GetLdapOfOwner(ldap.Owner, ldap.Id)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -260,6 +273,10 @@ func (c *ApiController) DeleteLdap() {
 		return
 	}
 
+	if !c.requireLdapOfOwner(ldap.Owner, ldap.Id) {
+		return
+	}
+
 	affected, err := object.DeleteLdap(&ldap)
 	if err != nil {
 		c.ResponseError(err.Error())
@@ -287,6 +304,10 @@ func (c *ApiController) SyncLdapUsers() {
 		c.ResponseError(err.Error())
 		return
 	}
+	if !c.requireLdapOfOwner(owner, ldapId) {
+		return
+	}
+
 	var users []object.LdapUser
 	err = json.Unmarshal(c.Ctx.Input.RequestBody, &users)
 	if err != nil {

@@ -159,7 +159,7 @@ func stopLogProviderRuntime(providerID string) {
 }
 
 // GetOpenClawProviderByIP returns the running OpenClawProvider whose Host field
-// matches clientIP, or whose Host is empty (meaning any IP is allowed).
+// matches clientIP, or else one whose Host is empty (meaning any IP is allowed).
 // Returns nil if no matching provider is registered.
 func GetOpenClawProviderByIP(clientIP string) (*log.OpenClawProvider, error) {
 	providers := []*Provider{}
@@ -171,14 +171,22 @@ func GetOpenClawProviderByIP(clientIP string) (*log.OpenClawProvider, error) {
 	runningCollectorsMu.Lock()
 	defer runningCollectorsMu.Unlock()
 
-	for _, p := range providers {
-		if p.Host == "" || p.Host == clientIP {
-			if lp, ok := runningCollectors[p.GetId()]; ok {
-				if ocp, ok := lp.(*log.OpenClawProvider); ok {
-					return ocp, nil
-				}
-			}
+	for _, host := range []string{clientIP, ""} {
+		if ocp := findRunningOpenClawProvider(providers, host); ocp != nil {
+			return ocp, nil
 		}
 	}
 	return nil, nil
+}
+
+func findRunningOpenClawProvider(providers []*Provider, host string) *log.OpenClawProvider {
+	for _, p := range providers {
+		if p.Host != host {
+			continue
+		}
+		if ocp, ok := runningCollectors[p.GetId()].(*log.OpenClawProvider); ok {
+			return ocp
+		}
+	}
+	return nil
 }

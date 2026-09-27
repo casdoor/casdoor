@@ -65,9 +65,19 @@ func checkOrderPlan(owner string, productInfo ProductInfo, product Product) erro
 	return nil
 }
 
+func checkOrderUser(owner string, user *User) error {
+	if user.Owner != owner {
+		return fmt.Errorf("the user: %s does not belong to the organization: %s", user.GetId(), owner)
+	}
+	return nil
+}
+
 func PlaceOrder(owner string, reqProductInfos []ProductInfo, user *User, couponCode string) (*Order, error) {
 	if len(reqProductInfos) == 0 {
 		return nil, fmt.Errorf("order has no products")
+	}
+	if err := checkOrderUser(owner, user); err != nil {
+		return nil, err
 	}
 
 	productNames := make([]string, 0, len(reqProductInfos))

@@ -187,7 +187,7 @@ func processArgsToTempFiles(args []string) ([]string, []string, error) {
 // @Success 200 {object} controllers.Response The Response object
 // @router /run-casbin-command [get]
 func (c *ApiController) RunCasbinCommand() {
-	if !conf.IsDemoMode() && !c.IsAdmin() {
+	if !conf.IsDemoMode() && !c.IsGlobalAdmin() {
 		c.ResponseError(c.T("auth:Unauthorized operation"))
 		return
 	}

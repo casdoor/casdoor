@@ -172,6 +172,14 @@ func (c *ApiController) RequireAdmin() (string, bool) {
 	return user.Owner, true
 }
 
+func (c *ApiController) RequireGlobalAdmin() bool {
+	if !c.IsGlobalAdmin() {
+		c.ResponseError(c.T("auth:Unauthorized operation"))
+		return false
+	}
+	return true
+}
+
 func (c *ApiController) IsOrgAdmin() (bool, bool) {
 	userId, ok := c.RequireSignedIn()
 	if !ok {

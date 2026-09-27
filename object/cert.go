@@ -80,6 +80,16 @@ func GetCerts(owner string) ([]*Cert, error) {
 	return certs, nil
 }
 
+func getGlobalOwnedCerts() ([]*Cert, error) {
+	certs := []*Cert{}
+	err := ormer.Engine.Where("owner = ? or owner = ?", "admin", "built-in").Desc("created_time").Find(&certs)
+	if err != nil {
+		return certs, err
+	}
+
+	return certs, nil
+}
+
 func GetPaginationCerts(owner string, offset, limit int, field, value, sortField, sortOrder string) ([]*Cert, error) {
 	certs := []*Cert{}
 	session := GetSession("", offset, limit, field, value, sortField, sortOrder)
@@ -126,24 +136,6 @@ func getCert(owner string, name string) (*Cert, error) {
 	existed, err := ormer.Engine.Get(&cert)
 	if err != nil {
 		return &cert, err
-	}
-
-	if existed {
-		return &cert, nil
-	} else {
-		return nil, nil
-	}
-}
-
-func getCertByName(name string) (*Cert, error) {
-	if name == "" {
-		return nil, nil
-	}
-
-	cert := Cert{Name: name}
-	existed, err := ormer.Engine.Get(&cert)
-	if err != nil {
-		return &cert, nil
 	}
 
 	if existed {
@@ -315,7 +307,7 @@ func RenewCert(cert *Cert) (bool, error) {
 
 func getCertByApplication(application *Application) (*Cert, error) {
 	if application.Cert != "" {
-		return getCertByName(application.Cert)
+		return GetCert(util.GetId(application.Organization, application.Cert))
 	} else {
 		return GetDefaultCert()
 	}

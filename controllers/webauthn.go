@@ -94,6 +94,7 @@ func (c *ApiController) WebAuthnSignupFinish() {
 		c.ResponseError(c.T("webauthn:Please call WebAuthnSigninBegin first"))
 		return
 	}
+	c.DelSession("registration")
 	c.Ctx.Request.Body = io.NopCloser(bytes.NewBuffer(c.Ctx.Input.RequestBody))
 
 	credential, err := webauthnObj.FinishRegistration(user, sessionData, c.Ctx.Request)
@@ -185,6 +186,7 @@ func (c *ApiController) WebAuthnSigninFinish() {
 		c.ResponseError(c.T("webauthn:Please call WebAuthnSigninBegin first"))
 		return
 	}
+	c.DelSession("authentication")
 	c.Ctx.Request.Body = io.NopCloser(bytes.NewBuffer(c.Ctx.Input.RequestBody))
 
 	var user *object.User

@@ -32,8 +32,7 @@ import (
 // @Success 200 {object} controllers.Response The Response object
 // @router /sync-intranet-servers [post]
 func (c *ApiController) SyncIntranetServers() {
-	_, ok := c.RequireAdmin()
-	if !ok {
+	if !c.RequireGlobalAdmin() {
 		return
 	}
 

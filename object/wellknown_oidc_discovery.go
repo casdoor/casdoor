@@ -191,9 +191,8 @@ func GetJsonWebKeySet(applicationName string) (jose.JSONWebKeySet, error) {
 		// Try to get application-specific cert (owner is always "admin")
 		applicationId := util.GetId("admin", applicationName)
 		application, err := GetApplication(applicationId)
-		if err == nil && application != nil && application.Cert != "" {
-			certId := util.GetId(application.Owner, application.Cert)
-			cert, err := GetCert(certId)
+		if err == nil && application != nil {
+			cert, err := getCertByApplication(application)
 			if err == nil && cert != nil {
 				certs = []*Cert{cert}
 			}
@@ -202,7 +201,7 @@ func GetJsonWebKeySet(applicationName string) (jose.JSONWebKeySet, error) {
 
 	// Fallback to global certs if no application-specific cert found
 	if len(certs) == 0 {
-		certs, err = GetCerts("")
+		certs, err = getGlobalOwnedCerts()
 		if err != nil {
 			return jwks, err
 		}
