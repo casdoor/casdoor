@@ -400,7 +400,7 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
     ),
     "Country/Region": (
       <AccountItemRow name="Country/Region" labelKey="user:Country/Region">
-        <Input value={user.region ?? ""} onChange={(e) => updateField("region", e.target.value)} />
+        <RegionSelect value={user.region ?? ""} onChange={(v) => updateField("region", v)} />
       </AccountItemRow>
     ),
     "Location": (
