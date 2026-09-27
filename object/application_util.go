@@ -491,6 +491,10 @@ func (application *Application) GetId() string {
 }
 
 func (application *Application) IsRedirectUriValid(redirectUri string) bool {
+	if isScriptUrl(redirectUri) {
+		return false
+	}
+
 	for _, targetUri := range application.RedirectUris {
 		if redirectUriMatchesPattern(redirectUri, targetUri) {
 			return true

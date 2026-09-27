@@ -557,7 +557,7 @@ export default function LoginPage({type = "login", application: applicationProp,
     if (casParams.service !== "") {
       const newUrl = new URL(casParams.service);
       newUrl.searchParams.append("ticket", res.data);
-      window.location.href = newUrl.toString();
+      Setting.goToLink(newUrl.toString());
     }
   };
 

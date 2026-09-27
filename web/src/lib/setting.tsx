@@ -2435,6 +2435,9 @@ export function getRepoUrl(name) {
 }
 
 export function createFormAndSubmit(url, params) {
+  if (isScriptUrl(url)) {
+    return;
+  }
   const form = document.createElement("form");
   form.method = "post";
   form.action = url;
