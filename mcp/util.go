@@ -39,7 +39,7 @@ type InnerMcpServer struct {
 func getServerHttpClient(ctx context.Context, owner string, token string) *http.Client {
 	var httpClient *http.Client
 	if owner != "built-in" {
-		httpClient = &http.Client{Transport: util.NewNonLocalHttpTransport(30 * time.Second)}
+		httpClient = util.NewInternetOnlyHttpClient(30 * time.Second)
 		ctx = context.WithValue(ctx, oauth2.HTTPClient, httpClient)
 	}
 

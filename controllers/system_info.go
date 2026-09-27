@@ -28,8 +28,7 @@ import (
 // @Success 200 {object} util.SystemInfo The Response object
 // @router /get-system-info [get]
 func (c *ApiController) GetSystemInfo() {
-	_, ok := c.RequireAdmin()
-	if !ok {
+	if !c.RequireGlobalAdmin() {
 		return
 	}
 

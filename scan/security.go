@@ -25,6 +25,7 @@ import (
 
 	"github.com/beego/beego/v2/core/logs"
 	"github.com/casdoor/casdoor/object"
+	"github.com/casdoor/casdoor/util"
 )
 
 const dataSourceUrl = "https://casdoor.ai/casdoor-data/data.json"
@@ -101,6 +102,33 @@ func NewScanProviderFromProvider(provider *object.Provider) SecurityScanProvider
 	return SecurityScanProvider{Type: provider.SubType, Owner: provider.Owner, OnlineList: provider.Endpoint, TargetURL: provider.Content}
 }
 
+func (v SecurityScanProvider) isTenant() bool {
+	return v.Owner != "admin" && v.Owner != "built-in"
+}
+
+func (v SecurityScanProvider) getScanHttpClient() *http.Client {
+	transport := &http.Transport{}
+	if v.isTenant() {
+		transport = util.NewInternetOnlyHttpClient(5 * time.Second).Transport.(*http.Transport)
+	}
+	transport.TLSClientConfig = &tls.Config{InsecureSkipVerify: true} //nolint:gosec
+
+	return &http.Client{
+		Timeout:   5 * time.Second,
+		Transport: transport,
+		CheckRedirect: func(_ *http.Request, _ []*http.Request) error {
+			return http.ErrUseLastResponse
+		},
+	}
+}
+
+func (v SecurityScanProvider) getOnlineListHttpClient() *http.Client {
+	if v.isTenant() {
+		return util.NewInternetOnlyHttpClient(10 * time.Second)
+	}
+	return &http.Client{Timeout: 10 * time.Second}
+}
+
 func (v SecurityScanProvider) Scan(target string, command string) (string, error) {
 	_ = command
 
@@ -108,7 +136,7 @@ func (v SecurityScanProvider) Scan(target string, command string) (string, error
 		return "", fmt.Errorf("scan provider sub type: %s is not supported", v.Type)
 	}
 
-	cves, fingerprints, err := getOnlineScanLists(dataSourceUrl)
+	cves, fingerprints, err := getOnlineScanLists(&http.Client{Timeout: 10 * time.Second}, dataSourceUrl)
 	if err != nil {
 		return "", err
 	}
@@ -117,7 +145,7 @@ func (v SecurityScanProvider) Scan(target string, command string) (string, error
 	runtimeFingerprintList := buildFingerprintList(fingerprints)
 
 	if strings.TrimSpace(v.OnlineList) != "" {
-		onlineCVEList, onlineFingerprintList, err := getOnlineScanLists(v.OnlineList)
+		onlineCVEList, onlineFingerprintList, err := getOnlineScanLists(v.getOnlineListHttpClient(), v.OnlineList)
 		if err != nil {
 			logs.Warning("scan: failed to load online scan lists, onlineList = %s, err = %v", v.OnlineList, err)
 		} else {
@@ -131,15 +159,7 @@ func (v SecurityScanProvider) Scan(target string, command string) (string, error
 		return "", err
 	}
 
-	client := &http.Client{
-		Timeout: 5 * time.Second,
-		Transport: &http.Transport{
-			TLSClientConfig: &tls.Config{InsecureSkipVerify: true}, //nolint:gosec
-		},
-		CheckRedirect: func(_ *http.Request, _ []*http.Request) error {
-			return http.ErrUseLastResponse
-		},
-	}
+	client := v.getScanHttpClient()
 
 	findings := make([]SecurityScanFinding, 0)
 	findingMap := map[string]int{}

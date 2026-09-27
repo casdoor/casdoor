@@ -110,6 +110,14 @@ func GetLdap(id string) (*Ldap, error) {
 	}
 }
 
+func GetLdapOfOwner(owner string, id string) (*Ldap, error) {
+	ldap, err := GetLdap(id)
+	if err != nil || ldap == nil || ldap.Owner != owner {
+		return nil, err
+	}
+	return ldap, nil
+}
+
 func GetMaskedLdap(ldap *Ldap, errs ...error) (*Ldap, error) {
 	if len(errs) > 0 && errs[0] != nil {
 		return nil, errs[0]

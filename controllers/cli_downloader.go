@@ -447,7 +447,7 @@ func downloadCLI() error {
 // @Success 200 {object} controllers.Response The Response object
 // @router /refresh-engines [post]
 func (c *ApiController) RefreshEngines() {
-	if !conf.IsDemoMode() && !c.IsAdmin() {
+	if !conf.IsDemoMode() && !c.IsGlobalAdmin() {
 		c.ResponseError(c.T("auth:Unauthorized operation"))
 		return
 	}

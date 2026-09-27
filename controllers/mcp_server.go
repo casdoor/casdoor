@@ -102,7 +102,7 @@ func (c *ApiController) ProxyServer() {
 
 	proxy := httputil.NewSingleHostReverseProxy(targetUrl)
 	if server.Owner != "built-in" {
-		proxy.Transport = util.NewNonLocalHttpTransport(30 * time.Second)
+		proxy.Transport = util.NewInternetOnlyHttpClient(30 * time.Second).Transport
 	}
 	proxy.ErrorHandler = func(writer http.ResponseWriter, request *http.Request, proxyErr error) {
 		c.Ctx.Output.SetStatus(http.StatusBadGateway)

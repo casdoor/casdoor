@@ -26,8 +26,7 @@ import (
 // @Success 200 {object} object.PrometheusInfo The Response object
 // @router /get-prometheus-info [get]
 func (c *ApiController) GetPrometheusInfo() {
-	_, ok := c.RequireAdmin()
-	if !ok {
+	if !c.RequireGlobalAdmin() {
 		return
 	}
 	prometheusInfo, err := object.GetPrometheusInfo()
@@ -53,17 +52,25 @@ func (c *ApiController) GetMetrics() {
 	accessSecret := c.Ctx.Input.Query("accessSecret")
 
 	if accessKey != "" || accessSecret != "" {
-		_, err := object.ValidateKeyByType(accessKey, accessSecret, "Prometheus")
-		if err != nil {
-			c.ResponseError(err.Error())
+		if !c.requireGlobalMetricsKey(accessKey, accessSecret) {
 			return
 		}
-	} else {
-		_, ok := c.RequireAdmin()
-		if !ok {
-			return
-		}
+	} else if !c.RequireGlobalAdmin() {
+		return
 	}
 
 	promhttp.Handler().ServeHTTP(c.Ctx.ResponseWriter, c.Ctx.Request)
+}
+
+func (c *ApiController) requireGlobalMetricsKey(accessKey string, accessSecret string) bool {
+	key, err := object.ValidateKeyByType(accessKey, accessSecret, "Prometheus")
+	if err != nil {
+		c.ResponseError(err.Error())
+		return false
+	}
+	if key.Owner != "admin" && key.Owner != "built-in" {
+		c.ResponseError(c.T("auth:Unauthorized operation"))
+		return false
+	}
+	return true
 }
