@@ -36,30 +36,25 @@ type InnerMcpServer struct {
 	Url  string `json:"url"`
 }
 
-func GetServerTools(owner, name, url, token string) ([]*mcpsdk.Tool, error) {
-	var session *mcpsdk.ClientSession
-	var err error
+func getServerHttpClient(ctx context.Context, owner string, token string) *http.Client {
+	var httpClient *http.Client
+	if owner != "built-in" {
+		httpClient = &http.Client{Transport: util.NewNonLocalHttpTransport(30 * time.Second)}
+		ctx = context.WithValue(ctx, oauth2.HTTPClient, httpClient)
+	}
 
+	if token != "" {
+		httpClient = oauth2.NewClient(ctx, oauth2.StaticTokenSource(&oauth2.Token{AccessToken: token}))
+	}
+	return httpClient
+}
+
+func GetServerTools(owner, name, url, token string) ([]*mcpsdk.Tool, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Minute*10)
 	defer cancel()
 	client := mcpsdk.NewClient(&mcpsdk.Implementation{Name: util.GetId(owner, name), Version: "1.0.0"}, nil)
 
-	if strings.HasSuffix(url, "sse") {
-		if token != "" {
-			httpClient := oauth2.NewClient(ctx, oauth2.StaticTokenSource(&oauth2.Token{AccessToken: token}))
-			session, err = client.Connect(ctx, &mcpsdk.StreamableClientTransport{Endpoint: url, HTTPClient: httpClient}, nil)
-		} else {
-			session, err = client.Connect(ctx, &mcpsdk.StreamableClientTransport{Endpoint: url}, nil)
-		}
-	} else {
-		if token != "" {
-			httpClient := oauth2.NewClient(ctx, oauth2.StaticTokenSource(&oauth2.Token{AccessToken: token}))
-			session, err = client.Connect(ctx, &mcpsdk.StreamableClientTransport{Endpoint: url, HTTPClient: httpClient}, nil)
-		} else {
-			session, err = client.Connect(ctx, &mcpsdk.StreamableClientTransport{Endpoint: url}, nil)
-		}
-	}
-
+	session, err := client.Connect(ctx, &mcpsdk.StreamableClientTransport{Endpoint: url, HTTPClient: getServerHttpClient(ctx, owner, token)}, nil)
 	if err != nil {
 		return nil, err
 	}
