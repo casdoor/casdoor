@@ -704,6 +704,18 @@ func replaceIdOwnerInId(id string, oldOwner string, newOwner string, changed boo
 	return id, changed
 }
 
+func IsSigninPending(user *User) (bool, error) {
+	if user.NeedUpdatePassword {
+		return true, nil
+	}
+
+	organization, err := GetOrganizationByUser(user)
+	if err != nil {
+		return false, err
+	}
+	return IsNeedPromptMfa(organization, user), nil
+}
+
 func IsNeedPromptMfa(org *Organization, user *User) bool {
 	if org == nil || user == nil {
 		return false

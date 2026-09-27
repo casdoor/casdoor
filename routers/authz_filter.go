@@ -23,6 +23,7 @@ import (
 	"time"
 
 	"github.com/beego/beego/v2/core/logs"
+	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/controllers"
 	"github.com/casdoor/casdoor/object"
 
@@ -170,9 +171,29 @@ func getUsername(ctx *context.Context) (username string) {
 	return
 }
 
+const requestCredentialUserKey = "requestCredentialUser"
+
+func isCrossOriginCookieRequest(ctx *context.Context) bool {
+	method := ctx.Request.Method
+	if method == http.MethodGet || method == http.MethodHead || method == http.MethodOptions {
+		return false
+	}
+	if strings.HasPrefix(ctx.Request.URL.Path, "/api/saml/logout/") {
+		return false
+	}
+
+	origin := ctx.Request.Header.Get("Origin")
+	if origin == "" || util.IsCredentialedOrigin(origin, conf.GetConfigString("origin"), ctx.Request.Host) {
+		return false
+	}
+
+	requestCredentialUser, _ := ctx.Input.GetData(requestCredentialUserKey).(string)
+	return requestCredentialUser == ""
+}
+
 func getSubject(ctx *context.Context) (string, string) {
 	username := getUsername(ctx)
-	if username == "" {
+	if username == "" || isCrossOriginCookieRequest(ctx) {
 		return "anonymous", "anonymous"
 	}
 

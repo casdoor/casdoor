@@ -206,7 +206,7 @@ func (c *ApiController) GetMcpAccessToken() {
 		c.ResponseError(fmt.Sprintf("the application: %s does not belong to the organization: %s", applicationName, organizationName))
 		return
 	}
-	if !c.checkApplicationSignin(application, user) || !c.checkUserOfApplication(user, application) {
+	if !c.checkSigninCompleted(user) || !c.checkApplicationSignin(application, user) || !c.checkUserOfApplication(user, application) {
 		return
 	}
 

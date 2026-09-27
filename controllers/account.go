@@ -345,8 +345,14 @@ func (c *ApiController) Signup() {
 	nonce := c.Ctx.Input.Query("nonce")
 	codeChallenge := c.Ctx.Input.Query("code_challenge")
 
+	isSigninPending, err := object.IsSigninPending(user)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
 	// If OAuth parameters are present, generate OAuth code and return it
-	if clientId != "" && responseType == ResponseTypeCode {
+	if clientId != "" && responseType == ResponseTypeCode && !isSigninPending {
 		consentRequired, err := object.CheckConsentRequired(user, application, scope)
 		if err != nil {
 			c.ResponseError(err.Error())

@@ -532,6 +532,19 @@ func (c *ApiController) promptMfaSetup(user *object.User, organization *object.O
 	return true
 }
 
+func (c *ApiController) checkSigninCompleted(user *object.User) bool {
+	isSigninPending, err := object.IsSigninPending(user)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return false
+	}
+	if isSigninPending {
+		c.ResponseError(c.T("auth:Unauthorized operation"))
+		return false
+	}
+	return true
+}
+
 func (c *ApiController) promptMfaSetupAfterMfa(user *object.User) bool {
 	organization, err := object.GetOrganizationByUser(user)
 	if err != nil {
