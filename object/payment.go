@@ -193,6 +193,17 @@ func UpdatePayment(id string, payment *Payment) (bool, error) {
 	return affected != 0, nil
 }
 
+func updatePaymentState(payment *Payment, state pp.PaymentState, message string) (bool, error) {
+	affected, err := ormer.Engine.ID(core.PK{payment.Owner, payment.Name}).Where("state = ?", string(payment.State)).Cols("state", "message").Update(&Payment{State: state, Message: message})
+	if err != nil || affected == 0 {
+		return false, err
+	}
+
+	payment.State = state
+	payment.Message = message
+	return true, nil
+}
+
 func AddPayment(payment *Payment) (bool, error) {
 	affected, err := ormer.Engine.Insert(payment)
 	if err != nil {
@@ -288,11 +299,9 @@ func NotifyPayment(body []byte, owner string, paymentName string, lang string) (
 		return payment, nil
 	}
 
-	payment.State = newState
-	payment.Message = newMessage
-	_, err = UpdatePayment(payment.GetId(), payment)
-	if err != nil {
-		return nil, err
+	isUpdated, err := updatePaymentState(payment, newState, newMessage)
+	if err != nil || !isUpdated {
+		return payment, err
 	}
 
 	// Update order state based on payment status

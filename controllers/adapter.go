@@ -167,5 +167,11 @@ func (c *ApiController) checkAdapterStorage(adapter *object.Adapter) bool {
 		c.ResponseError(err.Error())
 		return false
 	}
+
+	err = object.CheckAdapterHost(adapter)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return false
+	}
 	return true
 }
