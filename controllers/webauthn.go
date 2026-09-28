@@ -232,6 +232,10 @@ func (c *ApiController) WebAuthnSigninFinish() {
 		return
 	}
 
+	if c.checkWebAuthnSigninMfa(user) {
+		return
+	}
+
 	var authForm form.AuthForm
 	authForm.Type = responseType
 	resp := c.HandleLoggedIn(application, user, &authForm)
@@ -244,4 +248,14 @@ func (c *ApiController) WebAuthnSigninFinish() {
 	}
 	c.Data["json"] = resp
 	c.ServeJSON()
+}
+
+func (c *ApiController) checkWebAuthnSigninMfa(user *object.User) bool {
+	organization, err := object.GetOrganizationByUser(user)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return true
+	}
+
+	return checkMfaEnable(c, user, organization, "")
 }

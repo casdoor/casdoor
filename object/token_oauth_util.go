@@ -536,11 +536,8 @@ func RefreshToken(application *Application, grantType string, refreshToken strin
 		return "", fmt.Errorf("The user: %s doesn't exist", util.GetId(token.Organization, token.User))
 	}
 
-	if user.IsForbidden {
-		return &TokenError{
-			Error:            InvalidGrant,
-			ErrorDescription: "the user is forbidden to sign in, please contact the administrator",
-		}, nil
+	if tokenError := getInactiveUserTokenError(user); tokenError != nil {
+		return tokenError, nil
 	}
 
 	err = ExtendUserWithRolesAndPermissions(user)
