@@ -108,7 +108,7 @@ func getWebhookEventSession(owner, organization, webhook string, state WebhookEv
 		session = session.Limit(limit)
 	}
 
-	if sortField == "" || sortOrder == "" {
+	if sortField == "" || sortOrder == "" || !util.FilterField(sortField) {
 		sortField = "created_time"
 	}
 	if sortOrder == "ascend" {
