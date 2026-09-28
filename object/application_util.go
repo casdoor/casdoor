@@ -217,6 +217,22 @@ func extendApplicationWithSignupItems(application *Application) (err error) {
 	return
 }
 
+func isApplicationAdmin(user *User, application *Application) (bool, error) {
+	if user.IsGlobalAdmin() {
+		return true, nil
+	}
+	if !user.IsAdmin || user.Owner != application.Organization {
+		return false, nil
+	}
+
+	storedApplication := &Application{Owner: application.Owner, Name: application.Name}
+	existed, err := ormer.Engine.Cols("organization").Get(storedApplication)
+	if err != nil {
+		return false, err
+	}
+	return existed && storedApplication.Organization == user.Owner, nil
+}
+
 func GetMaskedApplication(application *Application, userId string) *Application {
 	if application == nil {
 		return nil
@@ -248,7 +264,11 @@ func GetMaskedApplication(application *Application, userId string) *Application 
 			panic(err)
 		}
 		if user != nil {
-			if user.IsApplicationAdmin(application) {
+			isAdmin, err := isApplicationAdmin(user, application)
+			if err != nil {
+				panic(err)
+			}
+			if isAdmin {
 				return application
 			}
 

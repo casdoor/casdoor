@@ -1612,14 +1612,6 @@ func (user *User) GetPreferredMfaProps(masked bool) *MfaProps {
 	return user.GetMfaProps(user.PreferredMfaType, masked)
 }
 
-func (user *User) IsApplicationAdmin(application *Application) bool {
-	if user == nil {
-		return false
-	}
-
-	return (user.Owner == application.Organization && user.IsAdmin) || user.IsGlobalAdmin()
-}
-
 func (user *User) IsGlobalAdmin() bool {
 	if user == nil {
 		return false
