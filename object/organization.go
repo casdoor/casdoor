@@ -252,7 +252,7 @@ func (organization *Organization) hashMasterPassword() {
 	}
 }
 
-func UpdateOrganization(id string, organization *Organization, isGlobalAdmin bool) (bool, error) {
+func UpdateOrganization(id string, organization *Organization, isGlobalAdmin bool, lang string) (bool, error) {
 	owner, name, err := util.GetOwnerAndNameFromIdWithError(id)
 	if err != nil {
 		return false, err
@@ -262,6 +262,13 @@ func UpdateOrganization(id string, organization *Organization, isGlobalAdmin boo
 		return false, err
 	} else if org == nil {
 		return false, nil
+	}
+
+	if !isGlobalAdmin && organization.DefaultApplication != org.DefaultApplication {
+		err = checkDefaultApplication(org.Name, organization.DefaultApplication, lang)
+		if err != nil {
+			return false, err
+		}
 	}
 
 	if name == "built-in" {
@@ -308,6 +315,22 @@ func UpdateOrganization(id string, organization *Organization, isGlobalAdmin boo
 	}
 
 	return affected != 0, nil
+}
+
+func checkDefaultApplication(organizationName string, applicationName string, lang string) error {
+	if applicationName == "" {
+		return nil
+	}
+
+	application := &Application{Owner: "admin", Name: applicationName}
+	existed, err := ormer.Engine.Cols("organization", "is_shared").Get(application)
+	if err != nil {
+		return err
+	}
+	if !existed || (application.Organization != organizationName && !application.IsShared) {
+		return fmt.Errorf("%s", i18n.Translate(lang, "auth:Unauthorized operation"))
+	}
+	return nil
 }
 
 func AddOrganization(organization *Organization) (bool, error) {

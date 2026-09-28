@@ -661,6 +661,11 @@ func CheckApplicationSignin(application *Application, user *User, clientIp strin
 		return fmt.Errorf(i18n.Translate(lang, "auth:The organization: %s has disabled users to signin"), application.Organization)
 	}
 
+	err = checkUserOrganizationSignin(application, user, clientIp, lang)
+	if err != nil {
+		return err
+	}
+
 	allowed, err := CheckLoginPermission(user.GetId(), application)
 	if err != nil {
 		return err
@@ -674,6 +679,25 @@ func CheckApplicationSignin(application *Application, user *User, clientIp strin
 	}
 
 	return nil
+}
+
+func checkUserOrganizationSignin(application *Application, user *User, clientIp string, lang string) error {
+	if application.OrganizationObj != nil && application.OrganizationObj.Name == user.Owner {
+		return nil
+	}
+
+	organization, err := GetOrganizationByUser(user)
+	if err != nil {
+		return err
+	}
+	if organization == nil {
+		return nil
+	}
+
+	if organization.DisableSignin {
+		return fmt.Errorf(i18n.Translate(lang, "auth:The organization: %s has disabled users to signin"), organization.Name)
+	}
+	return CheckEntryIp(clientIp, nil, nil, organization, lang)
 }
 
 func CheckLoginPermission(userId string, application *Application) (bool, error) {

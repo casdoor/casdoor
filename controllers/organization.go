@@ -145,7 +145,7 @@ func (c *ApiController) UpdateOrganization() {
 		organization.BalanceCurrency = "USD"
 	}
 
-	c.Data["json"] = wrapActionResponse(object.UpdateOrganization(id, &organization, isGlobalAdmin))
+	c.Data["json"] = wrapActionResponse(object.UpdateOrganization(id, &organization, isGlobalAdmin, c.GetAcceptLanguage()))
 	c.ServeJSON()
 }
 
