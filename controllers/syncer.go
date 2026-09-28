@@ -115,7 +115,7 @@ func (c *ApiController) UpdateSyncer() {
 		return
 	}
 
-	if !c.checkSyncerDatabaseType(&syncer) {
+	if !c.checkSyncerDatabase(&syncer) {
 		return
 	}
 
@@ -141,7 +141,7 @@ func (c *ApiController) AddSyncer() {
 	if !c.requireOrganizationPermission(syncer.Organization) {
 		return
 	}
-	if !c.checkSyncerDatabaseType(&syncer) {
+	if !c.checkSyncerDatabase(&syncer) {
 		return
 	}
 
@@ -215,6 +215,10 @@ func (c *ApiController) TestSyncerDb() {
 		return
 	}
 
+	if !c.checkSyncerDatabase(&syncer) {
+		return
+	}
+
 	err = object.TestSyncer(syncer)
 	if err != nil {
 		c.ResponseError(err.Error())
@@ -224,11 +228,20 @@ func (c *ApiController) TestSyncerDb() {
 	c.ResponseOk()
 }
 
-func (c *ApiController) checkSyncerDatabaseType(syncer *object.Syncer) bool {
-	if c.IsGlobalAdmin() || (syncer.DatabaseType != "sqlite3" && syncer.DatabaseType != "sqlite") {
+func (c *ApiController) checkSyncerDatabase(syncer *object.Syncer) bool {
+	if c.IsGlobalAdmin() {
 		return true
 	}
 
-	c.ResponseError(c.T("auth:Unauthorized operation"))
-	return false
+	if syncer.DatabaseType == "sqlite3" || syncer.DatabaseType == "sqlite" {
+		c.ResponseError(c.T("auth:Unauthorized operation"))
+		return false
+	}
+
+	err := object.CheckSyncerDatabaseHost(syncer)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return false
+	}
+	return true
 }

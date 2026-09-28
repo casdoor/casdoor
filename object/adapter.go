@@ -170,6 +170,10 @@ func (adapter *Adapter) InitAdapter() error {
 				return err
 			}
 		}
+		err := checkTenantAdapterHost(adapter)
+		if err != nil {
+			return err
+		}
 		switch driverName {
 		case "mssql":
 			dataSourceName = getMssqlDataSourceName(adapter.User, adapter.Password, adapter.Host, adapter.Port, adapter.Database)
@@ -273,6 +277,20 @@ func CheckSameDbAdapterTable(adapter *Adapter) error {
 	}
 
 	return fmt.Errorf("the table: %s is already used by Casdoor or another organization", table)
+}
+
+func CheckAdapterHost(adapter *Adapter) error {
+	if adapter.UseSameDb || adapter.DatabaseType == "sqlite3" || adapter.DatabaseType == "sqlite" {
+		return nil
+	}
+	return util.CheckInternetHost(adapter.Host)
+}
+
+func checkTenantAdapterHost(adapter *Adapter) error {
+	if adapter.Owner == "built-in" {
+		return nil
+	}
+	return CheckAdapterHost(adapter)
 }
 
 func (adapter *Adapter) isBuiltIn() bool {

@@ -226,6 +226,10 @@ func filterRecordIn24Hours(record *VerificationRecord) *VerificationRecord {
 }
 
 func getVerificationRecord(dest string) (*VerificationRecord, error) {
+	if dest == "" {
+		return nil, nil
+	}
+
 	record := &VerificationRecord{}
 	record.Receiver = dest
 
@@ -264,6 +268,10 @@ func getVerificationRecord(dest string) (*VerificationRecord, error) {
 }
 
 func getUnusedVerificationRecord(dest string) (*VerificationRecord, error) {
+	if dest == "" {
+		return nil, nil
+	}
+
 	record := &VerificationRecord{}
 	record.Receiver = dest
 

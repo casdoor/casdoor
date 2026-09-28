@@ -31,6 +31,35 @@ type DatabaseSyncerProvider struct {
 	Syncer *Syncer
 }
 
+func (syncer *Syncer) isSshTunneled() bool {
+	return syncer.SshType != "" && (syncer.DatabaseType == "mysql" || syncer.DatabaseType == "postgres" || syncer.DatabaseType == "mssql")
+}
+
+func (syncer *Syncer) isDatabaseSyncer() bool {
+	switch GetSyncerProvider(syncer).(type) {
+	case *DatabaseSyncerProvider, *KeycloakSyncerProvider:
+		return true
+	}
+	return false
+}
+
+func CheckSyncerDatabaseHost(syncer *Syncer) error {
+	if !syncer.isDatabaseSyncer() || syncer.DatabaseType == "sqlite3" || syncer.DatabaseType == "sqlite" {
+		return nil
+	}
+	if syncer.isSshTunneled() {
+		return util.CheckInternetHost(syncer.SshHost)
+	}
+	return util.CheckInternetHost(syncer.Host)
+}
+
+func checkTenantSyncerHost(syncer *Syncer) error {
+	if syncer.Organization == "built-in" {
+		return nil
+	}
+	return CheckSyncerDatabaseHost(syncer)
+}
+
 // InitAdapter initializes the database adapter
 func (p *DatabaseSyncerProvider) InitAdapter() error {
 	if p.Syncer.Ormer != nil {
@@ -38,6 +67,11 @@ func (p *DatabaseSyncerProvider) InitAdapter() error {
 	}
 
 	err := checkDataSourceFields(map[string]string{"host": p.Syncer.Host, "user": p.Syncer.User, "database": p.Syncer.Database, "SSL mode": p.Syncer.SslMode})
+	if err != nil {
+		return err
+	}
+
+	err = checkTenantSyncerHost(p.Syncer)
 	if err != nil {
 		return err
 	}
@@ -57,7 +91,7 @@ func (p *DatabaseSyncerProvider) InitAdapter() error {
 
 	var db *sql.DB
 
-	if p.Syncer.SshType != "" && (p.Syncer.DatabaseType == "mysql" || p.Syncer.DatabaseType == "postgres" || p.Syncer.DatabaseType == "mssql") {
+	if p.Syncer.isSshTunneled() {
 		var dial *ssh.Client
 		if p.Syncer.SshType == "password" {
 			dial, err = DialWithPassword(p.Syncer.SshUser, p.Syncer.SshPassword, p.Syncer.SshHost, p.Syncer.SshPort)
