@@ -553,18 +553,15 @@ func getUser(gothUser goth.User, provider string) *UserInfo {
 	return &user
 }
 
-// gothEmailVerifiedProviders only ever return an email the account has confirmed,
-// or one issued by the user's organization directory.
+// gothEmailVerifiedProviders only ever return an email the account has confirmed.
 var gothEmailVerifiedProviders = map[string]bool{
-	"azuread":         true,
-	"facebook":        true,
-	"github":          true,
-	"gitlab":          true,
-	"google":          true,
-	"linkedin":        true,
-	"microsoftonline": true,
-	"slack":           true,
-	"yahoo":           true,
+	"facebook": true,
+	"github":   true,
+	"gitlab":   true,
+	"google":   true,
+	"linkedin": true,
+	"slack":    true,
+	"yahoo":    true,
 }
 
 // isGothEmailVerified reports whether the provider vouches for gothUser.Email, from the
