@@ -192,6 +192,15 @@ func updateUsedByCode(token *Token) (bool, error) {
 	return affected != 0, nil
 }
 
+func claimAuthorizationCode(code string) (bool, error) {
+	affected, err := ormer.Engine.Where("code = ? and code_is_used = ?", code, false).Cols("code_is_used").Update(&Token{CodeIsUsed: true})
+	if err != nil {
+		return false, err
+	}
+
+	return affected != 0, nil
+}
+
 func GetToken(id string) (*Token, error) {
 	owner, name, err := util.GetOwnerAndNameFromIdWithError(id)
 	if err != nil {

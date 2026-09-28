@@ -254,6 +254,17 @@ func GetAuthorizationCodeToken(application *Application, clientSecret string, co
 		}, nil
 	}
 
+	claimed, err := claimAuthorizationCode(token.Code)
+	if err != nil {
+		return nil, nil, err
+	}
+	if !claimed {
+		return nil, &TokenError{
+			Error:            InvalidGrant,
+			ErrorDescription: fmt.Sprintf("authorization code has been used for token: [%s]", token.GetId()),
+		}, nil
+	}
+
 	if clientSecret != "" {
 		token.GrantType = "authorization_code"
 	}

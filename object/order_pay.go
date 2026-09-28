@@ -16,6 +16,7 @@ package object
 
 import (
 	"fmt"
+	"math"
 	"strings"
 
 	"github.com/beego/beego/v2/core/logs"
@@ -126,7 +127,7 @@ func PlaceOrder(owner string, reqProductInfos []ProductInfo, user *User, couponC
 		var productPrice float64
 		if product.IsRecharge {
 			productPrice = productInfo.Price
-			if productPrice <= 0 {
+			if !isValidCustomPrice(productPrice) {
 				return nil, fmt.Errorf("the custom price should be greater than zero")
 			}
 		} else {
@@ -524,4 +525,8 @@ func hasRechargeProduct(productInfos []ProductInfo) bool {
 		}
 	}
 	return false
+}
+
+func isValidCustomPrice(price float64) bool {
+	return price > 0 && !math.IsInf(price, 1)
 }
