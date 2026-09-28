@@ -62,7 +62,7 @@ type CasdoorToken struct {
 }
 
 func (idp *CasdoorIdProvider) GetToken(code string) (*oauth2.Token, error) {
-	resp, err := http.PostForm(idp.Config.Endpoint.TokenURL, url.Values{
+	resp, err := idp.Client.PostForm(idp.Config.Endpoint.TokenURL, url.Values{
 		"client_id":     {idp.Config.ClientID},
 		"client_secret": {idp.Config.ClientSecret},
 		"code":          {code},

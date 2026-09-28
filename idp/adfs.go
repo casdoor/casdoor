@@ -49,13 +49,20 @@ func NewAdfsIdProvider(clientId string, clientSecret string, redirectUrl string,
 }
 
 func (idp *AdfsIdProvider) SetHttpClient(client *http.Client) {
-	tr := &http.Transport{
-		TLSClientConfig: &tls.Config{
-			InsecureSkipVerify: true,
-		},
+	idp.Client = newInsecureTlsHttpClient(client)
+}
+
+func newInsecureTlsHttpClient(client *http.Client) *http.Client {
+	transport, ok := client.Transport.(*http.Transport)
+	if !ok || transport == nil {
+		transport = http.DefaultTransport.(*http.Transport)
 	}
-	idp.Client = client
-	idp.Client.Transport = tr
+	transport = transport.Clone()
+	transport.TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+
+	res := *client
+	res.Transport = transport
+	return &res
 }
 
 func (idp *AdfsIdProvider) getConfig(hostUrl string) *oauth2.Config {
@@ -132,6 +139,9 @@ func (idp *AdfsIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
 	if err := json.Unmarshal(body, &respKeys); err != nil {
 		return nil, err
 	}
+	if len(respKeys.Keys) == 0 {
+		return nil, errors.New("the ADFS discovery keys are empty")
+	}
 
 	respKey, err := json.Marshal(&(respKeys.Keys[0]))
 	if err != nil {
@@ -144,18 +154,38 @@ func (idp *AdfsIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
 	}
 
 	tokenSrc := []byte(token.AccessToken)
-	publicKey, _ := keyset.PublicKey()
-	idToken, _ := jwt.Parse(tokenSrc, jwt.WithVerify(jwa.RS256, publicKey))
-	sid, _ := idToken.Get("sid")
-	upn, _ := idToken.Get("upn")
-	name, _ := idToken.Get("unique_name")
+	publicKey, err := keyset.PublicKey()
+	if err != nil {
+		return nil, err
+	}
+	idToken, err := jwt.Parse(tokenSrc, jwt.WithVerify(jwa.RS256, publicKey))
+	if err != nil {
+		return nil, err
+	}
+
+	sid := getAdfsClaim(idToken, "sid")
+	upn := getAdfsClaim(idToken, "upn")
+	name := getAdfsClaim(idToken, "unique_name")
+	if sid == "" {
+		return nil, errors.New("the ADFS id_token has no sid claim")
+	}
+
 	userinfo := &UserInfo{
-		Id:          sid.(string),
-		Username:    name.(string),
-		DisplayName: name.(string),
-		Email:       upn.(string),
+		Id:          sid,
+		Username:    name,
+		DisplayName: name,
+		Email:       upn,
 		// the UPN is the directory account itself
-		EmailVerified: upn.(string) != "",
+		EmailVerified: upn != "",
 	}
 	return userinfo, nil
+}
+
+func getAdfsClaim(token jwt.Token, name string) string {
+	value, ok := token.Get(name)
+	if !ok {
+		return ""
+	}
+	res, _ := value.(string)
+	return res
 }
