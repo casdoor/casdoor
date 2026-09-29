@@ -102,7 +102,7 @@ export default function SamlCallback() {
         navigate(Setting.getFromLink());
       } else if (responseType === "code") {
         Setting.goToLink(
-          `${redirectUri}?code=${encodeURIComponent(res.data)}&state=${encodeURIComponent(state)}`,
+          `${redirectUri}?code=${encodeURIComponent(res.data)}&state=${encodeURIComponent(state)}${Setting.getOAuthIssuerParam()}`,
         );
       }
     };

@@ -434,7 +434,7 @@ export default function LoginPage({type = "login", application: applicationProp,
   /** An OAuth error goes back the same way the response would have (RFC 6749 §4.1.2.1). */
   const redirectWithOAuthError = (error: string, description = "") => {
     const oAuthParams = Util.getOAuthGetParameters();
-    const payload: Record<string, string> = {error};
+    const payload: Record<string, string> = {error, iss: Setting.getOAuthIssuer()};
     if (oAuthParams.state) {
       payload.state = oAuthParams.state;
     }
@@ -457,7 +457,7 @@ export default function LoginPage({type = "login", application: applicationProp,
     const concatChar = oAuthParams?.redirectUri?.includes("?") ? "&" : "?";
     const redirectUrl = `${oAuthParams.redirectUri}${concatChar}code=${encodeURIComponent(
       codeValue,
-    )}&state=${encodeURIComponent(oAuthParams.state)}`;
+    )}&state=${encodeURIComponent(oAuthParams.state)}${Setting.getOAuthIssuerParam()}`;
 
     if (res.data === Setting.RequiredUpdatePassword) {
       Setting.goToUpdatePassword(application?.name);
@@ -526,12 +526,13 @@ export default function LoginPage({type = "login", application: applicationProp,
           id_token: responseTypes.includes("id_token") ? res.data3 : null,
           token_type: "bearer",
           state: authParams?.state,
+          iss: Setting.getOAuthIssuer(),
         });
       } else {
         Setting.goToLink(
           `${authParams.redirectUri}#${amendatoryResponseType}=${encodeURIComponent(
             responseType === "id_token" ? res.data3 : res.data,
-          )}&state=${encodeURIComponent(authParams.state)}&token_type=bearer`,
+          )}&state=${encodeURIComponent(authParams.state)}&token_type=bearer${Setting.getOAuthIssuerParam()}`,
         );
       }
     } else if (responseType === "saml") {

@@ -65,7 +65,7 @@ export default function PromptPage({application: applicationProp}: {application?
     if (redirectUri === null || code === null || state === null) {
       return oauth === "true" ? sessionStorage.getItem("signinUrl") ?? "" : "";
     }
-    return `${redirectUri}?code=${encodeURIComponent(code)}&state=${encodeURIComponent(state)}`;
+    return `${redirectUri}?code=${encodeURIComponent(code)}&state=${encodeURIComponent(state)}${Setting.getOAuthIssuerParam()}`;
   };
 
   const finishAndJump = () => {
