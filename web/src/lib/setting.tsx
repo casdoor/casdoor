@@ -95,6 +95,14 @@ export function isSelfRedirectUri(redirectUri) {
   }
 }
 
+export function getOAuthIssuer() {
+  return getFullServerUrl();
+}
+
+export function getOAuthIssuerParam() {
+  return `&iss=${encodeURIComponent(getOAuthIssuer())}`;
+}
+
 export function isMobile() {
   if (typeof window === "undefined") {
     return false;

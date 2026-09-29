@@ -28,28 +28,29 @@ import (
 )
 
 type OidcDiscovery struct {
-	Issuer                                 string   `json:"issuer"`
-	AuthorizationEndpoint                  string   `json:"authorization_endpoint"`
-	TokenEndpoint                          string   `json:"token_endpoint"`
-	UserinfoEndpoint                       string   `json:"userinfo_endpoint"`
-	DeviceAuthorizationEndpoint            string   `json:"device_authorization_endpoint"`
-	RegistrationEndpoint                   string   `json:"registration_endpoint,omitempty"`
-	JwksUri                                string   `json:"jwks_uri"`
-	IntrospectionEndpoint                  string   `json:"introspection_endpoint"`
-	ResponseTypesSupported                 []string `json:"response_types_supported"`
-	ResponseModesSupported                 []string `json:"response_modes_supported"`
-	GrantTypesSupported                    []string `json:"grant_types_supported"`
-	SubjectTypesSupported                  []string `json:"subject_types_supported"`
-	IdTokenSigningAlgValuesSupported       []string `json:"id_token_signing_alg_values_supported"`
-	ScopesSupported                        []string `json:"scopes_supported"`
-	CodeChallengeMethodsSupported          []string `json:"code_challenge_methods_supported"`
-	ClaimsSupported                        []string `json:"claims_supported"`
-	RequestParameterSupported              bool     `json:"request_parameter_supported"`
-	RequestObjectSigningAlgValuesSupported []string `json:"request_object_signing_alg_values_supported"`
-	EndSessionEndpoint                     string   `json:"end_session_endpoint"`
-	BackchannelLogoutSupported             bool     `json:"backchannel_logout_supported"`                // OIDC Back-Channel Logout 1.0
-	BackchannelLogoutSessionSupported      bool     `json:"backchannel_logout_session_supported"`        // OIDC Back-Channel Logout 1.0
-	DPoPSigningAlgValuesSupported          []string `json:"dpop_signing_alg_values_supported,omitempty"` // RFC 9449
+	Issuer                                     string   `json:"issuer"`
+	AuthorizationEndpoint                      string   `json:"authorization_endpoint"`
+	TokenEndpoint                              string   `json:"token_endpoint"`
+	UserinfoEndpoint                           string   `json:"userinfo_endpoint"`
+	DeviceAuthorizationEndpoint                string   `json:"device_authorization_endpoint"`
+	RegistrationEndpoint                       string   `json:"registration_endpoint,omitempty"`
+	JwksUri                                    string   `json:"jwks_uri"`
+	IntrospectionEndpoint                      string   `json:"introspection_endpoint"`
+	ResponseTypesSupported                     []string `json:"response_types_supported"`
+	ResponseModesSupported                     []string `json:"response_modes_supported"`
+	GrantTypesSupported                        []string `json:"grant_types_supported"`
+	SubjectTypesSupported                      []string `json:"subject_types_supported"`
+	IdTokenSigningAlgValuesSupported           []string `json:"id_token_signing_alg_values_supported"`
+	ScopesSupported                            []string `json:"scopes_supported"`
+	CodeChallengeMethodsSupported              []string `json:"code_challenge_methods_supported"`
+	ClaimsSupported                            []string `json:"claims_supported"`
+	RequestParameterSupported                  bool     `json:"request_parameter_supported"`
+	RequestObjectSigningAlgValuesSupported     []string `json:"request_object_signing_alg_values_supported"`
+	EndSessionEndpoint                         string   `json:"end_session_endpoint"`
+	BackchannelLogoutSupported                 bool     `json:"backchannel_logout_supported"`                   // OIDC Back-Channel Logout 1.0
+	BackchannelLogoutSessionSupported          bool     `json:"backchannel_logout_session_supported"`           // OIDC Back-Channel Logout 1.0
+	DPoPSigningAlgValuesSupported              []string `json:"dpop_signing_alg_values_supported,omitempty"`    // RFC 9449
+	AuthorizationResponseIssParameterSupported bool     `json:"authorization_response_iss_parameter_supported"` // RFC 9207
 }
 
 type WebFinger struct {
@@ -154,28 +155,29 @@ func GetOidcDiscovery(host string, applicationName string) OidcDiscovery {
 	// https://accounts.google.com/.well-known/openid-configuration
 	// https://access.line.me/.well-known/openid-configuration
 	oidcDiscovery := OidcDiscovery{
-		Issuer:                                 issuer,
-		AuthorizationEndpoint:                  fmt.Sprintf("%s/login/oauth/authorize", originFrontend),
-		TokenEndpoint:                          fmt.Sprintf("%s/api/login/oauth/access_token", originBackend),
-		UserinfoEndpoint:                       fmt.Sprintf("%s/api/userinfo", originBackend),
-		DeviceAuthorizationEndpoint:            fmt.Sprintf("%s/api/device-auth", originBackend),
-		RegistrationEndpoint:                   fmt.Sprintf("%s/api/oauth/register", originBackend),
-		JwksUri:                                jwksUri,
-		IntrospectionEndpoint:                  fmt.Sprintf("%s/api/login/oauth/introspect", originBackend),
-		ResponseTypesSupported:                 []string{"code", "token", "id_token", "code token", "code id_token", "token id_token", "code token id_token", "none"},
-		ResponseModesSupported:                 []string{"query", "fragment", "form_post"},
-		GrantTypesSupported:                    []string{"authorization_code", "implicit", "password", "client_credentials", "refresh_token", "urn:ietf:params:oauth:grant-type:device_code", "urn:ietf:params:oauth:grant-type:token-exchange"},
-		SubjectTypesSupported:                  []string{"public"},
-		IdTokenSigningAlgValuesSupported:       []string{"RS256", "RS512", "ES256", "ES384", "ES512"},
-		ScopesSupported:                        scopes,
-		CodeChallengeMethodsSupported:          []string{"S256"},
-		ClaimsSupported:                        []string{"iss", "ver", "sub", "aud", "iat", "exp", "id", "type", "displayName", "avatar", "permanentAvatar", "email", "phone", "location", "affiliation", "title", "homepage", "bio", "tag", "region", "language", "score", "ranking", "isOnline", "isAdmin", "isForbidden", "signupApplication", "ldap"},
-		RequestParameterSupported:              true,
-		RequestObjectSigningAlgValuesSupported: []string{"HS256", "HS384", "HS512"},
-		EndSessionEndpoint:                     fmt.Sprintf("%s/api/logout", originBackend),
-		BackchannelLogoutSupported:             true,
-		BackchannelLogoutSessionSupported:      true,
-		DPoPSigningAlgValuesSupported:          []string{"RS256", "RS512", "ES256", "ES384", "ES512", "PS256", "PS384", "PS512"},
+		Issuer:                                     issuer,
+		AuthorizationEndpoint:                      fmt.Sprintf("%s/login/oauth/authorize", originFrontend),
+		TokenEndpoint:                              fmt.Sprintf("%s/api/login/oauth/access_token", originBackend),
+		UserinfoEndpoint:                           fmt.Sprintf("%s/api/userinfo", originBackend),
+		DeviceAuthorizationEndpoint:                fmt.Sprintf("%s/api/device-auth", originBackend),
+		RegistrationEndpoint:                       fmt.Sprintf("%s/api/oauth/register", originBackend),
+		JwksUri:                                    jwksUri,
+		IntrospectionEndpoint:                      fmt.Sprintf("%s/api/login/oauth/introspect", originBackend),
+		ResponseTypesSupported:                     []string{"code", "token", "id_token", "code token", "code id_token", "token id_token", "code token id_token", "none"},
+		ResponseModesSupported:                     []string{"query", "fragment", "form_post"},
+		GrantTypesSupported:                        []string{"authorization_code", "implicit", "password", "client_credentials", "refresh_token", "urn:ietf:params:oauth:grant-type:device_code", "urn:ietf:params:oauth:grant-type:token-exchange"},
+		SubjectTypesSupported:                      []string{"public"},
+		IdTokenSigningAlgValuesSupported:           []string{"RS256", "RS512", "ES256", "ES384", "ES512"},
+		ScopesSupported:                            scopes,
+		CodeChallengeMethodsSupported:              []string{"S256"},
+		ClaimsSupported:                            []string{"iss", "ver", "sub", "aud", "iat", "exp", "id", "type", "displayName", "avatar", "permanentAvatar", "email", "phone", "location", "affiliation", "title", "homepage", "bio", "tag", "region", "language", "score", "ranking", "isOnline", "isAdmin", "isForbidden", "signupApplication", "ldap"},
+		RequestParameterSupported:                  true,
+		RequestObjectSigningAlgValuesSupported:     []string{"HS256", "HS384", "HS512"},
+		EndSessionEndpoint:                         fmt.Sprintf("%s/api/logout", originBackend),
+		BackchannelLogoutSupported:                 true,
+		BackchannelLogoutSessionSupported:          true,
+		DPoPSigningAlgValuesSupported:              []string{"RS256", "RS512", "ES256", "ES384", "ES512", "PS256", "PS384", "PS512"},
+		AuthorizationResponseIssParameterSupported: true,
 	}
 
 	return oidcDiscovery

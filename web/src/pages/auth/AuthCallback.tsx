@@ -199,12 +199,12 @@ export default function AuthCallback() {
         navigate(Setting.getFromLink());
       } else if (type === "code") {
         if (responseMode === "form_post") {
-          Setting.createFormAndSubmit(oAuthParams?.redirectUri, {code: res.data, state: oAuthParams?.state});
+          Setting.createFormAndSubmit(oAuthParams?.redirectUri, {code: res.data, state: oAuthParams?.state, iss: Setting.getOAuthIssuer()});
         } else {
           Setting.goToLink(
             `${oAuthParams.redirectUri}${concatChar}code=${encodeURIComponent(res.data)}&state=${encodeURIComponent(
               oAuthParams.state,
-            )}`,
+            )}${Setting.getOAuthIssuerParam()}`,
           );
         }
       } else if (responseTypes.includes("token") || responseTypes.includes("id_token")) {
@@ -214,12 +214,13 @@ export default function AuthCallback() {
             id_token: responseTypes.includes("id_token") ? res.data3 : null,
             token_type: "bearer",
             state: oAuthParams?.state,
+            iss: Setting.getOAuthIssuer(),
           });
         } else {
           Setting.goToLink(
             `${oAuthParams.redirectUri}${concatChar}${type}=${encodeURIComponent(
               type === "id_token" ? res.data3 : res.data,
-            )}&state=${encodeURIComponent(oAuthParams.state)}&token_type=bearer`,
+            )}&state=${encodeURIComponent(oAuthParams.state)}&token_type=bearer${Setting.getOAuthIssuerParam()}`,
           );
         }
       } else if (type === "link") {

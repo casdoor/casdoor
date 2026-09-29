@@ -96,7 +96,7 @@ export default function ConsentPage() {
           Setting.goToLink(
             `${oAuthParams.redirectUri}${concatChar}code=${encodeURIComponent(res.data)}&state=${encodeURIComponent(
               oAuthParams.state,
-            )}`,
+            )}${Setting.getOAuthIssuerParam()}`,
           );
         } else {
           Setting.showMessage("error", res.msg);
@@ -114,7 +114,7 @@ export default function ConsentPage() {
     Setting.goToLink(
       `${oAuthParams.redirectUri}${concatChar}error=access_denied&error_description=${encodeURIComponent(
         "User denied consent",
-      )}&state=${encodeURIComponent(oAuthParams.state)}`,
+      )}&state=${encodeURIComponent(oAuthParams.state)}${Setting.getOAuthIssuerParam()}`,
     );
   };
 
