@@ -24,6 +24,11 @@ const GRANT_TYPES = [
 ];
 const TOKEN_FORMATS = ["JWT", "JWT-Empty", "JWT-Custom", "JWT-Standard"];
 const TOKEN_SIGNING_METHODS = ["RS256", "RS512", "ES256", "ES512", "ES384"];
+const TOKEN_GROUP_FORMATS = [
+  {id: "ID", name: "ID (org/group)"},
+  {id: "Path", name: "Path (org/parent/group)"},
+  {id: "Name", name: "Name (group)"},
+];
 /** the backend only tells "String" (first value) from everything else (the whole list) */
 const TOKEN_ATTRIBUTE_TYPES: EnumMap = {
   "Array": {i18nKey: "application:Array"},
@@ -201,6 +206,13 @@ export function ApplicationOidcOauthTab({application, updateField}: ApplicationT
           value={application.tokenSigningMethod || "RS256"}
           onChange={(v) => updateField("tokenSigningMethod", v)}
           options={TOKEN_SIGNING_METHODS.map((item) => ({id: item, name: item}))}
+        />
+      </FormRow>
+      <FormRow block labelKey="application:Token group format">
+        <SelectField
+          value={application.tokenGroupFormat || "ID"}
+          onChange={(v) => updateField("tokenGroupFormat", v)}
+          options={TOKEN_GROUP_FORMATS}
         />
       </FormRow>
       <FormRow block labelKey="application:Token fields">

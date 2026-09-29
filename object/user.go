@@ -1371,7 +1371,11 @@ func GetUserInfo(user *User, scope string, aud string, host string) (*Userinfo, 
 			resp.Avatar = user.Avatar
 		}
 		if allowed("Groups") {
-			resp.Groups = user.Groups
+			groups, err := user.GetGroupsForToken(application)
+			if err != nil {
+				return nil, err
+			}
+			resp.Groups = groups
 		}
 
 		if allowed("Roles") || allowed("Permissions") {
@@ -1717,21 +1721,15 @@ func (user *User) GetUserFullGroupPath() ([]string, error) {
 		}
 
 		groupPath := groupName
-
-		curGroup, ok := groupMap[group.ParentId]
-		if !ok {
-			return []string{}, fmt.Errorf(i18n.Translate("en", "auth:The group: %s does not exist"), group.ParentId)
-		}
-		for {
-			groupPath = util.GetId(curGroup.Name, groupPath)
-			if curGroup.IsTopGroup {
-				break
-			}
-
-			curGroup, ok = groupMap[curGroup.ParentId]
+		curGroup := group
+		for !curGroup.IsTopGroup {
+			parentGroup, ok := groupMap[curGroup.ParentId]
 			if !ok {
 				return []string{}, fmt.Errorf(i18n.Translate("en", "auth:The group: %s does not exist"), curGroup.ParentId)
 			}
+
+			groupPath = util.GetId(parentGroup.Name, groupPath)
+			curGroup = parentGroup
 		}
 
 		groupPath = util.GetId(curGroup.Owner, groupPath)
@@ -1739,6 +1737,31 @@ func (user *User) GetUserFullGroupPath() ([]string, error) {
 	}
 
 	return groupFullPath, nil
+}
+
+func (user *User) GetUserGroupNames() []string {
+	groupNames := []string{}
+	for _, groupId := range user.Groups {
+		_, groupName := util.GetOwnerAndNameFromIdNoCheck(groupId)
+		groupNames = append(groupNames, groupName)
+	}
+	return groupNames
+}
+
+func (user *User) GetGroupsForToken(application *Application) ([]string, error) {
+	tokenGroupFormat := ""
+	if application != nil {
+		tokenGroupFormat = application.TokenGroupFormat
+	}
+
+	switch tokenGroupFormat {
+	case "Path":
+		return user.GetUserFullGroupPath()
+	case "Name":
+		return user.GetUserGroupNames(), nil
+	default:
+		return user.Groups, nil
+	}
 }
 
 func GenerateIdForNewUser(application *Application) (string, error) {
