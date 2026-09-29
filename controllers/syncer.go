@@ -229,6 +229,12 @@ func (c *ApiController) TestSyncerDb() {
 }
 
 func (c *ApiController) checkSyncerDatabase(syncer *object.Syncer) bool {
+	err := object.CheckSyncerDatabaseTarget(syncer)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return false
+	}
+
 	if c.IsGlobalAdmin() {
 		return true
 	}
@@ -238,7 +244,7 @@ func (c *ApiController) checkSyncerDatabase(syncer *object.Syncer) bool {
 		return false
 	}
 
-	err := object.CheckSyncerDatabaseHost(syncer)
+	err = object.CheckSyncerDatabaseHost(syncer)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return false
