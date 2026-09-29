@@ -26,6 +26,7 @@ import (
 
 	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/util"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/xorm-io/core"
 )
 
@@ -732,26 +733,35 @@ func mintTokenForUser(application *Application, user *User, scope string, nonce 
 	return token, nil, nil
 }
 
+func getUnverifiedSubjectTokenAzp(subjectToken string) (string, *TokenError) {
+	claims := jwt.MapClaims{}
+	_, _, err := jwt.NewParser().ParseUnverified(subjectToken, claims)
+	if err != nil {
+		return "", &TokenError{Error: InvalidGrant, ErrorDescription: fmt.Sprintf("invalid subject_token: %s", err.Error())}
+	}
+
+	azp, _ := claims["azp"].(string)
+	if azp == "" {
+		return "", &TokenError{Error: InvalidGrant, ErrorDescription: "subject_token is missing the azp claim"}
+	}
+	return azp, nil
+}
+
 // parseAndValidateSubjectToken validates a subject_token for RFC 8693 token exchange.
 // It uses the ISSUING application's certificate (not the requesting client's) and
 // enforces audience binding to prevent cross-client token reuse.
 func parseAndValidateSubjectToken(subjectToken string, requestingClientId string) (owner, name, scope string, tokenErr *TokenError, err error) {
-	unverifiedToken, err := ParseJwtTokenWithoutValidation(subjectToken)
-	if err != nil {
-		return "", "", "", &TokenError{Error: InvalidGrant, ErrorDescription: fmt.Sprintf("invalid subject_token: %s", err.Error())}, nil
+	azp, tokenErr := getUnverifiedSubjectTokenAzp(subjectToken)
+	if tokenErr != nil {
+		return "", "", "", tokenErr, nil
 	}
 
-	unverifiedClaims, ok := unverifiedToken.Claims.(*Claims)
-	if !ok || unverifiedClaims.Azp == "" {
-		return "", "", "", &TokenError{Error: InvalidGrant, ErrorDescription: "subject_token is missing the azp claim"}, nil
-	}
-
-	issuingApp, err := GetApplicationByClientId(unverifiedClaims.Azp)
+	issuingApp, err := GetApplicationByClientId(azp)
 	if err != nil {
 		return "", "", "", nil, err
 	}
 	if issuingApp == nil {
-		return "", "", "", &TokenError{Error: InvalidGrant, ErrorDescription: fmt.Sprintf("subject_token issuing application not found: %s", unverifiedClaims.Azp)}, nil
+		return "", "", "", &TokenError{Error: InvalidGrant, ErrorDescription: fmt.Sprintf("subject_token issuing application not found: %s", azp)}, nil
 	}
 
 	cert, err := getCertByApplication(issuingApp)
@@ -759,7 +769,7 @@ func parseAndValidateSubjectToken(subjectToken string, requestingClientId string
 		return "", "", "", nil, err
 	}
 	if cert == nil {
-		return "", "", "", &TokenError{Error: EndpointError, ErrorDescription: fmt.Sprintf("cert for issuing application %s cannot be found", unverifiedClaims.Azp)}, nil
+		return "", "", "", &TokenError{Error: EndpointError, ErrorDescription: fmt.Sprintf("cert for issuing application %s cannot be found", azp)}, nil
 	}
 
 	var audience []string
