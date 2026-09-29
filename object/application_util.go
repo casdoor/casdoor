@@ -339,6 +339,7 @@ func GetMaskedApplication(application *Application, userId string) *Application 
 	application.TokenFields = []string{}
 	application.TokenSigningMethod = "***"
 	application.TokenAttributes = []*JwtItem{}
+	application.TokenGroupFormat = "***"
 	application.ExpireInHours = -1
 	application.RefreshExpireInHours = -1
 	application.CookieExpireInHours = -1

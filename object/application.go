@@ -159,6 +159,7 @@ type Application struct {
 	TokenSigningMethod      string     `xorm:"varchar(100)" json:"tokenSigningMethod"`
 	TokenFields             []string   `xorm:"varchar(1000)" json:"tokenFields"`
 	TokenAttributes         []*JwtItem `xorm:"mediumtext" json:"tokenAttributes"`
+	TokenGroupFormat        string     `xorm:"varchar(100)" json:"tokenGroupFormat"`
 	ExpireInHours           float64    `json:"expireInHours"`
 	RefreshExpireInHours    float64    `json:"refreshExpireInHours"`
 	CookieExpireInHours     int64      `json:"cookieExpireInHours"`
