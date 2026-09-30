@@ -201,9 +201,9 @@ func GetJsonWebKeySet(applicationName string) (jose.JSONWebKeySet, error) {
 		}
 	}
 
-	// Fallback to global certs if no application-specific cert found
+	// Fallback to all certs (public keys only) if no application-specific cert found
 	if len(certs) == 0 {
-		certs, err = getGlobalOwnedCerts()
+		certs, err = GetCerts("")
 		if err != nil {
 			return jwks, err
 		}
