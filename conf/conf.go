@@ -129,6 +129,10 @@ func IsDemoMode() bool {
 	return strings.ToLower(GetConfigString("isDemoMode")) == "true"
 }
 
+func IsDemoDatabase() bool {
+	return GetConfigString("dbName") == "casdoor_demo"
+}
+
 func GetConfigBatchSize() int {
 	res, err := strconv.Atoi(GetConfigString("batchSize"))
 	if err != nil {
