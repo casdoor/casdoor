@@ -213,31 +213,36 @@ func GetJsonWebKeySet(applicationName string) (jose.JSONWebKeySet, error) {
 	// link here: https://self-issued.info/docs/draft-ietf-jose-json-web-key.html
 	// or https://datatracker.ietf.org/doc/html/draft-ietf-jose-json-web-key
 	for _, cert := range certs {
-		if cert.Type != "x509" {
-			continue
+		if jwk := getJsonWebKey(cert); jwk != nil {
+			jwks.Keys = append(jwks.Keys, *jwk)
 		}
-
-		if cert.Certificate == "" {
-			return jwks, fmt.Errorf("the certificate field should not be empty for the cert: %v", cert)
-		}
-
-		certPemBlock := []byte(cert.Certificate)
-		certDerBlock, _ := pem.Decode(certPemBlock)
-		x509Cert, err := x509.ParseCertificate(certDerBlock.Bytes)
-		if err != nil {
-			return jwks, err
-		}
-
-		var jwk jose.JSONWebKey
-		jwk.Key = x509Cert.PublicKey
-		jwk.Certificates = []*x509.Certificate{x509Cert}
-		jwk.KeyID = cert.Name
-		jwk.Algorithm = cert.CryptoAlgorithm
-		jwk.Use = "sig"
-		jwks.Keys = append(jwks.Keys, jwk)
 	}
 
 	return jwks, nil
+}
+
+func getJsonWebKey(cert *Cert) *jose.JSONWebKey {
+	if cert.Type != "x509" || cert.Certificate == "" {
+		return nil
+	}
+
+	certDerBlock, _ := pem.Decode([]byte(cert.Certificate))
+	if certDerBlock == nil {
+		return nil
+	}
+
+	x509Cert, err := x509.ParseCertificate(certDerBlock.Bytes)
+	if err != nil {
+		return nil
+	}
+
+	return &jose.JSONWebKey{
+		Key:          x509Cert.PublicKey,
+		Certificates: []*x509.Certificate{x509Cert},
+		KeyID:        cert.Name,
+		Algorithm:    cert.CryptoAlgorithm,
+		Use:          "sig",
+	}
 }
 
 func GetWebFinger(resource string, rels []string, host string, applicationName string) (WebFinger, error) {
