@@ -214,6 +214,8 @@ func AddRecord(record *Record) bool {
 		panic(err)
 	}
 
+	sendAuditRecord(record)
+
 	return affected != 0
 }
 
