@@ -18,6 +18,7 @@ import (
 	"encoding/json"
 
 	"github.com/beego/beego/v2/core/utils/pagination"
+	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/idp"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
@@ -242,6 +243,18 @@ func (c *ApiController) UpdateProvider() {
 	ok := c.requireProviderSavePermission(&provider)
 	if !ok {
 		return
+	}
+
+	if conf.IsDemoDatabase() {
+		oldProvider, err := object.GetProvider(id)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+		if oldProvider != nil && (provider.Host != oldProvider.Host || provider.Endpoint != oldProvider.Endpoint || provider.Type != oldProvider.Type) {
+			c.ResponseError(c.T("general:this operation is not allowed in demo mode"))
+			return
+		}
 	}
 
 	c.Data["json"] = wrapActionResponse(object.UpdateProvider(id, &provider))
