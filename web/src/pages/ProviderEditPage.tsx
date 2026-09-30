@@ -59,7 +59,7 @@ const defaultSmsMapping: Record<string, string> = {
 };
 
 const CATEGORIES = [
-  "Captcha", "Email", "Face ID", "ID Verification", "Log", "MFA", "Notification",
+  "Audit", "Captcha", "Email", "Face ID", "ID Verification", "Log", "MFA", "Notification",
   "OAuth", "Payment", "SAML", "Scan", "SMS", "Storage",
 ].sort((a, b) => a.localeCompare(b));
 
@@ -68,6 +68,13 @@ const CONTENT_TYPES = ["application/json", "application/x-www-form-urlencoded"];
 
 const SMS_PROVIDERS_WITHOUT_SIGN_NAME = ["Custom HTTP SMS", "Twilio SMS", "Amazon SNS", "Msg91 SMS", "Infobip SMS"];
 const SMS_PROVIDERS_WITHOUT_TEMPLATE_CODE = ["Infobip SMS"];
+
+const SYSLOG_PROTOCOLS = ["UDP", "TCP", "TLS"];
+const SYSLOG_FACILITIES = [
+  "auth", "authpriv", "user", "daemon", "security",
+  "local0", "local1", "local2", "local3", "local4", "local5", "local6", "local7",
+];
+const SYSLOG_FORMATS = ["RFC 5424", "RFC 3164"];
 
 const SCAN_HOST_OPTIONS = ["127.0.0.1/32", "10.0.0.0/24", "172.16.0.0/24", "192.168.1.0/24"];
 const SCAN_PORT_OPTIONS = ["80", "3000", "8080"];
@@ -309,6 +316,7 @@ function hasClientIdRow(provider: any) {
 function hasCredentialRows(provider: any) {
   if ((provider.category === "Captcha" && provider.type === "Default") ||
       provider.category === "MFA" ||
+      provider.category === "Audit" ||
       provider.category === "Log" ||
       provider.category === "Scan" ||
       (provider.category === "Storage" && provider.type === "Local File System") ||
@@ -700,6 +708,14 @@ export default function ProviderEditPage() {
     } else if (value === "ID Verification") {
       defaultType = "Jumio";
       patch.endpoint = "";
+    } else if (value === "Audit") {
+      defaultType = "Syslog";
+      patch.host = "";
+      patch.port = 514;
+      patch.method = "UDP";
+      patch.title = "auth";
+      patch.templateCode = "RFC 5424";
+      patch.state = "Enabled";
     } else if (value === "Log") {
       defaultType = "Casdoor Permission Log";
       patch.host = "";
@@ -1217,6 +1233,58 @@ export default function ProviderEditPage() {
     </React.Fragment>
   );
 
+  const onChangeSyslogProtocol = (value: string) => {
+    const patch: Record<string, any> = {method: value};
+    if (value === "TLS" && provider.port === 514) {
+      patch.port = 6514;
+    } else if (value !== "TLS" && provider.port === 6514) {
+      patch.port = 514;
+    }
+    patchProvider(patch);
+  };
+
+  const renderAuditFields = () => (
+    <React.Fragment>
+      <FormRow label={i18next.t("general:Host")} tooltip={i18next.t("provider:Host - Tooltip")}>
+        <Input value={provider.host ?? ""} placeholder="10.10.10.10" onChange={(e) => updateProviderField("host", e.target.value)} />
+      </FormRow>
+      <FormRow label={i18next.t("general:Port")} tooltip={i18next.t("provider:Port - Tooltip")}>
+        <Input type="number" value={provider.port ?? 0} onChange={(e) => updateProviderField("port", e.target.value)} />
+      </FormRow>
+      <FormRow label={i18next.t("provider:Protocol")} tooltip={i18next.t("provider:Protocol - Tooltip")}>
+        <SelectField
+          value={provider.method || "UDP"}
+          onChange={onChangeSyslogProtocol}
+          options={SYSLOG_PROTOCOLS.map((item) => ({id: item, name: item}))}
+        />
+      </FormRow>
+      <FormRow label={i18next.t("provider:Facility")} tooltip={i18next.t("provider:Facility - Tooltip")}>
+        <SelectField
+          value={provider.title || "auth"}
+          onChange={(v) => updateProviderField("title", v)}
+          options={SYSLOG_FACILITIES.map((item) => ({id: item, name: item}))}
+        />
+      </FormRow>
+      <FormRow label={i18next.t("provider:Format")} tooltip={i18next.t("provider:Format - Tooltip")}>
+        <SelectField
+          value={provider.templateCode || "RFC 5424"}
+          onChange={(v) => updateProviderField("templateCode", v)}
+          options={SYSLOG_FORMATS.map((item) => ({id: item, name: item}))}
+        />
+      </FormRow>
+      <FormRow labelKey="general:State">
+        <SelectField
+          value={provider.state || "Enabled"}
+          onChange={(v) => updateProviderField("state", v)}
+          options={[
+            {id: "Enabled", name: i18next.t("general:Enabled")},
+            {id: "Disabled", name: i18next.t("general:Disabled")},
+          ]}
+        />
+      </FormRow>
+    </React.Fragment>
+  );
+
   const renderLogFields = () => {
     const storageProviders = providers.filter((item: any) =>
       item.category === "Storage" &&
@@ -1708,6 +1776,7 @@ export default function ProviderEditPage() {
       {provider.category === "Email" ? renderEmailFields() : null}
       {provider.category === "SMS" ? renderSmsFields() : null}
       {provider.category === "MFA" ? renderMfaFields() : null}
+      {provider.category === "Audit" ? renderAuditFields() : null}
       {provider.category === "Log" ? renderLogFields() : null}
       {provider.category === "Scan" ? renderScanFields() : null}
       {provider.category === "SAML" ? renderSamlFields() : null}
@@ -1716,7 +1785,7 @@ export default function ProviderEditPage() {
       {provider.category === "Face ID" ? renderEndpointOnlyField() : null}
       {provider.category === "ID Verification" ? renderEndpointOnlyField() : null}
 
-      {provider.category !== "Log" ? (
+      {provider.category !== "Log" && provider.category !== "Audit" ? (
         <FormRow block labelKey="provider:Provider URL">
           <Input value={provider.providerUrl ?? ""} onChange={(e) => updateProviderField("providerUrl", e.target.value)} />
         </FormRow>

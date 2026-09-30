@@ -10,7 +10,7 @@ import {newProvider} from "@/pages/defaults";
 
 /** the provider categories the antd list offers as filters, in its order */
 const PROVIDER_CATEGORIES = [
-  "Captcha", "Email", "Face ID", "ID Verification", "Log", "MFA", "Notification",
+  "Audit", "Captcha", "Email", "Face ID", "ID Verification", "Log", "MFA", "Notification",
   "OAuth", "Payment", "SAML", "Scan", "SMS", "Storage",
 ];
 

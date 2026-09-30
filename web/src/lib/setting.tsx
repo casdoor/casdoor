@@ -651,6 +651,12 @@ export const OtherProviderInfo = {
       url: "https://www.aliyun.com/product/idverification",
     },
   },
+  Audit: {
+    "Syslog": {
+      logo: `${StaticBaseUrl}/img/social_default.png`,
+      url: "https://datatracker.ietf.org/doc/html/rfc5424",
+    },
+  },
   Log: {
     "Casdoor Permission Log": {
       logo: `${StaticBaseUrl}/img/social_default.png`,
@@ -1614,6 +1620,10 @@ export function getProviderTypeOptions(category) {
     return ([
       {id: "Jumio", name: "Jumio"},
       {id: "Alibaba Cloud", name: "Alibaba Cloud"},
+    ]);
+  } else if (category === "Audit") {
+    return ([
+      {id: "Syslog", name: "Syslog"},
     ]);
   } else if (category === "Log") {
     return ([

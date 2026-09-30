@@ -310,6 +310,10 @@ func UpdateProvider(id string, provider *Provider) (bool, error) {
 		return false, err
 	}
 
+	if err := validateAuditProvider(provider); err != nil {
+		return false, err
+	}
+
 	if name != provider.Name {
 		err := providerChangeTrigger(owner, name, provider.Name)
 		if err != nil {
@@ -343,6 +347,7 @@ func UpdateProvider(id string, provider *Provider) (bool, error) {
 
 	if affected != 0 {
 		refreshLogProviderRuntime(util.GetId(owner, name), provider)
+		stopAuditProvider(util.GetId(owner, name))
 	}
 
 	return affected != 0, nil
@@ -373,6 +378,10 @@ func AddProvider(provider *Provider) (bool, error) {
 		return false, err
 	}
 
+	if err := validateAuditProvider(provider); err != nil {
+		return false, err
+	}
+
 	affected, err := ormer.Engine.Insert(provider)
 	if err != nil {
 		return false, err
@@ -393,6 +402,7 @@ func DeleteProvider(provider *Provider) (bool, error) {
 
 	if affected != 0 {
 		stopLogProviderRuntime(provider.GetId())
+		stopAuditProvider(provider.GetId())
 	}
 
 	return affected != 0, nil
