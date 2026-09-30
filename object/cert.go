@@ -80,16 +80,6 @@ func GetCerts(owner string) ([]*Cert, error) {
 	return certs, nil
 }
 
-func getGlobalOwnedCerts() ([]*Cert, error) {
-	certs := []*Cert{}
-	err := ormer.Engine.Where("owner = ? or owner = ?", "admin", "built-in").Desc("created_time").Find(&certs)
-	if err != nil {
-		return certs, err
-	}
-
-	return certs, nil
-}
-
 func GetPaginationCerts(owner string, offset, limit int, field, value, sortField, sortOrder string) ([]*Cert, error) {
 	certs := []*Cert{}
 	session := GetSession("", offset, limit, field, value, sortField, sortOrder)
