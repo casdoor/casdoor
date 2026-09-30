@@ -22,6 +22,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 )
@@ -129,6 +130,10 @@ func (c *ApiController) SendEmail() {
 
 	if emailForm.ProviderObject.Name != "" {
 		if emailForm.ProviderObject.ClientSecret == "***" || object.IsHttpHeadersMasked(emailForm.ProviderObject.HttpHeaders) {
+			if conf.IsDemoMode() || conf.IsDemoDatabase() {
+				c.ResponseError(c.T("general:this operation is not allowed in demo mode"))
+				return
+			}
 			// the real secret is sent to the host of providerObject, so only for the provider's own organization
 			if !c.checkServiceProvider(provider, "Email", true) {
 				return
