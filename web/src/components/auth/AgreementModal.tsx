@@ -20,6 +20,11 @@ export function getAgreementDefaultValue(application: any) {
   return isAgreementRequired(application) && item?.rule === "Signin (Default True)";
 }
 
+export function isSigninAgreementShown(application: any) {
+  const item = application?.signinItems?.find((signinItem: any) => signinItem.name === "Agreement");
+  return !!application?.termsOfUse && !!item?.visible;
+}
+
 function fetchTermsOfUse(url: string) {
   return fetch(url, {method: "GET"})
     .then((res) => res.text())
