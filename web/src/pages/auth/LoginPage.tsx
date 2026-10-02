@@ -12,7 +12,7 @@ import {CustomHtml, CustomStyle} from "@/components/common/CustomHtml";
 import {AuthDivider, AuthLayout} from "@/components/auth/AuthLayout";
 import {SigninMethodTabs} from "@/components/auth/SigninMethodTabs";
 import {MfaVerify, NextMfa, RequiredMfa} from "@/components/auth/MfaVerify";
-import {AgreementCheckbox, getAgreementDefaultValue, isAgreementRequired} from "@/components/auth/AgreementModal";
+import {AgreementCheckbox, isSigninAgreementShown} from "@/components/auth/AgreementModal";
 import {DeviceLoginPanel} from "@/components/auth/DeviceLoginPanel";
 import {GoogleOneTap} from "@/components/auth/GoogleOneTap";
 import {FaceRecognitionCommonModal} from "@/components/common/FaceRecognitionCommonModal";
@@ -298,7 +298,7 @@ export default function LoginPage({type = "login", application: applicationProp,
   const [mfa, setMfa] = React.useState<{props: any; values: any; authParams: any} | null>(null);
   const [captchaVisible, setCaptchaVisible] = React.useState(false);
   const [pendingValues, setPendingValues] = React.useState<any>(null);
-  const [agreed, setAgreed] = React.useState(false);
+  const [agreed, setAgreed] = React.useState(true);
   const [faceValues, setFaceValues] = React.useState<any>(null);
   const [captchaValues, setCaptchaValues] = React.useState<CaptchaValues | undefined>(undefined);
   const captchaRef = React.useRef<CaptchaHandle | null>(null);
@@ -334,7 +334,7 @@ export default function LoginPage({type = "login", application: applicationProp,
       setApplication(app);
       setCountryCode(app?.organizationObj?.countryCodes?.[0] ?? "");
       setLoginMethod(getDefaultLoginMethod(app));
-      setAgreed(getAgreementDefaultValue(app));
+      setAgreed(true);
       setAutoSignin(Setting.getAutoSigninDefaultValue(app));
     };
 
@@ -885,6 +885,14 @@ export default function LoginPage({type = "login", application: applicationProp,
       .finally(() => setLoading(false));
   };
 
+  const checkAgreement = () => {
+    if (isSigninAgreementShown(application) && !agreed) {
+      Setting.showMessage("error", i18next.t("signup:Please accept the agreement!"));
+      return false;
+    }
+    return true;
+  };
+
   const submit = (e?: React.FormEvent) => {
     e?.preventDefault();
     const found = validateSignin();
@@ -894,8 +902,7 @@ export default function LoginPage({type = "login", application: applicationProp,
       Setting.showMessage("error", firstError);
       return;
     }
-    if (isAgreementRequired(application) && !agreed) {
-      Setting.showMessage("error", i18next.t("signup:Please accept the agreement!"));
+    if (!checkAgreement()) {
       return;
     }
     const values = buildValues();
@@ -1450,7 +1457,7 @@ export default function LoginPage({type = "login", application: applicationProp,
         </div>
       );
     case "Agreement":
-      return application.termsOfUse ? (
+      return isSigninAgreementShown(application) ? (
         <AgreementCheckbox key={key} application={application} checked={agreed} onChange={setAgreed} />
       ) : null;
     case "Captcha":
@@ -1523,6 +1530,7 @@ export default function LoginPage({type = "login", application: applicationProp,
             application={application}
             method="signin"
             rule={Setting.getProvidersRule(application, item)}
+            onBeforeClick={checkAgreement}
           />
         </div>
       );
