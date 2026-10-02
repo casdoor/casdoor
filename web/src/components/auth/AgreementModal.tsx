@@ -5,21 +5,6 @@ import {Checkbox} from "@/components/ui/checkbox";
 import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog";
 import * as Setting from "@/lib/setting";
 
-/** The application requires the terms of use to be accepted before signing up. */
-export function isAgreementRequired(application: any) {
-  const item = application?.signupItems?.find((signupItem: any) => signupItem.name === "Agreement");
-  if (!item || !item.rule || item.rule === "None") {
-    return false;
-  }
-  return !!item.required;
-}
-
-/** "Signin (Default True)" pre-checks the box. */
-export function getAgreementDefaultValue(application: any) {
-  const item = application?.signupItems?.find((signupItem: any) => signupItem.name === "Agreement");
-  return isAgreementRequired(application) && item?.rule === "Signin (Default True)";
-}
-
 export function isSigninAgreementShown(application: any) {
   const item = application?.signinItems?.find((signinItem: any) => signinItem.name === "Agreement");
   return !!application?.termsOfUse && !!item?.visible;
