@@ -21,6 +21,7 @@ import {OpenTour} from "@/components/common/ConsoleTour";
 import {ThemeToggle} from "@/components/common/ThemeToggle";
 import {useAccount} from "@/hooks/use-account";
 import {useLogout} from "@/hooks/use-logout";
+import {useHoverMenu} from "@/hooks/use-hover-menu";
 import {isWidgetVisible} from "@/lib/nav";
 import * as Conf from "@/Conf";
 import * as UserBackend from "@/backend/UserBackend";
@@ -32,6 +33,7 @@ export function Header({onOpenPalette}: {onOpenPalette: () => void}) {
   const location = useLocation();
   const [organization, setOrganizationState] = React.useState(() => Setting.getOrganization());
   const logout = useLogout();
+  const accountMenu = useHoverMenu();
 
   if (!account) {
     return null;
@@ -94,8 +96,8 @@ export function Header({onOpenPalette}: {onOpenPalette: () => void}) {
         {isWidgetVisible(account, "theme") && <ThemeToggle />}
         {isWidgetVisible(account, "tour") && <OpenTour />}
 
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
+        <DropdownMenu {...accountMenu.root}>
+          <DropdownMenuTrigger asChild {...accountMenu.trigger}>
             <button type="button" className="ml-1 flex items-center gap-2 rounded-md p-1 hover:bg-accent">
               <Avatar className="h-8 w-8">
                 {avatarUrl ? <AvatarImage src={avatarUrl} alt={account.name} /> : null}
@@ -109,7 +111,7 @@ export function Header({onOpenPalette}: {onOpenPalette: () => void}) {
               <ChevronDown className="h-3.5 w-3.5 opacity-60" />
             </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56">
+          <DropdownMenuContent align="end" className="w-56" {...accountMenu.content}>
             <DropdownMenuLabel className="truncate font-normal">
               <div className="text-sm font-medium">{account.displayName || account.name}</div>
               <div className="truncate text-xs text-muted-foreground">
