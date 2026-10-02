@@ -11,6 +11,113 @@
     <meta name="theme-color" content="#000000" />
     <meta name="description" content="Casdoor - An open-source Identity and Access Management (IAM) / Single-Sign-On (SSO) platform" />
     <title>Casdoor</title>
+    <style>
+      body {
+        margin: 0;
+      }
+      #casdoor-boot-fallback {
+        display: -webkit-box;
+        display: -webkit-flex;
+        display: flex;
+        -webkit-box-orient: vertical;
+        -webkit-flex-direction: column;
+        flex-direction: column;
+        -webkit-box-align: center;
+        -webkit-align-items: center;
+        align-items: center;
+        -webkit-box-pack: center;
+        -webkit-justify-content: center;
+        justify-content: center;
+        min-height: 100vh;
+        box-sizing: border-box;
+        padding: 64px 16px;
+        background: #fff;
+        color: #171717;
+        font-family: "Inter Variable", Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
+        font-size: 14px;
+        line-height: 1.5;
+        text-align: center;
+        -webkit-font-smoothing: antialiased;
+      }
+      html.dark #casdoor-boot-fallback {
+        background: #121212;
+        color: #f5f5f5;
+      }
+      html.dark #casdoor-boot-spinner,
+      html.dark #casdoor-boot-hint {
+        color: #a3a3a3;
+      }
+      html.dark #casdoor-boot-detail {
+        border-color: #303030;
+        background: #262626;
+        color: #a3a3a3;
+      }
+      #casdoor-boot-spinner {
+        width: 24px;
+        height: 24px;
+        color: #707070;
+        -webkit-animation: casdoor-boot-spin 1s linear infinite;
+        animation: casdoor-boot-spin 1s linear infinite;
+      }
+      #casdoor-boot-fallback.failed #casdoor-boot-spinner {
+        display: none;
+      }
+      #casdoor-boot-message {
+        display: none;
+        width: 100%;
+        max-width: 28rem;
+      }
+      #casdoor-boot-fallback.failed #casdoor-boot-message {
+        display: block;
+      }
+      #casdoor-boot-title {
+        margin: 0;
+        font-size: 18px;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+      }
+      #casdoor-boot-hint {
+        margin: 8px 0 0 0;
+        color: #707070;
+      }
+      #casdoor-boot-detail {
+        display: none;
+        margin-top: 16px;
+        padding: 8px 12px;
+        border: 1px solid #e5e5e5;
+        border-radius: 6px;
+        background: #f5f5f5;
+        color: #707070;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 12px;
+        text-align: left;
+        word-break: break-all;
+      }
+      @-webkit-keyframes casdoor-boot-spin {
+        to { -webkit-transform: rotate(360deg); }
+      }
+      @keyframes casdoor-boot-spin {
+        to { transform: rotate(360deg); }
+      }
+    </style>
+    <script>
+      (function() {
+        var dark = false;
+        try {
+          var raw = localStorage.getItem("themeAlgorithm") || "system";
+          if (raw.charAt(0) === "[") {
+            dark = raw.indexOf("\"dark\"") !== -1;
+          } else if (raw === "dark") {
+            dark = true;
+          } else if (raw !== "light") {
+            dark = !!(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches);
+          }
+        } catch (e) {}
+        if (dark) {
+          document.documentElement.className += " dark";
+        }
+      })();
+    </script>
     <script>
       // Show a readable message instead of a blank white page when the app bundle
       // cannot be loaded or executed, for example in an outdated browser or in the
@@ -27,11 +134,10 @@
           shown = true;
 
           var titleEl = document.getElementById("casdoor-boot-title");
-          var hintEl = document.getElementById("casdoor-boot-hint");
           var detailEl = document.getElementById("casdoor-boot-detail");
 
           titleEl.innerHTML = title;
-          hintEl.style.display = "block";
+          box.className += " failed";
           if (detail) {
             detailEl.innerHTML = detail;
             detailEl.style.display = "block";
@@ -60,13 +166,29 @@
          bundle does not get that far. Inline styles on purpose: the stylesheet is
          part of the bundle that just failed. -->
     <div id="root">
-      <div id="casdoor-boot-fallback" style="max-width: 560px; margin: 15vh auto 0 auto; padding: 0 24px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #262626; text-align: center; line-height: 1.6;">
-        <div id="casdoor-boot-title" style="font-size: 20px; font-weight: 600;">Loading Casdoor...</div>
-        <div id="casdoor-boot-hint" style="display: none; margin-top: 12px; font-size: 14px; color: #595959;">
-          Your browser may be too old to run Casdoor. Please open this page in a recent version of Chrome, Edge, Firefox or Safari.
-          If this page was opened inside an app's built-in login window, sign in with your system browser instead.
+      <div id="casdoor-boot-fallback" role="status" aria-label="Loading">
+        <svg id="casdoor-boot-spinner" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+        </svg>
+        <script>
+          (function() {
+            var spinner = document.getElementById("casdoor-boot-spinner");
+            if (spinner.getAnimations) {
+              var animations = spinner.getAnimations();
+              for (var i = 0; i < animations.length; i++) {
+                animations[i].startTime = 0;
+              }
+            }
+          })();
+        </script>
+        <div id="casdoor-boot-message">
+          <h1 id="casdoor-boot-title"></h1>
+          <p id="casdoor-boot-hint">
+            Your browser may be too old to run Casdoor. Please open this page in a recent version of Chrome, Edge, Firefox or Safari.
+            If this page was opened inside an app's built-in login window, sign in with your system browser instead.
+          </p>
+          <div id="casdoor-boot-detail"></div>
         </div>
-        <div id="casdoor-boot-detail" style="display: none; margin-top: 12px; padding: 8px 12px; font-size: 12px; font-family: Consolas, Menlo, monospace; color: #8c8c8c; background: #fafafa; border: 1px solid #f0f0f0; border-radius: 5px; word-break: break-all; text-align: left;"></div>
       </div>
     </div>
     <script type="module" src="/src/main.tsx"></script>
