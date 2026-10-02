@@ -14,7 +14,7 @@ import {SearchableSelect} from "@/components/common/SearchableSelect";
 import {RegionSelect} from "@/components/common/RegionSelect";
 import {CustomHtml, CustomStyle} from "@/components/common/CustomHtml";
 import {AuthDivider, AuthLayout} from "@/components/auth/AuthLayout";
-import {AgreementCheckbox, getAgreementDefaultValue} from "@/components/auth/AgreementModal";
+import {AgreementCheckbox} from "@/components/auth/AgreementModal";
 import {ProviderButtons, getVisibleProviders} from "@/components/auth/ProviderButtons";
 import {SendCodeInput} from "@/components/auth/SendCodeInput";
 import {CaptchaModal} from "@/components/common/CaptchaModal";
@@ -66,7 +66,7 @@ export default function SignupPage({application: applicationProp}: {application?
   const [application, setApplication] = React.useState<any>(undefined);
   const [msg, setMsg] = React.useState<string | null>(null);
   const [values, setValues] = React.useState<Record<string, any>>({});
-  const [agreed, setAgreed] = React.useState(false);
+  const [agreed, setAgreed] = React.useState(true);
   const [errors, setErrors] = React.useState<Record<string, string>>({});
   const [loading, setLoading] = React.useState(false);
   const [captchaVisible, setCaptchaVisible] = React.useState(false);
@@ -81,7 +81,7 @@ export default function SignupPage({application: applicationProp}: {application?
   React.useEffect(() => {
     if (applicationProp) {
       setApplication(applicationProp);
-      setAgreed(getAgreementDefaultValue(applicationProp));
+      setAgreed(true);
       setValues((prev) => ({
         ...prev,
         application: applicationProp.name,
@@ -104,7 +104,7 @@ export default function SignupPage({application: applicationProp}: {application?
       .then((res: any) => {
         if (res.status === "ok" && res.data) {
           setApplication(res.data);
-          setAgreed(getAgreementDefaultValue(res.data));
+          setAgreed(true);
           const invitationCode = searchParams.get("invitationCode") ?? "";
           setValues((prev) => ({
             ...prev,
