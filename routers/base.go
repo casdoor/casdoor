@@ -226,6 +226,42 @@ func setSessionUser(ctx *context.Context, user string) {
 	ctx.Input.CruSession.SessionRelease(stdcontext.Background(), ctx.ResponseWriter)
 }
 
+func setSessionSigninToken(ctx *context.Context, userId string, token *object.Token) {
+	tokenId, _ := ctx.Input.CruSession.Get(stdcontext.Background(), object.SessionSigninTokenId).(string)
+	if tokenId == "" && getSessionUser(ctx) == userId {
+		return
+	}
+
+	err := ctx.Input.CruSession.Set(stdcontext.Background(), object.SessionSigninTokenId, token.GetId())
+	if err != nil {
+		panic(err)
+	}
+}
+
+func clearSessionOfRevokedToken(ctx *context.Context) error {
+	tokenId, _ := ctx.Input.CruSession.Get(stdcontext.Background(), object.SessionSigninTokenId).(string)
+	if tokenId == "" {
+		return nil
+	}
+
+	token, err := object.GetToken(tokenId)
+	if err != nil {
+		return err
+	}
+	if token != nil && token.ExpiresIn > 0 {
+		return nil
+	}
+
+	for _, key := range []string{"username", "SessionData", "accessToken", "scope", "aud", object.SessionSigninTokenId} {
+		err = ctx.Input.CruSession.Delete(stdcontext.Background(), key)
+		if err != nil {
+			return err
+		}
+	}
+	ctx.Input.CruSession.SessionRelease(stdcontext.Background(), ctx.ResponseWriter)
+	return nil
+}
+
 func setSessionExpire(ctx *context.Context, ExpireTime int64) {
 	SessionData := struct{ ExpireTime int64 }{ExpireTime: ExpireTime}
 	err := ctx.Input.CruSession.Set(stdcontext.Background(), "SessionData", util.StructToJson(SessionData))

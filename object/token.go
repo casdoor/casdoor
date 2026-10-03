@@ -23,6 +23,8 @@ import (
 	"github.com/xorm-io/core"
 )
 
+const SessionSigninTokenId = "signinTokenId"
+
 type Token struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
