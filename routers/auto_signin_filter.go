@@ -122,8 +122,15 @@ func AutoSigninFilter(ctx *context.Context) {
 		} else {
 			userId = util.GetId(token.Organization, token.User)
 		}
+		setSessionSigninToken(ctx, userId, token)
 		setSessionUser(ctx, userId)
 		setSessionOidc(ctx, token.Scope, application.ClientId)
+		return
+	}
+
+	err := clearSessionOfRevokedToken(ctx)
+	if err != nil {
+		responseError(ctx, err.Error())
 		return
 	}
 
