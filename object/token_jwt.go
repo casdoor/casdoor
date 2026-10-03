@@ -377,6 +377,15 @@ func getUserFieldValue(user *User, fieldName string) (interface{}, bool) {
 	return nil, false
 }
 
+func getRefreshClaimsCustom(claims Claims, tokenField []string, tokenAttributes []*JwtItem, refreshExpireTime time.Time) jwt.MapClaims {
+	res := getClaimsCustom(claims, tokenField, tokenAttributes)
+	res["exp"] = jwt.NewNumericDate(refreshExpireTime)
+	// overwrite the "access-token" set by getClaimsCustom(), so that the refresh token
+	// can't be used as an access token
+	res["tokenType"] = "refresh-token"
+	return res
+}
+
 func getClaimsCustom(claims Claims, tokenField []string, tokenAttributes []*JwtItem) jwt.MapClaims {
 	res := make(jwt.MapClaims)
 
@@ -639,10 +648,7 @@ func generateJwtToken(application *Application, user *User, provider string, sig
 
 		token = jwt.NewWithClaims(jwtMethod, claimsCustom)
 		idToken = jwt.NewWithClaims(jwtMethod, getClaimsCustom(idClaims, application.TokenFields, application.TokenAttributes))
-		refreshClaims := getClaimsCustom(claims, application.TokenFields, application.TokenAttributes)
-		refreshClaims["exp"] = jwt.NewNumericDate(refreshExpireTime)
-		refreshClaims["TokenType"] = "refresh-token"
-		refreshToken = jwt.NewWithClaims(jwtMethod, refreshClaims)
+		refreshToken = jwt.NewWithClaims(jwtMethod, getRefreshClaimsCustom(claims, application.TokenFields, application.TokenAttributes, refreshExpireTime))
 	} else if application.TokenFormat == "JWT-Standard" {
 		claimsStandard := getStandardClaims(claims)
 
