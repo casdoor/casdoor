@@ -22,6 +22,11 @@ export function handleCameraError(error: any) {
   }
 }
 
+export function stopMediaStream(streamRef: React.MutableRefObject<MediaStream | null>) {
+  streamRef.current?.getTracks().forEach((track) => track.stop());
+  streamRef.current = null;
+}
+
 /** The circular progress ring drawn around the camera preview. */
 export function FaceRing({percent}: {percent: number}) {
   return (
@@ -91,13 +96,13 @@ export function FaceRecognitionCommonModal({visible, onOk, onCancel}: FaceRecogn
 
     return () => {
       cancelled = true;
+      stopMediaStream(mediaStreamRef);
     };
   }, [visible]);
 
   React.useEffect(() => {
     if (!captured) {
-      mediaStreamRef.current?.getTracks().forEach((track) => track.stop());
-      mediaStreamRef.current = null;
+      stopMediaStream(mediaStreamRef);
       if (videoRef.current) {
         videoRef.current.srcObject = null;
       }
@@ -105,10 +110,15 @@ export function FaceRecognitionCommonModal({visible, onOk, onCancel}: FaceRecogn
     }
 
     let tick = 0;
+    let cancelled = false;
     const video = videoRef.current;
     if (video) {
       video.srcObject = mediaStreamRef.current;
-      video.play();
+      video.play().catch((error) => {
+        if (!cancelled) {
+          handleCameraError(error);
+        }
+      });
     }
 
     // the first three seconds let the user settle, then four frames are taken
@@ -131,7 +141,10 @@ export function FaceRecognitionCommonModal({visible, onOk, onCancel}: FaceRecogn
       }
     }, 1000);
 
-    return () => window.clearInterval(timer);
+    return () => {
+      cancelled = true;
+      window.clearInterval(timer);
+    };
   }, [captured]);
 
   return (
@@ -142,7 +155,7 @@ export function FaceRecognitionCommonModal({visible, onOk, onCancel}: FaceRecogn
         </DialogHeader>
         <Progress value={percent} />
         <div className="relative mb-12 mt-5 flex justify-center">
-          <video ref={videoRef} className="h-[220px] w-[220px] rounded-full object-cover" />
+          <video ref={videoRef} muted playsInline className="h-[220px] w-[220px] rounded-full object-cover" />
           <FaceRing percent={percent} />
         </div>
         <DialogFooter>
