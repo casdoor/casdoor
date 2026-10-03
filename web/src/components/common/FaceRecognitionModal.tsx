@@ -35,7 +35,7 @@ interface PickedFile {
  *   withImage=true, captureImage=true → camera, returns a JPEG data URL
  */
 export function FaceRecognitionModal({visible, withImage, captureImage, onOk, onCancel}: FaceRecognitionModalProps) {
-  const videoRef = React.useRef<HTMLVideoElement>(null);
+  const [video, setVideo] = React.useState<HTMLVideoElement | null>(null);
   const detectionRef = React.useRef<number | null>(null);
   const mediaStreamRef = React.useRef<MediaStream | null>(null);
   const [modelsLoaded, setModelsLoaded] = React.useState(false);
@@ -95,6 +95,9 @@ export function FaceRecognitionModal({visible, withImage, captureImage, onOk, on
         setCameraReady(true);
       })
       .catch((error) => {
+        if (cancelled) {
+          return;
+        }
         onCancelRef.current();
         handleCameraError(error);
       });
@@ -105,27 +108,31 @@ export function FaceRecognitionModal({visible, withImage, captureImage, onOk, on
         window.clearInterval(detectionRef.current);
         detectionRef.current = null;
       }
+      mediaStreamRef.current?.getTracks().forEach((track) => track.stop());
+      mediaStreamRef.current = null;
       setCameraReady(false);
     };
   }, [visible, modelsLoaded, useCamera]);
 
   React.useEffect(() => {
-    if (!useCamera) {
+    if (!useCamera || !cameraReady || !video) {
       return;
     }
-    if (!cameraReady) {
-      mediaStreamRef.current?.getTracks().forEach((track) => track.stop());
-      mediaStreamRef.current = null;
-      if (videoRef.current) {
-        videoRef.current.srcObject = null;
+    // DialogContent is portaled: cameraReady can change before the video mounts.
+    let cancelled = false;
+    video.srcObject = mediaStreamRef.current;
+    video.play().catch((error) => {
+      if (!cancelled) {
+        onCancelRef.current();
+        handleCameraError(error);
       }
-      return;
-    }
-    if (videoRef.current) {
-      videoRef.current.srcObject = mediaStreamRef.current;
-      videoRef.current.play();
-    }
-  }, [cameraReady, useCamera]);
+    });
+    return () => {
+      cancelled = true;
+      video.pause();
+      video.srcObject = null;
+    };
+  }, [cameraReady, useCamera, video]);
 
   const handleStreamVideo = () => {
     if (!useCamera || detectionRef.current !== null) {
@@ -135,7 +142,6 @@ export function FaceRecognitionModal({visible, withImage, captureImage, onOk, on
     let goodCount = 0;
 
     detectionRef.current = window.setInterval(async() => {
-      const video = videoRef.current;
       if (!modelsLoaded || !video || !visible) {
         return;
       }
@@ -232,7 +238,9 @@ export function FaceRecognitionModal({visible, withImage, captureImage, onOk, on
             {modelsLoaded ? (
               <>
                 <video
-                  ref={videoRef}
+                  ref={setVideo}
+                  muted
+                  playsInline
                   onPlay={handleStreamVideo}
                   className="h-[220px] w-[220px] rounded-full object-cover"
                 />

@@ -148,6 +148,9 @@ jobs:
           key: cypress-${{ runner.os }}-${{ hashFiles('web/yarn.lock') }}
       - run: yarn install
         working-directory: ./web
+      - name: Run component tests
+        run: yarn cypress run --component
+        working-directory: ./web
       - name: Wait for backend to be ready
         run: |
           echo "Waiting for backend server to start on port 8000..."
