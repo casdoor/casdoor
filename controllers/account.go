@@ -40,6 +40,7 @@ const (
 
 type Response struct {
 	Status string      `json:"status"`
+	Code   string      `json:"code,omitempty"`
 	Msg    string      `json:"msg"`
 	Sub    string      `json:"sub"`
 	Name   string      `json:"name"`

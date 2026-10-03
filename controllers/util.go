@@ -46,6 +46,11 @@ func (c *ApiController) ResponseOk(data ...interface{}) {
 
 // ResponseError ...
 func (c *ApiController) ResponseError(error string, data ...interface{}) {
+	c.ResponseErrorWithCode("", error, data...)
+}
+
+// ResponseErrorWithCode ...
+func (c *ApiController) ResponseErrorWithCode(code string, error string, data ...interface{}) {
 	enableErrorMask2 := conf.GetConfigBool("enableErrorMask2")
 	if enableErrorMask2 {
 		error = c.T("subscription:Error")
@@ -55,8 +60,20 @@ func (c *ApiController) ResponseError(error string, data ...interface{}) {
 		return
 	}
 
-	resp := &Response{Status: "error", Msg: error}
+	resp := &Response{Status: "error", Code: code, Msg: error}
 	c.ResponseJsonData(resp, data...)
+}
+
+func (c *ApiController) responseSigninError(err error, fallbackReason string) {
+	reason := fallbackReason
+	var signinErr *object.SigninError
+	if errors.As(err, &signinErr) {
+		reason = signinErr.Reason
+	}
+	if reason != "" {
+		c.Ctx.Input.SetParam("recordDetail", reason)
+	}
+	c.ResponseErrorWithCode(reason, err.Error())
 }
 
 func (c *ApiController) T(error string) string {

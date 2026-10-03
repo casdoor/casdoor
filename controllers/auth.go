@@ -921,11 +921,7 @@ func (c *ApiController) Login() {
 		}
 
 		if err != nil {
-			var signinErr *object.SigninError
-			if errors.As(err, &signinErr) {
-				c.Ctx.Input.SetParam("recordDetail", signinErr.Reason)
-			}
-			c.ResponseError(err.Error())
+			c.responseSigninError(err, "")
 			return
 		} else {
 			var application *object.Application
@@ -1407,8 +1403,7 @@ func (c *ApiController) Login() {
 
 			err = object.VerifyMfaWithLimit(user, func() error { return c.verifyMfaPasscode(user, mfaUtil, authForm.Passcode) }, c.GetAcceptLanguage())
 			if err != nil {
-				c.Ctx.Input.SetParam("recordDetail", object.SigninReasonMfaFailed)
-				c.ResponseError(err.Error())
+				c.responseSigninError(err, object.SigninReasonMfaFailed)
 				return
 			}
 
@@ -1432,8 +1427,7 @@ func (c *ApiController) Login() {
 		} else if authForm.RecoveryCode != "" {
 			err = object.VerifyMfaWithLimit(user, func() error { return object.MfaRecover(user, authForm.RecoveryCode) }, c.GetAcceptLanguage())
 			if err != nil {
-				c.Ctx.Input.SetParam("recordDetail", object.SigninReasonMfaFailed)
-				c.ResponseError(err.Error())
+				c.responseSigninError(err, object.SigninReasonMfaFailed)
 				return
 			}
 		} else {
