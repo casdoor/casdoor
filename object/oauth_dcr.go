@@ -146,6 +146,8 @@ func RegisterDynamicClient(req *DynamicClientRegistrationRequest, organization s
 		inheritedEnableWebAuthn = defaultApp.EnableWebAuthn
 	}
 
+	expireInHours, refreshExpireInHours, cookieExpireInHours := getDcrTokenLifetimes(defaultApp)
+
 	// Create Application object
 	// Note: DCR applications are created under "admin" owner by default
 	// This can be made configurable in future versions
@@ -182,9 +184,9 @@ func RegisterDynamicClient(req *DynamicClientRegistrationRequest, organization s
 		EnableWebAuthn:          inheritedEnableWebAuthn,
 		TokenFormat:             org.DefaultTokenFormat,
 		TokenFields:             org.DefaultTokenFields,
-		ExpireInHours:           168,
-		RefreshExpireInHours:    168,
-		CookieExpireInHours:     720,
+		ExpireInHours:           expireInHours,
+		RefreshExpireInHours:    refreshExpireInHours,
+		CookieExpireInHours:     cookieExpireInHours,
 		FormOffset:              2,
 		Tags:                    []string{"dcr"},
 		TermsOfUse:              req.TosUri,
@@ -310,6 +312,24 @@ func DeleteDynamicClient(app *Application) *DcrError {
 		return &DcrError{Error: "server_error", ErrorDescription: "failed to delete client"}
 	}
 	return nil
+}
+
+func getDcrTokenLifetimes(defaultApp *Application) (float64, float64, int64) {
+	expireInHours, refreshExpireInHours, cookieExpireInHours := 168.0, 720.0, int64(720)
+	if defaultApp == nil {
+		return expireInHours, refreshExpireInHours, cookieExpireInHours
+	}
+
+	if defaultApp.ExpireInHours > 0 {
+		expireInHours = defaultApp.ExpireInHours
+	}
+	if defaultApp.RefreshExpireInHours > 0 {
+		refreshExpireInHours = defaultApp.RefreshExpireInHours
+	}
+	if defaultApp.CookieExpireInHours > 0 {
+		cookieExpireInHours = defaultApp.CookieExpireInHours
+	}
+	return expireInHours, refreshExpireInHours, cookieExpireInHours
 }
 
 var dcrGrantTypes = []string{"authorization_code", "refresh_token", "urn:ietf:params:oauth:grant-type:device_code"}
