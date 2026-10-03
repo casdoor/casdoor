@@ -404,10 +404,19 @@ export default function LoginPage({type = "login", application: applicationProp,
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [type, owner, params.applicationName, params.casApplicationName, params.userCode, applicationProp]);
 
+  // The page to land on after sign-in: the console page that bounced the visitor
+  // here, or an explicit ?from=/groups on the login link.
+  React.useEffect(() => {
+    if (!preview && type === "login") {
+      Setting.setFromLink(new URLSearchParams(location.search).get("from") ?? (location.state as any)?.from);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [type, preview]);
+
   // Already signed in on a plain /login: go to the console.
   React.useEffect(() => {
     if (!preview && type === "login" && account && !location.search.includes("silentSignin")) {
-      navigate("/", {replace: true, state: {from: "/login"}});
+      navigate(Setting.getFromLink(), {replace: true, state: {from: "/login"}});
     }
   }, [account, type, navigate, location.search, preview]);
 

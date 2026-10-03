@@ -1820,6 +1820,18 @@ export function getRandomName() {
   return Math.random().toString(36).slice(-6);
 }
 
+/**
+ * Remembers where to land after sign-in. Only same-site paths are kept, so a
+ * crafted ?from= link cannot bounce the user to another site.
+ */
+export function setFromLink(from) {
+  if (typeof from === "string" && from.startsWith("/") && !from.startsWith("//") && !from.startsWith("/\\") && !from.startsWith("/login")) {
+    sessionStorage.setItem("from", from);
+  } else {
+    sessionStorage.removeItem("from");
+  }
+}
+
 export function getFromLink() {
   const from = sessionStorage.getItem("from");
   if (from === null) {
