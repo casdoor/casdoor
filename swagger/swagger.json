@@ -5150,39 +5150,6 @@
                 }
             }
         },
-        "/api/refresh-engines": {
-            "post": {
-                "tags": [
-                    "CLI API"
-                ],
-                "description": "Refresh all CLI engines",
-                "operationId": "ApiController.RefreshEngines",
-                "parameters": [
-                    {
-                        "in": "query",
-                        "name": "m",
-                        "description": "Hash for request validation",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "in": "query",
-                        "name": "t",
-                        "description": "Timestamp for request validation",
-                        "required": true,
-                        "type": "string"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "The Response object",
-                        "schema": {
-                            "$ref": "#/definitions/controllers.Response"
-                        }
-                    }
-                }
-            }
-        },
         "/api/remove-policy": {
             "post": {
                 "tags": [
@@ -5229,23 +5196,6 @@
                         "description": "The Response object",
                         "schema": {
                             "$ref": "#/definitions/object.Userinfo"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/run-casbin-command": {
-            "get": {
-                "tags": [
-                    "Enforcer API"
-                ],
-                "description": "Call Casbin CLI commands",
-                "operationId": "ApiController.RunCasbinCommand",
-                "responses": {
-                    "200": {
-                        "description": "The Response object",
-                        "schema": {
-                            "$ref": "#/definitions/controllers.Response"
                         }
                     }
                 }
