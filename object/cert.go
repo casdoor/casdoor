@@ -19,6 +19,7 @@ import (
 	"time"
 
 	"github.com/casdoor/casdoor/certificate"
+	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/core"
 	"golang.org/x/net/publicsuffix"
@@ -177,6 +178,29 @@ func UpdateCert(id string, cert *Cert) (bool, error) {
 	}
 
 	return affected != 0, nil
+}
+
+// CheckCertName keeps a cert name unique across owners, because the name is the "kid" of the
+// global JWKS, where another owner's cert of the same name would be taken for this one.
+func CheckCertName(cert *Cert, oldId string, lang string) error {
+	if cert.GetId() == oldId {
+		return nil
+	}
+
+	session := ormer.Engine.Where("name = ? and owner <> ?", cert.Name, cert.Owner)
+	if oldId != "" {
+		oldOwner, oldName := util.GetOwnerAndNameFromIdNoCheck(oldId)
+		session = session.And("not (owner = ? and name = ?)", oldOwner, oldName)
+	}
+
+	existed, err := session.Exist(&Cert{})
+	if err != nil {
+		return err
+	}
+	if existed {
+		return fmt.Errorf(i18n.Translate(lang, "cert:The cert name: %s is already used by another organization"), cert.Name)
+	}
+	return nil
 }
 
 func AddCert(cert *Cert) (bool, error) {
