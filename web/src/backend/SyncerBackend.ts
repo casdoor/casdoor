@@ -88,7 +88,7 @@ export function deleteSyncer(syncer) {
 
 export function runSyncer(owner, name, organization) {
   return fetch(`${Setting.ServerUrl}/api/run-syncer?id=${owner}/${encodeURIComponent(name)}&organization=${encodeURIComponent(organization)}`, {
-    method: "GET",
+    method: "POST",
     credentials: "include",
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
