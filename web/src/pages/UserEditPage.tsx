@@ -24,7 +24,7 @@ import {MapTable} from "@/components/crud/MapTable";
 import {FormRow, formGridClass} from "@/components/crud/FormRow";
 import {AffiliationAddressSelect, AffiliationField, useAffiliation} from "@/components/user/AffiliationSelect";
 import {CartTable} from "@/components/user/CartTable";
-import {CasdoorAppQrCode, CasdoorAppUrl} from "@/components/user/CasdoorAppConnector";
+import {CasdoorAppQrCode, CasdoorAppUrl, CasdoorAuthenticatorLink} from "@/components/user/CasdoorAppConnector";
 import {ConsentTable} from "@/components/user/ConsentTable";
 import {FaceIdTable} from "@/components/user/FaceIdTable";
 import {CropperDivModal, UserImageField} from "@/components/user/CropperDivModal";
@@ -858,6 +858,10 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
       <AccountItemRow name="MFA accounts" labelKey="user:MFA accounts" block>
         <div className="space-y-2">
           {/* the Casdoor Authenticator app takes these over by scanning the QR / opening the link */}
+          <p className="text-sm text-muted-foreground">
+            {i18next.t("user:Scan the QR code with Casdoor Authenticator to sync these MFA accounts to your phone")}
+          </p>
+          <CasdoorAuthenticatorLink />
           <div className="flex flex-wrap gap-2">
             <Popover>
               <PopoverTrigger asChild>

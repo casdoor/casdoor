@@ -5,6 +5,18 @@ import {Alert, AlertDescription} from "@/components/ui/alert";
 import {Button} from "@/components/ui/button";
 import * as Setting from "@/lib/setting";
 
+export const CasdoorAuthenticatorUrl = "https://app.casdoor.ai";
+
+export function CasdoorAuthenticatorLink({className}: {className?: string}) {
+  return (
+    <p className={className ?? "text-sm"}>
+      <a href={CasdoorAuthenticatorUrl} target="_blank" rel="noreferrer" className="font-medium text-primary underline underline-offset-4">
+        {i18next.t("mfa:Get the free Casdoor Authenticator app")}
+      </a>
+    </p>
+  );
+}
+
 /**
  * The deep link the Casdoor Authenticator app scans to take over the account's
  * MFA entries. Port of web/src/common/CasdoorAppConnector.js.
