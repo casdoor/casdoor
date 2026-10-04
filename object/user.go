@@ -1501,6 +1501,9 @@ func DeleteGroupForUser(user string, group string) (bool, error) {
 	if err != nil {
 		return false, err
 	}
+	if userObj == nil {
+		return false, fmt.Errorf(i18n.Translate("en", "general:The user: %s doesn't exist"), user)
+	}
 
 	userObj.Groups = util.DeleteVal(userObj.Groups, group)
 	_, err = updateUser(user, userObj, []string{"groups"})
