@@ -225,7 +225,15 @@ func buildSp(provider *Provider, samlResponse string, host string) (*saml2.SAMLS
 }
 
 func buildSpKeyStore() (dsig.X509KeyStore, error) {
-	keyPair, err := tls.LoadX509KeyPair("object/token_jwt_key.pem", "object/token_jwt_key.key")
+	cert, err := getCert("admin", "cert-built-in")
+	if err != nil {
+		return nil, err
+	}
+	if cert == nil || cert.Certificate == "" || cert.PrivateKey == "" {
+		return nil, fmt.Errorf("the cert: admin/cert-built-in is not found")
+	}
+
+	keyPair, err := tls.X509KeyPair([]byte(cert.Certificate), []byte(cert.PrivateKey))
 	if err != nil {
 		return nil, err
 	}

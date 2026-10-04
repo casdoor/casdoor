@@ -276,7 +276,12 @@ func UpdateOrganization(id string, organization *Organization, isGlobalAdmin boo
 	}
 
 	if name != organization.Name {
-		err := organizationChangeTrigger(name, organization.Name)
+		err = checkReservedOrganizationName(organization.Name)
+		if err != nil {
+			return false, err
+		}
+
+		err = organizationChangeTrigger(name, organization.Name)
 		if err != nil {
 			return false, err
 		}
@@ -333,7 +338,21 @@ func checkDefaultApplication(organizationName string, applicationName string, la
 	return nil
 }
 
+var reservedOrganizationNames = []string{"admin", "app"}
+
+func checkReservedOrganizationName(name string) error {
+	if util.InSlice(reservedOrganizationNames, name) {
+		return fmt.Errorf("the organization name: %s is reserved", name)
+	}
+	return nil
+}
+
 func AddOrganization(organization *Organization) (bool, error) {
+	err := checkReservedOrganizationName(organization.Name)
+	if err != nil {
+		return false, err
+	}
+
 	// there is no previous record for a new organization, so the masked values mean "empty"
 	if organization.MasterPassword == "***" {
 		organization.MasterPassword = ""

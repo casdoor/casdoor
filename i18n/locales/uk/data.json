@@ -19,6 +19,7 @@
     "The group: %s does not exist": "Група: %s не існує",
     "The login method: login with LDAP is not enabled for the application": "Метод входу через LDAP не увімкнено для цього додатка",
     "The login method: login with SMS is not enabled for the application": "Метод входу через SMS не увімкнено для цього додатка",
+    "The login method: login with WebAuthn is not enabled for the application": "Метод входу: вхід за допомогою WebAuthn не ввімкнено для застосунку",
     "The login method: login with email is not enabled for the application": "Метод входу через email не увімкнено для цього додатка",
     "The login method: login with face is not enabled for the application": "Метод входу через обличчя не увімкнено для цього додатка",
     "The login method: login with magic link is not enabled for the application": "Метод входу: вхід за магічним посиланням не увімкнено для цього застосунку",

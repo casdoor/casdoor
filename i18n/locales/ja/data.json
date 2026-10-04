@@ -19,6 +19,7 @@
     "The group: %s does not exist": "グループ: %sは存在しません",
     "The login method: login with LDAP is not enabled for the application": "このアプリケーションでは LDAP ログインは有効になっていません",
     "The login method: login with SMS is not enabled for the application": "このアプリケーションでは SMS ログインは有効になっていません",
+    "The login method: login with WebAuthn is not enabled for the application": "このアプリケーションでは WebAuthn によるログインは有効になっていません",
     "The login method: login with email is not enabled for the application": "このアプリケーションではメールログインは有効になっていません",
     "The login method: login with face is not enabled for the application": "このアプリケーションでは顔認証ログインは有効になっていません",
     "The login method: login with magic link is not enabled for the application": "このアプリケーションではマジックリンクによるログインが有効になっていません",

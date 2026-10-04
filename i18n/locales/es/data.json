@@ -19,6 +19,7 @@
     "The group: %s does not exist": "El grupo: %s no existe",
     "The login method: login with LDAP is not enabled for the application": "El método de inicio de sesión: inicio de sesión con LDAP no está habilitado para la aplicación",
     "The login method: login with SMS is not enabled for the application": "El método de inicio de sesión: inicio de sesión con SMS no está habilitado para la aplicación",
+    "The login method: login with WebAuthn is not enabled for the application": "El método de inicio de sesión: el inicio de sesión con WebAuthn no está habilitado para la aplicación",
     "The login method: login with email is not enabled for the application": "El método de inicio de sesión: inicio de sesión con correo electrónico no está habilitado para la aplicación",
     "The login method: login with face is not enabled for the application": "El método de inicio de sesión: inicio de sesión con reconocimiento facial no está habilitado para la aplicación",
     "The login method: login with magic link is not enabled for the application": "El método de inicio de sesión: inicio de sesión con enlace mágico no está habilitado para la aplicación",

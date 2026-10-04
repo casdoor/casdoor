@@ -216,19 +216,17 @@ func (c *ApiController) WebAuthnSigninFinish() {
 		return
 	}
 
-	var application *object.Application
-
-	if clientId != "" && (responseType == ResponseTypeCode) {
-		application, err = object.GetApplicationByClientId(clientId)
-	} else {
-		application, err = object.GetApplicationByUser(user)
-	}
+	application, err := getWebAuthnSigninApplication(clientId, responseType, c.Ctx.Input.Query("application"), user)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
 	if application == nil {
 		c.ResponseError(c.T("check:Application does not exist"))
+		return
+	}
+	if !application.IsWebAuthnEnabled() {
+		c.ResponseError(c.T("auth:The login method: login with WebAuthn is not enabled for the application"))
 		return
 	}
 
@@ -248,6 +246,16 @@ func (c *ApiController) WebAuthnSigninFinish() {
 	}
 	c.Data["json"] = resp
 	c.ServeJSON()
+}
+
+func getWebAuthnSigninApplication(clientId string, responseType string, applicationName string, user *object.User) (*object.Application, error) {
+	if clientId != "" && responseType == ResponseTypeCode {
+		return object.GetApplicationByClientId(clientId)
+	}
+	if applicationName != "" {
+		return object.GetApplication(util.GetId("admin", applicationName))
+	}
+	return object.GetApplicationByUser(user)
 }
 
 func (c *ApiController) checkWebAuthnSigninMfa(user *object.User) bool {
