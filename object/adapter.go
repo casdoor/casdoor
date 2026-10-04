@@ -258,6 +258,10 @@ func CheckSameDbAdapterTable(adapter *Adapter) error {
 	}
 
 	table := getSameDbAdapterTable(adapter)
+	if !util.FilterSQLIdentifier(table) {
+		return fmt.Errorf("the table: %s is not a valid table name", table)
+	}
+
 	existed, err := ormer.Engine.IsTableExist(table)
 	if err != nil {
 		return err

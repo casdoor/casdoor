@@ -80,6 +80,9 @@ func (p *Permission) setEnforcerAdapter(enforcer *casbin.Enforcer) error {
 		}
 
 		if adapterObj != nil && adapterObj.Table != "" {
+			if !adapterObj.UseSameDb && adapterObj.Owner != "built-in" {
+				return fmt.Errorf("the adapter: %s of permission: %s must use the same DB as Casdoor", adapterObj.GetId(), p.GetId())
+			}
 			tableName = adapterObj.Table
 		}
 	}

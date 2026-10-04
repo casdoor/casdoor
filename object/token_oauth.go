@@ -316,6 +316,10 @@ func GetPasswordToken(application *Application, username string, password string
 		return nil, tokenError, nil
 	}
 
+	if tokenError := getSigninPolicyTokenError(user, lang); tokenError != nil {
+		return nil, tokenError, nil
+	}
+
 	if tokenError := checkGrantUserSignin(application, user, clientIp, lang); tokenError != nil {
 		return nil, tokenError, nil
 	}
@@ -452,6 +456,10 @@ func GetImplicitToken(application *Application, username string, password string
 		return nil, tokenError, nil
 	}
 
+	if tokenError := getSigninPolicyTokenError(user, lang); tokenError != nil {
+		return nil, tokenError, nil
+	}
+
 	if tokenError := checkGrantUserSignin(application, user, clientIp, lang); tokenError != nil {
 		return nil, tokenError, nil
 	}
@@ -480,6 +488,18 @@ func getMfaUserTokenError(user *User) *TokenError {
 	return &TokenError{
 		Error:            InvalidGrant,
 		ErrorDescription: "the user has MFA enabled and cannot sign in with a password grant, please use the authorization code flow",
+	}
+}
+
+func getSigninPolicyTokenError(user *User, lang string) *TokenError {
+	err := CheckPasswordOnlySignin(user, "", lang)
+	if err == nil {
+		return nil
+	}
+
+	return &TokenError{
+		Error:            InvalidGrant,
+		ErrorDescription: err.Error(),
 	}
 }
 

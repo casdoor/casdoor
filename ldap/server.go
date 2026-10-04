@@ -145,6 +145,15 @@ func handleBind(w ldap.ResponseWriter, m *ldap.Message) {
 			return
 		}
 
+		err = object.CheckPasswordOnlySignin(bindUser, "", "en")
+		if err != nil {
+			log.Printf("Bind failed User=%s, ErrMsg=%s", string(r.Name()), err)
+			res.SetResultCode(ldap.LDAPResultInvalidCredentials)
+			res.SetDiagnosticMessage(err.Error())
+			w.Write(res)
+			return
+		}
+
 		if bindOrg == "built-in" || bindUser.IsGlobalAdmin() {
 			m.Client.IsGlobalAdmin, m.Client.IsOrgAdmin = true, true
 		} else if bindUser.IsAdmin {
