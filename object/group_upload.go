@@ -41,7 +41,7 @@ func getGroupMap(groups []*Group) (map[string]*Group, error) {
 	return m, nil
 }
 
-func UploadGroups(path string) (bool, error) {
+func UploadGroups(path string, organization string, lang string) (bool, error) {
 	table, err := xlsx.ReadXlsxFile(path)
 	if err != nil {
 		return false, err
@@ -50,6 +50,13 @@ func UploadGroups(path string) (bool, error) {
 	transGroups, err := StringArrayToStruct[Group](table)
 	if err != nil {
 		return false, err
+	}
+
+	for _, group := range transGroups {
+		err = checkUploadedOwner(&group.Owner, group.Name, organization, lang)
+		if err != nil {
+			return false, err
+		}
 	}
 
 	oldGroupMap, err := getGroupMap(transGroups)

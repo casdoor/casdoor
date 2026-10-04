@@ -39,6 +39,22 @@ func saveFile(path string, file *multipart.File) (err error) {
 	return nil
 }
 
+// getUploadOrganization returns the organization the current user may upload objects into,
+// or "" for a global admin, who may upload into any organization.
+func (c *ApiController) getUploadOrganization() (string, bool) {
+	isGlobalAdmin, user := c.isGlobalAdmin()
+	if isGlobalAdmin {
+		return "", true
+	}
+
+	if user == nil {
+		c.ResponseError(c.T("auth:Unauthorized operation"))
+		return "", false
+	}
+
+	return user.Owner, true
+}
+
 func (c *ApiController) UploadUsers() {
 	if !c.IsAdmin() {
 		c.ResponseError(c.T("auth:Unauthorized operation"))
