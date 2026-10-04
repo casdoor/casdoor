@@ -809,6 +809,11 @@ func (c *ApiController) RemoveUserFromGroup() {
 
 	organization, err := object.GetOrganization(util.GetId("admin", owner))
 	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	if organization == nil {
+		c.ResponseError(fmt.Sprintf(c.T("auth:The organization: %s does not exist"), owner))
 		return
 	}
 	item := object.GetAccountItemForUpdate("Groups", organization)
