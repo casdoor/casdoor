@@ -19,6 +19,7 @@
     "The group: %s does not exist": "Nhóm: %s không tồn tại",
     "The login method: login with LDAP is not enabled for the application": "Phương thức đăng nhập bằng LDAP chưa được bật cho ứng dụng",
     "The login method: login with SMS is not enabled for the application": "Phương thức đăng nhập bằng SMS chưa được bật cho ứng dụng",
+    "The login method: login with WebAuthn is not enabled for the application": "Phương thức đăng nhập: đăng nhập bằng WebAuthn không được bật cho ứng dụng",
     "The login method: login with email is not enabled for the application": "Phương thức đăng nhập bằng email chưa được bật cho ứng dụng",
     "The login method: login with face is not enabled for the application": "Phương thức đăng nhập bằng khuôn mặt chưa được bật cho ứng dụng",
     "The login method: login with magic link is not enabled for the application": "Phương thức đăng nhập: đăng nhập bằng liên kết ma thuật chưa được bật cho ứng dụng",

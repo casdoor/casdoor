@@ -144,7 +144,12 @@ func isFastAutoSigninAllowed(ctx *context.Context, user *object.User, applicatio
 		return false, nil
 	}
 
-	err := object.CheckApplicationSignin(application, user, util.GetClientIpFromRequest(ctx.Request), getAcceptLanguage(ctx))
+	isRestricted, err := isRestrictedClientSession(ctx)
+	if err != nil || isRestricted {
+		return false, err
+	}
+
+	err = object.CheckApplicationSignin(application, user, util.GetClientIpFromRequest(ctx.Request), getAcceptLanguage(ctx))
 	if err != nil {
 		return false, nil
 	}

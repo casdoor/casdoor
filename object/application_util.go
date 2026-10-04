@@ -471,32 +471,64 @@ func KeepApplicationCustomHtml(application *Application, oldApplication *Applica
 	application.FormSideHtml = oldApplication.FormSideHtml
 	application.SigninHtml = oldApplication.SigninHtml
 	application.SignupHtml = oldApplication.SignupHtml
+	application.FormCss = keepSafeCss(application.FormCss, oldApplication.FormCss)
+	application.FormCssMobile = keepSafeCss(application.FormCssMobile, oldApplication.FormCssMobile)
 
 	// a custom sign-in item renders its customCss as HTML
-	oldSigninHtmls := map[string]string{}
+	oldSigninCss := map[string]string{}
 	for _, item := range oldApplication.SigninItems {
-		if isCustomSigninItem(item) {
-			oldSigninHtmls[item.Name] = item.CustomCss
+		if item != nil {
+			oldSigninCss[item.Name] = item.CustomCss
 		}
 	}
 	for _, item := range application.SigninItems {
 		if isCustomSigninItem(item) {
-			item.CustomCss = oldSigninHtmls[item.Name]
+			item.CustomCss = oldSigninCss[item.Name]
+		} else if item != nil {
+			item.CustomCss = keepSafeCss(item.CustomCss, oldSigninCss[item.Name])
 		}
 	}
 
 	// a custom sign-up item ("Text N") renders its label as HTML
 	oldSignupHtmls := map[string]string{}
+	oldSignupCss := map[string]string{}
 	for _, item := range oldApplication.SignupItems {
 		if isCustomSignupItem(item) {
 			oldSignupHtmls[item.Name] = item.Label
+		}
+		if item != nil {
+			oldSignupCss[item.Name] = item.CustomCss
 		}
 	}
 	for _, item := range application.SignupItems {
 		if isCustomSignupItem(item) {
 			item.Label = oldSignupHtmls[item.Name]
 		}
+		if item != nil {
+			item.CustomCss = keepSafeCss(item.CustomCss, oldSignupCss[item.Name])
+		}
 	}
+}
+
+var unsafeCssTokens = []string{"\\", "<", "url(", "@import", "@font-face", "image(", "image-set(", "cross-fade(", "element(", "src("}
+
+var reStyleTag = regexp.MustCompile(`(?i)</?style[^>]*>`)
+
+func isCssSafe(css string) bool {
+	lowerCss := strings.ToLower(reStyleTag.ReplaceAllString(css, ""))
+	for _, token := range unsafeCssTokens {
+		if strings.Contains(lowerCss, token) {
+			return false
+		}
+	}
+	return true
+}
+
+func keepSafeCss(css string, oldCss string) string {
+	if css == oldCss || isCssSafe(css) {
+		return css
+	}
+	return oldCss
 }
 
 func isCustomSigninItem(item *SigninItem) bool {
@@ -659,6 +691,10 @@ func (application *Application) IsSignupAllowedFor(organization string) bool {
 
 func (application *Application) IsLdapEnabled() bool {
 	return application.HasSigninMethod("LDAP")
+}
+
+func (application *Application) IsWebAuthnEnabled() bool {
+	return application.HasSigninMethod("WebAuthn")
 }
 
 func (application *Application) IsFaceIdEnabled() bool {

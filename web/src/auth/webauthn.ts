@@ -38,7 +38,7 @@ export function signInWithWebAuthn(
       const response = assertion.response;
       const resourceQuery = oAuthParams?.resource ? `&resource=${encodeURIComponent(oAuthParams.resource)}` : "";
 
-      let finishUrl = `${Setting.ServerUrl}/api/webauthn/signin/finish?responseType=${values["type"]}`;
+      let finishUrl = `${Setting.ServerUrl}/api/webauthn/signin/finish?responseType=${values["type"]}&application=${encodeURIComponent(application.name)}`;
       if (values["type"] === "code") {
         finishUrl = `${Setting.ServerUrl}/api/webauthn/signin/finish?responseType=${values["type"]}&clientId=${oAuthParams.clientId}&scope=${oAuthParams.scope}&redirectUri=${oAuthParams.redirectUri}&nonce=${oAuthParams.nonce}&state=${oAuthParams.state}&codeChallenge=${oAuthParams.codeChallenge}&challengeMethod=${oAuthParams.challengeMethod}${resourceQuery}`;
       }

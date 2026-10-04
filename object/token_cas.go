@@ -102,6 +102,7 @@ type CasAuthenticationSuccessWrapper struct {
 	Service               string                    // to which service this token is issued
 	UserId                string
 	Application           string
+	IssuedTime            time.Time
 }
 
 type CasProxySuccess struct {
@@ -133,6 +134,27 @@ var stToServiceResponse sync.Map
 
 // pgt is short for proxy granting ticket
 var pgtToServiceResponse sync.Map
+
+const casTicketTimeout = 5 * time.Minute
+
+func isCasTicketExpired(wrapper *CasAuthenticationSuccessWrapper) bool {
+	return time.Since(wrapper.IssuedTime) > casTicketTimeout
+}
+
+func InitCleanupCasTickets() {
+	util.SafeGoroutine(func() {
+		ticker := time.NewTicker(time.Minute)
+		defer ticker.Stop()
+		for range ticker.C {
+			stToServiceResponse.Range(func(key, value any) bool {
+				if isCasTicketExpired(value.(*CasAuthenticationSuccessWrapper)) {
+					stToServiceResponse.Delete(key)
+				}
+				return true
+			})
+		}
+	})
+}
 
 func CheckCasLogin(application *Application, lang string, service string) error {
 	if !application.IsRedirectUriValid(service) {
@@ -166,10 +188,16 @@ func GetCasTokenByPgt(pgt string) *CasAuthenticationSuccessWrapper {
 
 // GetCasTokenByTicket returns the token of the service or proxy ticket, nil if not found
 func GetCasTokenByTicket(ticket string) *CasAuthenticationSuccessWrapper {
-	if responseWrapperType, ok := stToServiceResponse.LoadAndDelete(ticket); ok {
-		return responseWrapperType.(*CasAuthenticationSuccessWrapper)
+	responseWrapperType, ok := stToServiceResponse.LoadAndDelete(ticket)
+	if !ok {
+		return nil
 	}
-	return nil
+
+	wrapper := responseWrapperType.(*CasAuthenticationSuccessWrapper)
+	if isCasTicketExpired(wrapper) {
+		return nil
+	}
+	return wrapper
 }
 
 func IsCasServiceMatched(service string, issuedService string) bool {
@@ -184,6 +212,7 @@ func StoreCasTokenForProxyTicket(token *CasAuthenticationSuccess, targetService,
 		Service:               targetService,
 		UserId:                userId,
 		Application:           application,
+		IssuedTime:            time.Now(),
 	})
 	return proxyTicket
 }
@@ -274,6 +303,7 @@ func GenerateCasToken(userId string, service string, application string) (string
 		Service:               service,
 		UserId:                userId,
 		Application:           application,
+		IssuedTime:            time.Now(),
 	})
 	return st, nil
 }

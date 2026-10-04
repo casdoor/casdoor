@@ -78,6 +78,7 @@ func main() {
 	object.InitCleanupTokens()
 	object.InitCleanupRecords()
 	object.InitCleanupDeviceAuthMap()
+	object.InitCleanupCasTickets()
 	object.InitSamlAssertionStore()
 	object.InitExpirePermissions()
 

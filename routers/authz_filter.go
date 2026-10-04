@@ -665,6 +665,19 @@ func checkDynamicClientSession(ctx *context.Context, urlPath string) bool {
 	return false
 }
 
+func isRestrictedClientSession(ctx *context.Context) (bool, error) {
+	aud, ok := ctx.Input.Session("aud").(string)
+	if !ok || aud == "" {
+		return false, nil
+	}
+
+	application, err := object.GetApplicationByClientId(aud)
+	if err != nil || application == nil {
+		return false, err
+	}
+	return !isClientSessionApiAllowed(application, getSessionUser(ctx), "/login/oauth/authorize"), nil
+}
+
 func isClientSessionApiAllowed(application *object.Application, userId string, urlPath string) bool {
 	if isCrossOrgClient(application, userId) {
 		return util.InSlice(crossOrgClientApis, urlPath)

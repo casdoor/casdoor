@@ -19,6 +19,7 @@
     "The group: %s does not exist": "组: %s不存在",
     "The login method: login with LDAP is not enabled for the application": "该应用禁止采用LDAP登录方式",
     "The login method: login with SMS is not enabled for the application": "该应用禁止采用短信登录方式",
+    "The login method: login with WebAuthn is not enabled for the application": "该应用禁止采用WebAuthn登录方式",
     "The login method: login with email is not enabled for the application": "该应用禁止采用邮箱登录方式",
     "The login method: login with face is not enabled for the application": "该应用禁止采用人脸登录",
     "The login method: login with magic link is not enabled for the application": "该应用禁止使用魔法链接的登录方式",

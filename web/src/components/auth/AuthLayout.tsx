@@ -222,7 +222,7 @@ export function AuthLayout({
     application?.logoDark || cookieChrome.logoDark,
     [isDark && !panelIsLight ? "dark" : "light"],
   );
-  const footerHtml = application?.footerHtml || cookieChrome.footerHtml;
+  const footerHtml = application?.footerHtml;
 
   return (
     <div
