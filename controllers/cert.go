@@ -169,6 +169,11 @@ func (c *ApiController) UpdateCert() {
 		return
 	}
 
+	if err = object.CheckCertName(&cert, id, c.GetAcceptLanguage()); err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
 	c.Data["json"] = wrapActionResponse(object.UpdateCert(id, &cert))
 	c.ServeJSON()
 }
@@ -184,6 +189,11 @@ func (c *ApiController) AddCert() {
 	var cert object.Cert
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &cert)
 	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	if err = object.CheckCertName(&cert, "", c.GetAcceptLanguage()); err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
