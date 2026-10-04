@@ -100,7 +100,7 @@ func GetLdap(id string) (*Ldap, error) {
 	ldap := Ldap{Id: id}
 	existed, err := ormer.Engine.Get(&ldap)
 	if err != nil {
-		return &ldap, nil
+		return nil, err
 	}
 
 	if existed {
@@ -153,7 +153,7 @@ func UpdateLdap(ldap *Ldap) (bool, error) {
 	var l *Ldap
 	var err error
 	if l, err = GetLdap(ldap.Id); err != nil {
-		return false, nil
+		return false, err
 	} else if l == nil {
 		return false, nil
 	}
@@ -165,7 +165,7 @@ func UpdateLdap(ldap *Ldap) (bool, error) {
 	affected, err := ormer.Engine.ID(ldap.Id).Cols("owner", "server_name", "host",
 		"port", "enable_ssl", "username", "password", "base_dn", "filter", "filter_fields", "auto_sync", "default_group", "default_groups", "password_type", "allow_self_signed_cert", "custom_attributes", "enable_groups", "enable_password_reset").Update(ldap)
 	if err != nil {
-		return false, nil
+		return false, err
 	}
 
 	return affected != 0, nil

@@ -319,7 +319,10 @@ func CheckVerificationCode(dest string, code string, lang string) (*VerifyResult
 
 func DisableVerificationCode(dest string) error {
 	record, err := getUnusedVerificationRecord(dest)
-	if record == nil || err != nil {
+	if err != nil {
+		return err
+	}
+	if record == nil {
 		return nil
 	}
 

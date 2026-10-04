@@ -311,7 +311,7 @@ func GetApplicationByOrganizationName(organization string) (*Application, error)
 	application := Application{}
 	existed, err := ormer.Engine.Where("organization=?", organization).Get(&application)
 	if err != nil {
-		return nil, nil
+		return nil, err
 	}
 
 	if existed {
@@ -570,7 +570,7 @@ func AddApplication(application *Application, lang string) (bool, error) {
 
 	affected, err := ormer.Engine.Insert(application)
 	if err != nil {
-		return false, nil
+		return false, err
 	}
 
 	return affected != 0, nil

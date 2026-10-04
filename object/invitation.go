@@ -79,7 +79,7 @@ func getInvitation(owner string, name string) (*Invitation, error) {
 	invitation := Invitation{Owner: owner, Name: name}
 	existed, err := ormer.Engine.Get(&invitation)
 	if err != nil {
-		return &invitation, nil
+		return nil, err
 	}
 
 	if existed {
