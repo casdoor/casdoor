@@ -216,6 +216,7 @@ At this point you have a running identity provider with nothing connected to it 
 - **LDAP** — sync from a directory, or serve as one
 - **WebAuthn / passkeys** — passwordless sign-in
 - **TOTP / MFA** — multi-factor authentication, including email and SMS codes
+- **[Casdoor Authenticator](https://app.casdoor.ai)** — open-source TOTP app for Android and iOS that syncs your MFA accounts with Casdoor ([source](https://github.com/casdoor/casdoor-authenticator))
 - **Face ID** — biometric sign-in
 
 **🏢 Organizations and access control**

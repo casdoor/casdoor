@@ -7,6 +7,7 @@ import {Input} from "@/components/ui/input";
 import {Label} from "@/components/ui/label";
 import {CountryCodeSelect} from "@/components/common/CountryCodeSelect";
 import {SendCodeInput} from "@/components/auth/SendCodeInput";
+import {CasdoorAuthenticatorLink} from "@/components/user/CasdoorAppConnector";
 import {
   EmailMfaType,
   PushMfaType,
@@ -162,6 +163,7 @@ export function MfaVerifySetupForm({mfaProps, application, user, onSuccess, onFa
               <p className="text-center text-sm text-muted-foreground">
                 {i18next.t("mfa:Scan the QR code with your Authenticator App")}
               </p>
+              <CasdoorAuthenticatorLink className="text-center text-sm" />
               <p className="text-center text-sm text-muted-foreground">
                 {i18next.t("mfa:Or copy the secret to your Authenticator App")}
               </p>
