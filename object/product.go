@@ -82,7 +82,7 @@ func getProduct(owner string, name string) (*Product, error) {
 	product := Product{Owner: owner, Name: name}
 	existed, err := ormer.Engine.Get(&product)
 	if err != nil {
-		return &product, nil
+		return nil, err
 	}
 
 	if existed {
