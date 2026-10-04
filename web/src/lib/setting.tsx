@@ -2410,9 +2410,6 @@ export function getApiPaths() {
   // SAML APIs
   res.push("acs", "saml/metadata");
 
-  // Casbin engine APIs
-  res.push("run-casbin-command", "refresh-engines");
-
   // Monitoring and health APIs
   res.push("health", "metrics");
 
