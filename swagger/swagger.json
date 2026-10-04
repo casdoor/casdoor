@@ -5252,7 +5252,7 @@
             }
         },
         "/api/run-syncer": {
-            "get": {
+            "post": {
                 "tags": [
                     "Syncer API"
                 ],

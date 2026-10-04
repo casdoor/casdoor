@@ -3425,7 +3425,7 @@ paths:
           schema:
             $ref: '#/definitions/controllers.Response'
   /api/run-syncer:
-    get:
+    post:
       tags:
       - Syncer API
       description: run syncer

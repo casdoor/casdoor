@@ -205,6 +205,14 @@ func getSubject(ctx *context.Context) (string, string) {
 	return owner, name
 }
 
+func getRunSyncerObject(ctx *context.Context) (string, string, error) {
+	_, name, err := util.GetOwnerAndNameFromIdWithError(ctx.Input.Query("id"))
+	if err != nil {
+		return "", "", err
+	}
+	return ctx.Input.Query("organization"), name, nil
+}
+
 func getObject(ctx *context.Context) (string, string, error) {
 	method := ctx.Request.Method
 	path := ctx.Request.URL.Path
@@ -279,6 +287,10 @@ func getObject(ctx *context.Context) (string, string, error) {
 
 		return "", "", nil
 	} else {
+		if path == "/api/run-syncer" {
+			return getRunSyncerObject(ctx)
+		}
+
 		if path == "/api/add-policy" || path == "/api/remove-policy" || path == "/api/update-policy" || path == "/api/send-invitation" {
 			id := ctx.Input.Query("id")
 			if id != "" {

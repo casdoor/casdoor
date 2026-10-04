@@ -329,7 +329,7 @@ func InitAPI() {
 	web.Router("/api/update-syncer", &controllers.ApiController{}, "POST:UpdateSyncer")
 	web.Router("/api/add-syncer", &controllers.ApiController{}, "POST:AddSyncer")
 	web.Router("/api/delete-syncer", &controllers.ApiController{}, "POST:DeleteSyncer")
-	web.Router("/api/run-syncer", &controllers.ApiController{}, "GET:RunSyncer")
+	web.Router("/api/run-syncer", &controllers.ApiController{}, "POST:RunSyncer")
 	web.Router("/api/test-syncer-db", &controllers.ApiController{}, "POST:TestSyncerDb")
 
 	web.Router("/api/get-webhooks", &controllers.ApiController{}, "GET:GetWebhooks")
