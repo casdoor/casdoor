@@ -20,7 +20,6 @@ import (
 	"strings"
 
 	"github.com/beego/beego/v2/server/web/context"
-	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/mcpself"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
@@ -184,25 +183,5 @@ func checkUserPasswordWithoutMfa(userId string, password string, clientIp string
 	if user.IsMfaEnabled() {
 		return fmt.Errorf("the user: %s has MFA enabled and cannot sign in with a password in the URL", userId)
 	}
-	return checkUrlSigninPolicy(user, clientIp, lang)
-}
-
-func checkUrlSigninPolicy(user *object.User, clientIp string, lang string) error {
-	organization, err := object.GetOrganizationByUser(user)
-	if err != nil {
-		return err
-	}
-	if organization != nil && organization.DisableSignin {
-		return fmt.Errorf(i18n.Translate(lang, "auth:The organization: %s has disabled users to signin"), organization.Name)
-	}
-
-	err = object.CheckEntryIp(clientIp, user, nil, organization, lang)
-	if err != nil {
-		return err
-	}
-
-	if user.NeedUpdatePassword || object.IsNeedPromptMfa(organization, user) {
-		return fmt.Errorf("the user: %s must update the password or set up MFA on the login page first", user.GetId())
-	}
-	return nil
+	return object.CheckPasswordOnlySignin(user, clientIp, lang)
 }

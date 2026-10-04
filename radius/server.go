@@ -122,7 +122,7 @@ func handleAccessRequest(w radius.ResponseWriter, r *radius.Request) {
 	}
 
 	user, err := object.CheckUserPassword(organization, username, password, "en")
-	if err != nil {
+	if err != nil || object.CheckPasswordOnlySignin(user, "", "en") != nil {
 		w.Write(r.Response(radius.CodeAccessReject))
 		return
 	}

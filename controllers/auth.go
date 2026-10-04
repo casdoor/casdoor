@@ -1934,8 +1934,22 @@ func (c *ApiController) DeviceAuthComplete() {
 		Type: responseType,
 	}
 	resp := c.HandleLoggedIn(application, user, &authForm)
+	if resp == nil {
+		return
+	}
+	c.limitSessionToClient(application, user, deviceAuthCache.Scope)
 
 	c.Ctx.Input.SetParam("recordUserId", user.GetId())
 	c.Data["json"] = resp
 	c.ServeJSON()
+}
+
+func (c *ApiController) limitSessionToClient(application *object.Application, user *object.User, scope string) {
+	isCrossOrgClient := application.Organization != "built-in" && user.Owner != application.Organization
+	if !application.IsDynamicClient() && !isCrossOrgClient {
+		return
+	}
+
+	c.SetSession("scope", scope)
+	c.SetSession("aud", application.ClientId)
 }
