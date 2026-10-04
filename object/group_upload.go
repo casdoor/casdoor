@@ -18,33 +18,41 @@ import (
 	"github.com/casdoor/casdoor/xlsx"
 )
 
-func getGroupMap(owner string) (map[string]*Group, error) {
+func getGroupMap(groups []*Group) (map[string]*Group, error) {
 	m := map[string]*Group{}
 
-	groups, err := GetGroups(owner)
-	if err != nil {
-		return m, err
-	}
-
+	owners := map[string]bool{}
 	for _, group := range groups {
-		m[group.GetId()] = group
+		if owners[group.Owner] {
+			continue
+		}
+		owners[group.Owner] = true
+
+		oldGroups, err := GetGroups(group.Owner)
+		if err != nil {
+			return nil, err
+		}
+
+		for _, oldGroup := range oldGroups {
+			m[oldGroup.GetId()] = oldGroup
+		}
 	}
 
 	return m, nil
 }
 
-func UploadGroups(owner string, path string) (bool, error) {
+func UploadGroups(path string) (bool, error) {
 	table, err := xlsx.ReadXlsxFile(path)
 	if err != nil {
 		return false, err
 	}
 
-	oldGroupMap, err := getGroupMap(owner)
+	transGroups, err := StringArrayToStruct[Group](table)
 	if err != nil {
 		return false, err
 	}
 
-	transGroups, err := StringArrayToStruct[Group](table)
+	oldGroupMap, err := getGroupMap(transGroups)
 	if err != nil {
 		return false, err
 	}

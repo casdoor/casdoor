@@ -46,7 +46,7 @@ func (c *ApiController) UploadGroups() {
 		return
 	}
 
-	affected, err := object.UploadGroups(owner, path)
+	affected, err := object.UploadGroups(path)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
