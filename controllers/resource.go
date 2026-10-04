@@ -82,6 +82,11 @@ func (c *ApiController) checkStorageProvider(provider *object.Provider, owner st
 	return false
 }
 
+var imageUploadExts = []string{".png", ".jpg", ".jpeg", ".gif", ".webp", ".bmp", ".ico"}
+
+// activeContentExts are the files a browser runs as a page or script when served from the storage domain
+var activeContentExts = []string{".html", ".htm", ".xhtml", ".shtml", ".svg", ".svgz", ".xml", ".xsl", ".js", ".mjs", ".php", ".phtml", ".jsp", ".asp", ".aspx", ".swf", ".hta"}
+
 // checkUploadPath keeps a non-global admin's upload inside the paths the frontend uses for
 // the target user, so that it cannot overwrite the files of other users or organizations.
 // A "Direct" upload writes to the bucket itself, which is limited to admins as in GetResources().
@@ -98,7 +103,7 @@ func (c *ApiController) checkUploadPath(tag string, owner string, username strin
 	case tag == "avatar" || strings.HasPrefix(tag, "idCard"):
 		// e.g., "avatar/built-in/admin.png"
 		dir, file := path.Split(filePath)
-		isAllowed = dir == fmt.Sprintf("%s/%s/", tag, owner) && strings.TrimSuffix(file, path.Ext(file)) == username
+		isAllowed = dir == fmt.Sprintf("%s/%s/", tag, owner) && strings.TrimSuffix(file, path.Ext(file)) == username && util.InSlice(imageUploadExts, strings.ToLower(path.Ext(file)))
 	case tag == "termsOfUse":
 		// e.g., "termsOfUse/admin/app-built-in.html", only for an application of the organization
 		applicationId := strings.TrimSuffix(strings.TrimPrefix(filePath, "termsOfUse/"), ".html")
@@ -112,7 +117,7 @@ func (c *ApiController) checkUploadPath(tag string, owner string, username strin
 		}
 	default:
 		// e.g., "resource/built-in/admin/file.txt"
-		isAllowed = strings.HasPrefix(filePath, fmt.Sprintf("resource/%s/%s/", owner, username))
+		isAllowed = strings.HasPrefix(filePath, fmt.Sprintf("resource/%s/%s/", owner, username)) && !util.InSlice(activeContentExts, strings.ToLower(path.Ext(filePath)))
 	}
 
 	if !isAllowed {

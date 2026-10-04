@@ -703,6 +703,8 @@ func GetMaskedUser(user *User, isAdminOrSelf bool, errs ...error) (*User, error)
 				}
 			}
 		}
+		user.PasswordSalt = ""
+		user.PasswordType = ""
 	}
 
 	if user.ManagedAccounts != nil {
