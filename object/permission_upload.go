@@ -44,7 +44,7 @@ func getPermissionMap(permissions []*Permission) (map[string]*Permission, error)
 	return m, nil
 }
 
-func UploadPermissions(path string) (bool, error) {
+func UploadPermissions(path string, organization string, lang string) (bool, error) {
 	table, err := xlsx.ReadXlsxFile(path)
 	if err != nil {
 		return false, err
@@ -67,6 +67,13 @@ func UploadPermissions(path string) (bool, error) {
 	}
 
 	uploadedPermissions = filterInvalidUploadedPermissions(uploadedPermissions)
+
+	for _, permission := range uploadedPermissions {
+		err = checkUploadedOwner(&permission.Owner, permission.Name, organization, lang)
+		if err != nil {
+			return false, err
+		}
+	}
 
 	oldPermissionMap, err := getPermissionMap(uploadedPermissions)
 	if err != nil {

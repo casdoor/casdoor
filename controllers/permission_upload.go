@@ -23,6 +23,11 @@ import (
 )
 
 func (c *ApiController) UploadPermissions() {
+	organization, ok := c.getUploadOrganization()
+	if !ok {
+		return
+	}
+
 	userId := c.GetSessionUsername()
 	owner, user, err := util.GetOwnerAndNameFromIdWithError(userId)
 	if err != nil {
@@ -45,7 +50,7 @@ func (c *ApiController) UploadPermissions() {
 		return
 	}
 
-	affected, err := object.UploadPermissions(path)
+	affected, err := object.UploadPermissions(path, organization, c.GetAcceptLanguage())
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

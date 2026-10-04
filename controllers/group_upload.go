@@ -23,6 +23,11 @@ import (
 )
 
 func (c *ApiController) UploadGroups() {
+	organization, ok := c.getUploadOrganization()
+	if !ok {
+		return
+	}
+
 	userId := c.GetSessionUsername()
 	owner, user, err := util.GetOwnerAndNameFromIdWithError(userId)
 	if err != nil {
@@ -46,7 +51,7 @@ func (c *ApiController) UploadGroups() {
 		return
 	}
 
-	affected, err := object.UploadGroups(path)
+	affected, err := object.UploadGroups(path, organization, c.GetAcceptLanguage())
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

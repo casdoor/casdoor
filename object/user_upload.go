@@ -85,6 +85,24 @@ func isEmptyLine(line []string) bool {
 	return true
 }
 
+// checkUploadedOwner restricts an uploaded object to the organization of a non-global admin:
+// an empty owner becomes that organization, and another organization is rejected. A global
+// admin passes an empty organization and may upload into any organization.
+func checkUploadedOwner(owner *string, name string, organization string, lang string) error {
+	if organization == "" {
+		return nil
+	}
+
+	if *owner == "" {
+		*owner = organization
+	}
+	if *owner != organization {
+		return fmt.Errorf("%s: %s", i18n.Translate(lang, "auth:Unauthorized operation"), util.GetId(*owner, name))
+	}
+
+	return nil
+}
+
 func UploadUsers(owner string, path string, userObj *User, lang string) (bool, error) {
 	table, err := xlsx.ReadXlsxFile(path)
 	if err != nil {

@@ -44,7 +44,7 @@ func getRoleMap(roles []*Role) (map[string]*Role, error) {
 	return m, nil
 }
 
-func UploadRoles(path string) (bool, error) {
+func UploadRoles(path string, organization string, lang string) (bool, error) {
 	table, err := xlsx.ReadXlsxFile(path)
 	if err != nil {
 		return false, err
@@ -64,6 +64,13 @@ func UploadRoles(path string) (bool, error) {
 	uploadedRoles, err := StringArrayToStruct[Role](table)
 	if err != nil {
 		return false, err
+	}
+
+	for _, role := range uploadedRoles {
+		err = checkUploadedOwner(&role.Owner, role.Name, organization, lang)
+		if err != nil {
+			return false, err
+		}
 	}
 
 	oldRoleMap, err := getRoleMap(uploadedRoles)
