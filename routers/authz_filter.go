@@ -518,6 +518,12 @@ func getImpersonateUser(ctx *context.Context, subOwner, subName, username string
 }
 
 func ApiFilter(ctx *context.Context) {
+	urlPath := getUrlPath(ctx)
+	// before the subject is read: it may sign out a session left by another application's token
+	if !checkDynamicClientSession(ctx, urlPath) {
+		return
+	}
+
 	subOwner, subName := getSubject(ctx)
 	// stash current user info into request context for controllers
 	username := ""
@@ -540,10 +546,6 @@ func ApiFilter(ctx *context.Context) {
 	}
 
 	method := ctx.Request.Method
-	urlPath := getUrlPath(ctx)
-	if !checkDynamicClientSession(ctx, urlPath) {
-		return
-	}
 	extraInfo := getExtraInfo(ctx, urlPath)
 
 	objects := []Object{{}}
@@ -657,8 +659,20 @@ func checkDynamicClientSession(ctx *context.Context, urlPath string) bool {
 		return true
 	}
 
-	denyRequest(ctx)
-	return false
+	// a request that carries the access token itself is the client using it: keep it within the token's limits
+	if credentialUser, _ := ctx.Input.GetData(requestCredentialUserKey).(string); credentialUser != "" {
+		denyRequest(ctx)
+		return false
+	}
+
+	// otherwise it is the browser, sending only the cookie that the token-authenticated response left behind:
+	// sign that session out and go on as anonymous, so the login page and the rest of Casdoor keep working there
+	err = clearSessionOfToken(ctx)
+	if err != nil {
+		responseError(ctx, err.Error())
+		return false
+	}
+	return true
 }
 
 func isRestrictedClientSession(ctx *context.Context) (bool, error) {
