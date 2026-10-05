@@ -92,12 +92,17 @@ export default function ConsentPage() {
     )
       .then((res: any) => {
         if (res.status === "ok") {
-          const concatChar = oAuthParams?.redirectUri?.includes("?") ? "&" : "?";
-          Setting.goToLink(
-            `${oAuthParams.redirectUri}${concatChar}code=${encodeURIComponent(res.data)}&state=${encodeURIComponent(
-              oAuthParams.state,
-            )}${Setting.getOAuthIssuerParam()}`,
-          );
+          // a hybrid flow has the access token in data2 and the ID token in data3
+          const responseTypes = (oAuthParams.responseType || "code").split(" ");
+          const payload: Record<string, string> = {code: res.data};
+          if (responseTypes.includes("token")) {
+            payload.access_token = res.data2;
+            payload.token_type = "Bearer";
+          }
+          if (responseTypes.includes("id_token")) {
+            payload.id_token = res.data3;
+          }
+          Util.sendOAuthResponse(oAuthParams, payload);
         } else {
           Setting.showMessage("error", res.msg);
           setGranting(false);
@@ -110,12 +115,7 @@ export default function ConsentPage() {
   };
 
   const deny = () => {
-    const concatChar = oAuthParams?.redirectUri?.includes("?") ? "&" : "?";
-    Setting.goToLink(
-      `${oAuthParams.redirectUri}${concatChar}error=access_denied&error_description=${encodeURIComponent(
-        "User denied consent",
-      )}&state=${encodeURIComponent(oAuthParams.state)}${Setting.getOAuthIssuerParam()}`,
-    );
+    Util.sendOAuthResponse(oAuthParams, {error: "access_denied", error_description: "User denied consent"});
   };
 
   return (

@@ -47,6 +47,20 @@ func codeToResponse(code *object.Code) *Response {
 	return &Response{Status: "ok", Msg: "", Data: code.Code}
 }
 
+// codeToResponseWithTokens returns the code together with the tokens a hybrid flow asks for, never the refresh token
+func codeToResponseWithTokens(code *object.Code, responseType object.ResponseType) *Response {
+	resp := codeToResponse(code)
+	if resp.Status == "ok" && !responseType.IsCodeOnly() && code.Token != nil {
+		if responseType.Token {
+			resp.Data2 = code.Token.AccessToken
+		}
+		if responseType.IdToken {
+			resp.Data3 = code.Token.IdToken
+		}
+	}
+	return resp
+}
+
 func tokenToResponse(token *object.Token) *Response {
 	if token.AccessToken == "" {
 		return &Response{Status: "error", Msg: "fail to get accessToken", Data: token.AccessToken}
@@ -240,16 +254,7 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 				return
 			}
 
-			resp = codeToResponse(code)
-			// the hybrid flow returns the tokens it asks for together with the code, never the refresh token
-			if resp.Status == "ok" && !responseType.IsCodeOnly() {
-				if responseType.Token {
-					resp.Data2 = code.Token.AccessToken
-				}
-				if responseType.IdToken {
-					resp.Data3 = code.Token.IdToken
-				}
-			}
+			resp = codeToResponseWithTokens(code, responseType)
 		}
 	} else if isResponseType { // implicit flow
 		redirectUri := c.Ctx.Input.Query("redirectUri")
@@ -273,6 +278,10 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 					return
 				}
 				resp = tokenToResponse(token)
+
+				if application.EnableSigninSession || application.HasPromptPage() {
+					c.SetSessionUsername(userId)
+				}
 			}
 		}
 	} else if form.Type == ResponseTypeDevice {

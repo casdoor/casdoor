@@ -301,6 +301,7 @@ func UpdateOrganization(id string, organization *Organization, isGlobalAdmin boo
 		organization.BalanceCurrency = org.BalanceCurrency
 		organization.EnableLdapPassword = org.EnableLdapPassword
 		organization.EnableRadius = org.EnableRadius
+		organization.DcrPolicy = org.DcrPolicy
 	}
 
 	session := ormer.Engine.ID(core.PK{owner, name}).AllCols()
