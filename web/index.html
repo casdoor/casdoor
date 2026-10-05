@@ -145,6 +145,10 @@
         }
 
         window.addEventListener("error", function(event) {
+          // a file the server pointed to a CDN (routers/frontend_cdn.go) is loaded from the server again on failure
+          if (event && event.target && event.target.getAttribute && event.target.getAttribute("data-casdoor-local") !== null) {
+            return;
+          }
           if (event && event.target && event.target !== window && event.target.tagName === "SCRIPT") {
             show("Casdoor failed to load", "Could not load: " + (event.target.src || ""));
             return;
