@@ -102,6 +102,31 @@ func handlerRadius(w radius.ResponseWriter, r *radius.Request) {
 	}
 }
 
+func getRadiusOrganization(organization string) string {
+	if organization != "" {
+		return organization
+	}
+
+	organization = conf.GetConfigString("radiusDefaultOrganization")
+	if organization == "" {
+		return "built-in"
+	}
+	return organization
+}
+
+func isRadiusEnabled(organization string) bool {
+	org, err := object.GetOrganization(util.GetId("admin", organization))
+	if err != nil {
+		log.Printf("isRadiusEnabled() failed to get organization: %s, err = %v", organization, err)
+		return false
+	}
+	if org == nil || !org.EnableRadius {
+		log.Printf("RADIUS is not enabled for organization: %s", organization)
+		return false
+	}
+	return true
+}
+
 func handleAccessRequest(w radius.ResponseWriter, r *radius.Request) {
 	username := rfc2865.UserName_GetString(r.Packet)
 	password := rfc2865.UserPassword_GetString(r.Packet)
@@ -109,11 +134,10 @@ func handleAccessRequest(w radius.ResponseWriter, r *radius.Request) {
 	state := rfc2865.State_GetString(r.Packet)
 	log.Printf("handleAccessRequest() username=%v, org=%v", username, organization)
 
-	if organization == "" {
-		organization = conf.GetConfigString("radiusDefaultOrganization")
-		if organization == "" {
-			organization = "built-in"
-		}
+	organization = getRadiusOrganization(organization)
+	if !isRadiusEnabled(organization) {
+		w.Write(r.Response(radius.CodeAccessReject))
+		return
 	}
 
 	if state != "" {
@@ -193,6 +217,10 @@ func handleAccountingRequest(w radius.ResponseWriter, r *radius.Request) {
 	}
 
 	log.Printf("handleAccountingRequest() username=%v, org=%v, statusType=%v", username, organization, statusType)
+	if !isRadiusEnabled(getRadiusOrganization(organization)) {
+		return
+	}
+
 	w.Write(r.Response(radius.CodeAccountingResponse))
 	var err error
 	defer func() {

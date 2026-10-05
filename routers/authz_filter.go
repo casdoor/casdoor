@@ -25,6 +25,7 @@ import (
 	"github.com/beego/beego/v2/core/logs"
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/controllers"
+	"github.com/casdoor/casdoor/mcpself"
 	"github.com/casdoor/casdoor/object"
 
 	"github.com/beego/beego/v2/server/web/context"
@@ -475,18 +476,13 @@ func getUrlPath(ctx *context.Context) string {
 func getExtraInfo(ctx *context.Context, urlPath string) map[string]interface{} {
 	var extra map[string]interface{}
 	if urlPath == "/api/mcp" {
-		var m map[string]interface{}
-		if err := json.Unmarshal(ctx.Input.RequestBody, &m); err != nil {
-			return nil
-		}
-
-		method, ok := m["method"].(string)
-		if !ok {
+		var req mcpself.McpRequest
+		if err := json.Unmarshal(ctx.Input.RequestBody, &req); err != nil || req.Method == "" {
 			return nil
 		}
 
 		return map[string]interface{}{
-			"detailPathUrl": method,
+			"detailPathUrl": req.Method,
 		}
 	}
 	return extra
