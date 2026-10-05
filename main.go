@@ -95,7 +95,7 @@ func main() {
 
 	web.BConfig.WebConfig.DirectoryIndex = true
 	if web.BConfig.RunMode == "dev" {
-		web.SetStaticPath("/swagger", "swagger")
+		web.SetStaticPath("/swagger", routers.GetSwaggerFolder())
 	}
 	web.SetStaticPath("/files", "files")
 	// https://studygolang.com/articles/2303
