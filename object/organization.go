@@ -104,7 +104,9 @@ type Organization struct {
 
 	DcrPolicy string `xorm:"varchar(100)" json:"dcrPolicy"`
 
-	LdapAttributes []string `xorm:"mediumtext" json:"ldapAttributes"`
+	LdapAttributes     []string `xorm:"mediumtext" json:"ldapAttributes"`
+	EnableLdapPassword bool     `xorm:"bool" json:"enableLdapPassword"`
+	EnableRadius       bool     `xorm:"bool" json:"enableRadius"`
 
 	KerberosRealm       string `xorm:"varchar(200)" json:"kerberosRealm"`
 	KerberosKdcHost     string `xorm:"varchar(200)" json:"kerberosKdcHost"`
@@ -297,6 +299,8 @@ func UpdateOrganization(id string, organization *Organization, isGlobalAdmin boo
 		organization.UserBalance = org.UserBalance
 		organization.BalanceCredit = org.BalanceCredit
 		organization.BalanceCurrency = org.BalanceCurrency
+		organization.EnableLdapPassword = org.EnableLdapPassword
+		organization.EnableRadius = org.EnableRadius
 	}
 
 	session := ormer.Engine.ID(core.PK{owner, name}).AllCols()

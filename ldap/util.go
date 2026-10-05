@@ -268,9 +268,25 @@ func stringInSlice(value string, list []string) bool {
 	return false
 }
 
+var ldapPasswordAttrs = []string{"userPassword", "sambaNTPassword"}
+
+func isLdapPasswordAttr(attr string) bool {
+	for _, passwordAttr := range ldapPasswordAttrs {
+		if strings.EqualFold(attr, passwordAttr) {
+			return true
+		}
+	}
+	return false
+}
+
 // IsLdapAttrAllowed checks whether the given LDAP attribute is allowed for the organization.
-// An empty filter or a filter containing "All" means all attributes are allowed.
+// An empty filter or a filter containing "All" means all attributes are allowed, except the
+// password attributes, which are only published when the organization enables them.
 func IsLdapAttrAllowed(org *object.Organization, attr string) bool {
+	if isLdapPasswordAttr(attr) && (org == nil || !org.EnableLdapPassword) {
+		return false
+	}
+
 	if org == nil || len(org.LdapAttributes) == 0 {
 		return true
 	}

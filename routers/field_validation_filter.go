@@ -42,15 +42,15 @@ func FieldValidationFilter(ctx *context.Context) {
 
 	ctx.Request.Body = io.NopCloser(strings.NewReader(string(bodyBytes)))
 
-	var requestData map[string]interface{}
+	var requestData struct {
+		Name string `json:"name"`
+	}
 	if err := json.Unmarshal(bodyBytes, &requestData); err != nil {
 		return
 	}
 
-	if value, ok := requestData["name"].(string); ok {
-		if strings.ContainsAny(value, forbiddenChars) {
-			responseError(ctx, fmt.Sprintf("Field 'name' contains forbidden characters: %q", forbiddenChars))
-			return
-		}
+	if strings.ContainsAny(requestData.Name, forbiddenChars) {
+		responseError(ctx, fmt.Sprintf("Field 'name' contains forbidden characters: %q", forbiddenChars))
+		return
 	}
 }
