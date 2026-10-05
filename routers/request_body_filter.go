@@ -16,9 +16,12 @@ package routers
 
 import (
 	"bytes"
+	"errors"
+	"fmt"
 	"io"
 	"net/http"
 
+	"github.com/beego/beego/v2/server/web"
 	"github.com/beego/beego/v2/server/web/context"
 )
 
@@ -36,7 +39,18 @@ func RequestBodyFilter(ctx *context.Context) {
 		return
 	}
 
-	body, err := io.ReadAll(ctx.Request.Body)
+	limit := getRequestBodyLimit(ctx)
+	if ctx.Request.ContentLength > limit {
+		responseRequestBodyTooLarge(ctx, limit)
+		return
+	}
+
+	body, err := io.ReadAll(http.MaxBytesReader(ctx.ResponseWriter, ctx.Request.Body, limit))
+	var maxBytesErr *http.MaxBytesError
+	if errors.As(err, &maxBytesErr) {
+		responseRequestBodyTooLarge(ctx, limit)
+		return
+	}
 	if err != nil || len(body) == 0 {
 		return
 	}
@@ -45,4 +59,18 @@ func RequestBodyFilter(ctx *context.Context) {
 	ctx.Request.Body = io.NopCloser(bytes.NewBuffer(body))
 	// Cache the raw bytes directly so controllers always have access to them.
 	ctx.Input.RequestBody = body
+}
+
+// getRequestBodyLimit applies the same limits Beego enforces after the filters, the body
+// is read into memory here before Beego gets to check it
+func getRequestBodyLimit(ctx *context.Context) int64 {
+	if ctx.Input.IsUpload() {
+		return web.BConfig.MaxUploadSize
+	}
+	return web.BConfig.MaxMemory
+}
+
+func responseRequestBodyTooLarge(ctx *context.Context, limit int64) {
+	ctx.Output.SetStatus(http.StatusRequestEntityTooLarge)
+	responseError(ctx, fmt.Sprintf("the request body is larger than the limit: %d bytes", limit))
 }

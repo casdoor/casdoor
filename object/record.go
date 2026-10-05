@@ -34,12 +34,17 @@ var (
 )
 
 var secretRecordKeys = []string{
-	"password", "oldPassword", "newPassword", "masterPassword", "defaultPassword",
-	"clientSecret", "client_secret", "accessSecret", "refreshToken", "refresh_token",
-	"code_verifier", "passcode", "recoveryCode",
+	"password", "oldPassword", "newPassword", "masterPassword", "defaultPassword", "passwordSalt", "passwordObfuscatorKey",
+	"clientSecret", "client_secret", "clientSecret2", "accessSecret", "secret", "secretKey", "privateKey", "kerberosKeytab",
+	"token", "accessToken", "access_token", "refreshToken", "refresh_token", "idToken", "id_token", "registrationAccessToken",
+	"originalToken", "originalRefreshToken", "totpSecret", "masterVerificationCode",
+	"code_verifier", "passcode", "recoveryCode", "recoveryCodes",
 }
 
-var secretRecordQueries = append([]string{"accessToken", "access_token", "id_token_hint"}, secretRecordKeys...)
+// secretRecordKeyPatterns match the per-provider OAuth tokens kept in a user's properties
+var secretRecordKeyPatterns = []string{`oauth_[^"&=]*_(?:accessToken|refreshToken)`}
+
+var secretRecordQueries = append([]string{"id_token_hint"}, secretRecordKeys...)
 
 // alwaysLoggedActions lists the actions that are always recorded, even for GET
 // requests when "logPostOnly" is enabled. These endpoints accept GET by design
@@ -53,10 +58,11 @@ var alwaysLoggedActions = map[string]bool{
 
 func init() {
 	logPostOnly = conf.GetConfigBool("logPostOnly")
-	keys := strings.Join(secretRecordKeys, "|")
-	secretJsonRegex = regexp.MustCompile(`"(` + keys + `)"\s*:\s*"(?:[^"\\]|\\.)*"`)
-	secretFormRegex = regexp.MustCompile(`(^|&)(` + keys + `)=[^&]*`)
-	secretMultipartRegex = regexp.MustCompile(`(name="(?:` + keys + `)"\r?\n\r?\n)[^\r\n]*`)
+	keys := strings.Join(append(append([]string{}, secretRecordKeys...), secretRecordKeyPatterns...), "|")
+	jsonString := `"(?:[^"\\]|\\.)*"`
+	secretJsonRegex = regexp.MustCompile(`(?i)"(` + keys + `)"\s*:\s*(?:` + jsonString + `|\[(?:` + jsonString + `|[^\]"])*\])`)
+	secretFormRegex = regexp.MustCompile(`(?i)(^|&)(` + keys + `)=[^&]*`)
+	secretMultipartRegex = regexp.MustCompile(`(?i)(name="(?:` + keys + `)"\r?\n\r?\n)[^\r\n]*`)
 }
 
 type Record struct {

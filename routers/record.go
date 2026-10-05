@@ -111,6 +111,12 @@ func getOrganizationFromRequest(ctx *context.Context) string {
 	return ""
 }
 
+// getRecordUserObject masks the user's secrets, the record is shown to admins and sent to webhooks
+func getRecordUserObject(user *object.User) string {
+	maskedUser, _ := object.GetMaskedUser(user, false)
+	return util.StructToJson(maskedUser)
+}
+
 func AfterRecordMessage(ctx *context.Context) {
 	record, err := object.NewRecord(ctx)
 	if err != nil {
@@ -165,7 +171,7 @@ func AfterRecordMessage(ctx *context.Context) {
 			return
 		}
 
-		record2.Object = util.StructToJson(user)
+		record2.Object = getRecordUserObject(user)
 	}
 
 	util.SafeGoroutine(func() {
