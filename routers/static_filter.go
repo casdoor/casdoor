@@ -324,6 +324,7 @@ func serveFileWithReplace(w http.ResponseWriter, r *http.Request, name string, o
 		panic(err)
 	}
 
+	modTime := d.ModTime()
 	oldContent := util.ReadStringFromPath(name)
 	newContent := oldContent
 	if organizationThemeCookie != nil {
@@ -337,11 +338,18 @@ func serveFileWithReplace(w http.ResponseWriter, r *http.Request, name string, o
 	if strings.HasSuffix(name, "index.html") {
 		lang := getIndexHtmlLanguage(r)
 		newContent = strings.ReplaceAll(newContent, `<html lang="en">`, fmt.Sprintf(`<html lang="%s">`, lang))
+		var cdnEnabled bool
+		newContent, cdnEnabled = useFrontendCdn(newContent, name, r)
+		if cdnEnabled {
+			// the same file is served with or without the CDN (cookie), so a 304 by modification time could bring back
+			// the cached CDN version after the page turned the CDN off
+			modTime = time.Time{}
+		}
 	}
 
 	newContent = strings.ReplaceAll(newContent, oldStaticBaseUrl, newStaticBaseUrl)
 
-	http.ServeContent(w, r, d.Name(), d.ModTime(), strings.NewReader(newContent))
+	http.ServeContent(w, r, d.Name(), modTime, strings.NewReader(newContent))
 }
 
 type gzipResponseWriter struct {

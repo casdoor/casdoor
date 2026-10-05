@@ -59,6 +59,45 @@ jobs:
           name: frontend-build-${{ github.run_id }}
           path: ./web/build
 
+  # every master commit's frontend build is published as casdoor-web@0.0.0-c<commit>, servers running that commit
+  # install it instead of building it and let browsers load it from a public npm CDN (frontendCdnUrl in app.conf)
+  frontend-npm:
+    name: Front-end npm package
+    runs-on: ubuntu-latest
+    needs: [frontend]
+    if: github.repository == 'casdoor/casdoor' && github.event_name == 'push' && github.ref == 'refs/heads/master'
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Download frontend build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-build-${{ github.run_id }}
+          path: ./build
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          registry-url: "https://registry.npmjs.org"
+      - run: npm install -g npm@latest
+      - name: Publish
+        working-directory: ./build
+        run: |
+          cat > package.json <<EOF
+          {
+            "name": "casdoor-web",
+            "version": "0.0.0-c${GITHUB_SHA}",
+            "description": "The built frontend of Casdoor commit ${GITHUB_SHA}, for serving it from a CDN",
+            "license": "Apache-2.0",
+            "homepage": "https://casdoor.org",
+            "repository": {
+              "type": "git",
+              "url": "git+https://github.com/casdoor/casdoor.git"
+            }
+          }
+          EOF
+          npm publish --tag master --access public
+
   backend:
     name: Back-end
     runs-on: ubuntu-latest
