@@ -16,13 +16,14 @@ package object
 
 import (
 	"fmt"
+	"path/filepath"
 	"testing"
 
 	"github.com/casdoor/casdoor/util"
 )
 
 func TestGenerateRsaKeys(t *testing.T) {
-	fileId := "token_jwt_key"
+	fileId := filepath.Join(t.TempDir(), "token_jwt_key")
 	certificate, privateKey, err := generateRsaKeys(4096, 512, 20, "Casdoor Cert", "Casdoor Organization")
 	if err != nil {
 		panic(err)
@@ -36,7 +37,7 @@ func TestGenerateRsaKeys(t *testing.T) {
 }
 
 func TestGenerateEsKeys(t *testing.T) {
-	fileId := "token_jwt_key"
+	fileId := filepath.Join(t.TempDir(), "token_jwt_key")
 	certificate, privateKey, err := generateEsKeys(256, 20, "Casdoor Cert", "Casdoor Organization")
 	if err != nil {
 		panic(err)
@@ -50,7 +51,7 @@ func TestGenerateEsKeys(t *testing.T) {
 }
 
 func TestGenerateRsaPssKeys(t *testing.T) {
-	fileId := "token_jwt_key"
+	fileId := filepath.Join(t.TempDir(), "token_jwt_key")
 	certificate, privateKey, err := generateRsaPssKeys(4096, 256, 20, "Casdoor Cert", "Casdoor Organization")
 	if err != nil {
 		panic(err)

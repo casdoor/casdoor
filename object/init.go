@@ -15,9 +15,10 @@
 package object
 
 import (
+	"crypto/sha256"
 	"encoding/gob"
+	"encoding/hex"
 	"fmt"
-	"os"
 	"strings"
 
 	"github.com/casdoor/casdoor/conf"
@@ -257,20 +258,6 @@ func initBuiltInApplication() {
 	}
 }
 
-func readTokenFromFile() (string, string) {
-	pemPath := "./object/token_jwt_key.pem"
-	keyPath := "./object/token_jwt_key.key"
-	pem, err := os.ReadFile(pemPath)
-	if err != nil {
-		return "", ""
-	}
-	key, err := os.ReadFile(keyPath)
-	if err != nil {
-		return "", ""
-	}
-	return string(pem), string(key)
-}
-
 func initBuiltInCert() {
 	cert, err := getCert("admin", "cert-built-in")
 	if err != nil {
@@ -282,7 +269,7 @@ func initBuiltInCert() {
 	}
 
 	// the Certificate and PrivateKey are left empty for AddCert() to generate a new key pair,
-	// the one in "object/token_jwt_key.key" is public in the repository
+	// the one used by the old versions is public in the repository
 	cert = &Cert{
 		Owner:           "admin",
 		Name:            "cert-built-in",
@@ -300,14 +287,18 @@ func initBuiltInCert() {
 	}
 }
 
+// the SHA-256 of the private key that the old versions created cert-built-in with, it was published in the repository
+const publicBuiltInPrivateKeySha256 = "69cb4de40b4ffd09564cdad858a60f4666f0a9aa1d88331c97a5438ccef69012"
+
 func warnPublicBuiltInCert() {
 	cert, err := getCert("admin", "cert-built-in")
 	if err != nil || cert == nil {
 		return
 	}
 
-	_, publicPrivateKey := readTokenFromFile()
-	if publicPrivateKey != "" && strings.TrimSpace(cert.PrivateKey) == strings.TrimSpace(publicPrivateKey) {
+	privateKey := strings.TrimSpace(strings.ReplaceAll(cert.PrivateKey, "\r", ""))
+	hash := sha256.Sum256([]byte(privateKey))
+	if hex.EncodeToString(hash[:]) == publicBuiltInPrivateKeySha256 {
 		fmt.Printf("WARNING: the cert: %s signs tokens with the private key published in the Casdoor repository, anyone can forge its tokens, please generate a new key pair for it\n", cert.GetId())
 	}
 }
