@@ -17,7 +17,6 @@ package routers
 import (
 	"compress/gzip"
 	stdcontext "context"
-	"errors"
 	"fmt"
 	"html"
 	"io"
@@ -156,7 +155,8 @@ func fastAutoSignin(ctx *context.Context) (string, error) {
 	if err != nil {
 		return "", err
 	} else if code.Message != "" {
-		return "", errors.New(code.Message)
+		// the sign-in page reports why no code can be issued, and lets the user sign in with another account
+		return "", nil
 	}
 
 	sep := "?"
@@ -175,6 +175,12 @@ func isFastAutoSigninAllowed(ctx *context.Context, user *object.User, applicatio
 
 	isRestricted, err := isRestrictedClientSession(ctx)
 	if err != nil || isRestricted {
+		return false, err
+	}
+
+	// signed in to Casdoor with an account of another organization: show the sign-in page of this application
+	isUserOfApplication, err := object.IsUserOfApplication(user, application)
+	if err != nil || !isUserOfApplication {
 		return false, err
 	}
 
