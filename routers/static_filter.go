@@ -69,6 +69,27 @@ func getWebBuildFolder() string {
 	return path
 }
 
+// GetSwaggerFolder finds the swagger folder like getWebBuildFolder(), so an instance whose folder only has its own
+// conf, logs and files can serve the swagger of the shared Casdoor code on the same machine
+func GetSwaggerFolder() string {
+	path := "swagger"
+	if util.FileExist(filepath.Join(path, "swagger.json")) || frontendBaseDir == "" {
+		return path
+	}
+
+	candidates := []string{
+		filepath.Join(frontendBaseDir, "swagger"),
+		filepath.Join(filepath.Dir(frontendBaseDir), "casdoor", "swagger"),
+	}
+	for _, candidate := range candidates {
+		if util.FileExist(filepath.Join(candidate, "swagger.json")) {
+			return candidate
+		}
+	}
+
+	return path
+}
+
 func fastAutoSignin(ctx *context.Context) (string, error) {
 	userId := getSessionUser(ctx)
 	if userId == "" || isSessionExpired(ctx) {
