@@ -351,7 +351,7 @@ func GetPasswordToken(application *Application, username string, password string
 		Application:  application.Name,
 		Organization: user.Owner,
 		User:         user.Name,
-		Code:         util.GenerateClientId(),
+		Code:         util.GenerateAuthorizationCode(),
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
 		IdToken:      idToken,
@@ -405,7 +405,7 @@ func GetClientCredentialsToken(application *Application, clientSecret string, sc
 		Application:  application.Name,
 		Organization: application.Organization,
 		User:         nullUser.Name,
-		Code:         util.GenerateClientId(),
+		Code:         util.GenerateAuthorizationCode(),
 		AccessToken:  accessToken,
 		ExpiresIn:    int(application.ExpireInHours * float64(hourSeconds)),
 		Scope:        scope,
@@ -537,12 +537,20 @@ func GetJwtBearerToken(application *Application, assertion string, scope string,
 
 // GetTokenByUser mints a token for the given user (Implicit flow helper).
 func GetTokenByUser(application *Application, user *User, scope string, nonce string, sessionId string, host string) (*Token, error) {
+	return GetTokenByUserWithAuth(application, user, scope, nonce, sessionId, host, 0, false)
+}
+
+// GetTokenByUserWithAuth mints the tokens an implicit flow returns from the authorization endpoint:
+// authTime is when the user entered credentials, withAtHash is set when the access token is
+// returned together with the ID token
+func GetTokenByUserWithAuth(application *Application, user *User, scope string, nonce string, sessionId string, host string, authTime int64, withAtHash bool) (*Token, error) {
 	err := ExtendUserWithRolesAndPermissions(user)
 	if err != nil {
 		return nil, err
 	}
 
-	accessToken, refreshToken, idToken, tokenName, err := generateJwtToken(application, user, "", "", nonce, scope, "", host)
+	options := jwtTokenOptions{AuthTime: authTime, WithAtHash: withAtHash}
+	accessToken, refreshToken, idToken, tokenName, err := generateJwtTokenWithOptions(application, user, "", "", nonce, scope, "", host, options)
 	if err != nil {
 		return nil, err
 	}
@@ -554,7 +562,7 @@ func GetTokenByUser(application *Application, user *User, scope string, nonce st
 		Application:  application.Name,
 		Organization: user.Owner,
 		User:         user.Name,
-		Code:         util.GenerateClientId(),
+		Code:         util.GenerateAuthorizationCode(),
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
 		IdToken:      idToken,
@@ -864,7 +872,7 @@ func GetTokenExchangeToken(application *Application, clientSecret string, subjec
 		Application:  application.Name,
 		Organization: user.Owner,
 		User:         user.Name,
-		Code:         util.GenerateClientId(),
+		Code:         util.GenerateAuthorizationCode(),
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
 		IdToken:      idToken,

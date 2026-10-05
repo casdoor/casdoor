@@ -21,6 +21,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 
 	"github.com/beego/beego/v2/core/logs"
 	"github.com/casdoor/casdoor/form"
@@ -365,7 +366,7 @@ func (c *ApiController) Signup() {
 			return
 		}
 
-		code, err := object.GetOAuthCode(userId, clientId, "", "password", responseType, redirectUri, scope, state, nonce, codeChallenge, "", c.Ctx.Input.CruSession.SessionID(context.Background()), c.Ctx.Request.Host, c.GetAcceptLanguage())
+		code, err := object.GetOAuthCode(userId, clientId, "", "password", responseType, redirectUri, scope, state, nonce, codeChallenge, "", c.Ctx.Input.CruSession.SessionID(context.Background()), time.Now().Unix(), c.Ctx.Request.Host, c.GetAcceptLanguage())
 		if err != nil {
 			c.ResponseError(err.Error(), nil)
 			return
@@ -769,7 +770,7 @@ func (c *ApiController) GetAccount() {
 // @Tag Account API
 // @Description return user information according to OIDC standards
 // @Success 200 {object} object.Userinfo The Response object
-// @router /userinfo [get]
+// @router /userinfo [get,post]
 func (c *ApiController) GetUserinfo() {
 	user, ok := c.RequireSignedInUser()
 	if !ok {

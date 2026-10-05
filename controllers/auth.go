@@ -89,7 +89,7 @@ func (c *ApiController) checkCredentialApplication(user *object.User, applicatio
 		return false
 	}
 
-	if form.Type != ResponseTypeCode {
+	if rt, ok := object.ParseResponseType(form.Type); !ok || !rt.Code {
 		return true
 	}
 
@@ -114,6 +114,23 @@ func (c *ApiController) checkApplicationSignin(application *object.Application, 
 	return true
 }
 
+// getSessionAuthTime returns when the user of the session last entered credentials, 0 if unknown
+func (c *ApiController) getSessionAuthTime() int64 {
+	if authTime, ok := c.GetSession("authTime").(int64); ok {
+		return authTime
+	}
+	return 0
+}
+
+// getAuthTime returns when the user entered credentials: now for a sign-in with credentials, the
+// time kept in the session for a quick sign-in with the session
+func (c *ApiController) getAuthTime() int64 {
+	if c.Ctx.Input.Param("sessionSignin") != "true" {
+		return time.Now().Unix()
+	}
+	return c.getSessionAuthTime()
+}
+
 // HandleLoggedIn ...
 func (c *ApiController) HandleLoggedIn(application *object.Application, user *object.User, form *form.AuthForm) (resp *Response) {
 	if !c.checkApplicationSignin(application, user) || !c.checkCredentialApplication(user, application, form) {
@@ -123,6 +140,8 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 	userId := user.GetId()
 	c.renewSessionIdForUser(userId)
 	clientIp := util.GetClientIpFromRequest(c.Ctx.Request)
+	authTime := c.getAuthTime()
+	responseType, isResponseType := object.ParseResponseType(form.Type)
 	var err error
 
 	// check whether paid-user have active subscription, admins are never locked out by it
@@ -185,9 +204,8 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 		c.SetSessionUsername(userId)
 		util.LogInfo(c.Ctx, "API: [%s] signed in", userId)
 		resp = &Response{Status: "ok", Msg: "", Data: userId}
-	} else if form.Type == ResponseTypeCode {
+	} else if isResponseType && responseType.Code { // authorization code and hybrid flows
 		clientId := c.Ctx.Input.Query("clientId")
-		responseType := c.Ctx.Input.Query("responseType")
 		redirectUri := c.Ctx.Input.Query("redirectUri")
 		scope := c.Ctx.Input.Query("scope")
 		state := c.Ctx.Input.Query("state")
@@ -216,28 +234,44 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 		if consentRequired {
 			resp = &Response{Status: "ok", Data: map[string]bool{"required": true}}
 		} else {
-			code, err := object.GetOAuthCode(userId, clientId, form.Provider, form.SigninMethod, responseType, redirectUri, scope, state, nonce, codeChallenge, resource, c.Ctx.Input.CruSession.SessionID(context.Background()), c.Ctx.Request.Host, c.GetAcceptLanguage())
+			code, err := object.GetOAuthCode(userId, clientId, form.Provider, form.SigninMethod, form.Type, redirectUri, scope, state, nonce, codeChallenge, resource, c.Ctx.Input.CruSession.SessionID(context.Background()), authTime, c.Ctx.Request.Host, c.GetAcceptLanguage())
 			if err != nil {
 				c.ResponseError(err.Error(), nil)
 				return
 			}
 
 			resp = codeToResponse(code)
+			// the hybrid flow returns the tokens it asks for together with the code, never the refresh token
+			if resp.Status == "ok" && !responseType.IsCodeOnly() {
+				if responseType.Token {
+					resp.Data2 = code.Token.AccessToken
+				}
+				if responseType.IdToken {
+					resp.Data3 = code.Token.IdToken
+				}
+			}
 		}
-	} else if form.Type == ResponseTypeToken || form.Type == ResponseTypeIdToken { // implicit flow
+	} else if isResponseType { // implicit flow
 		redirectUri := c.Ctx.Input.Query("redirectUri")
-		if !object.IsGrantTypeValid(form.Type, application.GrantTypes) {
+		scope := c.Ctx.Input.Query("scope")
+		nonce := c.Ctx.Input.Query("nonce")
+		if (responseType.Token && !object.IsGrantTypeValid(ResponseTypeToken, application.GrantTypes)) ||
+			(responseType.IdToken && !object.IsGrantTypeValid(ResponseTypeIdToken, application.GrantTypes)) {
 			resp = &Response{Status: "error", Msg: fmt.Sprintf("error: grant_type: %s is not supported in this application", form.Type), Data: ""}
 		} else if redirectUri != "" && !application.IsRedirectUriValid(redirectUri) {
 			resp = &Response{Status: "error", Msg: fmt.Sprintf(c.T("token:Redirect URI: %s doesn't exist in the allowed Redirect URI list"), redirectUri), Data: ""}
+		} else if nonce == "" && responseType.IsNonceRequired(scope) {
+			resp = &Response{Status: "error", Msg: c.T("token:The nonce parameter is required for this response type"), Data: ""}
 		} else {
-			scope := c.Ctx.Input.Query("scope")
-			nonce := c.Ctx.Input.Query("nonce")
 			expandedScope, valid := object.IsScopeValidAndExpand(scope, application)
 			if !valid {
 				resp = &Response{Status: "error", Msg: "error: invalid_scope", Data: ""}
 			} else {
-				token, _ := object.GetTokenByUser(application, user, expandedScope, nonce, c.Ctx.Input.CruSession.SessionID(context.Background()), c.Ctx.Request.Host)
+				token, err := object.GetTokenByUserWithAuth(application, user, expandedScope, nonce, c.Ctx.Input.CruSession.SessionID(context.Background()), c.Ctx.Request.Host, authTime, responseType.Token && responseType.IdToken)
+				if err != nil {
+					c.ResponseError(err.Error(), nil)
+					return
+				}
 				resp = tokenToResponse(token)
 			}
 		}
@@ -345,6 +379,10 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 			return
 		}
 
+		if authTime != 0 {
+			c.SetSession("authTime", authTime)
+		}
+
 		sessionId := c.Ctx.Input.CruSession.SessionID(context.Background())
 		sessionInfo := &object.SessionInfo{
 			SessionId:      sessionId,
@@ -416,6 +454,7 @@ func (c *ApiController) GetApplicationLogin() {
 	redirectUri := c.Ctx.Input.Query("redirectUri")
 	scope := c.Ctx.Input.Query("scope")
 	state := c.Ctx.Input.Query("state")
+	nonce := c.Ctx.Input.Query("nonce")
 	id := c.Ctx.Input.Query("id")
 	loginType := c.Ctx.Input.Query("type")
 	userCode := c.Ctx.Input.Query("userCode")
@@ -424,7 +463,7 @@ func (c *ApiController) GetApplicationLogin() {
 	var msg string
 	var err error
 	if loginType == "code" {
-		msg, application, err = object.CheckOAuthLogin(clientId, responseType, redirectUri, scope, state, c.GetAcceptLanguage())
+		msg, application, err = object.CheckOAuthLogin(clientId, responseType, redirectUri, scope, state, nonce, c.GetAcceptLanguage())
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
@@ -1482,6 +1521,13 @@ func (c *ApiController) Login() {
 				return
 			}
 
+			// prompt=login and an expired max_age ask the user to enter credentials again
+			if !object.IsSessionAuthFresh(c.Ctx.Input.Query("prompt"), c.Ctx.Input.Query("max_age"), c.getSessionAuthTime()) {
+				c.ResponseError(c.T("auth:Please sign in again"), "login_required")
+				return
+			}
+
+			c.Ctx.Input.SetParam("sessionSignin", "true")
 			resp = c.HandleLoggedIn(application, user, &authForm)
 
 			c.Ctx.Input.SetParam("recordUserId", user.GetId())

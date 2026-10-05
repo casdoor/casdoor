@@ -60,9 +60,16 @@ export function oAuthParamsToQuery(oAuthParams) {
   const resourceQuery = oAuthParams.resource
     ? `&resource=${encodeURIComponent(oAuthParams.resource)}`
     : "";
+  // prompt=login and max_age decide whether the existing session is enough to sign in
+  const promptQuery = oAuthParams.prompt
+    ? `&prompt=${encodeURIComponent(oAuthParams.prompt)}`
+    : "";
+  const maxAgeQuery = oAuthParams.maxAge
+    ? `&max_age=${encodeURIComponent(oAuthParams.maxAge)}`
+    : "";
 
   // code
-  return `?clientId=${oAuthParams.clientId}&responseType=${oAuthParams.responseType}&redirectUri=${encodeURIComponent(oAuthParams.redirectUri)}&type=${oAuthParams.type}&scope=${oAuthParams.scope}&state=${oAuthParams.state}&nonce=${oAuthParams.nonce}&code_challenge_method=${oAuthParams.challengeMethod}&code_challenge=${oAuthParams.codeChallenge}${resourceQuery}`;
+  return `?clientId=${oAuthParams.clientId}&responseType=${oAuthParams.responseType}&redirectUri=${encodeURIComponent(oAuthParams.redirectUri)}&type=${oAuthParams.type}&scope=${oAuthParams.scope}&state=${oAuthParams.state}&nonce=${oAuthParams.nonce}&code_challenge_method=${oAuthParams.challengeMethod}&code_challenge=${oAuthParams.codeChallenge}${resourceQuery}${promptQuery}${maxAgeQuery}`;
 }
 
 export function getApplicationLogin(params) {

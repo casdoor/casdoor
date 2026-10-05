@@ -57,6 +57,7 @@ p, *, *, POST, /api/cancel-device-auth, *, *
 p, *, *, POST, /api/device-auth-complete, *, *
 p, *, *, GET, /api/get-account, *, *
 p, *, *, GET, /api/userinfo, *, *
+p, *, *, POST, /api/userinfo, *, *
 p, *, *, GET, /api/user, *, *
 p, *, *, GET, /api/health, *, *
 p, *, *, *, /api/webhook, *, *
