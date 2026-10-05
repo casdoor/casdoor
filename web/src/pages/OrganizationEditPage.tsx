@@ -647,6 +647,13 @@ export default function OrganizationEditPage() {
               onCheckedChange={(v) => update("enableRadius", v)}
             />
           </FormRow>
+          <FormRow labelKey="organization:Enable dynamic client registration">
+            <Switch
+              checked={!!organization.dcrPolicy && organization.dcrPolicy !== "disabled"}
+              disabled={!Setting.isAdminUser(account)}
+              onCheckedChange={(v) => update("dcrPolicy", v ? "open" : "disabled")}
+            />
+          </FormRow>
           <FormRow labelKey="organization:Admin navbar items" block>
             <NavItemTree
               disabled={!Setting.isAdminUser(account)}

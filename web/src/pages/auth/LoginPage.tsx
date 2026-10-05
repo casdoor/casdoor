@@ -445,22 +445,11 @@ export default function LoginPage({type = "login", application: applicationProp,
 
   /** An OAuth error goes back the same way the response would have (RFC 6749 §4.1.2.1). */
   const redirectWithOAuthError = (error: string, description = "") => {
-    const oAuthParams = Util.getOAuthGetParameters();
-    const payload: Record<string, string> = {error, iss: Setting.getOAuthIssuer()};
-    if (oAuthParams.state) {
-      payload.state = oAuthParams.state;
-    }
+    const payload: Record<string, string> = {error};
     if (description) {
       payload.error_description = description;
     }
-    if (oAuthParams.responseMode === "form_post") {
-      Setting.createFormAndSubmit(oAuthParams.redirectUri, payload);
-      return;
-    }
-    const inFragment = oAuthParams.responseMode === "fragment" ||
-      (oAuthParams.responseMode !== "query" && oAuthParams.responseType !== "code");
-    const concatChar = inFragment ? "#" : oAuthParams.redirectUri.includes("?") ? "&" : "?";
-    Setting.goToLink(`${oAuthParams.redirectUri}${concatChar}${new URLSearchParams(payload)}`);
+    Util.sendOAuthResponse(Util.getOAuthGetParameters(), payload);
   };
 
   const postCodeLoginAction = (res: any) => {
@@ -470,14 +459,8 @@ export default function LoginPage({type = "login", application: applicationProp,
     const redirectUrl = `${oAuthParams.redirectUri}${concatChar}code=${encodeURIComponent(
       codeValue,
     )}&state=${encodeURIComponent(oAuthParams.state)}${Setting.getOAuthIssuerParam()}`;
-    // response_mode=form_post sends the code in a POST form instead of the query string
-    const goToRedirectUrl = () => {
-      if (oAuthParams.responseMode === "form_post") {
-        Setting.createFormAndSubmit(oAuthParams.redirectUri, {code: codeValue, state: oAuthParams.state, iss: Setting.getOAuthIssuer()});
-      } else {
-        Setting.goToLink(redirectUrl);
-      }
-    };
+    // response_mode decides whether the code goes in the query string, the fragment or a POST form
+    const goToRedirectUrl = () => Util.sendOAuthResponse(oAuthParams, {code: codeValue});
 
     if (res.data === Setting.RequiredUpdatePassword) {
       Setting.goToUpdatePassword(application?.name);
@@ -528,7 +511,6 @@ export default function LoginPage({type = "login", application: applicationProp,
   const handleLoginResult = (res: any, values: any, authParams: any) => {
     const responseType = values["type"];
     const responseTypes = String(responseType).split(" ");
-    const responseMode = authParams?.responseMode || "query";
 
     if (responseType === "login") {
       Setting.showMessage("success", i18next.t("application:Logged in successfully"));
@@ -556,15 +538,7 @@ export default function LoginPage({type = "login", application: applicationProp,
       if (responseTypes.includes("id_token")) {
         payload.id_token = res.data3;
       }
-      if (authParams?.state) {
-        payload.state = authParams.state;
-      }
-      payload.iss = Setting.getOAuthIssuer();
-      if (responseMode === "form_post") {
-        Setting.createFormAndSubmit(authParams?.redirectUri, payload);
-      } else {
-        Setting.goToLink(`${authParams.redirectUri}#${new URLSearchParams(payload)}`);
-      }
+      Util.sendOAuthResponse(authParams, payload);
     } else if (responseType === "saml") {
       if (res.data2?.method === "POST") {
         setSaml({response: res.data, redirectUrl: res.data2.redirectUrl, relayState: values["relayState"] ?? ""});

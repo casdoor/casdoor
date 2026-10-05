@@ -147,6 +147,28 @@ export function getOAuthGetParameters(params?: any): any {
   }
 }
 
+/**
+ * Sends an authorization response (or error) back to the client the way the request asks for:
+ * response_mode=form_post as a POST form, otherwise in the query string for the code flow and in
+ * the fragment for the implicit and hybrid flows, unless response_mode says otherwise. Tokens never
+ * go in the query string, whatever response_mode asks.
+ */
+export function sendOAuthResponse(oAuthParams: any, payload: Record<string, string>) {
+  if (oAuthParams.state) {
+    payload.state = oAuthParams.state;
+  }
+  payload.iss = Setting.getOAuthIssuer();
+  if (oAuthParams.responseMode === "form_post") {
+    Setting.createFormAndSubmit(oAuthParams.redirectUri, payload);
+    return;
+  }
+  const hasToken = "access_token" in payload || "id_token" in payload;
+  const inFragment = oAuthParams.responseMode === "fragment" || hasToken ||
+    (oAuthParams.responseMode !== "query" && (oAuthParams.responseType || "code") !== "code");
+  const concatChar = inFragment ? "#" : oAuthParams.redirectUri.includes("?") ? "&" : "?";
+  Setting.goToLink(`${oAuthParams.redirectUri}${concatChar}${new URLSearchParams(payload)}`);
+}
+
 export function getStateFromQueryParams(applicationName, providerName, method, isShortState) {
   let query = window.location.search;
   query = `${query}&application=${encodeURIComponent(applicationName)}&provider=${encodeURIComponent(providerName)}&method=${method}`;
