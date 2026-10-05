@@ -118,6 +118,8 @@ export function getOAuthGetParameters(params?: any): any {
   const relayState = getRefinedValue(lowercaseQueries["RelayState".toLowerCase()]);
   const noRedirect = getRefinedValue(lowercaseQueries["noRedirect".toLowerCase()]);
   const resource = getRefinedValue(queries.get("resource"));
+  const prompt = getRefinedValue(queries.get("prompt"));
+  const maxAge = getRefinedValue(queries.get("max_age"));
 
   if (clientId === "" && samlRequest === "") {
     // login
@@ -138,6 +140,8 @@ export function getOAuthGetParameters(params?: any): any {
       relayState: relayState,
       noRedirect: noRedirect,
       resource: resource,
+      prompt: prompt,
+      maxAge: maxAge,
       type: "code",
     };
   }

@@ -24,38 +24,51 @@ import (
 
 type ClaimsStandard struct {
 	*UserStandard
-	EmailVerified       bool        `json:"email_verified,omitempty"`
-	PhoneNumber         string      `json:"phone_number,omitempty"`
-	PhoneNumberVerified bool        `json:"phone_number_verified,omitempty"`
-	Gender              string      `json:"gender,omitempty"`
-	TokenType           string      `json:"tokenType,omitempty"`
-	Nonce               string      `json:"nonce,omitempty"`
-	Scope               string      `json:"scope,omitempty"`
-	Address             OIDCAddress `json:"address,omitempty"`
-	Azp                 string      `json:"azp,omitempty"`
-	Provider            string      `json:"provider,omitempty"`
+	EmailVerified       bool         `json:"email_verified,omitempty"`
+	PhoneNumber         string       `json:"phone_number,omitempty"`
+	PhoneNumberVerified bool         `json:"phone_number_verified,omitempty"`
+	Gender              string       `json:"gender,omitempty"`
+	TokenType           string       `json:"tokenType,omitempty"`
+	Nonce               string       `json:"nonce,omitempty"`
+	Scope               string       `json:"scope,omitempty"`
+	Address             *OIDCAddress `json:"address,omitempty"`
+	Azp                 string       `json:"azp,omitempty"`
+	Provider            string       `json:"provider,omitempty"`
 
+	OidcIdTokenClaims
 	jwt.RegisteredClaims
 }
 
-func getStreetAddress(user *User) string {
-	var addrs string
+func getOIDCAddress(user *User) *OIDCAddress {
+	var lines []string
 	for _, addr := range user.Address {
-		addrs += addr + "\n"
+		if addr = strings.TrimSpace(addr); addr != "" {
+			lines = append(lines, addr)
+		}
 	}
-	return addrs
+
+	address := &OIDCAddress{
+		StreetAddress: strings.Join(lines, "\n"),
+		Locality:      user.Location,
+		Country:       user.Region,
+	}
+	if *address == (OIDCAddress{}) {
+		return nil
+	}
+	return address
 }
 
 func getStandardClaims(claims Claims) ClaimsStandard {
 	res := ClaimsStandard{
-		UserStandard:     getStandardUser(claims.User),
-		EmailVerified:    claims.User.EmailVerified,
-		TokenType:        claims.TokenType,
-		Nonce:            claims.Nonce,
-		Scope:            claims.Scope,
-		RegisteredClaims: claims.RegisteredClaims,
-		Azp:              claims.Azp,
-		Provider:         claims.Provider,
+		UserStandard:      getStandardUser(claims.User),
+		EmailVerified:     claims.User.EmailVerified,
+		TokenType:         claims.TokenType,
+		Nonce:             claims.Nonce,
+		Scope:             claims.Scope,
+		RegisteredClaims:  claims.RegisteredClaims,
+		Azp:               claims.Azp,
+		Provider:          claims.Provider,
+		OidcIdTokenClaims: claims.OidcIdTokenClaims,
 	}
 
 	res.Phone = ""
@@ -69,7 +82,7 @@ func getStandardClaims(claims Claims) ClaimsStandard {
 
 	for _, scope := range scopes {
 		if scope == "address" {
-			res.Address = OIDCAddress{StreetAddress: getStreetAddress(claims.User)}
+			res.Address = getOIDCAddress(claims.User)
 		} else if scope == "profile" {
 			res.Gender = claims.User.Gender
 		} else if scope == "phone" && claims.User.Phone != "" {

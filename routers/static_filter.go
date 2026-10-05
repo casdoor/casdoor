@@ -83,7 +83,14 @@ func fastAutoSignin(ctx *context.Context) (string, error) {
 	nonce := ctx.Input.Query("nonce")
 	codeChallenge := ctx.Input.Query("code_challenge")
 	resource := ctx.Input.Query("resource")
-	if clientId == "" || responseType != "code" || redirectUri == "" {
+	responseMode := ctx.Input.Query("response_mode")
+	if clientId == "" || responseType != "code" || redirectUri == "" || (responseMode != "" && responseMode != "query") {
+		return "", nil
+	}
+
+	// prompt=login and an expired max_age need the user to enter credentials on the sign-in page
+	authTime, _ := ctx.Input.Session("authTime").(int64)
+	if !object.IsSessionAuthFresh(ctx.Input.Query("prompt"), ctx.Input.Query("max_age"), authTime) {
 		return "", nil
 	}
 
@@ -124,7 +131,7 @@ func fastAutoSignin(ctx *context.Context) (string, error) {
 		return "", nil
 	}
 
-	code, err := object.GetOAuthCode(userId, clientId, "", "autoSignin", responseType, redirectUri, scope, state, nonce, codeChallenge, resource, ctx.Input.CruSession.SessionID(stdcontext.Background()), ctx.Request.Host, getAcceptLanguage(ctx))
+	code, err := object.GetOAuthCode(userId, clientId, "", "autoSignin", responseType, redirectUri, scope, state, nonce, codeChallenge, resource, ctx.Input.CruSession.SessionID(stdcontext.Background()), authTime, ctx.Request.Host, getAcceptLanguage(ctx))
 	if err != nil {
 		return "", err
 	} else if code.Message != "" {
@@ -135,7 +142,8 @@ func fastAutoSignin(ctx *context.Context) (string, error) {
 	if strings.Contains(redirectUri, "?") {
 		sep = "&"
 	}
-	res := fmt.Sprintf("%s%scode=%s&state=%s", redirectUri, sep, url.QueryEscape(code.Code), url.QueryEscape(state))
+	issuer := object.GetOidcDiscovery(ctx.Request.Host, "").Issuer
+	res := fmt.Sprintf("%s%scode=%s&state=%s&iss=%s", redirectUri, sep, url.QueryEscape(code.Code), url.QueryEscape(state), url.QueryEscape(issuer))
 	return res, nil
 }
 

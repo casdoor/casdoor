@@ -220,6 +220,7 @@ func (c *ApiController) GrantConsent() {
 		request.Challenge,
 		request.Resource,
 		c.Ctx.Input.CruSession.SessionID(context.Background()),
+		c.getSessionAuthTime(),
 		c.Ctx.Request.Host,
 		c.GetAcceptLanguage(),
 	)

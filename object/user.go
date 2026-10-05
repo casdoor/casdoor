@@ -255,21 +255,22 @@ type User struct {
 }
 
 type Userinfo struct {
-	Sub           string   `json:"sub"`
-	Iss           string   `json:"iss"`
-	Aud           string   `json:"aud"`
-	Name          string   `json:"preferred_username,omitempty"`
-	DisplayName   string   `json:"name,omitempty"`
-	Email         string   `json:"email,omitempty"`
-	EmailVerified bool     `json:"email_verified,omitempty"`
-	Avatar        string   `json:"picture,omitempty"`
-	Address       string   `json:"address,omitempty"`
-	Phone         string   `json:"phone,omitempty"`
-	RealName      string   `json:"real_name,omitempty"`
-	IsVerified    bool     `json:"is_verified,omitempty"`
-	Groups        []string `json:"groups,omitempty"`
-	Roles         []string `json:"roles,omitempty"`
-	Permissions   []string `json:"permissions,omitempty"`
+	Sub           string       `json:"sub"`
+	Iss           string       `json:"iss"`
+	Aud           string       `json:"aud"`
+	Name          string       `json:"preferred_username,omitempty"`
+	DisplayName   string       `json:"name,omitempty"`
+	Email         string       `json:"email,omitempty"`
+	EmailVerified bool         `json:"email_verified,omitempty"`
+	Avatar        string       `json:"picture,omitempty"`
+	Address       *OIDCAddress `json:"address,omitempty"`
+	Phone         string       `json:"phone,omitempty"`
+	PhoneNumber   string       `json:"phone_number,omitempty"`
+	RealName      string       `json:"real_name,omitempty"`
+	IsVerified    bool         `json:"is_verified,omitempty"`
+	Groups        []string     `json:"groups,omitempty"`
+	Roles         []string     `json:"roles,omitempty"`
+	Permissions   []string     `json:"permissions,omitempty"`
 }
 
 type ManagedAccount struct {
@@ -1408,11 +1409,14 @@ func GetUserInfo(user *User, scope string, aud string, host string) (*Userinfo, 
 	}
 
 	if strings.Contains(scope, "address") && allowed("Location") {
-		resp.Address = user.Location
+		resp.Address = getOIDCAddress(user)
 	}
 
 	if strings.Contains(scope, "phone") && allowed("Phone") {
 		resp.Phone = user.Phone
+		if phoneNumber, ok := util.GetE164Number(user.Phone, user.CountryCode); ok {
+			resp.PhoneNumber = phoneNumber
+		}
 	}
 
 	if strings.Contains(scope, "profile") {

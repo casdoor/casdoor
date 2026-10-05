@@ -30,6 +30,10 @@ func GenerateClientSecret() string {
 	return randstr.Hex(20)
 }
 
+func GenerateAuthorizationCode() string {
+	return randstr.Hex(32)
+}
+
 func GeneratePasswordSalt() string {
 	return randstr.Hex(10)
 }

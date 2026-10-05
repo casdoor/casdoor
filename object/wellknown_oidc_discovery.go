@@ -31,6 +31,7 @@ type OidcDiscovery struct {
 	Issuer                                     string   `json:"issuer"`
 	AuthorizationEndpoint                      string   `json:"authorization_endpoint"`
 	TokenEndpoint                              string   `json:"token_endpoint"`
+	TokenEndpointAuthMethodsSupported          []string `json:"token_endpoint_auth_methods_supported"`
 	UserinfoEndpoint                           string   `json:"userinfo_endpoint"`
 	DeviceAuthorizationEndpoint                string   `json:"device_authorization_endpoint"`
 	RegistrationEndpoint                       string   `json:"registration_endpoint,omitempty"`
@@ -158,12 +159,13 @@ func GetOidcDiscovery(host string, applicationName string) OidcDiscovery {
 		Issuer:                                     issuer,
 		AuthorizationEndpoint:                      fmt.Sprintf("%s/login/oauth/authorize", originFrontend),
 		TokenEndpoint:                              fmt.Sprintf("%s/api/login/oauth/access_token", originBackend),
+		TokenEndpointAuthMethodsSupported:          []string{"client_secret_basic", "client_secret_post"},
 		UserinfoEndpoint:                           fmt.Sprintf("%s/api/userinfo", originBackend),
 		DeviceAuthorizationEndpoint:                fmt.Sprintf("%s/api/device-auth", originBackend),
 		RegistrationEndpoint:                       fmt.Sprintf("%s/api/oauth/register", originBackend),
 		JwksUri:                                    jwksUri,
 		IntrospectionEndpoint:                      fmt.Sprintf("%s/api/login/oauth/introspect", originBackend),
-		ResponseTypesSupported:                     []string{"code", "token", "id_token", "code token", "code id_token", "token id_token", "code token id_token", "none"},
+		ResponseTypesSupported:                     []string{"code", "token", "id_token", "code token", "code id_token", "token id_token", "code token id_token"},
 		ResponseModesSupported:                     []string{"query", "fragment", "form_post"},
 		GrantTypesSupported:                        []string{"authorization_code", "implicit", "password", "client_credentials", "refresh_token", "urn:ietf:params:oauth:grant-type:device_code", "urn:ietf:params:oauth:grant-type:token-exchange"},
 		SubjectTypesSupported:                      []string{"public"},
