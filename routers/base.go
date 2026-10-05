@@ -252,8 +252,13 @@ func clearSessionOfRevokedToken(ctx *context.Context) error {
 		return nil
 	}
 
+	return clearSessionOfToken(ctx)
+}
+
+// clearSessionOfToken signs out the session that AutoSigninFilter created from an access token
+func clearSessionOfToken(ctx *context.Context) error {
 	for _, key := range []string{"username", "SessionData", "accessToken", "scope", "aud", object.SessionSigninTokenId} {
-		err = ctx.Input.CruSession.Delete(stdcontext.Background(), key)
+		err := ctx.Input.CruSession.Delete(stdcontext.Background(), key)
 		if err != nil {
 			return err
 		}
