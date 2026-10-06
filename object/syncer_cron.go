@@ -15,6 +15,7 @@
 package object
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/robfig/cron/v3"
@@ -62,7 +63,9 @@ func addSyncerJob(syncer *Syncer) error {
 
 	// A failed first run must not stop the job, otherwise the syncer stays idle until the next restart
 	err = RunSyncer(syncer)
-	if err != nil {
+	if errors.Is(err, errSyncerRunning) {
+		err = nil
+	} else if err != nil {
 		recordSyncerError(syncer, err)
 	}
 
@@ -72,7 +75,7 @@ func addSyncerJob(syncer *Syncer) error {
 
 func runSyncerNoError(syncer *Syncer) {
 	err := RunSyncer(syncer)
-	if err != nil {
+	if err != nil && !errors.Is(err, errSyncerRunning) {
 		recordSyncerError(syncer, err)
 		fmt.Printf("runSyncerNoError() error: %s\n", err.Error())
 	}
