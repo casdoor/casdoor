@@ -37,6 +37,36 @@ func checkDataSourceFields(fields map[string]string) error {
 	return nil
 }
 
+// isTrustedDbHost reports whether the deployment operator has listed the host in the
+// trustedDbHosts config, as "host" (any port) or "host:port".
+func isTrustedDbHost(host string, port int) bool {
+	host = strings.Trim(host, "[]")
+	if host == "" {
+		return false
+	}
+
+	for _, entry := range strings.Split(conf.GetConfigString("trustedDbHosts"), ",") {
+		entry = strings.TrimSpace(entry)
+		if entry == "" {
+			continue
+		}
+
+		entryHost, entryPort := entry, port
+		if h, p, err := net.SplitHostPort(entry); err == nil {
+			entryPort, err = strconv.Atoi(p)
+			if err != nil {
+				continue
+			}
+			entryHost = h
+		}
+
+		if entryPort == port && strings.EqualFold(strings.Trim(entryHost, "[]"), host) {
+			return true
+		}
+	}
+	return false
+}
+
 func getOwnDbAddress() (host string, port int, ok bool) {
 	dataSourceName := conf.GetConfigDataSourceName()
 	switch conf.GetConfigString("driverName") {
