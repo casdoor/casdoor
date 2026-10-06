@@ -335,6 +335,7 @@ func (syncer *Syncer) getTargetTablePrimaryKey() string {
 func RunSyncer(syncer *Syncer) error {
 	err := syncer.initAdapter()
 	if err != nil {
+		_ = syncer.Close()
 		return err
 	}
 
@@ -342,6 +343,7 @@ func RunSyncer(syncer *Syncer) error {
 	err = syncer.syncGroups()
 	if err != nil {
 		// Log error but don't fail the entire sync
+		recordSyncerError(syncer, err)
 		fmt.Printf("Warning: syncGroups() error: %s\n", err.Error())
 	}
 

@@ -51,38 +51,31 @@ func addSyncerJob(syncer *Syncer) error {
 		return nil
 	}
 
-	err := syncer.initAdapter()
-	if err != nil {
-		recordSyncerError(syncer, err)
-		return err
-	}
-
-	// Sync groups first so that the groups referenced by the synced users already exist
-	err = syncer.syncGroups()
-	if err != nil {
-		// Log error but don't fail the entire sync
-		recordSyncerError(syncer, err)
-		fmt.Printf("Warning: syncGroups() error: %s\n", err.Error())
-	}
-
-	err = syncer.syncUsers()
-	if err != nil {
-		recordSyncerError(syncer, err)
-		return err
-	}
-
 	schedule := fmt.Sprintf("@every %ds", syncer.SyncInterval)
 	cron := getCronMap(syncer.Name)
-	_, err = cron.AddFunc(schedule, func() {
-		syncer.syncGroupsNoError()
-		syncer.syncUsersNoError()
+	_, err := cron.AddFunc(schedule, func() {
+		runSyncerNoError(syncer)
 	})
 	if err != nil {
 		return err
 	}
 
+	// A failed first run must not stop the job, otherwise the syncer stays idle until the next restart
+	err = RunSyncer(syncer)
+	if err != nil {
+		recordSyncerError(syncer, err)
+	}
+
 	cron.Start()
-	return nil
+	return err
+}
+
+func runSyncerNoError(syncer *Syncer) {
+	err := RunSyncer(syncer)
+	if err != nil {
+		recordSyncerError(syncer, err)
+		fmt.Printf("runSyncerNoError() error: %s\n", err.Error())
+	}
 }
 
 func deleteSyncerJob(syncer *Syncer) {

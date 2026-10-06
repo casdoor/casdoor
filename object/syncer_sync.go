@@ -151,11 +151,3 @@ func (syncer *Syncer) syncUsers() error {
 
 	return nil
 }
-
-func (syncer *Syncer) syncUsersNoError() {
-	err := syncer.syncUsers()
-	if err != nil {
-		recordSyncerError(syncer, err)
-		fmt.Printf("syncUsersNoError() error: %s\n", err.Error())
-	}
-}
