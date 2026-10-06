@@ -279,6 +279,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      packages: write
     if: github.repository == 'casdoor/casdoor' && startsWith(github.ref, 'refs/tags/v')
     needs: [frontend, backend, linter, e2e]
     steps:
@@ -340,11 +341,35 @@ jobs:
             casbin/casdoor-all-in-one:${{ steps.version.outputs.version }}
             ${{ steps.version.outputs.prerelease == 'false' && 'casbin/casdoor-all-in-one:latest' || '' }}
 
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # The chart is published as `casdoor` on GHCR, which is what Artifact Hub
+      # lists. `casbin/casdoor` on Docker Hub is the image and uses the same tags,
+      # so Docker Hub keeps the old `casdoor-helm-charts` name for existing installs.
       - name: Package and push Helm chart
         env:
           VERSION: ${{ steps.version.outputs.version }}
         run: |
-          REGISTRY=oci://registry-1.docker.io/casbin
-
           helm package manifests/casdoor --version "$VERSION" --app-version "$VERSION"
-          helm push casdoor-helm-charts-$VERSION.tgz $REGISTRY
+          helm push casdoor-$VERSION.tgz oci://ghcr.io/casdoor/helm-charts
+
+          sed -i 's/^name: casdoor$/name: casdoor-helm-charts/' manifests/casdoor/Chart.yaml
+          helm package manifests/casdoor --version "$VERSION" --app-version "$VERSION"
+          helm push casdoor-helm-charts-$VERSION.tgz oci://registry-1.docker.io/casbin
+
+      - name: Set up ORAS
+        uses: oras-project/setup-oras@v1
+
+      - name: Push Artifact Hub metadata
+        working-directory: manifests
+        run: |
+          for ref in ghcr.io/casdoor/helm-charts/casdoor registry-1.docker.io/casbin/casdoor-helm-charts; do
+            oras push "$ref:artifacthub.io" \
+              --config /dev/null:application/vnd.cncf.artifacthub.config.v1+yaml \
+              artifacthub-repo.yml:application/vnd.cncf.artifacthub.repository-metadata.layer.v1.yaml
+          done

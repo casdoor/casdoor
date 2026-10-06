@@ -1,0 +1,5 @@
+# Artifact Hub repository metadata, pushed next to the chart as the `artifacthub.io` tag
+repositoryID: b4140489-13df-4d36-9769-9ecad4186cdc
+owners:
+  - name: Casdoor
+    email: hsluoyz@gmail.com
