@@ -1009,6 +1009,8 @@
     "Soft deletion - Tooltip": "When enabled, deleting users will not completely remove them from the database. Instead, they will be marked as deleted",
     "Tags": "Tags",
     "Token retention days": "Token retention days",
+    "Trusted database hosts": "Trusted database hosts",
+    "Trusted database hosts - Tooltip": "Database hosts that the syncers and Casbin adapters of this organization may connect to, even when they are intranet addresses or Casdoor's own database server, as a comma separated list of host or host:port. Only a global admin can change it.",
     "Use Email as username": "Use Email as username",
     "Use Email as username - Tooltip": "Use Email as username if the username field is not visible at signup",
     "Use permanent avatar": "Use permanent avatar",
