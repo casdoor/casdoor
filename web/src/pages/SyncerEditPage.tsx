@@ -206,6 +206,12 @@ export default function SyncerEditPage() {
       when: (ctx) => needSshFields(ctx.record) && ctx.record.sshType === "password",
     },
     {
+      type: "text",
+      name: "sshHostKey",
+      labelKey: "syncer:SSH host key",
+      when: (ctx) => needSshFields(ctx.record) && !!ctx.record.sshType,
+    },
+    {
       type: "custom",
       name: "cert",
       labelKey: "general:SSH cert",

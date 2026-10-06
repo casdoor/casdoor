@@ -9,6 +9,7 @@ import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 import {Alert, AlertDescription} from "@/components/ui/alert";
 import {Loading} from "@/components/common/Loading";
 import {CustomHtml, CustomStyle} from "@/components/common/CustomHtml";
+import {isTrustedApplication} from "@/lib/custom-html";
 import {AuthDivider, AuthLayout} from "@/components/auth/AuthLayout";
 import {SigninMethodTabs} from "@/components/auth/SigninMethodTabs";
 import {MfaVerify, NextMfa, RequiredMfa} from "@/components/auth/MfaVerify";
@@ -1277,7 +1278,7 @@ export default function LoginPage({type = "login", application: applicationProp,
 
   // The whole page can be replaced by the application's own markup.
   if (application.signinHtml) {
-    return <CustomHtml html={application.signinHtml} />;
+    return <CustomHtml html={application.signinHtml} trusted={isTrustedApplication(application)} />;
   }
 
   const signinItems = (application.signinItems ?? []) as any[];
@@ -1327,7 +1328,7 @@ export default function LoginPage({type = "login", application: applicationProp,
   const renderSigninItem = (item: any) => {
     const key = item.name;
     if (Setting.isCustomFormItem(item)) {
-      return item.visible ? <CustomHtml key={key} html={item.customCss} /> : null;
+      return item.visible ? <CustomHtml key={key} html={item.customCss} trusted={isTrustedApplication(application)} /> : null;
     }
     // the antd page keeps the auto sign-in checkbox even when the link is hidden
     if (!item.visible && item.name !== "Forgot password?") {
