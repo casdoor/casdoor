@@ -15,10 +15,12 @@
 package object
 
 import (
+	"bytes"
 	"context"
 	"database/sql/driver"
 	"fmt"
 	"net"
+	"strings"
 	"time"
 
 	mssql "github.com/microsoft/go-mssqldb"
@@ -63,54 +65,68 @@ func (v *ViaSSHDialer) DialTimeout(network, address string, timeout time.Duratio
 	return v.Client.Dial(network, address)
 }
 
-func DialWithPassword(SshUser string, SshPassword string, SshHost string, SshPort int) (*ssh.Client, error) {
-	address := fmt.Sprintf("%s:%d", SshHost, SshPort)
-	config := &ssh.ClientConfig{
-		User: SshUser,
-		Auth: []ssh.AuthMethod{
-			ssh.Password(SshPassword),
-		},
-		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
+func getHostKeyCallback(hostKey string, observedHostKey *string) ssh.HostKeyCallback {
+	return func(hostname string, remote net.Addr, key ssh.PublicKey) error {
+		*observedHostKey = strings.TrimSpace(string(ssh.MarshalAuthorizedKey(key)))
+		if strings.TrimSpace(hostKey) == "" || isHostKeyMatched(hostKey, key) {
+			return nil
+		}
+		return fmt.Errorf("the SSH host key of %s does not match the saved one, got: %s (%s); clear \"SSH host key\" in the syncer only if the server's key was changed on purpose", hostname, *observedHostKey, ssh.FingerprintSHA256(key))
 	}
-
-	return ssh.Dial("tcp", address, config)
 }
 
-func DialWithCert(SshUser string, CertId string, SshHost string, SshPort int) (*ssh.Client, error) {
-	address := fmt.Sprintf("%s:%d", SshHost, SshPort)
-	config := &ssh.ClientConfig{
-		User:            SshUser,
-		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
+func isHostKeyMatched(hostKey string, key ssh.PublicKey) bool {
+	hostKey = strings.TrimSpace(hostKey)
+	if strings.HasPrefix(hostKey, "SHA256:") {
+		return hostKey == ssh.FingerprintSHA256(key)
 	}
 
+	savedKey, _, _, _, err := ssh.ParseAuthorizedKey([]byte(hostKey))
+	if err != nil {
+		_, _, savedKey, _, _, err = ssh.ParseKnownHosts([]byte(hostKey))
+		if err != nil {
+			return false
+		}
+	}
+	return bytes.Equal(savedKey.Marshal(), key.Marshal())
+}
+
+func dialSsh(sshUser string, authMethod ssh.AuthMethod, sshHost string, sshPort int, hostKey string) (*ssh.Client, string, error) {
+	observedHostKey := ""
+	config := &ssh.ClientConfig{
+		User:            sshUser,
+		Auth:            []ssh.AuthMethod{authMethod},
+		HostKeyCallback: getHostKeyCallback(hostKey, &observedHostKey),
+	}
+
+	client, err := ssh.Dial("tcp", fmt.Sprintf("%s:%d", sshHost, sshPort), config)
+	if err != nil {
+		return nil, "", err
+	}
+	return client, observedHostKey, nil
+}
+
+func DialWithPassword(SshUser string, SshPassword string, SshHost string, SshPort int, HostKey string) (*ssh.Client, string, error) {
+	return dialSsh(SshUser, ssh.Password(SshPassword), SshHost, SshPort, HostKey)
+}
+
+func DialWithCert(SshUser string, CertId string, SshHost string, SshPort int, HostKey string) (*ssh.Client, string, error) {
 	cert, err := GetCert(CertId)
 	if err != nil {
-		return nil, err
+		return nil, "", err
+	}
+	if cert == nil {
+		return nil, "", fmt.Errorf("the cert: %s is not found", CertId)
 	}
 
-	signer, err := ssh.ParsePrivateKey([]byte(cert.PrivateKey))
-	if err != nil {
-		return nil, err
-	}
-	config.Auth = []ssh.AuthMethod{
-		ssh.PublicKeys(signer),
-	}
-	return ssh.Dial("tcp", address, config)
+	return DialWithPrivateKey(SshUser, []byte(cert.PrivateKey), SshHost, SshPort, HostKey)
 }
 
-func DialWithPrivateKey(SshUser string, PrivateKey []byte, SshHost string, SshPort int) (*ssh.Client, error) {
-	address := fmt.Sprintf("%s:%d", SshHost, SshPort)
-	config := &ssh.ClientConfig{
-		User:            SshUser,
-		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
-	}
-
+func DialWithPrivateKey(SshUser string, PrivateKey []byte, SshHost string, SshPort int, HostKey string) (*ssh.Client, string, error) {
 	signer, err := ssh.ParsePrivateKey(PrivateKey)
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
-	config.Auth = []ssh.AuthMethod{
-		ssh.PublicKeys(signer),
-	}
-	return ssh.Dial("tcp", address, config)
+
+	return dialSsh(SshUser, ssh.PublicKeys(signer), SshHost, SshPort, HostKey)
 }

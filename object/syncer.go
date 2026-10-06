@@ -52,6 +52,7 @@ type Syncer struct {
 	SshPort          int            `json:"sshPort"`
 	SshUser          string         `xorm:"varchar(100)" json:"sshUser"`
 	SshPassword      string         `xorm:"varchar(150)" json:"sshPassword"`
+	SshHostKey       string         `xorm:"varchar(1000)" json:"sshHostKey"`
 	Cert             string         `xorm:"varchar(100)" json:"cert"`
 	Database         string         `xorm:"varchar(100)" json:"database"`
 	Table            string         `xorm:"varchar(100)" json:"table"`
@@ -194,6 +195,9 @@ func UpdateSyncer(id string, syncer *Syncer, isGlobalAdmin bool, lang string) (b
 	if syncer.Password == "***" {
 		syncer.Password = s.Password
 	}
+	if (syncer.SshHost != s.SshHost || syncer.SshPort != s.SshPort) && syncer.SshHostKey == s.SshHostKey {
+		syncer.SshHostKey = ""
+	}
 	affected, err := session.Update(syncer)
 	if err != nil {
 		return false, err
@@ -207,6 +211,11 @@ func UpdateSyncer(id string, syncer *Syncer, isGlobalAdmin bool, lang string) (b
 	}
 
 	return affected != 0, nil
+}
+
+func updateSyncerSshHostKey(syncer *Syncer) error {
+	_, err := ormer.Engine.ID(core.PK{syncer.Owner, syncer.Name}).Cols("ssh_host_key").Update(syncer)
+	return err
 }
 
 func updateSyncerErrorText(syncer *Syncer, line string) (bool, error) {

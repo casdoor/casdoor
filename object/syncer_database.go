@@ -145,13 +145,23 @@ func (p *DatabaseSyncerProvider) InitAdapter() error {
 
 	if p.Syncer.isSshTunneled() {
 		var dial *ssh.Client
+		var sshHostKey string
 		if p.Syncer.SshType == "password" {
-			dial, err = DialWithPassword(p.Syncer.SshUser, p.Syncer.SshPassword, p.Syncer.SshHost, p.Syncer.SshPort)
+			dial, sshHostKey, err = DialWithPassword(p.Syncer.SshUser, p.Syncer.SshPassword, p.Syncer.SshHost, p.Syncer.SshPort, p.Syncer.SshHostKey)
 		} else {
-			dial, err = DialWithCert(p.Syncer.SshUser, p.Syncer.Owner+"/"+p.Syncer.Cert, p.Syncer.SshHost, p.Syncer.SshPort)
+			dial, sshHostKey, err = DialWithCert(p.Syncer.SshUser, p.Syncer.Owner+"/"+p.Syncer.Cert, p.Syncer.SshHost, p.Syncer.SshPort, p.Syncer.SshHostKey)
 		}
 		if err != nil {
 			return err
+		}
+
+		if strings.TrimSpace(p.Syncer.SshHostKey) == "" {
+			p.Syncer.SshHostKey = sshHostKey
+			err = updateSyncerSshHostKey(p.Syncer)
+			if err != nil {
+				dial.Close()
+				return err
+			}
 		}
 
 		// Store SSH client for proper cleanup
