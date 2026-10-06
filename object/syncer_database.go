@@ -21,6 +21,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/util"
 	"github.com/go-sql-driver/mysql"
 	"golang.org/x/crypto/ssh"
@@ -48,7 +49,13 @@ func CheckSyncerDatabaseHost(syncer *Syncer) error {
 		return nil
 	}
 	if syncer.isSshTunneled() {
+		if isTrustedDbHost(syncer.SshHost, syncer.SshPort) {
+			return nil
+		}
 		return util.CheckInternetHost(syncer.SshHost)
+	}
+	if isTrustedDbHost(syncer.Host, syncer.Port) {
+		return nil
 	}
 	return util.CheckInternetHost(syncer.Host)
 }
@@ -81,10 +88,16 @@ func CheckSyncerDatabaseTarget(syncer *Syncer) error {
 		host = strings.ReplaceAll(host, "dbi.", "db.")
 		ownHost = strings.ReplaceAll(ownHost, "dbi.", "db.")
 	}
-	if isSameDbServer(host, syncer.Port, ownHost, ownPort) {
-		return fmt.Errorf("the host: %s:%d of the syncer is Casdoor's own database server, which cannot be synced", syncer.Host, syncer.Port)
+	if !isSameDbServer(host, syncer.Port, ownHost, ownPort) {
+		return nil
 	}
-	return nil
+	if strings.EqualFold(syncer.Database, conf.GetConfigString("dbName")) {
+		return fmt.Errorf("the database: %s of the syncer is Casdoor's own database, which cannot be synced", syncer.Database)
+	}
+	if isTrustedDbHost(syncer.Host, syncer.Port) {
+		return nil
+	}
+	return fmt.Errorf("the host: %s:%d of the syncer is Casdoor's own database server, which cannot be synced", syncer.Host, syncer.Port)
 }
 
 func isValidSyncerTable(table string) bool {
