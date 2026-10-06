@@ -96,7 +96,11 @@ jobs:
             }
           }
           EOF
-          npm publish --tag master --access public
+          if npm view "casdoor-web@0.0.0-c${GITHUB_SHA}" version >/dev/null 2>&1; then
+            echo "casdoor-web@0.0.0-c${GITHUB_SHA} is already published, skipping"
+          else
+            npm publish --tag master --access public
+          fi
 
   backend:
     name: Back-end
