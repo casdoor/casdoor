@@ -1,19 +1,32 @@
 apiVersion: v2
-name: casdoor-helm-charts
-description: A Helm chart for Kubernetes
-
-# A chart can be either an 'application' or a 'library' chart.
-#
-# Application charts are a collection of templates that can be packaged into versioned archives
-# to be deployed.
-#
-# Library charts provide useful utilities or functions for the chart developer. They're included as
-# a dependency of application charts to inject those utilities and functions into the rendering
-# pipeline. Library charts do not define any templates and therefore cannot be deployed.
+name: casdoor
+description: An open-source Agent-first Identity and Access Management (IAM) /LLM MCP & agent gateway and auth server with web UI supporting OpenClaw, MCP, OAuth, OIDC, SAML, CAS, LDAP, SCIM, WebAuthn, TOTP, MFA, Face ID, Google Workspace, Azure AD
 type: application
-
-# version and appVersion are placeholders here: the release workflow overrides both
-# via `helm package --version/--app-version` at packaging time, so this file never
-# needs a commit per release.
+# version and appVersion are set from the release tag by the Docker Release job
 version: 0.0.0
 appVersion: 0.0.0
+home: https://casdoor.ai
+icon: https://cdn.casdoor.com/static/favicon.png
+keywords:
+  - casdoor
+  - iam
+  - sso
+  - oauth
+  - oidc
+  - saml
+  - ldap
+  - authentication
+sources:
+  - https://github.com/casdoor/casdoor
+maintainers:
+  - name: Casdoor
+    email: admin@casdoor.org
+    url: https://casdoor.ai
+annotations:
+  artifacthub.io/category: security
+  artifacthub.io/license: Apache-2.0
+  artifacthub.io/links: |
+    - name: Documentation
+      url: https://casdoor.ai/docs/basic/try-with-helm
+    - name: Demo
+      url: https://door.casdoor.com

@@ -164,7 +164,7 @@ Guide: [Try with Docker](https://casdoor.ai/docs/basic/try-with-docker)
 Requires Helm v3 and a running cluster:
 
 ```bash
-helm install casdoor oci://registry-1.docker.io/casbin/casdoor-helm-charts
+helm install casdoor oci://ghcr.io/casdoor/helm-charts/casdoor
 ```
 
 The chart does not expose Casdoor outside the cluster by default. To reach it, find the service and forward a port:
