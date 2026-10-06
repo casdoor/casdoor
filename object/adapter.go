@@ -287,7 +287,7 @@ func CheckAdapterHost(adapter *Adapter) error {
 	if adapter.UseSameDb || adapter.DatabaseType == "sqlite3" || adapter.DatabaseType == "sqlite" {
 		return nil
 	}
-	if isTrustedDbHost(adapter.Host, adapter.Port) {
+	if isTrustedDbHost(adapter.Owner, adapter.Host, adapter.Port) {
 		return nil
 	}
 	return util.CheckInternetHost(adapter.Host)

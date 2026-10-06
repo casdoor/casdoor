@@ -49,12 +49,12 @@ func CheckSyncerDatabaseHost(syncer *Syncer) error {
 		return nil
 	}
 	if syncer.isSshTunneled() {
-		if isTrustedDbHost(syncer.SshHost, syncer.SshPort) {
+		if isTrustedDbHost(syncer.Organization, syncer.SshHost, syncer.SshPort) {
 			return nil
 		}
 		return util.CheckInternetHost(syncer.SshHost)
 	}
-	if isTrustedDbHost(syncer.Host, syncer.Port) {
+	if isTrustedDbHost(syncer.Organization, syncer.Host, syncer.Port) {
 		return nil
 	}
 	return util.CheckInternetHost(syncer.Host)
@@ -94,7 +94,7 @@ func CheckSyncerDatabaseTarget(syncer *Syncer) error {
 	if strings.EqualFold(syncer.Database, conf.GetConfigString("dbName")) {
 		return fmt.Errorf("the database: %s of the syncer is Casdoor's own database, which cannot be synced", syncer.Database)
 	}
-	if isTrustedDbHost(syncer.Host, syncer.Port) {
+	if isTrustedDbHost(syncer.Organization, syncer.Host, syncer.Port) {
 		return nil
 	}
 	return fmt.Errorf("the host: %s:%d of the syncer is Casdoor's own database server, which cannot be synced", syncer.Host, syncer.Port)

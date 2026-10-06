@@ -37,15 +37,20 @@ func checkDataSourceFields(fields map[string]string) error {
 	return nil
 }
 
-// isTrustedDbHost reports whether the deployment operator has listed the host in the
-// trustedDbHosts config, as "host" (any port) or "host:port".
-func isTrustedDbHost(host string, port int) bool {
+// isTrustedDbHost reports whether the host is listed in the trusted database hosts of the
+// organization, as "host" (any port) or "host:port". Only a global admin can change the list.
+func isTrustedDbHost(organizationName string, host string, port int) bool {
 	host = strings.Trim(host, "[]")
-	if host == "" {
+	if host == "" || organizationName == "" {
 		return false
 	}
 
-	for _, entry := range strings.Split(conf.GetConfigString("trustedDbHosts"), ",") {
+	organization, err := getOrganization("admin", organizationName)
+	if err != nil || organization == nil {
+		return false
+	}
+
+	for _, entry := range strings.Split(organization.TrustedDbHosts, ",") {
 		entry = strings.TrimSpace(entry)
 		if entry == "" {
 			continue

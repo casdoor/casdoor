@@ -597,6 +597,16 @@ class OrganizationEditPage extends React.Component {
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("organization:Trusted database hosts"), i18next.t("organization:Trusted database hosts - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Input value={this.state.organization.trustedDbHosts} disabled={!Setting.isAdminUser(this.props.account)} onChange={e => {
+              this.updateOrganizationField("trustedDbHosts", e.target.value);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2}>
             {Setting.getLabel(i18next.t("organization:Init score"), i18next.t("organization:Init score - Tooltip"))} :
           </Col>

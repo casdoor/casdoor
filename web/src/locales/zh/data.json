@@ -1005,6 +1005,8 @@
     "Soft deletion": "软删除",
     "Soft deletion - Tooltip": "启用后，删除一个用户时不会在数据库彻底清除，只会标记为已删除状态",
     "Tags": "标签集合",
+    "Trusted database hosts": "可信数据库主机",
+    "Trusted database hosts - Tooltip": "本组织的同步器和 Casbin 适配器可以连接的数据库主机，即使它们是内网地址或 Casdoor 自己的数据库服务器也放行。用英文逗号分隔，每项写 host 或 host:port。只有全局管理员能修改。",
     "Use Email as username": "邮箱作为用户名",
     "Use Email as username - Tooltip": "如果注册时用户名不可见，则使用邮箱作为用户名",
     "Use permanent avatar": "使用永久头像",

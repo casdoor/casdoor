@@ -557,6 +557,13 @@ export default function OrganizationEditPage() {
               onChange={(e) => update("ipWhitelist", e.target.value)}
             />
           </FormRow>
+          <FormRow labelKey="organization:Trusted database hosts">
+            <Input
+              value={organization.trustedDbHosts ?? ""}
+              disabled={!Setting.isAdminUser(account)}
+              onChange={(e) => update("trustedDbHosts", e.target.value)}
+            />
+          </FormRow>
           <FormRow labelKey="organization:Init score">
             <Input
               type="number"
