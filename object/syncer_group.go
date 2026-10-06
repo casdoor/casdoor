@@ -110,11 +110,3 @@ func (syncer *Syncer) syncGroups() error {
 
 	return nil
 }
-
-func (syncer *Syncer) syncGroupsNoError() {
-	err := syncer.syncGroups()
-	if err != nil {
-		recordSyncerError(syncer, err)
-		fmt.Printf("syncGroupsNoError() error: %s\n", err.Error())
-	}
-}
