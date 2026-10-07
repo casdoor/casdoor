@@ -111,6 +111,7 @@ export default function InvitationEditPage() {
         <InvitationSend invitation={ctx.record} organizations={organizationObjs} isAdd={ctx.mode === "add"} />
       ),
     },
+    {type: "text", name: "expireTime", labelKey: "general:Expire time"},
     {
       type: "select",
       name: "state",
