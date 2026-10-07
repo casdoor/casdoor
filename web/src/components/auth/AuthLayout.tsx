@@ -225,6 +225,10 @@ export function AuthLayout({
     [isDark && !panelIsLight ? "dark" : "light"],
   );
   const footerHtml = application?.footerHtml;
+  const footerClassName = cn(
+    "shrink-0 text-center text-xs text-muted-foreground",
+    backgroundUrl ? "mx-auto mb-4 w-fit max-w-full rounded-full bg-background/80 px-4 py-1.5 backdrop-blur" : "py-6",
+  );
 
   return (
     <div
@@ -324,15 +328,16 @@ export function AuthLayout({
       </div>
 
       {/* below the centred card and at the bottom of the viewport, as antd's
-          Layout.Footer is a sibling of the Content it follows */}
+          Layout.Footer is a sibling of the Content it follows; over a background
+          image it brings its own surface, as that footer did */}
       {footerHtml ? (
         <footer
           id="footer"
-          className="shrink-0 py-6 text-center text-xs text-muted-foreground"
+          className={footerClassName}
           dangerouslySetInnerHTML={{__html: getSafeHtml(footerHtml, trusted)}}
         />
       ) : (
-        <footer id="footer" className="shrink-0 py-6 text-center text-xs text-muted-foreground">
+        <footer id="footer" className={footerClassName}>
           <PoweredBy />
         </footer>
       )}

@@ -475,7 +475,7 @@ export default function SignupPage({application: applicationProp}: {application?
   const renderItem = (item: any) => {
     if (Setting.isCustomFormItem(item)) {
       // a "Text N" item is raw HTML, kept in the label by the application editor
-      return <CustomHtml key={item.name} html={item.label} trusted={isTrustedApplication(application)} />;
+      return <CustomHtml key={item.name} html={item.label} trusted={isTrustedApplication(application)} className="text-center" />;
     }
 
     switch (item.name) {
