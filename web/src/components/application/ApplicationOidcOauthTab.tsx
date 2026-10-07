@@ -142,6 +142,71 @@ export function ApplicationOidcOauthTab({application, updateField}: ApplicationT
           ]}
         />
       </FormRow>
+      <FormRow labelKey="application:Federated credentials" block>
+        <EditableTable
+          rows={application.federatedCredentials ?? []}
+          onChange={(rows) => updateField("federatedCredentials", rows)}
+          newRow={() => ({issuer: "", jwksUri: "", subject: "", audience: "", user: ""})}
+          columns={[
+            {
+              key: "issuer",
+              title: i18next.t("application:Issuer"),
+              width: "24%",
+              render: (row: any, _i, patch) => (
+                <Input
+                  value={row.issuer ?? ""}
+                  placeholder="https://token.actions.githubusercontent.com"
+                  onChange={(e) => patch({issuer: e.target.value})}
+                />
+              ),
+            },
+            {
+              key: "jwksUri",
+              title: i18next.t("application:JWKS URL"),
+              width: "22%",
+              render: (row: any, _i, patch) => (
+                <Input
+                  value={row.jwksUri ?? ""}
+                  placeholder={i18next.t("application:Discovered from the issuer if empty")}
+                  onChange={(e) => patch({jwksUri: e.target.value})}
+                />
+              ),
+            },
+            {
+              key: "subject",
+              title: i18next.t("provider:Subject"),
+              width: "22%",
+              render: (row: any, _i, patch) => (
+                <Input
+                  value={row.subject ?? ""}
+                  placeholder="repo:my-org/my-repo:*"
+                  aria-invalid={!(row.subject ?? "").trim()}
+                  onChange={(e) => patch({subject: e.target.value})}
+                />
+              ),
+            },
+            {
+              key: "audience",
+              title: i18next.t("application:Audience"),
+              width: "16%",
+              render: (row: any, _i, patch) => (
+                <Input value={row.audience ?? ""} onChange={(e) => patch({audience: e.target.value})} />
+              ),
+            },
+            {
+              key: "user",
+              title: i18next.t("general:User"),
+              render: (row: any, _i, patch) => (
+                <Input
+                  value={row.user ?? ""}
+                  placeholder={i18next.t("application:The application itself if empty")}
+                  onChange={(e) => patch({user: e.target.value})}
+                />
+              ),
+            },
+          ]}
+        />
+      </FormRow>
       <FormRow labelKey="general:Custom scopes" block>
         <EditableTable
           rows={application.customScopes ?? []}

@@ -491,7 +491,7 @@ func (c *ApiController) ValidateOAuth(ignoreValidSecret bool) (ok bool, applicat
 	}
 
 	if clientAssertionType == "urn:ietf:params:oauth:client-assertion-type:jwt-bearer" {
-		ok, application, err = object.ValidateClientAssertion(clientAssertion, c.Ctx.Request.Host)
+		ok, application, err = object.ValidateClientAssertion(clientAssertion, reqClientId, c.Ctx.Request.Host)
 		if err != nil {
 			c.ResponseTokenError(object.InvalidClient, err.Error())
 			return
