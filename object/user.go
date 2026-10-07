@@ -1057,7 +1057,7 @@ func AddUser(user *User, lang string) (bool, error) {
 			return false, err
 		}
 		if applicationCount == 0 {
-			return false, fmt.Errorf(i18n.Translate(lang, "general:The organization: %s should have one application at least"), organization.Owner)
+			return false, fmt.Errorf(i18n.Translate(lang, "general:The organization: %s should have one application at least"), organization.Name)
 		}
 	}
 
