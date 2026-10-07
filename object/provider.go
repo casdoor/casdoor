@@ -547,21 +547,12 @@ func GetCaptchaProviderByApplication(applicationId, isCurrentProvider, lang stri
 	if application == nil || len(application.Providers) == 0 {
 		return nil, errors.New(i18n.Translate(lang, "provider:Invalid application id"))
 	}
-	for _, provider := range application.Providers {
-		if provider.Provider == nil {
-			continue
-		}
-		if provider.Provider.Category == "Captcha" {
-			// For CAPTCHA providers, "None" means disabled (don't show CAPTCHA at all)
-			// This is different from SMS/Email providers where "None" is treated as "All"
-			// CAPTCHA Rule options are: "None" (disabled), "Dynamic", "Always", "Internet-Only"
-			if provider.Rule == "None" || provider.Rule == "" {
-				return nil, nil
-			}
-			return GetCaptchaProviderByOwnerName(util.GetId(provider.Provider.Owner, provider.Provider.Name), lang)
-		}
+
+	providerItem := GetCaptchaProviderItem(application)
+	if providerItem == nil {
+		return nil, nil
 	}
-	return nil, nil
+	return GetCaptchaProviderByOwnerName(util.GetId(providerItem.Provider.Owner, providerItem.Provider.Name), lang)
 }
 
 func GetFaceIdProviderByOwnerName(applicationId, lang string) (*Provider, error) {
