@@ -25,6 +25,30 @@ export function getAccount(query: any = "") {
   }).then(res => res.json());
 }
 
+export function getInitAdminStatus() {
+  return fetch(`${authConfig.serverUrl}/api/get-init-admin-status`, {
+    method: "GET",
+    credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}
+
+export function initAdminPassword(password: string) {
+  const formData = new FormData();
+  formData.append("password", password);
+
+  return fetch(`${authConfig.serverUrl}/api/init-admin-password`, {
+    method: "POST",
+    credentials: "include",
+    body: formData,
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}
+
 export function signup(values, oAuthParams) {
   return fetch(`${authConfig.serverUrl}/api/signup${oAuthParamsToQuery(oAuthParams)}`, {
     method: "POST",

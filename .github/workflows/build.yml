@@ -177,6 +177,9 @@ jobs:
       - name: start backend
         run: nohup go run ./main.go > /tmp/backend.log 2>&1 &
         working-directory: ./
+        # the cypress tests sign in as built-in/admin with this password
+        env:
+          initAdminPassword: "123"
       - uses: actions/setup-node@v3
         with:
           node-version: 20

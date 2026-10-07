@@ -349,6 +349,8 @@ func InitAPI() {
 	web.Router("/api/add-ticket-message", &controllers.ApiController{}, "POST:AddTicketMessage")
 
 	web.Router("/api/set-password", &controllers.ApiController{}, "POST:SetPassword")
+	web.Router("/api/get-init-admin-status", &controllers.ApiController{}, "GET:GetInitAdminStatus")
+	web.Router("/api/init-admin-password", &controllers.ApiController{}, "POST:InitAdminPassword")
 	web.Router("/api/check-user-password", &controllers.ApiController{}, "POST:CheckUserPassword")
 	web.Router("/api/get-email-and-phone", &controllers.ApiController{}, "GET:GetEmailAndPhone")
 	web.Router("/api/send-verification-code", &controllers.ApiController{}, "POST:SendVerificationCode")
