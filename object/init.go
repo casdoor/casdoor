@@ -18,12 +18,15 @@ import (
 	"crypto/sha256"
 	"encoding/gob"
 	"encoding/hex"
+	"errors"
 	"fmt"
 	"strings"
 
 	"github.com/casdoor/casdoor/conf"
+	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/util"
 	"github.com/go-webauthn/webauthn/webauthn"
+	"github.com/xorm-io/core"
 )
 
 func InitDb() {
@@ -173,7 +176,7 @@ func initBuiltInUser() {
 		CreatedTime:       util.GetCurrentTime(),
 		Id:                util.GenerateId(),
 		Type:              "normal-user",
-		Password:          "123",
+		Password:          getInitAdminPassword(),
 		DisplayName:       "Admin",
 		Avatar:            fmt.Sprintf("%s/img/casbin.svg", conf.GetConfigString("staticBaseUrl")),
 		Email:             "admin@example.com",
@@ -197,6 +200,82 @@ func initBuiltInUser() {
 	if err != nil {
 		panic(err)
 	}
+
+	if user.Password == "" {
+		fmt.Println("The password of built-in/admin is not set, open Casdoor in the browser to set it, or set initAdminPassword before the first start")
+	}
+}
+
+// getInitAdminPassword is the password of built-in/admin when it is created. Without initAdminPassword the
+// password is left empty and set on the welcome page, the demo site keeps the well-known "123".
+func getInitAdminPassword() string {
+	password := conf.GetConfigString("initAdminPassword")
+	if password == "" && (conf.IsDemoMode() || conf.IsDemoDatabase()) {
+		return "123"
+	}
+	return password
+}
+
+// IsInitAdminPending tells whether built-in/admin has never had a password and is waiting for one on the welcome page
+func IsInitAdminPending() (bool, error) {
+	user, err := getUser("built-in", "admin")
+	if err != nil {
+		return false, err
+	}
+
+	return user != nil && !user.IsDeleted && user.Password == "" && user.LastSigninTime == "", nil
+}
+
+// SetInitAdminPassword sets the first password of built-in/admin. It returns false if the password has been set
+// in the meantime, only the first request wins.
+func SetInitAdminPassword(password string, lang string) (bool, error) {
+	isPending, err := IsInitAdminPending()
+	if err != nil {
+		return false, err
+	}
+	if !isPending {
+		return false, nil
+	}
+
+	user, err := getUser("built-in", "admin")
+	if err != nil {
+		return false, err
+	}
+
+	organization, err := GetOrganizationByUser(user)
+	if err != nil {
+		return false, err
+	}
+	if organization == nil {
+		return false, errors.New(i18n.Translate(lang, "check:Organization does not exist"))
+	}
+
+	if password == "" {
+		return false, errors.New(i18n.Translate(lang, "check:Password cannot be empty"))
+	}
+	if strings.Contains(password, " ") {
+		return false, errors.New(i18n.Translate(lang, "user:New password cannot contain blank space."))
+	}
+	msg := CheckPasswordComplexityByOrg(organization, password, lang)
+	if msg != "" {
+		return false, errors.New(msg)
+	}
+
+	user.Password = password
+	user.UpdateUserPassword(organization)
+	user.LastChangePasswordTime = util.GetCurrentTime()
+	user.UpdatedTime = user.LastChangePasswordTime
+	err = user.UpdateUserHash()
+	if err != nil {
+		return false, err
+	}
+
+	affected, err := ormer.Engine.ID(core.PK{user.Owner, user.Name}).Where("password = ?", "").
+		Cols("password", "password_salt", "password_type", "last_change_password_time", "updated_time", "hash").Update(user)
+	if err != nil {
+		return false, err
+	}
+	return affected != 0, nil
 }
 
 func initBuiltInApplication() {
@@ -320,7 +399,7 @@ func initBuiltInLdap() {
 		Host:       "example.com",
 		Port:       389,
 		Username:   "cn=buildin,dc=example,dc=com",
-		Password:   "123",
+		Password:   "",
 		BaseDn:     "ou=BuildIn,dc=example,dc=com",
 		AutoSync:   0,
 		LastSync:   "",

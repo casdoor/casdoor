@@ -776,6 +776,57 @@ func (c *ApiController) SetPassword() {
 	c.ResponseOk()
 }
 
+// GetInitAdminStatus
+// @Title GetInitAdminStatus
+// @Tag Account API
+// @Description whether built-in/admin is waiting for its first password on the welcome page
+// @Success 200 {object} controllers.Response The Response object
+// @router /get-init-admin-status [get]
+func (c *ApiController) GetInitAdminStatus() {
+	isPending, err := object.IsInitAdminPending()
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	c.ResponseOk(isPending)
+}
+
+// InitAdminPassword
+// @Title InitAdminPassword
+// @Tag Account API
+// @Description set the first password of built-in/admin on the welcome page
+// @Param   password     formData    string  true        "The password"
+// @Success 200 {object} controllers.Response The Response object
+// @router /init-admin-password [post]
+func (c *ApiController) InitAdminPassword() {
+	password := c.Ctx.Request.Form.Get("password")
+
+	organization, err := object.GetOrganization(util.GetId("admin", "built-in"))
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	if organization != nil && organization.PasswordObfuscatorType != "" && organization.PasswordObfuscatorType != "Plain" {
+		deobfuscatedPassword, deobfuscateErr := util.GetUnobfuscatedPassword(organization.PasswordObfuscatorType, organization.PasswordObfuscatorKey, password)
+		if deobfuscateErr == nil {
+			password = deobfuscatedPassword
+		}
+	}
+
+	isSet, err := object.SetInitAdminPassword(password, c.GetAcceptLanguage())
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	if !isSet {
+		c.ResponseError(c.T("auth:Unauthorized operation"))
+		return
+	}
+
+	c.ResponseOk()
+}
+
 // CheckUserPassword
 // @Title CheckUserPassword
 // @Description Check if user password is correct
