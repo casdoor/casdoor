@@ -55,6 +55,9 @@ func AutoSigninFilter(ctx *context.Context) {
 	}
 	if accessToken == "" {
 		accessToken = parseBearerToken(ctx)
+		if accessToken != "" {
+			skipSessionPersistence(ctx)
+		}
 	}
 
 	if accessToken != "" {
@@ -140,6 +143,7 @@ func AutoSigninFilter(ctx *context.Context) {
 		return
 	}
 	if userId != "" {
+		skipSessionPersistence(ctx)
 		setSessionUser(ctx, userId)
 		return
 	}
@@ -151,6 +155,7 @@ func AutoSigninFilter(ctx *context.Context) {
 		return
 	}
 	if userId != "" {
+		skipSessionPersistence(ctx)
 		setSessionUser(ctx, userId)
 		return
 	}
