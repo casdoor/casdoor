@@ -15,6 +15,7 @@
 package controllers
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"strings"
@@ -74,6 +75,34 @@ func (c *ApiController) responseSigninError(err error, fallbackReason string) {
 		c.Ctx.Input.SetParam("recordDetail", reason)
 	}
 	c.ResponseErrorWithCode(reason, err.Error())
+}
+
+// mergeColumns overwrites only the listed fields of obj with the ones in the request body,
+// columns may be written as JSON names (displayName) or column names (display_name)
+func mergeColumns(obj interface{}, body []byte, columnsStr string) error {
+	fields := map[string]json.RawMessage{}
+	err := json.Unmarshal(body, &fields)
+	if err != nil {
+		return err
+	}
+
+	keyMap := map[string]string{}
+	for key := range fields {
+		keyMap[util.CamelToSnakeCase(key)] = key
+	}
+
+	selected := map[string]json.RawMessage{}
+	for _, column := range strings.Split(columnsStr, ",") {
+		if key, ok := keyMap[util.CamelToSnakeCase(strings.TrimSpace(column))]; ok {
+			selected[key] = fields[key]
+		}
+	}
+
+	data, err := json.Marshal(selected)
+	if err != nil {
+		return err
+	}
+	return json.Unmarshal(data, obj)
 }
 
 func (c *ApiController) T(error string) string {

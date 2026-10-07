@@ -129,16 +129,38 @@ func (c *ApiController) GetPermission() {
 // @Description update permission
 // @Param   id     query    string  true        "The id ( owner/name ) of the permission"
 // @Param   body    body   object.Permission  true        "The details of the permission"
+// @Param   columns query  string  false  "Comma-separated fields to update, e.g. users,roles; the other fields keep their current values"
 // @Success 200 {object} controllers.Response The Response object
 // @router /update-permission [post]
 func (c *ApiController) UpdatePermission() {
 	id := c.Ctx.Input.Query("id")
+	columnsStr := c.Ctx.Input.Query("columns")
 
 	var permission object.Permission
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &permission)
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
+	if columnsStr != "" {
+		oldPermission, err := object.GetPermission(id)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+		if oldPermission == nil {
+			c.Data["json"] = wrapActionResponse(false)
+			c.ServeJSON()
+			return
+		}
+
+		permission = *oldPermission
+		err = mergeColumns(&permission, c.Ctx.Input.RequestBody, columnsStr)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+	} else {
+		err := json.Unmarshal(c.Ctx.Input.RequestBody, &permission)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
 	}
 
 	c.Data["json"] = wrapActionResponse(object.UpdatePermission(id, &permission))
