@@ -1012,7 +1012,7 @@
     "Record retention days - Tooltip": "组织的日志（审计记录）保留天数，超期的日志会被每天执行的清理任务自动删除。留空或填0表示永久保留",
     "Required": "必须",
     "Soft deletion": "软删除",
-    "Soft deletion - Tooltip": "启用后，删除一个用户时不会在数据库彻底清除，只会标记为已删除状态",
+    "Soft deletion - Tooltip": "启用后，删除用户时只会标记为已删除状态，不会从数据库清除。对已标记为删除的用户再删除一次，才会彻底清除",
     "Tags": "标签集合",
     "Trusted database hosts": "可信数据库主机",
     "Trusted database hosts - Tooltip": "本组织的同步器和 Casbin 适配器可以连接的数据库主机，即使它们是内网地址或 Casdoor 自己的数据库服务器也放行。用英文逗号分隔，每项写 host 或 host:port。只有全局管理员能修改。",
