@@ -1330,12 +1330,20 @@ func DeleteUser(user *User) (bool, error) {
 		return false, err
 	}
 	if organization != nil && organization.EnableSoftDeletion {
-		user.IsDeleted = true
-		user.DeletedTime = util.GetCurrentTime()
-		return UpdateUser(user.GetId(), user, []string{"is_deleted", "deleted_time"}, false)
-	} else {
-		return deleteUser(user)
+		oldUser, err := getUser(user.Owner, user.Name)
+		if err != nil {
+			return false, err
+		}
+
+		// Deleting a user that is already soft-deleted removes it permanently
+		if oldUser != nil && !oldUser.IsDeleted {
+			user.IsDeleted = true
+			user.DeletedTime = util.GetCurrentTime()
+			return UpdateUser(user.GetId(), user, []string{"is_deleted", "deleted_time"}, false)
+		}
 	}
+
+	return deleteUser(user)
 }
 
 func GetUserInfo(user *User, scope string, aud string, host string) (*Userinfo, error) {
