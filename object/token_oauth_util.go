@@ -350,6 +350,14 @@ func ExpireToken(token *Token) (bool, error) {
 		return false, err
 	}
 
+	// the tokens refreshed without rotation share the refresh token, it ends with all of them
+	if token.RefreshTokenHash != "" {
+		_, err = ormer.Engine.Where("refresh_token_hash = ? and expires_in > 0", token.RefreshTokenHash).Cols("expires_in").Update(&Token{ExpiresIn: 0})
+		if err != nil {
+			return false, err
+		}
+	}
+
 	return affected != 0, nil
 }
 
@@ -599,6 +607,7 @@ func RefreshToken(application *Application, grantType string, refreshToken strin
 	}
 
 	var oldTokenScope string
+	var oldTokenSubject string
 	if application.TokenFormat == "JWT-Standard" {
 		oldToken, err := ParseStandardJwtToken(refreshToken, cert)
 		if err != nil {
@@ -608,6 +617,7 @@ func RefreshToken(application *Application, grantType string, refreshToken strin
 			}, nil
 		}
 		oldTokenScope = oldToken.Scope
+		oldTokenSubject = oldToken.Subject
 	} else {
 		oldToken, err := ParseJwtToken(refreshToken, cert)
 		if err != nil {
@@ -617,6 +627,7 @@ func RefreshToken(application *Application, grantType string, refreshToken strin
 			}, nil
 		}
 		oldTokenScope = oldToken.Scope
+		oldTokenSubject = oldToken.Subject
 	}
 
 	if scope == "" {
@@ -633,8 +644,19 @@ func RefreshToken(application *Application, grantType string, refreshToken strin
 	if err != nil {
 		return nil, err
 	}
+	// a token issued before its user was renamed still has the old name, the
+	// subject is the user's ID, which a rename keeps
+	if user == nil && oldTokenSubject != "" {
+		user, err = GetUserByUserId(token.Organization, oldTokenSubject)
+		if err != nil {
+			return nil, err
+		}
+	}
 	if user == nil {
-		return "", fmt.Errorf("The user: %s doesn't exist", util.GetId(token.Organization, token.User))
+		return &TokenError{
+			Error:            InvalidGrant,
+			ErrorDescription: fmt.Sprintf("the user: %s doesn't exist", util.GetId(token.Organization, token.User)),
+		}, nil
 	}
 
 	if tokenError := getInactiveUserTokenError(user); tokenError != nil {
@@ -652,6 +674,12 @@ func RefreshToken(application *Application, grantType string, refreshToken strin
 			Error:            EndpointError,
 			ErrorDescription: fmt.Sprintf("generate jwt token error: %s", err.Error()),
 		}, nil
+	}
+
+	// without rotation the refresh token is handed back as is and keeps its own expiry, so the
+	// processes sharing it (e.g. the parallel jobs of a CLI) don't revoke it for one another
+	if application.DisableRefreshRotation {
+		newRefreshToken = refreshToken
 	}
 
 	newToken := &Token{
@@ -687,9 +715,13 @@ func RefreshToken(application *Application, grantType string, refreshToken strin
 		}
 	}
 
-	_, err = DeleteToken(token)
-	if err != nil {
-		return nil, err
+	// the access token of the earlier refresh may still be in use by another sharer of the
+	// refresh token, it expires on its own
+	if !application.DisableRefreshRotation {
+		_, err = DeleteToken(token)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	tokenWrapper := &TokenWrapper{

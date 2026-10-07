@@ -1605,6 +1605,11 @@ func userChangeTrigger(owner string, oldName string, newName string) error {
 		return err
 	}
 
+	_, err = session.Where(fmt.Sprintf("organization = ? AND %s = ?", quoteColumn("user")), owner, oldName).Cols("user").Update(&Token{User: newName})
+	if err != nil {
+		return err
+	}
+
 	_, err = session.Where("owner = ? AND user_name = ?", owner, oldName).Cols("user_name").Update(&ThirdPartyLink{UserName: newName})
 	if err != nil {
 		return err
