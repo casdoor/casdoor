@@ -285,6 +285,10 @@ func CheckPassword(user *User, password string, lang string, options ...bool) er
 	if passwordType == "" {
 		passwordType = organization.PasswordType
 	}
+	// an organization without a password type stores the passwords as they are
+	if passwordType == "" {
+		passwordType = "plain"
+	}
 
 	credManager := cred.GetCredManager(passwordType)
 	if credManager == nil {
@@ -301,7 +305,7 @@ func CheckPassword(user *User, password string, lang string, options ...bool) er
 		return recordSigninErrorInfo(user, lang, enableCaptcha)
 	}
 
-	isOutdated := passwordType != organization.PasswordType
+	isOutdated := organization.PasswordType != "" && passwordType != organization.PasswordType
 	if isOutdated {
 		user.Password = password
 		user.UpdateUserPassword(organization)
