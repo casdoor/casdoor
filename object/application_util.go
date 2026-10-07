@@ -444,9 +444,19 @@ func GetAllowedApplications(applications []*Application, userId string, lang str
 }
 
 func checkMultipleCaptchaProviders(application *Application, lang string) error {
+	// API clients may send the provider items without the providers themselves
+	m, err := getProviderMap(application.Organization)
+	if err != nil {
+		return err
+	}
+
 	var captchaProviders []string
 	for _, providerItem := range application.Providers {
-		if providerItem.Provider != nil && providerItem.Provider.Category == "Captcha" {
+		provider := providerItem.Provider
+		if provider == nil {
+			provider = m[providerItem.Name]
+		}
+		if provider != nil && provider.Category == "Captcha" {
 			captchaProviders = append(captchaProviders, providerItem.Name)
 		}
 	}

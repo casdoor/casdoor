@@ -987,42 +987,44 @@ func getOrganizationGroups(owner string, groups []string) []string {
 	return res
 }
 
+// GetCaptchaProviderItem returns the captcha provider the login page shows: the first one with the rule
+// "Always", then "Dynamic", then "Internet-Only"
+func GetCaptchaProviderItem(application *Application) *ProviderItem {
+	for _, rule := range []string{"Always", "Dynamic", "Internet-Only"} {
+		for _, providerItem := range application.Providers {
+			if providerItem.Provider != nil && providerItem.Provider.Category == "Captcha" && providerItem.Rule == rule {
+				return providerItem
+			}
+		}
+	}
+	return nil
+}
+
 func CheckToEnableCaptcha(application *Application, organization, username string, clientIp string) (bool, error) {
-	if len(application.Providers) == 0 {
+	providerItem := GetCaptchaProviderItem(application)
+	if providerItem == nil {
 		return false, nil
 	}
 
-	for _, providerItem := range application.Providers {
-		if providerItem.Provider == nil || providerItem.Provider.Category != "Captcha" {
-			continue
-		}
-
-		if providerItem.Rule == "Internet-Only" {
-			if util.IsInternetIp(clientIp) {
-				return true, nil
-			}
-		}
-
-		if providerItem.Rule == "Dynamic" {
-			user, err := GetUserByFields(organization, username)
-			if err != nil {
-				return false, err
-			}
-
-			if user != nil {
-				failedSigninLimit, _, err := GetFailedSigninConfigByUser(user)
-				if err != nil {
-					return false, err
-				}
-
-				return user.SigninWrongTimes >= failedSigninLimit, nil
-			}
-
-			return false, nil
-		}
-
-		return providerItem.Rule == "Always", nil
+	switch providerItem.Rule {
+	case "Always":
+		return true, nil
+	case "Internet-Only":
+		return util.IsInternetIp(clientIp), nil
 	}
 
-	return false, nil
+	user, err := GetUserByFields(organization, username)
+	if err != nil {
+		return false, err
+	}
+	if user == nil {
+		return false, nil
+	}
+
+	failedSigninLimit, _, err := GetFailedSigninConfigByUser(user)
+	if err != nil {
+		return false, err
+	}
+
+	return user.SigninWrongTimes >= failedSigninLimit, nil
 }
