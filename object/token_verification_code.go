@@ -33,7 +33,7 @@ func (application *Application) IsVerificationCodeSignupEnabled(verifyType strin
 		return false
 	}
 
-	if !application.EnableSignUp || !application.IsSignupAllowedFor(application.Organization) {
+	if !application.IsSelfSignupEnabled() || !application.IsSignupAllowedFor(application.Organization) {
 		return false
 	}
 

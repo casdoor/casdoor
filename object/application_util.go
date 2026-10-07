@@ -667,7 +667,7 @@ func (application *Application) IsMagicLinkEnabled() bool {
 // IsMagicLinkSignupEnabled tells whether a link may also create the account, the
 // application has to allow the signup itself as well.
 func (application *Application) IsMagicLinkSignupEnabled() bool {
-	if !application.EnableSignUp {
+	if !application.IsSelfSignupEnabled() {
 		return false
 	}
 
@@ -678,6 +678,14 @@ func (application *Application) IsMagicLinkSignupEnabled() bool {
 	}
 
 	return false
+}
+
+// IsSelfSignupEnabled tells whether users may sign themselves up on the signup page, by a
+// magic link or by a verification code. "Disable self signup" leaves only the signups of
+// the application's providers (e.g. the first SSO login of a new employee) and of the
+// invitation codes an admin hands out
+func (application *Application) IsSelfSignupEnabled() bool {
+	return application.EnableSignUp && !application.DisableSelfSignup
 }
 
 func (application *Application) IsSignupAllowedFor(organization string) bool {

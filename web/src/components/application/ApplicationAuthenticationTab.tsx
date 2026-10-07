@@ -23,6 +23,14 @@ export function ApplicationAuthenticationTab({application, updateField}: Applica
       <FormRow labelKey="application:Enable signup">
         <Switch checked={!!application.enableSignUp} onCheckedChange={(v) => updateField("enableSignUp", v)} />
       </FormRow>
+      {application.enableSignUp ? (
+        <FormRow labelKey="application:Disable self signup">
+          <Switch
+            checked={!!application.disableSelfSignup}
+            onCheckedChange={(v) => updateField("disableSelfSignup", v)}
+          />
+        </FormRow>
+      ) : null}
       <FormRow labelKey="application:Disable signin">
         <Switch checked={!!application.disableSignin} onCheckedChange={(v) => updateField("disableSignin", v)} />
       </FormRow>
