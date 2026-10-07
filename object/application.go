@@ -164,6 +164,7 @@ type Application struct {
 	TokenGroupFormat        string                 `xorm:"varchar(100)" json:"tokenGroupFormat"`
 	ExpireInHours           float64                `json:"expireInHours"`
 	RefreshExpireInHours    float64                `json:"refreshExpireInHours"`
+	DisableRefreshRotation  bool                   `json:"disableRefreshRotation"`
 	CookieExpireInHours     int64                  `json:"cookieExpireInHours"`
 	SignupUrl               string                 `xorm:"varchar(200)" json:"signupUrl"`
 	SigninUrl               string                 `xorm:"varchar(200)" json:"signinUrl"`

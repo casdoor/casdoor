@@ -1,6 +1,7 @@
 
 import i18next from "i18next";
 import {Input} from "@/components/ui/input";
+import {Switch} from "@/components/ui/switch";
 import {MultiSelect} from "@/components/common/MultiSelect";
 import {SelectField} from "@/components/common/SelectField";
 import {TagsInput} from "@/components/common/TagsInput";
@@ -363,6 +364,12 @@ export function ApplicationOidcOauthTab({application, updateField}: ApplicationT
           type="number"
           value={application.refreshExpireInHours ?? 168}
           onChange={(e) => updateField("refreshExpireInHours", Setting.myParseInt(e.target.value))}
+        />
+      </FormRow>
+      <FormRow labelKey="application:Disable refresh token rotation">
+        <Switch
+          checked={!!application.disableRefreshRotation}
+          onCheckedChange={(v) => updateField("disableRefreshRotation", v)}
         />
       </FormRow>
     </>
