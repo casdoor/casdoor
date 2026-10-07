@@ -205,6 +205,7 @@
     "MFA phone is enabled but phone number is empty": "MFA điện thoại đã bật nhưng số điện thoại trống",
     "New password cannot contain blank space.": "Mật khẩu mới không thể chứa dấu trắng.",
     "No application found for user": "Không tìm thấy ứng dụng cho người dùng",
+    "Please use the set-password API to change the password": "Vui lòng sử dụng API set-password để đổi mật khẩu",
     "The new password must be different from your current password": "Mật khẩu mới phải khác với mật khẩu hiện tại của bạn",
     "User is already verified": "Người dùng đã được xác minh",
     "the user's owner and name should not be empty": "chủ sở hữu và tên người dùng không được để trống"

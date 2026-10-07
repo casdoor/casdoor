@@ -205,6 +205,7 @@
     "MFA phone is enabled but phone number is empty": "MFA telefonu etkin ancak telefon numarası boş",
     "New password cannot contain blank space.": "Yeni şifre boşluk içeremez.",
     "No application found for user": "Kullanıcı için uygulama bulunamadı",
+    "Please use the set-password API to change the password": "Şifreyi değiştirmek için set-password API'sini kullanın",
     "The new password must be different from your current password": "Yeni şifre mevcut şifrenizden farklı olmalıdır",
     "User is already verified": "Kullanıcı zaten doğrulanmış",
     "the user's owner and name should not be empty": "kullanıcının sahibi ve adı boş olmamalıdır"

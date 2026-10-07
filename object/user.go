@@ -837,6 +837,16 @@ var userProviderColumns = []string{
 	"yammer", "yandex", "zoom", "oidc", "custom",
 }
 
+func GetDefaultUserUpdateColumns(isAdmin bool) []string {
+	columns := append([]string{}, userSelfColumns...)
+	if isAdmin {
+		columns = append(columns, "name", "id", "email", "phone", "country_code", "type", "balance", "balance_credit", "balance_currency", "mfa_items", "register_type", "register_source",
+			"is_admin", "is_forbidden", "is_deleted", "uid_number", "email_verified")
+		columns = append(columns, userProviderColumns...)
+	}
+	return columns
+}
+
 func FilterUserSelfColumns(columns []string) []string {
 	res := []string{}
 	for _, column := range columns {
@@ -902,13 +912,7 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 	}
 
 	if len(columns) == 0 {
-		columns = append([]string{}, userSelfColumns...)
-
-		if isAdmin {
-			columns = append(columns, "name", "id", "email", "phone", "country_code", "type", "balance", "balance_credit", "balance_currency", "mfa_items", "register_type", "register_source",
-				"is_admin", "is_forbidden", "is_deleted", "uid_number", "email_verified")
-			columns = append(columns, userProviderColumns...)
-		}
+		columns = GetDefaultUserUpdateColumns(isAdmin)
 	}
 
 	columns = append(columns, "updated_time")

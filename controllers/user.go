@@ -380,6 +380,57 @@ func (c *ApiController) UpdateUser() {
 		}
 	}
 
+	// a password_type column means the caller writes an already hashed password as it is
+	if user.Password != "" && user.Password != "***" && user.Password != oldUser.Password && !util.InSlice(columns, "password_type") {
+		if (!isAdmin && oldUser.Tag != "guest-user") || oldUser.Ldap != "" {
+			c.ResponseError(c.T("user:Please use the set-password API to change the password"))
+			return
+		}
+
+		if strings.Contains(user.Password, " ") {
+			c.ResponseError(c.T("user:New password cannot contain blank space."))
+			return
+		}
+
+		organization, err := object.GetOrganizationByUser(oldUser)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+		if organization == nil {
+			c.ResponseError(fmt.Sprintf(c.T("auth:the organization: %s is not found"), oldUser.Owner))
+			return
+		}
+
+		if msg := object.CheckPasswordComplexityByOrg(organization, user.Password, c.GetAcceptLanguage()); msg != "" {
+			c.ResponseError(msg)
+			return
+		}
+
+		msg, err := object.CheckPasswordReuse(oldUser, user.Password, organization, c.GetAcceptLanguage())
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+		if msg != "" {
+			c.ResponseError(msg)
+			return
+		}
+
+		err = oldUser.AddPasswordHistory(organization)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		user.UpdateUserPassword(organization)
+		user.LastChangePasswordTime = util.GetCurrentTime()
+		if len(columns) == 0 {
+			columns = object.GetDefaultUserUpdateColumns(isAdmin)
+		}
+		columns = append(columns, "password", "password_salt", "password_type", "last_change_password_time")
+	}
+
 	affected, err := object.UpdateUser(id, &user, columns, isAdmin)
 	if err != nil {
 		c.ResponseError(err.Error())

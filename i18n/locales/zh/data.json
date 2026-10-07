@@ -205,6 +205,7 @@
     "MFA phone is enabled but phone number is empty": "MFA 电话已启用，但电话号码为空",
     "New password cannot contain blank space.": "新密码不可以包含空格",
     "No application found for user": "未找到用户的应用程序",
+    "Please use the set-password API to change the password": "请使用 set-password 接口修改密码",
     "The new password must be different from your current password": "新密码必须与您当前的密码不同",
     "User is already verified": "用户已验证",
     "the user's owner and name should not be empty": "用户的组织和名称不能为空"

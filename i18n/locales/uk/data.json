@@ -205,6 +205,7 @@
     "MFA phone is enabled but phone number is empty": "MFA телефон увімкнено, але номер телефону порожній",
     "New password cannot contain blank space.": "Новий пароль не може містити пробіли.",
     "No application found for user": "Не знайдено додаток для користувача",
+    "Please use the set-password API to change the password": "Щоб змінити пароль, використовуйте API set-password",
     "The new password must be different from your current password": "Новий пароль повинен відрізнятися від поточного пароля",
     "User is already verified": "Користувач уже верифікований",
     "the user's owner and name should not be empty": "власник ім’я користувача не повинні бути порожніми"

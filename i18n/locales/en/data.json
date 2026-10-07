@@ -205,6 +205,7 @@
     "MFA phone is enabled but phone number is empty": "MFA phone is enabled but phone number is empty",
     "New password cannot contain blank space.": "New password cannot contain blank space.",
     "No application found for user": "No application found for user",
+    "Please use the set-password API to change the password": "Please use the set-password API to change the password",
     "The new password must be different from your current password": "The new password must be different from your current password",
     "User is already verified": "User is already verified",
     "the user's owner and name should not be empty": "the user's owner and name should not be empty"
