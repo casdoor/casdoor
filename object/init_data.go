@@ -15,8 +15,15 @@
 package object
 
 import (
+	"encoding/json"
+	"fmt"
+	"path/filepath"
+	"strings"
+	"time"
+
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/util"
+	"gopkg.in/yaml.v3"
 )
 
 type InitData struct {
@@ -53,7 +60,11 @@ type InitData struct {
 	EnforcerPolicies map[string][][]string `json:"enforcerPolicies"`
 }
 
-var initDataNewOnly bool
+var (
+	initDataNewOnly bool
+	initDataMerge   bool
+	initDataApplied string
+)
 
 func InitFromFile() {
 	initDataFile := conf.GetConfigString("initDataFile")
@@ -62,108 +73,244 @@ func InitFromFile() {
 	}
 
 	initDataNewOnly = conf.GetConfigBool("initDataNewOnly")
+	initDataMerge = conf.GetConfigBool("initDataMerge")
 
-	initData, err := readInitDataFromFile(initDataFile)
+	s, err := readInitDataFile(initDataFile)
 	if err != nil {
 		panic(err)
 	}
 
-	if initData != nil {
-		for _, organization := range initData.Organizations {
-			initDefinedOrganization(organization)
+	if s != "" {
+		err = applyInitData(s)
+		if err != nil {
+			panic(err)
 		}
-		for _, provider := range initData.Providers {
-			initDefinedProvider(provider)
-		}
-		for _, application := range initData.Applications {
-			initDefinedApplication(application)
-		}
-		for _, user := range initData.Users {
-			initDefinedUser(user)
-		}
-		for _, cert := range initData.Certs {
-			initDefinedCert(cert)
-		}
-		for _, ldap := range initData.Ldaps {
-			initDefinedLdap(ldap)
-		}
-		for _, model := range initData.Models {
-			initDefinedModel(model)
-		}
-		for _, payment := range initData.Payments {
-			initDefinedPayment(payment)
-		}
-		for _, product := range initData.Products {
-			initDefinedProduct(product)
-		}
-		for _, resource := range initData.Resources {
-			initDefinedResource(resource)
-		}
-		for _, role := range initData.Roles {
-			initDefinedRole(role)
-		}
-		for _, syncer := range initData.Syncers {
-			initDefinedSyncer(syncer)
-		}
-		for _, token := range initData.Tokens {
-			initDefinedToken(token)
-		}
-		for _, webhook := range initData.Webhooks {
-			initDefinedWebhook(webhook)
-		}
-		for _, group := range initData.Groups {
-			initDefinedGroup(group)
-		}
-		for _, adapter := range initData.Adapters {
-			initDefinedAdapter(adapter)
-		}
-		for _, enforcer := range initData.Enforcers {
-			policies := initData.EnforcerPolicies[enforcer.GetId()]
-			initDefinedEnforcer(enforcer, policies)
-		}
-		for _, permission := range initData.Permissions {
-			initDefinedPermission(permission)
-		}
-		for _, plan := range initData.Plans {
-			initDefinedPlan(plan)
-		}
-		for _, pricing := range initData.Pricings {
-			initDefinedPricing(pricing)
-		}
-		for _, invitation := range initData.Invitations {
-			initDefinedInvitation(invitation)
-		}
-		for _, record := range initData.Records {
-			initDefinedRecord(record)
-		}
-		for _, session := range initData.Sessions {
-			initDefinedSession(session)
-		}
-		for _, subscription := range initData.Subscriptions {
-			initDefinedSubscription(subscription)
-		}
-		for _, transaction := range initData.Transactions {
-			initDefinedTransaction(transaction)
-		}
-		for _, rule := range initData.Rules {
-			initDefinedRule(rule)
-		}
-		for _, site := range initData.Sites {
-			initDefinedSite(site)
-		}
-		for _, link := range initData.ThirdPartyLinks {
-			initThirdPartyLinks(link)
-		}
+		initDataApplied = s
+	}
+
+	interval, err := conf.GetConfigInt64("initDataWatchInterval")
+	if err == nil && interval > 0 {
+		startInitDataWatchLoop(initDataFile, interval)
 	}
 }
 
-func readInitDataFromFile(filePath string) (*InitData, error) {
+// startInitDataWatchLoop applies the init data file again whenever its content changes, so the
+// objects in it can be managed declaratively (e.g. from a Kubernetes ConfigMap or Secret)
+func startInitDataWatchLoop(initDataFile string, interval int64) {
+	fmt.Printf("startInitDataWatchLoop() Start!\n\n")
+	util.SafeGoroutine(func() {
+		lastError := ""
+		for {
+			time.Sleep(time.Duration(interval) * time.Second)
+
+			applied, err := applyInitDataFileIfChanged(initDataFile)
+			if err != nil {
+				if err.Error() != lastError {
+					fmt.Printf("[%s] Failed to apply the init data file: %s, error: %v\n", util.GetCurrentTime(), initDataFile, err)
+				}
+				lastError = err.Error()
+			} else if applied {
+				lastError = ""
+				fmt.Printf("[%s] Applied the changed init data file: %s\n", util.GetCurrentTime(), initDataFile)
+			}
+		}
+	})
+}
+
+// applyInitDataFileIfChanged doesn't remember a content that failed to apply, so it is retried in the next round
+func applyInitDataFileIfChanged(initDataFile string) (applied bool, err error) {
+	s, err := readInitDataFile(initDataFile)
+	if err != nil || s == "" || s == initDataApplied {
+		return false, err
+	}
+
+	defer func() {
+		if r := recover(); r != nil {
+			applied = false
+			err = fmt.Errorf("%v", r)
+		}
+	}()
+
+	err = applyInitData(s)
+	if err != nil {
+		return false, err
+	}
+
+	initDataApplied = s
+	return true, nil
+}
+
+func applyInitData(s string) error {
+	initData, err := parseInitData(s)
+	if err != nil {
+		return err
+	}
+
+	raws, err := parseInitDataRaws(s)
+	if err != nil {
+		return err
+	}
+
+	for i, organization := range initData.Organizations {
+		initDefinedOrganization(organization, getInitDataRaw(raws, "organizations", i))
+	}
+	for i, provider := range initData.Providers {
+		initDefinedProvider(provider, getInitDataRaw(raws, "providers", i))
+	}
+	for i, application := range initData.Applications {
+		initDefinedApplication(application, getInitDataRaw(raws, "applications", i))
+	}
+	for i, user := range initData.Users {
+		initDefinedUser(user, getInitDataRaw(raws, "users", i))
+	}
+	for i, cert := range initData.Certs {
+		initDefinedCert(cert, getInitDataRaw(raws, "certs", i))
+	}
+	for i, ldap := range initData.Ldaps {
+		initDefinedLdap(ldap, getInitDataRaw(raws, "ldaps", i))
+	}
+	for i, model := range initData.Models {
+		initDefinedModel(model, getInitDataRaw(raws, "models", i))
+	}
+	for i, payment := range initData.Payments {
+		initDefinedPayment(payment, getInitDataRaw(raws, "payments", i))
+	}
+	for i, product := range initData.Products {
+		initDefinedProduct(product, getInitDataRaw(raws, "products", i))
+	}
+	for i, resource := range initData.Resources {
+		initDefinedResource(resource, getInitDataRaw(raws, "resources", i))
+	}
+	for i, role := range initData.Roles {
+		initDefinedRole(role, getInitDataRaw(raws, "roles", i))
+	}
+	for i, syncer := range initData.Syncers {
+		initDefinedSyncer(syncer, getInitDataRaw(raws, "syncers", i))
+	}
+	for i, token := range initData.Tokens {
+		initDefinedToken(token, getInitDataRaw(raws, "tokens", i))
+	}
+	for i, webhook := range initData.Webhooks {
+		initDefinedWebhook(webhook, getInitDataRaw(raws, "webhooks", i))
+	}
+	for i, group := range initData.Groups {
+		initDefinedGroup(group, getInitDataRaw(raws, "groups", i))
+	}
+	for i, adapter := range initData.Adapters {
+		initDefinedAdapter(adapter, getInitDataRaw(raws, "adapters", i))
+	}
+	for i, enforcer := range initData.Enforcers {
+		policies := initData.EnforcerPolicies[enforcer.GetId()]
+		initDefinedEnforcer(enforcer, policies, getInitDataRaw(raws, "enforcers", i))
+	}
+	for i, permission := range initData.Permissions {
+		initDefinedPermission(permission, getInitDataRaw(raws, "permissions", i))
+	}
+	for i, plan := range initData.Plans {
+		initDefinedPlan(plan, getInitDataRaw(raws, "plans", i))
+	}
+	for i, pricing := range initData.Pricings {
+		initDefinedPricing(pricing, getInitDataRaw(raws, "pricings", i))
+	}
+	for i, invitation := range initData.Invitations {
+		initDefinedInvitation(invitation, getInitDataRaw(raws, "invitations", i))
+	}
+	for _, record := range initData.Records {
+		initDefinedRecord(record)
+	}
+	for _, session := range initData.Sessions {
+		initDefinedSession(session)
+	}
+	for i, subscription := range initData.Subscriptions {
+		initDefinedSubscription(subscription, getInitDataRaw(raws, "subscriptions", i))
+	}
+	for i, transaction := range initData.Transactions {
+		initDefinedTransaction(transaction, getInitDataRaw(raws, "transactions", i))
+	}
+	for i, rule := range initData.Rules {
+		initDefinedRule(rule, getInitDataRaw(raws, "rules", i))
+	}
+	for i, site := range initData.Sites {
+		initDefinedSite(site, getInitDataRaw(raws, "sites", i))
+	}
+	for _, link := range initData.ThirdPartyLinks {
+		initThirdPartyLinks(link)
+	}
+	return nil
+}
+
+// readInitDataFile returns the content of the init data file as JSON, a .yaml or .yml file is converted to JSON
+func readInitDataFile(filePath string) (string, error) {
 	if !util.FileExist(filePath) {
-		return nil, nil
+		return "", nil
 	}
 
 	s := util.ReadStringFromPath(filePath)
 
+	ext := strings.ToLower(filepath.Ext(filePath))
+	if ext == ".yaml" || ext == ".yml" {
+		var data interface{}
+		err := yaml.Unmarshal([]byte(s), &data)
+		if err != nil {
+			return "", err
+		}
+		if data == nil {
+			return "", nil
+		}
+
+		bytes, err := json.Marshal(data)
+		if err != nil {
+			return "", err
+		}
+		s = string(bytes)
+	}
+
+	return s, nil
+}
+
+// parseInitDataRaws keeps the fields of each object as they are written in the file, so the merge mode only
+// overwrites the fields that the file sets
+func parseInitDataRaws(s string) (map[string][]json.RawMessage, error) {
+	fields := map[string]json.RawMessage{}
+	err := json.Unmarshal([]byte(s), &fields)
+	if err != nil {
+		return nil, err
+	}
+
+	res := map[string][]json.RawMessage{}
+	for key, value := range fields {
+		items := []json.RawMessage{}
+		if json.Unmarshal(value, &items) == nil {
+			res[strings.ToLower(key)] = items
+		}
+	}
+	return res, nil
+}
+
+func getInitDataRaw(raws map[string][]json.RawMessage, key string, i int) json.RawMessage {
+	items := raws[key]
+	if i >= len(items) {
+		return nil
+	}
+	return items[i]
+}
+
+// mergeInitObject overwrites the existing object with the fields set in the file, then saves it with its update function
+func mergeInitObject(existed interface{}, raw json.RawMessage, update func() (bool, error)) {
+	if len(raw) != 0 {
+		err := json.Unmarshal(raw, existed)
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	_, err := update()
+	if err != nil {
+		panic(err)
+	}
+}
+
+func parseInitData(s string) (*InitData, error) {
 	data := &InitData{
 		Organizations: []*Organization{},
 		Applications:  []*Application{},
@@ -287,7 +434,7 @@ func readInitDataFromFile(filePath string) (*InitData, error) {
 	return data, nil
 }
 
-func initDefinedOrganization(organization *Organization) {
+func initDefinedOrganization(organization *Organization, raw json.RawMessage) {
 	existed, err := getOrganization(organization.Owner, organization.Name)
 	if err != nil {
 		panic(err)
@@ -295,6 +442,14 @@ func initDefinedOrganization(organization *Organization) {
 
 	if existed != nil {
 		if initDataNewOnly {
+			return
+		}
+		if initDataMerge {
+			// the masked secrets are kept as they are, as when an admin saves the organization in the UI
+			existed, _ = GetMaskedOrganization(true, existed)
+			mergeInitObject(existed, raw, func() (bool, error) {
+				return UpdateOrganization(util.GetId(organization.Owner, organization.Name), existed, true, "en")
+			})
 			return
 		}
 		affected, err := deleteOrganization(organization)
@@ -316,7 +471,7 @@ func initDefinedOrganization(organization *Organization) {
 	}
 }
 
-func initDefinedApplication(application *Application) {
+func initDefinedApplication(application *Application, raw json.RawMessage) {
 	existed, err := getApplication(application.Owner, application.Name)
 	if err != nil {
 		panic(err)
@@ -324,6 +479,12 @@ func initDefinedApplication(application *Application) {
 
 	if existed != nil {
 		if initDataNewOnly {
+			return
+		}
+		if initDataMerge {
+			mergeInitObject(existed, raw, func() (bool, error) {
+				return UpdateApplication(util.GetId(application.Owner, application.Name), existed, true, "en", nil)
+			})
 			return
 		}
 		affected, err := deleteApplication(application)
@@ -341,13 +502,22 @@ func initDefinedApplication(application *Application) {
 	}
 }
 
-func initDefinedUser(user *User) {
+func initDefinedUser(user *User, raw json.RawMessage) {
 	existed, err := getUser(user.Owner, user.Name)
 	if err != nil {
 		panic(err)
 	}
 	if existed != nil {
 		if initDataNewOnly {
+			return
+		}
+		if initDataMerge {
+			// the password in the file is only the initial one, users may have changed it since
+			password := existed.Password
+			mergeInitObject(existed, raw, func() (bool, error) {
+				existed.Password = password
+				return UpdateUser(util.GetId(user.Owner, user.Name), existed, nil, true)
+			})
 			return
 		}
 		affected, err := deleteUser(user)
@@ -369,7 +539,7 @@ func initDefinedUser(user *User) {
 	}
 }
 
-func initDefinedCert(cert *Cert) {
+func initDefinedCert(cert *Cert, raw json.RawMessage) {
 	existed, err := getCert(cert.Owner, cert.Name)
 	if err != nil {
 		panic(err)
@@ -377,6 +547,12 @@ func initDefinedCert(cert *Cert) {
 
 	if existed != nil {
 		if initDataNewOnly {
+			return
+		}
+		if initDataMerge {
+			mergeInitObject(existed, raw, func() (bool, error) {
+				return UpdateCert(util.GetId(cert.Owner, cert.Name), existed)
+			})
 			return
 		}
 		affected, err := DeleteCert(cert)
@@ -394,7 +570,7 @@ func initDefinedCert(cert *Cert) {
 	}
 }
 
-func initDefinedLdap(ldap *Ldap) {
+func initDefinedLdap(ldap *Ldap, raw json.RawMessage) {
 	existed, err := GetLdap(ldap.Id)
 	if err != nil {
 		panic(err)
@@ -402,6 +578,12 @@ func initDefinedLdap(ldap *Ldap) {
 
 	if existed != nil {
 		if initDataNewOnly {
+			return
+		}
+		if initDataMerge {
+			mergeInitObject(existed, raw, func() (bool, error) {
+				return UpdateLdap(existed)
+			})
 			return
 		}
 		affected, err := DeleteLdap(ldap)
@@ -418,7 +600,7 @@ func initDefinedLdap(ldap *Ldap) {
 	}
 }
 
-func initDefinedProvider(provider *Provider) {
+func initDefinedProvider(provider *Provider, raw json.RawMessage) {
 	existed, err := GetProvider(util.GetId("admin", provider.Name))
 	if err != nil {
 		panic(err)
@@ -426,6 +608,12 @@ func initDefinedProvider(provider *Provider) {
 
 	if existed != nil {
 		if initDataNewOnly {
+			return
+		}
+		if initDataMerge {
+			mergeInitObject(existed, raw, func() (bool, error) {
+				return UpdateProvider(util.GetId("admin", provider.Name), existed)
+			})
 			return
 		}
 		affected, err := DeleteProvider(provider)
@@ -442,7 +630,7 @@ func initDefinedProvider(provider *Provider) {
 	}
 }
 
-func initDefinedModel(model *Model) {
+func initDefinedModel(model *Model, raw json.RawMessage) {
 	existed, err := GetModel(model.GetId())
 	if err != nil {
 		panic(err)
@@ -450,6 +638,12 @@ func initDefinedModel(model *Model) {
 
 	if existed != nil {
 		if initDataNewOnly {
+			return
+		}
+		if initDataMerge {
+			mergeInitObject(existed, raw, func() (bool, error) {
+				return UpdateModel(model.GetId(), existed)
+			})
 			return
 		}
 		affected, err := DeleteModel(model)
@@ -467,7 +661,7 @@ func initDefinedModel(model *Model) {
 	}
 }
 
-func initDefinedPermission(permission *Permission) {
+func initDefinedPermission(permission *Permission, raw json.RawMessage) {
 	existed, err := GetPermission(permission.GetId())
 	if err != nil {
 		panic(err)
@@ -475,6 +669,12 @@ func initDefinedPermission(permission *Permission) {
 
 	if existed != nil {
 		if initDataNewOnly {
+			return
+		}
+		if initDataMerge {
+			mergeInitObject(existed, raw, func() (bool, error) {
+				return UpdatePermission(permission.GetId(), existed)
+			})
 			return
 		}
 		affected, err := deletePermission(permission)
@@ -492,7 +692,7 @@ func initDefinedPermission(permission *Permission) {
 	}
 }
 
-func initDefinedPayment(payment *Payment) {
+func initDefinedPayment(payment *Payment, raw json.RawMessage) {
 	existed, err := GetPayment(payment.GetId())
 	if err != nil {
 		panic(err)
@@ -500,6 +700,12 @@ func initDefinedPayment(payment *Payment) {
 
 	if existed != nil {
 		if initDataNewOnly {
+			return
+		}
+		if initDataMerge {
+			mergeInitObject(existed, raw, func() (bool, error) {
+				return UpdatePayment(payment.GetId(), existed)
+			})
 			return
 		}
 		affected, err := DeletePayment(payment)
@@ -517,7 +723,7 @@ func initDefinedPayment(payment *Payment) {
 	}
 }
 
-func initDefinedProduct(product *Product) {
+func initDefinedProduct(product *Product, raw json.RawMessage) {
 	existed, err := GetProduct(product.GetId())
 	if err != nil {
 		panic(err)
@@ -525,6 +731,12 @@ func initDefinedProduct(product *Product) {
 
 	if existed != nil {
 		if initDataNewOnly {
+			return
+		}
+		if initDataMerge {
+			mergeInitObject(existed, raw, func() (bool, error) {
+				return UpdateProduct(product.GetId(), existed)
+			})
 			return
 		}
 		affected, err := DeleteProduct(product)
@@ -542,7 +754,7 @@ func initDefinedProduct(product *Product) {
 	}
 }
 
-func initDefinedResource(resource *Resource) {
+func initDefinedResource(resource *Resource, raw json.RawMessage) {
 	existed, err := GetResource(resource.GetId())
 	if err != nil {
 		panic(err)
@@ -550,6 +762,12 @@ func initDefinedResource(resource *Resource) {
 
 	if existed != nil {
 		if initDataNewOnly {
+			return
+		}
+		if initDataMerge {
+			mergeInitObject(existed, raw, func() (bool, error) {
+				return UpdateResource(resource.GetId(), existed)
+			})
 			return
 		}
 		affected, err := DeleteResource(resource)
@@ -567,7 +785,7 @@ func initDefinedResource(resource *Resource) {
 	}
 }
 
-func initDefinedRole(role *Role) {
+func initDefinedRole(role *Role, raw json.RawMessage) {
 	existed, err := GetRole(role.GetId())
 	if err != nil {
 		panic(err)
@@ -575,6 +793,12 @@ func initDefinedRole(role *Role) {
 
 	if existed != nil {
 		if initDataNewOnly {
+			return
+		}
+		if initDataMerge {
+			mergeInitObject(existed, raw, func() (bool, error) {
+				return UpdateRole(role.GetId(), existed, true, "en")
+			})
 			return
 		}
 		affected, err := deleteRole(role)
@@ -592,7 +816,7 @@ func initDefinedRole(role *Role) {
 	}
 }
 
-func initDefinedSyncer(syncer *Syncer) {
+func initDefinedSyncer(syncer *Syncer, raw json.RawMessage) {
 	existed, err := GetSyncer(syncer.GetId())
 	if err != nil {
 		panic(err)
@@ -600,6 +824,12 @@ func initDefinedSyncer(syncer *Syncer) {
 
 	if existed != nil {
 		if initDataNewOnly {
+			return
+		}
+		if initDataMerge {
+			mergeInitObject(existed, raw, func() (bool, error) {
+				return UpdateSyncer(syncer.GetId(), existed, true, "en")
+			})
 			return
 		}
 		affected, err := DeleteSyncer(syncer)
@@ -617,7 +847,7 @@ func initDefinedSyncer(syncer *Syncer) {
 	}
 }
 
-func initDefinedToken(token *Token) {
+func initDefinedToken(token *Token, raw json.RawMessage) {
 	existed, err := GetToken(token.GetId())
 	if err != nil {
 		panic(err)
@@ -625,6 +855,12 @@ func initDefinedToken(token *Token) {
 
 	if existed != nil {
 		if initDataNewOnly {
+			return
+		}
+		if initDataMerge {
+			mergeInitObject(existed, raw, func() (bool, error) {
+				return UpdateToken(token.GetId(), existed, true)
+			})
 			return
 		}
 		affected, err := DeleteToken(token)
@@ -642,7 +878,7 @@ func initDefinedToken(token *Token) {
 	}
 }
 
-func initDefinedWebhook(webhook *Webhook) {
+func initDefinedWebhook(webhook *Webhook, raw json.RawMessage) {
 	existed, err := GetWebhook(webhook.GetId())
 	if err != nil {
 		panic(err)
@@ -650,6 +886,12 @@ func initDefinedWebhook(webhook *Webhook) {
 
 	if existed != nil {
 		if initDataNewOnly {
+			return
+		}
+		if initDataMerge {
+			mergeInitObject(existed, raw, func() (bool, error) {
+				return UpdateWebhook(webhook.GetId(), existed, true, "en")
+			})
 			return
 		}
 		affected, err := DeleteWebhook(webhook)
@@ -667,13 +909,19 @@ func initDefinedWebhook(webhook *Webhook) {
 	}
 }
 
-func initDefinedGroup(group *Group) {
+func initDefinedGroup(group *Group, raw json.RawMessage) {
 	existed, err := getGroup(group.Owner, group.Name)
 	if err != nil {
 		panic(err)
 	}
 	if existed != nil {
 		if initDataNewOnly {
+			return
+		}
+		if initDataMerge {
+			mergeInitObject(existed, raw, func() (bool, error) {
+				return UpdateGroup(util.GetId(group.Owner, group.Name), existed, true, "en")
+			})
 			return
 		}
 		affected, err := deleteGroup(group)
@@ -691,13 +939,19 @@ func initDefinedGroup(group *Group) {
 	}
 }
 
-func initDefinedAdapter(adapter *Adapter) {
+func initDefinedAdapter(adapter *Adapter, raw json.RawMessage) {
 	existed, err := getAdapter(adapter.Owner, adapter.Name)
 	if err != nil {
 		panic(err)
 	}
 	if existed != nil {
 		if initDataNewOnly {
+			return
+		}
+		if initDataMerge {
+			mergeInitObject(existed, raw, func() (bool, error) {
+				return UpdateAdapter(util.GetId(adapter.Owner, adapter.Name), existed)
+			})
 			return
 		}
 		affected, err := DeleteAdapter(adapter)
@@ -715,13 +969,20 @@ func initDefinedAdapter(adapter *Adapter) {
 	}
 }
 
-func initDefinedEnforcer(enforcer *Enforcer, policies [][]string) {
+func initDefinedEnforcer(enforcer *Enforcer, policies [][]string, raw json.RawMessage) {
 	existed, err := getEnforcer(enforcer.Owner, enforcer.Name)
 	if err != nil {
 		panic(err)
 	}
 	if existed != nil {
 		if initDataNewOnly {
+			return
+		}
+		if initDataMerge {
+			mergeInitObject(existed, raw, func() (bool, error) {
+				return UpdateEnforcer(util.GetId(enforcer.Owner, enforcer.Name), existed)
+			})
+			initEnforcerPolicies(existed, policies)
 			return
 		}
 		affected, err := DeleteEnforcer(enforcer)
@@ -738,7 +999,11 @@ func initDefinedEnforcer(enforcer *Enforcer, policies [][]string) {
 		panic(err)
 	}
 
-	err = enforcer.InitEnforcer()
+	initEnforcerPolicies(enforcer, policies)
+}
+
+func initEnforcerPolicies(enforcer *Enforcer, policies [][]string) {
+	err := enforcer.InitEnforcer()
 	if err != nil {
 		panic(err)
 	}
@@ -760,13 +1025,19 @@ func initDefinedEnforcer(enforcer *Enforcer, policies [][]string) {
 	}
 }
 
-func initDefinedPlan(plan *Plan) {
+func initDefinedPlan(plan *Plan, raw json.RawMessage) {
 	existed, err := getPlan(plan.Owner, plan.Name)
 	if err != nil {
 		panic(err)
 	}
 	if existed != nil {
 		if initDataNewOnly {
+			return
+		}
+		if initDataMerge {
+			mergeInitObject(existed, raw, func() (bool, error) {
+				return UpdatePlan(util.GetId(plan.Owner, plan.Name), existed)
+			})
 			return
 		}
 		affected, err := DeletePlan(plan)
@@ -784,13 +1055,19 @@ func initDefinedPlan(plan *Plan) {
 	}
 }
 
-func initDefinedPricing(pricing *Pricing) {
+func initDefinedPricing(pricing *Pricing, raw json.RawMessage) {
 	existed, err := getPricing(pricing.Owner, pricing.Name)
 	if err != nil {
 		panic(err)
 	}
 	if existed != nil {
 		if initDataNewOnly {
+			return
+		}
+		if initDataMerge {
+			mergeInitObject(existed, raw, func() (bool, error) {
+				return UpdatePricing(util.GetId(pricing.Owner, pricing.Name), existed)
+			})
 			return
 		}
 		affected, err := DeletePricing(pricing)
@@ -808,13 +1085,19 @@ func initDefinedPricing(pricing *Pricing) {
 	}
 }
 
-func initDefinedInvitation(invitation *Invitation) {
+func initDefinedInvitation(invitation *Invitation, raw json.RawMessage) {
 	existed, err := getInvitation(invitation.Owner, invitation.Name)
 	if err != nil {
 		panic(err)
 	}
 	if existed != nil {
 		if initDataNewOnly {
+			return
+		}
+		if initDataMerge {
+			mergeInitObject(existed, raw, func() (bool, error) {
+				return UpdateInvitation(util.GetId(invitation.Owner, invitation.Name), existed, "en")
+			})
 			return
 		}
 		affected, err := DeleteInvitation(invitation)
@@ -833,12 +1116,20 @@ func initDefinedInvitation(invitation *Invitation) {
 }
 
 func initDefinedRecord(record *Record) {
+	if initDataMerge {
+		return
+	}
+
 	record.Id = 0
 	record.CreatedTime = util.GetCurrentTime()
 	_ = AddRecord(record)
 }
 
 func initDefinedSession(session *Session) {
+	if initDataMerge {
+		return
+	}
+
 	session.CreatedTime = util.GetCurrentTime()
 	_, err := AddSession(session)
 	if err != nil {
@@ -846,13 +1137,19 @@ func initDefinedSession(session *Session) {
 	}
 }
 
-func initDefinedSubscription(subscription *Subscription) {
+func initDefinedSubscription(subscription *Subscription, raw json.RawMessage) {
 	existed, err := getSubscription(subscription.Owner, subscription.Name)
 	if err != nil {
 		panic(err)
 	}
 	if existed != nil {
 		if initDataNewOnly {
+			return
+		}
+		if initDataMerge {
+			mergeInitObject(existed, raw, func() (bool, error) {
+				return UpdateSubscription(util.GetId(subscription.Owner, subscription.Name), existed)
+			})
 			return
 		}
 		affected, err := DeleteSubscription(subscription)
@@ -870,13 +1167,19 @@ func initDefinedSubscription(subscription *Subscription) {
 	}
 }
 
-func initDefinedTransaction(transaction *Transaction) {
+func initDefinedTransaction(transaction *Transaction, raw json.RawMessage) {
 	existed, err := getTransaction(transaction.Owner, transaction.Name)
 	if err != nil {
 		panic(err)
 	}
 	if existed != nil {
 		if initDataNewOnly {
+			return
+		}
+		if initDataMerge {
+			mergeInitObject(existed, raw, func() (bool, error) {
+				return UpdateTransaction(util.GetId(transaction.Owner, transaction.Name), existed, "en")
+			})
 			return
 		}
 		affected, err := DeleteTransaction(transaction, "en")
@@ -894,13 +1197,19 @@ func initDefinedTransaction(transaction *Transaction) {
 	}
 }
 
-func initDefinedSite(site *Site) {
+func initDefinedSite(site *Site, raw json.RawMessage) {
 	existed, err := getSite(site.Owner, site.Name)
 	if err != nil {
 		panic(err)
 	}
 	if existed != nil {
 		if initDataNewOnly {
+			return
+		}
+		if initDataMerge {
+			mergeInitObject(existed, raw, func() (bool, error) {
+				return UpdateSite(util.GetId(site.Owner, site.Name), existed)
+			})
 			return
 		}
 		affected, err := DeleteSite(site)
@@ -918,13 +1227,19 @@ func initDefinedSite(site *Site) {
 	}
 }
 
-func initDefinedRule(rule *Rule) {
+func initDefinedRule(rule *Rule, raw json.RawMessage) {
 	existed, err := getRule(rule.Owner, rule.Name)
 	if err != nil {
 		panic(err)
 	}
 	if existed != nil {
 		if initDataNewOnly {
+			return
+		}
+		if initDataMerge {
+			mergeInitObject(existed, raw, func() (bool, error) {
+				return UpdateRule(util.GetId(rule.Owner, rule.Name), existed)
+			})
 			return
 		}
 		affected, err := DeleteRule(rule)
@@ -949,6 +1264,9 @@ func initThirdPartyLinks(link *ThirdPartyLink) {
 	}
 	if existed != nil {
 		if initDataNewOnly {
+			return
+		}
+		if initDataMerge {
 			return
 		}
 		affected, err := DeleteThirdPartyLink(link.Owner, link.UserName, link.ProviderName)

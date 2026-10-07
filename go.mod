@@ -89,6 +89,7 @@ require (
 	golang.org/x/time v0.14.0
 	google.golang.org/api v0.264.0
 	google.golang.org/protobuf v1.36.11
+	gopkg.in/yaml.v3 v3.0.1
 	layeh.com/radius v0.0.0-20231213012653-1006025d24f8
 	maunium.net/go/mautrix v0.22.1
 	modernc.org/sqlite v1.18.2
@@ -306,7 +307,6 @@ require (
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1 // indirect
 	gopkg.in/square/go-jose.v2 v2.6.0 // indirect
 	gopkg.in/warnings.v0 v0.1.2 // indirect
-	gopkg.in/yaml.v3 v3.0.1 // indirect
 	lukechampine.com/uint128 v1.2.0 // indirect
 	modernc.org/cc/v3 v3.37.0 // indirect
 	modernc.org/ccgo/v3 v3.16.9 // indirect
