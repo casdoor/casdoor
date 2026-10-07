@@ -179,7 +179,14 @@ kubectl port-forward svc/<service-name-from-above> 8000:8000
 
 For a real deployment, configure an Ingress and an external database through the chart's values. [`k8s.yaml`](k8s.yaml) in this repo is a minimal plain-manifest example if you would rather not use Helm.
 
-Guide: [Try with Helm](https://casdoor.ai/docs/basic/try-with-helm)
+Guide: [Try with Helm](https://casdoor.ai/docs/basic/try-with-helm) &middot; Chart on [Artifact Hub](https://artifacthub.io/packages/helm/casdoor/casdoor)
+
+### Configuration as code
+
+Organizations, applications, users, providers, roles and permissions can be kept in Git instead of being clicked together in the UI:
+
+- **Init data file**: Casdoor applies a JSON or YAML file at startup, and with `initDataMerge = true` and `initDataWatchInterval = 30` it applies every change to the file again without a restart, only touching the fields the file sets. The Helm chart exposes it as `initData` in its values ([chart README](manifests/casdoor/README.md#declarative-configuration-init-data)). Guide: [Data initialization](https://casdoor.ai/docs/deployment/data-initialization)
+- **Terraform**: the official [Terraform provider](https://registry.terraform.io/providers/casdoor/casdoor) manages the same objects through the API, with plan, import and drift detection.
 
 ### From source — for development
 

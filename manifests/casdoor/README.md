@@ -76,6 +76,45 @@ Override any value from [values.yaml](https://github.com/casdoor/casdoor/blob/ma
 | `ldap.enabled` | Enable the built-in LDAP server | `false` |
 | `ldap.service.port` | LDAP service port | `389` |
 
+### Declarative configuration (init data)
+
+Organizations, applications, users, providers, roles, permissions and the other Casdoor objects can be kept in the values file, in the [init data](https://casdoor.ai/docs/deployment/data-initialization) format. The chart stores them in a Secret, Casdoor applies them at startup and checks them for changes every `initData.watchInterval` seconds, so a `helm upgrade` that changes them takes effect without restarting the pods.
+
+```yaml
+initData:
+  enabled: true
+  data:
+    organizations:
+      - owner: admin
+        name: acme
+        displayName: Acme
+        passwordType: bcrypt
+    applications:
+      - owner: admin
+        name: app-acme
+        organization: acme
+        displayName: Acme Portal
+        redirectUris:
+          - https://portal.acme.example.com/callback
+    users:
+      - owner: acme
+        name: alice
+        displayName: Alice
+        password: change-me
+        signupApplication: app-acme
+```
+
+With `initData.merge: true` (the default), an object that already exists only gets the fields written in the data, its other fields keep the values edited in the web UI. A user's `password` is only used when the user is created, so users can change their own passwords. Objects removed from the data are not deleted from Casdoor.
+
+| Parameter | Description | Default |
+|---|---|---|
+| `initData.enabled` | Apply `initData.data` (or `initData.existingSecret`) | `false` |
+| `initData.merge` | Update existing objects with the given fields only; when `false`, they are deleted and re-created on every apply | `true` |
+| `initData.watchInterval` | Seconds between the checks for changes, `0` applies the data only at startup (the pods then restart when `initData.data` changes) | `30` |
+| `initData.existingSecret` | Name of an existing Secret holding the data, instead of `initData.data` | `""` |
+| `initData.existingSecretKey` | Key of the file in `existingSecret`; a `.yaml`/`.yml` key is read as YAML, any other as JSON | `init_data.yaml` |
+| `initData.data` | The objects to apply | `{}` |
+
 ### Service
 
 | Parameter | Description | Default |

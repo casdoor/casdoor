@@ -38,6 +38,35 @@ config: |
 # if you use your own secret, leave Value.config: ""
 # configFromSecret: casdoor
 
+# -- Declarative configuration: organizations, applications, users, providers, roles, permissions, ... in the
+# init data format (https://casdoor.ai/docs/deployment/data-initialization). It is stored in a Secret and applied
+# by Casdoor at startup, and with watchInterval set, a change rolled out by `helm upgrade` is applied again
+# without restarting the pods.
+initData:
+  enabled: false
+  # -- Update the existing objects with only the fields set in the data, the other fields keep the values
+  # edited in the web UI. When false, the existing objects are deleted and re-created on every apply.
+  merge: true
+  # -- Seconds between the checks of the data for changes, 0 applies it only when Casdoor starts
+  watchInterval: 30
+  # -- Use an existing Secret instead of `data`
+  existingSecret: ""
+  # -- Key of the file in existingSecret, a .yaml/.yml key is read as YAML, any other as JSON
+  existingSecretKey: init_data.yaml
+  data: {}
+  #  organizations:
+  #    - owner: admin
+  #      name: acme
+  #      displayName: Acme
+  #      passwordType: bcrypt
+  #  applications:
+  #    - owner: admin
+  #      name: app-acme
+  #      organization: acme
+  #      displayName: Acme Portal
+  #      redirectUris:
+  #        - https://portal.acme.example.com/callback
+
 database:
   # Supports mysql, postgres, cockroachdb, sqlite
   driver: sqlite

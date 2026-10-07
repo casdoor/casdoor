@@ -132,3 +132,21 @@ Create Envfrom
 {{- end -}}
 {{- end -}}
 {{- end -}}
+
+{{/*
+Name of the Secret holding the init data
+*/}}
+{{- define "casdoor.initDataSecretName" -}}
+{{- .Values.initData.existingSecret | default (printf "%s-init-data" (include "casdoor.fullname" .)) }}
+{{- end }}
+
+{{/*
+Key of the init data file in its Secret
+*/}}
+{{- define "casdoor.initDataKey" -}}
+{{- if .Values.initData.existingSecret }}
+{{- .Values.initData.existingSecretKey }}
+{{- else }}
+{{- "init_data.json" }}
+{{- end }}
+{{- end }}
