@@ -264,6 +264,7 @@ The full documentation lives at **[casdoor.ai/docs](https://casdoor.ai/docs/over
 | Use the API | [Public API](https://casdoor.ai/docs/basic/public-api) &middot; [Swagger UI](https://door.casdoor.net/swagger) |
 | Choose an SDK | [Integrations](https://casdoor.ai/docs/category/integrations) |
 | Deploy to production | [Deployment](https://casdoor.ai/docs/category/deployment) |
+| Upgrade from v3 to v4 | [Upgrading from v3 to v4](https://casdoor.ai/docs/deployment/upgrade-v3-to-v4) |
 
 ## 🔌 SDKs and integrations
 
