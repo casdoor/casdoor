@@ -205,6 +205,7 @@
     "MFA phone is enabled but phone number is empty": "MFA 電話番号が有効になっていますが、電話番号が空です",
     "New password cannot contain blank space.": "新しいパスワードにはスペースを含めることはできません。",
     "No application found for user": "ユーザーのアプリケーションが見つかりません",
+    "Please use the set-password API to change the password": "パスワードを変更するには set-password API を使用してください",
     "The new password must be different from your current password": "新しいパスワードは現在のパスワードと異なる必要があります",
     "User is already verified": "ユーザーは既に認証済みです",
     "the user's owner and name should not be empty": "ユーザーのオーナーと名前は空にできません"

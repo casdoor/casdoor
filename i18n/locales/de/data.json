@@ -205,6 +205,7 @@
     "MFA phone is enabled but phone number is empty": "MFA-Telefon ist aktiviert, aber Telefonnummer ist leer",
     "New password cannot contain blank space.": "Das neue Passwort darf keine Leerzeichen enthalten.",
     "No application found for user": "Keine Anwendung für Benutzer gefunden",
+    "Please use the set-password API to change the password": "Bitte verwenden Sie die set-password-API, um das Passwort zu ändern",
     "The new password must be different from your current password": "Das neue Passwort muss sich von Ihrem aktuellen Passwort unterscheiden",
     "User is already verified": "Benutzer ist bereits verifiziert",
     "the user's owner and name should not be empty": "Eigentümer und Name des Benutzers dürfen nicht leer sein"
