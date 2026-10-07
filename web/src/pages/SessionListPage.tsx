@@ -48,7 +48,7 @@ export default function SessionListPage() {
               {info.ip ? <span className="font-mono text-muted-foreground">{info.ip}</span> : null}
               {expired === null ? null : (
                 <Badge variant={expired ? "secondary" : "success"} className="py-0 text-[10px] font-normal">
-                  {expired ? i18next.t("general:Expired") : i18next.t("general:Active")}
+                  {expired ? i18next.t("subscription:Expired") : i18next.t("subscription:Active")}
                 </Badge>
               )}
             </div>

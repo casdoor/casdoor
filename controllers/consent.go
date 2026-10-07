@@ -148,7 +148,7 @@ func (c *ApiController) GrantConsent() {
 		return
 	}
 	if application == nil {
-		c.ResponseError(c.T("general:Invalid client_id"))
+		c.ResponseError(c.T("token:Invalid client_id"))
 		return
 	}
 

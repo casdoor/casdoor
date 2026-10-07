@@ -37,7 +37,7 @@ const SIMPLE_TEXT_ITEMS: Record<string, string> = {
   "ID card": "user:ID card",
   "Real name": "application:Real name",
   "Bio": "user:Bio",
-  "Tag": "user:Tag",
+  "Tag": "general:Tag",
   "Education": "user:Education",
   "Gender": "user:Gender",
   "First name": "general:First name",

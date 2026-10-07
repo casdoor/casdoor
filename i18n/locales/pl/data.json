@@ -10,10 +10,13 @@
     "Failed to create user, user information is invalid: %s": "Nie udało się utworzyć użytkownika, dane użytkownika są nieprawidłowe: %s",
     "Failed to login in: %s": "Logowanie nie powiodło się: %s",
     "Invalid token": "Nieprawidłowy token",
+    "Please sign in again": "Zaloguj się ponownie",
+    "Requested scope exceeds original device authorization scope": "Żądany zakres przekracza zakres pierwotnej autoryzacji urządzenia",
     "State expected: %s, but got: %s": "Oczekiwano stanu: %s, ale otrzymano: %s",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %s, please use another way to sign up": "Konto dla dostawcy: %s i nazwy użytkownika: %s (%s) nie istnieje i nie można się zarejestrować jako nowe konto przez %s, użyj innej metody rejestracji",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "Konto dla dostawcy: %s i nazwy użytkownika: %s (%s) nie istnieje i nie można się zarejestrować jako nowe konto, skontaktuj się z pomocą IT",
     "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)": "Konto dla dostawcy: %s i nazwy użytkownika: %s (%s) jest już powiązane z innym kontem: %s (%s)",
+    "The application does not match the device authorization request": "Aplikacja nie odpowiada żądaniu autoryzacji urządzenia",
     "The application: %s does not exist": "Aplikacja: %s nie istnieje",
     "The application: %s has disabled users to signin": "Aplikacja: %s wyłączyła logowanie użytkowników",
     "The group: %s does not exist": "Grupa: %s nie istnieje",
@@ -30,6 +33,7 @@
     "The plan: %s does not exist": "Plan: %s nie istnieje",
     "The pricing: %s does not exist": "Cennik: %s nie istnieje",
     "The pricing: %s does not have plan: %s": "Cennik: %s nie ma planu: %s",
+    "The pricing: %s is invite-only, only invited users can use it": "Cennik: %s jest tylko na zaproszenie, mogą z niego korzystać wyłącznie zaproszeni użytkownicy",
     "The provider: %s does not exist": "Dostawca: %s nie istnieje",
     "The provider: %s is not enabled for the application": "Dostawca: %s nie jest włączony dla aplikacji",
     "Unauthorized operation": "Nieautoryzowana operacja",
@@ -44,9 +48,13 @@
   "cas": {
     "Service %s and %s do not match": "Usługa %s i %s nie pasują do siebie"
   },
+  "cert": {
+    "The cert name: %s is already used by another organization": "Nazwa certyfikatu: %s jest już używana przez inną organizację"
+  },
   "check": {
     "%s does not meet the CIDR format requirements: %s": "%s nie spełnia wymagań formatu CIDR: %s",
     "Affiliation cannot be blank": "Przynależność nie może być pusta",
+    "Application does not exist": "Aplikacja nie istnieje",
     "CIDR for IP: %s should not be empty": "CIDR dla IP: %s nie powinno być puste",
     "Default code does not match the code's matching rules": "Domyślny kod nie pasuje do reguł dopasowania kodu",
     "DisplayName cannot be blank": "Nazwa wyświetlana nie może być pusta",
@@ -62,6 +70,7 @@
     "Guest users must upgrade their account by setting a username and password before they can sign in directly": "Użytkownicy-goście muszą uaktualnić swoje konto, ustawiając nazwę użytkownika i hasło, zanim będą mogli się zalogować bezpośrednio",
     "Invitation code cannot be blank": "Kod zaproszenia nie może być pusty",
     "Invitation code exhausted": "Kod zaproszenia został wykorzystany",
+    "Invitation code expired": "Kod zaproszenia wygasł",
     "Invitation code is invalid": "Kod zaproszenia jest nieprawidłowy",
     "Invitation code suspended": "Kod zaproszenia został zawieszony",
     "LastName cannot be blank": "Nazwisko nie może być puste",
@@ -106,24 +115,33 @@
     "the adapter: %s is not found": "adapter: %s nie został znaleziony"
   },
   "general": {
+    "Application cannot be empty": "Aplikacja nie może być pusta",
     "Failed to import groups": "Nie udało się zaimportować grup",
     "Failed to import users": "Nie udało się zaimportować użytkowników",
+    "Granted scopes cannot be empty": "Przyznane zakresy nie mogą być puste",
     "Insufficient balance: new balance %v would be below credit limit %v": "Niewystarczające saldo: nowe saldo %v byłoby poniżej limitu kredytowego %v",
     "Insufficient balance: new organization balance %v would be below credit limit %v": "Niewystarczające saldo: nowe saldo organizacji %v byłoby poniżej limitu kredytowego %v",
+    "Invalid application": "Nieprawidłowa aplikacja",
     "Missing parameter": "Brakujący parametr",
+    "Multiple captcha providers are not allowed in the same application: %s": "W jednej aplikacji nie można używać wielu dostawców captcha: %s",
     "Only admin user can specify user": "Tylko administrator może wskazać użytkownika",
     "Please login first": "Najpierw się zaloguj",
+    "Please sign in first": "Najpierw się zaloguj",
     "The LDAP: %s does not exist": "LDAP: %s nie istnieje",
+    "The object does not exist": "Obiekt nie istnieje",
     "The organization: %s should have one application at least": "Organizacja: %s powinna mieć co najmniej jedną aplikację",
     "The syncer: %s does not exist": "Synchronizer: %s nie istnieje",
+    "The token: %s does not exist": "Token: %s nie istnieje",
     "The uploaded file contains no user": "Przesłany plik nie zawiera żadnego użytkownika",
     "The uploaded file is empty": "Przesłany plik jest pusty",
+    "The user doesn't exist": "Użytkownik nie istnieje",
     "The user name in line %d is empty": "Nazwa użytkownika w wierszu %d jest pusta",
     "The user: %s doesn't exist": "Użytkownik: %s nie istnieje",
     "The user: %s in line %d is duplicated with line %d": "Użytkownik: %s w wierszu %d jest zduplikowany z wierszem %d",
     "The user: %s is not found": "Użytkownik: %s nie został znaleziony",
     "The users already exist: %s": "Następujący użytkownicy już istnieją: %s",
     "User is required for User category transaction": "Użytkownik jest wymagany do transakcji kategorii użytkownika",
+    "User not found": "Nie znaleziono użytkownika",
     "Wrong userId": "Nieprawidłowy userId",
     "don't support captchaProvider: ": "nie obsługuje captchaProvider: ",
     "this operation is not allowed in demo mode": "ta operacja nie jest dozwolona w trybie demo",
@@ -137,6 +155,7 @@
   },
   "link": {
     "Please link first": "Najpierw się połącz",
+    "Provider name is required for Custom Flexible providers": "Dla dostawców Custom Flexible wymagana jest nazwa dostawcy",
     "This application has no providers": "Ta aplikacja nie ma dostawców",
     "This application has no providers of type": "Ta aplikacja nie ma dostawców typu",
     "This provider can't be unlinked": "Ten dostawca nie może zostać odłączony",
@@ -175,7 +194,8 @@
   "service": {
     "Empty parameters for emailForm: %v": "Puste parametry dla emailForm: %v",
     "Invalid Email receivers: %s": "Nieprawidłowi odbiorcy email: %s",
-    "Invalid phone receivers: %s": "Nieprawidłowi odbiorcy telefonu: %s"
+    "Invalid phone receivers: %s": "Nieprawidłowi odbiorcy telefonu: %s",
+    "Too many requests, please try again later": "Zbyt wiele żądań, spróbuj ponownie później"
   },
   "session": {
     "session id %s is the current session and cannot be deleted": "identyfikator sesji %s jest bieżącą sesją i nie może być usunięty"
@@ -194,7 +214,9 @@
     "Grant_type: %s is not supported in this application": "Grant_type: %s nie jest obsługiwany w tej aplikacji",
     "Invalid application or wrong clientSecret": "Nieprawidłowa aplikacja lub błędny clientSecret",
     "Invalid client_id": "Nieprawidłowy client_id",
+    "Invalid scope": "Nieprawidłowy zakres",
     "Redirect URI: %s doesn't exist in the allowed Redirect URI list": "Redirect URI: %s nie istnieje na liście dozwolonych Redirect URI",
+    "The nonce parameter is required for this response type": "Dla tego typu odpowiedzi parametr nonce jest wymagany",
     "Token not found, invalid accessToken": "Token nie znaleziony, nieprawidłowy accessToken"
   },
   "user": {
@@ -207,6 +229,7 @@
     "No application found for user": "Nie znaleziono aplikacji dla użytkownika",
     "Please use the set-password API to change the password": "Aby zmienić hasło, użyj API set-password",
     "The new password must be different from your current password": "Nowe hasło musi różnić się od obecnego hasła",
+    "The new password must be different from your last %d passwords": "Nowe hasło musi różnić się od %d ostatnich haseł",
     "User is already verified": "Użytkownik jest już zweryfikowany",
     "the user's owner and name should not be empty": "właściciel i nazwa użytkownika nie powinny być puste"
   },
@@ -230,6 +253,7 @@
     "Unable to get the email modify rule.": "Nie można pobrać reguły modyfikacji email.",
     "Unable to get the phone modify rule.": "Nie można pobrać reguły modyfikacji telefonu.",
     "Unknown type": "Nieznany typ",
+    "Wrong parameter": "Nieprawidłowy parametr",
     "Wrong verification code!": "Zły kod weryfikacyjny!",
     "You should verify your code in %d min!": "Powinieneś zweryfikować swój kod w ciągu %d min!",
     "please add a SMS provider to the \"Providers\" list for the application: %s": "proszę dodać dostawcę SMS do listy \"Providers\" dla aplikacji: %s",

@@ -10,10 +10,13 @@
     "Failed to create user, user information is invalid: %s": "Не вдалося створити користувача, інформація недійсна: %s",
     "Failed to login in: %s": "Не вдалося увійти: %s",
     "Invalid token": "Недійсний токен",
+    "Please sign in again": "Увійдіть ще раз",
+    "Requested scope exceeds original device authorization scope": "Запитана область перевищує область початкової авторизації пристрою",
     "State expected: %s, but got: %s": "Очікувалося стан: %s, але отримано: %s",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %s, please use another way to sign up": "Обліковий запис для провайдера: %s та імені користувача: %s (%s) не існує і не дозволяється реєструвати як новий через %s, використайте інший спосіб",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "Обліковий запис для провайдера: %s та імені користувача: %s (%s) не існує і не дозволяється реєструвати як новий, зверніться до IT-підтримки",
     "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)": "Обліковий запис для провайдера: %s та імені користувача: %s (%s) уже пов’язаний з іншим обліковим записом: %s (%s)",
+    "The application does not match the device authorization request": "Застосунок не відповідає запиту на авторизацію пристрою",
     "The application: %s does not exist": "Додаток: %s не існує",
     "The application: %s has disabled users to signin": "Додаток: %s вимкнув вхід користувачів",
     "The group: %s does not exist": "Група: %s не існує",
@@ -30,6 +33,7 @@
     "The plan: %s does not exist": "План: %s не існує",
     "The pricing: %s does not exist": "Тариф: %s не існує",
     "The pricing: %s does not have plan: %s": "Тариф: %s не має план: %s",
+    "The pricing: %s is invite-only, only invited users can use it": "Тариф: %s доступний лише за запрошенням, ним можуть користуватися тільки запрошені користувачі",
     "The provider: %s does not exist": "Провайдер: %s не існує",
     "The provider: %s is not enabled for the application": "Провайдер: %s не увімкнено для цього додатка",
     "Unauthorized operation": "Неавторизована операція",
@@ -44,9 +48,13 @@
   "cas": {
     "Service %s and %s do not match": "Сервіс %s і %s не збігаються"
   },
+  "cert": {
+    "The cert name: %s is already used by another organization": "Назва сертифіката: %s уже використовується іншою організацією"
+  },
   "check": {
     "%s does not meet the CIDR format requirements: %s": "%s не відповідає формату CIDR: %s",
     "Affiliation cannot be blank": "Приналежність не може бути порожньою",
+    "Application does not exist": "Застосунок не існує",
     "CIDR for IP: %s should not be empty": "CIDR для IP: %s не повинен бути порожнім",
     "Default code does not match the code's matching rules": "Код за замовчуванням не відповідає правилам відповідності",
     "DisplayName cannot be blank": "Відображуване ім’я не може бути порожнім",
@@ -62,6 +70,7 @@
     "Guest users must upgrade their account by setting a username and password before they can sign in directly": "Гостьові користувачі повинні оновити свій обліковий запис, встановивши ім'я користувача та пароль, перш ніж вони зможуть увійти безпосередньо",
     "Invitation code cannot be blank": "Код запрошення не може бути порожнім",
     "Invitation code exhausted": "Код запрошення вичерпано",
+    "Invitation code expired": "Термін дії коду запрошення минув",
     "Invitation code is invalid": "Код запрошення недійсний",
     "Invitation code suspended": "Код запрошення призупинено",
     "LastName cannot be blank": "Прізвище не може бути порожнім",
@@ -106,24 +115,33 @@
     "the adapter: %s is not found": "адаптер: %s не знайдено"
   },
   "general": {
+    "Application cannot be empty": "Застосунок не може бути порожнім",
     "Failed to import groups": "Не вдалося імпортувати групи",
     "Failed to import users": "Не вдалося імпортувати користувачів",
+    "Granted scopes cannot be empty": "Надані області не можуть бути порожніми",
     "Insufficient balance: new balance %v would be below credit limit %v": "Недостатній баланс: новий баланс %v буде нижче кредитного ліміту %v",
     "Insufficient balance: new organization balance %v would be below credit limit %v": "Недостатній баланс: новий баланс організації %v буде нижче кредитного ліміту %v",
+    "Invalid application": "Недійсний застосунок",
     "Missing parameter": "Відсутній параметр",
+    "Multiple captcha providers are not allowed in the same application: %s": "В одному застосунку не можна використовувати кілька постачальників captcha: %s",
     "Only admin user can specify user": "Лише адміністратор може вказати користувача",
     "Please login first": "Спочатку увійдіть",
+    "Please sign in first": "Спочатку увійдіть",
     "The LDAP: %s does not exist": "LDAP: %s не існує",
+    "The object does not exist": "Об'єкт не існує",
     "The organization: %s should have one application at least": "Організація: %s має мати щонайменше один додаток",
     "The syncer: %s does not exist": "Синхронізатор: %s не існує",
+    "The token: %s does not exist": "Токен: %s не існує",
     "The uploaded file contains no user": "Завантажений файл не містить жодного користувача",
     "The uploaded file is empty": "Завантажений файл порожній",
+    "The user doesn't exist": "Користувач не існує",
     "The user name in line %d is empty": "Ім'я користувача в рядку %d порожнє",
     "The user: %s doesn't exist": "Користувач: %s не існує",
     "The user: %s in line %d is duplicated with line %d": "Користувач: %s у рядку %d дублюється з рядком %d",
     "The user: %s is not found": "Користувач: %s не знайдено",
     "The users already exist: %s": "Наступні користувачі вже існують: %s",
     "User is required for User category transaction": "Користувач обов'язковий для транзакції категорії користувача",
+    "User not found": "Користувача не знайдено",
     "Wrong userId": "Неправильний userId",
     "don't support captchaProvider: ": "не підтримується captchaProvider: ",
     "this operation is not allowed in demo mode": "ця операція недоступна в демо-режимі",
@@ -137,6 +155,7 @@
   },
   "link": {
     "Please link first": "Спочатку виконайте прив’язку",
+    "Provider name is required for Custom Flexible providers": "Для постачальників Custom Flexible потрібна назва постачальника",
     "This application has no providers": "Цей додаток не має провайдерів",
     "This application has no providers of type": "Цей додаток не має провайдерів цього типу",
     "This provider can't be unlinked": "Цього провайдера не можна від’єднати",
@@ -175,7 +194,8 @@
   "service": {
     "Empty parameters for emailForm: %v": "Порожні параметри для emailForm: %v",
     "Invalid Email receivers: %s": "Недійсні отримувачі Email: %s",
-    "Invalid phone receivers: %s": "Недійсні отримувачі телефону: %s"
+    "Invalid phone receivers: %s": "Недійсні отримувачі телефону: %s",
+    "Too many requests, please try again later": "Забагато запитів, спробуйте пізніше"
   },
   "session": {
     "session id %s is the current session and cannot be deleted": "ідентифікатор сесії %s є поточною сесією і не може бути видалений"
@@ -194,7 +214,9 @@
     "Grant_type: %s is not supported in this application": "Grant_type: %s не підтримується в цьому додатку",
     "Invalid application or wrong clientSecret": "Недійсний додаток або неправильний clientSecret",
     "Invalid client_id": "Недійсний client_id",
+    "Invalid scope": "Недійсна область",
     "Redirect URI: %s doesn't exist in the allowed Redirect URI list": "Redirect URI: %s відсутній у списку дозволених",
+    "The nonce parameter is required for this response type": "Для цього типу відповіді потрібен параметр nonce",
     "Token not found, invalid accessToken": "Токен не знайдено, недійсний accessToken"
   },
   "user": {
@@ -207,6 +229,7 @@
     "No application found for user": "Не знайдено додаток для користувача",
     "Please use the set-password API to change the password": "Щоб змінити пароль, використовуйте API set-password",
     "The new password must be different from your current password": "Новий пароль повинен відрізнятися від поточного пароля",
+    "The new password must be different from your last %d passwords": "Новий пароль має відрізнятися від %d останніх паролів",
     "User is already verified": "Користувач уже верифікований",
     "the user's owner and name should not be empty": "власник ім’я користувача не повинні бути порожніми"
   },
@@ -230,6 +253,7 @@
     "Unable to get the email modify rule.": "Не вдалося отримати правило зміни email.",
     "Unable to get the phone modify rule.": "Не вдалося отримати правило зміни телефону.",
     "Unknown type": "Невідомий тип",
+    "Wrong parameter": "Неправильний параметр",
     "Wrong verification code!": "Неправильний код підтвердження!",
     "You should verify your code in %d min!": "Ви маєте підтвердити код за %d хв!",
     "please add a SMS provider to the \"Providers\" list for the application: %s": "будь ласка, додайте SMS-провайдера до списку \"Провайдери\" для додатка: %s",
