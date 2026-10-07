@@ -278,6 +278,11 @@ func UpdateOrganization(id string, organization *Organization, isGlobalAdmin boo
 		organization.Name = name
 	}
 
+	organization.Owner = org.Owner
+	if organization.PasswordType == "" {
+		organization.PasswordType = org.PasswordType
+	}
+
 	if name != organization.Name {
 		err = checkReservedOrganizationName(organization.Name)
 		if err != nil {
@@ -372,6 +377,11 @@ func AddOrganization(organization *Organization) (bool, error) {
 	}
 	if organization.KerberosKeytab == "***" {
 		organization.KerberosKeytab = ""
+	}
+
+	organization.Owner = "admin"
+	if organization.PasswordType == "" {
+		organization.PasswordType = "bcrypt"
 	}
 
 	organization.hashMasterPassword()
