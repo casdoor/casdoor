@@ -24,7 +24,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func GetOAuthToken(grantType string, clientId string, clientSecret string, code string, verifier string, scope string, nonce string, username string, password string, host string, refreshToken string, tag string, avatar string, lang string, subjectToken string, subjectTokenType string, assertion string, clientAssertion string, clientAssertionType string, audience string, resource string, dpopProof string, clientIp string) (interface{}, error) {
+func GetOAuthToken(grantType string, clientId string, clientSecret string, code string, verifier string, scope string, nonce string, username string, password string, countryCode string, host string, refreshToken string, tag string, avatar string, lang string, subjectToken string, subjectTokenType string, assertion string, clientAssertion string, clientAssertionType string, audience string, resource string, dpopProof string, clientIp string) (interface{}, error) {
 	var (
 		application *Application
 		err         error
@@ -89,6 +89,8 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 		token, tokenError, err = GetPasswordToken(application, username, password, scope, host, clientIp, lang)
 	case "client_credentials": // Client Credentials Grant
 		token, tokenError, err = GetClientCredentialsToken(application, clientSecret, scope, host)
+	case VerificationCodeGrantType:
+		token, tokenError, err = GetVerificationCodeToken(application, username, countryCode, code, scope, host, clientIp, lang)
 	case "token", "id_token": // Implicit Grant
 		token, tokenError, err = GetImplicitToken(application, username, password, scope, nonce, host, clientIp, lang)
 	case "urn:ietf:params:oauth:grant-type:jwt-bearer":
@@ -325,7 +327,12 @@ func GetPasswordToken(application *Application, username string, password string
 		return nil, tokenError, nil
 	}
 
-	err = ExtendUserWithRolesAndPermissions(user)
+	return getUserGrantToken(application, user, scope, host)
+}
+
+// getUserGrantToken issues the token of a grant whose user has been authenticated by the grant itself
+func getUserGrantToken(application *Application, user *User, scope string, host string) (*Token, *TokenError, error) {
+	err := ExtendUserWithRolesAndPermissions(user)
 	if err != nil {
 		return nil, nil, err
 	}

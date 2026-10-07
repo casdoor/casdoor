@@ -27,6 +27,7 @@ type TokenRequest struct {
 	Nonce               string `json:"nonce"`
 	Username            string `json:"username"`
 	Password            string `json:"password"`
+	CountryCode         string `json:"country_code"`
 	Tag                 string `json:"tag"`
 	Avatar              string `json:"avatar"`
 	RefreshToken        string `json:"refresh_token"`

@@ -367,7 +367,8 @@ func (c *ApiController) SendVerificationCode() {
 				return
 			}
 
-			if user == nil {
+			// the verification code grant of a native app signs the address up with the code
+			if user == nil && (vform.Method == ForgetVerification || !application.IsVerificationCodeSignupEnabled(object.VerifyTypeEmail)) {
 				c.ResponseError(c.T("verification:the user does not exist, please sign up first"))
 				return
 			}
@@ -459,7 +460,7 @@ func (c *ApiController) SendVerificationCode() {
 			if user, err = object.GetUserByPhone(organization.Name, vform.Dest); err != nil {
 				c.ResponseError(err.Error())
 				return
-			} else if user == nil {
+			} else if user == nil && (vform.Method == ForgetVerification || !application.IsVerificationCodeSignupEnabled(object.VerifyTypePhone)) {
 				c.ResponseError(c.T("verification:the user does not exist, please sign up first"))
 				return
 			}
@@ -471,7 +472,11 @@ func (c *ApiController) SendVerificationCode() {
 				}
 			}
 
-			vform.CountryCode = user.GetCountryCode(vform.CountryCode)
+			if user != nil {
+				vform.CountryCode = user.GetCountryCode(vform.CountryCode)
+			} else if vform.CountryCode == "" && !strings.HasPrefix(vform.Dest, "+") && len(organization.CountryCodes) > 0 {
+				vform.CountryCode = organization.CountryCodes[0]
+			}
 		} else if vform.Method == ResetVerification || vform.Method == MfaSetupVerification {
 			if vform.CountryCode == "" {
 				if user = c.getCurrentUser(); user != nil {
