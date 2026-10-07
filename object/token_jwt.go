@@ -99,7 +99,7 @@ type UserWithoutThirdIdp struct {
 	CountryCode       string   `xorm:"varchar(6)" json:"countryCode"`
 	Region            string   `xorm:"varchar(100)" json:"region"`
 	Location          string   `xorm:"varchar(100)" json:"location"`
-	Address           []string `json:"address"`
+	Address           []string `json:"address,omitempty"`
 	Affiliation       string   `xorm:"varchar(100)" json:"affiliation"`
 	Title             string   `xorm:"varchar(100)" json:"title"`
 	IdCardType        string   `xorm:"varchar(100)" json:"idCardType"`
@@ -229,6 +229,15 @@ func getStandardUser(user *User) *UserStandard {
 	return res
 }
 
+func getNonEmptyAddress(address []string) []string {
+	for _, line := range address {
+		if strings.TrimSpace(line) != "" {
+			return address
+		}
+	}
+	return nil
+}
+
 func getUserWithoutThirdIdp(user *User) *UserWithoutThirdIdp {
 	res := &UserWithoutThirdIdp{
 		Owner:       user.Owner,
@@ -254,7 +263,7 @@ func getUserWithoutThirdIdp(user *User) *UserWithoutThirdIdp {
 		CountryCode:       user.CountryCode,
 		Region:            user.Region,
 		Location:          user.Location,
-		Address:           user.Address,
+		Address:           getNonEmptyAddress(user.Address),
 		Affiliation:       user.Affiliation,
 		Title:             user.Title,
 		IdCardType:        user.IdCardType,
