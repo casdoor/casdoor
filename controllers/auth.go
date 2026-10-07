@@ -693,7 +693,16 @@ func getUserByProvider(organization string, provider *object.Provider, providerI
 	if provider.Category == "SAML" {
 		return object.GetUserByFields(organization, providerId)
 	}
-	return object.GetUserByField(organization, provider.Type, providerId)
+
+	user, err := object.GetUserByField(organization, provider.Type, providerId)
+	if err != nil || user != nil {
+		return user, err
+	}
+
+	if provider.Type == "WeCom" && provider.SubType == "Internal" {
+		return object.GetUserByFieldIgnoreCase(organization, provider.Type, providerId)
+	}
+	return nil, nil
 }
 
 func checkUserFace(user *object.User, authForm *form.AuthForm, faceIdProvider *object.Provider, lang string) error {
