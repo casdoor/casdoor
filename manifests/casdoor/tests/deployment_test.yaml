@@ -18,3 +18,45 @@ tests:
           mountPath: /extra-volume
     asserts:
       - matchSnapshot: {}
+  - it: mounts the init data and passes its settings when initData is enabled
+    set:
+      initData.enabled: true
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: initDataFile
+            value: /init-data/init_data.json
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: initDataMerge
+            value: "true"
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: initDataWatchInterval
+            value: "30"
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: init-data
+            secret:
+              secretName: RELEASE-NAME-casdoor-init-data
+              items:
+                - key: init_data.json
+                  path: init_data.json
+  - it: reads the init data from an existing secret
+    set:
+      initData.enabled: true
+      initData.existingSecret: casdoor-init-data
+    asserts:
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: init-data
+            secret:
+              secretName: casdoor-init-data
+              items:
+                - key: init_data.yaml
+                  path: init_data.yaml

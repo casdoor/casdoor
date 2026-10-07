@@ -15,6 +15,9 @@ spec:
     metadata:
       annotations:
         checksum/config: {{ tpl .Values.config . | toYaml | sha256sum }}
+        {{- if and .Values.initData.enabled (not .Values.initData.existingSecret) (eq (int .Values.initData.watchInterval) 0) }}
+        checksum/init-data: {{ .Values.initData.data | toJson | sha256sum }}
+        {{- end }}
         {{- with .Values.podAnnotations }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
@@ -45,6 +48,14 @@ spec:
           env:
             - name: RUNNING_IN_DOCKER
               value: "true"
+            {{- if .Values.initData.enabled }}
+            - name: initDataFile
+              value: {{ printf "/init-data/%s" (include "casdoor.initDataKey" .) | quote }}
+            - name: initDataMerge
+              value: {{ .Values.initData.merge | quote }}
+            - name: initDataWatchInterval
+              value: {{ .Values.initData.watchInterval | quote }}
+            {{- end }}
           {{- if .Values.envFromSecret }}
             {{ include "casdoor.envFromSecret" .Values.envFromSecret | indent 12 | trim }}
           {{- end -}}
@@ -83,6 +94,11 @@ spec:
             - name: config-volume
               mountPath: /conf
             {{- end }}
+            {{- if .Values.initData.enabled }}
+            - name: init-data
+              mountPath: /init-data
+              readOnly: true
+            {{- end }}
             {{- if .Values.extraVolumeMounts }}
             {{- toYaml .Values.extraVolumeMounts | nindent 12 }}
             {{- end }}
@@ -108,6 +124,14 @@ spec:
                     - key: app.conf
                       path: app.conf
             {{- end }}
+        {{- end }}
+        {{- if .Values.initData.enabled }}
+        - name: init-data
+          secret:
+            secretName: {{ include "casdoor.initDataSecretName" . }}
+            items:
+              - key: {{ include "casdoor.initDataKey" . }}
+                path: {{ include "casdoor.initDataKey" . }}
         {{- end }}
         {{- if .Values.extraVolumes }}
         {{- toYaml .Values.extraVolumes | nindent 8 }}
