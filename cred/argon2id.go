@@ -33,5 +33,10 @@ func (cm *Argon2idCredManager) GetHashedPassword(password string, salt string) s
 
 func (cm *Argon2idCredManager) IsPasswordCorrect(plainPwd string, hashedPwd string, salt string) bool {
 	match, _ := argon2id.ComparePasswordAndHash(plainPwd, hashedPwd)
+	if match || salt == "" {
+		return match
+	}
+
+	match, _ = argon2id.ComparePasswordAndHash(plainPwd+salt, hashedPwd)
 	return match
 }
