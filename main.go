@@ -37,7 +37,7 @@ func main() {
 	web.BConfig.WebConfig.Session.SessionOn = true
 	web.BConfig.WebConfig.Session.SessionName = "casdoor_session_id"
 	if redisConfig := conf.GetRedisConfig(); redisConfig == nil {
-		web.BConfig.WebConfig.Session.SessionProvider = "file"
+		web.BConfig.WebConfig.Session.SessionProvider = routers.FileSessionProvider
 		web.BConfig.WebConfig.Session.SessionProviderConfig = "./tmp"
 	} else {
 		web.BConfig.WebConfig.Session.SessionProvider, web.BConfig.WebConfig.Session.SessionProviderConfig = redisConfig.GetSessionProvider()
