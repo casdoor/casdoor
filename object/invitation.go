@@ -16,6 +16,7 @@ package object
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/util"
@@ -42,7 +43,8 @@ type Invitation struct {
 	SignupGroup string `xorm:"varchar(100)" json:"signupGroup"`
 	DefaultCode string `xorm:"varchar(100)" json:"defaultCode"`
 
-	State string `xorm:"varchar(100)" json:"state"`
+	ExpireTime string `xorm:"varchar(100)" json:"expireTime"`
+	State      string `xorm:"varchar(100)" json:"state"`
 }
 
 func GetInvitationCount(owner, field, value string) (int64, error) {
@@ -157,6 +159,11 @@ func UpdateInvitation(id string, invitation *Invitation, lang string) (bool, err
 		return false, err
 	}
 
+	err = invitation.checkExpireTime()
+	if err != nil {
+		return false, err
+	}
+
 	affected, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(invitation)
 	if err != nil {
 		return false, err
@@ -173,6 +180,11 @@ func AddInvitation(invitation *Invitation, lang string) (bool, error) {
 	}
 
 	err := CheckInvitationDefaultCode(invitation.Code, invitation.DefaultCode, lang)
+	if err != nil {
+		return false, err
+	}
+
+	err = invitation.checkExpireTime()
 	if err != nil {
 		return false, err
 	}
@@ -198,6 +210,30 @@ func (invitation *Invitation) GetId() string {
 	return fmt.Sprintf("%s/%s", invitation.Owner, invitation.Name)
 }
 
+func (invitation *Invitation) checkExpireTime() error {
+	if invitation.ExpireTime == "" {
+		return nil
+	}
+
+	_, err := time.Parse(time.RFC3339, invitation.ExpireTime)
+	if err != nil {
+		return fmt.Errorf("invalid expireTime: %s, it should be in RFC 3339 format like 2026-01-02T15:04:05+08:00", invitation.ExpireTime)
+	}
+	return nil
+}
+
+func (invitation *Invitation) isExpired() bool {
+	if invitation.ExpireTime == "" {
+		return false
+	}
+
+	expireTime, err := time.Parse(time.RFC3339, invitation.ExpireTime)
+	if err != nil {
+		return false
+	}
+	return time.Now().After(expireTime)
+}
+
 func VerifyInvitation(id string) (payment *Payment, attachInfo map[string]interface{}, err error) {
 	return nil, nil, fmt.Errorf("the invitation: %s does not exist", id)
 }
@@ -211,6 +247,9 @@ func (invitation *Invitation) SimpleCheckInvitationCode(invitationCode string, l
 
 	if invitation.State != "Active" {
 		return false, i18n.Translate(lang, "check:Invitation code suspended")
+	}
+	if invitation.isExpired() {
+		return false, i18n.Translate(lang, "check:Invitation code expired")
 	}
 	if invitation.UsedCount >= invitation.Quota {
 		return false, i18n.Translate(lang, "check:Invitation code exhausted")

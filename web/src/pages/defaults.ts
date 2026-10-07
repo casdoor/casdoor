@@ -225,6 +225,7 @@ export function newInvitation(account: Account) {
     email: "",
     phone: "",
     signupGroup: "",
+    expireTime: "",
     state: "Active",
   };
 }

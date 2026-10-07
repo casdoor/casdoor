@@ -24,6 +24,7 @@ export default function InvitationListPage() {
     textColumn({dataIndex: "application", title: i18next.t("general:Application"), width: 150, searchable: true, link: (v, r: any) => `/applications/${r.owner}/${v}`}),
     textColumn({dataIndex: "email", title: i18next.t("general:Email"), width: 170, searchable: true, link: (v) => `mailto:${v}`, linkExternal: true}),
     textColumn({dataIndex: "phone", title: i18next.t("general:Phone"), width: 130, searchable: true}),
+    dateColumn("expireTime", i18next.t("general:Expire time")),
     enumColumn({dataIndex: "state", title: i18next.t("general:State"), map: INVITATION_STATES}),
   ];
 
