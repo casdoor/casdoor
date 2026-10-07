@@ -62,6 +62,8 @@
     "Default tag - Tooltip": "Default tag - Tooltip",
     "Disable SAML attributes": "Disable SAML attributes",
     "Disable SAML attributes - Tooltip": "Whether to disable including attribute statements in SAML assertion responses",
+    "Disable self signup": "Disable self signup",
+    "Disable self signup - Tooltip": "Users can no longer sign themselves up on the signup page, by magic link or by verification code, only with an invitation code. Signing up with the application's providers, e.g. the first SSO login of a new employee, still works",
     "Disable signin": "Disable signin",
     "Disable signin - Tooltip": "Disable user login operations",
     "Discovered from the issuer if empty": "Discovered from the issuer if empty",

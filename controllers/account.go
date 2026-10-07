@@ -106,6 +106,13 @@ func (c *ApiController) Signup() {
 		return
 	}
 
+	// without self signup, the signup page only takes the invitation codes an admin hands out,
+	// an invalid code is refused by CheckInvitationCode below
+	if !application.IsSelfSignupEnabled() && authForm.InvitationCode == "" {
+		c.ResponseError(c.T("account:The application does not allow to sign up new account"))
+		return
+	}
+
 	organization, err := object.GetOrganization(util.GetId("admin", authForm.Organization))
 	if err != nil {
 		c.ResponseError(c.T(err.Error()))

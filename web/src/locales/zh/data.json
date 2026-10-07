@@ -62,6 +62,8 @@
     "Default tag - Tooltip": "Default tag - Tooltip",
     "Disable SAML attributes": "禁用SAML属性",
     "Disable SAML attributes - Tooltip": "是否禁用SAML响应中的属性",
+    "Disable self signup": "禁止自助注册",
+    "Disable self signup - Tooltip": "用户不能再通过注册页、魔法链接或验证码自行注册，只能凭邀请码注册；通过应用的第三方提供商注册（例如新员工首次 SSO 登录）不受影响",
     "Disable signin": "禁止登录",
     "Disable signin - Tooltip": "禁止用户进行登录操作",
     "Discovered from the issuer if empty": "留空则从签发方自动发现",
