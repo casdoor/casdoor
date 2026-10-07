@@ -1342,7 +1342,7 @@ export default function LoginPage({type = "login", application: applicationProp,
   const renderSigninItem = (item: any) => {
     const key = item.name;
     if (Setting.isCustomFormItem(item)) {
-      return item.visible ? <CustomHtml key={key} html={item.customCss} trusted={isTrustedApplication(application)} /> : null;
+      return item.visible ? <CustomHtml key={key} html={item.customCss} trusted={isTrustedApplication(application)} className="text-center" /> : null;
     }
     // the antd page keeps the auto sign-in checkbox even when the link is hidden
     if (!item.visible && item.name !== "Forgot password?") {
