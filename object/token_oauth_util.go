@@ -748,15 +748,18 @@ func ValidateJwtAssertion(clientAssertion string, application *Application, host
 	return true, claims, nil
 }
 
-func ValidateClientAssertion(clientAssertion string, host string) (bool, *Application, error) {
-	token, err := ParseJwtTokenWithoutValidation(clientAssertion)
-	if err != nil {
-		return false, nil, err
-	}
+func ValidateClientAssertion(clientAssertion string, clientId string, host string) (bool, *Application, error) {
+	// the subject of an external workload token is not a client ID, so the client_id of the request wins
+	if clientId == "" {
+		token, err := ParseJwtTokenWithoutValidation(clientAssertion)
+		if err != nil {
+			return false, nil, err
+		}
 
-	clientId, err := token.Claims.GetSubject()
-	if err != nil {
-		return false, nil, err
+		clientId, err = token.Claims.GetSubject()
+		if err != nil {
+			return false, nil, err
+		}
 	}
 
 	application, err := GetApplicationByClientId(clientId)
@@ -765,6 +768,14 @@ func ValidateClientAssertion(clientAssertion string, host string) (bool, *Applic
 	}
 	if application == nil {
 		return false, nil, fmt.Errorf("application not found for client: [%s]", clientId)
+	}
+
+	credential, _, err := validateFederatedToken(application, clientAssertion, host)
+	if err != nil {
+		return false, application, err
+	}
+	if credential != nil {
+		return true, application, nil
 	}
 
 	ok, _, err := ValidateJwtAssertion(clientAssertion, application, host)
