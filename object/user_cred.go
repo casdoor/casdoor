@@ -48,6 +48,13 @@ func (user *User) UpdateUserPassword(organization *Organization) {
 		return
 	}
 
+	// an organization without a password type stores the passwords as they are
+	if organization.PasswordType == "" {
+		user.PasswordType = "plain"
+		user.PasswordSalt = ""
+		return
+	}
+
 	credManager := cred.GetCredManager(organization.PasswordType)
 	if credManager != nil {
 		// Use organization salt if available, otherwise generate a random salt for the user
