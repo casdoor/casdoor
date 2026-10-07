@@ -1265,7 +1265,7 @@ export default function ProviderEditPage() {
           options={SYSLOG_FACILITIES.map((item) => ({id: item, name: item}))}
         />
       </FormRow>
-      <FormRow label={i18next.t("provider:Format")} tooltip={i18next.t("provider:Format - Tooltip")}>
+      <FormRow label={i18next.t("resource:Format")} tooltip={i18next.t("provider:Format - Tooltip")}>
         <SelectField
           value={provider.templateCode || "RFC 5424"}
           onChange={(v) => updateProviderField("templateCode", v)}

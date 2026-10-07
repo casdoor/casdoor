@@ -10,10 +10,13 @@
     "Failed to create user, user information is invalid: %s": "Kullanıcı oluşturulamadı, kullanıcı bilgileri geçersiz: %s",
     "Failed to login in: %s": "Giriş yapılamadı: %s",
     "Invalid token": "Geçersiz token",
+    "Please sign in again": "Lütfen yeniden oturum açın",
+    "Requested scope exceeds original device authorization scope": "İstenen kapsam, özgün cihaz yetkilendirmesinin kapsamını aşıyor",
     "State expected: %s, but got: %s": "Beklenen durum: %s, fakat alınan: %s",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %s, please use another way to sign up": "Provider: %s ve kullanıcı adı: %s (%s) için hesap mevcut değil ve %s ile yeni hesap açılmasına izin verilmiyor, lütfen başka yöntemle kaydolun",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "Provider: %s ve kullanıcı adı: %s (%s) için hesap mevcut değil ve yeni hesap açılmasına izin verilmiyor, lütfen BT destek ile iletişime geçin",
     "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)": "Provider: %s ve kullanıcı adı: %s (%s) zaten başka bir hesaba bağlı: %s (%s)",
+    "The application does not match the device authorization request": "Uygulama, cihaz yetkilendirme isteğiyle eşleşmiyor",
     "The application: %s does not exist": "Uygulama: %s bulunamadı",
     "The application: %s has disabled users to signin": "Uygulama: %s kullanıcıların oturum açmasını devre dışı bıraktı",
     "The group: %s does not exist": "Grup: %s mevcut değil",
@@ -30,6 +33,7 @@
     "The plan: %s does not exist": "Plan: %s mevcut değil",
     "The pricing: %s does not exist": "Fiyatlandırma: %s mevcut değil",
     "The pricing: %s does not have plan: %s": "Fiyatlandırma: %s planı yok: %s",
+    "The pricing: %s is invite-only, only invited users can use it": "Fiyatlandırma: %s yalnızca davetle kullanılabilir, yalnızca davet edilen kullanıcılar kullanabilir",
     "The provider: %s does not exist": "Sağlayıcı: %s mevcut değil",
     "The provider: %s is not enabled for the application": "Provider: %s bu uygulama için etkin değil",
     "Unauthorized operation": "Yetkisiz işlem",
@@ -44,9 +48,13 @@
   "cas": {
     "Service %s and %s do not match": "Servis %s ve %s eşleşmiyor"
   },
+  "cert": {
+    "The cert name: %s is already used by another organization": "Sertifika adı: %s zaten başka bir kuruluş tarafından kullanılıyor"
+  },
   "check": {
     "%s does not meet the CIDR format requirements: %s": "%s, CIDR biçim gerekliliklerini karşılamıyor: %s",
     "Affiliation cannot be blank": "Kurum boş olamaz",
+    "Application does not exist": "Uygulama mevcut değil",
     "CIDR for IP: %s should not be empty": "IP için CIDR: %s boş olmamalı",
     "Default code does not match the code's matching rules": "Varsayılan kod, kodun eşleşme kurallarıyla uyuşmuyor",
     "DisplayName cannot be blank": "Görünen ad boş olamaz",
@@ -62,6 +70,7 @@
     "Guest users must upgrade their account by setting a username and password before they can sign in directly": "Misafir kullanıcılar doğrudan giriş yapabilmek için kullanıcı adı ve şifre belirleyerek hesaplarını yükseltmelidir",
     "Invitation code cannot be blank": "Davet kodu boş olamaz",
     "Invitation code exhausted": "Davet kodu kullanım dışı",
+    "Invitation code expired": "Davet kodunun süresi doldu",
     "Invitation code is invalid": "Davet kodu geçersiz",
     "Invitation code suspended": "Davet kodu askıya alındı",
     "LastName cannot be blank": "Soyad boş olamaz",
@@ -106,24 +115,33 @@
     "the adapter: %s is not found": "bağdaştırıcı: %s bulunamadı"
   },
   "general": {
+    "Application cannot be empty": "Uygulama boş olamaz",
     "Failed to import groups": "Gruplar içe aktarılamadı",
     "Failed to import users": "Kullanıcılar içe aktarılamadı",
+    "Granted scopes cannot be empty": "Verilen kapsamlar boş olamaz",
     "Insufficient balance: new balance %v would be below credit limit %v": "Yetersiz bakiye: yeni bakiye %v kredi limitinin altında olacak %v",
     "Insufficient balance: new organization balance %v would be below credit limit %v": "Yetersiz bakiye: yeni organizasyon bakiyesi %v kredi limitinin altında olacak %v",
+    "Invalid application": "Geçersiz uygulama",
     "Missing parameter": "Eksik parametre",
+    "Multiple captcha providers are not allowed in the same application: %s": "Aynı uygulamada birden fazla captcha sağlayıcısına izin verilmez: %s",
     "Only admin user can specify user": "Yalnızca yönetici kullanıcı kullanıcı belirleyebilir",
     "Please login first": "Lütfen önce giriş yapın",
+    "Please sign in first": "Lütfen önce oturum açın",
     "The LDAP: %s does not exist": "LDAP: %s mevcut değil",
+    "The object does not exist": "Nesne mevcut değil",
     "The organization: %s should have one application at least": "Organizasyon: %s en az bir uygulamaya sahip olmalı",
     "The syncer: %s does not exist": "Senkronizasyon: %s mevcut değil",
+    "The token: %s does not exist": "Belirteç: %s mevcut değil",
     "The uploaded file contains no user": "Yüklenen dosya hiçbir kullanıcı içermiyor",
     "The uploaded file is empty": "Yüklenen dosya boş",
+    "The user doesn't exist": "Kullanıcı mevcut değil",
     "The user name in line %d is empty": "%d. satırdaki kullanıcı adı boş",
     "The user: %s doesn't exist": "Kullanıcı: %s bulunamadı",
     "The user: %s in line %d is duplicated with line %d": "Kullanıcı: %s (%d. satır), %d. satır ile tekrarlanıyor",
     "The user: %s is not found": "Kullanıcı: %s bulunamadı",
     "The users already exist: %s": "Şu kullanıcılar zaten mevcut: %s",
     "User is required for User category transaction": "Kullanıcı kategorisi işlemi için kullanıcı gerekli",
+    "User not found": "Kullanıcı bulunamadı",
     "Wrong userId": "Yanlış kullanıcı kimliği",
     "don't support captchaProvider: ": "captchaProvider desteklenmiyor: ",
     "this operation is not allowed in demo mode": "bu işlem demo modunda izin verilmiyor",
@@ -137,6 +155,7 @@
   },
   "link": {
     "Please link first": "Lütfen önce bağlayın",
+    "Provider name is required for Custom Flexible providers": "Custom Flexible sağlayıcıları için sağlayıcı adı gereklidir",
     "This application has no providers": "Bu uygulamanın provider'ı yok",
     "This application has no providers of type": "Bu uygulamanın bu türde provider'ı yok",
     "This provider can't be unlinked": "Bu provider bağlantısı kaldırılamaz",
@@ -175,7 +194,8 @@
   "service": {
     "Empty parameters for emailForm: %v": "emailForm için boş parametreler: %v",
     "Invalid Email receivers: %s": "Geçersiz e-posta alıcıları: %s",
-    "Invalid phone receivers: %s": "Geçersiz telefon alıcıları: %s"
+    "Invalid phone receivers: %s": "Geçersiz telefon alıcıları: %s",
+    "Too many requests, please try again later": "Çok fazla istek, lütfen daha sonra tekrar deneyin"
   },
   "session": {
     "session id %s is the current session and cannot be deleted": "oturum kimliği %s geçerli oturumdur ve silinemez"
@@ -194,7 +214,9 @@
     "Grant_type: %s is not supported in this application": "Grant_type: %s bu uygulamada desteklenmiyor",
     "Invalid application or wrong clientSecret": "Geçersiz uygulama veya yanlış clientSecret",
     "Invalid client_id": "Geçersiz client_id",
+    "Invalid scope": "Geçersiz kapsam",
     "Redirect URI: %s doesn't exist in the allowed Redirect URI list": "Redirect URI: %s izin verilen Redirect URI listesinde yok",
+    "The nonce parameter is required for this response type": "Bu yanıt türü için nonce parametresi gereklidir",
     "Token not found, invalid accessToken": "Token bulunamadı, geçersiz accessToken"
   },
   "user": {
@@ -207,6 +229,7 @@
     "No application found for user": "Kullanıcı için uygulama bulunamadı",
     "Please use the set-password API to change the password": "Şifreyi değiştirmek için set-password API'sini kullanın",
     "The new password must be different from your current password": "Yeni şifre mevcut şifrenizden farklı olmalıdır",
+    "The new password must be different from your last %d passwords": "Yeni parola son %d parolanızdan farklı olmalıdır",
     "User is already verified": "Kullanıcı zaten doğrulanmış",
     "the user's owner and name should not be empty": "kullanıcının sahibi ve adı boş olmamalıdır"
   },
@@ -230,6 +253,7 @@
     "Unable to get the email modify rule.": "E-posta değiştirme kuralı alınamıyor.",
     "Unable to get the phone modify rule.": "Telefon değiştirme kuralı alınamıyor.",
     "Unknown type": "Bilinmeyen tür",
+    "Wrong parameter": "Yanlış parametre",
     "Wrong verification code!": "Yanlış doğrulama kodu!",
     "You should verify your code in %d min!": "Kodunuzu %d dakika içinde doğrulamalısınız!",
     "please add a SMS provider to the \"Providers\" list for the application: %s": "lütfen uygulama için \"Sağlayıcılar\" listesine bir SMS sağlayıcı ekleyin: %s",

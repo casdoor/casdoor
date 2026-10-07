@@ -10,10 +10,13 @@
     "Failed to create user, user information is invalid: %s": "No se pudo crear el usuario, la información del usuario es inválida: %s",
     "Failed to login in: %s": "No se ha podido iniciar sesión en: %s",
     "Invalid token": "Token inválido",
+    "Please sign in again": "Inicie sesión de nuevo",
+    "Requested scope exceeds original device authorization scope": "El alcance solicitado supera el alcance de la autorización de dispositivo original",
     "State expected: %s, but got: %s": "Estado esperado: %s, pero se obtuvo: %s",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %s, please use another way to sign up": "La cuenta para el proveedor: %s y nombre de usuario: %s (%s) no existe y no está permitido registrarse como una cuenta nueva a través de %s, por favor use otro método para registrarse",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "La cuenta para el proveedor: %s y el nombre de usuario: %s (%s) no existe y no se permite registrarse como una nueva cuenta, por favor contacte a su soporte de TI",
     "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)": "La cuenta para proveedor: %s y nombre de usuario: %s (%s) ya está vinculada a otra cuenta: %s (%s)",
+    "The application does not match the device authorization request": "La aplicación no coincide con la solicitud de autorización de dispositivo",
     "The application: %s does not exist": "La aplicación: %s no existe",
     "The application: %s has disabled users to signin": "La aplicación: %s ha desactivado el inicio de sesión de usuarios",
     "The group: %s does not exist": "El grupo: %s no existe",
@@ -30,6 +33,7 @@
     "The plan: %s does not exist": "El plan: %s no existe",
     "The pricing: %s does not exist": "El precio: %s no existe",
     "The pricing: %s does not have plan: %s": "El precio: %s no tiene el plan: %s",
+    "The pricing: %s is invite-only, only invited users can use it": "El precio: %s es solo por invitación, solo los usuarios invitados pueden usarlo",
     "The provider: %s does not exist": "El proveedor: %s no existe",
     "The provider: %s is not enabled for the application": "El proveedor: %s no está habilitado para la aplicación",
     "Unauthorized operation": "Operación no autorizada",
@@ -44,9 +48,13 @@
   "cas": {
     "Service %s and %s do not match": "Los servicios %s y %s no coinciden"
   },
+  "cert": {
+    "The cert name: %s is already used by another organization": "El nombre de certificado: %s ya lo usa otra organización"
+  },
   "check": {
     "%s does not meet the CIDR format requirements: %s": "%s no cumple con los requisitos del formato CIDR: %s",
     "Affiliation cannot be blank": "La afiliación no puede estar vacía",
+    "Application does not exist": "La aplicación no existe",
     "CIDR for IP: %s should not be empty": "El CIDR para la IP: %s no debe estar vacío",
     "Default code does not match the code's matching rules": "El código predeterminado no cumple con las reglas de validación del código",
     "DisplayName cannot be blank": "El nombre de visualización no puede estar en blanco",
@@ -62,6 +70,7 @@
     "Guest users must upgrade their account by setting a username and password before they can sign in directly": "Los usuarios invitados deben actualizar su cuenta configurando un nombre de usuario y una contraseña antes de poder iniciar sesión directamente",
     "Invitation code cannot be blank": "El código de invitación no puede estar vacío",
     "Invitation code exhausted": "Código de invitación agotado",
+    "Invitation code expired": "El código de invitación ha caducado",
     "Invitation code is invalid": "Código de invitación inválido",
     "Invitation code suspended": "Código de invitación suspendido",
     "LastName cannot be blank": "El apellido no puede estar en blanco",
@@ -106,24 +115,33 @@
     "the adapter: %s is not found": "no se encontró el adaptador: %s"
   },
   "general": {
+    "Application cannot be empty": "La aplicación no puede estar vacía",
     "Failed to import groups": "Error al importar grupos",
     "Failed to import users": "Error al importar usuarios",
+    "Granted scopes cannot be empty": "Los alcances concedidos no pueden estar vacíos",
     "Insufficient balance: new balance %v would be below credit limit %v": "Saldo insuficiente: el nuevo saldo %v estaría por debajo del límite de crédito %v",
     "Insufficient balance: new organization balance %v would be below credit limit %v": "Saldo insuficiente: el nuevo saldo de la organización %v estaría por debajo del límite de crédito %v",
+    "Invalid application": "Aplicación no válida",
     "Missing parameter": "Parámetro faltante",
+    "Multiple captcha providers are not allowed in the same application: %s": "No se permiten varios proveedores de captcha en la misma aplicación: %s",
     "Only admin user can specify user": "Solo el usuario administrador puede especificar usuario",
     "Please login first": "Por favor, inicia sesión primero",
+    "Please sign in first": "Inicie sesión primero",
     "The LDAP: %s does not exist": "El LDAP: %s no existe",
+    "The object does not exist": "El objeto no existe",
     "The organization: %s should have one application at least": "La organización: %s debe tener al menos una aplicación",
     "The syncer: %s does not exist": "El sincronizador: %s no existe",
+    "The token: %s does not exist": "El token: %s no existe",
     "The uploaded file contains no user": "El archivo subido no contiene ningún usuario",
     "The uploaded file is empty": "El archivo subido está vacío",
+    "The user doesn't exist": "El usuario no existe",
     "The user name in line %d is empty": "El nombre de usuario en la línea %d está vacío",
     "The user: %s doesn't exist": "El usuario: %s no existe",
     "The user: %s in line %d is duplicated with line %d": "El usuario: %s en la línea %d está duplicado con la línea %d",
     "The user: %s is not found": "El usuario: %s no encontrado",
     "The users already exist: %s": "Los siguientes usuarios ya existen: %s",
     "User is required for User category transaction": "El usuario es obligatorio para la transacción de la categoría Usuario",
+    "User not found": "Usuario no encontrado",
     "Wrong userId": "ID de usuario incorrecto",
     "don't support captchaProvider: ": "No apoyo a captchaProvider",
     "this operation is not allowed in demo mode": "esta operación no está permitida en modo de demostración",
@@ -137,6 +155,7 @@
   },
   "link": {
     "Please link first": "Por favor, enlaza primero",
+    "Provider name is required for Custom Flexible providers": "Los proveedores Custom Flexible requieren un nombre de proveedor",
     "This application has no providers": "Esta aplicación no tiene proveedores",
     "This application has no providers of type": "Esta aplicación no tiene proveedores del tipo",
     "This provider can't be unlinked": "Este proveedor no se puede desvincular",
@@ -175,10 +194,11 @@
   "service": {
     "Empty parameters for emailForm: %v": "Parámetros vacíos para el formulario de correo electrónico: %v",
     "Invalid Email receivers: %s": "Receptores de correo electrónico no válidos: %s",
-    "Invalid phone receivers: %s": "Receptores de teléfono no válidos: %s"
+    "Invalid phone receivers: %s": "Receptores de teléfono no válidos: %s",
+    "Too many requests, please try again later": "Demasiadas solicitudes, inténtelo de nuevo más tarde"
   },
   "session": {
-    "session id %s is the current session and cannot be deleted": "session id %s is the current session and cannot be deleted"
+    "session id %s is the current session and cannot be deleted": "El ID de sesión %s es la sesión actual y no se puede eliminar"
   },
   "storage": {
     "The objectKey: %s is not allowed": "El objectKey: %s no está permitido",
@@ -194,7 +214,9 @@
     "Grant_type: %s is not supported in this application": "El tipo de subvención: %s no es compatible con esta aplicación",
     "Invalid application or wrong clientSecret": "Solicitud inválida o clientSecret incorrecto",
     "Invalid client_id": "Identificador de cliente no válido",
+    "Invalid scope": "Alcance no válido",
     "Redirect URI: %s doesn't exist in the allowed Redirect URI list": "El URI de redirección: %s no existe en la lista de URI de redirección permitidos",
+    "The nonce parameter is required for this response type": "El parámetro nonce es obligatorio para este tipo de respuesta",
     "Token not found, invalid accessToken": "Token no encontrado, accessToken inválido"
   },
   "user": {
@@ -207,6 +229,7 @@
     "No application found for user": "No se encontró aplicación para el usuario",
     "Please use the set-password API to change the password": "Utilice la API set-password para cambiar la contraseña",
     "The new password must be different from your current password": "La nueva contraseña debe ser diferente de su contraseña actual",
+    "The new password must be different from your last %d passwords": "La nueva contraseña debe ser distinta de sus últimas %d contraseñas",
     "User is already verified": "El usuario ya está verificado",
     "the user's owner and name should not be empty": "el propietario y el nombre del usuario no deben estar vacíos"
   },
@@ -230,6 +253,7 @@
     "Unable to get the email modify rule.": "No se puede obtener la regla de modificación de correo electrónico.",
     "Unable to get the phone modify rule.": "No se pudo obtener la regla de modificación del teléfono.",
     "Unknown type": "Tipo desconocido",
+    "Wrong parameter": "Parámetro incorrecto",
     "Wrong verification code!": "¡Código de verificación incorrecto!",
     "You should verify your code in %d min!": "¡Deberías verificar tu código en %d minutos!",
     "please add a SMS provider to the \"Providers\" list for the application: %s": "agregue un proveedor de SMS a la lista \"Proveedores\" para la aplicación: %s",

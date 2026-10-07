@@ -10,10 +10,13 @@
     "Failed to create user, user information is invalid: %s": "Échec de la création de l'utilisateur, les informations utilisateur sont invalides : %s",
     "Failed to login in: %s": "Échec de la connexion : %s",
     "Invalid token": "Jeton invalide",
+    "Please sign in again": "Veuillez vous reconnecter",
+    "Requested scope exceeds original device authorization scope": "La portée demandée dépasse celle de l'autorisation d'appareil d'origine",
     "State expected: %s, but got: %s": "État attendu : %s, mais obtenu : %s",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %s, please use another way to sign up": "Le compte pour le fournisseur : %s et le nom d'utilisateur : %s (%s) n'existe pas et n'est pas autorisé à s'inscrire en tant que nouveau compte via %s, veuillez utiliser une autre méthode pour vous inscrire",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "Le compte pour le fournisseur : %s et le nom d'utilisateur : %s (%s) n'existe pas et n'est pas autorisé à s'inscrire comme nouveau compte, veuillez contacter votre support informatique",
     "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)": "Le compte du fournisseur : %s et le nom d'utilisateur : %s (%s) sont déjà liés à un autre compte : %s (%s)",
+    "The application does not match the device authorization request": "L'application ne correspond pas à la demande d'autorisation d'appareil",
     "The application: %s does not exist": "L'application : %s n'existe pas",
     "The application: %s has disabled users to signin": "L'application: %s a désactivé la connexion des utilisateurs",
     "The group: %s does not exist": "Le groupe : %s n'existe pas",
@@ -30,6 +33,7 @@
     "The plan: %s does not exist": "Le plan : %s n'existe pas",
     "The pricing: %s does not exist": "Le tarif : %s n'existe pas",
     "The pricing: %s does not have plan: %s": "Le tarif : %s n'a pas de plan : %s",
+    "The pricing: %s is invite-only, only invited users can use it": "La tarification : %s est sur invitation uniquement, seuls les utilisateurs invités peuvent l'utiliser",
     "The provider: %s does not exist": "Le fournisseur : %s n'existe pas",
     "The provider: %s is not enabled for the application": "Le fournisseur :%s n'est pas activé pour l'application",
     "Unauthorized operation": "Opération non autorisée",
@@ -44,9 +48,13 @@
   "cas": {
     "Service %s and %s do not match": "Les services %s et %s ne correspondent pas"
   },
+  "cert": {
+    "The cert name: %s is already used by another organization": "Le nom de certificat : %s est déjà utilisé par une autre organisation"
+  },
   "check": {
     "%s does not meet the CIDR format requirements: %s": "%s ne respecte pas les exigences du format CIDR : %s",
     "Affiliation cannot be blank": "L'affiliation ne peut pas être vide",
+    "Application does not exist": "L'application n'existe pas",
     "CIDR for IP: %s should not be empty": "Le CIDR pour l'IP : %s ne doit pas être vide",
     "Default code does not match the code's matching rules": "Le code par défaut ne respecte pas les règles de validation du code",
     "DisplayName cannot be blank": "Le nom d'affichage ne peut pas être vide",
@@ -62,6 +70,7 @@
     "Guest users must upgrade their account by setting a username and password before they can sign in directly": "Les utilisateurs invités doivent mettre à niveau leur compte en définissant un nom d'utilisateur et un mot de passe avant de pouvoir se connecter directement",
     "Invitation code cannot be blank": "Le code d'invitation ne peut pas être vide",
     "Invitation code exhausted": "Code d'invitation épuisé",
+    "Invitation code expired": "Le code d'invitation a expiré",
     "Invitation code is invalid": "Code d'invitation invalide",
     "Invitation code suspended": "Code d'invitation suspendu",
     "LastName cannot be blank": "Le nom de famille ne peut pas être vide",
@@ -106,24 +115,33 @@
     "the adapter: %s is not found": "l'adaptateur : %s est introuvable"
   },
   "general": {
+    "Application cannot be empty": "L'application ne peut pas être vide",
     "Failed to import groups": "Échec de l'importation des groupes",
     "Failed to import users": "Échec de l'importation des utilisateurs",
+    "Granted scopes cannot be empty": "Les portées accordées ne peuvent pas être vides",
     "Insufficient balance: new balance %v would be below credit limit %v": "Solde insuffisant : le nouveau solde %v serait inférieur à la limite de crédit %v",
     "Insufficient balance: new organization balance %v would be below credit limit %v": "Solde insuffisant : le nouveau solde de l'organisation %v serait inférieur à la limite de crédit %v",
+    "Invalid application": "Application non valide",
     "Missing parameter": "Paramètre manquant",
+    "Multiple captcha providers are not allowed in the same application: %s": "Plusieurs fournisseurs de captcha ne sont pas autorisés dans la même application : %s",
     "Only admin user can specify user": "Seul un administrateur peut désigner un utilisateur",
     "Please login first": "Veuillez d'abord vous connecter",
+    "Please sign in first": "Veuillez d'abord vous connecter",
     "The LDAP: %s does not exist": "Le LDAP : %s n'existe pas",
+    "The object does not exist": "L'objet n'existe pas",
     "The organization: %s should have one application at least": "L'organisation : %s doit avoir au moins une application",
     "The syncer: %s does not exist": "Le synchroniseur : %s n'existe pas",
+    "The token: %s does not exist": "Le jeton : %s n'existe pas",
     "The uploaded file contains no user": "Le fichier téléversé ne contient aucun utilisateur",
     "The uploaded file is empty": "Le fichier téléversé est vide",
+    "The user doesn't exist": "L'utilisateur n'existe pas",
     "The user name in line %d is empty": "Le nom d'utilisateur à la ligne %d est vide",
     "The user: %s doesn't exist": "L'utilisateur : %s n'existe pas",
     "The user: %s in line %d is duplicated with line %d": "L'utilisateur : %s à la ligne %d est en double avec la ligne %d",
     "The user: %s is not found": "L'utilisateur : %s est introuvable",
     "The users already exist: %s": "Les utilisateurs suivants existent déjà : %s",
     "User is required for User category transaction": "L'utilisateur est requis pour la transaction de catégorie Utilisateur",
+    "User not found": "Utilisateur introuvable",
     "Wrong userId": "ID utilisateur incorrect",
     "don't support captchaProvider: ": "ne prend pas en charge captchaProvider: ",
     "this operation is not allowed in demo mode": "cette opération n'est pas autorisée en mode démo",
@@ -137,6 +155,7 @@
   },
   "link": {
     "Please link first": "Veuillez d'abord faire le lien",
+    "Provider name is required for Custom Flexible providers": "Le nom du fournisseur est obligatoire pour les fournisseurs Custom Flexible",
     "This application has no providers": "Cette application n'a aucun fournisseur",
     "This application has no providers of type": "Cette application ne dispose d'aucun fournisseur de type",
     "This provider can't be unlinked": "Ce fournisseur ne peut pas être dissocié",
@@ -175,10 +194,11 @@
   "service": {
     "Empty parameters for emailForm: %v": "Paramètres vides pour emailForm : %v",
     "Invalid Email receivers: %s": "Destinataires d'e-mail invalides : %s",
-    "Invalid phone receivers: %s": "Destinataires de téléphone invalide : %s"
+    "Invalid phone receivers: %s": "Destinataires de téléphone invalide : %s",
+    "Too many requests, please try again later": "Trop de requêtes, veuillez réessayer plus tard"
   },
   "session": {
-    "session id %s is the current session and cannot be deleted": "session id %s is the current session and cannot be deleted"
+    "session id %s is the current session and cannot be deleted": "L'ID de session %s correspond à la session actuelle et ne peut pas être supprimé"
   },
   "storage": {
     "The objectKey: %s is not allowed": "La clé d'objet : %s n'est pas autorisée",
@@ -194,7 +214,9 @@
     "Grant_type: %s is not supported in this application": "Type_de_subvention : %s n'est pas pris en charge dans cette application",
     "Invalid application or wrong clientSecret": "Application invalide ou clientSecret incorrect",
     "Invalid client_id": "Identifiant de client invalide",
+    "Invalid scope": "Portée non valide",
     "Redirect URI: %s doesn't exist in the allowed Redirect URI list": "URI de redirection: %s n'existe pas dans la liste des URI de redirection autorisés",
+    "The nonce parameter is required for this response type": "Le paramètre nonce est obligatoire pour ce type de réponse",
     "Token not found, invalid accessToken": "Jeton non trouvé, accessToken invalide"
   },
   "user": {
@@ -207,6 +229,7 @@
     "No application found for user": "Aucune application trouvée pour l'utilisateur",
     "Please use the set-password API to change the password": "Veuillez utiliser l'API set-password pour modifier le mot de passe",
     "The new password must be different from your current password": "Le nouveau mot de passe doit être différent de votre mot de passe actuel",
+    "The new password must be different from your last %d passwords": "Le nouveau mot de passe doit être différent de vos %d derniers mots de passe",
     "User is already verified": "L'utilisateur est déjà vérifié",
     "the user's owner and name should not be empty": "le propriétaire et le nom de l'utilisateur ne doivent pas être vides"
   },
@@ -230,6 +253,7 @@
     "Unable to get the email modify rule.": "Incapable d'obtenir la règle de modification de courriel.",
     "Unable to get the phone modify rule.": "Impossible d'obtenir la règle de modification de téléphone.",
     "Unknown type": "Type inconnu",
+    "Wrong parameter": "Paramètre incorrect",
     "Wrong verification code!": "Mauvais code de vérification !",
     "You should verify your code in %d min!": "Vous devriez vérifier votre code en %d min !",
     "please add a SMS provider to the \"Providers\" list for the application: %s": "veuillez ajouter un fournisseur SMS à la liste \"Providers\" pour l'application : %s",
