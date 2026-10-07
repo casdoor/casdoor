@@ -55,6 +55,28 @@ func GetUserByField(organizationName string, field string, value string) (*User,
 	}
 }
 
+func GetUserByFieldIgnoreCase(organizationName string, field string, value string) (*User, error) {
+	if field == "" || value == "" {
+		return nil, nil
+	}
+
+	if !util.FilterSQLIdentifier(field) {
+		return nil, nil
+	}
+
+	user := User{Owner: organizationName}
+	existed, err := ormer.Engine.Where(fmt.Sprintf("lower(%s)=?", strings.ToLower(field)), strings.ToLower(value)).Get(&user)
+	if err != nil {
+		return nil, err
+	}
+
+	if existed {
+		return &user, nil
+	} else {
+		return nil, nil
+	}
+}
+
 func HasUserByField(organizationName string, field string, value string) bool {
 	user, err := GetUserByField(organizationName, field, value)
 	if err != nil {
