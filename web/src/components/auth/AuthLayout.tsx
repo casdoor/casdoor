@@ -298,10 +298,10 @@ export function AuthLayout({
                 <div className="login-logo-box mb-6 flex justify-center">
                   {application?.homepageUrl ? (
                     <a href={application.homepageUrl} target="_blank" rel="noreferrer">
-                      <img src={logo} alt={application?.displayName ?? "Casdoor"} className="h-10 max-w-full object-contain" />
+                      <img src={logo} alt={application?.displayName ?? "Casdoor"} className="h-auto max-h-32 w-auto max-w-[185px] object-contain" />
                     </a>
                   ) : (
-                    <img src={logo} alt={application?.displayName ?? "Casdoor"} className="h-10 max-w-full object-contain" />
+                    <img src={logo} alt={application?.displayName ?? "Casdoor"} className="h-auto max-h-32 w-auto max-w-[185px] object-contain" />
                   )}
                 </div>
               )}
