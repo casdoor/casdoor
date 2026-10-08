@@ -18,6 +18,7 @@ import {ConsoleDisabledPage} from "@/components/common/ConsoleDisabledPage";
 import {Loading} from "@/components/common/Loading";
 import {AppLayout} from "@/components/layout/AppLayout";
 import {useAccount} from "@/hooks/use-account";
+import {useAccountHelmet} from "@/hooks/use-application-chrome";
 import * as Auth from "@/auth/Auth";
 import * as Conf from "@/Conf";
 import * as Setting from "@/lib/setting";
@@ -206,6 +207,8 @@ function RequireConsoleAccess({children}: {children: React.ReactNode}) {
 }
 
 export default function App() {
+  const {account} = useAccount();
+  useAccountHelmet(account);
   useRequiredMfaRedirect();
 
   return (

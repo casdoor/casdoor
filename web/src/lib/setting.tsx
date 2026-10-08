@@ -964,6 +964,14 @@ export function isSignupItemPrompted(signupItem) {
   return signupItem.visible && signupItem.prompted;
 }
 
+// the signup items the prompt page can ask for, and the user field each one fills
+export const PromptedSignupItemFields: Record<string, string> = {
+  "Display name": "displayName",
+  "Email": "email",
+  "Phone": "phone",
+  "Country/Region": "region",
+};
+
 export function getAllPromptedProviderItems(application) {
   return application.providers?.filter(providerItem => isProviderPrompted(providerItem));
 }
@@ -1054,7 +1062,7 @@ export function hasPromptPage(application) {
   }
 
   const signupItems = getAllPromptedSignupItems(application);
-  if (signupItems?.filter(item => item.name === "Country/Region").length > 0) {
+  if (signupItems?.filter(item => PromptedSignupItemFields[item.name] !== undefined).length > 0) {
     return true;
   }
 
@@ -1087,12 +1095,13 @@ function isSignupItemAnswered(user, signupItem) {
     return false;
   }
 
-  if (signupItem.name !== "Country/Region") {
+  const field = PromptedSignupItemFields[signupItem.name];
+  if (field === undefined) {
     return true;
   }
 
-  const value = user["region"];
-  return value !== undefined && value !== "";
+  const value = user[field];
+  return value !== undefined && value !== null && value !== "";
 }
 
 export function isPromptAnswered(user, application) {

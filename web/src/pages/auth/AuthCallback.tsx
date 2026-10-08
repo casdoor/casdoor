@@ -198,15 +198,41 @@ export default function AuthCallback() {
         Setting.showMessage("success", i18next.t("application:Logged in successfully"));
         navigate(Setting.getFromLink());
       } else if (type === "code") {
-        if (responseMode === "form_post") {
-          Setting.createFormAndSubmit(oAuthParams?.redirectUri, {code: res.data, state: oAuthParams?.state, iss: Setting.getOAuthIssuer()});
-        } else {
-          Setting.goToLink(
-            `${oAuthParams.redirectUri}${concatChar}code=${encodeURIComponent(res.data)}&state=${encodeURIComponent(
-              oAuthParams.state,
-            )}${Setting.getOAuthIssuerParam()}`,
-          );
+        const goToRedirectUrl = () => {
+          if (responseMode === "form_post") {
+            Setting.createFormAndSubmit(oAuthParams?.redirectUri, {code: res.data, state: oAuthParams?.state, iss: Setting.getOAuthIssuer()});
+          } else {
+            Setting.goToLink(
+              `${oAuthParams.redirectUri}${concatChar}code=${encodeURIComponent(res.data)}&state=${encodeURIComponent(
+                oAuthParams.state,
+              )}${Setting.getOAuthIssuerParam()}`,
+            );
+          }
+        };
+
+        // The backend sets data3 when the application has a prompt page: an account a
+        // provider just created may still miss what the application wants filled in.
+        const promptApplication = params.get("application") ?? applicationName;
+        if (res.data3 !== true || !promptApplication) {
+          goToRedirectUrl();
+          return;
         }
+        Promise.all([ApplicationBackend.getApplication("admin", promptApplication), AuthBackend.getAccount()])
+          .then(([appRes, accountRes]: any[]) => {
+            if (
+              appRes.status === "ok" && accountRes.status === "ok" &&
+              Setting.hasPromptPage(appRes.data) && !Setting.isPromptAnswered(accountRes.data, appRes.data)
+            ) {
+              Setting.goToLink(
+                `/prompt/${promptApplication}?redirectUri=${encodeURIComponent(oAuthParams.redirectUri)}&code=${encodeURIComponent(
+                  res.data,
+                )}&state=${encodeURIComponent(oAuthParams.state)}`,
+              );
+            } else {
+              goToRedirectUrl();
+            }
+          })
+          .catch(goToRedirectUrl);
       } else if (responseTypes.includes("token") || responseTypes.includes("id_token")) {
         if (responseMode === "form_post") {
           Setting.createFormAndSubmit(oAuthParams?.redirectUri, {

@@ -426,12 +426,12 @@ export function ApplicationUiCustomizationTab({application, updateField}: Applic
               key: "prompted",
               title: i18next.t("provider:Prompted"),
               width: 90,
-              // a hidden item can be asked for after signup; Country/Region even when shown
+              // a hidden item can be asked for after signup; the ones the prompt page has a field for even when shown
               render: (row: any, _i, patch) => {
                 if (row.name === "ID" || NON_FIELD_SIGNUP_ITEMS.includes(row.name)) {
                   return null;
                 }
-                if (row.visible && row.name !== "Country/Region") {
+                if (row.visible && Setting.PromptedSignupItemFields[row.name] === undefined) {
                   return null;
                 }
                 return <Switch checked={!!row.prompted} onCheckedChange={(v) => patch({prompted: v})} />;
