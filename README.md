@@ -73,6 +73,8 @@
 
 ## ❤️ Sponsors
 
+> [Want to appear here?](mailto:admin@casdoor.org)
+
 <table>
   <tr>
     <td width="300" align="center">
