@@ -255,6 +255,10 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 			}
 
 			resp = codeToResponseWithTokens(code, responseType)
+			if resp.Status == "ok" && resp.Data3 == nil && application.HasPromptPage() {
+				// makes the lightweight callback page hand over to the React one, which shows the prompt page
+				resp.Data3 = true
+			}
 		}
 	} else if isResponseType { // implicit flow
 		redirectUri := c.Ctx.Input.Query("redirectUri")

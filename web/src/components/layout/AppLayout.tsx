@@ -11,7 +11,7 @@ import {Header} from "@/components/layout/Header";
 import {PoweredBy} from "@/components/layout/PoweredBy";
 import {AppSidebar} from "@/components/layout/Sidebar";
 import {useAccount} from "@/hooks/use-account";
-import {useAccountHelmet, useThemeData} from "@/hooks/use-application-chrome";
+import {useThemeData} from "@/hooks/use-application-chrome";
 import * as Setting from "@/lib/setting";
 
 /**
@@ -33,7 +33,6 @@ export function AppLayout() {
   const palette = useCommandPalette();
   // the console follows the signed-in user's organization theme, title and favicon
   useThemeData(Setting.getThemeData(account?.organization, null));
-  useAccountHelmet(account);
 
   return (
     <div className="flex h-screen flex-col overflow-hidden bg-background">

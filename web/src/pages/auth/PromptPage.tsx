@@ -3,7 +3,9 @@ import i18next from "i18next";
 import {useNavigate, useParams, useSearchParams} from "react-router-dom";
 import {Alert, AlertDescription} from "@/components/ui/alert";
 import {Button} from "@/components/ui/button";
+import {Input} from "@/components/ui/input";
 import {Label} from "@/components/ui/label";
+import {CountryCodeSelect} from "@/components/common/CountryCodeSelect";
 import {Loading} from "@/components/common/Loading";
 import {RegionSelect} from "@/components/common/RegionSelect";
 import {AuthLayout} from "@/components/auth/AuthLayout";
@@ -121,6 +123,7 @@ export default function PromptPage({application: applicationProp}: {application?
   };
 
   const promptedItems = (application?.signupItems ?? []).filter((item: any) => Setting.isSignupItemPrompted(item));
+  const defaultCountryCode = application?.organizationObj?.countryCodes?.[0] ?? "";
   const hasPromptedProviders = (application?.providers ?? []).some((item: any) => Setting.isProviderPrompted(item));
 
   return (
@@ -168,14 +171,71 @@ export default function PromptPage({application: applicationProp}: {application?
           </div>
         ) : null}
 
-        {promptedItems.map((item: any) =>
-          item.name === "Country/Region" ? (
-            <div key={item.name} className="space-y-2">
-              <Label>{i18next.t("user:Country/Region")}</Label>
-              <RegionSelect value={user?.region ?? ""} onChange={(value) => update({region: value})} />
-            </div>
-          ) : null,
-        )}
+        {promptedItems.map((item: any) => {
+          if (item.name === "Country/Region") {
+            return (
+              <div key={item.name} className="space-y-2">
+                <Label>{i18next.t("user:Country/Region")}</Label>
+                <RegionSelect value={user?.region ?? ""} onChange={(value) => update({region: value})} />
+              </div>
+            );
+          }
+          if (item.name === "Display name") {
+            return (
+              <div key={item.name} className="space-y-2">
+                <Label htmlFor="displayName">{item.label || i18next.t("general:Display name")}</Label>
+                <Input
+                  id="displayName"
+                  placeholder={item.placeholder}
+                  value={user?.displayName ?? ""}
+                  onChange={(e) => update({displayName: e.target.value})}
+                />
+              </div>
+            );
+          }
+          if (item.name === "Email") {
+            return (
+              <div key={item.name} className="space-y-2">
+                <Label htmlFor="email">{item.label || i18next.t("general:Email")}</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  autoComplete="email"
+                  placeholder={item.placeholder}
+                  value={user?.email ?? ""}
+                  onChange={(e) => update({email: e.target.value})}
+                />
+              </div>
+            );
+          }
+          if (item.name === "Phone") {
+            return (
+              <div key={item.name} className="space-y-2">
+                <Label htmlFor="phone">{item.label || i18next.t("general:Phone")}</Label>
+                <div className="flex gap-2">
+                  <div className="w-28 max-w-[50%] shrink-0">
+                    <CountryCodeSelect
+                      className="px-2"
+                      value={user?.countryCode || defaultCountryCode}
+                      onChange={(value) => update({countryCode: value})}
+                      countryCodes={application?.organizationObj?.countryCodes}
+                    />
+                  </div>
+                  <Input
+                    id="phone"
+                    className="min-w-0 flex-1"
+                    autoComplete="tel"
+                    placeholder={item.placeholder}
+                    value={user?.phone ?? ""}
+                    // an account a provider created has no calling code yet
+                    onChange={(e) => update({phone: e.target.value, countryCode: user?.countryCode || defaultCountryCode})}
+                  />
+                </div>
+              </div>
+            );
+          }
+          return null;
+        })}
 
         <Button
           className="w-full"
