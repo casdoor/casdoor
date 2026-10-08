@@ -196,14 +196,16 @@ export default function MfaSetupPage() {
           countryCode={verified.countryCode}
           onSuccess={() => {
             Setting.showMessage("success", i18next.t("general:Enabled successfully"));
-            reload();
             // A "RequiredMfa" sign-in parks the URL it wanted to reach here.
             const mfaRedirectUrl = localStorage.getItem("mfaRedirectUrl");
             if (mfaRedirectUrl) {
+              // The full page load fetches the account again. Reloading it here would
+              // remount this wizard, which then falls back to SMS as nothing is required anymore.
               localStorage.removeItem("mfaRedirectUrl");
               Setting.goToLink(mfaRedirectUrl);
             } else {
-              navigate("/account");
+              // Leave only once the account is fresh, the stale one still asks for this factor.
+              reload().then(() => navigate("/account"));
             }
           }}
           onFail={(res) => Setting.showMessage("error", `${i18next.t("general:Failed to enable")}: ${res.msg}`)}
