@@ -893,7 +893,7 @@ export default function LoginPage({type = "login", application: applicationProp,
     signInWithWebAuthn(application, username, values, oAuthParams)
       .then((res: any) => {
         if (res?.status === "ok") {
-          handleLoginResult(res, values, oAuthParams);
+          checkMfa(res, values, oAuthParams, (ok) => handleLoginResult(ok, values, oAuthParams));
         } else {
           Setting.showMessage("error", res?.msg);
         }
