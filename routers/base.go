@@ -249,7 +249,10 @@ func clearSessionOfRevokedToken(ctx *context.Context) error {
 		return err
 	}
 	if token != nil && token.ExpiresIn > 0 {
-		return nil
+		isExpired, _ := util.IsTokenExpired(token.CreatedTime, token.ExpiresIn)
+		if !isExpired {
+			return nil
+		}
 	}
 
 	return clearSessionOfToken(ctx)
