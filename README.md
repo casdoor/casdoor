@@ -15,6 +15,7 @@
     <a href="https://casdoor.ai"><strong>Website</strong></a> &middot;
     <a href="https://casdoor.ai/docs/overview"><strong>Documentation</strong></a> &middot;
     <a href="https://demo.casdoor.com"><strong>Live demo</strong></a> &middot;
+    <a href="https://www.casdoor.com/?utm_source=github&amp;utm_medium=readme&amp;utm_content=header"><strong>Casdoor Cloud</strong></a> &middot;
     <a href="https://discord.gg/5rPsrAzK7S"><strong>Discord</strong></a>
   </p>
 
@@ -112,6 +113,8 @@ Prefer not to install anything? Use the hosted demos:
 | **Read-only** | [door.casdoor.net](https://door.casdoor.net) | Stable global demo. **Every write operation fails by design.** |
 
 Both accept the same `built-in` / `admin` / `123` credentials.
+
+Want it hosted for production instead? [Casdoor Cloud](https://www.casdoor.com/pricing?utm_source=github&utm_medium=readme&utm_content=try) runs a dedicated Casdoor instance and database for you, kept up to date by the Casdoor team. It is the same open-source Casdoor, so you can move between Cloud and self-hosting at any time.
 
 ## 🤔 Why Casdoor
 
