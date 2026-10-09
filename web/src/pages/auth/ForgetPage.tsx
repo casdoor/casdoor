@@ -214,7 +214,7 @@ export default function ForgetPage() {
         ? () => setStep("verify")
         : undefined;
 
-  const signinLink = Setting.getLoginLink(application) || "/login";
+  const signinLink = Setting.getStoredSigninUrl() || Setting.getLoginLink(application) || "/login";
   const backToSigninClass = "inline-flex items-center gap-1.5 font-medium text-foreground underline-offset-4 hover:underline";
 
   return (
