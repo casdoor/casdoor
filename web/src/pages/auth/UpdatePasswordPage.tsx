@@ -66,7 +66,7 @@ export default function UpdatePasswordPage() {
 
   // same rules as PasswordModal: the organization's password options, and no old
   // password from an account that has none or from a local admin
-  const organization = account.organization ?? application?.organizationObj;
+  const organization = application?.organizationObj ?? account.organization;
   const passwordOptions: string[] = organization?.passwordOptions ?? [];
   const needOldPassword = (account.password !== "" || account.ldap !== "") && !Setting.isLocalAdminUser(account);
 
