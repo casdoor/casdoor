@@ -216,9 +216,6 @@ func GetMaskedOrganization(isAdmin bool, organization *Organization, errs ...err
 		organization.KerberosKeytab = "***"
 	}
 	if !isAdmin {
-		if organization.PasswordObfuscatorKey != "" {
-			organization.PasswordObfuscatorKey = "***"
-		}
 		if organization.PasswordSalt != "" {
 			organization.PasswordSalt = "***"
 		}
@@ -324,6 +321,9 @@ func UpdateOrganization(id string, organization *Organization, isGlobalAdmin boo
 	}
 	if organization.KerberosKeytab == "***" {
 		session.Omit("kerberos_keytab")
+	}
+	if organization.PasswordSalt == "***" {
+		session.Omit("password_salt")
 	}
 
 	affected, err := session.Update(organization)
