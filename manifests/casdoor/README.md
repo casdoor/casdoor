@@ -121,6 +121,7 @@ With `initData.merge: true` (the default), an object that already exists only ge
 |---|---|---|
 | `service.type` | Kubernetes service type | `ClusterIP` |
 | `service.port` | Service port | `8000` |
+| `service.annotations` | Annotations to add to the Service | `{}` |
 
 ### Ingress
 
