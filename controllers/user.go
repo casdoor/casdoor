@@ -773,6 +773,12 @@ func (c *ApiController) SetPassword() {
 		return
 	}
 
+	_, err = object.ExpireTokenByUser(targetUser.Owner, targetUser.Name)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
 	c.ResponseOk()
 }
 
