@@ -68,7 +68,7 @@ func getSafeRedirectPath(state string) string {
 func handleAuthCallback(w http.ResponseWriter, r *http.Request) {
 	site := getSiteByDomainWithWww(r.Host)
 	if site == nil {
-		responseError(w, "CasWAF error: site not found for host: %s", r.Host)
+		responseError(w, "Casdoor site error: site not found for host: %s", r.Host)
 		return
 	}
 
@@ -79,30 +79,30 @@ func handleSiteCallback(w http.ResponseWriter, r *http.Request, site *object.Sit
 	code := query.Get("code")
 	state := query.Get("state")
 	if code == "" {
-		responseError(w, "CasWAF error: the code should not be empty")
+		responseError(w, "Casdoor site error: the code should not be empty")
 		return
 	} else if state == "" {
-		responseError(w, "CasWAF error: the state should not be empty")
+		responseError(w, "Casdoor site error: the state should not be empty")
 		return
 	}
 
 	application, err := object.GetApplication(util.GetId(site.Owner, site.CasdoorApplication))
 	if err != nil {
-		responseError(w, "CasWAF error: casdoorClient.GetOAuthToken() error: %s", err.Error())
+		responseError(w, "Casdoor site error: casdoorClient.GetOAuthToken() error: %s", err.Error())
 		return
 	}
 	if application == nil {
-		responseError(w, "CasWAF error: the application: %s does not exist", site.CasdoorApplication)
+		responseError(w, "Casdoor site error: the application: %s does not exist", site.CasdoorApplication)
 		return
 	}
 
 	token, tokenError, err := object.GetAuthorizationCodeToken(application, application.ClientSecret, code, "", "", conf.GetAcceptLanguage(r.Header.Get("Accept-Language")))
 	if tokenError != nil {
-		responseError(w, "CasWAF error: casdoorClient.GetOAuthToken() error: %s", tokenError.Error)
+		responseError(w, "Casdoor site error: casdoorClient.GetOAuthToken() error: %s", tokenError.Error)
 		return
 	}
 	if err != nil {
-		responseError(w, "CasWAF error: casdoorClient.GetOAuthToken() error: %s", err.Error())
+		responseError(w, "Casdoor site error: casdoorClient.GetOAuthToken() error: %s", err.Error())
 		return
 	}
 

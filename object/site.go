@@ -60,6 +60,7 @@ type Site struct {
 	IsSelf         bool        `json:"isSelf"`
 	Status         string      `xorm:"varchar(100)" json:"status"`
 	Nodes          []*NodeItem `xorm:"mediumtext" json:"nodes"`
+	PublicPaths    []string    `xorm:"mediumtext" json:"publicPaths"`
 
 	CasdoorApplication string       `xorm:"varchar(100)" json:"casdoorApplication"`
 	ApplicationObj     *Application `xorm:"-" json:"applicationObj"`

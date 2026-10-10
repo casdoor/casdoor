@@ -1498,7 +1498,8 @@
     "Need redirect": "Need redirect",
     "Node": "Node",
     "Nodes": "Nodes",
-    "Public IP": "Public IP"
+    "Public IP": "Public IP",
+    "Public paths": "Public paths"
   },
   "subscription": {
     "Active": "Active",

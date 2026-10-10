@@ -1498,7 +1498,8 @@
     "Need redirect": "リダイレクトが必要",
     "Node": "ノード",
     "Nodes": "ノード一覧",
-    "Public IP": "パブリックIP"
+    "Public IP": "パブリックIP",
+    "Public paths": "公開パス"
   },
   "subscription": {
     "Active": "アクティブ",

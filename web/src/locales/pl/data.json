@@ -1498,7 +1498,8 @@
     "Need redirect": "Wymagane przekierowanie",
     "Node": "Węzeł",
     "Nodes": "Węzły",
-    "Public IP": "Publiczny IP"
+    "Public IP": "Publiczny IP",
+    "Public paths": "Ścieżki publiczne"
   },
   "subscription": {
     "Active": "Aktywna",

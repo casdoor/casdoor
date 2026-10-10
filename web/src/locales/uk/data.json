@@ -1498,7 +1498,8 @@
     "Need redirect": "Потрібне перенаправлення",
     "Node": "Вузол",
     "Nodes": "Вузли",
-    "Public IP": "Публічна IP"
+    "Public IP": "Публічна IP",
+    "Public paths": "Публічні шляхи"
   },
   "subscription": {
     "Active": "Активний",
