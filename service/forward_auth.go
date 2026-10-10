@@ -46,6 +46,23 @@ func getForwardedRequest(r *http.Request) (string, string, string) {
 	return scheme, host, uri
 }
 
+// getRuleRequest rebuilds the original request from the forwarded headers for the site rules.
+func getRuleRequest(r *http.Request, scheme string, host string, forwardedUrl *url.URL) *http.Request {
+	ruleRequest := r.Clone(r.Context())
+	if method := r.Header.Get("X-Forwarded-Method"); method != "" {
+		ruleRequest.Method = method
+	}
+
+	ruleUrl := *forwardedUrl
+	ruleUrl.Scheme = scheme
+	ruleUrl.Host = host
+	ruleRequest.URL = &ruleUrl
+	ruleRequest.Host = host
+	ruleRequest.RequestURI = forwardedUrl.RequestURI()
+	ruleRequest.Body = http.NoBody
+	return ruleRequest
+}
+
 // HandleForwardAuth answers the auth subrequest of a reverse proxy (Traefik forwardAuth, Caddy forward_auth,
 // Nginx auth_request) for the site whose domain is the forwarded host. Nginx sends X-Original-URL and gets
 // 401 with a Location header instead of a redirect.
@@ -69,8 +86,29 @@ func HandleForwardAuth(w http.ResponseWriter, r *http.Request) {
 		responseErrorWithoutCode(w, "Casdoor forward auth error: invalid URI: %s", uri)
 		return
 	}
+	isAuthRequest := r.Header.Get("X-Original-URL") != ""
+
+	isAllowed, statusCode, msg := evaluateSiteRules(site, getRuleRequest(r, scheme, host, forwardedUrl))
+	if !isAllowed {
+		// Nginx treats any status other than 2xx, 401 and 403 of auth_request as an error
+		if isAuthRequest && statusCode != http.StatusUnauthorized {
+			statusCode = http.StatusForbidden
+		}
+		w.WriteHeader(statusCode)
+		responseErrorWithoutCode(w, "%s", msg)
+		return
+	}
+
 	if forwardedUrl.Path == "/caswaf-handler" {
 		handleSiteCallback(w, r, site, scheme, forwardedUrl.Query())
+		return
+	}
+
+	if isSitePublicPath(site, forwardedUrl) {
+		for _, header := range siteUserHeaders {
+			w.Header().Set(header, "")
+		}
+		w.WriteHeader(http.StatusOK)
 		return
 	}
 
@@ -87,7 +125,7 @@ func HandleForwardAuth(w http.ResponseWriter, r *http.Request) {
 		}
 
 		signinUrl := getSiteSigninUrl(casdoorClient, scheme, host, uri)
-		if r.Header.Get("X-Original-URL") != "" {
+		if isAuthRequest {
 			w.Header().Set("Location", signinUrl)
 			w.WriteHeader(http.StatusUnauthorized)
 			return

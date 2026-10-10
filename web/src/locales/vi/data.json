@@ -1498,7 +1498,8 @@
     "Need redirect": "Cần chuyển hướng",
     "Node": "Nút",
     "Nodes": "Nút",
-    "Public IP": "IP công cộng"
+    "Public IP": "IP công cộng",
+    "Public paths": "Đường dẫn công khai"
   },
   "subscription": {
     "Active": "Hoạt động",

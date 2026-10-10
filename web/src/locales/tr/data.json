@@ -1498,7 +1498,8 @@
     "Need redirect": "Yönlendirme gerekli",
     "Node": "Düğüm",
     "Nodes": "Düğümler",
-    "Public IP": "Genel IP"
+    "Public IP": "Genel IP",
+    "Public paths": "Herkese açık yollar"
   },
   "subscription": {
     "Active": "Aktif",

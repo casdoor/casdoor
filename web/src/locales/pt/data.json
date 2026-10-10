@@ -1498,7 +1498,8 @@
     "Need redirect": "Redirecionamento necessário",
     "Node": "Nó",
     "Nodes": "Nós",
-    "Public IP": "IP público"
+    "Public IP": "IP público",
+    "Public paths": "Caminhos públicos"
   },
   "subscription": {
     "Active": "Ativa",

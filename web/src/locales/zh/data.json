@@ -1498,7 +1498,8 @@
     "Need redirect": "需要重定向",
     "Node": "节点",
     "Nodes": "节点列表",
-    "Public IP": "公网IP"
+    "Public IP": "公网IP",
+    "Public paths": "免登录路径"
   },
   "subscription": {
     "Active": "活跃的",

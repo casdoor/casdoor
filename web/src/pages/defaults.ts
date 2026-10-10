@@ -462,6 +462,7 @@ export function newSite(account: Account) {
     alertTryTimes: 3,
     alertProviders: [],
     challenges: [],
+    publicPaths: [],
     host: "",
     port: 8000,
     hosts: [],

@@ -1498,7 +1498,8 @@
     "Need redirect": "Weiterleitung erforderlich",
     "Node": "Knoten",
     "Nodes": "Knoten",
-    "Public IP": "Öffentliche IP"
+    "Public IP": "Öffentliche IP",
+    "Public paths": "Öffentliche Pfade"
   },
   "subscription": {
     "Active": "Aktiv",

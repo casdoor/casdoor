@@ -52,6 +52,7 @@ export default function SiteEditPage() {
     },
     {type: "select", name: "sslCert", labelKey: "application:SSL cert", options: () => certs},
     {type: "select", name: "casdoorApplication", labelKey: "site:Casdoor app", options: () => applications},
+    {type: "tags", name: "publicPaths", labelKey: "site:Public paths", when: (ctx) => !!ctx.record.casdoorApplication},
     {
       type: "select",
       name: "status",
