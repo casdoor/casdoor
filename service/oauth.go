@@ -33,12 +33,13 @@ func getSigninUrl(casdoorClient *casdoorsdk.Client, callbackUrl string, original
 		casdoorClient.Endpoint, casdoorClient.ClientId, url.QueryEscape(callbackUrl), scope, url.QueryEscape(originalPath))
 }
 
-func redirectToCasdoor(casdoorClient *casdoorsdk.Client, w http.ResponseWriter, r *http.Request) {
-	scheme := getScheme(r)
+func getSiteSigninUrl(casdoorClient *casdoorsdk.Client, scheme string, host string, originalPath string) string {
+	callbackUrl := fmt.Sprintf("%s://%s/caswaf-handler", scheme, host)
+	return getSigninUrl(casdoorClient, callbackUrl, originalPath)
+}
 
-	callbackUrl := fmt.Sprintf("%s://%s/caswaf-handler", scheme, r.Host)
-	originalPath := r.RequestURI
-	signinUrl := getSigninUrl(casdoorClient, callbackUrl, originalPath)
+func redirectToCasdoor(casdoorClient *casdoorsdk.Client, w http.ResponseWriter, r *http.Request) {
+	signinUrl := getSiteSigninUrl(casdoorClient, getScheme(r), r.Host, r.RequestURI)
 	http.Redirect(w, r, signinUrl, http.StatusFound)
 }
 
@@ -71,8 +72,12 @@ func handleAuthCallback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	code := r.URL.Query().Get("code")
-	state := r.URL.Query().Get("state")
+	handleSiteCallback(w, r, site, getScheme(r), r.URL.Query())
+}
+
+func handleSiteCallback(w http.ResponseWriter, r *http.Request, site *object.Site, scheme string, query url.Values) {
+	code := query.Get("code")
+	state := query.Get("state")
 	if code == "" {
 		responseError(w, "CasWAF error: the code should not be empty")
 		return
@@ -86,12 +91,10 @@ func handleAuthCallback(w http.ResponseWriter, r *http.Request) {
 		responseError(w, "CasWAF error: casdoorClient.GetOAuthToken() error: %s", err.Error())
 		return
 	}
-
-	//casdoorClient, err := getCasdoorClientFromSite(site)
-	//if err != nil {
-	//	responseError(w, "CasWAF error: getCasdoorClientFromSite() error: %s", err.Error())
-	//	return
-	//}
+	if application == nil {
+		responseError(w, "CasWAF error: the application: %s does not exist", site.CasdoorApplication)
+		return
+	}
 
 	token, tokenError, err := object.GetAuthorizationCodeToken(application, application.ClientSecret, code, "", "", conf.GetAcceptLanguage(r.Header.Get("Accept-Language")))
 	if tokenError != nil {
@@ -103,12 +106,15 @@ func handleAuthCallback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cookie := &http.Cookie{
-		Name:  "casdoor_access_token",
-		Value: token.AccessToken,
-		Path:  "/",
-	}
-	http.SetCookie(w, cookie)
+	http.SetCookie(w, &http.Cookie{
+		Name:     "casdoor_access_token",
+		Value:    token.AccessToken,
+		Path:     "/",
+		MaxAge:   token.ExpiresIn,
+		HttpOnly: true,
+		Secure:   scheme == "https",
+		SameSite: http.SameSiteLaxMode,
+	})
 
 	http.Redirect(w, r, getSafeRedirectPath(state), http.StatusFound)
 }

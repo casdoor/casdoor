@@ -114,6 +114,56 @@ func getSiteIdentity(site *object.Site, accessToken string) (*siteIdentity, erro
 	return identity, nil
 }
 
+type siteAuthResult int
+
+const (
+	siteAuthOk siteAuthResult = iota
+	siteAuthNeedLogin
+	siteAuthForbidden
+	siteAuthError
+)
+
+// authenticateSiteRequest checks the access token cookie of a request to the site, msg describes a forbidden or failed result.
+func authenticateSiteRequest(site *object.Site, r *http.Request) (*siteIdentity, siteAuthResult, string) {
+	casdoorClient, err := getCasdoorClientFromSite(site)
+	if err != nil {
+		return nil, siteAuthError, fmt.Sprintf("getCasdoorClientFromSite() error: %s", err.Error())
+	}
+
+	cookie, err := r.Cookie("casdoor_access_token")
+	if err != nil || cookie.Value == "" {
+		return nil, siteAuthNeedLogin, ""
+	}
+
+	err = checkSiteAccessToken(casdoorClient, cookie.Value)
+	if err != nil {
+		return nil, siteAuthNeedLogin, ""
+	}
+
+	identity, err := getSiteIdentity(site, cookie.Value)
+	if err != nil {
+		return nil, siteAuthError, fmt.Sprintf("failed to get the user of the access token: %s", err.Error())
+	}
+	if identity == nil {
+		return nil, siteAuthNeedLogin, ""
+	}
+	if !identity.isActive {
+		return nil, siteAuthForbidden, "the user is disabled or deleted"
+	}
+	if !identity.isAllowed {
+		return nil, siteAuthForbidden, fmt.Sprintf("the user: %s is not allowed to access the application: %s", identity.name, site.CasdoorApplication)
+	}
+	return identity, siteAuthOk, ""
+}
+
+func getUserHeaderValues(identity *siteIdentity) map[string]string {
+	return map[string]string{
+		"X-Forwarded-User":   identity.name,
+		"X-Forwarded-Email":  identity.email,
+		"X-Forwarded-Groups": strings.Join(identity.groups, ","),
+	}
+}
+
 func clearUserHeaders(r *http.Request) {
 	for _, header := range siteUserHeaders {
 		r.Header.Del(header)
@@ -121,12 +171,10 @@ func clearUserHeaders(r *http.Request) {
 }
 
 func setUserHeaders(r *http.Request, identity *siteIdentity) {
-	r.Header.Set("X-Forwarded-User", identity.name)
-	if identity.email != "" {
-		r.Header.Set("X-Forwarded-Email", identity.email)
-	}
-	if len(identity.groups) != 0 {
-		r.Header.Set("X-Forwarded-Groups", strings.Join(identity.groups, ","))
+	for header, value := range getUserHeaderValues(identity) {
+		if value != "" {
+			r.Header.Set(header, value)
+		}
 	}
 }
 

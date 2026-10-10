@@ -213,49 +213,26 @@ func handleRequest(w http.ResponseWriter, r *http.Request) {
 
 	// oAuth proxy
 	if site.CasdoorApplication != "" {
-		// handle oAuth proxy
-		cookie, err := r.Cookie("casdoor_access_token")
-		if err != nil && err.Error() != "http: named cookie not present" {
-			panic(err)
-		}
-
-		casdoorClient, err := getCasdoorClientFromSite(site)
-		if err != nil {
-			responseError(w, "CasWAF error: getCasdoorClientFromSite() error: %s", err.Error())
-			return
-		}
-
 		clearUserHeaders(r)
 
-		if cookie == nil {
-			// not logged in
+		identity, result, msg := authenticateSiteRequest(site, r)
+		switch result {
+		case siteAuthNeedLogin:
+			casdoorClient, err := getCasdoorClientFromSite(site)
+			if err != nil {
+				responseError(w, "CasWAF error: getCasdoorClientFromSite() error: %s", err.Error())
+				return
+			}
+			if _, err = r.Cookie("casdoor_access_token"); err == nil {
+				clearAccessTokenCookie(w)
+			}
 			redirectToCasdoor(casdoorClient, w, r)
 			return
-		}
-
-		err = checkSiteAccessToken(casdoorClient, cookie.Value)
-		if err != nil {
-			clearAccessTokenCookie(w)
-			redirectToCasdoor(casdoorClient, w, r)
+		case siteAuthForbidden:
+			responseForbidden(w, "Forbidden: %s", msg)
 			return
-		}
-
-		identity, err := getSiteIdentity(site, cookie.Value)
-		if err != nil {
-			responseError(w, "Casdoor site error: failed to get the user of the access token: %s", err.Error())
-			return
-		}
-		if identity == nil {
-			clearAccessTokenCookie(w)
-			redirectToCasdoor(casdoorClient, w, r)
-			return
-		}
-		if !identity.isActive {
-			responseForbidden(w, "Forbidden: the user is disabled or deleted")
-			return
-		}
-		if !identity.isAllowed {
-			responseForbidden(w, "Forbidden: the user: %s is not allowed to access the application: %s", identity.name, site.CasdoorApplication)
+		case siteAuthError:
+			responseError(w, "Casdoor site error: %s", msg)
 			return
 		}
 
