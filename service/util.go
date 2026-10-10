@@ -134,9 +134,11 @@ func getCasdoorClientFromSite(site *object.Site) (*casdoorsdk.Client, error) {
 }
 
 func getScheme(r *http.Request) string {
-	scheme := r.URL.Scheme
-	if scheme == "" {
-		scheme = "http"
+	if r.TLS != nil {
+		return "https"
 	}
-	return scheme
+	if strings.EqualFold(r.Header.Get("X-Forwarded-Proto"), "https") {
+		return "https"
+	}
+	return "http"
 }
