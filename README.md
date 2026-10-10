@@ -114,7 +114,7 @@ Prefer not to install anything? Use the hosted demos:
 
 Both accept the same `built-in` / `admin` / `123` credentials.
 
-Want it hosted for production instead? [Casdoor Cloud](https://www.casdoor.com/pricing?utm_source=github&utm_medium=readme&utm_content=try) runs a dedicated Casdoor instance and database for you, kept up to date by the Casdoor team. It is the same open-source Casdoor, so you can move between Cloud and self-hosting at any time.
+Want it hosted for production instead? [Casdoor Cloud](https://www.casdoor.com/pricing?utm_source=github&utm_medium=readme&utm_content=try) runs a dedicated Casdoor instance and database for you, kept up to date by the Casdoor team. It is the same open-source Casdoor, so you can move between Cloud and self-hosting at any time. New accounts get $20 in free credit to try it, so you can [start a free trial](https://admin.casdoor.com/signup?from=%2Finstances%2Fnew%3Ftier%3Dbasic%26period%3DPostPaid) without talking to anyone.
 
 ## 🤔 Why Casdoor
 
@@ -127,9 +127,13 @@ Casdoor is a **complete identity provider**, not an authentication proxy and not
 
 If all you need is a login screen in front of an existing reverse proxy, a smaller tool may suit you better. Casdoor is for when you want to own the user directory itself.
 
+Coming from another product? See how Casdoor compares with [Keycloak](https://www.casdoor.com/compare/keycloak?utm_source=github&utm_medium=readme&utm_content=why), [Auth0](https://www.casdoor.com/compare/auth0?utm_source=github&utm_medium=readme&utm_content=why), [Okta](https://www.casdoor.com/compare/okta?utm_source=github&utm_medium=readme&utm_content=why) and [others](https://www.casdoor.com/compare?utm_source=github&utm_medium=readme&utm_content=why).
+
 ## 📦 Installation
 
 Four supported paths, fastest first. All of them end up at <http://localhost:8000>.
+
+> Rather not run the server, database and upgrades yourself? [Casdoor Cloud](https://www.casdoor.com/pricing?utm_source=github&utm_medium=readme&utm_content=install) gives you a dedicated Casdoor instance in the region you choose, with flat monthly pricing and no per-user fees.
 
 ### Docker — all-in-one (evaluation)
 
@@ -314,6 +318,7 @@ Before exposing a Casdoor instance to the internet:
 - **GitHub Discussions** — [ask and search here](https://github.com/casdoor/casdoor/discussions)
 - **GitHub Issues** — [bug reports and feature requests](https://github.com/casdoor/casdoor/issues)
 - **Commercial support** — [casdoor.ai/help](https://casdoor.ai/help)
+- **Managed hosting** — [Casdoor Cloud](https://www.casdoor.com/?utm_source=github&utm_medium=readme&utm_content=support) runs and upgrades Casdoor for you
 
 ## 🌍 Contributing
 
@@ -325,7 +330,7 @@ Read the [contribution guidelines](https://casdoor.ai/docs/contributing/) before
 
 ## 🙌 Support Casdoor
 
-Casdoor is free and open source. If it saves you time, consider supporting its development on [Open Collective](https://opencollective.com/casdoor).
+Casdoor is free and open source. If it saves you time, consider supporting its development on [Open Collective](https://opencollective.com/casdoor). Choosing [Casdoor Cloud](https://www.casdoor.com/?utm_source=github&utm_medium=readme&utm_content=sponsor) for hosting also funds the project directly.
 
 <a href="https://opencollective.com/casdoor#sponsor"><img src="https://opencollective.com/casdoor/tiers/sponsor.svg?avatarHeight=74" alt="Sponsors on Open Collective"></a>
 
