@@ -490,6 +490,13 @@ func (p *DingtalkSyncerProvider) GetOriginalGroups() ([]*OriginalGroup, error) {
 		return nil, err
 	}
 
+	// Departments in this sync's scope. A department whose parent is out of scope
+	// becomes a top group (same rule as the WeCom adapter).
+	deptIdSet := map[int64]bool{}
+	for _, deptId := range deptIds {
+		deptIdSet[deptId] = true
+	}
+
 	// Get detailed information for each department
 	originalGroups := []*OriginalGroup{}
 	for _, deptId := range deptIds {
@@ -500,12 +507,10 @@ func (p *DingtalkSyncerProvider) GetOriginalGroups() ([]*OriginalGroup, error) {
 			continue
 		}
 
-		originalGroup := p.dingtalkDepartmentToOriginalGroup(dept)
+		hasParent := deptIdSet[dept.ParentId] && dept.ParentId != dept.DeptId
+		originalGroup := p.dingtalkDepartmentToOriginalGroup(dept, hasParent)
 		originalGroups = append(originalGroups, originalGroup)
 	}
-
-	return originalGroups, nil
-}
 
 // getDingtalkGroupName returns the Casdoor group name of a DingTalk department. The
 // department ID is used as the name because DingTalk department names are not unique.
@@ -521,8 +526,13 @@ func (p *DingtalkSyncerProvider) getDingtalkGroupId(deptId int64) string {
 }
 
 // dingtalkDepartmentToOriginalGroup converts DingTalk department to Casdoor OriginalGroup
-func (p *DingtalkSyncerProvider) dingtalkDepartmentToOriginalGroup(dept *DingtalkDepartment) *OriginalGroup {
+func (p *DingtalkSyncerProvider) dingtalkDepartmentToOriginalGroup(dept *DingtalkDepartment, hasParent bool) *OriginalGroup {
 	deptIdStr := getDingtalkGroupName(dept.DeptId)
+
+	parentId := ""
+	if hasParent {
+		parentId = getDingtalkGroupName(dept.ParentId)
+	}
 
 	return &OriginalGroup{
 		Id:          p.getDingtalkGroupId(dept.DeptId),
@@ -530,6 +540,7 @@ func (p *DingtalkSyncerProvider) dingtalkDepartmentToOriginalGroup(dept *Dingtal
 		DisplayName: dept.Name,    // Use actual name as display name
 		Description: "",           // DingTalk doesn't provide description
 		Type:        "department", // Mark as department type
+		ParentId:    parentId,     // Parent department's group name
 		Manager:     "",           // DingTalk doesn't provide manager in dept details
 		Email:       "",           // DingTalk doesn't provide email for departments
 	}
