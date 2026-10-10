@@ -225,17 +225,41 @@ func handleRequest(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		clearUserHeaders(r)
+
 		if cookie == nil {
 			// not logged in
 			redirectToCasdoor(casdoorClient, w, r)
 			return
-		} else {
-			err = checkSiteAccessToken(casdoorClient, cookie.Value)
-			if err != nil {
-				responseError(w, "CasWAF error: casdoorClient.ParseJwtToken() error: %s", err.Error())
-				return
-			}
 		}
+
+		err = checkSiteAccessToken(casdoorClient, cookie.Value)
+		if err != nil {
+			clearAccessTokenCookie(w)
+			redirectToCasdoor(casdoorClient, w, r)
+			return
+		}
+
+		identity, err := getSiteIdentity(site, cookie.Value)
+		if err != nil {
+			responseError(w, "Casdoor site error: failed to get the user of the access token: %s", err.Error())
+			return
+		}
+		if identity == nil {
+			clearAccessTokenCookie(w)
+			redirectToCasdoor(casdoorClient, w, r)
+			return
+		}
+		if !identity.isActive {
+			responseForbidden(w, "Forbidden: the user is disabled or deleted")
+			return
+		}
+		if !identity.isAllowed {
+			responseForbidden(w, "Forbidden: the user: %s is not allowed to access the application: %s", identity.name, site.CasdoorApplication)
+			return
+		}
+
+		setUserHeaders(r, identity)
 	}
 
 	host := site.GetHost()
