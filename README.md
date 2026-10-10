@@ -212,6 +212,10 @@ cd casdoor
 
 Set `driverName`, `dataSourceName` and `dbName` in [`conf/app.conf`](conf/app.conf). For MySQL, create the `casdoor` database first, or start the server with `--createDatabase=true`. Then build the frontend and run the server:
 
+For production databases, `dbMaxOpenConns`, `dbMaxIdleConns` and
+`dbConnMaxLifetimeSeconds` control the Go database connection pool. A value of
+`0` leaves that setting at its driver default.
+
 ```bash
 cd web && yarn install && yarn build && cd .. && go run main.go
 ```
