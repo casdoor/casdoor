@@ -770,7 +770,6 @@
     "Integration": "Tích hợp",
     "Marketplace description": "Tích hợp ứng dụng, nhà cung cấp đăng nhập và giao diện từ Casdoor Marketplace, cài đặt chỉ với một cú nhấp.",
     "Name help": "Cũng là tên của ứng dụng hoặc nhà cung cấp được tạo. Chữ cái, chữ số, - và _.",
-    "Only a global admin can install this theme": "Giao diện này đặt HTML cho thanh bên hoặc chân trang, chỉ quản trị viên toàn cục mới thay đổi được.",
     "Provider guide note": "Đây là các bước ở nhà cung cấp danh tính kia. Nếu đã đăng ký Casdoor ở đó trước khi cài đặt, hãy kiểm tra URI chuyển hướng có khớp không.",
     "Provider install summary": "Tạo nhà cung cấp đăng nhập {name} từ mẫu, với client ID và secret của bạn.",
     "Provider installed description": "Đã tạo nhà cung cấp này. Thêm nó vào danh sách nhà cung cấp của một ứng dụng để hiển thị trên trang đăng nhập.",

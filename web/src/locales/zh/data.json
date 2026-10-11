@@ -770,7 +770,6 @@
     "Integration": "集成",
     "Marketplace description": "来自 Casdoor 集成市场的应用集成、登录身份源和主题，一键安装。",
     "Name help": "也是它创建的应用或身份源的名称，只能用字母、数字、- 和 _。",
-    "Only a global admin can install this theme": "这个主题会设置侧栏或页脚 HTML，只有全局管理员能修改。",
     "Provider guide note": "以下是在对方身份源上的步骤。如果安装前已在对方注册了 Casdoor，请核对回调地址是否一致。",
     "Provider install summary": "按模板创建 {name} 登录身份源，填入你的 client ID 和密钥。",
     "Provider installed description": "已创建下面的身份源。把它加到应用的身份源列表里，登录页上才会显示。",

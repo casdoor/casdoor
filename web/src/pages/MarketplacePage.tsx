@@ -169,7 +169,6 @@ export default function MarketplacePage() {
       {selected ? (
         <InstallDialog
           item={selected}
-          account={account}
           organizationName={organizationName}
           installed={installed}
           onClose={() => setSelected(null)}
@@ -179,9 +178,8 @@ export default function MarketplacePage() {
   );
 }
 
-function InstallDialog({item, account, organizationName, installed, onClose}: {
+function InstallDialog({item, organizationName, installed, onClose}: {
   item: any;
-  account: any;
   organizationName: string;
   installed: any[];
   onClose: () => void;
@@ -243,7 +241,6 @@ function InstallDialog({item, account, organizationName, installed, onClose}: {
   }, [item, application]);
 
   const manifestVariables: any[] = bundle?.manifest?.variables ?? [];
-  const needsGlobalAdmin = item.requiresGlobalAdmin && !Setting.isAdminUser(account);
   const isMissing = !name
     || manifestVariables.some((variable) => variable.required && !variables[variable.name]?.trim())
     || (item.type === "provider" && (!clientId || !clientSecret))
@@ -310,12 +307,6 @@ function InstallDialog({item, account, organizationName, installed, onClose}: {
             <Loading />
           ) : (
             <div className="space-y-4">
-              {needsGlobalAdmin ? (
-                <p className="rounded-md border border-warning/30 bg-warning/10 p-3 text-sm text-warning">
-                  {i18next.t("integration:Only a global admin can install this theme")}
-                </p>
-              ) : null}
-
               <FieldRow label={i18next.t("general:Organization")}>
                 <Input value={organizationName} disabled />
               </FieldRow>
@@ -386,7 +377,7 @@ function InstallDialog({item, account, organizationName, installed, onClose}: {
 
         <DialogFooter>
           <Button variant="outline" onClick={onClose}>{i18next.t("general:Cancel")}</Button>
-          <Button onClick={install} disabled={!bundle || isMissing || needsGlobalAdmin || installing}>
+          <Button onClick={install} disabled={!bundle || isMissing || installing}>
             {installing ? i18next.t("integration:Installing") : i18next.t("integration:Install")}
           </Button>
         </DialogFooter>

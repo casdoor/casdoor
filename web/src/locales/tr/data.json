@@ -770,7 +770,6 @@
     "Integration": "Entegrasyon",
     "Marketplace description": "Casdoor Marketplace'ten uygulama entegrasyonları, giriş sağlayıcıları ve temalar, tek tıkla kurulur.",
     "Name help": "Oluşturulan uygulamanın veya sağlayıcının adı da olur. Harf, rakam, - ve _.",
-    "Only a global admin can install this theme": "Bu tema kenar paneli veya alt bilgi HTML'ini ayarlar; bunu yalnızca genel yönetici değiştirebilir.",
     "Provider guide note": "Bunlar diğer kimlik sağlayıcısındaki adımlardır. Casdoor'u orada kurulumdan önce kaydettiyseniz yönlendirme URI'sinin eşleştiğini kontrol edin.",
     "Provider install summary": "Şablondan, istemci kimliğiniz ve gizli anahtarınızla bir {name} giriş sağlayıcısı oluşturur.",
     "Provider installed description": "Bu sağlayıcı oluşturuldu. Giriş sayfasında görünmesi için bir uygulamanın sağlayıcılarına ekleyin.",

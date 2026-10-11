@@ -120,9 +120,12 @@ type themeFields struct {
 	FormCssMobile string     `json:"formCssMobile"`
 	FormSideHtml  string     `json:"formSideHtml"`
 	FooterHtml    string     `json:"footerHtml"`
+
+	FormBackgroundUrl       string `json:"formBackgroundUrl"`
+	FormBackgroundUrlMobile string `json:"formBackgroundUrlMobile"`
 }
 
-var themeColumns = []string{"theme_data", "form_offset", "form_css", "form_css_mobile", "form_side_html", "footer_html"}
+var themeColumns = []string{"theme_data", "form_offset", "form_css", "form_css_mobile", "form_side_html", "footer_html", "form_background_url", "form_background_url_mobile"}
 
 var (
 	marketplaceIndexMutex sync.Mutex
@@ -514,9 +517,6 @@ func installProviderIntegration(integration *Integration, bundle *IntegrationBun
 }
 
 func installThemeIntegration(integration *Integration, item *MarketplaceIntegration, bundle *IntegrationBundle, variables map[string]string, req *IntegrationInstallRequest, isGlobalAdmin bool, lang string) error {
-	if item.RequiresGlobalAdmin && !isGlobalAdmin {
-		return fmt.Errorf("only a global admin can install the theme: %s, it sets the side panel or footer HTML", item.Id)
-	}
 	if req.Application == "" {
 		return fmt.Errorf("choose the application to apply the theme to")
 	}
@@ -541,6 +541,16 @@ func installThemeIntegration(integration *Integration, item *MarketplaceIntegrat
 		return err
 	}
 
+	// an organization admin's save would quietly keep the old CSS or HTML instead
+	if !isGlobalAdmin {
+		prefixes := getCssUrlPrefixes()
+		isSafe := isCssSafeFor(theme.FormCss, prefixes) && isCssSafeFor(theme.FormCssMobile, prefixes) &&
+			isHtmlSafeFor(theme.FormSideHtml, prefixes) && isHtmlSafeFor(theme.FooterHtml, prefixes)
+		if !isSafe {
+			return fmt.Errorf("the theme: %s uses HTML or loads files that this Casdoor only lets a global admin set", item.Id)
+		}
+	}
+
 	backup, err := json.Marshal(themeFields{
 		ThemeData:     application.ThemeData,
 		FormOffset:    application.FormOffset,
@@ -548,6 +558,9 @@ func installThemeIntegration(integration *Integration, item *MarketplaceIntegrat
 		FormCssMobile: application.FormCssMobile,
 		FormSideHtml:  application.FormSideHtml,
 		FooterHtml:    application.FooterHtml,
+
+		FormBackgroundUrl:       application.FormBackgroundUrl,
+		FormBackgroundUrlMobile: application.FormBackgroundUrlMobile,
 	})
 	if err != nil {
 		return err
@@ -571,6 +584,8 @@ func setApplicationTheme(application *Application, theme *themeFields) {
 	application.FormCssMobile = theme.FormCssMobile
 	application.FormSideHtml = theme.FormSideHtml
 	application.FooterHtml = theme.FooterHtml
+	application.FormBackgroundUrl = theme.FormBackgroundUrl
+	application.FormBackgroundUrlMobile = theme.FormBackgroundUrlMobile
 }
 
 // InstallIntegration downloads an integration from the Marketplace, checks it against the index and creates
