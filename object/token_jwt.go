@@ -682,21 +682,7 @@ func generateJwtTokenWithOptions(application *Application, user *User, provider 
 		application.TokenFormat = "JWT"
 	}
 
-	var jwtMethod jwt.SigningMethod
-
-	if application.TokenSigningMethod == "RS256" {
-		jwtMethod = jwt.SigningMethodRS256
-	} else if application.TokenSigningMethod == "RS512" {
-		jwtMethod = jwt.SigningMethodRS512
-	} else if application.TokenSigningMethod == "ES256" {
-		jwtMethod = jwt.SigningMethodES256
-	} else if application.TokenSigningMethod == "ES512" {
-		jwtMethod = jwt.SigningMethodES512
-	} else if application.TokenSigningMethod == "ES384" {
-		jwtMethod = jwt.SigningMethodES384
-	} else {
-		jwtMethod = jwt.SigningMethodRS256
-	}
+	jwtMethod := getJwtSigningMethod(application)
 
 	// the JWT token length in "JWT-Empty" mode will be very short, as User object only has two properties: owner and name
 	if application.TokenFormat == "JWT" {
@@ -790,6 +776,21 @@ func generateJwtTokenWithOptions(application *Application, user *User, provider 
 	idTokenString, err = idToken.SignedString(key)
 
 	return tokenString, refreshTokenString, idTokenString, name, err
+}
+
+func getJwtSigningMethod(application *Application) jwt.SigningMethod {
+	switch application.TokenSigningMethod {
+	case "RS512":
+		return jwt.SigningMethodRS512
+	case "ES256":
+		return jwt.SigningMethodES256
+	case "ES384":
+		return jwt.SigningMethodES384
+	case "ES512":
+		return jwt.SigningMethodES512
+	default:
+		return jwt.SigningMethodRS256
+	}
 }
 
 func ParseJwtTokenWithoutValidation(token string) (*jwt.Token, error) {

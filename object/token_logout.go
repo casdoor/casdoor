@@ -18,7 +18,6 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
-	"strings"
 	"time"
 
 	"github.com/casdoor/casdoor/util"
@@ -64,17 +63,11 @@ func generateLogoutToken(application *Application, user *User, sessionId string,
 		return "", fmt.Errorf("no cert found for application: %s", application.GetId())
 	}
 
-	var (
-		token *jwt.Token
-		key   interface{}
-	)
-
-	signingMethod := application.TokenSigningMethod
-	if strings.Contains(signingMethod, "ES") {
-		token = jwt.NewWithClaims(jwt.SigningMethodES256, claims)
+	var key interface{}
+	token := jwt.NewWithClaims(getJwtSigningMethod(application), claims)
+	if _, ok := token.Method.(*jwt.SigningMethodECDSA); ok {
 		key, err = jwt.ParseECPrivateKeyFromPEM([]byte(cert.PrivateKey))
 	} else {
-		token = jwt.NewWithClaims(jwt.SigningMethodRS256, claims)
 		key, err = jwt.ParseRSAPrivateKeyFromPEM([]byte(cert.PrivateKey))
 	}
 	if err != nil {
