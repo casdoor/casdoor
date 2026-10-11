@@ -770,7 +770,6 @@
     "Integration": "Integracja",
     "Marketplace description": "Integracje aplikacji, dostawcy logowania i motywy z Casdoor Marketplace, instalowane jednym kliknięciem.",
     "Name help": "To także nazwa tworzonej aplikacji lub dostawcy. Litery, cyfry, - i _.",
-    "Only a global admin can install this theme": "Ten motyw ustawia HTML panelu bocznego lub stopki, który może zmienić tylko administrator globalny.",
     "Provider guide note": "To są kroki u innego dostawcy tożsamości. Jeśli zarejestrowano tam Casdoor przed instalacją, sprawdź, czy URI przekierowania się zgadza.",
     "Provider install summary": "Tworzy z szablonu dostawcę logowania {name} z Twoim identyfikatorem klienta i sekretem.",
     "Provider installed description": "Utworzono tego dostawcę. Dodaj go do dostawców aplikacji, aby pojawił się na stronie logowania.",

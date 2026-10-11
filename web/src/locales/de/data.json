@@ -770,7 +770,6 @@
     "Integration": "Integration",
     "Marketplace description": "App-Integrationen, Anmeldeanbieter und Designs aus dem Casdoor Marketplace, mit einem Klick installiert.",
     "Name help": "Auch der Name der Anwendung oder des Anbieters, die erstellt werden. Buchstaben, Ziffern, - und _.",
-    "Only a global admin can install this theme": "Dieses Design setzt HTML für Seitenleiste oder Fußzeile, das nur ein globaler Administrator ändern kann.",
     "Provider guide note": "Dies sind die Schritte beim anderen Identitätsanbieter. Wenn Sie Casdoor dort schon vor der Installation registriert haben, prüfen Sie, ob die Weiterleitungs-URI übereinstimmt.",
     "Provider install summary": "Erstellt aus der Vorlage einen {name}-Anmeldeanbieter mit Ihrer Client-ID und Ihrem Secret.",
     "Provider installed description": "Dieser Anbieter wurde erstellt. Fügen Sie ihn den Anbietern einer Anwendung hinzu, damit er auf der Anmeldeseite erscheint.",

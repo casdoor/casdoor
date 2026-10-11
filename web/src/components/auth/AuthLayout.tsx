@@ -247,7 +247,7 @@ export function AuthLayout({
     >
       {embedded ? null : <CustomStyle css={formCss} />}
 
-      <div className="flex items-center justify-end gap-1 p-3 sm:p-4">
+      <div className="login-topbar flex items-center justify-end gap-1 p-3 sm:p-4">
         {hideLanguages ? null : (
           <LanguageSelect
             className="rounded-full text-muted-foreground hover:text-foreground"

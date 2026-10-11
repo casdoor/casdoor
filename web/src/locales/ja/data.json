@@ -770,7 +770,6 @@
     "Integration": "連携",
     "Marketplace description": "Casdoor Marketplace のアプリ連携、サインインプロバイダー、テーマをワンクリックでインストールできます。",
     "Name help": "作成されるアプリケーションまたはプロバイダーの名前にもなります。英数字、- と _ が使えます。",
-    "Only a global admin can install this theme": "このテーマはサイドパネルまたはフッターの HTML を設定するため、グローバル管理者しか変更できません。",
     "Provider guide note": "以下は相手の ID プロバイダー側の手順です。インストール前に Casdoor を登録済みの場合は、リダイレクト URI が一致しているか確認してください。",
     "Provider install summary": "テンプレートから {name} のサインインプロバイダーを作成し、クライアント ID とシークレットを設定します。",
     "Provider installed description": "このプロバイダーが作成されました。サインインページに表示するには、アプリケーションのプロバイダーに追加してください。",

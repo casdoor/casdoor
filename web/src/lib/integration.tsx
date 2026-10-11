@@ -44,7 +44,7 @@ function escapeHtml(text: string): string {
 }
 
 /**
- * A copy of the application with a theme applied the way the backend installs it: the six theme
+ * A copy of the application with a theme applied the way the backend installs it: the theme
  * fields are replaced, and values going into HTML fields are escaped.
  */
 export function applyTheme(application: any, theme: any, values: Record<string, string>): any {
@@ -61,6 +61,8 @@ export function applyTheme(application: any, theme: any, values: Record<string, 
     formCssMobile: fill(theme.formCssMobile, false),
     formSideHtml: fill(theme.formSideHtml, true),
     footerHtml: fill(theme.footerHtml, true),
+    formBackgroundUrl: fill(theme.formBackgroundUrl, false),
+    formBackgroundUrlMobile: fill(theme.formBackgroundUrlMobile, false),
   };
 }
 

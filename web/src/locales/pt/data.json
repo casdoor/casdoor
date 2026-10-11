@@ -770,7 +770,6 @@
     "Integration": "Integração",
     "Marketplace description": "Integrações de aplicativos, provedores de login e temas do Casdoor Marketplace, instalados com um clique.",
     "Name help": "Também é o nome do aplicativo ou provedor que ele cria. Letras, dígitos, - e _.",
-    "Only a global admin can install this theme": "Este tema define o HTML do painel lateral ou do rodapé, que só um administrador global pode alterar.",
     "Provider guide note": "Estes são os passos no outro provedor de identidade. Se você registrou o Casdoor lá antes de instalar, verifique se a URI de redirecionamento confere.",
     "Provider install summary": "Cria um provedor de login {name} a partir do modelo, com o seu ID de cliente e segredo.",
     "Provider installed description": "Este provedor foi criado. Adicione-o aos provedores de um aplicativo para exibi-lo na página de login.",

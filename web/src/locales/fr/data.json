@@ -770,7 +770,6 @@
     "Integration": "Intégration",
     "Marketplace description": "Intégrations d'applications, fournisseurs de connexion et thèmes du Casdoor Marketplace, installés en un clic.",
     "Name help": "C'est aussi le nom de l'application ou du fournisseur créé. Lettres, chiffres, - et _.",
-    "Only a global admin can install this theme": "Ce thème définit le HTML du panneau latéral ou du pied de page, que seul un administrateur global peut modifier.",
     "Provider guide note": "Voici les étapes chez l'autre fournisseur d'identité. Si vous y avez enregistré Casdoor avant l'installation, vérifiez que l'URI de redirection correspond.",
     "Provider install summary": "Crée un fournisseur de connexion {name} à partir du modèle, avec votre ID client et votre secret.",
     "Provider installed description": "Ce fournisseur a été créé. Ajoutez-le aux fournisseurs d'une application pour l'afficher sur la page de connexion.",
