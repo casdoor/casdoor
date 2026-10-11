@@ -158,6 +158,8 @@ func (adapter *Adapter) InitAdapter() error {
 		dataSourceName = conf.GetConfigString("dataSourceName")
 		if conf.GetConfigString("driverName") == "mysql" {
 			dataSourceName = dataSourceName + conf.GetConfigString("dbName")
+		} else if driverName == "sqlite3" {
+			driverName = "sqlite"
 		}
 	} else {
 		driverName = adapter.DatabaseType
