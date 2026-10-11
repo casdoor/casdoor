@@ -985,7 +985,7 @@
     "Default token format": "Định dạng token mặc định",
     "Default token format - Tooltip": "Định dạng token được sử dụng bởi các ứng dụng mới tạo của tổ chức này, các ứng dụng hiện có không bị ảnh hưởng",
     "Disable console": "Tắt bảng điều khiển",
-    "Edit Organization": "Chỉnh sửa tổ chức",
+    "Edit Organization": "Sửa tổ chức",
     "Enable LDAP password": "Bật mật khẩu LDAP",
     "Enable LDAP password - Tooltip": "Khi bật, máy chủ LDAP tích hợp sẽ trả về các thuộc tính mật khẩu (userPassword và sambaNTPassword) của người dùng trong tổ chức, ví dụ để tích hợp Samba. Chỉ quản trị viên toàn cục mới có thể thay đổi",
     "Enable LDAP password warning": "Khi bật, máy chủ LDAP tích hợp sẽ trả về mã băm mật khẩu (userPassword, sambaNTPassword) của tất cả người dùng trong tổ chức này cho quản trị viên của tổ chức, và cả mật khẩu dạng văn bản thuần nếu tổ chức lưu như vậy. Mã băm NT có thể dùng trực tiếp để xác thực (pass-the-hash). Chỉ bật khi một tích hợp như Samba thực sự cần.",
