@@ -38,6 +38,8 @@ function getNavItemNodes(): TreeNode[] {
           children: [
             {key: "/applications", title: i18next.t("general:Applications")},
             {key: "/providers", title: i18next.t("application:Providers")},
+            {key: "/marketplace", title: i18next.t("general:Marketplace")},
+            {key: "/integrations", title: i18next.t("general:Integrations")},
             {key: "/resources", title: i18next.t("general:Resources")},
             {key: "/certs", title: i18next.t("general:Certs")},
             {key: "/keys", title: i18next.t("general:Keys")},

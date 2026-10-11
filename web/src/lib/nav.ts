@@ -71,6 +71,8 @@ export function getNavGroups(account: Account | null | undefined): NavGroup[] {
     items: [
       {key: "/applications", label: i18next.t("general:Applications")},
       {key: "/providers", label: i18next.t("application:Providers")},
+      {key: "/marketplace", label: i18next.t("general:Marketplace")},
+      {key: "/integrations", label: i18next.t("general:Integrations")},
       {key: "/resources", label: i18next.t("general:Resources")},
       {key: "/certs", label: i18next.t("general:Certs")},
       {key: "/keys", label: i18next.t("general:Keys")},

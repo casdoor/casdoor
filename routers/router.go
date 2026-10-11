@@ -126,6 +126,13 @@ func InitAPI() {
 	web.Router("/api/add-provider", &controllers.ApiController{}, "POST:AddProvider")
 	web.Router("/api/delete-provider", &controllers.ApiController{}, "POST:DeleteProvider")
 
+	web.Router("/api/get-marketplace-index", &controllers.ApiController{}, "GET:GetMarketplaceIndex")
+	web.Router("/api/get-marketplace-bundle", &controllers.ApiController{}, "GET:GetMarketplaceBundle")
+	web.Router("/api/get-integrations", &controllers.ApiController{}, "GET:GetIntegrations")
+	web.Router("/api/get-integration", &controllers.ApiController{}, "GET:GetIntegration")
+	web.Router("/api/install-integration", &controllers.ApiController{}, "POST:InstallIntegration")
+	web.Router("/api/delete-integration", &controllers.ApiController{}, "POST:DeleteIntegration")
+
 	web.Router("/api/get-resources", &controllers.ApiController{}, "GET:GetResources")
 	web.Router("/api/get-resource", &controllers.ApiController{}, "GET:GetResource")
 	web.Router("/api/update-resource", &controllers.ApiController{}, "POST:UpdateResource")

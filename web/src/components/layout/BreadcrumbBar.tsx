@@ -18,6 +18,8 @@ const RESOURCE_LABELS: Record<string, string> = {
   "invitations": "general:Invitations",
   "applications": "general:Applications",
   "providers": "application:Providers",
+  "marketplace": "general:Marketplace",
+  "integrations": "general:Integrations",
   "resources": "general:Resources",
   "certs": "general:Certs",
   "keys": "general:Keys",
