@@ -1113,7 +1113,7 @@ export default function LoginPage({type = "login", application: applicationProp,
   // The redirect runs once from an effect: doing it in render fired one upstream
   // authorization request per re-render, and the provider consumed the first one.
   const singleProviderAuthUrl = React.useMemo(() => {
-    if (!application || preview === "auto" || promptNone || application.disableSignin || application.organizationObj?.disableSignin) {
+    if (!application || preview === "auto" || preview === "theme" || promptNone || application.disableSignin || application.organizationObj?.disableSignin) {
       return null;
     }
     if (Setting.isPasswordEnabled(application) || Setting.isCodeSigninEnabled(application) || Setting.isWebAuthnEnabled(application) || Setting.isLdapEnabled(application) || Setting.isMagicLinkEnabled(application)) {
@@ -1563,7 +1563,7 @@ export default function LoginPage({type = "login", application: applicationProp,
 
   return (
     <AuthLayout
-      preview={!!preview}
+      preview={preview === "theme" ? "theme" : !!preview}
       application={application}
       hideLogo={!isVisible("Logo")}
       hideLanguages={!isVisible("Languages")}
@@ -1650,7 +1650,7 @@ export default function LoginPage({type = "login", application: applicationProp,
           </div>
         ) : null}
 
-        {preview === "auto" ? null : <GoogleOneTap application={application} />}
+        {preview === "auto" || preview === "theme" ? null : <GoogleOneTap application={application} />}
 
         {faceValues !== null ? (
           hasFaceIdProvider ? (

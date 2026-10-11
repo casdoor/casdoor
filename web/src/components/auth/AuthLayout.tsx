@@ -38,9 +38,10 @@ interface AuthLayoutProps {
   /**
    * Rendered inside the application editor's preview: the application's theme,
    * title, favicon and custom head belong to the visitor's page, not to the
-   * console the preview is embedded in.
+   * console the preview is embedded in. "theme" is a preview that has a frame
+   * of its own, the Marketplace's theme preview, so the theme is applied there.
    */
-  preview?: boolean;
+  preview?: boolean | "theme";
 }
 
 /** The "we cannot sign you in" panel, port of auth/Util.js renderMessageLarge(). */
@@ -173,7 +174,8 @@ export function AuthLayout({
   footer,
   preview,
 }: AuthLayoutProps) {
-  useApplicationTheme(application, !preview);
+  const themePreview = preview === "theme";
+  useApplicationTheme(application, !preview || themePreview);
   // an application can force the dark palette regardless of the visitor's own
   // preference, and the logo has to follow the palette that is actually painted
   const isDark = useIsDark();
@@ -203,7 +205,7 @@ export function AuthLayout({
 
   // the customized form styling is meant for the standalone page, an embedded
   // one keeps the host page's own look, as the antd pages did
-  const embedded = Setting.inIframe();
+  const embedded = Setting.inIframe() && !themePreview;
   const backgroundUrl = embedded
     ? undefined
     : (isMobile ? application?.formBackgroundUrlMobile : application?.formBackgroundUrl);

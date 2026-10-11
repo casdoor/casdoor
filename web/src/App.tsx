@@ -131,6 +131,7 @@ const ResultPage = React.lazy(() => import("@/pages/auth/ResultPage"));
 const ConsentPage = React.lazy(() => import("@/pages/auth/ConsentPage"));
 const PricingPage = React.lazy(() => import("@/pages/PricingPage"));
 const QrCodePage = React.lazy(() => import("@/pages/QrCodePage"));
+const ThemePreviewPage = React.lazy(() => import("@/pages/ThemePreviewPage"));
 const PromptPage = React.lazy(() => import("@/pages/auth/PromptPage"));
 const TelegramLogin = React.lazy(() => import("@/pages/auth/TelegramLogin"));
 const CasLogout = React.lazy(() => import("@/pages/auth/CasLogout"));
@@ -249,6 +250,7 @@ export default function App() {
         <Route path="/buy-plan/:owner/:pricingName" element={<ProductBuyPage />} />
         <Route path="/buy-plan/:owner/:pricingName/result" element={<PaymentResultPage />} />
         <Route path="/qrcode/:owner/:paymentName" element={<QrCodePage />} />
+        <Route path="/marketplace/theme-preview" element={<ThemePreviewPage />} />
 
         {/* Console */}
         <Route

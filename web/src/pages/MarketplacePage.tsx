@@ -1,6 +1,6 @@
 import * as React from "react";
 import i18next from "i18next";
-import {ExternalLink, Search, ShieldCheck} from "lucide-react";
+import {ExternalLink, Monitor, Search, ShieldCheck, Smartphone} from "lucide-react";
 import {Link, useNavigate} from "react-router-dom";
 import {Badge} from "@/components/ui/badge";
 import {Button} from "@/components/ui/button";
@@ -16,7 +16,7 @@ import {useAccount} from "@/hooks/use-account";
 import {useRequestOrganization} from "@/hooks/use-organization";
 import * as ApplicationBackend from "@/backend/ApplicationBackend";
 import * as IntegrationBackend from "@/backend/IntegrationBackend";
-import {IntegrationLogo, IntegrationTypes, getIntegrationTypeLabel, getMarketplaceSiteUrl, getLocalized} from "@/lib/integration";
+import {IntegrationLogo, IntegrationTypes, ThemePreviewMessage, applyTheme, getIntegrationTypeLabel, getMarketplaceSiteUrl, getLocalized} from "@/lib/integration";
 import * as Setting from "@/lib/setting";
 
 /** The Casdoor Marketplace: browse the catalog and install app integrations, provider templates and themes. */
@@ -203,6 +203,7 @@ function InstallDialog({item, account, organizationName, installed, onClose}: {
   const [clientId, setClientId] = React.useState("");
   const [clientSecret, setClientSecret] = React.useState("");
   const [installing, setInstalling] = React.useState(false);
+  const [previewApplication, setPreviewApplication] = React.useState<any>(null);
 
   React.useEffect(() => {
     IntegrationBackend.getMarketplaceBundle(organizationName, item.id).then((res: any) => {
@@ -221,10 +222,25 @@ function InstallDialog({item, account, organizationName, installed, onClose}: {
       ApplicationBackend.getApplicationsByOrganization("admin", organizationName).then((res: any) => {
         if (res.status === "ok") {
           setApplications(res.data ?? []);
+          if (item.type === "theme" && res.data?.length) {
+            setApplication((current) => current || res.data[0].name);
+          }
         }
       });
     }
   }, [item, organizationName]);
+
+  React.useEffect(() => {
+    if (item.type !== "theme" || !application) {
+      setPreviewApplication(null);
+      return;
+    }
+    ApplicationBackend.getApplication("admin", application).then((res: any) => {
+      if (res.status === "ok") {
+        setPreviewApplication(res.data);
+      }
+    });
+  }, [item, application]);
 
   const manifestVariables: any[] = bundle?.manifest?.variables ?? [];
   const needsGlobalAdmin = item.requiresGlobalAdmin && !Setting.isAdminUser(account);
@@ -261,11 +277,19 @@ function InstallDialog({item, account, organizationName, installed, onClose}: {
   };
 
   const itemName = getLocalized(item.name) || item.id;
+  const isTheme = item.type === "theme";
+  // empty fields are previewed with their examples, so the preview never shows a blank headline
+  const previewValues = Object.fromEntries(manifestVariables.map((variable) => {
+    const value = variables[variable.name]?.trim() ?? "";
+    const valid = variable.type !== "color" || /^#[0-9a-fA-F]{6}$/.test(value);
+    return [variable.name, value && valid ? value : variable.example ?? ""];
+  }));
+  const theme = bundle?.files?.["theme.json"];
   const applicationOptions = applications.map((app) => ({id: app.name, name: app.displayName ? `${app.displayName} (${app.name})` : app.name}));
 
   return (
     <Dialog open onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
+      <DialogContent className={isTheme ? "max-h-[92vh] overflow-y-auto sm:max-w-6xl" : "max-h-[90vh] overflow-y-auto sm:max-w-lg"}>
         <DialogHeader>
           <div className="flex items-center gap-3">
             <IntegrationLogo logo={item.logo} name={itemName} />
@@ -279,81 +303,86 @@ function InstallDialog({item, account, organizationName, installed, onClose}: {
         <p className="text-sm text-muted-foreground">{getLocalized(item.description)}</p>
         <p className="text-sm">{getInstallSummary(item.type, itemName)}</p>
 
-        {error ? (
-          <p className="text-sm text-destructive">{error}</p>
-        ) : !bundle ? (
-          <Loading />
-        ) : (
-          <div className="space-y-4">
-            {needsGlobalAdmin ? (
-              <p className="rounded-md border border-warning/30 bg-warning/10 p-3 text-sm text-warning">
-                {i18next.t("integration:Only a global admin can install this theme")}
-              </p>
-            ) : null}
+        <div className={isTheme ? "grid gap-6 lg:grid-cols-[minmax(0,340px)_minmax(0,1fr)]" : undefined}>
+          {error ? (
+            <p className="text-sm text-destructive">{error}</p>
+          ) : !bundle ? (
+            <Loading />
+          ) : (
+            <div className="space-y-4">
+              {needsGlobalAdmin ? (
+                <p className="rounded-md border border-warning/30 bg-warning/10 p-3 text-sm text-warning">
+                  {i18next.t("integration:Only a global admin can install this theme")}
+                </p>
+              ) : null}
 
-            <FieldRow label={i18next.t("general:Organization")}>
-              <Input value={organizationName} disabled />
-            </FieldRow>
-            <FieldRow label={i18next.t("general:Name")} required help={i18next.t("integration:Name help")}>
-              <Input value={name} onChange={(e) => setName(e.target.value)} />
-            </FieldRow>
+              <FieldRow label={i18next.t("general:Organization")}>
+                <Input value={organizationName} disabled />
+              </FieldRow>
+              <FieldRow label={i18next.t("general:Name")} required help={i18next.t("integration:Name help")}>
+                <Input value={name} onChange={(e) => setName(e.target.value)} />
+              </FieldRow>
 
-            {manifestVariables.map((variable) => (
-              <FieldRow
-                key={variable.name}
-                label={getLocalized(variable.label) || variable.name}
-                required={variable.required}
-                help={getLocalized(variable.description)}
-              >
-                {variable.type === "color" ? (
-                  <div className="flex gap-2">
-                    <input
-                      type="color"
-                      className="h-9 w-12 cursor-pointer rounded-md border bg-transparent p-1"
-                      value={/^#[0-9a-fA-F]{6}$/.test(variables[variable.name] ?? "") ? variables[variable.name] : "#000000"}
-                      onChange={(e) => setVariables({...variables, [variable.name]: e.target.value})}
-                    />
+              {manifestVariables.map((variable) => (
+                <FieldRow
+                  key={variable.name}
+                  label={getLocalized(variable.label) || variable.name}
+                  required={variable.required}
+                  help={getLocalized(variable.description)}
+                >
+                  {variable.type === "color" ? (
+                    <div className="flex gap-2">
+                      <input
+                        type="color"
+                        className="h-9 w-12 cursor-pointer rounded-md border bg-transparent p-1"
+                        value={/^#[0-9a-fA-F]{6}$/.test(variables[variable.name] ?? "") ? variables[variable.name] : "#000000"}
+                        onChange={(e) => setVariables({...variables, [variable.name]: e.target.value})}
+                      />
+                      <Input
+                        value={variables[variable.name] ?? ""}
+                        placeholder={variable.example}
+                        onChange={(e) => setVariables({...variables, [variable.name]: e.target.value})}
+                      />
+                    </div>
+                  ) : (
                     <Input
                       value={variables[variable.name] ?? ""}
                       placeholder={variable.example}
                       onChange={(e) => setVariables({...variables, [variable.name]: e.target.value})}
                     />
-                  </div>
-                ) : (
-                  <Input
-                    value={variables[variable.name] ?? ""}
-                    placeholder={variable.example}
-                    onChange={(e) => setVariables({...variables, [variable.name]: e.target.value})}
-                  />
-                )}
-              </FieldRow>
-            ))}
+                  )}
+                </FieldRow>
+              ))}
 
-            {item.type === "provider" ? (
-              <>
-                <FieldRow label={i18next.t("provider:Client ID")} required help={i18next.t("integration:Client ID help")}>
-                  <Input value={clientId} onChange={(e) => setClientId(e.target.value)} />
-                </FieldRow>
-                <FieldRow label={i18next.t("provider:Client secret")} required>
-                  <Input type="password" autoComplete="new-password" value={clientSecret} onChange={(e) => setClientSecret(e.target.value)} />
-                </FieldRow>
-                <FieldRow label={i18next.t("general:Application")} help={i18next.t("integration:Add to application help")}>
-                  <SelectField
-                    value={application || "-"}
-                    onChange={(value) => setApplication(value === "-" ? "" : value)}
-                    options={[{id: "-", name: i18next.t("general:None")}, ...applicationOptions]}
-                  />
-                </FieldRow>
-              </>
-            ) : null}
+              {item.type === "provider" ? (
+                <>
+                  <FieldRow label={i18next.t("provider:Client ID")} required help={i18next.t("integration:Client ID help")}>
+                    <Input value={clientId} onChange={(e) => setClientId(e.target.value)} />
+                  </FieldRow>
+                  <FieldRow label={i18next.t("provider:Client secret")} required>
+                    <Input type="password" autoComplete="new-password" value={clientSecret} onChange={(e) => setClientSecret(e.target.value)} />
+                  </FieldRow>
+                  <FieldRow label={i18next.t("general:Application")} help={i18next.t("integration:Add to application help")}>
+                    <SelectField
+                      value={application || "-"}
+                      onChange={(value) => setApplication(value === "-" ? "" : value)}
+                      options={[{id: "-", name: i18next.t("general:None")}, ...applicationOptions]}
+                    />
+                  </FieldRow>
+                </>
+              ) : null}
 
-            {item.type === "theme" ? (
-              <FieldRow label={i18next.t("general:Application")} required help={i18next.t("integration:Theme application help")}>
-                <SelectField value={application} onChange={setApplication} options={applicationOptions} />
-              </FieldRow>
-            ) : null}
-          </div>
-        )}
+              {item.type === "theme" ? (
+                <FieldRow label={i18next.t("general:Application")} required help={i18next.t("integration:Theme application help")}>
+                  <SelectField value={application} onChange={setApplication} options={applicationOptions} />
+                </FieldRow>
+              ) : null}
+            </div>
+          )}
+          {isTheme ? (
+            <ThemePreview application={previewApplication && theme ? applyTheme(previewApplication, theme, previewValues) : null} />
+          ) : null}
+        </div>
 
         <DialogFooter>
           <Button variant="outline" onClick={onClose}>{i18next.t("general:Cancel")}</Button>
@@ -363,6 +392,82 @@ function InstallDialog({item, account, organizationName, installed, onClose}: {
         </DialogFooter>
       </DialogContent>
     </Dialog>
+  );
+}
+
+/** The sign-in page of the chosen application with the theme applied, live, in a frame of its own. */
+function ThemePreview({application}: {application: any}) {
+  const frameRef = React.useRef<HTMLIFrameElement>(null);
+  const boxRef = React.useRef<HTMLDivElement>(null);
+  const [ready, setReady] = React.useState(false);
+  const [device, setDevice] = React.useState<"desktop" | "mobile">("desktop");
+  const [boxWidth, setBoxWidth] = React.useState(0);
+
+  React.useEffect(() => {
+    const onMessage = (event: MessageEvent) => {
+      if (event.origin === window.location.origin && event.source === frameRef.current?.contentWindow && event.data?.type === `${ThemePreviewMessage}-ready`) {
+        setReady(true);
+      }
+    };
+    window.addEventListener("message", onMessage);
+    return () => window.removeEventListener("message", onMessage);
+  }, []);
+
+  React.useEffect(() => {
+    if (ready && application) {
+      frameRef.current?.contentWindow?.postMessage({type: ThemePreviewMessage, application}, window.location.origin);
+    }
+  }, [ready, application]);
+
+  React.useEffect(() => {
+    const box = boxRef.current;
+    if (!box) {
+      return;
+    }
+    const observer = new ResizeObserver(() => setBoxWidth(box.clientWidth));
+    observer.observe(box);
+    return () => observer.disconnect();
+  }, []);
+
+  const [frameWidth, frameHeight] = device === "desktop" ? [1280, 800] : [390, 780];
+  const scale = boxWidth ? Math.min(1, boxWidth / frameWidth, device === "mobile" ? 520 / frameHeight : 1) : 0;
+
+  return (
+    <div className="min-w-0 space-y-2">
+      <div className="flex items-center justify-between gap-2">
+        <Label>{i18next.t("general:Preview")}</Label>
+        <Tabs value={device} onValueChange={(value) => {
+          setReady(false);
+          setDevice(value as "desktop" | "mobile");
+        }}>
+          <TabsList className="h-8">
+            <TabsTrigger value="desktop" className="h-6 gap-1 px-2 text-xs"><Monitor className="size-3.5" />{i18next.t("integration:Desktop")}</TabsTrigger>
+            <TabsTrigger value="mobile" className="h-6 gap-1 px-2 text-xs"><Smartphone className="size-3.5" />{i18next.t("provider:Mobile")}</TabsTrigger>
+          </TabsList>
+        </Tabs>
+      </div>
+      <div ref={boxRef} className="w-full">
+        <div
+          className="relative mx-auto overflow-hidden rounded-lg border bg-muted shadow-sm"
+          style={{width: frameWidth * scale, height: frameHeight * scale}}
+        >
+          {scale ? (
+            <iframe
+              key={device}
+              ref={frameRef}
+              title={i18next.t("general:Preview")}
+              src="/marketplace/theme-preview"
+              className="origin-top-left border-0"
+              style={{width: frameWidth, height: frameHeight, transform: `scale(${scale})`}}
+            />
+          ) : null}
+          {/* the preview is to look at, not to sign in with */}
+          <div className="absolute inset-0 cursor-not-allowed" />
+          {!application ? <div className="absolute inset-0 flex items-center justify-center"><Loading /></div> : null}
+        </div>
+      </div>
+      <p className="text-xs text-muted-foreground">{i18next.t("integration:Theme preview note")}</p>
+    </div>
   );
 }
 
