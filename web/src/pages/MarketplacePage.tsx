@@ -16,7 +16,7 @@ import {useAccount} from "@/hooks/use-account";
 import {useRequestOrganization} from "@/hooks/use-organization";
 import * as ApplicationBackend from "@/backend/ApplicationBackend";
 import * as IntegrationBackend from "@/backend/IntegrationBackend";
-import {IntegrationLogo, IntegrationTypes, MarketplaceSiteUrl, getIntegrationTypeLabel, getLocalized} from "@/lib/integration";
+import {IntegrationLogo, IntegrationTypes, getIntegrationTypeLabel, getMarketplaceSiteUrl, getLocalized} from "@/lib/integration";
 import * as Setting from "@/lib/setting";
 
 /** The Casdoor Marketplace: browse the catalog and install app integrations, provider templates and themes. */
@@ -149,7 +149,7 @@ export default function MarketplacePage() {
                   ) : null}
                   <div className="flex items-center justify-between gap-2 pt-1">
                     <a
-                      href={`${MarketplaceSiteUrl}/integrations/${item.id}/`}
+                      href={`${getMarketplaceSiteUrl()}/integrations/${item.id}/`}
                       target="_blank"
                       rel="noreferrer"
                       className="inline-flex items-center gap-1 text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"

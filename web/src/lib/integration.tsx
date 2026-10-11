@@ -1,8 +1,10 @@
 import * as React from "react";
 import i18next from "i18next";
 
-/** The public Marketplace site, where every integration has a page with its full guide. */
-export const MarketplaceSiteUrl = "https://marketplace.casdoor.cn";
+/** The public Marketplace site, where every integration has a page with its full guide: Chinese pages on the .cn host, English ones on the .com host. */
+export function getMarketplaceSiteUrl(): string {
+  return i18next.language?.startsWith("zh") ? "https://marketplace.casdoor.cn/zh" : "https://marketplace.casdoor.com";
+}
 
 export const IntegrationTypes = ["app", "provider", "theme"] as const;
 

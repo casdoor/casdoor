@@ -13,7 +13,7 @@ import * as ApplicationBackend from "@/backend/ApplicationBackend";
 import * as IntegrationBackend from "@/backend/IntegrationBackend";
 import {
   IntegrationLogo,
-  MarketplaceSiteUrl,
+  getMarketplaceSiteUrl,
   fillVariables,
   getIntegrationTypeLabel,
   getLocalized,
@@ -89,7 +89,7 @@ export default function IntegrationEditPage() {
     {
       label: i18next.t("integration:Integration"),
       children: (
-        <a className="inline-flex items-center gap-1 underline-offset-4 hover:underline" href={`${MarketplaceSiteUrl}/integrations/${integration.integrationId}/`} target="_blank" rel="noreferrer">
+        <a className="inline-flex items-center gap-1 underline-offset-4 hover:underline" href={`${getMarketplaceSiteUrl()}/integrations/${integration.integrationId}/`} target="_blank" rel="noreferrer">
           {integration.integrationId}
           <ExternalLink className="size-3.5" />
         </a>
