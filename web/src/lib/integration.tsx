@@ -39,6 +39,33 @@ export function fillVariables(text: string, values: Record<string, string>): str
   return text.replace(/\{\{\s*([a-zA-Z][a-zA-Z0-9]*)\s*\}\}/g, (match, name) => values[name] || match);
 }
 
+function escapeHtml(text: string): string {
+  return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&#34;").replace(/'/g, "&#39;");
+}
+
+/**
+ * A copy of the application with a theme applied the way the backend installs it: the six theme
+ * fields are replaced, and values going into HTML fields are escaped.
+ */
+export function applyTheme(application: any, theme: any, values: Record<string, string>): any {
+  const fill = (text: string | undefined, escape: boolean) =>
+    (text ?? "").replace(/\{\{\s*([a-zA-Z][a-zA-Z0-9]*)\s*\}\}/g, (match, name) => {
+      const value = values[name] ?? "";
+      return escape ? escapeHtml(value) : value;
+    });
+  return {
+    ...application,
+    themeData: theme.themeData ? {...theme.themeData, colorPrimary: fill(theme.themeData.colorPrimary, false)} : null,
+    formOffset: theme.formOffset ?? 2,
+    formCss: fill(theme.formCss, false),
+    formCssMobile: fill(theme.formCssMobile, false),
+    formSideHtml: fill(theme.formSideHtml, true),
+    footerHtml: fill(theme.footerHtml, true),
+  };
+}
+
+export const ThemePreviewMessage = "casdoor-theme-preview";
+
 /** Guide texts use `code` and **bold**. */
 export function renderInlineText(text: string): React.ReactNode[] {
   return text.split(/(`[^`]+`|\*\*[^*]+\*\*)/g).filter(Boolean).map((part, index) => {
