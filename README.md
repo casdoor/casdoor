@@ -225,7 +225,7 @@ Guide: [Server installation](https://casdoor.ai/docs/basic/server-installation)
 At this point you have a running identity provider with nothing connected to it yet. Next:
 
 1. **Change the `admin` password.** `123` is a demo credential and must not survive contact with production.
-2. **[Connect your first application](https://casdoor.ai/docs/how-to-connect/overview)** — create an Application in the console, copy its Client ID and Client Secret, and point your app's OAuth/OIDC client at Casdoor.
+2. **[Connect your first application](https://casdoor.ai/docs/how-to-connect/overview)** — create an Application in the console, copy its Client ID and Client Secret, and point your app's OAuth/OIDC client at Casdoor. For Grafana, GitLab, Nextcloud and other popular apps, open **Marketplace** in the console instead: one click creates the application, and the setup guide shows the app's settings with your values filled in.
 3. **[Add an identity provider](https://casdoor.ai/docs/provider/overview)** if you want Google, GitHub or Entra ID sign-in.
 4. **[Pick an SDK](https://casdoor.ai/docs/category/integrations)** for your language, or call the [Public API](https://casdoor.ai/docs/basic/public-api) directly.
 
@@ -264,6 +264,14 @@ At this point you have a running identity provider with nothing connected to it 
 - **Webhooks** — push user and sign-in events into your own systems
 - **Customizable UI** — theme the login page and console per organization
 
+**🧩 Marketplace**
+
+Install ready-made integrations from the **Marketplace** page of the console. Casdoor creates the objects with your values filled in, and uninstalling removes them or restores what was there before. Browse them at **[marketplace.casdoor.com](https://marketplace.casdoor.com)**; contributions go to [casdoor-integrations](https://github.com/casdoor/casdoor-integrations).
+
+- **App integrations** — single sign-on for Grafana, GitLab, Nextcloud, Vaultwarden, Argo CD, Immich, Open WebUI, Portainer, Gitea and Proxmox VE, with a step-by-step guide for the app's side
+- **Identity provider templates** — sign in to Casdoor with Keycloak, authentik, ZITADEL, Authelia or GitLab Self-Managed
+- **Sign-in themes** — login page designs you can preview on your own application before installing
+
 ## 🧱 Technology stack
 
 Casdoor is a frontend–backend separated application:
@@ -299,7 +307,7 @@ Official SDKs and framework integrations, by language:
 - **PHP** — [casdoor-php-sdk](https://github.com/casdoor/casdoor-php-sdk)
 - **Rust** — [casdoor-rust-sdk](https://github.com/casdoor/casdoor-rust-sdk)
 
-The complete list, including reverse proxies and third-party applications, is in the [Integrations](https://casdoor.ai/docs/category/integrations) documentation.
+The complete list, including reverse proxies and third-party applications, is in the [Integrations](https://casdoor.ai/docs/category/integrations) documentation. Self-hosted apps with a one-click setup are on the [Casdoor Marketplace](https://marketplace.casdoor.com/apps/).
 
 ## 🔒 Security
 
