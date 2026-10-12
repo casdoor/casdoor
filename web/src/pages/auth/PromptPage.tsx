@@ -13,6 +13,7 @@ import {AffiliationAddressSelect, AffiliationField, useAffiliation} from "@/comp
 import {ThirdPartyLogins} from "@/components/user/OAuthWidget";
 import {useAccount} from "@/hooks/use-account";
 import {authConfig} from "@/auth/Auth";
+import * as Util from "@/auth/Util";
 import * as ApplicationBackend from "@/backend/ApplicationBackend";
 import * as UserBackend from "@/backend/UserBackend";
 import * as Setting from "@/lib/setting";
@@ -59,19 +60,15 @@ export default function PromptPage({application: applicationProp}: {application?
 
   const affiliation = useAffiliation(application, user);
 
-  const getRedirectUrl = () => {
+  const finishAndJump = () => {
     const redirectUri = searchParams.get("redirectUri");
     const code = searchParams.get("code");
     const state = searchParams.get("state");
-    const oauth = searchParams.get("oauth");
-    if (redirectUri === null || code === null || state === null) {
-      return oauth === "true" ? sessionStorage.getItem("signinUrl") ?? "" : "";
+    if (redirectUri !== null && code !== null && state !== null) {
+      Util.sendOAuthResponse({redirectUri, state, responseMode: searchParams.get("responseMode") ?? "", responseType: "code"}, {code});
+      return;
     }
-    return `${redirectUri}?code=${encodeURIComponent(code)}&state=${encodeURIComponent(state)}${Setting.getOAuthIssuerParam()}`;
-  };
-
-  const finishAndJump = () => {
-    const redirectUrl = getRedirectUrl();
+    const redirectUrl = searchParams.get("oauth") === "true" ? sessionStorage.getItem("signinUrl") ?? "" : "";
     if (redirectUrl) {
       Setting.goToLink(redirectUrl);
       return;

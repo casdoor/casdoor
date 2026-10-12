@@ -226,7 +226,7 @@ export default function AuthCallback() {
               Setting.goToLink(
                 `/prompt/${promptApplication}?redirectUri=${encodeURIComponent(oAuthParams.redirectUri)}&code=${encodeURIComponent(
                   res.data,
-                )}&state=${encodeURIComponent(oAuthParams.state)}`,
+                )}&state=${encodeURIComponent(oAuthParams.state)}&responseMode=${encodeURIComponent(responseMode)}`,
               );
             } else {
               goToRedirectUrl();
