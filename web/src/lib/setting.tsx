@@ -2513,16 +2513,17 @@ export function getSignupLink(application) {
   }
 
   let url;
-  if (window.location.pathname.includes("/login/oauth/authorize")) {
+  if (application.signupUrl) {
+    // the application's own signup page, also when signing in through OAuth
+    url = application.signupUrl;
+  } else if (window.location.pathname.includes("/login/oauth/authorize")) {
     url = window.location.pathname.replace("/login/oauth/authorize", "/signup/oauth/authorize");
   } else if (authConfig.appName === application.name) {
     url = "/signup";
-  } else if (!application.signupUrl) {
+  } else {
     url = application.isShared
       ? `/signup/${application.name}-org-${application.organization}`
       : `/signup/${application.name}`;
-  } else {
-    url = application.signupUrl;
   }
   return url + window.location.search;
 }
