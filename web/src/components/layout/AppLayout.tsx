@@ -12,6 +12,8 @@ import {PoweredBy} from "@/components/layout/PoweredBy";
 import {AppSidebar} from "@/components/layout/Sidebar";
 import {useAccount} from "@/hooks/use-account";
 import {useThemeData} from "@/hooks/use-application-chrome";
+import * as OrganizationBackend from "@/backend/OrganizationBackend";
+import {getSafeHtml} from "@/lib/custom-html";
 import * as Setting from "@/lib/setting";
 
 /**
@@ -28,8 +30,38 @@ function readSidebarCookie(): boolean {
   }
 }
 
+/**
+ * The footer HTML of the default application of the signed-in user's organization,
+ * the same application whose sign-in page the organization's users see.
+ */
+function useFooterHtml(organizationName: string | undefined): string {
+  const [footerHtml, setFooterHtml] = React.useState("");
+
+  React.useEffect(() => {
+    if (!organizationName) {
+      setFooterHtml("");
+      return;
+    }
+
+    let cancelled = false;
+    OrganizationBackend.getDefaultApplication("admin", organizationName)
+      .then((res: any) => {
+        if (!cancelled) {
+          setFooterHtml(res.status === "ok" ? res.data?.footerHtml ?? "" : "");
+        }
+      })
+      .catch(() => undefined);
+    return () => {
+      cancelled = true;
+    };
+  }, [organizationName]);
+
+  return footerHtml;
+}
+
 export function AppLayout() {
   const {account} = useAccount();
+  const footerHtml = useFooterHtml(account?.organization?.name);
   const palette = useCommandPalette();
   // the console follows the signed-in user's organization theme, title and favicon
   useThemeData(Setting.getThemeData(account?.organization, null));
@@ -61,12 +93,21 @@ export function AppLayout() {
 
       {/* outside the scroll area and the full width of the window, so it stays at
           the bottom of the viewport the way antd's Layout.Footer does */}
-      <footer
-        id="footer"
-        className="shrink-0 border-t bg-background py-3 text-center text-xs text-muted-foreground"
-      >
-        <PoweredBy />
-      </footer>
+      {footerHtml ? (
+        // never trusted here: the console is where admins work, so no script runs in it
+        <footer
+          id="footer"
+          className="shrink-0 border-t bg-background py-3 text-center text-xs text-muted-foreground"
+          dangerouslySetInnerHTML={{__html: getSafeHtml(footerHtml, false)}}
+        />
+      ) : (
+        <footer
+          id="footer"
+          className="shrink-0 border-t bg-background py-3 text-center text-xs text-muted-foreground"
+        >
+          <PoweredBy />
+        </footer>
+      )}
     </div>
   );
 }
