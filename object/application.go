@@ -440,7 +440,10 @@ func UpdateApplication(id string, application *Application, isGlobalAdmin bool, 
 	}
 
 	if !isGlobalAdmin {
-		KeepApplicationCustomHtml(application, oldApplication)
+		err = CheckApplicationCustomHtml(application, oldApplication)
+		if err != nil {
+			return false, err
+		}
 	}
 
 	application.Owner = owner

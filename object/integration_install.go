@@ -541,7 +541,7 @@ func installThemeIntegration(integration *Integration, item *MarketplaceIntegrat
 		return err
 	}
 
-	// an organization admin's save would quietly keep the old CSS or HTML instead
+	// refuse the theme by its own name, before the application's save refuses it by field
 	if !isGlobalAdmin {
 		prefixes := getCssUrlPrefixes()
 		isSafe := isCssSafeFor(theme.FormCss, prefixes) && isCssSafeFor(theme.FormCssMobile, prefixes) &&

@@ -74,7 +74,10 @@ func (c *McpController) handleAddApplicationTool(id interface{}, args AddApplica
 	}
 
 	if !c.IsGlobalAdmin() {
-		object.KeepApplicationCustomHtml(&args.Application, nil)
+		if err = object.CheckApplicationCustomHtml(&args.Application, nil); err != nil {
+			c.SendToolErrorResult(id, err.Error())
+			return
+		}
 	}
 
 	affected, err := object.AddApplication(&args.Application, c.GetAcceptLanguage())

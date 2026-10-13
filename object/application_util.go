@@ -469,36 +469,48 @@ func checkMultipleCaptchaProviders(application *Application, lang string) error 
 	return nil
 }
 
-// KeepApplicationCustomHtml keeps what an organization admin may put on the sign-in pages to layout
-// and branding: custom HTML or CSS that could collect or send out what users type is replaced with
-// the one from oldApplication (nil for a new application). A global admin is not held to this.
-func KeepApplicationCustomHtml(application *Application, oldApplication *Application) {
+// CheckApplicationCustomHtml keeps what an organization admin may put on the sign-in pages to layout
+// and branding: custom HTML or CSS that could collect or send out what users type is refused unless
+// it is the one oldApplication (nil for a new application) already has. A global admin is not held
+// to this.
+func CheckApplicationCustomHtml(application *Application, oldApplication *Application) error {
 	if oldApplication == nil {
 		oldApplication = &Application{}
 	}
 
 	var prefixes []string
-	keepSafeHtml := func(text string, oldText string) string {
+	var unsafeFields []string
+	checkHtml := func(field string, text string, oldText string) {
 		if text == oldText || text == "" {
-			return text
+			return
 		}
 		if prefixes == nil {
 			prefixes = getCssUrlPrefixes()
 		}
-		if isHtmlSafeFor(text, prefixes) {
-			return text
+		if !isHtmlSafeFor(text, prefixes) {
+			unsafeFields = append(unsafeFields, field)
 		}
-		return oldText
+	}
+	checkCss := func(field string, css string, oldCss string) {
+		if css == oldCss || css == "" {
+			return
+		}
+		if prefixes == nil {
+			prefixes = getCssUrlPrefixes()
+		}
+		if !isCssSafeFor(css, prefixes) {
+			unsafeFields = append(unsafeFields, field)
+		}
 	}
 
-	application.HeaderHtml = keepSafeHtml(application.HeaderHtml, oldApplication.HeaderHtml)
-	application.PageHtml = keepSafeHtml(application.PageHtml, oldApplication.PageHtml)
-	application.FooterHtml = keepSafeHtml(application.FooterHtml, oldApplication.FooterHtml)
-	application.FormSideHtml = keepSafeHtml(application.FormSideHtml, oldApplication.FormSideHtml)
-	application.SigninHtml = keepSafeHtml(application.SigninHtml, oldApplication.SigninHtml)
-	application.SignupHtml = keepSafeHtml(application.SignupHtml, oldApplication.SignupHtml)
-	application.FormCss = keepSafeCss(application.FormCss, oldApplication.FormCss)
-	application.FormCssMobile = keepSafeCss(application.FormCssMobile, oldApplication.FormCssMobile)
+	checkHtml("header HTML", application.HeaderHtml, oldApplication.HeaderHtml)
+	checkHtml("page HTML", application.PageHtml, oldApplication.PageHtml)
+	checkHtml("footer HTML", application.FooterHtml, oldApplication.FooterHtml)
+	checkHtml("side panel HTML", application.FormSideHtml, oldApplication.FormSideHtml)
+	checkHtml("signin HTML", application.SigninHtml, oldApplication.SigninHtml)
+	checkHtml("signup HTML", application.SignupHtml, oldApplication.SignupHtml)
+	checkCss("form CSS", application.FormCss, oldApplication.FormCss)
+	checkCss("form CSS mobile", application.FormCssMobile, oldApplication.FormCssMobile)
 
 	// a custom sign-in item renders its customCss as HTML
 	oldSigninCss := map[string]string{}
@@ -509,9 +521,9 @@ func KeepApplicationCustomHtml(application *Application, oldApplication *Applica
 	}
 	for _, item := range application.SigninItems {
 		if isCustomSigninItem(item) {
-			item.CustomCss = keepSafeHtml(item.CustomCss, oldSigninCss[item.Name])
+			checkHtml(fmt.Sprintf("signin item \"%s\"", item.Name), item.CustomCss, oldSigninCss[item.Name])
 		} else if item != nil {
-			item.CustomCss = keepSafeCss(item.CustomCss, oldSigninCss[item.Name])
+			checkCss(fmt.Sprintf("signin item \"%s\"", item.Name), item.CustomCss, oldSigninCss[item.Name])
 		}
 	}
 
@@ -528,12 +540,17 @@ func KeepApplicationCustomHtml(application *Application, oldApplication *Applica
 	}
 	for _, item := range application.SignupItems {
 		if isCustomSignupItem(item) {
-			item.Label = keepSafeHtml(item.Label, oldSignupHtmls[item.Name])
+			checkHtml(fmt.Sprintf("signup item \"%s\"", item.Name), item.Label, oldSignupHtmls[item.Name])
 		}
 		if item != nil {
-			item.CustomCss = keepSafeCss(item.CustomCss, oldSignupCss[item.Name])
+			checkCss(fmt.Sprintf("signup item \"%s\"", item.Name), item.CustomCss, oldSignupCss[item.Name])
 		}
 	}
+
+	if len(unsafeFields) > 0 {
+		return fmt.Errorf("the %s of the application uses HTML or loads files that this Casdoor only lets a global admin set: scripts, forms and event handlers are not allowed, and images and fonts must come from this Casdoor, its storage providers or a URL in formCssAllowedUrls", strings.Join(unsafeFields, ", "))
+	}
+	return nil
 }
 
 // Form CSS may load images and fonts, but only from places whose access logs an organization
@@ -631,10 +648,6 @@ func isCssUrlAllowed(cssUrl string, prefixes []string, allowLocal bool) bool {
 	return false
 }
 
-func isCssSafe(css string) bool {
-	return isCssSafeFor(css, nil)
-}
-
 // isCssSafeFor checks css against prefixes, or against getCssUrlPrefixes() when it is nil.
 func isCssSafeFor(css string, prefixes []string) bool {
 	lowerCss := strings.ToLower(reStyleTag.ReplaceAllString(css, ""))
@@ -669,13 +682,6 @@ func isCssSafeFor(css string, prefixes []string) bool {
 		}
 	}
 	return true
-}
-
-func keepSafeCss(css string, oldCss string) string {
-	if css == oldCss || isCssSafe(css) {
-		return css
-	}
-	return oldCss
 }
 
 func isCustomSigninItem(item *SigninItem) bool {
