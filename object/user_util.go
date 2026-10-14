@@ -999,6 +999,14 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, allowDis
 			itemsChanged = append(itemsChanged, item)
 		}
 	}
+	if oldUser.IsVerified != newUser.IsVerified {
+		item := GetAccountItemByName("Is verified", organization)
+		if !userVisible(isAdmin, item) {
+			newUser.IsVerified = oldUser.IsVerified
+		} else {
+			itemsChanged = append(itemsChanged, item)
+		}
+	}
 	if oldUser.NeedUpdatePassword != newUser.NeedUpdatePassword {
 		item := GetAccountItemForUpdate("Need update password", organization)
 		if !userVisible(isAdmin, item) {

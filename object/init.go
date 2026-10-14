@@ -78,6 +78,7 @@ func GetDefaultAccountItems() []*AccountItem {
 		{Name: "ID card info", Visible: true, ViewRule: "Self", ModifyRule: "Self"},
 		{Name: "Real name", Visible: true, ViewRule: "Public", ModifyRule: "Self"},
 		{Name: "ID verification", Visible: true, ViewRule: "Self", ModifyRule: "Self"},
+		{Name: "Is verified", Visible: true, ViewRule: "Self", ModifyRule: "Admin"},
 		{Name: "Homepage", Visible: true, ViewRule: "Public", ModifyRule: "Self"},
 		{Name: "Bio", Visible: true, ViewRule: "Public", ModifyRule: "Self"},
 		{Name: "Tag", Visible: true, ViewRule: "Public", ModifyRule: "Admin"},

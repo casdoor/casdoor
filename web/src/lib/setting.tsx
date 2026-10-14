@@ -745,6 +745,7 @@ export const GetTranslatedUserItems = () => {
     {name: "ID card info", label: i18next.t("user:ID card info")},
     {name: "Real name", label: i18next.t("application:Real name")},
     {name: "ID verification", label: i18next.t("user:ID verification")},
+    {name: "Is verified", label: i18next.t("user:Is verified")},
     {name: "Homepage", label: i18next.t("user:Homepage")},
     {name: "Bio", label: i18next.t("user:Bio")},
     {name: "Tag", label: i18next.t("general:Tag")},

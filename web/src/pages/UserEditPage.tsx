@@ -617,6 +617,15 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
         </div>
       </AccountItemRow>
     ),
+    "Is verified": (
+      <AccountItemRow name="Is verified" labelKey="user:Is verified">
+        <Switch
+          checked={!!user.isVerified}
+          disabled={!isAdmin}
+          onCheckedChange={(v) => updateField("isVerified", v)}
+        />
+      </AccountItemRow>
+    ),
     "Language": (
       <AccountItemRow name="Language" labelKey="user:Language">
         <Input value={user.language ?? ""} onChange={(e) => updateField("language", e.target.value)} />
@@ -1122,9 +1131,6 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
   // rows this frontend adds on top of the antd list; no account item governs them
   const extraRows = (
     <>
-      <FormRow block labelKey="user:Is verified">
-        <Switch checked={!!user.isVerified} onCheckedChange={(v) => updateField("isVerified", v)} />
-      </FormRow>
       <FormRow block labelKey="user:Deleted time">
         <Input value={Setting.getFormattedDate(user.deletedTime) ?? ""} disabled />
       </FormRow>
