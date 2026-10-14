@@ -66,7 +66,7 @@ func GetDefaultAccountItems() []*AccountItem {
 		{Name: "Password", Visible: true, ViewRule: "Self", ModifyRule: "Self"},
 		{Name: "Email", Visible: true, ViewRule: "Public", ModifyRule: "Self"},
 		{Name: "Phone", Visible: true, ViewRule: "Public", ModifyRule: "Self"},
-		{Name: "Country code", Visible: true, ViewRule: "Public", ModifyRule: "Admin"},
+		{Name: "Country code", Visible: true, ViewRule: "Public", ModifyRule: "Self"},
 		{Name: "Country/Region", Visible: true, ViewRule: "Public", ModifyRule: "Self"},
 		{Name: "Location", Visible: true, ViewRule: "Public", ModifyRule: "Self"},
 		{Name: "Address", Visible: true, ViewRule: "Public", ModifyRule: "Self"},

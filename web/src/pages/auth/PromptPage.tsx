@@ -108,7 +108,7 @@ export default function PromptPage({application: applicationProp}: {application?
 
   const submit = () => {
     setSaving(true);
-    UserBackend.updateUser(user.owner, user.name, Setting.deepCopy(user))
+    UserBackend.updateUser(user.owner, user.name, Setting.deepCopy(user), applicationName)
       .then((res: any) => {
         if (res.status === "ok") {
           Setting.showMessage("success", i18next.t("general:Successfully saved"));

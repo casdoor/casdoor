@@ -45,9 +45,10 @@ export function getUser(owner, name) {
   }).then(res => res.json());
 }
 
-export function updateUser(owner, name, user) {
+export function updateUser(owner, name, user, promptedApplication?: string) {
   const newUser = Setting.deepCopy(user);
-  return fetch(`${Setting.ServerUrl}/api/update-user?id=${owner}/${encodeURIComponent(name)}`, {
+  const promptedApplicationQuery = promptedApplication ? `&promptedApplication=${encodeURIComponent(promptedApplication)}` : "";
+  return fetch(`${Setting.ServerUrl}/api/update-user?id=${owner}/${encodeURIComponent(name)}${promptedApplicationQuery}`, {
     method: "POST",
     credentials: "include",
     body: JSON.stringify(newUser),

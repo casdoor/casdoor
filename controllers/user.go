@@ -431,6 +431,23 @@ func (c *ApiController) UpdateUser() {
 		columns = append(columns, "password", "password_salt", "password_type", "last_change_password_time")
 	}
 
+	if !isAdmin {
+		// a user completing an application's prompted signup items may write those columns;
+		// GetPromptedSignupItemUpdateColumns re-resolves the application and matches
+		// its organization, so the claim cannot be borrowed from another organization
+		promptedColumns := object.GetPromptedSignupItemUpdateColumns(c.Ctx.Input.Query("promptedApplication"), oldUser)
+		if len(promptedColumns) != 0 {
+			if len(columns) == 0 {
+				columns = object.GetDefaultUserUpdateColumns(isAdmin)
+			}
+			for _, column := range promptedColumns {
+				if !util.InSlice(columns, column) {
+					columns = append(columns, column)
+				}
+			}
+		}
+	}
+
 	affected, err := object.UpdateUser(id, &user, columns, isAdmin)
 	if err != nil {
 		c.ResponseError(err.Error())

@@ -18,6 +18,7 @@ import (
 	"reflect"
 
 	"github.com/casdoor/casdoor/form"
+	"github.com/casdoor/casdoor/util"
 )
 
 func (application *Application) GetProviderByCategory(category string) (*Provider, error) {
@@ -193,6 +194,36 @@ func (application *Application) getAllPromptedProviderItems() []*ProviderItem {
 	for _, providerItem := range application.Providers {
 		if providerItem.isProviderPrompted() {
 			res = append(res, providerItem)
+		}
+	}
+	return res
+}
+
+// The user columns an application's prompted signup items allow their owner to
+// write through a self update, beyond the columns a self update may touch on
+// its own. The application is resolved from storage and must belong to the
+// user's organization, so a caller cannot invoke another organization's prompt.
+func GetPromptedSignupItemUpdateColumns(applicationName string, user *User) []string {
+	res := []string{}
+	if applicationName == "" || user == nil {
+		return res
+	}
+
+	application, err := GetApplication(util.GetId("admin", applicationName))
+	if err != nil || application == nil {
+		return res
+	}
+
+	if application.Organization != user.Owner {
+		return res
+	}
+
+	for _, signupItem := range application.getAllPromptedSignupItems() {
+		switch signupItem.Name {
+		case "Email":
+			res = append(res, "email")
+		case "Phone":
+			res = append(res, "phone", "country_code")
 		}
 	}
 	return res
