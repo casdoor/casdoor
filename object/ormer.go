@@ -22,6 +22,7 @@ import (
 	"regexp"
 	"runtime"
 	"strings"
+	"time"
 
 	"github.com/beego/beego/v2/server/web"
 	"github.com/casdoor/casdoor/conf"
@@ -297,8 +298,24 @@ func (a *Ormer) open() error {
 		}
 	}
 
+	setConnectionPool(engine)
+
 	a.Engine = engine
 	return nil
+}
+
+// database/sql keeps only 2 idle connections by default, so under concurrent load most connections
+// are closed right after use and reopened, which can exhaust local ports with TIME_WAIT sockets.
+func setConnectionPool(engine *xorm.Engine) {
+	if val, err := conf.GetConfigInt64("dbMaxIdleConns"); err == nil && val > 0 {
+		engine.SetMaxIdleConns(int(val))
+	}
+	if val, err := conf.GetConfigInt64("dbMaxOpenConns"); err == nil && val > 0 {
+		engine.SetMaxOpenConns(int(val))
+	}
+	if val, err := conf.GetConfigInt64("dbConnMaxLifetime"); err == nil && val > 0 {
+		engine.SetConnMaxLifetime(time.Duration(val) * time.Second)
+	}
 }
 
 func (a *Ormer) openFromDb(db *sql.DB) error {
