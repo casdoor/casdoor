@@ -208,7 +208,7 @@ export const TourObj: Record<string, TourStep[]> = {
 
 export const TourUrlList = ["home", "organizations", "groups", "users", "applications", "providers", "resources", "roles", "permissions", "models", "adapters", "enforcers", "tokens", "sessions", "products", "payments", "plans", "pricings", "subscriptions", "sysinfo", "syncers", "webhooks"];
 
-export function getNextUrl(pathName = window.location.pathname) {
+export function getNextUrl(pathName = Setting.getRoutePath()) {
   return TourUrlList[TourUrlList.indexOf(pathName.replace("/", "")) + 1] || "";
 }
 
@@ -243,12 +243,12 @@ export function getNextButtonChild(nextPathName: string) {
 }
 
 /** The steps for the page currently open, empty when the page has no tour. */
-export function getSteps(pathName = window.location.pathname): TourStep[] {
+export function getSteps(pathName = Setting.getRoutePath()): TourStep[] {
   return TourObj[pathName.replace("/", "")] ?? [];
 }
 
 /** Whether the page currently open has a tour at all. */
-export function canTour(pathName = window.location.pathname) {
+export function canTour(pathName = Setting.getRoutePath()) {
   const path = pathName.replace("/", "");
   return path === "" || TourUrlList.indexOf(path) !== -1;
 }

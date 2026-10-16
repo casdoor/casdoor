@@ -63,7 +63,7 @@ export default function PricingEditPage() {
         <Button
           variant="outline"
           onClick={() => {
-            copy(`${window.location.origin}/select-plan/${ctx.record.owner}/${ctx.record.name}`);
+            copy(`${Setting.getOriginUrl()}/select-plan/${ctx.record.owner}/${ctx.record.name}`);
             Setting.showMessage("success", i18next.t("general:Copied to clipboard successfully"));
           }}
         >

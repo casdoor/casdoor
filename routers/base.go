@@ -89,7 +89,7 @@ func denyMcpRequest(ctx *context.Context, message string) {
 		// localhost:8000 or computer-name:80
 		scheme = "http"
 	}
-	resourceMetadataUrl := fmt.Sprintf("%s://%s/.well-known/oauth-protected-resource", scheme, host)
+	resourceMetadataUrl := fmt.Sprintf("%s://%s%s/.well-known/oauth-protected-resource", scheme, host, basePath)
 	ctx.Output.Header("WWW-Authenticate", fmt.Sprintf("Bearer realm=\"casdoor\", resource_metadata=\"%s\"", resourceMetadataUrl))
 
 	req := mcpself.McpRequest{}

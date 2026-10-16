@@ -351,6 +351,7 @@ func serveFileWithReplace(w http.ResponseWriter, r *http.Request, name string, o
 			// the cached CDN version after the page turned the CDN off
 			modTime = time.Time{}
 		}
+		newContent = addBasePathToHtml(newContent)
 	}
 
 	newContent = strings.ReplaceAll(newContent, oldStaticBaseUrl, newStaticBaseUrl)

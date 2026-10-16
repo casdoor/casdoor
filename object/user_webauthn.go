@@ -36,9 +36,9 @@ func GetWebAuthnObject(host string) (*webauthn.WebAuthn, error) {
 	}
 
 	webAuthn, err := webauthn.New(&webauthn.Config{
-		RPDisplayName: conf.GetConfigString("appname"),      // Display Name for your site
-		RPID:          strings.Split(localUrl.Host, ":")[0], // Generally the domain name for your site, it's ok because splits cannot return empty array
-		RPOrigin:      originBackend,                        // The origin URL for WebAuthn requests
+		RPDisplayName: conf.GetConfigString("appname"),         // Display Name for your site
+		RPID:          strings.Split(localUrl.Host, ":")[0],    // Generally the domain name for your site, it's ok because splits cannot return empty array
+		RPOrigin:      localUrl.Scheme + "://" + localUrl.Host, // The origin URL for WebAuthn requests, without the base path
 		// RPIcon:     "https://duo.com/logo.png",           // Optional icon URL for your site
 	})
 	if err != nil {

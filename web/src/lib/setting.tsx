@@ -37,9 +37,12 @@ import viCountries from "i18n-iso-countries/langs/vi.json";
 import zhCountries from "i18n-iso-countries/langs/zh.json";
 import * as Conf from "@/Conf";
 import {authConfig} from "@/auth/Auth";
+import {BasePath, getRoutePath, withBasePath} from "@/lib/base-path";
 import "@/i18n";
 
-export const ServerUrl = "";
+export {BasePath, getOriginUrl, getRoutePath, withBasePath} from "@/lib/base-path";
+
+export const ServerUrl = BasePath;
 
 export const StaticBaseUrl = Conf.StaticBaseUrl;
 
@@ -77,19 +80,23 @@ export function getFullServerUrl() {
   if (fullServerUrl === "http://localhost:7002" || fullServerUrl === "http://localhost:7001") {
     fullServerUrl = "http://localhost:8000";
   }
-  return fullServerUrl;
+  return `${fullServerUrl}${BasePath}`;
 }
 
-// An OAuth redirect URI on Casdoor's own origin belongs to Casdoor itself: the whole
-// origin serves the frontend, so no client application can live there. Such a request
-// is signed in directly instead of being answered with a code nobody can collect.
+// An OAuth redirect URI on Casdoor's own origin (under its base path) belongs to Casdoor
+// itself: that whole path serves the frontend, so no client application can live there.
+// Such a request is signed in directly instead of being answered with a code nobody can collect.
 export function isSelfRedirectUri(redirectUri) {
   if (!redirectUri) {
     return false;
   }
 
   try {
-    return new URL(redirectUri).origin === getFullServerUrl();
+    const url = new URL(redirectUri);
+    if (url.origin !== new URL(getFullServerUrl()).origin) {
+      return false;
+    }
+    return BasePath === "" || url.pathname === BasePath || url.pathname.startsWith(`${BasePath}/`);
   } catch {
     return false;
   }
@@ -1201,7 +1208,7 @@ export function openLink(link) {
   }
   // this.props.history.push(link);
   const w = window.open("about:blank");
-  w.location.href = link;
+  w.location.href = withBasePath(link);
 }
 
 export function openLinkSafe(link) {
@@ -1211,7 +1218,7 @@ export function openLinkSafe(link) {
   // Javascript window.open issue in safari
   // https://stackoverflow.com/questions/45569893/javascript-window-open-issue-in-safari
   const a = document.createElement("a");
-  a.href = link;
+  a.href = withBasePath(link);
   a.setAttribute("target", "_blank");
   a.click();
 }
@@ -1220,7 +1227,7 @@ export function goToLink(link) {
   if (isScriptUrl(link)) {
     return;
   }
-  window.location.href = link;
+  window.location.href = withBasePath(link);
 }
 
 
@@ -2516,8 +2523,8 @@ export function getSignupLink(application) {
   if (application.signupUrl) {
     // the application's own signup page, also when signing in through OAuth
     url = application.signupUrl;
-  } else if (window.location.pathname.includes("/login/oauth/authorize")) {
-    url = window.location.pathname.replace("/login/oauth/authorize", "/signup/oauth/authorize");
+  } else if (getRoutePath().includes("/login/oauth/authorize")) {
+    url = getRoutePath().replace("/login/oauth/authorize", "/signup/oauth/authorize");
   } else if (authConfig.appName === application.name) {
     url = "/signup";
   } else {
@@ -2530,7 +2537,7 @@ export function getSignupLink(application) {
 
 /** The sign-in URL carries the OAuth params, so remember it before leaving for the signup or forget page. */
 export function storeSigninUrl() {
-  sessionStorage.setItem("signinUrl", window.location.pathname + window.location.search);
+  sessionStorage.setItem("signinUrl", getRoutePath() + window.location.search);
 }
 
 export function getStoredSigninUrl() {
@@ -2542,8 +2549,8 @@ export function getLoginLink(application) {
   let url;
   if (application === null) {
     url = null;
-  } else if (window.location.pathname.includes("/signup/oauth/authorize")) {
-    url = window.location.pathname.replace("/signup/oauth/authorize", "/login/oauth/authorize");
+  } else if (getRoutePath().includes("/signup/oauth/authorize")) {
+    url = getRoutePath().replace("/signup/oauth/authorize", "/login/oauth/authorize");
   } else if (authConfig.appName === application.name) {
     url = "/login";
   } else if (application.signinUrl === "") {

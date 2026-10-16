@@ -140,3 +140,12 @@ func GetConfigBatchSize() int {
 	}
 	return res
 }
+
+// GetBasePath returns the path prefix Casdoor is served under behind a reverse proxy, like "/casdoor", or "" at the root
+func GetBasePath() string {
+	res := strings.Trim(strings.TrimSpace(GetConfigString("basePath")), "/")
+	if res == "" {
+		return ""
+	}
+	return "/" + res
+}

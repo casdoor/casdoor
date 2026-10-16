@@ -15,6 +15,13 @@
 (function() {
   "use strict";
 
+  // the path Casdoor is served under, like "/casdoor", which the server writes into the page (routers/base_path.go)
+  var basePath = (function() {
+    var meta = document.querySelector("meta[name=\"casdoor-base-path\"]");
+    var value = meta ? (meta.getAttribute("content") || "").replace(/^\/+|\/+$/g, "") : "";
+    return value ? "/" + value : "";
+  })();
+
   var reactFallbackKey = "__casdoor_callback_react";
   var reactFallbackPayloadKey = "casdoor_callback_react_fallback";
 
@@ -101,8 +108,8 @@
         return "login";
       }
 
-      var realRedirectUrl = new URL(realRedirectUri).origin;
-      if (window.location.origin === realRedirectUrl) {
+      var realRedirectUrl = new URL(realRedirectUri);
+      if (window.location.origin === realRedirectUrl.origin && (basePath === "" || realRedirectUrl.pathname === basePath || realRedirectUrl.pathname.indexOf(basePath + "/") === 0)) {
         return "login";
       }
 
@@ -264,7 +271,7 @@
 
   function goToConsentPage(applicationName, queryString) {
     var url = new URL(getReactCallbackOrigin());
-    url.pathname = "/consent/" + encodeURIComponent(applicationName);
+    url.pathname = basePath + "/consent/" + encodeURIComponent(applicationName);
     url.search = queryString || "";
     window.location.replace(url.toString());
   }
@@ -274,11 +281,11 @@
   }
 
   function getFromLink() {
-    return sessionStorage.getItem("from") || "/";
+    return basePath + (sessionStorage.getItem("from") || "/");
   }
 
   async function loginCas(body, casService) {
-    return fetch(window.location.origin + "/api/login?service=" + encodeURIComponent(casService || ""), {
+    return fetch(window.location.origin + basePath + "/api/login?service=" + encodeURIComponent(casService || ""), {
       method: "POST",
       credentials: "include",
       body: JSON.stringify(body),
@@ -312,7 +319,7 @@
       return;
     }
 
-    var redirectUri = window.location.origin + "/callback";
+    var redirectUri = window.location.origin + basePath + "/callback";
     var codeVerifier = getCodeVerifier(params.get("state"));
     var body = {
       type: responseType,
@@ -363,7 +370,7 @@
     }
 
     var oAuthParams = getOAuthGetParameters(innerParams, queryString);
-    var response = await fetch(window.location.origin + "/api/login" + oAuthParamsToQuery(oAuthParams), {
+    var response = await fetch(window.location.origin + basePath + "/api/login" + oAuthParamsToQuery(oAuthParams), {
       method: "POST",
       credentials: "include",
       body: JSON.stringify(body),
@@ -437,7 +444,7 @@
       if (oauth) {
         from += "?oauth=" + oauth;
       }
-      window.location.replace(from);
+      window.location.replace(basePath + from);
       return;
     }
 

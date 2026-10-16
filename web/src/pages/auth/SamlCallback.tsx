@@ -85,7 +85,7 @@ export default function SamlCallback() {
       provider: providerName,
       state: state,
       application: applicationName,
-      redirectUri: `${window.location.origin}/callback`,
+      redirectUri: `${Setting.getOriginUrl()}/callback`,
       method: "signup",
       relayState: relayState,
       samlResponse: encodeURIComponent(samlResponse),
@@ -112,8 +112,8 @@ export default function SamlCallback() {
       if (res.data === Setting.RequiredUpdatePassword) {
         Setting.goToUpdatePassword(applicationName || undefined);
       } else if (res.data === "RequiredMfa") {
-        localStorage.setItem("mfaRedirectUrl", window.location.origin);
-        Setting.goToLink(window.location.origin);
+        localStorage.setItem("mfaRedirectUrl", Setting.getOriginUrl());
+        Setting.goToLink(Setting.getOriginUrl());
       } else if (res.data === NextMfa) {
         // the panel needs the application for its branding and the captcha rule
         // behind "Get Code"; with only a clientId there is no name to fetch by

@@ -95,7 +95,7 @@ export default function SignupPage({application: applicationProp}: {application?
     const oAuthParams = Util.getOAuthGetParameters();
     if (oAuthParams) {
       // the OAuth params live on the signin path, remember it to get back there after the signup
-      const signinUrl = window.location.pathname.replace("/signup/oauth/authorize", "/login/oauth/authorize");
+      const signinUrl = Setting.getRoutePath().replace("/signup/oauth/authorize", "/login/oauth/authorize");
       sessionStorage.setItem("signinUrl", signinUrl + window.location.search);
     }
     const load = oAuthParams

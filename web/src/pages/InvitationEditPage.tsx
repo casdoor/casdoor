@@ -59,7 +59,7 @@ export default function InvitationEditPage() {
       }
     }
     Setting.copyToClipboard(
-      `${window.location.origin}/signup/${defaultApplication}?invitationCode=${record.defaultCode ?? ""}`,
+      `${Setting.getOriginUrl()}/signup/${defaultApplication}?invitationCode=${record.defaultCode ?? ""}`,
     );
   };
 

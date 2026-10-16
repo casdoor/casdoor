@@ -166,7 +166,7 @@ export default function AuthCallback() {
       samlRequest: Util.getParameterIgnoreCase(innerParams, "SAMLRequest"),
       state: applicationName,
       invitationCode: innerParams.get("invitationCode") || "",
-      redirectUri: `${window.location.origin}/callback`,
+      redirectUri: `${Setting.getOriginUrl()}/callback`,
       method: innerParams.get("method"),
       userCode: innerParams.get("userCode") || "",
       codeVerifier,
@@ -275,8 +275,8 @@ export default function AuthCallback() {
         Setting.goToUpdatePassword(applicationName ?? undefined);
       } else if (res.data === "RequiredMfa") {
         // the account reload in the console then bounces to /mfa/setup
-        localStorage.setItem("mfaRedirectUrl", window.location.origin);
-        Setting.goToLink(window.location.origin);
+        localStorage.setItem("mfaRedirectUrl", Setting.getOriginUrl());
+        Setting.goToLink(Setting.getOriginUrl());
       } else if (res.data === NextMfa) {
         // the panel needs the application for its branding and the captcha rule
         // behind "Get Code"
