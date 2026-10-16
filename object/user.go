@@ -730,6 +730,22 @@ func GetMaskedUser(user *User, isAdminOrSelf bool, errs ...error) (*User, error)
 	return user, nil
 }
 
+func getOAuthDisplayProperties(properties map[string]string) map[string]string {
+	res := map[string]string{}
+	for key, value := range properties {
+		if !strings.HasPrefix(key, "oauth_") {
+			continue
+		}
+		for _, suffix := range []string{"_id", "_username", "_displayName", "_email", "_avatarUrl"} {
+			if strings.HasSuffix(key, suffix) {
+				res[key] = value
+				break
+			}
+		}
+	}
+	return res
+}
+
 func GetFilteredUser(user *User, isAdmin bool, isAdminOrSelf bool, accountItems []*AccountItem) (*User, error) {
 	if accountItems == nil || len(accountItems) == 0 {
 		return user, nil
@@ -771,6 +787,11 @@ func GetFilteredUser(user *User, isAdmin bool, isAdminOrSelf bool, accountItems 
 						user.Properties[infoKey] = ""
 					}
 				}
+				continue
+			}
+		case "Properties":
+			if isAdminOrSelf {
+				user.Properties = getOAuthDisplayProperties(user.Properties)
 				continue
 			}
 		}
