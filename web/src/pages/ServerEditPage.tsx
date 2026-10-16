@@ -107,7 +107,7 @@ export default function ServerEditPage() {
           return;
         }
         const next = `/servers/${server.owner}/${server.name}`;
-        if (next !== window.location.pathname) {
+        if (next !== Setting.getRoutePath()) {
           navigate(next, {replace: true});
         } else {
           reload();
@@ -218,7 +218,7 @@ export default function ServerEditPage() {
         </div>
       </FormRow>
       <FormRow labelKey="provider:Base URL">
-        <Input readOnly value={`${window.location.origin}/api/server/${server.owner}/${server.name}`} />
+        <Input readOnly value={`${Setting.getOriginUrl()}/api/server/${server.owner}/${server.name}`} />
       </FormRow>
     </EditPageShell>
   );

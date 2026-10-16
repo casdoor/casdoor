@@ -19,7 +19,7 @@ export function useLogout() {
         if (redirectUri !== null && redirectUri !== undefined && redirectUri !== "") {
           Setting.goToLink(redirectUri);
         } else if (owner !== "built-in") {
-          Setting.goToLink(`${window.location.origin}/login/${owner}`);
+          Setting.goToLink(`${Setting.getOriginUrl()}/login/${owner}`);
         } else {
           navigate("/");
         }

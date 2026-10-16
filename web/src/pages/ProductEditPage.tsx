@@ -106,7 +106,7 @@ export default function ProductEditPage() {
       extraActions={(ctx) =>
         ctx.mode === "add" ? null : (
           <Button variant="outline" asChild>
-            <a href={`/products/${ctx.record.owner}/${ctx.record.name}/buy`} target="_blank" rel="noreferrer">
+            <a href={Setting.withBasePath(`/products/${ctx.record.owner}/${ctx.record.name}/buy`)} target="_blank" rel="noreferrer">
               {i18next.t("product:Test buy page..")}
             </a>
           </Button>

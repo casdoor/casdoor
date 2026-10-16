@@ -536,7 +536,7 @@ export default function ProviderEditPage() {
           navigate("/providers");
         } else {
           const next = `/providers/${provider.owner}/${provider.name}`;
-          if (next !== window.location.pathname) {
+          if (next !== Setting.getRoutePath()) {
             navigate(next, {replace: true});
           }
         }

@@ -98,10 +98,11 @@ func getOriginFromHostInternal(host string) (string, string) {
 		protocol = "http://"
 	}
 
+	basePath := conf.GetBasePath()
 	if host == "localhost:8000" && isDev {
-		return fmt.Sprintf("%s%s", protocol, "localhost:7001"), fmt.Sprintf("%s%s", protocol, "localhost:8000")
+		return fmt.Sprintf("%s%s%s", protocol, "localhost:7001", basePath), fmt.Sprintf("%s%s%s", protocol, "localhost:8000", basePath)
 	} else {
-		return fmt.Sprintf("%s%s", protocol, host), fmt.Sprintf("%s%s", protocol, host)
+		return fmt.Sprintf("%s%s%s", protocol, host, basePath), fmt.Sprintf("%s%s%s", protocol, host, basePath)
 	}
 }
 

@@ -191,7 +191,7 @@ export function SimpleEditPage({
           return;
         }
         const next = editUrl ? editUrl({...record, ...patch}) : null;
-        if (next && next !== window.location.pathname) {
+        if (next && next !== Setting.getRoutePath()) {
           navigate(next, {replace: true});
         } else if (isAdd) {
           // the server fills in what the form could not know: generated ids and

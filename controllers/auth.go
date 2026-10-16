@@ -1785,7 +1785,7 @@ func (c *ApiController) Callback() {
 
 	setAppleDisplayNameCookie(c.Ctx, getAppleDisplayName(c.GetString("user")))
 
-	frontendCallbackUrl := fmt.Sprintf("/callback?code=%s&state=%s", url.QueryEscape(code), url.QueryEscape(state))
+	frontendCallbackUrl := fmt.Sprintf("%s/callback?code=%s&state=%s", conf.GetBasePath(), url.QueryEscape(code), url.QueryEscape(state))
 	c.Ctx.Redirect(http.StatusFound, frontendCallbackUrl)
 }
 

@@ -31,7 +31,7 @@ function goToSamlUrl(provider: any, search: string) {
   const clientId = params.get("client_id") ?? "";
   const state = params.get("state");
   const realRedirectUri = params.get("redirect_uri");
-  const redirectUri = `${window.location.origin}/callback/saml`;
+  const redirectUri = `${Setting.getOriginUrl()}/callback/saml`;
 
   const relayState = `${clientId}&${state}&${provider.name}&${realRedirectUri}&${redirectUri}`;
   AuthBackend.getSamlLogin(`${provider.owner}/${provider.name}`, btoa(relayState)).then((res: any) => {

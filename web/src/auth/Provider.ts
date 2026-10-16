@@ -402,7 +402,7 @@ export function getAuthUrl(application: any, provider: any, method: string, code
   }
   const type = Setting.isCustomOAuthType(provider.type) ? "Custom" : provider.type;
   let endpoint = authInfo[type].endpoint;
-  const redirectOrigin = application.forcedRedirectOrigin ? application.forcedRedirectOrigin : window.location.origin;
+  const redirectOrigin = application.forcedRedirectOrigin ? application.forcedRedirectOrigin : Setting.getOriginUrl();
   let redirectUri = `${redirectOrigin}/callback`;
   let scope = authInfo[type].scope;
   // Allow provider.scopes to override default scope if specified
