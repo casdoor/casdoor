@@ -6,6 +6,7 @@ import {EnableMfaNotification} from "@/components/auth/EnableMfaNotification";
 import {CommandPalette, useCommandPalette} from "@/components/common/CommandPalette";
 import {ConsoleTour} from "@/components/common/ConsoleTour";
 import {GithubCorner} from "@/components/common/GithubCorner";
+import {ThemeShowcaseBar} from "@/components/common/ThemeShowcaseBar";
 import {Loading} from "@/components/common/Loading";
 import {Header} from "@/components/layout/Header";
 import {PoweredBy} from "@/components/layout/PoweredBy";
@@ -15,6 +16,7 @@ import {useThemeData} from "@/hooks/use-application-chrome";
 import * as OrganizationBackend from "@/backend/OrganizationBackend";
 import {getSafeHtml} from "@/lib/custom-html";
 import * as Setting from "@/lib/setting";
+import {getConsoleCss, useShowcaseApplication} from "@/lib/theme-showcase";
 
 /**
  * `SidebarProvider` persists the rail through its own `sidebar_state` cookie, so
@@ -63,12 +65,17 @@ export function AppLayout() {
   const {account} = useAccount();
   const footerHtml = useFooterHtml(account?.organization?.name);
   const palette = useCommandPalette();
-  // the console follows the signed-in user's organization theme, title and favicon
-  useThemeData(Setting.getThemeData(account?.organization, null));
+  // the console follows the signed-in user's organization theme, title and favicon, or on
+  // a demo site the Marketplace theme on show
+  const showcase = useShowcaseApplication(null);
+  useThemeData(showcase?.themeData ?? Setting.getThemeData(account?.organization, null));
+  const showcaseCss = React.useMemo(() => getConsoleCss(showcase?.formCss), [showcase]);
 
   return (
     <div className="flex h-screen flex-col overflow-hidden bg-background">
       <GithubCorner />
+      {showcaseCss ? <style>{showcaseCss}</style> : null}
+      <ThemeShowcaseBar className="bottom-16 left-auto right-3 sm:bottom-16 sm:left-auto sm:right-4" />
       <ConsoleTour />
       <EnableMfaNotification />
       <CommandPalette open={palette.open} onOpenChange={palette.setOpen} />

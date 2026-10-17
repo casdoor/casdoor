@@ -11,7 +11,6 @@ import {Loading} from "@/components/common/Loading";
 import {CustomHtml, CustomStyle} from "@/components/common/CustomHtml";
 import {isTrustedApplication} from "@/lib/custom-html";
 import {AuthDivider, AuthLayout} from "@/components/auth/AuthLayout";
-import {useThemeShowcase} from "@/components/auth/ThemeShowcase";
 import {SigninMethodTabs} from "@/components/auth/SigninMethodTabs";
 import {MfaVerify, NextMfa, RequiredMfa} from "@/components/auth/MfaVerify";
 import {AgreementCheckbox, isSigninAgreementShown} from "@/components/auth/AgreementModal";
@@ -39,7 +38,6 @@ import * as AuthBackend from "@/backend/AuthBackend";
 import * as UserBackend from "@/backend/UserBackend";
 import * as OrganizationBackend from "@/backend/OrganizationBackend";
 import * as Setting from "@/lib/setting";
-import * as Conf from "@/Conf";
 
 type LoginType = "login" | "code" | "cas" | "saml" | "device";
 type LoginMethod = "password" | "verificationCode" | "verificationCodeEmail" | "verificationCodePhone" | "ldap" | "webAuthn" | "wechat" | "faceId" | "magicLink" | "device";
@@ -289,8 +287,6 @@ export default function LoginPage({type = "login", application: applicationProp,
   const {account, reload} = useAccount();
 
   const [application, setApplication] = React.useState<any>(undefined);
-  // on a demo site the Marketplace themes take turns on the page, the application itself stays as loaded
-  const {application: themedApplication, showcase} = useThemeShowcase(application, Conf.LoginThemeShowcase && !preview && type === "login" && !account);
   const [msg, setMsg] = React.useState<string | null>(null);
   const [loginMethod, setLoginMethod] = React.useState<LoginMethod | undefined>(undefined);
   const [username, setUsername] = React.useState("");
@@ -1568,7 +1564,7 @@ export default function LoginPage({type = "login", application: applicationProp,
   return (
     <AuthLayout
       preview={preview === "theme" ? "theme" : !!preview}
-      application={themedApplication}
+      application={application}
       hideLogo={!isVisible("Logo")}
       hideLanguages={!isVisible("Languages")}
     >
@@ -1708,7 +1704,6 @@ export default function LoginPage({type = "login", application: applicationProp,
           />
         ) : null}
       </div>
-      {showcase}
     </AuthLayout>
   );
 }
