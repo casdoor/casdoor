@@ -101,6 +101,10 @@ func (c *ApiController) Signup() {
 		return
 	}
 
+	// a value posted for a hidden signup item did not come from the signup page,
+	// so it is cleared before any check reads it, e.g. the invitation code gate below
+	application.ClearHiddenSignupFields(&authForm)
+
 	if !application.EnableSignUp || !application.IsSignupAllowedFor(authForm.Organization) {
 		c.ResponseError(c.T("account:The application does not allow to sign up new account"))
 		return
@@ -123,9 +127,6 @@ func (c *ApiController) Signup() {
 		c.ResponseError(fmt.Sprintf(c.T("auth:The organization: %s does not exist"), authForm.Organization))
 		return
 	}
-
-	// a value posted for a hidden signup item did not come from the signup page
-	application.ClearHiddenSignupFields(&authForm)
 
 	clientIp := util.GetClientIpFromRequest(c.Ctx.Request)
 	err = object.CheckEntryIp(clientIp, nil, application, organization, c.GetAcceptLanguage())
