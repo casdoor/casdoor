@@ -123,6 +123,7 @@ export default function PromptPage({application: applicationProp}: {application?
         ...Setting.deepCopy(user),
         email: savedUser.email,
         phone: savedUser.phone,
+        countryCode: savedUser.countryCode,
       });
       if (res.status !== "ok") {
         Setting.showMessage("error", res.msg);
@@ -135,7 +136,7 @@ export default function PromptPage({application: applicationProp}: {application?
         if (!changed) {
           continue;
         }
-        const resetRes: any = await UserBackend.resetEmailOrPhone(dest, destType, code);
+        const resetRes: any = await UserBackend.resetEmailOrPhone(dest, destType, code, phoneCountryCode);
         if (resetRes.status !== "ok") {
           Setting.showMessage("error", resetRes.msg);
           return;
