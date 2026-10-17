@@ -75,7 +75,8 @@ export function AppLayout() {
     <div className="flex h-screen flex-col overflow-hidden bg-background">
       <GithubCorner />
       {showcaseCss ? <style>{showcaseCss}</style> : null}
-      <ThemeShowcaseBar className="bottom-16 left-auto right-3 sm:bottom-16 sm:left-auto sm:right-4" />
+      {/* the console's own navigation is on the left */}
+      <ThemeShowcaseBar side="right" />
       <ConsoleTour />
       <EnableMfaNotification />
       <CommandPalette open={palette.open} onOpenChange={palette.setOpen} />
