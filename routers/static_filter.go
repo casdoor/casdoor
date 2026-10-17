@@ -17,6 +17,7 @@ package routers
 import (
 	"compress/gzip"
 	stdcontext "context"
+	"encoding/json"
 	"fmt"
 	"html"
 	"io"
@@ -352,11 +353,24 @@ func serveFileWithReplace(w http.ResponseWriter, r *http.Request, name string, o
 			modTime = time.Time{}
 		}
 		newContent = addBasePathToHtml(newContent)
+		newContent = addWebConfigToHtml(newContent)
 	}
 
 	newContent = strings.ReplaceAll(newContent, oldStaticBaseUrl, newStaticBaseUrl)
 
 	http.ServeContent(w, r, d.Name(), modTime, strings.NewReader(newContent))
+}
+
+// addWebConfigToHtml puts the web config into the page too: a page embedded in another site does not get the
+// jsonWebConfig cookie
+func addWebConfigToHtml(content string) string {
+	webConfig, err := json.Marshal(conf.GetWebConfig())
+	if err != nil {
+		return content
+	}
+
+	meta := fmt.Sprintf(`<meta name="casdoor-web-config" content="%s">`, html.EscapeString(string(webConfig)))
+	return strings.Replace(content, "</head>", meta+"</head>", 1)
 }
 
 type gzipResponseWriter struct {

@@ -81,7 +81,8 @@ export function initConfigFromCookie() {
 
   try {
     const curCookie = Cookie.parse(document.cookie);
-    const raw = curCookie["jsonWebConfig"];
+    // a page embedded in another site gets no cookie, the server also puts the config into the page
+    const raw = curCookie["jsonWebConfig"] ?? document.querySelector<HTMLMetaElement>("meta[name='casdoor-web-config']")?.content;
     if (!raw || raw === "null") {
       return;
     }
