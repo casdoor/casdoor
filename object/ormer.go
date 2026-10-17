@@ -22,6 +22,7 @@ import (
 	"regexp"
 	"runtime"
 	"strings"
+	"time"
 
 	"github.com/beego/beego/v2/server/web"
 	"github.com/casdoor/casdoor/conf"
@@ -289,6 +290,7 @@ func (a *Ormer) open() error {
 	if err != nil {
 		return err
 	}
+	configureConnectionPool(engine)
 
 	if a.driverName == "postgres" {
 		err = setPostgresSchema(engine, dataSourceName)
@@ -317,6 +319,7 @@ func (a *Ormer) openFromDb(db *sql.DB) error {
 	if err != nil {
 		return err
 	}
+	configureConnectionPool(engine)
 
 	if a.driverName == "postgres" {
 		err = setPostgresSchema(engine, dataSourceName)
@@ -327,6 +330,39 @@ func (a *Ormer) openFromDb(db *sql.DB) error {
 
 	a.Engine = engine
 	return nil
+}
+
+func configureConnectionPool(engine *xorm.Engine) {
+	maxOpenConns, maxIdleConns, maxLifetime := getConnectionPoolSettings()
+	if maxOpenConns > 0 {
+		engine.SetMaxOpenConns(int(maxOpenConns))
+	}
+
+	if maxIdleConns > 0 {
+		engine.SetMaxIdleConns(int(maxIdleConns))
+	}
+
+	if maxLifetime > 0 {
+		engine.SetConnMaxLifetime(maxLifetime)
+	}
+}
+
+func getConnectionPoolSettings() (int64, int64, time.Duration) {
+	maxOpenConns, _ := conf.GetConfigInt64("dbMaxOpenConns")
+	maxIdleConns, _ := conf.GetConfigInt64("dbMaxIdleConns")
+	maxLifetimeSeconds, _ := conf.GetConfigInt64("dbConnMaxLifetimeSeconds")
+
+	if maxOpenConns < 0 {
+		maxOpenConns = 0
+	}
+	if maxIdleConns < 0 {
+		maxIdleConns = 0
+	}
+	if maxLifetimeSeconds < 0 {
+		maxLifetimeSeconds = 0
+	}
+
+	return maxOpenConns, maxIdleConns, time.Duration(maxLifetimeSeconds) * time.Second
 }
 
 func (a *Ormer) close() {
