@@ -36,8 +36,8 @@ export const CustomFooter = null;
 // Maximum number of navbar items before switching from flat to grouped menu
 export let MaxItemsForFlatMenu = 7;
 
-// The demo sites rotate the Marketplace themes on the sign-in page and let visitors pick one
-export let LoginThemeShowcase = false;
+// The demo sites rotate the Marketplace themes on their pages and let visitors pick one
+export let ThemeShowcase = false;
 export let MarketplaceUrl = "https://cdn.jsdelivr.net/gh/casdoor/casdoor-integrations@dist";
 
 // setConfig updates the frontend configuration from backend
@@ -66,8 +66,8 @@ export function setConfig(config: Record<string, any>) {
   if (config.maxItemsForFlatMenu !== undefined) {
     MaxItemsForFlatMenu = config.maxItemsForFlatMenu;
   }
-  if (config.loginThemeShowcase !== undefined) {
-    LoginThemeShowcase = config.loginThemeShowcase;
+  if (config.themeShowcase !== undefined) {
+    ThemeShowcase = config.themeShowcase;
   }
   if (config.marketplaceUrl) {
     MarketplaceUrl = config.marketplaceUrl;

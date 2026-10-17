@@ -22,7 +22,7 @@ type WebConfig struct {
 	StaticBaseUrl       string `json:"staticBaseUrl"`
 	DefaultApplication  string `json:"defaultApplication"`
 	MaxItemsForFlatMenu int64  `json:"maxItemsForFlatMenu"`
-	LoginThemeShowcase  bool   `json:"loginThemeShowcase"`
+	ThemeShowcase       bool   `json:"themeShowcase"`
 	MarketplaceUrl      string `json:"marketplaceUrl"`
 }
 
@@ -49,8 +49,8 @@ func GetWebConfig() *WebConfig {
 	}
 	config.MaxItemsForFlatMenu = maxItemsForFlatMenu
 
-	config.LoginThemeShowcase = GetConfigBool("loginThemeShowcase") || IsDemoMode() || IsDemoDatabase()
-	if config.LoginThemeShowcase {
+	config.ThemeShowcase = GetConfigBool("themeShowcase") || IsDemoMode() || IsDemoDatabase()
+	if config.ThemeShowcase {
 		config.MarketplaceUrl = GetConfigString("marketplaceUrl")
 	}
 
