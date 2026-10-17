@@ -20,6 +20,7 @@ export interface ShowcaseTheme {
   id: string;
   name: Record<string, string> | string;
   url: string;
+  screenshot?: string;
 }
 
 export interface ThemeBundle {
@@ -33,6 +34,8 @@ interface ShowcaseState {
   // the theme on screen stays until the selected one has loaded
   shown: string;
   playing: boolean;
+  // the sidebar lists every theme with its screenshot when expanded
+  expanded: boolean;
   bundles: Record<string, ThemeBundle>;
 }
 
@@ -71,7 +74,7 @@ function setState(patch: Partial<ShowcaseState>) {
   // an embedded page shares the tab's storage with the site itself, which keeps its own choice
   if (!isFramed) {
     try {
-      sessionStorage.setItem(STORAGE_KEY, JSON.stringify({selected: state.selected, playing: state.playing}));
+      sessionStorage.setItem(STORAGE_KEY, JSON.stringify({selected: state.selected, playing: state.playing, expanded: state.expanded}));
     } catch {
       // the choice is only kept for this page then
     }
@@ -164,6 +167,7 @@ function init() {
     selected: fromUrl ?? saved?.selected ?? DEFAULT_THEME,
     shown: DEFAULT_THEME,
     playing: fromUrl ? false : saved?.playing ?? true,
+    expanded: !isFramed && !!saved?.expanded,
     bundles: {},
   };
 
@@ -174,7 +178,8 @@ function init() {
       const themes = ((index.integrations ?? []) as any[]).flatMap((item) => {
         const version = (item.versions ?? []).find((v: any) => v.version === item.latest);
         const isRevoked = revoked.some((r) => r.id === item.id && (!r.version || r.version === version?.version));
-        return item.type === "theme" && version && !isRevoked ? [{id: item.id, name: item.name, url: version.url}] : [];
+        const screenshot = item.screenshots?.[0] ? getMarketplaceFileUrl(item.screenshots[0]) : undefined;
+        return item.type === "theme" && version && !isRevoked ? [{id: item.id, name: item.name, url: version.url, screenshot}] : [];
       });
       setState({themes});
       if (state) {
@@ -209,6 +214,7 @@ export function useThemeShowcase(): ShowcaseState | null {
 export const showcaseActions = {
   pick: (id: string) => select(id, false),
   setPlaying: (playing: boolean) => setState({playing}),
+  setExpanded: (expanded: boolean) => setState({expanded}),
 };
 
 /** The theme on screen, null for the site's own look or when the site has no showcase. */
