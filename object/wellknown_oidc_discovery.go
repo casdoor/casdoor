@@ -137,16 +137,22 @@ func GetOidcDiscovery(host string, applicationName string) OidcDiscovery {
 	// Default OIDC scopes
 	scopes := []string{"openid", "email", "profile", "address", "phone", "offline_access"}
 
+	registrationEndpoint := fmt.Sprintf("%s/api/oauth/register", originBackend)
+
 	// Merge application-specific custom scopes if application is provided
 	if applicationName != "" {
 		applicationId := util.GetId("admin", applicationName)
 		application, err := GetApplication(applicationId)
-		if err == nil && application != nil && len(application.Scopes) > 0 {
+		if err == nil && application != nil {
 			for _, scope := range application.Scopes {
 				// Add custom scope names to the scopes list
 				if scope.Name != "" {
 					scopes = append(scopes, scope.Name)
 				}
+			}
+
+			if application.Organization != "" {
+				registrationEndpoint = fmt.Sprintf("%s?organization=%s", registrationEndpoint, url.QueryEscape(application.Organization))
 			}
 		}
 	}
@@ -163,7 +169,7 @@ func GetOidcDiscovery(host string, applicationName string) OidcDiscovery {
 		TokenEndpointAuthMethodsSupported:          []string{"client_secret_basic", "client_secret_post", "private_key_jwt"},
 		UserinfoEndpoint:                           fmt.Sprintf("%s/api/userinfo", originBackend),
 		DeviceAuthorizationEndpoint:                fmt.Sprintf("%s/api/device-auth", originBackend),
-		RegistrationEndpoint:                       fmt.Sprintf("%s/api/oauth/register", originBackend),
+		RegistrationEndpoint:                       registrationEndpoint,
 		JwksUri:                                    jwksUri,
 		IntrospectionEndpoint:                      fmt.Sprintf("%s/api/login/oauth/introspect", originBackend),
 		ResponseTypesSupported:                     []string{"code", "token", "id_token", "code token", "code id_token", "token id_token", "code token id_token"},
