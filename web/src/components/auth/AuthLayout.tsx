@@ -17,7 +17,7 @@ import {
 import {useIsMobile} from "@/hooks/use-mobile";
 import {useIsDark} from "@/hooks/use-theme";
 import * as Setting from "@/lib/setting";
-import {useShowcaseApplication} from "@/lib/theme-showcase";
+import {useShowcaseApplication, useShowcaseBundle} from "@/lib/theme-showcase";
 import {cn} from "@/lib/utils";
 
 const PHONE_QUERY = "(max-width: 639.98px)";
@@ -179,6 +179,7 @@ export function AuthLayout({
   const themePreview = preview === "theme";
   // on a demo site the Marketplace themes take turns on every entry page
   const application = useShowcaseApplication(ownApplication, !preview);
+  const showcased = !!useShowcaseBundle(!preview);
   useApplicationTheme(application, !preview || themePreview);
   // an application can force the dark palette regardless of the visitor's own
   // preference, and the logo has to follow the palette that is actually painted
@@ -208,8 +209,8 @@ export function AuthLayout({
   }
 
   // the customized form styling is meant for the standalone page, an embedded
-  // one keeps the host page's own look, as the antd pages did
-  const embedded = Setting.inIframe() && !themePreview;
+  // one keeps the host page's own look, as the antd pages did, unless the host asked for a theme
+  const embedded = Setting.inIframe() && !themePreview && !showcased;
   const backgroundUrl = embedded
     ? undefined
     : (isMobile ? application?.formBackgroundUrlMobile : application?.formBackgroundUrl);

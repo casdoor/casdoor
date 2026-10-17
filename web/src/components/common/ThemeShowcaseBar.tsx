@@ -5,7 +5,7 @@ import {ChevronLeft, ChevronRight, Pause, Play} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {getLocalized} from "@/lib/integration";
-import {ROTATE_MS, getThemeIds, showcaseActions, useThemeShowcase} from "@/lib/theme-showcase";
+import {ROTATE_MS, getThemeIds, isFramedShowcase, showcaseActions, useThemeShowcase} from "@/lib/theme-showcase";
 import {cn} from "@/lib/utils";
 
 /**
@@ -14,7 +14,7 @@ import {cn} from "@/lib/utils";
  */
 export function ThemeShowcaseBar({className}: {className?: string}) {
   const showcase = useThemeShowcase();
-  if (!showcase) {
+  if (!showcase || isFramedShowcase()) {
     return null;
   }
 

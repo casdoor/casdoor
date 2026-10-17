@@ -8,7 +8,7 @@ import {applyTheme} from "@/lib/integration";
  * The Marketplace themes on show on a demo site: they take turns on the sign-in, sign-up and
  * other entry pages and on the console, and the visitor can step through them or pick one.
  * Nothing is saved on the server, the choice only lives in the tab. `?theme=<id>` opens the
- * site on one theme, stopped.
+ * site on one theme, stopped, also when the page is embedded in another site.
  */
 
 export const ROTATE_MS = 6000;
@@ -42,8 +42,17 @@ let timer: number | undefined;
 let timerKey = "";
 const bundlePromises = new Map<string, Promise<ThemeBundle | null>>();
 
+// a page embedded in another site shows a theme only when the host asks for one
+const isFramed = Setting.inIframe();
+const themeFromUrl = new URLSearchParams(window.location.search).get("theme");
+
 export function isThemeShowcaseEnabled(): boolean {
-  return Conf.ThemeShowcase && !Setting.inIframe();
+  return Conf.ThemeShowcase && (!isFramed || !!themeFromUrl);
+}
+
+/** Embedded with `?theme=<id>`: the theme is fixed by the host page, with no switcher and nothing saved. */
+export function isFramedShowcase(): boolean {
+  return isFramed && !!themeFromUrl;
 }
 
 function getMarketplaceFileUrl(path: string): string {
@@ -59,10 +68,13 @@ function setState(patch: Partial<ShowcaseState>) {
     return;
   }
   state = {...state, ...patch};
-  try {
-    sessionStorage.setItem(STORAGE_KEY, JSON.stringify({selected: state.selected, playing: state.playing}));
-  } catch {
-    // the choice is only kept for this page then
+  // an embedded page shares the tab's storage with the site itself, which keeps its own choice
+  if (!isFramed) {
+    try {
+      sessionStorage.setItem(STORAGE_KEY, JSON.stringify({selected: state.selected, playing: state.playing}));
+    } catch {
+      // the choice is only kept for this page then
+    }
   }
   schedule();
   listeners.forEach((listener) => listener());
@@ -146,7 +158,7 @@ function init() {
   } catch {
     saved = null;
   }
-  const fromUrl = new URLSearchParams(window.location.search).get("theme");
+  const fromUrl = themeFromUrl;
   state = {
     themes: [],
     selected: fromUrl ?? saved?.selected ?? DEFAULT_THEME,
