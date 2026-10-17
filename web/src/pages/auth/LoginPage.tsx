@@ -501,7 +501,7 @@ export default function LoginPage({type = "login", application: applicationProp,
               navigate(
                 `/prompt/${application.name}?redirectUri=${encodeURIComponent(
                   oAuthParams.redirectUri,
-                )}&code=${encodeURIComponent(codeValue)}&state=${encodeURIComponent(oAuthParams.state)}`,
+                )}&code=${encodeURIComponent(codeValue)}&state=${encodeURIComponent(oAuthParams.state)}&responseMode=${encodeURIComponent(oAuthParams.responseMode)}`,
               ),
             );
           }
