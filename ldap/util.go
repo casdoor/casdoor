@@ -56,7 +56,7 @@ var ldapAttributesMapping = map[string]FieldRelation{
 	"uid": {userField: "name", hideOnStarOp: true, fieldMapper: func(user *object.User) message.AttributeValue {
 		return message.AttributeValue(user.Name)
 	}},
-	"displayname": {userField: "displayName", fieldMapper: func(user *object.User) message.AttributeValue {
+	"displayName": {userField: "displayName", fieldMapper: func(user *object.User) message.AttributeValue {
 		return message.AttributeValue(user.DisplayName)
 	}},
 	"email": {userField: "email", fieldMapper: func(user *object.User) message.AttributeValue {
@@ -227,7 +227,7 @@ func getNameAndOrgFromDN(DN string) (string, string, error) {
 }
 
 func getNameAndOrgFromFilter(baseDN, filter string) (string, string, int) {
-	if !strings.Contains(baseDN, "ou=") {
+	if !strings.Contains(strings.ToLower(baseDN), "ou=") {
 		return "", "", ldap.LDAPResultInvalidDNSyntax
 	}
 
@@ -240,23 +240,20 @@ func getNameAndOrgFromFilter(baseDN, filter string) (string, string, int) {
 }
 
 func getUsername(filter string) string {
-	nameIndex := strings.Index(filter, "cn=")
-	if nameIndex == -1 {
-		nameIndex = strings.Index(filter, "uid=")
-		if nameIndex == -1 {
-			return "*"
-		} else {
-			nameIndex += 4
+	for _, attr := range []string{"cn=", "uid="} {
+		for i := 0; i < len(filter); i++ {
+			if filter[i] != '(' || len(filter)-i-1 < len(attr) || !strings.EqualFold(filter[i+1:i+1+len(attr)], attr) {
+				continue
+			}
+			start := i + 1 + len(attr)
+			end := strings.IndexByte(filter[start:], ')')
+			if end == -1 {
+				return "*"
+			}
+			return filter[start : start+end]
 		}
-	} else {
-		nameIndex += 3
 	}
-
-	var name string
-	for i := nameIndex; filter[i] != ')'; i++ {
-		name = name + string(filter[i])
-	}
-	return name
+	return "*"
 }
 
 func stringInSlice(value string, list []string) bool {
@@ -389,7 +386,7 @@ func (q *userSearchFilter) buildCondition(filter interface{}, conjunctive bool) 
 			return attribute.buildCoarseCondition(value), nil
 		}
 
-		if attr == ldapMemberOfAttr {
+		if strings.EqualFold(attr, ldapMemberOfAttr) {
 			var names []string
 			groupId := string(f.AssertionValue())
 			// Accept the DN form (cn=name,ou=owner,...) emitted by memberOf and
@@ -715,8 +712,20 @@ func getUserPasswordWithType(user *object.User) string {
 	return fmt.Sprintf("{%s}%s", prefix, user.Password)
 }
 
+func getLdapAttributeRelation(attributeName string) (FieldRelation, bool) {
+	if v, ok := ldapAttributesMapping[attributeName]; ok {
+		return v, true
+	}
+	for k, v := range ldapAttributesMapping {
+		if strings.EqualFold(k, attributeName) {
+			return v, true
+		}
+	}
+	return FieldRelation{}, false
+}
+
 func getAttribute(attributeName string, user *object.User) message.AttributeValue {
-	v, ok := ldapAttributesMapping[attributeName]
+	v, ok := getLdapAttributeRelation(attributeName)
 	if !ok {
 		return ""
 	}
@@ -724,7 +733,7 @@ func getAttribute(attributeName string, user *object.User) message.AttributeValu
 }
 
 func getUserFieldFromAttribute(attributeName string) (string, error) {
-	v, ok := ldapAttributesMapping[attributeName]
+	v, ok := getLdapAttributeRelation(attributeName)
 	if !ok {
 		return "", fmt.Errorf("attribute %s not supported", attributeName)
 	}
