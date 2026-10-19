@@ -1163,7 +1163,7 @@ func getAppUserApplication(name string) (*Application, error) {
 }
 
 func (application *Application) IsDynamicClient() bool {
-	return util.InSlice(application.Tags, "dcr")
+	return util.InSlice(application.Tags, "dcr") || util.InSlice(application.Tags, cimdTag)
 }
 
 func GetAppUserId(application *Application) string {
