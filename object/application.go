@@ -379,7 +379,11 @@ func GetApplicationByUserId(userId string) (application *Application, err error)
 func GetApplicationByClientId(clientId string) (*Application, error) {
 	application := Application{}
 
-	realClientId, sharedOrg := util.GetSharedOrgFromApp(clientId)
+	realClientId, sharedOrg := clientId, ""
+	// a URL client_id may contain "-org-" in its path
+	if !IsClientIdMetadataUrl(clientId) {
+		realClientId, sharedOrg = util.GetSharedOrgFromApp(clientId)
+	}
 
 	existed, err := ormer.Engine.Where("client_id=?", realClientId).Get(&application)
 	if err != nil {

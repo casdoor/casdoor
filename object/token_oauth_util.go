@@ -367,7 +367,7 @@ func CheckOAuthLogin(clientId string, responseType string, redirectUri string, s
 		return fmt.Sprintf(i18n.Translate(lang, "token:Grant_type: %s is not supported in this application"), responseType), nil, nil
 	}
 
-	application, err := GetApplicationByClientId(clientId)
+	application, err := GetApplicationByClientIdMetadata(clientId, lang)
 	if err != nil {
 		return "", nil, err
 	}
