@@ -535,6 +535,20 @@ func setHttpClient(idProvider idp.IdProvider, provider *object.Provider) {
 	}
 }
 
+// getSigninLookupUsername normalizes a phone number username to E.164 with the posted country code,
+// so that the lookup matches the number stored at signup and users from different countries
+// sharing the same local number are distinguished.
+func getSigninLookupUsername(username string, countryCode string) string {
+	if countryCode == "" || strings.Contains(username, "@") {
+		return username
+	}
+
+	if e164, ok := util.GetE164Number(username, countryCode); ok {
+		return e164
+	}
+	return username
+}
+
 func isTenantUrlProvider(provider *object.Provider) bool {
 	return provider.Owner != "admin" && provider.Owner != "built-in" && !isProxyProviderType(provider.Type)
 }
@@ -824,16 +838,7 @@ func (c *ApiController) Login() {
 				return
 			}
 
-			// If the username looks like a phone number and a countryCode is provided,
-			// normalise it to E.164 format before looking up the user so that users
-			// from different countries sharing the same local number are distinguished.
-			lookupUsername := authForm.Username
-			if !strings.Contains(authForm.Username, "@") && authForm.CountryCode != "" {
-				if e164, ok := util.GetE164Number(authForm.Username, authForm.CountryCode); ok {
-					lookupUsername = e164
-				}
-			}
-
+			lookupUsername := getSigninLookupUsername(authForm.Username, authForm.CountryCode)
 			if user, err = object.GetUserByFieldsForSharedApp(application, authForm.Organization, lookupUsername); err != nil {
 				c.ResponseError(err.Error(), nil)
 				return
@@ -923,9 +928,10 @@ func (c *ApiController) Login() {
 			}
 
 			clientIp := util.GetClientIpFromRequest(c.Ctx.Request)
+			lookupUsername := getSigninLookupUsername(authForm.Username, authForm.CountryCode)
 
 			var enableCaptcha bool
-			if enableCaptcha, err = object.CheckToEnableCaptcha(application, authForm.Organization, authForm.Username, clientIp); err != nil {
+			if enableCaptcha, err = object.CheckToEnableCaptcha(application, authForm.Organization, lookupUsername, clientIp); err != nil {
 				c.ResponseError(err.Error())
 				return
 			} else if enableCaptcha {
@@ -968,7 +974,7 @@ func (c *ApiController) Login() {
 
 			if application.IsShared {
 				var resolvedUser *object.User
-				resolvedUser, err = object.GetUserByFieldsForSharedApp(application, authForm.Organization, authForm.Username)
+				resolvedUser, err = object.GetUserByFieldsForSharedApp(application, authForm.Organization, lookupUsername)
 				if err != nil {
 					c.ResponseError(err.Error())
 					return
@@ -978,7 +984,7 @@ func (c *ApiController) Login() {
 				}
 			}
 
-			user, err = object.CheckUserPassword(authForm.Organization, authForm.Username, password, c.GetAcceptLanguage(), enableCaptcha, isSigninViaLdap, isPasswordWithLdapEnabled)
+			user, err = object.CheckUserPassword(authForm.Organization, lookupUsername, password, c.GetAcceptLanguage(), enableCaptcha, isSigninViaLdap, isPasswordWithLdapEnabled)
 		}
 
 		if err != nil {

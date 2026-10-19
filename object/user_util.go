@@ -159,6 +159,11 @@ func GetUserByFields(organization string, field string) (*User, error) {
 		if user != nil || err != nil {
 			return user, err
 		}
+
+		user, err = getUserByNationalPhone(organization, field)
+		if user != nil || err != nil {
+			return user, err
+		}
 	}
 
 	// check user ID
@@ -171,6 +176,37 @@ func GetUserByFields(organization string, field string) (*User, error) {
 	user, err = GetUserByField(organization, "id_card", field)
 	if user != nil || err != nil {
 		return user, err
+	}
+
+	return nil, nil
+}
+
+// getUserByNationalPhone matches a phone number typed in the national format (e.g. "0796488996")
+// against the normalized number stored at signup, trying each country code of the organization.
+func getUserByNationalPhone(organization string, phone string) (*User, error) {
+	if phone == "" || strings.ContainsAny(phone, "@+") {
+		return nil, nil
+	}
+
+	org, err := getOrganization("admin", organization)
+	if err != nil || org == nil {
+		return nil, err
+	}
+
+	for _, countryCode := range org.CountryCodes {
+		if countryCode == "" || countryCode == "All" {
+			continue
+		}
+
+		normalizedPhone, normalizedCountryCode, ok := util.GetNormalizedPhone(phone, countryCode)
+		if !ok || normalizedPhone == phone {
+			continue
+		}
+
+		user, err := GetUserByPhoneAndCountryCode(organization, normalizedPhone, normalizedCountryCode)
+		if user != nil || err != nil {
+			return user, err
+		}
 	}
 
 	return nil, nil
