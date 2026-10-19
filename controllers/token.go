@@ -458,7 +458,7 @@ func (c *ApiController) RefreshToken() {
 	}
 
 	dpopProof := c.Ctx.Request.Header.Get("DPoP")
-	refreshToken2, err := object.RefreshToken(application, grantType, refreshToken, scope, clientId, clientSecret, resource, host, dpopProof)
+	refreshToken2, err := object.RefreshToken(application, grantType, refreshToken, scope, clientId, clientSecret, resource, host, dpopProof, "/api/login/oauth/refresh_token")
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
