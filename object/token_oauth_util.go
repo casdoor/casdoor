@@ -525,7 +525,7 @@ func GetOAuthCode(userId string, clientId string, provider string, signinMethod 
 	}, nil
 }
 
-func RefreshToken(application *Application, grantType string, refreshToken string, scope string, clientId string, clientSecret string, resource string, host string, dpopProof string) (interface{}, error) {
+func RefreshToken(application *Application, grantType string, refreshToken string, scope string, clientId string, clientSecret string, resource string, host string, dpopProof string, dpopPath string) (interface{}, error) {
 	if grantType != "refresh_token" {
 		return &TokenError{
 			Error:            UnsupportedGrantType,
@@ -590,7 +590,7 @@ func RefreshToken(application *Application, grantType string, refreshToken strin
 	}
 	resource = token.Resource
 
-	dpopJkt, tokenError := getRefreshDPoPJkt(token, dpopProof, host)
+	dpopJkt, tokenError := getRefreshDPoPJkt(token, dpopProof, host, dpopPath)
 	if tokenError != nil {
 		return tokenError, nil
 	}
