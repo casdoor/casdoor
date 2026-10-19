@@ -23,7 +23,7 @@ func GetEmailProvider(typ string, clientId string, clientSecret string, host str
 	case "Azure ACS":
 		return NewAzureACSEmailProvider(clientSecret, host)
 	case "Custom HTTP Email":
-		return NewHttpEmailProvider(endpoint, method, httpHeaders, bodyMapping, contentType)
+		return NewHttpEmailProvider(endpoint, method, httpHeaders, bodyMapping, contentType, enableProxy)
 	case "SendGrid":
 		return NewSendgridEmailProvider(clientSecret, host, endpoint)
 	case "Resend":

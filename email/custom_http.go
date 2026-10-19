@@ -31,10 +31,11 @@ type HttpEmailProvider struct {
 	httpHeaders map[string]string
 	bodyMapping map[string]string
 	contentType string
+	enableProxy bool
 	httpClient  *http.Client
 }
 
-func NewHttpEmailProvider(endpoint string, method string, httpHeaders map[string]string, bodyMapping map[string]string, contentType string) *HttpEmailProvider {
+func NewHttpEmailProvider(endpoint string, method string, httpHeaders map[string]string, bodyMapping map[string]string, contentType string, enableProxy bool) *HttpEmailProvider {
 	if contentType == "" {
 		contentType = "application/x-www-form-urlencoded"
 	}
@@ -45,6 +46,7 @@ func NewHttpEmailProvider(endpoint string, method string, httpHeaders map[string
 		httpHeaders: httpHeaders,
 		bodyMapping: bodyMapping,
 		contentType: contentType,
+		enableProxy: enableProxy,
 	}
 	return client
 }
@@ -90,7 +92,16 @@ func (c *HttpEmailProvider) Send(fromAddress string, fromName string, toAddress 
 
 		var fromValueBytes []byte
 		if c.contentType == "application/json" {
-			fromValueBytes, err = json.Marshal(bodyMap)
+			jsonBody := make(map[string]interface{}, len(bodyMap)+1)
+			for k, v := range bodyMap {
+				jsonBody[k] = v
+			}
+			if len(toAddress) == 1 {
+				jsonBody[toAddressField] = toAddress[0]
+			} else {
+				jsonBody[toAddressesField] = toAddress
+			}
+			fromValueBytes, err = json.Marshal(jsonBody)
 			if err != nil {
 				return err
 			}
@@ -143,6 +154,9 @@ func (c *HttpEmailProvider) Send(fromAddress string, fromName string, toAddress 
 	}
 
 	httpClient := proxy.DefaultHttpClient
+	if c.enableProxy {
+		httpClient = proxy.ProxyHttpClient
+	}
 	if c.httpClient != nil {
 		httpClient = c.httpClient
 	}
