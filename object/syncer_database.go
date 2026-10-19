@@ -162,7 +162,11 @@ func (p *DatabaseSyncerProvider) InitAdapter() error {
 		if p.Syncer.SshType == "password" {
 			dial, sshHostKey, err = DialWithPassword(p.Syncer.SshUser, p.Syncer.SshPassword, p.Syncer.SshHost, p.Syncer.SshPort, p.Syncer.SshHostKey)
 		} else {
-			dial, sshHostKey, err = DialWithCert(p.Syncer.SshUser, p.Syncer.Owner+"/"+p.Syncer.Cert, p.Syncer.SshHost, p.Syncer.SshPort, p.Syncer.SshHostKey)
+			certOwner := p.Syncer.Organization
+			if certOwner == "" {
+				certOwner = p.Syncer.Owner
+			}
+			dial, sshHostKey, err = DialWithCert(p.Syncer.SshUser, util.GetId(certOwner, p.Syncer.Cert), p.Syncer.SshHost, p.Syncer.SshPort, p.Syncer.SshHostKey)
 		}
 		if err != nil {
 			return err
