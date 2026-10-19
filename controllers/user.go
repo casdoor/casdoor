@@ -380,6 +380,7 @@ func (c *ApiController) UpdateUser() {
 		}
 	}
 
+	isPasswordChanged := false
 	// a password_type column means the caller writes an already hashed password as it is
 	if user.Password != "" && user.Password != "***" && user.Password != oldUser.Password && !util.InSlice(columns, "password_type") {
 		if (!isAdmin && oldUser.Tag != "guest-user") || oldUser.Ldap != "" {
@@ -425,16 +426,26 @@ func (c *ApiController) UpdateUser() {
 
 		user.UpdateUserPassword(organization)
 		user.LastChangePasswordTime = util.GetCurrentTime()
+		user.NeedUpdatePassword = isAdmin && user.NeedUpdatePassword && (util.InSlice(columns, "need_update_password") || !oldUser.NeedUpdatePassword)
 		if len(columns) == 0 {
 			columns = object.GetDefaultUserUpdateColumns(isAdmin)
 		}
-		columns = append(columns, "password", "password_salt", "password_type", "last_change_password_time")
+		columns = append(columns, "password", "password_salt", "password_type", "last_change_password_time", "need_update_password")
+		isPasswordChanged = true
 	}
 
 	affected, err := object.UpdateUser(id, &user, columns, isAdmin)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
+	}
+
+	if affected && isPasswordChanged && oldUser.Tag != "guest-user" {
+		_, err = object.ExpireTokenByUser(oldUser.Owner, oldUser.Name)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
 	}
 
 	if affected {
