@@ -587,7 +587,12 @@ export default function LoginPage({type = "login", application: applicationProp,
   const interactiveResultHandlers = new Map<string, (res: any, values: any, authParams: any) => void>([
     [Setting.RequiredUpdatePassword, () => Setting.goToUpdatePassword(application?.name)],
     [RequiredMfa, () => {
-      localStorage.setItem("mfaRedirectUrl", window.location.href);
+      // The reloaded account would trigger the auto sign-in, whose RequiredMfa can
+      // arrive after the wizard has opened and park the wizard itself as the target.
+      autoSignedIn.current = true;
+      if (!window.location.pathname.includes("/mfa/setup")) {
+        localStorage.setItem("mfaRedirectUrl", window.location.href);
+      }
       reload().then(() => navigate("/mfa/setup", {state: {from: "/login"}}));
     }],
     // hand over every enabled factor: MfaVerify starts on the preferred one and lets the user switch
