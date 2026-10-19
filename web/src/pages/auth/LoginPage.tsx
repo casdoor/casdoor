@@ -739,11 +739,11 @@ export default function LoginPage({type = "login", application: applicationProp,
       Setting.goToLink(`/login/oauth/authorize?${searchParams.toString()}`);
       return;
     }
-    if (window.location.pathname.startsWith("/login/saml/authorize")) {
+    if (Setting.getRoutePath().startsWith("/login/saml/authorize")) {
       Setting.goToLink(`/login/saml/authorize/${name}/${application.name}-org-${name}?${searchParams.toString()}`);
       return;
     }
-    if (window.location.pathname.startsWith("/cas")) {
+    if (Setting.getRoutePath().startsWith("/cas")) {
       Setting.goToLink(`/cas/${application.name}-org-${name}/${name}/login?${searchParams.toString()}`);
       return;
     }
@@ -1019,7 +1019,7 @@ export default function LoginPage({type = "login", application: applicationProp,
     // the token is single use, it has no business staying in the address bar
     searchParams.delete("magicLinkToken");
     const query = searchParams.toString();
-    window.history.replaceState(null, "", `${location.pathname}${query ? `?${query}` : ""}`);
+    window.history.replaceState(null, "", Setting.withBasePath(`${location.pathname}${query ? `?${query}` : ""}`));
 
     setMagicLinkVerifying(true);
     doLogin(applyRequestType({

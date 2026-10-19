@@ -78,7 +78,7 @@ export default function EnforcerEditPage() {
           return;
         }
         const next = `/enforcers/${enforcer.owner}/${enforcer.name}`;
-        if (next !== window.location.pathname) {
+        if (next !== Setting.getRoutePath()) {
           navigate(next, {replace: true});
         } else if (isAdd) {
           // the enforcer exists now, reload it so that its modelCfg and policies are available

@@ -87,9 +87,9 @@ export default function ApplicationEditPage() {
   }
 
   const idpInitiatedSsoUrl =
-    `${window.location.origin}/login/saml/authorize/${application.owner}/${encodeURIComponent(applicationName)}`;
+    `${Setting.getOriginUrl()}/login/saml/authorize/${application.owner}/${encodeURIComponent(applicationName)}`;
   const samlMetadataUrl =
-    `${window.location.origin}/api/saml/metadata?application=admin/${encodeURIComponent(applicationName)}` +
+    `${Setting.getOriginUrl()}/api/saml/metadata?application=admin/${encodeURIComponent(applicationName)}` +
     `&enablePostBinding=${enableSamlPostBinding}`;
 
   const save = async(exitAfterSave: boolean) => {

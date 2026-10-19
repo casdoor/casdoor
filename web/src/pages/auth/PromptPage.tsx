@@ -9,6 +9,7 @@ import {CountryCodeSelect} from "@/components/common/CountryCodeSelect";
 import {Loading} from "@/components/common/Loading";
 import {RegionSelect} from "@/components/common/RegionSelect";
 import {AuthLayout} from "@/components/auth/AuthLayout";
+import {SendCodeInput} from "@/components/auth/SendCodeInput";
 import {AffiliationAddressSelect, AffiliationField, useAffiliation} from "@/components/user/AffiliationSelect";
 import {ThirdPartyLogins} from "@/components/user/OAuthWidget";
 import {useAccount} from "@/hooks/use-account";
@@ -31,6 +32,9 @@ export default function PromptPage({application: applicationProp}: {application?
   const applicationName = params.applicationName ?? authConfig.appName;
   const [application, setApplication] = React.useState<any>(undefined);
   const [user, setUser] = React.useState<any>(null);
+  const [savedUser, setSavedUser] = React.useState<any>(null);
+  const [emailCode, setEmailCode] = React.useState("");
+  const [phoneCode, setPhoneCode] = React.useState("");
   const [saving, setSaving] = React.useState(false);
 
   React.useEffect(() => {
@@ -51,6 +55,7 @@ export default function PromptPage({application: applicationProp}: {application?
     UserBackend.getUser(account.owner, account.name).then((res: any) => {
       if (res.status === "ok") {
         setUser(res.data);
+        setSavedUser(res.data);
       }
     });
   }, [account]);
@@ -106,24 +111,50 @@ export default function PromptPage({application: applicationProp}: {application?
 
   const update = (fields: Record<string, any>) => setUser((prev: any) => ({...prev, ...fields}));
 
-  const submit = () => {
+  // update-user drops email and phone for a non-admin, so a new one is confirmed with a code
+  // through /api/reset-email-or-phone, the same way the account page changes them
+  const emailChanged = (user?.email ?? "") !== (savedUser?.email ?? "");
+  const phoneChanged = (user?.phone ?? "") !== (savedUser?.phone ?? "");
+
+  const submit = async() => {
     setSaving(true);
-    UserBackend.updateUser(user.owner, user.name, Setting.deepCopy(user))
-      .then((res: any) => {
-        if (res.status === "ok") {
-          Setting.showMessage("success", i18next.t("general:Successfully saved"));
-          reload();
-          finishAndJump();
-        } else {
-          Setting.showMessage("error", res.msg);
+    try {
+      const res: any = await UserBackend.updateUser(user.owner, user.name, {
+        ...Setting.deepCopy(user),
+        email: savedUser.email,
+        phone: savedUser.phone,
+        countryCode: savedUser.countryCode,
+      });
+      if (res.status !== "ok") {
+        Setting.showMessage("error", res.msg);
+        return;
+      }
+      for (const [changed, dest, destType, code] of [
+        [emailChanged, user.email, "email", emailCode],
+        [phoneChanged, user.phone, "phone", phoneCode],
+      ]) {
+        if (!changed) {
+          continue;
         }
-      })
-      .catch((error) => Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`))
-      .finally(() => setSaving(false));
+        const resetRes: any = await UserBackend.resetEmailOrPhone(dest, destType, code, phoneCountryCode);
+        if (resetRes.status !== "ok") {
+          Setting.showMessage("error", resetRes.msg);
+          return;
+        }
+      }
+      Setting.showMessage("success", i18next.t("general:Successfully saved"));
+      reload();
+      finishAndJump();
+    } catch (error) {
+      Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
+    } finally {
+      setSaving(false);
+    }
   };
 
   const promptedItems = (application?.signupItems ?? []).filter((item: any) => Setting.isSignupItemPrompted(item));
   const defaultCountryCode = application?.organizationObj?.countryCodes?.[0] ?? "";
+  const phoneCountryCode = user?.countryCode || defaultCountryCode;
   const hasPromptedProviders = (application?.providers ?? []).some((item: any) => Setting.isProviderPrompted(item));
 
   return (
@@ -205,6 +236,18 @@ export default function PromptPage({application: applicationProp}: {application?
                   value={user?.email ?? ""}
                   onChange={(e) => update({email: e.target.value})}
                 />
+                {emailChanged ? (
+                  <SendCodeInput
+                    value={emailCode}
+                    onChange={setEmailCode}
+                    method="reset"
+                    destType="email"
+                    dest={user?.email ?? ""}
+                    disabled={!Setting.isValidEmail(user?.email ?? "")}
+                    application={application}
+                    applicationId={Setting.getApplicationName(application)}
+                  />
+                ) : null}
               </div>
             );
           }
@@ -216,7 +259,7 @@ export default function PromptPage({application: applicationProp}: {application?
                   <div className="w-28 max-w-[50%] shrink-0">
                     <CountryCodeSelect
                       className="px-2"
-                      value={user?.countryCode || defaultCountryCode}
+                      value={phoneCountryCode}
                       onChange={(value) => update({countryCode: value})}
                       countryCodes={application?.organizationObj?.countryCodes}
                     />
@@ -228,9 +271,22 @@ export default function PromptPage({application: applicationProp}: {application?
                     placeholder={item.placeholder}
                     value={user?.phone ?? ""}
                     // an account a provider created has no calling code yet
-                    onChange={(e) => update({phone: e.target.value, countryCode: user?.countryCode || defaultCountryCode})}
+                    onChange={(e) => update({phone: e.target.value, countryCode: phoneCountryCode})}
                   />
                 </div>
+                {phoneChanged ? (
+                  <SendCodeInput
+                    value={phoneCode}
+                    onChange={setPhoneCode}
+                    method="reset"
+                    destType="phone"
+                    dest={user?.phone ?? ""}
+                    countryCode={phoneCountryCode}
+                    disabled={!Setting.isValidPhone(user?.phone ?? "", phoneCountryCode)}
+                    application={application}
+                    applicationId={Setting.getApplicationName(application)}
+                  />
+                ) : null}
               </div>
             );
           }
@@ -240,7 +296,7 @@ export default function PromptPage({application: applicationProp}: {application?
         <Button
           className="w-full"
           loading={saving}
-          disabled={saving || !Setting.isPromptAnswered(user, application)}
+          disabled={saving || !Setting.isPromptAnswered(user, application) || (emailChanged && emailCode === "") || (phoneChanged && phoneCode === "")}
           onClick={submit}
         >
           {i18next.t("code:Submit and complete")}

@@ -10,15 +10,13 @@ const BLANK_AVATAR =
   "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAQAAACROWYpAAAAHElEQVR42mNkoAAwjmoe1TyqeVTzqOZRzcNZMwB18wAfEFQkPQAAAABJRU5ErkJggg==";
 
 function getUserProperty(user: any, providerType: string, propertyName: string) {
-  if (user.properties === null || user.properties === undefined) {
-    return "";
-  }
-  return user.properties[`oauth_${providerType}_${propertyName}`];
+  return user.properties?.[`oauth_${providerType}_${propertyName}`] || undefined;
 }
 
 function getProviderLink(user: any, provider: any) {
   if (provider.type === "GitHub") {
-    return `https://github.com/${getUserProperty(user, provider.type, "username")}`;
+    const username = getUserProperty(user, provider.type, "username");
+    return username === undefined ? "" : `https://github.com/${username}`;
   } else if (provider.type === "Google") {
     return "https://mail.google.com";
   }
@@ -78,9 +76,11 @@ function OAuthRow({user, application, providerItem, account, onUnlinked}: Widget
   const email = getUserProperty(user, provider.type, "email");
   const avatarUrl = getUserProperty(user, provider.type, "avatarUrl") || BLANK_AVATAR;
 
-  let name = username === undefined ? displayName : `${displayName} (${username})`;
-  if (name === undefined) {
-    name = id !== undefined ? id : (email !== undefined ? email : linkedValue);
+  let name: string;
+  if (displayName !== undefined && username !== undefined && displayName !== username) {
+    name = `${displayName} (${username})`;
+  } else {
+    name = displayName ?? username ?? id ?? email ?? linkedValue;
   }
 
   const isSelf = user.id === account?.id;

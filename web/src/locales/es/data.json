@@ -1622,6 +1622,7 @@
     "Version": "Versión"
   },
   "theme": {
+    "All themes": "Todos los temas",
     "Blossom": "Floración",
     "Border radius": "Radio de borde",
     "Customize theme": "Personalizar tema",
@@ -1629,6 +1630,10 @@
     "Document": "Documento",
     "Is compact": "Es compacto",
     "Light": "Claro",
+    "Next theme": "Tema siguiente",
+    "Pause themes": "Pausar temas",
+    "Play themes": "Reproducir temas",
+    "Previous theme": "Tema anterior",
     "Primary color": "Color primario",
     "System": "Sistema",
     "Theme": "Tema",

@@ -447,7 +447,7 @@ function ThemePreview({application}: {application: any}) {
               key={device}
               ref={frameRef}
               title={i18next.t("general:Preview")}
-              src="/marketplace/theme-preview"
+              src={Setting.withBasePath("/marketplace/theme-preview")}
               className="origin-top-left border-0"
               style={{width: frameWidth, height: frameHeight, transform: `scale(${scale})`}}
             />

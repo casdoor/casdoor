@@ -611,7 +611,9 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
           >
             {user.isVerified ? i18next.t("user:Verified") : i18next.t("user:Verify Identity")}
           </Button>
-          {user.isVerified ? (
+          {isAdmin ? (
+            <Switch checked={!!user.isVerified} onCheckedChange={(v) => updateField("isVerified", v)} />
+          ) : user.isVerified ? (
             <Badge variant="success">{i18next.t("user:Identity verified")}</Badge>
           ) : null}
         </div>
@@ -1122,9 +1124,6 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
   // rows this frontend adds on top of the antd list; no account item governs them
   const extraRows = (
     <>
-      <FormRow block labelKey="user:Is verified">
-        <Switch checked={!!user.isVerified} onCheckedChange={(v) => updateField("isVerified", v)} />
-      </FormRow>
       <FormRow block labelKey="user:Deleted time">
         <Input value={Setting.getFormattedDate(user.deletedTime) ?? ""} disabled />
       </FormRow>

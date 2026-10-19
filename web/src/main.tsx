@@ -19,6 +19,7 @@ import "./index.css";
 import "./i18n";
 import "./lib/fetch-filter";
 import App from "./App";
+import {BasePath} from "./lib/base-path";
 import ErrorBoundary from "./components/common/ErrorBoundary";
 import {ThemeProvider} from "./hooks/use-theme";
 import {AccountProvider} from "./hooks/use-account";
@@ -35,7 +36,7 @@ function Root() {
     <ErrorBoundary>
       <ThemeProvider>
         <TooltipProvider delayDuration={200}>
-          <BrowserRouter>
+          <BrowserRouter basename={BasePath || undefined}>
             <AccountProvider>
               <App />
               <Toaster />

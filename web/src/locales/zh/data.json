@@ -1622,6 +1622,7 @@
     "Version": "版本"
   },
   "theme": {
+    "All themes": "全部主题",
     "Blossom": "桃花缘",
     "Border radius": "圆角",
     "Customize theme": "定制主题",
@@ -1629,6 +1630,10 @@
     "Document": "知识协作",
     "Is compact": "宽松度",
     "Light": "明亮",
+    "Next theme": "下一个主题",
+    "Pause themes": "暂停轮播",
+    "Play themes": "轮播主题",
+    "Previous theme": "上一个主题",
     "Primary color": "主题色",
     "System": "跟随系统",
     "Theme": "主题",

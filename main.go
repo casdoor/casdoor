@@ -153,5 +153,5 @@ func main() {
 		service.Start()
 	}
 
-	web.Run(fmt.Sprintf(":%v", port))
+	web.RunWithMiddleWares(fmt.Sprintf(":%v", port), routers.BasePathMiddleware)
 }

@@ -26,7 +26,7 @@ export function generateCasdoorAppUrl(accessToken: string | undefined, forQrCode
     return {qrUrl: "", error: i18next.t("general:Access token is empty")};
   }
 
-  const qrUrl = `casdoor-authenticator://login?serverUrl=${window.location.origin}&accessToken=${accessToken}`;
+  const qrUrl = `casdoor-authenticator://login?serverUrl=${Setting.getOriginUrl()}&accessToken=${accessToken}`;
   // a QR code that large stops being scannable, so the URL is offered instead
   if (forQrCode && qrUrl.length >= 2000) {
     return {qrUrl: "", error: i18next.t("general:QR code is too large")};

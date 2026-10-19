@@ -5,6 +5,7 @@ import {PoweredBy} from "@/components/layout/PoweredBy";
 import {Button} from "@/components/ui/button";
 import {LanguageSelect} from "@/components/common/LanguageSelect";
 import {ThemeToggle} from "@/components/common/ThemeToggle";
+import {ThemeShowcaseBar} from "@/components/common/ThemeShowcaseBar";
 import {CustomHtml, CustomStyle} from "@/components/common/CustomHtml";
 import {getSafeHtml, isTrustedApplication} from "@/lib/custom-html";
 import {
@@ -16,6 +17,7 @@ import {
 import {useIsMobile} from "@/hooks/use-mobile";
 import {useIsDark} from "@/hooks/use-theme";
 import * as Setting from "@/lib/setting";
+import {useShowcaseApplication, useShowcaseBundle} from "@/lib/theme-showcase";
 import {cn} from "@/lib/utils";
 
 const PHONE_QUERY = "(max-width: 639.98px)";
@@ -163,7 +165,7 @@ function getPanelBackground(css: string | undefined | null): string | null {
  * `login-logo-box` — so form CSS written against the old pages still lands.
  */
 export function AuthLayout({
-  application,
+  application: ownApplication,
   children,
   className,
   wide,
@@ -175,6 +177,9 @@ export function AuthLayout({
   preview,
 }: AuthLayoutProps) {
   const themePreview = preview === "theme";
+  // on a demo site the Marketplace themes take turns on every entry page
+  const application = useShowcaseApplication(ownApplication, !preview);
+  const showcased = !!useShowcaseBundle(!preview);
   useApplicationTheme(application, !preview || themePreview);
   // an application can force the dark palette regardless of the visitor's own
   // preference, and the logo has to follow the palette that is actually painted
@@ -204,8 +209,8 @@ export function AuthLayout({
   }
 
   // the customized form styling is meant for the standalone page, an embedded
-  // one keeps the host page's own look, as the antd pages did
-  const embedded = Setting.inIframe() && !themePreview;
+  // one keeps the host page's own look, as the antd pages did, unless the host asked for a theme
+  const embedded = Setting.inIframe() && !themePreview && !showcased;
   const backgroundUrl = embedded
     ? undefined
     : (isMobile ? application?.formBackgroundUrlMobile : application?.formBackgroundUrl);
@@ -343,6 +348,8 @@ export function AuthLayout({
           <PoweredBy />
         </footer>
       )}
+
+      {preview ? null : <ThemeShowcaseBar />}
     </div>
   );
 }
