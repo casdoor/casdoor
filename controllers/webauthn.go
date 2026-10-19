@@ -190,6 +190,7 @@ func (c *ApiController) WebAuthnSigninFinish() {
 	c.Ctx.Request.Body = io.NopCloser(bytes.NewBuffer(c.Ctx.Input.RequestBody))
 
 	var user *object.User
+	var credential *webauthn.Credential
 	if sessionData.UserID != nil {
 		userId := string(sessionData.UserID)
 		user, err = object.GetUser(userId)
@@ -198,7 +199,7 @@ func (c *ApiController) WebAuthnSigninFinish() {
 			return
 		}
 
-		_, err = webauthnObj.FinishLogin(user, sessionData, c.Ctx.Request)
+		credential, err = webauthnObj.FinishLogin(user, sessionData, c.Ctx.Request)
 	} else {
 		handler := func(rawID, userHandle []byte) (webauthn.User, error) {
 			user, err = object.GetUserByWebauthID(base64.StdEncoding.EncodeToString(rawID))
@@ -208,7 +209,7 @@ func (c *ApiController) WebAuthnSigninFinish() {
 			return user, nil
 		}
 
-		_, err = webauthnObj.FinishDiscoverableLogin(handler, sessionData, c.Ctx.Request)
+		credential, err = webauthnObj.FinishDiscoverableLogin(handler, sessionData, c.Ctx.Request)
 	}
 
 	if err != nil {
@@ -230,7 +231,7 @@ func (c *ApiController) WebAuthnSigninFinish() {
 		return
 	}
 
-	if c.checkWebAuthnSigninMfa(user) {
+	if !credential.Flags.UserVerified && c.checkWebAuthnSigninMfa(user) {
 		return
 	}
 
