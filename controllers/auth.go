@@ -978,7 +978,16 @@ func (c *ApiController) Login() {
 				}
 			}
 
-			user, err = object.CheckUserPassword(authForm.Organization, authForm.Username, password, c.GetAcceptLanguage(), enableCaptcha, isSigninViaLdap, isPasswordWithLdapEnabled)
+			// If the username looks like a phone number and a country code is provided,
+			// normalize it the way the signup flow does before looking up the user.
+			lookupUsername := authForm.Username
+			if !strings.Contains(authForm.Username, "@") && authForm.CountryCode != "" {
+				if e164, ok := util.GetE164Number(authForm.Username, authForm.CountryCode); ok {
+					lookupUsername = e164
+				}
+			}
+
+			user, err = object.CheckUserPassword(authForm.Organization, lookupUsername, password, c.GetAcceptLanguage(), enableCaptcha, isSigninViaLdap, isPasswordWithLdapEnabled)
 		}
 
 		if err != nil {
