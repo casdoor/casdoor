@@ -787,11 +787,15 @@
     "Update available": "Có bản cập nhật"
   },
   "invitation": {
+    "1 day": "1 ngày",
+    "30 days": "30 ngày",
+    "7 days": "7 ngày",
     "Code": "Mã",
     "Code - Tooltip": "Mã",
     "Default code": "Mã mặc định",
     "Default code - Tooltip": "Khi mã mời là biểu thức chính quy, vui lòng nhập mã mời khớp quy tắc biểu thức chính quy làm mã mời mặc định cho liên kết mời",
     "Edit Invitation": "Chỉnh sửa lời mời",
+    "Never": "Không bao giờ",
     "New Invitation": "Lời mời mới",
     "Quota": "Hạn ngạch",
     "Quota - Tooltip": "Hạn ngạch",

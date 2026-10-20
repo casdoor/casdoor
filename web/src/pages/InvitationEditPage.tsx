@@ -1,4 +1,5 @@
 import * as React from "react";
+import dayjs from "dayjs";
 import i18next from "i18next";
 import {useParams} from "react-router-dom";
 import {Button} from "@/components/ui/button";
@@ -19,6 +20,11 @@ import * as Setting from "@/lib/setting";
  */
 const PLAN_INVITATION_TAG = "auto_created_invitation_for_plan";
 const isCreatedByPlan = (ctx: {record: any}) => ctx.record.tag === PLAN_INVITATION_TAG;
+const EXPIRE_PRESETS = [
+  {days: 1, labelKey: "invitation:1 day"},
+  {days: 7, labelKey: "invitation:7 days"},
+  {days: 30, labelKey: "invitation:30 days"},
+];
 
 export default function InvitationEditPage() {
   const {organizationName = "", invitationName = ""} = useParams();
@@ -111,7 +117,29 @@ export default function InvitationEditPage() {
         <InvitationSend invitation={ctx.record} organizations={organizationObjs} isAdd={ctx.mode === "add"} />
       ),
     },
-    {type: "text", name: "expireTime", labelKey: "general:Expire time"},
+    {
+      type: "custom",
+      name: "expireTime",
+      labelKey: "general:Expire time",
+      render: (ctx, update) => (
+        <div className="flex flex-wrap items-center gap-2">
+          <Input
+            type="datetime-local"
+            className="w-auto"
+            value={ctx.record.expireTime ? dayjs(ctx.record.expireTime).format("YYYY-MM-DDTHH:mm") : ""}
+            onChange={(e) => update("expireTime", e.target.value ? dayjs(e.target.value).format() : "")}
+          />
+          {EXPIRE_PRESETS.map(({days, labelKey}) => (
+            <Button key={days} variant="outline" onClick={() => update("expireTime", dayjs().add(days, "day").format())}>
+              {i18next.t(labelKey)}
+            </Button>
+          ))}
+          <Button variant="outline" onClick={() => update("expireTime", "")}>
+            {i18next.t("invitation:Never")}
+          </Button>
+        </div>
+      ),
+    },
     {
       type: "select",
       name: "state",

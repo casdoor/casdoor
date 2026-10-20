@@ -787,11 +787,15 @@
     "Update available": "Dostępna aktualizacja"
   },
   "invitation": {
+    "1 day": "1 dzień",
+    "30 days": "30 dni",
+    "7 days": "7 dni",
     "Code": "Kod",
     "Code - Tooltip": "Kod",
     "Default code": "Domyślny kod",
     "Default code - Tooltip": "Gdy kod zaproszenia jest wyrażeniem regularnym, wprowadź kod zaproszenia pasujący do reguły wyrażenia regularnego jako domyślny kod zaproszenia dla linku zaproszenia",
     "Edit Invitation": "Edytuj zaproszenie",
+    "Never": "Nigdy",
     "New Invitation": "Nowe zaproszenie",
     "Quota": "Limit",
     "Quota - Tooltip": "Przydział",

@@ -787,11 +787,15 @@
     "Update available": "Update available"
   },
   "invitation": {
+    "1 day": "1 day",
+    "30 days": "30 days",
+    "7 days": "7 days",
     "Code": "Code",
     "Code - Tooltip": "Can be a single string as an invitation code, or a regular expression. All strings matching the regular expression are valid invitation codes",
     "Default code": "Default code",
     "Default code - Tooltip": "When the invitation code is a regular expression, please enter the invitation code that matches the regular expression rule as the default invitation code for the invitation link",
     "Edit Invitation": "Edit Invitation",
+    "Never": "Never",
     "New Invitation": "New Invitation",
     "Quota": "Quota",
     "Quota - Tooltip": "The maximum number of users that can register using this invitation code",

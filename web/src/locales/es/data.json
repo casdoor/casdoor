@@ -787,11 +787,15 @@
     "Update available": "Actualización disponible"
   },
   "invitation": {
+    "1 day": "1 día",
+    "30 days": "30 días",
+    "7 days": "7 días",
     "Code": "Código",
     "Code - Tooltip": "Código",
     "Default code": "Código por defecto",
     "Default code - Tooltip": "Cuando el código de invitación es una expresión regular, ingrese el código de invitación que coincida con la regla como código de invitación predeterminado para el enlace",
     "Edit Invitation": "Editar invitación",
+    "Never": "Nunca",
     "New Invitation": "Nueva invitación",
     "Quota": "Cuota",
     "Quota - Tooltip": "Cuota",
