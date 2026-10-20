@@ -91,9 +91,13 @@ export function oAuthParamsToQuery(oAuthParams) {
   const maxAgeQuery = oAuthParams.maxAge
     ? `&max_age=${encodeURIComponent(oAuthParams.maxAge)}`
     : "";
+  // the organization a URL client_id (client ID metadata document) is added to
+  const organizationQuery = oAuthParams.organization
+    ? `&organization=${encodeURIComponent(oAuthParams.organization)}`
+    : "";
 
   // code
-  return `?clientId=${encodeURIComponent(oAuthParams.clientId)}&responseType=${encodeURIComponent(oAuthParams.responseType)}&redirectUri=${encodeURIComponent(oAuthParams.redirectUri)}&type=${encodeURIComponent(oAuthParams.type)}&scope=${encodeURIComponent(oAuthParams.scope)}&state=${encodeURIComponent(oAuthParams.state)}&nonce=${encodeURIComponent(oAuthParams.nonce)}&code_challenge_method=${encodeURIComponent(oAuthParams.challengeMethod)}&code_challenge=${encodeURIComponent(oAuthParams.codeChallenge)}${resourceQuery}${promptQuery}${maxAgeQuery}`;
+  return `?clientId=${encodeURIComponent(oAuthParams.clientId)}&responseType=${encodeURIComponent(oAuthParams.responseType)}&redirectUri=${encodeURIComponent(oAuthParams.redirectUri)}&type=${encodeURIComponent(oAuthParams.type)}&scope=${encodeURIComponent(oAuthParams.scope)}&state=${encodeURIComponent(oAuthParams.state)}&nonce=${encodeURIComponent(oAuthParams.nonce)}&code_challenge_method=${encodeURIComponent(oAuthParams.challengeMethod)}&code_challenge=${encodeURIComponent(oAuthParams.codeChallenge)}${resourceQuery}${promptQuery}${maxAgeQuery}${organizationQuery}`;
 }
 
 export function getApplicationLogin(params) {
