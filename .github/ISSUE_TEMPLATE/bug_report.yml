@@ -1,0 +1,85 @@
+name: Bug report
+description: Report something in Casdoor that does not work as expected
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Please write in English**, so that every maintainer and user can follow the issue.
+
+        Do not report security vulnerabilities here, see the [security policy](https://github.com/casdoor/casdoor/security/policy) instead. For usage questions, read the [documentation](https://casdoor.ai/docs) or ask on [Discord](https://discord.gg/5rPsrAzK7S).
+  - type: input
+    id: version
+    attributes:
+      label: Casdoor version
+      description: The release (e.g. `v4.22.0`) or commit you run, shown on the System Info page (`/sysinfo`) of the admin console
+    validations:
+      required: true
+  - type: dropdown
+    id: deployment
+    attributes:
+      label: Deployment method
+      options:
+        - Docker
+        - Binary or built from source
+        - Helm / Kubernetes
+        - Casdoor Cloud
+        - Other
+    validations:
+      required: true
+  - type: dropdown
+    id: database
+    attributes:
+      label: Database
+      options:
+        - MySQL
+        - PostgreSQL
+        - SQLite
+        - SQL Server
+        - CockroachDB
+        - Other
+        - Not applicable (Casdoor Cloud)
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What is wrong, in a few sentences
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Starting from a fresh Casdoor or [the demo site](https://door.casdoor.com) if possible, include the relevant organization, application or provider settings
+      placeholder: |
+        1. Go to ...
+        2. Click ...
+        3. See ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: Include error messages and screenshots
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: Relevant server log lines or browser console errors, with secrets removed
+      render: shell
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional context
+      description: Browser, OS, reverse proxy, the client library or SDK you use, and anything else that may help

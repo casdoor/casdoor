@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Documentation
+    url: https://casdoor.ai/docs
+    about: Installation, configuration and integration guides
+  - name: Discord
+    url: https://discord.gg/5rPsrAzK7S
+    about: Ask questions and talk with the community
+  - name: Security vulnerability
+    url: https://github.com/casdoor/casdoor/security/policy
+    about: Do not open a public issue, follow the security policy to report it privately
