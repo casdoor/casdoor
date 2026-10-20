@@ -497,19 +497,28 @@ func getClaimsCustom(claims Claims, tokenField []string, tokenAttributes []*JwtI
 		}
 	}
 
+	for name, value := range getTokenAttributeClaims(claims.User, tokenAttributes) {
+		res[name] = value
+	}
+
+	return res
+}
+
+func getTokenAttributeClaims(user *User, tokenAttributes []*JwtItem) map[string]interface{} {
+	res := map[string]interface{}{}
 	for _, item := range tokenAttributes {
 		var value interface{}
 
 		// If Category is "Existing Field", get the actual field value from the user
 		if item.Category == "Existing Field" {
-			fieldValue, found := getUserFieldValue(claims.User, item.Value)
+			fieldValue, found := getUserFieldValue(user, item.Value)
 			if !found {
 				continue
 			}
 			value = fieldValue
 		} else {
 			// Default behavior: use replaceAttributeValue for "Static Value" or empty category
-			valueList := replaceAttributeValue(claims.User, item.Value)
+			valueList := replaceAttributeValue(user, item.Value)
 			if len(valueList) == 0 {
 				continue
 			}
@@ -577,6 +586,18 @@ func refineUser(user *User) *User {
 	return user
 }
 
+// getTokenUser shapes the claims from a copy, so that refineUser() does not clear the
+// password of the user object the caller keeps using
+func getTokenUser(application *Application, user *User) (*User, error) {
+	userCopy := *user
+	groups, err := userCopy.GetGroupsForToken(application)
+	if err != nil {
+		return nil, err
+	}
+	userCopy.Groups = groups
+	return refineUser(&userCopy), nil
+}
+
 // jwtTokenOptions carries what the ID token has to say about the authorization request
 type jwtTokenOptions struct {
 	// AuthTime is when the user last entered credentials, 0 if unknown
@@ -616,17 +637,10 @@ func generateJwtTokenWithOptions(application *Application, user *User, provider 
 		refreshExpireTime = expireTime
 	}
 
-	// the claims are shaped from a copy, so that refineUser() below does not clear the
-	// password of the user object the caller keeps using
-	userCopy := *user
-	user = &userCopy
-
-	groups, err := user.GetGroupsForToken(application)
+	user, err := getTokenUser(application, user)
 	if err != nil {
 		return "", "", "", "", err
 	}
-	user.Groups = groups
-	user = refineUser(user)
 
 	_, originBackend := getOriginFromHost(host)
 

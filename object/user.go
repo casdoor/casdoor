@@ -271,6 +271,28 @@ type Userinfo struct {
 	Groups        []string     `json:"groups,omitempty"`
 	Roles         []string     `json:"roles,omitempty"`
 	Permissions   []string     `json:"permissions,omitempty"`
+
+	CustomClaims map[string]interface{} `json:"-"`
+}
+
+func (u Userinfo) MarshalJSON() ([]byte, error) {
+	type userinfo Userinfo
+	data, err := json.Marshal(userinfo(u))
+	if err != nil || len(u.CustomClaims) == 0 {
+		return data, err
+	}
+
+	res := map[string]interface{}{}
+	err = json.Unmarshal(data, &res)
+	if err != nil {
+		return nil, err
+	}
+	for name, value := range u.CustomClaims {
+		if _, ok := res[name]; !ok {
+			res[name] = value
+		}
+	}
+	return json.Marshal(res)
 }
 
 type ManagedAccount struct {
@@ -1477,6 +1499,20 @@ func GetUserInfo(user *User, scope string, aud string, host string) (*Userinfo, 
 		if allowed("IsVerified") {
 			resp.IsVerified = user.IsVerified
 		}
+	}
+
+	if application != nil && application.TokenFormat == "JWT-Custom" && len(application.TokenAttributes) > 0 {
+		tokenUser := *user
+		err = ExtendUserWithRolesAndPermissions(&tokenUser)
+		if err != nil {
+			return nil, err
+		}
+
+		refinedUser, err := getTokenUser(application, &tokenUser)
+		if err != nil {
+			return nil, err
+		}
+		resp.CustomClaims = getTokenAttributeClaims(refinedUser, application.TokenAttributes)
 	}
 
 	return &resp, nil
