@@ -4,7 +4,7 @@ if [ -z "${driverName:-}" ]; then
   export driverName=sqlite
 fi
 if [ -z "${dataSourceName:-}" ]; then
-  export dataSourceName="file:casdoor.db?cache=shared"
+  export dataSourceName="file:casdoor.db?cache=shared&_pragma=busy_timeout(5000)&_pragma=journal_mode(WAL)"
 fi
 
 exec /server
