@@ -131,7 +131,7 @@ type Application struct {
 	DisableSamlAttributes        bool            `json:"disableSamlAttributes"`
 	EnableSamlAssertionSignature bool            `json:"enableSamlAssertionSignature"`
 	UseEmailAsSamlNameId         bool            `json:"useEmailAsSamlNameId"`
-	SamlNameIdTemplate           string          `xorm:"varchar(500)" json:"samlNameIdTemplate"`
+	SamlNameIdTemplate           string          `xorm:"mediumtext" json:"samlNameIdTemplate"`
 	EnableWebAuthn               bool            `json:"enableWebAuthn"`
 	EnableLinkWithEmail          bool            `json:"enableLinkWithEmail"`
 	OrgChoiceMode                string          `json:"orgChoiceMode"`
