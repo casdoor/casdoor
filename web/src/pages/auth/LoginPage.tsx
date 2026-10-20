@@ -1603,6 +1603,13 @@ export default function LoginPage({type = "login", application: applicationProp,
           <form className="space-y-4" onSubmit={submit}>
             {signinItems.map(renderSigninItem)}
           </form>
+        ) : !Setting.hasAnySigninMethod(application) ? (
+          <div className="space-y-4">
+            <Alert variant="warning">
+              <AlertDescription>{i18next.t("login:No sign-in method is enabled for this application. Please contact the administrator.")}</AlertDescription>
+            </Alert>
+            {signinItems.filter((item: any) => item.name === "Signup link").map(renderSigninItem)}
+          </div>
         ) : (
           <div className="space-y-4">
             <p className="text-sm text-muted-foreground">
