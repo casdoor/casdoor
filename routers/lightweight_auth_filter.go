@@ -235,6 +235,6 @@ func serveAuthCallbackPage(ctx *context.Context) bool {
 
 	ctx.Output.Header("Content-Type", "text/html; charset=utf-8")
 	ctx.Output.Header("Cache-Control", "no-store")
-	http.ServeContent(ctx.ResponseWriter, ctx.Request, "auth-callback.html", time.Now(), strings.NewReader(addBasePathToHtml(authCallbackHtml)))
+	http.ServeContent(ctx.ResponseWriter, ctx.Request, "auth-callback.html", time.Now(), strings.NewReader(addIssuerToHtml(addBasePathToHtml(authCallbackHtml), ctx.Request.Host)))
 	return true
 }
