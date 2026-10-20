@@ -16,6 +16,7 @@ package controllers
 
 import (
 	"context"
+	"net/http"
 	"strings"
 	"time"
 
@@ -259,10 +260,26 @@ func (c *ApiController) renewSessionIdForUser(userId string) {
 		return
 	}
 
+	if c.isSessionCreatedInRequest() {
+		return
+	}
+
 	err := c.SessionRegenerateID()
 	if err != nil {
 		logs.Error("SessionRegenerateID failed, error: %s", err)
 	}
+}
+
+// isSessionCreatedInRequest reports whether the session ID was generated for this request and is already being set in the response
+func (c *ApiController) isSessionCreatedInRequest() bool {
+	sessionId := c.StartSession().SessionID(context.Background())
+	cookies := (&http.Response{Header: c.Ctx.ResponseWriter.Header()}).Cookies()
+	for _, cookie := range cookies {
+		if cookie.Name == web.BConfig.WebConfig.Session.SessionName && cookie.Value == sessionId {
+			return true
+		}
+	}
+	return false
 }
 
 // SetSessionUsername ...
