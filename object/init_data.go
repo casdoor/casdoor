@@ -495,6 +495,16 @@ func initDefinedApplication(application *Application, raw json.RawMessage) {
 			panic("Fail to delete application")
 		}
 	}
+	if application.ClientId != "" {
+		app, err := GetApplicationByClientId(application.ClientId)
+		if err != nil {
+			panic(err)
+		}
+		if app != nil {
+			return
+		}
+	}
+
 	application.CreatedTime = util.GetCurrentTime()
 	_, err = AddApplication(application, "en")
 	if err != nil {

@@ -128,6 +128,7 @@
     "Please login first": "Lütfen önce giriş yapın",
     "Please sign in first": "Lütfen önce oturum açın",
     "The LDAP: %s does not exist": "LDAP: %s mevcut değil",
+    "The client ID: %s is already used by another application": "İstemci kimliği: %s zaten başka bir uygulama tarafından kullanılıyor",
     "The object does not exist": "Nesne mevcut değil",
     "The organization: %s should have one application at least": "Organizasyon: %s en az bir uygulamaya sahip olmalı",
     "The syncer: %s does not exist": "Senkronizasyon: %s mevcut değil",
