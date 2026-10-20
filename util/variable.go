@@ -18,4 +18,6 @@ var (
 	Version      = "dev"
 	CommitId     = "unknown"
 	CommitOffset = 0
+	// BuildType is set to "release" by .goreleaser.yaml, only such binaries can upgrade themselves
+	BuildType = ""
 )
