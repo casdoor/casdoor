@@ -135,7 +135,7 @@ func getStorageProvider(provider *Provider, lang string) (oss.StorageInterface, 
 
 	certificate := ""
 	if provider.Category == "Storage" && provider.Type == "Casdoor" {
-		cert, err := GetCert(util.GetId(provider.Owner, provider.Cert))
+		cert, err := GetCertEx(util.GetId(provider.Owner, provider.Cert))
 		if err != nil {
 			return nil, err
 		}

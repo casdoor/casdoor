@@ -86,7 +86,7 @@ func withRecover(handler ldap.HandlerFunc, newErrorResponse func() message.Proto
 }
 
 func getTLSconfig(ldapsCertId string) (*tls.Config, error) {
-	rawCert, err := object.GetCert(ldapsCertId)
+	rawCert, err := object.GetCertEx(ldapsCertId)
 	if err != nil {
 		return nil, err
 	}

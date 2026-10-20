@@ -102,14 +102,14 @@ func (c *ApiController) GetApplication() {
 	}
 
 	if c.Ctx.Input.Query("withKey") != "" && application != nil && application.Cert != "" {
-		cert, err := object.GetCert(util.GetId(application.Owner, application.Cert))
+		cert, err := object.GetCertEx(util.GetId(application.Owner, application.Cert))
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
 		}
 
 		if cert == nil {
-			cert, err = object.GetCert(util.GetId(application.Organization, application.Cert))
+			cert, err = object.GetCertEx(util.GetId(application.Organization, application.Cert))
 			if err != nil {
 				c.ResponseError(err.Error())
 				return

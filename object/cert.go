@@ -141,6 +141,14 @@ func GetCert(id string) (*Cert, error) {
 	if err != nil {
 		return nil, err
 	}
+	return getCert(owner, name)
+}
+
+func GetCertEx(id string) (*Cert, error) {
+	owner, name, err := util.GetOwnerAndNameFromIdWithError(id)
+	if err != nil {
+		return nil, err
+	}
 	cert, err := getCert(owner, name)
 	if cert == nil && owner != "admin" {
 		return getCert("admin", name)
@@ -321,7 +329,7 @@ func RenewCert(cert *Cert) (bool, error) {
 
 func getCertByApplication(application *Application) (*Cert, error) {
 	if application.Cert != "" {
-		return GetCert(util.GetId(application.Organization, application.Cert))
+		return GetCertEx(util.GetId(application.Organization, application.Cert))
 	} else {
 		return GetDefaultCert()
 	}

@@ -111,7 +111,7 @@ func DialWithPassword(SshUser string, SshPassword string, SshHost string, SshPor
 }
 
 func DialWithCert(SshUser string, CertId string, SshHost string, SshPort int, HostKey string) (*ssh.Client, string, error) {
-	cert, err := GetCert(CertId)
+	cert, err := GetCertEx(CertId)
 	if err != nil {
 		return nil, "", err
 	}
