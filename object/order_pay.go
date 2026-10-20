@@ -484,6 +484,11 @@ func PayOrder(providerName, host, paymentEnv string, order *Order, lang string) 
 				logs.Warning(fmt.Sprintf("PayOrder: failed to record coupon usage for order %s: %v", order.Name, err))
 			}
 		}
+
+		err = updatePaymentSubscriptions(payment)
+		if err != nil {
+			return nil, nil, err
+		}
 	}
 
 	return payment, payResp.AttachInfo, nil
