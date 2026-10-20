@@ -36,6 +36,7 @@
     "The pricing: %s is invite-only, only invited users can use it": "Тариф: %s доступний лише за запрошенням, ним можуть користуватися тільки запрошені користувачі",
     "The provider: %s does not exist": "Провайдер: %s не існує",
     "The provider: %s is not enabled for the application": "Провайдер: %s не увімкнено для цього додатка",
+    "The subscription: %s does not exist": "Підписка: %s не існує",
     "Unauthorized operation": "Неавторизована операція",
     "Unknown authentication type (not password or provider), form = %s": "Невідомий тип автентифікації (не пароль і не провайдер), форма = %s",
     "User's tag: %s is not listed in the application's tags": "Тег користувача: %s відсутній у тегах додатка",

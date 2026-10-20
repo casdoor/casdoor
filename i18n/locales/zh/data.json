@@ -36,6 +36,7 @@
     "The pricing: %s is invite-only, only invited users can use it": "定价：%s 仅限受邀用户使用",
     "The provider: %s does not exist": "提供商: %s 不存在",
     "The provider: %s is not enabled for the application": "该应用的提供商: %s未被启用",
+    "The subscription: %s does not exist": "订阅：%s 不存在",
     "Unauthorized operation": "未授权的操作",
     "Unknown authentication type (not password or provider), form = %s": "未知的认证类型（非密码或第三方提供商）：%s",
     "User's tag: %s is not listed in the application's tags": "用户的标签: %s不在该应用的标签列表中",

@@ -36,6 +36,7 @@
     "The pricing: %s is invite-only, only invited users can use it": "Cennik: %s jest tylko na zaproszenie, mogą z niego korzystać wyłącznie zaproszeni użytkownicy",
     "The provider: %s does not exist": "Dostawca: %s nie istnieje",
     "The provider: %s is not enabled for the application": "Dostawca: %s nie jest włączony dla aplikacji",
+    "The subscription: %s does not exist": "Subskrypcja: %s nie istnieje",
     "Unauthorized operation": "Nieautoryzowana operacja",
     "Unknown authentication type (not password or provider), form = %s": "Nieznany typ uwierzytelnienia (nie hasło ani dostawca), formularz = %s",
     "User's tag: %s is not listed in the application's tags": "Tag użytkownika: %s nie znajduje się na liście tagów aplikacji",

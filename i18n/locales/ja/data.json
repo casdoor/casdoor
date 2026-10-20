@@ -36,6 +36,7 @@
     "The pricing: %s is invite-only, only invited users can use it": "価格設定：%s は招待制のため、招待されたユーザーのみ利用できます",
     "The provider: %s does not exist": "プロバイダ「%s」は存在しません",
     "The provider: %s is not enabled for the application": "プロバイダー：%sはアプリケーションでは有効化されていません",
+    "The subscription: %s does not exist": "サブスクリプション：%s は存在しません",
     "Unauthorized operation": "不正操作",
     "Unknown authentication type (not password or provider), form = %s": "不明な認証タイプ（パスワードまたはプロバイダーではない）フォーム=%s",
     "User's tag: %s is not listed in the application's tags": "ユーザータグ「%s」はアプリケーションのタグに含まれていません",

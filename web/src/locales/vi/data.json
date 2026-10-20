@@ -1131,6 +1131,8 @@
     "Write": "Viết"
   },
   "plan": {
+    "Auto renew by default": "Tự động gia hạn theo mặc định",
+    "Auto renew by default - Tooltip": "Công tắc tự động gia hạn có bật mặc định khi mua gói này hay không. Chỉ các đăng ký thanh toán bằng số dư hoặc Stripe mới tự động gia hạn được",
     "Edit Plan": "Chỉnh sửa gói",
     "Is exclusive": "Độc quyền",
     "Is exclusive - Tooltip": "Khi được bật, đăng ký gói này sẽ hủy tất cả các đăng ký đang hoạt động khác",
@@ -1562,12 +1564,19 @@
   },
   "subscription": {
     "Active": "Hoạt động",
+    "Auto renew": "Tự động gia hạn",
+    "Auto renew - Tooltip": "Trừ tiền kỳ tiếp theo bằng phương thức thanh toán của đăng ký này 24 giờ trước khi kết thúc. Chỉ hỗ trợ thanh toán bằng số dư và Stripe",
     "Edit Subscription": "Chỉnh sửa đăng ký",
     "End time": "Thời gian kết thúc",
     "End time - Tooltip": "Thời gian kết thúc - Gợi ý",
     "Expired": "Đã hết hạn",
     "Group": "Nhóm",
     "New Subscription": "Đăng ký mới",
+    "Only these payment methods can renew automatically": "Chỉ các phương thức thanh toán này mới tự động gia hạn được",
+    "Renewal failed": "Gia hạn thất bại",
+    "Renewal state": "Trạng thái gia hạn",
+    "Renewed": "Đã gia hạn",
+    "Renewing": "Đang gia hạn",
     "Start time": "Thời gian bắt đầu",
     "Start time - Tooltip": "Thời gian bắt đầu - Gợi ý",
     "Subscription plan": "Kế hoạch đăng ký",

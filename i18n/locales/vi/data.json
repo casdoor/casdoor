@@ -36,6 +36,7 @@
     "The pricing: %s is invite-only, only invited users can use it": "Bảng giá: %s chỉ dành cho người được mời, chỉ người dùng được mời mới có thể sử dụng",
     "The provider: %s does not exist": "Nhà cung cấp: %s không tồn tại",
     "The provider: %s is not enabled for the application": "Nhà cung cấp: %s không được kích hoạt cho ứng dụng",
+    "The subscription: %s does not exist": "Đăng ký: %s không tồn tại",
     "Unauthorized operation": "Hoạt động không được ủy quyền",
     "Unknown authentication type (not password or provider), form = %s": "Loại xác thực không xác định (không phải mật khẩu hoặc nhà cung cấp), biểu mẫu = %s",
     "User's tag: %s is not listed in the application's tags": "Thẻ của người dùng: %s không nằm trong danh sách thẻ của ứng dụng",

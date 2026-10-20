@@ -54,6 +54,12 @@ type Subscription struct {
 	EndTime   string            `xorm:"varchar(100)" json:"endTime"`
 	Period    string            `xorm:"varchar(100)" json:"period"`
 	State     SubscriptionState `xorm:"varchar(100)" json:"state"`
+
+	AutoRenew           bool   `json:"autoRenew"`
+	RenewalState        string `xorm:"mediumtext" json:"renewalState"`
+	RenewalSubscription string `xorm:"mediumtext" json:"renewalSubscription"`
+	RenewalMessage      string `xorm:"mediumtext" json:"renewalMessage"`
+	PaymentType         string `xorm:"-" json:"paymentType"`
 }
 
 func (sub *Subscription) GetId() string {
@@ -106,7 +112,12 @@ func (sub *Subscription) UpdateState() error {
 	}
 
 	if preState != sub.State {
-		_, err := UpdateSubscription(sub.GetId(), sub)
+		_, err := ormer.Engine.ID(core.PK{sub.Owner, sub.Name}).Cols("state", "description").Update(sub)
+		if err != nil {
+			return err
+		}
+
+		err = syncSubscriptionRole(sub)
 		if err != nil {
 			return err
 		}
@@ -116,7 +127,11 @@ func (sub *Subscription) UpdateState() error {
 }
 
 func NewSubscription(owner, userName, planName, paymentName, period string) (*Subscription, error) {
-	startTime, endTime, err := getDuration(period)
+	return newSubscriptionFrom(owner, userName, planName, paymentName, period, time.Now())
+}
+
+func newSubscriptionFrom(owner, userName, planName, paymentName, period string, start time.Time) (*Subscription, error) {
+	startTime, endTime, err := getDurationFrom(period, start)
 	if err != nil {
 		return nil, err
 	}
@@ -157,6 +172,10 @@ func GetSubscriptions(owner string) ([]*Subscription, error) {
 		if err != nil {
 			return nil, err
 		}
+	}
+	err = extendSubscriptionsWithPaymentType(subscriptions)
+	if err != nil {
+		return nil, err
 	}
 	return subscriptions, nil
 }
@@ -245,6 +264,10 @@ func GetSubscriptionsByUser(owner, userName string) ([]*Subscription, error) {
 			return subscriptions, err
 		}
 	}
+	err = extendSubscriptionsWithPaymentType(subscriptions)
+	if err != nil {
+		return subscriptions, err
+	}
 	return subscriptions, nil
 }
 
@@ -276,6 +299,10 @@ func GetPaginationSubscriptionsByUser(owner, userName string, offset, limit int,
 			return nil, err
 		}
 	}
+	err = extendSubscriptionsWithPaymentType(subscriptions)
+	if err != nil {
+		return nil, err
+	}
 	return subscriptions, nil
 }
 
@@ -291,6 +318,10 @@ func GetPaginationSubscriptions(owner string, offset, limit int, field, value, s
 		if err != nil {
 			return nil, err
 		}
+	}
+	err = extendSubscriptionsWithPaymentType(subscriptions)
+	if err != nil {
+		return nil, err
 	}
 	return subscriptions, nil
 }
@@ -318,7 +349,17 @@ func GetSubscription(id string) (*Subscription, error) {
 	if err != nil {
 		return nil, err
 	}
-	return getSubscription(owner, name)
+
+	subscription, err := getSubscription(owner, name)
+	if err != nil || subscription == nil {
+		return subscription, err
+	}
+
+	err = extendSubscriptionsWithPaymentType([]*Subscription{subscription})
+	if err != nil {
+		return nil, err
+	}
+	return subscription, nil
 }
 
 func hasActiveSubscriptionForPlan(owner, planName, cond string, args []interface{}) (bool, error) {
@@ -368,7 +409,14 @@ func UpdateSubscription(id string, subscription *Subscription) (bool, error) {
 		return false, nil
 	}
 
-	affected, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(subscription)
+	if subscription.AutoRenew && !oldSubscription.AutoRenew {
+		err = checkSubscriptionAutoRenew(subscription)
+		if err != nil {
+			return false, err
+		}
+	}
+
+	affected, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Omit("renewal_state", "renewal_subscription", "renewal_message").Update(subscription)
 	if err != nil {
 		return false, err
 	}

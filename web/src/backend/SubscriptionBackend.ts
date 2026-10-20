@@ -47,6 +47,16 @@ export function updateSubscription(owner, name, subscription) {
   }).then(res => res.json());
 }
 
+export function setSubscriptionAutoRenew(owner, name, autoRenew: boolean) {
+  return fetch(`${Setting.ServerUrl}/api/set-subscription-auto-renew?id=${owner}/${encodeURIComponent(name)}&autoRenew=${autoRenew}`, {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}
+
 export function addSubscription(subscription) {
   const newSubscription = Setting.deepCopy(subscription);
   return fetch(`${Setting.ServerUrl}/api/add-subscription`, {

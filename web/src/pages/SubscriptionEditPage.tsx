@@ -1,5 +1,5 @@
 import i18next from "i18next";
-import {useParams} from "react-router-dom";
+import {Link, useParams} from "react-router-dom";
 import {SimpleEditPage, type EditField} from "@/components/crud/SimpleEditPage";
 import {useAccount} from "@/hooks/use-account";
 import {
@@ -10,7 +10,7 @@ import {
   useUserNameOptions,
 } from "@/hooks/use-options";
 import * as SubscriptionBackend from "@/backend/SubscriptionBackend";
-import {enumOptions, SUBSCRIPTION_STATES} from "@/lib/enum-labels";
+import {enumLabel, enumOptions, RENEWAL_STATES, SUBSCRIPTION_STATES} from "@/lib/enum-labels";
 import * as Setting from "@/lib/setting";
 
 const PERIODS = ["Monthly", "Yearly"];
@@ -55,6 +55,29 @@ export default function SubscriptionEditPage() {
       name: "state",
       labelKey: "general:State",
       options: () => enumOptions(SUBSCRIPTION_STATES),
+    },
+    {type: "switch", name: "autoRenew", labelKey: "subscription:Auto renew"},
+    {
+      type: "custom",
+      name: "renewalState",
+      labelKey: "subscription:Renewal state",
+      when: ({record}) => Boolean(record.renewalState),
+      render: ({record}) => (
+        <div className="space-y-1 text-sm">
+          <div>
+            {enumLabel(RENEWAL_STATES, record.renewalState)}
+            {record.renewalSubscription ? (
+              <>
+                {" → "}
+                <Link to={`/subscriptions/${record.owner}/${record.renewalSubscription}`} className="underline-offset-4 hover:underline">
+                  {record.renewalSubscription}
+                </Link>
+              </>
+            ) : null}
+          </div>
+          {record.renewalMessage ? <div className="text-muted-foreground">{record.renewalMessage}</div> : null}
+        </div>
+      ),
     },
   ];
 

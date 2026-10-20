@@ -38,6 +38,15 @@ export const SUBSCRIPTION_STATES: EnumMap = {
   "Suspended": {i18nKey: "subscription:Suspended", variant: "secondary"},
 };
 
+export const RENEWAL_STATES: EnumMap = {
+  "Renewing": {i18nKey: "subscription:Renewing", variant: "info"},
+  "Renewed": {i18nKey: "subscription:Renewed", variant: "success"},
+  "Failed": {i18nKey: "subscription:Renewal failed", variant: "destructive"},
+};
+
+/** the payment provider types whose subscriptions can be charged again without the payer */
+export const AUTO_RENEW_PAYMENT_TYPES = ["Balance", "Stripe"];
+
 export const INVITATION_STATES: EnumMap = {
   "Active": {i18nKey: "subscription:Active", variant: "success"},
   "Suspended": {i18nKey: "subscription:Suspended", variant: "secondary"},

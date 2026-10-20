@@ -1131,6 +1131,8 @@
     "Write": "Write"
   },
   "plan": {
+    "Auto renew by default": "Auto renew by default",
+    "Auto renew by default - Tooltip": "Whether the auto renewal switch is on by default when buying this plan. Only subscriptions paid with balance or Stripe can renew automatically",
     "Edit Plan": "Edit Plan",
     "Is exclusive": "Is exclusive",
     "Is exclusive - Tooltip": "When enabled, subscribing to this plan will cancel any other active subscriptions",
@@ -1562,12 +1564,19 @@
   },
   "subscription": {
     "Active": "Active",
+    "Auto renew": "Auto renew",
+    "Auto renew - Tooltip": "Charges the payment method of this subscription for the next period 24 hours before it ends. Only balance and Stripe payments are supported",
     "Edit Subscription": "Edit Subscription",
     "End time": "End time",
     "End time - Tooltip": "End time of the subscription",
     "Expired": "Expired",
     "Group": "Group",
     "New Subscription": "New Subscription",
+    "Only these payment methods can renew automatically": "Only these payment methods can renew automatically",
+    "Renewal failed": "Renewal failed",
+    "Renewal state": "Renewal state",
+    "Renewed": "Renewed",
+    "Renewing": "Renewing",
     "Start time": "Start time",
     "Start time - Tooltip": "Start time of the subscription",
     "Subscription plan": "Subscription plan",

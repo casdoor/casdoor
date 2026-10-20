@@ -1131,6 +1131,8 @@
     "Write": "Escribir"
   },
   "plan": {
+    "Auto renew by default": "Renovación automática por defecto",
+    "Auto renew by default - Tooltip": "Si la renovación automática está activada por defecto al comprar este plan. Solo las suscripciones pagadas con saldo o Stripe pueden renovarse automáticamente",
     "Edit Plan": "Editar plan",
     "Is exclusive": "Es exclusivo",
     "Is exclusive - Tooltip": "Si está habilitado, suscribirse a este plan cancelará otras suscripciones activas",
@@ -1562,12 +1564,19 @@
   },
   "subscription": {
     "Active": "Activo",
+    "Auto renew": "Renovación automática",
+    "Auto renew - Tooltip": "Cobra el siguiente periodo con el método de pago de esta suscripción 24 horas antes de que termine. Solo se admiten pagos con saldo y Stripe",
     "Edit Subscription": "Editar suscripción",
     "End time": "Hora de finalización",
     "End time - Tooltip": "Hora de finalización",
     "Expired": "Expirado",
     "Group": "Grupo",
     "New Subscription": "Nueva suscripción",
+    "Only these payment methods can renew automatically": "Solo estos métodos de pago pueden renovarse automáticamente",
+    "Renewal failed": "Renovación fallida",
+    "Renewal state": "Estado de renovación",
+    "Renewed": "Renovada",
+    "Renewing": "Renovando",
     "Start time": "Hora de inicio",
     "Start time - Tooltip": "Hora de inicio",
     "Subscription plan": "Plan de suscripción",

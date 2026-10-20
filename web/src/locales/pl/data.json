@@ -1131,6 +1131,8 @@
     "Write": "Zapis"
   },
   "plan": {
+    "Auto renew by default": "Domyślnie odnawiaj automatycznie",
+    "Auto renew by default - Tooltip": "Czy automatyczne odnawianie jest domyślnie włączone przy zakupie tego planu. Automatycznie odnawiać się mogą tylko subskrypcje opłacone saldem lub przez Stripe",
     "Edit Plan": "Edytuj plan",
     "Is exclusive": "Czy wyłączny",
     "Is exclusive - Tooltip": "Po włączeniu, subskrybowanie tego planu anuluje wszelkie inne aktywne subskrypcje",
@@ -1562,12 +1564,19 @@
   },
   "subscription": {
     "Active": "Aktywna",
+    "Auto renew": "Odnawiaj automatycznie",
+    "Auto renew - Tooltip": "Obciąża metodę płatności tej subskrypcji za następny okres 24 godziny przed jej końcem. Obsługiwane są tylko płatności saldem i przez Stripe",
     "Edit Subscription": "Edytuj subskrypcję",
     "End time": "Czas zakończenia",
     "End time - Tooltip": "Czas zakończenia - etykietka",
     "Expired": "Wygasła",
     "Group": "Grupa",
     "New Subscription": "Nowa subskrypcja",
+    "Only these payment methods can renew automatically": "Tylko te metody płatności mogą odnawiać się automatycznie",
+    "Renewal failed": "Odnowienie nie powiodło się",
+    "Renewal state": "Stan odnowienia",
+    "Renewed": "Odnowiona",
+    "Renewing": "Odnawianie",
     "Start time": "Czas rozpoczęcia",
     "Start time - Tooltip": "Czas rozpoczęcia - etykietka",
     "Subscription plan": "Plan subskrypcji",

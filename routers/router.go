@@ -306,6 +306,7 @@ func InitAPI() {
 	web.Router("/api/get-subscriptions", &controllers.ApiController{}, "GET:GetSubscriptions")
 	web.Router("/api/get-subscription", &controllers.ApiController{}, "GET:GetSubscription")
 	web.Router("/api/update-subscription", &controllers.ApiController{}, "POST:UpdateSubscription")
+	web.Router("/api/set-subscription-auto-renew", &controllers.ApiController{}, "POST:SetSubscriptionAutoRenew")
 	web.Router("/api/add-subscription", &controllers.ApiController{}, "POST:AddSubscription")
 	web.Router("/api/delete-subscription", &controllers.ApiController{}, "POST:DeleteSubscription")
 
