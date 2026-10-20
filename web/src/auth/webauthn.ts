@@ -40,7 +40,7 @@ export function signInWithWebAuthn(
 
       let finishUrl = `${Setting.ServerUrl}/api/webauthn/signin/finish?responseType=${values["type"]}&application=${encodeURIComponent(application.name)}`;
       if (values["type"] === "code") {
-        finishUrl = `${Setting.ServerUrl}/api/webauthn/signin/finish?responseType=${values["type"]}&clientId=${encodeURIComponent(oAuthParams.clientId)}&scope=${oAuthParams.scope}&redirectUri=${oAuthParams.redirectUri}&nonce=${oAuthParams.nonce}&state=${oAuthParams.state}&codeChallenge=${oAuthParams.codeChallenge}&challengeMethod=${oAuthParams.challengeMethod}${resourceQuery}`;
+        finishUrl = `${Setting.ServerUrl}/api/webauthn/signin/finish?responseType=${values["type"]}&clientId=${encodeURIComponent(oAuthParams.clientId)}&scope=${encodeURIComponent(oAuthParams.scope)}&redirectUri=${encodeURIComponent(oAuthParams.redirectUri)}&nonce=${encodeURIComponent(oAuthParams.nonce)}&state=${encodeURIComponent(oAuthParams.state)}&codeChallenge=${encodeURIComponent(oAuthParams.codeChallenge)}&challengeMethod=${encodeURIComponent(oAuthParams.challengeMethod)}${resourceQuery}`;
       }
 
       return fetch(finishUrl, {
