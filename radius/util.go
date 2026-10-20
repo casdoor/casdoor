@@ -58,7 +58,7 @@ func GetAccountingFromRequest(r *radius.Request) *object.RadiusAccounting {
 		AcctInputTotal:     int64(acctInputOctets) + int64(acctInputGigawords)*4*1024*1024*1024,
 		AcctOutputTotal:    int64(acctOutputOctets) + int64(acctOutputGigawords)*4*1024*1024*1024,
 		AcctInputPackets:   int64(rfc2866.AcctInputPackets_Get(r.Packet)),
-		AcctOutputPackets:  int64(rfc2866.AcctInputPackets_Get(r.Packet)),
+		AcctOutputPackets:  int64(rfc2866.AcctOutputPackets_Get(r.Packet)),
 		AcctStartTime:      getAcctStartTime(int(rfc2866.AcctSessionTime_Get(r.Packet))),
 		AcctTerminateCause: int64(rfc2866.AcctTerminateCause_Get(r.Packet)),
 		LastUpdate:         time.Now(),
