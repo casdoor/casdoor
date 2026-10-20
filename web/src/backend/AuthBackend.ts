@@ -93,7 +93,7 @@ export function oAuthParamsToQuery(oAuthParams) {
     : "";
 
   // code
-  return `?clientId=${encodeURIComponent(oAuthParams.clientId)}&responseType=${oAuthParams.responseType}&redirectUri=${encodeURIComponent(oAuthParams.redirectUri)}&type=${oAuthParams.type}&scope=${oAuthParams.scope}&state=${oAuthParams.state}&nonce=${oAuthParams.nonce}&code_challenge_method=${oAuthParams.challengeMethod}&code_challenge=${oAuthParams.codeChallenge}${resourceQuery}${promptQuery}${maxAgeQuery}`;
+  return `?clientId=${encodeURIComponent(oAuthParams.clientId)}&responseType=${encodeURIComponent(oAuthParams.responseType)}&redirectUri=${encodeURIComponent(oAuthParams.redirectUri)}&type=${encodeURIComponent(oAuthParams.type)}&scope=${encodeURIComponent(oAuthParams.scope)}&state=${encodeURIComponent(oAuthParams.state)}&nonce=${encodeURIComponent(oAuthParams.nonce)}&code_challenge_method=${encodeURIComponent(oAuthParams.challengeMethod)}&code_challenge=${encodeURIComponent(oAuthParams.codeChallenge)}${resourceQuery}${promptQuery}${maxAgeQuery}`;
 }
 
 export function getApplicationLogin(params) {
