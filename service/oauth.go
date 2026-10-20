@@ -72,10 +72,10 @@ func handleAuthCallback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	handleSiteCallback(w, r, site, getScheme(r), r.URL.Query())
+	handleSiteCallback(w, r, site, getScheme(r), r.Host, r.URL.Query())
 }
 
-func handleSiteCallback(w http.ResponseWriter, r *http.Request, site *object.Site, scheme string, query url.Values) {
+func handleSiteCallback(w http.ResponseWriter, r *http.Request, site *object.Site, scheme string, host string, query url.Values) {
 	code := query.Get("code")
 	state := query.Get("state")
 	if code == "" {
@@ -116,5 +116,6 @@ func handleSiteCallback(w http.ResponseWriter, r *http.Request, site *object.Sit
 		SameSite: http.SameSiteLaxMode,
 	})
 
-	http.Redirect(w, r, getSafeRedirectPath(state), http.StatusFound)
+	// absolute, since Traefik resolves a relative Location of forward auth against the Casdoor address
+	http.Redirect(w, r, fmt.Sprintf("%s://%s%s", scheme, host, getSafeRedirectPath(state)), http.StatusFound)
 }

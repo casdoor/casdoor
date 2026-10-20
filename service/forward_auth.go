@@ -100,7 +100,7 @@ func HandleForwardAuth(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if forwardedUrl.Path == "/caswaf-handler" {
-		handleSiteCallback(w, r, site, scheme, forwardedUrl.Query())
+		handleSiteCallback(w, r, site, scheme, host, forwardedUrl.Query())
 		return
 	}
 
