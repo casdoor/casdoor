@@ -173,7 +173,7 @@ export function getStateFromQueryParams(applicationName, providerName, method, i
   let query = window.location.search;
   query = `${query}&application=${encodeURIComponent(applicationName)}&provider=${encodeURIComponent(providerName)}&method=${method}`;
   if (method === "link") {
-    query = `${query}&from=${window.location.pathname}&linkNonce=${newLinkNonce()}`;
+    query = `${query}&from=${Setting.getRoutePath()}&linkNonce=${newLinkNonce()}`;
   }
 
   // Device authorization flow: the userCode lives in the path (/login/oauth/device/:userCode),

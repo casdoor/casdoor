@@ -1622,6 +1622,7 @@
     "Version": "Phiên bản"
   },
   "theme": {
+    "All themes": "Tất cả giao diện",
     "Blossom": "hoa nở",
     "Border radius": "Bán kính đường viền",
     "Customize theme": "Tùy chỉnh giao diện",
@@ -1629,6 +1630,10 @@
     "Document": "Tài liệu",
     "Is compact": "Có kích thước nhỏ gọn",
     "Light": "Sáng",
+    "Next theme": "Giao diện tiếp theo",
+    "Pause themes": "Tạm dừng đổi giao diện",
+    "Play themes": "Tự đổi giao diện",
+    "Previous theme": "Giao diện trước",
     "Primary color": "Màu sắc cơ bản",
     "System": "Hệ thống",
     "Theme": "Giao diện",

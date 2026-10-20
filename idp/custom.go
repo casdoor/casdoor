@@ -260,10 +260,6 @@ func (idp *CustomIdProvider) mapUserInfo(claims map[string]interface{}) (*UserIn
 	for k, v := range idp.UserMapping {
 		val, err := getNestedValue(claims, v)
 		if err != nil {
-			// only the ID is mandatory, the other claims may be absent for some users
-			if k == "id" {
-				return nil, fmt.Errorf("cannot find %s in user from custom provider: %v", v, err)
-			}
 			continue
 		}
 		dataMap[k] = val

@@ -367,7 +367,7 @@ func CheckOAuthLogin(clientId string, responseType string, redirectUri string, s
 		return fmt.Sprintf(i18n.Translate(lang, "token:Grant_type: %s is not supported in this application"), responseType), nil, nil
 	}
 
-	application, err := GetApplicationByClientId(clientId)
+	application, err := GetApplicationByClientIdMetadata(clientId, lang)
 	if err != nil {
 		return "", nil, err
 	}
@@ -525,7 +525,7 @@ func GetOAuthCode(userId string, clientId string, provider string, signinMethod 
 	}, nil
 }
 
-func RefreshToken(application *Application, grantType string, refreshToken string, scope string, clientId string, clientSecret string, resource string, host string, dpopProof string) (interface{}, error) {
+func RefreshToken(application *Application, grantType string, refreshToken string, scope string, clientId string, clientSecret string, resource string, host string, dpopProof string, dpopPath string) (interface{}, error) {
 	if grantType != "refresh_token" {
 		return &TokenError{
 			Error:            UnsupportedGrantType,
@@ -590,7 +590,7 @@ func RefreshToken(application *Application, grantType string, refreshToken strin
 	}
 	resource = token.Resource
 
-	dpopJkt, tokenError := getRefreshDPoPJkt(token, dpopProof, host)
+	dpopJkt, tokenError := getRefreshDPoPJkt(token, dpopProof, host, dpopPath)
 	if tokenError != nil {
 		return tokenError, nil
 	}

@@ -165,6 +165,10 @@ func (c *ApiController) AddSite() {
 // @Success 200 {object} controllers.Response The Response object
 // @router /delete-site [post]
 func (c *ApiController) DeleteSite() {
+	if !c.requireGlobalAdmin() {
+		return
+	}
+
 	var site object.Site
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &site)
 	if err != nil {

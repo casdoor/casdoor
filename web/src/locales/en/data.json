@@ -1622,6 +1622,7 @@
     "Version": "Version"
   },
   "theme": {
+    "All themes": "All themes",
     "Blossom": "Blossom",
     "Border radius": "Border radius",
     "Customize theme": "Customize theme",
@@ -1629,6 +1630,10 @@
     "Document": "Document",
     "Is compact": "Is compact",
     "Light": "Light",
+    "Next theme": "Next theme",
+    "Pause themes": "Pause themes",
+    "Play themes": "Play themes",
+    "Previous theme": "Previous theme",
     "Primary color": "Primary color",
     "System": "System",
     "Theme": "Theme",

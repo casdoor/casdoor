@@ -47,7 +47,7 @@ export function InvitationSend({
         return;
       }
     }
-    copy(`${window.location.origin}/signup/${defaultApplication}?invitationCode=${invitation?.defaultCode}`);
+    copy(`${Setting.getOriginUrl()}/signup/${defaultApplication}?invitationCode=${invitation?.defaultCode}`);
     Setting.showMessage("success", i18next.t("general:Copied to clipboard successfully"));
   };
 

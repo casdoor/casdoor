@@ -31,7 +31,7 @@ function goToSamlUrl(provider: any, search: string) {
   const clientId = params.get("client_id") ?? "";
   const state = params.get("state");
   const realRedirectUri = params.get("redirect_uri");
-  const redirectUri = `${window.location.origin}/callback/saml`;
+  const redirectUri = `${Setting.getOriginUrl()}/callback/saml`;
 
   const relayState = `${clientId}&${state}&${provider.name}&${realRedirectUri}&${redirectUri}`;
   AuthBackend.getSamlLogin(`${provider.owner}/${provider.name}`, btoa(relayState)).then((res: any) => {
@@ -123,14 +123,15 @@ export function ProviderButtons({application, method, rule, onBeforeClick}: Prov
   // rule a short list still gets the buttons and a long one the grid.
   const big = rule === "big" || (rule !== "small" && items.length <= 3);
   if (big) {
+    // gaps are the buttons' own margins, so the default "Providers" CSS (.provider-big-img margin-bottom) applies to every gap
     return (
-      <div className="space-y-2">
+      <div className="flex flex-col">
         {items.map((item: any) => (
           <Button
             key={item.name}
             type="button"
             variant="outline"
-            className="provider-big-img w-full justify-start gap-3 px-4 font-normal"
+            className="provider-big-img mb-2 w-full justify-start gap-3 px-4 font-normal last:mb-0"
             onClick={() => onClick(item)}
           >
             <img

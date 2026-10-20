@@ -214,7 +214,7 @@ export function ApplicationProvidersTab({
                 }
                 return (
                   <a
-                    href={`/providers/${provider.owner}/${provider.name}`}
+                    href={Setting.withBasePath(`/providers/${provider.owner}/${provider.name}`)}
                     target="_blank"
                     rel="noreferrer"
                     className="underline-offset-4 hover:underline"

@@ -15,6 +15,21 @@
 (function() {
   "use strict";
 
+  // the path Casdoor is served under, like "/casdoor", which the server writes into the page (routers/base_path.go)
+  var basePath = (function() {
+    var meta = document.querySelector("meta[name=\"casdoor-base-path\"]");
+    var value = meta ? (meta.getAttribute("content") || "").replace(/^\/+|\/+$/g, "") : "";
+    return value ? "/" + value : "";
+  })();
+
+  function getRoutePath() {
+    var pathname = window.location.pathname;
+    if (basePath !== "" && (pathname === basePath || pathname.indexOf(basePath + "/") === 0)) {
+      return pathname.slice(basePath.length) || "/";
+    }
+    return pathname;
+  }
+
   function getFallbackUrl() {
     var url = new URL(window.location.href);
     url.searchParams.delete("provider_hint");
@@ -165,7 +180,7 @@
     var query = window.location.search;
     query = query + "&application=" + encodeURIComponent(applicationName) + "&provider=" + encodeURIComponent(providerName) + "&method=" + method;
     if (method === "link") {
-      query = query + "&from=" + window.location.pathname;
+      query = query + "&from=" + getRoutePath();
     }
 
     if (!isShortState) {
@@ -189,7 +204,7 @@
     }
 
     var endpoint = info.endpoint;
-    var redirectOrigin = application.forcedRedirectOrigin ? application.forcedRedirectOrigin : window.location.origin;
+    var redirectOrigin = application.forcedRedirectOrigin ? application.forcedRedirectOrigin : window.location.origin + basePath;
     var redirectUri = redirectOrigin + "/callback";
     var scope = info.scope;
     if (provider.scopes && provider.scopes.trim() !== "") {
@@ -331,19 +346,19 @@
   }
 
   async function getApplication(applicationName) {
-    return fetchJson("/api/get-application?id=" + encodeURIComponent(applicationName), {
+    return fetchJson(basePath + "/api/get-application?id=" + encodeURIComponent(applicationName), {
       credentials: "include"
     });
   }
 
   async function getProviders(applicationName, language) {
-    return fetchJson("/api/get-login-providers?application=" + encodeURIComponent(applicationName) + "&acceptLanguage=" + encodeURIComponent(language), {
+    return fetchJson(basePath + "/api/get-login-providers?application=" + encodeURIComponent(applicationName) + "&acceptLanguage=" + encodeURIComponent(language), {
       credentials: "include"
     });
   }
 
   async function run() {
-    localStorage.setItem("signinUrl", window.location.pathname + window.location.search);
+    localStorage.setItem("signinUrl", getRoutePath() + window.location.search);
 
     var providerHint = new URLSearchParams(window.location.search).get("provider_hint");
     if (!providerHint) {
@@ -363,7 +378,7 @@
     searchParams.set("code_challenge_method", currentSearchParams.get("code_challenge_method") || "");
     searchParams.set("code_challenge", currentSearchParams.get("code_challenge") || "");
 
-    var response = await fetch("/api/get-app-login?" + searchParams.toString(), {
+    var response = await fetch(basePath + "/api/get-app-login?" + searchParams.toString(), {
       method: "GET",
       credentials: "include",
       headers: {

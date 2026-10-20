@@ -158,7 +158,7 @@ export function getNavGroups(account: Account | null | undefined): NavGroup[] {
     adminItems.push({
       key: "/swagger",
       label: i18next.t("general:Swagger"),
-      href: Setting.isLocalhost() ? `${Setting.getFullServerUrl()}/swagger` : "/swagger",
+      href: Setting.isLocalhost() ? `${Setting.getFullServerUrl()}/swagger` : Setting.withBasePath("/swagger"),
     });
   }
 

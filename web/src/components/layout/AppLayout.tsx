@@ -6,13 +6,17 @@ import {EnableMfaNotification} from "@/components/auth/EnableMfaNotification";
 import {CommandPalette, useCommandPalette} from "@/components/common/CommandPalette";
 import {ConsoleTour} from "@/components/common/ConsoleTour";
 import {GithubCorner} from "@/components/common/GithubCorner";
+import {ThemeShowcaseBar} from "@/components/common/ThemeShowcaseBar";
 import {Loading} from "@/components/common/Loading";
 import {Header} from "@/components/layout/Header";
 import {PoweredBy} from "@/components/layout/PoweredBy";
 import {AppSidebar} from "@/components/layout/Sidebar";
 import {useAccount} from "@/hooks/use-account";
 import {useThemeData} from "@/hooks/use-application-chrome";
+import * as OrganizationBackend from "@/backend/OrganizationBackend";
+import {getSafeHtml} from "@/lib/custom-html";
 import * as Setting from "@/lib/setting";
+import {getConsoleCss, useShowcaseApplication} from "@/lib/theme-showcase";
 
 /**
  * `SidebarProvider` persists the rail through its own `sidebar_state` cookie, so
@@ -28,15 +32,51 @@ function readSidebarCookie(): boolean {
   }
 }
 
+/**
+ * The footer HTML of the default application of the signed-in user's organization,
+ * the same application whose sign-in page the organization's users see.
+ */
+function useFooterHtml(organizationName: string | undefined): string {
+  const [footerHtml, setFooterHtml] = React.useState("");
+
+  React.useEffect(() => {
+    if (!organizationName) {
+      setFooterHtml("");
+      return;
+    }
+
+    let cancelled = false;
+    OrganizationBackend.getDefaultApplication("admin", organizationName)
+      .then((res: any) => {
+        if (!cancelled) {
+          setFooterHtml(res.status === "ok" ? res.data?.footerHtml ?? "" : "");
+        }
+      })
+      .catch(() => undefined);
+    return () => {
+      cancelled = true;
+    };
+  }, [organizationName]);
+
+  return footerHtml;
+}
+
 export function AppLayout() {
   const {account} = useAccount();
+  const footerHtml = useFooterHtml(account?.organization?.name);
   const palette = useCommandPalette();
-  // the console follows the signed-in user's organization theme, title and favicon
-  useThemeData(Setting.getThemeData(account?.organization, null));
+  // the console follows the signed-in user's organization theme, title and favicon, or on
+  // a demo site the Marketplace theme on show
+  const showcase = useShowcaseApplication(null);
+  useThemeData(showcase?.themeData ?? Setting.getThemeData(account?.organization, null));
+  const showcaseCss = React.useMemo(() => getConsoleCss(showcase?.formCss), [showcase]);
 
   return (
     <div className="flex h-screen flex-col overflow-hidden bg-background">
       <GithubCorner />
+      {showcaseCss ? <style>{showcaseCss}</style> : null}
+      {/* the console's own navigation is on the left */}
+      <ThemeShowcaseBar side="right" />
       <ConsoleTour />
       <EnableMfaNotification />
       <CommandPalette open={palette.open} onOpenChange={palette.setOpen} />
@@ -61,12 +101,21 @@ export function AppLayout() {
 
       {/* outside the scroll area and the full width of the window, so it stays at
           the bottom of the viewport the way antd's Layout.Footer does */}
-      <footer
-        id="footer"
-        className="shrink-0 border-t bg-background py-3 text-center text-xs text-muted-foreground"
-      >
-        <PoweredBy />
-      </footer>
+      {footerHtml ? (
+        // never trusted here: the console is where admins work, so no script runs in it
+        <footer
+          id="footer"
+          className="shrink-0 border-t bg-background py-3 text-center text-xs text-muted-foreground"
+          dangerouslySetInnerHTML={{__html: getSafeHtml(footerHtml, false)}}
+        />
+      ) : (
+        <footer
+          id="footer"
+          className="shrink-0 border-t bg-background py-3 text-center text-xs text-muted-foreground"
+        >
+          <PoweredBy />
+        </footer>
+      )}
     </div>
   );
 }

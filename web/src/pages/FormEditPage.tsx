@@ -78,7 +78,7 @@ export default function FormEditPage() {
         setMode("edit");
         if (exitAfterSave) {
           navigate("/forms");
-        } else if (`/forms/${form.name}` !== window.location.pathname) {
+        } else if (`/forms/${form.name}` !== Setting.getRoutePath()) {
           navigate(`/forms/${form.name}`, {replace: true});
         }
       },

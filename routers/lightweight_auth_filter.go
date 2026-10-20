@@ -15,6 +15,7 @@
 package routers
 
 import (
+	"fmt"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -62,14 +63,14 @@ func serveLightweightAuthScript(ctx *context.Context, requestPath string, script
 	scriptPath := getLightweightAuthScriptPath(scriptName)
 	if scriptPath == "" {
 		ctx.ResponseWriter.WriteHeader(http.StatusNotFound)
-		http.ServeContent(ctx.ResponseWriter, ctx.Request, scriptName, time.Now(), strings.NewReader("window.location.replace('/');"))
+		http.ServeContent(ctx.ResponseWriter, ctx.Request, scriptName, time.Now(), strings.NewReader(fmt.Sprintf("window.location.replace('%s/');", basePath)))
 		return true
 	}
 
 	f, err := os.Open(filepath.Clean(scriptPath))
 	if err != nil {
 		ctx.ResponseWriter.WriteHeader(http.StatusInternalServerError)
-		http.ServeContent(ctx.ResponseWriter, ctx.Request, scriptName, time.Now(), strings.NewReader("window.location.replace('/');"))
+		http.ServeContent(ctx.ResponseWriter, ctx.Request, scriptName, time.Now(), strings.NewReader(fmt.Sprintf("window.location.replace('%s/');", basePath)))
 		return true
 	}
 	defer f.Close()
@@ -77,7 +78,7 @@ func serveLightweightAuthScript(ctx *context.Context, requestPath string, script
 	fileInfo, err := f.Stat()
 	if err != nil {
 		ctx.ResponseWriter.WriteHeader(http.StatusInternalServerError)
-		http.ServeContent(ctx.ResponseWriter, ctx.Request, scriptName, time.Now(), strings.NewReader("window.location.replace('/');"))
+		http.ServeContent(ctx.ResponseWriter, ctx.Request, scriptName, time.Now(), strings.NewReader(fmt.Sprintf("window.location.replace('%s/');", basePath)))
 		return true
 	}
 
@@ -163,7 +164,7 @@ func serveProviderHintRedirectPage(ctx *context.Context) bool {
 
 	ctx.Output.Header("Content-Type", "text/html; charset=utf-8")
 	ctx.Output.Header("Cache-Control", "no-store")
-	http.ServeContent(ctx.ResponseWriter, ctx.Request, "provider-hint-redirect.html", time.Now(), strings.NewReader(providerHintRedirectHtml))
+	http.ServeContent(ctx.ResponseWriter, ctx.Request, "provider-hint-redirect.html", time.Now(), strings.NewReader(addBasePathToHtml(providerHintRedirectHtml)))
 	return true
 }
 
@@ -234,6 +235,6 @@ func serveAuthCallbackPage(ctx *context.Context) bool {
 
 	ctx.Output.Header("Content-Type", "text/html; charset=utf-8")
 	ctx.Output.Header("Cache-Control", "no-store")
-	http.ServeContent(ctx.ResponseWriter, ctx.Request, "auth-callback.html", time.Now(), strings.NewReader(authCallbackHtml))
+	http.ServeContent(ctx.ResponseWriter, ctx.Request, "auth-callback.html", time.Now(), strings.NewReader(addBasePathToHtml(authCallbackHtml)))
 	return true
 }

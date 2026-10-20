@@ -30,7 +30,7 @@ import {authConfig} from "@/auth/Auth";
 import copy from "copy-to-clipboard";
 
 const defaultUserMapping: Record<string, string> = {
-  id: "id",
+  id: "sub",
   username: "username",
   displayName: "displayName",
   email: "email",
@@ -536,7 +536,7 @@ export default function ProviderEditPage() {
           navigate("/providers");
         } else {
           const next = `/providers/${provider.owner}/${provider.name}`;
-          if (next !== window.location.pathname) {
+          if (next !== Setting.getRoutePath()) {
             navigate(next, {replace: true});
           }
         }

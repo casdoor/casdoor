@@ -603,7 +603,7 @@ func (c *ApiController) ResetEmailOrPhone() {
 		return
 	}
 
-	countryCode := user.GetCountryCode("")
+	countryCode := user.GetCountryCode(c.Ctx.Request.Form.Get("countryCode"))
 	if destType == object.VerifyTypePhone {
 		normalizedPhone, normalizedCountryCode, isValid := util.GetNormalizedPhone(dest, countryCode)
 		if !isValid {

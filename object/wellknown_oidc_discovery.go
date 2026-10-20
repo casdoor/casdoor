@@ -52,6 +52,7 @@ type OidcDiscovery struct {
 	BackchannelLogoutSessionSupported          bool     `json:"backchannel_logout_session_supported"`           // OIDC Back-Channel Logout 1.0
 	DPoPSigningAlgValuesSupported              []string `json:"dpop_signing_alg_values_supported,omitempty"`    // RFC 9449
 	AuthorizationResponseIssParameterSupported bool     `json:"authorization_response_iss_parameter_supported"` // RFC 9207
+	ClientIdMetadataDocumentSupported          bool     `json:"client_id_metadata_document_supported"`          // draft-ietf-oauth-client-id-metadata-document
 }
 
 type WebFinger struct {
@@ -98,10 +99,11 @@ func getOriginFromHostInternal(host string) (string, string) {
 		protocol = "http://"
 	}
 
+	basePath := conf.GetBasePath()
 	if host == "localhost:8000" && isDev {
-		return fmt.Sprintf("%s%s", protocol, "localhost:7001"), fmt.Sprintf("%s%s", protocol, "localhost:8000")
+		return fmt.Sprintf("%s%s%s", protocol, "localhost:7001", basePath), fmt.Sprintf("%s%s%s", protocol, "localhost:8000", basePath)
 	} else {
-		return fmt.Sprintf("%s%s", protocol, host), fmt.Sprintf("%s%s", protocol, host)
+		return fmt.Sprintf("%s%s%s", protocol, host, basePath), fmt.Sprintf("%s%s%s", protocol, host, basePath)
 	}
 }
 
@@ -136,16 +138,22 @@ func GetOidcDiscovery(host string, applicationName string) OidcDiscovery {
 	// Default OIDC scopes
 	scopes := []string{"openid", "email", "profile", "address", "phone", "offline_access"}
 
+	registrationEndpoint := fmt.Sprintf("%s/api/oauth/register", originBackend)
+
 	// Merge application-specific custom scopes if application is provided
 	if applicationName != "" {
 		applicationId := util.GetId("admin", applicationName)
 		application, err := GetApplication(applicationId)
-		if err == nil && application != nil && len(application.Scopes) > 0 {
+		if err == nil && application != nil {
 			for _, scope := range application.Scopes {
 				// Add custom scope names to the scopes list
 				if scope.Name != "" {
 					scopes = append(scopes, scope.Name)
 				}
+			}
+
+			if application.Organization != "" {
+				registrationEndpoint = fmt.Sprintf("%s?organization=%s", registrationEndpoint, url.QueryEscape(application.Organization))
 			}
 		}
 	}
@@ -159,10 +167,10 @@ func GetOidcDiscovery(host string, applicationName string) OidcDiscovery {
 		Issuer:                                     issuer,
 		AuthorizationEndpoint:                      fmt.Sprintf("%s/login/oauth/authorize", originFrontend),
 		TokenEndpoint:                              fmt.Sprintf("%s/api/login/oauth/access_token", originBackend),
-		TokenEndpointAuthMethodsSupported:          []string{"client_secret_basic", "client_secret_post", "private_key_jwt"},
+		TokenEndpointAuthMethodsSupported:          []string{"client_secret_basic", "client_secret_post", "private_key_jwt", "none"},
 		UserinfoEndpoint:                           fmt.Sprintf("%s/api/userinfo", originBackend),
 		DeviceAuthorizationEndpoint:                fmt.Sprintf("%s/api/device-auth", originBackend),
-		RegistrationEndpoint:                       fmt.Sprintf("%s/api/oauth/register", originBackend),
+		RegistrationEndpoint:                       registrationEndpoint,
 		JwksUri:                                    jwksUri,
 		IntrospectionEndpoint:                      fmt.Sprintf("%s/api/login/oauth/introspect", originBackend),
 		ResponseTypesSupported:                     []string{"code", "token", "id_token", "code token", "code id_token", "token id_token", "code token id_token"},
@@ -180,6 +188,7 @@ func GetOidcDiscovery(host string, applicationName string) OidcDiscovery {
 		BackchannelLogoutSessionSupported:          true,
 		DPoPSigningAlgValuesSupported:              []string{"RS256", "RS512", "ES256", "ES384", "ES512", "PS256", "PS384", "PS512"},
 		AuthorizationResponseIssParameterSupported: true,
+		ClientIdMetadataDocumentSupported:          IsClientIdMetadataDocumentSupported(),
 	}
 
 	return oidcDiscovery

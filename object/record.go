@@ -165,17 +165,18 @@ func NewRecord(ctx *context.Context) (*Record, error) {
 }
 
 // SetUser sets the record's organization and user from the subject's user ID. An M2M
-// credential ("app/<name>") is recorded in the application's organization, because the
-// pseudo organization "app" is shown by no organization's audit log.
+// credential ("app/<name>" or "app-dcr/<name>") is recorded in the application's organization,
+// because the pseudo organizations "app" and "app-dcr" are shown by no organization's audit log.
 func (record *Record) SetUser(userId string) error {
 	if IsAppUser(userId) {
-		appUser, err := GetAppUser(userId)
+		_, name := util.GetOwnerAndNameFromIdNoCheck(userId)
+		application, err := getAppUserApplication(name)
 		if err != nil {
 			return err
 		}
 
-		if appUser != nil {
-			record.Organization, record.User = appUser.Owner, appUser.Name
+		if application != nil {
+			record.Organization, record.User = application.Organization, userId
 			return nil
 		}
 	}

@@ -121,79 +121,11 @@ func RegisterDynamicClient(req *DynamicClientRegistrationRequest, organization s
 		req.ApplicationType = "web"
 	}
 
-	// Generate unique application name
-	randomName := util.GetRandomName()
-	appName := fmt.Sprintf("dcr_%s", randomName)
-
-	// Inherit providers, signin methods, and branding from the organization's default application
-	// so that DCR-registered apps have a working sign-in method and correct branding out of the box.
-	var inheritedProviders []*ProviderItem
-	var inheritedSigninMethods []*SigninMethod
-	var inheritedLogo, inheritedFooterHtml, inheritedFormCss string
-	var inheritedThemeData *ThemeData
-	var inheritedSigninItems []*SigninItem
-	var inheritedEnableSigninSession, inheritedEnableWebAuthn bool
-	defaultApp, err := GetDefaultApplication(util.GetId("admin", organization))
-	if err == nil && defaultApp != nil {
-		inheritedProviders = defaultApp.Providers
-		inheritedSigninMethods = defaultApp.SigninMethods
-		inheritedLogo = defaultApp.Logo
-		inheritedThemeData = defaultApp.ThemeData
-		inheritedFooterHtml = defaultApp.FooterHtml
-		inheritedFormCss = defaultApp.FormCss
-		inheritedSigninItems = defaultApp.SigninItems
-		inheritedEnableSigninSession = defaultApp.EnableSigninSession
-		inheritedEnableWebAuthn = defaultApp.EnableWebAuthn
-	}
-
-	expireInHours, refreshExpireInHours, cookieExpireInHours := getDcrTokenLifetimes(defaultApp)
-
-	// Create Application object
-	// Note: DCR applications are created under "admin" owner by default
-	// This can be made configurable in future versions
-	clientId := util.GenerateClientId()
-	clientSecret := util.GenerateClientSecret()
 	registrationAccessToken := util.GenerateClientSecret()
-	createdTime := util.GetCurrentTime()
-
-	application := &Application{
-		Owner:                   "admin",
-		Name:                    appName,
-		Organization:            organization,
-		CreatedTime:             createdTime,
-		DisplayName:             req.ClientName,
-		Category:                "Agent",
-		Type:                    "MCP",
-		Scopes:                  []*ScopeItem{},
-		Logo:                    firstNonEmpty(req.LogoUri, inheritedLogo),
-		ThemeData:               inheritedThemeData,
-		FooterHtml:              inheritedFooterHtml,
-		FormCss:                 inheritedFormCss,
-		SigninItems:             inheritedSigninItems,
-		HomepageUrl:             req.ClientUri,
-		ClientId:                clientId,
-		ClientSecret:            clientSecret,
-		RedirectUris:            req.RedirectUris,
-		GrantTypes:              req.GrantTypes,
-		EnablePassword:          true,
-		EnableSignUp:            false,
-		DisableSignin:           false,
-		EnableSigninSession:     inheritedEnableSigninSession,
-		EnableCodeSignin:        true,
-		EnableAutoSignin:        false,
-		EnableWebAuthn:          inheritedEnableWebAuthn,
-		TokenFormat:             org.DefaultTokenFormat,
-		TokenFields:             org.DefaultTokenFields,
-		ExpireInHours:           expireInHours,
-		RefreshExpireInHours:    refreshExpireInHours,
-		CookieExpireInHours:     cookieExpireInHours,
-		FormOffset:              2,
-		Tags:                    []string{"dcr"},
-		TermsOfUse:              req.TosUri,
-		Providers:               inheritedProviders,
-		SigninMethods:           inheritedSigninMethods,
-		RegistrationAccessToken: registrationAccessToken,
-	}
+	application := newDynamicClientApplication(req, org, "dcr")
+	application.RegistrationAccessToken = registrationAccessToken
+	clientId := application.ClientId
+	clientSecret := application.ClientSecret
 
 	// Add the application
 	affected, err := AddApplication(application, lang)
@@ -230,6 +162,75 @@ func RegisterDynamicClient(req *DynamicClientRegistrationRequest, organization s
 	}
 
 	return response, nil, nil
+}
+
+// newDynamicClientApplication builds an application for a client that registers itself, tagged with the way it registered
+func newDynamicClientApplication(req *DynamicClientRegistrationRequest, org *Organization, tag string) *Application {
+	appName := fmt.Sprintf("%s_%s", tag, util.GetRandomName())
+
+	// Inherit providers, signin methods, and branding from the organization's default application
+	// so that DCR-registered apps have a working sign-in method and correct branding out of the box.
+	var inheritedProviders []*ProviderItem
+	var inheritedSigninMethods []*SigninMethod
+	var inheritedLogo, inheritedFooterHtml, inheritedFormCss string
+	var inheritedThemeData *ThemeData
+	var inheritedSigninItems []*SigninItem
+	var inheritedEnableSigninSession, inheritedEnableWebAuthn bool
+	defaultApp, err := GetDefaultApplication(util.GetId(org.Owner, org.Name))
+	if err == nil && defaultApp != nil {
+		inheritedProviders = defaultApp.Providers
+		inheritedSigninMethods = defaultApp.SigninMethods
+		inheritedLogo = defaultApp.Logo
+		inheritedThemeData = defaultApp.ThemeData
+		inheritedFooterHtml = defaultApp.FooterHtml
+		inheritedFormCss = defaultApp.FormCss
+		inheritedSigninItems = defaultApp.SigninItems
+		inheritedEnableSigninSession = defaultApp.EnableSigninSession
+		inheritedEnableWebAuthn = defaultApp.EnableWebAuthn
+	}
+
+	expireInHours, refreshExpireInHours, cookieExpireInHours := getDcrTokenLifetimes(defaultApp)
+
+	// Create Application object
+	// Note: DCR applications are created under "admin" owner by default
+	// This can be made configurable in future versions
+	return &Application{
+		Owner:                "admin",
+		Name:                 appName,
+		Organization:         org.Name,
+		CreatedTime:          util.GetCurrentTime(),
+		DisplayName:          req.ClientName,
+		Category:             "Agent",
+		Type:                 "MCP",
+		Scopes:               []*ScopeItem{},
+		Logo:                 firstNonEmpty(req.LogoUri, inheritedLogo),
+		ThemeData:            inheritedThemeData,
+		FooterHtml:           inheritedFooterHtml,
+		FormCss:              inheritedFormCss,
+		SigninItems:          inheritedSigninItems,
+		HomepageUrl:          req.ClientUri,
+		ClientId:             util.GenerateClientId(),
+		ClientSecret:         util.GenerateClientSecret(),
+		RedirectUris:         req.RedirectUris,
+		GrantTypes:           req.GrantTypes,
+		EnablePassword:       true,
+		EnableSignUp:         false,
+		DisableSignin:        false,
+		EnableSigninSession:  inheritedEnableSigninSession,
+		EnableCodeSignin:     true,
+		EnableAutoSignin:     false,
+		EnableWebAuthn:       inheritedEnableWebAuthn,
+		TokenFormat:          org.DefaultTokenFormat,
+		TokenFields:          org.DefaultTokenFields,
+		ExpireInHours:        expireInHours,
+		RefreshExpireInHours: refreshExpireInHours,
+		CookieExpireInHours:  cookieExpireInHours,
+		FormOffset:           2,
+		Tags:                 []string{tag},
+		TermsOfUse:           req.TosUri,
+		Providers:            inheritedProviders,
+		SigninMethods:        inheritedSigninMethods,
+	}
 }
 
 // GetDynamicClientByToken finds a DCR application by clientId and validates the registration access token

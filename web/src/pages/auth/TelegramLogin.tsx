@@ -27,7 +27,7 @@ export default function TelegramLogin() {
       }
 
       const botUsername = res.data.clientId;
-      const authUrl = `${window.location.origin}/callback?state=${state}`;
+      const authUrl = `${Setting.getOriginUrl()}/callback?state=${state}`;
       if (!botUsername || !containerRef.current) {
         return;
       }

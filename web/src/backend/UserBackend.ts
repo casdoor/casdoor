@@ -179,11 +179,12 @@ export function verifyCaptcha(owner, name, captchaType, captchaToken, clientSecr
   });
 }
 
-export function resetEmailOrPhone(dest, type, code) {
+export function resetEmailOrPhone(dest, type, code, countryCode = "") {
   const formData = new FormData();
   formData.append("dest", dest);
   formData.append("type", type);
   formData.append("code", code);
+  formData.append("countryCode", countryCode);
   return fetch(`${Setting.ServerUrl}/api/reset-email-or-phone`, {
     method: "POST",
     credentials: "include",
