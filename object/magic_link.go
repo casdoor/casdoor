@@ -297,7 +297,7 @@ func CheckMagicLinkSignup(application *Application, lang string) error {
 		}
 
 		switch signupItem.Name {
-		case "ID", "Username", "Display name", "Email", "Password", "Confirm password", "Agreement", "Invitation code", "Signup button", "Providers":
+		case "ID", "Logo", "Username", "Display name", "Email", "Password", "Confirm password", "Agreement", "Invitation code", "Signup button", "Providers":
 			continue
 		default:
 			return fmt.Errorf(i18n.Translate(lang, "verification:The signup item: %s is required, so the magic link cannot sign up a new user"), signupItem.Name)

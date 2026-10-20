@@ -186,6 +186,7 @@ export function validateSignupItem(item: any, values: Record<string, any>, appli
     return required && values.agreement !== true ? i18next.t("signup:Please accept the agreement!") : "";
   // these render no input of their own
   case "ID":
+  case "Logo":
   case "Languages":
   case "Providers":
   case "Signup button":

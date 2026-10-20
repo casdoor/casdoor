@@ -82,6 +82,7 @@ export function newApplication(account: Account) {
     ],
     signupItems: [
       {name: "ID", visible: false, required: true, rule: "Random"},
+      {name: "Logo", visible: true, required: false, rule: "None", customCss: SignupTableDefaultCssMap["Logo"]},
       {name: "Username", visible: true, required: true, rule: "None"},
       {name: "Display name", visible: true, required: true, rule: "None"},
       {name: "Password", visible: true, required: true, rule: "None"},

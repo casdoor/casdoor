@@ -146,6 +146,8 @@ export default function SignupPage({application: applicationProp}: {application?
 
   const signupItems = (application?.signupItems ?? []) as any[];
   const languagesItem = signupItems.find((item: any) => item.name === "Languages");
+  // an application that lists no Logo item keeps the logo
+  const hideLogo = signupItems.find((item: any) => item.name === "Logo")?.visible === false;
   const languages = application?.organizationObj?.languages as string[] | undefined;
   // an organization that offers a single language forces it rather than offering a choice
   const forcedLanguage =
@@ -195,7 +197,7 @@ export default function SignupPage({application: applicationProp}: {application?
   // without self signup, only an invitation link opens the signup form
   if (!application.enableSignUp || (application.disableSelfSignup && !values.invitationCode)) {
     return (
-      <AuthLayout preview={!!applicationProp} application={application}>
+      <AuthLayout preview={!!applicationProp} application={application} hideLogo={hideLogo}>
         <div className="space-y-4">
           <Alert variant="warning">
             <AlertDescription>{i18next.t("application:The application does not allow to sign up new account")}</AlertDescription>
@@ -618,6 +620,7 @@ export default function SignupPage({application: applicationProp}: {application?
         </Button>
       );
     case "ID":
+    case "Logo":
     case "Languages":
       return null;
     default: {
@@ -667,6 +670,7 @@ export default function SignupPage({application: applicationProp}: {application?
       preview={!!applicationProp}
       application={application}
       wide
+      hideLogo={hideLogo}
       hideLanguages={(languagesItem && !languagesItem.visible) || forcedLanguage !== ""}
       onLanguageChange={(key) => {
         setUserLang(key);

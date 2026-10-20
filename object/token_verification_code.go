@@ -43,7 +43,7 @@ func (application *Application) IsVerificationCodeSignupEnabled(verifyType strin
 		}
 
 		switch signupItem.Name {
-		case "ID", "Username", "Display name", "Password", "Confirm password", "Agreement", "Signup button", "Providers":
+		case "ID", "Logo", "Username", "Display name", "Password", "Confirm password", "Agreement", "Signup button", "Providers":
 			continue
 		case "Email":
 			if verifyType != VerifyTypeEmail {
