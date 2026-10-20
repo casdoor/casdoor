@@ -128,6 +128,7 @@
     "Please login first": "最初にログインしてください",
     "Please sign in first": "先にサインインしてください",
     "The LDAP: %s does not exist": "LDAP：%s は存在しません",
+    "The client ID: %s is already used by another application": "クライアント ID：%s は既に別のアプリケーションで使用されています",
     "The object does not exist": "オブジェクトが存在しません",
     "The organization: %s should have one application at least": "組織「%s」は少なくとも1つのアプリケーションを持っている必要があります",
     "The syncer: %s does not exist": "同期装置：%s は存在しません",

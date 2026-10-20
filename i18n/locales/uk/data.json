@@ -128,6 +128,7 @@
     "Please login first": "Спочатку увійдіть",
     "Please sign in first": "Спочатку увійдіть",
     "The LDAP: %s does not exist": "LDAP: %s не існує",
+    "The client ID: %s is already used by another application": "Ідентифікатор клієнта: %s уже використовується іншим застосунком",
     "The object does not exist": "Об'єкт не існує",
     "The organization: %s should have one application at least": "Організація: %s має мати щонайменше один додаток",
     "The syncer: %s does not exist": "Синхронізатор: %s не існує",

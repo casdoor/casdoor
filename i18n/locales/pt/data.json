@@ -128,6 +128,7 @@
     "Please login first": "Por favor, faça login primeiro",
     "Please sign in first": "Faça login primeiro",
     "The LDAP: %s does not exist": "O LDAP: %s não existe",
+    "The client ID: %s is already used by another application": "O ID do cliente: %s já está sendo usado por outro aplicativo",
     "The object does not exist": "O objeto não existe",
     "The organization: %s should have one application at least": "A organização: %s deve ter pelo menos um aplicativo",
     "The syncer: %s does not exist": "O sincronizador: %s não existe",

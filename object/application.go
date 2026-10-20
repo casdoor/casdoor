@@ -542,7 +542,7 @@ func AddApplication(application *Application, lang string) (bool, error) {
 	}
 
 	if app != nil {
-		return false, nil
+		return false, fmt.Errorf(i18n.Translate(lang, "general:The client ID: %s is already used by another application"), application.ClientId)
 	}
 
 	if application.IsShared == true && application.Organization != "built-in" {
