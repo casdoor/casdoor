@@ -83,8 +83,8 @@ func (c *ApiController) GetPlan() {
 		return
 	}
 
-	if plan != nil && includeOption {
-		options, err := object.GetPermissionsByRole(plan.Role)
+	if plan != nil && includeOption && plan.Role != "" {
+		options, err := object.GetPermissionsByRole(plan.GetRoleId())
 		if err != nil {
 			c.ResponseError(err.Error())
 			return

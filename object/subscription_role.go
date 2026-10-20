@@ -16,7 +16,6 @@ package object
 
 import (
 	"fmt"
-	"strings"
 	"time"
 
 	"github.com/casdoor/casdoor/util"
@@ -44,14 +43,11 @@ func (sub *Subscription) isActiveAt(now time.Time) bool {
 
 func getPlanRoleId(owner string, planName string) (string, error) {
 	plan, err := getPlan(owner, planName)
-	if err != nil || plan == nil || plan.Role == "" {
+	if err != nil || plan == nil {
 		return "", err
 	}
 
-	if strings.Contains(plan.Role, "/") {
-		return plan.Role, nil
-	}
-	return util.GetId(plan.Owner, plan.Role), nil
+	return plan.GetRoleId(), nil
 }
 
 // syncSubscriptionRole gives the plan's role to the user or group only while one of their subscriptions to it is active
