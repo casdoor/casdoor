@@ -25,6 +25,11 @@
   var reactFallbackKey = "__casdoor_callback_react";
   var reactFallbackPayloadKey = "casdoor_callback_react_fallback";
 
+  function getIssuer() {
+    var meta = document.querySelector("meta[name=\"casdoor-issuer\"]");
+    return (meta && meta.getAttribute("content")) || window.location.origin + basePath;
+  }
+
   function setStatus(message, isError) {
     var statusNode = document.getElementById("callback-status");
     if (!statusNode) {
@@ -417,9 +422,9 @@
 
     if (responseType === "code") {
       if (responseMode === "form_post") {
-        createFormAndSubmit(oAuthParams.redirectUri, {code: res.data, state: oAuthParams.state});
+        createFormAndSubmit(oAuthParams.redirectUri, {code: res.data, state: oAuthParams.state, iss: getIssuer()});
       } else {
-        window.location.replace(oAuthParams.redirectUri + concatChar + "code=" + encodeURIComponent(res.data) + "&state=" + encodeURIComponent(oAuthParams.state));
+        window.location.replace(oAuthParams.redirectUri + concatChar + "code=" + encodeURIComponent(res.data) + "&state=" + encodeURIComponent(oAuthParams.state) + "&iss=" + encodeURIComponent(getIssuer()));
       }
       return;
     }
@@ -430,10 +435,11 @@
           token: responseTypes.indexOf("token") !== -1 ? res.data : null,
           id_token: responseTypes.indexOf("id_token") !== -1 ? res.data : null,
           token_type: "bearer",
-          state: oAuthParams.state
+          state: oAuthParams.state,
+          iss: getIssuer()
         });
       } else {
-        window.location.replace(oAuthParams.redirectUri + concatChar + responseType + "=" + encodeURIComponent(res.data) + "&state=" + encodeURIComponent(oAuthParams.state) + "&token_type=bearer");
+        window.location.replace(oAuthParams.redirectUri + concatChar + responseType + "=" + encodeURIComponent(res.data) + "&state=" + encodeURIComponent(oAuthParams.state) + "&token_type=bearer&iss=" + encodeURIComponent(getIssuer()));
       }
       return;
     }

@@ -125,6 +125,11 @@ func getOriginFromHost(host string) (string, string) {
 	return originF, originB
 }
 
+func GetOidcIssuer(host string) string {
+	_, originBackend := getOriginFromHost(host)
+	return originBackend
+}
+
 func GetOidcDiscovery(host string, applicationName string) OidcDiscovery {
 	originFrontend, originBackend := getOriginFromHost(host)
 

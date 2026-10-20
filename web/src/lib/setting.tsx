@@ -103,7 +103,7 @@ export function isSelfRedirectUri(redirectUri) {
 }
 
 export function getOAuthIssuer() {
-  return getFullServerUrl();
+  return document.querySelector("meta[name=\"casdoor-issuer\"]")?.getAttribute("content") || getFullServerUrl();
 }
 
 export function getOAuthIssuerParam() {
