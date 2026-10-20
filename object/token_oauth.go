@@ -91,6 +91,8 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 		token, tokenError, err = GetClientCredentialsToken(application, clientSecret, scope, host)
 	case VerificationCodeGrantType:
 		token, tokenError, err = GetVerificationCodeToken(application, username, countryCode, code, scope, host, clientIp, lang)
+	case MobileOneClickGrantType:
+		token, tokenError, err = GetMobileOneClickToken(application, code, scope, host, clientIp, lang)
 	case "token", "id_token": // Implicit Grant
 		token, tokenError, err = GetImplicitToken(application, username, password, scope, nonce, host, clientIp, lang)
 	case "urn:ietf:params:oauth:grant-type:jwt-bearer":

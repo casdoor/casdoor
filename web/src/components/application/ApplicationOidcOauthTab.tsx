@@ -23,6 +23,7 @@ const GRANT_TYPES = [
   {value: "urn:ietf:params:oauth:grant-type:jwt-bearer", label: "JWT Bearer"},
   {value: "urn:ietf:params:oauth:grant-type:token-exchange", label: "Token Exchange"},
   {value: "urn:casdoor:params:oauth:grant-type:verification-code", label: "Verification Code"},
+  {value: "urn:casdoor:params:oauth:grant-type:mobile-one-click", label: "Mobile One-Click"},
 ];
 const TOKEN_FORMATS = ["JWT", "JWT-Empty", "JWT-Custom", "JWT-Standard"];
 const TOKEN_SIGNING_METHODS = ["RS256", "RS512", "ES256", "ES512", "ES384"];
