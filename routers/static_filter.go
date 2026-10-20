@@ -343,6 +343,7 @@ func serveFileWithReplace(w http.ResponseWriter, r *http.Request, name string, o
 	// do not mis-detect the page language (e.g. Chrome offering to translate a
 	// Chinese page into Chinese because the static shell declares lang="en").
 	if strings.HasSuffix(name, "index.html") {
+		w.Header().Set("Cache-Control", "no-cache")
 		lang := getIndexHtmlLanguage(r)
 		newContent = strings.ReplaceAll(newContent, `<html lang="en">`, fmt.Sprintf(`<html lang="%s">`, lang))
 		var cdnEnabled bool

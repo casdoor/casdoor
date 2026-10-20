@@ -27,6 +27,26 @@ import {useLanguageVersion} from "./hooks/use-language";
 import {TooltipProvider} from "./components/ui/tooltip";
 import {Toaster} from "./components/ui/sonner";
 
+// An upgrade removes the chunks of the previous build, so a page loaded before it fails to
+// load the next lazy page. Reload once per build to get the new index.html; the CDN fallback
+// script of index.html handles its own case first.
+window.addEventListener("vite:preloadError", (event) => {
+  if (event.defaultPrevented) {
+    return;
+  }
+  const build = document.querySelector<HTMLScriptElement>("script[type=module][src]")?.src ?? "";
+  try {
+    if (sessionStorage.getItem("preloadErrorReloadedBuild") === build) {
+      return;
+    }
+    sessionStorage.setItem("preloadErrorReloadedBuild", build);
+  } catch {
+    return;
+  }
+  event.preventDefault();
+  window.location.reload();
+});
+
 // re-rendered from the root on a language change, so every screen picks up the new
 // bundle right away instead of waiting for a reload
 function Root() {
