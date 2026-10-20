@@ -181,8 +181,6 @@ export default function AuthCallback() {
     // closures over the ones this page decoded
     const handleOAuth = (res: any, params: URLSearchParams = innerParams, type: string = responseType) => {
       const oAuthParams = Util.getOAuthGetParameters(params);
-      const concatChar = oAuthParams?.redirectUri?.includes("?") ? "&" : "?";
-      const responseMode = oAuthParams?.responseMode || "query";
       const responseTypes = type.split(" ");
 
       // The backend answers with `data: {required: true}` instead of an authorization
@@ -198,17 +196,7 @@ export default function AuthCallback() {
         Setting.showMessage("success", i18next.t("application:Logged in successfully"));
         navigate(Setting.getFromLink());
       } else if (type === "code") {
-        const goToRedirectUrl = () => {
-          if (responseMode === "form_post") {
-            Setting.createFormAndSubmit(oAuthParams?.redirectUri, {code: res.data, state: oAuthParams?.state, iss: Setting.getOAuthIssuer()});
-          } else {
-            Setting.goToLink(
-              `${oAuthParams.redirectUri}${concatChar}code=${encodeURIComponent(res.data)}&state=${encodeURIComponent(
-                oAuthParams.state,
-              )}${Setting.getOAuthIssuerParam()}`,
-            );
-          }
-        };
+        const goToRedirectUrl = () => Util.sendOAuthResponse(oAuthParams, {code: res.data});
 
         // The backend sets data3 when the application has a prompt page: an account a
         // provider just created may still miss what the application wants filled in.
@@ -223,32 +211,14 @@ export default function AuthCallback() {
               appRes.status === "ok" && accountRes.status === "ok" &&
               Setting.hasPromptPage(appRes.data) && !Setting.isPromptAnswered(accountRes.data, appRes.data)
             ) {
-              Setting.goToLink(
-                `/prompt/${promptApplication}?redirectUri=${encodeURIComponent(oAuthParams.redirectUri)}&code=${encodeURIComponent(
-                  res.data,
-                )}&state=${encodeURIComponent(oAuthParams.state)}`,
-              );
+              Setting.goToLink(Util.getPromptLink(promptApplication, oAuthParams, res.data));
             } else {
               goToRedirectUrl();
             }
           })
           .catch(goToRedirectUrl);
       } else if (responseTypes.includes("token") || responseTypes.includes("id_token")) {
-        if (responseMode === "form_post") {
-          Setting.createFormAndSubmit(oAuthParams?.redirectUri, {
-            token: responseTypes.includes("token") ? res.data : null,
-            id_token: responseTypes.includes("id_token") ? res.data3 : null,
-            token_type: "bearer",
-            state: oAuthParams?.state,
-            iss: Setting.getOAuthIssuer(),
-          });
-        } else {
-          Setting.goToLink(
-            `${oAuthParams.redirectUri}${concatChar}${type}=${encodeURIComponent(
-              type === "id_token" ? res.data3 : res.data,
-            )}&state=${encodeURIComponent(oAuthParams.state)}&token_type=bearer${Setting.getOAuthIssuerParam()}`,
-          );
-        }
+        Util.sendOAuthResponse(oAuthParams, Util.getTokenResponsePayload(type, res));
       } else if (type === "link") {
         let from = params.get("from") ?? "/";
         const oauth = params.get("oauth");

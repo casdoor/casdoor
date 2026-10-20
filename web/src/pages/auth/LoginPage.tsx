@@ -497,13 +497,7 @@ export default function LoginPage({type = "login", application: applicationProp,
             redirectWithOAuthError("interaction_required");
           } else {
             // the prompt page renders the signed-in account, so it has to be loaded first
-            reload().then(() =>
-              navigate(
-                `/prompt/${application.name}?redirectUri=${encodeURIComponent(
-                  oAuthParams.redirectUri,
-                )}&code=${encodeURIComponent(codeValue)}&state=${encodeURIComponent(oAuthParams.state)}`,
-              ),
-            );
+            reload().then(() => navigate(Util.getPromptLink(application.name, oAuthParams, codeValue)));
           }
         } else if (promptNone) {
           redirectWithOAuthError("server_error", accountRes.msg);
@@ -539,24 +533,11 @@ export default function LoginPage({type = "login", application: applicationProp,
     } else if (responseType === "code") {
       postCodeLoginAction(res);
     } else if (responseTypes.includes("token") || responseTypes.includes("id_token")) {
-      // implicit and hybrid flows return what response_type asks for: a hybrid flow has the code in
-      // data and the access token in data2, an implicit flow has the access token in data
       if (res.data?.required === true) {
         reload().then(() => navigate(`/consent/${application.name}?${window.location.search.substring(1)}`));
         return;
       }
-      const payload: Record<string, string> = {};
-      if (responseTypes.includes("code")) {
-        payload.code = res.data;
-      }
-      if (responseTypes.includes("token")) {
-        payload.access_token = responseTypes.includes("code") ? res.data2 : res.data;
-        payload.token_type = "Bearer";
-      }
-      if (responseTypes.includes("id_token")) {
-        payload.id_token = res.data3;
-      }
-      Util.sendOAuthResponse(authParams, payload);
+      Util.sendOAuthResponse(authParams, Util.getTokenResponsePayload(responseType, res));
     } else if (responseType === "saml") {
       if (res.data2?.method === "POST") {
         setSaml({response: res.data, redirectUrl: res.data2.redirectUrl, relayState: values["relayState"] ?? ""});
