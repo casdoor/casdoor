@@ -150,10 +150,31 @@ func NewSamlResponse(application *Application, user *User, host string, certific
 }
 
 func getSamlNameId(application *Application, user *User) (string, string) {
+	nameIdFormat := "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified"
 	if application.UseEmailAsSamlNameId {
-		return user.Email, "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress"
+		nameIdFormat = "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress"
 	}
-	return user.Name, "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified"
+
+	if application.SamlNameIdTemplate != "" {
+		return replaceSamlNameIdTemplate(user, application.SamlNameIdTemplate), nameIdFormat
+	}
+	if application.UseEmailAsSamlNameId {
+		return user.Email, nameIdFormat
+	}
+	return user.Name, nameIdFormat
+}
+
+func replaceSamlNameIdTemplate(user *User, template string) string {
+	emailLocalPart, emailDomain, _ := strings.Cut(user.Email, "@")
+	return strings.NewReplacer(
+		"$user.emailLocalPart", emailLocalPart,
+		"$user.emailDomain", emailDomain,
+		"$user.owner", user.Owner,
+		"$user.name", user.Name,
+		"$user.email", user.Email,
+		"$user.id", user.Id,
+		"$user.phone", user.Phone,
+	).Replace(template)
 }
 
 type X509Key struct {
@@ -602,11 +623,8 @@ func NewSamlResponse11(application *Application, user *User, requestID string, h
 	// nameIdentifier inside subject
 	nameIdentifier := subject.CreateElement("saml:NameIdentifier")
 	// nameIdentifier.CreateAttr("Format", "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress")
-	if application.UseEmailAsSamlNameId {
-		nameIdentifier.SetText(user.Email)
-	} else {
-		nameIdentifier.SetText(user.Name)
-	}
+	nameIdValue, _ := getSamlNameId(application, user)
+	nameIdentifier.SetText(nameIdValue)
 
 	// subjectConfirmation inside subject
 	subjectConfirmation := subject.CreateElement("saml:SubjectConfirmation")
@@ -615,11 +633,7 @@ func NewSamlResponse11(application *Application, user *User, requestID string, h
 	attributeStatement := assertion.CreateElement("saml:AttributeStatement")
 	subjectInAttribute := attributeStatement.CreateElement("saml:Subject")
 	nameIdentifierInAttribute := subjectInAttribute.CreateElement("saml:NameIdentifier")
-	if application.UseEmailAsSamlNameId {
-		nameIdentifierInAttribute.SetText(user.Email)
-	} else {
-		nameIdentifierInAttribute.SetText(user.Name)
-	}
+	nameIdentifierInAttribute.SetText(nameIdValue)
 
 	subjectConfirmationInAttribute := subjectInAttribute.CreateElement("saml:SubjectConfirmation")
 	subjectConfirmationInAttribute.CreateElement("saml:ConfirmationMethod").SetText("urn:oasis:names:tc:SAML:1.0:cm:artifact")

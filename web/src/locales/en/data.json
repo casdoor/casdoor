@@ -156,6 +156,8 @@
     "Rule": "Rule",
     "SAML C14N10 prefix": "SAML C14N10 prefix",
     "SAML C14N10 prefix - Tooltip": "XML namespace prefix used in SAML C14N10 canonicalization (e.g., 'ds' for XML digital signatures)",
+    "SAML NameID template": "SAML NameID template",
+    "SAML NameID template - Tooltip": "Custom NameID value. Placeholders: $user.name, $user.email, $user.emailLocalPart (before @), $user.emailDomain (after @), $user.id, $user.phone, $user.owner. E.g. $user.emailLocalPart.$user.emailDomain@tenant.com turns user@example.com into user.example.com@tenant.com. Empty means the user name, or the email when \"Use Email as NameID\" is on",
     "SAML hash algorithm": "SAML hash algorithm",
     "SAML hash algorithm - Tooltip": "Hash algorithm for SAML signature",
     "SAML metadata": "SAML metadata",

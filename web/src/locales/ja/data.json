@@ -156,6 +156,8 @@
     "Rule": "ルール",
     "SAML C14N10 prefix": "SAML C14N10プレフィックス",
     "SAML C14N10 prefix - Tooltip": "SAML C14N10正規化で使用されるXML名前空間プレフィックス（例：XML電子署名の場合は'ds'）",
+    "SAML NameID template": "SAML NameIDテンプレート",
+    "SAML NameID template - Tooltip": "NameIDのカスタム値。プレースホルダー：$user.name、$user.email、$user.emailLocalPart（@の前）、$user.emailDomain（@の後）、$user.id、$user.phone、$user.owner。例：$user.emailLocalPart.$user.emailDomain@tenant.com は user@example.com を user.example.com@tenant.com にします。空の場合はユーザー名、「メールアドレスをNameIDとして使用」がオンならメールアドレス",
     "SAML hash algorithm": "SAMLハッシュアルゴリズム",
     "SAML hash algorithm - Tooltip": "SAML署名のハッシュアルゴリズム",
     "SAML metadata": "SAMLメタデータ",

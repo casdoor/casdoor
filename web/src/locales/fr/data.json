@@ -156,6 +156,8 @@
     "Rule": "Règle",
     "SAML C14N10 prefix": "Préfixe SAML C14N10",
     "SAML C14N10 prefix - Tooltip": "Préfixe d'espace de noms XML utilisé dans la canonicalisation SAML C14N10 (p. ex. 'ds' pour les signatures numériques XML)",
+    "SAML NameID template": "Modèle de NameID SAML",
+    "SAML NameID template - Tooltip": "Valeur NameID personnalisée. Variables : $user.name, $user.email, $user.emailLocalPart (avant @), $user.emailDomain (après @), $user.id, $user.phone, $user.owner. Par exemple, $user.emailLocalPart.$user.emailDomain@tenant.com transforme user@example.com en user.example.com@tenant.com. Vide : nom d'utilisateur, ou e-mail si « Utiliser l'e-mail comme NameID » est activé",
     "SAML hash algorithm": "Algorithme de hachage SAML",
     "SAML hash algorithm - Tooltip": "Algorithme de hachage pour la signature SAML - Info-bulle",
     "SAML metadata": "Métadonnées SAML",

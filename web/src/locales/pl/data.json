@@ -156,6 +156,8 @@
     "Rule": "Reguła",
     "SAML C14N10 prefix": "Prefiks SAML C14N10",
     "SAML C14N10 prefix - Tooltip": "Prefiks przestrzeni nazw XML używany w kanonizacji SAML C14N10 (np. 'ds' dla cyfrowych podpisów XML)",
+    "SAML NameID template": "Szablon NameID SAML",
+    "SAML NameID template - Tooltip": "Własna wartość NameID. Symbole: $user.name, $user.email, $user.emailLocalPart (przed @), $user.emailDomain (po @), $user.id, $user.phone, $user.owner. Np. $user.emailLocalPart.$user.emailDomain@tenant.com zmienia user@example.com w user.example.com@tenant.com. Puste oznacza nazwę użytkownika lub e-mail, gdy włączono \"Użyj e-maila jako NameID\"",
     "SAML hash algorithm": "Algorytm skrótu SAML",
     "SAML hash algorithm - Tooltip": "Algorytm skrótu dla podpisu SAML",
     "SAML metadata": "Metadane SAML",
