@@ -775,6 +775,7 @@ func (c *ApiController) Login() {
 		c.ResponseError(err.Error())
 		return
 	}
+	defer c.recordLoginMetric(&authForm)
 
 	verificationType := ""
 
@@ -1581,6 +1582,49 @@ func (c *ApiController) Login() {
 
 	c.Data["json"] = resp
 	c.ServeJSON()
+}
+
+func (c *ApiController) recordLoginMetric(authForm *form.AuthForm) {
+	status, _ := c.Ctx.Input.GetData("responseStatus").(string)
+	if resp, ok := c.Data["json"].(*Response); ok && resp != nil {
+		status = resp.Status
+	}
+
+	userId := c.Ctx.Input.Param("recordUserId")
+	result := ""
+	if status == "error" {
+		result = "failure"
+	} else if status == "ok" && userId != "" {
+		result = "success"
+	} else {
+		return
+	}
+
+	var application *object.Application
+	if authForm.Application != "" {
+		application, _ = object.GetApplication(util.GetId("admin", authForm.Application))
+	}
+	if application == nil && authForm.ClientId != "" {
+		application, _ = object.GetApplicationByClientId(authForm.ClientId)
+	}
+
+	applicationName := ""
+	organizationName := ""
+	if application != nil {
+		applicationName = application.Name
+		organizationName = application.Organization
+	}
+
+	if userId != "" {
+		organizationName, _ = util.GetOwnerAndNameFromIdNoCheck(userId)
+	} else if authForm.Organization != "" && authForm.Organization != organizationName {
+		organization, err := object.GetOrganization(util.GetId("admin", authForm.Organization))
+		if err == nil && organization != nil {
+			organizationName = organization.Name
+		}
+	}
+
+	object.LoginCounter.WithLabelValues(organizationName, applicationName, result).Inc()
 }
 
 // SamlRequestIdSessionKey holds the ID of the AuthnRequest the browser was sent to the

@@ -36,6 +36,7 @@ func (c *ApiController) ResponseJsonData(resp *Response, data ...interface{}) {
 		resp.Data = data[0]
 	}
 	c.Data["json"] = resp
+	c.Ctx.Input.SetData("responseStatus", resp.Status)
 	c.ServeJSON()
 }
 
