@@ -15,6 +15,8 @@
 package controllers
 
 import (
+	"errors"
+	"net/http"
 	"strings"
 
 	"github.com/casdoor/casdoor/object"
@@ -54,7 +56,7 @@ func (c *RootController) GetOidcDiscoveryByApplication() {
 func (c *RootController) GetJwks() {
 	jwks, err := object.GetJsonWebKeySet("")
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.responseWellKnownError(http.StatusInternalServerError, err)
 		return
 	}
 	c.Data["json"] = jwks
@@ -71,7 +73,7 @@ func (c *RootController) GetJwksByApplication() {
 	application := c.Ctx.Input.Param(":application")
 	jwks, err := object.GetJsonWebKeySet(application)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.responseWellKnownError(http.StatusInternalServerError, err)
 		return
 	}
 	c.Data["json"] = jwks
@@ -98,7 +100,7 @@ func (c *RootController) GetWebFinger() {
 
 	webfinger, err := object.GetWebFinger(resource, rels, host, "")
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.responseWebFingerError(err)
 		return
 	}
 
@@ -129,7 +131,7 @@ func (c *RootController) GetWebFingerByApplication() {
 
 	webfinger, err := object.GetWebFinger(resource, rels, host, application)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.responseWebFingerError(err)
 		return
 	}
 
@@ -162,4 +164,20 @@ func (c *RootController) GetOAuthServerMetadataByApplication() {
 	host := c.Ctx.Request.Host
 	c.Data["json"] = object.GetOidcDiscovery(host, application)
 	c.ServeJSON()
+}
+
+// responseWellKnownError responds with an error status instead of 200, the standard clients of these endpoints only check the status
+func (c *RootController) responseWellKnownError(status int, err error) {
+	c.Ctx.Output.SetStatus(status)
+	c.ResponseError(err.Error())
+}
+
+func (c *RootController) responseWebFingerError(err error) {
+	status := http.StatusInternalServerError
+	if errors.Is(err, object.ErrWebFingerInvalidResource) {
+		status = http.StatusBadRequest
+	} else if errors.Is(err, object.ErrWebFingerUserNotFound) {
+		status = http.StatusNotFound
+	}
+	c.responseWellKnownError(status, err)
 }
