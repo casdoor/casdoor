@@ -412,7 +412,7 @@ func GetPaymentProvider(p *Provider) (pp.PaymentProvider, error) {
 	cert := &Cert{}
 	if p.Cert != "" {
 		var err error
-		cert, err = GetCert(util.GetId(p.Owner, p.Cert))
+		cert, err = GetCertEx(util.GetId(p.Owner, p.Cert))
 		if err != nil {
 			return nil, err
 		}
@@ -431,7 +431,7 @@ func GetPaymentProvider(p *Provider) (pp.PaymentProvider, error) {
 	} else if typ == "Alipay" {
 		if p.Metadata != "" {
 			// alipay provider store rootCert's name in metadata
-			rootCert, err := GetCert(util.GetId(p.Owner, p.Metadata))
+			rootCert, err := GetCertEx(util.GetId(p.Owner, p.Metadata))
 			if err != nil {
 				return nil, err
 			}
@@ -717,7 +717,7 @@ func FromProviderToIdpInfo(ctx *context.Context, provider *Provider) (*idp.Provi
 	} else if provider.Type == "ADFS" || provider.Type == "AzureAD" || provider.Type == "AzureADB2C" || provider.Type == "Casdoor" || provider.Type == "Okta" || provider.Type == "OIDC" {
 		providerInfo.HostUrl = provider.Domain
 	} else if provider.Type == "Alipay" && provider.Cert != "" {
-		cert, err := GetCert(util.GetId(provider.Owner, provider.Cert))
+		cert, err := GetCertEx(util.GetId(provider.Owner, provider.Cert))
 		if err != nil {
 			return nil, fmt.Errorf("failed to load certificate for Alipay provider %s: %w", provider.Name, err)
 		}
@@ -727,7 +727,7 @@ func FromProviderToIdpInfo(ctx *context.Context, provider *Provider) (*idp.Provi
 		providerInfo.ClientSecret = cert.PrivateKey
 		providerInfo.AppCertificate = cert.Certificate
 		if provider.Metadata != "" {
-			rootCert, err := GetCert(util.GetId(provider.Owner, provider.Metadata))
+			rootCert, err := GetCertEx(util.GetId(provider.Owner, provider.Metadata))
 			if err != nil {
 				return nil, fmt.Errorf("failed to load root certificate for Alipay provider %s: %w", provider.Name, err)
 			}

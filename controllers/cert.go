@@ -143,8 +143,6 @@ func (c *ApiController) GetCert() {
 	}
 
 	if cert != nil {
-		// GetCert() falls back to the global "admin" cert of the same name, mask it
-		// unless the caller administers it
 		cert = c.getMaskedCerts([]*object.Cert{cert})[0]
 	}
 
@@ -237,6 +235,10 @@ func (c *ApiController) UpdateCertDomainExpire() {
 	cert, err := object.GetCert(id)
 	if err != nil {
 		c.ResponseError(err.Error())
+		return
+	}
+	if cert == nil {
+		c.ResponseError(c.T("general:The object does not exist"))
 		return
 	}
 
