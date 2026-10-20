@@ -1131,6 +1131,8 @@
     "Write": "書く"
   },
   "plan": {
+    "Auto renew by default": "デフォルトで自動更新",
+    "Auto renew by default - Tooltip": "このプランを購入するときに自動更新をデフォルトでオンにするかどうか。残高または Stripe で支払ったサブスクリプションのみ自動更新できます",
     "Edit Plan": "プランを編集",
     "Is exclusive": "排他的",
     "Is exclusive - Tooltip": "有効にすると、このプランを購読すると他のアクティブな購読がキャンセルされます",
@@ -1562,12 +1564,19 @@
   },
   "subscription": {
     "Active": "アクティブ",
+    "Auto renew": "自動更新",
+    "Auto renew - Tooltip": "終了の 24 時間前に、このサブスクリプションの支払い方法で次の期間を請求します。残高と Stripe の支払いのみ対応しています",
     "Edit Subscription": "サブスクリプションを編集",
     "End time": "終了時刻",
     "End time - Tooltip": "終了時刻",
     "Expired": "期限切れ",
     "Group": "グループ",
     "New Subscription": "新しいサブスクリプション",
+    "Only these payment methods can renew automatically": "自動更新できる支払い方法",
+    "Renewal failed": "更新に失敗しました",
+    "Renewal state": "更新状態",
+    "Renewed": "更新済み",
+    "Renewing": "更新中",
     "Start time": "開始時刻",
     "Start time - Tooltip": "開始時刻",
     "Subscription plan": "サブスクリプションプラン",

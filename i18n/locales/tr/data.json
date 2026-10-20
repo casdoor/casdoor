@@ -36,6 +36,7 @@
     "The pricing: %s is invite-only, only invited users can use it": "Fiyatlandırma: %s yalnızca davetle kullanılabilir, yalnızca davet edilen kullanıcılar kullanabilir",
     "The provider: %s does not exist": "Sağlayıcı: %s mevcut değil",
     "The provider: %s is not enabled for the application": "Provider: %s bu uygulama için etkin değil",
+    "The subscription: %s does not exist": "Abonelik: %s mevcut değil",
     "Unauthorized operation": "Yetkisiz işlem",
     "Unknown authentication type (not password or provider), form = %s": "Bilinmeyen kimlik doğrulama türü (şifre veya provider değil), form = %s",
     "User's tag: %s is not listed in the application's tags": "Kullanıcı etiketi: %s uygulamanın etiketlerinde listelenmiyor",

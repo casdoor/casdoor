@@ -150,7 +150,7 @@ func updatePaymentSubscriptions(payment *Payment) error {
 	return nil
 }
 
-// UpdateSubscriptionStates refreshes the unfinished subscriptions so that their plans' roles are granted and taken back on time
+// UpdateSubscriptionStates refreshes the unfinished subscriptions so that their plans' roles are granted and taken back on time, and renews the ones about to end
 func UpdateSubscriptionStates() error {
 	subscriptions := []*Subscription{}
 	err := ormer.Engine.In("state", string(SubStatePending), string(SubStateUpcoming), string(SubStateActive)).Find(&subscriptions)
@@ -158,6 +158,7 @@ func UpdateSubscriptionStates() error {
 		return err
 	}
 
+	now := time.Now()
 	for _, sub := range subscriptions {
 		err = sub.UpdateState()
 		if err != nil {
@@ -169,6 +170,13 @@ func UpdateSubscriptionStates() error {
 			err = syncSubscriptionRole(sub)
 			if err != nil {
 				fmt.Printf("UpdateSubscriptionStates() error for subscription %s: %v\n", sub.GetId(), err)
+			}
+		}
+
+		if sub.needsRenewal(now) {
+			err = renewSubscription(sub)
+			if err != nil {
+				fmt.Printf("UpdateSubscriptionStates() error renewing subscription %s: %v\n", sub.GetId(), err)
 			}
 		}
 	}

@@ -37,6 +37,7 @@ type Plan struct {
 	PaymentProviders []string `xorm:"varchar(100)" json:"paymentProviders"` // payment providers for related product
 	IsEnabled        bool     `json:"isEnabled"`
 	IsExclusive      bool     `json:"isExclusive"` // if true, a user can only have at most one subscription of this plan
+	AutoRenew        bool     `json:"autoRenew"`
 
 	Role    string   `xorm:"varchar(100)" json:"role"`
 	Options []string `xorm:"-" json:"options"`
@@ -58,8 +59,7 @@ func (plan *Plan) GetRoleId() string {
 	return util.GetId(plan.Owner, plan.Role)
 }
 
-func getDuration(period string) (string, string, error) {
-	startTime := time.Now()
+func getDurationFrom(period string, startTime time.Time) (string, string, error) {
 	var endTime time.Time
 
 	if period == PeriodYearly {

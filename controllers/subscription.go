@@ -158,6 +158,43 @@ func (c *ApiController) UpdateSubscription() {
 	c.ServeJSON()
 }
 
+// SetSubscriptionAutoRenew
+// @Title SetSubscriptionAutoRenew
+// @Tag Subscription API
+// @Description turn the auto renewal of a subscription on or off
+// @Param   id     query    string  true        "The id ( owner/name ) of the subscription"
+// @Param   autoRenew     query    string  true        "true or false"
+// @Success 200 {object} controllers.Response The Response object
+// @router /set-subscription-auto-renew [post]
+func (c *ApiController) SetSubscriptionAutoRenew() {
+	id := c.Ctx.Input.Query("id")
+	autoRenew := c.Ctx.Input.Query("autoRenew") == "true"
+
+	subscription, err := object.GetSubscription(id)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	if subscription == nil {
+		c.ResponseError(fmt.Sprintf(c.T("auth:The subscription: %s does not exist"), id))
+		return
+	}
+
+	if !c.IsAdminOfOrganization(subscription.Owner) {
+		userName, ok := c.requireSessionUserNameOf(subscription.Owner)
+		if !ok {
+			return
+		}
+		if subscription.User == "" || subscription.User != userName {
+			c.ResponseError(c.T("auth:Unauthorized operation"))
+			return
+		}
+	}
+
+	c.Data["json"] = wrapActionResponse(object.SetSubscriptionAutoRenew(subscription, autoRenew))
+	c.ServeJSON()
+}
+
 // AddSubscription
 // @Title AddSubscription
 // @Tag Subscription API

@@ -1131,6 +1131,8 @@
     "Write": "Yaz"
   },
   "plan": {
+    "Auto renew by default": "Varsayılan olarak otomatik yenile",
+    "Auto renew by default - Tooltip": "Bu plan satın alınırken otomatik yenilemenin varsayılan olarak açık olup olmadığı. Yalnızca bakiye veya Stripe ile ödenen abonelikler otomatik yenilenebilir",
     "Edit Plan": "Planı Düzenle",
     "Is exclusive": "Özel mi",
     "Is exclusive - Tooltip": "Etkinleştirildiğinde, bu plana abone olmak diğer aktif abonelikleri iptal eder",
@@ -1562,12 +1564,19 @@
   },
   "subscription": {
     "Active": "Aktif",
+    "Auto renew": "Otomatik yenile",
+    "Auto renew - Tooltip": "Bitmeden 24 saat önce sonraki dönem için bu aboneliğin ödeme yönteminden tahsilat yapar. Yalnızca bakiye ve Stripe ödemeleri desteklenir",
     "Edit Subscription": "Aboneliği Düzenle",
     "End time": "Bitiş zamanı",
     "End time - Tooltip": "Bitiş zamanı - İpucu",
     "Expired": "Süresi doldu",
     "Group": "Grup",
     "New Subscription": "Yeni Abonelik",
+    "Only these payment methods can renew automatically": "Yalnızca bu ödeme yöntemleri otomatik yenilenebilir",
+    "Renewal failed": "Yenileme başarısız",
+    "Renewal state": "Yenileme durumu",
+    "Renewed": "Yenilendi",
+    "Renewing": "Yenileniyor",
     "Start time": "Başlangıç zamanı",
     "Start time - Tooltip": "Başlangıç zamanı - İpucu",
     "Subscription plan": "Abonelik planı",

@@ -276,7 +276,7 @@ func BuyProduct(id string, user *User, providerName, pricingName, planName, host
 		return nil, nil, err
 	}
 
-	return PayOrder(providerName, host, paymentEnv, order, lang)
+	return PayOrder(providerName, host, paymentEnv, order, nil, lang)
 }
 
 func ExtendProductWithProviders(product *Product) error {

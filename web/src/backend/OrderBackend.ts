@@ -24,8 +24,9 @@ export function getOrders(owner, page: any = "", pageSize: any = "", field: any 
   }).then(res => res.json());
 }
 
-export function payOrder(owner, name, providerName, paymentEnv: any = "") {
-  return fetch(`${Setting.ServerUrl}/api/pay-order?id=${owner}/${encodeURIComponent(name)}&providerName=${encodeURIComponent(providerName)}&paymentEnv=${paymentEnv}`, {
+export function payOrder(owner, name, providerName, paymentEnv: any = "", autoRenew: boolean | null = null) {
+  const autoRenewParam = autoRenew === null ? "" : `&autoRenew=${autoRenew}`;
+  return fetch(`${Setting.ServerUrl}/api/pay-order?id=${owner}/${encodeURIComponent(name)}&providerName=${encodeURIComponent(providerName)}&paymentEnv=${paymentEnv}${autoRenewParam}`, {
     method: "POST",
     credentials: "include",
     headers: {

@@ -1131,6 +1131,8 @@
     "Write": "写权限"
   },
   "plan": {
+    "Auto renew by default": "默认开启自动续费",
+    "Auto renew by default - Tooltip": "购买此计划时自动续费开关是否默认打开。只有用余额或 Stripe 付款的订阅能自动续费",
     "Edit Plan": "编辑计划",
     "Is exclusive": "是否互斥",
     "Is exclusive - Tooltip": "启用后，订阅此计划将取消其他所有活跃订阅",
@@ -1562,12 +1564,19 @@
   },
   "subscription": {
     "Active": "活跃的",
+    "Auto renew": "自动续费",
+    "Auto renew - Tooltip": "订阅结束前 24 小时用原来的支付方式扣下一期的费用。只支持余额和 Stripe 付款",
     "Edit Subscription": "编辑订阅",
     "End time": "结束时间",
     "End time - Tooltip": "订阅的结束时间",
     "Expired": "已过期",
     "Group": "群组",
     "New Subscription": "添加订阅",
+    "Only these payment methods can renew automatically": "只有这些支付方式能自动续费",
+    "Renewal failed": "续费失败",
+    "Renewal state": "续费状态",
+    "Renewed": "已续费",
+    "Renewing": "续费中",
     "Start time": "开始时间",
     "Start time - Tooltip": "订阅的开始时间",
     "Subscription plan": "订阅计划",

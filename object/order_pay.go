@@ -215,7 +215,7 @@ func getOrderProvider(products []Product, providerName string) (*Provider, error
 	return provider, nil
 }
 
-func PayOrder(providerName, host, paymentEnv string, order *Order, lang string) (payment *Payment, attachInfo map[string]interface{}, err error) {
+func PayOrder(providerName, host, paymentEnv string, order *Order, autoRenew *bool, lang string) (payment *Payment, attachInfo map[string]interface{}, err error) {
 	if order.State != "Created" {
 		return nil, nil, fmt.Errorf("cannot pay for order: %s, current state is %s", order.GetId(), order.State)
 	}
@@ -271,6 +271,7 @@ func PayOrder(providerName, host, paymentEnv string, order *Order, lang string) 
 	notifyUrl := fmt.Sprintf("%s/api/notify-payment/%s/%s", originBackend, owner, paymentName)
 
 	orderProductInfos := order.ProductInfos
+	saveForRenewal := false
 	// Create a subscription when pricing and plan are provided
 	// This allows both free users and paid users to subscribe to plans
 	for i, productInfo := range orderProductInfos {
@@ -300,6 +301,15 @@ func PayOrder(providerName, host, paymentEnv string, order *Order, lang string) 
 		sub, err := NewSubscription(owner, user.Name, plan.Name, paymentName, plan.Period)
 		if err != nil {
 			return nil, nil, err
+		}
+
+		sub.AutoRenew = plan.AutoRenew
+		if autoRenew != nil {
+			sub.AutoRenew = *autoRenew
+		}
+		sub.AutoRenew = sub.AutoRenew && isAutoRenewSupported(provider.Type)
+		if sub.AutoRenew && provider.Type == "Stripe" {
+			saveForRenewal = true
 		}
 
 		affected, err := AddSubscription(sub)
@@ -344,6 +354,7 @@ func PayOrder(providerName, host, paymentEnv string, order *Order, lang string) 
 		ReturnUrl:          returnUrl,
 		NotifyUrl:          notifyUrl,
 		PaymentEnv:         paymentEnv,
+		SaveForRenewal:     saveForRenewal,
 	}
 
 	if provider.Type == "WeChat Pay" {

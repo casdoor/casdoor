@@ -51,6 +51,16 @@ type PayReq struct {
 	NotifyUrl string
 
 	PaymentEnv string
+
+	SaveForRenewal bool
+}
+
+type RenewReq struct {
+	PaymentName        string
+	ProductDisplayName string
+	Price              float64
+	Currency           string
+	PreviousOrderId    string
 }
 
 type PayResp struct {
@@ -78,4 +88,10 @@ type PaymentProvider interface {
 	Notify(body []byte, orderId string) (*NotifyResult, error)
 	GetInvoice(paymentName string, personName string, personIdCard string, personEmail string, personPhone string, invoiceType string, invoiceTitle string, invoiceTaxId string) (string, error)
 	GetResponseError(err error) string
+}
+
+// RenewablePaymentProvider charges a saved payment method again without the payer
+type RenewablePaymentProvider interface {
+	CheckRenewal(orderId string) error
+	Renew(req *RenewReq) (*PayResp, error)
 }

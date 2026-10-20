@@ -339,6 +339,7 @@ export function newPlan(account: Account) {
     currency: "USD",
     period: "Monthly",
     isEnabled: true,
+    autoRenew: false,
     paymentProviders: [],
     role: "",
     options: [],
@@ -494,6 +495,7 @@ export function newSubscription(account: Account) {
     group: "",
     plan: "",
     state: "Active",
+    autoRenew: false,
   };
 }
 

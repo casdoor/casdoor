@@ -2,12 +2,15 @@ import * as React from "react";
 import i18next from "i18next";
 import {useNavigate, useParams} from "react-router-dom";
 import {Button} from "@/components/ui/button";
+import {Switch} from "@/components/ui/switch";
 import {Loading} from "@/components/common/Loading";
 import {FormRow} from "@/components/crud/FormRow";
 import {getPaymentEnv} from "@/pages/ProductBuyPage";
 import * as OrderBackend from "@/backend/OrderBackend";
+import * as PlanBackend from "@/backend/PlanBackend";
 import * as ProductBackend from "@/backend/ProductBackend";
 import * as Setting from "@/lib/setting";
+import {AUTO_RENEW_PAYMENT_TYPES} from "@/lib/enum-labels";
 
 const PROVIDER_TEXT: Record<string, string> = {
   "Dummy": "product:Dummy",
@@ -33,6 +36,7 @@ export default function OrderPayPage() {
   const [order, setOrder] = React.useState<any>(null);
   const [firstProduct, setFirstProduct] = React.useState<any>(null);
   const [processing, setProcessing] = React.useState(false);
+  const [autoRenew, setAutoRenew] = React.useState(false);
   const paymentEnv = React.useMemo(() => getPaymentEnv(), []);
 
   React.useEffect(() => {
@@ -45,6 +49,15 @@ export default function OrderPayPage() {
         return;
       }
       setOrder(res.data);
+
+      const planInfo = res.data?.productInfos?.find((info: any) => info.pricingName && info.planName);
+      if (planInfo) {
+        PlanBackend.getPlan(res.data.owner, planInfo.planName).then((planRes: any) => {
+          if (planRes.status === "ok" && planRes.data) {
+            setAutoRenew(Boolean(planRes.data.autoRenew));
+          }
+        });
+      }
 
       const firstProductName = res.data?.products?.[0] ?? res.data?.productInfos?.[0]?.name;
       if (!firstProductName) {
@@ -59,6 +72,8 @@ export default function OrderPayPage() {
       });
     });
   }, [owner, orderName]);
+
+  const hasPlan = Boolean(order?.productInfos?.some((info: any) => info.pricingName && info.planName));
 
   // WeChat Pay inside the WeChat browser goes through the JSAPI bridge
   const callWechatPay = (attachInfo: any) => {
@@ -99,7 +114,7 @@ export default function OrderPayPage() {
     }
     setProcessing(true);
 
-    OrderBackend.payOrder(order.owner, order.name, provider.name, paymentEnv)
+    OrderBackend.payOrder(order.owner, order.name, provider.name, paymentEnv, hasPlan ? autoRenew : null)
       .then((res: any) => {
         if (res.status !== "ok") {
           Setting.showMessage("error", `${i18next.t("product:Payment failed")}: ${res.msg}`);
@@ -132,6 +147,7 @@ export default function OrderPayPage() {
   }
 
   const isViewMode = order.state !== "Created";
+  const autoRenewProviders = (firstProduct?.providerObjs ?? []).filter((provider: any) => AUTO_RENEW_PAYMENT_TYPES.includes(provider.type));
   const updateTimeLabels: Record<string, string> = {
     Paid: "order:Payment time",
     Canceled: "order:Cancel time",
@@ -210,6 +226,16 @@ export default function OrderPayPage() {
               {`${Setting.getCurrencySymbol(order.currency)}${order.price} (${Setting.getCurrencyText(order.currency)})`}
             </span>
           </FormRow>
+          {!isViewMode && hasPlan && autoRenewProviders.length > 0 ? (
+            <FormRow labelKey="subscription:Auto renew" block>
+              <div className="flex flex-wrap items-center gap-3">
+                <Switch checked={autoRenew} onCheckedChange={setAutoRenew} />
+                <span className="text-sm text-muted-foreground">
+                  {`${i18next.t("subscription:Only these payment methods can renew automatically")}: ${autoRenewProviders.map((provider: any) => i18next.t(PROVIDER_TEXT[provider.type] ?? provider.type)).join(", ")}`}
+                </span>
+              </div>
+            </FormRow>
+          ) : null}
           {!isViewMode ? (
             <FormRow label={i18next.t("order:Pay")} block>
               {!firstProduct?.providerObjs?.length ? (

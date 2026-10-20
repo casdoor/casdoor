@@ -43,6 +43,7 @@ export default function PlanEditPage() {
     {type: "select", name: "role", labelKey: "general:Role", options: () => roles},
     {type: "tags", name: "options", labelKey: "signup:Options"},
     {type: "switch", name: "isExclusive", labelKey: "plan:Is exclusive"},
+    {type: "switch", name: "autoRenew", labelKey: "plan:Auto renew by default"},
     {type: "switch", name: "isEnabled", labelKey: "general:Is enabled"},
   ];
 

@@ -1131,6 +1131,8 @@
     "Write": "Schreib"
   },
   "plan": {
+    "Auto renew by default": "Standardmäßig automatisch verlängern",
+    "Auto renew by default - Tooltip": "Ob die automatische Verlängerung beim Kauf dieses Plans standardmäßig aktiviert ist. Nur mit Guthaben oder Stripe bezahlte Abonnements können automatisch verlängert werden",
     "Edit Plan": "Plan bearbeiten",
     "Is exclusive": "Exklusiv",
     "Is exclusive - Tooltip": "Wenn aktiviert, werden andere aktive Abonnements bei Auswahl dieses Plans gekündigt",
@@ -1562,12 +1564,19 @@
   },
   "subscription": {
     "Active": "Aktiv",
+    "Auto renew": "Automatisch verlängern",
+    "Auto renew - Tooltip": "Belastet die Zahlungsmethode dieses Abonnements 24 Stunden vor dem Ende für den nächsten Zeitraum. Nur Guthaben- und Stripe-Zahlungen werden unterstützt",
     "Edit Subscription": "Abonnement bearbeiten",
     "End time": "Endzeit",
     "End time - Tooltip": "Endzeit",
     "Expired": "Abgelaufen",
     "Group": "Gruppe",
     "New Subscription": "Neues Abonnement",
+    "Only these payment methods can renew automatically": "Nur diese Zahlungsmethoden können automatisch verlängern",
+    "Renewal failed": "Verlängerung fehlgeschlagen",
+    "Renewal state": "Verlängerungsstatus",
+    "Renewed": "Verlängert",
+    "Renewing": "Wird verlängert",
     "Start time": "Startzeit",
     "Start time - Tooltip": "Startzeit",
     "Subscription plan": "Abonnementplan",
