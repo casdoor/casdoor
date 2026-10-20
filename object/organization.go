@@ -775,17 +775,37 @@ func IsSigninPending(user *User) (bool, error) {
 	return IsNeedPromptMfa(organization, user), nil
 }
 
+// GetUserMfaItems returns the user's own MFA items, or the organization's when the user has none
+func GetUserMfaItems(org *Organization, user *User) []*MfaItem {
+	if user != nil && len(user.MfaItems) > 0 {
+		return user.MfaItems
+	}
+	if org != nil {
+		return org.MfaItems
+	}
+	return nil
+}
+
+// IsMfaTypeAllowed reports whether the user may set up the MFA type, an empty MFA items list allows all types
+func IsMfaTypeAllowed(org *Organization, user *User, mfaType string) bool {
+	mfaItems := GetUserMfaItems(org, user)
+	if len(mfaItems) == 0 {
+		return true
+	}
+	for _, item := range mfaItems {
+		if item != nil && item.Name == mfaType {
+			return true
+		}
+	}
+	return false
+}
+
 func IsNeedPromptMfa(org *Organization, user *User) bool {
 	if org == nil || user == nil {
 		return false
 	}
 
-	mfaItems := org.MfaItems
-
-	if len(user.MfaItems) > 0 {
-		mfaItems = user.MfaItems
-	}
-	for _, item := range mfaItems {
+	for _, item := range GetUserMfaItems(org, user) {
 		if item.Rule == "Required" {
 			if item.Name == EmailType && !user.MfaEmailEnabled {
 				return true
