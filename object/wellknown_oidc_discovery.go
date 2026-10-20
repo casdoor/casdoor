@@ -17,6 +17,7 @@ package object
 import (
 	"crypto/x509"
 	"encoding/pem"
+	"errors"
 	"fmt"
 	"net"
 	"net/url"
@@ -55,6 +56,11 @@ type OidcDiscovery struct {
 	AuthorizationResponseIssParameterSupported bool     `json:"authorization_response_iss_parameter_supported"` // RFC 9207
 	ClientIdMetadataDocumentSupported          bool     `json:"client_id_metadata_document_supported"`          // draft-ietf-oauth-client-id-metadata-document
 }
+
+var (
+	ErrWebFingerInvalidResource = errors.New("invalid resource")
+	ErrWebFingerUserNotFound    = errors.New("user not found")
+)
 
 type WebFinger struct {
 	Subject    string             `json:"subject"`
@@ -271,7 +277,7 @@ func GetWebFinger(resource string, rels []string, host string, applicationName s
 	resourceSplit := strings.Split(resource, ":")
 
 	if len(resourceSplit) != 2 {
-		return wf, fmt.Errorf("invalid resource")
+		return wf, ErrWebFingerInvalidResource
 	}
 
 	resourceType := resourceSplit[0]
@@ -287,7 +293,7 @@ func GetWebFinger(resource string, rels []string, host string, applicationName s
 		}
 
 		if user == nil {
-			return wf, fmt.Errorf("user not found")
+			return wf, ErrWebFingerUserNotFound
 		}
 
 		wf.Subject = resource
