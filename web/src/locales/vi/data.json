@@ -1331,6 +1331,8 @@
     "Provider owner and name are required": "Chủ sở hữu và tên nhà cung cấp là bắt buộc",
     "Public key": "Khóa công khai",
     "Public key - Tooltip": "Gợi ý khóa công khai",
+    "Public key ID": "ID khóa công khai",
+    "Public key ID - Tooltip": "Với người bán dùng chế độ khóa công khai WeChat Pay, nhập ID khóa công khai (PUB_KEY_ID_...) và khóa công khai WeChat Pay. Để trống cả hai với người bán dùng chứng chỉ nền tảng",
     "RADIUS Shared Secret - Tooltip": "Bí mật dùng chung RADIUS",
     "Region": "Vùng",
     "Region - Tooltip": "Gợi ý vùng",

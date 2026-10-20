@@ -1331,6 +1331,8 @@
     "Provider owner and name are required": "提供商的所有者和名称为必填项",
     "Public key": "公钥",
     "Public key - Tooltip": "用于加密的公钥",
+    "Public key ID": "公钥ID",
+    "Public key ID - Tooltip": "使用微信支付公钥模式的商户，填写公钥ID（PUB_KEY_ID_开头）和微信支付公钥；使用平台证书的商户两项都留空",
     "RADIUS Shared Secret - Tooltip": "RADIUS的共享密钥",
     "Region": "区域",
     "Region - Tooltip": "服务的地理区域",

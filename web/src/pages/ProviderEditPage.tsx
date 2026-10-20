@@ -247,6 +247,8 @@ function getClientSecret2Label(provider: any): Label {
     return label(i18next.t("provider:From name"), i18next.t("provider:From name - Tooltip"));
   } else if (provider.type === "Aliyun Captcha") {
     return label(i18next.t("provider:App key"), i18next.t("provider:App key - Tooltip"));
+  } else if (provider.type === "WeChat Pay") {
+    return label(i18next.t("provider:Public key ID"), i18next.t("provider:Public key ID - Tooltip"));
   }
   return label(i18next.t("provider:Client secret 2"), i18next.t("provider:Client secret 2 - Tooltip"));
 }
@@ -1549,6 +1551,11 @@ export default function ProviderEditPage() {
           <SearchableSelect value={provider.cert ?? ""} onChange={(v) => updateProviderField("cert", v)} options={certOptions} />
         </FormRow>
       ) : null}
+      {provider.type === "WeChat Pay" ? (
+        <FormRow label={i18next.t("provider:Public key")} tooltip={i18next.t("provider:Public key ID - Tooltip")}>
+          <Textarea rows={4} value={provider.content ?? ""} onChange={(e) => updateProviderField("content", e.target.value)} />
+        </FormRow>
+      ) : null}
       {provider.type === "Alipay" ? (
         <FormRow labelKey="general:Root cert">
           <SearchableSelect value={provider.metadata ?? ""} onChange={(v) => updateProviderField("metadata", v)} options={certOptions} />
@@ -1754,7 +1761,7 @@ export default function ProviderEditPage() {
           <FormRow label={getClientId2Label(provider).label} tooltip={getClientId2Label(provider).tooltip}>
             <Input value={provider.clientId2 ?? ""} onChange={(e) => updateProviderField("clientId2", e.target.value)} />
           </FormRow>
-          {["WeChat Pay", "CUCloud"].includes(provider.type) || (provider.category === "Email" && provider.type === "Azure ACS") ? null : (
+          {provider.type === "CUCloud" || (provider.category === "Email" && provider.type === "Azure ACS") ? null : (
             <FormRow label={getClientSecret2Label(provider).label} tooltip={getClientSecret2Label(provider).tooltip}>
               {provider.category === "OAuth" && provider.type === "Apple" ? (
                 <Textarea rows={4} value={provider.clientSecret2 ?? ""} onChange={(e) => updateProviderField("clientSecret2", e.target.value)} />

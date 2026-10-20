@@ -1331,6 +1331,8 @@
     "Provider owner and name are required": "Le propriétaire et le nom du fournisseur sont obligatoires",
     "Public key": "Clé publique",
     "Public key - Tooltip": "Clé publique - Infobulle",
+    "Public key ID": "ID de clé publique",
+    "Public key ID - Tooltip": "Pour les marchands en mode clé publique WeChat Pay, renseignez l'ID de clé publique (PUB_KEY_ID_...) et la clé publique WeChat Pay. Laissez les deux vides pour les marchands utilisant les certificats de plateforme",
     "RADIUS Shared Secret - Tooltip": "Secret partagé RADIUS",
     "Region": "Région",
     "Region - Tooltip": "Région - Infobulle",
