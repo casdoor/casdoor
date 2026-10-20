@@ -40,7 +40,7 @@ func setCorsHeadersWithCredentials(ctx *context.Context, origin string, allowCre
 	if origin != "" {
 		ctx.Output.Header(headerAllowOrigin, origin)
 		ctx.Output.Header(headerAllowMethods, "POST, GET, OPTIONS, DELETE")
-		ctx.Output.Header(headerAllowHeaders, "Content-Type, Authorization")
+		ctx.Output.Header(headerAllowHeaders, "Content-Type, Authorization, X-Requested-With")
 		if allowCredentials {
 			ctx.Output.Header(headerAllowCredentials, "true")
 		}
