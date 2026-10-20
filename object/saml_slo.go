@@ -289,7 +289,7 @@ func getSamlLogoutSigningContext(application *Application) (*dsig.SigningContext
 
 // signSamlPostMessage embeds the signature in the message, as the HTTP-POST binding requires
 func signSamlPostMessage(ctx *dsig.SigningContext, element *etree.Element) (string, error) {
-	signature, err := ctx.ConstructSignature(element, true)
+	signature, err := constructSamlSignature(ctx, element)
 	if err != nil {
 		return "", err
 	}
