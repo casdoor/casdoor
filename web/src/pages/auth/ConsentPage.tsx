@@ -1,12 +1,14 @@
 import * as React from "react";
 import i18next from "i18next";
-import {Lock} from "lucide-react";
 import {useParams, useSearchParams} from "react-router-dom";
 import {Alert, AlertDescription} from "@/components/ui/alert";
+import {Badge} from "@/components/ui/badge";
 import {Button} from "@/components/ui/button";
+import {Checkbox} from "@/components/ui/checkbox";
 import {Loading} from "@/components/common/Loading";
 import {AuthLayout} from "@/components/auth/AuthLayout";
 import * as Util from "@/auth/Util";
+import {useAccount} from "@/hooks/use-account";
 import * as ApplicationBackend from "@/backend/ApplicationBackend";
 import * as ConsentBackend from "@/backend/ConsentBackend";
 import * as Setting from "@/lib/setting";
@@ -15,9 +17,14 @@ interface ScopeDescription {
   scope: string;
   displayName: string;
   description?: string;
+  /** openid and scopes the application doesn't define are always granted */
+  required: boolean;
+  /** not asked before, while the user has already answered for other scopes of this application */
+  isNew: boolean;
+  defaultChecked: boolean;
 }
 
-/** OAuth consent screen: shows the requested scopes and grants or denies the code. */
+/** OAuth consent screen: lets the user pick which of the requested scopes to grant, or deny the code. */
 export default function ConsentPage() {
   const params = useParams();
   const [searchParams] = useSearchParams();
@@ -25,7 +32,9 @@ export default function ConsentPage() {
 
   const [application, setApplication] = React.useState<any>(undefined);
   const [granting, setGranting] = React.useState(false);
+  const [checkedScopes, setCheckedScopes] = React.useState<Record<string, boolean>>({});
   const oAuthParams = React.useMemo(() => Util.getOAuthGetParameters(), []);
+  const {account} = useAccount();
 
   React.useEffect(() => {
     if (!applicationName) {
@@ -44,6 +53,53 @@ export default function ConsentPage() {
       .catch(() => setApplication(null));
   }, [applicationName]);
 
+  const scopeDescriptions: ScopeDescription[] = React.useMemo(() => {
+    if (!application) {
+      return [];
+    }
+
+    // Scopes the client asked for, described by the application's customScopes.
+    const customScopesMap: Record<string, any> = {};
+    (application.customScopes ?? []).forEach((item: any) => {
+      if (item?.scope) {
+        customScopesMap[item.scope] = item;
+      }
+    });
+
+    // What the user answered before for this application: granted scopes start checked, denied ones unchecked.
+    const record = (account?.applicationScopes ?? []).find((item: any) => item?.application === `${application.owner}/${application.name}`);
+    const granted: string[] = record?.grantedScopes ?? [];
+    const denied: string[] = record?.deniedScopes ?? [];
+
+    return Array.from(new Set<string>((oAuthParams?.scope ?? "").split(" ").map((s: string) => s.trim()).filter(Boolean)))
+      .map((scope: string) => {
+        const item = customScopesMap[scope];
+        const required = scope === "openid" || !item;
+        const base = item
+          ? {...item, displayName: item.displayName || item.scope}
+          : {
+            scope,
+            displayName: scope,
+            description: i18next.t("consent:This scope is not defined in the application"),
+          };
+        return {
+          ...base,
+          scope,
+          required,
+          isNew: !!record && !required && !granted.includes(scope) && !denied.includes(scope),
+          defaultChecked: required || !denied.includes(scope),
+        };
+      });
+  }, [application, account, oAuthParams]);
+
+  React.useEffect(() => {
+    const checked: Record<string, boolean> = {};
+    scopeDescriptions.forEach((item) => {
+      checked[item.scope] = item.defaultChecked;
+    });
+    setCheckedScopes(checked);
+  }, [scopeDescriptions]);
+
   if (application === undefined) {
     return <Loading className="min-h-screen" />;
   }
@@ -58,27 +114,7 @@ export default function ConsentPage() {
     );
   }
 
-  // Scopes the client asked for, described by the application's customScopes.
-  const customScopesMap: Record<string, any> = {};
-  (application.customScopes ?? []).forEach((item: any) => {
-    if (item?.scope) {
-      customScopesMap[item.scope] = item;
-    }
-  });
-  const scopeDescriptions: ScopeDescription[] = (oAuthParams?.scope ?? "")
-    .split(" ")
-    .map((s: string) => s.trim())
-    .filter(Boolean)
-    .map((scope: string) => {
-      const item = customScopesMap[scope];
-      return item
-        ? {...item, displayName: item.displayName || item.scope}
-        : {
-          scope,
-          displayName: scope,
-          description: i18next.t("consent:This scope is not defined in the application"),
-        };
-    });
+  const grantedScopes = scopeDescriptions.filter((item) => item.required || checkedScopes[item.scope]).map((item) => item.scope);
 
   const grant = () => {
     setGranting(true);
@@ -86,7 +122,7 @@ export default function ConsentPage() {
       {
         owner: application.owner,
         application: `${application.owner}/${application.name}`,
-        grantedScopes: scopeDescriptions.map((s) => s.scope),
+        grantedScopes,
       },
       oAuthParams,
     )
@@ -144,14 +180,31 @@ export default function ConsentPage() {
         ) : (
           <ul className="divide-y rounded-lg border">
             {scopeDescriptions.map((item) => (
-              <li key={item.scope} className="flex items-start gap-3 p-3">
-                <Lock className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
-                <div className="min-w-0">
-                  <div className="text-sm font-medium">{item.displayName}</div>
-                  {item.description ? (
-                    <p className="text-xs text-muted-foreground">{item.description}</p>
-                  ) : null}
-                </div>
+              <li key={item.scope}>
+                <label
+                  htmlFor={`consent-scope-${item.scope}`}
+                  className={`flex items-start gap-3 p-3 ${item.required ? "" : "cursor-pointer"}`}
+                >
+                  <Checkbox
+                    id={`consent-scope-${item.scope}`}
+                    className="mt-0.5"
+                    checked={item.required || !!checkedScopes[item.scope]}
+                    disabled={item.required || granting}
+                    onCheckedChange={(v) => setCheckedScopes((prev) => ({...prev, [item.scope]: v === true}))}
+                  />
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-2 text-sm font-medium">
+                      {item.displayName}
+                      {item.isNew ? <Badge variant="info">{i18next.t("consent:New")}</Badge> : null}
+                      {item.required ? (
+                        <span className="text-xs font-normal text-muted-foreground">{i18next.t("organization:Required")}</span>
+                      ) : null}
+                    </div>
+                    {item.description ? (
+                      <p className="text-xs text-muted-foreground">{item.description}</p>
+                    ) : null}
+                  </div>
+                </label>
               </li>
             ))}
           </ul>
@@ -161,7 +214,7 @@ export default function ConsentPage() {
           <Button variant="outline" className="flex-1" onClick={deny} disabled={granting}>
             {i18next.t("permission:Deny")}
           </Button>
-          <Button className="flex-1" loading={granting} onClick={grant} disabled={granting || scopeDescriptions.length === 0}>
+          <Button className="flex-1" loading={granting} onClick={grant} disabled={granting || grantedScopes.length === 0}>
             {i18next.t("permission:Allow")}
           </Button>
         </div>

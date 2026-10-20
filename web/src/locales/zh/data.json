@@ -251,6 +251,7 @@
     "Consents": "授权记录",
     "Consents - Tooltip": "用户已授权的应用及权限列表",
     "Granted scopes": "已授权的权限范围",
+    "New": "新增",
     "This application is requesting": "该应用请求访问",
     "This scope is not defined in the application": "该权限范围未在应用中定义",
     "wants to access your account": "请求访问您的账户"

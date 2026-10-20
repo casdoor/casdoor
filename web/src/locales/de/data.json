@@ -251,6 +251,7 @@
     "Consents": "Einwilligungen",
     "Consents - Tooltip": "Liste der Benutzereinwilligungen, die Anwendungen Zugriff gewähren",
     "Granted scopes": "Gewährte Berechtigungsbereiche",
+    "New": "Neu",
     "This application is requesting": "Diese Anwendung beantragt",
     "This scope is not defined in the application": "Dieser Bereich ist in der Anwendung nicht definiert",
     "wants to access your account": "möchte auf Ihr Konto zugreifen"
