@@ -1318,6 +1318,7 @@ func replaceAttributeValue(user *User, value string) []string {
 
 	valueList = replaceAttributeValues("$user.owner", user.Owner, valueList)
 	valueList = replaceAttributeValues("$user.name", user.Name, valueList)
+	valueList = replaceAttributeValues("$user.displayName", user.DisplayName, valueList)
 	valueList = replaceAttributeValues("$user.email", user.Email, valueList)
 	valueList = replaceAttributeValues("$user.id", user.Id, valueList)
 	valueList = replaceAttributeValues("$user.phone", user.Phone, valueList)
