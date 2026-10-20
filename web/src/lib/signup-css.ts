@@ -4,6 +4,7 @@ const EmailCss = ".signup-email{}\n.signup-email-input{}\n.signup-email-code{}\n
 const PhoneCss = ".signup-phone{}\n.signup-phone-input{}\n.phone-code{}\n.signup-phone-code-input{}";
 
 export const SignupTableDefaultCssMap: Record<string, string> = {
+  "Logo": ".login-logo-box {}",
   "Username": ".signup-username {}\n.signup-username-input {}",
   "Display name": ".signup-first-name {}\n.signup-first-name-input{}\n.signup-last-name{}\n.signup-last-name-input{}\n.signup-name{}\n.signup-name-input{}",
   "Affiliation": ".signup-affiliation{}\n.signup-affiliation-input{}",

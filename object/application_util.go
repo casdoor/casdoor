@@ -204,6 +204,7 @@ func extendApplicationWithSignupItems(application *Application) (err error) {
 	if len(application.SignupItems) == 0 {
 		application.SignupItems = []*SignupItem{
 			{Name: "ID", Visible: false, Required: true, Prompted: false, Rule: "Random"},
+			{Name: "Logo", Visible: true, Required: false, Prompted: false, Rule: "None"},
 			{Name: "Username", Visible: true, Required: true, Prompted: false, Rule: "None"},
 			{Name: "Display name", Visible: true, Required: true, Prompted: false, Rule: "None"},
 			{Name: "Password", Visible: true, Required: true, Prompted: false, Rule: "None"},
