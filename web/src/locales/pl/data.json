@@ -494,6 +494,7 @@
     "GID number - Tooltip": "GID number - Tooltip",
     "General": "Ogólne",
     "Generate": "Generuj",
+    "Global Settings": "Ustawienia globalne",
     "Go to enable": "Przejdź, aby włączyć",
     "Go to writable demo site?": "Przejdź do strony demo z możliwością zapisu?",
     "Groups": "Grupy",
@@ -1480,6 +1481,15 @@
     "Production endpoint is empty": "Punkt końcowy produkcji jest pusty",
     "Scan server": "Serwer skanowania",
     "Scanned hosts": "Zeskanowane hosty"
+  },
+  "setting": {
+    "Cannot be more than the max open connections": "Nie może przekraczać maks. liczby otwartych połączeń",
+    "Connection max lifetime": "Maks. czas życia połączenia",
+    "Connection max lifetime - Tooltip": "Maksymalny czas ponownego użycia połączenia przed jego zamknięciem, 0 oznacza brak limitu",
+    "Max idle connections": "Maks. bezczynnych połączeń",
+    "Max idle connections - Tooltip": "Maksymalna liczba bezczynnych połączeń w puli, 0 oznacza domyślną wartość 2",
+    "Max open connections": "Maks. otwartych połączeń",
+    "Max open connections - Tooltip": "Maksymalna liczba otwartych połączeń z bazą danych, 0 oznacza brak limitu"
   },
   "signup": {
     "Accept": "Akceptuj",

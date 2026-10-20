@@ -494,6 +494,7 @@
     "GID number - Tooltip": "The POSIX group ID published by the built-in LDAP server. Leave it as 0 to derive the number from the group name",
     "General": "General",
     "Generate": "Generate",
+    "Global Settings": "Global Settings",
     "Go to enable": "Go to enable",
     "Go to writable demo site?": "Go to writable demo site?",
     "Groups": "Groups",
@@ -1480,6 +1481,15 @@
     "Production endpoint is empty": "Production endpoint is empty",
     "Scan server": "Scan server",
     "Scanned hosts": "Scanned hosts"
+  },
+  "setting": {
+    "Cannot be more than the max open connections": "Cannot be more than the max open connections",
+    "Connection max lifetime": "Connection max lifetime",
+    "Connection max lifetime - Tooltip": "Maximum time a connection is reused before it is closed, 0 means no limit",
+    "Max idle connections": "Max idle connections",
+    "Max idle connections - Tooltip": "Maximum number of idle connections kept in the pool, 0 means the default of 2",
+    "Max open connections": "Max open connections",
+    "Max open connections - Tooltip": "Maximum number of open connections to the database, 0 means unlimited"
   },
   "signup": {
     "Accept": "Accept",

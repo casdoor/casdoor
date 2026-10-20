@@ -99,6 +99,7 @@ function getNavItemNodes(): TreeNode[] {
           title: i18next.t("general:Admin"),
           children: [
             {key: "/sysinfo", title: i18next.t("general:System Info")},
+            {key: "/settings", title: i18next.t("general:Global Settings")},
             {key: "/forms", title: i18next.t("general:Forms")},
             {key: "/syncers", title: i18next.t("general:Syncers")},
             {key: "/webhooks", title: i18next.t("general:Webhooks")},

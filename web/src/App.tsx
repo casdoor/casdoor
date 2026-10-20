@@ -31,6 +31,7 @@ const ShortcutsPage = React.lazy(() => import("@/pages/ShortcutsPage"));
 const AccountPage = React.lazy(() => import("@/pages/AccountPage"));
 const MfaSetupPage = React.lazy(() => import("@/pages/auth/MfaSetupPage"));
 const SystemInfoPage = React.lazy(() => import("@/pages/SystemInfoPage"));
+const SettingEditPage = React.lazy(() => import("@/pages/SettingEditPage"));
 
 const OrganizationListPage = React.lazy(() => import("@/pages/OrganizationListPage"));
 const OrganizationEditPage = React.lazy(() => import("@/pages/OrganizationEditPage"));
@@ -268,6 +269,7 @@ export default function App() {
           <Route path="/account" element={<AccountPage />} />
           <Route path="/mfa/setup" element={<MfaSetupPage />} />
           <Route path="/sysinfo" element={<SystemInfoPage />} />
+          <Route path="/settings" element={<SettingEditPage />} />
 
           <Route path="/organizations" element={<OrganizationListPage />} />
           <Route path="/organizations/:organizationName" element={<OrganizationEditPage />} />

@@ -494,6 +494,7 @@
     "GID number - Tooltip": "内置LDAP服务器对外发布的POSIX组ID，保持为0时将根据组名自动推导",
     "General": "通用",
     "Generate": "生成",
+    "Global Settings": "全站设置",
     "Go to enable": "前往启用",
     "Go to writable demo site?": "跳转至可写演示站点？",
     "Groups": "群组",
@@ -1480,6 +1481,15 @@
     "Production endpoint is empty": "生产端点为空",
     "Scan server": "扫描服务器",
     "Scanned hosts": "已扫描主机"
+  },
+  "setting": {
+    "Cannot be more than the max open connections": "不能超过最大打开连接数",
+    "Connection max lifetime": "连接最长使用时间",
+    "Connection max lifetime - Tooltip": "一条连接最多复用多久就关闭重连，0表示不限",
+    "Max idle connections": "最大空闲连接数",
+    "Max idle connections - Tooltip": "连接池里最多保留的空闲连接数，0表示用默认值2",
+    "Max open connections": "最大打开连接数",
+    "Max open connections - Tooltip": "数据库最多同时打开的连接数，0表示不限"
   },
   "signup": {
     "Accept": "阅读并接受",

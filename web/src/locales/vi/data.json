@@ -494,6 +494,7 @@
     "GID number - Tooltip": "GID number - Tooltip",
     "General": "Chung",
     "Generate": "Tạo",
+    "Global Settings": "Cài đặt toàn cục",
     "Go to enable": "Đi để bật",
     "Go to writable demo site?": "Bạn có muốn đi đến trang demo có thể viết được không?",
     "Groups": "Nhóm",
@@ -1480,6 +1481,15 @@
     "Production endpoint is empty": "Điểm cuối production trống",
     "Scan server": "Máy chủ quét",
     "Scanned hosts": "Máy chủ đã quét"
+  },
+  "setting": {
+    "Cannot be more than the max open connections": "Không được lớn hơn số kết nối mở tối đa",
+    "Connection max lifetime": "Thời gian sống tối đa của kết nối",
+    "Connection max lifetime - Tooltip": "Thời gian tối đa một kết nối được dùng lại trước khi đóng, 0 nghĩa là không giới hạn",
+    "Max idle connections": "Số kết nối nhàn rỗi tối đa",
+    "Max idle connections - Tooltip": "Số kết nối nhàn rỗi tối đa giữ trong pool, 0 nghĩa là mặc định 2",
+    "Max open connections": "Số kết nối mở tối đa",
+    "Max open connections - Tooltip": "Số kết nối tối đa được mở tới cơ sở dữ liệu, 0 nghĩa là không giới hạn"
   },
   "signup": {
     "Accept": "Chấp nhận",

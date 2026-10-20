@@ -494,6 +494,7 @@
     "GID number - Tooltip": "GID number - Tooltip",
     "General": "Geral",
     "Generate": "Gerar",
+    "Global Settings": "Configurações globais",
     "Go to enable": "Ir para ativar",
     "Go to writable demo site?": "Acessar o site de demonstração gravável?",
     "Groups": "Grupos",
@@ -1480,6 +1481,15 @@
     "Production endpoint is empty": "O ponto de extremidade de produção está vazio",
     "Scan server": "Servidor de varredura",
     "Scanned hosts": "Hosts verificados"
+  },
+  "setting": {
+    "Cannot be more than the max open connections": "Não pode ser maior que o máx. de conexões abertas",
+    "Connection max lifetime": "Tempo máximo de vida da conexão",
+    "Connection max lifetime - Tooltip": "Tempo máximo que uma conexão é reutilizada antes de ser fechada, 0 significa sem limite",
+    "Max idle connections": "Máx. de conexões ociosas",
+    "Max idle connections - Tooltip": "Número máximo de conexões ociosas mantidas no pool, 0 significa o padrão de 2",
+    "Max open connections": "Máx. de conexões abertas",
+    "Max open connections - Tooltip": "Número máximo de conexões abertas com o banco de dados, 0 significa ilimitado"
   },
   "signup": {
     "Accept": "Aceitar",

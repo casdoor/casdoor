@@ -494,6 +494,7 @@
     "GID number - Tooltip": "GID number - Tooltip",
     "General": "Загальне",
     "Generate": "Генерувати",
+    "Global Settings": "Глобальні налаштування",
     "Go to enable": "Перейти до увімкнення",
     "Go to writable demo site?": "Перейти на демонстраційний сайт для запису?",
     "Groups": "Групи",
@@ -1480,6 +1481,15 @@
     "Production endpoint is empty": "Продакшн-кінцева точка порожня",
     "Scan server": "Сервер сканування",
     "Scanned hosts": "Відскановані хости"
+  },
+  "setting": {
+    "Cannot be more than the max open connections": "Не може перевищувати макс. кількість відкритих з'єднань",
+    "Connection max lifetime": "Макс. час життя з'єднання",
+    "Connection max lifetime - Tooltip": "Максимальний час повторного використання з'єднання до його закриття, 0 означає без обмежень",
+    "Max idle connections": "Макс. неактивних з'єднань",
+    "Max idle connections - Tooltip": "Максимальна кількість неактивних з'єднань у пулі, 0 означає типове значення 2",
+    "Max open connections": "Макс. відкритих з'єднань",
+    "Max open connections - Tooltip": "Максимальна кількість відкритих з'єднань з базою даних, 0 означає без обмежень"
   },
   "signup": {
     "Accept": "Прийняти",
