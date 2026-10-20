@@ -153,21 +153,21 @@ func handleAccessRequest(w radius.ResponseWriter, r *radius.Request) {
 
 	if user.IsMfaEnabled() {
 		responseState := addAccessState(organization, username)
+		response := r.Response(radius.CodeAccessChallenge)
 
-		err = rfc2865.State_Set(r.Packet, []byte(responseState))
+		err = rfc2865.State_Set(response, []byte(responseState))
 		if err != nil {
 			w.Write(r.Response(radius.CodeAccessReject))
 			return
 		}
 
-		err = rfc2865.ReplyMessage_Set(r.Packet, []byte("please enter OTP"))
+		err = rfc2865.ReplyMessage_Set(response, []byte("please enter OTP"))
 		if err != nil {
 			w.Write(r.Response(radius.CodeAccessReject))
 			return
 		}
 
-		r.Packet.Code = radius.CodeAccessChallenge
-		w.Write(r.Packet)
+		w.Write(response)
 		return
 	}
 
