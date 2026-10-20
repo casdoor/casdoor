@@ -335,6 +335,11 @@ func NotifyPayment(body []byte, owner string, paymentName string, lang string) (
 		return nil, err
 	}
 
+	err = updatePaymentSubscriptions(payment)
+	if err != nil {
+		return nil, err
+	}
+
 	if payment.State == pp.PaymentStatePaid {
 		// Get provider, product and user for transaction creation
 		provider, err := getProvider(payment.Owner, payment.Provider)

@@ -361,15 +361,28 @@ func UpdateSubscription(id string, subscription *Subscription) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	if s, err := getSubscription(owner, name); err != nil {
+	oldSubscription, err := getSubscription(owner, name)
+	if err != nil {
 		return false, err
-	} else if s == nil {
+	} else if oldSubscription == nil {
 		return false, nil
 	}
 
 	affected, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(subscription)
 	if err != nil {
 		return false, err
+	}
+
+	if affected != 0 {
+		err = syncSubscriptionRole(oldSubscription)
+		if err != nil {
+			return false, err
+		}
+
+		err = syncSubscriptionRole(subscription)
+		if err != nil {
+			return false, err
+		}
 	}
 
 	return affected != 0, nil
@@ -381,13 +394,32 @@ func AddSubscription(subscription *Subscription) (bool, error) {
 		return false, err
 	}
 
+	if affected != 0 {
+		err = syncSubscriptionRole(subscription)
+		if err != nil {
+			return false, err
+		}
+	}
+
 	return affected != 0, nil
 }
 
 func DeleteSubscription(subscription *Subscription) (bool, error) {
+	oldSubscription, err := getSubscription(subscription.Owner, subscription.Name)
+	if err != nil {
+		return false, err
+	}
+
 	affected, err := ormer.Engine.ID(core.PK{subscription.Owner, subscription.Name}).Delete(&Subscription{})
 	if err != nil {
 		return false, err
+	}
+
+	if affected != 0 {
+		err = syncSubscriptionRole(oldSubscription)
+		if err != nil {
+			return false, err
+		}
 	}
 
 	return affected != 0, nil
