@@ -493,7 +493,7 @@ func GetSamlResponse(application *Application, user *User, samlRequest string, h
 	if application.EnableSamlAssertionSignature {
 		assertion := samlResponse.FindElement("./Assertion")
 		if assertion != nil {
-			assertionSig, err := ctx.ConstructSignature(assertion, true)
+			assertionSig, err := constructSamlSignature(ctx, assertion)
 			if err != nil {
 				return "", "", "", fmt.Errorf("err: Failed to sign SAML assertion, %s", err.Error())
 			}
@@ -503,7 +503,7 @@ func GetSamlResponse(application *Application, user *User, samlRequest string, h
 	}
 
 	// Sign the response
-	sig, err := ctx.ConstructSignature(samlResponse, true)
+	sig, err := constructSamlSignature(ctx, samlResponse)
 	if err != nil {
 		return "", "", "", fmt.Errorf("err: Failed to serializes the SAML request into bytes, %s", err.Error())
 	}
@@ -573,9 +573,55 @@ func newSamlSigningContext(application *Application, privateKey string, certific
 	}
 
 	if application.EnableSamlC14n10 {
-		ctx.Canonicalizer = dsig.MakeC14N10ExclusiveCanonicalizerWithPrefixList(application.SamlC14nPrefix)
+		ctx.Canonicalizer = &samlC14n10Canonicalizer{prefixList: application.SamlC14nPrefix}
 	}
 	return ctx
+}
+
+// samlC14n10Canonicalizer canonicalizes a copy, as goxmldsig strips namespace declarations from the signed XML itself, and applies the prefix list to the reference only
+type samlC14n10Canonicalizer struct {
+	prefixList string
+}
+
+func (c *samlC14n10Canonicalizer) Canonicalize(el *etree.Element) ([]byte, error) {
+	el = el.Copy()
+	prefixList := c.prefixList
+	if el.Tag == dsig.SignedInfoTag {
+		addSamlInclusiveNamespaces(el, c.prefixList)
+		prefixList = ""
+	}
+	return dsig.MakeC14N10ExclusiveCanonicalizerWithPrefixList(prefixList).Canonicalize(el)
+}
+
+func (c *samlC14n10Canonicalizer) Algorithm() dsig.AlgorithmID {
+	return dsig.CanonicalXML10ExclusiveAlgorithmId
+}
+
+// addSamlInclusiveNamespaces writes the prefix list into the exclusive C14N transform, where the SP reads it from
+func addSamlInclusiveNamespaces(signedInfo *etree.Element, prefixList string) {
+	if signedInfo == nil || strings.TrimSpace(prefixList) == "" {
+		return
+	}
+
+	for _, transform := range signedInfo.FindElements("./Reference/Transforms/Transform") {
+		if transform.SelectAttrValue(dsig.AlgorithmAttr, "") == string(dsig.CanonicalXML10ExclusiveAlgorithmId) {
+			inclusiveNamespaces := transform.CreateElement("ec:InclusiveNamespaces")
+			inclusiveNamespaces.CreateAttr("xmlns:ec", string(dsig.CanonicalXML10ExclusiveAlgorithmId))
+			inclusiveNamespaces.CreateAttr("PrefixList", prefixList)
+		}
+	}
+}
+
+func constructSamlSignature(ctx *dsig.SigningContext, el *etree.Element) (*etree.Element, error) {
+	sig, err := ctx.ConstructSignature(el, true)
+	if err != nil {
+		return nil, err
+	}
+
+	if c, ok := ctx.Canonicalizer.(*samlC14n10Canonicalizer); ok {
+		addSamlInclusiveNamespaces(sig.SelectElement(dsig.SignedInfoTag), c.prefixList)
+	}
+	return sig, nil
 }
 
 // NewSamlResponse11 return a saml1.1 response(not 2.0)
