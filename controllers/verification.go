@@ -281,7 +281,7 @@ func (c *ApiController) SendVerificationCode() {
 		} else if vform.Type == object.VerifyTypePhone {
 			// Prefer resolving the user directly by phone, consistent with the later login switch,
 			// so that Dynamic CAPTCHA is not skipped due to missing/invalid country code.
-			user, err = object.GetUserByPhone(organization.Name, vform.Dest)
+			user, err = object.GetUserByPhoneWithCountryCode(organization.Name, vform.Dest, vform.CountryCode)
 			if err != nil {
 				c.ResponseError(err.Error())
 				return
@@ -457,7 +457,7 @@ func (c *ApiController) SendVerificationCode() {
 				vform.Dest = user.Phone
 			}
 
-			if user, err = object.GetUserByPhone(organization.Name, vform.Dest); err != nil {
+			if user, err = object.GetUserByPhoneWithCountryCode(organization.Name, vform.Dest, vform.CountryCode); err != nil {
 				c.ResponseError(err.Error())
 				return
 			} else if user == nil && (vform.Method == ForgetVerification || !application.IsVerificationCodeSignupEnabled(object.VerifyTypePhone)) {

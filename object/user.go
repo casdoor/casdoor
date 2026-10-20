@@ -572,9 +572,27 @@ func GetUserByPhone(owner string, phone string) (*User, error) {
 
 	if existed {
 		return &user, nil
-	} else {
-		return nil, nil
 	}
+
+	if regionCode == "" {
+		return getUserByNationalPhone(owner, phone)
+	}
+	return nil, nil
+}
+
+// GetUserByPhoneWithCountryCode looks up the user of a phone number typed with the chosen country code,
+// a national number like "0796488996" is normalized the same way as the one stored at signup
+func GetUserByPhoneWithCountryCode(owner string, phone string, countryCode string) (*User, error) {
+	if countryCode != "" && !strings.HasPrefix(phone, "+") {
+		if e164, ok := util.GetE164Number(phone, countryCode); ok {
+			user, err := GetUserByPhone(owner, e164)
+			if user != nil || err != nil {
+				return user, err
+			}
+		}
+	}
+
+	return GetUserByPhone(owner, phone)
 }
 
 func GetUserByPhoneOnly(phone string) (*User, error) {
