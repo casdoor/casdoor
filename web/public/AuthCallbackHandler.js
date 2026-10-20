@@ -235,6 +235,43 @@
     form.submit();
   }
 
+  // Keep in sync with sendOAuthResponse and getTokenResponsePayload in src/auth/Util.ts
+  function sendOAuthResponse(oAuthParams, payload) {
+    if (oAuthParams.state) {
+      payload.state = oAuthParams.state;
+    }
+    payload.iss = getIssuer();
+    if (oAuthParams.responseMode === "form_post") {
+      createFormAndSubmit(oAuthParams.redirectUri, payload);
+      return;
+    }
+
+    var hasToken = "access_token" in payload || "id_token" in payload;
+    var inFragment = oAuthParams.responseMode === "fragment" || hasToken ||
+      (oAuthParams.responseMode !== "query" && (oAuthParams.responseType || "code") !== "code");
+    var concatChar = inFragment ? "#" : oAuthParams.redirectUri.indexOf("?") !== -1 ? "&" : "?";
+    var query = new URLSearchParams();
+    Object.keys(payload).forEach(function(key) {
+      query.append(key, payload[key]);
+    });
+    window.location.replace(oAuthParams.redirectUri + concatChar + query.toString());
+  }
+
+  function getTokenResponsePayload(responseTypes, res) {
+    var payload = {};
+    if (responseTypes.indexOf("code") !== -1) {
+      payload.code = res.data;
+    }
+    if (responseTypes.indexOf("token") !== -1) {
+      payload.access_token = responseTypes.indexOf("code") !== -1 ? res.data2 : res.data;
+      payload.token_type = "Bearer";
+    }
+    if (responseTypes.indexOf("id_token") !== -1) {
+      payload.id_token = res.data3;
+    }
+    return payload;
+  }
+
   function extractCallbackCode(params) {
     var isSteam = params.get("openid.mode");
     var code = params.get("code") || params.get("auth_code") || params.get("authCode");
@@ -411,8 +448,6 @@
       return;
     }
 
-    var concatChar = oAuthParams.redirectUri.indexOf("?") !== -1 ? "&" : "?";
-    var responseMode = oAuthParams.responseMode || "query";
     var responseTypes = responseType.split(" ");
 
     if (responseType === "login") {
@@ -421,26 +456,12 @@
     }
 
     if (responseType === "code") {
-      if (responseMode === "form_post") {
-        createFormAndSubmit(oAuthParams.redirectUri, {code: res.data, state: oAuthParams.state, iss: getIssuer()});
-      } else {
-        window.location.replace(oAuthParams.redirectUri + concatChar + "code=" + encodeURIComponent(res.data) + "&state=" + encodeURIComponent(oAuthParams.state) + "&iss=" + encodeURIComponent(getIssuer()));
-      }
+      sendOAuthResponse(oAuthParams, {code: res.data});
       return;
     }
 
     if (responseTypes.indexOf("token") !== -1 || responseTypes.indexOf("id_token") !== -1) {
-      if (responseMode === "form_post") {
-        createFormAndSubmit(oAuthParams.redirectUri, {
-          token: responseTypes.indexOf("token") !== -1 ? res.data : null,
-          id_token: responseTypes.indexOf("id_token") !== -1 ? res.data : null,
-          token_type: "bearer",
-          state: oAuthParams.state,
-          iss: getIssuer()
-        });
-      } else {
-        window.location.replace(oAuthParams.redirectUri + concatChar + responseType + "=" + encodeURIComponent(res.data) + "&state=" + encodeURIComponent(oAuthParams.state) + "&token_type=bearer&iss=" + encodeURIComponent(getIssuer()));
-      }
+      sendOAuthResponse(oAuthParams, getTokenResponsePayload(responseTypes, res));
       return;
     }
 
