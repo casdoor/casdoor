@@ -19,6 +19,7 @@ import (
 	"strings"
 
 	"github.com/casdoor/casdoor/i18n"
+	"github.com/casdoor/casdoor/util"
 )
 
 // ConsentRecord represents the data for OAuth consent API requests/responses
@@ -26,6 +27,7 @@ type ConsentRecord struct {
 	// owner/name
 	Application   string   `json:"application"`
 	GrantedScopes []string `json:"grantedScopes"`
+	DeniedScopes  []string `json:"deniedScopes,omitempty"`
 }
 
 // ScopeDescription represents a human-readable description of an OAuth scope
@@ -51,6 +53,26 @@ func parseScopes(scopeStr string) []string {
 	return result
 }
 
+func getCustomScopeSet(application *Application) map[string]bool {
+	res := map[string]bool{}
+	for _, customScope := range application.CustomScopes {
+		if customScope != nil && customScope.Scope != "" {
+			res[customScope.Scope] = true
+		}
+	}
+	return res
+}
+
+func getConsentRecord(userObj *User, application *Application) *ConsentRecord {
+	appId := application.GetId()
+	for i := range userObj.ApplicationScopes {
+		if userObj.ApplicationScopes[i].Application == appId {
+			return &userObj.ApplicationScopes[i]
+		}
+	}
+	return nil
+}
+
 // CheckConsentRequired checks if user consent is required for the OAuth flow
 func CheckConsentRequired(userObj *User, application *Application, scopeStr string) (bool, error) {
 	// Skip consent when no custom scopes are configured
@@ -58,21 +80,11 @@ func CheckConsentRequired(userObj *User, application *Application, scopeStr stri
 		return false, nil
 	}
 
-	// Once policy: check if consent already granted
-	requestedScopes := parseScopes(scopeStr)
-	appId := application.GetId()
-
-	// Filter requestedScopes to only include scopes defined in application.CustomScopes
-	customScopesMap := make(map[string]bool)
-	for _, customScope := range application.CustomScopes {
-		if customScope.Scope != "" {
-			customScopesMap[customScope.Scope] = true
-		}
-	}
-
+	// Once policy: consent is asked again only for requested custom scopes the user has neither granted nor denied
+	customScopeSet := getCustomScopeSet(application)
 	validRequestedScopes := []string{}
-	for _, scope := range requestedScopes {
-		if customScopesMap[scope] {
+	for _, scope := range parseScopes(scopeStr) {
+		if customScopeSet[scope] {
 			validRequestedScopes = append(validRequestedScopes, scope)
 		}
 	}
@@ -82,31 +94,127 @@ func CheckConsentRequired(userObj *User, application *Application, scopeStr stri
 		return false, nil
 	}
 
-	for _, record := range userObj.ApplicationScopes {
-		if record.Application == appId {
-			// Check if grantedScopes contains all validRequestedScopes
-			grantedMap := make(map[string]bool)
-			for _, scope := range record.GrantedScopes {
-				grantedMap[scope] = true
-			}
+	record := getConsentRecord(userObj, application)
+	if record == nil {
+		return true, nil
+	}
 
-			allGranted := true
-			for _, scope := range validRequestedScopes {
-				if !grantedMap[scope] {
-					allGranted = false
-					break
-				}
-			}
+	decided := map[string]bool{}
+	for _, scope := range record.GrantedScopes {
+		decided[scope] = true
+	}
+	for _, scope := range record.DeniedScopes {
+		decided[scope] = true
+	}
 
-			if allGranted {
-				// Consent already granted for all valid requested scopes
-				return false, nil
-			}
+	for _, scope := range validRequestedScopes {
+		if !decided[scope] {
+			return true, nil
+		}
+	}
+	return false, nil
+}
+
+// GetConsentGrantedScopes returns the granted scopes submitted on the consent page, or false if they are not a subset of the requested ones
+func GetConsentGrantedScopes(scopeStr string, grantedScopes []string) ([]string, bool) {
+	requestedSet := map[string]bool{}
+	for _, scope := range parseScopes(scopeStr) {
+		requestedSet[scope] = true
+	}
+
+	res := []string{}
+	seen := map[string]bool{}
+	for _, scope := range grantedScopes {
+		if !requestedSet[scope] {
+			return nil, false
+		}
+		if !seen[scope] {
+			seen[scope] = true
+			res = append(res, scope)
 		}
 	}
 
-	// Consent required
-	return true, nil
+	if requestedSet["openid"] && !seen["openid"] {
+		res = append([]string{"openid"}, res...)
+	}
+	return res, true
+}
+
+// UpdateConsentRecord records which requested scopes the user granted and which custom scopes the user denied
+func UpdateConsentRecord(userObj *User, application *Application, scopeStr string, grantedScopes []string) {
+	requestedSet := map[string]bool{}
+	for _, scope := range parseScopes(scopeStr) {
+		requestedSet[scope] = true
+	}
+	grantedSet := map[string]bool{}
+	for _, scope := range grantedScopes {
+		grantedSet[scope] = true
+	}
+
+	deniedScopes := []string{}
+	customScopeSet := getCustomScopeSet(application)
+	for _, scope := range parseScopes(scopeStr) {
+		if customScopeSet[scope] && !grantedSet[scope] && !util.InSlice(deniedScopes, scope) {
+			deniedScopes = append(deniedScopes, scope)
+		}
+	}
+
+	record := getConsentRecord(userObj, application)
+	if record == nil {
+		userObj.ApplicationScopes = append(userObj.ApplicationScopes, ConsentRecord{Application: application.GetId()})
+		record = &userObj.ApplicationScopes[len(userObj.ApplicationScopes)-1]
+	}
+
+	newGranted := []string{}
+	for _, scope := range record.GrantedScopes {
+		if !requestedSet[scope] || grantedSet[scope] {
+			newGranted = append(newGranted, scope)
+		}
+	}
+	for _, scope := range grantedScopes {
+		if !util.InSlice(newGranted, scope) {
+			newGranted = append(newGranted, scope)
+		}
+	}
+
+	newDenied := []string{}
+	for _, scope := range record.DeniedScopes {
+		if !requestedSet[scope] {
+			newDenied = append(newDenied, scope)
+		}
+	}
+	newDenied = append(newDenied, deniedScopes...)
+
+	record.GrantedScopes = newGranted
+	record.DeniedScopes = newDenied
+}
+
+// GetConsentedScope removes the custom scopes the user has denied from the requested scope
+func GetConsentedScope(userObj *User, application *Application, scopeStr string) string {
+	record := getConsentRecord(userObj, application)
+	if record == nil || len(record.DeniedScopes) == 0 {
+		return scopeStr
+	}
+
+	customScopeSet := getCustomScopeSet(application)
+	deniedSet := map[string]bool{}
+	for _, scope := range record.DeniedScopes {
+		if customScopeSet[scope] {
+			deniedSet[scope] = true
+		}
+	}
+
+	scopes := parseScopes(scopeStr)
+	res := []string{}
+	for _, scope := range scopes {
+		if !deniedSet[scope] {
+			res = append(res, scope)
+		}
+	}
+	if len(res) == len(scopes) {
+		return scopeStr
+	}
+	return strings.Join(res, " ")
 }
 
 func validateCustomScopes(customScopes []*ScopeDescription, lang string) error {

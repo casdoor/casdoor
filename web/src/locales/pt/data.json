@@ -251,6 +251,7 @@
     "Consents": "Consentimentos",
     "Consents - Tooltip": "Lista de registros de consentimento do usuário mostrando quais aplicações tiveram acesso concedido",
     "Granted scopes": "Escopos concedidos",
+    "New": "Novo",
     "This application is requesting": "Este aplicativo está solicitando",
     "This scope is not defined in the application": "Este escopo não está definido no aplicativo",
     "wants to access your account": "quer acessar sua conta"

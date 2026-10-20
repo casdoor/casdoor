@@ -251,6 +251,7 @@
     "Consents": "Згоди",
     "Consents - Tooltip": "Список записів згоди користувача, що показує, яким застосункам було надано доступ",
     "Granted scopes": "Надані області",
+    "New": "Новий",
     "This application is requesting": "Цей застосунок запитує",
     "This scope is not defined in the application": "Ця область не визначена в застосунку",
     "wants to access your account": "хоче отримати доступ до вашого облікового запису"

@@ -251,6 +251,7 @@
     "Consents": "Consents",
     "Consents - Tooltip": "List of user consent records showing which applications have been granted access",
     "Granted scopes": "Granted scopes",
+    "New": "New",
     "This application is requesting": "This application is requesting",
     "This scope is not defined in the application": "This scope is not defined in the application",
     "wants to access your account": "wants to access your account"

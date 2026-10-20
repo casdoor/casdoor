@@ -251,6 +251,7 @@
     "Consents": "Đồng ý",
     "Consents - Tooltip": "Danh sách bản ghi đồng ý của người dùng cho thấy ứng dụng nào đã được cấp quyền truy cập",
     "Granted scopes": "Phạm vi đã cấp",
+    "New": "Mới",
     "This application is requesting": "Ứng dụng này đang yêu cầu",
     "This scope is not defined in the application": "Phạm vi này chưa được định nghĩa trong ứng dụng",
     "wants to access your account": "muốn truy cập tài khoản của bạn"

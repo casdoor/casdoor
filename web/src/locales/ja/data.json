@@ -251,6 +251,7 @@
     "Consents": "同意情報",
     "Consents - Tooltip": "アプリケーションへのアクセスを許可したユーザーの同意記録一覧",
     "Granted scopes": "許可されたスコープ",
+    "New": "新規",
     "This application is requesting": "このアプリケーションが要求しています",
     "This scope is not defined in the application": "このスコープはアプリケーションで定義されていません",
     "wants to access your account": "があなたのアカウントへのアクセスを要求しています"

@@ -493,6 +493,8 @@ func GetOAuthCode(userId string, clientId string, provider string, signinMethod 
 		}, nil
 	}
 
+	scope = GetConsentedScope(user, application, scope)
+
 	// Expand regex/wildcard scopes to concrete scope names.
 	expandedScope, ok := IsScopeValidAndExpand(scope, application)
 	if !ok {
