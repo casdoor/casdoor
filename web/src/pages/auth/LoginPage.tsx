@@ -289,7 +289,10 @@ export default function LoginPage({type = "login", application: applicationProp,
   const [application, setApplication] = React.useState<any>(undefined);
   const [msg, setMsg] = React.useState<string | null>(null);
   const [loginMethod, setLoginMethod] = React.useState<LoginMethod | undefined>(undefined);
-  const [username, setUsername] = React.useState("");
+  const [username, setUsername] = React.useState(() => {
+    const query = new URLSearchParams(location.search);
+    return query.get("username") || query.get("login_hint") || "";
+  });
   const [countryCode, setCountryCode] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [code, setCode] = React.useState("");
