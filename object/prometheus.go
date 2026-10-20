@@ -67,6 +67,11 @@ var (
 		Name: "casdoor_total_throughput",
 		Help: "The total throughput of casdoor",
 	})
+
+	LoginCounter = promauto.NewCounterVec(prometheus.CounterOpts{
+		Name: "casdoor_login_total",
+		Help: "The number of sign-in attempts by result",
+	}, []string{"organization", "application", "result"})
 )
 
 func ClearThroughputPerSecond() {
