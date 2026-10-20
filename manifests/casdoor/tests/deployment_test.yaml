@@ -60,3 +60,20 @@ tests:
               items:
                 - key: init_data.yaml
                   path: init_data.yaml
+  - it: lets the probes be tuned or turned off
+    set:
+      probe.liveness.enabled: false
+      probe.startup.failureThreshold: 60
+      probe.readiness.timeoutSeconds: 2
+    asserts:
+      - notExists:
+          path: spec.template.spec.containers[0].livenessProbe
+      - equal:
+          path: spec.template.spec.containers[0].startupProbe.failureThreshold
+          value: 60
+      - equal:
+          path: spec.template.spec.containers[0].readinessProbe.timeoutSeconds
+          value: 2
+      - equal:
+          path: spec.template.spec.containers[0].readinessProbe.httpGet.path
+          value: /api/health
