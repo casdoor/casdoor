@@ -535,6 +535,13 @@ func AddApplication(application *Application, lang string) (bool, error) {
 
 		application.TokenFields = tokenFields
 	}
+	if application.ExpireInHours == 0 {
+		expireInHours, refreshExpireInHours, _ := getDcrTokenLifetimes(nil)
+		application.ExpireInHours = expireInHours
+		if application.RefreshExpireInHours == 0 {
+			application.RefreshExpireInHours = refreshExpireInHours
+		}
+	}
 
 	app, err := GetApplicationByClientId(application.ClientId)
 	if err != nil {
