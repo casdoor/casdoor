@@ -34,6 +34,28 @@ export function getVersionInfo() {
   }).then(res => res.json());
 }
 
+export function getUpgradeInfo() {
+  return fetch(`${Setting.ServerUrl}/api/get-upgrade-info`, {
+    method: "GET",
+    credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}
+
+export function upgradeSystem(version: string) {
+  return fetch(`${Setting.ServerUrl}/api/upgrade-system`, {
+    method: "POST",
+    credentials: "include",
+    body: JSON.stringify({version}),
+    headers: {
+      "Content-Type": "application/json",
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}
+
 export function getPrometheusInfo() {
   return fetch(`${Setting.ServerUrl}/api/get-prometheus-info `, {
     method: "GET",

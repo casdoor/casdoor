@@ -26,6 +26,8 @@ builds:
     goarch:
       - amd64
       - arm64
+    ldflags:
+      - -s -w -X github.com/casdoor/casdoor/util.BuildType=release
 
 archives:
   - format: tar.gz
