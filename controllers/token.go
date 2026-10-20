@@ -17,6 +17,7 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
 	"time"
 
 	"github.com/beego/beego/v2/core/utils/pagination"
@@ -469,6 +470,64 @@ func (c *ApiController) RefreshToken() {
 	c.ServeJSON()
 }
 
+// RevokeToken
+// @Title RevokeToken
+// @Tag Login API
+// @Description revoke an OAuth access token or refresh token (RFC 7009), revoking a refresh token also revokes its access tokens
+// @Param   token     formData    string  true        "access_token's value or refresh_token's value"
+// @Param   token_type_hint     formData    string  false        "the token type access_token or refresh_token"
+// @Param   client_id     formData    string  false        "OAuth client id"
+// @Param   client_secret     formData    string  false        "OAuth client secret"
+// @Success 200 The token has been revoked or is unknown
+// @Success 400 {object} object.TokenError The Response object
+// @Success 401 {object} object.TokenError The Response object
+// @router /login/oauth/revoke [post]
+func (c *ApiController) RevokeToken() {
+	c.Ctx.Output.Header("Cache-Control", "no-store")
+	c.Ctx.Output.Header("Pragma", "no-cache")
+
+	tokenValue := c.Ctx.Input.Query("token")
+	tokenTypeHint := c.Ctx.Input.Query("token_type_hint")
+	clientId := c.Ctx.Input.Query("client_id")
+	clientSecret := c.Ctx.Input.Query("client_secret")
+	if clientId == "" && clientSecret == "" {
+		clientId, clientSecret, _ = c.Ctx.Request.BasicAuth()
+	}
+
+	if clientId == "" {
+		c.ResponseTokenError(object.InvalidClient, "client_id is required")
+		return
+	}
+
+	application, err := object.GetApplicationByClientId(clientId)
+	if err != nil {
+		c.ResponseTokenError(object.InvalidClient, err.Error())
+		return
+	}
+	if application == nil || (clientSecret != "" && application.ClientSecret != clientSecret) {
+		c.ResponseTokenError(object.InvalidClient, c.T("token:Invalid application or wrong clientSecret"))
+		return
+	}
+
+	if tokenValue == "" {
+		c.ResponseTokenError(object.InvalidRequest, "token is required")
+		return
+	}
+
+	tokenError, err := object.RevokeToken(application, clientSecret, tokenValue, tokenTypeHint)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	if tokenError != nil {
+		c.ResponseTokenError(tokenError.Error, tokenError.ErrorDescription)
+		return
+	}
+
+	c.Ctx.Output.SetStatus(http.StatusOK)
+	c.Ctx.Output.Body([]byte{})
+}
+
 func (c *ApiController) ResponseTokenError(errorMsg string, errorDescription string) {
 	c.Data["json"] = &object.TokenError{
 		Error:            errorMsg,
@@ -595,9 +654,6 @@ func (c *ApiController) IntrospectToken() {
 	if application.TokenFormat == "JWT-Standard" {
 		jwtToken, err := object.ParseStandardJwtTokenByApplication(tokenValue, application)
 		if err != nil {
-			// and token revoked case. but we not implement
-			// TODO: 2022-03-03 add token revoked check, when we implemented the Token Revocation(rfc7009) Specs.
-			// refs: https://tools.ietf.org/html/rfc7009
 			respondWithInactiveToken()
 			return
 		}
@@ -618,9 +674,6 @@ func (c *ApiController) IntrospectToken() {
 	} else {
 		jwtToken, err := object.ParseJwtTokenByApplication(tokenValue, application)
 		if err != nil {
-			// and token revoked case. but we not implement
-			// TODO: 2022-03-03 add token revoked check, when we implemented the Token Revocation(rfc7009) Specs.
-			// refs: https://tools.ietf.org/html/rfc7009
 			respondWithInactiveToken()
 			return
 		}

@@ -361,6 +361,45 @@ func ExpireToken(token *Token) (bool, error) {
 	return affected != 0, nil
 }
 
+// RevokeToken expires the client's access or refresh token (RFC 7009), an unknown token or one of another client is left alone
+func RevokeToken(application *Application, clientSecret string, tokenValue string, tokenTypeHint string) (*TokenError, error) {
+	getters := []func(string) (*Token, error){GetTokenByAccessToken, GetTokenByRefreshToken}
+	if tokenTypeHint == "refresh_token" {
+		getters = []func(string) (*Token, error){GetTokenByRefreshToken, GetTokenByAccessToken}
+	}
+
+	var token *Token
+	for _, getter := range getters {
+		var err error
+		token, err = getter(tokenValue)
+		if err != nil {
+			return nil, err
+		}
+		if token != nil {
+			break
+		}
+	}
+
+	if token == nil || token.Owner != application.Owner || token.Application != application.Name {
+		return nil, nil
+	}
+
+	isClientAuthenticated := util.InSlice(clientAuthenticatedGrantTypes, token.GrantType) || token.GrantType == "client_credentials"
+	if clientSecret == "" && isClientAuthenticated && token.CodeChallenge == "" {
+		return &TokenError{
+			Error:            InvalidClient,
+			ErrorDescription: "client_secret is required",
+		}, nil
+	}
+
+	if token.ExpiresIn <= 0 {
+		return nil, nil
+	}
+
+	_, err := ExpireToken(token)
+	return nil, err
+}
+
 func CheckOAuthLogin(clientId string, organization string, responseType string, redirectUri string, scope string, state string, nonce string, lang string) (string, *Application, error) {
 	rt, ok := ParseResponseType(responseType)
 	if !ok {
