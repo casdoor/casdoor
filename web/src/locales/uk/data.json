@@ -156,6 +156,8 @@
     "Rule": "Правило",
     "SAML C14N10 prefix": "Префікс SAML C14N10",
     "SAML C14N10 prefix - Tooltip": "Префікс простору імен XML, що використовується в канонікалізації SAML C14N10 (наприклад, 'ds' для цифрових підписів XML)",
+    "SAML NameID template": "Шаблон SAML NameID",
+    "SAML NameID template - Tooltip": "Власне значення NameID. Заповнювачі: $user.name, $user.email, $user.emailLocalPart (до @), $user.emailDomain (після @), $user.id, $user.phone, $user.owner. Напр. $user.emailLocalPart.$user.emailDomain@tenant.com перетворює user@example.com на user.example.com@tenant.com. Порожнє: ім'я користувача або email, якщо ввімкнено \"Використовувати Email як NameID\"",
     "SAML hash algorithm": "Хеш-алгоритм SAML",
     "SAML hash algorithm - Tooltip": "Хеш-алгоритм для підпису SAML",
     "SAML metadata": "Метадані SAML",

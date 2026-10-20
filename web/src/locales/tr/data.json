@@ -156,6 +156,8 @@
     "Rule": "Kural",
     "SAML C14N10 prefix": "SAML C14N10 ön eki",
     "SAML C14N10 prefix - Tooltip": "SAML C14N10 kanonizasyonunda kullanılan XML ad alanı ön eki (ör. XML dijital imzaları için 'ds')",
+    "SAML NameID template": "SAML NameID şablonu",
+    "SAML NameID template - Tooltip": "Özel NameID değeri. Yer tutucular: $user.name, $user.email, $user.emailLocalPart (@ öncesi), $user.emailDomain (@ sonrası), $user.id, $user.phone, $user.owner. Örn. $user.emailLocalPart.$user.emailDomain@tenant.com, user@example.com adresini user.example.com@tenant.com yapar. Boşsa kullanıcı adı, \"NameID olarak E-posta kullan\" açıksa e-posta kullanılır",
     "SAML hash algorithm": "SAML karma algoritması",
     "SAML hash algorithm - Tooltip": "SAML imzası için karma algoritması",
     "SAML metadata": "SAML meta verileri",

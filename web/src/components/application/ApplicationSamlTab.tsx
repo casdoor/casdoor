@@ -73,6 +73,13 @@ export function ApplicationSamlTab({
           onCheckedChange={(v) => updateField("useEmailAsSamlNameId", v)}
         />
       </FormRow>
+      <FormRow labelKey="application:SAML NameID template">
+        <Input
+          value={application.samlNameIdTemplate ?? ""}
+          placeholder="$user.emailLocalPart.$user.emailDomain@example.com"
+          onChange={(e) => updateField("samlNameIdTemplate", e.target.value)}
+        />
+      </FormRow>
       <FormRow labelKey="application:Enable SAML POST binding">
         <Switch
           checked={!!application.enableSamlPostBinding}

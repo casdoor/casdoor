@@ -156,6 +156,8 @@
     "Rule": "Quy tắc",
     "SAML C14N10 prefix": "Tiền tố SAML C14N10",
     "SAML C14N10 prefix - Tooltip": "Tiền tố không gian tên XML được sử dụng trong chuẩn hóa SAML C14N10 (ví dụ: 'ds' cho chữ ký số XML)",
+    "SAML NameID template": "Mẫu NameID SAML",
+    "SAML NameID template - Tooltip": "Giá trị NameID tùy chỉnh. Biến: $user.name, $user.email, $user.emailLocalPart (trước @), $user.emailDomain (sau @), $user.id, $user.phone, $user.owner. Ví dụ $user.emailLocalPart.$user.emailDomain@tenant.com biến user@example.com thành user.example.com@tenant.com. Để trống sẽ dùng tên người dùng, hoặc email nếu bật \"Sử dụng Email làm NameID\"",
     "SAML hash algorithm": "Thuật toán hash SAML",
     "SAML hash algorithm - Tooltip": "Thuật toán hash cho chữ ký SAML - Gợi ý",
     "SAML metadata": "SAML metadata: Siêu dữ liệu SAML",

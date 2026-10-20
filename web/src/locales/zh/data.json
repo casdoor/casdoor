@@ -156,6 +156,8 @@
     "Rule": "规则",
     "SAML C14N10 prefix": "SAML C14N10前缀",
     "SAML C14N10 prefix - Tooltip": "SAML C14N10规范化中使用的XML命名空间前缀（例如，'ds'用于XML数字签名）",
+    "SAML NameID template": "SAML NameID模板",
+    "SAML NameID template - Tooltip": "自定义NameID的值，可用占位符：$user.name、$user.email、$user.emailLocalPart（@前面的部分）、$user.emailDomain（@后面的部分）、$user.id、$user.phone、$user.owner。例如 $user.emailLocalPart.$user.emailDomain@tenant.com 会把 user@example.com 变成 user.example.com@tenant.com。留空则用用户名，开启“使用邮箱作为NameID”时用邮箱",
     "SAML hash algorithm": "SAML哈希算法",
     "SAML hash algorithm - Tooltip": "SAML签名使用的哈希算法",
     "SAML metadata": "SAML元数据",
