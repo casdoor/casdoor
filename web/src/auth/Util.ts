@@ -171,6 +171,36 @@ export function sendOAuthResponse(oAuthParams: any, payload: Record<string, stri
   Setting.goToLink(`${oAuthParams.redirectUri}${concatChar}${new URLSearchParams(payload)}`);
 }
 
+/**
+ * What the implicit and hybrid flows send back from a sign-in: a hybrid flow has the code in data
+ * and the access token in data2, an implicit flow has the access token in data, both have the ID
+ * token in data3.
+ */
+export function getTokenResponsePayload(responseType: string, res: any): Record<string, string> {
+  const responseTypes = responseType.split(" ");
+  const payload: Record<string, string> = {};
+  if (responseTypes.includes("code")) {
+    payload.code = res.data;
+  }
+  if (responseTypes.includes("token")) {
+    payload.access_token = responseTypes.includes("code") ? res.data2 : res.data;
+    payload.token_type = "Bearer";
+  }
+  if (responseTypes.includes("id_token")) {
+    payload.id_token = res.data3;
+  }
+  return payload;
+}
+
+/** The prompt page hands the code over itself, so it gets what sendOAuthResponse needs. */
+export function getPromptLink(applicationName: string, oAuthParams: any, code: string): string {
+  const query = new URLSearchParams({redirectUri: oAuthParams.redirectUri, code: code, state: oAuthParams.state ?? ""});
+  if (oAuthParams.responseMode) {
+    query.set("responseMode", oAuthParams.responseMode);
+  }
+  return `/prompt/${applicationName}?${query}`;
+}
+
 export function getStateFromQueryParams(applicationName, providerName, method, isShortState) {
   let query = window.location.search;
   query = `${query}&application=${encodeURIComponent(applicationName)}&provider=${encodeURIComponent(providerName)}&method=${method}`;
