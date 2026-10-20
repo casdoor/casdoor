@@ -293,19 +293,21 @@ jobs:
           # needs the full history and the tags, not the default shallow clone.
           fetch-depth: 0
 
-      # Registry versions keep the historical, un-prefixed form: tag `v1.2.3`
-      # publishes `1.2.3`. `latest` is skipped for pre-release tags such as
+      # Tag `v1.2.3` publishes images `1.2.3`, `v1.2.3`, `1.2`, `1` and `latest`.
+      # Pre-release tags such as `v1.2.3-beta.1` only publish `1.2.3-beta.1` and
       # `v1.2.3-beta.1`.
       - name: Resolve the released version
         id: version
         run: |
           version=${GITHUB_REF_NAME#v}
           echo "version=$version" >> $GITHUB_OUTPUT
-          if [[ "$version" == *-* ]]; then
-            echo "prerelease=true" >> $GITHUB_OUTPUT
-          else
-            echo "prerelease=false" >> $GITHUB_OUTPUT
-          fi
+          for image in casdoor casdoor-all-in-one; do
+            tags="casbin/$image:$version,casbin/$image:v$version"
+            if [[ "$version" != *-* ]]; then
+              tags="$tags,casbin/$image:${version%.*},casbin/$image:${version%%.*},casbin/$image:latest"
+            fi
+            echo "$image=$tags" >> $GITHUB_OUTPUT
+          done
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -329,9 +331,7 @@ jobs:
           target: STANDARD
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: |
-            casbin/casdoor:${{ steps.version.outputs.version }}
-            ${{ steps.version.outputs.prerelease == 'false' && 'casbin/casdoor:latest' || '' }}
+          tags: ${{ steps.version.outputs.casdoor }}
 
       - name: Push All In One Version to Docker Hub
         uses: docker/build-push-action@v3
@@ -340,9 +340,7 @@ jobs:
           target: ALLINONE
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: |
-            casbin/casdoor-all-in-one:${{ steps.version.outputs.version }}
-            ${{ steps.version.outputs.prerelease == 'false' && 'casbin/casdoor-all-in-one:latest' || '' }}
+          tags: ${{ steps.version.outputs['casdoor-all-in-one'] }}
 
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v1
