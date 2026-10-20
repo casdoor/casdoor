@@ -361,13 +361,13 @@ func ExpireToken(token *Token) (bool, error) {
 	return affected != 0, nil
 }
 
-func CheckOAuthLogin(clientId string, responseType string, redirectUri string, scope string, state string, nonce string, lang string) (string, *Application, error) {
+func CheckOAuthLogin(clientId string, organization string, responseType string, redirectUri string, scope string, state string, nonce string, lang string) (string, *Application, error) {
 	rt, ok := ParseResponseType(responseType)
 	if !ok {
 		return fmt.Sprintf(i18n.Translate(lang, "token:Grant_type: %s is not supported in this application"), responseType), nil, nil
 	}
 
-	application, err := GetApplicationByClientIdMetadata(clientId, lang)
+	application, err := GetApplicationByClientIdMetadata(clientId, organization, lang)
 	if err != nil {
 		return "", nil, err
 	}
@@ -431,7 +431,7 @@ func GetOAuthCode(userId string, clientId string, provider string, signinMethod 
 		}, nil
 	}
 
-	msg, application, err := CheckOAuthLogin(clientId, responseType, redirectUri, scope, state, nonce, lang)
+	msg, application, err := CheckOAuthLogin(clientId, "", responseType, redirectUri, scope, state, nonce, lang)
 	if err != nil {
 		return nil, err
 	}

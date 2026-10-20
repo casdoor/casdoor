@@ -69,9 +69,13 @@ func IsClientIdMetadataUrl(clientId string) bool {
 }
 
 // IsClientIdMetadataDocumentSupported reports whether URL client_ids are accepted, which follows
-// the dynamic client registration switch of the organization they are added to
-func IsClientIdMetadataDocumentSupported() bool {
-	org, err := GetOrganization(util.GetId("admin", cimdOrganization))
+// the dynamic client registration switch of the organization they are added to (built-in by default)
+func IsClientIdMetadataDocumentSupported(organization string) bool {
+	if organization == "" {
+		organization = cimdOrganization
+	}
+
+	org, err := GetOrganization(util.GetId("admin", organization))
 	if err != nil || org == nil {
 		return false
 	}
@@ -80,8 +84,9 @@ func IsClientIdMetadataDocumentSupported() bool {
 
 // GetApplicationByClientIdMetadata returns the application of a client_id. When the client_id is the URL
 // of a client ID metadata document, the document is fetched and kept as an application tagged "cimd",
-// fetched again once it is older than cimdRefreshInterval.
-func GetApplicationByClientIdMetadata(clientId string, lang string) (*Application, error) {
+// fetched again once it is older than cimdRefreshInterval. A new application is added to the organization
+// passed in (built-in by default), an existing one stays in its own organization.
+func GetApplicationByClientIdMetadata(clientId string, organization string, lang string) (*Application, error) {
 	if !IsClientIdMetadataUrl(clientId) {
 		return GetApplicationByClientId(clientId)
 	}
@@ -97,8 +102,13 @@ func GetApplicationByClientIdMetadata(clientId string, lang string) (*Applicatio
 		return application, nil
 	}
 
-	if !IsClientIdMetadataDocumentSupported() {
-		return nil, fmt.Errorf("client ID metadata documents are not accepted, enable dynamic client registration of the organization: %s first", cimdOrganization)
+	if application != nil {
+		organization = application.Organization
+	} else if organization == "" {
+		organization = cimdOrganization
+	}
+	if !IsClientIdMetadataDocumentSupported(organization) {
+		return nil, fmt.Errorf("client ID metadata documents are not accepted, enable dynamic client registration of the organization: %s first", organization)
 	}
 
 	if application != nil && time.Since(cimdFetchedAt[clientId]) < cimdRefreshInterval {
@@ -122,7 +132,7 @@ func GetApplicationByClientIdMetadata(clientId string, lang string) (*Applicatio
 	}
 
 	if application == nil {
-		org, err := GetOrganization(util.GetId("admin", cimdOrganization))
+		org, err := GetOrganization(util.GetId("admin", organization))
 		if err != nil {
 			return nil, err
 		}

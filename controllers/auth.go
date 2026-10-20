@@ -459,6 +459,7 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 // @Param   redirectUri    query    string  true        "redirect uri"
 // @Param   scope    query    string  true        "scope"
 // @Param   state    query    string  true        "state"
+// @Param   organization    query    string  false        "The organization a client ID metadata document client is added to (defaults to built-in)"
 // @Success 200 {object} controllers.Response The Response object
 // @router /get-app-login [get]
 func (c *ApiController) GetApplicationLogin() {
@@ -471,12 +472,13 @@ func (c *ApiController) GetApplicationLogin() {
 	id := c.Ctx.Input.Query("id")
 	loginType := c.Ctx.Input.Query("type")
 	userCode := c.Ctx.Input.Query("userCode")
+	organization := c.Ctx.Input.Query("organization")
 
 	var application *object.Application
 	var msg string
 	var err error
 	if loginType == "code" {
-		msg, application, err = object.CheckOAuthLogin(clientId, responseType, redirectUri, scope, state, nonce, c.GetAcceptLanguage())
+		msg, application, err = object.CheckOAuthLogin(clientId, organization, responseType, redirectUri, scope, state, nonce, c.GetAcceptLanguage())
 		if err != nil {
 			c.ResponseError(err.Error())
 			return

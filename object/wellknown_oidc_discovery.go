@@ -139,6 +139,8 @@ func GetOidcDiscovery(host string, applicationName string) OidcDiscovery {
 	scopes := []string{"openid", "email", "profile", "address", "phone", "offline_access"}
 
 	registrationEndpoint := fmt.Sprintf("%s/api/oauth/register", originBackend)
+	authorizationEndpoint := fmt.Sprintf("%s/login/oauth/authorize", originFrontend)
+	cimdOrg := ""
 
 	// Merge application-specific custom scopes if application is provided
 	if applicationName != "" {
@@ -154,6 +156,11 @@ func GetOidcDiscovery(host string, applicationName string) OidcDiscovery {
 
 			if application.Organization != "" {
 				registrationEndpoint = fmt.Sprintf("%s?organization=%s", registrationEndpoint, url.QueryEscape(application.Organization))
+				cimdOrg = application.Organization
+				// Tells URL client_ids which organization to be added to, as registrationEndpoint does for DCR
+				if cimdOrg != cimdOrganization && IsClientIdMetadataDocumentSupported(cimdOrg) {
+					authorizationEndpoint = fmt.Sprintf("%s?organization=%s", authorizationEndpoint, url.QueryEscape(cimdOrg))
+				}
 			}
 		}
 	}
@@ -165,7 +172,7 @@ func GetOidcDiscovery(host string, applicationName string) OidcDiscovery {
 	// https://access.line.me/.well-known/openid-configuration
 	oidcDiscovery := OidcDiscovery{
 		Issuer:                                     issuer,
-		AuthorizationEndpoint:                      fmt.Sprintf("%s/login/oauth/authorize", originFrontend),
+		AuthorizationEndpoint:                      authorizationEndpoint,
 		TokenEndpoint:                              fmt.Sprintf("%s/api/login/oauth/access_token", originBackend),
 		TokenEndpointAuthMethodsSupported:          []string{"client_secret_basic", "client_secret_post", "private_key_jwt", "none"},
 		UserinfoEndpoint:                           fmt.Sprintf("%s/api/userinfo", originBackend),
@@ -188,7 +195,7 @@ func GetOidcDiscovery(host string, applicationName string) OidcDiscovery {
 		BackchannelLogoutSessionSupported:          true,
 		DPoPSigningAlgValuesSupported:              []string{"RS256", "RS512", "ES256", "ES384", "ES512", "PS256", "PS384", "PS512"},
 		AuthorizationResponseIssParameterSupported: true,
-		ClientIdMetadataDocumentSupported:          IsClientIdMetadataDocumentSupported(),
+		ClientIdMetadataDocumentSupported:          IsClientIdMetadataDocumentSupported(cimdOrg),
 	}
 
 	return oidcDiscovery

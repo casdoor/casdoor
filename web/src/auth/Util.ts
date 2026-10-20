@@ -120,6 +120,7 @@ export function getOAuthGetParameters(params?: any): any {
   const resource = getRefinedValue(queries.get("resource"));
   const prompt = getRefinedValue(queries.get("prompt"));
   const maxAge = getRefinedValue(queries.get("max_age"));
+  const organization = getRefinedValue(queries.get("organization"));
 
   if (clientId === "" && samlRequest === "") {
     // login
@@ -142,6 +143,7 @@ export function getOAuthGetParameters(params?: any): any {
       resource: resource,
       prompt: prompt,
       maxAge: maxAge,
+      organization: organization,
       type: "code",
     };
   }
