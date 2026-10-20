@@ -152,6 +152,11 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
 
   const isAdmin = Setting.isLocalAdminUser(account);
   const isSelf = account?.owner === user.owner && account?.name === user.name;
+  // only offer the methods in the MFA items, an enabled one stays so it can still be edited or disabled
+  const allowedMfaTypes = Setting.getAllowedMfaTypes(user, organization);
+  const visibleMfaItems = mfaItems.filter(
+    (item: any) => item.enabled || allowedMfaTypes.length === 0 || allowedMfaTypes.includes(item.mfaType),
+  );
 
   const save = async(exitAfterSave: boolean) => {
     const isAdd = mode === "add";
@@ -982,12 +987,12 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
       <AccountItemRow name="Multi-factor authentication" labelKey="mfa:Multi-factor authentication" block>
         <div className="space-y-2">
           <div className="divide-y rounded-lg border">
-            {mfaItems.length === 0 ? (
+            {visibleMfaItems.length === 0 ? (
               <div className="p-4 text-center text-sm text-muted-foreground">
                 {i18next.t("general:No data")}
               </div>
             ) : (
-              mfaItems.map((item: any) => (
+              visibleMfaItems.map((item: any) => (
                 <div key={item.mfaType} className="flex flex-wrap items-center gap-2 p-3">
                   <span className="text-sm font-medium">{item.mfaType}</span>
                   {item.secret ? (

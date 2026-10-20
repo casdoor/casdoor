@@ -1157,6 +1157,15 @@ export function isRequiredEnableMfa(user, organization) {
   return getMfaItemsByRules(user, organization, [MfaRuleRequired]).length > 0;
 }
 
+/** The MFA types the user may set up: the user's own MFA items, else the organization's. An empty list allows all types. */
+export function getAllowedMfaTypes(user, organization): string[] {
+  let mfaItems = organization?.mfaItems ?? [];
+  if (user?.mfaItems && user.mfaItems.length !== 0) {
+    mfaItems = user.mfaItems;
+  }
+  return (mfaItems ?? []).map((mfaItem) => mfaItem.name);
+}
+
 export function getMfaItemsByRules(user, organization, mfaRules = []) {
   if (!user || !organization || (!organization.mfaItems && !user.mfaItems)) {
     return [];

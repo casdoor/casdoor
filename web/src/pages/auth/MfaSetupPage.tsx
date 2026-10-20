@@ -55,7 +55,11 @@ export default function MfaSetupPage() {
   // A "RequiredMfa" sign-in lands here without a "mfaType", so fall back to the
   // required factor: plain SMS would ask for a phone code the organization never asked for.
   const [mfaType, setMfaType] = React.useState(
-    () => searchParams.get("mfaType") ?? getRequiredMfaType(account) ?? SmsMfaType,
+    () =>
+      searchParams.get("mfaType") ??
+      getRequiredMfaType(account) ??
+      Setting.getAllowedMfaTypes(account, account?.organization)[0] ??
+      SmsMfaType,
   );
   const [application, setApplication] = React.useState<any>(undefined);
   const [applicationError, setApplicationError] = React.useState<string | null>(null);
@@ -101,7 +105,7 @@ export default function MfaSetupPage() {
         if (res.status === "ok") {
           setMfaProps(res.data);
         } else {
-          Setting.showMessage("error", i18next.t("mfa:Failed to initiate MFA"));
+          Setting.showMessage("error", `${i18next.t("mfa:Failed to initiate MFA")}: ${res.msg}`);
         }
       })
       .finally(() => setInitiating(false));
@@ -128,6 +132,8 @@ export default function MfaSetupPage() {
   if (application === undefined) {
     return <Loading />;
   }
+
+  const allowedMfaTypes = Setting.getAllowedMfaTypes(account, account.organization);
 
   const switchMfaType = (next: string) => {
     setMfaType(next);
@@ -176,7 +182,9 @@ export default function MfaSetupPage() {
           />
           {!cameFromLogin ? (
             <div className="flex flex-wrap justify-center gap-1">
-              {MFA_TYPE_LABELS.filter((item) => item.type !== mfaType).map((item) => (
+              {MFA_TYPE_LABELS.filter(
+                (item) => item.type !== mfaType && (allowedMfaTypes.length === 0 || allowedMfaTypes.includes(item.type)),
+              ).map((item) => (
                 <Button key={item.type} variant="link" size="sm" onClick={() => switchMfaType(item.type)}>
                   {i18next.t(item.labelKey)}
                 </Button>

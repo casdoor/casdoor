@@ -15,6 +15,7 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/casdoor/casdoor/object"
@@ -61,6 +62,11 @@ func (c *ApiController) MfaSetupInitiate() {
 	organization, err := object.GetOrganizationByUser(user)
 	if err != nil {
 		c.ResponseError(err.Error())
+		return
+	}
+
+	if !object.IsMfaTypeAllowed(organization, user, mfaType) {
+		c.ResponseError(fmt.Sprintf("the MFA type: %s is not allowed by the MFA items", mfaType))
 		return
 	}
 
@@ -299,6 +305,17 @@ func (c *ApiController) MfaSetupEnable() {
 	mfaUtil := object.GetMfaUtil(mfaType, config)
 	if mfaUtil == nil {
 		c.ResponseError("Invalid multi-factor authentication type")
+		return
+	}
+
+	organization, err := object.GetOrganizationByUser(user)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	if !object.IsMfaTypeAllowed(organization, user, mfaType) {
+		c.ResponseError(fmt.Sprintf("the MFA type: %s is not allowed by the MFA items", mfaType))
 		return
 	}
 
