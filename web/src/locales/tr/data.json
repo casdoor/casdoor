@@ -787,11 +787,15 @@
     "Update available": "Güncelleme var"
   },
   "invitation": {
+    "1 day": "1 gün",
+    "30 days": "30 gün",
+    "7 days": "7 gün",
     "Code": "Kod",
     "Code - Tooltip": "Kod",
     "Default code": "Varsayılan kod",
     "Default code - Tooltip": "Davet kodu bir düzenli ifade ise, lütfen düzenli ifade kuralına uyan davet kodunu varsayılan davet bağlantısı için davet kodu olarak girin",
     "Edit Invitation": "Daveti Düzenle",
+    "Never": "Asla",
     "New Invitation": "Yeni Davet",
     "Quota": "Kota",
     "Quota - Tooltip": "Kota",

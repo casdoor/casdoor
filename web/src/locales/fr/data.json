@@ -787,11 +787,15 @@
     "Update available": "Mise à jour disponible"
   },
   "invitation": {
+    "1 day": "1 jour",
+    "30 days": "30 jours",
+    "7 days": "7 jours",
     "Code": "Code d'invitation",
     "Code - Tooltip": "Code",
     "Default code": "Code par défaut",
     "Default code - Tooltip": "Lorsque le code d'invitation est une expression régulière, veuillez entrer le code d'invitation correspondant à la règle regex comme code d'invitation par défaut pour le lien d'invitation",
     "Edit Invitation": "Modifier l'invitation",
+    "Never": "Jamais",
     "New Invitation": "Nouvelle invitation",
     "Quota": "Quota d'invitation",
     "Quota - Tooltip": "Quota",

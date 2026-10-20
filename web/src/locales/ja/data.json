@@ -787,11 +787,15 @@
     "Update available": "更新があります"
   },
   "invitation": {
+    "1 day": "1 日",
+    "30 days": "30 日",
+    "7 days": "7 日",
     "Code": "コード",
     "Code - Tooltip": "コード",
     "Default code": "デフォルトコード",
     "Default code - Tooltip": "招待コードが正規表現の場合、正規表現ルールに一致する招待コードをデフォルトの招待コードとして入力してください",
     "Edit Invitation": "招待を編集",
+    "Never": "無期限",
     "New Invitation": "新しい招待",
     "Quota": "クォータ",
     "Quota - Tooltip": "割り当て",

@@ -1,12 +1,18 @@
+import dayjs from "dayjs";
 import i18next from "i18next";
 import {CrudListPage} from "@/components/crud/CrudListPage";
 import {dateColumn, linkColumn, organizationColumn, textColumn} from "@/components/crud/columns";
 import type {ColumnDef} from "@/components/crud/types";
-import {enumColumn, INVITATION_STATES} from "@/lib/enum-labels";
+import {EnumBadge, enumColumn, INVITATION_STATES, type EnumMap} from "@/lib/enum-labels";
 import {useAccount} from "@/hooks/use-account";
 import {useOrganizationFilter} from "@/hooks/use-organization";
 import * as InvitationBackend from "@/backend/InvitationBackend";
 import {newInvitation} from "@/pages/defaults";
+
+const INVITATION_DISPLAY_STATES: EnumMap = {
+  ...INVITATION_STATES,
+  "Expired": {i18nKey: "subscription:Expired", variant: "destructive"},
+};
 
 export default function InvitationListPage() {
   const {account} = useAccount();
@@ -25,7 +31,13 @@ export default function InvitationListPage() {
     textColumn({dataIndex: "email", title: i18next.t("general:Email"), width: 170, searchable: true, link: (v) => `mailto:${v}`, linkExternal: true}),
     textColumn({dataIndex: "phone", title: i18next.t("general:Phone"), width: 130, searchable: true}),
     dateColumn("expireTime", i18next.t("general:Expire time")),
-    enumColumn({dataIndex: "state", title: i18next.t("general:State"), map: INVITATION_STATES}),
+    {
+      ...enumColumn({dataIndex: "state", title: i18next.t("general:State"), map: INVITATION_STATES}),
+      render: (value, r: any) => {
+        const expired = value === "Active" && r.expireTime && dayjs().isAfter(dayjs(r.expireTime));
+        return <EnumBadge map={INVITATION_DISPLAY_STATES} value={expired ? "Expired" : value} />;
+      },
+    },
   ];
 
   return (

@@ -787,11 +787,15 @@
     "Update available": "Update verfügbar"
   },
   "invitation": {
+    "1 day": "1 Tag",
+    "30 days": "30 Tage",
+    "7 days": "7 Tage",
     "Code": "Einladungscode",
     "Code - Tooltip": "Code",
     "Default code": "Standardcode",
     "Default code - Tooltip": "Wenn der Einladungscode ein regulärer Ausdruck ist, geben Sie bitte den Code ein, der der Regel entspricht, als Standard-Einladungscode für den Einladungslink ein.",
     "Edit Invitation": "Einladung bearbeiten",
+    "Never": "Nie",
     "New Invitation": "Neue Einladung",
     "Quota": "Kontingent",
     "Quota - Tooltip": "Kontingent",
