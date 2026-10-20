@@ -317,6 +317,8 @@ func InitAPI() {
 
 	web.Router("/api/get-system-info", &controllers.ApiController{}, "GET:GetSystemInfo")
 	web.Router("/api/get-version-info", &controllers.ApiController{}, "GET:GetVersionInfo")
+	web.Router("/api/get-setting", &controllers.ApiController{}, "GET:GetSetting")
+	web.Router("/api/update-setting", &controllers.ApiController{}, "POST:UpdateSetting")
 	web.Router("/api/health", &controllers.ApiController{}, "GET:Health")
 	web.Router("/api/get-prometheus-info", &controllers.ApiController{}, "GET:GetPrometheusInfo")
 	web.Router("/api/metrics", &controllers.ApiController{}, "GET:GetMetrics")

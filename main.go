@@ -56,6 +56,7 @@ func main() {
 	object.CreateTables()
 
 	object.InitDb()
+	object.InitSetting()
 
 	// Handle export command
 	if object.ShouldExportData() {

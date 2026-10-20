@@ -48,6 +48,7 @@ const RESOURCE_LABELS: Record<string, string> = {
   "subscriptions": "general:Subscriptions",
   "transactions": "general:Transactions",
   "sysinfo": "general:System Info",
+  "settings": "general:Global Settings",
   "forms": "general:Forms",
   "syncers": "general:Syncers",
   "webhooks": "general:Webhooks",

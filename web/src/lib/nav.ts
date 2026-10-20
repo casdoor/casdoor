@@ -145,7 +145,10 @@ export function getNavGroups(account: Account | null | undefined): NavGroup[] {
 
   const adminItems: NavItem[] = [];
   if (Setting.isAdminUser(account)) {
-    adminItems.push({key: "/sysinfo", label: i18next.t("general:System Info")});
+    adminItems.push(
+      {key: "/sysinfo", label: i18next.t("general:System Info")},
+      {key: "/settings", label: i18next.t("general:Global Settings")},
+    );
   }
   adminItems.push(
     {key: "/forms", label: i18next.t("general:Forms")},

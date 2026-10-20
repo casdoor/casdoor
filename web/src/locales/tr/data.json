@@ -494,6 +494,7 @@
     "GID number - Tooltip": "GID number - Tooltip",
     "General": "Genel",
     "Generate": "Oluştur",
+    "Global Settings": "Genel ayarlar",
     "Go to enable": "Etkinleştirmek için git",
     "Go to writable demo site?": "Yazılabilir demo sitesine gitmek ister misiniz?",
     "Groups": "Gruplar",
@@ -1480,6 +1481,15 @@
     "Production endpoint is empty": "Üretim uç noktası boş",
     "Scan server": "Tarama sunucusu",
     "Scanned hosts": "Taranan hostlar"
+  },
+  "setting": {
+    "Cannot be more than the max open connections": "Maks. açık bağlantı sayısından fazla olamaz",
+    "Connection max lifetime": "Bağlantı maks. ömrü",
+    "Connection max lifetime - Tooltip": "Bir bağlantının kapatılmadan önce yeniden kullanılabileceği en uzun süre, 0 sınırsız demektir",
+    "Max idle connections": "Maks. boşta bağlantı",
+    "Max idle connections - Tooltip": "Havuzda tutulan en fazla boşta bağlantı sayısı, 0 varsayılan değer olan 2 demektir",
+    "Max open connections": "Maks. açık bağlantı",
+    "Max open connections - Tooltip": "Veritabanına açık olabilecek en fazla bağlantı sayısı, 0 sınırsız demektir"
   },
   "signup": {
     "Accept": "Kabul Et",
