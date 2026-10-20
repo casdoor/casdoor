@@ -16,6 +16,7 @@ package object
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/casdoor/casdoor/util"
@@ -48,6 +49,13 @@ const (
 
 func (plan *Plan) GetId() string {
 	return fmt.Sprintf("%s/%s", plan.Owner, plan.Name)
+}
+
+func (plan *Plan) GetRoleId() string {
+	if plan.Role == "" || strings.Contains(plan.Role, "/") {
+		return plan.Role
+	}
+	return util.GetId(plan.Owner, plan.Role)
 }
 
 func getDuration(period string) (string, string, error) {
