@@ -153,11 +153,21 @@ export default function PromptPage({application: applicationProp}: {application?
   const defaultCountryCode = application?.organizationObj?.countryCodes?.[0] ?? "";
   const phoneCountryCode = user?.countryCode || defaultCountryCode;
   const hasPromptedProviders = (application?.providers ?? []).some((item: any) => Setting.isProviderPrompted(item));
+  // "Binding providers" only fits a page that asks for nothing but third-party accounts
+  const hasPromptedFields = promptedItems.some((item: any) => Setting.PromptedSignupItemFields[item.name] !== undefined) ||
+    Setting.isAffiliationPrompted(application);
 
   return (
     <AuthLayout preview={!!applicationProp} application={application}>
       <div className="space-y-5">
-        <h1 className="text-center text-lg font-semibold">{i18next.t("application:Binding providers")}</h1>
+        {hasPromptedFields ? (
+          <div className="space-y-1 text-center">
+            <h1 className="text-lg font-semibold">{i18next.t("application:Complete your account")}</h1>
+            <p className="text-sm text-muted-foreground">{i18next.t("application:Fill in the information below to continue")}</p>
+          </div>
+        ) : (
+          <h1 className="text-center text-lg font-semibold">{i18next.t("application:Binding providers")}</h1>
+        )}
 
         {hasPromptedProviders && user ? (
           <ThirdPartyLogins
