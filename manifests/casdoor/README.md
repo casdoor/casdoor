@@ -284,5 +284,19 @@ gatewayApi:
 
 | Parameter | Description | Default |
 |---|---|---|
+| `probe.path` | HTTP path requested by all probes | `/api/health` |
+| `probe.startup.enabled` | Enable startup probe, which holds off the other probes until Casdoor has started | `true` |
+| `probe.startup.initialDelaySeconds` | Seconds before the first startup check | `0` |
+| `probe.startup.periodSeconds` | Seconds between startup checks | `10` |
+| `probe.startup.timeoutSeconds` | Seconds before a startup check times out | `5` |
+| `probe.startup.failureThreshold` | Failed startup checks before the container is restarted (`30` x `10s` allows 5 minutes to start) | `30` |
 | `probe.readiness.enabled` | Enable readiness probe | `true` |
+| `probe.readiness.initialDelaySeconds` | Seconds before the first readiness check | `0` |
+| `probe.readiness.periodSeconds` | Seconds between readiness checks | `10` |
+| `probe.readiness.timeoutSeconds` | Seconds before a readiness check times out | `5` |
+| `probe.readiness.failureThreshold` | Failed readiness checks before the pod is taken out of the Service | `3` |
 | `probe.liveness.enabled` | Enable liveness probe | `true` |
+| `probe.liveness.initialDelaySeconds` | Seconds before the first liveness check | `0` |
+| `probe.liveness.periodSeconds` | Seconds between liveness checks | `10` |
+| `probe.liveness.timeoutSeconds` | Seconds before a liveness check times out | `5` |
+| `probe.liveness.failureThreshold` | Failed liveness checks before the container is restarted | `3` |

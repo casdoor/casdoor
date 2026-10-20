@@ -31,20 +31,36 @@ has extraVolume and extraVolumeMounts:
               image: casbin/casdoor:1.2.3
               imagePullPolicy: IfNotPresent
               livenessProbe:
+                failureThreshold: 3
                 httpGet:
-                  path: /
+                  path: /api/health
                   port: http
+                initialDelaySeconds: 0
+                periodSeconds: 10
+                timeoutSeconds: 5
               name: casdoor
               ports:
                 - containerPort: 8000
                   name: http
                   protocol: TCP
               readinessProbe:
+                failureThreshold: 3
                 httpGet:
-                  path: /
+                  path: /api/health
                   port: http
+                initialDelaySeconds: 0
+                periodSeconds: 10
+                timeoutSeconds: 5
               resources: {}
               securityContext: {}
+              startupProbe:
+                failureThreshold: 30
+                httpGet:
+                  path: /api/health
+                  port: http
+                initialDelaySeconds: 0
+                periodSeconds: 10
+                timeoutSeconds: 5
               volumeMounts:
                 - mountPath: /conf
                   name: config-volume
@@ -97,20 +113,36 @@ manifest should match snapshot:
               image: casbin/casdoor:1.2.3
               imagePullPolicy: IfNotPresent
               livenessProbe:
+                failureThreshold: 3
                 httpGet:
-                  path: /
+                  path: /api/health
                   port: http
+                initialDelaySeconds: 0
+                periodSeconds: 10
+                timeoutSeconds: 5
               name: casdoor
               ports:
                 - containerPort: 8000
                   name: http
                   protocol: TCP
               readinessProbe:
+                failureThreshold: 3
                 httpGet:
-                  path: /
+                  path: /api/health
                   port: http
+                initialDelaySeconds: 0
+                periodSeconds: 10
+                timeoutSeconds: 5
               resources: {}
               securityContext: {}
+              startupProbe:
+                failureThreshold: 30
+                httpGet:
+                  path: /api/health
+                  port: http
+                initialDelaySeconds: 0
+                periodSeconds: 10
+                timeoutSeconds: 5
               volumeMounts:
                 - mountPath: /conf
                   name: config-volume

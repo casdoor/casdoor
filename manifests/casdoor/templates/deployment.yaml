@@ -75,18 +75,20 @@ spec:
               containerPort: 10389
               protocol: TCP
             {{- end }}
-          {{ if .Values.probe.liveness.enabled }}
-          livenessProbe:
+          {{- range $name := list "startup" "liveness" "readiness" }}
+          {{- with index $.Values.probe $name }}
+          {{- if .enabled }}
+          {{ $name }}Probe:
             httpGet:
-              path: /
+              path: {{ $.Values.probe.path }}
               port: http
-          {{ end }}
-          {{ if .Values.probe.readiness.enabled }}
-          readinessProbe:
-            httpGet:
-              path: /
-              port: http
-          {{ end }}
+            initialDelaySeconds: {{ .initialDelaySeconds }}
+            periodSeconds: {{ .periodSeconds }}
+            timeoutSeconds: {{ .timeoutSeconds }}
+            failureThreshold: {{ .failureThreshold }}
+          {{- end }}
+          {{- end }}
+          {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:

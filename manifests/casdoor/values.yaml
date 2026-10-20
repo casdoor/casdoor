@@ -113,10 +113,28 @@ securityContext: {}
   # runAsUser: 1000
 
 probe:
+  # -- HTTP path the probes request, /api/health needs no sign-in and does not query the database
+  path: /api/health
+  # -- Holds off the liveness and readiness probes until Casdoor has started, which can take minutes on the
+  # first start (database migration) or on a busy node: up to failureThreshold * periodSeconds
+  startup:
+    enabled: true
+    initialDelaySeconds: 0
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 30
   readiness:
     enabled: true
+    initialDelaySeconds: 0
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
   liveness:
     enabled: true
+    initialDelaySeconds: 0
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
 
 service:
   type: ClusterIP
