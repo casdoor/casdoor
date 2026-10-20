@@ -17,6 +17,7 @@
 package util
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"path"
@@ -56,6 +57,9 @@ func TestGetNetworkUsage(t *testing.T) {
 
 func TestGetVersionInfo(t *testing.T) {
 	versionInfo, err := GetVersionInfo()
+	if errors.Is(err, git.ErrRepositoryNotExists) {
+		t.Skip("no git repository, keeping the version info in variable.go")
+	}
 	assert.NoError(t, err)
 	assert.NotNil(t, versionInfo)
 
