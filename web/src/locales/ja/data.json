@@ -1331,6 +1331,8 @@
     "Provider owner and name are required": "プロバイダーのオーナーと名前は必須です",
     "Public key": "公開鍵",
     "Public key - Tooltip": "公開鍵 - ツールチップ",
+    "Public key ID": "公開鍵ID",
+    "Public key ID - Tooltip": "WeChat Pay 公開鍵モードの加盟店は、公開鍵ID（PUB_KEY_ID_...）と WeChat Pay 公開鍵を入力してください。プラットフォーム証明書を使う加盟店は両方とも空欄のままにします",
     "RADIUS Shared Secret - Tooltip": "RADIUSの共有シークレット",
     "Region": "リージョン",
     "Region - Tooltip": "リージョン - ツールチップ",

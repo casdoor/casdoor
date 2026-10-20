@@ -1331,6 +1331,8 @@
     "Provider owner and name are required": "Власник та ім'я постачальника є обов'язковими",
     "Public key": "Відкритий ключ",
     "Public key - Tooltip": "Відкритий ключ - підказка",
+    "Public key ID": "ID відкритого ключа",
+    "Public key ID - Tooltip": "Для продавців у режимі відкритого ключа WeChat Pay вкажіть ID відкритого ключа (PUB_KEY_ID_...) і відкритий ключ WeChat Pay. Для продавців із сертифікатами платформи залиште обидва поля порожніми",
     "RADIUS Shared Secret - Tooltip": "Спільний секрет RADIUS",
     "Region": "Регіон",
     "Region - Tooltip": "Регіон - підказка",

@@ -1331,6 +1331,8 @@
     "Provider owner and name are required": "Sağlayıcı sahibi ve adı zorunludur",
     "Public key": "Açık anahtar",
     "Public key - Tooltip": "Açık anahtar - Araç ipucu",
+    "Public key ID": "Açık anahtar kimliği",
+    "Public key ID - Tooltip": "WeChat Pay açık anahtar modunu kullanan satıcılar için açık anahtar kimliğini (PUB_KEY_ID_...) ve WeChat Pay açık anahtarını girin. Platform sertifikası kullanan satıcılar için ikisini de boş bırakın",
     "RADIUS Shared Secret - Tooltip": "RADIUS paylaşılan gizli anahtarı",
     "Region": "Bölge",
     "Region - Tooltip": "Bölge - Araç ipucu",

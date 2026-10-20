@@ -16,8 +16,11 @@ package pp
 
 import (
 	"context"
+	"crypto/x509"
+	"encoding/pem"
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/casdoor/casdoor/util"
 	"github.com/go-pay/gopay"
@@ -34,11 +37,13 @@ type WechatPaymentProvider struct {
 	AppId  string
 }
 
-func NewWechatPaymentProvider(mchId string, apiV3Key string, appId string, serialNo string, privateKey string) (*WechatPaymentProvider, error) {
+func NewWechatPaymentProvider(mchId string, apiV3Key string, appId string, serialNo string, privateKey string, publicKeyId string, publicKey string) (*WechatPaymentProvider, error) {
 	// https://pay.weixin.qq.com/docs/merchant/products/native-payment/preparation.html
 	// clientId => mchId
 	// clientSecret => apiV3Key
 	// clientId2 => appId
+	// clientSecret2 => publicKeyId
+	// content => publicKey
 
 	// appCertificate => serialNo
 	// appPrivateKey => privateKey
@@ -46,13 +51,22 @@ func NewWechatPaymentProvider(mchId string, apiV3Key string, appId string, seria
 		return &WechatPaymentProvider{}, nil
 	}
 
+	serialNo, err := getWechatPaySerialNo(serialNo)
+	if err != nil {
+		return nil, err
+	}
+
 	clientV3, err := wechat.NewClientV3(mchId, serialNo, apiV3Key, privateKey)
 	if err != nil {
 		return nil, err
 	}
 
-	// AutoVerifySign: automatically fetch and verify platform certificate
-	err = clientV3.AutoVerifySign()
+	if publicKeyId != "" && publicKey != "" {
+		err = clientV3.AutoVerifySignByPublicKey([]byte(publicKey), publicKeyId)
+	} else {
+		// AutoVerifySign: automatically fetch and verify platform certificate
+		err = clientV3.AutoVerifySign()
+	}
 	if err != nil {
 		return nil, err
 	}
@@ -63,6 +77,30 @@ func NewWechatPaymentProvider(mchId string, apiV3Key string, appId string, seria
 	}
 
 	return pp, nil
+}
+
+// getWechatPaySerialNo returns the serial number of a merchant certificate in PEM, or the value itself if it is not a PEM
+func getWechatPaySerialNo(certificate string) (string, error) {
+	certificate = strings.TrimSpace(certificate)
+	if !strings.HasPrefix(certificate, "-----BEGIN") {
+		return certificate, nil
+	}
+
+	block, _ := pem.Decode([]byte(certificate))
+	if block == nil {
+		return "", errors.New("failed to decode the merchant certificate of WeChat Pay")
+	}
+
+	cert, err := x509.ParseCertificate(block.Bytes)
+	if err != nil {
+		return "", fmt.Errorf("failed to parse the merchant certificate of WeChat Pay: %s", err.Error())
+	}
+
+	serialNo := strings.ToUpper(cert.SerialNumber.Text(16))
+	if len(serialNo)%2 == 1 {
+		serialNo = "0" + serialNo
+	}
+	return serialNo, nil
 }
 
 func (pp *WechatPaymentProvider) Pay(r *PayReq) (*PayResp, error) {

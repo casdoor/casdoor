@@ -1331,6 +1331,8 @@
     "Provider owner and name are required": "Właściciel i nazwa dostawcy są wymagane",
     "Public key": "Klucz publiczny",
     "Public key - Tooltip": "Klucz publiczny - Podpowiedź",
+    "Public key ID": "ID klucza publicznego",
+    "Public key ID - Tooltip": "Dla sprzedawców w trybie klucza publicznego WeChat Pay podaj ID klucza publicznego (PUB_KEY_ID_...) i klucz publiczny WeChat Pay. Dla sprzedawców korzystających z certyfikatów platformy pozostaw oba pola puste",
     "RADIUS Shared Secret - Tooltip": "Wspólny sekret RADIUS",
     "Region": "Region geograficzny",
     "Region - Tooltip": "Region - Podpowiedź",
