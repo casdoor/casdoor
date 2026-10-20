@@ -25,6 +25,15 @@ import (
 
 var forbiddenChars = `/?:#&%=+;`
 
+// these add APIs either generate the name themselves or have no name field
+var addPathsWithoutName = map[string]bool{
+	"/api/add-ldap":           true,
+	"/api/add-policy":         true,
+	"/api/add-record":         true,
+	"/api/add-ticket-message": true,
+	"/api/add-transaction":    true,
+}
+
 func FieldValidationFilter(ctx *context.Context) {
 	if ctx.Input.Method() != "POST" {
 		return
@@ -46,6 +55,11 @@ func FieldValidationFilter(ctx *context.Context) {
 		Name string `json:"name"`
 	}
 	if err := json.Unmarshal(bodyBytes, &requestData); err != nil {
+		return
+	}
+
+	if strings.HasPrefix(urlPath, "/api/add-") && !addPathsWithoutName[urlPath] && strings.TrimSpace(requestData.Name) == "" {
+		responseError(ctx, "Field 'name' cannot be empty")
 		return
 	}
 
