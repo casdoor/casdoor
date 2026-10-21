@@ -289,10 +289,11 @@ func GetMaskedEmail(email string) string {
 }
 
 func maskString(str string) string {
-	if len(str) <= 2 {
+	runes := []rune(str)
+	if len(runes) <= 2 {
 		return str
 	} else {
-		return fmt.Sprintf("%c%s%c", str[0], strings.Repeat("*", len(str)-2), str[len(str)-1])
+		return fmt.Sprintf("%c%s%c", runes[0], strings.Repeat("*", len(runes)-2), runes[len(runes)-1])
 	}
 }
 
