@@ -7,10 +7,9 @@ import {Input} from "@/components/ui/input";
 import {Label} from "@/components/ui/label";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 import {Alert, AlertDescription} from "@/components/ui/alert";
-import {Loading} from "@/components/common/Loading";
 import {CustomHtml, CustomStyle} from "@/components/common/CustomHtml";
 import {isTrustedApplication} from "@/lib/custom-html";
-import {AuthDivider, AuthLayout} from "@/components/auth/AuthLayout";
+import {AuthDivider, AuthLayout, AuthLoading} from "@/components/auth/AuthLayout";
 import {SigninMethodTabs} from "@/components/auth/SigninMethodTabs";
 import {MfaVerify, NextMfa, RequiredMfa} from "@/components/auth/MfaVerify";
 import {AgreementCheckbox, isSigninAgreementShown} from "@/components/auth/AgreementModal";
@@ -1140,7 +1139,7 @@ export default function LoginPage({type = "login", application: applicationProp,
   }
 
   if (application === undefined) {
-    return <Loading className="min-h-screen" />;
+    return <AuthLoading preview={!!preview} />;
   }
 
   if (application === null) {
@@ -1154,7 +1153,7 @@ export default function LoginPage({type = "login", application: applicationProp,
   }
 
   if (promptNone) {
-    return <Loading className="min-h-screen" />;
+    return <AuthLoading application={application} preview={!!preview} />;
   }
 
   // the token is exchanged as soon as the page has the application, the form is only
@@ -1163,7 +1162,7 @@ export default function LoginPage({type = "login", application: applicationProp,
     ? loading
     : new URLSearchParams(window.location.search).has("magicLinkToken"));
   if (magicLinkPending) {
-    return <Loading className="min-h-screen" />;
+    return <AuthLoading application={application} preview={!!preview} />;
   }
 
   if (magicLinkSent) {
@@ -1261,7 +1260,7 @@ export default function LoginPage({type = "login", application: applicationProp,
   const showForm = passwordEnabled || codeEnabled || webAuthnEnabled || ldapEnabled || faceIdEnabled || magicLinkEnabled;
 
   if (singleProviderAuthUrl !== null) {
-    return <Loading className="min-h-screen" />;
+    return <AuthLoading application={application} preview={!!preview} />;
   }
 
   // An application can ask the visitor which organization they belong to before

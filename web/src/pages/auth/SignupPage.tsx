@@ -7,14 +7,13 @@ import {Checkbox} from "@/components/ui/checkbox";
 import {Input} from "@/components/ui/input";
 import {Label} from "@/components/ui/label";
 import {CountryCodeSelect} from "@/components/common/CountryCodeSelect";
-import {Loading} from "@/components/common/Loading";
 import {MultiSelect} from "@/components/common/MultiSelect";
 import {PasswordInput} from "@/components/common/PasswordInput";
 import {SearchableSelect} from "@/components/common/SearchableSelect";
 import {RegionSelect} from "@/components/common/RegionSelect";
 import {CustomHtml, CustomStyle} from "@/components/common/CustomHtml";
 import {isTrustedApplication} from "@/lib/custom-html";
-import {AuthDivider, AuthLayout} from "@/components/auth/AuthLayout";
+import {AuthDivider, AuthLayout, AuthLoading} from "@/components/auth/AuthLayout";
 import {AgreementCheckbox} from "@/components/auth/AgreementModal";
 import {ProviderButtons, getVisibleProviders} from "@/components/auth/ProviderButtons";
 import {SendCodeInput} from "@/components/auth/SendCodeInput";
@@ -179,7 +178,7 @@ export default function SignupPage({application: applicationProp}: {application?
   );
 
   if (application === undefined) {
-    return <Loading className="min-h-screen" />;
+    return <AuthLoading preview={!!applicationProp} />;
   }
 
   if (application === null) {
