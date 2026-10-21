@@ -243,6 +243,7 @@ func (r *permissionRoleResolver) getRolesInRole(permissionOwner string, roleId s
 type permissionGroupResolver struct {
 	groupsByOwner map[string][]*Group
 	usersByGroup  map[string][]string
+	policyLoaded  bool
 }
 
 func newPermissionGroupResolver() *permissionGroupResolver {
@@ -306,7 +307,17 @@ func (r *permissionGroupResolver) getUsersInGroup(permissionOwner string, groupI
 		return []string{}, nil
 	}
 
-	users, err := userEnforcer.GetAllUsersByGroup(groupId)
+	// Load the policy once per resolver, GetAllUsersByGroup() would otherwise
+	// read the entire policy table again for every group of a "*" permission.
+	if !r.policyLoaded {
+		err = userEnforcer.LoadPolicy()
+		if err != nil {
+			return nil, err
+		}
+		r.policyLoaded = true
+	}
+
+	users, err := userEnforcer.getAllUsersByGroup(groupId)
 	if err != nil {
 		return nil, err
 	}
