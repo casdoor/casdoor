@@ -211,7 +211,7 @@ jobs:
             echo "Waiting... ($i/60)"
             sleep 1
           done
-      - uses: cypress-io/github-action@v5
+      - uses: cypress-io/github-action@v7
         with:
           browser: chrome
           # `yarn install` above already installed everything, Cypress included.
