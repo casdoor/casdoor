@@ -228,6 +228,11 @@ function ColumnFilter({
  * column in the middle would sit on top of its neighbours — and every one of
  * them needs a numeric width so the offsets can be summed. Anything that does
  * not qualify is simply left unpinned.
+ *
+ * Pinning also has to leave the data some room: on a narrow table the pinned
+ * runs can be as wide as the table itself and cover every other column at any
+ * scroll position. A side that does not fit scrolls with the rest instead, the
+ * right one (actions) going first so the row stays identifiable.
  */
 interface StickyOffset {
   side: "left" | "right";
@@ -236,41 +241,48 @@ interface StickyOffset {
   edge: boolean;
 }
 
-function getStickyOffsets(columns: ColumnDef[]): Map<number, StickyOffset> {
-  const result = new Map<number, StickyOffset>();
+const MIN_UNPINNED_WIDTH = 320;
+
+function getStickyOffsets(columns: ColumnDef[], tableWidth: number): Map<number, StickyOffset> {
+  const left = new Map<number, StickyOffset>();
+  const right = new Map<number, StickyOffset>();
   const widthOf = (column: ColumnDef) => (typeof column.width === "number" ? column.width : null);
 
-  let offset = 0;
+  let leftWidth = 0;
   let lastLeft = -1;
   for (let i = 0; i < columns.length; i++) {
     const width = widthOf(columns[i]);
     if (columns[i].fixed !== "left" || width === null) {
       break;
     }
-    result.set(i, {side: "left", offset, edge: false});
-    offset += width;
+    left.set(i, {side: "left", offset: leftWidth, edge: false});
+    leftWidth += width;
     lastLeft = i;
   }
   if (lastLeft >= 0) {
-    result.get(lastLeft)!.edge = true;
+    left.get(lastLeft)!.edge = true;
   }
 
-  offset = 0;
+  let rightWidth = 0;
   let lastRight = -1;
   for (let i = columns.length - 1; i > lastLeft; i--) {
     const width = widthOf(columns[i]);
     if (columns[i].fixed !== "right" || width === null) {
       break;
     }
-    result.set(i, {side: "right", offset, edge: false});
-    offset += width;
+    right.set(i, {side: "right", offset: rightWidth, edge: false});
+    rightWidth += width;
     lastRight = i;
   }
   if (lastRight >= 0) {
-    result.get(lastRight)!.edge = true;
+    right.get(lastRight)!.edge = true;
   }
 
-  return result;
+  const fits = (width: number) => tableWidth - width >= MIN_UNPINNED_WIDTH;
+  const sides = fits(leftWidth + rightWidth)
+    ? [left, right]
+    : fits(leftWidth) ? [left] : fits(rightWidth) ? [right] : [];
+  return new Map(sides.flatMap((side) => [...side]));
 }
 
 /** the class and inline offset a pinned cell needs; `null` when it is not pinned */
@@ -428,7 +440,23 @@ export function DataTable<T = any>({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [columns, selection, pageKeys, selectedOnPage, keyOf]);
 
-  const stickyOffsets = React.useMemo(() => getStickyOffsets(visibleColumns), [visibleColumns]);
+  const frameRef = React.useRef<HTMLDivElement>(null);
+  const [frameWidth, setFrameWidth] = React.useState(0);
+  React.useLayoutEffect(() => {
+    const frame = frameRef.current;
+    if (!frame) {
+      return;
+    }
+    setFrameWidth(frame.clientWidth);
+    const observer = new ResizeObserver(() => setFrameWidth(frame.clientWidth));
+    observer.observe(frame);
+    return () => observer.disconnect();
+  }, []);
+
+  const stickyOffsets = React.useMemo(
+    () => getStickyOffsets(visibleColumns, frameWidth),
+    [visibleColumns, frameWidth],
+  );
   const pageCount = Math.max(1, Math.ceil(total / query.pageSize));
   const from = total === 0 ? 0 : (query.page - 1) * query.pageSize + 1;
   const to = Math.min(query.page * query.pageSize, total);
@@ -447,7 +475,7 @@ export function DataTable<T = any>({
   return (
     <div className={cn("space-y-3", className)}>
       <ActiveFilter columns={visibleColumns} query={query} onQueryChange={onQueryChange} />
-      <div className="overflow-hidden rounded-lg border bg-card" data-tour="table">
+      <div ref={frameRef} className="overflow-hidden rounded-lg border bg-card" data-tour="table">
         <Table>
           <TableHeader>
             <TableRow className="bg-muted/60 hover:bg-muted/60">
