@@ -7,8 +7,7 @@ import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {PasswordInput} from "@/components/common/PasswordInput";
 import {Label} from "@/components/ui/label";
-import {Loading} from "@/components/common/Loading";
-import {AuthLayout} from "@/components/auth/AuthLayout";
+import {AuthLayout, AuthLoading} from "@/components/auth/AuthLayout";
 import {SendCodeInput} from "@/components/auth/SendCodeInput";
 import {PasswordRequirements, checkPasswordComplexity} from "@/lib/password-checker";
 import {authConfig} from "@/auth/Auth";
@@ -53,7 +52,7 @@ export default function ForgetPage() {
   }, [applicationName]);
 
   if (application === undefined) {
-    return <Loading className="min-h-screen" />;
+    return <AuthLoading />;
   }
 
   if (application === null) {

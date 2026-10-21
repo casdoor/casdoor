@@ -7,6 +7,7 @@ import {LanguageSelect} from "@/components/common/LanguageSelect";
 import {ThemeToggle} from "@/components/common/ThemeToggle";
 import {ThemeShowcaseBar} from "@/components/common/ThemeShowcaseBar";
 import {CustomHtml, CustomStyle} from "@/components/common/CustomHtml";
+import {Loading} from "@/components/common/Loading";
 import {getSafeHtml, isTrustedApplication} from "@/lib/custom-html";
 import {
   getOrganizationCookieChrome,
@@ -154,6 +155,17 @@ function getPanelBackground(css: string | undefined | null): string | null {
     }
   }
   return found;
+}
+
+/**
+ * The spinner an entry page shows while its application loads, already on the
+ * organization's palette: before the application arrives, useApplicationTheme
+ * reads it from the organizationTheme cookie the backend set on this page.
+ */
+export function AuthLoading({application, preview}: {application?: any; preview?: boolean}) {
+  const shown = useShowcaseApplication(application, !preview);
+  useApplicationTheme(shown, !preview);
+  return <Loading className="min-h-screen" />;
 }
 
 /**
