@@ -17,10 +17,8 @@ package rule
 import (
 	"net/http"
 	"testing"
-	"time"
 
 	"github.com/casdoor/casdoor/object"
-	"golang.org/x/time/rate"
 )
 
 func TestIpRateRule_checkRule(t *testing.T) {
@@ -157,32 +155,23 @@ func TestIpRateRule_checkRule(t *testing.T) {
 
 func TestIpRateRule_checkRuleBlackListKeepsOtherIps(t *testing.T) {
 	ruleName := "admin/test-ip-rate-blacklist"
-	expressions := []*object.Expression{
-		{
-			Operator: "1000",
-			Value:    "3600",
-		},
-	}
-
-	burst := 1000
-	blackList[ruleName] = map[string]time.Time{}
-	ipRateLimiters[ruleName] = NewIpRateLimiter(rate.Limit(burst), burst)
+	blockedIp := "1.1.1.1"
+	otherIp := "2.2.2.2"
 	r := &IpRateRule{
 		ruleName: ruleName,
 	}
 
-	// exhaust the limiters of both IPs, so that the next request of each one is
-	// rate limited and the IP is put on the black list
-	for _, ip := range []string{"1.1.1.1", "2.2.2.2"} {
-		limiter := ipRateLimiters[ruleName].AddIP(ip)
-		for i := 0; i < 2*burst; i++ {
-			limiter.Allow()
-		}
+	// a rate limit of 0 always denies, so both IPs are put on the black list
+	// without depending on how long the test takes to run
+	denyAll := []*object.Expression{
+		{
+			Operator: "0",
+			Value:    "3600",
+		},
 	}
 
-	// 1.1.1.1 and then 2.2.2.2 exceed the limit, both are blocked
-	for _, ip := range []string{"1.1.1.1", "2.2.2.2"} {
-		result, err := r.checkRule(expressions, &http.Request{RemoteAddr: ip})
+	for _, ip := range []string{blockedIp, otherIp} {
+		result, err := r.checkRule(denyAll, &http.Request{RemoteAddr: ip})
 		if err != nil {
 			t.Fatalf("checkRule() error = %v", err)
 		}
@@ -191,15 +180,24 @@ func TestIpRateRule_checkRuleBlackListKeepsOtherIps(t *testing.T) {
 		}
 	}
 
-	// 1.1.1.1 gets a limiter that is not exhausted any more, so only its black
-	// list entry, which lasts for an hour, can keep it blocked
-	ipRateLimiters[ruleName].AddIP("1.1.1.1")
+	if n := len(blackList[ruleName]); n != 2 {
+		t.Errorf("black list of %s has %d entries after blocking %s and %s, want 2", ruleName, n, blockedIp, otherIp)
+	}
 
-	result, err := r.checkRule(expressions, &http.Request{RemoteAddr: "1.1.1.1"})
+	// a rate limit that allows the request again: only the black list entry can
+	// keep the IP blocked while its block time is not over yet
+	allowAll := []*object.Expression{
+		{
+			Operator: "1000",
+			Value:    "3600",
+		},
+	}
+
+	result, err := r.checkRule(allowAll, &http.Request{RemoteAddr: blockedIp})
 	if err != nil {
 		t.Fatalf("checkRule() error = %v", err)
 	}
 	if result == nil || result.Action != "Block" {
-		t.Errorf("checkRule() 1.1.1.1 is still within the block time of 2.2.2.2, it should stay blocked, got: %+v", result)
+		t.Errorf("checkRule() %s is still within its block time, it should stay blocked, got: %+v", blockedIp, result)
 	}
 }
