@@ -15,7 +15,9 @@
 package rule
 
 import (
+	"fmt"
 	"net/http"
+	"sync"
 	"testing"
 
 	"github.com/casdoor/casdoor/object"
@@ -199,5 +201,48 @@ func TestIpRateRule_checkRuleBlackListKeepsOtherIps(t *testing.T) {
 	}
 	if result == nil || result.Action != "Block" {
 		t.Errorf("checkRule() %s is still within its block time, it should stay blocked, got: %+v", blockedIp, result)
+	}
+}
+
+func TestIpRateRule_checkRuleConcurrentRequests(t *testing.T) {
+	ruleName := "admin/test-ip-rate-concurrent"
+	r := &IpRateRule{
+		ruleName: ruleName,
+	}
+	// a rate limit of 0 always denies, so every request writes to the black list
+	// of the rule, like any two requests of different clients served at the same
+	// time do in production
+	expressions := []*object.Expression{
+		{
+			Operator: "0",
+			Value:    "3600",
+		},
+	}
+
+	ips := make([]string, 0, 40)
+	for i := 0; i < 40; i++ {
+		ips = append(ips, fmt.Sprintf("10.0.0.%d", i))
+	}
+
+	var wg sync.WaitGroup
+	for _, ip := range ips {
+		wg.Add(1)
+		go func(ip string) {
+			defer wg.Done()
+
+			result, err := r.checkRule(expressions, &http.Request{RemoteAddr: ip})
+			if err != nil {
+				t.Errorf("checkRule() error = %v for the IP: %s", err, ip)
+				return
+			}
+			if result == nil || result.Action != "Block" {
+				t.Errorf("checkRule() for the IP: %s should be blocked, got: %+v", ip, result)
+			}
+		}(ip)
+	}
+	wg.Wait()
+
+	if n := len(blackList[ruleName]); n != len(ips) {
+		t.Errorf("black list of %s has %d entries, want %d", ruleName, n, len(ips))
 	}
 }
