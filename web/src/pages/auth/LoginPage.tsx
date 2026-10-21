@@ -28,6 +28,7 @@ import {SendCodeInput, type CaptchaValues} from "@/components/auth/SendCodeInput
 import {CaptchaModal, type CaptchaHandle} from "@/components/common/CaptchaModal";
 import {getCaptchaProvider} from "@/lib/captcha";
 import {useAccount} from "@/hooks/use-account";
+import {useApplicationTheme} from "@/hooks/use-application-chrome";
 import {authConfig} from "@/auth/Auth";
 import * as Util from "@/auth/Util";
 import * as Provider from "@/auth/Provider";
@@ -313,6 +314,13 @@ export default function LoginPage({type = "login", application: applicationProp,
   const [magicLinkSent, setMagicLinkSent] = React.useState(false);
   const [magicLinkVerifying, setMagicLinkVerifying] = React.useState(false);
   const [captchaForMagicLink, setCaptchaForMagicLink] = React.useState(false);
+
+  // The organizationTheme cookie the backend set on this very response carries the
+  // organization's themeData, which is what AuthLayout falls back to before the
+  // application has loaded. Applying it here as well keeps the loading state of the
+  // sign-in page on the branded palette; without it the page waits for
+  // /api/get-application on the default palette and repaints once the answer lands.
+  useApplicationTheme(application);
 
   const owner = params.owner;
   const applicationName = params.applicationName ?? authConfig.appName;
