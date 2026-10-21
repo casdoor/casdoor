@@ -121,7 +121,10 @@ func (r *IpRateRule) checkRule(expressions []*object.Expression, req *http.Reque
 		// If the rate limit is exceeded, add the client IP to the blacklist
 		allow := limiter.Allow()
 		if !allow {
-			blackList[r.ruleName] = map[string]time.Time{}
+			// keep the other blocked IPs, their block time is not over yet
+			if blackList[r.ruleName] == nil {
+				blackList[r.ruleName] = map[string]time.Time{}
+			}
 			blackList[r.ruleName][clientIp] = time.Now()
 			return &RuleResult{
 				Action: "Block",

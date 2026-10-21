@@ -17,8 +17,10 @@ package rule
 import (
 	"net/http"
 	"testing"
+	"time"
 
 	"github.com/casdoor/casdoor/object"
+	"golang.org/x/time/rate"
 )
 
 func TestIpRateRule_checkRule(t *testing.T) {
@@ -150,5 +152,54 @@ func TestIpRateRule_checkRule(t *testing.T) {
 				}
 			}
 		})
+	}
+}
+
+func TestIpRateRule_checkRuleBlackListKeepsOtherIps(t *testing.T) {
+	ruleName := "admin/test-ip-rate-blacklist"
+	expressions := []*object.Expression{
+		{
+			Operator: "1000",
+			Value:    "3600",
+		},
+	}
+
+	burst := 1000
+	blackList[ruleName] = map[string]time.Time{}
+	ipRateLimiters[ruleName] = NewIpRateLimiter(rate.Limit(burst), burst)
+	r := &IpRateRule{
+		ruleName: ruleName,
+	}
+
+	// exhaust the limiters of both IPs, so that the next request of each one is
+	// rate limited and the IP is put on the black list
+	for _, ip := range []string{"1.1.1.1", "2.2.2.2"} {
+		limiter := ipRateLimiters[ruleName].AddIP(ip)
+		for i := 0; i < 2*burst; i++ {
+			limiter.Allow()
+		}
+	}
+
+	// 1.1.1.1 and then 2.2.2.2 exceed the limit, both are blocked
+	for _, ip := range []string{"1.1.1.1", "2.2.2.2"} {
+		result, err := r.checkRule(expressions, &http.Request{RemoteAddr: ip})
+		if err != nil {
+			t.Fatalf("checkRule() error = %v", err)
+		}
+		if result == nil || result.Action != "Block" {
+			t.Fatalf("checkRule() for the IP: %s should be blocked, got: %+v", ip, result)
+		}
+	}
+
+	// 1.1.1.1 gets a limiter that is not exhausted any more, so only its black
+	// list entry, which lasts for an hour, can keep it blocked
+	ipRateLimiters[ruleName].AddIP("1.1.1.1")
+
+	result, err := r.checkRule(expressions, &http.Request{RemoteAddr: "1.1.1.1"})
+	if err != nil {
+		t.Fatalf("checkRule() error = %v", err)
+	}
+	if result == nil || result.Action != "Block" {
+		t.Errorf("checkRule() 1.1.1.1 is still within the block time of 2.2.2.2, it should stay blocked, got: %+v", result)
 	}
 }
