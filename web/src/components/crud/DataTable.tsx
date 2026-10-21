@@ -18,6 +18,7 @@ import {
 import {Skeleton} from "@/components/ui/skeleton";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import type {ColumnDef, ColumnFilterOption, TableQuery} from "@/components/crud/types";
+import {useIsMobile} from "@/hooks/use-mobile";
 
 const PAGE_SIZE_OPTIONS = [10, 20, 50, 100];
 
@@ -428,7 +429,16 @@ export function DataTable<T = any>({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [columns, selection, pageKeys, selectedOnPage, keyOf]);
 
-  const stickyOffsets = React.useMemo(() => getStickyOffsets(visibleColumns), [visibleColumns]);
+  const isMobile = useIsMobile();
+  // Pinning only pays off when the data still has room beside it: on a phone
+  // the pinned columns (the action one alone is up to 340px wide, and Users
+  // pins another 280px on the left) are as wide as the viewport itself, so
+  // they sit on the data and no scroll position ever reveals it. Below the
+  // mobile breakpoint the whole table scrolls instead, buttons included.
+  const stickyOffsets = React.useMemo(
+    () => (isMobile ? new Map<number, StickyOffset>() : getStickyOffsets(visibleColumns)),
+    [visibleColumns, isMobile],
+  );
   const pageCount = Math.max(1, Math.ceil(total / query.pageSize));
   const from = total === 0 ? 0 : (query.page - 1) * query.pageSize + 1;
   const to = Math.min(query.page * query.pageSize, total);
