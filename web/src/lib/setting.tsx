@@ -889,12 +889,13 @@ export function getCountryCode(country) {
   return "";
 }
 
-export function getCountryCodeData(countryCodes: any = phoneNumber.getCountries()): any[] {
-  if (countryCodes?.includes("All")) {
+export function getCountryCodeData(countryCodes: any = undefined): any[] {
+  // organizations created from init.json come back with null countryCodes
+  if (!countryCodes || countryCodes.includes("All")) {
     countryCodes = phoneNumber.getCountries();
   }
   const countries = initCountries() as any;
-  return countryCodes?.map((countryCode) => {
+  return countryCodes.map((countryCode) => {
     if (phoneNumber.isSupportedCountry(countryCode)) {
       // fall back to English so an unregistered locale never empties the list
       const name = countries.getName(countryCode, getLanguage()) || countries.getName(countryCode, "en");
