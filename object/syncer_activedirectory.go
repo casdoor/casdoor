@@ -16,12 +16,22 @@ package object
 
 import (
 	"crypto/tls"
+	"errors"
 	"fmt"
+	"reflect"
+	"strconv"
 	"strings"
+	"time"
+	"unicode"
 	"unicode/utf8"
 
 	"github.com/casdoor/casdoor/util"
 	goldap "github.com/go-ldap/ldap/v3"
+)
+
+const (
+	adUserSearchFilter = "(&(objectClass=user)(objectCategory=person))"
+	adPagingSize       = 100
 )
 
 // convertGUIDToString converts a binary GUID byte array to a standard UUID string format
@@ -42,20 +52,17 @@ func convertGUIDToString(guidBytes []byte) string {
 		guidBytes[10], guidBytes[11], guidBytes[12], guidBytes[13], guidBytes[14], guidBytes[15]) // Data5 (big-endian)
 }
 
-// sanitizeUTF8 ensures the string contains only valid UTF-8 characters
-// Invalid UTF-8 sequences are replaced with the Unicode replacement character
+// sanitizeUTF8 drops invalid UTF-8 sequences from s.
 func sanitizeUTF8(s string) string {
 	if utf8.ValidString(s) {
 		return s
 	}
 
-	// Build a new string with only valid UTF-8
 	var builder strings.Builder
 	builder.Grow(len(s))
 
 	for _, r := range s {
 		if r == utf8.RuneError {
-			// Skip invalid runes
 			continue
 		}
 		builder.WriteRune(r)
@@ -64,10 +71,497 @@ func sanitizeUTF8(s string) string {
 	return builder.String()
 }
 
-// getAttributeValueSafe safely retrieves an LDAP attribute value and ensures it's valid UTF-8
-func getAttributeValueSafe(entry *goldap.Entry, attributeName string) string {
-	value := entry.GetAttributeValue(attributeName)
-	return sanitizeUTF8(value)
+type adTargetKind int
+
+const (
+	adKindString adTargetKind = iota
+	adKindBool
+	adKindInt
+)
+
+type adTargetSpec struct {
+	Kind adTargetKind
+}
+
+// adSettableTargets mirrors the fields handled by Syncer.setUserByKeyValue().
+// Keep it in sync with object/syncer_util.go when new user fields become settable.
+var adSettableTargets = []string{
+	"Name", "CreatedTime", "UpdatedTime", "DeletedTime", "Id", "Type",
+	"Password", "PasswordSalt", "PasswordType",
+	"DisplayName", "FirstName", "LastName", "Avatar", "PermanentAvatar", "AvatarType",
+	"Email", "EmailVerified", "Phone", "CountryCode", "Region", "Location", "Address",
+	"Affiliation", "Title", "IdCardType", "IdCard", "RealName", "IsVerified",
+	"Homepage", "Bio", "Tag", "Language", "Gender", "Birthday", "Education",
+	"UidNumber", "Score", "Ranking", "IsDefaultAvatar", "IsOnline", "IsAdmin",
+	"IsForbidden", "IsDeleted", "CreatedIp", "PreferredMfaType", "TotpSecret",
+	"SignupApplication", "MfaPhoneEnabled", "MfaEmailEnabled", "RecoveryCodes",
+	"ExternalId", "MfaRadiusEnabled", "MfaRadiusUsername", "MfaRadiusProvider",
+	"MfaPushEnabled", "MfaPushReceiver", "MfaPushProvider", "Invitation",
+	"InvitationCode", "Ldap", "LastSigninTime", "LastSigninIp", "LastChangePasswordTime",
+	"LastSigninWrongTime", "SigninWrongTimes", "NeedUpdatePassword", "IpWhitelist",
+	"MfaRememberDeadline", "WebauthnCredentials", "FaceIds", "ManagedAccounts",
+	"MfaAccounts", "MfaItems",
+}
+
+var adCanonicalTargets = func() map[string]string {
+	targets := make(map[string]string, len(adSettableTargets))
+	for _, target := range adSettableTargets {
+		targets[strings.ToLower(target)] = target
+	}
+	return targets
+}()
+
+// adRejectedTargets are settable fields that must not be driven by the directory.
+var adRejectedTargets = map[string]string{
+	"Password":            "credentials cannot be synced from Active Directory",
+	"PasswordSalt":        "credentials cannot be synced from Active Directory",
+	"PasswordType":        "credentials cannot be synced from Active Directory",
+	"IsAdmin":             "directory-driven administrator privileges are not allowed",
+	"IsDeleted":           "directory-driven deletion is not allowed",
+	"TotpSecret":          "MFA secrets cannot be synced from Active Directory",
+	"RecoveryCodes":       "MFA secrets cannot be synced from Active Directory",
+	"WebauthnCredentials": "MFA secrets cannot be synced from Active Directory",
+	"FaceIds":             "MFA secrets cannot be synced from Active Directory",
+	"ManagedAccounts":     "managed accounts cannot be synced from Active Directory",
+	"MfaAccounts":         "MFA secrets cannot be synced from Active Directory",
+	"MfaItems":            "MFA secrets cannot be synced from Active Directory",
+	"Address":             "Address is not a persisted scalar user column",
+	"IpWhitelist":         "IP allowlists must not be driven by the directory",
+}
+
+// adKeyTargets are the only targets stable and unique enough to match users by.
+var adKeyTargets = map[string]bool{
+	"Id":    true,
+	"Name":  true,
+	"Email": true,
+}
+
+type adColumnPlan struct {
+	Column     *TableColumn
+	Sources    []string
+	SourceAttr string
+	Target     string
+	Spec       adTargetSpec
+}
+
+type adSearchPlan struct {
+	Columns    []*adColumnPlan
+	Attributes []string
+	Key        *adColumnPlan
+}
+
+func adTargetSpecOf(target string) (adTargetSpec, bool) {
+	field, ok := reflect.TypeOf(User{}).FieldByName(target)
+	if !ok {
+		return adTargetSpec{}, false
+	}
+
+	switch field.Type.Kind() {
+	case reflect.String:
+		return adTargetSpec{Kind: adKindString}, true
+	case reflect.Bool:
+		return adTargetSpec{Kind: adKindBool}, true
+	case reflect.Int:
+		return adTargetSpec{Kind: adKindInt}, true
+	default:
+		return adTargetSpec{}, false
+	}
+}
+
+func adLookupTarget(raw string) (string, adTargetSpec, error) {
+	trimmed := strings.TrimSpace(raw)
+	canonical, ok := adCanonicalTargets[strings.ToLower(trimmed)]
+	if !ok {
+		return "", adTargetSpec{}, fmt.Errorf("Casdoor column %q is not supported by the Active Directory syncer", trimmed)
+	}
+	if reason, rejected := adRejectedTargets[canonical]; rejected {
+		return "", adTargetSpec{}, fmt.Errorf("Casdoor column %q cannot be synced: %s", canonical, reason)
+	}
+
+	spec, ok := adTargetSpecOf(canonical)
+	if !ok {
+		return "", adTargetSpec{}, fmt.Errorf("Casdoor column %q is not a supported scalar field", canonical)
+	}
+	return canonical, spec, nil
+}
+
+func parseADValueSources(name string) ([]string, error) {
+	name = strings.TrimSpace(name)
+	if name == "" {
+		return nil, nil
+	}
+
+	parts := strings.Split(name, "+")
+	sources := make([]string, 0, len(parts))
+	for _, part := range parts {
+		part = strings.TrimSpace(part)
+		if part == "" {
+			return nil, fmt.Errorf("empty attribute in %q", name)
+		}
+		for _, r := range part {
+			if unicode.IsSpace(r) || unicode.IsControl(r) {
+				return nil, fmt.Errorf("attribute %q contains whitespace or control characters", part)
+			}
+		}
+		sources = append(sources, part)
+	}
+	return sources, nil
+}
+
+func isVirtualADAttribute(name string) bool {
+	return strings.EqualFold(name, "dn") || strings.EqualFold(name, "distinguishedName")
+}
+
+func adTargetMapped(columns []*adColumnPlan, target string) bool {
+	for _, column := range columns {
+		if column.Target == target {
+			return true
+		}
+	}
+	return false
+}
+
+func validateADKey(column *adColumnPlan) error {
+	if column == nil || column.Column == nil {
+		return fmt.Errorf("the key column is missing")
+	}
+	if column.Spec.Kind != adKindString {
+		return fmt.Errorf("the key column %q must map to a string field", column.Target)
+	}
+	if !adKeyTargets[column.Target] {
+		return fmt.Errorf("the key column %q cannot be used as the primary key; allowed targets are Id, Name and Email", column.Target)
+	}
+	return nil
+}
+
+func resolveADKey(columns []*adColumnPlan, rawColumns []*TableColumn) (*adColumnPlan, bool, error) {
+	planByColumn := make(map[*TableColumn]*adColumnPlan, len(columns))
+	for _, column := range columns {
+		planByColumn[column.Column] = column
+	}
+
+	explicitKeys := []*adColumnPlan{}
+	for i, rawColumn := range rawColumns {
+		if rawColumn == nil || !rawColumn.IsKey {
+			continue
+		}
+		column, ok := planByColumn[rawColumn]
+		if !ok {
+			return nil, true, fmt.Errorf("table column #%d (%q) is marked as the key but has no usable attribute name or Casdoor column", i+1, rawColumn.Name)
+		}
+		explicitKeys = append(explicitKeys, column)
+	}
+
+	if len(explicitKeys) > 1 {
+		return nil, true, fmt.Errorf("only one table column can be the key, found %d", len(explicitKeys))
+	}
+	if len(explicitKeys) == 1 {
+		if err := validateADKey(explicitKeys[0]); err != nil {
+			return nil, true, err
+		}
+		return explicitKeys[0], true, nil
+	}
+
+	for _, column := range columns {
+		if column.Target == "Id" {
+			if err := validateADKey(column); err != nil {
+				return nil, false, err
+			}
+			return column, false, nil
+		}
+	}
+
+	return nil, false, fmt.Errorf("no key column: enable 'Is key' on one row, or map an attribute to Id")
+}
+
+func normalizeADKeyFlags(columns []*TableColumn, key *TableColumn) {
+	for _, column := range columns {
+		if column == nil {
+			continue
+		}
+		column.IsKey = column == key
+	}
+}
+
+func (p *ActiveDirectorySyncerProvider) buildSearchPlan() (*adSearchPlan, error) {
+	if len(p.Syncer.TableColumns) == 0 {
+		return nil, fmt.Errorf("the Active Directory syncer has no table columns")
+	}
+
+	plan := &adSearchPlan{}
+	for i, tableColumn := range p.Syncer.TableColumns {
+		if tableColumn == nil {
+			return nil, fmt.Errorf("table column #%d is null", i+1)
+		}
+
+		sources, err := parseADValueSources(tableColumn.Name)
+		if err != nil {
+			return nil, fmt.Errorf("table column #%d: %w", i+1, err)
+		}
+		if len(sources) == 0 {
+			fmt.Printf("ActiveDirectorySyncer: ignoring table column #%d without an attribute name\n", i+1)
+			continue
+		}
+
+		if strings.TrimSpace(tableColumn.CasdoorName) == "" {
+			fmt.Printf("ActiveDirectorySyncer: ignoring table column #%d (%q) without a Casdoor column\n", i+1, tableColumn.Name)
+			continue
+		}
+		target, spec, err := adLookupTarget(tableColumn.CasdoorName)
+		if err != nil {
+			return nil, fmt.Errorf("table column #%d: %w", i+1, err)
+		}
+		tableColumn.CasdoorName = target
+
+		plan.Columns = append(plan.Columns, &adColumnPlan{
+			Column:     tableColumn,
+			Sources:    sources,
+			SourceAttr: strings.Join(sources, "+"),
+			Target:     target,
+			Spec:       spec,
+		})
+	}
+	if len(plan.Columns) == 0 {
+		return nil, fmt.Errorf("the Active Directory syncer has no usable table columns")
+	}
+
+	if adTargetMapped(plan.Columns, "Ldap") {
+		fmt.Print("ActiveDirectorySyncer: a column maps to Ldap; these users will sign in through LDAP instead of a local password\n")
+	}
+
+	seenAttributes := map[string]bool{}
+	addAttribute := func(name string) {
+		key := strings.ToLower(strings.TrimSpace(name))
+		if key == "" || seenAttributes[key] {
+			return
+		}
+		seenAttributes[key] = true
+		plan.Attributes = append(plan.Attributes, strings.TrimSpace(name))
+	}
+	for _, column := range plan.Columns {
+		for _, source := range column.Sources {
+			if isVirtualADAttribute(source) {
+				continue
+			}
+			addAttribute(source)
+		}
+	}
+	if !adTargetMapped(plan.Columns, "Id") {
+		addAttribute("objectGUID")
+	}
+	if !adTargetMapped(plan.Columns, "Name") {
+		addAttribute("sAMAccountName")
+	}
+	if !adTargetMapped(plan.Columns, "IsForbidden") {
+		addAttribute("userAccountControl")
+	}
+	if !adTargetMapped(plan.Columns, "CreatedTime") {
+		addAttribute("whenCreated")
+	}
+
+	key, explicit, err := resolveADKey(plan.Columns, p.Syncer.TableColumns)
+	if err != nil {
+		return nil, err
+	}
+	if !explicit {
+		normalizeADKeyFlags(p.Syncer.TableColumns, key.Column)
+	}
+	plan.Key = key
+
+	if key.Target != "Id" {
+		fmt.Printf("ActiveDirectorySyncer: the key column maps to %s; make sure it is unique and stable in Active Directory, or map objectGUID to Id\n", key.Target)
+	}
+	if !adTargetMapped(plan.Columns, "IsForbidden") {
+		fmt.Print("ActiveDirectorySyncer: no column maps to IsForbidden; an account disabled in Active Directory is only marked as forbidden when the user is first created\n")
+	}
+
+	return plan, nil
+}
+
+type adEntryView struct {
+	entry *goldap.Entry
+	attrs map[string]*goldap.EntryAttribute
+}
+
+func newADEntryView(entry *goldap.Entry) *adEntryView {
+	view := &adEntryView{
+		entry: entry,
+		attrs: make(map[string]*goldap.EntryAttribute, len(entry.Attributes)),
+	}
+	for _, attribute := range entry.Attributes {
+		name := strings.ToLower(attribute.Name)
+		if _, ok := view.attrs[name]; !ok {
+			view.attrs[name] = attribute
+		}
+	}
+	return view
+}
+
+func (v *adEntryView) first(name string) (raw []byte, text string, ok bool) {
+	if isVirtualADAttribute(name) {
+		if v.entry.DN == "" {
+			return nil, "", false
+		}
+		return []byte(v.entry.DN), v.entry.DN, true
+	}
+
+	attribute, found := v.attrs[strings.ToLower(name)]
+	if !found {
+		return nil, "", false
+	}
+	if len(attribute.Values) > 0 {
+		text = attribute.Values[0]
+	}
+	raw = v.entry.GetRawAttributeValue(attribute.Name)
+	if raw == nil && text != "" {
+		raw = []byte(text)
+	}
+	if text == "" && raw != nil {
+		text = string(raw)
+	}
+	return raw, text, true
+}
+
+func convertADGeneralizedTime(value string) string {
+	value = strings.TrimSpace(value)
+	if value == "" {
+		return ""
+	}
+
+	for _, layout := range []string{"20060102150405.999Z", "20060102150405Z"} {
+		if parsed, err := time.Parse(layout, value); err == nil {
+			return parsed.UTC().Format(time.RFC3339)
+		}
+	}
+	return ""
+}
+
+func canonicalizeADValue(source string, raw []byte, text string, target string) string {
+	switch strings.ToLower(source) {
+	case "objectguid":
+		if len(raw) == 16 {
+			if guid := convertGUIDToString(raw); guid != "" {
+				return guid
+			}
+		}
+		return sanitizeUTF8(text)
+	case "useraccountcontrol":
+		if target == "IsForbidden" {
+			value, err := strconv.Atoi(strings.TrimSpace(text))
+			if err != nil {
+				return ""
+			}
+			if value&0x02 != 0 {
+				return "true"
+			}
+			return "false"
+		}
+	case "whencreated", "whenchanged":
+		if converted := convertADGeneralizedTime(text); converted != "" {
+			return converted
+		}
+		return sanitizeUTF8(text)
+	case "objectsid":
+		fmt.Printf("ActiveDirectorySyncer: skipping binary attribute %s (not supported yet)\n", source)
+		return ""
+	}
+
+	if !utf8.ValidString(text) {
+		fmt.Printf("ActiveDirectorySyncer: skipping attribute %s with a non-UTF-8 value\n", source)
+		return ""
+	}
+	return sanitizeUTF8(text)
+}
+
+func normalizeADBool(value string) (string, bool) {
+	switch strings.ToLower(strings.TrimSpace(value)) {
+	case "true", "1", "yes", "on", "y":
+		return "true", true
+	case "false", "0", "no", "off", "n":
+		return "false", true
+	default:
+		return "", false
+	}
+}
+
+func coerceADValue(value string, tableColumn *adColumnPlan) (string, bool) {
+	value = strings.TrimSpace(value)
+	if value == "" {
+		return "", false
+	}
+
+	switch tableColumn.Spec.Kind {
+	case adKindBool:
+		return normalizeADBool(value)
+	case adKindInt:
+		number, err := strconv.Atoi(value)
+		if err != nil {
+			return "", false
+		}
+		return strconv.Itoa(number), true
+	}
+
+	switch strings.ToLower(strings.TrimSpace(tableColumn.Column.Type)) {
+	case "integer", "int":
+		if _, err := strconv.Atoi(value); err != nil {
+			return "", false
+		}
+		return value, true
+	case "boolean", "bool":
+		return normalizeADBool(value)
+	default:
+		return value, true
+	}
+}
+
+func applyADFallbacks(user *OriginalUser, view *adEntryView, assigned map[string]bool) {
+	if user.Id == "" {
+		if raw, text, ok := view.first("objectGUID"); ok {
+			if len(raw) == 16 {
+				user.Id = convertGUIDToString(raw)
+			}
+			if user.Id == "" {
+				user.Id = sanitizeUTF8(text)
+			}
+		}
+	}
+	if user.Id == "" {
+		if _, text, ok := view.first("sAMAccountName"); ok {
+			user.Id = sanitizeUTF8(text)
+		}
+	}
+	if user.Id == "" {
+		user.Id = strings.TrimSpace(view.entry.DN)
+	}
+
+	if user.Name == "" {
+		if _, text, ok := view.first("sAMAccountName"); ok {
+			user.Name = sanitizeUTF8(text)
+		}
+		if user.Name == "" {
+			user.Name = user.Id
+		}
+	}
+
+	if !assigned["CreatedTime"] && user.CreatedTime == "" {
+		if _, text, ok := view.first("whenCreated"); ok {
+			user.CreatedTime = convertADGeneralizedTime(text)
+			if user.CreatedTime == "" {
+				user.CreatedTime = sanitizeUTF8(text)
+			}
+		}
+		if user.CreatedTime == "" {
+			user.CreatedTime = util.GetCurrentTime()
+		}
+	}
+
+	if !assigned["IsForbidden"] {
+		if _, text, ok := view.first("userAccountControl"); ok {
+			if value, err := strconv.Atoi(strings.TrimSpace(text)); err == nil {
+				user.IsForbidden = value&0x02 != 0
+			}
+		}
+	}
 }
 
 // ActiveDirectorySyncerProvider implements SyncerProvider for Active Directory LDAP-based syncers
@@ -83,7 +577,11 @@ func (p *ActiveDirectorySyncerProvider) InitAdapter() error {
 
 // GetOriginalUsers retrieves all users from Active Directory via LDAP
 func (p *ActiveDirectorySyncerProvider) GetOriginalUsers() ([]*OriginalUser, error) {
-	return p.getActiveDirectoryUsers()
+	plan, err := p.buildSearchPlan()
+	if err != nil {
+		return nil, err
+	}
+	return p.getActiveDirectoryUsers(plan)
 }
 
 // AddUser adds a new user to Active Directory (not supported for read-only LDAP)
@@ -169,8 +667,21 @@ func (p *ActiveDirectorySyncerProvider) getLdapConn() (*goldap.Conn, error) {
 	return conn, nil
 }
 
+// formatADIssues renders at most limit issues and summarizes the rest.
+func formatADIssues(issues []string, limit int) string {
+	shown := issues
+	if len(shown) > limit {
+		shown = shown[:limit]
+	}
+	result := "  " + strings.Join(shown, "\n  ")
+	if len(issues) > limit {
+		result += fmt.Sprintf("\n  ... and %d more", len(issues)-limit)
+	}
+	return result
+}
+
 // getActiveDirectoryUsers retrieves all users from Active Directory
-func (p *ActiveDirectorySyncerProvider) getActiveDirectoryUsers() ([]*OriginalUser, error) {
+func (p *ActiveDirectorySyncerProvider) getActiveDirectoryUsers(plan *adSearchPlan) ([]*OriginalUser, error) {
 	conn, err := p.getLdapConn()
 	if err != nil {
 		return nil, err
@@ -183,32 +694,7 @@ func (p *ActiveDirectorySyncerProvider) getActiveDirectoryUsers() ([]*OriginalUs
 		return nil, fmt.Errorf("database field (base DN) is required for Active Directory syncer")
 	}
 
-	// Search filter for user objects in Active Directory
-	// Filter for users: objectClass=user, objectCategory=person, and not disabled accounts
-	searchFilter := "(&(objectClass=user)(objectCategory=person))"
-
-	// Attributes to retrieve from Active Directory
-	attributes := []string{
-		"sAMAccountName",     // Username
-		"userPrincipalName",  // UPN (email-like format)
-		"displayName",        // Display name
-		"givenName",          // First name
-		"sn",                 // Last name (surname)
-		"mail",               // Email address
-		"telephoneNumber",    // Phone number
-		"mobile",             // Mobile phone
-		"title",              // Job title
-		"department",         // Department
-		"company",            // Company
-		"streetAddress",      // Street address
-		"l",                  // City/Locality
-		"st",                 // State/Province
-		"postalCode",         // Postal code
-		"co",                 // Country
-		"objectGUID",         // Unique identifier
-		"whenCreated",        // Creation time
-		"userAccountControl", // Account status
-	}
+	fmt.Printf("ActiveDirectorySyncer: searching attributes %v\n", plan.Attributes)
 
 	searchRequest := goldap.NewSearchRequest(
 		baseDN,
@@ -217,158 +703,91 @@ func (p *ActiveDirectorySyncerProvider) getActiveDirectoryUsers() ([]*OriginalUs
 		0,     // No size limit
 		0,     // No time limit
 		false, // Types only = false
-		searchFilter,
-		attributes,
+		adUserSearchFilter,
+		plan.Attributes,
 		nil,
 	)
 
-	sr, err := conn.Search(searchRequest)
+	sr, err := conn.SearchWithPaging(searchRequest, adPagingSize)
 	if err != nil {
 		return nil, fmt.Errorf("failed to search Active Directory: %w", err)
 	}
 
+	keyField := util.CamelToSnakeCase(plan.Key.Target)
 	originalUsers := []*OriginalUser{}
+	seenKeys := map[string]string{}
+	issues := []string{}
 	for _, entry := range sr.Entries {
-		originalUser := p.adEntryToOriginalUser(entry)
+		originalUser, err := p.adEntryToOriginalUser(entry, plan)
+		if err != nil {
+			issues = append(issues, fmt.Sprintf("%s: %v", entry.DN, err))
+			continue
+		}
+		key := p.Syncer.getUserValue(originalUser, keyField)
+		if key == "" {
+			issues = append(issues, fmt.Sprintf("%s: no value for key %s", entry.DN, plan.Key.Target))
+			continue
+		}
+		if previous, ok := seenKeys[key]; ok {
+			issues = append(issues, fmt.Sprintf("%s: duplicate key %q, already used by %s", entry.DN, key, previous))
+			continue
+		}
+		seenKeys[key] = entry.DN
 		originalUsers = append(originalUsers, originalUser)
+	}
+
+	if len(issues) > 0 {
+		return nil, fmt.Errorf("the Active Directory sync is aborted because %d of %d entries could not be mapped:\n%s", len(issues), len(sr.Entries), formatADIssues(issues, 5))
 	}
 
 	return originalUsers, nil
 }
 
 // adEntryToOriginalUser converts an Active Directory LDAP entry to Casdoor OriginalUser
-func (p *ActiveDirectorySyncerProvider) adEntryToOriginalUser(entry *goldap.Entry) *OriginalUser {
+func (p *ActiveDirectorySyncerProvider) adEntryToOriginalUser(entry *goldap.Entry, plan *adSearchPlan) (*OriginalUser, error) {
+	view := newADEntryView(entry)
 	user := &OriginalUser{
 		Address:    []string{},
 		Properties: map[string]string{},
 		Groups:     []string{},
 	}
 
-	// Get basic attributes with UTF-8 sanitization
-	sAMAccountName := getAttributeValueSafe(entry, "sAMAccountName")
-	userPrincipalName := getAttributeValueSafe(entry, "userPrincipalName")
-	displayName := getAttributeValueSafe(entry, "displayName")
-	givenName := getAttributeValueSafe(entry, "givenName")
-	sn := getAttributeValueSafe(entry, "sn")
-	mail := getAttributeValueSafe(entry, "mail")
-	telephoneNumber := getAttributeValueSafe(entry, "telephoneNumber")
-	mobile := getAttributeValueSafe(entry, "mobile")
-	title := getAttributeValueSafe(entry, "title")
-	department := getAttributeValueSafe(entry, "department")
-	company := getAttributeValueSafe(entry, "company")
-	streetAddress := getAttributeValueSafe(entry, "streetAddress")
-	city := getAttributeValueSafe(entry, "l")
-	state := getAttributeValueSafe(entry, "st")
-	postalCode := getAttributeValueSafe(entry, "postalCode")
-	country := getAttributeValueSafe(entry, "co")
-	whenCreated := getAttributeValueSafe(entry, "whenCreated")
-	userAccountControlStr := getAttributeValueSafe(entry, "userAccountControl")
-
-	// Handle objectGUID specially - it's a binary attribute
-	var objectGUID string
-	objectGUIDBytes := entry.GetRawAttributeValue("objectGUID")
-	if len(objectGUIDBytes) == 16 {
-		objectGUID = convertGUIDToString(objectGUIDBytes)
-	}
-
-	// Set user fields
-	// Use sAMAccountName as the primary username
-	user.Name = sAMAccountName
-
-	// Use objectGUID as the unique ID if available, otherwise use sAMAccountName
-	if objectGUID != "" {
-		user.Id = objectGUID
-	} else {
-		user.Id = sAMAccountName
-	}
-
-	user.DisplayName = displayName
-	user.FirstName = givenName
-	user.LastName = sn
-
-	// If display name is empty, construct from first and last name
-	if user.DisplayName == "" && (user.FirstName != "" || user.LastName != "") {
-		user.DisplayName = strings.TrimSpace(fmt.Sprintf("%s %s", user.FirstName, user.LastName))
-	}
-
-	// Set email - prefer mail attribute, fallback to userPrincipalName
-	if mail != "" {
-		user.Email = mail
-	} else if userPrincipalName != "" {
-		user.Email = userPrincipalName
-	}
-
-	// Set phone - prefer mobile, fallback to telephoneNumber
-	if mobile != "" {
-		user.Phone = mobile
-	} else if telephoneNumber != "" {
-		user.Phone = telephoneNumber
-	}
-
-	user.Title = title
-
-	// Set affiliation/department
-	if department != "" {
-		user.Affiliation = department
-	}
-
-	// Construct location from city, state, country
-	locationParts := []string{}
-	if city != "" {
-		locationParts = append(locationParts, city)
-	}
-	if state != "" {
-		locationParts = append(locationParts, state)
-	}
-	if country != "" {
-		locationParts = append(locationParts, country)
-	}
-	if len(locationParts) > 0 {
-		user.Location = strings.Join(locationParts, ", ")
-	}
-
-	// Construct address
-	if streetAddress != "" {
-		addressParts := []string{streetAddress}
-		if city != "" {
-			addressParts = append(addressParts, city)
+	assigned := map[string]bool{}
+	invalid := []string{}
+	for _, tableColumn := range plan.Columns {
+		values := []string{}
+		for _, source := range tableColumn.Sources {
+			raw, text, ok := view.first(source)
+			if !ok {
+				continue
+			}
+			value := canonicalizeADValue(source, raw, text, tableColumn.Target)
+			if strings.TrimSpace(value) == "" {
+				continue
+			}
+			values = append(values, value)
 		}
-		if state != "" {
-			addressParts = append(addressParts, state)
+		if len(values) == 0 {
+			continue
 		}
-		if postalCode != "" {
-			addressParts = append(addressParts, postalCode)
+
+		value, ok := coerceADValue(strings.Join(values, " "), tableColumn)
+		if !ok {
+			invalid = append(invalid, fmt.Sprintf("invalid value %q for %s -> %s", strings.Join(values, " "), tableColumn.SourceAttr, tableColumn.Target))
+			continue
 		}
-		if country != "" {
-			addressParts = append(addressParts, country)
+		if assigned[tableColumn.Target] {
+			continue
 		}
-		user.Address = []string{strings.Join(addressParts, ", ")}
+		assigned[tableColumn.Target] = true
+		p.Syncer.setUserByKeyValue(user, tableColumn.Target, value)
 	}
 
-	// Store additional properties
-	if company != "" {
-		user.Properties["company"] = company
+	applyADFallbacks(user, view, assigned)
+	if len(invalid) > 0 {
+		return user, errors.New(strings.Join(invalid, "; "))
 	}
-	if userPrincipalName != "" {
-		user.Properties["userPrincipalName"] = userPrincipalName
-	}
-
-	// Set creation time
-	if whenCreated != "" {
-		user.CreatedTime = whenCreated
-	} else {
-		user.CreatedTime = util.GetCurrentTime()
-	}
-
-	// Parse userAccountControl to determine if account is disabled
-	// Bit 2 (value 2) indicates the account is disabled
-	if userAccountControlStr != "" {
-		userAccountControl := util.ParseInt(userAccountControlStr)
-		// Check if bit 2 is set (account disabled)
-		user.IsForbidden = (userAccountControl & 0x02) != 0
-	}
-
-	return user
+	return user, nil
 }
 
 // GetOriginalGroups retrieves all groups from Active Directory (not implemented yet)
