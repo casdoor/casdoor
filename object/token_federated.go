@@ -25,6 +25,7 @@ import (
 	"time"
 
 	"github.com/casdoor/casdoor/proxy"
+	"github.com/casdoor/casdoor/util"
 	"github.com/go-jose/go-jose/v4"
 	"github.com/golang-jwt/jwt/v5"
 )
@@ -57,12 +58,16 @@ var (
 	federatedKeySetMutex sync.Mutex
 )
 
-func fetchFederatedJson(url string, v interface{}) error {
+// fetchFederatedJson only reaches the Internet for a client that registered itself, as anyone can set its jwks_uri
+func fetchFederatedJson(url string, v interface{}, internetOnly bool) error {
 	if !strings.HasPrefix(url, "https://") && !strings.HasPrefix(url, "http://") {
 		return fmt.Errorf("invalid URL: %s", url)
 	}
 
 	client := proxy.GetHttpClient(url)
+	if internetOnly {
+		client = util.NewInternetOnlyHttpClient(30 * time.Second)
+	}
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return err
@@ -86,14 +91,14 @@ func fetchFederatedJson(url string, v interface{}) error {
 	return json.Unmarshal(body, v)
 }
 
-func fetchFederatedKeySet(credential *FederatedCredential) (*jose.JSONWebKeySet, error) {
+func fetchFederatedKeySet(credential *FederatedCredential, internetOnly bool) (*jose.JSONWebKeySet, error) {
 	jwksUri := credential.JwksUri
 	if jwksUri == "" {
 		discovery := struct {
 			Issuer  string `json:"issuer"`
 			JwksUri string `json:"jwks_uri"`
 		}{}
-		err := fetchFederatedJson(strings.TrimSuffix(credential.Issuer, "/")+"/.well-known/openid-configuration", &discovery)
+		err := fetchFederatedJson(strings.TrimSuffix(credential.Issuer, "/")+"/.well-known/openid-configuration", &discovery, internetOnly)
 		if err != nil {
 			return nil, err
 		}
@@ -107,7 +112,7 @@ func fetchFederatedKeySet(credential *FederatedCredential) (*jose.JSONWebKeySet,
 	}
 
 	keySet := &jose.JSONWebKeySet{}
-	err := fetchFederatedJson(jwksUri, keySet)
+	err := fetchFederatedJson(jwksUri, keySet, internetOnly)
 	if err != nil {
 		return nil, err
 	}
@@ -133,7 +138,7 @@ func findFederatedKey(keySet *jose.JSONWebKeySet, kid string) interface{} {
 
 // getFederatedKey reads the issuer's JWKS through a cache. An unknown key ID refetches the set,
 // at most once per minute, so a rotated key is picked up without waiting for the cache to expire.
-func getFederatedKey(credential *FederatedCredential, kid string) (interface{}, error) {
+func getFederatedKey(credential *FederatedCredential, kid string, internetOnly bool) (interface{}, error) {
 	federatedKeySetMutex.Lock()
 	defer federatedKeySetMutex.Unlock()
 
@@ -149,7 +154,7 @@ func getFederatedKey(credential *FederatedCredential, kid string) (interface{}, 
 		}
 	}
 
-	keySet, err := fetchFederatedKeySet(credential)
+	keySet, err := fetchFederatedKeySet(credential, internetOnly)
 	if err != nil {
 		return nil, err
 	}
@@ -233,7 +238,7 @@ func validateFederatedToken(application *Application, tokenString string, host s
 	}
 
 	kid, _ := unverifiedToken.Header["kid"].(string)
-	key, err := getFederatedKey(credential, kid)
+	key, err := getFederatedKey(credential, kid, isDynamicClient(application))
 	if err != nil {
 		return nil, nil, err
 	}
