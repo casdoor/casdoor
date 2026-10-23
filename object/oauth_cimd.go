@@ -141,6 +141,7 @@ func GetApplicationByClientIdMetadata(clientId string, organization string, lang
 		application.ClientId = clientId
 		application.DisplayName = displayName
 		application.HomepageUrl = homepageUrl
+		setPrivateKeyJwtCredential(application, &doc.DynamicClientRegistrationRequest)
 
 		affected, err := AddApplication(application, lang)
 		if err != nil {
@@ -158,6 +159,7 @@ func GetApplicationByClientIdMetadata(clientId string, organization string, lang
 		if doc.LogoUri != "" {
 			application.Logo = doc.LogoUri
 		}
+		setPrivateKeyJwtCredential(application, &doc.DynamicClientRegistrationRequest)
 
 		_, err = UpdateApplication(application.GetId(), application, true, lang, nil)
 		if err != nil {
@@ -219,8 +221,8 @@ func checkClientIdMetadataDocument(doc *ClientIdMetadataDocument, clientId strin
 	if doc.ClientSecret != "" {
 		return fmt.Errorf("the client metadata document: %s must not contain client_secret", clientId)
 	}
-	if doc.TokenEndpointAuthMethod != "" && doc.TokenEndpointAuthMethod != "none" {
-		return fmt.Errorf("the token_endpoint_auth_method: %s of the client: %s is not supported, only \"none\" with PKCE is", doc.TokenEndpointAuthMethod, clientId)
+	if doc.TokenEndpointAuthMethod != "" && doc.TokenEndpointAuthMethod != "none" && doc.TokenEndpointAuthMethod != "private_key_jwt" {
+		return fmt.Errorf("the token_endpoint_auth_method: %s of the client: %s is not supported, only \"none\" with PKCE and \"private_key_jwt\" are", doc.TokenEndpointAuthMethod, clientId)
 	}
 	if len(doc.RedirectUris) == 0 {
 		return fmt.Errorf("the client metadata document: %s has no redirect_uris", clientId)

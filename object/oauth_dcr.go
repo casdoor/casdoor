@@ -30,6 +30,7 @@ type DynamicClientRegistrationRequest struct {
 	GrantTypes              []string `json:"grant_types,omitempty"`
 	ResponseTypes           []string `json:"response_types,omitempty"`
 	TokenEndpointAuthMethod string   `json:"token_endpoint_auth_method,omitempty"`
+	JwksUri                 string   `json:"jwks_uri,omitempty"`
 	ApplicationType         string   `json:"application_type,omitempty"`
 	Contacts                []string `json:"contacts,omitempty"`
 	LogoUri                 string   `json:"logo_uri,omitempty"`
@@ -50,6 +51,7 @@ type DynamicClientRegistrationResponse struct {
 	GrantTypes              []string `json:"grant_types,omitempty"`
 	ResponseTypes           []string `json:"response_types,omitempty"`
 	TokenEndpointAuthMethod string   `json:"token_endpoint_auth_method,omitempty"`
+	JwksUri                 string   `json:"jwks_uri,omitempty"`
 	ApplicationType         string   `json:"application_type,omitempty"`
 	Contacts                []string `json:"contacts,omitempty"`
 	LogoUri                 string   `json:"logo_uri,omitempty"`
@@ -124,6 +126,7 @@ func RegisterDynamicClient(req *DynamicClientRegistrationRequest, organization s
 	registrationAccessToken := util.GenerateClientSecret()
 	application := newDynamicClientApplication(req, org, "dcr")
 	application.RegistrationAccessToken = registrationAccessToken
+	setPrivateKeyJwtCredential(application, req)
 	clientId := application.ClientId
 	clientSecret := application.ClientSecret
 
@@ -150,6 +153,7 @@ func RegisterDynamicClient(req *DynamicClientRegistrationRequest, organization s
 		GrantTypes:              req.GrantTypes,
 		ResponseTypes:           req.ResponseTypes,
 		TokenEndpointAuthMethod: req.TokenEndpointAuthMethod,
+		JwksUri:                 req.JwksUri,
 		ApplicationType:         req.ApplicationType,
 		Contacts:                req.Contacts,
 		LogoUri:                 req.LogoUri,
@@ -250,6 +254,11 @@ func GetDynamicClientByToken(clientId, bearerToken string) (*Application, *DcrEr
 
 // GetDynamicClientRegistrationResponse builds a RFC 7592 read response from an application
 func GetDynamicClientRegistrationResponse(app *Application, registrationClientUri string) *DynamicClientRegistrationResponse {
+	tokenEndpointAuthMethod, jwksUri := "client_secret_basic", ""
+	if credential := getPrivateKeyJwtCredential(app); credential != nil {
+		tokenEndpointAuthMethod, jwksUri = "private_key_jwt", credential.JwksUri
+	}
+
 	return &DynamicClientRegistrationResponse{
 		ClientId:                app.ClientId,
 		ClientSecret:            app.ClientSecret,
@@ -258,7 +267,8 @@ func GetDynamicClientRegistrationResponse(app *Application, registrationClientUr
 		ClientName:              app.DisplayName,
 		RedirectUris:            app.RedirectUris,
 		GrantTypes:              app.GrantTypes,
-		TokenEndpointAuthMethod: "client_secret_basic",
+		TokenEndpointAuthMethod: tokenEndpointAuthMethod,
+		JwksUri:                 jwksUri,
 		ApplicationType:         "web",
 		LogoUri:                 app.Logo,
 		ClientUri:               app.HomepageUrl,
@@ -294,6 +304,7 @@ func UpdateDynamicClient(app *Application, req *DynamicClientRegistrationRequest
 	if req.TosUri != "" {
 		app.TermsOfUse = req.TosUri
 	}
+	setPrivateKeyJwtCredential(app, req)
 
 	_, err := UpdateApplication(util.GetId(app.Owner, app.Name), app, true, "", nil)
 	if err != nil {
@@ -335,6 +346,8 @@ func getDcrTokenLifetimes(defaultApp *Application) (float64, float64, int64) {
 
 var dcrGrantTypes = []string{"authorization_code", "refresh_token", "urn:ietf:params:oauth:grant-type:device_code"}
 
+var dcrTokenEndpointAuthMethods = []string{"client_secret_basic", "client_secret_post", "private_key_jwt", "none"}
+
 func checkDcrClientMetadata(req *DynamicClientRegistrationRequest) *DcrError {
 	for _, redirectUri := range req.RedirectUris {
 		if isScriptUrl(redirectUri) {
@@ -354,6 +367,19 @@ func checkDcrClientMetadata(req *DynamicClientRegistrationRequest) *DcrError {
 		}
 	}
 
+	if req.TokenEndpointAuthMethod != "" && !util.InSlice(dcrTokenEndpointAuthMethods, req.TokenEndpointAuthMethod) {
+		return &DcrError{
+			Error:            "invalid_client_metadata",
+			ErrorDescription: fmt.Sprintf("the token_endpoint_auth_method: %s is not supported", req.TokenEndpointAuthMethod),
+		}
+	}
+	if req.TokenEndpointAuthMethod == "private_key_jwt" && !strings.HasPrefix(req.JwksUri, "https://") {
+		return &DcrError{
+			Error:            "invalid_client_metadata",
+			ErrorDescription: "the token_endpoint_auth_method: private_key_jwt requires a jwks_uri with https",
+		}
+	}
+
 	grantTypes := []string{}
 	for _, grantType := range req.GrantTypes {
 		if util.InSlice(dcrGrantTypes, grantType) {
@@ -362,6 +388,39 @@ func checkDcrClientMetadata(req *DynamicClientRegistrationRequest) *DcrError {
 	}
 	req.GrantTypes = grantTypes
 	return nil
+}
+
+func isDynamicClient(application *Application) bool {
+	return util.InSlice(application.Tags, "dcr") || util.InSlice(application.Tags, cimdTag)
+}
+
+func getPrivateKeyJwtCredential(application *Application) *FederatedCredential {
+	for _, credential := range application.FederatedCredentials {
+		if credential != nil && credential.Issuer == application.ClientId {
+			return credential
+		}
+	}
+	return nil
+}
+
+// setPrivateKeyJwtCredential trusts the keys at the jwks_uri of a client using private_key_jwt (RFC 7523)
+// as a federated credential whose issuer and subject are the client ID, which client_assertion is checked against
+func setPrivateKeyJwtCredential(application *Application, req *DynamicClientRegistrationRequest) {
+	credentials := []*FederatedCredential{}
+	for _, credential := range application.FederatedCredentials {
+		if credential != nil && credential.Issuer != application.ClientId {
+			credentials = append(credentials, credential)
+		}
+	}
+
+	if req.TokenEndpointAuthMethod == "private_key_jwt" {
+		credentials = append(credentials, &FederatedCredential{
+			Issuer:  application.ClientId,
+			JwksUri: req.JwksUri,
+			Subject: application.ClientId,
+		})
+	}
+	application.FederatedCredentials = credentials
 }
 
 func isScriptUrl(rawUrl string) bool {
