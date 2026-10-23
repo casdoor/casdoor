@@ -14,7 +14,7 @@
 
 //go:build windows
 
-package main
+package util
 
 import (
 	"os"
@@ -23,11 +23,13 @@ import (
 	"golang.org/x/sys/windows/svc"
 )
 
-type windowsService struct{}
+type windowsService struct {
+	run func()
+}
 
 func (s *windowsService) Execute(args []string, requests <-chan svc.ChangeRequest, changes chan<- svc.Status) (bool, uint32) {
 	changes <- svc.Status{State: svc.StartPending}
-	go runServer()
+	go s.run()
 	changes <- svc.Status{State: svc.Running, Accepts: svc.AcceptStop | svc.AcceptShutdown}
 
 	for request := range requests {
@@ -43,7 +45,7 @@ func (s *windowsService) Execute(args []string, requests <-chan svc.ChangeReques
 	return false, 0
 }
 
-func runAsService() bool {
+func RunAsService(run func()) bool {
 	isService, err := svc.IsWindowsService()
 	if err != nil {
 		panic(err)
@@ -62,7 +64,7 @@ func runAsService() bool {
 		panic(err)
 	}
 
-	err = svc.Run("casdoor", &windowsService{})
+	err = svc.Run("casdoor", &windowsService{run: run})
 	if err != nil {
 		panic(err)
 	}

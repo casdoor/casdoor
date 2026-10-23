@@ -14,8 +14,8 @@
 
 //go:build !windows
 
-package main
+package util
 
-func runAsService() bool {
+func RunAsService(run func()) bool {
 	return false
 }
