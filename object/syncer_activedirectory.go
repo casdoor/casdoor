@@ -17,7 +17,9 @@ package object
 import (
 	"crypto/tls"
 	"fmt"
+	"strconv"
 	"strings"
+	"time"
 	"unicode/utf8"
 
 	"github.com/casdoor/casdoor/util"
@@ -66,8 +68,48 @@ func sanitizeUTF8(s string) string {
 
 // getAttributeValueSafe safely retrieves an LDAP attribute value and ensures it's valid UTF-8
 func getAttributeValueSafe(entry *goldap.Entry, attributeName string) string {
-	value := entry.GetAttributeValue(attributeName)
+	value := entry.GetEqualFoldAttributeValue(attributeName)
 	return sanitizeUTF8(value)
+}
+
+// convertADTime converts an AD generalized time like "20231010120000.0Z" to RFC 3339
+func convertADTime(value string) string {
+	t, err := time.Parse("20060102150405Z0700", value)
+	if err != nil {
+		return value
+	}
+	return t.Format(time.RFC3339)
+}
+
+// isADAccountDisabled checks the ACCOUNTDISABLE bit (0x02) of userAccountControl
+func isADAccountDisabled(userAccountControl string) bool {
+	i, err := strconv.Atoi(userAccountControl)
+	if err != nil {
+		return false
+	}
+	return i&0x02 != 0
+}
+
+// getADAttributeValue gets an attribute value for a table column, converting the AD-specific formats
+func getADAttributeValue(entry *goldap.Entry, attributeName string, casdoorName string) string {
+	switch strings.ToLower(attributeName) {
+	case "objectguid":
+		return convertGUIDToString(entry.GetEqualFoldRawAttributeValue(attributeName))
+	case "whencreated", "whenchanged":
+		value := getAttributeValueSafe(entry, attributeName)
+		if value == "" {
+			return ""
+		}
+		return convertADTime(value)
+	case "useraccountcontrol":
+		value := getAttributeValueSafe(entry, attributeName)
+		if value != "" && casdoorName == "IsForbidden" {
+			return strconv.FormatBool(isADAccountDisabled(value))
+		}
+		return value
+	default:
+		return getAttributeValueSafe(entry, attributeName)
+	}
 }
 
 // ActiveDirectorySyncerProvider implements SyncerProvider for Active Directory LDAP-based syncers
@@ -169,25 +211,8 @@ func (p *ActiveDirectorySyncerProvider) getLdapConn() (*goldap.Conn, error) {
 	return conn, nil
 }
 
-// getActiveDirectoryUsers retrieves all users from Active Directory
-func (p *ActiveDirectorySyncerProvider) getActiveDirectoryUsers() ([]*OriginalUser, error) {
-	conn, err := p.getLdapConn()
-	if err != nil {
-		return nil, err
-	}
-	defer conn.Close()
-
-	// Use the Database field to store the base DN for searching
-	baseDN := p.Syncer.Database
-	if baseDN == "" {
-		return nil, fmt.Errorf("database field (base DN) is required for Active Directory syncer")
-	}
-
-	// Search filter for user objects in Active Directory
-	// Filter for users: objectClass=user, objectCategory=person, and not disabled accounts
-	searchFilter := "(&(objectClass=user)(objectCategory=person))"
-
-	// Attributes to retrieve from Active Directory
+// getSearchAttributes returns the default attributes plus the ones referenced by the table columns
+func (p *ActiveDirectorySyncerProvider) getSearchAttributes() []string {
 	attributes := []string{
 		"sAMAccountName",     // Username
 		"userPrincipalName",  // UPN (email-like format)
@@ -210,6 +235,43 @@ func (p *ActiveDirectorySyncerProvider) getActiveDirectoryUsers() ([]*OriginalUs
 		"userAccountControl", // Account status
 	}
 
+	seen := map[string]bool{}
+	for _, attribute := range attributes {
+		seen[strings.ToLower(attribute)] = true
+	}
+
+	for _, tableColumn := range p.Syncer.TableColumns {
+		for _, name := range strings.Split(tableColumn.Name, "+") {
+			name = strings.TrimSpace(name)
+			if name == "" || seen[strings.ToLower(name)] {
+				continue
+			}
+			seen[strings.ToLower(name)] = true
+			attributes = append(attributes, name)
+		}
+	}
+
+	return attributes
+}
+
+// getActiveDirectoryUsers retrieves all users from Active Directory
+func (p *ActiveDirectorySyncerProvider) getActiveDirectoryUsers() ([]*OriginalUser, error) {
+	conn, err := p.getLdapConn()
+	if err != nil {
+		return nil, err
+	}
+	defer conn.Close()
+
+	// Use the Database field to store the base DN for searching
+	baseDN := p.Syncer.Database
+	if baseDN == "" {
+		return nil, fmt.Errorf("database field (base DN) is required for Active Directory syncer")
+	}
+
+	// Search filter for user objects in Active Directory
+	// Filter for users: objectClass=user, objectCategory=person, and not disabled accounts
+	searchFilter := "(&(objectClass=user)(objectCategory=person))"
+
 	searchRequest := goldap.NewSearchRequest(
 		baseDN,
 		goldap.ScopeWholeSubtree,
@@ -218,11 +280,12 @@ func (p *ActiveDirectorySyncerProvider) getActiveDirectoryUsers() ([]*OriginalUs
 		0,     // No time limit
 		false, // Types only = false
 		searchFilter,
-		attributes,
+		p.getSearchAttributes(),
 		nil,
 	)
 
-	sr, err := conn.Search(searchRequest)
+	// AD returns at most 1000 entries (MaxPageSize) per search, so page through the results
+	sr, err := conn.SearchWithPaging(searchRequest, 500)
 	if err != nil {
 		return nil, fmt.Errorf("failed to search Active Directory: %w", err)
 	}
@@ -266,7 +329,7 @@ func (p *ActiveDirectorySyncerProvider) adEntryToOriginalUser(entry *goldap.Entr
 
 	// Handle objectGUID specially - it's a binary attribute
 	var objectGUID string
-	objectGUIDBytes := entry.GetRawAttributeValue("objectGUID")
+	objectGUIDBytes := entry.GetEqualFoldRawAttributeValue("objectGUID")
 	if len(objectGUIDBytes) == 16 {
 		objectGUID = convertGUIDToString(objectGUIDBytes)
 	}
@@ -355,7 +418,7 @@ func (p *ActiveDirectorySyncerProvider) adEntryToOriginalUser(entry *goldap.Entr
 
 	// Set creation time
 	if whenCreated != "" {
-		user.CreatedTime = whenCreated
+		user.CreatedTime = convertADTime(whenCreated)
 	} else {
 		user.CreatedTime = util.GetCurrentTime()
 	}
@@ -363,9 +426,26 @@ func (p *ActiveDirectorySyncerProvider) adEntryToOriginalUser(entry *goldap.Entr
 	// Parse userAccountControl to determine if account is disabled
 	// Bit 2 (value 2) indicates the account is disabled
 	if userAccountControlStr != "" {
-		userAccountControl := util.ParseInt(userAccountControlStr)
-		// Check if bit 2 is set (account disabled)
-		user.IsForbidden = (userAccountControl & 0x02) != 0
+		user.IsForbidden = isADAccountDisabled(userAccountControlStr)
+	}
+
+	// Apply the syncer's table columns on top of the defaults above, "a+b" joins several attributes
+	for _, tableColumn := range p.Syncer.TableColumns {
+		values := []string{}
+		for _, name := range strings.Split(tableColumn.Name, "+") {
+			name = strings.TrimSpace(name)
+			if name == "" {
+				continue
+			}
+			value := getADAttributeValue(entry, name, tableColumn.CasdoorName)
+			if value != "" {
+				values = append(values, value)
+			}
+		}
+		if len(values) == 0 {
+			continue
+		}
+		p.Syncer.setUserByKeyValue(user, tableColumn.CasdoorName, strings.Join(values, " "))
 	}
 
 	return user
