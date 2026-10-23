@@ -74,18 +74,19 @@ type LarkAccessTokenResp struct {
 }
 
 type LarkUser struct {
-	UserId        string      `json:"user_id"`
-	UnionId       string      `json:"union_id"`
-	OpenId        string      `json:"open_id"`
-	Name          string      `json:"name"`
-	EnName        string      `json:"en_name"`
-	Email         string      `json:"email"`
-	Mobile        string      `json:"mobile"`
-	Gender        int         `json:"gender"`
-	Avatar        *LarkAvatar `json:"avatar"`
-	Status        *LarkStatus `json:"status"`
-	DepartmentIds []string    `json:"department_ids"`
-	JobTitle      string      `json:"job_title"`
+	UserId          string      `json:"user_id"`
+	UnionId         string      `json:"union_id"`
+	OpenId          string      `json:"open_id"`
+	Name            string      `json:"name"`
+	EnName          string      `json:"en_name"`
+	Email           string      `json:"email"`
+	EnterpriseEmail string      `json:"enterprise_email"`
+	Mobile          string      `json:"mobile"`
+	Gender          int         `json:"gender"`
+	Avatar          *LarkAvatar `json:"avatar"`
+	Status          *LarkStatus `json:"status"`
+	DepartmentIds   []string    `json:"department_ids"`
+	JobTitle        string      `json:"job_title"`
 }
 
 type LarkAvatar struct {
@@ -355,6 +356,34 @@ func (p *LarkSyncerProvider) getLarkUsers() ([]*OriginalUser, error) {
 	return originalUsers, nil
 }
 
+// getLarkUserFieldValue returns a Lark user field by name, for TableColumns mapping.
+// The second return value is false for unknown fields so a typo in the mapping
+// skips the field instead of overwriting it with an empty value.
+func (p *LarkSyncerProvider) getLarkUserFieldValue(larkUser *LarkUser, field string) (string, bool) {
+	switch field {
+	case "user_id":
+		return larkUser.UserId, true
+	case "union_id":
+		return larkUser.UnionId, true
+	case "open_id":
+		return larkUser.OpenId, true
+	case "name":
+		return larkUser.Name, true
+	case "en_name":
+		return larkUser.EnName, true
+	case "email":
+		return larkUser.Email, true
+	case "enterprise_email":
+		return larkUser.EnterpriseEmail, true
+	case "mobile":
+		return larkUser.Mobile, true
+	case "job_title":
+		return larkUser.JobTitle, true
+	default:
+		return "", false
+	}
+}
+
 // larkUserToOriginalUser converts Lark user to Casdoor OriginalUser
 func (p *LarkSyncerProvider) larkUserToOriginalUser(larkUser *LarkUser) *OriginalUser {
 	// Use user_id as name, fallback to union_id or open_id
@@ -377,6 +406,14 @@ func (p *LarkSyncerProvider) larkUserToOriginalUser(larkUser *LarkUser) *Origina
 		Properties:  map[string]string{},
 		Groups:      []string{},
 		Lark:        larkUser.UserId, // Link Lark provider account
+	}
+
+	// TableColumns can override individual fields, e.g. map
+	// enterprise_email -> Email on tenants that only have an enterprise mailbox.
+	for _, tableColumn := range p.Syncer.TableColumns {
+		if value, ok := p.getLarkUserFieldValue(larkUser, tableColumn.Name); ok {
+			p.Syncer.setUserByKeyValue(user, tableColumn.CasdoorName, value)
+		}
 	}
 
 	// Set avatar if available
