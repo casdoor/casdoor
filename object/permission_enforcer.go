@@ -342,8 +342,10 @@ func getPermissionEnforcerTargets(permission *Permission, permissionIDs ...strin
 		if err != nil {
 			return nil, err
 		}
+		// The old ID of a renamed permission is no longer in the DB, but its old policies still need to be removed.
 		if targetPermission == nil {
-			return nil, fmt.Errorf("the permission: %s doesn't exist", permissionID)
+			visited[permissionID] = struct{}{}
+			continue
 		}
 
 		permissions = append(permissions, targetPermission)
