@@ -606,6 +606,9 @@ type jwtTokenOptions struct {
 	Code string
 	// WithAtHash adds the at_hash of the access token issued together with the ID token
 	WithAtHash bool
+	// RefreshScope is the scope of the refresh token when the access token asks for less of it,
+	// as a refresh token keeps the scope of the grant (RFC 6749 section 6)
+	RefreshScope string
 }
 
 // getOidcHash returns the left-most half of the hash of value, base64url encoded, using the hash
@@ -687,6 +690,11 @@ func generateJwtTokenWithOptions(application *Application, user *User, provider 
 		claims.Audience = []string{resource}
 	}
 
+	refreshClaims := claims
+	if options.RefreshScope != "" {
+		refreshClaims.Scope = options.RefreshScope
+	}
+
 	var token *jwt.Token
 	var refreshToken *jwt.Token
 	// the ID token is created once the access token is signed, its at_hash depends on it
@@ -706,6 +714,7 @@ func generateJwtTokenWithOptions(application *Application, user *User, provider 
 		newIdToken = func() *jwt.Token { return jwt.NewWithClaims(jwtMethod, getClaimsWithoutThirdIdp(idClaims)) }
 		claimsWithoutThirdIdp.ExpiresAt = jwt.NewNumericDate(refreshExpireTime)
 		claimsWithoutThirdIdp.TokenType = "refresh-token"
+		claimsWithoutThirdIdp.Scope = refreshClaims.Scope
 		refreshToken = jwt.NewWithClaims(jwtMethod, claimsWithoutThirdIdp)
 	} else if application.TokenFormat == "JWT-Empty" {
 		claimsShort := getShortClaims(claims)
@@ -714,6 +723,7 @@ func generateJwtTokenWithOptions(application *Application, user *User, provider 
 		newIdToken = func() *jwt.Token { return jwt.NewWithClaims(jwtMethod, getShortClaims(idClaims)) }
 		claimsShort.ExpiresAt = jwt.NewNumericDate(refreshExpireTime)
 		claimsShort.TokenType = "refresh-token"
+		claimsShort.Scope = refreshClaims.Scope
 		refreshToken = jwt.NewWithClaims(jwtMethod, claimsShort)
 	} else if application.TokenFormat == "JWT-Custom" {
 		claimsCustom := getClaimsCustom(claims, application.TokenFields, application.TokenAttributes)
@@ -722,12 +732,13 @@ func generateJwtTokenWithOptions(application *Application, user *User, provider 
 		newIdToken = func() *jwt.Token {
 			return jwt.NewWithClaims(jwtMethod, getClaimsCustom(idClaims, application.TokenFields, application.TokenAttributes))
 		}
-		refreshToken = jwt.NewWithClaims(jwtMethod, getRefreshClaimsCustom(claims, application.TokenFields, application.TokenAttributes, refreshExpireTime))
+		refreshToken = jwt.NewWithClaims(jwtMethod, getRefreshClaimsCustom(refreshClaims, application.TokenFields, application.TokenAttributes, refreshExpireTime))
 	} else if application.TokenFormat == "JWT-Standard" {
 		claimsStandard := getStandardClaims(claims)
 
 		token = jwt.NewWithClaims(jwtMethod, claimsStandard)
 		newIdToken = func() *jwt.Token { return jwt.NewWithClaims(jwtMethod, getStandardClaims(idClaims)) }
+		claimsStandard = getStandardClaims(refreshClaims)
 		claimsStandard.ExpiresAt = jwt.NewNumericDate(refreshExpireTime)
 		claimsStandard.TokenType = "refresh-token"
 		refreshToken = jwt.NewWithClaims(jwtMethod, claimsStandard)
