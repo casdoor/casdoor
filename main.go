@@ -34,7 +34,7 @@ import (
 )
 
 func main() {
-	if runAsService() {
+	if util.RunAsService(runServer) {
 		return
 	}
 
