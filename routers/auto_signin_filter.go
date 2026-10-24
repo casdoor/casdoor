@@ -68,13 +68,13 @@ func AutoSigninFilter(ctx *context.Context) {
 		}
 
 		if token == nil {
-			responseError(ctx, "Access token doesn't exist in database")
+			responseInvalidToken(ctx, "Access token doesn't exist in database")
 			return
 		}
 
 		isExpired, expireTime := util.IsTokenExpired(token.CreatedTime, token.ExpiresIn)
 		if isExpired {
-			responseError(ctx, fmt.Sprintf("Access token has expired, expireTime = %s", expireTime))
+			responseInvalidToken(ctx, fmt.Sprintf("Access token has expired, expireTime = %s", expireTime))
 			return
 		}
 
@@ -85,7 +85,7 @@ func AutoSigninFilter(ctx *context.Context) {
 			return
 		}
 		if !isUserActive {
-			responseError(ctx, "The user is forbidden to sign in, please contact the administrator")
+			responseInvalidToken(ctx, "The user is forbidden to sign in, please contact the administrator")
 			return
 		}
 

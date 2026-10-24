@@ -44,6 +44,17 @@ func isMcpRequest(urlPath string) bool {
 	return urlPath == "/api/mcp" || strings.HasPrefix(urlPath, "/api/server/")
 }
 
+// responseInvalidToken rejects a request whose access token cannot be used. The OIDC
+// userinfo endpoint answers 401 with a Bearer challenge (RFC 6750 section 3.1), so that
+// relying parties can tell an expired or revoked token apart from a server error
+func responseInvalidToken(ctx *context.Context, error string) {
+	if ctx.Request.URL.Path == "/api/userinfo" {
+		ctx.Output.Header("WWW-Authenticate", fmt.Sprintf("Bearer error=\"invalid_token\", error_description=%q", error))
+		ctx.Output.SetStatus(http.StatusUnauthorized)
+	}
+	responseError(ctx, error)
+}
+
 func responseError(ctx *context.Context, error string, data ...interface{}) {
 	// ctx.ResponseWriter.WriteHeader(http.StatusForbidden)
 	urlPath := ctx.Request.URL.Path
