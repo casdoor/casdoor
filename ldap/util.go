@@ -438,19 +438,22 @@ func (q *userSearchFilter) buildCondition(filter interface{}, conjunctive bool) 
 		if err != nil {
 			return nil, err
 		}
+		// initial*any*final: only the initial part anchors the start, only the final part the end
 		var expr string
+		hasFinal := false
 		for _, substring := range f.Substrings() {
 			switch s := substring.(type) {
 			case message.SubstringInitial:
-				expr += string(s) + "%"
-				continue
-			case message.SubstringAny:
-				expr += string(s) + "%"
-				continue
-			case message.SubstringFinal:
 				expr += string(s)
-				continue
+			case message.SubstringAny:
+				expr += "%" + string(s)
+			case message.SubstringFinal:
+				expr += "%" + string(s)
+				hasFinal = true
 			}
+		}
+		if !hasFinal {
+			expr += "%"
 		}
 		return builder.Expr(field+" LIKE ?", expr), nil
 	default:
