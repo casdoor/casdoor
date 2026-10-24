@@ -1495,6 +1495,8 @@
     "Cannot be more than the max open connections": "不能超过最大打开连接数",
     "Connection max lifetime": "连接最长使用时间",
     "Connection max lifetime - Tooltip": "一条连接最多复用多久就关闭重连，0表示不限",
+    "Default record retention days": "默认日志保留天数",
+    "Default record retention days - Tooltip": "没有单独设置日志保留天数的组织，日志（审计记录）保留多少天，超期的日志由每天执行的清理任务自动删除，0表示永久保留",
     "Max idle connections": "最大空闲连接数",
     "Max idle connections - Tooltip": "连接池里最多保留的空闲连接数，0表示用默认值2",
     "Max open connections": "最大打开连接数",

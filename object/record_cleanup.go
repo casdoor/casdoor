@@ -26,6 +26,10 @@ import (
 // a long time.
 const recordCleanupBatchSize = 1000
 
+// recordCleanupBatchInterval spreads the deletes over time, so that the binlog they generate
+// does not fill up the database's disk at once.
+const recordCleanupBatchInterval = 100 * time.Millisecond
+
 // getOrgRecordRetentionDays returns a map from organization name to its configured
 // record retention period in days. Organizations that keep their records forever
 // (the default, i.e. a non-positive value) are not included, so audit rows are never
@@ -74,6 +78,55 @@ func cleanupOrgRecords(owner string, cutoffTime string) (int64, error) {
 		if len(records) < recordCleanupBatchSize {
 			break
 		}
+		time.Sleep(recordCleanupBatchInterval)
+	}
+
+	return deletedCount, nil
+}
+
+// cleanupRecordsByGlobalRetention deletes the records created before cutoffTime whose organizations
+// do not set their own retention. The records are scanned in the order of their ids, because
+// "created_time" has no index and the ids grow with it.
+func cleanupRecordsByGlobalRetention(cutoffTime string, retentionDaysMap map[string]int) (int64, error) {
+	deletedCount := int64(0)
+	lastId := 0
+
+	for {
+		records := []*Record{}
+		err := ormer.Engine.Cols("id", "owner", "created_time").Where("id > ?", lastId).Asc("id").Limit(recordCleanupBatchSize).Find(&records)
+		if err != nil {
+			return deletedCount, fmt.Errorf("failed to query expired records: %w", err)
+		}
+		if len(records) == 0 {
+			break
+		}
+
+		ids := []int{}
+		reachedCutoff := false
+		for _, record := range records {
+			if record.CreatedTime >= cutoffTime {
+				reachedCutoff = true
+				break
+			}
+
+			lastId = record.Id
+			if _, ok := retentionDaysMap[record.Owner]; !ok {
+				ids = append(ids, record.Id)
+			}
+		}
+
+		if len(ids) != 0 {
+			affected, err := ormer.Engine.In("id", ids).Delete(&Record{})
+			if err != nil {
+				return deletedCount, fmt.Errorf("failed to delete expired records: %w", err)
+			}
+			deletedCount += affected
+		}
+
+		if reachedCutoff || len(records) < recordCleanupBatchSize {
+			break
+		}
+		time.Sleep(recordCleanupBatchInterval)
 	}
 
 	return deletedCount, nil
@@ -116,6 +169,24 @@ func CleanupRecords() error {
 		if deletedCount != 0 {
 			fmt.Printf("Deleted [%d] expired records | Org: %s | Created before: %s\n", deletedCount, owner, cutoffTime)
 		}
+	}
+
+	setting, err := GetSetting()
+	if err != nil {
+		return err
+	}
+	if setting == nil || setting.RecordRetentionDays <= 0 {
+		return nil
+	}
+
+	cutoffTime := currentTime.AddDate(0, 0, -setting.RecordRetentionDays).Format(time.RFC3339)
+	deletedCount, err := cleanupRecordsByGlobalRetention(cutoffTime, retentionDaysMap)
+	if err != nil {
+		return err
+	}
+
+	if deletedCount != 0 {
+		fmt.Printf("Deleted [%d] expired records | Global setting | Created before: %s\n", deletedCount, cutoffTime)
 	}
 
 	return nil

@@ -38,6 +38,9 @@ type Setting struct {
 	DbMaxOpenConns    int `json:"dbMaxOpenConns"`
 	DbMaxIdleConns    int `json:"dbMaxIdleConns"`
 	DbConnMaxLifetime int `json:"dbConnMaxLifetime"`
+
+	// applies to the organizations that do not set their own record retention days, 0 keeps the records forever
+	RecordRetentionDays int `json:"recordRetentionDays"`
 }
 
 func GetSetting() (*Setting, error) {
@@ -86,6 +89,9 @@ func (setting *Setting) check() error {
 	}
 	if setting.DbMaxOpenConns > 0 && setting.DbMaxIdleConns > setting.DbMaxOpenConns {
 		return fmt.Errorf("the max idle connections cannot be more than the max open connections")
+	}
+	if setting.RecordRetentionDays < 0 {
+		return fmt.Errorf("the record retention days cannot be negative")
 	}
 	return nil
 }

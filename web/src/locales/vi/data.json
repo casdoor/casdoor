@@ -1495,6 +1495,8 @@
     "Cannot be more than the max open connections": "Không được lớn hơn số kết nối mở tối đa",
     "Connection max lifetime": "Thời gian sống tối đa của kết nối",
     "Connection max lifetime - Tooltip": "Thời gian tối đa một kết nối được dùng lại trước khi đóng, 0 nghĩa là không giới hạn",
+    "Default record retention days": "Số ngày lưu nhật ký mặc định",
+    "Default record retention days - Tooltip": "Số ngày lưu nhật ký (kiểm toán) của các tổ chức không tự đặt thời hạn; nhật ký cũ hơn bị xóa bởi tác vụ dọn dẹp hằng ngày, 0 nghĩa là lưu vĩnh viễn",
     "Max idle connections": "Số kết nối nhàn rỗi tối đa",
     "Max idle connections - Tooltip": "Số kết nối nhàn rỗi tối đa giữ trong pool, 0 nghĩa là mặc định 2",
     "Max open connections": "Số kết nối mở tối đa",

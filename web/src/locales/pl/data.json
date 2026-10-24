@@ -1495,6 +1495,8 @@
     "Cannot be more than the max open connections": "Nie może przekraczać maks. liczby otwartych połączeń",
     "Connection max lifetime": "Maks. czas życia połączenia",
     "Connection max lifetime - Tooltip": "Maksymalny czas ponownego użycia połączenia przed jego zamknięciem, 0 oznacza brak limitu",
+    "Default record retention days": "Domyślny okres przechowywania logów (dni)",
+    "Default record retention days - Tooltip": "Liczba dni przechowywania logów (audytu) organizacji bez własnego okresu; starsze logi usuwa codzienne zadanie czyszczenia, 0 oznacza przechowywanie bezterminowe",
     "Max idle connections": "Maks. bezczynnych połączeń",
     "Max idle connections - Tooltip": "Maksymalna liczba bezczynnych połączeń w puli, 0 oznacza domyślną wartość 2",
     "Max open connections": "Maks. otwartych połączeń",

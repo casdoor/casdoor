@@ -1495,6 +1495,8 @@
     "Cannot be more than the max open connections": "No puede superar el máximo de conexiones abiertas",
     "Connection max lifetime": "Duración máxima de la conexión",
     "Connection max lifetime - Tooltip": "Tiempo máximo que se reutiliza una conexión antes de cerrarla, 0 significa sin límite",
+    "Default record retention days": "Días de retención de registros predeterminados",
+    "Default record retention days - Tooltip": "Días que se conservan los registros (auditoría) de las organizaciones sin retención propia; los más antiguos se eliminan con una tarea de limpieza diaria, 0 significa conservarlos para siempre",
     "Max idle connections": "Máx. conexiones inactivas",
     "Max idle connections - Tooltip": "Número máximo de conexiones inactivas en el pool, 0 significa el valor predeterminado de 2",
     "Max open connections": "Máx. conexiones abiertas",

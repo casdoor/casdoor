@@ -1495,6 +1495,8 @@
     "Cannot be more than the max open connections": "Darf nicht größer als die max. offenen Verbindungen sein",
     "Connection max lifetime": "Maximale Verbindungslebensdauer",
     "Connection max lifetime - Tooltip": "Maximale Zeit, die eine Verbindung wiederverwendet wird, bevor sie geschlossen wird, 0 bedeutet unbegrenzt",
+    "Default record retention days": "Standard-Aufbewahrungsdauer der Protokolle (Tage)",
+    "Default record retention days - Tooltip": "Tage, die Protokolle (Audit-Logs) von Organisationen ohne eigene Aufbewahrungsdauer behalten werden; ältere Protokolle werden von einem täglichen Bereinigungsjob gelöscht, 0 bedeutet dauerhaft behalten",
     "Max idle connections": "Max. inaktive Verbindungen",
     "Max idle connections - Tooltip": "Maximale Anzahl inaktiver Verbindungen im Pool, 0 bedeutet den Standardwert 2",
     "Max open connections": "Max. offene Verbindungen",

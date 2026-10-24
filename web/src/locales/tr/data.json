@@ -1495,6 +1495,8 @@
     "Cannot be more than the max open connections": "Maks. açık bağlantı sayısından fazla olamaz",
     "Connection max lifetime": "Bağlantı maks. ömrü",
     "Connection max lifetime - Tooltip": "Bir bağlantının kapatılmadan önce yeniden kullanılabileceği en uzun süre, 0 sınırsız demektir",
+    "Default record retention days": "Varsayılan kayıt saklama süresi (gün)",
+    "Default record retention days - Tooltip": "Kendi saklama süresini belirlemeyen kuruluşların kayıtlarının (denetim günlükleri) tutulacağı gün sayısı; daha eskileri günlük temizlik göreviyle silinir, 0 süresiz saklamak demektir",
     "Max idle connections": "Maks. boşta bağlantı",
     "Max idle connections - Tooltip": "Havuzda tutulan en fazla boşta bağlantı sayısı, 0 varsayılan değer olan 2 demektir",
     "Max open connections": "Maks. açık bağlantı",

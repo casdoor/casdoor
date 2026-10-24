@@ -1495,6 +1495,8 @@
     "Cannot be more than the max open connections": "Cannot be more than the max open connections",
     "Connection max lifetime": "Connection max lifetime",
     "Connection max lifetime - Tooltip": "Maximum time a connection is reused before it is closed, 0 means no limit",
+    "Default record retention days": "Default record retention days",
+    "Default record retention days - Tooltip": "Days to keep the records (audit logs) of the organizations that do not set their own record retention days, older records are deleted by a daily cleanup job, 0 means keeping them forever",
     "Max idle connections": "Max idle connections",
     "Max idle connections - Tooltip": "Maximum number of idle connections kept in the pool, 0 means the default of 2",
     "Max open connections": "Max open connections",
