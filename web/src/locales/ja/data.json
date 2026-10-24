@@ -1495,6 +1495,8 @@
     "Cannot be more than the max open connections": "最大オープン接続数を超えることはできません",
     "Connection max lifetime": "接続の最大有効期間",
     "Connection max lifetime - Tooltip": "接続を閉じるまでに再利用できる最大時間。0は無制限",
+    "Default record retention days": "既定のログ保存日数",
+    "Default record retention days - Tooltip": "独自の保存日数を設定していない組織のログ（監査記録）を保存する日数。超過したログは毎日のクリーンアップで削除されます。0は無期限に保存",
     "Max idle connections": "最大アイドル接続数",
     "Max idle connections - Tooltip": "プールに保持するアイドル接続の最大数。0はデフォルトの2",
     "Max open connections": "最大オープン接続数",
