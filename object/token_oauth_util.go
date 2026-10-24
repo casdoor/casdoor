@@ -709,7 +709,7 @@ func RefreshToken(application *Application, grantType string, refreshToken strin
 		return nil, err
 	}
 
-	newAccessToken, newRefreshToken, newIdToken, tokenName, err := generateJwtToken(application, user, "", "", "", scope, resource, host)
+	newAccessToken, newRefreshToken, newIdToken, tokenName, err := generateJwtTokenWithOptions(application, user, "", "", "", scope, resource, host, jwtTokenOptions{RefreshScope: oldTokenScope})
 	if err != nil {
 		return &TokenError{
 			Error:            EndpointError,
