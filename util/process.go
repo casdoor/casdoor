@@ -17,80 +17,103 @@ package util
 import (
 	"fmt"
 	"os"
-	"os/exec"
-	"runtime"
-	"strconv"
+	"path/filepath"
+	"slices"
 	"strings"
+	"time"
+
+	"github.com/shirou/gopsutil/v4/net"
+	"github.com/shirou/gopsutil/v4/process"
 )
 
-func getPidByPort(port int) (int, error) {
-	var cmd *exec.Cmd
-	switch runtime.GOOS {
-	case "windows":
-		cmd = exec.Command("cmd", "/c", "netstat -ano | findstr :"+strconv.Itoa(port))
-	case "darwin", "linux":
-		cmd = exec.Command("lsof", "-t", "-i", ":"+strconv.Itoa(port))
-	default:
-		return 0, fmt.Errorf("unsupported OS: %s", runtime.GOOS)
-	}
-
-	output, err := cmd.Output()
+func getListenerPids(port int) ([]int32, error) {
+	conns, err := net.Connections("tcp")
 	if err != nil {
-		if exitErr, ok := err.(*exec.ExitError); ok {
-			if exitErr.ExitCode() == 1 {
-				return 0, nil
-			}
-		}
-
-		return 0, nil
+		return nil, err
 	}
 
-	lines := strings.Split(string(output), "\n")
-	for _, line := range lines {
-		fields := strings.Fields(line)
-		if len(fields) > 0 {
-			if runtime.GOOS == "windows" {
-				if fields[1] == "0.0.0.0:"+strconv.Itoa(port) {
-					pid, err := strconv.Atoi(fields[len(fields)-1])
-					if err != nil {
-						return 0, err
-					}
+	pids := []int32{}
+	for _, conn := range conns {
+		if conn.Status != "LISTEN" || conn.Laddr.Port != uint32(port) {
+			continue
+		}
 
-					return pid, nil
-				}
-			} else {
-				pid, err := strconv.Atoi(fields[0])
-				if err != nil {
-					return 0, err
-				}
-
-				return pid, nil
-			}
+		if !slices.Contains(pids, conn.Pid) {
+			pids = append(pids, conn.Pid)
 		}
 	}
 
-	return 0, nil
+	return pids, nil
+}
+
+func getExeName(path string) string {
+	name := strings.ToLower(filepath.Base(strings.TrimSuffix(path, " (deleted)")))
+	return strings.TrimSuffix(name, ".exe")
+}
+
+func isOldInstance(p *process.Process) (bool, string) {
+	exe, err := p.Exe()
+	if err != nil || exe == "" {
+		exe, err = p.Name()
+		if err != nil {
+			return false, ""
+		}
+	}
+
+	name := getExeName(exe)
+	if strings.Contains(name, "casdoor") {
+		return true, exe
+	}
+
+	selfExe, err := os.Executable()
+	if err != nil {
+		return false, exe
+	}
+
+	return name == getExeName(selfExe), exe
 }
 
 func StopOldInstance(port int) error {
-	pid, err := getPidByPort(port)
+	pids, err := getListenerPids(port)
 	if err != nil {
-		return err
-	}
-	if pid == 0 {
+		fmt.Printf("StopOldInstance() error: failed to list the listeners of port %d: %s\n", port, err.Error())
 		return nil
 	}
 
-	process, err := os.FindProcess(pid)
-	if err != nil {
-		return err
+	stopped := false
+	for _, pid := range pids {
+		if pid == int32(os.Getpid()) {
+			continue
+		}
+		if pid == 0 {
+			return fmt.Errorf("port %d is in use by another program, please stop it or change httpport", port)
+		}
+
+		p, err := process.NewProcess(pid)
+		if err != nil {
+			continue
+		}
+
+		ok, exe := isOldInstance(p)
+		if !ok {
+			return fmt.Errorf("port %d is in use by another program: %s (pid: %d), please stop it or change httpport", port, exe, pid)
+		}
+
+		err = p.Kill()
+		if err != nil {
+			return err
+		}
+
+		stopped = true
+		fmt.Printf("The old instance with pid: %d has been stopped\n", pid)
 	}
 
-	err = process.Kill()
-	if err != nil {
-		return err
-	} else {
-		fmt.Printf("The old instance with pid: %d has been stopped\n", pid)
+	for i := 0; stopped && i < 50; i++ {
+		pids, err = getListenerPids(port)
+		if err != nil || len(pids) == 0 {
+			break
+		}
+		time.Sleep(100 * time.Millisecond)
 	}
 
 	return nil
