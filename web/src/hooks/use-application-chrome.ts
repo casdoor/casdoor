@@ -200,6 +200,10 @@ export function useApplicationHelmet(application: any) {
       document.title = title;
     }
 
+    if (!favicon) {
+      return;
+    }
+
     let link = document.querySelector<HTMLLinkElement>("link[rel='icon']");
     const previousHref = link?.getAttribute("href") ?? null;
     if (favicon) {
@@ -224,18 +228,23 @@ export function useApplicationHelmet(application: any) {
   }, [application]);
 }
 
-/** what the tab shows before an organization has been loaded */
-const DEFAULT_FAVICON = "https://cdn.casdoor.com/static/favicon.png";
-
 /**
  * The console's tab title and favicon, which follow the signed-in user's
- * organization. Signed out, the favicon falls back to Casdoor's own — the same
- * two <Helmet> blocks web/src/App.js renders.
+ * organization.
+ *
+ * Signed out there is no organization and so no favicon of our own to set: the
+ * link the server already rendered is left alone. On a deployment with branding
+ * that link was rewritten to the organization's own favicon
+ * (routers/static_filter.go), and a hard-coded Casdoor default here would
+ * replace it for as long as the application takes to load and then be replaced
+ * back, flashing Casdoor's own icon in the tab on every signed-out page load.
+ * The hard-coded URL also bypasses staticBaseUrl, which on an intranet
+ * deployment turns it into a third-party request.
  */
 export function useAccountHelmet(account: any) {
   const organization = account?.organization;
   const title = organization?.displayName;
-  const favicon = organization?.favicon || DEFAULT_FAVICON;
+  const favicon = organization?.favicon;
 
   React.useEffect(() => {
     if (title) {
