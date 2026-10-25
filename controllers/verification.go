@@ -367,8 +367,9 @@ func (c *ApiController) SendVerificationCode() {
 				return
 			}
 
-			// the verification code grant of a native app signs the address up with the code
-			if user == nil && (vform.Method == ForgetVerification || !application.IsVerificationCodeSignupEnabled(object.VerifyTypeEmail)) {
+			// the verification code grant of a native app signs the address up with the code, and
+			// so does the signup page after a sign-in with it
+			if user == nil && (vform.Method == ForgetVerification || !application.IsVerificationCodeSignupEnabled(object.VerifyTypeEmail) && !application.IsCodeSigninSignupEnabled(object.VerifyTypeEmail)) {
 				c.ResponseError(c.T("verification:the user does not exist, please sign up first"))
 				return
 			}
@@ -460,7 +461,7 @@ func (c *ApiController) SendVerificationCode() {
 			if user, err = object.GetUserByPhoneWithCountryCode(organization.Name, vform.Dest, vform.CountryCode); err != nil {
 				c.ResponseError(err.Error())
 				return
-			} else if user == nil && (vform.Method == ForgetVerification || !application.IsVerificationCodeSignupEnabled(object.VerifyTypePhone)) {
+			} else if user == nil && (vform.Method == ForgetVerification || !application.IsVerificationCodeSignupEnabled(object.VerifyTypePhone) && !application.IsCodeSigninSignupEnabled(object.VerifyTypePhone)) {
 				c.ResponseError(c.T("verification:the user does not exist, please sign up first"))
 				return
 			}

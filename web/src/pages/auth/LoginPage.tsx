@@ -172,6 +172,9 @@ function getUsernameLabel(method: LoginMethod | undefined) {
   }
 }
 
+/** The backend's answer to a verification-code sign-in of an email or phone that has no account yet. */
+const NextSignup = "NextSignup";
+
 /** A phone number typed without a country code belongs to the organization's only country, if it has just one. */
 function getOnlyCountryCode(application: any): string {
   const countryCodes = application?.organizationObj?.countryCodes ?? [];
@@ -845,7 +848,9 @@ export default function LoginPage({type = "login", application: applicationProp,
     const oAuthParams = Util.getOAuthGetParameters();
     AuthBackend.login(values, oAuthParams)
       .then((res: any) => {
-        if (res.status === "ok") {
+        if (res.status === "ok" && res.data === NextSignup) {
+          goToCodeSignup(res.data2, values.code);
+        } else if (res.status === "ok") {
           checkMfa(res, values, oAuthParams, (ok) => handleLoginResult(ok, values, oAuthParams));
         } else {
           Setting.showMessage("error", `${i18next.t("application:Failed to sign in")}: ${res.msg}`);
@@ -856,6 +861,19 @@ export default function LoginPage({type = "login", application: applicationProp,
         localStorage.setItem("lastLoginOrg", values?.organization || "");
         setLoading(false);
       });
+  };
+
+  /**
+   * The code proved an email or phone that has no account: the signup page takes it as
+   * verified, with the same code, and asks for the rest of the application's signup items.
+   */
+  const goToCodeSignup = (address: any, code: string) => {
+    const signupUrl = Setting.getSignupLink(application);
+    if (!signupUrl?.startsWith("/")) {
+      return;
+    }
+    Setting.storeSigninUrl();
+    navigate(signupUrl, {state: {verifiedAddress: {...address, code}}});
   };
 
   /** the user rejected this device-code sign-in from the approval page */

@@ -833,6 +833,23 @@ func (application *Application) IsMagicLinkSignupEnabled() bool {
 	return false
 }
 
+// NextSignup answers a verification-code sign-in of an email or phone that has no account yet
+const NextSignup = "NextSignup"
+
+// IsCodeSigninSignupEnabled tells whether a verification-code sign-in of an email or phone
+// that has no account may go on to the application's own signup page, which takes the
+// address the code proved and asks for the rest of the signup items
+func (application *Application) IsCodeSigninSignupEnabled(verifyType string) bool {
+	if !application.IsSelfSignupEnabled() || application.SignupUrl != "" {
+		return false
+	}
+
+	if verifyType == VerifyTypeEmail {
+		return application.IsCodeSigninViaEmailEnabled() && application.IsSignupFieldVisible("Email")
+	}
+	return application.IsCodeSigninViaSmsEnabled() && application.IsSignupFieldVisible("Phone")
+}
+
 // IsSelfSignupEnabled tells whether users may sign themselves up on the signup page, by a
 // magic link or by a verification code. "Disable self signup" leaves only the signups of
 // the application's providers (e.g. the first SSO login of a new employee) and of the
