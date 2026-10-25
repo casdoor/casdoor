@@ -207,7 +207,7 @@
     "The provider type: %s is not supported": "El tipo de proveedor: %s no es compatible"
   },
   "subscription": {
-    "Error": "Error"
+    "Error": "Fallo"
   },
   "ticket": {
     "Ticket not found": "Ticket no encontrado"
