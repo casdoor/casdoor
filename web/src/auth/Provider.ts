@@ -396,14 +396,32 @@ export function getProviderUrl(provider) {
   }
 }
 
-// WeChat's QR page takes a stylesheet (href) when it is framed: a sign-in embedded in another site
-// centers the code and leaves out the open platform app's name, which is not the embedding site's
-const wechatFramedQrCss = "html,body{height:100%;margin:0;background:#fff}" +
-  ".impowerBox{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;width:auto;padding:0;margin:0}" +
-  ".impowerBox .title{font-size:22px;font-weight:600;color:#171717;margin:0 0 20px}" +
-  ".impowerBox .qrcode{width:240px;height:240px;margin:0;border:1px solid #ecebe6;border-radius:16px;padding:12px}" +
-  ".impowerBox .info{width:auto}.impowerBox .status{padding:0;text-align:center}" +
-  ".impowerBox .status_browser p:nth-child(2){display:none}.impowerBox .status p{font-size:15px;color:#666}";
+// WeChat's QR page takes a stylesheet (href) when it is framed: the code is centered and the open
+// platform app's name is left out, as it is not the name of the site the visitor is on. The title
+// goes too where the sign-in page shows its own, see getWechatQrConnectUrl
+function getWechatQrCssHref(withTitle: boolean) {
+  const css = "html,body{height:100%;margin:0;background:#fff}" +
+    ".impowerBox{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;width:auto;padding:0;margin:0}" +
+    (withTitle ? ".impowerBox .title{font-size:22px;font-weight:600;color:#171717;margin:0 0 20px}" : ".impowerBox .title{display:none}") +
+    ".impowerBox .qrcode{width:220px;height:220px;margin:0;border:1px solid #ecebe6;border-radius:16px;padding:12px}" +
+    ".impowerBox .info{width:auto}.impowerBox .status{padding:0;text-align:center}" +
+    ".impowerBox .status_browser p:nth-child(2){display:none}.impowerBox .status p{font-size:14px;color:#666}";
+  return `data:text/css;base64,${btoa(css)}`;
+}
+
+// the frame's name outlives the scan's redirect, so /callback knows it is that frame
+export const WECHAT_QR_FRAME_NAME = "casdoor-wechat-qr";
+
+/**
+ * The WeChat QR code (open platform website app) for a frame on the sign-in page. self_redirect keeps
+ * the scan's redirect in that frame, where AuthCallback hands it to the page around it.
+ */
+export function getWechatQrConnectUrl(application: any, provider: any) {
+  const url = new URL(getAuthUrl(application, provider, "signin"));
+  url.searchParams.set("self_redirect", "true");
+  url.searchParams.set("href", getWechatQrCssHref(false));
+  return url.toString();
+}
 
 export function getAuthUrl(application: any, provider: any, method: string, code?: string) {
   if (application === null || provider === null) {
@@ -480,8 +498,9 @@ export function getAuthUrl(application: any, provider: any, method: string, code
       if (provider.clientId2 && provider?.disableSsl && provider?.signName === "media") {
         return `${redirectOrigin}/callback?state=${state}&code=${"wechat_oa:" + code}`;
       }
-      const href = Setting.inIframe() ? `&href=${encodeURIComponent(`data:text/css;base64,${btoa(wechatFramedQrCss)}`)}` : "";
-      return `${endpoint}?appid=${provider.clientId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=code&state=${state}${href}#wechat_redirect`;
+      // framed in another site, the scan comes back in the frame: a cross-origin frame may not move the page around it
+      const framed = Setting.inIframe() ? `&self_redirect=true&href=${encodeURIComponent(getWechatQrCssHref(true))}` : "";
+      return `${endpoint}?appid=${provider.clientId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=code&state=${state}${framed}#wechat_redirect`;
     }
   } else if (provider.type === "WeCom") {
     if (provider.subType === "Internal") {

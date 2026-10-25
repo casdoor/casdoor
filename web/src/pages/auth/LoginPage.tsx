@@ -19,6 +19,8 @@ import {FaceRecognitionCommonModal} from "@/components/common/FaceRecognitionCom
 import {FaceRecognitionModal} from "@/components/common/FaceRecognitionModal";
 import {ProviderButtons, getVisibleProviders} from "@/components/auth/ProviderButtons";
 import {WeChatLoginPanel} from "@/components/auth/WeChatLoginPanel";
+import {QrCornerSwitch, WeChatQrConnectPanel} from "@/components/auth/WeChatQrConnectPanel";
+import {needsWeChatQrDialog} from "@/components/auth/WeChatQrDialog";
 import {OrganizationSelect} from "@/components/common/OrganizationSelect";
 import {RedirectForm} from "@/components/auth/RedirectForm";
 import {CountryCodeSelect} from "@/components/common/CountryCodeSelect";
@@ -313,6 +315,7 @@ export default function LoginPage({type = "login", application: applicationProp,
   const [captchaVisible, setCaptchaVisible] = React.useState(false);
   const [pendingValues, setPendingValues] = React.useState<any>(null);
   const [agreed, setAgreed] = React.useState(true);
+  const [wechatQrShown, setWechatQrShown] = React.useState(false);
   const [faceValues, setFaceValues] = React.useState<any>(null);
   const [captchaValues, setCaptchaValues] = React.useState<CaptchaValues | undefined>(undefined);
   const captchaRef = React.useRef<CaptchaHandle | null>(null);
@@ -1318,6 +1321,12 @@ export default function LoginPage({type = "login", application: applicationProp,
   const wechatOnLoginPage = (application.signinMethods ?? []).some(
     (item: any) => item.name === "WeChat" && item.rule === "Login page",
   );
+  // or behind the panel's corner, from the open platform website app; a phone cannot scan its own screen
+  const wechatCornerItem = (application.signinMethods ?? []).some((item: any) => item.name === "WeChat" && item.rule === "Corner") &&
+    !navigator.userAgent.includes("MicroMessenger") && !window.matchMedia("(hover: none) and (pointer: coarse)").matches
+    ? getVisibleProviders(application, "signin").find((item: any) => item.provider?.type === "WeChat" && !needsWeChatQrDialog(item.provider))
+    : undefined;
+  const showWechatQr = wechatQrShown && !!wechatCornerItem;
   // without any credential method there is no form, only the providers
   const showForm = passwordEnabled || codeEnabled || webAuthnEnabled || ldapEnabled || faceIdEnabled || magicLinkEnabled;
 
@@ -1628,6 +1637,13 @@ export default function LoginPage({type = "login", application: applicationProp,
             method="signin"
             rule={Setting.getProvidersRule(application, item)}
             onBeforeClick={checkAgreement}
+            onProvider={(providerItem) => {
+              if (providerItem.provider?.name !== wechatCornerItem?.provider?.name) {
+                return false;
+              }
+              setWechatQrShown(true);
+              return true;
+            }}
           />
         </div>
       );
@@ -1642,8 +1658,11 @@ export default function LoginPage({type = "login", application: applicationProp,
       application={application}
       hideLogo={!isVisible("Logo")}
       hideLanguages={!isVisible("Languages") || forcedLanguage !== ""}
+      corner={wechatCornerItem ? <QrCornerSwitch showingQr={showWechatQr} onClick={() => setWechatQrShown(!showWechatQr)} /> : null}
     >
-      <div className="space-y-6">
+      {showWechatQr ? <WeChatQrConnectPanel application={application} provider={wechatCornerItem.provider} /> : null}
+      {/* hidden rather than unmounted, so what the visitor typed is still there on the way back */}
+      <div className="space-y-6" hidden={showWechatQr}>
         {/* each item styles itself; a "Text N" item holds HTML, not CSS */}
         {signinItems.map((item: any) =>
           Setting.isCustomFormItem(item) ? null : <CustomStyle key={`css-${item.name}`} css={item.customCss} />,
