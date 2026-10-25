@@ -38,6 +38,7 @@ const SIGNIN_METHOD_RULES: Record<string, EnumMap> = {
   "WeChat": {
     "Tab": {i18nKey: "general:Tab"},
     "Login page": {i18nKey: "general:Login page"},
+    "Corner": {i18nKey: "application:Corner QR code"},
   },
   "Device login": {
     "Tab": {i18nKey: "general:Tab"},
@@ -111,6 +112,7 @@ const SIGNIN_ITEM_NAMES: {name: string; labelKey: string}[] = [
   {name: "Logo", labelKey: "general:Logo"},
   {name: "Back button", labelKey: "login:Back button"},
   {name: "Languages", labelKey: "general:Languages"},
+  {name: "Theme", labelKey: "theme:Theme"},
   {name: "Username", labelKey: "signup:Username"},
   {name: "Password", labelKey: "general:Password"},
   {name: "Verification code", labelKey: "login:Verification code"},

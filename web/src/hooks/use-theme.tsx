@@ -6,12 +6,15 @@ interface ThemeContextValue {
   theme: Theme;
   resolvedTheme: "light" | "dark";
   setTheme: (theme: Theme) => void;
+  /** paints one palette whatever the visitor picked, without saving it; null hands it back */
+  setForcedTheme: (theme: "light" | "dark" | null) => void;
 }
 
 const ThemeContext = React.createContext<ThemeContextValue>({
   theme: "system",
   resolvedTheme: "light",
   setTheme: () => undefined,
+  setForcedTheme: () => undefined,
 });
 
 const STORAGE_KEY = "themeAlgorithm";
@@ -44,6 +47,7 @@ function systemPrefersDark(): boolean {
 export function ThemeProvider({children}: {children: React.ReactNode}) {
   const [theme, setThemeState] = React.useState<Theme>(() => readStoredTheme());
   const [systemDark, setSystemDark] = React.useState<boolean>(() => systemPrefersDark());
+  const [forcedTheme, setForcedTheme] = React.useState<"light" | "dark" | null>(null);
 
   React.useEffect(() => {
     const mq = window.matchMedia("(prefers-color-scheme: dark)");
@@ -52,7 +56,7 @@ export function ThemeProvider({children}: {children: React.ReactNode}) {
     return () => mq.removeEventListener("change", onChange);
   }, []);
 
-  const resolvedTheme: "light" | "dark" = theme === "system" ? (systemDark ? "dark" : "light") : theme;
+  const resolvedTheme: "light" | "dark" = forcedTheme ?? (theme === "system" ? (systemDark ? "dark" : "light") : theme);
 
   React.useEffect(() => {
     const root = document.documentElement;
@@ -69,13 +73,26 @@ export function ThemeProvider({children}: {children: React.ReactNode}) {
     }
   }, []);
 
-  const value = React.useMemo(() => ({theme, resolvedTheme, setTheme}), [theme, resolvedTheme, setTheme]);
+  const value = React.useMemo(() => ({theme, resolvedTheme, setTheme, setForcedTheme}), [theme, resolvedTheme, setTheme]);
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
 }
 
 export function useTheme() {
   return React.useContext(ThemeContext);
+}
+
+/** Paints `forced` for as long as the caller is mounted; null leaves the palette to the visitor. */
+export function useForcedTheme(forced: "light" | "dark" | null) {
+  const {setForcedTheme} = useTheme();
+
+  React.useEffect(() => {
+    if (!forced) {
+      return;
+    }
+    setForcedTheme(forced);
+    return () => setForcedTheme(null);
+  }, [forced, setForcedTheme]);
 }
 
 /**
