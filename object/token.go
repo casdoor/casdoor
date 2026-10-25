@@ -163,17 +163,15 @@ func GetTokenByIdToken(idToken string) (*Token, error) {
 }
 
 func GetTokenByTokenValue(tokenValue, tokenTypeHint string) (*Token, error) {
-	switch tokenTypeHint {
-	case "access_token", "access-token":
-		token, err := GetTokenByAccessToken(tokenValue)
-		if err != nil {
-			return nil, err
-		}
-		if token != nil {
-			return token, nil
-		}
-	case "refresh_token", "refresh-token":
-		token, err := GetTokenByRefreshToken(tokenValue)
+	// The hint only sets the lookup order: a token not found as the hinted type
+	// is still looked up as the other type (RFC 7662 section 2.1).
+	getters := []func(string) (*Token, error){GetTokenByAccessToken, GetTokenByRefreshToken}
+	if tokenTypeHint == "refresh_token" || tokenTypeHint == "refresh-token" {
+		getters = []func(string) (*Token, error){GetTokenByRefreshToken, GetTokenByAccessToken}
+	}
+
+	for _, getter := range getters {
+		token, err := getter(tokenValue)
 		if err != nil {
 			return nil, err
 		}
