@@ -44,6 +44,20 @@ func isMcpRequest(urlPath string) bool {
 	return urlPath == "/api/mcp" || strings.HasPrefix(urlPath, "/api/server/")
 }
 
+// responseInvalidToken answers 401 with a challenge on the userinfo endpoint (RFC 6750 section 3.1,
+// RFC 9449 section 7.1), other APIs keep answering 200 with the error in the body
+func responseInvalidToken(ctx *context.Context, token *object.Token, errorCode string, error string) {
+	if ctx.Request.URL.Path == "/api/userinfo" {
+		challenge := fmt.Sprintf("Bearer error=\"%s\", error_description=%q", errorCode, error)
+		if (token != nil && token.TokenType == "DPoP") || strings.HasPrefix(ctx.Request.Header.Get("Authorization"), "DPoP ") {
+			challenge = fmt.Sprintf("DPoP error=\"%s\", error_description=%q, algs=\"%s\"", errorCode, error, strings.Join(object.DPoPSigningAlgs, " "))
+		}
+		ctx.Output.Header("WWW-Authenticate", challenge)
+		ctx.Output.SetStatus(http.StatusUnauthorized)
+	}
+	responseError(ctx, error)
+}
+
 func responseError(ctx *context.Context, error string, data ...interface{}) {
 	// ctx.ResponseWriter.WriteHeader(http.StatusForbidden)
 	urlPath := ctx.Request.URL.Path
