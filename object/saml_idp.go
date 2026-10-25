@@ -339,7 +339,8 @@ func decodeSamlMessage(message string) ([]byte, error) {
 		return nil, fmt.Errorf("err: Failed to decode SAML request, %s", err.Error())
 	}
 
-	if strings.Contains(string(defated), "xmlns:") {
+	// POST binding sends plain XML, which may only use default namespaces (xmlns="...").
+	if bytes.HasPrefix(bytes.TrimSpace(defated), []byte("<")) || strings.Contains(string(defated), "xmlns:") {
 		return defated, nil
 	}
 
