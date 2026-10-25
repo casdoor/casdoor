@@ -106,6 +106,9 @@
   function getResponseType(innerParams) {
     var method = innerParams.get("method");
     if (method === "signup" || method === "signin") {
+      if (innerParams.get("userCode")) {
+        return "device";
+      }
       var realRedirectUri = innerParams.get("redirect_uri");
       if (realRedirectUri === null) {
         var samlRequest = getParameterIgnoreCase(innerParams, "SAMLRequest");
@@ -399,6 +402,9 @@
       method: method,
       codeVerifier: codeVerifier
     };
+    if (responseType === "device") {
+      body.userCode = innerParams.get("userCode");
+    }
 
     if (codeVerifier) {
       clearCodeVerifier(params.get("state"));
@@ -474,7 +480,7 @@
 
     var responseTypes = responseType.split(" ");
 
-    if (responseType === "login") {
+    if (responseType === "login" || responseType === "device") {
       window.location.replace(getFromLink());
       return;
     }
