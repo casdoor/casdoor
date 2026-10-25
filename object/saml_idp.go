@@ -29,6 +29,7 @@ import (
 	"net/url"
 	"strings"
 	"time"
+	"unicode/utf8"
 
 	"github.com/beevik/etree"
 	"github.com/casdoor/casdoor/util"
@@ -334,28 +335,19 @@ func GetSamlMeta(application *Application, host string, enablePostBinding bool) 
 // decodeSamlMessage decodes a base64 SAML message, which is also deflated when it comes over the HTTP-Redirect binding
 func decodeSamlMessage(message string) ([]byte, error) {
 	message = strings.ReplaceAll(message, " ", "+")
-	defated, err := base64.StdEncoding.DecodeString(message)
+	data, err := base64.StdEncoding.DecodeString(message)
 	if err != nil {
 		return nil, fmt.Errorf("err: Failed to decode SAML request, %s", err.Error())
 	}
 
-	if strings.Contains(string(defated), "xmlns:") {
-		return defated, nil
+	// The HTTP-POST binding sends plain XML. Deflated data can also start with '<' (a non-final
+	// dynamic Huffman block), but it is practically never valid UTF-8
+	plainXml := bytes.TrimSpace(bytes.TrimPrefix(data, []byte("\xef\xbb\xbf")))
+	if bytes.HasPrefix(plainXml, []byte("<")) && utf8.Valid(plainXml) {
+		return plainXml, nil
 	}
 
-	var buffer bytes.Buffer
-	rdr := flate.NewReader(bytes.NewReader(defated))
-	for {
-		_, err = io.CopyN(&buffer, rdr, 1024)
-		if err != nil {
-			if err == io.EOF {
-				break
-			}
-			return nil, err
-		}
-	}
-
-	return buffer.Bytes(), nil
+	return io.ReadAll(flate.NewReader(bytes.NewReader(data)))
 }
 
 // getAuthnRequest parses the AuthnRequest sent by the SP, parameter samlRequest is the SAML request in base64 format
