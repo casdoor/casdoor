@@ -240,7 +240,7 @@
     }
 
     if (["Google", "GitHub", "Facebook", "Weibo", "Gitee", "LinkedIn", "GitLab", "AzureAD", "Slack", "Line", "Amazon", "Auth0", "BattleNet", "Bitbucket", "Box", "CloudFoundry", "Dailymotion", "DigitalOcean", "Discord", "Dropbox", "EveOnline", "Gitea", "Heroku", "InfluxCloud", "Instagram", "Intercom", "Kakao", "MailRu", "Mailru", "Meetup", "MicrosoftOnline", "Naver", "Nextcloud", "OneDrive", "Oura", "Patreon", "PayPal", "SalesForce", "SoundCloud", "Soundcloud", "Spotify", "Strava", "Stripe", "Tumblr", "Twitch", "Typetalk", "Uber", "VK", "Wepay", "Xero", "Yahoo", "Yammer", "Yandex", "Zoom"].indexOf(provider.type) !== -1) {
-      return endpoint + "?client_id=" + provider.clientId + "&redirect_uri=" + redirectUri + "&scope=" + scope + "&response_type=code&state=" + state;
+      return endpoint + "?client_id=" + provider.clientId + "&redirect_uri=" + redirectUri + "&scope=" + scope + "&response_type=code&state=" + encodeURIComponent(state);
     } else if (provider.type === "QQ") {
       return endpoint + "?response_type=code&client_id=" + provider.clientId + "&redirect_uri=" + encodeURIComponent(redirectUri) + "&state=" + encodeURIComponent(state) + "&scope=" + encodeURIComponent(scope);
     } else if (provider.type === "AzureADB2C") {
