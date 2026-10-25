@@ -329,6 +329,11 @@ export default function ForgetPage() {
                 application={application}
                 applicationId={Setting.getApplicationName(application)}
                 checkUser={account}
+                onComplete={() => {
+                  if (!loading) {
+                    verifyCode();
+                  }
+                }}
               />
             </div>
 

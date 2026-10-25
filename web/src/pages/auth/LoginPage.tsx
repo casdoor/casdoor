@@ -26,7 +26,7 @@ import {RedirectForm} from "@/components/auth/RedirectForm";
 import {CountryCodeSelect} from "@/components/common/CountryCodeSelect";
 import {PasswordInput} from "@/components/common/PasswordInput";
 import {useSendCode, type CaptchaValues} from "@/components/auth/SendCodeInput";
-import {CodeInput} from "@/components/auth/CodeInput";
+import {CodeInput, VerificationCodeLength} from "@/components/auth/CodeInput";
 import {CaptchaModal, type CaptchaHandle} from "@/components/common/CaptchaModal";
 import {getCaptchaProvider} from "@/lib/captcha";
 import {useAccount} from "@/hooks/use-account";
@@ -42,9 +42,6 @@ import * as OrganizationBackend from "@/backend/OrganizationBackend";
 import * as Setting from "@/lib/setting";
 
 type LoginType = "login" | "code" | "cas" | "saml" | "device";
-// object/verification.go always sends six digits
-const VerificationCodeLength = 6;
-
 type LoginMethod = "password" | "verificationCode" | "verificationCodeEmail" | "verificationCodePhone" | "ldap" | "webAuthn" | "wechat" | "faceId" | "magicLink" | "device";
 
 function getDefaultLoginMethod(application: any): LoginMethod {
@@ -1184,14 +1181,6 @@ export default function LoginPage({type = "login", application: applicationProp,
     setCode("");
   }, [loginMethod]);
 
-  // the last digit signs in by itself, as Enter would
-  React.useEffect(() => {
-    if (codeSentTo !== "" && code.length === VerificationCodeLength && !loading && (loginMethod ?? "").startsWith("verificationCode")) {
-      submit();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [code]);
-
   // an organization that offers a single language forces it rather than offering a choice, as the signup page does
   const orgLanguages = application?.organizationObj?.languages as string[] | undefined;
   const forcedLanguage = orgLanguages?.length === 1 && Setting.isSigninItemVisible(application, "Languages") ? orgLanguages[0] : "";
@@ -1388,12 +1377,17 @@ export default function LoginPage({type = "login", application: applicationProp,
       <CodeInput
         id="code"
         className="verification-code-input"
-        length={VerificationCodeLength}
         autoFocus
         value={code}
         onChange={(value) => {
           setCode(value);
           clearError("code");
+        }}
+        // the last digit signs in by itself, as Enter would
+        onComplete={() => {
+          if (!loading) {
+            submit();
+          }
         }}
       />
       {fieldError("code")}

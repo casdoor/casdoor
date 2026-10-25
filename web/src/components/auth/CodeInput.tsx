@@ -1,11 +1,16 @@
 import * as React from "react";
 import {cn} from "@/lib/utils";
 
+// object/verification.go always sends six digits, and TOTP codes are six digits too
+export const VerificationCodeLength = 6;
+
 interface CodeInputProps {
   value: string;
   onChange: (value: string) => void;
   /** the number of digits, one box each */
   length?: number;
+  /** called once the last box is typed, after the parent has re-rendered with the full code */
+  onComplete?: () => void;
   id?: string;
   autoFocus?: boolean;
   disabled?: boolean;
@@ -17,11 +22,12 @@ interface CodeInputProps {
  * is typed, Backspace goes back, and a pasted or autofilled code is spread over the boxes.
  * The digits stay contiguous, so a box after the first empty one cannot be focused.
  */
-export function CodeInput({value, onChange, length = 6, id, autoFocus, disabled, className}: CodeInputProps) {
+export function CodeInput({value, onChange, length = VerificationCodeLength, onComplete, id, autoFocus, disabled, className}: CodeInputProps) {
   const refs = React.useRef<(HTMLInputElement | null)[]>([]);
   // the box focused right after a change sees the new value before the parent re-renders
   const latest = React.useRef(value);
   latest.current = value;
+  const userEdit = React.useRef(false);
   const digits = Array.from({length}, (_, i) => value[i] ?? "");
 
   const focusBox = (index: number) => {
@@ -30,7 +36,21 @@ export function CodeInput({value, onChange, length = 6, id, autoFocus, disabled,
     box?.select();
   };
 
+  React.useEffect(() => {
+    const byUser = userEdit.current;
+    userEdit.current = false;
+    if (byUser && value.length === length) {
+      onComplete?.();
+    }
+    // a code cleared by the parent, e.g. after a wrong one, is typed again from its first empty box
+    if (refs.current.indexOf(document.activeElement as HTMLInputElement) > value.length) {
+      focusBox(value.length);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value]);
+
   const setValue = (next: string) => {
+    userEdit.current = true;
     latest.current = next.replace(/\D/g, "").slice(0, length);
     onChange(latest.current);
   };
