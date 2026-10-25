@@ -16,14 +16,19 @@ interface ApplicationSecurityTabProps extends ApplicationTabProps {
   certs: SearchableOption[];
 }
 
-/** The "Security" tab: the token certificate, the password policy, and the terms of use. */
-export function ApplicationSecurityTab({application, updateField, mode, account, certs}: ApplicationSecurityTabProps) {
-  const [uploadingTerms, setUploadingTerms] = React.useState(false);
-  const termsFileRef = React.useRef<HTMLInputElement>(null);
+/** An HTML document the signin and signup pages ask users to accept, typed in as a URL or uploaded. */
+function AgreementDocRow({application, updateField, mode, account, field, labelKey}: ApplicationTabProps & {
+  mode: string;
+  account: any;
+  field: "termsOfUse" | "privacyPolicy";
+  labelKey: string;
+}) {
+  const [uploading, setUploading] = React.useState(false);
+  const fileRef = React.useRef<HTMLInputElement>(null);
 
-  const uploadTermsOfUse = (file: File | undefined) => {
-    if (termsFileRef.current) {
-      termsFileRef.current.value = "";
+  const upload = (file: File | undefined) => {
+    if (fileRef.current) {
+      fileRef.current.value = "";
     }
     if (!file) {
       return;
@@ -32,19 +37,56 @@ export function ApplicationSecurityTab({application, updateField, mode, account,
       Setting.showMessage("error", i18next.t("application:Please select a HTML file"));
       return;
     }
-    setUploadingTerms(true);
-    const fullFilePath = `termsOfUse/${application.owner}/${application.name}.html`;
-    ResourceBackend.uploadResource(account?.owner, account?.name, "termsOfUse", "ApplicationEditPage", fullFilePath, file)
+    setUploading(true);
+    const fullFilePath = `${field}/${application.owner}/${application.name}.html`;
+    ResourceBackend.uploadResource(account?.owner, account?.name, field, "ApplicationEditPage", fullFilePath, file)
       .then((res: any) => {
         if (res.status === "ok") {
           Setting.showMessage("success", i18next.t("application:File uploaded successfully"));
-          updateField("termsOfUse", res.data);
+          updateField(field, res.data);
         } else {
           Setting.showMessage("error", `${i18next.t("general:Failed to save")}: ${res.msg}`);
         }
       })
-      .finally(() => setUploadingTerms(false));
+      .finally(() => setUploading(false));
   };
+
+  return (
+    <FormRow labelKey={labelKey}>
+      <div className="flex flex-wrap items-center gap-2">
+        <Input
+          className="min-w-[16rem] flex-1"
+          value={application[field] ?? ""}
+          onChange={(e) => updateField(field, e.target.value)}
+        />
+        {/* the upload writes the stored URL back onto the application, so it
+            can only be done once the application exists */}
+        {mode === "add" ? null : (
+          <>
+            <input
+              ref={fileRef}
+              type="file"
+              accept=".html"
+              className="hidden"
+              onChange={(e) => upload(e.target.files?.[0])}
+            />
+            <Button
+              variant="outline"
+              loading={uploading}
+              onClick={() => fileRef.current?.click()}
+            >
+              <Upload />
+              {i18next.t("general:Click to Upload")}
+            </Button>
+          </>
+        )}
+      </div>
+    </FormRow>
+  );
+}
+
+/** The "Security" tab: the token certificate, the password policy, the terms of use and the privacy policy. */
+export function ApplicationSecurityTab({application, updateField, mode, account, certs}: ApplicationSecurityTabProps) {
   return (
     <>
       <FormRow labelKey="application:Token cert">
@@ -89,36 +131,8 @@ export function ApplicationSecurityTab({application, updateField, mode, account,
           onChange={(e) => updateField("ipWhitelist", e.target.value)}
         />
       </FormRow>
-      <FormRow labelKey="signup:Terms of Use">
-        <div className="flex flex-wrap items-center gap-2">
-          <Input
-            className="min-w-[16rem] flex-1"
-            value={application.termsOfUse ?? ""}
-            onChange={(e) => updateField("termsOfUse", e.target.value)}
-          />
-          {/* the upload writes the stored URL back onto the application, so it
-              can only be done once the application exists */}
-          {mode === "add" ? null : (
-            <>
-              <input
-                ref={termsFileRef}
-                type="file"
-                accept=".html"
-                className="hidden"
-                onChange={(e) => uploadTermsOfUse(e.target.files?.[0])}
-              />
-              <Button
-                variant="outline"
-                loading={uploadingTerms}
-                onClick={() => termsFileRef.current?.click()}
-              >
-                <Upload />
-                {i18next.t("general:Click to Upload")}
-              </Button>
-            </>
-          )}
-        </div>
-      </FormRow>
+      <AgreementDocRow application={application} updateField={updateField} mode={mode} account={account} field="termsOfUse" labelKey="signup:Terms of Use" />
+      <AgreementDocRow application={application} updateField={updateField} mode={mode} account={account} field="privacyPolicy" labelKey="signup:Privacy Policy" />
     </>
   );
 }

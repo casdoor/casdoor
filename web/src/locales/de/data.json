@@ -1508,6 +1508,7 @@
   "signup": {
     "Accept": "Akzeptieren",
     "Agreement": "Vereinbarung",
+    "Agreement separator": " und ",
     "Decline": "Abnahme",
     "Have account?": "Haben Sie ein Konto?",
     "Label": "Beschriftung",
@@ -1530,6 +1531,8 @@
     "Please select your country code!": "Bitte wählen Sie Ihren Ländercode aus!",
     "Please select your country/region!": "Bitte wählen Sie Ihr Land/Ihre Region aus!",
     "Please select your tag!": "Bitte wählen Sie Ihr Tag aus!",
+    "Privacy Policy": "Datenschutzerklärung",
+    "Privacy Policy - Tooltip": "Datenschutzerklärung, die Benutzer bei der Registrierung und Anmeldung lesen und akzeptieren müssen",
     "Regex": "Regulärer Ausdruck",
     "Signup button": "Registrierungs-Button",
     "Terms of Use": "Nutzungsbedingungen",

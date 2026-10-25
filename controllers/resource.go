@@ -104,10 +104,10 @@ func (c *ApiController) checkUploadPath(tag string, owner string, username strin
 		// e.g., "avatar/built-in/admin.png"
 		dir, file := path.Split(filePath)
 		isAllowed = dir == fmt.Sprintf("%s/%s/", tag, owner) && strings.TrimSuffix(file, path.Ext(file)) == username && util.InSlice(imageUploadExts, strings.ToLower(path.Ext(file)))
-	case tag == "termsOfUse":
+	case tag == "termsOfUse" || tag == "privacyPolicy":
 		// e.g., "termsOfUse/admin/app-built-in.html", only for an application of the organization
-		applicationId := strings.TrimSuffix(strings.TrimPrefix(filePath, "termsOfUse/"), ".html")
-		if c.IsAdmin() && strings.HasPrefix(filePath, "termsOfUse/") && strings.HasSuffix(filePath, ".html") {
+		applicationId := strings.TrimSuffix(strings.TrimPrefix(filePath, tag+"/"), ".html")
+		if c.IsAdmin() && strings.HasPrefix(filePath, tag+"/") && strings.HasSuffix(filePath, ".html") {
 			application, err := object.GetApplication(applicationId)
 			if err != nil {
 				c.ResponseError(err.Error())
@@ -459,7 +459,7 @@ func (c *ApiController) UploadResource() {
 	}
 
 	fullFilePath = object.GetTruncatedPath(provider, fullFilePath, 450)
-	if tag != "avatar" && tag != "termsOfUse" && !strings.HasPrefix(tag, "idCard") {
+	if tag != "avatar" && tag != "termsOfUse" && tag != "privacyPolicy" && !strings.HasPrefix(tag, "idCard") {
 		ext := filepath.Ext(filepath.Base(fullFilePath))
 		index := len(fullFilePath) - len(ext)
 		for i := 1; ; i++ {
@@ -534,7 +534,7 @@ func (c *ApiController) UploadResource() {
 			return
 		}
 
-	case "termsOfUse":
+	case "termsOfUse", "privacyPolicy":
 		user, err := object.GetUserNoCheck(util.GetId(owner, username))
 		if err != nil {
 			c.ResponseError(err.Error())
@@ -562,7 +562,11 @@ func (c *ApiController) UploadResource() {
 			return
 		}
 
-		applicationObj.TermsOfUse = fileUrl
+		if tag == "termsOfUse" {
+			applicationObj.TermsOfUse = fileUrl
+		} else {
+			applicationObj.PrivacyPolicy = fileUrl
+		}
 		_, err = object.UpdateApplication(applicationId, applicationObj, true, c.GetAcceptLanguage(), nil)
 		if err != nil {
 			c.ResponseError(err.Error())

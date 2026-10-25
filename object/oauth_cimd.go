@@ -156,6 +156,7 @@ func GetApplicationByClientIdMetadata(clientId string, organization string, lang
 		application.RedirectUris = doc.RedirectUris
 		application.GrantTypes = doc.GrantTypes
 		application.TermsOfUse = doc.TosUri
+		application.PrivacyPolicy = doc.PolicyUri
 		if doc.LogoUri != "" {
 			application.Logo = doc.LogoUri
 		}
