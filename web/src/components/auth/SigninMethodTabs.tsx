@@ -81,7 +81,7 @@ export function SigninMethodTabs({methods, value, onChange, className}: {
     <Tabs value={value} onValueChange={onChange} className={className}>
       {/* the track is drawn here so the "More" button can share it with the tabs */}
       <div ref={stripRef} className="relative flex h-9 w-full items-center gap-1 overflow-hidden rounded-lg bg-muted p-1">
-        <TabsList className="h-7 min-w-0 flex-1 gap-1 rounded-none bg-transparent p-0 [&>button]:h-7 [&>button]:min-w-max [&>button]:flex-1 [&>button]:basis-0 [&>button]:px-1.5 [&>button]:text-xs">
+        <TabsList className="h-7 min-w-0 flex-1 gap-1 rounded-none bg-transparent p-0 [&>button]:h-7 [&>button]:min-w-max [&>button]:flex-1 [&>button]:basis-0 [&>button]:px-1.5 [&>button]:text-sm">
           {visible.map((item) => (
             <TabsTrigger key={item.value} value={item.value}>
               {item.label}
@@ -112,7 +112,7 @@ export function SigninMethodTabs({methods, value, onChange, className}: {
           className="pointer-events-none invisible absolute left-0 top-0 flex h-0 w-0 overflow-hidden [&>span]:shrink-0"
         >
           {methods.map((item) => (
-            <span key={item.value} className="whitespace-nowrap px-1.5 text-xs font-medium">
+            <span key={item.value} className="whitespace-nowrap px-1.5 text-sm font-medium">
               {item.label}
             </span>
           ))}
