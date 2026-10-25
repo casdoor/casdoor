@@ -1508,6 +1508,7 @@
   "signup": {
     "Accept": "Прийняти",
     "Agreement": "Угода",
+    "Agreement separator": " та ",
     "Decline": "Відхилити",
     "Have account?": "Є акаунт?",
     "Label": "Мітка",
@@ -1530,6 +1531,8 @@
     "Please select your country code!": "Виберіть код країни!",
     "Please select your country/region!": "Виберіть свою країну/регіон!",
     "Please select your tag!": "Будь ласка, оберіть свій тег!",
+    "Privacy Policy": "Політика конфіденційності",
+    "Privacy Policy - Tooltip": "Політика конфіденційності, з якою користувачі повинні ознайомитися та погодитися під час реєстрації та входу",
     "Regex": "Регулярний вираз",
     "Signup button": "Кнопка реєстрації",
     "Terms of Use": "Умови використання",

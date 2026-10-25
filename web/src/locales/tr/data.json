@@ -1508,6 +1508,7 @@
   "signup": {
     "Accept": "Kabul Et",
     "Agreement": "Anlaşma",
+    "Agreement separator": " ve ",
     "Decline": "Reddet",
     "Have account?": "Zaten bir hesabınız var mı?",
     "Label": "Etiket",
@@ -1530,6 +1531,8 @@
     "Please select your country code!": "Lütfen ülke kodunuzu seçin!",
     "Please select your country/region!": "Lütfen ülke/bölgenizi seçin!",
     "Please select your tag!": "Lütfen etiketinizi seçin!",
+    "Privacy Policy": "Gizlilik Politikası",
+    "Privacy Policy - Tooltip": "Kullanıcıların kayıt olurken ve giriş yaparken okuyup kabul etmesi gereken gizlilik politikası",
     "Regex": "Düzenli ifade",
     "Signup button": "Kayıt düğmesi",
     "Terms of Use": "Kullanım Koşulları",

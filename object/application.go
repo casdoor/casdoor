@@ -173,6 +173,7 @@ type Application struct {
 	AffiliationUrl          string                 `xorm:"varchar(100)" json:"affiliationUrl"`
 	IpWhitelist             string                 `xorm:"varchar(200)" json:"ipWhitelist"`
 	TermsOfUse              string                 `xorm:"varchar(200)" json:"termsOfUse"`
+	PrivacyPolicy           string                 `xorm:"varchar(200)" json:"privacyPolicy"`
 	SignupHtml              string                 `xorm:"mediumtext" json:"signupHtml"`
 	SigninHtml              string                 `xorm:"mediumtext" json:"signinHtml"`
 	ThemeData               *ThemeData             `xorm:"json" json:"themeData"`

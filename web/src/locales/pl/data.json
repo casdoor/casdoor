@@ -1508,6 +1508,7 @@
   "signup": {
     "Accept": "Akceptuj",
     "Agreement": "Umowa",
+    "Agreement separator": " i ",
     "Decline": "Odrzuć",
     "Have account?": "Masz konto?",
     "Label": "Etykieta",
@@ -1530,6 +1531,8 @@
     "Please select your country code!": "Proszę wybrać swój kod kraju!",
     "Please select your country/region!": "Proszę wybrać swój kraj/region!",
     "Please select your tag!": "Proszę wybrać swój tag!",
+    "Privacy Policy": "Polityka prywatności",
+    "Privacy Policy - Tooltip": "Polityka prywatności, którą użytkownicy muszą przeczytać i zaakceptować podczas rejestracji i logowania",
     "Regex": "Wyrażenie regularne",
     "Signup button": "Przycisk rejestracji",
     "Terms of Use": "Warunki korzystania",

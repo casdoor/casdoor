@@ -1508,6 +1508,7 @@
   "signup": {
     "Accept": "Chấp nhận",
     "Agreement": "Thỏa thuận",
+    "Agreement separator": " và ",
     "Decline": "Từ chối",
     "Have account?": "Có tài khoản không?",
     "Label": "Nhãn",
@@ -1530,6 +1531,8 @@
     "Please select your country code!": "Vui lòng chọn mã quốc gia của bạn!",
     "Please select your country/region!": "Vui lòng chọn quốc gia/vùng của bạn!",
     "Please select your tag!": "Vui lòng chọn thẻ của bạn!",
+    "Privacy Policy": "Chính sách quyền riêng tư",
+    "Privacy Policy - Tooltip": "Chính sách quyền riêng tư mà người dùng cần đọc và đồng ý khi đăng ký và đăng nhập",
     "Regex": "Biểu thức chính quy",
     "Signup button": "Nút đăng ký",
     "Terms of Use": "Điều khoản sử dụng",

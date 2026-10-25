@@ -232,6 +232,7 @@ func newDynamicClientApplication(req *DynamicClientRegistrationRequest, org *Org
 		FormOffset:           2,
 		Tags:                 []string{tag},
 		TermsOfUse:           req.TosUri,
+		PrivacyPolicy:        req.PolicyUri,
 		Providers:            inheritedProviders,
 		SigninMethods:        inheritedSigninMethods,
 	}
@@ -272,6 +273,7 @@ func GetDynamicClientRegistrationResponse(app *Application, registrationClientUr
 		ApplicationType:         "web",
 		LogoUri:                 app.Logo,
 		ClientUri:               app.HomepageUrl,
+		PolicyUri:               app.PrivacyPolicy,
 		TosUri:                  app.TermsOfUse,
 		RegistrationClientUri:   fmt.Sprintf("%s/%s", registrationClientUri, app.ClientId),
 		RegistrationAccessToken: app.RegistrationAccessToken,
@@ -303,6 +305,9 @@ func UpdateDynamicClient(app *Application, req *DynamicClientRegistrationRequest
 	}
 	if req.TosUri != "" {
 		app.TermsOfUse = req.TosUri
+	}
+	if req.PolicyUri != "" {
+		app.PrivacyPolicy = req.PolicyUri
 	}
 	setPrivateKeyJwtCredential(app, req)
 

@@ -14,7 +14,7 @@ import {RegionSelect} from "@/components/common/RegionSelect";
 import {CustomHtml, CustomStyle} from "@/components/common/CustomHtml";
 import {isTrustedApplication} from "@/lib/custom-html";
 import {AuthDivider, AuthLayout, AuthLoading} from "@/components/auth/AuthLayout";
-import {AgreementCheckbox} from "@/components/auth/AgreementModal";
+import {AgreementCheckbox, hasAgreementDoc} from "@/components/auth/AgreementModal";
 import {ProviderButtons, getVisibleProviders} from "@/components/auth/ProviderButtons";
 import {SendCodeInput} from "@/components/auth/SendCodeInput";
 import {CaptchaModal} from "@/components/common/CaptchaModal";
@@ -613,8 +613,8 @@ export default function SignupPage({application: applicationProp}: {application?
         disabled: invitation !== undefined,
       });
     case "Agreement":
-      // the application's own terms document opens in a dialog, as in the antd page
-      if (application.termsOfUse) {
+      // the application's own terms and privacy documents open in a dialog, as in the antd page
+      if (hasAgreementDoc(application)) {
         return (
           <div key={item.name} className="login-agreement">
             <AgreementCheckbox application={application} checked={agreed} onChange={setAgreed} />

@@ -1508,6 +1508,7 @@
   "signup": {
     "Accept": "阅读并接受",
     "Agreement": "用户协议",
+    "Agreement separator": "和",
     "Decline": "不接受",
     "Have account?": "已有账号？",
     "Label": "标签",
@@ -1530,6 +1531,8 @@
     "Please select your country code!": "请选择国家代码！",
     "Please select your country/region!": "请选择您的国家或地区",
     "Please select your tag!": "请选择您的标签！",
+    "Privacy Policy": "《隐私政策》",
+    "Privacy Policy - Tooltip": "用户注册和登录时需要阅读并同意的隐私政策",
     "Regex": "正则表达式",
     "Signup button": "注册按钮",
     "Terms of Use": "《用户协议》",

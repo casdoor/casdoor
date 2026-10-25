@@ -1508,6 +1508,7 @@
   "signup": {
     "Accept": "受け入れる",
     "Agreement": "協定",
+    "Agreement separator": "と",
     "Decline": "拒否",
     "Have account?": "アカウントはありますか？",
     "Label": "ラベル",
@@ -1530,6 +1531,8 @@
     "Please select your country code!": "あなたの国コードを選択してください！",
     "Please select your country/region!": "あなたの国/地域を選択してください！",
     "Please select your tag!": "タグを選択してください！",
+    "Privacy Policy": "プライバシーポリシー",
+    "Privacy Policy - Tooltip": "ユーザーが登録やログインの際に読んで同意する必要があるプライバシーポリシー",
     "Regex": "正規表現",
     "Signup button": "サインアップボタン",
     "Terms of Use": "利用規約",
