@@ -72,6 +72,11 @@ function getDefaultLoginMethod(application: any): LoginMethod {
       return "device";
     }
     break;
+  case "WeChat":
+    if (first?.rule === "Tab" || first?.rule === "None") {
+      return "wechat";
+    }
+    break;
   }
   return "password";
 }
