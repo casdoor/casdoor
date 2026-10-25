@@ -199,8 +199,29 @@ func serveAuthCallbackPage(ctx *context.Context) bool {
 
 		body {
 			display: flex;
+			flex-direction: column;
 			align-items: center;
 			justify-content: center;
+		}
+
+		.callback-spinner {
+			width: 24px;
+			height: 24px;
+			box-sizing: border-box;
+			border: 2.5px solid #e5e7eb;
+			border-top-color: #737373;
+			border-radius: 50%;
+			animation: callback-spin 0.8s linear infinite;
+		}
+
+		@keyframes callback-spin {
+			to {
+				transform: rotate(360deg);
+			}
+		}
+
+		.callback-status:empty {
+			display: none;
 		}
 
 		.callback-status {
@@ -212,11 +233,13 @@ func serveAuthCallbackPage(ctx *context.Context) bool {
 	</style>
 </head>
 <body>
-	<div id="callback-status" class="callback-status">Signing in...</div>
+	<div id="callback-spinner" class="callback-spinner"></div>
+	<div id="callback-status" class="callback-status"></div>
 	<script src="/AuthCallbackHandler.js"></script>
 	<script>
 		(function() {
 			if (!window.CasdoorAuthCallback || typeof window.CasdoorAuthCallback.run !== "function") {
+				document.getElementById("callback-spinner").style.display = "none";
 				document.getElementById("callback-status").textContent = "Failed to load callback handler.";
 				return;
 			}

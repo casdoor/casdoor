@@ -409,7 +409,7 @@ function getWechatQrCssHref(withTitle: boolean) {
   return `data:text/css;base64,${btoa(css)}`;
 }
 
-// the frame's name outlives the scan's redirect, so /callback knows it is that frame
+// the frame's name attribute tells /callback it is that frame, see AuthCallback and AuthCallbackHandler.js
 export const WECHAT_QR_FRAME_NAME = "casdoor-wechat-qr";
 
 /**

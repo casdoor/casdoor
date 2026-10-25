@@ -36,6 +36,12 @@
       return;
     }
 
+    // a message replaces the spinner the page starts with
+    var spinnerNode = document.getElementById("callback-spinner");
+    if (spinnerNode) {
+      spinnerNode.style.display = "none";
+    }
+
     statusNode.textContent = message;
     statusNode.style.color = isError ? "#b42318" : "#1f2937";
   }
@@ -339,8 +345,26 @@
     });
   }
 
+  // The WeChat QR code on the sign-in page comes back here inside its frame (see
+  // web/src/auth/Provider.ts): the page around it finishes the sign-in instead.
+  function handOffToSigninPage() {
+    var frame = null;
+    try {
+      frame = window.frameElement;
+    } catch (e) {
+      frame = null;
+    }
+    if (!frame || frame.getAttribute("name") !== "casdoor-wechat-qr") {
+      return false;
+    }
+    window.parent.location.replace(window.location.href);
+    return true;
+  }
+
   async function run() {
-    setStatus("Signing in...", false);
+    if (handOffToSigninPage()) {
+      return;
+    }
 
     var params = new URLSearchParams(window.location.search);
     var innerParams = getInnerParams();
