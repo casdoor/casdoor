@@ -1747,10 +1747,7 @@ export default function LoginPage({type = "login", application: applicationProp,
         {wechatOnLoginPage ? (
           <div className="space-y-4">
             <AuthDivider />
-            <p className="text-center text-sm text-muted-foreground">
-              {i18next.t("provider:Please use WeChat to scan the QR code and follow the official account for sign in")}
-            </p>
-            <WeChatLoginPanel application={application} />
+            <WeChatLoginPanel application={application} showHint />
           </div>
         ) : null}
 
