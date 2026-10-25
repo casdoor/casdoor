@@ -396,6 +396,15 @@ export function getProviderUrl(provider) {
   }
 }
 
+// WeChat's QR page takes a stylesheet (href) when it is framed: a sign-in embedded in another site
+// centers the code and leaves out the open platform app's name, which is not the embedding site's
+const wechatFramedQrCss = "html,body{height:100%;margin:0;background:#fff}" +
+  ".impowerBox{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;width:auto;padding:0;margin:0}" +
+  ".impowerBox .title{font-size:22px;font-weight:600;color:#171717;margin:0 0 20px}" +
+  ".impowerBox .qrcode{width:240px;height:240px;margin:0;border:1px solid #ecebe6;border-radius:16px;padding:12px}" +
+  ".impowerBox .info{width:auto}.impowerBox .status{padding:0;text-align:center}" +
+  ".impowerBox .status_browser p:nth-child(2){display:none}.impowerBox .status p{font-size:15px;color:#666}";
+
 export function getAuthUrl(application: any, provider: any, method: string, code?: string) {
   if (application === null || provider === null) {
     return "";
@@ -471,7 +480,8 @@ export function getAuthUrl(application: any, provider: any, method: string, code
       if (provider.clientId2 && provider?.disableSsl && provider?.signName === "media") {
         return `${redirectOrigin}/callback?state=${state}&code=${"wechat_oa:" + code}`;
       }
-      return `${endpoint}?appid=${provider.clientId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=code&state=${state}#wechat_redirect`;
+      const href = Setting.inIframe() ? `&href=${encodeURIComponent(`data:text/css;base64,${btoa(wechatFramedQrCss)}`)}` : "";
+      return `${endpoint}?appid=${provider.clientId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=code&state=${state}${href}#wechat_redirect`;
     }
   } else if (provider.type === "WeCom") {
     if (provider.subType === "Internal") {
