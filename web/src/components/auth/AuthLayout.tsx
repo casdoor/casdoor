@@ -269,6 +269,8 @@ export function AuthLayout({
       style={backgroundUrl ? {backgroundImage: `url(${backgroundUrl})`} : undefined}
     >
       {embedded ? null : <CustomStyle css={formCss} />}
+      {/* embedded, the panel has no edge of its own: the corner goes to the frame's, the host page's dialog */}
+      {embedded ? corner : null}
 
       <div className="login-topbar flex items-center justify-end gap-1 p-3 sm:p-4">
         {hideLanguages ? null : (
@@ -309,7 +311,7 @@ export function AuthLayout({
               sidePanel ? null : bleed ? "px-1 pt-4" : "px-6 pt-6 sm:px-8 sm:pt-8",
             )}
           >
-            {corner}
+            {embedded ? null : corner}
             {sidePanel ? (
               <CustomHtml html={application.formSideHtml} trusted={trusted} className="side-image hidden w-[420px] shrink-0 self-stretch lg:block" />
             ) : null}
