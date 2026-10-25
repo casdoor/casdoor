@@ -41,29 +41,40 @@ interface SendCodeInputProps {
   className?: string;
 }
 
+interface UseSendCodeOptions {
+  method: string;
+  destType: "email" | "phone";
+  dest: string;
+  countryCode?: string;
+  applicationId: string;
+  checkUser?: string;
+  application?: any;
+  captchaValue?: CaptchaValues;
+  useInlineCaptcha?: boolean;
+  refreshCaptcha?: () => void;
+  /** called once the backend accepted the code request */
+  onSent?: () => void;
+}
+
 /**
- * Verification-code field with the "Get Code" button, replacing
- * common/SendCodeInput.js — including its captcha rule handling: Never sends
- * straight away, Always challenges first, Dynamic/Internet-Only asks the backend
- * whether this user needs a challenge.
+ * Sending a verification code, without the field: the resend countdown and the
+ * captcha rule — Never sends straight away, Always challenges first,
+ * Dynamic/Internet-Only asks the backend whether this user needs a challenge.
+ * `captchaModal` has to be rendered for the non-inline captcha to show up.
  */
-export function SendCodeInput({
-  value,
-  onChange,
+export function useSendCode({
   method,
   destType,
   dest,
   countryCode = "",
   applicationId,
   checkUser,
-  disabled,
   application,
   captchaValue,
   useInlineCaptcha,
   refreshCaptcha,
-  placeholder,
-  className,
-}: SendCodeInputProps) {
+  onSent,
+}: UseSendCodeOptions) {
   const [seconds, setSeconds] = React.useState(0);
   const [sending, setSending] = React.useState(false);
   const [captchaVisible, setCaptchaVisible] = React.useState(false);
@@ -100,6 +111,7 @@ export function SendCodeInput({
         // UserBackend.sendCode() already showed the success or the error message
         if (sent) {
           setSeconds(resendTimeout);
+          onSent?.();
         } else if (useInlineCaptcha) {
           refreshCaptcha?.();
         }
@@ -112,7 +124,7 @@ export function SendCodeInput({
       .finally(() => setSending(false));
   };
 
-  const handleClick = () => {
+  const request = () => {
     const sendWithoutCaptcha = () => send("none", "", "");
 
     const sendWithCaptcha = () => {
@@ -161,6 +173,53 @@ export function SendCodeInput({
     sendWithoutCaptcha();
   };
 
+  const captchaModal = !useInlineCaptcha && application ? (
+    <CaptchaModal
+      owner={application.owner}
+      name={application.name}
+      visible={captchaVisible}
+      onOk={send}
+      onCancel={() => setCaptchaVisible(false)}
+    />
+  ) : null;
+
+  return {seconds, sending, request, captchaModal, resetCountdown: () => setSeconds(0)};
+}
+
+/**
+ * Verification-code field with the "Get Code" button, replacing
+ * common/SendCodeInput.js.
+ */
+export function SendCodeInput({
+  value,
+  onChange,
+  method,
+  destType,
+  dest,
+  countryCode = "",
+  applicationId,
+  checkUser,
+  disabled,
+  application,
+  captchaValue,
+  useInlineCaptcha,
+  refreshCaptcha,
+  placeholder,
+  className,
+}: SendCodeInputProps) {
+  const {seconds, sending, request, captchaModal} = useSendCode({
+    method,
+    destType,
+    dest,
+    countryCode,
+    applicationId,
+    checkUser,
+    application,
+    captchaValue,
+    useInlineCaptcha,
+    refreshCaptcha,
+  });
+
   return (
     <>
       <div className="flex gap-2">
@@ -181,20 +240,12 @@ export function SendCodeInput({
           className="shrink-0 max-sm:h-11"
           loading={sending}
           disabled={disabled || seconds > 0}
-          onClick={handleClick}
+          onClick={request}
         >
           {seconds > 0 ? `${seconds}s` : sending ? i18next.t("code:Getting") : i18next.t("code:Get Code")}
         </Button>
       </div>
-      {!useInlineCaptcha && application ? (
-        <CaptchaModal
-          owner={application.owner}
-          name={application.name}
-          visible={captchaVisible}
-          onOk={send}
-          onCancel={() => setCaptchaVisible(false)}
-        />
-      ) : null}
+      {captchaModal}
     </>
   );
 }
