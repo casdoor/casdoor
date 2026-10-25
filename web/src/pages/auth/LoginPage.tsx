@@ -26,6 +26,7 @@ import {RedirectForm} from "@/components/auth/RedirectForm";
 import {CountryCodeSelect} from "@/components/common/CountryCodeSelect";
 import {PasswordInput} from "@/components/common/PasswordInput";
 import {useSendCode, type CaptchaValues} from "@/components/auth/SendCodeInput";
+import {CodeInput} from "@/components/auth/CodeInput";
 import {CaptchaModal, type CaptchaHandle} from "@/components/common/CaptchaModal";
 import {getCaptchaProvider} from "@/lib/captcha";
 import {useAccount} from "@/hooks/use-account";
@@ -41,6 +42,9 @@ import * as OrganizationBackend from "@/backend/OrganizationBackend";
 import * as Setting from "@/lib/setting";
 
 type LoginType = "login" | "code" | "cas" | "saml" | "device";
+// object/verification.go always sends six digits
+const VerificationCodeLength = 6;
+
 type LoginMethod = "password" | "verificationCode" | "verificationCodeEmail" | "verificationCodePhone" | "ldap" | "webAuthn" | "wechat" | "faceId" | "magicLink" | "device";
 
 function getDefaultLoginMethod(application: any): LoginMethod {
@@ -719,7 +723,7 @@ export default function LoginPage({type = "login", application: applicationProp,
     if ((loginMethod === "password" || loginMethod === "ldap") && password === "") {
       found.password = i18next.t("login:Please input your password!");
     }
-    if (isCodeMethod && codeSentTo !== "" && code === "") {
+    if (isCodeMethod && codeSentTo !== "" && code.length < VerificationCodeLength) {
       found.code = i18next.t("login:Please input your code!");
     }
     return found;
@@ -1180,6 +1184,14 @@ export default function LoginPage({type = "login", application: applicationProp,
     setCode("");
   }, [loginMethod]);
 
+  // the last digit signs in by itself, as Enter would
+  React.useEffect(() => {
+    if (codeSentTo !== "" && code.length === VerificationCodeLength && !loading && (loginMethod ?? "").startsWith("verificationCode")) {
+      submit();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [code]);
+
   // an organization that offers a single language forces it rather than offering a choice, as the signup page does
   const orgLanguages = application?.organizationObj?.languages as string[] | undefined;
   const forcedLanguage = orgLanguages?.length === 1 && Setting.isSigninItemVisible(application, "Languages") ? orgLanguages[0] : "";
@@ -1373,16 +1385,14 @@ export default function LoginPage({type = "login", application: applicationProp,
   const renderCodeInput = (item: any) => (
     <div key={item.name} className="verification-code space-y-2">
       <Label htmlFor="code">{item.label || i18next.t("login:Verification code")}</Label>
-      <Input
+      <CodeInput
         id="code"
         className="verification-code-input"
+        length={VerificationCodeLength}
         autoFocus
-        autoComplete="one-time-code"
-        inputMode="numeric"
-        placeholder={item.placeholder || i18next.t("code:Enter your code")}
         value={code}
-        onChange={(e) => {
-          setCode(e.target.value);
+        onChange={(value) => {
+          setCode(value);
           clearError("code");
         }}
       />
