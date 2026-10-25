@@ -1,6 +1,6 @@
 import * as React from "react";
 import i18next from "i18next";
-import {Link, useNavigate, useParams, useSearchParams} from "react-router-dom";
+import {Link, useLocation, useNavigate, useParams, useSearchParams} from "react-router-dom";
 import {Alert, AlertDescription} from "@/components/ui/alert";
 import {Button} from "@/components/ui/button";
 import {Checkbox} from "@/components/ui/checkbox";
@@ -60,8 +60,12 @@ function fieldClass(field: string): string {
 export default function SignupPage({application: applicationProp}: {application?: any} = {}) {
   const params = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const [searchParams] = useSearchParams();
   const {reload} = useAccount();
+  // the email or phone a verification-code sign-in already proved, with that code
+  const verifiedAddress = (location.state as any)?.verifiedAddress as
+    {type: "email" | "phone"; dest: string; countryCode: string; code: string} | undefined;
 
   const [application, setApplication] = React.useState<any>(undefined);
   const [msg, setMsg] = React.useState<string | null>(null);
@@ -71,7 +75,9 @@ export default function SignupPage({application: applicationProp}: {application?
   const [loading, setLoading] = React.useState(false);
   const [captchaVisible, setCaptchaVisible] = React.useState(false);
   const [pendingValues, setPendingValues] = React.useState<any>(null);
-  const [emailOrPhoneMode, setEmailOrPhoneMode] = React.useState("");
+  const [emailOrPhoneMode, setEmailOrPhoneMode] = React.useState(
+    verifiedAddress ? (verifiedAddress.type === "email" ? "Email" : "Phone") : "",
+  );
   const [invitation, setInvitation] = React.useState<any>(undefined);
   const [passwordFocused, setPasswordFocused] = React.useState(false);
   const [userLang, setUserLang] = React.useState("");
@@ -160,6 +166,30 @@ export default function SignupPage({application: applicationProp}: {application?
     }
   }, [forcedLanguage]);
 
+  React.useEffect(() => {
+    if (!application || !verifiedAddress) {
+      return;
+    }
+    setValues((prev) => ({
+      ...prev,
+      ...(verifiedAddress.type === "email"
+        ? {email: verifiedAddress.dest, emailCode: verifiedAddress.code}
+        : {phone: verifiedAddress.dest, countryCode: verifiedAddress.countryCode, phoneCode: verifiedAddress.code}),
+    }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [application]);
+
+  /** The email or phone the sign-in proved, shown instead of its field and code. */
+  const renderVerifiedAddress = (item: any, field: "email" | "phone", defaultLabel: string) => (
+    <div key={`${item.name}-${field}`} className={`signup-${field} signup-verified-address space-y-2`}>
+      {renderLabel(item.label || defaultLabel, item.required)}
+      <div className="flex h-9 items-center justify-between gap-3 rounded-md border bg-muted/40 px-3 text-sm">
+        <span className="truncate">{values[field] ?? verifiedAddress?.dest}</span>
+        <span className="shrink-0 text-xs text-muted-foreground">{i18next.t("user:Verified")}</span>
+      </div>
+    </div>
+  );
+
   const set = (key: string, value: any) => {
     setValues((prev) => ({...prev, [key]: value}));
     // antd re-validates on change; clearing the message as the user types matches that
@@ -211,6 +241,11 @@ export default function SignupPage({application: applicationProp}: {application?
 
   const captchaProvider = getCaptchaProvider(application);
   const items = signupItems.filter((item: any) => item.visible);
+  // the address a verification-code sign-in proved leads the form, the other items keep their order
+  const isVerifiedItem = (item: any) => !!verifiedAddress && (
+    item.name === (verifiedAddress.type === "email" ? "Email" : "Phone") || item.name === "Email or Phone" || item.name === "Phone or Email"
+  );
+  const shownItems = verifiedAddress ? [...items.filter(isVerifiedItem), ...items.filter((item: any) => !isVerifiedItem(item))] : items;
   // "First, last" splits the display name into two fields, which then replace the
   // separate First name / Last name items; Chinese names are not split
   const splitDisplayName =
@@ -344,7 +379,7 @@ export default function SignupPage({application: applicationProp}: {application?
       .finally(() => setLoading(false));
   };
 
-  const renderEmail = (item: any) => (
+  const renderEmail = (item: any) => verifiedAddress?.type === "email" ? renderVerifiedAddress(item, "email", i18next.t("general:Email")) : (
     <React.Fragment key={`${item.name}-email`}>
       <div className="signup-email space-y-2">
         {renderLabel(item.label || i18next.t("general:Email"), item.required, "email")}
@@ -381,7 +416,7 @@ export default function SignupPage({application: applicationProp}: {application?
     </React.Fragment>
   );
 
-  const renderPhone = (item: any) => (
+  const renderPhone = (item: any) => verifiedAddress?.type === "phone" ? renderVerifiedAddress(item, "phone", i18next.t("general:Phone")) : (
     <React.Fragment key={`${item.name}-phone`}>
       <div className="signup-phone space-y-2">
         {renderLabel(item.label || i18next.t("general:Phone"), item.required, "phone")}
@@ -517,6 +552,10 @@ export default function SignupPage({application: applicationProp}: {application?
     case "Phone or Email": {
       const mode = emailOrPhoneMode || (item.name === "Email or Phone" ? "Email" : "Phone");
       const choices = item.name === "Email or Phone" ? ["Email", "Phone"] : ["Phone", "Email"];
+      // the address the sign-in proved decides the choice
+      if (verifiedAddress) {
+        return mode === "Email" ? renderEmail(item) : renderPhone(item);
+      }
       return (
         <React.Fragment key={item.name}>
           <div className="signup-email-or-phone grid grid-cols-2 gap-1 rounded-lg bg-muted p-1">
@@ -695,7 +734,7 @@ export default function SignupPage({application: applicationProp}: {application?
         {signupItems.map((item: any) => (
           <CustomStyle key={`css-${item.name}`} css={item.customCss} />
         ))}
-        {items.map(renderItem)}
+        {shownItems.map(renderItem)}
         {hasSignupButtonItem ? null : (
           <Button type="submit" className="signup-button w-full" loading={loading}>
             {i18next.t("account:Sign Up")}
