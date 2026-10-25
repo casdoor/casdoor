@@ -2,22 +2,30 @@ import * as React from "react";
 import i18next from "i18next";
 import {QRCodeSVG} from "qrcode.react";
 import * as AuthBackend from "@/backend/AuthBackend";
+import * as Provider from "@/auth/Provider";
 import * as Util from "@/auth/Util";
 
 /**
  * The WeChat QR panel of the sign-in page, ported from
- * web/src/auth/WeChatLoginPanel.js: it fetches a QR code for the application's
- * WeChat provider and polls the scan event once a second.
+ * web/src/auth/WeChatLoginPanel.js: with an official account (Client ID 2) it fetches
+ * that account's QR code and polls the scan event once a second; with only the open
+ * platform website app it frames WeChat's own QR code, whose scan comes back to
+ * /callback inside the frame and is finished by AuthCallback in the page around it.
  */
-export function WeChatLoginPanel({application}: {application: any}) {
+export function WeChatLoginPanel({application, showHint = false}: {application: any; showHint?: boolean}) {
   const [qrCode, setQrCode] = React.useState<string | null>(null);
   const [expired, setExpired] = React.useState(false);
   const [nonce, setNonce] = React.useState(0);
 
   const providerItem = (application?.providers ?? []).find((item: any) => item.provider?.type === "WeChat");
+  const officialAccount = !!providerItem?.provider?.clientId2;
+  const qrConnectUrl = React.useMemo(
+    () => (providerItem && !officialAccount ? Provider.getWechatQrConnectUrl(application, providerItem.provider) : ""),
+    [providerItem, officialAccount, application],
+  );
 
   React.useEffect(() => {
-    if (!providerItem) {
+    if (!providerItem || !officialAccount) {
       return;
     }
     let cancelled = false;
@@ -52,7 +60,7 @@ export function WeChatLoginPanel({application}: {application: any}) {
         window.clearInterval(timer);
       }
     };
-  }, [providerItem, application, nonce]);
+  }, [providerItem, officialAccount, application, nonce]);
 
   if (!providerItem) {
     return null;
@@ -60,9 +68,18 @@ export function WeChatLoginPanel({application}: {application: any}) {
 
   return (
     <div className="mx-auto flex flex-col items-center gap-3 pt-4">
-      <div className={expired ? "opacity-30" : undefined}>
-        <QRCodeSVG value={qrCode ?? " "} size={230} />
-      </div>
+      {showHint && officialAccount ? (
+        <p className="text-center text-sm text-muted-foreground">
+          {i18next.t("provider:Please use WeChat to scan the QR code and follow the official account for sign in")}
+        </p>
+      ) : null}
+      {officialAccount ? (
+        <div className={expired ? "opacity-30" : undefined}>
+          <QRCodeSVG value={qrCode ?? " "} size={230} />
+        </div>
+      ) : (
+        <iframe key={nonce} src={qrConnectUrl} name={Provider.WECHAT_QR_FRAME_NAME} title={i18next.t("login:Scan to sign in")} className="h-[310px] w-full max-w-[300px] border-0" />
+      )}
       <button
         type="button"
         className="text-sm text-muted-foreground underline-offset-4 hover:underline"
