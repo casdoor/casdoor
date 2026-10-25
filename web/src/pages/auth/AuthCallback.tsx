@@ -99,7 +99,8 @@ export default function AuthCallback() {
     startedRef.current = true;
 
     // the WeChat QR code on the sign-in page comes back here inside its frame: finish in the page itself
-    if (window.name === Provider.WECHAT_QR_FRAME_NAME && window.parent !== window) {
+    // (the frame's own name does not survive WeChat's page, its element's does; a cross-origin parent hides it)
+    if (window.frameElement?.getAttribute("name") === Provider.WECHAT_QR_FRAME_NAME) {
       window.parent.location.replace(window.location.href);
       return;
     }
