@@ -29,6 +29,8 @@ import (
 
 const dpopMaxAgeSeconds = 300
 
+var DPoPSigningAlgs = []string{"RS256", "RS512", "ES256", "ES384", "ES512", "PS256", "PS384", "PS512"}
+
 // DPoPProofClaims represents the payload claims of a DPoP proof JWT (RFC 9449).
 type DPoPProofClaims struct {
 	Jti string `json:"jti"`

@@ -779,6 +779,12 @@ func (c *ApiController) GetAccount() {
 // @Success 200 {object} object.Userinfo The Response object
 // @router /userinfo [get,post]
 func (c *ApiController) GetUserinfo() {
+	if c.GetSessionUsername() == "" {
+		// RFC 6750 section 3.1: a request without an access token gets a challenge without an error code
+		c.Ctx.Output.Header("WWW-Authenticate", "Bearer")
+		c.Ctx.Output.SetStatus(http.StatusUnauthorized)
+	}
+
 	user, ok := c.RequireSignedInUser()
 	if !ok {
 		return

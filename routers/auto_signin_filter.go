@@ -68,13 +68,13 @@ func AutoSigninFilter(ctx *context.Context) {
 		}
 
 		if token == nil {
-			responseError(ctx, "Access token doesn't exist in database")
+			responseInvalidToken(ctx, nil, "invalid_token", "Access token doesn't exist in database")
 			return
 		}
 
 		isExpired, expireTime := util.IsTokenExpired(token.CreatedTime, token.ExpiresIn)
 		if isExpired {
-			responseError(ctx, fmt.Sprintf("Access token has expired, expireTime = %s", expireTime))
+			responseInvalidToken(ctx, token, "invalid_token", fmt.Sprintf("Access token has expired, expireTime = %s", expireTime))
 			return
 		}
 
@@ -85,7 +85,7 @@ func AutoSigninFilter(ctx *context.Context) {
 			return
 		}
 		if !isUserActive {
-			responseError(ctx, "The user is forbidden to sign in, please contact the administrator")
+			responseInvalidToken(ctx, token, "invalid_token", "The user is forbidden to sign in, please contact the administrator")
 			return
 		}
 
@@ -93,17 +93,17 @@ func AutoSigninFilter(ctx *context.Context) {
 		if token.TokenType == "DPoP" {
 			dpopProof := ctx.Request.Header.Get("DPoP")
 			if dpopProof == "" {
-				responseError(ctx, "DPoP proof header required for DPoP-bound access token")
+				responseInvalidToken(ctx, token, "invalid_dpop_proof", "DPoP proof header required for DPoP-bound access token")
 				return
 			}
 			htu := object.GetDPoPHtu(ctx.Request.Host, ctx.Request.URL.Path)
 			jkt, dpopErr := object.ValidateDPoPProof(dpopProof, ctx.Request.Method, htu, accessToken)
 			if dpopErr != nil {
-				responseError(ctx, fmt.Sprintf("DPoP proof validation failed: %s", dpopErr.Error()))
+				responseInvalidToken(ctx, token, "invalid_dpop_proof", fmt.Sprintf("DPoP proof validation failed: %s", dpopErr.Error()))
 				return
 			}
 			if jkt != token.DPoPJkt {
-				responseError(ctx, "DPoP proof key binding mismatch")
+				responseInvalidToken(ctx, token, "invalid_token", "DPoP proof key binding mismatch")
 				return
 			}
 		}
