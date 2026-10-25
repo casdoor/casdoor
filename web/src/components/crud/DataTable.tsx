@@ -650,7 +650,7 @@ export function DataTable<T = any>({
               <SelectContent>
                 {PAGE_SIZE_OPTIONS.map((size) => (
                   <SelectItem key={size} value={String(size)}>
-                    {size} / page
+                    {i18next.t("general:{count} / page").replace("{count}", String(size))}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -658,7 +658,7 @@ export function DataTable<T = any>({
             <Button
               variant="ghost"
               size="iconSm"
-              aria-label="Previous page"
+              aria-label={i18next.t("general:Previous page")}
               disabled={query.page <= 1 || loading}
               onClick={() => onQueryChange({page: query.page - 1})}
             >
@@ -670,7 +670,7 @@ export function DataTable<T = any>({
             <Button
               variant="ghost"
               size="iconSm"
-              aria-label="Next page"
+              aria-label={i18next.t("general:Next page")}
               disabled={query.page >= pageCount || loading}
               onClick={() => onQueryChange({page: query.page + 1})}
             >

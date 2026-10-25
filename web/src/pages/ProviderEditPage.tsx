@@ -840,7 +840,7 @@ export default function ProviderEditPage() {
     <MapTable
       value={provider.httpHeaders}
       onChange={(value) => updateProviderField("httpHeaders", value)}
-      keyTitle={i18next.t("general:Keys")}
+      keyTitle={i18next.t("provider:Header name")}
       valueTitle={i18next.t("user:Values")}
     />
   );

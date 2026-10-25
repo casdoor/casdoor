@@ -325,6 +325,16 @@ Read the [contribution guidelines](https://casdoor.ai/docs/contributing/) before
 
 **Translations.** User-facing strings in the web console go through [i18next](https://www.i18next.com/). When you add or change one under [`web/`](web), update the English catalog at [`web/src/locales/en/data.json`](web/src/locales/en/data.json). The other languages are translated on [Crowdin](https://crowdin.com/project/casdoor-site) and should not be edited by hand.
 
+### Traditional Chinese (Taiwan)
+
+The `zh-TW` locale is labeled **正體中文（臺灣）** and is separate from Simplified Chinese (`zh`). Case-insensitive aliases such as `zh-tw` and the script tag `zh-Hant` resolve to `zh-TW`, including in browser preferences, language settings and API error messages. A missing Traditional Chinese translation falls back to English, not Simplified Chinese.
+
+New organizations include `zh-TW` in their language options. To enable it for an existing organization, add `zh-TW` to its **Languages** setting. This does not rewrite existing organizations, user language preferences, country/region values or telephone country codes.
+
+Use Taiwan terminology consistently: **帳號** (account), **使用者** (user), **身分驗證** (authentication), **授權** (authorization), **工作階段** (session), **存取權杖** (access token), **更新權杖** (refresh token), **金鑰** (cryptographic key), **憑證** (certificate), **儲存** (save) and **重設** (reset). Translate by context: an email subject is **主旨**, a JWT subject is **主體**, and a table key is not a cryptographic key. Keep protocol identifiers, stored enum values, placeholders and technical examples unchanged.
+
+These catalogs do not rewrite tenant-authored content, external editors or provider-controlled widgets, and do not change identification-document, tax-ID or other validation rules for Taiwan.
+
 ## 🙌 Support Casdoor
 
 Casdoor is free and open source. If it saves you time, consider supporting its development on [Open Collective](https://opencollective.com/casdoor). Choosing [Casdoor Cloud](https://www.casdoor.com/?utm_source=github&utm_medium=readme&utm_content=sponsor) for hosting also funds the project directly.

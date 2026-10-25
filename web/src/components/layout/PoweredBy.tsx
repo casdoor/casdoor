@@ -1,3 +1,4 @@
+import i18next from "i18next";
 import * as Conf from "@/Conf";
 import {useIsDark} from "@/hooks/use-theme";
 import * as Setting from "@/lib/setting";
@@ -17,7 +18,7 @@ export function PoweredBy() {
 
   return (
     <span className="inline-flex items-center gap-1">
-      Powered by
+      {i18next.t("general:Powered by")}
       <a href="https://casdoor.org" target="_blank" rel="noreferrer">
         <img
           src={Setting.getLogo([isDark ? "dark" : "light"])}

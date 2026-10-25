@@ -1,4 +1,5 @@
 import * as React from "react";
+import i18next from "i18next";
 import {CircleCheck, Info, Loader2, OctagonX, TriangleAlert} from "lucide-react";
 import {Toaster as SonnerToaster} from "sonner";
 import {useTheme} from "@/hooks/use-theme";
@@ -9,6 +10,7 @@ export function Toaster() {
     <SonnerToaster
       theme={resolvedTheme as "light" | "dark"}
       position="top-center"
+      containerAriaLabel={i18next.t("general:Notifications")}
       className="toaster group"
       icons={{
         success: <CircleCheck className="size-4 text-success" />,

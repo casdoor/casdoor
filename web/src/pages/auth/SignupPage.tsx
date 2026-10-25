@@ -29,6 +29,7 @@ import * as AuthBackend from "@/backend/AuthBackend";
 import {getSignupItemField, validateSignupItems} from "@/lib/signup-validation";
 import * as Setting from "@/lib/setting";
 import {cn} from "@/lib/utils";
+import {normalizeLanguage} from "@/i18n";
 
 /** The signup items Casdoor can render; anything else falls back to a text input. */
 const SIMPLE_TEXT_ITEMS: Record<string, string> = {
@@ -159,7 +160,7 @@ export default function SignupPage({application: applicationProp}: {application?
   // an organization that offers a single language forces it rather than offering a choice
   const forcedLanguage =
     (!languagesItem || languagesItem.visible) && languages && languages.length <= 1
-      ? (languages.length === 1 ? languages[0] : "en")
+      ? (languages.length === 1 ? normalizeLanguage(languages[0]) || "en" : "en")
       : "";
 
   React.useEffect(() => {
@@ -252,7 +253,7 @@ export default function SignupPage({application: applicationProp}: {application?
   // separate First name / Last name items; Chinese names are not split
   const splitDisplayName =
     signupItems.find((item: any) => item.name === "Display name")?.rule === "First, last" &&
-    Setting.getLanguage() !== "zh";
+    !["zh", "zh-TW"].includes(Setting.getLanguage());
 
   /** The item an "Email or Phone" / "Phone or Email" choice currently stands for. */
   const emailOrPhoneItem = (item: any) => {

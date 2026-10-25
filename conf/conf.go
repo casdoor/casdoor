@@ -23,6 +23,7 @@ import (
 	"strings"
 
 	"github.com/beego/beego/v2/server/web"
+	"golang.org/x/text/language"
 )
 
 //go:embed waf.conf
@@ -106,23 +107,42 @@ func ReplaceDataSourceNameByDocker(dataSourceName string) string {
 	return dataSourceName
 }
 
-func GetAcceptLanguage(acceptLanguage string) string {
-	if len(acceptLanguage) > 2 {
-		acceptLanguage = acceptLanguage[0:2]
+func NormalizeLanguage(value string) string {
+	tag, err := language.Parse(strings.ReplaceAll(strings.TrimSpace(value), "_", "-"))
+	if err != nil {
+		return ""
 	}
-	return GetLanguage(acceptLanguage)
+	base, _, _ := tag.Raw()
+	code := base.String()
+	if code == "zh" {
+		script, _ := tag.Script()
+		if script.String() == "Hant" {
+			return "zh-TW"
+		}
+	}
+	if len(code) != 2 || code == "nu" {
+		return ""
+	}
+	return code
+}
+
+func GetAcceptLanguage(acceptLanguage string) string {
+	tags, _, err := language.ParseAcceptLanguage(acceptLanguage)
+	if err == nil {
+		for _, tag := range tags {
+			if code := NormalizeLanguage(tag.String()); code != "" {
+				return code
+			}
+		}
+	}
+	return "en"
 }
 
 func GetLanguage(language string) string {
-	if language == "" || language == "*" {
-		return "en"
+	if code := NormalizeLanguage(language); code != "" {
+		return code
 	}
-
-	if len(language) != 2 || language == "nu" {
-		return "en"
-	} else {
-		return language
-	}
+	return "en"
 }
 
 func IsDemoMode() bool {

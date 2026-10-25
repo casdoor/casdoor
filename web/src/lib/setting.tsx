@@ -38,7 +38,7 @@ import zhCountries from "i18n-iso-countries/langs/zh.json";
 import * as Conf from "@/Conf";
 import {authConfig} from "@/auth/Auth";
 import {BasePath, getRoutePath, withBasePath} from "@/lib/base-path";
-import "@/i18n";
+import {normalizeLanguage} from "@/i18n";
 
 export {BasePath, getOriginUrl, getRoutePath, withBasePath} from "@/lib/base-path";
 
@@ -150,6 +150,7 @@ const countryLocales: Record<string, any> = {
 };
 
 const registeredCountryLocales = new Set<string>();
+let traditionalChineseCountryNames: Intl.DisplayNames | null | undefined;
 
 export function initCountries() {
   for (const locale of ["en", getLanguage()]) {
@@ -159,6 +160,32 @@ export function initCountries() {
     }
   }
   return countriesLib;
+}
+
+export function getCountryName(countryCode: string, options?: {select: "official"}): string {
+  const language = getLanguage();
+  if (language === "zh-TW") {
+    const code = countryCode.toUpperCase();
+    if (code === "TW") {
+      return "臺灣";
+    }
+    if (traditionalChineseCountryNames === undefined) {
+      try {
+        const names = new Intl.DisplayNames(["zh-Hant-TW"], {type: "region", fallback: "none"});
+        traditionalChineseCountryNames = normalizeLanguage(names.resolvedOptions().locale) === "zh-TW" ? names : null;
+      } catch {
+        traditionalChineseCountryNames = null;
+      }
+    }
+    try {
+      const name = traditionalChineseCountryNames?.of(code);
+      if (name) {
+        return name;
+      }
+    } catch { /* An unknown region still gets the existing English fallback. */ }
+  }
+  const countries = initCountries();
+  return countries.getName(countryCode, language, options) || countries.getName(countryCode, "en", options) || "";
 }
 
 export function getCountryImage(country) {
@@ -281,13 +308,25 @@ export function getThemedLogo(
 }
 
 
+export function getApplicationCategoryLabel(category: string) {
+  switch (category || "Default") {
+  case "Default":
+    return i18next.t("general:Default");
+  case "Agent":
+    return i18next.t("general:Agent");
+  default:
+    return category;
+  }
+}
+
 export const Countries = [
   {label: "English", key: "en", country: "US", alt: "English"},
   {label: "Español", key: "es", country: "ES", alt: "Español"},
   {label: "Français", key: "fr", country: "FR", alt: "Français"},
   {label: "Deutsch", key: "de", country: "DE", alt: "Deutsch"},
   {label: "日本語", key: "ja", country: "JP", alt: "日本語"},
-  {label: "中文", key: "zh", country: "CN", alt: "中文"},
+  {label: "简体中文", key: "zh", country: "CN", alt: "简体中文"},
+  {label: "正體中文（臺灣）", key: "zh-TW", country: "TW", alt: "正體中文（臺灣）"},
   {label: "TiếngViệt", key: "vi", country: "VN", alt: "TiếngViệt"},
   {label: "Português", key: "pt", country: "PT", alt: "Português"},
   {label: "Türkçe", key: "tr", country: "TR", alt: "Türkçe"},
@@ -898,11 +937,10 @@ export function getCountryCodeData(countryCodes: any = undefined): any[] {
   if (!countryCodes || countryCodes.includes("All")) {
     countryCodes = phoneNumber.getCountries();
   }
-  const countries = initCountries() as any;
   return countryCodes.map((countryCode) => {
     if (phoneNumber.isSupportedCountry(countryCode)) {
       // fall back to English so an unregistered locale never empties the list
-      const name = countries.getName(countryCode, getLanguage()) || countries.getName(countryCode, "en");
+      const name = getCountryName(countryCode);
       return {
         code: countryCode,
         name: name || "",
@@ -954,7 +992,7 @@ export function isProviderVisible(providerItem) {
 }
 
 export function isResponseDenied(data) {
-  if (data.msg === "Unauthorized operation" || data.msg === "未授权的操作") {
+  if (data.msg === "Unauthorized operation" || data.msg === "未授权的操作" || data.msg === "未經授權的操作") {
     return true;
   }
   return false;
@@ -1431,29 +1469,27 @@ export function getLanguageText(text) {
 }
 
 export function getLanguage() {
-  return (i18next.language !== undefined && i18next.language !== null && i18next.language !== "" && i18next.language !== "null") ? i18next.language : Conf.DefaultLanguage;
+  return normalizeLanguage(i18next.language) || normalizeLanguage(Conf.DefaultLanguage) || "en";
 }
 
 export function setLanguage(language) {
-  localStorage.setItem("language", language);
-  i18next.changeLanguage(language);
+  const normalized = normalizeLanguage(language) || normalizeLanguage(Conf.DefaultLanguage) || "en";
+  localStorage.setItem("language", normalized);
+  i18next.changeLanguage(normalized);
 }
 
 // The language chosen on the signin/signup page, remembered so it survives the
 // redirect through a provider and can be saved to the newly created user.
 export function setSigninLanguage(language) {
-  sessionStorage.setItem("signinLanguage", language);
+  sessionStorage.setItem("signinLanguage", normalizeLanguage(language));
 }
 
 export function getSigninLanguage() {
-  return sessionStorage.getItem("signinLanguage") ?? "";
+  return normalizeLanguage(sessionStorage.getItem("signinLanguage"));
 }
 
 export function getAcceptLanguage() {
-  if (i18next.language === null || i18next.language === "") {
-    return "en;q=0.9,en;q=0.8";
-  }
-  return i18next.language + ";q=0.9,en;q=0.8";
+  return getLanguage() + ";q=0.9,en;q=0.8";
 }
 
 
@@ -2165,7 +2201,7 @@ export function getUserCommonFields() {
 export function getDefaultFooterContent() {
   // the height is inline rather than an attribute: this HTML is injected into the
   // page, where Tailwind's preflight would otherwise reset it to `height: auto`
-  return `Powered by <a target="_blank" href="https://casdoor.org" rel="noreferrer"><img style="display: inline-block; height: 20px; width: auto; padding-bottom: 3px" alt="Casdoor" src="${StaticBaseUrl}/img/casdoor-logo_1185x256.png"/></a>`;
+  return `${i18next.t("general:Powered by")} <a target="_blank" href="https://casdoor.org" rel="noreferrer"><img style="display: inline-block; height: 20px; width: auto; padding-bottom: 3px" alt="Casdoor" src="${StaticBaseUrl}/img/casdoor-logo_1185x256.png"/></a>`;
 }
 
 export function getEmptyFooterContent() {

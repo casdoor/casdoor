@@ -65,7 +65,7 @@ export function useTableData<T = any>(
         } else {
           setRows([]);
           setTotal(0);
-          if ((res.data as any) === "Please login first" || (res.msg ?? "").includes("Please login first")) {
+          if ((res.data as any) === "Please login first" || (res.msg ?? "").includes("Please login first") || res.msg === "請先登入") {
             setErrorMessage("Please login first");
           } else if (Setting.isResponseDenied(res)) {
             // the 403 page says it; a toast on top of it would be noise

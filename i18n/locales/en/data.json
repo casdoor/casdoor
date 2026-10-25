@@ -257,7 +257,7 @@
     "Unknown type": "Unknown type",
     "Wrong parameter": "Wrong parameter",
     "Wrong verification code!": "Wrong verification code!",
-    "You should verify your code in %d min!": "You should verify your code in %d min!",
+    "You should verify your code in %d min!": "The code has expired after %d minutes. Please request a new code.",
     "please add a SMS provider to the \"Providers\" list for the application: %s": "please add a SMS provider to the \"Providers\" list for the application: %s",
     "please add an Email provider to the \"Providers\" list for the application: %s": "please add an Email provider to the \"Providers\" list for the application: %s",
     "please set \"origin\" in conf/app.conf to send magic links": "please set \"origin\" in conf/app.conf to send magic links",

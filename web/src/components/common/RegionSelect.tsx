@@ -1,4 +1,5 @@
 import * as React from "react";
+import i18next from "i18next";
 import {SearchableSelect} from "@/components/common/SearchableSelect";
 import {useLanguageVersion} from "@/hooks/use-language";
 import * as Setting from "@/lib/setting";
@@ -46,7 +47,7 @@ export function RegionSelect({
       options={options}
       disabled={disabled}
       className={className}
-      placeholder="Please select country/region"
+      placeholder={i18next.t("user:Select country/region")}
     />
   );
 }

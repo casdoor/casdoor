@@ -130,7 +130,7 @@ export default function UserListPage({
       searchable: true,
       // the column stores the ISO code, antd shows the country's own name
       render: (value) =>
-        value ? Setting.initCountries().getName(value, Setting.getLanguage(), {select: "official"}) ?? value : null,
+        value ? Setting.getCountryName(value, {select: "official"}) || value : null,
     },
     textColumn({dataIndex: "type", title: i18next.t("general:User type"), width: 130, searchable: true}),
     {

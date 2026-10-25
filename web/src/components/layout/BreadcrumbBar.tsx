@@ -97,7 +97,7 @@ export function BreadcrumbBar() {
   }
 
   return (
-    <nav aria-label="Breadcrumb" className="min-w-0">
+    <nav aria-label={i18next.t("general:Breadcrumb")} className="min-w-0">
       <ol className="flex min-w-0 items-center gap-1 text-sm text-muted-foreground">
         {items.map((item, index) => (
           <li key={`${item.label}-${index}`} className="flex min-w-0 items-center gap-1">

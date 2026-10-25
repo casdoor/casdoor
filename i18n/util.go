@@ -84,6 +84,7 @@ func applyData(data1 *I18nData, data2 *I18nData) {
 }
 
 func Translate(language string, errorText string) string {
+	language = conf.GetLanguage(language)
 	modified := false
 	if enableErrorMask {
 		if errorText == "general:The user: %s doesn't exist" ||

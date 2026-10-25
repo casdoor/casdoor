@@ -1,4 +1,5 @@
 import * as React from "react";
+import i18next from "i18next";
 import * as SheetPrimitive from "@radix-ui/react-dialog";
 import {cva, type VariantProps} from "class-variance-authority";
 import {X} from "lucide-react";
@@ -51,7 +52,7 @@ const SheetContent = React.forwardRef<React.ElementRef<typeof SheetPrimitive.Con
         {children}
         <SheetPrimitive.Close className="absolute right-4 top-4 rounded-sm opacity-70 transition-opacity hover:opacity-100 focus:outline-none">
           <X className="h-4 w-4" />
-          <span className="sr-only">Close</span>
+          <span className="sr-only">{i18next.t("general:Close")}</span>
         </SheetPrimitive.Close>
       </SheetPrimitive.Content>
     </SheetPortal>

@@ -106,14 +106,14 @@ export function ApplicationBasicTab({
             // the two categories have no type in common, so the old one cannot be kept
             updateField("type", v === "Agent" ? "MCP" : "All");
           }}
-          options={APPLICATION_CATEGORIES.map((item) => ({id: item, name: item}))}
+          options={APPLICATION_CATEGORIES.map((item) => ({id: item, name: Setting.getApplicationCategoryLabel(item)}))}
         />
       </FormRow>
       <FormRow labelKey="general:Type">
         <SelectField
           value={application.type || "All"}
           onChange={(v) => updateField("type", v)}
-          options={(application.category === "Agent" ? AGENT_APPLICATION_TYPES : APPLICATION_TYPES).map((item) => ({id: item, name: item}))}
+          options={(application.category === "Agent" ? AGENT_APPLICATION_TYPES : APPLICATION_TYPES).map((item) => ({id: item, name: item === "All" ? i18next.t("general:All") : item}))}
         />
       </FormRow>
       <FormRow labelKey="general:Is shared">

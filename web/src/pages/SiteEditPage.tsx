@@ -43,7 +43,7 @@ export default function SiteEditPage() {
     {type: "tags", name: "hosts", labelKey: "site:Hosts"},
     {type: "text", name: "publicIp", labelKey: "site:Public IP"},
     {type: "text", name: "node", labelKey: "site:Node"},
-    {type: "switch", name: "isSelf", labelKey: "general:Self"},
+    {type: "switch", name: "isSelf", labelKey: "site:Current node"},
     {
       type: "select",
       name: "sslMode",

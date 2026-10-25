@@ -72,7 +72,7 @@ export function validateSignupItem(item: any, values: Record<string, any>, appli
   switch (item.name) {
   case "Display name": {
     // the "First, last" rule replaces the single field with two of its own
-    if (item.rule === "First, last" && Setting.getLanguage() !== "zh") {
+    if (item.rule === "First, last" && !["zh", "zh-TW"].includes(Setting.getLanguage())) {
       if (required && isBlank(values.firstName)) {
         return i18next.t("signup:Please input your first name!");
       }

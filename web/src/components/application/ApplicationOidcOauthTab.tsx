@@ -177,7 +177,7 @@ export function ApplicationOidcOauthTab({application, updateField}: ApplicationT
             },
             {
               key: "subject",
-              title: i18next.t("provider:Subject"),
+              title: i18next.t("application:Token subject"),
               width: "22%",
               render: (row: any, _i, patch) => (
                 <Input

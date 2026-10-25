@@ -55,18 +55,21 @@ export default function ApplicationListPage({formItems}: {formItems?: any[]} = {
       // antd greys every category but "Agent"
       render: (value: string) => {
         const text = value || "Default";
-        return <Badge variant={text === "Agent" ? "success" : "secondary"}>{text}</Badge>;
+        return <Badge variant={text === "Agent" ? "success" : "secondary"}>{Setting.getApplicationCategoryLabel(text)}</Badge>;
       },
     },
-    textColumn({dataIndex: "type", title: i18next.t("general:Type"), width: 110, searchable: true}),
+    {
+      ...textColumn({dataIndex: "type", title: i18next.t("general:Type"), width: 110, searchable: true}),
+      render: (value: string) => value === "All" ? i18next.t("general:All") : value,
+    },
     {
       dataIndex: "logo",
-      title: "Logo",
+      title: i18next.t("general:Logo"),
       width: 170,
       render: (value) =>
         value ? (
           <a href={value} target="_blank" rel="noreferrer">
-            <img src={value} alt="logo" className="h-8 max-w-[150px] object-contain" />
+            <img src={value} alt={i18next.t("general:Logo")} className="h-8 max-w-[150px] object-contain" />
           </a>
         ) : null,
     },

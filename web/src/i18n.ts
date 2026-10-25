@@ -21,26 +21,35 @@ import en from "./locales/en/data.json";
 Conf.initConfigFromCookie();
 
 export const SupportedLanguages = [
-  "en", "zh", "es", "fr", "de", "id", "ja", "ko", "ru", "vi", "pt", "it", "ms",
+  "en", "zh", "zh-TW", "es", "fr", "de", "id", "ja", "ko", "ru", "vi", "pt", "it", "ms",
   "tr", "ar", "he", "nl", "pl", "fi", "sv", "uk", "kk", "fa", "cs", "sk", "az",
 ];
 
 // Languages that actually ship a translation bundle in src/locales.
-const bundledLanguages = ["de", "en", "es", "fr", "ja", "pl", "pt", "tr", "uk", "vi", "zh"];
+const bundledLanguages = ["de", "en", "es", "fr", "ja", "pl", "pt", "tr", "uk", "vi", "zh", "zh-TW"];
 
 const localeLoaders = import.meta.glob("./locales/*/data.json");
 
-function initLanguage(): string {
-  let language = localStorage.getItem("language");
-  if (language === undefined || language === null || language === "") {
-    if (Conf.ForceLanguage !== "") {
-      language = Conf.ForceLanguage;
-    } else {
-      const baseLanguage = navigator.language.split("-")[0];
-      language = SupportedLanguages.includes(baseLanguage) ? baseLanguage : Conf.DefaultLanguage;
-    }
+export function normalizeLanguage(language: string | null | undefined): string {
+  if (typeof language !== "string" || !language.trim()) {
+    return "";
   }
-  return language;
+  try {
+    const locale = new Intl.Locale(language.trim().replace(/_/g, "-"));
+    const normalized = locale.language === "zh"
+      ? (locale.maximize().script === "Hant" ? "zh-TW" : "zh")
+      : locale.language;
+    return SupportedLanguages.includes(normalized) ? normalized : "";
+  } catch {
+    return "";
+  }
+}
+
+function initLanguage(): string {
+  return normalizeLanguage(localStorage.getItem("language")) ||
+    normalizeLanguage(Conf.ForceLanguage) ||
+    normalizeLanguage(navigator.language) ||
+    normalizeLanguage(Conf.DefaultLanguage) || "en";
 }
 
 const resourcesToBackend = () => ({
@@ -59,6 +68,10 @@ const resourcesToBackend = () => ({
   },
 });
 
+i18n.on("languageChanged", (language) => {
+  document.documentElement.lang = normalizeLanguage(language) || "en";
+});
+
 i18n
   .use(resourcesToBackend() as any)
   .use(initReactI18next)
@@ -66,6 +79,9 @@ i18n
     lng: initLanguage(),
     ns: Object.keys(en),
     fallbackLng: "en",
+    supportedLngs: SupportedLanguages,
+    // A missing Traditional Chinese translation must not fall back to Simplified Chinese.
+    load: "currentOnly",
     keySeparator: false,
     // Must be set explicitly: with only `keySeparator: false`, i18next treats a key
     // containing spaces as natural language and stops splitting off the "general:"

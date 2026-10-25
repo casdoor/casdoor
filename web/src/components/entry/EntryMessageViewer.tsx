@@ -45,7 +45,7 @@ function TraceAttributeTable({attributes}: {attributes: any[]}) {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[220px]">{i18next.t("general:Keys")}</TableHead>
+            <TableHead className="w-[220px]">{i18next.t("entry:Attribute name")}</TableHead>
             <TableHead className="w-[120px]">{i18next.t("general:Type")}</TableHead>
             <TableHead>{i18next.t("user:Values")}</TableHead>
           </TableRow>
