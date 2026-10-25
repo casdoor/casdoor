@@ -1,8 +1,7 @@
 import * as React from "react";
 import i18next from "i18next";
-import {ShieldCheck} from "lucide-react";
 import {Button} from "@/components/ui/button";
-import {Input} from "@/components/ui/input";
+import {CodeInput} from "@/components/auth/CodeInput";
 import {CaptchaModal} from "@/components/common/CaptchaModal";
 import * as AuthBackend from "@/backend/AuthBackend";
 import * as UserBackend from "@/backend/UserBackend";
@@ -36,9 +35,10 @@ interface SendCodeInputProps {
   captchaValue?: CaptchaValues;
   useInlineCaptcha?: boolean;
   refreshCaptcha?: () => void;
-  /** the signin/signup item can override the field placeholder and add its own class */
-  placeholder?: string;
+  /** the signup item adds its own class */
   className?: string;
+  /** called once every digit is typed */
+  onComplete?: () => void;
 }
 
 interface UseSendCodeOptions {
@@ -187,7 +187,7 @@ export function useSendCode({
 }
 
 /**
- * Verification-code field with the "Get Code" button, replacing
+ * Verification-code boxes with the "Get Code" link under them, replacing
  * common/SendCodeInput.js.
  */
 export function SendCodeInput({
@@ -204,9 +204,10 @@ export function SendCodeInput({
   captchaValue,
   useInlineCaptcha,
   refreshCaptcha,
-  placeholder,
   className,
+  onComplete,
 }: SendCodeInputProps) {
+  const [sent, setSent] = React.useState(false);
   const {seconds, sending, request, captchaModal} = useSendCode({
     method,
     destType,
@@ -218,32 +219,27 @@ export function SendCodeInput({
     captchaValue,
     useInlineCaptcha,
     refreshCaptcha,
+    onSent: () => setSent(true),
   });
 
   return (
     <>
-      <div className="flex gap-2">
-        <div className="relative flex-1">
-          <ShieldCheck className="pointer-events-none absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            className={cn("pl-8", className)}
-            value={value}
-            disabled={disabled}
-            autoComplete="one-time-code"
-            placeholder={placeholder || i18next.t("code:Enter your code")}
-            onChange={(e) => onChange(e.target.value)}
-          />
+      <div className="space-y-2">
+        <CodeInput className={className} value={value} disabled={disabled} onChange={onChange} onComplete={onComplete} />
+        <div className="flex justify-end">
+          <Button
+            type="button"
+            variant="link"
+            className={cn("h-auto p-0", seconds > 0 && "text-muted-foreground")}
+            loading={sending}
+            disabled={disabled || seconds > 0}
+            onClick={request}
+          >
+            {seconds > 0
+              ? `${i18next.t("login:Resend code")} (${seconds}s)`
+              : sent ? i18next.t("login:Resend code") : i18next.t("code:Get Code")}
+          </Button>
         </div>
-        <Button
-          type="button"
-          variant="outline"
-          className="shrink-0 max-sm:h-11"
-          loading={sending}
-          disabled={disabled || seconds > 0}
-          onClick={request}
-        >
-          {seconds > 0 ? `${seconds}s` : sending ? i18next.t("code:Getting") : i18next.t("code:Get Code")}
-        </Button>
       </div>
       {captchaModal}
     </>

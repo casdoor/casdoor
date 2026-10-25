@@ -7,6 +7,7 @@ import {Input} from "@/components/ui/input";
 import {Label} from "@/components/ui/label";
 import {CountryCodeSelect} from "@/components/common/CountryCodeSelect";
 import {SendCodeInput} from "@/components/auth/SendCodeInput";
+import {CodeInput} from "@/components/auth/CodeInput";
 import {CasdoorAuthenticatorLink} from "@/components/user/CasdoorAppConnector";
 import {
   EmailMfaType,
@@ -71,8 +72,8 @@ export function MfaVerifySetupForm({mfaProps, application, user, onSuccess, onFa
     return mfaProps.secret;
   };
 
-  const submit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const submit = (e?: React.FormEvent) => {
+    e?.preventDefault();
     setSubmitting(true);
     const secret = resolveSecret();
     MfaBackend.MfaSetupVerify({
@@ -97,6 +98,12 @@ export function MfaVerifySetupForm({mfaProps, application, user, onSuccess, onFa
         setPasscode("");
         setSubmitting(false);
       });
+  };
+
+  const verifyComplete = () => {
+    if (!submitting) {
+      submit();
+    }
   };
 
   const renderBody = () => {
@@ -147,6 +154,7 @@ export function MfaVerifySetupForm({mfaProps, application, user, onSuccess, onFa
             application={application}
             applicationId={Setting.getApplicationName(application)}
             checkUser={user?.name}
+            onComplete={verifyComplete}
           />
         </>
       );
@@ -183,14 +191,7 @@ export function MfaVerifySetupForm({mfaProps, application, user, onSuccess, onFa
           ) : null}
           <div className="space-y-2">
             <Label htmlFor="passcode">{i18next.t("mfa:Verify Code")}</Label>
-            <Input
-              id="passcode"
-              autoFocus
-              inputMode="numeric"
-              value={passcode}
-              placeholder={i18next.t("code:Enter your code")}
-              onChange={(e) => setPasscode(e.target.value)}
-            />
+            <CodeInput id="passcode" autoFocus value={passcode} onChange={setPasscode} onComplete={verifyComplete} />
           </div>
         </>
       );

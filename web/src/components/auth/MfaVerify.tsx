@@ -5,6 +5,7 @@ import {Checkbox} from "@/components/ui/checkbox";
 import {Input} from "@/components/ui/input";
 import {Label} from "@/components/ui/label";
 import {SendCodeInput} from "@/components/auth/SendCodeInput";
+import {CodeInput} from "@/components/auth/CodeInput";
 import * as AuthBackend from "@/backend/AuthBackend";
 import * as Setting from "@/lib/setting";
 import {
@@ -118,6 +119,11 @@ export function MfaVerify({formValues, authParams, mfaProps, application, onSucc
   }
 
   const isCodeType = selected?.mfaType === SmsMfaType || selected?.mfaType === EmailMfaType;
+  const verifyComplete = () => {
+    if (!loading) {
+      post({passcode, enableMfaRemember: remember});
+    }
+  };
 
   // The antd MfaAuthVerifyForm branches on the factor: SMS/email get a "Get Code"
   // field, TOTP an authenticator code, push the code from the notification, and
@@ -160,7 +166,13 @@ export function MfaVerify({formValues, authParams, mfaProps, application, onSucc
             countryCode={selected?.countryCode ?? ""}
             application={application}
             applicationId={Setting.getApplicationName(application)}
+            onComplete={verifyComplete}
           />
+        </>
+      ) : selected?.mfaType === TotpMfaType ? (
+        <>
+          <p className="text-sm text-muted-foreground">{prompt}</p>
+          <CodeInput autoFocus value={passcode} onChange={setPasscode} onComplete={verifyComplete} />
         </>
       ) : (
         <>
