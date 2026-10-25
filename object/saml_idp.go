@@ -29,6 +29,7 @@ import (
 	"net/url"
 	"strings"
 	"time"
+	"unicode/utf8"
 
 	"github.com/beevik/etree"
 	"github.com/casdoor/casdoor/util"
@@ -340,7 +341,10 @@ func decodeSamlMessage(message string) ([]byte, error) {
 	}
 
 	// POST binding sends plain XML, which may only use default namespaces (xmlns="...").
-	if bytes.HasPrefix(bytes.TrimSpace(defated), []byte("<")) || strings.Contains(string(defated), "xmlns:") {
+	if plainXml, ok := plainSamlXml(defated); ok {
+		return plainXml, nil
+	}
+	if strings.Contains(string(defated), "xmlns:") {
 		return defated, nil
 	}
 
@@ -357,6 +361,17 @@ func decodeSamlMessage(message string) ([]byte, error) {
 	}
 
 	return buffer.Bytes(), nil
+}
+
+// plainSamlXml reports whether data is an uncompressed XML message and returns it without a
+// leading UTF-8 BOM or whitespace. A DEFLATE stream can start with '<' (0x3c) when its first
+// block is not final, so the whole message must also be valid UTF-8.
+func plainSamlXml(data []byte) ([]byte, bool) {
+	trimmed := bytes.TrimSpace(bytes.TrimPrefix(data, []byte("\xef\xbb\xbf")))
+	if !bytes.HasPrefix(trimmed, []byte("<")) || !utf8.Valid(trimmed) {
+		return nil, false
+	}
+	return trimmed, true
 }
 
 // getAuthnRequest parses the AuthnRequest sent by the SP, parameter samlRequest is the SAML request in base64 format
