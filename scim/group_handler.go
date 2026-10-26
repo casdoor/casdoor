@@ -24,6 +24,7 @@ import (
 	"github.com/casdoor/casdoor/util"
 	"github.com/elimity-com/scim"
 	"github.com/elimity-com/scim/errors"
+	"github.com/xorm-io/builder"
 )
 
 const GroupExtensionKey = "urn:ietf:params:scim:schemas:extension:enterprise:2.0:Group"
@@ -69,16 +70,24 @@ func (h GroupResourceHandler) GetAll(r *http.Request, params scim.ListRequestPar
 		return scim.Page{}, err
 	}
 
-	if params.Count == 0 {
-		count, err := object.GetGroupCount(organization, "", "")
+	cond := builder.NewCond()
+	if params.Filter != nil {
+		cond, err = filterToCond(params.Filter, nil, groupFilterCond)
 		if err != nil {
 			return scim.Page{}, err
 		}
+	}
+
+	count, err := object.GetGroupCountWithFilter(organization, cond)
+	if err != nil {
+		return scim.Page{}, err
+	}
+	if params.Count == 0 {
 		return scim.Page{TotalResults: int(count)}, nil
 	}
 
 	// startIndex is 1-based
-	groups, err := object.GetPaginationGroups(organization, params.StartIndex-1, params.Count, "", "", "", "")
+	groups, err := object.GetPaginationGroupsWithFilter(organization, params.StartIndex-1, params.Count, cond)
 	if err != nil {
 		return scim.Page{}, err
 	}
@@ -94,13 +103,8 @@ func (h GroupResourceHandler) GetAll(r *http.Request, params scim.ListRequestPar
 		}
 	}
 
-	totalCount, err := object.GetGroupCount(organization, "", "")
-	if err != nil {
-		return scim.Page{}, err
-	}
-
 	return scim.Page{
-		TotalResults: int(totalCount),
+		TotalResults: int(count),
 		Resources:    resources,
 	}, nil
 }

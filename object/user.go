@@ -395,6 +395,11 @@ func GetUserCount(owner, field, value string, groupName string) (int64, error) {
 	return session.Count(&User{})
 }
 
+func GetUserCountWithFilter(owner string, cond builder.Cond) (int64, error) {
+	session := GetSession(owner, -1, -1, "", "", "", "")
+	return session.And(cond).Count(&User{})
+}
+
 func GetOnlineUserCount(owner string, isOnline int) (int64, error) {
 	return ormer.Engine.Where("is_online = ?", isOnline).Count(&User{Owner: owner})
 }
@@ -459,6 +464,16 @@ func GetPaginationUsers(owner string, offset, limit int, field, value, sortField
 
 	session := GetSessionForUser(owner, offset, limit, field, value, sortField, sortOrder)
 	err := session.Find(&users)
+	if err != nil {
+		return nil, err
+	}
+	return users, nil
+}
+
+func GetPaginationUsersWithFilter(owner string, offset, limit int, cond builder.Cond) ([]*User, error) {
+	users := []*User{}
+	session := GetSession(owner, offset, limit, "", "", "", "")
+	err := session.And(cond).Find(&users)
 	if err != nil {
 		return nil, err
 	}

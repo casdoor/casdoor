@@ -95,6 +95,21 @@ func GetPaginationGroups(owner string, offset, limit int, field, value, sortFiel
 	return groups, nil
 }
 
+func GetGroupCountWithFilter(owner string, cond builder.Cond) (int64, error) {
+	session := GetSession(owner, -1, -1, "", "", "", "")
+	return session.And(cond).Count(&Group{})
+}
+
+func GetPaginationGroupsWithFilter(owner string, offset, limit int, cond builder.Cond) ([]*Group, error) {
+	groups := []*Group{}
+	session := GetSession(owner, offset, limit, "", "", "", "")
+	err := session.And(cond).Find(&groups)
+	if err != nil {
+		return nil, err
+	}
+	return groups, nil
+}
+
 // GetGroupsParentMap returns the parent group of each given group, keyed by the parent's ID.
 func GetGroupsParentMap(groups []*Group) (map[string]*Group, error) {
 	resultMap := make(map[string]*Group)
