@@ -1864,19 +1864,21 @@ func (c *ApiController) DeviceAuth() {
 	}
 
 	if application == nil {
-		c.Data["json"] = object.TokenError{
-			Error:            c.T("token:Invalid client_id"),
+		c.Data["json"] = &object.TokenError{
+			Error:            object.InvalidClient,
 			ErrorDescription: c.T("token:Invalid client_id"),
 		}
+		c.SetTokenErrorHttpStatus()
 		c.ServeJSON()
 		return
 	}
 
 	if !application.HasSigninMethod("Device login") {
-		c.Data["json"] = object.TokenError{
+		c.Data["json"] = &object.TokenError{
 			Error:            object.UnauthorizedClient,
 			ErrorDescription: "device login is not enabled for this application",
 		}
+		c.SetTokenErrorHttpStatus()
 		c.ServeJSON()
 		return
 	}
