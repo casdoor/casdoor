@@ -2,7 +2,7 @@ module github.com/casdoor/casdoor
 
 go 1.25.0
 
-toolchain go1.25.8
+toolchain go1.26.10
 
 require (
 	github.com/Masterminds/squirrel v1.5.3
