@@ -33,7 +33,7 @@ import (
 func (c *ApiController) GetMarketplaceIndex() {
 	refresh := c.Ctx.Input.Query("refresh") == "1"
 
-	index, err := object.GetMarketplaceIndex(refresh)
+	index, err := object.GetMarketplaceIndexForLanguage(refresh, c.GetAcceptLanguage())
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

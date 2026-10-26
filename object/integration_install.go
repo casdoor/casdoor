@@ -33,7 +33,11 @@ import (
 	"github.com/xorm-io/core"
 )
 
-const defaultMarketplaceUrl = "https://cdn.jsdelivr.net/gh/casdoor/casdoor-integrations@dist"
+const (
+	defaultMarketplaceUrl = "https://cdn.jsdelivr.net/gh/casdoor/casdoor-integrations@dist"
+	// the same catalog served from mainland China, where jsDelivr is often unreachable
+	fallbackMarketplaceUrl = "https://marketplace.casdoor.cn/data"
+)
 
 type MarketplaceVersion struct {
 	Version        string `json:"version"`
@@ -57,6 +61,7 @@ type MarketplaceIntegration struct {
 	Screenshots         []string              `json:"screenshots"`
 	Verified            bool                  `json:"verified"`
 	RequiresGlobalAdmin bool                  `json:"requiresGlobalAdmin"`
+	Region              string                `json:"region"`
 	Latest              string                `json:"latest"`
 	Versions            []*MarketplaceVersion `json:"versions"`
 }
@@ -139,12 +144,12 @@ var (
 	installNameRegex = regexp.MustCompile(`^[a-zA-Z0-9][a-zA-Z0-9_-]*$`)
 )
 
-func getMarketplaceUrl() string {
+func getMarketplaceUrls() []string {
 	marketplaceUrl := conf.GetConfigString("marketplaceUrl")
 	if marketplaceUrl == "" {
-		marketplaceUrl = defaultMarketplaceUrl
+		return []string{defaultMarketplaceUrl, fallbackMarketplaceUrl}
 	}
-	return strings.TrimSuffix(marketplaceUrl, "/")
+	return []string{strings.TrimSuffix(marketplaceUrl, "/")}
 }
 
 func fetchMarketplaceFile(fileUrl string) ([]byte, error) {
@@ -177,8 +182,15 @@ func GetMarketplaceIndex(refresh bool) (*MarketplaceIndex, error) {
 		return marketplaceIndexCache, nil
 	}
 
-	baseUrl := getMarketplaceUrl()
-	data, err := fetchMarketplaceFile(baseUrl + "/index.json")
+	var baseUrl string
+	var data []byte
+	var err error
+	for _, baseUrl = range getMarketplaceUrls() {
+		data, err = fetchMarketplaceFile(baseUrl + "/index.json")
+		if err == nil {
+			break
+		}
+	}
 	if err != nil {
 		return nil, err
 	}
@@ -200,6 +212,24 @@ func GetMarketplaceIndex(refresh bool) (*MarketplaceIndex, error) {
 	marketplaceIndexCache = index
 	marketplaceIndexTime = time.Now()
 	return index, nil
+}
+
+// GetMarketplaceIndexForLanguage leaves out the integrations of the Chinese Marketplace, such as sign-in with
+// platforms only used in China, unless the admin uses Casdoor in Chinese.
+func GetMarketplaceIndexForLanguage(refresh bool, lang string) (*MarketplaceIndex, error) {
+	index, err := GetMarketplaceIndex(refresh)
+	if err != nil || strings.HasPrefix(lang, "zh") {
+		return index, err
+	}
+
+	res := *index
+	res.Integrations = []*MarketplaceIntegration{}
+	for _, item := range index.Integrations {
+		if item.Region != "cn" {
+			res.Integrations = append(res.Integrations, item)
+		}
+	}
+	return &res, nil
 }
 
 func GetMarketplaceIntegration(id string) (*MarketplaceIntegration, error) {
