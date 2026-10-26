@@ -172,6 +172,7 @@ export default function AuthCallback() {
       code,
       samlRequest: Util.getParameterIgnoreCase(innerParams, "SAMLRequest"),
       state: applicationName,
+      callbackState: state,
       invitationCode: innerParams.get("invitationCode") || "",
       redirectUri: `${Setting.getOriginUrl()}/callback`,
       method: innerParams.get("method"),

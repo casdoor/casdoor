@@ -47,6 +47,8 @@ type AuthForm struct {
 	RedirectUri  string `json:"redirectUri"`
 	Method       string `json:"method"`
 	CodeVerifier string `json:"codeVerifier"`
+	// the state the identity provider sent back, which some providers want again in later requests
+	CallbackState string `json:"callbackState"`
 
 	EmailCode   string `json:"emailCode"`
 	PhoneCode   string `json:"phoneCode"`

@@ -21,6 +21,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -39,6 +41,21 @@ type CustomIdProvider struct {
 	UserMapping  map[string]string
 	Scopes       []string
 	CodeVerifier string
+	State        string
+}
+
+// A token or userinfo URL with {name} placeholders is filled in instead of following OAuth 2.0, for providers whose
+// requests use other parameter names, e.g. appid and secret, or need fields of the token response
+var urlParamPattern = regexp.MustCompile(`\{([a-zA-Z_][a-zA-Z0-9_]*)\}`)
+
+func isUrlTemplate(rawUrl string) bool {
+	return urlParamPattern.MatchString(rawUrl)
+}
+
+func fillUrlTemplate(rawUrl string, getValue func(name string) string) string {
+	return urlParamPattern.ReplaceAllStringFunc(rawUrl, func(match string) string {
+		return url.QueryEscape(getValue(match[1 : len(match)-1]))
+	})
 }
 
 func NewCustomIdProvider(idpInfo *ProviderInfo, redirectUrl string) *CustomIdProvider {
@@ -57,6 +74,7 @@ func NewCustomIdProvider(idpInfo *ProviderInfo, redirectUrl string) *CustomIdPro
 	idp.UserMapping = idpInfo.UserMapping
 
 	idp.CodeVerifier = idpInfo.CodeVerifier
+	idp.State = idpInfo.State
 	return idp
 }
 
@@ -65,12 +83,62 @@ func (idp *CustomIdProvider) SetHttpClient(client *http.Client) {
 }
 
 func (idp *CustomIdProvider) GetToken(code string) (*oauth2.Token, error) {
+	if isUrlTemplate(idp.Config.Endpoint.TokenURL) {
+		return idp.getTokenFromUrlTemplate(code)
+	}
+
 	ctx := context.WithValue(context.Background(), oauth2.HTTPClient, idp.Client)
 	var oauth2Opts []oauth2.AuthCodeOption
 	if idp.CodeVerifier != "" {
 		oauth2Opts = append(oauth2Opts, oauth2.VerifierOption(idp.CodeVerifier))
 	}
 	return idp.Config.Exchange(ctx, code, oauth2Opts...)
+}
+
+// getTokenFromUrlTemplate posts the query of the filled token URL as the form body, so the secret stays out of URLs
+func (idp *CustomIdProvider) getTokenFromUrlTemplate(code string) (*oauth2.Token, error) {
+	values := map[string]string{
+		"clientId":     idp.Config.ClientID,
+		"clientSecret": idp.Config.ClientSecret,
+		"code":         code,
+		"redirectUri":  idp.Config.RedirectURL,
+		"codeVerifier": idp.CodeVerifier,
+		"state":        idp.State,
+	}
+	tokenUrl := fillUrlTemplate(idp.Config.Endpoint.TokenURL, func(name string) string { return values[name] })
+	endpoint, body, _ := strings.Cut(tokenUrl, "?")
+
+	resp, err := idp.Client.Post(endpoint, "application/x-www-form-urlencoded", strings.NewReader(body))
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	data, err := io.ReadAll(io.LimitReader(resp.Body, 1<<20))
+	if err != nil {
+		return nil, err
+	}
+
+	var raw map[string]interface{}
+	err = json.Unmarshal(data, &raw)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse the token response: %s", string(data))
+	}
+
+	accessToken := toStringValue(raw["access_token"])
+	if accessToken == "" {
+		return nil, fmt.Errorf("no access_token in the token response: %s", string(data))
+	}
+
+	token := &oauth2.Token{
+		AccessToken:  accessToken,
+		TokenType:    toStringValue(raw["token_type"]),
+		RefreshToken: toStringValue(raw["refresh_token"]),
+	}
+	if expiresIn, ok := raw["expires_in"].(float64); ok && expiresIn > 0 {
+		token.Expiry = time.Now().Add(time.Duration(expiresIn) * time.Second)
+	}
+	return token.WithExtra(raw), nil
 }
 
 func getNestedValue(data map[string]interface{}, path string) (interface{}, error) {
@@ -226,12 +294,28 @@ func flattenClaims(claims map[string]interface{}) map[string]string {
 }
 
 func (idp *CustomIdProvider) getClaimsFromUserInfoUrl(token *oauth2.Token) (map[string]interface{}, error) {
-	request, err := http.NewRequest("GET", idp.UserInfoURL, nil)
+	userInfoUrl := idp.UserInfoURL
+	isTemplate := isUrlTemplate(userInfoUrl)
+	if isTemplate {
+		userInfoUrl = fillUrlTemplate(userInfoUrl, func(name string) string {
+			switch name {
+			case "clientId":
+				return idp.Config.ClientID
+			case "state":
+				return idp.State
+			}
+			return toStringValue(token.Extra(name))
+		})
+	}
+
+	request, err := http.NewRequest("GET", userInfoUrl, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	request.Header.Add("Authorization", fmt.Sprintf("Bearer %s", token.AccessToken))
+	if !isTemplate {
+		request.Header.Add("Authorization", fmt.Sprintf("Bearer %s", token.AccessToken))
+	}
 	resp, err := idp.Client.Do(request)
 	if err != nil {
 		return nil, err
