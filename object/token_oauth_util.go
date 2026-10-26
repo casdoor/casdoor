@@ -363,21 +363,9 @@ func ExpireToken(token *Token) (bool, error) {
 
 // RevokeToken expires the client's access or refresh token (RFC 7009), an unknown token or one of another client is left alone
 func RevokeToken(application *Application, clientSecret string, tokenValue string, tokenTypeHint string) (*TokenError, error) {
-	getters := []func(string) (*Token, error){GetTokenByAccessToken, GetTokenByRefreshToken}
-	if tokenTypeHint == "refresh_token" {
-		getters = []func(string) (*Token, error){GetTokenByRefreshToken, GetTokenByAccessToken}
-	}
-
-	var token *Token
-	for _, getter := range getters {
-		var err error
-		token, err = getter(tokenValue)
-		if err != nil {
-			return nil, err
-		}
-		if token != nil {
-			break
-		}
+	token, err := GetTokenByTokenValue(tokenValue, tokenTypeHint)
+	if err != nil {
+		return nil, err
 	}
 
 	if token == nil || token.Owner != application.Owner || token.Application != application.Name {
@@ -396,7 +384,7 @@ func RevokeToken(application *Application, clientSecret string, tokenValue strin
 		return nil, nil
 	}
 
-	_, err := ExpireToken(token)
+	_, err = ExpireToken(token)
 	return nil, err
 }
 
