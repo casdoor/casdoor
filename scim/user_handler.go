@@ -58,16 +58,16 @@ func (h UserResourceHandler) GetAll(r *http.Request, params scim.ListRequestPara
 		return scim.Page{}, err
 	}
 
+	var count int64
+	if organization == "" {
+		count, err = object.GetGlobalUserCount("", "")
+	} else {
+		count, err = object.GetUserCount(organization, "", "", "")
+	}
+	if err != nil {
+		return scim.Page{}, err
+	}
 	if params.Count == 0 {
-		var count int64
-		if organization == "" {
-			count, err = object.GetGlobalUserCount("", "")
-		} else {
-			count, err = object.GetUserCount(organization, "", "", "")
-		}
-		if err != nil {
-			return scim.Page{}, err
-		}
 		return scim.Page{TotalResults: int(count)}, nil
 	}
 
@@ -86,7 +86,7 @@ func (h UserResourceHandler) GetAll(r *http.Request, params scim.ListRequestPara
 		resources = append(resources, *user2resource(user))
 	}
 	return scim.Page{
-		TotalResults: len(resources),
+		TotalResults: int(count),
 		Resources:    resources,
 	}, nil
 }
