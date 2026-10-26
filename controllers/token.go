@@ -332,7 +332,12 @@ func (c *ApiController) GetOAuthToken() {
 
 		deviceAuthCacheCast := deviceAuthCache.(object.DeviceAuthCache)
 
-		if deviceAuthCacheCast.RequestAt.Add(time.Second * object.DeviceAuthExpiresIn).Before(time.Now()) {
+		// The code lives as long as /api/device-auth said in expires_in
+		expiresIn := deviceAuthCacheCast.ExpiresIn
+		if expiresIn == 0 {
+			expiresIn = object.DeviceAuthExpiresIn
+		}
+		if deviceAuthCacheCast.RequestAt.Add(time.Duration(expiresIn) * time.Second).Before(time.Now()) {
 			object.DeviceAuthMap.Delete(deviceCode)
 			c.Data["json"] = &object.TokenError{
 				Error:            "expired_token",
