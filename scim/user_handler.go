@@ -22,6 +22,7 @@ import (
 	"github.com/casdoor/casdoor/object"
 	"github.com/elimity-com/scim"
 	"github.com/elimity-com/scim/errors"
+	"github.com/xorm-io/builder"
 )
 
 type UserResourceHandler struct{}
@@ -58,12 +59,15 @@ func (h UserResourceHandler) GetAll(r *http.Request, params scim.ListRequestPara
 		return scim.Page{}, err
 	}
 
-	var count int64
-	if organization == "" {
-		count, err = object.GetGlobalUserCount("", "")
-	} else {
-		count, err = object.GetUserCount(organization, "", "", "")
+	cond := builder.NewCond()
+	if params.Filter != nil {
+		cond, err = filterToCond(params.Filter, nil, userFilterCond)
+		if err != nil {
+			return scim.Page{}, err
+		}
 	}
+
+	count, err := object.GetUserCountWithFilter(organization, cond)
 	if err != nil {
 		return scim.Page{}, err
 	}
@@ -73,12 +77,7 @@ func (h UserResourceHandler) GetAll(r *http.Request, params scim.ListRequestPara
 
 	resources := make([]scim.Resource, 0)
 	// startIndex is 1-based index
-	var users []*object.User
-	if organization == "" {
-		users, err = object.GetPaginationGlobalUsers(params.StartIndex-1, params.Count, "", "", "", "")
-	} else {
-		users, err = object.GetPaginationUsers(organization, params.StartIndex-1, params.Count, "", "", "", "", "")
-	}
+	users, err := object.GetPaginationUsersWithFilter(organization, params.StartIndex-1, params.Count, cond)
 	if err != nil {
 		return scim.Page{}, err
 	}
