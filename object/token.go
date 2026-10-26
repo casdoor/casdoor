@@ -162,23 +162,17 @@ func GetTokenByIdToken(idToken string) (*Token, error) {
 	return &token, nil
 }
 
+// GetTokenByTokenValue looks the token up as the hinted type first and then as the other type (RFC 7009 and RFC 7662 section 2.1)
 func GetTokenByTokenValue(tokenValue, tokenTypeHint string) (*Token, error) {
-	switch tokenTypeHint {
-	case "access_token", "access-token":
-		token, err := GetTokenByAccessToken(tokenValue)
-		if err != nil {
-			return nil, err
-		}
-		if token != nil {
-			return token, nil
-		}
-	case "refresh_token", "refresh-token":
-		token, err := GetTokenByRefreshToken(tokenValue)
-		if err != nil {
-			return nil, err
-		}
-		if token != nil {
-			return token, nil
+	getters := []func(string) (*Token, error){GetTokenByAccessToken, GetTokenByRefreshToken}
+	if tokenTypeHint == "refresh_token" || tokenTypeHint == "refresh-token" {
+		getters[0], getters[1] = getters[1], getters[0]
+	}
+
+	for _, getter := range getters {
+		token, err := getter(tokenValue)
+		if err != nil || token != nil {
+			return token, err
 		}
 	}
 
