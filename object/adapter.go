@@ -15,6 +15,7 @@
 package object
 
 import (
+	"context"
 	"fmt"
 	"strings"
 
@@ -134,12 +135,78 @@ func AddAdapter(adapter *Adapter) (bool, error) {
 }
 
 func DeleteAdapter(adapter *Adapter) (bool, error) {
+	oldAdapter, err := getAdapter(adapter.Owner, adapter.Name)
+	if err != nil {
+		return false, err
+	}
+
 	affected, err := ormer.Engine.ID(core.PK{adapter.Owner, adapter.Name}).Delete(&Adapter{})
 	if err != nil {
 		return false, err
 	}
 
+	if affected != 0 && oldAdapter != nil {
+		err = dropSameDbAdapterTable(oldAdapter)
+		if err != nil {
+			return false, err
+		}
+	}
+
 	return affected != 0, nil
+}
+
+func dropSameDbAdapterTable(adapter *Adapter) error {
+	if !adapter.UseSameDb || adapter.isBuiltIn() || adapter.Table == "" {
+		return nil
+	}
+
+	table := adapter.Table
+	if !util.FilterSQLIdentifier(table) {
+		return nil
+	}
+	switch strings.ToLower(table) {
+	case "casbin_rule", "casbin_user_rule", "casbin_api_rule":
+		return nil
+	}
+
+	adapters := []*Adapter{}
+	err := ormer.Engine.Where("use_same_db = ?", true).Find(&adapters)
+	if err != nil {
+		return err
+	}
+	for _, otherAdapter := range adapters {
+		if strings.EqualFold(getSameDbAdapterTable(otherAdapter), table) {
+			return nil
+		}
+	}
+
+	existed, err := ormer.Engine.IsTableExist(table)
+	if err != nil || !existed {
+		return err
+	}
+
+	columns, _, err := ormer.Engine.Dialect().GetColumns(ormer.Engine.DB(), context.Background(), table)
+	if err != nil {
+		return err
+	}
+	if !isCasbinRuleColumns(columns) {
+		return nil
+	}
+
+	return ormer.Engine.DropTables(table)
+}
+
+func isCasbinRuleColumns(columns []string) bool {
+	expected := map[string]bool{"id": true, "ptype": true, "v0": true, "v1": true, "v2": true, "v3": true, "v4": true, "v5": true}
+	if len(columns) != len(expected) {
+		return false
+	}
+	for _, column := range columns {
+		if !expected[strings.ToLower(column)] {
+			return false
+		}
+	}
+	return true
 }
 
 func (adapter *Adapter) GetId() string {
