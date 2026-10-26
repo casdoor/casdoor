@@ -13,6 +13,7 @@ import {CodeEditor} from "@/components/common/CodeEditor";
 import {EditPageShell} from "@/components/crud/EditPageShell";
 import {FormGrid, FormRow} from "@/components/crud/FormRow";
 import {useEditRecord} from "@/hooks/use-edit-record";
+import {useLanguageVersion} from "@/hooks/use-language";
 import {getModeTitleKey, submitEdit, type CasdoorResponse, type EditMode} from "@/lib/crud";
 import * as Setting from "@/lib/setting";
 
@@ -109,6 +110,7 @@ export function SimpleEditPage({
   extraActions,
   children,
 }: SimpleEditPageProps) {
+  useLanguageVersion();
   const navigate = useNavigate();
   const [saving, setSaving] = React.useState(false);
   const [errors, setErrors] = React.useState<Record<string, string>>({});
@@ -331,7 +333,7 @@ export function SimpleEditPage({
         label={typeof field.label === "function" ? field.label(ctx) : field.label}
         block={field.block || field.type === "code"}
         required={field.required && applies(field)}
-        error={errors[field.name]}
+        error={errors[field.name] ? checkField(field, value) : undefined}
       >
         <div data-field={field.name}>{control}</div>
       </FormRow>

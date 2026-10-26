@@ -217,7 +217,7 @@ func (invitation *Invitation) checkExpireTime() error {
 
 	_, err := time.Parse(time.RFC3339, invitation.ExpireTime)
 	if err != nil {
-		return fmt.Errorf("invalid expireTime: %s, it should be in RFC 3339 format like 2026-01-02T15:04:05+08:00", invitation.ExpireTime)
+		return util.MessageErrorf("invitation:invalid expireTime: %s, it should be in RFC 3339 format like 2026-01-02T15:04:05+08:00", invitation.ExpireTime)
 	}
 	return nil
 }
@@ -235,7 +235,7 @@ func (invitation *Invitation) isExpired() bool {
 }
 
 func VerifyInvitation(id string) (payment *Payment, attachInfo map[string]interface{}, err error) {
-	return nil, nil, fmt.Errorf("the invitation: %s does not exist", id)
+	return nil, nil, util.MessageErrorf("invitation:the invitation: %s does not exist", id)
 }
 
 func (invitation *Invitation) SimpleCheckInvitationCode(invitationCode string, lang string) (bool, string) {

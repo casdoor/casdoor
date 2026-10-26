@@ -15,8 +15,9 @@
 package audit
 
 import (
-	"fmt"
 	"time"
+
+	"github.com/casdoor/casdoor/util"
 )
 
 const (
@@ -50,7 +51,7 @@ func GetAuditProvider(config *Config) (AuditProvider, error) {
 	case "Syslog":
 		return NewSyslogProvider(config)
 	default:
-		return nil, fmt.Errorf("unsupported audit provider type: %s", config.Type)
+		return nil, util.MessageErrorf("audit:unsupported audit provider type: %s", config.Type)
 	}
 }
 
@@ -60,6 +61,6 @@ func ValidateConfig(config *Config) error {
 		_, err := newSyslogSettings(config)
 		return err
 	default:
-		return fmt.Errorf("unsupported audit provider type: %s", config.Type)
+		return util.MessageErrorf("audit:unsupported audit provider type: %s", config.Type)
 	}
 }

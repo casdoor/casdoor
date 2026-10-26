@@ -85,13 +85,13 @@ func UpdateSetting(setting *Setting) (bool, error) {
 
 func (setting *Setting) check() error {
 	if setting.DbMaxOpenConns < 0 || setting.DbMaxIdleConns < 0 || setting.DbConnMaxLifetime < 0 {
-		return fmt.Errorf("the connection pool settings cannot be negative")
+		return util.MessageErrorf("setting:the connection pool settings cannot be negative")
 	}
 	if setting.DbMaxOpenConns > 0 && setting.DbMaxIdleConns > setting.DbMaxOpenConns {
-		return fmt.Errorf("the max idle connections cannot be more than the max open connections")
+		return util.MessageErrorf("setting:the max idle connections cannot be more than the max open connections")
 	}
 	if setting.RecordRetentionDays < 0 {
-		return fmt.Errorf("the record retention days cannot be negative")
+		return util.MessageErrorf("setting:the record retention days cannot be negative")
 	}
 	return nil
 }

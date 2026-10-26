@@ -98,7 +98,7 @@ func serveWebManifest(ctx *context.Context) bool {
 
 	application, err := object.GetApplication(ctx.Input.Query("application"))
 	if err != nil {
-		responseError(ctx, err.Error())
+		responseErrorFrom(ctx, err)
 		return true
 	}
 	if application == nil {
@@ -108,7 +108,7 @@ func serveWebManifest(ctx *context.Context) bool {
 
 	organizationThemeCookie, err := getOrganizationThemeCookieFromApplication(application)
 	if err != nil {
-		responseError(ctx, err.Error())
+		responseErrorFrom(ctx, err)
 		return true
 	}
 
@@ -136,7 +136,7 @@ func serveWebManifest(ctx *context.Context) bool {
 
 	data, err := json.Marshal(manifest)
 	if err != nil {
-		responseError(ctx, err.Error())
+		responseErrorFrom(ctx, err)
 		return true
 	}
 

@@ -50,7 +50,7 @@ func (c *ApiController) GetApplications() {
 			applications, err = object.GetOrganizationApplications(owner, organization)
 		}
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 		c.ResponseOk(object.GetMaskedApplications(applications, userId))
@@ -63,7 +63,7 @@ func (c *ApiController) GetApplications() {
 			count, err = object.GetOrganizationApplicationCount(owner, organization, field, value)
 		}
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -75,7 +75,7 @@ func (c *ApiController) GetApplications() {
 			application, err = object.GetPaginationOrganizationApplications(owner, organization, paginator.Offset(), limit, field, value, sortField, sortOrder)
 		}
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -97,21 +97,21 @@ func (c *ApiController) GetApplication() {
 
 	application, err := object.GetApplication(id)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
 	if c.Ctx.Input.Query("withKey") != "" && application != nil && application.Cert != "" {
 		cert, err := object.GetCertEx(util.GetId(application.Owner, application.Cert))
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
 		if cert == nil {
 			cert, err = object.GetCertEx(util.GetId(application.Organization, application.Cert))
 			if err != nil {
-				c.ResponseError(err.Error())
+				c.ResponseErrorFrom(err)
 				return
 			}
 		}
@@ -140,7 +140,7 @@ func (c *ApiController) GetUserApplication() {
 
 	user, err := object.GetUser(id)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 	if user == nil {
@@ -150,7 +150,7 @@ func (c *ApiController) GetUserApplication() {
 
 	application, err := object.GetApplicationByUser(user)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 	if application == nil {
@@ -187,13 +187,13 @@ func (c *ApiController) GetOrganizationApplications() {
 	if limit == "" || page == "" {
 		applications, err := object.GetOrganizationApplications(owner, organization)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
 		applications, err = object.GetAllowedApplications(applications, userId, c.GetAcceptLanguage())
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -203,20 +203,20 @@ func (c *ApiController) GetOrganizationApplications() {
 
 		count, err := object.GetOrganizationApplicationCount(owner, organization, field, value)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
 		paginator := pagination.NewPaginator(c.Ctx.Request, limit, count)
 		applications, err := object.GetPaginationOrganizationApplications(owner, organization, paginator.Offset(), limit, field, value, sortField, sortOrder)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
 		applications, err = object.GetAllowedApplications(applications, userId, c.GetAcceptLanguage())
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -240,12 +240,12 @@ func (c *ApiController) UpdateApplication() {
 	var application object.Application
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &application)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
 	if err = object.CheckIpWhitelist(application.IpWhitelist, c.GetAcceptLanguage()); err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -271,7 +271,7 @@ func (c *ApiController) AddApplication() {
 	var application object.Application
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &application)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -281,17 +281,17 @@ func (c *ApiController) AddApplication() {
 
 	count, err := object.GetApplicationCount("", "", "")
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
 	if err := checkQuotaForApplication(int(count)); err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
 	if err = object.CheckIpWhitelist(application.IpWhitelist, c.GetAcceptLanguage()); err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -318,7 +318,7 @@ func (c *ApiController) AddApplication() {
 	if !c.IsGlobalAdmin() {
 		err = object.CheckApplicationCustomHtml(&application, nil)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 	}
@@ -338,7 +338,7 @@ func (c *ApiController) DeleteApplication() {
 	var application object.Application
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &application)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 

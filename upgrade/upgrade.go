@@ -201,7 +201,7 @@ func fetchLatestRelease() (*Release, error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("GitHub API returned status %d", resp.StatusCode)
+		return nil, util.MessageErrorf("upgrade:GitHub API returned status %d", resp.StatusCode)
 	}
 
 	var release Release
@@ -210,7 +210,7 @@ func fetchLatestRelease() (*Release, error) {
 		return nil, err
 	}
 	if !releaseTagRegex.MatchString(release.TagName) {
-		return nil, fmt.Errorf("unexpected release tag: %s", release.TagName)
+		return nil, util.MessageErrorf("upgrade:unexpected release tag: %s", release.TagName)
 	}
 	return &release, nil
 }
@@ -316,19 +316,19 @@ func StartUpgrade(version string, operator string) error {
 	if !info.CanUpgrade {
 		switch {
 		case info.DeploymentType != DeploymentRelease:
-			return fmt.Errorf("only an official release binary can upgrade itself, this Casdoor is deployed as: %s", info.DeploymentType)
+			return util.MessageErrorf("upgrade:only an official release binary can upgrade itself, this Casdoor is deployed as: %s", info.DeploymentType)
 		case info.IsUpgradeDisabled:
-			return fmt.Errorf("upgrading is disabled by disableUpgrade in app.conf")
+			return util.MessageErrorf("upgrade:upgrading is disabled by disableUpgrade in app.conf")
 		case info.IsCheckDisabled:
-			return fmt.Errorf("checking the latest version is disabled by disableVersionCheck in app.conf")
+			return util.MessageErrorf("upgrade:checking the latest version is disabled by disableVersionCheck in app.conf")
 		case info.CheckError != "":
-			return fmt.Errorf("failed to check the latest version: %s", info.CheckError)
+			return util.MessageErrorf("upgrade:failed to check the latest version: %s", info.CheckError)
 		default:
-			return fmt.Errorf("there is no new version to upgrade to")
+			return util.MessageErrorf("upgrade:there is no new version to upgrade to")
 		}
 	}
 	if version != info.LatestVersion {
-		return fmt.Errorf("the latest version is %s, not %s", info.LatestVersion, version)
+		return util.MessageErrorf("upgrade:the latest version is %s, not %s", info.LatestVersion, version)
 	}
 
 	release, err := getLatestRelease()
@@ -339,7 +339,7 @@ func StartUpgrade(version string, operator string) error {
 	statusMutex.Lock()
 	if isUpgrading(status.State) {
 		statusMutex.Unlock()
-		return fmt.Errorf("an upgrade to %s is already in progress", status.Version)
+		return util.MessageErrorf("upgrade:an upgrade to %s is already in progress", status.Version)
 	}
 	status = &UpgradeStatus{State: StateDownloading, Version: release.TagName}
 	statusMutex.Unlock()

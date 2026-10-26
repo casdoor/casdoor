@@ -1,6 +1,6 @@
 import i18next from "i18next";
 import {CrudListPage} from "@/components/crud/CrudListPage";
-import {boolColumn, dateColumn, linkColumn, textColumn, valueFilters} from "@/components/crud/columns";
+import {boolColumn, dateColumn, linkColumn, textColumn} from "@/components/crud/columns";
 import type {ColumnDef} from "@/components/crud/types";
 import {useAccount} from "@/hooks/use-account";
 import {useOrganizationFilter} from "@/hooks/use-organization";
@@ -16,7 +16,7 @@ export default function SyncerListPage() {
     linkColumn({dataIndex: "name", to: (r) => `/syncers/${r.organization}/${r.name}`, width: 170}),
     textColumn({dataIndex: "organization", title: i18next.t("general:Organization"), width: 140, searchable: true, link: (v) => `/organizations/${v}`}),
     dateColumn(),
-    textColumn({dataIndex: "type", title: i18next.t("general:Type"), width: 120, filters: valueFilters(["Database", "LDAP"])}),
+    {...textColumn({dataIndex: "type", title: i18next.t("general:Type"), width: 120, filters: [{value: "Database", label: i18next.t("syncer:Database")}, {value: "LDAP", label: "LDAP"}]}), render: (value) => value === "Database" ? i18next.t("syncer:Database") : value},
     textColumn({dataIndex: "databaseType", title: i18next.t("syncer:Database type"), width: 140}),
     textColumn({dataIndex: "host", title: i18next.t("general:Host"), width: 130, searchable: true}),
     textColumn({dataIndex: "port", title: i18next.t("general:Port"), width: 90, searchable: true}),

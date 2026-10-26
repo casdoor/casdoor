@@ -35,7 +35,7 @@ func (c *ApiController) GetGlobalSites() {
 
 	sites, err := object.GetGlobalSites()
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -65,7 +65,7 @@ func (c *ApiController) GetSites() {
 	if limit == "" || page == "" {
 		sites, err := object.GetSites(owner)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 		c.ResponseOk(object.GetMaskedSites(sites, util.GetHostname()))
@@ -75,14 +75,14 @@ func (c *ApiController) GetSites() {
 	limitInt := util.ParseInt(limit)
 	count, err := object.GetSiteCount(owner, field, value)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
 	paginator := pagination.SetPaginator(c.Ctx, limitInt, count)
 	sites, err := object.GetPaginationSites(owner, paginator.Offset(), limitInt, field, value, sortField, sortOrder)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -101,7 +101,7 @@ func (c *ApiController) GetSite() {
 
 	site, err := object.GetSite(id)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -126,7 +126,7 @@ func (c *ApiController) UpdateSite() {
 	var site object.Site
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &site)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -149,7 +149,7 @@ func (c *ApiController) AddSite() {
 	var site object.Site
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &site)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -172,7 +172,7 @@ func (c *ApiController) DeleteSite() {
 	var site object.Site
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &site)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 

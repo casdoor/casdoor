@@ -12,6 +12,7 @@ import (
 
 	"github.com/beego/beego/v2/core/logs"
 	"github.com/casdoor/casdoor/object"
+	"github.com/casdoor/casdoor/util"
 )
 
 func getSiteBaseURLs(site *object.Site) []string {
@@ -91,7 +92,7 @@ func splitScanTargets(raw string) []string {
 func normalizeScanBaseURL(rawURL string) (string, string, error) {
 	candidate := strings.TrimSpace(rawURL)
 	if candidate == "" {
-		return "", "", fmt.Errorf("target URL is empty")
+		return "", "", util.MessageErrorf("scan:target URL is empty")
 	}
 
 	lower := strings.ToLower(candidate)
@@ -106,11 +107,11 @@ func normalizeScanBaseURL(rawURL string) (string, string, error) {
 
 	scheme := strings.ToLower(strings.TrimSpace(u.Scheme))
 	if scheme != "http" && scheme != "https" {
-		return "", "", fmt.Errorf("unsupported URL scheme: %s", u.Scheme)
+		return "", "", util.MessageErrorf("scan:unsupported URL scheme: %s", u.Scheme)
 	}
 
 	if strings.TrimSpace(u.Host) == "" {
-		return "", "", fmt.Errorf("invalid target URL: host is empty")
+		return "", "", util.MessageErrorf("scan:invalid target URL: host is empty")
 	}
 
 	baseURL := fmt.Sprintf("%s://%s", scheme, u.Host)
@@ -130,7 +131,7 @@ func getOnlineScanLists(client *http.Client, link string) ([]CVE, []Fingerprint,
 	defer response.Body.Close()
 
 	if response.StatusCode < http.StatusOK || response.StatusCode >= http.StatusMultipleChoices {
-		return nil, nil, fmt.Errorf("unexpected status code: %d", response.StatusCode)
+		return nil, nil, util.MessageErrorf("scan:unexpected status code: %d", response.StatusCode)
 	}
 
 	body, err := io.ReadAll(io.LimitReader(response.Body, 8*1024*1024))
@@ -340,7 +341,7 @@ func doRequest(client *http.Client, method string, baseURL string, path string) 
 		return resp.StatusCode, resp.Header.Clone(), string(bodyBytes), nil
 	}
 
-	return 0, nil, "", fmt.Errorf("too many redirects")
+	return 0, nil, "", util.MessageErrorf("scan:too many redirects")
 }
 
 func buildHeadersText(headers http.Header) string {
@@ -415,7 +416,7 @@ func evalVersionRule(rule string, version string) (bool, error) {
 	})
 
 	if strings.Contains(replaced, "version") {
-		return false, fmt.Errorf("invalid version expression: %s", rule)
+		return false, util.MessageErrorf("scan:invalid version expression: %s", rule)
 	}
 
 	return evalBoolExpr(replaced)
@@ -463,7 +464,7 @@ func evalBoolExpr(expr string) (bool, error) {
 
 	parseFactor = func() (bool, error) {
 		if index >= len(tokens) {
-			return false, fmt.Errorf("unexpected end of expression")
+			return false, util.MessageErrorf("scan:unexpected end of expression")
 		}
 
 		token := tokens[index]
@@ -480,12 +481,12 @@ func evalBoolExpr(expr string) (bool, error) {
 				return false, err
 			}
 			if index >= len(tokens) || tokens[index] != ")" {
-				return false, fmt.Errorf("missing closing parenthesis")
+				return false, util.MessageErrorf("scan:missing closing parenthesis")
 			}
 			index++
 			return value, nil
 		default:
-			return false, fmt.Errorf("invalid token: %s", token)
+			return false, util.MessageErrorf("scan:invalid token: %s", token)
 		}
 	}
 
@@ -494,7 +495,7 @@ func evalBoolExpr(expr string) (bool, error) {
 		return false, err
 	}
 	if index != len(tokens) {
-		return false, fmt.Errorf("invalid expression: %s", expr)
+		return false, util.MessageErrorf("scan:invalid expression: %s", expr)
 	}
 
 	return value, nil

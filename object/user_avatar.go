@@ -60,7 +60,7 @@ func downloadImage(client *http.Client, url string) (*bytes.Buffer, string, erro
 			return nil, "", err
 		}
 		if fileExtensions == nil {
-			return nil, "", fmt.Errorf("fileExtensions is nil")
+			return nil, "", util.MessageErrorf("user:fileExtensions is nil")
 		}
 
 		fileExtension = fileExtensions[0]

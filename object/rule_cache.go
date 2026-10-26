@@ -15,8 +15,6 @@
 package object
 
 import (
-	"fmt"
-
 	"github.com/casdoor/casdoor/util"
 )
 
@@ -49,7 +47,7 @@ func GetRulesByRuleIds(ids []string) ([]*Rule, error) {
 	for _, id := range ids {
 		rule, ok := ruleMap[id]
 		if !ok {
-			return nil, fmt.Errorf("rule: %s not found", id)
+			return nil, util.MessageErrorf("rule:rule: %s not found", id)
 		}
 		res = append(res, rule)
 	}

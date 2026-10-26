@@ -78,7 +78,7 @@ export function ScanServerDialog({organizationName, onAdded}: ScanServerDialogPr
           const scanServers = scanResult.servers ?? [];
           setResult(scanResult);
           setServers(scanServers);
-          Setting.showMessage("success", `${i18next.t("general:Successfully got")}: ${scanServers.length} server(s)`);
+          Setting.showMessage("success", i18next.t("server:Server discovery summary", {count: scanServers.length}));
         } else {
           Setting.showMessage("error", `${i18next.t("general:Failed to get")}: ${res.msg}`);
         }
@@ -94,7 +94,7 @@ export function ScanServerDialog({organizationName, onAdded}: ScanServerDialogPr
       owner: organizationName,
       name: `server_${Setting.getRandomName()}`,
       createdTime: new Date().toISOString(),
-      displayName: `Scanned MCP ${scanServer.host}:${scanServer.port}`,
+      displayName: i18next.t("server:Scanned MCP server name", {host: scanServer.host, port: scanServer.port}),
       url: scanServer.url,
       application: "",
     })

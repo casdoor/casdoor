@@ -28,7 +28,7 @@ func (c *ApiController) GetDashboard() {
 
 	data, err := object.GetDashboard(owner)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -47,7 +47,7 @@ func (c *ApiController) GetDashboardProviderDistribution() {
 
 	data, err := object.GetDashboardProviderDistribution(owner)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -66,7 +66,7 @@ func (c *ApiController) GetDashboardMfaCoverage() {
 
 	data, err := object.GetDashboardMfaCoverage(owner)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -85,7 +85,7 @@ func (c *ApiController) GetDashboardLoginHeatmap() {
 
 	data, err := object.GetDashboardLoginHeatmap(owner)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 

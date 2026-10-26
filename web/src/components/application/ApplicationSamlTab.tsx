@@ -129,7 +129,7 @@ export function ApplicationSamlTab({
                 <SelectField
                   value={row.nameFormat}
                   onChange={(v) => patch({nameFormat: v})}
-                  options={SAML_NAME_FORMATS}
+                  options={SAML_NAME_FORMATS.map((item) => ({...item, name: ["Unspecified", "Basic"].includes(item.name) ? i18next.t(`application:${item.name}`) : item.name}))}
                 />
               ),
             },

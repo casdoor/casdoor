@@ -28,6 +28,7 @@ import * as InvitationBackend from "@/backend/InvitationBackend";
 import * as AuthBackend from "@/backend/AuthBackend";
 import {getSignupItemField, validateSignupItems} from "@/lib/signup-validation";
 import * as Setting from "@/lib/setting";
+import {useLanguageVersion} from "@/hooks/use-language";
 import {cn} from "@/lib/utils";
 import {normalizeLanguage} from "@/i18n";
 
@@ -59,6 +60,7 @@ function fieldClass(field: string): string {
 
 /** the application editor's live preview hands the form's own object over */
 export default function SignupPage({application: applicationProp}: {application?: any} = {}) {
+  useLanguageVersion();
   const params = useParams();
   const navigate = useNavigate();
   const location = useLocation();
@@ -201,7 +203,7 @@ export default function SignupPage({application: applicationProp}: {application?
 
   /** the inline message under a field, as the antd Form.Item shows it */
   const fieldError = (field: string) =>
-    errors[field] ? <p className="text-xs text-destructive">{errors[field]}</p> : null;
+    errors[field] ? <p className="text-xs text-destructive">{getCurrentValidationErrors()[field]}</p> : null;
 
   const renderLabel = (text: React.ReactNode, required?: boolean, htmlFor?: string) => (
     <Label htmlFor={htmlFor}>
@@ -263,6 +265,11 @@ export default function SignupPage({application: applicationProp}: {application?
 
   const agreementItem = signupItems.find((item: any) => item.name === "Agreement" && item.visible);
 
+  const getCurrentValidationErrors = () => validateSignupItems(
+    items.map((item: any) => item.name === "Email or Phone" || item.name === "Phone or Email" ? emailOrPhoneItem(item) : item),
+    {...values, agreement: agreed}, application,
+  );
+
   /** the agreement gates the provider buttons too */
   const checkAgreement = () => {
     if (agreementItem?.required && !agreed) {
@@ -277,10 +284,7 @@ export default function SignupPage({application: applicationProp}: {application?
 
     // the antd form runs these as Form rules; without them an organization's
     // signup-item regex and the phone / email / password checks are ignored
-    const validated = items.map((item: any) =>
-      item.name === "Email or Phone" || item.name === "Phone or Email" ? emailOrPhoneItem(item) : item,
-    );
-    const found = validateSignupItems(validated, {...values, agreement: agreed}, application);
+    const found = getCurrentValidationErrors();
     setErrors(found);
     const firstError = Object.values(found)[0];
     if (firstError) {

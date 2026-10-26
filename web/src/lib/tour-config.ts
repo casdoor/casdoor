@@ -1,4 +1,5 @@
 import * as Setting from "@/lib/setting";
+import i18next from "i18next";
 
 export interface TourStep {
   title: string;
@@ -7,6 +8,7 @@ export interface TourStep {
   id?: string;
   coverUrl?: string;
   nextButtonText?: string;
+  nextPathName?: string;
 }
 
 /**
@@ -97,7 +99,7 @@ export const TourObj: Record<string, TourStep[]> = {
   ],
   products: [
     {
-      title: "Session List",
+      title: "Product List",
       description: "You can add the product (or service) you want to sell. The following will tell you how to add a product.",
     },
   ],
@@ -236,10 +238,22 @@ export function getTourVisible() {
   return localStorage.getItem("isTourVisible") !== "false";
 }
 
+export function getTourText(text: string) {
+  const shared: Record<string, string> = {
+    "CPU Usage": "system:CPU Usage",
+    "Memory Usage": "system:Memory Usage",
+    "API Latency": "system:API Latency",
+    "API Throughput": "system:API Throughput",
+    "About Casdoor": "system:About Casdoor",
+  };
+  return i18next.t(shared[text] ?? `tour:${text}`);
+}
+
 export function getNextButtonChild(nextPathName: string) {
+  const title = TourObj[nextPathName]?.[0]?.title ?? nextPathName;
   return nextPathName !== ""
-    ? `Go to "${nextPathName.charAt(0).toUpperCase()}${nextPathName.slice(1)} List"`
-    : "Finish";
+    ? i18next.t("tour:Go to list", {page: getTourText(title)})
+    : i18next.t("general:Finish");
 }
 
 /** The steps for the page currently open, empty when the page has no tour. */

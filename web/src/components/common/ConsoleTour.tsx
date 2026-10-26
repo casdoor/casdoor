@@ -61,7 +61,7 @@ export function ConsoleTour() {
     const nextPathName = TourConfig.getNextUrl(location.pathname);
     return TourConfig.getSteps(location.pathname).map((step, index, all) =>
       index === all.length - 1
-        ? {...step, nextButtonText: TourConfig.getNextButtonChild(nextPathName)}
+        ? {...step, nextPathName}
         : step,
     );
   }, [location.pathname]);

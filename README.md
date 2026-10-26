@@ -331,9 +331,20 @@ The `zh-TW` locale is labeled **正體中文（臺灣）** and is separate from 
 
 New organizations include `zh-TW` in their language options. To enable it for an existing organization, add `zh-TW` to its **Languages** setting. This does not rewrite existing organizations, user language preferences, country/region values or telephone country codes.
 
-Use Taiwan terminology consistently: **帳號** (account), **使用者** (user), **身分驗證** (authentication), **授權** (authorization), **工作階段** (session), **存取權杖** (access token), **更新權杖** (refresh token), **金鑰** (cryptographic key), **憑證** (certificate), **儲存** (save) and **重設** (reset). Translate by context: an email subject is **主旨**, a JWT subject is **主體**, and a table key is not a cryptographic key. Keep protocol identifiers, stored enum values, placeholders and technical examples unchanged.
+Use Taiwan terminology consistently: **帳號** (account), **使用者** (user), **身分驗證** (authentication), **授權** (authorization), **工作階段** (session), **存取權杖** (access token), **更新權杖** (refresh token), **金鑰** (cryptographic key), **用戶端密鑰** (client secret), **憑證** (certificate), **儲存** (save), **重設** (reset) and **線上** (online). Translate by context: an email subject is **主旨**, a JWT subject is **主體**, and a table key is not a cryptographic key. Keep protocol identifiers, stored enum values, placeholders and technical examples unchanged.
 
 These catalogs do not rewrite tenant-authored content, external editors or provider-controlled widgets, and do not change identification-document, tax-ID or other validation rules for Taiwan.
+
+Native console captions, accessibility text, tour steps, first-party validation and standalone callback/boot guidance use the selected locale. New/reset first-party templates and suggested names are translated when explicitly created or reset, not by rewriting saved tenant data on a language change. Newly generated payment outcome prose retains first-party provenance until its existing write; historical records, custom rule reasons and external diagnostics are not reverse-translated. RFC challenge headers, OAuth/MCP codes and stored enum values remain unchanged.
+
+Read-only localization checks are available on the project's approved build host:
+
+```sh
+go test -tags skipCi -race -count=1 ./util ./i18n ./controllers ./routers ./object ./service -run '^(TestMessageError|TestLocalization|TestNative)'
+node --test web/localization.test.mjs
+```
+
+The Go checks reject duplicate/shadowed keys, mismatched placeholders and missing source keys, and cover typed error presentation, routed controllers, standalone HTTP guidance and locale isolation. The Node checks use fixed-source declarations and bounded DOM shims without network requests. They do not replace browser/CSP, real provider, migration or deployment acceptance. Keep the existing Crowdin workflow for ongoing translation changes; a locale contribution and its import process still require maintainer review.
 
 ## 🙌 Support Casdoor
 

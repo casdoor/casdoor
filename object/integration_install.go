@@ -161,7 +161,7 @@ func fetchMarketplaceFile(fileUrl string) ([]byte, error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("failed to get %s, status code: %d", fileUrl, resp.StatusCode)
+		return nil, util.MessageErrorf("integration:failed to get %s, status code: %d", fileUrl, resp.StatusCode)
 	}
 	return io.ReadAll(io.LimitReader(resp.Body, 10<<20))
 }
@@ -243,7 +243,7 @@ func GetMarketplaceIntegration(id string) (*MarketplaceIntegration, error) {
 			return item, nil
 		}
 	}
-	return nil, fmt.Errorf("the integration: %s is not in the Marketplace", id)
+	return nil, util.MessageErrorf("integration:the integration: %s is not in the Marketplace", id)
 }
 
 func isIntegrationRevoked(index *MarketplaceIndex, id string, version string) bool {
@@ -264,7 +264,7 @@ func getIntegrationBundle(item *MarketplaceIntegration, version string) (*Integr
 		version = item.Latest
 	}
 	if isIntegrationRevoked(index, item.Id, version) {
-		return nil, "", fmt.Errorf("the integration: %s %s has been withdrawn from the Marketplace", item.Id, version)
+		return nil, "", util.MessageErrorf("integration:the integration: %s %s has been withdrawn from the Marketplace", item.Id, version)
 	}
 
 	var marketplaceVersion *MarketplaceVersion
@@ -274,7 +274,7 @@ func getIntegrationBundle(item *MarketplaceIntegration, version string) (*Integr
 		}
 	}
 	if marketplaceVersion == nil {
-		return nil, "", fmt.Errorf("the integration: %s has no version %s", item.Id, version)
+		return nil, "", util.MessageErrorf("integration:the integration: %s has no version %s", item.Id, version)
 	}
 
 	data, err := fetchMarketplaceFile(joinMarketplaceUrl(index.BaseUrl, marketplaceVersion.Url))
@@ -284,7 +284,7 @@ func getIntegrationBundle(item *MarketplaceIntegration, version string) (*Integr
 
 	hash := sha256.Sum256(data)
 	if !strings.EqualFold(hex.EncodeToString(hash[:]), marketplaceVersion.Sha256) {
-		return nil, "", fmt.Errorf("the checksum of %s %s does not match the Marketplace index", item.Id, version)
+		return nil, "", util.MessageErrorf("integration:the checksum of %s %s does not match the Marketplace index", item.Id, version)
 	}
 
 	bundle := &IntegrationBundle{}
@@ -293,7 +293,7 @@ func getIntegrationBundle(item *MarketplaceIntegration, version string) (*Integr
 		return nil, "", err
 	}
 	if bundle.Manifest == nil || bundle.Manifest.Id != item.Id || bundle.Manifest.Type != item.Type || bundle.Manifest.Version != version {
-		return nil, "", fmt.Errorf("the bundle of %s %s does not match the Marketplace index", item.Id, version)
+		return nil, "", util.MessageErrorf("integration:the bundle of %s %s does not match the Marketplace index", item.Id, version)
 	}
 
 	return bundle, string(data), nil
@@ -319,7 +319,7 @@ func getIntegrationVariables(bundle *IntegrationBundle, input map[string]string)
 		value := strings.TrimSpace(input[variable.Name])
 		if value == "" {
 			if variable.Required {
-				return nil, fmt.Errorf("%s is required", variable.Name)
+				return nil, util.MessageErrorf("integration:%s is required", variable.Name)
 			}
 			res[variable.Name] = ""
 			continue
@@ -330,15 +330,15 @@ func getIntegrationVariables(bundle *IntegrationBundle, input map[string]string)
 			value = strings.TrimRight(value, "/")
 			u, err := url.Parse(value)
 			if err != nil || (u.Scheme != "http" && u.Scheme != "https") || u.Host == "" || strings.ContainsAny(value, " \"'<>`") {
-				return nil, fmt.Errorf("%s is not a valid http(s) URL: %s", variable.Name, value)
+				return nil, util.MessageErrorf("integration:%s is not a valid http(s) URL: %s", variable.Name, value)
 			}
 		case "color":
 			if !colorPattern.MatchString(value) {
-				return nil, fmt.Errorf("%s is not a #rrggbb color: %s", variable.Name, value)
+				return nil, util.MessageErrorf("integration:%s is not a #rrggbb color: %s", variable.Name, value)
 			}
 		default:
 			if len(value) > 500 {
-				return nil, fmt.Errorf("%s is too long", variable.Name)
+				return nil, util.MessageErrorf("integration:%s is too long", variable.Name)
 			}
 		}
 		res[variable.Name] = value
@@ -373,7 +373,7 @@ func replaceIntegrationVariables(value interface{}, variables map[string]string,
 func renderIntegrationFile(bundle *IntegrationBundle, file string, variables map[string]string, out interface{}) error {
 	raw, ok := bundle.Files[file]
 	if !ok {
-		return fmt.Errorf("the integration has no %s", file)
+		return util.MessageErrorf("integration:the integration has no %s", file)
 	}
 
 	var data map[string]interface{}
@@ -390,7 +390,7 @@ func renderIntegrationFile(bundle *IntegrationBundle, file string, variables map
 		} else if strings.HasPrefix(key, "formCss") || key == "themeData" {
 			escape = func(s string) string {
 				if strings.ContainsAny(s, "<>{};\\\"'@\r\n") {
-					cssErr = fmt.Errorf("the value %q cannot be used in a stylesheet", s)
+					cssErr = util.MessageErrorf("integration:the value %q cannot be used in a stylesheet", s)
 				}
 				return s
 			}
@@ -414,10 +414,10 @@ func getIntegrationApplication(owner string, name string, isGlobalAdmin bool) (*
 		return nil, err
 	}
 	if application == nil {
-		return nil, fmt.Errorf("the application: %s does not exist", name)
+		return nil, util.MessageErrorf("integration:the application: %s does not exist", name)
 	}
 	if application.Organization != owner && !isGlobalAdmin {
-		return nil, fmt.Errorf("the application: %s does not belong to the organization: %s", name, owner)
+		return nil, util.MessageErrorf("general:the application: %s does not belong to the organization: %s", name, owner)
 	}
 	return application, nil
 }
@@ -434,7 +434,7 @@ func installAppIntegration(integration *Integration, bundle *IntegrationBundle, 
 		return err
 	}
 	if existing != nil {
-		return fmt.Errorf("an application named %s already exists, choose another name", integration.Name)
+		return util.MessageErrorf("integration:an application named %s already exists, choose another name", integration.Name)
 	}
 
 	grantTypes := template.GrantTypes
@@ -476,7 +476,7 @@ func installAppIntegration(integration *Integration, bundle *IntegrationBundle, 
 		return err
 	}
 	if !affected {
-		return fmt.Errorf("failed to add the application: %s", integration.Name)
+		return util.MessageErrorf("integration:failed to add the application: %s", integration.Name)
 	}
 
 	integration.Application = application.Name
@@ -485,7 +485,7 @@ func installAppIntegration(integration *Integration, bundle *IntegrationBundle, 
 
 func installProviderIntegration(integration *Integration, bundle *IntegrationBundle, variables map[string]string, req *IntegrationInstallRequest, isGlobalAdmin bool, lang string) error {
 	if req.ClientId == "" || req.ClientSecret == "" {
-		return fmt.Errorf("the client ID and client secret are required")
+		return util.MessageErrorf("integration:the client ID and client secret are required")
 	}
 
 	var application *Application
@@ -509,7 +509,7 @@ func installProviderIntegration(integration *Integration, bundle *IntegrationBun
 		return err
 	}
 	if existed {
-		return fmt.Errorf("a provider named %s already exists, choose another name", integration.Name)
+		return util.MessageErrorf("integration:a provider named %s already exists, choose another name", integration.Name)
 	}
 
 	provider.Owner = integration.Owner
@@ -524,7 +524,7 @@ func installProviderIntegration(integration *Integration, bundle *IntegrationBun
 		return err
 	}
 	if !affected {
-		return fmt.Errorf("failed to add the provider: %s", integration.Name)
+		return util.MessageErrorf("integration:failed to add the provider: %s", integration.Name)
 	}
 	integration.Provider = provider.Name
 
@@ -548,7 +548,7 @@ func installProviderIntegration(integration *Integration, bundle *IntegrationBun
 
 func installThemeIntegration(integration *Integration, item *MarketplaceIntegration, bundle *IntegrationBundle, variables map[string]string, req *IntegrationInstallRequest, isGlobalAdmin bool, lang string) error {
 	if req.Application == "" {
-		return fmt.Errorf("choose the application to apply the theme to")
+		return util.MessageErrorf("integration:choose the application to apply the theme to")
 	}
 
 	application, err := getIntegrationApplication(integration.Owner, req.Application, isGlobalAdmin)
@@ -562,7 +562,7 @@ func installThemeIntegration(integration *Integration, item *MarketplaceIntegrat
 		return err
 	}
 	if len(installed) > 0 {
-		return fmt.Errorf("the application: %s already has the theme: %s, uninstall it first", application.Name, installed[0].Name)
+		return util.MessageErrorf("integration:the application: %s already has the theme: %s, uninstall it first", application.Name, installed[0].Name)
 	}
 
 	theme := themeFields{}
@@ -577,7 +577,7 @@ func installThemeIntegration(integration *Integration, item *MarketplaceIntegrat
 		isSafe := isCssSafeFor(theme.FormCss, prefixes) && isCssSafeFor(theme.FormCssMobile, prefixes) &&
 			isHtmlSafeFor(theme.FormSideHtml, prefixes) && isHtmlSafeFor(theme.FooterHtml, prefixes)
 		if !isSafe {
-			return fmt.Errorf("the theme: %s uses HTML or loads files that this Casdoor only lets a global admin set", item.Id)
+			return util.MessageErrorf("integration:the theme: %s uses HTML or loads files that this Casdoor only lets a global admin set", item.Id)
 		}
 	}
 
@@ -622,7 +622,7 @@ func setApplicationTheme(application *Application, theme *themeFields) {
 // the application or provider it describes, or applies the theme to an application.
 func InstallIntegration(req *IntegrationInstallRequest, isGlobalAdmin bool, host string, lang string) (*Integration, error) {
 	if req.Owner == "" || !installNameRegex.MatchString(req.Name) {
-		return nil, fmt.Errorf("the name may only contain letters, digits, - and _")
+		return nil, util.MessageErrorf("integration:the name may only contain letters, digits, - and _")
 	}
 
 	organization, err := getOrganization("admin", req.Owner)
@@ -630,7 +630,7 @@ func InstallIntegration(req *IntegrationInstallRequest, isGlobalAdmin bool, host
 		return nil, err
 	}
 	if organization == nil {
-		return nil, fmt.Errorf("the organization: %s does not exist", req.Owner)
+		return nil, util.MessageErrorf("integration:the organization: %s does not exist", req.Owner)
 	}
 
 	existing, err := getIntegration(req.Owner, req.Name)
@@ -638,7 +638,7 @@ func InstallIntegration(req *IntegrationInstallRequest, isGlobalAdmin bool, host
 		return nil, err
 	}
 	if existing != nil {
-		return nil, fmt.Errorf("an integration named %s is already installed in %s", req.Name, req.Owner)
+		return nil, util.MessageErrorf("integration:an integration named %s is already installed in %s", req.Name, req.Owner)
 	}
 
 	item, err := GetMarketplaceIntegration(req.IntegrationId)
@@ -685,7 +685,7 @@ func InstallIntegration(req *IntegrationInstallRequest, isGlobalAdmin bool, host
 	case "theme":
 		err = installThemeIntegration(integration, item, bundle, variables, req, isGlobalAdmin, lang)
 	default:
-		err = fmt.Errorf("integrations of type: %s cannot be installed yet", item.Type)
+		err = util.MessageErrorf("integration:integrations of type: %s cannot be installed yet", item.Type)
 	}
 	if err != nil {
 		return nil, err

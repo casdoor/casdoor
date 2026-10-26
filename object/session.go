@@ -228,7 +228,7 @@ func DeleteSession(id, curSessionId string) (bool, error) {
 	}
 
 	if slices.Contains(session.SessionId, curSessionId) {
-		return false, fmt.Errorf("session:session id %s is the current session and cannot be deleted", curSessionId)
+		return false, util.MessageErrorf("session:session id %s is the current session and cannot be deleted", curSessionId)
 	}
 
 	_, err = ExpireTokensBySessionIds(owner, name, session.SessionId)

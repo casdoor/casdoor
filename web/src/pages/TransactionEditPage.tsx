@@ -1,4 +1,5 @@
 import * as React from "react";
+import {enumLabel, PAYMENT_STATES} from "@/lib/enum-labels";
 import {useLocation, useParams} from "react-router-dom";
 import {SimpleEditPage, type EditField} from "@/components/crud/SimpleEditPage";
 import {useAccount} from "@/hooks/use-account";
@@ -55,7 +56,7 @@ export default function TransactionEditPage() {
       type: "select",
       name: "state",
       labelKey: "general:State",
-      options: () => STATES.map((item) => ({value: item, label: item})),
+      options: () => STATES.map((item) => ({value: item, label: enumLabel(PAYMENT_STATES, item)})),
     },
   ];
 

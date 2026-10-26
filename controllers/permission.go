@@ -41,7 +41,7 @@ func (c *ApiController) GetPermissions() {
 	if limit == "" || page == "" {
 		permissions, err := object.GetPermissions(owner)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -50,14 +50,14 @@ func (c *ApiController) GetPermissions() {
 		limit := util.ParseInt(limit)
 		count, err := object.GetPermissionCount(owner, field, value)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
 		paginator := pagination.NewPaginator(c.Ctx.Request, limit, count)
 		permissions, err := object.GetPaginationPermissions(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -79,7 +79,7 @@ func (c *ApiController) GetPermissionsBySubmitter() {
 
 	permissions, err := object.GetPermissionsBySubmitter(user.Owner, user.Name)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -97,7 +97,7 @@ func (c *ApiController) GetPermissionsByRole() {
 	id := c.Ctx.Input.Query("id")
 	permissions, err := object.GetPermissionsByRole(id)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -116,7 +116,7 @@ func (c *ApiController) GetPermission() {
 
 	permission, err := object.GetPermission(id)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -140,7 +140,7 @@ func (c *ApiController) UpdatePermission() {
 	if columnsStr != "" {
 		oldPermission, err := object.GetPermission(id)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 		if oldPermission == nil {
@@ -152,13 +152,13 @@ func (c *ApiController) UpdatePermission() {
 		permission = *oldPermission
 		err = mergeColumns(&permission, c.Ctx.Input.RequestBody, columnsStr)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 	} else {
 		err := json.Unmarshal(c.Ctx.Input.RequestBody, &permission)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 	}
@@ -178,7 +178,7 @@ func (c *ApiController) UpdatePermissions() {
 	var permissions []*object.Permission
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &permissions)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -197,7 +197,7 @@ func (c *ApiController) AddPermission() {
 	var permission object.Permission
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &permission)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -216,7 +216,7 @@ func (c *ApiController) DeletePermission() {
 	var permission object.Permission
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &permission)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 

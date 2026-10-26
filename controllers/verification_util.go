@@ -15,8 +15,6 @@
 package controllers
 
 import (
-	"fmt"
-
 	"github.com/casdoor/casdoor/captcha"
 	"github.com/casdoor/casdoor/form"
 	"github.com/casdoor/casdoor/object"
@@ -43,7 +41,7 @@ func (c *ApiController) checkOrgMasterVerificationCode(user *object.User, code s
 		return false, err
 	}
 	if organization == nil {
-		return false, fmt.Errorf("The organization: %s does not exist", user.Owner)
+		return false, util.MessageErrorf("auth:The organization: %s does not exist", user.Owner)
 	}
 
 	if organization.MasterVerificationCode != "" && organization.MasterVerificationCode == code {
@@ -58,7 +56,7 @@ func (c *ApiController) checkVerifyCodeOrOrgMasterCode(user *object.User, dest s
 		return false, err
 	}
 	if organization == nil {
-		return false, fmt.Errorf("The organization: %s does not exist", user.Owner)
+		return false, util.MessageErrorf("auth:The organization: %s does not exist", user.Owner)
 	}
 
 	clientIp := util.GetClientIpFromRequest(c.Ctx.Request)

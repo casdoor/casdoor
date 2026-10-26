@@ -69,7 +69,7 @@ const IframeEditor = React.forwardRef<IframeEditorHandle, IframeEditorProps>(
         width="100%"
         height="500px"
         className="rounded-md border"
-        title="Casbin Model Editor"
+        title={i18next.t("model:Casbin Model Editor")}
       />
     );
   },

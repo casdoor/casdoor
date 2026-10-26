@@ -96,7 +96,7 @@ function OAuthRow({user, application, providerItem, account, onUnlinked}: Widget
   const unlink = () => {
     AuthBackend.unlink({providerType: provider.type, providerName: provider.name || "", user}).then((res: any) => {
       if (res.status === "ok") {
-        Setting.showMessage("success", "Unlinked successfully");
+        Setting.showMessage("success", i18next.t("user:Unlinked successfully"));
         onUnlinked();
       } else {
         Setting.showMessage("error", `${i18next.t("general:Failed to unlink")}: ${res.msg}`);

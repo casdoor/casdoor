@@ -41,7 +41,7 @@ func (c *ApiController) GetRoles() {
 	if limit == "" || page == "" {
 		roles, err := object.GetRoles(owner)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -50,14 +50,14 @@ func (c *ApiController) GetRoles() {
 		limit := util.ParseInt(limit)
 		count, err := object.GetRoleCount(owner, field, value)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
 		paginator := pagination.NewPaginator(c.Ctx.Request, limit, count)
 		roles, err := object.GetPaginationRoles(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -77,7 +77,7 @@ func (c *ApiController) GetRole() {
 
 	role, err := object.GetRole(id)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -101,7 +101,7 @@ func (c *ApiController) UpdateRole() {
 	if columnsStr != "" {
 		oldRole, err := object.GetRole(id)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 		if oldRole == nil {
@@ -113,13 +113,13 @@ func (c *ApiController) UpdateRole() {
 		role = *oldRole
 		err = mergeColumns(&role, c.Ctx.Input.RequestBody, columnsStr)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 	} else {
 		err := json.Unmarshal(c.Ctx.Input.RequestBody, &role)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 	}
@@ -139,7 +139,7 @@ func (c *ApiController) AddRole() {
 	var role object.Role
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &role)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -162,7 +162,7 @@ func (c *ApiController) DeleteRole() {
 	var role object.Role
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &role)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 

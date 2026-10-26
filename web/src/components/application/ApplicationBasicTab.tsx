@@ -124,7 +124,7 @@ export function ApplicationBasicTab({
           <Input value={application.logo ?? ""} onChange={(e) => updateField("logo", e.target.value)} />
           {application.logo ? (
             <a href={application.logo} target="_blank" rel="noreferrer">
-              <img src={application.logo} alt="logo" className="h-14 max-w-[240px] rounded-md border bg-white object-contain p-1.5" />
+              <img src={application.logo} alt={i18next.t("general:Logo")} className="h-14 max-w-[240px] rounded-md border bg-white object-contain p-1.5" />
             </a>
           ) : null}
         </div>
@@ -148,7 +148,7 @@ export function ApplicationBasicTab({
               <a href={application.logoDark} target="_blank" rel="noreferrer">
                 <img
                   src={application.logoDark}
-                  alt="logo dark"
+                  alt={i18next.t("general:Logo dark")}
                   className="h-14 max-w-[240px] rounded-md border bg-black object-contain p-1.5"
                 />
               </a>
@@ -164,7 +164,7 @@ export function ApplicationBasicTab({
           <Input value={application.favicon ?? ""} onChange={(e) => updateField("favicon", e.target.value)} />
           {application.favicon ? (
             <a href={application.favicon} target="_blank" rel="noreferrer">
-              <img src={application.favicon} alt="favicon" className="h-10 w-10 object-contain" />
+              <img src={application.favicon} alt={i18next.t("general:Favicon")} className="h-10 w-10 object-contain" />
             </a>
           ) : null}
         </div>

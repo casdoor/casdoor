@@ -138,7 +138,7 @@ export default function PricingPage({pricing: pricingProp, owner: ownerProp, emb
               variant={selectedPeriod === period ? "default" : "outline"}
               onClick={() => setSelectedPeriod(period)}
             >
-              {period}
+              {i18next.t(`plan:${period}`)}
             </Button>
           ))}
         </div>

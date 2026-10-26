@@ -39,18 +39,18 @@ func (c *ApiController) SyncIntranetServers() {
 	owner := strings.TrimSpace(c.GetString("owner"))
 	name := strings.TrimSpace(c.GetString("name"))
 	if owner == "" || name == "" {
-		c.ResponseError("provider owner and name are required")
+		c.ResponseError(c.T("general:provider owner and name are required"))
 		return
 	}
 
 	providerId := fmt.Sprintf("%s/%s", owner, name)
 	configuredProvider, err := object.GetProvider(providerId)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 	if configuredProvider == nil {
-		c.ResponseError("provider does not exist")
+		c.ResponseError(c.T("general:provider does not exist"))
 		return
 	}
 
@@ -60,7 +60,7 @@ func (c *ApiController) SyncIntranetServers() {
 
 	provider, err := scan.GetScanProviderFromProvider(configuredProvider)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -70,25 +70,25 @@ func (c *ApiController) SyncIntranetServers() {
 		Paths: strings.Split(configuredProvider.Endpoint, ","),
 	})
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
 	rawResult, err := provider.Scan("", string(commandBytes))
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
 	parsedResult, err := provider.ParseResult(rawResult)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
 	var intranetResult scan.SyncInnerServersResult
 	if err := json.Unmarshal([]byte(parsedResult), &intranetResult); err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 

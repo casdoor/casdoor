@@ -26,7 +26,24 @@ import (
 	"github.com/casdoor/casdoor/util"
 )
 
-// ResponseJsonData ...
+// ServeJSON localizes only an error Response's retained first-party cause.
+// Protocol objects and response data pass through unchanged; the original stays diagnostic.
+func (c *ApiController) ServeJSON(encoding ...bool) error {
+	original := c.Data["json"]
+	if response, ok := original.(*Response); ok && response != nil && response.Status == "error" && i18n.IsLocalizableError(response.cause) {
+		presentation := *response
+		if conf.GetConfigBool("enableErrorMask2") {
+			presentation.Msg = c.T("subscription:Error")
+			presentation.Code = ""
+		} else {
+			presentation.Msg = i18n.LocalizeError(c.GetAcceptLanguage(), response.cause)
+		}
+		c.Data["json"] = &presentation
+		defer func() { c.Data["json"] = original }()
+	}
+	return c.Controller.ServeJSON(encoding...)
+}
+
 func (c *ApiController) ResponseJsonData(resp *Response, data ...interface{}) {
 	switch len(data) {
 	case 2:
@@ -51,6 +68,22 @@ func (c *ApiController) ResponseError(error string, data ...interface{}) {
 	c.ResponseErrorWithCode("", error, data...)
 }
 
+func (c *ApiController) ResponseErrorFrom(err error, data ...interface{}) {
+	c.ResponseErrorFromWithCode("", err, data...)
+}
+
+func (c *ApiController) ResponseErrorFromWithCode(code string, err error, data ...interface{}) {
+	if conf.GetConfigBool("enableErrorMask2") {
+		c.ResponseErrorWithCode(code, "", data...)
+		return
+	}
+	message := ""
+	if err != nil {
+		message = err.Error()
+	}
+	c.ResponseJsonData(&Response{Status: "error", Code: code, Msg: message, cause: err}, data...)
+}
+
 // ResponseErrorWithCode ...
 func (c *ApiController) ResponseErrorWithCode(code string, error string, data ...interface{}) {
 	enableErrorMask2 := conf.GetConfigBool("enableErrorMask2")
@@ -73,9 +106,9 @@ func (c *ApiController) responseSigninError(err error, fallbackReason string) {
 		reason = signinErr.Reason
 	}
 	if reason != "" {
-		c.Ctx.Input.SetParam("recordDetail", reason)
+		c.Ctx.Input.SetParam("recordFailureReason", reason)
 	}
-	c.ResponseErrorWithCode(reason, err.Error())
+	c.ResponseErrorFromWithCode(reason, err)
 }
 
 // mergeColumns overwrites only the listed fields of obj with the ones in the request body,
@@ -155,12 +188,12 @@ func (c *ApiController) RequireSignedInUser() (*object.User, bool) {
 			// an application may only act as a user of its own organization
 			appUser, err := object.GetAppUser(userId)
 			if err != nil {
-				c.ResponseError(err.Error())
+				c.ResponseErrorFrom(err)
 				return nil, false
 			}
 			tmpUserOwner, _, err := util.GetOwnerAndNameFromIdWithError(tmpUserId)
 			if err != nil {
-				c.ResponseError(err.Error())
+				c.ResponseErrorFrom(err)
 				return nil, false
 			}
 			if appUser == nil || (!appUser.IsGlobalAdmin() && tmpUserOwner != appUser.Owner) {
@@ -173,7 +206,7 @@ func (c *ApiController) RequireSignedInUser() (*object.User, bool) {
 
 	user, err := object.GetUser(userId)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return nil, false
 	}
 	if user == nil {
@@ -203,7 +236,7 @@ func (c *ApiController) checkCredentialedOrigin() bool {
 func (c *ApiController) requireSessionUserNameOf(organization string) (string, bool) {
 	owner, name, err := util.GetOwnerAndNameFromIdWithError(c.GetSessionUsername())
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return "", false
 	}
 	if owner != organization {
@@ -248,7 +281,7 @@ func (c *ApiController) IsOrgAdmin() (bool, bool) {
 
 	user, err := object.GetUserOrAppUser(userId)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return false, false
 	}
 	if user == nil {
@@ -407,7 +440,7 @@ func checkQuotaForApplication(count int) error {
 		return nil
 	}
 	if count >= quota {
-		return fmt.Errorf("application quota is exceeded")
+		return util.MessageErrorf("general:application quota is exceeded")
 	}
 	return nil
 }
@@ -418,7 +451,7 @@ func checkQuotaForOrganization(count int) error {
 		return nil
 	}
 	if count >= quota {
-		return fmt.Errorf("organization quota is exceeded")
+		return util.MessageErrorf("general:organization quota is exceeded")
 	}
 	return nil
 }
@@ -429,7 +462,7 @@ func checkQuotaForProvider(count int) error {
 		return nil
 	}
 	if count >= quota {
-		return fmt.Errorf("provider quota is exceeded")
+		return util.MessageErrorf("general:provider quota is exceeded")
 	}
 	return nil
 }
@@ -446,7 +479,7 @@ func checkQuotaForUser() error {
 	}
 
 	if int(count) >= quota {
-		return fmt.Errorf("user quota is exceeded")
+		return util.MessageErrorf("general:user quota is exceeded")
 	}
 	return nil
 }

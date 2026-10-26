@@ -15,10 +15,8 @@
 package object
 
 import (
-	"fmt"
 	"strings"
 
-	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/util"
 )
 
@@ -220,7 +218,7 @@ func GetConsentedScope(userObj *User, application *Application, scopeStr string)
 func validateCustomScopes(customScopes []*ScopeDescription, lang string) error {
 	for _, scope := range customScopes {
 		if scope == nil || strings.TrimSpace(scope.Scope) == "" {
-			return fmt.Errorf("%s: custom scope name", i18n.Translate(lang, "general:Missing parameter"))
+			return util.MessageErrorf("general:Missing parameter: custom scope name")
 		}
 	}
 	return nil

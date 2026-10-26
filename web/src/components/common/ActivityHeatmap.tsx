@@ -1,5 +1,6 @@
 import * as React from "react";
 import {cn} from "@/lib/utils";
+import {useLanguage} from "@/hooks/use-language";
 
 interface DayCount {
   date: string;
@@ -23,6 +24,7 @@ export function ActivityHeatmap({
   dateRange?: [string, string] | string[];
   className?: string;
 }) {
+  const language = useLanguage();
   const {weeks, monthLabels} = React.useMemo(() => {
     const counts = new Map<string, number>();
     (data ?? []).forEach((item) => counts.set(item.date, item.count));
@@ -54,7 +56,7 @@ export function ActivityHeatmap({
         week.push({date: iso, count: counts.get(iso) ?? 0, inRange});
         if (day === 0 && inRange && cursor.getMonth() !== lastMonth) {
           lastMonth = cursor.getMonth();
-          labels.push({index: built.length, label: cursor.toLocaleString(undefined, {month: "short"})});
+          labels.push({index: built.length, label: cursor.toLocaleString(language, {month: "short"})});
         }
         cursor.setDate(cursor.getDate() + 1);
       }
@@ -62,7 +64,7 @@ export function ActivityHeatmap({
     }
 
     return {weeks: built, monthLabels: labels};
-  }, [data, dateRange]);
+  }, [data, dateRange, language]);
 
   const max = Math.max(maxCount ?? 0, 1);
   // five buckets, matching the five-stop colour ramp the antd dashboard uses

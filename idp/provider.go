@@ -15,10 +15,10 @@
 package idp
 
 import (
-	"fmt"
 	"net/http"
 	"strings"
 
+	"github.com/casdoor/casdoor/util"
 	"golang.org/x/oauth2"
 )
 
@@ -98,7 +98,7 @@ func GetIdProvider(idpInfo *ProviderInfo, redirectUrl string) (IdProvider, error
 		} else if idpInfo.SubType == "Third-party" {
 			return NewWeComIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl, idpInfo.DisableSsl), nil
 		} else {
-			return nil, fmt.Errorf("WeCom provider subType: %s is not supported", idpInfo.SubType)
+			return nil, util.MessageErrorf("provider:WeCom provider subType: %s is not supported", idpInfo.SubType)
 		}
 	case "Lark":
 		return NewLarkIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl, idpInfo.DisableSsl), nil
@@ -122,7 +122,7 @@ func GetIdProvider(idpInfo *ProviderInfo, redirectUrl string) (IdProvider, error
 		} else if idpInfo.SubType == "Third-party" {
 			return NewInfoflowIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, idpInfo.AppId, redirectUrl), nil
 		} else {
-			return nil, fmt.Errorf("Infoflow provider subType: %s is not supported", idpInfo.SubType)
+			return nil, util.MessageErrorf("provider:Infoflow provider subType: %s is not supported", idpInfo.SubType)
 		}
 	case "Casdoor":
 		return NewCasdoorIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl, idpInfo.HostUrl), nil
@@ -147,7 +147,7 @@ func GetIdProvider(idpInfo *ProviderInfo, redirectUrl string) (IdProvider, error
 		if strings.HasPrefix(idpInfo.Type, "Custom") {
 			return NewCustomIdProvider(idpInfo, redirectUrl), nil
 		}
-		return nil, fmt.Errorf("OAuth provider type: %s is not supported", idpInfo.Type)
+		return nil, util.MessageErrorf("provider:OAuth provider type: %s is not supported", idpInfo.Type)
 	}
 }
 

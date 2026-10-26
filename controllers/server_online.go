@@ -33,7 +33,7 @@ func (c *ApiController) GetOnlineServers() {
 	httpClient := &http.Client{Timeout: 10 * time.Second}
 	resp, err := httpClient.Get(onlineServerListUrl)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 	defer func() {
@@ -41,14 +41,14 @@ func (c *ApiController) GetOnlineServers() {
 	}()
 
 	if resp.StatusCode < http.StatusOK || resp.StatusCode >= http.StatusMultipleChoices {
-		c.ResponseError(fmt.Sprintf("failed to get online server list, status code: %d", resp.StatusCode))
+		c.ResponseError(fmt.Sprintf(c.T("general:failed to get online server list, status code: %d"), resp.StatusCode))
 		return
 	}
 
 	var onlineServers interface{}
 	err = json.NewDecoder(resp.Body).Decode(&onlineServers)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 

@@ -23,6 +23,8 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/casdoor/casdoor/util"
 )
 
 const (
@@ -62,10 +64,10 @@ type syslogSettings struct {
 func newSyslogSettings(config *Config) (*syslogSettings, error) {
 	host := strings.TrimSpace(config.Host)
 	if host == "" {
-		return nil, fmt.Errorf("the syslog server host should not be empty")
+		return nil, util.MessageErrorf("audit:the syslog server host should not be empty")
 	}
 	if config.Port <= 0 || config.Port > 65535 {
-		return nil, fmt.Errorf("the syslog server port: %d is invalid", config.Port)
+		return nil, util.MessageErrorf("audit:the syslog server port: %d is invalid", config.Port)
 	}
 
 	protocol := config.Protocol
@@ -74,7 +76,7 @@ func newSyslogSettings(config *Config) (*syslogSettings, error) {
 	}
 	network, ok := syslogNetworks[protocol]
 	if !ok {
-		return nil, fmt.Errorf("the syslog protocol: %s is not supported", config.Protocol)
+		return nil, util.MessageErrorf("audit:the syslog protocol: %s is not supported", config.Protocol)
 	}
 
 	facilityName := config.Facility
@@ -83,7 +85,7 @@ func newSyslogSettings(config *Config) (*syslogSettings, error) {
 	}
 	facility, ok := syslogFacilities[facilityName]
 	if !ok {
-		return nil, fmt.Errorf("the syslog facility: %s is not supported", config.Facility)
+		return nil, util.MessageErrorf("audit:the syslog facility: %s is not supported", config.Facility)
 	}
 
 	format := config.Format
@@ -91,7 +93,7 @@ func newSyslogSettings(config *Config) (*syslogSettings, error) {
 		format = "RFC 5424"
 	}
 	if !syslogFormats[format] {
-		return nil, fmt.Errorf("the syslog format: %s is not supported", config.Format)
+		return nil, util.MessageErrorf("audit:the syslog format: %s is not supported", config.Format)
 	}
 
 	return &syslogSettings{
@@ -141,7 +143,7 @@ func (p *SyslogProvider) Send(event *Event) error {
 	case p.queue <- message:
 		return nil
 	default:
-		return fmt.Errorf("the syslog queue for %s is full, the audit event is dropped", p.settings.address)
+		return util.MessageErrorf("audit:the syslog queue for %s is full, the audit event is dropped", p.settings.address)
 	}
 }
 

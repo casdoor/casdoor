@@ -25,6 +25,7 @@ import (
 	"time"
 
 	"github.com/casdoor/casdoor/mcp"
+	"github.com/casdoor/casdoor/util"
 )
 
 const (
@@ -212,7 +213,7 @@ func parseIntranetScanRequest(target string, command string) (*SyncInnerServersR
 	req.CIDR = trimmedCIDR
 
 	if len(req.CIDR) == 0 {
-		return nil, fmt.Errorf("scan target (CIDR/IP) is required")
+		return nil, util.MessageErrorf("scan:scan target (CIDR/IP) is required")
 	}
 
 	return req, nil

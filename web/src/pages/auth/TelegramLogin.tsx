@@ -22,7 +22,7 @@ export default function TelegramLogin() {
 
     ProviderBackend.getProvider("admin", providerName).then((res: any) => {
       if (res.status !== "ok") {
-        Setting.showMessage("error", `Failed to get provider: ${res.msg}`);
+        Setting.showMessage("error", `${i18next.t("provider:Failed to get provider")}: ${res.msg}`);
         return;
       }
 

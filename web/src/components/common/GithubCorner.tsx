@@ -1,4 +1,5 @@
 import * as Conf from "@/Conf";
+import i18next from "i18next";
 
 /**
  * The "Fork me on GitHub" ribbon, shown when the backend sets showGithubCorner.
@@ -15,7 +16,7 @@ export function GithubCorner({href = "https://github.com/casdoor/casdoor", size 
       href={href}
       target="_blank"
       rel="noreferrer"
-      aria-label="View source on GitHub"
+      aria-label={i18next.t("general:View source on GitHub")}
       className="github-corner fixed right-0 top-0 z-40"
     >
       <svg

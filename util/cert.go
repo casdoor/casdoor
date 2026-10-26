@@ -17,8 +17,6 @@ package util
 import (
 	"crypto/x509"
 	"encoding/pem"
-	"errors"
-	"fmt"
 	"time"
 
 	"golang.org/x/net/publicsuffix"
@@ -27,9 +25,9 @@ import (
 func GetCertExpireTime(s string) (string, error) {
 	block, _ := pem.Decode([]byte(s))
 	if block == nil {
-		return "", errors.New("getCertExpireTime() error, block should not be nil")
+		return "", NewMessageError("general:getCertExpireTime() error, block should not be nil")
 	} else if block.Type != "CERTIFICATE" {
-		return "", fmt.Errorf("getCertExpireTime() error, block.Type should be \"CERTIFICATE\" instead of %s", block.Type)
+		return "", MessageErrorf("general:getCertExpireTime() error, block.Type should be \"CERTIFICATE\" instead of %s", block.Type)
 	}
 
 	certificate, err := x509.ParseCertificate(block.Bytes)

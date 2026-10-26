@@ -1,5 +1,6 @@
 import * as React from "react";
 import i18next from "i18next";
+import {enumLabel, PAYMENT_STATES} from "@/lib/enum-labels";
 import {AlertTriangle, CheckCircle2, Info, XCircle} from "lucide-react";
 import {useNavigate, useParams, useSearchParams} from "react-router-dom";
 import {Button} from "@/components/ui/button";
@@ -174,7 +175,7 @@ export default function PaymentResultPage() {
     return (
       <Result
         status="info"
-        title={`${i18next.t("payment:The payment is still under processing")}: ${payment.productsDisplayName}, ${i18next.t("payment:the current state is")}: ${payment.state}, ${i18next.t("payment:please wait for a few seconds...")}`}
+        title={`${i18next.t("payment:The payment is still under processing")}: ${payment.productsDisplayName}, ${i18next.t("payment:the current state is")}: ${enumLabel(PAYMENT_STATES, payment.state)}, ${i18next.t("payment:please wait for a few seconds...")}`}
         subTitle={subTitle}
         extra={<Loading />}
       />
@@ -188,7 +189,7 @@ export default function PaymentResultPage() {
     return (
       <Result
         status="warning"
-        title={`${title}: ${payment.productsDisplayName}, ${i18next.t("payment:the current state is")}: ${payment.state}`}
+        title={`${title}: ${payment.productsDisplayName}, ${i18next.t("payment:the current state is")}: ${enumLabel(PAYMENT_STATES, payment.state)}`}
         subTitle={subTitle}
         extra={actions}
       />
@@ -198,7 +199,7 @@ export default function PaymentResultPage() {
   return (
     <Result
       status="error"
-      title={`${i18next.t("payment:The payment has failed")}: ${payment.productsDisplayName}, ${i18next.t("payment:the current state is")}: ${payment.state}`}
+      title={`${i18next.t("payment:The payment has failed")}: ${payment.productsDisplayName}, ${i18next.t("payment:the current state is")}: ${enumLabel(PAYMENT_STATES, payment.state)}`}
       subTitle={`${i18next.t("payment:Failed reason")}: ${payment.message}`}
       extra={actions}
     />

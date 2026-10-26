@@ -43,7 +43,7 @@ func (c *ApiController) GetInvitations() {
 	if limit == "" || page == "" {
 		invitations, err := object.GetInvitations(owner)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -52,14 +52,14 @@ func (c *ApiController) GetInvitations() {
 		limit := util.ParseInt(limit)
 		count, err := object.GetInvitationCount(owner, field, value)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
 		paginator := pagination.NewPaginator(c.Ctx.Request, limit, count)
 		invitations, err := object.GetPaginationInvitations(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -79,7 +79,7 @@ func (c *ApiController) GetInvitation() {
 
 	invitation, err := object.GetInvitation(id)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -99,7 +99,7 @@ func (c *ApiController) GetInvitationCodeInfo() {
 
 	application, err := object.GetApplication(applicationId)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 	if application == nil {
@@ -130,7 +130,7 @@ func (c *ApiController) UpdateInvitation() {
 	var invitation object.Invitation
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &invitation)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -149,7 +149,7 @@ func (c *ApiController) AddInvitation() {
 	var invitation object.Invitation
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &invitation)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -168,7 +168,7 @@ func (c *ApiController) DeleteInvitation() {
 	var invitation object.Invitation
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &invitation)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -188,7 +188,7 @@ func (c *ApiController) VerifyInvitation() {
 
 	payment, attachInfo, err := object.VerifyInvitation(id)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -216,7 +216,7 @@ func (c *ApiController) SendInvitation() {
 
 	invitation, err := object.GetInvitation(id)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 	if invitation == nil {
@@ -226,7 +226,7 @@ func (c *ApiController) SendInvitation() {
 
 	organization, err := object.GetOrganization(fmt.Sprintf("admin/%s", invitation.Owner))
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 	if organization == nil {
@@ -238,13 +238,13 @@ func (c *ApiController) SendInvitation() {
 	if invitation.Application != "" {
 		application, err = object.GetApplication(fmt.Sprintf("admin/%s-org-%s", invitation.Application, invitation.Owner))
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 	} else {
 		application, err = object.GetApplicationByOrganizationName(invitation.Owner)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 	}
@@ -260,7 +260,7 @@ func (c *ApiController) SendInvitation() {
 
 	provider, err := application.GetEmailProvider("Invitation")
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 	if provider == nil {
@@ -275,7 +275,7 @@ func (c *ApiController) SendInvitation() {
 
 	err = object.SendEmail(provider, provider.Title, content, destinations, organization.DisplayName)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 

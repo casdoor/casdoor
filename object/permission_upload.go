@@ -15,9 +15,9 @@
 package object
 
 import (
-	"fmt"
 	"strings"
 
+	"github.com/casdoor/casdoor/util"
 	"github.com/casdoor/casdoor/xlsx"
 )
 
@@ -51,7 +51,7 @@ func UploadPermissions(path string, organization string, lang string) (bool, err
 	}
 
 	if len(table) == 0 {
-		return false, fmt.Errorf("empty table")
+		return false, util.MessageErrorf("permission:empty table")
 	}
 
 	for idx, row := range table[0] {

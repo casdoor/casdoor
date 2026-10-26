@@ -21,6 +21,7 @@ import (
 	"time"
 
 	"github.com/NdoleStudio/lemonsqueezy-go"
+	"github.com/casdoor/casdoor/util"
 )
 
 type LemonSqueezyPaymentProvider struct {
@@ -35,7 +36,7 @@ func NewLemonSqueezyPaymentProvider(storeId string, apiKey string) (*LemonSqueez
 
 	storeID, err := strconv.Atoi(storeId)
 	if err != nil {
-		return nil, fmt.Errorf("invalid store ID: %w", err)
+		return nil, util.MessageErrorf("payment:invalid store ID: %w", err)
 	}
 
 	pp := &LemonSqueezyPaymentProvider{
@@ -51,7 +52,7 @@ func (pp *LemonSqueezyPaymentProvider) Pay(r *PayReq) (*PayResp, error) {
 	// Parse variant ID from the product name (expected to be the variant ID)
 	variantID, err := strconv.Atoi(r.ProductName)
 	if err != nil {
-		return nil, fmt.Errorf("invalid variant ID in product name: %w", err)
+		return nil, util.MessageErrorf("payment:invalid variant ID in product name: %w", err)
 	}
 
 	// Store product info in custom data for later retrieval
@@ -88,7 +89,7 @@ func (pp *LemonSqueezyPaymentProvider) Pay(r *PayReq) (*PayResp, error) {
 	}
 
 	if checkout == nil {
-		return nil, fmt.Errorf("lemonsqueezy checkout response is nil")
+		return nil, util.MessageErrorf("payment:lemonsqueezy checkout response is nil")
 	}
 
 	payResp := &PayResp{

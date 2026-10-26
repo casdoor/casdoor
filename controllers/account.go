@@ -48,6 +48,7 @@ type Response struct {
 	Data   interface{} `json:"data"`
 	Data2  interface{} `json:"data2"`
 	Data3  interface{} `json:"data3"`
+	cause  error
 }
 
 type Captcha struct {
@@ -87,13 +88,13 @@ func (c *ApiController) Signup() {
 	var authForm form.AuthForm
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &authForm)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
 	application, err := object.GetApplication(fmt.Sprintf("admin/%s", authForm.Application))
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 	if application == nil {
@@ -115,7 +116,7 @@ func (c *ApiController) Signup() {
 
 	organization, err := object.GetOrganization(util.GetId("admin", authForm.Organization))
 	if err != nil {
-		c.ResponseError(c.T(err.Error()))
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -130,25 +131,25 @@ func (c *ApiController) Signup() {
 	clientIp := util.GetClientIpFromRequest(c.Ctx.Request)
 	err = object.CheckEntryIp(clientIp, nil, application, organization, c.GetAcceptLanguage())
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
 	var enableCaptcha bool
 	if enableCaptcha, err = object.CheckToEnableCaptcha(application, authForm.Organization, authForm.Username, clientIp); err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	} else if enableCaptcha {
 		captchaProvider, err := object.GetCaptchaProviderByApplication(util.GetId(application.Owner, application.Name), "false", c.GetAcceptLanguage())
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
 		var isHuman bool
 		isHuman, err = verifyAuthFormCaptcha(captchaProvider, &authForm)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -179,7 +180,7 @@ func (c *ApiController) Signup() {
 	if application.IsSignupFieldVisible("Email") && application.GetSignupFieldRule("Email") != "No verification" && authForm.Email != "" {
 		err = object.CheckVerifyCodeWithLimitAndIp(nil, clientIp, authForm.Email, authForm.EmailCode, c.GetAcceptLanguage())
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -192,14 +193,14 @@ func (c *ApiController) Signup() {
 
 		err = object.CheckVerifyCodeWithLimitAndIp(nil, clientIp, checkPhone, authForm.PhoneCode, c.GetAcceptLanguage())
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 	}
 
 	id, err := object.GenerateIdForNewUser(application)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -214,7 +215,7 @@ func (c *ApiController) Signup() {
 
 	initScore, err := organization.GetInitScore()
 	if err != nil {
-		c.ResponseError(fmt.Errorf(c.T("account:Get init score failed, error: %w"), err).Error())
+		c.ResponseErrorFrom(fmt.Errorf(c.T("account:Get init score failed, error: %w"), err))
 		return
 	}
 
@@ -222,7 +223,7 @@ func (c *ApiController) Signup() {
 	if authForm.Plan != "" && authForm.Pricing != "" {
 		err = object.CheckPricingAndPlan(authForm.Organization, authForm.Pricing, authForm.Plan, c.GetAcceptLanguage())
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 		userType = "paid-user"
@@ -292,7 +293,7 @@ func (c *ApiController) Signup() {
 
 	affected, err := object.AddUser(user, c.GetAcceptLanguage())
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -303,7 +304,7 @@ func (c *ApiController) Signup() {
 
 	err = object.AddUserToOriginalDatabase(user)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -311,7 +312,7 @@ func (c *ApiController) Signup() {
 		invitation.UsedCount += 1
 		_, err := object.UpdateInvitation(invitation.GetId(), invitation, c.GetAcceptLanguage())
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 	}
@@ -326,7 +327,7 @@ func (c *ApiController) Signup() {
 	if authForm.Email != "" {
 		err = object.DisableVerificationCode(authForm.Email)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 	}
@@ -334,7 +335,7 @@ func (c *ApiController) Signup() {
 	if checkPhone != "" {
 		err = object.DisableVerificationCode(checkPhone)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 	}
@@ -356,7 +357,7 @@ func (c *ApiController) Signup() {
 
 	isSigninPending, err := object.IsSigninPending(user)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -364,7 +365,7 @@ func (c *ApiController) Signup() {
 	if clientId != "" && responseType == ResponseTypeCode && !isSigninPending {
 		consentRequired, err := object.CheckConsentRequired(user, application, scope)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -375,7 +376,7 @@ func (c *ApiController) Signup() {
 
 		code, err := object.GetOAuthCode(userId, clientId, "", "password", responseType, redirectUri, scope, state, nonce, codeChallenge, "", c.Ctx.Input.CruSession.SessionID(context.Background()), time.Now().Unix(), c.Ctx.Request.Host, c.GetAcceptLanguage())
 		if err != nil {
-			c.ResponseError(err.Error(), nil)
+			c.ResponseErrorFrom(err, nil)
 			return
 		}
 
@@ -419,7 +420,7 @@ func (c *ApiController) Logout() {
 		if application == nil && clientId != "" {
 			app, err := object.GetApplicationByClientId(clientId)
 			if err != nil {
-				c.ResponseError(err.Error())
+				c.ResponseErrorFrom(err)
 				return
 			}
 			application = app
@@ -452,7 +453,7 @@ func (c *ApiController) Logout() {
 		c.ClearTokenSession()
 
 		if err := c.deleteUserSession(user, beegoSessionId); err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -474,14 +475,14 @@ func (c *ApiController) Logout() {
 	} else {
 		token, err := object.GetTokenByIdToken(idTokenHint)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 		// RPs still holding a hint issued before ID tokens were split from access tokens
 		if token == nil {
 			token, err = object.GetTokenByAccessToken(idTokenHint)
 			if err != nil {
-				c.ResponseError(err.Error())
+				c.ResponseErrorFrom(err)
 				return
 			}
 		}
@@ -492,7 +493,7 @@ func (c *ApiController) Logout() {
 
 		application, err := object.GetApplication(util.GetId(token.Owner, token.Application))
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 		if application == nil {
@@ -515,7 +516,7 @@ func (c *ApiController) Logout() {
 
 		_, err = object.ExpireToken(token)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -531,7 +532,7 @@ func (c *ApiController) Logout() {
 
 		// TODO https://github.com/casdoor/casdoor/pull/1494#discussion_r1095675265
 		if err := c.deleteUserSession(user, beegoSessionId); err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -599,7 +600,7 @@ func (c *ApiController) SsoLogout() {
 	c.ClearTokenSession()
 	owner, username, err := util.GetOwnerAndNameFromIdWithError(user)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -611,7 +612,7 @@ func (c *ApiController) SsoLogout() {
 	// Note: Tokens must be retrieved BEFORE expiration to include their hashes in the notification
 	tokens, err = object.GetTokensByUser(owner, username)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -625,13 +626,13 @@ func (c *ApiController) SsoLogout() {
 
 		_, err = object.ExpireTokenByUser(owner, username)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
 		sessions, err := object.GetUserSessions(owner, username)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -643,7 +644,7 @@ func (c *ApiController) SsoLogout() {
 
 		_, err = object.DeleteAllUserSessions(owner, username)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -662,7 +663,7 @@ func (c *ApiController) SsoLogout() {
 		// still carries the current session id.
 		err = object.DeleteUserSessionId(owner, username, currentSessionId)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -673,14 +674,14 @@ func (c *ApiController) SsoLogout() {
 	// Now includes session-level information for targeted logout
 	userObj, err := object.GetUser(user)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
 	if userObj != nil {
 		err = object.SendSsoLogoutNotifications(userObj, sessionIds, tokens)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 	}
@@ -714,14 +715,14 @@ func (c *ApiController) GetAccount() {
 	if managedAccounts == "1" {
 		user, err = object.ExtendManagedAccountsWithUser(user)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 	}
 
 	err = object.ExtendUserWithRolesAndPermissions(user)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -734,14 +735,14 @@ func (c *ApiController) GetAccount() {
 	org, orgErr := object.GetOrganizationByUser(user)
 	organization, err := object.GetMaskedOrganization(c.IsGlobalAdmin(), org, orgErr)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
 	isAdminOrSelf := c.IsAdminOrSelf(user)
 	u, err := object.GetMaskedUser(user, isAdminOrSelf)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -753,7 +754,7 @@ func (c *ApiController) GetAccount() {
 	if accessToken == "" {
 		accessToken, err = object.GetAccessTokenByUser(user, c.Ctx.Request.Host)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 		c.SetSessionToken(accessToken)
@@ -795,7 +796,7 @@ func (c *ApiController) GetUserinfo() {
 
 	userInfo, err := object.GetUserInfo(user, scope, aud, host)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -848,7 +849,7 @@ func (c *ApiController) GetCaptcha() {
 	if isCurrentProvider != "true" {
 		application, err := object.GetApplication(applicationId)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -871,7 +872,7 @@ func (c *ApiController) GetCaptcha() {
 	}
 	captchaProvider, err := object.GetCaptchaProviderByApplication(applicationId, isCurrentProvider, c.GetAcceptLanguage())
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -879,7 +880,7 @@ func (c *ApiController) GetCaptcha() {
 		if captchaProvider.Type == "Default" {
 			id, img, err := object.GetCaptcha()
 			if err != nil {
-				c.ResponseError(err.Error())
+				c.ResponseErrorFrom(err)
 				return
 			}
 

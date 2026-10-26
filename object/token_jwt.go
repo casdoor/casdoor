@@ -728,7 +728,7 @@ func generateJwtTokenWithOptions(application *Application, user *User, provider 
 		newIdToken = func() *jwt.Token { return jwt.NewWithClaims(jwtMethod, getStandardClaims(idClaims)) }
 		refreshToken = jwt.NewWithClaims(jwtMethod, getStandardClaims(refreshClaims))
 	} else {
-		return "", "", "", "", fmt.Errorf("unknown application TokenFormat: %s", application.TokenFormat)
+		return "", "", "", "", util.MessageErrorf("token:unknown application TokenFormat: %s", application.TokenFormat)
 	}
 
 	cert, err := getCertByApplication(application)
@@ -738,9 +738,9 @@ func generateJwtTokenWithOptions(application *Application, user *User, provider 
 
 	if cert == nil {
 		if application.Cert == "" {
-			return "", "", "", "", fmt.Errorf("The cert field of the application \"%s\" should not be empty", application.GetId())
+			return "", "", "", "", util.MessageErrorf("token:The cert field of the application \"%s\" should not be empty", application.GetId())
 		} else {
-			return "", "", "", "", fmt.Errorf("The cert \"%s\" does not exist", application.Cert)
+			return "", "", "", "", util.MessageErrorf("token:The cert \"%s\" does not exist", application.Cert)
 		}
 	}
 

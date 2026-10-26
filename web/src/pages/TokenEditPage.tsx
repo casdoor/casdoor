@@ -30,7 +30,7 @@ function parseAccessToken(accessToken: string | undefined) {
   try {
     const parts = (accessToken ?? "").split(".");
     if (parts.length < 2) {
-      throw new Error("Invalid token specified: missing part #2");
+      throw new Error(i18next.t("token:Invalid token: missing part #2"));
     }
     return JSON.stringify({header: decodeSegment(parts[0]), payload: decodeSegment(parts[1])}, null, 2);
   } catch (error: any) {

@@ -124,7 +124,7 @@ func (c *ApiController) isGlobalAdmin() (bool, *object.User) {
 		// e.g., "app/app-casnode", an admin of the application's organization
 		appUser, err := object.GetAppUser(username)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return false, nil
 		}
 		return appUser.IsGlobalAdmin(), appUser
@@ -147,7 +147,7 @@ func (c *ApiController) getCurrentUser() *object.User {
 	} else {
 		user, err = object.GetUser(userId)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return nil
 		}
 	}
@@ -217,7 +217,7 @@ func (c *ApiController) GetSessionApplication() *object.Application {
 	}
 	application, err := object.GetApplicationByClientId(clientId.(string))
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return nil
 	}
 
@@ -351,7 +351,7 @@ func (c *ApiController) setExpireForSession(cookieExpireInHours int64) {
 
 func wrapActionResponse(affected bool, e ...error) *Response {
 	if len(e) != 0 && e[0] != nil {
-		return &Response{Status: "error", Msg: e[0].Error()}
+		return &Response{Status: "error", Msg: e[0].Error(), cause: e[0]}
 	} else if affected {
 		return &Response{Status: "ok", Msg: "", Data: "Affected"}
 	} else {
@@ -363,7 +363,7 @@ func wrapErrorResponse(err error) *Response {
 	if err == nil {
 		return &Response{Status: "ok", Msg: ""}
 	} else {
-		return &Response{Status: "error", Msg: err.Error()}
+		return &Response{Status: "error", Msg: err.Error(), cause: err}
 	}
 }
 

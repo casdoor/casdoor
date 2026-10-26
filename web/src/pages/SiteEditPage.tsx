@@ -48,7 +48,7 @@ export default function SiteEditPage() {
       type: "select",
       name: "sslMode",
       labelKey: "site:Mode",
-      options: () => SSL_MODES.map((item) => ({value: item, label: item})),
+      options: () => SSL_MODES.map((item) => ({value: item, label: i18next.t(`site:${item}`)})),
     },
     {type: "select", name: "sslCert", labelKey: "application:SSL cert", options: () => certs},
     {type: "select", name: "casdoorApplication", labelKey: "site:Casdoor app", options: () => applications},

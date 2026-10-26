@@ -34,7 +34,7 @@ export default function RoleListPage() {
           columns={Setting.getRoleColumns()}
           templateName="import-role.xlsx"
           uploadApi="upload-roles"
-          successMessage="Roles uploaded successfully, refreshing the page"
+          successMessage={i18next.t("role:Roles uploaded successfully, refreshing the page")}
           onUploaded={refresh}
         />
       )}

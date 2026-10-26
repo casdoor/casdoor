@@ -256,10 +256,10 @@ export function PolicyTable({enforcer, modelCfg, mode}: PolicyTableProps) {
       {pageCount > 1 ? (
         <div className="flex items-center justify-end gap-2 text-sm text-muted-foreground">
           <span>{`${start + 1}-${Math.min(start + PAGE_SIZE, policies.length)} / ${policies.length}`}</span>
-          <Button variant="outline" size="iconSm" disabled={page === 1} onClick={() => setPage(page - 1)} aria-label="Previous">
+          <Button variant="outline" size="iconSm" disabled={page === 1} onClick={() => setPage(page - 1)} aria-label={i18next.t("general:Previous page")}>
             <ChevronLeft />
           </Button>
-          <Button variant="outline" size="iconSm" disabled={page === pageCount} onClick={() => setPage(page + 1)} aria-label="Next">
+          <Button variant="outline" size="iconSm" disabled={page === pageCount} onClick={() => setPage(page + 1)} aria-label={i18next.t("general:Next page")}>
             <ChevronRight />
           </Button>
         </div>

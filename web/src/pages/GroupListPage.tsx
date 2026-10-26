@@ -22,15 +22,18 @@ export default function GroupListPage() {
     dateColumn(),
     dateColumn("updatedTime", i18next.t("general:Updated time")),
     textColumn({dataIndex: "displayName", title: i18next.t("general:Display name"), searchable: true, width: 170}),
-    textColumn({
-      dataIndex: "type",
-      title: i18next.t("general:Type"),
-      width: 110,
-      filters: [
-        {value: "Virtual", label: i18next.t("group:Virtual")},
-        {value: "Physical", label: i18next.t("group:Physical")},
-      ],
-    }),
+    {
+      ...textColumn({
+        dataIndex: "type",
+        title: i18next.t("general:Type"),
+        width: 110,
+        filters: [
+          {value: "Virtual", label: i18next.t("group:Virtual")},
+          {value: "Physical", label: i18next.t("group:Physical")},
+        ],
+      }),
+      render: (value) => value === "Virtual" || value === "Physical" ? i18next.t(`group:${value}`) : value,
+    },
     {
       ...textColumn({dataIndex: "parentId", title: i18next.t("group:Parent group"), width: 150, searchable: true}),
       // a top group's parent is its organization, everyone else's is another group
@@ -75,7 +78,7 @@ export default function GroupListPage() {
             columns={Setting.getGroupColumns()}
             templateName="import-group.xlsx"
             uploadApi="upload-groups"
-            successMessage="Groups uploaded successfully, refreshing the page"
+            successMessage={i18next.t("group:Groups uploaded successfully, refreshing the page")}
             onUploaded={refresh}
           />
         </>

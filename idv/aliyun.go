@@ -20,6 +20,7 @@ import (
 	cloudauth "github.com/alibabacloud-go/cloudauth-20190307/v3/client"
 	openapi "github.com/alibabacloud-go/darabonba-openapi/v2/client"
 	"github.com/alibabacloud-go/tea/tea"
+	"github.com/casdoor/casdoor/util"
 )
 
 const (
@@ -43,7 +44,7 @@ func NewAlibabaCloudIdvProvider(clientId string, clientSecret string, endpoint s
 
 func (provider *AlibabaCloudIdvProvider) VerifyIdentity(idCardType string, idCard string, realName string) (bool, error) {
 	if provider.ClientId == "" || provider.ClientSecret == "" {
-		return false, fmt.Errorf("Alibaba Cloud credentials not configured")
+		return false, util.MessageErrorf("user:Alibaba Cloud credentials not configured")
 	}
 
 	if idCard == "" || realName == "" {
@@ -66,7 +67,7 @@ func (provider *AlibabaCloudIdvProvider) VerifyIdentity(idCardType string, idCar
 	// Create Alibaba Cloud Auth client
 	client, err := cloudauth.NewClient(config)
 	if err != nil {
-		return false, fmt.Errorf("failed to create Alibaba Cloud client: %v", err)
+		return false, util.MessageErrorf("user:failed to create Alibaba Cloud client: %v", err)
 	}
 
 	// Prepare verification request using Id2MetaVerify API
@@ -81,21 +82,21 @@ func (provider *AlibabaCloudIdvProvider) VerifyIdentity(idCardType string, idCar
 	// Send verification request
 	response, err := client.Id2MetaVerify(request)
 	if err != nil {
-		return false, fmt.Errorf("failed to verify identity with Alibaba Cloud: %v", err)
+		return false, util.MessageErrorf("user:failed to verify identity with Alibaba Cloud: %v", err)
 	}
 
 	// Check response
 	if response == nil || response.Body == nil {
-		return false, fmt.Errorf("empty response from Alibaba Cloud")
+		return false, util.MessageErrorf("user:empty response from Alibaba Cloud")
 	}
 
 	// Check if the API call was successful
 	if response.Body.Code == nil || *response.Body.Code != "200" {
-		message := "unknown error"
+		var message interface{} = util.NewMessageError("user:unknown error")
 		if response.Body.Message != nil {
 			message = *response.Body.Message
 		}
-		return false, fmt.Errorf("Alibaba Cloud API error: %s", message)
+		return false, util.MessageErrorf("user:Alibaba Cloud API error: %s", message)
 	}
 
 	// Check verification result
@@ -104,8 +105,8 @@ func (provider *AlibabaCloudIdvProvider) VerifyIdentity(idCardType string, idCar
 		if *response.Body.ResultObject.BizCode == "1" {
 			return true, nil
 		}
-		return false, fmt.Errorf("identity verification failed: BizCode=%s", *response.Body.ResultObject.BizCode)
+		return false, util.MessageErrorf("user:identity verification failed: BizCode=%s", *response.Body.ResultObject.BizCode)
 	}
 
-	return false, fmt.Errorf("identity verification failed: missing result")
+	return false, util.MessageErrorf("user:identity verification failed: missing result")
 }

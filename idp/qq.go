@@ -16,13 +16,13 @@ package idp
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"net/http"
 	"net/url"
 	"regexp"
 
+	"github.com/casdoor/casdoor/util"
 	"golang.org/x/oauth2"
 )
 
@@ -157,7 +157,7 @@ func (idp *QqIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
 	matched := re.FindAllStringSubmatch(string(openIdBody), -1)
 	openId := matched[0][1]
 	if openId == "" {
-		return nil, errors.New("openId is empty")
+		return nil, util.NewMessageError("provider:openId is empty")
 	}
 
 	userInfoUrl := fmt.Sprintf("https://graph.qq.com/user/get_user_info?access_token=%s&oauth_consumer_key=%s&openid=%s", token.AccessToken, idp.Config.ClientID, openId)
@@ -179,7 +179,7 @@ func (idp *QqIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
 	}
 
 	if qqUserInfo.Ret != 0 {
-		return nil, fmt.Errorf("ret expected 0, got %d", qqUserInfo.Ret)
+		return nil, util.MessageErrorf("provider:ret expected 0, got %d", qqUserInfo.Ret)
 	}
 
 	userInfo := UserInfo{

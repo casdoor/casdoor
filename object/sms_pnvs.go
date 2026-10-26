@@ -17,9 +17,9 @@ package object
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/dypnsapi"
+	"github.com/casdoor/casdoor/util"
 )
 
 type PnvsSmsClient struct {
@@ -49,7 +49,7 @@ func newPnvsSmsClient(accessId string, accessKey string, sign string, template s
 
 func (c *PnvsSmsClient) SendMessage(param map[string]string, targetPhoneNumber ...string) error {
 	if len(targetPhoneNumber) == 0 {
-		return fmt.Errorf("missing parameter: targetPhoneNumber")
+		return util.MessageErrorf("sms:missing parameter: targetPhoneNumber")
 	}
 
 	// PNVS sends to one phone number at a time
@@ -80,7 +80,7 @@ func (c *PnvsSmsClient) SendMessage(param map[string]string, targetPhoneNumber .
 		if response.Message != "" {
 			return errors.New(response.Message)
 		}
-		return fmt.Errorf("PNVS SMS send failed with code: %s", response.Code)
+		return util.MessageErrorf("sms:PNVS SMS send failed with code: %s", response.Code)
 	}
 
 	return nil
@@ -99,13 +99,13 @@ func (c *PnvsSmsClient) GetMobile(accessToken string) (string, error) {
 
 	if response.Code != "OK" {
 		if response.Message != "" {
-			return "", fmt.Errorf("PNVS GetMobile failed with code: %s, %s", response.Code, response.Message)
+			return "", util.MessageErrorf("sms:PNVS GetMobile failed with code: %s, %s", response.Code, response.Message)
 		}
-		return "", fmt.Errorf("PNVS GetMobile failed with code: %s", response.Code)
+		return "", util.MessageErrorf("sms:PNVS GetMobile failed with code: %s", response.Code)
 	}
 
 	if response.GetMobileResultDTO.Mobile == "" {
-		return "", fmt.Errorf("PNVS GetMobile returned no mobile")
+		return "", util.MessageErrorf("sms:PNVS GetMobile returned no mobile")
 	}
 
 	return response.GetMobileResultDTO.Mobile, nil

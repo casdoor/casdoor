@@ -43,7 +43,7 @@ func (c *ApiController) GetWebhooks() {
 	if limit == "" || page == "" {
 		webhooks, err := object.GetWebhooks(owner, organization)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -52,7 +52,7 @@ func (c *ApiController) GetWebhooks() {
 		limit := util.ParseInt(limit)
 		count, err := object.GetWebhookCount(owner, organization, field, value)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -60,7 +60,7 @@ func (c *ApiController) GetWebhooks() {
 
 		webhooks, err := object.GetPaginationWebhooks(owner, organization, paginator.Offset(), limit, field, value, sortField, sortOrder)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -89,7 +89,7 @@ func (c *ApiController) GetWebhook() {
 	}
 
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -110,7 +110,7 @@ func (c *ApiController) UpdateWebhook() {
 	var webhook object.Webhook
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &webhook)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -135,7 +135,7 @@ func (c *ApiController) AddWebhook() {
 	var webhook object.Webhook
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &webhook)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -164,7 +164,7 @@ func (c *ApiController) DeleteWebhook() {
 	var webhook object.Webhook
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &webhook)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 

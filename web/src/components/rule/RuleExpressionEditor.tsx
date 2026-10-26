@@ -17,40 +17,40 @@ export interface Expression {
 type Rows = Expression[];
 type OnChange = (rows: Rows) => void;
 
-const WAF_DEFAULTS: Rows = [
+const wafDefaults = (): Rows => [
   {
-    name: "Enable XML request body parser",
+    name: i18next.t("rule:Enable XML request body parser"),
     operator: "match",
     value: "SecRule REQUEST_HEADERS:Content-Type \"^(?:application(?:/soap\\+|/)|text/)xml\" \"id:'200000',phase:1,t:none,t:lowercase,pass,nolog,ctl:requestBodyProcessor=XML\"",
   },
   {
-    name: "Enable JSON request body parser",
+    name: i18next.t("rule:Enable JSON request body parser"),
     operator: "match",
     value: "SecRule REQUEST_HEADERS:Content-Type \"^application/json\" \"id:'200001',phase:1,t:none,t:lowercase,pass,nolog,ctl:requestBodyProcessor=JSON\"",
   },
   {
-    name: "Verify that we've correctly processed the request body",
+    name: i18next.t("rule:Verify request body processing"),
     operator: "match",
     value: "SecRule &REQUEST_BODY \"@eq 0\" \"id:'200002',phase:2,t:none,deny,status:400,msg:'Failed to parse request body.'\"",
   },
 ];
 
-const IP_DEFAULTS: Rows = [
-  {name: "loopback", operator: "is in", value: "127.0.0.1"},
-  {name: "lan cidr", operator: "is in", value: "10.0.0.0/8,192.168.0.0/16"},
+const ipDefaults = (): Rows => [
+  {name: i18next.t("rule:Loopback address"), operator: "is in", value: "127.0.0.1"},
+  {name: i18next.t("rule:LAN CIDR"), operator: "is in", value: "10.0.0.0/8,192.168.0.0/16"},
 ];
 
-const IP_RATE_DEFAULTS: Rows = [
-  {name: "Default IP Rate", operator: "100", value: "6000"},
+const ipRateDefaults = (): Rows => [
+  {name: i18next.t("rule:Default IP rate"), operator: "100", value: "6000"},
 ];
 
-const COMPOUND_DEFAULTS: Rows = [
-  {name: "Start", operator: "begin", value: "rule1"},
-  {name: "And", operator: "and", value: "rule2"},
+const compoundDefaults = (): Rows => [
+  {name: i18next.t("rule:begin"), operator: "begin", value: "rule1"},
+  {name: i18next.t("rule:and"), operator: "and", value: "rule2"},
 ];
 
 const uaDefaults = (): Rows => [
-  {name: "Current User-Agent", operator: "equals", value: window.navigator.userAgent},
+  {name: i18next.t("rule:Current User-Agent"), operator: "equals", value: window.navigator.userAgent},
 ];
 
 const UA_OPERATORS = ["equals", "does not equal", "contains", "does not contain", "match"];
@@ -93,15 +93,15 @@ function nameColumn() {
 }
 
 function WafRuleTable({rows, onChange}: {rows: Rows; onChange: OnChange}) {
-  useDefaults(rows, onChange, () => WAF_DEFAULTS);
+  useDefaults(rows, onChange, wafDefaults);
 
   return (
     <EditableTable<Expression>
       title={
         <TableTitle
           title="Seclang"
-          onAdd={() => onChange([...(rows ?? []), {name: `New WAF Rule - ${(rows ?? []).length}`, operator: "match", value: ""}])}
-          onRestore={() => onChange(Setting.deepCopy(WAF_DEFAULTS))}
+          onAdd={() => onChange([...(rows ?? []), {name: `${i18next.t("rule:New WAF rule")} - ${(rows ?? []).length}`, operator: "match", value: ""}])}
+          onRestore={() => onChange(wafDefaults())}
         />
       }
       rows={rows}
@@ -121,15 +121,15 @@ function WafRuleTable({rows, onChange}: {rows: Rows; onChange: OnChange}) {
 }
 
 function IpRuleTable({rows, onChange}: {rows: Rows; onChange: OnChange}) {
-  useDefaults(rows, onChange, () => IP_DEFAULTS);
+  useDefaults(rows, onChange, ipDefaults);
 
   return (
     <EditableTable<Expression>
       title={
         <TableTitle
-          title="IPs"
-          onAdd={() => onChange([...(rows ?? []), {name: `New IP Rule - ${(rows ?? []).length}`, operator: "is in", value: "127.0.0.1"}])}
-          onRestore={() => onChange(Setting.deepCopy(IP_DEFAULTS))}
+          title={i18next.t("rule:IP addresses")}
+          onAdd={() => onChange([...(rows ?? []), {name: `${i18next.t("rule:New IP rule")} - ${(rows ?? []).length}`, operator: "is in", value: "127.0.0.1"}])}
+          onRestore={() => onChange(ipDefaults())}
         />
       }
       rows={rows}
@@ -159,7 +159,7 @@ function IpRuleTable({rows, onChange}: {rows: Rows; onChange: OnChange}) {
             return (
               <MultiSelect
                 creatable
-                placeholder="Input IP Addresses"
+                placeholder={i18next.t("rule:Input IP Addresses")}
                 value={values}
                 onChange={(next) => patch({value: next.map((item) => item.trim()).join(",")})}
                 options={values.map((item) => ({value: item, label: item}))}
@@ -180,7 +180,7 @@ function UaRuleTable({rows, onChange}: {rows: Rows; onChange: OnChange}) {
       title={
         <TableTitle
           title="User-Agents"
-          onAdd={() => onChange([...(rows ?? []), {name: `New UA Rule - ${(rows ?? []).length}`, operator: "equals", value: ""}])}
+          onAdd={() => onChange([...(rows ?? []), {name: `${i18next.t("rule:New User-Agent rule")} - ${(rows ?? []).length}`, operator: "equals", value: ""}])}
           onRestore={() => onChange(uaDefaults())}
         />
       }
@@ -220,11 +220,11 @@ function UaRuleTable({rows, onChange}: {rows: Rows; onChange: OnChange}) {
 }
 
 function IpRateRuleTable({rows, onChange}: {rows: Rows; onChange: OnChange}) {
-  useDefaults(rows, onChange, () => IP_RATE_DEFAULTS);
+  useDefaults(rows, onChange, ipRateDefaults);
 
   return (
     <EditableTable<Expression>
-      title={<TableTitle title={i18next.t("rule:IP Rate Limiting")} onRestore={() => onChange(Setting.deepCopy(IP_RATE_DEFAULTS))} />}
+      title={<TableTitle title={i18next.t("rule:IP Rate Limiting")} onRestore={() => onChange(ipRateDefaults())} />}
       rows={rows}
       onChange={onChange}
       reorderable={false}
@@ -242,7 +242,7 @@ function IpRateRuleTable({rows, onChange}: {rows: Rows; onChange: OnChange}) {
                 value={row.operator ?? ""}
                 onChange={(e) => patch({operator: String(e.target.value)})}
               />
-              <span className="whitespace-nowrap text-xs text-muted-foreground">requests / ip / s</span>
+              <span className="whitespace-nowrap text-xs text-muted-foreground">{i18next.t("rule:Requests per IP per second")}</span>
             </div>
           ),
         },
@@ -268,7 +268,7 @@ function IpRateRuleTable({rows, onChange}: {rows: Rows; onChange: OnChange}) {
 function CompoundRuleTable({rows, onChange, owner, ruleName}: {rows: Rows; onChange: OnChange; owner: string; ruleName: string}) {
   const [rules, setRules] = React.useState<string[]>([]);
 
-  useDefaults(rows, onChange, () => COMPOUND_DEFAULTS);
+  useDefaults(rows, onChange, compoundDefaults);
 
   React.useEffect(() => {
     RuleBackend.getRules(owner).then((res: any) => {
@@ -284,8 +284,8 @@ function CompoundRuleTable({rows, onChange, owner, ruleName}: {rows: Rows; onCha
       title={
         <TableTitle
           title={i18next.t("rule:Compound")}
-          onAdd={() => onChange([...(rows ?? []), {name: `New Item - ${(rows ?? []).length}`, operator: "and", value: ""}])}
-          onRestore={() => onChange(Setting.deepCopy(COMPOUND_DEFAULTS))}
+          onAdd={() => onChange([...(rows ?? []), {name: `${i18next.t("rule:New compound item")} - ${(rows ?? []).length}`, operator: "and", value: ""}])}
+          onRestore={() => onChange(compoundDefaults())}
         />
       }
       rows={rows}

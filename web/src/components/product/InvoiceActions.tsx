@@ -62,12 +62,13 @@ export function InvoiceActions({payment, isAdd, onIssued}: {payment: any; isAdd:
     PaymentBackend.invoicePayment(payment.owner, payment.name)
       .then((res: any) => {
         if (res.status === "ok") {
-          Setting.showMessage("success", "Successfully invoiced");
+          Setting.showMessage("success", i18next.t("payment:Successfully invoiced"));
           Setting.openLinkSafe(res.data);
           onIssued();
         } else {
-          // some providers answer with a Chinese success sentence on a non-ok status
-          Setting.showMessage(res.msg?.includes("成功") ? "info" : "error", res.msg);
+          // Prefer the stable outcome code; keep compatibility with older servers.
+          const pending = res.code === "invoice-pending" || !res.code && res.msg?.includes("成功");
+          Setting.showMessage(pending ? "info" : "error", res.msg);
         }
       })
       .catch((error) => Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`))

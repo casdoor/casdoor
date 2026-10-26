@@ -40,17 +40,17 @@ func (p *AwsIamSyncerProvider) InitAdapter() error {
 
 	region := p.Syncer.Host
 	if region == "" {
-		return fmt.Errorf("AWS region (host field) is required for AWS IAM syncer")
+		return util.MessageErrorf("syncer:AWS region (host field) is required for AWS IAM syncer")
 	}
 
 	accessKeyId := p.Syncer.User
 	if accessKeyId == "" {
-		return fmt.Errorf("AWS Access Key ID (user field) is required for AWS IAM syncer")
+		return util.MessageErrorf("syncer:AWS Access Key ID (user field) is required for AWS IAM syncer")
 	}
 
 	secretAccessKey := p.Syncer.Password
 	if secretAccessKey == "" {
-		return fmt.Errorf("AWS Secret Access Key (password field) is required for AWS IAM syncer")
+		return util.MessageErrorf("syncer:AWS Secret Access Key (password field) is required for AWS IAM syncer")
 	}
 
 	// Create AWS session
@@ -59,7 +59,7 @@ func (p *AwsIamSyncerProvider) InitAdapter() error {
 		Credentials: credentials.NewStaticCredentials(accessKeyId, secretAccessKey, ""),
 	})
 	if err != nil {
-		return fmt.Errorf("failed to create AWS session: %w", err)
+		return util.MessageErrorf("syncer:failed to create AWS session: %w", err)
 	}
 
 	// Create IAM client
@@ -82,13 +82,13 @@ func (p *AwsIamSyncerProvider) GetOriginalUsers() ([]*OriginalUser, error) {
 // AddUser adds a new user to AWS IAM (not supported for read-only API)
 func (p *AwsIamSyncerProvider) AddUser(user *OriginalUser) (bool, error) {
 	// AWS IAM syncer is typically read-only
-	return false, fmt.Errorf("adding users to AWS IAM is not supported")
+	return false, util.MessageErrorf("syncer:adding users to AWS IAM is not supported")
 }
 
 // UpdateUser updates an existing user in AWS IAM (not supported for read-only API)
 func (p *AwsIamSyncerProvider) UpdateUser(user *OriginalUser) (bool, error) {
 	// AWS IAM syncer is typically read-only
-	return false, fmt.Errorf("updating users in AWS IAM is not supported")
+	return false, util.MessageErrorf("syncer:updating users in AWS IAM is not supported")
 }
 
 // TestConnection tests the AWS IAM API connection
@@ -134,7 +134,7 @@ func (p *AwsIamSyncerProvider) getAwsIamUsers() ([]*OriginalUser, error) {
 
 		result, err := p.iamClient.ListUsersWithContext(ctx, input)
 		if err != nil {
-			return nil, fmt.Errorf("failed to list IAM users: %w", err)
+			return nil, util.MessageErrorf("syncer:failed to list IAM users: %w", err)
 		}
 
 		allUsers = append(allUsers, result.Users...)
@@ -168,7 +168,7 @@ func (p *AwsIamSyncerProvider) getAwsIamUsers() ([]*OriginalUser, error) {
 // awsIamUserToOriginalUser converts AWS IAM user to Casdoor OriginalUser
 func (p *AwsIamSyncerProvider) awsIamUserToOriginalUser(iamUser *iam.User) (*OriginalUser, error) {
 	if iamUser == nil {
-		return nil, fmt.Errorf("IAM user is nil")
+		return nil, util.MessageErrorf("syncer:IAM user is nil")
 	}
 
 	user := &OriginalUser{
@@ -276,7 +276,7 @@ func (p *AwsIamSyncerProvider) GetOriginalGroups() ([]*OriginalGroup, error) {
 
 		result, err := p.iamClient.ListGroupsWithContext(ctx, input)
 		if err != nil {
-			return nil, fmt.Errorf("failed to list IAM groups: %w", err)
+			return nil, util.MessageErrorf("syncer:failed to list IAM groups: %w", err)
 		}
 
 		allGroups = append(allGroups, result.Groups...)

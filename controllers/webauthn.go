@@ -36,7 +36,7 @@ import (
 func (c *ApiController) WebAuthnSignupBegin() {
 	webauthnObj, err := object.GetWebAuthnObject(c.Ctx.Request.Host)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -61,7 +61,7 @@ func (c *ApiController) WebAuthnSignupBegin() {
 		registerOptions,
 	)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 	c.SetSession("registration", *sessionData)
@@ -79,7 +79,7 @@ func (c *ApiController) WebAuthnSignupBegin() {
 func (c *ApiController) WebAuthnSignupFinish() {
 	webauthnObj, err := object.GetWebAuthnObject(c.Ctx.Request.Host)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -99,13 +99,13 @@ func (c *ApiController) WebAuthnSignupFinish() {
 
 	credential, err := webauthnObj.FinishRegistration(user, sessionData, c.Ctx.Request)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 	isGlobalAdmin := c.IsGlobalAdmin()
 	_, err = user.AddCredentials(*credential, isGlobalAdmin)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -123,7 +123,7 @@ func (c *ApiController) WebAuthnSignupFinish() {
 func (c *ApiController) WebAuthnSigninBegin() {
 	webauthnObj, err := object.GetWebAuthnObject(c.Ctx.Request.Host)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -139,7 +139,7 @@ func (c *ApiController) WebAuthnSigninBegin() {
 		var user *object.User
 		user, err = object.GetUserByFields(userOwner, userName)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -156,7 +156,7 @@ func (c *ApiController) WebAuthnSigninBegin() {
 	}
 
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 	c.SetSession("authentication", *sessionData)
@@ -176,7 +176,7 @@ func (c *ApiController) WebAuthnSigninFinish() {
 	clientId := c.Ctx.Input.Query("clientId")
 	webauthnObj, err := object.GetWebAuthnObject(c.Ctx.Request.Host)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -195,7 +195,7 @@ func (c *ApiController) WebAuthnSigninFinish() {
 		userId := string(sessionData.UserID)
 		user, err = object.GetUser(userId)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -213,13 +213,13 @@ func (c *ApiController) WebAuthnSigninFinish() {
 	}
 
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
 	application, err := getWebAuthnSigninApplication(clientId, responseType, c.Ctx.Input.Query("application"), user)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 	if application == nil {
@@ -262,7 +262,7 @@ func getWebAuthnSigninApplication(clientId string, responseType string, applicat
 func (c *ApiController) checkWebAuthnSigninMfa(user *object.User) bool {
 	organization, err := object.GetOrganizationByUser(user)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return true
 	}
 

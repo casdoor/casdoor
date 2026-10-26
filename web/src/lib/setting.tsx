@@ -2151,7 +2151,7 @@ export function getCurrencyFlag(currency) {
     // attribute the antd frontend relies on — so the size has to be a class
     <img
       src={`${StaticBaseUrl}/flag-icons/${countryCode}.svg`}
-      alt={`${currency} flag`}
+      alt={i18next.t("currency:Currency flag", {currency})}
       className="mr-1.5 inline-block h-5 w-auto align-text-bottom"
     />
   );
@@ -2171,7 +2171,7 @@ export function getCurrencyWithFlag(currency) {
     <span>
       <img
         src={`${StaticBaseUrl}/flag-icons/${countryCode}.svg`}
-        alt={`${currency} flag`}
+        alt=""
         className="mr-1.5 inline-block h-5 w-auto align-text-bottom"
       />
       {currencyText}
@@ -2215,11 +2215,11 @@ export function getEmptyFooterContent() {
 
 export function getDefaultHtmlEmailContent() {
   return `<!DOCTYPE html>
-<html lang="en">
+<html lang="${getLanguage()}">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Verification Code Email</title>
+<title>${i18next.t("provider:Verification email title")}</title>
 <style>
     body { font-family: Arial, sans-serif; }
     .email-container { width: 600px; margin: 0 auto; }
@@ -2232,24 +2232,24 @@ export function getDefaultHtmlEmailContent() {
 <body>
 <div class="email-container">
   <div class="header">
-        <h3>Casbin Organization</h3>
-        <img src="${StaticBaseUrl}/img/casdoor-logo_1185x256.png" alt="Casdoor Logo" width="300">
+        <h3>${i18next.t("provider:Casbin Organization")}</h3>
+        <img src="${StaticBaseUrl}/img/casdoor-logo_1185x256.png" alt="${i18next.t("provider:Casdoor Logo")}" width="300">
     </div>
-    <p><strong>%{user.friendlyName}</strong>, here is your verification code</p>
-    <p>Use this code for your transaction. It's valid for 5 minutes</p>
+    <p>${i18next.t("provider:Verification email introduction").replace("%{user.friendlyName}", "<strong>%{user.friendlyName}</strong>")}</p>
+    <p>${i18next.t("provider:Verification email instructions")}</p>
     <div class="code">
         %s
     </div>
     <reset-link>
       <div class="link">
-         Or click this <a href="%link">link</a> to reset
+         <a href="%link">${i18next.t("provider:Reset password email link")}</a>
       </div>
     </reset-link>
-    <p>Thanks</p>
-    <p>Casbin Team</p>
+    <p>${i18next.t("provider:Email thanks")}</p>
+    <p>${i18next.t("provider:Casbin Team")}</p>
     <hr>
     <div class="footer">
-        <p>Casdoor is a brand operated by Casbin organization. For more info please refer to <a href="https://casdoor.org">https://casdoor.org</a></p>
+        <p>${i18next.t("provider:Casdoor brand footer")} <a href="https://casdoor.org">https://casdoor.org</a></p>
     </div>
 </div>
 </body>
@@ -2258,11 +2258,11 @@ export function getDefaultHtmlEmailContent() {
 
 export function getDefaultInvitationHtmlEmailContent() {
   return `<!DOCTYPE html>
-<html lang="en">
+<html lang="${getLanguage()}">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Invitation Code Email</title>
+<title>${i18next.t("provider:Invitation email title")}</title>
 <style>
     body { font-family: Arial, sans-serif; }
     .email-container { width: 600px; margin: 0 auto; }
@@ -2275,23 +2275,23 @@ export function getDefaultInvitationHtmlEmailContent() {
 <body>
 <div class="email-container">
   <div class="header">
-        <h3>Casbin Organization</h3>
-        <img src="${StaticBaseUrl}/img/casdoor-logo_1185x256.png" alt="Casdoor Logo" width="300">
+        <h3>${i18next.t("provider:Casbin Organization")}</h3>
+        <img src="${StaticBaseUrl}/img/casdoor-logo_1185x256.png" alt="${i18next.t("provider:Casdoor Logo")}" width="300">
     </div>
-    <p>You have been invited into Casdoor</p>
+    <p>${i18next.t("provider:Invitation email introduction")}</p>
     <div class="code">
         %code
     </div>
     <reset-link>
       <div class="link">
-         Or click this <a href="%link">link</a> to signup
+         <a href="%link">${i18next.t("provider:Signup email link")}</a>
       </div>
     </reset-link>
-    <p>Thanks</p>
-    <p>Casbin Team</p>
+    <p>${i18next.t("provider:Email thanks")}</p>
+    <p>${i18next.t("provider:Casbin Team")}</p>
     <hr>
     <div class="footer">
-        <p>Casdoor is a brand operated by Casbin organization. For more info please refer to <a href="https://casdoor.org">https://casdoor.org</a></p>
+        <p>${i18next.t("provider:Casdoor brand footer")} <a href="https://casdoor.org">https://casdoor.org</a></p>
     </div>
 </div>
 </body>
@@ -2352,7 +2352,7 @@ export function getCurrencyText(currency) {
   } else if (currency === "HUF") {
     return i18next.t("currency:HUF");
   } else {
-    return "(Unknown currency)";
+    return i18next.t("currency:Unknown currency");
   }
 }
 
@@ -2430,7 +2430,7 @@ export function getFormTypeItems(formType) {
       {name: "name", label: "general:Name", visible: true, width: "150"},
       {name: "createdTime", label: "general:Created time", visible: true, width: "160"},
       {name: "displayName", label: "general:Display name", visible: true, width: "150"},
-      {name: "logo", label: "Logo", visible: true, width: "200"},
+      {name: "logo", label: "general:Logo", visible: true, width: "200"},
       {name: "organization", label: "general:Organization", visible: true, width: "150"},
       {name: "providers", label: "application:Providers", visible: true, width: "500"},
     ];
@@ -2554,9 +2554,9 @@ export function getVersionInfo(text, siteName) {
   try {
     const versionInfo = JSON.parse(text);
     const link = versionInfo?.version !== "" ? `${getRepoUrl(siteName)}/releases/tag/${versionInfo?.version}` : "";
-    let versionText = versionInfo?.version !== "" ? versionInfo?.version : "Unknown version";
+    let versionText = versionInfo?.version !== "" ? versionInfo?.version : i18next.t("system:Unknown version");
     if (versionInfo?.commitOffset > 0) {
-      versionText += ` (ahead+${versionInfo?.commitOffset})`;
+      versionText += ` (${i18next.t("system:Ahead commits", {count: versionInfo?.commitOffset})})`;
     }
 
     return {text: versionText, link: link};

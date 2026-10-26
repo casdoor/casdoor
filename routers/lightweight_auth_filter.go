@@ -111,7 +111,7 @@ func serveProviderHintRedirectPage(ctx *context.Context) bool {
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Redirecting...</title>
+	<title data-casdoor-native-text="Redirecting...">Redirecting...</title>
 	<style>
 		html, body {
 			width: 100%;
@@ -135,7 +135,7 @@ func serveProviderHintRedirectPage(ctx *context.Context) bool {
 	</style>
 </head>
 <body>
-	<div class="redirecting">Redirecting...</div>
+	<div class="redirecting" data-casdoor-native-text="Redirecting...">Redirecting...</div>
 	<script src="/ProviderHintRedirect.js"></script>
 	<script>
 		(function() {
@@ -164,7 +164,7 @@ func serveProviderHintRedirectPage(ctx *context.Context) bool {
 
 	ctx.Output.Header("Content-Type", "text/html; charset=utf-8")
 	ctx.Output.Header("Cache-Control", "no-store")
-	http.ServeContent(ctx.ResponseWriter, ctx.Request, "provider-hint-redirect.html", time.Now(), strings.NewReader(addBasePathToHtml(providerHintRedirectHtml)))
+	http.ServeContent(ctx.ResponseWriter, ctx.Request, "provider-hint-redirect.html", time.Now(), strings.NewReader(addBasePathToHtml(localizeNativeHtml(providerHintRedirectHtml, ctx.Request))))
 	return true
 }
 
@@ -186,7 +186,7 @@ func serveAuthCallbackPage(ctx *context.Context) bool {
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Signing in...</title>
+	<title data-casdoor-native-text="Signing in...">Signing in...</title>
 	<style>
 		html, body {
 			width: 100%;
@@ -240,7 +240,7 @@ func serveAuthCallbackPage(ctx *context.Context) bool {
 		(function() {
 			if (!window.CasdoorAuthCallback || typeof window.CasdoorAuthCallback.run !== "function") {
 				document.getElementById("callback-spinner").style.display = "none";
-				document.getElementById("callback-status").textContent = "Failed to load callback handler.";
+				document.getElementById("callback-status").textContent = window.CasdoorNativeText ? window.CasdoorNativeText("Failed to load callback handler.") : "Failed to load callback handler.";
 				return;
 			}
 
@@ -258,6 +258,6 @@ func serveAuthCallbackPage(ctx *context.Context) bool {
 
 	ctx.Output.Header("Content-Type", "text/html; charset=utf-8")
 	ctx.Output.Header("Cache-Control", "no-store")
-	http.ServeContent(ctx.ResponseWriter, ctx.Request, "auth-callback.html", time.Now(), strings.NewReader(addIssuerToHtml(addBasePathToHtml(authCallbackHtml), ctx.Request.Host)))
+	http.ServeContent(ctx.ResponseWriter, ctx.Request, "auth-callback.html", time.Now(), strings.NewReader(addIssuerToHtml(addBasePathToHtml(localizeNativeHtml(authCallbackHtml, ctx.Request)), ctx.Request.Host)))
 	return true
 }

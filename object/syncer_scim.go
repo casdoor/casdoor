@@ -45,13 +45,13 @@ func (p *SCIMSyncerProvider) GetOriginalUsers() ([]*OriginalUser, error) {
 // AddUser adds a new user to SCIM (not supported for read-only API)
 func (p *SCIMSyncerProvider) AddUser(user *OriginalUser) (bool, error) {
 	// SCIM syncer is typically read-only
-	return false, fmt.Errorf("adding users to SCIM is not supported")
+	return false, util.MessageErrorf("syncer:adding users to SCIM is not supported")
 }
 
 // UpdateUser updates an existing user in SCIM (not supported for read-only API)
 func (p *SCIMSyncerProvider) UpdateUser(user *OriginalUser) (bool, error) {
 	// SCIM syncer is typically read-only
-	return false, fmt.Errorf("updating users in SCIM is not supported")
+	return false, util.MessageErrorf("syncer:updating users in SCIM is not supported")
 }
 
 // TestConnection tests the SCIM API connection
@@ -74,7 +74,7 @@ func (p *SCIMSyncerProvider) TestConnection() error {
 
 	if resp.StatusCode != http.StatusOK {
 		body, _ := io.ReadAll(resp.Body)
-		return fmt.Errorf("SCIM connection test failed: status=%d, body=%s", resp.StatusCode, string(body))
+		return util.MessageErrorf("syncer:SCIM connection test failed: status=%d, body=%s", resp.StatusCode, string(body))
 	}
 
 	return nil
@@ -209,7 +209,7 @@ func (p *SCIMSyncerProvider) getSCIMUsers() ([]*OriginalUser, error) {
 
 		if resp.StatusCode != http.StatusOK {
 			body, _ := io.ReadAll(resp.Body)
-			return nil, fmt.Errorf("failed to get users: status=%d, body=%s", resp.StatusCode, string(body))
+			return nil, util.MessageErrorf("syncer:failed to get users: status=%d, body=%s", resp.StatusCode, string(body))
 		}
 
 		body, err := io.ReadAll(resp.Body)

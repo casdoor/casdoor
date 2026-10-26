@@ -46,7 +46,7 @@ func ParseInt(s string) int {
 
 func ParseIntWithError(s string) (int, error) {
 	if s == "" {
-		return 0, fmt.Errorf("ParseIntWithError() error, empty string")
+		return 0, MessageErrorf("general:ParseIntWithError() error, empty string")
 	}
 
 	i, err := strconv.Atoi(s)
@@ -124,7 +124,7 @@ func SpaceToCamel(name string) string {
 func GetOwnerAndNameFromIdWithError(id string) (string, string, error) {
 	tokens := strings.Split(id, "/")
 	if len(tokens) != 2 {
-		return "", "", errors.New("GetOwnerAndNameFromId() error, wrong token count for ID: " + id)
+		return "", "", MessageErrorf("util:GetOwnerAndNameFromId() error, wrong token count for ID: %s", id)
 	}
 
 	return tokens[0], tokens[1], nil
@@ -326,7 +326,7 @@ func ParseIdToString(input interface{}) (string, error) {
 	case float64:
 		return strconv.FormatFloat(v, 'f', -1, 64), nil
 	default:
-		return "", fmt.Errorf("unsupported id type: %T", input)
+		return "", MessageErrorf("general:unsupported id type: %T", input)
 	}
 }
 

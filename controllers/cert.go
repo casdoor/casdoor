@@ -58,7 +58,7 @@ func (c *ApiController) GetCerts() {
 	if limit == "" || page == "" {
 		certs, err := object.GetCerts(owner)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -67,14 +67,14 @@ func (c *ApiController) GetCerts() {
 		limit := util.ParseInt(limit)
 		count, err := object.GetCertCount(owner, field, value)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
 		paginator := pagination.NewPaginator(c.Ctx.Request, limit, count)
 		certs, err := object.GetPaginationCerts(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -103,7 +103,7 @@ func (c *ApiController) GetGlobalCerts() {
 	if limit == "" || page == "" {
 		certs, err := object.GetGlobalCerts()
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -112,14 +112,14 @@ func (c *ApiController) GetGlobalCerts() {
 		limit := util.ParseInt(limit)
 		count, err := object.GetGlobalCertsCount(field, value)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
 		paginator := pagination.NewPaginator(c.Ctx.Request, limit, count)
 		certs, err := object.GetPaginationGlobalCerts(paginator.Offset(), limit, field, value, sortField, sortOrder)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -138,7 +138,7 @@ func (c *ApiController) GetCert() {
 	id := c.Ctx.Input.Query("id")
 	cert, err := object.GetCert(id)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -163,12 +163,12 @@ func (c *ApiController) UpdateCert() {
 	var cert object.Cert
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &cert)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
 	if err = object.CheckCertName(&cert, id, c.GetAcceptLanguage()); err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -187,12 +187,12 @@ func (c *ApiController) AddCert() {
 	var cert object.Cert
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &cert)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
 	if err = object.CheckCertName(&cert, "", c.GetAcceptLanguage()); err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -211,7 +211,7 @@ func (c *ApiController) DeleteCert() {
 	var cert object.Cert
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &cert)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -234,7 +234,7 @@ func (c *ApiController) UpdateCertDomainExpire() {
 	id := c.Ctx.Input.Query("id")
 	cert, err := object.GetCert(id)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 	if cert == nil {
@@ -244,14 +244,12 @@ func (c *ApiController) UpdateCertDomainExpire() {
 
 	domainExpireTime, err := object.GetDomainExpireTime(cert.Name)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
 	if domainExpireTime == "" {
-		c.ResponseError("Failed to determine domain expiration time for domain " + cert.Name +
-			". Please verify that the domain is valid, publicly resolvable, and has a retrievable expiration date, " +
-			"or update the domain expiration time manually.")
+		c.ResponseErrorFrom(util.MessageErrorf("cert:Could not determine the expiration date of domain %s. Verify that the domain is valid and publicly resolvable with an available expiration date, or update it manually.", cert.Name))
 		return
 	}
 	cert.DomainExpireTime = domainExpireTime

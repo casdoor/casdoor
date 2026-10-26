@@ -111,7 +111,7 @@ export default function SyncerEditPage() {
       type: "select",
       name: "type",
       labelKey: "general:Type",
-      options: () => TYPES.map((item) => ({value: item, label: item})),
+      options: () => TYPES.map((item) => ({value: item, label: item === "Database" ? i18next.t("syncer:Database") : item})),
       onChange: (value, ctx, updateFields) =>
         updateFields({
           type: value,

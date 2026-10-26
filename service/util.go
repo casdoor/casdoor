@@ -23,7 +23,9 @@ import (
 
 	"github.com/casdoor/casdoor-go-sdk/casdoorsdk"
 	"github.com/casdoor/casdoor/conf"
+	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/object"
+	"github.com/casdoor/casdoor/util"
 )
 
 func joinPath(a string, b string) string {
@@ -73,6 +75,21 @@ func responseErrorWithoutCode(w http.ResponseWriter, format string, a ...interfa
 	}
 }
 
+func responseErrorFrom(w http.ResponseWriter, r *http.Request, value error) {
+	w.WriteHeader(http.StatusInternalServerError)
+	responseErrorWithoutCodeFrom(w, r, value)
+}
+
+func responseErrorWithoutCodeFrom(w http.ResponseWriter, r *http.Request, value error) {
+	if value != nil {
+		fmt.Println(value.Error())
+	}
+	message := i18n.LocalizeError(conf.GetAcceptLanguage(r.Header.Get("Accept-Language")), value)
+	if _, err := fmt.Fprint(w, message); err != nil {
+		panic(err)
+	}
+}
+
 func getDomainWithoutPort(domain string) string {
 	if !strings.Contains(domain, ":") {
 		return domain
@@ -113,7 +130,7 @@ func getX509CertByDomain(domain string) (*tls.Certificate, error) {
 
 func getCasdoorClientFromSite(site *object.Site) (*casdoorsdk.Client, error) {
 	if site.ApplicationObj == nil {
-		return nil, fmt.Errorf("site.ApplicationObj is empty")
+		return nil, util.MessageErrorf("site:site.ApplicationObj is empty")
 	}
 
 	casdoorEndpoint := conf.GetConfigString("origin")

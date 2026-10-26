@@ -15,9 +15,9 @@
 package object
 
 import (
-	"errors"
 	"time"
 
+	"github.com/casdoor/casdoor/i18n"
 	"github.com/pquerna/otp"
 	"github.com/pquerna/otp/totp"
 )
@@ -72,7 +72,7 @@ func (mfa *TotpMfa) SetupVerify(passcode string, lang string) error {
 	if result {
 		return nil
 	} else {
-		return errors.New("totp passcode error")
+		return i18n.Errorf("mfa:totp passcode error")
 	}
 }
 
@@ -95,7 +95,7 @@ func (mfa *TotpMfa) Enable(user *User) error {
 
 func (mfa *TotpMfa) Verify(passcode string, lang string) error {
 	if mfa.Secret == "" {
-		return errors.New("totp is not enabled")
+		return i18n.Errorf("mfa:totp is not enabled")
 	}
 
 	result, err := totp.ValidateCustom(passcode, mfa.Secret, time.Now().UTC(), totp.ValidateOpts{
@@ -111,7 +111,7 @@ func (mfa *TotpMfa) Verify(passcode string, lang string) error {
 	if result {
 		return nil
 	} else {
-		return errors.New("totp passcode error")
+		return i18n.Errorf("mfa:totp passcode error")
 	}
 }
 

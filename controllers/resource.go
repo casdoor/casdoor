@@ -40,7 +40,7 @@ func (c *ApiController) checkResourcePermission(owner string, username string) b
 
 	user, err := object.GetUserOrAppUser(userId)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return false
 	}
 	if user == nil {
@@ -110,7 +110,7 @@ func (c *ApiController) checkUploadPath(tag string, owner string, username strin
 		if c.IsAdmin() && strings.HasPrefix(filePath, tag+"/") && strings.HasSuffix(filePath, ".html") {
 			application, err := object.GetApplication(applicationId)
 			if err != nil {
-				c.ResponseError(err.Error())
+				c.ResponseErrorFrom(err)
 				return false
 			}
 			isAllowed = application != nil && application.Organization == owner
@@ -173,7 +173,7 @@ func (c *ApiController) GetResources() {
 
 		provider, err := c.GetProviderFromContext("Storage")
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 		if !c.checkStorageProvider(provider, owner, true) {
@@ -183,7 +183,7 @@ func (c *ApiController) GetResources() {
 		prefix := sortOrder
 		resources, err := object.GetDirectResources(owner, user, provider, prefix, c.GetAcceptLanguage())
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -191,7 +191,7 @@ func (c *ApiController) GetResources() {
 	} else if limit == "" || page == "" {
 		resources, err := object.GetResources(owner, user)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -200,14 +200,14 @@ func (c *ApiController) GetResources() {
 		limit := util.ParseInt(limit)
 		count, err := object.GetResourceCount(owner, user, field, value)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
 		paginator := pagination.NewPaginator(c.Ctx.Request, limit, count)
 		resources, err := object.GetPaginationResources(owner, user, paginator.Offset(), limit, field, value, sortField, sortOrder)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -227,7 +227,7 @@ func (c *ApiController) GetResource() {
 
 	resource, err := object.GetResource(id)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -257,7 +257,7 @@ func (c *ApiController) UpdateResource() {
 	var resource object.Resource
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &resource)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -274,7 +274,7 @@ func (c *ApiController) UpdateResource() {
 	if !c.IsGlobalAdmin() {
 		oldResource, err := object.GetResource(id)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 		if oldResource != nil {
@@ -297,7 +297,7 @@ func (c *ApiController) AddResource() {
 	var resource object.Resource
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &resource)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -326,7 +326,7 @@ func (c *ApiController) DeleteResource() {
 	var resource object.Resource
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &resource)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -346,7 +346,7 @@ func (c *ApiController) DeleteResource() {
 			// delete the file of the stored resource, not the one the request names
 			storedResource, err := object.GetResource(resource.GetId())
 			if err != nil {
-				c.ResponseError(err.Error())
+				c.ResponseErrorFrom(err)
 				return
 			}
 			if storedResource == nil {
@@ -368,7 +368,7 @@ func (c *ApiController) DeleteResource() {
 	inputs.Set("fullFilePath", resource.Name)
 	provider, err := c.GetProviderFromContext("Storage")
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 	if !c.checkStorageProvider(provider, resource.Owner, tag == "Direct") {
@@ -382,7 +382,7 @@ func (c *ApiController) DeleteResource() {
 
 	err = object.DeleteFile(provider, resource.Name, c.GetAcceptLanguage())
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -420,7 +420,7 @@ func (c *ApiController) UploadResource() {
 
 	file, header, err := c.GetFile("file")
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 	defer file.Close()
@@ -433,13 +433,13 @@ func (c *ApiController) UploadResource() {
 	filename := filepath.Base(fullFilePath)
 	fileBuffer := bytes.NewBuffer(nil)
 	if _, err = io.Copy(fileBuffer, file); err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
 	provider, err := c.GetProviderFromContext("Storage")
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 	directProviderName, fullFilePath := refineFullFilePath(fullFilePath)
@@ -465,7 +465,7 @@ func (c *ApiController) UploadResource() {
 		for i := 1; ; i++ {
 			_, objectKey := object.GetUploadFileUrl(provider, fullFilePath, true)
 			if count, err := object.GetResourceCount(owner, username, "name", objectKey); err != nil {
-				c.ResponseError(err.Error())
+				c.ResponseErrorFrom(err)
 				return
 			} else if count == 0 {
 				break
@@ -478,7 +478,7 @@ func (c *ApiController) UploadResource() {
 
 	fileUrl, objectKey, err := object.UploadFileSafe(provider, fullFilePath, fileBuffer, c.GetAcceptLanguage())
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -510,7 +510,7 @@ func (c *ApiController) UploadResource() {
 	}
 	_, err = object.AddOrUpdateResource(resource)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -518,7 +518,7 @@ func (c *ApiController) UploadResource() {
 	case "avatar":
 		user, err := object.GetUserNoCheck(util.GetId(owner, username))
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -530,14 +530,14 @@ func (c *ApiController) UploadResource() {
 		user.Avatar = fileUrl
 		_, err = object.UpdateUser(user.GetId(), user, []string{"avatar"}, false)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
 	case "termsOfUse", "privacyPolicy":
 		user, err := object.GetUserNoCheck(util.GetId(owner, username))
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -554,7 +554,7 @@ func (c *ApiController) UploadResource() {
 		_, applicationId := util.GetOwnerAndNameFromIdNoCheck(strings.TrimSuffix(fullFilePath, ".html"))
 		applicationObj, err := object.GetApplication(applicationId)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 		if applicationObj == nil {
@@ -569,13 +569,13 @@ func (c *ApiController) UploadResource() {
 		}
 		_, err = object.UpdateApplication(applicationId, applicationObj, true, c.GetAcceptLanguage(), nil)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 	case "idCardFront", "idCardBack", "idCardWithPerson":
 		user, err := object.GetUserNoCheck(util.GetId(owner, username))
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -591,7 +591,7 @@ func (c *ApiController) UploadResource() {
 		user.Properties["isIdCardVerified"] = "false"
 		_, err = object.UpdateUser(user.GetId(), user, []string{"properties"}, false)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 	}

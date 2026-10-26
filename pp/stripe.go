@@ -20,6 +20,7 @@ import (
 	"time"
 
 	"github.com/casdoor/casdoor/conf"
+	"github.com/casdoor/casdoor/util"
 	"github.com/stripe/stripe-go/v74"
 	stripeCheckout "github.com/stripe/stripe-go/v74/checkout/session"
 	stripeIntent "github.com/stripe/stripe-go/v74/paymentintent"
@@ -178,7 +179,7 @@ func (pp *StripePaymentProvider) getSavedPaymentMethod(orderId string) (string, 
 			return "", "", err
 		}
 		if sCheckout.PaymentIntent == nil {
-			return "", "", fmt.Errorf("the stripe checkout session: %s has no payment intent", orderId)
+			return "", "", util.MessageErrorf("payment:the stripe checkout session: %s has no payment intent", orderId)
 		}
 		intentId = sCheckout.PaymentIntent.ID
 	}
@@ -189,7 +190,7 @@ func (pp *StripePaymentProvider) getSavedPaymentMethod(orderId string) (string, 
 	}
 	if sIntent.Status != stripe.PaymentIntentStatusSucceeded || sIntent.Customer == nil || sIntent.PaymentMethod == nil ||
 		(isCheckout && sIntent.SetupFutureUsage != stripe.PaymentIntentSetupFutureUsageOffSession) {
-		return "", "", fmt.Errorf("the stripe payment: %s did not save a payment method for renewals, please buy it again with auto renewal on", orderId)
+		return "", "", util.MessageErrorf("payment:the stripe payment: %s did not save a payment method for renewals, please buy it again with auto renewal on", orderId)
 	}
 	return sIntent.Customer.ID, sIntent.PaymentMethod.ID, nil
 }

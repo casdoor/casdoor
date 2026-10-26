@@ -48,10 +48,22 @@ func SendNotification(provider *Provider, content string, recipient string) erro
 	}
 
 	if sender, ok := client.(notificationRecipientSender); ok {
-		return sender.SendWithRecipient(context.Background(), "", content, recipient)
+		return notificationPresentationError(sender.SendWithRecipient(context.Background(), "", content, recipient))
 	}
 
-	return client.Send(context.Background(), "", content)
+	return notificationPresentationError(client.Send(context.Background(), "", content))
+}
+
+func notificationPresentationError(err error) error {
+	// notify2 v1.6.0 joins this sentinel and the original service error. Recognize
+	// that exact contract, never parse rendered messages or unwrap arbitrary SDK errors.
+	if joined, ok := err.(interface{ Unwrap() []error }); ok {
+		values := joined.Unwrap()
+		if len(values) == 2 && values[0] == notify.ErrSendNotification {
+			return util.WrapMessageError(err, "service:send notification\n%s", values[1])
+		}
+	}
+	return err
 }
 
 // SsoLogoutNotification represents the structure of a session-level SSO logout notification
@@ -115,11 +127,11 @@ func SendSsoLogoutNotifications(user *User, sessionIds []string, tokens []*Token
 	// Get the user's signup application
 	application, err := GetApplicationByUser(user)
 	if err != nil {
-		return fmt.Errorf("failed to get signup application: %w", err)
+		return util.MessageErrorf("service:failed to get signup application: %w", err)
 	}
 
 	if application == nil {
-		return fmt.Errorf("signup application not found: %s", user.SignupApplication)
+		return util.MessageErrorf("service:signup application not found: %s", user.SignupApplication)
 	}
 
 	// Extract access token hashes from tokens
@@ -181,7 +193,7 @@ func SendSsoLogoutNotifications(user *User, sessionIds []string, tokens []*Token
 		// Send the notification using the provider from the providerItem
 		err = SendNotification(providerItem.Provider, content, "")
 		if err != nil {
-			return fmt.Errorf("failed to send SSO logout notification to provider %s/%s: %w", providerItem.Provider.Owner, providerItem.Provider.Name, err)
+			return util.MessageErrorf("service:failed to send SSO logout notification to provider %s/%s: %w", providerItem.Provider.Owner, providerItem.Provider.Name, notificationPresentationError(err))
 		}
 	}
 

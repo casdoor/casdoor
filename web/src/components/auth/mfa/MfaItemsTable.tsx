@@ -6,10 +6,10 @@ import * as Setting from "@/lib/setting";
 
 /** The stored name is the backend's MFA type, not the label shown in the dropdown. */
 const MFA_ITEMS = [
-  {id: SmsMfaType, name: "Phone"},
-  {id: EmailMfaType, name: "Email"},
-  {id: TotpMfaType, name: "App"},
-  {id: PushMfaType, name: "Push"},
+  {id: SmsMfaType, labelKey: "general:Phone"},
+  {id: EmailMfaType, labelKey: "general:Email"},
+  {id: TotpMfaType, labelKey: "mfa:Authenticator app"},
+  {id: PushMfaType, labelKey: "mfa:Push"},
 ];
 
 /** `general:Optional` and friends do not exist; the antd table uses these. */
@@ -39,8 +39,9 @@ export function MfaItemsTable({rows, onChange}: {rows: any[] | undefined | null;
           render: (row: any, index, patch) => (
             <SelectField
               value={row.name}
+              unknownValueLabel={row.name?.trim() === "Please select a MFA method" ? i18next.t("mfa:Please select a MFA method") : undefined}
               onChange={(value) => patch({name: value})}
-              options={MFA_ITEMS.filter((item) => !items.some((other: any, i) => i !== index && other.name === item.id))}
+              options={MFA_ITEMS.filter((item) => !items.some((other: any, i) => i !== index && other.name === item.id)).map((item) => ({id: item.id, name: i18next.t(item.labelKey)}))}
             />
           ),
         },

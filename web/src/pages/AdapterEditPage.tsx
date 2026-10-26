@@ -77,7 +77,7 @@ export default function AdapterEditPage() {
       labelKey: "general:Type",
       when: usesOwnDb,
       disabled: isBuiltIn,
-      options: () => [{value: "Database", label: "Database"}],
+      options: () => [{value: "Database", label: i18next.t("syncer:Database")}],
     },
     {
       type: "select",

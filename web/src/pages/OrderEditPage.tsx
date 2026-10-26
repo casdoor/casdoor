@@ -1,4 +1,4 @@
-import i18next from "i18next";
+import {enumLabel, PAYMENT_STATES} from "@/lib/enum-labels";
 import {useParams} from "react-router-dom";
 import {SimpleEditPage, type EditField} from "@/components/crud/SimpleEditPage";
 import {useAccount} from "@/hooks/use-account";
@@ -32,7 +32,7 @@ export default function OrderEditPage() {
       type: "select",
       name: "state",
       labelKey: "general:State",
-      options: () => STATES.map((item) => ({value: item, label: i18next.t(`payment:${item}`)})),
+      options: () => STATES.map((item) => ({value: item, label: enumLabel(PAYMENT_STATES, item)})),
     },
     {type: "text", name: "message", labelKey: "payment:Message"},
   ];

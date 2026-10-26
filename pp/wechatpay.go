@@ -88,12 +88,12 @@ func getWechatPaySerialNo(certificate string) (string, error) {
 
 	block, _ := pem.Decode([]byte(certificate))
 	if block == nil {
-		return "", errors.New("failed to decode the merchant certificate of WeChat Pay")
+		return "", util.NewMessageError("payment:failed to decode the merchant certificate of WeChat Pay")
 	}
 
 	cert, err := x509.ParseCertificate(block.Bytes)
 	if err != nil {
-		return "", fmt.Errorf("failed to parse the merchant certificate of WeChat Pay: %s", err.Error())
+		return "", util.MessageErrorf("payment:failed to parse the merchant certificate of WeChat Pay: %s", err)
 	}
 
 	serialNo := strings.ToUpper(cert.SerialNumber.Text(16))
@@ -117,7 +117,7 @@ func (pp *WechatPaymentProvider) Pay(r *PayReq) (*PayResp, error) {
 	// In Wechat browser, we use JSAPI
 	if r.PaymentEnv == PaymentEnvWechatBrowser {
 		if r.PayerId == "" {
-			return nil, errors.New("failed to get the payer's openid, please retry login")
+			return nil, util.NewMessageError("payment:failed to get the payer's openid, please retry login")
 		}
 		bm.SetBodyMap("payer", func(bm gopay.BodyMap) {
 			bm.Set("openid", r.PayerId) // If the account is signup via Wechat, the PayerId is the Wechat OpenId e.g.oxW9O1ZDvgreSHuBSQDiQ2F055PI

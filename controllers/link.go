@@ -43,7 +43,7 @@ func (c *ApiController) Unlink() {
 	var form LinkForm
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &form)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 	providerType := form.ProviderType
@@ -66,7 +66,7 @@ func (c *ApiController) Unlink() {
 		// if the user is unlinking themselves, should check the provider can be unlinked, if not, we should return an error.
 		application, err := object.GetApplicationByUser(user)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 		if application == nil {
@@ -119,7 +119,7 @@ func (c *ApiController) Unlink() {
 
 		link, err := object.GetThirdPartyLink(unlinkedUser.Owner, unlinkedUser.Name, providerName)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 		if link == nil {
@@ -129,7 +129,7 @@ func (c *ApiController) Unlink() {
 
 		_, err = object.DeleteThirdPartyLink(unlinkedUser.Owner, unlinkedUser.Name, providerName)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -146,13 +146,13 @@ func (c *ApiController) Unlink() {
 
 	_, err = object.ClearUserOAuthProperties(unlinkedUser, providerType)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
 	_, err = object.LinkUserAccount(unlinkedUser, providerType, "")
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -164,7 +164,7 @@ func (c *ApiController) Unlink() {
 func (c *ApiController) getUnlinkedUser(formUser *object.User) (*object.User, bool) {
 	unlinkedUser, err := object.GetUser(formUser.GetId())
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return nil, false
 	}
 	if unlinkedUser == nil {

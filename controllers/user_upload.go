@@ -70,13 +70,13 @@ func (c *ApiController) UploadUsers() {
 	userId := c.GetSessionUsername()
 	owner, user, err := util.GetOwnerAndNameFromIdWithError(userId)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
 	file, header, err := c.Ctx.Request.FormFile("file")
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -85,13 +85,13 @@ func (c *ApiController) UploadUsers() {
 	defer os.Remove(path)
 	err = saveFile(path, &file)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
 	affected, err := object.UploadUsers(owner, path, userObj, c.GetAcceptLanguage())
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 

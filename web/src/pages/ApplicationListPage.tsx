@@ -28,7 +28,7 @@ export default function ApplicationListPage({formItems}: {formItems?: any[]} = {
       ...record,
       name,
       createdTime: new Date().toISOString(),
-      displayName: `Copy Application - ${name}`,
+      displayName: `${i18next.t("application:Copied application")} - ${name}`,
       clientId: "",
       clientSecret: "",
     };

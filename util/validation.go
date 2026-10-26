@@ -117,7 +117,7 @@ func GetCountryCode(prefix string, phone string) (string, error) {
 
 	countryCode := phonenumbers.GetRegionCodeForNumber(phoneNumber)
 	if countryCode == "" {
-		return "", fmt.Errorf("country code not found for phone prefix: %s", prefix)
+		return "", MessageErrorf("util:country code not found for phone prefix: %s", prefix)
 	}
 
 	return countryCode, nil

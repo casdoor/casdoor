@@ -1,4 +1,5 @@
 import i18next from "i18next";
+import {enumLabel, PAYMENT_STATES, providerTypeLabel} from "@/lib/enum-labels";
 import {Link} from "react-router-dom";
 import {Badge} from "@/components/ui/badge";
 import {CrudListPage} from "@/components/crud/CrudListPage";
@@ -42,14 +43,14 @@ export default function PaymentListPage() {
         dataIndex: "type",
         title: i18next.t("general:Type"),
         width: 140,
-        filters: Setting.getProviderTypeOptions("Payment").map((option: any) => ({value: option.name, label: option.id})),
+        filters: Setting.getProviderTypeOptions("Payment").map((option: any) => ({value: option.name, label: providerTypeLabel(option.id)})),
       }),
       // antd shows the payment provider's logo here; the type stays next to it
       render: (value: string, record: any) =>
         value ? (
           <span className="flex items-center gap-2">
             {Setting.getProviderLogo({...record, category: "Payment"})}
-            <span>{value}</span>
+            <span>{providerTypeLabel(value)}</span>
           </span>
         ) : null,
     },
@@ -68,7 +69,7 @@ export default function PaymentListPage() {
       title: i18next.t("general:State"),
       width: 110,
       sortable: true,
-      render: (value) => <Badge variant={stateVariant(value) as any}>{value}</Badge>,
+      render: (value) => <Badge variant={stateVariant(value) as any}>{enumLabel(PAYMENT_STATES, value)}</Badge>,
     },
   ];
 

@@ -108,7 +108,7 @@ func GetApplicationByClientIdMetadata(clientId string, organization string, lang
 		organization = cimdOrganization
 	}
 	if !IsClientIdMetadataDocumentSupported(organization) {
-		return nil, fmt.Errorf("client ID metadata documents are not accepted, enable dynamic client registration of the organization: %s first", organization)
+		return nil, util.MessageErrorf("application:client ID metadata documents are not accepted, enable dynamic client registration of the organization: %s first", organization)
 	}
 
 	if application != nil && time.Since(cimdFetchedAt[clientId]) < cimdRefreshInterval {
@@ -148,7 +148,7 @@ func GetApplicationByClientIdMetadata(clientId string, organization string, lang
 			return nil, err
 		}
 		if !affected {
-			return nil, fmt.Errorf("failed to add the application for the client: %s", clientId)
+			return nil, util.MessageErrorf("application:failed to add the application for the client: %s", clientId)
 		}
 	} else {
 		application.DisplayName = displayName
@@ -186,12 +186,12 @@ func fetchClientIdMetadataDocument(clientId string) (*ClientIdMetadataDocument, 
 
 	resp, err := client.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("failed to fetch the client metadata document: %s, %s", clientId, err.Error())
+		return nil, util.MessageErrorf("application:failed to fetch the client metadata document: %s, %s", clientId, err)
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("failed to fetch the client metadata document: %s, status: %s", clientId, resp.Status)
+		return nil, util.MessageErrorf("application:failed to fetch the client metadata document: %s, status: %s", clientId, resp.Status)
 	}
 
 	body, err := io.ReadAll(io.LimitReader(resp.Body, cimdMaxDocumentSize+1))
@@ -199,13 +199,13 @@ func fetchClientIdMetadataDocument(clientId string) (*ClientIdMetadataDocument, 
 		return nil, err
 	}
 	if len(body) > cimdMaxDocumentSize {
-		return nil, fmt.Errorf("the client metadata document: %s is larger than %d bytes", clientId, cimdMaxDocumentSize)
+		return nil, util.MessageErrorf("application:the client metadata document: %s is larger than %d bytes", clientId, cimdMaxDocumentSize)
 	}
 
 	doc := &ClientIdMetadataDocument{}
 	err = json.Unmarshal(body, doc)
 	if err != nil {
-		return nil, fmt.Errorf("the client metadata document: %s is not valid JSON, %s", clientId, err.Error())
+		return nil, util.MessageErrorf("application:the client metadata document: %s is not valid JSON, %s", clientId, err)
 	}
 
 	err = checkClientIdMetadataDocument(doc, clientId)
@@ -217,23 +217,23 @@ func fetchClientIdMetadataDocument(clientId string) (*ClientIdMetadataDocument, 
 
 func checkClientIdMetadataDocument(doc *ClientIdMetadataDocument, clientId string) error {
 	if doc.ClientId != clientId {
-		return fmt.Errorf("the client_id: %s in the client metadata document doesn't match its URL: %s", doc.ClientId, clientId)
+		return util.MessageErrorf("application:the client_id: %s in the client metadata document doesn't match its URL: %s", doc.ClientId, clientId)
 	}
 	if doc.ClientSecret != "" {
-		return fmt.Errorf("the client metadata document: %s must not contain client_secret", clientId)
+		return util.MessageErrorf("application:the client metadata document: %s must not contain client_secret", clientId)
 	}
 	if doc.TokenEndpointAuthMethod != "" && doc.TokenEndpointAuthMethod != "none" && doc.TokenEndpointAuthMethod != "private_key_jwt" {
-		return fmt.Errorf("the token_endpoint_auth_method: %s of the client: %s is not supported, only \"none\" with PKCE and \"private_key_jwt\" are", doc.TokenEndpointAuthMethod, clientId)
+		return util.MessageErrorf("application:the token_endpoint_auth_method: %s of the client: %s is not supported, only \"none\" with PKCE and \"private_key_jwt\" are", doc.TokenEndpointAuthMethod, clientId)
 	}
 	if len(doc.RedirectUris) == 0 {
-		return fmt.Errorf("the client metadata document: %s has no redirect_uris", clientId)
+		return util.MessageErrorf("application:the client metadata document: %s has no redirect_uris", clientId)
 	}
 
 	// Only full URLs, so that a redirect URI is never read as a host pattern
 	for _, redirectUri := range doc.RedirectUris {
 		u, err := url.Parse(redirectUri)
 		if err != nil || u.Scheme == "" || u.Host == "" {
-			return fmt.Errorf("the redirect URI: %s of the client: %s must be a full URL", redirectUri, clientId)
+			return util.MessageErrorf("application:the redirect URI: %s of the client: %s must be a full URL", redirectUri, clientId)
 		}
 	}
 

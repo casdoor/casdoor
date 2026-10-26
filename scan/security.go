@@ -133,7 +133,7 @@ func (v SecurityScanProvider) Scan(target string, command string) (string, error
 	_ = command
 
 	if !strings.EqualFold(v.Type, "Site") && !strings.EqualFold(v.Type, "Url") {
-		return "", fmt.Errorf("scan provider sub type: %s is not supported", v.Type)
+		return "", util.MessageErrorf("scan:scan provider sub type: %s is not supported", v.Type)
 	}
 
 	cves, fingerprints, err := getOnlineScanLists(&http.Client{Timeout: 10 * time.Second}, dataSourceUrl)
@@ -295,12 +295,12 @@ func (v SecurityScanProvider) getScanTargets(target string) ([]securityScanTarge
 		targetURL = strings.TrimSpace(v.TargetURL)
 	}
 	if targetURL == "" {
-		return nil, fmt.Errorf("target URL is required for Url scan")
+		return nil, util.MessageErrorf("general:target URL is required for Url scan")
 	}
 
 	targetURLs := splitScanTargets(targetURL)
 	if len(targetURLs) == 0 {
-		return nil, fmt.Errorf("target URL is required for Url scan")
+		return nil, util.MessageErrorf("general:target URL is required for Url scan")
 	}
 
 	res := make([]securityScanTarget, 0, len(targetURLs))

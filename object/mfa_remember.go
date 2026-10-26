@@ -19,9 +19,10 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"encoding/hex"
-	"fmt"
 	"strings"
 	"time"
+
+	"github.com/casdoor/casdoor/util"
 )
 
 const MfaRememberCookieName = "casdoor_mfa_remember"
@@ -32,7 +33,7 @@ func getMfaRememberSignature(userId string, deadline string) (string, error) {
 		return "", err
 	}
 	if cert == nil || cert.PrivateKey == "" {
-		return "", fmt.Errorf("the cert: admin/cert-built-in is not found")
+		return "", util.MessageErrorf("saml:the cert: admin/cert-built-in is not found")
 	}
 
 	key := sha256.Sum256([]byte("mfa-remember:" + cert.PrivateKey))

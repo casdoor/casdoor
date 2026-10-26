@@ -19,7 +19,7 @@ export default function CertListPage() {
     dateColumn(),
     textColumn({dataIndex: "displayName", title: i18next.t("general:Display name"), searchable: true, width: 170}),
     textColumn({dataIndex: "scope", title: i18next.t("provider:Scope"), width: 110, filters: valueFilters(["JWT"])}),
-    textColumn({dataIndex: "type", title: i18next.t("general:Type"), width: 110, filters: valueFilters(["x509", "Payment"])}),
+    {...textColumn({dataIndex: "type", title: i18next.t("general:Type"), width: 110, filters: [{value: "x509", label: "x509"}, {value: "Payment", label: i18next.t("general:Payment")}]}), render: (value) => value === "Payment" ? i18next.t("general:Payment") : value},
     textColumn({dataIndex: "cryptoAlgorithm", title: i18next.t("cert:Crypto algorithm"), width: 150, filters: valueFilters(["RS256"])}),
     textColumn({dataIndex: "bitSize", title: i18next.t("cert:Bit size"), width: 110, searchable: true}),
     textColumn({dataIndex: "expireInYears", title: i18next.t("cert:Expire in years"), width: 140, searchable: true}),
@@ -47,13 +47,13 @@ export default function CertListPage() {
             CertBackend.refreshDomainExpire(record.owner, record.name)
               .then((res: any) => {
                 if (res.status === "error") {
-                  Setting.showMessage("error", `Failed to refresh domain expire: ${res.msg}`);
+                  Setting.showMessage("error", `${i18next.t("cert:Failed to refresh domain expiry")}: ${res.msg}`);
                 } else {
-                  Setting.showMessage("success", "Domain expire refreshed successfully");
+                  Setting.showMessage("success", i18next.t("cert:Domain expiry refreshed successfully"));
                   refresh();
                 }
               })
-              .catch((error) => Setting.showMessage("error", `Domain expire failed to refresh: ${error}`));
+              .catch((error) => Setting.showMessage("error", `${i18next.t("cert:Failed to refresh domain expiry")}: ${error}`));
           },
         },
       ]}

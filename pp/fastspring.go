@@ -21,6 +21,8 @@ import (
 	"io"
 	"net/http"
 	"strings"
+
+	"github.com/casdoor/casdoor/util"
 )
 
 type FastSpringPaymentProvider struct {
@@ -154,7 +156,7 @@ func (pp *FastSpringPaymentProvider) Pay(r *PayReq) (*PayResp, error) {
 	}
 
 	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusCreated {
-		return nil, fmt.Errorf("fastspring API error: %s", string(body))
+		return nil, util.MessageErrorf("payment:fastspring API error: %s", string(body))
 	}
 
 	var sessionResp fastSpringSessionResponse

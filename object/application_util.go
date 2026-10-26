@@ -549,7 +549,7 @@ func CheckApplicationCustomHtml(application *Application, oldApplication *Applic
 	}
 
 	if len(unsafeFields) > 0 {
-		return fmt.Errorf("the %s of the application uses HTML or loads files that this Casdoor only lets a global admin set: scripts, forms and event handlers are not allowed, and images and fonts must come from this Casdoor, its storage providers or a URL in formCssAllowedUrls", strings.Join(unsafeFields, ", "))
+		return util.MessageErrorf("application:the %s of the application uses HTML or loads files that this Casdoor only lets a global admin set: scripts, forms and event handlers are not allowed, and images and fonts must come from this Casdoor, its storage providers or a URL in formCssAllowedUrls", strings.Join(unsafeFields, ", "))
 	}
 	return nil
 }

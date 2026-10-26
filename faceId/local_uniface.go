@@ -22,6 +22,8 @@ import (
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/casdoor/casdoor/util"
 )
 
 type LocalUniFaceProvider struct {
@@ -54,7 +56,7 @@ func NewLocalUniFaceProvider(endpoint string, apiKey string) *LocalUniFaceProvid
 
 func (provider *LocalUniFaceProvider) Check(base64ImageA string, base64ImageB string) (bool, error) {
 	if provider.Endpoint == "" {
-		return false, fmt.Errorf("Local UniFace endpoint is empty")
+		return false, util.MessageErrorf("check:Local UniFace endpoint is empty")
 	}
 
 	body, err := json.Marshal(localUniFaceCompareRequest{
@@ -91,7 +93,7 @@ func (provider *LocalUniFaceProvider) Check(base64ImageA string, base64ImageB st
 	}
 
 	if response.StatusCode < http.StatusOK || response.StatusCode >= http.StatusMultipleChoices {
-		return false, fmt.Errorf("Local UniFace compare failed with status %d: %s", response.StatusCode, string(responseBody))
+		return false, util.MessageErrorf("check:Local UniFace compare failed with status %d: %s", response.StatusCode, string(responseBody))
 	}
 
 	var compareResponse localUniFaceCompareResponse

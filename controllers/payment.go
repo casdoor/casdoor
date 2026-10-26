@@ -16,9 +16,11 @@ package controllers
 
 import (
 	"encoding/json"
+	"errors"
 
 	"github.com/beego/beego/v2/core/utils/pagination"
 	"github.com/casdoor/casdoor/object"
+	"github.com/casdoor/casdoor/pp"
 	"github.com/casdoor/casdoor/util"
 )
 
@@ -58,7 +60,7 @@ func (c *ApiController) GetPayments() {
 		}
 
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -75,14 +77,14 @@ func (c *ApiController) GetPayments() {
 		}
 		count, err := object.GetPaymentCount(owner, user, field, value)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
 		paginator := pagination.NewPaginator(c.Ctx.Request, limit, count)
 		payments, err := object.GetPaginationPayments(owner, user, paginator.Offset(), limit, field, value, sortField, sortOrder)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -107,18 +109,18 @@ func (c *ApiController) GetUserPayments() {
 		sessionUser := c.GetSessionUsername()
 		sessionUserOwner, sessionUserName, err := util.GetOwnerAndNameFromIdWithError(sessionUser)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 		if sessionUserOwner != owner || sessionUserName != user {
-			c.ResponseError("Forbidden")
+			c.ResponseError(c.T("general:Forbidden"))
 			return
 		}
 	}
 
 	payments, err := object.GetUserPayments(owner, user)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -137,7 +139,7 @@ func (c *ApiController) GetPayment() {
 
 	payment, err := object.GetPayment(id)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -145,11 +147,11 @@ func (c *ApiController) GetPayment() {
 		sessionUser := c.GetSessionUsername()
 		sessionUserOwner, sessionUserName, err := util.GetOwnerAndNameFromIdWithError(sessionUser)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 		if payment.Owner != sessionUserOwner || payment.User != sessionUserName {
-			c.ResponseError("Forbidden")
+			c.ResponseError(c.T("general:Forbidden"))
 			return
 		}
 	}
@@ -171,7 +173,7 @@ func (c *ApiController) UpdatePayment() {
 	var payment object.Payment
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &payment)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -190,7 +192,7 @@ func (c *ApiController) AddPayment() {
 	var payment object.Payment
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &payment)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -209,7 +211,7 @@ func (c *ApiController) DeletePayment() {
 	var payment object.Payment
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &payment)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -232,7 +234,7 @@ func (c *ApiController) NotifyPayment() {
 
 	payment, err := object.NotifyPayment(body, owner, paymentName, c.GetAcceptLanguage())
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -251,7 +253,7 @@ func (c *ApiController) InvoicePayment() {
 
 	payment, err := object.GetPayment(id)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -260,19 +262,27 @@ func (c *ApiController) InvoicePayment() {
 		sessionUser := c.GetSessionUsername()
 		sessionUserOwner, sessionUserName, err := util.GetOwnerAndNameFromIdWithError(sessionUser)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 		if payment.Owner != sessionUserOwner || payment.User != sessionUserName {
-			c.ResponseError("Forbidden")
+			c.ResponseError(c.T("general:Forbidden"))
 			return
 		}
 	}
 
 	invoiceUrl, err := object.InvoicePayment(payment)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.responseInvoiceError(err)
 		return
 	}
 	c.ResponseOk(invoiceUrl)
+}
+
+func (c *ApiController) responseInvoiceError(err error) {
+	code := ""
+	if errors.Is(err, pp.ErrInvoicePending) {
+		code = "invoice-pending"
+	}
+	c.ResponseErrorFromWithCode(code, err)
 }

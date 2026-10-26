@@ -1,4 +1,5 @@
 import * as Setting from "@/lib/setting";
+import i18next from "i18next";
 
 /**
  * Default object for a new organization, ported verbatim from the antd
@@ -11,7 +12,7 @@ export function newOrganization(createdTime: string) {
     owner: "admin", // this.props.account.organizationname,
     name: `organization_${randomName}`,
     createdTime,
-    displayName: `New Organization - ${randomName}`,
+    displayName: `${i18next.t("organization:New Organization")} - ${randomName}`,
     websiteUrl: "https://door.casdoor.com",
     favicon: `${Setting.StaticBaseUrl}/img/favicon.png`,
     passwordType: "bcrypt",

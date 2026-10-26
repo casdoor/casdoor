@@ -350,10 +350,8 @@ function getNodeSubtitle(node: any): string {
   case "tool_call":
     return normalizeText(node?.tool) || node?.timestamp || "-";
   case "tool_result":
-    if (node?.ok === false) {
-      return normalizeText(node?.error) || `${normalizeText(node?.tool) || "tool"} failed`;
-    }
-    return `${normalizeText(node?.tool) || "tool"} ok`;
+    // The view supplies localized status prose without rebuilding graph geometry.
+    return (node?.ok === false ? normalizeText(node?.error) : "") || normalizeText(node?.tool) || node?.timestamp || "-";
   case "join":
     return node?.timestamp || "-";
   default:

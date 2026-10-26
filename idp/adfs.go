@@ -24,6 +24,7 @@ import (
 	"net/url"
 	"time"
 
+	"github.com/casdoor/casdoor/util"
 	"github.com/lestrrat-go/jwx/jwa"
 	"github.com/lestrrat-go/jwx/jwk"
 	"github.com/lestrrat-go/jwx/jwt"
@@ -140,7 +141,7 @@ func (idp *AdfsIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
 		return nil, err
 	}
 	if len(respKeys.Keys) == 0 {
-		return nil, errors.New("the ADFS discovery keys are empty")
+		return nil, util.NewMessageError("provider:the ADFS discovery keys are empty")
 	}
 
 	respKey, err := json.Marshal(&(respKeys.Keys[0]))
@@ -167,7 +168,7 @@ func (idp *AdfsIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
 	upn := getAdfsClaim(idToken, "upn")
 	name := getAdfsClaim(idToken, "unique_name")
 	if sid == "" {
-		return nil, errors.New("the ADFS id_token has no sid claim")
+		return nil, util.NewMessageError("provider:the ADFS id_token has no sid claim")
 	}
 
 	userinfo := &UserInfo{

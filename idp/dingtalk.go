@@ -237,7 +237,7 @@ func (idp *DingTalkIdProvider) postWithBody(body interface{}, url string) ([]byt
 	}
 
 	if resp.StatusCode < 200 || resp.StatusCode > 299 {
-		return nil, fmt.Errorf("postWithBody() error, url = %s, status = %s, response = %s", url, resp.Status, string(data))
+		return nil, util.MessageErrorf("provider:postWithBody() error, url = %s, status = %s, response = %s", url, resp.Status, string(data))
 	}
 
 	return data, nil
@@ -264,11 +264,11 @@ func (idp *DingTalkIdProvider) getInnerAppAccessToken() (string, error) {
 	}
 
 	if data.ErrCode != "" {
-		return "", fmt.Errorf("getInnerAppAccessToken() error, code = %s, message = %s", data.ErrCode, data.ErrMsg)
+		return "", util.MessageErrorf("provider:getInnerAppAccessToken() error, code = %s, message = %s", data.ErrCode, data.ErrMsg)
 	}
 
 	if data.AccessToken == "" {
-		return "", fmt.Errorf("getInnerAppAccessToken() error, accessToken is empty, response = %s", string(respBytes))
+		return "", util.MessageErrorf("provider:getInnerAppAccessToken() error, accessToken is empty, response = %s", string(respBytes))
 	}
 
 	return data.AccessToken, nil
@@ -294,7 +294,7 @@ func (idp *DingTalkIdProvider) getUserId(unionId string, accessToken string) (st
 		return "", err
 	}
 	if data.ErrCode == 60121 {
-		return "", fmt.Errorf("该应用只允许本企业内部用户登录，您不属于该企业，无法登录")
+		return "", util.MessageErrorf("provider:该应用只允许本企业内部用户登录，您不属于该企业，无法登录")
 	} else if data.ErrCode != 0 {
 		return "", errors.New(data.ErrMessage)
 	}

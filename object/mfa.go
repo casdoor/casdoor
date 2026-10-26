@@ -15,8 +15,7 @@
 package object
 
 import (
-	"fmt"
-
+	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/util"
 )
 
@@ -82,7 +81,7 @@ func VerifyMfaWithLimit(user *User, verify func() error, lang string) error {
 	err = verify()
 	if err != nil {
 		if limitErr := recordVerifyCodeErrorInfo(user, mfaErrorKey, lang); limitErr != nil {
-			return fmt.Errorf("%s, %s", err.Error(), limitErr.Error())
+			return i18n.JoinErrors(", ", err, limitErr)
 		}
 		return err
 	}
@@ -95,7 +94,7 @@ func MfaRecover(user *User, recoveryCode string) error {
 	hit := false
 
 	if len(user.RecoveryCodes) == 0 {
-		return fmt.Errorf("do not have recovery codes")
+		return i18n.Errorf("mfa:do not have recovery codes")
 	}
 
 	for _, code := range user.RecoveryCodes {
@@ -106,7 +105,7 @@ func MfaRecover(user *User, recoveryCode string) error {
 		}
 	}
 	if !hit {
-		return fmt.Errorf("recovery code not found")
+		return i18n.Errorf("mfa:recovery code not found")
 	}
 
 	_, err := UpdateUser(user.GetId(), user, []string{"recovery_codes"}, false)

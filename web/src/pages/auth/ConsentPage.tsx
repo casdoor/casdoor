@@ -17,6 +17,7 @@ interface ScopeDescription {
   scope: string;
   displayName: string;
   description?: string;
+  descriptionKey?: string;
   /** openid and scopes the application doesn't define are always granted */
   required: boolean;
   /** not asked before, while the user has already answered for other scopes of this application */
@@ -80,7 +81,7 @@ export default function ConsentPage() {
           : {
             scope,
             displayName: scope,
-            description: i18next.t("consent:This scope is not defined in the application"),
+            descriptionKey: "consent:This scope is not defined in the application",
           };
         return {
           ...base,
@@ -200,8 +201,8 @@ export default function ConsentPage() {
                         <span className="text-xs font-normal text-muted-foreground">{i18next.t("organization:Required")}</span>
                       ) : null}
                     </div>
-                    {item.description ? (
-                      <p className="text-xs text-muted-foreground">{item.description}</p>
+                    {item.description || item.descriptionKey ? (
+                      <p className="text-xs text-muted-foreground">{item.descriptionKey ? i18next.t(item.descriptionKey) : item.description}</p>
                     ) : null}
                   </div>
                 </label>

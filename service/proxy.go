@@ -166,7 +166,7 @@ func handleRequest(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		responseError(w, "Casdoor site error: site not found for host: %s", r.Host)
+		responseErrorFrom(w, r, util.MessageErrorf("site:Casdoor site error: site not found for host: %s", r.Host))
 		return
 	}
 
@@ -226,7 +226,7 @@ func handleRequest(w http.ResponseWriter, r *http.Request) {
 			case siteAuthNeedLogin:
 				casdoorClient, err := getCasdoorClientFromSite(site)
 				if err != nil {
-					responseError(w, "Casdoor site error: getCasdoorClientFromSite() error: %s", err.Error())
+					responseErrorFrom(w, r, util.MessageErrorf("site:Casdoor site error: getCasdoorClientFromSite() error: %s", err))
 					return
 				}
 				if _, err = r.Cookie("casdoor_access_token"); err == nil {
@@ -235,10 +235,10 @@ func handleRequest(w http.ResponseWriter, r *http.Request) {
 				redirectToCasdoor(casdoorClient, w, r)
 				return
 			case siteAuthForbidden:
-				responseForbidden(w, "Forbidden: %s", msg)
+				responseForbiddenFrom(w, r, util.MessageErrorf("site:Forbidden: %s", msg))
 				return
 			case siteAuthError:
-				responseError(w, "Casdoor site error: %s", msg)
+				responseErrorFrom(w, r, util.MessageErrorf("site:Casdoor site error: %s", msg))
 				return
 			}
 
@@ -248,7 +248,7 @@ func handleRequest(w http.ResponseWriter, r *http.Request) {
 
 	host := site.GetHost()
 	if host == "" {
-		responseError(w, "Casdoor site error: targetUrl should not be empty for host: %s, site = %v", r.Host, site)
+		responseErrorFrom(w, r, util.MessageErrorf("site:Casdoor site error: targetUrl should not be empty for host: %s, site = %s", r.Host, site.GetId()))
 		return
 	}
 
@@ -256,30 +256,30 @@ func handleRequest(w http.ResponseWriter, r *http.Request) {
 }
 
 // evaluateSiteRules returns whether the request is allowed by the rules of the site, if not, the status code and message to respond.
-func evaluateSiteRules(site *object.Site, r *http.Request) (bool, int, string) {
+func evaluateSiteRules(site *object.Site, r *http.Request) (bool, int, error) {
 	if len(site.Rules) == 0 {
-		return true, 0, ""
+		return true, 0, nil
 	}
 
 	result, err := rule.CheckRules(site.Rules, r)
 	if err != nil {
-		return false, http.StatusInternalServerError, fmt.Sprintf("Internal Server Error: %v", err)
+		return false, http.StatusInternalServerError, util.MessageErrorf("site:Internal Server Error: %v", err)
 	}
 
-	reason := result.Reason
-	if reason != "" && site.DisableVerbose {
-		reason = "the rule has been hit"
+	var reason interface{} = result.Reason
+	if result.Reason != "" && site.DisableVerbose {
+		reason = util.NewMessageError("site:the rule has been hit")
 	}
 
 	switch result.Action {
 	case "", "Allow":
-		return true, 0, ""
+		return true, 0, nil
 	case "Block":
-		return false, result.StatusCode, fmt.Sprintf("Blocked by Casdoor: %s", reason)
+		return false, result.StatusCode, util.MessageErrorf("site:Blocked by Casdoor: %s", reason)
 	case "Drop":
-		return false, result.StatusCode, fmt.Sprintf("Dropped by Casdoor: %s", reason)
+		return false, result.StatusCode, util.MessageErrorf("site:Dropped by Casdoor: %s", reason)
 	default:
-		return false, http.StatusInternalServerError, fmt.Sprintf("Casdoor site error: %s", reason)
+		return false, http.StatusInternalServerError, util.MessageErrorf("site:Casdoor site error: %s", reason)
 	}
 }
 
@@ -288,7 +288,7 @@ func checkSiteRules(w http.ResponseWriter, site *object.Site, r *http.Request) b
 	isAllowed, statusCode, msg := evaluateSiteRules(site, r)
 	if !isAllowed {
 		w.WriteHeader(statusCode)
-		responseErrorWithoutCode(w, "%s", msg)
+		responseErrorWithoutCodeFrom(w, r, msg)
 	}
 	return isAllowed
 }

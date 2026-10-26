@@ -22,6 +22,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/casdoor/casdoor/util"
 	"golang.org/x/oauth2"
 )
 
@@ -160,7 +161,7 @@ func (idp *WeComInternalIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo,
 		return nil, fmt.Errorf("userIdResp.Errcode = %d, userIdResp.Errmsg = %s", userResp.Errcode, userResp.Errmsg)
 	}
 	if userResp.OpenId != "" {
-		return nil, fmt.Errorf("not an internal user")
+		return nil, util.MessageErrorf("provider:not an internal user")
 	}
 
 	userInfo := UserInfo{

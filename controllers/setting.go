@@ -33,7 +33,7 @@ func (c *ApiController) GetSetting() {
 
 	setting, err := object.GetSetting()
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -55,7 +55,7 @@ func (c *ApiController) UpdateSetting() {
 	var setting object.Setting
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &setting)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 

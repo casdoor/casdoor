@@ -14,7 +14,7 @@
 
 package captcha
 
-import "fmt"
+import "github.com/casdoor/casdoor/util"
 
 type CaptchaProvider interface {
 	VerifyCaptcha(token, clientId, clientSecret, clientId2 string) (bool, error)
@@ -46,7 +46,7 @@ func GetCaptchaProvider(captchaType string) CaptchaProvider {
 func VerifyCaptchaByCaptchaType(captchaType, token, clientId, clientSecret, clientId2 string) (bool, error) {
 	provider := GetCaptchaProvider(captchaType)
 	if provider == nil {
-		return false, fmt.Errorf("invalid captcha provider: %s", captchaType)
+		return false, util.MessageErrorf("verification:invalid captcha provider: %s", captchaType)
 	}
 
 	return provider.VerifyCaptcha(token, clientId, clientSecret, clientId2)

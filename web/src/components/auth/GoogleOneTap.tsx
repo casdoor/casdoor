@@ -1,4 +1,5 @@
 import * as React from "react";
+import i18next from "i18next";
 import * as Provider from "@/auth/Provider";
 import * as Setting from "@/lib/setting";
 
@@ -13,14 +14,14 @@ function loadGsiScript(): Promise<void> {
     const existing = document.querySelector(`script[src="${GSI_SRC}"]`) as HTMLScriptElement | null;
     if (existing) {
       existing.addEventListener("load", () => resolve());
-      existing.addEventListener("error", () => reject(new Error("failed to load Google Identity Services")));
+      existing.addEventListener("error", () => reject(new Error(i18next.t("login:Failed to load Google Identity Services"))));
       return;
     }
     const script = document.createElement("script");
     script.src = GSI_SRC;
     script.async = true;
     script.onload = () => resolve();
-    script.onerror = () => reject(new Error("failed to load Google Identity Services"));
+    script.onerror = () => reject(new Error(i18next.t("login:Failed to load Google Identity Services")));
     document.body.appendChild(script);
   });
 }

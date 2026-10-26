@@ -58,7 +58,7 @@ func (c *ApiController) GetOrganizations() {
 		}
 
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -68,7 +68,7 @@ func (c *ApiController) GetOrganizations() {
 			orgs, orgErr := object.GetOrganizations(owner, currentUser.Owner)
 			organizations, err := object.GetMaskedOrganizations(false, orgs, orgErr)
 			if err != nil {
-				c.ResponseError(err.Error())
+				c.ResponseErrorFrom(err)
 				return
 			}
 			c.ResponseOk(organizations)
@@ -76,7 +76,7 @@ func (c *ApiController) GetOrganizations() {
 			limit := util.ParseInt(limit)
 			count, err := object.GetOrganizationCount(owner, organizationName, field, value)
 			if err != nil {
-				c.ResponseError(err.Error())
+				c.ResponseErrorFrom(err)
 				return
 			}
 
@@ -84,7 +84,7 @@ func (c *ApiController) GetOrganizations() {
 			orgs, orgErr := object.GetPaginationOrganizations(owner, organizationName, paginator.Offset(), limit, field, value, sortField, sortOrder)
 			organizations, err := object.GetMaskedOrganizations(true, orgs, orgErr)
 			if err != nil {
-				c.ResponseError(err.Error())
+				c.ResponseErrorFrom(err)
 				return
 			}
 
@@ -105,7 +105,7 @@ func (c *ApiController) GetOrganization() {
 	org, orgErr := object.GetOrganization(id)
 	organization, err := object.GetMaskedOrganization(c.IsGlobalAdmin(), org, orgErr)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -130,12 +130,12 @@ func (c *ApiController) UpdateOrganization() {
 	var organization object.Organization
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &organization)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
 	if err = object.CheckIpWhitelist(organization.IpWhitelist, c.GetAcceptLanguage()); err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -160,23 +160,23 @@ func (c *ApiController) AddOrganization() {
 	var organization object.Organization
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &organization)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
 	count, err := object.GetOrganizationCount("", "", "", "")
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
 	if err = checkQuotaForOrganization(int(count)); err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
 	if err = object.CheckIpWhitelist(organization.IpWhitelist, c.GetAcceptLanguage()); err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -215,7 +215,7 @@ func (c *ApiController) DeleteOrganization() {
 	var organization object.Organization
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &organization)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -236,7 +236,7 @@ func (c *ApiController) GetDefaultApplication() {
 
 	application, err := object.GetDefaultApplication(id)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -255,7 +255,7 @@ func (c *ApiController) GetOrganizationNames() {
 	owner := c.Ctx.Input.Query("owner")
 	organizationNames, err := object.GetOrganizationsByFields(owner, []string{"name", "display_name"}...)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 

@@ -89,7 +89,7 @@ export function InvitationSend({
             <DialogTitle>{i18next.t("general:Send")}</DialogTitle>
           </DialogHeader>
           <div className="space-y-2 text-sm">
-            <p>You will send invitation email to:</p>
+            <p>{i18next.t("invitation:You will send invitation email to")}</p>
             <ul className="max-h-64 space-y-1 overflow-auto rounded-lg border p-3 font-mono text-xs">
               {emails.map((email) => (
                 <li key={email}>{email}</li>

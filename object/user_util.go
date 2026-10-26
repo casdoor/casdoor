@@ -1260,7 +1260,7 @@ func StringArrayToStruct[T any](stringArray [][]string) ([]*T, error) {
 			case reflect.Int:
 				intVal, err := strconv.Atoi(v)
 				if err != nil {
-					return nil, fmt.Errorf("line %d - column %s: %s", idx+1, fName, err.Error())
+					return nil, util.MessageErrorf("user:line %d - column %s: %s", idx+1, fName, err)
 				}
 				fv.SetInt(int64(intVal))
 				continue
@@ -1290,7 +1290,7 @@ func StringArrayToStruct[T any](stringArray [][]string) ([]*T, error) {
 			}
 
 			if err != nil {
-				return nil, fmt.Errorf("line %d: %s", idx, err.Error())
+				return nil, util.MessageErrorf("user:line %d: %s", idx, err)
 			}
 		}
 		instances = append(instances, instance)

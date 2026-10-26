@@ -27,7 +27,7 @@ export default function ProductListPage() {
       render: (value) =>
         value ? (
           <a href={value} target="_blank" rel="noreferrer">
-            <img src={value} alt="product" className="h-8 max-w-[130px] object-contain" />
+            <img src={value} alt={i18next.t("product:Image")} className="h-8 max-w-[130px] object-contain" />
           </a>
         ) : null,
     },
@@ -48,7 +48,7 @@ export default function ProductListPage() {
       title: i18next.t("general:State"),
       width: 120,
       sortable: true,
-      render: (value) => <Badge variant={value === "Published" ? "success" : "secondary"}>{value}</Badge>,
+      render: (value) => <Badge variant={value === "Published" ? "success" : "secondary"}>{i18next.t(`product:${value}`)}</Badge>,
     },
     tagsColumn({dataIndex: "providers", title: i18next.t("product:Payment providers"), width: 200}),
   ];

@@ -116,7 +116,7 @@ func deliverWebhookEvent(event *WebhookEvent) {
 	webhook, err := GetWebhook(event.Webhook)
 	if err != nil {
 		logs.Error(fmt.Sprintf("failed to get webhook %s: %v", event.Webhook, err))
-		UpdateWebhookEventState(event, WebhookEventStatusFailed, 0, "", fmt.Errorf("get webhook: %w", err))
+		UpdateWebhookEventState(event, WebhookEventStatusFailed, 0, "", util.MessageErrorf("webhook:get webhook: %w", err))
 		return
 	}
 
@@ -124,13 +124,13 @@ func deliverWebhookEvent(event *WebhookEvent) {
 		// Webhook has been deleted, mark event as failed
 		event.State = WebhookEventStatusFailed
 		event.LastError = "Webhook not found"
-		UpdateWebhookEventState(event, WebhookEventStatusFailed, 0, "", fmt.Errorf("webhook not found"))
+		UpdateWebhookEventState(event, WebhookEventStatusFailed, 0, "", util.MessageErrorf("webhook:webhook not found"))
 		return
 	}
 
 	if !webhook.IsEnabled {
 		// Disabled webhooks should finalize the event to avoid hot-looping forever.
-		UpdateWebhookEventState(event, WebhookEventStatusFailed, 0, "", fmt.Errorf("webhook is disabled"))
+		UpdateWebhookEventState(event, WebhookEventStatusFailed, 0, "", util.MessageErrorf("webhook:webhook is disabled"))
 		return
 	}
 
@@ -236,7 +236,7 @@ func ReplayWebhookEvent(eventId string) error {
 	}
 
 	if event == nil {
-		return fmt.Errorf("webhook event not found: %s", eventId)
+		return util.MessageErrorf("webhook:webhook event not found: %s", eventId)
 	}
 
 	// Reset the event for replay

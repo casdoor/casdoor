@@ -281,9 +281,9 @@ export default function AuthCallback() {
     };
 
     const handleCas = (ok: any, service: string) => {
-      let message = "Logged in successfully.";
+      let message = i18next.t("application:Logged in successfully");
       if (service === "") {
-        message += " Now you can visit apps protected by Casdoor.";
+        message += ` ${i18next.t("application:Now you can visit apps protected by Casdoor.")}`;
       }
       Setting.showMessage("success", message);
       if (service !== "") {

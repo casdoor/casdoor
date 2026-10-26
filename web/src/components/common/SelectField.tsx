@@ -23,6 +23,8 @@ interface SelectFieldProps {
   className?: string;
   /** rendered when the current value is not part of the options */
   allowUnknownValue?: boolean;
+  /** Presentation only for a first-party sentinel; the stored value is unchanged. */
+  unknownValueLabel?: React.ReactNode;
 }
 
 /**
@@ -37,10 +39,11 @@ export function SelectField({
   disabled,
   className,
   allowUnknownValue = true,
+  unknownValueLabel,
 }: SelectFieldProps) {
   const stringValue = value === undefined || value === null || value === "" ? undefined : String(value);
   const known = options.some((o) => String(o.id) === stringValue);
-  const items = !known && stringValue && allowUnknownValue ? [{id: stringValue, name: stringValue}, ...options] : options;
+  const items = !known && stringValue && allowUnknownValue ? [{id: stringValue, name: unknownValueLabel ?? stringValue}, ...options] : options;
 
   return (
     <Select value={stringValue} onValueChange={onChange} disabled={disabled}>

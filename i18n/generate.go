@@ -16,6 +16,9 @@ package i18n
 
 import (
 	"fmt"
+	"go/ast"
+	"go/parser"
+	"go/token"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -31,8 +34,6 @@ var (
 	reI18nFrontend          *regexp.Regexp
 	reI18nFrontendNamespace *regexp.Regexp
 	reI18nFrontendDynamic   *regexp.Regexp
-	reI18nBackendObject     *regexp.Regexp
-	reI18nBackendController *regexp.Regexp
 )
 
 func init() {
@@ -42,8 +43,6 @@ func init() {
 	reI18nFrontendNamespace = regexp.MustCompile("i18next\\.t\\([\"`](\\w+):")
 	// keys built at runtime: i18next.t("webhook:" + state), i18next.t(`rule:${item}`)
 	reI18nFrontendDynamic = regexp.MustCompile("\"(\\w+):\"\\s*\\+|`(\\w+):\\$\\{")
-	reI18nBackendObject, _ = regexp.Compile("i18n.Translate\\((.*?)\"\\)")
-	reI18nBackendController, _ = regexp.Compile("c.T\\((.*?)\"\\)")
 }
 
 func getAllI18nStringsFrontend(fileContent string, namespaces map[string]bool) []string {
@@ -126,36 +125,70 @@ func keepDerivedWords(data *I18nData, oldData *I18nData, dynamicNamespaces map[s
 	}
 }
 
-func getAllI18nStringsBackend(fileContent string, isObjectPackage bool) []string {
+func getAllI18nStringsBackend(fileContent string, _ bool) []string {
 	res := []string{}
-	if isObjectPackage {
-		matches := reI18nBackendObject.FindAllStringSubmatch(fileContent, -1)
-		if matches == nil {
-			return res
-		}
-		for _, match := range matches {
-			match := strings.SplitN(match[1], ",", 2)
-			target, err := strconv.Unquote("\"" + match[1][2:] + "\"")
-			if err != nil {
-				target = match[1][2:]
-			}
-
-			res = append(res, target)
-		}
-	} else {
-		matches := reI18nBackendController.FindAllStringSubmatch(fileContent, -1)
-		if matches == nil {
-			return res
-		}
-		for _, match := range matches {
-			target, err := strconv.Unquote("\"" + match[1][1:] + "\"")
-			if err != nil {
-				target = match[1][1:]
-			}
-			res = append(res, target)
-		}
+	file, err := parser.ParseFile(token.NewFileSet(), "", fileContent, 0)
+	if err != nil {
+		return res
 	}
-
+	ast.Inspect(file, func(node ast.Node) bool {
+		call, ok := node.(*ast.CallExpr)
+		if !ok {
+			return true
+		}
+		if identifier, ok := call.Fun.(*ast.Ident); ok && (file.Name.Name == "util" || file.Name.Name == "routers") {
+			argument := -1
+			if file.Name.Name == "util" {
+				switch identifier.Name {
+				case "MessageErrorf", "NewMessageError":
+					argument = 0
+				case "WrapMessageError":
+					argument = 1
+				}
+			} else if identifier.Name == "T" {
+				argument = 1
+			}
+			if argument >= 0 && len(call.Args) > argument {
+				if literal, ok := call.Args[argument].(*ast.BasicLit); ok && literal.Kind == token.STRING {
+					if key, err := strconv.Unquote(literal.Value); err == nil && strings.Contains(key, ":") {
+						res = append(res, key)
+					}
+				}
+			}
+			return true
+		}
+		selector, ok := call.Fun.(*ast.SelectorExpr)
+		if !ok {
+			return true
+		}
+		receiver, ok := selector.X.(*ast.Ident)
+		if !ok {
+			return true
+		}
+		argument := -1
+		if receiver.Name == "i18n" || receiver.Name == "util" {
+			switch selector.Sel.Name {
+			case "Translate", "WrapError", "WrapMessageError":
+				argument = 1
+			case "Errorf", "NewError", "MessageErrorf", "NewMessageError":
+				argument = 0
+			}
+		} else if receiver.Name == "c" && selector.Sel.Name == "T" {
+			argument = 0
+		}
+		if argument < 0 || len(call.Args) <= argument {
+			return true
+		}
+		literal, ok := call.Args[argument].(*ast.BasicLit)
+		if !ok || literal.Kind != token.STRING {
+			return true
+		}
+		key, err := strconv.Unquote(literal.Value)
+		if err == nil && strings.Contains(key, ":") {
+			res = append(res, key)
+		}
+		return true
+	})
 	return res
 }
 
@@ -222,6 +255,9 @@ func parseAllWords(category string) *I18nData {
 
 	allWords := []string{}
 	for i, path := range paths {
+		if strings.HasSuffix(path, "_test.go") || strings.HasSuffix(path, ".test.ts") || strings.HasSuffix(path, ".test.tsx") {
+			continue
+		}
 		fileContent := fileContents[i]
 
 		var words []string

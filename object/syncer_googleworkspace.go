@@ -45,13 +45,13 @@ func (p *GoogleWorkspaceSyncerProvider) GetOriginalUsers() ([]*OriginalUser, err
 // AddUser adds a new user to Google Workspace (not supported for read-only API)
 func (p *GoogleWorkspaceSyncerProvider) AddUser(user *OriginalUser) (bool, error) {
 	// Google Workspace syncer is typically read-only
-	return false, fmt.Errorf("adding users to Google Workspace is not supported")
+	return false, util.MessageErrorf("syncer:adding users to Google Workspace is not supported")
 }
 
 // UpdateUser updates an existing user in Google Workspace (not supported for read-only API)
 func (p *GoogleWorkspaceSyncerProvider) UpdateUser(user *OriginalUser) (bool, error) {
 	// Google Workspace syncer is typically read-only
-	return false, fmt.Errorf("updating users in Google Workspace is not supported")
+	return false, util.MessageErrorf("syncer:updating users in Google Workspace is not supported")
 }
 
 // TestConnection tests the Google Workspace API connection
@@ -74,13 +74,13 @@ func (p *GoogleWorkspaceSyncerProvider) getAdminService() (*admin.Service, error
 
 	adminEmail := p.Syncer.Host
 	if adminEmail == "" {
-		return nil, fmt.Errorf("admin email (host field) is required for Google Workspace syncer")
+		return nil, util.MessageErrorf("syncer:admin email (host field) is required for Google Workspace syncer")
 	}
 
 	// Parse the service account credentials from the password field
 	serviceAccountKey := p.Syncer.Password
 	if serviceAccountKey == "" {
-		return nil, fmt.Errorf("service account key (password field) is required for Google Workspace syncer")
+		return nil, util.MessageErrorf("syncer:service account key (password field) is required for Google Workspace syncer")
 	}
 
 	// Parse the JSON key
@@ -92,7 +92,7 @@ func (p *GoogleWorkspaceSyncerProvider) getAdminService() (*admin.Service, error
 
 	err := json.Unmarshal([]byte(serviceAccountKey), &serviceAccount)
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse service account key: %v", err)
+		return nil, util.MessageErrorf("syncer:failed to parse service account key: %v", err)
 	}
 
 	// Create JWT config for service account with domain-wide delegation
@@ -112,7 +112,7 @@ func (p *GoogleWorkspaceSyncerProvider) getAdminService() (*admin.Service, error
 	// Create Admin SDK service
 	service, err := admin.NewService(context.Background(), option.WithHTTPClient(client))
 	if err != nil {
-		return nil, fmt.Errorf("failed to create admin service: %v", err)
+		return nil, util.MessageErrorf("syncer:failed to create admin service: %v", err)
 	}
 
 	return service, nil
@@ -134,7 +134,7 @@ func (p *GoogleWorkspaceSyncerProvider) getGoogleWorkspaceUsers(service *admin.S
 
 		resp, err := call.Do()
 		if err != nil {
-			return nil, fmt.Errorf("failed to list users: %v", err)
+			return nil, util.MessageErrorf("syncer:failed to list users: %v", err)
 		}
 
 		allUsers = append(allUsers, resp.Users...)
@@ -237,7 +237,7 @@ func (p *GoogleWorkspaceSyncerProvider) buildUserGroupsMap(service *admin.Servic
 	// Get all groups
 	groups, err := p.getGoogleWorkspaceGroups(service)
 	if err != nil {
-		return nil, fmt.Errorf("failed to fetch groups: %v", err)
+		return nil, util.MessageErrorf("syncer:failed to fetch groups: %v", err)
 	}
 
 	// For each group, get its members and populate the user-to-groups map
@@ -270,7 +270,7 @@ func (p *GoogleWorkspaceSyncerProvider) getGroupMembers(service *admin.Service, 
 
 		resp, err := call.Do()
 		if err != nil {
-			return nil, fmt.Errorf("failed to list members: %v", err)
+			return nil, util.MessageErrorf("syncer:failed to list members: %v", err)
 		}
 
 		allMembers = append(allMembers, resp.Members...)
@@ -329,7 +329,7 @@ func (p *GoogleWorkspaceSyncerProvider) GetOriginalUserGroups(userId string) ([]
 
 		resp, err := call.Do()
 		if err != nil {
-			return nil, fmt.Errorf("failed to list user groups: %v", err)
+			return nil, util.MessageErrorf("syncer:failed to list user groups: %v", err)
 		}
 
 		for _, group := range resp.Groups {
@@ -362,7 +362,7 @@ func (p *GoogleWorkspaceSyncerProvider) getGoogleWorkspaceGroups(service *admin.
 
 		resp, err := call.Do()
 		if err != nil {
-			return nil, fmt.Errorf("failed to list groups: %v", err)
+			return nil, util.MessageErrorf("syncer:failed to list groups: %v", err)
 		}
 
 		allGroups = append(allGroups, resp.Groups...)

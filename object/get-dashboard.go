@@ -15,11 +15,11 @@
 package object
 
 import (
-	"fmt"
 	"sync"
 	"time"
 
 	"github.com/casdoor/casdoor/conf"
+	"github.com/casdoor/casdoor/util"
 )
 
 type DashboardDateItem struct {
@@ -52,7 +52,7 @@ func GetDashboard(owner string) (*map[string][]int64, error) {
 		go func(ch chan error) {
 			defer func() {
 				if r := recover(); r != nil {
-					ch <- fmt.Errorf("panic in dashboard goroutine: %v", r)
+					ch <- util.MessageErrorf("general:panic in dashboard goroutine: %v", r)
 				}
 				wg.Done()
 			}()

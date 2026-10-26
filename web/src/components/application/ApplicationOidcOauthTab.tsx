@@ -14,7 +14,7 @@ import * as Setting from "@/lib/setting";
 /** the values the token endpoint matches on, so the RFC URNs are stored as such */
 const GRANT_TYPES = [
   {value: "authorization_code", label: "Authorization Code"},
-  {value: "password", label: "Password"},
+  {value: "password", label: "Password", labelKey: "general:Password"},
   {value: "client_credentials", label: "Client Credentials"},
   {value: "token", label: "Token"},
   {value: "id_token", label: "ID Token"},
@@ -50,12 +50,12 @@ const TOKEN_ATTRIBUTE_USER_FIELDS = [
 
 /** picking one of these fills in its display name and description, as antd's CustomScopeTable */
 const DEFAULT_CUSTOM_SCOPES = [
-  {scope: "openid", displayName: "OpenID", description: "Authenticate the user and obtain an ID token"},
-  {scope: "profile", displayName: "Profile", description: "Read all user profile data"},
-  {scope: "email", displayName: "Email", description: "Access user email addresses (read-only)"},
-  {scope: "address", displayName: "Address", description: "Access the user's address information"},
-  {scope: "phone", displayName: "Phone", description: "Access the user's phone number information"},
-  {scope: "offline_access", displayName: "Offline Access", description: "Obtain refresh tokens for offline access"},
+  {scope: "openid", displayNameKey: "OpenID", descriptionKey: "application:Authenticate the user and obtain an ID token"},
+  {scope: "profile", displayNameKey: "application:Profile", descriptionKey: "application:Read all user profile data"},
+  {scope: "email", displayNameKey: "general:Email", descriptionKey: "application:Access user email addresses (read-only)"},
+  {scope: "address", displayNameKey: "user:Address", descriptionKey: "application:Access the user's address information"},
+  {scope: "phone", displayNameKey: "general:Phone", descriptionKey: "application:Access the user's phone number information"},
+  {scope: "offline_access", displayNameKey: "application:Offline Access", descriptionKey: "application:Obtain refresh tokens for offline access"},
 ];
 
 /** The "OIDC/OAuth" tab: the client credentials, the token format, and what goes into a token. */
@@ -95,7 +95,7 @@ export function ApplicationOidcOauthTab({application, updateField}: ApplicationT
         <MultiSelect
           value={application.grantTypes ?? []}
           onChange={(v) => updateField("grantTypes", v)}
-          options={GRANT_TYPES}
+          options={GRANT_TYPES.map((item) => ({...item, label: i18next.t(item.labelKey ?? `application:${item.label}`)}))}
         />
       </FormRow>
       {/* scopes are ScopeItem objects (name / displayName / description), the
@@ -113,7 +113,7 @@ export function ApplicationOidcOauthTab({application, updateField}: ApplicationT
               render: (row: any, index, update) => (
                 <Input
                   value={row.name ?? ""}
-                  placeholder="e.g., files:read"
+                  placeholder={i18next.t("application:Scope name example")}
                   onChange={(e) => update({name: e.target.value})}
                 />
               ),
@@ -125,7 +125,7 @@ export function ApplicationOidcOauthTab({application, updateField}: ApplicationT
               render: (row: any, index, update) => (
                 <Input
                   value={row.displayName ?? ""}
-                  placeholder="e.g., Read Files"
+                  placeholder={i18next.t("application:Scope display name example")}
                   onChange={(e) => update({displayName: e.target.value})}
                 />
               ),
@@ -137,7 +137,7 @@ export function ApplicationOidcOauthTab({application, updateField}: ApplicationT
               render: (row: any, index, update) => (
                 <Input
                   value={row.description ?? ""}
-                  placeholder="e.g., Allow reading your files and documents"
+                  placeholder={i18next.t("application:Scope description example")}
                   onChange={(e) => update({description: e.target.value})}
                 />
               ),
@@ -230,11 +230,15 @@ export function ApplicationOidcOauthTab({application, updateField}: ApplicationT
                     <Input
                       value={row.scope ?? ""}
                       list={`custom-scope-options-${index}`}
-                      placeholder="Select or input scope"
+                      placeholder={i18next.t("application:Select or input scope")}
                       aria-invalid={!(row.scope ?? "").trim()}
                       onChange={(e) => {
                         const picked = available.find((item) => item.scope === e.target.value);
-                        patch(picked ?? {scope: e.target.value});
+                        patch(picked ? {
+                          scope: picked.scope,
+                          displayName: picked.displayNameKey.includes(":") ? i18next.t(picked.displayNameKey) : picked.displayNameKey,
+                          description: i18next.t(picked.descriptionKey),
+                        } : {scope: e.target.value});
                       }}
                     />
                     <datalist id={`custom-scope-options-${index}`}>
@@ -280,7 +284,7 @@ export function ApplicationOidcOauthTab({application, updateField}: ApplicationT
         <SelectField
           value={application.tokenGroupFormat || "ID"}
           onChange={(v) => updateField("tokenGroupFormat", v)}
-          options={TOKEN_GROUP_FORMATS}
+          options={TOKEN_GROUP_FORMATS.map((item) => ({...item, name: i18next.t(`application:${item.name}`)}))}
         />
       </FormRow>
       <FormRow block labelKey="application:Token fields">

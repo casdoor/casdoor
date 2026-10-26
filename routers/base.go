@@ -17,6 +17,7 @@ package routers
 import (
 	stdcontext "context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net"
 	"net/http"
@@ -47,15 +48,32 @@ func isMcpRequest(urlPath string) bool {
 // responseInvalidToken answers 401 with a challenge on the userinfo endpoint (RFC 6750 section 3.1,
 // RFC 9449 section 7.1), other APIs keep answering 200 with the error in the body
 func responseInvalidToken(ctx *context.Context, token *object.Token, errorCode string, error string) {
+	responseInvalidTokenFrom(ctx, token, errorCode, errors.New(error))
+}
+
+func responseInvalidTokenFrom(ctx *context.Context, token *object.Token, errorCode string, err error) {
+	// RFC challenge prose stays in its original form; only the human JSON body localizes.
+	diagnostic := err.Error()
 	if ctx.Request.URL.Path == "/api/userinfo" {
-		challenge := fmt.Sprintf("Bearer error=\"%s\", error_description=%q", errorCode, error)
+		challenge := fmt.Sprintf("Bearer error=\"%s\", error_description=%q", errorCode, diagnostic)
 		if (token != nil && token.TokenType == "DPoP") || strings.HasPrefix(ctx.Request.Header.Get("Authorization"), "DPoP ") {
-			challenge = fmt.Sprintf("DPoP error=\"%s\", error_description=%q, algs=\"%s\"", errorCode, error, strings.Join(object.DPoPSigningAlgs, " "))
+			challenge = fmt.Sprintf("DPoP error=\"%s\", error_description=%q, algs=\"%s\"", errorCode, diagnostic, strings.Join(object.DPoPSigningAlgs, " "))
 		}
 		ctx.Output.Header("WWW-Authenticate", challenge)
 		ctx.Output.SetStatus(http.StatusUnauthorized)
 	}
-	responseError(ctx, error)
+	responseErrorFrom(ctx, err)
+}
+
+func responseErrorFrom(ctx *context.Context, err error, data ...interface{}) {
+	message := ""
+	if err != nil {
+		message = err.Error()
+		if !isMcpRequest(ctx.Request.URL.Path) {
+			message = i18n.LocalizeError(getAcceptLanguage(ctx), err)
+		}
+	}
+	responseError(ctx, message, data...)
 }
 
 func responseError(ctx *context.Context, error string, data ...interface{}) {
@@ -153,7 +171,7 @@ func getUsernameByClientIdSecret(ctx *context.Context) (string, error) {
 			// silently ignore it instead of returning an error that would break the whole system.
 			return "", nil
 		}
-		return "", fmt.Errorf("Application not found for client ID: %s", clientId)
+		return "", util.MessageErrorf("auth:Application not found for client ID: %s", clientId)
 	}
 
 	if application.ClientSecret != clientSecret {
@@ -161,7 +179,7 @@ func getUsernameByClientIdSecret(ctx *context.Context) (string, error) {
 			// Same as above: the secret mismatch may be due to proxy-level Basic Auth credentials.
 			return "", nil
 		}
-		return "", fmt.Errorf("Incorrect client secret for application: %s", application.Name)
+		return "", util.MessageErrorf("auth:Incorrect client secret for application: %s", application.Name)
 	}
 
 	return object.GetAppUserId(application), nil
@@ -180,24 +198,24 @@ func getUsernameByAccessKey(ctx *context.Context) (string, error) {
 		return "", err
 	}
 	if key == nil {
-		return "", fmt.Errorf("Access key not found: %s", accessKey)
+		return "", util.MessageErrorf("auth:Access key not found: %s", accessKey)
 	}
 
 	if key.AccessSecret != accessSecret {
-		return "", fmt.Errorf("Incorrect access secret for key: %s", key.Name)
+		return "", util.MessageErrorf("auth:Incorrect access secret for key: %s", key.Name)
 	}
 
 	if key.State != "Active" {
-		return "", fmt.Errorf("Access key is not active: %s", key.Name)
+		return "", util.MessageErrorf("auth:Access key is not active: %s", key.Name)
 	}
 
 	if key.ExpireTime != "" {
 		expireTime, err := time.Parse(time.RFC3339, key.ExpireTime)
 		if err != nil {
-			return "", fmt.Errorf("Invalid expire time format for key: %s", key.Name)
+			return "", util.MessageErrorf("auth:Invalid expire time format for key: %s", key.Name)
 		}
 		if time.Now().After(expireTime) {
-			return "", fmt.Errorf("Access key has expired, expireTime = %s", key.ExpireTime)
+			return "", util.MessageErrorf("auth:Access key has expired, expireTime = %s", key.ExpireTime)
 		}
 	}
 
@@ -207,7 +225,7 @@ func getUsernameByAccessKey(ctx *context.Context) (string, error) {
 			return "", err
 		}
 		if !isUserActive {
-			return "", fmt.Errorf("The user of access key: %s is forbidden or deleted", key.Name)
+			return "", util.MessageErrorf("auth:The user of access key: %s is forbidden or deleted", key.Name)
 		}
 		return util.GetId(key.Organization, key.User), nil
 	}

@@ -37,18 +37,18 @@ func (c *ApiController) Scan() {
 	name := strings.TrimSpace(c.GetString("name"))
 	target := strings.TrimSpace(c.GetString("target"))
 	if owner == "" || name == "" {
-		c.ResponseError("provider owner and name are required")
+		c.ResponseError(c.T("general:provider owner and name are required"))
 		return
 	}
 
 	providerId := fmt.Sprintf("%s/%s", owner, name)
 	configuredProvider, err := object.GetProvider(providerId)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 	if configuredProvider == nil {
-		c.ResponseError("provider does not exist")
+		c.ResponseError(c.T("general:provider does not exist"))
 		return
 	}
 
@@ -57,43 +57,43 @@ func (c *ApiController) Scan() {
 	}
 
 	if configuredProvider.Category != "Scan" || configuredProvider.Type != "Security Scan" {
-		c.ResponseError("provider type Security Scan is required")
+		c.ResponseError(c.T("general:provider type Security Scan is required"))
 		return
 	}
 
 	if strings.EqualFold(configuredProvider.SubType, "Url") && target == "" && strings.TrimSpace(configuredProvider.Content) == "" {
-		c.ResponseError("target URL is required for Url scan")
+		c.ResponseError(c.T("general:target URL is required for Url scan"))
 		return
 	}
 
 	scanProvider, err := scan.GetScanProviderFromProvider(configuredProvider)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
 	rawResult, err := scanProvider.Scan(target, "")
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
 	parsedResult, err := scanProvider.ParseResult(rawResult)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
 	configuredProvider.Metadata = parsedResult
 	_, err = object.UpdateProvider(configuredProvider.GetId(), configuredProvider)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
 	var result interface{}
 	if err := json.Unmarshal([]byte(parsedResult), &result); err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 

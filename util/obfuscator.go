@@ -44,7 +44,7 @@ func decryptDesOrAes(passwordCipher string, block cipher.Block) (string, error) 
 	}
 
 	if len(passwordCipherBytes) < block.BlockSize() {
-		return "", fmt.Errorf("the password ciphertext should contain a random hexadecimal string of length %d at the beginning", block.BlockSize()*2)
+		return "", MessageErrorf("util:the password ciphertext should contain a random hexadecimal string of length %d at the beginning", block.BlockSize()*2)
 	}
 
 	iv := passwordCipherBytes[:block.BlockSize()]
@@ -85,6 +85,6 @@ func GetUnobfuscatedPassword(passwordObfuscatorType string, passwordObfuscatorKe
 
 		return decryptDesOrAes(passwordCipher, block)
 	} else {
-		return "", fmt.Errorf("unsupported password obfuscator type: %s", passwordObfuscatorType)
+		return "", MessageErrorf("util:unsupported password obfuscator type: %s", passwordObfuscatorType)
 	}
 }

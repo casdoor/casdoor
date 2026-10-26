@@ -156,6 +156,7 @@ function ColumnFilter({
   const [open, setOpen] = React.useState(false);
   const selected = query.searchedColumn === column.dataIndex ? query.searchText : "";
   const active = selected !== "";
+  const groupId = React.useId();
 
   const pick = (value: string) => {
     onQueryChange({searchText: value, searchedColumn: column.dataIndex, page: 1});
@@ -170,8 +171,8 @@ function ColumnFilter({
   const renderOption = (option: ColumnFilterOption) => {
     if (option.children?.length) {
       return (
-        <div key={option.value} role="group" aria-label={String(option.value)} className="py-1">
-          <div className="px-2 py-1 text-xs font-semibold text-muted-foreground">{option.label}</div>
+        <div key={option.value} role="group" aria-labelledby={`${groupId}-${encodeURIComponent(option.value)}`} className="py-1">
+          <div id={`${groupId}-${encodeURIComponent(option.value)}`} className="px-2 py-1 text-xs font-semibold text-muted-foreground">{option.label}</div>
           {option.children.map((child) => renderOption(child))}
         </div>
       );

@@ -142,24 +142,24 @@ func (enforcer *Enforcer) InitEnforcer() error {
 	}
 
 	if enforcer.Model == "" {
-		return fmt.Errorf("the model for enforcer: %s should not be empty", enforcer.GetId())
+		return util.MessageErrorf("enforcer:the model for enforcer: %s should not be empty", enforcer.GetId())
 	}
 	if enforcer.Adapter == "" {
-		return fmt.Errorf("the adapter for enforcer: %s should not be empty", enforcer.GetId())
+		return util.MessageErrorf("enforcer:the adapter for enforcer: %s should not be empty", enforcer.GetId())
 	}
 
 	m, err := GetModel(enforcer.Model)
 	if err != nil {
 		return err
 	} else if m == nil {
-		return fmt.Errorf("the model: %s for enforcer: %s is not found", enforcer.Model, enforcer.GetId())
+		return util.MessageErrorf("enforcer:the model: %s for enforcer: %s is not found", enforcer.Model, enforcer.GetId())
 	}
 
 	a, err := GetAdapter(enforcer.Adapter)
 	if err != nil {
 		return err
 	} else if a == nil {
-		return fmt.Errorf("the adapter: %s for enforcer: %s is not found", enforcer.Adapter, enforcer.GetId())
+		return util.MessageErrorf("enforcer:the adapter: %s for enforcer: %s is not found", enforcer.Adapter, enforcer.GetId())
 	}
 
 	err = m.initModel()
@@ -185,7 +185,7 @@ func GetInitializedEnforcer(enforcerId string) (*Enforcer, error) {
 	if err != nil {
 		return nil, err
 	} else if enforcer == nil {
-		return nil, fmt.Errorf("the enforcer: %s is not found", enforcerId)
+		return nil, util.MessageErrorf("enforcer:the enforcer: %s is not found", enforcerId)
 	}
 
 	err = enforcer.InitEnforcer()
@@ -201,14 +201,14 @@ func GetPolicies(id string) ([]*xormadapter.CasbinRule, error) {
 		return nil, err
 	}
 	if enforcer == nil {
-		return nil, fmt.Errorf("the enforcer: %s is not found", id)
+		return nil, util.MessageErrorf("enforcer:the enforcer: %s is not found", id)
 	}
 
 	a, err := GetAdapter(enforcer.Adapter)
 	if err != nil {
 		return nil, err
 	} else if a == nil {
-		return nil, fmt.Errorf("the adapter: %s for enforcer: %s is not found", enforcer.Adapter, enforcer.GetId())
+		return nil, util.MessageErrorf("enforcer:the adapter: %s for enforcer: %s is not found", enforcer.Adapter, enforcer.GetId())
 	}
 
 	err = a.InitAdapter()
@@ -376,7 +376,7 @@ func (enforcer *Enforcer) LoadModelCfg() error {
 	if err != nil {
 		return err
 	} else if model == nil {
-		return fmt.Errorf("the model: %s for enforcer: %s is not found", enforcer.Model, enforcer.GetId())
+		return util.MessageErrorf("enforcer:the model: %s for enforcer: %s is not found", enforcer.Model, enforcer.GetId())
 	}
 
 	enforcer.ModelCfg, err = getModelCfg(model)

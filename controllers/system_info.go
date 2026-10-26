@@ -37,7 +37,7 @@ func (c *ApiController) GetSystemInfo() {
 
 	systemInfo, err := util.GetSystemInfo()
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -53,7 +53,7 @@ func (c *ApiController) GetSystemInfo() {
 func (c *ApiController) GetVersionInfo() {
 	versionInfo, err := util.GetVersionInfo()
 	if err != nil && !errors.Is(err, git.ErrRepositoryNotExists) {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -92,7 +92,7 @@ func (c *ApiController) UpgradeSystem() {
 	}
 
 	if !strings.HasPrefix(c.Ctx.Input.Header("Content-Type"), "application/json") {
-		c.ResponseError("the request body must be JSON")
+		c.ResponseError(c.T("general:the request body must be JSON"))
 		return
 	}
 
@@ -101,13 +101,13 @@ func (c *ApiController) UpgradeSystem() {
 	}
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &req)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
 	err = upgrade.StartUpgrade(req.Version, c.GetSessionUsername())
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 

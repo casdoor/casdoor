@@ -39,7 +39,7 @@ func (c *ApiController) RevokeConsent() {
 	var consent object.ConsentRecord
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &consent)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -57,7 +57,7 @@ func (c *ApiController) RevokeConsent() {
 
 	userObj, err := object.GetUser(userId)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 	if userObj == nil {
@@ -93,7 +93,7 @@ func (c *ApiController) RevokeConsent() {
 	userObj.ApplicationScopes = newScopes
 	success, err := object.UpdateUser(userObj.GetId(), userObj, nil, false)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 	c.ResponseOk(success)
@@ -130,7 +130,7 @@ func (c *ApiController) GrantConsent() {
 
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &request)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -144,7 +144,7 @@ func (c *ApiController) GrantConsent() {
 	// Validate application by clientId
 	application, err := object.GetApplicationByClientId(request.ClientId)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 	if application == nil {
@@ -161,7 +161,7 @@ func (c *ApiController) GrantConsent() {
 	// Update user's ApplicationScopes
 	userObj, err := object.GetUser(userId)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 	if userObj == nil {
@@ -187,7 +187,7 @@ func (c *ApiController) GrantConsent() {
 
 	_, err = object.UpdateUser(userObj.GetId(), userObj, []string{"application_scopes"}, false)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -210,7 +210,7 @@ func (c *ApiController) GrantConsent() {
 		c.GetAcceptLanguage(),
 	)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 

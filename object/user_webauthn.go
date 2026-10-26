@@ -16,12 +16,12 @@ package object
 
 import (
 	"encoding/base64"
-	"fmt"
 	"net/url"
 	"slices"
 	"strings"
 
 	"github.com/casdoor/casdoor/conf"
+	"github.com/casdoor/casdoor/util"
 	"github.com/go-webauthn/webauthn/protocol"
 	"github.com/go-webauthn/webauthn/webauthn"
 )
@@ -51,7 +51,7 @@ func GetWebAuthnObject(host string) (*webauthn.WebAuthn, error) {
 func getWebAuthnRpIdAndOrigins(originBackend string) (string, []string, error) {
 	localUrl, err := url.Parse(originBackend)
 	if err != nil {
-		return "", nil, fmt.Errorf("error when parsing origin: %w", err)
+		return "", nil, util.MessageErrorf("user:error when parsing origin: %w", err)
 	}
 
 	rpId := strings.Split(localUrl.Host, ":")[0]
@@ -76,12 +76,12 @@ func getWebAuthnRpIdAndOrigins(originBackend string) (string, []string, error) {
 	for _, origin := range rpOrigins {
 		originUrl, err := url.Parse(origin)
 		if err != nil || originUrl.Scheme == "" || originUrl.Host == "" {
-			return "", nil, fmt.Errorf("invalid WebAuthn origin: %s", origin)
+			return "", nil, util.MessageErrorf("user:invalid WebAuthn origin: %s", origin)
 		}
 
 		hostname := strings.ToLower(originUrl.Hostname())
 		if hostname != strings.ToLower(rpId) && !strings.HasSuffix(hostname, "."+strings.ToLower(rpId)) {
-			return "", nil, fmt.Errorf("the WebAuthn RP ID: %s is not a registrable suffix of the origin: %s", rpId, origin)
+			return "", nil, util.MessageErrorf("user:the WebAuthn RP ID: %s is not a registrable suffix of the origin: %s", rpId, origin)
 		}
 	}
 

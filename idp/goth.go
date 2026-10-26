@@ -417,7 +417,7 @@ func NewGothIdProvider(providerType string, clientId string, clientSecret string
 			Session:  &zoom.Session{},
 		}
 	default:
-		return nil, fmt.Errorf("OAuth Goth provider type: %s is not supported", providerType)
+		return nil, util.MessageErrorf("provider:OAuth Goth provider type: %s is not supported", providerType)
 	}
 
 	return &idp, nil

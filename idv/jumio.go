@@ -21,6 +21,8 @@ import (
 	"io"
 	"net/http"
 	"time"
+
+	"github.com/casdoor/casdoor/util"
 )
 
 type JumioIdvProvider struct {
@@ -56,11 +58,11 @@ func NewJumioIdvProvider(clientId string, clientSecret string, endpoint string) 
 
 func (provider *JumioIdvProvider) VerifyIdentity(idCardType string, idCard string, realName string) (bool, error) {
 	if provider.ClientId == "" || provider.ClientSecret == "" {
-		return false, fmt.Errorf("Jumio credentials not configured")
+		return false, util.MessageErrorf("user:Jumio credentials not configured")
 	}
 
 	if provider.Endpoint == "" {
-		return false, fmt.Errorf("Jumio endpoint not configured")
+		return false, util.MessageErrorf("user:Jumio endpoint not configured")
 	}
 
 	if idCard == "" || realName == "" {
@@ -92,7 +94,7 @@ func (provider *JumioIdvProvider) VerifyIdentity(idCardType string, idCard strin
 	// Create HTTP request to Jumio API
 	req, err := http.NewRequest("POST", fmt.Sprintf("%s/api/v4/initiate", provider.Endpoint), bytes.NewBuffer(reqBody))
 	if err != nil {
-		return false, fmt.Errorf("failed to create request: %v", err)
+		return false, util.MessageErrorf("user:failed to create request: %v", err)
 	}
 
 	// Set authentication headers
@@ -103,25 +105,25 @@ func (provider *JumioIdvProvider) VerifyIdentity(idCardType string, idCard strin
 	// Send request
 	resp, err := client.Do(req)
 	if err != nil {
-		return false, fmt.Errorf("failed to send request to Jumio: %v", err)
+		return false, util.MessageErrorf("user:failed to send request to Jumio: %v", err)
 	}
 	defer resp.Body.Close()
 
 	// Read response
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return false, fmt.Errorf("failed to read response: %v", err)
+		return false, util.MessageErrorf("user:failed to read response: %v", err)
 	}
 
 	// Check response status
 	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusCreated {
-		return false, fmt.Errorf("Jumio API returned error status %d: %s", resp.StatusCode, string(body))
+		return false, util.MessageErrorf("user:Jumio API returned error status %d: %s", resp.StatusCode, string(body))
 	}
 
 	// Parse response
 	var initiateResp JumioInitiateResponse
 	if err := json.Unmarshal(body, &initiateResp); err != nil {
-		return false, fmt.Errorf("failed to parse Jumio response: %v", err)
+		return false, util.MessageErrorf("user:failed to parse Jumio response: %v", err)
 	}
 
 	// In a real implementation, the user would be redirected to initiateResp.RedirectUrl
@@ -139,5 +141,5 @@ func (provider *JumioIdvProvider) VerifyIdentity(idCardType string, idCard strin
 		return true, nil
 	}
 
-	return false, fmt.Errorf("verification could not be initiated")
+	return false, util.MessageErrorf("user:verification could not be initiated")
 }

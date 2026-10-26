@@ -40,6 +40,7 @@ import * as AuthBackend from "@/backend/AuthBackend";
 import * as UserBackend from "@/backend/UserBackend";
 import * as OrganizationBackend from "@/backend/OrganizationBackend";
 import * as Setting from "@/lib/setting";
+import {useLanguageVersion} from "@/hooks/use-language";
 
 type LoginType = "login" | "code" | "cas" | "saml" | "device";
 type LoginMethod = "password" | "verificationCode" | "verificationCodeEmail" | "verificationCodePhone" | "ldap" | "webAuthn" | "wechat" | "faceId" | "magicLink" | "device";
@@ -119,8 +120,8 @@ function getSigninMethods(application: any, type: string) {
       return;
     }
     let label = signinMethod.name === signinMethod.displayName ? getSigninMethodLabel(value) : signinMethod.displayName;
-    if (signinMethods.length >= 4 && label === "Verification code") {
-      label = "Code";
+    if (signinMethods.length >= 4 && signinMethod.name === "Verification code" && signinMethod.name === signinMethod.displayName) {
+      label = i18next.t("login:Short verification code label");
     }
     methods.push({value, label});
   });
@@ -297,6 +298,7 @@ interface LoginPageProps {
 }
 
 export default function LoginPage({type = "login", application: applicationProp, preview}: LoginPageProps) {
+  useLanguageVersion();
   const params = useParams();
   const location = useLocation();
   const navigate = useNavigate();
@@ -583,9 +585,9 @@ export default function LoginPage({type = "login", application: applicationProp,
   };
 
   const handleCasLoginResult = (res: any, casParams: any) => {
-    let message = "Logged in successfully. ";
+    let message = i18next.t("application:Logged in successfully");
     if (casParams.service === "") {
-      message += "Now you can visit apps protected by Casdoor.";
+      message += ` ${i18next.t("application:Now you can visit apps protected by Casdoor.")}`;
     }
     Setting.showMessage("success", message);
     if (casParams.service !== "") {
@@ -740,7 +742,7 @@ export default function LoginPage({type = "login", application: applicationProp,
   };
 
   const fieldError = (field: string) =>
-    signinErrors[field] ? <p className="text-xs text-destructive">{signinErrors[field]}</p> : null;
+    signinErrors[field] ? <p className="text-xs text-destructive">{validateSignin()[field]}</p> : null;
 
   const clearError = (field: string) =>
     setSigninErrors((prev) => (prev[field] ? {...prev, [field]: ""} : prev));
@@ -1211,7 +1213,7 @@ export default function LoginPage({type = "login", application: applicationProp,
     return (
       <AuthLayout preview={!!preview}>
         <Alert variant="destructive">
-          <AlertDescription>{`Code ${i18next.t("subscription:Expired")}`}</AlertDescription>
+          <AlertDescription>{i18next.t("login:Device login expired")}</AlertDescription>
         </Alert>
       </AuthLayout>
     );

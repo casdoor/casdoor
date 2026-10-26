@@ -39,7 +39,7 @@ func (c *ApiController) KerberosLogin() {
 
 	application, err := object.GetApplication(fmt.Sprintf("admin/%s", applicationName))
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 	if application == nil {
@@ -49,16 +49,16 @@ func (c *ApiController) KerberosLogin() {
 
 	organization, err := object.GetOrganization(util.GetId("admin", application.Organization))
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 	if organization == nil {
-		c.ResponseError(fmt.Sprintf("The organization: %s does not exist", application.Organization))
+		c.ResponseError(fmt.Sprintf(c.T("auth:The organization: %s does not exist"), application.Organization))
 		return
 	}
 
 	if organization.KerberosRealm == "" || organization.KerberosKeytab == "" {
-		c.ResponseError("Kerberos is not configured for this organization")
+		c.ResponseError(c.T("general:Kerberos is not configured for this organization"))
 		return
 	}
 
@@ -66,7 +66,7 @@ func (c *ApiController) KerberosLogin() {
 	if authHeader == "" || !strings.HasPrefix(authHeader, "Negotiate ") {
 		c.Ctx.Output.Header("WWW-Authenticate", "Negotiate")
 		c.Ctx.Output.SetStatus(401)
-		c.Ctx.Output.Body([]byte("Kerberos authentication required"))
+		c.Ctx.Output.Body([]byte(c.T("native:Kerberos authentication required")))
 		return
 	}
 
@@ -75,13 +75,13 @@ func (c *ApiController) KerberosLogin() {
 	kerberosUsername, err := object.ValidateKerberosToken(organization, spnegoToken)
 	if err != nil {
 		c.Ctx.Output.Header("WWW-Authenticate", "Negotiate")
-		c.ResponseError(fmt.Sprintf("Kerberos authentication failed: %s", err.Error()))
+		c.ResponseErrorFrom(util.MessageErrorf("general:Kerberos authentication failed: %s", err))
 		return
 	}
 
 	user, err := object.GetUserByKerberosName(organization.Name, kerberosUsername)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 	if user == nil {

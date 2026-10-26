@@ -857,7 +857,7 @@ func CheckLdapPasswordForget(user *User) error {
 		}
 	}
 
-	return fmt.Errorf("the password of the LDAP user: %s is managed by the LDAP server, please contact your administrator to reset it", user.Name)
+	return util.MessageErrorf("ldap:the password of the LDAP user: %s is managed by the LDAP server, please contact your administrator to reset it", user.Name)
 }
 
 func ResetLdapPassword(user *User, oldPassword string, newPassword string, lang string) error {

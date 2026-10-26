@@ -43,7 +43,7 @@ func (c *ApiController) GetProducts() {
 	if limit == "" || page == "" {
 		products, err := object.GetProducts(owner)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -52,14 +52,14 @@ func (c *ApiController) GetProducts() {
 		limit := util.ParseInt(limit)
 		count, err := object.GetProductCount(owner, field, value)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
 		paginator := pagination.NewPaginator(c.Ctx.Request, limit, count)
 		products, err := object.GetPaginationProducts(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -79,13 +79,13 @@ func (c *ApiController) GetProduct() {
 
 	product, err := object.GetProduct(id)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
 	err = object.ExtendProductWithProviders(product)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -106,7 +106,7 @@ func (c *ApiController) UpdateProduct() {
 	var product object.Product
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &product)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -125,7 +125,7 @@ func (c *ApiController) AddProduct() {
 	var product object.Product
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &product)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -144,7 +144,7 @@ func (c *ApiController) DeleteProduct() {
 	var product object.Product
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &product)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -177,7 +177,7 @@ func (c *ApiController) BuyProduct() {
 
 	customPrice, err := strconv.ParseFloat(customPriceStr, 64)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -187,7 +187,7 @@ func (c *ApiController) BuyProduct() {
 
 	owner, _, err := util.GetOwnerAndNameFromIdWithError(id)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -210,7 +210,7 @@ func (c *ApiController) BuyProduct() {
 
 	user, err := object.GetUser(userId)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 	if user == nil {
@@ -222,7 +222,7 @@ func (c *ApiController) BuyProduct() {
 
 	payment, attachInfo, err := object.BuyProduct(id, user, providerName, pricingName, planName, host, paymentEnv, customPrice, c.GetAcceptLanguage(), couponCode)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 

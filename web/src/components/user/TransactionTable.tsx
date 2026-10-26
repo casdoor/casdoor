@@ -1,4 +1,5 @@
 import i18next from "i18next";
+import {enumLabel, PAYMENT_STATES} from "@/lib/enum-labels";
 import {Link} from "react-router-dom";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import * as Setting from "@/lib/setting";
@@ -89,7 +90,7 @@ export function TransactionTable({
                     </Link>
                   ) : null}
                 </TableCell>
-                <TableCell>{record.state}</TableCell>
+                <TableCell>{enumLabel(PAYMENT_STATES, record.state)}</TableCell>
                 <TableCell>{Setting.getPriceDisplay(record.amount, record.currency)}</TableCell>
               </TableRow>
             ))

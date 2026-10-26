@@ -95,7 +95,7 @@ func GetOpenClawSessionGraph(id string) (*OpenClawSessionGraph, error) {
 
 	records, err := collectOpenClawSessionGraphRecords(entry, anchorPayload)
 	if err != nil {
-		return nil, fmt.Errorf("failed to load OpenClaw session entries from database: %w", err)
+		return nil, util.MessageErrorf("entry:failed to load OpenClaw session entries from database: %w", err)
 	}
 
 	graph := buildOpenClawSessionGraphFromEntries(anchorPayload, entry.Name, records)
@@ -111,12 +111,12 @@ func GetOpenClawSessionGraph(id string) (*OpenClawSessionGraph, error) {
 
 func parseOpenClawSessionGraphPayload(entry *Entry) (openClawBehaviorPayload, error) {
 	if entry == nil {
-		return openClawBehaviorPayload{}, fmt.Errorf("entry is nil")
+		return openClawBehaviorPayload{}, util.MessageErrorf("entry:entry is nil")
 	}
 
 	message := strings.TrimSpace(entry.Message)
 	if message == "" {
-		return openClawBehaviorPayload{}, fmt.Errorf("message is empty")
+		return openClawBehaviorPayload{}, util.MessageErrorf("entry:message is empty")
 	}
 
 	var payload openClawBehaviorPayload
@@ -140,13 +140,13 @@ func parseOpenClawSessionGraphPayload(entry *Entry) (openClawBehaviorPayload, er
 	payload.Timestamp = strings.TrimSpace(firstNonEmpty(payload.Timestamp, entry.CreatedTime))
 
 	if payload.SessionID == "" {
-		return openClawBehaviorPayload{}, fmt.Errorf("sessionId is empty")
+		return openClawBehaviorPayload{}, util.MessageErrorf("entry:sessionId is empty")
 	}
 	if payload.EntryID == "" {
-		return openClawBehaviorPayload{}, fmt.Errorf("entryId is empty")
+		return openClawBehaviorPayload{}, util.MessageErrorf("entry:entryId is empty")
 	}
 	if payload.Kind == "" {
-		return openClawBehaviorPayload{}, fmt.Errorf("kind is empty")
+		return openClawBehaviorPayload{}, util.MessageErrorf("entry:kind is empty")
 	}
 
 	return payload, nil
@@ -154,7 +154,7 @@ func parseOpenClawSessionGraphPayload(entry *Entry) (openClawBehaviorPayload, er
 
 func collectOpenClawSessionGraphRecords(anchorEntry *Entry, anchorPayload openClawBehaviorPayload) ([]openClawSessionGraphRecord, error) {
 	if anchorEntry == nil {
-		return nil, fmt.Errorf("anchor entry is nil")
+		return nil, util.MessageErrorf("entry:anchor entry is nil")
 	}
 
 	entries := []*Entry{}

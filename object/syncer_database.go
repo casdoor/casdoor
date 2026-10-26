@@ -67,7 +67,7 @@ func CheckSyncerDatabaseTarget(syncer *Syncer) error {
 
 	for name, table := range map[string]string{"table": syncer.Table, "affiliation table": syncer.AffiliationTable} {
 		if table != "" && !isValidSyncerTable(table) {
-			return fmt.Errorf("the %s: %s of the syncer is not a valid table name", name, table)
+			return util.MessageErrorf("syncer:the %s: %s of the syncer is not a valid table name", name, table)
 		}
 	}
 
@@ -92,12 +92,12 @@ func CheckSyncerDatabaseTarget(syncer *Syncer) error {
 		return nil
 	}
 	if strings.EqualFold(syncer.Database, conf.GetConfigString("dbName")) {
-		return fmt.Errorf("the database: %s of the syncer is Casdoor's own database, which cannot be synced", syncer.Database)
+		return util.MessageErrorf("syncer:the database: %s of the syncer is Casdoor's own database, which cannot be synced", syncer.Database)
 	}
 	if isTrustedDbHost(syncer.Organization, syncer.Host, syncer.Port) {
 		return nil
 	}
-	return fmt.Errorf("the host: %s:%d of the syncer is Casdoor's own database server, which cannot be synced", syncer.Host, syncer.Port)
+	return util.MessageErrorf("syncer:the host: %s:%d of the syncer is Casdoor's own database server, which cannot be synced", syncer.Host, syncer.Port)
 }
 
 func isValidSyncerTable(table string) bool {
@@ -241,7 +241,7 @@ func (p *DatabaseSyncerProvider) AddUser(user *OriginalUser) (bool, error) {
 func (p *DatabaseSyncerProvider) UpdateUser(user *OriginalUser) (bool, error) {
 	key := p.Syncer.getTargetTablePrimaryKey()
 	if !util.FilterSQLIdentifier(key) {
-		return false, fmt.Errorf("object.UpdateUser: invalid primary key column name: %s", key)
+		return false, util.MessageErrorf("syncer:object.UpdateUser: invalid primary key column name: %s", key)
 	}
 
 	m := p.Syncer.getMapFromOriginalUser(user)

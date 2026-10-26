@@ -31,7 +31,7 @@ export function WebauthnCredentialTable({
     UserWebauthnBackend.registerWebauthnCredential()
       .then((res: any) => {
         if (res.status === "ok") {
-          Setting.showMessage("success", "Successfully added webauthn credentials");
+          Setting.showMessage("success", i18next.t("user:Successfully added WebAuthn credentials"));
         } else {
           Setting.showMessage("error", res.msg);
         }

@@ -22,6 +22,7 @@ import (
 	"net/url"
 	"time"
 
+	"github.com/casdoor/casdoor/util"
 	"golang.org/x/oauth2"
 )
 
@@ -122,7 +123,7 @@ func (idp *OktaIdProvider) GetToken(code string) (*oauth2.Token, error) {
 	pToken := &OktaToken{}
 	err = json.Unmarshal(data, pToken)
 	if err != nil {
-		return nil, fmt.Errorf("fail to unmarshal token response: %s", err.Error())
+		return nil, util.MessageErrorf("provider:fail to unmarshal token response: %s", err)
 	}
 
 	token := &oauth2.Token{

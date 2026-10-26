@@ -51,13 +51,13 @@ func (p *WecomSyncerProvider) GetOriginalUsers() ([]*OriginalUser, error) {
 // AddUser adds a new user to WeCom (not supported for read-only API)
 func (p *WecomSyncerProvider) AddUser(user *OriginalUser) (bool, error) {
 	// WeCom syncer is typically read-only
-	return false, fmt.Errorf("adding users to WeCom is not supported")
+	return false, util.MessageErrorf("syncer:adding users to WeCom is not supported")
 }
 
 // UpdateUser updates an existing user in WeCom (not supported for read-only API)
 func (p *WecomSyncerProvider) UpdateUser(user *OriginalUser) (bool, error) {
 	// WeCom syncer is typically read-only
-	return false, fmt.Errorf("updating users in WeCom is not supported")
+	return false, util.MessageErrorf("syncer:updating users in WeCom is not supported")
 }
 
 // TestConnection tests the WeCom API connection
@@ -206,7 +206,7 @@ func (p *WecomSyncerProvider) getWecomAccessToken() (string, error) {
 	}
 
 	if tokenResp.Errcode != 0 {
-		return "", fmt.Errorf("failed to get access token: errcode=%d, errmsg=%s",
+		return "", util.MessageErrorf("syncer:failed to get access token: errcode=%d, errmsg=%s",
 			tokenResp.Errcode, tokenResp.Errmsg)
 	}
 
@@ -248,7 +248,7 @@ func (p *WecomSyncerProvider) getWecomDepartmentsByList(accessToken string) ([]*
 	}
 
 	if deptResp.Errcode != 0 {
-		return nil, fmt.Errorf("failed to get departments: errcode=%d, errmsg=%s",
+		return nil, util.MessageErrorf("syncer:failed to get departments: errcode=%d, errmsg=%s",
 			deptResp.Errcode, deptResp.Errmsg)
 	}
 
@@ -272,7 +272,7 @@ func (p *WecomSyncerProvider) getWecomDepartmentsBySimpleList(accessToken string
 	}
 
 	if deptResp.Errcode != 0 {
-		return nil, fmt.Errorf("failed to get departments: errcode=%d, errmsg=%s",
+		return nil, util.MessageErrorf("syncer:failed to get departments: errcode=%d, errmsg=%s",
 			deptResp.Errcode, deptResp.Errmsg)
 	}
 
@@ -359,12 +359,12 @@ func (p *WecomSyncerProvider) getWecomDepartmentDetails(accessToken string, dept
 	}
 
 	if deptResp.Errcode != 0 {
-		return nil, fmt.Errorf("failed to get department details for %d: errcode=%d, errmsg=%s",
+		return nil, util.MessageErrorf("syncer:failed to get department details for %d: errcode=%d, errmsg=%s",
 			deptId, deptResp.Errcode, deptResp.Errmsg)
 	}
 
 	if deptResp.Department == nil {
-		return nil, fmt.Errorf("failed to get department details for %d: the response is empty", deptId)
+		return nil, util.MessageErrorf("syncer:failed to get department details for %d: the response is empty", deptId)
 	}
 
 	return deptResp.Department, nil
@@ -387,7 +387,7 @@ func (p *WecomSyncerProvider) getWecomUsersFromDept(accessToken string, deptId i
 	}
 
 	if userResp.Errcode != 0 {
-		return nil, fmt.Errorf("failed to get users from dept %d: errcode=%d, errmsg=%s",
+		return nil, util.MessageErrorf("syncer:failed to get users from dept %d: errcode=%d, errmsg=%s",
 			deptId, userResp.Errcode, userResp.Errmsg)
 	}
 
@@ -436,7 +436,7 @@ func (p *WecomSyncerProvider) getWecomUsersByListId(accessToken string) (map[str
 		}
 
 		if userResp.Errcode != 0 {
-			return nil, fmt.Errorf("failed to get user IDs: errcode=%d, errmsg=%s",
+			return nil, util.MessageErrorf("syncer:failed to get user IDs: errcode=%d, errmsg=%s",
 				userResp.Errcode, userResp.Errmsg)
 		}
 
@@ -487,12 +487,12 @@ func (p *WecomSyncerProvider) getWecomUserDetails(accessToken string, userId str
 	}
 
 	if userResp.Errcode != 0 {
-		return nil, fmt.Errorf("failed to get user details for %s: errcode=%d, errmsg=%s",
+		return nil, util.MessageErrorf("syncer:failed to get user details for %s: errcode=%d, errmsg=%s",
 			userId, userResp.Errcode, userResp.Errmsg)
 	}
 
 	if userResp.WecomUser == nil {
-		return nil, fmt.Errorf("failed to get user details for %s: the response is empty", userId)
+		return nil, util.MessageErrorf("syncer:failed to get user details for %s: the response is empty", userId)
 	}
 
 	return userResp.WecomUser, nil

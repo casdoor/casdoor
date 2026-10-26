@@ -22,12 +22,12 @@ const JWT_ALGORITHMS = [
   {value: "RS256", label: "RS256 (RSA + SHA256)"},
   {value: "RS384", label: "RS384 (RSA + SHA384)"},
   {value: "RS512", label: "RS512 (RSA + SHA512)"},
-  {value: "ES256", label: "ES256 (ECDSA using P-256 + SHA256)"},
-  {value: "ES384", label: "ES384 (ECDSA using P-384 + SHA384)"},
-  {value: "ES512", label: "ES512 (ECDSA using P-521 + SHA512)"},
-  {value: "PS256", label: "PS256 (RSASSA-PSS using SHA256 and MGF1 with SHA256)"},
-  {value: "PS384", label: "PS384 (RSASSA-PSS using SHA384 and MGF1 with SHA384)"},
-  {value: "PS512", label: "PS512 (RSASSA-PSS using SHA512 and MGF1 with SHA512)"},
+  {value: "ES256", label: "ES256 (ECDSA P-256 + SHA256)"},
+  {value: "ES384", label: "ES384 (ECDSA P-384 + SHA384)"},
+  {value: "ES512", label: "ES512 (ECDSA P-521 + SHA512)"},
+  {value: "PS256", label: "PS256 (RSASSA-PSS SHA256 + MGF1 SHA256)"},
+  {value: "PS384", label: "PS384 (RSASSA-PSS SHA384 + MGF1 SHA384)"},
+  {value: "PS512", label: "PS512 (RSASSA-PSS SHA512 + MGF1 SHA512)"},
 ];
 
 /** the DNS providers Casdoor can solve the ACME challenge with */
@@ -63,7 +63,7 @@ export default function CertEditPage() {
       type: "select",
       name: "type",
       labelKey: "general:Type",
-      options: () => TYPES.map((item) => ({value: item, label: item})),
+      options: () => TYPES.map((item) => ({value: item, label: item === "Payment" ? i18next.t("general:Payment") : item})),
       onChange: (value, ctx, updateFields) => {
         if (value === "SSL") {
           // the SSL key pair is issued by the provider, never pasted in

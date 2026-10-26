@@ -258,7 +258,7 @@ func (adapter *Adapter) InitAdapter() error {
 		case "sqlite":
 			dataSourceName = fmt.Sprintf("file:%s", adapter.Host)
 		default:
-			return fmt.Errorf("unsupported database type: %s", adapter.DatabaseType)
+			return util.MessageErrorf("adapter:unsupported database type: %s", adapter.DatabaseType)
 		}
 	}
 
@@ -328,7 +328,7 @@ func CheckSameDbAdapterTable(adapter *Adapter) error {
 
 	table := getSameDbAdapterTable(adapter)
 	if !util.FilterSQLIdentifier(table) {
-		return fmt.Errorf("the table: %s is not a valid table name", table)
+		return util.MessageErrorf("adapter:the table: %s is not a valid table name", table)
 	}
 
 	existed, err := ormer.Engine.IsTableExist(table)
@@ -349,7 +349,7 @@ func CheckSameDbAdapterTable(adapter *Adapter) error {
 		}
 	}
 
-	return fmt.Errorf("the table: %s is already used by Casdoor or another organization", table)
+	return util.MessageErrorf("adapter:the table: %s is already used by Casdoor or another organization", table)
 }
 
 func CheckAdapterHost(adapter *Adapter) error {

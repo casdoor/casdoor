@@ -59,7 +59,7 @@ func (c *ApiController) GetSubscriptions() {
 		}
 
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -74,14 +74,14 @@ func (c *ApiController) GetSubscriptions() {
 
 			count, err := object.GetSubscriptionCountByUser(owner, userName, field, value)
 			if err != nil {
-				c.ResponseError(err.Error())
+				c.ResponseErrorFrom(err)
 				return
 			}
 
 			paginator := pagination.NewPaginator(c.Ctx.Request, limit, count)
 			subscriptions, err := object.GetPaginationSubscriptionsByUser(owner, userName, paginator.Offset(), limit, field, value, sortField, sortOrder)
 			if err != nil {
-				c.ResponseError(err.Error())
+				c.ResponseErrorFrom(err)
 				return
 			}
 
@@ -91,14 +91,14 @@ func (c *ApiController) GetSubscriptions() {
 
 		count, err := object.GetSubscriptionCount(owner, field, value)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
 		paginator := pagination.NewPaginator(c.Ctx.Request, limit, count)
 		subscription, err := object.GetPaginationSubscriptions(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -118,7 +118,7 @@ func (c *ApiController) GetSubscription() {
 
 	subscription, err := object.GetSubscription(id)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -150,7 +150,7 @@ func (c *ApiController) UpdateSubscription() {
 	var subscription object.Subscription
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &subscription)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -172,7 +172,7 @@ func (c *ApiController) SetSubscriptionAutoRenew() {
 
 	subscription, err := object.GetSubscription(id)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 	if subscription == nil {
@@ -206,7 +206,7 @@ func (c *ApiController) AddSubscription() {
 	var subscription object.Subscription
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &subscription)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -214,29 +214,29 @@ func (c *ApiController) AddSubscription() {
 	if subscription.Plan != "" {
 		plan, err := object.GetPlan(util.GetId(subscription.Owner, subscription.Plan))
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 		if plan != nil && plan.IsExclusive {
 			if subscription.User != "" {
 				hasSubscription, err := object.HasActiveSubscriptionForPlan(subscription.Owner, subscription.User, subscription.Plan)
 				if err != nil {
-					c.ResponseError(err.Error())
+					c.ResponseErrorFrom(err)
 					return
 				}
 				if hasSubscription {
-					c.ResponseError(fmt.Sprintf("User already has an active subscription for plan: %s", subscription.Plan))
+					c.ResponseError(fmt.Sprintf(c.T("general:User already has an active subscription for plan: %s"), subscription.Plan))
 					return
 				}
 			}
 			if subscription.Group != "" {
 				hasSubscription, err := object.HasActiveSubscriptionForPlanByGroup(subscription.Owner, subscription.Group, subscription.Plan)
 				if err != nil {
-					c.ResponseError(err.Error())
+					c.ResponseErrorFrom(err)
 					return
 				}
 				if hasSubscription {
-					c.ResponseError(fmt.Sprintf("Group already has an active subscription for plan: %s", subscription.Plan))
+					c.ResponseError(fmt.Sprintf(c.T("general:Group already has an active subscription for plan: %s"), subscription.Plan))
 					return
 				}
 			}
@@ -258,7 +258,7 @@ func (c *ApiController) DeleteSubscription() {
 	var subscription object.Subscription
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &subscription)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
