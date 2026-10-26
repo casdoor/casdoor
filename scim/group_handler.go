@@ -24,6 +24,7 @@ import (
 	"github.com/casdoor/casdoor/util"
 	"github.com/elimity-com/scim"
 	"github.com/elimity-com/scim/errors"
+	"github.com/elimity-com/scim/schema"
 )
 
 const GroupExtensionKey = "urn:ietf:params:scim:schemas:extension:enterprise:2.0:Group"
@@ -67,6 +68,35 @@ func (h GroupResourceHandler) GetAll(r *http.Request, params scim.ListRequestPar
 	organization, err := getOrganization(r)
 	if err != nil {
 		return scim.Page{}, err
+	}
+
+	if params.Filter != nil {
+		// displayName is not case-exact in the SCIM core schema (RFC 7643, 4.2).
+		cond, err := filterCond(params.Filter, schema.GroupSchema, map[string]string{"displayname": "display_name"}, "display_name")
+		if err != nil {
+			return scim.Page{}, err
+		}
+		groups, err := object.GetGroupsWithFilter(organization, cond)
+		if err != nil {
+			return scim.Page{}, err
+		}
+		// startIndex is 1-based
+		start := min(params.StartIndex-1, len(groups))
+		end := min(start+params.Count, len(groups))
+		resources := make([]scim.Resource, 0, end-start)
+		for _, group := range groups[start:end] {
+			resource, err := getScimGroup(group.GetId())
+			if err != nil {
+				return scim.Page{}, err
+			}
+			if resource != nil {
+				resources = append(resources, *resource)
+			}
+		}
+		return scim.Page{
+			TotalResults: len(groups),
+			Resources:    resources,
+		}, nil
 	}
 
 	if params.Count == 0 {

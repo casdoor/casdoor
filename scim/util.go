@@ -17,12 +17,16 @@ package scim
 import (
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 	"github.com/elimity-com/scim"
+	"github.com/elimity-com/scim/errors"
 	"github.com/elimity-com/scim/optional"
 	"github.com/elimity-com/scim/schema"
+	filter "github.com/scim2/filter-parser/v2"
+	"github.com/xorm-io/builder"
 )
 
 type AnyMap map[string]interface{}
@@ -62,6 +66,30 @@ func ToAnyArray(v interface{}, defaultV ...interface{}) AnyArray {
 		m = v.(AnyArray)
 	}
 	return m
+}
+
+// filterCond turns an `<attribute> eq "<value>"` filter into a condition on
+// the attribute's column. Attribute names are matched without case and may
+// carry the resource's schema URI; caselessColumn is compared without case.
+// Any other filter is rejected rather than ignored, so a lookup never
+// answers with resources that do not match.
+func filterCond(exp filter.Expression, schemaURI string, columns map[string]string, caselessColumn string) (builder.Cond, error) {
+	attrExp, ok := exp.(*filter.AttributeExpression)
+	if !ok || attrExp.Operator != filter.EQ || attrExp.AttributePath.SubAttribute != nil {
+		return nil, errors.ScimErrorInvalidFilter
+	}
+	if uri := attrExp.AttributePath.URIPrefix; uri != nil && !strings.EqualFold(*uri, schemaURI) {
+		return nil, errors.ScimErrorInvalidFilter
+	}
+	column, ok := columns[strings.ToLower(attrExp.AttributePath.AttributeName)]
+	value, isString := attrExp.CompareValue.(string)
+	if !ok || !isString {
+		return nil, errors.ScimErrorInvalidFilter
+	}
+	if column == caselessColumn {
+		return builder.Expr(fmt.Sprintf("lower(%s) = lower(?)", column), value), nil
+	}
+	return builder.Eq{column: value}, nil
 }
 
 func newStringParams(name string, required, unique bool) schema.SimpleParams {

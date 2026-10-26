@@ -74,6 +74,20 @@ func GetGroups(owner string) ([]*Group, error) {
 	return groups, nil
 }
 
+func GetGroupsWithFilter(owner string, cond builder.Cond) ([]*Group, error) {
+	groups := []*Group{}
+	session := ormer.Engine.Desc("created_time")
+	if cond != nil {
+		session = session.Where(cond)
+	}
+	err := session.Find(&groups, &Group{Owner: owner})
+	if err != nil {
+		return nil, err
+	}
+
+	return groups, nil
+}
+
 func GetGlobalGroups() ([]*Group, error) {
 	groups := []*Group{}
 	err := ormer.Engine.Desc("created_time").Find(&groups)

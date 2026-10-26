@@ -111,7 +111,8 @@ var (
 func GetScimServer() scim.Server {
 	config := scim.ServiceProviderConfig{
 		// DocumentationURI: optional.NewString("www.example.com/scim"),
-		SupportPatch: true,
+		SupportFiltering: true,
+		SupportPatch:     true,
 	}
 
 	userAttrs := make([]schema.CoreAttribute, 0, len(UserStringField)+len(UserComplexField))

@@ -22,6 +22,8 @@ import (
 	"github.com/casdoor/casdoor/object"
 	"github.com/elimity-com/scim"
 	"github.com/elimity-com/scim/errors"
+	"github.com/elimity-com/scim/schema"
+	filter "github.com/scim2/filter-parser/v2"
 )
 
 type UserResourceHandler struct{}
@@ -58,6 +60,24 @@ func (h UserResourceHandler) GetAll(r *http.Request, params scim.ListRequestPara
 		return scim.Page{}, err
 	}
 
+	if params.Filter != nil {
+		users, err := getFilteredUsers(organization, params.Filter)
+		if err != nil {
+			return scim.Page{}, err
+		}
+		// startIndex is 1-based index
+		start := min(params.StartIndex-1, len(users))
+		end := min(start+params.Count, len(users))
+		resources := make([]scim.Resource, 0, end-start)
+		for _, user := range users[start:end] {
+			resources = append(resources, *user2resource(user))
+		}
+		return scim.Page{
+			TotalResults: len(users),
+			Resources:    resources,
+		}, nil
+	}
+
 	var count int64
 	if organization == "" {
 		count, err = object.GetGlobalUserCount("", "")
@@ -89,6 +109,28 @@ func (h UserResourceHandler) GetAll(r *http.Request, params scim.ListRequestPara
 		TotalResults: int(count),
 		Resources:    resources,
 	}, nil
+}
+
+// userFilterColumns are the attributes a user list can be filtered on, as
+// provisioning clients do (userName eq "alice"), and their columns.
+var userFilterColumns = map[string]string{
+	"id":         "id",
+	"externalid": "external_id",
+	"username":   "name",
+}
+
+// getFilteredUsers returns the users matching an `<attribute> eq "<value>"`
+// filter on one of userFilterColumns.
+func getFilteredUsers(organization string, exp filter.Expression) ([]*object.User, error) {
+	// userName is not case-exact in the SCIM core schema (RFC 7643, 4.1.1).
+	cond, err := filterCond(exp, schema.UserSchema, userFilterColumns, "name")
+	if err != nil {
+		return nil, err
+	}
+	if organization == "" {
+		return object.GetGlobalUsersWithFilter(cond)
+	}
+	return object.GetUsersWithFilter(organization, cond)
 }
 
 func (h UserResourceHandler) Patch(r *http.Request, id string, operations []scim.PatchOperation) (scim.Resource, error) {
