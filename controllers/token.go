@@ -18,6 +18,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 	"time"
 
 	"github.com/beego/beego/v2/core/utils/pagination"
@@ -239,7 +240,7 @@ func (c *ApiController) GetOAuthToken() {
 	resource := c.Ctx.Input.Query("resource")
 
 	if clientId == "" && clientSecret == "" {
-		clientId, clientSecret, _ = c.Ctx.Request.BasicAuth()
+		clientId, clientSecret, _ = c.getClientBasicAuth()
 	}
 
 	if len(c.Ctx.Input.RequestBody) != 0 && grantType != "urn:ietf:params:oauth:grant-type:device_code" {
@@ -491,7 +492,7 @@ func (c *ApiController) RevokeToken() {
 	clientId := c.Ctx.Input.Query("client_id")
 	clientSecret := c.Ctx.Input.Query("client_secret")
 	if clientId == "" && clientSecret == "" {
-		clientId, clientSecret, _ = c.Ctx.Request.BasicAuth()
+		clientId, clientSecret, _ = c.getClientBasicAuth()
 	}
 
 	if clientId == "" {
@@ -572,7 +573,7 @@ func (c *ApiController) ValidateOAuth(ignoreValidSecret bool) (ok bool, applicat
 	}
 
 	if reqClientId == "" && reqClientSecret == "" {
-		clientId, clientSecret, ok = c.Ctx.Request.BasicAuth()
+		clientId, clientSecret, ok = c.getClientBasicAuth()
 		if !ok {
 			clientId = c.Ctx.Input.Query("client_id")
 			clientSecret = c.Ctx.Input.Query("client_secret")
@@ -745,4 +746,26 @@ func (c *ApiController) IntrospectToken() {
 
 	c.Data["json"] = introspectionResponse
 	c.ServeJSON()
+}
+
+// getClientBasicAuth reads client_secret_basic credentials. RFC 6749 2.3.1
+// form-urlencodes the client id and secret before they are put in the header;
+// a client that sends them unencoded keeps working.
+func (c *ApiController) getClientBasicAuth() (string, string, bool) {
+	clientId, clientSecret, ok := c.Ctx.Request.BasicAuth()
+	if !ok {
+		return "", "", false
+	}
+
+	decodedId, errId := url.QueryUnescape(clientId)
+	decodedSecret, errSecret := url.QueryUnescape(clientSecret)
+	if errId != nil || errSecret != nil || (decodedId == clientId && decodedSecret == clientSecret) {
+		return clientId, clientSecret, true
+	}
+
+	application, err := object.GetApplicationByClientId(clientId)
+	if err == nil && application != nil && application.ClientSecret == clientSecret {
+		return clientId, clientSecret, true
+	}
+	return decodedId, decodedSecret, true
 }
