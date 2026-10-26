@@ -552,6 +552,10 @@ export function getAuthUrl(application: any, provider: any, method: string, code
   } else if (provider.type === "Kwai") {
     return `${endpoint}?app_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&scope=${scope}`;
   } else if (type === "Custom") {
+    if (/\{[a-zA-Z_][a-zA-Z0-9_]*\}/.test(provider.customAuthUrl ?? "")) {
+      const values: Record<string, string> = {clientId: provider.clientId, redirectUri, scope: provider.scopes ?? "", state, codeChallenge};
+      return provider.customAuthUrl.replace(/\{([a-zA-Z_][a-zA-Z0-9_]*)\}/g, (_: string, name: string) => encodeURIComponent(values[name] ?? ""));
+    }
     let authUrl = `${provider.customAuthUrl}?client_id=${provider.clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(provider.scopes)}&response_type=code&state=${encodeURIComponent(state)}`;
     if (provider.enablePkce) {
       authUrl += `&code_challenge=${codeChallenge}&code_challenge_method=S256`;

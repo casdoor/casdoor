@@ -50,6 +50,7 @@ type ProviderInfo struct {
 	RedirectUrl   string
 	DisableSsl    bool
 	CodeVerifier  string
+	State         string
 
 	TokenURL    string
 	AuthURL     string
