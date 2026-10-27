@@ -209,6 +209,9 @@ func (c *ApiController) requireTokenPermission(token *object.Token, checkApplica
 // @Param   client_id     query    string  true        "OAuth client id"
 // @Param   client_secret     query    string  true        "OAuth client secret"
 // @Param   code     query    string  true        "OAuth code"
+// @Param   tag     query    string  false        "set to wechat_miniprogram for WeChat Mini Program login, code is then the wx.login code"
+// @Param   phone_code     query    string  false        "WeChat Mini Program only: code from the getPhoneNumber button, used to link or create the user by phone number"
+// @Param   phone_required     query    bool  false        "WeChat Mini Program only: return phone_required instead of creating a user without a phone number"
 // @Success 200 {object} object.TokenWrapper The Response object
 // @Success 400 {object} object.TokenError The Response object
 // @Success 401 {object} object.TokenError The Response object
@@ -232,6 +235,8 @@ func (c *ApiController) GetOAuthToken() {
 	countryCode := c.Ctx.Input.Query("country_code")
 	tag := c.Ctx.Input.Query("tag")
 	avatar := c.Ctx.Input.Query("avatar")
+	phoneCode := c.Ctx.Input.Query("phone_code")
+	phoneRequired := c.Ctx.Input.Query("phone_required") == "true"
 	refreshToken := c.Ctx.Input.Query("refresh_token")
 	deviceCode := c.Ctx.Input.Query("device_code")
 	subjectToken := c.Ctx.Input.Query("subject_token")
@@ -289,6 +294,12 @@ func (c *ApiController) GetOAuthToken() {
 			}
 			if avatar == "" {
 				avatar = tokenRequest.Avatar
+			}
+			if phoneCode == "" {
+				phoneCode = tokenRequest.PhoneCode
+			}
+			if !phoneRequired {
+				phoneRequired = tokenRequest.PhoneRequired
 			}
 			if refreshToken == "" {
 				refreshToken = tokenRequest.RefreshToken
@@ -396,7 +407,7 @@ func (c *ApiController) GetOAuthToken() {
 		return
 	}
 
-	token, err := object.GetOAuthToken(grantType, clientId, clientSecret, code, verifier, scope, nonce, username, password, countryCode, host, refreshToken, tag, avatar, c.GetAcceptLanguage(), subjectToken, subjectTokenType, assertion, clientAssertion, clientAssertionType, audience, resource, dpopProof, util.GetClientIpFromRequest(c.Ctx.Request))
+	token, err := object.GetOAuthToken(grantType, clientId, clientSecret, code, verifier, scope, nonce, username, password, countryCode, host, refreshToken, tag, avatar, phoneCode, phoneRequired, c.GetAcceptLanguage(), subjectToken, subjectTokenType, assertion, clientAssertion, clientAssertionType, audience, resource, dpopProof, util.GetClientIpFromRequest(c.Ctx.Request))
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
