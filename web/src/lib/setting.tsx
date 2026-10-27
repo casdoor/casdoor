@@ -941,6 +941,11 @@ export function isProviderVisible(providerItem) {
     return false;
   }
 
+  // inside WeChat only the Official Account (clientId2) can sign in, the QR code needs another device
+  if (providerItem.provider.type === "WeChat" && !providerItem.provider.clientId2 && navigator.userAgent.includes("MicroMessenger")) {
+    return false;
+  }
+
   return true;
 }
 
