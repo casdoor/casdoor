@@ -23,6 +23,7 @@ import (
 	"runtime"
 	"time"
 
+	"github.com/beego/beego/v2/core/logs"
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/shirou/gopsutil/v4/cpu"
@@ -143,9 +144,11 @@ func GetSystemInfo() (*SystemInfo, error) {
 		return nil, err
 	}
 
+	// Process I/O counters are missing on some kernels (e.g. WSL2 without
+	// CONFIG_TASKSTATS), so report zero instead of failing the whole request.
 	networkSent, networkRecv, networkTotal, err := getNetworkUsage()
 	if err != nil {
-		return nil, err
+		logs.Warning("failed to get network usage: %v", err)
 	}
 
 	res := &SystemInfo{
