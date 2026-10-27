@@ -33,7 +33,7 @@ import {AccountItemRow, AccountItemsProvider} from "@/components/user/AccountIte
 import {EnableMfaButton} from "@/components/user/EnableMfaButton";
 import {TotpMfaType} from "@/components/auth/mfa/constants";
 import {MfaItemsTable} from "@/components/auth/mfa/MfaItemsTable";
-import {isAccountItemVisible} from "@/lib/account-items";
+import {isAccountItemVisible, isSameUser} from "@/lib/account-items";
 import {PasswordModal} from "@/components/user/PasswordModal";
 import {ResetModal} from "@/components/user/ResetModal";
 import {TransactionTable} from "@/components/user/TransactionTable";
@@ -151,7 +151,7 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
   }
 
   const isAdmin = Setting.isLocalAdminUser(account);
-  const isSelf = account?.owner === user.owner && account?.name === user.name;
+  const isSelf = isSameUser(account, user);
   // only offer the methods in the MFA items, an enabled one stays so it can still be edited or disabled
   const allowedMfaTypes = Setting.getAllowedMfaTypes(user, organization);
   const visibleMfaItems = mfaItems.filter(

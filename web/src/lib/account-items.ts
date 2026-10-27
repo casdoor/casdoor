@@ -22,6 +22,17 @@ export interface AccountItemRules {
   user: any;
 }
 
+/** Compare by ID first: `get-user` blanks `name` when "Name" has the Admin view rule. */
+export function isSameUser(account: any, user: any): boolean {
+  if (!account || !user) {
+    return false;
+  }
+  if (account.id && user.id) {
+    return account.id === user.id;
+  }
+  return account.owner === user.owner && account.name === user.name;
+}
+
 /** The rows whose editing is frozen once the user's identity has been verified. */
 const ID_VERIFICATION_ITEMS = new Set(["ID card info", "ID card", "ID card type", "Real name"]);
 
