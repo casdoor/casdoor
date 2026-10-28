@@ -166,6 +166,17 @@ export default function SignupPage({application: applicationProp}: {application?
     }
   }, [forcedLanguage]);
 
+  // a page restored from the back-forward cache comes back still spinning
+  React.useEffect(() => {
+    const onPageShow = (event: PageTransitionEvent) => {
+      if (event.persisted) {
+        setLoading(false);
+      }
+    };
+    window.addEventListener("pageshow", onPageShow);
+    return () => window.removeEventListener("pageshow", onPageShow);
+  }, []);
+
   React.useEffect(() => {
     if (!application || !verifiedAddress) {
       return;
@@ -344,6 +355,8 @@ export default function SignupPage({application: applicationProp}: {application?
 
   const submitSignup = (payload: Record<string, any>) => {
     setLoading(true);
+    // the button spins until the page is gone once the browser is sent to the redirect URI
+    let redirecting = false;
     const oAuthParams = Util.getOAuthGetParameters();
     AuthBackend.signup(payload, oAuthParams)
       .then((res: any) => {
@@ -356,6 +369,7 @@ export default function SignupPage({application: applicationProp}: {application?
           const redirectUrl = `${oAuthParams.redirectUri}${
             oAuthParams.redirectUri.includes("?") ? "&" : "?"
           }code=${encodeURIComponent(res.data)}&state=${encodeURIComponent(oAuthParams.state)}${Setting.getOAuthIssuerParam()}`;
+          redirecting = true;
           Setting.goToLink(redirectUrl);
           return;
         }
@@ -376,7 +390,11 @@ export default function SignupPage({application: applicationProp}: {application?
         }
         navigate(path, {state: {username}});
       })
-      .finally(() => setLoading(false));
+      .finally(() => {
+        if (!redirecting) {
+          setLoading(false);
+        }
+      });
   };
 
   const renderEmail = (item: any) => verifiedAddress?.type === "email" ? renderVerifiedAddress(item, "email", i18next.t("general:Email")) : (

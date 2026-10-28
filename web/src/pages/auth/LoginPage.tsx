@@ -460,6 +460,25 @@ export default function LoginPage({type = "login", application: applicationProp,
     }
   }, [account, type, navigate, location.search, preview]);
 
+  // once a sign-in has sent the browser to the redirect URI, the button spins until the page is gone
+  const redirecting = React.useRef(false);
+  const stopLoading = () => {
+    if (!redirecting.current) {
+      setLoading(false);
+    }
+  };
+  // a page restored from the back-forward cache comes back still spinning
+  React.useEffect(() => {
+    const onPageShow = (event: PageTransitionEvent) => {
+      if (event.persisted) {
+        redirecting.current = false;
+        setLoading(false);
+      }
+    };
+    window.addEventListener("pageshow", onPageShow);
+    return () => window.removeEventListener("pageshow", onPageShow);
+  }, []);
+
   /** An iframe-embedded sign-in reports its progress to the host page. */
   const sendSilentSigninData = (data: string) => {
     if (Setting.inIframe()) {
@@ -497,7 +516,10 @@ export default function LoginPage({type = "login", application: applicationProp,
       codeValue,
     )}&state=${encodeURIComponent(oAuthParams.state)}${Setting.getOAuthIssuerParam()}`;
     // response_mode decides whether the code goes in the query string, the fragment or a POST form
-    const goToRedirectUrl = () => Util.sendOAuthResponse(oAuthParams, {code: codeValue});
+    const goToRedirectUrl = () => {
+      redirecting.current = true;
+      Util.sendOAuthResponse(oAuthParams, {code: codeValue});
+    };
 
     if (res.data === Setting.RequiredUpdatePassword) {
       Setting.goToUpdatePassword(application?.name);
@@ -559,12 +581,14 @@ export default function LoginPage({type = "login", application: applicationProp,
         reload().then(() => navigate(`/consent/${application.name}?${window.location.search.substring(1)}`));
         return;
       }
+      redirecting.current = true;
       Util.sendOAuthResponse(authParams, Util.getTokenResponsePayload(responseType, res));
     } else if (responseType === "saml") {
       if (res.data2?.method === "POST") {
         setSaml({response: res.data, redirectUrl: res.data2.redirectUrl, relayState: values["relayState"] ?? ""});
       } else {
         const redirectUri = res.data2.redirectUrl;
+        redirecting.current = true;
         Setting.goToLink(
           `${redirectUri}${redirectUri.includes("?") ? "&" : "?"}SAMLResponse=${encodeURIComponent(
             res.data,
@@ -583,6 +607,7 @@ export default function LoginPage({type = "login", application: applicationProp,
     if (casParams.service !== "") {
       const newUrl = new URL(casParams.service);
       newUrl.searchParams.append("ticket", res.data);
+      redirecting.current = true;
       Setting.goToLink(newUrl.toString());
     }
   };
@@ -850,7 +875,7 @@ export default function LoginPage({type = "login", application: applicationProp,
             onRejected();
           }
         })
-        .finally(() => setLoading(false));
+        .finally(stopLoading);
       return;
     }
 
@@ -868,7 +893,7 @@ export default function LoginPage({type = "login", application: applicationProp,
       })
       .finally(() => {
         localStorage.setItem("lastLoginOrg", values?.organization || "");
-        setLoading(false);
+        stopLoading();
       });
   };
 
@@ -927,7 +952,7 @@ export default function LoginPage({type = "login", application: applicationProp,
       .catch((error: any) => {
         Setting.showMessage("error", error.message);
       })
-      .finally(() => setLoading(false));
+      .finally(stopLoading);
   };
 
   const checkAgreement = () => {
