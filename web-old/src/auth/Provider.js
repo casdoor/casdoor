@@ -499,7 +499,7 @@ export function getAuthUrl(application, provider, method, code) {
         Setting.showMessage("error", i18next.t("login:Please open the login page in an external browser to sign in with WeChat, or ask the administrator to configure a WeChat Official Account"));
         return "#";
       }
-      return `${authInfo[provider.type].mpEndpoint}?appid=${provider.clientId2}&redirect_uri=${redirectUri}&state=${state}&scope=${authInfo[provider.type].mpScope}&response_type=code#wechat_redirect`;
+      return `${authInfo[provider.type].mpEndpoint}?appid=${provider.clientId2}&redirect_uri=${redirectUri}&response_type=code&scope=${authInfo[provider.type].mpScope}&state=${state}#wechat_redirect`;
     } else {
       if (provider.clientId2 && provider?.disableSsl && provider?.signName === "media") {
         return `${redirectOrigin}/callback?state=${state}&code=${"wechat_oa:" + code}`;
