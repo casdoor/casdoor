@@ -374,6 +374,11 @@ export default function ForgetPage() {
                 value={confirm}
                 onChange={(e) => setConfirm(e.target.value)}
               />
+              {confirm !== "" && confirm !== password ? (
+                <p className="text-xs text-destructive">
+                  {i18next.t("signup:Your confirmed password is inconsistent with the password!")}
+                </p>
+              ) : null}
             </div>
             <Button type="submit" className="w-full" loading={loading}>
               {i18next.t("forget:Change Password")}
