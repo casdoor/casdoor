@@ -1625,6 +1625,8 @@
     "Is key": "Anahtar mı",
     "Is read-only": "Salt okunur mu",
     "Is read-only - Tooltip": "Salt okunur mu - Araç ipucu",
+    "Lark platform": "Lark platformu",
+    "Lark platform - Tooltip": "Feishu (Çin anakarası) ve Lark (küresel), farklı kullanıcı alanları döndüren ayrı platformlardır. Uygulamanın oluşturulduğu platformu seçin",
     "New Syncer": "Yeni Senkronizatör",
     "Paste your Google Workspace service account JSON key here": "Google Workspace hizmet hesabı JSON anahtarınızı buraya yapıştırın",
     "SCIM Server URL": "SCIM sunucu URL'si",

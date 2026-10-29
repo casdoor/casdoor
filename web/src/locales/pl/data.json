@@ -1625,6 +1625,8 @@
     "Is key": "Jest kluczem",
     "Is read-only": "Tylko do odczytu",
     "Is read-only - Tooltip": "Tylko do odczytu - etykietka",
+    "Lark platform": "Platforma Lark",
+    "Lark platform - Tooltip": "Feishu (Chiny kontynentalne) i Lark (globalny) to osobne platformy zwracające różne pola użytkownika. Wybierz tę, na której utworzono aplikację",
     "New Syncer": "Nowy synchronizator",
     "Paste your Google Workspace service account JSON key here": "Wklej tutaj klucz JSON konta usługi Google Workspace",
     "SCIM Server URL": "URL serwera SCIM",

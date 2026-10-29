@@ -1625,6 +1625,8 @@
     "Is key": "Is key",
     "Is read-only": "Is read-only",
     "Is read-only - Tooltip": "When enabled, data from this syncer source will only be read and not written back",
+    "Lark platform": "Lark platform",
+    "Lark platform - Tooltip": "Feishu (mainland China) and Lark (global) are separate platforms that return different user fields. Choose the one your app was created on",
     "New Syncer": "New Syncer",
     "Paste your Google Workspace service account JSON key here": "Paste your Google Workspace service account JSON key here",
     "SCIM Server URL": "SCIM Server URL",

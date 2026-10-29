@@ -1625,6 +1625,8 @@
     "Is key": "Là khóa",
     "Is read-only": "Chỉ đọc",
     "Is read-only - Tooltip": "Chỉ có thể đọc, không thể chỉnh sửa",
+    "Lark platform": "Nền tảng Lark",
+    "Lark platform - Tooltip": "Feishu (Trung Quốc đại lục) và Lark (toàn cầu) là hai nền tảng riêng biệt, trả về các trường người dùng khác nhau. Hãy chọn nền tảng nơi bạn đã tạo ứng dụng",
     "New Syncer": "Đồng bộ mới",
     "Paste your Google Workspace service account JSON key here": "Dán khóa JSON tài khoản dịch vụ Google Workspace của bạn tại đây",
     "SCIM Server URL": "URL máy chủ SCIM",

@@ -21,6 +21,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/casdoor/casdoor/util"
@@ -129,10 +130,14 @@ type LarkDeptListResp struct {
 func (p *LarkSyncerProvider) getLarkDomain() string {
 	// syncer.Host can be used to specify custom endpoint
 	// If empty, default to global endpoint (larksuite.com)
-	if p.Syncer.Host != "" {
-		return p.Syncer.Host
+	host := strings.TrimRight(strings.TrimSpace(p.Syncer.Host), "/")
+	if host == "" {
+		return "https://open.larksuite.com"
 	}
-	return "https://open.larksuite.com"
+	if !strings.Contains(host, "://") {
+		host = "https://" + host
+	}
+	return host
 }
 
 // getLarkAccessToken gets access token from Lark API

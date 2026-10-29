@@ -1625,6 +1625,8 @@
     "Is key": "是否为主键",
     "Is read-only": "是否只读",
     "Is read-only - Tooltip": "启用后，此同步器来源的数据只读取不写回",
+    "Lark platform": "飞书平台",
+    "Lark platform - Tooltip": "飞书（中国大陆）和 Lark（国际版）是两个独立的平台，返回的用户字段不同，请选择创建应用所在的平台",
     "New Syncer": "添加同步器",
     "Paste your Google Workspace service account JSON key here": "请在此粘贴您的Google Workspace服务账户JSON密钥",
     "SCIM Server URL": "SCIM服务器URL",

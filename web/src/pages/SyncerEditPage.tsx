@@ -38,6 +38,12 @@ const API_TYPES = [
 /** these have no host at all: the SDK knows the endpoint */
 const NO_HOST_TYPES = ["WeCom", "DingTalk", "Lark"];
 
+/** Feishu (mainland China) and Lark (global) are separate platforms; an empty host means Lark */
+const LARK_DOMAINS = [
+  {id: "https://open.feishu.cn", name: "Feishu (open.feishu.cn)"},
+  {id: "https://open.larksuite.com", name: "Lark (open.larksuite.com)"},
+];
+
 const isApiType = (type: string) => API_TYPES.includes(type);
 
 /** Active Directory is LDAP, so it keeps host/port/base DN but has no database schema */
@@ -111,7 +117,7 @@ export default function SyncerEditPage() {
           type: value,
           tableColumns: getSyncerTableColumns(value),
           table: value === "Keycloak" ? "user_entity" : ctx.record.table,
-          host: isApiType(value) ? "" : ctx.record.host,
+          host: value === "Lark" ? LARK_DOMAINS[0].id : isApiType(value) ? "" : ctx.record.host,
         }),
     },
     {
@@ -136,6 +142,19 @@ export default function SyncerEditPage() {
       name: "host",
       labelKey: (ctx) => hostLabelKey(ctx.record.type),
       when: (ctx) => !NO_HOST_TYPES.includes(ctx.record.type),
+    },
+    {
+      type: "custom",
+      name: "host",
+      labelKey: "syncer:Lark platform",
+      when: (ctx) => ctx.record.type === "Lark",
+      render: (ctx, update) => (
+        <SelectField
+          value={ctx.record.host || LARK_DOMAINS[1].id}
+          onChange={(value) => update("host", value)}
+          options={LARK_DOMAINS}
+        />
+      ),
     },
     {
       type: "number",
