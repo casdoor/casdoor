@@ -15,6 +15,7 @@
 package util
 
 import (
+	"bytes"
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/des"
@@ -22,13 +23,18 @@ import (
 	"fmt"
 )
 
-func unPaddingPkcs7(s []byte) []byte {
+func unPaddingPkcs7(s []byte, blockSize int) ([]byte, error) {
 	length := len(s)
 	if length == 0 {
-		return s
+		return nil, fmt.Errorf("the password ciphertext has an invalid padding, please check the password obfuscator key")
 	}
+
 	unPadding := int(s[length-1])
-	return s[:(length - unPadding)]
+	if unPadding == 0 || unPadding > blockSize || unPadding > length || !bytes.Equal(s[length-unPadding:], bytes.Repeat([]byte{s[length-1]}, unPadding)) {
+		return nil, fmt.Errorf("the password ciphertext has an invalid padding, please check the password obfuscator key")
+	}
+
+	return s[:length-unPadding], nil
 }
 
 func decryptDesOrAes(passwordCipher string, block cipher.Block) (string, error) {
@@ -42,12 +48,20 @@ func decryptDesOrAes(passwordCipher string, block cipher.Block) (string, error) 
 	}
 
 	iv := passwordCipherBytes[:block.BlockSize()]
-	password := make([]byte, len(passwordCipherBytes)-block.BlockSize())
+	password := passwordCipherBytes[block.BlockSize():]
+	if len(password) == 0 || len(password)%block.BlockSize() != 0 {
+		return "", fmt.Errorf("the password ciphertext should be a non-empty hexadecimal string whose length is a multiple of %d after the random string", block.BlockSize()*2)
+	}
 
 	mode := cipher.NewCBCDecrypter(block, iv)
-	mode.CryptBlocks(password, passwordCipherBytes[block.BlockSize():])
+	mode.CryptBlocks(password, password)
 
-	return string(unPaddingPkcs7(password)), nil
+	password, err = unPaddingPkcs7(password, block.BlockSize())
+	if err != nil {
+		return "", err
+	}
+
+	return string(password), nil
 }
 
 func GetUnobfuscatedPassword(passwordObfuscatorType string, passwordObfuscatorKey string, passwordCipher string) (string, error) {
