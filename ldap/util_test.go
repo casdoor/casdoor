@@ -33,6 +33,9 @@ func TestLdapFilterAsQuery(t *testing.T) {
 		{"Should be SQL for FilterGreaterOrEqual", "(mail>=admin)", "email>=?", args("admin")},
 		{"Should be SQL for FilterLessOrEqual", "(mail<=admin)", "email<=?", args("admin")},
 		{"Should be SQL for FilterSubstrings", "(mail=admin*ex*c*m)", "email LIKE ?", args("admin%ex%c%m")},
+		{"Should be SQL for FilterSubstrings with initial only", "(mail=admin*)", "email LIKE ?", args("admin%")},
+		{"Should be SQL for FilterSubstrings with final only", "(mail=*example.com)", "email LIKE ?", args("%example.com")},
+		{"Should be SQL for FilterSubstrings with any only", "(mail=*example*)", "email LIKE ?", args("%example%")},
 		{"Should be SQL for country attribute c", "(c=US)", "region=?", args("US")},
 		{"Should be SQL for country attribute co", "(co=United States)", "region=?", args("United States")},
 	}
