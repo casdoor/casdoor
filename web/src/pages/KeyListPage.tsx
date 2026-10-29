@@ -36,7 +36,7 @@ export default function KeyListPage() {
       searchable: true,
       title: i18next.t("general:Access key"),
       width: 200,
-      render: (value) => (value ? Setting.getClickable(Setting.getShortText(value)) : null),
+      render: (value) => (value ? Setting.getClickable(value, Setting.getShortText(value)) : null),
     },
     {
       dataIndex: "expireTime",

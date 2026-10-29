@@ -199,14 +199,14 @@ export function copyToClipboard(text: string) {
   showMessage("success", i18next.t("general:Copied to clipboard successfully"));
 }
 
-export function getClickable(text) {
+export function getClickable(text, label: React.ReactNode = text) {
   return (
     <button
       type="button"
       className="text-left underline-offset-4 hover:underline"
       onClick={() => copyToClipboard(text)}
     >
-      {text}
+      {label}
     </button>
   );
 }
