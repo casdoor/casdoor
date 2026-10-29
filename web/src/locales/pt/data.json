@@ -1384,6 +1384,8 @@
     "Sender number - Tooltip": "Dica: número do remetente",
     "Service ID identifier": "Identificador do ID do serviço",
     "Service ID identifier - Tooltip": "Identificador do ID do serviço",
+    "Service SID": "SID do serviço",
+    "Service SID - Tooltip": "O SID do serviço Twilio Verify, começando com VA. O Twilio gera, envia e verifica os códigos de verificação",
     "Service account JSON": "JSON da conta de serviço",
     "Service account JSON - Tooltip": "Dica: JSON da conta de serviço",
     "Sign Name": "Nome do Sinal",

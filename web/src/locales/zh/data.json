@@ -1384,6 +1384,8 @@
     "Sender number - Tooltip": "发送者用于发送短信、电话等通信的具体号码，显示为接收方看到的来源号码",
     "Service ID identifier": "服务ID标识符",
     "Service ID identifier - Tooltip": "用于唯一标识特定服务的标识符，便于服务的调用、管理和关联配置",
+    "Service SID": "服务SID",
+    "Service SID - Tooltip": "Twilio Verify服务的SID，以VA开头。验证码由Twilio生成、发送和校验",
     "Service account JSON": "服务账号JSON",
     "Service account JSON - Tooltip": "Service account对应的JSON文件内容",
     "Sign Name": "签名名称",

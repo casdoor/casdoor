@@ -1384,6 +1384,8 @@
     "Sender number - Tooltip": "Gợi ý số người gửi",
     "Service ID identifier": "Định danh ID dịch vụ",
     "Service ID identifier - Tooltip": "Định danh ID dịch vụ - Gợi ý",
+    "Service SID": "SID dịch vụ",
+    "Service SID - Tooltip": "SID của dịch vụ Twilio Verify, bắt đầu bằng VA. Twilio tạo, gửi và kiểm tra mã xác minh",
     "Service account JSON": "Tài khoản dịch vụ JSON",
     "Service account JSON - Tooltip": "Tài khoản dịch vụ JSON - Gợi ý",
     "Sign Name": "Ký tên",

@@ -1384,6 +1384,8 @@
     "Sender number - Tooltip": "送信者番号 - ツールチップ",
     "Service ID identifier": "サービスID識別子",
     "Service ID identifier - Tooltip": "サービスID識別子",
+    "Service SID": "サービスSID",
+    "Service SID - Tooltip": "VAで始まるTwilio VerifyサービスのSID。認証コードはTwilioが生成、送信、検証します",
     "Service account JSON": "サービスアカウントJSON",
     "Service account JSON - Tooltip": "サービスアカウントJSON",
     "Sign Name": "署名",

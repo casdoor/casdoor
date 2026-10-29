@@ -1384,6 +1384,8 @@
     "Sender number - Tooltip": "Numer nadawcy - Podpowiedź",
     "Service ID identifier": "Identyfikator ID usługi",
     "Service ID identifier - Tooltip": "Identyfikator ID usługi - Podpowiedź",
+    "Service SID": "SID usługi",
+    "Service SID - Tooltip": "SID usługi Twilio Verify, zaczynający się od VA. Twilio generuje, wysyła i sprawdza kody weryfikacyjne",
     "Service account JSON": "JSON konta usługi",
     "Service account JSON - Tooltip": "JSON konta usługi - Podpowiedź",
     "Sign Name": "Nazwa podpisu",

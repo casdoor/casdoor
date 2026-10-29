@@ -1384,6 +1384,8 @@
     "Sender number - Tooltip": "Gönderen numarası - Araç ipucu",
     "Service ID identifier": "Servis Kimliği tanımlayıcısı",
     "Service ID identifier - Tooltip": "Hizmet ID tanımlayıcısı",
+    "Service SID": "Hizmet SID",
+    "Service SID - Tooltip": "VA ile başlayan Twilio Verify hizmetinin SID değeri. Doğrulama kodlarını Twilio oluşturur, gönderir ve kontrol eder",
     "Service account JSON": "Servis hesabı JSON",
     "Service account JSON - Tooltip": "Servis hesabı JSON - Araç ipucu",
     "Sign Name": "İmza Adı",

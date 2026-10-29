@@ -66,8 +66,8 @@ const CATEGORIES = [
 const HTTP_METHODS = ["GET", "POST", "PUT", "DELETE"];
 const CONTENT_TYPES = ["application/json", "application/x-www-form-urlencoded"];
 
-const SMS_PROVIDERS_WITHOUT_SIGN_NAME = ["Custom HTTP SMS", "Twilio SMS", "Amazon SNS", "Msg91 SMS", "Infobip SMS"];
-const SMS_PROVIDERS_WITHOUT_TEMPLATE_CODE = ["Infobip SMS"];
+const SMS_PROVIDERS_WITHOUT_SIGN_NAME = ["Custom HTTP SMS", "Twilio SMS", "Twilio Verify", "Amazon SNS", "Msg91 SMS", "Infobip SMS"];
+const SMS_PROVIDERS_WITHOUT_TEMPLATE_CODE = ["Infobip SMS", "Twilio Verify"];
 
 const SYSLOG_PROTOCOLS = ["UDP", "TCP", "TLS"];
 const SYSLOG_FACILITIES = [
@@ -264,6 +264,8 @@ function getAppIdLabel(provider: any): Label | null {
   } else if (provider.category === "SMS") {
     if (provider.type === "Twilio SMS" || provider.type === "Azure ACS") {
       return label(i18next.t("provider:Sender number"), i18next.t("provider:Sender number - Tooltip"));
+    } else if (provider.type === "Twilio Verify") {
+      return label(i18next.t("provider:Service SID"), i18next.t("provider:Service SID - Tooltip"));
     } else if (provider.type === "Tencent Cloud SMS") {
       return label(i18next.t("provider:App ID"), i18next.t("provider:App ID - Tooltip"));
     } else if (provider.type === "Volc Engine SMS") {

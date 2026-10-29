@@ -1384,6 +1384,8 @@
     "Sender number - Tooltip": "Specific number used by the sender for sending SMS, phone calls, etc., displayed as the source number seen by recipients",
     "Service ID identifier": "Service ID identifier",
     "Service ID identifier - Tooltip": "Identifier used to uniquely identify a specific service, facilitating service invocation, management, and configuration association",
+    "Service SID": "Service SID",
+    "Service SID - Tooltip": "The SID of the Twilio Verify service, starting with VA. Twilio generates, sends and checks the verification codes",
     "Service account JSON": "Service account JSON",
     "Service account JSON - Tooltip": "The JSON file content for the service account",
     "Sign Name": "Sign Name",

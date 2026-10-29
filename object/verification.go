@@ -179,6 +179,10 @@ func SendVerificationCodeToPhone(organization *Organization, user *User, provide
 		return err
 	}
 
+	if provider.Type == TwilioVerify {
+		code = ""
+	}
+
 	err = AddToVerificationRecord(user, provider, organization, remoteAddr, provider.Category, dest, code)
 	if err != nil {
 		return err
@@ -308,6 +312,27 @@ func CheckVerificationCode(dest string, code string, lang string) (*VerifyResult
 	now := time.Now().Unix()
 	if now-record.Time > timeoutInMinutes*60 {
 		return &VerifyResult{timeoutError, fmt.Sprintf(i18n.Translate(lang, "verification:You should verify your code in %d min!"), timeoutInMinutes)}, nil
+	}
+
+	if record.Code == "" {
+		if code == "" {
+			return &VerifyResult{wrongCodeError, i18n.Translate(lang, "verification:Wrong verification code!")}, nil
+		}
+
+		isApproved, err := checkTwilioVerifyCode(record, code)
+		if err != nil {
+			return nil, err
+		}
+		if !isApproved {
+			return &VerifyResult{wrongCodeError, i18n.Translate(lang, "verification:Wrong verification code!")}, nil
+		}
+
+		// Twilio approves a code only once, keep it so that the later checks of the same flow pass
+		record.Code = code
+		_, err = ormer.Engine.ID(core.PK{record.Owner, record.Name}).Cols("code").Update(record)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	if record.Code != code {

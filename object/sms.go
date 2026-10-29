@@ -32,6 +32,8 @@ func getSmsClient(provider *Provider) (sender.SmsClient, error) {
 		client, err = newHttpSmsClient(provider.Endpoint, provider.Method, provider.Title, provider.TemplateCode, provider.HttpHeaders, provider.UserMapping, provider.IssuerUrl, provider.EnableProxy, getTenantHttpClient(provider))
 	} else if provider.Type == "Alibaba Cloud PNVS SMS" {
 		client, err = newPnvsSmsClient(provider.ClientId, provider.ClientSecret, provider.SignName, provider.TemplateCode, provider.RegionId)
+	} else if provider.Type == TwilioVerify {
+		client, err = newTwilioVerifyClient(provider)
 	} else if provider.Type == sender.Twilio {
 		// For Twilio, the message body is pre-formatted in SendSms using the template.
 		// Pass "%s" as the template so go-sms-sender's fmt.Sprintf passes the content through unchanged.
