@@ -236,7 +236,7 @@
       return endpoint + "?client_id=" + provider.clientId + "&redirect_uri=" + redirectUri + "&scope=" + scope + "&response_type=code&prompt=login%20consent&state=" + state;
     } else if (provider.type === "WeChat") {
       if (navigator.userAgent.indexOf("MicroMessenger") !== -1) {
-        return authInfo[provider.type].mpEndpoint + "?appid=" + provider.clientId2 + "&redirect_uri=" + redirectUri + "&state=" + state + "&scope=" + authInfo[provider.type].mpScope + "&response_type=code#wechat_redirect";
+        return authInfo[provider.type].mpEndpoint + "?appid=" + provider.clientId2 + "&redirect_uri=" + redirectUri + "&response_type=code&scope=" + authInfo[provider.type].mpScope + "&state=" + state + "#wechat_redirect";
       }
 
       if (provider.clientId2 && provider.disableSsl && provider.signName === "media") {
