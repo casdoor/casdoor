@@ -143,10 +143,7 @@ func GetSystemInfo() (*SystemInfo, error) {
 		return nil, err
 	}
 
-	networkSent, networkRecv, networkTotal, err := getNetworkUsage()
-	if err != nil {
-		return nil, err
-	}
+	networkSent, networkRecv, networkTotal, _ := getNetworkUsage()
 
 	res := &SystemInfo{
 		CpuUsage:     cpuUsage,
