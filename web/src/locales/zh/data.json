@@ -1604,6 +1604,8 @@
     "Admin Email": "管理员邮箱",
     "Affiliation table": "工作单位表",
     "Affiliation table - Tooltip": "工作单位的数据库表名",
+    "Lark API domain": "飞书 API 域名",
+    "Lark API domain - Tooltip": "飞书开放平台域名,例如国内版填 https://open.feishu.cn,国际版(Lark)填 https://open.larksuite.com。留空默认使用国际版。两个域名接口返回的用户字段不一致,请根据租户实际情况填写。",
     "Avatar base URL": "头像基URL",
     "Avatar base URL - Tooltip": "头像图片的URL前缀",
     "Bind DN": "绑定DN",

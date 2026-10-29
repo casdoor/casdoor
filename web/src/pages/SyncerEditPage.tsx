@@ -36,7 +36,7 @@ const API_TYPES = [
 ];
 
 /** these have no host at all: the SDK knows the endpoint */
-const NO_HOST_TYPES = ["WeCom", "DingTalk", "Lark"];
+const NO_HOST_TYPES = ["WeCom", "DingTalk"];
 
 const isApiType = (type: string) => API_TYPES.includes(type);
 
@@ -75,6 +75,7 @@ function passwordLabelKey(type: string): string {
 
 function hostLabelKey(type: string): string {
   switch (type) {
+  case "Lark": return "syncer:Lark API domain";
   case "Azure AD": return "provider:Tenant ID";
   case "Google Workspace": return "syncer:Admin Email";
   case "Active Directory": return "ldap:Server";

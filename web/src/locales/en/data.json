@@ -1604,6 +1604,8 @@
     "Admin Email": "Admin Email",
     "Affiliation table": "Affiliation table",
     "Affiliation table - Tooltip": "Database table name of the work unit",
+    "Lark API domain": "Lark API domain",
+    "Lark API domain - Tooltip": "Lark (Feishu) Open Platform domain, e.g. https://open.feishu.cn for mainland China or https://open.larksuite.com for the global endpoint. Leave empty to use the global endpoint. The two endpoints return different user fields, so pick the one matching your tenant.",
     "Avatar base URL": "Avatar base URL",
     "Avatar base URL - Tooltip": "URL prefix for the avatar images",
     "Bind DN": "Bind DN",
