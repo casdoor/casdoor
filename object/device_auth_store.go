@@ -147,12 +147,8 @@ func (s *redisDeviceAuthStore) Store(key, value any) {
 		return
 	}
 
-	ttl := cache.ExpiresIn
-	if ttl <= 0 {
-		ttl = DeviceAuthExpiresIn
-	}
-
-	if err := s.client.Set(context.Background(), rk, data, time.Duration(ttl)*time.Second).Err(); err != nil {
+	ttl := time.Duration(cache.GetExpiresIn()) * time.Second
+	if err := s.client.Set(context.Background(), rk, data, ttl).Err(); err != nil {
 		logs.Warn("device_auth_store: Redis SET failed for key %s: %v", rk, err)
 	}
 }

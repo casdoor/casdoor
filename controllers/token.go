@@ -19,7 +19,6 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
-	"time"
 
 	"github.com/beego/beego/v2/core/utils/pagination"
 	"github.com/casdoor/casdoor/object"
@@ -336,7 +335,7 @@ func (c *ApiController) GetOAuthToken() {
 
 		deviceAuthCacheCast := deviceAuthCache.(object.DeviceAuthCache)
 
-		if deviceAuthCacheCast.RequestAt.Add(time.Second * object.DeviceAuthExpiresIn).Before(time.Now()) {
+		if deviceAuthCacheCast.IsExpired() {
 			object.DeviceAuthMap.Delete(deviceCode)
 			c.Data["json"] = &object.TokenError{
 				Error:            "expired_token",

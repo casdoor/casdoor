@@ -304,11 +304,7 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 			return
 		}
 
-		expiresIn := authCacheCast.ExpiresIn
-		if expiresIn == 0 {
-			expiresIn = object.DeviceAuthExpiresIn
-		}
-		if authCacheCast.RequestAt.Add(time.Duration(expiresIn) * time.Second).Before(time.Now()) {
+		if authCacheCast.IsExpired() {
 			if authCacheCast.UserName != "" {
 				object.DeviceAuthMap.Delete(authCacheCast.UserName)
 			}
@@ -1891,7 +1887,7 @@ func (c *ApiController) DeviceAuth() {
 	cancelToken := util.GenerateId()
 
 	expiresIn := application.CodeResendTimeout
-	if expiresIn == 0 {
+	if expiresIn <= 0 {
 		expiresIn = object.DeviceAuthExpiresIn
 	}
 
@@ -1994,7 +1990,7 @@ func (c *ApiController) DeviceAuthComplete() {
 		return
 	}
 
-	if deviceAuthCache.RequestAt.Add(time.Duration(deviceAuthCache.ExpiresIn) * time.Second).Before(time.Now()) {
+	if deviceAuthCache.IsExpired() {
 		object.DeviceAuthMap.Delete(deviceCode)
 		c.ResponseError(c.T("auth:UserCode Expired"))
 		return

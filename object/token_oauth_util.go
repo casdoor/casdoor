@@ -188,20 +188,25 @@ type DeviceAuthCache struct {
 	ExpiresIn     int
 }
 
+func (cache DeviceAuthCache) GetExpiresIn() int {
+	if cache.ExpiresIn <= 0 {
+		return DeviceAuthExpiresIn
+	}
+	return cache.ExpiresIn
+}
+
+func (cache DeviceAuthCache) IsExpired() bool {
+	return cache.RequestAt.Add(time.Duration(cache.GetExpiresIn()) * time.Second).Before(time.Now())
+}
+
 func InitCleanupDeviceAuthMap() {
 	InitDeviceAuthStore()
 	util.SafeGoroutine(func() {
 		ticker := time.NewTicker(time.Minute)
 		defer ticker.Stop()
 		for range ticker.C {
-			now := time.Now()
 			DeviceAuthMap.Range(func(key, value any) bool {
-				cache := value.(DeviceAuthCache)
-				expiresIn := cache.ExpiresIn
-				if expiresIn == 0 {
-					expiresIn = DeviceAuthExpiresIn
-				}
-				if cache.RequestAt.Add(time.Duration(expiresIn) * time.Second).Before(now) {
+				if value.(DeviceAuthCache).IsExpired() {
 					DeviceAuthMap.Delete(key)
 				}
 				return true
