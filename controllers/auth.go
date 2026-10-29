@@ -1853,53 +1853,39 @@ func (c *ApiController) Callback() {
 func (c *ApiController) DeviceAuth() {
 	clientId := c.Ctx.Input.Query("client_id")
 	scope := c.Ctx.Input.Query("scope")
+	if clientId == "" {
+		c.responseDeviceAuthError(object.InvalidRequest, "missing client_id")
+		return
+	}
+
 	application, err := object.GetApplicationByClientId(clientId)
 	if err != nil {
-		c.Data["json"] = object.TokenError{
-			Error:            err.Error(),
-			ErrorDescription: err.Error(),
-		}
-		c.ServeJSON()
+		c.responseDeviceAuthError("server_error", err.Error())
 		return
 	}
 
 	if application == nil {
-		c.Data["json"] = object.TokenError{
-			Error:            c.T("token:Invalid client_id"),
-			ErrorDescription: c.T("token:Invalid client_id"),
-		}
-		c.ServeJSON()
+		c.responseDeviceAuthError(object.InvalidClient, c.T("token:Invalid client_id"))
 		return
 	}
 
 	if !application.HasSigninMethod("Device login") {
-		c.Data["json"] = object.TokenError{
-			Error:            object.UnauthorizedClient,
-			ErrorDescription: "device login is not enabled for this application",
-		}
-		c.ServeJSON()
+		c.responseDeviceAuthError(object.UnauthorizedClient, "device login is not enabled for this application")
 		return
 	}
 
 	deviceCode := util.GenerateId()
-	userCode := util.GetRandomName()
-
-	generateTime := 0
-	for {
-		if generateTime > 5 {
-			c.Data["json"] = object.TokenError{
-				Error:            "userCode gen",
-				ErrorDescription: c.T("token:Invalid client_id"),
-			}
-			c.ServeJSON()
-			return
-		}
-		_, ok := object.DeviceAuthMap.Load(userCode)
-		if !ok {
+	userCode := ""
+	for i := 0; i < 5; i++ {
+		code := util.GetRandomName()
+		if _, ok := object.DeviceAuthMap.Load(code); !ok {
+			userCode = code
 			break
 		}
-
-		generateTime++
+	}
+	if userCode == "" {
+		c.responseDeviceAuthError("server_error", "failed to generate a unique user code")
+		return
 	}
 
 	cancelToken := util.GenerateId()
@@ -1935,6 +1921,19 @@ func (c *ApiController) DeviceAuth() {
 	object.DeviceAuthMap.Store(userCode, userAuthCache)
 
 	c.Data["json"] = object.GetDeviceAuthResponse(deviceCode, userCode, cancelToken, c.Ctx.Request.Host, expiresIn)
+	c.ServeJSON()
+}
+
+func (c *ApiController) responseDeviceAuthError(errorCode string, description string) {
+	c.Data["json"] = &object.TokenError{
+		Error:            errorCode,
+		ErrorDescription: description,
+	}
+	if errorCode == "server_error" {
+		c.Ctx.Output.SetStatus(http.StatusInternalServerError)
+	} else {
+		c.SetTokenErrorHttpStatus()
+	}
 	c.ServeJSON()
 }
 
