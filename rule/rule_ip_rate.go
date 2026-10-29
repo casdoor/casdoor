@@ -24,110 +24,96 @@ import (
 	"golang.org/x/time/rate"
 )
 
+const ipRatePruneInterval = time.Minute
+
 type IpRateRule struct {
 	ruleName string
 }
 
-type IpRateLimiter struct {
-	ips map[string]*rate.Limiter
-	mu  *sync.RWMutex
-	r   rate.Limit
-	b   int
+type ipRateState struct {
+	limit     int
+	limiters  map[string]*rate.Limiter
+	blackList map[string]time.Time
+	pruneTime time.Time
 }
 
-var blackList = map[string]map[string]time.Time{}
+var (
+	ipRateMu     sync.Mutex
+	ipRateStates = map[string]*ipRateState{}
+)
 
-var ipRateLimiters = map[string]*IpRateLimiter{}
-
-// NewIpRateLimiter .
-func NewIpRateLimiter(r rate.Limit, b int) *IpRateLimiter {
-	i := &IpRateLimiter{
-		ips: make(map[string]*rate.Limiter),
-		mu:  &sync.RWMutex{},
-		r:   r,
-		b:   b,
+func (s *ipRateState) prune(now time.Time, blockTime time.Duration) {
+	for ip, createAt := range s.blackList {
+		if now.Sub(createAt) >= blockTime {
+			delete(s.blackList, ip)
+		}
 	}
 
-	return i
-}
-
-// AddIP creates a new rate limiter and adds it to the ips map,
-// using the IP address as the key
-func (i *IpRateLimiter) AddIP(ip string) *rate.Limiter {
-	i.mu.Lock()
-	defer i.mu.Unlock()
-
-	limiter := rate.NewLimiter(i.r, i.b)
-
-	i.ips[ip] = limiter
-
-	return limiter
-}
-
-// GetLimiter returns the rate limiter for the provided IP address if it exists.
-// Otherwise, calls AddIP to add IP address to the map
-func (i *IpRateLimiter) GetLimiter(ip string) *rate.Limiter {
-	i.mu.Lock()
-	limiter, exists := i.ips[ip]
-
-	if !exists {
-		i.mu.Unlock()
-		return i.AddIP(ip)
+	// A limiter with a full bucket behaves the same as a new one
+	for ip, limiter := range s.limiters {
+		if limiter.TokensAt(now) >= float64(s.limit) {
+			delete(s.limiters, ip)
+		}
 	}
 
-	i.mu.Unlock()
+	s.pruneTime = now
+}
 
-	return limiter
+func allowIpRate(ruleName string, ip string, limit int, blockTime time.Duration) bool {
+	ipRateMu.Lock()
+	defer ipRateMu.Unlock()
+
+	now := time.Now()
+	state, ok := ipRateStates[ruleName]
+	if !ok {
+		state = &ipRateState{
+			limit:     limit,
+			limiters:  map[string]*rate.Limiter{},
+			blackList: map[string]time.Time{},
+			pruneTime: now,
+		}
+		ipRateStates[ruleName] = state
+	} else if state.limit != limit {
+		state.limit = limit
+		state.limiters = map[string]*rate.Limiter{}
+	}
+
+	if now.Sub(state.pruneTime) >= ipRatePruneInterval {
+		state.prune(now, blockTime)
+	}
+
+	if createAt, ok := state.blackList[ip]; ok {
+		if now.Sub(createAt) < blockTime {
+			return false
+		}
+		delete(state.blackList, ip)
+	}
+
+	limiter, ok := state.limiters[ip]
+	if !ok {
+		limiter = rate.NewLimiter(rate.Limit(limit), limit)
+		state.limiters[ip] = limiter
+	}
+
+	if !limiter.AllowN(now, 1) {
+		state.blackList[ip] = now
+		return false
+	}
+
+	return true
 }
 
 func (r *IpRateRule) checkRule(expressions []*object.Expression, req *http.Request) (*RuleResult, error) {
 	expression := expressions[0] // IpRate rule should have only one expression
 	clientIp := util.GetClientIp(req)
+	limit := util.ParseInt(expression.Operator)
+	blockTime := time.Duration(util.ParseInt(expression.Value)) * time.Second
 
-	// If the client IP is in the blacklist, check the block time
-	createAt, ok := blackList[r.ruleName][clientIp]
-	if ok {
-		blockTime := util.ParseInt(expression.Value)
-		if time.Now().Sub(createAt) < time.Duration(blockTime)*time.Second {
-			return &RuleResult{
-				Action: "Block",
-				Reason: "Rate limit exceeded",
-			}, nil
-		} else {
-			delete(blackList[r.ruleName], clientIp)
-		}
-	}
-
-	// If the client IP is not in the blacklist, check the rate limit
-	ipRateLimiter := ipRateLimiters[r.ruleName]
-	parseInt := util.ParseInt(expression.Operator)
-	if ipRateLimiter == nil {
-		ipRateLimiter = NewIpRateLimiter(rate.Limit(parseInt), parseInt)
-		ipRateLimiters[r.ruleName] = ipRateLimiter
-	}
-
-	// If the rate limit has changed, update the rate limiter
-	limiter := ipRateLimiter.GetLimiter(clientIp)
-	if ipRateLimiter.r != rate.Limit(parseInt) {
-		ipRateLimiter.r = rate.Limit(parseInt)
-		ipRateLimiter.b = parseInt
-		limiter.SetLimit(ipRateLimiter.r)
-		limiter.SetBurst(ipRateLimiter.b)
-		err := limiter.Wait(req.Context())
-		if err != nil {
-			return nil, err
-		}
-	} else {
-		// If the rate limit is exceeded, add the client IP to the blacklist
-		allow := limiter.Allow()
-		if !allow {
-			blackList[r.ruleName] = map[string]time.Time{}
-			blackList[r.ruleName][clientIp] = time.Now()
-			return &RuleResult{
-				Action: "Block",
-				Reason: "Rate limit exceeded",
-			}, nil
-		}
+	if !allowIpRate(r.ruleName, clientIp, limit, blockTime) {
+		return &RuleResult{
+			Action: "Block",
+			Reason: "Rate limit exceeded",
+		}, nil
 	}
 
 	return nil, nil
