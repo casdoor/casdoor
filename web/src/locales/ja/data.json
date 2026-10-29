@@ -1041,6 +1041,8 @@
     "Record retention days": "ログの保存日数",
     "Record retention days - Tooltip": "Record retention days - Tooltip",
     "Required": "必須",
+    "Skip MFA for RADIUS": "RADIUSでMFAをスキップ",
+    "Skip MFA for RADIUS - Tooltip": "有効にすると、組み込みRADIUSサーバーはMFAを有効にしたユーザーをパスワード確認のみで受け付け、OTPを要求しません。OTPに応答できないWPA2/WPA3-Enterprise Wi-Fiクライアントなどに使用します。WebサインインのMFA には影響しません。グローバル管理者のみ変更できます",
     "Soft deletion": "ソフト削除",
     "Soft deletion - Tooltip": "有効になっている場合、ユーザーを削除しても完全にデータベースから削除されません。代わりに、削除されたとマークされます",
     "Tags": "タグ",

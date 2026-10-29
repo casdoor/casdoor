@@ -1041,6 +1041,8 @@
     "Record retention days": "Kayıt saklama süresi (gün)",
     "Record retention days - Tooltip": "Record retention days - Tooltip",
     "Required": "Gerekli",
+    "Skip MFA for RADIUS": "RADIUS için MFA'yı atla",
+    "Skip MFA for RADIUS - Tooltip": "Etkinleştirildiğinde yerleşik RADIUS sunucusu, MFA kullanan kullanıcıları yalnızca parola denetimiyle, OTP istemeden kabul eder; örneğin buna yanıt veremeyen WPA2/WPA3-Enterprise Wi-Fi istemcileri için. Web oturum açmadaki MFA etkilenmez. Yalnızca genel yöneticiler değiştirebilir",
     "Soft deletion": "Yumuşak silme",
     "Soft deletion - Tooltip": "Etkinleştirildiğinde, kullanıcıların silinmesi onları veritabanından tamamen kaldırmayacaktır. Bunun yerine silinmiş olarak işaretlenecekler",
     "Tags": "Etiketler",

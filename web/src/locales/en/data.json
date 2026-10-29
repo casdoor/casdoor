@@ -1041,6 +1041,8 @@
     "Record retention days": "Record retention days",
     "Record retention days - Tooltip": "Number of days to keep the organization's records (audit logs) before they are automatically deleted by a daily cleanup job. Leave it empty or set it to 0 to keep the records forever",
     "Required": "Required",
+    "Skip MFA for RADIUS": "Skip MFA for RADIUS",
+    "Skip MFA for RADIUS - Tooltip": "When enabled, the built-in RADIUS server accepts users with MFA after the password check alone, without sending an OTP challenge, e.g. for WPA2/WPA3-Enterprise Wi-Fi clients that cannot answer it. MFA for web sign-in is not affected. Only global administrators can change it",
     "Soft deletion": "Soft deletion",
     "Soft deletion - Tooltip": "When enabled, deleting a user only marks it as deleted and keeps it in the database. Deleting a user that is already marked as deleted removes it permanently",
     "Tags": "Tags",

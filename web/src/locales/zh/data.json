@@ -1041,6 +1041,8 @@
     "Record retention days": "日志保留天数",
     "Record retention days - Tooltip": "组织的日志（审计记录）保留天数，超期的日志会被每天执行的清理任务自动删除。留空或填0表示永久保留",
     "Required": "必须",
+    "Skip MFA for RADIUS": "RADIUS跳过MFA",
+    "Skip MFA for RADIUS - Tooltip": "启用后，内置RADIUS服务器对开启了MFA的用户只校验密码、不再要求输入动态口令，用于WPA2/WPA3企业级Wi-Fi等无法输入动态口令的客户端。网页登录的MFA不受影响。仅全局管理员可以修改",
     "Soft deletion": "软删除",
     "Soft deletion - Tooltip": "启用后，删除用户时只会标记为已删除状态，不会从数据库清除。对已标记为删除的用户再删除一次，才会彻底清除",
     "Tags": "标签集合",

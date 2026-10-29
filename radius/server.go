@@ -114,17 +114,17 @@ func getRadiusOrganization(organization string) string {
 	return organization
 }
 
-func isRadiusEnabled(organization string) bool {
+func getRadiusEnabledOrganization(organization string) *object.Organization {
 	org, err := object.GetOrganization(util.GetId("admin", organization))
 	if err != nil {
-		log.Printf("isRadiusEnabled() failed to get organization: %s, err = %v", organization, err)
-		return false
+		log.Printf("getRadiusEnabledOrganization() failed to get organization: %s, err = %v", organization, err)
+		return nil
 	}
 	if org == nil || !org.EnableRadius {
 		log.Printf("RADIUS is not enabled for organization: %s", organization)
-		return false
+		return nil
 	}
-	return true
+	return org
 }
 
 func handleAccessRequest(w radius.ResponseWriter, r *radius.Request) {
@@ -135,7 +135,8 @@ func handleAccessRequest(w radius.ResponseWriter, r *radius.Request) {
 	log.Printf("handleAccessRequest() username=%v, org=%v", username, organization)
 
 	organization = getRadiusOrganization(organization)
-	if !isRadiusEnabled(organization) {
+	org := getRadiusEnabledOrganization(organization)
+	if org == nil {
 		w.Write(r.Response(radius.CodeAccessReject))
 		return
 	}
@@ -151,7 +152,7 @@ func handleAccessRequest(w radius.ResponseWriter, r *radius.Request) {
 		return
 	}
 
-	if user.IsMfaEnabled() {
+	if user.IsMfaEnabled() && !org.DisableRadiusMfa {
 		responseState := addAccessState(organization, username)
 		response := r.Response(radius.CodeAccessChallenge)
 
@@ -217,7 +218,7 @@ func handleAccountingRequest(w radius.ResponseWriter, r *radius.Request) {
 	}
 
 	log.Printf("handleAccountingRequest() username=%v, org=%v, statusType=%v", username, organization, statusType)
-	if !isRadiusEnabled(getRadiusOrganization(organization)) {
+	if getRadiusEnabledOrganization(getRadiusOrganization(organization)) == nil {
 		return
 	}
 

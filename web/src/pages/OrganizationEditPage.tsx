@@ -654,6 +654,13 @@ export default function OrganizationEditPage() {
               onCheckedChange={(v) => update("enableRadius", v)}
             />
           </FormRow>
+          <FormRow labelKey="organization:Skip MFA for RADIUS">
+            <Switch
+              checked={!!organization.disableRadiusMfa}
+              disabled={!Setting.isAdminUser(account)}
+              onCheckedChange={(v) => update("disableRadiusMfa", v)}
+            />
+          </FormRow>
           <FormRow labelKey="organization:Enable dynamic client registration">
             <Switch
               checked={!!organization.dcrPolicy && organization.dcrPolicy !== "disabled"}

@@ -1041,6 +1041,8 @@
     "Record retention days": "Okres przechowywania logów (dni)",
     "Record retention days - Tooltip": "Record retention days - Tooltip",
     "Required": "Wymagane",
+    "Skip MFA for RADIUS": "Pomiń MFA dla RADIUS",
+    "Skip MFA for RADIUS - Tooltip": "Po włączeniu wbudowany serwer RADIUS akceptuje użytkowników z MFA po samej weryfikacji hasła, bez żądania kodu OTP, np. dla klientów Wi-Fi WPA2/WPA3-Enterprise, którzy nie mogą na nie odpowiedzieć. MFA przy logowaniu przez przeglądarkę nie jest zmieniane. Tylko administratorzy globalni mogą to zmienić",
     "Soft deletion": "Miękkie usuwanie",
     "Soft deletion - Tooltip": "Po włączeniu usunięcie użytkownika nie usunie go całkowicie z bazy danych. Zamiast tego zostanie oznaczony jako usunięty",
     "Tags": "Tagi",

@@ -108,6 +108,7 @@ type Organization struct {
 	LdapAttributes     []string `xorm:"mediumtext" json:"ldapAttributes"`
 	EnableLdapPassword bool     `xorm:"bool" json:"enableLdapPassword"`
 	EnableRadius       bool     `xorm:"bool" json:"enableRadius"`
+	DisableRadiusMfa   bool     `xorm:"bool" json:"disableRadiusMfa"`
 
 	KerberosRealm       string `xorm:"varchar(200)" json:"kerberosRealm"`
 	KerberosKdcHost     string `xorm:"varchar(200)" json:"kerberosKdcHost"`
@@ -305,6 +306,7 @@ func UpdateOrganization(id string, organization *Organization, isGlobalAdmin boo
 		organization.BalanceCurrency = org.BalanceCurrency
 		organization.EnableLdapPassword = org.EnableLdapPassword
 		organization.EnableRadius = org.EnableRadius
+		organization.DisableRadiusMfa = org.DisableRadiusMfa
 		organization.DcrPolicy = org.DcrPolicy
 	}
 

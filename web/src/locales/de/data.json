@@ -1041,6 +1041,8 @@
     "Record retention days": "Aufbewahrungsdauer der Protokolle (Tage)",
     "Record retention days - Tooltip": "Record retention days - Tooltip",
     "Required": "Erforderlich",
+    "Skip MFA for RADIUS": "MFA für RADIUS überspringen",
+    "Skip MFA for RADIUS - Tooltip": "Wenn aktiviert, akzeptiert der integrierte RADIUS-Server Benutzer mit MFA allein nach der Passwortprüfung, ohne OTP-Abfrage, z. B. für WPA2/WPA3-Enterprise-WLAN-Clients, die diese nicht beantworten können. MFA bei der Web-Anmeldung ist nicht betroffen. Nur globale Administratoren können dies ändern",
     "Soft deletion": "Softe Löschung",
     "Soft deletion - Tooltip": "Wenn aktiviert, werden gelöschte Benutzer nicht vollständig aus der Datenbank entfernt. Stattdessen werden sie als gelöscht markiert",
     "Tags": "Schlagwörter",
