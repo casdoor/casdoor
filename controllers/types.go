@@ -30,6 +30,8 @@ type TokenRequest struct {
 	CountryCode         string `json:"country_code"`
 	Tag                 string `json:"tag"`
 	Avatar              string `json:"avatar"`
+	PhoneCode           string `json:"phone_code"`
+	PhoneRequired       bool   `json:"phone_required"`
 	RefreshToken        string `json:"refresh_token"`
 	SubjectToken        string `json:"subject_token"`
 	SubjectTokenType    string `json:"subject_token_type"`
