@@ -151,7 +151,7 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
   }
 
   const isAdmin = Setting.isLocalAdminUser(account);
-  const isSelf = account?.owner === user.owner && account?.name === user.name;
+  const isSelf = !!account && (user.id && account.id ? user.id === account.id : account.owner === user.owner && account.name === user.name);
   // only offer the methods in the MFA items, an enabled one stays so it can still be edited or disabled
   const allowedMfaTypes = Setting.getAllowedMfaTypes(user, organization);
   const visibleMfaItems = mfaItems.filter(
