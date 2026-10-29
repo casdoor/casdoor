@@ -84,6 +84,8 @@ export default function SignupPage({application: applicationProp}: {application?
 
   const applicationName = params.applicationName ?? authConfig.appName;
 
+  React.useEffect(() => Setting.onPageRestored(() => setLoading(false)), []);
+
   React.useEffect(() => {
     if (applicationProp) {
       setApplication(applicationProp);
@@ -376,7 +378,12 @@ export default function SignupPage({application: applicationProp}: {application?
         }
         navigate(path, {state: {username}});
       })
-      .finally(() => setLoading(false));
+      .finally(() => {
+        // the spinner stays on while the browser leaves for the application
+        if (!Setting.isLeavingPage()) {
+          setLoading(false);
+        }
+      });
   };
 
   const renderEmail = (item: any) => verifiedAddress?.type === "email" ? renderVerifiedAddress(item, "email", i18next.t("general:Email")) : (

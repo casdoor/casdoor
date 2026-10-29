@@ -342,6 +342,14 @@ export default function LoginPage({type = "login", application: applicationProp,
   const promptLogin = !preview && type === "code" &&
     (new URLSearchParams(location.search).get("prompt") ?? "").split(" ").includes("login");
 
+  // the spinner stays on while the browser leaves for the application, and goes off if it comes back
+  const stopLoading = () => {
+    if (!Setting.isLeavingPage()) {
+      setLoading(false);
+    }
+  };
+  React.useEffect(() => Setting.onPageRestored(() => setLoading(false)), []);
+
   // remember where the sign-in started, for the flows that have to come back to it
   React.useEffect(() => {
     if (preview) {
@@ -850,7 +858,7 @@ export default function LoginPage({type = "login", application: applicationProp,
             onRejected();
           }
         })
-        .finally(() => setLoading(false));
+        .finally(stopLoading);
       return;
     }
 
@@ -868,7 +876,7 @@ export default function LoginPage({type = "login", application: applicationProp,
       })
       .finally(() => {
         localStorage.setItem("lastLoginOrg", values?.organization || "");
-        setLoading(false);
+        stopLoading();
       });
   };
 
@@ -927,7 +935,7 @@ export default function LoginPage({type = "login", application: applicationProp,
       .catch((error: any) => {
         Setting.showMessage("error", error.message);
       })
-      .finally(() => setLoading(false));
+      .finally(stopLoading);
   };
 
   const checkAgreement = () => {

@@ -1241,11 +1241,45 @@ export function openLinkSafe(link) {
   a.click();
 }
 
+let leavingPage = false;
+
+// a custom scheme hands the link to a native app and a fragment of this page stays on it
+function unloadsPage(link) {
+  try {
+    const url = new URL(link, window.location.href);
+    if (url.protocol !== "http:" && url.protocol !== "https:") {
+      return false;
+    }
+    return !(url.hash !== "" && url.href.split("#")[0] === window.location.href.split("#")[0]);
+  } catch {
+    return false;
+  }
+}
+
+/** Whether goToLink() or createFormAndSubmit() has sent the browser to another page that is still loading. */
+export function isLeavingPage() {
+  return leavingPage;
+}
+
+/** Calls onRestored when the browser shows this page again from its back-forward cache. */
+export function onPageRestored(onRestored) {
+  const onPageShow = (event) => {
+    if (event.persisted) {
+      leavingPage = false;
+      onRestored();
+    }
+  };
+  window.addEventListener("pageshow", onPageShow);
+  return () => window.removeEventListener("pageshow", onPageShow);
+}
+
 export function goToLink(link) {
   if (isScriptUrl(link)) {
     return;
   }
-  window.location.href = withBasePath(link);
+  const href = withBasePath(link);
+  leavingPage = unloadsPage(href);
+  window.location.href = href;
 }
 
 
@@ -2528,6 +2562,7 @@ export function createFormAndSubmit(url, params) {
   }
 
   document.body.appendChild(form);
+  leavingPage = unloadsPage(url);
   form.submit();
   setTimeout(() => {form.remove();}, 500);
 }
