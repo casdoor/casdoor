@@ -24,7 +24,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func GetOAuthToken(grantType string, clientId string, clientSecret string, code string, verifier string, scope string, nonce string, username string, password string, countryCode string, host string, refreshToken string, tag string, avatar string, lang string, subjectToken string, subjectTokenType string, assertion string, clientAssertion string, clientAssertionType string, audience string, resource string, dpopProof string, clientIp string) (interface{}, error) {
+func GetOAuthToken(grantType string, clientId string, clientSecret string, code string, verifier string, scope string, nonce string, username string, password string, countryCode string, host string, refreshToken string, tag string, avatar string, lang string, subjectToken string, subjectTokenType string, requestedTokenType string, assertion string, clientAssertion string, clientAssertionType string, audience string, resource string, dpopProof string, clientIp string) (interface{}, error) {
 	var (
 		application *Application
 		err         error
@@ -102,6 +102,16 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 		// so we skip password verification and mint a token directly.
 		token, tokenError, err = GetDeviceCodeToken(application, username, scope, nonce, host)
 	case "urn:ietf:params:oauth:grant-type:token-exchange": // Token Exchange Grant (RFC 8693)
+		if requestedTokenType == IdJagTokenType {
+			idJag, tokenError, err := GetIdJagToken(application, clientSecret, subjectToken, subjectTokenType, audience, resource, scope, host)
+			if err != nil {
+				return nil, err
+			}
+			if tokenError != nil {
+				return tokenError, nil
+			}
+			return idJag, nil
+		}
 		token, tokenError, err = GetTokenExchangeToken(application, clientSecret, subjectToken, subjectTokenType, audience, scope, host)
 	case "refresh_token":
 		refreshToken2, err := RefreshToken(application, grantType, refreshToken, scope, clientId, clientSecret, resource, host, dpopProof, "/api/login/oauth/access_token")
@@ -789,56 +799,12 @@ func GetTokenExchangeToken(application *Application, clientSecret string, subjec
 		}, nil
 	}
 
-	subjectOwner, subjectName, subjectScope, tokenError, err := parseAndValidateSubjectToken(subjectToken, application.ClientId)
+	user, subjectScope, tokenError, err := getSubjectTokenUser(application, subjectToken, subjectTokenType)
 	if err != nil {
 		return nil, nil, err
 	}
 	if tokenError != nil {
 		return nil, tokenError, nil
-	}
-
-	// A valid signature is not enough: the subject token must still be active, the same
-	// way the refresh_token grant checks it, or a revoked token can be exchanged forever.
-	var subjectTokenRecord *Token
-	if subjectTokenType == "urn:ietf:params:oauth:token-type:id_token" {
-		subjectTokenRecord, err = GetTokenByIdToken(subjectToken)
-	} else {
-		subjectTokenRecord, err = GetTokenByAccessToken(subjectToken)
-	}
-	if err != nil {
-		return nil, nil, err
-	}
-	if subjectTokenRecord == nil || subjectTokenRecord.ExpiresIn <= 0 {
-		return nil, &TokenError{
-			Error:            InvalidGrant,
-			ErrorDescription: "subject_token is revoked or unknown",
-		}, nil
-	}
-
-	user, err := getUser(subjectOwner, subjectName)
-	if err != nil {
-		return nil, nil, err
-	}
-	if user == nil {
-		return nil, &TokenError{
-			Error:            InvalidGrant,
-			ErrorDescription: fmt.Sprintf("user from subject_token does not exist: %s", util.GetId(subjectOwner, subjectName)),
-		}, nil
-	}
-
-	if user.IsForbidden {
-		return nil, &TokenError{
-			Error:            InvalidGrant,
-			ErrorDescription: "the user is forbidden to sign in, please contact the administrator",
-		}, nil
-	}
-
-	// the same as signing in: only a shared application serves the users of other organizations
-	if user.Owner != application.Organization && !application.IsShared {
-		return nil, &TokenError{
-			Error:            InvalidGrant,
-			ErrorDescription: fmt.Sprintf("user from subject_token: %s does not belong to the organization of the application: %s", user.GetId(), application.Organization),
-		}, nil
 	}
 
 	// RFC 8693: "audience" is the target service the new token is for, by client ID or by application name
@@ -936,6 +902,60 @@ func GetTokenExchangeToken(application *Application, clientSecret string, subjec
 	}
 
 	return token, nil, nil
+}
+
+// getSubjectTokenUser returns the user of an active subject token issued by Casdoor to the application, and the token's scope
+func getSubjectTokenUser(application *Application, subjectToken string, subjectTokenType string) (*User, string, *TokenError, error) {
+	subjectOwner, subjectName, subjectScope, tokenError, err := parseAndValidateSubjectToken(subjectToken, application.ClientId)
+	if err != nil || tokenError != nil {
+		return nil, "", tokenError, err
+	}
+
+	// A valid signature is not enough: the subject token must still be active, the same
+	// way the refresh_token grant checks it, or a revoked token can be exchanged forever.
+	var subjectTokenRecord *Token
+	if subjectTokenType == "urn:ietf:params:oauth:token-type:id_token" {
+		subjectTokenRecord, err = GetTokenByIdToken(subjectToken)
+	} else {
+		subjectTokenRecord, err = GetTokenByAccessToken(subjectToken)
+	}
+	if err != nil {
+		return nil, "", nil, err
+	}
+	if subjectTokenRecord == nil || subjectTokenRecord.ExpiresIn <= 0 {
+		return nil, "", &TokenError{
+			Error:            InvalidGrant,
+			ErrorDescription: "subject_token is revoked or unknown",
+		}, nil
+	}
+
+	user, err := getUser(subjectOwner, subjectName)
+	if err != nil {
+		return nil, "", nil, err
+	}
+	if user == nil {
+		return nil, "", &TokenError{
+			Error:            InvalidGrant,
+			ErrorDescription: fmt.Sprintf("user from subject_token does not exist: %s", util.GetId(subjectOwner, subjectName)),
+		}, nil
+	}
+
+	if user.IsForbidden {
+		return nil, "", &TokenError{
+			Error:            InvalidGrant,
+			ErrorDescription: "the user is forbidden to sign in, please contact the administrator",
+		}, nil
+	}
+
+	// the same as signing in: only a shared application serves the users of other organizations
+	if user.Owner != application.Organization && !application.IsShared {
+		return nil, "", &TokenError{
+			Error:            InvalidGrant,
+			ErrorDescription: fmt.Sprintf("user from subject_token: %s does not belong to the organization of the application: %s", user.GetId(), application.Organization),
+		}, nil
+	}
+
+	return user, subjectScope, nil, nil
 }
 
 func GetAccessTokenByUser(user *User, host string) (string, error) {

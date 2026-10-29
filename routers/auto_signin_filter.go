@@ -67,7 +67,8 @@ func AutoSigninFilter(ctx *context.Context) {
 			return
 		}
 
-		if token == nil {
+		// an ID-JAG is a grant to be redeemed at another authorization server, not an access token
+		if token == nil || token.TokenType == "ID-JAG" {
 			responseInvalidToken(ctx, nil, "invalid_token", "Access token doesn't exist in database")
 			return
 		}
