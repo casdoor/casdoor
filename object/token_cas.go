@@ -232,7 +232,7 @@ func GenerateCasToken(userId string, service string, application string) (string
 		return "", err
 	}
 	if user == nil {
-		return "", fmt.Errorf("The user: %s doesn't exist", userId)
+		return "", util.MessageErrorf("general:The user: %s doesn't exist", userId)
 	}
 
 	user, _ = GetMaskedUser(user, false)
@@ -323,12 +323,12 @@ func GetValidationBySaml(samlRequest string, host string) (string, string, error
 
 	ticket := request.AssertionArtifact.InnerXML
 	if ticket == "" {
-		return "", "", fmt.Errorf("request.AssertionArtifact.InnerXML error, AssertionArtifact field not found")
+		return "", "", util.MessageErrorf("token:request.AssertionArtifact.InnerXML error, AssertionArtifact field not found")
 	}
 
 	casToken := GetCasTokenByTicket(ticket)
 	if casToken == nil {
-		return "", "", fmt.Errorf("the CAS token for ticket %s is not found", ticket)
+		return "", "", util.MessageErrorf("token:the CAS token for ticket %s is not found", ticket)
 	}
 	service, userId := casToken.Service, casToken.UserId
 
@@ -338,7 +338,7 @@ func GetValidationBySaml(samlRequest string, host string) (string, string, error
 	}
 
 	if user == nil {
-		return "", "", fmt.Errorf("the user %s is not found", userId)
+		return "", "", util.MessageErrorf("token:the user %s is not found", userId)
 	}
 
 	application, err := GetApplicationByUser(user)
@@ -346,7 +346,7 @@ func GetValidationBySaml(samlRequest string, host string) (string, string, error
 		return "", "", err
 	}
 	if application == nil {
-		return "", "", fmt.Errorf("the application for user %s is not found", userId)
+		return "", "", util.MessageErrorf("auth:the application for user %s is not found", userId)
 	}
 
 	samlResponse, err := NewSamlResponse11(application, user, request.RequestID, host)
@@ -360,7 +360,7 @@ func GetValidationBySaml(samlRequest string, host string) (string, string, error
 	}
 
 	if cert.Certificate == "" {
-		return "", "", fmt.Errorf("the certificate field should not be empty for the cert: %v", cert)
+		return "", "", util.MessageErrorf("saml:the certificate field should not be empty for the cert: %s", cert.GetId())
 	}
 
 	block, _ := pem.Decode([]byte(cert.Certificate))
@@ -374,14 +374,14 @@ func GetValidationBySaml(samlRequest string, host string) (string, string, error
 	ctx.Hash = crypto.SHA1
 	signedXML, err := ctx.SignEnveloped(samlResponse)
 	if err != nil {
-		return "", "", fmt.Errorf("err: %s", err.Error())
+		return "", "", util.MessageErrorf("token:err: %s", err)
 	}
 
 	doc := etree.NewDocument()
 	doc.SetRoot(signedXML)
 	xmlStr, err := doc.WriteToString()
 	if err != nil {
-		return "", "", fmt.Errorf("err: %s", err.Error())
+		return "", "", util.MessageErrorf("token:err: %s", err)
 	}
 	return xmlStr, service, nil
 }

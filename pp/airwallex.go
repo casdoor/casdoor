@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/casdoor/casdoor/conf"
+	"github.com/casdoor/casdoor/util"
 )
 
 type AirwallexPaymentProvider struct {
@@ -76,7 +77,8 @@ func (pp *AirwallexPaymentProvider) Notify(body []byte, orderId string) (*Notify
 		// Skip
 	default:
 		notifyResult.PaymentStatus = PaymentStateError
-		notifyResult.NotifyMessage = fmt.Sprintf("unexpected airwallex checkout status: %v", intent.Status)
+		notifyResult.MessageError = util.MessageErrorf("payment:unexpected airwallex checkout status: %v", intent.Status)
+		notifyResult.NotifyMessage = notifyResult.MessageError.Error()
 		return notifyResult, nil
 	}
 	// Check attempt status
@@ -89,7 +91,8 @@ func (pp *AirwallexPaymentProvider) Notify(body []byte, orderId string) (*Notify
 			// Skip
 		default:
 			notifyResult.PaymentStatus = PaymentStateError
-			notifyResult.NotifyMessage = fmt.Sprintf("unexpected airwallex checkout payment status: %v", intent.PaymentStatus)
+			notifyResult.MessageError = util.MessageErrorf("payment:unexpected airwallex checkout payment status: %v", intent.PaymentStatus)
+			notifyResult.NotifyMessage = notifyResult.MessageError.Error()
 			return notifyResult, nil
 		}
 	}
@@ -168,7 +171,7 @@ func (c *AirwallexClient) GetToken() (string, error) {
 		return "", err
 	}
 	if result.Token == "" {
-		return "", fmt.Errorf("invalid token response")
+		return "", util.MessageErrorf("payment:invalid token response")
 	}
 	expiresAt := strings.Replace(result.ExpiresAt, "+0000", "+00:00", 1)
 	result.parsedExpiresAt, _ = time.Parse(time.RFC3339, expiresAt)
@@ -217,7 +220,7 @@ func (c *AirwallexClient) CreateIntent(r *PayReq) (*AirWallexIntentResp, error) 
 	intentUrl := fmt.Sprintf("%s/pa/payment_intents/create", c.APIEndpoint)
 	intentRes, err := c.authRequest("POST", intentUrl, intentReq)
 	if err != nil {
-		return nil, fmt.Errorf("failed to create payment intent: %v", err)
+		return nil, util.MessageErrorf("payment:failed to create payment intent: %v", err)
 	}
 	return &AirWallexIntentResp{
 		Id:              intentRes["id"].(string),

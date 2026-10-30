@@ -121,7 +121,7 @@ func (idp *GoogleIdProvider) validateOneTapResponse(response string) (*GoogleIdT
 		return nil, err
 	}
 	if oneTapResponse.Credential == "" || idp.Config.ClientID == "" {
-		return nil, errors.New("the Google One Tap credential is missing")
+		return nil, util.NewMessageError("provider:the Google One Tap credential is missing")
 	}
 
 	client := idp.Client
@@ -140,7 +140,7 @@ func (idp *GoogleIdProvider) validateOneTapResponse(response string) (*GoogleIdT
 		return nil, err
 	}
 	if payload.Issuer != "accounts.google.com" && payload.Issuer != "https://accounts.google.com" {
-		return nil, fmt.Errorf("the Google ID token has an invalid issuer: %s", payload.Issuer)
+		return nil, util.MessageErrorf("provider:the Google ID token has an invalid issuer: %s", payload.Issuer)
 	}
 
 	getClaim := func(name string) string {
@@ -241,7 +241,7 @@ func (idp *GoogleIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error)
 	}
 
 	if googleUserInfo.Email == "" {
-		return nil, errors.New("google email is empty")
+		return nil, util.NewMessageError("provider:google email is empty")
 	}
 
 	url = fmt.Sprintf("https://people.googleapis.com/v1/people/me?personFields=phoneNumbers&access_token=%s", token.AccessToken)

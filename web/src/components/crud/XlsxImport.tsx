@@ -148,7 +148,7 @@ export function XlsxImport({columns, templateName, uploadApi, successMessage, on
                   <TableRow key={index}>
                     {columns.map((column) => (
                       <TableCell key={column} className="whitespace-nowrap">
-                        {String(row[column] ?? "")}
+                        {String(getXlsxPreviewValue(row, column) ?? "")}
                       </TableCell>
                     ))}
                   </TableRow>
@@ -168,4 +168,17 @@ export function XlsxImport({columns, templateName, uploadApi, successMessage, on
       </Dialog>
     </>
   );
+}
+
+// The label before # can change with the UI language; the imported field ID cannot.
+export function getXlsxPreviewValue(row: Record<string, unknown>, column: string) {
+  if (Object.prototype.hasOwnProperty.call(row, column)) {
+    return row[column];
+  }
+  if (!column.includes("#")) {
+    return undefined;
+  }
+  const field = column.slice(column.lastIndexOf("#") + 1);
+  const matches = field ? Object.keys(row).filter((header) => header.includes("#") && header.slice(header.lastIndexOf("#") + 1) === field) : [];
+  return matches.length === 1 ? row[matches[0]] : undefined;
 }

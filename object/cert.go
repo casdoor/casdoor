@@ -258,7 +258,7 @@ func (p *Cert) populateContent() error {
 	}
 
 	if len(p.CryptoAlgorithm) < 3 {
-		err := fmt.Errorf("populateContent() error, unsupported crypto algorithm: %s", p.CryptoAlgorithm)
+		err := util.MessageErrorf("cert:populateContent() error, unsupported crypto algorithm: %s", p.CryptoAlgorithm)
 		return err
 	}
 
@@ -280,7 +280,7 @@ func (p *Cert) populateContent() error {
 	} else if sigAlgorithm == "PS" {
 		certificate, privateKey, err = generateRsaPssKeys(p.BitSize, shaSize, p.ExpireInYears, p.Name, p.Owner)
 	} else {
-		err = fmt.Errorf("populateContent() error, unsupported signature algorithm: %s", sigAlgorithm)
+		err = util.MessageErrorf("cert:populateContent() error, unsupported signature algorithm: %s", sigAlgorithm)
 	}
 	if err != nil {
 		return err
@@ -308,7 +308,7 @@ func RenewCert(cert *Cert) (bool, error) {
 	} else if cert.Provider == "GoDaddy" {
 		certStr, privateKey, err = certificate.ObtainCertificateGoDaddy(client, cert.Name, cert.AccessKey, cert.AccessSecret)
 	} else {
-		return false, fmt.Errorf("unknown provider: %s", cert.Provider)
+		return false, util.MessageErrorf("cert:unknown provider: %s", cert.Provider)
 	}
 
 	if err != nil {
@@ -380,7 +380,7 @@ func getBaseDomain(domain string) (string, error) {
 
 func GetCertByDomain(domain string) (*Cert, error) {
 	if domain == "" {
-		return nil, fmt.Errorf("GetCertByDomain() error: domain should not be empty")
+		return nil, util.MessageErrorf("cert:GetCertByDomain() error: domain should not be empty")
 	}
 
 	cert, ok := certMap[domain]

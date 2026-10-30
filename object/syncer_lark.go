@@ -46,13 +46,13 @@ func (p *LarkSyncerProvider) GetOriginalUsers() ([]*OriginalUser, error) {
 // AddUser adds a new user to Lark (not supported for read-only API)
 func (p *LarkSyncerProvider) AddUser(user *OriginalUser) (bool, error) {
 	// Lark syncer is typically read-only
-	return false, fmt.Errorf("adding users to Lark is not supported")
+	return false, util.MessageErrorf("syncer:adding users to Lark is not supported")
 }
 
 // UpdateUser updates an existing user in Lark (not supported for read-only API)
 func (p *LarkSyncerProvider) UpdateUser(user *OriginalUser) (bool, error) {
 	// Lark syncer is typically read-only
-	return false, fmt.Errorf("updating users in Lark is not supported")
+	return false, util.MessageErrorf("syncer:updating users in Lark is not supported")
 }
 
 // TestConnection tests the Lark API connection
@@ -146,12 +146,12 @@ func (p *LarkSyncerProvider) getLarkAccessToken() (string, error) {
 	// syncer.Password should be the app_secret
 	appId := p.Syncer.User
 	if appId == "" {
-		return "", fmt.Errorf("app_id (user field) is required for Lark syncer")
+		return "", util.MessageErrorf("syncer:app_id (user field) is required for Lark syncer")
 	}
 
 	appSecret := p.Syncer.Password
 	if appSecret == "" {
-		return "", fmt.Errorf("app_secret (password field) is required for Lark syncer")
+		return "", util.MessageErrorf("syncer:app_secret (password field) is required for Lark syncer")
 	}
 
 	domain := p.getLarkDomain()
@@ -174,7 +174,7 @@ func (p *LarkSyncerProvider) getLarkAccessToken() (string, error) {
 	}
 
 	if tokenResp.Code != 0 {
-		return "", fmt.Errorf("failed to get access token: code=%d, msg=%s",
+		return "", util.MessageErrorf("syncer:failed to get access token: code=%d, msg=%s",
 			tokenResp.Code, tokenResp.Msg)
 	}
 
@@ -205,7 +205,7 @@ func (p *LarkSyncerProvider) getLarkDepartments(accessToken string) ([]string, e
 		}
 
 		if deptResp.Code != 0 {
-			return nil, fmt.Errorf("failed to get departments: code=%d, msg=%s",
+			return nil, util.MessageErrorf("syncer:failed to get departments: code=%d, msg=%s",
 				deptResp.Code, deptResp.Msg)
 		}
 
@@ -246,7 +246,7 @@ func (p *LarkSyncerProvider) getLarkUsersFromDept(accessToken string, deptId str
 		}
 
 		if userResp.Code != 0 {
-			return nil, fmt.Errorf("failed to get users from dept %s: code=%d, msg=%s",
+			return nil, util.MessageErrorf("syncer:failed to get users from dept %s: code=%d, msg=%s",
 				deptId, userResp.Code, userResp.Msg)
 		}
 

@@ -88,7 +88,7 @@ export function ThemeEditor({
                   <img
                     className="h-16 w-full object-contain"
                     src={`${Setting.StaticBaseUrl}/img/theme_${item.value}.svg`}
-                    alt={item.value}
+                    alt=""
                   />
                   <span className="block pt-1 text-xs text-neutral-700">{i18next.t(item.labelKey)}</span>
                 </button>

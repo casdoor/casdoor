@@ -96,7 +96,7 @@ export default function LdapSyncPage() {
             <ConfirmButton
               loading={syncing}
               disabled={selected.length === 0}
-              title="Please confirm to sync selected users"
+              title={i18next.t("ldap:Please confirm to sync selected users")}
               destructive={false}
               onConfirm={sync}
             >

@@ -1029,7 +1029,7 @@ func GetAccessTokenByUser(user *User, host string) (string, error) {
 		return "", err
 	}
 	if application == nil {
-		return "", fmt.Errorf("the application for user %s is not found", user.Id)
+		return "", util.MessageErrorf("auth:the application for user %s is not found", user.Id)
 	}
 
 	token, err := GetTokenByUser(application, user, "profile", "", "", host)

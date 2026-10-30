@@ -1,4 +1,5 @@
 import * as React from "react";
+import i18next from "i18next";
 import {Minus, Plus, ShoppingCart} from "lucide-react";
 import {useNavigate} from "react-router-dom";
 import {Button} from "@/components/ui/button";
@@ -37,7 +38,7 @@ export function QuantityStepper({
         variant="ghost"
         size="iconSm"
         className="h-full rounded-r-none"
-        aria-label="Decrease"
+        aria-label={i18next.t("product:Decrease quantity")}
         disabled={disabled || normalized <= min}
         onClick={onDecrease}
       >
@@ -55,7 +56,7 @@ export function QuantityStepper({
         variant="ghost"
         size="iconSm"
         className="h-full rounded-l-none"
-        aria-label="Increase"
+        aria-label={i18next.t("product:Increase quantity")}
         disabled={disabled || (max !== undefined && normalized >= max)}
         onClick={onIncrease}
       >
@@ -74,7 +75,7 @@ export function FloatingCartButton({itemCount}: {itemCount: number}) {
       type="button"
       onClick={() => navigate("/cart")}
       className="fixed bottom-12 right-12 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-transform hover:scale-105"
-      aria-label="Cart"
+      aria-label={i18next.t("general:Cart")}
     >
       <ShoppingCart className="!h-6 !w-6" />
       {itemCount > 0 ? (

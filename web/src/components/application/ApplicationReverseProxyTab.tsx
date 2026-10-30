@@ -21,7 +21,7 @@ export function ApplicationReverseProxyTab({application, updateField, certs}: Ap
       <FormRow labelKey="provider:Domain">
         <Input
           value={application.domain ?? ""}
-          placeholder="e.g., blog.example.com"
+          placeholder={i18next.t("site:Domain example")}
           onChange={(e) => updateField("domain", e.target.value)}
         />
       </FormRow>
@@ -31,7 +31,7 @@ export function ApplicationReverseProxyTab({application, updateField, certs}: Ap
       <FormRow labelKey="application:Upstream host">
         <Input
           value={application.upstreamHost ?? ""}
-          placeholder="e.g., localhost:8080 or 192.168.1.100:3000"
+          placeholder={i18next.t("site:Backend example")}
           onChange={(e) => updateField("upstreamHost", e.target.value)}
         />
       </FormRow>
@@ -39,7 +39,7 @@ export function ApplicationReverseProxyTab({application, updateField, certs}: Ap
         <SelectField
           value={application.sslMode ?? ""}
           onChange={(v) => updateField("sslMode", v)}
-          options={SSL_MODES.map((item) => ({id: item, name: item === "" ? i18next.t("general:None") : item}))}
+          options={SSL_MODES.map((item) => ({id: item, name: item === "" ? i18next.t("general:None") : i18next.t(`site:${item}`)}))}
         />
       </FormRow>
       <FormRow labelKey="application:SSL cert">

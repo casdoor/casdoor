@@ -41,7 +41,7 @@ type LdapSyncResp struct {
 func (c *ApiController) requireLdapOfOwner(owner string, ldapId string) bool {
 	ldap, err := object.GetLdapOfOwner(owner, ldapId)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return false
 	}
 	if ldap == nil {
@@ -63,12 +63,12 @@ func (c *ApiController) GetLdapUsers() {
 
 	owner, ldapId, err := util.GetOwnerAndNameFromIdWithError(id)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 	ldapServer, err := object.GetLdapOfOwner(owner, ldapId)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 	if ldapServer == nil {
@@ -78,7 +78,7 @@ func (c *ApiController) GetLdapUsers() {
 
 	conn, err := ldapServer.GetLdapConn()
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 	defer conn.Close()
@@ -98,7 +98,7 @@ func (c *ApiController) GetLdapUsers() {
 
 	users, err := conn.GetLdapUsers(ldapServer)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -108,7 +108,7 @@ func (c *ApiController) GetLdapUsers() {
 	}
 	existUuids, err := object.GetExistUuids(ldapServer.Owner, uuids)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -149,12 +149,12 @@ func (c *ApiController) GetLdap() {
 
 	owner, name, err := util.GetOwnerAndNameFromIdWithError(id)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 	ldap, err := object.GetLdapOfOwner(owner, name)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 	c.ResponseOk(object.GetMaskedLdap(ldap))
@@ -171,7 +171,7 @@ func (c *ApiController) AddLdap() {
 	var ldap object.Ldap
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &ldap)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -182,7 +182,7 @@ func (c *ApiController) AddLdap() {
 
 	organization, err := object.GetOrganization(util.GetId("admin", ldap.Owner))
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 	if organization == nil {
@@ -191,7 +191,7 @@ func (c *ApiController) AddLdap() {
 	}
 
 	if ok, err := object.CheckLdapExist(&ldap); err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	} else if ok {
 		c.ResponseError(c.T("ldap:Ldap server exist"))
@@ -204,7 +204,7 @@ func (c *ApiController) AddLdap() {
 	if ldap.AutoSync != 0 {
 		err = object.GetLdapAutoSynchronizer().StartAutoSync(ldap.Id)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 	}
@@ -230,7 +230,7 @@ func (c *ApiController) UpdateLdap() {
 
 	prevLdap, err := object.GetLdapOfOwner(ldap.Owner, ldap.Id)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 	if prevLdap == nil {
@@ -240,14 +240,14 @@ func (c *ApiController) UpdateLdap() {
 
 	affected, err := object.UpdateLdap(&ldap)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
 	if ldap.AutoSync != 0 {
 		err := object.GetLdapAutoSynchronizer().StartAutoSync(ldap.Id)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 	} else if ldap.AutoSync == 0 && prevLdap.AutoSync != 0 {
@@ -269,7 +269,7 @@ func (c *ApiController) DeleteLdap() {
 	var ldap object.Ldap
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &ldap)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -279,7 +279,7 @@ func (c *ApiController) DeleteLdap() {
 
 	affected, err := object.DeleteLdap(&ldap)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -301,7 +301,7 @@ func (c *ApiController) SyncLdapUsers() {
 
 	owner, ldapId, err := util.GetOwnerAndNameFromIdWithError(id)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 	if !c.requireLdapOfOwner(owner, ldapId) {
@@ -311,19 +311,19 @@ func (c *ApiController) SyncLdapUsers() {
 	var users []object.LdapUser
 	err = json.Unmarshal(c.Ctx.Input.RequestBody, &users)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
 	err = object.UpdateLdapSyncTime(ldapId)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
 	exist, failed, err := object.SyncLdapUsers(owner, users, ldapId, c.GetAcceptLanguage())
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 

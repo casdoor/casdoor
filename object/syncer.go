@@ -333,7 +333,7 @@ func (syncer *Syncer) getTargetTablePrimaryKey() string {
 	return column.Name
 }
 
-var errSyncerRunning = errors.New("the syncer is already running")
+var errSyncerRunning = util.NewMessageError("syncer:the syncer is already running")
 
 var syncerLocks sync.Map
 

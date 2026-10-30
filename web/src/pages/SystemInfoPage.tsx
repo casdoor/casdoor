@@ -165,7 +165,7 @@ function UpgradeCard() {
   const latestVersion: string = info.latestVersion ?? "";
   const inProgress = target !== "" || isUpgrading(status.state);
   const currentText = info.currentVersion
-    ? `${info.currentVersion}${info.commitOffset > 0 ? ` (ahead+${info.commitOffset})` : ""}`
+    ? `${info.currentVersion}${info.commitOffset > 0 ? ` (${i18next.t("system:Ahead commits", {count: info.commitOffset})})` : ""}`
     : i18next.t("system:Unknown version");
 
   const upgrade = async() => {
@@ -370,7 +370,7 @@ export default function SystemInfoPage() {
   const memoryPercent = systemInfo.memoryTotal ? (systemInfo.memoryUsed / systemInfo.memoryTotal) * 100 : 0;
   const diskPercent = systemInfo.diskTotal ? (systemInfo.diskUsed / systemInfo.diskTotal) * 100 : 0;
   const versionText = versionInfo?.version
-    ? `${versionInfo.version}${versionInfo.commitOffset > 0 ? ` (ahead+${versionInfo.commitOffset})` : ""}`
+    ? `${versionInfo.version}${versionInfo.commitOffset > 0 ? ` (${i18next.t("system:Ahead commits", {count: versionInfo.commitOffset})})` : ""}`
     : i18next.t("system:Unknown version");
 
   return (
@@ -546,7 +546,7 @@ export default function SystemInfoPage() {
               rel="noreferrer"
               className="underline-offset-4 hover:underline"
             >
-              Get in Touch!
+              {i18next.t("system:Get in Touch!")}
             </a>
           </div>
         </CardContent>

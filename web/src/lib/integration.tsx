@@ -1,9 +1,10 @@
 import * as React from "react";
 import i18next from "i18next";
+import {normalizeLanguage} from "@/i18n";
 
-/** The public Marketplace site, where every integration has a page with its full guide: Chinese pages on the .cn host, English ones on the .com host. */
+/** The public Marketplace has Simplified Chinese guides on .cn and English guides on .com. */
 export function getMarketplaceSiteUrl(): string {
-  return i18next.language?.startsWith("zh") ? "https://marketplace.casdoor.cn/zh" : "https://marketplace.casdoor.com";
+  return normalizeLanguage(i18next.language) === "zh" ? "https://marketplace.casdoor.cn/zh" : "https://marketplace.casdoor.com";
 }
 
 export const IntegrationTypes = ["app", "provider", "theme"] as const;
@@ -30,6 +31,9 @@ export function getLocalized(text: Record<string, string> | string | undefined |
   }
   if (typeof text === "string") {
     return text;
+  }
+  if (normalizeLanguage(i18next.language) === "zh-TW") {
+    return text["zh-TW"] ?? Object.entries(text).find(([language]) => normalizeLanguage(language) === "zh-TW")?.[1] ?? text.en ?? "";
   }
   const language = i18next.language?.split("-")[0];
   return text[i18next.language] ?? text[language] ?? text.en ?? Object.values(text)[0] ?? "";

@@ -27,6 +27,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/casdoor/casdoor/util"
 	"golang.org/x/oauth2"
 )
 
@@ -58,12 +59,12 @@ func (idp *TelegramIdProvider) GetToken(code string) (*oauth2.Token, error) {
 	// Decode the auth data from the code parameter
 	var authData map[string]interface{}
 	if err := json.Unmarshal([]byte(code), &authData); err != nil {
-		return nil, fmt.Errorf("failed to parse Telegram auth data: %v", err)
+		return nil, util.MessageErrorf("provider:failed to parse Telegram auth data: %v", err)
 	}
 
 	// Verify the data authenticity
 	if err := idp.verifyTelegramAuth(authData); err != nil {
-		return nil, fmt.Errorf("failed to verify Telegram auth data: %v", err)
+		return nil, util.MessageErrorf("provider:failed to verify Telegram auth data: %v", err)
 	}
 	if err := checkTelegramAuthDate(authData); err != nil {
 		return nil, err
@@ -72,7 +73,7 @@ func (idp *TelegramIdProvider) GetToken(code string) (*oauth2.Token, error) {
 	// Create a token with the user ID as access token
 	userId, ok := telegramAsInt64(authData["id"])
 	if !ok {
-		return nil, fmt.Errorf("invalid user id in auth data")
+		return nil, util.MessageErrorf("provider:invalid user id in auth data")
 	}
 
 	// Store the complete auth data in the token for later retrieval
@@ -100,7 +101,7 @@ func (idp *TelegramIdProvider) verifyTelegramAuth(authData map[string]interface{
 	// Extract hash from auth data
 	hash, ok := authData["hash"].(string)
 	if !ok {
-		return fmt.Errorf("hash not found in auth data")
+		return util.MessageErrorf("provider:hash not found in auth data")
 	}
 	hash = strings.TrimSpace(hash)
 
@@ -126,7 +127,7 @@ func (idp *TelegramIdProvider) verifyTelegramAuth(authData map[string]interface{
 
 	// Compare hashes
 	if calculatedHash != hash {
-		return fmt.Errorf("data verification failed")
+		return util.MessageErrorf("provider:data verification failed")
 	}
 
 	return nil
@@ -137,10 +138,10 @@ const telegramAuthMaxAge = 24 * time.Hour
 func checkTelegramAuthDate(authData map[string]interface{}) error {
 	authDate, ok := telegramAsInt64(authData["auth_date"])
 	if !ok {
-		return fmt.Errorf("invalid auth_date in Telegram auth data")
+		return util.MessageErrorf("provider:invalid auth_date in Telegram auth data")
 	}
 	if time.Since(time.Unix(authDate, 0)) > telegramAuthMaxAge {
-		return fmt.Errorf("the Telegram auth data has expired")
+		return util.MessageErrorf("provider:the Telegram auth data has expired")
 	}
 	return nil
 }

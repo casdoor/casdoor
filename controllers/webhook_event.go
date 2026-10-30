@@ -82,14 +82,14 @@ func (c *ApiController) GetWebhookEvents() {
 		limit := util.ParseInt(limit)
 		count, err := object.GetWebhookEventCount(owner, organization, webhook, object.WebhookEventStatus(state))
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
 		paginator := pagination.NewPaginator(c.Ctx.Request, limit, count)
 		events, err := object.GetWebhookEvents(owner, organization, webhook, object.WebhookEventStatus(state), paginator.Offset(), limit, sortField, sortOrder)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -97,7 +97,7 @@ func (c *ApiController) GetWebhookEvents() {
 	} else {
 		events, err := object.GetWebhookEvents(owner, organization, webhook, object.WebhookEventStatus(state), 0, defaultWebhookEventListLimit, sortField, sortOrder)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -122,7 +122,7 @@ func (c *ApiController) GetWebhookEvent() {
 
 	event, err := object.GetWebhookEvent(id)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -150,7 +150,7 @@ func (c *ApiController) ReplayWebhookEvent() {
 
 	event, err := object.GetWebhookEvent(id)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -160,7 +160,7 @@ func (c *ApiController) ReplayWebhookEvent() {
 
 	err = object.ReplayWebhookEvent(id)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -183,13 +183,13 @@ func (c *ApiController) DeleteWebhookEvent() {
 	var event object.WebhookEvent
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &event)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
 	storedEvent, err := object.GetWebhookEvent(event.GetId())
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 

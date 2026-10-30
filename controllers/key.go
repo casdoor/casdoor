@@ -41,12 +41,12 @@ func (c *ApiController) GetKeys() {
 	if limit == "" || page == "" {
 		keys, err := object.GetKeys(owner)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 		maskedKeys, err := object.GetMaskedKeys(keys, true, nil)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -55,19 +55,19 @@ func (c *ApiController) GetKeys() {
 		limit := util.ParseInt(limit)
 		count, err := object.GetKeyCount(owner, field, value)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
 		paginator := pagination.NewPaginator(c.Ctx.Request, limit, count)
 		keys, err := object.GetPaginationKeys(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 		maskedKeys, err := object.GetMaskedKeys(keys, true, nil)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -96,12 +96,12 @@ func (c *ApiController) GetGlobalKeys() {
 	if limit == "" || page == "" {
 		keys, err := object.GetGlobalKeys()
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 		maskedKeys, err := object.GetMaskedKeys(keys, true, nil)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -110,19 +110,19 @@ func (c *ApiController) GetGlobalKeys() {
 		limit := util.ParseInt(limit)
 		count, err := object.GetGlobalKeyCount(field, value)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
 		paginator := pagination.NewPaginator(c.Ctx.Request, limit, count)
 		keys, err := object.GetPaginationGlobalKeys(paginator.Offset(), limit, field, value, sortField, sortOrder)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 		maskedKeys, err := object.GetMaskedKeys(keys, true, nil)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -142,7 +142,7 @@ func (c *ApiController) GetKey() {
 
 	key, err := object.GetKey(id)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -162,7 +162,7 @@ func (c *ApiController) UpdateKey() {
 
 	oldKey, err := object.GetKey(id)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 	if oldKey == nil {
@@ -174,7 +174,7 @@ func (c *ApiController) UpdateKey() {
 	var key object.Key
 	err = json.Unmarshal(c.Ctx.Input.RequestBody, &key)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -197,7 +197,7 @@ func (c *ApiController) AddKey() {
 	var key object.Key
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &key)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -220,7 +220,7 @@ func (c *ApiController) DeleteKey() {
 	var key object.Key
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &key)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 

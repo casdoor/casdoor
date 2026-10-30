@@ -63,7 +63,7 @@ func (syncer *Syncer) updateUserForOriginalFields(user *User, key string) (bool,
 	// controls, and it is concatenated into the WHERE clause below, so reject any value
 	// that is not a plain SQL identifier to keep it from injecting SQL into Casdoor's DB.
 	if !util.FilterSQLIdentifier(key) {
-		return false, fmt.Errorf("object.updateUserForOriginalFields() error: invalid key field: %s", key)
+		return false, util.MessageErrorf("syncer:object.updateUserForOriginalFields() error: invalid key field: %s", key)
 	}
 
 	existed, err := ormer.Engine.Where(key+" = ? and owner = ?", syncer.getUserValue(user, key), user.Owner).Get(&oldUser)

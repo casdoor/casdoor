@@ -1,5 +1,6 @@
 import * as React from "react";
 import i18next from "i18next";
+import {enumLabel, PAYMENT_STATES} from "@/lib/enum-labels";
 import {useNavigate, useParams} from "react-router-dom";
 import {Button} from "@/components/ui/button";
 import {Switch} from "@/components/ui/switch";
@@ -168,7 +169,7 @@ export default function OrderPayPage() {
         <h1 className="text-2xl font-semibold">{i18next.t("application:Order")}</h1>
         <div className="divide-y divide-border/60 rounded-lg border px-4">
           <FormRow labelKey="general:ID"><span>{order.name}</span></FormRow>
-          <FormRow label={i18next.t("general:Status")}><span>{order.state}</span></FormRow>
+          <FormRow label={i18next.t("general:Status")}><span>{enumLabel(PAYMENT_STATES, order.state)}</span></FormRow>
           <FormRow labelKey="general:Created time">
             <span>{Setting.getFormattedDate(order.createdTime)}</span>
           </FormRow>

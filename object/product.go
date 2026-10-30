@@ -123,9 +123,9 @@ func UpdateProductStock(productInfos []ProductInfo) error {
 		}
 		if affected == 0 {
 			if product.IsRecharge {
-				return fmt.Errorf("failed to update stock for product: %s", product.Name)
+				return util.MessageErrorf("product:failed to update stock for product: %s", product.Name)
 			}
-			return fmt.Errorf("insufficient stock for product: %s", product.Name)
+			return util.MessageErrorf("product:insufficient stock for product: %s", product.Name)
 		}
 	}
 	return nil
@@ -171,11 +171,11 @@ func AddProduct(product *Product) (bool, error) {
 
 func checkProduct(product *Product) error {
 	if product == nil {
-		return fmt.Errorf("the product not exist")
+		return util.MessageErrorf("product:the product not exist")
 	}
 
 	if product.Currency == "" {
-		return fmt.Errorf("currency cannot be empty")
+		return util.MessageErrorf("product:currency cannot be empty")
 	}
 
 	if len(product.Providers) == 0 {
@@ -184,7 +184,7 @@ func checkProduct(product *Product) error {
 			return err
 		}
 		if len(providers) == 0 {
-			return fmt.Errorf("no payment provider available")
+			return util.MessageErrorf("product:no payment provider available")
 		}
 
 		for _, provider := range providers {
@@ -194,7 +194,7 @@ func checkProduct(product *Product) error {
 		}
 
 		if len(product.Providers) == 0 {
-			return fmt.Errorf("no compatible payment provider available for currency: %s", product.Currency)
+			return util.MessageErrorf("product:no compatible payment provider available for currency: %s", product.Currency)
 		}
 	} else {
 		for _, providerName := range product.Providers {
@@ -203,7 +203,7 @@ func checkProduct(product *Product) error {
 				return err
 			}
 			if provider != nil && provider.Type == "Alipay" && product.Currency != "CNY" {
-				return fmt.Errorf("alipay provider only supports CNY, got: %s", product.Currency)
+				return util.MessageErrorf("product:alipay provider only supports CNY, got: %s", product.Currency)
 			}
 		}
 	}
@@ -225,7 +225,7 @@ func (product *Product) GetId() string {
 
 func (product *Product) isValidProvider(provider *Provider) error {
 	if provider.Type == "Alipay" && product.Currency != "CNY" {
-		return fmt.Errorf("alipay provider only supports CNY, got: %s", product.Currency)
+		return util.MessageErrorf("product:alipay provider only supports CNY, got: %s", product.Currency)
 	}
 
 	providerMatched := false
@@ -236,7 +236,7 @@ func (product *Product) isValidProvider(provider *Provider) error {
 		}
 	}
 	if !providerMatched {
-		return fmt.Errorf("the payment provider: %s is not valid for the product: %s", provider.Name, product.Name)
+		return util.MessageErrorf("product:the payment provider: %s is not valid for the product: %s", provider.Name, product.Name)
 	}
 
 	return nil
@@ -249,7 +249,7 @@ func (product *Product) getProvider(providerName string) (*Provider, error) {
 	}
 
 	if provider == nil {
-		return nil, fmt.Errorf("the payment provider: %s does not exist", providerName)
+		return nil, util.MessageErrorf("payment:the payment provider: %s does not exist", providerName)
 	}
 
 	if err := product.isValidProvider(provider); err != nil {
@@ -359,7 +359,7 @@ func getOrderProducts(owner string, productNames []string) ([]Product, error) {
 	for _, productName := range productNames {
 		product, ok := productMap[productName]
 		if !ok {
-			return nil, fmt.Errorf("the product: %s does not exist", productName)
+			return nil, util.MessageErrorf("product:the product: %s does not exist", productName)
 		}
 		orderedProducts = append(orderedProducts, product)
 	}
@@ -373,10 +373,10 @@ func validateProductCurrencies(products []Product, orderCurrency string) error {
 			productCurrency = "USD"
 		}
 		if productCurrency != orderCurrency {
-			return fmt.Errorf("products have different currencies, expected: %s, got: %s (product: %s)", orderCurrency, productCurrency, product.Name)
+			return util.MessageErrorf("product:products have different currencies, expected: %s, got: %s (product: %s)", orderCurrency, productCurrency, product.Name)
 		}
 		if !product.IsRecharge && product.Quantity <= 0 {
-			return fmt.Errorf("the product: %s is out of stock", product.Name)
+			return util.MessageErrorf("payment:the product: %s is out of stock", product.Name)
 		}
 	}
 	return nil

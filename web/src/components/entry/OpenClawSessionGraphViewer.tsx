@@ -1,5 +1,6 @@
 import * as React from "react";
 import i18next from "i18next";
+import {useLanguage} from "@/hooks/use-language";
 import {FileText, Maximize2, Minimize2} from "lucide-react";
 import {useNavigate} from "react-router-dom";
 import ReactFlow, {Background, Controls, MiniMap, ReactFlowProvider, type ReactFlowInstance} from "reactflow";
@@ -87,7 +88,7 @@ function getNodeStatusText(node: any) {
     return "";
   }
 
-  return node.ok ? i18next.t("general:OK") : i18next.t("webhook:Failed");
+  return node.ok ? i18next.t("webhook:Success") : i18next.t("webhook:Failed");
 }
 
 function StatusBadge({node}: {node: any}) {
@@ -96,7 +97,7 @@ function StatusBadge({node}: {node: any}) {
   }
 
   return node.ok ? (
-    <Badge variant="success">{i18next.t("general:OK")}</Badge>
+    <Badge variant="success">{i18next.t("webhook:Success")}</Badge>
   ) : (
     <Badge variant="destructive">{i18next.t("webhook:Failed")}</Badge>
   );
@@ -142,6 +143,14 @@ function NodeHoverCard({node}: {node: any}) {
 }
 
 function NodeLabel({title, subtitle, node}: {title: string; subtitle: string; node: any}) {
+  useLanguage();
+  const tool = typeof node?.tool === "string" && node.tool.trim() ? node.tool.trim() : i18next.t("general:Tool");
+  const hasError = typeof node?.error === "string" ? node.error.trim() !== "" : !!node?.error;
+  const statusSubtitle = node?.kind === "tool_result" && node.ok === true
+    ? i18next.t("entry:Tool succeeded", {tool, interpolation: {escapeValue: false}})
+    : node?.kind === "tool_result" && node.ok === false && !hasError
+      ? i18next.t("entry:Tool failed", {tool, interpolation: {escapeValue: false}})
+      : subtitle;
   return (
     <Tooltip delayDuration={120}>
       <TooltipTrigger asChild>
@@ -150,7 +159,7 @@ function NodeLabel({title, subtitle, node}: {title: string; subtitle: string; no
             {title || "-"}
           </div>
           <div className="line-clamp-2 [overflow-wrap:anywhere] break-words text-xs leading-snug text-slate-500">
-            {subtitle || "-"}
+            {statusSubtitle || "-"}
           </div>
         </div>
       </TooltipTrigger>

@@ -452,13 +452,13 @@ func GetOAuthCode(userId string, clientId string, provider string, signinMethod 
 
 	if user == nil {
 		return &Code{
-			Message: fmt.Sprintf("general:The user: %s doesn't exist", userId),
+			Message: fmt.Sprintf(i18n.Translate(lang, "general:The user: %s doesn't exist"), userId),
 			Code:    "",
 		}, nil
 	}
 	if user.IsForbidden {
 		return &Code{
-			Message: "error: the user is forbidden to sign in, please contact the administrator",
+			Message: i18n.Translate(lang, "check:The user is forbidden to sign in, please contact the administrator"),
 			Code:    "",
 		}, nil
 	}

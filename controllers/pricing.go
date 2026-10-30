@@ -42,7 +42,7 @@ func (c *ApiController) GetPricings() {
 	if limit == "" || page == "" {
 		pricings, err := object.GetPricings(owner)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -51,14 +51,14 @@ func (c *ApiController) GetPricings() {
 		limit := util.ParseInt(limit)
 		count, err := object.GetPricingCount(owner, field, value)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
 		paginator := pagination.NewPaginator(c.Ctx.Request, limit, count)
 		pricing, err := object.GetPaginatedPricings(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -78,7 +78,7 @@ func (c *ApiController) GetPricing() {
 
 	pricing, err := object.GetPricing(id)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -107,7 +107,7 @@ func (c *ApiController) UpdatePricing() {
 	var pricing object.Pricing
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &pricing)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -126,7 +126,7 @@ func (c *ApiController) AddPricing() {
 	var pricing object.Pricing
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &pricing)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -145,7 +145,7 @@ func (c *ApiController) DeletePricing() {
 	var pricing object.Pricing
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &pricing)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 

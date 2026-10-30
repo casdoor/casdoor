@@ -27,6 +27,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/casdoor/casdoor/util"
 	"golang.org/x/oauth2"
 )
 
@@ -200,38 +201,38 @@ var oidcClaimFallbacks = map[string][]string{
 func parseIdTokenClaims(token *oauth2.Token) (map[string]interface{}, error) {
 	rawIdToken, ok := token.Extra("id_token").(string)
 	if !ok || rawIdToken == "" {
-		return nil, fmt.Errorf("id_token not found in token response")
+		return nil, util.MessageErrorf("provider:id_token not found in token response")
 	}
 	parts := strings.Split(rawIdToken, ".")
 	if len(parts) != 3 {
-		return nil, fmt.Errorf("invalid id_token format")
+		return nil, util.MessageErrorf("provider:invalid id_token format")
 	}
 	payload, err := base64.RawURLEncoding.DecodeString(parts[1])
 	if err != nil {
-		return nil, fmt.Errorf("failed to decode id_token payload: %v", err)
+		return nil, util.MessageErrorf("provider:failed to decode id_token payload: %v", err)
 	}
 	var claims map[string]interface{}
 	if err = json.Unmarshal(payload, &claims); err != nil {
-		return nil, fmt.Errorf("failed to parse id_token claims: %v", err)
+		return nil, util.MessageErrorf("provider:failed to parse id_token claims: %v", err)
 	}
 	return claims, nil
 }
 
 func validateIdTokenClaims(claims map[string]interface{}, clientId string, issuer string) error {
 	if sub, _ := claims["sub"].(string); sub == "" {
-		return fmt.Errorf("id_token missing required claim: sub")
+		return util.MessageErrorf("provider:id_token missing required claim: sub")
 	}
 
 	if issuer != "" {
 		iss, _ := claims["iss"].(string)
 		if strings.TrimSuffix(iss, "/") != issuer {
-			return fmt.Errorf("id_token iss: %s doesn't match the issuer: %s", iss, issuer)
+			return util.MessageErrorf("provider:id_token iss: %s doesn't match the issuer: %s", iss, issuer)
 		}
 	}
 
 	if exp, ok := claims["exp"].(float64); ok {
 		if time.Now().After(time.Unix(int64(exp), 0)) {
-			return fmt.Errorf("id_token has expired")
+			return util.MessageErrorf("provider:id_token has expired")
 		}
 	}
 
@@ -242,7 +243,7 @@ func validateIdTokenClaims(claims map[string]interface{}, clientId string, issue
 	switch aud := claims["aud"].(type) {
 	case string:
 		if aud != clientId {
-			return fmt.Errorf("id_token aud: %s doesn't match the client ID", aud)
+			return util.MessageErrorf("provider:id_token aud: %s doesn't match the client ID", aud)
 		}
 	case []interface{}:
 		for _, item := range aud {
@@ -250,7 +251,7 @@ func validateIdTokenClaims(claims map[string]interface{}, clientId string, issue
 				return nil
 			}
 		}
-		return fmt.Errorf("id_token aud doesn't contain the client ID")
+		return util.MessageErrorf("provider:id_token aud doesn't contain the client ID")
 	}
 	return nil
 }
@@ -372,7 +373,7 @@ func (idp *CustomIdProvider) mapUserInfo(claims map[string]interface{}) (*UserIn
 		AvatarUrl:     getField("avatarUrl"),
 	}
 	if userInfo.Id == "" {
-		return nil, fmt.Errorf("cannot get the user ID from custom provider, please check the \"id\" field in userMapping")
+		return nil, util.MessageErrorf("provider:cannot get the user ID from custom provider, please check the \"id\" field in userMapping")
 	}
 	if userInfo.Username == "" {
 		userInfo.Username = userInfo.Id
@@ -395,7 +396,7 @@ func (idp *CustomIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error)
 	} else if idp.Issuer != "" {
 		return nil, idTokenErr
 	} else if idp.UserInfoURL == "" {
-		return nil, fmt.Errorf("UserInfoURL is empty and %v", idTokenErr)
+		return nil, util.MessageErrorf("provider:UserInfoURL is empty and %v", idTokenErr)
 	}
 
 	// the UserInfo endpoint is more authoritative, so it overrides the id_token claims

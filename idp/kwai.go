@@ -21,6 +21,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/casdoor/casdoor/util"
 	"golang.org/x/oauth2"
 )
 
@@ -92,7 +93,7 @@ func (idp *KwaiIdProvider) GetToken(code string) (*oauth2.Token, error) {
 		return nil, err
 	}
 	if tokenResp.Result != 1 {
-		return nil, fmt.Errorf("get token error: %s", tokenResp.ErrorMsg)
+		return nil, util.MessageErrorf("provider:get token error: %s", tokenResp.ErrorMsg)
 	}
 
 	token := &oauth2.Token{
@@ -143,7 +144,7 @@ func (idp *KwaiIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
 	}
 
 	if kwaiUserInfo.Result != 1 {
-		return nil, fmt.Errorf("get user info error: %s", kwaiUserInfo.ErrorMsg)
+		return nil, util.MessageErrorf("provider:get user info error: %s", kwaiUserInfo.ErrorMsg)
 	}
 
 	userInfo := &UserInfo{

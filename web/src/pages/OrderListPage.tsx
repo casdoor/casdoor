@@ -1,4 +1,5 @@
 import i18next from "i18next";
+import {enumLabel, PAYMENT_STATES} from "@/lib/enum-labels";
 import {Link} from "react-router-dom";
 import {Badge} from "@/components/ui/badge";
 import {CrudListPage} from "@/components/crud/CrudListPage";
@@ -60,7 +61,7 @@ export default function OrderListPage() {
       title: i18next.t("general:State"),
       width: 110,
       sortable: true,
-      render: (value) => <Badge variant={stateVariant(value) as any}>{value}</Badge>,
+      render: (value) => <Badge variant={stateVariant(value) as any}>{enumLabel(PAYMENT_STATES, value)}</Badge>,
     },
   ];
 

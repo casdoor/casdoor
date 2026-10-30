@@ -41,7 +41,7 @@ func (c *ApiController) GetAdapters() {
 	if limit == "" || page == "" {
 		adapters, err := object.GetAdapters(owner)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -50,14 +50,14 @@ func (c *ApiController) GetAdapters() {
 		limit := util.ParseInt(limit)
 		count, err := object.GetAdapterCount(owner, field, value)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
 		paginator := pagination.NewPaginator(c.Ctx.Request, limit, count)
 		adapters, err := object.GetPaginationAdapters(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -77,7 +77,7 @@ func (c *ApiController) GetAdapter() {
 
 	adapter, err := object.GetAdapter(id)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -98,7 +98,7 @@ func (c *ApiController) UpdateAdapter() {
 	var adapter object.Adapter
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &adapter)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -121,7 +121,7 @@ func (c *ApiController) AddAdapter() {
 	var adapter object.Adapter
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &adapter)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -144,7 +144,7 @@ func (c *ApiController) DeleteAdapter() {
 	var adapter object.Adapter
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &adapter)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -164,13 +164,13 @@ func (c *ApiController) checkAdapterStorage(adapter *object.Adapter) bool {
 
 	err := object.CheckSameDbAdapterTable(adapter)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return false
 	}
 
 	err = object.CheckAdapterHost(adapter)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return false
 	}
 	return true

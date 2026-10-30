@@ -73,6 +73,8 @@ type NotifyResult struct {
 	PaymentName   string
 	PaymentStatus PaymentState
 	NotifyMessage string
+	// Only a first-party adapter may supply presentation provenance; it is never wire or DB data.
+	MessageError error `json:"-"`
 
 	ProductName        string
 	ProductDisplayName string

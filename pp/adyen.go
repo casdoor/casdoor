@@ -22,6 +22,7 @@ import (
 	"github.com/adyen/adyen-go-api-library/v11/src/checkout"
 	"github.com/adyen/adyen-go-api-library/v11/src/common"
 	"github.com/casdoor/casdoor/conf"
+	"github.com/casdoor/casdoor/util"
 )
 
 type AdyenPaymentProvider struct {
@@ -81,7 +82,7 @@ func (pp *AdyenPaymentProvider) Pay(r *PayReq) (*PayResp, error) {
 		return nil, err
 	}
 	if httpRes.StatusCode != 200 && httpRes.StatusCode != 201 {
-		return nil, fmt.Errorf("adyen session creation failed with status: %d", httpRes.StatusCode)
+		return nil, util.MessageErrorf("payment:adyen session creation failed with status: %d", httpRes.StatusCode)
 	}
 
 	payUrl := ""
@@ -125,19 +126,23 @@ func (pp *AdyenPaymentProvider) Notify(body []byte, orderId string) (*NotifyResu
 			return notifyResult, nil
 		case "canceled":
 			notifyResult.PaymentStatus = PaymentStateCanceled
-			notifyResult.NotifyMessage = "Payment cancelled"
+			notifyResult.MessageError = util.NewMessageError("payment:Payment cancelled")
+			notifyResult.NotifyMessage = notifyResult.MessageError.Error()
 			return notifyResult, nil
 		case "refused":
 			notifyResult.PaymentStatus = PaymentStateError
-			notifyResult.NotifyMessage = "Payment refused"
+			notifyResult.MessageError = util.NewMessageError("payment:Payment refused")
+			notifyResult.NotifyMessage = notifyResult.MessageError.Error()
 			return notifyResult, nil
 		case "expired":
 			notifyResult.PaymentStatus = PaymentStateTimeout
-			notifyResult.NotifyMessage = "Session expired"
+			notifyResult.MessageError = util.NewMessageError("payment:Session expired")
+			notifyResult.NotifyMessage = notifyResult.MessageError.Error()
 			return notifyResult, nil
 		default:
 			notifyResult.PaymentStatus = PaymentStateError
-			notifyResult.NotifyMessage = fmt.Sprintf("unexpected adyen session status: %s", *res.Status)
+			notifyResult.MessageError = util.MessageErrorf("payment:unexpected adyen session status: %s", *res.Status)
+			notifyResult.NotifyMessage = notifyResult.MessageError.Error()
 			return notifyResult, nil
 		}
 	}

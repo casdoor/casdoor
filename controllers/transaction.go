@@ -58,7 +58,7 @@ func (c *ApiController) GetTransactions() {
 		}
 
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -78,14 +78,14 @@ func (c *ApiController) GetTransactions() {
 
 		count, err := object.GetTransactionCount(owner, user, field, value)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
 		paginator := pagination.NewPaginator(c.Ctx.Request, limit, count)
 		transactions, err := object.GetPaginationTransactions(owner, user, paginator.Offset(), limit, field, value, sortField, sortOrder)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -105,7 +105,7 @@ func (c *ApiController) GetTransaction() {
 
 	transaction, err := object.GetTransaction(id)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -145,7 +145,7 @@ func (c *ApiController) UpdateTransaction() {
 	var transaction object.Transaction
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &transaction)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -165,7 +165,7 @@ func (c *ApiController) AddTransaction() {
 	var transaction object.Transaction
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &transaction)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -174,7 +174,7 @@ func (c *ApiController) AddTransaction() {
 
 	affected, transactionId, err := object.AddTransaction(&transaction, c.GetAcceptLanguage(), dryRun)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -198,7 +198,7 @@ func (c *ApiController) DeleteTransaction() {
 	var transaction object.Transaction
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &transaction)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 

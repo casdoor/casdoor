@@ -25,6 +25,7 @@ import (
 
 	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/idp"
+	"github.com/casdoor/casdoor/util"
 	"github.com/mitchellh/mapstructure"
 	saml2 "github.com/russellhaering/gosaml2"
 	dsig "github.com/russellhaering/goxmldsig"
@@ -112,15 +113,15 @@ func checkSamlAssertion(assertionInfo *saml2.AssertionInfo, requestId string) er
 	warningInfo := assertionInfo.WarningInfo
 	if warningInfo != nil {
 		if warningInfo.InvalidTime {
-			return fmt.Errorf("the SAML assertion is not within its validity period (NotBefore / NotOnOrAfter)")
+			return util.MessageErrorf("saml:the SAML assertion is not within its validity period (NotBefore / NotOnOrAfter)")
 		}
 		if warningInfo.NotInAudience {
-			return fmt.Errorf("the SAML assertion is not issued for this service provider (AudienceRestriction mismatch)")
+			return util.MessageErrorf("saml:the SAML assertion is not issued for this service provider (AudienceRestriction mismatch)")
 		}
 	}
 
 	if len(assertionInfo.Assertions) == 0 {
-		return fmt.Errorf("the SAML response contains no assertion")
+		return util.MessageErrorf("saml:the SAML response contains no assertion")
 	}
 	assertion := assertionInfo.Assertions[0]
 
@@ -129,11 +130,11 @@ func checkSamlAssertion(assertionInfo *saml2.AssertionInfo, requestId string) er
 		inResponseTo = assertion.Subject.SubjectConfirmation.SubjectConfirmationData.InResponseTo
 	}
 	if requestId == "" || inResponseTo != requestId {
-		return fmt.Errorf("the SAML assertion does not answer the AuthnRequest of this login (InResponseTo: %s)", inResponseTo)
+		return util.MessageErrorf("saml:the SAML assertion does not answer the AuthnRequest of this login (InResponseTo: %s)", inResponseTo)
 	}
 
 	if assertion.ID == "" {
-		return fmt.Errorf("the SAML assertion has no ID")
+		return util.MessageErrorf("saml:the SAML assertion has no ID")
 	}
 	ttl := time.Hour
 	if assertion.Conditions != nil {
@@ -147,7 +148,7 @@ func checkSamlAssertion(assertionInfo *saml2.AssertionInfo, requestId string) er
 		return err
 	}
 	if isReplayed {
-		return fmt.Errorf("the SAML assertion has already been used: %s", assertion.ID)
+		return util.MessageErrorf("saml:the SAML assertion has already been used: %s", assertion.ID)
 	}
 
 	return nil
@@ -230,7 +231,7 @@ func buildSpKeyStore() (dsig.X509KeyStore, error) {
 		return nil, err
 	}
 	if cert == nil || cert.Certificate == "" || cert.PrivateKey == "" {
-		return nil, fmt.Errorf("the cert: admin/cert-built-in is not found")
+		return nil, util.MessageErrorf("saml:the cert: admin/cert-built-in is not found")
 	}
 
 	keyPair, err := tls.X509KeyPair([]byte(cert.Certificate), []byte(cert.PrivateKey))
@@ -246,7 +247,7 @@ func buildSpKeyStore() (dsig.X509KeyStore, error) {
 func buildSpCertificateStore(provider *Provider) (certStore dsig.MemoryX509CertificateStore, err error) {
 	certEncodedData := provider.IdP
 	if certEncodedData == "" {
-		return dsig.MemoryX509CertificateStore{}, fmt.Errorf("the IdP certificate of provider: %s is empty", provider.Name)
+		return dsig.MemoryX509CertificateStore{}, util.MessageErrorf("saml:the IdP certificate of provider: %s is empty", provider.Name)
 	}
 
 	var certData []byte

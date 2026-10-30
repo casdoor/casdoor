@@ -22,6 +22,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/casdoor/casdoor/util"
 	"github.com/nyaruka/phonenumbers"
 	"golang.org/x/oauth2"
 )
@@ -101,7 +102,7 @@ func (idp *LarkIdProvider) GetToken(code string) (*oauth2.Token, error) {
 	}
 
 	if appToken.Code != 0 {
-		return nil, fmt.Errorf("GetToken() error, appToken.Code: %d, appToken.Msg: %s", appToken.Code, appToken.Msg)
+		return nil, util.MessageErrorf("provider:GetToken() error, appToken.Code: %d, appToken.Msg: %s", appToken.Code, appToken.Msg)
 	}
 
 	t := &oauth2.Token{

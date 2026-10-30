@@ -99,7 +99,7 @@ func (c *ApiController) SendEmail() {
 	var emailForm EmailForm
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &emailForm)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -108,14 +108,14 @@ func (c *ApiController) SendEmail() {
 		// called by frontend's TestEmailWidget, provider name is set by frontend
 		provider, err = object.GetProvider(util.GetId("admin", emailForm.Provider))
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 	} else {
 		// called by Casdoor SDK via Client ID & Client Secret, so the used Email provider will be the application' Email provider or the default Email provider
 		provider, err = c.GetProviderFromContext("Email")
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 	}
@@ -151,7 +151,7 @@ func (c *ApiController) SendEmail() {
 	if len(emailForm.Receivers) == 1 && emailForm.Receivers[0] == "TestSmtpServer" {
 		err = object.TestSmtpServer(provider)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 		c.ResponseOk()
@@ -188,7 +188,7 @@ func (c *ApiController) SendEmail() {
 		var user *object.User
 		user, err = object.GetUser(userId)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 		if user != nil {
@@ -203,7 +203,7 @@ func (c *ApiController) SendEmail() {
 	for _, receiver := range emailForm.Receivers {
 		err = object.SendEmail(provider, emailForm.Title, content, []string{receiver}, emailForm.Sender)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 	}
@@ -223,7 +223,7 @@ func (c *ApiController) SendEmail() {
 func (c *ApiController) SendSms() {
 	provider, err := c.GetProviderFromContext("SMS")
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 	if !c.checkServiceProvider(provider, "SMS", false) {
@@ -233,7 +233,7 @@ func (c *ApiController) SendSms() {
 	var smsForm SmsForm
 	err = json.Unmarshal(c.Ctx.Input.RequestBody, &smsForm)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -247,7 +247,7 @@ func (c *ApiController) SendSms() {
 
 	err = object.SendSms(provider, smsForm.Content, smsForm.Receivers...)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -264,7 +264,7 @@ func (c *ApiController) SendSms() {
 func (c *ApiController) SendNotification() {
 	provider, err := c.GetProviderFromContext("Notification")
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 	if !c.checkServiceProvider(provider, "Notification", false) {
@@ -274,13 +274,13 @@ func (c *ApiController) SendNotification() {
 	var notificationForm NotificationForm
 	err = json.Unmarshal(c.Ctx.Input.RequestBody, &notificationForm)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
 	err = object.SendNotification(provider, notificationForm.Content, notificationForm.Recipient)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 

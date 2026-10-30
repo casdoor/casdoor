@@ -126,6 +126,10 @@
       (function() {
         var shown = false;
 
+        function nativeText(key) {
+          return window.CasdoorNativeText ? window.CasdoorNativeText(key) : key;
+        }
+
         function show(title, detail) {
           var box = document.getElementById("casdoor-boot-fallback");
           if (!box || shown) {
@@ -136,10 +140,10 @@
           var titleEl = document.getElementById("casdoor-boot-title");
           var detailEl = document.getElementById("casdoor-boot-detail");
 
-          titleEl.innerHTML = title;
+          titleEl.textContent = title;
           box.className += " failed";
           if (detail) {
-            detailEl.innerHTML = detail;
+            detailEl.textContent = detail;
             detailEl.style.display = "block";
           }
         }
@@ -150,15 +154,15 @@
             return;
           }
           if (event && event.target && event.target !== window && event.target.tagName === "SCRIPT") {
-            show("Casdoor failed to load", "Could not load: " + (event.target.src || ""));
+            show(nativeText("Casdoor failed to load"), nativeText("Could not load: ") + (event.target.src || ""));
             return;
           }
-          show("Casdoor failed to load", event && event.message ? String(event.message) : "");
+          show(nativeText("Casdoor failed to load"), event && event.message ? String(event.message) : "");
         }, true);
 
         window.addEventListener("load", function() {
           window.setTimeout(function() {
-            show("Casdoor is taking too long to load", "");
+            show(nativeText("Casdoor is taking too long to load"), "");
           }, 20000);
         });
       })();
@@ -188,8 +192,8 @@
         <div id="casdoor-boot-message">
           <h1 id="casdoor-boot-title"></h1>
           <p id="casdoor-boot-hint">
-            Your browser may be too old to run Casdoor. Please open this page in a recent version of Chrome, Edge, Firefox or Safari.
-            If this page was opened inside an app's built-in login window, sign in with your system browser instead.
+            <span data-casdoor-native-text="Your browser may be too old to run Casdoor. Please open this page in a recent version of Chrome, Edge, Firefox or Safari.">Your browser may be too old to run Casdoor. Please open this page in a recent version of Chrome, Edge, Firefox or Safari.</span>
+            <span data-casdoor-native-text="If this page was opened inside an app's built-in login window, sign in with your system browser instead.">If this page was opened inside an app's built-in login window, sign in with your system browser instead.</span>
           </p>
           <div id="casdoor-boot-detail"></div>
         </div>

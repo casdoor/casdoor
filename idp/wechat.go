@@ -30,6 +30,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/casdoor/casdoor/util"
 	"golang.org/x/oauth2"
 )
 
@@ -198,7 +199,7 @@ func (idp *WeChatIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error)
 		Lock.RUnlock()
 
 		if !ok || mapValue.WechatUnionId == "" {
-			return nil, fmt.Errorf("error ticket")
+			return nil, util.MessageErrorf("provider:error ticket")
 		}
 
 		Lock.Lock()
@@ -301,7 +302,7 @@ func GetWechatOfficialAccountQRCode(clientId string, clientSecret string, provid
 	}
 
 	if errMsg != "" {
-		return "", "", fmt.Errorf("Fail to fetch WeChat QRcode: %s", errMsg)
+		return "", "", util.MessageErrorf("provider:Fail to fetch WeChat QRcode: %s", errMsg)
 	}
 
 	client := new(http.Client)

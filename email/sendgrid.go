@@ -16,9 +16,9 @@ package email
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
+	"github.com/casdoor/casdoor/util"
 	"github.com/sendgrid/sendgrid-go"
 	"github.com/sendgrid/sendgrid-go/helpers/mail"
 )
@@ -76,11 +76,11 @@ func (s *SendgridEmailProvider) Send(fromAddress string, fromName string, toAddr
 			messages = append(messages, sendgridError.Message)
 		}
 
-		return fmt.Errorf("status code: %d, error message: %s", resp.StatusCode, messages)
+		return util.MessageErrorf("service:status code: %d, error message: %s", resp.StatusCode, messages)
 	}
 
 	if resp.StatusCode != http.StatusAccepted {
-		return fmt.Errorf("status code: %d", resp.StatusCode)
+		return util.MessageErrorf("service:status code: %d", resp.StatusCode)
 	}
 
 	return nil

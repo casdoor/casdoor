@@ -124,36 +124,36 @@ const (
 )
 
 // authenticateSiteRequest checks the access token cookie of a request to the site, msg describes a forbidden or failed result.
-func authenticateSiteRequest(site *object.Site, r *http.Request) (*siteIdentity, siteAuthResult, string) {
+func authenticateSiteRequest(site *object.Site, r *http.Request) (*siteIdentity, siteAuthResult, error) {
 	casdoorClient, err := getCasdoorClientFromSite(site)
 	if err != nil {
-		return nil, siteAuthError, fmt.Sprintf("getCasdoorClientFromSite() error: %s", err.Error())
+		return nil, siteAuthError, util.MessageErrorf("site:getCasdoorClientFromSite() error: %s", err)
 	}
 
 	cookie, err := r.Cookie("casdoor_access_token")
 	if err != nil || cookie.Value == "" {
-		return nil, siteAuthNeedLogin, ""
+		return nil, siteAuthNeedLogin, nil
 	}
 
 	err = checkSiteAccessToken(casdoorClient, cookie.Value)
 	if err != nil {
-		return nil, siteAuthNeedLogin, ""
+		return nil, siteAuthNeedLogin, nil
 	}
 
 	identity, err := getSiteIdentity(site, cookie.Value)
 	if err != nil {
-		return nil, siteAuthError, fmt.Sprintf("failed to get the user of the access token: %s", err.Error())
+		return nil, siteAuthError, util.MessageErrorf("site:failed to get the user of the access token: %s", err)
 	}
 	if identity == nil {
-		return nil, siteAuthNeedLogin, ""
+		return nil, siteAuthNeedLogin, nil
 	}
 	if !identity.isActive {
-		return nil, siteAuthForbidden, "the user is disabled or deleted"
+		return nil, siteAuthForbidden, util.NewMessageError("site:the user is disabled or deleted")
 	}
 	if !identity.isAllowed {
-		return nil, siteAuthForbidden, fmt.Sprintf("the user: %s is not allowed to access the application: %s", identity.name, site.CasdoorApplication)
+		return nil, siteAuthForbidden, util.MessageErrorf("site:the user: %s is not allowed to access the application: %s", identity.name, site.CasdoorApplication)
 	}
-	return identity, siteAuthOk, ""
+	return identity, siteAuthOk, nil
 }
 
 func getUserHeaderValues(identity *siteIdentity) map[string]string {
@@ -190,4 +190,9 @@ func clearAccessTokenCookie(w http.ResponseWriter) {
 func responseForbidden(w http.ResponseWriter, format string, a ...interface{}) {
 	w.WriteHeader(http.StatusForbidden)
 	responseErrorWithoutCode(w, format, a...)
+}
+
+func responseForbiddenFrom(w http.ResponseWriter, r *http.Request, value error) {
+	w.WriteHeader(http.StatusForbidden)
+	responseErrorWithoutCodeFrom(w, r, value)
 }

@@ -120,7 +120,7 @@ export default function MfaSetupPage() {
   if (!account) {
     return (
       <div className="flex flex-col items-center justify-center gap-4 py-24 text-center">
-        <h1 className="text-xl font-semibold">403 Unauthorized</h1>
+        <h1 className="text-xl font-semibold">403 {i18next.t("general:Unauthorized")}</h1>
         <p className="text-muted-foreground">
           {i18next.t("general:Sorry, you do not have permission to access this page or logged in status invalid.")}
         </p>

@@ -50,7 +50,7 @@ func GetOidcDiscoveryByAdmin(issuer string, isGlobalAdmin bool) (*OidcDiscovery,
 func getOidcDiscovery(issuer string, client *http.Client) (*OidcDiscovery, error) {
 	issuer = strings.TrimSuffix(strings.TrimSpace(issuer), "/")
 	if issuer == "" {
-		return nil, fmt.Errorf("the issuer is empty")
+		return nil, util.MessageErrorf("provider:the issuer is empty")
 	}
 	if !strings.HasPrefix(issuer, "http://") && !strings.HasPrefix(issuer, "https://") {
 		issuer = fmt.Sprintf("https://%s", issuer)
@@ -73,17 +73,17 @@ func getOidcDiscovery(issuer string, client *http.Client) (*OidcDiscovery, error
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("failed to get OIDC discovery from: %s, status: %d", discoveryUrl, resp.StatusCode)
+		return nil, util.MessageErrorf("provider:failed to get OIDC discovery from: %s, status: %d", discoveryUrl, resp.StatusCode)
 	}
 
 	discovery := &OidcDiscovery{}
 	err = json.Unmarshal(data, discovery)
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse OIDC discovery from: %s, error: %v", discoveryUrl, err)
+		return nil, util.MessageErrorf("provider:failed to parse OIDC discovery from: %s, error: %v", discoveryUrl, err)
 	}
 
 	if discovery.AuthorizationEndpoint == "" || discovery.TokenEndpoint == "" {
-		return nil, fmt.Errorf("the OIDC discovery from: %s doesn't contain the required endpoints", discoveryUrl)
+		return nil, util.MessageErrorf("provider:the OIDC discovery from: %s doesn't contain the required endpoints", discoveryUrl)
 	}
 
 	return discovery, nil

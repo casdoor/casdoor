@@ -35,7 +35,7 @@ func (c *ApiController) GetMarketplaceIndex() {
 
 	index, err := object.GetMarketplaceIndexForLanguage(refresh, c.GetAcceptLanguage())
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -57,7 +57,7 @@ func (c *ApiController) GetMarketplaceBundle() {
 
 	bundle, err := object.GetMarketplaceBundle(integrationId, version)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -83,7 +83,7 @@ func (c *ApiController) GetIntegrations() {
 	if limit == "" || page == "" {
 		integrations, err := object.GetIntegrations(owner)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -92,14 +92,14 @@ func (c *ApiController) GetIntegrations() {
 		limit := util.ParseInt(limit)
 		count, err := object.GetIntegrationCount(owner, field, value)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
 		paginator := pagination.NewPaginator(c.Ctx.Request, limit, count)
 		integrations, err := object.GetPaginationIntegrations(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -119,7 +119,7 @@ func (c *ApiController) GetIntegration() {
 
 	integration, err := object.GetIntegration(id)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -137,7 +137,7 @@ func (c *ApiController) InstallIntegration() {
 	var req object.IntegrationInstallRequest
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &req)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -147,7 +147,7 @@ func (c *ApiController) InstallIntegration() {
 
 	item, err := object.GetMarketplaceIntegration(req.IntegrationId)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -155,28 +155,28 @@ func (c *ApiController) InstallIntegration() {
 	case "app":
 		count, err := object.GetApplicationCount("", "", "")
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 		if err = checkQuotaForApplication(int(count)); err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 	case "provider":
 		count, err := object.GetProviderCount("", "", "")
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 		if err = checkQuotaForProvider(int(count)); err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 	}
 
 	integration, err := object.InstallIntegration(&req, c.IsGlobalAdmin(), c.Ctx.Request.Host, c.GetAcceptLanguage())
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -194,7 +194,7 @@ func (c *ApiController) DeleteIntegration() {
 	var integration object.Integration
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &integration)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 

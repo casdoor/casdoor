@@ -139,7 +139,7 @@ func SendVerificationCodeToEmail(organization *Organization, user *User, provide
 		content = strings.Replace(content, string(matchContent), "", -1)
 	}
 
-	userString := "Hi"
+	userString := i18n.Translate(lang, "verification:Anonymous email greeting")
 	if user != nil {
 		userString = user.GetFriendlyName()
 	}
@@ -488,7 +488,7 @@ func CheckFaceIdWithLimit(user *User, check func() error, lang string) error {
 	err = check()
 	if err != nil {
 		if recordErr := recordSigninErrorInfo(user, lang); recordErr != nil {
-			return fmt.Errorf("%s, %s", err.Error(), recordErr.Error())
+			return i18n.JoinErrors(", ", err, recordErr)
 		}
 		return err
 	}

@@ -59,12 +59,12 @@ func FieldValidationFilter(ctx *context.Context) {
 	}
 
 	if strings.HasPrefix(urlPath, "/api/add-") && !addPathsWithoutName[urlPath] && strings.TrimSpace(requestData.Name) == "" {
-		responseError(ctx, "Field 'name' cannot be empty")
+		responseError(ctx, T(ctx, "general:Field 'name' cannot be empty"))
 		return
 	}
 
 	if strings.ContainsAny(requestData.Name, forbiddenChars) {
-		responseError(ctx, fmt.Sprintf("Field 'name' contains forbidden characters: %q", forbiddenChars))
+		responseError(ctx, fmt.Sprintf(T(ctx, "general:Field 'name' contains forbidden characters: %q"), forbiddenChars))
 		return
 	}
 }

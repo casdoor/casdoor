@@ -31,7 +31,7 @@ const dataSourceFieldChars = "?#/()'\"\\=;& \t\r\n"
 func checkDataSourceFields(fields map[string]string) error {
 	for name, value := range fields {
 		if strings.ContainsAny(value, dataSourceFieldChars) {
-			return fmt.Errorf("the %s: %s of the database connection contains characters that are not allowed", name, value)
+			return util.MessageErrorf("data:the %s: %s of the database connection contains characters that are not allowed", name, value)
 		}
 	}
 	return nil

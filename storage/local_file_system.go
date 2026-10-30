@@ -15,12 +15,12 @@
 package storage
 
 import (
-	"fmt"
 	"io"
 	"os"
 	"path/filepath"
 	"strings"
 
+	"github.com/casdoor/casdoor/util"
 	"github.com/casdoor/oss"
 )
 
@@ -66,7 +66,7 @@ func (sp LocalFileSystemProvider) Put(path string, reader io.Reader) (*oss.Objec
 
 	err := os.MkdirAll(filepath.Dir(fullPath), os.ModePerm)
 	if err != nil {
-		return nil, fmt.Errorf("Casdoor fails to create folder: \"%s\" for local file system storage provider: %s. Make sure Casdoor process has correct permission to create/access it, or you can create it manually in advance", filepath.Dir(fullPath), err.Error())
+		return nil, util.MessageErrorf("storage:Casdoor fails to create folder: \"%s\" for local file system storage provider: %s. Make sure Casdoor process has correct permission to create/access it, or you can create it manually in advance", filepath.Dir(fullPath), err)
 	}
 
 	dst, err := os.Create(filepath.Clean(fullPath))

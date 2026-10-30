@@ -298,13 +298,13 @@ func DeleteGroup(group *Group) (bool, error) {
 	if count, err := ormer.Engine.Where("owner = ?", group.Owner).And("parent_id = ?", group.Name).Count(&Group{}); err != nil {
 		return false, err
 	} else if count > 0 {
-		return false, errors.New("group has children group")
+		return false, util.NewMessageError("group:group has children group")
 	}
 
 	if count, err := GetGroupUserCount(group.GetId(), "", ""); err != nil {
 		return false, err
 	} else if count > 0 {
-		return false, errors.New("group has users")
+		return false, util.NewMessageError("group:group has users")
 	}
 
 	return deleteGroup(group)
@@ -312,17 +312,17 @@ func DeleteGroup(group *Group) (bool, error) {
 
 func checkGroupName(name string) error {
 	if name == "" {
-		return errors.New("group name can't be empty")
+		return util.NewMessageError("group:group name can't be empty")
 	}
 	if strings.Contains(name, "/") {
-		return errors.New("group name can't contain \"/\"")
+		return util.NewMessageError("group:group name can't contain \"/\"")
 	}
 	exist, err := ormer.Engine.Exist(&Organization{Owner: "admin", Name: name})
 	if err != nil {
 		return err
 	}
 	if exist {
-		return errors.New("group name can't be same as the organization name")
+		return util.NewMessageError("group:group name can't be same as the organization name")
 	}
 	return nil
 }

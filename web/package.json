@@ -12,6 +12,7 @@
     "lint": "eslint src --ext .ts,.tsx",
     "fix": "eslint src --ext .ts,.tsx --fix",
     "typecheck": "tsc --noEmit",
+    "test:localization": "node --test localization.test.mjs",
     "e2e": "cypress run",
     "e2e:open": "cypress open",
     "preinstall": "node -e \"if (process.env.npm_execpath.indexOf('yarn') === -1) throw new Error('Use yarn for installing: https://yarnpkg.com/en/docs/install')\""

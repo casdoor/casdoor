@@ -236,7 +236,7 @@ func getRolesByUserInternal(userId string) ([]*Role, map[string][]string, error)
 		return nil, nil, err
 	}
 	if user == nil {
-		return nil, nil, fmt.Errorf("The user: %s doesn't exist", userId)
+		return nil, nil, util.MessageErrorf("general:The user: %s doesn't exist", userId)
 	}
 
 	query := ormer.Engine.Alias("r").Where("r.users like ?", fmt.Sprintf("%%%s%%", userId))

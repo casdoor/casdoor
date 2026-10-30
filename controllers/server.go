@@ -47,7 +47,7 @@ func (c *ApiController) GetServers() {
 	if limit == "" || page == "" {
 		servers, err := object.GetServers(owner)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 		c.ResponseOk(object.GetMaskedServers(servers))
@@ -57,14 +57,14 @@ func (c *ApiController) GetServers() {
 	limitInt := util.ParseInt(limit)
 	count, err := object.GetServerCount(owner, field, value)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
 	paginator := pagination.SetPaginator(c.Ctx, limitInt, count)
 	servers, err := object.GetPaginationServers(owner, paginator.Offset(), limitInt, field, value, sortField, sortOrder)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -83,7 +83,7 @@ func (c *ApiController) GetServer() {
 
 	server, err := object.GetServer(id)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -104,7 +104,7 @@ func (c *ApiController) UpdateServer() {
 	var server object.Server
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &server)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -128,7 +128,7 @@ func (c *ApiController) SyncMcpTool() {
 	var server object.Server
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &server)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -147,7 +147,7 @@ func (c *ApiController) AddServer() {
 	var server object.Server
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &server)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -166,7 +166,7 @@ func (c *ApiController) DeleteServer() {
 	var server object.Server
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &server)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -189,13 +189,13 @@ func (c *ApiController) GetMcpAccessToken() {
 
 	user := c.getCurrentUser()
 	if user == nil {
-		c.ResponseError("user is not logged in")
+		c.ResponseError(c.T("general:user is not logged in"))
 		return
 	}
 
 	application, err := object.GetApplication(fmt.Sprintf("admin/%s", applicationName))
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 	if application == nil {
@@ -203,7 +203,7 @@ func (c *ApiController) GetMcpAccessToken() {
 		return
 	}
 	if organizationName != "" && !application.IsShared && application.Organization != organizationName {
-		c.ResponseError(fmt.Sprintf("the application: %s does not belong to the organization: %s", applicationName, organizationName))
+		c.ResponseError(fmt.Sprintf(c.T("general:the application: %s does not belong to the organization: %s"), applicationName, organizationName))
 		return
 	}
 	if !c.checkSigninCompleted(user) || !c.checkApplicationSignin(application, user) || !c.checkUserOfApplication(user, application) {
@@ -212,7 +212,7 @@ func (c *ApiController) GetMcpAccessToken() {
 
 	token, err := object.GetTokenByUser(application, user, "read", "", c.Ctx.Input.CruSession.SessionID(context.Background()), c.Ctx.Request.Host)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 

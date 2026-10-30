@@ -2,7 +2,7 @@ import i18next from "i18next";
 import {Link} from "react-router-dom";
 import {CrudListPage} from "@/components/crud/CrudListPage";
 import {XlsxImport} from "@/components/crud/XlsxImport";
-import {boolColumn, dateColumn, linkColumn, organizationColumn, refsColumn, tagsColumn, textColumn, valueFilters} from "@/components/crud/columns";
+import {boolColumn, dateColumn, linkColumn, organizationColumn, refsColumn, tagsColumn, textColumn} from "@/components/crud/columns";
 import type {ColumnDef} from "@/components/crud/types";
 import {enumColumn, PERMISSION_EFFECTS, PERMISSION_STATES} from "@/lib/enum-labels";
 import {useAccount} from "@/hooks/use-account";
@@ -10,6 +10,7 @@ import {useOrganizationFilter} from "@/hooks/use-organization";
 import * as PermissionBackend from "@/backend/PermissionBackend";
 import * as Setting from "@/lib/setting";
 import {newPermission} from "@/pages/defaults";
+import {enumLabel, enumFilters, PERMISSION_RESOURCE_TYPES} from "@/lib/enum-labels";
 
 export default function PermissionListPage() {
   const {account} = useAccount();
@@ -39,7 +40,7 @@ export default function PermissionListPage() {
     refsColumn({dataIndex: "groups", title: i18next.t("role:Sub groups"), urlPrefix: "/groups", width: 160, sortable: true, searchable: true}),
     refsColumn({dataIndex: "roles", title: i18next.t("role:Sub roles"), urlPrefix: "/roles", width: 160, sortable: true, searchable: true}),
     tagsColumn({dataIndex: "domains", title: i18next.t("role:Sub domains"), width: 140, sortable: true, searchable: true}),
-    textColumn({dataIndex: "resourceType", title: i18next.t("permission:Resource type"), width: 130, filters: valueFilters(["Application"])}),
+    {...textColumn({dataIndex: "resourceType", title: i18next.t("permission:Resource type"), width: 130, filters: enumFilters(PERMISSION_RESOURCE_TYPES).filter((item) => item.value === "Application")}), render: (value) => enumLabel(PERMISSION_RESOURCE_TYPES, value)},
     tagsColumn({dataIndex: "resources", title: i18next.t("general:Resources"), width: 180, sortable: true, searchable: true}),
     tagsColumn({dataIndex: "actions", title: i18next.t("permission:Actions"), width: 140}),
     enumColumn({dataIndex: "effect", title: i18next.t("permission:Effect"), map: PERMISSION_EFFECTS, width: 100, filters: true}),
@@ -65,7 +66,7 @@ export default function PermissionListPage() {
           columns={Setting.getPermissionColumns()}
           templateName="import-permission.xlsx"
           uploadApi="upload-permissions"
-          successMessage="Permissions uploaded successfully, refreshing the page"
+          successMessage={i18next.t("permission:Permissions uploaded successfully, refreshing the page")}
           onUploaded={refresh}
         />
       )}

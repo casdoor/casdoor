@@ -48,12 +48,12 @@ func (c *ApiController) Enforce() {
 		}
 	}
 	if nonEmpty > 1 {
-		c.ResponseError("Only one of the parameters (permissionId, modelId, resourceId, enforcerId, owner) should be provided")
+		c.ResponseError(c.T("general:Only one of the parameters (permissionId, modelId, resourceId, enforcerId, owner) should be provided"))
 		return
 	}
 
 	if len(c.Ctx.Input.RequestBody) == 0 {
-		c.ResponseError("The request body should not be empty")
+		c.ResponseError(c.T("general:The request body should not be empty"))
 		return
 	}
 
@@ -62,14 +62,14 @@ func (c *ApiController) Enforce() {
 	var request []interface{}
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &request)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
 	if enforcerId != "" {
 		enforcer, err := object.GetInitializedEnforcer(enforcerId)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -81,7 +81,7 @@ func (c *ApiController) Enforce() {
 
 		enforceResult, err := enforcer.Enforce(interfaceRequest...)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -95,7 +95,7 @@ func (c *ApiController) Enforce() {
 	if permissionId != "" {
 		permission, err := object.GetPermission(permissionId)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 		if permission == nil {
@@ -108,7 +108,7 @@ func (c *ApiController) Enforce() {
 
 		enforceResult, err := object.Enforce(permission, request)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -123,24 +123,24 @@ func (c *ApiController) Enforce() {
 	if modelId != "" {
 		owner, _, err := util.GetOwnerAndNameFromIdWithError(modelId)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 		permissions, err = object.GetPermissionsByModel(owner, modelId)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 	} else if resourceId != "" {
 		permissions, err = object.GetPermissionsByResource(resourceId)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 	} else if owner != "" {
 		permissions, err = object.GetPermissions(owner)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 	} else {
@@ -154,13 +154,13 @@ func (c *ApiController) Enforce() {
 	for key, permissionIds := range listPermissionIdMap {
 		firstPermission, err := object.GetPermission(permissionIds[0])
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
 		enforceResult, err := object.Enforce(firstPermission, request, permissionIds...)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -195,7 +195,7 @@ func (c *ApiController) BatchEnforce() {
 		}
 	}
 	if nonEmpty > 1 {
-		c.ResponseError("Only one of the parameters (permissionId, modelId, enforcerId, owner) should be provided")
+		c.ResponseError(c.T("general:Only one of the parameters (permissionId, modelId, enforcerId, owner) should be provided"))
 		return
 	}
 
@@ -203,14 +203,14 @@ func (c *ApiController) BatchEnforce() {
 	var requests [][]interface{}
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &requests)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
 	if enforcerId != "" {
 		enforcer, err := object.GetInitializedEnforcer(enforcerId)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -222,7 +222,7 @@ func (c *ApiController) BatchEnforce() {
 
 		enforceResult, err := enforcer.BatchEnforce(interfaceRequests)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -236,7 +236,7 @@ func (c *ApiController) BatchEnforce() {
 	if permissionId != "" {
 		permission, err := object.GetPermission(permissionId)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 		if permission == nil {
@@ -249,7 +249,7 @@ func (c *ApiController) BatchEnforce() {
 
 		enforceResult, err := object.BatchEnforce(permission, requests)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -264,18 +264,18 @@ func (c *ApiController) BatchEnforce() {
 	if modelId != "" {
 		owner, _, err := util.GetOwnerAndNameFromIdWithError(modelId)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 		permissions, err = object.GetPermissionsByModel(owner, modelId)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 	} else if owner != "" {
 		permissions, err = object.GetPermissions(owner)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 	} else {
@@ -289,13 +289,13 @@ func (c *ApiController) BatchEnforce() {
 	for _, permissionIds := range listPermissionIdMap {
 		firstPermission, err := object.GetPermission(permissionIds[0])
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
 		enforceResult, err := object.BatchEnforce(firstPermission, requests, permissionIds...)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -321,7 +321,7 @@ func (c *ApiController) GetAllObjects() {
 
 	objects, err := object.GetAllObjects(userId)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -343,7 +343,7 @@ func (c *ApiController) GetAllActions() {
 
 	actions, err := object.GetAllActions(userId)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -365,7 +365,7 @@ func (c *ApiController) GetAllRoles() {
 
 	roles, err := object.GetAllRoles(userId)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -386,7 +386,7 @@ func (c *ApiController) getCasbinQueryUserId() (string, bool) {
 
 	hasPermission, err := object.CheckUserPermission(sessionUserId, userId, true, c.GetAcceptLanguage())
 	if !hasPermission {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return "", false
 	}
 	return userId, true

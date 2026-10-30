@@ -2,7 +2,6 @@ package object
 
 import (
 	errors2 "errors"
-	"fmt"
 
 	"github.com/casbin/casbin/v2/errors"
 
@@ -23,7 +22,7 @@ func NewUserGroupEnforcer(enforcer *casbin.SyncedEnforcer) *UserGroupEnforcer {
 
 func (e *UserGroupEnforcer) checkModel() error {
 	if _, ok := e.enforcer.GetModel()["g"]; !ok {
-		return fmt.Errorf("The Casbin model used by enforcer doesn't support RBAC (\"[role_definition]\" section not found), please use a RBAC enabled Casbin model for the enforcer")
+		return util.MessageErrorf("user:The Casbin model used by enforcer doesn't support RBAC (\"[role_definition]\" section not found), please use a RBAC enabled Casbin model for the enforcer")
 	}
 	return nil
 }

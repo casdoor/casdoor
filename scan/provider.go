@@ -15,9 +15,8 @@
 package scan
 
 import (
-	"fmt"
-
 	"github.com/casdoor/casdoor/object"
+	"github.com/casdoor/casdoor/util"
 )
 
 type ScanProvider interface {
@@ -28,11 +27,11 @@ type ScanProvider interface {
 
 func GetScanProviderFromProvider(provider *object.Provider) (ScanProvider, error) {
 	if provider == nil {
-		return nil, fmt.Errorf("provider is nil")
+		return nil, util.MessageErrorf("entry:provider is nil")
 	}
 
 	if provider.Category != "Scan" {
-		return nil, fmt.Errorf("provider %s is not supported", provider.Category)
+		return nil, util.MessageErrorf("scan:provider %s is not supported", provider.Category)
 	}
 
 	switch {
@@ -42,5 +41,5 @@ func GetScanProviderFromProvider(provider *object.Provider) (ScanProvider, error
 		return NewIntranetServerProvider(), nil
 	}
 
-	return nil, fmt.Errorf("scan provider type: %s (sub type: %s) is not supported", provider.Type, provider.SubType)
+	return nil, util.MessageErrorf("scan:scan provider type: %s (sub type: %s) is not supported", provider.Type, provider.SubType)
 }

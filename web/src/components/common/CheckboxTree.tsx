@@ -1,4 +1,5 @@
 import * as React from "react";
+import i18next from "i18next";
 import {ChevronRight} from "lucide-react";
 import {Checkbox} from "@/components/ui/checkbox";
 import {cn} from "@/lib/utils";
@@ -79,7 +80,7 @@ export function CheckboxTree({
           {hasChildren ? (
             <button
               type="button"
-              aria-label={isExpanded ? "Collapse" : "Expand"}
+              aria-label={isExpanded ? i18next.t("general:Collapse") : i18next.t("general:Expand")}
               className="rounded p-0.5 text-muted-foreground hover:bg-accent"
               onClick={() =>
                 setExpanded((prev) =>

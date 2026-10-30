@@ -31,7 +31,7 @@ func (c *ApiController) GetPrometheusInfo() {
 	}
 	prometheusInfo, err := object.GetPrometheusInfo()
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -65,7 +65,7 @@ func (c *ApiController) GetMetrics() {
 func (c *ApiController) requireGlobalMetricsKey(accessKey string, accessSecret string) bool {
 	key, err := object.ValidateKeyByType(accessKey, accessSecret, "Prometheus")
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return false
 	}
 	if key.Owner != "admin" && key.Owner != "built-in" {

@@ -356,7 +356,7 @@ var reservedOrganizationNames = []string{"admin", "app"}
 
 func checkReservedOrganizationName(name string) error {
 	if util.InSlice(reservedOrganizationNames, name) {
-		return fmt.Errorf("the organization name: %s is reserved", name)
+		return util.MessageErrorf("organization:the organization name: %s is reserved", name)
 	}
 	return nil
 }
@@ -492,7 +492,7 @@ func GetDefaultApplication(id string) (*Application, error) {
 	}
 
 	if organization == nil {
-		return nil, fmt.Errorf("The organization: %s does not exist", id)
+		return nil, util.MessageErrorf("auth:The organization: %s does not exist", id)
 	}
 
 	if organization.DefaultApplication != "" {
@@ -502,7 +502,7 @@ func GetDefaultApplication(id string) (*Application, error) {
 		}
 
 		if defaultApplication == nil {
-			return nil, fmt.Errorf("The default application: %s does not exist", organization.DefaultApplication)
+			return nil, util.MessageErrorf("organization:The default application: %s does not exist", organization.DefaultApplication)
 		} else {
 			defaultApplication.Organization = organization.Name
 			return defaultApplication, nil
@@ -516,7 +516,7 @@ func GetDefaultApplication(id string) (*Application, error) {
 	}
 
 	if len(applications) == 0 {
-		return nil, fmt.Errorf("The application does not exist")
+		return nil, util.MessageErrorf("organization:The application does not exist")
 	}
 
 	defaultApplication := applications[0]

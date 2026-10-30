@@ -110,7 +110,7 @@ func UpdateForm(id string, form *Form) (bool, error) {
 	}
 	existingForm, err := getForm(owner, name)
 	if existingForm == nil {
-		return false, fmt.Errorf("the form: %s is not found", id)
+		return false, util.MessageErrorf("form:the form: %s is not found", id)
 	}
 	if err != nil {
 		return false, err

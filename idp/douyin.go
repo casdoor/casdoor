@@ -17,12 +17,12 @@ package idp
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/http"
 	"net/url"
 	"time"
 
+	"github.com/casdoor/casdoor/util"
 	"golang.org/x/oauth2"
 )
 
@@ -105,7 +105,7 @@ func (idp *DouyinIdProvider) GetToken(code string) (*oauth2.Token, error) {
 	tokenResp := &DouyinTokenResp{}
 	err = json.Unmarshal(data, tokenResp)
 	if err != nil {
-		return nil, fmt.Errorf("fail to unmarshal token response: %s", err.Error())
+		return nil, util.MessageErrorf("provider:fail to unmarshal token response: %s", err)
 	}
 
 	token := &oauth2.Token{

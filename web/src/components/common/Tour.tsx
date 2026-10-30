@@ -2,7 +2,8 @@ import * as React from "react";
 import i18next from "i18next";
 import {X} from "lucide-react";
 import {Button} from "@/components/ui/button";
-import type {TourStep} from "@/lib/tour-config";
+import {getNextButtonChild, getTourText, type TourStep} from "@/lib/tour-config";
+import {useLanguageVersion} from "@/hooks/use-language";
 
 const PADDING = 6;
 const CARD_WIDTH = 340;
@@ -23,6 +24,7 @@ interface TourProps {
  * "next page" behaviour — see src/lib/tour-config.ts.
  */
 export function Tour({open, steps, getTarget, onClose, onFinish}: TourProps) {
+  useLanguageVersion();
   const [current, setCurrent] = React.useState(0);
   const [rect, setRect] = React.useState<DOMRect | null>(null);
 
@@ -104,21 +106,21 @@ export function Tour({open, steps, getTarget, onClose, onFinish}: TourProps) {
         </button>
 
         {step.coverUrl ? (
-          <img src={step.coverUrl} alt={step.title} className="mb-3 max-h-16 object-contain" />
+          <img src={step.coverUrl} alt={getTourText(step.title)} className="mb-3 max-h-16 object-contain" />
         ) : null}
-        <h3 className="pr-6 font-semibold">{step.title}</h3>
-        <p className="mt-1 text-sm text-muted-foreground">{step.description}</p>
+        <h3 className="pr-6 font-semibold">{getTourText(step.title)}</h3>
+        <p className="mt-1 text-sm text-muted-foreground">{getTourText(step.description)}</p>
 
         <div className="mt-4 flex items-center justify-between">
           <span className="text-xs text-muted-foreground">{current + 1} / {steps.length}</span>
           <div className="flex gap-2">
             {current > 0 ? (
               <Button variant="outline" size="sm" onClick={() => setCurrent(current - 1)}>
-                Previous
+                {i18next.t("general:Previous")}
               </Button>
             ) : null}
             <Button size="sm" onClick={() => (isLast ? onFinish() : setCurrent(current + 1))}>
-              {isLast ? (step.nextButtonText ?? "Finish") : "Next"}
+              {isLast ? (step.nextPathName !== undefined ? getNextButtonChild(step.nextPathName) : step.nextButtonText ?? i18next.t("general:Finish")) : i18next.t("general:Next")}
             </Button>
           </div>
         </div>

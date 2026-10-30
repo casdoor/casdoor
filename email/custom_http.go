@@ -17,12 +17,12 @@ package email
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"net/url"
 	"strings"
 
 	"github.com/casdoor/casdoor/proxy"
+	"github.com/casdoor/casdoor/util"
 )
 
 type HttpEmailProvider struct {
@@ -146,7 +146,7 @@ func (c *HttpEmailProvider) Send(fromAddress string, fromName string, toAddress 
 		q.Add(contentField, content)
 		req.URL.RawQuery = q.Encode()
 	} else {
-		return fmt.Errorf("HttpEmailProvider's Send() error, unsupported method: %s", c.method)
+		return util.MessageErrorf("service:HttpEmailProvider's Send() error, unsupported method: %s", c.method)
 	}
 
 	for k, v := range c.httpHeaders {
@@ -167,7 +167,7 @@ func (c *HttpEmailProvider) Send(fromAddress string, fromName string, toAddress 
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("HttpEmailProvider's Send() error, custom HTTP Email request failed with status: %s", resp.Status)
+		return util.MessageErrorf("service:HttpEmailProvider's Send() error, custom HTTP Email request failed with status: %s", resp.Status)
 	}
 
 	return err

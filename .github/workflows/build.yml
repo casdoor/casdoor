@@ -48,7 +48,7 @@ jobs:
           cache-dependency-path: ./web/yarn.lock
       - run: yarn install
         working-directory: ./web
-      - run: yarn typecheck && yarn lint
+      - run: yarn typecheck && yarn lint && yarn test:localization
         working-directory: ./web
       - run: CI=false yarn run build
         working-directory: ./web

@@ -18,6 +18,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/casdoor/casdoor/util"
 	polargo "github.com/polarsource/polar-go"
 	"github.com/polarsource/polar-go/models/components"
 )
@@ -65,7 +66,7 @@ func (pp *PolarPaymentProvider) Pay(r *PayReq) (*PayResp, error) {
 	}
 
 	if res.Checkout == nil {
-		return nil, fmt.Errorf("polar checkout response is nil")
+		return nil, util.MessageErrorf("payment:polar checkout response is nil")
 	}
 
 	payResp := &PayResp{
@@ -102,9 +103,10 @@ func (pp *PolarPaymentProvider) Notify(body []byte, orderId string) (*NotifyResu
 	case components.CheckoutStatusExpired:
 		return &NotifyResult{PaymentStatus: PaymentStateTimeout}, nil
 	case components.CheckoutStatusFailed:
-		return &NotifyResult{PaymentStatus: PaymentStateError, NotifyMessage: "Payment failed"}, nil
+		return &NotifyResult{PaymentStatus: PaymentStateError, NotifyMessage: "Payment failed", MessageError: util.NewMessageError("payment:Payment failed")}, nil
 	default:
-		return &NotifyResult{PaymentStatus: PaymentStateError, NotifyMessage: fmt.Sprintf("unexpected polar checkout status: %v", checkout.Status)}, nil
+		message := util.MessageErrorf("payment:unexpected polar checkout status: %v", checkout.Status)
+		return &NotifyResult{PaymentStatus: PaymentStateError, NotifyMessage: message.Error(), MessageError: message}, nil
 	}
 
 	// Extract payment details from checkout for successful payment

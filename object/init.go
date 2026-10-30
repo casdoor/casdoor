@@ -147,7 +147,7 @@ func initBuiltInOrganization() bool {
 		DefaultTokenFields: []string{},
 		UserTypes:          []string{},
 		Tags:               []string{},
-		Languages:          []string{"en", "es", "fr", "de", "ja", "zh", "vi", "pt", "tr", "pl", "uk"},
+		Languages:          []string{"en", "es", "fr", "de", "ja", "zh", "zh-TW", "vi", "pt", "tr", "pl", "uk"},
 		InitScore:          2000,
 		AccountItems:       GetDefaultAccountItems(),
 		EnableSoftDeletion: false,

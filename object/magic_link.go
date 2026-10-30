@@ -133,10 +133,10 @@ func getMagicLinkUrl(origin string, signinPath string, application *Application,
 	return fmt.Sprintf("%s%s", strings.TrimSuffix(origin, "/"), signinUrl.String())
 }
 
-func getMagicLinkEmailContent(provider *Provider, magicLinkUrl string, user *User) string {
+func getMagicLinkEmailContent(provider *Provider, magicLinkUrl string, user *User, lang string) string {
 	content := provider.Content
 	if !strings.Contains(content, "%link") {
-		content = getDefaultMagicLinkEmailContent()
+		content = getDefaultMagicLinkEmailContent(lang)
 	}
 
 	content = strings.ReplaceAll(content, "<reset-link>", "")
@@ -144,7 +144,7 @@ func getMagicLinkEmailContent(provider *Provider, magicLinkUrl string, user *Use
 	content = strings.ReplaceAll(content, "%link", magicLinkUrl)
 	content = strings.ReplaceAll(content, "%expireTime", fmt.Sprintf("%d", getMagicLinkTimeout()))
 
-	userString := "Hi"
+	userString := i18n.Translate(lang, "verification:Anonymous email greeting")
 	if user != nil {
 		userString = user.GetFriendlyName()
 	}
@@ -153,11 +153,8 @@ func getMagicLinkEmailContent(provider *Provider, magicLinkUrl string, user *Use
 
 // getDefaultMagicLinkEmailContent is the mail an Email provider without a "%link" in
 // its own content falls back to.
-func getDefaultMagicLinkEmailContent() string {
-	return `<p>You have requested a sign-in link at Casdoor.</p>
-<p><a href="%link">Click here to sign in</a></p>
-<p>Or open this link: %link</p>
-<p>The link can only be used once, in the browser you asked for it, and expires in %expireTime minutes. If you did not request it, you can ignore this email.</p>`
+func getDefaultMagicLinkEmailContent(lang string) string {
+	return i18n.Translate(lang, "verification:Default magic link email body")
 }
 
 // isAllowSendMagicLink throttles the links the same way IsAllowSend() throttles the
@@ -235,10 +232,10 @@ func SendMagicLinkToEmail(organization *Organization, user *User, provider *Prov
 
 	title := provider.Title
 	if title == "" {
-		title = "Magic Link"
+		title = i18n.Translate(lang, "verification:Magic Link")
 	}
 
-	content := getMagicLinkEmailContent(provider, getMagicLinkUrl(origin, signinPath, application, token), user)
+	content := getMagicLinkEmailContent(provider, getMagicLinkUrl(origin, signinPath, application, token), user, lang)
 	err = SendEmail(provider, title, content, []string{dest}, organization.DisplayName)
 	if err != nil {
 		return err

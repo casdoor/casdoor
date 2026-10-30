@@ -31,13 +31,13 @@ func (c *ApiController) UploadRoles() {
 	userId := c.GetSessionUsername()
 	owner, user, err := util.GetOwnerAndNameFromIdWithError(userId)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
 	file, header, err := c.Ctx.Request.FormFile("file")
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -46,13 +46,13 @@ func (c *ApiController) UploadRoles() {
 	defer os.Remove(path)
 	err = saveFile(path, &file)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
 	affected, err := object.UploadRoles(path, organization, c.GetAcceptLanguage())
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 

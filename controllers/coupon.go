@@ -50,7 +50,7 @@ func (c *ApiController) GetCoupons() {
 	if limit == "" || page == "" {
 		coupons, err := object.GetCoupons(owner)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -59,14 +59,14 @@ func (c *ApiController) GetCoupons() {
 		limit := util.ParseInt(limit)
 		count, err := object.GetCouponCount(owner, field, value)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
 		paginator := pagination.NewPaginator(c.Ctx.Request, limit, count)
 		coupons, err := object.GetPaginationCoupons(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -86,7 +86,7 @@ func (c *ApiController) GetCoupon() {
 
 	coupon, err := object.GetCoupon(id)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -107,7 +107,7 @@ func (c *ApiController) UpdateCoupon() {
 	var coupon object.Coupon
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &coupon)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -126,7 +126,7 @@ func (c *ApiController) AddCoupon() {
 	var coupon object.Coupon
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &coupon)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -145,7 +145,7 @@ func (c *ApiController) DeleteCoupon() {
 	var coupon object.Coupon
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &coupon)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -164,7 +164,7 @@ func (c *ApiController) ValidateCoupon() {
 	var req ValidateCouponRequest
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &req)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -176,13 +176,13 @@ func (c *ApiController) ValidateCoupon() {
 
 	_, userName, err := util.GetOwnerAndNameFromIdWithError(userId)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
 	coupon, err := object.ValidateCoupon(req.Owner, req.CouponCode, userName, req.Products, req.Amount, req.Currency)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 

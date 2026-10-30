@@ -68,7 +68,7 @@ func getSafeRedirectPath(state string) string {
 func handleAuthCallback(w http.ResponseWriter, r *http.Request) {
 	site := getSiteByDomainWithWww(r.Host)
 	if site == nil {
-		responseError(w, "Casdoor site error: site not found for host: %s", r.Host)
+		responseErrorFrom(w, r, util.MessageErrorf("site:Casdoor site error: site not found for host: %s", r.Host))
 		return
 	}
 
@@ -79,30 +79,30 @@ func handleSiteCallback(w http.ResponseWriter, r *http.Request, site *object.Sit
 	code := query.Get("code")
 	state := query.Get("state")
 	if code == "" {
-		responseError(w, "Casdoor site error: the code should not be empty")
+		responseErrorFrom(w, r, util.NewMessageError("site:Casdoor site error: the code should not be empty"))
 		return
 	} else if state == "" {
-		responseError(w, "Casdoor site error: the state should not be empty")
+		responseErrorFrom(w, r, util.NewMessageError("site:Casdoor site error: the state should not be empty"))
 		return
 	}
 
 	application, err := object.GetApplication(util.GetId(site.Owner, site.CasdoorApplication))
 	if err != nil {
-		responseError(w, "Casdoor site error: casdoorClient.GetOAuthToken() error: %s", err.Error())
+		responseErrorFrom(w, r, util.MessageErrorf("site:Casdoor site error: casdoorClient.GetOAuthToken() error: %s", err))
 		return
 	}
 	if application == nil {
-		responseError(w, "Casdoor site error: the application: %s does not exist", site.CasdoorApplication)
+		responseErrorFrom(w, r, util.MessageErrorf("site:Casdoor site error: the application: %s does not exist", site.CasdoorApplication))
 		return
 	}
 
 	token, tokenError, err := object.GetAuthorizationCodeToken(application, application.ClientSecret, code, "", "", conf.GetAcceptLanguage(r.Header.Get("Accept-Language")))
 	if tokenError != nil {
-		responseError(w, "Casdoor site error: casdoorClient.GetOAuthToken() error: %s", tokenError.Error)
+		responseErrorFrom(w, r, util.MessageErrorf("site:Casdoor site error: casdoorClient.GetOAuthToken() error: %s", tokenError.Error))
 		return
 	}
 	if err != nil {
-		responseError(w, "Casdoor site error: casdoorClient.GetOAuthToken() error: %s", err.Error())
+		responseErrorFrom(w, r, util.MessageErrorf("site:Casdoor site error: casdoorClient.GetOAuthToken() error: %s", err))
 		return
 	}
 

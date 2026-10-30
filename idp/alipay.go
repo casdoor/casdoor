@@ -23,7 +23,6 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"encoding/pem"
-	"fmt"
 	"io"
 	"net/http"
 	"net/url"
@@ -31,6 +30,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/casdoor/casdoor/util"
 	"github.com/go-pay/gopay/alipay"
 	"golang.org/x/oauth2"
 )
@@ -52,14 +52,14 @@ func NewAlipayIdProvider(clientId string, clientSecret string, redirectUrl strin
 	if appCert != "" {
 		sn, err := alipay.GetCertSN([]byte(appCert))
 		if err != nil {
-			return nil, fmt.Errorf("failed to compute app_cert_sn: %w", err)
+			return nil, util.MessageErrorf("provider:failed to compute app_cert_sn: %w", err)
 		}
 		idp.AppCertSN = sn
 	}
 	if rootCert != "" {
 		sn, err := alipay.GetRootCertSN([]byte(rootCert))
 		if err != nil {
-			return nil, fmt.Errorf("failed to compute alipay_root_cert_sn: %w", err)
+			return nil, util.MessageErrorf("provider:failed to compute alipay_root_cert_sn: %w", err)
 		}
 		idp.RootCertSN = sn
 	}
@@ -152,7 +152,7 @@ func (idp *AlipayIdProvider) GetToken(code string) (*oauth2.Token, error) {
 		if errResp.SubMsg != "" {
 			errMsg = errResp.SubMsg
 		}
-		return nil, fmt.Errorf("alipay GetToken error: code=%s, sub_code=%s, msg=%s", errResp.Code, errResp.SubCode, errMsg)
+		return nil, util.MessageErrorf("provider:alipay GetToken error: code=%s, sub_code=%s, msg=%s", errResp.Code, errResp.SubCode, errMsg)
 	}
 
 	token := &oauth2.Token{
@@ -215,7 +215,7 @@ func (idp *AlipayIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error)
 
 	resp := atUserInfo.AlipayUserInfoShareResponse
 	if resp.Code != "10000" {
-		return nil, fmt.Errorf("alipay GetUserInfo error: code=%s, msg=%s", resp.Code, resp.Msg)
+		return nil, util.MessageErrorf("provider:alipay GetUserInfo error: code=%s, msg=%s", resp.Code, resp.Msg)
 	}
 
 	// Alipay apps created after the openid migration no longer return user_id
@@ -224,7 +224,7 @@ func (idp *AlipayIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error)
 		id = resp.OpenId
 	}
 	if id == "" {
-		return nil, fmt.Errorf("alipay GetUserInfo error: both user_id and open_id are empty")
+		return nil, util.MessageErrorf("provider:alipay GetUserInfo error: both user_id and open_id are empty")
 	}
 
 	userInfo := UserInfo{

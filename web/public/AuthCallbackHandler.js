@@ -25,6 +25,21 @@
   var reactFallbackKey = "__casdoor_callback_react";
   var reactFallbackPayloadKey = "casdoor_callback_react_fallback";
 
+  function nativeText(key) {
+    return window.CasdoorNativeText ? window.CasdoorNativeText(key) : key;
+  }
+
+  function getAcceptLanguage() {
+    if (window.CasdoorNativeText && document.documentElement.lang) {
+      return document.documentElement.lang;
+    }
+    try {
+      return localStorage.getItem("language") || navigator.language || "en";
+    } catch (e) {
+      return navigator.language || "en";
+    }
+  }
+
   function getIssuer() {
     var meta = document.querySelector("meta[name=\"casdoor-issuer\"]");
     return (meta && meta.getAttribute("content")) || window.location.origin + basePath;
@@ -43,6 +58,7 @@
     }
 
     statusNode.textContent = message;
+    statusNode.removeAttribute("data-casdoor-native-text");
     statusNode.style.color = isError ? "#b42318" : "#1f2937";
   }
 
@@ -338,7 +354,7 @@
       credentials: "include",
       body: JSON.stringify(body),
       headers: {
-        "Accept-Language": localStorage.getItem("language") || navigator.language || "en"
+        "Accept-Language": getAcceptLanguage()
       }
     }).then(function(res) {
       return res.json();
@@ -369,7 +385,7 @@
     var params = new URLSearchParams(window.location.search);
     var innerParams = getInnerParams();
     if (!innerParams) {
-      setStatus("Missing callback state.", true);
+      setStatus(nativeText("Missing callback state."), true);
       return;
     }
 
@@ -381,7 +397,7 @@
     var code = extractCallbackCode(params);
     var responseType = getResponseType(innerParams);
     if (responseType === "link" && !consumeLinkNonce(innerParams.get("linkNonce"))) {
-      setStatus("Unauthorized", true);
+      setStatus(nativeText("Unauthorized"), true);
       return;
     }
 
@@ -408,7 +424,7 @@
       var casService = innerParams.get("service") || "";
       var casRes = await loginCas(body, casService);
       if (casRes.status !== "ok") {
-        setStatus(casRes.msg || "Failed to sign in.", true);
+        setStatus(casRes.msg || nativeText("Failed to sign in."), true);
         return;
       }
 
@@ -425,7 +441,7 @@
       }
 
       if (casService === "") {
-        setStatus("Logged in successfully. Now you can visit apps protected by Casdoor.", false);
+        setStatus(nativeText("Logged in successfully. Now you can visit apps protected by Casdoor."), false);
         return;
       }
 
@@ -441,12 +457,12 @@
       credentials: "include",
       body: JSON.stringify(body),
       headers: {
-        "Accept-Language": localStorage.getItem("language") || navigator.language || "en"
+        "Accept-Language": getAcceptLanguage()
       }
     });
     var res = await response.json();
     if (res.status !== "ok") {
-      setStatus(res.msg || "Failed to sign in.", true);
+      setStatus(res.msg || nativeText("Failed to sign in."), true);
       return;
     }
 
@@ -509,7 +525,7 @@
         var samlRedirectUri = res.data2.redirectUrl;
         window.location.replace(samlRedirectUri + (samlRedirectUri.indexOf("?") !== -1 ? "&" : "?") + "SAMLResponse=" + encodeURIComponent(res.data) + "&RelayState=" + oAuthParams.relayState);
       } else {
-        setStatus("Unsupported SAML callback response.", true);
+        setStatus(nativeText("Unsupported SAML callback response."), true);
       }
       return;
     }
@@ -520,7 +536,7 @@
   window.CasdoorAuthCallback = {
     run: function() {
       return run().catch(function(error) {
-        setStatus(error && error.message ? error.message : "Failed to complete callback.", true);
+        setStatus(error && error.message ? error.message : nativeText("Failed to complete callback."), true);
       });
     }
   };

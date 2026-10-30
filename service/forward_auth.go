@@ -18,6 +18,8 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+
+	"github.com/casdoor/casdoor/util"
 )
 
 func getForwardedRequest(r *http.Request) (string, string, string) {
@@ -70,20 +72,20 @@ func HandleForwardAuth(w http.ResponseWriter, r *http.Request) {
 	scheme, host, uri := getForwardedRequest(r)
 	if host == "" {
 		w.WriteHeader(http.StatusBadRequest)
-		responseErrorWithoutCode(w, "Casdoor forward auth error: the X-Forwarded-Host or X-Original-URL header is missing")
+		responseErrorWithoutCodeFrom(w, r, util.NewMessageError("site:Casdoor forward auth error: the X-Forwarded-Host or X-Original-URL header is missing"))
 		return
 	}
 
 	site := getSiteByDomainWithWww(host)
 	if site == nil || site.CasdoorApplication == "" {
-		responseForbidden(w, "Casdoor forward auth error: no site with a Casdoor application is found for host: %s", host)
+		responseForbiddenFrom(w, r, util.MessageErrorf("site:Casdoor forward auth error: no site with a Casdoor application is found for host: %s", host))
 		return
 	}
 
 	forwardedUrl, err := url.Parse(uri)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		responseErrorWithoutCode(w, "Casdoor forward auth error: invalid URI: %s", uri)
+		responseErrorWithoutCodeFrom(w, r, util.MessageErrorf("site:Casdoor forward auth error: invalid URI: %s", uri))
 		return
 	}
 	isAuthRequest := r.Header.Get("X-Original-URL") != ""
@@ -95,7 +97,7 @@ func HandleForwardAuth(w http.ResponseWriter, r *http.Request) {
 			statusCode = http.StatusForbidden
 		}
 		w.WriteHeader(statusCode)
-		responseErrorWithoutCode(w, "%s", msg)
+		responseErrorWithoutCodeFrom(w, r, msg)
 		return
 	}
 
@@ -117,7 +119,7 @@ func HandleForwardAuth(w http.ResponseWriter, r *http.Request) {
 	case siteAuthNeedLogin:
 		casdoorClient, err := getCasdoorClientFromSite(site)
 		if err != nil {
-			responseError(w, "Casdoor forward auth error: getCasdoorClientFromSite() error: %s", err.Error())
+			responseErrorFrom(w, r, util.MessageErrorf("site:Casdoor forward auth error: getCasdoorClientFromSite() error: %s", err))
 			return
 		}
 		if _, err = r.Cookie("casdoor_access_token"); err == nil {
@@ -133,10 +135,10 @@ func HandleForwardAuth(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, signinUrl, http.StatusFound)
 		return
 	case siteAuthForbidden:
-		responseForbidden(w, "Forbidden: %s", msg)
+		responseForbiddenFrom(w, r, util.MessageErrorf("site:Forbidden: %s", msg))
 		return
 	case siteAuthError:
-		responseError(w, "Casdoor forward auth error: %s", msg)
+		responseErrorFrom(w, r, util.MessageErrorf("site:Casdoor forward auth error: %s", msg))
 		return
 	}
 

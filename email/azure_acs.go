@@ -159,11 +159,11 @@ func (a *AzureACSEmailProvider) Send(fromAddress string, fromName string, toAddr
 			return err
 		}
 
-		return fmt.Errorf("status code: %d, error message: %s", resp.StatusCode, commError.Error.Message)
+		return util.MessageErrorf("service:status code: %d, error message: %s", resp.StatusCode, commError.Error.Message)
 	}
 
 	if resp.StatusCode != http.StatusAccepted {
-		return fmt.Errorf("status code: %d", resp.StatusCode)
+		return util.MessageErrorf("service:status code: %d", resp.StatusCode)
 	}
 
 	return nil
@@ -192,7 +192,7 @@ func signRequestHMAC(secret string, req *http.Request) error {
 
 	key, err := base64.StdEncoding.DecodeString(secret)
 	if err != nil {
-		return fmt.Errorf("error decoding secret: %s", err)
+		return util.MessageErrorf("service:error decoding secret: %s", err)
 	}
 
 	timestamp := time.Now().UTC().Format(http.TimeFormat)

@@ -46,13 +46,13 @@ func (p *AzureAdSyncerProvider) GetOriginalUsers() ([]*OriginalUser, error) {
 // AddUser adds a new user to Azure AD (not supported for read-only API)
 func (p *AzureAdSyncerProvider) AddUser(user *OriginalUser) (bool, error) {
 	// Azure AD syncer is typically read-only
-	return false, fmt.Errorf("adding users to Azure AD is not supported")
+	return false, util.MessageErrorf("syncer:adding users to Azure AD is not supported")
 }
 
 // UpdateUser updates an existing user in Azure AD (not supported for read-only API)
 func (p *AzureAdSyncerProvider) UpdateUser(user *OriginalUser) (bool, error) {
 	// Azure AD syncer is typically read-only
-	return false, fmt.Errorf("updating users in Azure AD is not supported")
+	return false, util.MessageErrorf("syncer:updating users in Azure AD is not supported")
 }
 
 // TestConnection tests the Azure AD API connection
@@ -103,17 +103,17 @@ func (p *AzureAdSyncerProvider) getAzureAdAccessToken() (string, error) {
 
 	tenantId := p.Syncer.Host
 	if tenantId == "" {
-		return "", fmt.Errorf("tenant ID (host field) is required for Azure AD syncer")
+		return "", util.MessageErrorf("syncer:tenant ID (host field) is required for Azure AD syncer")
 	}
 
 	clientId := p.Syncer.User
 	if clientId == "" {
-		return "", fmt.Errorf("client ID (user field) is required for Azure AD syncer")
+		return "", util.MessageErrorf("syncer:client ID (user field) is required for Azure AD syncer")
 	}
 
 	clientSecret := p.Syncer.Password
 	if clientSecret == "" {
-		return "", fmt.Errorf("client secret (password field) is required for Azure AD syncer")
+		return "", util.MessageErrorf("syncer:client secret (password field) is required for Azure AD syncer")
 	}
 
 	tokenUrl := fmt.Sprintf("https://login.microsoftonline.com/%s/oauth2/v2.0/token", tenantId)
@@ -153,11 +153,11 @@ func (p *AzureAdSyncerProvider) getAzureAdAccessToken() (string, error) {
 	}
 
 	if tokenResp.Error != "" {
-		return "", fmt.Errorf("failed to get access token: %s - %s", tokenResp.Error, tokenResp.ErrorDesc)
+		return "", util.MessageErrorf("syncer:failed to get access token: %s - %s", tokenResp.Error, tokenResp.ErrorDesc)
 	}
 
 	if tokenResp.AccessToken == "" {
-		return "", fmt.Errorf("access token is empty in response")
+		return "", util.MessageErrorf("syncer:access token is empty in response")
 	}
 
 	return tokenResp.AccessToken, nil
@@ -189,7 +189,7 @@ func (p *AzureAdSyncerProvider) getAzureAdUsers(accessToken string) ([]*AzureAdU
 
 		if resp.StatusCode != http.StatusOK {
 			body, _ := io.ReadAll(resp.Body)
-			return nil, fmt.Errorf("failed to get users: status=%d, body=%s", resp.StatusCode, string(body))
+			return nil, util.MessageErrorf("syncer:failed to get users: status=%d, body=%s", resp.StatusCode, string(body))
 		}
 
 		body, err := io.ReadAll(resp.Body)

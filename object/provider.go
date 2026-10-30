@@ -301,7 +301,7 @@ func UpdateProvider(id string, provider *Provider) (bool, error) {
 	if provider.Type == ProviderTypeLocalFileSystem {
 		for _, component := range strings.Split(provider.PathPrefix, "/") {
 			if component == ".." {
-				return false, fmt.Errorf("the pathPrefix: %s is not allowed", provider.PathPrefix)
+				return false, util.MessageErrorf("provider:the pathPrefix: %s is not allowed", provider.PathPrefix)
 			}
 		}
 	}
@@ -369,7 +369,7 @@ func AddProvider(provider *Provider) (bool, error) {
 	if provider.Type == ProviderTypeLocalFileSystem {
 		for _, component := range strings.Split(provider.PathPrefix, "/") {
 			if component == ".." {
-				return false, fmt.Errorf("the pathPrefix: %s is not allowed", provider.PathPrefix)
+				return false, util.MessageErrorf("provider:the pathPrefix: %s is not allowed", provider.PathPrefix)
 			}
 		}
 	}
@@ -418,7 +418,7 @@ func GetPaymentProvider(p *Provider) (pp.PaymentProvider, error) {
 		}
 
 		if cert == nil {
-			return nil, fmt.Errorf("the cert: %s does not exist", p.Cert)
+			return nil, util.MessageErrorf("provider:the cert: %s does not exist", p.Cert)
 		}
 	}
 	typ := p.Type
@@ -436,7 +436,7 @@ func GetPaymentProvider(p *Provider) (pp.PaymentProvider, error) {
 				return nil, err
 			}
 			if rootCert == nil {
-				return nil, fmt.Errorf("the cert: %s does not exist", p.Metadata)
+				return nil, util.MessageErrorf("provider:the cert: %s does not exist", p.Metadata)
 			}
 			pp, err := pp.NewAlipayPaymentProvider(p.ClientId, cert.Certificate, cert.PrivateKey, rootCert.Certificate, rootCert.PrivateKey)
 			if err != nil {
@@ -444,7 +444,7 @@ func GetPaymentProvider(p *Provider) (pp.PaymentProvider, error) {
 			}
 			return pp, nil
 		} else {
-			return nil, fmt.Errorf("the metadata of alipay provider is empty")
+			return nil, util.MessageErrorf("provider:the metadata of alipay provider is empty")
 		}
 	} else if typ == "GC" {
 		return pp.NewGcPaymentProvider(p.ClientId, p.ClientSecret, p.Host), nil
@@ -509,7 +509,7 @@ func GetPaymentProvider(p *Provider) (pp.PaymentProvider, error) {
 		}
 		return pp, nil
 	} else {
-		return nil, fmt.Errorf("the payment provider type: %s is not supported", p.Type)
+		return nil, util.MessageErrorf("provider:the payment provider type: %s is not supported", p.Type)
 	}
 }
 
@@ -719,20 +719,20 @@ func FromProviderToIdpInfo(ctx *context.Context, provider *Provider) (*idp.Provi
 	} else if provider.Type == "Alipay" && provider.Cert != "" {
 		cert, err := GetCertEx(util.GetId(provider.Owner, provider.Cert))
 		if err != nil {
-			return nil, fmt.Errorf("failed to load certificate for Alipay provider %s: %w", provider.Name, err)
+			return nil, util.MessageErrorf("provider:failed to load certificate for Alipay provider %s: %w", provider.Name, err)
 		}
 		if cert == nil {
-			return nil, fmt.Errorf("certificate not found for Alipay provider %s", provider.Name)
+			return nil, util.MessageErrorf("provider:certificate not found for Alipay provider %s", provider.Name)
 		}
 		providerInfo.ClientSecret = cert.PrivateKey
 		providerInfo.AppCertificate = cert.Certificate
 		if provider.Metadata != "" {
 			rootCert, err := GetCertEx(util.GetId(provider.Owner, provider.Metadata))
 			if err != nil {
-				return nil, fmt.Errorf("failed to load root certificate for Alipay provider %s: %w", provider.Name, err)
+				return nil, util.MessageErrorf("provider:failed to load root certificate for Alipay provider %s: %w", provider.Name, err)
 			}
 			if rootCert == nil {
-				return nil, fmt.Errorf("root certificate not found for Alipay provider %s", provider.Name)
+				return nil, util.MessageErrorf("provider:root certificate not found for Alipay provider %s", provider.Name)
 			}
 			providerInfo.RootCertificate = rootCert.PrivateKey
 		}
@@ -750,7 +750,7 @@ func GetIdvProviderFromProvider(provider *Provider) idv.IdvProvider {
 
 func GetLogProviderFromProvider(provider *Provider) (log.LogProvider, error) {
 	if provider.Category != "Log" {
-		return nil, fmt.Errorf("provider %s category is not Log", provider.Name)
+		return nil, util.MessageErrorf("provider:provider %s category is not Log", provider.Name)
 	}
 
 	if provider.Type == "Casdoor Permission Log" {

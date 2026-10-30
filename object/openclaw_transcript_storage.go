@@ -51,7 +51,7 @@ func uploadOpenClawRawTranscript(logProvider *Provider, sessionID string, transc
 		return err
 	}
 	if storageProvider == nil {
-		return fmt.Errorf("no enabled Storage provider found")
+		return util.MessageErrorf("entry:no enabled Storage provider found")
 	}
 
 	resource, err := getOpenClawRawTranscriptResource(logProvider.Owner, logProvider.Name, sessionID)
@@ -68,7 +68,7 @@ func uploadOpenClawRawTranscript(logProvider *Provider, sessionID string, transc
 		objectKey = getOpenClawTranscriptObjectKey(storageProvider, fullFilePath)
 	}
 	if strings.Contains(objectKey, "..") {
-		return fmt.Errorf("the objectKey: %s is not allowed", objectKey)
+		return util.MessageErrorf("entry:the objectKey: %s is not allowed", objectKey)
 	}
 
 	if err := putOpenClawRawTranscriptObject(storageProvider, objectKey, transcriptPath); err != nil {
@@ -82,7 +82,7 @@ func uploadOpenClawRawTranscript(logProvider *Provider, sessionID string, transc
 
 func getOpenClawTranscriptStorageProvider(logProvider *Provider) (*Provider, error) {
 	if logProvider == nil {
-		return nil, fmt.Errorf("provider is nil")
+		return nil, util.MessageErrorf("entry:provider is nil")
 	}
 
 	providers, err := GetProviders(logProvider.Owner)
@@ -109,12 +109,12 @@ func selectOpenClawTranscriptStorageProvider(logProvider *Provider, providers []
 				continue
 			}
 			if !isUsableOpenClawTranscriptStorageProviderForOwner(logProvider.Owner, provider) {
-				return nil, fmt.Errorf("selected provider %s is not an enabled Storage provider", selectedName)
+				return nil, util.MessageErrorf("entry:selected provider %s is not an enabled Storage provider", selectedName)
 			}
 			return provider, nil
 		}
 
-		return nil, fmt.Errorf("selected Storage provider %s is not found", selectedName)
+		return nil, util.MessageErrorf("entry:selected Storage provider %s is not found", selectedName)
 	}
 
 	for _, provider := range providers {
@@ -137,7 +137,7 @@ func isUsableOpenClawTranscriptStorageProviderForOwner(owner string, provider *P
 
 func createOpenClawTranscriptDefaultStorageProvider(logProvider *Provider) (*Provider, error) {
 	if logProvider == nil {
-		return nil, fmt.Errorf("provider is nil")
+		return nil, util.MessageErrorf("entry:provider is nil")
 	}
 
 	provider := &Provider{
@@ -168,7 +168,7 @@ func createOpenClawTranscriptDefaultStorageProvider(logProvider *Provider) (*Pro
 		return nil, err
 	}
 	if !affected {
-		return nil, fmt.Errorf("failed to create default OpenClaw transcript Storage provider")
+		return nil, util.MessageErrorf("entry:failed to create default OpenClaw transcript Storage provider")
 	}
 
 	return provider, nil
@@ -278,7 +278,7 @@ func GetOpenClawSessionTranscript(id string, lang string) (*OpenClawSessionTrans
 		return nil, err
 	}
 	if provider == nil || provider.Category != "Storage" {
-		return nil, fmt.Errorf("storage provider %s is not found", resource.Provider)
+		return nil, util.MessageErrorf("entry:storage provider %s is not found", resource.Provider)
 	}
 
 	storageProvider, err := getStorageProvider(provider, lang)
@@ -394,7 +394,7 @@ func loadOpenClawSessionEntry(id string) (*Entry, *Provider, openClawBehaviorPay
 		return nil, nil, openClawBehaviorPayload{}, nil
 	}
 	if strings.TrimSpace(entry.Type) != "session" {
-		return nil, nil, openClawBehaviorPayload{}, fmt.Errorf("entry %s is not an OpenClaw session entry", id)
+		return nil, nil, openClawBehaviorPayload{}, util.MessageErrorf("entry:entry %s is not an OpenClaw session entry", id)
 	}
 
 	provider, err := GetProvider(util.GetId(entry.Owner, entry.Provider))
@@ -402,12 +402,12 @@ func loadOpenClawSessionEntry(id string) (*Entry, *Provider, openClawBehaviorPay
 		return nil, nil, openClawBehaviorPayload{}, err
 	}
 	if provider != nil && !isOpenClawLogProvider(provider) {
-		return nil, nil, openClawBehaviorPayload{}, fmt.Errorf("entry %s is not an OpenClaw session entry", id)
+		return nil, nil, openClawBehaviorPayload{}, util.MessageErrorf("entry:entry %s is not an OpenClaw session entry", id)
 	}
 
 	payload, err := parseOpenClawSessionGraphPayload(entry)
 	if err != nil {
-		return nil, nil, openClawBehaviorPayload{}, fmt.Errorf("failed to parse anchor entry %s: %w", entry.Name, err)
+		return nil, nil, openClawBehaviorPayload{}, util.MessageErrorf("entry:failed to parse anchor entry %s: %w", entry.Name, err)
 	}
 
 	return entry, provider, payload, nil

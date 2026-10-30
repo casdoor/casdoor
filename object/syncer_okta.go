@@ -45,13 +45,13 @@ func (p *OktaSyncerProvider) GetOriginalUsers() ([]*OriginalUser, error) {
 // AddUser adds a new user to Okta (not supported for read-only API)
 func (p *OktaSyncerProvider) AddUser(user *OriginalUser) (bool, error) {
 	// Okta syncer is typically read-only
-	return false, fmt.Errorf("adding users to Okta is not supported")
+	return false, util.MessageErrorf("syncer:adding users to Okta is not supported")
 }
 
 // UpdateUser updates an existing user in Okta (not supported for read-only API)
 func (p *OktaSyncerProvider) UpdateUser(user *OriginalUser) (bool, error) {
 	// Okta syncer is typically read-only
-	return false, fmt.Errorf("updating users in Okta is not supported")
+	return false, util.MessageErrorf("syncer:updating users in Okta is not supported")
 }
 
 // TestConnection tests the Okta API connection
@@ -125,12 +125,12 @@ func (p *OktaSyncerProvider) getOktaUsers(nextLink string) ([]*OktaUser, string,
 
 	domain := p.Syncer.Host
 	if domain == "" {
-		return nil, "", fmt.Errorf("Okta domain (host field) is required for Okta syncer")
+		return nil, "", util.MessageErrorf("syncer:Okta domain (host field) is required for Okta syncer")
 	}
 
 	apiToken := p.Syncer.Password
 	if apiToken == "" {
-		return nil, "", fmt.Errorf("API token (password field) is required for Okta syncer")
+		return nil, "", util.MessageErrorf("syncer:API token (password field) is required for Okta syncer")
 	}
 
 	// Construct API URL
@@ -164,7 +164,7 @@ func (p *OktaSyncerProvider) getOktaUsers(nextLink string) ([]*OktaUser, string,
 
 	if resp.StatusCode != http.StatusOK {
 		body, _ := io.ReadAll(resp.Body)
-		return nil, "", fmt.Errorf("failed to get users from Okta: status=%d, body=%s", resp.StatusCode, string(body))
+		return nil, "", util.MessageErrorf("syncer:failed to get users from Okta: status=%d, body=%s", resp.StatusCode, string(body))
 	}
 
 	body, err := io.ReadAll(resp.Body)

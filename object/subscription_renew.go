@@ -37,7 +37,7 @@ func isAutoRenewSupported(providerType string) bool {
 
 func getSubscriptionPaymentProvider(sub *Subscription) (*Payment, *Provider, error) {
 	if sub.Payment == "" {
-		return nil, nil, fmt.Errorf("the subscription: %s has no payment to renew with", sub.GetId())
+		return nil, nil, util.MessageErrorf("subscription:the subscription: %s has no payment to renew with", sub.GetId())
 	}
 
 	payment, err := getPayment(sub.Owner, sub.Payment)
@@ -45,10 +45,10 @@ func getSubscriptionPaymentProvider(sub *Subscription) (*Payment, *Provider, err
 		return nil, nil, err
 	}
 	if payment == nil {
-		return nil, nil, fmt.Errorf("the payment: %s does not exist", sub.Payment)
+		return nil, nil, util.MessageErrorf("payment:the payment: %s does not exist", sub.Payment)
 	}
 	if payment.State != pp.PaymentStatePaid {
-		return nil, nil, fmt.Errorf("the payment: %s is not paid", payment.Name)
+		return nil, nil, util.MessageErrorf("subscription:the payment: %s is not paid", payment.Name)
 	}
 
 	provider, err := getProvider(payment.Owner, payment.Provider)
@@ -56,10 +56,10 @@ func getSubscriptionPaymentProvider(sub *Subscription) (*Payment, *Provider, err
 		return nil, nil, err
 	}
 	if provider == nil {
-		return nil, nil, fmt.Errorf("the provider: %s does not exist", payment.Provider)
+		return nil, nil, util.MessageErrorf("provider:the provider: %s does not exist", payment.Provider)
 	}
 	if !isAutoRenewSupported(provider.Type) {
-		return nil, nil, fmt.Errorf("auto renewal is not supported for the payment provider type: %s", provider.Type)
+		return nil, nil, util.MessageErrorf("subscription:auto renewal is not supported for the payment provider type: %s", provider.Type)
 	}
 
 	return payment, provider, nil
@@ -73,7 +73,7 @@ func getRenewablePaymentProvider(provider *Provider) (pp.RenewablePaymentProvide
 
 	renewable, ok := pProvider.(pp.RenewablePaymentProvider)
 	if !ok {
-		return nil, fmt.Errorf("auto renewal is not supported for the payment provider type: %s", provider.Type)
+		return nil, util.MessageErrorf("subscription:auto renewal is not supported for the payment provider type: %s", provider.Type)
 	}
 	return renewable, nil
 }
@@ -194,10 +194,10 @@ func chargeSubscriptionRenewal(sub *Subscription) (*Subscription, error) {
 		return nil, err
 	}
 	if plan == nil {
-		return nil, fmt.Errorf("the plan: %s does not exist", sub.Plan)
+		return nil, util.MessageErrorf("order:the plan: %s does not exist", sub.Plan)
 	}
 	if !plan.IsEnabled {
-		return nil, fmt.Errorf("the plan: %s is disabled", plan.Name)
+		return nil, util.MessageErrorf("subscription:the plan: %s is disabled", plan.Name)
 	}
 
 	product, err := getProduct(sub.Owner, plan.Product)
@@ -205,7 +205,7 @@ func chargeSubscriptionRenewal(sub *Subscription) (*Subscription, error) {
 		return nil, err
 	}
 	if product == nil {
-		return nil, fmt.Errorf("the product: %s does not exist", plan.Product)
+		return nil, util.MessageErrorf("product:the product: %s does not exist", plan.Product)
 	}
 
 	user, err := getUser(payment.Owner, payment.User)
@@ -213,7 +213,7 @@ func chargeSubscriptionRenewal(sub *Subscription) (*Subscription, error) {
 		return nil, err
 	}
 	if user == nil {
-		return nil, fmt.Errorf("the user: %s does not exist", payment.User)
+		return nil, util.MessageErrorf("order:the user: %s does not exist", payment.User)
 	}
 
 	startTime, err := time.Parse(time.RFC3339, sub.EndTime)
@@ -362,7 +362,7 @@ func chargeRenewalPayment(provider *Provider, payment *Payment, renewalPayment *
 			return err
 		}
 		if !affected {
-			return fmt.Errorf("failed to add transaction: %s", util.StructToJson(transaction))
+			return util.MessageErrorf("order:failed to add transaction: %s", util.StructToJson(transaction))
 		}
 		return nil
 	}

@@ -22,6 +22,7 @@ import (
 	"net/url"
 	"time"
 
+	"github.com/casdoor/casdoor/util"
 	"golang.org/x/oauth2"
 )
 
@@ -108,7 +109,7 @@ func (p *AzureADB2CProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error)
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("error fetching user info: status code %d", resp.StatusCode)
+		return nil, util.MessageErrorf("provider:error fetching user info: status code %d", resp.StatusCode)
 	}
 
 	bodyBytes, err := io.ReadAll(resp.Body)

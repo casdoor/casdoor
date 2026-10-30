@@ -23,7 +23,6 @@ import (
 	"encoding/json"
 	"encoding/pem"
 	"encoding/xml"
-	"errors"
 	"fmt"
 	"io"
 	"net/url"
@@ -264,11 +263,11 @@ func GetSamlMeta(application *Application, host string, enablePostBinding bool) 
 	}
 
 	if cert == nil {
-		return nil, errors.New("please set a cert for the application first")
+		return nil, util.NewMessageError("saml:please set a cert for the application first")
 	}
 
 	if cert.Certificate == "" {
-		return nil, fmt.Errorf("the certificate field should not be empty for the cert: %v", cert)
+		return nil, util.MessageErrorf("saml:the certificate field should not be empty for the cert: %s", cert.GetId())
 	}
 
 	block, _ := pem.Decode([]byte(cert.Certificate))
@@ -337,7 +336,7 @@ func decodeSamlMessage(message string) ([]byte, error) {
 	message = strings.ReplaceAll(message, " ", "+")
 	data, err := base64.StdEncoding.DecodeString(message)
 	if err != nil {
-		return nil, fmt.Errorf("err: Failed to decode SAML request, %s", err.Error())
+		return nil, util.MessageErrorf("saml:err: Failed to decode SAML request, %s", err)
 	}
 
 	// The HTTP-POST binding sends plain XML. Deflated data can also start with '<' (a non-final
@@ -361,12 +360,12 @@ func getAuthnRequest(application *Application, samlRequest string) (saml.AuthNRe
 
 	err = xml.Unmarshal(requestByte, &authnRequest)
 	if err != nil {
-		return authnRequest, fmt.Errorf("err: Failed to unmarshal AuthnRequest, please check the SAML request, %s", err.Error())
+		return authnRequest, util.MessageErrorf("saml:err: Failed to unmarshal AuthnRequest, please check the SAML request, %s", err)
 	}
 
 	// verify samlRequest
 	if isValid := application.IsRedirectUriValid(authnRequest.Issuer); !isValid {
-		return authnRequest, fmt.Errorf("err: Issuer URI: %s doesn't exist in the allowed Redirect URI list", authnRequest.Issuer)
+		return authnRequest, util.MessageErrorf("saml:err: Issuer URI: %s doesn't exist in the allowed Redirect URI list", authnRequest.Issuer)
 	}
 
 	return authnRequest, nil
@@ -399,7 +398,7 @@ func getIdpInitiatedAuthnRequest(application *Application) (saml.AuthNRequest, e
 	var authnRequest saml.AuthNRequest
 
 	if application.SamlReplyUrl == "" {
-		return authnRequest, fmt.Errorf("err: the SAML reply URL should not be empty for IdP-initiated SSO")
+		return authnRequest, util.MessageErrorf("saml:err: the SAML reply URL should not be empty for IdP-initiated SSO")
 	}
 
 	entityId := ""
@@ -410,7 +409,7 @@ func getIdpInitiatedAuthnRequest(application *Application) (saml.AuthNRequest, e
 		}
 	}
 	if entityId == "" {
-		return authnRequest, fmt.Errorf("err: the Redirect URIs should contain the SP's entity ID for IdP-initiated SSO")
+		return authnRequest, util.MessageErrorf("saml:err: the Redirect URIs should contain the SP's entity ID for IdP-initiated SSO")
 	}
 
 	authnRequest.AssertionConsumerServiceURL = application.SamlReplyUrl
@@ -445,7 +444,7 @@ func GetSamlResponse(application *Application, user *User, samlRequest string, h
 	}
 
 	if cert.Certificate == "" {
-		return "", "", "", fmt.Errorf("the certificate field should not be empty for the cert: %v", cert)
+		return "", "", "", util.MessageErrorf("saml:the certificate field should not be empty for the cert: %s", cert.GetId())
 	}
 
 	block, _ := pem.Decode([]byte(cert.Certificate))
@@ -456,9 +455,9 @@ func GetSamlResponse(application *Application, user *User, samlRequest string, h
 		method = "POST"
 		authnRequest.AssertionConsumerServiceURL = application.SamlReplyUrl
 	} else if authnRequest.AssertionConsumerServiceURL == "" {
-		return "", "", "", fmt.Errorf("err: SAML request don't has attribute 'AssertionConsumerServiceURL' in <samlp:AuthnRequest>")
+		return "", "", "", util.MessageErrorf("saml:err: SAML request don't has attribute 'AssertionConsumerServiceURL' in <samlp:AuthnRequest>")
 	} else if !application.isSamlAcsUrlValid(authnRequest.AssertionConsumerServiceURL) {
-		return "", "", "", fmt.Errorf("err: AssertionConsumerServiceURL: %s doesn't match the SAML reply URL or the allowed Redirect URI list", authnRequest.AssertionConsumerServiceURL)
+		return "", "", "", util.MessageErrorf("saml:err: AssertionConsumerServiceURL: %s doesn't match the SAML reply URL or the allowed Redirect URI list", authnRequest.AssertionConsumerServiceURL)
 	}
 	if authnRequest.ProtocolBinding == "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" {
 		method = "POST"
@@ -470,7 +469,7 @@ func GetSamlResponse(application *Application, user *User, samlRequest string, h
 	sessionIndex := fmt.Sprintf("_%s", util.GenerateUUID())
 	samlResponse, err := NewSamlResponse(application, user, originBackend, certificate, authnRequest.AssertionConsumerServiceURL, authnRequest.Issuer, authnRequest.ID, sessionIndex, application.RedirectUris)
 	if err != nil {
-		return "", "", "", fmt.Errorf("err: NewSamlResponse() error, %s", err.Error())
+		return "", "", "", util.MessageErrorf("saml:err: NewSamlResponse() error, %s", err)
 	}
 
 	ctx := newSamlSigningContext(application, cert.PrivateKey, certificate)
@@ -487,7 +486,7 @@ func GetSamlResponse(application *Application, user *User, samlRequest string, h
 		if assertion != nil {
 			assertionSig, err := constructSamlSignature(ctx, assertion)
 			if err != nil {
-				return "", "", "", fmt.Errorf("err: Failed to sign SAML assertion, %s", err.Error())
+				return "", "", "", util.MessageErrorf("saml:err: Failed to sign SAML assertion, %s", err)
 			}
 			// Insert signature as the second child of assertion (after Issuer)
 			assertion.InsertChildAt(1, assertionSig)
@@ -497,7 +496,7 @@ func GetSamlResponse(application *Application, user *User, samlRequest string, h
 	// Sign the response
 	sig, err := constructSamlSignature(ctx, samlResponse)
 	if err != nil {
-		return "", "", "", fmt.Errorf("err: Failed to serializes the SAML request into bytes, %s", err.Error())
+		return "", "", "", util.MessageErrorf("saml:err: Failed to serializes the SAML request into bytes, %s", err)
 	}
 
 	samlResponse.InsertChildAt(1, sig)
@@ -508,7 +507,7 @@ func GetSamlResponse(application *Application, user *User, samlRequest string, h
 	// Write to bytes
 	xmlBytes, err := doc.WriteToBytes()
 	if err != nil {
-		return "", "", "", fmt.Errorf("err: Failed to serializes the SAML request into bytes, %s", err.Error())
+		return "", "", "", util.MessageErrorf("saml:err: Failed to serializes the SAML request into bytes, %s", err)
 	}
 
 	// compress

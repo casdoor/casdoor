@@ -62,7 +62,7 @@ export default function SubscriptionListPage() {
     organizationColumn(),
     dateColumn(),
     textColumn({dataIndex: "displayName", title: i18next.t("general:Display name"), searchable: true, width: 170}),
-    textColumn({dataIndex: "period", title: i18next.t("plan:Period"), width: 120, searchable: true}),
+    {...textColumn({dataIndex: "period", title: i18next.t("plan:Period"), width: 120, searchable: true}), render: (value) => value ? i18next.t(`plan:${value}`) : null},
     {
       dataIndex: "startTime",
       searchable: true,

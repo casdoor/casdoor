@@ -131,13 +131,13 @@ func (p *ActiveDirectorySyncerProvider) GetOriginalUsers() ([]*OriginalUser, err
 // AddUser adds a new user to Active Directory (not supported for read-only LDAP)
 func (p *ActiveDirectorySyncerProvider) AddUser(user *OriginalUser) (bool, error) {
 	// Active Directory syncer is typically read-only
-	return false, fmt.Errorf("adding users to Active Directory is not supported")
+	return false, util.MessageErrorf("syncer:adding users to Active Directory is not supported")
 }
 
 // UpdateUser updates an existing user in Active Directory (not supported for read-only LDAP)
 func (p *ActiveDirectorySyncerProvider) UpdateUser(user *OriginalUser) (bool, error) {
 	// Active Directory syncer is typically read-only
-	return false, fmt.Errorf("updating users in Active Directory is not supported")
+	return false, util.MessageErrorf("syncer:updating users in Active Directory is not supported")
 }
 
 // TestConnection tests the Active Directory LDAP connection
@@ -166,7 +166,7 @@ func (p *ActiveDirectorySyncerProvider) getLdapConn() (*goldap.Conn, error) {
 
 	host := p.Syncer.Host
 	if host == "" {
-		return nil, fmt.Errorf("host is required for Active Directory syncer")
+		return nil, util.MessageErrorf("syncer:host is required for Active Directory syncer")
 	}
 
 	port := p.Syncer.Port
@@ -176,12 +176,12 @@ func (p *ActiveDirectorySyncerProvider) getLdapConn() (*goldap.Conn, error) {
 
 	user := p.Syncer.User
 	if user == "" {
-		return nil, fmt.Errorf("user (bind DN) is required for Active Directory syncer")
+		return nil, util.MessageErrorf("syncer:user (bind DN) is required for Active Directory syncer")
 	}
 
 	password := p.Syncer.Password
 	if password == "" {
-		return nil, fmt.Errorf("password is required for Active Directory syncer")
+		return nil, util.MessageErrorf("syncer:password is required for Active Directory syncer")
 	}
 
 	var conn *goldap.Conn
@@ -198,14 +198,14 @@ func (p *ActiveDirectorySyncerProvider) getLdapConn() (*goldap.Conn, error) {
 	}
 
 	if err != nil {
-		return nil, fmt.Errorf("failed to connect to Active Directory: %w", err)
+		return nil, util.MessageErrorf("syncer:failed to connect to Active Directory: %w", err)
 	}
 
 	// Bind with the provided credentials
 	err = conn.Bind(user, password)
 	if err != nil {
 		conn.Close()
-		return nil, fmt.Errorf("failed to bind to Active Directory: %w", err)
+		return nil, util.MessageErrorf("syncer:failed to bind to Active Directory: %w", err)
 	}
 
 	return conn, nil
@@ -265,7 +265,7 @@ func (p *ActiveDirectorySyncerProvider) getActiveDirectoryUsers() ([]*OriginalUs
 	// Use the Database field to store the base DN for searching
 	baseDN := p.Syncer.Database
 	if baseDN == "" {
-		return nil, fmt.Errorf("database field (base DN) is required for Active Directory syncer")
+		return nil, util.MessageErrorf("syncer:database field (base DN) is required for Active Directory syncer")
 	}
 
 	// Search filter for user objects in Active Directory
@@ -287,7 +287,7 @@ func (p *ActiveDirectorySyncerProvider) getActiveDirectoryUsers() ([]*OriginalUs
 	// AD returns at most 1000 entries (MaxPageSize) per search, so page through the results
 	sr, err := conn.SearchWithPaging(searchRequest, 500)
 	if err != nil {
-		return nil, fmt.Errorf("failed to search Active Directory: %w", err)
+		return nil, util.MessageErrorf("syncer:failed to search Active Directory: %w", err)
 	}
 
 	originalUsers := []*OriginalUser{}

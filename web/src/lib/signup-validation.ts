@@ -48,7 +48,8 @@ const ID_CARD_REGEX =
   /^[1-9]\d{5}(18|19|20)\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9X]$/;
 
 function requiredMessage(item: any): string {
-  return i18next.t("signup:Please input your {label}!").replace("{label}", item.label || item.name);
+  const builtIn = Setting.GetTranslatedUserItems().find((candidate) => candidate.name === item.name);
+  return i18next.t("signup:Please input your {label}!").replace("{label}", item.label || builtIn?.label || item.name);
 }
 
 function isBlank(value: any): boolean {
@@ -72,7 +73,7 @@ export function validateSignupItem(item: any, values: Record<string, any>, appli
   switch (item.name) {
   case "Display name": {
     // the "First, last" rule replaces the single field with two of its own
-    if (item.rule === "First, last" && Setting.getLanguage() !== "zh") {
+    if (item.rule === "First, last" && !["zh", "zh-TW"].includes(Setting.getLanguage())) {
       if (required && isBlank(values.firstName)) {
         return i18next.t("signup:Please input your first name!");
       }

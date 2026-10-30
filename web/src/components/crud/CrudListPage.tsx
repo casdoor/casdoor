@@ -239,7 +239,7 @@ export function CrudListPage<T extends Record<string, any>>({
           <>
             {typeof toolbar === "function" ? toolbar({refresh}) : toolbar}
             <ColumnMenu columns={allColumns} visibility={visibility} />
-            <Button variant="outline" size="iconSm" onClick={refresh} aria-label="Refresh" disabled={loading}>
+            <Button variant="outline" size="iconSm" onClick={refresh} aria-label={i18next.t("general:Refresh")} disabled={loading}>
               <RefreshCw className={loading ? "animate-spin" : undefined} />
             </Button>
             {newRecord ? (

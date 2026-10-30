@@ -140,7 +140,7 @@ func getStorageProvider(provider *Provider, lang string) (oss.StorageInterface, 
 			return nil, err
 		}
 		if cert == nil {
-			return nil, fmt.Errorf("no cert for %s", provider.Cert)
+			return nil, util.MessageErrorf("storage:no cert for %s", provider.Cert)
 		}
 		certificate = cert.Certificate
 	}
@@ -187,7 +187,7 @@ func uploadFile(provider *Provider, fullFilePath string, fileBuffer *bytes.Buffe
 func UploadFileSafe(provider *Provider, fullFilePath string, fileBuffer *bytes.Buffer, lang string) (string, string, error) {
 	// check fullFilePath is there security issue
 	if strings.Contains(fullFilePath, "..") {
-		return "", "", fmt.Errorf("the fullFilePath: %s is not allowed", fullFilePath)
+		return "", "", util.MessageErrorf("storage:the fullFilePath: %s is not allowed", fullFilePath)
 	}
 
 	var fileUrl string

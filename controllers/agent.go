@@ -45,7 +45,7 @@ func (c *ApiController) GetAgents() {
 	if limit == "" || page == "" {
 		agents, err := object.GetAgents(owner)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 		c.ResponseOk(agents)
@@ -55,14 +55,14 @@ func (c *ApiController) GetAgents() {
 	limitInt := util.ParseInt(limit)
 	count, err := object.GetAgentCount(owner, field, value)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
 	paginator := pagination.SetPaginator(c.Ctx, limitInt, count)
 	agents, err := object.GetPaginationAgents(owner, paginator.Offset(), limitInt, field, value, sortField, sortOrder)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -81,7 +81,7 @@ func (c *ApiController) GetAgent() {
 
 	agent, err := object.GetAgent(id)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -102,7 +102,7 @@ func (c *ApiController) UpdateAgent() {
 	var agent object.Agent
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &agent)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -121,7 +121,7 @@ func (c *ApiController) AddAgent() {
 	var agent object.Agent
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &agent)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -140,7 +140,7 @@ func (c *ApiController) DeleteAgent() {
 	var agent object.Agent
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &agent)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 

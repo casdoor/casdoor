@@ -23,6 +23,8 @@ import (
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/casdoor/casdoor/util"
 )
 
 func hasGravatar(client *http.Client, email string) (bool, error) {
@@ -60,7 +62,7 @@ func hasGravatar(client *http.Client, email string) (bool, error) {
 	} else if resp.StatusCode == http.StatusNotFound {
 		return false, nil
 	} else {
-		return false, fmt.Errorf("failed to fetch gravatar image: %s", resp.Status)
+		return false, util.MessageErrorf("user:failed to fetch gravatar image: %s", resp.Status)
 	}
 }
 

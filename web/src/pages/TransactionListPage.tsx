@@ -1,5 +1,6 @@
 import * as React from "react";
 import i18next from "i18next";
+import {enumLabel, PAYMENT_STATES} from "@/lib/enum-labels";
 import {Link, useNavigate} from "react-router-dom";
 import {Badge} from "@/components/ui/badge";
 import {Button} from "@/components/ui/button";
@@ -79,7 +80,7 @@ export default function TransactionListPage() {
       title: i18next.t("general:State"),
       width: 110,
       sortable: true,
-      render: (value) => <Badge variant={value === "Paid" ? "success" : "secondary"}>{value}</Badge>,
+      render: (value) => <Badge variant={value === "Paid" ? "success" : "secondary"}>{enumLabel(PAYMENT_STATES, value)}</Badge>,
     },
   ];
 

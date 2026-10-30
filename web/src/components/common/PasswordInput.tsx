@@ -1,4 +1,5 @@
 import * as React from "react";
+import i18next from "i18next";
 import {Eye, EyeOff} from "lucide-react";
 import {Input} from "@/components/ui/input";
 import {cn} from "@/lib/utils";
@@ -17,7 +18,7 @@ export const PasswordInput = React.forwardRef<
         type="button"
         tabIndex={-1}
         disabled={props.disabled}
-        aria-label={visible ? "Hide password" : "Show password"}
+        aria-label={visible ? i18next.t("general:Hide password") : i18next.t("general:Show password")}
         className="absolute inset-y-0 right-0 flex w-9 items-center justify-center text-muted-foreground hover:text-foreground disabled:pointer-events-none"
         onClick={() => setVisible((prev) => !prev)}
       >

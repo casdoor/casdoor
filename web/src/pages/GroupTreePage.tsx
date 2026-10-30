@@ -151,7 +151,7 @@ export default function GroupTreePage() {
       name: `group_${randomName}`,
       createdTime: dayjs().format(),
       updatedTime: dayjs().format(),
-      displayName: `New Group - ${randomName}`,
+      displayName: `${i18next.t("group:New Group")} - ${randomName}`,
       type: "Virtual",
       parentId: isRoot || selected === null ? organizationName : selected.name,
       isTopGroup: isRoot || selected === null,

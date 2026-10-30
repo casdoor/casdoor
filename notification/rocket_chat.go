@@ -15,9 +15,9 @@
 package notification
 
 import (
-	"fmt"
 	"strings"
 
+	"github.com/casdoor/casdoor/util"
 	notify "github.com/casdoor/notify2"
 	"github.com/casdoor/notify2/service/rocketchat"
 )
@@ -30,7 +30,7 @@ func NewRocketChatProvider(clientId string, clientSecret string, endpoint string
 		scheme = parts[0]
 		serverURL = parts[1]
 	} else {
-		return nil, fmt.Errorf("parse endpoint error")
+		return nil, util.MessageErrorf("service:parse endpoint error")
 	}
 
 	rocketChatSrv, err := rocketchat.New(serverURL, scheme, clientId, clientSecret)

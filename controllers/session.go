@@ -43,7 +43,7 @@ func (c *ApiController) GetSessions() {
 	if limit == "" || page == "" {
 		sessions, err := object.GetSessions(owner)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 		object.MaskSessionIds(sessions...)
@@ -53,13 +53,13 @@ func (c *ApiController) GetSessions() {
 		limit := util.ParseInt(limit)
 		count, err := object.GetSessionCount(owner, field, value)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 		paginator := pagination.NewPaginator(c.Ctx.Request, limit, count)
 		sessions, err := object.GetPaginationSessions(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 		object.MaskSessionIds(sessions...)
@@ -80,7 +80,7 @@ func (c *ApiController) GetSingleSession() {
 
 	session, err := object.GetSingleSession(id)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 	object.MaskSessionIds(session)
@@ -99,7 +99,7 @@ func (c *ApiController) UpdateSession() {
 	var session object.Session
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &session)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -118,7 +118,7 @@ func (c *ApiController) AddSession() {
 	var session object.Session
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &session)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -137,7 +137,7 @@ func (c *ApiController) DeleteSession() {
 	var session object.Session
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &session)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -173,7 +173,7 @@ func (c *ApiController) IsSessionDuplicated() {
 
 	isUserSessionDuplicated, err := object.IsSessionDuplicated(id, sessionId)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 

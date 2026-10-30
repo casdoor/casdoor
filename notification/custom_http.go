@@ -16,13 +16,13 @@ package notification
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"net/url"
 	"strings"
 	"time"
 
 	"github.com/casdoor/casdoor/proxy"
+	"github.com/casdoor/casdoor/util"
 )
 
 const customHttpNotificationTimeout = 30 * time.Second
@@ -84,7 +84,7 @@ func (c *HttpNotificationClient) SendWithRecipient(ctx context.Context, subject 
 		}
 		req.URL.RawQuery = q.Encode()
 	} else {
-		return fmt.Errorf("HttpNotificationClient's SendMessage() error, unsupported method: %s", c.method)
+		return util.MessageErrorf("service:HttpNotificationClient's SendMessage() error, unsupported method: %s", c.method)
 	}
 
 	httpClient := getCustomHttpNotificationClient()
@@ -98,7 +98,7 @@ func (c *HttpNotificationClient) SendWithRecipient(ctx context.Context, subject 
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("HttpNotificationClient's SendMessage() error, custom HTTP Notification request failed with status: %s", resp.Status)
+		return util.MessageErrorf("service:HttpNotificationClient's SendMessage() error, custom HTTP Notification request failed with status: %s", resp.Status)
 	}
 
 	return err

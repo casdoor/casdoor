@@ -47,7 +47,7 @@ func (c *ApiController) GetRecords() {
 	if limit == "" || page == "" {
 		records, err := object.GetRecords(organization)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -60,14 +60,14 @@ func (c *ApiController) GetRecords() {
 		filterRecord := &object.Record{Organization: organization}
 		count, err := object.GetRecordCount(field, value, filterRecord)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
 		paginator := pagination.NewPaginator(c.Ctx.Request, limit, count)
 		records, err := object.GetPaginationRecords(paginator.Offset(), limit, field, value, sortField, sortOrder, filterRecord)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -93,7 +93,7 @@ func (c *ApiController) GetRecordsByFilter() {
 	record := &object.Record{}
 	err := util.JsonToStruct(body, record)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -103,7 +103,7 @@ func (c *ApiController) GetRecordsByFilter() {
 
 	records, err := object.GetRecordsByField(record)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -121,7 +121,7 @@ func (c *ApiController) AddRecord() {
 	var record object.Record
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &record)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 

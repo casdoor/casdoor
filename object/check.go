@@ -387,7 +387,7 @@ func CheckLdapUserPassword(user *User, password string, lang string, options ...
 
 	if !ldapLoginSuccess {
 		if !hit {
-			return fmt.Errorf("user not exist")
+			return util.MessageErrorf("check:user not exist")
 		}
 		return recordSigninErrorInfo(user, lang, enableCaptcha)
 	}
@@ -660,7 +660,7 @@ func CheckPasswordOnlySignin(user *User, clientIp string, lang string) error {
 	}
 
 	if user.NeedUpdatePassword || IsNeedPromptMfa(organization, user) {
-		return fmt.Errorf("the user: %s must update the password or set up MFA on the login page first", user.GetId())
+		return util.MessageErrorf("check:the user: %s must update the password or set up MFA on the login page first", user.GetId())
 	}
 	return nil
 }

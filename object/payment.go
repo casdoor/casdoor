@@ -18,6 +18,7 @@ import (
 	"fmt"
 
 	"github.com/beego/beego/v2/core/logs"
+	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/pp"
 	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/core"
@@ -228,7 +229,7 @@ func notifyPayment(body []byte, owner string, paymentName string) (*Payment, *pp
 		return nil, nil, err
 	}
 	if payment == nil {
-		err = fmt.Errorf("the payment: %s does not exist", paymentName)
+		err = util.MessageErrorf("payment:the payment: %s does not exist", paymentName)
 		return nil, nil, err
 	}
 
@@ -256,12 +257,12 @@ func notifyPayment(body []byte, owner string, paymentName string) (*Payment, *pp
 	}
 	// Only check paid payment
 	if notifyResult.ProductDisplayName != "" && notifyResult.ProductDisplayName != payment.ProductsDisplayName {
-		err = fmt.Errorf("the payment's product name: %s doesn't equal to the expected product name: %s", notifyResult.ProductDisplayName, payment.ProductsDisplayName)
+		err = util.MessageErrorf("payment:the payment's product name: %s doesn't equal to the expected product name: %s", notifyResult.ProductDisplayName, payment.ProductsDisplayName)
 		return payment, nil, err
 	}
 
 	if notifyResult.Price != payment.Price {
-		err = fmt.Errorf("the payment's price: %f doesn't equal to the expected price: %f", notifyResult.Price, payment.Price)
+		err = util.MessageErrorf("payment:the payment's price: %f doesn't equal to the expected price: %f", notifyResult.Price, payment.Price)
 		return payment, nil, err
 	}
 
@@ -274,7 +275,7 @@ func NotifyPayment(body []byte, owner string, paymentName string, lang string) (
 		if err != nil {
 			return nil, err
 		}
-		return nil, fmt.Errorf("the payment: %s does not exist", paymentName)
+		return nil, util.MessageErrorf("payment:the payment: %s does not exist", paymentName)
 	}
 
 	// Check if payment is already in a terminal state to prevent duplicate processing
@@ -287,10 +288,10 @@ func NotifyPayment(body []byte, owner string, paymentName string, lang string) (
 	var newMessage string
 	if err != nil {
 		newState = pp.PaymentStateError
-		newMessage = err.Error()
+		newMessage = i18n.LocalizeError(lang, err)
 	} else {
 		newState = notifyResult.PaymentStatus
-		newMessage = notifyResult.NotifyMessage
+		newMessage = getPaymentNotificationMessage(notifyResult, lang)
 	}
 
 	// Check if the payment state would actually change
@@ -310,12 +311,12 @@ func NotifyPayment(body []byte, owner string, paymentName string, lang string) (
 		return nil, err
 	}
 	if order == nil {
-		return nil, fmt.Errorf("the order: %s does not exist", payment.Order)
+		return nil, util.MessageErrorf("payment:the order: %s does not exist", payment.Order)
 	}
 
 	if payment.State == pp.PaymentStatePaid {
 		order.State = "Paid"
-		order.Message = "Payment successful"
+		order.Message = i18n.Translate(lang, "payment:Payment successful")
 		order.UpdateTime = util.GetCurrentTime()
 	} else if payment.State == pp.PaymentStateError {
 		order.State = "Failed"
@@ -323,11 +324,11 @@ func NotifyPayment(body []byte, owner string, paymentName string, lang string) (
 		order.UpdateTime = util.GetCurrentTime()
 	} else if payment.State == pp.PaymentStateCanceled {
 		order.State = "Canceled"
-		order.Message = "Payment was cancelled"
+		order.Message = i18n.Translate(lang, "payment:Payment was cancelled")
 		order.UpdateTime = util.GetCurrentTime()
 	} else if payment.State == pp.PaymentStateTimeout {
 		order.State = "Timeout"
-		order.Message = "Payment timed out"
+		order.Message = i18n.Translate(lang, "payment:Payment timed out")
 		order.UpdateTime = util.GetCurrentTime()
 	}
 	_, err = UpdateOrder(order.GetId(), order)
@@ -347,7 +348,7 @@ func NotifyPayment(body []byte, owner string, paymentName string, lang string) (
 			return nil, err
 		}
 		if provider == nil {
-			return nil, fmt.Errorf("the provider: %s does not exist", payment.Provider)
+			return nil, util.MessageErrorf("provider:the provider: %s does not exist", payment.Provider)
 		}
 
 		products, err := getOrderProducts(payment.Owner, order.Products)
@@ -355,11 +356,11 @@ func NotifyPayment(body []byte, owner string, paymentName string, lang string) (
 			return nil, err
 		}
 		if len(products) == 0 {
-			return nil, fmt.Errorf("order has no products")
+			return nil, util.MessageErrorf("order:order has no products")
 		}
 		for _, product := range products {
 			if !product.IsRecharge && product.Quantity <= 0 {
-				return nil, fmt.Errorf("the product: %s is out of stock", product.Name)
+				return nil, util.MessageErrorf("payment:the product: %s is out of stock", product.Name)
 			}
 		}
 
@@ -368,7 +369,7 @@ func NotifyPayment(body []byte, owner string, paymentName string, lang string) (
 			return nil, err
 		}
 		if user == nil {
-			return nil, fmt.Errorf("the user: %s does not exist", payment.User)
+			return nil, util.MessageErrorf("order:the user: %s does not exist", payment.User)
 		}
 
 		transaction := &Transaction{
@@ -393,7 +394,7 @@ func NotifyPayment(body []byte, owner string, paymentName string, lang string) (
 			return nil, err
 		}
 		if !affected {
-			return nil, fmt.Errorf("failed to add transaction: %s", util.StructToJson(transaction))
+			return nil, util.MessageErrorf("order:failed to add transaction: %s", util.StructToJson(transaction))
 		}
 
 		hasRecharge := false
@@ -428,7 +429,7 @@ func NotifyPayment(body []byte, owner string, paymentName string, lang string) (
 				return nil, err
 			}
 			if !affected {
-				return nil, fmt.Errorf("failed to add recharge transaction: %s", util.StructToJson(rechargeTransaction))
+				return nil, util.MessageErrorf("order:failed to add recharge transaction: %s", util.StructToJson(rechargeTransaction))
 			}
 		}
 
@@ -454,7 +455,7 @@ func invoicePayment(payment *Payment) (string, error) {
 	}
 
 	if provider == nil {
-		return "", fmt.Errorf("the payment provider: %s does not exist", payment.Provider)
+		return "", util.MessageErrorf("payment:the payment provider: %s does not exist", payment.Provider)
 	}
 
 	pProvider, err := GetPaymentProvider(provider)
@@ -470,9 +471,19 @@ func invoicePayment(payment *Payment) (string, error) {
 	return invoiceUrl, nil
 }
 
+func getPaymentNotificationMessage(result *pp.NotifyResult, lang string) string {
+	if result != nil && i18n.IsLocalizableError(result.MessageError) {
+		return i18n.LocalizeError(lang, result.MessageError)
+	}
+	if result == nil {
+		return ""
+	}
+	return result.NotifyMessage
+}
+
 func InvoicePayment(payment *Payment) (string, error) {
 	if payment.State != pp.PaymentStatePaid {
-		return "", fmt.Errorf("the payment state is supposed to be: \"%s\", got: \"%s\"", "Paid", payment.State)
+		return "", util.MessageErrorf("payment:the payment state is supposed to be: \"%s\", got: \"%s\"", "Paid", payment.State)
 	}
 
 	invoiceUrl, err := invoicePayment(payment)
@@ -487,7 +498,7 @@ func InvoicePayment(payment *Payment) (string, error) {
 	}
 
 	if !affected {
-		return "", fmt.Errorf("failed to update the payment: %s", payment.Name)
+		return "", util.MessageErrorf("payment:failed to update the payment: %s", payment.Name)
 	}
 
 	return invoiceUrl, nil

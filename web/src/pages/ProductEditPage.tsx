@@ -39,7 +39,7 @@ export default function ProductEditPage() {
           />
           {ctx.record.image ? (
             <a href={ctx.record.image} target="_blank" rel="noreferrer">
-              <img src={ctx.record.image} alt="product" className="h-24 object-contain" />
+              <img src={ctx.record.image} alt={i18next.t("product:Image")} className="h-24 object-contain" />
             </a>
           ) : null}
         </div>

@@ -475,7 +475,7 @@ func UpdateApplication(id string, application *Application, isGlobalAdmin bool, 
 	}
 
 	if application.IsShared == true && application.Organization != "built-in" {
-		return false, fmt.Errorf("only applications belonging to built-in organization can be shared")
+		return false, util.MessageErrorf("application:only applications belonging to built-in organization can be shared")
 	}
 
 	err = checkMultipleCaptchaProviders(application, lang)
@@ -554,7 +554,7 @@ func AddApplication(application *Application, lang string) (bool, error) {
 	}
 
 	if application.IsShared == true && application.Organization != "built-in" {
-		return false, fmt.Errorf("only applications belonging to built-in organization can be shared")
+		return false, util.MessageErrorf("application:only applications belonging to built-in organization can be shared")
 	}
 
 	err = checkMultipleCaptchaProviders(application, lang)

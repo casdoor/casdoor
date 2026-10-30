@@ -86,7 +86,7 @@ export function SearchableSelect({
           }}
         >
           <CommandInput placeholder={i18next.t("general:Search")} />
-          <CommandList>
+          <CommandList label={i18next.t("general:Search results")}>
             <CommandEmpty>{i18next.t("general:No data")}</CommandEmpty>
             <CommandGroup>
               {items.map((option) => (

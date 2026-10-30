@@ -21,6 +21,7 @@ import (
 
 	"github.com/PaddleHQ/paddle-go-sdk"
 	"github.com/casdoor/casdoor/conf"
+	"github.com/casdoor/casdoor/util"
 )
 
 type PaddlePaymentProvider struct {
@@ -106,7 +107,7 @@ func (pp *PaddlePaymentProvider) Pay(r *PayReq) (*PayResp, error) {
 	}
 
 	if res == nil {
-		return nil, fmt.Errorf("paddle transaction response is nil")
+		return nil, util.MessageErrorf("payment:paddle transaction response is nil")
 	}
 
 	// Get checkout URL from the transaction
@@ -148,11 +149,12 @@ func (pp *PaddlePaymentProvider) Notify(body []byte, orderId string) (*NotifyRes
 		// Billed but not yet paid
 		return &NotifyResult{PaymentStatus: PaymentStateCreated}, nil
 	case paddle.TransactionStatusCanceled:
-		return &NotifyResult{PaymentStatus: PaymentStateCanceled, NotifyMessage: "Transaction canceled"}, nil
+		return &NotifyResult{PaymentStatus: PaymentStateCanceled, NotifyMessage: "Transaction canceled", MessageError: util.NewMessageError("payment:Transaction canceled")}, nil
 	case paddle.TransactionStatusPastDue:
-		return &NotifyResult{PaymentStatus: PaymentStateError, NotifyMessage: "Payment past due"}, nil
+		return &NotifyResult{PaymentStatus: PaymentStateError, NotifyMessage: "Payment past due", MessageError: util.NewMessageError("payment:Payment past due")}, nil
 	default:
-		return &NotifyResult{PaymentStatus: PaymentStateError, NotifyMessage: fmt.Sprintf("unexpected paddle transaction status: %v", res.Status)}, nil
+		message := util.MessageErrorf("payment:unexpected paddle transaction status: %v", res.Status)
+		return &NotifyResult{PaymentStatus: PaymentStateError, NotifyMessage: message.Error(), MessageError: message}, nil
 	}
 
 	// Extract payment details from transaction for successful payment

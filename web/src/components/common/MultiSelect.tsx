@@ -112,7 +112,8 @@ export function MultiSelect({
         <Command
           filter={(itemValue, searchValue) => {
             const option = options.find((o) => o.value === itemValue);
-            const haystack = `${itemValue} ${option?.keywords ?? ""}`.toLowerCase();
+            const label = typeof option?.label === "string" ? option.label : "";
+            const haystack = `${itemValue} ${label} ${option?.keywords ?? ""}`.toLowerCase();
             return haystack.includes(searchValue.toLowerCase()) ? 1 : 0;
           }}
         >

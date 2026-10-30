@@ -22,9 +22,10 @@ import (
 	"crypto/x509"
 	"crypto/x509/pkix"
 	"encoding/pem"
-	"fmt"
 	"math/big"
 	"time"
+
+	"github.com/casdoor/casdoor/util"
 )
 
 func generateRsaKeys(bitSize int, shaSize int, expireInYears int, commonName string, organization string) (string, string, error) {
@@ -66,7 +67,7 @@ func generateRsaKeys(bitSize int, shaSize int, expireInYears int, commonName str
 	case 512:
 		tml.SignatureAlgorithm = x509.SHA512WithRSA
 	default:
-		return "", "", fmt.Errorf("generateRsaKeys() error, unsupported SHA size: %d", shaSize)
+		return "", "", util.MessageErrorf("token:generateRsaKeys() error, unsupported SHA size: %d", shaSize)
 	}
 
 	cert, err := x509.CreateCertificate(rand.Reader, &tml, &tml, &key.PublicKey, key)
@@ -93,7 +94,7 @@ func generateEsKeys(shaSize int, expireInYears int, commonName string, organizat
 	case 512:
 		curve = elliptic.P521() // ES512(P521,SHA512)
 	default:
-		return "", "", fmt.Errorf("generateEsKeys() error, unsupported SHA size: %d", shaSize)
+		return "", "", util.MessageErrorf("token:generateEsKeys() error, unsupported SHA size: %d", shaSize)
 	}
 
 	// Generate ECDSA key pair.
@@ -181,7 +182,7 @@ func generateRsaPssKeys(bitSize int, shaSize int, expireInYears int, commonName 
 	case 512:
 		tml.SignatureAlgorithm = x509.SHA512WithRSAPSS
 	default:
-		return "", "", fmt.Errorf("generateRsaPssKeys() error, unsupported SHA size: %d", shaSize)
+		return "", "", util.MessageErrorf("token:generateRsaPssKeys() error, unsupported SHA size: %d", shaSize)
 	}
 
 	cert, err := x509.CreateCertificate(rand.Reader, &tml, &tml, &key.PublicKey, key)

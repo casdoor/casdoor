@@ -8,6 +8,7 @@ import {XlsxImport} from "@/components/crud/XlsxImport";
 import {boolColumn, dateColumn, linkColumn, organizationColumn, textColumn} from "@/components/crud/columns";
 import type {ColumnDef} from "@/components/crud/types";
 import {useAccount} from "@/hooks/use-account";
+import {useLanguage} from "@/hooks/use-language";
 import {useRequestOrganization} from "@/hooks/use-organization";
 import * as OrganizationBackend from "@/backend/OrganizationBackend";
 import * as UserBackend from "@/backend/UserBackend";
@@ -24,6 +25,7 @@ export default function UserListPage({
   formItems,
 }: {organizationName?: string; groupName?: string; formItems?: any[]} = {}) {
   const {account} = useAccount();
+  const language = useLanguage();
   const params = useParams();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -56,10 +58,10 @@ export default function UserListPage({
     const map: Record<string, string> = {};
     ((organization?.tags ?? []) as string[]).forEach((tag) => {
       const tokens = tag.split("|");
-      map[tokens[0]] = Setting.getLanguage() !== "zh" ? tokens[0] : tokens[1] ?? tokens[0];
+      map[tokens[0]] = language !== "zh" ? tokens[0] : tokens[1] ?? tokens[0];
     });
     return map;
-  }, [organization]);
+  }, [organization, language]);
 
   const columns: ColumnDef<any>[] = [
     organizationColumn(140, "owner", undefined, "left"),
@@ -130,7 +132,7 @@ export default function UserListPage({
       searchable: true,
       // the column stores the ISO code, antd shows the country's own name
       render: (value) =>
-        value ? Setting.initCountries().getName(value, Setting.getLanguage(), {select: "official"}) ?? value : null,
+        value ? Setting.getCountryName(value, {select: "official"}) || value : null,
     },
     textColumn({dataIndex: "type", title: i18next.t("general:User type"), width: 130, searchable: true}),
     {
@@ -176,7 +178,7 @@ export default function UserListPage({
           columns={Setting.getUserColumns()}
           templateName="import-user.xlsx"
           uploadApi="upload-users"
-          successMessage="Users uploaded successfully, refreshing the page"
+          successMessage={i18next.t("user:Users uploaded successfully, refreshing the page")}
           onUploaded={refresh}
         />
       )}

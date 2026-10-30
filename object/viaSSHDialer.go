@@ -25,6 +25,7 @@ import (
 
 	mssql "github.com/microsoft/go-mssqldb"
 
+	"github.com/casdoor/casdoor/util"
 	"github.com/lib/pq"
 	"golang.org/x/crypto/ssh"
 )
@@ -71,7 +72,7 @@ func getHostKeyCallback(hostKey string, observedHostKey *string) ssh.HostKeyCall
 		if strings.TrimSpace(hostKey) == "" || isHostKeyMatched(hostKey, key) {
 			return nil
 		}
-		return fmt.Errorf("the SSH host key of %s does not match the saved one, got: %s (%s); clear \"SSH host key\" in the syncer only if the server's key was changed on purpose", hostname, *observedHostKey, ssh.FingerprintSHA256(key))
+		return util.MessageErrorf("syncer:the SSH host key of %s does not match the saved one, got: %s (%s); clear \"SSH host key\" in the syncer only if the server's key was changed on purpose", hostname, *observedHostKey, ssh.FingerprintSHA256(key))
 	}
 }
 
@@ -116,7 +117,7 @@ func DialWithCert(SshUser string, CertId string, SshHost string, SshPort int, Ho
 		return nil, "", err
 	}
 	if cert == nil {
-		return nil, "", fmt.Errorf("the cert: %s is not found", CertId)
+		return nil, "", util.MessageErrorf("syncer:the cert: %s is not found", CertId)
 	}
 
 	return DialWithPrivateKey(SshUser, []byte(cert.PrivateKey), SshHost, SshPort, HostKey)

@@ -67,7 +67,7 @@ func getDurationFrom(period string, startTime time.Time) (string, string, error)
 	} else if period == PeriodMonthly {
 		endTime = startTime.AddDate(0, 1, 0)
 	} else {
-		return "", "", fmt.Errorf("invalid period: %s", period)
+		return "", "", util.MessageErrorf("plan:invalid period: %s", period)
 	}
 
 	startTimeString := startTime.Format(time.RFC3339)

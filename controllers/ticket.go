@@ -55,7 +55,7 @@ func (c *ApiController) GetTickets() {
 			tickets, err = object.GetUserTickets(owner, user.GetId())
 		}
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -70,14 +70,14 @@ func (c *ApiController) GetTickets() {
 			// For non-admin users, only show their own tickets
 			tickets, err = object.GetUserTickets(owner, user.GetId())
 			if err != nil {
-				c.ResponseError(err.Error())
+				c.ResponseErrorFrom(err)
 				return
 			}
 			count = int64(len(tickets))
 		}
 
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -88,7 +88,7 @@ func (c *ApiController) GetTickets() {
 		}
 
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -108,7 +108,7 @@ func (c *ApiController) GetTicket() {
 
 	ticket, err := object.GetTicket(id)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -144,7 +144,7 @@ func (c *ApiController) UpdateTicket() {
 	var ticket object.Ticket
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &ticket)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -158,7 +158,7 @@ func (c *ApiController) UpdateTicket() {
 
 	existingTicket, err := object.GetTicket(id)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -200,7 +200,7 @@ func (c *ApiController) AddTicket() {
 	var ticket object.Ticket
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &ticket)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -227,7 +227,7 @@ func (c *ApiController) DeleteTicket() {
 	var ticket object.Ticket
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &ticket)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -255,7 +255,7 @@ func (c *ApiController) AddTicketMessage() {
 	var message object.TicketMessage
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &message)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -269,7 +269,7 @@ func (c *ApiController) AddTicketMessage() {
 
 	ticket, err := object.GetTicket(id)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 

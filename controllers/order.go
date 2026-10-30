@@ -58,7 +58,7 @@ func (c *ApiController) GetOrders() {
 		}
 
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -75,14 +75,14 @@ func (c *ApiController) GetOrders() {
 		}
 		count, err := object.GetOrderCount(owner, user, field, value)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
 		paginator := pagination.NewPaginator(c.Ctx.Request, limit, count)
 		orders, err := object.GetPaginationOrders(owner, user, paginator.Offset(), limit, field, value, sortField, sortOrder)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -106,18 +106,18 @@ func (c *ApiController) GetUserOrders() {
 		sessionUser := c.GetSessionUsername()
 		sessionUserOwner, sessionUserName, err := util.GetOwnerAndNameFromIdWithError(sessionUser)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 		if sessionUserOwner != owner || sessionUserName != user {
-			c.ResponseError("Forbidden")
+			c.ResponseError(c.T("general:Forbidden"))
 			return
 		}
 	}
 
 	orders, err := object.GetUserOrders(owner, user)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -136,7 +136,7 @@ func (c *ApiController) GetOrder() {
 
 	order, err := object.GetOrder(id)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -144,11 +144,11 @@ func (c *ApiController) GetOrder() {
 		sessionUser := c.GetSessionUsername()
 		sessionUserOwner, sessionUserName, err := util.GetOwnerAndNameFromIdWithError(sessionUser)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 		if order.Owner != sessionUserOwner || order.User != sessionUserName {
-			c.ResponseError("Forbidden")
+			c.ResponseError(c.T("general:Forbidden"))
 			return
 		}
 	}
@@ -170,7 +170,7 @@ func (c *ApiController) UpdateOrder() {
 	var order object.Order
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &order)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -189,7 +189,7 @@ func (c *ApiController) AddOrder() {
 	var order object.Order
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &order)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -208,7 +208,7 @@ func (c *ApiController) DeleteOrder() {
 	var order object.Order
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &order)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 

@@ -78,7 +78,7 @@ export function Header({onOpenPalette}: {onOpenPalette: () => void}) {
             rel="noreferrer"
             className="saas-hosting-btn mr-1 hidden whitespace-nowrap text-sm sm:inline"
           >
-            🚀 SaaS Hosting 🔥
+            {i18next.t("general:SaaS Hosting")}
           </a>
         ) : null}
         {showOrganizationSelect && (

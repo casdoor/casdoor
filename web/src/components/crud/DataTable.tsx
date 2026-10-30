@@ -156,6 +156,7 @@ function ColumnFilter({
   const [open, setOpen] = React.useState(false);
   const selected = query.searchedColumn === column.dataIndex ? query.searchText : "";
   const active = selected !== "";
+  const groupId = React.useId();
 
   const pick = (value: string) => {
     onQueryChange({searchText: value, searchedColumn: column.dataIndex, page: 1});
@@ -170,8 +171,8 @@ function ColumnFilter({
   const renderOption = (option: ColumnFilterOption) => {
     if (option.children?.length) {
       return (
-        <div key={option.value} role="group" aria-label={String(option.value)} className="py-1">
-          <div className="px-2 py-1 text-xs font-semibold text-muted-foreground">{option.label}</div>
+        <div key={option.value} role="group" aria-labelledby={`${groupId}-${encodeURIComponent(option.value)}`} className="py-1">
+          <div id={`${groupId}-${encodeURIComponent(option.value)}`} className="px-2 py-1 text-xs font-semibold text-muted-foreground">{option.label}</div>
           {option.children.map((child) => renderOption(child))}
         </div>
       );
@@ -650,7 +651,7 @@ export function DataTable<T = any>({
               <SelectContent>
                 {PAGE_SIZE_OPTIONS.map((size) => (
                   <SelectItem key={size} value={String(size)}>
-                    {size} / page
+                    {i18next.t("general:{count} / page").replace("{count}", String(size))}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -658,7 +659,7 @@ export function DataTable<T = any>({
             <Button
               variant="ghost"
               size="iconSm"
-              aria-label="Previous page"
+              aria-label={i18next.t("general:Previous page")}
               disabled={query.page <= 1 || loading}
               onClick={() => onQueryChange({page: query.page - 1})}
             >
@@ -670,7 +671,7 @@ export function DataTable<T = any>({
             <Button
               variant="ghost"
               size="iconSm"
-              aria-label="Next page"
+              aria-label={i18next.t("general:Next page")}
               disabled={query.page >= pageCount || loading}
               onClick={() => onQueryChange({page: query.page + 1})}
             >

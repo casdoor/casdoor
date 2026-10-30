@@ -81,7 +81,17 @@ export function buildBreadcrumbItems(pathname: string): Crumb[] | null {
   }
 
   const lastSegment = pathSegments[pathSegments.length - 1];
-  const lastLabelKey = RESOURCE_LABELS[lastSegment];
+  const entityActions: Record<string, Record<string, string>> = {
+    entries: {transcript: "entry:Session transcript"},
+    products: {buy: "product:Buy"},
+    orders: {pay: "order:Pay"},
+    payments: {result: "payment:Result"},
+  };
+  // Only fixed route positions are actions. An entity named "groups" is still an ID.
+  const lastLabelKey = pathSegments.length === 4 ? entityActions[rootSegment]?.[lastSegment]
+    : rootSegment === "mfa" && pathSegments.length === 2 && lastSegment === "setup" ? "mfa:Set MFA"
+      : rootSegment === "organizations" && pathSegments.length === 3 && lastSegment === "users" ? "general:Users"
+        : undefined;
   return [
     home,
     {label: i18next.t(listLabelKey), to: `/${rootSegment}`},
@@ -97,7 +107,7 @@ export function BreadcrumbBar() {
   }
 
   return (
-    <nav aria-label="Breadcrumb" className="min-w-0">
+    <nav aria-label={i18next.t("general:Breadcrumb")} className="min-w-0">
       <ol className="flex min-w-0 items-center gap-1 text-sm text-muted-foreground">
         {items.map((item, index) => (
           <li key={`${item.label}-${index}`} className="flex min-w-0 items-center gap-1">

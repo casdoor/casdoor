@@ -16,7 +16,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"errors"
 	"net"
 	"strings"
 
@@ -48,7 +47,7 @@ func (c *ApiController) GetRules() {
 	if limit == "" || page == "" {
 		rules, err := object.GetRules(owner)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -57,14 +56,14 @@ func (c *ApiController) GetRules() {
 		limit := util.ParseInt(limit)
 		count, err := object.GetRuleCount(owner, field, value)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
 		paginator := pagination.SetPaginator(c.Ctx, limit, count)
 		rules, err := object.GetPaginationRules(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -83,7 +82,7 @@ func (c *ApiController) GetRule() {
 	id := c.Ctx.Input.Query("id")
 	rule, err := object.GetRule(id)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -105,12 +104,12 @@ func (c *ApiController) AddRule() {
 	}
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &rule)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 	err = checkExpressions(rule.Expressions, rule.Type)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 	c.Data["json"] = wrapActionResponse(object.AddRule(&rule))
@@ -129,13 +128,13 @@ func (c *ApiController) UpdateRule() {
 	var rule object.Rule
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &rule)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
 	err = checkExpressions(rule.Expressions, rule.Type)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -155,7 +154,7 @@ func (c *ApiController) DeleteRule() {
 	var rule object.Rule
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &rule)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -197,7 +196,7 @@ func checkIpRule(ipLists []string) error {
 		for _, ip := range strings.Split(ipList, ",") {
 			_, _, err := net.ParseCIDR(ip)
 			if net.ParseIP(ip) == nil && err != nil {
-				return errors.New("Invalid IP address: " + ip)
+				return util.MessageErrorf("rule:Invalid IP address: %s", ip)
 			}
 		}
 	}
@@ -206,7 +205,7 @@ func checkIpRule(ipLists []string) error {
 
 func checkIpRateRule(expressions []*object.Expression) error {
 	if len(expressions) != 1 {
-		return errors.New("IP Rate Limiting rule must have exactly one expression")
+		return util.NewMessageError("general:IP Rate Limiting rule must have exactly one expression")
 	}
 	expression := expressions[0]
 	_, err := util.ParseIntWithError(expression.Operator)

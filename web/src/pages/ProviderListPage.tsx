@@ -1,12 +1,13 @@
 import i18next from "i18next";
 import {CrudListPage} from "@/components/crud/CrudListPage";
-import {dateColumn, linkColumn, organizationColumn, textColumn, valueFilters} from "@/components/crud/columns";
+import {dateColumn, linkColumn, organizationColumn, textColumn} from "@/components/crud/columns";
 import type {ColumnDef} from "@/components/crud/types";
 import {useAccount} from "@/hooks/use-account";
 import {useRequestOrganization} from "@/hooks/use-organization";
 import * as ProviderBackend from "@/backend/ProviderBackend";
 import * as Setting from "@/lib/setting";
 import {newProvider} from "@/pages/defaults";
+import {enumLabel, providerTypeLabel, PROVIDER_CATEGORY_LABELS} from "@/lib/enum-labels";
 
 /** the provider categories the antd list offers as filters, in its order */
 const PROVIDER_CATEGORIES = [
@@ -24,7 +25,7 @@ export default function ProviderListPage({formItems}: {formItems?: any[]} = {}) 
     organizationColumn(),
     dateColumn(),
     textColumn({dataIndex: "displayName", title: i18next.t("general:Display name"), searchable: true, width: 170}),
-    textColumn({dataIndex: "category", title: i18next.t("general:Category"), width: 120, filters: valueFilters(PROVIDER_CATEGORIES)}),
+    {...textColumn({dataIndex: "category", title: i18next.t("general:Category"), width: 120}), filters: PROVIDER_CATEGORIES.map((value) => ({value, label: enumLabel(PROVIDER_CATEGORY_LABELS, value)})), render: (value) => enumLabel(PROVIDER_CATEGORY_LABELS, value)},
     {
       dataIndex: "type",
       title: i18next.t("general:Type"),
@@ -33,13 +34,13 @@ export default function ProviderListPage({formItems}: {formItems?: any[]} = {}) 
       // antd's two-level type filter: the provider types grouped by their category
       filters: PROVIDER_CATEGORIES.map((category) => ({
         value: category,
-        label: category,
-        children: Setting.getProviderTypeOptions(category).map((option: any) => ({value: option.name, label: option.id})),
+        label: enumLabel(PROVIDER_CATEGORY_LABELS, category),
+        children: Setting.getProviderTypeOptions(category).map((option: any) => ({value: option.name, label: providerTypeLabel(option.id)})),
       })),
       render: (_value, record) => (
         <span className="flex items-center gap-2">
           {Setting.getProviderLogo(record)}
-          <span>{record.type}</span>
+          <span>{providerTypeLabel(record.type)}</span>
         </span>
       ),
     },

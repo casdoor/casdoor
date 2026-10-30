@@ -214,7 +214,7 @@ func (key *Key) IsUserActive() (bool, error) {
 // Key on success and an error describing the validation failure otherwise.
 func ValidateKeyByType(accessKey, accessSecret, keyType string) (*Key, error) {
 	if accessKey == "" || accessSecret == "" {
-		return nil, fmt.Errorf("accessKey and accessSecret must not be empty")
+		return nil, util.MessageErrorf("key:accessKey and accessSecret must not be empty")
 	}
 
 	key, err := GetKeyByAccessKey(accessKey)
@@ -222,28 +222,28 @@ func ValidateKeyByType(accessKey, accessSecret, keyType string) (*Key, error) {
 		return nil, err
 	}
 	if key == nil {
-		return nil, fmt.Errorf("access key not found: %s", accessKey)
+		return nil, util.MessageErrorf("key:access key not found: %s", accessKey)
 	}
 
 	if key.Type != keyType {
-		return nil, fmt.Errorf("access key type is not %s: %s", keyType, key.Name)
+		return nil, util.MessageErrorf("key:access key type is not %s: %s", keyType, key.Name)
 	}
 
 	if key.AccessSecret != accessSecret {
-		return nil, fmt.Errorf("incorrect access secret for key: %s", key.Name)
+		return nil, util.MessageErrorf("key:incorrect access secret for key: %s", key.Name)
 	}
 
 	if key.State != "Active" {
-		return nil, fmt.Errorf("access key is not active: %s", key.Name)
+		return nil, util.MessageErrorf("key:access key is not active: %s", key.Name)
 	}
 
 	if key.ExpireTime != "" {
 		expireTime, err := time.Parse(time.RFC3339, key.ExpireTime)
 		if err != nil {
-			return nil, fmt.Errorf("invalid expire time format for key: %s", key.Name)
+			return nil, util.MessageErrorf("key:invalid expire time format for key: %s", key.Name)
 		}
 		if time.Now().After(expireTime) {
-			return nil, fmt.Errorf("access key has expired, expireTime = %s", key.ExpireTime)
+			return nil, util.MessageErrorf("key:access key has expired, expireTime = %s", key.ExpireTime)
 		}
 	}
 

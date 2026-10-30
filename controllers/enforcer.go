@@ -44,7 +44,7 @@ func (c *ApiController) GetEnforcers() {
 	if limit == "" || page == "" {
 		enforcers, err := object.GetEnforcers(owner)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -53,14 +53,14 @@ func (c *ApiController) GetEnforcers() {
 		limit := util.ParseInt(limit)
 		count, err := object.GetEnforcerCount(owner, field, value)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
 		paginator := pagination.NewPaginator(c.Ctx.Request, limit, count)
 		enforcers, err := object.GetPaginationEnforcers(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -81,7 +81,7 @@ func (c *ApiController) GetEnforcer() {
 
 	enforcer, err := object.GetEnforcer(id)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -89,7 +89,7 @@ func (c *ApiController) GetEnforcer() {
 		if loadModelCfg == "true" && enforcer.Model != "" {
 			err = enforcer.LoadModelCfg()
 			if err != nil {
-				c.ResponseError(err.Error())
+				c.ResponseErrorFrom(err)
 				return
 			}
 		}
@@ -112,7 +112,7 @@ func (c *ApiController) UpdateEnforcer() {
 	enforcer := object.Enforcer{}
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &enforcer)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -135,7 +135,7 @@ func (c *ApiController) AddEnforcer() {
 	enforcer := object.Enforcer{}
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &enforcer)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -158,7 +158,7 @@ func (c *ApiController) DeleteEnforcer() {
 	var enforcer object.Enforcer
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &enforcer)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -181,7 +181,7 @@ func (c *ApiController) GetPolicies() {
 	if adapterId != "" {
 		adapter, err := object.GetAdapter(adapterId)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 		if adapter == nil {
@@ -191,7 +191,7 @@ func (c *ApiController) GetPolicies() {
 
 		err = adapter.InitAdapter()
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -201,7 +201,7 @@ func (c *ApiController) GetPolicies() {
 
 	policies, err := object.GetPolicies(id)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -222,13 +222,13 @@ func (c *ApiController) GetFilteredPolicies() {
 	var filters []object.Filter
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &filters)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
 	filteredPolicies, err := object.GetFilteredPoliciesMulti(id, filters)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -249,18 +249,18 @@ func (c *ApiController) UpdatePolicy() {
 	var policies []xormadapter.CasbinRule
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &policies)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
 	if len(policies) < 2 {
-		c.ResponseError("The request body should contain at least two policies (old and new)")
+		c.ResponseError(c.T("general:The request body should contain at least two policies (old and new)"))
 		return
 	}
 
 	affected, err := object.UpdatePolicy(id, policies[0].Ptype, util.CasbinToSlice(policies[0]), util.CasbinToSlice(policies[1]))
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 	c.Data["json"] = wrapActionResponse(affected)
@@ -281,13 +281,13 @@ func (c *ApiController) AddPolicy() {
 	var policy xormadapter.CasbinRule
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &policy)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
 	affected, err := object.AddPolicy(id, policy.Ptype, util.CasbinToSlice(policy))
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 	c.Data["json"] = wrapActionResponse(affected)
@@ -308,13 +308,13 @@ func (c *ApiController) RemovePolicy() {
 	var policy xormadapter.CasbinRule
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &policy)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
 	affected, err := object.RemovePolicy(id, policy.Ptype, util.CasbinToSlice(policy))
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 	c.Data["json"] = wrapActionResponse(affected)

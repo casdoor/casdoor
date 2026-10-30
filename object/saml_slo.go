@@ -61,14 +61,14 @@ func ParseSamlLogoutRequest(application *Application, samlRequest string) (*Saml
 	var request SamlLogoutRequest
 	err = xml.Unmarshal(data, &request)
 	if err != nil {
-		return nil, fmt.Errorf("err: Failed to unmarshal LogoutRequest, please check the SAML request, %s", err.Error())
+		return nil, util.MessageErrorf("saml:err: Failed to unmarshal LogoutRequest, please check the SAML request, %s", err)
 	}
 
 	if !application.IsRedirectUriValid(request.Issuer) {
-		return nil, fmt.Errorf("err: Issuer URI: %s doesn't exist in the allowed Redirect URI list", request.Issuer)
+		return nil, util.MessageErrorf("saml:err: Issuer URI: %s doesn't exist in the allowed Redirect URI list", request.Issuer)
 	}
 	if request.NameId == "" {
-		return nil, fmt.Errorf("err: SAML request doesn't have <saml:NameID> in <samlp:LogoutRequest>")
+		return nil, util.MessageErrorf("saml:err: SAML request doesn't have <saml:NameID> in <samlp:LogoutRequest>")
 	}
 
 	return &request, nil
@@ -84,14 +84,14 @@ func CheckSamlLogoutResponse(application *Application, samlResponse string) erro
 	var response types.LogoutResponse
 	err = xml.Unmarshal(data, &response)
 	if err != nil {
-		return fmt.Errorf("err: Failed to unmarshal LogoutResponse, %s", err.Error())
+		return util.MessageErrorf("saml:err: Failed to unmarshal LogoutResponse, %s", err)
 	}
 
 	if response.Issuer == nil || !application.IsRedirectUriValid(response.Issuer.Value) {
-		return fmt.Errorf("err: the issuer of the LogoutResponse doesn't exist in the allowed Redirect URI list")
+		return util.MessageErrorf("saml:err: the issuer of the LogoutResponse doesn't exist in the allowed Redirect URI list")
 	}
 	if response.Status == nil || response.Status.StatusCode == nil || response.Status.StatusCode.Value != samlStatusSuccess {
-		return fmt.Errorf("err: the SP failed to log out")
+		return util.MessageErrorf("saml:err: the SP failed to log out")
 	}
 
 	return nil
@@ -240,7 +240,7 @@ func newSamlLogoutRequest(application *Application, samlSession *SamlSession, ho
 // binding it returns the base64 message to post to the SP, over the HTTP-Redirect binding the URL to redirect to.
 func GetSamlLogoutResponse(application *Application, request *SamlLogoutRequest, relayState string, host string, usePost bool) (string, error) {
 	if isScriptUrl(application.SamlSingleLogoutUrl) {
-		return "", fmt.Errorf("the SAML single logout URL: %s of the application: %s is not allowed", application.SamlSingleLogoutUrl, application.GetId())
+		return "", util.MessageErrorf("saml:the SAML single logout URL: %s of the application: %s is not allowed", application.SamlSingleLogoutUrl, application.GetId())
 	}
 
 	_, originBackend := getOriginFromHost(host)
@@ -275,12 +275,12 @@ func getSamlLogoutSigningContext(application *Application) (*dsig.SigningContext
 		return nil, err
 	}
 	if cert == nil {
-		return nil, fmt.Errorf("please set a cert for the application first")
+		return nil, util.MessageErrorf("saml:please set a cert for the application first")
 	}
 
 	block, _ := pem.Decode([]byte(cert.Certificate))
 	if block == nil {
-		return nil, fmt.Errorf("the certificate field should not be empty for the cert: %s", cert.GetId())
+		return nil, util.MessageErrorf("saml:the certificate field should not be empty for the cert: %s", cert.GetId())
 	}
 	certificate := base64.StdEncoding.EncodeToString(block.Bytes)
 

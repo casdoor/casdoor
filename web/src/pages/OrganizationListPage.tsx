@@ -24,7 +24,7 @@ export default function OrganizationListPage({formItems}: {formItems?: any[]} = 
       render: (value) =>
         value ? (
           <a href={value} target="_blank" rel="noreferrer">
-            <img src={value} alt="favicon" className="mx-auto h-8 w-8 object-contain" />
+            <img src={value} alt={i18next.t("general:Favicon")} className="mx-auto h-8 w-8 object-contain" />
           </a>
         ) : null,
     },
@@ -51,7 +51,7 @@ export default function OrganizationListPage({formItems}: {formItems?: any[]} = 
       render: (value) =>
         value ? (
           <a href={value} target="_blank" rel="noreferrer">
-            <img src={value} alt="avatar" className="mx-auto h-8 w-8 rounded-full object-cover" />
+            <img src={value} alt={i18next.t("general:Avatar")} className="mx-auto h-8 w-8 rounded-full object-cover" />
           </a>
         ) : null,
     },

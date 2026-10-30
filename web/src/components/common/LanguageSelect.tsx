@@ -1,4 +1,5 @@
 import {Languages} from "lucide-react";
+import i18next from "i18next";
 import {Button} from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -9,6 +10,7 @@ import {
 import {useLanguage} from "@/hooks/use-language";
 import * as Setting from "@/lib/setting";
 import {cn} from "@/lib/utils";
+import {normalizeLanguage} from "@/i18n";
 
 interface LanguageSelectProps {
   /** restrict the list, as the organization setting does */
@@ -22,7 +24,7 @@ export function LanguageSelect({languages, className, onLanguageChange}: Languag
   const current = useLanguage();
 
   const items = (Setting.Countries as any[]).filter(
-    (country) => !languages || languages.length === 0 || languages.includes(country.key),
+    (country) => !languages || languages.length === 0 || languages.some((language) => normalizeLanguage(language) === country.key),
   );
 
   if (items.length === 0) {
@@ -32,7 +34,7 @@ export function LanguageSelect({languages, className, onLanguageChange}: Languag
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="iconSm" className={className} aria-label="Language">
+        <Button variant="ghost" size="iconSm" className={className} aria-label={i18next.t("user:Language")}>
           <Languages />
         </Button>
       </DropdownMenuTrigger>

@@ -16,9 +16,9 @@ package object
 
 import (
 	"encoding/base64"
-	"fmt"
 	"strings"
 
+	"github.com/casdoor/casdoor/util"
 	"github.com/jcmturner/gokrb5/v8/credentials"
 	"github.com/jcmturner/gokrb5/v8/gssapi"
 	"github.com/jcmturner/gokrb5/v8/keytab"
@@ -36,18 +36,18 @@ const ctxCredentials = "github.com/jcmturner/gokrb5/v8/ctxCredentials"
 // Authorization header and returns the authenticated Kerberos username.
 func ValidateKerberosToken(organization *Organization, spnegoTokenBase64 string) (string, error) {
 	if organization.KerberosRealm == "" || organization.KerberosKdcHost == "" || organization.KerberosKeytab == "" {
-		return "", fmt.Errorf("kerberos configuration is incomplete for organization: %s", organization.Name)
+		return "", util.MessageErrorf("kerberos:kerberos configuration is incomplete for organization: %s", organization.Name)
 	}
 
 	keytabData, err := base64.StdEncoding.DecodeString(organization.KerberosKeytab)
 	if err != nil {
-		return "", fmt.Errorf("failed to decode keytab: %w", err)
+		return "", util.MessageErrorf("kerberos:failed to decode keytab: %w", err)
 	}
 
 	kt := keytab.New()
 	err = kt.Unmarshal(keytabData)
 	if err != nil {
-		return "", fmt.Errorf("failed to parse keytab: %w", err)
+		return "", util.MessageErrorf("kerberos:failed to parse keytab: %w", err)
 	}
 
 	servicePrincipal := organization.KerberosServiceName
@@ -59,38 +59,38 @@ func ValidateKerberosToken(organization *Organization, spnegoTokenBase64 string)
 
 	tokenBytes, err := base64.StdEncoding.DecodeString(spnegoTokenBase64)
 	if err != nil {
-		return "", fmt.Errorf("failed to decode SPNEGO token: %w", err)
+		return "", util.MessageErrorf("kerberos:failed to decode SPNEGO token: %w", err)
 	}
 
 	var st spnego.SPNEGOToken
 	err = st.Unmarshal(tokenBytes)
 	if err != nil {
-		return "", fmt.Errorf("failed to unmarshal SPNEGO token: %w", err)
+		return "", util.MessageErrorf("kerberos:failed to unmarshal SPNEGO token: %w", err)
 	}
 
 	authed, ctx, status := spnegoSvc.AcceptSecContext(&st)
 	if status.Code != gssapi.StatusComplete && status.Code != gssapi.StatusContinueNeeded {
-		return "", fmt.Errorf("SPNEGO validation error: %s", status.Message)
+		return "", util.MessageErrorf("kerberos:SPNEGO validation error: %s", status.Message)
 	}
 	if status.Code == gssapi.StatusContinueNeeded {
-		return "", fmt.Errorf("SPNEGO negotiation requires continuation, which is not supported")
+		return "", util.MessageErrorf("kerberos:SPNEGO negotiation requires continuation, which is not supported")
 	}
 	if !authed {
-		return "", fmt.Errorf("SPNEGO token validation failed")
+		return "", util.MessageErrorf("kerberos:SPNEGO token validation failed")
 	}
 
 	creds, ok := ctx.Value(ctxCredentials).(*credentials.Credentials)
 	if !ok || creds == nil {
-		return "", fmt.Errorf("no credentials found in SPNEGO context")
+		return "", util.MessageErrorf("kerberos:no credentials found in SPNEGO context")
 	}
 
 	username := creds.UserName()
 	if username == "" {
-		return "", fmt.Errorf("no username found in Kerberos ticket")
+		return "", util.MessageErrorf("kerberos:no username found in Kerberos ticket")
 	}
 
 	if !strings.EqualFold(creds.Realm(), organization.KerberosRealm) {
-		return "", fmt.Errorf("the Kerberos realm: %s doesn't match the realm: %s of organization: %s", creds.Realm(), organization.KerberosRealm, organization.Name)
+		return "", util.MessageErrorf("kerberos:the Kerberos realm: %s doesn't match the realm: %s of organization: %s", creds.Realm(), organization.KerberosRealm, organization.Name)
 	}
 
 	return username, nil

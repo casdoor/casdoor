@@ -169,7 +169,7 @@ func (c *RootController) GetOAuthServerMetadataByApplication() {
 // responseWellKnownError responds with an error status instead of 200, the standard clients of these endpoints only check the status
 func (c *RootController) responseWellKnownError(status int, err error) {
 	c.Ctx.Output.SetStatus(status)
-	c.ResponseError(err.Error())
+	c.ResponseErrorFrom(err)
 }
 
 func (c *RootController) responseWebFingerError(err error) {

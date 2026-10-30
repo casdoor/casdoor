@@ -12,8 +12,10 @@ import {
   enumLabel,
   enumOptions,
   enumSelectOptions,
+  providerTypeLabel,
   PROVIDER_BINDING_RULES,
   PROVIDER_CAPTCHA_RULES,
+  PROVIDER_CATEGORY_LABELS,
   PROVIDER_CODE_RULES,
   PROVIDER_GOOGLE_RULES,
 } from "@/lib/enum-labels";
@@ -219,7 +221,7 @@ export function ApplicationProvidersTab({
                     rel="noreferrer"
                     className="underline-offset-4 hover:underline"
                   >
-                    {provider.category}
+                    {enumLabel(PROVIDER_CATEGORY_LABELS, provider.category)}
                   </a>
                 );
               },
@@ -228,7 +230,10 @@ export function ApplicationProvidersTab({
               key: "type",
               title: i18next.t("general:Type"),
               width: 110,
-              render: (row: any) => resolveProvider(row)?.type ?? null,
+              render: (row: any) => {
+                const type = resolveProvider(row)?.type;
+                return type ? providerTypeLabel(type) : null;
+              },
             },
             {
               key: "countryCodes",

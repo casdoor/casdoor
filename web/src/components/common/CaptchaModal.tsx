@@ -150,7 +150,7 @@ export function CaptchaModal({
           src={`data:image/png;base64,${captchaImg}`}
           onClick={() => loadCaptcha(true)}
           className="h-9 w-[110px] cursor-pointer rounded-md border object-cover"
-          alt="captcha"
+          alt={i18next.t("general:Captcha")}
         />
       </div>
     ) : (
@@ -159,7 +159,7 @@ export function CaptchaModal({
           src={`data:image/png;base64,${captchaImg}`}
           onClick={() => loadCaptcha(true)}
           className="h-20 w-[200px] cursor-pointer rounded-md border object-cover"
-          alt="captcha"
+          alt={i18next.t("general:Captcha")}
         />
         <div className="relative w-[200px]">
           <ShieldCheck className="pointer-events-none absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />

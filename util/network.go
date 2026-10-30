@@ -132,7 +132,7 @@ func CheckInternetHost(host string) error {
 	}
 	for _, ip := range ips {
 		if isNonInternetAddress(ip.String()) {
-			return fmt.Errorf("the host: %s is not allowed, only Internet addresses can be requested", host)
+			return MessageErrorf("general:the host: %s is not allowed, only Internet addresses can be requested", host)
 		}
 	}
 	return nil
@@ -152,7 +152,7 @@ func newRestrictedHttpTransport(timeout time.Duration, isRefused func(address st
 		Timeout: timeout,
 		Control: func(network, address string, _ syscall.RawConn) error {
 			if isRefused(address) {
-				return fmt.Errorf("the address: %s is not allowed, %s", address, reason)
+				return MessageErrorf("general:the address: %s is not allowed, %s", address, reason)
 			}
 			return nil
 		},

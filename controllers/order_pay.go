@@ -43,7 +43,7 @@ func (c *ApiController) PlaceOrder() {
 	}
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &req)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -73,7 +73,7 @@ func (c *ApiController) PlaceOrder() {
 
 	user, err := object.GetUser(userId)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 	if user == nil {
@@ -83,7 +83,7 @@ func (c *ApiController) PlaceOrder() {
 
 	order, err := object.PlaceOrder(owner, productInfos, user, req.CouponCode)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -107,7 +107,7 @@ func (c *ApiController) PayOrder() {
 
 	order, err := object.GetOrder(id)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 	if order == nil {
@@ -130,7 +130,7 @@ func (c *ApiController) PayOrder() {
 
 	payment, attachInfo, err := object.PayOrder(providerName, host, paymentEnv, order, autoRenew, c.GetAcceptLanguage())
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -148,7 +148,7 @@ func (c *ApiController) CancelOrder() {
 	id := c.Ctx.Input.Query("id")
 	order, err := object.GetOrder(id)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 	if order == nil {
@@ -163,6 +163,6 @@ func (c *ApiController) CancelOrder() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.CancelOrder(order))
+	c.Data["json"] = wrapActionResponse(object.CancelOrder(order, c.GetAcceptLanguage()))
 	c.ServeJSON()
 }

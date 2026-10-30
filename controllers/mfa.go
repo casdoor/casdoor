@@ -38,35 +38,35 @@ func (c *ApiController) MfaSetupInitiate() {
 	userId := util.GetId(owner, name)
 
 	if len(userId) == 0 {
-		c.ResponseError(http.StatusText(http.StatusBadRequest))
+		c.ResponseError(c.T("native:Bad Request"))
 		return
 	}
 
 	MfaUtil := object.GetMfaUtil(mfaType, nil)
 	if MfaUtil == nil {
-		c.ResponseError("Invalid auth type")
+		c.ResponseError(c.T("mfa:Invalid auth type"))
 		return
 	}
 
 	user, err := object.GetUser(userId)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
 	if user == nil {
-		c.ResponseError("User doesn't exist")
+		c.ResponseError(c.T("general:The user doesn't exist"))
 		return
 	}
 
 	organization, err := object.GetOrganizationByUser(user)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
 	if !object.IsMfaTypeAllowed(organization, user, mfaType) {
-		c.ResponseError(fmt.Sprintf("the MFA type: %s is not allowed by the MFA items", mfaType))
+		c.ResponseError(fmt.Sprintf(c.T("mfa:the MFA type: %s is not allowed by the MFA items"), mfaType))
 		return
 	}
 
@@ -79,7 +79,7 @@ func (c *ApiController) MfaSetupInitiate() {
 
 	mfaProps, err := MfaUtil.Initiate(user.GetId(), issuer)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -107,7 +107,7 @@ func (c *ApiController) MfaSetupVerify() {
 	countryCode := c.Ctx.Request.Form.Get("countryCode")
 
 	if mfaType == "" || passcode == "" {
-		c.ResponseError("missing auth type or passcode")
+		c.ResponseError(c.T("mfa:missing auth type or passcode"))
 		return
 	}
 
@@ -116,46 +116,46 @@ func (c *ApiController) MfaSetupVerify() {
 	}
 	if mfaType == object.TotpType {
 		if secret == "" {
-			c.ResponseError("totp secret is missing")
+			c.ResponseError(c.T("mfa:totp secret is missing"))
 			return
 		}
 		config.Secret = secret
 	} else if mfaType == object.SmsType {
 		if dest == "" {
-			c.ResponseError("destination is missing")
+			c.ResponseError(c.T("mfa:destination is missing"))
 			return
 		}
 		config.Secret = dest
 		if countryCode == "" {
-			c.ResponseError("country code is missing")
+			c.ResponseError(c.T("mfa:country code is missing"))
 			return
 		}
 		config.CountryCode = countryCode
 	} else if mfaType == object.EmailType {
 		if dest == "" {
-			c.ResponseError("destination is missing")
+			c.ResponseError(c.T("mfa:destination is missing"))
 			return
 		}
 		config.Secret = dest
 	} else if mfaType == object.RadiusType {
 		if dest == "" {
-			c.ResponseError("RADIUS username is missing")
+			c.ResponseError(c.T("mfa:RADIUS username is missing"))
 			return
 		}
 		config.Secret = dest
 		if secret == "" {
-			c.ResponseError("RADIUS provider is missing")
+			c.ResponseError(c.T("mfa:RADIUS provider is missing"))
 			return
 		}
 		config.URL = secret
 	} else if mfaType == object.PushType {
 		if dest == "" {
-			c.ResponseError("push notification receiver is missing")
+			c.ResponseError(c.T("mfa:push notification receiver is missing"))
 			return
 		}
 		config.Secret = dest
 		if secret == "" {
-			c.ResponseError("push notification provider is missing")
+			c.ResponseError(c.T("mfa:push notification provider is missing"))
 			return
 		}
 		config.URL = secret
@@ -163,24 +163,24 @@ func (c *ApiController) MfaSetupVerify() {
 
 	mfaUtil := object.GetMfaUtil(mfaType, config)
 	if mfaUtil == nil {
-		c.ResponseError("Invalid multi-factor authentication type")
+		c.ResponseError(c.T("mfa:Invalid multi-factor authentication type"))
 		return
 	}
 
 	user, err := object.GetUser(util.GetId(c.Ctx.Request.Form.Get("owner"), c.Ctx.Request.Form.Get("name")))
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 	if user == nil {
-		c.ResponseError("User doesn't exist")
+		c.ResponseError(c.T("general:The user doesn't exist"))
 		return
 	}
 
 	verifiedDest := getMfaSetupDest(mfaType, dest, countryCode)
 	err = object.VerifyMfaWithLimit(user, func() error { return mfaUtil.SetupVerify(passcode, c.GetAcceptLanguage()) }, c.GetAcceptLanguage())
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 	} else {
 		c.SetSession(mfaSetupVerifiedDestSession, verifiedDest)
 		c.ResponseOk(http.StatusText(http.StatusOK))
@@ -206,7 +206,7 @@ func (c *ApiController) checkMfaSetupDest(user *object.User, mfaType string) boo
 		dest = user.Phone
 	}
 	if c.GetSession(mfaSetupVerifiedDestSession) != getMfaSetupDest(mfaType, dest, user.CountryCode) {
-		c.ResponseError("the MFA destination has not been verified")
+		c.ResponseError(c.T("mfa:the MFA destination has not been verified"))
 		return false
 	}
 	return true
@@ -232,12 +232,12 @@ func (c *ApiController) MfaSetupEnable() {
 
 	user, err := object.GetUser(util.GetId(owner, name))
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
 	if user == nil {
-		c.ResponseError("User doesn't exist")
+		c.ResponseError(c.T("general:The user doesn't exist"))
 		return
 	}
 
@@ -247,14 +247,14 @@ func (c *ApiController) MfaSetupEnable() {
 
 	if mfaType == object.TotpType {
 		if secret == "" {
-			c.ResponseError("totp secret is missing")
+			c.ResponseError(c.T("mfa:totp secret is missing"))
 			return
 		}
 		config.Secret = secret
 	} else if mfaType == object.EmailType {
 		if user.Email == "" {
 			if dest == "" {
-				c.ResponseError("destination is missing")
+				c.ResponseError(c.T("mfa:destination is missing"))
 				return
 			}
 			user.Email = dest
@@ -262,60 +262,60 @@ func (c *ApiController) MfaSetupEnable() {
 	} else if mfaType == object.SmsType {
 		if user.Phone == "" {
 			if dest == "" {
-				c.ResponseError("destination is missing")
+				c.ResponseError(c.T("mfa:destination is missing"))
 				return
 			}
 			user.Phone = dest
 			if countryCode == "" {
-				c.ResponseError("country code is missing")
+				c.ResponseError(c.T("mfa:country code is missing"))
 				return
 			}
 			user.CountryCode = countryCode
 		}
 	} else if mfaType == object.RadiusType {
 		if dest == "" {
-			c.ResponseError("RADIUS username is missing")
+			c.ResponseError(c.T("mfa:RADIUS username is missing"))
 			return
 		}
 		config.Secret = dest
 		if secret == "" {
-			c.ResponseError("RADIUS provider is missing")
+			c.ResponseError(c.T("mfa:RADIUS provider is missing"))
 			return
 		}
 		config.URL = secret
 	} else if mfaType == object.PushType {
 		if dest == "" {
-			c.ResponseError("push notification receiver is missing")
+			c.ResponseError(c.T("mfa:push notification receiver is missing"))
 			return
 		}
 		config.Secret = dest
 		if secret == "" {
-			c.ResponseError("push notification provider is missing")
+			c.ResponseError(c.T("mfa:push notification provider is missing"))
 			return
 		}
 		config.URL = secret
 	}
 
 	if recoveryCodes == "" {
-		c.ResponseError("recovery codes is missing")
+		c.ResponseError(c.T("mfa:recovery codes is missing"))
 		return
 	}
 	config.RecoveryCodes = []string{recoveryCodes}
 
 	mfaUtil := object.GetMfaUtil(mfaType, config)
 	if mfaUtil == nil {
-		c.ResponseError("Invalid multi-factor authentication type")
+		c.ResponseError(c.T("mfa:Invalid multi-factor authentication type"))
 		return
 	}
 
 	organization, err := object.GetOrganizationByUser(user)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
 	if !object.IsMfaTypeAllowed(organization, user, mfaType) {
-		c.ResponseError(fmt.Sprintf("the MFA type: %s is not allowed by the MFA items", mfaType))
+		c.ResponseError(fmt.Sprintf(c.T("mfa:the MFA type: %s is not allowed by the MFA items"), mfaType))
 		return
 	}
 
@@ -325,7 +325,7 @@ func (c *ApiController) MfaSetupEnable() {
 
 	err = mfaUtil.Enable(user)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -348,17 +348,17 @@ func (c *ApiController) DeleteMfa() {
 
 	user, err := object.GetUser(userId)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 	if user == nil {
-		c.ResponseError("User doesn't exist")
+		c.ResponseError(c.T("general:The user doesn't exist"))
 		return
 	}
 
 	err = object.DisabledMultiFactorAuth(user)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -382,17 +382,17 @@ func (c *ApiController) SetPreferredMfa() {
 
 	user, err := object.GetUser(userId)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 	if user == nil {
-		c.ResponseError("User doesn't exist")
+		c.ResponseError(c.T("general:The user doesn't exist"))
 		return
 	}
 
 	err = object.SetPreferredMultiFactorAuth(user, mfaType)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 	c.ResponseOk(object.GetAllMfaProps(user, true))

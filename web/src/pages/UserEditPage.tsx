@@ -556,7 +556,7 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
         <SearchableSelect
           value={user.gender ?? ""}
           onChange={(v) => updateField("gender", v)}
-          options={GENDERS.map((item) => ({value: item, label: item}))}
+          options={GENDERS.map((item) => ({value: item, label: i18next.t(`user:${item}`)}))}
         />
       </AccountItemRow>
     ),
@@ -575,7 +575,7 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
         <SearchableSelect
           value={user.idCardType ?? ""}
           onChange={(v) => updateField("idCardType", v)}
-          options={ID_CARD_TYPES.map((item) => ({value: item, label: item}))}
+          options={ID_CARD_TYPES.map((item) => ({value: item, label: i18next.t(`user:${item}`)}))}
         />
       </AccountItemRow>
     ),
@@ -908,7 +908,7 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
               },
               {
                 key: "issuer",
-                title: "Issuer",
+                title: i18next.t("application:Issuer"),
                 width: 180,
                 render: (row: any, _i, patch) => (
                   <Input value={row.issuer ?? ""} onChange={(e) => patch({issuer: e.target.value})} />
@@ -1250,7 +1250,7 @@ function IssuerLogo({issuer}: {issuer?: string}) {
     <img
       className="h-9 w-9 rounded"
       src={src}
-      alt={issuer ?? "default"}
+      alt={issuer ?? i18next.t("user:Default MFA issuer logo")}
       onError={(e) => {
         (e.currentTarget as HTMLImageElement).src = `${Setting.StaticBaseUrl}/img/social_default.png`;
       }}

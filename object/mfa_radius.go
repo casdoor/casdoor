@@ -16,10 +16,10 @@ package object
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"time"
 
+	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/radius/authenticator"
 	"layeh.com/radius"
 	"layeh.com/radius/rfc2865"
@@ -39,11 +39,11 @@ func (mfa *RadiusMfa) Initiate(userId string, issuer string) (*MfaProps, error) 
 
 func (mfa *RadiusMfa) SetupVerify(passCode string, lang string) error {
 	if mfa.Secret == "" {
-		return errors.New("RADIUS username is required")
+		return i18n.NewError("mfa:RADIUS username is required")
 	}
 
 	if mfa.provider == nil {
-		return errors.New("RADIUS provider is not configured")
+		return i18n.NewError("mfa:RADIUS provider is not configured")
 	}
 
 	return mfa.authenticateWithRadius(mfa.Secret, passCode)
@@ -51,7 +51,7 @@ func (mfa *RadiusMfa) SetupVerify(passCode string, lang string) error {
 
 func (mfa *RadiusMfa) Enable(user *User) error {
 	if mfa.provider == nil {
-		return fmt.Errorf("RADIUS provider not found: %s", mfa.URL)
+		return i18n.Errorf("mfa:RADIUS provider not found: %s", mfa.URL)
 	}
 
 	columns := []string{"recovery_codes", "preferred_mfa_type", "mfa_radius_enabled", "mfa_radius_username", "mfa_radius_provider"}
@@ -75,11 +75,11 @@ func (mfa *RadiusMfa) Enable(user *User) error {
 
 func (mfa *RadiusMfa) Verify(passCode string, lang string) error {
 	if mfa.Secret == "" {
-		return errors.New("RADIUS username is required")
+		return i18n.NewError("mfa:RADIUS username is required")
 	}
 
 	if mfa.provider == nil {
-		return errors.New("RADIUS provider is not configured")
+		return i18n.NewError("mfa:RADIUS provider is not configured")
 	}
 
 	return mfa.authenticateWithRadius(mfa.Secret, passCode)
@@ -91,27 +91,27 @@ func (mfa *RadiusMfa) authenticateWithRadius(username, password string) error {
 		if mfa.URL != "" && ormer != nil && ormer.Engine != nil {
 			provider, err := GetProvider(mfa.URL)
 			if err != nil {
-				return fmt.Errorf("failed to load RADIUS provider: %v", err)
+				return i18n.Errorf("mfa:failed to load RADIUS provider: %v", err)
 			}
 			if provider == nil {
-				return errors.New("RADIUS provider not found")
+				return i18n.NewError("mfa:RADIUS provider not found")
 			}
 			mfa.provider = provider
 		} else {
-			return errors.New("RADIUS provider is not configured")
+			return i18n.NewError("mfa:RADIUS provider is not configured")
 		}
 	}
 
 	// Create RADIUS packet
 	packet := radius.New(radius.CodeAccessRequest, []byte(mfa.provider.ClientSecret))
 	if err := rfc2865.UserName_SetString(packet, username); err != nil {
-		return fmt.Errorf("failed to set RADIUS username: %v", err)
+		return i18n.Errorf("mfa:failed to set RADIUS username: %v", err)
 	}
 	if err := rfc2865.UserPassword_SetString(packet, password); err != nil {
-		return fmt.Errorf("failed to set RADIUS password: %v", err)
+		return i18n.Errorf("mfa:failed to set RADIUS password: %v", err)
 	}
 	if err := authenticator.Sign(packet); err != nil {
-		return fmt.Errorf("failed to sign RADIUS request: %v", err)
+		return i18n.Errorf("mfa:failed to sign RADIUS request: %v", err)
 	}
 
 	// Send request to RADIUS server
@@ -121,12 +121,12 @@ func (mfa *RadiusMfa) authenticateWithRadius(username, password string) error {
 
 	response, err := radius.Exchange(ctx, packet, address)
 	if err != nil {
-		return fmt.Errorf("RADIUS authentication failed: %v", err)
+		return i18n.Errorf("mfa:RADIUS authentication failed: %v", err)
 	}
 
 	if mfa.provider.RequireMessageAuthenticator {
 		if err = authenticator.VerifyResponse(response, packet); err != nil {
-			return fmt.Errorf("RADIUS authentication failed: %v", err)
+			return i18n.Errorf("mfa:RADIUS authentication failed: %v", err)
 		}
 	}
 
@@ -134,7 +134,7 @@ func (mfa *RadiusMfa) authenticateWithRadius(username, password string) error {
 		return nil
 	}
 
-	return errors.New("RADIUS authentication rejected")
+	return i18n.NewError("mfa:RADIUS authentication rejected")
 }
 
 func NewRadiusMfaUtil(config *MfaProps) *RadiusMfa {

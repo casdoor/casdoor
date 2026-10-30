@@ -8,6 +8,7 @@ import {useRequestOrganization} from "@/hooks/use-organization";
 import * as KeyBackend from "@/backend/KeyBackend";
 import * as Setting from "@/lib/setting";
 import {newKey} from "@/pages/defaults";
+import {enumLabel, KEY_TYPES, KEY_STATES} from "@/lib/enum-labels";
 
 export default function KeyListPage() {
   const {account} = useAccount();
@@ -19,7 +20,7 @@ export default function KeyListPage() {
     organizationColumn(),
     dateColumn(),
     textColumn({dataIndex: "displayName", title: i18next.t("general:Display name"), searchable: true, width: 170}),
-    textColumn({
+    {...textColumn({
       dataIndex: "type",
       title: i18next.t("general:Type"),
       width: 130,
@@ -29,7 +30,7 @@ export default function KeyListPage() {
         {value: "User", label: i18next.t("general:User")},
         {value: "General", label: i18next.t("general:General")},
       ],
-    }),
+    }), render: (value) => enumLabel(KEY_TYPES, value)},
     {
       dataIndex: "accessKey",
       sortable: true,
@@ -51,7 +52,7 @@ export default function KeyListPage() {
       title: i18next.t("general:State"),
       width: 110,
       sortable: true,
-      render: (value) => <Badge variant={value === "Active" ? "success" : "secondary"}>{value}</Badge>,
+      render: (value) => <Badge variant={value === "Active" ? "success" : "secondary"}>{enumLabel(KEY_STATES, value)}</Badge>,
     },
   ];
 

@@ -280,7 +280,7 @@ export function FaceRecognitionModal({visible, withImage, captureImage, onOk, on
           {currentFace && currentIndex !== null ? (
             <div className="space-y-2">
               <div className="text-sm">{i18next.t("application:Select")}: {files[currentIndex]?.name}</div>
-              <img src={files[currentIndex]?.base64} alt="selected" className="w-full" />
+              <img src={files[currentIndex]?.base64} alt={i18next.t("general:Selected image")} className="w-full" />
             </div>
           ) : null}
         </div>

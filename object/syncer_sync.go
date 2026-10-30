@@ -17,12 +17,13 @@ package object
 import (
 	"fmt"
 
+	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/core"
 )
 
 func (syncer *Syncer) syncUsers() error {
 	if len(syncer.TableColumns) == 0 {
-		return fmt.Errorf("The syncer table columns should not be empty")
+		return util.MessageErrorf("syncer:The syncer table columns should not be empty")
 	}
 
 	fmt.Printf("Running syncUsers()..\n")

@@ -28,6 +28,9 @@ import (
 	"github.com/casdoor/casdoor/util"
 )
 
+// ErrInvoicePending is a provider-owned pending outcome, not prose to classify by language.
+var ErrInvoicePending = util.NewMessageError("payment:申请成功，开票中")
+
 type GcPaymentProvider struct {
 	Xmpch     string
 	SecretKey string
@@ -349,11 +352,11 @@ func (pp *GcPaymentProvider) GetInvoice(paymentName string, personName string, p
 	}
 
 	if invoiceRespInfo.State == "0" {
-		return "", fmt.Errorf("申请成功，开票中")
+		return "", ErrInvoicePending
 	}
 
 	if invoiceRespInfo.Url == "" {
-		return "", fmt.Errorf("invoice URL is empty")
+		return "", util.MessageErrorf("payment:invoice URL is empty")
 	}
 
 	return invoiceRespInfo.Url, nil

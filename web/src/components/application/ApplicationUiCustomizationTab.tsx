@@ -232,6 +232,7 @@ export function ApplicationUiCustomizationTab({application, updateField}: Applic
               render: (row: any, index, patch) => (
                 <SelectField
                   value={row.name}
+                  unknownValueLabel={row.name?.trim() === "Please select a signin method" ? i18next.t("application:Please select a signin method") : undefined}
                   onChange={(v) => patch({name: v, displayName: v, rule: getDefaultSigninMethodRule(v)})}
                   options={SIGNIN_METHOD_NAMES
                     .filter((item) => !(application.signinMethods ?? []).some((other: any, i: number) => i !== index && other.name === item.name))
@@ -313,6 +314,7 @@ export function ApplicationUiCustomizationTab({application, updateField}: Applic
                 ) : (
                   <SelectField
                     value={row.name}
+                    unknownValueLabel={row.name?.trim() === "Please select a signin item" ? i18next.t("application:Please select a signin item") : undefined}
                     onChange={(v) => patch({name: v, customCss: SigninTableDefaultCssMap[v] ?? ""})}
                     options={getUnusedItemOptions(SIGNIN_ITEM_NAMES, application.signinItems ?? [], index)}
                   />
@@ -398,6 +400,7 @@ export function ApplicationUiCustomizationTab({application, updateField}: Applic
               render: (row: any, index, patch) => (
                 <SelectField
                   value={row.name}
+                  unknownValueLabel={row.name?.trim() === "Please select a signup item" ? i18next.t("application:Please select a signup item") : undefined}
                   onChange={(v) => patch({name: v, customCss: SignupTableDefaultCssMap[v] ?? "", ...(v === "Logo" ? {required: false, prompted: false} : {})})}
                   options={getUnusedItemOptions(SIGNUP_ITEM_NAMES, application.signupItems ?? [], index)}
                 />

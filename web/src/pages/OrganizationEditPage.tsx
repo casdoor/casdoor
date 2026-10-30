@@ -1,5 +1,6 @@
 import * as React from "react";
 import i18next from "i18next";
+import {ACCOUNT_ITEM_RULES, enumLabel} from "@/lib/enum-labels";
 import {Link, useNavigate, useParams} from "react-router-dom";
 import {Link as LinkIcon} from "lucide-react";
 import {UnauthorizedPage} from "@/components/common/UnauthorizedPage";
@@ -211,7 +212,7 @@ export default function OrganizationEditPage() {
               </div>
               {organization.logo ? (
                 <a href={organization.logo} target="_blank" rel="noreferrer">
-                  <img src={organization.logo} alt="logo" className="h-14 max-w-[240px] rounded-md border bg-white object-contain p-1.5" />
+                  <img src={organization.logo} alt={i18next.t("general:Logo")} className="h-14 max-w-[240px] rounded-md border bg-white object-contain p-1.5" />
                 </a>
               ) : null}
             </div>
@@ -235,7 +236,7 @@ export default function OrganizationEditPage() {
                   <a href={organization.logoDark} target="_blank" rel="noreferrer">
                     <img
                       src={organization.logoDark}
-                      alt="logo dark"
+                      alt={i18next.t("general:Logo dark")}
                       className="h-14 max-w-[240px] rounded-md border bg-black object-contain p-1.5"
                     />
                   </a>
@@ -248,7 +249,7 @@ export default function OrganizationEditPage() {
               <Input value={organization.favicon ?? ""} onChange={(e) => update("favicon", e.target.value)} />
               {organization.favicon ? (
                 <a href={organization.favicon} target="_blank" rel="noreferrer">
-                  <img src={organization.favicon} alt="favicon" className="h-10 w-10 object-contain" />
+                  <img src={organization.favicon} alt={i18next.t("general:Favicon")} className="h-10 w-10 object-contain" />
                 </a>
               ) : null}
             </div>
@@ -264,7 +265,7 @@ export default function OrganizationEditPage() {
               />
               {organization.defaultAvatar ? (
                 <a href={organization.defaultAvatar} target="_blank" rel="noreferrer">
-                  <img src={organization.defaultAvatar} alt="default avatar" className="h-20 w-20 rounded-full object-cover" />
+                  <img src={organization.defaultAvatar} alt={i18next.t("general:Default avatar")} className="h-20 w-20 rounded-full object-cover" />
                 </a>
               ) : null}
             </div>
@@ -354,7 +355,7 @@ export default function OrganizationEditPage() {
             <SelectField
               value={organization.passwordObfuscatorType || "Plain"}
               onChange={(value) => updatePasswordObfuscator("type", value)}
-              options={OBFUSCATOR_TYPES.map((item) => ({id: item, name: item}))}
+              options={OBFUSCATOR_TYPES.map((item) => ({id: item, name: item === "Plain" ? i18next.t("general:Plain") : item}))}
             />
           </FormRow>
           {organization.passwordObfuscatorType && organization.passwordObfuscatorType !== "Plain" ? (
@@ -427,6 +428,7 @@ export default function OrganizationEditPage() {
                   render: (row: any, _index, patch) => (
                     <SelectField
                       value={row.name}
+                      unknownValueLabel={row.name === "Please select an account item" ? i18next.t("organization:Please select an account item") : undefined}
                       onChange={(value) => patch({name: value})}
                       options={Setting.GetTranslatedUserItems()
                         .filter((item) => item.name === row.name ||
@@ -473,7 +475,7 @@ export default function OrganizationEditPage() {
                       value={row.viewRule}
                       disabled={!row.visible}
                       onChange={(value) => patch({viewRule: value})}
-                      options={VIEW_RULES.map((item) => ({id: item, name: item}))}
+                      options={VIEW_RULES.map((item) => ({id: item, name: enumLabel(ACCOUNT_ITEM_RULES, item)}))}
                     />
                   ),
                 },
@@ -487,7 +489,7 @@ export default function OrganizationEditPage() {
                       disabled={!row.visible}
                       onChange={(value) => patch({modifyRule: value})}
                       options={(row.viewRule === "Admin" || row.name === "Is admin" ? ADMIN_MODIFY_RULES : MODIFY_RULES)
-                        .map((item) => ({id: item, name: item}))}
+                        .map((item) => ({id: item, name: enumLabel(ACCOUNT_ITEM_RULES, item)}))}
                     />
                   ),
                 },
@@ -756,7 +758,7 @@ export default function OrganizationEditPage() {
                             {ldap.autoSync === 0 ? (
                               <span className="text-warning">{i18next.t("general:Disable")}</span>
                             ) : (
-                              <span className="text-success">{ldap.autoSync} mins</span>
+                              <span className="text-success">{ldap.autoSync} {i18next.t("general:minutes")}</span>
                             )}
                           </td>
                           <td className="px-3 py-2">{ldap.lastSync}</td>

@@ -17,12 +17,12 @@ package routers
 import (
 	"bytes"
 	"errors"
-	"fmt"
 	"io"
 	"net/http"
 
 	"github.com/beego/beego/v2/server/web"
 	"github.com/beego/beego/v2/server/web/context"
+	"github.com/casdoor/casdoor/util"
 )
 
 // RequestBodyFilter reads the raw request body early (before Beego's CopyBody
@@ -72,5 +72,5 @@ func getRequestBodyLimit(ctx *context.Context) int64 {
 
 func responseRequestBodyTooLarge(ctx *context.Context, limit int64) {
 	ctx.Output.SetStatus(http.StatusRequestEntityTooLarge)
-	responseError(ctx, fmt.Sprintf("the request body is larger than the limit: %d bytes", limit))
+	responseErrorFrom(ctx, util.MessageErrorf("general:the request body is larger than the limit: %d bytes", limit))
 }

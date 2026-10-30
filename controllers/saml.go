@@ -30,7 +30,7 @@ func (c *ApiController) GetSamlMeta() {
 	paramApp := c.Ctx.Input.Query("application")
 	application, err := object.GetApplication(paramApp)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -41,13 +41,13 @@ func (c *ApiController) GetSamlMeta() {
 
 	enablePostBinding, err := c.GetBool("enablePostBinding", false)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
 	metadata, err := object.GetSamlMeta(application, host, enablePostBinding)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -87,7 +87,7 @@ func (c *ApiController) HandleSamlLogout() {
 	applicationId := util.GetId(c.Ctx.Input.Param(":owner"), c.Ctx.Input.Param(":application"))
 	application, err := object.GetApplication(applicationId)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 	if application == nil {
@@ -100,7 +100,7 @@ func (c *ApiController) HandleSamlLogout() {
 		// The SP answers a LogoutRequest of Casdoor
 		err = object.CheckSamlLogoutResponse(application, c.Ctx.Input.Query("SAMLResponse"))
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 		c.ResponseOk()
@@ -109,18 +109,18 @@ func (c *ApiController) HandleSamlLogout() {
 
 	logoutRequest, err := object.ParseSamlLogoutRequest(application, samlRequest)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 	if application.SamlSingleLogoutUrl == "" {
-		c.ResponseError(fmt.Sprintf("err: the SAML single logout URL of the application: %s is empty", applicationId))
+		c.ResponseError(fmt.Sprintf(c.T("general:err: the SAML single logout URL of the application: %s is empty"), applicationId))
 		return
 	}
 
 	currentSessionId := c.Ctx.Input.CruSession.SessionID(context.Background())
 	isCurrentSession, err := object.LogoutBySamlRequest(application, logoutRequest, c.GetSessionUsername(), currentSessionId, c.Ctx.Request.Host)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 	if isCurrentSession {
@@ -133,7 +133,7 @@ func (c *ApiController) HandleSamlLogout() {
 	usePost := c.Ctx.Request.Method == http.MethodPost
 	logoutResponse, err := object.GetSamlLogoutResponse(application, logoutRequest, relayState, c.Ctx.Request.Host, usePost)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -147,6 +147,6 @@ func (c *ApiController) HandleSamlLogout() {
 		relayStateInput = fmt.Sprintf(`<input type="hidden" name="RelayState" value="%s"/>`, html.EscapeString(relayState))
 	}
 	c.Ctx.Output.Header("Content-Type", "text/html; charset=utf-8")
-	_ = c.Ctx.Output.Body([]byte(fmt.Sprintf(`<!DOCTYPE html><html><body onload="document.forms[0].submit()"><form method="post" action="%s"><input type="hidden" name="SAMLResponse" value="%s"/>%s<noscript><button type="submit">Continue</button></noscript></form></body></html>`,
-		html.EscapeString(application.SamlSingleLogoutUrl), html.EscapeString(logoutResponse), relayStateInput)))
+	_ = c.Ctx.Output.Body([]byte(fmt.Sprintf(`<!DOCTYPE html><html lang="%s"><body onload="document.forms[0].submit()"><form method="post" action="%s"><input type="hidden" name="SAMLResponse" value="%s"/>%s<noscript><button type="submit">%s</button></noscript></form></body></html>`,
+		html.EscapeString(c.GetAcceptLanguage()), html.EscapeString(application.SamlSingleLogoutUrl), html.EscapeString(logoutResponse), relayStateInput, html.EscapeString(c.T("native:Continue")))))
 }

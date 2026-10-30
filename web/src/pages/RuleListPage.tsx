@@ -19,7 +19,7 @@ export default function RuleListPage() {
     dateColumn("updatedTime", i18next.t("general:Update time")),
     {
       ...textColumn({dataIndex: "type", title: i18next.t("general:Type"), width: 130}),
-      render: (value: string) => (value ? <Badge variant="info">{value}</Badge> : null),
+      render: (value: string) => (value ? <Badge variant="info">{i18next.t(`rule:${value}`)}</Badge> : null),
     },
     {
       dataIndex: "expressions",
@@ -36,7 +36,7 @@ export default function RuleListPage() {
           </div>
         ),
     },
-    textColumn({dataIndex: "action", title: i18next.t("general:Action"), width: 110}),
+    {...textColumn({dataIndex: "action", title: i18next.t("general:Action"), width: 110}), render: (value) => value === "Allow" ? i18next.t("permission:Allow") : value ? i18next.t(`rule:${value}`) : null},
     textColumn({dataIndex: "statusCode", title: i18next.t("rule:Status code"), width: 120}),
     textColumn({dataIndex: "reason", title: i18next.t("rule:Reason"), width: 220}),
   ];

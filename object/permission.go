@@ -143,7 +143,7 @@ func checkPermissionModel(permission *Permission) error {
 		if err != nil {
 			return err
 		} else if model == nil {
-			return fmt.Errorf("the model: %s for permission: %s is not found", permission.Model, permission.GetId())
+			return util.MessageErrorf("permission:the model: %s for permission: %s is not found", permission.Model, permission.GetId())
 		}
 
 		modelCfg, err := getModelCfg(model)
@@ -152,7 +152,7 @@ func checkPermissionModel(permission *Permission) error {
 		}
 
 		if len(strings.Split(modelCfg["p"], ",")) != 3 {
-			return fmt.Errorf("the model: %s for permission: %s is not valid, Casbin model's [policy_defination] section should have 3 elements", permission.Model, permission.GetId())
+			return util.MessageErrorf("permission:the model: %s for permission: %s is not valid, Casbin model's [policy_defination] section should have 3 elements", permission.Model, permission.GetId())
 		}
 	}
 

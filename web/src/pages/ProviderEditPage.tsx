@@ -24,6 +24,7 @@ import * as CertBackend from "@/backend/CertBackend";
 import * as ProviderBackend from "@/backend/ProviderBackend";
 import * as ServerBackend from "@/backend/ServerBackend";
 import {submitEdit} from "@/lib/crud";
+import {enumLabel, providerTypeLabel, PROVIDER_CATEGORY_LABELS} from "@/lib/enum-labels";
 import * as ProviderTest from "@/lib/provider-test";
 import * as Setting from "@/lib/setting";
 import {authConfig} from "@/auth/Auth";
@@ -85,7 +86,9 @@ function isDefaultProviderName(name: string) {
 }
 
 function isDefaultProviderDisplayName(displayName: string) {
-  return /^New Provider - [a-z0-9]+$/.test(displayName ?? "");
+  const prefix = i18next.t("provider:New Provider");
+  const value = displayName ?? "";
+  return /^New Provider - [a-z0-9]+$/.test(value) || value.startsWith(`${prefix} - `) && /^[a-z0-9]+$/.test(value.slice(prefix.length + 3));
 }
 
 function slug(value: string) {
@@ -100,7 +103,8 @@ function getAutoProviderName(category: string, type: string, subType: string) {
 }
 
 function getAutoProviderDisplayName(category: string, type: string, subType: string) {
-  return subType ? `${category} ${type} ${subType}` : `${category} ${type}`;
+  const subtypeLabel = subType ? getProviderSubTypeOptions(type).find((option) => option.id === subType)?.name ?? subType : "";
+  return [enumLabel(PROVIDER_CATEGORY_LABELS, category), providerTypeLabel(type), subtypeLabel].filter(Boolean).join(" ");
 }
 
 /** the (label, tooltip) pair a row shows, the shadcn counterpart of Setting.getLabel() */
@@ -121,15 +125,15 @@ function normalizeAndJoin(values: string[]) {
 function getProviderSubTypeOptions(type: string) {
   if (type === "Aliyun Captcha") {
     return [
-      {id: "Embed", name: "Embed"},
-      {id: "Popup", name: "Popup"},
+      {id: "Embed", name: i18next.t("provider:Embed")},
+      {id: "Popup", name: i18next.t("provider:Popup")},
     ];
   } else if (type === "Agent") {
     return [{id: "OpenClaw", name: "OpenClaw"}];
   } else if (type === "Security Scan") {
-    return [{id: "Site", name: "Site"}, {id: "Url", name: "Url"}];
+    return [{id: "Site", name: i18next.t("provider:Site")}, {id: "Url", name: "URL"}];
   } else if (type === "MCP Scan") {
-    return [{id: "Intranet Scan", name: "Intranet Scan"}];
+    return [{id: "Intranet Scan", name: i18next.t("provider:Intranet Scan")}];
   } else if (type === "WeCom" || type === "Infoflow") {
     return [
       {id: "Internal", name: i18next.t("provider:Internal")},
@@ -291,7 +295,7 @@ function getAppIdLabel(provider: any): Label | null {
     } else if (["Line", "Matrix", "Rocket Chat"].includes(provider.type)) {
       return label(i18next.t("provider:App Key"), i18next.t("provider:App Key - Tooltip"));
     } else if (provider.type === "CUCloud") {
-      return label("Topic name", "Topic name - Tooltip");
+      return label(i18next.t("provider:Topic name"), i18next.t("provider:Topic name - Tooltip"));
     }
   }
   return null;
@@ -577,7 +581,7 @@ export default function ProviderEditPage() {
     fetch(requestUrl, {method: "GET"})
       .then(res => {
         if (!res.ok) {
-          return Promise.reject(new Error("error"));
+          return Promise.reject(new Error(i18next.t("provider:Failed to fetch SAML metadata")));
         }
         return res.text();
       })
@@ -649,9 +653,9 @@ export default function ProviderEditPage() {
           setScanServers(servers);
 
           if (Array.isArray(result)) {
-            Setting.showMessage("success", `${i18next.t("general:Successfully got")}: ${result.length} finding(s)`);
+            Setting.showMessage("success", i18next.t("provider:Found findings", {count: result.length}));
           } else if (Array.isArray(servers)) {
-            Setting.showMessage("success", `${i18next.t("general:Successfully got")}: ${servers.length} server(s)`);
+            Setting.showMessage("success", i18next.t("server:Server discovery summary", {count: servers.length}));
           } else {
             Setting.showMessage("success", i18next.t("general:Successfully saved"));
           }
@@ -686,7 +690,7 @@ export default function ProviderEditPage() {
       patch.host = "smtp.example.com";
       patch.port = 465;
       patch.sslMode = "Auto";
-      patch.title = "Casdoor Verification Code";
+      patch.title = i18next.t("provider:Casdoor Verification Code");
       patch.content = Setting.getDefaultHtmlEmailContent();
       patch.metadata = Setting.getDefaultInvitationHtmlEmailContent();
       patch.receiver = account?.email ?? "";
@@ -840,7 +844,7 @@ export default function ProviderEditPage() {
     <MapTable
       value={provider.httpHeaders}
       onChange={(value) => updateProviderField("httpHeaders", value)}
-      keyTitle={i18next.t("general:Keys")}
+      keyTitle={i18next.t("provider:Header name")}
       valueTitle={i18next.t("user:Values")}
     />
   );
@@ -1032,9 +1036,9 @@ export default function ProviderEditPage() {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => updateProviderField("content", "You have requested a verification code at Casdoor. Here is your code: %s, please enter in 5 minutes. <reset-link>Or click %link to reset</reset-link>")}
+              onClick={() => updateProviderField("content", i18next.t("provider:Default verification text"))}
             >
-              {i18next.t("general:Reset to Default")} (Text)
+              {i18next.t("general:Reset to Default")} ({i18next.t("entry:Text")})
             </Button>
             <Button size="sm" onClick={() => updateProviderField("content", Setting.getDefaultHtmlEmailContent())}>
               {i18next.t("general:Reset to Default")} (HTML)
@@ -1048,7 +1052,7 @@ export default function ProviderEditPage() {
               onChange={(v) => updateProviderField("content", v)}
             />
             <iframe
-              title="email-content-preview"
+              title={i18next.t("provider:Email content preview")}
               sandbox=""
               className="h-[300px] w-full rounded-md border bg-background"
               srcDoc={String(provider.content ?? "").replace("%s", "123456").replace("%{user.friendlyName}", account ? Setting.getFriendlyUserName(account) : "")}
@@ -1066,9 +1070,9 @@ export default function ProviderEditPage() {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => updateProviderField("metadata", "You have invited to join Casdoor. Here is your invitation code: %s, please enter in 5 minutes. Or click %link to signup")}
+              onClick={() => updateProviderField("metadata", i18next.t("provider:Default invitation text"))}
             >
-              {i18next.t("general:Reset to Default")} (Text)
+              {i18next.t("general:Reset to Default")} ({i18next.t("entry:Text")})
             </Button>
             <Button size="sm" onClick={() => updateProviderField("metadata", Setting.getDefaultInvitationHtmlEmailContent())}>
               {i18next.t("general:Reset to Default")} (HTML)
@@ -1082,7 +1086,7 @@ export default function ProviderEditPage() {
               onChange={(v) => updateProviderField("metadata", v)}
             />
             <iframe
-              title="invitation-email-content-preview"
+              title={i18next.t("provider:Invitation email content preview")}
               sandbox=""
               className="h-[300px] w-full rounded-md border bg-background"
               srcDoc={String(provider.metadata ?? "").replace("%code", "123456").replace("%s", "123456")}
@@ -1202,7 +1206,7 @@ export default function ProviderEditPage() {
         <FormRow labelKey="provider:Content">
           <Textarea rows={3} value={provider.content ?? ""} onChange={(e) => updateProviderField("content", e.target.value)} />
         </FormRow>
-        <FormRow label={receiverLabel ? receiverLabel.label : "Test Notification"} tooltip={receiverLabel?.tooltip}>
+        <FormRow label={receiverLabel ? receiverLabel.label : i18next.t("provider:Test Notification")} tooltip={receiverLabel?.tooltip}>
           <div className="flex flex-wrap items-center gap-2">
             {receiverLabel ? (
               <Input
@@ -1229,7 +1233,7 @@ export default function ProviderEditPage() {
         <Input type="number" value={provider.port ?? 0} onChange={(e) => updateProviderField("port", e.target.value)} />
       </FormRow>
       <FormRow label={i18next.t("provider:Client secret")} tooltip={i18next.t("provider:RADIUS Shared Secret - Tooltip")}>
-        <Input value={provider.clientSecret ?? ""} placeholder="Shared secret" onChange={(e) => updateProviderField("clientSecret", e.target.value)} />
+        <Input value={provider.clientSecret ?? ""} placeholder={i18next.t("provider:Shared secret")} onChange={(e) => updateProviderField("clientSecret", e.target.value)} />
       </FormRow>
       <FormRow label={i18next.t("provider:Require Message-Authenticator")} tooltip={i18next.t("provider:Require Message-Authenticator - Tooltip")}>
         <Switch checked={!!provider.requireMessageAuthenticator} onCheckedChange={(v) => updateProviderField("requireMessageAuthenticator", v)} />
@@ -1669,7 +1673,7 @@ export default function ProviderEditPage() {
         <SearchableSelect
           value={provider.category ?? ""}
           onChange={onChangeCategory}
-          options={CATEGORIES.map((item) => ({value: item, label: item}))}
+          options={CATEGORIES.map((item) => ({value: item, label: enumLabel(PROVIDER_CATEGORY_LABELS, item)}))}
         />
       </FormRow>
       <FormRow labelKey="general:Type">
@@ -1686,12 +1690,12 @@ export default function ProviderEditPage() {
                     width={20}
                     height={20}
                     src={Setting.getProviderLogoURL({category: provider.category, type: providerType.id})}
-                    alt={providerType.id}
+                    alt=""
                   />
-                  {providerType.name}
+                  {providerTypeLabel(providerType.id)}
                 </span>
               ),
-              keywords: providerType.name,
+              keywords: `${providerType.id} ${providerType.name} ${providerTypeLabel(providerType.id)}`,
             }))}
         />
       </FormRow>

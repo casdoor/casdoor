@@ -45,7 +45,7 @@ func (c *ApiController) GetEntries() {
 	if limit == "" || page == "" {
 		entries, err := object.GetEntries(owner)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 		c.ResponseOk(entries)
@@ -55,14 +55,14 @@ func (c *ApiController) GetEntries() {
 	limitInt := util.ParseInt(limit)
 	count, err := object.GetEntryCount(owner, field, value)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
 	paginator := pagination.SetPaginator(c.Ctx, limitInt, count)
 	entries, err := object.GetPaginationEntries(owner, paginator.Offset(), limitInt, field, value, sortField, sortOrder)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -81,7 +81,7 @@ func (c *ApiController) GetEntry() {
 
 	entry, err := object.GetEntry(id)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -100,7 +100,7 @@ func (c *ApiController) GetOpenClawSessionGraph() {
 
 	graph, err := object.GetOpenClawSessionGraph(id)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -119,11 +119,11 @@ func (c *ApiController) GetOpenClawSessionTranscript() {
 
 	preview, err := object.GetOpenClawSessionTranscript(id, c.GetAcceptLanguage())
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 	if preview == nil {
-		c.ResponseError("OpenClaw raw session transcript is not found")
+		c.ResponseError(c.T("general:OpenClaw raw session transcript is not found"))
 		return
 	}
 
@@ -144,7 +144,7 @@ func (c *ApiController) UpdateEntry() {
 	var entry object.Entry
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &entry)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -163,7 +163,7 @@ func (c *ApiController) AddEntry() {
 	var entry object.Entry
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &entry)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -182,7 +182,7 @@ func (c *ApiController) DeleteEntry() {
 	var entry object.Entry
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &entry)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 

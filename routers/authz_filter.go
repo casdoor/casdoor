@@ -553,7 +553,7 @@ func ApiFilter(ctx *context.Context) {
 		var err error
 		objects, err = getObjects(ctx)
 		if err != nil {
-			responseError(ctx, err.Error())
+			responseErrorFrom(ctx, err)
 			return
 		}
 	}
@@ -567,7 +567,7 @@ func ApiFilter(ctx *context.Context) {
 	for _, obj := range objects {
 		allowed, err := authz.IsAllowed(subOwner, subName, method, urlPath, obj.Owner, obj.Name, extraInfo)
 		if err != nil {
-			responseError(ctx, err.Error())
+			responseErrorFrom(ctx, err)
 			return
 		}
 
@@ -652,7 +652,7 @@ func checkDynamicClientSession(ctx *context.Context, urlPath string) bool {
 
 	application, err := object.GetApplicationByClientId(aud)
 	if err != nil {
-		responseError(ctx, err.Error())
+		responseErrorFrom(ctx, err)
 		return false
 	}
 	if application == nil || isClientSessionApiAllowed(application, getSessionUser(ctx), urlPath) {
@@ -669,7 +669,7 @@ func checkDynamicClientSession(ctx *context.Context, urlPath string) bool {
 	// sign that session out and go on as anonymous, so the login page and the rest of Casdoor keep working there
 	err = clearSessionOfToken(ctx)
 	if err != nil {
-		responseError(ctx, err.Error())
+		responseErrorFrom(ctx, err)
 		return false
 	}
 	return true

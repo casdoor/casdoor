@@ -18,6 +18,7 @@ import (
 	"embed"
 	"fmt"
 	"strings"
+	"sync"
 
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/util"
@@ -28,7 +29,10 @@ var enableErrorMask = false
 //go:embed locales/*/data.json
 var f embed.FS
 
-var langMap = make(map[string]map[string]map[string]string) // for example : langMap[en][account][Invalid information] = Invalid information
+var (
+	langMap   = make(map[string]map[string]map[string]string) // for example : langMap[en][account][Invalid information] = Invalid information
+	langMapMu sync.Mutex
+)
 
 func init() {
 	enableErrorMask = conf.GetConfigBool("enableErrorMask")
@@ -84,6 +88,7 @@ func applyData(data1 *I18nData, data2 *I18nData) {
 }
 
 func Translate(language string, errorText string) string {
+	language = conf.GetLanguage(language)
 	modified := false
 	if enableErrorMask {
 		if errorText == "general:The user: %s doesn't exist" ||
@@ -98,6 +103,9 @@ func Translate(language string, errorText string) string {
 		return fmt.Sprintf("Translate error: the error text doesn't contain \":\", errorText = %s", errorText)
 	}
 
+	// The first requests for different languages can initialize this shared cache concurrently.
+	langMapMu.Lock()
+	defer langMapMu.Unlock()
 	if langMap[language] == nil {
 		file, err := f.ReadFile(fmt.Sprintf("locales/%s/data.json", language))
 		if err != nil {
@@ -129,3 +137,21 @@ func Translate(language string, errorText string) string {
 	}
 	return res
 }
+
+func Errorf(key string, args ...interface{}) error { return util.MessageErrorf(key, args...) }
+
+func NewError(key string) error { return util.NewMessageError(key) }
+
+func WrapError(cause error, key string, args ...interface{}) error {
+	return util.WrapMessageError(cause, key, args...)
+}
+
+func JoinErrors(separator string, values ...error) error {
+	return util.JoinMessageErrors(separator, values...)
+}
+
+func LocalizeError(language string, err error) string {
+	return util.FormatMessageError(err, func(key string) string { return Translate(language, key) })
+}
+
+func IsLocalizableError(err error) bool { return util.IsMessageError(err) }

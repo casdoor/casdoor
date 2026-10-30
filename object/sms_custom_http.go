@@ -23,6 +23,7 @@ import (
 	"strings"
 
 	"github.com/casdoor/casdoor/proxy"
+	"github.com/casdoor/casdoor/util"
 )
 
 type HttpSmsClient struct {
@@ -128,7 +129,7 @@ func (c *HttpSmsClient) SendMessage(param map[string]string, targetPhoneNumber .
 			req.URL.RawQuery = q.Encode()
 		}
 	} else {
-		return fmt.Errorf("HttpSmsClient's SendMessage() error, unsupported method: %s", c.method)
+		return util.MessageErrorf("sms:HttpSmsClient's SendMessage() error, unsupported method: %s", c.method)
 	}
 
 	for k, v := range c.httpHeaders {
@@ -149,7 +150,7 @@ func (c *HttpSmsClient) SendMessage(param map[string]string, targetPhoneNumber .
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("HttpSmsClient's SendMessage() error, custom HTTP SMS request failed with status: %s", resp.Status)
+		return util.MessageErrorf("sms:HttpSmsClient's SendMessage() error, custom HTTP SMS request failed with status: %s", resp.Status)
 	}
 
 	return err

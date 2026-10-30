@@ -150,7 +150,7 @@ func AddTicketMessage(id string, message *TicketMessage) (bool, error) {
 		return false, err
 	}
 	if ticket == nil {
-		return false, fmt.Errorf("ticket not found: %s", id)
+		return false, util.MessageErrorf("ticket:ticket not found: %s", id)
 	}
 
 	if ticket.Messages == nil {

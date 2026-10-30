@@ -22,6 +22,43 @@ export interface EnumEntry {
 
 export type EnumMap = Record<string, EnumEntry>;
 
+export const PAYMENT_STATES: EnumMap = {
+  "Created": {i18nKey: "payment:Created"},
+  "Paid": {i18nKey: "payment:Paid"},
+  "Delivered": {i18nKey: "payment:Delivered"},
+  "Completed": {i18nKey: "payment:Completed"},
+  "Canceled": {i18nKey: "payment:Canceled"},
+  "Expired": {i18nKey: "subscription:Expired"},
+  "Timeout": {i18nKey: "payment:Timeout"},
+  "Error": {i18nKey: "general:Error"},
+  "Failed": {i18nKey: "webhook:Failed"},
+  "Pending": {i18nKey: "webhook:Pending"},
+};
+
+export const PROVIDER_CATEGORY_LABELS: EnumMap = {
+  "Audit": {i18nKey: "provider:Audit"},
+  "Captcha": {i18nKey: "general:Captcha"},
+  "Email": {i18nKey: "general:Email"},
+  "Face ID": {i18nKey: "login:Face ID"},
+  "ID Verification": {i18nKey: "provider:ID Verification"},
+  "Log": {i18nKey: "provider:Log"},
+  "MFA": {i18nKey: "general:MFA"},
+  "Notification": {i18nKey: "provider:Notification"},
+  "OAuth": {i18nKey: "provider:OAuth"},
+  "Payment": {i18nKey: "general:Payment"},
+  "SAML": {i18nKey: "provider:SAML"},
+  "Scan": {i18nKey: "general:Scan"},
+  "SMS": {i18nKey: "provider:SMS"},
+  "Storage": {i18nKey: "provider:Storage"},
+};
+
+export const ACCOUNT_ITEM_RULES: EnumMap = {
+  "Public": {i18nKey: "organization:Public"},
+  "Self": {i18nKey: "general:Self"},
+  "Admin": {i18nKey: "general:Admin"},
+  "Immutable": {i18nKey: "organization:Immutable"},
+};
+
 export const TICKET_STATES: EnumMap = {
   "Open": {i18nKey: "ticket:Open", variant: "info"},
   "In Progress": {i18nKey: "ticket:In Progress", variant: "warning"},
@@ -121,19 +158,44 @@ export const PROVIDER_CAPTCHA_RULES: EnumMap = {
 
 export const PROVIDER_GOOGLE_RULES: EnumMap = {
   "Default": {i18nKey: "general:Default"},
-  "OneTap": {i18nKey: "One Tap"},
+  "OneTap": {i18nKey: "login:One Tap"},
 };
 
 export const PROVIDER_CODE_RULES: EnumMap = {
-  "all": {i18nKey: "All"},
-  "signup": {i18nKey: "Signup"},
-  "login": {i18nKey: "Login"},
-  "forget": {i18nKey: "Forget Password"},
-  "reset": {i18nKey: "Reset Password"},
-  "mfaSetup": {i18nKey: "Set MFA"},
-  "mfaAuth": {i18nKey: "MFA Auth"},
+  "all": {i18nKey: "general:All"},
+  "signup": {i18nKey: "login:Sign up"},
+  "login": {i18nKey: "login:Login"},
+  "forget": {i18nKey: "login:Forget Password"},
+  "reset": {i18nKey: "login:Reset Password"},
+  "mfaSetup": {i18nKey: "mfa:Set MFA"},
+  "mfaAuth": {i18nKey: "mfa:MFA Auth"},
   "magicLink": {i18nKey: "login:Magic link"},
 };
+
+export const PROVIDER_TYPE_LABELS: EnumMap = {
+  "Agent": {i18nKey: "general:Agent"},
+  "Default": {i18nKey: "general:Default"},
+  "Custom": {i18nKey: "general:Custom"},
+  "Custom Flexible": {i18nKey: "provider:Custom Flexible"},
+  "Custom HTTP Email": {i18nKey: "provider:Custom HTTP Email"},
+  "Custom HTTP SMS": {i18nKey: "provider:Custom HTTP SMS"},
+  "Custom HTTP": {i18nKey: "provider:Custom HTTP"},
+  "Mock SMS": {i18nKey: "provider:Mock SMS"},
+  "Local File System": {i18nKey: "provider:Local File System"},
+  "Dummy": {i18nKey: "provider:Dummy payment provider"},
+  "Balance": {i18nKey: "user:Balance"},
+  "System Log": {i18nKey: "provider:System Log"},
+  "Casdoor Permission Log": {i18nKey: "provider:Casdoor Permission Log"},
+  "SELinux Log": {i18nKey: "provider:SELinux Log"},
+  "Security Scan": {i18nKey: "provider:Security Scan"},
+  "MCP Scan": {i18nKey: "provider:MCP Scan"},
+  "Local UniFace": {i18nKey: "provider:Local UniFace"},
+};
+
+export function providerTypeLabel(value: string) {
+  const custom = /^Custom([2-9]|10)$/.exec(value ?? "");
+  return custom ? `${i18next.t("general:Custom")} ${custom[1]}` : enumLabel(PROVIDER_TYPE_LABELS, value);
+}
 
 /** which of the user's identifiers an external account may bind to */
 export const PROVIDER_BINDING_RULES: EnumMap = {
@@ -154,7 +216,7 @@ export const LDAP_PASSWORD_TYPES: EnumMap = {
  * antd `default:` branches did.
  */
 export function enumLabel(map: EnumMap, value: any): string {
-  const entry = map[value];
+  const entry = Object.prototype.hasOwnProperty.call(map, value) ? map[value] : undefined;
   if (!entry) {
     return `${value ?? ""}`;
   }

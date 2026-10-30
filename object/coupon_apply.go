@@ -66,12 +66,12 @@ func ValidateCoupon(owner, couponCode, userName string, productNames []string, o
 		return nil, err
 	}
 	if coupon == nil {
-		return nil, fmt.Errorf("the coupon code: %s does not exist", couponCode)
+		return nil, util.MessageErrorf("coupon:the coupon code: %s does not exist", couponCode)
 	}
 
 	// Check state
 	if coupon.State != "Active" {
-		return nil, fmt.Errorf("the coupon: %s is not active (current state: %s)", coupon.Name, coupon.State)
+		return nil, util.MessageErrorf("coupon:the coupon: %s is not active (current state: %s)", coupon.Name, coupon.State)
 	}
 
 	// Check validity period
@@ -79,55 +79,55 @@ func ValidateCoupon(owner, couponCode, userName string, productNames []string, o
 	if coupon.StartTime != "" {
 		startTime, err := time.Parse(time.RFC3339, coupon.StartTime)
 		if err != nil {
-			return nil, fmt.Errorf("the coupon: %s has an invalid start time %q: %w", coupon.Name, coupon.StartTime, err)
+			return nil, util.MessageErrorf("coupon:the coupon: %s has an invalid start time %q: %w", coupon.Name, coupon.StartTime, err)
 		}
 		if now.Before(startTime) {
-			return nil, fmt.Errorf("the coupon: %s is not yet active (starts at %s)", coupon.Name, coupon.StartTime)
+			return nil, util.MessageErrorf("coupon:the coupon: %s is not yet active (starts at %s)", coupon.Name, coupon.StartTime)
 		}
 	}
 	if coupon.ExpireTime != "" {
 		expireTime, err := time.Parse(time.RFC3339, coupon.ExpireTime)
 		if err != nil {
-			return nil, fmt.Errorf("the coupon: %s has an invalid expire time %q: %w", coupon.Name, coupon.ExpireTime, err)
+			return nil, util.MessageErrorf("coupon:the coupon: %s has an invalid expire time %q: %w", coupon.Name, coupon.ExpireTime, err)
 		}
 		if now.After(expireTime) {
-			return nil, fmt.Errorf("the coupon: %s has expired (expired at %s)", coupon.Name, coupon.ExpireTime)
+			return nil, util.MessageErrorf("coupon:the coupon: %s has expired (expired at %s)", coupon.Name, coupon.ExpireTime)
 		}
 	}
 
 	// Check stock (quantity=0 means unlimited)
 	if coupon.Quantity > 0 && coupon.UsedCount >= coupon.Quantity {
-		return nil, fmt.Errorf("the coupon: %s has been fully redeemed (%d/%d)", coupon.Name, coupon.UsedCount, coupon.Quantity)
+		return nil, util.MessageErrorf("coupon:the coupon: %s has been fully redeemed (%d/%d)", coupon.Name, coupon.UsedCount, coupon.Quantity)
 	}
 
 	// Check scope
 	switch coupon.Scope {
 	case "product":
 		if !hasOverlap(coupon.Products, productNames) {
-			return nil, fmt.Errorf("the coupon: %s is not applicable to the selected products", coupon.Name)
+			return nil, util.MessageErrorf("coupon:the coupon: %s is not applicable to the selected products", coupon.Name)
 		}
 	case "user":
 		if !containsString(coupon.Users, userName) {
-			return nil, fmt.Errorf("the coupon: %s is not applicable to user: %s", coupon.Name, userName)
+			return nil, util.MessageErrorf("coupon:the coupon: %s is not applicable to user: %s", coupon.Name, userName)
 		}
 	case "universal":
 		// No restriction
 	default:
-		return nil, fmt.Errorf("the coupon: %s has an invalid scope: %s", coupon.Name, coupon.Scope)
+		return nil, util.MessageErrorf("coupon:the coupon: %s has an invalid scope: %s", coupon.Name, coupon.Scope)
 	}
 
 	// Check minimum order amount
 	if coupon.MinOrderAmount > 0 && orderAmount < coupon.MinOrderAmount {
-		return nil, fmt.Errorf("the order amount %.2f is below the minimum %.2f required for coupon: %s", orderAmount, coupon.MinOrderAmount, coupon.Name)
+		return nil, util.MessageErrorf("coupon:the order amount %.2f is below the minimum %.2f required for coupon: %s", orderAmount, coupon.MinOrderAmount, coupon.Name)
 	}
 
 	// Check currency (empty coupon currency means any currency)
 	if coupon.Currency != "" {
 		if currency == "" {
-			return nil, fmt.Errorf("the coupon: %s requires currency %s, but order currency is missing", coupon.Name, coupon.Currency)
+			return nil, util.MessageErrorf("coupon:the coupon: %s requires currency %s, but order currency is missing", coupon.Name, coupon.Currency)
 		}
 		if coupon.Currency != currency {
-			return nil, fmt.Errorf("the coupon: %s requires currency %s, but order currency is %s", coupon.Name, coupon.Currency, currency)
+			return nil, util.MessageErrorf("coupon:the coupon: %s requires currency %s, but order currency is %s", coupon.Name, coupon.Currency, currency)
 		}
 	}
 
@@ -138,7 +138,7 @@ func ValidateCoupon(owner, couponCode, userName string, productNames []string, o
 			return nil, err
 		}
 		if usageCount >= coupon.MaxUsagePerUser {
-			return nil, fmt.Errorf("the user: %s has reached the usage limit (%d/%d) for coupon: %s", userName, usageCount, coupon.MaxUsagePerUser, coupon.Name)
+			return nil, util.MessageErrorf("coupon:the user: %s has reached the usage limit (%d/%d) for coupon: %s", userName, usageCount, coupon.MaxUsagePerUser, coupon.Name)
 		}
 	}
 
@@ -166,7 +166,7 @@ func ApplyCoupon(couponOwner, couponName, userName, orderName string, discountAm
 	}
 	if !existed {
 		_ = session.Rollback()
-		return fmt.Errorf("the coupon: %s/%s does not exist", couponOwner, couponName)
+		return util.MessageErrorf("coupon:the coupon: %s/%s does not exist", couponOwner, couponName)
 	}
 
 	// Re-check per-user usage limit inside transaction using the same session
@@ -181,7 +181,7 @@ func ApplyCoupon(couponOwner, couponName, userName, orderName string, discountAm
 		}
 		if int(usageCount) >= coupon.MaxUsagePerUser {
 			_ = session.Rollback()
-			return fmt.Errorf("the user: %s has reached the usage limit (%d/%d) for coupon: %s/%s", userName, int(usageCount), coupon.MaxUsagePerUser, couponOwner, couponName)
+			return util.MessageErrorf("coupon:the user: %s has reached the usage limit (%d/%d) for coupon: %s/%s", userName, int(usageCount), coupon.MaxUsagePerUser, couponOwner, couponName)
 		}
 	}
 
@@ -203,7 +203,7 @@ func ApplyCoupon(couponOwner, couponName, userName, orderName string, discountAm
 	}
 	if affected == 0 {
 		_ = session.Rollback()
-		return fmt.Errorf("failed to apply coupon: %s/%s (may be fully redeemed)", couponOwner, couponName)
+		return util.MessageErrorf("coupon:failed to apply coupon: %s/%s (may be fully redeemed)", couponOwner, couponName)
 	}
 
 	// Record usage

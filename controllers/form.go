@@ -35,7 +35,7 @@ func (c *ApiController) GetGlobalForms() {
 
 	forms, err := object.GetGlobalForms()
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -61,7 +61,7 @@ func (c *ApiController) GetForms() {
 	if limit == "" || page == "" {
 		forms, err := object.GetForms(owner)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
@@ -70,14 +70,14 @@ func (c *ApiController) GetForms() {
 		limit := util.ParseInt(limit)
 		count, err := object.GetFormCount(owner, field, value)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 
 		paginator := pagination.NewPaginator(c.Ctx.Request, limit, count)
 		forms, err := object.GetPaginationForms(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErrorFrom(err)
 			return
 		}
 		c.ResponseOk(forms, paginator.Nums())
@@ -96,7 +96,7 @@ func (c *ApiController) GetForm() {
 
 	form, err := object.GetForm(id)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -117,13 +117,13 @@ func (c *ApiController) UpdateForm() {
 	var form object.Form
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &form)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
 	success, err := object.UpdateForm(id, &form)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -141,13 +141,13 @@ func (c *ApiController) AddForm() {
 	var form object.Form
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &form)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
 	success, err := object.AddForm(&form)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
@@ -165,13 +165,13 @@ func (c *ApiController) DeleteForm() {
 	var form object.Form
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &form)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 
 	success, err := object.DeleteForm(&form)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErrorFrom(err)
 		return
 	}
 

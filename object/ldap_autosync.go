@@ -46,7 +46,7 @@ func (l *LdapAutoSynchronizer) StartAutoSync(ldapId string) error {
 	}
 
 	if ldap == nil {
-		return fmt.Errorf("ldap %s doesn't exist", ldapId)
+		return util.MessageErrorf("ldap:ldap %s doesn't exist", ldapId)
 	}
 	l.stopAutoSync(ldapId)
 
@@ -188,7 +188,7 @@ func claimSyncCycle(ldapId string, autoSync int) (bool, error) {
 		return false, err
 	}
 	if ldap == nil {
-		return false, fmt.Errorf("ldap %s doesn't exist", ldapId)
+		return false, util.MessageErrorf("ldap:ldap %s doesn't exist", ldapId)
 	}
 
 	if !isSyncDue(ldap.LastSync, autoSync) {

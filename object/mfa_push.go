@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/notification"
 	"github.com/casdoor/casdoor/util"
 )
@@ -40,11 +41,11 @@ func (mfa *PushMfa) Initiate(userId string, issuer string) (*MfaProps, error) {
 
 func (mfa *PushMfa) SetupVerify(passCode string, lang string) error {
 	if mfa.Secret == "" {
-		return errors.New("push notification receiver is required")
+		return i18n.Errorf("mfa:push notification receiver is required")
 	}
 
 	if mfa.provider == nil {
-		return errors.New("push notification provider is not configured")
+		return i18n.Errorf("mfa:push notification provider is not configured")
 	}
 
 	return errPushMfaUnverifiable
@@ -52,11 +53,11 @@ func (mfa *PushMfa) SetupVerify(passCode string, lang string) error {
 
 // errPushMfaUnverifiable: nothing brings the approval of a push notification back to Casdoor
 // yet, so treating the sent notification as a passed factor would let any passcode through
-var errPushMfaUnverifiable = errors.New("push notification MFA cannot verify the approval on the device yet, please use another MFA method or a recovery code")
+var errPushMfaUnverifiable = i18n.Errorf("mfa:push notification MFA cannot verify the approval on the device yet, please use another MFA method or a recovery code")
 
 func (mfa *PushMfa) Enable(user *User) error {
 	if mfa.provider == nil {
-		return fmt.Errorf("push notification provider not found: %s", mfa.URL)
+		return i18n.Errorf("mfa:push notification provider not found: %s", mfa.URL)
 	}
 
 	columns := []string{"recovery_codes", "preferred_mfa_type", "mfa_push_enabled", "mfa_push_receiver", "mfa_push_provider"}
@@ -80,11 +81,11 @@ func (mfa *PushMfa) Enable(user *User) error {
 
 func (mfa *PushMfa) Verify(passCode string, lang string) error {
 	if mfa.Secret == "" {
-		return errors.New("push notification receiver is required")
+		return i18n.Errorf("mfa:push notification receiver is required")
 	}
 
 	if mfa.provider == nil {
-		return errors.New("push notification provider is not configured")
+		return i18n.Errorf("mfa:push notification provider is not configured")
 	}
 
 	return errPushMfaUnverifiable

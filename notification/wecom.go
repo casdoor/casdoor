@@ -22,6 +22,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/casdoor/casdoor/util"
 	notify "github.com/casdoor/notify2"
 )
 
@@ -72,7 +73,7 @@ func (s *wecomService) Send(ctx context.Context, subject, content string) error 
 
 	req, err := http.NewRequestWithContext(ctx, "POST", s.webhookURL, bytes.NewBuffer(jsonData))
 	if err != nil {
-		return fmt.Errorf("failed to create WeCom request: %w", err)
+		return util.MessageErrorf("service:failed to create WeCom request: %w", err)
 	}
 	req.Header.Set("Content-Type", "application/json")
 
@@ -81,23 +82,23 @@ func (s *wecomService) Send(ctx context.Context, subject, content string) error 
 	}
 	resp, err := client.Do(req)
 	if err != nil {
-		return fmt.Errorf("failed to send WeCom message: %w", err)
+		return util.MessageErrorf("service:failed to send WeCom message: %w", err)
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("WeCom webhook returned HTTP status code: %d", resp.StatusCode)
+		return util.MessageErrorf("service:WeCom webhook returned HTTP status code: %d", resp.StatusCode)
 	}
 
 	// Parse WeCom API response
 	var wecomResp wecomResponse
 	if err := json.NewDecoder(resp.Body).Decode(&wecomResp); err != nil {
-		return fmt.Errorf("failed to decode WeCom response: %w", err)
+		return util.MessageErrorf("service:failed to decode WeCom response: %w", err)
 	}
 
 	// Check WeCom API error code
 	if wecomResp.Errcode != 0 {
-		return fmt.Errorf("WeCom API error: errcode=%d, errmsg=%s", wecomResp.Errcode, wecomResp.Errmsg)
+		return util.MessageErrorf("service:WeCom API error: errcode=%d, errmsg=%s", wecomResp.Errcode, wecomResp.Errmsg)
 	}
 
 	return nil

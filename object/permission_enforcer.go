@@ -81,7 +81,7 @@ func (p *Permission) setEnforcerAdapter(enforcer *casbin.Enforcer) error {
 
 		if adapterObj != nil && adapterObj.Table != "" {
 			if !adapterObj.UseSameDb && adapterObj.Owner != "built-in" {
-				return fmt.Errorf("the adapter: %s of permission: %s must use the same DB as Casdoor", adapterObj.GetId(), p.GetId())
+				return util.MessageErrorf("permission:the adapter: %s of permission: %s must use the same DB as Casdoor", adapterObj.GetId(), p.GetId())
 			}
 			tableName = adapterObj.Table
 		}
@@ -546,7 +546,7 @@ type permissionPolicyDiff struct {
 // every policy row of that permission.
 func updatePermissionsPolicies(oldPermissions []*Permission, newPermissions []*Permission) error {
 	if len(oldPermissions) != len(newPermissions) {
-		return fmt.Errorf("updatePermissionsPolicies: the old permission count: %d doesn't match the new permission count: %d", len(oldPermissions), len(newPermissions))
+		return util.MessageErrorf("permission:updatePermissionsPolicies: the old permission count: %d doesn't match the new permission count: %d", len(oldPermissions), len(newPermissions))
 	}
 
 	movedOldPermissions := []*Permission{}
@@ -827,14 +827,14 @@ m = g(r.sub, p.sub) && r.obj == p.obj && r.act == p.act`
 
 		fieldsNum := len(policyDefinition)
 		if fieldsNum > builtInMaxFields {
-			return nil, fmt.Errorf("the maximum policy_definition field number cannot exceed %d, got %d", builtInMaxFields, fieldsNum)
+			return nil, util.MessageErrorf("permission:the maximum policy_definition field number cannot exceed %d, got %d", builtInMaxFields, fieldsNum)
 		}
 
 		// filled empty field with "" and V5 with "permissionId"
 		if fieldsNum == builtInMaxFields {
 			sixthField := strings.TrimSpace(policyDefinition[builtInMaxFields-1])
 			if sixthField != "permissionId" {
-				return nil, fmt.Errorf("when adding policies with permissions, the sixth field of policy_definition must be permissionId, got %s", policyDefinition[builtInMaxFields-1])
+				return nil, util.MessageErrorf("permission:when adding policies with permissions, the sixth field of policy_definition must be permissionId, got %s", policyDefinition[builtInMaxFields-1])
 			}
 		} else {
 			needFill := builtInMaxFields - fieldsNum

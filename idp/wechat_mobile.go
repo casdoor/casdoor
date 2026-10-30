@@ -24,6 +24,7 @@ import (
 	"net/url"
 	"time"
 
+	"github.com/casdoor/casdoor/util"
 	"golang.org/x/oauth2"
 )
 
@@ -147,7 +148,7 @@ func (idp *WeChatMobileIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, 
 
 	// Check for error response
 	if wechatUserInfo.Openid == "" {
-		return nil, fmt.Errorf("failed to get user info: %s", buf.String())
+		return nil, util.MessageErrorf("provider:failed to get user info: %s", buf.String())
 	}
 
 	id := wechatUserInfo.Unionid

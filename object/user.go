@@ -445,7 +445,7 @@ func GetUsersByTagWithFilter(owner string, tag string, cond builder.Cond) ([]*Us
 func GetSortedUsers(owner string, sorter string, limit int) ([]*User, error) {
 	users := []*User{}
 	if !util.FilterSQLIdentifier(sorter) {
-		return nil, fmt.Errorf("object.GetSortedUsers() error: invalid sorter field: %s", sorter)
+		return nil, util.MessageErrorf("user:object.GetSortedUsers() error: invalid sorter field: %s", sorter)
 	}
 	err := ormer.Engine.Desc(sorter).Limit(limit, 0).Find(&users, &User{Owner: owner})
 	if err != nil {
@@ -570,7 +570,7 @@ func GetUserByWebauthID(webauthId string) (*User, error) {
 	}
 
 	if !existed {
-		return nil, fmt.Errorf("user not exist")
+		return nil, util.MessageErrorf("check:user not exist")
 	}
 
 	return &user, err
@@ -941,7 +941,7 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 		return false, err
 	}
 	if oldUser == nil {
-		return false, fmt.Errorf("the user: %s is not found", id)
+		return false, util.MessageErrorf("user:the user: %s is not found", id)
 	}
 
 	// Auto-upgrade guest users when they update their username or password
@@ -1014,7 +1014,7 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 		// The tokens and sessions are keyed by the old user name, it may have just been renamed
 		err = terminateUserAccess(oldUser)
 		if err != nil {
-			return true, fmt.Errorf("the user: %s is updated, but terminating its access failed: %w", id, err)
+			return true, util.MessageErrorf("user:the user: %s is updated, but terminating its access failed: %w", id, err)
 		}
 	}
 
@@ -1052,7 +1052,7 @@ func UpdateUserForAllFields(id string, user *User) (bool, error) {
 	}
 
 	if oldUser == nil {
-		return false, fmt.Errorf("the user: %s is not found", id)
+		return false, util.MessageErrorf("user:the user: %s is not found", id)
 	}
 
 	if name != user.Name {
@@ -1091,7 +1091,7 @@ func UpdateUserForAllFields(id string, user *User) (bool, error) {
 	if affected != 0 && isUserAccessRevoked(oldUser, user, nil) {
 		err = terminateUserAccess(oldUser)
 		if err != nil {
-			return true, fmt.Errorf("the user: %s is updated, but terminating its access failed: %w", id, err)
+			return true, util.MessageErrorf("user:the user: %s is updated, but terminating its access failed: %w", id, err)
 		}
 	}
 
@@ -1223,7 +1223,7 @@ func AddUser(user *User, lang string) (bool, error) {
 
 func AddUsers(users []*User) (bool, error) {
 	if len(users) == 0 {
-		return false, fmt.Errorf("no users are provided")
+		return false, util.MessageErrorf("user:no users are provided")
 	}
 
 	isUsernameLowered := conf.GetConfigBool("isUsernameLowered")
@@ -1278,7 +1278,7 @@ func AddUsers(users []*User) (bool, error) {
 
 func AddUsersInBatch(users []*User) (bool, error) {
 	if len(users) == 0 {
-		return false, fmt.Errorf("no users are provided")
+		return false, util.MessageErrorf("user:no users are provided")
 	}
 
 	batchSize := conf.GetConfigBatchSize()
@@ -1610,7 +1610,7 @@ func DeleteGroupForUser(user string, group string) (bool, error) {
 		return false, err
 	}
 	if userObj == nil {
-		return false, fmt.Errorf(i18n.Translate("en", "general:The user: %s doesn't exist"), user)
+		return false, util.MessageErrorf("general:The user: %s doesn't exist", user)
 	}
 
 	userObj.Groups = util.DeleteVal(userObj.Groups, group)
@@ -1841,7 +1841,7 @@ func (user *User) GetUserFullGroupPath() ([]string, error) {
 		for !curGroup.IsTopGroup {
 			parentGroup, ok := groupMap[curGroup.ParentId]
 			if !ok {
-				return []string{}, fmt.Errorf(i18n.Translate("en", "auth:The group: %s does not exist"), curGroup.ParentId)
+				return []string{}, util.MessageErrorf("auth:The group: %s does not exist", curGroup.ParentId)
 			}
 
 			groupPath = util.GetId(parentGroup.Name, groupPath)
