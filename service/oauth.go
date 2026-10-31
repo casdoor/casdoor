@@ -86,10 +86,18 @@ func handleSiteCallback(w http.ResponseWriter, r *http.Request, site *object.Sit
 		return
 	}
 
-	application, err := object.GetApplication(util.GetId(site.Owner, site.CasdoorApplication))
+	// a site's owner is the organization that owns it, while applications are stored under the "admin" owner
+	application, err := object.GetApplicationByOrganizationAndName(site.Owner, site.CasdoorApplication)
 	if err != nil {
 		responseError(w, "Casdoor site error: casdoorClient.GetOAuthToken() error: %s", err.Error())
 		return
+	}
+	if application == nil {
+		application, err = object.GetApplication(util.GetId("admin", site.CasdoorApplication))
+		if err != nil {
+			responseError(w, "Casdoor site error: casdoorClient.GetOAuthToken() error: %s", err.Error())
+			return
+		}
 	}
 	if application == nil {
 		responseError(w, "Casdoor site error: the application: %s does not exist", site.CasdoorApplication)
