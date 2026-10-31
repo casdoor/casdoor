@@ -115,6 +115,7 @@ type Application struct {
 	DefaultTag                   string          `xorm:"varchar(100)" json:"defaultTag"`
 	HeaderHtml                   string          `xorm:"mediumtext" json:"headerHtml"`
 	PageHtml                     string          `xorm:"mediumtext" json:"pageHtml"`
+	EnableCustomScript           bool            `json:"enableCustomScript"`
 	EnablePassword               bool            `json:"enablePassword"`
 	EnableSignUp                 bool            `json:"enableSignUp"`
 	DisableSelfSignup            bool            `json:"disableSelfSignup"`
