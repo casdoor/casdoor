@@ -80,6 +80,8 @@
     "Enable SAML assertion signature - Tooltip": "Whether to digitally sign the SAML assertion in addition to the SAML response",
     "Enable SAML compression": "Enable SAML compression",
     "Enable SAML compression - Tooltip": "Whether to compress SAML response messages when Casdoor is used as SAML idp",
+    "Enable custom scripts": "Enable custom scripts",
+    "Enable custom scripts - Tooltip": "Render the custom HTML of this application as it is on the sign-in pages, scripts included, instead of removing its scripts. Only a global admin can turn it on, and change the custom HTML while it is on",
     "Enable exclusive signin": "Enable exclusive signin",
     "Enable exclusive signin - Tooltip": "When exclusive signin enabled, user cannot have multiple active session",
     "Enable guest signin": "Enable guest signin",

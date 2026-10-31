@@ -80,6 +80,8 @@
     "Enable SAML assertion signature - Tooltip": "是否对SAML断言进行数字签名",
     "Enable SAML compression": "压缩SAML响应",
     "Enable SAML compression - Tooltip": "Casdoor作为SAML IdP时，是否压缩SAML响应信息",
+    "Enable custom scripts": "启用自定义脚本",
+    "Enable custom scripts - Tooltip": "在登录页上按原样渲染本应用的自定义 HTML，其中的脚本会执行，不再被删除。只有全局管理员能开启，开启期间也只有全局管理员能修改这些 HTML",
     "Enable exclusive signin": "互斥登录",
     "Enable exclusive signin - Tooltip": "互斥登录启用时，用户不能同时拥有多个活跃的会话",
     "Enable guest signin": "启用访客登录",

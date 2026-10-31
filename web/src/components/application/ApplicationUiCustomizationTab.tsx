@@ -10,6 +10,7 @@ import {ThemeEditor} from "@/components/common/ThemeEditor";
 import {EditableTable} from "@/components/crud/EditableTable";
 import {ApplicationPromptPreview, ApplicationSignupSigninPreview} from "@/components/application/ApplicationPreview";
 import {FormRow} from "@/components/crud/FormRow";
+import {useAccount} from "@/hooks/use-account";
 import type {ApplicationTabProps} from "@/components/application/types";
 import {enumSelectOptions, type EnumMap} from "@/lib/enum-labels";
 import {SigninTableDefaultCssMap} from "@/lib/signin-css";
@@ -201,6 +202,8 @@ function getSigninItemRuleOptions(name: string) {
 
 /** The "UI Customization" tab: the blocks the sign-in and sign-up pages are built from. */
 export function ApplicationUiCustomizationTab({application, updateField}: ApplicationTabProps) {
+  const {account} = useAccount();
+
   return (
     <>
       <FormRow block labelKey="application:Org choice mode">
@@ -584,6 +587,13 @@ export function ApplicationUiCustomizationTab({application, updateField}: Applic
           themeData={application.themeData}
           onChange={(next) => updateField("themeData", next)}
           followLabelKey="application:Follow organization theme"
+        />
+      </FormRow>
+      <FormRow labelKey="application:Enable custom scripts">
+        <Switch
+          checked={!!application.enableCustomScript}
+          disabled={!Setting.isAdminUser(account)}
+          onCheckedChange={(v) => updateField("enableCustomScript", v)}
         />
       </FormRow>
       <FormRow labelKey="application:Header HTML" block>
