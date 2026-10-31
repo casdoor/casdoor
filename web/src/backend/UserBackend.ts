@@ -16,7 +16,7 @@ import * as Setting from "@/lib/setting";
 import i18next from "i18next";
 
 export function getGlobalUsers(page, pageSize, field: any = "", value: any = "", sortField: any = "", sortOrder: any = "") {
-  return fetch(`${Setting.ServerUrl}/api/get-global-users?p=${page}&pageSize=${pageSize}&field=${field}&value=${value}&sortField=${sortField}&sortOrder=${sortOrder}`, {
+  return fetch(`${Setting.ServerUrl}/api/get-global-users?p=${page}&pageSize=${pageSize}&field=${field}&value=${encodeURIComponent(value)}&sortField=${sortField}&sortOrder=${sortOrder}`, {
     method: "GET",
     credentials: "include",
     headers: {
@@ -26,7 +26,7 @@ export function getGlobalUsers(page, pageSize, field: any = "", value: any = "",
 }
 
 export function getUsers(owner, page: any = "", pageSize: any = "", field: any = "", value: any = "", sortField: any = "", sortOrder: any = "", groupName: any = "") {
-  return fetch(`${Setting.ServerUrl}/api/get-users?owner=${owner}&p=${page}&pageSize=${pageSize}&field=${field}&value=${value}&sortField=${sortField}&sortOrder=${sortOrder}&groupName=${groupName}`, {
+  return fetch(`${Setting.ServerUrl}/api/get-users?owner=${owner}&p=${page}&pageSize=${pageSize}&field=${field}&value=${encodeURIComponent(value)}&sortField=${sortField}&sortOrder=${sortOrder}&groupName=${groupName}`, {
     method: "GET",
     credentials: "include",
     headers: {
