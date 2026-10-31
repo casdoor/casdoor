@@ -1137,6 +1137,16 @@ export default function ProviderEditPage() {
               {renderSmsMappingInput()}
             </FormRow>
           ) : null}
+          {provider.method !== "GET" ? (
+            <FormRow labelKey="provider:HTTP body template" tooltip={i18next.t("provider:HTTP body template - Tooltip")} block>
+              <Textarea
+                rows={4}
+                value={provider.bodyTemplate ?? ""}
+                placeholder={"{\"to\": \"{phoneNumber}\", \"text\": \"{content}\", \"sender\": \"10004346\", \"templateId\": 5821}"}
+                onChange={(e) => updateProviderField("bodyTemplate", e.target.value)}
+              />
+            </FormRow>
+          ) : null}
           <FormRow labelKey="provider:Parameter">
             <Input value={provider.title ?? ""} onChange={(e) => updateProviderField("title", e.target.value)} />
           </FormRow>

@@ -1307,6 +1307,8 @@
     "Get phone number - Tooltip": "If sync phone number is enabled, you should enable google people api first and add scope https://www.googleapis.com/auth/user.phonenumbers.read",
     "HTTP body mapping": "HTTP body mapping",
     "HTTP body mapping - Tooltip": "HTTP body mapping",
+    "HTTP body template": "HTTP body template",
+    "HTTP body template - Tooltip": "Optional request body for POST, PUT and DELETE. When set, it replaces the body mapping. Variables: {phoneNumber} (e.g. +989121234567), {phoneNumberNoPlus} (e.g. 989121234567), {code} (the verification code) and {content} (the full message)",
     "HTTP header": "HTTP header",
     "HTTP header - Tooltip": "HTTP header information",
     "Host - Tooltip": "Hostname",

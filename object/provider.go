@@ -66,6 +66,7 @@ type Provider struct {
 	RegionId     string `xorm:"varchar(100)" json:"regionId"`
 	SignName     string `xorm:"varchar(100)" json:"signName"`
 	TemplateCode string `xorm:"varchar(100)" json:"templateCode"`
+	BodyTemplate string `xorm:"mediumtext" json:"bodyTemplate"` // If provider type is Custom HTTP SMS, BodyTemplate is the request body with {phoneNumber}, {code} and {content} placeholders
 	AppId        string `xorm:"varchar(100)" json:"appId"`
 
 	Endpoint         string `xorm:"varchar(1000)" json:"endpoint"`

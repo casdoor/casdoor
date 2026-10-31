@@ -1307,6 +1307,8 @@
     "Get phone number - Tooltip": "如果启用获取手机号码，你需要先启用peopleApi并添加范围https://www.googleapis.com/auth/user.phonenumbers.read",
     "HTTP body mapping": "HTTP body映射",
     "HTTP body mapping - Tooltip": "HTTP body映射",
+    "HTTP body template": "HTTP body模板",
+    "HTTP body template - Tooltip": "可选的 POST、PUT、DELETE 请求体，填写后不再使用 body 映射。可用变量：{phoneNumber}（如 +989121234567）、{phoneNumberNoPlus}（如 989121234567）、{code}（验证码）、{content}（应用模板后的完整短信内容）",
     "HTTP header": "HTTP标头",
     "HTTP header - Tooltip": "HTTP标头",
     "Host - Tooltip": "主机名",
