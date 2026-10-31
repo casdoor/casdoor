@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/core"
 )
@@ -41,6 +42,9 @@ type Setting struct {
 
 	// applies to the organizations that do not set their own record retention days, 0 keeps the records forever
 	RecordRetentionDays int `json:"recordRetentionDays"`
+
+	// hides the links to Casdoor Cloud that the console shows its admins
+	HideCloudPromotion bool `json:"hideCloudPromotion"`
 }
 
 func GetSetting() (*Setting, error) {
@@ -96,7 +100,7 @@ func (setting *Setting) check() error {
 	return nil
 }
 
-// apply only touches the main database, the syncers' databases keep their own pools
+// apply only touches the main database's pool, the syncers' databases keep their own
 func (setting *Setting) apply() {
 	ormer.Engine.SetMaxOpenConns(setting.DbMaxOpenConns)
 
@@ -108,6 +112,8 @@ func (setting *Setting) apply() {
 	ormer.Engine.SetMaxIdleConns(maxIdleConns)
 
 	ormer.Engine.SetConnMaxLifetime(time.Duration(setting.DbConnMaxLifetime) * time.Second)
+
+	conf.SetHideCloudPromotion(setting.HideCloudPromotion)
 }
 
 func initBuiltInSetting() *Setting {

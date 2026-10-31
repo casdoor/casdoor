@@ -6,6 +6,7 @@ import {Button} from "@/components/ui/button";
 import {LanguageSelect} from "@/components/common/LanguageSelect";
 import {ThemeToggle} from "@/components/common/ThemeToggle";
 import {ThemeShowcaseBar} from "@/components/common/ThemeShowcaseBar";
+import {CloudLoginLink, showCloudLoginLink} from "@/components/common/CloudPromo";
 import {CustomHtml, CustomStyle} from "@/components/common/CustomHtml";
 import {Loading} from "@/components/common/Loading";
 import {getSafeHtml, isTrustedApplication} from "@/lib/custom-html";
@@ -352,6 +353,11 @@ export function AuthLayout({
           </div>
 
           {footer ? <div className="mt-6 px-4 text-center text-sm text-muted-foreground">{footer}</div> : null}
+          {!preview && showCloudLoginLink() ? (
+            <div className="mt-6 flex justify-center px-4">
+              <CloudLoginLink />
+            </div>
+          ) : null}
         </div>
       </div>
 

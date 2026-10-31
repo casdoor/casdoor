@@ -13,6 +13,7 @@ import {
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarHeader,
@@ -25,6 +26,7 @@ import {
   SidebarRail,
   useSidebar,
 } from "@/components/ui/sidebar";
+import {CloudSidebarCard, showCloudPromo} from "@/components/common/CloudPromo";
 import {getNavGroups, shouldFlattenNav, type NavGroup, type NavItem} from "@/lib/nav";
 import * as Setting from "@/lib/setting";
 import {useAccount} from "@/hooks/use-account";
@@ -269,6 +271,12 @@ export function AppSidebar({onNavigate}: {onNavigate?: () => void}) {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+
+      {showCloudPromo(account) ? (
+        <SidebarFooter>
+          <CloudSidebarCard collapsed={collapsed} />
+        </SidebarFooter>
+      ) : null}
 
       {/* the thin strip along the border: click or drag it to collapse the rail */}
       <SidebarRail />

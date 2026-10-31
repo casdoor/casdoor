@@ -14,6 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {CommandPaletteTrigger} from "@/components/common/CommandPalette";
+import {CloudHeaderButton, CloudMenuItem} from "@/components/common/CloudPromo";
 import {BreadcrumbBar} from "@/components/layout/BreadcrumbBar";
 import {LanguageSelect} from "@/components/common/LanguageSelect";
 import {OrganizationSelect} from "@/components/common/OrganizationSelect";
@@ -23,7 +24,6 @@ import {useAccount} from "@/hooks/use-account";
 import {useLogout} from "@/hooks/use-logout";
 import {useHoverMenu} from "@/hooks/use-hover-menu";
 import {isWidgetVisible} from "@/lib/nav";
-import * as Conf from "@/Conf";
 import * as UserBackend from "@/backend/UserBackend";
 import * as Setting from "@/lib/setting";
 
@@ -70,17 +70,7 @@ export function Header({onOpenPalette}: {onOpenPalette: () => void}) {
 
       <div className="ml-auto flex items-center gap-1.5">
         <CommandPaletteTrigger onOpen={onOpenPalette} />
-        {/* the demo deployment advertises the hosted offering, as antd does */}
-        {Setting.isLocalAdminUser(account) && Conf.ShowGithubCorner ? (
-          <a
-            href="https://casdoor.com"
-            target="_blank"
-            rel="noreferrer"
-            className="saas-hosting-btn mr-1 hidden whitespace-nowrap text-sm sm:inline"
-          >
-            🚀 SaaS Hosting 🔥
-          </a>
-        ) : null}
+        <CloudHeaderButton />
         {showOrganizationSelect && (
           <OrganizationSelect
             withAll
@@ -123,6 +113,7 @@ export function Header({onOpenPalette}: {onOpenPalette: () => void}) {
               <Settings />
               {i18next.t("account:My Account")}
             </DropdownMenuItem>
+            <CloudMenuItem />
             {impersonating ? (
               <DropdownMenuItem onSelect={exitImpersonation}>
                 <LogOut />

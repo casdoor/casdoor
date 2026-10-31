@@ -23,6 +23,7 @@ export default function SettingEditPage() {
       suffix: i18next.t("usage:seconds"),
     },
     {type: "number", name: "recordRetentionDays", labelKey: "setting:Default record retention days", min: 0},
+    {type: "switch", name: "hideCloudPromotion", labelKey: "setting:Hide Casdoor Cloud links"},
   ];
 
   return (

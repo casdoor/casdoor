@@ -17,6 +17,7 @@ import {
 } from "recharts";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import {ActivityHeatmap} from "@/components/common/ActivityHeatmap";
+import {CloudDashboardBanner} from "@/components/common/CloudPromo";
 import {Loading} from "@/components/common/Loading";
 import {PageHeader} from "@/components/crud/PageHeader";
 import {useAccount} from "@/hooks/use-account";
@@ -208,6 +209,8 @@ export default function Dashboard() {
   return (
     <div className="space-y-5">
       <PageHeader title={i18next.t("general:Dashboard")} />
+
+      <CloudDashboardBanner />
 
       {/* Key metrics */}
       {/* Eight across only once there is room for the labels; below that they
