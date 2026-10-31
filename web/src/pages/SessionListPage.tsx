@@ -120,6 +120,8 @@ export default function SessionListPage() {
     <CrudListPage
       title={i18next.t("general:Sessions")}
       columns={columns}
+      // a user has one session row per application
+      rowKey={(row) => `${row.owner}/${row.name}/${row.application}`}
       deps={[organizationName, nonce]}
       fetch={(q) =>
         SessionBackend.getSessions(
