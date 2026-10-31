@@ -66,6 +66,7 @@ func getCasdoorApplicationMap() (map[string]*Application, error) {
 			}
 		}
 
+		res[application.Organization+"/"+application.Name] = application
 		res[application.Name] = application
 	}
 	return res, nil
@@ -90,11 +91,15 @@ func refreshSiteMap() error {
 	}
 
 	for _, site := range sites {
-		if applicationMap != nil {
-			if site.CasdoorApplication != "" && site.ApplicationObj == nil {
-				if v, ok2 := applicationMap[site.CasdoorApplication]; ok2 {
-					site.ApplicationObj = v
-				}
+		site.ApplicationObj = nil
+		if applicationMap != nil && site.CasdoorApplication != "" {
+			realName, _ := util.GetSharedOrgFromApp(site.CasdoorApplication)
+			if v, ok := applicationMap[site.Owner+"/"+realName]; ok {
+				site.ApplicationObj = v
+			} else if v, ok := applicationMap[site.CasdoorApplication]; ok && site.MatchesApplication(v) {
+				site.ApplicationObj = v
+			} else if v, ok := applicationMap[realName]; ok && site.MatchesApplication(v) {
+				site.ApplicationObj = v
 			}
 		}
 

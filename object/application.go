@@ -312,6 +312,46 @@ func getApplication(owner string, name string) (*Application, error) {
 	}
 }
 
+// GetApplicationByOrganizationAndName resolves an application by the organization
+// that owns it and the application name. Applications are stored with Owner
+// "admin" while Organization is the tenant, so Site callbacks (where the Site
+// owner is the organization) must not use the owner/name form.
+func GetApplicationByOrganizationAndName(organization string, name string) (*Application, error) {
+	if organization == "" || name == "" {
+		return nil, nil
+	}
+
+	realApplicationName, sharedOrg := util.GetSharedOrgFromApp(name)
+
+	application := Application{}
+	existed, err := ormer.Engine.Where("organization = ? AND name = ?", organization, realApplicationName).Get(&application)
+	if err != nil {
+		return nil, err
+	}
+	if !existed {
+		return nil, nil
+	}
+
+	if application.IsShared && sharedOrg != "" {
+		application.Organization = sharedOrg
+	}
+
+	if err = extendApplicationWithProviders(&application); err != nil {
+		return nil, err
+	}
+	if err = extendApplicationWithOrg(&application); err != nil {
+		return nil, err
+	}
+	if err = extendApplicationWithSigninMethods(&application); err != nil {
+		return nil, err
+	}
+	if err = extendApplicationWithSigninItems(&application); err != nil {
+		return nil, err
+	}
+
+	return &application, nil
+}
+
 func GetApplicationByOrganizationName(organization string) (*Application, error) {
 	application := Application{}
 	existed, err := ormer.Engine.Where("organization=?", organization).Get(&application)

@@ -222,6 +222,16 @@ func (site *Site) GetId() string {
 	return fmt.Sprintf("%s/%s", site.Owner, site.Name)
 }
 
+// MatchesApplication reports whether the application can serve this Site:
+// it belongs to the Site's organization, is owned by the Site owner (legacy
+// admin-owned sites), or is a shared application.
+func (site *Site) MatchesApplication(application *Application) bool {
+	if site == nil || application == nil {
+		return false
+	}
+	return application.IsShared || application.Organization == site.Owner || application.Owner == site.Owner
+}
+
 func (site *Site) GetChallengeMap() map[string]string {
 	m := map[string]string{}
 	for _, challenge := range site.Challenges {

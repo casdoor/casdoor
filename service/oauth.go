@@ -24,7 +24,6 @@ import (
 	"github.com/casdoor/casdoor-go-sdk/casdoorsdk"
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/object"
-	"github.com/casdoor/casdoor/util"
 )
 
 func getSigninUrl(casdoorClient *casdoorsdk.Client, callbackUrl string, originalPath string) string {
@@ -86,10 +85,13 @@ func handleSiteCallback(w http.ResponseWriter, r *http.Request, site *object.Sit
 		return
 	}
 
-	application, err := object.GetApplication(util.GetId(site.Owner, site.CasdoorApplication))
+	application, err := object.GetApplicationByOrganizationAndName(site.Owner, site.CasdoorApplication)
 	if err != nil {
 		responseError(w, "Casdoor site error: casdoorClient.GetOAuthToken() error: %s", err.Error())
 		return
+	}
+	if application == nil && site.MatchesApplication(site.ApplicationObj) {
+		application = site.ApplicationObj
 	}
 	if application == nil {
 		responseError(w, "Casdoor site error: the application: %s does not exist", site.CasdoorApplication)
