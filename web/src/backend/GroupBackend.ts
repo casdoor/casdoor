@@ -15,7 +15,7 @@
 import * as Setting from "@/lib/setting";
 
 export function getGroups(owner: any = "", withTree: any = false, page: any = "", pageSize: any = "", field: any = "", value: any = "", sortField: any = "", sortOrder: any = "") {
-  return fetch(`${Setting.ServerUrl}/api/get-groups?owner=${owner}&p=${page}&pageSize=${pageSize}&field=${field}&value=${value}&sortField=${sortField}&sortOrder=${sortOrder}&withTree=${withTree}`, {
+  return fetch(`${Setting.ServerUrl}/api/get-groups?owner=${owner}&p=${page}&pageSize=${pageSize}&field=${field}&value=${encodeURIComponent(value)}&sortField=${sortField}&sortOrder=${sortOrder}&withTree=${withTree}`, {
     method: "GET",
     credentials: "include",
     headers: {

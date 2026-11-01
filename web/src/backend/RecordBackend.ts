@@ -15,7 +15,7 @@
 import * as Setting from "@/lib/setting";
 
 export function getRecords(organizationName, page, pageSize, field: any = "", value: any = "", sortField: any = "", sortOrder: any = "") {
-  return fetch(`${Setting.ServerUrl}/api/get-records?organizationName=${organizationName}&pageSize=${pageSize}&p=${page}&field=${field}&value=${value}&sortField=${sortField}&sortOrder=${sortOrder}`, {
+  return fetch(`${Setting.ServerUrl}/api/get-records?organizationName=${organizationName}&pageSize=${pageSize}&p=${page}&field=${field}&value=${encodeURIComponent(value)}&sortField=${sortField}&sortOrder=${sortOrder}`, {
     method: "GET",
     credentials: "include",
     headers: {
