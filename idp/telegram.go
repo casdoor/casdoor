@@ -125,7 +125,7 @@ func (idp *TelegramIdProvider) verifyTelegramAuth(authData map[string]interface{
 	calculatedHash := hex.EncodeToString(h.Sum(nil))
 
 	// Compare hashes
-	if calculatedHash != hash {
+	if !hmac.Equal([]byte(calculatedHash), []byte(strings.ToLower(hash))) {
 		return fmt.Errorf("data verification failed")
 	}
 
