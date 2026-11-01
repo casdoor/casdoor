@@ -480,7 +480,7 @@ func GetPaymentProvider(p *Provider) (pp.PaymentProvider, error) {
 		}
 		return pp, nil
 	} else if typ == "Polar" {
-		pp, err := pp.NewPolarPaymentProvider(p.ClientSecret)
+		pp, err := pp.NewPolarPaymentProvider(p.ClientSecret, p.Host)
 		if err != nil {
 			return nil, err
 		}

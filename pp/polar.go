@@ -17,6 +17,7 @@ package pp
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	polargo "github.com/polarsource/polar-go"
 	"github.com/polarsource/polar-go/models/components"
@@ -26,10 +27,15 @@ type PolarPaymentProvider struct {
 	Client *polargo.Polar
 }
 
-func NewPolarPaymentProvider(accessToken string) (*PolarPaymentProvider, error) {
-	client := polargo.New(
-		polargo.WithSecurity(accessToken),
-	)
+func NewPolarPaymentProvider(accessToken string, host string) (*PolarPaymentProvider, error) {
+	opts := []polargo.SDKOption{polargo.WithSecurity(accessToken)}
+	if host != "" {
+		if !strings.HasPrefix(host, "http://") && !strings.HasPrefix(host, "https://") {
+			host = "https://" + host
+		}
+		opts = append(opts, polargo.WithServerURL(host))
+	}
+	client := polargo.New(opts...)
 
 	pp := &PolarPaymentProvider{
 		Client: client,
