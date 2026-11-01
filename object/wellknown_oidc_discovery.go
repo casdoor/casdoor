@@ -50,11 +50,12 @@ type OidcDiscovery struct {
 	RequestParameterSupported                  bool     `json:"request_parameter_supported"`
 	RequestObjectSigningAlgValuesSupported     []string `json:"request_object_signing_alg_values_supported"`
 	EndSessionEndpoint                         string   `json:"end_session_endpoint"`
-	BackchannelLogoutSupported                 bool     `json:"backchannel_logout_supported"`                   // OIDC Back-Channel Logout 1.0
-	BackchannelLogoutSessionSupported          bool     `json:"backchannel_logout_session_supported"`           // OIDC Back-Channel Logout 1.0
-	DPoPSigningAlgValuesSupported              []string `json:"dpop_signing_alg_values_supported,omitempty"`    // RFC 9449
-	AuthorizationResponseIssParameterSupported bool     `json:"authorization_response_iss_parameter_supported"` // RFC 9207
-	ClientIdMetadataDocumentSupported          bool     `json:"client_id_metadata_document_supported"`          // draft-ietf-oauth-client-id-metadata-document
+	BackchannelLogoutSupported                 bool     `json:"backchannel_logout_supported"`                     // OIDC Back-Channel Logout 1.0
+	BackchannelLogoutSessionSupported          bool     `json:"backchannel_logout_session_supported"`             // OIDC Back-Channel Logout 1.0
+	DPoPSigningAlgValuesSupported              []string `json:"dpop_signing_alg_values_supported,omitempty"`      // RFC 9449
+	AuthorizationResponseIssParameterSupported bool     `json:"authorization_response_iss_parameter_supported"`   // RFC 9207
+	ClientIdMetadataDocumentSupported          bool     `json:"client_id_metadata_document_supported"`            // draft-ietf-oauth-client-id-metadata-document
+	AuthorizationGrantProfilesSupported        []string `json:"authorization_grant_profiles_supported,omitempty"` // draft-ietf-oauth-identity-assertion-authz-grant
 }
 
 var (
@@ -133,6 +134,14 @@ func GetOidcIssuer(host string) string {
 // GetOrganizationIssuer returns the issuer of an organization that works as its own tenant, e.g. "https://door.casdoor.com/orgs/casbin"
 func GetOrganizationIssuer(host string, organizationName string) string {
 	return fmt.Sprintf("%s/orgs/%s", GetOidcIssuer(host), url.PathEscape(organizationName))
+}
+
+// getOrganizationIssuerOrGlobal returns the issuer of an organization when it has its own, otherwise the global issuer
+func getOrganizationIssuerOrGlobal(host string, organization *Organization) string {
+	if organization.UseOrganizationIssuer {
+		return GetOrganizationIssuer(host, organization.Name)
+	}
+	return GetOidcIssuer(host)
 }
 
 // GetOidcIssuerByApplication returns the `iss` of the tokens of an application: the issuer of its organization when the
@@ -222,7 +231,7 @@ func GetOidcDiscovery(host string, applicationName string) OidcDiscovery {
 		RevocationEndpoint:                         fmt.Sprintf("%s/api/login/oauth/revoke", originBackend),
 		ResponseTypesSupported:                     []string{"code", "token", "id_token", "code token", "code id_token", "token id_token", "code token id_token"},
 		ResponseModesSupported:                     []string{"query", "fragment", "form_post"},
-		GrantTypesSupported:                        []string{"authorization_code", "implicit", "password", "client_credentials", "refresh_token", "urn:ietf:params:oauth:grant-type:device_code", "urn:ietf:params:oauth:grant-type:token-exchange", VerificationCodeGrantType, MobileOneClickGrantType},
+		GrantTypesSupported:                        []string{"authorization_code", "implicit", "password", "client_credentials", "refresh_token", "urn:ietf:params:oauth:grant-type:device_code", "urn:ietf:params:oauth:grant-type:jwt-bearer", "urn:ietf:params:oauth:grant-type:token-exchange", VerificationCodeGrantType, MobileOneClickGrantType},
 		SubjectTypesSupported:                      []string{"public"},
 		IdTokenSigningAlgValuesSupported:           []string{"RS256", "RS512", "ES256", "ES384", "ES512"},
 		ScopesSupported:                            scopes,
@@ -236,6 +245,7 @@ func GetOidcDiscovery(host string, applicationName string) OidcDiscovery {
 		DPoPSigningAlgValuesSupported:              DPoPSigningAlgs,
 		AuthorizationResponseIssParameterSupported: true,
 		ClientIdMetadataDocumentSupported:          IsClientIdMetadataDocumentSupported(cimdOrg),
+		AuthorizationGrantProfilesSupported:        []string{"urn:ietf:params:oauth:grant-profile:id-jag"},
 	}
 
 	return oidcDiscovery

@@ -1056,6 +1056,8 @@
     "Tags": "Tags",
     "The Casdoor console is disabled for the regular users of this organization": "The Casdoor console is disabled for the regular users of this organization",
     "Token retention days": "Token retention days",
+    "Trusted ID-JAG issuers": "Trusted ID-JAG issuers",
+    "Trusted ID-JAG issuers - Tooltip": "Enterprise IdPs whose ID-JAGs (Identity Assertion JWT Authorization Grants) sign the users of this organization in to MCP clients without a browser. The user is matched by the claim in the User column, by email if it is empty. Only a global admin can change it.",
     "Trusted database hosts": "Trusted database hosts",
     "Trusted database hosts - Tooltip": "Database hosts that the syncers and Casbin adapters of this organization may connect to, even when they are intranet addresses or Casdoor's own database server, as a comma separated list of host or host:port. Only a global admin can change it.",
     "Use Email as username": "Use Email as username",

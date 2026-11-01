@@ -349,7 +349,7 @@ func getDcrTokenLifetimes(defaultApp *Application) (float64, float64, int64) {
 	return expireInHours, refreshExpireInHours, cookieExpireInHours
 }
 
-var dcrGrantTypes = []string{"authorization_code", "refresh_token", "urn:ietf:params:oauth:grant-type:device_code"}
+var dcrGrantTypes = []string{"authorization_code", "refresh_token", "urn:ietf:params:oauth:grant-type:device_code", "urn:ietf:params:oauth:grant-type:jwt-bearer"}
 
 var dcrTokenEndpointAuthMethods = []string{"client_secret_basic", "client_secret_post", "private_key_jwt", "none"}
 

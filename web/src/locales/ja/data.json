@@ -1054,6 +1054,8 @@
     "Tags": "タグ",
     "The Casdoor console is disabled for the regular users of this organization": "この組織の一般ユーザーは Casdoor コンソールを利用できません",
     "Token retention days": "トークンの保存日数",
+    "Trusted ID-JAG issuers": "Trusted ID-JAG issuers",
+    "Trusted ID-JAG issuers - Tooltip": "Trusted ID-JAG issuers - Tooltip",
     "Trusted database hosts": "信頼済みデータベースホスト",
     "Trusted database hosts - Tooltip": "Trusted database hosts - Tooltip",
     "Use Email as username": "メールアドレスをユーザー名として使用",

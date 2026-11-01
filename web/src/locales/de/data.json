@@ -1054,6 +1054,8 @@
     "Tags": "Schlagwörter",
     "The Casdoor console is disabled for the regular users of this organization": "Die Casdoor-Konsole ist für normale Benutzer dieser Organisation deaktiviert",
     "Token retention days": "Aufbewahrungsdauer der Tokens (Tage)",
+    "Trusted ID-JAG issuers": "Trusted ID-JAG issuers",
+    "Trusted ID-JAG issuers - Tooltip": "Trusted ID-JAG issuers - Tooltip",
     "Trusted database hosts": "Vertrauenswürdige Datenbank-Hosts",
     "Trusted database hosts - Tooltip": "Trusted database hosts - Tooltip",
     "Use Email as username": "E-Mail als Benutzername verwenden",

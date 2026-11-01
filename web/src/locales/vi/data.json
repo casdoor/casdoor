@@ -1054,6 +1054,8 @@
     "Tags": "Thẻ",
     "The Casdoor console is disabled for the regular users of this organization": "Bảng điều khiển Casdoor đã bị tắt đối với người dùng thông thường của tổ chức này",
     "Token retention days": "Số ngày lưu token",
+    "Trusted ID-JAG issuers": "Trusted ID-JAG issuers",
+    "Trusted ID-JAG issuers - Tooltip": "Trusted ID-JAG issuers - Tooltip",
     "Trusted database hosts": "Máy chủ cơ sở dữ liệu tin cậy",
     "Trusted database hosts - Tooltip": "Trusted database hosts - Tooltip",
     "Use Email as username": "Sử dụng Email làm tên người dùng",

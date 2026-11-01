@@ -104,7 +104,8 @@ type Organization struct {
 	AccountMenu        string         `xorm:"varchar(20)" json:"accountMenu"`
 	AccountItems       []*AccountItem `xorm:"mediumtext" json:"accountItems"`
 
-	DcrPolicy string `xorm:"varchar(100)" json:"dcrPolicy"`
+	DcrPolicy    string                 `xorm:"varchar(100)" json:"dcrPolicy"`
+	IdJagIssuers []*FederatedCredential `xorm:"mediumtext" json:"idJagIssuers"`
 
 	LdapAttributes     []string `xorm:"mediumtext" json:"ldapAttributes"`
 	EnableLdapPassword bool     `xorm:"bool" json:"enableLdapPassword"`
@@ -309,6 +310,7 @@ func UpdateOrganization(id string, organization *Organization, isGlobalAdmin boo
 		organization.EnableRadius = org.EnableRadius
 		organization.DisableRadiusMfa = org.DisableRadiusMfa
 		organization.DcrPolicy = org.DcrPolicy
+		organization.IdJagIssuers = org.IdJagIssuers
 	}
 
 	session := ormer.Engine.ID(core.PK{owner, name}).AllCols()

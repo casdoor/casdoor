@@ -96,7 +96,16 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 	case "token", "id_token": // Implicit Grant
 		token, tokenError, err = GetImplicitToken(application, username, password, scope, nonce, host, clientIp, lang)
 	case "urn:ietf:params:oauth:grant-type:jwt-bearer":
-		token, tokenError, err = GetJwtBearerToken(application, assertion, scope, nonce, host, clientIp, lang)
+		if IsIdJag(assertion) {
+			token, tokenError, err = GetIdJagGrantToken(application, clientSecret, assertion, scope, host, clientIp, lang)
+		} else if isDynamicClient(application) {
+			tokenError = &TokenError{
+				Error:            InvalidGrant,
+				ErrorDescription: "a client that registered itself can only redeem an ID-JAG with the JWT bearer grant",
+			}
+		} else {
+			token, tokenError, err = GetJwtBearerToken(application, assertion, scope, nonce, host, clientIp, lang)
+		}
 	case "urn:ietf:params:oauth:grant-type:device_code":
 		// The user has already authenticated via browser in the device flow,
 		// so we skip password verification and mint a token directly.

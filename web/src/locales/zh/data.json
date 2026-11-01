@@ -1056,6 +1056,8 @@
     "Tags": "标签集合",
     "The Casdoor console is disabled for the regular users of this organization": "该组织的普通用户已被禁止使用 Casdoor 控制台",
     "Token retention days": "令牌保留天数",
+    "Trusted ID-JAG issuers": "可信 ID-JAG 签发方",
+    "Trusted ID-JAG issuers - Tooltip": "信任哪些企业 IdP 签发的 ID-JAG（身份断言授权许可）：MCP 客户端拿它就能免浏览器登录本组织的用户。按“用户”列里的声明匹配用户，留空按邮箱匹配。只有全局管理员能修改。",
     "Trusted database hosts": "可信数据库主机",
     "Trusted database hosts - Tooltip": "本组织的同步器和 Casbin 适配器可以连接的数据库主机，即使它们是内网地址或 Casdoor 自己的数据库服务器也放行。用英文逗号分隔，每项写 host 或 host:port。只有全局管理员能修改。",
     "Use Email as username": "邮箱作为用户名",

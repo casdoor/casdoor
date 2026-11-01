@@ -1054,6 +1054,8 @@
     "Tags": "Etiketler",
     "The Casdoor console is disabled for the regular users of this organization": "Casdoor konsolu bu kuruluşun normal kullanıcıları için devre dışı",
     "Token retention days": "Belirteç saklama süresi (gün)",
+    "Trusted ID-JAG issuers": "Trusted ID-JAG issuers",
+    "Trusted ID-JAG issuers - Tooltip": "Trusted ID-JAG issuers - Tooltip",
     "Trusted database hosts": "Güvenilir veritabanı sunucuları",
     "Trusted database hosts - Tooltip": "Trusted database hosts - Tooltip",
     "Use Email as username": "Kullanıcı adı olarak E-posta kullan",
