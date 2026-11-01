@@ -322,8 +322,16 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
     ),
     "Email": (
       <AccountItemRow name="Email" labelKey="general:Email">
-        <div className="flex gap-2">
+        <div className="flex items-center gap-2">
           <Input type="email" value={user.email ?? ""} disabled={!isAdmin} onChange={(e) => updateField("email", e.target.value)} />
+          {isAdmin ? (
+            <label className="flex shrink-0 items-center gap-2 text-sm">
+              <Switch checked={!!user.emailVerified} onCheckedChange={(v) => updateField("emailVerified", v)} />
+              {i18next.t("user:Verified")}
+            </label>
+          ) : user.emailVerified ? (
+            <Badge variant="success">{i18next.t("user:Verified")}</Badge>
+          ) : null}
           {/* the backend resolves the current user itself, so only the user can reset their own */}
           {isSelf ? (
             <ResetModal application={application} destType="email" buttonText={i18next.t("user:Reset Email...")} />
