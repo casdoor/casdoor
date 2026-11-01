@@ -230,6 +230,21 @@ func (c *ApiController) NotifyPayment() {
 
 	body := c.Ctx.Input.RequestBody
 
+	existingPayment, err := object.GetPayment(util.GetId(owner, paymentName))
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	// a Dummy payment is marked as paid without any external check, so only its own user or an admin can do it
+	if existingPayment != nil && existingPayment.Type == "Dummy" && !c.IsAdminOfOrganization(existingPayment.Owner) {
+		sessionUserOwner, sessionUserName, err := util.GetOwnerAndNameFromIdWithError(c.GetSessionUsername())
+		if err != nil || existingPayment.Owner != sessionUserOwner || existingPayment.User != sessionUserName {
+			c.ResponseError("Forbidden")
+			return
+		}
+	}
+
 	payment, err := object.NotifyPayment(body, owner, paymentName, c.GetAcceptLanguage())
 	if err != nil {
 		c.ResponseError(err.Error())
