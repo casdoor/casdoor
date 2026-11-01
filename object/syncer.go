@@ -43,6 +43,9 @@ type Syncer struct {
 	Type         string `xorm:"varchar(100)" json:"type"`
 	DatabaseType string `xorm:"varchar(100)" json:"databaseType"`
 	SslMode      string `xorm:"varchar(100)" json:"sslMode"`
+	SslRootCert  string `xorm:"mediumtext" json:"sslRootCert"`
+	SslCert      string `xorm:"mediumtext" json:"sslCert"`
+	SslKey       string `xorm:"mediumtext" json:"sslKey"`
 	SshType      string `xorm:"varchar(100)" json:"sshType"`
 
 	Host             string         `xorm:"varchar(100)" json:"host"`
@@ -156,6 +159,9 @@ func GetMaskedSyncer(syncer *Syncer, errs ...error) (*Syncer, error) {
 	if syncer.Password != "" {
 		syncer.Password = "***"
 	}
+	if syncer.SslKey != "" {
+		syncer.SslKey = "***"
+	}
 	return syncer, nil
 }
 
@@ -195,6 +201,9 @@ func UpdateSyncer(id string, syncer *Syncer, isGlobalAdmin bool, lang string) (b
 	session := ormer.Engine.ID(core.PK{owner, name}).Where("organization = ?", s.Organization).AllCols()
 	if syncer.Password == "***" {
 		syncer.Password = s.Password
+	}
+	if syncer.SslKey == "***" {
+		syncer.SslKey = s.SslKey
 	}
 	if (syncer.SshHost != s.SshHost || syncer.SshPort != s.SshPort) && syncer.SshHostKey == s.SshHostKey {
 		syncer.SshHostKey = ""
@@ -371,6 +380,9 @@ func TestSyncer(syncer Syncer) error {
 	// the syncer may not be created yet when the connection is tested from the syncer add page
 	if syncer.Password == "***" && oldSyncer != nil {
 		syncer.Password = oldSyncer.Password
+	}
+	if syncer.SslKey == "***" && oldSyncer != nil {
+		syncer.SslKey = oldSyncer.SslKey
 	}
 
 	provider := GetSyncerProvider(&syncer)

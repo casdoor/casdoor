@@ -137,6 +137,18 @@ export default function SyncerEditPage() {
       when: (ctx) => ctx.record.databaseType === "postgres",
       options: () => SSL_MODES.map((item) => ({value: item, label: item})),
     },
+    ...[
+      {name: "sslRootCert", labelKey: "syncer:SSL root certificate", placeholder: "-----BEGIN CERTIFICATE-----"},
+      {name: "sslCert", labelKey: "syncer:SSL client certificate", placeholder: "-----BEGIN CERTIFICATE-----"},
+      {name: "sslKey", labelKey: "syncer:SSL client private key", placeholder: "-----BEGIN PRIVATE KEY-----"},
+    ].map(({name, labelKey, placeholder}): EditField => ({
+      type: "textarea",
+      name,
+      labelKey,
+      rows: 4,
+      placeholder,
+      when: (ctx) => ctx.record.databaseType === "postgres" && !!ctx.record.sslMode && ctx.record.sslMode !== "disable",
+    })),
     {
       type: "text",
       name: "host",
