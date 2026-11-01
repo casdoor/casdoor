@@ -117,10 +117,8 @@ func GetIdProvider(idpInfo *ProviderInfo, redirectUrl string) (IdProvider, error
 	case "OIDC":
 		return NewOidcIdProvider(idpInfo, redirectUrl), nil
 	case "Infoflow":
-		if idpInfo.SubType == "Internal" {
+		if idpInfo.SubType == "" || idpInfo.SubType == "Internal" {
 			return NewInfoflowInternalIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, idpInfo.AppId, redirectUrl), nil
-		} else if idpInfo.SubType == "Third-party" {
-			return NewInfoflowIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, idpInfo.AppId, redirectUrl), nil
 		} else {
 			return nil, fmt.Errorf("Infoflow provider subType: %s is not supported", idpInfo.SubType)
 		}
