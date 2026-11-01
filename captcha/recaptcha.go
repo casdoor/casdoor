@@ -25,10 +25,19 @@ import (
 
 const ReCaptchaVerifyUrl = "https://recaptcha.net/recaptcha/api/siteverify"
 
-type ReCaptchaProvider struct{}
+const ReCaptchaV3MinScore = 0.5
+
+type ReCaptchaProvider struct {
+	MinScore float64
+}
 
 func NewReCaptchaProvider() *ReCaptchaProvider {
 	captcha := &ReCaptchaProvider{}
+	return captcha
+}
+
+func NewReCaptchaV3Provider() *ReCaptchaProvider {
+	captcha := &ReCaptchaProvider{MinScore: ReCaptchaV3MinScore}
 	return captcha
 }
 
@@ -50,6 +59,7 @@ func (captcha *ReCaptchaProvider) VerifyCaptcha(token, clientId, clientSecret, c
 
 	type captchaResponse struct {
 		Success    bool     `json:"success"`
+		Score      float64  `json:"score"`
 		ErrorCodes []string `json:"error-codes"`
 	}
 	captchaResp := &captchaResponse{}
@@ -60,6 +70,10 @@ func (captcha *ReCaptchaProvider) VerifyCaptcha(token, clientId, clientSecret, c
 
 	if len(captchaResp.ErrorCodes) > 0 {
 		return false, errors.New(strings.Join(captchaResp.ErrorCodes, ","))
+	}
+
+	if captchaResp.Success && captcha.MinScore > 0 && captchaResp.Score < captcha.MinScore {
+		return false, nil
 	}
 
 	return captchaResp.Success, nil

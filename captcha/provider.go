@@ -29,7 +29,7 @@ func GetCaptchaProvider(captchaType string) CaptchaProvider {
 	case "reCAPTCHA v2":
 		return NewReCaptchaProvider()
 	case "reCAPTCHA v3":
-		return NewReCaptchaProvider()
+		return NewReCaptchaV3Provider()
 	case "Aliyun Captcha":
 		return NewAliyunCaptchaProvider()
 	case "hCaptcha":
