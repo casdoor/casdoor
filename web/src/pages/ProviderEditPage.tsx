@@ -992,7 +992,7 @@ export default function ProviderEditPage() {
           <Input value={provider.host ?? ""} onChange={(e) => updateProviderField("host", e.target.value)} />
         </FormRow>
       ) : null}
-      {!["Azure ACS", "SendGrid", "Resend"].includes(provider.type) ? (
+      {!["Azure ACS", "Custom HTTP Email", "SendGrid", "Resend"].includes(provider.type) ? (
         <React.Fragment>
           <FormRow label={i18next.t("general:Port")} tooltip={i18next.t("provider:Port - Tooltip")}>
             <Input type="number" value={provider.port ?? 0} onChange={(e) => updateProviderField("port", e.target.value)} />
@@ -1098,7 +1098,7 @@ export default function ProviderEditPage() {
             placeholder={i18next.t("user:Input your email")}
             onChange={(e) => updateProviderField("receiver", e.target.value)}
           />
-          {!["Azure ACS", "SendGrid", "Resend"].includes(provider.type) ? (
+          {!["Azure ACS", "Custom HTTP Email", "SendGrid", "Resend"].includes(provider.type) ? (
             <Button variant="outline" onClick={() => ProviderTest.connectSmtpServer(provider)}>
               {i18next.t("provider:Test SMTP Connection")}
             </Button>
