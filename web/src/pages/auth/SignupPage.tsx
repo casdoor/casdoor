@@ -158,9 +158,7 @@ export default function SignupPage({application: applicationProp}: {application?
   const languages = application?.organizationObj?.languages as string[] | undefined;
   // an organization that offers a single language forces it rather than offering a choice
   const forcedLanguage =
-    (!languagesItem || languagesItem.visible) && languages && languages.length <= 1
-      ? (languages.length === 1 ? languages[0] : "en")
-      : "";
+    (!languagesItem || languagesItem.visible) && languages?.length === 1 ? languages[0] : "";
 
   React.useEffect(() => {
     if (forcedLanguage !== "" && Setting.getLanguage() !== forcedLanguage) {
