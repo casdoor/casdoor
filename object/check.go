@@ -700,7 +700,14 @@ func CheckApplicationSignin(application *Application, user *User, clientIp strin
 		return errors.New(i18n.Translate(lang, "auth:Unauthorized operation"))
 	}
 
-	if !user.IsGlobalAdmin() && !user.IsAdmin && len(application.Tags) > 0 && !util.HasTagInSlice(application.Tags, user.Tag) {
+	// "dcr" and "cimd" tell how a client registered, they don't limit who may sign in
+	accessTags := []string{}
+	for _, tag := range application.Tags {
+		if tag != "dcr" && tag != cimdTag {
+			accessTags = append(accessTags, tag)
+		}
+	}
+	if !user.IsGlobalAdmin() && !user.IsAdmin && len(accessTags) > 0 && !util.HasTagInSlice(accessTags, user.Tag) {
 		return fmt.Errorf(i18n.Translate(lang, "auth:User's tag: %s is not listed in the application's tags"), user.Tag)
 	}
 
