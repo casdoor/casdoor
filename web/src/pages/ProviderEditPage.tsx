@@ -1032,7 +1032,7 @@ export default function ProviderEditPage() {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => updateProviderField("content", "You have requested a verification code at Casdoor. Here is your code: %s, please enter in 5 minutes. <reset-link>Or click %link to reset</reset-link>")}
+              onClick={() => updateProviderField("content", "You have requested a verification code at Casdoor. Here is your code: %s, please enter in 10 minutes. <reset-link>Or click %link to reset</reset-link>")}
             >
               {i18next.t("general:Reset to Default")} (Text)
             </Button>

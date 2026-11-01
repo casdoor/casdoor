@@ -2200,7 +2200,7 @@ export function getDefaultHtmlEmailContent() {
         <img src="${StaticBaseUrl}/img/casdoor-logo_1185x256.png" alt="Casdoor Logo" width="300">
     </div>
     <p><strong>%{user.friendlyName}</strong>, here is your verification code</p>
-    <p>Use this code for your transaction. It's valid for 5 minutes</p>
+    <p>Use this code for your transaction. It's valid for 10 minutes</p>
     <div class="code">
         %s
     </div>

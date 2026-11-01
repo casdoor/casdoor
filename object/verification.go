@@ -120,7 +120,7 @@ func SendVerificationCodeToEmail(organization *Organization, user *User, provide
 	//	code = organization.MasterVerificationCode
 	// }
 
-	// "You have requested a verification code at Casdoor. Here is your code: %s, please enter in 5 minutes."
+	// "You have requested a verification code at Casdoor. Here is your code: %s, please enter in 10 minutes."
 	content := strings.Replace(provider.Content, "%s", code, 1)
 
 	originFrontend, isOriginTrusted := getTrustedOriginFrontend(host)
