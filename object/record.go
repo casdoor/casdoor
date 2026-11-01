@@ -39,7 +39,7 @@ var (
 
 var secretRecordKeys = []string{
 	"password", "oldPassword", "newPassword", "masterPassword", "defaultPassword", "passwordSalt", "passwordObfuscatorKey",
-	"clientSecret", "client_secret", "clientSecret2", "accessSecret", "secret", "secretKey", "privateKey", "kerberosKeytab",
+	"clientSecret", "client_secret", "clientSecret2", "accessSecret", "secret", "secretKey", "privateKey", "sslKey", "kerberosKeytab",
 	"token", "accessToken", "access_token", "refreshToken", "refresh_token", "idToken", "id_token", "registrationAccessToken",
 	"originalToken", "originalRefreshToken", "totpSecret", "masterVerificationCode",
 	"code_verifier", "passcode", "recoveryCode", "recoveryCodes",

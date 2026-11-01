@@ -2,6 +2,7 @@ import i18next from "i18next";
 import {useParams} from "react-router-dom";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
+import {Textarea} from "@/components/ui/textarea";
 import {Switch} from "@/components/ui/switch";
 import {SelectField} from "@/components/common/SelectField";
 import {CodeEditor} from "@/components/common/CodeEditor";
@@ -27,6 +28,39 @@ const DATABASE_TYPES = [
 ];
 
 const SSL_MODES = ["disable", "require", "verify-ca", "verify-full"];
+
+function PemField({value, onChange, label}: {value: string; onChange: (value: string) => void; label: string}) {
+  return (
+    <div className="space-y-2">
+      <Textarea
+        aria-label={label}
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        rows={6}
+        autoComplete="off"
+        spellCheck={false}
+        className="font-mono"
+      />
+      <Input
+        type="file"
+        accept=".pem,.crt,.cer,.key"
+        aria-label={i18next.t("syncer:Load from file")}
+        onChange={async (event) => {
+          const file = event.target.files?.[0];
+          event.target.value = "";
+          if (!file) {
+            return;
+          }
+          try {
+            onChange(await file.text());
+          } catch {
+            Setting.showMessage("error", i18next.t("syncer:Failed to read certificate file"));
+          }
+        }}
+      />
+    </div>
+  );
+}
 
 const SYNCER_TABLE_TYPES = ["string", "integer", "boolean"];
 
@@ -137,6 +171,20 @@ export default function SyncerEditPage() {
       when: (ctx) => ctx.record.databaseType === "postgres",
       options: () => SSL_MODES.map((item) => ({value: item, label: item})),
     },
+    ...[
+      {name: "sslRootCert", labelKey: "syncer:SSL root certificate"},
+      {name: "sslCert", labelKey: "syncer:SSL client certificate"},
+      {name: "sslKey", labelKey: "syncer:SSL client private key"},
+    ].map(({name, labelKey}): EditField => ({
+      type: "custom",
+      name,
+      labelKey,
+      when: (ctx) => hasDatabaseSchema(ctx.record.type) && ctx.record.databaseType === "postgres"
+        && !!ctx.record.sslMode && ctx.record.sslMode !== "disable",
+      render: (ctx, update) => (
+        <PemField value={ctx.record[name] || ""} onChange={(value) => update(name, value)} label={i18next.t(labelKey)} />
+      ),
+    })),
     {
       type: "text",
       name: "host",

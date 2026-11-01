@@ -24,6 +24,8 @@ import (
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/util"
 	"github.com/go-sql-driver/mysql"
+	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/stdlib"
 	"golang.org/x/crypto/ssh"
 )
 
@@ -155,6 +157,15 @@ func (p *DatabaseSyncerProvider) InitAdapter() error {
 	}
 
 	var db *sql.DB
+	var postgresConfig *pgx.ConnConfig
+	// lib/pq inline TLS requires a client key pair even for CA-only verification.
+	if p.Syncer.DatabaseType == "postgres" && p.Syncer.SslMode != "" && p.Syncer.SslMode != "disable" &&
+		(p.Syncer.SslRootCert != "" || p.Syncer.SslCert != "" || p.Syncer.SslKey != "") {
+		postgresConfig, err = p.Syncer.getPostgresTLSConfig(dataSourceName)
+		if err != nil {
+			return err
+		}
+	}
 
 	if p.Syncer.isSshTunneled() {
 		var dial *ssh.Client
@@ -187,6 +198,8 @@ func (p *DatabaseSyncerProvider) InitAdapter() error {
 		if p.Syncer.DatabaseType == "mysql" {
 			dataSourceName = fmt.Sprintf("%s:%s@%s(%s:%d)/", p.Syncer.User, p.Syncer.Password, p.Syncer.Owner+p.Syncer.Name, p.Syncer.Host, p.Syncer.Port)
 			mysql.RegisterDialContext(p.Syncer.Owner+p.Syncer.Name, (&ViaSSHDialer{Client: dial, Context: nil}).MysqlDial)
+		} else if postgresConfig != nil {
+			postgresConfig.DialFunc = dial.DialContext
 		} else if p.Syncer.DatabaseType == "postgres" || p.Syncer.DatabaseType == "mssql" {
 			db = sql.OpenDB(dsnConnector{dsn: dataSourceName, driver: &ViaSSHDialer{Client: dial, Context: nil, DatabaseType: p.Syncer.DatabaseType}})
 		}
@@ -196,12 +209,19 @@ func (p *DatabaseSyncerProvider) InitAdapter() error {
 		dataSourceName = strings.ReplaceAll(dataSourceName, "dbi.", "db.")
 	}
 
+	if postgresConfig != nil {
+		db = stdlib.OpenDB(*postgresConfig)
+	}
+
 	if db != nil {
 		p.Syncer.Ormer, err = NewAdapterFromDb(p.Syncer.DatabaseType, dataSourceName, p.Syncer.Database, db)
 	} else {
 		p.Syncer.Ormer, err = NewAdapter(p.Syncer.DatabaseType, dataSourceName, p.Syncer.Database)
 	}
 
+	if err != nil && db != nil {
+		db.Close()
+	}
 	return err
 }
 
