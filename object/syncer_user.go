@@ -113,6 +113,18 @@ func (syncer *Syncer) updateUserForOriginalFields(user *User, key string) (bool,
 		return false, err
 	}
 
+	if affected != 0 {
+		triggerUserForbiddenWebhook(&oldUser, user, columns)
+
+		// A user disabled in the upstream directory is forced offline like one forbidden by an admin
+		if isUserAccessRevoked(&oldUser, user, columns) {
+			err = terminateUserAccess(&oldUser)
+			if err != nil {
+				return true, err
+			}
+		}
+	}
+
 	return affected != 0, nil
 }
 
