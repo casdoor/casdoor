@@ -84,8 +84,9 @@ func IsClientIdMetadataDocumentSupported(organization string) bool {
 
 // GetApplicationByClientIdMetadata returns the application of a client_id. When the client_id is the URL
 // of a client ID metadata document, the document is fetched and kept as an application tagged "cimd",
-// fetched again once it is older than cimdRefreshInterval. A new application is added to the organization
-// passed in (built-in by default), an existing one stays in its own organization.
+// fetched again once it is older than cimdRefreshInterval. The same client (ChatGPT, Claude, VS Code, ...) is
+// used by the users of many organizations, so the application is a shared one of built-in, returned as the
+// application of the organization passed in (built-in by default), which must accept URL client_ids.
 func GetApplicationByClientIdMetadata(clientId string, organization string, lang string) (*Application, error) {
 	if !IsClientIdMetadataUrl(clientId) {
 		return GetApplicationByClientId(clientId)
@@ -102,17 +103,16 @@ func GetApplicationByClientIdMetadata(clientId string, organization string, lang
 		return application, nil
 	}
 
-	if application != nil {
-		organization = application.Organization
-	} else if organization == "" {
+	if organization == "" {
 		organization = cimdOrganization
 	}
 	if !IsClientIdMetadataDocumentSupported(organization) {
 		return nil, fmt.Errorf("client ID metadata documents are not accepted, enable dynamic client registration of the organization: %s first", organization)
 	}
 
-	if application != nil && time.Since(cimdFetchedAt[clientId]) < cimdRefreshInterval {
-		return application, nil
+	// a client added to one organization before the applications were shared is shared on its next fetch
+	if application != nil && application.IsShared && time.Since(cimdFetchedAt[clientId]) < cimdRefreshInterval {
+		return getCimdApplicationOfOrganization(application, organization)
 	}
 
 	doc, err := fetchClientIdMetadataDocument(clientId)
@@ -132,15 +132,19 @@ func GetApplicationByClientIdMetadata(clientId string, organization string, lang
 	}
 
 	if application == nil {
-		org, err := GetOrganization(util.GetId("admin", organization))
+		org, err := GetOrganization(util.GetId("admin", cimdOrganization))
 		if err != nil {
 			return nil, err
+		}
+		if org == nil {
+			return nil, fmt.Errorf("the organization: %s does not exist", cimdOrganization)
 		}
 
 		application = newDynamicClientApplication(&doc.DynamicClientRegistrationRequest, org, cimdTag)
 		application.ClientId = clientId
 		application.DisplayName = displayName
 		application.HomepageUrl = homepageUrl
+		application.IsShared = true
 		setPrivateKeyJwtCredential(application, &doc.DynamicClientRegistrationRequest)
 
 		affected, err := AddApplication(application, lang)
@@ -151,6 +155,8 @@ func GetApplicationByClientIdMetadata(clientId string, organization string, lang
 			return nil, fmt.Errorf("failed to add the application for the client: %s", clientId)
 		}
 	} else {
+		application.Organization = cimdOrganization
+		application.IsShared = true
 		application.DisplayName = displayName
 		application.HomepageUrl = homepageUrl
 		application.RedirectUris = doc.RedirectUris
@@ -169,7 +175,34 @@ func GetApplicationByClientIdMetadata(clientId string, organization string, lang
 	}
 
 	cimdFetchedAt[clientId] = time.Now()
-	return GetApplicationByClientId(clientId)
+	application, err = GetApplicationByClientId(clientId)
+	if err != nil || application == nil {
+		return application, err
+	}
+	return getCimdApplicationOfOrganization(application, organization)
+}
+
+// getCimdApplicationOfOrganization returns the shared application of a URL client_id as the application of an organization
+func getCimdApplicationOfOrganization(application *Application, organization string) (*Application, error) {
+	if application.Organization == organization {
+		return application, nil
+	}
+
+	application.Organization = organization
+	err := extendApplicationWithOrg(application)
+	if err != nil {
+		return nil, err
+	}
+	return application, nil
+}
+
+// GetCimdOrganization returns the organization a URL client_id works for: the organization of the user
+// who signs in, as its application is shared. It returns "" for other client_ids.
+func GetCimdOrganization(clientId string, user *User) string {
+	if user == nil || !IsClientIdMetadataUrl(clientId) {
+		return ""
+	}
+	return user.Owner
 }
 
 func fetchClientIdMetadataDocument(clientId string) (*ClientIdMetadataDocument, error) {

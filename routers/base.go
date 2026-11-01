@@ -104,6 +104,9 @@ func denyMcpRequest(ctx *context.Context, message string) {
 		scheme = "http"
 	}
 	resourceMetadataUrl := fmt.Sprintf("%s://%s%s/.well-known/oauth-protected-resource", scheme, host, basePath)
+	if strings.HasPrefix(ctx.Request.URL.Path, "/api/server/") {
+		resourceMetadataUrl += ctx.Request.URL.EscapedPath()
+	}
 	ctx.Output.Header("WWW-Authenticate", fmt.Sprintf("Bearer realm=\"casdoor\", resource_metadata=\"%s\"", resourceMetadataUrl))
 
 	req := mcpself.McpRequest{}

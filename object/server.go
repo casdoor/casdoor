@@ -224,3 +224,22 @@ func GetPaginationServers(owner string, offset, limit int, field, value, sortFie
 
 	return servers, nil
 }
+
+// IsServerAllowed reports whether a user of the server's organization may use an MCP server through the proxy:
+// the users who may sign in to the application of the server
+func IsServerAllowed(user *User, owner string, name string) (bool, error) {
+	server, err := GetServer(util.GetId(owner, name))
+	if err != nil || server == nil || server.Application == "" || user.Owner != owner {
+		return false, err
+	}
+
+	application, err := getApplication("admin", server.Application)
+	if err != nil || application == nil {
+		return false, err
+	}
+	if application.Organization != owner && !application.IsShared {
+		return false, nil
+	}
+
+	return CheckLoginPermission(user.GetId(), application)
+}

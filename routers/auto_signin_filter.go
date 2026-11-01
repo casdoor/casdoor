@@ -73,6 +73,12 @@ func AutoSigninFilter(ctx *context.Context) {
 			return
 		}
 
+		// RFC 8707: a token bound to a resource works only for that resource
+		if strings.HasPrefix(urlPath, "/api/server/") && token.Resource != "" && strings.TrimSuffix(token.Resource, "/") != object.GetServerProxyUrl(ctx.Request.Host, ctx.Input.Param(":owner"), ctx.Input.Param(":name")) {
+			responseInvalidToken(ctx, token, "invalid_token", "The access token is for another resource")
+			return
+		}
+
 		isExpired, expireTime := util.IsTokenExpired(token.CreatedTime, token.ExpiresIn)
 		if isExpired {
 			responseInvalidToken(ctx, token, "invalid_token", fmt.Sprintf("Access token has expired, expireTime = %s", expireTime))

@@ -423,6 +423,7 @@ func InitAPI() {
 	web.Router("/.well-known/openid-configuration/orgs/:organization", &controllers.RootController{}, "GET:GetOidcDiscoveryByOrganization")
 	web.Router("/.well-known/oauth-authorization-server/orgs/:organization", &controllers.RootController{}, "GET:GetOidcDiscoveryByOrganization")
 	web.Router("/.well-known/:application/oauth-protected-resource", &controllers.RootController{}, "GET:GetOauthProtectedResourceMetadataByApplication")
+	web.Router("/.well-known/oauth-protected-resource/api/server/:owner/:name", &controllers.RootController{}, "GET:GetOauthProtectedResourceMetadataByServer")
 
 	web.Router("/cas/:organization/:application/serviceValidate", &controllers.RootController{}, "GET:CasServiceValidate")
 	web.Router("/cas/:organization/:application/proxyValidate", &controllers.RootController{}, "GET:CasProxyValidate")

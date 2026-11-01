@@ -464,7 +464,7 @@ func GetOAuthCode(userId string, clientId string, provider string, signinMethod 
 		}, nil
 	}
 
-	msg, application, err := CheckOAuthLogin(clientId, "", responseType, redirectUri, scope, state, nonce, lang)
+	msg, application, err := CheckOAuthLogin(clientId, GetCimdOrganization(clientId, user), responseType, redirectUri, scope, state, nonce, lang)
 	if err != nil {
 		return nil, err
 	}
@@ -701,6 +701,13 @@ func RefreshToken(application *Application, grantType string, refreshToken strin
 	err = ExtendUserWithRolesAndPermissions(user)
 	if err != nil {
 		return nil, err
+	}
+
+	// the shared application of a URL client_id works for the organization of its user
+	if application.IsShared && IsClientIdMetadataUrl(application.ClientId) && application.Organization != user.Owner {
+		sharedApplication := *application
+		sharedApplication.Organization = user.Owner
+		application = &sharedApplication
 	}
 
 	newAccessToken, newRefreshToken, newIdToken, tokenName, err := generateJwtTokenWithOptions(application, user, "", "", "", scope, resource, host, jwtTokenOptions{RefreshScope: oldTokenScope})

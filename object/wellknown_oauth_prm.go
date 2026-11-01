@@ -16,6 +16,9 @@ package object
 
 import (
 	"fmt"
+	"net/url"
+
+	"github.com/casdoor/casdoor/util"
 )
 
 // OauthProtectedResourceMetadata represents RFC 9728 OAuth 2.0 Protected Resource Metadata
@@ -56,4 +59,38 @@ func GetOauthProtectedResourceMetadataByApplication(host string, applicationName
 		ScopesSupported:        []string{"openid", "profile", "email", "read", "write"},
 		ResourceSigningAlg:     []string{"RS256"},
 	}
+}
+
+// GetOauthProtectedResourceMetadataByServer returns RFC 9728 Protected Resource Metadata for an MCP server behind the proxy
+// of Casdoor. Its authorization server is the issuer of the server's organization, so that MCP clients register and sign
+// in there. It returns nil when the server doesn't exist.
+func GetOauthProtectedResourceMetadataByServer(host string, owner string, name string) (*OauthProtectedResourceMetadata, error) {
+	server, err := GetServer(util.GetId(owner, name))
+	if err != nil || server == nil {
+		return nil, err
+	}
+
+	organization, err := getOrganization("admin", owner)
+	if err != nil {
+		return nil, err
+	}
+
+	authorizationServer := GetOidcIssuer(host)
+	if organization != nil {
+		authorizationServer = getOrganizationIssuerOrGlobal(host, organization)
+	}
+
+	return &OauthProtectedResourceMetadata{
+		Resource:               GetServerProxyUrl(host, owner, name),
+		AuthorizationServers:   []string{authorizationServer},
+		BearerMethodsSupported: []string{"header"},
+		ScopesSupported:        []string{"openid", "profile", "email", "offline_access"},
+		ResourceSigningAlg:     []string{"RS256"},
+	}, nil
+}
+
+// GetServerProxyUrl returns the URL MCP clients connect to for an MCP server behind the proxy of Casdoor
+func GetServerProxyUrl(host string, owner string, name string) string {
+	_, originBackend := getOriginFromHost(host)
+	return fmt.Sprintf("%s/api/server/%s/%s", originBackend, url.PathEscape(owner), url.PathEscape(name))
 }

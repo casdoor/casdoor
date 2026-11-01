@@ -15,6 +15,8 @@
 package controllers
 
 import (
+	"net/http"
+
 	"github.com/casdoor/casdoor/object"
 )
 
@@ -41,5 +43,29 @@ func (c *RootController) GetOauthProtectedResourceMetadataByApplication() {
 	application := c.Ctx.Input.Param(":application")
 	host := c.Ctx.Request.Host
 	c.Data["json"] = object.GetOauthProtectedResourceMetadataByApplication(host, application)
+	c.ServeJSON()
+}
+
+// GetOauthProtectedResourceMetadataByServer
+// @Title GetOauthProtectedResourceMetadataByServer
+// @Tag OAuth 2.0 API
+// @Description Get OAuth 2.0 Protected Resource Metadata for an MCP server behind the proxy (RFC 9728)
+// @Param owner path string true "The owner name of the server"
+// @Param name path string true "The name of the server"
+// @Success 200 {object} object.OauthProtectedResourceMetadata
+// @router /.well-known/oauth-protected-resource/api/server/:owner/:name [get]
+func (c *RootController) GetOauthProtectedResourceMetadataByServer() {
+	metadata, err := object.GetOauthProtectedResourceMetadataByServer(c.Ctx.Request.Host, c.Ctx.Input.Param(":owner"), c.Ctx.Input.Param(":name"))
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	if metadata == nil {
+		c.Ctx.Output.SetStatus(http.StatusNotFound)
+		c.ResponseError("server not found")
+		return
+	}
+
+	c.Data["json"] = metadata
 	c.ServeJSON()
 }
