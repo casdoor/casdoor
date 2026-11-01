@@ -20,7 +20,7 @@ type AirwallexPaymentProvider struct {
 
 func NewAirwallexPaymentProvider(clientId string, apiKey string) (*AirwallexPaymentProvider, error) {
 	isProd := conf.GetConfigString("runmode") == "prod"
-	apiEndpoint := "https://api-demo.airwallex.com/api/v1"
+	apiEndpoint := "https://api.sandbox.airwallex.com/api/v1"
 	apiCheckout := "https://checkout-demo.airwallex.com/#/standalone/checkout?"
 	if isProd {
 		apiEndpoint = "https://api.airwallex.com/api/v1"
