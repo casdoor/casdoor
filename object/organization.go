@@ -88,6 +88,7 @@ type Organization struct {
 	EnableSoftDeletion     bool       `json:"enableSoftDeletion"`
 	IsProfilePublic        bool       `json:"isProfilePublic"`
 	UseEmailAsUsername     bool       `json:"useEmailAsUsername"`
+	UseOrganizationIssuer  bool       `json:"useOrganizationIssuer"`
 	EnableTour             bool       `json:"enableTour"`
 	DisableSignin          bool       `json:"disableSignin"`
 	EnableExclusiveSignin  bool       `json:"enableExclusiveSignin"`

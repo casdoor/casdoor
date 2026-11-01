@@ -106,7 +106,10 @@ func GetIdJagToken(application *Application, clientSecret string, subjectToken s
 	}
 
 	nowTime := time.Now()
-	_, originBackend := getOriginFromHost(host)
+	issuer, err := GetOidcIssuerByApplication(host, application)
+	if err != nil {
+		return nil, nil, err
+	}
 	name := util.GenerateId()
 	claims := IdJagClaims{
 		Email:    user.Email,
@@ -114,7 +117,7 @@ func GetIdJagToken(application *Application, clientSecret string, subjectToken s
 		Resource: resource,
 		Scope:    expandedScope,
 		RegisteredClaims: jwt.RegisteredClaims{
-			Issuer:    originBackend,
+			Issuer:    issuer,
 			Subject:   user.Id,
 			Audience:  []string{audience},
 			ExpiresAt: jwt.NewNumericDate(nowTime.Add(idJagExpiresIn * time.Second)),

@@ -1058,6 +1058,8 @@
     "Trusted database hosts - Tooltip": "Trusted database hosts - Tooltip",
     "Use Email as username": "メールアドレスをユーザー名として使用",
     "Use Email as username - Tooltip": "ユーザー名フィールドがサインアップ時に表示されない場合、メールアドレスをユーザー名として使用します",
+    "Use organization issuer": "組織独自のIssuerを使用",
+    "Use organization issuer - Tooltip": "有効にすると、この組織は Keycloak の Realm のように独立した OIDC / OAuth 2.0 の発行者として動作します。ディスカバリードキュメントは <origin>/orgs/<organization>/.well-known/openid-configuration（および oauth-authorization-server）で提供され、DCR はクライアントをこの組織に登録し、組織内アプリケーションのトークンはグローバルな発行者ではなく <origin>/orgs/<organization> を発行者として使用します。すでにグローバルな発行者を検証しているクライアントは新しい発行者に変更する必要があります",
     "Use permanent avatar": "永続アバターを使用",
     "Use permanent avatar - Tooltip": "アバターを更新してもアバターのURLは変わりません",
     "User balance": "ユーザー残高",

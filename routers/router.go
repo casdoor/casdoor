@@ -418,6 +418,10 @@ func InitAPI() {
 	web.Router("/.well-known/webfinger", &controllers.RootController{}, "GET:GetWebFinger")
 	web.Router("/.well-known/:application/webfinger", &controllers.RootController{}, "GET:GetWebFingerByApplication")
 	web.Router("/.well-known/oauth-protected-resource", &controllers.RootController{}, "GET:GetOauthProtectedResourceMetadata")
+	web.Router("/orgs/:organization/.well-known/openid-configuration", &controllers.RootController{}, "GET:GetOidcDiscoveryByOrganization")
+	web.Router("/orgs/:organization/.well-known/oauth-authorization-server", &controllers.RootController{}, "GET:GetOidcDiscoveryByOrganization")
+	web.Router("/.well-known/openid-configuration/orgs/:organization", &controllers.RootController{}, "GET:GetOidcDiscoveryByOrganization")
+	web.Router("/.well-known/oauth-authorization-server/orgs/:organization", &controllers.RootController{}, "GET:GetOidcDiscoveryByOrganization")
 	web.Router("/.well-known/:application/oauth-protected-resource", &controllers.RootController{}, "GET:GetOauthProtectedResourceMetadataByApplication")
 
 	web.Router("/cas/:organization/:application/serviceValidate", &controllers.RootController{}, "GET:CasServiceValidate")

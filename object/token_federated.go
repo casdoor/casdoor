@@ -185,6 +185,9 @@ func isFederatedAudienceMatched(application *Application, credential *FederatedC
 	if credential.Audience == "" {
 		_, originBackend := getOriginFromHost(host)
 		expected = []string{originBackend, fmt.Sprintf("%s/api/login/oauth/access_token", originBackend), application.ClientId}
+		if issuer, err := GetOidcIssuerByApplication(host, application); err == nil && issuer != originBackend {
+			expected = append(expected, issuer)
+		}
 	}
 
 	for _, audience := range audiences {

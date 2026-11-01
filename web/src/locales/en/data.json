@@ -1060,6 +1060,8 @@
     "Trusted database hosts - Tooltip": "Database hosts that the syncers and Casbin adapters of this organization may connect to, even when they are intranet addresses or Casdoor's own database server, as a comma separated list of host or host:port. Only a global admin can change it.",
     "Use Email as username": "Use Email as username",
     "Use Email as username - Tooltip": "Use Email as username if the username field is not visible at signup",
+    "Use organization issuer": "Use organization issuer",
+    "Use organization issuer - Tooltip": "When enabled, this organization works as a separate OIDC / OAuth 2.0 issuer, like a Keycloak realm: its discovery document is served at <origin>/orgs/<organization>/.well-known/openid-configuration (and oauth-authorization-server), DCR registers clients into this organization, and the tokens of its applications use the issuer <origin>/orgs/<organization> instead of the global issuer. Clients that already check the global issuer have to be changed to the new issuer",
     "Use permanent avatar": "Use permanent avatar",
     "Use permanent avatar - Tooltip": "When enabled, user avatar URL will be a permanent link that does not change even when the avatar is updated",
     "User balance": "User balance",

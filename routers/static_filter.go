@@ -17,6 +17,7 @@ package routers
 import (
 	"compress/gzip"
 	stdcontext "context"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"html"
@@ -164,7 +165,10 @@ func fastAutoSignin(ctx *context.Context) (string, error) {
 	if strings.Contains(redirectUri, "?") {
 		sep = "&"
 	}
-	issuer := object.GetOidcIssuer(ctx.Request.Host)
+	issuer, err := object.GetOidcIssuerByApplication(ctx.Request.Host, application)
+	if err != nil {
+		return "", err
+	}
 	res := fmt.Sprintf("%s%scode=%s&state=%s&iss=%s", redirectUri, sep, url.QueryEscape(code.Code), url.QueryEscape(state), url.QueryEscape(issuer))
 	return res, nil
 }
@@ -239,6 +243,9 @@ func StaticFilter(ctx *context.Context) {
 	}
 
 	if strings.HasPrefix(urlPath, "/api/") || strings.HasPrefix(urlPath, "/.well-known/") {
+		return
+	}
+	if strings.HasPrefix(urlPath, "/orgs/") && strings.Contains(urlPath, "/.well-known/") {
 		return
 	}
 	if serveAuthCallbackHandlerScript(ctx) {
@@ -357,7 +364,7 @@ func serveFileWithReplace(w http.ResponseWriter, r *http.Request, name string, o
 		}
 		newContent = addBasePathToHtml(newContent)
 		newContent = addWebConfigToHtml(newContent)
-		newContent = addIssuerToHtml(newContent, r.Host)
+		newContent = addIssuerToHtml(newContent, r)
 	}
 
 	newContent = strings.ReplaceAll(newContent, oldStaticBaseUrl, newStaticBaseUrl)
@@ -377,9 +384,40 @@ func addWebConfigToHtml(content string) string {
 	return strings.Replace(content, "</head>", meta+"</head>", 1)
 }
 
-// addIssuerToHtml tells the frontend the issuer it has to send back as `iss` in authorization responses (RFC 9207)
-func addIssuerToHtml(content string, host string) string {
-	meta := fmt.Sprintf(`<meta name="casdoor-issuer" content="%s">`, html.EscapeString(object.GetOidcIssuer(host)))
+// getClientIdOfPage returns the client_id of the authorization request a page belongs to: in the query string of the
+// sign-in page, or in the state of the callback page of a third-party sign-in
+func getClientIdOfPage(r *http.Request) string {
+	clientId := r.URL.Query().Get("client_id")
+	if clientId != "" {
+		return clientId
+	}
+
+	state, err := base64.StdEncoding.DecodeString(r.URL.Query().Get("state"))
+	if err != nil {
+		return ""
+	}
+	query, err := url.ParseQuery(strings.TrimPrefix(string(state), "?"))
+	if err != nil {
+		return ""
+	}
+	return query.Get("client_id")
+}
+
+// addIssuerToHtml tells the frontend the issuer it has to send back as `iss` in authorization responses (RFC 9207),
+// the issuer of the client's organization when the organization has its own issuer
+func addIssuerToHtml(content string, r *http.Request) string {
+	issuer := object.GetOidcIssuer(r.Host)
+	if clientId := getClientIdOfPage(r); clientId != "" {
+		application, err := object.GetApplicationByClientId(clientId)
+		if err == nil && application != nil {
+			applicationIssuer, err := object.GetOidcIssuerByApplication(r.Host, application)
+			if err == nil {
+				issuer = applicationIssuer
+			}
+		}
+	}
+
+	meta := fmt.Sprintf(`<meta name="casdoor-issuer" content="%s">`, html.EscapeString(issuer))
 	return strings.Replace(content, "</head>", meta+"</head>", 1)
 }
 

@@ -1058,6 +1058,8 @@
     "Trusted database hosts - Tooltip": "Trusted database hosts - Tooltip",
     "Use Email as username": "Використовувати email як ім'я користувача",
     "Use Email as username - Tooltip": "Використовувати email як ім'я користувача, якщо поле імені користувача не відображається при реєстрації",
+    "Use organization issuer": "Використовувати issuer організації",
+    "Use organization issuer - Tooltip": "Якщо ввімкнено, ця організація працює як окремий OIDC / OAuth 2.0 issuer, як realm у Keycloak: документ discovery доступний за адресою <origin>/orgs/<organization>/.well-known/openid-configuration (та oauth-authorization-server), DCR реєструє клієнтів у цій організації, а токени її застосунків використовують issuer <origin>/orgs/<organization> замість глобального. Клієнтів, які вже перевіряють глобальний issuer, треба перевести на новий",
     "Use permanent avatar": "Використовувати постійний аватар",
     "Use permanent avatar - Tooltip": "Коли увімкнено, URL аватара користувача буде постійним посиланням, що не змінюється навіть після оновлення аватара",
     "User balance": "Баланс користувача",

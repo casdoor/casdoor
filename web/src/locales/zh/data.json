@@ -1060,6 +1060,8 @@
     "Trusted database hosts - Tooltip": "本组织的同步器和 Casbin 适配器可以连接的数据库主机，即使它们是内网地址或 Casdoor 自己的数据库服务器也放行。用英文逗号分隔，每项写 host 或 host:port。只有全局管理员能修改。",
     "Use Email as username": "邮箱作为用户名",
     "Use Email as username - Tooltip": "如果注册时用户名不可见，则使用邮箱作为用户名",
+    "Use organization issuer": "组织独立Issuer",
+    "Use organization issuer - Tooltip": "启用后，该组织作为独立的OIDC / OAuth 2.0签发方（类似Keycloak的Realm）：发现文档位于<origin>/orgs/<组织名>/.well-known/openid-configuration（以及oauth-authorization-server），动态客户端注册（DCR）会把客户端注册到本组织，组织下应用签发的令牌的issuer改为<origin>/orgs/<组织名>，不再使用全局issuer。已经按全局issuer校验令牌的客户端需要改成新的issuer",
     "Use permanent avatar": "使用永久头像",
     "Use permanent avatar - Tooltip": "启用后，用户头像URL将是永久链接，即使更新头像也不会改变",
     "User balance": "用户余额",

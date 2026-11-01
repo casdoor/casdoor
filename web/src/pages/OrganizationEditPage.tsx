@@ -523,6 +523,12 @@ export default function OrganizationEditPage() {
               onCheckedChange={(v) => update("useEmailAsUsername", v)}
             />
           </FormRow>
+          <FormRow labelKey="organization:Use organization issuer">
+            <Switch
+              checked={!!organization.useOrganizationIssuer}
+              onCheckedChange={(v) => update("useOrganizationIssuer", v)}
+            />
+          </FormRow>
           <FormRow labelKey="organization:Use permanent avatar">
             <Switch
               checked={!!organization.usePermanentAvatar}

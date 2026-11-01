@@ -1058,6 +1058,8 @@
     "Trusted database hosts - Tooltip": "Trusted database hosts - Tooltip",
     "Use Email as username": "Użyj e-mail jako nazwy użytkownika",
     "Use Email as username - Tooltip": "Użyj e-mail jako nazwy użytkownika, jeśli pole nazwy użytkownika nie jest widoczne przy rejestracji",
+    "Use organization issuer": "Użyj wystawcy organizacji",
+    "Use organization issuer - Tooltip": "Po włączeniu ta organizacja działa jako osobny wystawca OIDC / OAuth 2.0, jak realm w Keycloak: jej dokument discovery jest dostępny pod <origin>/orgs/<organization>/.well-known/openid-configuration (oraz oauth-authorization-server), DCR rejestruje klientów w tej organizacji, a tokeny jej aplikacji używają wystawcy <origin>/orgs/<organization> zamiast globalnego. Klienci, którzy już sprawdzają globalnego wystawcę, muszą zostać przestawieni na nowego",
     "Use permanent avatar": "Użyj stałego awatara",
     "Use permanent avatar - Tooltip": "Po włączeniu URL awatara użytkownika będzie stałym linkiem, który nie zmienia się nawet po aktualizacji awatara",
     "User balance": "Saldo użytkownika",

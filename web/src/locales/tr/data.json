@@ -1058,6 +1058,8 @@
     "Trusted database hosts - Tooltip": "Trusted database hosts - Tooltip",
     "Use Email as username": "Kullanıcı adı olarak E-posta kullan",
     "Use Email as username - Tooltip": "Kullanıcı adı alanı kayıtta görünür değilse kullanıcı adı olarak E-posta kullan",
+    "Use organization issuer": "Organizasyon issuer'ını kullan",
+    "Use organization issuer - Tooltip": "Etkinleştirildiğinde bu organizasyon, bir Keycloak realm'i gibi ayrı bir OIDC / OAuth 2.0 issuer olarak çalışır: keşif belgesi <origin>/orgs/<organization>/.well-known/openid-configuration (ve oauth-authorization-server) adresinde sunulur, DCR istemcileri bu organizasyona kaydeder ve uygulamalarının token'ları genel issuer yerine <origin>/orgs/<organization> issuer'ını kullanır. Genel issuer'ı zaten doğrulayan istemcilerin yeni issuer'a geçirilmesi gerekir",
     "Use permanent avatar": "Kalıcı avatar kullan",
     "Use permanent avatar - Tooltip": "Etkinleştirildiğinde, kullanıcı avatar URL'si avatar güncellendiğinde bile değişmeyen kalıcı bir bağlantı olur",
     "User balance": "Kullanıcı bakiyesi",

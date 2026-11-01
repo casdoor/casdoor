@@ -1058,6 +1058,8 @@
     "Trusted database hosts - Tooltip": "Trusted database hosts - Tooltip",
     "Use Email as username": "Sử dụng Email làm tên người dùng",
     "Use Email as username - Tooltip": "Sử dụng Email làm tên người dùng nếu trường tên người dùng không hiển thị khi đăng ký",
+    "Use organization issuer": "Dùng issuer riêng của tổ chức",
+    "Use organization issuer - Tooltip": "Khi bật, tổ chức này hoạt động như một issuer OIDC / OAuth 2.0 riêng, giống realm của Keycloak: tài liệu discovery nằm tại <origin>/orgs/<organization>/.well-known/openid-configuration (và oauth-authorization-server), DCR đăng ký client vào tổ chức này và token của các ứng dụng trong tổ chức dùng issuer <origin>/orgs/<organization> thay cho issuer toàn cục. Các client đang kiểm tra issuer toàn cục cần đổi sang issuer mới",
     "Use permanent avatar": "Dùng ảnh đại diện cố định",
     "Use permanent avatar - Tooltip": "Khi được bật, URL ảnh đại diện của người dùng sẽ là liên kết cố định không thay đổi ngay cả khi ảnh đại diện được cập nhật",
     "User balance": "Số dư người dùng",

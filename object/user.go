@@ -1423,19 +1423,22 @@ func DeleteUser(user *User) (bool, error) {
 }
 
 func GetUserInfo(user *User, scope string, aud string, host string) (*Userinfo, error) {
-	_, originBackend := getOriginFromHost(host)
-
-	resp := Userinfo{
-		Sub: user.Id,
-		Iss: originBackend,
-		Aud: aud,
-	}
-
 	// Build a TokenFields whitelist from the application config.
 	// If the application has no TokenFields configured (empty list), all fields are allowed.
 	application, err := GetApplicationByClientId(aud)
 	if err != nil {
 		return nil, err
+	}
+
+	issuer, err := GetOidcIssuerByApplication(host, application)
+	if err != nil {
+		return nil, err
+	}
+
+	resp := Userinfo{
+		Sub: user.Id,
+		Iss: issuer,
+		Aud: aud,
 	}
 	allowedFields := make(map[string]bool)
 	hasWhitelist := application != nil && len(application.TokenFields) > 0

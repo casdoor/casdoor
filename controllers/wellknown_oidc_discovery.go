@@ -16,6 +16,7 @@ package controllers
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -45,6 +46,29 @@ func (c *RootController) GetOidcDiscoveryByApplication() {
 	application := c.Ctx.Input.Param(":application")
 	host := c.Ctx.Request.Host
 	c.Data["json"] = object.GetOidcDiscovery(host, application)
+	c.ServeJSON()
+}
+
+// GetOidcDiscoveryByOrganization
+// @Title GetOidcDiscoveryByOrganization
+// @Tag OIDC API
+// @Description Get Oidc Discovery and OAuth 2.0 Authorization Server Metadata of an organization that has its own issuer
+// @Param organization path string true "organization name"
+// @Success 200 {object} object.OidcDiscovery
+// @router /orgs/:organization/.well-known/openid-configuration [get]
+func (c *RootController) GetOidcDiscoveryByOrganization() {
+	organization := c.Ctx.Input.Param(":organization")
+	oidcDiscovery, err := object.GetOidcDiscoveryByOrganization(c.Ctx.Request.Host, organization)
+	if err != nil {
+		c.responseWellKnownError(http.StatusInternalServerError, err)
+		return
+	}
+	if oidcDiscovery == nil {
+		c.responseWellKnownError(http.StatusNotFound, fmt.Errorf("the organization: %s doesn't exist or doesn't have its own issuer", organization))
+		return
+	}
+
+	c.Data["json"] = oidcDiscovery
 	c.ServeJSON()
 }
 
