@@ -46,11 +46,12 @@ func generateLogoutToken(application *Application, user *User, sessionId string,
 	claims := LogoutTokenClaims{
 		Events: events,
 		RegisteredClaims: jwt.RegisteredClaims{
-			Issuer:   issuer,
-			Subject:  user.Id,
-			Audience: []string{application.ClientId},
-			IssuedAt: jwt.NewNumericDate(nowTime),
-			ID:       util.GetId(application.Owner, util.GenerateId()),
+			Issuer:    issuer,
+			Subject:   user.Id,
+			Audience:  []string{application.ClientId},
+			IssuedAt:  jwt.NewNumericDate(nowTime),
+			ExpiresAt: jwt.NewNumericDate(nowTime.Add(2 * time.Minute)),
+			ID:        util.GetId(application.Owner, util.GenerateId()),
 		},
 	}
 
