@@ -396,10 +396,37 @@ func (c *ApiController) GetOAuthToken() {
 			c.ServeJSON()
 			return
 		}
+
+		// RFC 8707: the token request must keep the resource the device authorization was approved for
+		if resource != deviceAuthCacheCast.Resource {
+			c.Data["json"] = &object.TokenError{
+				Error:            object.InvalidTarget,
+				ErrorDescription: fmt.Sprintf("resource parameter does not match the device authorization request, expected: [%s], got: [%s]", deviceAuthCacheCast.Resource, resource),
+			}
+			c.SetTokenErrorHttpStatus()
+			c.ServeJSON()
+			return
+		}
+
 		username = deviceAuthCacheCast.UserName
 		scope = deviceAuthCacheCast.Scope
+		resource = deviceAuthCacheCast.Resource
+
+		// Atomically claim the device code: a device code is single-use (RFC 8628), and a plain
+		// Load followed by a Store after token generation lets concurrent requests all pass the
+		// status check and receive tokens.
+		claimed, ok := object.DeviceAuthMap.LoadAndDelete(deviceCode)
+		if !ok {
+			c.Data["json"] = &object.TokenError{
+				Error:            "access_denied",
+				ErrorDescription: "device_code has already been used",
+			}
+			c.SetTokenErrorHttpStatus()
+			c.ServeJSON()
+			return
+		}
 		pendingDeviceCode = deviceCode
-		pendingDeviceAuthCache = deviceAuthCacheCast
+		pendingDeviceAuthCache = claimed.(object.DeviceAuthCache)
 	} else if grantType == "urn:ietf:params:oauth:grant-type:device_code" {
 		c.Data["json"] = &object.TokenError{
 			Error:            "invalid_request",
@@ -412,12 +439,18 @@ func (c *ApiController) GetOAuthToken() {
 
 	token, err := object.GetOAuthToken(grantType, clientId, clientSecret, code, verifier, scope, nonce, username, password, countryCode, host, refreshToken, tag, avatar, phoneCode, phoneRequired, c.GetAcceptLanguage(), subjectToken, subjectTokenType, requestedTokenType, assertion, clientAssertion, clientAssertionType, audience, resource, dpopProof, util.GetClientIpFromRequest(c.Ctx.Request))
 	if err != nil {
+		if pendingDeviceCode != "" {
+			object.DeviceAuthMap.Store(pendingDeviceCode, pendingDeviceAuthCache)
+		}
 		c.ResponseError(err.Error())
 		return
 	}
 
 	if pendingDeviceCode != "" {
-		if _, isTokenError := token.(*object.TokenError); !isTokenError {
+		if _, isTokenError := token.(*object.TokenError); isTokenError {
+			// Give the device code back so the client can retry a failed exchange
+			object.DeviceAuthMap.Store(pendingDeviceCode, pendingDeviceAuthCache)
+		} else {
 			pendingDeviceAuthCache.Status = object.DeviceAuthStatusTokenIssued
 			object.DeviceAuthMap.Store(pendingDeviceCode, pendingDeviceAuthCache)
 		}

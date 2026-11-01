@@ -276,7 +276,7 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 			if !valid {
 				resp = &Response{Status: "error", Msg: "error: invalid_scope", Data: ""}
 			} else {
-				token, err := object.GetTokenByUserWithAuth(application, user, expandedScope, nonce, c.Ctx.Input.CruSession.SessionID(context.Background()), c.Ctx.Request.Host, authTime, responseType.Token && responseType.IdToken)
+				token, err := object.GetTokenByUserWithAuth(application, user, expandedScope, nonce, c.Ctx.Input.CruSession.SessionID(context.Background()), c.Ctx.Request.Host, authTime, responseType.Token && responseType.IdToken, "")
 				if err != nil {
 					c.ResponseError(err.Error(), nil)
 					return
@@ -1849,8 +1849,15 @@ func (c *ApiController) Callback() {
 func (c *ApiController) DeviceAuth() {
 	clientId := c.Ctx.Input.Query("client_id")
 	scope := c.Ctx.Input.Query("scope")
+	resource := c.Ctx.Input.Query("resource")
 	if clientId == "" {
 		c.responseDeviceAuthError(object.InvalidRequest, "missing client_id")
+		return
+	}
+
+	// Validate resource parameter (RFC 8707)
+	if err := object.ValidateResourceURI(resource); err != nil {
+		c.responseDeviceAuthError(object.InvalidTarget, err.Error())
 		return
 	}
 
@@ -1895,6 +1902,7 @@ func (c *ApiController) DeviceAuth() {
 		UserSignIn:    false,
 		UserName:      "",
 		Scope:         scope,
+		Resource:      resource,
 		ApplicationId: application.GetId(),
 		ClientId:      application.ClientId,
 		RequestAt:     time.Now(),

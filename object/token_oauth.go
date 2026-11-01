@@ -100,7 +100,7 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 	case "urn:ietf:params:oauth:grant-type:device_code":
 		// The user has already authenticated via browser in the device flow,
 		// so we skip password verification and mint a token directly.
-		token, tokenError, err = GetDeviceCodeToken(application, username, scope, nonce, host)
+		token, tokenError, err = GetDeviceCodeToken(application, username, scope, nonce, host, resource)
 	case "urn:ietf:params:oauth:grant-type:token-exchange": // Token Exchange Grant (RFC 8693)
 		if requestedTokenType == IdJagTokenType {
 			idJag, tokenError, err := GetIdJagToken(application, clientSecret, subjectToken, subjectTokenType, audience, resource, scope, host)
@@ -488,7 +488,7 @@ func GetImplicitToken(application *Application, username string, password string
 		return nil, tokenError, nil
 	}
 
-	return mintTokenForUser(application, user, scope, nonce, host)
+	return mintTokenForUser(application, user, scope, nonce, host, "")
 }
 
 func checkGrantUserSignin(application *Application, user *User, clientIp string, lang string) *TokenError {
@@ -558,7 +558,7 @@ func GetJwtBearerToken(application *Application, assertion string, scope string,
 		if tokenError = checkGrantUserSignin(application, user, clientIp, lang); tokenError != nil {
 			return nil, tokenError, nil
 		}
-		return mintTokenForUser(application, user, scope, nonce, host)
+		return mintTokenForUser(application, user, scope, nonce, host, "")
 	}
 
 	ok, claims, err := ValidateJwtAssertion(assertion, application, host)
@@ -582,20 +582,20 @@ func GetJwtBearerToken(application *Application, assertion string, scope string,
 
 // GetTokenByUser mints a token for the given user (Implicit flow helper).
 func GetTokenByUser(application *Application, user *User, scope string, nonce string, sessionId string, host string) (*Token, error) {
-	return GetTokenByUserWithAuth(application, user, scope, nonce, sessionId, host, 0, false)
+	return GetTokenByUserWithAuth(application, user, scope, nonce, sessionId, host, 0, false, "")
 }
 
 // GetTokenByUserWithAuth mints the tokens an implicit flow returns from the authorization endpoint:
 // authTime is when the user entered credentials, withAtHash is set when the access token is
-// returned together with the ID token
-func GetTokenByUserWithAuth(application *Application, user *User, scope string, nonce string, sessionId string, host string, authTime int64, withAtHash bool) (*Token, error) {
+// returned together with the ID token, resource is the RFC 8707 resource indicator to bind the token to
+func GetTokenByUserWithAuth(application *Application, user *User, scope string, nonce string, sessionId string, host string, authTime int64, withAtHash bool, resource string) (*Token, error) {
 	err := ExtendUserWithRolesAndPermissions(user)
 	if err != nil {
 		return nil, err
 	}
 
 	options := jwtTokenOptions{AuthTime: authTime, WithAtHash: withAtHash}
-	accessToken, refreshToken, idToken, tokenName, err := generateJwtTokenWithOptions(application, user, "", "", nonce, scope, "", host, options)
+	accessToken, refreshToken, idToken, tokenName, err := generateJwtTokenWithOptions(application, user, "", "", nonce, scope, resource, host, options)
 	if err != nil {
 		return nil, err
 	}
@@ -615,6 +615,7 @@ func GetTokenByUserWithAuth(application *Application, user *User, scope string, 
 		Scope:        scope,
 		TokenType:    "Bearer",
 		CodeIsUsed:   true,
+		Resource:     resource,
 		SessionId:    sessionId,
 	}
 	_, err = AddToken(token)
