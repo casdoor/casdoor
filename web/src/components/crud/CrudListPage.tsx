@@ -209,9 +209,14 @@ export function CrudListPage<T extends Record<string, any>>({
   const deleteSelected = async() => {
     const records = (rows ?? []).filter((row, index) => selected.has(keyOf(row, index)) && !deleteDisabled?.(row));
     setDeletingMany(true);
-    await submitDeleteMany({records, remove: remove!, onDeleted: () => {
+    await submitDeleteMany({records, remove: remove!, onDeleted: (deleted) => {
       setSelected(new Set());
-      refresh();
+      // step back a page when every row of the page was removed
+      if (query.page > 1 && deleted > 0 && deleted >= (rows ?? []).length) {
+        setQuery({page: query.page - 1});
+      } else {
+        refresh();
+      }
     }});
     setDeletingMany(false);
   };
