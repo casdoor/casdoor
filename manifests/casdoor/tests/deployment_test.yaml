@@ -60,6 +60,40 @@ tests:
               items:
                 - key: init_data.yaml
                   path: init_data.yaml
+  - it: passes the initial admin password from a value
+    set:
+      initAdminPassword.value: admin-password
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: initAdminPassword
+            value: admin-password
+  - it: reads the initial admin password from an existing secret
+    set:
+      initAdminPassword.existingSecret: casdoor-admin
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: initAdminPassword
+            valueFrom:
+              secretKeyRef:
+                name: casdoor-admin
+                key: initAdminPassword
+  - it: prefers the existing secret over the value
+    set:
+      initAdminPassword.value: admin-password
+      initAdminPassword.existingSecret: casdoor-admin
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: initAdminPassword
+            valueFrom:
+              secretKeyRef:
+                name: casdoor-admin
+                key: initAdminPassword
   - it: lets the probes be tuned or turned off
     set:
       probe.liveness.enabled: false

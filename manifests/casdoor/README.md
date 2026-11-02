@@ -56,6 +56,20 @@ Override any value from [values.yaml](https://github.com/casdoor/casdoor/blob/ma
 | `image.tag` | Image tag (defaults to chart appVersion) | `""` |
 | `config` | Casdoor `app.conf` content (Go template) | See values.yaml |
 | `configFromSecret` | Name of an existing Secret holding `app.conf` | `""` |
+| `initAdminPassword.value` | Password of `built-in/admin` for a new database; use `existingSecret` in production | `""` |
+| `initAdminPassword.existingSecret` | Name of an existing Secret that holds the initial password | `""` |
+| `initAdminPassword.existingSecretKey` | Key of the initial password in `existingSecret` | `initAdminPassword` |
+
+The initial admin password is used only when Casdoor creates the database, and only for `built-in/admin`. Read it from a Secret instead of putting it in the values file:
+
+```yaml
+initAdminPassword:
+  existingSecret: casdoor-admin
+```
+
+```bash
+kubectl create secret generic casdoor-admin --from-literal=initAdminPassword='<admin-password>'
+```
 
 ### Database
 

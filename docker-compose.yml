@@ -13,6 +13,9 @@ services:
         condition: service_healthy
     environment:
       RUNNING_IN_DOCKER: "true"
+      # Password of built-in/admin when Casdoor creates the database. It applies only to a
+      # new database; leave it commented to set the password on the /init-admin page.
+      # initAdminPassword: "change-me"
     volumes:
       - ./conf:/conf/
   db:

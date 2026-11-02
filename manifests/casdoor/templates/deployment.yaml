@@ -48,6 +48,16 @@ spec:
           env:
             - name: RUNNING_IN_DOCKER
               value: "true"
+            {{- if .Values.initAdminPassword.existingSecret }}
+            - name: initAdminPassword
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.initAdminPassword.existingSecret }}
+                  key: {{ .Values.initAdminPassword.existingSecretKey | default "initAdminPassword" }}
+            {{- else if .Values.initAdminPassword.value }}
+            - name: initAdminPassword
+              value: {{ .Values.initAdminPassword.value | quote }}
+            {{- end }}
             {{- if .Values.initData.enabled }}
             - name: initDataFile
               value: {{ printf "/init-data/%s" (include "casdoor.initDataKey" .) | quote }}
