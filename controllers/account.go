@@ -443,9 +443,10 @@ func (c *ApiController) Logout() {
 		// replaces CruSession's id, so reading it afterwards would miss the id stored in the DB.
 		beegoSessionId := c.Ctx.Input.CruSession.SessionID(context.Background())
 
-		// Sent before deleteUserSession(), which expires the tokens that SendBackchannelLogout() looks up
+		// Sent before deleteUserSession(), which expires the tokens that SendBackchannelLogout() looks up.
+		// Only the applications signed in with this session are told, the user's other devices stay signed in.
 		bcOwner, bcUsername := util.GetOwnerAndNameFromIdNoCheck(user)
-		object.SendBackchannelLogout(bcOwner, bcUsername, "", c.Ctx.Request.Host)
+		object.SendBackchannelLogout(bcOwner, bcUsername, beegoSessionId, c.Ctx.Request.Host)
 		object.SendSamlLogout(bcOwner, bcUsername, []string{beegoSessionId}, c.Ctx.Request.Host)
 
 		c.ClearUserSession()
@@ -510,8 +511,15 @@ func (c *ApiController) Logout() {
 			c.Ctx.Input.SetParam("recordUserId", user)
 		}
 
-		// Sent before the tokens are expired, SendBackchannelLogout() only sees active ones
-		object.SendBackchannelLogout(token.Organization, token.User, "", c.Ctx.Request.Host)
+		// The session the token was minted under is ended even when the RP calls from its backend
+		// without the browser's cookie, so that its other tokens and the browser sign-in go too
+		if token.SessionId != "" {
+			err = object.LogoutSession(token.Organization, token.User, token.SessionId, c.Ctx.Request.Host)
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
+		}
 
 		_, err = object.ExpireToken(token)
 		if err != nil {
@@ -523,8 +531,12 @@ func (c *ApiController) Logout() {
 		// replaces CruSession's id, so reading it afterwards would miss the id stored in the DB.
 		beegoSessionId := c.Ctx.Input.CruSession.SessionID(context.Background())
 
-		samlOwner, samlUsername := util.GetOwnerAndNameFromIdNoCheck(user)
-		object.SendSamlLogout(samlOwner, samlUsername, []string{beegoSessionId}, c.Ctx.Request.Host)
+		if beegoSessionId != token.SessionId {
+			// Sent before deleteUserSession(), which expires the tokens that SendBackchannelLogout() looks up
+			cookieOwner, cookieUsername := util.GetOwnerAndNameFromIdNoCheck(user)
+			object.SendBackchannelLogout(cookieOwner, cookieUsername, beegoSessionId, c.Ctx.Request.Host)
+			object.SendSamlLogout(cookieOwner, cookieUsername, []string{beegoSessionId}, c.Ctx.Request.Host)
+		}
 
 		c.ClearUserSession()
 		c.ClearTokenSession()
@@ -615,12 +627,12 @@ func (c *ApiController) SsoLogout() {
 		return
 	}
 
-	// Send OIDC Back-Channel Logout notifications BEFORE expiring tokens,
+	// The OIDC Back-Channel Logout notifications are sent BEFORE expiring tokens,
 	// because SendBackchannelLogout calls GetActiveTokensByUser (expires_in > 0).
-	object.SendBackchannelLogout(owner, username, currentSessionId, c.Ctx.Request.Host)
-
 	if logoutAllSessions {
-		// Logout from all sessions: expire all tokens and delete all sessions
+		// Logout from all sessions: expire all tokens and delete all sessions. The logout token
+		// carries no "sid", which tells the applications to end every session of the user.
+		object.SendBackchannelLogout(owner, username, "", c.Ctx.Request.Host)
 		object.SendSamlLogout(owner, username, nil, c.Ctx.Request.Host)
 
 		_, err = object.ExpireTokenByUser(owner, username)
@@ -649,8 +661,9 @@ func (c *ApiController) SsoLogout() {
 
 		util.LogInfo(c.Ctx, "API: [%s] logged out from all applications", user)
 	} else {
-		// Logout from current session only
+		// Logout from current session only, only the applications signed in with it are told
 		sessionIds = []string{currentSessionId}
+		object.SendBackchannelLogout(owner, username, currentSessionId, c.Ctx.Request.Host)
 		object.SendSamlLogout(owner, username, sessionIds, c.Ctx.Request.Host)
 
 		// Only delete the current session's Beego session
@@ -687,6 +700,45 @@ func (c *ApiController) SsoLogout() {
 
 	// Propagate logout to external Custom OAuth2 providers
 	object.InvokeCustomProviderLogout(ssoApplication, ssoSessionToken)
+
+	c.ResponseOk()
+}
+
+// LogoutUser
+// @Title LogoutUser
+// @Tag Login API
+// @Description sign a user out of all sessions and applications, e.g. after the account is compromised, the user is kept
+// @Param   body    body   object.User  true        "The owner and name of the user"
+// @Success 200 {object} controllers.Response The Response object
+// @router /logout-user [post]
+func (c *ApiController) LogoutUser() {
+	var body object.User
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, &body)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	user, err := object.GetUser(util.GetId(body.Owner, body.Name))
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	if user == nil {
+		c.ResponseError(fmt.Sprintf(c.T("general:The user: %s doesn't exist"), util.GetId(body.Owner, body.Name)))
+		return
+	}
+
+	if !c.IsAdminOf(user) {
+		c.ResponseError(c.T("auth:Unauthorized operation"))
+		return
+	}
+
+	err = object.TerminateUserAccess(user)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
 
 	c.ResponseOk()
 }

@@ -182,7 +182,7 @@ func (syncer *Syncer) forbidRemovedUsers(users []*User, myOUsers map[string]*Use
 
 		TriggerWebhookForUser("forbid-user", user)
 
-		err = terminateUserAccess(user)
+		err = TerminateUserAccess(user)
 		if err != nil {
 			return err
 		}

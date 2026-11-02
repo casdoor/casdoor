@@ -150,7 +150,9 @@ func (c *ApiController) DeleteSession() {
 	}
 
 	if sessionId != "" {
-		c.Data["json"] = wrapActionResponse(object.DeleteSessionId(util.GetSessionId(session.Owner, session.Name, session.Application), sessionId))
+		// Ending one session is a sign-out of it: the applications signed in with it are told,
+		// and the id is removed from every Session row of the user, not only this one
+		c.Data["json"] = wrapActionResponse(object.LogoutSessionId(util.GetSessionId(session.Owner, session.Name, session.Application), sessionId, c.Ctx.Request.Host))
 		c.ServeJSON()
 		return
 	}

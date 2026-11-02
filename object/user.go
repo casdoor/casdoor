@@ -1016,7 +1016,7 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 
 	if affected != 0 && isUserAccessRevoked(oldUser, user, columns) {
 		// The tokens and sessions are keyed by the old user name, it may have just been renamed
-		err = terminateUserAccess(oldUser)
+		err = TerminateUserAccess(oldUser)
 		if err != nil {
 			return true, fmt.Errorf("the user: %s is updated, but terminating its access failed: %w", id, err)
 		}
@@ -1097,7 +1097,7 @@ func UpdateUserForAllFields(id string, user *User) (bool, error) {
 	}
 
 	if affected != 0 && isUserAccessRevoked(oldUser, user, nil) {
-		err = terminateUserAccess(oldUser)
+		err = TerminateUserAccess(oldUser)
 		if err != nil {
 			return true, fmt.Errorf("the user: %s is updated, but terminating its access failed: %w", id, err)
 		}
@@ -1354,10 +1354,10 @@ func triggerUserForbiddenWebhook(oldUser *User, user *User, columns []string) {
 	}
 }
 
-// terminateUserAccess forces the user offline, it expires the user's tokens and drops all of its
+// TerminateUserAccess forces the user offline, it expires the user's tokens and drops all of its
 // sessions, in the same way as the "logout from all applications" flow. It does nothing when the
 // user has neither active tokens nor sessions, so it is safe to call it more than once
-func terminateUserAccess(user *User) error {
+func TerminateUserAccess(user *User) error {
 	tokens, err := GetActiveTokensByUser(user.Owner, user.Name)
 	if err != nil {
 		return err
@@ -1406,7 +1406,7 @@ func terminateUserAccess(user *User) error {
 
 func DeleteUser(user *User) (bool, error) {
 	// Forced offline the user first, its tokens would otherwise outlive the user row
-	err := terminateUserAccess(user)
+	err := TerminateUserAccess(user)
 	if err != nil {
 		return false, err
 	}

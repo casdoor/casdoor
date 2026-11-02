@@ -377,6 +377,44 @@ func DeleteUserSessionId(owner string, name string, beegoSessionId string) error
 	return nil
 }
 
+// LogoutSession ends one Casdoor session of the user together with its tokens, and tells the OIDC
+// and SAML applications signed in with it, while the user's other sessions are left alone
+func LogoutSession(owner string, name string, sessionId string, host string) error {
+	// Sent before DeleteUserSessionId(), which expires the tokens that SendBackchannelLogout() looks up
+	SendBackchannelLogout(owner, name, sessionId, host)
+	SendSamlLogout(owner, name, []string{sessionId}, host)
+
+	err := DeleteUserSessionId(owner, name, sessionId)
+	if err != nil {
+		return err
+	}
+
+	DeleteBeegoSession([]string{sessionId})
+	return nil
+}
+
+// LogoutSessionId is LogoutSession for the session id (raw or hashed) of the Session row id
+func LogoutSessionId(id string, sessionId string, host string) (bool, error) {
+	session, err := GetSingleSession(id)
+	if err != nil {
+		return false, err
+	}
+	if session == nil {
+		return false, nil
+	}
+
+	sessionId = resolveSessionId(session, sessionId)
+	if sessionId == "" {
+		return false, nil
+	}
+
+	err = LogoutSession(session.Owner, session.Name, sessionId, host)
+	if err != nil {
+		return false, err
+	}
+	return true, nil
+}
+
 // EnforceBrowserSessionLimit keeps the current Beego session id of the user plus the limit-1 most
 // recently active other live ones across all applications, and drops the rest together with the
 // tokens minted under them. An SSO sign-in into another application reuses the same id, so it is

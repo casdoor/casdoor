@@ -118,7 +118,7 @@ func (syncer *Syncer) updateUserForOriginalFields(user *User, key string) (bool,
 
 		// A user disabled in the upstream directory is forced offline like one forbidden by an admin
 		if isUserAccessRevoked(&oldUser, user, columns) {
-			err = terminateUserAccess(&oldUser)
+			err = TerminateUserAccess(&oldUser)
 			if err != nil {
 				return true, err
 			}
