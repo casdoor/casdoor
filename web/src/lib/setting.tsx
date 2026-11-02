@@ -2447,7 +2447,7 @@ export function getApiPaths() {
     }
     if (obj === "user") {
       res.push("remove-user-from-group", "upload-users");
-      res.push("check-user-password", "set-password", "reset-email-or-phone");
+      res.push("check-user-password", "set-password", "reset-email-or-phone", "merge-user");
       res.push("verify-identification");
       res.push("forbid-user", "unforbid-user"); // Custom events for the user being forbidden or unforbidden by any path
     }

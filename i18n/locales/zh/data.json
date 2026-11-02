@@ -85,6 +85,7 @@
     "Please register using the phone  corresponding to the invitation code": "请使用邀请码关联的手机号注册",
     "Please register using the username corresponding to the invitation code": "请使用邀请码关联的用户名注册",
     "Session outdated, please login again": "会话已过期，请重新登录",
+    "The account has already linked another %s account": "该账号已绑定另一个 %s 账号",
     "The invitation code has already been used": "邀请码已被使用",
     "The password must contain at least one special character": "密码必须包含至少一个特殊字符",
     "The password must contain at least one uppercase letter, one lowercase letter and one digit": "密码必须包含至少一个大写字母、一个小写字母和一个数字",

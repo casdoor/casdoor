@@ -370,6 +370,8 @@ func InitAPI() {
 	web.Router("/api/verify-code", &controllers.ApiController{}, "POST:VerifyCode")
 	web.Router("/api/verify-captcha", &controllers.ApiController{}, "POST:VerifyCaptcha")
 	web.Router("/api/reset-email-or-phone", &controllers.ApiController{}, "POST:ResetEmailOrPhone")
+	web.Router("/api/check-user-merge", &controllers.ApiController{}, "GET:CheckUserMerge")
+	web.Router("/api/merge-user", &controllers.ApiController{}, "POST:MergeUser")
 	web.Router("/api/get-captcha", &controllers.ApiController{}, "GET:GetCaptcha")
 	web.Router("/api/get-verifications", &controllers.ApiController{}, "GET:GetVerifications")
 

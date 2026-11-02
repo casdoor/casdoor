@@ -98,6 +98,8 @@ p, *, *, POST, /api/v1/traces, *, *
 p, *, *, POST, /api/v1/metrics, *, *
 p, *, *, POST, /api/v1/logs, *, *
 p, *, *, POST, /api/reset-email-or-phone, *, *
+p, *, *, GET, /api/check-user-merge, *, *
+p, *, *, POST, /api/merge-user, *, *
 p, *, *, POST, /api/upload-resource, *, *
 p, *, *, GET, /.well-known/openid-configuration, *, *
 p, *, *, GET, /.well-known/oauth-authorization-server, *, *

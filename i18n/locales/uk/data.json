@@ -85,6 +85,7 @@
     "Please register using the phone  corresponding to the invitation code": "Будь ласка, зареєструйтесь, використовуючи телефон, що відповідає коду запрошення",
     "Please register using the username corresponding to the invitation code": "Будь ласка, зареєструйтесь, використовуючи ім’я користувача, що відповідає коду запрошення",
     "Session outdated, please login again": "Сесію застаро, будь ласка, увійдіть знову",
+    "The account has already linked another %s account": "The account has already linked another %s account",
     "The invitation code has already been used": "Код запрошення вже використано",
     "The password must contain at least one special character": "Пароль повинен містити принаймні один спеціальний символ",
     "The password must contain at least one uppercase letter, one lowercase letter and one digit": "Пароль повинен містити принаймні одну велику літеру, одну малу літеру та одну цифру",

@@ -26,6 +26,28 @@ export function ResetModal({application, destType, buttonText, countryCode = "",
   const [submitting, setSubmitting] = React.useState(false);
   const [dest, setDest] = React.useState("");
   const [code, setCode] = React.useState("");
+  // the new email or phone belongs to another account, which is merged into this one once it is verified
+  const [mergeable, setMergeable] = React.useState(false);
+
+  React.useEffect(() => {
+    setMergeable(false);
+    const valid = destType === "phone" ? Setting.isValidPhone(dest, countryCode) : Setting.isValidEmail(dest);
+    if (!open || !valid) {
+      return;
+    }
+    let active = true;
+    const timer = setTimeout(() => {
+      UserBackend.checkUserMerge(destType, dest, countryCode, "current").then((res: any) => {
+        if (active && res.status === "ok" && res.data === "merge") {
+          setMergeable(true);
+        }
+      });
+    }, 400);
+    return () => {
+      active = false;
+      clearTimeout(timer);
+    };
+  }, [open, dest, destType, countryCode]);
 
   const close = () => {
     setOpen(false);
@@ -46,9 +68,12 @@ export function ResetModal({application, destType, buttonText, countryCode = "",
     }
 
     setSubmitting(true);
-    UserBackend.resetEmailOrPhone(dest, destType, code).then((res: any) => {
+    const request = mergeable
+      ? UserBackend.mergeUser({type: destType, dest, countryCode, code, keep: "current"})
+      : UserBackend.resetEmailOrPhone(dest, destType, code);
+    request.then((res: any) => {
       if (res.status === "ok") {
-        Setting.showMessage("success", i18next.t("user:Email/phone reset successfully"));
+        Setting.showMessage("success", mergeable ? i18next.t("user:Accounts merged successfully") : i18next.t("user:Email/phone reset successfully"));
         window.location.reload();
       } else {
         Setting.showMessage("error", i18next.t("user:" + res.msg));
@@ -96,10 +121,13 @@ export function ResetModal({application, destType, buttonText, countryCode = "",
                 application={application}
               />
             </div>
+            {mergeable ? (
+              <p className="text-sm text-muted-foreground">{i18next.t("user:It already belongs to another account. Once it is verified, that account is merged into this one and deleted.")}</p>
+            ) : null}
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={close}>{i18next.t("general:Cancel")}</Button>
-            <Button loading={submitting} onClick={handleOk}>{buttonText}</Button>
+            <Button loading={submitting} onClick={handleOk}>{mergeable ? i18next.t("user:Merge accounts") : buttonText}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

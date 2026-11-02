@@ -2,6 +2,7 @@ import * as React from "react";
 import i18next from "i18next";
 import {useLocation, useNavigate} from "react-router-dom";
 import {Alert, AlertDescription} from "@/components/ui/alert";
+import {Button} from "@/components/ui/button";
 import {Loading} from "@/components/common/Loading";
 import {AuthLayout} from "@/components/auth/AuthLayout";
 import {MfaVerify, NextMfa} from "@/components/auth/MfaVerify";
@@ -10,6 +11,7 @@ import * as Provider from "@/auth/Provider";
 import * as Util from "@/auth/Util";
 import * as ApplicationBackend from "@/backend/ApplicationBackend";
 import * as AuthBackend from "@/backend/AuthBackend";
+import * as UserBackend from "@/backend/UserBackend";
 import * as Setting from "@/lib/setting";
 
 /**
@@ -90,6 +92,9 @@ export default function AuthCallback() {
   // login and leave them unable to finish.
   const [mfa, setMfa] = React.useState<PendingMfa | null>(null);
   const [application, setApplication] = React.useState<any>(null);
+  // the third-party account being linked already belongs to another account, which can be merged into this one
+  const [merge, setMerge] = React.useState<{name: string; displayName: string; from: string} | null>(null);
+  const [merging, setMerging] = React.useState(false);
   const startedRef = React.useRef(false);
 
   React.useEffect(() => {
@@ -233,6 +238,10 @@ export default function AuthCallback() {
         if (oauth) {
           from += `?oauth=${oauth}`;
         }
+        if (res.data?.merge === true) {
+          setMerge({name: res.data.name, displayName: res.data.displayName, from});
+          return;
+        }
         navigate(from);
       } else if (type === "saml") {
         if (res.data2?.method === "POST") {
@@ -355,6 +364,43 @@ export default function AuthCallback() {
           application={application}
           onSuccess={(res) => mfa.onSuccess(res)}
         />
+      </AuthLayout>
+    );
+  }
+
+  if (merge !== null) {
+    const confirmMerge = () => {
+      setMerging(true);
+      UserBackend.mergeUser({type: "provider"})
+        .then((res: any) => {
+          if (res.status === "ok") {
+            Setting.showMessage("success", i18next.t("user:Accounts merged successfully"));
+            navigate(merge.from);
+          } else {
+            setMerge(null);
+            setMsg(res.msg);
+          }
+        })
+        .finally(() => setMerging(false));
+    };
+    const otherAccount = merge.displayName ? `${merge.displayName} (${merge.name})` : merge.name;
+
+    return (
+      <AuthLayout application={application}>
+        <div className="space-y-4">
+          <h1 className="text-center text-lg font-semibold">{i18next.t("user:Merge accounts")}</h1>
+          <p className="text-sm text-muted-foreground">
+            {i18next.t("user:This third-party account is already linked to the account {account}. Merge it into the account you are signed in with? Its sign-in methods will move to your current account and it will be deleted.").replace("{account}", otherAccount)}
+          </p>
+          <div className="flex gap-2">
+            <Button variant="outline" className="flex-1" disabled={merging} onClick={() => navigate(merge.from)}>
+              {i18next.t("general:Cancel")}
+            </Button>
+            <Button className="flex-1" loading={merging} onClick={confirmMerge}>
+              {i18next.t("user:Merge accounts")}
+            </Button>
+          </div>
+        </div>
       </AuthLayout>
     );
   }

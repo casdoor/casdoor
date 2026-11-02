@@ -324,8 +324,10 @@
     window.location.replace(url.toString());
   }
 
+  // a link to a third-party account that already belongs to another account asks to merge the two
   function shouldFallbackToReact(res) {
-    return res.data === "RequiredMfa" || res.data === "NextMfa" || res.data === "SelectPlan" || res.data === "BuyPlanResult" || res.data3;
+    return res.data === "RequiredMfa" || res.data === "NextMfa" || res.data === "SelectPlan" || res.data === "BuyPlanResult" || res.data3 ||
+      !!(res.data && typeof res.data === "object" && res.data.merge === true);
   }
 
   function getFromLink() {

@@ -26,7 +26,7 @@ import * as Setting from "@/lib/setting";
  */
 export default function PromptPage({application: applicationProp}: {application?: any} = {}) {
   const params = useParams();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const {account, reload} = useAccount();
 
@@ -37,6 +37,8 @@ export default function PromptPage({application: applicationProp}: {application?
   const [emailCode, setEmailCode] = React.useState("");
   const [phoneCode, setPhoneCode] = React.useState("");
   const [saving, setSaving] = React.useState(false);
+  // the new phone or email belongs to another account, which this one is merged into once it is verified
+  const [mergeType, setMergeType] = React.useState("");
 
   React.useEffect(() => {
     // the application editor's preview hands its own object over
@@ -65,9 +67,38 @@ export default function PromptPage({application: applicationProp}: {application?
 
   const affiliation = useAffiliation(application, user);
 
-  const finishAndJump = () => {
+  // update-user drops email and phone for a non-admin, so a new one is confirmed with a code
+  // through /api/reset-email-or-phone, the same way the account page changes them
+  const emailChanged = (user?.email ?? "") !== (savedUser?.email ?? "");
+  const phoneChanged = (user?.phone ?? "") !== (savedUser?.phone ?? "");
+  const defaultCountryCode = application?.organizationObj?.countryCodes?.[0] ?? "";
+  const phoneCountryCode = user?.countryCode || defaultCountryCode;
+
+  React.useEffect(() => {
+    setMergeType("");
+    const changed = phoneChanged && Setting.isValidPhone(user?.phone ?? "", phoneCountryCode) ? "phone" :
+      emailChanged && Setting.isValidEmail(user?.email ?? "") ? "email" : "";
+    if (changed === "") {
+      return;
+    }
+    let active = true;
+    const timer = setTimeout(() => {
+      const dest = changed === "phone" ? user.phone : user.email;
+      UserBackend.checkUserMerge(changed, dest, phoneCountryCode, "other").then((res: any) => {
+        if (active && res.status === "ok" && res.data === "merge") {
+          setMergeType(changed);
+        }
+      });
+    }, 400);
+    return () => {
+      active = false;
+      clearTimeout(timer);
+    };
+  }, [phoneChanged, emailChanged, user?.phone, user?.email, phoneCountryCode]);
+
+  const finishAndJump = (newCode = "") => {
     const redirectUri = searchParams.get("redirectUri");
-    const code = searchParams.get("code");
+    const code = newCode || searchParams.get("code");
     const state = searchParams.get("state");
     if (redirectUri !== null && code !== null && state !== null) {
       Util.sendOAuthResponse({redirectUri, state, responseMode: searchParams.get("responseMode") ?? ""}, {code});
@@ -98,7 +129,7 @@ export default function PromptPage({application: applicationProp}: {application?
           <Alert variant="warning">
             <AlertDescription>{i18next.t("application:You are unexpected to see this prompt page")}</AlertDescription>
           </Alert>
-          <Button className="w-full" onClick={finishAndJump}>
+          <Button className="w-full" onClick={() => finishAndJump()}>
             {i18next.t("login:Sign In")}
           </Button>
         </div>
@@ -108,10 +139,40 @@ export default function PromptPage({application: applicationProp}: {application?
 
   const update = (fields: Record<string, any>) => setUser((prev: any) => ({...prev, ...fields}));
 
-  // update-user drops email and phone for a non-admin, so a new one is confirmed with a code
-  // through /api/reset-email-or-phone, the same way the account page changes them
-  const emailChanged = (user?.email ?? "") !== (savedUser?.email ?? "");
-  const phoneChanged = (user?.phone ?? "") !== (savedUser?.phone ?? "");
+  // finishes on the kept account: it gets the authorization code, or still has to fill in what it lacks
+  const mergeAndContinue = async() => {
+    const mergeRes: any = await UserBackend.mergeUser({
+      type: mergeType,
+      dest: mergeType === "phone" ? user.phone : user.email,
+      countryCode: phoneCountryCode,
+      code: mergeType === "phone" ? phoneCode : emailCode,
+      keep: "other",
+      oauthCode: searchParams.get("code") ?? "",
+      redirectUri: searchParams.get("redirectUri") ?? "",
+      state: searchParams.get("state") ?? "",
+    });
+    if (mergeRes.status !== "ok") {
+      Setting.showMessage("error", mergeRes.msg);
+      return;
+    }
+    Setting.showMessage("success", i18next.t("user:Accounts merged successfully"));
+
+    const [owner, name] = String(mergeRes.data2).split("/");
+    const userRes: any = await UserBackend.getUser(owner, name);
+    if (userRes.status === "ok" && !Setting.isPromptAnswered(userRes.data, application)) {
+      const nextParams = new URLSearchParams(searchParams);
+      if (mergeRes.data) {
+        nextParams.set("code", mergeRes.data);
+      }
+      setSearchParams(nextParams, {replace: true});
+      setMergeType("");
+      setPhoneCode("");
+      setEmailCode("");
+      await reload();
+      return;
+    }
+    finishAndJump(mergeRes.data);
+  };
 
   const submit = async() => {
     setSaving(true);
@@ -130,7 +191,7 @@ export default function PromptPage({application: applicationProp}: {application?
         [emailChanged, user.email, "email", emailCode],
         [phoneChanged, user.phone, "phone", phoneCode],
       ]) {
-        if (!changed) {
+        if (!changed || destType === mergeType) {
           continue;
         }
         const resetRes: any = await UserBackend.resetEmailOrPhone(dest, destType, code, phoneCountryCode);
@@ -138,6 +199,10 @@ export default function PromptPage({application: applicationProp}: {application?
           Setting.showMessage("error", resetRes.msg);
           return;
         }
+      }
+      if (mergeType !== "") {
+        await mergeAndContinue();
+        return;
       }
       Setting.showMessage("success", i18next.t("general:Successfully saved"));
       reload();
@@ -150,8 +215,6 @@ export default function PromptPage({application: applicationProp}: {application?
   };
 
   const promptedItems = (application?.signupItems ?? []).filter((item: any) => Setting.isSignupItemPrompted(item));
-  const defaultCountryCode = application?.organizationObj?.countryCodes?.[0] ?? "";
-  const phoneCountryCode = user?.countryCode || defaultCountryCode;
   const hasPromptedProviders = (application?.providers ?? []).some((item: any) => Setting.isProviderPrompted(item));
   // "Binding providers" only fits a page that asks for nothing but third-party accounts
   const hasPromptedFields = promptedItems.some((item: any) => Setting.PromptedSignupItemFields[item.name] !== undefined) ||
@@ -259,6 +322,9 @@ export default function PromptPage({application: applicationProp}: {application?
                     applicationId={Setting.getApplicationName(application)}
                   />
                 ) : null}
+                {mergeType === "email" ? (
+                  <p className="text-sm text-muted-foreground">{i18next.t("user:It already belongs to another account. Once it is verified, you continue with that account, and the account you are signed in with is merged into it and deleted.")}</p>
+                ) : null}
               </div>
             );
           }
@@ -298,6 +364,9 @@ export default function PromptPage({application: applicationProp}: {application?
                     applicationId={Setting.getApplicationName(application)}
                   />
                 ) : null}
+                {mergeType === "phone" ? (
+                  <p className="text-sm text-muted-foreground">{i18next.t("user:It already belongs to another account. Once it is verified, you continue with that account, and the account you are signed in with is merged into it and deleted.")}</p>
+                ) : null}
               </div>
             );
           }
@@ -310,7 +379,7 @@ export default function PromptPage({application: applicationProp}: {application?
           disabled={saving || !Setting.isPromptAnswered(user, application) || (emailChanged && emailCode === "") || (phoneChanged && phoneCode === "")}
           onClick={submit}
         >
-          {i18next.t("code:Submit and complete")}
+          {mergeType !== "" ? i18next.t("user:Merge accounts and continue") : i18next.t("code:Submit and complete")}
         </Button>
       </div>
     </AuthLayout>

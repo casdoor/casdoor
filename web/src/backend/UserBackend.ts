@@ -179,6 +179,32 @@ export function verifyCaptcha(owner, name, captchaType, captchaToken, clientSecr
   });
 }
 
+/** Data is "merge" when the email or phone belongs to another account that can be merged with the signed-in one. */
+export function checkUserMerge(type: string, dest: string, countryCode: string, keep: "current" | "other") {
+  const query = new URLSearchParams({type, dest, countryCode, keep});
+  return fetch(`${Setting.ServerUrl}/api/check-user-merge?${query}`, {
+    method: "GET",
+    credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}
+
+/** Merges the signed-in user with the account that owns the verified email, phone or third-party account. */
+export function mergeUser(params: Record<string, string>) {
+  const formData = new FormData();
+  Object.entries(params).forEach(([key, value]) => formData.append(key, value ?? ""));
+  return fetch(`${Setting.ServerUrl}/api/merge-user`, {
+    method: "POST",
+    credentials: "include",
+    body: formData,
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}
+
 export function resetEmailOrPhone(dest, type, code, countryCode = "") {
   const formData = new FormData();
   formData.append("dest", dest);
