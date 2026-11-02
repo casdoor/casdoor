@@ -532,9 +532,10 @@ export default function LoginPage({type = "login", application: applicationProp,
         } else if (promptNone) {
           redirectWithOAuthError("server_error", accountRes.msg);
         } else {
-          Setting.showMessage("error", `${i18next.t("application:Failed to sign in")}: ${accountRes.msg}`);
+          // in a cross-site iframe the session cookie is not sent, so the account cannot be read: hand the code over as AuthCallback does
+          goToRedirectUrl();
         }
-      });
+      }).catch(goToRedirectUrl);
       return;
     }
     if (oAuthParams.noRedirect === "true") {
