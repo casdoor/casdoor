@@ -219,15 +219,19 @@ export default function PromptPage({application: applicationProp}: {application?
             );
           }
           if (item.name === "Display name") {
+            const realName = item.rule === "Real name";
             return (
               <div key={item.name} className="space-y-2">
-                <Label htmlFor="displayName">{item.label || i18next.t("general:Display name")}</Label>
+                <Label htmlFor="displayName">{item.label || (realName ? i18next.t("application:Real name") : i18next.t("general:Display name"))}</Label>
                 <Input
                   id="displayName"
                   placeholder={item.placeholder}
                   value={user?.displayName ?? ""}
                   onChange={(e) => update({displayName: e.target.value})}
                 />
+                {realName && !Setting.isValidRealName(user?.displayName) ? (
+                  <p className="text-xs text-destructive">{i18next.t("user:Please enter your real name")}</p>
+                ) : null}
               </div>
             );
           }

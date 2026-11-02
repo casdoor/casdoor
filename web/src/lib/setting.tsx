@@ -1029,6 +1029,10 @@ export function isValidEmail(email) {
   return emailRegex.test(email);
 }
 
+export function isValidRealName(name) {
+  return /^[一-龥]{2,6}(?:·[一-龥]{1,10})*$/.test(name ?? "");
+}
+
 export function isValidPhone(phone, countryCode = "") {
   if (countryCode !== "" && countryCode !== "CN") {
     return phoneNumber.isValidPhoneNumber(phone, countryCode as any);
@@ -1121,6 +1125,10 @@ function isSignupItemAnswered(user, signupItem) {
   }
 
   const value = user[field];
+  if (signupItem.name === "Display name" && signupItem.rule === "Real name") {
+    // a third-party nickname fills the display name but is not a real name
+    return isValidRealName(value);
+  }
   return value !== undefined && value !== null && value !== "";
 }
 
