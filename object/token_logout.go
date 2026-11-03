@@ -111,6 +111,23 @@ func SendBackchannelLogout(organization, username, sessionId, host string) {
 
 // sendBackchannelLogoutForTokens is the body of SendBackchannelLogout for callers that already
 // hold the user and its active tokens, so that the token table is not queried a second time
+// getTokenHost returns the host the token was issued on. A logout with no request behind it, like
+// an admin forbidding a user, has no host of its own, and without the "origin" config its logout
+// token would not carry the issuer that the application saw in its ID token, so it would be rejected.
+func getTokenHost(token *Token) string {
+	claims := jwt.RegisteredClaims{}
+	_, _, err := jwt.NewParser().ParseUnverified(token.AccessToken, &claims)
+	if err != nil {
+		return ""
+	}
+
+	issuer, err := url.Parse(claims.Issuer)
+	if err != nil {
+		return ""
+	}
+	return issuer.Host
+}
+
 func sendBackchannelLogoutForTokens(user *User, tokens []*Token, sessionId string, host string) {
 	// Deduplicate applications
 	seen := map[string]bool{}
@@ -126,7 +143,12 @@ func sendBackchannelLogoutForTokens(user *User, tokens []*Token, sessionId strin
 			continue
 		}
 
-		logoutToken, err := generateLogoutToken(application, user, sessionId, host)
+		tokenHost := host
+		if tokenHost == "" {
+			tokenHost = getTokenHost(token)
+		}
+
+		logoutToken, err := generateLogoutToken(application, user, sessionId, tokenHost)
 		if err != nil {
 			continue
 		}
