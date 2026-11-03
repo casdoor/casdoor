@@ -380,11 +380,16 @@ func DeleteUserSessionId(owner string, name string, beegoSessionId string) error
 // LogoutSession ends one Casdoor session of the user together with its tokens, and tells the OIDC
 // and SAML applications signed in with it, while the user's other sessions are left alone
 func LogoutSession(owner string, name string, sessionId string, host string) error {
-	// Sent before DeleteUserSessionId(), which expires the tokens that SendBackchannelLogout() looks up
-	SendBackchannelLogout(owner, name, sessionId, host)
-	SendSamlLogout(owner, name, []string{sessionId}, host)
+	user, err := GetUser(util.GetId(owner, name))
+	if err != nil {
+		return err
+	}
+	if user != nil {
+		return logoutUserSession(user, sessionId, host)
+	}
 
-	err := DeleteUserSessionId(owner, name, sessionId)
+	// A session left behind by a removed user, there is no one to log out of the applications
+	err = DeleteUserSessionId(owner, name, sessionId)
 	if err != nil {
 		return err
 	}
