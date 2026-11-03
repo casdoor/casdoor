@@ -42,6 +42,7 @@ import (
 const (
 	UserPropertiesWechatUnionId = "wechatUnionId"
 	UserPropertiesWechatOpenId  = "wechatOpenId"
+	UserPropertiesMergedUsers   = "mergedUsers"
 )
 
 const UserEnforcerId = "built-in/user-enforcer-built-in"
@@ -974,6 +975,11 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 
 	if user.FaceIds == nil {
 		user.FaceIds = oldUser.FaceIds
+	}
+
+	// only a merge lists the accounts merged into a user, the applications hand their data over by it
+	if !isAdmin {
+		setUserProperty(user, UserPropertiesMergedUsers, getUserProperty(oldUser, UserPropertiesMergedUsers))
 	}
 
 	if user.Id != oldUser.Id && user.Id == "" {
