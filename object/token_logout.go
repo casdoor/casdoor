@@ -33,11 +33,17 @@ type LogoutTokenClaims struct {
 	jwt.RegisteredClaims
 }
 
-func generateLogoutToken(application *Application, user *User, sessionId string, host string) (string, error) {
+func generateLogoutToken(application *Application, user *User, signinToken *Token, sessionId string, host string) (string, error) {
 	nowTime := time.Now()
-	issuer, err := GetOidcIssuerByApplication(host, application)
-	if err != nil {
-		return "", err
+	// The application checks "iss" against the ID token it got, which may have been issued on another host
+	// than the one of this request, or without any request at all when the user is forced offline
+	issuer := getTokenIssuer(signinToken)
+	if issuer == "" {
+		var err error
+		issuer, err = GetOidcIssuerByApplication(host, application)
+		if err != nil {
+			return "", err
+		}
 	}
 
 	events := map[string]interface{}{
@@ -126,13 +132,30 @@ func sendBackchannelLogoutForTokens(user *User, tokens []*Token, sessionId strin
 			continue
 		}
 
-		logoutToken, err := generateLogoutToken(application, user, sessionId, host)
+		logoutToken, err := generateLogoutToken(application, user, token, sessionId, host)
 		if err != nil {
 			continue
 		}
 
 		go postLogoutForm(application, application.BackchannelLogoutUri, url.Values{"logout_token": {logoutToken}})
 	}
+}
+
+func getTokenIssuer(token *Token) string {
+	for _, tokenString := range []string{token.IdToken, token.AccessToken} {
+		if tokenString == "" {
+			continue
+		}
+
+		jwtToken, err := ParseJwtTokenWithoutValidation(tokenString)
+		if err != nil {
+			continue
+		}
+		if claims, ok := jwtToken.Claims.(*Claims); ok && claims.Issuer != "" {
+			return claims.Issuer
+		}
+	}
+	return ""
 }
 
 func postLogoutForm(application *Application, logoutUrl string, form url.Values) {

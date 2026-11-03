@@ -541,6 +541,7 @@ func GetSamlResponse(application *Application, user *User, samlRequest string, h
 		NameId:       nameIdValue,
 		NameIdFormat: nameIdFormat,
 		SpEntityId:   authnRequest.Issuer,
+		IdpEntityId:  originBackend,
 	})
 	if err != nil {
 		return "", "", "", err

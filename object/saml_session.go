@@ -32,6 +32,7 @@ type SamlSession struct {
 	NameId       string `xorm:"varchar(200)" json:"nameId"`
 	NameIdFormat string `xorm:"varchar(200)" json:"nameIdFormat"`
 	SpEntityId   string `xorm:"varchar(500)" json:"spEntityId"`
+	IdpEntityId  string `xorm:"varchar(500)" json:"idpEntityId"`
 }
 
 func addSamlSession(samlSession *SamlSession) error {

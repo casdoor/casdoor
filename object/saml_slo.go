@@ -213,7 +213,11 @@ func SendSamlLogout(owner string, name string, sessionIds []string, host string)
 }
 
 func newSamlLogoutRequest(application *Application, samlSession *SamlSession, host string) (string, error) {
-	_, originBackend := getOriginFromHost(host)
+	// The SP knows the IdP by the entity id it signed in with, which the host of a forced logout may not give
+	originBackend := samlSession.IdpEntityId
+	if originBackend == "" {
+		_, originBackend = getOriginFromHost(host)
+	}
 
 	request := &etree.Element{Space: "samlp", Tag: "LogoutRequest"}
 	request.CreateAttr("xmlns:samlp", "urn:oasis:names:tc:SAML:2.0:protocol")

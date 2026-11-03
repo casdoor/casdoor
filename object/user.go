@@ -1385,7 +1385,7 @@ func TerminateUserAccess(user *User) error {
 		sessionIds = append(sessionIds, session.SessionId...)
 	}
 
-	// The host is empty, so the issuer falls back to the configured origin
+	// There is no request host here, the logout token and LogoutRequest take the issuer the sign-in was made with
 	sendBackchannelLogoutForTokens(user, tokens, "", "")
 	SendSamlLogout(user.Owner, user.Name, nil, "")
 
