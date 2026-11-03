@@ -20,8 +20,6 @@ import (
 
 	"github.com/beego/beego/v2/core/logs"
 	"github.com/beego/beego/v2/server/web"
-	_ "github.com/beego/beego/v2/server/web/session/redis"
-	_ "github.com/beego/beego/v2/server/web/session/redis_cluster"
 	"github.com/casdoor/casdoor/authz"
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/ldap"
@@ -45,10 +43,12 @@ func runServer() {
 	web.BConfig.WebConfig.Session.SessionOn = true
 	web.BConfig.WebConfig.Session.SessionName = "casdoor_session_id"
 	if redisConfig := conf.GetRedisConfig(); redisConfig == nil {
-		web.BConfig.WebConfig.Session.SessionProvider = routers.FileSessionProvider
+		web.BConfig.WebConfig.Session.SessionProvider = routers.GetLazySessionProvider("file")
 		web.BConfig.WebConfig.Session.SessionProviderConfig = "./tmp"
 	} else {
-		web.BConfig.WebConfig.Session.SessionProvider, web.BConfig.WebConfig.Session.SessionProviderConfig = redisConfig.GetSessionProvider()
+		provider, providerConfig := redisConfig.GetSessionProvider()
+		web.BConfig.WebConfig.Session.SessionProvider = routers.GetLazySessionProvider(provider)
+		web.BConfig.WebConfig.Session.SessionProviderConfig = providerConfig
 	}
 	sessionCookieLifeTime := 3600 * 24 * 30
 	if val, err := conf.GetConfigInt64("sessionCookieLifeTime"); err == nil && val > 0 {
