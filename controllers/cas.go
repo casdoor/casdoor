@@ -37,6 +37,12 @@ const (
 	UnauthorizedService      string = "UNAUTHORIZED_SERVICE"
 )
 
+// CAS protocol format values are XML and JSON. Match them case-insensitively.
+// https://apereo.github.io/cas/development/protocol/CAS-Protocol-Specification.html#251-parameters
+func normalizeCasFormat(format string) string {
+	return strings.ToUpper(format)
+}
+
 func (c *RootController) CasValidate() {
 	ticket := c.Ctx.Input.Query("ticket")
 	service := c.Ctx.Input.Query("service")
@@ -58,7 +64,7 @@ func (c *RootController) CasValidate() {
 
 func (c *RootController) CasServiceValidate() {
 	ticket := c.Ctx.Input.Query("ticket")
-	format := c.Ctx.Input.Query("format")
+	format := normalizeCasFormat(c.Ctx.Input.Query("format"))
 	if !strings.HasPrefix(ticket, "ST") {
 		c.sendCasAuthenticationResponseErr(InvalidTicket, fmt.Sprintf("Ticket %s not recognized", ticket), format)
 		return
@@ -74,7 +80,7 @@ func (c *RootController) CasProxyValidate() {
 
 func (c *RootController) CasP3ServiceValidate() {
 	ticket := c.Ctx.Input.Query("ticket")
-	format := c.Ctx.Input.Query("format")
+	format := normalizeCasFormat(c.Ctx.Input.Query("format"))
 	if !strings.HasPrefix(ticket, "ST") {
 		c.sendCasAuthenticationResponseErr(InvalidTicket, fmt.Sprintf("Ticket %s not recognized", ticket), format)
 		return
@@ -84,7 +90,7 @@ func (c *RootController) CasP3ServiceValidate() {
 
 func (c *RootController) CasP3ProxyValidate() {
 	ticket := c.Ctx.Input.Query("ticket")
-	format := c.Ctx.Input.Query("format")
+	format := normalizeCasFormat(c.Ctx.Input.Query("format"))
 	service := c.Ctx.Input.Query("service")
 	pgtUrl := c.Ctx.Input.Query("pgtUrl")
 
@@ -154,7 +160,7 @@ func (c *RootController) CasP3ProxyValidate() {
 		}
 	}
 	// everything is ok, send the response
-	if format == "json" {
+	if format == "JSON" {
 		c.Data["json"] = serviceResponse
 		c.ServeJSON()
 	} else {
@@ -191,7 +197,7 @@ func sendCasPgtCallback(request *http.Request, applicationId string) error {
 func (c *RootController) CasProxy() {
 	pgt := c.Ctx.Input.Query("pgt")
 	targetService := c.Ctx.Input.Query("targetService")
-	format := c.Ctx.Input.Query("format")
+	format := normalizeCasFormat(c.Ctx.Input.Query("format"))
 	if pgt == "" || targetService == "" {
 		c.sendCasProxyResponseErr(InvalidRequest, "pgt and targetService must exist", format)
 		return
@@ -222,7 +228,7 @@ func (c *RootController) CasProxy() {
 		},
 	}
 
-	if format == "json" {
+	if format == "JSON" {
 		c.Data["json"] = serviceResponse
 		c.ServeJSON()
 	} else {
@@ -295,7 +301,7 @@ func (c *RootController) sendCasProxyResponseErr(code, msg, format string) {
 			Message: msg,
 		},
 	}
-	if format == "json" {
+	if format == "JSON" {
 		c.Data["json"] = serviceResponse
 		c.ServeJSON()
 	} else {
@@ -312,7 +318,7 @@ func (c *RootController) sendCasAuthenticationResponseErr(code, msg, format stri
 			Message: msg,
 		},
 	}
-	if format == "json" {
+	if format == "JSON" {
 		c.Data["json"] = serviceResponse
 		c.ServeJSON()
 	} else {
