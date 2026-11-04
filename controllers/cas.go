@@ -154,7 +154,7 @@ func (c *RootController) CasP3ProxyValidate() {
 		}
 	}
 	// everything is ok, send the response
-	if format == "json" {
+	if strings.EqualFold(format, "json") {
 		c.Data["json"] = serviceResponse
 		c.ServeJSON()
 	} else {
@@ -222,7 +222,7 @@ func (c *RootController) CasProxy() {
 		},
 	}
 
-	if format == "json" {
+	if strings.EqualFold(format, "json") {
 		c.Data["json"] = serviceResponse
 		c.ServeJSON()
 	} else {
@@ -295,7 +295,7 @@ func (c *RootController) sendCasProxyResponseErr(code, msg, format string) {
 			Message: msg,
 		},
 	}
-	if format == "json" {
+	if strings.EqualFold(format, "json") {
 		c.Data["json"] = serviceResponse
 		c.ServeJSON()
 	} else {
@@ -312,7 +312,7 @@ func (c *RootController) sendCasAuthenticationResponseErr(code, msg, format stri
 			Message: msg,
 		},
 	}
-	if format == "json" {
+	if strings.EqualFold(format, "json") {
 		c.Data["json"] = serviceResponse
 		c.ServeJSON()
 	} else {
