@@ -48,6 +48,7 @@ type OidcDiscovery struct {
 	CodeChallengeMethodsSupported              []string `json:"code_challenge_methods_supported"`
 	ClaimsSupported                            []string `json:"claims_supported"`
 	RequestParameterSupported                  bool     `json:"request_parameter_supported"`
+	RequestUriParameterSupported               bool     `json:"request_uri_parameter_supported"`
 	RequestObjectSigningAlgValuesSupported     []string `json:"request_object_signing_alg_values_supported"`
 	EndSessionEndpoint                         string   `json:"end_session_endpoint"`
 	BackchannelLogoutSupported                 bool     `json:"backchannel_logout_supported"`                     // OIDC Back-Channel Logout 1.0
@@ -238,7 +239,8 @@ func GetOidcDiscovery(host string, applicationName string) OidcDiscovery {
 		CodeChallengeMethodsSupported:              []string{"S256"},
 		ClaimsSupported:                            []string{"iss", "ver", "sub", "aud", "iat", "exp", "id", "type", "displayName", "avatar", "permanentAvatar", "email", "phone", "location", "affiliation", "title", "homepage", "bio", "tag", "region", "language", "score", "ranking", "isOnline", "isAdmin", "isForbidden", "signupApplication", "ldap"},
 		RequestParameterSupported:                  true,
-		RequestObjectSigningAlgValuesSupported:     []string{"HS256", "HS384", "HS512"},
+		RequestUriParameterSupported:               false,
+		RequestObjectSigningAlgValuesSupported:     RequestObjectSigningAlgs,
 		EndSessionEndpoint:                         fmt.Sprintf("%s/api/logout", originBackend),
 		BackchannelLogoutSupported:                 true,
 		BackchannelLogoutSessionSupported:          true,
