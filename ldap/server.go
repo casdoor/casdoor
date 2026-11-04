@@ -31,6 +31,7 @@ func StartLdapServer() {
 	ldapServerPort := conf.GetConfigString("ldapServerPort")
 	ldapsServerPort := conf.GetConfigString("ldapsServerPort")
 
+	ldap.Logger = log.Default()
 	server := ldap.NewServer()
 	serverSsl := ldap.NewServer()
 	routes := ldap.NewRouteMux()

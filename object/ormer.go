@@ -289,6 +289,7 @@ func (a *Ormer) open() error {
 	if err != nil {
 		return err
 	}
+	engine.SetLogger(&xormLogger{})
 
 	if a.driverName == "postgres" {
 		err = setPostgresSchema(engine, dataSourceName)
@@ -317,6 +318,7 @@ func (a *Ormer) openFromDb(db *sql.DB) error {
 	if err != nil {
 		return err
 	}
+	engine.SetLogger(&xormLogger{})
 
 	if a.driverName == "postgres" {
 		err = setPostgresSchema(engine, dataSourceName)

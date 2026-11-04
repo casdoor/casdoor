@@ -15,10 +15,8 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 
-	"github.com/beego/beego/v2/core/logs"
 	"github.com/beego/beego/v2/server/web"
 	"github.com/casdoor/casdoor/authz"
 	"github.com/casdoor/casdoor/conf"
@@ -60,6 +58,11 @@ func runServer() {
 
 	routers.InitAPI()
 	object.InitFlag()
+	// InitFlag loads the config file, which also resets the logger
+	if err := util.InitLogger(conf.GetConfigString("logConfig")); err != nil {
+		panic(err)
+	}
+
 	object.InitAdapter()
 	object.CreateTables()
 
@@ -123,31 +126,9 @@ func runServer() {
 	web.InsertFilter("*", web.BeforeRouter, routers.FieldValidationFilter)
 	web.InsertFilter("*", web.AfterExec, routers.AfterRecordMessage, web.WithReturnOnOutput(false))
 
-	var logAdapter string
-	logConfigMap := make(map[string]interface{})
-	err := json.Unmarshal([]byte(conf.GetConfigString("logConfig")), &logConfigMap)
-	if err != nil {
-		panic(err)
-	}
-	_, ok := logConfigMap["adapter"]
-	if !ok {
-		logAdapter = "file"
-	} else {
-		logAdapter = logConfigMap["adapter"].(string)
-	}
-	if logAdapter == "console" {
-		logs.Reset()
-	}
-	err = logs.SetLogger(logAdapter, conf.GetConfigString("logConfig"))
-	if err != nil {
-		panic(err)
-	}
-
 	port := web.AppConfig.DefaultInt("httpport", 8000)
-	// logs.SetLevel(logs.LevelInformational)
-	logs.SetLogFuncCall(false)
 
-	err = util.StopOldInstance(port)
+	err := util.StopOldInstance(port)
 	if err != nil {
 		panic(err)
 	}
