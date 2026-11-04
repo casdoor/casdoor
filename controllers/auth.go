@@ -145,6 +145,17 @@ func (c *ApiController) getAuthTime() int64 {
 	return c.getSessionAuthTime()
 }
 
+// saveSigninLanguage stores the language chosen on the login page on the user who is signing in.
+func saveSigninLanguage(user *object.User, language string) error {
+	if language == "" || language == user.Language {
+		return nil
+	}
+
+	user.Language = language
+	_, err := object.UpdateUser(user.GetId(), user, []string{"language"}, user.IsAdmin)
+	return err
+}
+
 // HandleLoggedIn ...
 func (c *ApiController) HandleLoggedIn(application *object.Application, user *object.User, form *form.AuthForm) (resp *Response) {
 	if !c.checkApplicationSignin(application, user) || !c.checkCredentialApplication(user, application, form) {
@@ -207,6 +218,12 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 			c.ResponseError(err.Error(), nil)
 			return
 		}
+	}
+
+	// The tokens below carry the user's language, so it has to be saved before they are generated
+	if err = saveSigninLanguage(user, form.Language); err != nil {
+		c.ResponseError(err.Error())
+		return
 	}
 
 	if user.NeedUpdatePassword {
@@ -1569,18 +1586,6 @@ func (c *ApiController) Login() {
 		} else {
 			c.ResponseError(fmt.Sprintf(c.T("auth:Unknown authentication type (not password or provider), form = %s"), util.StructToJson(authForm)))
 			return
-		}
-	}
-
-	if authForm.Language != "" {
-		user := c.getCurrentUser()
-		if user != nil {
-			user.Language = authForm.Language
-			_, err = object.UpdateUser(user.GetId(), user, []string{"language"}, user.IsAdmin)
-			if err != nil {
-				c.ResponseError(err.Error())
-				return
-			}
 		}
 	}
 

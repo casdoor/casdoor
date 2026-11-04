@@ -1442,6 +1442,12 @@ export function getLanguage() {
   return (i18next.language !== undefined && i18next.language !== null && i18next.language !== "" && i18next.language !== "null") ? i18next.language : Conf.DefaultLanguage;
 }
 
+// The language the user picked in this browser, empty when the page only detected one.
+// Signing in saves it on the account, so a detected language must not replace a saved choice.
+export function getChosenLanguage() {
+  return localStorage.getItem("language") ?? "";
+}
+
 export function setLanguage(language) {
   localStorage.setItem("language", language);
   i18next.changeLanguage(language);

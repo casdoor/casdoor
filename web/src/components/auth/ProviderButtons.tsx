@@ -78,7 +78,7 @@ export function ProviderButtons({application, method, rule, onBeforeClick, onPro
 
     const url = Provider.getAuthUrl(application, provider, method);
     if (url) {
-      Setting.setSigninLanguage(Setting.getLanguage());
+      Setting.setSigninLanguage(Setting.getChosenLanguage());
       Setting.goToLink(url);
     }
   };

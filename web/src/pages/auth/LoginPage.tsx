@@ -666,7 +666,7 @@ export default function LoginPage({type = "login", application: applicationProp,
     doLogin(applyRequestType({
       application: application.name,
       organization: application.organization,
-      language: Setting.getLanguage(),
+      language: Setting.getChosenLanguage(),
     }));
   };
 
@@ -677,7 +677,7 @@ export default function LoginPage({type = "login", application: applicationProp,
       username,
       autoSignin,
       signinMethod: getSigninMethodName(loginMethod ?? "password"),
-      language: Setting.getLanguage(),
+      language: Setting.getChosenLanguage(),
     };
 
     if (loginMethod === "password" || loginMethod === "ldap") {
@@ -838,7 +838,7 @@ export default function LoginPage({type = "login", application: applicationProp,
 
   const doLogin = (values: any) => {
     setLoading(true);
-    Setting.setSigninLanguage(Setting.getLanguage());
+    Setting.setSigninLanguage(Setting.getChosenLanguage());
 
     // a widget captcha is single-use, so a rejected sign-in needs a fresh one
     const usedInlineCaptcha = Setting.isInlineCaptchaEnabled(application) && captchaValues !== undefined;
@@ -1064,7 +1064,7 @@ export default function LoginPage({type = "login", application: applicationProp,
       signinMethod: "Magic link",
       code: token,
       autoSignin: true,
-      language: Setting.getLanguage(),
+      language: Setting.getChosenLanguage(),
     }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [application, location.search, preview]);
@@ -1126,7 +1126,7 @@ export default function LoginPage({type = "login", application: applicationProp,
     const values = applyRequestType({
       application: application.name,
       organization: application.organization,
-      language: Setting.getLanguage(),
+      language: Setting.getChosenLanguage(),
     });
     const oAuthParams = Util.getOAuthGetParameters();
     AuthBackend.login(values, oAuthParams)
