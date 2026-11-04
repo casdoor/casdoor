@@ -21,6 +21,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/beego/beego/v2/core/logs"
 	"github.com/casdoor/casdoor-go-sdk/casdoorsdk"
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/object"
@@ -46,7 +47,7 @@ func responseOk(w http.ResponseWriter, format string, a ...interface{}) {
 	w.WriteHeader(http.StatusOK)
 
 	msg := fmt.Sprintf(format, a...)
-	fmt.Println(msg)
+	logs.Info(msg)
 	_, err := fmt.Fprint(w, msg)
 	if err != nil {
 		panic(err)
@@ -57,7 +58,7 @@ func responseError(w http.ResponseWriter, format string, a ...interface{}) {
 	w.WriteHeader(http.StatusInternalServerError)
 
 	msg := fmt.Sprintf(format, a...)
-	fmt.Println(msg)
+	logs.Error(msg)
 	_, err := fmt.Fprint(w, msg)
 	if err != nil {
 		panic(err)
@@ -66,7 +67,7 @@ func responseError(w http.ResponseWriter, format string, a ...interface{}) {
 
 func responseErrorWithoutCode(w http.ResponseWriter, format string, a ...interface{}) {
 	msg := fmt.Sprintf(format, a...)
-	fmt.Println(msg)
+	logs.Error(msg)
 	_, err := fmt.Fprint(w, msg)
 	if err != nil {
 		panic(err)

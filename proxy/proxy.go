@@ -15,13 +15,13 @@
 package proxy
 
 import (
-	"fmt"
 	"net"
 	"net/http"
 	"net/url"
 	"strings"
 	"time"
 
+	"github.com/beego/beego/v2/core/logs"
 	"github.com/casdoor/casdoor/conf"
 	"golang.org/x/net/proxy"
 )
@@ -49,7 +49,7 @@ func isAddressOpen(address string) bool {
 
 	if conn != nil {
 		defer conn.Close()
-		fmt.Printf("Socks5 proxy enabled: %s\n", address)
+		logs.Info("Socks5 proxy enabled: %s", address)
 		return true
 	}
 
@@ -68,7 +68,7 @@ func getProxyHttpClient() *http.Client {
 
 	URL, err := url.Parse(socks5Proxy)
 	if err != nil {
-		fmt.Printf("Invalid socks5 proxy URL: %s, error: %v\n", socks5Proxy, err)
+		logs.Error("Invalid socks5Proxy in the config")
 		return &http.Client{}
 	}
 

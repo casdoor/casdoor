@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/beego/beego/v2/core/logs"
 	"github.com/casdoor/casdoor/util"
 	"github.com/robfig/cron/v3"
 	"github.com/xorm-io/core"
@@ -162,21 +163,21 @@ func UpdateSubscriptionStates() error {
 	for _, sub := range subscriptions {
 		err = sub.UpdateState()
 		if err != nil {
-			fmt.Printf("UpdateSubscriptionStates() error for subscription %s: %v\n", sub.GetId(), err)
+			logs.Error("UpdateSubscriptionStates() error for subscription %s: %v", sub.GetId(), err)
 			continue
 		}
 
 		if sub.State == SubStateActive {
 			err = syncSubscriptionRole(sub)
 			if err != nil {
-				fmt.Printf("UpdateSubscriptionStates() error for subscription %s: %v\n", sub.GetId(), err)
+				logs.Error("UpdateSubscriptionStates() error for subscription %s: %v", sub.GetId(), err)
 			}
 		}
 
 		if sub.needsRenewal(now) {
 			err = renewSubscription(sub)
 			if err != nil {
-				fmt.Printf("UpdateSubscriptionStates() error renewing subscription %s: %v\n", sub.GetId(), err)
+				logs.Error("UpdateSubscriptionStates() error renewing subscription %s: %v", sub.GetId(), err)
 			}
 		}
 	}
@@ -187,18 +188,18 @@ func UpdateSubscriptionStates() error {
 func InitUpdateSubscriptionStates() {
 	go func() {
 		if err := UpdateSubscriptionStates(); err != nil {
-			fmt.Printf("Error updating subscription states at startup: %v\n", err)
+			logs.Error("Error updating subscription states at startup: %v", err)
 		}
 	}()
 
 	cronJob := cron.New()
 	_, err := cronJob.AddFunc("0 * * * *", func() {
 		if err := UpdateSubscriptionStates(); err != nil {
-			fmt.Printf("Error updating subscription states: %v\n", err)
+			logs.Error("Error updating subscription states: %v", err)
 		}
 	})
 	if err != nil {
-		fmt.Printf("Error scheduling subscription state updates: %v\n", err)
+		logs.Error("Error scheduling subscription state updates: %v", err)
 		return
 	}
 	cronJob.Start()

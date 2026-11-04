@@ -22,6 +22,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/beego/beego/v2/core/logs"
 	"github.com/shirou/gopsutil/v4/net"
 	"github.com/shirou/gopsutil/v4/process"
 )
@@ -76,7 +77,7 @@ func isOldInstance(p *process.Process) (bool, string) {
 func StopOldInstance(port int) error {
 	pids, err := getListenerPids(port)
 	if err != nil {
-		fmt.Printf("StopOldInstance() error: failed to list the listeners of port %d: %s\n", port, err.Error())
+		logs.Error("StopOldInstance() error: failed to list the listeners of port %d: %s", port, err.Error())
 		return nil
 	}
 
@@ -105,7 +106,7 @@ func StopOldInstance(port int) error {
 		}
 
 		stopped = true
-		fmt.Printf("The old instance with pid: %d has been stopped\n", pid)
+		logs.Info("The old instance with pid: %d has been stopped", pid)
 	}
 
 	for i := 0; stopped && i < 50; i++ {

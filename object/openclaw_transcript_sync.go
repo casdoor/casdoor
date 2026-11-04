@@ -13,6 +13,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/beego/beego/v2/core/logs"
 	"github.com/casdoor/casdoor/util"
 )
 
@@ -166,11 +167,11 @@ func (w *openClawTranscriptSyncWorker) syncOnce() {
 	if err := w.scanTranscriptDir(); err != nil {
 		if os.IsNotExist(err) {
 			if !w.pathErrLogged {
-				fmt.Printf("OpenClaw transcript sync failed for provider %s: %v\n", w.provider.Name, err)
+				logs.Error("OpenClaw transcript sync failed for provider %s: %v", w.provider.Name, err)
 				w.pathErrLogged = true
 			}
 		} else {
-			fmt.Printf("OpenClaw transcript sync failed for provider %s: %v\n", w.provider.Name, err)
+			logs.Error("OpenClaw transcript sync failed for provider %s: %v", w.provider.Name, err)
 		}
 	} else {
 		w.pathErrLogged = false
@@ -232,7 +233,7 @@ func (w *openClawTranscriptSyncWorker) scanTranscriptDir() error {
 		}
 		sessionID := strings.TrimSuffix(filepath.Base(path), ".jsonl")
 		if err := uploadOpenClawRawTranscript(w.provider, sessionID, path, nextState.Size); err != nil {
-			fmt.Printf("OpenClaw raw transcript storage failed for provider %s session %s: %v\n", w.provider.Name, sessionID, err)
+			logs.Error("OpenClaw raw transcript storage failed for provider %s session %s: %v", w.provider.Name, sessionID, err)
 			continue
 		}
 		w.fileStates[path] = nextState

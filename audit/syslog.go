@@ -23,6 +23,8 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/beego/beego/v2/core/logs"
 )
 
 const (
@@ -175,7 +177,7 @@ func (p *SyslogProvider) write(message string) bool {
 	if p.conn == nil {
 		conn, err := p.dial()
 		if err != nil {
-			fmt.Printf("SyslogProvider: failed to connect to %s: %v\n", p.settings.address, err)
+			logs.Error("SyslogProvider: failed to connect to %s: %v", p.settings.address, err)
 			return false
 		}
 		p.conn = conn
@@ -184,7 +186,7 @@ func (p *SyslogProvider) write(message string) bool {
 	_ = p.conn.SetWriteDeadline(time.Now().Add(syslogWriteTimeout))
 	_, err := p.conn.Write([]byte(message))
 	if err != nil {
-		fmt.Printf("SyslogProvider: failed to write to %s: %v\n", p.settings.address, err)
+		logs.Error("SyslogProvider: failed to write to %s: %v", p.settings.address, err)
 		p.closeConn()
 		return false
 	}

@@ -22,6 +22,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/beego/beego/v2/core/logs"
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/util"
@@ -205,7 +206,7 @@ func initBuiltInUser() {
 	}
 
 	if user.Password == "" {
-		fmt.Println("The password of built-in/admin is not set, open Casdoor in the browser to set it, or set initAdminPassword before the first start")
+		logs.Warning("The password of built-in/admin is not set, open Casdoor in the browser to set it, or set initAdminPassword before the first start")
 	}
 }
 
@@ -382,7 +383,7 @@ func warnPublicBuiltInCert() {
 	privateKey := strings.TrimSpace(strings.ReplaceAll(cert.PrivateKey, "\r", ""))
 	hash := sha256.Sum256([]byte(privateKey))
 	if hex.EncodeToString(hash[:]) == publicBuiltInPrivateKeySha256 {
-		fmt.Printf("WARNING: the cert: %s signs tokens with the private key published in the Casdoor repository, anyone can forge its tokens, please generate a new key pair for it\n", cert.GetId())
+		logs.Warning("the cert: %s signs tokens with the private key published in the Casdoor repository, anyone can forge its tokens, please generate a new key pair for it", cert.GetId())
 	}
 }
 

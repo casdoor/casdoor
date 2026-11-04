@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/beego/beego/v2/core/logs"
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/core"
@@ -150,7 +151,7 @@ func InitSetting() {
 		for range ticker.C {
 			setting, err := GetSetting()
 			if err != nil {
-				fmt.Printf("InitSetting() error: %s\n", err.Error())
+				logs.Error("InitSetting() error: %s", err.Error())
 				continue
 			}
 			if setting != nil {

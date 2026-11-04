@@ -20,6 +20,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/beego/beego/v2/core/logs"
 	"github.com/casdoor/casdoor/util"
 	"golang.org/x/net/html"
 )
@@ -239,7 +240,7 @@ func getFaviconFileBuffer(client *http.Client, email string) (*bytes.Buffer, str
 	if buffer != nil {
 		faviconUrl, err = GetFaviconUrl(buffer.String())
 		if err != nil {
-			fmt.Printf("getFaviconFileBuffer() error, faviconUrl is empty, error = %s\n", err.Error())
+			logs.Error("getFaviconFileBuffer() error, faviconUrl is empty, error = %s", err.Error())
 		} else {
 			if !strings.HasPrefix(faviconUrl, "http") {
 				faviconUrl = util.UrlJoin(htmlUrl, faviconUrl)

@@ -21,6 +21,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/beego/beego/v2/core/logs"
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/util"
 	"gopkg.in/yaml.v3"
@@ -97,7 +98,7 @@ func InitFromFile() {
 // startInitDataWatchLoop applies the init data file again whenever its content changes, so the
 // objects in it can be managed declaratively (e.g. from a Kubernetes ConfigMap or Secret)
 func startInitDataWatchLoop(initDataFile string, interval int64) {
-	fmt.Printf("startInitDataWatchLoop() Start!\n\n")
+	logs.Info("startInitDataWatchLoop() Start!")
 	util.SafeGoroutine(func() {
 		lastError := ""
 		for {
@@ -106,12 +107,12 @@ func startInitDataWatchLoop(initDataFile string, interval int64) {
 			applied, err := applyInitDataFileIfChanged(initDataFile)
 			if err != nil {
 				if err.Error() != lastError {
-					fmt.Printf("[%s] Failed to apply the init data file: %s, error: %v\n", util.GetCurrentTime(), initDataFile, err)
+					logs.Error("Failed to apply the init data file: %s, error: %v", initDataFile, err)
 				}
 				lastError = err.Error()
 			} else if applied {
 				lastError = ""
-				fmt.Printf("[%s] Applied the changed init data file: %s\n", util.GetCurrentTime(), initDataFile)
+				logs.Info("Applied the changed init data file: %s", initDataFile)
 			}
 		}
 	})

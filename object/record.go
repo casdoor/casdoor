@@ -25,6 +25,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/beego/beego/v2/core/logs"
 	"github.com/beego/beego/v2/server/web/context"
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/util"
@@ -255,7 +256,7 @@ func AddRecord(record *Record) bool {
 	if errWebhook == nil {
 		record.IsTriggered = true
 	} else {
-		fmt.Println(errWebhook)
+		logs.Error(errWebhook)
 	}
 
 	affected, err := addRecord(record)

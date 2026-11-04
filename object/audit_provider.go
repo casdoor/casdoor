@@ -16,11 +16,11 @@ package object
 
 import (
 	"encoding/json"
-	"fmt"
 	"strings"
 	"sync"
 	"time"
 
+	"github.com/beego/beego/v2/core/logs"
 	"github.com/casdoor/casdoor/audit"
 )
 
@@ -84,7 +84,7 @@ func getAuditSeverity(record *Record) int {
 func sendAuditRecord(record *Record) {
 	providers, err := GetProvidersByCategory(record.Organization, "Audit")
 	if err != nil {
-		fmt.Printf("sendAuditRecord() error: %v\n", err)
+		logs.Error("sendAuditRecord() error: %v", err)
 		return
 	}
 	if len(providers) == 0 {
@@ -93,7 +93,7 @@ func sendAuditRecord(record *Record) {
 
 	message, err := json.Marshal(record)
 	if err != nil {
-		fmt.Printf("sendAuditRecord() error: %v\n", err)
+		logs.Error("sendAuditRecord() error: %v", err)
 		return
 	}
 
@@ -116,13 +116,13 @@ func sendAuditRecord(record *Record) {
 
 		auditProvider, err := getAuditProvider(provider)
 		if err != nil {
-			fmt.Printf("sendAuditRecord() error: provider %s: %v\n", provider.GetId(), err)
+			logs.Error("sendAuditRecord() error: provider %s: %v", provider.GetId(), err)
 			continue
 		}
 
 		err = auditProvider.Send(event)
 		if err != nil {
-			fmt.Printf("sendAuditRecord() error: provider %s: %v\n", provider.GetId(), err)
+			logs.Error("sendAuditRecord() error: provider %s: %v", provider.GetId(), err)
 		}
 	}
 }

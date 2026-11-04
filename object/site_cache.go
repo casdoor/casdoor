@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/beego/beego/v2/core/logs"
 	"github.com/casdoor/casdoor/util"
 )
 
@@ -74,7 +75,7 @@ func getCasdoorApplicationMap() (map[string]*Application, error) {
 func refreshSiteMap() error {
 	applicationMap, err := getCasdoorApplicationMap()
 	if err != nil {
-		fmt.Println(err)
+		logs.Error(err)
 	}
 
 	newSiteMap := map[string]*Site{}
@@ -103,7 +104,7 @@ func refreshSiteMap() error {
 				site.PublicIp = util.ResolveDomainToIp(site.Domain)
 				_, err2 := UpdateSiteNoRefresh(site.GetId(), site)
 				if err2 != nil {
-					fmt.Printf("UpdateSiteNoRefresh() error: %v\n", err2)
+					logs.Error("UpdateSiteNoRefresh() error: %v", err2)
 				}
 			}(site)
 		}

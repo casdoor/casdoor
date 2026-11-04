@@ -26,6 +26,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/beego/beego/v2/core/logs"
 	"github.com/casdoor/casdoor/util"
 )
 
@@ -281,7 +282,7 @@ func (p *WecomSyncerProvider) getWecomDepartmentsBySimpleList(accessToken string
 		dept, err := p.getWecomDepartmentDetails(accessToken, simpleDept.Id)
 		if err != nil {
 			// Keep the name-less department so that the department tree stays complete
-			fmt.Printf("Warning: failed to get details for department %d: %v\n", simpleDept.Id, err)
+			logs.Warning("failed to get details for department %d: %v", simpleDept.Id, err)
 			p.deptNameError = err
 			depts = append(depts, simpleDept)
 			continue
@@ -304,7 +305,7 @@ func (p *WecomSyncerProvider) fillWecomDepartmentNames(accessToken string, depts
 
 		detail, err := p.getWecomDepartmentDetails(accessToken, dept.Id)
 		if err != nil {
-			fmt.Printf("Warning: failed to get details for department %d: %v\n", dept.Id, err)
+			logs.Warning("failed to get details for department %d: %v", dept.Id, err)
 			p.deptNameError = err
 			continue
 		}
@@ -338,7 +339,7 @@ func (p *WecomSyncerProvider) reportNamelessWecomDepts(depts []*WecomDepartment)
 		util.GetCurrentTime(), strings.Join(namelessDepts, ", "), reason)
 	_, err := updateSyncerErrorText(p.Syncer, line)
 	if err != nil {
-		fmt.Printf("reportNamelessWecomDepts() error: %s\n", err.Error())
+		logs.Error("reportNamelessWecomDepts() error: %s", err.Error())
 	}
 }
 
@@ -449,7 +450,7 @@ func (p *WecomSyncerProvider) getWecomUsersByListId(accessToken string) (map[str
 
 			user, err := p.getWecomUserDetails(accessToken, deptUser.UserId)
 			if err != nil {
-				fmt.Printf("Warning: failed to get details for user %s: %v\n", deptUser.UserId, err)
+				logs.Warning("failed to get details for user %s: %v", deptUser.UserId, err)
 				lastErr = err
 				continue
 			}

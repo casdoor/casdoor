@@ -19,6 +19,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/beego/beego/v2/core/logs"
 	"github.com/casdoor/casdoor/util"
 )
 
@@ -149,7 +150,7 @@ func (syncer *Syncer) initAdapter() error {
 func RunSyncUsersJob() {
 	syncers, err := GetSyncers("admin")
 	if err != nil {
-		fmt.Printf("RunSyncUsersJob() error: %s\n", err.Error())
+		logs.Error("RunSyncUsersJob() error: %s", err.Error())
 		return
 	}
 
@@ -157,7 +158,7 @@ func RunSyncUsersJob() {
 	for _, syncer := range syncers {
 		err = addSyncerJob(syncer)
 		if err != nil {
-			fmt.Printf("RunSyncUsersJob() failed to start syncer [%s]: %s\n", syncer.GetId(), err.Error())
+			logs.Error("RunSyncUsersJob() failed to start syncer [%s]: %s", syncer.GetId(), err.Error())
 		}
 	}
 

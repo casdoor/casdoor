@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/beego/beego/v2/core/logs"
 	"github.com/casdoor/casdoor/pp"
 	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/core"
@@ -315,7 +316,7 @@ func chargeSubscriptionRenewal(sub *Subscription) (*Subscription, error) {
 
 	err = UpdateProductStock(productInfos)
 	if err != nil {
-		fmt.Printf("chargeSubscriptionRenewal() error for subscription %s: %v\n", sub.GetId(), err)
+		logs.Error("chargeSubscriptionRenewal() error for subscription %s: %v", sub.GetId(), err)
 	}
 
 	nextSub, err := newSubscriptionFrom(sub.Owner, sub.User, plan.Name, paymentName, plan.Period, startTime)
@@ -386,7 +387,7 @@ func chargeRenewalPayment(provider *Provider, payment *Payment, renewalPayment *
 
 	_, err = AddExternalPaymentTransaction(transaction, "en")
 	if err != nil {
-		fmt.Printf("chargeRenewalPayment() error for payment %s: %v\n", renewalPayment.GetId(), err)
+		logs.Error("chargeRenewalPayment() error for payment %s: %v", renewalPayment.GetId(), err)
 	}
 	return nil
 }

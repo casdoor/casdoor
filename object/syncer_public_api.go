@@ -14,7 +14,9 @@
 
 package object
 
-import "fmt"
+import (
+	"github.com/beego/beego/v2/core/logs"
+)
 
 func getDbSyncerForUser(user *User) (*Syncer, error) {
 	syncers, err := GetSyncers("admin")
@@ -69,7 +71,7 @@ func AddUserToOriginalDatabase(user *User) error {
 		return err
 	}
 
-	fmt.Printf("Add from user to oUser: %v\n", updatedOUser)
+	logs.Info("Add from user to oUser: %s", updatedOUser.GetId())
 	return nil
 }
 
@@ -97,6 +99,6 @@ func UpdateUserToOriginalDatabase(user *User) error {
 		return err
 	}
 
-	fmt.Printf("Update from user to oUser: %v\n", updatedOUser)
+	logs.Info("Update from user to oUser: %s", updatedOUser.GetId())
 	return nil
 }

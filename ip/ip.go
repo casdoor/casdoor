@@ -15,8 +15,7 @@
 package ip
 
 import (
-	"fmt"
-
+	"github.com/beego/beego/v2/core/logs"
 	"github.com/casdoor/casdoor/util"
 )
 
@@ -35,7 +34,7 @@ func IsAbroadIp(ip string) bool {
 
 	info, err := Find(ip)
 	if err != nil {
-		fmt.Printf("error: ip = %s, error = %s\n", ip, err.Error())
+		logs.Error("error: ip = %s, error = %s", ip, err.Error())
 		return false
 	}
 

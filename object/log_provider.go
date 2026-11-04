@@ -15,9 +15,9 @@
 package object
 
 import (
-	"fmt"
 	"sync"
 
+	"github.com/beego/beego/v2/core/logs"
 	"github.com/casdoor/casdoor/log"
 )
 
@@ -93,10 +93,10 @@ func startLogCollector(provider *Provider) {
 	}
 
 	onError := func(err error) {
-		fmt.Printf("InitLogProviders: collector for provider %s stopped with error: %v\n", providerName, err)
+		logs.Error("InitLogProviders: collector for provider %s stopped with error: %v", providerName, err)
 	}
 	if err := lp.Start(addEntry, onError); err != nil {
-		fmt.Printf("InitLogProviders: failed to start collector for provider %s: %v\n", providerName, err)
+		logs.Error("InitLogProviders: failed to start collector for provider %s: %v", providerName, err)
 		return
 	}
 
@@ -113,7 +113,7 @@ func startOpenClawProvider(provider *Provider) {
 
 	lp, err := GetLogProviderFromProvider(provider)
 	if err != nil {
-		fmt.Printf("InitLogProviders: failed to create OpenClaw provider %s: %v\n", provider.Name, err)
+		logs.Error("InitLogProviders: failed to create OpenClaw provider %s: %v", provider.Name, err)
 		return
 	}
 

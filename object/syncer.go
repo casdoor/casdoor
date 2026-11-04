@@ -19,6 +19,7 @@ import (
 	"fmt"
 	"sync"
 
+	"github.com/beego/beego/v2/core/logs"
 	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/core"
@@ -256,7 +257,7 @@ func recordSyncerError(syncer *Syncer, err error) {
 	line := fmt.Sprintf("[%s] %s\n", util.GetCurrentTime(), err.Error())
 	_, err2 := updateSyncerErrorText(syncer, line)
 	if err2 != nil {
-		fmt.Printf("recordSyncerError() error: %s\n", err2.Error())
+		logs.Error("recordSyncerError() error: %s", err2.Error())
 	}
 }
 
@@ -365,7 +366,7 @@ func RunSyncer(syncer *Syncer) error {
 	if err != nil {
 		// Log error but don't fail the entire sync
 		recordSyncerError(syncer, err)
-		fmt.Printf("Warning: syncGroups() error: %s\n", err.Error())
+		logs.Warning("syncGroups() error: %s", err.Error())
 	}
 
 	return syncer.syncUsers()

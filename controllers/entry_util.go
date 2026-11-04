@@ -19,6 +19,7 @@ import (
 	"io"
 	"strings"
 
+	"github.com/beego/beego/v2/core/logs"
 	"github.com/beego/beego/v2/server/web/context"
 	"github.com/casdoor/casdoor/log"
 	"github.com/casdoor/casdoor/object"
@@ -28,27 +29,16 @@ import (
 func responseOtlpError(ctx *context.Context, status int, body []byte, format string, args ...interface{}) {
 	msg := fmt.Sprintf(format, args...)
 	req := ctx.Request
-	bodyInfo := "(no body)"
-	if len(body) > 0 {
-		bodyInfo = fmt.Sprintf("%d bytes: %q", len(body), truncate(body, 256))
-	}
-	fmt.Printf("responseOtlpError: [%d] %s | %s %s | remoteAddr=%s | Content-Type=%s | User-Agent=%s | body=%s\n",
+	logs.Error("responseOtlpError: [%d] %s | %s %s | remoteAddr=%s | Content-Type=%s | User-Agent=%s | bodySize=%d",
 		status, msg,
 		req.Method, req.URL.Path,
 		req.RemoteAddr,
 		req.Header.Get("Content-Type"),
 		req.Header.Get("User-Agent"),
-		bodyInfo,
+		len(body),
 	)
 	ctx.Output.SetStatus(status)
 	ctx.Output.Body([]byte(msg))
-}
-
-func truncate(b []byte, max int) []byte {
-	if len(b) <= max {
-		return b
-	}
-	return b[:max]
 }
 
 func resolveOpenClawProvider(ctx *context.Context) (*log.OpenClawProvider, int, error) {

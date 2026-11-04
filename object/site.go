@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/beego/beego/v2/core/logs"
 	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/core"
 )
@@ -249,7 +250,7 @@ func (site *Site) GetHost() string {
 }
 
 func addErrorToMsg(msg string, function string, err error) string {
-	fmt.Printf("%s(): %s\n", function, err.Error())
+	logs.Info("%s(): %s", function, err.Error())
 	if msg == "" {
 		return fmt.Sprintf("%s(): %s", function, err.Error())
 	} else {

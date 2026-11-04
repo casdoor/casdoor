@@ -119,7 +119,7 @@ func getHostNonWww(host string) string {
 
 func logRequest(clientIp string, r *http.Request) {
 	if !strings.Contains(r.UserAgent(), "Uptime-Kuma") {
-		fmt.Printf("handleRequest: %s\t%s\t%s\t%s\t%s\t%s\n", clientIp, r.Method, r.Host, r.RequestURI, r.UserAgent(), r.RemoteAddr)
+		logs.Info("handleRequest: %s\t%s\t%s\t%s\t%s\t%s", clientIp, r.Method, r.Host, r.URL.Path, r.UserAgent(), r.RemoteAddr)
 		record := object.Record{
 			Owner:       "admin",
 			CreatedTime: util.GetCurrentTime(),
@@ -364,7 +364,7 @@ func Start() {
 	}
 
 	go func() {
-		fmt.Printf("Casdoor site proxy running on: http://127.0.0.1:%d\n", gatewayHttpPort)
+		logs.Info("Casdoor site proxy running on: http://127.0.0.1:%d", gatewayHttpPort)
 		err := http.ListenAndServe(fmt.Sprintf(":%d", gatewayHttpPort), serverMux)
 		if err != nil {
 			logs.Error(err)
@@ -372,7 +372,7 @@ func Start() {
 	}()
 
 	go func() {
-		fmt.Printf("Casdoor site proxy running on: https://127.0.0.1:%d\n", gatewayHttpsPort)
+		logs.Info("Casdoor site proxy running on: https://127.0.0.1:%d", gatewayHttpsPort)
 		server := &http.Server{
 			Handler: serverMux,
 			Addr:    fmt.Sprintf(":%d", gatewayHttpsPort),

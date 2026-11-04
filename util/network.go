@@ -23,6 +23,8 @@ import (
 	"strings"
 	"syscall"
 	"time"
+
+	"github.com/beego/beego/v2/core/logs"
 )
 
 func GetHostname() string {
@@ -197,7 +199,7 @@ func ResolveDomainToIp(domain string) string {
 			return "(empty)"
 		}
 
-		fmt.Printf("resolveDomainToIp() error: %s\n", err.Error())
+		logs.Error("resolveDomainToIp() error: %s", err.Error())
 		return err.Error()
 	}
 

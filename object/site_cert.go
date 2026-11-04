@@ -21,6 +21,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/beego/beego/v2/core/logs"
 	"github.com/casdoor/casdoor/util"
 )
 
@@ -87,14 +88,14 @@ func (site *Site) preCheckCertForDomain(domain string) (bool, error) {
 	url := fmt.Sprintf("http://%s/.well-known/acme-challenge/%s", domain, token)
 	var ok bool
 	for i := 0; i < 10; i++ {
-		fmt.Printf("checkUrlToken(): try time: %d\n", i+1)
+		logs.Info("checkUrlToken(): try time: %d", i+1)
 		ok, err = checkUrlToken(url, keyAuth)
 		if err != nil {
-			fmt.Printf("preCheckCertForDomain() error: %v\n", err)
+			logs.Error("preCheckCertForDomain() error: %v", err)
 			time.Sleep(time.Second)
 		}
 		if ok {
-			fmt.Printf("checkUrlToken(): try time: %d, succeed!\n", i+1)
+			logs.Info("checkUrlToken(): try time: %d, succeed!", i+1)
 			break
 		}
 	}
@@ -119,7 +120,7 @@ func (site *Site) updateCertForDomain(domain string) error {
 		return err
 	}
 	if !ok {
-		fmt.Printf("preCheckCertForDomain(): not ok for domain: %s\n", domain)
+		logs.Warning("preCheckCertForDomain(): not ok for domain: %s", domain)
 		return nil
 	}
 
@@ -130,12 +131,12 @@ func (site *Site) updateCertForDomain(domain string) error {
 
 	expireTime, err := util.GetCertExpireTime(certificate)
 	if err != nil {
-		fmt.Printf("getCertExpireTime() error: %v\n", err)
+		logs.Error("getCertExpireTime() error: %v", err)
 	}
 
 	domainExpireTime, err := getDomainExpireTime(domain)
 	if err != nil {
-		fmt.Printf("getDomainExpireTime() error: %v\n", err)
+		logs.Error("getDomainExpireTime() error: %v", err)
 	}
 
 	cert := Cert{

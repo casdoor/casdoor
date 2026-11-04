@@ -18,6 +18,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/beego/beego/v2/core/logs"
 	"github.com/robfig/cron/v3"
 )
 
@@ -77,7 +78,7 @@ func runSyncerNoError(syncer *Syncer) {
 	err := RunSyncer(syncer)
 	if err != nil && !errors.Is(err, errSyncerRunning) {
 		recordSyncerError(syncer, err)
-		fmt.Printf("runSyncerNoError() error: %s\n", err.Error())
+		logs.Error("runSyncerNoError() error: %s", err.Error())
 	}
 }
 

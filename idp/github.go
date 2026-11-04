@@ -23,6 +23,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/beego/beego/v2/core/logs"
 	"golang.org/x/oauth2"
 )
 
@@ -249,7 +250,7 @@ func (idp *GithubIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error)
 				return nil, err
 			}
 
-			fmt.Printf("GithubIdProvider:GetUserInfo() error, status code = %d, error message = %v\n", respEmail.StatusCode, errMessage)
+			logs.Error("GithubIdProvider:GetUserInfo() error, status code = %d, error message = %v", respEmail.StatusCode, errMessage)
 		} else {
 			var userEmails []GitHubUserEmailInfo
 			err = json.Unmarshal(emailBody, &userEmails)

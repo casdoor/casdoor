@@ -18,6 +18,7 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/beego/beego/v2/core/logs"
 	"github.com/beego/beego/v2/server/web/context"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
@@ -47,7 +48,7 @@ func RecordMessage(ctx *context.Context) {
 	if ctx.Request.URL.Path == "/api/set-password" {
 		// Parse form if not already parsed
 		if err := ctx.Request.ParseForm(); err != nil {
-			fmt.Printf("RecordMessage() error parsing form: %s\n", err.Error())
+			logs.Error("RecordMessage() error parsing form: %s", err.Error())
 		} else {
 			userOwner := ctx.Request.Form.Get("userOwner")
 			userName := ctx.Request.Form.Get("userName")
@@ -120,7 +121,7 @@ func getRecordUserObject(user *object.User) string {
 func AfterRecordMessage(ctx *context.Context) {
 	record, err := object.NewRecord(ctx)
 	if err != nil {
-		fmt.Printf("AfterRecordMessage() error: %s\n", err.Error())
+		logs.Error("AfterRecordMessage() error: %s", err.Error())
 		return
 	}
 
@@ -138,7 +139,7 @@ func AfterRecordMessage(ctx *context.Context) {
 	if record.Action == "set-password" && targetUserId != "" {
 		owner, user, err := util.GetOwnerAndNameFromIdWithError(targetUserId)
 		if err != nil {
-			fmt.Printf("AfterRecordMessage() error parsing target user %s: %s\n", targetUserId, err.Error())
+			logs.Error("AfterRecordMessage() error parsing target user %s: %s", targetUserId, err.Error())
 		} else {
 			record.Organization, record.User = owner, user
 		}
@@ -162,12 +163,12 @@ func AfterRecordMessage(ctx *context.Context) {
 		var user *object.User
 		user, err = object.GetUser(userId)
 		if err != nil {
-			fmt.Printf("AfterRecordMessage() error: %s\n", err.Error())
+			logs.Error("AfterRecordMessage() error: %s", err.Error())
 			return
 		}
 		if user == nil {
 			err = fmt.Errorf("the user: %s is not found", userId)
-			fmt.Printf("AfterRecordMessage() error: %s\n", err.Error())
+			logs.Error("AfterRecordMessage() error: %s", err.Error())
 			return
 		}
 

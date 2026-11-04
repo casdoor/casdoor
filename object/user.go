@@ -28,6 +28,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/beego/beego/v2/core/logs"
 	"github.com/casbin/casbin/v2"
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/faceId"
@@ -1306,7 +1307,7 @@ func AddUsersInBatch(users []*User) (bool, error) {
 		}
 
 		tmp := users[start:end]
-		fmt.Printf("The syncer adds users: [%d - %d]\n", start, end)
+		logs.Info("The syncer adds users: [%d - %d]", start, end)
 		if ok, err := AddUsers(tmp); err != nil {
 			return false, err
 		} else if ok {

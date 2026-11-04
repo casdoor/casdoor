@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/beego/beego/v2/core/logs"
 	"github.com/casdoor/casdoor/util"
 	"github.com/robfig/cron/v3"
 )
@@ -111,7 +112,7 @@ func CleanupTokens() error {
 			tokenAfterExpiry := currentTime.Sub(expireTimeObj).Seconds()
 			if tokenAfterExpiry > float64(retentionInterval) {
 				expiredNames[session.Owner] = append(expiredNames[session.Owner], session.Name)
-				fmt.Printf("[%d] Deleting expired token: %s | Created: %s | Org: %s | App: %s | User: %s\n",
+				logs.Info("[%d] Deleting expired token: %s | Created: %s | Org: %s | App: %s | User: %s",
 					deletedCount, session.Name, session.CreatedTime, session.Organization, session.Application, session.User)
 				deletedCount++
 			}
@@ -139,18 +140,18 @@ func InitCleanupTokens() {
 
 	go func() {
 		if err := CleanupTokens(); err != nil {
-			fmt.Printf("Error cleaning up tokens at startup: %v\n", err)
+			logs.Error("Error cleaning up tokens at startup: %v", err)
 		}
 	}()
 
 	cronJob := cron.New()
 	_, err := cronJob.AddFunc(schedule, func() {
 		if err := CleanupTokens(); err != nil {
-			fmt.Printf("Error cleaning up tokens: %v\n", err)
+			logs.Error("Error cleaning up tokens: %v", err)
 		}
 	})
 	if err != nil {
-		fmt.Printf("Error scheduling token cleanup: %v\n", err)
+		logs.Error("Error scheduling token cleanup: %v", err)
 		return
 	}
 	cronJob.Start()

@@ -19,6 +19,7 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/beego/beego/v2/core/logs"
 	"github.com/casdoor/casdoor/util"
 	"golang.org/x/oauth2/google"
 	"golang.org/x/oauth2/jwt"
@@ -207,7 +208,7 @@ func (p *GoogleWorkspaceSyncerProvider) getGoogleWorkspaceOriginalUsers() ([]*Or
 	// This avoids N+1 queries by fetching group memberships upfront
 	userGroupsMap, err := p.buildUserGroupsMap(service)
 	if err != nil {
-		fmt.Printf("Warning: failed to fetch group memberships: %v. Users will have no groups assigned.\n", err)
+		logs.Warning("failed to fetch group memberships: %v. Users will have no groups assigned.", err)
 		userGroupsMap = make(map[string][]string)
 	}
 
@@ -244,7 +245,7 @@ func (p *GoogleWorkspaceSyncerProvider) buildUserGroupsMap(service *admin.Servic
 	for _, group := range groups {
 		members, err := p.getGroupMembers(service, group.Id)
 		if err != nil {
-			fmt.Printf("Warning: failed to get members for group %s: %v\n", group.Email, err)
+			logs.Warning("failed to get members for group %s: %v", group.Email, err)
 			continue
 		}
 

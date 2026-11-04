@@ -17,6 +17,7 @@ package main
 import (
 	"fmt"
 
+	"github.com/beego/beego/v2/core/logs"
 	"github.com/beego/beego/v2/server/web"
 	"github.com/casdoor/casdoor/authz"
 	"github.com/casdoor/casdoor/conf"
@@ -76,7 +77,7 @@ func runServer() {
 		if err != nil {
 			panic(fmt.Sprintf("Error exporting data to %s: %v", exportPath, err))
 		}
-		fmt.Printf("Data exported successfully to %s\n", exportPath)
+		logs.Info("Data exported successfully to %s", exportPath)
 		return
 	}
 

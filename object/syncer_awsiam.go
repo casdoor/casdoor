@@ -23,6 +23,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/iam"
+	"github.com/beego/beego/v2/core/logs"
 	"github.com/casdoor/casdoor/util"
 )
 
@@ -156,7 +157,7 @@ func (p *AwsIamSyncerProvider) getAwsIamUsers() ([]*OriginalUser, error) {
 			if iamUser.UserName != nil {
 				userName = *iamUser.UserName
 			}
-			fmt.Printf("Warning: Failed to convert IAM user %s: %v\n", userName, err)
+			logs.Warning("Failed to convert IAM user %s: %v", userName, err)
 			continue
 		}
 		originalUsers = append(originalUsers, originalUser)

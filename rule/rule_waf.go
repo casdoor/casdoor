@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/beego/beego/v2/core/logs"
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/object"
 	"github.com/corazawaf/coraza/v3"
@@ -101,5 +102,5 @@ func processRequest(tx types.Transaction, req *http.Request) {
 
 func logError(error types.MatchedRule) {
 	msg := error.ErrorLog()
-	fmt.Printf("[WAFlogError][%s] %s\n", error.Rule().Severity(), msg)
+	logs.Warning("[WAFlogError][%s] %s", error.Rule().Severity(), msg)
 }

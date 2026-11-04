@@ -15,8 +15,7 @@
 package object
 
 import (
-	"fmt"
-
+	"github.com/beego/beego/v2/core/logs"
 	"github.com/casdoor/casdoor/util"
 )
 
@@ -51,7 +50,7 @@ func (syncer *Syncer) createGroupFromOriginalGroup(originalGroup *OriginalGroup)
 }
 
 func (syncer *Syncer) syncGroups() error {
-	fmt.Printf("Running syncGroups()..\n")
+	logs.Info("Running syncGroups()..")
 
 	// Get existing groups from Casdoor
 	groups, err := GetGroups(syncer.Organization)
@@ -65,7 +64,7 @@ func (syncer *Syncer) syncGroups() error {
 		return err
 	}
 
-	fmt.Printf("Groups: %d, oGroups: %d\n", len(groups), len(oGroups))
+	logs.Info("Groups: %d, oGroups: %d", len(groups), len(oGroups))
 
 	// Create a map of existing groups by name
 	myGroups := map[string]*Group{}
@@ -78,7 +77,7 @@ func (syncer *Syncer) syncGroups() error {
 	for _, oGroup := range oGroups {
 		if _, ok := myGroups[oGroup.Name]; !ok {
 			newGroup := syncer.createGroupFromOriginalGroup(oGroup)
-			fmt.Printf("New group: %v\n", newGroup)
+			logs.Info("New group: %s", newGroup.Name)
 			newGroups = append(newGroups, newGroup)
 		} else {
 			// Group already exists, could update it here if needed
@@ -93,9 +92,9 @@ func (syncer *Syncer) syncGroups() error {
 				existingGroup.UpdatedTime = util.GetCurrentTime()
 				_, err = UpdateGroup(existingGroup.GetId(), existingGroup, true, "")
 				if err != nil {
-					fmt.Printf("Failed to update group %s: %v\n", existingGroup.Name, err)
+					logs.Error("Failed to update group %s: %v", existingGroup.Name, err)
 				} else {
-					fmt.Printf("Updated group: %s\n", existingGroup.Name)
+					logs.Info("Updated group: %s", existingGroup.Name)
 				}
 			}
 		}

@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/beego/beego/v2/core/logs"
 	"github.com/robfig/cron/v3"
 )
 
@@ -167,7 +168,7 @@ func CleanupRecords() error {
 		}
 
 		if deletedCount != 0 {
-			fmt.Printf("Deleted [%d] expired records | Org: %s | Created before: %s\n", deletedCount, owner, cutoffTime)
+			logs.Info("Deleted [%d] expired records | Org: %s | Created before: %s", deletedCount, owner, cutoffTime)
 		}
 	}
 
@@ -186,7 +187,7 @@ func CleanupRecords() error {
 	}
 
 	if deletedCount != 0 {
-		fmt.Printf("Deleted [%d] expired records | Global setting | Created before: %s\n", deletedCount, cutoffTime)
+		logs.Info("Deleted [%d] expired records | Global setting | Created before: %s", deletedCount, cutoffTime)
 	}
 
 	return nil
@@ -197,18 +198,18 @@ func InitCleanupRecords() {
 
 	go func() {
 		if err := CleanupRecords(); err != nil {
-			fmt.Printf("Error cleaning up records at startup: %v\n", err)
+			logs.Error("Error cleaning up records at startup: %v", err)
 		}
 	}()
 
 	cronJob := cron.New()
 	_, err := cronJob.AddFunc(schedule, func() {
 		if err := CleanupRecords(); err != nil {
-			fmt.Printf("Error cleaning up records: %v\n", err)
+			logs.Error("Error cleaning up records: %v", err)
 		}
 	})
 	if err != nil {
-		fmt.Printf("Error scheduling record cleanup: %v\n", err)
+		logs.Error("Error scheduling record cleanup: %v", err)
 		return
 	}
 	cronJob.Start()

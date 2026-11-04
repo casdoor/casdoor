@@ -17,6 +17,7 @@ package object
 import (
 	"fmt"
 
+	"github.com/beego/beego/v2/core/logs"
 	"github.com/xorm-io/core"
 )
 
@@ -25,7 +26,7 @@ func (syncer *Syncer) syncUsers() error {
 		return fmt.Errorf("The syncer table columns should not be empty")
 	}
 
-	fmt.Printf("Running syncUsers()..\n")
+	logs.Info("Running syncUsers()..")
 
 	users, err := GetUsers(syncer.Organization)
 	if err != nil {
@@ -37,7 +38,7 @@ func (syncer *Syncer) syncUsers() error {
 		return err
 	}
 
-	fmt.Printf("Users: %d, oUsers: %d\n", len(users), len(oUsers))
+	logs.Info("Users: %d, oUsers: %d", len(users), len(oUsers))
 
 	var affiliationMap map[int]string
 	if syncer.AffiliationTable != "" {
@@ -65,7 +66,7 @@ func (syncer *Syncer) syncUsers() error {
 
 		if _, ok := myUsers[primary]; !ok {
 			newUser := syncer.createUserFromOriginalUser(oUser, affiliationMap)
-			fmt.Printf("New user: %v\n", newUser)
+			logs.Info("New user: %s", newUser.GetId())
 			newUsers = append(newUsers, newUser)
 		} else {
 			user := myUsers[primary]
@@ -76,7 +77,7 @@ func (syncer *Syncer) syncUsers() error {
 					updatedUser.Hash = oHash
 					updatedUser.PreHash = oHash
 
-					fmt.Printf("Update from oUser to user: %v\n", updatedUser)
+					logs.Info("Update from oUser to user: %s", updatedUser.GetId())
 					_, err = syncer.updateUserForOriginalFields(updatedUser, key)
 					if err != nil {
 						return err
@@ -87,7 +88,7 @@ func (syncer *Syncer) syncUsers() error {
 					if !syncer.IsReadOnly {
 						updatedOUser := syncer.createOriginalUserFromUser(user)
 
-						fmt.Printf("Update from user to oUser: %v\n", updatedOUser)
+						logs.Info("Update from user to oUser: %s", updatedOUser.GetId())
 						_, err = syncer.updateUser(updatedOUser)
 						if err != nil {
 							return err
@@ -113,7 +114,7 @@ func (syncer *Syncer) syncUsers() error {
 						updatedUser.Hash = oHash
 						updatedUser.PreHash = oHash
 
-						fmt.Printf("Update from oUser to user (2nd condition): %v\n", updatedUser)
+						logs.Info("Update from oUser to user (2nd condition): %s", updatedUser.GetId())
 						_, err = syncer.updateUserForOriginalFields(updatedUser, key)
 						if err != nil {
 							return err
@@ -142,7 +143,7 @@ func (syncer *Syncer) syncUsers() error {
 			if _, ok := myOUsers[primary]; !ok {
 				newOUser := syncer.createOriginalUserFromUser(user)
 
-				fmt.Printf("New oUser: %v\n", newOUser)
+				logs.Info("New oUser: %s", newOUser.GetId())
 				_, err = syncer.addUser(newOUser)
 				if err != nil {
 					return err
@@ -171,7 +172,7 @@ func (syncer *Syncer) forbidRemovedUsers(users []*User, myOUsers map[string]*Use
 			continue
 		}
 
-		fmt.Printf("Forbid user removed from oUsers: %s\n", user.GetId())
+		logs.Info("Forbid user removed from oUsers: %s", user.GetId())
 		user.IsForbidden = true
 		user.Hash = ""
 		user.PreHash = ""

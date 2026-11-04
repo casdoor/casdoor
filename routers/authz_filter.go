@@ -596,7 +596,6 @@ func ApiFilter(ctx *context.Context) {
 		if extra != "" {
 			logLine += fmt.Sprintf(", extraInfo = %s", extra)
 		}
-		fmt.Println(logLine)
 		util.LogInfo(ctx, logLine)
 	}
 

@@ -4,6 +4,13 @@ run:
   modules-download-mode: vendor
 linters:
   default: none
+  enable:
+    - forbidigo
+  settings:
+    forbidigo:
+      forbid:
+        - pattern: ^fmt\.Print(f|ln)?$
+          msg: use the logs package from github.com/beego/beego/v2/core/logs
   exclusions:
     generated: lax
     presets:
@@ -11,6 +18,10 @@ linters:
       - common-false-positives
       - legacy
       - std-error-handling
+    rules:
+      - path: (_test\.go|i18n/generate\.go|deployment/deploy\.go)
+        linters:
+          - forbidigo
     paths:
       - third_party$
       - builtin$

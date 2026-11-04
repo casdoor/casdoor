@@ -23,6 +23,8 @@ import (
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/beego/beego/v2/core/logs"
 )
 
 func hasGravatar(client *http.Client, email string) (bool, error) {
@@ -49,7 +51,7 @@ func hasGravatar(client *http.Client, email string) (bool, error) {
 
 	resp, err := client.Do(req)
 	if err != nil {
-		fmt.Printf("hasGravatar() error: %v\n", err)
+		logs.Error("hasGravatar() error: %v", err)
 		return false, nil
 	}
 	defer resp.Body.Close()

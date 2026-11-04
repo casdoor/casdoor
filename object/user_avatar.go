@@ -23,6 +23,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/beego/beego/v2/core/logs"
 	"github.com/casdoor/casdoor/proxy"
 	"github.com/casdoor/casdoor/util"
 )
@@ -36,13 +37,13 @@ func downloadImage(client *http.Client, url string) (*bytes.Buffer, string, erro
 
 	resp, err := client.Do(req)
 	if err != nil {
-		fmt.Printf("downloadImage() error for url [%s]: %s\n", url, err.Error())
+		logs.Error("downloadImage() error for url [%s]: %s", url, err.Error())
 		return nil, "", nil
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		fmt.Printf("downloadImage() error for url [%s]: %s\n", url, resp.Status)
+		logs.Error("downloadImage() error for url [%s]: %s", url, resp.Status)
 		return nil, "", nil
 	}
 

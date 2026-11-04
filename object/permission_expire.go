@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/beego/beego/v2/core/logs"
 	"github.com/robfig/cron/v3"
 	"github.com/xorm-io/core"
 )
@@ -32,7 +33,7 @@ func isPermissionExpired(permission *Permission, now time.Time) bool {
 
 	expireTime, err := time.Parse(time.RFC3339, permission.ExpireTime)
 	if err != nil {
-		fmt.Printf("isPermissionExpired() error, invalid expireTime %q for permission %s: %v\n", permission.ExpireTime, permission.GetId(), err)
+		logs.Error("isPermissionExpired() error, invalid expireTime %q for permission %s: %v", permission.ExpireTime, permission.GetId(), err)
 		return false
 	}
 
@@ -72,7 +73,7 @@ func ExpirePermissions() error {
 			return fmt.Errorf("failed to disable expired permission %s: %w", permission.GetId(), err)
 		}
 
-		fmt.Printf("[%d] Revoked expired permission: %s | ExpireTime: %s\n", revokedCount, permission.GetId(), permission.ExpireTime)
+		logs.Info("[%d] Revoked expired permission: %s | ExpireTime: %s", revokedCount, permission.GetId(), permission.ExpireTime)
 		revokedCount++
 	}
 
@@ -87,18 +88,18 @@ func InitExpirePermissions() {
 
 	go func() {
 		if err := ExpirePermissions(); err != nil {
-			fmt.Printf("Error revoking expired permissions at startup: %v\n", err)
+			logs.Error("Error revoking expired permissions at startup: %v", err)
 		}
 	}()
 
 	cronJob := cron.New()
 	_, err := cronJob.AddFunc(schedule, func() {
 		if err := ExpirePermissions(); err != nil {
-			fmt.Printf("Error revoking expired permissions: %v\n", err)
+			logs.Error("Error revoking expired permissions: %v", err)
 		}
 	})
 	if err != nil {
-		fmt.Printf("Error scheduling permission expiration: %v\n", err)
+		logs.Error("Error scheduling permission expiration: %v", err)
 		return
 	}
 	cronJob.Start()

@@ -20,6 +20,7 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/beego/beego/v2/core/logs"
 	"github.com/casdoor/casdoor/util"
 )
 
@@ -101,7 +102,7 @@ func GetOpenClawSessionGraph(id string) (*OpenClawSessionGraph, error) {
 	graph := buildOpenClawSessionGraphFromEntries(anchorPayload, entry.Name, records)
 	rawTranscript, err := getOpenClawRawTranscriptRef(entry.Owner, entry.Provider, anchorPayload.SessionID)
 	if err != nil {
-		fmt.Printf("GetOpenClawSessionGraph: failed to load raw transcript ref for provider %s session %s: %v\n", entry.Provider, anchorPayload.SessionID, err)
+		logs.Error("GetOpenClawSessionGraph: failed to load raw transcript ref for provider %s session %s: %v", entry.Provider, anchorPayload.SessionID, err)
 		return graph, nil
 	}
 	graph.RawTranscript = rawTranscript

@@ -20,6 +20,7 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/beego/beego/v2/core/logs"
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/util"
@@ -190,7 +191,7 @@ func AddRolesInBatch(roles []*Role) bool {
 		}
 
 		tmp := roles[start:end]
-		fmt.Printf("The syncer adds roles: [%d - %d]\n", start, end)
+		logs.Info("The syncer adds roles: [%d - %d]", start, end)
 		if AddRoles(tmp) {
 			affected = true
 		}

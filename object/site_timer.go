@@ -15,11 +15,10 @@
 package object
 
 import (
-	"fmt"
 	"sync"
 	"time"
 
-	"github.com/casdoor/casdoor/util"
+	"github.com/beego/beego/v2/core/logs"
 )
 
 var (
@@ -53,11 +52,11 @@ func monitorSiteCerts() error {
 }
 
 func StartMonitorSitesLoop() {
-	fmt.Printf("StartMonitorSitesLoop() Start!\n\n")
+	logs.Info("StartMonitorSitesLoop() Start!")
 	go func() {
 		defer func() {
 			if r := recover(); r != nil {
-				fmt.Printf("[%s] Recovered from StartMonitorSitesLoop() panic: %v\n", util.GetCurrentTime(), r)
+				logs.Error("Recovered from StartMonitorSitesLoop() panic: %v", r)
 				StartMonitorSitesLoop()
 			}
 		}()
@@ -65,19 +64,19 @@ func StartMonitorSitesLoop() {
 		for {
 			err := refreshSiteMap()
 			if err != nil {
-				fmt.Println(err)
+				logs.Error(err)
 				continue
 			}
 
 			err = refreshRuleMap()
 			if err != nil {
-				fmt.Println(err)
+				logs.Error(err)
 				continue
 			}
 
 			err = monitorSiteCerts()
 			if err != nil {
-				fmt.Println(err)
+				logs.Error(err)
 				continue
 			}
 

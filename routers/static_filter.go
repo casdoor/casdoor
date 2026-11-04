@@ -298,7 +298,7 @@ func StaticFilter(ctx *context.Context) {
 
 	organizationThemeCookie, err := appendThemeCookie(ctx, urlPath)
 	if err != nil {
-		fmt.Println(err)
+		logs.Error(err)
 	}
 
 	if !filepath.IsLocal(strings.TrimPrefix(urlPath, "/")) || !util.FileExist(path) {

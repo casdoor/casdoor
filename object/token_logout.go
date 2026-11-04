@@ -21,6 +21,7 @@ import (
 	"slices"
 	"time"
 
+	"github.com/beego/beego/v2/core/logs"
 	"github.com/casdoor/casdoor/util"
 	"github.com/golang-jwt/jwt/v5"
 )
@@ -171,12 +172,12 @@ func postLogoutForm(application *Application, logoutUrl string, form url.Values)
 
 	resp, err := client.PostForm(logoutUrl, form)
 	if err != nil {
-		fmt.Printf("postLogoutForm() error: %s\n", err.Error())
+		logs.Error("postLogoutForm() error: %s", err.Error())
 		return
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		fmt.Printf("postLogoutForm() error: unexpected status: %s from: %s\n", resp.Status, logoutUrl)
+		logs.Error("postLogoutForm() error: unexpected status: %s from: %s", resp.Status, logoutUrl)
 	}
 }

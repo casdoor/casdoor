@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/beego/beego/v2/core/logs"
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/core"
@@ -328,7 +329,7 @@ func AddPermissionsInBatch(permissions []*Permission) (bool, error) {
 		}
 
 		tmp := permissions[start:end]
-		fmt.Printf("The syncer adds permissions: [%d - %d]\n", start, end)
+		logs.Info("The syncer adds permissions: [%d - %d]", start, end)
 
 		b, err := AddPermissions(tmp)
 		if err != nil {

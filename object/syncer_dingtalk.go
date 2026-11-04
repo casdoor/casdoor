@@ -24,6 +24,7 @@ import (
 	"net/url"
 	"time"
 
+	"github.com/beego/beego/v2/core/logs"
 	"github.com/casdoor/casdoor/util"
 )
 
@@ -503,7 +504,7 @@ func (p *DingtalkSyncerProvider) GetOriginalGroups() ([]*OriginalGroup, error) {
 		dept, err := p.getDingtalkDepartmentDetails(accessToken, deptId)
 		if err != nil {
 			// Log error but continue with other departments
-			fmt.Printf("Warning: failed to get details for department %d: %v\n", deptId, err)
+			logs.Warning("failed to get details for department %d: %v", deptId, err)
 			continue
 		}
 
