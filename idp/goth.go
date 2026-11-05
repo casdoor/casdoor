@@ -306,7 +306,7 @@ func NewGothIdProvider(providerType string, clientId string, clientSecret string
 			Provider: patreon.New(clientId, clientSecret, redirectUrl),
 			Session:  &patreon.Session{},
 		}
-	case "Paypal":
+	case "Paypal", "PayPal":
 		idp = GothIdProvider{
 			Provider: paypal.New(clientId, clientSecret, redirectUrl),
 			Session:  &paypal.Session{},
