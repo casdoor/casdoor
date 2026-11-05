@@ -70,11 +70,10 @@ func takeAccessState(state string, organization string, username string) bool {
 }
 
 func StartRadiusServer() {
-	secret := conf.GetConfigString("radiusSecret")
 	server := radius.PacketServer{
 		Addr:         "0.0.0.0:" + conf.GetConfigString("radiusServerPort"),
 		Handler:      radius.HandlerFunc(handlerRadius),
-		SecretSource: radius.StaticSecretSource([]byte(secret)),
+		SecretSource: newDynamicSecretSource(),
 	}
 	log.Printf("Starting Radius server on %s", server.Addr)
 	if err := server.ListenAndServe(); err != nil {

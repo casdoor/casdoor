@@ -223,6 +223,12 @@ func InitAPI() {
 	web.Router("/api/add-model", &controllers.ApiController{}, "POST:AddModel")
 	web.Router("/api/delete-model", &controllers.ApiController{}, "POST:DeleteModel")
 
+	web.Router("/api/get-radius-clients", &controllers.ApiController{}, "GET:GetRadiusClients")
+	web.Router("/api/get-radius-client", &controllers.ApiController{}, "GET:GetRadiusClient")
+	web.Router("/api/update-radius-client", &controllers.ApiController{}, "POST:UpdateRadiusClient")
+	web.Router("/api/add-radius-client", &controllers.ApiController{}, "POST:AddRadiusClient")
+	web.Router("/api/delete-radius-client", &controllers.ApiController{}, "POST:DeleteRadiusClient")
+
 	web.Router("/api/get-adapters", &controllers.ApiController{}, "GET:GetAdapters")
 	web.Router("/api/get-adapter", &controllers.ApiController{}, "GET:GetAdapter")
 	web.Router("/api/update-adapter", &controllers.ApiController{}, "POST:UpdateAdapter")
