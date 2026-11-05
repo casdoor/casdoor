@@ -413,7 +413,12 @@ func DeleteOrganization(organization *Organization) (bool, error) {
 		return false, nil
 	}
 
-	return deleteOrganization(organization)
+	affected, err := deleteOrganization(organization)
+	if err != nil || !affected {
+		return affected, err
+	}
+
+	return affected, deleteApplicationGrantsByOrganization(organization.Name)
 }
 
 func GetOrganizationByUser(user *User) (*Organization, error) {

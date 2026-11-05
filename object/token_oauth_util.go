@@ -435,14 +435,7 @@ func checkOAuthCodeUser(user *User, application *Application, lang string) (stri
 		return i18n.Translate(lang, "check:The user has been deleted and cannot be used to sign in, please contact the administrator"), nil
 	}
 
-	isUserOfApplication, err := IsUserOfApplication(user, application)
-	if err != nil {
-		return "", err
-	}
-	if !isUserOfApplication {
-		return i18n.Translate(lang, "auth:Unauthorized operation"), nil
-	}
-	return "", nil
+	return CheckApplicationAccess(user, application, lang)
 }
 
 func GetOAuthCode(userId string, clientId string, provider string, signinMethod string, responseType string, redirectUri string, scope string, state string, nonce string, challenge string, resource string, sessionId string, authTime int64, host string, lang string) (*Code, error) {
@@ -528,6 +521,11 @@ func GetOAuthCode(userId string, clientId string, provider string, signinMethod 
 		challenge = ""
 	}
 
+	isGrantAccess, err := isApplicationGrantUser(user, application)
+	if err != nil {
+		return nil, err
+	}
+
 	token := &Token{
 		Owner:         application.Owner,
 		Name:          tokenName,
@@ -547,6 +545,7 @@ func GetOAuthCode(userId string, clientId string, provider string, signinMethod 
 		CodeExpireIn:  time.Now().Add(time.Minute * 5).Unix(),
 		Resource:      resource,
 		SessionId:     sessionId,
+		IsGrantAccess: isGrantAccess,
 	}
 	_, err = AddToken(token)
 	if err != nil {
@@ -698,6 +697,20 @@ func RefreshToken(application *Application, grantType string, refreshToken strin
 		return tokenError, nil
 	}
 
+	// a user of another organization keeps the access only while their grant does
+	if token.IsGrantAccess {
+		msg, err := CheckApplicationAccess(user, application, "en")
+		if err != nil {
+			return nil, err
+		}
+		if msg != "" {
+			return &TokenError{
+				Error:            InvalidGrant,
+				ErrorDescription: "the user is no longer allowed to access the application",
+			}, nil
+		}
+	}
+
 	err = ExtendUserWithRolesAndPermissions(user)
 	if err != nil {
 		return nil, err
@@ -724,6 +737,11 @@ func RefreshToken(application *Application, grantType string, refreshToken strin
 		newRefreshToken = refreshToken
 	}
 
+	isGrantAccess, err := isApplicationGrantUser(user, application)
+	if err != nil {
+		return nil, err
+	}
+
 	newToken := &Token{
 		Owner:        application.Owner,
 		Name:         tokenName,
@@ -741,7 +759,8 @@ func RefreshToken(application *Application, grantType string, refreshToken strin
 		Resource:     resource,
 		GrantType:    token.GrantType,
 		// the refreshed token stays bound to the login session that minted the original one
-		SessionId: token.SessionId,
+		SessionId:     token.SessionId,
+		IsGrantAccess: isGrantAccess,
 	}
 	_, err = AddToken(newToken)
 	if err != nil {

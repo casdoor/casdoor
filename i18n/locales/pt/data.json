@@ -4,6 +4,18 @@
     "Get init score failed, error: %w": "Falha ao obter pontuação inicial, erro: %w",
     "The application does not allow to sign up new account": "O aplicativo não permite a criação de novas contas"
   },
+  "application": {
+    "A shared application is available to every organization and does not take grants": "A shared application is available to every organization and does not take grants",
+    "Invalid expire time: %s": "Invalid expire time: %s",
+    "Invalid principal type: %s": "Invalid principal type: %s",
+    "Invalid principal: %s": "Invalid principal: %s",
+    "The ID of the user: %s is not unique and can't identify the user to the application": "The ID of the user: %s is not unique and can't identify the user to the application",
+    "The expire time must be in the future": "The expire time must be in the future",
+    "The name %s is already used by a user of the application's organization": "The name %s is already used by a user of the application's organization",
+    "The principal belongs to the organization of the application, which already has access": "The principal belongs to the organization of the application, which already has access",
+    "The principal: %s already has a grant for this application": "The principal: %s already has a grant for this application",
+    "The principal: %s does not exist": "The principal: %s does not exist"
+  },
   "auth": {
     "Challenge method should be S256": "O método de desafio deve ser S256",
     "DeviceCode Invalid": "Código de dispositivo inválido",
@@ -16,7 +28,9 @@
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %s, please use another way to sign up": "A conta do provedor: %s e nome de usuário: %s (%s) não existe e não é permitido criar nova conta via %s, por favor, use outra forma de cadastro",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "A conta do provedor: %s e nome de usuário: %s (%s) não existe e não é permitido criar nova conta, entre em contato com o suporte de TI",
     "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)": "A conta do provedor: %s e nome de usuário: %s (%s) já está vinculada a outra conta: %s (%s)",
+    "The account matches users of several organizations, please sign in with organization/username": "The account matches users of several organizations, please sign in with organization/username",
     "The application does not match the device authorization request": "A aplicação não corresponde à solicitação de autorização de dispositivo",
+    "The application requires multi-factor authentication, please set it up in your account first": "The application requires multi-factor authentication, please set it up in your account first",
     "The application: %s does not exist": "O aplicativo: %s não existe",
     "The application: %s has disabled users to signin": "O aplicativo: %s desativou o login de usuários",
     "The group: %s does not exist": "O grupo: %s não existe",
@@ -130,6 +144,7 @@
     "Please login first": "Por favor, faça login primeiro",
     "Please sign in first": "Faça login primeiro",
     "The LDAP: %s does not exist": "O LDAP: %s não existe",
+    "The application does not exist": "The application does not exist",
     "The client ID: %s is already used by another application": "O ID do cliente: %s já está sendo usado por outro aplicativo",
     "The object does not exist": "O objeto não existe",
     "The organization: %s should have one application at least": "A organização: %s deve ter pelo menos um aplicativo",

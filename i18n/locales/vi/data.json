@@ -4,6 +4,18 @@
     "Get init score failed, error: %w": "Lấy điểm khởi đầu thất bại, lỗi: %w",
     "The application does not allow to sign up new account": "Ứng dụng không cho phép đăng ký tài khoản mới"
   },
+  "application": {
+    "A shared application is available to every organization and does not take grants": "A shared application is available to every organization and does not take grants",
+    "Invalid expire time: %s": "Invalid expire time: %s",
+    "Invalid principal type: %s": "Invalid principal type: %s",
+    "Invalid principal: %s": "Invalid principal: %s",
+    "The ID of the user: %s is not unique and can't identify the user to the application": "The ID of the user: %s is not unique and can't identify the user to the application",
+    "The expire time must be in the future": "The expire time must be in the future",
+    "The name %s is already used by a user of the application's organization": "The name %s is already used by a user of the application's organization",
+    "The principal belongs to the organization of the application, which already has access": "The principal belongs to the organization of the application, which already has access",
+    "The principal: %s already has a grant for this application": "The principal: %s already has a grant for this application",
+    "The principal: %s does not exist": "The principal: %s does not exist"
+  },
   "auth": {
     "Challenge method should be S256": "Phương pháp thách thức nên là S256",
     "DeviceCode Invalid": "Mã thiết bị không hợp lệ",
@@ -16,7 +28,9 @@
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %s, please use another way to sign up": "Tài khoản cho nhà cung cấp: %s và tên người dùng: %s (%s) không tồn tại và không được phép đăng ký làm tài khoản mới qua %s, vui lòng sử dụng cách khác để đăng ký",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "Tài khoản cho nhà cung cấp: %s và tên người dùng: %s (%s) không tồn tại và không được phép đăng ký như một tài khoản mới, vui lòng liên hệ với bộ phận hỗ trợ công nghệ thông tin của bạn",
     "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)": "Tài khoản cho nhà cung cấp: %s và tên người dùng: %s (%s) đã được liên kết với tài khoản khác: %s (%s)",
+    "The account matches users of several organizations, please sign in with organization/username": "The account matches users of several organizations, please sign in with organization/username",
     "The application does not match the device authorization request": "Ứng dụng không khớp với yêu cầu ủy quyền thiết bị",
+    "The application requires multi-factor authentication, please set it up in your account first": "The application requires multi-factor authentication, please set it up in your account first",
     "The application: %s does not exist": "Ứng dụng: %s không tồn tại",
     "The application: %s has disabled users to signin": "Ứng dụng: %s đã vô hiệu hóa đăng nhập của người dùng",
     "The group: %s does not exist": "Nhóm: %s không tồn tại",
@@ -130,6 +144,7 @@
     "Please login first": "Vui lòng đăng nhập trước",
     "Please sign in first": "Vui lòng đăng nhập trước",
     "The LDAP: %s does not exist": "LDAP: %s không tồn tại",
+    "The application does not exist": "The application does not exist",
     "The client ID: %s is already used by another application": "ID ứng dụng khách: %s đã được một ứng dụng khác sử dụng",
     "The object does not exist": "Đối tượng không tồn tại",
     "The organization: %s should have one application at least": "Tổ chức: %s cần có ít nhất một ứng dụng",

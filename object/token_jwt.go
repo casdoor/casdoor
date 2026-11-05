@@ -594,6 +594,18 @@ func refineUser(user *User) *User {
 // getTokenUser shapes the claims from a copy, so that refineUser() does not clear the
 // password of the user object the caller keeps using
 func getTokenUser(application *Application, user *User) (*User, error) {
+	isGrantUser, err := isApplicationGrantUser(user, application)
+	if err != nil {
+		return nil, err
+	}
+	if isGrantUser {
+		qualifiedUser, err := qualifyApplicationGrantUser(user, application)
+		if err != nil {
+			return nil, err
+		}
+		return refineUser(qualifiedUser), nil
+	}
+
 	userCopy := *user
 	groups, err := userCopy.GetGroupsForToken(application)
 	if err != nil {

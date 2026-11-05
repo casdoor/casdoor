@@ -169,7 +169,7 @@ func (c *ApiController) GrantConsent() {
 		return
 	}
 
-	if !c.checkSigninCompleted(userObj) || !c.checkApplicationSignin(application, userObj) || !c.checkUserOfApplication(userObj, application) {
+	if !c.checkSigninCompleted(userObj) || !c.checkApplicationSignin(application, userObj) || !c.checkApplicationAccess(userObj, application) {
 		return
 	}
 

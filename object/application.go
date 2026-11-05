@@ -653,5 +653,10 @@ func DeleteApplication(application *Application) (bool, error) {
 		return false, nil
 	}
 
-	return deleteApplication(application)
+	affected, err := deleteApplication(application)
+	if err != nil || !affected {
+		return affected, err
+	}
+
+	return affected, deleteApplicationGrantsByApplication(application.Organization, application.Name)
 }

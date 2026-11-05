@@ -6,6 +6,7 @@ import {Button} from "@/components/ui/button";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import {Loading} from "@/components/common/Loading";
 import {ApplicationExportButton, ApplicationImportModal} from "@/components/application/ApplicationImportExport";
+import {ApplicationAccessTab} from "@/components/application/ApplicationAccessTab";
 import {ApplicationAuthenticationTab} from "@/components/application/ApplicationAuthenticationTab";
 import {ApplicationBasicTab} from "@/components/application/ApplicationBasicTab";
 import {ApplicationOidcOauthTab} from "@/components/application/ApplicationOidcOauthTab";
@@ -35,6 +36,7 @@ const TAB_KEYS = [
   "ui-customization",
   "security",
   "reverse-proxy",
+  "access",
 ];
 
 export default function ApplicationEditPage() {
@@ -192,6 +194,7 @@ export default function ApplicationEditPage() {
           <TabsTrigger value="ui-customization">{i18next.t("application:UI Customization")}</TabsTrigger>
           <TabsTrigger value="security">{i18next.t("application:Security")}</TabsTrigger>
           <TabsTrigger value="reverse-proxy">{i18next.t("application:Reverse Proxy")}</TabsTrigger>
+          {mode !== "add" && <TabsTrigger value="access">{i18next.t("application:Cross-Organization Access")}</TabsTrigger>}
         </TabsList>
 
         <TabsContent value="basic" className={tabClassName}>
@@ -251,6 +254,12 @@ export default function ApplicationEditPage() {
         <TabsContent value="reverse-proxy" className={tabClassName}>
           <ApplicationReverseProxyTab application={application} updateField={updateField} certs={certs} />
         </TabsContent>
+
+        {mode !== "add" && (
+          <TabsContent value="access" className={tabClassName}>
+            <ApplicationAccessTab application={application} account={account} organizations={organizations} />
+          </TabsContent>
+        )}
       </Tabs>
     </EditPageShell>
   );

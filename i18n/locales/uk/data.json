@@ -4,6 +4,18 @@
     "Get init score failed, error: %w": "Не вдалося отримати початковий бал, помилка: %w",
     "The application does not allow to sign up new account": "Додаток не дозволяє реєструвати нові облікові записи"
   },
+  "application": {
+    "A shared application is available to every organization and does not take grants": "A shared application is available to every organization and does not take grants",
+    "Invalid expire time: %s": "Invalid expire time: %s",
+    "Invalid principal type: %s": "Invalid principal type: %s",
+    "Invalid principal: %s": "Invalid principal: %s",
+    "The ID of the user: %s is not unique and can't identify the user to the application": "The ID of the user: %s is not unique and can't identify the user to the application",
+    "The expire time must be in the future": "The expire time must be in the future",
+    "The name %s is already used by a user of the application's organization": "The name %s is already used by a user of the application's organization",
+    "The principal belongs to the organization of the application, which already has access": "The principal belongs to the organization of the application, which already has access",
+    "The principal: %s already has a grant for this application": "The principal: %s already has a grant for this application",
+    "The principal: %s does not exist": "The principal: %s does not exist"
+  },
   "auth": {
     "Challenge method should be S256": "Метод виклику має бути S256",
     "DeviceCode Invalid": "Недійсний DeviceCode",
@@ -16,7 +28,9 @@
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %s, please use another way to sign up": "Обліковий запис для провайдера: %s та імені користувача: %s (%s) не існує і не дозволяється реєструвати як новий через %s, використайте інший спосіб",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "Обліковий запис для провайдера: %s та імені користувача: %s (%s) не існує і не дозволяється реєструвати як новий, зверніться до IT-підтримки",
     "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)": "Обліковий запис для провайдера: %s та імені користувача: %s (%s) уже пов’язаний з іншим обліковим записом: %s (%s)",
+    "The account matches users of several organizations, please sign in with organization/username": "The account matches users of several organizations, please sign in with organization/username",
     "The application does not match the device authorization request": "Застосунок не відповідає запиту на авторизацію пристрою",
+    "The application requires multi-factor authentication, please set it up in your account first": "The application requires multi-factor authentication, please set it up in your account first",
     "The application: %s does not exist": "Додаток: %s не існує",
     "The application: %s has disabled users to signin": "Додаток: %s вимкнув вхід користувачів",
     "The group: %s does not exist": "Група: %s не існує",
@@ -130,6 +144,7 @@
     "Please login first": "Спочатку увійдіть",
     "Please sign in first": "Спочатку увійдіть",
     "The LDAP: %s does not exist": "LDAP: %s не існує",
+    "The application does not exist": "The application does not exist",
     "The client ID: %s is already used by another application": "Ідентифікатор клієнта: %s уже використовується іншим застосунком",
     "The object does not exist": "Об'єкт не існує",
     "The organization: %s should have one application at least": "Організація: %s має мати щонайменше один додаток",

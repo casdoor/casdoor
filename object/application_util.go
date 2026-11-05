@@ -1011,6 +1011,12 @@ func applicationChangeTrigger(oldName string, newName string) error {
 		return err
 	}
 
+	// the grants follow the application, a new application taking the old name gets none
+	_, err = session.Where("application=?", oldName).Cols("application").Update(&ApplicationGrant{Application: newName})
+	if err != nil {
+		return err
+	}
+
 	var permissions []*Permission
 	err = ormer.Engine.Find(&permissions)
 	if err != nil {

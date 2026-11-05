@@ -27,11 +27,12 @@ var forbiddenChars = `/?:#&%=+;`
 
 // these add APIs either generate the name themselves or have no name field
 var addPathsWithoutName = map[string]bool{
-	"/api/add-ldap":           true,
-	"/api/add-policy":         true,
-	"/api/add-record":         true,
-	"/api/add-ticket-message": true,
-	"/api/add-transaction":    true,
+	"/api/add-application-grant": true,
+	"/api/add-ldap":              true,
+	"/api/add-policy":            true,
+	"/api/add-record":            true,
+	"/api/add-ticket-message":    true,
+	"/api/add-transaction":       true,
 }
 
 func FieldValidationFilter(ctx *context.Context) {

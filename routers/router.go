@@ -102,6 +102,11 @@ func InitAPI() {
 	web.Router("/api/impersonate-user", &controllers.ApiController{}, "POST:ImpersonateUser")
 	web.Router("/api/exit-impersonate-user", &controllers.ApiController{}, "POST:ExitImpersonateUser")
 
+	web.Router("/api/get-application-grants", &controllers.ApiController{}, "GET:GetApplicationGrants")
+	web.Router("/api/add-application-grant", &controllers.ApiController{}, "POST:AddApplicationGrant")
+	web.Router("/api/delete-application-grant", &controllers.ApiController{}, "POST:DeleteApplicationGrant")
+	web.Router("/api/get-application-grant-principals", &controllers.ApiController{}, "GET:GetApplicationGrantPrincipals")
+
 	web.Router("/api/get-invitations", &controllers.ApiController{}, "GET:GetInvitations")
 	web.Router("/api/get-invitation", &controllers.ApiController{}, "GET:GetInvitation")
 	web.Router("/api/get-invitation-info", &controllers.ApiController{}, "GET:GetInvitationCodeInfo")

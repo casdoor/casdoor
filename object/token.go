@@ -51,6 +51,8 @@ type Token struct {
 	Resource         string `xorm:"varchar(255)" json:"resource"`           // RFC 8707 Resource Indicator
 	DPoPJkt          string `xorm:"varchar(255) 'dpop_jkt'" json:"dPoPJkt"` // RFC 9449 DPoP JWK thumbprint binding
 	SessionId        string `xorm:"varchar(100) index" json:"sessionId"`    // the Beego session id that minted the token
+	// IsGrantAccess marks a token of a user of another organization, issued through an application grant
+	IsGrantAccess bool `json:"isGrantAccess"`
 }
 
 func GetTokenCount(owner, organization, field, value string) (int64, error) {
@@ -132,8 +134,36 @@ func (token *Token) IsUserActive() (bool, error) {
 	if user == nil {
 		return false, nil
 	}
+	if user.IsForbidden || user.IsDeleted {
+		return false, nil
+	}
+	if !token.IsGrantAccess {
+		return true, nil
+	}
 
-	return !user.IsForbidden && !user.IsDeleted, nil
+	return token.isApplicationAccessAllowed(user)
+}
+
+// isApplicationAccessAllowed keeps the token of a user of another organization usable only
+// while the user still holds a grant for the token's application
+func (token *Token) isApplicationAccessAllowed(user *User) (bool, error) {
+	application := Application{Owner: token.Owner, Name: token.Application}
+	existed, err := ormer.Engine.Cols("owner", "name", "organization", "is_shared").Get(&application)
+	if err != nil {
+		return false, err
+	}
+	if !existed {
+		return false, nil
+	}
+	if application.IsShared || application.Organization == user.Owner {
+		return true, nil
+	}
+
+	msg, err := CheckApplicationAccess(user, &application, "en")
+	if err != nil {
+		return false, err
+	}
+	return msg == "", nil
 }
 
 func GetTokenByRefreshToken(refreshToken string) (*Token, error) {

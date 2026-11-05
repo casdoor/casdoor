@@ -81,6 +81,19 @@ func (c *ApiController) checkUserOfApplication(user *object.User, application *o
 	return true
 }
 
+func (c *ApiController) checkApplicationAccess(user *object.User, application *object.Application) bool {
+	msg, err := object.CheckApplicationAccess(user, application, c.GetAcceptLanguage())
+	if err != nil {
+		c.ResponseError(err.Error())
+		return false
+	}
+	if msg != "" {
+		c.ResponseError(msg)
+		return false
+	}
+	return true
+}
+
 func (c *ApiController) checkUserOfApplicationId(user *object.User, applicationId string) bool {
 	application, err := object.GetApplication(applicationId)
 	if err != nil {
@@ -99,11 +112,17 @@ func (c *ApiController) checkCredentialApplication(user *object.User, applicatio
 		return true
 	}
 
-	if !c.checkUserOfApplication(user, application) {
+	rt, isOAuth := object.ParseResponseType(form.Type)
+	if isOAuth {
+		// OAuth/OIDC also admits the users of other organizations that hold an application grant
+		if !c.checkApplicationAccess(user, application) {
+			return false
+		}
+	} else if !c.checkUserOfApplication(user, application) {
 		return false
 	}
 
-	if rt, ok := object.ParseResponseType(form.Type); !ok || !rt.Code {
+	if !isOAuth || !rt.Code {
 		return true
 	}
 
@@ -980,6 +999,27 @@ func (c *ApiController) Login() {
 				}
 				if resolvedUser != nil {
 					authForm.Organization = resolvedUser.Owner
+				}
+			} else if authForm.Organization == application.Organization {
+				// nobody of the application's organization has the name: it may be a user of
+				// another organization holding a grant for the application
+				var appUser *object.User
+				appUser, err = object.GetUserByFields(application.Organization, lookupUsername)
+				if err != nil {
+					c.ResponseError(err.Error())
+					return
+				}
+				if appUser == nil {
+					var grantUser *object.User
+					grantUser, err = object.GetApplicationGrantUserForLogin(application, lookupUsername, c.GetAcceptLanguage())
+					if err != nil {
+						c.ResponseError(err.Error())
+						return
+					}
+					if grantUser != nil {
+						authForm.Organization = grantUser.Owner
+						lookupUsername = grantUser.Name
+					}
 				}
 			}
 

@@ -4,6 +4,18 @@
     "Get init score failed, error: %w": "Get init score failed, error: %w",
     "The application does not allow to sign up new account": "The application does not allow to sign up new account"
   },
+  "application": {
+    "A shared application is available to every organization and does not take grants": "A shared application is available to every organization and does not take grants",
+    "Invalid expire time: %s": "Invalid expire time: %s",
+    "Invalid principal type: %s": "Invalid principal type: %s",
+    "Invalid principal: %s": "Invalid principal: %s",
+    "The ID of the user: %s is not unique and can't identify the user to the application": "The ID of the user: %s is not unique and can't identify the user to the application",
+    "The expire time must be in the future": "The expire time must be in the future",
+    "The name %s is already used by a user of the application's organization": "The name %s is already used by a user of the application's organization",
+    "The principal belongs to the organization of the application, which already has access": "The principal belongs to the organization of the application, which already has access",
+    "The principal: %s already has a grant for this application": "The principal: %s already has a grant for this application",
+    "The principal: %s does not exist": "The principal: %s does not exist"
+  },
   "auth": {
     "Challenge method should be S256": "Challenge method should be S256",
     "DeviceCode Invalid": "DeviceCode Invalid",
@@ -16,7 +28,9 @@
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %s, please use another way to sign up": "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %s, please use another way to sign up",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support",
     "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)": "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)",
+    "The account matches users of several organizations, please sign in with organization/username": "The account matches users of several organizations, please sign in with organization/username",
     "The application does not match the device authorization request": "The application does not match the device authorization request",
+    "The application requires multi-factor authentication, please set it up in your account first": "The application requires multi-factor authentication, please set it up in your account first",
     "The application: %s does not exist": "The application: %s does not exist",
     "The application: %s has disabled users to signin": "The application: %s has disabled users to signin",
     "The group: %s does not exist": "The group: %s does not exist",
@@ -130,6 +144,7 @@
     "Please login first": "Please login first",
     "Please sign in first": "Please sign in first",
     "The LDAP: %s does not exist": "The LDAP: %s does not exist",
+    "The application does not exist": "The application does not exist",
     "The client ID: %s is already used by another application": "The client ID: %s is already used by another application",
     "The object does not exist": "The object does not exist",
     "The organization: %s should have one application at least": "The organization: %s should have one application at least",

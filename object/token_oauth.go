@@ -278,6 +278,24 @@ func GetAuthorizationCodeToken(application *Application, clientSecret string, co
 		}, nil
 	}
 
+	// a grant revoked after the code was issued must not be redeemed any more
+	if token.IsGrantAccess {
+		codeUser, err := getUser(token.Organization, token.User)
+		if err != nil {
+			return nil, nil, err
+		}
+		msg, err := CheckApplicationAccess(codeUser, application, lang)
+		if err != nil {
+			return nil, nil, err
+		}
+		if msg != "" {
+			return nil, &TokenError{
+				Error:            InvalidGrant,
+				ErrorDescription: "the user is no longer allowed to access the application",
+			}, nil
+		}
+	}
+
 	claimed, err := claimAuthorizationCode(token.Code)
 	if err != nil {
 		return nil, nil, err
@@ -609,23 +627,29 @@ func GetTokenByUserWithAuth(application *Application, user *User, scope string, 
 		return nil, err
 	}
 
+	isGrantAccess, err := isApplicationGrantUser(user, application)
+	if err != nil {
+		return nil, err
+	}
+
 	token := &Token{
-		Owner:        application.Owner,
-		Name:         tokenName,
-		CreatedTime:  util.GetCurrentTime(),
-		Application:  application.Name,
-		Organization: user.Owner,
-		User:         user.Name,
-		Code:         util.GenerateAuthorizationCode(),
-		AccessToken:  accessToken,
-		RefreshToken: refreshToken,
-		IdToken:      idToken,
-		ExpiresIn:    int(application.ExpireInHours * float64(hourSeconds)),
-		Scope:        scope,
-		TokenType:    "Bearer",
-		CodeIsUsed:   true,
-		Resource:     resource,
-		SessionId:    sessionId,
+		Owner:         application.Owner,
+		Name:          tokenName,
+		CreatedTime:   util.GetCurrentTime(),
+		Application:   application.Name,
+		Organization:  user.Owner,
+		User:          user.Name,
+		Code:          util.GenerateAuthorizationCode(),
+		AccessToken:   accessToken,
+		RefreshToken:  refreshToken,
+		IdToken:       idToken,
+		ExpiresIn:     int(application.ExpireInHours * float64(hourSeconds)),
+		Scope:         scope,
+		TokenType:     "Bearer",
+		CodeIsUsed:    true,
+		Resource:      resource,
+		SessionId:     sessionId,
+		IsGrantAccess: isGrantAccess,
 	}
 	_, err = AddToken(token)
 	if err != nil {
