@@ -1453,11 +1453,11 @@
     "admin (Shared)": "quản trị viên (Chung)"
   },
   "radiusClient": {
+    "Bound organization": "Tổ chức ràng buộc",
+    "Bound organization - Tooltip": "Nếu đặt, NAS này chỉ có thể xác thực người dùng của tổ chức này và thuộc tính Class không thể chọn tổ chức khác. Để trống để tiếp tục dùng thuộc tính Class hoặc radiusDefaultOrganization",
     "Edit RADIUS Client": "Chỉnh sửa máy khách RADIUS",
     "IP ranges": "Dải IP",
     "IP ranges - Tooltip": "Địa chỉ IP nguồn hoặc dải CIDR của NAS này, phân tách bằng dấu phẩy, ví dụ 192.168.20.50,10.0.0.0/24. Khi nhiều máy khách khớp, dải cụ thể nhất được dùng",
-    "Organization": "Tổ chức",
-    "Organization - Tooltip": "Nếu đặt, NAS này chỉ có thể xác thực người dùng của tổ chức này và thuộc tính Class không thể chọn tổ chức khác. Để trống để tiếp tục dùng thuộc tính Class hoặc radiusDefaultOrganization",
     "Shared secret": "Khóa bí mật dùng chung",
     "Shared secret - Tooltip": "Khóa bí mật dùng chung RADIUS được cấu hình trên NAS này. Yêu cầu từ IP không khớp với máy khách nào dùng radiusSecret trong app.conf"
   },

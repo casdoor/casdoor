@@ -1453,11 +1453,11 @@
     "admin (Shared)": "admin (Compartilhado)"
   },
   "radiusClient": {
+    "Bound organization": "Organização vinculada",
+    "Bound organization - Tooltip": "Se definido, este NAS só pode autenticar usuários desta organização e o atributo Class não pode escolher outra. Deixe vazio para continuar usando o atributo Class ou radiusDefaultOrganization",
     "Edit RADIUS Client": "Editar cliente RADIUS",
     "IP ranges": "Intervalos de IP",
     "IP ranges - Tooltip": "Endereços IP de origem ou intervalos CIDR deste NAS, separados por vírgulas, p. ex. 192.168.20.50,10.0.0.0/24. Se vários clientes corresponderem, vence o intervalo mais específico",
-    "Organization": "Organização",
-    "Organization - Tooltip": "Se definido, este NAS só pode autenticar usuários desta organização e o atributo Class não pode escolher outra. Deixe vazio para continuar usando o atributo Class ou radiusDefaultOrganization",
     "Shared secret": "Segredo compartilhado",
     "Shared secret - Tooltip": "O segredo compartilhado RADIUS configurado neste NAS. Solicitações de IPs que não correspondem a nenhum cliente usam radiusSecret do app.conf"
   },

@@ -15,7 +15,7 @@ export default function RadiusClientEditPage() {
     {
       type: "select",
       name: "organization",
-      labelKey: "radiusClient:Organization",
+      labelKey: "radiusClient:Bound organization",
       options: () => [{value: "", label: i18next.t("general:None")}, ...organizations],
     },
     {type: "text", name: "ipRanges", labelKey: "radiusClient:IP ranges", required: true},

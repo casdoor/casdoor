@@ -1453,11 +1453,11 @@
     "admin (Shared)": "管理者（共有）"
   },
   "radiusClient": {
+    "Bound organization": "紐付け組織",
+    "Bound organization - Tooltip": "設定すると、この NAS はこの組織のユーザーのみ認証でき、Class 属性で別の組織を指定できなくなります。空欄の場合は従来どおり Class 属性または radiusDefaultOrganization を使います",
     "Edit RADIUS Client": "RADIUS クライアントを編集",
     "IP ranges": "IP 範囲",
     "IP ranges - Tooltip": "この NAS の送信元 IP アドレスまたは CIDR 範囲（カンマ区切り）。例: 192.168.20.50,10.0.0.0/24。複数のクライアントが一致する場合は最も狭い範囲が優先されます",
-    "Organization": "組織",
-    "Organization - Tooltip": "設定すると、この NAS はこの組織のユーザーのみ認証でき、Class 属性で別の組織を指定できなくなります。空欄の場合は従来どおり Class 属性または radiusDefaultOrganization を使います",
     "Shared secret": "共有シークレット",
     "Shared secret - Tooltip": "この NAS に設定した RADIUS 共有シークレット。どのクライアントにも一致しない IP からのリクエストは app.conf の radiusSecret を使います"
   },

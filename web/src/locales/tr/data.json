@@ -1453,11 +1453,11 @@
     "admin (Shared)": "yönetici (Paylaşılan)"
   },
   "radiusClient": {
+    "Bound organization": "Bağlı organizasyon",
+    "Bound organization - Tooltip": "Ayarlanırsa bu NAS yalnızca bu kuruluşun kullanıcılarını doğrulayabilir ve Class özniteliği başka bir kuruluş seçemez. Class özniteliğini veya radiusDefaultOrganization'ı kullanmaya devam etmek için boş bırakın",
     "Edit RADIUS Client": "RADIUS İstemcisini Düzenle",
     "IP ranges": "IP aralıkları",
     "IP ranges - Tooltip": "Bu NAS'ın kaynak IP adresleri veya CIDR aralıkları, virgülle ayrılmış, ör. 192.168.20.50,10.0.0.0/24. Birden çok istemci eşleşirse en dar aralık kazanır",
-    "Organization": "Organizasyon",
-    "Organization - Tooltip": "Ayarlanırsa bu NAS yalnızca bu kuruluşun kullanıcılarını doğrulayabilir ve Class özniteliği başka bir kuruluş seçemez. Class özniteliğini veya radiusDefaultOrganization'ı kullanmaya devam etmek için boş bırakın",
     "Shared secret": "Paylaşılan gizli anahtar",
     "Shared secret - Tooltip": "Bu NAS üzerinde yapılandırılan RADIUS paylaşılan gizli anahtarı. Hiçbir istemciyle eşleşmeyen IP'lerden gelen istekler app.conf'taki radiusSecret'i kullanır"
   },
