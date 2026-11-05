@@ -62,6 +62,8 @@ const PermissionListPage = React.lazy(() => import("@/pages/PermissionListPage")
 const PermissionEditPage = React.lazy(() => import("@/pages/PermissionEditPage"));
 const ModelListPage = React.lazy(() => import("@/pages/ModelListPage"));
 const ModelEditPage = React.lazy(() => import("@/pages/ModelEditPage"));
+const RadiusClientListPage = React.lazy(() => import("@/pages/RadiusClientListPage"));
+const RadiusClientEditPage = React.lazy(() => import("@/pages/RadiusClientEditPage"));
 const AdapterListPage = React.lazy(() => import("@/pages/AdapterListPage"));
 const AdapterEditPage = React.lazy(() => import("@/pages/AdapterEditPage"));
 const EnforcerListPage = React.lazy(() => import("@/pages/EnforcerListPage"));
@@ -302,6 +304,8 @@ export default function App() {
           <Route path="/permissions/:organizationName/:permissionName" element={<PermissionEditPage />} />
           <Route path="/models" element={<ModelListPage />} />
           <Route path="/models/:organizationName/:modelName" element={<ModelEditPage />} />
+          <Route path="/radius-clients" element={<RadiusClientListPage />} />
+          <Route path="/radius-clients/:organizationName/:radiusClientName" element={<RadiusClientEditPage />} />
           <Route path="/adapters" element={<AdapterListPage />} />
           <Route path="/adapters/:organizationName/:adapterName" element={<AdapterEditPage />} />
           <Route path="/enforcers" element={<EnforcerListPage />} />
