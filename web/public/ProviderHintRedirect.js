@@ -152,7 +152,7 @@
     OneDrive: {scope: "offline_access%20onedrive.readonly", endpoint: "https://login.live.com/oauth20_authorize.srf"},
     Oura: {scope: "personal", endpoint: "https://cloud.ouraring.com/oauth/authorize"},
     Patreon: {scope: "identity", endpoint: "https://www.patreon.com/oauth2/authorize"},
-    PayPal: {scope: "openid%20profile%20email", endpoint: "https://www.sandbox.paypal.com/connect"},
+    PayPal: {scope: "openid%20profile%20email", endpoint: "https://www.paypal.com/connect", endpoint2: "https://www.sandbox.paypal.com/connect"},
     SalesForce: {scope: "openid%20profile%20email", endpoint: "https://login.salesforce.com/services/oauth2/authorize"},
     Shopify: {scope: "read_products", endpoint: "https://myshopify.com/admin/oauth/authorize"},
     Soundcloud: {scope: "non-expiring", endpoint: "https://api.soundcloud.com/connect"},
@@ -236,6 +236,8 @@
         endpoint = provider.domain + "/apps/oauth2/authorize";
       }
     } else if (provider.type === "Lark" && provider.disableSsl) {
+      endpoint = authInfo[provider.type].endpoint2;
+    } else if (provider.type === "PayPal" && provider.subType === "Sandbox") {
       endpoint = authInfo[provider.type].endpoint2;
     }
 

@@ -92,7 +92,7 @@ type GothIdProvider struct {
 	CodeVerifier string
 }
 
-func NewGothIdProvider(providerType string, clientId string, clientSecret string, clientId2 string, clientSecret2 string, redirectUrl string, hostUrl string) (*GothIdProvider, error) {
+func NewGothIdProvider(providerType string, subType string, clientId string, clientSecret string, clientId2 string, clientSecret2 string, redirectUrl string, hostUrl string) (*GothIdProvider, error) {
 	var idp GothIdProvider
 	switch providerType {
 	case "Amazon":
@@ -307,8 +307,12 @@ func NewGothIdProvider(providerType string, clientId string, clientSecret string
 			Session:  &patreon.Session{},
 		}
 	case "Paypal", "PayPal":
+		paypalOidcUrl := "https://www.paypal.com/webapps/auth/protocol/openidconnect/v1"
+		if subType == "Sandbox" {
+			paypalOidcUrl = "https://www.sandbox.paypal.com/webapps/auth/protocol/openidconnect/v1"
+		}
 		idp = GothIdProvider{
-			Provider: paypal.New(clientId, clientSecret, redirectUrl),
+			Provider: paypal.NewCustomisedURL(clientId, clientSecret, redirectUrl, paypalOidcUrl+"/authorize", paypalOidcUrl+"/tokenservice", paypalOidcUrl+"/userinfo"),
 			Session:  &paypal.Session{},
 		}
 	case "SalesForce":

@@ -288,7 +288,8 @@ const authInfo = {
   },
   PayPal: {
     scope: "openid%20profile%20email",
-    endpoint: "https://www.sandbox.paypal.com/connect",
+    endpoint: "https://www.paypal.com/connect",
+    endpoint2: "https://www.sandbox.paypal.com/connect",
   },
   SalesForce: {
     scope: "openid%20profile%20email",
@@ -462,6 +463,8 @@ export function getAuthUrl(application: any, provider: any, method: string, code
       endpoint = `${provider.domain}/apps/oauth2/authorize`;
     }
   } else if (provider.type === "Lark" && provider.disableSsl) {
+    endpoint = authInfo[provider.type].endpoint2;
+  } else if (provider.type === "PayPal" && provider.subType === "Sandbox") {
     endpoint = authInfo[provider.type].endpoint2;
   }
 

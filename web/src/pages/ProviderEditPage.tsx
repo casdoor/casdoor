@@ -118,8 +118,10 @@ function normalizeAndJoin(values: string[]) {
   return (values || []).map(item => `${item}`.trim()).filter(item => item !== "").join(",");
 }
 
-function getProviderSubTypeOptions(type: string) {
-  if (type === "Aliyun Captcha") {
+function getProviderSubTypeOptions(category: string, type: string) {
+  if (category === "OAuth" && type === "PayPal") {
+    return [{id: "Live", name: "Live"}, {id: "Sandbox", name: "Sandbox"}];
+  } else if (type === "Aliyun Captcha") {
     return [
       {id: "Embed", name: "Embed"},
       {id: "Popup", name: "Popup"},
@@ -678,7 +680,7 @@ export default function ProviderEditPage() {
   }
 
   const certOptions = certs.map((cert: any) => ({value: cert.name, label: cert.name}));
-  const subTypeOptions = getProviderSubTypeOptions(provider.type);
+  const subTypeOptions = getProviderSubTypeOptions(provider.category, provider.type);
 
   const onChangeCategory = (value: string) => {
     const patch: Record<string, any> = {category: value};
@@ -784,6 +786,8 @@ export default function ProviderEditPage() {
       }
     } else if (value === "Security Scan") {
       patch.subType = "Site";
+    } else if (value === "PayPal" && provider.category === "OAuth") {
+      patch.subType = "Live";
     } else if (value === "Aliyun Captcha") {
       // Popup stays opt-in: only Alibaba Cloud's traceless scenes require it
       patch.subType = "Embed";
