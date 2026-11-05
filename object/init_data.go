@@ -75,17 +75,28 @@ func InitFromFile() {
 	initDataNewOnly = conf.GetConfigBool("initDataNewOnly")
 	initDataMerge = conf.GetConfigBool("initDataMerge")
 
+	path, err := filepath.Abs(initDataFile)
+	if err != nil {
+		path = initDataFile
+	}
+
+	if !util.FileExist(initDataFile) {
+		fmt.Printf("The init data file: %s is not found, skipped initializing data from it\n", path)
+	}
+
 	s, err := readInitDataFile(initDataFile)
 	if err != nil {
-		panic(err)
+		panic(fmt.Errorf("failed to read the init data file: %s, error: %v", path, err))
 	}
 
 	if s != "" {
+		fmt.Printf("Initializing data from the init data file: %s\n", path)
 		err = applyInitData(s)
 		if err != nil {
-			panic(err)
+			panic(fmt.Errorf("failed to apply the init data file: %s, error: %v", path, err))
 		}
 		initDataApplied = s
+		fmt.Printf("Initialized data from the init data file: %s\n", path)
 	}
 
 	interval, err := conf.GetConfigInt64("initDataWatchInterval")

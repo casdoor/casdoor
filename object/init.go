@@ -36,9 +36,12 @@ func InitDb() {
 		initBuiltInProvider()
 		initBuiltInUser()
 		initBuiltInApplication()
-		initBuiltInCert()
 		initBuiltInLdap()
 	}
+
+	// cert-built-in signs the tokens of the applications without a cert, including app-built-in, so nobody
+	// can sign in when it is missing, e.g. after an earlier start failed halfway
+	initBuiltInCert()
 
 	existed = initBuiltInApiModel()
 	if !existed {
