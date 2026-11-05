@@ -75,6 +75,10 @@ func (pp *PaddlePaymentProvider) Pay(r *PayReq) (*PayResp, error) {
 				Description: r.ProductDisplayName,
 				Name:        &r.ProductDisplayName,
 				TaxMode:     paddle.TaxModeAccountSetting,
+				Quantity: paddle.PriceQuantity{
+					Minimum: 1,
+					Maximum: 1,
+				},
 				UnitPrice: paddle.Money{
 					Amount:       amountInCents,
 					CurrencyCode: currencyCode,
