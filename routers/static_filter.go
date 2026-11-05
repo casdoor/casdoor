@@ -91,6 +91,33 @@ func GetSwaggerFolder() string {
 	return path
 }
 
+// serveSwaggerForAdmin serves the swagger folder to admins when it is not registered as a static path (runmode is not dev),
+// so the Swagger item of the admin menu still works in production
+func serveSwaggerForAdmin(ctx *context.Context) bool {
+	urlPath := ctx.Request.URL.Path
+	if urlPath != "/swagger" && !strings.HasPrefix(urlPath, "/swagger/") {
+		return false
+	}
+
+	userId := getSessionUser(ctx)
+	if userId == "" {
+		return false
+	}
+
+	user, err := object.GetUser(userId)
+	if err != nil || !user.IsAdminUser() {
+		return false
+	}
+
+	if urlPath == "/swagger" {
+		http.Redirect(ctx.ResponseWriter, ctx.Request, basePath+"/swagger/", http.StatusFound)
+		return true
+	}
+
+	http.StripPrefix("/swagger", http.FileServer(http.Dir(GetSwaggerFolder()))).ServeHTTP(ctx.ResponseWriter, ctx.Request)
+	return true
+}
+
 func fastAutoSignin(ctx *context.Context) (string, error) {
 	userId := getSessionUser(ctx)
 	if userId == "" || isSessionExpired(ctx) {
@@ -261,6 +288,9 @@ func StaticFilter(ctx *context.Context) {
 		return
 	}
 	if strings.HasPrefix(urlPath, "/scim") {
+		return
+	}
+	if serveSwaggerForAdmin(ctx) {
 		return
 	}
 
