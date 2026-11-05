@@ -768,7 +768,12 @@
     "Total users": "Total des utilisateurs"
   },
   "integration": {
+    "Action client secret help": "La clé secrète fournie par le service de paiement. Vous pouvez aussi la saisir plus tard sur la page du fournisseur.",
+    "Action install summary": "Ajoute un fournisseur de paiement {name}. Son code s'exécute dans Casdoor dans un bac à sable et ne peut envoyer des requêtes qu'aux hôtes autorisés.",
+    "Action installed description": "Ce fournisseur de paiement exécute l'action. Saisissez ses clés sur la page du fournisseur, puis ajoutez-le aux fournisseurs de paiement d'un produit.",
     "Add to application help": "Facultatif : ajouter aussi le fournisseur à la page de connexion de cette application.",
+    "Allowed hosts": "Hôtes autorisés",
+    "Allowed hosts help": "Les seules destinations auxquelles l'action peut envoyer des requêtes. Elle ne peut lire ni les fichiers, ni la base de données, ni rien d'autre de Casdoor.",
     "App": "Application",
     "App install summary": "Crée une application avec les URL de redirection dont {name} a besoin. Le guide de configuration affiche ensuite la suite avec vos valeurs.",
     "App installed description": "Cette application a été créée pour l'intégration. Terminez la configuration côté application avec les étapes ci-dessous.",
@@ -795,6 +800,7 @@
     "Theme installed description": "Ce thème est appliqué aux pages de connexion de l'application.",
     "Theme preview note": "Les champs vides sont affichés avec leurs exemples. Rien ne change avant l'installation.",
     "Uninstall": "Désinstaller",
+    "Uninstall action description": "Cela supprime le fournisseur de paiement {name}. Les produits qui l'utilisent ne pourront plus être payés avec.",
     "Uninstall app description": "L'application {name} sera supprimée. Plus personne ne pourra se connecter à l'application avec Casdoor.",
     "Uninstall provider description": "Le fournisseur {name} sera supprimé et retiré de l'application à laquelle il a été ajouté.",
     "Uninstall theme description": "L'application {name} retrouvera l'apparence qu'elle avait avant l'installation du thème.",
@@ -1241,6 +1247,7 @@
     "WeChat Pay": "Paiement WeChat Pay"
   },
   "provider": {
+    "Action - Tooltip": "L'action installée depuis le Marketplace dont ce fournisseur exécute le code",
     "Advanced": "Avancé",
     "Agent ID": "Identifiant d'agent",
     "Agent ID - Tooltip": "ID d'agent",

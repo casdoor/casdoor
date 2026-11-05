@@ -770,7 +770,12 @@
     "Total users": "Total users"
   },
   "integration": {
+    "Action client secret help": "The secret key the payment service gave you. You can also fill it in on the provider page later.",
+    "Action install summary": "Adds a {name} payment provider. Its code runs inside Casdoor in a sandbox and can only send requests to the allowed hosts.",
+    "Action installed description": "This payment provider runs the action. Fill in its keys on the provider page, then add it to the payment providers of a product.",
     "Add to application help": "Optional: also add the provider to the sign-in page of this application.",
+    "Allowed hosts": "Allowed hosts",
+    "Allowed hosts help": "The only places the action can send requests to. It cannot read files, the database or anything else of Casdoor.",
     "App": "App",
     "App install summary": "Creates an application with the redirect URLs {name} needs. The setup guide then shows the rest with your values filled in.",
     "App installed description": "This application was created for the integration. Finish the setup on the app's side with the steps below.",
@@ -797,6 +802,7 @@
     "Theme installed description": "This theme is applied to the sign-in pages of the application.",
     "Theme preview note": "Empty fields are shown with their examples. Nothing changes until you install.",
     "Uninstall": "Uninstall",
+    "Uninstall action description": "This deletes the payment provider {name}. Products that use it can no longer be paid with it.",
     "Uninstall app description": "This deletes the application {name}. People can no longer sign in to the app with Casdoor.",
     "Uninstall provider description": "This deletes the provider {name} and removes it from the application it was added to.",
     "Uninstall theme description": "This restores the look the application {name} had before the theme was installed.",
@@ -1243,6 +1249,7 @@
     "WeChat Pay": "WeChat Pay"
   },
   "provider": {
+    "Action - Tooltip": "The action installed from the Marketplace whose code this provider runs",
     "Advanced": "Advanced",
     "Agent ID": "Agent ID",
     "Agent ID - Tooltip": "Unique identifier for the agent, used to distinguish different agent entities",

@@ -363,6 +363,21 @@ function InstallDialog({item, organizationName, installed, onClose}: {
                 </>
               ) : null}
 
+              {item.type === "action" ? (
+                <>
+                  <FieldRow label={i18next.t("provider:Client secret")} help={i18next.t("integration:Action client secret help")}>
+                    <Input type="password" autoComplete="new-password" value={clientSecret} onChange={(e) => setClientSecret(e.target.value)} />
+                  </FieldRow>
+                  {bundle?.manifest?.permissions?.hosts?.length ? (
+                    <FieldRow label={i18next.t("integration:Allowed hosts")} help={i18next.t("integration:Allowed hosts help")}>
+                      <div className="space-y-0.5">
+                        {bundle.manifest.permissions.hosts.map((host: string) => <div key={host}><code className="font-mono text-xs">{host}</code></div>)}
+                      </div>
+                    </FieldRow>
+                  ) : null}
+                </>
+              ) : null}
+
               {item.type === "theme" ? (
                 <FieldRow label={i18next.t("general:Application")} required help={i18next.t("integration:Theme application help")}>
                   <SelectField value={application} onChange={setApplication} options={applicationOptions} />
@@ -470,6 +485,8 @@ function getInstallSummary(type: string, name: string): string {
     return i18next.t("integration:Provider install summary").replace("{name}", name);
   case "theme":
     return i18next.t("integration:Theme install summary");
+  case "action":
+    return i18next.t("integration:Action install summary").replace("{name}", name);
   default:
     return "";
   }

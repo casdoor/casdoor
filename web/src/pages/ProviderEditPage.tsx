@@ -21,6 +21,7 @@ import {useAccount} from "@/hooks/use-account";
 import {useEditRecord} from "@/hooks/use-edit-record";
 import {useOrganizationOptions} from "@/hooks/use-options";
 import * as CertBackend from "@/backend/CertBackend";
+import * as IntegrationBackend from "@/backend/IntegrationBackend";
 import * as ProviderBackend from "@/backend/ProviderBackend";
 import * as ServerBackend from "@/backend/ServerBackend";
 import {submitEdit} from "@/lib/crud";
@@ -392,6 +393,7 @@ export default function ProviderEditPage() {
   const organizations = useOrganizationOptions();
   const [providers, setProviders] = React.useState<any[]>([]);
   const [certs, setCerts] = React.useState<any[]>([]);
+  const [actions, setActions] = React.useState<any[]>([]);
   const [saving, setSaving] = React.useState(false);
 
   const [nameNotUserEdited, setNameNotUserEdited] = React.useState(false);
@@ -446,6 +448,18 @@ export default function ProviderEditPage() {
     getProviders(owner);
     getCerts(owner);
   }, [owner, getProviders, getCerts]);
+
+  const isPlugin = provider?.type === "Plugin";
+  React.useEffect(() => {
+    if (!isPlugin) {
+      return;
+    }
+    IntegrationBackend.getIntegrations(owner).then((res: any) => {
+      if (res.status === "ok") {
+        setActions((res.data ?? []).filter((integration: any) => integration.type === "action"));
+      }
+    });
+  }, [owner, isPlugin]);
 
   // the name/display name keep following category+type until the user types their own
   const initializedRef = React.useRef(false);
@@ -1581,7 +1595,16 @@ export default function ProviderEditPage() {
           <SearchableSelect value={provider.metadata ?? ""} onChange={(v) => updateProviderField("metadata", v)} options={certOptions} />
         </FormRow>
       ) : null}
-      {["GC", "FastSpring", "Polar"].includes(provider.type) ? (
+      {provider.type === "Plugin" ? (
+        <FormRow label={i18next.t("general:Action")} tooltip={i18next.t("provider:Action - Tooltip")}>
+          <SelectField
+            value={provider.subType ?? ""}
+            onChange={(v) => updateProviderField("subType", v)}
+            options={actions.map((integration: any) => ({id: integration.name, name: `${integration.displayName} (${integration.name})`}))}
+          />
+        </FormRow>
+      ) : null}
+      {["GC", "FastSpring", "Polar", "Plugin"].includes(provider.type) ? (
         <FormRow label={i18next.t("general:Host")} tooltip={i18next.t("provider:Host - Tooltip")}>
           <Input value={provider.host ?? ""} onChange={(e) => updateProviderField("host", e.target.value)} />
         </FormRow>

@@ -16,6 +16,7 @@ package object
 
 import (
 	"crypto/sha256"
+	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
@@ -28,6 +29,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/casdoor/casdoor/action"
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/core"
@@ -85,17 +87,33 @@ type IntegrationVariable struct {
 	Required bool   `json:"required"`
 }
 
+type IntegrationPermissions struct {
+	Hosts []string `json:"hosts"`
+}
+
 type IntegrationManifest struct {
-	Id        string                 `json:"id"`
-	Type      string                 `json:"type"`
-	Version   string                 `json:"version"`
-	Name      map[string]string      `json:"name"`
-	Variables []*IntegrationVariable `json:"variables"`
+	Id          string                  `json:"id"`
+	Type        string                  `json:"type"`
+	Version     string                  `json:"version"`
+	Name        map[string]string       `json:"name"`
+	Variables   []*IntegrationVariable  `json:"variables"`
+	Permissions *IntegrationPermissions `json:"permissions"`
 }
 
 type IntegrationBundle struct {
 	Manifest *IntegrationManifest       `json:"manifest"`
 	Files    map[string]json.RawMessage `json:"files"`
+
+	// the directory the bundle was downloaded from, where the other files of the version are
+	baseUrl string
+}
+
+// actionFile is the action.json of an action: what it does and the module that does it
+type actionFile struct {
+	Kind   string `json:"kind"`
+	Abi    int    `json:"abi"`
+	Module string `json:"module"`
+	Sha256 string `json:"sha256"`
 }
 
 type IntegrationInstallRequest struct {
@@ -163,7 +181,7 @@ func fetchMarketplaceFile(fileUrl string) ([]byte, error) {
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("failed to get %s, status code: %d", fileUrl, resp.StatusCode)
 	}
-	return io.ReadAll(io.LimitReader(resp.Body, 10<<20))
+	return io.ReadAll(io.LimitReader(resp.Body, 32<<20))
 }
 
 func joinMarketplaceUrl(baseUrl string, path string) string {
@@ -277,7 +295,8 @@ func getIntegrationBundle(item *MarketplaceIntegration, version string) (*Integr
 		return nil, "", fmt.Errorf("the integration: %s has no version %s", item.Id, version)
 	}
 
-	data, err := fetchMarketplaceFile(joinMarketplaceUrl(index.BaseUrl, marketplaceVersion.Url))
+	bundleUrl := joinMarketplaceUrl(index.BaseUrl, marketplaceVersion.Url)
+	data, err := fetchMarketplaceFile(bundleUrl)
 	if err != nil {
 		return nil, "", err
 	}
@@ -295,6 +314,7 @@ func getIntegrationBundle(item *MarketplaceIntegration, version string) (*Integr
 	if bundle.Manifest == nil || bundle.Manifest.Id != item.Id || bundle.Manifest.Type != item.Type || bundle.Manifest.Version != version {
 		return nil, "", fmt.Errorf("the bundle of %s %s does not match the Marketplace index", item.Id, version)
 	}
+	bundle.baseUrl = bundleUrl[:strings.LastIndex(bundleUrl, "/")]
 
 	return bundle, string(data), nil
 }
@@ -546,6 +566,110 @@ func installProviderIntegration(integration *Integration, bundle *IntegrationBun
 	return nil
 }
 
+func getActionFile(bundle *IntegrationBundle) (*actionFile, error) {
+	raw, ok := bundle.Files["action.json"]
+	if !ok {
+		return nil, fmt.Errorf("the action has no action.json")
+	}
+
+	file := &actionFile{}
+	err := json.Unmarshal(raw, file)
+	if err != nil {
+		return nil, err
+	}
+	if file.Abi != action.Abi {
+		return nil, fmt.Errorf("the action is built for abi %d, this Casdoor runs abi %d", file.Abi, action.Abi)
+	}
+	if file.Kind != "payment" {
+		return nil, fmt.Errorf("this Casdoor cannot run actions of kind: %s", file.Kind)
+	}
+	if file.Module == "" || strings.ContainsAny(file.Module, "/\\") || file.Sha256 == "" {
+		return nil, fmt.Errorf("the action.json of the action has no valid module")
+	}
+	return file, nil
+}
+
+func installActionIntegration(integration *Integration, bundle *IntegrationBundle, req *IntegrationInstallRequest) error {
+	file, err := getActionFile(bundle)
+	if err != nil {
+		return err
+	}
+
+	module, err := fetchMarketplaceFile(fmt.Sprintf("%s/%s", bundle.baseUrl, file.Module))
+	if err != nil {
+		return err
+	}
+	hash := sha256.Sum256(module)
+	if !strings.EqualFold(hex.EncodeToString(hash[:]), file.Sha256) {
+		return fmt.Errorf("the checksum of %s does not match the action", file.Module)
+	}
+	err = action.Check(module)
+	if err != nil {
+		return err
+	}
+
+	existing := &Provider{Name: integration.Name}
+	existed, err := ormer.Engine.Get(existing)
+	if err != nil {
+		return err
+	}
+	if existed {
+		return fmt.Errorf("a provider named %s already exists, choose another name", integration.Name)
+	}
+
+	provider := &Provider{
+		Owner:        integration.Owner,
+		Name:         integration.Name,
+		CreatedTime:  util.GetCurrentTime(),
+		DisplayName:  integration.DisplayName,
+		Category:     "Payment",
+		Type:         ProviderTypePlugin,
+		SubType:      integration.Name,
+		Method:       "Normal",
+		ClientId:     req.ClientId,
+		ClientSecret: req.ClientSecret,
+		CustomLogo:   integration.Logo,
+	}
+	affected, err := AddProvider(provider)
+	if err != nil {
+		return err
+	}
+	if !affected {
+		return fmt.Errorf("failed to add the provider: %s", integration.Name)
+	}
+
+	integration.Provider = provider.Name
+	integration.Module = base64.StdEncoding.EncodeToString(module)
+	return nil
+}
+
+// getActionModule returns the module and allowed hosts of the action a provider of type Plugin runs.
+func getActionModule(owner string, name string) ([]byte, []string, error) {
+	integration, err := getIntegration(owner, name)
+	if err != nil {
+		return nil, nil, err
+	}
+	if integration == nil || integration.Type != "action" || integration.Module == "" {
+		return nil, nil, fmt.Errorf("the action: %s is not installed in %s", name, owner)
+	}
+
+	module, err := base64.StdEncoding.DecodeString(integration.Module)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	bundle := &IntegrationBundle{}
+	err = json.Unmarshal([]byte(integration.Bundle), bundle)
+	if err != nil {
+		return nil, nil, err
+	}
+	hosts := []string{}
+	if bundle.Manifest != nil && bundle.Manifest.Permissions != nil {
+		hosts = bundle.Manifest.Permissions.Hosts
+	}
+	return module, hosts, nil
+}
+
 func installThemeIntegration(integration *Integration, item *MarketplaceIntegration, bundle *IntegrationBundle, variables map[string]string, req *IntegrationInstallRequest, isGlobalAdmin bool, lang string) error {
 	if req.Application == "" {
 		return fmt.Errorf("choose the application to apply the theme to")
@@ -684,6 +808,8 @@ func InstallIntegration(req *IntegrationInstallRequest, isGlobalAdmin bool, host
 		err = installProviderIntegration(integration, bundle, variables, req, isGlobalAdmin, lang)
 	case "theme":
 		err = installThemeIntegration(integration, item, bundle, variables, req, isGlobalAdmin, lang)
+	case "action":
+		err = installActionIntegration(integration, bundle, req)
 	default:
 		err = fmt.Errorf("integrations of type: %s cannot be installed yet", item.Type)
 	}
@@ -723,6 +849,10 @@ func UninstallIntegration(integration *Integration, isGlobalAdmin bool, lang str
 	case "app":
 		if application != nil {
 			_, err = DeleteApplication(application)
+		}
+	case "action":
+		if integration.Provider != "" {
+			_, err = DeleteProvider(&Provider{Owner: integration.Owner, Name: integration.Provider})
 		}
 	case "provider":
 		if application != nil {

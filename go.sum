@@ -1757,6 +1757,8 @@ github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.744 h1:mnGB
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.744/go.mod h1:7sCQWVkxcsR38nffDW057DRGk8mUjK1Ing/EFOK8s8Y=
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/sms v1.0.744 h1:+aNOYBQb/gp4WdfKfpTvmiK7LHBrD567DAsDJZh2CAI=
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/sms v1.0.744/go.mod h1:CUsOnyCLHn4pAzZivR3tdcI5A/7FYg33tl1WDXK8Fsg=
+github.com/tetratelabs/wazero v1.12.0 h1:DuWcpNu/FzgEXgGBDp8J1Spc+CWOvvtvVyjKlaZopYU=
+github.com/tetratelabs/wazero v1.12.0/go.mod h1:LvKtzl2RqO4gyF27BiXU+nKAjcV8f38U+kP/q2vgxh0=
 github.com/thanhpk/randstr v1.0.4 h1:IN78qu/bR+My+gHCvMEXhR/i5oriVHcTB/BJJIRTsNo=
 github.com/thanhpk/randstr v1.0.4/go.mod h1:M/H2P1eNLZzlDwAzpkkkUvoyNNMbzRGhESZuEQk3r0U=
 github.com/tidwall/gjson v1.14.2/go.mod h1:/wbyibRr2FHMks5tjHJ5F8dMZh3AcwJEMf5vlfC0lxk=

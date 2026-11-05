@@ -768,7 +768,12 @@
     "Total users": "総ユーザー数"
   },
   "integration": {
+    "Action client secret help": "決済サービスから発行されたシークレットキーです。後でプロバイダーのページで入力することもできます。",
+    "Action install summary": "{name} の決済プロバイダーを追加します。そのコードは Casdoor 内のサンドボックスで実行され、許可されたホストにのみリクエストを送信できます。",
+    "Action installed description": "この決済プロバイダーはアクションを実行します。プロバイダーのページでキーを入力し、商品の決済プロバイダーに追加してください。",
     "Add to application help": "任意: このアプリケーションのサインインページにもプロバイダーを追加します。",
+    "Allowed hosts": "許可されたホスト",
+    "Allowed hosts help": "アクションがリクエストを送信できるのはこれらのホストだけです。ファイルやデータベースなど Casdoor の他の情報は読み取れません。",
     "App": "アプリ",
     "App install summary": "{name} に必要なリダイレクト URL を設定したアプリケーションを作成します。残りの手順はあなたの値を埋め込んだ設定ガイドで表示されます。",
     "App installed description": "この連携のためにこのアプリケーションが作成されました。以下の手順でアプリ側の設定を完了してください。",
@@ -795,6 +800,7 @@
     "Theme installed description": "このテーマはアプリケーションのサインインページに適用されています。",
     "Theme preview note": "未入力の項目は例の値でプレビューします。インストールするまで何も変わりません。",
     "Uninstall": "アンインストール",
+    "Uninstall action description": "決済プロバイダー {name} を削除します。これを使っている商品は、この方法で支払えなくなります。",
     "Uninstall app description": "アプリケーション {name} を削除します。以後、Casdoor でこのアプリにサインインできなくなります。",
     "Uninstall provider description": "プロバイダー {name} を削除し、追加先のアプリケーションからも外します。",
     "Uninstall theme description": "アプリケーション {name} の見た目をテーマのインストール前に戻します。",
@@ -1241,6 +1247,7 @@
     "WeChat Pay": "微信支付"
   },
   "provider": {
+    "Action - Tooltip": "このプロバイダーがコードを実行する、Marketplace からインストールしたアクション",
     "Advanced": "詳細設定",
     "Agent ID": "エージェントID",
     "Agent ID - Tooltip": "エージェントID",

@@ -768,7 +768,12 @@
     "Total users": "Toplam kullanıcı"
   },
   "integration": {
+    "Action client secret help": "Ödeme hizmetinin size verdiği gizli anahtar. Daha sonra sağlayıcı sayfasında da girebilirsiniz.",
+    "Action install summary": "Bir {name} ödeme sağlayıcısı ekler. Kodu Casdoor içinde bir korumalı alanda çalışır ve yalnızca izin verilen sunuculara istek gönderebilir.",
+    "Action installed description": "Bu ödeme sağlayıcısı eylemi çalıştırır. Anahtarlarını sağlayıcı sayfasında girin, ardından bir ürünün ödeme sağlayıcılarına ekleyin.",
     "Add to application help": "İsteğe bağlı: sağlayıcıyı bu uygulamanın giriş sayfasına da ekleyin.",
+    "Allowed hosts": "İzin verilen sunucular",
+    "Allowed hosts help": "Eylemin istek gönderebileceği tek yerler. Dosyaları, veritabanını veya Casdoor'un başka hiçbir şeyini okuyamaz.",
     "App": "Uygulama",
     "App install summary": "{name} için gereken yönlendirme URL'leriyle bir uygulama oluşturur. Kurulum kılavuzu kalan adımları sizin değerlerinizle gösterir.",
     "App installed description": "Bu uygulama entegrasyon için oluşturuldu. Uygulama tarafındaki kurulumu aşağıdaki adımlarla tamamlayın.",
@@ -795,6 +800,7 @@
     "Theme installed description": "Bu tema uygulamanın giriş sayfalarına uygulandı.",
     "Theme preview note": "Boş alanlar örnek değerleriyle gösterilir. Kurana kadar hiçbir şey değişmez.",
     "Uninstall": "Kaldır",
+    "Uninstall action description": "Bu, {name} ödeme sağlayıcısını siler. Onu kullanan ürünler artık bununla ödenemez.",
     "Uninstall app description": "{name} uygulaması silinecek. Artık Casdoor ile bu uygulamaya giriş yapılamayacak.",
     "Uninstall provider description": "{name} sağlayıcısı silinecek ve eklendiği uygulamadan kaldırılacak.",
     "Uninstall theme description": "{name} uygulaması tema kurulmadan önceki görünümüne dönecek.",
@@ -1241,6 +1247,7 @@
     "WeChat Pay": "WeChat Ödeme"
   },
   "provider": {
+    "Action - Tooltip": "Bu sağlayıcının kodunu çalıştırdığı, Marketplace'ten yüklenen eylem",
     "Advanced": "Gelişmiş",
     "Agent ID": "Ajan ID'si",
     "Agent ID - Tooltip": "Temsilci ID",

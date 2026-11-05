@@ -768,7 +768,12 @@
     "Total users": "Tổng người dùng"
   },
   "integration": {
+    "Action client secret help": "Khóa bí mật do dịch vụ thanh toán cấp. Bạn cũng có thể điền sau trên trang nhà cung cấp.",
+    "Action install summary": "Thêm một nhà cung cấp thanh toán {name}. Mã của nó chạy trong Casdoor trong môi trường cách ly và chỉ có thể gửi yêu cầu đến các máy chủ được phép.",
+    "Action installed description": "Nhà cung cấp thanh toán này chạy action. Điền khóa trên trang nhà cung cấp, rồi thêm nó vào danh sách nhà cung cấp thanh toán của một sản phẩm.",
     "Add to application help": "Tùy chọn: thêm nhà cung cấp này vào trang đăng nhập của ứng dụng.",
+    "Allowed hosts": "Máy chủ được phép",
+    "Allowed hosts help": "Những nơi duy nhất mà action có thể gửi yêu cầu đến. Nó không thể đọc tệp, cơ sở dữ liệu hay bất cứ thứ gì khác của Casdoor.",
     "App": "Ứng dụng",
     "App install summary": "Tạo một ứng dụng với các URL chuyển hướng mà {name} cần. Sau đó hướng dẫn thiết lập hiển thị phần còn lại với giá trị của bạn.",
     "App installed description": "Ứng dụng này được tạo cho tích hợp. Hoàn tất thiết lập phía ứng dụng theo các bước bên dưới.",
@@ -795,6 +800,7 @@
     "Theme installed description": "Giao diện này đã được áp dụng cho các trang đăng nhập của ứng dụng.",
     "Theme preview note": "Các trường trống được hiển thị bằng giá trị mẫu. Không có gì thay đổi cho đến khi bạn cài đặt.",
     "Uninstall": "Gỡ cài đặt",
+    "Uninstall action description": "Thao tác này xóa nhà cung cấp thanh toán {name}. Các sản phẩm dùng nó sẽ không thể thanh toán bằng nó nữa.",
     "Uninstall app description": "Ứng dụng {name} sẽ bị xóa. Không thể đăng nhập vào ứng dụng bằng Casdoor nữa.",
     "Uninstall provider description": "Nhà cung cấp {name} sẽ bị xóa và gỡ khỏi ứng dụng mà nó đã được thêm vào.",
     "Uninstall theme description": "Ứng dụng {name} sẽ trở lại giao diện trước khi cài giao diện này.",
@@ -1241,6 +1247,7 @@
     "WeChat Pay": "WeChat Pay (thanh toán)"
   },
   "provider": {
+    "Action - Tooltip": "Action được cài từ Marketplace mà nhà cung cấp này chạy mã của nó",
     "Advanced": "Nâng cao",
     "Agent ID": "Mã đại lý",
     "Agent ID - Tooltip": "ID đại lý",

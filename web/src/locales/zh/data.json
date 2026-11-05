@@ -770,7 +770,12 @@
     "Total users": "用户总数"
   },
   "integration": {
+    "Action client secret help": "支付服务给你的密钥，也可以以后在身份源页面里填写。",
+    "Action install summary": "添加一个 {name} 支付身份源。它的代码在 Casdoor 内的沙箱里运行，只能访问下面列出的地址。",
+    "Action installed description": "这个支付身份源运行该 action。在身份源页面填好密钥，再把它加到商品的支付身份源里。",
     "Add to application help": "可选：同时把这个身份源加到该应用的登录页上。",
+    "Allowed hosts": "允许访问的地址",
+    "Allowed hosts help": "action 只能向这些地址发请求，读不到文件、数据库和 Casdoor 的其他任何东西。",
     "App": "应用",
     "App install summary": "创建一个应用，回调地址按 {name} 的要求填好。之后的配置步骤会带上你自己的地址和 client ID。",
     "App installed description": "已为这个集成创建了下面的应用。按后面的步骤在对方应用里完成配置。",
@@ -797,6 +802,7 @@
     "Theme installed description": "这个主题已应用到该应用的登录页。",
     "Theme preview note": "没填的项用示例值预览，安装前不会改动应用。",
     "Uninstall": "卸载",
+    "Uninstall action description": "这会删除支付身份源 {name}，用它的商品不能再用它付款。",
     "Uninstall app description": "将删除应用 {name}，之后不能再用 Casdoor 登录这个应用。",
     "Uninstall provider description": "将删除身份源 {name}，并把它从所加入的应用中移除。",
     "Uninstall theme description": "将把应用 {name} 的登录页恢复成安装主题前的样式。",
@@ -1243,6 +1249,7 @@
     "WeChat Pay": "微信支付"
   },
   "provider": {
+    "Action - Tooltip": "从 Marketplace 安装的 action，这个身份源运行它的代码",
     "Advanced": "高级",
     "Agent ID": "代理ID",
     "Agent ID - Tooltip": "标识代理身份的唯一编号，用于区分不同代理实体",

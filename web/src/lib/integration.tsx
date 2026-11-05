@@ -6,7 +6,7 @@ export function getMarketplaceSiteUrl(): string {
   return i18next.language?.startsWith("zh") ? "https://marketplace.casdoor.cn/zh" : "https://marketplace.casdoor.com";
 }
 
-export const IntegrationTypes = ["app", "provider", "theme"] as const;
+export const IntegrationTypes = ["app", "provider", "theme", "action"] as const;
 
 export function getIntegrationTypeLabel(type: string): string {
   switch (type) {

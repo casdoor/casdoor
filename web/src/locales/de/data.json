@@ -768,7 +768,12 @@
     "Total users": "Gesamte Benutzer"
   },
   "integration": {
+    "Action client secret help": "Der geheime Schlüssel, den Sie vom Zahlungsdienst erhalten haben. Sie können ihn auch später auf der Anbieterseite eintragen.",
+    "Action install summary": "Fügt einen {name}-Zahlungsanbieter hinzu. Sein Code läuft in Casdoor in einer Sandbox und kann nur Anfragen an die erlaubten Hosts senden.",
+    "Action installed description": "Dieser Zahlungsanbieter führt die Action aus. Tragen Sie seine Schlüssel auf der Anbieterseite ein und fügen Sie ihn dann den Zahlungsanbietern eines Produkts hinzu.",
     "Add to application help": "Optional: den Anbieter auch zur Anmeldeseite dieser Anwendung hinzufügen.",
+    "Allowed hosts": "Erlaubte Hosts",
+    "Allowed hosts help": "Die einzigen Ziele, an die die Action Anfragen senden kann. Sie kann weder Dateien noch die Datenbank oder sonst etwas von Casdoor lesen.",
     "App": "App",
     "App install summary": "Erstellt eine Anwendung mit den Weiterleitungs-URLs, die {name} braucht. Die Einrichtungsanleitung zeigt den Rest danach mit Ihren Werten.",
     "App installed description": "Diese Anwendung wurde für die Integration erstellt. Schließen Sie die Einrichtung auf der Seite der App mit den folgenden Schritten ab.",
@@ -795,6 +800,7 @@
     "Theme installed description": "Dieses Design ist auf die Anmeldeseiten der Anwendung angewendet.",
     "Theme preview note": "Leere Felder werden mit ihren Beispielen angezeigt. Bis zur Installation ändert sich nichts.",
     "Uninstall": "Deinstallieren",
+    "Uninstall action description": "Dadurch wird der Zahlungsanbieter {name} gelöscht. Produkte, die ihn verwenden, können nicht mehr damit bezahlt werden.",
     "Uninstall app description": "Dadurch wird die Anwendung {name} gelöscht. Danach kann sich niemand mehr mit Casdoor bei der App anmelden.",
     "Uninstall provider description": "Dadurch wird der Anbieter {name} gelöscht und aus der Anwendung entfernt, zu der er hinzugefügt wurde.",
     "Uninstall theme description": "Dadurch erhält die Anwendung {name} wieder das Aussehen von vor der Installation des Designs.",
@@ -1241,6 +1247,7 @@
     "WeChat Pay": "WeChat Pay (Zahlung)"
   },
   "provider": {
+    "Action - Tooltip": "Die aus dem Marketplace installierte Action, deren Code dieser Anbieter ausführt",
     "Advanced": "Erweitert",
     "Agent ID": "Agenten-ID",
     "Agent ID - Tooltip": "Eindeutige Kennung für den Agenten, verwendet zur Unterscheidung verschiedener Agenten-Entitäten",

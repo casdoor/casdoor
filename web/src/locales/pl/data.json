@@ -768,7 +768,12 @@
     "Total users": "Łączna liczba użytkowników"
   },
   "integration": {
+    "Action client secret help": "Klucz tajny otrzymany od usługi płatniczej. Możesz go też wpisać później na stronie dostawcy.",
+    "Action install summary": "Dodaje dostawcę płatności {name}. Jego kod działa w Casdoor w piaskownicy i może wysyłać żądania tylko do dozwolonych hostów.",
+    "Action installed description": "Ten dostawca płatności uruchamia akcję. Wpisz jego klucze na stronie dostawcy, a następnie dodaj go do dostawców płatności produktu.",
     "Add to application help": "Opcjonalnie: dodaj dostawcę także do strony logowania tej aplikacji.",
+    "Allowed hosts": "Dozwolone hosty",
+    "Allowed hosts help": "Jedyne miejsca, do których akcja może wysyłać żądania. Nie może czytać plików, bazy danych ani niczego innego w Casdoor.",
     "App": "Aplikacja",
     "App install summary": "Tworzy aplikację z adresami przekierowania, których potrzebuje {name}. Przewodnik konfiguracji pokaże resztę z Twoimi wartościami.",
     "App installed description": "Ta aplikacja została utworzona dla integracji. Dokończ konfigurację po stronie aplikacji, wykonując poniższe kroki.",
@@ -795,6 +800,7 @@
     "Theme installed description": "Ten motyw jest zastosowany do stron logowania aplikacji.",
     "Theme preview note": "Puste pola są pokazane z przykładowymi wartościami. Nic się nie zmieni przed instalacją.",
     "Uninstall": "Odinstaluj",
+    "Uninstall action description": "Spowoduje to usunięcie dostawcy płatności {name}. Produktów, które go używają, nie będzie można już nim opłacić.",
     "Uninstall app description": "Aplikacja {name} zostanie usunięta. Nie będzie już można logować się do niej przez Casdoor.",
     "Uninstall provider description": "Dostawca {name} zostanie usunięty i odłączony od aplikacji, do której go dodano.",
     "Uninstall theme description": "Aplikacja {name} odzyska wygląd sprzed instalacji motywu.",
@@ -1241,6 +1247,7 @@
     "WeChat Pay": "Płatność WeChat"
   },
   "provider": {
+    "Action - Tooltip": "Akcja zainstalowana z Marketplace, której kod uruchamia ten dostawca",
     "Advanced": "Zaawansowane",
     "Agent ID": "ID agenta",
     "Agent ID - Tooltip": "ID agenta",

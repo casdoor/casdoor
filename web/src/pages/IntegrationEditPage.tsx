@@ -114,6 +114,15 @@ export default function IntegrationEditPage() {
       hidden: !integration.provider,
       children: <Link className="underline-offset-4 hover:underline" to={`/providers/${integration.owner}/${integration.provider}`}>{integration.provider}</Link>,
     },
+    {
+      label: i18next.t("integration:Allowed hosts"),
+      hidden: integration.type !== "action",
+      children: (
+        <div className="space-y-0.5">
+          {(bundle?.manifest?.permissions?.hosts ?? []).map((host: string) => <div key={host}><code className="font-mono text-xs">{host}</code></div>)}
+        </div>
+      ),
+    },
     {label: i18next.t("provider:Client ID"), hidden: !application, children: <code className="font-mono text-xs">{application?.clientId}</code>},
     {
       label: i18next.t("application:Redirect URLs"),
@@ -260,6 +269,8 @@ function getInstalledDescription(integration: any): string {
     return integration.application ? i18next.t("integration:Provider installed in application description") : i18next.t("integration:Provider installed description");
   case "theme":
     return i18next.t("integration:Theme installed description");
+  case "action":
+    return i18next.t("integration:Action installed description");
   default:
     return "";
   }
@@ -273,6 +284,8 @@ function getUninstallDescription(integration: any): string {
     return i18next.t("integration:Uninstall provider description").replace("{name}", integration.provider);
   case "theme":
     return i18next.t("integration:Uninstall theme description").replace("{name}", integration.application);
+  case "action":
+    return i18next.t("integration:Uninstall action description").replace("{name}", integration.provider);
   default:
     return "";
   }
