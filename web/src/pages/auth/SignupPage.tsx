@@ -224,7 +224,7 @@ export default function SignupPage({application: applicationProp}: {application?
   const signinLink = Setting.getStoredSigninUrl() || Setting.getLoginLink(application) || "/login";
 
   // without self signup, only an invitation link opens the signup form
-  if (!application.enableSignUp || (application.disableSelfSignup && !values.invitationCode)) {
+  if (!Setting.isSignupAllowed(application) || (application.disableSelfSignup && !values.invitationCode)) {
     return (
       <AuthLayout preview={!!applicationProp} application={application} hideLogo={hideLogo}>
         <div className="space-y-4">

@@ -2598,6 +2598,11 @@ export function getForgetLink(application) {
   return application.forgetUrl;
 }
 
+/** The backend never signs anyone up into the built-in organization, whose members are global admins. */
+export function isSignupAllowed(application) {
+  return !!application?.enableSignUp && application.organization !== "built-in";
+}
+
 /** The OAuth params have to survive the hop, or the signup cannot hand back a code. */
 export function getSignupLink(application) {
   if (!application) {

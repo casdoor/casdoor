@@ -1626,7 +1626,7 @@ export default function LoginPage({type = "login", application: applicationProp,
         </div>
       );
     case "Signup link": {
-      if (!application.enableSignUp || application.disableSelfSignup) {
+      if (!Setting.isSignupAllowed(application) || application.disableSelfSignup) {
         return null;
       }
       const signupUrl = Setting.getSignupLink(application) ?? "/signup";
