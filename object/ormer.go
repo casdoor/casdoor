@@ -508,6 +508,11 @@ func (a *Ormer) createTable() {
 		panic(err)
 	}
 
+	err = a.Engine.Sync2(new(RadiusClient))
+	if err != nil {
+		panic(err)
+	}
+
 	err = a.Engine.Sync2(new(xormadapter.CasbinRule))
 	if err != nil {
 		panic(err)

@@ -116,6 +116,8 @@ const WebhookListPage = React.lazy(() => import("@/pages/WebhookListPage"));
 const WebhookEditPage = React.lazy(() => import("@/pages/WebhookEditPage"));
 const WebhookEventListPage = React.lazy(() => import("@/pages/WebhookEventListPage"));
 const TicketListPage = React.lazy(() => import("@/pages/TicketListPage"));
+const RadiusClientListPage = React.lazy(() => import("@/pages/RadiusClientListPage"));
+const RadiusClientEditPage = React.lazy(() => import("@/pages/RadiusClientEditPage"));
 const TicketEditPage = React.lazy(() => import("@/pages/TicketEditPage"));
 const LdapEditPage = React.lazy(() => import("@/pages/LdapEditPage"));
 const LdapSyncPage = React.lazy(() => import("@/pages/LdapSyncPage"));
@@ -357,6 +359,8 @@ export default function App() {
           <Route path="/webhook-events" element={<WebhookEventListPage />} />
           <Route path="/tickets" element={<TicketListPage />} />
           <Route path="/tickets/:organizationName/:ticketName" element={<TicketEditPage />} />
+          <Route path="/radius-clients" element={<RadiusClientListPage />} />
+          <Route path="/radius-clients/:organizationName/:radiusClientName" element={<RadiusClientEditPage />} />
           <Route path="/ldap/:organizationName/:ldapId" element={<LdapEditPage />} />
           <Route path="/ldap/sync/:organizationName/:ldapId" element={<LdapSyncPage />} />
 

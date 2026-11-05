@@ -54,6 +54,7 @@ const RESOURCE_LABELS: Record<string, string> = {
   "webhooks": "general:Webhooks",
   "webhook-events": "general:Webhook Events",
   "tickets": "general:Tickets",
+  "radius-clients": "general:RADIUS Clients",
   "ldap": "login:LDAP",
   "mfa": "general:MFA",
 };

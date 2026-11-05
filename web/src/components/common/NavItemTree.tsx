@@ -105,6 +105,7 @@ function getNavItemNodes(): TreeNode[] {
             {key: "/webhooks", title: i18next.t("general:Webhooks")},
             {key: "/webhook-events", title: i18next.t("general:Webhook Events")},
             {key: "/tickets", title: i18next.t("general:Tickets")},
+            {key: "/radius-clients", title: i18next.t("general:RADIUS Clients")},
             {key: "/swagger", title: i18next.t("general:Swagger")},
           ],
         },

@@ -15,8 +15,10 @@
 package radius
 
 import (
+	"context"
 	"fmt"
 	"log"
+	"net"
 	"strings"
 	"sync"
 	"time"
@@ -69,12 +71,64 @@ func takeAccessState(state string, organization string, username string) bool {
 	return stateContent.ExpiredAt.After(time.Now()) && stateContent.Organization == organization && stateContent.Username == username
 }
 
+// radiusSecretSource uses the secret of the RADIUS client matching the source IP, and falls back to radiusSecret.
+type radiusSecretSource struct {
+	globalSecret []byte
+}
+
+func (s *radiusSecretSource) RADIUSSecret(ctx context.Context, remoteAddr net.Addr) ([]byte, error) {
+	client, err := object.GetRadiusClientByIp(getRemoteIp(remoteAddr))
+	if err != nil {
+		return nil, err
+	}
+	if client != nil {
+		return []byte(client.Secret), nil
+	}
+	return s.globalSecret, nil
+}
+
+func getRemoteIp(addr net.Addr) net.IP {
+	switch addr := addr.(type) {
+	case *net.UDPAddr:
+		return addr.IP
+	case *net.TCPAddr:
+		return addr.IP
+	}
+
+	host, _, err := net.SplitHostPort(addr.String())
+	if err != nil {
+		return nil
+	}
+	return net.ParseIP(host)
+}
+
+func getRequestRadiusClient(r *radius.Request) *object.RadiusClient {
+	client, err := object.GetRadiusClientByIp(getRemoteIp(r.RemoteAddr))
+	if err != nil {
+		log.Printf("getRequestRadiusClient() failed, err = %v", err)
+		return nil
+	}
+	return client
+}
+
+// getClientOrganization pins the organization to the one the RADIUS client is bound to, if any.
+func getClientOrganization(client *object.RadiusClient, organization string) (string, bool) {
+	if client == nil || client.Organization == "" {
+		return organization, true
+	}
+	if organization != "" && organization != client.Organization {
+		log.Printf("RADIUS client: %s is not allowed to access organization: %s", client.Name, organization)
+		return "", false
+	}
+	return client.Organization, true
+}
+
 func StartRadiusServer() {
 	secret := conf.GetConfigString("radiusSecret")
 	server := radius.PacketServer{
 		Addr:         "0.0.0.0:" + conf.GetConfigString("radiusServerPort"),
 		Handler:      radius.HandlerFunc(handlerRadius),
-		SecretSource: radius.StaticSecretSource([]byte(secret)),
+		SecretSource: &radiusSecretSource{globalSecret: []byte(secret)},
 	}
 	log.Printf("Starting Radius server on %s", server.Addr)
 	if err := server.ListenAndServe(); err != nil {
@@ -132,7 +186,14 @@ func handleAccessRequest(w radius.ResponseWriter, r *radius.Request) {
 	password := rfc2865.UserPassword_GetString(r.Packet)
 	organization := rfc2865.Class_GetString(r.Packet)
 	state := rfc2865.State_GetString(r.Packet)
-	log.Printf("handleAccessRequest() username=%v, org=%v", username, organization)
+	client := getRequestRadiusClient(r)
+	log.Printf("handleAccessRequest() username=%v, org=%v, client=%v", username, organization, getRadiusClientName(client))
+
+	organization, ok := getClientOrganization(client, organization)
+	if !ok {
+		w.Write(r.Response(radius.CodeAccessReject))
+		return
+	}
 
 	organization = getRadiusOrganization(organization)
 	org := getRadiusEnabledOrganization(organization)
@@ -217,7 +278,12 @@ func handleAccountingRequest(w radius.ResponseWriter, r *radius.Request) {
 		}
 	}
 
-	log.Printf("handleAccountingRequest() username=%v, org=%v, statusType=%v", username, organization, statusType)
+	client := getRequestRadiusClient(r)
+	log.Printf("handleAccountingRequest() username=%v, org=%v, statusType=%v, client=%v", username, organization, statusType, getRadiusClientName(client))
+	organization, ok := getClientOrganization(client, organization)
+	if !ok {
+		return
+	}
 	if getRadiusEnabledOrganization(getRadiusOrganization(organization)) == nil {
 		return
 	}
@@ -232,12 +298,12 @@ func handleAccountingRequest(w radius.ResponseWriter, r *radius.Request) {
 	switch statusType {
 	case rfc2866.AcctStatusType_Value_Start:
 		// Start an accounting session
-		ra := GetAccountingFromRequest(r)
+		ra := getClientAccountingFromRequest(r, client)
 		err = object.AddRadiusAccounting(ra)
 	case rfc2866.AcctStatusType_Value_InterimUpdate, rfc2866.AcctStatusType_Value_Stop:
 		// Interim update to an accounting session | Stop an accounting session
 		var (
-			newRa = GetAccountingFromRequest(r)
+			newRa = getClientAccountingFromRequest(r, client)
 			oldRa *object.RadiusAccounting
 		)
 		oldRa, err = object.GetRadiusAccountingBySessionId(newRa.AcctSessionId)
@@ -256,4 +322,19 @@ func handleAccountingRequest(w radius.ResponseWriter, r *radius.Request) {
 	default:
 		err = fmt.Errorf("unsupport statusType = %v", statusType)
 	}
+}
+
+func getRadiusClientName(client *object.RadiusClient) string {
+	if client == nil {
+		return ""
+	}
+	return client.Name
+}
+
+func getClientAccountingFromRequest(r *radius.Request, client *object.RadiusClient) *object.RadiusAccounting {
+	ra := GetAccountingFromRequest(r)
+	if client != nil && client.Organization != "" {
+		ra.Owner = client.Organization
+	}
+	return ra
 }

@@ -251,6 +251,21 @@ export function newKey(account: Account) {
   };
 }
 
+export function newRadiusClient() {
+  const randomName = Setting.getRandomName();
+  return {
+    owner: "admin",
+    name: `radius_client_${randomName}`,
+    createdTime: now(),
+    updatedTime: now(),
+    displayName: `New RADIUS Client - ${randomName}`,
+    organization: "",
+    ipRanges: "",
+    secret: "",
+    state: "Active",
+  };
+}
+
 export function newModel(account: Account) {
   const randomName = Setting.getRandomName();
   const owner = Setting.getRequestOrganization(account);

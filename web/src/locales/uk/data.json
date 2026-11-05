@@ -624,6 +624,7 @@
     "Provider - Tooltip": "Платіжні постачальники, які потрібно налаштувати, зокрема PayPal, Alipay, WeChat Pay тощо.",
     "QR Code": "QR-код",
     "QR code is too large": "QR-код занадто великий",
+    "RADIUS Clients": "Клієнти RADIUS",
     "Records": "Записи",
     "Refresh": "Оновити",
     "Request": "Запит",
@@ -1450,6 +1451,15 @@
     "UserInfo URL - Tooltip": "URL-адреса інформації про користувача",
     "Web": "Веб",
     "admin (Shared)": "admin (спільний)"
+  },
+  "radiusClient": {
+    "Edit RADIUS Client": "Редагувати клієнт RADIUS",
+    "IP ranges": "Діапазони IP",
+    "IP ranges - Tooltip": "Вихідні IP-адреси або діапазони CIDR цього NAS через кому, напр. 192.168.20.50,10.0.0.0/24. Якщо збігаються кілька клієнтів, перемагає найвужчий діапазон",
+    "Organization": "Організація",
+    "Organization - Tooltip": "Якщо задано, цей NAS може автентифікувати лише користувачів цієї організації, а атрибут Class не може вибрати іншу. Залиште порожнім, щоб і далі використовувати атрибут Class або radiusDefaultOrganization",
+    "Shared secret": "Спільний секрет",
+    "Shared secret - Tooltip": "Спільний секрет RADIUS, налаштований на цьому NAS. Запити з IP, що не збігаються з жодним клієнтом, використовують radiusSecret з app.conf"
   },
   "record": {
     "Is triggered": "Спрацьовує",

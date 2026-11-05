@@ -626,6 +626,7 @@
     "Provider - Tooltip": "Payment providers to be configured, including PayPal, Alipay, WeChat Pay, etc.",
     "QR Code": "QR Code",
     "QR code is too large": "QR code is too large",
+    "RADIUS Clients": "RADIUS Clients",
     "Records": "Records",
     "Refresh": "Refresh",
     "Request": "Request",
@@ -1454,6 +1455,15 @@
     "UserInfo URL - Tooltip": "Custom OAuth UserInfo URL",
     "Web": "Web",
     "admin (Shared)": "admin (Shared)"
+  },
+  "radiusClient": {
+    "Edit RADIUS Client": "Edit RADIUS Client",
+    "IP ranges": "IP ranges",
+    "IP ranges - Tooltip": "Source IP addresses or CIDR ranges of this NAS, separated by commas, e.g. 192.168.20.50,10.0.0.0/24. When several clients match, the most specific range wins",
+    "Organization": "Organization",
+    "Organization - Tooltip": "If set, this NAS can only authenticate users of this organization, and the Class attribute cannot select another one. Leave empty to keep using the Class attribute or radiusDefaultOrganization",
+    "Shared secret": "Shared secret",
+    "Shared secret - Tooltip": "The RADIUS shared secret configured on this NAS. Requests from IPs that match no client use radiusSecret in app.conf"
   },
   "record": {
     "Is triggered": "Is triggered",

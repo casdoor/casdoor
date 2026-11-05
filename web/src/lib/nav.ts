@@ -158,6 +158,7 @@ export function getNavGroups(account: Account | null | undefined): NavGroup[] {
     {key: "/tickets", label: i18next.t("general:Tickets")},
   );
   if (Setting.isAdminUser(account)) {
+    adminItems.push({key: "/radius-clients", label: i18next.t("general:RADIUS Clients")});
     adminItems.push({
       key: "/swagger",
       label: i18next.t("general:Swagger"),

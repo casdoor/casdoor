@@ -185,6 +185,12 @@ func InitAPI() {
 	web.Router("/api/update-rule", &controllers.ApiController{}, "POST:UpdateRule")
 	web.Router("/api/delete-rule", &controllers.ApiController{}, "POST:DeleteRule")
 
+	web.Router("/api/get-radius-clients", &controllers.ApiController{}, "GET:GetRadiusClients")
+	web.Router("/api/get-radius-client", &controllers.ApiController{}, "GET:GetRadiusClient")
+	web.Router("/api/add-radius-client", &controllers.ApiController{}, "POST:AddRadiusClient")
+	web.Router("/api/update-radius-client", &controllers.ApiController{}, "POST:UpdateRadiusClient")
+	web.Router("/api/delete-radius-client", &controllers.ApiController{}, "POST:DeleteRadiusClient")
+
 	web.Router("/api/get-certs", &controllers.ApiController{}, "GET:GetCerts")
 	web.Router("/api/get-global-certs", &controllers.ApiController{}, "GET:GetGlobalCerts")
 	web.Router("/api/get-cert", &controllers.ApiController{}, "GET:GetCert")

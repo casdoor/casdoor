@@ -624,6 +624,7 @@
     "Provider - Tooltip": "Dostawcy płatności do skonfigurowania, w tym PayPal, Alipay, WeChat Pay itp.",
     "QR Code": "Kod QR",
     "QR code is too large": "Kod QR jest zbyt duży",
+    "RADIUS Clients": "Klienci RADIUS",
     "Records": "Rekordy",
     "Refresh": "Odśwież",
     "Request": "Żądanie",
@@ -1450,6 +1451,15 @@
     "UserInfo URL - Tooltip": "Adres URL informacji użytkownika",
     "Web": "Sieć",
     "admin (Shared)": "admin (Wspólny)"
+  },
+  "radiusClient": {
+    "Edit RADIUS Client": "Edytuj klienta RADIUS",
+    "IP ranges": "Zakresy IP",
+    "IP ranges - Tooltip": "Źródłowe adresy IP lub zakresy CIDR tego NAS, oddzielone przecinkami, np. 192.168.20.50,10.0.0.0/24. Gdy pasuje kilku klientów, wygrywa najwęższy zakres",
+    "Organization": "Organizacja",
+    "Organization - Tooltip": "Jeśli ustawione, ten NAS może uwierzytelniać tylko użytkowników tej organizacji, a atrybut Class nie może wybrać innej. Pozostaw puste, aby nadal używać atrybutu Class lub radiusDefaultOrganization",
+    "Shared secret": "Wspólny sekret",
+    "Shared secret - Tooltip": "Wspólny sekret RADIUS skonfigurowany na tym NAS. Żądania z adresów IP niepasujących do żadnego klienta używają radiusSecret z app.conf"
   },
   "record": {
     "Is triggered": "Zostało wyzwolone",
