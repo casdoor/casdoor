@@ -1,8 +1,25 @@
 import i18next from "i18next";
 import {SimpleEditPage, type EditField} from "@/components/crud/SimpleEditPage";
 import * as SettingBackend from "@/backend/SettingBackend";
+import * as Conf from "@/Conf";
+import {useAccount} from "@/hooks/use-account";
 
 export default function SettingEditPage() {
+  const {account, setAccount} = useAccount();
+
+  const updateSetting = async(record) => {
+    const res = await SettingBackend.updateSetting(record);
+    if (res.status === "ok") {
+      // the console reads this switch only when the page loads, so the Casdoor Cloud links would stay until a reload;
+      // a new account object makes the header, sidebar and dashboard render again
+      Conf.setConfig({showCloudPromotion: !record.hideCloudPromotion});
+      if (account) {
+        setAccount({...account});
+      }
+    }
+    return res;
+  };
+
   const fields: EditField[] = [
     {type: "number", name: "dbMaxOpenConns", labelKey: "setting:Max open connections", min: 0},
     {
@@ -32,8 +49,8 @@ export default function SettingEditPage() {
       backTo="/sysinfo"
       fields={fields}
       fetch={() => SettingBackend.getSetting()}
-      add={(record) => SettingBackend.updateSetting(record)}
-      update={(record) => SettingBackend.updateSetting(record)}
+      add={updateSetting}
+      update={updateSetting}
     />
   );
 }
