@@ -1538,6 +1538,8 @@
     "Connection max lifetime - Tooltip": "Maximum time a connection is reused before it is closed, 0 means no limit",
     "Default record retention days": "Default record retention days",
     "Default record retention days - Tooltip": "Days to keep the records (audit logs) of the organizations that do not set their own record retention days, older records are deleted by a daily cleanup job, 0 means keeping them forever",
+    "Head HTML": "Head HTML",
+    "Head HTML - Tooltip": "Trusted HTML put into the <head> of every page of every organization, including the sign-in pages and the console, e.g. <script> tags to load a JavaScript library. Only global admins can change it",
     "Hide Casdoor Cloud links": "Hide Casdoor Cloud links",
     "Hide Casdoor Cloud links - Tooltip": "Hide the links to Casdoor Cloud (www.casdoor.com) in the header, sidebar, dashboard and account menu of the console",
     "Max idle connections": "Max idle connections",

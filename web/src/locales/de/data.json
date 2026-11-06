@@ -1534,6 +1534,8 @@
     "Connection max lifetime - Tooltip": "Maximale Zeit, die eine Verbindung wiederverwendet wird, bevor sie geschlossen wird, 0 bedeutet unbegrenzt",
     "Default record retention days": "Standard-Aufbewahrungsdauer der Protokolle (Tage)",
     "Default record retention days - Tooltip": "Tage, die Protokolle (Audit-Logs) von Organisationen ohne eigene Aufbewahrungsdauer behalten werden; ältere Protokolle werden von einem täglichen Bereinigungsjob gelöscht, 0 bedeutet dauerhaft behalten",
+    "Head HTML": "Head-HTML",
+    "Head HTML - Tooltip": "Vertrauenswürdiges HTML, das in den <head> jeder Seite aller Organisationen eingefügt wird, einschließlich der Anmeldeseiten und der Konsole, z. B. <script>-Tags zum Laden einer JavaScript-Bibliothek. Nur globale Administratoren können es ändern",
     "Hide Casdoor Cloud links": "Casdoor-Cloud-Links ausblenden",
     "Hide Casdoor Cloud links - Tooltip": "Blendet die Links zu Casdoor Cloud (www.casdoor.com) in Kopfzeile, Seitenleiste, Dashboard und Kontomenü der Konsole aus",
     "Max idle connections": "Max. inaktive Verbindungen",

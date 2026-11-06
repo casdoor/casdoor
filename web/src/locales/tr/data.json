@@ -1534,6 +1534,8 @@
     "Connection max lifetime - Tooltip": "Bir bağlantının kapatılmadan önce yeniden kullanılabileceği en uzun süre, 0 sınırsız demektir",
     "Default record retention days": "Varsayılan kayıt saklama süresi (gün)",
     "Default record retention days - Tooltip": "Kendi saklama süresini belirlemeyen kuruluşların kayıtlarının (denetim günlükleri) tutulacağı gün sayısı; daha eskileri günlük temizlik göreviyle silinir, 0 süresiz saklamak demektir",
+    "Head HTML": "Head HTML",
+    "Head HTML - Tooltip": "Giriş sayfaları ve konsol dahil tüm organizasyonların her sayfasının <head> bölümüne eklenen güvenilir HTML, örneğin bir JavaScript kütüphanesi yükleyen <script> etiketleri. Yalnızca genel yöneticiler değiştirebilir",
     "Hide Casdoor Cloud links": "Casdoor Cloud bağlantılarını gizle",
     "Hide Casdoor Cloud links - Tooltip": "Konsolun başlığındaki, kenar çubuğundaki, panosundaki ve hesap menüsündeki Casdoor Cloud (www.casdoor.com) bağlantılarını gizler",
     "Max idle connections": "Maks. boşta bağlantı",

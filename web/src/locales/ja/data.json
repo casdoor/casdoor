@@ -1534,6 +1534,8 @@
     "Connection max lifetime - Tooltip": "接続を閉じるまでに再利用できる最大時間。0は無制限",
     "Default record retention days": "既定のログ保存日数",
     "Default record retention days - Tooltip": "独自の保存日数を設定していない組織のログ（監査記録）を保存する日数。超過したログは毎日のクリーンアップで削除されます。0は無期限に保存",
+    "Head HTML": "ヘッドHTML",
+    "Head HTML - Tooltip": "すべての組織のすべてのページ（サインインページとコンソールを含む）の<head>に挿入される信頼済みHTML。例：JavaScriptライブラリを読み込む<script>タグ。グローバル管理者のみ変更できます",
     "Hide Casdoor Cloud links": "Casdoor Cloud へのリンクを非表示",
     "Hide Casdoor Cloud links - Tooltip": "コンソールのヘッダー、サイドバー、ダッシュボード、アカウントメニューにある Casdoor Cloud（www.casdoor.com）へのリンクを非表示にします",
     "Max idle connections": "最大アイドル接続数",

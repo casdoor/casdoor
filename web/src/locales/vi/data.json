@@ -1534,6 +1534,8 @@
     "Connection max lifetime - Tooltip": "Thời gian tối đa một kết nối được dùng lại trước khi đóng, 0 nghĩa là không giới hạn",
     "Default record retention days": "Số ngày lưu nhật ký mặc định",
     "Default record retention days - Tooltip": "Số ngày lưu nhật ký (kiểm toán) của các tổ chức không tự đặt thời hạn; nhật ký cũ hơn bị xóa bởi tác vụ dọn dẹp hằng ngày, 0 nghĩa là lưu vĩnh viễn",
+    "Head HTML": "HTML phần đầu",
+    "Head HTML - Tooltip": "HTML tin cậy được chèn vào <head> của mọi trang thuộc mọi tổ chức, kể cả trang đăng nhập và bảng điều khiển, ví dụ thẻ <script> để tải một thư viện JavaScript. Chỉ quản trị viên toàn cục mới có thể thay đổi",
     "Hide Casdoor Cloud links": "Ẩn liên kết đến Casdoor Cloud",
     "Hide Casdoor Cloud links - Tooltip": "Ẩn các liên kết đến Casdoor Cloud (www.casdoor.com) ở thanh tiêu đề, thanh bên, bảng điều khiển và menu tài khoản của bảng quản trị",
     "Max idle connections": "Số kết nối nhàn rỗi tối đa",

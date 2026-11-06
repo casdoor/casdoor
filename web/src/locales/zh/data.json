@@ -1538,6 +1538,8 @@
     "Connection max lifetime - Tooltip": "一条连接最多复用多久就关闭重连，0表示不限",
     "Default record retention days": "默认日志保留天数",
     "Default record retention days - Tooltip": "没有单独设置日志保留天数的组织，日志（审计记录）保留多少天，超期的日志由每天执行的清理任务自动删除，0表示永久保留",
+    "Head HTML": "头部HTML",
+    "Head HTML - Tooltip": "插入所有组织每个页面（包括登录页和控制台）<head>中的可信HTML，例如用<script>标签加载JavaScript库，只有全局管理员能修改",
     "Hide Casdoor Cloud links": "隐藏Casdoor Cloud入口",
     "Hide Casdoor Cloud links - Tooltip": "隐藏控制台顶栏、侧边栏、首页和账号菜单中指向Casdoor Cloud（www.casdoor.com）的链接",
     "Max idle connections": "最大空闲连接数",

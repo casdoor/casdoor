@@ -41,6 +41,7 @@ export default function SettingEditPage() {
     },
     {type: "number", name: "recordRetentionDays", labelKey: "setting:Default record retention days", min: 0},
     {type: "switch", name: "hideCloudPromotion", labelKey: "setting:Hide Casdoor Cloud links"},
+    {type: "code", name: "headHtml", labelKey: "setting:Head HTML", language: "html"},
   ];
 
   return (

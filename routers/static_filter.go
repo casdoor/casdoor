@@ -407,6 +407,15 @@ func serveFileWithReplace(w http.ResponseWriter, r *http.Request, name string, o
 		newContent = addBasePathToHtml(newContent)
 		newContent = addWebConfigToHtml(newContent)
 		newContent = addIssuerToHtml(newContent, r)
+
+		headHtml, settingTime := object.GetHeadHtml()
+		if headHtml != "" {
+			newContent = strings.Replace(newContent, "</head>", headHtml+"</head>", 1)
+		}
+		// a 304 by the file's modification time would keep the old head HTML after the setting is changed
+		if !modTime.IsZero() && settingTime.After(modTime) {
+			modTime = settingTime
+		}
 	}
 
 	newContent = strings.ReplaceAll(newContent, oldStaticBaseUrl, newStaticBaseUrl)
