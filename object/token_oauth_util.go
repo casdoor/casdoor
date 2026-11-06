@@ -698,6 +698,18 @@ func RefreshToken(application *Application, grantType string, refreshToken strin
 		return tokenError, nil
 	}
 
+	// a user removed from the external users or groups of the application can no longer refresh
+	isUserOfApplication, err := IsUserOfApplication(user, application)
+	if err != nil {
+		return nil, err
+	}
+	if !isUserOfApplication {
+		return &TokenError{
+			Error:            InvalidGrant,
+			ErrorDescription: fmt.Sprintf("the user: %s is not allowed to sign in to the application: %s", user.GetId(), application.Name),
+		}, nil
+	}
+
 	err = ExtendUserWithRolesAndPermissions(user)
 	if err != nil {
 		return nil, err

@@ -150,6 +150,8 @@ type Application struct {
 	SamlHashAlgorithm            string          `xorm:"varchar(20)" json:"samlHashAlgorithm"`
 	SamlC14nPrefix               string          `xorm:"varchar(100)" json:"samlC14nPrefix"`
 	IsShared                     bool            `json:"isShared"`
+	ExternalUsers                []string        `xorm:"mediumtext" json:"externalUsers"`
+	ExternalGroups               []string        `xorm:"mediumtext" json:"externalGroups"`
 	IpRestriction                string          `json:"ipRestriction"`
 
 	ClientId                string                 `xorm:"varchar(100)" json:"clientId"`

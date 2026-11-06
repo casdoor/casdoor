@@ -215,11 +215,15 @@ func getUserByNationalPhone(organization string, phone string) (*User, error) {
 // GetUserByFieldsForSharedApp looks up a user for a shared application login.
 // If the application is shared and the user is not found in the given organization,
 // it searches all organizations that have this app as their default application.
+// For a non-shared application, it searches the external users and groups of the application.
 // Returns the User directly to avoid a redundant lookup in the caller.
 func GetUserByFieldsForSharedApp(application *Application, organization string, field string) (*User, error) {
 	user, err := GetUserByFields(organization, field)
-	if err != nil || user != nil || application == nil || !application.IsShared {
+	if err != nil || user != nil || application == nil {
 		return user, err
+	}
+	if !application.IsShared {
+		return getExternalUserByFields(application, field)
 	}
 
 	var orgs []*Organization
@@ -242,6 +246,45 @@ func GetUserByFieldsForSharedApp(application *Application, organization string, 
 	}
 
 	return nil, nil
+}
+
+// getExternalUserByFields looks up a user of another organization that the application lets sign in.
+// "organization/username" names the organization, otherwise the organizations of the external users
+// and groups are searched, and a name matching users in more than one of them finds no user.
+func getExternalUserByFields(application *Application, field string) (*User, error) {
+	organizations := []string{}
+	if strings.Contains(field, "/") {
+		var organization string
+		organization, field = util.GetOwnerAndNameFromIdNoCheck(field)
+		organizations = append(organizations, organization)
+	} else {
+		for _, id := range append(application.ExternalUsers, application.ExternalGroups...) {
+			organization, _ := util.GetOwnerAndNameFromIdNoCheck(id)
+			if !util.InSlice(organizations, organization) {
+				organizations = append(organizations, organization)
+			}
+		}
+	}
+
+	var result *User
+	for _, organization := range organizations {
+		if organization == "" || organization == application.Organization {
+			continue
+		}
+
+		user, err := GetUserByFields(organization, field)
+		if err != nil {
+			return nil, err
+		}
+		if user == nil || !application.IsExternalUser(user) {
+			continue
+		}
+		if result != nil {
+			return nil, nil
+		}
+		result = user
+	}
+	return result, nil
 }
 
 func SetUserField(user *User, field string, value string) (bool, error) {

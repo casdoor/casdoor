@@ -632,7 +632,7 @@ func CheckApiPermission(userId string, organization string, path string, method 
 }
 
 func IsUserOfApplication(user *User, application *Application) (bool, error) {
-	if user.IsGlobalAdmin() || user.Owner == application.Organization || application.IsShared {
+	if user.IsGlobalAdmin() || user.Owner == application.Organization || application.IsShared || application.IsExternalUser(user) {
 		return true, nil
 	}
 

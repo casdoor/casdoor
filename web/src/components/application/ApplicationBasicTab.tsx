@@ -119,6 +119,17 @@ export function ApplicationBasicTab({
       <FormRow labelKey="general:Is shared">
         <Switch checked={!!application.isShared} onCheckedChange={(v) => updateField("isShared", v)} />
       </FormRow>
+      {/* a shared application already serves every organization */}
+      {application.isShared ? null : (
+        <>
+          <FormRow labelKey="application:External users">
+            <TagsInput value={application.externalUsers ?? []} onChange={(v) => updateField("externalUsers", v)} />
+          </FormRow>
+          <FormRow labelKey="application:External groups">
+            <TagsInput value={application.externalGroups ?? []} onChange={(v) => updateField("externalGroups", v)} />
+          </FormRow>
+        </>
+      )}
       <FormRow labelKey="general:Logo">
         <div className="space-y-2">
           <Input value={application.logo ?? ""} onChange={(e) => updateField("logo", e.target.value)} />

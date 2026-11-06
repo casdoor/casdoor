@@ -286,6 +286,8 @@ func GetMaskedApplication(application *Application, userId string) *Application 
 	application.RegistrationAccessToken = "***"
 	application.IpWhitelist = "***"
 	application.BackchannelLogoutUri = "***"
+	application.ExternalUsers = nil
+	application.ExternalGroups = nil
 	application.EnablePassword = false
 	application.EnableSigninSession = false
 	application.EnableCodeSignin = false
@@ -777,6 +779,23 @@ func redirectUriMatchesTarget(redirectUri, targetUri *url.URL) bool {
 		return false
 	}
 	return true
+}
+
+// IsExternalUser reports whether a user of another organization is let to sign in to the application,
+// by being listed in its external users or being a member of one of its external groups.
+func (application *Application) IsExternalUser(user *User) bool {
+	if user.Owner == application.Organization {
+		return false
+	}
+	if util.InSlice(application.ExternalUsers, user.GetId()) {
+		return true
+	}
+	for _, group := range user.Groups {
+		if util.InSlice(application.ExternalGroups, group) {
+			return true
+		}
+	}
+	return false
 }
 
 func (application *Application) IsPasswordEnabled() bool {

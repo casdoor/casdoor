@@ -971,7 +971,7 @@ func (c *ApiController) Login() {
 				isPasswordWithLdapEnabled = false
 			}
 
-			if application.IsShared {
+			if application.IsShared || len(application.ExternalUsers) > 0 || len(application.ExternalGroups) > 0 {
 				var resolvedUser *object.User
 				resolvedUser, err = object.GetUserByFieldsForSharedApp(application, authForm.Organization, lookupUsername)
 				if err != nil {
@@ -980,6 +980,10 @@ func (c *ApiController) Login() {
 				}
 				if resolvedUser != nil {
 					authForm.Organization = resolvedUser.Owner
+					// "organization/username" of an external user
+					if strings.Contains(lookupUsername, "/") {
+						lookupUsername = resolvedUser.Name
+					}
 				}
 			}
 
