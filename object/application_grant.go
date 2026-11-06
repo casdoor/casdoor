@@ -17,6 +17,7 @@ package object
 import (
 	"errors"
 	"fmt"
+	"sort"
 	"strings"
 	"time"
 
@@ -49,6 +50,12 @@ type ApplicationGrant struct {
 	PrincipalId string `xorm:"varchar(100)" json:"principalId"`
 	ExpireTime  string `xorm:"varchar(100)" json:"expireTime"`
 	Description string `xorm:"varchar(255)" json:"description"`
+
+	// Roles are application roles (Application.AppRoles) the grant assigns. Empty means the grant
+	// only allows the sign-in.
+	Roles       []string `xorm:"mediumtext" json:"roles"`
+	UpdatedTime string   `xorm:"varchar(100)" json:"updatedTime"`
+	UpdatedBy   string   `xorm:"varchar(255)" json:"updatedBy"`
 }
 
 func (grant *ApplicationGrant) GetId() string {
@@ -127,8 +134,13 @@ func CheckApplicationGrant(grant *ApplicationGrant, application *Application, la
 	if err != nil || principalOwner == "" || principalName == "" {
 		return fmt.Errorf(i18n.Translate(lang, "application:Invalid principal: %s"), grant.Principal)
 	}
-	if principalOwner == application.Organization {
+	isInternal := principalOwner == application.Organization
+	if isInternal && len(grant.Roles) == 0 {
 		return errors.New(i18n.Translate(lang, "application:The principal belongs to the organization of the application, which already has access"))
+	}
+	err = checkApplicationGrantRoles(grant, application, lang)
+	if err != nil {
+		return err
 	}
 	// one answer for a missing organization, user or group, so that a grant can't be used to
 	// probe another organization
@@ -153,19 +165,24 @@ func CheckApplicationGrant(grant *ApplicationGrant, application *Application, la
 		if user == nil || user.IsDeleted {
 			return notFound
 		}
-		collision, err := getApplicationGrantNameCollision(user, application)
-		if err != nil {
-			return err
+		if user.Id == "" {
+			return notFound
 		}
-		if collision != "" {
-			return fmt.Errorf(i18n.Translate(lang, "application:The name %s is already used by a user of the application's organization"), collision)
-		}
-		identityOk, err := checkApplicationGrantIdentity(user, application)
-		if err != nil {
-			return err
-		}
-		if !identityOk {
-			return fmt.Errorf(i18n.Translate(lang, "application:The ID of the user: %s is not unique and can't identify the user to the application"), grant.Principal)
+		if !isInternal {
+			collision, err := getApplicationGrantNameCollision(user, application)
+			if err != nil {
+				return err
+			}
+			if collision != "" {
+				return fmt.Errorf(i18n.Translate(lang, "application:The name %s is already used by a user of the application's organization"), collision)
+			}
+			identityOk, err := checkApplicationGrantIdentity(user, application)
+			if err != nil {
+				return err
+			}
+			if !identityOk {
+				return fmt.Errorf(i18n.Translate(lang, "application:The ID of the user: %s is not unique and can't identify the user to the application"), grant.Principal)
+			}
 		}
 		grant.PrincipalId = user.Id
 	case ApplicationGrantPrincipalGroup:
@@ -206,7 +223,78 @@ func CheckApplicationGrant(grant *ApplicationGrant, application *Application, la
 
 	grant.Name = util.GenerateId()
 	grant.CreatedTime = util.GetCurrentTime()
+	grant.UpdatedTime = ""
+	grant.UpdatedBy = ""
 	return nil
+}
+
+// checkApplicationGrantRoles requires every role of the grant to be an application role of the
+// application, so a grant can only assign what the application's organization defined.
+//
+// A privileged role can't be assigned to a group of another organization: whoever administers
+// that group, outside the application's organization, could add anyone to it, including themselves.
+func checkApplicationGrantRoles(grant *ApplicationGrant, application *Application, lang string) error {
+	principalOwner, _ := util.GetOwnerAndNameFromIdNoCheck(grant.Principal)
+	isForeignGroup := grant.PrincipalType == ApplicationGrantPrincipalGroup && principalOwner != application.Organization
+	seen := map[string]bool{}
+	roles := []string{}
+	for _, name := range grant.Roles {
+		role := application.getAppRole(name)
+		if role == nil {
+			return fmt.Errorf(i18n.Translate(lang, "application:The application role: %s does not exist"), name)
+		}
+		if role.IsPrivileged && isForeignGroup {
+			return fmt.Errorf(i18n.Translate(lang, "application:The privileged application role: %s can only be granted to users of other organizations, not to their groups"), name)
+		}
+		if !seen[name] {
+			seen[name] = true
+			roles = append(roles, name)
+		}
+	}
+	sort.Strings(roles)
+	grant.Roles = roles
+	return nil
+}
+
+// CheckApplicationGrantUpdate applies the editable fields of an update to the stored grant: its
+// roles, expiry and description. Who and which application it is for can't change; that takes a
+// new grant.
+func CheckApplicationGrantUpdate(stored *ApplicationGrant, update *ApplicationGrant, application *Application, lang string) error {
+	owner, _ := util.GetOwnerAndNameFromIdNoCheck(stored.Principal)
+	if owner == application.Organization && len(update.Roles) == 0 {
+		return errors.New(i18n.Translate(lang, "application:The principal belongs to the organization of the application, which already has access"))
+	}
+	edited := *stored
+	edited.Roles = update.Roles
+	err := checkApplicationGrantRoles(&edited, application, lang)
+	if err != nil {
+		return err
+	}
+	if update.ExpireTime != "" && update.ExpireTime != stored.ExpireTime {
+		expireTime, err := time.Parse(time.RFC3339, update.ExpireTime)
+		if err != nil {
+			return fmt.Errorf(i18n.Translate(lang, "application:Invalid expire time: %s"), update.ExpireTime)
+		}
+		if !time.Now().Before(expireTime) {
+			return errors.New(i18n.Translate(lang, "application:The expire time must be in the future"))
+		}
+	}
+	stored.Roles = edited.Roles
+	stored.ExpireTime = update.ExpireTime
+	stored.Description = update.Description
+	if len(stored.Description) > 255 {
+		stored.Description = stored.Description[:255]
+	}
+	stored.UpdatedTime = util.GetCurrentTime()
+	return nil
+}
+
+func UpdateApplicationGrant(grant *ApplicationGrant) (bool, error) {
+	affected, err := ormer.Engine.ID(core.PK{grant.Owner, grant.Name}).Cols("roles", "expire_time", "description", "updated_time", "updated_by").Update(grant)
+	if err != nil {
+		return false, err
+	}
+	return affected != 0, nil
 }
 
 func AddApplicationGrant(grant *ApplicationGrant) (bool, error) {
@@ -298,44 +386,11 @@ func HasApplicationGrant(user *User, application *Application) (bool, error) {
 		return false, nil
 	}
 
-	grants, err := GetApplicationGrants(application.Organization, application.Name)
-	if err != nil || len(grants) == 0 {
+	grants, err := getMatchingApplicationGrants(user, application)
+	if err != nil {
 		return false, err
 	}
-
-	now := time.Now()
-	var groups map[string]*Group
-	for _, grant := range grants {
-		if grant.isExpired(now) {
-			continue
-		}
-		owner, name := util.GetOwnerAndNameFromIdNoCheck(grant.Principal)
-		if owner != user.Owner {
-			continue
-		}
-
-		switch grant.PrincipalType {
-		case ApplicationGrantPrincipalUser:
-			if name == user.Name && grant.PrincipalId != "" && grant.PrincipalId == user.Id {
-				return true, nil
-			}
-		case ApplicationGrantPrincipalGroup:
-			if groups == nil {
-				orgGroups, err := GetGroups(user.Owner)
-				if err != nil {
-					return false, err
-				}
-				groups = make(map[string]*Group, len(orgGroups))
-				for _, group := range orgGroups {
-					groups[group.Name] = group
-				}
-			}
-			if isUserInGroupTree(user, name, groups) {
-				return true, nil
-			}
-		}
-	}
-	return false, nil
+	return len(grants) > 0, nil
 }
 
 // isApplicationGrantUser reports whether a user who obtains tokens of the application does
@@ -413,6 +468,14 @@ func CheckApplicationAccess(user *User, application *Application, lang string) (
 		return i18n.Translate(lang, "auth:Unauthorized operation"), nil
 	}
 
+	return checkApplicationGrantPreconditions(user, application, lang)
+}
+
+// checkApplicationGrantPreconditions returns why a user who holds a grant may still not sign in:
+// an identity that could be taken for another user's, or MFA the application's organization
+// requires and the user has not set up.
+func checkApplicationGrantPreconditions(user *User, application *Application, lang string) (string, error) {
+	var err error
 	identityOk, err := checkApplicationGrantIdentity(user, application)
 	if err != nil {
 		return "", err
@@ -500,8 +563,12 @@ type ApplicationGrantPrincipal struct {
 func SearchApplicationGrantPrincipals(application *Application, principalType string, organization string, query string, exactOnly bool) ([]*ApplicationGrantPrincipal, error) {
 	res := []*ApplicationGrantPrincipal{}
 	query = strings.TrimSpace(query)
-	if application == nil || organization == "" || organization == application.Organization || query == "" {
+	if application == nil || organization == "" || query == "" {
 		return res, nil
+	}
+	// the users and groups of the application's own organization may be searched by its admins
+	if organization == application.Organization {
+		exactOnly = false
 	}
 	const limit = 20
 

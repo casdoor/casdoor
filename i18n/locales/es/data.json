@@ -6,15 +6,27 @@
   },
   "application": {
     "A shared application is available to every organization and does not take grants": "A shared application is available to every organization and does not take grants",
+    "Application role names may only contain letters, digits, dots, underscores and hyphens": "Application role names may only contain letters, digits, dots, underscores and hyphens",
     "Invalid expire time: %s": "Invalid expire time: %s",
     "Invalid principal type: %s": "Invalid principal type: %s",
     "Invalid principal: %s": "Invalid principal: %s",
     "The ID of the user: %s is not unique and can't identify the user to the application": "The ID of the user: %s is not unique and can't identify the user to the application",
+    "The application role: %s does not exist": "The application role: %s does not exist",
+    "The application role: %s is defined twice": "The application role: %s is defined twice",
+    "The application role: %s is still assigned by the grant for: %s": "The application role: %s is still assigned by the grant for: %s",
+    "The application role: %s may only use groups of the organization: %s": "The application role: %s may only use groups of the organization: %s",
+    "The application role: %s may only use roles of the organization: %s": "The application role: %s may only use roles of the organization: %s",
+    "The claim: %s can't be set by an application role": "The claim: %s can't be set by an application role",
+    "The claim: %s must be of type String or Array": "The claim: %s must be of type String or Array",
+    "The claim: %s needs a literal value": "The claim: %s needs a literal value",
     "The expire time must be in the future": "The expire time must be in the future",
     "The name %s is already used by a user of the application's organization": "The name %s is already used by a user of the application's organization",
     "The principal belongs to the organization of the application, which already has access": "The principal belongs to the organization of the application, which already has access",
     "The principal: %s already has a grant for this application": "The principal: %s already has a grant for this application",
-    "The principal: %s does not exist": "The principal: %s does not exist"
+    "The principal: %s does not exist": "The principal: %s does not exist",
+    "The privileged application role: %s can only be granted to users of other organizations, not to their groups": "The privileged application role: %s can only be granted to users of other organizations, not to their groups",
+    "The role: %s does not exist": "The role: %s does not exist",
+    "The user: %s doesn't exist or has no grant for this application": "The user: %s doesn't exist or has no grant for this application"
   },
   "auth": {
     "Challenge method should be S256": "El método de desafío debe ser S256",

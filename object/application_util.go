@@ -341,6 +341,8 @@ func GetMaskedApplication(application *Application, userId string) *Application 
 	application.TokenFields = []string{}
 	application.TokenSigningMethod = "***"
 	application.TokenAttributes = []*JwtItem{}
+	// application roles name the groups and roles that authorize users in the application
+	application.AppRoles = []*AppRole{}
 	application.FederatedCredentials = []*FederatedCredential{}
 	application.TokenGroupFormat = "***"
 	application.ExpireInHours = -1

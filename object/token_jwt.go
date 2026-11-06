@@ -593,26 +593,49 @@ func refineUser(user *User) *User {
 
 // getTokenUser shapes the claims from a copy, so that refineUser() does not clear the
 // password of the user object the caller keeps using
-func getTokenUser(application *Application, user *User) (*User, error) {
+//
+// The application roles that application grants assign to the user are added for this application
+// only: their groups and roles join the user's own, their custom claims are returned for the token.
+func getTokenUser(application *Application, user *User) (*User, map[string]interface{}, error) {
 	isGrantUser, err := isApplicationGrantUser(user, application)
 	if err != nil {
-		return nil, err
-	}
-	if isGrantUser {
-		qualifiedUser, err := qualifyApplicationGrantUser(user, application)
-		if err != nil {
-			return nil, err
-		}
-		return refineUser(qualifiedUser), nil
+		return nil, nil, err
 	}
 
-	userCopy := *user
-	groups, err := userCopy.GetGroupsForToken(application)
+	var tokenUser *User
+	if isGrantUser {
+		tokenUser, err = qualifyApplicationGrantUser(user, application)
+		if err != nil {
+			return nil, nil, err
+		}
+	} else {
+		userCopy := *user
+		userCopy.Groups, err = userCopy.GetGroupsForToken(application)
+		if err != nil {
+			return nil, nil, err
+		}
+		tokenUser = &userCopy
+	}
+
+	entitlements, err := GetApplicationEntitlements(user, application, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+	applyEntitlements(tokenUser, application, entitlements)
+	return refineUser(tokenUser), entitlements.Claims, nil
+}
+
+// withExtraClaims returns the claims of a token with the custom claims of application roles added,
+// or the claims unchanged when there are none, so tokens without them stay exactly as before.
+func withExtraClaims(claims jwt.Claims, extra map[string]interface{}) (jwt.Claims, error) {
+	if len(extra) == 0 {
+		return claims, nil
+	}
+	merged, err := addClaims(claims, extra)
 	if err != nil {
 		return nil, err
 	}
-	userCopy.Groups = groups
-	return refineUser(&userCopy), nil
+	return jwt.MapClaims(merged), nil
 }
 
 // jwtTokenOptions carries what the ID token has to say about the authorization request
@@ -658,7 +681,7 @@ func generateJwtTokenWithOptions(application *Application, user *User, provider 
 		refreshExpireTime = expireTime
 	}
 
-	user, err := getTokenUser(application, user)
+	user, extraClaims, err := getTokenUser(application, user)
 	if err != nil {
 		return "", "", "", "", err
 	}
@@ -755,6 +778,26 @@ func generateJwtTokenWithOptions(application *Application, user *User, provider 
 		refreshToken = jwt.NewWithClaims(jwtMethod, getStandardClaims(refreshClaims))
 	} else {
 		return "", "", "", "", fmt.Errorf("unknown application TokenFormat: %s", application.TokenFormat)
+	}
+
+	if len(extraClaims) > 0 {
+		token.Claims, err = withExtraClaims(token.Claims, extraClaims)
+		if err != nil {
+			return "", "", "", "", err
+		}
+		refreshToken.Claims, err = withExtraClaims(refreshToken.Claims, extraClaims)
+		if err != nil {
+			return "", "", "", "", err
+		}
+		// the ID token is built last, its hashes are only known once the access token is signed
+		newBaseIdToken := newIdToken
+		newIdToken = func() *jwt.Token {
+			idToken := newBaseIdToken()
+			if idTokenClaims, err := withExtraClaims(idToken.Claims, extraClaims); err == nil {
+				idToken.Claims = idTokenClaims
+			}
+			return idToken
+		}
 	}
 
 	cert, err := getCertByApplication(application)

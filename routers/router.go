@@ -106,6 +106,9 @@ func InitAPI() {
 	web.Router("/api/add-application-grant", &controllers.ApiController{}, "POST:AddApplicationGrant")
 	web.Router("/api/delete-application-grant", &controllers.ApiController{}, "POST:DeleteApplicationGrant")
 	web.Router("/api/get-application-grant-principals", &controllers.ApiController{}, "GET:GetApplicationGrantPrincipals")
+	web.Router("/api/update-application-grant", &controllers.ApiController{}, "POST:UpdateApplicationGrant")
+	web.Router("/api/update-application-roles", &controllers.ApiController{}, "POST:UpdateApplicationRoles")
+	web.Router("/api/get-application-access-preview", &controllers.ApiController{}, "GET:GetApplicationAccessPreview")
 
 	web.Router("/api/get-invitations", &controllers.ApiController{}, "GET:GetInvitations")
 	web.Router("/api/get-invitation", &controllers.ApiController{}, "GET:GetInvitation")

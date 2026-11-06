@@ -164,6 +164,7 @@ type Application struct {
 	TokenFields             []string               `xorm:"varchar(1000)" json:"tokenFields"`
 	TokenAttributes         []*JwtItem             `xorm:"mediumtext" json:"tokenAttributes"`
 	TokenGroupFormat        string                 `xorm:"varchar(100)" json:"tokenGroupFormat"`
+	AppRoles                []*AppRole             `xorm:"mediumtext" json:"appRoles"`
 	ExpireInHours           float64                `json:"expireInHours"`
 	RefreshExpireInHours    float64                `json:"refreshExpireInHours"`
 	DisableRefreshRotation  bool                   `json:"disableRefreshRotation"`
@@ -532,6 +533,11 @@ func UpdateApplication(id string, application *Application, isGlobalAdmin bool, 
 		return false, err
 	}
 
+	err = CheckApplicationAppRoles(application, lang, oldApplication)
+	if err != nil {
+		return false, err
+	}
+
 	for _, providerItem := range application.Providers {
 		providerItem.Provider = nil
 	}
@@ -623,6 +629,11 @@ func AddApplication(application *Application, lang string) (bool, error) {
 	}
 
 	err = validateCustomScopes(application.CustomScopes, lang)
+	if err != nil {
+		return false, err
+	}
+
+	err = CheckApplicationAppRoles(application, lang)
 	if err != nil {
 		return false, err
 	}

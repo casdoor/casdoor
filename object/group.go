@@ -223,6 +223,10 @@ func UpdateGroup(id string, group *Group, isGlobalAdmin bool, lang string) (bool
 		if err != nil {
 			return false, err
 		}
+		err = renameAppRoleReferences(owner, true, util.GetId(owner, name), util.GetId(owner, group.Name))
+		if err != nil {
+			return false, err
+		}
 	}
 
 	return affected != 0, nil
@@ -320,6 +324,10 @@ func DeleteGroup(group *Group) (bool, error) {
 		return affected, err
 	}
 
+	err = removeAppRoleReferences(group.Owner, true, group.GetId())
+	if err != nil {
+		return affected, err
+	}
 	return affected, deleteApplicationGrantsByPrincipal(ApplicationGrantPrincipalGroup, group.GetId())
 }
 

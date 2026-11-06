@@ -739,8 +739,9 @@ func TestApplicationGrantPrincipalSearch(t *testing.T) {
 	if found, _ := SearchApplicationGrantPrincipals(application, "Group", grantTestPartnerOrg, "team", true); len(found) != 1 || found[0].Id != "partner-org/team" {
 		t.Fatalf("group search: %+v", found)
 	}
-	if found, _ := SearchApplicationGrantPrincipals(application, "User", grantTestResourceOrg, "internal-bob", false); len(found) != 0 {
-		t.Fatal("search returned the application's own organization")
+	// the application's own users may get application roles, its admins search them like any of their users
+	if found, _ := SearchApplicationGrantPrincipals(application, "User", grantTestResourceOrg, "internal", true); len(found) != 2 {
+		t.Fatalf("search of the application's own organization: %+v", found)
 	}
 }
 

@@ -252,8 +252,21 @@ func (c *ApiController) UpdateApplication() {
 	columns := []string{}
 	if columnsStr != "" {
 		for _, col := range strings.Split(columnsStr, ",") {
-			columns = append(columns, util.CamelToSnakeCase(col))
+			if col = util.CamelToSnakeCase(col); col != "app_roles" {
+				columns = append(columns, col)
+			}
 		}
+	}
+
+	// application roles only change through update-application-roles, which checks that no grant
+	// still assigns a removed role; a save of the whole application keeps the stored ones
+	storedApplication, err := object.GetApplication(id)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	if storedApplication != nil {
+		application.AppRoles = storedApplication.AppRoles
 	}
 
 	c.Data["json"] = wrapActionResponse(object.UpdateApplication(id, &application, c.IsGlobalAdmin(), c.GetAcceptLanguage(), columns))

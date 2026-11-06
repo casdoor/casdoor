@@ -64,3 +64,45 @@ export function getApplicationGrantPrincipals(organization: string, application:
     },
   }).then(res => res.json());
 }
+
+export function updateApplicationGrant(grant: any) {
+  return fetch(`${Setting.ServerUrl}/api/update-application-grant`, {
+    method: "POST",
+    credentials: "include",
+    body: JSON.stringify({
+      owner: grant.owner,
+      name: grant.name,
+      application: grant.application,
+      roles: grant.roles ?? [],
+      expireTime: grant.expireTime ?? "",
+      description: grant.description ?? "",
+    }),
+    headers: {
+      "Content-Type": "application/json",
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}
+
+export function updateApplicationRoles(organization: string, application: string, appRoles: any[]) {
+  return fetch(`${Setting.ServerUrl}/api/update-application-roles`, {
+    method: "POST",
+    credentials: "include",
+    body: JSON.stringify({owner: organization, name: application, application, appRoles}),
+    headers: {
+      "Content-Type": "application/json",
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}
+
+export function getApplicationAccessPreview(organization: string, application: string, user: string, roles: string[] = [], draft = false) {
+  const params = new URLSearchParams({owner: organization, application, user, roles: roles.join(","), draft: String(draft)});
+  return fetch(`${Setting.ServerUrl}/api/get-application-access-preview?${params.toString()}`, {
+    method: "GET",
+    credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}
