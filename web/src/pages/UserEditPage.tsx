@@ -152,8 +152,13 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
 
   const isAdmin = Setting.isLocalAdminUser(account);
   const isSelf = !!account && (user.id && account.id ? user.id === account.id : account.owner === user.owner && account.name === user.name);
+  // The form layout and the MFA items are per-organization policies, and
+  // `get-user-application` is the only way a non-admin can read their own
+  // organization, so prefer it over the admin-only `get-organization` this page
+  // also fetches.
+  const userOrganization = application?.organizationObj ?? organization;
   // only offer the methods in the MFA items, an enabled one stays so it can still be edited or disabled
-  const allowedMfaTypes = Setting.getAllowedMfaTypes(user, organization);
+  const allowedMfaTypes = Setting.getAllowedMfaTypes(user, userOrganization);
   const visibleMfaItems = mfaItems.filter(
     (item: any) => item.enabled || allowedMfaTypes.length === 0 || allowedMfaTypes.includes(item.mfaType),
   );
@@ -245,10 +250,6 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
     });
   };
 
-  // The form layout is a per-organization policy, and `get-user-application` is the
-  // only way a non-admin can read their own organization, so prefer it over the
-  // admin-only `get-organization` this page also fetches.
-  const userOrganization = application?.organizationObj ?? organization;
   const isSelfOrAdmin = isSelf || isAdmin;
 
   const avatarUrl = Setting.getEffectiveAvatarUrl(user);
