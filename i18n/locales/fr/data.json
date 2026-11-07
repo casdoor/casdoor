@@ -85,7 +85,7 @@
     "Please register using the phone  corresponding to the invitation code": "Veuillez vous inscrire avec le téléphone correspondant au code d'invitation",
     "Please register using the username corresponding to the invitation code": "Veuillez vous inscrire avec le nom d'utilisateur correspondant au code d'invitation",
     "Session outdated, please login again": "Session expirée, veuillez vous connecter à nouveau",
-    "The account has already linked another %s account": "The account has already linked another %s account",
+    "The account has already linked another %s account": "Le compte est déjà associé à un autre compte %s",
     "The invitation code has already been used": "Le code d'invitation a déjà été utilisé",
     "The password must contain at least one special character": "Le mot de passe doit contenir au moins un caractère spécial",
     "The password must contain at least one uppercase letter, one lowercase letter and one digit": "Le mot de passe doit contenir au moins une lettre majuscule, une lettre minuscule et un chiffre",
