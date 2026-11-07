@@ -92,6 +92,11 @@ export function parseBundle(bundle: string | undefined | null): any {
   }
 }
 
+/** "payment" or "sms": the kind of provider an action is, from the action.json of its bundle */
+export function getActionKind(bundle: any): string {
+  return bundle?.files?.["action.json"]?.kind ?? "payment";
+}
+
 export function IntegrationLogo({logo, name, className = "size-10"}: {logo?: string; name: string; className?: string}) {
   const [failed, setFailed] = React.useState(false);
   if (logo && !failed) {

@@ -54,6 +54,8 @@ type Config struct {
 	ClientSecret2 string `json:"clientSecret2"`
 	Host          string `json:"host"`
 	Metadata      string `json:"metadata"`
+	SignName      string `json:"signName"`
+	TemplateCode  string `json:"templateCode"`
 }
 
 type fetchRequest struct {

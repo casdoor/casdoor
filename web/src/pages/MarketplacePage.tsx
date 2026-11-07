@@ -16,7 +16,7 @@ import {useAccount} from "@/hooks/use-account";
 import {useRequestOrganization} from "@/hooks/use-organization";
 import * as ApplicationBackend from "@/backend/ApplicationBackend";
 import * as IntegrationBackend from "@/backend/IntegrationBackend";
-import {IntegrationLogo, IntegrationTypes, ThemePreviewMessage, applyTheme, getIntegrationTypeLabel, getMarketplaceSiteUrl, getLocalized} from "@/lib/integration";
+import {IntegrationLogo, IntegrationTypes, ThemePreviewMessage, applyTheme, getActionKind, getIntegrationTypeLabel, getMarketplaceSiteUrl, getLocalized} from "@/lib/integration";
 import * as Setting from "@/lib/setting";
 
 /** The Casdoor Marketplace: browse the catalog and install app integrations, provider templates and themes. */
@@ -241,6 +241,7 @@ function InstallDialog({item, organizationName, installed, onClose}: {
   }, [item, application]);
 
   const manifestVariables: any[] = bundle?.manifest?.variables ?? [];
+  const actionKind = getActionKind(bundle);
   const isMissing = !name
     || manifestVariables.some((variable) => variable.required && !variables[variable.name]?.trim())
     || (item.type === "provider" && (!clientId || !clientSecret))
@@ -298,7 +299,7 @@ function InstallDialog({item, organizationName, installed, onClose}: {
         </DialogHeader>
 
         <p className="text-sm text-muted-foreground">{getLocalized(item.description)}</p>
-        <p className="text-sm">{getInstallSummary(item.type, itemName)}</p>
+        <p className="text-sm">{getInstallSummary(item.type, itemName, actionKind)}</p>
 
         <div className={isTheme ? "grid gap-6 lg:grid-cols-[minmax(0,340px)_minmax(0,1fr)]" : undefined}>
           {error ? (
@@ -365,7 +366,12 @@ function InstallDialog({item, organizationName, installed, onClose}: {
 
               {item.type === "action" ? (
                 <>
-                  <FieldRow label={i18next.t("provider:Client secret")} help={i18next.t("integration:Action client secret help")}>
+                  {actionKind === "sms" ? (
+                    <FieldRow label={i18next.t("provider:Client ID")} help={i18next.t("integration:SMS action client ID help")}>
+                      <Input value={clientId} onChange={(e) => setClientId(e.target.value)} />
+                    </FieldRow>
+                  ) : null}
+                  <FieldRow label={i18next.t("provider:Client secret")} help={actionKind === "sms" ? i18next.t("integration:SMS action client secret help") : i18next.t("integration:Action client secret help")}>
                     <Input type="password" autoComplete="new-password" value={clientSecret} onChange={(e) => setClientSecret(e.target.value)} />
                   </FieldRow>
                   {bundle?.manifest?.permissions?.hosts?.length ? (
@@ -477,7 +483,7 @@ function ThemePreview({application}: {application: any}) {
   );
 }
 
-function getInstallSummary(type: string, name: string): string {
+function getInstallSummary(type: string, name: string, actionKind: string): string {
   switch (type) {
   case "app":
     return i18next.t("integration:App install summary").replace("{name}", name);
@@ -486,7 +492,7 @@ function getInstallSummary(type: string, name: string): string {
   case "theme":
     return i18next.t("integration:Theme install summary");
   case "action":
-    return i18next.t("integration:Action install summary").replace("{name}", name);
+    return (actionKind === "sms" ? i18next.t("integration:SMS action install summary") : i18next.t("integration:Action install summary")).replace("{name}", name);
   default:
     return "";
   }

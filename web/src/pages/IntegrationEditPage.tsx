@@ -17,6 +17,7 @@ import {
   fillVariables,
   getIntegrationTypeLabel,
   getLocalized,
+  getActionKind,
   parseBundle,
   renderInlineText,
 } from "@/lib/integration";
@@ -162,7 +163,7 @@ export default function IntegrationEditPage() {
           <ConfirmButton
             variant="outline"
             title={i18next.t("integration:Uninstall")}
-            description={getUninstallDescription(integration)}
+            description={getUninstallDescription(integration, getActionKind(bundle))}
             confirmText={i18next.t("integration:Uninstall")}
             onConfirm={uninstall}
           >
@@ -174,7 +175,7 @@ export default function IntegrationEditPage() {
       <Card>
         <CardHeader>
           <CardTitle className="text-base">{i18next.t("integration:Installed in Casdoor")}</CardTitle>
-          <CardDescription>{getInstalledDescription(integration)}</CardDescription>
+          <CardDescription>{getInstalledDescription(integration, getActionKind(bundle))}</CardDescription>
         </CardHeader>
         <CardContent>
           <DescriptionList items={items} />
@@ -261,7 +262,7 @@ function CodeBlock({content}: {content: string}) {
   );
 }
 
-function getInstalledDescription(integration: any): string {
+function getInstalledDescription(integration: any, actionKind: string): string {
   switch (integration.type) {
   case "app":
     return i18next.t("integration:App installed description");
@@ -270,13 +271,13 @@ function getInstalledDescription(integration: any): string {
   case "theme":
     return i18next.t("integration:Theme installed description");
   case "action":
-    return i18next.t("integration:Action installed description");
+    return actionKind === "sms" ? i18next.t("integration:SMS action installed description") : i18next.t("integration:Action installed description");
   default:
     return "";
   }
 }
 
-function getUninstallDescription(integration: any): string {
+function getUninstallDescription(integration: any, actionKind: string): string {
   switch (integration.type) {
   case "app":
     return i18next.t("integration:Uninstall app description").replace("{name}", integration.application);
@@ -285,7 +286,7 @@ function getUninstallDescription(integration: any): string {
   case "theme":
     return i18next.t("integration:Uninstall theme description").replace("{name}", integration.application);
   case "action":
-    return i18next.t("integration:Uninstall action description").replace("{name}", integration.provider);
+    return (actionKind === "sms" ? i18next.t("integration:Uninstall SMS action description") : i18next.t("integration:Uninstall action description")).replace("{name}", integration.provider);
   default:
     return "";
   }

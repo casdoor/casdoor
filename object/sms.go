@@ -18,6 +18,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/casdoor/casdoor/action"
 	"github.com/casdoor/casdoor/conf"
 	sender "github.com/casdoor/go-sms-sender"
 )
@@ -34,6 +35,12 @@ func getSmsClient(provider *Provider) (sender.SmsClient, error) {
 		client, err = newPnvsSmsClient(provider.ClientId, provider.ClientSecret, provider.SignName, provider.TemplateCode, provider.RegionId)
 	} else if provider.Type == TwilioVerify {
 		client, err = newTwilioVerifyClient(provider)
+	} else if provider.Type == ProviderTypePlugin {
+		module, hosts, err := getActionModule(provider.Owner, provider.SubType)
+		if err != nil {
+			return nil, err
+		}
+		client = action.NewSmsClient(provider.SubType, module, hosts, provider.getActionConfig())
 	} else if provider.Type == sender.Twilio {
 		// For Twilio, the message body is pre-formatted in SendSms using the template.
 		// Pass "%s" as the template so go-sms-sender's fmt.Sprintf passes the content through unchanged.

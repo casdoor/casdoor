@@ -341,6 +341,10 @@ export const OtherProviderInfo = {
       logo: `${StaticBaseUrl}/img/social_twilio.svg`,
       url: "https://www.twilio.com/docs/verify",
     },
+    "Plugin": {
+      logo: `${StaticBaseUrl}/img/social_custom.png`,
+      url: "",
+    },
     "SmsBao SMS": {
       logo: `${StaticBaseUrl}/img/social_smsbao.png`,
       url: "https://www.smsbao.com/",
@@ -1618,6 +1622,7 @@ export function getProviderTypeOptions(category) {
         {id: "SmsBao SMS", name: "SmsBao SMS"},
         {id: "SUBMAIL SMS", name: "SUBMAIL SMS"},
         {id: "Msg91 SMS", name: "Msg91 SMS"},
+        {id: "Plugin", name: "Plugin"},
       ]
     );
   } else if (category === "Storage") {

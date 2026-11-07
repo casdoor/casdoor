@@ -413,6 +413,19 @@ func DeleteProvider(provider *Provider) (bool, error) {
 // ProviderTypePlugin is a provider whose code is an action installed from the Marketplace, named by SubType
 const ProviderTypePlugin = "Plugin"
 
+func (p *Provider) getActionConfig() *action.Config {
+	return &action.Config{
+		ClientId:      p.ClientId,
+		ClientSecret:  p.ClientSecret,
+		ClientId2:     p.ClientId2,
+		ClientSecret2: p.ClientSecret2,
+		Host:          p.Host,
+		Metadata:      p.Metadata,
+		SignName:      p.SignName,
+		TemplateCode:  p.TemplateCode,
+	}
+}
+
 func GetPaymentProvider(p *Provider) (pp.PaymentProvider, error) {
 	cert := &Cert{}
 	if p.Cert != "" {
@@ -518,15 +531,7 @@ func GetPaymentProvider(p *Provider) (pp.PaymentProvider, error) {
 		if err != nil {
 			return nil, err
 		}
-		config := &action.Config{
-			ClientId:      p.ClientId,
-			ClientSecret:  p.ClientSecret,
-			ClientId2:     p.ClientId2,
-			ClientSecret2: p.ClientSecret2,
-			Host:          p.Host,
-			Metadata:      p.Metadata,
-		}
-		return action.NewPaymentProvider(p.SubType, module, hosts, config), nil
+		return action.NewPaymentProvider(p.SubType, module, hosts, p.getActionConfig()), nil
 	} else {
 		return nil, fmt.Errorf("the payment provider type: %s is not supported", p.Type)
 	}

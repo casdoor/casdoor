@@ -25,6 +25,7 @@ import * as IntegrationBackend from "@/backend/IntegrationBackend";
 import * as ProviderBackend from "@/backend/ProviderBackend";
 import * as ServerBackend from "@/backend/ServerBackend";
 import {submitEdit} from "@/lib/crud";
+import {getActionKind, parseBundle} from "@/lib/integration";
 import * as ProviderTest from "@/lib/provider-test";
 import * as Setting from "@/lib/setting";
 import {authConfig} from "@/auth/Auth";
@@ -1136,8 +1137,28 @@ export default function ProviderEditPage() {
     </React.Fragment>
   );
 
+  // the actions of the provider's kind installed from the Marketplace, for a provider of type Plugin
+  const renderActionRow = () => {
+    if (provider.type !== "Plugin") {
+      return null;
+    }
+    const kind = provider.category === "SMS" ? "sms" : "payment";
+    return (
+      <FormRow label={i18next.t("general:Action")} tooltip={i18next.t("provider:Action - Tooltip")}>
+        <SelectField
+          value={provider.subType ?? ""}
+          onChange={(v) => updateProviderField("subType", v)}
+          options={actions
+            .filter((integration: any) => getActionKind(parseBundle(integration.bundle)) === kind)
+            .map((integration: any) => ({id: integration.name, name: `${integration.displayName} (${integration.name})`}))}
+        />
+      </FormRow>
+    );
+  };
+
   const renderSmsFields = () => (
     <React.Fragment>
+      {renderActionRow()}
       {!SMS_PROVIDERS_WITHOUT_SIGN_NAME.includes(provider.type) ? (
         <FormRow labelKey="provider:Sign Name">
           <Input value={provider.signName ?? ""} onChange={(e) => updateProviderField("signName", e.target.value)} />
@@ -1595,15 +1616,7 @@ export default function ProviderEditPage() {
           <SearchableSelect value={provider.metadata ?? ""} onChange={(v) => updateProviderField("metadata", v)} options={certOptions} />
         </FormRow>
       ) : null}
-      {provider.type === "Plugin" ? (
-        <FormRow label={i18next.t("general:Action")} tooltip={i18next.t("provider:Action - Tooltip")}>
-          <SelectField
-            value={provider.subType ?? ""}
-            onChange={(v) => updateProviderField("subType", v)}
-            options={actions.map((integration: any) => ({id: integration.name, name: `${integration.displayName} (${integration.name})`}))}
-          />
-        </FormRow>
-      ) : null}
+      {renderActionRow()}
       {["GC", "FastSpring", "Polar", "Plugin"].includes(provider.type) ? (
         <FormRow label={i18next.t("general:Host")} tooltip={i18next.t("provider:Host - Tooltip")}>
           <Input value={provider.host ?? ""} onChange={(e) => updateProviderField("host", e.target.value)} />

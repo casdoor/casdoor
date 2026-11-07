@@ -580,7 +580,7 @@ func getActionFile(bundle *IntegrationBundle) (*actionFile, error) {
 	if file.Abi != action.Abi {
 		return nil, fmt.Errorf("the action is built for abi %d, this Casdoor runs abi %d", file.Abi, action.Abi)
 	}
-	if file.Kind != "payment" {
+	if file.Kind != "payment" && file.Kind != "sms" {
 		return nil, fmt.Errorf("this Casdoor cannot run actions of kind: %s", file.Kind)
 	}
 	if file.Module == "" || strings.ContainsAny(file.Module, "/\\") || file.Sha256 == "" {
@@ -608,6 +608,11 @@ func installActionIntegration(integration *Integration, bundle *IntegrationBundl
 		return err
 	}
 
+	category := "Payment"
+	if file.Kind == "sms" {
+		category = "SMS"
+	}
+
 	existing := &Provider{Name: integration.Name}
 	existed, err := ormer.Engine.Get(existing)
 	if err != nil {
@@ -622,7 +627,7 @@ func installActionIntegration(integration *Integration, bundle *IntegrationBundl
 		Name:         integration.Name,
 		CreatedTime:  util.GetCurrentTime(),
 		DisplayName:  integration.DisplayName,
-		Category:     "Payment",
+		Category:     category,
 		Type:         ProviderTypePlugin,
 		SubType:      integration.Name,
 		Method:       "Normal",
