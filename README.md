@@ -22,6 +22,7 @@
   <p>
     <a href="https://github.com/casdoor/casdoor/releases/latest">
       <img src="https://img.shields.io/github/v/release/casdoor/casdoor?style=flat-square&color=blue" alt="Release">
+[![MCP Security Audit](https://raw.githubusercontent.com/DSHCorrectover/mcp-security-scanner/main/badges/scanned.svg)](https://github.com/DSHCorrectover/mcp-security-scanner)
     </a>
     <a href="https://hub.docker.com/r/casbin/casdoor">
       <img src="https://img.shields.io/docker/pulls/casbin/casdoor?style=flat-square&color=brightgreen" alt="Docker Pulls">
