@@ -62,6 +62,7 @@ var ownerParamObject = []string{
 	"/api/get-dashboard-providers",
 	"/api/get-dashboard-mfa",
 	"/api/get-dashboard-heatmap",
+	"/api/get-dashboard-security",
 	"/api/get-user-count",
 }
 

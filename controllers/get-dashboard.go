@@ -73,6 +73,25 @@ func (c *ApiController) GetDashboardMfaCoverage() {
 	c.ResponseOk(data)
 }
 
+// GetDashboardSecurity
+// @Title GetDashboardSecurity
+// @Tag System API
+// @Description get the security checks of the dashboard: inactive accounts, admins without MFA, the protections in use and recent sign-ins
+// @Param   owner query string true "The owner (organization) name"
+// @Success 200 {object} controllers.Response The Response object
+// @router /get-dashboard-security [get]
+func (c *ApiController) GetDashboardSecurity() {
+	owner := c.Ctx.Input.Query("owner")
+
+	data, err := object.GetDashboardSecurity(owner)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	c.ResponseOk(data)
+}
+
 // GetDashboardLoginHeatmap
 // @Title GetDashboardLoginHeatmap
 // @Tag System API

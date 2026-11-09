@@ -58,3 +58,7 @@ export function getDashboardMfa(owner) {
 export function getDashboardHeatmap(owner) {
   return fetchDashboardApi("get-dashboard-heatmap", owner);
 }
+
+export function getDashboardSecurity(owner) {
+  return fetchDashboardApi("get-dashboard-security", owner);
+}

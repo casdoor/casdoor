@@ -22,6 +22,16 @@ import {Loading} from "@/components/common/Loading";
 import {PageHeader} from "@/components/crud/PageHeader";
 import {useAccount} from "@/hooks/use-account";
 import * as DashboardBackend from "@/backend/DashboardBackend";
+import * as SystemBackend from "@/backend/SystemInfo";
+import * as Conf from "@/Conf";
+import {
+  type DashboardSecurity,
+  EditionHero,
+  SecurityChecks,
+  SigninRisk,
+  getPostureScore,
+  getSecurityChecks,
+} from "@/components/dashboard/EditionDashboard";
 import * as Setting from "@/lib/setting";
 
 /**
@@ -100,6 +110,8 @@ export default function Dashboard() {
   const [providerData, setProviderData] = React.useState<any[] | null>(null);
   const [mfaData, setMfaData] = React.useState<any>(null);
   const [heatmapData, setHeatmapData] = React.useState<any>(null);
+  const [securityData, setSecurityData] = React.useState<DashboardSecurity | null>(null);
+  const [license, setLicense] = React.useState<any>(null);
   const [loading, setLoading] = React.useState(true);
 
   // a regular user has no dashboard; antd sends them to the first page their
@@ -131,12 +143,16 @@ export default function Dashboard() {
       DashboardBackend.getDashboardProviders(org),
       DashboardBackend.getDashboardMfa(org),
       DashboardBackend.getDashboardHeatmap(org),
+      DashboardBackend.getDashboardSecurity(org),
+      SystemBackend.getLicense(),
     ])
-      .then(([dash, providers, mfa, heatmap]) => {
+      .then(([dash, providers, mfa, heatmap, security, licenseRes]) => {
         apply(dash, setData);
         apply(providers, setProviderData);
         apply(mfa, setMfaData);
         apply(heatmap, setHeatmapData);
+        apply(security, setSecurityData);
+        apply(licenseRes, setLicense);
       })
       .finally(() => setLoading(false));
   }, [account]);
@@ -206,11 +222,18 @@ export default function Dashboard() {
     value: item.count,
   }));
 
+  // the look follows the edition the page runs as, which a demo site lets the visitor switch
+  const edition = Conf.Edition;
+  const checks = securityData ? getSecurityChecks(securityData, getDashboardOrganization(account)) : [];
+  const score = securityData ? getPostureScore(securityData, checks) : 0;
+
   return (
     <div className="space-y-5">
       <PageHeader title={i18next.t("general:Dashboard")} />
 
       <CloudDashboardBanner />
+
+      <EditionHero edition={edition} license={license} data={securityData} checks={checks} score={score} />
 
       {/* Key metrics */}
       {/* Eight across only once there is room for the labels; below that they
@@ -241,8 +264,15 @@ export default function Dashboard() {
         <StatCard title={i18next.t("application:Providers")} value={at("providerCounts", 30)} icon={<Plug />} to="/providers" />
       </div>
 
+      {securityData ? (
+        <div className="grid gap-4 xl:grid-cols-2 [&>*]:min-w-0">
+          <SecurityChecks edition={edition} checks={checks} />
+          <SigninRisk edition={edition} data={securityData} />
+        </div>
+      ) : null}
+
       {/* 30-day trend + provider distribution */}
-      <div className="grid gap-4 xl:grid-cols-[7fr_5fr]">
+      <div className="grid gap-4 xl:grid-cols-[7fr_5fr] [&>*]:min-w-0">
         <Card>
           <CardHeader>
             <CardTitle className="text-base">{i18next.t("home:Past 30 days")}</CardTitle>
@@ -329,7 +359,7 @@ export default function Dashboard() {
       </div>
 
       {/* MFA coverage + sign-in heatmap */}
-      <div className="grid gap-4 xl:grid-cols-[4fr_8fr]">
+      <div className="grid gap-4 xl:grid-cols-[4fr_8fr] [&>*]:min-w-0">
         <Card>
           <CardHeader>
             <CardTitle className="text-base">{i18next.t("user:MFA accounts")}</CardTitle>
@@ -369,11 +399,13 @@ export default function Dashboard() {
           </CardHeader>
           <CardContent>
             {heatmapData?.data ? (
-              <ActivityHeatmap
-                data={heatmapData.data}
-                maxCount={heatmapData.maxCount}
-                dateRange={heatmapData.dateRange}
-              />
+              <div className="overflow-x-auto scrollbar-thin">
+                <ActivityHeatmap
+                  data={heatmapData.data}
+                  maxCount={heatmapData.maxCount}
+                  dateRange={heatmapData.dateRange}
+                />
+              </div>
             ) : (
               <div className="flex h-[180px] items-center justify-center text-muted-foreground">
                 {i18next.t("general:None")}
