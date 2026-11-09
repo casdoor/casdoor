@@ -75,7 +75,7 @@ func (c *ApiController) GetVersionInfo() {
 func (c *ApiController) GetLicense() {
 	info := edition.GetLicenseInfo()
 	if !c.IsGlobalAdmin() {
-		info = &edition.LicenseInfo{Edition: info.Edition}
+		info = &edition.LicenseInfo{Edition: info.Edition, Features: info.Features}
 	}
 
 	c.ResponseOk(info)

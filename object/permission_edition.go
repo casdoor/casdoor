@@ -28,7 +28,11 @@ import (
 var abacMatcherRegex = regexp.MustCompile(`\b[rp][0-9]*[._][A-Za-z_]\w*\.[A-Za-z_]|\beval\(`)
 
 func isRbacAllowed() bool {
-	return edition.Has(edition.Commercial)
+	return edition.Allows(edition.Commercial, edition.FeatureRbac)
+}
+
+func isAbacAllowed() bool {
+	return edition.Allows(edition.Commercial, edition.FeatureAbac)
 }
 
 func requireRbac() error {
@@ -72,7 +76,7 @@ func hasGroupingPolicies(m model.Model) bool {
 }
 
 func checkAbacEdition(m model.Model, requests [][]interface{}) error {
-	if edition.Has(edition.Commercial) {
+	if isAbacAllowed() {
 		return nil
 	}
 
@@ -107,12 +111,8 @@ func checkPermissionsEdition(permission *Permission, permissionIds ...string) er
 
 // CheckEnforcerEdition refuses the RBAC (grouping policies) and ABAC enforcement of an enforcer without a license
 func CheckEnforcerEdition(enforcer *casbin.Enforcer, requests [][]interface{}) error {
-	if edition.Has(edition.Commercial) {
-		return nil
-	}
-
 	m := enforcer.GetModel()
-	if hasGroupingPolicies(m) {
+	if !isRbacAllowed() && hasGroupingPolicies(m) {
 		return requireRbac()
 	}
 	return checkAbacEdition(m, requests)
@@ -131,7 +131,7 @@ func CheckPermissionEdition(permission *Permission) error {
 
 // CheckModelEdition is checked when a model is saved
 func CheckModelEdition(m *Model) error {
-	if m == nil || edition.Has(edition.Commercial) || !isAbacModelText(m.ModelText) {
+	if m == nil || isAbacAllowed() || !isAbacModelText(m.ModelText) {
 		return nil
 	}
 	return edition.Require(edition.Commercial, edition.FeatureAbac)

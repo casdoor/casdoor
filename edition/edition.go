@@ -55,6 +55,13 @@ const (
 	FeatureAbac             = "Attribute-based access control (ABAC)"
 )
 
+// The features that a license can also grant on their own, without the edition they belong to, by these keys in its
+// "features", e.g. a community edition license with "features": ["rbac", "abac"]
+var featureKeys = map[string]string{
+	FeatureRbac: "rbac",
+	FeatureAbac: "abac",
+}
+
 var ranks = map[string]int{
 	Community:  0,
 	Commercial: 1,
@@ -64,20 +71,22 @@ var ranks = map[string]int{
 var publicKey = ed25519.PublicKey(mustDecodeBase64("yu3Y2GTk/CNjdXfooXzLVUDCo19jTV3VXVDFLdHu+Bg="))
 
 type License struct {
-	Id         string `json:"id"`
-	Licensee   string `json:"licensee"`
-	Edition    string `json:"edition"`
-	IssuedTime string `json:"issuedTime"`
-	ExpireTime string `json:"expireTime"`
+	Id         string   `json:"id"`
+	Licensee   string   `json:"licensee"`
+	Edition    string   `json:"edition"`
+	IssuedTime string   `json:"issuedTime"`
+	ExpireTime string   `json:"expireTime"`
+	Features   []string `json:"features,omitempty"`
 }
 
 type LicenseInfo struct {
-	Edition    string `json:"edition"`
-	Id         string `json:"id,omitempty"`
-	Licensee   string `json:"licensee,omitempty"`
-	IssuedTime string `json:"issuedTime,omitempty"`
-	ExpireTime string `json:"expireTime,omitempty"`
-	Error      string `json:"error,omitempty"`
+	Edition    string   `json:"edition"`
+	Features   []string `json:"features,omitempty"`
+	Id         string   `json:"id,omitempty"`
+	Licensee   string   `json:"licensee,omitempty"`
+	IssuedTime string   `json:"issuedTime,omitempty"`
+	ExpireTime string   `json:"expireTime,omitempty"`
+	Error      string   `json:"error,omitempty"`
 }
 
 var (
@@ -123,7 +132,7 @@ func ParseLicense(text string) (*License, error) {
 	if err != nil {
 		return nil, fmt.Errorf("the license is malformed: %s", err.Error())
 	}
-	if rank, ok := ranks[license.Edition]; !ok || rank == 0 {
+	if rank, ok := ranks[license.Edition]; !ok || (rank == 0 && len(license.Features) == 0) {
 		return nil, fmt.Errorf("the license has an unknown edition: %s", license.Edition)
 	}
 	if license.ExpireTime != "" {
@@ -227,9 +236,35 @@ func FindRequired(message string) (*RequiredError, int, int) {
 	return required, match[0], match[1]
 }
 
+// GetFeatures returns the features that the license grants on their own
+func GetFeatures() []string {
+	load()
+	if current == nil || current.isExpired() {
+		return nil
+	}
+	return current.Features
+}
+
+// Allows tells whether the license gives the edition, or grants the feature on its own
+func Allows(edition string, feature string) bool {
+	if Has(edition) {
+		return true
+	}
+	key, ok := featureKeys[feature]
+	if !ok {
+		return false
+	}
+	for _, item := range GetFeatures() {
+		if item == key {
+			return true
+		}
+	}
+	return false
+}
+
 // Require returns the error to show when a feature needs a higher edition than the license gives
 func Require(edition string, feature string) error {
-	if Has(edition) {
+	if Allows(edition, feature) {
 		return nil
 	}
 	return &RequiredError{Edition: edition, Feature: feature}
@@ -237,7 +272,7 @@ func Require(edition string, feature string) error {
 
 func GetLicenseInfo() *LicenseInfo {
 	load()
-	info := &LicenseInfo{Edition: Get()}
+	info := &LicenseInfo{Edition: Get(), Features: GetFeatures()}
 	if currentErr != nil {
 		info.Error = currentErr.Error()
 	}
