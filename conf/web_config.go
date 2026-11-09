@@ -77,8 +77,9 @@ func GetWebConfig() *WebConfig {
 		config.Edition = getEdition()
 	}
 
-	// a licensed deployment has already bought Casdoor, so it is not shown the hosted offering
-	config.ShowCloudPromotion = !hideCloudPromotion.Load() && config.Edition == "Community"
+	// a licensed deployment has already bought Casdoor, so it is not shown the hosted offering,
+	// while the demo sites keep it in every edition
+	config.ShowCloudPromotion = !hideCloudPromotion.Load() && (config.Edition == "Community" || config.ThemeShowcase)
 
 	return config
 }
