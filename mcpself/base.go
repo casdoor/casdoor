@@ -307,7 +307,7 @@ func (c *McpController) handleToolsList(req McpRequest) {
 	allowedTools := GetToolsForScopes(grantedScopes, BuiltinScopes)
 
 	// Filter tools based on allowed scopes
-	var filteredTools []McpTool
+	filteredTools := make([]McpTool, 0)
 	for _, tool := range allTools {
 		if allowedTools[tool.Name] {
 			filteredTools = append(filteredTools, tool)
