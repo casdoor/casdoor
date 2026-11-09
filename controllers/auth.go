@@ -36,7 +36,9 @@ import (
 	"github.com/casdoor/casdoor/idp"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/proxy"
+	"github.com/casdoor/casdoor/tracing"
 	"github.com/casdoor/casdoor/util"
+	"go.opentelemetry.io/otel/attribute"
 	"golang.org/x/oauth2"
 )
 
@@ -148,6 +150,9 @@ func (c *ApiController) getAuthTime() int64 {
 
 // HandleLoggedIn ...
 func (c *ApiController) HandleLoggedIn(application *object.Application, user *object.User, form *form.AuthForm) (resp *Response) {
+	_, span := c.traceStep("signin.issue", attribute.String("casdoor.application", application.Name), attribute.String("casdoor.user", user.GetId()))
+	defer span.End()
+
 	if !c.checkApplicationSignin(application, user) || !c.checkCredentialApplication(user, application, form) {
 		return
 	}
@@ -388,6 +393,7 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 			c.ResponseError(err.Error(), nil)
 			return
 		}
+		object.CheckSigninRisk(user, clientIp, c.Ctx.Request.Header.Get("X-Casdoor-Device"), c.Ctx.Request.UserAgent())
 
 		if authTime != 0 {
 			c.SetSession("authTime", authTime)
@@ -703,7 +709,7 @@ func isEmailBindable(user *object.User) bool {
 	return user.EmailVerified || user.RegisterType != "Application Signup"
 }
 
-func getUserByProvider(organization string, provider *object.Provider, providerId string) (*object.User, error) {
+func getUserByProvider(organization string, provider *object.Provider, providerId string, extra ...map[string]string) (*object.User, error) {
 	if object.IsFlexibleCustomProvider(provider.Type) {
 		return object.GetUserByThirdPartyLink(organization, provider.Name, providerId)
 	}
@@ -718,6 +724,10 @@ func getUserByProvider(organization string, provider *object.Provider, providerI
 
 	if provider.Type == "WeCom" && provider.SubType == "Internal" {
 		return object.GetUserByFieldIgnoreCase(organization, provider.Type, providerId)
+	}
+	// a member who signed in through another WeChat app of the same open platform account
+	if provider.Type == "WeChat" && len(extra) > 0 {
+		return object.GetUserByWechatUnionId(organization, extra[0]["wechat_unionid"])
 	}
 	return nil, nil
 }
@@ -988,7 +998,23 @@ func (c *ApiController) Login() {
 				}
 			}
 
-			user, err = object.CheckUserPassword(authForm.Organization, lookupUsername, password, c.GetAcceptLanguage(), enableCaptcha, isSigninViaLdap, isPasswordWithLdapEnabled)
+			err = object.CheckCredentialStuffing(authForm.Organization, clientIp, c.GetAcceptLanguage())
+			if err == nil {
+				_, passwordSpan := c.traceStep("signin.password", attribute.String("casdoor.organization", authForm.Organization), attribute.Bool("casdoor.ldap", isSigninViaLdap))
+				user, err = object.CheckUserPassword(authForm.Organization, lookupUsername, password, c.GetAcceptLanguage(), enableCaptcha, isSigninViaLdap, isPasswordWithLdapEnabled)
+				tracing.End(passwordSpan, err)
+				if err != nil && !isSigninViaLdap {
+					// a user imported without a password signs in with the one of the old system
+					if migratedUser, migrateErr := object.MigratePasswordOnSignin(authForm.Organization, lookupUsername, password); migrateErr == nil && migratedUser != nil {
+						user, err = migratedUser, nil
+					}
+				}
+				if err != nil {
+					object.RecordCredentialStuffingFailure(authForm.Organization, clientIp, lookupUsername)
+				} else if !isSigninViaLdap && user.Ldap == "" {
+					object.MarkWeakPasswordOnSignin(user, password)
+				}
+			}
 		}
 
 		if err != nil {
@@ -1111,7 +1137,9 @@ func (c *ApiController) Login() {
 			}
 
 			// https://github.com/golang/oauth2/issues/123#issuecomment-103715338
+			_, tokenSpan := c.traceStep("signin.provider.token", attribute.String("casdoor.provider", provider.Name), attribute.String("casdoor.provider_type", provider.Type))
 			token, err = idProvider.GetToken(authForm.Code)
+			tracing.End(tokenSpan, err)
 			if err != nil {
 				c.ResponseError(err.Error())
 				return
@@ -1122,7 +1150,9 @@ func (c *ApiController) Login() {
 				return
 			}
 
+			_, userInfoSpan := c.traceStep("signin.provider.userinfo", attribute.String("casdoor.provider", provider.Name))
 			userInfo, err = idProvider.GetUserInfo(token)
+			tracing.End(userInfoSpan, err)
 			if err != nil {
 				c.ResponseError(fmt.Sprintf(c.T("auth:Failed to login in: %s"), err.Error()))
 				return
@@ -1160,7 +1190,7 @@ func (c *ApiController) Login() {
 					return
 				}
 			} else if provider.Category == "OAuth" || object.IsFlexibleCustomProvider(provider.Type) {
-				user, err = getUserByProvider(application.Organization, provider, userInfo.Id)
+				user, err = getUserByProvider(application.Organization, provider, userInfo.Id, userInfo.Extra)
 				if err != nil {
 					c.ResponseError(err.Error())
 					return
@@ -1383,7 +1413,7 @@ func (c *ApiController) Login() {
 			}
 
 			var oldUser *object.User
-			oldUser, err = getUserByProvider(application.Organization, provider, userInfo.Id)
+			oldUser, err = getUserByProvider(application.Organization, provider, userInfo.Id, userInfo.Extra)
 			if err != nil {
 				c.ResponseError(err.Error())
 				return
@@ -1480,7 +1510,9 @@ func (c *ApiController) Login() {
 				return
 			}
 
+			_, mfaSpan := c.traceStep("signin.mfa", attribute.String("casdoor.mfa_type", authForm.MfaType))
 			err = object.VerifyMfaWithLimit(user, func() error { return c.verifyMfaPasscode(user, mfaUtil, authForm.Passcode) }, c.GetAcceptLanguage())
+			tracing.End(mfaSpan, err)
 			if err != nil {
 				c.responseSigninError(err, object.SigninReasonMfaFailed)
 				return
@@ -1535,6 +1567,15 @@ func (c *ApiController) Login() {
 			if application == nil {
 				c.ResponseError(fmt.Sprintf(c.T("auth:The application: %s does not exist"), authForm.Application))
 				return
+			}
+
+			// the application's own idle timeout: an idle Casdoor session can't sign in to it without the password again
+			if application.InactiveTimeoutMinutes > 0 && edition.Has(edition.Commercial) {
+				if previousTime, ok := c.Ctx.Input.GetData("previousRequestTime").(time.Time); ok && time.Since(previousTime) > time.Duration(application.InactiveTimeoutMinutes)*time.Minute {
+					c.ClearUserSession()
+					c.ResponseError(fmt.Sprintf(c.T("auth:Timeout for inactivity of %d minutes"), application.InactiveTimeoutMinutes))
+					return
+				}
 			}
 
 			if authForm.Provider == "" {

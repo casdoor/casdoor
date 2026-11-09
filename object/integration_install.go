@@ -21,8 +21,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"html"
-	"io"
-	"net/http"
 	"net/url"
 	"regexp"
 	"strings"
@@ -31,6 +29,7 @@ import (
 
 	"github.com/casdoor/casdoor/action"
 	"github.com/casdoor/casdoor/conf"
+	"github.com/casdoor/casdoor/edition"
 	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/core"
 )
@@ -50,22 +49,27 @@ type MarketplaceVersion struct {
 }
 
 type MarketplaceIntegration struct {
-	Id                  string                `json:"id"`
-	Type                string                `json:"type"`
-	Name                map[string]string     `json:"name"`
-	Description         map[string]string     `json:"description"`
-	Author              string                `json:"author"`
-	License             string                `json:"license"`
-	Homepage            string                `json:"homepage"`
-	Tags                []string              `json:"tags"`
-	Categories          []string              `json:"categories"`
-	Logo                string                `json:"logo"`
-	Screenshots         []string              `json:"screenshots"`
-	Verified            bool                  `json:"verified"`
-	RequiresGlobalAdmin bool                  `json:"requiresGlobalAdmin"`
-	Region              string                `json:"region"`
-	Latest              string                `json:"latest"`
-	Versions            []*MarketplaceVersion `json:"versions"`
+	Id                  string            `json:"id"`
+	Type                string            `json:"type"`
+	Name                map[string]string `json:"name"`
+	Description         map[string]string `json:"description"`
+	Author              string            `json:"author"`
+	License             string            `json:"license"`
+	Homepage            string            `json:"homepage"`
+	Tags                []string          `json:"tags"`
+	Categories          []string          `json:"categories"`
+	Logo                string            `json:"logo"`
+	Screenshots         []string          `json:"screenshots"`
+	Verified            bool              `json:"verified"`
+	RequiresGlobalAdmin bool              `json:"requiresGlobalAdmin"`
+	Region              string            `json:"region"`
+	Edition             string            `json:"edition"`
+	// where the files of a paid integration are, the Marketplace server rather than the CDN
+	BaseUrl string `json:"baseUrl,omitempty"`
+	// the paid integration can be downloaded with this Casdoor's license
+	Licensed bool                  `json:"licensed,omitempty"`
+	Latest   string                `json:"latest"`
+	Versions []*MarketplaceVersion `json:"versions"`
 }
 
 type MarketplaceRevoked struct {
@@ -98,14 +102,30 @@ type IntegrationManifest struct {
 	Name        map[string]string       `json:"name"`
 	Variables   []*IntegrationVariable  `json:"variables"`
 	Permissions *IntegrationPermissions `json:"permissions"`
+	// the files an admin downloads to install elsewhere, such as the plugin of an API gateway
+	Downloads []string `json:"downloads"`
 }
 
 type IntegrationBundle struct {
 	Manifest *IntegrationManifest       `json:"manifest"`
 	Files    map[string]json.RawMessage `json:"files"`
+	// the license a paid integration was downloaded with, written into it by the Marketplace server
+	License *BundleLicense `json:"license,omitempty"`
 
 	// the directory the bundle was downloaded from, where the other files of the version are
 	baseUrl string
+	// a paid integration, whose files are downloaded with the license
+	isPaid bool
+}
+
+type BundleLicense struct {
+	Id       string `json:"id"`
+	Licensee string `json:"licensee"`
+}
+
+// fetch downloads another file of the version
+func (bundle *IntegrationBundle) fetch(path string) ([]byte, error) {
+	return fetchMarketplaceFileWithLicense(fmt.Sprintf("%s/%s", bundle.baseUrl, path), bundle.isPaid)
 }
 
 // actionFile is the action.json of an action: what it does and the module that does it
@@ -114,6 +134,18 @@ type actionFile struct {
 	Abi    int    `json:"abi"`
 	Module string `json:"module"`
 	Sha256 string `json:"sha256"`
+	// push only: the user field that holds the receiver
+	ReceiverField string `json:"receiverField"`
+}
+
+// the kinds of actions this Casdoor runs, and the provider category each one creates on install ("" for none)
+var actionKindCategories = map[string]string{
+	"payment":            "Payment",
+	"sms":                "SMS",
+	"push":               "Notification",
+	"syncer":             "",
+	"password-check":     "",
+	"password-migration": "",
 }
 
 type IntegrationInstallRequest struct {
@@ -170,20 +202,6 @@ func getMarketplaceUrls() []string {
 	return []string{strings.TrimSuffix(marketplaceUrl, "/")}
 }
 
-func fetchMarketplaceFile(fileUrl string) ([]byte, error) {
-	client := &http.Client{Timeout: 15 * time.Second}
-	resp, err := client.Get(fileUrl)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("failed to get %s, status code: %d", fileUrl, resp.StatusCode)
-	}
-	return io.ReadAll(io.LimitReader(resp.Body, 32<<20))
-}
-
 func joinMarketplaceUrl(baseUrl string, path string) string {
 	if path == "" || strings.HasPrefix(path, "https://") || strings.HasPrefix(path, "http://") {
 		return path
@@ -226,6 +244,7 @@ func GetMarketplaceIndex(refresh bool) (*MarketplaceIndex, error) {
 			item.Screenshots[i] = joinMarketplaceUrl(baseUrl, screenshot)
 		}
 	}
+	mergePaidIntegrations(index)
 
 	marketplaceIndexCache = index
 	marketplaceIndexTime = time.Now()
@@ -295,8 +314,12 @@ func getIntegrationBundle(item *MarketplaceIntegration, version string) (*Integr
 		return nil, "", fmt.Errorf("the integration: %s has no version %s", item.Id, version)
 	}
 
-	bundleUrl := joinMarketplaceUrl(index.BaseUrl, marketplaceVersion.Url)
-	data, err := fetchMarketplaceFile(bundleUrl)
+	baseUrl := index.BaseUrl
+	if item.BaseUrl != "" {
+		baseUrl = item.BaseUrl
+	}
+	bundleUrl := joinMarketplaceUrl(baseUrl, marketplaceVersion.Url)
+	data, err := fetchMarketplaceFileWithLicense(bundleUrl, item.Edition != "")
 	if err != nil {
 		return nil, "", err
 	}
@@ -315,6 +338,7 @@ func getIntegrationBundle(item *MarketplaceIntegration, version string) (*Integr
 		return nil, "", fmt.Errorf("the bundle of %s %s does not match the Marketplace index", item.Id, version)
 	}
 	bundle.baseUrl = bundleUrl[:strings.LastIndex(bundleUrl, "/")]
+	bundle.isPaid = item.Edition != ""
 
 	return bundle, string(data), nil
 }
@@ -580,7 +604,7 @@ func getActionFile(bundle *IntegrationBundle) (*actionFile, error) {
 	if file.Abi != action.Abi {
 		return nil, fmt.Errorf("the action is built for abi %d, this Casdoor runs abi %d", file.Abi, action.Abi)
 	}
-	if file.Kind != "payment" && file.Kind != "sms" {
+	if _, ok := actionKindCategories[file.Kind]; !ok {
 		return nil, fmt.Errorf("this Casdoor cannot run actions of kind: %s", file.Kind)
 	}
 	if file.Module == "" || strings.ContainsAny(file.Module, "/\\") || file.Sha256 == "" {
@@ -595,7 +619,7 @@ func installActionIntegration(integration *Integration, bundle *IntegrationBundl
 		return err
 	}
 
-	module, err := fetchMarketplaceFile(fmt.Sprintf("%s/%s", bundle.baseUrl, file.Module))
+	module, err := bundle.fetch(file.Module)
 	if err != nil {
 		return err
 	}
@@ -608,9 +632,13 @@ func installActionIntegration(integration *Integration, bundle *IntegrationBundl
 		return err
 	}
 
-	category := "Payment"
-	if file.Kind == "sms" {
-		category = "SMS"
+	integration.Kind = file.Kind
+	integration.Module = base64.StdEncoding.EncodeToString(module)
+
+	// the syncers and the security settings of the organization pick these actions themselves
+	category := actionKindCategories[file.Kind]
+	if category == "" {
+		return nil
 	}
 
 	existing := &Provider{Name: integration.Name}
@@ -644,7 +672,6 @@ func installActionIntegration(integration *Integration, bundle *IntegrationBundl
 	}
 
 	integration.Provider = provider.Name
-	integration.Module = base64.StdEncoding.EncodeToString(module)
 	return nil
 }
 
@@ -774,6 +801,12 @@ func InstallIntegration(req *IntegrationInstallRequest, isGlobalAdmin bool, host
 	if err != nil {
 		return nil, err
 	}
+	// e.g. the templates of Chinese office systems need a commercial edition license
+	if item.Edition != "" {
+		if err = edition.Require(item.Edition, fmt.Sprintf("The integration: %s", item.Id)); err != nil {
+			return nil, err
+		}
+	}
 
 	bundle, bundleText, err := getIntegrationBundle(item, req.Version)
 	if err != nil {
@@ -804,6 +837,9 @@ func InstallIntegration(req *IntegrationInstallRequest, isGlobalAdmin bool, host
 		Logo:          item.Logo,
 		Variables:     variables,
 		Bundle:        bundleText,
+	}
+	if bundle.License != nil {
+		integration.LicenseId = bundle.License.Id
 	}
 
 	switch item.Type {

@@ -17,6 +17,7 @@ import * as ServerBackend from "@/backend/ServerBackend";
 import {submitEdit} from "@/lib/crud";
 import * as Setting from "@/lib/setting";
 import {EditionNotice} from "@/components/common/EditionNotice";
+import {McpRecordTable} from "@/components/server/McpRecordTable";
 
 /** The tools the MCP server exposes; only "isAllowed" is editable, see web/src/ToolTable.js. */
 function ToolTable({tools, onChange}: {tools: any[]; onChange: (tools: any[]) => void}) {
@@ -200,6 +201,13 @@ export default function ServerEditPage() {
           </Button>
         </div>
       </FormRow>
+      <FormRow labelKey="server:Token header">
+        <Input
+          placeholder="Authorization: Bearer"
+          value={server.tokenHeader ?? ""}
+          onChange={(e) => updateServerField("tokenHeader", e.target.value)}
+        />
+      </FormRow>
       <FormRow block labelKey="general:Application">
         <SearchableSelect
           value={server.application ?? ""}
@@ -221,7 +229,15 @@ export default function ServerEditPage() {
       <FormRow labelKey="provider:Base URL">
         <Input readOnly value={`${Setting.getOriginUrl()}/api/server/${server.owner}/${server.name}`} />
         <EditionNotice />
+        <p className="mt-1.5 text-xs text-muted-foreground">
+          {i18next.t("server:Agent platforms that only send fixed headers, such as Alibaba Cloud Bailian, Baidu Qianfan and Coze, can use a key of the Keys page: Authorization: Bearer <access key>:<access secret>")}
+        </p>
       </FormRow>
+      {mode !== "add" ? (
+        <FormRow labelKey="entry:Tool calls" block>
+          <McpRecordTable owner={server.owner} server={server.name} />
+        </FormRow>
+      ) : null}
     </EditPageShell>
   );
 }

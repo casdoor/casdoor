@@ -779,7 +779,7 @@ func generateJwtTokenWithOptions(application *Application, user *User, provider 
 		return "", "", "", "", err
 	}
 
-	token.Header["kid"] = cert.Name
+	token.Header["kid"] = cert.GetKeyId()
 	tokenString, err = token.SignedString(key)
 	if err != nil {
 		return "", "", "", "", err
@@ -796,7 +796,7 @@ func generateJwtTokenWithOptions(application *Application, user *User, provider 
 		idClaims.AtHash = getOidcHash(tokenString, jwtMethod)
 	}
 	idToken := newIdToken()
-	idToken.Header["kid"] = cert.Name
+	idToken.Header["kid"] = cert.GetKeyId()
 	idTokenString, err = idToken.SignedString(key)
 
 	return tokenString, refreshTokenString, idTokenString, name, err
@@ -837,12 +837,14 @@ func ParseJwtToken(token string, cert *Cert) (*Claims, error) {
 			return nil, fmt.Errorf("the certificate field should not be empty for the cert: %v", cert)
 		}
 
+		kid, _ := token.Header["kid"].(string)
+		publicKey := cert.getCertificateByKeyId(kid)
 		if _, ok := token.Method.(*jwt.SigningMethodRSA); ok {
 			// RSA certificate
-			certificate, err = jwt.ParseRSAPublicKeyFromPEM([]byte(cert.Certificate))
+			certificate, err = jwt.ParseRSAPublicKeyFromPEM([]byte(publicKey))
 		} else if _, ok := token.Method.(*jwt.SigningMethodECDSA); ok {
 			// ES certificate
-			certificate, err = jwt.ParseECPublicKeyFromPEM([]byte(cert.Certificate))
+			certificate, err = jwt.ParseECPublicKeyFromPEM([]byte(publicKey))
 		} else {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}

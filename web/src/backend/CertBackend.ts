@@ -89,3 +89,13 @@ export function refreshDomainExpire(owner, name) {
     credentials: "include",
   }).then(res => res.json());
 }
+
+export function rotateCert(owner: string, name: string) {
+  return fetch(`${Setting.ServerUrl}/api/rotate-cert?id=${owner}/${encodeURIComponent(name)}`, {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}

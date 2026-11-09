@@ -374,6 +374,7 @@ func GetMaskedApplication(application *Application, userId string) *Application 
 		application.OrganizationObj.OrgBalance = -1
 		application.OrganizationObj.UserBalance = -1
 		application.OrganizationObj.BalanceCredit = -1
+		application.OrganizationObj.SecurityPolicy = application.OrganizationObj.SecurityPolicy.getPublic()
 
 		if !isOrgUser {
 			application.OrganizationObj.MfaItems = nil

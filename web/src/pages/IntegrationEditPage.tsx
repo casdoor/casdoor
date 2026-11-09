@@ -11,16 +11,7 @@ import {Loading} from "@/components/common/Loading";
 import {useAccount} from "@/hooks/use-account";
 import * as ApplicationBackend from "@/backend/ApplicationBackend";
 import * as IntegrationBackend from "@/backend/IntegrationBackend";
-import {
-  IntegrationLogo,
-  getMarketplaceSiteUrl,
-  fillVariables,
-  getIntegrationTypeLabel,
-  getLocalized,
-  getActionKind,
-  parseBundle,
-  renderInlineText,
-} from "@/lib/integration";
+import {IntegrationLogo, getMarketplaceSiteUrl, fillVariables, getIntegrationTypeLabel, getLocalized, getActionKind, parseBundle, renderInlineText, getActionText} from "@/lib/integration";
 import * as Setting from "@/lib/setting";
 
 /** An installed integration: what it created, and the rest of the setup with this Casdoor's own values filled in. */
@@ -271,7 +262,7 @@ function getInstalledDescription(integration: any, actionKind: string): string {
   case "theme":
     return i18next.t("integration:Theme installed description");
   case "action":
-    return actionKind === "sms" ? i18next.t("integration:SMS action installed description") : i18next.t("integration:Action installed description");
+    return getActionText(actionKind, "installed");
   default:
     return "";
   }
@@ -286,7 +277,7 @@ function getUninstallDescription(integration: any, actionKind: string): string {
   case "theme":
     return i18next.t("integration:Uninstall theme description").replace("{name}", integration.application);
   case "action":
-    return (actionKind === "sms" ? i18next.t("integration:Uninstall SMS action description") : i18next.t("integration:Uninstall action description")).replace("{name}", integration.provider);
+    return getActionText(actionKind, "uninstall").replace("{name}", integration.provider || integration.name);
   default:
     return "";
   }

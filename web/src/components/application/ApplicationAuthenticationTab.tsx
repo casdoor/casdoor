@@ -62,6 +62,16 @@ export function ApplicationAuthenticationTab({application, updateField}: Applica
           />
         </FormRow>
       ) : null}
+      <FormRow labelKey="organization:Inactive timeout minutes">
+        <Input
+          type="number"
+          min={0}
+          placeholder="0"
+          value={application.inactiveTimeoutMinutes || ""}
+          onChange={(e) => updateField("inactiveTimeoutMinutes", Setting.myParseInt(e.target.value))}
+        />
+        {application.inactiveTimeoutMinutes > 0 ? <EditionNotice /> : null}
+      </FormRow>
       <FormRow labelKey="application:Signin session">
         <Switch
           checked={!!application.enableSigninSession}

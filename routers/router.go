@@ -93,6 +93,9 @@ func InitAPI() {
 	web.Router("/api/get-sorted-users", &controllers.ApiController{}, "GET:GetSortedUsers")
 	web.Router("/api/get-user-count", &controllers.ApiController{}, "GET:GetUserCount")
 	web.Router("/api/get-user", &controllers.ApiController{}, "GET:GetUser")
+	web.Router("/api/get-user-personal-info", &controllers.ApiController{}, "GET:GetUserPersonalInfo")
+	web.Router("/api/export-own-data", &controllers.ApiController{}, "GET:ExportOwnData")
+	web.Router("/api/delete-own-account", &controllers.ApiController{}, "POST:DeleteOwnAccount")
 	web.Router("/api/update-user", &controllers.ApiController{}, "POST:UpdateUser")
 	web.Router("/api/add-user", &controllers.ApiController{}, "POST:AddUser")
 	web.Router("/api/delete-user", &controllers.ApiController{}, "POST:DeleteUser")
@@ -129,6 +132,7 @@ func InitAPI() {
 
 	web.Router("/api/get-marketplace-index", &controllers.ApiController{}, "GET:GetMarketplaceIndex")
 	web.Router("/api/get-marketplace-bundle", &controllers.ApiController{}, "GET:GetMarketplaceBundle")
+	web.Router("/api/download-marketplace-file", &controllers.ApiController{}, "GET:DownloadMarketplaceFile")
 	web.Router("/api/get-integrations", &controllers.ApiController{}, "GET:GetIntegrations")
 	web.Router("/api/get-integration", &controllers.ApiController{}, "GET:GetIntegration")
 	web.Router("/api/install-integration", &controllers.ApiController{}, "POST:InstallIntegration")
@@ -148,6 +152,7 @@ func InitAPI() {
 	web.Router("/api/delete-agent", &controllers.ApiController{}, "POST:DeleteAgent")
 
 	web.Router("/api/get-servers", &controllers.ApiController{}, "GET:GetServers")
+	web.Router("/api/get-mcp-records", &controllers.ApiController{}, "GET:GetMcpRecords")
 	web.Router("/api/get-online-servers", &controllers.ApiController{}, "GET:GetOnlineServers")
 	web.Router("/api/scan", &controllers.ApiController{}, "GET:Scan")
 	web.Router("/api/sync-intranet-servers", &controllers.ApiController{}, "POST:SyncIntranetServers")
@@ -195,6 +200,7 @@ func InitAPI() {
 	web.Router("/api/get-global-certs", &controllers.ApiController{}, "GET:GetGlobalCerts")
 	web.Router("/api/get-cert", &controllers.ApiController{}, "GET:GetCert")
 	web.Router("/api/update-cert", &controllers.ApiController{}, "POST:UpdateCert")
+	web.Router("/api/rotate-cert", &controllers.ApiController{}, "POST:RotateCert")
 	web.Router("/api/add-cert", &controllers.ApiController{}, "POST:AddCert")
 	web.Router("/api/delete-cert", &controllers.ApiController{}, "POST:DeleteCert")
 	web.Router("/api/update-cert-domain-expire", &controllers.ApiController{}, "POST:UpdateCertDomainExpire")
@@ -413,6 +419,9 @@ func InitAPI() {
 	web.Router("/api/mfa/setup/initiate", &controllers.ApiController{}, "POST:MfaSetupInitiate")
 	web.Router("/api/mfa/setup/verify", &controllers.ApiController{}, "POST:MfaSetupVerify")
 	web.Router("/api/mfa/setup/enable", &controllers.ApiController{}, "POST:MfaSetupEnable")
+	web.Router("/api/mfa/push/send", &controllers.ApiController{}, "POST:SendMfaPush")
+	web.Router("/api/mfa/push/challenge", &controllers.ApiController{}, "GET:GetMfaPushChallenge")
+	web.Router("/api/mfa/push/answer", &controllers.ApiController{}, "POST:AnswerMfaPushChallenge")
 	web.Router("/api/delete-mfa", &controllers.ApiController{}, "POST:DeleteMfa")
 	web.Router("/api/set-preferred-mfa", &controllers.ApiController{}, "POST:SetPreferredMfa")
 

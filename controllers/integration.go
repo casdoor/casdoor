@@ -16,6 +16,8 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
+	"path/filepath"
 
 	"github.com/beego/beego/v2/core/utils/pagination"
 	"github.com/casdoor/casdoor/object"
@@ -62,6 +64,30 @@ func (c *ApiController) GetMarketplaceBundle() {
 	}
 
 	c.ResponseOk(bundle)
+}
+
+// DownloadMarketplaceFile
+// @Title DownloadMarketplaceFile
+// @Tag Integration API
+// @Description download a file of a Marketplace integration to install elsewhere, such as the plugin of an API gateway
+// @Param   owner         query    string  true        "The organization"
+// @Param   integrationId query    string  true        "The integration ID in the Marketplace"
+// @Param   path          query    string  true        "The file, one of the integration's downloads"
+// @Success 200 {file} file The file
+// @router /download-marketplace-file [get]
+func (c *ApiController) DownloadMarketplaceFile() {
+	integrationId := c.Ctx.Input.Query("integrationId")
+	path := c.Ctx.Input.Query("path")
+
+	data, err := object.GetMarketplaceDownload(integrationId, path)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	c.Ctx.Output.Header("Content-Type", "application/octet-stream")
+	c.Ctx.Output.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%q", filepath.Base(path)))
+	_ = c.Ctx.Output.Body(data)
 }
 
 // GetIntegrations

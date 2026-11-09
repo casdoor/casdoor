@@ -28,6 +28,7 @@ import (
 	"github.com/casdoor/casdoor/radius"
 	"github.com/casdoor/casdoor/routers"
 	"github.com/casdoor/casdoor/service"
+	"github.com/casdoor/casdoor/tracing"
 	"github.com/casdoor/casdoor/util"
 )
 
@@ -91,6 +92,8 @@ func runServer() {
 	object.InitSamlAssertionStore()
 	object.InitExpirePermissions()
 	object.InitUpdateSubscriptionStates()
+	object.InitSecurityPolicyJobs()
+	tracing.Init()
 
 	object.InitSiteMap()
 	if len(object.SiteMap) != 0 {
@@ -109,6 +112,7 @@ func runServer() {
 	}
 	web.SetStaticPath("/files", "files")
 	// https://studygolang.com/articles/2303
+	web.InsertFilter("*", web.BeforeStatic, routers.TracingFilter)
 	web.InsertFilter("/api/forward-auth", web.BeforeStatic, routers.ForwardAuthFilter)
 	web.InsertFilter("*", web.BeforeStatic, routers.RequestBodyFilter)
 	web.InsertFilter("*", web.BeforeStatic, routers.ContentTypeFilter)
@@ -122,6 +126,7 @@ func runServer() {
 	web.InsertFilter("*", web.BeforeRouter, routers.RecordMessage)
 	web.InsertFilter("*", web.BeforeRouter, routers.FieldValidationFilter)
 	web.InsertFilter("*", web.AfterExec, routers.AfterRecordMessage, web.WithReturnOnOutput(false))
+	web.InsertFilter("*", web.FinishRouter, routers.TracingEndFilter, web.WithReturnOnOutput(false))
 
 	var logAdapter string
 	logConfigMap := make(map[string]interface{})

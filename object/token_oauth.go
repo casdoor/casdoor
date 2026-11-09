@@ -694,6 +694,13 @@ func GetWechatMiniProgramToken(application *Application, code string, phoneCode 
 	if err != nil {
 		return nil, nil, err
 	}
+	if user == nil {
+		// a member who signed in through the website or official account app of the same open platform account
+		user, err = GetUserByWechatUnionId(application.Organization, unionId)
+		if err != nil {
+			return nil, nil, err
+		}
+	}
 
 	phone, countryCode := "", ""
 	if user == nil && phoneCode != "" {

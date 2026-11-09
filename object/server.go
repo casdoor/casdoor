@@ -38,6 +38,7 @@ type Server struct {
 
 	Url         string  `xorm:"varchar(500)" json:"url"`
 	Token       string  `xorm:"mediumtext" json:"token"`
+	TokenHeader string  `xorm:"varchar(100)" json:"tokenHeader"`
 	Application string  `xorm:"varchar(100)" json:"application"`
 	Tools       []*Tool `xorm:"mediumtext" json:"tools"`
 }

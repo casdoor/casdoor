@@ -14,6 +14,7 @@
 
 import {authConfig} from "@/auth/Auth";
 import * as Setting from "@/lib/setting";
+import {getDeviceId} from "@/lib/device";
 
 export function getAccount(query: any = "") {
   return fetch(`${authConfig.serverUrl}/api/get-account${query}`, {
@@ -166,6 +167,7 @@ export function login(values, oAuthParams) {
     headers: {
       "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
+      "X-Casdoor-Device": getDeviceId(),
     },
   }).then(res => res.json());
 }
@@ -178,6 +180,7 @@ export function loginCas(values, params) {
     headers: {
       "Content-Type": "application/json",
       "Accept-Language": Setting.getAcceptLanguage(),
+      "X-Casdoor-Device": getDeviceId(),
     },
   }).then(res => res.json());
 }

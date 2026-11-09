@@ -1,3 +1,4 @@
+import * as React from "react";
 import i18next from "i18next";
 import copy from "copy-to-clipboard";
 import FileSaver from "file-saver";
@@ -9,6 +10,8 @@ import {useAccount} from "@/hooks/use-account";
 import {useOrganizationOptions} from "@/hooks/use-options";
 import * as CertBackend from "@/backend/CertBackend";
 import * as Setting from "@/lib/setting";
+import {ConfirmButton} from "@/components/common/ConfirmButton";
+import {EditionNotice} from "@/components/common/EditionNotice";
 
 const TYPES = ["SSL", "x509", "Payment"];
 
@@ -144,6 +147,13 @@ export default function CertEditPage() {
     {type: "password", name: "accessSecret", labelKey: "cert:Access secret", when: isSsl},
     {
       type: "custom",
+      name: "keyId",
+      labelKey: "provider:Key ID",
+      when: (ctx) => !isSsl(ctx) && !!ctx.record.certificate,
+      render: (ctx) => <KeyRotation cert={ctx.record} />,
+    },
+    {
+      type: "custom",
       name: "certificate",
       labelKey: "cert:Certificate",
       block: true,
@@ -231,6 +241,47 @@ function PemField({value, onChange, copyLabel, downloadLabel, fileName}: PemFiel
         </Button>
       </div>
       <CodeEditor value={value ?? ""} onChange={onChange} height={320} />
+    </div>
+  );
+}
+
+/** The "kid" of the tokens the cert signs, and the rotation that gives the tokens a new key */
+function KeyRotation({cert}: {cert: any}) {
+  const [rotating, setRotating] = React.useState(false);
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center gap-2">
+        <div className="flex-1 rounded-md border bg-muted/40 px-3 py-2 font-mono text-sm text-muted-foreground">
+          {cert.keyId || cert.name}
+        </div>
+        <ConfirmButton
+          variant="outline"
+          destructive={false}
+          loading={rotating}
+          title={i18next.t("cert:Rotate the key now? The tokens get a new key ID, and the previous public key stays published for the tokens it signed")}
+          onConfirm={() => {
+            setRotating(true);
+            CertBackend.rotateCert(cert.owner, cert.name)
+              .then((res: any) => {
+                if (res.status === "ok") {
+                  Setting.showMessage("success", i18next.t("general:Successfully modified"));
+                  window.location.reload();
+                } else {
+                  Setting.showMessage("error", res.msg);
+                }
+              })
+              .finally(() => setRotating(false));
+          }}
+        >
+          {i18next.t("cert:Rotate key")}
+        </ConfirmButton>
+      </div>
+      {cert.rotatedTime ? (
+        <p className="text-xs text-muted-foreground">
+          {i18next.t("cert:Rotated time")}: {Setting.getFormattedDate(cert.rotatedTime)}, {i18next.t("cert:Previous key ID")}: {cert.previousKeyId}
+        </p>
+      ) : null}
+      <EditionNotice />
     </div>
   );
 }

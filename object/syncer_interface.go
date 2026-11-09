@@ -72,6 +72,8 @@ func GetSyncerProvider(syncer *Syncer) SyncerProvider {
 		return &LarkSyncerProvider{Syncer: syncer}
 	case "Okta":
 		return &OktaSyncerProvider{Syncer: syncer}
+	case "Plugin":
+		return &PluginSyncerProvider{Syncer: syncer}
 	case "SCIM":
 		return &SCIMSyncerProvider{Syncer: syncer}
 	case "AWS IAM":

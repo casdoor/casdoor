@@ -413,6 +413,16 @@ func (a *Ormer) createTable() {
 		panic(err)
 	}
 
+	err = a.Engine.Sync2(new(SigninTrace))
+	if err != nil {
+		panic(err)
+	}
+
+	err = a.Engine.Sync2(new(McpRecord))
+	if err != nil {
+		panic(err)
+	}
+
 	err = a.Engine.Sync2(new(Token))
 	if err != nil {
 		panic(err)

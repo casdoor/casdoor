@@ -103,3 +103,13 @@ export function getMcpAccessToken(owner, applicationName) {
     credentials: "include",
   }).then(res => res.json());
 }
+
+export function getMcpRecords(owner: string, server: string, page = 1, pageSize = 50) {
+  return fetch(`${Setting.ServerUrl}/api/get-mcp-records?owner=${encodeURIComponent(owner)}&server=${encodeURIComponent(server)}&p=${page}&pageSize=${pageSize}`, {
+    method: "GET",
+    credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}

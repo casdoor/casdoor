@@ -46,6 +46,11 @@ type Cert struct {
 
 	Certificate string `xorm:"mediumtext" json:"certificate"`
 	PrivateKey  string `xorm:"mediumtext" json:"privateKey"`
+
+	KeyId               string `xorm:"varchar(100)" json:"keyId"`
+	PreviousKeyId       string `xorm:"varchar(100)" json:"previousKeyId"`
+	PreviousCertificate string `xorm:"mediumtext" json:"previousCertificate"`
+	RotatedTime         string `xorm:"varchar(100)" json:"rotatedTime"`
 }
 
 func GetMaskedCert(cert *Cert) *Cert {

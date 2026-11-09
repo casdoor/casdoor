@@ -139,6 +139,7 @@ const PromptPage = React.lazy(() => import("@/pages/auth/PromptPage"));
 const TelegramLogin = React.lazy(() => import("@/pages/auth/TelegramLogin"));
 const CasLogout = React.lazy(() => import("@/pages/auth/CasLogout"));
 const CaptchaPage = React.lazy(() => import("@/pages/auth/CaptchaPage"));
+const PushConfirmPage = React.lazy(() => import("@/pages/auth/PushConfirmPage"));
 const OidcDiscoveryPage = React.lazy(() => import("@/pages/auth/OidcDiscoveryPage"));
 
 Setting.initServerUrl();
@@ -241,6 +242,7 @@ export default function App() {
         <Route path="/callback/saml" element={<SamlCallback />} />
         <Route path="/telegram-login" element={<TelegramLogin />} />
         <Route path="/captcha" element={<CaptchaPage />} />
+        <Route path="/mfa/push-confirm/:id" element={<PushConfirmPage />} />
         <Route path="/.well-known/openid-configuration" element={<OidcDiscoveryPage />} />
         <Route path="/consent/:applicationName" element={<ConsentPage />} />
         <Route path="/prompt" element={<PromptPage />} />

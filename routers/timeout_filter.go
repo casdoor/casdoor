@@ -22,6 +22,7 @@ import (
 
 	"github.com/beego/beego/v2/server/web/context"
 	"github.com/casdoor/casdoor/conf"
+	"github.com/casdoor/casdoor/object"
 )
 
 var (
@@ -35,31 +36,48 @@ func init() {
 	if err != nil {
 		inactiveTimeoutMinutes = 0
 	}
+
+	go func() {
+		for range time.Tick(time.Hour) {
+			requestTimeMap.Range(func(key, value interface{}) bool {
+				if time.Since(value.(time.Time)) > 7*24*time.Hour {
+					requestTimeMap.Delete(key)
+				}
+				return true
+			})
+		}
+	}()
 }
 
-func timeoutLogout(ctx *context.Context, sessionId string) {
+func timeoutLogout(ctx *context.Context, sessionId string, minutes int64) {
 	requestTimeMap.Delete(sessionId)
 	ctx.Input.CruSession.Set(stdcontext.Background(), "username", "")
 	ctx.Input.CruSession.Set(stdcontext.Background(), "accessToken", "")
 	ctx.Input.CruSession.Delete(stdcontext.Background(), "SessionData")
-	responseError(ctx, fmt.Sprintf(T(ctx, "auth:Timeout for inactivity of %d minutes"), inactiveTimeoutMinutes))
+	responseError(ctx, fmt.Sprintf(T(ctx, "auth:Timeout for inactivity of %d minutes"), minutes))
 }
 
 func TimeoutFilter(ctx *context.Context) {
-	if inactiveTimeoutMinutes <= 0 {
-		return
-	}
-
 	owner, name := getSubject(ctx)
 	if owner == "anonymous" || name == "anonymous" {
 		return
+	}
+
+	// the organization's security policy overrides the global setting
+	minutes := inactiveTimeoutMinutes
+	if policy := object.GetCachedSecurityPolicy(owner); policy != nil && policy.InactiveTimeoutMinutes > 0 {
+		minutes = int64(policy.InactiveTimeoutMinutes)
 	}
 
 	sessionId := ctx.Input.CruSession.SessionID(stdcontext.Background())
 	currentTime := time.Now()
 	preRequestTime, has := requestTimeMap.Load(sessionId)
 	requestTimeMap.Store(sessionId, currentTime)
-	if has && preRequestTime.(time.Time).Add(time.Minute*time.Duration(inactiveTimeoutMinutes)).Before(currentTime) {
-		timeoutLogout(ctx, sessionId)
+	if has {
+		// for the per-application timeout checked when the session signs in to an application
+		ctx.Input.SetData("previousRequestTime", preRequestTime)
+	}
+	if minutes > 0 && has && preRequestTime.(time.Time).Add(time.Minute*time.Duration(minutes)).Before(currentTime) {
+		timeoutLogout(ctx, sessionId, minutes)
 	}
 }

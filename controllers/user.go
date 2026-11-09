@@ -50,6 +50,7 @@ func (c *ApiController) GetGlobalUsers() {
 			return
 		}
 
+		c.maskPersonalInfo(users...)
 		c.ResponseOk(users)
 	} else {
 		limit := util.ParseInt(limit)
@@ -72,6 +73,7 @@ func (c *ApiController) GetGlobalUsers() {
 			return
 		}
 
+		c.maskPersonalInfo(users...)
 		c.ResponseOk(users, paginator.Nums())
 	}
 }
@@ -100,6 +102,7 @@ func (c *ApiController) GetUsers() {
 				c.ResponseError(err.Error())
 				return
 			}
+			c.maskPersonalInfo(users...)
 			c.ResponseOk(users)
 			return
 		}
@@ -110,6 +113,7 @@ func (c *ApiController) GetUsers() {
 			return
 		}
 
+		c.maskPersonalInfo(users...)
 		c.ResponseOk(users)
 	} else {
 		limit := util.ParseInt(limit)
@@ -132,6 +136,7 @@ func (c *ApiController) GetUsers() {
 			return
 		}
 
+		c.maskPersonalInfo(users...)
 		c.ResponseOk(users, paginator.Nums())
 	}
 }
@@ -250,6 +255,7 @@ func (c *ApiController) GetUser() {
 		}
 	}
 
+	c.maskPersonalInfo(user)
 	c.ResponseOk(user)
 }
 
@@ -329,6 +335,9 @@ func (c *ApiController) UpdateUser() {
 		user = mergedUser
 	}
 
+	// a console form showing the masked phone, email and ID card sends them back unchanged
+	object.RestoreMaskedPersonalInfo(&user, oldUser)
+
 	if oldUser.Owner == "built-in" && oldUser.Name == "admin" && (user.Owner != "built-in" || user.Name != "admin") {
 		c.ResponseError(c.T("auth:Unauthorized operation"))
 		return
@@ -403,7 +412,7 @@ func (c *ApiController) UpdateUser() {
 			return
 		}
 
-		if msg := object.CheckPasswordComplexityByOrg(organization, user.Password, c.GetAcceptLanguage()); msg != "" {
+		if msg := object.CheckPasswordComplexityByOrg(organization, user.Password, c.GetAcceptLanguage(), user.Name); msg != "" {
 			c.ResponseError(msg)
 			return
 		}
@@ -891,6 +900,7 @@ func (c *ApiController) GetSortedUsers() {
 		return
 	}
 
+	c.maskPersonalInfo(users...)
 	c.ResponseOk(users)
 }
 

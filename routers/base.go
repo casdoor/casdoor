@@ -173,7 +173,16 @@ func getUsernameByClientIdSecret(ctx *context.Context) (string, error) {
 func getUsernameByAccessKey(ctx *context.Context) (string, error) {
 	accessKey := ctx.Input.Query("accessKey")
 	accessSecret := ctx.Input.Query("accessSecret")
+	// the agent platforms that only send fixed headers to an MCP server, e.g. Alibaba Cloud Bailian, Baidu Qianfan and Coze
+	if accessKey == "" && accessSecret == "" && strings.HasPrefix(ctx.Request.URL.Path, "/api/server/") {
+		accessKey = ctx.Request.Header.Get("X-Casdoor-Access-Key")
+		accessSecret = ctx.Request.Header.Get("X-Casdoor-Access-Secret")
+	}
+	return getUsernameByKeyPair(accessKey, accessSecret)
+}
 
+// getUsernameByKeyPair authenticates an access key of the "Keys" page, which belongs to a user or an application
+func getUsernameByKeyPair(accessKey string, accessSecret string) (string, error) {
 	if accessKey == "" || accessSecret == "" {
 		return "", nil
 	}

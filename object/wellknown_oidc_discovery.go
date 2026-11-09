@@ -310,17 +310,28 @@ func GetJsonWebKeySet(applicationName string) (jose.JSONWebKeySet, error) {
 		if jwk := getJsonWebKey(cert); jwk != nil {
 			jwks.Keys = append(jwks.Keys, *jwk)
 		}
+		// the key before the last rotation stays published, for the tokens it signed
+		if jwk := getPreviousJsonWebKey(cert); jwk != nil {
+			jwks.Keys = append(jwks.Keys, *jwk)
+		}
 	}
 
 	return jwks, nil
 }
 
 func getJsonWebKey(cert *Cert) *jose.JSONWebKey {
-	if cert.Type != "x509" || cert.Certificate == "" {
+	if cert.Type != "x509" {
+		return nil
+	}
+	return newJsonWebKey(cert, cert.Certificate, cert.GetKeyId())
+}
+
+func newJsonWebKey(cert *Cert, certificate string, keyId string) *jose.JSONWebKey {
+	if certificate == "" {
 		return nil
 	}
 
-	certDerBlock, _ := pem.Decode([]byte(cert.Certificate))
+	certDerBlock, _ := pem.Decode([]byte(certificate))
 	if certDerBlock == nil {
 		return nil
 	}
@@ -333,7 +344,7 @@ func getJsonWebKey(cert *Cert) *jose.JSONWebKey {
 	return &jose.JSONWebKey{
 		Key:          x509Cert.PublicKey,
 		Certificates: []*x509.Certificate{x509Cert},
-		KeyID:        cert.Name,
+		KeyID:        keyId,
 		Algorithm:    cert.CryptoAlgorithm,
 		Use:          "sig",
 	}

@@ -6,6 +6,7 @@ import {Input} from "@/components/ui/input";
 import {Label} from "@/components/ui/label";
 import {SendCodeInput} from "@/components/auth/SendCodeInput";
 import {CodeInput} from "@/components/auth/CodeInput";
+import {PushWait} from "@/components/auth/mfa/PushWait";
 import * as AuthBackend from "@/backend/AuthBackend";
 import * as Setting from "@/lib/setting";
 import {
@@ -41,6 +42,8 @@ function getSwitchLabel(mfaType: string) {
     return i18next.t("mfa:Use Authenticator App");
   case EmailMfaType:
     return i18next.t("mfa:Use Email");
+  case PushMfaType:
+    return i18next.t("mfa:Use phone confirmation");
   default:
     return "";
   }
@@ -169,6 +172,12 @@ export function MfaVerify({formValues, authParams, mfaProps, application, onSucc
             onComplete={verifyComplete}
           />
         </>
+      ) : selected?.mfaType === PushMfaType ? (
+        <PushWait
+          key={selected?.mfaType}
+          application={Setting.getApplicationName(application)}
+          onApproved={(challengeId) => post({passcode: challengeId, enableMfaRemember: remember})}
+        />
       ) : selected?.mfaType === TotpMfaType ? (
         <>
           <p className="text-sm text-muted-foreground">{prompt}</p>
@@ -200,9 +209,11 @@ export function MfaVerify({formValues, authParams, mfaProps, application, onSucc
         </Label>
       </div>
 
-      <Button className="w-full" loading={loading} onClick={() => post({passcode, enableMfaRemember: remember})}>
-        {i18next.t("mfa:Verify Code")}
-      </Button>
+      {selected?.mfaType !== PushMfaType ? (
+        <Button className="w-full" loading={loading} onClick={() => post({passcode, enableMfaRemember: remember})}>
+          {i18next.t("mfa:Verify Code")}
+        </Button>
+      ) : null}
       {factors
         .filter((item) => item.mfaType !== selected?.mfaType && getSwitchLabel(item.mfaType))
         .map((item) => (

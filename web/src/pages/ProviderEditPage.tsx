@@ -269,6 +269,9 @@ function getAppIdLabel(provider: any): Label | null {
     } else if (provider.type === "AzureADB2C") {
       return label(i18next.t("provider:User flow"), i18next.t("provider:User flow - Tooltip"));
     }
+  } else if (provider.category === "Notification" && provider.type === "Plugin") {
+    // the agent ID of the WeCom or DingTalk app that sends the sign-in confirmations
+    return label(i18next.t("provider:Agent ID"), i18next.t("provider:Agent ID - Tooltip"));
   } else if (provider.category === "SMS") {
     if (provider.type === "Twilio SMS" || provider.type === "Azure ACS") {
       return label(i18next.t("provider:Sender number"), i18next.t("provider:Sender number - Tooltip"));
@@ -1142,7 +1145,7 @@ export default function ProviderEditPage() {
     if (provider.type !== "Plugin") {
       return null;
     }
-    const kind = provider.category === "SMS" ? "sms" : "payment";
+    const kind = provider.category === "SMS" ? "sms" : provider.category === "Notification" ? "push" : "payment";
     return (
       <FormRow label={i18next.t("general:Action")} tooltip={i18next.t("provider:Action - Tooltip")}>
         <SelectField
@@ -1228,6 +1231,7 @@ export default function ProviderEditPage() {
     const receiverLabel = getReceiverLabel(provider);
     return (
       <React.Fragment>
+        {renderActionRow()}
         {provider.type === "CUCloud" ? (
           <FormRow labelKey="provider:Region ID">
             <Input value={provider.regionId ?? ""} onChange={(e) => updateProviderField("regionId", e.target.value)} />

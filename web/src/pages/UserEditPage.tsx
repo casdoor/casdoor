@@ -36,6 +36,7 @@ import {MfaItemsTable} from "@/components/auth/mfa/MfaItemsTable";
 import {isAccountItemVisible} from "@/lib/account-items";
 import {PasswordModal} from "@/components/user/PasswordModal";
 import {ResetModal} from "@/components/user/ResetModal";
+import {PersonalDataActions, RevealButton} from "@/components/user/PersonalInfo";
 import {TransactionTable} from "@/components/user/TransactionTable";
 import {WebauthnCredentialTable} from "@/components/user/WebauthnCredentialTable";
 import {useAccount} from "@/hooks/use-account";
@@ -324,6 +325,7 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
       <AccountItemRow name="Email" labelKey="general:Email">
         <div className="flex items-center gap-2">
           <Input type="email" value={user.email ?? ""} disabled={!isAdmin} onChange={(e) => updateField("email", e.target.value)} />
+          {!isSelf ? <RevealButton userId={`${user.owner}/${user.name}`} field="email" value={user.email} onReveal={(v) => updateField("email", v)} /> : null}
           {isAdmin ? (
             <label className="flex shrink-0 items-center gap-2 text-sm">
               <Switch checked={!!user.emailVerified} onCheckedChange={(v) => updateField("emailVerified", v)} />
@@ -350,6 +352,7 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
             />
           </div>
           <Input value={user.phone ?? ""} disabled={!isAdmin} onChange={(e) => updateField("phone", e.target.value)} />
+          {!isSelf ? <RevealButton userId={`${user.owner}/${user.name}`} field="phone" value={user.phone} onReveal={(v) => updateField("phone", v)} /> : null}
           {isSelf ? (
             <ResetModal
               application={application}
@@ -589,7 +592,10 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
     ),
     "ID card": (
       <AccountItemRow name="ID card" labelKey="user:ID card">
-        <Input value={user.idCard ?? ""} onChange={(e) => updateField("idCard", e.target.value)} />
+        <div className="flex items-center gap-2">
+          <Input value={user.idCard ?? ""} onChange={(e) => updateField("idCard", e.target.value)} />
+          {!isSelf ? <RevealButton userId={`${user.owner}/${user.name}`} field="idCard" value={user.idCard} onReveal={(v) => updateField("idCard", v)} /> : null}
+        </div>
       </AccountItemRow>
     ),
     "Real name": (
@@ -1245,6 +1251,11 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
           </Tabs>
         )}
       </AccountItemsProvider>
+      {isSelf ? (
+        <div className={formGridClass}>
+          <PersonalDataActions user={user} organization={userOrganization} />
+        </div>
+      ) : null}
     </EditPageShell>
   );
 }

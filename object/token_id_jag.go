@@ -265,6 +265,6 @@ func signIdJag(application *Application, claims IdJagClaims) (string, error) {
 	}
 
 	token.Header["typ"] = "oauth-id-jag+jwt"
-	token.Header["kid"] = cert.Name
+	token.Header["kid"] = cert.GetKeyId()
 	return token.SignedString(key)
 }

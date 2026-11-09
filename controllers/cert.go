@@ -259,3 +259,30 @@ func (c *ApiController) UpdateCertDomainExpire() {
 	c.Data["json"] = wrapActionResponse(object.UpdateCert(id, cert))
 	c.ServeJSON()
 }
+
+// RotateCert
+// @Title RotateCert
+// @Tag Cert API
+// @Description generate a new key pair for a JWT signing cert, the previous public key stays in the JWKS for the tokens it signed
+// @Param   id     query    string  true        "The id ( owner/name ) of the cert"
+// @Success 200 {object} controllers.Response The Response object
+// @router /rotate-cert [post]
+func (c *ApiController) RotateCert() {
+	id := c.Ctx.Input.Query("id")
+	cert, err := object.GetCert(id)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	if cert == nil {
+		c.ResponseError("the cert does not exist: " + id)
+		return
+	}
+
+	err = object.RotateCert(cert)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	c.ResponseOk(cert.KeyId)
+}

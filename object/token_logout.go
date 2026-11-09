@@ -86,7 +86,7 @@ func generateLogoutToken(application *Application, user *User, signinToken *Toke
 		return "", err
 	}
 
-	token.Header["kid"] = cert.Name
+	token.Header["kid"] = cert.GetKeyId()
 	return token.SignedString(key)
 }
 

@@ -24,7 +24,10 @@ import (
 	"github.com/beego/beego/v2/server/web"
 	"github.com/casdoor/casdoor/mcpself"
 	"github.com/casdoor/casdoor/object"
+	"github.com/casdoor/casdoor/tracing"
 	"github.com/casdoor/casdoor/util"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/trace"
 )
 
 // ApiController
@@ -387,4 +390,10 @@ func (c *ApiController) McpResponseError(id interface{}, code int, message strin
 	c.Ctx.Output.Header("Content-Type", "application/json")
 	c.Data["json"] = resp
 	c.ServeJSON()
+}
+
+// traceStep starts a child span of the request's trace, for the steps of the sign-in
+func (c *ApiController) traceStep(name string, attributes ...attribute.KeyValue) (context.Context, trace.Span) {
+	parent, _ := c.Ctx.Input.GetData("otelContext").(context.Context)
+	return tracing.Start(parent, name, attributes...)
 }

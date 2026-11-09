@@ -108,3 +108,17 @@ export function IntegrationLogo({logo, name, className = "size-10"}: {logo?: str
     </div>
   );
 }
+
+const ACTION_TEXT_KEYS: Record<string, {summary: string; installed: string; uninstall: string}> = {
+  payment: {summary: "integration:Action install summary", installed: "integration:Action installed description", uninstall: "integration:Uninstall action description"},
+  sms: {summary: "integration:SMS action install summary", installed: "integration:SMS action installed description", uninstall: "integration:Uninstall SMS action description"},
+  push: {summary: "integration:Push action install summary", installed: "integration:Push action installed description", uninstall: "integration:Uninstall push action description"},
+  "syncer": {summary: "integration:Syncer action install summary", installed: "integration:Syncer action installed description", uninstall: "integration:Uninstall syncer action description"},
+  "password-check": {summary: "integration:Password check action install summary", installed: "integration:Password check action installed description", uninstall: "integration:Uninstall password check action description"},
+  "password-migration": {summary: "integration:Password migration action install summary", installed: "integration:Password migration action installed description", uninstall: "integration:Uninstall password migration action description"},
+};
+
+/** The install summary, the description after installing or the uninstall warning of an action of the kind. */
+export function getActionText(kind: string, which: "summary" | "installed" | "uninstall"): string {
+  return i18next.t((ACTION_TEXT_KEYS[kind] ?? ACTION_TEXT_KEYS.payment)[which]);
+}

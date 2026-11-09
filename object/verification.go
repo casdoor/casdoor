@@ -169,6 +169,11 @@ func SendVerificationCodeToPhone(organization *Organization, user *User, provide
 		return err
 	}
 
+	err = checkSmsSecurityPolicy(organization, dest, lang)
+	if err != nil {
+		return err
+	}
+
 	code := getRandomCode(6)
 	// if organization.MasterVerificationCode != "" {
 	//	code = organization.MasterVerificationCode
@@ -188,6 +193,7 @@ func SendVerificationCodeToPhone(organization *Organization, user *User, provide
 		return err
 	}
 
+	checkSmsVolume(organization)
 	return nil
 }
 

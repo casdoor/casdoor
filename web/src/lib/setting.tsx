@@ -563,6 +563,10 @@ export const OtherProviderInfo = {
     },
   },
   Notification: {
+    "Plugin": {
+      logo: `${StaticBaseUrl}/img/social_custom.png`,
+      url: "",
+    },
     "Telegram": {
       logo: `${StaticBaseUrl}/img/social_telegram.png`,
       url: "https://telegram.org/",
@@ -1697,6 +1701,7 @@ export function getProviderTypeOptions(category) {
       {id: "Viber", name: "Viber"},
       {id: "CUCloud", name: "CUCloud"},
       {id: "WeCom", name: "WeCom"},
+      {id: "Plugin", name: "Plugin"},
     ]);
   } else if (category === "Face ID") {
     return ([

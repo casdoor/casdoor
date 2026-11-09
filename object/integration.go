@@ -42,8 +42,11 @@ type Integration struct {
 	// the theme fields of the application before a theme was installed, restored on uninstall
 	Backup string `xorm:"mediumtext" json:"backup"`
 	Bundle string `xorm:"mediumtext" json:"bundle"`
-	// the WebAssembly module of an action, base64 encoded
+	// the WebAssembly module of an action, base64 encoded, and its kind
 	Module string `xorm:"mediumtext" json:"-"`
+	Kind   string `xorm:"varchar(50)" json:"kind"`
+	// the license the module was downloaded with, for a paid integration
+	LicenseId string `xorm:"varchar(100)" json:"licenseId"`
 }
 
 func (integration *Integration) GetId() string {

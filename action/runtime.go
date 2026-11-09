@@ -78,6 +78,41 @@ type callState struct {
 	result []byte
 }
 
+// ConfigHostPermission in permissions.hosts lets the action call the host the admin filled in, such as the address
+// of a customer's old identity system
+const ConfigHostPermission = "{host}"
+
+// getHostname takes the host name out of the host field of a provider or syncer, with or without a scheme
+func getHostname(host string) string {
+	host = strings.TrimSpace(host)
+	if host == "" {
+		return ""
+	}
+	if !strings.Contains(host, "://") {
+		host = "https://" + host
+	}
+	u, err := url.Parse(host)
+	if err != nil {
+		return ""
+	}
+	return u.Hostname()
+}
+
+// getAllowedHosts expands {host} to the configured host name
+func getAllowedHosts(hosts []string, config *Config) []string {
+	res := []string{}
+	for _, host := range hosts {
+		if host == ConfigHostPermission {
+			if config != nil && getHostname(config.Host) != "" {
+				res = append(res, getHostname(config.Host))
+			}
+			continue
+		}
+		res = append(res, host)
+	}
+	return res
+}
+
 type callStateKey struct{}
 
 var (
@@ -138,8 +173,14 @@ func checkFetchUrl(u *url.URL, hosts []string) error {
 	if u.Port() != "" && u.Port() != "443" {
 		return fmt.Errorf("actions can only send requests to port 443, not %s", u.Port())
 	}
+	hostname := strings.ToLower(u.Hostname())
 	for _, host := range hosts {
-		if strings.EqualFold(u.Hostname(), host) {
+		host = strings.ToLower(host)
+		// "*.authing.cn" allows the subdomains, such as the application domains of a SaaS
+		if strings.HasPrefix(host, "*.") && strings.HasSuffix(hostname, host[1:]) && len(hostname) > len(host)-1 {
+			return nil
+		}
+		if hostname == host {
 			return nil
 		}
 	}
@@ -285,7 +326,7 @@ func (w logWriter) Write(p []byte) (int, error) {
 func Call(name string, module []byte, hosts []string, method string, config *Config, params interface{}, out interface{}) error {
 	ctx, cancel := context.WithTimeout(context.Background(), callTimeout)
 	defer cancel()
-	ctx = context.WithValue(ctx, callStateKey{}, &callState{name: name, hosts: hosts})
+	ctx = context.WithValue(ctx, callStateKey{}, &callState{name: name, hosts: getAllowedHosts(hosts, config)})
 
 	r, compiled, err := compile(ctx, module)
 	if err != nil {

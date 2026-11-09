@@ -16,8 +16,9 @@ import {useAccount} from "@/hooks/use-account";
 import {useRequestOrganization} from "@/hooks/use-organization";
 import * as ApplicationBackend from "@/backend/ApplicationBackend";
 import * as IntegrationBackend from "@/backend/IntegrationBackend";
-import {IntegrationLogo, IntegrationTypes, ThemePreviewMessage, applyTheme, getActionKind, getIntegrationTypeLabel, getMarketplaceSiteUrl, getLocalized} from "@/lib/integration";
+import {IntegrationLogo, IntegrationTypes, ThemePreviewMessage, applyTheme, getActionKind, getIntegrationTypeLabel, getMarketplaceSiteUrl, getLocalized, getActionText} from "@/lib/integration";
 import * as Setting from "@/lib/setting";
+import {getEditionText} from "@/components/common/EditionNotice";
 
 /** The Casdoor Marketplace: browse the catalog and install app integrations, provider templates and themes. */
 export default function MarketplacePage() {
@@ -137,6 +138,7 @@ export default function MarketplacePage() {
                       </div>
                       <div className="mt-0.5 flex flex-wrap gap-1">
                         <Badge variant="secondary">{getIntegrationTypeLabel(item.type)}</Badge>
+                        {item.edition ? <Badge variant="warning">{getEditionText(item.edition)}</Badge> : null}
                         {installedCount > 0 ? <Badge variant="success">{i18next.t("integration:Installed")}{installedCount > 1 ? ` (${installedCount})` : ""}</Badge> : null}
                       </div>
                     </div>
@@ -366,14 +368,18 @@ function InstallDialog({item, organizationName, installed, onClose}: {
 
               {item.type === "action" ? (
                 <>
-                  {actionKind === "sms" ? (
-                    <FieldRow label={i18next.t("provider:Client ID")} help={i18next.t("integration:SMS action client ID help")}>
+                  {actionKind === "sms" || actionKind === "push" ? (
+                    <FieldRow label={i18next.t("provider:Client ID")} help={actionKind === "sms" ? i18next.t("integration:SMS action client ID help") : i18next.t("integration:Push action client ID help")}>
                       <Input value={clientId} onChange={(e) => setClientId(e.target.value)} />
                     </FieldRow>
                   ) : null}
-                  <FieldRow label={i18next.t("provider:Client secret")} help={actionKind === "sms" ? i18next.t("integration:SMS action client secret help") : i18next.t("integration:Action client secret help")}>
-                    <Input type="password" autoComplete="new-password" value={clientSecret} onChange={(e) => setClientSecret(e.target.value)} />
-                  </FieldRow>
+                  {["payment", "sms", "push"].includes(actionKind) ? (
+                    <FieldRow label={i18next.t("provider:Client secret")} help={actionKind === "sms" ? i18next.t("integration:SMS action client secret help") : i18next.t("integration:Action client secret help")}>
+                      <Input type="password" autoComplete="new-password" value={clientSecret} onChange={(e) => setClientSecret(e.target.value)} />
+                    </FieldRow>
+                  ) : (
+                    <p className="text-sm text-muted-foreground">{i18next.t("integration:Plugin action install help")}</p>
+                  )}
                   {bundle?.manifest?.permissions?.hosts?.length ? (
                     <FieldRow label={i18next.t("integration:Allowed hosts")} help={i18next.t("integration:Allowed hosts help")}>
                       <div className="space-y-0.5">
@@ -382,6 +388,20 @@ function InstallDialog({item, organizationName, installed, onClose}: {
                     </FieldRow>
                   ) : null}
                 </>
+              ) : null}
+
+              {bundle?.manifest?.downloads?.length ? (
+                <FieldRow label={i18next.t("integration:Downloads")} help={i18next.t("integration:Downloads help")}>
+                  <div className="flex flex-wrap gap-2">
+                    {bundle.manifest.downloads.map((path: string) => (
+                      <Button key={path} variant="outline" size="sm" asChild>
+                        <a href={`${Setting.ServerUrl}/api/download-marketplace-file?owner=${encodeURIComponent(organizationName)}&integrationId=${encodeURIComponent(item.id)}&path=${encodeURIComponent(path)}`}>
+                          {path.split("/").pop()}
+                        </a>
+                      </Button>
+                    ))}
+                  </div>
+                </FieldRow>
               ) : null}
 
               {item.type === "theme" ? (
@@ -492,7 +512,7 @@ function getInstallSummary(type: string, name: string, actionKind: string): stri
   case "theme":
     return i18next.t("integration:Theme install summary");
   case "action":
-    return (actionKind === "sms" ? i18next.t("integration:SMS action install summary") : i18next.t("integration:Action install summary")).replace("{name}", name);
+    return getActionText(actionKind, "summary").replace("{name}", name);
   default:
     return "";
   }

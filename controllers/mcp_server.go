@@ -23,6 +23,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/beego/beego/v2/server/web/pagination"
 	"github.com/casdoor/casdoor/edition"
 	"github.com/casdoor/casdoor/mcpself"
 	"github.com/casdoor/casdoor/object"
@@ -97,6 +98,7 @@ func (c *ApiController) ProxyServer() {
 			for _, tool := range server.Tools {
 				if tool.Name == params.Name {
 					if !tool.IsAllowed {
+						c.recordBlockedMcpToolCall(server, params, "tool is forbidden")
 						c.McpResponseError(mcpReq.ID, -32600, "tool is forbidden", nil)
 						return
 					}
@@ -105,6 +107,7 @@ func (c *ApiController) ProxyServer() {
 				}
 			}
 			if !toolAllowed {
+				c.recordBlockedMcpToolCall(server, params, "tool is not in the allowlist")
 				c.McpResponseError(mcpReq.ID, -32600, "tool is not in the allowlist", nil)
 				return
 			}
@@ -129,14 +132,81 @@ func (c *ApiController) ProxyServer() {
 
 		// don't forward the caller's own credentials to the upstream MCP server
 		request.Header.Del("Cookie")
+		request.Header.Del("X-Casdoor-Access-Key")
+		request.Header.Del("X-Casdoor-Access-Secret")
+		request.Header.Del("Authorization")
 		if server.Token != "" {
-			request.Header.Set("Authorization", "Bearer "+server.Token)
-		} else {
-			request.Header.Del("Authorization")
+			// some platforms take the key in their own header, e.g. "X-Api-Key"
+			if server.TokenHeader != "" && !strings.EqualFold(server.TokenHeader, "Authorization") {
+				request.Header.Set(server.TokenHeader, server.Token)
+			} else {
+				request.Header.Set("Authorization", "Bearer "+server.Token)
+			}
 		}
 	}
 
-	proxy.ServeHTTP(c.Ctx.ResponseWriter, c.Ctx.Request)
+	if mcpReq.Method != "tools/call" || !object.IsMcpToolCallRecorded(server.Owner) {
+		proxy.ServeHTTP(c.Ctx.ResponseWriter, c.Ctx.Request)
+		return
+	}
+
+	recorder := &mcpResponseRecorder{ResponseWriter: c.Ctx.ResponseWriter.ResponseWriter, statusCode: http.StatusOK}
+	startTime := time.Now()
+	proxy.ServeHTTP(recorder, c.Ctx.Request)
+	c.recordMcpToolCall(server, mcpReq, recorder, time.Since(startTime))
+}
+
+// mcpResponseRecorder keeps the status and the beginning of the upstream response for the tool call record
+type mcpResponseRecorder struct {
+	http.ResponseWriter
+	statusCode int
+	body       bytes.Buffer
+}
+
+func (r *mcpResponseRecorder) WriteHeader(statusCode int) {
+	r.statusCode = statusCode
+	r.ResponseWriter.WriteHeader(statusCode)
+}
+
+func (r *mcpResponseRecorder) Write(data []byte) (int, error) {
+	if r.body.Len() < 8192 {
+		r.body.Write(data[:min(len(data), 8192-r.body.Len())])
+	}
+	return r.ResponseWriter.Write(data)
+}
+
+func (r *mcpResponseRecorder) Flush() {
+	if flusher, ok := r.ResponseWriter.(http.Flusher); ok {
+		flusher.Flush()
+	}
+}
+
+func (c *ApiController) recordMcpToolCall(server *object.Server, mcpReq *mcpself.McpRequest, recorder *mcpResponseRecorder, duration time.Duration) {
+	var params mcpself.McpCallToolParams
+	_ = json.Unmarshal(mcpReq.Params, &params)
+	arguments, _ := json.Marshal(params.Arguments)
+
+	response := recorder.body.String()
+	result := "Success"
+	if recorder.statusCode >= 400 {
+		result = "Failed"
+	} else if strings.Contains(response, `"error"`) || strings.Contains(response, `"isError":true`) {
+		result = "Error"
+	}
+
+	object.AddMcpRecord(&object.McpRecord{
+		Owner:      server.Owner,
+		Server:     server.Name,
+		UserName:   c.GetSessionUsername(),
+		ClientIp:   util.GetClientIpFromRequest(c.Ctx.Request),
+		UserAgent:  c.Ctx.Request.UserAgent(),
+		Tool:       params.Name,
+		Arguments:  string(arguments),
+		Result:     result,
+		StatusCode: recorder.statusCode,
+		Response:   response,
+		DurationMs: duration.Milliseconds(),
+	})
 }
 
 func isAmbiguousMcpRequest(body []byte, mcpReq *mcpself.McpRequest) bool {
@@ -179,4 +249,61 @@ func hasAmbiguousJsonKeys(data []byte, keys ...string) bool {
 		}
 	}
 	return false
+}
+
+func (c *ApiController) recordBlockedMcpToolCall(server *object.Server, params mcpself.McpCallToolParams, reason string) {
+	if !object.IsMcpToolCallRecorded(server.Owner) {
+		return
+	}
+	object.AddMcpRecord(&object.McpRecord{
+		Owner:     server.Owner,
+		Server:    server.Name,
+		UserName:  c.GetSessionUsername(),
+		ClientIp:  util.GetClientIpFromRequest(c.Ctx.Request),
+		UserAgent: c.Ctx.Request.UserAgent(),
+		Tool:      params.Name,
+		Arguments: string(params.Arguments),
+		Result:    "Blocked",
+		Response:  reason,
+	})
+}
+
+// GetMcpRecords
+// @Title GetMcpRecords
+// @Tag Server API
+// @Description get the tool calls through the MCP gateway of an organization
+// @Param   owner    query string true  "The organization"
+// @Param   server   query string false "The server name"
+// @Param   tool     query string false "The tool name"
+// @Param   p        query string false "The page"
+// @Param   pageSize query string false "The page size"
+// @Success 200 {array} object.McpRecord The Response object
+// @router /get-mcp-records [get]
+func (c *ApiController) GetMcpRecords() {
+	owner := c.Ctx.Input.Query("owner")
+	user := c.getCurrentUser()
+	if user == nil || !(c.IsGlobalAdmin() || (user.IsAdmin && user.Owner == owner)) {
+		c.ResponseError(c.T("auth:Unauthorized operation"))
+		return
+	}
+
+	server := c.Ctx.Input.Query("server")
+	tool := c.Ctx.Input.Query("tool")
+	limit := util.ParseInt(c.Ctx.Input.Query("pageSize"))
+	if limit <= 0 || limit > 500 {
+		limit = 100
+	}
+
+	count, err := object.GetMcpRecordCount(owner, server, tool)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	paginator := pagination.SetPaginator(c.Ctx, limit, count)
+	records, err := object.GetPaginationMcpRecords(owner, server, tool, paginator.Offset(), limit)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	c.ResponseOk(records, paginator.Nums())
 }

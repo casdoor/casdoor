@@ -62,9 +62,10 @@ type LicenseInfo struct {
 }
 
 var (
-	loadOnce   sync.Once
-	current    *License
-	currentErr error
+	loadOnce    sync.Once
+	current     *License
+	currentErr  error
+	currentText string
 )
 
 func mustDecodeBase64(s string) []byte {
@@ -136,6 +137,9 @@ func load() {
 		}
 
 		current, currentErr = ParseLicense(text)
+		if currentErr == nil {
+			currentText = strings.TrimSpace(text)
+		}
 		if currentErr != nil {
 			logs.Warn("license: %s, running as the %s edition", currentErr.Error(), Community)
 		} else {
@@ -158,6 +162,16 @@ func Get() string {
 		return Community
 	}
 	return current.Edition
+}
+
+// GetLicenseText returns the configured license when it is valid and not expired, for the Marketplace to send
+// when downloading a paid integration
+func GetLicenseText() string {
+	load()
+	if current == nil || current.isExpired() {
+		return ""
+	}
+	return currentText
 }
 
 func Has(edition string) bool {

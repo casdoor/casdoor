@@ -80,3 +80,38 @@ export function SetPreferredMfa(values) {
     body: formData,
   }).then((res) => res.json());
 }
+
+export function sendMfaPush(values: {provider?: string; receiver?: string; application?: string}) {
+  const formData = new FormData();
+  formData.append("provider", values.provider ?? "");
+  formData.append("receiver", values.receiver ?? "");
+  formData.append("application", values.application ?? "");
+  return fetch(`${Setting.ServerUrl}/api/mfa/push/send`, {
+    method: "POST",
+    credentials: "include",
+    body: formData,
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}
+
+export function getMfaPushChallenge(id: string) {
+  return fetch(`${Setting.ServerUrl}/api/mfa/push/challenge?id=${encodeURIComponent(id)}`, {
+    method: "GET",
+    credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}
+
+export function answerMfaPushChallenge(id: string, approve: boolean) {
+  return fetch(`${Setting.ServerUrl}/api/mfa/push/answer?id=${encodeURIComponent(id)}&approve=${approve}`, {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}

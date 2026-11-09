@@ -58,6 +58,18 @@ func AutoSigninFilter(ctx *context.Context) {
 		if accessToken != "" {
 			skipSessionPersistence(ctx)
 		}
+		// "Authorization: Bearer <accessKey>:<accessSecret>" for the agent platforms that call the MCP gateway with a fixed key
+		if accessKey, accessSecret, ok := strings.Cut(accessToken, ":"); ok && strings.HasPrefix(urlPath, "/api/server/") {
+			userId, err := getUsernameByKeyPair(accessKey, accessSecret)
+			if err != nil {
+				denyMcpRequest(ctx, err.Error())
+				return
+			}
+			if userId != "" {
+				setSessionUser(ctx, userId)
+				return
+			}
+		}
 	}
 
 	if accessToken != "" {

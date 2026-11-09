@@ -318,3 +318,36 @@ export function verifyIdentification(owner, name, provider) {
     },
   }).then(res => res.json());
 }
+
+export function getUserPersonalInfo(id: string, field: string) {
+  return fetch(`${Setting.ServerUrl}/api/get-user-personal-info?id=${encodeURIComponent(id)}&field=${encodeURIComponent(field)}`, {
+    method: "GET",
+    credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}
+
+export function exportOwnData() {
+  return fetch(`${Setting.ServerUrl}/api/export-own-data`, {
+    method: "GET",
+    credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}
+
+export function deleteOwnAccount(password: string) {
+  const formData = new FormData();
+  formData.append("password", password);
+  return fetch(`${Setting.ServerUrl}/api/delete-own-account`, {
+    method: "POST",
+    credentials: "include",
+    body: formData,
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}

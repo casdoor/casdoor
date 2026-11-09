@@ -126,6 +126,7 @@ type Application struct {
 	EnableCodeSignin             bool            `json:"enableCodeSignin"`
 	EnableExclusiveSignin        bool            `json:"enableExclusiveSignin"`
 	MaxSessions                  int             `json:"maxSessions"`
+	InactiveTimeoutMinutes       int             `json:"inactiveTimeoutMinutes"`
 	EnableSamlCompress           bool            `json:"enableSamlCompress"`
 	EnableSamlC14n10             bool            `json:"enableSamlC14n10"`
 	EnableSamlPostBinding        bool            `json:"enableSamlPostBinding"`
