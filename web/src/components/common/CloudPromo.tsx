@@ -10,11 +10,17 @@ import {cn} from "@/lib/utils";
 
 /**
  * The entries that point a deployment's admins at the hosted offering, unless a
- * global admin turned them off in the global settings. Each one tags its link
- * with the place it sits in, so www.casdoor.com's analytics can tell them apart.
+ * global admin turned them off in the global settings or the deployment runs a
+ * commercial or enterprise license. Each one tags its link with the place it
+ * sits in, so www.casdoor.com's analytics can tell them apart.
  */
+function cloudPromotionOn(): boolean {
+  // the global settings page sets ShowCloudPromotion again on save, without the edition
+  return Conf.ShowCloudPromotion && Conf.Edition === "Community";
+}
+
 export function showCloudPromo(account: any): boolean {
-  return Conf.ShowCloudPromotion && Setting.isLocalAdminUser(account);
+  return cloudPromotionOn() && Setting.isLocalAdminUser(account);
 }
 
 /**
@@ -22,7 +28,7 @@ export function showCloudPromo(account: any): boolean {
  * so only the demo deployment (door and demo.casdoor.com) advertises there.
  */
 export function showCloudLoginLink(): boolean {
-  return Conf.ShowCloudPromotion && Conf.ShowGithubCorner;
+  return cloudPromotionOn() && Conf.ShowGithubCorner;
 }
 
 function useCloudPromo(): boolean {

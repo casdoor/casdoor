@@ -72,12 +72,13 @@ func GetWebConfig() *WebConfig {
 		config.MarketplaceUrl = GetConfigString("marketplaceUrl")
 	}
 
-	config.ShowCloudPromotion = !hideCloudPromotion.Load()
-
 	config.Edition = "Community"
 	if getEdition != nil {
 		config.Edition = getEdition()
 	}
+
+	// a licensed deployment has already bought Casdoor, so it is not shown the hosted offering
+	config.ShowCloudPromotion = !hideCloudPromotion.Load() && config.Edition == "Community"
 
 	return config
 }
