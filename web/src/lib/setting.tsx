@@ -49,7 +49,23 @@ export const StaticBaseUrl = Conf.StaticBaseUrl;
 export const MAX_PAGE_SIZE = 25;
 export const SEARCH_DEBOUNCE_MS = 300;
 
+export const PricingUrl = "https://casdoor.cn/pricing";
+
+// the backend ends the message of a feature that needs a higher edition with " (<pricing page>)"
+const editionRequiredSuffix = ` (${PricingUrl})`;
+
 export function showMessage(type: "success" | "error" | "info" | "warning", text: string) {
+  if (type === "error" && typeof text === "string" && text.includes(editionRequiredSuffix)) {
+    toast.error(text.replace(editionRequiredSuffix, ""), {
+      duration: 15000,
+      action: {
+        label: i18next.t("general:View editions and pricing"),
+        onClick: () => window.open(PricingUrl, "_blank", "noopener,noreferrer"),
+      },
+    });
+    return;
+  }
+
   if (type === "success") {
     toast.success(text);
   } else if (type === "error") {

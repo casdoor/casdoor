@@ -163,6 +163,11 @@ func (c *ApiController) UpdatePermission() {
 		}
 	}
 
+	if err := object.CheckPermissionEdition(&permission); err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
 	c.Data["json"] = wrapActionResponse(object.UpdatePermission(id, &permission))
 	c.ServeJSON()
 }
@@ -182,6 +187,13 @@ func (c *ApiController) UpdatePermissions() {
 		return
 	}
 
+	for _, permission := range permissions {
+		if err = object.CheckPermissionEdition(permission); err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+	}
+
 	c.Data["json"] = wrapActionResponse(object.UpdatePermissions(permissions))
 	c.ServeJSON()
 }
@@ -197,6 +209,11 @@ func (c *ApiController) AddPermission() {
 	var permission object.Permission
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &permission)
 	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	if err = object.CheckPermissionEdition(&permission); err != nil {
 		c.ResponseError(err.Error())
 		return
 	}

@@ -54,7 +54,7 @@ func Init() {
 	if endpoint == "" {
 		return
 	}
-	if err := edition.Require(edition.Commercial, "OpenTelemetry tracing"); err != nil {
+	if err := edition.Require(edition.Commercial, edition.FeatureTracing); err != nil {
 		logs.Warn("tracing is off: %s", err.Error())
 		return
 	}

@@ -53,7 +53,7 @@ func fetchMarketplaceFileWithLicense(fileUrl string, withLicense bool) ([]byte, 
 	if withLicense {
 		license := edition.GetLicenseText()
 		if license == "" {
-			return nil, edition.Require(edition.Commercial, "Downloading paid integrations")
+			return nil, edition.Require(edition.Commercial, edition.FeaturePaidIntegrations)
 		}
 		req.Header.Set(licenseHeader, license)
 	}
@@ -123,8 +123,8 @@ func GetMarketplaceDownload(id string, path string) ([]byte, error) {
 		return nil, err
 	}
 	if item.Edition != "" {
-		if err = edition.Require(item.Edition, fmt.Sprintf("The integration: %s", item.Id)); err != nil {
-			return nil, err
+		if err = edition.Require(item.Edition, edition.FeaturePaidIntegrations); err != nil {
+			return nil, fmt.Errorf("%s: %w", item.Id, err)
 		}
 	}
 

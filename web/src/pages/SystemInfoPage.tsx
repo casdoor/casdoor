@@ -11,7 +11,7 @@ import {PageHeader} from "@/components/crud/PageHeader";
 import * as SystemBackend from "@/backend/SystemInfo";
 import * as Setting from "@/lib/setting";
 import {getEditionText, PricingUrl} from "@/components/common/EditionNotice";
-import {EditionSwitcher, isEditionPreviewEnabled} from "@/components/common/EditionPreview";
+import {EditionSwitcher, getEditionPreviewHint, isEditionPreviewEnabled} from "@/components/common/EditionPreview";
 
 const REFRESH_MS = 5000;
 const UPGRADE_POLL_MS = 1500;
@@ -364,7 +364,7 @@ function LicenseCard() {
         {isEditionPreviewEnabled() ? (
           <div className="space-y-2 border-t pt-3">
             <p className="text-muted-foreground">
-              {i18next.t("system:Try the look of each edition on this demo site, paid features need a license")}
+              {getEditionPreviewHint()}
             </p>
             <EditionSwitcher className="flex w-full flex-wrap rounded-xl [&>button]:flex-1 [&>svg]:hidden" />
           </div>

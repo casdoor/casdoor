@@ -105,6 +105,27 @@ export function setConfig(config: Record<string, any>) {
   if (config.edition) {
     setEdition(config.edition);
   }
+  if (config.editionDemoUrls !== undefined) {
+    EditionDemoUrls = parseEditionDemoUrls(config.editionDemoUrls);
+  }
+}
+
+// the demo site of each edition, when a demo site has one for it: switching to that edition goes there
+export let EditionDemoUrls: Record<string, string> = {};
+
+/** "Commercial=https://demo-commercial.{domain},Enterprise=..." where {domain} is this host without its first label. */
+function parseEditionDemoUrls(value: string): Record<string, string> {
+  const domain = window.location.hostname.split(".").slice(1).join(".");
+  const res: Record<string, string> = {};
+  for (const item of (value ?? "").split(",")) {
+    const at = item.indexOf("=");
+    const edition = findEdition(item.slice(0, at).trim());
+    const url = item.slice(at + 1).trim().replace("{domain}", domain);
+    if (at > 0 && edition && /^https?:\/\//.test(url)) {
+      res[edition] = url.replace(/\/+$/, "");
+    }
+  }
+  return res;
 }
 
 export const Editions = ["Community", "Commercial", "Enterprise"];
@@ -150,6 +171,16 @@ function applyDemoEdition() {
 }
 
 export function setDemoEdition(edition: string) {
+  // an edition with a demo site of its own is tried there, on the same page
+  const demoUrl = EditionDemoUrls[edition];
+  if (demoUrl && new URL(demoUrl).host !== window.location.host) {
+    const target = new URL(window.location.pathname + window.location.search, demoUrl);
+    target.searchParams.set("edition", edition.toLowerCase());
+    target.searchParams.delete("theme");
+    window.location.assign(target.toString());
+    return;
+  }
+
   try {
     localStorage.setItem(DEMO_EDITION_KEY, edition);
     // the default theme is the one that shows the edition's look, so the theme carousel stops on it

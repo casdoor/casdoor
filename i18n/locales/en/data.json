@@ -116,10 +116,28 @@
     "password or code is incorrect, you have %s remaining chances": "password or code is incorrect, you have %s remaining chances",
     "unsupported password type: %s": "unsupported password type: %s"
   },
+  "edition": {
+    "Attribute-based access control (ABAC)": "Attribute-based access control (ABAC)",
+    "Exclusive sign-in": "Exclusive sign-in",
+    "ID-JAG": "ID-JAG",
+    "Inactivity timeout": "Inactivity timeout",
+    "Keycloak syncer": "Keycloak syncer",
+    "MCP gateway": "MCP gateway",
+    "Mobile one-click login": "Mobile one-click login",
+    "More than one syncer": "More than one syncer",
+    "OpenTelemetry tracing": "OpenTelemetry tracing",
+    "Paid integrations": "Paid integrations",
+    "Push notification MFA": "Push notification MFA",
+    "Role-based access control (RBAC)": "Role-based access control (RBAC)",
+    "Security policy": "Security policy",
+    "Signing key rotation": "Signing key rotation"
+  },
   "enforcer": {
     "the adapter: %s is not found": "the adapter: %s is not found"
   },
   "general": {
+    "%s needs a commercial or enterprise edition license, please upgrade (%s)": "%s needs a commercial or enterprise edition license, please upgrade (%s)",
+    "%s needs an enterprise edition license, please upgrade (%s)": "%s needs an enterprise edition license, please upgrade (%s)",
     "Application cannot be empty": "Application cannot be empty",
     "Failed to import groups": "Failed to import groups",
     "Failed to import users": "Failed to import users",

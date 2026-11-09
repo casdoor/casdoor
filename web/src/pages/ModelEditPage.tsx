@@ -1,5 +1,7 @@
+import i18next from "i18next";
 import {useParams} from "react-router-dom";
 import {CasbinEditor} from "@/components/casbin/CasbinEditor";
+import {EditionNotice, useEdition} from "@/components/common/EditionNotice";
 import {SimpleEditPage, type EditField} from "@/components/crud/SimpleEditPage";
 import {useAccount} from "@/hooks/use-account";
 import {useOrganizationOptions} from "@/hooks/use-options";
@@ -9,6 +11,7 @@ import * as Setting from "@/lib/setting";
 export default function ModelEditPage() {
   const {organizationName = "", modelName = ""} = useParams();
   const {account} = useAccount();
+  const edition = useEdition();
   const organizations = useOrganizationOptions();
 
   const isBuiltIn = (ctx: {record: any}) => Setting.builtInObject(ctx.record);
@@ -32,6 +35,13 @@ export default function ModelEditPage() {
       render: (ctx, update) => (
         <CasbinEditor model={ctx.record} onModelTextChange={(value) => update("modelText", value)} />
       ),
+    },
+    {
+      type: "custom",
+      name: "edition",
+      labelKey: "system:License",
+      when: (ctx) => edition === "Community" && /\b[rp][0-9]*\.[A-Za-z_]\w*\.[A-Za-z_]|\beval\(/.test(ctx.record.modelText ?? ""),
+      render: () => <EditionNotice message={i18next.t("model:ABAC needs a commercial or enterprise edition license")} />,
     },
   ];
 

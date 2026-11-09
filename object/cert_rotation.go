@@ -71,7 +71,7 @@ func RotateCert(cert *Cert) error {
 	if cert.Type != "x509" {
 		return fmt.Errorf("only the x509 certs that sign tokens can be rotated, the cert: %s is %s", cert.GetId(), cert.Type)
 	}
-	if err := edition.Require(edition.Commercial, "Signing key rotation"); err != nil {
+	if err := edition.Require(edition.Commercial, edition.FeatureKeyRotation); err != nil {
 		return err
 	}
 

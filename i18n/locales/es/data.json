@@ -116,10 +116,28 @@
     "password or code is incorrect, you have %s remaining chances": "Contraseña o código incorrecto, tienes %s intentos restantes",
     "unsupported password type: %s": "Tipo de contraseña no compatible: %s"
   },
+  "edition": {
+    "Attribute-based access control (ABAC)": "Control de acceso basado en atributos (ABAC)",
+    "Exclusive sign-in": "Inicio de sesión exclusivo",
+    "ID-JAG": "ID-JAG",
+    "Inactivity timeout": "Tiempo de espera por inactividad",
+    "Keycloak syncer": "Sincronizador de Keycloak",
+    "MCP gateway": "Pasarela MCP",
+    "Mobile one-click login": "Inicio de sesión con un clic por número móvil",
+    "More than one syncer": "Más de un sincronizador",
+    "OpenTelemetry tracing": "Trazas de OpenTelemetry",
+    "Paid integrations": "Integraciones de pago",
+    "Push notification MFA": "MFA por notificación push",
+    "Role-based access control (RBAC)": "Control de acceso basado en roles (RBAC)",
+    "Security policy": "Política de seguridad",
+    "Signing key rotation": "Rotación de la clave de firma"
+  },
   "enforcer": {
     "the adapter: %s is not found": "no se encontró el adaptador: %s"
   },
   "general": {
+    "%s needs a commercial or enterprise edition license, please upgrade (%s)": "%s necesita una licencia de la edición comercial o empresarial, actualice su edición (%s)",
+    "%s needs an enterprise edition license, please upgrade (%s)": "%s necesita una licencia de la edición empresarial, actualice su edición (%s)",
     "Application cannot be empty": "La aplicación no puede estar vacía",
     "Failed to import groups": "Error al importar grupos",
     "Failed to import users": "Error al importar usuarios",

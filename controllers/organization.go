@@ -139,6 +139,11 @@ func (c *ApiController) UpdateOrganization() {
 		return
 	}
 
+	if err = object.CheckOrganizationEdition(&organization); err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
 	isGlobalAdmin, _ := c.isGlobalAdmin()
 
 	if organization.BalanceCurrency == "" {
@@ -176,6 +181,11 @@ func (c *ApiController) AddOrganization() {
 	}
 
 	if err = object.CheckIpWhitelist(organization.IpWhitelist, c.GetAcceptLanguage()); err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	if err = object.CheckOrganizationEdition(&organization); err != nil {
 		c.ResponseError(err.Error())
 		return
 	}

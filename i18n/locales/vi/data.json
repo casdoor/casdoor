@@ -116,10 +116,28 @@
     "password or code is incorrect, you have %s remaining chances": "Mật khẩu hoặc mã không chính xác, bạn còn %s lần cơ hội",
     "unsupported password type: %s": "Loại mật khẩu không được hỗ trợ: %s"
   },
+  "edition": {
+    "Attribute-based access control (ABAC)": "Kiểm soát truy cập dựa trên thuộc tính (ABAC)",
+    "Exclusive sign-in": "Đăng nhập độc quyền",
+    "ID-JAG": "ID-JAG",
+    "Inactivity timeout": "Hết thời gian chờ do không hoạt động",
+    "Keycloak syncer": "Bộ đồng bộ Keycloak",
+    "MCP gateway": "Cổng MCP",
+    "Mobile one-click login": "Đăng nhập một chạm bằng số điện thoại",
+    "More than one syncer": "Nhiều hơn một bộ đồng bộ",
+    "OpenTelemetry tracing": "Theo dõi OpenTelemetry",
+    "Paid integrations": "Tích hợp trả phí",
+    "Push notification MFA": "MFA qua thông báo đẩy",
+    "Role-based access control (RBAC)": "Kiểm soát truy cập dựa trên vai trò (RBAC)",
+    "Security policy": "Chính sách bảo mật",
+    "Signing key rotation": "Xoay vòng khóa ký"
+  },
   "enforcer": {
     "the adapter: %s is not found": "không tìm thấy adapter: %s"
   },
   "general": {
+    "%s needs a commercial or enterprise edition license, please upgrade (%s)": "%s cần giấy phép phiên bản thương mại hoặc doanh nghiệp, vui lòng nâng cấp (%s)",
+    "%s needs an enterprise edition license, please upgrade (%s)": "%s cần giấy phép phiên bản doanh nghiệp, vui lòng nâng cấp (%s)",
     "Application cannot be empty": "Ứng dụng không được để trống",
     "Failed to import groups": "Không thể nhập nhóm",
     "Failed to import users": "Không thể nhập người dùng",

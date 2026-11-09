@@ -116,10 +116,28 @@
     "password or code is incorrect, you have %s remaining chances": "パスワードまたはコードが間違っています。あと %s 回の試行機会があります",
     "unsupported password type: %s": "サポートされていないパスワードタイプ：%s"
   },
+  "edition": {
+    "Attribute-based access control (ABAC)": "属性ベースのアクセス制御（ABAC）",
+    "Exclusive sign-in": "排他ログイン",
+    "ID-JAG": "ID-JAG",
+    "Inactivity timeout": "無操作タイムアウト",
+    "Keycloak syncer": "Keycloak 同期",
+    "MCP gateway": "MCP ゲートウェイ",
+    "Mobile one-click login": "携帯番号ワンクリックログイン",
+    "More than one syncer": "複数の同期",
+    "OpenTelemetry tracing": "OpenTelemetry トレーシング",
+    "Paid integrations": "有料インテグレーション",
+    "Push notification MFA": "プッシュ通知 MFA",
+    "Role-based access control (RBAC)": "ロールベースのアクセス制御（RBAC）",
+    "Security policy": "セキュリティポリシー",
+    "Signing key rotation": "署名鍵のローテーション"
+  },
   "enforcer": {
     "the adapter: %s is not found": "アダプタ「%s」が見つかりません"
   },
   "general": {
+    "%s needs a commercial or enterprise edition license, please upgrade (%s)": "%sには商用版またはエンタープライズ版のライセンスが必要です。アップグレードしてください (%s)",
+    "%s needs an enterprise edition license, please upgrade (%s)": "%sにはエンタープライズ版のライセンスが必要です。アップグレードしてください (%s)",
     "Application cannot be empty": "アプリケーションは空にできません",
     "Failed to import groups": "グループのインポートに失敗しました",
     "Failed to import users": "ユーザーのインポートに失敗しました",

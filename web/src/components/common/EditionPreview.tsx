@@ -18,6 +18,13 @@ export function isEditionPreviewEnabled(): boolean {
   return Conf.ThemeShowcase;
 }
 
+/** With a demo site for each edition the switch goes there, otherwise only the look changes. */
+export function getEditionPreviewHint(): string {
+  return Object.keys(Conf.EditionDemoUrls).length > 0
+    ? i18next.t("system:Each edition has a demo site of its own, switch to try its features")
+    : i18next.t("system:Try the look of each edition on this demo site, paid features need a license");
+}
+
 /** The three editions side by side, for the sign-in pages and the license card. */
 export function EditionSwitcher({className}: {className?: string}) {
   if (!isEditionPreviewEnabled()) {
@@ -28,7 +35,7 @@ export function EditionSwitcher({className}: {className?: string}) {
     <div
       role="radiogroup"
       aria-label={i18next.t("system:Edition")}
-      title={i18next.t("system:Try the look of each edition on this demo site, paid features need a license")}
+      title={getEditionPreviewHint()}
       className={cn("edition-switcher inline-flex items-center gap-0.5 rounded-full border bg-background/80 p-0.5 text-xs shadow-sm backdrop-blur", className)}
     >
       <Sparkles className="ml-2 mr-1 size-3.5 shrink-0 text-muted-foreground" />
@@ -77,7 +84,7 @@ export function EditionMenu() {
         <DropdownMenuLabel className="font-normal">
           <div className="text-sm font-medium">{i18next.t("system:Edition")}</div>
           <div className="mt-0.5 text-xs text-muted-foreground">
-            {i18next.t("system:Try the look of each edition on this demo site, paid features need a license")}
+            {getEditionPreviewHint()}
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />

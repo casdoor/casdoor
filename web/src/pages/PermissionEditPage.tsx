@@ -1,6 +1,7 @@
 import * as React from "react";
 import i18next from "i18next";
 import {useParams} from "react-router-dom";
+import {EditionNotice, useEdition} from "@/components/common/EditionNotice";
 import {SimpleEditPage, type EditField} from "@/components/crud/SimpleEditPage";
 import {useAccount} from "@/hooks/use-account";
 import {
@@ -27,6 +28,7 @@ import * as Setting from "@/lib/setting";
 export default function PermissionEditPage() {
   const {organizationName = "", permissionName = ""} = useParams();
   const {account} = useAccount();
+  const edition = useEdition();
   const organizations = useOrganizationOptions();
   const users = useUserOptions(organizationName);
   const groups = useGroupOptions(organizationName);
@@ -83,6 +85,13 @@ export default function PermissionEditPage() {
       labelKey: "role:Sub roles",
       options: () => roles,
       disabled: (ctx) => !hasRoleDefinition(ctx.record.model),
+    },
+    {
+      type: "custom",
+      name: "edition",
+      labelKey: "system:License",
+      when: (ctx) => edition === "Community" && ((ctx.record.groups ?? []).length > 0 || (ctx.record.roles ?? []).length > 0),
+      render: () => <EditionNotice message={i18next.t("permission:Granting by groups and roles needs a commercial or enterprise edition license")} />,
     },
     {
       type: "tags",

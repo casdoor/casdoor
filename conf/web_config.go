@@ -40,6 +40,7 @@ type WebConfig struct {
 	MaxItemsForFlatMenu int64  `json:"maxItemsForFlatMenu"`
 	ThemeShowcase       bool   `json:"themeShowcase"`
 	MarketplaceUrl      string `json:"marketplaceUrl"`
+	EditionDemoUrls     string `json:"editionDemoUrls"`
 	ShowCloudPromotion  bool   `json:"showCloudPromotion"`
 	Edition             string `json:"edition"`
 }
@@ -70,6 +71,8 @@ func GetWebConfig() *WebConfig {
 	config.ThemeShowcase = GetConfigBool("themeShowcase") || IsDemoMode() || IsDemoDatabase()
 	if config.ThemeShowcase {
 		config.MarketplaceUrl = GetConfigString("marketplaceUrl")
+		// where the demo site of each edition is, e.g. "Commercial=https://demo-commercial.{domain},Enterprise=..."
+		config.EditionDemoUrls = GetConfigString("editionDemoUrls")
 	}
 
 	config.Edition = "Community"

@@ -56,7 +56,7 @@ func (c *ApiController) ProxyServer() {
 		c.McpResponseError(1, -32600, "invalid server identifier", nil)
 		return
 	}
-	if err = edition.Require(edition.Commercial, "MCP gateway"); err != nil {
+	if err = edition.Require(edition.Commercial, edition.FeatureMcpGateway); err != nil {
 		c.McpResponseError(mcpReq.ID, -32600, err.Error(), nil)
 		return
 	}

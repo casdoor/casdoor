@@ -2,6 +2,7 @@ import i18next from "i18next";
 import {CrudListPage} from "@/components/crud/CrudListPage";
 import {boolColumn, dateColumn, linkColumn, textColumn, valueFilters} from "@/components/crud/columns";
 import type {ColumnDef} from "@/components/crud/types";
+import {EditionNotice} from "@/components/common/EditionNotice";
 import {useAccount} from "@/hooks/use-account";
 import {useOrganizationFilter} from "@/hooks/use-organization";
 import * as SyncerBackend from "@/backend/SyncerBackend";
@@ -39,6 +40,7 @@ export default function SyncerListPage() {
     <CrudListPage
       title={i18next.t("general:Syncers")}
       // Sync is the primary action here, not Edit
+      description={<EditionNotice message={i18next.t("syncer:The community edition can have only one syncer")} />}
       columns={columns}
       deps={[organizationName]}
       fetch={(q) =>

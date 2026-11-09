@@ -803,8 +803,8 @@ func InstallIntegration(req *IntegrationInstallRequest, isGlobalAdmin bool, host
 	}
 	// e.g. the templates of Chinese office systems need a commercial edition license
 	if item.Edition != "" {
-		if err = edition.Require(item.Edition, fmt.Sprintf("The integration: %s", item.Id)); err != nil {
-			return nil, err
+		if err = edition.Require(item.Edition, edition.FeaturePaidIntegrations); err != nil {
+			return nil, fmt.Errorf("%s: %w", item.Id, err)
 		}
 	}
 

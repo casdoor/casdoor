@@ -20,6 +20,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"regexp"
 	"strings"
 	"sync"
 	"time"
@@ -35,6 +36,24 @@ const (
 )
 
 const PricingUrl = "https://casdoor.cn/pricing"
+
+// The features that need a license, as passed to Require. The API translates them by these names
+const (
+	FeatureExclusiveSignin  = "Exclusive sign-in"
+	FeatureInactiveTimeout  = "Inactivity timeout"
+	FeatureMobileOneClick   = "Mobile one-click login"
+	FeatureIdJag            = "ID-JAG"
+	FeatureMcpGateway       = "MCP gateway"
+	FeatureKeycloakSyncer   = "Keycloak syncer"
+	FeatureMultipleSyncers  = "More than one syncer"
+	FeatureSecurityPolicy   = "Security policy"
+	FeatureKeyRotation      = "Signing key rotation"
+	FeaturePushMfa          = "Push notification MFA"
+	FeaturePaidIntegrations = "Paid integrations"
+	FeatureTracing          = "OpenTelemetry tracing"
+	FeatureRbac             = "Role-based access control (RBAC)"
+	FeatureAbac             = "Attribute-based access control (ABAC)"
+)
 
 var ranks = map[string]int{
 	Community:  0,
@@ -182,12 +201,38 @@ func Has(edition string) bool {
 	return ranks[Get()] >= ranks[edition]
 }
 
+// RequiredError tells that a feature needs a higher edition than the license gives
+type RequiredError struct {
+	Edition string
+	Feature string
+}
+
+func (e *RequiredError) Error() string {
+	return fmt.Sprintf("%s requires a Casdoor %s edition license or higher, see %s", e.Feature, strings.ToLower(e.Edition), PricingUrl)
+}
+
+var requiredRegex = regexp.MustCompile(`([A-Za-z0-9][A-Za-z0-9 ()\-]*?) requires a Casdoor (commercial|enterprise) edition license or higher, see ` + regexp.QuoteMeta(PricingUrl))
+
+// FindRequired finds the error of Require in a message, which may have been wrapped or turned into a string,
+// and returns it with where it is in the message
+func FindRequired(message string) (*RequiredError, int, int) {
+	match := requiredRegex.FindStringSubmatchIndex(message)
+	if match == nil {
+		return nil, 0, 0
+	}
+	required := &RequiredError{
+		Feature: message[match[2]:match[3]],
+		Edition: strings.ToUpper(message[match[4]:match[4]+1]) + message[match[4]+1:match[5]],
+	}
+	return required, match[0], match[1]
+}
+
 // Require returns the error to show when a feature needs a higher edition than the license gives
 func Require(edition string, feature string) error {
 	if Has(edition) {
 		return nil
 	}
-	return fmt.Errorf("%s requires a Casdoor %s edition license or higher, see %s", feature, strings.ToLower(edition), PricingUrl)
+	return &RequiredError{Edition: edition, Feature: feature}
 }
 
 func GetLicenseInfo() *LicenseInfo {

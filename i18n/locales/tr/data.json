@@ -116,10 +116,28 @@
     "password or code is incorrect, you have %s remaining chances": "şifre veya kod yanlış, %s hakkınız kaldı",
     "unsupported password type: %s": "desteklenmeyen şifre türü: %s"
   },
+  "edition": {
+    "Attribute-based access control (ABAC)": "Öznitelik tabanlı erişim denetimi (ABAC)",
+    "Exclusive sign-in": "Özel oturum açma",
+    "ID-JAG": "ID-JAG",
+    "Inactivity timeout": "Hareketsizlik zaman aşımı",
+    "Keycloak syncer": "Keycloak eşitleyicisi",
+    "MCP gateway": "MCP ağ geçidi",
+    "Mobile one-click login": "Cep numarasıyla tek tıkla giriş",
+    "More than one syncer": "Birden fazla eşitleyici",
+    "OpenTelemetry tracing": "OpenTelemetry izleme",
+    "Paid integrations": "Ücretli entegrasyonlar",
+    "Push notification MFA": "Anlık bildirimle MFA",
+    "Role-based access control (RBAC)": "Rol tabanlı erişim denetimi (RBAC)",
+    "Security policy": "Güvenlik politikası",
+    "Signing key rotation": "İmza anahtarı rotasyonu"
+  },
   "enforcer": {
     "the adapter: %s is not found": "bağdaştırıcı: %s bulunamadı"
   },
   "general": {
+    "%s needs a commercial or enterprise edition license, please upgrade (%s)": "%s için ticari veya kurumsal sürüm lisansı gerekir, lütfen yükseltin (%s)",
+    "%s needs an enterprise edition license, please upgrade (%s)": "%s için kurumsal sürüm lisansı gerekir, lütfen yükseltin (%s)",
     "Application cannot be empty": "Uygulama boş olamaz",
     "Failed to import groups": "Gruplar içe aktarılamadı",
     "Failed to import users": "Kullanıcılar içe aktarılamadı",

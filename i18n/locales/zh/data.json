@@ -116,10 +116,28 @@
     "password or code is incorrect, you have %s remaining chances": "密码错误，您还有 %s 次尝试的机会",
     "unsupported password type: %s": "不支持的密码类型: %s"
   },
+  "edition": {
+    "Attribute-based access control (ABAC)": "基于属性的权限控制（ABAC）",
+    "Exclusive sign-in": "互斥登录",
+    "ID-JAG": "ID-JAG（智能体跨应用授权）",
+    "Inactivity timeout": "空闲超时",
+    "Keycloak syncer": "Keycloak 同步器",
+    "MCP gateway": "MCP 网关",
+    "Mobile one-click login": "本机号码一键登录",
+    "More than one syncer": "创建多个同步器",
+    "OpenTelemetry tracing": "OpenTelemetry 链路追踪",
+    "Paid integrations": "付费插件",
+    "Push notification MFA": "消息卡片确认登录",
+    "Role-based access control (RBAC)": "基于角色的权限控制（RBAC）",
+    "Security policy": "组织安全策略",
+    "Signing key rotation": "签名密钥轮换"
+  },
   "enforcer": {
     "the adapter: %s is not found": "适配器: %s 未找到"
   },
   "general": {
+    "%s needs a commercial or enterprise edition license, please upgrade (%s)": "%s需要商业版或企业版许可证，请升级后使用 (%s)",
+    "%s needs an enterprise edition license, please upgrade (%s)": "%s需要企业版许可证，请升级后使用 (%s)",
     "Application cannot be empty": "应用不能为空",
     "Failed to import groups": "导入群组失败",
     "Failed to import users": "导入用户失败",

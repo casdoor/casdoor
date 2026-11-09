@@ -116,10 +116,28 @@
     "password or code is incorrect, you have %s remaining chances": "пароль або код неправильний, у вас залишилось %s спроб",
     "unsupported password type: %s": "непідтримуваний тип пароля: %s"
   },
+  "edition": {
+    "Attribute-based access control (ABAC)": "Керування доступом на основі атрибутів (ABAC)",
+    "Exclusive sign-in": "Ексклюзивний вхід",
+    "ID-JAG": "ID-JAG",
+    "Inactivity timeout": "Тайм-аут неактивності",
+    "Keycloak syncer": "Синхронізатор Keycloak",
+    "MCP gateway": "Шлюз MCP",
+    "Mobile one-click login": "Вхід в один дотик за номером телефону",
+    "More than one syncer": "Більше одного синхронізатора",
+    "OpenTelemetry tracing": "Трасування OpenTelemetry",
+    "Paid integrations": "Платні інтеграції",
+    "Push notification MFA": "MFA через push-сповіщення",
+    "Role-based access control (RBAC)": "Керування доступом на основі ролей (RBAC)",
+    "Security policy": "Політика безпеки",
+    "Signing key rotation": "Ротація ключа підпису"
+  },
   "enforcer": {
     "the adapter: %s is not found": "адаптер: %s не знайдено"
   },
   "general": {
+    "%s needs a commercial or enterprise edition license, please upgrade (%s)": "%s потребує ліцензії комерційної або корпоративної редакції, будь ласка, оновіть редакцію (%s)",
+    "%s needs an enterprise edition license, please upgrade (%s)": "%s потребує ліцензії корпоративної редакції, будь ласка, оновіть редакцію (%s)",
     "Application cannot be empty": "Застосунок не може бути порожнім",
     "Failed to import groups": "Не вдалося імпортувати групи",
     "Failed to import users": "Не вдалося імпортувати користувачів",

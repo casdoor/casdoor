@@ -117,7 +117,7 @@ func consumePushChallenge(id string, provider string, receiver string) error {
 // SendPushChallenge sends a card with a confirmation link to the receiver through the provider: the enterprise
 // app of a WeCom, DingTalk or Lark login provider, or a notification provider
 func SendPushChallenge(userId string, providerId string, receiver string, application string, clientIp string, userAgent string, origin string) (*PushChallenge, error) {
-	if err := edition.Require(edition.Commercial, "Push notification MFA"); err != nil {
+	if err := edition.Require(edition.Commercial, edition.FeaturePushMfa); err != nil {
 		return nil, err
 	}
 	if providerId == "" || receiver == "" {

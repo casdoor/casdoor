@@ -119,6 +119,11 @@ func (c *ApiController) UpdateSyncer() {
 		return
 	}
 
+	if err = object.CheckSyncerEdition(&syncer, false); err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
 	c.Data["json"] = wrapActionResponse(object.UpdateSyncer(id, &syncer, c.IsGlobalAdmin(), c.GetAcceptLanguage()))
 	c.ServeJSON()
 }
@@ -142,6 +147,11 @@ func (c *ApiController) AddSyncer() {
 		return
 	}
 	if !c.checkSyncerDatabase(&syncer) {
+		return
+	}
+
+	if err = object.CheckSyncerEdition(&syncer, true); err != nil {
+		c.ResponseError(err.Error())
 		return
 	}
 

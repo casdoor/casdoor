@@ -102,6 +102,11 @@ func (c *ApiController) UpdateModel() {
 		return
 	}
 
+	if err = object.CheckModelEdition(&model); err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
 	c.Data["json"] = wrapErrorResponse(object.UpdateModelWithCheck(id, &model))
 	c.ServeJSON()
 }
@@ -117,6 +122,11 @@ func (c *ApiController) AddModel() {
 	var model object.Model
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &model)
 	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	if err = object.CheckModelEdition(&model); err != nil {
 		c.ResponseError(err.Error())
 		return
 	}

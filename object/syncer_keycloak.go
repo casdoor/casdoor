@@ -25,7 +25,7 @@ type KeycloakSyncerProvider struct {
 // GetOriginalUsers retrieves all users from Keycloak database
 // This method overrides the base implementation to handle Keycloak-specific logic
 func (p *KeycloakSyncerProvider) GetOriginalUsers() ([]*OriginalUser, error) {
-	if err := edition.Require(edition.Commercial, "Keycloak syncer"); err != nil {
+	if err := edition.Require(edition.Commercial, edition.FeatureKeycloakSyncer); err != nil {
 		return nil, err
 	}
 

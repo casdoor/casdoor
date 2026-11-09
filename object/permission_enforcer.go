@@ -457,7 +457,7 @@ func getRuntimeGroupingPolicies(permissions []*Permission) ([][]string, error) {
 }
 
 func loadRuntimeGroupingPolicies(enforcer *casbin.Enforcer, permission *Permission, permissionIDs ...string) error {
-	if !HasRoleDefinition(enforcer.GetModel()) {
+	if !HasRoleDefinition(enforcer.GetModel()) || !isRbacAllowed() {
 		return nil
 	}
 
@@ -705,6 +705,16 @@ func Enforce(permission *Permission, request []interface{}, permissionIds ...str
 		return false, err
 	}
 
+	err = checkAbacEdition(enforcer.GetModel(), [][]interface{}{request})
+	if err != nil {
+		return false, err
+	}
+
+	err = checkPermissionsEdition(permission, permissionIds...)
+	if err != nil {
+		return false, err
+	}
+
 	// Convert each element: JSON-object strings and maps become anonymous structs
 	// so Casbin can evaluate ABAC rules with dot-notation (e.g. r.sub.DivisionGuid).
 	interfaceRequest := util.InterfaceToEnforceArray(request)
@@ -714,6 +724,16 @@ func Enforce(permission *Permission, request []interface{}, permissionIds ...str
 
 func BatchEnforce(permission *Permission, requests [][]interface{}, permissionIds ...string) ([]bool, error) {
 	enforcer, err := getPermissionEnforcer(permission, permissionIds...)
+	if err != nil {
+		return nil, err
+	}
+
+	err = checkAbacEdition(enforcer.GetModel(), requests)
+	if err != nil {
+		return nil, err
+	}
+
+	err = checkPermissionsEdition(permission, permissionIds...)
 	if err != nil {
 		return nil, err
 	}
@@ -745,10 +765,29 @@ func getEnforcers(userId string) ([]*casbin.Enforcer, error) {
 		permissions = append(permissions, permissionsByRole...)
 	}
 
+	if !isRbacAllowed() {
+		directPermissions, err := getPermissionsByUser(userId)
+		if err != nil {
+			return nil, err
+		}
+		directIds := map[string]bool{}
+		for _, permission := range directPermissions {
+			directIds[permission.GetId()] = true
+		}
+		for _, permission := range permissions {
+			if !directIds[permission.GetId()] {
+				return nil, requireRbac()
+			}
+		}
+	}
+
+	return getPermissionEnforcers(permissions)
+}
+
+func getPermissionEnforcers(permissions []*Permission) ([]*casbin.Enforcer, error) {
 	var enforcers []*casbin.Enforcer
 	for _, permission := range permissions {
-		var enforcer *casbin.Enforcer
-		enforcer, err = getPermissionEnforcer(permission)
+		enforcer, err := getPermissionEnforcer(permission)
 		if err != nil {
 			return nil, err
 		}

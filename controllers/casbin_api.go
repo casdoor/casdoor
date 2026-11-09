@@ -73,6 +73,12 @@ func (c *ApiController) Enforce() {
 			return
 		}
 
+		err = object.CheckEnforcerEdition(enforcer.Enforcer, [][]interface{}{request})
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
 		res := []bool{}
 		keyRes := []string{}
 
@@ -209,6 +215,12 @@ func (c *ApiController) BatchEnforce() {
 
 	if enforcerId != "" {
 		enforcer, err := object.GetInitializedEnforcer(enforcerId)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		err = object.CheckEnforcerEdition(enforcer.Enforcer, requests)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return

@@ -93,7 +93,7 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 	case VerificationCodeGrantType:
 		token, tokenError, err = GetVerificationCodeToken(application, username, countryCode, code, scope, host, clientIp, lang)
 	case MobileOneClickGrantType:
-		tokenError = getEditionTokenError(edition.Commercial, "Mobile one-click login")
+		tokenError = getEditionTokenError(edition.Commercial, edition.FeatureMobileOneClick)
 		if tokenError == nil {
 			token, tokenError, err = GetMobileOneClickToken(application, code, scope, host, clientIp, lang)
 		}
@@ -101,7 +101,7 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 		token, tokenError, err = GetImplicitToken(application, username, password, scope, nonce, host, clientIp, lang)
 	case "urn:ietf:params:oauth:grant-type:jwt-bearer":
 		if IsIdJag(assertion) {
-			tokenError = getEditionTokenError(edition.Commercial, "ID-JAG")
+			tokenError = getEditionTokenError(edition.Commercial, edition.FeatureIdJag)
 			if tokenError == nil {
 				token, tokenError, err = GetIdJagGrantToken(application, clientSecret, assertion, scope, host, clientIp, lang)
 			}
@@ -119,7 +119,7 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 		token, tokenError, err = GetDeviceCodeToken(application, username, scope, nonce, host, resource)
 	case "urn:ietf:params:oauth:grant-type:token-exchange": // Token Exchange Grant (RFC 8693)
 		if requestedTokenType == IdJagTokenType {
-			if tokenError := getEditionTokenError(edition.Commercial, "ID-JAG"); tokenError != nil {
+			if tokenError := getEditionTokenError(edition.Commercial, edition.FeatureIdJag); tokenError != nil {
 				return tokenError, nil
 			}
 			idJag, tokenError, err := GetIdJagToken(application, clientSecret, subjectToken, subjectTokenType, audience, resource, scope, host)
