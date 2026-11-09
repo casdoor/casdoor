@@ -8,6 +8,7 @@ import {LanguageSelect} from "@/components/common/LanguageSelect";
 import {ThemeToggle} from "@/components/common/ThemeToggle";
 import {ThemeShowcaseBar} from "@/components/common/ThemeShowcaseBar";
 import {CloudLoginLink, showCloudLoginLink} from "@/components/common/CloudPromo";
+import {EditionSwitcher} from "@/components/common/EditionPreview";
 import {CustomHtml, CustomStyle} from "@/components/common/CustomHtml";
 import {Loading} from "@/components/common/Loading";
 import {getSafeHtml, isTrustedApplication} from "@/lib/custom-html";
@@ -283,6 +284,7 @@ export function AuthLayout({
       {embedded ? corner : null}
 
       <div className="login-topbar flex items-center justify-end gap-1 p-3 sm:p-4">
+        {preview || embedded ? null : <EditionSwitcher className="mr-auto" />}
         {hideLanguages ? null : (
           <LanguageSelect
             className="rounded-full text-muted-foreground hover:text-foreground"

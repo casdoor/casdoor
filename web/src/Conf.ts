@@ -103,10 +103,65 @@ export function setConfig(config: Record<string, any>) {
     ShowCloudPromotion = config.showCloudPromotion;
   }
   if (config.edition) {
-    Edition = config.edition;
-    // index.css styles the console and the default sign-in page per edition
-    document.documentElement.dataset.edition = Edition.toLowerCase();
+    setEdition(config.edition);
   }
+}
+
+export const Editions = ["Community", "Commercial", "Enterprise"];
+
+function setEdition(edition: string) {
+  Edition = edition;
+  // index.css styles the console and the default sign-in page per edition
+  document.documentElement.dataset.edition = Edition.toLowerCase();
+}
+
+const DEMO_EDITION_KEY = "casdoorDemoEdition";
+
+function findEdition(value: string | null | undefined): string | undefined {
+  return Editions.find((edition) => edition.toLowerCase() === value?.toLowerCase());
+}
+
+/**
+ * A demo site lets the visitor try on the look of each edition: `?edition=enterprise` or the
+ * switchers of EditionPreview pick one, kept in the visitor's own browser. Only the look changes,
+ * the backend keeps running as the edition its license gives.
+ */
+function applyDemoEdition() {
+  if (!ThemeShowcase) {
+    return;
+  }
+
+  const fromUrl = findEdition(new URLSearchParams(window.location.search).get("edition"));
+  let edition = fromUrl;
+  try {
+    // a page embedded with ?edition= must not change the site's own choice
+    if (fromUrl && window.self === window.top) {
+      localStorage.setItem(DEMO_EDITION_KEY, fromUrl);
+    } else if (!fromUrl) {
+      edition = findEdition(localStorage.getItem(DEMO_EDITION_KEY));
+    }
+  } catch {
+    // the choice then only holds for this page
+  }
+
+  if (edition) {
+    setEdition(edition);
+  }
+}
+
+export function setDemoEdition(edition: string) {
+  try {
+    localStorage.setItem(DEMO_EDITION_KEY, edition);
+    // the default theme is the one that shows the edition's look, so the theme carousel stops on it
+    sessionStorage.setItem("themeShowcase", JSON.stringify({selected: "default", playing: false, expanded: false}));
+  } catch {
+    // fall through to the address, which carries the choice for this page
+  }
+
+  const url = new URL(window.location.href);
+  url.searchParams.set("edition", edition.toLowerCase());
+  url.searchParams.delete("theme");
+  window.location.replace(url.toString());
 }
 
 export function initConfigFromCookie() {
@@ -127,4 +182,6 @@ export function initConfigFromCookie() {
   } catch {
     // Ignore malformed cookie and keep compile-time defaults.
   }
+
+  applyDemoEdition();
 }

@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import {CommandPaletteTrigger} from "@/components/common/CommandPalette";
 import {CloudHeaderButton, CloudMenuItem} from "@/components/common/CloudPromo";
+import {EditionMenu} from "@/components/common/EditionPreview";
 import {BreadcrumbBar} from "@/components/layout/BreadcrumbBar";
 import {LanguageSelect} from "@/components/common/LanguageSelect";
 import {OrganizationSelect} from "@/components/common/OrganizationSelect";
@@ -70,6 +71,7 @@ export function Header({onOpenPalette}: {onOpenPalette: () => void}) {
 
       <div className="ml-auto flex items-center gap-1.5">
         <CommandPaletteTrigger onOpen={onOpenPalette} />
+        <EditionMenu />
         <CloudHeaderButton />
         {showOrganizationSelect && (
           <OrganizationSelect

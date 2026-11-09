@@ -508,6 +508,14 @@ html[data-edition="enterprise"] .login-edition.login-backdrop-dark {
 html[data-edition="enterprise"] .login-edition:not(.login-backdrop-dark) {
   box-shadow: inset 0 4px 0 hsl(var(--gold));
 }
+/* the demo site's edition switcher on that backdrop */
+html[data-edition="enterprise"] .login-backdrop-dark .edition-switcher {
+  border-color: hsl(var(--gold) / 0.3);
+  background-color: hsl(222 45% 14% / 0.8);
+}
+html[data-edition="enterprise"] .login-backdrop-dark .edition-switcher [aria-checked="true"] {
+  color: hsl(222 52% 10%);
+}
 html[data-edition="enterprise"].dark .login-edition.login-backdrop-dark {
   background-color: hsl(222 50% 5%);
 }

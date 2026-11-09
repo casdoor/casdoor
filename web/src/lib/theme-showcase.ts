@@ -48,6 +48,8 @@ const bundlePromises = new Map<string, Promise<ThemeBundle | null>>();
 // a page embedded in another site shows a theme only when the host asks for one
 const isFramed = Setting.inIframe();
 const themeFromUrl = new URLSearchParams(window.location.search).get("theme");
+// a link to an edition opens on the default theme, the one that shows the edition's look
+const editionFromUrl = !!new URLSearchParams(window.location.search).get("edition");
 
 export function isThemeShowcaseEnabled(): boolean {
   return Conf.ThemeShowcase && (!isFramed || !!themeFromUrl);
@@ -164,9 +166,9 @@ function init() {
   const fromUrl = themeFromUrl;
   state = {
     themes: [],
-    selected: fromUrl ?? saved?.selected ?? DEFAULT_THEME,
+    selected: fromUrl ?? (editionFromUrl ? DEFAULT_THEME : saved?.selected ?? DEFAULT_THEME),
     shown: DEFAULT_THEME,
-    playing: fromUrl ? false : saved?.playing ?? true,
+    playing: fromUrl || editionFromUrl ? false : saved?.playing ?? true,
     expanded: !isFramed && !!saved?.expanded,
     bundles: {},
   };
