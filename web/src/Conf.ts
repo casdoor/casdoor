@@ -165,19 +165,47 @@ function applyDemoEdition() {
     // the choice then only holds for this page
   }
 
+  // an edition with a demo site of its own is tried there, so this site only previews the others:
+  // a link with ?edition= goes on to that site, a choice kept from before is dropped
+  const demoUrl = edition ? getOtherDemoUrl(edition) : undefined;
+  if (edition && demoUrl) {
+    try {
+      localStorage.removeItem(DEMO_EDITION_KEY);
+    } catch {
+      // nothing was kept then
+    }
+    if (fromUrl && window.self === window.top) {
+      goToDemoSite(edition, demoUrl, true);
+    }
+    return;
+  }
   if (edition) {
     setEdition(edition);
   }
 }
 
+function getOtherDemoUrl(edition: string): string | undefined {
+  const demoUrl = EditionDemoUrls[edition];
+  return demoUrl && new URL(demoUrl).host !== window.location.host ? demoUrl : undefined;
+}
+
+/** Opens the same page on the demo site of that edition. */
+function goToDemoSite(edition: string, demoUrl: string, replace: boolean) {
+  const target = new URL(window.location.pathname + window.location.search, demoUrl);
+  target.searchParams.set("edition", edition.toLowerCase());
+  target.searchParams.delete("theme");
+  if (replace) {
+    window.location.replace(target.toString());
+  } else {
+    window.location.assign(target.toString());
+  }
+}
+
 export function setDemoEdition(edition: string) {
   // an edition with a demo site of its own is tried there, on the same page
-  const demoUrl = EditionDemoUrls[edition];
-  if (demoUrl && new URL(demoUrl).host !== window.location.host) {
-    const target = new URL(window.location.pathname + window.location.search, demoUrl);
-    target.searchParams.set("edition", edition.toLowerCase());
-    target.searchParams.delete("theme");
-    window.location.assign(target.toString());
+  const demoUrl = getOtherDemoUrl(edition);
+  if (demoUrl) {
+    goToDemoSite(edition, demoUrl, false);
     return;
   }
 
