@@ -19,6 +19,13 @@ import "sync/atomic"
 // hideCloudPromotion mirrors the global setting of the same name, which lives in the database this package cannot read
 var hideCloudPromotion atomic.Bool
 
+// getEdition is set by the edition package, which reads the license through this package
+var getEdition func() string
+
+func SetEditionGetter(getter func() string) {
+	getEdition = getter
+}
+
 func SetHideCloudPromotion(hide bool) {
 	hideCloudPromotion.Store(hide)
 }
@@ -34,6 +41,7 @@ type WebConfig struct {
 	ThemeShowcase       bool   `json:"themeShowcase"`
 	MarketplaceUrl      string `json:"marketplaceUrl"`
 	ShowCloudPromotion  bool   `json:"showCloudPromotion"`
+	Edition             string `json:"edition"`
 }
 
 func GetWebConfig() *WebConfig {
@@ -65,6 +73,11 @@ func GetWebConfig() *WebConfig {
 	}
 
 	config.ShowCloudPromotion = !hideCloudPromotion.Load()
+
+	config.Edition = "Community"
+	if getEdition != nil {
+		config.Edition = getEdition()
+	}
 
 	return config
 }

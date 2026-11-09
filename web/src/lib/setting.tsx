@@ -228,7 +228,7 @@ export function getThemeData(organization, application) {
   } else if (organization?.themeData?.isEnabled) {
     return organization.themeData;
   } else {
-    return Conf.ThemeDefault;
+    return Conf.getThemeDefault();
   }
 }
 

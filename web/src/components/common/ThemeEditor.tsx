@@ -55,16 +55,17 @@ export function ThemeEditor({
   /** what the object inherits from when it does not override: the global theme, or its organization's */
   followLabelKey?: string;
 }) {
-  const current: ThemeData = themeData ?? {...Conf.ThemeDefault, isEnabled: false};
+  const themeDefault = Conf.getThemeDefault();
+  const current: ThemeData = themeData ?? {...themeDefault, isEnabled: false};
   const update = (patch: Partial<ThemeData>) => onChange({...current, ...patch});
 
-  const themeType = current.themeType ?? Conf.ThemeDefault.themeType;
-  const colorPrimary = current.colorPrimary ?? Conf.ThemeDefault.colorPrimary;
-  const borderRadius = current.borderRadius ?? Conf.ThemeDefault.borderRadius;
+  const themeType = current.themeType ?? themeDefault.themeType;
+  const colorPrimary = current.colorPrimary ?? themeDefault.colorPrimary;
+  const borderRadius = current.borderRadius ?? themeDefault.borderRadius;
 
   const selectTheme = (value: string) =>
     // a theme carries its own primary colour and radius, so re-apply the preset
-    update({...Conf.ThemeDefault, ...current, themeType: value, ...THEMES_INFO[value]});
+    update({...themeDefault, ...current, themeType: value, ...THEMES_INFO[value]});
 
   return (
     <div className="space-y-1 rounded-lg border p-4">

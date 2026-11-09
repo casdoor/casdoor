@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/sidebar";
 import {CloudSidebarCard, showCloudPromo} from "@/components/common/CloudPromo";
 import {getNavGroups, shouldFlattenNav, type NavGroup, type NavItem} from "@/lib/nav";
+import * as Conf from "@/Conf";
 import * as Setting from "@/lib/setting";
 import {useAccount} from "@/hooks/use-account";
 import {useIsDark} from "@/hooks/use-theme";
@@ -178,7 +179,11 @@ export function AppSidebar({onNavigate}: {onNavigate?: () => void}) {
 
   const organization = account?.organization;
   // the organization brands its own console, and may brand light and dark apart
-  const siderLogo = Setting.getThemedLogo(organization?.logo, organization?.logoDark, [isDark ? "dark" : "light"]);
+  // the enterprise edition paints the sidebar dark on the light palette too, see index.css
+  const siderDark = isDark || Conf.Edition === "Enterprise";
+  const siderLogo = Setting.getThemedLogo(organization?.logo, organization?.logoDark, [siderDark ? "dark" : "light"]);
+  // a logo without a dark twin keeps a light ground to stand on
+  const siderLogoOnLight = siderDark && !isDark && !!organization?.logo && siderLogo === organization.logo;
   // recomputed every render on purpose: the labels come from i18next, which
   // changes language without re-rendering this component's inputs
   const groups = getNavGroups(account);
@@ -227,7 +232,11 @@ export function AppSidebar({onNavigate}: {onNavigate?: () => void}) {
           <img
             src={collapsed ? organization?.favicon || siderLogo : siderLogo}
             alt={organization?.displayName || "Casdoor"}
-            className={cn("object-contain", collapsed ? "h-6 w-6 rounded" : "h-8 max-w-[160px]")}
+            className={cn(
+              "object-contain",
+              collapsed ? "h-6 w-6 rounded" : "h-8 max-w-[160px]",
+              siderLogoOnLight && "rounded bg-white p-1",
+            )}
           />
         </Link>
       </SidebarHeader>

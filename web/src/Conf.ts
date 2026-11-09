@@ -31,6 +31,30 @@ export const ThemeDefault = {
   isCompact: false,
 };
 
+// the commercial and enterprise editions each ship a default theme of their own,
+// which an organization or application theme still overrides
+const EditionThemeDefaults: Record<string, typeof ThemeDefault> = {
+  Commercial: {
+    themeType: "default",
+    colorPrimary: "#4338ca",
+    borderRadius: 12,
+    isCompact: false,
+  },
+  Enterprise: {
+    themeType: "default",
+    colorPrimary: "#16294f",
+    borderRadius: 8,
+    isCompact: false,
+  },
+};
+
+// "Community", "Commercial" or "Enterprise", from the license the backend runs with
+export let Edition = "Community";
+
+export function getThemeDefault() {
+  return EditionThemeDefaults[Edition] ?? ThemeDefault;
+}
+
 export const CustomFooter = null;
 
 // Maximum number of navbar items before switching from flat to grouped menu
@@ -77,6 +101,11 @@ export function setConfig(config: Record<string, any>) {
   }
   if (config.showCloudPromotion !== undefined) {
     ShowCloudPromotion = config.showCloudPromotion;
+  }
+  if (config.edition) {
+    Edition = config.edition;
+    // index.css styles the console and the default sign-in page per edition
+    document.documentElement.dataset.edition = Edition.toLowerCase();
   }
 }
 

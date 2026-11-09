@@ -155,7 +155,7 @@ export function useApplicationTheme(application: any, enabled = true) {
         // fall through to the default
       }
     }
-    return Conf.ThemeDefault;
+    return Conf.getThemeDefault();
   }, [application]);
 
   useThemeData(enabled ? themeData : undefined);

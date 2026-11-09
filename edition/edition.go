@@ -68,6 +68,10 @@ var (
 	currentText string
 )
 
+func init() {
+	conf.SetEditionGetter(Get)
+}
+
 func mustDecodeBase64(s string) []byte {
 	res, err := base64.StdEncoding.DecodeString(s)
 	if err != nil {

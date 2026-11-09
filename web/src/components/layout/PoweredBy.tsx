@@ -6,10 +6,11 @@ import * as Setting from "@/lib/setting";
  * The default footer: "Powered by" followed by the Casdoor wordmark, which has a
  * light and a dark variant. The antd frontend renders the same image rather than
  * the word "Casdoor", and a deployment can replace the whole line through
- * `Conf.CustomFooter` or an organization's `footerHtml`.
+ * `Conf.CustomFooter` or an organization's `footerHtml`. `dark` is for a footer
+ * on a dark backdrop while the page itself is light.
  */
-export function PoweredBy() {
-  const isDark = useIsDark();
+export function PoweredBy({dark = false}: {dark?: boolean}) {
+  const isDark = useIsDark() || dark;
 
   if (Conf.CustomFooter !== null) {
     return <>{Conf.CustomFooter}</>;

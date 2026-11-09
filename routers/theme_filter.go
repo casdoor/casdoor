@@ -112,8 +112,17 @@ func getOrganizationThemeCookieFromApplication(application *object.Application) 
 		}
 	}
 
+	// the same choice as Setting.getThemeData(): the application's theme, else the
+	// organization's, else none, which leaves the page on the edition's default theme
+	var themeData *object.ThemeData
+	if application.ThemeData != nil && application.ThemeData.IsEnabled {
+		themeData = application.ThemeData
+	} else if organization != nil && organization.ThemeData != nil && organization.ThemeData.IsEnabled {
+		themeData = organization.ThemeData
+	}
+
 	organizationThemeCookie := &OrganizationThemeCookie{
-		ThemeData:   application.ThemeData,
+		ThemeData:   themeData,
 		LogoUrl:     application.Logo,
 		LogoDarkUrl: application.LogoDark,
 		FooterHtml:  application.FooterHtml,

@@ -1,5 +1,6 @@
 import * as React from "react";
 import i18next from "i18next";
+import * as Conf from "@/Conf";
 import {AlertCircle, ArrowLeft} from "lucide-react";
 import {PoweredBy} from "@/components/layout/PoweredBy";
 import {Button} from "@/components/ui/button";
@@ -196,7 +197,7 @@ export function AuthLayout({
   // on a demo site the Marketplace themes take turns on every entry page
   const application = useShowcaseApplication(ownApplication, !preview);
   const showcased = !!useShowcaseBundle(!preview);
-  useApplicationTheme(application, !preview || themePreview);
+  const themeData = useApplicationTheme(application, !preview || themePreview);
   // an application that hides the theme switch is painted light, or dark when its theme says so
   const themeLocked = !Setting.isSigninItemVisible(application, "Theme");
   useForcedTheme(themeLocked && !preview ? "light" : null);
@@ -242,6 +243,12 @@ export function AuthLayout({
   // a bled panel paints no background of its own — index.css drops the one the
   // application's form CSS asked for along with the rest of its card
   const panelIsLight = isDark && !bleed && !!panelBackground && isLightColor(panelBackground);
+  // the commercial and enterprise editions dress the page up, but only while it
+  // keeps the default theme: any branding of the application's own turns it off
+  const editionLook = Conf.Edition !== "Community" && !embedded && !formCss && !backgroundUrl && !sidePanel &&
+    !showcased && themeData === Conf.getThemeDefault();
+  // the enterprise one puts the panel on a dark backdrop, except on a phone, where the panel is the page
+  const darkBackdrop = editionLook && Conf.Edition === "Enterprise" && !bleed;
 
   // the application's logo and the organization's are different things, so the
   // dark twin painted here is the application's own, never the organization's
@@ -260,6 +267,8 @@ export function AuthLayout({
     <div
       className={cn(
         "login-background relative flex min-h-screen flex-col",
+        editionLook && "login-edition",
+        darkBackdrop && "login-backdrop-dark",
         // the tint is what lifts the card off the page; a panel that has
         // dissolved into the page has nothing to be lifted off
         bleed ? "bg-background" : "bg-muted/40 dark:bg-background",
@@ -372,7 +381,7 @@ export function AuthLayout({
         />
       ) : (
         <footer id="footer" className={footerClassName}>
-          <PoweredBy />
+          <PoweredBy dark={darkBackdrop} />
         </footer>
       )}
 

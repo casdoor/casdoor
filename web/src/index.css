@@ -268,3 +268,265 @@ html.compact {
     font-size: 16px;
   }
 }
+
+/* ---------------------------------------------------------------------------
+   Editions. A commercial or enterprise license gives the console a look of its
+   own, and the sign-in pages too while they keep the default theme (AuthLayout
+   puts `login-edition` on those). Colours stay tokens, so an organization's
+   own primary colour still lands on top.
+   --------------------------------------------------------------------------- */
+
+/* Commercial: indigo, cool-tinted neutrals and a softer, deeper elevation. */
+html[data-edition="commercial"] {
+  --foreground: 230 28% 11%;
+  --card-foreground: 230 28% 11%;
+  --popover-foreground: 230 28% 11%;
+  --secondary: 228 32% 96%;
+  --secondary-foreground: 230 28% 13%;
+  --muted: 228 32% 96%;
+  --muted-foreground: 229 12% 43%;
+  --accent: 232 45% 95.5%;
+  --accent-foreground: 240 45% 24%;
+  --border: 228 24% 90%;
+  --input: 228 22% 85%;
+
+  --sidebar-background: 230 45% 98.2%;
+  --sidebar-foreground: 230 14% 32%;
+  --sidebar-accent: 236 70% 95%;
+  --sidebar-accent-foreground: 243 55% 40%;
+  --sidebar-border: 228 28% 91%;
+}
+
+html[data-edition="commercial"].dark {
+  --background: 232 32% 6.5%;
+  --foreground: 228 30% 96%;
+  --card: 232 28% 9.5%;
+  --card-foreground: 228 30% 96%;
+  --popover: 232 24% 14.5%;
+  --popover-foreground: 228 30% 96%;
+  --secondary: 232 22% 15%;
+  --secondary-foreground: 228 30% 96%;
+  --muted: 232 22% 14%;
+  --muted-foreground: 229 14% 64%;
+  --accent: 236 26% 19%;
+  --accent-foreground: 228 40% 98%;
+  --border: 232 20% 17%;
+  --input: 232 18% 23%;
+
+  --sidebar-background: 232 34% 8%;
+  --sidebar-foreground: 229 18% 76%;
+  --sidebar-accent: 240 34% 19%;
+  --sidebar-accent-foreground: 238 100% 90%;
+  --sidebar-border: 232 24% 14%;
+}
+
+/* Enterprise: midnight navy, with a thread of gold for the details. */
+html[data-edition="enterprise"] {
+  --gold: 40 52% 58%;
+  --gold-soft: 41 60% 72%;
+
+  --foreground: 222 42% 10%;
+  --card-foreground: 222 42% 10%;
+  --popover-foreground: 222 42% 10%;
+  --secondary: 220 28% 95.5%;
+  --secondary-foreground: 222 42% 12%;
+  --muted: 220 28% 95.5%;
+  --muted-foreground: 220 13% 41%;
+  --accent: 220 32% 94.5%;
+  --accent-foreground: 222 50% 16%;
+  --border: 220 22% 88.5%;
+  --input: 220 20% 83%;
+
+  /* the sidebar stays midnight on the light palette too */
+  --sidebar-background: 222 52% 11%;
+  --sidebar-foreground: 220 22% 76%;
+  --sidebar-primary: var(--gold);
+  --sidebar-primary-foreground: 222 52% 11%;
+  --sidebar-accent: 222 40% 18%;
+  --sidebar-accent-foreground: 0 0% 100%;
+  --sidebar-border: 222 38% 17%;
+  --sidebar-ring: var(--gold);
+}
+
+html[data-edition="enterprise"].dark {
+  --background: 222 46% 5.5%;
+  --foreground: 220 30% 95%;
+  --card: 222 40% 8.5%;
+  --card-foreground: 220 30% 95%;
+  --popover: 222 34% 12.5%;
+  --popover-foreground: 220 30% 95%;
+  --secondary: 222 30% 13%;
+  --secondary-foreground: 220 30% 95%;
+  --muted: 222 30% 12.5%;
+  --muted-foreground: 220 14% 63%;
+  --accent: 222 28% 17%;
+  --accent-foreground: 220 40% 98%;
+  --border: 222 26% 15.5%;
+  --input: 222 24% 21%;
+
+  --sidebar-background: 222 50% 7%;
+  --sidebar-foreground: 220 20% 74%;
+  --sidebar-accent: 222 36% 15%;
+  --sidebar-border: 222 34% 12.5%;
+}
+
+/* the active page in the sidebar gets a rule down its edge */
+html[data-edition="commercial"] [data-sidebar="menu-button"][data-active="true"],
+html[data-edition="enterprise"] [data-sidebar="menu-button"][data-active="true"],
+html[data-edition="commercial"] [data-sidebar="menu-sub-button"][data-active="true"],
+html[data-edition="enterprise"] [data-sidebar="menu-sub-button"][data-active="true"] {
+  position: relative;
+}
+html[data-edition="commercial"] [data-sidebar="menu-button"][data-active="true"]::before,
+html[data-edition="enterprise"] [data-sidebar="menu-button"][data-active="true"]::before,
+html[data-edition="commercial"] [data-sidebar="menu-sub-button"][data-active="true"]::before,
+html[data-edition="enterprise"] [data-sidebar="menu-sub-button"][data-active="true"]::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 22%;
+  bottom: 22%;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
+  background: hsl(var(--primary));
+}
+html[data-edition="enterprise"] [data-sidebar="menu-button"][data-active="true"]::before,
+html[data-edition="enterprise"] [data-sidebar="menu-sub-button"][data-active="true"]::before {
+  background: hsl(var(--gold));
+}
+html[data-edition="enterprise"] [data-sidebar="menu-button"][data-active="true"] > svg,
+html[data-edition="enterprise"] [data-sidebar="menu-sub-button"][data-active="true"] > svg {
+  color: hsl(var(--gold-soft));
+}
+/* on the midnight sidebar a navy button would vanish, so it turns gold there */
+html[data-edition="enterprise"]:not(.dark) [data-sidebar="sidebar"] .bg-primary {
+  background-color: hsl(var(--gold));
+  color: hsl(222 52% 11%);
+}
+html[data-edition="enterprise"] [data-sidebar="sidebar"] {
+  /* a faint light from the top, so the navy does not read as a flat slab */
+  background-image: linear-gradient(180deg, hsl(222 45% 16% / 0.6), transparent 40%);
+}
+
+/* the header ends in a hairline of colour instead of a plain border */
+html[data-edition="commercial"] .app-header,
+html[data-edition="enterprise"] .app-header {
+  border-bottom-color: transparent;
+}
+html[data-edition="commercial"] .app-header::after,
+html[data-edition="enterprise"] .app-header::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 1px;
+  pointer-events: none;
+}
+html[data-edition="commercial"] .app-header::after {
+  background: linear-gradient(90deg, hsl(var(--border)), hsl(243 75% 59% / 0.55) 35%, hsl(266 80% 64% / 0.55) 65%, hsl(var(--border)));
+}
+html[data-edition="enterprise"] .app-header::after {
+  background: linear-gradient(90deg, hsl(var(--gold) / 0.15), hsl(var(--gold) / 0.85) 50%, hsl(var(--gold) / 0.15));
+}
+
+/* the primary button picks up a sheen from above */
+html[data-edition="commercial"] button.bg-primary,
+html[data-edition="commercial"] a.bg-primary {
+  background-image: linear-gradient(180deg, hsl(0 0% 100% / 0.14), hsl(0 0% 100% / 0));
+  box-shadow: 0 1px 2px hsl(243 50% 30% / 0.18), 0 6px 16px -6px hsl(var(--primary) / 0.55);
+}
+html[data-edition="enterprise"] button.bg-primary,
+html[data-edition="enterprise"] a.bg-primary {
+  background-image: linear-gradient(180deg, hsl(0 0% 100% / 0.1), hsl(0 0% 100% / 0));
+  box-shadow: inset 0 1px 0 hsl(var(--gold-soft) / 0.45), 0 1px 2px hsl(222 50% 8% / 0.3), 0 8px 18px -8px hsl(222 60% 12% / 0.6);
+}
+
+/* Commercial sign-in page: soft indigo light behind a frosted panel. */
+html[data-edition="commercial"] .login-edition {
+  background-color: hsl(228 45% 97.5%);
+  background-image:
+    radial-gradient(56rem 36rem at 8% -12%, hsl(243 75% 59% / 0.17), transparent 62%),
+    radial-gradient(48rem 36rem at 108% 6%, hsl(266 80% 64% / 0.15), transparent 62%),
+    radial-gradient(44rem 30rem at 50% 118%, hsl(214 90% 60% / 0.11), transparent 62%);
+}
+html[data-edition="commercial"].dark .login-edition {
+  background-color: hsl(232 34% 5.5%);
+  background-image:
+    radial-gradient(56rem 36rem at 8% -12%, hsl(243 75% 59% / 0.26), transparent 62%),
+    radial-gradient(48rem 36rem at 108% 6%, hsl(266 80% 60% / 0.2), transparent 62%),
+    radial-gradient(44rem 30rem at 50% 118%, hsl(214 90% 55% / 0.14), transparent 62%);
+}
+html[data-edition="commercial"] .login-edition .login-panel:not(.login-panel-bleed) {
+  border-radius: 1rem;
+  border-color: hsl(228 30% 88% / 0.9);
+  background-color: hsl(var(--card) / 0.88);
+  backdrop-filter: blur(18px);
+  box-shadow:
+    inset 0 1px 0 hsl(0 0% 100% / 0.7),
+    0 1px 2px hsl(232 40% 20% / 0.05),
+    0 28px 64px -24px hsl(243 60% 40% / 0.32);
+}
+html[data-edition="commercial"].dark .login-edition .login-panel:not(.login-panel-bleed) {
+  border-color: hsl(236 30% 24% / 0.8);
+  box-shadow:
+    inset 0 1px 0 hsl(0 0% 100% / 0.06),
+    0 28px 64px -24px hsl(243 80% 10% / 0.8);
+}
+
+/* Enterprise sign-in page: the panel on a midnight backdrop, crowned in gold. */
+html[data-edition="enterprise"] .login-edition .login-panel:not(.login-panel-bleed) {
+  border-radius: 0.75rem;
+}
+html[data-edition="enterprise"] .login-edition .login-panel:not(.login-panel-bleed)::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, hsl(var(--gold)), hsl(var(--gold-soft)) 50%, hsl(var(--gold)));
+}
+html[data-edition="enterprise"] .login-edition.login-backdrop-dark {
+  background-color: hsl(222 52% 9%);
+  background-image:
+    radial-gradient(64rem 34rem at 50% -14%, hsl(var(--gold) / 0.17), transparent 62%),
+    radial-gradient(52rem 40rem at 104% 104%, hsl(218 70% 38% / 0.38), transparent 60%),
+    radial-gradient(40rem 32rem at -6% 90%, hsl(226 60% 30% / 0.3), transparent 60%),
+    linear-gradient(hsl(0 0% 100% / 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, hsl(0 0% 100% / 0.03) 1px, transparent 1px);
+  background-size: auto, auto, auto, 56px 56px, 56px 56px;
+  background-position: center;
+  /* what sits on the backdrop itself: the top bar, the footer, the line under the panel */
+  --foreground: 0 0% 98%;
+  --muted-foreground: 220 18% 74%;
+  --accent: 222 34% 19%;
+  --accent-foreground: 0 0% 100%;
+  --primary: var(--gold-soft);
+}
+/* on a phone the panel is the page, so the gold runs along the top of the screen instead */
+html[data-edition="enterprise"] .login-edition:not(.login-backdrop-dark) {
+  box-shadow: inset 0 4px 0 hsl(var(--gold));
+}
+html[data-edition="enterprise"].dark .login-edition.login-backdrop-dark {
+  background-color: hsl(222 50% 5%);
+}
+html[data-edition="enterprise"] .login-edition.login-backdrop-dark .login-panel {
+  --foreground: 222 42% 10%;
+  --muted-foreground: 220 13% 41%;
+  --accent: 220 32% 94.5%;
+  --accent-foreground: 222 50% 16%;
+  --primary: var(--primary-base, 222 56% 20%);
+  border-color: hsl(var(--gold) / 0.28);
+  box-shadow:
+    0 0 0 1px hsl(222 60% 4% / 0.4),
+    0 34px 90px -24px hsl(222 80% 3% / 0.85);
+}
+html[data-edition="enterprise"].dark .login-edition.login-backdrop-dark .login-panel {
+  --foreground: 220 30% 95%;
+  --muted-foreground: 220 14% 63%;
+  --accent: 222 28% 17%;
+  --accent-foreground: 220 40% 98%;
+  --primary: var(--gold-soft);
+  --primary-foreground: 222 52% 10%;
+}
