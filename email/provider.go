@@ -18,7 +18,7 @@ type EmailProvider interface {
 	Send(fromAddress string, fromName string, toAddress []string, subject string, content string) error
 }
 
-func GetEmailProvider(typ string, clientId string, clientSecret string, host string, port int, sslMode string, endpoint string, method string, httpHeaders map[string]string, bodyMapping map[string]string, contentType string, enableProxy bool) EmailProvider {
+func GetEmailProvider(typ string, clientId string, clientSecret string, host string, port int, sslMode string, endpoint string, method string, httpHeaders map[string]string, bodyMapping map[string]string, contentType string, enableProxy bool, scopes string, tokenUrl string) EmailProvider {
 	switch typ {
 	case "Azure ACS":
 		return NewAzureACSEmailProvider(clientSecret, host)
@@ -28,6 +28,8 @@ func GetEmailProvider(typ string, clientId string, clientSecret string, host str
 		return NewSendgridEmailProvider(clientSecret, host, endpoint)
 	case "Resend":
 		return NewResendEmailProvider(clientSecret)
+	case "XOauth2":
+		return NewXOauth2EmailProvider(clientId, clientSecret, host, port, sslMode, scopes, tokenUrl)
 	default:
 		return NewSmtpEmailProvider(clientId, clientSecret, host, port, typ, sslMode, enableProxy)
 	}
