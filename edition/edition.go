@@ -79,6 +79,8 @@ type License struct {
 	Features   []string `json:"features,omitempty"`
 	// set when the license was activated offline for one Casdoor instance (its database)
 	InstanceId string `json:"instanceId,omitempty"`
+	// the license server that issued the license, where this instance reports to
+	Server string `json:"server,omitempty"`
 }
 
 type LicenseInfo struct {

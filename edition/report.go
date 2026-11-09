@@ -161,7 +161,11 @@ func report() error {
 		return nil
 	}
 
+	// the config item overrides the server in the license, e.g. "none" for an instance without Internet access
 	server := strings.TrimRight(conf.GetConfigString("licenseServer"), "/")
+	if server == "" {
+		server = strings.TrimRight(license.Server, "/")
+	}
 	if server == "" {
 		server = defaultLicenseServer
 	}
