@@ -49,6 +49,9 @@ type Setting struct {
 
 	// trusted HTML (scripts, styles, meta tags) put into the <head> of every page of every organization
 	HeadHtml string `xorm:"mediumtext" json:"headHtml"`
+
+	// identifies this Casdoor (its database) to the license server, generated once and never edited
+	InstanceId string `xorm:"varchar(100)" json:"instanceId"`
 }
 
 type headHtmlState struct {
@@ -97,6 +100,7 @@ func UpdateSetting(setting *Setting) (bool, error) {
 	setting.Name = settingName
 	setting.CreatedTime = oldSetting.CreatedTime
 	setting.UpdatedTime = util.GetCurrentTime()
+	setting.InstanceId = oldSetting.InstanceId
 
 	affected, err := ormer.Engine.ID(core.PK{settingOwner, settingName}).AllCols().Update(setting)
 	if err != nil {
@@ -166,6 +170,7 @@ func initBuiltInSetting() *Setting {
 // another Casdoor instance sharing the same database also takes effect here
 func InitSetting() {
 	initBuiltInSetting().apply()
+	initLicenseReporter()
 
 	util.SafeGoroutine(func() {
 		ticker := time.NewTicker(time.Minute)
