@@ -43,7 +43,7 @@ func SendEmail(provider *Provider, title string, content string, dest []string, 
 	}
 
 	sslMode := getSslMode(provider)
-	emailProvider := email.GetEmailProvider(provider.Type, provider.ClientId, provider.ClientSecret, provider.Host, provider.Port, sslMode, provider.Endpoint, provider.Method, provider.HttpHeaders, provider.UserMapping, provider.IssuerUrl, provider.EnableProxy)
+	emailProvider := email.GetEmailProvider(provider.Type, provider.ClientId, provider.ClientSecret, provider.Host, provider.Port, sslMode, provider.Endpoint, provider.Method, provider.HttpHeaders, provider.UserMapping, provider.IssuerUrl, provider.EnableProxy, provider.Scopes, provider.CustomTokenUrl)
 	restrictTenantEmailProvider(provider, emailProvider)
 
 	fromAddress := provider.ClientId2

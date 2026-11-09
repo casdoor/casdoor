@@ -399,6 +399,10 @@ export const OtherProviderInfo = {
       logo: `${StaticBaseUrl}/img/email_resend.png`,
       url: "https://resend.com/",
     },
+    "XOauth2": {
+      logo: `${StaticBaseUrl}/img/email_default.png`,
+      url: "",
+    },
   },
   Storage: {
     "Local File System": {
@@ -1603,6 +1607,7 @@ export function getProviderTypeOptions(category) {
         {id: "SendGrid", name: "SendGrid"},
         {id: "Custom HTTP Email", name: "Custom HTTP Email"},
         {id: "Resend", name: "Resend"},
+        {id: "XOauth2", name: "XOauth2"},
       ]
     );
   } else if (category === "SMS") {
