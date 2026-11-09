@@ -325,6 +325,7 @@ func InitAPI() {
 
 	web.Router("/api/get-system-info", &controllers.ApiController{}, "GET:GetSystemInfo")
 	web.Router("/api/get-version-info", &controllers.ApiController{}, "GET:GetVersionInfo")
+	web.Router("/api/get-license", &controllers.ApiController{}, "GET:GetLicense")
 	web.Router("/api/get-upgrade-info", &controllers.ApiController{}, "GET:GetUpgradeInfo")
 	web.Router("/api/upgrade-system", &controllers.ApiController{}, "POST:UpgradeSystem")
 	web.Router("/api/get-setting", &controllers.ApiController{}, "GET:GetSetting")

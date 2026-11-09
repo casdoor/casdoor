@@ -16,6 +16,7 @@ import {useEditRecord} from "@/hooks/use-edit-record";
 import * as ServerBackend from "@/backend/ServerBackend";
 import {submitEdit} from "@/lib/crud";
 import * as Setting from "@/lib/setting";
+import {EditionNotice} from "@/components/common/EditionNotice";
 
 /** The tools the MCP server exposes; only "isAllowed" is editable, see web/src/ToolTable.js. */
 function ToolTable({tools, onChange}: {tools: any[]; onChange: (tools: any[]) => void}) {
@@ -219,6 +220,7 @@ export default function ServerEditPage() {
       </FormRow>
       <FormRow labelKey="provider:Base URL">
         <Input readOnly value={`${Setting.getOriginUrl()}/api/server/${server.owner}/${server.name}`} />
+        <EditionNotice />
       </FormRow>
     </EditPageShell>
   );

@@ -19,6 +19,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/casdoor/casdoor/edition"
 	"github.com/casdoor/casdoor/idp"
 	"github.com/casdoor/casdoor/util"
 	"github.com/golang-jwt/jwt/v5"
@@ -92,12 +93,18 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 	case VerificationCodeGrantType:
 		token, tokenError, err = GetVerificationCodeToken(application, username, countryCode, code, scope, host, clientIp, lang)
 	case MobileOneClickGrantType:
-		token, tokenError, err = GetMobileOneClickToken(application, code, scope, host, clientIp, lang)
+		tokenError = getEditionTokenError(edition.Commercial, "Mobile one-click login")
+		if tokenError == nil {
+			token, tokenError, err = GetMobileOneClickToken(application, code, scope, host, clientIp, lang)
+		}
 	case "token", "id_token": // Implicit Grant
 		token, tokenError, err = GetImplicitToken(application, username, password, scope, nonce, host, clientIp, lang)
 	case "urn:ietf:params:oauth:grant-type:jwt-bearer":
 		if IsIdJag(assertion) {
-			token, tokenError, err = GetIdJagGrantToken(application, clientSecret, assertion, scope, host, clientIp, lang)
+			tokenError = getEditionTokenError(edition.Commercial, "ID-JAG")
+			if tokenError == nil {
+				token, tokenError, err = GetIdJagGrantToken(application, clientSecret, assertion, scope, host, clientIp, lang)
+			}
 		} else if isDynamicClient(application) {
 			tokenError = &TokenError{
 				Error:            InvalidGrant,
@@ -112,6 +119,9 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 		token, tokenError, err = GetDeviceCodeToken(application, username, scope, nonce, host, resource)
 	case "urn:ietf:params:oauth:grant-type:token-exchange": // Token Exchange Grant (RFC 8693)
 		if requestedTokenType == IdJagTokenType {
+			if tokenError := getEditionTokenError(edition.Commercial, "ID-JAG"); tokenError != nil {
+				return tokenError, nil
+			}
 			idJag, tokenError, err := GetIdJagToken(application, clientSecret, subjectToken, subjectTokenType, audience, resource, scope, host)
 			if err != nil {
 				return nil, err
@@ -1157,4 +1167,15 @@ func getFederatedTokenExchangeToken(application *Application, credential *Federa
 	}
 
 	return token, nil, nil
+}
+
+func getEditionTokenError(required string, feature string) *TokenError {
+	err := edition.Require(required, feature)
+	if err != nil {
+		return &TokenError{
+			Error:            UnauthorizedClient,
+			ErrorDescription: err.Error(),
+		}
+	}
+	return nil
 }

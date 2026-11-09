@@ -23,6 +23,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/casdoor/casdoor/edition"
 	"github.com/casdoor/casdoor/mcpself"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
@@ -52,6 +53,10 @@ func (c *ApiController) ProxyServer() {
 	}
 	if util.IsStringsEmpty(owner, name) {
 		c.McpResponseError(1, -32600, "invalid server identifier", nil)
+		return
+	}
+	if err = edition.Require(edition.Commercial, "MCP gateway"); err != nil {
+		c.McpResponseError(mcpReq.ID, -32600, err.Error(), nil)
 		return
 	}
 

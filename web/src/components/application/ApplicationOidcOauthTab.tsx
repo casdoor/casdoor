@@ -10,6 +10,7 @@ import {FormRow} from "@/components/crud/FormRow";
 import type {ApplicationTabProps} from "@/components/application/types";
 import {enumSelectOptions, type EnumMap} from "@/lib/enum-labels";
 import * as Setting from "@/lib/setting";
+import {EditionNotice} from "@/components/common/EditionNotice";
 
 /** the values the token endpoint matches on, so the RFC URNs are stored as such */
 const GRANT_TYPES = [
@@ -97,6 +98,7 @@ export function ApplicationOidcOauthTab({application, updateField}: ApplicationT
           onChange={(v) => updateField("grantTypes", v)}
           options={GRANT_TYPES}
         />
+        {(application.grantTypes ?? []).includes("urn:casdoor:params:oauth:grant-type:mobile-one-click") ? <EditionNotice /> : null}
       </FormRow>
       {/* scopes are ScopeItem objects (name / displayName / description), the
           same three columns antd's ScopeTable edits */}

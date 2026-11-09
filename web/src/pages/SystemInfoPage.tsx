@@ -10,6 +10,7 @@ import {Loading} from "@/components/common/Loading";
 import {PageHeader} from "@/components/crud/PageHeader";
 import * as SystemBackend from "@/backend/SystemInfo";
 import * as Setting from "@/lib/setting";
+import {getEditionText, PricingUrl} from "@/components/common/EditionNotice";
 
 const REFRESH_MS = 5000;
 const UPGRADE_POLL_MS = 1500;
@@ -314,6 +315,56 @@ function UpgradeCard() {
   );
 }
 
+function LicenseCard() {
+  const [license, setLicense] = React.useState<any>(null);
+
+  React.useEffect(() => {
+    SystemBackend.getLicense().then((res: any) => {
+      if (res.status === "ok") {
+        setLicense(res.data);
+      }
+    });
+  }, []);
+
+  if (license === null) {
+    return null;
+  }
+
+  return (
+    <Card id="license-card">
+      <CardHeader className="flex-row items-center justify-between gap-3 space-y-0 pb-3">
+        <CardTitle className="text-base">{i18next.t("system:License")}</CardTitle>
+        <Badge variant={license.edition === "Community" ? "secondary" : "default"}>{getEditionText(license.edition)}</Badge>
+      </CardHeader>
+      <CardContent className="space-y-3 text-sm">
+        {license.id ? (
+          <dl className="grid gap-x-6 gap-y-2 sm:grid-cols-[max-content_1fr]">
+            <dt className="text-muted-foreground">{i18next.t("system:Licensee")}</dt>
+            <dd>{license.licensee}</dd>
+            <dt className="text-muted-foreground">{i18next.t("general:ID")}</dt>
+            <dd className="font-mono text-xs leading-5">{license.id}</dd>
+            <dt className="text-muted-foreground">{i18next.t("general:Expire time")}</dt>
+            <dd>{license.expireTime ? Setting.getFormattedDate(license.expireTime) : i18next.t("invitation:Never")}</dd>
+          </dl>
+        ) : null}
+        {license.error ? (
+          <Alert variant="destructive">
+            <AlertDescription>{license.error}</AlertDescription>
+          </Alert>
+        ) : null}
+        {!license.id && !license.error ? (
+          <p className="text-muted-foreground">
+            {i18next.t("system:No license configured")}{" "}
+            <a href={PricingUrl} target="_blank" rel="noreferrer" className="underline underline-offset-2">
+              {i18next.t("general:Learn more")}
+            </a>
+          </p>
+        ) : null}
+      </CardContent>
+    </Card>
+  );
+}
+
 export default function SystemInfoPage() {
   const [systemInfo, setSystemInfo] = React.useState<any>(null);
   const [versionInfo, setVersionInfo] = React.useState<any>(null);
@@ -380,7 +431,10 @@ export default function SystemInfoPage() {
         description={versionInfo?.version ? versionText : undefined}
       />
 
-      <UpgradeCard />
+      <div className="grid gap-4 md:grid-cols-2">
+        <UpgradeCard />
+        <LicenseCard />
+      </div>
 
       {/* Memory and disk are one meter each; the CPU card is as many meters as the
           machine has cores, so it gets its own full-width row rather than being

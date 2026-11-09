@@ -19,6 +19,7 @@ import (
 	"errors"
 	"strings"
 
+	"github.com/casdoor/casdoor/edition"
 	"github.com/casdoor/casdoor/upgrade"
 	"github.com/casdoor/casdoor/util"
 	"github.com/go-git/go-git/v5"
@@ -63,6 +64,21 @@ func (c *ApiController) GetVersionInfo() {
 	}
 
 	c.ResponseOk(util.GetBuiltInVersionInfo())
+}
+
+// GetLicense
+// @Title GetLicense
+// @Tag System API
+// @Description get the edition that the license of this Casdoor gives, and for a global admin the license details
+// @Success 200 {object} edition.LicenseInfo The Response object
+// @router /get-license [get]
+func (c *ApiController) GetLicense() {
+	info := edition.GetLicenseInfo()
+	if !c.IsGlobalAdmin() {
+		info = &edition.LicenseInfo{Edition: info.Edition}
+	}
+
+	c.ResponseOk(info)
 }
 
 // GetUpgradeInfo

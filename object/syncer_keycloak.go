@@ -14,6 +14,8 @@
 
 package object
 
+import "github.com/casdoor/casdoor/edition"
+
 // KeycloakSyncerProvider implements SyncerProvider for Keycloak database syncers
 // Keycloak syncer extends DatabaseSyncerProvider with special handling for Keycloak schema
 type KeycloakSyncerProvider struct {
@@ -23,6 +25,10 @@ type KeycloakSyncerProvider struct {
 // GetOriginalUsers retrieves all users from Keycloak database
 // This method overrides the base implementation to handle Keycloak-specific logic
 func (p *KeycloakSyncerProvider) GetOriginalUsers() ([]*OriginalUser, error) {
+	if err := edition.Require(edition.Commercial, "Keycloak syncer"); err != nil {
+		return nil, err
+	}
+
 	// Use the base database implementation
 	return p.DatabaseSyncerProvider.GetOriginalUsers()
 }

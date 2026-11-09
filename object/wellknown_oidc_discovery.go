@@ -24,6 +24,7 @@ import (
 	"strings"
 
 	"github.com/casdoor/casdoor/conf"
+	"github.com/casdoor/casdoor/edition"
 	"github.com/casdoor/casdoor/util"
 	"github.com/go-jose/go-jose/v4"
 )
@@ -248,6 +249,11 @@ func GetOidcDiscovery(host string, applicationName string) OidcDiscovery {
 		AuthorizationResponseIssParameterSupported: true,
 		ClientIdMetadataDocumentSupported:          IsClientIdMetadataDocumentSupported(cimdOrg),
 		AuthorizationGrantProfilesSupported:        []string{"urn:ietf:params:oauth:grant-profile:id-jag"},
+	}
+
+	if !edition.Has(edition.Commercial) {
+		oidcDiscovery.GrantTypesSupported = util.DeleteVal(oidcDiscovery.GrantTypesSupported, MobileOneClickGrantType)
+		oidcDiscovery.AuthorizationGrantProfilesSupported = nil
 	}
 
 	return oidcDiscovery

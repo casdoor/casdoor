@@ -12,6 +12,7 @@ import {useCertOptions, useOrganizationOptions} from "@/hooks/use-options";
 import {getSyncerTableColumns} from "@/lib/syncer-columns";
 import * as SyncerBackend from "@/backend/SyncerBackend";
 import * as Setting from "@/lib/setting";
+import {EditionNotice, useEdition} from "@/components/common/EditionNotice";
 
 const TYPES = [
   "Database", "Keycloak", "WeCom", "Azure AD", "Active Directory", "Google Workspace",
@@ -95,6 +96,7 @@ export default function SyncerEditPage() {
   const {account} = useAccount();
   const organizations = useOrganizationOptions();
 
+  const edition = useEdition();
   const fields: EditField[] = [
     {
       type: "select",
@@ -119,6 +121,13 @@ export default function SyncerEditPage() {
           table: value === "Keycloak" ? "user_entity" : ctx.record.table,
           host: value === "Lark" ? LARK_DOMAINS[0].id : isApiType(value) ? "" : ctx.record.host,
         }),
+    },
+    {
+      type: "custom",
+      name: "edition",
+      labelKey: "system:License",
+      when: (ctx) => ctx.record.type === "Keycloak" && edition === "Community",
+      render: () => <EditionNotice />,
     },
     {
       type: "select",

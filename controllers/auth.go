@@ -30,6 +30,7 @@ import (
 	"time"
 
 	"github.com/casdoor/casdoor/conf"
+	"github.com/casdoor/casdoor/edition"
 	"github.com/casdoor/casdoor/form"
 	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/idp"
@@ -201,7 +202,7 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 
 	// Revoke the tokens of the displaced login before the response is built, otherwise the
 	// token that this login creates below would be revoked too
-	if application.EnableExclusiveSignin && application.MaxSessions <= 1 {
+	if application.EnableExclusiveSignin && application.MaxSessions <= 1 && edition.Has(edition.Commercial) {
 		_, err = object.ExpireTokenByUserAndApplication(user.Owner, user.Name, application.Name)
 		if err != nil {
 			c.ResponseError(err.Error(), nil)
@@ -416,7 +417,7 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 			return
 		}
 
-		if application.EnableExclusiveSignin {
+		if application.EnableExclusiveSignin && edition.Has(edition.Commercial) {
 			err = object.EnforceApplicationSessionLimit(user, application.Name, sessionId, application.MaxSessions)
 			if err != nil {
 				c.ResponseError(err.Error(), nil)
@@ -434,7 +435,7 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 				return
 			}
 		}
-		if organization != nil && organization.EnableExclusiveSignin {
+		if organization != nil && organization.EnableExclusiveSignin && edition.Has(edition.Commercial) {
 			err = object.EnforceBrowserSessionLimit(user, sessionId, organization.MaxSessions, c.Ctx.Request.Host)
 			if err != nil {
 				c.ResponseError(err.Error(), nil)
