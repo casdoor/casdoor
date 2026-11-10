@@ -137,6 +137,12 @@ func StartRadiusServer() {
 }
 
 func handlerRadius(w radius.ResponseWriter, r *radius.Request) {
+	defer func() {
+		if rec := recover(); rec != nil {
+			log.Printf("handlerRadius() recovered from panic: %v", rec)
+		}
+	}()
+
 	switch r.Code {
 	case radius.CodeAccessRequest:
 		// RFC 2869: a request carrying a Message-Authenticator must be silently
@@ -273,7 +279,6 @@ func handleAccountingRequest(w radius.ResponseWriter, r *radius.Request) {
 		organization, username, err = util.GetOwnerAndNameFromIdWithError(username)
 		if err != nil {
 			log.Printf("handleAccountingRequest() failed to parse username, err = %v", err)
-			w.Write(r.Response(radius.CodeAccessReject))
 			return
 		}
 	}
@@ -284,7 +289,8 @@ func handleAccountingRequest(w radius.ResponseWriter, r *radius.Request) {
 	if !ok {
 		return
 	}
-	if getRadiusEnabledOrganization(getRadiusOrganization(organization)) == nil {
+	organization = getRadiusOrganization(organization)
+	if getRadiusEnabledOrganization(organization) == nil {
 		return
 	}
 
@@ -298,24 +304,28 @@ func handleAccountingRequest(w radius.ResponseWriter, r *radius.Request) {
 	switch statusType {
 	case rfc2866.AcctStatusType_Value_Start:
 		// Start an accounting session
-		ra := getClientAccountingFromRequest(r, client)
+		ra := getAccountingRecord(r, organization, username)
 		err = object.AddRadiusAccounting(ra)
 	case rfc2866.AcctStatusType_Value_InterimUpdate, rfc2866.AcctStatusType_Value_Stop:
 		// Interim update to an accounting session | Stop an accounting session
-		var (
-			newRa = getClientAccountingFromRequest(r, client)
-			oldRa *object.RadiusAccounting
-		)
-		oldRa, err = object.GetRadiusAccountingBySessionId(newRa.AcctSessionId)
+		newRa := getAccountingRecord(r, organization, username)
+		stop := statusType == rfc2866.AcctStatusType_Value_Stop
+		if newRa.AcctSessionId == "" {
+			err = fmt.Errorf("missing Acct-Session-Id")
+			return
+		}
+		var oldRa *object.RadiusAccounting
+		oldRa, err = object.GetRadiusAccountingBySessionId(newRa.Owner, newRa.AcctSessionId)
 		if err != nil {
 			return
 		}
 		if oldRa == nil {
-			if err = object.AddRadiusAccounting(newRa); err != nil {
-				return
+			if stop {
+				newRa.AcctStopTime = time.Now()
 			}
+			err = object.AddRadiusAccounting(newRa)
+			return
 		}
-		stop := statusType == rfc2866.AcctStatusType_Value_Stop
 		err = object.InterimUpdateRadiusAccounting(oldRa, newRa, stop)
 	case rfc2866.AcctStatusType_Value_AccountingOn, rfc2866.AcctStatusType_Value_AccountingOff:
 		// By default, no Accounting-On or Accounting-Off messages are sent (no acct-on-off).
@@ -331,10 +341,9 @@ func getRadiusClientName(client *object.RadiusClient) string {
 	return client.Name
 }
 
-func getClientAccountingFromRequest(r *radius.Request, client *object.RadiusClient) *object.RadiusAccounting {
+func getAccountingRecord(r *radius.Request, organization string, username string) *object.RadiusAccounting {
 	ra := GetAccountingFromRequest(r)
-	if client != nil && client.Organization != "" {
-		ra.Owner = client.Organization
-	}
+	ra.Owner = organization
+	ra.Username = username
 	return ra
 }

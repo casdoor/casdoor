@@ -76,8 +76,12 @@ func GetRadiusAccounting(id string) (*RadiusAccounting, error) {
 	return getRadiusAccounting(owner, name)
 }
 
-func GetRadiusAccountingBySessionId(sessionId string) (*RadiusAccounting, error) {
-	ras, err := getPaginationRadiusAccounting("", "acct_session_id", sessionId, "created_time", "desc", 0, 1)
+func GetRadiusAccountingBySessionId(owner string, sessionId string) (*RadiusAccounting, error) {
+	if sessionId == "" {
+		return nil, nil
+	}
+	ras := []*RadiusAccounting{}
+	err := ormer.Engine.Where("owner = ? and acct_session_id = ?", owner, sessionId).Desc("created_time").Limit(1).Find(&ras)
 	if err != nil {
 		return nil, err
 	}
@@ -107,6 +111,12 @@ func UpdateRadiusAccounting(id string, ra *RadiusAccounting) error {
 }
 
 func InterimUpdateRadiusAccounting(oldRa *RadiusAccounting, newRa *RadiusAccounting, stop bool) error {
+	if oldRa == nil || newRa == nil {
+		return fmt.Errorf("radius accounting session not found")
+	}
+	if oldRa.Owner != newRa.Owner {
+		return fmt.Errorf("radius accounting owner is not equal, newRa = %s, oldRa = %s", newRa.Owner, oldRa.Owner)
+	}
 	if oldRa.AcctSessionId != newRa.AcctSessionId {
 		return fmt.Errorf("AcctSessionId is not equal, newRa = %s, oldRa = %s", newRa.AcctSessionId, oldRa.AcctSessionId)
 	}
