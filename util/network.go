@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"net"
 	"net/http"
+	"net/netip"
 	"net/url"
 	"os"
 	"strings"
@@ -35,31 +36,40 @@ func GetHostname() string {
 }
 
 func IsInternetIp(ip string) bool {
-	ipStr, _, err := net.SplitHostPort(ip)
-	if err != nil {
-		ipStr = ip
-	}
-
-	parsedIP := net.ParseIP(ipStr)
-	if parsedIP == nil {
+	addr, ok := parseAddr(ip)
+	if !ok {
 		return false
 	}
 
-	return !parsedIP.IsPrivate() && !parsedIP.IsLoopback() && !parsedIP.IsMulticast() && !parsedIP.IsUnspecified()
+	return !addr.IsPrivate() && !addr.IsLoopback() && !addr.IsMulticast() && !addr.IsUnspecified()
 }
 
 func IsHostIntranet(ip string) bool {
-	ipStr, _, err := net.SplitHostPort(ip)
-	if err != nil {
-		ipStr = ip
-	}
-
-	parsedIP := net.ParseIP(ipStr)
-	if parsedIP == nil {
+	addr, ok := parseAddr(ip)
+	if !ok {
 		return false
 	}
 
-	return parsedIP.IsPrivate() || parsedIP.IsLoopback() || parsedIP.IsLinkLocalUnicast() || parsedIP.IsLinkLocalMulticast()
+	return addr.IsPrivate() || addr.IsLoopback() || addr.IsLinkLocalUnicast() || addr.IsLinkLocalMulticast()
+}
+
+func parseAddr(address string) (netip.Addr, bool) {
+	host, _, err := net.SplitHostPort(address)
+	if err != nil {
+		host = address
+	}
+
+	addr, err := netip.ParseAddr(strings.Trim(host, "[]"))
+	if err != nil {
+		return netip.Addr{}, false
+	}
+
+	addr = addr.WithZone("").Unmap()
+	if nat64Prefix.Contains(addr) {
+		b := addr.As16()
+		addr = netip.AddrFrom4([4]byte{b[12], b[13], b[14], b[15]})
+	}
+	return addr, true
 }
 
 // IsCredentialedOrigin reports whether the browser origin may act with the Casdoor session cookie,
@@ -104,7 +114,39 @@ func NewInternetOnlyHttpClient(timeout time.Duration) *http.Client {
 }
 
 func isNonInternetAddress(address string) bool {
-	return IsHostIntranet(address) || isUnspecifiedIp(address) || isSharedAddressSpaceIp(address)
+	addr, ok := parseAddr(address)
+	return !ok || isNonInternetAddr(addr)
+}
+
+var nat64Prefix = netip.MustParsePrefix("64:ff9b::/96")
+
+var nonLocalBlockedPrefixes = []netip.Prefix{
+	netip.MustParsePrefix("0.0.0.0/8"),
+	netip.MustParsePrefix("100.64.0.0/10"),
+}
+
+var nonInternetPrefixes = append([]netip.Prefix{
+	netip.MustParsePrefix("192.0.0.0/24"),
+	netip.MustParsePrefix("198.18.0.0/15"),
+	netip.MustParsePrefix("240.0.0.0/4"),
+	netip.MustParsePrefix("fec0::/10"),
+}, nonLocalBlockedPrefixes...)
+
+func isInPrefixes(addr netip.Addr, prefixes []netip.Prefix) bool {
+	for _, prefix := range prefixes {
+		if prefix.Contains(addr) {
+			return true
+		}
+	}
+	return false
+}
+
+func isLocalAddr(addr netip.Addr) bool {
+	return addr.IsLoopback() || addr.IsLinkLocalUnicast() || addr.IsLinkLocalMulticast() || addr.IsInterfaceLocalMulticast() || addr.IsUnspecified() || isInPrefixes(addr, nonLocalBlockedPrefixes)
+}
+
+func isNonInternetAddr(addr netip.Addr) bool {
+	return isLocalAddr(addr) || addr.IsPrivate() || addr.IsMulticast() || isInPrefixes(addr, nonInternetPrefixes)
 }
 
 // CheckInternetHost refuses a host (a hostname, "host:port" or URL) that resolves to an address
@@ -140,8 +182,8 @@ func CheckInternetHost(host string) error {
 
 func NewNonLocalHttpTransport(timeout time.Duration) *http.Transport {
 	isRefused := func(address string) bool {
-		ip := parseDialIp(address)
-		return ip != nil && (ip.IsLoopback() || ip.IsLinkLocalUnicast() || ip.IsLinkLocalMulticast() || ip.IsUnspecified() || isSharedAddressSpaceIp(address))
+		addr, ok := parseAddr(address)
+		return !ok || isLocalAddr(addr)
 	}
 
 	return newRestrictedHttpTransport(timeout, isRefused, "loopback, link-local and metadata addresses cannot be requested")
@@ -163,31 +205,6 @@ func newRestrictedHttpTransport(timeout time.Duration, isRefused func(address st
 		Proxy:       nil,
 		DialContext: dialer.DialContext,
 	}
-}
-
-func parseDialIp(address string) net.IP {
-	host, _, err := net.SplitHostPort(address)
-	if err != nil {
-		host = address
-	}
-	return net.ParseIP(host)
-}
-
-var sharedAddressSpace = &net.IPNet{IP: net.IPv4(100, 64, 0, 0), Mask: net.CIDRMask(10, 32)}
-
-func isSharedAddressSpaceIp(address string) bool {
-	ip := parseDialIp(address)
-	return ip != nil && sharedAddressSpace.Contains(ip)
-}
-
-func isUnspecifiedIp(address string) bool {
-	host, _, err := net.SplitHostPort(address)
-	if err != nil {
-		host = address
-	}
-
-	parsedIP := net.ParseIP(host)
-	return parsedIP != nil && parsedIP.IsUnspecified()
 }
 
 func ResolveDomainToIp(domain string) string {
@@ -226,18 +243,13 @@ func PingUrl(url string) (bool, string) {
 }
 
 func IsIntranetIp(ip string) bool {
-	ipStr, _, err := net.SplitHostPort(ip)
-	if err != nil {
-		ipStr = ip
-	}
-
-	parsedIP := net.ParseIP(ipStr)
-	if parsedIP == nil {
+	addr, ok := parseAddr(ip)
+	if !ok {
 		return false
 	}
 
-	return parsedIP.IsPrivate() ||
-		parsedIP.IsLoopback() ||
-		parsedIP.IsLinkLocalUnicast() ||
-		parsedIP.IsLinkLocalMulticast()
+	return addr.IsPrivate() ||
+		addr.IsLoopback() ||
+		addr.IsLinkLocalUnicast() ||
+		addr.IsLinkLocalMulticast()
 }
