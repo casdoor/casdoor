@@ -144,6 +144,8 @@ export const EditionFeatures: EditionFeature[] = [
     stop: marketplace("edition=Enterprise&q=verification")},
   {id: "form-fill", edition: "Enterprise", category: "edition:Enterprise connections", name: "edition:Legacy system form autofill", description: "edition:Legacy system form autofill - Description",
     stop: app("form-fill", "application:Form autofill", "application:Enable form autofill")},
+  {id: "pam", edition: "Enterprise", category: "edition:Administration and audit", name: "edition:Privileged account management", description: "edition:Privileged account management - Description",
+    stop: {path: "/privileged-accounts"}},
 ];
 
 export function getEditionFeatures(edition: PaidEdition): EditionFeature[] {

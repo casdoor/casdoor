@@ -91,9 +91,11 @@ export function getNavGroups(account: Account | null | undefined): NavGroup[] {
       {key: "/models", label: i18next.t("general:Models")},
       {key: "/adapters", label: i18next.t("general:Adapters")},
       {key: "/enforcers", label: i18next.t("general:Enforcers")},
+      {key: "/privileged-accounts", label: i18next.t("pam:Privileged accounts")},
+      {key: "/privileged-access", label: i18next.t("pam:Privileged access")},
     ].filter(
       (item) =>
-        Setting.isLocalAdminUser(account) || !["/models", "/adapters", "/enforcers"].includes(item.key),
+        Setting.isLocalAdminUser(account) || !["/models", "/adapters", "/enforcers", "/privileged-accounts"].includes(item.key),
     ),
   });
 

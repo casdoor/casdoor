@@ -93,6 +93,7 @@ func runServer() {
 	object.InitExpirePermissions()
 	object.InitUpdateSubscriptionStates()
 	object.InitSecurityPolicyJobs()
+	object.InitPrivilegedAccessJobs()
 	tracing.Init()
 
 	object.InitSiteMap()

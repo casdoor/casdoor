@@ -66,6 +66,8 @@ function getNavItemNodes(): TreeNode[] {
             {key: "/models", title: i18next.t("general:Models")},
             {key: "/adapters", title: i18next.t("general:Adapters")},
             {key: "/enforcers", title: i18next.t("general:Enforcers")},
+            {key: "/privileged-accounts", title: i18next.t("pam:Privileged accounts")},
+            {key: "/privileged-access", title: i18next.t("pam:Privileged access")},
           ],
         },
         {

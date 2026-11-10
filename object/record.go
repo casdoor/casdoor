@@ -60,6 +60,8 @@ var alwaysLoggedActions = map[string]bool{
 	"sso-logout": true,
 	// handing out the password of a managed account
 	"get-form-fill-account": true,
+	// handing out the password of a privileged account
+	"reveal-privileged-password": true,
 }
 
 func init() {

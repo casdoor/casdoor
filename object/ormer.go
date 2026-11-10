@@ -587,4 +587,14 @@ func (a *Ormer) createTable() {
 	if err != nil {
 		panic(err)
 	}
+
+	err = a.Engine.Sync2(new(PrivilegedAccount))
+	if err != nil {
+		panic(err)
+	}
+
+	err = a.Engine.Sync2(new(PrivilegedRequest))
+	if err != nil {
+		panic(err)
+	}
 }

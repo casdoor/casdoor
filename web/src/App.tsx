@@ -121,6 +121,9 @@ const WebhookEventListPage = React.lazy(() => import("@/pages/WebhookEventListPa
 const TicketListPage = React.lazy(() => import("@/pages/TicketListPage"));
 const RadiusClientListPage = React.lazy(() => import("@/pages/RadiusClientListPage"));
 const RadiusClientEditPage = React.lazy(() => import("@/pages/RadiusClientEditPage"));
+const PrivilegedAccountListPage = React.lazy(() => import("@/pages/PrivilegedAccountListPage"));
+const PrivilegedAccountEditPage = React.lazy(() => import("@/pages/PrivilegedAccountEditPage"));
+const PrivilegedAccessPage = React.lazy(() => import("@/pages/PrivilegedAccessPage"));
 const TicketEditPage = React.lazy(() => import("@/pages/TicketEditPage"));
 const LdapEditPage = React.lazy(() => import("@/pages/LdapEditPage"));
 const LdapSyncPage = React.lazy(() => import("@/pages/LdapSyncPage"));
@@ -316,6 +319,9 @@ export default function App() {
           <Route path="/adapters/:organizationName/:adapterName" element={<AdapterEditPage />} />
           <Route path="/enforcers" element={<EnforcerListPage />} />
           <Route path="/enforcers/:organizationName/:enforcerName" element={<EnforcerEditPage />} />
+          <Route path="/privileged-accounts" element={<PrivilegedAccountListPage />} />
+          <Route path="/privileged-accounts/:organizationName/:accountName" element={<PrivilegedAccountEditPage />} />
+          <Route path="/privileged-access" element={<PrivilegedAccessPage />} />
 
           <Route path="/agents" element={<AgentListPage />} />
           <Route path="/agents/:organizationName/:agentName" element={<AgentEditPage />} />

@@ -177,13 +177,15 @@ func (e *AdminDutyError) Error() string {
 
 var auditApiKeywords = []string{"record", "consent-log", "security-overview"}
 
-var securityApiObjects = []string{"permission", "permissions", "role", "roles", "model", "models", "enforcer", "enforcers", "adapter", "adapters", "cert", "certs"}
+var securityApiObjects = []string{"permission", "permissions", "role", "roles", "model", "models", "enforcer", "enforcers", "adapter", "adapters", "cert", "certs", "privileged-account", "privileged-accounts"}
 
 // selfServiceApis are the APIs every admin uses on their own account, whatever their duty
 var selfServiceApis = []string{
 	"/api/login", "/api/logout", "/api/signin", "/api/signout", "/api/sso-logout", "/api/set-password", "/api/mfa/",
 	"/api/send-verification-code", "/api/verify-code", "/api/set-preferred-mfa", "/api/delete-mfa", "/api/webauthn/",
 	"/api/upload-resource", "/api/get-account", "/api/userinfo",
+	"/api/get-privileged-access", "/api/request-privileged-access", "/api/approve-privileged-request", "/api/reject-privileged-request",
+	"/api/cancel-privileged-request", "/api/return-privileged-request", "/api/reveal-privileged-password",
 }
 
 func isAuditApi(urlPath string) bool {
@@ -196,7 +198,7 @@ func isAuditApi(urlPath string) bool {
 }
 
 func isSecurityApi(urlPath string) bool {
-	if strings.Contains(urlPath, "-polic") || urlPath == "/api/rotate-cert" || urlPath == "/api/import-otp-devices" {
+	if strings.Contains(urlPath, "-polic") || urlPath == "/api/rotate-cert" || urlPath == "/api/import-otp-devices" || urlPath == "/api/rotate-privileged-account" {
 		return true
 	}
 	for _, prefix := range []string{"/api/add-", "/api/update-", "/api/delete-"} {

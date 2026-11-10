@@ -97,6 +97,13 @@ p, *, *, GET, /api/get-mcp-records, *, *
 p, *, *, GET, /api/get-form-fill-sites, *, *
 p, *, *, GET, /api/get-form-fill-account, *, *
 p, *, *, POST, /api/save-form-fill-account, *, *
+p, *, *, GET, /api/get-privileged-access, *, *
+p, *, *, POST, /api/request-privileged-access, *, *
+p, *, *, POST, /api/approve-privileged-request, *, *
+p, *, *, POST, /api/reject-privileged-request, *, *
+p, *, *, POST, /api/cancel-privileged-request, *, *
+p, *, *, POST, /api/return-privileged-request, *, *
+p, *, *, POST, /api/reveal-privileged-password, *, *
 p, *, *, GET, /api/export-own-data, *, *
 p, *, *, POST, /api/delete-own-account, *, *
 p, *, *, GET, /api/mfa/push/challenge, *, *
