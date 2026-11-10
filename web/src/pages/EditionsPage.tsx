@@ -117,8 +117,11 @@ function FeatureRow({feature, covered, highlighted, onTour}: {
 }
 
 function EditionSection({edition, current, highlighted}: {edition: PaidEdition; current: string | null; highlighted: string}) {
-  const features = getEditionFeatures(edition);
   const grantedFeatures = useLicenseFeatures();
+  // when the enterprise section is left out, the enterprise features the license grants on their own show here
+  const features = edition === "Commercial" && Conf.isUpgradeHidden("Enterprise")
+    ? [...getEditionFeatures(edition), ...getEditionFeatures("Enterprise").filter((feature) => grantedFeatures.includes(feature.id))]
+    : getEditionFeatures(edition);
   const tourIds = features.filter((feature) => feature.stop).map((feature) => feature.id);
   const covered = current === null || isEditionCovered(current, edition);
   const demoUrl = covered ? undefined : getEditionDemoUrl(edition, `/editions?tour=${edition.toLowerCase()}`);
