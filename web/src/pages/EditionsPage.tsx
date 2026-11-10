@@ -6,7 +6,7 @@ import {Badge} from "@/components/ui/badge";
 import {Button} from "@/components/ui/button";
 import {Card, CardContent, CardHeader} from "@/components/ui/card";
 import {PageHeader} from "@/components/crud/PageHeader";
-import {getEditionText, PricingUrl, useEdition} from "@/components/common/EditionNotice";
+import {getEditionText, PricingUrl, useEdition, useLicenseFeatures} from "@/components/common/EditionNotice";
 import {getEditionDemoUrl, startEditionTour} from "@/components/common/EditionTour";
 import {
   type EditionFeature,
@@ -117,6 +117,7 @@ function FeatureRow({feature, covered, highlighted, onTour}: {
 
 function EditionSection({edition, current, highlighted}: {edition: PaidEdition; current: string | null; highlighted: string}) {
   const features = getEditionFeatures(edition);
+  const grantedFeatures = useLicenseFeatures();
   const tourIds = features.filter((feature) => feature.stop).map((feature) => feature.id);
   const covered = current === null || isEditionCovered(current, edition);
   const demoUrl = covered ? undefined : getEditionDemoUrl(edition, `/editions?tour=${edition.toLowerCase()}`);
@@ -188,7 +189,7 @@ function EditionSection({edition, current, highlighted}: {edition: PaidEdition; 
                 <FeatureRow
                   key={feature.id}
                   feature={feature}
-                  covered={covered}
+                  covered={covered || grantedFeatures.includes(feature.id)}
                   highlighted={highlighted === feature.id}
                   onTour={() => startEditionTour(tourIds, tourIds.indexOf(feature.id))}
                 />

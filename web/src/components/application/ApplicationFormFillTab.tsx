@@ -4,7 +4,7 @@ import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Switch} from "@/components/ui/switch";
 import {TagsInput} from "@/components/common/TagsInput";
-import {EditionNotice} from "@/components/common/EditionNotice";
+import {EditionNotice, useFeatureMissing} from "@/components/common/EditionNotice";
 import {SelectField} from "@/components/common/SelectField";
 import {FormRow} from "@/components/crud/FormRow";
 import type {ApplicationTabProps} from "@/components/application/types";
@@ -64,6 +64,7 @@ function FormFillProgramCard({program, onChange, onRemove}: {program: any; onCha
 /** The "Form autofill" tab: the browser extension signs users into this legacy system by filling its sign-in form with their managed accounts. */
 export function ApplicationFormFillTab({application, updateField}: ApplicationTabProps) {
   const formFill = application.formFill ?? {};
+  const formFillMissing = useFeatureMissing("form-fill", "Enterprise");
   const set = (key: string, value: any) => updateField("formFill", {...formFill, [key]: value});
   const programs: any[] = formFill.programs ?? [];
   const setPrograms = (value: any[]) => set("programs", value);
@@ -87,7 +88,7 @@ export function ApplicationFormFillTab({application, updateField}: ApplicationTa
       </div>
       <FormRow labelKey="application:Enable form autofill">
         <Switch checked={!!formFill.enabled} onCheckedChange={(v) => set("enabled", v)} />
-        {formFill.enabled ? <EditionNotice edition="Enterprise" /> : null}
+        {formFill.enabled && formFillMissing ? <EditionNotice edition="Enterprise" /> : null}
       </FormRow>
       <FormRow labelKey="application:Sign-in page URLs">
         <TagsInput value={formFill.urls ?? []} onChange={(v) => set("urls", v)} />

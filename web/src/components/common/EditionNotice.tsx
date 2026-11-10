@@ -9,7 +9,8 @@ const ranks: Record<string, number> = {Community: 0, Commercial: 1, Enterprise: 
 
 interface LicenseInfo {
   edition: string;
-  // the features the license grants on their own, e.g. "rbac" and "abac" for a community edition license
+  // the features the license grants on their own, e.g. "rbac" and "abac" for a community edition license,
+  // or "form-fill" for a commercial edition license
   features?: string[];
   error?: string;
 }
@@ -47,10 +48,15 @@ export function useEdition(): string | null {
   return useLicenseInfo()?.edition ?? null;
 }
 
-/** Whether a commercial edition feature is missing: false until the license is known, or when the license gives the edition or grants the feature by its key. */
-export function useFeatureMissing(featureKey: string): boolean {
+/** The features the license grants on their own, by their keys. */
+export function useLicenseFeatures(): string[] {
+  return useLicenseInfo()?.features ?? [];
+}
+
+/** Whether a paid feature is missing: false until the license is known, or when the license gives the edition or grants the feature by its key. */
+export function useFeatureMissing(featureKey: string, edition = "Commercial"): boolean {
   const info = useLicenseInfo();
-  return info !== null && info.edition === "Community" && !(info.features ?? []).includes(featureKey);
+  return info !== null && (ranks[info.edition] ?? 0) < ranks[edition] && !(info.features ?? []).includes(featureKey);
 }
 
 export function getEditionText(edition: string) {

@@ -4,7 +4,7 @@ import {ArrowLeft, ArrowRight, ExternalLink, Gem, LayoutList, Sparkles, X} from 
 import {useLocation, useNavigate} from "react-router-dom";
 import * as Conf from "@/Conf";
 import {Button} from "@/components/ui/button";
-import {getEditionText, useEdition} from "@/components/common/EditionNotice";
+import {getEditionText, useEdition, useLicenseFeatures} from "@/components/common/EditionNotice";
 import {useAccount} from "@/hooks/use-account";
 import {type EditionFeature, getEditionFeature, getObjectListPath, isEditionCovered, resolveObjectPath} from "@/lib/edition-features";
 import * as Setting from "@/lib/setting";
@@ -145,6 +145,7 @@ export function EditionTour() {
   const navigate = useNavigate();
   const {account} = useAccount();
   const edition = useEdition();
+  const grantedFeatures = useLicenseFeatures();
   const [rect, setRect] = React.useState<DOMRect | null>(null);
   const [searching, setSearching] = React.useState(false);
   const pathCache = React.useRef<Record<string, string>>({});
@@ -247,7 +248,7 @@ export function EditionTour() {
 
   const total = state.features.length;
   const isLast = state.index === total - 1;
-  const covered = edition === null || isEditionCovered(edition, feature.edition);
+  const covered = edition === null || isEditionCovered(edition, feature.edition) || grantedFeatures.includes(feature.id);
   const demoUrl = covered ? undefined : getEditionDemoUrl(feature.edition, `/editions?tour=${feature.id}`);
   const go = (index: number) => writeState({...state, index});
 

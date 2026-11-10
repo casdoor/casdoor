@@ -75,10 +75,12 @@ const (
 )
 
 // The features that a license can also grant on their own, without the edition they belong to, by these keys in its
-// "features", e.g. a community edition license with "features": ["rbac", "abac"]
+// "features", e.g. a community edition license with "features": ["rbac", "abac"], or a commercial edition license
+// with "features": ["form-fill"]
 var featureKeys = map[string]string{
-	FeatureRbac: "rbac",
-	FeatureAbac: "abac",
+	FeatureRbac:     "rbac",
+	FeatureAbac:     "abac",
+	FeatureFormFill: "form-fill",
 }
 
 var ranks = map[string]int{
