@@ -32,6 +32,28 @@ var langMap = make(map[string]map[string]map[string]string) // for example : lan
 
 func init() {
 	enableErrorMask = conf.GetConfigBool("enableErrorMask")
+	loadLangMap()
+}
+
+func loadLangMap() {
+	entries, err := f.ReadDir("locales")
+	if err != nil {
+		panic(err)
+	}
+
+	for _, entry := range entries {
+		file, err := f.ReadFile(fmt.Sprintf("locales/%s/data.json", entry.Name()))
+		if err != nil {
+			panic(err)
+		}
+
+		data := I18nData{}
+		err = util.JsonToStruct(string(file), &data)
+		if err != nil {
+			panic(err)
+		}
+		langMap[entry.Name()] = data
+	}
 }
 
 func getI18nFilePath(category string, language string) string {
@@ -98,28 +120,12 @@ func Translate(language string, errorText string) string {
 		return fmt.Sprintf("Translate error: the error text doesn't contain \":\", errorText = %s", errorText)
 	}
 
-	if langMap[language] == nil {
-		file, err := f.ReadFile(fmt.Sprintf("locales/%s/data.json", language))
-		if err != nil {
-			originalLanguage := language
-			language = "en"
-			file, err = f.ReadFile(fmt.Sprintf("locales/%s/data.json", language))
-			if err != nil {
-				return fmt.Sprintf("Translate error: the language \"%s\" is not supported, err = %s", originalLanguage, err.Error())
-			}
-		}
-
-		if langMap[language] == nil {
-			data := I18nData{}
-			err = util.JsonToStruct(string(file), &data)
-			if err != nil {
-				panic(err)
-			}
-			langMap[language] = data
-		}
+	lang, ok := langMap[language]
+	if !ok {
+		lang = langMap["en"]
 	}
 
-	res := langMap[language][tokens[0]][tokens[1]]
+	res := lang[tokens[0]][tokens[1]]
 	if res == "" {
 		res = tokens[1]
 	}
