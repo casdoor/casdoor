@@ -174,7 +174,7 @@ func runServer() {
 		service.Start()
 	}
 
-	tlsserver.Start(port, routers.BasePathMiddleware)
+	tlsserver.Start(port, routers.RequestPathMiddleware)
 
-	web.RunWithMiddleWares(fmt.Sprintf(":%v", port), routers.BasePathMiddleware)
+	web.RunWithMiddleWares(fmt.Sprintf(":%v", port), routers.RequestPathMiddleware)
 }

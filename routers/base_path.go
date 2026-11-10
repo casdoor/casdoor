@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"html"
 	"net/http"
+	"path"
 	"regexp"
 	"strings"
 
@@ -29,15 +30,13 @@ var (
 	reRootRelativeUrl = regexp.MustCompile(`\b(src|href|data-casdoor-local)="/([^/"])`)
 )
 
-// BasePathMiddleware lets Casdoor run under a path like "https://example.com/casdoor": the prefix is removed before
-// routing, so it works both when the reverse proxy keeps the prefix and when it strips it
-func BasePathMiddleware(next http.Handler) http.Handler {
-	if basePath == "" {
-		return next
-	}
-
+// RequestPathMiddleware cleans the request path, so the filters see the same path as the router. It also lets Casdoor
+// run under a path like "https://example.com/casdoor": the prefix is removed before routing, so it works both when the
+// reverse proxy keeps the prefix and when it strips it
+func RequestPathMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path == basePath || strings.HasPrefix(r.URL.Path, basePath+"/") {
+		cleanRequestPath(r)
+		if basePath != "" && (r.URL.Path == basePath || strings.HasPrefix(r.URL.Path, basePath+"/")) {
 			r.URL.Path = strings.TrimPrefix(r.URL.Path, basePath)
 			if r.URL.Path == "" {
 				r.URL.Path = "/"
@@ -52,6 +51,25 @@ func BasePathMiddleware(next http.Handler) http.Handler {
 		}
 		next.ServeHTTP(w, r)
 	})
+}
+
+func cleanRequestPath(r *http.Request) {
+	urlPath := r.URL.Path
+	if !strings.HasPrefix(urlPath, "/") {
+		return
+	}
+
+	cleanPath := path.Clean(urlPath)
+	if strings.HasSuffix(urlPath, "/") && cleanPath != "/" {
+		cleanPath += "/"
+	}
+	if cleanPath == urlPath {
+		return
+	}
+
+	r.URL.Path = cleanPath
+	r.URL.RawPath = ""
+	r.RequestURI = r.URL.RequestURI()
 }
 
 // addBasePathToHtml prefixes the root-relative script, stylesheet and link URLs of a page with the base path, and
