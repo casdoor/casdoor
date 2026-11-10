@@ -160,6 +160,8 @@ func InitAPI() {
 	web.Router("/api/get-sod-conflicts", &controllers.ApiController{}, "GET:GetSodConflicts")
 	web.Router("/api/get-orphan-accounts", &controllers.ApiController{}, "GET:GetOrphanAccounts")
 	web.Router("/api/get-security-overview", &controllers.ApiController{}, "GET:GetSecurityOverview")
+	web.Router("/api/get-security-screen", &controllers.ApiController{}, "GET:GetSecurityScreen")
+	web.Router("/api/get-security-report-docx", &controllers.ApiController{}, "GET:GetSecurityReportDocx")
 	web.Router("/api/get-consent-logs", &controllers.ApiController{}, "GET:GetConsentLogs")
 	web.Router("/api/import-otp-devices", &controllers.ApiController{}, "POST:ImportOtpTokens")
 	web.Router("/api/get-form-fill-sites", &controllers.ApiController{}, "GET:GetFormFillSites")

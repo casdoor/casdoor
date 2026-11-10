@@ -127,6 +127,10 @@ export const EditionFeatures: EditionFeature[] = [
     stop: compliance("report", "enterprise:MLPS checklist")},
   {id: "security-overview", edition: "Enterprise", category: "edition:Governance and compliance", name: "edition:Security overview and monthly report", description: "edition:Security overview and monthly report - Description",
     stop: compliance("security", "enterprise:Security overview")},
+  {id: "security-screen", edition: "Enterprise", category: "edition:Governance and compliance", name: "edition:Security situation screen", description: "edition:Security situation screen - Description",
+    stop: {path: "/compliance", tab: "security", tabLabel: "enterprise:Security overview", target: "[data-tour='security-screen']"}},
+  {id: "security-report-word", edition: "Enterprise", category: "edition:Governance and compliance", name: "edition:Security report in Word", description: "edition:Security report in Word - Description",
+    stop: {path: "/compliance", tab: "security", tabLabel: "enterprise:Security overview", target: "[data-tour='security-report-word']"}},
   {id: "posture-score", edition: "Enterprise", category: "edition:Governance and compliance", name: "edition:Security score", description: "edition:Security score - Description",
     stop: {path: "/", target: "[data-tour='edition-hero']"}},
 

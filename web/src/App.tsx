@@ -32,6 +32,7 @@ const AccountPage = React.lazy(() => import("@/pages/AccountPage"));
 const MfaSetupPage = React.lazy(() => import("@/pages/auth/MfaSetupPage"));
 const SystemInfoPage = React.lazy(() => import("@/pages/SystemInfoPage"));
 const CompliancePage = React.lazy(() => import("@/pages/CompliancePage"));
+const SecurityScreenPage = React.lazy(() => import("@/pages/SecurityScreenPage"));
 const EditionsPage = React.lazy(() => import("@/pages/EditionsPage"));
 const SettingEditPage = React.lazy(() => import("@/pages/SettingEditPage"));
 
@@ -258,6 +259,9 @@ export default function App() {
         <Route path="/buy-plan/:owner/:pricingName/result" element={<PaymentResultPage />} />
         <Route path="/qrcode/:owner/:paymentName" element={<QrCodePage />} />
         <Route path="/marketplace/theme-preview" element={<ThemePreviewPage />} />
+
+        {/* A wall display, full screen without the console chrome */}
+        <Route path="/compliance/screen" element={<RequireAuth><RequireConsoleAccess><SecurityScreenPage /></RequireConsoleAccess></RequireAuth>} />
 
         {/* Console */}
         <Route

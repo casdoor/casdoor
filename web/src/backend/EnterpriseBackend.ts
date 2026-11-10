@@ -54,3 +54,21 @@ export function importOtpDevices(owner: string, tokens: string, assignments: str
     headers: {"Accept-Language": Setting.getAcceptLanguage()},
   }).then(res => res.json());
 }
+
+export function getSecurityScreen(owner: string) {
+  return get(`/api/get-security-screen?owner=${encodeURIComponent(owner)}`);
+}
+
+/** Downloads the security report as a .docx, or returns the JSON error the server sent instead. */
+export async function getSecurityReportDocx(owner: string, days: number, month = ""): Promise<{status: string; msg?: string; blob?: Blob; fileName?: string}> {
+  const res = await fetch(`${Setting.ServerUrl}/api/get-security-report-docx?owner=${encodeURIComponent(owner)}&days=${days}&month=${month}`, {
+    method: "GET",
+    credentials: "include",
+    headers: {"Accept-Language": Setting.getAcceptLanguage()},
+  });
+  if ((res.headers.get("Content-Type") ?? "").includes("json")) {
+    return res.json();
+  }
+  const fileName = /filename="?([^";]+)"?/.exec(res.headers.get("Content-Disposition") ?? "")?.[1] ?? "security-report.docx";
+  return {status: "ok", blob: await res.blob(), fileName};
+}

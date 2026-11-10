@@ -16,6 +16,7 @@ package object
 
 import (
 	"fmt"
+	"sort"
 	"strings"
 	"sync"
 	"time"
@@ -108,6 +109,23 @@ func CheckCredentialStuffing(organization string, clientIp string, lang string) 
 		return newSigninError(SigninReasonAccountFrozen, fmt.Sprintf(i18n.Translate(lang, "check:Too many accounts failed to sign in from your IP address, please wait for %d minutes and try again"), minutes))
 	}
 	return nil
+}
+
+// GetCredentialStuffingBlockedIps lists the IPs that are blocked from signing in to the organization right now
+func GetCredentialStuffingBlockedIps(organization string) []string {
+	stuffingLock.Lock()
+	defer stuffingLock.Unlock()
+
+	res := []string{}
+	now := time.Now()
+	prefix := organization + "/"
+	for key, record := range stuffingRecords {
+		if strings.HasPrefix(key, prefix) && now.Before(record.blockedUntil) {
+			res = append(res, strings.TrimPrefix(key, prefix))
+		}
+	}
+	sort.Strings(res)
+	return res
 }
 
 // RecordCredentialStuffingFailure counts the distinct accounts that fail to sign in from an IP, and blocks the IP

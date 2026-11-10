@@ -257,7 +257,7 @@ func countDashboardSignins(res *DashboardSecurity, owner string, now time.Time) 
 		session := ormer.Engine.Table(getDashboardTable("record")).Cols("created_time").
 			Where("created_time >= ?", start.Format(time.RFC3339)).And("action = ?", "login")
 		if failed {
-			session = session.And("response LIKE ?", `%"status":"error"%`)
+			session = session.And("(response LIKE ? OR response LIKE ?)", `{status:"error"%`, `%"status":"error"%`)
 		}
 		if owner != "" {
 			session = session.And("organization = ?", owner)

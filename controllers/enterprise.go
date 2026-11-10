@@ -143,6 +143,42 @@ func (c *ApiController) GetOrphanAccounts() {
 	c.ResponseOk(accounts)
 }
 
+// getSecurityPeriod reads the period of a security overview or report from the query: a month such as 2026-10, a
+// range "from" and "to" of dates such as 2026-10-01 (both included), or the last "days" (7 by default)
+func (c *ApiController) getSecurityPeriod() (time.Time, time.Time, bool, error) {
+	if month := c.Ctx.Input.Query("month"); month != "" {
+		start, err := time.ParseInLocation("2006-01", month, time.Local)
+		if err != nil {
+			return time.Time{}, time.Time{}, false, fmt.Errorf("the month: %s is not like 2026-10", month)
+		}
+		return start, start.AddDate(0, 1, 0), true, nil
+	}
+
+	if fromDate, toDate := c.Ctx.Input.Query("from"), c.Ctx.Input.Query("to"); fromDate != "" || toDate != "" {
+		from, err := time.ParseInLocation("2006-01-02", fromDate, time.Local)
+		if err != nil {
+			return time.Time{}, time.Time{}, false, fmt.Errorf("the date: %s is not like 2026-10-01", fromDate)
+		}
+		to, err := time.ParseInLocation("2006-01-02", toDate, time.Local)
+		if err != nil {
+			return time.Time{}, time.Time{}, false, fmt.Errorf("the date: %s is not like 2026-10-01", toDate)
+		}
+		to = to.AddDate(0, 0, 1)
+		if !to.After(from) || to.Sub(from) > 366*24*time.Hour {
+			return time.Time{}, time.Time{}, false, fmt.Errorf("the period from %s to %s is not between 1 and 366 days", fromDate, toDate)
+		}
+		return from, to, false, nil
+	}
+
+	now := time.Now()
+	days := util.ParseInt(c.Ctx.Input.Query("days"))
+	if days <= 0 || days > 90 {
+		days = 7
+	}
+	today := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.Local)
+	return today.AddDate(0, 0, 1-days), today.AddDate(0, 0, 1), false, nil
+}
+
 // GetSecurityOverview
 // @Title GetSecurityOverview
 // @Tag Enterprise API
@@ -150,6 +186,8 @@ func (c *ApiController) GetOrphanAccounts() {
 // @Param   owner     query    string  true        "The organization"
 // @Param   days      query    int     false       "The last days, 7 by default"
 // @Param   month     query    string  false       "A month such as 2026-10, for the monthly report"
+// @Param   from      query    string  false       "The first day of a custom period, such as 2026-10-01"
+// @Param   to        query    string  false       "The last day of a custom period, such as 2026-10-31"
 // @Success 200 {object} object.SecurityOverview The Response object
 // @router /get-security-overview [get]
 func (c *ApiController) GetSecurityOverview() {
@@ -158,22 +196,10 @@ func (c *ApiController) GetSecurityOverview() {
 		return
 	}
 
-	now := time.Now()
-	var from, to time.Time
-	if month := c.Ctx.Input.Query("month"); month != "" {
-		start, err := time.ParseInLocation("2006-01", month, time.Local)
-		if err != nil {
-			c.ResponseError(fmt.Sprintf("the month: %s is not like 2026-10", month))
-			return
-		}
-		from, to = start, start.AddDate(0, 1, 0)
-	} else {
-		days := util.ParseInt(c.Ctx.Input.Query("days"))
-		if days <= 0 || days > 90 {
-			days = 7
-		}
-		today := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.Local)
-		from, to = today.AddDate(0, 0, 1-days), today.AddDate(0, 0, 1)
+	from, to, _, err := c.getSecurityPeriod()
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
 	}
 
 	overview, err := object.GetSecurityOverview(owner, from, to)
@@ -182,6 +208,58 @@ func (c *ApiController) GetSecurityOverview() {
 		return
 	}
 	c.ResponseOk(overview)
+}
+
+// GetSecurityScreen
+// @Title GetSecurityScreen
+// @Tag Enterprise API
+// @Description get what the security situation screen of an organization shows
+// @Param   owner     query    string  true        "The organization"
+// @Success 200 {object} object.SecurityScreen The Response object
+// @router /get-security-screen [get]
+func (c *ApiController) GetSecurityScreen() {
+	owner, ok := c.requireEnterpriseAdmin(edition.FeatureSecurityOverview)
+	if !ok {
+		return
+	}
+	screen, err := object.GetSecurityScreen(owner)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	c.ResponseOk(screen)
+}
+
+// GetSecurityReportDocx
+// @Title GetSecurityReportDocx
+// @Tag Enterprise API
+// @Description download the security report of an organization for a period as a Word document
+// @Param   owner     query    string  true        "The organization"
+// @Param   month     query    string  false       "A month such as 2026-10"
+// @Param   from      query    string  false       "The first day of a custom period, such as 2026-10-01"
+// @Param   to        query    string  false       "The last day of a custom period, such as 2026-10-31"
+// @Param   days      query    int     false       "The last days, 7 by default"
+// @Success 200 {file} file The .docx file
+// @router /get-security-report-docx [get]
+func (c *ApiController) GetSecurityReportDocx() {
+	owner, ok := c.requireEnterpriseAdmin(edition.FeatureSecurityOverview)
+	if !ok {
+		return
+	}
+	from, to, isMonth, err := c.getSecurityPeriod()
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	data, fileName, err := object.GetSecurityReportDocx(owner, from, to, isMonth, c.GetAcceptLanguage())
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	c.Ctx.Output.Header("Content-Type", "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+	c.Ctx.Output.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%q", fileName))
+	_ = c.Ctx.Output.Body(data)
 }
 
 // GetConsentLogs

@@ -1,6 +1,7 @@
 import * as React from "react";
 import i18next from "i18next";
-import {Printer, ShieldCheck} from "lucide-react";
+import FileSaver from "file-saver";
+import {FileText, MonitorPlay, Printer, ShieldCheck} from "lucide-react";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import {Badge} from "@/components/ui/badge";
@@ -17,6 +18,7 @@ import {useOrganizationOptions} from "@/hooks/use-options";
 import * as EnterpriseBackend from "@/backend/EnterpriseBackend";
 import * as UserBackend from "@/backend/UserBackend";
 import * as Setting from "@/lib/setting";
+import {BasePath} from "@/lib/base-path";
 
 /** Loads one response's data, shows its error as a message, reloads when the deps change. */
 function useData<T>(load: () => Promise<any> | null, deps: React.DependencyList): [T | null, boolean, () => void] {
@@ -197,6 +199,18 @@ ${list(i18next.t("enterprise:Top failed IPs"), overview.topFailedIps)}${list(i18
 ${list(i18next.t("enterprise:Top admin operations"), overview.topActions)}${list(i18next.t("enterprise:Top admins"), overview.topAdmins)}`);
   };
 
+  const [exporting, setExporting] = React.useState(false);
+  const exportWord = async() => {
+    setExporting(true);
+    const res = await EnterpriseBackend.getSecurityReportDocx(owner, days, month);
+    setExporting(false);
+    if (res.status === "ok" && res.blob) {
+      FileSaver.saveAs(res.blob, res.fileName);
+    } else {
+      Setting.showMessage("error", res.msg ?? "");
+    }
+  };
+
   const maxDay = overview ? Math.max(1, ...overview.days.map((day: any) => day.success + day.failure)) : 1;
   return (
     <div className="space-y-4">
@@ -210,9 +224,17 @@ ${list(i18next.t("enterprise:Top admin operations"), overview.topActions)}${list
           </Button>
         ))}
         <Input type="month" className="w-44" value={month} onChange={(e) => setMonth(e.target.value)} />
-        <Button variant="outline" size="sm" className="ml-auto" disabled={!overview} onClick={print}>
+        <Button variant="outline" size="sm" className="ml-auto" data-tour="security-screen" onClick={() => window.open(`${BasePath}/compliance/screen?owner=${encodeURIComponent(owner)}`, "_blank")}>
+          <MonitorPlay className="size-4" />
+          {i18next.t("enterprise:Security screen")}
+        </Button>
+        <Button variant="outline" size="sm" disabled={!overview} onClick={print}>
           <Printer className="size-4" />
           {i18next.t(month ? "enterprise:Print monthly report" : "enterprise:Print")}
+        </Button>
+        <Button variant="outline" size="sm" data-tour="security-report-word" loading={exporting} disabled={!overview} onClick={exportWord}>
+          <FileText className="size-4" />
+          {i18next.t("enterprise:Export Word report")}
         </Button>
       </div>
       {loading || !overview ? (loading ? <Loading /> : null) : (
