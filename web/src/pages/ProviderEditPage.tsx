@@ -175,6 +175,9 @@ function getClientIdLabel(provider: any): Label {
     }
     return label(i18next.t("provider:Client ID"), i18next.t("provider:Client ID - Tooltip"));
   } else if (provider.category === "Captcha") {
+    if (provider.type === "ALTCHA") {
+      return label(i18next.t("provider:Api Key"), i18next.t("provider:Api Key - Tooltip"));
+    }
     return provider.type === "Aliyun Captcha"
       ? label(i18next.t("general:Access key"), i18next.t("general:Access key - Tooltip"))
       : label(i18next.t("provider:Site key"), i18next.t("provider:Site key - Tooltip"));
@@ -821,6 +824,9 @@ export default function ProviderEditPage() {
     } else if (value === "Aliyun Captcha") {
       // Popup stays opt-in: only Alibaba Cloud's traceless scenes require it
       patch.subType = "Embed";
+    } else if (value === "ALTCHA" && !provider.clientSecret) {
+      // the HMAC key Casdoor signs its own challenges with
+      patch.clientSecret = Array.from(crypto.getRandomValues(new Uint8Array(32)), b => b.toString(16).padStart(2, "0")).join("");
     }
     if (nameNotUserEdited) {
       patch.name = getAutoProviderName(provider.category, value, "");
@@ -1895,6 +1901,15 @@ export default function ProviderEditPage() {
       {provider.category === "Payment" ? renderPaymentFields() : null}
       {provider.category === "Storage" ? renderStorageFields() : null}
       {provider.category === "Face ID" ? renderEndpointOnlyField() : null}
+      {provider.category === "Captcha" && provider.type === "ALTCHA" ? (
+        <FormRow label={i18next.t("provider:Endpoint")} tooltip={i18next.t("provider:Endpoint - Tooltip")}>
+          <Input
+            value={provider.endpoint ?? ""}
+            placeholder="https://gatecha.example.com/api/v1"
+            onChange={(e) => updateProviderField("endpoint", e.target.value)}
+          />
+        </FormRow>
+      ) : null}
       {provider.category === "ID Verification" && provider.type === "Plugin" ? (
         <React.Fragment>
           {renderActionRow()}

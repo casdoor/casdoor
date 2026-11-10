@@ -48,6 +48,9 @@ export function CaptchaPreview({
   };
 
   const isButtonDisabled = () => {
+    if (captchaType === "ALTCHA") {
+      return provider.endpoint ? !clientId : !clientSecret;
+    }
     if (captchaType !== "Default") {
       if (!clientId || !clientSecret) {
         return true;

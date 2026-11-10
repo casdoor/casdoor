@@ -575,6 +575,10 @@ export const OtherProviderInfo = {
       logo: `${StaticBaseUrl}/img/social_cloudflare.png`,
       url: "https://www.cloudflare.com/products/turnstile/",
     },
+    "ALTCHA": {
+      logo: `${StaticBaseUrl}/img/social_altcha.svg`,
+      url: "https://altcha.org",
+    },
   },
   AI: {
     "OpenAI API - GPT": {
@@ -1704,6 +1708,7 @@ export function getProviderTypeOptions(category) {
       {id: "Aliyun Captcha", name: "Aliyun Captcha"},
       {id: "GEETEST", name: "GEETEST"},
       {id: "Cloudflare Turnstile", name: "Cloudflare Turnstile"},
+      {id: "ALTCHA", name: "ALTCHA"},
     ]);
   } else if (category === "Notification") {
     return ([

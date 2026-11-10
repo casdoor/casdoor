@@ -2171,6 +2171,13 @@ ajv@^6.12.4:
     json-schema-traverse "^0.4.1"
     uri-js "^4.2.2"
 
+altcha@3.5.0:
+  version "3.5.0"
+  resolved "https://registry.yarnpkg.com/altcha/-/altcha-3.5.0.tgz#97b32f1d0f9335d0662d7ed4587ab23ae4af8fbc"
+  integrity sha512-wBXNK1bBeWs/XTOZiyE3JQvRNECgFKYEJqcPxFW7tFd7ErG62yQmMlRasygZrza3zyNTTuon3BfMF/PcBcepcw==
+  dependencies:
+    hash-wasm "^4.12.0"
+
 ansi-colors@^4.1.1:
   version "4.1.3"
   resolved "https://registry.yarnpkg.com/ansi-colors/-/ansi-colors-4.1.3.tgz#37611340eb2243e70cc604cad35d63270d48781b"
@@ -3801,6 +3808,11 @@ has-tostringtag@^1.0.2:
   integrity sha512-NqADB8VjPFLM2V0VvHUewwwsw0ZWBaIdgo+ieHtK3hasLz4qeCRjYcqfB6AQrBggRKppKF8L52/VqdVsO47Dlw==
   dependencies:
     has-symbols "^1.0.3"
+
+hash-wasm@^4.12.0:
+  version "4.13.0"
+  resolved "https://registry.yarnpkg.com/hash-wasm/-/hash-wasm-4.13.0.tgz#714d58df2b630385ec6286833095b871e8d7e90e"
+  integrity sha512-GrWl7wsV46fKIXQZB5ebskLZLAmKL6d9RS0fspCxDeQyjoNu1AfTJTMLPOJyfzaQm0ldFiwFN21/w+sE/kgEFQ==
 
 hasown@^2.0.2, hasown@^2.0.3, hasown@^2.0.4:
   version "2.0.4"

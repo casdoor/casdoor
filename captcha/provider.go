@@ -20,7 +20,7 @@ type CaptchaProvider interface {
 	VerifyCaptcha(token, clientId, clientSecret, clientId2 string) (bool, error)
 }
 
-func GetCaptchaProvider(captchaType string) CaptchaProvider {
+func GetCaptchaProvider(captchaType string, endpoint string) CaptchaProvider {
 	switch captchaType {
 	case "Default":
 		return NewDefaultCaptchaProvider()
@@ -38,13 +38,15 @@ func GetCaptchaProvider(captchaType string) CaptchaProvider {
 		return NewGEETESTCaptchaProvider()
 	case "Cloudflare Turnstile":
 		return NewCloudflareTurnstileProvider()
+	case "ALTCHA":
+		return NewAltchaProvider(endpoint)
 	}
 
 	return nil
 }
 
-func VerifyCaptchaByCaptchaType(captchaType, token, clientId, clientSecret, clientId2 string) (bool, error) {
-	provider := GetCaptchaProvider(captchaType)
+func VerifyCaptchaByCaptchaType(captchaType, endpoint, token, clientId, clientSecret, clientId2 string) (bool, error) {
+	provider := GetCaptchaProvider(captchaType, endpoint)
 	if provider == nil {
 		return false, fmt.Errorf("invalid captcha provider: %s", captchaType)
 	}

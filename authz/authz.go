@@ -111,6 +111,7 @@ p, *, *, POST, /api/delete-own-account, *, *
 p, *, *, GET, /api/mfa/push/challenge, *, *
 p, *, *, POST, /api/mfa/push/answer, *, *
 p, *, *, GET, /api/get-captcha, *, *
+p, *, *, GET, /api/get-altcha-challenge, *, *
 p, *, *, POST, /api/verify-captcha, *, *
 p, *, *, POST, /api/verify-code, *, *
 p, *, *, POST, /api/v1/traces, *, *

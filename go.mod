@@ -19,6 +19,7 @@ require (
 	github.com/aliyun/alibaba-cloud-sdk-go v1.63.107
 	github.com/aliyun/aliyun-oss-go-sdk v2.2.2+incompatible
 	github.com/aliyun/credentials-go v1.3.10
+	github.com/altcha-org/altcha-lib-go/v2 v2.4.1
 	github.com/aws/aws-sdk-go v1.45.5
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.95.0
 	github.com/beego/beego/v2 v2.3.8

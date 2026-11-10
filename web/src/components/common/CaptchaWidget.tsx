@@ -1,4 +1,5 @@
 import * as React from "react";
+import * as Setting from "@/lib/setting";
 
 interface CaptchaWidgetProps {
   captchaType: string;
@@ -7,6 +8,8 @@ interface CaptchaWidgetProps {
   clientSecret?: string;
   clientId2?: string;
   clientSecret2?: string;
+  /** ALTCHA: where the widget fetches its proof-of-work challenge */
+  challengeUrl?: string;
   onChange: (token: string) => void;
   /** a vendor overlay was closed or errored without producing a token */
   onCancel?: () => void;
@@ -34,6 +37,7 @@ export function CaptchaWidget({
   clientSecret,
   clientId2,
   clientSecret2,
+  challengeUrl,
   onChange,
   onCancel,
 }: CaptchaWidgetProps) {
@@ -210,6 +214,28 @@ export function CaptchaWidget({
       }, 300);
       break;
     }
+    case "ALTCHA": {
+      // bundled rather than loaded from a CDN, so no third party sees the visitor
+      import("altcha/i18n").then(() => {
+        const container = document.getElementById("captcha");
+        if (unmounted || !container || !challengeUrl) {
+          return;
+        }
+        const widget = document.createElement("altcha-widget");
+        widget.setAttribute("challenge", challengeUrl.startsWith("/") ? `${Setting.ServerUrl}${challengeUrl}` : challengeUrl);
+        widget.setAttribute("auto", "onload");
+        widget.addEventListener("statechange", (event: any) => {
+          if (event.detail?.state === "verified") {
+            emit(event.detail.payload);
+          } else if (event.detail?.state === "expired") {
+            emit("");
+          }
+        });
+        container.replaceChildren(widget);
+        destroyCaptcha = () => widget.remove();
+      });
+      break;
+    }
     default:
       break;
     }
@@ -224,7 +250,7 @@ export function CaptchaWidget({
       }
       destroyCaptcha?.();
     };
-  }, [captchaType, subType, siteKey, clientSecret, clientId2, clientSecret2]);
+  }, [captchaType, subType, siteKey, clientSecret, clientId2, clientSecret2, challengeUrl]);
 
   return (
     <React.Fragment>

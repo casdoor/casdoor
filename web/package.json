@@ -39,6 +39,7 @@
     "@uiw/codemirror-extensions-langs": "^4.23.8",
     "@uiw/codemirror-theme-material": "^4.23.8",
     "@uiw/react-codemirror": "^4.23.8",
+    "altcha": "^3.5.0",
     "buffer": "^6.0.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

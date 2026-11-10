@@ -327,7 +327,7 @@ func (c *ApiController) SendVerificationCode() {
 			}
 
 			if vform.CaptchaType != "none" {
-				if captchaService := captcha.GetCaptchaProvider(vform.CaptchaType); captchaService == nil {
+				if captchaService := captcha.GetCaptchaProvider(vform.CaptchaType, captchaProvider.Endpoint); captchaService == nil {
 					c.ResponseError(c.T("general:don't support captchaProvider: ") + vform.CaptchaType)
 					return
 				} else if isHuman, err := captchaService.VerifyCaptcha(vform.CaptchaToken, captchaProvider.ClientId, vform.ClientSecret, captchaProvider.ClientId2); err != nil {
@@ -566,7 +566,7 @@ func (c *ApiController) VerifyCaptcha() {
 		vform.ClientSecret = captchaProvider.ClientSecret
 	}
 
-	provider := captcha.GetCaptchaProvider(vform.CaptchaType)
+	provider := captcha.GetCaptchaProvider(vform.CaptchaType, captchaProvider.Endpoint)
 	if provider == nil {
 		c.ResponseError(c.T("verification:Invalid captcha provider."))
 		return

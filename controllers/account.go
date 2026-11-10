@@ -24,6 +24,7 @@ import (
 	"time"
 
 	"github.com/beego/beego/v2/core/logs"
+	"github.com/casdoor/casdoor/captcha"
 	"github.com/casdoor/casdoor/form"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
@@ -63,6 +64,7 @@ type Captcha struct {
 	ClientId2     string `json:"clientId2"`
 	ClientSecret2 string `json:"clientSecret2"`
 	SubType       string `json:"subType"`
+	ChallengeUrl  string `json:"challengeUrl,omitempty"`
 }
 
 // this API is used by "Api URL" of Flarum's FoF Passport plugin
@@ -955,6 +957,19 @@ func (c *ApiController) GetCaptcha() {
 
 			c.ResponseOk(Captcha{Owner: captchaProvider.Owner, Name: captchaProvider.Name, Type: captchaProvider.Type, CaptchaId: id, CaptchaImage: img})
 			return
+		} else if captchaProvider.Type == "ALTCHA" {
+			challengeUrl := "/api/get-altcha-challenge?id=" + url.QueryEscape(captchaProvider.GetId())
+			if captchaProvider.Endpoint != "" {
+				challengeUrl = captcha.GetAltchaChallengeUrl(captchaProvider.Endpoint, captchaProvider.ClientId)
+			}
+			c.ResponseOk(Captcha{
+				Owner:        captchaProvider.Owner,
+				Name:         captchaProvider.Name,
+				Type:         captchaProvider.Type,
+				ClientSecret: "***",
+				ChallengeUrl: challengeUrl,
+			})
+			return
 		} else if captchaProvider.Type != "" {
 			c.ResponseOk(Captcha{
 				Owner:         captchaProvider.Owner,
@@ -971,6 +986,37 @@ func (c *ApiController) GetCaptcha() {
 	}
 
 	c.ResponseOk(Captcha{Type: "none"})
+}
+
+// GetAltchaChallenge
+// @Tag Login API
+// @Title GetAltchaChallenge
+// @Description Get a proof-of-work challenge of an ALTCHA captcha provider that has no external server
+// @Param   id     query string true  "The id (owner/name) of the captcha provider"
+// @router /get-altcha-challenge [get]
+// @Success 200 {object} altcha.Challenge The Response object
+func (c *ApiController) GetAltchaChallenge() {
+	id := c.Ctx.Input.Query("id")
+
+	provider, err := object.GetCaptchaProviderByOwnerName(id, c.GetAcceptLanguage())
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	if provider.Type != "ALTCHA" || provider.Endpoint != "" {
+		c.ResponseError(c.T("verification:Invalid captcha provider."))
+		return
+	}
+
+	challenge, err := captcha.CreateAltchaChallenge(provider.ClientSecret)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	c.Ctx.Output.Header("Cache-Control", "no-store")
+	c.Data["json"] = challenge
+	c.ServeJSON()
 }
 
 func (c *ApiController) deleteUserSession(user string, beegoSessionId string) error {

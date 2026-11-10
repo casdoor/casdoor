@@ -433,6 +433,7 @@ func InitAPI() {
 	web.Router("/api/check-user-merge", &controllers.ApiController{}, "GET:CheckUserMerge")
 	web.Router("/api/merge-user", &controllers.ApiController{}, "POST:MergeUser")
 	web.Router("/api/get-captcha", &controllers.ApiController{}, "GET:GetCaptcha")
+	web.Router("/api/get-altcha-challenge", &controllers.ApiController{}, "GET:GetAltchaChallenge")
 	web.Router("/api/get-verifications", &controllers.ApiController{}, "GET:GetVerifications")
 
 	web.Router("/api/get-ldap-users", &controllers.ApiController{}, "GET:GetLdapUsers")

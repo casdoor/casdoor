@@ -49,6 +49,7 @@ export function CaptchaModal({
   const [subType, setSubType] = React.useState("");
   const [clientId2, setClientId2] = React.useState("");
   const [clientSecret2, setClientSecret2] = React.useState("");
+  const [challengeUrl, setChallengeUrl] = React.useState("");
 
   const [open, setOpen] = React.useState(false);
   const [captchaImg, setCaptchaImg] = React.useState("");
@@ -95,6 +96,7 @@ export function CaptchaModal({
           setSubType(res.subType);
           setClientId2(res.clientId2);
           setClientSecret2(res.clientSecret2);
+          setChallengeUrl(res.challengeUrl ?? "");
         }
       });
     },
@@ -191,6 +193,7 @@ export function CaptchaModal({
           clientSecret={clientSecret}
           clientId2={clientId2}
           clientSecret2={clientSecret2}
+          challengeUrl={challengeUrl}
           onChange={onTokenChange}
           onCancel={handleCancel}
         />

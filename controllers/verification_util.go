@@ -34,7 +34,7 @@ func verifyAuthFormCaptcha(captchaProvider *object.Provider, authForm *form.Auth
 	if captchaProvider.Type != "Default" {
 		clientSecret = captchaProvider.ClientSecret
 	}
-	return captcha.VerifyCaptchaByCaptchaType(captchaProvider.Type, authForm.CaptchaToken, captchaProvider.ClientId, clientSecret, captchaProvider.ClientId2)
+	return captcha.VerifyCaptchaByCaptchaType(captchaProvider.Type, captchaProvider.Endpoint, authForm.CaptchaToken, captchaProvider.ClientId, clientSecret, captchaProvider.ClientId2)
 }
 
 func (c *ApiController) checkOrgMasterVerificationCode(user *object.User, code string) (bool, error) {
