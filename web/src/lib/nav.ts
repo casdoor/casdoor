@@ -31,6 +31,8 @@ export interface NavGroup {
   items: NavItem[];
 }
 
+const EnterpriseOnlyPages = ["/access-reviews", "/privileged-accounts", "/privileged-access", "/compliance"];
+
 /** The console navigation, mirroring the antd ManagementPage menu. */
 export function getNavGroups(account: Account | null | undefined): NavGroup[] {
   if (!account) {
@@ -204,6 +206,13 @@ export function getNavGroups(account: Account | null | undefined): NavGroup[] {
     to: Setting.isAdminUser(account) ? "/sysinfo" : "/syncers",
     items: adminItems,
   });
+
+  // an on-premise license is not offered the pages that only the enterprise edition has
+  if (Conf.isUpgradeHidden("Enterprise")) {
+    for (const group of groups) {
+      group.items = group.items.filter((item) => !EnterpriseOnlyPages.includes(item.key));
+    }
+  }
 
   return applyNavItems(groups, account);
 }

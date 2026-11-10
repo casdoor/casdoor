@@ -10,6 +10,7 @@ import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/c
 import {Loading} from "@/components/common/Loading";
 import {PageHeader} from "@/components/crud/PageHeader";
 import * as SystemBackend from "@/backend/SystemInfo";
+import * as Conf from "@/Conf";
 import * as Setting from "@/lib/setting";
 import {getEditionText, PricingUrl} from "@/components/common/EditionNotice";
 import {EditionSwitcher, getEditionPreviewHint, isEditionPreviewEnabled} from "@/components/common/EditionPreview";
@@ -358,7 +359,7 @@ function TlsListenersCard() {
               <Alert variant="destructive">
                 <AlertDescription>
                   {listener.error}
-                  {listener.code === "edition-required" ? (
+                  {listener.code === "edition-required" && !Conf.HideUpgrades ? (
                     <>
                       {" "}
                       <a href={PricingUrl} target="_blank" rel="noreferrer" className="underline underline-offset-2">

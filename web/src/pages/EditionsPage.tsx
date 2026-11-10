@@ -16,6 +16,7 @@ import {
   isEditionCovered,
   type PaidEdition,
 } from "@/lib/edition-features";
+import * as Conf from "@/Conf";
 import {cn} from "@/lib/utils";
 
 const objectLabels: Record<string, string> = {
@@ -220,7 +221,7 @@ export default function EditionsPage() {
     const feature = getEditionFeature(tour);
     const target = edition ?? feature?.edition;
     navigate("/editions", {replace: true});
-    if (target) {
+    if (target && !Conf.isUpgradeHidden(target)) {
       const ids = getEditionFeatures(target).filter((item) => item.stop).map((item) => item.id);
       startEditionTour(ids, feature ? ids.indexOf(feature.id) : 0);
     }
@@ -244,18 +245,24 @@ export default function EditionsPage() {
                 {i18next.t("edition:Your edition")}: <span className="font-medium text-foreground">{getEditionText(current)}</span>
               </span>
             ) : null}
-            <Button asChild variant="outline">
-              <a href={PricingUrl} target="_blank" rel="noreferrer">
-                {i18next.t("general:View editions and pricing")}
-                <ArrowUpRight className="size-4" />
-              </a>
-            </Button>
+            {Conf.HideUpgrades ? null : (
+              <Button asChild variant="outline">
+                <a href={PricingUrl} target="_blank" rel="noreferrer">
+                  {i18next.t("general:View editions and pricing")}
+                  <ArrowUpRight className="size-4" />
+                </a>
+              </Button>
+            )}
           </>
         }
       />
-      <EditionSection edition="Commercial" current={current} highlighted={highlighted} />
-      <p className="text-sm text-muted-foreground">{i18next.t("edition:The enterprise edition includes every commercial feature, and adds")}</p>
-      <EditionSection edition="Enterprise" current={current} highlighted={highlighted} />
+      {Conf.isUpgradeHidden("Commercial") ? null : <EditionSection edition="Commercial" current={current} highlighted={highlighted} />}
+      {Conf.isUpgradeHidden("Enterprise") ? null : (
+        <>
+          <p className="text-sm text-muted-foreground">{i18next.t("edition:The enterprise edition includes every commercial feature, and adds")}</p>
+          <EditionSection edition="Enterprise" current={current} highlighted={highlighted} />
+        </>
+      )}
     </div>
   );
 }

@@ -64,6 +64,14 @@ export let MaxItemsForFlatMenu = 7;
 export let ThemeShowcase = false;
 export let MarketplaceUrl = "https://cdn.jsdelivr.net/gh/casdoor/casdoor-integrations@dist";
 
+// An on-premise license was sold by contract: its console does not offer the higher editions
+export let HideUpgrades = false;
+
+/** Whether the console leaves out the offer of an edition higher than the license gives. */
+export function isUpgradeHidden(required: string): boolean {
+  return HideUpgrades && Editions.indexOf(Edition) < Editions.indexOf(required);
+}
+
 // the links to Casdoor Cloud in the console, which a global admin can turn off in the global settings
 export let ShowCloudPromotion = true;
 
@@ -104,6 +112,9 @@ export function setConfig(config: Record<string, any>) {
   }
   if (config.edition) {
     setEdition(config.edition);
+  }
+  if (config.hideUpgrades !== undefined) {
+    HideUpgrades = config.hideUpgrades;
   }
   if (config.editionDemoUrls !== undefined) {
     EditionDemoUrls = parseEditionDemoUrls(config.editionDemoUrls);

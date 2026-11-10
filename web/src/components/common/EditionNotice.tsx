@@ -1,6 +1,7 @@
 import * as React from "react";
 import i18next from "i18next";
 import * as SystemBackend from "@/backend/SystemInfo";
+import * as Conf from "@/Conf";
 import {PricingUrl} from "@/lib/setting";
 
 export {PricingUrl};
@@ -79,9 +80,11 @@ export function EditionNotice({edition = "Commercial", message}: {edition?: stri
   return (
     <p className="mt-1.5 text-xs text-warning">
       {message ?? i18next.t("general:Commercial edition required")}{" "}
-      <a href={PricingUrl} target="_blank" rel="noreferrer" className="underline underline-offset-2">
-        {i18next.t("general:View editions and pricing")}
-      </a>
+      {Conf.isUpgradeHidden(edition) ? null : (
+        <a href={PricingUrl} target="_blank" rel="noreferrer" className="underline underline-offset-2">
+          {i18next.t("general:View editions and pricing")}
+        </a>
+      )}
     </p>
   );
 }

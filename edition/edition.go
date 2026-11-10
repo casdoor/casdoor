@@ -74,6 +74,16 @@ const (
 	FeatureDelegatedAdmin   = "Delegated administration"
 )
 
+const KindOnPremise = "OnPremise"
+
+func getKind() string {
+	license, _, _ := getState()
+	if license == nil {
+		return ""
+	}
+	return license.Kind
+}
+
 // The features that a license can also grant on their own, without the edition they belong to, by these keys in its
 // "features", e.g. a community edition license with "features": ["rbac", "abac"], or a commercial edition license
 // with "features": ["form-fill"]
@@ -102,11 +112,14 @@ type License struct {
 	InstanceId string `json:"instanceId,omitempty"`
 	// the license server that issued the license, where this instance reports to
 	Server string `json:"server,omitempty"`
+	// how the license was sold: "SaaS", "OnPremise", "Internal" or "Demo"
+	Kind string `json:"kind,omitempty"`
 }
 
 type LicenseInfo struct {
 	Edition    string   `json:"edition"`
 	Features   []string `json:"features,omitempty"`
+	Kind       string   `json:"kind,omitempty"`
 	Id         string   `json:"id,omitempty"`
 	Licensee   string   `json:"licensee,omitempty"`
 	IssuedTime string   `json:"issuedTime,omitempty"`
@@ -129,6 +142,7 @@ var (
 
 func init() {
 	conf.SetEditionGetter(Get)
+	conf.SetHideUpgradesGetter(HidesUpgrades)
 }
 
 func mustDecodeBase64(s string) []byte {
@@ -288,6 +302,13 @@ func FindRequired(message string) (*RequiredError, int, int) {
 	return required, match[0], match[1]
 }
 
+// HidesUpgrades tells whether the console should leave out the offers of higher editions: an on-premise deployment
+// bought its edition by contract and does not upgrade from the console, while a hosted instance can
+func HidesUpgrades() bool {
+	license, _, _ := getState()
+	return license != nil && license.Kind == KindOnPremise
+}
+
 // GetFeatures returns the features that the license grants on their own
 func GetFeatures() []string {
 	license, _, _ := getState()
@@ -324,7 +345,7 @@ func Require(edition string, feature string) error {
 
 func GetLicenseInfo() *LicenseInfo {
 	_, _, err := getState()
-	info := &LicenseInfo{Edition: Get(), Features: GetFeatures(), InstanceId: getInstanceId(), ActivationCode: GetActivationCode()}
+	info := &LicenseInfo{Edition: Get(), Features: GetFeatures(), Kind: getKind(), InstanceId: getInstanceId(), ActivationCode: GetActivationCode()}
 	if err != nil {
 		info.Error = err.Error()
 	}

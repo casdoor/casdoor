@@ -351,14 +351,16 @@ export function EditionHero({edition, license, data, checks, score}: {
             <p className="text-sm text-muted-foreground">{i18next.t("home:Business-hours support is included with your license.")}</p>
             <EditionsLink className="text-indigo-700 dark:text-indigo-300" />
           </div>
-          <div className="flex w-fit shrink-0 items-center gap-4 rounded-lg border border-dashed border-[#c9a45c]/50 bg-background/60 p-4">
-            <ScoreRing score={score} className="size-[72px] blur-[6px]" trackClassName="stroke-muted" barClassName="stroke-[#c9a45c]" />
-            <div className="max-w-[220px] space-y-1.5">
-              <EditionBadge edition="Enterprise" />
-              <div className="text-sm font-medium">{i18next.t("home:Security posture score")}</div>
-              <UpgradeButton edition="Enterprise" variant="outline" className="h-8 px-3 text-xs" />
+          {Conf.isUpgradeHidden("Enterprise") ? null : (
+            <div className="flex w-fit shrink-0 items-center gap-4 rounded-lg border border-dashed border-[#c9a45c]/50 bg-background/60 p-4">
+              <ScoreRing score={score} className="size-[72px] blur-[6px]" trackClassName="stroke-muted" barClassName="stroke-[#c9a45c]" />
+              <div className="max-w-[220px] space-y-1.5">
+                <EditionBadge edition="Enterprise" />
+                <div className="text-sm font-medium">{i18next.t("home:Security posture score")}</div>
+                <UpgradeButton edition="Enterprise" variant="outline" className="h-8 px-3 text-xs" />
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     );
@@ -398,7 +400,9 @@ export function EditionHero({edition, license, data, checks, score}: {
 }
 
 /** The checks with what each found; a check the edition does not cover shows its finding but locks its fix. */
-export function SecurityChecks({edition, checks}: {edition: string; checks: SecurityCheck[]}) {
+export function SecurityChecks({edition, checks: allChecks}: {edition: string; checks: SecurityCheck[]}) {
+  // an on-premise license is not offered the checks of the higher editions
+  const checks = allChecks.filter((check) => !Conf.isUpgradeHidden(check.edition));
   return (
     <Card data-tour="security-checks">
       <CardHeader className="flex-row items-center justify-between gap-3 space-y-0">

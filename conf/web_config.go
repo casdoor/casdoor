@@ -26,6 +26,13 @@ func SetEditionGetter(getter func() string) {
 	getEdition = getter
 }
 
+// getHideUpgrades is set by the edition package too
+var getHideUpgrades func() bool
+
+func SetHideUpgradesGetter(getter func() bool) {
+	getHideUpgrades = getter
+}
+
 func SetHideCloudPromotion(hide bool) {
 	hideCloudPromotion.Store(hide)
 }
@@ -43,6 +50,7 @@ type WebConfig struct {
 	EditionDemoUrls     string `json:"editionDemoUrls"`
 	ShowCloudPromotion  bool   `json:"showCloudPromotion"`
 	Edition             string `json:"edition"`
+	HideUpgrades        bool   `json:"hideUpgrades"`
 }
 
 func GetWebConfig() *WebConfig {
@@ -82,6 +90,9 @@ func GetWebConfig() *WebConfig {
 
 	// a licensed deployment has already bought Casdoor, so it is not shown the hosted offering,
 	// while the demo sites keep it in every edition
+	// an on-premise license was sold by contract, its console does not offer the higher editions; the demo sites always do
+	config.HideUpgrades = getHideUpgrades != nil && getHideUpgrades() && !config.ThemeShowcase
+
 	config.ShowCloudPromotion = !hideCloudPromotion.Load() && (config.Edition == "Community" || config.ThemeShowcase)
 
 	return config

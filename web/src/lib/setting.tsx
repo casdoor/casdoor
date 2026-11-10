@@ -56,6 +56,10 @@ const editionRequiredSuffix = ` (${PricingUrl})`;
 
 export function showMessage(type: "success" | "error" | "info" | "warning", text: string) {
   if (type === "error" && typeof text === "string" && text.includes(editionRequiredSuffix)) {
+    if (Conf.HideUpgrades) {
+      toast.error(text.replace(editionRequiredSuffix, ""), {duration: 15000});
+      return;
+    }
     toast.error(text.replace(editionRequiredSuffix, ""), {
       duration: 15000,
       action: {
