@@ -1,5 +1,6 @@
 import * as React from "react";
 import i18next from "i18next";
+import {Link} from "react-router-dom";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import {Alert, AlertDescription, AlertTitle} from "@/components/ui/alert";
 import {Badge} from "@/components/ui/badge";
@@ -361,6 +362,11 @@ function LicenseCard() {
             </a>
           </p>
         ) : null}
+        <p>
+          <Link to="/editions" className="underline underline-offset-2">
+            {i18next.t("edition:See every feature and take the tour")}
+          </Link>
+        </p>
         {isEditionPreviewEnabled() ? (
           <div className="space-y-2 border-t pt-3">
             <p className="text-muted-foreground">

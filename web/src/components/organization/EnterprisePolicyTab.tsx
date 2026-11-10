@@ -82,7 +82,7 @@ export function EnterprisePolicyTab({owner, policy, onChange}: {owner: string; p
       {toggle("recordConsents", "organization:Record consents")}
 
       {section("organization:Separation of duties", "organization:Separation of duties - Tooltip")}
-      <div className="col-span-full space-y-2">
+      <div className="col-span-full space-y-2" data-tour="sod-rules">
         {rules.map((rule, index) => (
           <div key={index} className="flex flex-wrap items-start gap-2">
             <Input

@@ -6,6 +6,7 @@ import {EnableMfaNotification} from "@/components/auth/EnableMfaNotification";
 import {LicenseBanner} from "@/components/common/EditionNotice";
 import {CommandPalette, useCommandPalette} from "@/components/common/CommandPalette";
 import {ConsoleTour} from "@/components/common/ConsoleTour";
+import {EditionTour} from "@/components/common/EditionTour";
 import {GithubCorner} from "@/components/common/GithubCorner";
 import {ThemeShowcaseBar} from "@/components/common/ThemeShowcaseBar";
 import {Loading} from "@/components/common/Loading";
@@ -79,6 +80,7 @@ export function AppLayout() {
       {/* the console's own navigation is on the left */}
       <ThemeShowcaseBar side="right" />
       <ConsoleTour />
+      <EditionTour />
       <EnableMfaNotification />
       <CommandPalette open={palette.open} onOpenChange={palette.setOpen} />
 

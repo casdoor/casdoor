@@ -61,7 +61,7 @@ export function FormRow({label, labelKey, tooltip, children, className, block, h
   }
 
   return (
-    <div className={cn("min-w-0 space-y-1.5 py-2.5", block && "xl:col-span-2", className)}>
+    <div className={cn("min-w-0 space-y-1.5 py-2.5", block && "xl:col-span-2", className)} data-label-key={labelKey}>
       <label htmlFor={htmlFor} className="flex items-center gap-1.5 text-sm font-medium leading-none">
         <span>
           {resolvedLabel}

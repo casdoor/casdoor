@@ -47,6 +47,7 @@ export function getNavGroups(account: Account | null | undefined): NavGroup[] {
       {key: "/", label: i18next.t("general:Dashboard")},
       {key: "/shortcuts", label: i18next.t("general:Shortcuts")},
       {key: "/apps", label: i18next.t("general:Apps")},
+      ...(Setting.isLocalAdminUser(account) ? [{key: "/editions", label: i18next.t("edition:Editions and features")}] : []),
     ],
   });
 

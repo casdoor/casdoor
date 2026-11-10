@@ -260,6 +260,16 @@ function formatExpiry(license: any) {
   return i18next.t("home:Valid until %s").replace("%s", Setting.getFormattedDate(license.expireTime));
 }
 
+/** Opens the page that lists the paid features, with the tour through them. */
+function EditionsLink({className}: {className?: string}) {
+  return (
+    <Link to="/editions" className={cn("inline-flex items-center gap-1 text-sm font-medium underline-offset-4 hover:underline", className)}>
+      {i18next.t("edition:See every feature and take the tour")}
+      <ArrowRight className="size-3.5" />
+    </Link>
+  );
+}
+
 /** The band across the top of the dashboard: which edition this is, and what it gives or would give. */
 export function EditionHero({edition, license, data, checks, score}: {
   edition: string;
@@ -273,7 +283,7 @@ export function EditionHero({edition, license, data, checks, score}: {
 
   if (edition === "Enterprise") {
     return (
-      <div className="relative overflow-hidden rounded-xl border border-[#c9a45c]/30 bg-[#0e1a33] p-5 text-white shadow-lg sm:p-6">
+      <div className="relative overflow-hidden rounded-xl border border-[#c9a45c]/30 bg-[#0e1a33] p-5 text-white shadow-lg sm:p-6" data-tour="edition-hero">
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0"
@@ -296,6 +306,7 @@ export function EditionHero({edition, license, data, checks, score}: {
             <p className="max-w-2xl text-sm text-white/65">
               {i18next.t("home:The score weighs MFA, inactive accounts, session control, password checks, credential stuffing, sign-in alerts, key expiry and data masking across your organizations.")}
             </p>
+            <EditionsLink className="text-[#e9cf8f]" />
           </div>
           <dl className="grid shrink-0 gap-x-6 gap-y-2 text-sm sm:grid-cols-3 lg:grid-cols-1 lg:border-l lg:border-white/10 lg:pl-6">
             {license?.licensee ? (
@@ -323,7 +334,7 @@ export function EditionHero({edition, license, data, checks, score}: {
     const orgs = data?.organizations ?? 0;
     const enabled = orgs > 0 ? protections.filter((key) => (data?.policies?.[key] ?? 0) > 0).length : 0;
     return (
-      <div className="relative overflow-hidden rounded-xl border border-indigo-500/20 bg-gradient-to-br from-indigo-600/[0.08] via-violet-500/[0.05] to-transparent p-5 sm:p-6">
+      <div className="relative overflow-hidden rounded-xl border border-indigo-500/20 bg-gradient-to-br from-indigo-600/[0.08] via-violet-500/[0.05] to-transparent p-5 sm:p-6" data-tour="edition-hero">
         <div className="flex flex-col gap-5 xl:flex-row xl:items-center">
           <div className="min-w-0 flex-1 space-y-2">
             <div className="flex flex-wrap items-center gap-2">
@@ -338,6 +349,7 @@ export function EditionHero({edition, license, data, checks, score}: {
               <div className="h-full rounded-full bg-gradient-to-r from-indigo-600 to-violet-500" style={{width: `${(enabled / protections.length) * 100}%`}} />
             </div>
             <p className="text-sm text-muted-foreground">{i18next.t("home:Business-hours support is included with your license.")}</p>
+            <EditionsLink className="text-indigo-700 dark:text-indigo-300" />
           </div>
           <div className="flex w-fit shrink-0 items-center gap-4 rounded-lg border border-dashed border-[#c9a45c]/50 bg-background/60 p-4">
             <ScoreRing score={score} className="size-[72px] blur-[6px]" trackClassName="stroke-muted" barClassName="stroke-[#c9a45c]" />
@@ -353,7 +365,7 @@ export function EditionHero({edition, license, data, checks, score}: {
   }
 
   return (
-    <div className="rounded-xl border bg-card p-5 sm:p-6">
+    <div className="rounded-xl border bg-card p-5 sm:p-6" data-tour="edition-hero">
       <div className="flex flex-col gap-5 xl:flex-row xl:items-center">
         <div className="min-w-0 flex-1 space-y-2">
           <div className="flex flex-wrap items-center gap-2">
@@ -370,9 +382,15 @@ export function EditionHero({edition, license, data, checks, score}: {
             {i18next.t("home:Idle timeouts, exclusive sign-in, leaked password checks, credential stuffing defense, new device alerts, key rotation and business-hours support, on the same Casdoor you run now.")}
           </p>
         </div>
-        <div className="flex shrink-0 flex-wrap gap-2">
+        <div className="flex shrink-0 flex-wrap items-center gap-2">
           <UpgradeButton edition="Commercial" />
           <UpgradeButton edition="Enterprise" variant="outline" />
+          <Button asChild variant="ghost">
+            <Link to="/editions">
+              {i18next.t("edition:See every feature and take the tour")}
+              <ArrowRight />
+            </Link>
+          </Button>
         </div>
       </div>
     </div>
@@ -382,7 +400,7 @@ export function EditionHero({edition, license, data, checks, score}: {
 /** The checks with what each found; a check the edition does not cover shows its finding but locks its fix. */
 export function SecurityChecks({edition, checks}: {edition: string; checks: SecurityCheck[]}) {
   return (
-    <Card>
+    <Card data-tour="security-checks">
       <CardHeader className="flex-row items-center justify-between gap-3 space-y-0">
         <CardTitle className="text-base">{i18next.t("home:Security checks")}</CardTitle>
         <span className="text-xs text-muted-foreground">

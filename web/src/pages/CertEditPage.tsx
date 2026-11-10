@@ -261,7 +261,7 @@ function KeyRotation({cert}: {cert: any}) {
   const [rotating, setRotating] = React.useState(false);
   return (
     <div className="space-y-2">
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2" data-tour="rotate-key">
         <div className="flex-1 rounded-md border bg-muted/40 px-3 py-2 font-mono text-sm text-muted-foreground">
           {cert.keyId || cert.name}
         </div>

@@ -1,7 +1,7 @@
 import * as React from "react";
 import i18next from "i18next";
-import {ExternalLink, Monitor, Search, ShieldCheck, Smartphone} from "lucide-react";
-import {Link, useNavigate} from "react-router-dom";
+import {ExternalLink, Monitor, Search, ShieldCheck, Smartphone, X} from "lucide-react";
+import {Link, useNavigate, useSearchParams} from "react-router-dom";
 import {Badge} from "@/components/ui/badge";
 import {Button} from "@/components/ui/button";
 import {Card} from "@/components/ui/card";
@@ -29,7 +29,10 @@ export default function MarketplacePage() {
   const [index, setIndex] = React.useState<any>(null);
   const [installed, setInstalled] = React.useState<any[]>([]);
   const [type, setType] = React.useState("all");
-  const [search, setSearch] = React.useState("");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [search, setSearch] = React.useState(() => searchParams.get("q") ?? "");
+  // "?edition=Enterprise" lists only the paid entries of that edition, as linked from the editions page
+  const editionFilter = searchParams.get("edition") ?? "";
   const [selected, setSelected] = React.useState<any>(null);
 
   const fetchIndex = React.useCallback((refresh: boolean) => {
@@ -67,6 +70,7 @@ export default function MarketplacePage() {
     return (index?.integrations ?? [])
       .filter((item: any) => IntegrationTypes.includes(item.type))
       .filter((item: any) => type === "all" || item.type === type)
+      .filter((item: any) => !editionFilter || (item.edition ?? "").toLowerCase() === editionFilter.toLowerCase())
       .filter((item: any) => {
         if (!filter) {
           return true;
@@ -74,7 +78,7 @@ export default function MarketplacePage() {
         const text = [item.id, getLocalized(item.name), getLocalized(item.description), ...(item.tags ?? []), ...(item.categories ?? [])].join(" ");
         return text.toLowerCase().includes(filter);
       });
-  }, [index, type, search]);
+  }, [index, type, search, editionFilter]);
 
   const getInstalledCount = (id: string) => installed.filter((integration) => integration.integrationId === id).length;
 
@@ -108,6 +112,20 @@ export default function MarketplacePage() {
             ))}
           </TabsList>
         </Tabs>
+        {editionFilter ? (
+          <Button
+            variant="secondary"
+            size="sm"
+            className="gap-1 rounded-full sm:ml-auto"
+            onClick={() => {
+              searchParams.delete("edition");
+              setSearchParams(searchParams, {replace: true});
+            }}
+          >
+            {getEditionText(editionFilter.charAt(0).toUpperCase() + editionFilter.slice(1).toLowerCase())}
+            <X className="size-3.5" />
+          </Button>
+        ) : null}
         <div className="relative sm:w-72">
           <Search className="pointer-events-none absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input className="pl-8" placeholder={i18next.t("general:Search")} value={search} onChange={(e) => setSearch(e.target.value)} />
@@ -117,9 +135,9 @@ export default function MarketplacePage() {
       {loading && !index ? (
         <Loading />
       ) : integrations.length === 0 ? (
-        <p className="py-16 text-center text-muted-foreground">{i18next.t("general:No data")}</p>
+        <p className="py-16 text-center text-muted-foreground" data-tour="marketplace-items">{i18next.t("general:No data")}</p>
       ) : (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" data-tour="marketplace-items">
           {integrations.map((item: any) => {
             const name = getLocalized(item.name) || item.id;
             const installedCount = getInstalledCount(item.id);
