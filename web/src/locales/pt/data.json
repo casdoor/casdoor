@@ -210,7 +210,7 @@
     "Sign in only": "Somente login",
     "Sign in or sign up": "Login ou cadastro",
     "Sign-in page URLs": "URLs das páginas de login",
-    "Sign-in page URLs - Tooltip": "As páginas de login do sistema, por exemplo https://oa.example.com/login. O host deve ser o mesmo, *.example.com abrange seus subdomínios e um caminho sem * é comparado como prefixo",
+    "Sign-in page URLs - Tooltip": "As páginas de login do sistema, por exemplo https://oa.example.com/login. O host deve ser o mesmo, *.example.com abrange seus subdomínios e um caminho sem * é comparado como prefixo. Em um aplicativo de página única, inclua a parte após #, como https://oa.example.com/#/login",
     "Signin": "Entrar",
     "Signin (Default True)": "Login (Padrão: Verdadeiro)",
     "Signin items": "Itens de login",

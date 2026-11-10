@@ -210,7 +210,7 @@
     "Sign in only": "Лише вхід",
     "Sign in or sign up": "Вхід або реєстрація",
     "Sign-in page URLs": "URL-адреси сторінок входу",
-    "Sign-in page URLs - Tooltip": "Сторінки входу системи, наприклад https://oa.example.com/login. Хост має збігатися, *.example.com охоплює його піддомени, а шлях без * порівнюється як префікс",
+    "Sign-in page URLs - Tooltip": "Сторінки входу системи, наприклад https://oa.example.com/login. Хост має збігатися, *.example.com охоплює його піддомени, а шлях без * порівнюється як префікс. Для односторінкового застосунку додайте частину після #, наприклад https://oa.example.com/#/login",
     "Signin": "Вхід",
     "Signin (Default True)": "Вхід (за замовчуванням True)",
     "Signin items": "Елементи входу",

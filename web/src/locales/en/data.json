@@ -212,7 +212,7 @@
     "Sign in only": "Sign in only",
     "Sign in or sign up": "Sign in or sign up",
     "Sign-in page URLs": "Sign-in page URLs",
-    "Sign-in page URLs - Tooltip": "The sign-in pages of the system, e.g. https://oa.example.com/login. The host must be the same, *.example.com covers its subdomains, and a path without * matches as a prefix",
+    "Sign-in page URLs - Tooltip": "The sign-in pages of the system, e.g. https://oa.example.com/login. The host must be the same, *.example.com covers its subdomains, and a path without * matches as a prefix. For a single-page app, include the part after #, like https://oa.example.com/#/login",
     "Signin": "Signin",
     "Signin (Default True)": "Signin (Default True)",
     "Signin items": "Signin items",

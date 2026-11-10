@@ -101,7 +101,8 @@ func matchFormFillHost(pattern string, host string) bool {
 }
 
 // MatchFormFillUrl tells whether a page is one of the sign-in pages of a pattern. The host has to be the same (or a
-// subdomain for "*."), so that a page of another site never gets the password. A path without "*" is a prefix.
+// subdomain for "*."), so that a page of another site never gets the password. A path without "*" is a prefix, and
+// the part after "#" is compared only when the pattern has it.
 func MatchFormFillUrl(pattern string, pageUrl string) bool {
 	pattern = strings.TrimSpace(pattern)
 	if pattern == "" {
@@ -118,7 +119,8 @@ func MatchFormFillUrl(pattern string, pageUrl string) bool {
 	if !matchFormFillHost(patternHost, pageHost) {
 		return false
 	}
-	if index := strings.Index(pagePath, "#"); index >= 0 {
+	// the fragment only counts when the pattern has one, like the "#/login" route of a single-page application
+	if index := strings.Index(pagePath, "#"); index >= 0 && !strings.Contains(patternPath, "#") {
 		pagePath = pagePath[:index]
 	}
 	if !strings.Contains(patternPath, "*") {

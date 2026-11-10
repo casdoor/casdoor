@@ -210,7 +210,7 @@
     "Sign in only": "Connexion uniquement",
     "Sign in or sign up": "Connexion ou inscription",
     "Sign-in page URLs": "URL des pages de connexion",
-    "Sign-in page URLs - Tooltip": "Les pages de connexion du système, par ex. https://oa.example.com/login. L'hôte doit être identique, *.example.com couvre ses sous-domaines, et un chemin sans * est comparé comme préfixe",
+    "Sign-in page URLs - Tooltip": "Les pages de connexion du système, par ex. https://oa.example.com/login. L'hôte doit être identique, *.example.com couvre ses sous-domaines, et un chemin sans * est comparé comme préfixe. Pour une application monopage, incluez la partie après #, comme https://oa.example.com/#/login",
     "Signin": "Se connecter",
     "Signin (Default True)": "Connexion (Vrai par défaut)",
     "Signin items": "Éléments de connexion",

@@ -210,7 +210,7 @@
     "Sign in only": "Chỉ đăng nhập",
     "Sign in or sign up": "Đăng nhập hoặc đăng ký",
     "Sign-in page URLs": "URL trang đăng nhập",
-    "Sign-in page URLs - Tooltip": "Các trang đăng nhập của hệ thống, ví dụ https://oa.example.com/login. Tên máy chủ phải trùng khớp, *.example.com bao gồm các tên miền con, và đường dẫn không có * được so khớp theo tiền tố",
+    "Sign-in page URLs - Tooltip": "Các trang đăng nhập của hệ thống, ví dụ https://oa.example.com/login. Tên máy chủ phải trùng khớp, *.example.com bao gồm các tên miền con, và đường dẫn không có * được so khớp theo tiền tố. Với ứng dụng một trang, hãy thêm phần sau #, như https://oa.example.com/#/login",
     "Signin": "Đăng nhập",
     "Signin (Default True)": "Đăng nhập (Mặc định True)",
     "Signin items": "Các mục đăng nhập",

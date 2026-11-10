@@ -210,7 +210,7 @@
     "Sign in only": "Solo iniciar sesión",
     "Sign in or sign up": "Iniciar sesión o registrarse",
     "Sign-in page URLs": "URL de las páginas de inicio de sesión",
-    "Sign-in page URLs - Tooltip": "Las páginas de inicio de sesión del sistema, p. ej. https://oa.example.com/login. El host debe coincidir, *.example.com incluye sus subdominios y una ruta sin * se compara como prefijo",
+    "Sign-in page URLs - Tooltip": "Las páginas de inicio de sesión del sistema, p. ej. https://oa.example.com/login. El host debe coincidir, *.example.com incluye sus subdominios y una ruta sin * se compara como prefijo. En una aplicación de una sola página, incluya la parte después de #, como https://oa.example.com/#/login",
     "Signin": "Iniciar sesión",
     "Signin (Default True)": "Iniciar sesión (Verdadero por defecto)",
     "Signin items": "Elementos de inicio",

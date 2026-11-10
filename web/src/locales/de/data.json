@@ -210,7 +210,7 @@
     "Sign in only": "Nur Anmeldung",
     "Sign in or sign up": "Anmelden oder registrieren",
     "Sign-in page URLs": "Anmeldeseiten-URLs",
-    "Sign-in page URLs - Tooltip": "Die Anmeldeseiten des Systems, z. B. https://oa.example.com/login. Der Host muss übereinstimmen, *.example.com umfasst seine Subdomains, und ein Pfad ohne * wird als Präfix verglichen",
+    "Sign-in page URLs - Tooltip": "Die Anmeldeseiten des Systems, z. B. https://oa.example.com/login. Der Host muss übereinstimmen, *.example.com umfasst seine Subdomains, und ein Pfad ohne * wird als Präfix verglichen. Bei Single-Page-Apps den Teil nach # angeben, z. B. https://oa.example.com/#/login",
     "Signin": "Anmelden",
     "Signin (Default True)": "Anmelden (Standard: Wahr)",
     "Signin items": "Anmeldeelemente",

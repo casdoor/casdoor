@@ -210,7 +210,7 @@
     "Sign in only": "ログインのみ",
     "Sign in or sign up": "ログインまたは登録",
     "Sign-in page URLs": "サインインページの URL",
-    "Sign-in page URLs - Tooltip": "システムのサインインページ（例：https://oa.example.com/login）。ホストは完全一致が必要で、*.example.com はサブドメインを含みます。* を含まないパスは前方一致です",
+    "Sign-in page URLs - Tooltip": "システムのサインインページ（例：https://oa.example.com/login）。ホストは完全一致が必要で、*.example.com はサブドメインを含みます。* を含まないパスは前方一致です。シングルページアプリでは # 以降も含めます（例：https://oa.example.com/#/login）",
     "Signin": "サインイン",
     "Signin (Default True)": "サインイン（デフォルトは有効）",
     "Signin items": "サインイン項目",

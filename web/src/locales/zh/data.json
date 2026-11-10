@@ -212,7 +212,7 @@
     "Sign in only": "仅登录",
     "Sign in or sign up": "登录或注册",
     "Sign-in page URLs": "登录页地址",
-    "Sign-in page URLs - Tooltip": "老系统的登录页，例如 https://oa.example.com/login。域名要完全一致，*.example.com 表示所有子域名；路径里没有 * 时按前缀匹配",
+    "Sign-in page URLs - Tooltip": "老系统的登录页，例如 https://oa.example.com/login。域名要完全一致，*.example.com 表示所有子域名；路径里没有 * 时按前缀匹配；单页应用的登录页可以带 # 后面的路由，例如 https://oa.example.com/#/login",
     "Signin": "登录",
     "Signin (Default True)": "登录 (默认同意)",
     "Signin items": "登录项",

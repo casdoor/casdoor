@@ -210,7 +210,7 @@
     "Sign in only": "Yalnızca oturum açma",
     "Sign in or sign up": "Oturum aç veya kaydol",
     "Sign-in page URLs": "Giriş sayfası URL'leri",
-    "Sign-in page URLs - Tooltip": "Sistemin giriş sayfaları, örneğin https://oa.example.com/login. Ana bilgisayar aynı olmalıdır, *.example.com alt alan adlarını kapsar ve * içermeyen bir yol önek olarak eşleşir",
+    "Sign-in page URLs - Tooltip": "Sistemin giriş sayfaları, örneğin https://oa.example.com/login. Ana bilgisayar aynı olmalıdır, *.example.com alt alan adlarını kapsar ve * içermeyen bir yol önek olarak eşleşir. Tek sayfalı uygulamalarda # sonrasını da yazın, ör. https://oa.example.com/#/login",
     "Signin": "Oturum aç",
     "Signin (Default True)": "Oturum aç (Varsayılan True)",
     "Signin items": "Oturum açma öğeleri",
