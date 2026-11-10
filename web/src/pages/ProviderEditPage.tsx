@@ -160,7 +160,9 @@ function getClientIdLabel(provider: any): Label {
       ? label(i18next.t("provider:Service ID identifier"), i18next.t("provider:Service ID identifier - Tooltip"))
       : label(i18next.t("provider:Client ID"), i18next.t("provider:Client ID - Tooltip"));
   } else if (provider.category === "Email") {
-    return label(i18next.t("signup:Username"), i18next.t("signup:Username - Tooltip"));
+    return provider.type === "Microsoft 365"
+      ? label(i18next.t("provider:Client ID"), i18next.t("provider:Client ID - Tooltip"))
+      : label(i18next.t("signup:Username"), i18next.t("signup:Username - Tooltip"));
   } else if (provider.category === "SMS") {
     if (["Volc Engine SMS", "Amazon SNS", "Baidu Cloud SMS"].includes(provider.type)) {
       return label(i18next.t("general:Access key"), i18next.t("general:Access key - Tooltip"));
@@ -198,6 +200,9 @@ function getClientSecretLabel(provider: any): Label {
       ? label(i18next.t("provider:Service account JSON"), i18next.t("provider:Service account JSON - Tooltip"))
       : label(i18next.t("provider:Client secret"), i18next.t("provider:Client secret - Tooltip"));
   } else if (provider.category === "Email") {
+    if (provider.type === "Microsoft 365") {
+      return label(i18next.t("provider:Client secret"), i18next.t("provider:Client secret - Tooltip"));
+    }
     return ["Azure ACS", "SendGrid", "Resend"].includes(provider.type)
       ? label(i18next.t("provider:Secret key"), i18next.t("provider:Secret key - Tooltip"))
       : label(i18next.t("general:Password"), i18next.t("general:Password - Tooltip"));
@@ -790,6 +795,11 @@ export default function ProviderEditPage() {
     } else if (value === "Custom HTTP Email") {
       patch.endpoint = "https://example.com/send-custom-http-email";
       patch.method = "POST";
+    } else if (value === "Microsoft 365") {
+      patch.host = "smtp.office365.com";
+      patch.port = 587;
+      patch.customTokenUrl = "https://login.microsoftonline.com/<tenant-id>/oauth2/v2.0/token";
+      patch.scopes = "https://outlook.office365.com/.default";
     } else if (value === "Custom HTTP") {
       patch.method = "GET";
       patch.title = "";
@@ -1056,6 +1066,16 @@ export default function ProviderEditPage() {
                 {id: "Disable", name: i18next.t("general:Disable")},
               ]}
             />
+          </FormRow>
+        </React.Fragment>
+      ) : null}
+      {provider.type === "Microsoft 365" ? (
+        <React.Fragment>
+          <FormRow labelKey="provider:Token URL">
+            <Input value={provider.customTokenUrl ?? ""} onChange={(e) => updateProviderField("customTokenUrl", e.target.value)} />
+          </FormRow>
+          <FormRow labelKey="provider:Scope">
+            <Input value={provider.scopes ?? ""} onChange={(e) => updateProviderField("scopes", e.target.value)} />
           </FormRow>
         </React.Fragment>
       ) : null}

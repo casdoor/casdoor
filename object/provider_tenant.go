@@ -53,8 +53,11 @@ func getProviderHttpClient(provider *Provider) *http.Client {
 }
 
 func restrictTenantEmailProvider(provider *Provider, emailProvider email.EmailProvider) {
-	if httpProvider, ok := emailProvider.(*email.HttpEmailProvider); ok {
-		httpProvider.SetHttpClient(getTenantHttpClient(provider))
+	switch p := emailProvider.(type) {
+	case *email.HttpEmailProvider:
+		p.SetHttpClient(getTenantHttpClient(provider))
+	case *email.Microsoft365EmailProvider:
+		p.SetHttpClient(getTenantHttpClient(provider))
 	}
 }
 

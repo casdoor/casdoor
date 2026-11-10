@@ -25,6 +25,16 @@ func TestSmtpServer(provider *Provider) error {
 	}
 
 	sslMode := getSslMode(provider)
+	if provider.Type == "Microsoft 365" {
+		microsoft365EmailProvider := email.NewMicrosoft365EmailProvider(provider.ClientId, provider.ClientSecret, provider.Host, provider.Port, sslMode, provider.EnableProxy, provider.CustomTokenUrl, provider.Scopes)
+		restrictTenantEmailProvider(provider, microsoft365EmailProvider)
+		sender, err := microsoft365EmailProvider.Dial(provider.ClientId2)
+		if err != nil {
+			return err
+		}
+		return sender.Close()
+	}
+
 	smtpEmailProvider := email.NewSmtpEmailProvider(provider.ClientId, provider.ClientSecret, provider.Host, provider.Port, provider.Type, sslMode, provider.EnableProxy)
 	sender, err := smtpEmailProvider.Dialer.Dial()
 	if err != nil {
@@ -43,11 +53,11 @@ func SendEmail(provider *Provider, title string, content string, dest []string, 
 	}
 
 	sslMode := getSslMode(provider)
-	emailProvider := email.GetEmailProvider(provider.Type, provider.ClientId, provider.ClientSecret, provider.Host, provider.Port, sslMode, provider.Endpoint, provider.Method, provider.HttpHeaders, provider.UserMapping, provider.IssuerUrl, provider.EnableProxy)
+	emailProvider := email.GetEmailProvider(provider.Type, provider.ClientId, provider.ClientSecret, provider.Host, provider.Port, sslMode, provider.Endpoint, provider.Method, provider.HttpHeaders, provider.UserMapping, provider.IssuerUrl, provider.EnableProxy, provider.CustomTokenUrl, provider.Scopes)
 	restrictTenantEmailProvider(provider, emailProvider)
 
 	fromAddress := provider.ClientId2
-	if fromAddress == "" {
+	if fromAddress == "" && provider.Type != "Microsoft 365" {
 		fromAddress = provider.ClientId
 	}
 

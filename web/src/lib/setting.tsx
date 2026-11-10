@@ -415,6 +415,10 @@ export const OtherProviderInfo = {
       logo: `${StaticBaseUrl}/img/email_resend.png`,
       url: "https://resend.com/",
     },
+    "Microsoft 365": {
+      logo: `${StaticBaseUrl}/img/social_microsoftonline.png`,
+      url: "https://learn.microsoft.com/exchange/client-developer/legacy-protocols/how-to-authenticate-an-imap-pop-smtp-application-by-using-oauth",
+    },
   },
   Storage: {
     "Local File System": {
@@ -1624,6 +1628,7 @@ export function getProviderTypeOptions(category) {
         {id: "SendGrid", name: "SendGrid"},
         {id: "Custom HTTP Email", name: "Custom HTTP Email"},
         {id: "Resend", name: "Resend"},
+        {id: "Microsoft 365", name: "Microsoft 365"},
       ]
     );
   } else if (category === "SMS") {
