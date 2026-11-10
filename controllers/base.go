@@ -17,6 +17,7 @@ package controllers
 import (
 	"context"
 	"net/http"
+	"path"
 	"strings"
 	"time"
 
@@ -44,6 +45,73 @@ type RootController struct {
 
 type SessionData struct {
 	ExpireTime int64
+}
+
+var signinPendingApis = map[string]bool{
+	"/api/login":                  true,
+	"/api/logout":                 true,
+	"/api/sso-logout":             true,
+	"/api/get-account":            true,
+	"/api/get-user-application":   true,
+	"/api/send-verification-code": true,
+}
+
+var passwordPendingApis = map[string]bool{
+	"/api/set-password": true,
+}
+
+var mfaPendingApis = map[string]bool{
+	"/api/check-user-password": true,
+	"/api/mfa/setup/initiate":  true,
+	"/api/mfa/setup/verify":    true,
+	"/api/mfa/setup/enable":    true,
+	"/api/mfa/push/send":       true,
+	"/api/mfa/push/challenge":  true,
+}
+
+func (c *ApiController) Prepare() {
+	urlPath := path.Clean(c.Ctx.Request.URL.Path)
+	if signinPendingApis[urlPath] {
+		return
+	}
+
+	needUpdatePassword, needMfa := c.getSessionSigninPending()
+	if !needUpdatePassword && !needMfa {
+		return
+	}
+	if (needUpdatePassword && passwordPendingApis[urlPath]) || (needMfa && mfaPendingApis[urlPath]) {
+		return
+	}
+
+	c.Ctx.Input.SetData("currentUserId", "")
+}
+
+func (c *ApiController) getSessionSigninPending() (bool, bool) {
+	if credentialUser, _ := c.Ctx.Input.GetData("requestCredentialUser").(string); credentialUser != "" {
+		return false, false
+	}
+	if impersonating, _ := c.Ctx.Input.GetData("impersonating").(bool); impersonating {
+		return false, false
+	}
+
+	userId := c.GetSessionUsername()
+	if userId == "" || object.IsAppUser(userId) {
+		return false, false
+	}
+
+	user, err := object.GetUser(userId)
+	if err != nil {
+		return true, true
+	}
+	if user == nil {
+		return false, false
+	}
+
+	organization, err := object.GetOrganizationByUser(user)
+	if err != nil {
+		return true, true
+	}
+	return user.NeedUpdatePassword, object.IsNeedPromptMfa(organization, user)
 }
 
 func (c *ApiController) IsGlobalAdmin() bool {

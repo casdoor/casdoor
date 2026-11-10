@@ -764,10 +764,16 @@ func (c *ApiController) GetAccount() {
 		return
 	}
 
+	isSigninPending, err := object.IsSigninPending(user)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
 	// the browser extension reads the user's own managed accounts with their passwords here
 	var ownManagedAccounts []object.ManagedAccount
 	managedAccounts := c.Ctx.Input.Query("managedAccounts")
-	if managedAccounts == "1" {
+	if managedAccounts == "1" && !isSigninPending {
 		user, err = object.ExtendManagedAccountsWithUser(user)
 		if err != nil {
 			c.ResponseError(err.Error())
@@ -809,14 +815,17 @@ func (c *ApiController) GetAccount() {
 		u.CountryCode = organization.CountryCodes[0]
 	}
 
-	accessToken := c.GetSessionToken()
-	if accessToken == "" {
-		accessToken, err = object.GetAccessTokenByUser(user, c.Ctx.Request.Host)
-		if err != nil {
-			c.ResponseError(err.Error())
-			return
+	accessToken := ""
+	if !isSigninPending {
+		accessToken = c.GetSessionToken()
+		if accessToken == "" {
+			accessToken, err = object.GetAccessTokenByUser(user, c.Ctx.Request.Host)
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
+			c.SetSessionToken(accessToken)
 		}
-		c.SetSessionToken(accessToken)
 	}
 	u.AccessToken = accessToken
 
