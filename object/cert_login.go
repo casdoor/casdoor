@@ -35,6 +35,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/casdoor/casdoor/action"
 	"github.com/casdoor/casdoor/edition"
 	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/util"
@@ -55,6 +56,9 @@ type CertLoginPolicy struct {
 	// the full URL of /api/login/cert on the port that asks for client certificates, the login page's button goes
 	// there, the same origin's /api/login/cert when empty (a reverse proxy passing the client certificate)
 	LoginUrl string `json:"loginUrl"`
+	// optional, an action of kind "cert" installed from the Marketplace that checks the certificates instead of
+	// Casdoor, for the algorithms Casdoor doesn't verify itself
+	Verifier string `json:"verifier"`
 }
 
 const (
@@ -111,13 +115,31 @@ func parseTrustedCas(text string) (*x509.CertPool, int, error) {
 	return pool, count, nil
 }
 
+func countPemCertificates(text string) int {
+	count := 0
+	rest := []byte(text)
+	for {
+		var block *pem.Block
+		block, rest = pem.Decode(rest)
+		if block == nil {
+			return count
+		}
+		if block.Type == "CERTIFICATE" {
+			count++
+		}
+	}
+}
+
 func validateCertLoginPolicy(policy *CertLoginPolicy, lang string) error {
 	if !policy.isEnabled() {
 		return nil
 	}
-	_, count, err := parseTrustedCas(policy.TrustedCas)
-	if err != nil {
-		return fmt.Errorf(i18n.Translate(lang, "enterprise:The trusted CA certificates are invalid: %s"), err.Error())
+	count := countPemCertificates(policy.TrustedCas)
+	if policy.Verifier == "" {
+		_, _, err := parseTrustedCas(policy.TrustedCas)
+		if err != nil {
+			return fmt.Errorf(i18n.Translate(lang, "enterprise:The trusted CA certificates are invalid: %s"), err.Error())
+		}
 	}
 	if count == 0 {
 		return errors.New(i18n.Translate(lang, "enterprise:Add at least one trusted CA certificate in PEM"))
@@ -138,15 +160,15 @@ func validateCertLoginPolicy(policy *CertLoginPolicy, lang string) error {
 	return nil
 }
 
-// ParseCertificateChain reads certificates from PEM blocks, or a single certificate in base64 DER, the first being
-// the user's own one
-func ParseCertificateChain(text string) ([]*x509.Certificate, error) {
+// ReadCertificateDers reads the DER certificates in PEM blocks, or a certificate in base64 DER, the first being the
+// user's own one
+func ReadCertificateDers(text string) ([][]byte, error) {
 	text = strings.TrimSpace(text)
 	if text == "" {
 		return nil, errors.New("the certificate is empty")
 	}
 	if strings.Contains(text, "-----BEGIN") {
-		res := []*x509.Certificate{}
+		res := [][]byte{}
 		rest := []byte(text)
 		for {
 			var block *pem.Block
@@ -154,14 +176,9 @@ func ParseCertificateChain(text string) ([]*x509.Certificate, error) {
 			if block == nil {
 				break
 			}
-			if block.Type != "CERTIFICATE" {
-				continue
+			if block.Type == "CERTIFICATE" {
+				res = append(res, block.Bytes)
 			}
-			certificate, err := x509.ParseCertificate(block.Bytes)
-			if err != nil {
-				return nil, err
-			}
-			res = append(res, certificate)
 		}
 		if len(res) == 0 {
 			return nil, errors.New("no certificate is found in the PEM")
@@ -182,24 +199,26 @@ func ParseCertificateChain(text string) ([]*x509.Certificate, error) {
 			return nil, errors.New("the certificate is neither PEM nor base64 DER")
 		}
 	}
-	return x509.ParseCertificates(der)
+	return [][]byte{der}, nil
 }
 
-// ParseCertificateDers parses the DER certificates that a TLS client presented
-func ParseCertificateDers(ders [][]byte) ([]*x509.Certificate, error) {
+func parseCertificateDers(ders [][]byte) ([]*x509.Certificate, error) {
 	res := []*x509.Certificate{}
 	for _, der := range ders {
-		certificate, err := x509.ParseCertificate(der)
+		certificates, err := x509.ParseCertificates(der)
 		if err != nil {
 			return nil, err
 		}
-		res = append(res, certificate)
+		res = append(res, certificates...)
+	}
+	if len(res) == 0 {
+		return nil, errors.New("no certificate is found")
 	}
 	return res, nil
 }
 
-func GetCertFingerprint(certificate *x509.Certificate) string {
-	sum := sha256.Sum256(certificate.Raw)
+func getCertFingerprint(der []byte) string {
+	sum := sha256.Sum256(der)
 	return hex.EncodeToString(sum[:])
 }
 
@@ -229,7 +248,7 @@ func getCertIdentity(certificate *x509.Certificate, field string) string {
 	case CertFieldUid:
 		return strings.TrimSpace(getSubjectAttribute(certificate, oidUid))
 	case CertFieldFingerprint:
-		return GetCertFingerprint(certificate)
+		return getCertFingerprint(certificate.Raw)
 	}
 	return ""
 }
@@ -241,11 +260,19 @@ type cachedCrl struct {
 	fetchTime time.Time
 }
 
-func getCrl(crlUrl string) (*x509.RevocationList, error) {
-	if value, ok := crlCache.Load(crlUrl); ok {
-		cached := value.(*cachedCrl)
-		if time.Since(cached.fetchTime) < 10*time.Minute && (cached.crl.NextUpdate.IsZero() || time.Now().Before(cached.crl.NextUpdate)) {
-			return cached.crl, nil
+var crlDataCache sync.Map
+
+type cachedCrlData struct {
+	data      []byte
+	fetchTime time.Time
+}
+
+// getCrlData fetches a CRL, DER or PEM, kept for 10 minutes
+func getCrlData(crlUrl string) ([]byte, error) {
+	if value, ok := crlDataCache.Load(crlUrl); ok {
+		cached := value.(*cachedCrlData)
+		if time.Since(cached.fetchTime) < 10*time.Minute {
+			return cached.data, nil
 		}
 	}
 
@@ -259,6 +286,22 @@ func getCrl(crlUrl string) (*x509.RevocationList, error) {
 		return nil, fmt.Errorf("HTTP %d", resp.StatusCode)
 	}
 	data, err := io.ReadAll(io.LimitReader(resp.Body, 32<<20))
+	if err != nil {
+		return nil, err
+	}
+	crlDataCache.Store(crlUrl, &cachedCrlData{data: data, fetchTime: time.Now()})
+	return data, nil
+}
+
+func getCrl(crlUrl string) (*x509.RevocationList, error) {
+	if value, ok := crlCache.Load(crlUrl); ok {
+		cached := value.(*cachedCrl)
+		if time.Since(cached.fetchTime) < 10*time.Minute && (cached.crl.NextUpdate.IsZero() || time.Now().Before(cached.crl.NextUpdate)) {
+			return cached.crl, nil
+		}
+	}
+
+	data, err := getCrlData(crlUrl)
 	if err != nil {
 		return nil, err
 	}
@@ -377,30 +420,77 @@ func findCertUser(organization *Organization, userField string, value string, la
 	return nil, nil
 }
 
-// VerifyCertLogin checks the certificate chain of a certificate sign-in against the organization's trusted CAs, its
-// validity period and the CRL, and returns the user it identifies
-func VerifyCertLogin(organizationName string, chain []*x509.Certificate, lang string) (*User, error) {
+// CertLoginInput is what a certificate sign-in presents: the DER certificates, the user's own one first, and for a
+// UKey plug-in the challenge and the signature the UKey made of it
+type CertLoginInput struct {
+	Ders      [][]byte
+	Message   []byte
+	Signature []byte
+}
+
+// VerifyCertLogin checks a certificate sign-in against the organization's trusted CAs, the validity period, the CRL
+// and the signature of the challenge if any, by Casdoor itself or by the organization's verifier action, and returns
+// the user it identifies and the fingerprint of the user's certificate
+func VerifyCertLogin(organizationName string, input *CertLoginInput, lang string) (*User, string, error) {
 	if err := edition.Require(edition.Enterprise, edition.FeatureCertLogin); err != nil {
-		return nil, err
+		return nil, "", err
 	}
-	if len(chain) == 0 {
-		return nil, errors.New(i18n.Translate(lang, "enterprise:No client certificate was presented"))
+	if input == nil || len(input.Ders) == 0 {
+		return nil, "", errors.New(i18n.Translate(lang, "enterprise:No client certificate was presented"))
 	}
 
 	organization, err := GetOrganization(util.GetId("admin", organizationName))
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
 	if organization == nil {
-		return nil, fmt.Errorf(i18n.Translate(lang, "auth:The organization: %s does not exist"), organizationName)
+		return nil, "", fmt.Errorf(i18n.Translate(lang, "auth:The organization: %s does not exist"), organizationName)
 	}
 	policy := GetEnterprisePolicy(organization)
 	if policy == nil || !policy.CertLogin.isEnabled() {
-		return nil, fmt.Errorf(i18n.Translate(lang, "enterprise:Certificate login is not enabled for the organization: %s"), organizationName)
+		return nil, "", fmt.Errorf(i18n.Translate(lang, "enterprise:Certificate login is not enabled for the organization: %s"), organizationName)
 	}
 	certLogin := policy.CertLogin
 
+	var fields map[string]string
+	if certLogin.Verifier != "" {
+		fields, err = verifyCertByAction(organization.Name, certLogin, input, lang)
+	} else {
+		fields, err = verifyCert(certLogin, input, lang)
+	}
+	if err != nil {
+		return nil, "", err
+	}
+
+	identity := strings.TrimSpace(fields[certLogin.CertField])
+	if identity == "" {
+		return nil, "", fmt.Errorf(i18n.Translate(lang, "enterprise:The certificate has no %s"), certLogin.CertField)
+	}
+
+	user, err := findCertUser(organization, certLogin.UserField, identity, lang)
+	if err != nil {
+		return nil, "", err
+	}
+	if user == nil {
+		return nil, "", fmt.Errorf(i18n.Translate(lang, "enterprise:No user matches the certificate: %s"), identity)
+	}
+	if user.IsDeleted || user.IsForbidden {
+		return nil, "", errors.New(i18n.Translate(lang, "check:The user is forbidden to sign in, please contact the administrator"))
+	}
+	return user, fields[CertFieldFingerprint], nil
+}
+
+// verifyCert checks an RSA or ECDSA certificate sign-in and returns the fields of the user's certificate
+func verifyCert(certLogin *CertLoginPolicy, input *CertLoginInput, lang string) (map[string]string, error) {
+	chain, err := parseCertificateDers(input.Ders)
+	if err != nil {
+		return nil, fmt.Errorf(i18n.Translate(lang, "enterprise:The certificate is invalid: %s"), err.Error())
+	}
 	certificate := chain[0]
+	if input.Signature != nil && !verifyCertSignature(certificate, input.Message, input.Signature) {
+		return nil, errors.New(i18n.Translate(lang, "enterprise:The signature of the challenge is invalid"))
+	}
+
 	now := time.Now()
 	if now.Before(certificate.NotBefore) || now.After(certificate.NotAfter) {
 		return nil, errors.New(i18n.Translate(lang, "enterprise:The certificate has expired or is not valid yet"))
@@ -434,27 +524,72 @@ func VerifyCertLogin(organizationName string, chain []*x509.Certificate, lang st
 		}
 	}
 
-	identity := getCertIdentity(certificate, certLogin.CertField)
-	if identity == "" {
-		return nil, fmt.Errorf(i18n.Translate(lang, "enterprise:The certificate has no %s"), certLogin.CertField)
+	fields := map[string]string{}
+	for _, field := range CertLoginFields {
+		fields[field] = getCertIdentity(certificate, field)
 	}
+	return fields, nil
+}
 
-	user, err := findCertUser(organization, certLogin.UserField, identity, lang)
+// verifyCertByAction has the organization's verifier action check the sign-in, with the CRLs that Casdoor fetched
+func verifyCertByAction(owner string, certLogin *CertLoginPolicy, input *CertLoginInput, lang string) (map[string]string, error) {
+	m, _, err := getInstalledAction(owner, certLogin.Verifier, "cert")
 	if err != nil {
 		return nil, err
 	}
-	if user == nil {
-		return nil, fmt.Errorf(i18n.Translate(lang, "enterprise:No user matches the certificate: %s"), identity)
+
+	req := &action.CertVerifyRequest{
+		Certificates: []string{},
+		TrustedCas:   certLogin.TrustedCas,
+		Crls:         []string{},
+		Time:         time.Now().UTC().Format(time.RFC3339),
 	}
-	if user.IsDeleted || user.IsForbidden {
-		return nil, errors.New(i18n.Translate(lang, "check:The user is forbidden to sign in, please contact the administrator"))
+	for _, der := range input.Ders {
+		req.Certificates = append(req.Certificates, base64.StdEncoding.EncodeToString(der))
 	}
-	return user, nil
+	for _, crlUrl := range strings.Fields(strings.ReplaceAll(certLogin.CrlUrl, ",", " ")) {
+		data, err := getCrlData(crlUrl)
+		if err != nil {
+			return nil, fmt.Errorf(i18n.Translate(lang, "enterprise:Failed to check the certificate revocation list: %s"), err.Error())
+		}
+		req.Crls = append(req.Crls, base64.StdEncoding.EncodeToString(data))
+	}
+	if input.Signature != nil {
+		req.Message = base64.StdEncoding.EncodeToString(input.Message)
+		req.Signature = base64.StdEncoding.EncodeToString(input.Signature)
+	}
+
+	res, err := action.VerifyCertificate(m, req)
+	if err != nil {
+		return nil, err
+	}
+	if !res.Valid {
+		switch res.Reason {
+		case "expired":
+			return nil, errors.New(i18n.Translate(lang, "enterprise:The certificate has expired or is not valid yet"))
+		case "untrusted":
+			return nil, fmt.Errorf(i18n.Translate(lang, "enterprise:The certificate is not issued by a trusted CA: %s"), res.Detail)
+		case "revoked":
+			return nil, errors.New(i18n.Translate(lang, "enterprise:The certificate has been revoked"))
+		case "signature":
+			return nil, errors.New(i18n.Translate(lang, "enterprise:The signature of the challenge is invalid"))
+		}
+		return nil, fmt.Errorf(i18n.Translate(lang, "enterprise:The certificate is invalid: %s"), res.Detail)
+	}
+
+	fields := res.Fields
+	if fields == nil {
+		fields = map[string]string{}
+	}
+	if fields[CertFieldFingerprint] == "" {
+		fields[CertFieldFingerprint] = getCertFingerprint(input.Ders[0])
+	}
+	return fields, nil
 }
 
-// VerifyCertSignature checks the signature that a UKey made of the message with the certificate's key: RSA PKCS #1
+// verifyCertSignature checks the signature that a UKey made of the message with the certificate's key: RSA PKCS #1
 // v1.5 with SHA-256 or ECDSA with SHA-256, in ASN.1 DER or r and s
-func VerifyCertSignature(certificate *x509.Certificate, message []byte, signature []byte) bool {
+func verifyCertSignature(certificate *x509.Certificate, message []byte, signature []byte) bool {
 	switch publicKey := certificate.PublicKey.(type) {
 	case *ecdsa.PublicKey:
 		digest := sha256.Sum256(message)

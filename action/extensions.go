@@ -160,3 +160,34 @@ func ListSyncerUsers(m *Module, config *Config) ([]*SyncerUser, error) {
 func TestSyncer(m *Module, config *Config) error {
 	return Call(m.Name, m.Module, m.Hosts, "syncer.test", config, map[string]string{}, nil)
 }
+
+// CertVerifyRequest asks an action of kind "cert" to check a certificate sign-in, for the certificate algorithms that
+// Casdoor itself doesn't verify. The binary values are in base64
+type CertVerifyRequest struct {
+	// the DER certificates the user presented, the user's own one first
+	Certificates []string `json:"certificates"`
+	// the PEM certificates of the organization's trusted CAs
+	TrustedCas string `json:"trustedCas"`
+	// the DER or PEM CRLs fetched from the organization's CRL URLs
+	Crls []string `json:"crls"`
+	// for a UKey plug-in: the challenge and the signature the UKey made of it
+	Message   string `json:"message,omitempty"`
+	Signature string `json:"signature,omitempty"`
+	Time      string `json:"time"`
+}
+
+type CertVerifyResult struct {
+	Valid bool `json:"valid"`
+	// when not valid: "expired", "untrusted", "revoked", "signature" or "invalid"
+	Reason string `json:"reason"`
+	Detail string `json:"detail"`
+	// the fields of the user's certificate: CN, SERIALNUMBER, Email, UID and Fingerprint (SHA-256 of the DER in hex)
+	Fields map[string]string `json:"fields"`
+}
+
+// VerifyCertificate runs "cert.verify" of an action of kind "cert"
+func VerifyCertificate(m *Module, req *CertVerifyRequest) (*CertVerifyResult, error) {
+	res := &CertVerifyResult{}
+	err := Call(m.Name, m.Module, m.Hosts, "cert.verify", &Config{}, req, res)
+	return res, err
+}

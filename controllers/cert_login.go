@@ -15,7 +15,6 @@
 package controllers
 
 import (
-	"crypto/x509"
 	"errors"
 	"fmt"
 	"net"
@@ -95,20 +94,20 @@ func (c *ApiController) getCertLoginReturnUrl(value string) (*url.URL, bool) {
 	return returnUrl, true
 }
 
-func (c *ApiController) getClientCertificateChain() ([]*x509.Certificate, error) {
+func (c *ApiController) getClientCertificateDers() ([][]byte, error) {
 	ders, isTlsPort := tlsserver.GetPeerCertificates(c.Ctx.Request)
 	if isTlsPort {
 		if len(ders) == 0 {
 			return nil, errors.New(c.T("enterprise:No client certificate was presented"))
 		}
-		return object.ParseCertificateDers(ders)
+		return ders, nil
 	}
 
 	certificate := tlsserver.GetProxiedCertificate(c.Ctx.Request)
 	if certificate == "" {
 		return nil, errors.New(c.T("enterprise:No client certificate was presented"))
 	}
-	return object.ParseCertificateChain(certificate)
+	return object.ReadCertificateDers(certificate)
 }
 
 func (c *ApiController) addCertLoginTicket() (string, string, error) {
@@ -116,15 +115,15 @@ func (c *ApiController) addCertLoginTicket() (string, string, error) {
 	if err != nil {
 		return "", "", err
 	}
-	chain, err := c.getClientCertificateChain()
+	ders, err := c.getClientCertificateDers()
 	if err != nil {
 		return "", "", err
 	}
-	user, err := object.VerifyCertLogin(getCertLoginOrganization(application, c.Ctx.Input.Query("organization")), chain, c.GetAcceptLanguage())
+	user, fingerprint, err := object.VerifyCertLogin(getCertLoginOrganization(application, c.Ctx.Input.Query("organization")), &object.CertLoginInput{Ders: ders}, c.GetAcceptLanguage())
 	if err != nil {
 		return "", "", err
 	}
-	ticket, err := object.AddCertTicket(application, user, object.GetCertFingerprint(chain[0]))
+	ticket, err := object.AddCertTicket(application, user, fingerprint)
 	if err != nil {
 		return "", "", err
 	}
@@ -215,7 +214,7 @@ func (c *ApiController) checkCertSignin(authForm *form.AuthForm) (*object.User, 
 			return nil, errors.New(c.T("check:The user is forbidden to sign in, please contact the administrator"))
 		}
 	} else {
-		chain, err := object.ParseCertificateChain(authForm.Certificate)
+		ders, err := object.ReadCertificateDers(authForm.Certificate)
 		if err != nil {
 			return nil, fmt.Errorf(c.T("enterprise:The certificate is invalid: %s"), err.Error())
 		}
@@ -228,10 +227,8 @@ func (c *ApiController) checkCertSignin(authForm *form.AuthForm) (*object.User, 
 		if err != nil {
 			return nil, err
 		}
-		if !object.VerifyCertSignature(chain[0], []byte(authForm.Nonce), signature) {
-			return nil, errors.New(c.T("enterprise:The signature of the challenge is invalid"))
-		}
-		user, err = object.VerifyCertLogin(getCertLoginOrganization(application, authForm.Organization), chain, lang)
+		input := &object.CertLoginInput{Ders: ders, Message: []byte(authForm.Nonce), Signature: signature}
+		user, _, err = object.VerifyCertLogin(getCertLoginOrganization(application, authForm.Organization), input, lang)
 		if err != nil {
 			return nil, err
 		}

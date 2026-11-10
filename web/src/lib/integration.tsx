@@ -116,6 +116,9 @@ const ACTION_TEXT_KEYS: Record<string, {summary: string; installed: string; unin
   "syncer": {summary: "integration:Syncer action install summary", installed: "integration:Syncer action installed description", uninstall: "integration:Uninstall syncer action description"},
   "password-check": {summary: "integration:Password check action install summary", installed: "integration:Password check action installed description", uninstall: "integration:Uninstall password check action description"},
   "password-migration": {summary: "integration:Password migration action install summary", installed: "integration:Password migration action installed description", uninstall: "integration:Uninstall password migration action description"},
+  idp: {summary: "integration:Sign-in action install summary", installed: "integration:Sign-in action installed description", uninstall: "integration:Uninstall sign-in action description"},
+  idv: {summary: "integration:ID verification action install summary", installed: "integration:ID verification action installed description", uninstall: "integration:Uninstall ID verification action description"},
+  cert: {summary: "integration:Certificate verifier action install summary", installed: "integration:Certificate verifier action installed description", uninstall: "integration:Uninstall certificate verifier action description"},
 };
 
 /** The install summary, the description after installing or the uninstall warning of an action of the kind. */

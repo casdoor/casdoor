@@ -8,6 +8,7 @@ import {Button} from "@/components/ui/button";
 import {MultiSelect} from "@/components/common/MultiSelect";
 import {SearchableSelect} from "@/components/common/SearchableSelect";
 import {SelectField} from "@/components/common/SelectField";
+import {ActionSelect} from "@/components/common/ActionSelect";
 import {FormRow} from "@/components/crud/FormRow";
 import {EditionNotice} from "@/components/common/EditionNotice";
 import {useApplicationOptions, useGroupNameOptions, useRoleOptions, useUserNameOptions} from "@/hooks/use-options";
@@ -63,7 +64,7 @@ const CERT_USER_FIELDS = [
 ];
 
 /** Signing in with a certificate in a UKey: the trusted CAs and how a certificate is matched to a user. */
-function CertLoginSection({value, onChange}: {value: any; onChange: (value: any) => void}) {
+function CertLoginSection({owner, value, onChange}: {owner: string; value: any; onChange: (value: any) => void}) {
   const certLogin = value ?? {};
   const set = (key: string, v: any) => onChange({certField: "CN", userField: "name", ...certLogin, [key]: v});
   return (
@@ -100,6 +101,9 @@ function CertLoginSection({value, onChange}: {value: any; onChange: (value: any)
           </FormRow>
           <FormRow labelKey="organization:Certificate login URL">
             <Input value={certLogin.loginUrl ?? ""} placeholder="https://door.example.com:18444/api/login/cert" onChange={(e) => set("loginUrl", e.target.value)} />
+          </FormRow>
+          <FormRow labelKey="organization:Certificate verifier">
+            <ActionSelect owner={owner} kind="cert" allowNone value={certLogin.verifier ?? ""} onChange={(v) => set("verifier", v)} />
           </FormRow>
           <div className="col-span-full space-y-1 rounded-md border bg-muted/40 p-3 text-xs text-muted-foreground">
             <p>{i18next.t("organization:Certificate login - Help")}</p>
@@ -172,7 +176,7 @@ export function EnterprisePolicyTab({owner, policy, onChange}: {owner: string; p
       {toggle("recordConsents", "organization:Record consents")}
 
       {section("organization:Certificate and UKey login", "organization:Certificate and UKey login - Tooltip")}
-      <CertLoginSection value={value.certLogin} onChange={(v) => set("certLogin", v)} />
+      <CertLoginSection owner={owner} value={value.certLogin} onChange={(v) => set("certLogin", v)} />
 
       {section("organization:Separation of duties", "organization:Separation of duties - Tooltip")}
       <div className="col-span-full space-y-2" data-tour="sod-rules">
