@@ -228,7 +228,7 @@
     "Submit automatically - Tooltip": "Formu doldurduktan sonra giriş düğmesine tıklar. Kapalıyken kullanıcılar kendileri tıklar",
     "Submit button control": "Giriş düğmesi denetimi",
     "Submit button selector": "Gönder düğmesi seçicisi",
-    "Submit button selector - Tooltip": "Giriş düğmesinin CSS seçicisi. Otomatik bulmak için boş bırakın; düğme yoksa parola alanında Enter'a basılır",
+    "Submit button selector - Tooltip": "Giriş düğmesinin CSS seçicisi, ör. .login-btn (sınıf adı noktayla başlar). Otomatik bulmak için boş bırakın; düğme yoksa parola alanında Enter'a basılır",
     "The application does not allow to sign up new account": "Uygulama yeni hesap kaydetmeyi izin vermemektedir",
     "The application itself if empty": "Boşsa uygulamanın kendisi",
     "Token cert": "Jeton sertifikası",

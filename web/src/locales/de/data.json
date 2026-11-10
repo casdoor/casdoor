@@ -228,7 +228,7 @@
     "Submit automatically - Tooltip": "Nach dem Ausfüllen auf die Anmeldeschaltfläche klicken. Wenn deaktiviert, klicken Benutzer selbst",
     "Submit button control": "Steuerelement für Anmeldeschaltfläche",
     "Submit button selector": "Selektor der Anmeldeschaltfläche",
-    "Submit button selector - Tooltip": "CSS-Selektor der Anmeldeschaltfläche. Leer lassen, um sie automatisch zu finden; gibt es keine, wird im Passwortfeld Enter gedrückt",
+    "Submit button selector - Tooltip": "CSS-Selektor der Anmeldeschaltfläche, z. B. .login-btn (ein Klassenname beginnt mit einem Punkt). Leer lassen, um sie automatisch zu finden; gibt es keine, wird im Passwortfeld Enter gedrückt",
     "The application does not allow to sign up new account": "Die Anwendung erlaubt es nicht, ein neues Konto zu registrieren",
     "The application itself if empty": "Bei leerem Feld die Anwendung selbst",
     "Token cert": "Token-Zertifikat",

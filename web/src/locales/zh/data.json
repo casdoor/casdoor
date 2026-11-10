@@ -230,7 +230,7 @@
     "Submit automatically - Tooltip": "填好后自动点登录按钮。关闭时由用户自己点",
     "Submit button control": "登录按钮控件",
     "Submit button selector": "登录按钮选择器",
-    "Submit button selector - Tooltip": "登录按钮的 CSS 选择器。留空时自动识别，找不到按钮就在密码框里按回车",
+    "Submit button selector - Tooltip": "登录按钮的 CSS 选择器，例如 .login-btn（按 class 找时前面加点）。留空时自动识别，找不到按钮就在密码框里按回车",
     "The application does not allow to sign up new account": "该应用不允许注册新账户",
     "The application itself if empty": "留空则代表应用自身",
     "Token cert": "Token证书",

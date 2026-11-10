@@ -228,7 +228,7 @@
     "Submit automatically - Tooltip": "Kliknij przycisk logowania po wypełnieniu formularza. Po wyłączeniu użytkownicy klikają sami",
     "Submit button control": "Kontrolka przycisku logowania",
     "Submit button selector": "Selektor przycisku logowania",
-    "Submit button selector - Tooltip": "Selektor CSS przycisku logowania. Pozostaw puste, aby wykryć go automatycznie; jeśli go nie ma, w polu hasła zostanie naciśnięty Enter",
+    "Submit button selector - Tooltip": "Selektor CSS przycisku logowania, np. .login-btn (nazwa klasy zaczyna się od kropki). Pozostaw puste, aby wykryć go automatycznie; jeśli go nie ma, w polu hasła zostanie naciśnięty Enter",
     "The application does not allow to sign up new account": "Aplikacja nie zezwala na rejestrację nowego konta",
     "The application itself if empty": "Jeśli puste, sama aplikacja",
     "Token cert": "Certyfikat tokenu",

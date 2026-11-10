@@ -228,7 +228,7 @@
     "Submit automatically - Tooltip": "Cliquer sur le bouton de connexion après avoir rempli le formulaire. Désactivé, les utilisateurs cliquent eux-mêmes",
     "Submit button control": "Contrôle du bouton de connexion",
     "Submit button selector": "Sélecteur du bouton de connexion",
-    "Submit button selector - Tooltip": "Sélecteur CSS du bouton de connexion. Laissez vide pour le détecter automatiquement ; s'il n'y en a pas, la touche Entrée est pressée dans le champ de mot de passe",
+    "Submit button selector - Tooltip": "Sélecteur CSS du bouton de connexion, par ex. .login-btn (un nom de classe commence par un point). Laissez vide pour le détecter automatiquement ; s'il n'y en a pas, la touche Entrée est pressée dans le champ de mot de passe",
     "The application does not allow to sign up new account": "L'application ne permet pas de créer un nouveau compte",
     "The application itself if empty": "L'application elle-même si vide",
     "Token cert": "Certificat de token",

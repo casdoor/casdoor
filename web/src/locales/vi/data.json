@@ -228,7 +228,7 @@
     "Submit automatically - Tooltip": "Nhấn nút đăng nhập sau khi điền biểu mẫu. Khi tắt, người dùng tự nhấn",
     "Submit button control": "Điều khiển nút đăng nhập",
     "Submit button selector": "Bộ chọn nút đăng nhập",
-    "Submit button selector - Tooltip": "Bộ chọn CSS của nút đăng nhập. Để trống để tự động tìm; nếu không có nút, sẽ nhấn Enter trong ô mật khẩu",
+    "Submit button selector - Tooltip": "Bộ chọn CSS của nút đăng nhập, ví dụ .login-btn (tên lớp bắt đầu bằng dấu chấm). Để trống để tự động tìm; nếu không có nút, sẽ nhấn Enter trong ô mật khẩu",
     "The application does not allow to sign up new account": "Ứng dụng không cho phép đăng ký tài khoản mới",
     "The application itself if empty": "Nếu để trống thì là chính ứng dụng",
     "Token cert": "Chứng chỉ token",

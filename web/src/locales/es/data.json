@@ -228,7 +228,7 @@
     "Submit automatically - Tooltip": "Hace clic en el botón de inicio de sesión tras rellenar el formulario. Si está desactivado, los usuarios hacen clic ellos mismos",
     "Submit button control": "Control del botón de inicio de sesión",
     "Submit button selector": "Selector del botón de envío",
-    "Submit button selector - Tooltip": "Selector CSS del botón de inicio de sesión. Déjelo vacío para detectarlo automáticamente; si no hay ninguno, se pulsa Intro en el campo de contraseña",
+    "Submit button selector - Tooltip": "Selector CSS del botón de inicio de sesión, p. ej. .login-btn (un nombre de clase empieza con un punto). Déjelo vacío para detectarlo automáticamente; si no hay ninguno, se pulsa Intro en el campo de contraseña",
     "The application does not allow to sign up new account": "La aplicación no permite registrarse una cuenta nueva",
     "The application itself if empty": "Si está vacío, la propia aplicación",
     "Token cert": "Certificado de token",

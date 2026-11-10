@@ -230,7 +230,7 @@
     "Submit automatically - Tooltip": "Click the sign-in button after filling the form. When off, users click it themselves",
     "Submit button control": "Submit button control",
     "Submit button selector": "Submit button selector",
-    "Submit button selector - Tooltip": "CSS selector of the sign-in button. Leave it empty to find it automatically, or to press Enter in the password input when there is none",
+    "Submit button selector - Tooltip": "CSS selector of the sign-in button, e.g. .login-btn (a class name starts with a dot). Leave it empty to find it automatically, or to press Enter in the password input when there is none",
     "The application does not allow to sign up new account": "The application does not allow to sign up new account",
     "The application itself if empty": "The application itself if empty",
     "Token cert": "Token cert",

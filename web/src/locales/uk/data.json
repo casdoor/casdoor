@@ -228,7 +228,7 @@
     "Submit automatically - Tooltip": "Натискати кнопку входу після заповнення форми. Якщо вимкнено, користувачі натискають самі",
     "Submit button control": "Елемент кнопки входу",
     "Submit button selector": "Селектор кнопки входу",
-    "Submit button selector - Tooltip": "CSS-селектор кнопки входу. Залиште порожнім, щоб знайти автоматично; якщо кнопки немає, у полі пароля натискається Enter",
+    "Submit button selector - Tooltip": "CSS-селектор кнопки входу, наприклад .login-btn (ім'я класу починається з крапки). Залиште порожнім, щоб знайти автоматично; якщо кнопки немає, у полі пароля натискається Enter",
     "The application does not allow to sign up new account": "Застосунок не дозволяє зареєструвати новий обліковий запис",
     "The application itself if empty": "Якщо порожньо, сам застосунок",
     "Token cert": "Сертифікат токена",

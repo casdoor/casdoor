@@ -228,7 +228,7 @@
     "Submit automatically - Tooltip": "入力後にサインインボタンをクリックします。オフの場合はユーザーが自分でクリックします",
     "Submit button control": "サインインボタンのコントロール",
     "Submit button selector": "送信ボタンのセレクター",
-    "Submit button selector - Tooltip": "サインインボタンの CSS セレクター。空欄なら自動で検出し、見つからない場合はパスワード欄で Enter を押します",
+    "Submit button selector - Tooltip": "サインインボタンの CSS セレクター（例：.login-btn、クラス名の前にはドットを付けます）。空欄なら自動で検出し、見つからない場合はパスワード欄で Enter を押します",
     "The application does not allow to sign up new account": "アプリケーションでは新しいアカウントの登録ができません",
     "The application itself if empty": "空の場合はアプリケーション自身",
     "Token cert": "トークン証明書",
