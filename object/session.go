@@ -274,6 +274,38 @@ func DeleteAllUserSessions(owner string, name string) (bool, error) {
 	return affected != 0, nil
 }
 
+// DeleteOtherUserSessions ends all sessions of the user except keepSessionId, so that a password
+// change signs out every other browser while the one that made the change stays signed in
+func DeleteOtherUserSessions(owner string, name string, keepSessionId string) error {
+	sessions, err := GetUserSessions(owner, name)
+	if err != nil {
+		return err
+	}
+
+	otherIds := getOtherSessionIds(sessions, keepSessionId)
+	_, err = ExpireTokensBySessionIds(owner, name, otherIds)
+	if err != nil {
+		return err
+	}
+
+	DeleteBeegoSession(otherIds)
+
+	for _, session := range sessions {
+		if keepSessionId != "" && slices.Contains(session.SessionId, keepSessionId) {
+			session.SessionId = []string{keepSessionId}
+			pruneSessionInfos(session)
+			_, err = updateSessionIds(session)
+		} else {
+			_, err = ormer.Engine.ID(core.PK{session.Owner, session.Name, session.Application}).Delete(&Session{})
+		}
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 func DeleteSessionId(id string, sessionId string) (bool, error) {
 	session, err := GetSingleSession(id)
 	if err != nil {

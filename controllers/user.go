@@ -15,6 +15,7 @@
 package controllers
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"strings"
@@ -488,6 +489,12 @@ func (c *ApiController) UpdateUser() {
 			c.ResponseError(err.Error())
 			return
 		}
+
+		err = object.DeleteOtherUserSessions(oldUser.Owner, oldUser.Name, c.getKeptSessionId(oldUser))
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
 	}
 
 	if affected {
@@ -856,7 +863,23 @@ func (c *ApiController) SetPassword() {
 		return
 	}
 
+	err = object.DeleteOtherUserSessions(targetUser.Owner, targetUser.Name, c.getKeptSessionId(targetUser))
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
 	c.ResponseOk()
+}
+
+// getKeptSessionId returns the current session id when users change their own password, so that
+// only that session survives the change, an admin changing someone else's password ends all of them
+func (c *ApiController) getKeptSessionId(user *object.User) string {
+	if c.GetSessionUsername() != user.GetId() {
+		return ""
+	}
+
+	return c.Ctx.Input.CruSession.SessionID(context.Background())
 }
 
 // GetInitAdminStatus
