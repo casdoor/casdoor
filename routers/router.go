@@ -156,6 +156,9 @@ func InitAPI() {
 
 	web.Router("/api/get-servers", &controllers.ApiController{}, "GET:GetServers")
 	web.Router("/api/get-mcp-records", &controllers.ApiController{}, "GET:GetMcpRecords")
+	web.Router("/api/get-mcp-approvals", &controllers.ApiController{}, "GET:GetMcpApprovals")
+	web.Router("/api/get-mcp-approval", &controllers.ApiController{}, "GET:GetMcpApproval")
+	web.Router("/api/decide-mcp-approval", &controllers.ApiController{}, "POST:DecideMcpApproval")
 
 	web.Router("/api/verify-records", &controllers.ApiController{}, "GET:VerifyRecords")
 	web.Router("/api/get-compliance-report", &controllers.ApiController{}, "GET:GetComplianceReport")

@@ -423,6 +423,11 @@ func (a *Ormer) createTable() {
 		panic(err)
 	}
 
+	err = a.Engine.Sync2(new(McpApproval))
+	if err != nil {
+		panic(err)
+	}
+
 	err = a.Engine.Sync2(new(ConsentLog))
 	if err != nil {
 		panic(err)

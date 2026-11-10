@@ -48,10 +48,12 @@ type EnterprisePolicy struct {
 	CertLogin       *CertLoginPolicy  `json:"certLogin"`
 }
 
-// SodRule says that no user may hold two or more of the roles at once, such as the requester and the approver
+// SodRule says that no user may hold two or more of the roles at once, such as the requester and the approver, and
+// that no agent may be allowed two or more of the MCP tools ("<server>/<tool>") at once, such as paying and approving
 type SodRule struct {
 	Name  string   `json:"name"`
 	Roles []string `json:"roles"`
+	Tools []string `json:"tools"`
 }
 
 const (
@@ -155,8 +157,8 @@ func ValidateEnterprisePolicy(policy *EnterprisePolicy, editor *User, lang strin
 		return err
 	}
 	for _, rule := range policy.SodRules {
-		if rule == nil || rule.Name == "" || len(rule.Roles) < 2 {
-			return errors.New(i18n.Translate(lang, "enterprise:A separation-of-duty rule needs a name and at least two roles"))
+		if rule == nil || rule.Name == "" || (len(rule.Roles) < 2 && len(rule.Tools) < 2) {
+			return errors.New(i18n.Translate(lang, "enterprise:A separation-of-duty rule needs a name and at least two roles or two MCP tools"))
 		}
 	}
 	if !policy.SeparationOfDuties {

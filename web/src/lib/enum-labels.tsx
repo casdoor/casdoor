@@ -90,6 +90,18 @@ export const PERMISSION_RESOURCE_TYPES: EnumMap = {
   "TreeNode": {i18nKey: "permission:TreeNode"},
   "Custom": {i18nKey: "general:Custom"},
   "API": {i18nKey: "API"},
+  "MCP tool": {i18nKey: "permission:MCP tool"},
+};
+
+/** an "MCP tool" permission lets its users and agents call the tool through the MCP gateway */
+export const PERMISSION_MCP_ACTIONS: EnumMap = {
+  "Call": {i18nKey: "entry:Call"},
+};
+
+export const PERMISSION_CONDITION_OPERATORS: EnumMap = {
+  "Equals": {i18nKey: "permission:Equals"},
+  "Not equals": {i18nKey: "permission:Not equals"},
+  "Starts with": {i18nKey: "permission:Starts with"},
 };
 
 export const COUPON_DISCOUNT_TYPES: EnumMap = {

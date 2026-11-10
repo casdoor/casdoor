@@ -77,6 +77,7 @@ const EnforcerEditPage = React.lazy(() => import("@/pages/EnforcerEditPage"));
 const AgentListPage = React.lazy(() => import("@/pages/AgentListPage"));
 const AgentEditPage = React.lazy(() => import("@/pages/AgentEditPage"));
 const ServerListPage = React.lazy(() => import("@/pages/ServerListPage"));
+const McpApprovalListPage = React.lazy(() => import("@/pages/McpApprovalListPage"));
 const ServerEditPage = React.lazy(() => import("@/pages/ServerEditPage"));
 const ServerStorePage = React.lazy(() => import("@/pages/ServerStorePage"));
 const EntryListPage = React.lazy(() => import("@/pages/EntryListPage"));
@@ -331,6 +332,8 @@ export default function App() {
           <Route path="/agents" element={<AgentListPage />} />
           <Route path="/agents/:organizationName/:agentName" element={<AgentEditPage />} />
           <Route path="/servers" element={<ServerListPage />} />
+          <Route path="/mcp-approvals" element={<McpApprovalListPage />} />
+          <Route path="/mcp-approvals/:organizationName/:approvalName" element={<McpApprovalListPage />} />
           <Route path="/servers/:organizationName/:serverName" element={<ServerEditPage />} />
           <Route path="/server-store" element={<ServerStorePage />} />
           <Route path="/entries" element={<EntryListPage />} />

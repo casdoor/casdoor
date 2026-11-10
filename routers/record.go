@@ -153,6 +153,16 @@ func AfterRecordMessage(ctx *context.Context) {
 		record.Organization = getOrganizationFromRequest(ctx)
 	}
 
+	// a call through the MCP gateway is recorded as what it did, see setMcpAuditRecord() in controllers/mcp_server.go
+	if traceId := ctx.Input.Params()["recordMcpTraceId"]; traceId != "" {
+		record.Detail = "trace:" + traceId
+	}
+	if mcpObject := ctx.Input.Params()["recordMcpObject"]; mcpObject != "" {
+		record.Action = "mcp-tool-call"
+		record.Object = mcpObject
+		record.Response = ctx.Input.Params()["recordMcpResponse"]
+	}
+
 	var record2 *object.Record
 	recordSignup := ctx.Input.Params()["recordSignup"]
 	if recordSignup == "true" {

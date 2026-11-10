@@ -19,7 +19,7 @@ import * as Setting from "@/lib/setting";
 import {EditionNotice} from "@/components/common/EditionNotice";
 import {McpRecordTable} from "@/components/server/McpRecordTable";
 
-/** The tools the MCP server exposes; only "isAllowed" is editable, see web/src/ToolTable.js. */
+/** The tools the MCP server exposes; "isAllowed" and "requireApproval" are editable. */
 function ToolTable({tools, onChange}: {tools: any[]; onChange: (tools: any[]) => void}) {
   const rows = tools ?? [];
 
@@ -31,12 +31,13 @@ function ToolTable({tools, onChange}: {tools: any[]; onChange: (tools: any[]) =>
             <TableHead className="w-[260px]">{i18next.t("general:Name")}</TableHead>
             <TableHead>{i18next.t("general:Description")}</TableHead>
             <TableHead className="w-[120px]">{i18next.t("general:Is allowed")}</TableHead>
+            <TableHead className="w-[140px]">{i18next.t("server:Needs approval")}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {rows.length === 0 ? (
             <TableRow className="hover:bg-transparent">
-              <TableCell colSpan={3} className="h-20 text-center text-muted-foreground">
+              <TableCell colSpan={4} className="h-20 text-center text-muted-foreground">
                 {i18next.t("general:No data")}
               </TableCell>
             </TableRow>
@@ -51,6 +52,16 @@ function ToolTable({tools, onChange}: {tools: any[]; onChange: (tools: any[]) =>
                     onCheckedChange={(checked) => {
                       const next = [...rows];
                       next[index] = {...next[index], isAllowed: checked};
+                      onChange(next);
+                    }}
+                  />
+                </TableCell>
+                <TableCell>
+                  <Switch
+                    checked={!!tool.requireApproval}
+                    onCheckedChange={(checked) => {
+                      const next = [...rows];
+                      next[index] = {...next[index], requireApproval: checked};
                       onChange(next);
                     }}
                   />
@@ -215,6 +226,25 @@ export default function ServerEditPage() {
           options={applications}
         />
       </FormRow>
+      <FormRow labelKey="server:Identity header">
+        <Input
+          placeholder="X-Casdoor-Identity"
+          value={server.identityHeader ?? ""}
+          onChange={(e) => updateServerField("identityHeader", e.target.value)}
+        />
+        <p className="mt-1.5 text-xs text-muted-foreground">
+          {i18next.t("server:The gateway signs a 5-minute JWT with the certificate of the application, with the user, their groups and roles, the agent acting for them and the trace ID, and sends it to the MCP server in this header. The MCP server verifies it with the JWKS of Casdoor and can pass it on to the business systems. Leave it empty to send no identity")}
+        </p>
+      </FormRow>
+      <FormRow labelKey="server:Tool permissions">
+        <Switch
+          checked={!!server.enableToolPermissions}
+          onCheckedChange={(checked) => updateServerField("enableToolPermissions", checked)}
+        />
+        <p className="mt-1.5 text-xs text-muted-foreground">
+          {i18next.t("server:Every tool call needs an \"MCP tool\" permission of the user, and of the agent when an agent calls, so the agent can do at most what both are allowed. Add the permissions on the Permissions page")}
+        </p>
+      </FormRow>
       <FormRow labelKey="general:Tool" block>
         <div className="space-y-2">
           {mode !== "add" ? (
@@ -231,6 +261,9 @@ export default function ServerEditPage() {
         <EditionNotice />
         <p className="mt-1.5 text-xs text-muted-foreground">
           {i18next.t("server:Agent platforms that only send fixed headers, such as Alibaba Cloud Bailian, Baidu Qianfan and Coze, can use a key of the Keys page: Authorization: Bearer <access key>:<access secret>")}
+        </p>
+        <p className="mt-1.5 text-xs text-muted-foreground">
+          {i18next.t("server:Each call has a trace ID. The gateway takes it from the traceparent or X-Casdoor-Trace-Id header of the agent, or makes one, passes traceparent and X-Casdoor-Trace-Id to the MCP server and returns X-Casdoor-Trace-Id in the response")}
         </p>
       </FormRow>
       {mode !== "add" ? (

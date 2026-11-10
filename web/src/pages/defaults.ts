@@ -49,6 +49,9 @@ export function newAgent(account: Account) {
     url: "",
     token: "",
     application: "",
+    description: "",
+    manager: "",
+    isForbidden: false,
   };
 }
 

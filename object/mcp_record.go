@@ -16,7 +16,9 @@ package object
 
 import (
 	"github.com/beego/beego/v2/core/logs"
+	"github.com/casdoor/casdoor/edition"
 	"github.com/casdoor/casdoor/util"
+	"github.com/xorm-io/xorm"
 )
 
 // McpRecord is one tool call through the MCP gateway, kept when the server owner's security policy asks so
@@ -35,6 +37,27 @@ type McpRecord struct {
 	StatusCode int    `json:"statusCode"`
 	Response   string `xorm:"mediumtext" json:"response"`
 	DurationMs int64  `json:"durationMs"`
+
+	// who called: the OAuth client (application), the agent it is, the RFC 8693 actor chain and how it authenticated
+	Application string `xorm:"varchar(100)" json:"application"`
+	Agent       string `xorm:"varchar(200) index" json:"agent"`
+	Actor       string `xorm:"varchar(1000)" json:"actor"`
+	AuthMethod  string `xorm:"varchar(100)" json:"authMethod"`
+	TokenId     string `xorm:"varchar(200)" json:"tokenId"`
+	// the trace ID that the gateway passes to the upstream MCP server, which passes it on to the business systems
+	TraceId string `xorm:"varchar(100) index" json:"traceId"`
+	// the jti of the identity token sent to the upstream MCP server
+	IdentityTokenId string `xorm:"varchar(200)" json:"identityTokenId"`
+	Approval        string `xorm:"varchar(200)" json:"approval"`
+}
+
+// GetMcpRecordBodyLimit keeps the whole arguments and response of a tool call for the enterprise edition, as the
+// evidence of an incident review, and the beginning of them otherwise
+func GetMcpRecordBodyLimit() int {
+	if edition.Has(edition.Enterprise) {
+		return 1 << 20
+	}
+	return 4000
 }
 
 func IsMcpToolCallRecorded(owner string) bool {
@@ -44,34 +67,52 @@ func IsMcpToolCallRecorded(owner string) bool {
 
 func AddMcpRecord(record *McpRecord) {
 	record.CreatedTime = util.GetCurrentTime()
-	record.Arguments = truncateString(record.Arguments, 4000)
-	record.Response = truncateString(record.Response, 4000)
+	record.Arguments = truncateString(record.Arguments, GetMcpRecordBodyLimit())
+	record.Response = truncateString(record.Response, GetMcpRecordBodyLimit())
 	record.UserAgent = truncateString(record.UserAgent, 500)
 	if _, err := ormer.Engine.Insert(record); err != nil {
 		logs.Warn("the MCP tool call record is not saved: %s", err.Error())
 	}
 }
 
-func GetMcpRecordCount(owner string, server string, tool string) (int64, error) {
-	session := ormer.Engine.Where("owner = ?", owner)
-	if server != "" {
-		session = session.And("server = ?", server)
-	}
-	if tool != "" {
-		session = session.And("tool = ?", tool)
-	}
-	return session.Count(&McpRecord{})
+type McpRecordFilter struct {
+	Server  string
+	Tool    string
+	Agent   string
+	User    string
+	TraceId string
+	Result  string
 }
 
-func GetPaginationMcpRecords(owner string, server string, tool string, offset int, limit int) ([]*McpRecord, error) {
-	records := []*McpRecord{}
+func getMcpRecordSession(owner string, filter *McpRecordFilter) *xorm.Session {
 	session := ormer.Engine.Where("owner = ?", owner)
-	if server != "" {
-		session = session.And("server = ?", server)
+	if filter.Server != "" {
+		session = session.And("server = ?", filter.Server)
 	}
-	if tool != "" {
-		session = session.And("tool = ?", tool)
+	if filter.Tool != "" {
+		session = session.And("tool = ?", filter.Tool)
 	}
-	err := session.Desc("id").Limit(limit, offset).Find(&records)
+	if filter.Agent != "" {
+		session = session.And("agent = ?", filter.Agent)
+	}
+	if filter.User != "" {
+		session = session.And("user_name = ?", filter.User)
+	}
+	if filter.TraceId != "" {
+		session = session.And("trace_id = ?", filter.TraceId)
+	}
+	if filter.Result != "" {
+		session = session.And("result = ?", filter.Result)
+	}
+	return session
+}
+
+func GetMcpRecordCount(owner string, filter *McpRecordFilter) (int64, error) {
+	return getMcpRecordSession(owner, filter).Count(&McpRecord{})
+}
+
+func GetPaginationMcpRecords(owner string, filter *McpRecordFilter, offset int, limit int) ([]*McpRecord, error) {
+	records := []*McpRecord{}
+	err := getMcpRecordSession(owner, filter).Desc("id").Limit(limit, offset).Find(&records)
 	return records, err
 }

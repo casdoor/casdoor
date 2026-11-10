@@ -40,6 +40,15 @@ type OidcIdTokenClaims struct {
 	Sid string `json:"sid,omitempty"`
 }
 
+// ActClaim is the RFC 8693 "act" claim: the party (such as an AI agent) acting for the token's subject, with the
+// party it acts for in turn nested in its own "act"
+type ActClaim struct {
+	Sub      string    `json:"sub"`
+	ClientId string    `json:"client_id,omitempty"`
+	Agent    string    `json:"agent,omitempty"`
+	Act      *ActClaim `json:"act,omitempty"`
+}
+
 type Claims struct {
 	*User
 	TokenType string `json:"tokenType,omitempty"`
@@ -47,8 +56,9 @@ type Claims struct {
 	Tag       string `json:"tag"`
 	Scope     string `json:"scope,omitempty"`
 	// the `azp` (Authorized Party) claim. Optional. See https://openid.net/specs/openid-connect-core-1_0.html#IDToken
-	Azp      string `json:"azp,omitempty"`
-	Provider string `json:"provider,omitempty"`
+	Azp      string    `json:"azp,omitempty"`
+	Provider string    `json:"provider,omitempty"`
+	Act      *ActClaim `json:"act,omitempty"`
 
 	SigninMethod string `json:"signinMethod,omitempty"`
 	OidcIdTokenClaims
@@ -169,11 +179,12 @@ type UserWithoutThirdIdp struct {
 
 type ClaimsShort struct {
 	*UserShort
-	TokenType string `json:"tokenType,omitempty"`
-	Nonce     string `json:"nonce,omitempty"`
-	Scope     string `json:"scope,omitempty"`
-	Azp       string `json:"azp,omitempty"`
-	Provider  string `json:"provider,omitempty"`
+	TokenType string    `json:"tokenType,omitempty"`
+	Nonce     string    `json:"nonce,omitempty"`
+	Scope     string    `json:"scope,omitempty"`
+	Azp       string    `json:"azp,omitempty"`
+	Provider  string    `json:"provider,omitempty"`
+	Act       *ActClaim `json:"act,omitempty"`
 
 	SigninMethod string `json:"signinMethod,omitempty"`
 	OidcIdTokenClaims
@@ -191,12 +202,13 @@ type OIDCAddress struct {
 
 type ClaimsWithoutThirdIdp struct {
 	*UserWithoutThirdIdp
-	TokenType string `json:"tokenType,omitempty"`
-	Nonce     string `json:"nonce,omitempty"`
-	Tag       string `json:"tag"`
-	Scope     string `json:"scope,omitempty"`
-	Azp       string `json:"azp,omitempty"`
-	Provider  string `json:"provider,omitempty"`
+	TokenType string    `json:"tokenType,omitempty"`
+	Nonce     string    `json:"nonce,omitempty"`
+	Tag       string    `json:"tag"`
+	Scope     string    `json:"scope,omitempty"`
+	Azp       string    `json:"azp,omitempty"`
+	Provider  string    `json:"provider,omitempty"`
+	Act       *ActClaim `json:"act,omitempty"`
 
 	SigninMethod string `json:"signinMethod,omitempty"`
 	OidcIdTokenClaims
@@ -342,6 +354,7 @@ func getShortClaims(claims Claims) ClaimsShort {
 		Azp:               claims.Azp,
 		SigninMethod:      claims.SigninMethod,
 		Provider:          claims.Provider,
+		Act:               claims.Act,
 		OidcIdTokenClaims: claims.OidcIdTokenClaims,
 	}
 	return res
@@ -358,6 +371,7 @@ func getClaimsWithoutThirdIdp(claims Claims) ClaimsWithoutThirdIdp {
 		Azp:                 claims.Azp,
 		SigninMethod:        claims.SigninMethod,
 		Provider:            claims.Provider,
+		Act:                 claims.Act,
 		OidcIdTokenClaims:   claims.OidcIdTokenClaims,
 	}
 	return res
@@ -449,6 +463,9 @@ func getClaimsCustom(claims Claims, tokenField []string, tokenAttributes []*JwtI
 	// Always include azp if present (authorized party)
 	if claims.Azp != "" {
 		res["azp"] = claims.Azp
+	}
+	if claims.Act != nil {
+		res["act"] = claims.Act
 	}
 
 	// Always include nonce and scope as they are built-in OAuth/OIDC fields (even if empty)
@@ -617,6 +634,8 @@ type jwtTokenOptions struct {
 	RefreshScope string
 	// SessionId is the Beego session id the tokens are minted under, its hash is the "sid" of the ID token
 	SessionId string
+	// Actor is the RFC 8693 "act" claim of the access and refresh tokens
+	Actor *ActClaim
 }
 
 // getOidcHash returns the left-most half of the hash of value, base64url encoded, using the hash
@@ -706,6 +725,9 @@ func generateJwtTokenWithOptions(application *Application, user *User, provider 
 	if resource != "" {
 		claims.Audience = []string{resource}
 	}
+
+	// RFC 8693: only the access token and the refresh token say who acts for the user, the ID token is about the user
+	claims.Act = options.Actor
 
 	// RFC 6749 section 6: the refresh token keeps the scope of the grant
 	refreshClaims := claims

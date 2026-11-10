@@ -120,7 +120,20 @@ func CheckEnforcerEdition(enforcer *casbin.Enforcer, requests [][]interface{}) e
 
 // CheckPermissionEdition is checked when a permission is saved
 func CheckPermissionEdition(permission *Permission) error {
-	if permission == nil || isRbacAllowed() {
+	if permission == nil {
+		return nil
+	}
+	if permission.ResourceType == PermissionResourceTypeMcpTool || len(permission.Agents) > 0 {
+		if err := edition.Require(edition.Commercial, edition.FeatureMcpGateway); err != nil {
+			return err
+		}
+	}
+	if len(permission.Conditions) > 0 {
+		if err := edition.Require(edition.Commercial, edition.FeatureAbac); err != nil {
+			return err
+		}
+	}
+	if isRbacAllowed() {
 		return nil
 	}
 	if len(permission.Groups) > 0 || len(permission.Roles) > 0 {

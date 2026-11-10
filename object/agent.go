@@ -30,7 +30,29 @@ type Agent struct {
 
 	Url         string `xorm:"varchar(500)" json:"url"`
 	Token       string `xorm:"varchar(500)" json:"token"`
-	Application string `xorm:"varchar(100)" json:"application"`
+	Application string `xorm:"varchar(100) index" json:"application"`
+
+	Description string `xorm:"varchar(500)" json:"description"`
+	Manager     string `xorm:"varchar(100)" json:"manager"`
+	IsForbidden bool   `json:"isForbidden"`
+}
+
+// GetAgentByApplication returns the agent whose OAuth client is the application, the application's tokens and keys
+// are then the agent's identity
+func GetAgentByApplication(application string) (*Agent, error) {
+	if application == "" {
+		return nil, nil
+	}
+
+	agents := []*Agent{}
+	err := ormer.Engine.Where("application = ?", application).Asc("created_time").Limit(1).Find(&agents)
+	if err != nil {
+		return nil, err
+	}
+	if len(agents) == 0 {
+		return nil, nil
+	}
+	return agents[0], nil
 }
 
 func GetAgents(owner string) ([]*Agent, error) {

@@ -34,6 +34,9 @@ type Permission struct {
 	Groups  []string `xorm:"mediumtext" json:"groups"`
 	Roles   []string `xorm:"mediumtext" json:"roles"`
 	Domains []string `xorm:"mediumtext" json:"domains"`
+	// Agents and Conditions are for the "MCP tool" permissions of the MCP gateway
+	Agents     []string               `xorm:"mediumtext" json:"agents"`
+	Conditions []*PermissionCondition `xorm:"mediumtext" json:"conditions"`
 
 	// SourceGroups and SourceRoles are only set when the permission is resolved for a user, both being empty means it was assigned directly
 	SourceGroups []string `xorm:"-" json:"sourceGroups,omitempty"`

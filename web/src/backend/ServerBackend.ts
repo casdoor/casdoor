@@ -104,9 +104,40 @@ export function getMcpAccessToken(owner, applicationName) {
   }).then(res => res.json());
 }
 
-export function getMcpRecords(owner: string, server: string, page = 1, pageSize = 50) {
-  return fetch(`${Setting.ServerUrl}/api/get-mcp-records?owner=${encodeURIComponent(owner)}&server=${encodeURIComponent(server)}&p=${page}&pageSize=${pageSize}`, {
+export function getMcpRecords(owner: string, server: string, page = 1, pageSize = 50, filters: Record<string, string> = {}) {
+  const query = Object.entries(filters).filter(([, value]) => value).map(([key, value]) => `&${key}=${encodeURIComponent(value)}`).join("");
+  return fetch(`${Setting.ServerUrl}/api/get-mcp-records?owner=${encodeURIComponent(owner)}&server=${encodeURIComponent(server)}&p=${page}&pageSize=${pageSize}${query}`, {
     method: "GET",
+    credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}
+
+export function getMcpApprovals(owner: string, state = "") {
+  return fetch(`${Setting.ServerUrl}/api/get-mcp-approvals?owner=${encodeURIComponent(owner)}&state=${encodeURIComponent(state)}`, {
+    method: "GET",
+    credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}
+
+export function getMcpApproval(owner: string, name: string) {
+  return fetch(`${Setting.ServerUrl}/api/get-mcp-approval?id=${encodeURIComponent(`${owner}/${name}`)}`, {
+    method: "GET",
+    credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}
+
+export function decideMcpApproval(owner: string, name: string, approved: boolean, comment: string) {
+  return fetch(`${Setting.ServerUrl}/api/decide-mcp-approval?id=${encodeURIComponent(`${owner}/${name}`)}&approved=${approved}&comment=${encodeURIComponent(comment)}`, {
+    method: "POST",
     credentials: "include",
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),

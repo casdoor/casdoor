@@ -12,6 +12,7 @@ import {ActionSelect} from "@/components/common/ActionSelect";
 import {FormRow} from "@/components/crud/FormRow";
 import {EditionNotice} from "@/components/common/EditionNotice";
 import {useApplicationOptions, useGroupNameOptions, useRoleOptions, useUserNameOptions} from "@/hooks/use-options";
+import * as ServerBackend from "@/backend/ServerBackend";
 
 const ENCRYPTABLE_FIELDS = ["idCard", "realName", "birthday", "location", "address", "managedAccounts"];
 
@@ -145,6 +146,18 @@ export function EnterprisePolicyTab({owner, policy, onChange}: {owner: string; p
     </FormRow>
   );
   const setRule = (index: number, rule: any) => set("sodRules", rules.map((item, i) => (i === index ? rule : item)));
+  const [toolOptions, setToolOptions] = React.useState<{value: string; label: string}[]>([]);
+  React.useEffect(() => {
+    if (!owner) {
+      return;
+    }
+    ServerBackend.getServers(owner, 1, 1000).then((res: any) => {
+      if (res.status === "ok") {
+        setToolOptions((res.data ?? []).flatMap((server: any) =>
+          (server.tools ?? []).map((tool: any) => ({value: `${server.name}/${tool.name}`, label: `${server.name}/${tool.name}`}))));
+      }
+    });
+  }, [owner]);
 
   return (
     <>
@@ -195,12 +208,19 @@ export function EnterprisePolicyTab({owner, policy, onChange}: {owner: string; p
               options={roleOptions}
               placeholder={i18next.t("organization:Roles that one user cannot hold together")}
             />
+            <MultiSelect
+              className="min-w-64 flex-1"
+              value={rule.tools ?? []}
+              onChange={(v) => setRule(index, {...rule, tools: v})}
+              options={toolOptions}
+              placeholder={i18next.t("organization:MCP tools that one agent cannot be allowed together")}
+            />
             <Button variant="ghost" size="icon" onClick={() => set("sodRules", rules.filter((_, i) => i !== index))}>
               <Trash2 className="size-4" />
             </Button>
           </div>
         ))}
-        <Button variant="outline" size="sm" onClick={() => set("sodRules", [...rules, {name: "", roles: []}])}>
+        <Button variant="outline" size="sm" onClick={() => set("sodRules", [...rules, {name: "", roles: [], tools: []}])}>
           <Plus className="size-4" />
           {i18next.t("organization:Add rule")}
         </Button>

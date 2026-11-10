@@ -72,6 +72,7 @@ const (
 	FeaturePam              = "Privileged account management"
 	FeatureAccessReview     = "Access reviews"
 	FeatureDelegatedAdmin   = "Delegated administration"
+	FeatureMcpApproval      = "MCP tool call approval"
 )
 
 const KindOnPremise = "OnPremise"

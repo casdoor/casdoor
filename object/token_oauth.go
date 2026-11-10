@@ -16,6 +16,7 @@ package object
 
 import (
 	"fmt"
+	"net/url"
 	"strings"
 	"time"
 
@@ -25,7 +26,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func GetOAuthToken(grantType string, clientId string, clientSecret string, code string, verifier string, scope string, nonce string, username string, password string, countryCode string, host string, refreshToken string, tag string, avatar string, phoneCode string, phoneRequired bool, lang string, subjectToken string, subjectTokenType string, requestedTokenType string, assertion string, clientAssertion string, clientAssertionType string, audience string, resource string, dpopProof string, clientIp string) (interface{}, error) {
+func GetOAuthToken(grantType string, clientId string, clientSecret string, code string, verifier string, scope string, nonce string, username string, password string, countryCode string, host string, refreshToken string, tag string, avatar string, phoneCode string, phoneRequired bool, lang string, subjectToken string, subjectTokenType string, actorToken string, actorTokenType string, requestedTokenType string, assertion string, clientAssertion string, clientAssertionType string, audience string, resource string, dpopProof string, clientIp string) (interface{}, error) {
 	var (
 		application *Application
 		err         error
@@ -131,7 +132,7 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 			}
 			return idJag, nil
 		}
-		token, tokenError, err = GetTokenExchangeToken(application, clientSecret, subjectToken, subjectTokenType, audience, scope, host)
+		token, tokenError, err = GetTokenExchangeToken(application, clientSecret, subjectToken, subjectTokenType, actorToken, actorTokenType, audience, resource, scope, host)
 	case "refresh_token":
 		refreshToken2, err := RefreshToken(application, grantType, refreshToken, scope, clientId, clientSecret, resource, host, dpopProof, "/api/login/oauth/access_token")
 		if err != nil {
@@ -839,7 +840,7 @@ func GetWechatMiniProgramToken(application *Application, code string, phoneCode 
 
 // GetTokenExchangeToken handles the Token Exchange Grant flow (RFC 8693).
 // Exchanges a subject token for a new token with different audience or scope.
-func GetTokenExchangeToken(application *Application, clientSecret string, subjectToken string, subjectTokenType string, audience string, scope string, host string) (*Token, *TokenError, error) {
+func GetTokenExchangeToken(application *Application, clientSecret string, subjectToken string, subjectTokenType string, actorToken string, actorTokenType string, audience string, resource string, scope string, host string) (*Token, *TokenError, error) {
 	credential, federatedClaims, err := validateFederatedToken(application, subjectToken, host)
 	if err != nil {
 		return nil, &TokenError{
@@ -956,12 +957,31 @@ func GetTokenExchangeToken(application *Application, clientSecret string, subjec
 		}
 	}
 
+	// RFC 8707: a resource, such as an MCP server of the gateway, binds the new token to it
+	if resource != "" {
+		if resourceUrl, err := url.Parse(resource); err != nil || !resourceUrl.IsAbs() {
+			return nil, &TokenError{
+				Error:            InvalidTarget,
+				ErrorDescription: fmt.Sprintf("the resource is not an absolute URI: %s", resource),
+			}, nil
+		}
+		targetAudience = resource
+	}
+
+	actor, tokenError, err := getTokenExchangeActor(application, user, subjectToken, actorToken, actorTokenType)
+	if err != nil {
+		return nil, nil, err
+	}
+	if tokenError != nil {
+		return nil, tokenError, nil
+	}
+
 	err = ExtendUserWithRolesAndPermissions(user)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	accessToken, refreshToken, idToken, tokenName, err := generateJwtToken(application, user, "", "", "", scope, targetAudience, host)
+	accessToken, refreshToken, idToken, tokenName, err := generateJwtTokenWithOptions(application, user, "", "", "", scope, targetAudience, host, jwtTokenOptions{Actor: actor})
 	if err != nil {
 		return nil, &TokenError{
 			Error:            EndpointError,
@@ -986,6 +1006,7 @@ func GetTokenExchangeToken(application *Application, clientSecret string, subjec
 		CodeIsUsed:   true,
 		Resource:     targetAudience,
 		GrantType:    "urn:ietf:params:oauth:grant-type:token-exchange",
+		Actor:        getActorJson(actor),
 	}
 
 	_, err = AddToken(token)

@@ -1,6 +1,6 @@
 import i18next from "i18next";
 import {CrudListPage} from "@/components/crud/CrudListPage";
-import {dateColumn, linkColumn, organizationColumn, textColumn, urlColumn} from "@/components/crud/columns";
+import {boolColumn, dateColumn, linkColumn, organizationColumn, textColumn, urlColumn} from "@/components/crud/columns";
 import type {ColumnDef} from "@/components/crud/types";
 import {useAccount} from "@/hooks/use-account";
 import {useRequestOrganization} from "@/hooks/use-organization";
@@ -18,6 +18,8 @@ export default function AgentListPage() {
     textColumn({dataIndex: "displayName", title: i18next.t("general:Display name"), searchable: true, width: 180}),
     urlColumn({dataIndex: "url", title: i18next.t("general:Listening URL"), width: 240, max: 40}),
     textColumn({dataIndex: "application", title: i18next.t("general:Application"), width: 160, searchable: true}),
+    textColumn({dataIndex: "manager", title: i18next.t("group:Manager"), width: 160, searchable: true}),
+    boolColumn({dataIndex: "isForbidden", title: i18next.t("user:Is forbidden"), invertColor: true}),
   ];
 
   return (

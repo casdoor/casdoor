@@ -17,6 +17,7 @@ package object
 import (
 	"crypto/sha256"
 	"encoding/hex"
+	"encoding/json"
 	"fmt"
 
 	"github.com/casdoor/casdoor/util"
@@ -51,6 +52,30 @@ type Token struct {
 	Resource         string `xorm:"varchar(255)" json:"resource"`           // RFC 8707 Resource Indicator
 	DPoPJkt          string `xorm:"varchar(255) 'dpop_jkt'" json:"dPoPJkt"` // RFC 9449 DPoP JWK thumbprint binding
 	SessionId        string `xorm:"varchar(100) index" json:"sessionId"`    // the Beego session id that minted the token
+	// the RFC 8693 "act" claim of the token as JSON, set when an agent acts for the user
+	Actor string `xorm:"varchar(1000)" json:"actor"`
+}
+
+func (token *Token) GetActor() *ActClaim {
+	if token == nil || token.Actor == "" {
+		return nil
+	}
+	actor := &ActClaim{}
+	if err := json.Unmarshal([]byte(token.Actor), actor); err != nil || actor.Sub == "" {
+		return nil
+	}
+	return actor
+}
+
+func getActorJson(actor *ActClaim) string {
+	if actor == nil {
+		return ""
+	}
+	data, err := json.Marshal(actor)
+	if err != nil {
+		return ""
+	}
+	return string(data)
 }
 
 func GetTokenCount(owner, organization, field, value string) (int64, error) {

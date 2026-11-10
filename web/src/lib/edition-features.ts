@@ -88,6 +88,10 @@ export const EditionFeatures: EditionFeature[] = [
     stop: {object: "server", label: "server:Token header"}},
   {id: "mcp-records", edition: "Commercial", category: "edition:AI agents", name: "edition:MCP tool call records", description: "edition:MCP tool call records - Description",
     stop: org("security", "application:Security", "organization:Record MCP tool calls")},
+  {id: "mcp-tool-permissions", edition: "Commercial", category: "edition:AI agents", name: "edition:Tool permissions for agents", description: "edition:Tool permissions for agents - Description",
+    stop: {object: "server", label: "server:Tool permissions"}},
+  {id: "mcp-identity", edition: "Commercial", category: "edition:AI agents", name: "edition:Identity and trace for MCP servers", description: "edition:Identity and trace for MCP servers - Description",
+    stop: {object: "server", label: "server:Identity header"}},
   {id: "id-jag", edition: "Commercial", category: "edition:AI agents", name: "edition:Identity assertion grants", description: "edition:Identity assertion grants - Description",
     stop: org("advanced", "provider:Advanced", "organization:Trusted ID-JAG issuers")},
 
@@ -122,6 +126,9 @@ export const EditionFeatures: EditionFeature[] = [
     stop: org("enterprise", "general:Compliance", "organization:Record consents")},
   {id: "siem", edition: "Enterprise", category: "edition:Administration and audit", name: "edition:CEF and LEEF log forwarding", description: "edition:CEF and LEEF log forwarding - Description",
     stop: {path: "/providers"}},
+
+  {id: "mcp-approval", edition: "Enterprise", category: "edition:AI agents", name: "edition:Approval of tool calls", description: "edition:Approval of tool calls - Description",
+    stop: {object: "server", label: "server:Needs approval"}},
 
   {id: "sod", edition: "Enterprise", category: "edition:Governance and compliance", name: "edition:Separation-of-duty rules", description: "edition:Separation-of-duty rules - Description",
     stop: org("enterprise", "general:Compliance", undefined, "[data-tour='sod-rules']")},

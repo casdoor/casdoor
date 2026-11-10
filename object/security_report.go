@@ -482,8 +482,22 @@ func GetSecurityReportDocx(owner string, from time.Time, to time.Time, isMonth b
 		d.Table([]string{t.pick("用户", "User"), t.pick("规则", "Rule"), t.pick("角色", "Roles")}, []int{30, 30, 40}, rows)
 	}
 
-	// 7. findings
-	d.Heading(1, t.pick("七、发现与建议", "7. Findings and recommendations"))
+	// 7. AI agents
+	d.Heading(1, t.pick("七、AI 智能体与 MCP 工具调用", "7. AI agents and MCP tool calls"))
+	d.Paragraph(t.pick(
+		fmt.Sprintf("本期智能体和用户经 MCP 网关调用工具 %d 次（上期 %d 次），涉及智能体 %d 个；被拦截 %d 次（上期 %d 次），等待人工审批 %d 次。",
+			overview.McpCalls, previous.McpCalls, overview.McpAgents, overview.McpBlocked, previous.McpBlocked, overview.McpPendingApproval),
+		fmt.Sprintf("Agents and users called tools through the MCP gateway %d times in this period (%d in the previous period), by %d agents; %d calls were blocked (%d in the previous period) and %d waited for approval.",
+			overview.McpCalls, previous.McpCalls, overview.McpAgents, overview.McpBlocked, previous.McpBlocked, overview.McpPendingApproval)))
+	d.Heading(2, t.pick("调用最多的工具", "Most called tools"))
+	countTable(t.pick("MCP 服务器 / 工具", "MCP server / tool"), overview.TopMcpTools)
+	d.Heading(2, t.pick("调用最多的智能体", "Most active agents"))
+	countTable(t.pick("智能体", "Agent"), overview.TopMcpAgents)
+	d.Heading(2, t.pick("被拦截最多的工具", "Most blocked tools"))
+	countTable(t.pick("MCP 服务器 / 工具", "MCP server / tool"), overview.TopMcpBlockedTools)
+
+	// 8. findings
+	d.Heading(1, t.pick("八、发现与建议", "8. Findings and recommendations"))
 	findings := getSecurityReportFindings(t, overview, previous, security, checks, compliance, len(orphans), len(conflicts), expiringCerts)
 	for _, finding := range findings {
 		d.Bullet(finding)

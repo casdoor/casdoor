@@ -182,6 +182,15 @@ function getOverviewStats(overview: any): [string, React.ReactNode][] {
   ];
 }
 
+function getMcpStats(overview: any): [string, any][] {
+  return [
+    [i18next.t("entry:Tool calls"), overview.mcpCalls ?? 0],
+    [i18next.t("enterprise:Agents that called"), overview.mcpAgents ?? 0],
+    [i18next.t("enterprise:Blocked calls"), overview.mcpBlocked ?? 0],
+    [i18next.t("enterprise:Calls waiting for approval"), overview.mcpPendingApproval ?? 0],
+  ];
+}
+
 function SecurityOverviewTab({owner}: {owner: string}) {
   const [days, setDays] = React.useState(7);
   const [month, setMonth] = React.useState("");
@@ -196,7 +205,9 @@ function SecurityOverviewTab({owner}: {owner: string}) {
 <table>${stats}</table>
 <h2>${escapeHtml(i18next.t("enterprise:By day"))}</h2><table><tr><th>${escapeHtml(i18next.t("enterprise:Date"))}</th><th>${escapeHtml(i18next.t("enterprise:Sign-ins"))}</th><th>${escapeHtml(i18next.t("home:Failed sign-ins"))}</th><th>${escapeHtml(i18next.t("enterprise:Signups"))}</th></tr>${dayRows}</table>
 ${list(i18next.t("enterprise:Top failed IPs"), overview.topFailedIps)}${list(i18next.t("enterprise:Top failed users"), overview.topFailedUsers)}
-${list(i18next.t("enterprise:Top admin operations"), overview.topActions)}${list(i18next.t("enterprise:Top admins"), overview.topAdmins)}`);
+${list(i18next.t("enterprise:Top admin operations"), overview.topActions)}${list(i18next.t("enterprise:Top admins"), overview.topAdmins)}
+<h2>${escapeHtml(i18next.t("enterprise:AI agents and MCP tool calls"))}</h2><table>${getMcpStats(overview).map(([label, value]) => `<tr><th>${escapeHtml(label)}</th><td>${escapeHtml(value)}</td></tr>`).join("")}</table>
+${list(i18next.t("enterprise:Most called tools"), overview.topMcpTools ?? [])}${list(i18next.t("enterprise:Most active agents"), overview.topMcpAgents ?? [])}${list(i18next.t("enterprise:Most blocked tools"), overview.topMcpBlockedTools ?? [])}`);
   };
 
   const [exporting, setExporting] = React.useState(false);
@@ -266,6 +277,19 @@ ${list(i18next.t("enterprise:Top admin operations"), overview.topActions)}${list
             <CountList title={i18next.t("enterprise:Top admin operations")} items={overview.topActions} />
             <CountList title={i18next.t("enterprise:Top admins")} items={overview.topAdmins} />
           </div>
+          <Card>
+            <CardHeader className="pb-2"><CardTitle className="text-sm">{i18next.t("enterprise:AI agents and MCP tool calls")}</CardTitle></CardHeader>
+            <CardContent className="space-y-3">
+              <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+                {getMcpStats(overview).map(([label, value]) => <Stat key={label} label={label} value={value} />)}
+              </div>
+              <div className="grid gap-3 md:grid-cols-3">
+                <CountList title={i18next.t("enterprise:Most called tools")} items={overview.topMcpTools ?? []} />
+                <CountList title={i18next.t("enterprise:Most active agents")} items={overview.topMcpAgents ?? []} />
+                <CountList title={i18next.t("enterprise:Most blocked tools")} items={overview.topMcpBlockedTools ?? []} />
+              </div>
+            </CardContent>
+          </Card>
           <Card>
             <CardHeader className="pb-2"><CardTitle className="text-sm">{i18next.t("enterprise:Recent new places and devices")}</CardTitle></CardHeader>
             <CardContent>

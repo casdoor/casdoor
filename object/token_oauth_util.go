@@ -722,7 +722,7 @@ func RefreshToken(application *Application, grantType string, refreshToken strin
 		application = &sharedApplication
 	}
 
-	newAccessToken, newRefreshToken, newIdToken, tokenName, err := generateJwtTokenWithOptions(application, user, "", "", "", scope, resource, host, jwtTokenOptions{RefreshScope: oldTokenScope, SessionId: token.SessionId})
+	newAccessToken, newRefreshToken, newIdToken, tokenName, err := generateJwtTokenWithOptions(application, user, "", "", "", scope, resource, host, jwtTokenOptions{RefreshScope: oldTokenScope, SessionId: token.SessionId, Actor: token.GetActor()})
 	if err != nil {
 		return &TokenError{
 			Error:            EndpointError,
@@ -756,6 +756,7 @@ func RefreshToken(application *Application, grantType string, refreshToken strin
 		CodeChallenge: token.CodeChallenge,
 		// the refreshed token stays bound to the login session that minted the original one
 		SessionId: token.SessionId,
+		Actor:     token.Actor,
 	}
 	_, err = AddToken(newToken)
 	if err != nil {

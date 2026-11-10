@@ -15,6 +15,7 @@
 package object
 
 import (
+	"encoding/json"
 	"sort"
 	"strings"
 	"time"
@@ -57,6 +58,67 @@ type SecurityOverview struct {
 	TopActions        []*SecurityCount `json:"topActions"`
 	TopAdmins         []*SecurityCount `json:"topAdmins"`
 	RecentSigninRisks []*SigninTrace   `json:"recentSigninRisks"`
+
+	// the tool calls of AI agents through the MCP gateway
+	McpCalls           int              `json:"mcpCalls"`
+	McpBlocked         int              `json:"mcpBlocked"`
+	McpPendingApproval int              `json:"mcpPendingApproval"`
+	McpAgents          int              `json:"mcpAgents"`
+	TopMcpTools        []*SecurityCount `json:"topMcpTools"`
+	TopMcpAgents       []*SecurityCount `json:"topMcpAgents"`
+	TopMcpBlockedTools []*SecurityCount `json:"topMcpBlockedTools"`
+}
+
+type mcpAuditObject struct {
+	Server string `json:"server"`
+	Tool   string `json:"tool"`
+	Agent  string `json:"agent"`
+	Result string `json:"result"`
+}
+
+// addMcpOverview counts the tool calls of the period from the audit records, which are kept whether or not the
+// organization records the details of the calls
+func addMcpOverview(res *SecurityOverview, owner string) error {
+	tools, agents, blockedTools := map[string]int{}, map[string]int{}, map[string]int{}
+	lastId := 0
+	for res.McpCalls < securityOverviewMaxRecords {
+		records := []*Record{}
+		err := ormer.Engine.Cols("id", "object").
+			Where("owner = ? and action = ? and created_time >= ? and created_time < ? and id > ?", owner, "mcp-tool-call", res.From, res.To, lastId).
+			Asc("id").Limit(5000).Find(&records)
+		if err != nil {
+			return err
+		}
+		if len(records) == 0 {
+			break
+		}
+
+		for _, record := range records {
+			lastId = record.Id
+			call := mcpAuditObject{}
+			if json.Unmarshal([]byte(record.Object), &call) != nil {
+				continue
+			}
+			res.McpCalls++
+			tool := call.Server + " / " + call.Tool
+			tools[tool]++
+			if call.Agent != "" {
+				agents[call.Agent]++
+			}
+			switch call.Result {
+			case "Blocked":
+				res.McpBlocked++
+				blockedTools[tool]++
+			case "Pending approval":
+				res.McpPendingApproval++
+			}
+		}
+	}
+	res.McpAgents = len(agents)
+	res.TopMcpTools = topCounts(tools, 10)
+	res.TopMcpAgents = topCounts(agents, 10)
+	res.TopMcpBlockedTools = topCounts(blockedTools, 10)
+	return nil
 }
 
 const securityOverviewMaxRecords = 300000
@@ -157,7 +219,9 @@ func GetSecurityOverview(owner string, from time.Time, to time.Time) (*SecurityO
 				}
 				continue
 			}
-			if record.Method != "GET" && !nonAdminActions[record.Action] && !isError && record.User != "" {
+			// the tool calls through the MCP gateway are counted on their own, see addMcpOverview()
+			isMcpCall := record.Action == "mcp-tool-call" || strings.HasPrefix(record.Action, "server/")
+			if record.Method != "GET" && !nonAdminActions[record.Action] && !isMcpCall && !isError && record.User != "" {
 				res.AdminOperations++
 				actions[record.Action]++
 				admins[record.User]++
@@ -174,6 +238,10 @@ func GetSecurityOverview(owner string, from time.Time, to time.Time) (*SecurityO
 	res.TopFailedUsers = topCounts(failedUsers, 10)
 	res.TopActions = topCounts(actions, 10)
 	res.TopAdmins = topCounts(admins, 10)
+
+	if err := addMcpOverview(res, owner); err != nil {
+		return nil, err
+	}
 
 	traces := []*SigninTrace{}
 	err := ormer.Engine.Where("owner = ?", owner).Asc("created_time").Find(&traces)
