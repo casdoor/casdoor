@@ -714,6 +714,16 @@ func (application *Application) GetId() string {
 	return fmt.Sprintf("%s/%s", application.Owner, application.Name)
 }
 
+// FormFillExtensionRedirectUri is where Chrome hands the OAuth sign-in of the Casdoor browser extension from the
+// Chrome Web Store back to it. Only that extension can receive it, so the authorization code flow of every application
+// accepts it, and the users of any application can sign in to the extension without setting it up.
+const FormFillExtensionRedirectUri = "https://bnjbegmkpjbcpneclidlbloadenondlm.chromiumapp.org/"
+
+// IsOAuthRedirectUriValid tells whether an authorization code may be sent to the redirect URI
+func (application *Application) IsOAuthRedirectUriValid(redirectUri string) bool {
+	return redirectUri == FormFillExtensionRedirectUri || application.IsRedirectUriValid(redirectUri)
+}
+
 func (application *Application) IsRedirectUriValid(redirectUri string) bool {
 	if isScriptUrl(redirectUri) {
 		return false
