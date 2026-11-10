@@ -4,6 +4,17 @@
     "Get init score failed, error: %w": "Не вдалося отримати початковий бал, помилка: %w",
     "The application does not allow to sign up new account": "Додаток не дозволяє реєструвати нові облікові записи"
   },
+  "application": {
+    "Form autofill is not available for the application: %s": "Автозаповнення форм недоступне для застосунку %s",
+    "Form autofill needs at least one sign-in page URL": "Для автозаповнення форм потрібна хоча б одна URL-адреса сторінки входу",
+    "The application: %s does not let users save their accounts": "Застосунок %s не дозволяє користувачам зберігати свої облікові записи",
+    "The page: %s is not a sign-in page of the application: %s": "Сторінка %s не є сторінкою входу застосунку %s",
+    "The sign-in page URL: %s is invalid: %s": "URL-адреса сторінки входу %s недійсна: %s",
+    "The sign-in page URL: %s is not an http or https URL": "URL-адреса сторінки входу %s не є адресою http або https",
+    "The sign-in page URL: %s must start with a host, where * is only allowed as *. at the beginning": "URL-адреса сторінки входу %s має починатися з хоста, * можна використовувати лише як *. на початку",
+    "The username and the password must not be empty": "Ім'я користувача та пароль не можуть бути порожніми",
+    "You have no managed account of the application: %s": "У вас немає керованого облікового запису застосунку %s"
+  },
   "auth": {
     "Challenge method should be S256": "Метод виклику має бути S256",
     "DeviceCode Invalid": "Недійсний DeviceCode",
@@ -124,6 +135,7 @@
     "Consent log": "Журнал згод",
     "Encrypted personal fields": "Зашифровані персональні поля",
     "Exclusive sign-in": "Ексклюзивний вхід",
+    "Form autofill": "Автозаповнення форм",
     "Hardware OTP token import": "Імпорт апаратних OTP-токенів",
     "ID verification plugins": "Плагіни перевірки особи",
     "ID-JAG": "ID-JAG",

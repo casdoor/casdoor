@@ -863,10 +863,13 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
               title: i18next.t("general:Password"),
               width: 180,
               render: (row: any, _i, patch) => (
+                // a saved password comes back as "***" and stays as it is until a new one is typed
                 <Input
                   type="password"
-                  value={row.password ?? ""}
-                  onChange={(e) => patch({password: e.target.value})}
+                  autoComplete="new-password"
+                  value={row.password === "***" ? "" : row.password ?? ""}
+                  placeholder={row.password === "***" ? i18next.t("user:Saved, type to change") : ""}
+                  onChange={(e) => patch({password: e.target.value === "" && row.password === "***" ? "***" : e.target.value})}
                 />
               ),
             },

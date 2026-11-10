@@ -254,6 +254,11 @@ func (c *ApiController) UpdateApplication() {
 		return
 	}
 
+	if err = object.ValidateFormFill(application.FormFill, c.GetAcceptLanguage()); err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
 	columns := []string{}
 	if columnsStr != "" {
 		for _, col := range strings.Split(columnsStr, ",") {
@@ -301,6 +306,11 @@ func (c *ApiController) AddApplication() {
 	}
 
 	if err = object.CheckApplicationEdition(&application); err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	if err = object.ValidateFormFill(application.FormFill, c.GetAcceptLanguage()); err != nil {
 		c.ResponseError(err.Error())
 		return
 	}

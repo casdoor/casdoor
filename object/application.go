@@ -202,6 +202,9 @@ type Application struct {
 	SslMode      string   `xorm:"varchar(100)" json:"sslMode"`
 	SslCert      string   `xorm:"varchar(100)" json:"sslCert"`
 
+	// FormFill signs users into legacy systems without SSO by filling their sign-in forms with the managed accounts
+	FormFill *FormFill `xorm:"json" json:"formFill"`
+
 	CertObj *Cert `xorm:"-"`
 
 	RegistrationAccessToken string `xorm:"varchar(100)" json:"registrationAccessToken"`

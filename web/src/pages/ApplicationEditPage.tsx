@@ -11,6 +11,7 @@ import {ApplicationBasicTab} from "@/components/application/ApplicationBasicTab"
 import {ApplicationOidcOauthTab} from "@/components/application/ApplicationOidcOauthTab";
 import {ApplicationProvidersTab} from "@/components/application/ApplicationProvidersTab";
 import {ApplicationReverseProxyTab} from "@/components/application/ApplicationReverseProxyTab";
+import {ApplicationFormFillTab} from "@/components/application/ApplicationFormFillTab";
 import {ApplicationSamlTab} from "@/components/application/ApplicationSamlTab";
 import {ApplicationSecurityTab} from "@/components/application/ApplicationSecurityTab";
 import {ApplicationUiCustomizationTab} from "@/components/application/ApplicationUiCustomizationTab";
@@ -192,6 +193,7 @@ export default function ApplicationEditPage() {
           <TabsTrigger value="ui-customization">{i18next.t("application:UI Customization")}</TabsTrigger>
           <TabsTrigger value="security">{i18next.t("application:Security")}</TabsTrigger>
           <TabsTrigger value="reverse-proxy">{i18next.t("application:Reverse Proxy")}</TabsTrigger>
+          <TabsTrigger value="form-fill">{i18next.t("application:Form autofill")}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="basic" className={tabClassName}>
@@ -250,6 +252,10 @@ export default function ApplicationEditPage() {
 
         <TabsContent value="reverse-proxy" className={tabClassName}>
           <ApplicationReverseProxyTab application={application} updateField={updateField} certs={certs} />
+        </TabsContent>
+
+        <TabsContent value="form-fill" className={tabClassName}>
+          <ApplicationFormFillTab application={application} updateField={updateField} />
         </TabsContent>
       </Tabs>
     </EditPageShell>

@@ -9,7 +9,7 @@ import {FormRow} from "@/components/crud/FormRow";
 import {EditionNotice} from "@/components/common/EditionNotice";
 import {useRoleOptions, useUserNameOptions} from "@/hooks/use-options";
 
-const ENCRYPTABLE_FIELDS = ["idCard", "realName", "birthday", "location", "address"];
+const ENCRYPTABLE_FIELDS = ["idCard", "realName", "birthday", "location", "address", "managedAccounts"];
 
 function getFieldLabel(field: string) {
   switch (field) {
@@ -21,6 +21,8 @@ function getFieldLabel(field: string) {
     return i18next.t("user:Birthday");
   case "location":
     return i18next.t("user:Location");
+  case "managedAccounts":
+    return i18next.t("user:Managed account passwords");
   default:
     return i18next.t("user:Address");
   }

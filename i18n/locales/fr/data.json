@@ -4,6 +4,17 @@
     "Get init score failed, error: %w": "Obtention du score initiale échouée, erreur : %w",
     "The application does not allow to sign up new account": "L'application ne permet pas de créer un nouveau compte"
   },
+  "application": {
+    "Form autofill is not available for the application: %s": "Le remplissage automatique des formulaires n'est pas disponible pour l'application %s",
+    "Form autofill needs at least one sign-in page URL": "Le remplissage automatique des formulaires nécessite au moins une URL de page de connexion",
+    "The application: %s does not let users save their accounts": "L'application %s ne permet pas aux utilisateurs d'enregistrer leurs comptes",
+    "The page: %s is not a sign-in page of the application: %s": "La page %s n'est pas une page de connexion de l'application %s",
+    "The sign-in page URL: %s is invalid: %s": "L'URL de page de connexion %s est invalide : %s",
+    "The sign-in page URL: %s is not an http or https URL": "L'URL de page de connexion %s n'est pas une URL http ou https",
+    "The sign-in page URL: %s must start with a host, where * is only allowed as *. at the beginning": "L'URL de page de connexion %s doit commencer par un hôte, * n'est autorisé que sous la forme *. au début",
+    "The username and the password must not be empty": "Le nom d'utilisateur et le mot de passe ne doivent pas être vides",
+    "You have no managed account of the application: %s": "Vous n'avez aucun compte géré pour l'application %s"
+  },
   "auth": {
     "Challenge method should be S256": "La méthode de défi doit être S256",
     "DeviceCode Invalid": "Code appareil invalide",
@@ -124,6 +135,7 @@
     "Consent log": "Journal des consentements",
     "Encrypted personal fields": "Champs personnels chiffrés",
     "Exclusive sign-in": "Connexion exclusive",
+    "Form autofill": "Remplissage automatique des formulaires",
     "Hardware OTP token import": "Importation de jetons OTP matériels",
     "ID verification plugins": "Plugins de vérification d'identité",
     "ID-JAG": "ID-JAG",

@@ -4,6 +4,17 @@
     "Get init score failed, error: %w": "Error al obtener el puntaje de inicio, error: %w",
     "The application does not allow to sign up new account": "La aplicación no permite registrarse con una cuenta nueva"
   },
+  "application": {
+    "Form autofill is not available for the application: %s": "El autocompletado de formularios no está disponible para la aplicación %s",
+    "Form autofill needs at least one sign-in page URL": "El autocompletado de formularios necesita al menos una URL de página de inicio de sesión",
+    "The application: %s does not let users save their accounts": "La aplicación %s no permite a los usuarios guardar sus cuentas",
+    "The page: %s is not a sign-in page of the application: %s": "La página %s no es una página de inicio de sesión de la aplicación %s",
+    "The sign-in page URL: %s is invalid: %s": "La URL de la página de inicio de sesión %s no es válida: %s",
+    "The sign-in page URL: %s is not an http or https URL": "La URL de la página de inicio de sesión %s no es una URL http o https",
+    "The sign-in page URL: %s must start with a host, where * is only allowed as *. at the beginning": "La URL de la página de inicio de sesión %s debe comenzar con un host; * solo se permite como *. al principio",
+    "The username and the password must not be empty": "El nombre de usuario y la contraseña no pueden estar vacíos",
+    "You have no managed account of the application: %s": "No tiene ninguna cuenta gestionada de la aplicación %s"
+  },
   "auth": {
     "Challenge method should be S256": "El método de desafío debe ser S256",
     "DeviceCode Invalid": "Código de dispositivo inválido",
@@ -124,6 +135,7 @@
     "Consent log": "Registro de consentimientos",
     "Encrypted personal fields": "Campos personales cifrados",
     "Exclusive sign-in": "Inicio de sesión exclusivo",
+    "Form autofill": "Autocompletado de formularios",
     "Hardware OTP token import": "Importación de tokens OTP de hardware",
     "ID verification plugins": "Complementos de verificación de identidad",
     "ID-JAG": "ID-JAG",

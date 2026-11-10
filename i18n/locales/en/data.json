@@ -4,6 +4,17 @@
     "Get init score failed, error: %w": "Get init score failed, error: %w",
     "The application does not allow to sign up new account": "The application does not allow to sign up new account"
   },
+  "application": {
+    "Form autofill is not available for the application: %s": "Form autofill is not available for the application: %s",
+    "Form autofill needs at least one sign-in page URL": "Form autofill needs at least one sign-in page URL",
+    "The application: %s does not let users save their accounts": "The application: %s does not let users save their accounts",
+    "The page: %s is not a sign-in page of the application: %s": "The page: %s is not a sign-in page of the application: %s",
+    "The sign-in page URL: %s is invalid: %s": "The sign-in page URL: %s is invalid: %s",
+    "The sign-in page URL: %s is not an http or https URL": "The sign-in page URL: %s is not an http or https URL",
+    "The sign-in page URL: %s must start with a host, where * is only allowed as *. at the beginning": "The sign-in page URL: %s must start with a host, where * is only allowed as *. at the beginning",
+    "The username and the password must not be empty": "The username and the password must not be empty",
+    "You have no managed account of the application: %s": "You have no managed account of the application: %s"
+  },
   "auth": {
     "Challenge method should be S256": "Challenge method should be S256",
     "DeviceCode Invalid": "DeviceCode Invalid",
@@ -124,6 +135,7 @@
     "Consent log": "Consent log",
     "Encrypted personal fields": "Encrypted personal fields",
     "Exclusive sign-in": "Exclusive sign-in",
+    "Form autofill": "Form autofill",
     "Hardware OTP token import": "Hardware OTP token import",
     "ID verification plugins": "ID verification plugins",
     "ID-JAG": "ID-JAG",

@@ -66,6 +66,7 @@ const (
 	FeatureOtpTokenImport   = "Hardware OTP token import"
 	FeaturePluginIdp        = "Identity provider plugins"
 	FeaturePluginIdv        = "ID verification plugins"
+	FeatureFormFill         = "Form autofill"
 )
 
 // The features that a license can also grant on their own, without the edition they belong to, by these keys in its

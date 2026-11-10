@@ -4,6 +4,17 @@
     "Get init score failed, error: %w": "Lấy điểm khởi đầu thất bại, lỗi: %w",
     "The application does not allow to sign up new account": "Ứng dụng không cho phép đăng ký tài khoản mới"
   },
+  "application": {
+    "Form autofill is not available for the application: %s": "Tự động điền biểu mẫu không khả dụng cho ứng dụng %s",
+    "Form autofill needs at least one sign-in page URL": "Tự động điền biểu mẫu cần ít nhất một URL trang đăng nhập",
+    "The application: %s does not let users save their accounts": "Ứng dụng %s không cho phép người dùng lưu tài khoản của họ",
+    "The page: %s is not a sign-in page of the application: %s": "Trang %s không phải là trang đăng nhập của ứng dụng %s",
+    "The sign-in page URL: %s is invalid: %s": "URL trang đăng nhập %s không hợp lệ: %s",
+    "The sign-in page URL: %s is not an http or https URL": "URL trang đăng nhập %s không phải là URL http hoặc https",
+    "The sign-in page URL: %s must start with a host, where * is only allowed as *. at the beginning": "URL trang đăng nhập %s phải bắt đầu bằng tên máy chủ, * chỉ được dùng dưới dạng *. ở đầu",
+    "The username and the password must not be empty": "Tên người dùng và mật khẩu không được để trống",
+    "You have no managed account of the application: %s": "Bạn không có tài khoản được quản lý của ứng dụng %s"
+  },
   "auth": {
     "Challenge method should be S256": "Phương pháp thách thức nên là S256",
     "DeviceCode Invalid": "Mã thiết bị không hợp lệ",
@@ -124,6 +135,7 @@
     "Consent log": "Nhật ký đồng ý",
     "Encrypted personal fields": "Mã hóa trường thông tin cá nhân",
     "Exclusive sign-in": "Đăng nhập độc quyền",
+    "Form autofill": "Tự động điền biểu mẫu",
     "Hardware OTP token import": "Nhập token OTP phần cứng",
     "ID verification plugins": "Plugin xác minh danh tính",
     "ID-JAG": "ID-JAG",

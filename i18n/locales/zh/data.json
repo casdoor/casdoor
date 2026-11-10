@@ -4,6 +4,17 @@
     "Get init score failed, error: %w": "初始化分数失败: %w",
     "The application does not allow to sign up new account": "该应用不允许注册新用户"
   },
+  "application": {
+    "Form autofill is not available for the application: %s": "应用 %s 没有开启表单代填",
+    "Form autofill needs at least one sign-in page URL": "表单代填至少要填一个登录页地址",
+    "The application: %s does not let users save their accounts": "应用 %s 不允许用户自己保存账号",
+    "The page: %s is not a sign-in page of the application: %s": "页面 %s 不是应用 %s 的登录页",
+    "The sign-in page URL: %s is invalid: %s": "登录页地址 %s 无效：%s",
+    "The sign-in page URL: %s is not an http or https URL": "登录页地址 %s 不是 http 或 https 地址",
+    "The sign-in page URL: %s must start with a host, where * is only allowed as *. at the beginning": "登录页地址 %s 要以域名开头，* 只能以 *. 的形式放在域名最前面",
+    "The username and the password must not be empty": "用户名和密码不能为空",
+    "You have no managed account of the application: %s": "你在应用 %s 里没有托管账户"
+  },
   "auth": {
     "Challenge method should be S256": "Challenge方法应该为S256",
     "DeviceCode Invalid": "DeviceCode 无效",
@@ -124,6 +135,7 @@
     "Consent log": "授权同意留痕",
     "Encrypted personal fields": "敏感字段加密",
     "Exclusive sign-in": "互斥登录",
+    "Form autofill": "表单代填",
     "Hardware OTP token import": "硬件令牌导入",
     "ID verification plugins": "实名核验插件",
     "ID-JAG": "ID-JAG（智能体跨应用授权）",

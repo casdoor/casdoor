@@ -161,5 +161,8 @@ func IsValidOrigin(origin string) (bool, error) {
 	}
 
 	res := originHostOnly == "http://localhost" || originHostOnly == "https://localhost" || originHostOnly == "http://127.0.0.1" || originHostOnly == "http://casdoor-authenticator" || strings.HasSuffix(originHostOnly, ".chromiumapp.org")
+	// the browser extension that fills sign-in forms calls the API with a bearer token from its service worker, a
+	// cross-origin request with cookies is still treated as anonymous
+	res = res || urlObj.Scheme == "chrome-extension" || urlObj.Scheme == "moz-extension"
 	return res, nil
 }

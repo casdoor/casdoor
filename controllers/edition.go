@@ -112,6 +112,8 @@ func (c *ApiController) getEditionFeatureName(feature string) string {
 		return c.T("edition:Identity provider plugins")
 	case edition.FeaturePluginIdv:
 		return c.T("edition:ID verification plugins")
+	case edition.FeatureFormFill:
+		return c.T("edition:Form autofill")
 	default:
 		return feature
 	}

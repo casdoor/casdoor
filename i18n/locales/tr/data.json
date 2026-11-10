@@ -4,6 +4,17 @@
     "Get init score failed, error: %w": "Başlangıç puanı alınamadı, hata: %w",
     "The application does not allow to sign up new account": "Uygulama yeni hesap kaydına izin vermiyor"
   },
+  "application": {
+    "Form autofill is not available for the application: %s": "%s uygulaması için form otomatik doldurma kullanılamıyor",
+    "Form autofill needs at least one sign-in page URL": "Form otomatik doldurma için en az bir giriş sayfası URL'si gerekir",
+    "The application: %s does not let users save their accounts": "%s uygulaması kullanıcıların hesaplarını kaydetmesine izin vermiyor",
+    "The page: %s is not a sign-in page of the application: %s": "%s sayfası, %s uygulamasının giriş sayfası değil",
+    "The sign-in page URL: %s is invalid: %s": "Giriş sayfası URL'si %s geçersiz: %s",
+    "The sign-in page URL: %s is not an http or https URL": "Giriş sayfası URL'si %s bir http veya https URL'si değil",
+    "The sign-in page URL: %s must start with a host, where * is only allowed as *. at the beginning": "Giriş sayfası URL'si %s bir ana bilgisayar adıyla başlamalıdır; * yalnızca başta *. olarak kullanılabilir",
+    "The username and the password must not be empty": "Kullanıcı adı ve parola boş olamaz",
+    "You have no managed account of the application: %s": "%s uygulamasında yönetilen hesabınız yok"
+  },
   "auth": {
     "Challenge method should be S256": "Challenge yöntemi S256 olmalı",
     "DeviceCode Invalid": "Cihaz Kodu Geçersiz",
@@ -124,6 +135,7 @@
     "Consent log": "Onay kaydı",
     "Encrypted personal fields": "Şifrelenmiş kişisel alanlar",
     "Exclusive sign-in": "Özel oturum açma",
+    "Form autofill": "Form otomatik doldurma",
     "Hardware OTP token import": "Donanım OTP belirteci içe aktarma",
     "ID verification plugins": "Kimlik doğrulama eklentileri",
     "ID-JAG": "ID-JAG",

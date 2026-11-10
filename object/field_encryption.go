@@ -32,8 +32,9 @@ import (
 )
 
 // The personal fields of users that an organization can keep encrypted with SM4 in the database. The phone and the
-// email are not among them, as users sign in and are looked up by them.
-var EncryptableUserFields = []string{"idCard", "realName", "birthday", "location", "address"}
+// email are not among them, as users sign in and are looked up by them. "managedAccounts" stands for the passwords of
+// the managed accounts that form autofill signs users in with.
+var EncryptableUserFields = []string{"idCard", "realName", "birthday", "location", "address", "managedAccounts"}
 
 const encryptedFieldPrefix = "sm4:"
 
@@ -134,6 +135,13 @@ func (user *User) transformUserFields(fields []string, transform func(owner stri
 					break
 				}
 			}
+		case "managedAccounts":
+			for i := range user.ManagedAccounts {
+				user.ManagedAccounts[i].Password, err = transform(user.Owner, field, user.ManagedAccounts[i].Password)
+				if err != nil {
+					break
+				}
+			}
 		}
 		if err != nil {
 			return err
@@ -149,6 +157,11 @@ func (user *User) hasEncryptedFields() bool {
 	}
 	for _, address := range user.Address {
 		if strings.HasPrefix(address, encryptedFieldPrefix) {
+			return true
+		}
+	}
+	for _, account := range user.ManagedAccounts {
+		if strings.HasPrefix(account.Password, encryptedFieldPrefix) {
 			return true
 		}
 	}
@@ -200,7 +213,7 @@ func (user *User) AfterLoad() {
 // changed: the fields now listed get encrypted, the others go back to plaintext
 func ReencryptOrganizationUsers(owner string) (int, error) {
 	clearEnterprisePolicyCache(owner)
-	columns := []string{"id_card", "real_name", "birthday", "location", "address"}
+	columns := []string{"id_card", "real_name", "birthday", "location", "address", "managedAccounts"}
 
 	count := 0
 	for offset := 0; ; offset += 500 {

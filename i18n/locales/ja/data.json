@@ -4,6 +4,17 @@
     "Get init score failed, error: %w": "イニットスコアの取得に失敗しました。エラー：%w",
     "The application does not allow to sign up new account": "アプリケーションは新しいアカウントの登録を許可しません"
   },
+  "application": {
+    "Form autofill is not available for the application: %s": "アプリケーション %s ではフォーム自動入力が有効になっていません",
+    "Form autofill needs at least one sign-in page URL": "フォーム自動入力にはサインインページの URL が少なくとも 1 つ必要です",
+    "The application: %s does not let users save their accounts": "アプリケーション %s ではユーザーがアカウントを保存できません",
+    "The page: %s is not a sign-in page of the application: %s": "ページ %s はアプリケーション %s のサインインページではありません",
+    "The sign-in page URL: %s is invalid: %s": "サインインページの URL %s が無効です: %s",
+    "The sign-in page URL: %s is not an http or https URL": "サインインページの URL %s は http または https の URL ではありません",
+    "The sign-in page URL: %s must start with a host, where * is only allowed as *. at the beginning": "サインインページの URL %s はホストで始まる必要があります。* はホストの先頭に *. としてのみ使えます",
+    "The username and the password must not be empty": "ユーザー名とパスワードは空にできません",
+    "You have no managed account of the application: %s": "アプリケーション %s の管理アカウントがありません"
+  },
   "auth": {
     "Challenge method should be S256": "チャレンジメソッドはS256である必要があります",
     "DeviceCode Invalid": "デバイスコードが無効です",
@@ -124,6 +135,7 @@
     "Consent log": "同意ログ",
     "Encrypted personal fields": "個人情報フィールドの暗号化",
     "Exclusive sign-in": "排他ログイン",
+    "Form autofill": "フォーム自動入力",
     "Hardware OTP token import": "ハードウェアOTPトークンのインポート",
     "ID verification plugins": "本人確認プラグイン",
     "ID-JAG": "ID-JAG",

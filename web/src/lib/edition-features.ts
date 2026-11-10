@@ -138,6 +138,8 @@ export const EditionFeatures: EditionFeature[] = [
     stop: marketplace("edition=Enterprise&q=idp")},
   {id: "id-verification", edition: "Enterprise", category: "edition:Enterprise connections", name: "edition:Real-name verification", description: "edition:Real-name verification - Description",
     stop: marketplace("edition=Enterprise&q=verification")},
+  {id: "form-fill", edition: "Enterprise", category: "edition:Enterprise connections", name: "edition:Legacy system form autofill", description: "edition:Legacy system form autofill - Description",
+    stop: app("form-fill", "application:Form autofill", "application:Enable form autofill")},
 ];
 
 export function getEditionFeatures(edition: PaidEdition): EditionFeature[] {

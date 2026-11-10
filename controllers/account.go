@@ -762,6 +762,8 @@ func (c *ApiController) GetAccount() {
 		return
 	}
 
+	// the browser extension reads the user's own managed accounts with their passwords here
+	var ownManagedAccounts []object.ManagedAccount
 	managedAccounts := c.Ctx.Input.Query("managedAccounts")
 	if managedAccounts == "1" {
 		user, err = object.ExtendManagedAccountsWithUser(user)
@@ -769,6 +771,7 @@ func (c *ApiController) GetAccount() {
 			c.ResponseError(err.Error())
 			return
 		}
+		ownManagedAccounts = append(ownManagedAccounts, user.ManagedAccounts...)
 	}
 
 	err = object.ExtendUserWithRolesAndPermissions(user)
@@ -795,6 +798,9 @@ func (c *ApiController) GetAccount() {
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
+	}
+	if ownManagedAccounts != nil && u != nil {
+		u.ManagedAccounts = ownManagedAccounts
 	}
 
 	if organization != nil && len(organization.CountryCodes) == 1 && u != nil && u.CountryCode == "" {

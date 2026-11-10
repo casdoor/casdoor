@@ -4,6 +4,17 @@
     "Get init score failed, error: %w": "Falha ao obter pontuação inicial, erro: %w",
     "The application does not allow to sign up new account": "O aplicativo não permite a criação de novas contas"
   },
+  "application": {
+    "Form autofill is not available for the application: %s": "O preenchimento automático de formulários não está disponível para o aplicativo %s",
+    "Form autofill needs at least one sign-in page URL": "O preenchimento automático de formulários precisa de pelo menos uma URL de página de login",
+    "The application: %s does not let users save their accounts": "O aplicativo %s não permite que os usuários salvem suas contas",
+    "The page: %s is not a sign-in page of the application: %s": "A página %s não é uma página de login do aplicativo %s",
+    "The sign-in page URL: %s is invalid: %s": "A URL da página de login %s é inválida: %s",
+    "The sign-in page URL: %s is not an http or https URL": "A URL da página de login %s não é uma URL http ou https",
+    "The sign-in page URL: %s must start with a host, where * is only allowed as *. at the beginning": "A URL da página de login %s deve começar com um host; * só é permitido como *. no início",
+    "The username and the password must not be empty": "O nome de usuário e a senha não podem estar vazios",
+    "You have no managed account of the application: %s": "Você não tem uma conta gerenciada do aplicativo %s"
+  },
   "auth": {
     "Challenge method should be S256": "O método de desafio deve ser S256",
     "DeviceCode Invalid": "Código de dispositivo inválido",
@@ -124,6 +135,7 @@
     "Consent log": "Registro de consentimentos",
     "Encrypted personal fields": "Campos pessoais criptografados",
     "Exclusive sign-in": "Login exclusivo",
+    "Form autofill": "Preenchimento automático de formulários",
     "Hardware OTP token import": "Importação de tokens OTP de hardware",
     "ID verification plugins": "Plugins de verificação de identidade",
     "ID-JAG": "ID-JAG",

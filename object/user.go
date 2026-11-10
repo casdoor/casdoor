@@ -764,15 +764,19 @@ func GetMaskedUser(user *User, isAdminOrSelf bool, errs ...error) (*User, error)
 		user.PasswordType = ""
 	}
 
-	if user.ManagedAccounts != nil {
-		for _, manageAccount := range user.ManagedAccounts {
-			manageAccount.Password = "***"
+	// the passwords of the managed accounts are only handed out by form autofill, not even to the admins
+	for i := range user.ManagedAccounts {
+		if user.ManagedAccounts[i].Password != "" {
+			user.ManagedAccounts[i].Password = "***"
 		}
 	}
 
-	if user.MfaAccounts != nil {
-		for _, mfaAccount := range user.MfaAccounts {
-			mfaAccount.SecretKey = "***"
+	// the authenticator app syncs the secrets of the user's own MFA accounts
+	if !isAdminOrSelf {
+		for i := range user.MfaAccounts {
+			if user.MfaAccounts[i].SecretKey != "" {
+				user.MfaAccounts[i].SecretKey = "***"
+			}
 		}
 	}
 
@@ -972,6 +976,8 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 	if user.Password == "***" {
 		user.Password = oldUser.Password
 	}
+
+	keepMaskedAccountSecrets(user, oldUser)
 
 	if user.FaceIds == nil {
 		user.FaceIds = oldUser.FaceIds
