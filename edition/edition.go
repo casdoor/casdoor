@@ -67,6 +67,11 @@ const (
 	FeaturePluginIdp        = "Identity provider plugins"
 	FeaturePluginIdv        = "ID verification plugins"
 	FeatureFormFill         = "Form autofill"
+	FeatureHsm              = "Hardware security module"
+	FeatureCertLogin        = "Certificate and UKey login"
+	FeaturePam              = "Privileged account management"
+	FeatureAccessReview     = "Access reviews"
+	FeatureDelegatedAdmin   = "Delegated administration"
 )
 
 // The features that a license can also grant on their own, without the edition they belong to, by these keys in its

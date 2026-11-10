@@ -114,6 +114,16 @@ func (c *ApiController) getEditionFeatureName(feature string) string {
 		return c.T("edition:ID verification plugins")
 	case edition.FeatureFormFill:
 		return c.T("edition:Form autofill")
+	case edition.FeatureHsm:
+		return c.T("edition:Hardware security module")
+	case edition.FeatureCertLogin:
+		return c.T("edition:Certificate and UKey login")
+	case edition.FeaturePam:
+		return c.T("edition:Privileged account management")
+	case edition.FeatureAccessReview:
+		return c.T("edition:Access reviews")
+	case edition.FeatureDelegatedAdmin:
+		return c.T("edition:Delegated administration")
 	default:
 		return feature
 	}
