@@ -114,7 +114,6 @@ func ParseStandardJwtToken(token string, cert *Cert) (*ClaimsStandard, error) {
 		kid, _ := token.Header["kid"].(string)
 		publicKey := cert.getCertificateByKeyId(kid)
 		certificate, err = getJwtVerifyKey(token, publicKey)
-
 		if err != nil {
 			return nil, err
 		}
