@@ -2171,7 +2171,7 @@ ajv@^6.12.4:
     json-schema-traverse "^0.4.1"
     uri-js "^4.2.2"
 
-altcha@3.5.0:
+altcha@^3.5.0:
   version "3.5.0"
   resolved "https://registry.yarnpkg.com/altcha/-/altcha-3.5.0.tgz#97b32f1d0f9335d0662d7ed4587ab23ae4af8fbc"
   integrity sha512-wBXNK1bBeWs/XTOZiyE3JQvRNECgFKYEJqcPxFW7tFd7ErG62yQmMlRasygZrza3zyNTTuon3BfMF/PcBcepcw==
