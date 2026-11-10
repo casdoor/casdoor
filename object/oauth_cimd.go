@@ -182,18 +182,60 @@ func GetApplicationByClientIdMetadata(clientId string, organization string, lang
 	return getCimdApplicationOfOrganization(application, organization)
 }
 
-// getCimdApplicationOfOrganization returns the shared application of a URL client_id as the application of an organization
+// getCimdApplicationOfOrganization returns the shared application of a URL client_id as the application of an organization,
+// with the sign-in settings and branding of the organization's default application, like a DCR client of the organization
 func getCimdApplicationOfOrganization(application *Application, organization string) (*Application, error) {
 	if application.Organization == organization {
 		return application, nil
 	}
 
+	clientLogo := application.Logo
+	if builtInApp, err := GetDefaultApplication(util.GetId("admin", application.Organization)); err == nil && builtInApp != nil && builtInApp.Logo == clientLogo {
+		clientLogo = ""
+	}
+
 	application.Organization = organization
-	err := extendApplicationWithOrg(application)
+	defaultApp, err := GetDefaultApplication(util.GetId("admin", organization))
+	if err == nil && defaultApp != nil {
+		application.Logo = firstNonEmpty(clientLogo, defaultApp.Logo)
+		application.ThemeData = defaultApp.ThemeData
+		application.FooterHtml = defaultApp.FooterHtml
+		application.FormCss = defaultApp.FormCss
+		application.SigninItems = defaultApp.SigninItems
+		application.SigninMethods = defaultApp.SigninMethods
+		application.Providers = defaultApp.Providers
+		application.EnablePassword = defaultApp.EnablePassword
+		application.EnableCodeSignin = defaultApp.EnableCodeSignin
+		application.EnableWebAuthn = defaultApp.EnableWebAuthn
+		application.EnableSigninSession = defaultApp.EnableSigninSession
+	}
+
+	err = extendApplicationWithProviders(application)
+	if err != nil {
+		return nil, err
+	}
+	err = extendApplicationWithOrg(application)
+	if err != nil {
+		return nil, err
+	}
+	err = extendApplicationWithSigninMethods(application)
+	if err != nil {
+		return nil, err
+	}
+	err = extendApplicationWithSigninItems(application)
 	if err != nil {
 		return nil, err
 	}
 	return application, nil
+}
+
+// GetSigninApplicationOfOrganization returns the application a user signs in to: a shared application of a URL client_id
+// is the application of the organization signed in to when it accepts URL client_ids, other applications are returned as they are
+func GetSigninApplicationOfOrganization(application *Application, organization string) (*Application, error) {
+	if application == nil || organization == "" || !util.InSlice(application.Tags, cimdTag) || !IsClientIdMetadataDocumentSupported(organization) {
+		return application, nil
+	}
+	return getCimdApplicationOfOrganization(application, organization)
 }
 
 // GetCimdOrganization returns the organization a URL client_id works for: the organization of the user
