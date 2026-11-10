@@ -73,6 +73,15 @@ func (policy *EnterprisePolicy) isEmpty() bool {
 		len(policy.DelegatedAdmins) == 0 && !policy.CertLogin.isEnabled()
 }
 
+// getPublic is the part of the policy that the sign-in pages need, the button of the certificate login, so that the
+// admin lists, separation-of-duty rules, delegated admins and trusted CAs aren't handed to anonymous visitors
+func (policy *EnterprisePolicy) getPublic() *EnterprisePolicy {
+	if policy == nil || policy.CertLogin == nil {
+		return nil
+	}
+	return &EnterprisePolicy{CertLogin: &CertLoginPolicy{Enabled: policy.CertLogin.Enabled, LoginUrl: policy.CertLogin.LoginUrl}}
+}
+
 // GetEnterprisePolicy returns the organization's enterprise policy, or nil when there is none or the license gives
 // a lower edition than the enterprise one
 func GetEnterprisePolicy(organization *Organization) *EnterprisePolicy {
