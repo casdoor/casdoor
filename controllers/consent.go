@@ -20,6 +20,7 @@ import (
 	"fmt"
 
 	"github.com/casdoor/casdoor/object"
+	"github.com/casdoor/casdoor/util"
 )
 
 // RevokeConsent revokes a consent record
@@ -92,6 +93,11 @@ func (c *ApiController) RevokeConsent() {
 	}
 	userObj.ApplicationScopes = newScopes
 	success, err := object.UpdateUser(userObj.GetId(), userObj, nil, false)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	err = object.AddConsentLog(userObj, consent.Application, "revoke", consent.GrantedScopes, nil, util.GetClientIpFromRequest(c.Ctx.Request), c.Ctx.Request.UserAgent())
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -189,6 +195,14 @@ func (c *ApiController) GrantConsent() {
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
+	}
+
+	if record := object.GetConsentRecordOfUser(userObj, application); record != nil {
+		err = object.AddConsentLog(userObj, application.GetId(), "grant", record.GrantedScopes, record.DeniedScopes, util.GetClientIpFromRequest(c.Ctx.Request), c.Ctx.Request.UserAgent())
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
 	}
 
 	// Now get the OAuth code

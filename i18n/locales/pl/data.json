@@ -117,23 +117,49 @@
     "unsupported password type: %s": "nieobsługiwany typ hasła: %s"
   },
   "edition": {
+    "Account governance": "Zarządzanie kontami",
     "Attribute-based access control (ABAC)": "Kontrola dostępu oparta na atrybutach (ABAC)",
+    "CEF and LEEF audit log formats": "Formaty dzienników audytu CEF i LEEF",
+    "Chinese SM cryptographic algorithms": "Chińskie algorytmy kryptograficzne (SM2, SM3, SM4)",
+    "Consent log": "Dziennik zgód",
+    "Encrypted personal fields": "Szyfrowane pola osobowe",
     "Exclusive sign-in": "Wyłączne logowanie",
+    "Hardware OTP token import": "Import sprzętowych tokenów OTP",
+    "ID verification plugins": "Wtyczki weryfikacji tożsamości",
     "ID-JAG": "ID-JAG",
+    "Identity provider plugins": "Wtyczki dostawców tożsamości",
     "Inactivity timeout": "Limit czasu bezczynności",
     "Keycloak syncer": "Synchronizator Keycloak",
     "MCP gateway": "Brama MCP",
+    "MLPS compliance checklist": "Lista kontrolna zgodności MLPS",
     "Mobile one-click login": "Logowanie jednym kliknięciem numerem telefonu",
     "More than one syncer": "Więcej niż jeden synchronizator",
     "OpenTelemetry tracing": "Śledzenie OpenTelemetry",
     "Paid integrations": "Płatne integracje",
     "Push notification MFA": "MFA przez powiadomienie push",
     "Role-based access control (RBAC)": "Kontrola dostępu oparta na rolach (RBAC)",
+    "Security dashboard and reports": "Pulpit bezpieczeństwa i raporty",
     "Security policy": "Zasady bezpieczeństwa",
-    "Signing key rotation": "Rotacja klucza podpisu"
+    "Separation of duties": "Rozdział obowiązków",
+    "Signing key rotation": "Rotacja klucza podpisu",
+    "Tamper-proof audit records": "Dzienniki audytu odporne na manipulację",
+    "Three-admin separation": "Rozdzielenie administratorów systemu, bezpieczeństwa i audytu"
   },
   "enforcer": {
     "the adapter: %s is not found": "adapter: %s nie został znaleziony"
+  },
+  "enterprise": {
+    "A separation-of-duty rule needs a name and at least two roles": "Reguła rozdziału obowiązków wymaga nazwy i co najmniej dwóch ról",
+    "Add yourself to the security admins before separating the admins": "Przed rozdzieleniem administratorów dodaj siebie do administratorów bezpieczeństwa, inaczej nie zmienisz już tego ustawienia",
+    "Only the audit admin can view the audit records": "Tylko administrator audytu może przeglądać dzienniki audytu",
+    "Only the security admin can manage permissions, roles, certs and security settings": "Tylko administrator bezpieczeństwa może zarządzać uprawnieniami, rolami, certyfikatami i ustawieniami bezpieczeństwa",
+    "Separation of duties: the user %s would hold the roles %s together, which the rule %s keeps apart": "Rozdział obowiązków: użytkownik %s miałby jednocześnie role %s, które rozdziela reguła %s",
+    "Set the configuration fieldEncryptionKey before encrypting personal fields": "Przed szyfrowaniem pól osobowych ustaw konfigurację fieldEncryptionKey",
+    "The audit admin can only view, not change anything": "Administrator audytu może tylko przeglądać, niczego nie zmieniać",
+    "The field: %s cannot be encrypted": "Pola: %s nie można zaszyfrować",
+    "The security admin can only manage permissions, roles, certs and security settings": "Administrator bezpieczeństwa może zarządzać tylko uprawnieniami, rolami, certyfikatami i ustawieniami bezpieczeństwa",
+    "The separation of admins needs at least one security admin and one audit admin": "Rozdzielenie administratorów wymaga co najmniej jednego administratora bezpieczeństwa i jednego audytu",
+    "The user: %s cannot be more than one of the system, security and audit admins": "Użytkownik: %s nie może pełnić więcej niż jednej z ról administratora systemu, bezpieczeństwa i audytu"
   },
   "general": {
     "%s needs a commercial or enterprise edition license, please upgrade (%s)": "%s wymaga licencji edycji komercyjnej lub Enterprise, prosimy o zmianę edycji (%s)",

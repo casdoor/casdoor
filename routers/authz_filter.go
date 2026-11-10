@@ -19,6 +19,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"path"
 	"strings"
 	"time"
 
@@ -180,7 +181,7 @@ func isCrossOriginCookieRequest(ctx *context.Context) bool {
 	if method == http.MethodGet || method == http.MethodHead || method == http.MethodOptions {
 		return false
 	}
-	if strings.HasPrefix(ctx.Request.URL.Path, "/api/saml/logout/") {
+	if strings.HasPrefix(getRequestPath(ctx), "/api/saml/logout/") {
 		return false
 	}
 
@@ -217,7 +218,7 @@ func getRunSyncerObject(ctx *context.Context) (string, string, error) {
 
 func getObject(ctx *context.Context) (string, string, error) {
 	method := ctx.Request.Method
-	path := ctx.Request.URL.Path
+	path := getRequestPath(ctx)
 
 	if strings.HasPrefix(path, "/api/server/") {
 		return ctx.Input.Param(":owner"), ctx.Input.Param(":name"), nil
@@ -236,7 +237,7 @@ func getObject(ctx *context.Context) (string, string, error) {
 			return ctx.Input.Query("owner"), "", nil
 		}
 
-		if ctx.Request.URL.Path == "/api/get-policies" {
+		if path == "/api/get-policies" {
 			// GetPolicies() works on the adapter as soon as "adapterId" is given and
 			// falls back to the enforcer of "id", so authorize the same way.
 			adapterId := ctx.Input.Query("adapterId")
@@ -260,7 +261,7 @@ func getObject(ctx *context.Context) (string, string, error) {
 			organization = ctx.Input.Query("organization")
 		}
 
-		if !(strings.HasPrefix(ctx.Request.URL.Path, "/api/get-") && strings.HasSuffix(ctx.Request.URL.Path, "s")) || ctx.Request.URL.Path == "/api/get-ldap-users" {
+		if !(strings.HasPrefix(path, "/api/get-") && strings.HasSuffix(path, "s")) || path == "/api/get-ldap-users" {
 			// query == "?id=built-in/admin"
 			id := ctx.Input.Query("id")
 			if id != "" {
@@ -272,7 +273,7 @@ func getObject(ctx *context.Context) (string, string, error) {
 					return organization, name, nil
 				}
 
-				if strings.HasSuffix(ctx.Request.URL.Path, "organization") {
+				if strings.HasSuffix(path, "organization") {
 					return name, name, nil
 				}
 				return owner, name, nil
@@ -377,7 +378,7 @@ func getObjectFromBody(ctx *context.Context, path string) (string, string) {
 // authorized. Otherwise an org admin can have a request authorized against an object
 // of their own organization and executed against another organization's object.
 func getObjects(ctx *context.Context) ([]Object, error) {
-	path := ctx.Request.URL.Path
+	path := getRequestPath(ctx)
 	if path == "/api/mcp" && ctx.Request.Method == http.MethodPost {
 		objects, err := getMcpObjects(ctx)
 		if err != nil {
@@ -440,8 +441,14 @@ func willLog(subOwner string, subName string, method string, urlPath string, obj
 	return true
 }
 
+// getRequestPath returns the request path normalized the same way beego normalizes it
+// before routing, so the authorized path is always the path that gets dispatched
+func getRequestPath(ctx *context.Context) string {
+	return path.Clean(ctx.Request.URL.Path)
+}
+
 func getUrlPath(ctx *context.Context) string {
-	urlPath := ctx.Request.URL.Path
+	urlPath := getRequestPath(ctx)
 
 	if strings.HasPrefix(urlPath, "/cas") && (strings.HasSuffix(urlPath, "/serviceValidate") || strings.HasSuffix(urlPath, "/proxy") || strings.HasSuffix(urlPath, "/proxyValidate") || strings.HasSuffix(urlPath, "/validate") || strings.HasSuffix(urlPath, "/p3/serviceValidate") || strings.HasSuffix(urlPath, "/p3/proxyValidate") || strings.HasSuffix(urlPath, "/samlValidate")) {
 		return "/cas"
@@ -576,6 +583,15 @@ func ApiFilter(ctx *context.Context) {
 			isAllowed = false
 			objOwner, objName = obj.Owner, obj.Name
 			break
+		}
+	}
+
+	// the separation of the system, security and audit admins narrows what an allowed admin may do
+	if isAllowed {
+		err := object.CheckAdminDuty(subOwner, subName, method, urlPath, objOwner, objName)
+		if dutyErr, ok := err.(*object.AdminDutyError); ok {
+			responseError(ctx, translateAdminDutyError(ctx, dutyErr))
+			return
 		}
 	}
 
@@ -744,4 +760,19 @@ func formatExtraInfo(extra map[string]interface{}) string {
 		return ""
 	}
 	return string(b)
+}
+
+// translateAdminDutyError names each message literally, for the i18n generator
+func translateAdminDutyError(ctx *context.Context, err *object.AdminDutyError) string {
+	switch err.Key {
+	case "The audit admin can only view, not change anything":
+		return T(ctx, "enterprise:The audit admin can only view, not change anything")
+	case "Only the audit admin can view the audit records":
+		return T(ctx, "enterprise:Only the audit admin can view the audit records")
+	case "The security admin can only manage permissions, roles, certs and security settings":
+		return T(ctx, "enterprise:The security admin can only manage permissions, roles, certs and security settings")
+	case "Only the security admin can manage permissions, roles, certs and security settings":
+		return T(ctx, "enterprise:Only the security admin can manage permissions, roles, certs and security settings")
+	}
+	return err.Key
 }

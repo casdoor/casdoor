@@ -689,6 +689,10 @@ export const OtherProviderInfo = {
       logo: `${StaticBaseUrl}/img/social_aliyun.png`,
       url: "https://www.aliyun.com/product/idverification",
     },
+    "Plugin": {
+      logo: `${StaticBaseUrl}/img/social_custom.png`,
+      url: "",
+    },
   },
   Audit: {
     "Syslog": {
@@ -1502,7 +1506,7 @@ export function getProviderLogoURL(provider) {
     return provider.customLogo;
   }
   if (provider.category === "OAuth") {
-    const type = isCustomOAuthType(provider.type) ? "Custom" : provider.type;
+    const type = isCustomOAuthType(provider.type) || provider.type === "Plugin" ? "Custom" : provider.type;
     return `${StaticBaseUrl}/img/social_${type.toLowerCase()}.png`;
   } else {
     const info = OtherProviderInfo[provider.category]?.[provider.type];
@@ -1607,6 +1611,7 @@ export function getProviderTypeOptions(category) {
         {id: "Custom9", name: "Custom9"},
         {id: "Custom10", name: "Custom10"},
         {id: "Custom Flexible", name: "Custom Flexible"},
+        {id: "Plugin", name: "Plugin"},
       ]
     );
   } else if (category === "Email") {
@@ -1732,6 +1737,7 @@ export function getProviderTypeOptions(category) {
     return ([
       {id: "Jumio", name: "Jumio"},
       {id: "Alibaba Cloud", name: "Alibaba Cloud"},
+      {id: "Plugin", name: "Plugin"},
     ]);
   } else if (category === "Audit") {
     return ([

@@ -18,6 +18,7 @@ import (
 	"encoding/json"
 
 	"github.com/casdoor/casdoor/edition"
+	"github.com/casdoor/casdoor/gm"
 	"github.com/casdoor/casdoor/util"
 )
 
@@ -25,7 +26,15 @@ import (
 // while silently not taking effect
 
 func CheckApplicationEdition(application *Application) error {
-	if application == nil || edition.Has(edition.Commercial) {
+	if application == nil {
+		return nil
+	}
+	if application.TokenSigningMethod == gm.Alg {
+		if err := edition.Require(edition.Enterprise, edition.FeatureGuomi); err != nil {
+			return err
+		}
+	}
+	if edition.Has(edition.Commercial) {
 		return nil
 	}
 	if application.EnableExclusiveSignin {
@@ -41,7 +50,13 @@ func CheckApplicationEdition(application *Application) error {
 }
 
 func CheckOrganizationEdition(organization *Organization) error {
-	if organization == nil || edition.Has(edition.Commercial) {
+	if organization == nil {
+		return nil
+	}
+	if err := checkOrganizationEnterpriseEdition(organization); err != nil {
+		return err
+	}
+	if edition.Has(edition.Commercial) {
 		return nil
 	}
 	if organization.EnableExclusiveSignin {
@@ -52,6 +67,43 @@ func CheckOrganizationEdition(organization *Organization) error {
 	}
 	if !organization.SecurityPolicy.isEmpty() {
 		return edition.Require(edition.Commercial, edition.FeatureSecurityPolicy)
+	}
+	return nil
+}
+
+func checkOrganizationEnterpriseEdition(organization *Organization) error {
+	if edition.Has(edition.Enterprise) {
+		return nil
+	}
+	if organization.PasswordType == "pbkdf2-sm3" {
+		return edition.Require(edition.Enterprise, edition.FeatureGuomi)
+	}
+	policy := organization.EnterprisePolicy
+	if policy == nil {
+		return nil
+	}
+	if policy.SeparationOfDuties {
+		return edition.Require(edition.Enterprise, edition.FeatureAdminSeparation)
+	}
+	if policy.TamperProofRecords {
+		return edition.Require(edition.Enterprise, edition.FeatureTamperProofLogs)
+	}
+	if len(policy.EncryptedFields) > 0 {
+		return edition.Require(edition.Enterprise, edition.FeatureFieldEncryption)
+	}
+	if len(policy.SodRules) > 0 {
+		return edition.Require(edition.Enterprise, edition.FeatureSod)
+	}
+	if policy.RecordConsents {
+		return edition.Require(edition.Enterprise, edition.FeatureConsentLog)
+	}
+	return nil
+}
+
+// CheckCertEdition refuses SM2 certs without an enterprise edition license
+func CheckCertEdition(cert *Cert) error {
+	if cert != nil && cert.CryptoAlgorithm == gm.Alg {
+		return edition.Require(edition.Enterprise, edition.FeatureGuomi)
 	}
 	return nil
 }

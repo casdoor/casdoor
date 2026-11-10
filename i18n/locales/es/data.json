@@ -117,23 +117,49 @@
     "unsupported password type: %s": "Tipo de contraseña no compatible: %s"
   },
   "edition": {
+    "Account governance": "Gobernanza de cuentas",
     "Attribute-based access control (ABAC)": "Control de acceso basado en atributos (ABAC)",
+    "CEF and LEEF audit log formats": "Formatos de registro de auditoría CEF y LEEF",
+    "Chinese SM cryptographic algorithms": "Algoritmos criptográficos chinos (SM2, SM3, SM4)",
+    "Consent log": "Registro de consentimientos",
+    "Encrypted personal fields": "Campos personales cifrados",
     "Exclusive sign-in": "Inicio de sesión exclusivo",
+    "Hardware OTP token import": "Importación de tokens OTP de hardware",
+    "ID verification plugins": "Complementos de verificación de identidad",
     "ID-JAG": "ID-JAG",
+    "Identity provider plugins": "Complementos de proveedores de identidad",
     "Inactivity timeout": "Tiempo de espera por inactividad",
     "Keycloak syncer": "Sincronizador de Keycloak",
     "MCP gateway": "Pasarela MCP",
+    "MLPS compliance checklist": "Lista de verificación de cumplimiento MLPS",
     "Mobile one-click login": "Inicio de sesión con un clic por número móvil",
     "More than one syncer": "Más de un sincronizador",
     "OpenTelemetry tracing": "Trazas de OpenTelemetry",
     "Paid integrations": "Integraciones de pago",
     "Push notification MFA": "MFA por notificación push",
     "Role-based access control (RBAC)": "Control de acceso basado en roles (RBAC)",
+    "Security dashboard and reports": "Panel de seguridad e informes",
     "Security policy": "Política de seguridad",
-    "Signing key rotation": "Rotación de la clave de firma"
+    "Separation of duties": "Separación de funciones",
+    "Signing key rotation": "Rotación de la clave de firma",
+    "Tamper-proof audit records": "Registros de auditoría a prueba de manipulaciones",
+    "Three-admin separation": "Separación de administradores de sistema, seguridad y auditoría"
   },
   "enforcer": {
     "the adapter: %s is not found": "no se encontró el adaptador: %s"
+  },
+  "enterprise": {
+    "A separation-of-duty rule needs a name and at least two roles": "Una regla de separación de funciones necesita un nombre y al menos dos roles",
+    "Add yourself to the security admins before separating the admins": "Añádase a los administradores de seguridad antes de separar los administradores, o ya no podrá cambiar este ajuste",
+    "Only the audit admin can view the audit records": "Solo el administrador de auditoría puede ver los registros de auditoría",
+    "Only the security admin can manage permissions, roles, certs and security settings": "Solo el administrador de seguridad puede gestionar permisos, roles, certificados y ajustes de seguridad",
+    "Separation of duties: the user %s would hold the roles %s together, which the rule %s keeps apart": "Separación de funciones: el usuario %s tendría a la vez los roles %s, que la regla %s separa",
+    "Set the configuration fieldEncryptionKey before encrypting personal fields": "Configure fieldEncryptionKey antes de cifrar campos personales",
+    "The audit admin can only view, not change anything": "El administrador de auditoría solo puede ver, no cambiar nada",
+    "The field: %s cannot be encrypted": "El campo: %s no se puede cifrar",
+    "The security admin can only manage permissions, roles, certs and security settings": "El administrador de seguridad solo puede gestionar permisos, roles, certificados y ajustes de seguridad",
+    "The separation of admins needs at least one security admin and one audit admin": "La separación de administradores necesita al menos un administrador de seguridad y uno de auditoría",
+    "The user: %s cannot be more than one of the system, security and audit admins": "El usuario: %s no puede ser más de uno de los administradores de sistema, seguridad y auditoría"
   },
   "general": {
     "%s needs a commercial or enterprise edition license, please upgrade (%s)": "%s necesita una licencia de la edición comercial o empresarial, actualice su edición (%s)",

@@ -35,7 +35,7 @@ const recordCleanupBatchInterval = 100 * time.Millisecond
 // (the default, i.e. a non-positive value) are not included, so audit rows are never
 // deleted unless the retention has been explicitly configured.
 func getOrgRecordRetentionDays() (map[string]int, error) {
-	organizations, err := GetOrganizationsByFields("admin", "name", "record_retention_days")
+	organizations, err := GetOrganizationsByFields("admin", "name", "record_retention_days", "enterprise_policy")
 	if err != nil {
 		return nil, fmt.Errorf("failed to load organizations for record cleanup: %w", err)
 	}
@@ -44,6 +44,14 @@ func getOrgRecordRetentionDays() (map[string]int, error) {
 	for _, organization := range organizations {
 		if organization.RecordRetentionDays > 0 {
 			res[organization.Name] = organization.RecordRetentionDays
+		}
+		// tamper-proof records are kept 6 months at least, and the global retention doesn't apply to them (0)
+		if policy := GetEnterprisePolicy(organization); policy != nil && policy.TamperProofRecords {
+			if organization.RecordRetentionDays <= 0 {
+				res[organization.Name] = 0
+			} else if organization.RecordRetentionDays < MinTamperProofRecordDays {
+				res[organization.Name] = MinTamperProofRecordDays
+			}
 		}
 	}
 	return res, nil
@@ -157,6 +165,9 @@ func CleanupRecords() error {
 
 	currentTime := time.Now()
 	for owner, retentionDays := range retentionDaysMap {
+		if retentionDays <= 0 {
+			continue
+		}
 		// "record"'s "owner" column is the organization that the record belongs to,
 		// see AddRecord().
 		cutoffTime := currentTime.AddDate(0, 0, -retentionDays).Format(time.RFC3339)

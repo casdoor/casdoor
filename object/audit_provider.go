@@ -22,6 +22,7 @@ import (
 	"time"
 
 	"github.com/casdoor/casdoor/audit"
+	"github.com/casdoor/casdoor/edition"
 )
 
 var (
@@ -30,19 +31,29 @@ var (
 )
 
 func getAuditConfig(provider *Provider) *audit.Config {
+	format := provider.TemplateCode
+	// without the license the CEF and LEEF records still go out, in the standard syslog format
+	if audit.IsEnterpriseSyslogFormat(format) && !edition.Has(edition.Enterprise) {
+		format = "RFC 5424"
+	}
 	return &audit.Config{
 		Type:     provider.Type,
 		Host:     provider.Host,
 		Port:     provider.Port,
 		Protocol: provider.Method,
 		Facility: provider.Title,
-		Format:   provider.TemplateCode,
+		Format:   format,
 	}
 }
 
 func validateAuditProvider(provider *Provider) error {
 	if provider.Category != "Audit" {
 		return nil
+	}
+	if audit.IsEnterpriseSyslogFormat(provider.TemplateCode) {
+		if err := edition.Require(edition.Enterprise, edition.FeatureSiemFormats); err != nil {
+			return err
+		}
 	}
 	return audit.ValidateConfig(getAuditConfig(provider))
 }
@@ -102,11 +113,21 @@ func sendAuditRecord(record *Record) {
 		eventTime = time.Now()
 	}
 
+	severity := getAuditSeverity(record)
 	event := &audit.Event{
 		Time:     eventTime,
-		Severity: getAuditSeverity(record),
+		Severity: severity,
 		Action:   record.Action,
 		Message:  string(message),
+		Fields: &audit.EventFields{
+			Organization: record.Organization,
+			User:         record.User,
+			ClientIp:     record.ClientIp,
+			Method:       record.Method,
+			RequestUri:   record.RequestUri,
+			StatusCode:   record.StatusCode,
+			Success:      severity != audit.SeverityWarning,
+		},
 	}
 
 	for _, provider := range providers {

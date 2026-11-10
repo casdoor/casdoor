@@ -117,23 +117,49 @@
     "unsupported password type: %s": "サポートされていないパスワードタイプ：%s"
   },
   "edition": {
+    "Account governance": "アカウントガバナンス",
     "Attribute-based access control (ABAC)": "属性ベースのアクセス制御（ABAC）",
+    "CEF and LEEF audit log formats": "CEF・LEEF 形式の監査ログ転送",
+    "Chinese SM cryptographic algorithms": "中国国家暗号アルゴリズム（SM2、SM3、SM4）",
+    "Consent log": "同意ログ",
+    "Encrypted personal fields": "個人情報フィールドの暗号化",
     "Exclusive sign-in": "排他ログイン",
+    "Hardware OTP token import": "ハードウェアOTPトークンのインポート",
+    "ID verification plugins": "本人確認プラグイン",
     "ID-JAG": "ID-JAG",
+    "Identity provider plugins": "IDプロバイダープラグイン",
     "Inactivity timeout": "無操作タイムアウト",
     "Keycloak syncer": "Keycloak 同期",
     "MCP gateway": "MCP ゲートウェイ",
+    "MLPS compliance checklist": "等級保護（MLPS）チェックリスト",
     "Mobile one-click login": "携帯番号ワンクリックログイン",
     "More than one syncer": "複数の同期",
     "OpenTelemetry tracing": "OpenTelemetry トレーシング",
     "Paid integrations": "有料インテグレーション",
     "Push notification MFA": "プッシュ通知 MFA",
     "Role-based access control (RBAC)": "ロールベースのアクセス制御（RBAC）",
+    "Security dashboard and reports": "セキュリティダッシュボードとレポート",
     "Security policy": "セキュリティポリシー",
-    "Signing key rotation": "署名鍵のローテーション"
+    "Separation of duties": "職務分掌",
+    "Signing key rotation": "署名鍵のローテーション",
+    "Tamper-proof audit records": "改ざん防止の監査ログ",
+    "Three-admin separation": "システム・セキュリティ・監査管理者の分離"
   },
   "enforcer": {
     "the adapter: %s is not found": "アダプタ「%s」が見つかりません"
+  },
+  "enterprise": {
+    "A separation-of-duty rule needs a name and at least two roles": "職務分掌ルールには名前と2つ以上のロールが必要です",
+    "Add yourself to the security admins before separating the admins": "管理者を分離する前に自分をセキュリティ管理者に追加してください。追加しないと、この設定を変更できなくなります",
+    "Only the audit admin can view the audit records": "監査ログを閲覧できるのは監査管理者だけです",
+    "Only the security admin can manage permissions, roles, certs and security settings": "権限、ロール、証明書、セキュリティ設定を管理できるのはセキュリティ管理者だけです",
+    "Separation of duties: the user %s would hold the roles %s together, which the rule %s keeps apart": "職務分掌：ユーザー %s がロール %s を同時に持つことになり、ルール「%s」に違反します",
+    "Set the configuration fieldEncryptionKey before encrypting personal fields": "個人情報フィールドを暗号化する前に、設定 fieldEncryptionKey を設定してください",
+    "The audit admin can only view, not change anything": "監査管理者は閲覧のみ可能で、変更はできません",
+    "The field: %s cannot be encrypted": "フィールド %s は暗号化できません",
+    "The security admin can only manage permissions, roles, certs and security settings": "セキュリティ管理者が管理できるのは権限、ロール、証明書、セキュリティ設定だけです",
+    "The separation of admins needs at least one security admin and one audit admin": "管理者の分離には、セキュリティ管理者と監査管理者がそれぞれ1人以上必要です",
+    "The user: %s cannot be more than one of the system, security and audit admins": "ユーザー %s はシステム・セキュリティ・監査管理者のうち2つ以上を兼任できません"
   },
   "general": {
     "%s needs a commercial or enterprise edition license, please upgrade (%s)": "%sには商用版またはエンタープライズ版のライセンスが必要です。アップグレードしてください (%s)",

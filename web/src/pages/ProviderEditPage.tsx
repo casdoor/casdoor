@@ -4,6 +4,7 @@ import {useNavigate, useParams} from "react-router-dom";
 import {UnauthorizedPage} from "@/components/common/UnauthorizedPage";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
+import {EditionNotice} from "@/components/common/EditionNotice";
 import {Switch} from "@/components/ui/switch";
 import {Textarea} from "@/components/ui/textarea";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
@@ -76,7 +77,8 @@ const SYSLOG_FACILITIES = [
   "auth", "authpriv", "user", "daemon", "security",
   "local0", "local1", "local2", "local3", "local4", "local5", "local6", "local7",
 ];
-const SYSLOG_FORMATS = ["RFC 5424", "RFC 3164"];
+// CEF and LEEF, which SIEM and situational awareness platforms read, need an enterprise edition license
+const SYSLOG_FORMATS = ["RFC 5424", "RFC 3164", "CEF", "LEEF"];
 
 const SCAN_HOST_OPTIONS = ["127.0.0.1/32", "10.0.0.0/24", "172.16.0.0/24", "192.168.1.0/24"];
 const SCAN_PORT_OPTIONS = ["80", "3000", "8080"];
@@ -895,8 +897,29 @@ export default function ProviderEditPage() {
     </React.Fragment>
   );
 
+  // an OAuth provider of type Plugin signs in through an installed action of kind "idp", its authorization URL is a
+  // template with {clientId}, {redirectUri}, {state} and {scope}
+  const renderOAuthPluginFields = () => (
+    <React.Fragment>
+      {renderActionRow()}
+      <FormRow labelKey="provider:Auth URL" tooltip={i18next.t("provider:Plugin auth URL - Tooltip")}>
+        <Input value={provider.customAuthUrl ?? ""} onChange={(e) => updateProviderField("customAuthUrl", e.target.value)} />
+      </FormRow>
+      <FormRow labelKey="provider:Scope">
+        <Input value={provider.scopes ?? ""} onChange={(e) => updateProviderField("scopes", e.target.value)} />
+      </FormRow>
+      <FormRow labelKey="general:Host">
+        <Input value={provider.host ?? ""} onChange={(e) => updateProviderField("host", e.target.value)} />
+      </FormRow>
+      <FormRow labelKey="system:License">
+        <EditionNotice edition="Enterprise" />
+      </FormRow>
+    </React.Fragment>
+  );
+
   const renderOAuthFields = () => (
     <React.Fragment>
+      {provider.type === "Plugin" ? renderOAuthPluginFields() : null}
       <FormRow labelKey="provider:Email regex">
         <Textarea rows={4} value={provider.emailRegex ?? ""} onChange={(e) => updateProviderField("emailRegex", e.target.value)} />
       </FormRow>
@@ -1145,7 +1168,8 @@ export default function ProviderEditPage() {
     if (provider.type !== "Plugin") {
       return null;
     }
-    const kind = provider.category === "SMS" ? "sms" : provider.category === "Notification" ? "push" : "payment";
+    const kinds: Record<string, string> = {"SMS": "sms", "Notification": "push", "OAuth": "idp", "ID Verification": "idv"};
+    const kind = kinds[provider.category] ?? "payment";
     return (
       <FormRow label={i18next.t("general:Action")} tooltip={i18next.t("provider:Action - Tooltip")}>
         <SelectField
@@ -1332,6 +1356,7 @@ export default function ProviderEditPage() {
           onChange={(v) => updateProviderField("templateCode", v)}
           options={SYSLOG_FORMATS.map((item) => ({id: item, name: item}))}
         />
+        {provider.templateCode === "CEF" || provider.templateCode === "LEEF" ? <EditionNotice edition="Enterprise" /> : null}
       </FormRow>
       <FormRow labelKey="general:State">
         <SelectField
@@ -1850,7 +1875,15 @@ export default function ProviderEditPage() {
       {provider.category === "Payment" ? renderPaymentFields() : null}
       {provider.category === "Storage" ? renderStorageFields() : null}
       {provider.category === "Face ID" ? renderEndpointOnlyField() : null}
-      {provider.category === "ID Verification" ? renderEndpointOnlyField() : null}
+      {provider.category === "ID Verification" && provider.type === "Plugin" ? (
+        <React.Fragment>
+          {renderActionRow()}
+          <FormRow labelKey="system:License">
+            <EditionNotice edition="Enterprise" />
+          </FormRow>
+        </React.Fragment>
+      ) : null}
+      {provider.category === "ID Verification" && provider.type !== "Plugin" ? renderEndpointOnlyField() : null}
 
       {provider.category !== "Log" && provider.category !== "Audit" ? (
         <FormRow block labelKey="provider:Provider URL">

@@ -117,23 +117,49 @@
     "unsupported password type: %s": "Type de mot de passe non pris en charge : %s"
   },
   "edition": {
+    "Account governance": "Gouvernance des comptes",
     "Attribute-based access control (ABAC)": "Contrôle d'accès basé sur les attributs (ABAC)",
+    "CEF and LEEF audit log formats": "Formats de journaux d'audit CEF et LEEF",
+    "Chinese SM cryptographic algorithms": "Algorithmes cryptographiques chinois (SM2, SM3, SM4)",
+    "Consent log": "Journal des consentements",
+    "Encrypted personal fields": "Champs personnels chiffrés",
     "Exclusive sign-in": "Connexion exclusive",
+    "Hardware OTP token import": "Importation de jetons OTP matériels",
+    "ID verification plugins": "Plugins de vérification d'identité",
     "ID-JAG": "ID-JAG",
+    "Identity provider plugins": "Plugins de fournisseurs d'identité",
     "Inactivity timeout": "Délai d'inactivité",
     "Keycloak syncer": "Synchroniseur Keycloak",
     "MCP gateway": "Passerelle MCP",
+    "MLPS compliance checklist": "Liste de contrôle de conformité MLPS",
     "Mobile one-click login": "Connexion en un clic par numéro mobile",
     "More than one syncer": "Plus d'un synchroniseur",
     "OpenTelemetry tracing": "Traçage OpenTelemetry",
     "Paid integrations": "Intégrations payantes",
     "Push notification MFA": "MFA par notification push",
     "Role-based access control (RBAC)": "Contrôle d'accès basé sur les rôles (RBAC)",
+    "Security dashboard and reports": "Tableau de bord et rapports de sécurité",
     "Security policy": "Politique de sécurité",
-    "Signing key rotation": "Rotation de la clé de signature"
+    "Separation of duties": "Séparation des tâches",
+    "Signing key rotation": "Rotation de la clé de signature",
+    "Tamper-proof audit records": "Journaux d'audit infalsifiables",
+    "Three-admin separation": "Séparation des administrateurs système, sécurité et audit"
   },
   "enforcer": {
     "the adapter: %s is not found": "l'adaptateur : %s est introuvable"
+  },
+  "enterprise": {
+    "A separation-of-duty rule needs a name and at least two roles": "Une règle de séparation des tâches nécessite un nom et au moins deux rôles",
+    "Add yourself to the security admins before separating the admins": "Ajoutez-vous aux administrateurs de sécurité avant de séparer les administrateurs, sinon vous ne pourrez plus modifier ce paramètre",
+    "Only the audit admin can view the audit records": "Seul l'administrateur d'audit peut consulter les journaux d'audit",
+    "Only the security admin can manage permissions, roles, certs and security settings": "Seul l'administrateur de sécurité peut gérer les permissions, rôles, certificats et paramètres de sécurité",
+    "Separation of duties: the user %s would hold the roles %s together, which the rule %s keeps apart": "Séparation des tâches : l'utilisateur %s aurait à la fois les rôles %s, que la règle %s sépare",
+    "Set the configuration fieldEncryptionKey before encrypting personal fields": "Définissez la configuration fieldEncryptionKey avant de chiffrer les champs personnels",
+    "The audit admin can only view, not change anything": "L'administrateur d'audit peut seulement consulter, rien modifier",
+    "The field: %s cannot be encrypted": "Le champ : %s ne peut pas être chiffré",
+    "The security admin can only manage permissions, roles, certs and security settings": "L'administrateur de sécurité ne peut gérer que les permissions, rôles, certificats et paramètres de sécurité",
+    "The separation of admins needs at least one security admin and one audit admin": "La séparation des administrateurs nécessite au moins un administrateur de sécurité et un d'audit",
+    "The user: %s cannot be more than one of the system, security and audit admins": "L'utilisateur : %s ne peut pas cumuler les rôles d'administrateur système, sécurité et audit"
   },
   "general": {
     "%s needs a commercial or enterprise edition license, please upgrade (%s)": "%s nécessite une licence de l'édition commerciale ou entreprise, veuillez passer à une édition supérieure (%s)",

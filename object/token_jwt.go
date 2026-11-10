@@ -24,7 +24,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/casdoor/casdoor/gm"
 	"github.com/casdoor/casdoor/util"
+	"github.com/emmansun/gmsm/sm3"
 	"github.com/golang-jwt/jwt/v5"
 )
 
@@ -626,6 +628,8 @@ func getOidcHash(value string, method jwt.SigningMethod) string {
 		h = sha512.New384()
 	case "RS512", "ES512", "PS512":
 		h = sha512.New()
+	case gm.Alg:
+		h = sm3.New()
 	default:
 		h = sha256.New()
 	}
@@ -765,16 +769,7 @@ func generateJwtTokenWithOptions(application *Application, user *User, provider 
 		key                interface{}
 	)
 
-	if strings.Contains(application.TokenSigningMethod, "RS") || application.TokenSigningMethod == "" {
-		// RSA private key
-		key, err = jwt.ParseRSAPrivateKeyFromPEM([]byte(cert.PrivateKey))
-	} else if strings.Contains(application.TokenSigningMethod, "ES") {
-		// ES private key
-		key, err = jwt.ParseECPrivateKeyFromPEM([]byte(cert.PrivateKey))
-	} else if strings.Contains(application.TokenSigningMethod, "Ed") {
-		// Ed private key
-		key, err = jwt.ParseEdPrivateKeyFromPEM([]byte(cert.PrivateKey))
-	}
+	key, err = getJwtSigningKey(jwtMethod, cert.PrivateKey)
 	if err != nil {
 		return "", "", "", "", err
 	}
@@ -812,6 +807,8 @@ func getJwtSigningMethod(application *Application) jwt.SigningMethod {
 		return jwt.SigningMethodES384
 	case "ES512":
 		return jwt.SigningMethodES512
+	case gm.Alg:
+		return gm.SigningMethodSm2
 	default:
 		return jwt.SigningMethodRS256
 	}
@@ -839,15 +836,7 @@ func ParseJwtToken(token string, cert *Cert) (*Claims, error) {
 
 		kid, _ := token.Header["kid"].(string)
 		publicKey := cert.getCertificateByKeyId(kid)
-		if _, ok := token.Method.(*jwt.SigningMethodRSA); ok {
-			// RSA certificate
-			certificate, err = jwt.ParseRSAPublicKeyFromPEM([]byte(publicKey))
-		} else if _, ok := token.Method.(*jwt.SigningMethodECDSA); ok {
-			// ES certificate
-			certificate, err = jwt.ParseECPublicKeyFromPEM([]byte(publicKey))
-		} else {
-			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
-		}
+		certificate, err = getJwtVerifyKey(token, publicKey)
 
 		if err != nil {
 			return nil, err

@@ -1113,7 +1113,11 @@ func (c *ApiController) Login() {
 			idpInfo.CodeVerifier = authForm.CodeVerifier
 			idpInfo.State = authForm.CallbackState
 			var idProvider idp.IdProvider
-			idProvider, err = idp.GetIdProvider(idpInfo, authForm.RedirectUri)
+			if provider.Type == object.ProviderTypePlugin {
+				idProvider, err = object.GetPluginIdProvider(provider, authForm.RedirectUri)
+			} else {
+				idProvider, err = idp.GetIdProvider(idpInfo, authForm.RedirectUri)
+			}
 			if err != nil {
 				c.ResponseError(err.Error())
 				return

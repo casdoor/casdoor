@@ -36,6 +36,8 @@ func GetCredManager(passwordType string) CredManager {
 		return NewArgon2idCredManager()
 	} else if passwordType == "pbkdf2-django" {
 		return NewPbkdf2DjangoCredManager()
+	} else if passwordType == "pbkdf2-sm3" {
+		return NewPbkdf2Sm3CredManager()
 	}
 	return nil
 }

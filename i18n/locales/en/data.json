@@ -117,23 +117,49 @@
     "unsupported password type: %s": "unsupported password type: %s"
   },
   "edition": {
+    "Account governance": "Account governance",
     "Attribute-based access control (ABAC)": "Attribute-based access control (ABAC)",
+    "CEF and LEEF audit log formats": "CEF and LEEF audit log formats",
+    "Chinese SM cryptographic algorithms": "Chinese SM cryptographic algorithms",
+    "Consent log": "Consent log",
+    "Encrypted personal fields": "Encrypted personal fields",
     "Exclusive sign-in": "Exclusive sign-in",
+    "Hardware OTP token import": "Hardware OTP token import",
+    "ID verification plugins": "ID verification plugins",
     "ID-JAG": "ID-JAG",
+    "Identity provider plugins": "Identity provider plugins",
     "Inactivity timeout": "Inactivity timeout",
     "Keycloak syncer": "Keycloak syncer",
     "MCP gateway": "MCP gateway",
+    "MLPS compliance checklist": "MLPS compliance checklist",
     "Mobile one-click login": "Mobile one-click login",
     "More than one syncer": "More than one syncer",
     "OpenTelemetry tracing": "OpenTelemetry tracing",
     "Paid integrations": "Paid integrations",
     "Push notification MFA": "Push notification MFA",
     "Role-based access control (RBAC)": "Role-based access control (RBAC)",
+    "Security dashboard and reports": "Security dashboard and reports",
     "Security policy": "Security policy",
-    "Signing key rotation": "Signing key rotation"
+    "Separation of duties": "Separation of duties",
+    "Signing key rotation": "Signing key rotation",
+    "Tamper-proof audit records": "Tamper-proof audit records",
+    "Three-admin separation": "Three-admin separation"
   },
   "enforcer": {
     "the adapter: %s is not found": "the adapter: %s is not found"
+  },
+  "enterprise": {
+    "A separation-of-duty rule needs a name and at least two roles": "A separation-of-duty rule needs a name and at least two roles",
+    "Add yourself to the security admins before separating the admins": "Add yourself to the security admins before separating the admins, otherwise you can no longer change this setting",
+    "Only the audit admin can view the audit records": "Only the audit admin can view the audit records",
+    "Only the security admin can manage permissions, roles, certs and security settings": "Only the security admin can manage permissions, roles, certs and security settings",
+    "Separation of duties: the user %s would hold the roles %s together, which the rule %s keeps apart": "Separation of duties: the user %s would hold the roles %s together, which the rule %s keeps apart",
+    "Set the configuration fieldEncryptionKey before encrypting personal fields": "Set the configuration fieldEncryptionKey before encrypting personal fields",
+    "The audit admin can only view, not change anything": "The audit admin can only view, not change anything",
+    "The field: %s cannot be encrypted": "The field: %s cannot be encrypted",
+    "The security admin can only manage permissions, roles, certs and security settings": "The security admin can only manage permissions, roles, certs and security settings",
+    "The separation of admins needs at least one security admin and one audit admin": "The separation of admins needs at least one security admin and one audit admin",
+    "The user: %s cannot be more than one of the system, security and audit admins": "The user: %s cannot be more than one of the system, security and audit admins"
   },
   "general": {
     "%s needs a commercial or enterprise edition license, please upgrade (%s)": "%s needs a commercial or enterprise edition license, please upgrade (%s)",

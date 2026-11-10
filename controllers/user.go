@@ -358,6 +358,11 @@ func (c *ApiController) UpdateUser() {
 		return
 	}
 
+	if err = object.CheckUserSod(oldUser, &user, c.GetAcceptLanguage()); err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
 	if msg := object.CheckUpdateUser(oldUser, &user, c.GetAcceptLanguage()); msg != "" {
 		c.ResponseError(msg)
 		return
@@ -1136,16 +1141,34 @@ func (c *ApiController) VerifyIdentification() {
 		}
 	}
 
-	idvProvider := object.GetIdvProviderFromProvider(provider)
-	if idvProvider == nil {
-		c.ResponseError(c.T("provider:Failed to initialize ID Verification provider"))
-		return
-	}
+	var verified bool
+	if provider.Type == object.ProviderTypePlugin {
+		pluginProvider, err := object.GetPluginIdvProvider(provider, user.Phone)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+		verified, err = pluginProvider.VerifyIdentity(user.IdCardType, user.IdCard, user.RealName)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+		if !verified && pluginProvider.GetReason() != "" {
+			c.ResponseError(c.T("user:Identity verification failed") + ": " + pluginProvider.GetReason())
+			return
+		}
+	} else {
+		idvProvider := object.GetIdvProviderFromProvider(provider)
+		if idvProvider == nil {
+			c.ResponseError(c.T("provider:Failed to initialize ID Verification provider"))
+			return
+		}
 
-	verified, err := idvProvider.VerifyIdentity(user.IdCardType, user.IdCard, user.RealName)
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
+		verified, err = idvProvider.VerifyIdentity(user.IdCardType, user.IdCard, user.RealName)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
 	}
 
 	if !verified {

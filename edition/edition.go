@@ -53,6 +53,19 @@ const (
 	FeatureTracing          = "OpenTelemetry tracing"
 	FeatureRbac             = "Role-based access control (RBAC)"
 	FeatureAbac             = "Attribute-based access control (ABAC)"
+	FeatureGuomi            = "Chinese SM cryptographic algorithms"
+	FeatureSiemFormats      = "CEF and LEEF audit log formats"
+	FeatureAdminSeparation  = "Three-admin separation"
+	FeatureTamperProofLogs  = "Tamper-proof audit records"
+	FeatureFieldEncryption  = "Encrypted personal fields"
+	FeatureSod              = "Separation of duties"
+	FeatureConsentLog       = "Consent log"
+	FeatureGovernance       = "Account governance"
+	FeatureComplianceReport = "MLPS compliance checklist"
+	FeatureSecurityOverview = "Security dashboard and reports"
+	FeatureOtpTokenImport   = "Hardware OTP token import"
+	FeaturePluginIdp        = "Identity provider plugins"
+	FeaturePluginIdv        = "ID verification plugins"
 )
 
 // The features that a license can also grant on their own, without the edition they belong to, by these keys in its

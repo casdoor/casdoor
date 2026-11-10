@@ -145,8 +145,9 @@ export default function AuthCallback() {
     };
 
     // Providers disagree on the parameter name for the authorization code.
+    // Yunzhijia sends a "ticket", which its plugin exchanges like a code
     let code =
-      params.get("code") ?? params.get("auth_code") ?? params.get("authCode") ?? null;
+      params.get("code") ?? params.get("auth_code") ?? params.get("authCode") ?? params.get("ticket") ?? null;
     const isSteam = params.get("openid.mode");
     if (isSteam !== null && code === null) {
       code = location.search;

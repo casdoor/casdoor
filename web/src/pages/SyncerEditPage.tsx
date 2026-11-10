@@ -136,6 +136,14 @@ export default function SyncerEditPage() {
       ),
     },
     {
+      type: "textarea",
+      name: "metadata",
+      labelKey: "provider:Metadata",
+      rows: 6,
+      placeholder: "{}",
+      when: (ctx) => ctx.record.type === "Plugin",
+    },
+    {
       type: "custom",
       name: "edition",
       labelKey: "system:License",

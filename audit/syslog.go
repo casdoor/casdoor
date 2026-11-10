@@ -49,6 +49,15 @@ var syslogFacilities = map[string]int{
 var syslogFormats = map[string]bool{
 	"RFC 5424": true,
 	"RFC 3164": true,
+	// ArcSight CEF and IBM QRadar LEEF, which the situational awareness platforms of Qi An Xin, Sangfor and DBAPPSecurity
+	// also take, sent in an RFC 3164 header
+	"CEF":  true,
+	"LEEF": true,
+}
+
+// IsEnterpriseSyslogFormat tells the formats that need an enterprise edition license
+func IsEnterpriseSyslogFormat(format string) bool {
+	return format == "CEF" || format == "LEEF"
 }
 
 type syslogSettings struct {
@@ -219,7 +228,11 @@ func (p *SyslogProvider) formatMessage(event *Event) string {
 	message := strings.NewReplacer("\r", " ", "\n", " ").Replace(event.Message)
 
 	var line string
-	if p.settings.format == "RFC 3164" {
+	if p.settings.format == "CEF" {
+		line = fmt.Sprintf("<%d>%s %s %s", priority, eventTime.Format(time.Stamp), p.hostname, formatCef(event, eventTime))
+	} else if p.settings.format == "LEEF" {
+		line = fmt.Sprintf("<%d>%s %s %s", priority, eventTime.Format(time.Stamp), p.hostname, formatLeef(event, eventTime))
+	} else if p.settings.format == "RFC 3164" {
 		line = fmt.Sprintf("<%d>%s %s casdoor[%s]: %s", priority, eventTime.Format(time.Stamp), p.hostname, p.procId, message)
 	} else {
 		line = fmt.Sprintf("<%d>1 %s %s casdoor %s %s - %s", priority, eventTime.Format(time.RFC3339), p.hostname, p.procId, getSyslogMsgId(event.Action), message)

@@ -25,6 +25,7 @@ import (
 
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/edition"
+	"github.com/casdoor/casdoor/gm"
 	"github.com/casdoor/casdoor/util"
 	"github.com/go-jose/go-jose/v4"
 )
@@ -255,6 +256,9 @@ func GetOidcDiscovery(host string, applicationName string) OidcDiscovery {
 		oidcDiscovery.GrantTypesSupported = util.DeleteVal(oidcDiscovery.GrantTypesSupported, MobileOneClickGrantType)
 		oidcDiscovery.AuthorizationGrantProfilesSupported = nil
 	}
+	if edition.Has(edition.Enterprise) {
+		oidcDiscovery.IdTokenSigningAlgValuesSupported = append(oidcDiscovery.IdTokenSigningAlgValuesSupported, gm.Alg)
+	}
 
 	return oidcDiscovery
 }
@@ -277,9 +281,7 @@ func GetOidcDiscoveryByOrganization(host string, organizationName string) (*Oidc
 	return &oidcDiscovery, nil
 }
 
-func GetJsonWebKeySet(applicationName string) (jose.JSONWebKeySet, error) {
-	jwks := jose.JSONWebKeySet{}
-
+func getJsonWebKeySetCerts(applicationName string) ([]*Cert, error) {
 	// Get certs - use application-specific cert if applicationName is provided
 	var certs []*Cert
 	var err error
@@ -299,8 +301,17 @@ func GetJsonWebKeySet(applicationName string) (jose.JSONWebKeySet, error) {
 	if len(certs) == 0 {
 		certs, err = GetCerts("")
 		if err != nil {
-			return jwks, err
+			return nil, err
 		}
+	}
+	return certs, nil
+}
+
+func GetJsonWebKeySet(applicationName string) (jose.JSONWebKeySet, error) {
+	jwks := jose.JSONWebKeySet{}
+	certs, err := getJsonWebKeySetCerts(applicationName)
+	if err != nil {
+		return jwks, err
 	}
 
 	// follows the protocol rfc 7517(draft)
@@ -317,6 +328,37 @@ func GetJsonWebKeySet(applicationName string) (jose.JSONWebKeySet, error) {
 	}
 
 	return jwks, nil
+}
+
+// GetJsonWebKeySetWithSm2 is the JWKS with the keys of SM2 certs too, which go-jose cannot encode
+func GetJsonWebKeySetWithSm2(applicationName string) (interface{}, error) {
+	jwks, err := GetJsonWebKeySet(applicationName)
+	if err != nil {
+		return nil, err
+	}
+	certs, err := getJsonWebKeySetCerts(applicationName)
+	if err != nil {
+		return nil, err
+	}
+
+	keys := []interface{}{}
+	for i := range jwks.Keys {
+		keys = append(keys, jwks.Keys[i])
+	}
+	for _, cert := range certs {
+		if cert.Type != "x509" || cert.CryptoAlgorithm != gm.Alg {
+			continue
+		}
+		if jwk, err := gm.GetJsonWebKey(cert.Certificate, cert.GetKeyId()); err == nil {
+			keys = append(keys, jwk)
+		}
+		if cert.PreviousCertificate != "" && cert.PreviousKeyId != "" && cert.PreviousKeyId != cert.GetKeyId() {
+			if jwk, err := gm.GetJsonWebKey(cert.PreviousCertificate, cert.PreviousKeyId); err == nil {
+				keys = append(keys, jwk)
+			}
+		}
+	}
+	return map[string]interface{}{"keys": keys}, nil
 }
 
 func getJsonWebKey(cert *Cert) *jose.JSONWebKey {

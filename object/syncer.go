@@ -42,7 +42,9 @@ type Syncer struct {
 	Organization string `xorm:"varchar(100)" json:"organization"`
 	Type         string `xorm:"varchar(100)" json:"type"`
 	// the installed action of kind "syncer" a syncer of type Plugin runs, such as the Authing import
-	Plugin       string `xorm:"varchar(100)" json:"plugin"`
+	Plugin string `xorm:"varchar(100)" json:"plugin"`
+	// more settings of a syncer of type Plugin as the plugin documents them, usually JSON, such as a private key
+	Metadata     string `xorm:"mediumtext" json:"metadata"`
 	DatabaseType string `xorm:"varchar(100)" json:"databaseType"`
 	SslMode      string `xorm:"varchar(100)" json:"sslMode"`
 	SslRootCert  string `xorm:"mediumtext" json:"sslRootCert"`

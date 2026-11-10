@@ -117,23 +117,49 @@
     "unsupported password type: %s": "Nicht unterstützter Passworttyp: %s"
   },
   "edition": {
+    "Account governance": "Konten-Governance",
     "Attribute-based access control (ABAC)": "Attributbasierte Zugriffskontrolle (ABAC)",
+    "CEF and LEEF audit log formats": "Audit-Logs im CEF- und LEEF-Format",
+    "Chinese SM cryptographic algorithms": "Chinesische Kryptoalgorithmen (SM2, SM3, SM4)",
+    "Consent log": "Einwilligungsprotokoll",
+    "Encrypted personal fields": "Verschlüsselte personenbezogene Felder",
     "Exclusive sign-in": "Exklusive Anmeldung",
+    "Hardware OTP token import": "Import von Hardware-OTP-Token",
+    "ID verification plugins": "Plugins zur Identitätsprüfung",
     "ID-JAG": "ID-JAG",
+    "Identity provider plugins": "Identitätsanbieter-Plugins",
     "Inactivity timeout": "Zeitlimit bei Inaktivität",
     "Keycloak syncer": "Keycloak-Synchronisierer",
     "MCP gateway": "MCP-Gateway",
+    "MLPS compliance checklist": "MLPS-Compliance-Checkliste",
     "Mobile one-click login": "Ein-Klick-Anmeldung mit der Mobilnummer",
     "More than one syncer": "Mehr als ein Synchronisierer",
     "OpenTelemetry tracing": "OpenTelemetry-Tracing",
     "Paid integrations": "Kostenpflichtige Integrationen",
     "Push notification MFA": "MFA per Push-Benachrichtigung",
     "Role-based access control (RBAC)": "Rollenbasierte Zugriffskontrolle (RBAC)",
+    "Security dashboard and reports": "Sicherheits-Dashboard und Berichte",
     "Security policy": "Sicherheitsrichtlinie",
-    "Signing key rotation": "Rotation des Signaturschlüssels"
+    "Separation of duties": "Funktionstrennung",
+    "Signing key rotation": "Rotation des Signaturschlüssels",
+    "Tamper-proof audit records": "Manipulationssichere Audit-Protokolle",
+    "Three-admin separation": "Trennung von System-, Sicherheits- und Audit-Administratoren"
   },
   "enforcer": {
     "the adapter: %s is not found": "Der Adapter: %s wurde nicht gefunden"
+  },
+  "enterprise": {
+    "A separation-of-duty rule needs a name and at least two roles": "Eine Funktionstrennungsregel braucht einen Namen und mindestens zwei Rollen",
+    "Add yourself to the security admins before separating the admins": "Fügen Sie sich vor der Administratorentrennung zu den Sicherheitsadministratoren hinzu, sonst können Sie diese Einstellung nicht mehr ändern",
+    "Only the audit admin can view the audit records": "Nur der Audit-Administrator kann die Audit-Protokolle ansehen",
+    "Only the security admin can manage permissions, roles, certs and security settings": "Nur der Sicherheitsadministrator kann Berechtigungen, Rollen, Zertifikate und Sicherheitseinstellungen verwalten",
+    "Separation of duties: the user %s would hold the roles %s together, which the rule %s keeps apart": "Funktionstrennung: Der Benutzer %s hätte die Rollen %s gleichzeitig, was die Regel %s verbietet",
+    "Set the configuration fieldEncryptionKey before encrypting personal fields": "Legen Sie vor dem Verschlüsseln personenbezogener Felder die Konfiguration fieldEncryptionKey fest",
+    "The audit admin can only view, not change anything": "Der Audit-Administrator kann nur ansehen, nichts ändern",
+    "The field: %s cannot be encrypted": "Das Feld: %s kann nicht verschlüsselt werden",
+    "The security admin can only manage permissions, roles, certs and security settings": "Der Sicherheitsadministrator kann nur Berechtigungen, Rollen, Zertifikate und Sicherheitseinstellungen verwalten",
+    "The separation of admins needs at least one security admin and one audit admin": "Die Administratorentrennung braucht mindestens einen Sicherheits- und einen Audit-Administrator",
+    "The user: %s cannot be more than one of the system, security and audit admins": "Der Benutzer: %s kann nicht mehrere der Rollen System-, Sicherheits- und Audit-Administrator haben"
   },
   "general": {
     "%s needs a commercial or enterprise edition license, please upgrade (%s)": "%s benötigt eine Lizenz der Commercial oder Enterprise Edition, bitte führen Sie ein Upgrade durch (%s)",

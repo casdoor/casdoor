@@ -107,7 +107,8 @@ type Organization struct {
 	DcrPolicy    string                 `xorm:"varchar(100)" json:"dcrPolicy"`
 	IdJagIssuers []*FederatedCredential `xorm:"mediumtext" json:"idJagIssuers"`
 
-	SecurityPolicy *SecurityPolicy `xorm:"json" json:"securityPolicy"`
+	SecurityPolicy   *SecurityPolicy   `xorm:"json" json:"securityPolicy"`
+	EnterprisePolicy *EnterprisePolicy `xorm:"json" json:"enterprisePolicy"`
 
 	LdapAttributes     []string `xorm:"mediumtext" json:"ldapAttributes"`
 	EnableLdapPassword bool     `xorm:"bool" json:"enableLdapPassword"`

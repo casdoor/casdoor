@@ -154,6 +154,14 @@ func InitAPI() {
 
 	web.Router("/api/get-servers", &controllers.ApiController{}, "GET:GetServers")
 	web.Router("/api/get-mcp-records", &controllers.ApiController{}, "GET:GetMcpRecords")
+
+	web.Router("/api/verify-records", &controllers.ApiController{}, "GET:VerifyRecords")
+	web.Router("/api/get-compliance-report", &controllers.ApiController{}, "GET:GetComplianceReport")
+	web.Router("/api/get-sod-conflicts", &controllers.ApiController{}, "GET:GetSodConflicts")
+	web.Router("/api/get-orphan-accounts", &controllers.ApiController{}, "GET:GetOrphanAccounts")
+	web.Router("/api/get-security-overview", &controllers.ApiController{}, "GET:GetSecurityOverview")
+	web.Router("/api/get-consent-logs", &controllers.ApiController{}, "GET:GetConsentLogs")
+	web.Router("/api/import-otp-devices", &controllers.ApiController{}, "POST:ImportOtpTokens")
 	web.Router("/api/get-online-servers", &controllers.ApiController{}, "GET:GetOnlineServers")
 	web.Router("/api/scan", &controllers.ApiController{}, "GET:Scan")
 	web.Router("/api/sync-intranet-servers", &controllers.ApiController{}, "POST:SyncIntranetServers")

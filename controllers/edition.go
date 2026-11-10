@@ -86,6 +86,32 @@ func (c *ApiController) getEditionFeatureName(feature string) string {
 		return c.T("edition:Role-based access control (RBAC)")
 	case edition.FeatureAbac:
 		return c.T("edition:Attribute-based access control (ABAC)")
+	case edition.FeatureGuomi:
+		return c.T("edition:Chinese SM cryptographic algorithms")
+	case edition.FeatureSiemFormats:
+		return c.T("edition:CEF and LEEF audit log formats")
+	case edition.FeatureAdminSeparation:
+		return c.T("edition:Three-admin separation")
+	case edition.FeatureTamperProofLogs:
+		return c.T("edition:Tamper-proof audit records")
+	case edition.FeatureFieldEncryption:
+		return c.T("edition:Encrypted personal fields")
+	case edition.FeatureSod:
+		return c.T("edition:Separation of duties")
+	case edition.FeatureConsentLog:
+		return c.T("edition:Consent log")
+	case edition.FeatureGovernance:
+		return c.T("edition:Account governance")
+	case edition.FeatureComplianceReport:
+		return c.T("edition:MLPS compliance checklist")
+	case edition.FeatureSecurityOverview:
+		return c.T("edition:Security dashboard and reports")
+	case edition.FeatureOtpTokenImport:
+		return c.T("edition:Hardware OTP token import")
+	case edition.FeaturePluginIdp:
+		return c.T("edition:Identity provider plugins")
+	case edition.FeaturePluginIdv:
+		return c.T("edition:ID verification plugins")
 	default:
 		return feature
 	}

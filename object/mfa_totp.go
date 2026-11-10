@@ -59,10 +59,12 @@ func (mfa *TotpMfa) Initiate(userId string, issuer string) (*MfaProps, error) {
 }
 
 func (mfa *TotpMfa) SetupVerify(passcode string, lang string) error {
-	result, err := totp.ValidateCustom(passcode, mfa.Secret, time.Now().UTC(), totp.ValidateOpts{
-		Period:    MfaTotpPeriodInSeconds,
+	// an imported hardware token may have another time step or length, kept after its secret, see otp_token.go
+	secret, period, digits := parseTotpSecret(mfa.Secret)
+	result, err := totp.ValidateCustom(passcode, secret, time.Now().UTC(), totp.ValidateOpts{
+		Period:    period,
 		Skew:      1,
-		Digits:    otp.DigitsSix,
+		Digits:    digits,
 		Algorithm: otp.AlgorithmSHA1,
 	})
 	if err != nil {
@@ -98,10 +100,12 @@ func (mfa *TotpMfa) Verify(passcode string, lang string) error {
 		return errors.New("totp is not enabled")
 	}
 
-	result, err := totp.ValidateCustom(passcode, mfa.Secret, time.Now().UTC(), totp.ValidateOpts{
-		Period:    MfaTotpPeriodInSeconds,
+	// an imported hardware token may have another time step or length, kept after its secret, see otp_token.go
+	secret, period, digits := parseTotpSecret(mfa.Secret)
+	result, err := totp.ValidateCustom(passcode, secret, time.Now().UTC(), totp.ValidateOpts{
+		Period:    period,
 		Skew:      1,
-		Digits:    otp.DigitsSix,
+		Digits:    digits,
 		Algorithm: otp.AlgorithmSHA1,
 	})
 	if err != nil {

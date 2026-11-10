@@ -124,6 +124,11 @@ func (c *ApiController) UpdateRole() {
 		}
 	}
 
+	if err := object.CheckRoleSod(&role, c.GetAcceptLanguage()); err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
 	c.Data["json"] = wrapActionResponse(object.UpdateRole(id, &role, c.IsGlobalAdmin(), c.GetAcceptLanguage()))
 	c.ServeJSON()
 }
@@ -144,6 +149,11 @@ func (c *ApiController) AddRole() {
 	}
 
 	if !c.requireOrganizationPermission(role.Owner) {
+		return
+	}
+
+	if err = object.CheckRoleSod(&role, c.GetAcceptLanguage()); err != nil {
+		c.ResponseError(err.Error())
 		return
 	}
 

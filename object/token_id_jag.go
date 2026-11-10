@@ -255,11 +255,7 @@ func signIdJag(application *Application, claims IdJagClaims) (string, error) {
 
 	var key interface{}
 	token := jwt.NewWithClaims(getJwtSigningMethod(application), claims)
-	if _, ok := token.Method.(*jwt.SigningMethodECDSA); ok {
-		key, err = jwt.ParseECPrivateKeyFromPEM([]byte(cert.PrivateKey))
-	} else {
-		key, err = jwt.ParseRSAPrivateKeyFromPEM([]byte(cert.PrivateKey))
-	}
+	key, err = getJwtSigningKey(token.Method, cert.PrivateKey)
 	if err != nil {
 		return "", err
 	}

@@ -117,23 +117,49 @@
     "unsupported password type: %s": "непідтримуваний тип пароля: %s"
   },
   "edition": {
+    "Account governance": "Керування обліковими записами",
     "Attribute-based access control (ABAC)": "Керування доступом на основі атрибутів (ABAC)",
+    "CEF and LEEF audit log formats": "Формати журналів аудиту CEF і LEEF",
+    "Chinese SM cryptographic algorithms": "Китайські криптоалгоритми (SM2, SM3, SM4)",
+    "Consent log": "Журнал згод",
+    "Encrypted personal fields": "Зашифровані персональні поля",
     "Exclusive sign-in": "Ексклюзивний вхід",
+    "Hardware OTP token import": "Імпорт апаратних OTP-токенів",
+    "ID verification plugins": "Плагіни перевірки особи",
     "ID-JAG": "ID-JAG",
+    "Identity provider plugins": "Плагіни постачальників ідентичності",
     "Inactivity timeout": "Тайм-аут неактивності",
     "Keycloak syncer": "Синхронізатор Keycloak",
     "MCP gateway": "Шлюз MCP",
+    "MLPS compliance checklist": "Контрольний список відповідності MLPS",
     "Mobile one-click login": "Вхід в один дотик за номером телефону",
     "More than one syncer": "Більше одного синхронізатора",
     "OpenTelemetry tracing": "Трасування OpenTelemetry",
     "Paid integrations": "Платні інтеграції",
     "Push notification MFA": "MFA через push-сповіщення",
     "Role-based access control (RBAC)": "Керування доступом на основі ролей (RBAC)",
+    "Security dashboard and reports": "Панель безпеки та звіти",
     "Security policy": "Політика безпеки",
-    "Signing key rotation": "Ротація ключа підпису"
+    "Separation of duties": "Розподіл обов'язків",
+    "Signing key rotation": "Ротація ключа підпису",
+    "Tamper-proof audit records": "Захищені від підробки журнали аудиту",
+    "Three-admin separation": "Розділення адміністраторів системи, безпеки та аудиту"
   },
   "enforcer": {
     "the adapter: %s is not found": "адаптер: %s не знайдено"
+  },
+  "enterprise": {
+    "A separation-of-duty rule needs a name and at least two roles": "Правило розподілу обов'язків потребує назви та щонайменше двох ролей",
+    "Add yourself to the security admins before separating the admins": "Перед розділенням адміністраторів додайте себе до адміністраторів безпеки, інакше ви більше не зможете змінити це налаштування",
+    "Only the audit admin can view the audit records": "Лише адміністратор аудиту може переглядати журнали аудиту",
+    "Only the security admin can manage permissions, roles, certs and security settings": "Лише адміністратор безпеки може керувати дозволами, ролями, сертифікатами та налаштуваннями безпеки",
+    "Separation of duties: the user %s would hold the roles %s together, which the rule %s keeps apart": "Розподіл обов'язків: користувач %s мав би одночасно ролі %s, які розділяє правило %s",
+    "Set the configuration fieldEncryptionKey before encrypting personal fields": "Перед шифруванням персональних полів задайте параметр fieldEncryptionKey",
+    "The audit admin can only view, not change anything": "Адміністратор аудиту може лише переглядати, нічого не змінюючи",
+    "The field: %s cannot be encrypted": "Поле %s не можна зашифрувати",
+    "The security admin can only manage permissions, roles, certs and security settings": "Адміністратор безпеки може керувати лише дозволами, ролями, сертифікатами та налаштуваннями безпеки",
+    "The separation of admins needs at least one security admin and one audit admin": "Розділення адміністраторів потребує щонайменше одного адміністратора безпеки та одного аудиту",
+    "The user: %s cannot be more than one of the system, security and audit admins": "Користувач %s не може бути більш ніж одним з адміністраторів системи, безпеки та аудиту"
   },
   "general": {
     "%s needs a commercial or enterprise edition license, please upgrade (%s)": "%s потребує ліцензії комерційної або корпоративної редакції, будь ласка, оновіть редакцію (%s)",

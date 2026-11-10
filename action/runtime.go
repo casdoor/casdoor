@@ -40,9 +40,10 @@ import (
 const Abi = 1
 
 const (
-	callTimeout     = 60 * time.Second
-	fetchTimeout    = 30 * time.Second
-	maxResponseSize = 10 << 20
+	callTimeout       = 60 * time.Second
+	syncerCallTimeout = 10 * time.Minute
+	fetchTimeout      = 30 * time.Second
+	maxResponseSize   = 10 << 20
 	// 256 MB
 	memoryLimitPages = 4096
 )
@@ -324,7 +325,12 @@ func (w logWriter) Write(p []byte) (int, error) {
 
 // Call runs method in a new instance of the module, which can only send requests to hosts.
 func Call(name string, module []byte, hosts []string, method string, config *Config, params interface{}, out interface{}) error {
-	ctx, cancel := context.WithTimeout(context.Background(), callTimeout)
+	timeout := callTimeout
+	// a sync pages through the whole directory of the other system, sometimes under its rate limit
+	if strings.HasPrefix(method, "syncer.") {
+		timeout = syncerCallTimeout
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	defer cancel()
 	ctx = context.WithValue(ctx, callStateKey{}, &callState{name: name, hosts: getAllowedHosts(hosts, config)})
 

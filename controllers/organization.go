@@ -150,7 +150,21 @@ func (c *ApiController) UpdateOrganization() {
 		organization.BalanceCurrency = "USD"
 	}
 
-	c.Data["json"] = wrapActionResponse(object.UpdateOrganization(id, &organization, isGlobalAdmin, c.GetAcceptLanguage()))
+	oldOrganization, err := object.GetOrganization(id)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	if err = c.checkEnterprisePolicyChange(oldOrganization, &organization); err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	affected, err := object.UpdateOrganization(id, &organization, isGlobalAdmin, c.GetAcceptLanguage())
+	if err == nil && affected {
+		object.AfterEnterprisePolicyChange(oldOrganization, &organization)
+	}
+	c.Data["json"] = wrapActionResponse(affected, err)
 	c.ServeJSON()
 }
 

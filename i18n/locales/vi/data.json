@@ -117,23 +117,49 @@
     "unsupported password type: %s": "Loại mật khẩu không được hỗ trợ: %s"
   },
   "edition": {
+    "Account governance": "Quản trị tài khoản",
     "Attribute-based access control (ABAC)": "Kiểm soát truy cập dựa trên thuộc tính (ABAC)",
+    "CEF and LEEF audit log formats": "Định dạng nhật ký kiểm toán CEF và LEEF",
+    "Chinese SM cryptographic algorithms": "Thuật toán mật mã Trung Quốc (SM2, SM3, SM4)",
+    "Consent log": "Nhật ký đồng ý",
+    "Encrypted personal fields": "Mã hóa trường thông tin cá nhân",
     "Exclusive sign-in": "Đăng nhập độc quyền",
+    "Hardware OTP token import": "Nhập token OTP phần cứng",
+    "ID verification plugins": "Plugin xác minh danh tính",
     "ID-JAG": "ID-JAG",
+    "Identity provider plugins": "Plugin nhà cung cấp danh tính",
     "Inactivity timeout": "Hết thời gian chờ do không hoạt động",
     "Keycloak syncer": "Bộ đồng bộ Keycloak",
     "MCP gateway": "Cổng MCP",
+    "MLPS compliance checklist": "Danh sách kiểm tra tuân thủ MLPS",
     "Mobile one-click login": "Đăng nhập một chạm bằng số điện thoại",
     "More than one syncer": "Nhiều hơn một bộ đồng bộ",
     "OpenTelemetry tracing": "Theo dõi OpenTelemetry",
     "Paid integrations": "Tích hợp trả phí",
     "Push notification MFA": "MFA qua thông báo đẩy",
     "Role-based access control (RBAC)": "Kiểm soát truy cập dựa trên vai trò (RBAC)",
+    "Security dashboard and reports": "Bảng điều khiển và báo cáo bảo mật",
     "Security policy": "Chính sách bảo mật",
-    "Signing key rotation": "Xoay vòng khóa ký"
+    "Separation of duties": "Phân tách nhiệm vụ",
+    "Signing key rotation": "Xoay vòng khóa ký",
+    "Tamper-proof audit records": "Nhật ký kiểm toán chống giả mạo",
+    "Three-admin separation": "Tách biệt quản trị viên hệ thống, bảo mật và kiểm toán"
   },
   "enforcer": {
     "the adapter: %s is not found": "không tìm thấy adapter: %s"
+  },
+  "enterprise": {
+    "A separation-of-duty rule needs a name and at least two roles": "Quy tắc phân tách nhiệm vụ cần có tên và ít nhất hai vai trò",
+    "Add yourself to the security admins before separating the admins": "Hãy thêm bản thân vào quản trị viên bảo mật trước khi tách biệt quản trị viên, nếu không bạn sẽ không thể thay đổi cài đặt này nữa",
+    "Only the audit admin can view the audit records": "Chỉ quản trị viên kiểm toán mới được xem nhật ký kiểm toán",
+    "Only the security admin can manage permissions, roles, certs and security settings": "Chỉ quản trị viên bảo mật mới được quản lý quyền, vai trò, chứng chỉ và cài đặt bảo mật",
+    "Separation of duties: the user %s would hold the roles %s together, which the rule %s keeps apart": "Phân tách nhiệm vụ: người dùng %s sẽ đồng thời có các vai trò %s, vi phạm quy tắc %s",
+    "Set the configuration fieldEncryptionKey before encrypting personal fields": "Hãy đặt cấu hình fieldEncryptionKey trước khi mã hóa trường cá nhân",
+    "The audit admin can only view, not change anything": "Quản trị viên kiểm toán chỉ được xem, không được thay đổi gì",
+    "The field: %s cannot be encrypted": "Không thể mã hóa trường: %s",
+    "The security admin can only manage permissions, roles, certs and security settings": "Quản trị viên bảo mật chỉ được quản lý quyền, vai trò, chứng chỉ và cài đặt bảo mật",
+    "The separation of admins needs at least one security admin and one audit admin": "Tách biệt quản trị viên cần ít nhất một quản trị viên bảo mật và một quản trị viên kiểm toán",
+    "The user: %s cannot be more than one of the system, security and audit admins": "Người dùng: %s không thể kiêm nhiều hơn một vai trò quản trị hệ thống, bảo mật và kiểm toán"
   },
   "general": {
     "%s needs a commercial or enterprise edition license, please upgrade (%s)": "%s cần giấy phép phiên bản thương mại hoặc doanh nghiệp, vui lòng nâng cấp (%s)",

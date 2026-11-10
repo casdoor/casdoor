@@ -31,7 +31,11 @@ const JWT_ALGORITHMS = [
   {value: "PS256", label: "PS256 (RSASSA-PSS using SHA256 and MGF1 with SHA256)"},
   {value: "PS384", label: "PS384 (RSASSA-PSS using SHA384 and MGF1 with SHA384)"},
   {value: "PS512", label: "PS512 (RSASSA-PSS using SHA512 and MGF1 with SHA512)"},
+  {value: "SM2", label: "SM2 (SM2 + SM3, GB/T 32918)"},
 ];
+
+/** the key size is fixed by the algorithm */
+const isFixedKeySize = (algorithm: string) => algorithm.startsWith("ES") || algorithm === "SM2";
 
 /** the DNS providers Casdoor can solve the ACME challenge with */
 const SSL_PROVIDERS = ["GoDaddy", "Aliyun"];
@@ -95,7 +99,7 @@ export default function CertEditPage() {
       labelKey: "cert:Crypto algorithm",
       options: (ctx) => (isSsl(ctx) ? SSL_ALGORITHMS : JWT_ALGORITHMS),
       onChange: (value, ctx, updateFields) => {
-        const bitSize = String(value).startsWith("ES")
+        const bitSize = isFixedKeySize(String(value))
           ? 0
           : ([1024, 2048, 4096].includes(Setting.myParseInt(ctx.record.bitSize)) ? ctx.record.bitSize : 2048);
         // the stored key pair no longer matches the algorithm, so it is regenerated
@@ -103,10 +107,17 @@ export default function CertEditPage() {
       },
     },
     {
+      type: "custom",
+      name: "edition",
+      labelKey: "system:License",
+      when: (ctx) => ctx.record.cryptoAlgorithm === "SM2",
+      render: () => <EditionNotice edition="Enterprise" />,
+    },
+    {
       type: "select",
       name: "bitSize",
       labelKey: "cert:Bit size",
-      when: (ctx) => !isSsl(ctx) && !String(ctx.record.cryptoAlgorithm ?? "").startsWith("ES"),
+      when: (ctx) => !isSsl(ctx) && !isFixedKeySize(String(ctx.record.cryptoAlgorithm ?? "")),
       options: (ctx) =>
         Setting.getCryptoAlgorithmOptions(ctx.record.cryptoAlgorithm ?? "").map((item: any) => ({
           value: String(item.id),

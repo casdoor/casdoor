@@ -78,7 +78,7 @@ func (c *RootController) GetOidcDiscoveryByOrganization() {
 // @Success 200 {object} jose.JSONWebKey
 // @router /.well-known/jwks [get]
 func (c *RootController) GetJwks() {
-	jwks, err := object.GetJsonWebKeySet("")
+	jwks, err := object.GetJsonWebKeySetWithSm2("")
 	if err != nil {
 		c.responseWellKnownError(http.StatusInternalServerError, err)
 		return
@@ -95,7 +95,7 @@ func (c *RootController) GetJwks() {
 // @router /.well-known/:application/jwks [get]
 func (c *RootController) GetJwksByApplication() {
 	application := c.Ctx.Input.Param(":application")
-	jwks, err := object.GetJsonWebKeySet(application)
+	jwks, err := object.GetJsonWebKeySetWithSm2(application)
 	if err != nil {
 		c.responseWellKnownError(http.StatusInternalServerError, err)
 		return

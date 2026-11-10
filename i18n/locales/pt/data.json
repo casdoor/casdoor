@@ -117,23 +117,49 @@
     "unsupported password type: %s": "Tipo de senha não suportado: %s"
   },
   "edition": {
+    "Account governance": "Governança de contas",
     "Attribute-based access control (ABAC)": "Controle de acesso baseado em atributos (ABAC)",
+    "CEF and LEEF audit log formats": "Formatos de log de auditoria CEF e LEEF",
+    "Chinese SM cryptographic algorithms": "Algoritmos criptográficos chineses (SM2, SM3, SM4)",
+    "Consent log": "Registro de consentimentos",
+    "Encrypted personal fields": "Campos pessoais criptografados",
     "Exclusive sign-in": "Login exclusivo",
+    "Hardware OTP token import": "Importação de tokens OTP de hardware",
+    "ID verification plugins": "Plugins de verificação de identidade",
     "ID-JAG": "ID-JAG",
+    "Identity provider plugins": "Plugins de provedores de identidade",
     "Inactivity timeout": "Tempo limite de inatividade",
     "Keycloak syncer": "Sincronizador do Keycloak",
     "MCP gateway": "Gateway MCP",
+    "MLPS compliance checklist": "Checklist de conformidade MLPS",
     "Mobile one-click login": "Login com um clique pelo número do celular",
     "More than one syncer": "Mais de um sincronizador",
     "OpenTelemetry tracing": "Rastreamento OpenTelemetry",
     "Paid integrations": "Integrações pagas",
     "Push notification MFA": "MFA por notificação push",
     "Role-based access control (RBAC)": "Controle de acesso baseado em funções (RBAC)",
+    "Security dashboard and reports": "Painel de segurança e relatórios",
     "Security policy": "Política de segurança",
-    "Signing key rotation": "Rotação da chave de assinatura"
+    "Separation of duties": "Segregação de funções",
+    "Signing key rotation": "Rotação da chave de assinatura",
+    "Tamper-proof audit records": "Registros de auditoria à prova de adulteração",
+    "Three-admin separation": "Separação dos administradores de sistema, segurança e auditoria"
   },
   "enforcer": {
     "the adapter: %s is not found": "O adaptador: %s não foi encontrado"
+  },
+  "enterprise": {
+    "A separation-of-duty rule needs a name and at least two roles": "Uma regra de segregação de funções precisa de um nome e pelo menos duas funções",
+    "Add yourself to the security admins before separating the admins": "Adicione-se aos administradores de segurança antes de separar os administradores, senão não poderá mais alterar esta configuração",
+    "Only the audit admin can view the audit records": "Somente o administrador de auditoria pode ver os registros de auditoria",
+    "Only the security admin can manage permissions, roles, certs and security settings": "Somente o administrador de segurança pode gerenciar permissões, funções, certificados e configurações de segurança",
+    "Separation of duties: the user %s would hold the roles %s together, which the rule %s keeps apart": "Segregação de funções: o usuário %s teria ao mesmo tempo as funções %s, que a regra %s separa",
+    "Set the configuration fieldEncryptionKey before encrypting personal fields": "Defina a configuração fieldEncryptionKey antes de criptografar campos pessoais",
+    "The audit admin can only view, not change anything": "O administrador de auditoria só pode visualizar, não alterar nada",
+    "The field: %s cannot be encrypted": "O campo: %s não pode ser criptografado",
+    "The security admin can only manage permissions, roles, certs and security settings": "O administrador de segurança só pode gerenciar permissões, funções, certificados e configurações de segurança",
+    "The separation of admins needs at least one security admin and one audit admin": "A separação de administradores precisa de pelo menos um administrador de segurança e um de auditoria",
+    "The user: %s cannot be more than one of the system, security and audit admins": "O usuário: %s não pode ser mais de um dos administradores de sistema, segurança e auditoria"
   },
   "general": {
     "%s needs a commercial or enterprise edition license, please upgrade (%s)": "%s precisa de uma licença da edição comercial ou empresarial, faça o upgrade (%s)",

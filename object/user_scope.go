@@ -63,6 +63,11 @@ func getCustomScopeSet(application *Application) map[string]bool {
 	return res
 }
 
+// GetConsentRecordOfUser is the user's consent to the application, nil when there is none
+func GetConsentRecordOfUser(userObj *User, application *Application) *ConsentRecord {
+	return getConsentRecord(userObj, application)
+}
+
 func getConsentRecord(userObj *User, application *Application) *ConsentRecord {
 	appId := application.GetId()
 	for i := range userObj.ApplicationScopes {

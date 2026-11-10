@@ -117,23 +117,49 @@
     "unsupported password type: %s": "不支持的密码类型: %s"
   },
   "edition": {
+    "Account governance": "账号治理",
     "Attribute-based access control (ABAC)": "基于属性的权限控制（ABAC）",
+    "CEF and LEEF audit log formats": "CEF、LEEF 格式的审计日志外发",
+    "Chinese SM cryptographic algorithms": "国密算法（SM2、SM3、SM4）",
+    "Consent log": "授权同意留痕",
+    "Encrypted personal fields": "敏感字段加密",
     "Exclusive sign-in": "互斥登录",
+    "Hardware OTP token import": "硬件令牌导入",
+    "ID verification plugins": "实名核验插件",
     "ID-JAG": "ID-JAG（智能体跨应用授权）",
+    "Identity provider plugins": "第三方登录插件",
     "Inactivity timeout": "空闲超时",
     "Keycloak syncer": "Keycloak 同步器",
     "MCP gateway": "MCP 网关",
+    "MLPS compliance checklist": "等保核查清单",
     "Mobile one-click login": "本机号码一键登录",
     "More than one syncer": "创建多个同步器",
     "OpenTelemetry tracing": "OpenTelemetry 链路追踪",
     "Paid integrations": "付费插件",
     "Push notification MFA": "消息卡片确认登录",
     "Role-based access control (RBAC)": "基于角色的权限控制（RBAC）",
+    "Security dashboard and reports": "安全态势和报表",
     "Security policy": "组织安全策略",
-    "Signing key rotation": "签名密钥轮换"
+    "Separation of duties": "职责分离",
+    "Signing key rotation": "签名密钥轮换",
+    "Tamper-proof audit records": "审计日志防篡改",
+    "Three-admin separation": "三员分立"
   },
   "enforcer": {
     "the adapter: %s is not found": "适配器: %s 未找到"
+  },
+  "enterprise": {
+    "A separation-of-duty rule needs a name and at least two roles": "职责分离规则需要名称和至少两个角色",
+    "Add yourself to the security admins before separating the admins": "开启三员分立前，请先把自己加入安全管理员，否则保存后将无法再修改这项设置",
+    "Only the audit admin can view the audit records": "只有审计管理员可以查看审计日志",
+    "Only the security admin can manage permissions, roles, certs and security settings": "只有安全管理员可以管理权限、角色、证书和安全设置",
+    "Separation of duties: the user %s would hold the roles %s together, which the rule %s keeps apart": "职责分离：用户 %s 将同时拥有角色 %s，违反规则“%s”",
+    "Set the configuration fieldEncryptionKey before encrypting personal fields": "加密敏感字段前，请先在配置文件里设置 fieldEncryptionKey",
+    "The audit admin can only view, not change anything": "审计管理员只能查看，不能修改任何内容",
+    "The field: %s cannot be encrypted": "字段 %s 不能加密",
+    "The security admin can only manage permissions, roles, certs and security settings": "安全管理员只能管理权限、角色、证书和安全设置",
+    "The separation of admins needs at least one security admin and one audit admin": "三员分立至少需要一名安全管理员和一名审计管理员",
+    "The user: %s cannot be more than one of the system, security and audit admins": "用户 %s 不能同时担任系统管理员、安全管理员、审计管理员中的两个"
   },
   "general": {
     "%s needs a commercial or enterprise edition license, please upgrade (%s)": "%s需要商业版或企业版许可证，请升级后使用 (%s)",

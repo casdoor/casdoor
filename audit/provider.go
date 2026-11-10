@@ -29,6 +29,18 @@ type Event struct {
 	Severity int
 	Action   string
 	Message  string
+	// the fields the CEF and LEEF formats of SIEM and situational awareness platforms carry as key-value pairs
+	Fields *EventFields
+}
+
+type EventFields struct {
+	Organization string
+	User         string
+	ClientIp     string
+	Method       string
+	RequestUri   string
+	StatusCode   int
+	Success      bool
 }
 
 type AuditProvider interface {

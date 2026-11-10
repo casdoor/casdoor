@@ -375,7 +375,8 @@ const authInfo = {
 
 export function getProviderUrl(provider) {
   if (provider.category === "OAuth") {
-    const type = Setting.isCustomOAuthType(provider.type) ? "Custom" : provider.type;
+    // a Plugin provider builds its authorization URL from the template like Custom does
+    const type = Setting.isCustomOAuthType(provider.type) || provider.type === "Plugin" ? "Custom" : provider.type;
     const endpoint = authInfo[type].endpoint;
     const urlObj = new URL(endpoint);
 
@@ -428,7 +429,8 @@ export function getAuthUrl(application: any, provider: any, method: string, code
   if (application === null || provider === null) {
     return "";
   }
-  const type = Setting.isCustomOAuthType(provider.type) ? "Custom" : provider.type;
+  // a Plugin provider builds its authorization URL from the template like Custom does
+  const type = Setting.isCustomOAuthType(provider.type) || provider.type === "Plugin" ? "Custom" : provider.type;
   let endpoint = authInfo[type].endpoint;
   const redirectOrigin = application.forcedRedirectOrigin ? application.forcedRedirectOrigin : Setting.getOriginUrl();
   let redirectUri = `${redirectOrigin}/callback`;

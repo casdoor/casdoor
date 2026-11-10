@@ -91,6 +91,10 @@ type Record struct {
 	Detail string `xorm:"varchar(100)" json:"detail"`
 
 	IsTriggered bool `json:"isTriggered"`
+
+	// the hash chain of an organization with tamper-proof records, see record_chain.go
+	PrevHash string `xorm:"varchar(100)" json:"prevHash"`
+	Hash     string `xorm:"varchar(100)" json:"hash"`
 }
 
 type Response struct {
@@ -258,7 +262,7 @@ func AddRecord(record *Record) bool {
 		fmt.Println(errWebhook)
 	}
 
-	affected, err := addRecord(record)
+	affected, err := addChainedRecord(record)
 	if err != nil {
 		panic(err)
 	}

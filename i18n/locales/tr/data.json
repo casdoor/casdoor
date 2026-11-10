@@ -117,23 +117,49 @@
     "unsupported password type: %s": "desteklenmeyen şifre türü: %s"
   },
   "edition": {
+    "Account governance": "Hesap yönetişimi",
     "Attribute-based access control (ABAC)": "Öznitelik tabanlı erişim denetimi (ABAC)",
+    "CEF and LEEF audit log formats": "CEF ve LEEF denetim günlüğü biçimleri",
+    "Chinese SM cryptographic algorithms": "Çin kriptografi algoritmaları (SM2, SM3, SM4)",
+    "Consent log": "Onay kaydı",
+    "Encrypted personal fields": "Şifrelenmiş kişisel alanlar",
     "Exclusive sign-in": "Özel oturum açma",
+    "Hardware OTP token import": "Donanım OTP belirteci içe aktarma",
+    "ID verification plugins": "Kimlik doğrulama eklentileri",
     "ID-JAG": "ID-JAG",
+    "Identity provider plugins": "Kimlik sağlayıcı eklentileri",
     "Inactivity timeout": "Hareketsizlik zaman aşımı",
     "Keycloak syncer": "Keycloak eşitleyicisi",
     "MCP gateway": "MCP ağ geçidi",
+    "MLPS compliance checklist": "MLPS uyumluluk kontrol listesi",
     "Mobile one-click login": "Cep numarasıyla tek tıkla giriş",
     "More than one syncer": "Birden fazla eşitleyici",
     "OpenTelemetry tracing": "OpenTelemetry izleme",
     "Paid integrations": "Ücretli entegrasyonlar",
     "Push notification MFA": "Anlık bildirimle MFA",
     "Role-based access control (RBAC)": "Rol tabanlı erişim denetimi (RBAC)",
+    "Security dashboard and reports": "Güvenlik panosu ve raporlar",
     "Security policy": "Güvenlik politikası",
-    "Signing key rotation": "İmza anahtarı rotasyonu"
+    "Separation of duties": "Görevler ayrılığı",
+    "Signing key rotation": "İmza anahtarı rotasyonu",
+    "Tamper-proof audit records": "Değiştirilemez denetim kayıtları",
+    "Three-admin separation": "Sistem, güvenlik ve denetim yöneticilerinin ayrılması"
   },
   "enforcer": {
     "the adapter: %s is not found": "bağdaştırıcı: %s bulunamadı"
+  },
+  "enterprise": {
+    "A separation-of-duty rule needs a name and at least two roles": "Bir görevler ayrılığı kuralının adı ve en az iki rolü olmalıdır",
+    "Add yourself to the security admins before separating the admins": "Yöneticileri ayırmadan önce kendinizi güvenlik yöneticilerine ekleyin, aksi halde bu ayarı artık değiştiremezsiniz",
+    "Only the audit admin can view the audit records": "Denetim kayıtlarını yalnızca denetim yöneticisi görüntüleyebilir",
+    "Only the security admin can manage permissions, roles, certs and security settings": "İzinleri, rolleri, sertifikaları ve güvenlik ayarlarını yalnızca güvenlik yöneticisi yönetebilir",
+    "Separation of duties: the user %s would hold the roles %s together, which the rule %s keeps apart": "Görevler ayrılığı: %s kullanıcısı %s rollerine birlikte sahip olur, %s kuralı bunu yasaklar",
+    "Set the configuration fieldEncryptionKey before encrypting personal fields": "Kişisel alanları şifrelemeden önce fieldEncryptionKey yapılandırmasını ayarlayın",
+    "The audit admin can only view, not change anything": "Denetim yöneticisi yalnızca görüntüleyebilir, hiçbir şeyi değiştiremez",
+    "The field: %s cannot be encrypted": "%s alanı şifrelenemez",
+    "The security admin can only manage permissions, roles, certs and security settings": "Güvenlik yöneticisi yalnızca izinleri, rolleri, sertifikaları ve güvenlik ayarlarını yönetebilir",
+    "The separation of admins needs at least one security admin and one audit admin": "Yönetici ayrımı için en az bir güvenlik ve bir denetim yöneticisi gerekir",
+    "The user: %s cannot be more than one of the system, security and audit admins": "%s kullanıcısı sistem, güvenlik ve denetim yöneticilerinden birden fazlası olamaz"
   },
   "general": {
     "%s needs a commercial or enterprise edition license, please upgrade (%s)": "%s için ticari veya kurumsal sürüm lisansı gerekir, lütfen yükseltin (%s)",

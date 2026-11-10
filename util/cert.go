@@ -21,6 +21,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/casdoor/casdoor/gm"
 	"golang.org/x/net/publicsuffix"
 )
 
@@ -34,6 +35,9 @@ func GetCertExpireTime(s string) (string, error) {
 
 	certificate, err := x509.ParseCertificate(block.Bytes)
 	if err != nil {
+		if gm.IsSm2Certificate(s) {
+			return gm.GetCertExpireTime(s)
+		}
 		return "", err
 	}
 

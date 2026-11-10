@@ -35,7 +35,7 @@ func (p *PluginSyncerProvider) getAction() (*action.Module, *action.Config, erro
 	if err != nil {
 		return nil, nil, err
 	}
-	config := &action.Config{Host: p.Syncer.Host, ClientId: p.Syncer.User, ClientSecret: p.Syncer.Password}
+	config := &action.Config{Host: p.Syncer.Host, ClientId: p.Syncer.User, ClientSecret: p.Syncer.Password, Metadata: p.Syncer.Metadata}
 	return m, config, nil
 }
 
@@ -80,14 +80,63 @@ func (p *PluginSyncerProvider) GetOriginalUsers() ([]*OriginalUser, error) {
 			CreatedTime:   createdTime,
 			Address:       []string{},
 			Properties:    properties,
-			Groups:        []string{},
+			Groups:        p.getGroupIds(u.Groups),
 		})
 	}
 	return res, nil
 }
 
+func (p *PluginSyncerProvider) getGroupIds(departmentIds []string) []string {
+	res := []string{}
+	for _, departmentId := range departmentIds {
+		if departmentId != "" {
+			res = append(res, util.GetId(p.Syncer.Organization, departmentId))
+		}
+	}
+	return res
+}
+
+// GetOriginalGroups reads the departments of a plugin that has "syncer.listGroups", named by their IDs in the
+// external system like the DingTalk and WeCom syncers do
 func (p *PluginSyncerProvider) GetOriginalGroups() ([]*OriginalGroup, error) {
-	return []*OriginalGroup{}, nil
+	m, config, err := p.getAction()
+	if err != nil {
+		return nil, err
+	}
+	groups, err := action.ListSyncerGroups(m, config)
+	if action.IsNotImplemented(err) {
+		return []*OriginalGroup{}, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	ids := map[string]bool{}
+	for _, group := range groups {
+		ids[group.Id] = true
+	}
+	res := []*OriginalGroup{}
+	for _, group := range groups {
+		if group.Id == "" {
+			continue
+		}
+		displayName := group.DisplayName
+		if displayName == "" {
+			displayName = group.Name
+		}
+		parentId := ""
+		if ids[group.ParentId] && group.ParentId != group.Id {
+			parentId = group.ParentId
+		}
+		res = append(res, &OriginalGroup{
+			Id:          util.GetId(p.Syncer.Organization, group.Id),
+			Name:        group.Id,
+			DisplayName: displayName,
+			Type:        "department",
+			ParentId:    parentId,
+		})
+	}
+	return res, nil
 }
 
 func (p *PluginSyncerProvider) GetOriginalUserGroups(userId string) ([]string, error) {

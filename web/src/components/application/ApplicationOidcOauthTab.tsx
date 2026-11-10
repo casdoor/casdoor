@@ -27,7 +27,7 @@ const GRANT_TYPES = [
   {value: "urn:casdoor:params:oauth:grant-type:mobile-one-click", label: "Mobile One-Click"},
 ];
 const TOKEN_FORMATS = ["JWT", "JWT-Empty", "JWT-Custom", "JWT-Standard"];
-const TOKEN_SIGNING_METHODS = ["RS256", "RS512", "ES256", "ES512", "ES384"];
+const TOKEN_SIGNING_METHODS = ["RS256", "RS512", "ES256", "ES512", "ES384", "SM2"];
 const TOKEN_GROUP_FORMATS = [
   {id: "ID", name: "ID (org/group)"},
   {id: "Path", name: "Path (org/parent/group)"},
@@ -277,6 +277,7 @@ export function ApplicationOidcOauthTab({application, updateField}: ApplicationT
           onChange={(v) => updateField("tokenSigningMethod", v)}
           options={TOKEN_SIGNING_METHODS.map((item) => ({id: item, name: item}))}
         />
+        {application.tokenSigningMethod === "SM2" ? <EditionNotice edition="Enterprise" /> : null}
       </FormRow>
       <FormRow block labelKey="application:Token group format">
         <SelectField

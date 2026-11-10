@@ -315,6 +315,9 @@ func UpdateProvider(id string, provider *Provider) (bool, error) {
 	if err := validateAuditProvider(provider); err != nil {
 		return false, err
 	}
+	if err := CheckProviderEdition(provider); err != nil {
+		return false, err
+	}
 
 	if name != provider.Name {
 		err := providerChangeTrigger(owner, name, provider.Name)
@@ -381,6 +384,9 @@ func AddProvider(provider *Provider) (bool, error) {
 	}
 
 	if err := validateAuditProvider(provider); err != nil {
+		return false, err
+	}
+	if err := CheckProviderEdition(provider); err != nil {
 		return false, err
 	}
 

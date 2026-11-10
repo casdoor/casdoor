@@ -31,6 +31,7 @@ const ShortcutsPage = React.lazy(() => import("@/pages/ShortcutsPage"));
 const AccountPage = React.lazy(() => import("@/pages/AccountPage"));
 const MfaSetupPage = React.lazy(() => import("@/pages/auth/MfaSetupPage"));
 const SystemInfoPage = React.lazy(() => import("@/pages/SystemInfoPage"));
+const CompliancePage = React.lazy(() => import("@/pages/CompliancePage"));
 const SettingEditPage = React.lazy(() => import("@/pages/SettingEditPage"));
 
 const OrganizationListPage = React.lazy(() => import("@/pages/OrganizationListPage"));
@@ -326,6 +327,7 @@ export default function App() {
 
           <Route path="/sessions" element={<SessionListPage />} />
           <Route path="/records" element={<RecordListPage />} />
+          <Route path="/compliance" element={<CompliancePage />} />
           <Route path="/tokens" element={<TokenListPage />} />
           <Route path="/tokens/:tokenName" element={<TokenEditPage />} />
           <Route path="/verifications" element={<VerificationListPage />} />

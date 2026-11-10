@@ -19,6 +19,7 @@ import (
 	"time"
 
 	"github.com/casdoor/casdoor/certificate"
+	"github.com/casdoor/casdoor/gm"
 	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/core"
@@ -269,6 +270,16 @@ func (p *Cert) populateContent() error {
 
 	if p.CryptoAlgorithm == "RSA" {
 		p.CryptoAlgorithm = "RS256"
+	}
+
+	if p.CryptoAlgorithm == gm.Alg {
+		certificate, privateKey, err := gm.GenerateCertificate(p.ExpireInYears, p.Name, p.Owner)
+		if err != nil {
+			return err
+		}
+		p.Certificate = certificate
+		p.PrivateKey = privateKey
+		return nil
 	}
 
 	sigAlgorithm := p.CryptoAlgorithm[:2]
