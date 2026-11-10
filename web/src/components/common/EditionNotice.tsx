@@ -3,6 +3,7 @@ import i18next from "i18next";
 import {Link} from "react-router-dom";
 import * as SystemBackend from "@/backend/SystemInfo";
 import * as Conf from "@/Conf";
+import * as Setting from "@/lib/setting";
 import {PricingUrl} from "@/lib/setting";
 
 export {PricingUrl};
@@ -15,6 +16,9 @@ interface LicenseInfo {
   // or "form-fill" for a commercial edition license
   features?: string[];
   error?: string;
+  expireTime?: string;
+  // the license has expired but still covers this version
+  updatesEnded?: boolean;
   // for a global admin: the upgrade the license server asks for
   upgradeOrder?: {version: string; note?: string};
 }
@@ -103,6 +107,17 @@ export function LicenseBanner() {
         <Link to="/sysinfo" className="font-medium underline underline-offset-2">
           {i18next.t("system:Go to upgrade")}
         </Link>
+      </div>
+    );
+  }
+  if (!info?.error && info?.updatesEnded) {
+    return (
+      <div className="border-b border-warning/40 bg-warning/10 px-4 py-2 text-sm text-warning md:px-6">
+        {i18next.t("system:The license has expired, this version keeps its paid features but gets no more upgrades or new features")}
+        {info.expireTime ? ` (${Setting.getFormattedDate(info.expireTime)})` : ""}{" "}
+        <a href={PricingUrl} target="_blank" rel="noreferrer" className="font-medium underline underline-offset-2">
+          {i18next.t("general:View editions and pricing")}
+        </a>
       </div>
     );
   }

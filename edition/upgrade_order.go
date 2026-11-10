@@ -85,6 +85,9 @@ func ParseUpgradeOrder(text string) (*UpgradeOrder, error) {
 	if license == nil || license.Id != order.License {
 		return nil, fmt.Errorf("the upgrade order is for the license %s, not the license of this Casdoor", order.License)
 	}
+	if license.isExpired() {
+		return nil, fmt.Errorf("the license expired at %s, it gets no more upgrades", license.ExpireTime)
+	}
 	if order.InstanceId != "" && order.InstanceId != getInstanceId() {
 		return nil, fmt.Errorf("the upgrade order is for another Casdoor instance")
 	}
