@@ -127,6 +127,9 @@ var ldapAttributesMapping = map[string]FieldRelation{
 
 const ldapMemberOfAttr = "memberOf"
 
+// likeEscaper keeps LIKE metacharacters literal, the same way scim/filter.go does.
+var likeEscaper = strings.NewReplacer("!", "!!", "%", "!%", "_", "!_")
+
 // userObjectClasses are carried by every published user entry: posixAccount for
 // Unix logins, the Samba ones for SMB clients such as Synology DSM and TrueNAS.
 var userObjectClasses = []string{"posixAccount", "sambaSamAccount", "sambaIdmapEntry"}
@@ -444,18 +447,18 @@ func (q *userSearchFilter) buildCondition(filter interface{}, conjunctive bool) 
 		for _, substring := range f.Substrings() {
 			switch s := substring.(type) {
 			case message.SubstringInitial:
-				expr += string(s)
+				expr += likeEscaper.Replace(string(s))
 			case message.SubstringAny:
-				expr += "%" + string(s)
+				expr += "%" + likeEscaper.Replace(string(s))
 			case message.SubstringFinal:
-				expr += "%" + string(s)
+				expr += "%" + likeEscaper.Replace(string(s))
 				hasFinal = true
 			}
 		}
 		if !hasFinal {
 			expr += "%"
 		}
-		return builder.Expr(field+" LIKE ?", expr), nil
+		return builder.Expr(field+" LIKE ? ESCAPE '!'", expr), nil
 	default:
 		return nil, fmt.Errorf("LDAP filter operation %#v not supported", f)
 	}
