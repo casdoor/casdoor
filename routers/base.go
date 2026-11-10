@@ -47,6 +47,11 @@ func isMcpRequest(urlPath string) bool {
 // responseInvalidToken answers 401 with a challenge on the userinfo endpoint (RFC 6750 section 3.1,
 // RFC 9449 section 7.1), other APIs keep answering 200 with the error in the body
 func responseInvalidToken(ctx *context.Context, token *object.Token, errorCode string, error string) {
+	if isMcpRequest(ctx.Request.URL.Path) {
+		denyMcpRequest(ctx, error, true)
+		return
+	}
+
 	if ctx.Request.URL.Path == "/api/userinfo" {
 		challenge := fmt.Sprintf("Bearer error=\"%s\", error_description=%q", errorCode, error)
 		if (token != nil && token.TokenType == "DPoP") || strings.HasPrefix(ctx.Request.Header.Get("Authorization"), "DPoP ") {
@@ -62,7 +67,7 @@ func responseError(ctx *context.Context, error string, data ...interface{}) {
 	// ctx.ResponseWriter.WriteHeader(http.StatusForbidden)
 	urlPath := ctx.Request.URL.Path
 	if isMcpRequest(urlPath) {
-		denyMcpRequest(ctx, error)
+		denyMcpRequest(ctx, error, getSessionUser(ctx) == "")
 		return
 	}
 
@@ -93,44 +98,36 @@ func denyRequest(ctx *context.Context) {
 	responseError(ctx, T(ctx, "auth:Unauthorized operation"))
 }
 
-func denyMcpRequest(ctx *context.Context, message string) {
-	// Add WWW-Authenticate header per MCP Authorization spec (RFC 9728), so that the MCP
-	// client knows it should start the OAuth flow instead of treating the error as fatal
-	// Use the same logic as getOriginFromHost to determine the scheme
-	host := ctx.Request.Host
-	scheme := "https"
-	if !strings.Contains(host, ".") {
-		// localhost:8000 or computer-name:80
-		scheme = "http"
+// denyMcpRequest answers 401 with a challenge only when the request has no valid credential, so that the
+// MCP client starts the OAuth flow. A signed-in subject that is refused gets 403: a 401 would make the
+// client drop its credentials and sign in again for an operation that it still won't be allowed to do.
+func denyMcpRequest(ctx *context.Context, message string, isUnauthenticated bool) {
+	status := http.StatusForbidden
+	if isUnauthenticated {
+		status = http.StatusUnauthorized
+		challenge := fmt.Sprintf("Bearer realm=\"casdoor\", resource_metadata=\"%s\"", mcpself.GetResourceMetadataUrl(ctx.Request))
+		if ctx.Request.URL.Path == "/api/mcp" {
+			challenge += fmt.Sprintf(", scope=\"%s\"", strings.Join(object.McpScopesSupported, " "))
+		}
+		ctx.Output.Header("WWW-Authenticate", challenge)
 	}
-	resourceMetadataUrl := fmt.Sprintf("%s://%s%s/.well-known/oauth-protected-resource", scheme, host, basePath)
-	if strings.HasPrefix(ctx.Request.URL.Path, "/api/server/") {
-		resourceMetadataUrl += ctx.Request.URL.EscapedPath()
-	}
-	ctx.Output.Header("WWW-Authenticate", fmt.Sprintf("Bearer realm=\"casdoor\", resource_metadata=\"%s\"", resourceMetadataUrl))
 
 	req := mcpself.McpRequest{}
 	err := json.Unmarshal(ctx.Input.RequestBody, &req)
-	if err != nil {
-		// the request body is not a JSON-RPC request, e.g., the GET request of the MCP proxy
-		ctx.Output.SetStatus(http.StatusUnauthorized)
-		ctx.Output.Body([]byte{})
-		return
-	}
-
-	if req.ID == nil {
-		ctx.Output.SetStatus(http.StatusAccepted)
+	if err != nil || req.ID == nil {
+		// the request body is not a JSON-RPC request (e.g., the GET request of the MCP proxy) or is a notification
+		ctx.Output.SetStatus(status)
 		ctx.Output.Body([]byte{})
 		return
 	}
 
 	resp := mcpself.BuildMcpResponse(req.ID, nil, &mcpself.McpError{
 		Code:    -32001,
-		Message: "Unauthorized",
+		Message: http.StatusText(status),
 		Data:    message,
 	})
 
-	ctx.Output.SetStatus(http.StatusUnauthorized)
+	ctx.Output.SetStatus(status)
 	_ = ctx.Output.JSON(resp, true, false)
 }
 

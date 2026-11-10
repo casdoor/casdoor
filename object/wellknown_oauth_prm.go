@@ -31,6 +31,9 @@ type OauthProtectedResourceMetadata struct {
 	ResourceDocumentation  string   `json:"resource_documentation,omitempty"`
 }
 
+// McpScopesSupported are the scopes that Casdoor's MCP server advertises, "read" and "write" grant all its tools
+var McpScopesSupported = []string{"openid", "profile", "email", "read", "write"}
+
 // GetOauthProtectedResourceMetadata returns RFC 9728 Protected Resource Metadata for global discovery
 func GetOauthProtectedResourceMetadata(host string) OauthProtectedResourceMetadata {
 	_, originBackend := getOriginFromHost(host)
@@ -39,7 +42,7 @@ func GetOauthProtectedResourceMetadata(host string) OauthProtectedResourceMetada
 		Resource:               originBackend,
 		AuthorizationServers:   []string{originBackend},
 		BearerMethodsSupported: []string{"header"},
-		ScopesSupported:        []string{"openid", "profile", "email", "read", "write"},
+		ScopesSupported:        McpScopesSupported,
 		ResourceSigningAlg:     []string{"RS256"},
 	}
 }
@@ -56,7 +59,7 @@ func GetOauthProtectedResourceMetadataByApplication(host string, applicationName
 		Resource:               resourceIdentifier,
 		AuthorizationServers:   []string{authServer},
 		BearerMethodsSupported: []string{"header"},
-		ScopesSupported:        []string{"openid", "profile", "email", "read", "write"},
+		ScopesSupported:        McpScopesSupported,
 		ResourceSigningAlg:     []string{"RS256"},
 	}
 }

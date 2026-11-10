@@ -15,6 +15,8 @@
 package mcpself
 
 import (
+	"fmt"
+	"net/http"
 	"strings"
 	"time"
 
@@ -208,4 +210,20 @@ func GetScopesFromClaims(claims *object.Claims) []string {
 
 	// Scopes are space-separated in OAuth 2.0
 	return strings.Split(claims.Scope, " ")
+}
+
+// GetResourceMetadataUrl returns the RFC 9728 metadata URL that the WWW-Authenticate challenge of an MCP request points to
+func GetResourceMetadataUrl(r *http.Request) string {
+	host := r.Host
+	scheme := "https"
+	if !strings.Contains(host, ".") {
+		// localhost:8000 or computer-name:80
+		scheme = "http"
+	}
+
+	url := fmt.Sprintf("%s://%s%s/.well-known/oauth-protected-resource", scheme, host, conf.GetBasePath())
+	if strings.HasPrefix(r.URL.Path, "/api/server/") {
+		url += r.URL.EscapedPath()
+	}
+	return url
 }

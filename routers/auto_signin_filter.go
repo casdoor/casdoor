@@ -15,12 +15,11 @@
 package routers
 
 import (
-	"encoding/json"
 	"fmt"
+	"net/http"
 	"strings"
 
 	"github.com/beego/beego/v2/server/web/context"
-	"github.com/casdoor/casdoor/mcpself"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 )
@@ -35,13 +34,9 @@ func AutoSigninFilter(ctx *context.Context) {
 	if strings.HasPrefix(urlPath, "/api/oauth/register") {
 		return
 	}
-	if urlPath == "/api/mcp" {
-		var req mcpself.McpRequest
-		if err := json.Unmarshal(ctx.Input.RequestBody, &req); err == nil {
-			if req.Method == "initialize" || req.Method == "notifications/initialized" || req.Method == "ping" || req.Method == "tools/list" {
-				return
-			}
-		}
+	// ApiFilter answers 405 to the other methods of the MCP server before any credential is checked
+	if urlPath == "/api/mcp" && ctx.Request.Method != http.MethodPost {
+		return
 	}
 	//if getSessionUser(ctx) != "" {
 	//	return
@@ -62,7 +57,7 @@ func AutoSigninFilter(ctx *context.Context) {
 		if accessKey, accessSecret, ok := strings.Cut(accessToken, ":"); ok && strings.HasPrefix(urlPath, "/api/server/") {
 			userId, err := getUsernameByKeyPair(accessKey, accessSecret)
 			if err != nil {
-				denyMcpRequest(ctx, err.Error())
+				denyMcpRequest(ctx, err.Error(), true)
 				return
 			}
 			if userId != "" {

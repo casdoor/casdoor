@@ -18,10 +18,15 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/beego/beego/v2/server/web"
 	"github.com/casdoor/casdoor/object"
+	"github.com/casdoor/casdoor/util"
 )
+
+// SupportedProtocolVersions are the MCP revisions the server speaks, newest first
+var SupportedProtocolVersions = []string{"2025-11-25", "2025-06-18", "2025-03-26", "2024-11-05"}
 
 // MCP JSON-RPC 2.0 structures
 type McpRequest struct {
@@ -237,12 +242,17 @@ func (c *McpController) HandleMcp() {
 		return
 	}
 
+	// a notification gets no response, only 202 Accepted
+	if req.ID == nil {
+		c.Ctx.Output.SetStatus(http.StatusAccepted)
+		c.Ctx.Output.Body([]byte{})
+		return
+	}
+
 	// Handle different MCP methods
 	switch req.Method {
 	case "initialize":
 		c.handleInitialize(req)
-	case "notifications/initialized":
-		c.handleNotificationsInitialized(req)
 	case "ping":
 		c.handlePing(req)
 	case "tools/list":
@@ -264,11 +274,20 @@ func (c *McpController) handleInitialize(req McpRequest) {
 		}
 	}
 
+	// answer with the client's version when the server supports it, otherwise with the latest one
+	protocolVersion := SupportedProtocolVersions[0]
+	for _, version := range SupportedProtocolVersions {
+		if version == params.ProtocolVersion {
+			protocolVersion = version
+			break
+		}
+	}
+
 	result := McpInitializeResult{
-		ProtocolVersion: "2024-11-05",
+		ProtocolVersion: protocolVersion,
 		Capabilities: McpServerCapabilities{
 			Tools: map[string]interface{}{
-				"listChanged": true,
+				"listChanged": false,
 			},
 		},
 		ServerInfo: McpImplementation{
@@ -278,11 +297,6 @@ func (c *McpController) handleInitialize(req McpRequest) {
 	}
 
 	c.McpResponseOk(req.ID, result)
-}
-
-func (c *McpController) handleNotificationsInitialized(req McpRequest) {
-	c.Ctx.Output.SetStatus(http.StatusAccepted)
-	c.Ctx.Output.Body([]byte{})
 }
 
 func (c *McpController) handlePing(req McpRequest) {
@@ -296,7 +310,7 @@ func (c *McpController) handleToolsList(req McpRequest) {
 
 	grantedScopes, isScoped := c.GetGrantedScopes()
 	if !isScoped {
-		// Session-authenticated and unauthenticated requests both see all tools for discovery
+		// A session signed in interactively (not via an access token) sees all tools
 		result := McpListToolsResult{
 			Tools: allTools,
 		}
@@ -307,7 +321,7 @@ func (c *McpController) handleToolsList(req McpRequest) {
 	allowedTools := GetToolsForScopes(grantedScopes, BuiltinScopes)
 
 	// Filter tools based on allowed scopes
-	var filteredTools []McpTool
+	filteredTools := []McpTool{}
 	for _, tool := range allTools {
 		if allowedTools[tool.Name] {
 			filteredTools = append(filteredTools, tool)
@@ -438,10 +452,19 @@ func (c *McpController) checkToolPermission(id interface{}, toolName string) boo
 	return true
 }
 
-// sendInsufficientScopeError sends an error response for insufficient scope
+// sendInsufficientScopeError answers 403 with an "insufficient_scope" challenge (RFC 6750 section 3.1), whose
+// scope keeps the granted scopes and adds the required one, so that the MCP client can ask the user for it
 func (c *McpController) sendInsufficientScopeError(id interface{}, toolName string, grantedScopes []string) {
 	// Find required scope for this tool
 	requiredScope := GetRequiredScopeForTool(toolName, BuiltinScopes)
+
+	challengeScopes := append([]string{}, grantedScopes...)
+	if requiredScope != "" && !util.InSlice(challengeScopes, requiredScope) {
+		challengeScopes = append(challengeScopes, requiredScope)
+	}
+	c.Ctx.Output.Header("WWW-Authenticate", fmt.Sprintf("Bearer error=\"insufficient_scope\", scope=\"%s\", resource_metadata=\"%s\", error_description=\"The tool %s requires the scope %s\"",
+		strings.Join(challengeScopes, " "), GetResourceMetadataUrl(c.Ctx.Request), toolName, requiredScope))
+	c.Ctx.Output.SetStatus(http.StatusForbidden)
 
 	errorData := map[string]interface{}{
 		"tool":           toolName,

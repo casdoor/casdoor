@@ -178,10 +178,14 @@ p, *, *, POST, /api/revoke-consent, *, *
 
 func IsAllowed(subOwner string, subName string, method string, urlPath string, objOwner string, objName string, extraInfo map[string]interface{}) (bool, error) {
 	if urlPath == "/api/mcp" {
-		if detailPath, ok := extraInfo["detailPathUrl"].(string); ok {
-			if detailPath == "initialize" || detailPath == "notifications/initialized" || detailPath == "ping" || detailPath == "tools/list" {
-				return true, nil
-			}
+		// every MCP request needs a credential, so that MCP clients start the OAuth flow when they connect
+		if subOwner == "anonymous" && subName == "anonymous" {
+			return false, nil
+		}
+
+		// only a tool call acts on objects, the MCP server answers the other methods by itself
+		if detailPath, _ := extraInfo["detailPathUrl"].(string); detailPath != "tools/call" {
+			return true, nil
 		}
 	}
 

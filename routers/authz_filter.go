@@ -527,6 +527,14 @@ func getImpersonateUser(ctx *context.Context, subOwner, subName, username string
 
 func ApiFilter(ctx *context.Context) {
 	urlPath := getUrlPath(ctx)
+	// the MCP server has no SSE stream to open with GET, so the Streamable HTTP transport requires 405 for it
+	if urlPath == "/api/mcp" && ctx.Request.Method != http.MethodPost && ctx.Request.Method != http.MethodOptions {
+		ctx.Output.Header("Allow", http.MethodPost)
+		ctx.Output.SetStatus(http.StatusMethodNotAllowed)
+		ctx.Output.Body([]byte{})
+		return
+	}
+
 	// before the subject is read: it may sign out a session left by another application's token
 	if !checkDynamicClientSession(ctx, urlPath) {
 		return
