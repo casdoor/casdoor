@@ -23,6 +23,7 @@ import (
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
+	"github.com/xorm-io/builder"
 )
 
 // GetGlobalUsers
@@ -86,6 +87,11 @@ func (c *ApiController) GetGlobalUsers() {
 // @Success 200 {array} object.User The Response object
 // @router /get-users [get]
 func (c *ApiController) GetUsers() {
+	if scope := c.getDelegatedScope(); scope != nil {
+		c.getDelegatedUsers(scope)
+		return
+	}
+
 	owner := c.Ctx.Input.Query("owner")
 	groupName := c.Ctx.Input.Query("groupName")
 	limit := c.Ctx.Input.Query("pageSize")
@@ -206,6 +212,7 @@ func (c *ApiController) GetUser() {
 		return
 	}
 
+	isDelegatedAdmin := c.getDelegatedScope().CanManageUser(user)
 	var organization *object.Organization
 	if user != nil {
 		organization, err = object.GetOrganizationByUser(user)
@@ -218,7 +225,7 @@ func (c *ApiController) GetUser() {
 			return
 		}
 
-		if !organization.IsProfilePublic {
+		if !organization.IsProfilePublic && !isDelegatedAdmin {
 			requestUserId := c.GetSessionUsername()
 			var hasPermission bool
 			hasPermission, err = object.CheckUserPermission(requestUserId, user.GetId(), true, c.GetAcceptLanguage())
@@ -239,8 +246,8 @@ func (c *ApiController) GetUser() {
 		return
 	}
 
-	isAdmin := c.IsAdminOf(user)
-	isAdminOrSelf := c.IsAdminOrSelf(user)
+	isAdmin := c.IsAdminOf(user) || isDelegatedAdmin
+	isAdminOrSelf := c.IsAdminOrSelf(user) || isDelegatedAdmin
 	user, err = object.GetMaskedUser(user, isAdminOrSelf)
 	if err != nil {
 		c.ResponseError(err.Error())
@@ -338,6 +345,23 @@ func (c *ApiController) UpdateUser() {
 	// a console form showing the masked phone, email and ID card sends them back unchanged
 	object.RestoreMaskedPersonalInfo(&user, oldUser)
 
+	isDelegatedAdmin := false
+	if scope := c.getDelegatedScope(); scope != nil {
+		if c.isSessionUser(oldUser) {
+			// a delegated admin changes their own account like any user, the body must describe that account
+			if user.Owner != oldUser.Owner || user.Name != oldUser.Name {
+				c.ResponseError(c.T("auth:Unauthorized operation"))
+				return
+			}
+		} else {
+			if err = c.checkDelegatedUserUpdate(scope, oldUser, &user, columnsStr); err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
+			isDelegatedAdmin = true
+		}
+	}
+
 	if oldUser.Owner == "built-in" && oldUser.Name == "admin" && (user.Owner != "built-in" || user.Name != "admin") {
 		c.ResponseError(c.T("auth:Unauthorized operation"))
 		return
@@ -373,7 +397,7 @@ func (c *ApiController) UpdateUser() {
 		user.Name = strings.ToLower(user.Name)
 	}
 
-	isAdmin := c.IsAdmin()
+	isAdmin := c.IsAdmin() || isDelegatedAdmin
 	allowDisplayNameEmpty := c.Ctx.Input.Query("allowEmpty") != ""
 	if pass, err := object.CheckPermissionForUpdateUser(oldUser, &user, isAdmin, allowDisplayNameEmpty, c.GetAcceptLanguage()); !pass {
 		c.ResponseError(err)
@@ -448,7 +472,11 @@ func (c *ApiController) UpdateUser() {
 		isPasswordChanged = true
 	}
 
-	affected, err := object.UpdateUser(id, &user, columns, isAdmin)
+	// a delegated admin writes the admin columns but, unlike an admin, can't list the accounts merged into the user
+	if isDelegatedAdmin && len(columns) == 0 {
+		columns = object.GetDefaultUserUpdateColumns(true)
+	}
+	affected, err := object.UpdateUser(id, &user, columns, isAdmin && !isDelegatedAdmin)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -494,6 +522,13 @@ func (c *ApiController) AddUser() {
 		return
 	}
 
+	if scope := c.getDelegatedScope(); scope != nil {
+		if err = c.checkDelegatedUserAdd(scope, &user); err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+	}
+
 	emptyUser := object.User{}
 	msg := object.CheckUpdateUser(&emptyUser, &user, c.GetAcceptLanguage())
 	if msg != "" {
@@ -534,6 +569,19 @@ func (c *ApiController) DeleteUser() {
 	if user.Owner == "built-in" && user.Name == "admin" {
 		c.ResponseError(c.T("auth:Unauthorized operation"))
 		return
+	}
+
+	if scope := c.getDelegatedScope(); scope != nil {
+		storedUser, err := object.GetUser(util.GetId(user.Owner, user.Name))
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+		if !scope.CanManageUser(storedUser) {
+			c.ResponseError(c.T("auth:Unauthorized operation"))
+			return
+		}
+		user = *storedUser
 	}
 
 	c.Data["json"] = wrapActionResponse(object.DeleteUser(&user))
@@ -669,15 +717,19 @@ func (c *ApiController) SetPassword() {
 		return
 	}
 
+	scope := c.getDelegatedScope()
+	isDelegatedAdmin := code == "" && scope.CanManageUser(user) && scope.Can(object.DelegatedActionPasswords)
 	requestUserId := c.GetSessionUsername()
 	if requestUserId == "" && code == "" {
 		c.ResponseError(c.T("general:Please login first"), "Please login first")
 		return
 	} else if code == "" {
-		hasPermission, err := object.CheckUserPermission(requestUserId, userId, true, c.GetAcceptLanguage())
-		if !hasPermission {
-			c.ResponseError(err.Error())
-			return
+		if !isDelegatedAdmin {
+			hasPermission, err := object.CheckUserPermission(requestUserId, userId, true, c.GetAcceptLanguage())
+			if !hasPermission {
+				c.ResponseError(err.Error())
+				return
+			}
 		}
 	} else {
 		if code != c.GetSession("verifiedCode") {
@@ -709,7 +761,7 @@ func (c *ApiController) SetPassword() {
 		}
 	}
 
-	isAdmin := c.IsAdmin()
+	isAdmin := c.IsAdmin() || isDelegatedAdmin
 	if isAdmin {
 		if oldPassword != "" {
 			err = object.CheckPassword(targetUser, oldPassword, c.GetAcceptLanguage())
@@ -899,7 +951,17 @@ func (c *ApiController) GetSortedUsers() {
 	sorter := c.Ctx.Input.Query("sorter")
 	limit := util.ParseInt(c.Ctx.Input.Query("limit"))
 
-	users, err := object.GetMaskedUsers(object.GetSortedUsers(owner, sorter, limit))
+	var users []*object.User
+	var err error
+	if scope := c.getDelegatedScope(); scope != nil {
+		if !util.FilterSQLIdentifier(sorter) {
+			c.ResponseError(fmt.Sprintf("invalid sorter field: %s", sorter))
+			return
+		}
+		users, err = object.GetMaskedUsers(scope.GetScopedUsers(0, limit, "", "", sorter, "descend", ""))
+	} else {
+		users, err = object.GetMaskedUsers(object.GetSortedUsers(owner, sorter, limit))
+	}
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -923,7 +985,13 @@ func (c *ApiController) GetUserCount() {
 
 	var count int64
 	var err error
-	if isOnline == "" {
+	if scope := c.getDelegatedScope(); scope != nil {
+		var cond builder.Cond
+		if isOnline != "" {
+			cond = builder.Eq{"is_online": util.ParseInt(isOnline)}
+		}
+		count, err = scope.GetScopedUserCount("", "", "", cond)
+	} else if isOnline == "" {
 		count, err = object.GetUserCount(owner, "", "", "")
 	} else {
 		count, err = object.GetOnlineUserCount(owner, util.ParseInt(isOnline))
@@ -950,8 +1018,23 @@ func (c *ApiController) RemoveUserFromGroup() {
 		c.ResponseError(fmt.Sprintf(c.T("auth:The organization: %s does not exist"), owner))
 		return
 	}
+	isDelegatedAdmin := false
+	if scope := c.getDelegatedScope(); scope != nil {
+		user, err := object.GetUser(util.GetId(owner, name))
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+		groupId := util.GetId(owner, groupName)
+		if !scope.CanManageUser(user) || !scope.HasGroup(groupId) || !scope.CheckGroupChange(user.Groups, util.DeleteVal(append([]string{}, user.Groups...), groupId)) {
+			c.ResponseError(c.T("enterprise:A delegated admin can only put users in the groups they administer"))
+			return
+		}
+		isDelegatedAdmin = true
+	}
+
 	item := object.GetAccountItemForUpdate("Groups", organization)
-	res, msg := object.CheckAccountItemModifyRule(item, c.IsAdmin(), c.GetAcceptLanguage())
+	res, msg := object.CheckAccountItemModifyRule(item, c.IsAdmin() || isDelegatedAdmin, c.GetAcceptLanguage())
 	if !res {
 		c.ResponseError(msg)
 		return

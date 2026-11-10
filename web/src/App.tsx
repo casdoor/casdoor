@@ -22,6 +22,7 @@ import {useAccountHelmet} from "@/hooks/use-application-chrome";
 import * as Auth from "@/auth/Auth";
 import * as Conf from "@/Conf";
 import * as Setting from "@/lib/setting";
+import {isDelegatedAdmin} from "@/lib/delegated-admin";
 
 // ---- console pages -----------------------------------------------------------
 const Dashboard = React.lazy(() => import("@/pages/Dashboard"));
@@ -33,6 +34,9 @@ const MfaSetupPage = React.lazy(() => import("@/pages/auth/MfaSetupPage"));
 const SystemInfoPage = React.lazy(() => import("@/pages/SystemInfoPage"));
 const CompliancePage = React.lazy(() => import("@/pages/CompliancePage"));
 const SecurityScreenPage = React.lazy(() => import("@/pages/SecurityScreenPage"));
+const AccessReviewListPage = React.lazy(() => import("@/pages/AccessReviewListPage"));
+const AccessReviewEditPage = React.lazy(() => import("@/pages/AccessReviewEditPage"));
+const MyAccessReviewsPage = React.lazy(() => import("@/pages/MyAccessReviewsPage"));
 const EditionsPage = React.lazy(() => import("@/pages/EditionsPage"));
 const SettingEditPage = React.lazy(() => import("@/pages/SettingEditPage"));
 
@@ -213,6 +217,7 @@ function RequireConsoleAccess({children}: {children: React.ReactNode}) {
   if (
     account?.organization?.disableConsole &&
     !Setting.isLocalAdminUser(account) &&
+    !isDelegatedAdmin(account) &&
     !location.pathname.startsWith("/mfa/setup")
   ) {
     return <ConsoleDisabledPage />;
@@ -339,6 +344,9 @@ export default function App() {
           <Route path="/sessions" element={<SessionListPage />} />
           <Route path="/records" element={<RecordListPage />} />
           <Route path="/compliance" element={<CompliancePage />} />
+          <Route path="/access-reviews" element={<AccessReviewListPage />} />
+          <Route path="/access-reviews/:organizationName/:reviewName" element={<AccessReviewEditPage />} />
+          <Route path="/my-access-reviews" element={<MyAccessReviewsPage />} />
           <Route path="/editions" element={<EditionsPage />} />
           <Route path="/tokens" element={<TokenListPage />} />
           <Route path="/tokens/:tokenName" element={<TokenEditPage />} />

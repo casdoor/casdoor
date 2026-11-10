@@ -49,6 +49,7 @@ import * as MfaBackend from "@/backend/MfaBackend";
 import * as TransactionBackend from "@/backend/TransactionBackend";
 import * as UserBackend from "@/backend/UserBackend";
 import * as Setting from "@/lib/setting";
+import {canDelegated, isDelegatedAdmin, isDelegatedAdminOf} from "@/lib/delegated-admin";
 
 /** the value a Radix tab needs for the account item whose `tab` is the empty string */
 const DEFAULT_TAB = "__default__";
@@ -151,8 +152,11 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
     return <Loading />;
   }
 
-  const isAdmin = Setting.isLocalAdminUser(account);
   const isSelf = !!account && (user.id && account.id ? user.id === account.id : account.owner === user.owner && account.name === user.name);
+  const isLocalAdmin = Setting.isLocalAdminUser(account);
+  // a delegated admin edits the users of their groups like an admin, except making admins and renaming
+  const isDelegated = !isLocalAdmin && !isSelf && isDelegatedAdmin(account) && (mode === "add" || isDelegatedAdminOf(account, user));
+  const isAdmin = isLocalAdmin || isDelegated;
   // The form layout and MFA items are a per-organization policy, and `get-user-application`
   // is the only way a non-admin can read their own organization, so prefer it over the
   // admin-only `get-organization` this page also fetches.
@@ -278,7 +282,7 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
     ),
     "Name": (
       <AccountItemRow name="Name" labelKey="general:Name">
-        <Input value={user.name ?? ""} disabled={!isAdmin} onChange={(e) => updateField("name", e.target.value)} />
+        <Input value={user.name ?? ""} disabled={!isLocalAdmin && !(isDelegated && mode === "add")} onChange={(e) => updateField("name", e.target.value)} />
       </AccountItemRow>
     ),
     "Display name": (
@@ -776,7 +780,7 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
             userName={userName}
             organization={userOrganization}
             account={account}
-            disabled={!isAdmin && !isSelf}
+            disabled={(!isAdmin && !isSelf) || (isDelegated && !canDelegated(account, "passwords"))}
             onPasswordUpdated={() => updateField("needUpdatePassword", false)}
           />
         )}
@@ -794,7 +798,7 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
       <AccountItemRow name="Is admin" labelKey="user:Is admin">
         <Switch
           checked={!!user.isAdmin}
-          disabled={!isAdmin}
+          disabled={!isLocalAdmin}
           onCheckedChange={(v) => updateField("isAdmin", v)}
         />
       </AccountItemRow>

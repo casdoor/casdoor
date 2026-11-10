@@ -94,6 +94,7 @@ func runServer() {
 	object.InitUpdateSubscriptionStates()
 	object.InitSecurityPolicyJobs()
 	object.InitPrivilegedAccessJobs()
+	object.InitAccessReviewJobs()
 	tracing.Init()
 
 	object.InitSiteMap()

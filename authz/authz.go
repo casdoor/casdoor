@@ -104,6 +104,8 @@ p, *, *, POST, /api/reject-privileged-request, *, *
 p, *, *, POST, /api/cancel-privileged-request, *, *
 p, *, *, POST, /api/return-privileged-request, *, *
 p, *, *, POST, /api/reveal-privileged-password, *, *
+p, *, *, GET, /api/get-my-access-review-items, *, *
+p, *, *, POST, /api/decide-access-review-items, *, *
 p, *, *, GET, /api/export-own-data, *, *
 p, *, *, POST, /api/delete-own-account, *, *
 p, *, *, GET, /api/mfa/push/challenge, *, *

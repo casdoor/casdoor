@@ -15,6 +15,7 @@ import * as GroupBackend from "@/backend/GroupBackend";
 import {useAccount} from "@/hooks/use-account";
 import {submitDelete} from "@/lib/crud";
 import * as Setting from "@/lib/setting";
+import {canDelegated, isDelegatedAdmin, isDelegatedRootGroup} from "@/lib/delegated-admin";
 import {cn} from "@/lib/utils";
 
 interface GroupNode {
@@ -106,6 +107,9 @@ export default function GroupTreePage() {
   const navigate = useNavigate();
   const location = useLocation();
   const {account} = useAccount();
+  // a delegated admin adds groups only under their groups and keeps their own top groups
+  const delegated = isDelegatedAdmin(account);
+  const canManageGroups = !delegated || canDelegated(account, "groups");
   const [tree, setTree] = React.useState<GroupNode[] | null>(null);
   const [selected, setSelected] = React.useState<GroupNode | null>(null);
   const [version, setVersion] = React.useState(0);
@@ -202,10 +206,12 @@ export default function GroupTreePage() {
             >
               {i18next.t("group:Show all")}
             </Button>
-            <Button onClick={() => addGroup(true)}>
-              <Plus />
-              {i18next.t("general:Add")}
-            </Button>
+            {delegated ? null : (
+              <Button onClick={() => addGroup(true)}>
+                <Plus />
+                {i18next.t("general:Add")}
+              </Button>
+            )}
             <Button variant="outline" asChild>
               <Link to="/groups">{i18next.t("general:Groups")}</Link>
             </Button>
@@ -230,9 +236,11 @@ export default function GroupTreePage() {
                     }}
                     actions={(current) => (
                       <>
-                        <NodeAction label={i18next.t("general:Add")} onClick={() => addGroup(false)}>
-                          <Plus />
-                        </NodeAction>
+                        {canManageGroups ? (
+                          <NodeAction label={i18next.t("general:Add")} onClick={() => addGroup(false)}>
+                            <Plus />
+                          </NodeAction>
+                        ) : null}
                         <NodeAction
                           label={i18next.t("general:Edit")}
                           onClick={() => navigate(`/groups/${current.owner}/${current.name}`, {state: {backTo}})}
@@ -240,7 +248,7 @@ export default function GroupTreePage() {
                           <Pencil />
                         </NodeAction>
                         {/* a group with subgroups cannot be deleted, as on the group list */}
-                        {(current.children?.length ?? 0) === 0 ? (
+                        {(current.children?.length ?? 0) === 0 && canManageGroups && !(delegated && isDelegatedRootGroup(account, current.name)) ? (
                           <ConfirmButton
                             variant="ghost"
                             size="iconSm"

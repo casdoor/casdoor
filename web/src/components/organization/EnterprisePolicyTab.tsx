@@ -5,11 +5,27 @@ import {Input} from "@/components/ui/input";
 import {Switch} from "@/components/ui/switch";
 import {Button} from "@/components/ui/button";
 import {MultiSelect} from "@/components/common/MultiSelect";
+import {SearchableSelect} from "@/components/common/SearchableSelect";
 import {FormRow} from "@/components/crud/FormRow";
 import {EditionNotice} from "@/components/common/EditionNotice";
-import {useRoleOptions, useUserNameOptions} from "@/hooks/use-options";
+import {useApplicationOptions, useGroupNameOptions, useRoleOptions, useUserNameOptions} from "@/hooks/use-options";
 
 const ENCRYPTABLE_FIELDS = ["idCard", "realName", "birthday", "location", "address", "managedAccounts"];
+
+const DELEGATED_ACTIONS = ["users", "groups", "applications", "passwords"];
+
+function getDelegatedActionLabel(action: string) {
+  switch (action) {
+  case "users":
+    return i18next.t("organization:Manage users");
+  case "groups":
+    return i18next.t("organization:Manage groups");
+  case "applications":
+    return i18next.t("organization:Manage application settings");
+  default:
+    return i18next.t("organization:Reset passwords");
+  }
+}
 
 function getFieldLabel(field: string) {
   switch (field) {
@@ -35,6 +51,11 @@ export function EnterprisePolicyTab({owner, policy, onChange}: {owner: string; p
   const userOptions = useUserNameOptions(owner);
   const roleOptions = useRoleOptions(owner);
   const rules: any[] = value.sodRules ?? [];
+  const groupOptions = useGroupNameOptions(owner);
+  const applicationOptions = useApplicationOptions(owner);
+  const delegatedAdmins: any[] = value.delegatedAdmins ?? [];
+  const setDelegatedAdmin = (index: number, item: any) =>
+    set("delegatedAdmins", delegatedAdmins.map((current, i) => (i === index ? item : current)));
 
   const section = (titleKey: string, descriptionKey?: string) => (
     <div className="col-span-full mt-4 border-b pb-1 first:mt-0">
@@ -108,6 +129,53 @@ export function EnterprisePolicyTab({owner, policy, onChange}: {owner: string; p
         <Button variant="outline" size="sm" onClick={() => set("sodRules", [...rules, {name: "", roles: []}])}>
           <Plus className="size-4" />
           {i18next.t("organization:Add rule")}
+        </Button>
+      </div>
+
+      {section("edition:Delegated administration", "organization:Delegated administration - Tooltip")}
+      <div className="col-span-full space-y-3" data-tour="delegated-admins">
+        {delegatedAdmins.map((item, index) => (
+          <div key={index} className="flex flex-wrap items-start gap-2 rounded-md border p-2">
+            <SearchableSelect
+              className="w-48"
+              value={item.user ?? ""}
+              onChange={(v) => setDelegatedAdmin(index, {...item, user: v})}
+              options={userOptions}
+              placeholder={i18next.t("general:User")}
+            />
+            <MultiSelect
+              className="min-w-56 flex-1"
+              value={item.groups ?? []}
+              onChange={(v) => setDelegatedAdmin(index, {...item, groups: v})}
+              options={groupOptions}
+              placeholder={i18next.t("organization:Groups they administer, with subgroups")}
+            />
+            <MultiSelect
+              className="min-w-48 flex-1"
+              value={item.applications ?? []}
+              onChange={(v) => setDelegatedAdmin(index, {...item, applications: v})}
+              options={applicationOptions}
+              placeholder={i18next.t("organization:Applications they administer")}
+            />
+            <MultiSelect
+              className="min-w-48 flex-1"
+              value={item.actions ?? []}
+              onChange={(v) => setDelegatedAdmin(index, {...item, actions: v})}
+              options={DELEGATED_ACTIONS.map((action) => ({value: action, label: getDelegatedActionLabel(action)}))}
+              placeholder={i18next.t("organization:What they may do")}
+            />
+            <Button variant="ghost" size="icon" onClick={() => set("delegatedAdmins", delegatedAdmins.filter((_, i) => i !== index))}>
+              <Trash2 className="size-4" />
+            </Button>
+          </div>
+        ))}
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => set("delegatedAdmins", [...delegatedAdmins, {user: "", groups: [], applications: [], actions: ["users", "groups"]}])}
+        >
+          <Plus className="size-4" />
+          {i18next.t("organization:Add delegated admin")}
         </Button>
       </div>
     </>

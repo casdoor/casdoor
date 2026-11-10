@@ -9,6 +9,7 @@ import {useAccount} from "@/hooks/use-account";
 import {useRequestOrganization} from "@/hooks/use-organization";
 import * as ApplicationBackend from "@/backend/ApplicationBackend";
 import * as Setting from "@/lib/setting";
+import {isDelegatedAdmin} from "@/lib/delegated-admin";
 import {newApplication} from "@/pages/defaults";
 
 export default function ApplicationListPage({formItems}: {formItems?: any[]} = {}) {
@@ -17,6 +18,8 @@ export default function ApplicationListPage({formItems}: {formItems?: any[]} = {
   const organizationName = useRequestOrganization();
   const isGlobal = account ? Setting.isDefaultOrganizationSelected(account) : false;
   const [copying, setCopying] = React.useState("");
+  // a delegated admin only changes the settings of their applications
+  const delegated = isDelegatedAdmin(account);
 
   /**
    * "Duplicate" saves a copy right away and opens it, as the antd page does.
@@ -126,18 +129,18 @@ export default function ApplicationListPage({formItems}: {formItems?: any[]} = {
           )
       }
       rowActions={(record) => [
-        {
+        delegated ? null : {
           key: "duplicate",
           label: i18next.t("general:Duplicate"),
           loading: copying === record.name,
           onSelect: () => duplicate(record),
         },
       ]}
-      newRecord={account ? () => newApplication(account) : undefined}
+      newRecord={account && !delegated ? () => newApplication(account) : undefined}
       // antd refuses to delete the built-in application
       deleteDisabled={(record) => record.name === "app-built-in"}
       editUrl={(r) => `/applications/${r.organization}/${r.name}`}
-      remove={(r) => ApplicationBackend.deleteApplication(r)}
+      remove={delegated ? undefined : (r) => ApplicationBackend.deleteApplication(r)}
     />
   );
 }

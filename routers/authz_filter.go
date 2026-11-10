@@ -594,6 +594,18 @@ func ApiFilter(ctx *context.Context) {
 		}
 	}
 
+	// a delegated admin may administer the users, groups and applications in their scope, the controllers check
+	// the objects against the scope
+	scope, err := checkDelegatedAdmin(ctx, subOwner, subName, method, urlPath, objects)
+	if err != nil {
+		responseError(ctx, err.Error())
+		return
+	}
+	if scope != nil && !isAllowed {
+		isAllowed = true
+		objOwner, objName = objects[0].Owner, objects[0].Name
+	}
+
 	// the separation of the system, security and audit admins narrows what an allowed admin may do
 	if isAllowed {
 		err := object.CheckAdminDuty(subOwner, subName, method, urlPath, objOwner, objName)

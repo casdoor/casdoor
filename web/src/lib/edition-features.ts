@@ -110,6 +110,8 @@ export const EditionFeatures: EditionFeature[] = [
 
   {id: "admin-separation", edition: "Enterprise", category: "edition:Administration and audit", name: "edition:Three-admin separation", description: "edition:Three-admin separation - Description",
     stop: org("enterprise", "general:Compliance", "organization:Separate the admins")},
+  {id: "delegated-admin", edition: "Enterprise", category: "edition:Administration and audit", name: "edition:Delegated administration", description: "edition:Delegated administration - Description",
+    stop: org("enterprise", "general:Compliance", undefined, "[data-tour='delegated-admins']")},
   {id: "tamper-proof", edition: "Enterprise", category: "edition:Administration and audit", name: "edition:Tamper-proof audit records", description: "edition:Tamper-proof audit records - Description",
     stop: org("enterprise", "general:Compliance", "organization:Tamper-proof records")},
   {id: "record-integrity", edition: "Enterprise", category: "edition:Administration and audit", name: "edition:Record integrity verification", description: "edition:Record integrity verification - Description",
@@ -123,6 +125,8 @@ export const EditionFeatures: EditionFeature[] = [
     stop: org("enterprise", "general:Compliance", undefined, "[data-tour='sod-rules']")},
   {id: "governance", edition: "Enterprise", category: "edition:Governance and compliance", name: "edition:Orphan account cleanup", description: "edition:Orphan account cleanup - Description",
     stop: compliance("governance", "enterprise:Account governance")},
+  {id: "access-review", edition: "Enterprise", category: "edition:Governance and compliance", name: "edition:Access reviews", description: "edition:Access reviews - Description",
+    stop: {path: "/access-reviews", target: "#add-button"}},
   {id: "mlps", edition: "Enterprise", category: "edition:Governance and compliance", name: "edition:MLPS self-check", description: "edition:MLPS self-check - Description",
     stop: compliance("report", "enterprise:MLPS checklist")},
   {id: "security-overview", edition: "Enterprise", category: "edition:Governance and compliance", name: "edition:Security overview and monthly report", description: "edition:Security overview and monthly report - Description",

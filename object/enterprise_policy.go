@@ -43,6 +43,8 @@ type EnterprisePolicy struct {
 	SodRules []*SodRule `json:"sodRules"`
 
 	RecordConsents bool `json:"recordConsents"`
+
+	DelegatedAdmins []*DelegatedAdmin `json:"delegatedAdmins"`
 }
 
 // SodRule says that no user may hold two or more of the roles at once, such as the requester and the approver
@@ -66,7 +68,8 @@ func (policy *EnterprisePolicy) isEmpty() bool {
 		return true
 	}
 	return !policy.SeparationOfDuties && len(policy.SystemAdmins) == 0 && len(policy.SecurityAdmins) == 0 && len(policy.AuditAdmins) == 0 &&
-		!policy.TamperProofRecords && len(policy.EncryptedFields) == 0 && len(policy.SodRules) == 0 && !policy.RecordConsents
+		!policy.TamperProofRecords && len(policy.EncryptedFields) == 0 && len(policy.SodRules) == 0 && !policy.RecordConsents &&
+		len(policy.DelegatedAdmins) == 0
 }
 
 // GetEnterprisePolicy returns the organization's enterprise policy, or nil when there is none or the license gives
@@ -183,7 +186,7 @@ var securityApiObjects = []string{"permission", "permissions", "role", "roles", 
 var selfServiceApis = []string{
 	"/api/login", "/api/logout", "/api/signin", "/api/signout", "/api/sso-logout", "/api/set-password", "/api/mfa/",
 	"/api/send-verification-code", "/api/verify-code", "/api/set-preferred-mfa", "/api/delete-mfa", "/api/webauthn/",
-	"/api/upload-resource", "/api/get-account", "/api/userinfo",
+	"/api/upload-resource", "/api/get-account", "/api/userinfo", "/api/get-my-access-review-items", "/api/decide-access-review-items",
 	"/api/get-privileged-access", "/api/request-privileged-access", "/api/approve-privileged-request", "/api/reject-privileged-request",
 	"/api/cancel-privileged-request", "/api/return-privileged-request", "/api/reveal-privileged-password",
 }
@@ -198,7 +201,7 @@ func isAuditApi(urlPath string) bool {
 }
 
 func isSecurityApi(urlPath string) bool {
-	if strings.Contains(urlPath, "-polic") || urlPath == "/api/rotate-cert" || urlPath == "/api/import-otp-devices" || urlPath == "/api/rotate-privileged-account" {
+	if strings.Contains(urlPath, "-polic") || urlPath == "/api/rotate-cert" || urlPath == "/api/import-otp-devices" || urlPath == "/api/rotate-privileged-account" || strings.HasSuffix(urlPath, "-access-review") {
 		return true
 	}
 	for _, prefix := range []string{"/api/add-", "/api/update-", "/api/delete-"} {

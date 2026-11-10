@@ -45,6 +45,9 @@ func (c *ApiController) requireEnterpriseAdmin(feature string) (string, bool) {
 func (c *ApiController) checkEnterprisePolicyChange(oldOrganization *object.Organization, organization *object.Organization) error {
 	editor := c.getCurrentUser()
 	if oldOrganization == nil {
+		if err := object.ValidateDelegatedAdmins(organization.Name, organization.EnterprisePolicy, c.GetAcceptLanguage()); err != nil {
+			return err
+		}
 		return object.ValidateEnterprisePolicy(organization.EnterprisePolicy, nil, c.GetAcceptLanguage())
 	}
 
@@ -54,6 +57,9 @@ func (c *ApiController) checkEnterprisePolicyChange(oldOrganization *object.Orga
 	}
 	if util.StructToJson(oldOrganization.EnterprisePolicy) == util.StructToJson(organization.EnterprisePolicy) {
 		return nil
+	}
+	if err = object.ValidateDelegatedAdmins(organization.Name, organization.EnterprisePolicy, c.GetAcceptLanguage()); err != nil {
+		return err
 	}
 	// whoever separates the admins of their own organization has to stay a security admin
 	if editor != nil && editor.Owner != organization.Name {

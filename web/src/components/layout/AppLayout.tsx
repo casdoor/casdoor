@@ -4,6 +4,7 @@ import {Outlet} from "react-router-dom";
 import {SidebarInset, SidebarProvider} from "@/components/ui/sidebar";
 import {EnableMfaNotification} from "@/components/auth/EnableMfaNotification";
 import {LicenseBanner} from "@/components/common/EditionNotice";
+import {DelegatedAdminBanner} from "@/components/common/DelegatedAdminBanner";
 import {CommandPalette, useCommandPalette} from "@/components/common/CommandPalette";
 import {ConsoleTour} from "@/components/common/ConsoleTour";
 import {EditionTour} from "@/components/common/EditionTour";
@@ -92,6 +93,7 @@ export function AppLayout() {
         <SidebarInset className="min-h-0 overflow-hidden">
           <Header onOpenPalette={() => palette.setOpen(true)} />
           <LicenseBanner />
+          <DelegatedAdminBanner />
           <main className="min-h-0 flex-1 overflow-y-auto scrollbar-thin">
             <div className="mx-auto w-full max-w-[1600px] p-4 md:p-6">
               {/* keeps a lazy page's suspension from tearing down the console chrome */}

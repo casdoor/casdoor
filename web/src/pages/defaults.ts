@@ -5,6 +5,7 @@
 import dayjs from "dayjs";
 import * as Conf from "@/Conf";
 import * as Setting from "@/lib/setting";
+import {getDelegatedAdmin, isDelegatedAdmin} from "@/lib/delegated-admin";
 import {SignupTableDefaultCssMap} from "@/lib/signup-css";
 import type {Account} from "@/hooks/use-account";
 
@@ -194,6 +195,8 @@ export function newForm(account: Account) {
 export function newGroup(account: Account) {
   const randomName = Setting.getRandomName();
   const owner = Setting.getRequestOrganization(account);
+  // a delegated admin adds groups under the first group they administer
+  const delegatedParent = isDelegatedAdmin(account) ? getDelegatedAdmin(account)?.rootGroups?.[0] : undefined;
   return {
     owner,
     name: `group_${randomName}`,
@@ -201,8 +204,8 @@ export function newGroup(account: Account) {
     updatedTime: now(),
     displayName: `New Group - ${randomName}`,
     type: "Virtual",
-    parentId: account.owner,
-    isTopGroup: true,
+    parentId: delegatedParent ?? account.owner,
+    isTopGroup: !delegatedParent,
     isEnabled: true,
   };
 }

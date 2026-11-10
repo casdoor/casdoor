@@ -9,12 +9,16 @@ import {useAccount} from "@/hooks/use-account";
 import {useOrganizationFilter, useRequestOrganization} from "@/hooks/use-organization";
 import * as GroupBackend from "@/backend/GroupBackend";
 import * as Setting from "@/lib/setting";
+import {canDelegated, isDelegatedAdmin, isDelegatedRootGroup} from "@/lib/delegated-admin";
 import {newGroup} from "@/pages/defaults";
 
 export default function GroupListPage() {
   const {account} = useAccount();
   const organizationName = useRequestOrganization();
   const organizationFilter = useOrganizationFilter();
+  // a delegated admin adds groups under the groups they administer and can't delete their own top groups
+  const delegated = isDelegatedAdmin(account);
+  const canManageGroups = !delegated || canDelegated(account, "groups");
 
   const columns: ColumnDef<any>[] = [
     linkColumn({dataIndex: "name", to: (r) => `/groups/${r.owner}/${r.name}`}),
@@ -71,13 +75,15 @@ export default function GroupListPage() {
           <Button variant="outline" asChild>
             <Link to={`/trees/${organizationName}`}>{i18next.t("general:Groups")}</Link>
           </Button>
-          <XlsxImport
-            columns={Setting.getGroupColumns()}
-            templateName="import-group.xlsx"
-            uploadApi="upload-groups"
-            successMessage="Groups uploaded successfully, refreshing the page"
-            onUploaded={refresh}
-          />
+          {delegated ? null : (
+            <XlsxImport
+              columns={Setting.getGroupColumns()}
+              templateName="import-group.xlsx"
+              uploadApi="upload-groups"
+              successMessage="Groups uploaded successfully, refreshing the page"
+              onUploaded={refresh}
+            />
+          )}
         </>
       )}
       fetch={(q) =>
@@ -92,14 +98,15 @@ export default function GroupListPage() {
           q.sortOrder,
         )
       }
-      newRecord={account ? () => newGroup(account) : undefined}
+      newRecord={account && canManageGroups ? () => newGroup(account) : undefined}
       editUrl={(r) => `/groups/${r.owner}/${r.name}`}
-      remove={(r) => GroupBackend.deleteGroup(r)}
+      remove={canManageGroups ? (r) => GroupBackend.deleteGroup(r) : undefined}
       deleteDisabled={(r) =>
-        r.haveChildren &&
-        i18next.t(
-          "group:You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page",
-        )
+        (delegated && isDelegatedRootGroup(account, r.name)) ||
+        (r.haveChildren &&
+          i18next.t(
+            "group:You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page",
+          ))
       }
     />
   );

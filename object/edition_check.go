@@ -102,6 +102,9 @@ func checkOrganizationEnterpriseEdition(organization *Organization) error {
 	if policy.RecordConsents {
 		return edition.Require(edition.Enterprise, edition.FeatureConsentLog)
 	}
+	if len(policy.DelegatedAdmins) > 0 {
+		return edition.Require(edition.Enterprise, edition.FeatureDelegatedAdmin)
+	}
 	return nil
 }
 

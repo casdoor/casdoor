@@ -12,6 +12,7 @@ import {useRequestOrganization} from "@/hooks/use-organization";
 import * as OrganizationBackend from "@/backend/OrganizationBackend";
 import * as UserBackend from "@/backend/UserBackend";
 import * as Setting from "@/lib/setting";
+import {canDelegated, isDelegatedAdmin} from "@/lib/delegated-admin";
 import {newUser} from "@/pages/defaults";
 
 /**
@@ -51,6 +52,9 @@ export default function UserListPage({
   }, [organizationName]);
 
   const isGlobal = account ? Setting.isDefaultOrganizationSelected(account) && !scopedOrganizationName : false;
+  // a delegated admin sees the users of their groups, and adds or deletes them only when allowed to manage users
+  const delegated = isDelegatedAdmin(account);
+  const canManageUsers = !delegated || canDelegated(account, "users");
 
   const tagLabels = React.useMemo(() => {
     const map: Record<string, string> = {};
@@ -171,7 +175,7 @@ export default function UserListPage({
       columns={columns}
       formType="users"
       formItems={formItems}
-      toolbar={({refresh}) => (
+      toolbar={({refresh}) => delegated ? null : (
         <XlsxImport
           columns={Setting.getUserColumns()}
           templateName="import-user.xlsx"
@@ -195,10 +199,10 @@ export default function UserListPage({
             groupName,
           )
       }
-      newRecord={account ? () => newUser(account, organization, organizationName, groupName) : undefined}
+      newRecord={account && canManageUsers ? () => newUser(account, organization, organizationName, groupName) : undefined}
       deleteDisabled={isProtected}
       editUrl={(r) => `/users/${r.owner}/${r.name}`}
-      remove={(r) => UserBackend.deleteUser(r)}
+      remove={canManageUsers ? (r) => UserBackend.deleteUser(r) : undefined}
       rowActions={(record, _index, {refresh}) => [
         Setting.isLocalAdminUser(account) && record.name !== account?.name
           ? {
@@ -217,7 +221,7 @@ export default function UserListPage({
           }
           : null,
         // only offered while the list is scoped to a group, as on the group tree page
-        groupName
+        groupName && canManageUsers
           ? {
             key: "remove",
             label: i18next.t("general:remove"),

@@ -818,12 +818,24 @@ func (c *ApiController) GetAccount() {
 	}
 	u.AccessToken = accessToken
 
+	delegatedAdmin, err := object.GetDelegatedAdminInfo(user)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	pendingAccessReviews, err := object.GetPendingReviewItemCount(user.Owner, user.Name)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
 	resp := Response{
 		Status: "ok",
 		Sub:    user.Id,
 		Name:   user.Name,
 		Data:   u,
 		Data2:  organization,
+		Data3:  map[string]interface{}{"delegatedAdmin": delegatedAdmin, "pendingAccessReviews": pendingAccessReviews},
 	}
 	c.Data["json"] = resp
 	c.ServeJSON()

@@ -85,6 +85,9 @@ export function AccountProvider({children}: {children: React.ReactNode}) {
       if (res.status === "ok") {
         const next = res.data;
         next.organization = res.data2;
+        // a delegated admin administers some groups and applications without being an admin of the organization
+        next.delegatedAdmin = res.data3?.delegatedAdmin ?? null;
+        next.pendingAccessReviews = res.data3?.pendingAccessReviews ?? 0;
         setAccountState(next);
         setAccessToken(res.data.accessToken ?? null);
         if (!localStorage.getItem("language") && next.language) {

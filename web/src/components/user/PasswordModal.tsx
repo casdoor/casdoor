@@ -8,6 +8,7 @@ import {PasswordRequirements, checkPasswordComplexity} from "@/lib/password-chec
 import * as Obfuscator from "@/auth/Obfuscator";
 import * as UserBackend from "@/backend/UserBackend";
 import * as Setting from "@/lib/setting";
+import {canDelegated, isDelegatedAdminOf} from "@/lib/delegated-admin";
 
 interface PasswordModalProps {
   user: any;
@@ -39,7 +40,8 @@ export function PasswordModal({user, userName, organization, account, disabled, 
   const hasOldPassword = user.password !== "" || user.ldap !== "";
   const buttonText = hasOldPassword ? i18next.t("user:Modify password...") : i18next.t("user:Set password...");
   // an admin resetting someone else's password is not asked for the old one
-  const needOldPassword = hasOldPassword && !Setting.isLocalAdminUser(account);
+  // so is a delegated admin allowed to reset the passwords of the users in their groups
+  const needOldPassword = hasOldPassword && !Setting.isLocalAdminUser(account) && !(canDelegated(account, "passwords") && isDelegatedAdminOf(account, user));
 
   const newPasswordError = newPassword === "" ? "" : checkPasswordComplexity(newPassword, passwordOptions);
   const rePasswordError =
