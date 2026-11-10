@@ -9,7 +9,7 @@ import {SelectField} from "@/components/common/SelectField";
 import {FormRow} from "@/components/crud/FormRow";
 import type {ApplicationTabProps} from "@/components/application/types";
 
-export const FormFillExtensionUrl = "https://github.com/casdoor/casdoor-chrome-extension";
+export const FormFillExtensionUrl = "https://chromewebstore.google.com/detail/casdoor-browser-plugin/bnjbegmkpjbcpneclidlbloadenondlm";
 export const FormFillDesktopClientUrl = "https://github.com/casdoor/casdoor-desktop-autofill";
 
 const AutoFillMethod = "Auto";
