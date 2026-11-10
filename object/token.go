@@ -332,6 +332,11 @@ func ExpireTokenByUserAndApplication(owner string, username string, application 
 	return affected != 0, nil
 }
 
+func ExpireTokensByApplication(owner string, application string) error {
+	_, err := ormer.Engine.Where("owner = ? and application = ? and expires_in > 0", owner, application).Cols("expires_in").Update(&Token{ExpiresIn: 0})
+	return err
+}
+
 // updateTokenDPoP updates the token_type and dpop_jkt columns for DPoP binding (RFC 9449).
 func updateTokenDPoP(token *Token) error {
 	_, err := ormer.Engine.ID(core.PK{token.Owner, token.Name}).Cols("token_type", "dpop_jkt").Update(token)

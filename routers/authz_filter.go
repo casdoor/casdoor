@@ -692,7 +692,8 @@ func checkDynamicClientSession(ctx *context.Context, urlPath string) bool {
 		responseError(ctx, err.Error())
 		return false
 	}
-	if application == nil || isClientSessionApiAllowed(application, getSessionUser(ctx), urlPath) {
+	// the application is gone (e.g. a dynamic client deleted itself): the session can no longer be limited by it
+	if application != nil && isClientSessionApiAllowed(application, getSessionUser(ctx), urlPath) {
 		return true
 	}
 
@@ -719,8 +720,11 @@ func isRestrictedClientSession(ctx *context.Context) (bool, error) {
 	}
 
 	application, err := object.GetApplicationByClientId(aud)
-	if err != nil || application == nil {
+	if err != nil {
 		return false, err
+	}
+	if application == nil {
+		return true, nil
 	}
 	return !isClientSessionApiAllowed(application, getSessionUser(ctx), "/login/oauth/authorize"), nil
 }

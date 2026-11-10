@@ -330,6 +330,11 @@ func DeleteDynamicClient(app *Application) *DcrError {
 	if !affected {
 		return &DcrError{Error: "server_error", ErrorDescription: "failed to delete client"}
 	}
+
+	err = ExpireTokensByApplication(app.Owner, app.Name)
+	if err != nil {
+		return &DcrError{Error: "server_error", ErrorDescription: err.Error()}
+	}
 	return nil
 }
 
