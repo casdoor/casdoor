@@ -21,6 +21,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/casdoor/casdoor/edition"
 	"github.com/casdoor/casdoor/i18n"
 )
 
@@ -218,17 +219,47 @@ func ValidateFormFill(formFill *FormFill, lang string) error {
 	return nil
 }
 
+// formFillApplication is an application that the user may be signed into by form autofill, with the form autofill
+// it gets: its own settings in the enterprise edition, and its Signin URL with the managed accounts as they are in the
+// other editions
+type formFillApplication struct {
+	application *Application
+	formFill    *FormFill
+}
+
+// IsFullFormFill tells whether the form autofill of the enterprise edition is available. The other editions only fill
+// the managed accounts into the Signin URL of their applications and submit them, like the first browser extensions.
+func IsFullFormFill() bool {
+	return edition.Require(edition.Enterprise, edition.FeatureFormFill) == nil
+}
+
+func getBasicFormFill(application *Application) *FormFill {
+	scheme, host, _ := splitFormFillUrl(application.SigninUrl)
+	if (scheme != "http" && scheme != "https") || host == "" || strings.ContainsAny(host, `*\`) {
+		return nil
+	}
+	return &FormFill{Enabled: true, Urls: []string{application.SigninUrl}, AutoSubmit: true}
+}
+
 // getFormFillApplications returns the applications of the user's organization that the user may be signed into by
 // form autofill
-func getFormFillApplications(user *User) ([]*Application, error) {
+func getFormFillApplications(user *User) ([]*formFillApplication, error) {
 	applications, err := GetOrganizationApplications("admin", user.Owner)
 	if err != nil {
 		return nil, err
 	}
 
-	res := []*Application{}
+	full := IsFullFormFill()
+	res := []*formFillApplication{}
 	for _, application := range applications {
-		if !application.FormFill.isOn() {
+		formFill := application.FormFill
+		if !full {
+			formFill = nil
+			if user.hasManagedAccountOf(application.Name) {
+				formFill = getBasicFormFill(application)
+			}
+		}
+		if !formFill.isOn() {
 			continue
 		}
 		allowed, err := CheckLoginPermission(user.GetId(), application)
@@ -236,10 +267,19 @@ func getFormFillApplications(user *User) ([]*Application, error) {
 			return nil, err
 		}
 		if allowed {
-			res = append(res, application)
+			res = append(res, &formFillApplication{application: application, formFill: formFill})
 		}
 	}
 	return res, nil
+}
+
+func (user *User) hasManagedAccountOf(applicationName string) bool {
+	for _, account := range user.ManagedAccounts {
+		if account.Application == applicationName && account.Username != "" {
+			return true
+		}
+	}
+	return false
 }
 
 func GetFormFillSites(user *User) ([]*FormFillSite, error) {
@@ -249,8 +289,8 @@ func GetFormFillSites(user *User) ([]*FormFillSite, error) {
 	}
 
 	sites := []*FormFillSite{}
-	for _, application := range applications {
-		formFill := application.FormFill
+	for _, item := range applications {
+		application, formFill := item.application, item.formFill
 		site := &FormFillSite{
 			Application:          application.Name,
 			DisplayName:          application.DisplayName,
@@ -268,6 +308,9 @@ func GetFormFillSites(user *User) ([]*FormFillSite, error) {
 			CaptchaCharset:       formFill.CaptchaCharset,
 			Accounts:             []string{},
 		}
+		if site.Programs == nil {
+			site.Programs = []*FormFillProgram{}
+		}
 		for _, account := range user.ManagedAccounts {
 			if account.Application == application.Name && account.Username != "" {
 				site.Accounts = append(site.Accounts, account.Username)
@@ -280,22 +323,26 @@ func GetFormFillSites(user *User) ([]*FormFillSite, error) {
 	return sites, nil
 }
 
-func getFormFillApplication(user *User, applicationName string, target *FormFillTarget, lang string) (*Application, error) {
+func getFormFillApplication(user *User, applicationName string, target *FormFillTarget, lang string) (*formFillApplication, error) {
+	// desktop programs and saving accounts are only in the enterprise edition
+	if target.Program != "" && !IsFullFormFill() {
+		return nil, edition.Require(edition.Enterprise, edition.FeatureFormFill)
+	}
 	applications, err := getFormFillApplications(user)
 	if err != nil {
 		return nil, err
 	}
-	for _, application := range applications {
-		if application.Name != applicationName {
+	for _, item := range applications {
+		if item.application.Name != applicationName {
 			continue
 		}
-		if !application.FormFill.matchTarget(target) {
+		if !item.formFill.matchTarget(target) {
 			if target.Program != "" {
 				return nil, fmt.Errorf(i18n.Translate(lang, "application:The window of the program: %s is not a sign-in window of the application: %s"), target.String(), applicationName)
 			}
 			return nil, fmt.Errorf(i18n.Translate(lang, "application:The page: %s is not a sign-in page of the application: %s"), target.Url, applicationName)
 		}
-		return application, nil
+		return item, nil
 	}
 	return nil, fmt.Errorf(i18n.Translate(lang, "application:Form autofill is not available for the application: %s"), applicationName)
 }
@@ -318,14 +365,17 @@ func GetFormFillAccount(user *User, applicationName string, username string, tar
 
 // SaveFormFillAccount keeps the account that the user signed into an application with by hand as a managed account
 func SaveFormFillAccount(user *User, applicationName string, username string, password string, target *FormFillTarget, lang string) error {
+	if !IsFullFormFill() {
+		return edition.Require(edition.Enterprise, edition.FeatureFormFill)
+	}
 	if username == "" || password == "" {
 		return errors.New(i18n.Translate(lang, "application:The username and the password must not be empty"))
 	}
-	application, err := getFormFillApplication(user, applicationName, target, lang)
+	item, err := getFormFillApplication(user, applicationName, target, lang)
 	if err != nil {
 		return err
 	}
-	if !application.FormFill.AllowSave {
+	if !item.formFill.AllowSave {
 		return fmt.Errorf(i18n.Translate(lang, "application:The application: %s does not let users save their accounts"), applicationName)
 	}
 

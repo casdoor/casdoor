@@ -17,7 +17,6 @@ package controllers
 import (
 	"encoding/json"
 
-	"github.com/casdoor/casdoor/edition"
 	"github.com/casdoor/casdoor/object"
 )
 
@@ -37,10 +36,6 @@ func (c *ApiController) getFormFillTarget() *object.FormFillTarget {
 // requireFormFillUser returns the signed-in user for form autofill. Only users themselves get their managed accounts,
 // an application credential can't act as a user here.
 func (c *ApiController) requireFormFillUser() (*object.User, bool) {
-	if err := edition.Require(edition.Enterprise, edition.FeatureFormFill); err != nil {
-		c.ResponseError(err.Error())
-		return nil, false
-	}
 	userId, ok := c.RequireSignedIn()
 	if !ok {
 		return nil, false
@@ -64,7 +59,7 @@ func (c *ApiController) requireFormFillUser() (*object.User, bool) {
 // GetFormFillSites
 // @Title GetFormFillSites
 // @Tag Form Autofill API
-// @Description get the legacy systems whose sign-in forms are filled for the current user, without the passwords
+// @Description get the legacy systems whose sign-in forms are filled for the current user, without the passwords. data2 is true with the form autofill of the enterprise edition, and false when only the managed accounts are filled into the Signin URL of their applications.
 // @Success 200 {array} object.FormFillSite The Response object
 // @router /get-form-fill-sites [get]
 func (c *ApiController) GetFormFillSites() {
@@ -77,7 +72,7 @@ func (c *ApiController) GetFormFillSites() {
 		c.ResponseError(err.Error())
 		return
 	}
-	c.ResponseOk(sites)
+	c.ResponseOk(sites, object.IsFullFormFill())
 }
 
 // GetFormFillAccount
@@ -101,6 +96,7 @@ func (c *ApiController) GetFormFillAccount() {
 	}
 	application := c.Ctx.Input.Query("application")
 	username := c.Ctx.Input.Query("username")
+	c.Ctx.Output.Header("Cache-Control", "no-store")
 	account, err := object.GetFormFillAccount(user, application, username, c.getFormFillTarget(), c.GetAcceptLanguage())
 	if err != nil {
 		c.ResponseError(err.Error())
