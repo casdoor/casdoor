@@ -245,6 +245,9 @@ func InitAPI() {
 	web.Router("/api/add-cert", &controllers.ApiController{}, "POST:AddCert")
 	web.Router("/api/delete-cert", &controllers.ApiController{}, "POST:DeleteCert")
 	web.Router("/api/update-cert-domain-expire", &controllers.ApiController{}, "POST:UpdateCertDomainExpire")
+	web.Router("/api/get-hsm-status", &controllers.ApiController{}, "GET:GetHsmStatus")
+	web.Router("/api/generate-hsm-cert", &controllers.ApiController{}, "POST:GenerateHsmCert")
+	web.Router("/api/test-hsm-cert", &controllers.ApiController{}, "POST:TestHsmCert")
 
 	web.Router("/api/get-keys", &controllers.ApiController{}, "GET:GetKeys")
 	web.Router("/api/get-global-keys", &controllers.ApiController{}, "GET:GetGlobalKeys")

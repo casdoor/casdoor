@@ -48,6 +48,11 @@ type Cert struct {
 	Certificate string `xorm:"mediumtext" json:"certificate"`
 	PrivateKey  string `xorm:"mediumtext" json:"privateKey"`
 
+	// "HSM" when the private key stays in the hardware security module set in app.conf, found by KeyReference: a
+	// PKCS #11 CKA_LABEL (or "id:<hex CKA_ID>")
+	KeyStorage   string `xorm:"varchar(100)" json:"keyStorage"`
+	KeyReference string `xorm:"varchar(200)" json:"keyReference"`
+
 	KeyId               string `xorm:"varchar(100)" json:"keyId"`
 	PreviousKeyId       string `xorm:"varchar(100)" json:"previousKeyId"`
 	PreviousCertificate string `xorm:"mediumtext" json:"previousCertificate"`
@@ -245,6 +250,10 @@ func (p *Cert) GetId() string {
 }
 
 func (p *Cert) populateContent() error {
+	if p.IsHsmKey() {
+		return p.populateHsmContent()
+	}
+
 	if p.Certificate != "" && p.PrivateKey != "" {
 		return nil
 	}

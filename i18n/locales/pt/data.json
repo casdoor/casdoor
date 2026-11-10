@@ -68,6 +68,7 @@
     "Service %s and %s do not match": "O serviço %s e %s não correspondem"
   },
   "cert": {
+    "Only a global admin can choose a key in the HSM": "Apenas um administrador global pode escolher uma chave no HSM",
     "The cert name: %s is already used by another organization": "O nome do certificado: %s já é usado por outra organização"
   },
   "check": {

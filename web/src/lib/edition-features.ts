@@ -107,6 +107,8 @@ export const EditionFeatures: EditionFeature[] = [
     stop: org("password", "general:Password type", "general:Password type")},
   {id: "sm4-fields", edition: "Enterprise", category: "edition:Chinese SM cryptography", name: "edition:SM4 field encryption", description: "edition:SM4 field encryption - Description",
     stop: org("enterprise", "general:Compliance", "organization:Encrypted fields")},
+  {id: "hsm", edition: "Enterprise", category: "edition:Keys and access control", name: "edition:Hardware security module", description: "edition:Hardware security module - Description",
+    stop: {object: "cert", label: "cert:Key storage"}},
 
   {id: "admin-separation", edition: "Enterprise", category: "edition:Administration and audit", name: "edition:Three-admin separation", description: "edition:Three-admin separation - Description",
     stop: org("enterprise", "general:Compliance", "organization:Separate the admins")},

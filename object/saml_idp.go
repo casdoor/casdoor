@@ -473,7 +473,10 @@ func GetSamlResponse(application *Application, user *User, samlRequest string, h
 		return "", "", "", fmt.Errorf("err: NewSamlResponse() error, %s", err.Error())
 	}
 
-	ctx := newSamlSigningContext(application, cert.PrivateKey, certificate)
+	ctx, err := newSamlSigningContext(application, cert, certificate)
+	if err != nil {
+		return "", "", "", err
+	}
 
 	// signedXML, err := ctx.SignEnvelopedLimix(samlResponse)
 	// if err != nil {
@@ -552,11 +555,11 @@ func GetSamlResponse(application *Application, user *User, samlRequest string, h
 	return res, authnRequest.AssertionConsumerServiceURL, method, err
 }
 
-func newSamlSigningContext(application *Application, privateKey string, certificate string) *dsig.SigningContext {
-	ctx := dsig.NewDefaultSigningContext(&X509Key{
-		PrivateKey:      privateKey,
-		X509Certificate: certificate,
-	})
+func newSamlSigningContext(application *Application, cert *Cert, certificate string) (*dsig.SigningContext, error) {
+	ctx, err := newCertXmlSigningContext(cert, certificate)
+	if err != nil {
+		return nil, err
+	}
 	if application.SamlHashAlgorithm == "" || application.SamlHashAlgorithm == "SHA1" {
 		ctx.Hash = crypto.SHA1
 	} else if application.SamlHashAlgorithm == "SHA256" {
@@ -568,7 +571,7 @@ func newSamlSigningContext(application *Application, privateKey string, certific
 	if application.EnableSamlC14n10 {
 		ctx.Canonicalizer = &samlC14n10Canonicalizer{prefixList: application.SamlC14nPrefix}
 	}
-	return ctx
+	return ctx, nil
 }
 
 // samlC14n10Canonicalizer canonicalizes a copy, as goxmldsig strips namespace declarations from the signed XML itself, and applies the prefix list to the reference only

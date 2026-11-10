@@ -77,13 +77,13 @@ func generateLogoutToken(application *Application, user *User, signinToken *Toke
 
 	var key interface{}
 	token := jwt.NewWithClaims(getJwtSigningMethod(application), claims)
-	key, err = getJwtSigningKey(token.Method, cert.PrivateKey)
+	key, err = getJwtSigningKey(token.Method, cert)
 	if err != nil {
 		return "", err
 	}
 
 	token.Header["kid"] = cert.GetKeyId()
-	return token.SignedString(key)
+	return signJwtToken(token, key)
 }
 
 // SendBackchannelLogout sends OIDC Back-Channel Logout tokens to all registered

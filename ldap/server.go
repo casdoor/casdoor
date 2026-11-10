@@ -93,7 +93,7 @@ func getTLSconfig(ldapsCertId string) (*tls.Config, error) {
 	if rawCert == nil {
 		return nil, fmt.Errorf("cert is empty")
 	}
-	cert, err := tls.X509KeyPair([]byte(rawCert.Certificate), []byte(rawCert.PrivateKey))
+	cert, err := object.GetCertTlsCertificate(rawCert)
 	if err != nil {
 		return &tls.Config{}, err
 	}

@@ -22,8 +22,14 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-// getJwtSigningKey parses the private key of a cert for the signing method of a token
-func getJwtSigningKey(method jwt.SigningMethod, privateKey string) (interface{}, error) {
+// getJwtSigningKey parses the private key of a cert for the signing method of a token, or returns the HSM signer
+// of a cert whose key is in the HSM, which signJwtToken signs with
+func getJwtSigningKey(method jwt.SigningMethod, cert *Cert) (interface{}, error) {
+	if cert.IsHsmKey() {
+		return getCertSigner(cert)
+	}
+
+	privateKey := cert.PrivateKey
 	switch method.(type) {
 	case *jwt.SigningMethodECDSA:
 		return jwt.ParseECPrivateKeyFromPEM([]byte(privateKey))

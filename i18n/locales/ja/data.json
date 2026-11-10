@@ -68,6 +68,7 @@
     "Service %s and %s do not match": "サービス%sと%sは一致しません"
   },
   "cert": {
+    "Only a global admin can choose a key in the HSM": "HSM 内の鍵を選択できるのはグローバル管理者だけです",
     "The cert name: %s is already used by another organization": "証明書名：%s は既に別の組織で使用されています"
   },
   "check": {

@@ -68,6 +68,7 @@
     "Service %s and %s do not match": "Dịch sang tiếng Việt: Dịch vụ %s và %s không khớp"
   },
   "cert": {
+    "Only a global admin can choose a key in the HSM": "Chỉ quản trị viên toàn cục mới có thể chọn khóa trong HSM",
     "The cert name: %s is already used by another organization": "Tên chứng chỉ: %s đã được tổ chức khác sử dụng"
   },
   "check": {

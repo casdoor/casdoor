@@ -30,7 +30,6 @@ import (
 	"github.com/beevik/etree"
 	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/util"
-	dsig "github.com/russellhaering/goxmldsig"
 )
 
 type CasServiceResponse struct {
@@ -365,12 +364,10 @@ func GetValidationBySaml(samlRequest string, host string) (string, string, error
 
 	block, _ := pem.Decode([]byte(cert.Certificate))
 	certificate := base64.StdEncoding.EncodeToString(block.Bytes)
-	randomKeyStore := &X509Key{
-		PrivateKey:      cert.PrivateKey,
-		X509Certificate: certificate,
+	ctx, err := newCertXmlSigningContext(cert, certificate)
+	if err != nil {
+		return "", "", err
 	}
-
-	ctx := dsig.NewDefaultSigningContext(randomKeyStore)
 	ctx.Hash = crypto.SHA1
 	signedXML, err := ctx.SignEnveloped(samlResponse)
 	if err != nil {

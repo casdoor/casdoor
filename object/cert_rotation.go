@@ -74,6 +74,9 @@ func RotateCert(cert *Cert) error {
 	if err := edition.Require(edition.Commercial, edition.FeatureKeyRotation); err != nil {
 		return err
 	}
+	if cert.IsHsmKey() {
+		return fmt.Errorf("the private key of the cert: %s is in the HSM, create a new key in the HSM, then set it as the key reference and generate the certificate", cert.GetId())
+	}
 
 	rotated := *cert
 	rotated.Certificate = ""

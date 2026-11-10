@@ -288,7 +288,7 @@ func getSamlLogoutSigningContext(application *Application) (*dsig.SigningContext
 	}
 	certificate := base64.StdEncoding.EncodeToString(block.Bytes)
 
-	return newSamlSigningContext(application, cert.PrivateKey, certificate), nil
+	return newSamlSigningContext(application, cert, certificate)
 }
 
 // signSamlPostMessage embeds the signature in the message, as the HTTP-POST binding requires

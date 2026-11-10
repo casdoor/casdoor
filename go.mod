@@ -34,6 +34,7 @@ require (
 	github.com/casdoor/xorm-adapter/v3 v3.1.0
 	github.com/corazawaf/coraza/v3 v3.3.3
 	github.com/dchest/captcha v0.0.0-20200903113550-03f5f0333e1f
+	github.com/ebitengine/purego v0.9.0
 	github.com/elimity-com/scim v0.0.0-20230426070224-941a5eac92f3
 	github.com/fogleman/gg v1.3.0
 	github.com/go-asn1-ber/asn1-ber v1.5.5
@@ -158,7 +159,6 @@ require (
 	github.com/di-wu/parser v0.2.2 // indirect
 	github.com/di-wu/xsd-datetime v1.0.0 // indirect
 	github.com/drswork/go-twitter v0.0.0-20221107160839-dea1b6ed53d7 // indirect
-	github.com/ebitengine/purego v0.9.0 // indirect
 	github.com/emirpasic/gods v1.18.1 // indirect
 	github.com/emmansun/gmsm v0.45.2 // indirect
 	github.com/envoyproxy/go-control-plane/envoy v1.37.0 // indirect

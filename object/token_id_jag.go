@@ -255,12 +255,12 @@ func signIdJag(application *Application, claims IdJagClaims) (string, error) {
 
 	var key interface{}
 	token := jwt.NewWithClaims(getJwtSigningMethod(application), claims)
-	key, err = getJwtSigningKey(token.Method, cert.PrivateKey)
+	key, err = getJwtSigningKey(token.Method, cert)
 	if err != nil {
 		return "", err
 	}
 
 	token.Header["typ"] = "oauth-id-jag+jwt"
 	token.Header["kid"] = cert.GetKeyId()
-	return token.SignedString(key)
+	return signJwtToken(token, key)
 }

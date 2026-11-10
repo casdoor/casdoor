@@ -769,17 +769,17 @@ func generateJwtTokenWithOptions(application *Application, user *User, provider 
 		key                interface{}
 	)
 
-	key, err = getJwtSigningKey(jwtMethod, cert.PrivateKey)
+	key, err = getJwtSigningKey(jwtMethod, cert)
 	if err != nil {
 		return "", "", "", "", err
 	}
 
 	token.Header["kid"] = cert.GetKeyId()
-	tokenString, err = token.SignedString(key)
+	tokenString, err = signJwtToken(token, key)
 	if err != nil {
 		return "", "", "", "", err
 	}
-	refreshTokenString, err = refreshToken.SignedString(key)
+	refreshTokenString, err = signJwtToken(refreshToken, key)
 	if err != nil {
 		return "", "", "", "", err
 	}
@@ -792,7 +792,7 @@ func generateJwtTokenWithOptions(application *Application, user *User, provider 
 	}
 	idToken := newIdToken()
 	idToken.Header["kid"] = cert.GetKeyId()
-	idTokenString, err = idToken.SignedString(key)
+	idTokenString, err = signJwtToken(idToken, key)
 
 	return tokenString, refreshTokenString, idTokenString, name, err
 }

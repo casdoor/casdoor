@@ -229,6 +229,9 @@ func buildSpKeyStore() (dsig.X509KeyStore, error) {
 	if err != nil {
 		return nil, err
 	}
+	if cert != nil && cert.IsHsmKey() {
+		return nil, fmt.Errorf("the private key of the cert: admin/cert-built-in is in the HSM, Casdoor can't sign SAML requests to identity providers with it")
+	}
 	if cert == nil || cert.Certificate == "" || cert.PrivateKey == "" {
 		return nil, fmt.Errorf("the cert: admin/cert-built-in is not found")
 	}

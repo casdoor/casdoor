@@ -68,6 +68,7 @@
     "Service %s and %s do not match": "Servis %s ve %s eşleşmiyor"
   },
   "cert": {
+    "Only a global admin can choose a key in the HSM": "HSM'deki bir anahtarı yalnızca genel yönetici seçebilir",
     "The cert name: %s is already used by another organization": "Sertifika adı: %s zaten başka bir kuruluş tarafından kullanılıyor"
   },
   "check": {

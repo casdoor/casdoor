@@ -68,6 +68,7 @@
     "Service %s and %s do not match": "服务%s与%s不匹配"
   },
   "cert": {
+    "Only a global admin can choose a key in the HSM": "只有全局管理员才能选择密码机里的密钥",
     "The cert name: %s is already used by another organization": "证书名称：%s 已被其他组织使用"
   },
   "check": {

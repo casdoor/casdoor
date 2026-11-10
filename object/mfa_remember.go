@@ -31,11 +31,22 @@ func getMfaRememberSignature(userId string, deadline string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	if cert == nil || cert.PrivateKey == "" {
+	if cert == nil {
 		return "", fmt.Errorf("the cert: admin/cert-built-in is not found")
 	}
 
-	key := sha256.Sum256([]byte("mfa-remember:" + cert.PrivateKey))
+	seed := cert.PrivateKey
+	if cert.IsHsmKey() {
+		seed, err = getHsmSecret(cert, "mfa-remember")
+		if err != nil {
+			return "", err
+		}
+	}
+	if seed == "" {
+		return "", fmt.Errorf("the cert: admin/cert-built-in is not found")
+	}
+
+	key := sha256.Sum256([]byte("mfa-remember:" + seed))
 	mac := hmac.New(sha256.New, key[:])
 	mac.Write([]byte(userId + "|" + deadline))
 	return hex.EncodeToString(mac.Sum(nil)), nil
