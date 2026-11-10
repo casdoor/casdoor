@@ -28,6 +28,7 @@ import (
 	"github.com/casdoor/casdoor/radius"
 	"github.com/casdoor/casdoor/routers"
 	"github.com/casdoor/casdoor/service"
+	"github.com/casdoor/casdoor/tlsserver"
 	"github.com/casdoor/casdoor/tracing"
 	"github.com/casdoor/casdoor/util"
 )
@@ -169,6 +170,8 @@ func runServer() {
 	if len(object.SiteMap) != 0 {
 		service.Start()
 	}
+
+	tlsserver.Start(port, routers.BasePathMiddleware)
 
 	web.RunWithMiddleWares(fmt.Sprintf(":%v", port), routers.BasePathMiddleware)
 }

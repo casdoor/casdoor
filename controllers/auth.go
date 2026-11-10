@@ -806,8 +806,10 @@ func (c *ApiController) Login() {
 	// a magic link posts no username, the one-time token in the link is the credential.
 	// The passcode of a sign-in that already asked for MFA is answered further below
 	isMagicLinkSignin := authForm.SigninMethod == "Magic link" && c.getMfaUserSession() == ""
+	// a certificate (UKey) sign-in posts the ticket of /api/login/cert, or a certificate with its signature of a challenge
+	isCertSignin := authForm.SigninMethod == object.SigninMethodCertificate && c.getMfaUserSession() == ""
 
-	if authForm.Username != "" || isMagicLinkSignin {
+	if authForm.Username != "" || isMagicLinkSignin || isCertSignin {
 		var user *object.User
 		if isMagicLinkSignin {
 			// the one-time link in the email is the credential, it proves the address
@@ -815,6 +817,8 @@ func (c *ApiController) Login() {
 			if err == nil {
 				verificationType = "email"
 			}
+		} else if isCertSignin {
+			user, err = c.checkCertSignin(&authForm)
 		} else if authForm.SigninMethod == "Face ID" {
 			var application *object.Application
 			application, err = getSigninApplication(fmt.Sprintf("admin/%s", authForm.Application), authForm.Organization)

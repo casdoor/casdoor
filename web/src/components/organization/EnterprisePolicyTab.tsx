@@ -2,10 +2,12 @@ import * as React from "react";
 import i18next from "i18next";
 import {Plus, Trash2} from "lucide-react";
 import {Input} from "@/components/ui/input";
+import {Textarea} from "@/components/ui/textarea";
 import {Switch} from "@/components/ui/switch";
 import {Button} from "@/components/ui/button";
 import {MultiSelect} from "@/components/common/MultiSelect";
 import {SearchableSelect} from "@/components/common/SearchableSelect";
+import {SelectField} from "@/components/common/SelectField";
 import {FormRow} from "@/components/crud/FormRow";
 import {EditionNotice} from "@/components/common/EditionNotice";
 import {useApplicationOptions, useGroupNameOptions, useRoleOptions, useUserNameOptions} from "@/hooks/use-options";
@@ -42,6 +44,71 @@ function getFieldLabel(field: string) {
   default:
     return i18next.t("user:Address");
   }
+}
+
+const CERT_FIELDS = [
+  {id: "CN", key: "organization:Subject common name (CN)"},
+  {id: "SERIALNUMBER", key: "organization:Subject serial number (SERIALNUMBER)"},
+  {id: "Email", key: "organization:Email address in the certificate"},
+  {id: "UID", key: "organization:Subject user ID (UID)"},
+  {id: "Fingerprint", key: "organization:Certificate SHA-256 fingerprint"},
+];
+
+const CERT_USER_FIELDS = [
+  {id: "name", key: "general:Name"},
+  {id: "idCard", key: "user:ID card"},
+  {id: "email", key: "general:Email"},
+  {id: "phone", key: "general:Phone"},
+  {id: "certFingerprint", key: "organization:Bound certificate fingerprint"},
+];
+
+/** Signing in with a certificate in a UKey: the trusted CAs and how a certificate is matched to a user. */
+function CertLoginSection({value, onChange}: {value: any; onChange: (value: any) => void}) {
+  const certLogin = value ?? {};
+  const set = (key: string, v: any) => onChange({certField: "CN", userField: "name", ...certLogin, [key]: v});
+  return (
+    <>
+      <FormRow labelKey="organization:Enable certificate login">
+        <Switch checked={!!certLogin.enabled} onCheckedChange={(v) => set("enabled", v)} />
+      </FormRow>
+      {certLogin.enabled ? (
+        <>
+          <FormRow labelKey="organization:Trusted CA certificates" block>
+            <Textarea
+              className="min-h-32 font-mono text-xs"
+              placeholder="-----BEGIN CERTIFICATE-----"
+              value={certLogin.trustedCas ?? ""}
+              onChange={(e) => set("trustedCas", e.target.value)}
+            />
+          </FormRow>
+          <FormRow labelKey="organization:Certificate field">
+            <SelectField
+              value={certLogin.certField ?? "CN"}
+              onChange={(v) => set("certField", v)}
+              options={CERT_FIELDS.map((item) => ({id: item.id, name: i18next.t(item.key)}))}
+            />
+          </FormRow>
+          <FormRow labelKey="organization:Matched user attribute">
+            <SelectField
+              value={certLogin.userField ?? "name"}
+              onChange={(v) => set("userField", v)}
+              options={CERT_USER_FIELDS.map((item) => ({id: item.id, name: i18next.t(item.key)}))}
+            />
+          </FormRow>
+          <FormRow labelKey="organization:CRL URL">
+            <Input value={certLogin.crlUrl ?? ""} placeholder="http://ca.example.com/crl/ca.crl" onChange={(e) => set("crlUrl", e.target.value)} />
+          </FormRow>
+          <FormRow labelKey="organization:Certificate login URL">
+            <Input value={certLogin.loginUrl ?? ""} placeholder="https://door.example.com:18444/api/login/cert" onChange={(e) => set("loginUrl", e.target.value)} />
+          </FormRow>
+          <div className="col-span-full space-y-1 rounded-md border bg-muted/40 p-3 text-xs text-muted-foreground">
+            <p>{i18next.t("organization:Certificate login - Help")}</p>
+            <p>{i18next.t("organization:UKey plug-in sign-in - Help")}</p>
+          </div>
+        </>
+      ) : null}
+    </>
+  );
 }
 
 /** The organization's compliance and governance settings, which need an enterprise edition license. */
@@ -103,6 +170,9 @@ export function EnterprisePolicyTab({owner, policy, onChange}: {owner: string; p
         />
       </FormRow>
       {toggle("recordConsents", "organization:Record consents")}
+
+      {section("organization:Certificate and UKey login", "organization:Certificate and UKey login - Tooltip")}
+      <CertLoginSection value={value.certLogin} onChange={(v) => set("certLogin", v)} />
 
       {section("organization:Separation of duties", "organization:Separation of duties - Tooltip")}
       <div className="col-span-full space-y-2" data-tour="sod-rules">

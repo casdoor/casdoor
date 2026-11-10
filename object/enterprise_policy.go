@@ -45,6 +45,7 @@ type EnterprisePolicy struct {
 	RecordConsents bool `json:"recordConsents"`
 
 	DelegatedAdmins []*DelegatedAdmin `json:"delegatedAdmins"`
+	CertLogin       *CertLoginPolicy  `json:"certLogin"`
 }
 
 // SodRule says that no user may hold two or more of the roles at once, such as the requester and the approver
@@ -69,7 +70,7 @@ func (policy *EnterprisePolicy) isEmpty() bool {
 	}
 	return !policy.SeparationOfDuties && len(policy.SystemAdmins) == 0 && len(policy.SecurityAdmins) == 0 && len(policy.AuditAdmins) == 0 &&
 		!policy.TamperProofRecords && len(policy.EncryptedFields) == 0 && len(policy.SodRules) == 0 && !policy.RecordConsents &&
-		len(policy.DelegatedAdmins) == 0
+		len(policy.DelegatedAdmins) == 0 && !policy.CertLogin.isEnabled()
 }
 
 // GetEnterprisePolicy returns the organization's enterprise policy, or nil when there is none or the license gives
@@ -140,6 +141,9 @@ func ValidateEnterprisePolicy(policy *EnterprisePolicy, editor *User, lang strin
 	}
 	if len(policy.EncryptedFields) > 0 && !IsFieldEncryptionKeyConfigured() {
 		return errors.New(i18n.Translate(lang, "enterprise:Set the configuration fieldEncryptionKey before encrypting personal fields"))
+	}
+	if err := validateCertLoginPolicy(policy.CertLogin, lang); err != nil {
+		return err
 	}
 	for _, rule := range policy.SodRules {
 		if rule == nil || rule.Name == "" || len(rule.Roles) < 2 {

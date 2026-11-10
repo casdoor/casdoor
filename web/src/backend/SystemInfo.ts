@@ -44,6 +44,16 @@ export function getLicense() {
   }).then(res => res.json());
 }
 
+export function getTlsListeners() {
+  return fetch(`${Setting.ServerUrl}/api/get-tls-listeners`, {
+    method: "GET",
+    credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}
+
 export function getUpgradeInfo() {
   return fetch(`${Setting.ServerUrl}/api/get-upgrade-info`, {
     method: "GET",

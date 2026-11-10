@@ -152,6 +152,8 @@ export const EditionFeatures: EditionFeature[] = [
     stop: app("form-fill", "application:Form autofill", "application:Enable form autofill")},
   {id: "pam", edition: "Enterprise", category: "edition:Administration and audit", name: "edition:Privileged account management", description: "edition:Privileged account management - Description",
     stop: {path: "/privileged-accounts"}},
+  {id: "cert-login", edition: "Enterprise", category: "edition:Enterprise connections", name: "edition:UKey and certificate login", description: "edition:UKey and certificate login - Description",
+    stop: org("enterprise", "general:Compliance", "organization:Enable certificate login")},
 ];
 
 export function getEditionFeatures(edition: PaidEdition): EditionFeature[] {

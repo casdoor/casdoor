@@ -163,6 +163,8 @@ p, *, *, GET, /api/get-all-roles, *, *
 p, *, *, GET, /api/get-invitation-info, *, *
 p, *, *, GET, /api/get-license, *, *
 p, *, *, GET, /api/faceid-signin-begin, *, *
+p, *, *, GET, /api/login/cert, *, *
+p, *, *, GET, /api/get-cert-challenge, *, *
 p, *, *, GET, /api/kerberos-login, *, *
 p, *, *, POST, /api/grant-consent, *, *
 p, *, *, POST, /api/revoke-consent, *, *

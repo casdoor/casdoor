@@ -1849,7 +1849,7 @@ export function getProvidersRule(application, item) {
 // The login page offers a credential form, the sign-in providers or a QR panel; without any of them it has nothing to sign in with.
 export function hasAnySigninMethod(application) {
   if (isPasswordEnabled(application) || isCodeSigninEnabled(application) || isWebAuthnEnabled(application) ||
-    isLdapEnabled(application) || isFaceIdEnabled(application) || isMagicLinkEnabled(application)) {
+    isLdapEnabled(application) || isFaceIdEnabled(application) || isMagicLinkEnabled(application) || isCertLoginEnabled(application)) {
     return true;
   }
   const providersShown = (application?.signinItems ?? []).some(item => item.name === "Providers" && item.visible);
@@ -1893,6 +1893,10 @@ export function isFaceIdEnabled(application) {
 
 export function isMagicLinkEnabled(application) {
   return isSigninMethodEnabled(application, "Magic link");
+}
+
+export function isCertLoginEnabled(application) {
+  return isSigninMethodEnabled(application, "Certificate");
 }
 
 

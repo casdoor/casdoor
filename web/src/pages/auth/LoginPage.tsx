@@ -14,6 +14,7 @@ import {SigninMethodTabs} from "@/components/auth/SigninMethodTabs";
 import {MfaVerify, NextMfa, RequiredMfa} from "@/components/auth/MfaVerify";
 import {AgreementCheckbox, isSigninAgreementShown} from "@/components/auth/AgreementModal";
 import {DeviceLoginPanel} from "@/components/auth/DeviceLoginPanel";
+import {CertLoginPanel, CertLoginParams} from "@/components/auth/CertLoginPanel";
 import {GoogleOneTap} from "@/components/auth/GoogleOneTap";
 import {FaceRecognitionCommonModal} from "@/components/common/FaceRecognitionCommonModal";
 import {FaceRecognitionModal} from "@/components/common/FaceRecognitionModal";
@@ -42,7 +43,7 @@ import * as OrganizationBackend from "@/backend/OrganizationBackend";
 import * as Setting from "@/lib/setting";
 
 type LoginType = "login" | "code" | "cas" | "saml" | "device";
-type LoginMethod = "password" | "verificationCode" | "verificationCodeEmail" | "verificationCodePhone" | "ldap" | "webAuthn" | "wechat" | "faceId" | "magicLink" | "device";
+type LoginMethod = "password" | "verificationCode" | "verificationCodeEmail" | "verificationCodePhone" | "ldap" | "webAuthn" | "wechat" | "faceId" | "magicLink" | "device" | "certificate";
 
 function getDefaultLoginMethod(application: any): LoginMethod {
   const first = application?.signinMethods?.[0];
@@ -67,6 +68,8 @@ function getDefaultLoginMethod(application: any): LoginMethod {
     return "faceId";
   case "Magic link":
     return "magicLink";
+  case "Certificate":
+    return "certificate";
   case "Device login":
     if (first?.rule === "Tab") {
       return "device";
@@ -97,6 +100,7 @@ const SIGNIN_METHOD_KEYS = new Map<string, LoginMethod>([
   ["Device login-Tab", "device"],
   ["WeChat-Tab", "wechat"],
   ["WeChat-None", "wechat"],
+  ["Certificate-None", "certificate"],
 ]);
 
 function getSigninMethods(application: any, type: string) {
@@ -144,6 +148,8 @@ function getSigninMethodLabel(method: LoginMethod) {
     return i18next.t("login:Device login");
   case "wechat":
     return i18next.t("login:WeChat");
+  case "certificate":
+    return i18next.t("login:UKey or certificate");
   default:
     return i18next.t("login:Verification code");
   }
@@ -221,6 +227,9 @@ function getSigninMethodName(method: LoginMethod) {
   }
   if (method === "magicLink") {
     return "Magic link";
+  }
+  if (method === "certificate") {
+    return "Certificate";
   }
   return "Password";
 }
@@ -1069,6 +1078,43 @@ export default function LoginPage({type = "login", application: applicationProp,
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [application, location.search, preview]);
 
+  /**
+   * The visitor came back from the certificate sign-in port: its one-time ticket is posted as the credential,
+   * like a magic link, so MFA and every response type behave as for a password sign-in.
+   */
+  const certLoginHandled = React.useRef(false);
+  React.useEffect(() => {
+    if (preview || !application || certLoginHandled.current) {
+      return;
+    }
+    const searchParams = new URLSearchParams(location.search);
+    const token = searchParams.get("certLoginToken");
+    const error = searchParams.get("certLoginError");
+    if (!token && !error) {
+      return;
+    }
+
+    certLoginHandled.current = true;
+    CertLoginParams.forEach((param) => searchParams.delete(param));
+    const query = searchParams.toString();
+    window.history.replaceState(null, "", Setting.withBasePath(`${location.pathname}${query ? `?${query}` : ""}`));
+    setLoginMethod("certificate");
+
+    if (error) {
+      Setting.showMessage("error", error);
+      return;
+    }
+    doLogin(applyRequestType({
+      application: application.name,
+      organization: application.organization,
+      signinMethod: "Certificate",
+      code: token,
+      autoSignin: true,
+      language: Setting.getLanguage(),
+    }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [application, location.search, preview]);
+
   // A popup host wants to know when the visitor closes the window without signing in.
   React.useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
@@ -1327,7 +1373,7 @@ export default function LoginPage({type = "login", application: applicationProp,
   // each block of the form can be hidden from "Signin items" in the application
   const isVisible = (name: string) => Setting.isSigninItemVisible(application, name);
   // the QR panels replace the credential form entirely
-  const isPanelMethod = loginMethod === "wechat" || loginMethod === "device";
+  const isPanelMethod = loginMethod === "wechat" || loginMethod === "device" || loginMethod === "certificate";
   // device login is offered next to the form when the application asks for it
   const deviceLoginOnLoginPage = type !== "device" && (application.signinMethods ?? []).some(
     (item: any) => item.name === "Device login" && item.rule === "Login page",
@@ -1343,7 +1389,8 @@ export default function LoginPage({type = "login", application: applicationProp,
     : undefined;
   const showWechatQr = wechatQrShown && !!wechatCornerItem;
   // without any credential method there is no form, only the providers
-  const showForm = passwordEnabled || codeEnabled || webAuthnEnabled || ldapEnabled || faceIdEnabled || magicLinkEnabled;
+  const certLoginEnabled = Setting.isCertLoginEnabled(application);
+  const showForm = passwordEnabled || codeEnabled || webAuthnEnabled || ldapEnabled || faceIdEnabled || magicLinkEnabled || certLoginEnabled;
 
   if (singleProviderAuthUrl !== null) {
     return <AuthLoading application={application} preview={!!preview} />;
@@ -1458,6 +1505,9 @@ export default function LoginPage({type = "login", application: applicationProp,
       }
       if (loginMethod === "device") {
         return <DeviceLoginPanel key={key} application={application} onSuccess={completeDeviceLogin} />;
+      }
+      if (loginMethod === "certificate") {
+        return <CertLoginPanel key={key} application={application} />;
       }
       if (isCodeMethod && codeSentTo !== "") {
         return (

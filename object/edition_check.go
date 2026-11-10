@@ -34,6 +34,11 @@ func CheckApplicationEdition(application *Application) error {
 			return err
 		}
 	}
+	if application.IsCertLoginEnabled() {
+		if err := edition.Require(edition.Enterprise, edition.FeatureCertLogin); err != nil {
+			return err
+		}
+	}
 	if application.FormFill != nil && application.FormFill.Enabled {
 		if err := edition.Require(edition.Enterprise, edition.FeatureFormFill); err != nil {
 			return err
@@ -104,6 +109,9 @@ func checkOrganizationEnterpriseEdition(organization *Organization) error {
 	}
 	if len(policy.DelegatedAdmins) > 0 {
 		return edition.Require(edition.Enterprise, edition.FeatureDelegatedAdmin)
+	}
+	if policy.CertLogin.isEnabled() {
+		return edition.Require(edition.Enterprise, edition.FeatureCertLogin)
 	}
 	return nil
 }

@@ -317,6 +317,65 @@ function UpgradeCard() {
   );
 }
 
+/** The certificate sign-in port set in app.conf, shown only when it is. */
+function TlsListenersCard() {
+  const [listeners, setListeners] = React.useState<any[]>([]);
+
+  React.useEffect(() => {
+    SystemBackend.getTlsListeners().then((res: any) => {
+      if (res.status === "ok" && Array.isArray(res.data)) {
+        setListeners(res.data);
+      }
+    });
+  }, []);
+
+  if (listeners.length === 0) {
+    return null;
+  }
+
+
+  return (
+    <Card id="tls-listeners-card">
+      <CardHeader className="pb-3">
+        <CardTitle className="text-base">{i18next.t("system:Secure ports")}</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-3 text-sm">
+        {listeners.map((listener: any) => (
+          <div key={listener.name} className="space-y-1.5">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="font-medium">{i18next.t("system:Certificate login port")}</span>
+              <span className="font-mono text-xs text-muted-foreground">:{listener.port}</span>
+              <Badge variant={listener.running ? "success" : "destructive"}>
+                {listener.running ? i18next.t("system:Listening") : i18next.t("system:Not started")}
+              </Badge>
+            </div>
+            {listener.certificates?.length ? (
+              <p className="text-xs text-muted-foreground">
+                {i18next.t("cert:Certificate")}: <span className="break-all font-mono">{listener.certificates.join(", ")}</span>
+              </p>
+            ) : null}
+            {listener.error ? (
+              <Alert variant="destructive">
+                <AlertDescription>
+                  {listener.error}
+                  {listener.code === "edition-required" ? (
+                    <>
+                      {" "}
+                      <a href={PricingUrl} target="_blank" rel="noreferrer" className="underline underline-offset-2">
+                        {i18next.t("general:Learn more")}
+                      </a>
+                    </>
+                  ) : null}
+                </AlertDescription>
+              </Alert>
+            ) : null}
+          </div>
+        ))}
+      </CardContent>
+    </Card>
+  );
+}
+
 function LicenseCard() {
   const [license, setLicense] = React.useState<any>(null);
 
@@ -449,6 +508,7 @@ export default function SystemInfoPage() {
       <div className="grid gap-4 md:grid-cols-2">
         <UpgradeCard />
         <LicenseCard />
+        <TlsListenersCard />
       </div>
 
       {/* Memory and disk are one meter each; the CPU card is as many meters as the

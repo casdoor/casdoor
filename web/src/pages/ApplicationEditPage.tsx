@@ -101,7 +101,7 @@ export default function ApplicationEditPage() {
       knownProviders.includes(item.name),
     );
     const signinMethods = (application.signinMethods ?? []).filter((item: any) =>
-      ["Password", "Verification code", "Magic link", "WebAuthn", "LDAP", "Face ID", "Device login", "WeChat"].includes(item.name),
+      ["Password", "Verification code", "Magic link", "WebAuthn", "LDAP", "Face ID", "Device login", "WeChat", "Certificate"].includes(item.name),
     );
     // a row added but never given a name would show up on the signup page as a text box
     const signinItems = application.signinItems?.filter((item: any) => !item.name?.startsWith("Please select a signin item"));

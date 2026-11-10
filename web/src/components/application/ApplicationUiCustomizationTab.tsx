@@ -62,6 +62,7 @@ const SIGNIN_METHOD_NAMES: {name: string; labelKey: string}[] = [
   {name: "Face ID", labelKey: "login:Face ID"},
   {name: "Device login", labelKey: "login:Device login"},
   {name: "WeChat", labelKey: "login:WeChat"},
+  {name: "Certificate", labelKey: "login:UKey or certificate"},
 ];
 
 const SIGNUP_ITEM_TYPES: EnumMap = {
