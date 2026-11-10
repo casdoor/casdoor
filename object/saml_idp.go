@@ -332,8 +332,14 @@ func GetSamlMeta(application *Application, host string, enablePostBinding bool) 
 	return &d, nil
 }
 
+const maxSamlMessageSize = 1 << 20
+
 // decodeSamlMessage decodes a base64 SAML message, which is also deflated when it comes over the HTTP-Redirect binding
 func decodeSamlMessage(message string) ([]byte, error) {
+	if len(message) > base64.StdEncoding.EncodedLen(maxSamlMessageSize) {
+		return nil, fmt.Errorf("err: SAML message exceeds the maximum size of %d bytes", maxSamlMessageSize)
+	}
+
 	message = strings.ReplaceAll(message, " ", "+")
 	data, err := base64.StdEncoding.DecodeString(message)
 	if err != nil {
@@ -347,7 +353,18 @@ func decodeSamlMessage(message string) ([]byte, error) {
 		return plainXml, nil
 	}
 
-	return io.ReadAll(flate.NewReader(bytes.NewReader(data)))
+	reader := flate.NewReader(bytes.NewReader(data))
+	defer reader.Close()
+
+	inflated, err := io.ReadAll(io.LimitReader(reader, maxSamlMessageSize+1))
+	if err != nil {
+		return nil, err
+	}
+	if len(inflated) > maxSamlMessageSize {
+		return nil, fmt.Errorf("err: SAML message exceeds the maximum size of %d bytes", maxSamlMessageSize)
+	}
+
+	return inflated, nil
 }
 
 // getAuthnRequest parses the AuthnRequest sent by the SP, parameter samlRequest is the SAML request in base64 format
