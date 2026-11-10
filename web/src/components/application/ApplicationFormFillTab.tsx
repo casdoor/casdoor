@@ -13,6 +13,7 @@ export const FormFillExtensionUrl = "https://chromewebstore.google.com/detail/ca
 export const FormFillDesktopClientUrl = "https://github.com/casdoor/casdoor-desktop-autofill";
 
 const AutoFillMethod = "Auto";
+const AutoCaptchaCharset = "Auto";
 
 /** One desktop (C/S) program whose sign-in window the desktop autofill client fills. */
 function FormFillProgramCard({program, onChange, onRemove}: {program: any; onChange: (program: any) => void; onRemove: () => void}) {
@@ -100,6 +101,27 @@ export function ApplicationFormFillTab({application, updateField}: ApplicationTa
       <FormRow labelKey="application:Let users save their accounts">
         <Switch checked={!!formFill.allowSave} onCheckedChange={(v) => set("allowSave", v)} />
       </FormRow>
+      <FormRow labelKey="application:Recognize image captchas">
+        <Switch checked={!!formFill.captcha} onCheckedChange={(v) => set("captcha", v)} />
+      </FormRow>
+      {formFill.captcha ? (
+        <>
+          {selector("captchaSelector", "application:Captcha input selector")}
+          {selector("captchaImageSelector", "application:Captcha image selector")}
+          <FormRow labelKey="application:Captcha characters">
+            <SelectField
+              value={formFill.captchaCharset || AutoCaptchaCharset}
+              onChange={(v) => set("captchaCharset", v === AutoCaptchaCharset ? "" : v)}
+              options={[
+                {id: AutoCaptchaCharset, name: i18next.t("application:Decide from the page")},
+                {id: "Digits", name: i18next.t("application:Digits only")},
+                {id: "Alphanumeric", name: i18next.t("application:Letters and digits only")},
+                {id: "Any", name: i18next.t("application:Any characters")},
+              ]}
+            />
+          </FormRow>
+        </>
+      ) : null}
       <div className="col-span-full mt-4 border-t pt-4" data-label-key="application:Desktop programs">
         <div className="text-sm font-medium">{i18next.t("application:Desktop programs")}</div>
         <div className="mt-1 text-sm text-muted-foreground">

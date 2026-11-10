@@ -8,6 +8,7 @@
     "Form autofill is not available for the application: %s": "Automatyczne wypełnianie formularzy nie jest dostępne dla aplikacji %s",
     "Form autofill needs at least one sign-in page URL or desktop program": "Autouzupełnianie wymaga co najmniej jednego adresu strony logowania lub programu desktopowego",
     "The application: %s does not let users save their accounts": "Aplikacja %s nie pozwala użytkownikom zapisywać kont",
+    "The captcha characters: %s are not supported": "Znaki captcha: %s nie są obsługiwane",
     "The control: %s is invalid, it should be like id=txtUser or type=Edit;index=1": "Kontrolka: %s jest nieprawidłowa, powinna wyglądać jak id=txtUser lub type=Edit;index=1",
     "The desktop program must have the path of its executable": "Program desktopowy musi mieć ścieżkę do pliku wykonywalnego",
     "The fill method: %s is not supported": "Sposób wypełniania: %s nie jest obsługiwany",

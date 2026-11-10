@@ -39,6 +39,13 @@ type FormFill struct {
 	AllowSave bool `json:"allowSave"`
 	// the desktop (C/S) programs whose sign-in windows the desktop autofill client fills
 	Programs []*FormFillProgram `json:"programs"`
+	// whether the browser extension reads the image captcha of the sign-in page (on the user's computer), the CSS
+	// selectors of the captcha input and picture (found automatically when empty), and its characters: "" (digits
+	// when the page says so, else letters and digits), "Digits", "Alphanumeric" or "Any"
+	Captcha              bool   `json:"captcha"`
+	CaptchaSelector      string `json:"captchaSelector"`
+	CaptchaImageSelector string `json:"captchaImageSelector"`
+	CaptchaCharset       string `json:"captchaCharset"`
 }
 
 // FormFillSite is an application whose sign-in form the extension fills for the current user, without the passwords
@@ -53,7 +60,11 @@ type FormFillSite struct {
 	AutoSubmit       bool     `json:"autoSubmit"`
 	AllowSave        bool     `json:"allowSave"`
 	// the desktop programs, which have no secrets in them either
-	Programs []*FormFillProgram `json:"programs"`
+	Programs             []*FormFillProgram `json:"programs"`
+	Captcha              bool               `json:"captcha"`
+	CaptchaSelector      string             `json:"captchaSelector"`
+	CaptchaImageSelector string             `json:"captchaImageSelector"`
+	CaptchaCharset       string             `json:"captchaCharset"`
 	// the usernames of the user's managed accounts of the application
 	Accounts []string `json:"accounts"`
 }
@@ -69,6 +80,8 @@ func (formFill *FormFill) isOn() bool {
 }
 
 var formFillSchemeRegex = regexp.MustCompile(`^[a-zA-Z][a-zA-Z0-9+.-]*://`)
+
+var formFillCaptchaCharsets = map[string]bool{"": true, "Digits": true, "Alphanumeric": true, "Any": true}
 
 // splitFormFillUrl splits a sign-in page pattern or a page URL into its scheme (may be empty), host with port and the
 // rest of it
@@ -187,6 +200,9 @@ func ValidateFormFill(formFill *FormFill, lang string) error {
 			return err
 		}
 	}
+	if !formFillCaptchaCharsets[formFill.CaptchaCharset] {
+		return fmt.Errorf(i18n.Translate(lang, "application:The captcha characters: %s are not supported"), formFill.CaptchaCharset)
+	}
 	for _, pattern := range formFill.Urls {
 		scheme, host, _ := splitFormFillUrl(pattern)
 		if scheme != "" && scheme != "http" && scheme != "https" {
@@ -236,17 +252,21 @@ func GetFormFillSites(user *User) ([]*FormFillSite, error) {
 	for _, application := range applications {
 		formFill := application.FormFill
 		site := &FormFillSite{
-			Application:      application.Name,
-			DisplayName:      application.DisplayName,
-			Logo:             application.Logo,
-			Urls:             formFill.Urls,
-			UsernameSelector: formFill.UsernameSelector,
-			PasswordSelector: formFill.PasswordSelector,
-			SubmitSelector:   formFill.SubmitSelector,
-			AutoSubmit:       formFill.AutoSubmit,
-			AllowSave:        formFill.AllowSave,
-			Programs:         formFill.Programs,
-			Accounts:         []string{},
+			Application:          application.Name,
+			DisplayName:          application.DisplayName,
+			Logo:                 application.Logo,
+			Urls:                 formFill.Urls,
+			UsernameSelector:     formFill.UsernameSelector,
+			PasswordSelector:     formFill.PasswordSelector,
+			SubmitSelector:       formFill.SubmitSelector,
+			AutoSubmit:           formFill.AutoSubmit,
+			AllowSave:            formFill.AllowSave,
+			Programs:             formFill.Programs,
+			Captcha:              formFill.Captcha,
+			CaptchaSelector:      formFill.CaptchaSelector,
+			CaptchaImageSelector: formFill.CaptchaImageSelector,
+			CaptchaCharset:       formFill.CaptchaCharset,
+			Accounts:             []string{},
 		}
 		for _, account := range user.ManagedAccounts {
 			if account.Application == application.Name && account.Username != "" {

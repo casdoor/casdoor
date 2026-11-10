@@ -8,6 +8,7 @@
     "Form autofill is not available for the application: %s": "%s uygulaması için form otomatik doldurma kullanılamıyor",
     "Form autofill needs at least one sign-in page URL or desktop program": "Otomatik doldurma en az bir giriş sayfası URL'si veya masaüstü programı gerektirir",
     "The application: %s does not let users save their accounts": "%s uygulaması kullanıcıların hesaplarını kaydetmesine izin vermiyor",
+    "The captcha characters: %s are not supported": "Doğrulama kodu karakterleri: %s desteklenmiyor",
     "The control: %s is invalid, it should be like id=txtUser or type=Edit;index=1": "Denetim: %s geçersiz, id=txtUser veya type=Edit;index=1 gibi olmalı",
     "The desktop program must have the path of its executable": "Masaüstü programının çalıştırılabilir dosya yolu olmalıdır",
     "The fill method: %s is not supported": "Doldurma yöntemi: %s desteklenmiyor",

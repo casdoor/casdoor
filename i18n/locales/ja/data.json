@@ -8,6 +8,7 @@
     "Form autofill is not available for the application: %s": "アプリケーション %s ではフォーム自動入力が有効になっていません",
     "Form autofill needs at least one sign-in page URL or desktop program": "自動入力には少なくとも 1 つのサインインページ URL またはデスクトッププログラムが必要です",
     "The application: %s does not let users save their accounts": "アプリケーション %s ではユーザーがアカウントを保存できません",
+    "The captcha characters: %s are not supported": "CAPTCHA の文字：%s はサポートされていません",
     "The control: %s is invalid, it should be like id=txtUser or type=Edit;index=1": "コントロール：%s は無効です。id=txtUser や type=Edit;index=1 のように指定してください",
     "The desktop program must have the path of its executable": "デスクトッププログラムには実行ファイルのパスが必要です",
     "The fill method: %s is not supported": "入力方法：%s はサポートされていません",

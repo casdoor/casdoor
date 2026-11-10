@@ -8,6 +8,7 @@
     "Form autofill is not available for the application: %s": "Tự động điền biểu mẫu không khả dụng cho ứng dụng %s",
     "Form autofill needs at least one sign-in page URL or desktop program": "Tự động điền cần ít nhất một URL trang đăng nhập hoặc một chương trình máy tính",
     "The application: %s does not let users save their accounts": "Ứng dụng %s không cho phép người dùng lưu tài khoản của họ",
+    "The captcha characters: %s are not supported": "Ký tự captcha: %s không được hỗ trợ",
     "The control: %s is invalid, it should be like id=txtUser or type=Edit;index=1": "Điều khiển: %s không hợp lệ, phải có dạng id=txtUser hoặc type=Edit;index=1",
     "The desktop program must have the path of its executable": "Chương trình máy tính phải có đường dẫn tệp thực thi",
     "The fill method: %s is not supported": "Cách điền: %s không được hỗ trợ",
