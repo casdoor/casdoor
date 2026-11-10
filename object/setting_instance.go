@@ -19,6 +19,7 @@ import (
 	"sync"
 
 	"github.com/casdoor/casdoor/edition"
+	"github.com/casdoor/casdoor/upgrade"
 	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/core"
 )
@@ -83,5 +84,29 @@ func initLicenseReporter() {
 			}
 			return count
 		},
+		Deployment:   upgrade.GetDeploymentType,
+		DbVersion:    getDbVersion,
+		UpgradeState: upgrade.GetReportState,
 	})
+}
+
+func getDbVersion() string {
+	query := "SELECT VERSION()"
+	switch ormer.driverName {
+	case "sqlite":
+		query = "SELECT sqlite_version()"
+	case "mssql":
+		query = "SELECT @@VERSION"
+	}
+	res, err := ormer.Engine.QueryString(query)
+	if err != nil || len(res) == 0 {
+		return ""
+	}
+	for _, value := range res[0] {
+		if len(value) > 100 {
+			return value[:100]
+		}
+		return value
+	}
+	return ""
 }

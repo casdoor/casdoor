@@ -17,6 +17,8 @@ package controllers
 import (
 	"encoding/json"
 	"errors"
+	"io"
+	"os"
 	"strings"
 
 	"github.com/casdoor/casdoor/edition"
@@ -123,6 +125,68 @@ func (c *ApiController) UpgradeSystem() {
 
 	err = upgrade.StartUpgrade(req.Version, c.GetSessionUsername())
 	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	c.ResponseOk()
+}
+
+// GetLicenseReport
+// @Title GetLicenseReport
+// @Tag System API
+// @Description get the report of this Casdoor's license, environment and upgrades, for an instance that cannot reach the license server to send to the vendor
+// @Success 200 {string} The Response object
+// @router /get-license-report [get]
+func (c *ApiController) GetLicenseReport() {
+	if !c.RequireGlobalAdmin() {
+		return
+	}
+
+	report, err := edition.GetOfflineReport()
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	c.ResponseOk(report)
+}
+
+// UploadUpgradePackage
+// @Title UploadUpgradePackage
+// @Tag System API
+// @Description upgrade a Casdoor without Internet access from an uploaded official release package and the offline upgrade order from the vendor
+// @Param   order    formData   string  true        "The offline upgrade order"
+// @Param   file     formData   file    true        "The release package, e.g. casdoor_Linux_x86_64.tar.gz"
+// @Success 200 {object} controllers.Response The Response object
+// @router /upload-upgrade-package [post]
+func (c *ApiController) UploadUpgradePackage() {
+	if !c.RequireGlobalAdmin() {
+		return
+	}
+
+	file, _, err := c.GetFile("file")
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	defer file.Close()
+
+	tempFile, err := os.CreateTemp("", "casdoor-upgrade-*")
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	_, err = io.Copy(tempFile, file)
+	closeErr := tempFile.Close()
+	if err == nil {
+		err = closeErr
+	}
+	if err == nil {
+		err = upgrade.InstallUploadedPackage(c.GetString("order"), tempFile.Name(), c.GetSessionUsername())
+	}
+	if err != nil {
+		_ = os.Remove(tempFile.Name())
 		c.ResponseError(err.Error())
 		return
 	}

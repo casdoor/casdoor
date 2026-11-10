@@ -381,6 +381,8 @@ func InitAPI() {
 	web.Router("/api/get-tls-listeners", &controllers.ApiController{}, "GET:GetTlsListeners")
 	web.Router("/api/get-upgrade-info", &controllers.ApiController{}, "GET:GetUpgradeInfo")
 	web.Router("/api/upgrade-system", &controllers.ApiController{}, "POST:UpgradeSystem")
+	web.Router("/api/get-license-report", &controllers.ApiController{}, "GET:GetLicenseReport")
+	web.Router("/api/upload-upgrade-package", &controllers.ApiController{}, "POST:UploadUpgradePackage")
 	web.Router("/api/get-setting", &controllers.ApiController{}, "GET:GetSetting")
 	web.Router("/api/update-setting", &controllers.ApiController{}, "POST:UpdateSetting")
 	web.Router("/api/health", &controllers.ApiController{}, "GET:Health")

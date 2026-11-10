@@ -27,7 +27,7 @@ builds:
       - amd64
       - arm64
     ldflags:
-      - -s -w -X github.com/casdoor/casdoor/util.BuildType=release
+      - -s -w -X github.com/casdoor/casdoor/util.BuildType=release -X github.com/casdoor/casdoor/util.Version={{ .Tag }} -X github.com/casdoor/casdoor/util.CommitId={{ .ShortCommit }}
 
 archives:
   - format: tar.gz

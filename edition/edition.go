@@ -128,6 +128,8 @@ type LicenseInfo struct {
 	// for a global admin: this instance's ID and the code to send for an offline activation
 	InstanceId     string `json:"instanceId,omitempty"`
 	ActivationCode string `json:"activationCode,omitempty"`
+	// for a global admin: the upgrade the license server asks for
+	UpgradeOrder *UpgradeOrder `json:"upgradeOrder,omitempty"`
 }
 
 var (
@@ -345,7 +347,7 @@ func Require(edition string, feature string) error {
 
 func GetLicenseInfo() *LicenseInfo {
 	_, _, err := getState()
-	info := &LicenseInfo{Edition: Get(), Features: GetFeatures(), Kind: getKind(), InstanceId: getInstanceId(), ActivationCode: GetActivationCode()}
+	info := &LicenseInfo{Edition: Get(), Features: GetFeatures(), Kind: getKind(), InstanceId: getInstanceId(), ActivationCode: GetActivationCode(), UpgradeOrder: GetUpgradeOrder()}
 	if err != nil {
 		info.Error = err.Error()
 	}

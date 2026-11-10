@@ -31,6 +31,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/util"
 )
 
@@ -46,8 +47,14 @@ func (progressWriter) Write(p []byte) (int, error) {
 	return len(p), nil
 }
 
+// getReleaseFileUrl takes releaseDownloadUrl from app.conf for a mirror of GitHub Releases, e.g. one inside the
+// customer's network, laid out as <url>/<tag>/<file>
 func getReleaseFileUrl(tag string, name string) string {
-	return fmt.Sprintf("%s/%s/%s", releaseDownloadUrl, tag, name)
+	baseUrl := strings.TrimRight(conf.GetConfigString("releaseDownloadUrl"), "/")
+	if baseUrl == "" {
+		baseUrl = releaseDownloadUrl
+	}
+	return fmt.Sprintf("%s/%s/%s", baseUrl, tag, name)
 }
 
 func download(url string, timeout time.Duration) (*http.Response, error) {
@@ -329,15 +336,35 @@ func replaceExecutable(exePath string, newExePath string) error {
 	return nil
 }
 
-func installRelease(release *Release) (string, error) {
+func checkFileChecksum(filePath string, expectedChecksum string) error {
+	file, err := os.Open(filePath)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	hash := sha256.New()
+	if _, err = io.Copy(hash, io.LimitReader(file, maxArchiveSize+1)); err != nil {
+		return err
+	}
+	checksum := hex.EncodeToString(hash.Sum(nil))
+	if checksum != expectedChecksum {
+		return fmt.Errorf("the SHA-256 of the uploaded package is %s, but the upgrade order says %s for %s", checksum, expectedChecksum, getAssetName())
+	}
+	return nil
+}
+
+// installRelease puts the release in place of the running binary and frontend, from a download or the local
+// archivePath, and returns the binary and the folder holding the previous version
+func installRelease(release *Release, expectedChecksum string, localArchivePath string) (string, string, error) {
 	assetName := getAssetName()
 	if assetName == "" {
-		return "", fmt.Errorf("there is no release package for %s/%s", runtime.GOOS, runtime.GOARCH)
+		return "", "", fmt.Errorf("there is no release package for %s/%s", runtime.GOOS, runtime.GOARCH)
 	}
 
 	exePath, err := getExecutablePath()
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 	exeDir := filepath.Dir(exePath)
 
@@ -348,22 +375,32 @@ func installRelease(release *Release) (string, error) {
 
 	stagingDir, err := os.MkdirTemp(exeDir, ".upgrade-")
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 	defer os.RemoveAll(stagingDir)
 
-	expectedChecksum, err := getExpectedChecksum(release.TagName, assetName)
-	if err != nil {
-		return "", err
-	}
+	archivePath := localArchivePath
+	if archivePath != "" {
+		err = checkFileChecksum(archivePath, expectedChecksum)
+		if err != nil {
+			return "", "", err
+		}
+	} else {
+		if expectedChecksum == "" {
+			expectedChecksum, err = getExpectedChecksum(release.TagName, assetName)
+			if err != nil {
+				return "", "", err
+			}
+		}
 
-	if asset := release.getAsset(assetName); asset != nil {
-		setStatus(func(status *UpgradeStatus) { status.Total = asset.Size })
-	}
-	archivePath := filepath.Join(stagingDir, assetName)
-	err = downloadArchive(release.TagName, assetName, archivePath, expectedChecksum)
-	if err != nil {
-		return "", err
+		if asset := release.getAsset(assetName); asset != nil {
+			setStatus(func(status *UpgradeStatus) { status.Total = asset.Size })
+		}
+		archivePath = filepath.Join(stagingDir, assetName)
+		err = downloadArchive(release.TagName, assetName, archivePath, expectedChecksum)
+		if err != nil {
+			return "", "", err
+		}
 	}
 
 	setStatus(func(status *UpgradeStatus) { status.State = StateInstalling })
@@ -375,44 +412,44 @@ func installRelease(release *Release) (string, error) {
 		err = extractTarGz(archivePath, extractDir)
 	}
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 
 	newExePath := filepath.Join(extractDir, getBinaryName())
 	if !util.FileExist(newExePath) {
-		return "", fmt.Errorf("%s has no %s", assetName, getBinaryName())
+		return "", "", fmt.Errorf("%s has no %s", assetName, getBinaryName())
 	}
 
 	webDir := getWebBuildDir(exeDir)
 	newWebDir := filepath.Join(extractDir, "web", "build")
 	if webDir != "" && !util.FileExist(filepath.Join(newWebDir, "index.html")) {
-		return "", fmt.Errorf("%s has no web/build/index.html", assetName)
+		return "", "", fmt.Errorf("%s has no web/build/index.html", assetName)
 	}
 
 	backupDir := filepath.Join(exeDir, "backup", fmt.Sprintf("%s_%s", util.Version, time.Now().Format("20060102150405")))
 	err = os.MkdirAll(backupDir, 0o755)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 	err = copyFile(exePath, filepath.Join(backupDir, filepath.Base(exePath)))
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 
 	backupWebDir := filepath.Join(backupDir, "web", "build")
 	if webDir != "" {
 		err = os.MkdirAll(filepath.Dir(backupWebDir), 0o755)
 		if err != nil {
-			return "", err
+			return "", "", err
 		}
 		err = renameFile(webDir, backupWebDir)
 		if err != nil {
-			return "", err
+			return "", "", err
 		}
 		err = renameFile(newWebDir, webDir)
 		if err != nil {
 			_ = renameFile(backupWebDir, webDir)
-			return "", err
+			return "", "", err
 		}
 	}
 
@@ -422,8 +459,8 @@ func installRelease(release *Release) (string, error) {
 			_ = os.RemoveAll(webDir)
 			_ = renameFile(backupWebDir, webDir)
 		}
-		return "", err
+		return "", "", err
 	}
 
-	return exePath, nil
+	return exePath, backupDir, nil
 }

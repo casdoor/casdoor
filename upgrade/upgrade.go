@@ -29,12 +29,14 @@ import (
 
 	"github.com/beego/beego/v2/core/logs"
 	"github.com/casdoor/casdoor/conf"
+	"github.com/casdoor/casdoor/edition"
 	"github.com/casdoor/casdoor/proxy"
 	"github.com/casdoor/casdoor/util"
 )
 
 const (
 	latestReleaseUrl   = "https://api.github.com/repos/casdoor/casdoor/releases/latest"
+	releaseByTagUrl    = "https://api.github.com/repos/casdoor/casdoor/releases/tags/"
 	releaseDownloadUrl = "https://github.com/casdoor/casdoor/releases/download"
 	checkCacheTtl      = time.Hour
 	checkErrorCacheTtl = 10 * time.Minute
@@ -67,9 +69,19 @@ type Release struct {
 type UpgradeStatus struct {
 	State      string `json:"state"`
 	Version    string `json:"version"`
+	OrderId    string `json:"orderId,omitempty"`
 	Downloaded int64  `json:"downloaded"`
 	Total      int64  `json:"total"`
 	Error      string `json:"error"`
+}
+
+// VendorOrder is the upgrade the license server asks for, shown to the admin
+type VendorOrder struct {
+	Id         string `json:"id"`
+	Version    string `json:"version"`
+	Note       string `json:"note"`
+	IssuedTime string `json:"issuedTime"`
+	CanUpgrade bool   `json:"canUpgrade"`
 }
 
 type UpgradeInfo struct {
@@ -85,6 +97,11 @@ type UpgradeInfo struct {
 	IsUpgradeDisabled bool           `json:"isUpgradeDisabled"`
 	CanUpgrade        bool           `json:"canUpgrade"`
 	Status            *UpgradeStatus `json:"status"`
+	// the upgrade the license server asks for, which starts by itself when allowVendorUpgrade is set in app.conf
+	VendorOrder        *VendorOrder   `json:"vendorOrder"`
+	AllowVendorUpgrade bool           `json:"allowVendorUpgrade"`
+	AssetName          string         `json:"assetName"`
+	LastResult         *UpgradeResult `json:"lastResult"`
 }
 
 var (
@@ -103,6 +120,10 @@ func isCheckDisabled() bool {
 
 func isUpgradeDisabled() bool {
 	return conf.GetConfigBool("disableUpgrade") || conf.IsDemoMode()
+}
+
+func isVendorUpgradeAllowed() bool {
+	return conf.GetConfigBool("allowVendorUpgrade")
 }
 
 func isDocker() bool {
@@ -188,7 +209,11 @@ func newRequest(url string) (*http.Request, error) {
 }
 
 func fetchLatestRelease() (*Release, error) {
-	req, err := newRequest(latestReleaseUrl)
+	return fetchRelease(latestReleaseUrl)
+}
+
+func fetchRelease(url string) (*Release, error) {
+	req, err := newRequest(url)
 	if err != nil {
 		return nil, err
 	}
@@ -280,15 +305,37 @@ func isUpgrading(state string) bool {
 	return state == StateDownloading || state == StateInstalling || state == StateRestarting
 }
 
+func canInstallHere() bool {
+	return GetDeploymentType() == DeploymentRelease && !isUpgradeDisabled() && getAssetName() != ""
+}
+
+// isOrderPending tells whether an order still asks for a version other than the running one
+func isOrderPending(order *edition.UpgradeOrder) bool {
+	currentVersion, commitOffset := getCurrentVersion()
+	return order != nil && releaseTagRegex.MatchString(order.Version) && (order.Version != currentVersion || commitOffset > 0)
+}
+
 func GetUpgradeInfo() *UpgradeInfo {
 	currentVersion, commitOffset := getCurrentVersion()
 	info := &UpgradeInfo{
-		CurrentVersion:    currentVersion,
-		CommitOffset:      commitOffset,
-		DeploymentType:    GetDeploymentType(),
-		IsCheckDisabled:   isCheckDisabled(),
-		IsUpgradeDisabled: isUpgradeDisabled(),
-		Status:            getStatus(),
+		CurrentVersion:     currentVersion,
+		CommitOffset:       commitOffset,
+		DeploymentType:     GetDeploymentType(),
+		IsCheckDisabled:    isCheckDisabled(),
+		IsUpgradeDisabled:  isUpgradeDisabled(),
+		Status:             getStatus(),
+		AllowVendorUpgrade: isVendorUpgradeAllowed(),
+		AssetName:          getAssetName(),
+		LastResult:         GetLastResult(),
+	}
+	if order := edition.GetUpgradeOrder(); isOrderPending(order) {
+		info.VendorOrder = &VendorOrder{
+			Id:         order.Id,
+			Version:    order.Version,
+			Note:       order.Note,
+			IssuedTime: order.IssuedTime,
+			CanUpgrade: canInstallHere(),
+		}
 	}
 	if info.IsCheckDisabled {
 		return info
@@ -309,9 +356,14 @@ func GetUpgradeInfo() *UpgradeInfo {
 	return info
 }
 
-// StartUpgrade checks that version is the latest release and installs it in the background, the progress is
-// reported by GetUpgradeInfo()
+// StartUpgrade installs version in the background, which must be the latest release or the one the license server
+// asks for; the progress is reported by GetUpgradeInfo()
 func StartUpgrade(version string, operator string) error {
+	order := edition.GetUpgradeOrder()
+	if isOrderPending(order) && version == order.Version {
+		return startOrderedUpgrade(order, "", operator)
+	}
+
 	info := GetUpgradeInfo()
 	if !info.CanUpgrade {
 		switch {
@@ -335,22 +387,97 @@ func StartUpgrade(version string, operator string) error {
 	if err != nil {
 		return err
 	}
+	return startUpgrade(release, "", "", "", operator)
+}
 
+// startOrderedUpgrade installs the release of an upgrade order, downloaded or, for an instance without Internet
+// access, from archivePath that the admin uploaded; the checksum in the signed order is trusted over the release's
+func startOrderedUpgrade(order *edition.UpgradeOrder, archivePath string, operator string) error {
+	switch {
+	case GetDeploymentType() != DeploymentRelease:
+		return fmt.Errorf("only an official release binary can upgrade itself, this Casdoor is deployed as: %s", GetDeploymentType())
+	case isUpgradeDisabled():
+		return fmt.Errorf("upgrading is disabled by disableUpgrade in app.conf")
+	case getAssetName() == "":
+		return fmt.Errorf("there is no release package for %s/%s", runtime.GOOS, runtime.GOARCH)
+	case !releaseTagRegex.MatchString(order.Version):
+		return fmt.Errorf("the upgrade order asks for an invalid version: %s", order.Version)
+	}
+
+	checksum := strings.ToLower(order.Checksums[getAssetName()])
+	if archivePath != "" && checksum == "" {
+		return fmt.Errorf("the upgrade order has no checksum of %s, ask for an offline upgrade order", getAssetName())
+	}
+
+	release := &Release{TagName: order.Version}
+	if checksum == "" {
+		var err error
+		release, err = fetchRelease(releaseByTagUrl + order.Version)
+		if err != nil {
+			return fmt.Errorf("failed to get the release %s: %s", order.Version, err.Error())
+		}
+		if release.TagName != order.Version || release.getAsset(getAssetName()) == nil || release.getAsset(getChecksumsName(release.TagName)) == nil {
+			return fmt.Errorf("the release %s has no package for %s/%s", order.Version, runtime.GOOS, runtime.GOARCH)
+		}
+	}
+	return startUpgrade(release, checksum, archivePath, order.Id, operator)
+}
+
+func startUpgrade(release *Release, checksum string, archivePath string, orderId string, operator string) error {
 	statusMutex.Lock()
 	if isUpgrading(status.State) {
 		statusMutex.Unlock()
 		return fmt.Errorf("an upgrade to %s is already in progress", status.Version)
 	}
-	status = &UpgradeStatus{State: StateDownloading, Version: release.TagName}
+	status = &UpgradeStatus{State: StateDownloading, Version: release.TagName, OrderId: orderId}
+	if archivePath != "" {
+		status.State = StateInstalling
+	}
 	statusMutex.Unlock()
 
 	logs.Info("upgrade from %s to %s started by %s", util.Version, release.TagName, operator)
-	util.SafeGoroutine(func() { runUpgrade(release) })
+	util.SafeGoroutine(func() { runUpgrade(release, checksum, archivePath, orderId) })
 	return nil
 }
 
-func runUpgrade(release *Release) {
-	exePath, err := installRelease(release)
+// InstallUploadedPackage upgrades an instance without Internet access from a release package the admin uploaded,
+// with the offline upgrade order the vendor gave
+func InstallUploadedPackage(orderText string, archivePath string, operator string) error {
+	order, err := edition.ParseUpgradeOrder(orderText)
+	if err != nil {
+		return err
+	}
+	return startOrderedUpgrade(order, archivePath, operator)
+}
+
+// onUpgradeOrder starts the upgrade a new order asks for when the admin let the vendor upgrade this instance
+func onUpgradeOrder(order *edition.UpgradeOrder) {
+	if !isVendorUpgradeAllowed() || !isOrderPending(order) || !canInstallHere() || isUpgrading(getStatus().State) {
+		return
+	}
+	err := startOrderedUpgrade(order, "", "the license server")
+	if err != nil {
+		logs.Warn("upgrade: failed to start the upgrade to %s that the license server asks for: %s", order.Version, err.Error())
+		setStatus(func(status *UpgradeStatus) {
+			if !isUpgrading(status.State) {
+				status.State = StateFailed
+				status.Version = order.Version
+				status.OrderId = order.Id
+				status.Error = err.Error()
+			}
+		})
+	}
+}
+
+func init() {
+	edition.SetUpgradeOrderHandler(onUpgradeOrder)
+}
+
+func runUpgrade(release *Release, checksum string, archivePath string, orderId string) {
+	if archivePath != "" {
+		defer os.Remove(archivePath)
+	}
+	exePath, backupDir, err := installRelease(release, checksum, archivePath)
 	if err != nil {
 		logs.Error("upgrade to %s failed: %s", release.TagName, err.Error())
 		setStatus(func(status *UpgradeStatus) {
@@ -359,6 +486,14 @@ func runUpgrade(release *Release) {
 		})
 		return
 	}
+
+	writePendingUpgrade(&pendingUpgrade{
+		From:      util.Version,
+		To:        release.TagName,
+		OrderId:   orderId,
+		BackupDir: backupDir,
+		Time:      time.Now().Format(time.RFC3339),
+	})
 
 	logs.Info("upgrade to %s installed, restarting", release.TagName)
 	setStatus(func(status *UpgradeStatus) { status.State = StateRestarting })

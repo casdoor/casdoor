@@ -37,9 +37,12 @@ const defaultLicenseServer = "https://admin.casdoor.com"
 
 // Reporter gives what a licensed Casdoor tells the license server about itself
 type Reporter struct {
-	InstanceId func() string
-	Version    func() string
-	UserCount  func() int64
+	InstanceId   func() string
+	Version      func() string
+	UserCount    func() int64
+	Deployment   func() string
+	DbVersion    func() string
+	UpgradeState func() interface{}
 }
 
 var (
@@ -131,6 +134,7 @@ type reportResponse struct {
 		Status  string `json:"status"`
 		License string `json:"license"`
 		Message string `json:"message"`
+		Upgrade string `json:"upgrade"`
 	} `json:"data"`
 }
 
@@ -145,6 +149,53 @@ func reportLoop() {
 		}
 		time.Sleep(time.Hour)
 	}
+}
+
+func getReportBody(r *Reporter, text string, source string) map[string]interface{} {
+	hostname, _ := os.Hostname()
+	userCount := int64(0)
+	if r.UserCount != nil {
+		userCount = r.UserCount()
+	}
+	var upgradeState interface{}
+	if r.UpgradeState != nil {
+		upgradeState = r.UpgradeState()
+	}
+	res := map[string]interface{}{
+		"license":     text,
+		"instanceId":  getInstanceId(),
+		"fingerprint": getFingerprint(),
+		"hostname":    hostname,
+		"version":     getVersion(),
+		"edition":     Get(),
+		"userCount":   userCount,
+		"environment": collectEnvironment(),
+		"upgrade":     upgradeState,
+	}
+	if source != "" {
+		res["source"] = source
+		res["time"] = time.Now().Format(time.RFC3339)
+	}
+	return res
+}
+
+// GetOfflineReport is the report of an instance that cannot reach the license server, which a customer copies to the vendor
+func GetOfflineReport() (string, error) {
+	r := getReporter()
+	if r == nil {
+		return "", fmt.Errorf("the database is not ready")
+	}
+	stateMu.RLock()
+	text := currentText
+	stateMu.RUnlock()
+	if text == "" {
+		return "", fmt.Errorf("no valid license is configured")
+	}
+	data, err := json.Marshal(getReportBody(r, text, "offline"))
+	if err != nil {
+		return "", err
+	}
+	return base64.RawURLEncoding.EncodeToString(data), nil
 }
 
 func report() error {
@@ -173,20 +224,7 @@ func report() error {
 		return nil
 	}
 
-	hostname, _ := os.Hostname()
-	userCount := int64(0)
-	if r.UserCount != nil {
-		userCount = r.UserCount()
-	}
-	body, err := json.Marshal(map[string]interface{}{
-		"license":     text,
-		"instanceId":  getInstanceId(),
-		"fingerprint": getFingerprint(),
-		"hostname":    hostname,
-		"version":     getVersion(),
-		"edition":     Get(),
-		"userCount":   userCount,
-	})
+	body, err := json.Marshal(getReportBody(r, text, ""))
 	if err != nil {
 		return err
 	}
@@ -226,6 +264,14 @@ func report() error {
 		}
 		rejectedErr = nil
 		stateMu.Unlock()
+	}
+
+	if res.Data.Upgrade == "" {
+		setUpgradeOrder(nil)
+	} else if order, err := ParseUpgradeOrder(res.Data.Upgrade); err != nil {
+		logs.Warn("license: ignored the upgrade order from the license server: %s", err.Error())
+	} else {
+		setUpgradeOrder(order)
 	}
 
 	if res.Data.License != "" && strings.TrimSpace(res.Data.License) != text {

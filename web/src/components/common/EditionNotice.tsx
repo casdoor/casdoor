@@ -1,5 +1,6 @@
 import * as React from "react";
 import i18next from "i18next";
+import {Link} from "react-router-dom";
 import * as SystemBackend from "@/backend/SystemInfo";
 import * as Conf from "@/Conf";
 import {PricingUrl} from "@/lib/setting";
@@ -14,6 +15,8 @@ interface LicenseInfo {
   // or "form-fill" for a commercial edition license
   features?: string[];
   error?: string;
+  // for a global admin: the upgrade the license server asks for
+  upgradeOrder?: {version: string; note?: string};
 }
 
 let licensePromise: Promise<LicenseInfo> | null = null;
@@ -92,6 +95,17 @@ export function EditionNotice({edition = "Commercial", message}: {edition?: stri
 /** Tells the administrators of the console that the configured license is invalid or has expired, so the paid features are off. */
 export function LicenseBanner() {
   const info = useLicenseInfo();
+  if (!info?.error && info?.upgradeOrder) {
+    return (
+      <div className="border-b border-primary/30 bg-primary/5 px-4 py-2 text-sm md:px-6">
+        {i18next.t("system:Casdoor support suggests upgrading to")} {info.upgradeOrder.version}
+        {info.upgradeOrder.note ? `: ${info.upgradeOrder.note}` : ""}{" "}
+        <Link to="/sysinfo" className="font-medium underline underline-offset-2">
+          {i18next.t("system:Go to upgrade")}
+        </Link>
+      </div>
+    );
+  }
   if (!info?.error) {
     return null;
   }
