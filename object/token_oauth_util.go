@@ -409,7 +409,7 @@ func CheckOAuthLogin(clientId string, organization string, responseType string, 
 		return i18n.Translate(lang, "token:Invalid client_id"), nil, nil
 	}
 
-	if !application.IsRedirectUriValid(redirectUri) {
+	if !application.IsOAuthRedirectUriValid(redirectUri) {
 		return fmt.Sprintf(i18n.Translate(lang, "token:Redirect URI: %s doesn't exist in the allowed Redirect URI list"), redirectUri), application, nil
 	}
 
@@ -752,6 +752,8 @@ func RefreshToken(application *Application, grantType string, refreshToken strin
 		TokenType:    "Bearer",
 		Resource:     resource,
 		GrantType:    token.GrantType,
+		// the refreshed token of a public client can be refreshed again without the client secret
+		CodeChallenge: token.CodeChallenge,
 		// the refreshed token stays bound to the login session that minted the original one
 		SessionId: token.SessionId,
 	}
@@ -794,7 +796,8 @@ func RefreshToken(application *Application, grantType string, refreshToken strin
 var clientAuthenticatedGrantTypes = []string{"authorization_code", "urn:ietf:params:oauth:grant-type:token-exchange"}
 
 func checkRefreshClientSecret(application *Application, token *Token, clientSecret string) *TokenError {
-	if clientSecret == "" && !util.InSlice(clientAuthenticatedGrantTypes, token.GrantType) {
+	// a token of PKCE was got without the client secret, by a public client that has none (like RevokeToken)
+	if clientSecret == "" && (!util.InSlice(clientAuthenticatedGrantTypes, token.GrantType) || token.CodeChallenge != "") {
 		return nil
 	}
 
