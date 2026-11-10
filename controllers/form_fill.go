@@ -21,6 +21,19 @@ import (
 	"github.com/casdoor/casdoor/object"
 )
 
+// getFormFillTarget reads where the client fills the form: the page URL for the browser extension, the program and
+// its window for the desktop client
+func (c *ApiController) getFormFillTarget() *object.FormFillTarget {
+	return &object.FormFillTarget{
+		Url:       c.Ctx.Input.Query("url"),
+		Program:   c.Ctx.Input.Query("program"),
+		Title:     c.Ctx.Input.Query("title"),
+		Publisher: c.Ctx.Input.Query("publisher"),
+		FileHash:  c.Ctx.Input.Query("fileHash"),
+		Launch:    c.Ctx.Input.Query("launch") == "true",
+	}
+}
+
 // requireFormFillUser returns the signed-in user for form autofill. Only users themselves get their managed accounts,
 // an application credential can't act as a user here.
 func (c *ApiController) requireFormFillUser() (*object.User, bool) {
@@ -73,7 +86,12 @@ func (c *ApiController) GetFormFillSites() {
 // @Description get the current user's managed account of an application to fill its sign-in form, every call is recorded
 // @Param   application query string true  "The application name"
 // @Param   username    query string false "The username of the managed account, the first one when empty"
-// @Param   url         query string true  "The sign-in page the form is on"
+// @Param   url         query string false "The sign-in page the form is on, for the browser extension"
+// @Param   program     query string false "The full path of the desktop program, for the desktop client"
+// @Param   title       query string false "The title of the program's sign-in window"
+// @Param   publisher   query string false "The subject CN of the program's Authenticode certificate"
+// @Param   fileHash    query string false "The SHA-256 of the program's executable"
+// @Param   launch      query string false "true when the client starts the program with the account in its command line"
 // @Success 200 {object} object.FormFillAccount The Response object
 // @router /get-form-fill-account [get]
 func (c *ApiController) GetFormFillAccount() {
@@ -83,8 +101,7 @@ func (c *ApiController) GetFormFillAccount() {
 	}
 	application := c.Ctx.Input.Query("application")
 	username := c.Ctx.Input.Query("username")
-	pageUrl := c.Ctx.Input.Query("url")
-	account, err := object.GetFormFillAccount(user, application, username, pageUrl, c.GetAcceptLanguage())
+	account, err := object.GetFormFillAccount(user, application, username, c.getFormFillTarget(), c.GetAcceptLanguage())
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -97,6 +114,10 @@ type saveFormFillAccountForm struct {
 	Username    string `json:"username"`
 	Password    string `json:"password"`
 	Url         string `json:"url"`
+	Program     string `json:"program"`
+	Title       string `json:"title"`
+	Publisher   string `json:"publisher"`
+	FileHash    string `json:"fileHash"`
 }
 
 // SaveFormFillAccount
@@ -116,7 +137,8 @@ func (c *ApiController) SaveFormFillAccount() {
 		c.ResponseError(err.Error())
 		return
 	}
-	err := object.SaveFormFillAccount(user, form.Application, form.Username, form.Password, form.Url, c.GetAcceptLanguage())
+	target := &object.FormFillTarget{Url: form.Url, Program: form.Program, Title: form.Title, Publisher: form.Publisher, FileHash: form.FileHash}
+	err := object.SaveFormFillAccount(user, form.Application, form.Username, form.Password, target, c.GetAcceptLanguage())
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

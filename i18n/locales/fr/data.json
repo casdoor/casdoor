@@ -6,13 +6,19 @@
   },
   "application": {
     "Form autofill is not available for the application: %s": "Le remplissage automatique des formulaires n'est pas disponible pour l'application %s",
-    "Form autofill needs at least one sign-in page URL": "Le remplissage automatique des formulaires nécessite au moins une URL de page de connexion",
+    "Form autofill needs at least one sign-in page URL or desktop program": "Le remplissage automatique nécessite au moins une URL de page de connexion ou un programme de bureau",
     "The application: %s does not let users save their accounts": "L'application %s ne permet pas aux utilisateurs d'enregistrer leurs comptes",
+    "The control: %s is invalid, it should be like id=txtUser or type=Edit;index=1": "Le contrôle : %s n'est pas valide, il devrait ressembler à id=txtUser ou type=Edit;index=1",
+    "The desktop program must have the path of its executable": "Le programme de bureau doit avoir le chemin de son exécutable",
+    "The fill method: %s is not supported": "La méthode de remplissage : %s n'est pas prise en charge",
+    "The key: {%s} is not supported, use {username}, {password}, {TAB}, {ENTER} or {WAIT}": "La touche : {%s} n'est pas prise en charge, utilisez {username}, {password}, {TAB}, {ENTER} ou {WAIT}",
     "The page: %s is not a sign-in page of the application: %s": "La page %s n'est pas une page de connexion de l'application %s",
+    "The regular expression: %s is invalid: %s": "L'expression régulière : %s n'est pas valide : %s",
     "The sign-in page URL: %s is invalid: %s": "L'URL de page de connexion %s est invalide : %s",
     "The sign-in page URL: %s is not an http or https URL": "L'URL de page de connexion %s n'est pas une URL http ou https",
     "The sign-in page URL: %s must start with a host, where * is only allowed as *. at the beginning": "L'URL de page de connexion %s doit commencer par un hôte, * n'est autorisé que sous la forme *. au début",
     "The username and the password must not be empty": "Le nom d'utilisateur et le mot de passe ne doivent pas être vides",
+    "The window of the program: %s is not a sign-in window of the application: %s": "La fenêtre du programme : %s n'est pas une fenêtre de connexion de l'application : %s",
     "You have no managed account of the application: %s": "Vous n'avez aucun compte géré pour l'application %s"
   },
   "auth": {

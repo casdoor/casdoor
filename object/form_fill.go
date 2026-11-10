@@ -37,6 +37,8 @@ type FormFill struct {
 	AutoSubmit       bool   `json:"autoSubmit"`
 	// whether users may save the account they sign in with by hand, so that it is filled the next time
 	AllowSave bool `json:"allowSave"`
+	// the desktop (C/S) programs whose sign-in windows the desktop autofill client fills
+	Programs []*FormFillProgram `json:"programs"`
 }
 
 // FormFillSite is an application whose sign-in form the extension fills for the current user, without the passwords
@@ -50,6 +52,8 @@ type FormFillSite struct {
 	SubmitSelector   string   `json:"submitSelector"`
 	AutoSubmit       bool     `json:"autoSubmit"`
 	AllowSave        bool     `json:"allowSave"`
+	// the desktop programs, which have no secrets in them either
+	Programs []*FormFillProgram `json:"programs"`
 	// the usernames of the user's managed accounts of the application
 	Accounts []string `json:"accounts"`
 }
@@ -134,13 +138,52 @@ func (formFill *FormFill) matchUrl(pageUrl string) bool {
 	return false
 }
 
+// FormFillTarget is where a client is about to fill a sign-in form: a web page, or a window of a desktop program
+type FormFillTarget struct {
+	Url string
+	// the full path of the program's executable, and the sign-in window's title
+	Program   string
+	Title     string
+	Publisher string
+	FileHash  string
+	// the client is starting the program with the account in its command line, there is no window yet
+	Launch bool
+}
+
+func (formFill *FormFill) matchTarget(target *FormFillTarget) bool {
+	if target.Program == "" {
+		return formFill.matchUrl(target.Url)
+	}
+	for _, program := range formFill.Programs {
+		if program.match(target) {
+			return true
+		}
+	}
+	return false
+}
+
+func (target *FormFillTarget) String() string {
+	if target.Program == "" {
+		return target.Url
+	}
+	if target.Title == "" {
+		return target.Program
+	}
+	return fmt.Sprintf("%s (%s)", target.Program, target.Title)
+}
+
 // ValidateFormFill checks the sign-in pages of an application's form autofill
 func ValidateFormFill(formFill *FormFill, lang string) error {
 	if !formFill.isOn() {
 		return nil
 	}
-	if len(formFill.Urls) == 0 {
-		return errors.New(i18n.Translate(lang, "application:Form autofill needs at least one sign-in page URL"))
+	if len(formFill.Urls) == 0 && len(formFill.Programs) == 0 {
+		return errors.New(i18n.Translate(lang, "application:Form autofill needs at least one sign-in page URL or desktop program"))
+	}
+	for _, program := range formFill.Programs {
+		if err := program.validate(lang); err != nil {
+			return err
+		}
 	}
 	for _, pattern := range formFill.Urls {
 		scheme, host, _ := splitFormFillUrl(pattern)
@@ -200,6 +243,7 @@ func GetFormFillSites(user *User) ([]*FormFillSite, error) {
 			SubmitSelector:   formFill.SubmitSelector,
 			AutoSubmit:       formFill.AutoSubmit,
 			AllowSave:        formFill.AllowSave,
+			Programs:         formFill.Programs,
 			Accounts:         []string{},
 		}
 		for _, account := range user.ManagedAccounts {
@@ -214,7 +258,7 @@ func GetFormFillSites(user *User) ([]*FormFillSite, error) {
 	return sites, nil
 }
 
-func getFormFillApplication(user *User, applicationName string, pageUrl string, lang string) (*Application, error) {
+func getFormFillApplication(user *User, applicationName string, target *FormFillTarget, lang string) (*Application, error) {
 	applications, err := getFormFillApplications(user)
 	if err != nil {
 		return nil, err
@@ -223,8 +267,11 @@ func getFormFillApplication(user *User, applicationName string, pageUrl string, 
 		if application.Name != applicationName {
 			continue
 		}
-		if !application.FormFill.matchUrl(pageUrl) {
-			return nil, fmt.Errorf(i18n.Translate(lang, "application:The page: %s is not a sign-in page of the application: %s"), pageUrl, applicationName)
+		if !application.FormFill.matchTarget(target) {
+			if target.Program != "" {
+				return nil, fmt.Errorf(i18n.Translate(lang, "application:The window of the program: %s is not a sign-in window of the application: %s"), target.String(), applicationName)
+			}
+			return nil, fmt.Errorf(i18n.Translate(lang, "application:The page: %s is not a sign-in page of the application: %s"), target.Url, applicationName)
 		}
 		return application, nil
 	}
@@ -232,9 +279,9 @@ func getFormFillApplication(user *User, applicationName string, pageUrl string, 
 }
 
 // GetFormFillAccount hands out the user's managed account of an application, for the sign-in page of the
-// application that the extension is on
-func GetFormFillAccount(user *User, applicationName string, username string, pageUrl string, lang string) (*FormFillAccount, error) {
-	_, err := getFormFillApplication(user, applicationName, pageUrl, lang)
+// application or the sign-in window of its desktop program that the client is on
+func GetFormFillAccount(user *User, applicationName string, username string, target *FormFillTarget, lang string) (*FormFillAccount, error) {
+	_, err := getFormFillApplication(user, applicationName, target, lang)
 	if err != nil {
 		return nil, err
 	}
@@ -248,11 +295,11 @@ func GetFormFillAccount(user *User, applicationName string, username string, pag
 }
 
 // SaveFormFillAccount keeps the account that the user signed into an application with by hand as a managed account
-func SaveFormFillAccount(user *User, applicationName string, username string, password string, pageUrl string, lang string) error {
+func SaveFormFillAccount(user *User, applicationName string, username string, password string, target *FormFillTarget, lang string) error {
 	if username == "" || password == "" {
 		return errors.New(i18n.Translate(lang, "application:The username and the password must not be empty"))
 	}
-	application, err := getFormFillApplication(user, applicationName, pageUrl, lang)
+	application, err := getFormFillApplication(user, applicationName, target, lang)
 	if err != nil {
 		return err
 	}

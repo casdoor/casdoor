@@ -6,13 +6,19 @@
   },
   "application": {
     "Form autofill is not available for the application: %s": "Automatyczne wypełnianie formularzy nie jest dostępne dla aplikacji %s",
-    "Form autofill needs at least one sign-in page URL": "Automatyczne wypełnianie formularzy wymaga co najmniej jednego adresu URL strony logowania",
+    "Form autofill needs at least one sign-in page URL or desktop program": "Autouzupełnianie wymaga co najmniej jednego adresu strony logowania lub programu desktopowego",
     "The application: %s does not let users save their accounts": "Aplikacja %s nie pozwala użytkownikom zapisywać kont",
+    "The control: %s is invalid, it should be like id=txtUser or type=Edit;index=1": "Kontrolka: %s jest nieprawidłowa, powinna wyglądać jak id=txtUser lub type=Edit;index=1",
+    "The desktop program must have the path of its executable": "Program desktopowy musi mieć ścieżkę do pliku wykonywalnego",
+    "The fill method: %s is not supported": "Sposób wypełniania: %s nie jest obsługiwany",
+    "The key: {%s} is not supported, use {username}, {password}, {TAB}, {ENTER} or {WAIT}": "Klawisz: {%s} nie jest obsługiwany, użyj {username}, {password}, {TAB}, {ENTER} lub {WAIT}",
     "The page: %s is not a sign-in page of the application: %s": "Strona %s nie jest stroną logowania aplikacji %s",
+    "The regular expression: %s is invalid: %s": "Wyrażenie regularne: %s jest nieprawidłowe: %s",
     "The sign-in page URL: %s is invalid: %s": "Adres URL strony logowania %s jest nieprawidłowy: %s",
     "The sign-in page URL: %s is not an http or https URL": "Adres URL strony logowania %s nie jest adresem http ani https",
     "The sign-in page URL: %s must start with a host, where * is only allowed as *. at the beginning": "Adres URL strony logowania %s musi zaczynać się od hosta, * jest dozwolona tylko jako *. na początku",
     "The username and the password must not be empty": "Nazwa użytkownika i hasło nie mogą być puste",
+    "The window of the program: %s is not a sign-in window of the application: %s": "Okno programu: %s nie jest oknem logowania aplikacji: %s",
     "You have no managed account of the application: %s": "Nie masz zarządzanego konta aplikacji %s"
   },
   "auth": {

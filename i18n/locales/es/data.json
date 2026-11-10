@@ -6,13 +6,19 @@
   },
   "application": {
     "Form autofill is not available for the application: %s": "El autocompletado de formularios no está disponible para la aplicación %s",
-    "Form autofill needs at least one sign-in page URL": "El autocompletado de formularios necesita al menos una URL de página de inicio de sesión",
+    "Form autofill needs at least one sign-in page URL or desktop program": "El autocompletado necesita al menos una URL de página de inicio de sesión o un programa de escritorio",
     "The application: %s does not let users save their accounts": "La aplicación %s no permite a los usuarios guardar sus cuentas",
+    "The control: %s is invalid, it should be like id=txtUser or type=Edit;index=1": "El control: %s no es válido, debería ser como id=txtUser o type=Edit;index=1",
+    "The desktop program must have the path of its executable": "El programa de escritorio debe tener la ruta de su ejecutable",
+    "The fill method: %s is not supported": "El método de relleno: %s no es compatible",
+    "The key: {%s} is not supported, use {username}, {password}, {TAB}, {ENTER} or {WAIT}": "La tecla: {%s} no es compatible, use {username}, {password}, {TAB}, {ENTER} o {WAIT}",
     "The page: %s is not a sign-in page of the application: %s": "La página %s no es una página de inicio de sesión de la aplicación %s",
+    "The regular expression: %s is invalid: %s": "La expresión regular: %s no es válida: %s",
     "The sign-in page URL: %s is invalid: %s": "La URL de la página de inicio de sesión %s no es válida: %s",
     "The sign-in page URL: %s is not an http or https URL": "La URL de la página de inicio de sesión %s no es una URL http o https",
     "The sign-in page URL: %s must start with a host, where * is only allowed as *. at the beginning": "La URL de la página de inicio de sesión %s debe comenzar con un host; * solo se permite como *. al principio",
     "The username and the password must not be empty": "El nombre de usuario y la contraseña no pueden estar vacíos",
+    "The window of the program: %s is not a sign-in window of the application: %s": "La ventana del programa: %s no es una ventana de inicio de sesión de la aplicación: %s",
     "You have no managed account of the application: %s": "No tiene ninguna cuenta gestionada de la aplicación %s"
   },
   "auth": {

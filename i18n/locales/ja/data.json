@@ -6,13 +6,19 @@
   },
   "application": {
     "Form autofill is not available for the application: %s": "アプリケーション %s ではフォーム自動入力が有効になっていません",
-    "Form autofill needs at least one sign-in page URL": "フォーム自動入力にはサインインページの URL が少なくとも 1 つ必要です",
+    "Form autofill needs at least one sign-in page URL or desktop program": "自動入力には少なくとも 1 つのサインインページ URL またはデスクトッププログラムが必要です",
     "The application: %s does not let users save their accounts": "アプリケーション %s ではユーザーがアカウントを保存できません",
+    "The control: %s is invalid, it should be like id=txtUser or type=Edit;index=1": "コントロール：%s は無効です。id=txtUser や type=Edit;index=1 のように指定してください",
+    "The desktop program must have the path of its executable": "デスクトッププログラムには実行ファイルのパスが必要です",
+    "The fill method: %s is not supported": "入力方法：%s はサポートされていません",
+    "The key: {%s} is not supported, use {username}, {password}, {TAB}, {ENTER} or {WAIT}": "キー：{%s} はサポートされていません。{username}、{password}、{TAB}、{ENTER}、{WAIT} を使ってください",
     "The page: %s is not a sign-in page of the application: %s": "ページ %s はアプリケーション %s のサインインページではありません",
+    "The regular expression: %s is invalid: %s": "正規表現：%s は無効です：%s",
     "The sign-in page URL: %s is invalid: %s": "サインインページの URL %s が無効です: %s",
     "The sign-in page URL: %s is not an http or https URL": "サインインページの URL %s は http または https の URL ではありません",
     "The sign-in page URL: %s must start with a host, where * is only allowed as *. at the beginning": "サインインページの URL %s はホストで始まる必要があります。* はホストの先頭に *. としてのみ使えます",
     "The username and the password must not be empty": "ユーザー名とパスワードは空にできません",
+    "The window of the program: %s is not a sign-in window of the application: %s": "プログラム：%s のウィンドウはアプリケーション：%s のサインインウィンドウではありません",
     "You have no managed account of the application: %s": "アプリケーション %s の管理アカウントがありません"
   },
   "auth": {

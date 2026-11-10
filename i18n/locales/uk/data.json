@@ -6,13 +6,19 @@
   },
   "application": {
     "Form autofill is not available for the application: %s": "Автозаповнення форм недоступне для застосунку %s",
-    "Form autofill needs at least one sign-in page URL": "Для автозаповнення форм потрібна хоча б одна URL-адреса сторінки входу",
+    "Form autofill needs at least one sign-in page URL or desktop program": "Для автозаповнення потрібна принаймні одна адреса сторінки входу або настільна програма",
     "The application: %s does not let users save their accounts": "Застосунок %s не дозволяє користувачам зберігати свої облікові записи",
+    "The control: %s is invalid, it should be like id=txtUser or type=Edit;index=1": "Елемент: %s недійсний, він має бути на кшталт id=txtUser або type=Edit;index=1",
+    "The desktop program must have the path of its executable": "Для настільної програми потрібен шлях до виконуваного файлу",
+    "The fill method: %s is not supported": "Спосіб заповнення: %s не підтримується",
+    "The key: {%s} is not supported, use {username}, {password}, {TAB}, {ENTER} or {WAIT}": "Клавіша: {%s} не підтримується, використовуйте {username}, {password}, {TAB}, {ENTER} або {WAIT}",
     "The page: %s is not a sign-in page of the application: %s": "Сторінка %s не є сторінкою входу застосунку %s",
+    "The regular expression: %s is invalid: %s": "Регулярний вираз: %s недійсний: %s",
     "The sign-in page URL: %s is invalid: %s": "URL-адреса сторінки входу %s недійсна: %s",
     "The sign-in page URL: %s is not an http or https URL": "URL-адреса сторінки входу %s не є адресою http або https",
     "The sign-in page URL: %s must start with a host, where * is only allowed as *. at the beginning": "URL-адреса сторінки входу %s має починатися з хоста, * можна використовувати лише як *. на початку",
     "The username and the password must not be empty": "Ім'я користувача та пароль не можуть бути порожніми",
+    "The window of the program: %s is not a sign-in window of the application: %s": "Вікно програми: %s не є вікном входу застосунку: %s",
     "You have no managed account of the application: %s": "У вас немає керованого облікового запису застосунку %s"
   },
   "auth": {

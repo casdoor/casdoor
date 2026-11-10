@@ -6,13 +6,19 @@
   },
   "application": {
     "Form autofill is not available for the application: %s": "%s uygulaması için form otomatik doldurma kullanılamıyor",
-    "Form autofill needs at least one sign-in page URL": "Form otomatik doldurma için en az bir giriş sayfası URL'si gerekir",
+    "Form autofill needs at least one sign-in page URL or desktop program": "Otomatik doldurma en az bir giriş sayfası URL'si veya masaüstü programı gerektirir",
     "The application: %s does not let users save their accounts": "%s uygulaması kullanıcıların hesaplarını kaydetmesine izin vermiyor",
+    "The control: %s is invalid, it should be like id=txtUser or type=Edit;index=1": "Denetim: %s geçersiz, id=txtUser veya type=Edit;index=1 gibi olmalı",
+    "The desktop program must have the path of its executable": "Masaüstü programının çalıştırılabilir dosya yolu olmalıdır",
+    "The fill method: %s is not supported": "Doldurma yöntemi: %s desteklenmiyor",
+    "The key: {%s} is not supported, use {username}, {password}, {TAB}, {ENTER} or {WAIT}": "Tuş: {%s} desteklenmiyor; {username}, {password}, {TAB}, {ENTER} veya {WAIT} kullanın",
     "The page: %s is not a sign-in page of the application: %s": "%s sayfası, %s uygulamasının giriş sayfası değil",
+    "The regular expression: %s is invalid: %s": "Düzenli ifade: %s geçersiz: %s",
     "The sign-in page URL: %s is invalid: %s": "Giriş sayfası URL'si %s geçersiz: %s",
     "The sign-in page URL: %s is not an http or https URL": "Giriş sayfası URL'si %s bir http veya https URL'si değil",
     "The sign-in page URL: %s must start with a host, where * is only allowed as *. at the beginning": "Giriş sayfası URL'si %s bir ana bilgisayar adıyla başlamalıdır; * yalnızca başta *. olarak kullanılabilir",
     "The username and the password must not be empty": "Kullanıcı adı ve parola boş olamaz",
+    "The window of the program: %s is not a sign-in window of the application: %s": "Program: %s penceresi, uygulama: %s için bir giriş penceresi değil",
     "You have no managed account of the application: %s": "%s uygulamasında yönetilen hesabınız yok"
   },
   "auth": {
