@@ -28,6 +28,7 @@ import (
 
 	"github.com/beego/beego/v2/core/logs"
 	"github.com/casdoor/casdoor/conf"
+	"github.com/casdoor/casdoor/util"
 )
 
 const (
@@ -265,25 +266,28 @@ func (l *License) isExpired() bool {
 	return err != nil || time.Now().After(expireTime)
 }
 
-// buildTime is when the code of this build was committed, which Go records when it builds from a git checkout. A
-// license keeps covering the versions released before it expired: they keep their paid features for good, the
-// versions released after it run as the community edition
+// buildTime is when the code of this build was committed, which Go records when it builds from a git checkout with
+// the git command; without it, the HEAD commit of the checkout it was built from. A license keeps covering the
+// versions released before it expired: they keep their paid features for good, the versions released after it run
+// as the community edition
 var buildTime = getBuildTime()
 
 func getBuildTime() time.Time {
-	info, ok := debug.ReadBuildInfo()
-	if !ok {
-		return time.Time{}
-	}
-	for _, setting := range info.Settings {
-		if setting.Key == "vcs.time" {
-			t, err := time.Parse(time.RFC3339, setting.Value)
-			if err == nil {
-				return t
+	if info, ok := debug.ReadBuildInfo(); ok {
+		for _, setting := range info.Settings {
+			if setting.Key == "vcs.time" {
+				t, err := time.Parse(time.RFC3339, setting.Value)
+				if err == nil {
+					return t
+				}
 			}
 		}
 	}
-	return time.Time{}
+	t, err := util.GetCommitTime()
+	if err != nil {
+		return time.Time{}
+	}
+	return t
 }
 
 func (l *License) coversTime(t time.Time) bool {

@@ -158,6 +158,24 @@ func GetSystemInfo() (*SystemInfo, error) {
 	return res, nil
 }
 
+// GetCommitTime returns when the HEAD commit of the source checkout this binary was built from was committed
+func GetCommitTime() (time.Time, error) {
+	_, filename, _, _ := runtime.Caller(0)
+	r, err := git.PlainOpen(path.Dir(path.Dir(filename)))
+	if err != nil {
+		return time.Time{}, err
+	}
+	ref, err := r.Head()
+	if err != nil {
+		return time.Time{}, err
+	}
+	commit, err := r.CommitObject(ref.Hash())
+	if err != nil {
+		return time.Time{}, err
+	}
+	return commit.Committer.When, nil
+}
+
 // GetVersionInfo get git current commit and repo release version
 func GetVersionInfo() (*VersionInfo, error) {
 	res := &VersionInfo{
