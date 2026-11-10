@@ -18,6 +18,7 @@ import (
 	"embed"
 	"fmt"
 	"strings"
+	"sync"
 
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/util"
@@ -28,7 +29,10 @@ var enableErrorMask = false
 //go:embed locales/*/data.json
 var f embed.FS
 
-var langMap = make(map[string]map[string]map[string]string) // for example : langMap[en][account][Invalid information] = Invalid information
+var (
+	langMap   = make(map[string]map[string]map[string]string) // for example : langMap[en][account][Invalid information] = Invalid information
+	langMapMu sync.RWMutex
+)
 
 func init() {
 	enableErrorMask = conf.GetConfigBool("enableErrorMask")
@@ -98,28 +102,18 @@ func Translate(language string, errorText string) string {
 		return fmt.Sprintf("Translate error: the error text doesn't contain \":\", errorText = %s", errorText)
 	}
 
-	if langMap[language] == nil {
-		file, err := f.ReadFile(fmt.Sprintf("locales/%s/data.json", language))
+	langMapMu.RLock()
+	lang, ok := langMap[language]
+	langMapMu.RUnlock()
+	if !ok {
+		var err error
+		lang, err = loadLanguage(language)
 		if err != nil {
-			originalLanguage := language
-			language = "en"
-			file, err = f.ReadFile(fmt.Sprintf("locales/%s/data.json", language))
-			if err != nil {
-				return fmt.Sprintf("Translate error: the language \"%s\" is not supported, err = %s", originalLanguage, err.Error())
-			}
-		}
-
-		if langMap[language] == nil {
-			data := I18nData{}
-			err = util.JsonToStruct(string(file), &data)
-			if err != nil {
-				panic(err)
-			}
-			langMap[language] = data
+			return fmt.Sprintf("Translate error: %s", err.Error())
 		}
 	}
 
-	res := langMap[language][tokens[0]][tokens[1]]
+	res := lang[tokens[0]][tokens[1]]
 	if res == "" {
 		res = tokens[1]
 	}
@@ -128,4 +122,37 @@ func Translate(language string, errorText string) string {
 		res += "%.s"
 	}
 	return res
+}
+
+// loadLanguage returns the translation data for language, loading and caching it
+// on first use. The returned map is only read after it is published, so callers
+// may use it without holding langMapMu.
+func loadLanguage(language string) (map[string]map[string]string, error) {
+	langMapMu.Lock()
+	defer langMapMu.Unlock()
+
+	if lang, ok := langMap[language]; ok {
+		return lang, nil
+	}
+
+	originalLanguage := language
+	file, err := f.ReadFile(fmt.Sprintf("locales/%s/data.json", language))
+	if err != nil {
+		language = "en"
+		if lang, ok := langMap[language]; ok {
+			return lang, nil
+		}
+		file, err = f.ReadFile(fmt.Sprintf("locales/%s/data.json", language))
+		if err != nil {
+			return nil, fmt.Errorf("the language %q is not supported, err = %s", originalLanguage, err.Error())
+		}
+	}
+
+	data := I18nData{}
+	err = util.JsonToStruct(string(file), &data)
+	if err != nil {
+		panic(err)
+	}
+	langMap[language] = data
+	return data, nil
 }
