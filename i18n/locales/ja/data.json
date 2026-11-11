@@ -105,7 +105,7 @@
     "Please register using the phone  corresponding to the invitation code": "招待コードに対応する電話番号で登録してください",
     "Please register using the username corresponding to the invitation code": "招待コードに対応するユーザー名で登録してください",
     "Session outdated, please login again": "セッションが期限切れになりました。再度ログインしてください",
-    "The account has already linked another %s account": "The account has already linked another %s account",
+    "The account has already linked another %s account": "このアカウントは既に別の%sアカウントと連携されています",
     "The invitation code has already been used": "この招待コードは既に使用されています",
     "The password is not allowed: %s": "このパスワードは使用できません：%s",
     "The password must contain at least one special character": "パスワードには少なくとも1つの特殊文字が必要です",

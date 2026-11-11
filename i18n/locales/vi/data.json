@@ -105,7 +105,7 @@
     "Please register using the phone  corresponding to the invitation code": "Vui lòng đăng ký bằng số điện thoại tương ứng với mã mời",
     "Please register using the username corresponding to the invitation code": "Vui lòng đăng ký bằng tên người dùng tương ứng với mã mời",
     "Session outdated, please login again": "Phiên làm việc hết hạn, vui lòng đăng nhập lại",
-    "The account has already linked another %s account": "The account has already linked another %s account",
+    "The account has already linked another %s account": "Tài khoản này đã liên kết với một tài khoản %s khác",
     "The invitation code has already been used": "Mã mời đã được sử dụng",
     "The password is not allowed: %s": "Không được dùng mật khẩu này: %s",
     "The password must contain at least one special character": "Mật khẩu phải chứa ít nhất một ký tự đặc biệt",

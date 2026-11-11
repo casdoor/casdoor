@@ -2144,7 +2144,7 @@
   },
   "radiusClient": {
     "Bound organization": "绑定组织",
-    "Bound organization - Tooltip": "设置后这台 NAS 只能认证该组织的用户，Class 属性不能再指定别的组织。留空则照旧用 Class 属性或 radiusDefaultOrganization",
+    "Bound organization - Tooltip": "If set, this NAS can only authenticate users of this organization, and the Class attribute cannot select another one. Leave empty to keep using the Class attribute or radiusDefaultOrganization",
     "Edit RADIUS Client": "编辑 RADIUS 客户端",
     "IP ranges": "IP 范围",
     "IP ranges - Tooltip": "这台 NAS 的来源 IP 或 CIDR 网段，用英文逗号分隔，例如 192.168.20.50,10.0.0.0/24。多个客户端都匹配时用范围最小的那个",

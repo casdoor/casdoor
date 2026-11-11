@@ -105,7 +105,7 @@
     "Please register using the phone  corresponding to the invitation code": "Regístrese usando el número de teléfono correspondiente al código de invitación",
     "Please register using the username corresponding to the invitation code": "Regístrese usando el nombre de usuario correspondiente al código de invitación",
     "Session outdated, please login again": "Sesión expirada, por favor vuelva a iniciar sesión",
-    "The account has already linked another %s account": "The account has already linked another %s account",
+    "The account has already linked another %s account": "La cuenta ya está vinculada a otra cuenta %s",
     "The invitation code has already been used": "El código de invitación ya ha sido utilizado",
     "The password is not allowed: %s": "Esta contraseña no está permitida: %s",
     "The password must contain at least one special character": "La contraseña debe contener al menos un carácter especial",
@@ -353,7 +353,7 @@
     "The provider type: %s is not supported": "El tipo de proveedor: %s no es compatible"
   },
   "subscription": {
-    "Error": "Error"
+    "Error": "Fallo"
   },
   "ticket": {
     "Ticket not found": "Ticket no encontrado"
