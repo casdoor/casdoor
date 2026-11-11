@@ -196,7 +196,9 @@ func (idp *DingTalkIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, erro
 			userInfo.Phone = userDetail.Mobile
 		}
 
-		if userDetail.Email != "" {
+		if userDetail.OrgEmail != "" {
+			userInfo.Email = userDetail.OrgEmail
+		} else if userDetail.Email != "" {
 			userInfo.Email = userDetail.Email
 		}
 
@@ -302,10 +304,12 @@ func (idp *DingTalkIdProvider) getUserId(unionId string, accessToken string) (st
 }
 
 type DingTalkUserDetail struct {
-	Mobile  string `json:"mobile"`
-	Email   string `json:"email"`
-	UnionId string `json:"unionid"`
-	Title   string `json:"title"`
+	Mobile string `json:"mobile"`
+	Email  string `json:"email"`
+	// OrgEmail is the corporate email set by the org admin; Email is the user's personal one
+	OrgEmail string `json:"org_email"`
+	UnionId  string `json:"unionid"`
+	Title    string `json:"title"`
 }
 
 func (idp *DingTalkIdProvider) getUserCorpInfo(userId string, accessToken string) (*DingTalkUserDetail, error) {
