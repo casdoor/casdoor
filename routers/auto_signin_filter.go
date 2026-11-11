@@ -85,6 +85,10 @@ func AutoSigninFilter(ctx *context.Context) {
 			responseInvalidToken(ctx, token, "invalid_token", "The access token is for another resource")
 			return
 		}
+		if urlPath == "/api/mcp" && token.Resource != "" && !object.IsBuiltinMcpResource(ctx.Request.Host, token.Resource) {
+			responseInvalidToken(ctx, token, "invalid_token", "The access token is for another resource")
+			return
+		}
 
 		isExpired, expireTime := util.IsTokenExpired(token.CreatedTime, token.ExpiresIn)
 		if isExpired {

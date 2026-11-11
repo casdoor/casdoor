@@ -17,6 +17,7 @@ package object
 import (
 	"fmt"
 	"net/url"
+	"strings"
 
 	"github.com/casdoor/casdoor/util"
 )
@@ -96,4 +97,19 @@ func GetOauthProtectedResourceMetadataByServer(host string, owner string, name s
 func GetServerProxyUrl(host string, owner string, name string) string {
 	_, originBackend := getOriginFromHost(host)
 	return fmt.Sprintf("%s/api/server/%s/%s", originBackend, url.PathEscape(owner), url.PathEscape(name))
+}
+
+// IsBuiltinMcpResource reports whether an RFC 8707 resource indicator names the built-in MCP server "/api/mcp": the
+// resource of the global or an application's protected resource metadata, or the URL of the MCP endpoint itself
+func IsBuiltinMcpResource(host string, resource string) bool {
+	_, originBackend := getOriginFromHost(host)
+	originBackend = strings.TrimSuffix(originBackend, "/")
+	resource = strings.TrimSuffix(resource, "/")
+
+	if resource == originBackend || resource == originBackend+"/api/mcp" {
+		return true
+	}
+
+	applicationName, ok := strings.CutPrefix(resource, originBackend+"/.well-known/")
+	return ok && applicationName != "" && !strings.Contains(applicationName, "/")
 }
