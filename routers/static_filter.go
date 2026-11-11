@@ -435,31 +435,36 @@ func addWebConfigToHtml(content string) string {
 	return strings.Replace(content, "</head>", meta+"</head>", 1)
 }
 
-// getClientIdOfPage returns the client_id of the authorization request a page belongs to: in the query string of the
-// sign-in page, or in the state of the callback page of a third-party sign-in
-func getClientIdOfPage(r *http.Request) string {
-	clientId := r.URL.Query().Get("client_id")
-	if clientId != "" {
-		return clientId
+// getAuthorizationQueryOfPage returns the query of the authorization request a page belongs to: the query string of the
+// sign-in page, or the one in the state of the callback page of a third-party sign-in
+func getAuthorizationQueryOfPage(r *http.Request) url.Values {
+	query := r.URL.Query()
+	if query.Get("client_id") != "" {
+		return query
 	}
 
-	state, err := base64.StdEncoding.DecodeString(r.URL.Query().Get("state"))
+	state, err := base64.StdEncoding.DecodeString(query.Get("state"))
 	if err != nil {
-		return ""
+		return url.Values{}
 	}
-	query, err := url.ParseQuery(strings.TrimPrefix(string(state), "?"))
+	stateQuery, err := url.ParseQuery(strings.TrimPrefix(string(state), "?"))
 	if err != nil {
-		return ""
+		return url.Values{}
 	}
-	return query.Get("client_id")
+	return stateQuery
 }
 
 // addIssuerToHtml tells the frontend the issuer it has to send back as `iss` in authorization responses (RFC 9207),
 // the issuer of the client's organization when the organization has its own issuer
 func addIssuerToHtml(content string, r *http.Request) string {
 	issuer := object.GetOidcIssuer(r.Host)
-	if clientId := getClientIdOfPage(r); clientId != "" {
+	query := getAuthorizationQueryOfPage(r)
+	if clientId := query.Get("client_id"); clientId != "" {
 		application, err := object.GetApplicationByClientId(clientId)
+		if err == nil && application != nil {
+			// the shared application of a URL client_id works for the organization the authorization request is sent to
+			application, err = object.GetSigninApplicationOfOrganization(application, query.Get("organization"))
+		}
 		if err == nil && application != nil {
 			applicationIssuer, err := object.GetOidcIssuerByApplication(r.Host, application)
 			if err == nil {
