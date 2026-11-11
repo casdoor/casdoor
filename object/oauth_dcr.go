@@ -142,6 +142,10 @@ func RegisterDynamicClient(req *DynamicClientRegistrationRequest, organization s
 		}, nil
 	}
 
+	if req.TokenEndpointAuthMethod == "none" {
+		clientSecret = ""
+	}
+
 	// Build response
 	response := &DynamicClientRegistrationResponse{
 		ClientId:                clientId,
@@ -237,6 +241,8 @@ func newDynamicClientApplication(req *DynamicClientRegistrationRequest, org *Org
 		PrivacyPolicy:        req.PolicyUri,
 		Providers:            inheritedProviders,
 		SigninMethods:        inheritedSigninMethods,
+
+		TokenEndpointAuthMethod: req.TokenEndpointAuthMethod,
 	}
 }
 
@@ -257,14 +263,19 @@ func GetDynamicClientByToken(clientId, bearerToken string) (*Application, *DcrEr
 
 // GetDynamicClientRegistrationResponse builds a RFC 7592 read response from an application
 func GetDynamicClientRegistrationResponse(app *Application, registrationClientUri string) *DynamicClientRegistrationResponse {
-	tokenEndpointAuthMethod, jwksUri := "client_secret_basic", ""
+	tokenEndpointAuthMethod, jwksUri, clientSecret := app.TokenEndpointAuthMethod, "", app.ClientSecret
 	if credential := getPrivateKeyJwtCredential(app); credential != nil {
 		tokenEndpointAuthMethod, jwksUri = "private_key_jwt", credential.JwksUri
+	} else if tokenEndpointAuthMethod == "" || tokenEndpointAuthMethod == "private_key_jwt" {
+		tokenEndpointAuthMethod = "client_secret_basic"
+	}
+	if tokenEndpointAuthMethod == "none" {
+		clientSecret = ""
 	}
 
 	return &DynamicClientRegistrationResponse{
 		ClientId:                app.ClientId,
-		ClientSecret:            app.ClientSecret,
+		ClientSecret:            clientSecret,
 		ClientIdIssuedAt:        0,
 		ClientSecretExpiresAt:   0,
 		ClientName:              app.DisplayName,
@@ -311,6 +322,7 @@ func UpdateDynamicClient(app *Application, req *DynamicClientRegistrationRequest
 	if req.PolicyUri != "" {
 		app.PrivacyPolicy = req.PolicyUri
 	}
+	app.TokenEndpointAuthMethod = firstNonEmpty(req.TokenEndpointAuthMethod, "client_secret_basic")
 	setPrivateKeyJwtCredential(app, req)
 
 	_, err := UpdateApplication(util.GetId(app.Owner, app.Name), app, true, "", nil)

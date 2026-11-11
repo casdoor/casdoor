@@ -210,6 +210,7 @@ type Application struct {
 	CertObj *Cert `xorm:"-"`
 
 	RegistrationAccessToken string `xorm:"varchar(100)" json:"registrationAccessToken"`
+	TokenEndpointAuthMethod string `xorm:"varchar(100)" json:"tokenEndpointAuthMethod"`
 }
 
 func (application *Application) HasSigninMethod(name string) bool {
