@@ -502,6 +502,7 @@ func InitAPI() {
 	web.Router("/.well-known/oauth-authorization-server/orgs/:organization", &controllers.RootController{}, "GET:GetOidcDiscoveryByOrganization")
 	web.Router("/.well-known/:application/oauth-protected-resource", &controllers.RootController{}, "GET:GetOauthProtectedResourceMetadataByApplication")
 	web.Router("/.well-known/oauth-protected-resource/api/server/:owner/:name", &controllers.RootController{}, "GET:GetOauthProtectedResourceMetadataByServer")
+	web.Router("/.well-known/oauth-protected-resource/api/mcp/orgs/:organization", &controllers.RootController{}, "GET:GetOauthProtectedResourceMetadataByOrganization")
 
 	web.Router("/cas/:organization/:application/serviceValidate", &controllers.RootController{}, "GET:CasServiceValidate")
 	web.Router("/cas/:organization/:application/proxyValidate", &controllers.RootController{}, "GET:CasProxyValidate")
@@ -515,6 +516,7 @@ func InitAPI() {
 	web.Router("/scim/*", &controllers.RootController{}, "*:HandleScim")
 
 	web.Router("/api/mcp", &mcpself.McpController{}, "POST:HandleMcp")
+	web.Router("/api/mcp/orgs/:organization", &mcpself.McpController{}, "POST:HandleMcp")
 
 	web.Router("/api/faceid-signin-begin", &controllers.ApiController{}, "GET:FaceIDSigninBegin")
 }

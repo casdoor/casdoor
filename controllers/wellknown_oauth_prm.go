@@ -46,6 +46,29 @@ func (c *RootController) GetOauthProtectedResourceMetadataByApplication() {
 	c.ServeJSON()
 }
 
+// GetOauthProtectedResourceMetadataByOrganization
+// @Title GetOauthProtectedResourceMetadataByOrganization
+// @Tag OAuth 2.0 API
+// @Description Get OAuth 2.0 Protected Resource Metadata for the built-in MCP server of an organization (RFC 9728)
+// @Param organization path string true "The name of the organization"
+// @Success 200 {object} object.OauthProtectedResourceMetadata
+// @router /.well-known/oauth-protected-resource/api/mcp/orgs/:organization [get]
+func (c *RootController) GetOauthProtectedResourceMetadataByOrganization() {
+	metadata, err := object.GetOauthProtectedResourceMetadataByOrganization(c.Ctx.Request.Host, c.Ctx.Input.Param(":organization"))
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	if metadata == nil {
+		c.Ctx.Output.SetStatus(http.StatusNotFound)
+		c.ResponseError("organization not found")
+		return
+	}
+
+	c.Data["json"] = metadata
+	c.ServeJSON()
+}
+
 // GetOauthProtectedResourceMetadataByServer
 // @Title GetOauthProtectedResourceMetadataByServer
 // @Tag OAuth 2.0 API

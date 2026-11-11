@@ -40,8 +40,8 @@ type Response struct {
 }
 
 func isMcpRequest(urlPath string) bool {
-	// "/api/mcp" is Casdoor's own MCP server, "/api/server/:owner/:name" is the MCP server proxy
-	return urlPath == "/api/mcp" || strings.HasPrefix(urlPath, "/api/server/")
+	// "/api/mcp" (or "/api/mcp/orgs/:organization") is Casdoor's own MCP server, "/api/server/:owner/:name" is the MCP server proxy
+	return object.IsBuiltinMcpPath(urlPath) || strings.HasPrefix(urlPath, "/api/server/")
 }
 
 // responseInvalidToken answers 401 with a challenge on the userinfo endpoint (RFC 6750 section 3.1,
@@ -106,7 +106,7 @@ func denyMcpRequest(ctx *context.Context, message string, isUnauthenticated bool
 	if isUnauthenticated {
 		status = http.StatusUnauthorized
 		challenge := fmt.Sprintf("Bearer realm=\"casdoor\", resource_metadata=\"%s\"", mcpself.GetResourceMetadataUrl(ctx.Request))
-		if ctx.Request.URL.Path == "/api/mcp" {
+		if object.IsBuiltinMcpPath(ctx.Request.URL.Path) {
 			challenge += fmt.Sprintf(", scope=\"%s\"", strings.Join(object.McpScopesSupported, " "))
 		}
 		ctx.Output.Header("WWW-Authenticate", challenge)

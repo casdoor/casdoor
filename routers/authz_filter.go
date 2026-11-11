@@ -456,7 +456,7 @@ func getObjectFromJson(body []byte, path string) (string, string, bool) {
 // of their own organization and executed against another organization's object.
 func getObjects(ctx *context.Context) ([]Object, error) {
 	path := getRequestPath(ctx)
-	if path == "/api/mcp" && ctx.Request.Method == http.MethodPost {
+	if object.IsBuiltinMcpPath(path) && ctx.Request.Method == http.MethodPost {
 		objects, err := getMcpObjects(ctx)
 		if err != nil {
 			return nil, err
@@ -537,6 +537,10 @@ func getUrlPath(ctx *context.Context) string {
 
 	if strings.HasPrefix(urlPath, "/scim") {
 		return "/scim"
+	}
+
+	if object.IsBuiltinMcpPath(urlPath) {
+		return "/api/mcp"
 	}
 
 	if strings.HasPrefix(urlPath, "/api/login/oauth") {

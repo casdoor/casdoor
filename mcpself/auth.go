@@ -222,7 +222,7 @@ func GetResourceMetadataUrl(r *http.Request) string {
 	}
 
 	url := fmt.Sprintf("%s://%s%s/.well-known/oauth-protected-resource", scheme, host, conf.GetBasePath())
-	if strings.HasPrefix(r.URL.Path, "/api/server/") {
+	if strings.HasPrefix(r.URL.Path, "/api/server/") || (object.IsBuiltinMcpPath(r.URL.Path) && r.URL.Path != "/api/mcp") {
 		url += r.URL.EscapedPath()
 	}
 	return url

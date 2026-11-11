@@ -35,7 +35,7 @@ func AutoSigninFilter(ctx *context.Context) {
 		return
 	}
 	// ApiFilter answers 405 to the other methods of the MCP server before any credential is checked
-	if urlPath == "/api/mcp" && ctx.Request.Method != http.MethodPost {
+	if object.IsBuiltinMcpPath(urlPath) && ctx.Request.Method != http.MethodPost {
 		return
 	}
 	//if getSessionUser(ctx) != "" {
@@ -85,7 +85,7 @@ func AutoSigninFilter(ctx *context.Context) {
 			responseInvalidToken(ctx, token, "invalid_token", "The access token is for another resource")
 			return
 		}
-		if urlPath == "/api/mcp" && token.Resource != "" && !object.IsBuiltinMcpResource(ctx.Request.Host, token.Resource) {
+		if object.IsBuiltinMcpPath(urlPath) && token.Resource != "" && !object.IsBuiltinMcpResource(ctx.Request.Host, token.Resource) {
 			responseInvalidToken(ctx, token, "invalid_token", "The access token is for another resource")
 			return
 		}

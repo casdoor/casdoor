@@ -48,6 +48,44 @@ func GetOauthProtectedResourceMetadata(host string) OauthProtectedResourceMetada
 	}
 }
 
+// GetOauthProtectedResourceMetadataByOrganization returns RFC 9728 Protected Resource Metadata for the built-in MCP server
+// of an organization, "/api/mcp/orgs/:organization". Its authorization server is the issuer of the organization, so that
+// MCP clients following the standard discovery register and sign in there instead of the default organization. It
+// returns nil when the organization doesn't exist.
+func GetOauthProtectedResourceMetadataByOrganization(host string, organizationName string) (*OauthProtectedResourceMetadata, error) {
+	organization, err := getOrganization("admin", organizationName)
+	if err != nil || organization == nil {
+		return nil, err
+	}
+
+	return &OauthProtectedResourceMetadata{
+		Resource:               GetBuiltinMcpUrl(host, organization.Name),
+		AuthorizationServers:   []string{getOrganizationIssuerOrGlobal(host, organization)},
+		BearerMethodsSupported: []string{"header"},
+		ScopesSupported:        McpScopesSupported,
+		ResourceSigningAlg:     []string{"RS256"},
+	}, nil
+}
+
+// GetBuiltinMcpUrl returns the URL of the built-in MCP server, "/api/mcp/orgs/:organization" for an organization
+func GetBuiltinMcpUrl(host string, organizationName string) string {
+	_, originBackend := getOriginFromHost(host)
+	if organizationName == "" {
+		return fmt.Sprintf("%s/api/mcp", originBackend)
+	}
+	return fmt.Sprintf("%s/api/mcp/orgs/%s", originBackend, url.PathEscape(organizationName))
+}
+
+// IsBuiltinMcpPath reports whether a request path is the built-in MCP server: "/api/mcp" or "/api/mcp/orgs/:organization"
+func IsBuiltinMcpPath(urlPath string) bool {
+	if urlPath == "/api/mcp" {
+		return true
+	}
+
+	organizationName, ok := strings.CutPrefix(urlPath, "/api/mcp/orgs/")
+	return ok && organizationName != "" && !strings.Contains(organizationName, "/")
+}
+
 // GetOauthProtectedResourceMetadataByApplication returns RFC 9728 Protected Resource Metadata for application-specific discovery
 func GetOauthProtectedResourceMetadataByApplication(host string, applicationName string) OauthProtectedResourceMetadata {
 	_, originBackend := getOriginFromHost(host)
@@ -100,7 +138,8 @@ func GetServerProxyUrl(host string, owner string, name string) string {
 }
 
 // IsBuiltinMcpResource reports whether an RFC 8707 resource indicator names the built-in MCP server "/api/mcp": the
-// resource of the global or an application's protected resource metadata, or the URL of the MCP endpoint itself
+// resource of the global, an organization's or an application's protected resource metadata, or the URL of the MCP
+// endpoint itself
 func IsBuiltinMcpResource(host string, resource string) bool {
 	_, originBackend := getOriginFromHost(host)
 	originBackend = strings.TrimSuffix(originBackend, "/")
@@ -108,6 +147,10 @@ func IsBuiltinMcpResource(host string, resource string) bool {
 
 	if resource == originBackend || resource == originBackend+"/api/mcp" {
 		return true
+	}
+
+	if organizationName, ok := strings.CutPrefix(resource, originBackend+"/api/mcp/orgs/"); ok {
+		return organizationName != "" && !strings.Contains(organizationName, "/")
 	}
 
 	applicationName, ok := strings.CutPrefix(resource, originBackend+"/.well-known/")
