@@ -203,6 +203,7 @@ func getCimdApplicationOfOrganization(application *Application, organization str
 		application.FormCss = defaultApp.FormCss
 		application.SigninItems = defaultApp.SigninItems
 		application.SigninMethods = defaultApp.SigninMethods
+		application.Cert = defaultApp.Cert
 		application.Providers = defaultApp.Providers
 		application.EnablePassword = defaultApp.EnablePassword
 		application.EnableCodeSignin = defaultApp.EnableCodeSignin
