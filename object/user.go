@@ -1024,6 +1024,9 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 
 	if affected != 0 {
 		triggerUserForbiddenWebhook(oldUser, user, columns)
+		if isProvisionedUserUpdate(columns) {
+			provisionUser(oldUser)
+		}
 	}
 
 	if affected != 0 && isUserAccessRevoked(oldUser, user, columns) {
@@ -1106,6 +1109,7 @@ func UpdateUserForAllFields(id string, user *User) (bool, error) {
 
 	if affected != 0 {
 		triggerUserForbiddenWebhook(oldUser, user, nil)
+		provisionUser(oldUser)
 	}
 
 	if affected != 0 && isUserAccessRevoked(oldUser, user, nil) {
@@ -1238,6 +1242,9 @@ func AddUser(user *User, lang string) (bool, error) {
 		return false, err
 	}
 
+	if affected != 0 {
+		provisionUser(user)
+	}
 	return affected != 0, nil
 }
 
@@ -1320,6 +1327,14 @@ func AddUsersInBatch(users []*User) (bool, error) {
 		}
 	}
 
+	// too many users to queue one by one, the applications of their organizations are reconciled instead
+	owners := map[string]bool{}
+	for _, user := range users {
+		if !owners[user.Owner] {
+			owners[user.Owner] = true
+			requestOrganizationProvisioning(user.Owner)
+		}
+	}
 	return affected, nil
 }
 
@@ -1456,7 +1471,11 @@ func DeleteUser(user *User) (bool, error) {
 		}
 	}
 
-	return deleteUser(user)
+	affected, err := deleteUser(user)
+	if err == nil && affected {
+		provisionUser(user)
+	}
+	return affected, err
 }
 
 func GetUserInfo(user *User, scope string, aud string, host string) (*Userinfo, error) {

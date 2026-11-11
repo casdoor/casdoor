@@ -126,6 +126,10 @@ func (c *ApiController) getEditionFeatureName(feature string) string {
 		return c.T("edition:Delegated administration")
 	case edition.FeatureMcpApproval:
 		return c.T("edition:MCP tool call approval")
+	case edition.FeatureScimProvisioning:
+		return c.T("edition:SCIM provisioning")
+	case edition.FeatureDbProvisioning:
+		return c.T("edition:Provisioning to legacy databases")
 	default:
 		return feature
 	}

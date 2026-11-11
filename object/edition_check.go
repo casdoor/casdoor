@@ -39,6 +39,9 @@ func CheckApplicationEdition(application *Application) error {
 			return err
 		}
 	}
+	if err := CheckProvisioningConfig(application); err != nil {
+		return err
+	}
 	if application.FormFill != nil && application.FormFill.Enabled {
 		if err := edition.Require(edition.Enterprise, edition.FeatureFormFill); err != nil {
 			return err

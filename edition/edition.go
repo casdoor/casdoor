@@ -75,6 +75,8 @@ const (
 	FeatureAccessReview     = "Access reviews"
 	FeatureDelegatedAdmin   = "Delegated administration"
 	FeatureMcpApproval      = "MCP tool call approval"
+	FeatureScimProvisioning = "SCIM provisioning"
+	FeatureDbProvisioning   = "Provisioning to legacy databases"
 )
 
 const KindOnPremise = "OnPremise"

@@ -282,6 +282,7 @@ func GetMaskedApplication(application *Application, userId string) *Application 
 
 	application.ClientSecret = "***"
 	application.ClientCert = "***"
+	application.Provisioning = nil
 	application.Cert = "***"
 	application.RegistrationAccessToken = "***"
 	application.IpWhitelist = "***"

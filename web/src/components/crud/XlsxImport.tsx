@@ -23,6 +23,8 @@ interface XlsxImportProps {
   /** shown after a successful upload, e.g. "Users uploaded successfully, refreshing the page" */
   successMessage: string;
   onUploaded: () => void;
+  /** for an API that answers what it did, the message to show instead of successMessage, and whether it is a warning */
+  describeResult?: (data: any) => {message: string; isWarning: boolean};
 }
 
 /**
@@ -30,7 +32,7 @@ interface XlsxImportProps {
  * permission list pages. The sheet is parsed client-side only to preview it; the
  * file itself is what the backend imports.
  */
-export function XlsxImport({columns, templateName, uploadApi, successMessage, onUploaded}: XlsxImportProps) {
+export function XlsxImport({columns, templateName, uploadApi, successMessage, onUploaded, describeResult}: XlsxImportProps) {
   const inputRef = React.useRef<HTMLInputElement>(null);
   const [file, setFile] = React.useState<File | null>(null);
   const [rows, setRows] = React.useState<any[]>([]);
@@ -90,7 +92,12 @@ export function XlsxImport({columns, templateName, uploadApi, successMessage, on
       .then((res) => res.json())
       .then((res) => {
         if (res.status === "ok") {
-          Setting.showMessage("success", successMessage);
+          if (describeResult) {
+            const result = describeResult(res.data);
+            Setting.showMessage(result.isWarning ? "warning" : "success", result.message);
+          } else {
+            Setting.showMessage("success", successMessage);
+          }
           onUploaded();
         } else {
           Setting.showMessage("error", `${i18next.t("general:Failed to upload")}: ${res.msg}`);

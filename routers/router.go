@@ -122,6 +122,12 @@ func InitAPI() {
 	web.Router("/api/get-user-application", &controllers.ApiController{}, "GET:GetUserApplication")
 	web.Router("/api/get-organization-applications", &controllers.ApiController{}, "GET:GetOrganizationApplications")
 	web.Router("/api/update-application", &controllers.ApiController{}, "POST:UpdateApplication")
+	web.Router("/api/upload-applications", &controllers.ApiController{}, "POST:UploadApplications")
+	web.Router("/api/test-provisioning", &controllers.ApiController{}, "POST:TestProvisioning")
+	web.Router("/api/sync-provisioning", &controllers.ApiController{}, "POST:SyncProvisioning")
+	web.Router("/api/retry-provisioning", &controllers.ApiController{}, "POST:RetryProvisioning")
+	web.Router("/api/get-provisioned-accounts", &controllers.ApiController{}, "GET:GetProvisionedAccounts")
+	web.Router("/api/get-provisioning-tasks", &controllers.ApiController{}, "GET:GetProvisioningTasks")
 	web.Router("/api/add-application", &controllers.ApiController{}, "POST:AddApplication")
 	web.Router("/api/delete-application", &controllers.ApiController{}, "POST:DeleteApplication")
 

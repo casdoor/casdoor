@@ -101,3 +101,54 @@ export function getSamlMetadata(owner, name, enablePostBinding) {
     },
   }).then(res => res.text());
 }
+
+export function testProvisioning(id: string, provisioning: any) {
+  return fetch(`${Setting.ServerUrl}/api/test-provisioning?id=${encodeURIComponent(id)}`, {
+    method: "POST",
+    credentials: "include",
+    body: JSON.stringify(provisioning),
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}
+
+export function syncProvisioning(id: string) {
+  return fetch(`${Setting.ServerUrl}/api/sync-provisioning?id=${encodeURIComponent(id)}`, {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}
+
+export function retryProvisioning(id: string) {
+  return fetch(`${Setting.ServerUrl}/api/retry-provisioning?id=${encodeURIComponent(id)}`, {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}
+
+export function getProvisionedAccounts(id: string, state = "", page = 1, pageSize = 50) {
+  return fetch(`${Setting.ServerUrl}/api/get-provisioned-accounts?id=${encodeURIComponent(id)}&state=${encodeURIComponent(state)}&p=${page}&pageSize=${pageSize}`, {
+    method: "GET",
+    credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}
+
+export function getProvisioningTasks(id: string) {
+  return fetch(`${Setting.ServerUrl}/api/get-provisioning-tasks?id=${encodeURIComponent(id)}`, {
+    method: "GET",
+    credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}

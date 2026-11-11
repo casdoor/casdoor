@@ -169,6 +169,7 @@ func runServer() {
 
 	// Start webhook delivery worker
 	object.StartWebhookDeliveryWorker()
+	object.StartProvisioningWorker()
 
 	if len(object.SiteMap) != 0 {
 		service.Start()

@@ -3,6 +3,7 @@ import i18next from "i18next";
 import {Link, useNavigate} from "react-router-dom";
 import {Badge} from "@/components/ui/badge";
 import {CrudListPage} from "@/components/crud/CrudListPage";
+import {XlsxImport} from "@/components/crud/XlsxImport";
 import {dateColumn, linkColumn, textColumn} from "@/components/crud/columns";
 import type {ColumnDef} from "@/components/crud/types";
 import {useAccount} from "@/hooks/use-account";
@@ -11,6 +12,25 @@ import * as ApplicationBackend from "@/backend/ApplicationBackend";
 import * as Setting from "@/lib/setting";
 import {isDelegatedAdmin} from "@/lib/delegated-admin";
 import {newApplication} from "@/pages/defaults";
+
+/** the columns of the import template, "<label>#<field>" like the other imports; client ID, secret and redirect URIs are
+ * kept as they are, so the systems moved from another SSO keep their settings */
+function getApplicationImportColumns() {
+  return [
+    `${i18next.t("general:Name")}#name`,
+    `${i18next.t("general:Display name")}#display_name`,
+    `${i18next.t("general:Organization")}#organization`,
+    `${i18next.t("provider:Client ID")}#client_id`,
+    `${i18next.t("provider:Client secret")}#client_secret`,
+    `${i18next.t("application:Redirect URLs")}#redirect_uris`,
+    `${i18next.t("user:Homepage")}#homepage_url`,
+    `${i18next.t("general:Description")}#description`,
+    `${i18next.t("application:Grant types")}#grant_types`,
+    `${i18next.t("general:Cert")}#cert`,
+    `${i18next.t("application:SAML reply URL")}#saml_reply_url`,
+    "Logo#logo",
+  ];
+}
 
 export default function ApplicationListPage({formItems}: {formItems?: any[]} = {}) {
   const {account} = useAccount();
@@ -114,6 +134,23 @@ export default function ApplicationListPage({formItems}: {formItems?: any[]} = {
       formType="applications"
       formItems={formItems}
       deps={[organizationName, isGlobal]}
+      toolbar={delegated ? undefined : ({refresh}) => (
+        <XlsxImport
+          columns={getApplicationImportColumns()}
+          templateName="import-application.xlsx"
+          uploadApi="upload-applications"
+          successMessage=""
+          onUploaded={refresh}
+          describeResult={(data) => ({
+            message: [
+              i18next.t("application:Added %s applications").replace("%s", String(data?.added ?? 0)),
+              (data?.skipped ?? []).length > 0 ? i18next.t("application:Skipped the existing applications (%s)").replace("%s", data.skipped.join(", ")) : "",
+              ...(data?.errors ?? []),
+            ].filter(Boolean).join("\n"),
+            isWarning: (data?.errors ?? []).length > 0,
+          })}
+        />
+      )}
       fetch={(q) =>
         isGlobal
           ? ApplicationBackend.getApplications("admin", q.page, q.pageSize, q.searchedColumn, q.searchText, q.sortField, q.sortOrder)
