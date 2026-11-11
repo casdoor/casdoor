@@ -17,8 +17,8 @@
     "Use same DB - Tooltip": "与Casdoor使用同一个数据库"
   },
   "agent": {
-    "Edit Agent": "编辑代理",
-    "New Agent": "新建代理",
+    "Edit Agent": "编辑智能体",
+    "New Agent": "新建智能体",
     "The application is the agent's OAuth client. The tokens it gets, with client credentials or when a user signs in through it, and the keys of the application are the agent's identity at the MCP gateway": "应用就是智能体的 OAuth 客户端：它用客户端凭据拿到的令牌、用户经它登录后拿到的令牌，以及这个应用的密钥，在 MCP 网关上都代表这个智能体"
   },
   "application": {
@@ -807,7 +807,7 @@
     "Admin": "管理工具",
     "Affiliation URL": "工作单位URL",
     "Affiliation URL - Tooltip": "工作单位的官网URL",
-    "Agents": "代理",
+    "Agents": "智能体",
     "All": "全部",
     "Application": "应用",
     "Application - Tooltip": "可以访问的应用",
