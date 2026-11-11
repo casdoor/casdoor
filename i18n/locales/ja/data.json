@@ -129,6 +129,7 @@
     "Username supports email format. Also The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline. Also pay attention to the email format.": "ユーザー名はメール形式もサポートします。ユーザー名は英数字、アンダースコア、またはハイフンのみを含め、連続するハイフンやアンダースコアは使用できません。また、ハイフンまたはアンダースコアで始まったり終わったりすることもできません。メール形式にも注意してください。",
     "You have entered the wrong password or code too many times, please wait for %d minutes and try again": "あなたは間違ったパスワードまたはコードを何度も入力しました。%d 分間待ってから再度お試しください",
     "Your IP address: %s has been banned according to the configuration of: ": "あなたの IP アドレス「%s」は設定によりアクセスが禁止されています: ",
+    "Your account is waiting for the administrator's approval": "アカウントは管理者の承認待ちです",
     "Your password has expired. Please reset your password by clicking \"Forgot password\"": "パスワードの有効期限が切れています。「パスワードを忘れた方はこちら」をクリックしてリセットしてください",
     "Your region is not allow to signup by phone": "あなたの地域は電話でサインアップすることができません",
     "password or code is incorrect": "パスワードまたはコードが正しくありません",

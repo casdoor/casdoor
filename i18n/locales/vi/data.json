@@ -129,6 +129,7 @@
     "Username supports email format. Also The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline. Also pay attention to the email format.": "Tên người dùng hỗ trợ định dạng email. Ngoài ra, tên người dùng chỉ có thể chứa ký tự chữ và số, gạch dưới hoặc gạch ngang, không được có gạch ngang hoặc gạch dưới liên tiếp và không được bắt đầu hoặc kết thúc bằng gạch ngang hoặc gạch dưới. Đồng thời lưu ý định dạng email.",
     "You have entered the wrong password or code too many times, please wait for %d minutes and try again": "Bạn đã nhập sai mật khẩu hoặc mã quá nhiều lần, vui lòng đợi %d phút và thử lại",
     "Your IP address: %s has been banned according to the configuration of: ": "Địa chỉ IP của bạn: %s đã bị cấm theo cấu hình của: ",
+    "Your account is waiting for the administrator's approval": "Tài khoản của bạn đang chờ quản trị viên phê duyệt",
     "Your password has expired. Please reset your password by clicking \"Forgot password\"": "Mật khẩu của bạn đã hết hạn. Vui lòng đặt lại mật khẩu bằng cách nhấp vào \"Quên mật khẩu\"",
     "Your region is not allow to signup by phone": "Vùng của bạn không được phép đăng ký bằng điện thoại",
     "password or code is incorrect": "mật khẩu hoặc mã không đúng",

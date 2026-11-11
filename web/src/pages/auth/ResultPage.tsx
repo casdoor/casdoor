@@ -1,6 +1,6 @@
 import * as React from "react";
 import i18next from "i18next";
-import {CheckCircle2} from "lucide-react";
+import {CheckCircle2, Clock} from "lucide-react";
 import {useLocation, useParams} from "react-router-dom";
 import {Button} from "@/components/ui/button";
 import {Loading} from "@/components/common/Loading";
@@ -16,6 +16,7 @@ export default function ResultPage() {
   const {account} = useAccount();
   const [application, setApplication] = React.useState<any>(undefined);
   const username = (location.state as any)?.username ?? "";
+  const pendingApproval = (location.state as any)?.pendingApproval === true;
 
   const applicationName = params.applicationName ?? authConfig.appName;
 
@@ -40,9 +41,19 @@ export default function ResultPage() {
   return (
     <AuthLayout application={application}>
       <div className="space-y-4 text-center">
-        <CheckCircle2 className="mx-auto h-12 w-12 text-success" />
-        <h1 className="text-xl font-semibold">{i18next.t("signup:Your account has been created!")}</h1>
-        <p className="text-sm text-muted-foreground">{i18next.t("signup:Please click the below button to sign in")}</p>
+        {pendingApproval ? (
+          <>
+            <Clock className="mx-auto h-12 w-12 text-warning" />
+            <h1 className="text-xl font-semibold">{i18next.t("signup:Your account has been created!")}</h1>
+            <p className="text-sm text-muted-foreground">{i18next.t("signup:You can sign in after the administrator approves your account")}</p>
+          </>
+        ) : (
+          <>
+            <CheckCircle2 className="mx-auto h-12 w-12 text-success" />
+            <h1 className="text-xl font-semibold">{i18next.t("signup:Your account has been created!")}</h1>
+            <p className="text-sm text-muted-foreground">{i18next.t("signup:Please click the below button to sign in")}</p>
+          </>
+        )}
         {username ? <p className="text-sm font-medium">{username}</p> : null}
         <Button className="w-full" onClick={() => Setting.goToLink(signinUrl)}>
           {i18next.t("login:Sign In")}

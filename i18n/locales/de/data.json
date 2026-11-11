@@ -129,6 +129,7 @@
     "Username supports email format. Also The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline. Also pay attention to the email format.": "Benutzername unterstützt E-Mail-Format. Der Benutzername darf nur alphanumerische Zeichen, Unterstriche oder Bindestriche enthalten, keine aufeinanderfolgenden Bindestriche oder Unterstriche haben und darf nicht mit einem Bindestrich oder Unterstrich beginnen oder enden. Achten Sie auch auf das E-Mail-Format.",
     "You have entered the wrong password or code too many times, please wait for %d minutes and try again": "Sie haben zu oft das falsche Passwort oder den falschen Code eingegeben. Bitte warten Sie %d Minuten und versuchen Sie es erneut",
     "Your IP address: %s has been banned according to the configuration of: ": "Ihre IP-Adresse: %s wurde laut Konfiguration gesperrt von: ",
+    "Your account is waiting for the administrator's approval": "Ihr Konto wartet auf die Freigabe durch einen Administrator",
     "Your password has expired. Please reset your password by clicking \"Forgot password\"": "Ihr Passwort ist abgelaufen. Bitte setzen Sie Ihr Passwort zurück, indem Sie auf \"Passwort vergessen\" klicken",
     "Your region is not allow to signup by phone": "Ihre Region ist nicht berechtigt, sich telefonisch anzumelden",
     "password or code is incorrect": "Passwort oder Code ist falsch",

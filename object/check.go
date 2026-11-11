@@ -421,7 +421,7 @@ func CheckUserPassword(organization string, username string, password string, la
 	}
 
 	if user.IsForbidden {
-		return nil, newSigninError(SigninReasonAccountDisabled, i18n.Translate(lang, "check:The user is forbidden to sign in, please contact the administrator"))
+		return nil, newSigninError(SigninReasonAccountDisabled, GetUserForbiddenMessage(user, lang))
 	}
 
 	// Prevent direct login for guest users without upgrading
@@ -678,7 +678,7 @@ func CheckPasswordOnlySignin(user *User, clientIp string, lang string) error {
 
 func CheckApplicationSignin(application *Application, user *User, clientIp string, lang string) error {
 	if user.IsForbidden {
-		return errors.New(i18n.Translate(lang, "check:The user is forbidden to sign in, please contact the administrator"))
+		return errors.New(GetUserForbiddenMessage(user, lang))
 	}
 
 	if user.IsDeleted {

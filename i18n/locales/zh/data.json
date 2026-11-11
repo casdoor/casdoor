@@ -129,6 +129,7 @@
     "Username supports email format. Also The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline. Also pay attention to the email format.": "用户名支持电子邮件格式。此外，用户名只能包含字母数字字符、下划线或连字符，不能包含连续的连字符或下划线，也不能以连字符或下划线开头或结尾。同时请注意电子邮件格式。",
     "You have entered the wrong password or code too many times, please wait for %d minutes and try again": "密码错误次数已达上限，请在 %d 分后重试",
     "Your IP address: %s has been banned according to the configuration of: ": "您的IP地址：%s 根据以下配置已被禁止： ",
+    "Your account is waiting for the administrator's approval": "您的账号正在等待管理员审核，审核通过后才能登录",
     "Your password has expired. Please reset your password by clicking \"Forgot password\"": "您的密码已过期。请点击 \"忘记密码\" 以重置密码",
     "Your region is not allow to signup by phone": "所在地区不支持手机号注册",
     "password or code is incorrect": "密码错误",
