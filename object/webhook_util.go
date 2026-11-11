@@ -80,6 +80,11 @@ func sendWebhook(webhook *Webhook, record *Record, extendedUser *User) (int, str
 		req.Header.Set(header.Name, header.Value)
 	}
 
+	// the client above owns its transport, which would keep the connection idle forever
+	if webhook.Organization != "built-in" {
+		defer client.CloseIdleConnections()
+	}
+
 	resp, err := client.Do(req)
 	if err != nil {
 		return 0, "", err
