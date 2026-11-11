@@ -129,6 +129,7 @@
     "Username supports email format. Also The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline. Also pay attention to the email format.": "Ім’я користувача підтримує формат email. Також може містити лише буквено-цифрові символи, підкреслення або дефіси, не може мати послідовні дефіси або підкреслення та не може починатися або закінчуватися дефісом або підкресленням. Зверніть увагу на формат email.",
     "You have entered the wrong password or code too many times, please wait for %d minutes and try again": "Ви ввели неправильний пароль або код забагато разів, зачекайте %d хвилин і спробуйте знову",
     "Your IP address: %s has been banned according to the configuration of: ": "Ваша IP-адреса: %s заблокована відповідно до конфігурації: ",
+    "Your account is waiting for the administrator's approval": "Ваш обліковий запис очікує підтвердження адміністратора",
     "Your password has expired. Please reset your password by clicking \"Forgot password\"": "Ваш пароль застарів. Будь ласка, скиньте пароль, натиснувши \"Забув пароль\"",
     "Your region is not allow to signup by phone": "У вашому регіоні реєстрація за телефоном недоступна",
     "password or code is incorrect": "пароль або код неправильний",

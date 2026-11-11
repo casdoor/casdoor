@@ -65,6 +65,15 @@ export default function UserListPage({
     return map;
   }, [organization]);
 
+  const nameColumn = linkColumn<any>({dataIndex: "name", to: (r) => `/users/${r.owner}/${r.name}`, width: 150});
+  const renderName = nameColumn.render;
+  nameColumn.render = (value, record, index) => (
+    <span className="inline-flex items-center gap-2">
+      {renderName ? renderName(value, record, index) : value}
+      {record.pendingApproval ? <Badge variant="outline">{i18next.t("user:Pending approval")}</Badge> : null}
+    </span>
+  );
+
   const columns: ColumnDef<any>[] = [
     organizationColumn(140, "owner", undefined, "left"),
     {
@@ -81,7 +90,7 @@ export default function UserListPage({
           </Link>
         ) : null,
     },
-    linkColumn({dataIndex: "name", to: (r) => `/users/${r.owner}/${r.name}`, width: 150}),
+    nameColumn,
     dateColumn(),
     textColumn({dataIndex: "displayName", title: i18next.t("general:Display name"), searchable: true, width: 150}),
     {
@@ -164,6 +173,14 @@ export default function UserListPage({
     },
     textColumn({dataIndex: "balanceCurrency", title: i18next.t("organization:Balance currency"), width: 130}),
     boolColumn({dataIndex: "isAdmin", title: i18next.t("user:Is admin")}),
+    {
+      dataIndex: "pendingApproval",
+      title: i18next.t("user:Pending approval"),
+      width: 120,
+      sortable: true,
+      align: "center",
+      render: (value) => (value ? <Badge variant="outline">{i18next.t("user:Pending approval")}</Badge> : null),
+    },
     boolColumn({dataIndex: "isForbidden", title: i18next.t("user:Is forbidden"), invertColor: true}),
     boolColumn({dataIndex: "isDeleted", title: i18next.t("user:Is deleted"), invertColor: true}),
   ];
@@ -204,6 +221,31 @@ export default function UserListPage({
       editUrl={(r) => `/users/${r.owner}/${r.name}`}
       remove={canManageUsers ? (r) => UserBackend.deleteUser(r) : undefined}
       rowActions={(record, _index, {refresh}) => [
+        record.pendingApproval && canManageUsers
+          ? {
+            key: "approve",
+            label: i18next.t("user:Approve signup"),
+            destructive: false,
+            confirm: {title: i18next.t("user:Sure to approve"), description: `${record.name ?? ""}`},
+            onSelect: () =>
+              UserBackend.getUser(record.owner, record.name)
+                .then((res: any) => {
+                  if (res.status !== "ok" || !res.data) {
+                    throw new Error(res.msg);
+                  }
+                  return UserBackend.updateUser(record.owner, record.name, {...res.data, isForbidden: false});
+                })
+                .then((res: any) => {
+                  if (res.status === "ok") {
+                    Setting.showMessage("success", i18next.t("user:Successfully approved"));
+                    refresh();
+                  } else {
+                    Setting.showMessage("error", `${i18next.t("general:Failed to save")}: ${res.msg}`);
+                  }
+                })
+                .catch((error) => Setting.showMessage("error", `${i18next.t("general:Failed to save")}: ${error.message ?? error}`)),
+          }
+          : null,
         Setting.isLocalAdminUser(account) && record.name !== account?.name
           ? {
             key: "impersonate",
@@ -244,7 +286,7 @@ export default function UserListPage({
           }
           : null,
       ]}
-      actionColumnWidth={groupName ? 340 : 260}
+      actionColumnWidth={groupName ? 440 : 360}
       // the tree page has one route per group, so pin the column choices to the page
       tableId={embedded ? "/trees" : undefined}
     />

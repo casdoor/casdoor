@@ -810,6 +810,9 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
           disabled={!isAdmin}
           onCheckedChange={(v) => updateField("isForbidden", v)}
         />
+        {user.pendingApproval ? (
+          <p className="mt-1 text-xs text-muted-foreground">{i18next.t("user:Waiting for approval, turn it off to approve the user")}</p>
+        ) : null}
       </AccountItemRow>
     ),
     "Is deleted": (

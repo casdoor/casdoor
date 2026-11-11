@@ -256,7 +256,7 @@ func (c *ApiController) SendVerificationCode() {
 		}
 
 		if user.IsForbidden {
-			c.ResponseError(c.T("check:The user is forbidden to sign in, please contact the administrator"))
+			c.ResponseError(object.GetUserForbiddenMessage(user, c.GetAcceptLanguage()))
 			return
 		}
 	} else if mfaUserSession := c.getMfaUserSession(); mfaUserSession != "" {
@@ -410,7 +410,7 @@ func (c *ApiController) SendVerificationCode() {
 					return
 				}
 			} else if user.IsDeleted || user.IsForbidden {
-				c.ResponseError(c.T("check:The user is forbidden to sign in, please contact the administrator"))
+				c.ResponseError(object.GetUserForbiddenMessage(user, c.GetAcceptLanguage()))
 				return
 			}
 		} else if vform.Method == ResetVerification {

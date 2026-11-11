@@ -129,6 +129,7 @@
     "Username supports email format. Also The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline. Also pay attention to the email format.": "Kullanıcı adı e-posta biçimini destekler. Ayrıca kullanıcı adı yalnızca alfanümerik karakterler, alt çizgiler veya tireler içerebilir, ardışık tireler veya alt çizgiler olamaz ve tire veya alt çizgi ile başlayıp bitemez. Ayrıca e-posta biçimine dikkat edin.",
     "You have entered the wrong password or code too many times, please wait for %d minutes and try again": "Çok fazla hatalı şifre veya kod girdiniz, lütfen %d dakika bekleyin ve tekrar deneyin",
     "Your IP address: %s has been banned according to the configuration of: ": "IP adresiniz: %s, yapılandırmaya göre yasaklandı: ",
+    "Your account is waiting for the administrator's approval": "Hesabınız yönetici onayı bekliyor",
     "Your password has expired. Please reset your password by clicking \"Forgot password\"": "Şifrenizin süresi doldu. Lütfen \"Şifremi unuttum\"a tıklayarak şifrenizi sıfırlayın",
     "Your region is not allow to signup by phone": "Bölgeniz telefonla kayıt yapmaya izin verilmiyor",
     "password or code is incorrect": "şifre veya kod yanlış",

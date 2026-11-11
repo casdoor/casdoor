@@ -112,6 +112,7 @@ type User struct {
 	IsAdmin              bool       `json:"isAdmin"`
 	IsForbidden          bool       `json:"isForbidden"`
 	IsDeleted            bool       `json:"isDeleted"`
+	PendingApproval      bool       `json:"pendingApproval"`
 	SignupApplication    string     `xorm:"varchar(100)" json:"signupApplication"`
 	Hash                 string     `xorm:"varchar(100)" json:"hash"`
 	PreHash              string     `xorm:"varchar(100)" json:"preHash"`
@@ -1001,6 +1002,14 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 
 	if len(columns) == 0 {
 		columns = GetDefaultUserUpdateColumns(isAdmin)
+	}
+
+	// turning off "Is forbidden" approves a user who signed up through an application that needs approval
+	if oldUser.PendingApproval && util.InSlice(columns, "is_forbidden") {
+		user.PendingApproval = user.IsForbidden
+		columns = append(columns, "pending_approval")
+	} else {
+		user.PendingApproval = oldUser.PendingApproval
 	}
 
 	columns = append(columns, "updated_time")

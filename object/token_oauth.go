@@ -552,6 +552,13 @@ func getInactiveUserTokenError(user *User) *TokenError {
 		return nil
 	}
 
+	if user.PendingApproval && !user.IsDeleted {
+		return &TokenError{
+			Error:            InvalidGrant,
+			ErrorDescription: "the user is waiting for the administrator's approval",
+		}
+	}
+
 	return &TokenError{
 		Error:            InvalidGrant,
 		ErrorDescription: "the user is forbidden to sign in, please contact the administrator",
@@ -792,6 +799,7 @@ func GetWechatMiniProgramToken(application *Application, code string, phoneCode 
 				UserPropertiesWechatUnionId: unionId,
 			},
 		}
+		application.ApplySignupApproval(user)
 		_, err = AddUser(user, lang)
 		if err != nil {
 			return nil, nil, err
