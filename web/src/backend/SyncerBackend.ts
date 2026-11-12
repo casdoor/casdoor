@@ -95,3 +95,13 @@ export function runSyncer(owner, name, organization) {
     },
   }).then(res => res.json());
 }
+
+export function isSyncerTypeReadOnly(type: string) {
+  return fetch(`${Setting.ServerUrl}/api/is-syncer-type-read-only?type=${encodeURIComponent(type)}`, {
+    method: "GET",
+    credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}

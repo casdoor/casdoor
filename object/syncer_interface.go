@@ -90,3 +90,7 @@ func GetSyncerProvider(syncer *Syncer) SyncerProvider {
 		return &DatabaseSyncerProvider{Syncer: syncer}
 	}
 }
+
+func IsSyncerTypeReadOnly(syncerType string) bool {
+	return GetSyncerProvider(&Syncer{Type: syncerType}).IsReadOnly()
+}

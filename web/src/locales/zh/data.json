@@ -2691,6 +2691,7 @@
     "Single org only": "仅本组织",
     "Single org only - Tooltip": "仅在Webhook所在组织触发",
     "Success": "成功",
+    "This syncer type cannot write users back, so it is always read-only": "该类型的同步器不支持写回用户，始终为只读",
     "Unknown": "未知",
     "Value": "值",
     "Webhook event replay triggered": "Webhook事件重放已触发"

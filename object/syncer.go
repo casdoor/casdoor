@@ -212,6 +212,9 @@ func UpdateSyncer(id string, syncer *Syncer, isGlobalAdmin bool, lang string) (b
 	if (syncer.SshHost != s.SshHost || syncer.SshPort != s.SshPort) && syncer.SshHostKey == s.SshHostKey {
 		syncer.SshHostKey = ""
 	}
+	if !syncer.IsReadOnly && GetSyncerProvider(syncer).IsReadOnly() {
+		syncer.IsReadOnly = true
+	}
 	affected, err := session.Update(syncer)
 	if err != nil {
 		return false, err
@@ -265,6 +268,10 @@ func recordSyncerError(syncer *Syncer, err error) {
 }
 
 func AddSyncer(syncer *Syncer) (bool, error) {
+	if !syncer.IsReadOnly && GetSyncerProvider(syncer).IsReadOnly() {
+		syncer.IsReadOnly = true
+	}
+
 	affected, err := ormer.Engine.Insert(syncer)
 	if err != nil {
 		return false, err
