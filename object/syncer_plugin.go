@@ -151,6 +151,10 @@ func (p *PluginSyncerProvider) UpdateUser(user *OriginalUser) (bool, error) {
 	return false, fmt.Errorf("updating users through the syncer plugin is not supported")
 }
 
+func (p *PluginSyncerProvider) IsReadOnly() bool {
+	return true
+}
+
 func (p *PluginSyncerProvider) TestConnection() error {
 	m, config, err := p.getAction()
 	if err != nil {

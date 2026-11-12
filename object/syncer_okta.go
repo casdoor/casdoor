@@ -54,6 +54,10 @@ func (p *OktaSyncerProvider) UpdateUser(user *OriginalUser) (bool, error) {
 	return false, fmt.Errorf("updating users in Okta is not supported")
 }
 
+func (p *OktaSyncerProvider) IsReadOnly() bool {
+	return true
+}
+
 // TestConnection tests the Okta API connection
 func (p *OktaSyncerProvider) TestConnection() error {
 	// Try to fetch first page of users to verify connection

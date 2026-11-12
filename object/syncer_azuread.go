@@ -55,6 +55,10 @@ func (p *AzureAdSyncerProvider) UpdateUser(user *OriginalUser) (bool, error) {
 	return false, fmt.Errorf("updating users in Azure AD is not supported")
 }
 
+func (p *AzureAdSyncerProvider) IsReadOnly() bool {
+	return true
+}
+
 // TestConnection tests the Azure AD API connection
 func (p *AzureAdSyncerProvider) TestConnection() error {
 	_, err := p.getAzureAdAccessToken()

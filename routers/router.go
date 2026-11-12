@@ -412,6 +412,7 @@ func InitAPI() {
 	web.Router("/api/delete-syncer", &controllers.ApiController{}, "POST:DeleteSyncer")
 	web.Router("/api/run-syncer", &controllers.ApiController{}, "POST:RunSyncer")
 	web.Router("/api/test-syncer-db", &controllers.ApiController{}, "POST:TestSyncerDb")
+	web.Router("/api/is-syncer-type-read-only", &controllers.ApiController{}, "GET:IsSyncerTypeReadOnly")
 
 	web.Router("/api/get-webhooks", &controllers.ApiController{}, "GET:GetWebhooks")
 	web.Router("/api/get-webhook", &controllers.ApiController{}, "GET:GetWebhook")

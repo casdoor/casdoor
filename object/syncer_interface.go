@@ -48,6 +48,9 @@ type SyncerProvider interface {
 	// UpdateUser updates an existing user in the external system
 	UpdateUser(user *OriginalUser) (bool, error)
 
+	// IsReadOnly returns whether the provider cannot write users back
+	IsReadOnly() bool
+
 	// TestConnection tests the connection to the external system
 	TestConnection() error
 
@@ -86,4 +89,8 @@ func GetSyncerProvider(syncer *Syncer) SyncerProvider {
 		// Default to database syncer for "Database" type and any others
 		return &DatabaseSyncerProvider{Syncer: syncer}
 	}
+}
+
+func IsSyncerTypeReadOnly(syncerType string) bool {
+	return GetSyncerProvider(&Syncer{Type: syncerType}).IsReadOnly()
 }

@@ -2691,6 +2691,7 @@
     "Single org only": "Single org only",
     "Single org only - Tooltip": "Triggered only in the organization that the webhook belongs to",
     "Success": "Success",
+    "This syncer type cannot write users back, so it is always read-only": "This syncer type cannot write users back, so it is always read-only",
     "Unknown": "Unknown",
     "Value": "Value",
     "Webhook event replay triggered": "Webhook event replay triggered"

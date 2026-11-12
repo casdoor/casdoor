@@ -59,7 +59,7 @@ func AddUserToOriginalDatabase(user *User) error {
 		return nil
 	}
 
-	if syncer.IsReadOnly {
+	if syncer.IsReadOnly || GetSyncerProvider(syncer).IsReadOnly() {
 		return nil
 	}
 
@@ -82,7 +82,7 @@ func UpdateUserToOriginalDatabase(user *User) error {
 		return nil
 	}
 
-	if syncer.IsReadOnly {
+	if syncer.IsReadOnly || GetSyncerProvider(syncer).IsReadOnly() {
 		return nil
 	}
 

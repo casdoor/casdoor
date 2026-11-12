@@ -54,6 +54,10 @@ func (p *SCIMSyncerProvider) UpdateUser(user *OriginalUser) (bool, error) {
 	return false, fmt.Errorf("updating users in SCIM is not supported")
 }
 
+func (p *SCIMSyncerProvider) IsReadOnly() bool {
+	return true
+}
+
 // TestConnection tests the SCIM API connection
 func (p *SCIMSyncerProvider) TestConnection() error {
 	// Test by trying to fetch users with a limit of 1

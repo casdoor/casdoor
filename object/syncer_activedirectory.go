@@ -140,6 +140,10 @@ func (p *ActiveDirectorySyncerProvider) UpdateUser(user *OriginalUser) (bool, er
 	return false, fmt.Errorf("updating users in Active Directory is not supported")
 }
 
+func (p *ActiveDirectorySyncerProvider) IsReadOnly() bool {
+	return true
+}
+
 // TestConnection tests the Active Directory LDAP connection
 func (p *ActiveDirectorySyncerProvider) TestConnection() error {
 	conn, err := p.getLdapConn()

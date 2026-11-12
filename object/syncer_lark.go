@@ -55,6 +55,10 @@ func (p *LarkSyncerProvider) UpdateUser(user *OriginalUser) (bool, error) {
 	return false, fmt.Errorf("updating users in Lark is not supported")
 }
 
+func (p *LarkSyncerProvider) IsReadOnly() bool {
+	return true
+}
+
 // TestConnection tests the Lark API connection
 func (p *LarkSyncerProvider) TestConnection() error {
 	_, err := p.getLarkAccessToken()

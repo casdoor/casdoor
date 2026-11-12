@@ -1,8 +1,10 @@
+import * as React from "react";
 import i18next from "i18next";
 import {useParams} from "react-router-dom";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Switch} from "@/components/ui/switch";
+import {Tooltip, TooltipContent, TooltipTrigger} from "@/components/ui/tooltip";
 import {SelectField} from "@/components/common/SelectField";
 import {CodeEditor} from "@/components/common/CodeEditor";
 import {EditableTable} from "@/components/crud/EditableTable";
@@ -93,6 +95,37 @@ function hostLabelKey(type: string): string {
   case "AWS IAM": return "syncer:AWS Region";
   default: return "general:Host";
   }
+}
+
+function ReadOnlySwitch(props: {type: string; value: boolean; onChange: (v: boolean) => void}) {
+  const [isTypeReadOnly, setIsTypeReadOnly] = React.useState<boolean | null>(null);
+  React.useEffect(() => {
+    // a late response for a previous type must not overwrite the current one
+    let cancelled = false;
+    setIsTypeReadOnly(null);
+    SyncerBackend.isSyncerTypeReadOnly(props.type)
+      .then((res: any) => {
+        if (!cancelled && res.status === "ok") {
+          setIsTypeReadOnly(res.data === true);
+        }
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [props.type]);
+
+  if (isTypeReadOnly) {
+    return (
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <span><Switch checked disabled /></span>
+        </TooltipTrigger>
+        <TooltipContent>{i18next.t("syncer:This syncer type cannot write users back, so it is always read-only")}</TooltipContent>
+      </Tooltip>
+    );
+  }
+  return <Switch checked={props.value} onCheckedChange={props.onChange} />;
 }
 
 export default function SyncerEditPage() {
@@ -385,7 +418,12 @@ export default function SyncerEditPage() {
         />
       ),
     },
-    {type: "switch", name: "isReadOnly", labelKey: "syncer:Is read-only"},
+    {
+      type: "custom",
+      name: "isReadOnly",
+      labelKey: "syncer:Is read-only",
+      render: (ctx, update) => <ReadOnlySwitch type={ctx.record.type} value={!!ctx.record.isReadOnly} onChange={(v) => update("isReadOnly", v)} />,
+    },
     {type: "switch", name: "isEnabled", labelKey: "general:Is enabled"},
     {
       // the antd page gives the test its own labelled row rather than a header button

@@ -261,3 +261,20 @@ func (c *ApiController) checkSyncerDatabase(syncer *object.Syncer) bool {
 	}
 	return true
 }
+
+// IsSyncerTypeReadOnly
+// @Title IsSyncerTypeReadOnly
+// @Tag Syncer API
+// @Description check whether a syncer type is read-only (cannot write users back)
+// @Param   type   query    string  true        "The type of the syncer"
+// @Success 200 {object} controllers.Response The Response object
+// @router /is-syncer-type-read-only [get]
+func (c *ApiController) IsSyncerTypeReadOnly() {
+	syncerType := c.Ctx.Input.Query("type")
+	if syncerType == "" {
+		c.ResponseError("type is empty")
+		return
+	}
+
+	c.ResponseOk(object.IsSyncerTypeReadOnly(syncerType))
+}
