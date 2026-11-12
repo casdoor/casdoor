@@ -55,6 +55,10 @@ func (p *DingtalkSyncerProvider) UpdateUser(user *OriginalUser) (bool, error) {
 	return false, fmt.Errorf("updating users in DingTalk is not supported")
 }
 
+func (p *DingtalkSyncerProvider) IsReadOnly() bool {
+	return true
+}
+
 // TestConnection tests the DingTalk API connection
 func (p *DingtalkSyncerProvider) TestConnection() error {
 	_, err := p.getDingtalkAccessToken()

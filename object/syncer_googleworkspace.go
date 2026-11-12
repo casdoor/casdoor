@@ -54,6 +54,10 @@ func (p *GoogleWorkspaceSyncerProvider) UpdateUser(user *OriginalUser) (bool, er
 	return false, fmt.Errorf("updating users in Google Workspace is not supported")
 }
 
+func (p *GoogleWorkspaceSyncerProvider) IsReadOnly() bool {
+	return true
+}
+
 // TestConnection tests the Google Workspace API connection
 func (p *GoogleWorkspaceSyncerProvider) TestConnection() error {
 	_, err := p.getAdminService()

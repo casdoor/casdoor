@@ -268,6 +268,10 @@ func (p *DatabaseSyncerProvider) UpdateUser(user *OriginalUser) (bool, error) {
 	return affected != 0, nil
 }
 
+func (p *DatabaseSyncerProvider) IsReadOnly() bool {
+	return false
+}
+
 // TestConnection tests the database connection
 func (p *DatabaseSyncerProvider) TestConnection() error {
 	err := p.InitAdapter()

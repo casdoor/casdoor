@@ -84,7 +84,7 @@ func (syncer *Syncer) syncUsers() error {
 				}
 			} else {
 				if user.PreHash == oHash {
-					if !syncer.IsReadOnly {
+					if !syncer.IsReadOnly && !GetSyncerProvider(syncer).IsReadOnly() {
 						updatedOUser := syncer.createOriginalUserFromUser(user)
 
 						fmt.Printf("Update from user to oUser: %v\n", updatedOUser)
@@ -136,7 +136,7 @@ func (syncer *Syncer) syncUsers() error {
 		}
 	}
 
-	if !syncer.IsReadOnly {
+	if !syncer.IsReadOnly && !GetSyncerProvider(syncer).IsReadOnly() {
 		for _, user := range users {
 			primary := syncer.getUserValue(user, key)
 			if _, ok := myOUsers[primary]; !ok {

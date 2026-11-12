@@ -48,6 +48,9 @@ type SyncerProvider interface {
 	// UpdateUser updates an existing user in the external system
 	UpdateUser(user *OriginalUser) (bool, error)
 
+	// IsReadOnly returns whether the provider cannot write users back
+	IsReadOnly() bool
+
 	// TestConnection tests the connection to the external system
 	TestConnection() error
 

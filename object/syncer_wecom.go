@@ -60,6 +60,10 @@ func (p *WecomSyncerProvider) UpdateUser(user *OriginalUser) (bool, error) {
 	return false, fmt.Errorf("updating users in WeCom is not supported")
 }
 
+func (p *WecomSyncerProvider) IsReadOnly() bool {
+	return true
+}
+
 // TestConnection tests the WeCom API connection
 func (p *WecomSyncerProvider) TestConnection() error {
 	_, err := p.getWecomAccessToken()

@@ -91,6 +91,10 @@ func (p *AwsIamSyncerProvider) UpdateUser(user *OriginalUser) (bool, error) {
 	return false, fmt.Errorf("updating users in AWS IAM is not supported")
 }
 
+func (p *AwsIamSyncerProvider) IsReadOnly() bool {
+	return true
+}
+
 // TestConnection tests the AWS IAM API connection
 func (p *AwsIamSyncerProvider) TestConnection() error {
 	if p.iamClient == nil {
