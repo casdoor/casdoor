@@ -246,7 +246,11 @@ func getObject(ctx *context.Context) (string, string, error) {
 	}
 	// the controller imports the applications into the organization of the admin who uploads them
 	if path == "/api/upload-applications" {
-		owner, _ := util.GetOwnerAndNameFromIdNoCheck(getUsername(ctx))
+		username := getUsername(ctx)
+		if username == "" {
+			return "", "", nil
+		}
+		owner, _ := util.GetOwnerAndNameFromIdNoCheck(username)
 		return owner, "", nil
 	}
 
