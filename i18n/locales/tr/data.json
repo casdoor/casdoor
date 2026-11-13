@@ -105,7 +105,7 @@
     "Please register using the phone  corresponding to the invitation code": "Lütfen davet koduna karşılık gelen telefonla kayıt olun",
     "Please register using the username corresponding to the invitation code": "Lütfen davet koduna karşılık gelen kullanıcı adıyla kayıt olun",
     "Session outdated, please login again": "Oturum süresi doldu, lütfen tekrar giriş yapın",
-    "The account has already linked another %s account": "The account has already linked another %s account",
+    "The account has already linked another %s account": "Hesap zaten başka bir %s hesabına bağlı",
     "The invitation code has already been used": "Davet kodu zaten kullanılmış",
     "The password is not allowed: %s": "Bu parolaya izin verilmiyor: %s",
     "The password must contain at least one special character": "Şifre en az bir özel karakter içermelidir",

@@ -1,6 +1,6 @@
 {
   "account": {
-    "Failed to add user": "Konnte den Benutzer nicht hinzufügen",
+    "Failed to add user": "Failed to add user",
     "Get init score failed, error: %w": "Init-Score konnte nicht abgerufen werden, Fehler: %w",
     "The application does not allow to sign up new account": "Die Anwendung erlaubt es nicht, sich für ein neues Konto anzumelden"
   },
@@ -105,7 +105,7 @@
     "Please register using the phone  corresponding to the invitation code": "Bitte registrieren Sie sich mit der Telefonnummer, die zum Einladungscode gehört",
     "Please register using the username corresponding to the invitation code": "Bitte registrieren Sie sich mit dem Benutzernamen, der zum Einladungscode gehört",
     "Session outdated, please login again": "Sitzung abgelaufen, bitte erneut anmelden",
-    "The account has already linked another %s account": "The account has already linked another %s account",
+    "The account has already linked another %s account": "Das Konto ist bereits mit einem anderen %s-Konto verknüpft",
     "The invitation code has already been used": "Der Einladungscode wurde bereits verwendet",
     "The password is not allowed: %s": "Dieses Passwort ist nicht erlaubt: %s",
     "The password must contain at least one special character": "Das Passwort muss mindestens ein Sonderzeichen enthalten",
