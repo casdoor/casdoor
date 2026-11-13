@@ -667,7 +667,7 @@ func getExistUserByBindingRule(providerItem *object.ProviderItem, application *o
 		// Find existing user with Email, only one the provider vouches for: a provider
 		// account with someone else's unverified email must not take over their account
 		if rule == "Email" && userInfo.EmailVerified {
-			user, err = object.GetUserByField(application.Organization, "email", userInfo.Email)
+			user, err = getUserByEmail(application.Organization, userInfo.Email)
 			if err != nil {
 				return nil, err
 			}
