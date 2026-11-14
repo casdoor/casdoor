@@ -874,8 +874,9 @@ func (c *ApiController) Login() {
 				c.ResponseError(err.Error(), nil)
 				return
 			} else if user == nil {
-				c.answerCodeSigninSignup(application, &authForm)
-				return
+				if user = c.answerCodeSigninSignup(application, &authForm); user == nil {
+					return
+				}
 			}
 
 			verificationCodeType := object.GetVerifyType(authForm.Username)

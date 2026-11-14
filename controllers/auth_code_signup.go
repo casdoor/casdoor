@@ -26,12 +26,14 @@ import (
 // answerCodeSigninSignup answers a verification-code sign-in of an email or phone that has
 // no account. When the application takes signups, the code is checked but not used up: the
 // signup page posts it again with the rest of the signup items, and /api/signup checks it
-// the same way as a code the signup page sent itself
-func (c *ApiController) answerCodeSigninSignup(application *object.Application, authForm *form.AuthForm) {
+// the same way as a code the signup page sent itself. A signup page that would ask for
+// nothing more is not shown: the user is added by the same rules and returned, for the
+// sign-in to go on with and to use the code up
+func (c *ApiController) answerCodeSigninSignup(application *object.Application, authForm *form.AuthForm) *object.User {
 	verifyType := object.GetVerifyType(authForm.Username)
 	if !application.IsCodeSigninSignupEnabled(verifyType) || !application.IsSignupAllowedFor(authForm.Organization) {
 		c.ResponseError(fmt.Sprintf(c.T("general:The user: %s doesn't exist"), util.GetId(authForm.Organization, authForm.Username)))
-		return
+		return nil
 	}
 
 	dest := strings.TrimSpace(authForm.Username)
@@ -44,7 +46,7 @@ func (c *ApiController) answerCodeSigninSignup(application *object.Application, 
 			organization, err := object.GetOrganization(util.GetId("admin", application.Organization))
 			if err != nil {
 				c.ResponseError(err.Error())
-				return
+				return nil
 			}
 			if organization != nil && len(organization.CountryCodes) > 0 {
 				countryCode = organization.CountryCodes[0]
@@ -54,7 +56,7 @@ func (c *ApiController) answerCodeSigninSignup(application *object.Application, 
 		var ok bool
 		if checkDest, ok = util.GetE164Number(dest, countryCode); !ok {
 			c.ResponseError(fmt.Sprintf(c.T("verification:Phone number is invalid in your region %s"), countryCode))
-			return
+			return nil
 		}
 		dest, countryCode = util.ParseE164Phone(checkDest)
 	}
@@ -63,12 +65,42 @@ func (c *ApiController) answerCodeSigninSignup(application *object.Application, 
 	err := object.CheckVerifyCodeWithLimitAndIp(nil, clientIp, checkDest, authForm.Code, c.GetAcceptLanguage())
 	if err != nil {
 		c.ResponseError(fmt.Sprintf("%s - %s", verifyType, err.Error()))
-		return
+		return nil
 	}
 
-	c.ResponseOk(object.NextSignup, map[string]string{
-		"type":        verifyType,
-		"dest":        dest,
-		"countryCode": countryCode,
-	})
+	enableCaptcha, err := object.CheckToEnableCaptcha(application, authForm.Organization, "", clientIp)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return nil
+	}
+
+	if enableCaptcha || !application.IsCodeSigninSignupComplete(verifyType) {
+		c.ResponseOk(object.NextSignup, map[string]string{
+			"type":        verifyType,
+			"dest":        dest,
+			"countryCode": countryCode,
+		})
+		return nil
+	}
+
+	// what the signup page posts for the address the code proved
+	signupForm := &form.AuthForm{Application: authForm.Application, Organization: authForm.Organization}
+	if verifyType == object.VerifyTypeEmail {
+		signupForm.Email, signupForm.EmailCode = dest, authForm.Code
+	} else {
+		signupForm.Phone, signupForm.CountryCode, signupForm.PhoneCode = dest, countryCode, authForm.Code
+	}
+
+	user, _ := c.addSignupUser(application, signupForm)
+	if user == nil {
+		return nil
+	}
+
+	c.Ctx.Input.SetParam("recordUserId", user.GetId())
+	c.Ctx.Input.SetParam("recordSignup", "true")
+	util.LogInfo(c.Ctx, "API: [%s] is signed up as new user", user.GetId())
+
+	// the sign-in checks the code of the address as it was proved
+	authForm.Username = checkDest
+	return user
 }

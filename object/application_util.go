@@ -895,6 +895,55 @@ func (application *Application) IsCodeSigninSignupEnabled(verifyType string) boo
 	return application.IsCodeSigninViaSmsEnabled() && application.IsSignupFieldVisible("Phone")
 }
 
+// IsCodeSigninSignupComplete tells whether the address a verification-code sign-in proved
+// is all that the application's signup page asks for, so the account is created without
+// showing a page that has nothing but its signup button left to press
+func (application *Application) IsCodeSigninSignupComplete(verifyType string) bool {
+	fieldName := "Phone"
+	if verifyType == VerifyTypeEmail {
+		fieldName = "Email"
+	}
+
+	if application.SignupApproval || application.SignupHtml != "" || application.IsSignupItemRequired("Invitation code") || application.GetSignupFieldRule(fieldName) == "No verification" {
+		return false
+	}
+
+	addressItem := application.getSignupItemForField(fieldName)
+	for _, signupItem := range application.SignupItems {
+		if signupItem == nil || !signupItem.Visible || signupItem == addressItem {
+			continue
+		}
+
+		switch signupItem.Name {
+		case "ID", "Logo", "Languages", "Signup button", "Providers":
+			continue
+		case "Agreement":
+			// the signin page sends no code before its own agreement is accepted
+			if !application.isSigninAgreementShown() {
+				return false
+			}
+		default:
+			return false
+		}
+	}
+
+	return true
+}
+
+func (application *Application) isSigninAgreementShown() bool {
+	if application.SigninHtml != "" || application.TermsOfUse == "" && application.PrivacyPolicy == "" {
+		return false
+	}
+
+	for _, signinItem := range application.SigninItems {
+		if signinItem != nil && signinItem.Name == "Agreement" {
+			return signinItem.Visible
+		}
+	}
+
+	return false
+}
+
 // IsSelfSignupEnabled tells whether users may sign themselves up on the signup page, by a
 // magic link or by a verification code. "Disable self signup" leaves only the signups of
 // the application's providers (e.g. the first SSO login of a new employee) and of the

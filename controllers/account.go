@@ -78,98 +78,77 @@ type LaravelResponse struct {
 	UpdatedAt       string `json:"updated_at"`
 }
 
-// Signup
-// @Tag Login API
-// @Title Signup
-// @Description sign up a new user
-// @Param   body    body   form.AuthForm  true        "Signup request"
-// @Success 200 {object} controllers.Response The Response object
-// @router /signup [post]
-func (c *ApiController) Signup() {
-	var authForm form.AuthForm
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &authForm)
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
-	}
-
-	application, err := object.GetApplication(fmt.Sprintf("admin/%s", authForm.Application))
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
-	}
-	if application == nil {
-		c.ResponseError(fmt.Sprintf(c.T("auth:The application: %s does not exist"), authForm.Application))
-		return
-	}
-
+// addSignupUser checks a signup against the rules of the application and adds its user. It
+// has answered the request itself when it returns no user. The verification codes are not
+// used up yet, checkPhone is the phone number whose code was checked
+func (c *ApiController) addSignupUser(application *object.Application, authForm *form.AuthForm) (*object.User, string) {
 	if !application.EnableSignUp || !application.IsSignupAllowedFor(authForm.Organization) {
 		c.ResponseError(c.T("account:The application does not allow to sign up new account"))
-		return
+		return nil, ""
 	}
 
 	// without self signup, the signup page only takes the invitation codes an admin hands out,
 	// an invalid code is refused by CheckInvitationCode below
 	if !application.IsSelfSignupEnabled() && authForm.InvitationCode == "" {
 		c.ResponseError(c.T("account:The application does not allow to sign up new account"))
-		return
+		return nil, ""
 	}
 
 	organization, err := object.GetOrganization(util.GetId("admin", authForm.Organization))
 	if err != nil {
 		c.ResponseError(c.T(err.Error()))
-		return
+		return nil, ""
 	}
 
 	if organization == nil {
 		c.ResponseError(fmt.Sprintf(c.T("auth:The organization: %s does not exist"), authForm.Organization))
-		return
+		return nil, ""
 	}
 
 	// a value posted for a hidden signup item did not come from the signup page
-	application.ClearHiddenSignupFields(&authForm)
+	application.ClearHiddenSignupFields(authForm)
 
 	clientIp := util.GetClientIpFromRequest(c.Ctx.Request)
 	err = object.CheckEntryIp(clientIp, nil, application, organization, c.GetAcceptLanguage())
 	if err != nil {
 		c.ResponseError(err.Error())
-		return
+		return nil, ""
 	}
 
 	var enableCaptcha bool
 	if enableCaptcha, err = object.CheckToEnableCaptcha(application, authForm.Organization, authForm.Username, clientIp); err != nil {
 		c.ResponseError(err.Error())
-		return
+		return nil, ""
 	} else if enableCaptcha {
 		captchaProvider, err := object.GetCaptchaProviderByApplication(util.GetId(application.Owner, application.Name), "false", c.GetAcceptLanguage())
 		if err != nil {
 			c.ResponseError(err.Error())
-			return
+			return nil, ""
 		}
 
 		var isHuman bool
-		isHuman, err = verifyAuthFormCaptcha(captchaProvider, &authForm)
+		isHuman, err = verifyAuthFormCaptcha(captchaProvider, authForm)
 		if err != nil {
 			c.ResponseError(err.Error())
-			return
+			return nil, ""
 		}
 
 		if !isHuman {
 			c.ResponseError(c.T("verification:Turing test failed."))
-			return
+			return nil, ""
 		}
 	}
 
-	msg := object.CheckUserSignup(application, organization, &authForm, c.GetAcceptLanguage())
+	msg := object.CheckUserSignup(application, organization, authForm, c.GetAcceptLanguage())
 	if msg != "" {
 		c.ResponseError(msg)
-		return
+		return nil, ""
 	}
 
-	invitation, msg := object.CheckInvitationCode(application, organization, &authForm, c.GetAcceptLanguage())
+	invitation, msg := object.CheckInvitationCode(application, organization, authForm, c.GetAcceptLanguage())
 	if msg != "" {
 		c.ResponseError(msg)
-		return
+		return nil, ""
 	}
 	invitationName := ""
 	if invitation != nil {
@@ -182,7 +161,7 @@ func (c *ApiController) Signup() {
 		err = object.CheckVerifyCodeWithLimitAndIp(nil, clientIp, authForm.Email, authForm.EmailCode, c.GetAcceptLanguage())
 		if err != nil {
 			c.ResponseError(err.Error())
-			return
+			return nil, ""
 		}
 
 		userEmailVerified = true
@@ -195,14 +174,14 @@ func (c *ApiController) Signup() {
 		err = object.CheckVerifyCodeWithLimitAndIp(nil, clientIp, checkPhone, authForm.PhoneCode, c.GetAcceptLanguage())
 		if err != nil {
 			c.ResponseError(err.Error())
-			return
+			return nil, ""
 		}
 	}
 
 	id, err := object.GenerateIdForNewUser(application)
 	if err != nil {
 		c.ResponseError(err.Error())
-		return
+		return nil, ""
 	}
 
 	username := authForm.Username
@@ -217,7 +196,7 @@ func (c *ApiController) Signup() {
 	initScore, err := organization.GetInitScore()
 	if err != nil {
 		c.ResponseError(fmt.Errorf(c.T("account:Get init score failed, error: %w"), err).Error())
-		return
+		return nil, ""
 	}
 
 	userType := "normal-user"
@@ -225,7 +204,7 @@ func (c *ApiController) Signup() {
 		err = object.CheckPricingAndPlan(authForm.Organization, authForm.Pricing, authForm.Plan, c.GetAcceptLanguage())
 		if err != nil {
 			c.ResponseError(err.Error())
-			return
+			return nil, ""
 		}
 		userType = "paid-user"
 	}
@@ -297,18 +276,18 @@ func (c *ApiController) Signup() {
 	affected, err := object.AddUser(user, c.GetAcceptLanguage())
 	if err != nil {
 		c.ResponseError(err.Error())
-		return
+		return nil, ""
 	}
 
 	if !affected {
 		c.ResponseError(c.T("account:Failed to add user"), util.StructToJson(user))
-		return
+		return nil, ""
 	}
 
 	err = object.AddUserToOriginalDatabase(user)
 	if err != nil {
 		c.ResponseError(err.Error())
-		return
+		return nil, ""
 	}
 
 	if invitation != nil {
@@ -316,8 +295,41 @@ func (c *ApiController) Signup() {
 		_, err := object.UpdateInvitation(invitation.GetId(), invitation, c.GetAcceptLanguage())
 		if err != nil {
 			c.ResponseError(err.Error())
-			return
+			return nil, ""
 		}
+	}
+
+	return user, checkPhone
+}
+
+// Signup
+// @Tag Login API
+// @Title Signup
+// @Description sign up a new user
+// @Param   body    body   form.AuthForm  true        "Signup request"
+// @Success 200 {object} controllers.Response The Response object
+// @router /signup [post]
+func (c *ApiController) Signup() {
+	var authForm form.AuthForm
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, &authForm)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	application, err := object.GetApplication(fmt.Sprintf("admin/%s", authForm.Application))
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	if application == nil {
+		c.ResponseError(fmt.Sprintf(c.T("auth:The application: %s does not exist"), authForm.Application))
+		return
+	}
+
+	user, checkPhone := c.addSignupUser(application, &authForm)
+	if user == nil {
+		return
 	}
 
 	// no session or authorization code until an administrator approves the user
