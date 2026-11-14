@@ -280,3 +280,31 @@ func buildLdapSearchRequest(filter string) (*ber.Packet, error) {
 
 	return packet, nil
 }
+
+func TestGetUsername(t *testing.T) {
+	scenarios := []struct {
+		input    string
+		expected string
+	}{
+		{"(&(objectClass=posixAccount)(uid=admin))", "admin"},
+		{"(|(uid=admin@example.com)(mail=admin@example.com))", "*"},
+		{"(uid=ad*)", "*"},
+		{"(!(uid=nobody))", "*"},
+	}
+
+	for _, scenery := range scenarios {
+		t.Run(scenery.input, func(t *testing.T) {
+			searchRequest, err := buildLdapSearchRequest(scenery.input)
+			if err != nil {
+				assert.FailNow(t, "Unable to create searchRequest", err)
+			}
+			m, err := message.ReadLDAPMessage(message.NewBytes(0, searchRequest.Bytes()))
+			if err != nil {
+				assert.FailNow(t, "Unable to create searchRequest", err)
+			}
+			req := m.ProtocolOp().(message.SearchRequest)
+
+			assert.Equal(t, scenery.expected, getUsername(req.Filter()))
+		})
+	}
+}
