@@ -30,6 +30,9 @@ var (
 	webhookWorkerStop      chan struct{}
 	webhookPollingInterval = 30 * time.Second // Configurable polling interval
 	webhookBatchSize       = 100              // Configurable batch size for processing events
+
+	webhookMaxConcurrency           = 10 // events delivered at the same time
+	webhookMaxConcurrencyPerWebhook = 3  // events delivered at the same time to one webhook, so a slow endpoint cannot take every slot
 )
 
 // StartWebhookDeliveryWorker starts the background worker for webhook delivery
@@ -105,9 +108,33 @@ func processWebhookEvents() {
 		return
 	}
 
+	sem := make(chan struct{}, webhookMaxConcurrency)
+	webhookSems := map[string]chan struct{}{}
+	waitGroup := sync.WaitGroup{}
+
 	for _, event := range events {
-		deliverWebhookEvent(event)
+		webhookSem, ok := webhookSems[event.Webhook]
+		if !ok {
+			webhookSem = make(chan struct{}, webhookMaxConcurrencyPerWebhook)
+			webhookSems[event.Webhook] = webhookSem
+		}
+
+		waitGroup.Add(1)
+		util.SafeGoroutine(func() {
+			defer waitGroup.Done()
+
+			// the webhook slot comes first so that the events of a slow webhook do not hold the global ones
+			webhookSem <- struct{}{}
+			defer func() { <-webhookSem }()
+			sem <- struct{}{}
+			defer func() { <-sem }()
+
+			deliverWebhookEvent(event)
+		})
 	}
+
+	// the next batch must not pick up the events still in flight
+	waitGroup.Wait()
 }
 
 // deliverWebhookEvent attempts to deliver a single webhook event
