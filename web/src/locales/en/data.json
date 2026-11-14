@@ -1264,7 +1264,7 @@
     "Client ID help": "From the client you registered on the other identity provider, with this Casdoor's address followed by /callback as its redirect URI.",
     "Desktop": "Desktop",
     "Downloads": "Downloads",
-    "Downloads help": "Downloads help",
+    "Downloads help": "Files to install in another system, such as a gateway plugin. The files of paid integrations carry the ID of your license, don't share them.",
     "Failed to install": "Failed to install",
     "Failed to uninstall": "Failed to uninstall",
     "Good to know": "Good to know",

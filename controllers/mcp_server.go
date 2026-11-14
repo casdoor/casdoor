@@ -585,3 +585,28 @@ func (c *ApiController) DecideMcpApproval() {
 	c.Data["json"] = wrapActionResponse(affected)
 	c.ServeJSON()
 }
+
+// GetMyMcpServers
+// @Title GetMyMcpServers
+// @Tag Server API
+// @Description get the MCP servers of the signed-in user's organization with their gateway addresses and allowed tools, for the agents that act for the user
+// @Success 200 {array} object.UserMcpServer The Response object
+// @router /get-my-mcp-servers [get]
+func (c *ApiController) GetMyMcpServers() {
+	user := c.getCurrentUser()
+	if user == nil || object.IsAppUser(user.GetId()) {
+		c.ResponseError(c.T("general:Please login first"))
+		return
+	}
+	if err := edition.Require(edition.Commercial, edition.FeatureMcpGateway); err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	servers, err := object.GetUserMcpServers(user, c.Ctx.Request.Host)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	c.ResponseOk(servers)
+}
