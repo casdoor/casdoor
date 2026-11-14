@@ -102,6 +102,11 @@ export default function IntegrationEditPage() {
       children: <Link className="underline-offset-4 hover:underline" to={`/applications/${integration.owner}/${integration.application}`}>{integration.application}</Link>,
     },
     {
+      label: i18next.t("server:Agent"),
+      hidden: !integration.application || !files["application.json"]?.agent,
+      children: <Link className="underline-offset-4 hover:underline" to={`/agents/${integration.owner}/${integration.name}`}>{integration.name}</Link>,
+    },
+    {
       label: i18next.t("general:Provider"),
       hidden: !integration.provider,
       children: <Link className="underline-offset-4 hover:underline" to={`/providers/${integration.owner}/${integration.provider}`}>{integration.provider}</Link>,
@@ -112,6 +117,21 @@ export default function IntegrationEditPage() {
       children: (
         <div className="space-y-0.5">
           {(bundle?.manifest?.permissions?.hosts ?? []).map((host: string) => <div key={host}><code className="font-mono text-xs">{host}</code></div>)}
+        </div>
+      ),
+    },
+    {
+      label: i18next.t("integration:Downloads"),
+      hidden: !bundle?.manifest?.downloads?.length,
+      children: (
+        <div className="flex flex-wrap gap-2">
+          {(bundle?.manifest?.downloads ?? []).map((path: string) => (
+            <Button key={path} variant="outline" size="sm" asChild>
+              <a href={`${Setting.ServerUrl}/api/download-marketplace-file?owner=${encodeURIComponent(integration.owner)}&integrationId=${encodeURIComponent(integration.integrationId)}&path=${encodeURIComponent(path)}`}>
+                {path.split("/").pop()}
+              </a>
+            </Button>
+          ))}
         </div>
       ),
     },

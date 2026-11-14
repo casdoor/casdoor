@@ -285,3 +285,46 @@ func IsServerAllowed(user *User, owner string, name string) (bool, error) {
 
 	return CheckLoginPermission(user.GetId(), application)
 }
+
+// UserMcpServer is an MCP server as the agents of a user see it: only its gateway address and its allowed tools
+type UserMcpServer struct {
+	Owner                 string         `json:"owner"`
+	Name                  string         `json:"name"`
+	DisplayName           string         `json:"displayName"`
+	Url                   string         `json:"url"`
+	EnableToolPermissions bool           `json:"enableToolPermissions"`
+	Tools                 []*UserMcpTool `json:"tools"`
+}
+
+type UserMcpTool struct {
+	Name        string `json:"name"`
+	Description string `json:"description"`
+}
+
+// GetUserMcpServers lists the MCP servers of the user's organization with their gateway addresses, so an agent signed
+// in as the user can connect to them, the upstream addresses and tokens stay hidden
+func GetUserMcpServers(user *User, host string) ([]*UserMcpServer, error) {
+	servers, err := GetServers(user.Owner)
+	if err != nil {
+		return nil, err
+	}
+
+	res := []*UserMcpServer{}
+	for _, server := range servers {
+		tools := []*UserMcpTool{}
+		for _, tool := range server.Tools {
+			if tool.IsAllowed {
+				tools = append(tools, &UserMcpTool{Name: tool.Name, Description: tool.Description})
+			}
+		}
+		res = append(res, &UserMcpServer{
+			Owner:                 server.Owner,
+			Name:                  server.Name,
+			DisplayName:           server.DisplayName,
+			Url:                   GetServerProxyUrl(host, server.Owner, server.Name),
+			EnableToolPermissions: server.EnableToolPermissions,
+			Tools:                 tools,
+		})
+	}
+	return res, nil
+}
