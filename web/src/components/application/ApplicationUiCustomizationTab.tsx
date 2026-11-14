@@ -173,9 +173,19 @@ function getUnusedItemOptions(names: {name: string; labelKey: string}[], rows: a
     .map((item) => ({id: item.name, name: i18next.t(item.labelKey)}));
 }
 
+/** the "Agreement" rule of either page that leaves its checkbox for the user to tick, see getAgreementDefaultValue() */
+function getAgreementUncheckedOption() {
+  return {id: "Agreement - False", name: `${i18next.t("signup:Agreement")} - ${i18next.t("general:False")}`};
+}
+
 /** Only a few signin items take a rule, and each has its own option set. */
 function getSigninItemRuleOptions(name: string) {
   switch (name) {
+  case "Agreement":
+    return [
+      {id: "None", name: `${i18next.t("signup:Agreement")} - ${i18next.t("general:True")}`},
+      getAgreementUncheckedOption(),
+    ];
   case "Providers":
     return [
       {id: "big", name: i18next.t("application:Big icon")},
@@ -469,7 +479,7 @@ export function ApplicationUiCustomizationTab({application, updateField}: Applic
                   <SelectField
                     value={row.rule}
                     onChange={(v) => patch({rule: v})}
-                    options={enumSelectOptions(map)}
+                    options={row.name === "Agreement" ? [...enumSelectOptions(map), getAgreementUncheckedOption()] : enumSelectOptions(map)}
                   />
                 );
               },

@@ -14,7 +14,7 @@ import {RegionSelect} from "@/components/common/RegionSelect";
 import {CustomHtml, CustomStyle} from "@/components/common/CustomHtml";
 import {isTrustedApplication} from "@/lib/custom-html";
 import {AuthDivider, AuthLayout, AuthLoading} from "@/components/auth/AuthLayout";
-import {AgreementCheckbox, hasAgreementDoc} from "@/components/auth/AgreementModal";
+import {AgreementCheckbox, getAgreementDefaultValue, hasAgreementDoc} from "@/components/auth/AgreementModal";
 import {ProviderButtons, getVisibleProviders} from "@/components/auth/ProviderButtons";
 import {SendCodeInput} from "@/components/auth/SendCodeInput";
 import {CaptchaModal} from "@/components/common/CaptchaModal";
@@ -89,7 +89,7 @@ export default function SignupPage({application: applicationProp}: {application?
   React.useEffect(() => {
     if (applicationProp) {
       setApplication(applicationProp);
-      setAgreed(true);
+      setAgreed(getAgreementDefaultValue(applicationProp.signupItems));
       setValues((prev) => ({
         ...prev,
         application: applicationProp.name,
@@ -112,7 +112,7 @@ export default function SignupPage({application: applicationProp}: {application?
       .then((res: any) => {
         if (res.status === "ok" && res.data) {
           setApplication(res.data);
-          setAgreed(true);
+          setAgreed(getAgreementDefaultValue(res.data.signupItems));
           const invitationCode = searchParams.get("invitationCode") ?? "";
           setValues((prev) => ({
             ...prev,
