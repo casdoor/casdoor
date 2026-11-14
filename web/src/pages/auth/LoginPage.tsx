@@ -12,7 +12,7 @@ import {isTrustedApplication} from "@/lib/custom-html";
 import {AuthDivider, AuthLayout, AuthLoading} from "@/components/auth/AuthLayout";
 import {SigninMethodTabs} from "@/components/auth/SigninMethodTabs";
 import {MfaVerify, NextMfa, RequiredMfa} from "@/components/auth/MfaVerify";
-import {AgreementCheckbox, isSigninAgreementShown} from "@/components/auth/AgreementModal";
+import {AgreementCheckbox, getAgreementDefaultValue, isSigninAgreementShown} from "@/components/auth/AgreementModal";
 import {DeviceLoginPanel} from "@/components/auth/DeviceLoginPanel";
 import {CertLoginPanel, CertLoginParams} from "@/components/auth/CertLoginPanel";
 import {GoogleOneTap} from "@/components/auth/GoogleOneTap";
@@ -377,7 +377,7 @@ export default function LoginPage({type = "login", application: applicationProp,
       setApplication(app);
       setCountryCode(app?.organizationObj?.countryCodes?.[0] ?? "");
       setLoginMethod(getDefaultLoginMethod(app));
-      setAgreed(true);
+      setAgreed(getAgreementDefaultValue(app?.signinItems));
       setAutoSignin(Setting.getAutoSigninDefaultValue(app));
     };
 

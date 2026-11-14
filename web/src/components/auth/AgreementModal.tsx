@@ -21,6 +21,11 @@ export function isSigninAgreementShown(application: any) {
   return hasAgreementDoc(application) && !!item?.visible;
 }
 
+/** the checkbox of a page starts checked, unless the rule of the page's "Agreement" item is "Agreement - False" */
+export function getAgreementDefaultValue(items: any[] | undefined) {
+  return items?.find((item: any) => item.name === "Agreement")?.rule !== "Agreement - False";
+}
+
 function fetchAgreementDoc(url: string) {
   return fetch(url, {method: "GET"})
     .then((res) => res.text())
