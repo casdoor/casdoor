@@ -218,10 +218,8 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 	if user.NeedUpdatePassword {
 		// no credential may be issued here, otherwise the requirement could be bypassed
 		// by reading the credential from the response of this API directly
-		c.SetSessionUsername(userId)
 		resp = &Response{Status: "ok", Msg: "", Data: object.RequiredUpdatePassword, Data3: true}
 	} else if form.Type == ResponseTypeLogin {
-		c.SetSessionUsername(userId)
 		util.LogInfo(c.Ctx, "API: [%s] signed in", userId)
 		resp = &Response{Status: "ok", Msg: "", Data: userId}
 	} else if isResponseType && responseType.Code { // authorization code and hybrid flows
@@ -243,12 +241,6 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
-		}
-
-		needSigninSession := application.EnableSigninSession || application.HasPromptPage() || consentRequired
-		if needSigninSession {
-			// Prompt and consent pages need the user to be signed in.
-			c.SetSessionUsername(userId)
 		}
 
 		if consentRequired {
@@ -288,10 +280,6 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 					return
 				}
 				resp = tokenToResponse(token)
-
-				if application.EnableSigninSession || application.HasPromptPage() {
-					c.SetSessionUsername(userId)
-				}
 			}
 		}
 	} else if form.Type == ResponseTypeDevice {
@@ -343,10 +331,6 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 		}
 		resp = &Response{Status: "ok", Msg: "", Data: res, Data2: map[string]interface{}{"redirectUrl": redirectUrl, "method": method}}
 
-		if application.EnableSigninSession || application.HasPromptPage() {
-			// The prompt page needs the user to be signed in
-			c.SetSessionUsername(userId)
-		}
 	} else if form.Type == ResponseTypeCas {
 		// not oauth but CAS SSO protocol
 		service := c.Ctx.Input.Query("service")
@@ -365,16 +349,22 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 			}
 		}
 
-		if application.EnableSigninSession || application.HasPromptPage() {
-			// The prompt page needs the user to be signed in
-			c.SetSessionUsername(userId)
-		}
 	} else {
 		resp = wrapErrorResponse(fmt.Errorf("unknown response type: %s", form.Type))
 	}
 
-	// For all successful logins, set the session expiration; if auto signin is not checked, cap it at 24 hours.
+	// For all successful logins, establish the IdP session and set its expiration;
+	// if auto signin is not checked, cap it at 24 hours.
+	//
+	// The session has to be established for every successful login, not only when
+	// the authorize flow renders prompt or consent pages: the user has just
+	// authenticated with their credentials, so signing in through any
+	// application's authorize page (code, implicit, device, SAML, CAS) must
+	// provide cross-application single sign-on exactly like the standalone login
+	// page does (#6087).
 	if resp.Status == "ok" {
+		c.SetSessionUsername(userId)
+
 		expireInHours := application.CookieExpireInHours
 
 		if expireInHours == 0 {
