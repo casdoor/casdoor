@@ -18,6 +18,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net/url"
 	"strings"
 
 	"github.com/beego/beego/v2/core/utils/pagination"
@@ -1114,7 +1115,7 @@ func (c *ApiController) ImpersonateUser() {
 		c.ResponseError(err.Error())
 		return
 	}
-	c.Ctx.SetCookie("impersonateUser", username, 0, "/")
+	c.Ctx.SetCookie("impersonateUser", url.QueryEscape(username), 0, "/")
 	c.ResponseOk()
 }
 
