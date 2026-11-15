@@ -43,14 +43,19 @@ type MagicLink struct {
 	Application string `xorm:"varchar(100) notnull" json:"application"`
 	Email       string `xorm:"varchar(100) index notnull" json:"email"`
 	RemoteAddr  string `xorm:"varchar(100)" json:"remoteAddr"`
+	SigninPath  string `xorm:"varchar(1000)" json:"-"`
 	TokenHash   string `xorm:"varchar(100) index notnull" json:"-"`
 	SessionHash string `xorm:"varchar(100) notnull" json:"-"`
 	Time        int64  `xorm:"notnull" json:"time"`
 	IsUsed      bool   `xorm:"notnull" json:"isUsed"`
 }
 
+// MagicLinkUrlPrefix is the short path mailed in a link, "/m/<token>". The sign-in page
+// the link returns to is kept with the link instead of being spelled out in the mail.
+const MagicLinkUrlPrefix = "/m/"
+
 func generateMagicLinkToken() (string, error) {
-	bytes := make([]byte, 32)
+	bytes := make([]byte, 16)
 	_, err := rand.Read(bytes)
 	if err != nil {
 		return "", err
@@ -116,21 +121,62 @@ func isValidSigninPath(signinPath string) bool {
 	return path == "/login" || strings.HasPrefix(path, "/login/") || strings.HasPrefix(path, "/cas/")
 }
 
-func getMagicLinkUrl(origin string, signinPath string, application *Application, token string) string {
+func getMagicLinkSigninPath(signinPath string, application *Application) string {
 	if !isValidSigninPath(signinPath) {
-		signinPath = fmt.Sprintf("/login/%s", application.Name)
+		return fmt.Sprintf("/login/%s", url.PathEscape(application.Name))
+	}
+
+	return signinPath
+}
+
+func getMagicLinkUrl(origin string, token string) string {
+	return fmt.Sprintf("%s%s%s", strings.TrimSuffix(origin, "/"), MagicLinkUrlPrefix, token)
+}
+
+// GetMagicLinkRedirectPath is where the short link "/m/<token>" sends the browser: the
+// sign-in page the link was asked from, carrying the token. It only looks the link up,
+// the token is claimed when that page posts it, so a mail scanner opening the link
+// first does not use it up.
+func GetMagicLinkRedirectPath(token string) (string, error) {
+	signinPath := "/login"
+	if token != "" && len(token) <= 100 {
+		magicLink := &MagicLink{TokenHash: HashMagicLinkSecret(token)}
+		existed, err := ormer.Engine.Get(magicLink)
+		if err != nil {
+			return "", err
+		}
+
+		if existed {
+			signinPath = magicLink.SigninPath
+			if !isValidSigninPath(signinPath) {
+				signinPath = fmt.Sprintf("/login/%s", url.PathEscape(magicLink.Application))
+			}
+		}
 	}
 
 	signinUrl, err := url.ParseRequestURI(signinPath)
 	if err != nil {
-		return ""
+		return "", err
 	}
 
 	query := signinUrl.Query()
 	query.Set("magicLinkToken", token)
 	signinUrl.RawQuery = query.Encode()
+	return signinUrl.String(), nil
+}
 
-	return fmt.Sprintf("%s%s", strings.TrimSuffix(origin, "/"), signinUrl.String())
+func getMagicLinkEmailTitle(provider *Provider, organization *Organization) string {
+	// the provider's own title is the one of its verification code mail, it is only
+	// meant for the link when the provider's content is written for the link too
+	if provider.Title != "" && strings.Contains(provider.Content, "%link") {
+		return provider.Title
+	}
+
+	name := organization.DisplayName
+	if name == "" {
+		name = organization.Name
+	}
+	return fmt.Sprintf("Your sign-in link for %s", name)
 }
 
 func getMagicLinkEmailContent(provider *Provider, magicLinkUrl string, user *User) string {
@@ -187,7 +233,7 @@ func isAllowSendMagicLink(application *Application, email string, remoteAddr str
 	return nil
 }
 
-func addMagicLink(organization *Organization, application *Application, email string, remoteAddr string, token string, sessionHash string) error {
+func addMagicLink(organization *Organization, application *Application, email string, remoteAddr string, signinPath string, token string, sessionHash string) error {
 	magicLink := &MagicLink{
 		Owner:       organization.Name,
 		Name:        util.GenerateId(),
@@ -195,6 +241,7 @@ func addMagicLink(organization *Organization, application *Application, email st
 		Application: application.Name,
 		Email:       email,
 		RemoteAddr:  remoteAddr,
+		SigninPath:  signinPath,
 		TokenHash:   HashMagicLinkSecret(token),
 		SessionHash: sessionHash,
 		Time:        time.Now().Unix(),
@@ -233,18 +280,25 @@ func SendMagicLinkToEmail(organization *Organization, user *User, provider *Prov
 		return err
 	}
 
-	title := provider.Title
-	if title == "" {
-		title = "Magic Link"
-	}
-
-	content := getMagicLinkEmailContent(provider, getMagicLinkUrl(origin, signinPath, application, token), user)
-	err = SendEmail(provider, title, content, []string{dest}, organization.DisplayName)
+	// the link is stored before it is mailed, so it can be opened the moment it arrives
+	err = addMagicLink(organization, application, dest, remoteAddr, getMagicLinkSigninPath(signinPath, application), token, sessionHash)
 	if err != nil {
 		return err
 	}
 
-	return addMagicLink(organization, application, dest, remoteAddr, token, sessionHash)
+	title := getMagicLinkEmailTitle(provider, organization)
+	content := getMagicLinkEmailContent(provider, getMagicLinkUrl(origin, token), user)
+	err = SendEmail(provider, title, content, []string{dest}, organization.DisplayName)
+	if err != nil {
+		// a link that was never mailed must not hold back the next attempt
+		_, deleteErr := ormer.Engine.Where("token_hash = ?", HashMagicLinkSecret(token)).Delete(&MagicLink{})
+		if deleteErr != nil {
+			return deleteErr
+		}
+		return err
+	}
+
+	return nil
 }
 
 // ConsumeMagicLink claims a link for a single sign-in. The claim is one conditional

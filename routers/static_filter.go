@@ -282,6 +282,31 @@ func serveOrganizationAuthorizeRedirect(ctx *context.Context) bool {
 	return true
 }
 
+// serveMagicLinkRedirect sends the short link "/m/<token>" in a sign-in mail to the
+// sign-in page the link was asked from.
+func serveMagicLinkRedirect(ctx *context.Context) bool {
+	urlPath := ctx.Request.URL.Path
+	if !strings.HasPrefix(urlPath, object.MagicLinkUrlPrefix) {
+		return false
+	}
+
+	token := strings.TrimPrefix(urlPath, object.MagicLinkUrlPrefix)
+	if token == "" || strings.Contains(token, "/") {
+		return false
+	}
+
+	redirectPath, err := object.GetMagicLinkRedirectPath(token)
+	if err != nil {
+		responseError(ctx, err.Error())
+		return true
+	}
+
+	ctx.ResponseWriter.Header().Set("Cache-Control", "no-store")
+	ctx.ResponseWriter.Header().Set("Referrer-Policy", "no-referrer")
+	http.Redirect(ctx.ResponseWriter, ctx.Request, basePath+redirectPath, http.StatusFound)
+	return true
+}
+
 func StaticFilter(ctx *context.Context) {
 	urlPath := ctx.Request.URL.Path
 
@@ -296,6 +321,9 @@ func StaticFilter(ctx *context.Context) {
 		return
 	}
 	if serveOrganizationAuthorizeRedirect(ctx) {
+		return
+	}
+	if serveMagicLinkRedirect(ctx) {
 		return
 	}
 	if serveAuthCallbackHandlerScript(ctx) {

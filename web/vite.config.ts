@@ -11,6 +11,7 @@ const proxyPaths = [
   "/.well-known/openid-configuration",
   "/scim",
   "/cas",
+  "/m/",
 ];
 
 export default defineConfig({
