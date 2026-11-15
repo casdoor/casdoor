@@ -76,6 +76,7 @@ type MarketplaceIntegration struct {
 type MarketplaceRevoked struct {
 	Id      string `json:"id"`
 	Version string `json:"version"`
+	Reason  string `json:"reason,omitempty"`
 }
 
 type MarketplaceIndex struct {
@@ -273,13 +274,25 @@ func GetMarketplaceIndex(refresh bool) (*MarketplaceIndex, error) {
 
 // GetMarketplaceIndexForLanguage leaves out the integrations of the Chinese Marketplace, such as sign-in with
 // platforms only used in China, unless the admin uses Casdoor in Chinese.
+// It is what the Marketplace page shows, so it also reads the versions withdrawn right now from the Marketplace server.
 func GetMarketplaceIndexForLanguage(refresh bool, lang string) (*MarketplaceIndex, error) {
 	index, err := GetMarketplaceIndex(refresh)
-	if err != nil || strings.HasPrefix(lang, "zh") {
-		return index, err
+	if err != nil {
+		return nil, err
 	}
+	refreshMarketplaceStatus()
 
 	res := *index
+	res.Revoked = append([]*MarketplaceRevoked{}, index.Revoked...)
+	for _, revoked := range getMarketplaceServerRevoked() {
+		if findRevoked(index.Revoked, revoked.Id, revoked.Version) == nil {
+			res.Revoked = append(res.Revoked, revoked)
+		}
+	}
+	if strings.HasPrefix(lang, "zh") {
+		return &res, nil
+	}
+
 	res.Integrations = []*MarketplaceIntegration{}
 	for _, item := range index.Integrations {
 		if item.Region != "cn" {
@@ -303,19 +316,29 @@ func GetMarketplaceIntegration(id string) (*MarketplaceIntegration, error) {
 	return nil, fmt.Errorf("the integration: %s is not in the Marketplace", id)
 }
 
-func isIntegrationRevoked(index *MarketplaceIndex, id string, version string) bool {
-	for _, revoked := range index.Revoked {
+func findRevoked(list []*MarketplaceRevoked, id string, version string) *MarketplaceRevoked {
+	for _, revoked := range list {
 		if revoked.Id == id && (revoked.Version == "" || revoked.Version == version) {
-			return true
+			return revoked
 		}
 	}
-	return false
+	return nil
 }
 
-// getIntegrationBundle downloads the bundle of a version and checks it. For an install, it first checks with the
-// Marketplace server that the version is still published and what checksum the bundle must have, and downloads the
-// bundle from the server when the CDN copy does not have it. It also returns the version it checked with the server,
-// or "" when it did not.
+// getIntegrationRevoked returns the withdrawal of a version in the index or, as of the last time the Marketplace page
+// was opened, on the Marketplace server, or nil when it is not withdrawn
+func getIntegrationRevoked(index *MarketplaceIndex, id string, version string) *MarketplaceRevoked {
+	revoked := findRevoked(getMarketplaceServerRevoked(), id, version)
+	if revoked == nil {
+		revoked = findRevoked(index.Revoked, id, version)
+	}
+	return revoked
+}
+
+// getIntegrationBundle downloads the bundle of a version and checks it. It first checks with the Marketplace server
+// that the version is still published and what checksum the bundle must have, and downloads the bundle from the server
+// when the CDN copy does not have it. For an install, it also returns the version it checked with the server, or ""
+// when it did not; otherwise it is an admin opening the integration in the Marketplace page.
 func getIntegrationBundle(item *MarketplaceIntegration, version string, forInstall bool) (*IntegrationBundle, string, string, error) {
 	index, err := GetMarketplaceIndex(false)
 	if err != nil {
@@ -324,8 +347,13 @@ func getIntegrationBundle(item *MarketplaceIntegration, version string, forInsta
 	if version == "" {
 		version = item.Latest
 	}
-	if isIntegrationRevoked(index, item.Id, version) {
-		return nil, "", "", fmt.Errorf("the integration: %s %s has been withdrawn from the Marketplace", item.Id, version)
+	// the official Marketplace server, when it can be reached, says itself whether the version is withdrawn
+	var revokedErr error
+	if revoked := getIntegrationRevoked(index, item.Id, version); revoked != nil {
+		revokedErr = fmt.Errorf("the integration: %s %s has been withdrawn from the Marketplace", item.Id, version)
+		if revoked.Reason != "" {
+			revokedErr = fmt.Errorf("%w: %s", revokedErr, revoked.Reason)
+		}
 	}
 
 	var marketplaceVersion *MarketplaceVersion
@@ -333,6 +361,9 @@ func getIntegrationBundle(item *MarketplaceIntegration, version string, forInsta
 		if v.Version == version {
 			marketplaceVersion = v
 		}
+	}
+	if revokedErr != nil && (marketplaceVersion == nil || !isOfficialMarketplace(item)) {
+		return nil, "", "", revokedErr
 	}
 	if marketplaceVersion == nil {
 		return nil, "", "", fmt.Errorf("the integration: %s has no version %s", item.Id, version)
@@ -346,10 +377,16 @@ func getIntegrationBundle(item *MarketplaceIntegration, version string, forInsta
 	var meta *MarketplaceVersionMeta
 	serverUrl := ""
 	checkedVersion := ""
-	if forInstall && isOfficialMarketplace(item) {
-		meta, serverUrl = getMarketplaceVersionMeta(item, marketplaceVersion)
-		if meta != nil {
+	if isOfficialMarketplace(item) {
+		step := marketplaceStepView
+		if forInstall {
+			step = ""
+		}
+		meta, serverUrl = getMarketplaceVersionMeta(item, marketplaceVersion, step)
+		if meta != nil && forInstall {
 			checkedVersion = version
+		}
+		if meta != nil {
 			if meta.Status == "Revoked" {
 				if meta.Reason != "" {
 					return nil, "", checkedVersion, integrationRevokedError{fmt.Errorf("the integration: %s %s has been withdrawn from the Marketplace: %s", item.Id, version, meta.Reason)}
@@ -360,6 +397,9 @@ func getIntegrationBundle(item *MarketplaceIntegration, version string, forInsta
 				expectedSha256 = meta.Sha256
 			}
 		}
+	}
+	if meta == nil && revokedErr != nil {
+		return nil, "", "", revokedErr
 	}
 
 	bundleUrl := joinMarketplaceUrl(baseUrl, marketplaceVersion.Url)

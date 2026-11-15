@@ -47,6 +47,10 @@ func fetchMarketplaceFile(fileUrl string) ([]byte, error) {
 }
 
 func fetchMarketplaceFileWithLicense(fileUrl string, withLicense bool) ([]byte, error) {
+	return fetchMarketplaceFileWithTimeout(fileUrl, withLicense, 30*time.Second)
+}
+
+func fetchMarketplaceFileWithTimeout(fileUrl string, withLicense bool, timeout time.Duration) ([]byte, error) {
 	req, err := http.NewRequest("GET", fileUrl, nil)
 	if err != nil {
 		return nil, err
@@ -59,7 +63,7 @@ func fetchMarketplaceFileWithLicense(fileUrl string, withLicense bool) ([]byte, 
 		req.Header.Set(licenseHeader, license)
 	}
 
-	client := &http.Client{Timeout: 30 * time.Second}
+	client := &http.Client{Timeout: timeout}
 	resp, err := client.Do(req)
 	if err != nil {
 		return nil, err

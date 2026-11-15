@@ -16,11 +16,15 @@ package object
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/url"
+	"sync"
+	"time"
 
 	"github.com/beego/beego/v2/core/logs"
 	"github.com/casdoor/casdoor/conf"
+	"github.com/casdoor/casdoor/edition"
 )
 
 // the steps after the check before installing at which Casdoor reads the meta of the version again
@@ -28,7 +32,80 @@ const (
 	marketplaceStepInstalled   = "installed"
 	marketplaceStepFailed      = "failed"
 	marketplaceStepUninstalled = "uninstalled"
+	// an admin opened the integration in the Marketplace page
+	marketplaceStepView = "view"
 )
+
+// The Marketplace page reads the server's status of the catalog and of the integration opened with a short timeout,
+// and after the server could not be reached, not again for a while, so a Casdoor without Internet access does not
+// wait for it on every page.
+const (
+	marketplacePageTimeout       = 5 * time.Second
+	marketplaceServerRetryPeriod = 10 * time.Minute
+)
+
+var (
+	marketplaceServerMutex sync.Mutex
+	marketplaceServerDown  time.Time
+	// the versions the server says are withdrawn, as of the last time the Marketplace page was opened
+	marketplaceServerRevoked []*MarketplaceRevoked
+)
+
+func isMarketplaceServerDown() bool {
+	marketplaceServerMutex.Lock()
+	defer marketplaceServerMutex.Unlock()
+	return time.Since(marketplaceServerDown) < marketplaceServerRetryPeriod
+}
+
+// setMarketplaceServerDown remembers that the server could not be reached, when err, the last error, is that of the
+// connection rather than an answer such as 404
+func setMarketplaceServerDown(err error) {
+	urlErr := &url.Error{}
+	if !errors.As(err, &urlErr) {
+		return
+	}
+	marketplaceServerMutex.Lock()
+	defer marketplaceServerMutex.Unlock()
+	marketplaceServerDown = time.Now()
+}
+
+func getMarketplaceServerRevoked() []*MarketplaceRevoked {
+	marketplaceServerMutex.Lock()
+	defer marketplaceServerMutex.Unlock()
+	return marketplaceServerRevoked
+}
+
+// marketplaceStatus is what the Marketplace server says about the catalog right now
+type marketplaceStatus struct {
+	Revoked []*MarketplaceRevoked `json:"revoked"`
+}
+
+// refreshMarketplaceStatus reads status.json from the Marketplace server each time an admin opens the Marketplace
+// page: the versions withdrawn right now, which the catalog from the CDN may not have yet. Like meta.json, the
+// address carries nothing about this Casdoor.
+func refreshMarketplaceStatus() {
+	if conf.GetConfigString("marketplaceUrl") != "" || isMarketplaceServerDown() {
+		return
+	}
+	var err error
+	for _, serverUrl := range getMarketplaceServerUrls() {
+		var data []byte
+		data, err = fetchMarketplaceFileWithTimeout(serverUrl+"/status.json", false, marketplacePageTimeout)
+		if err != nil {
+			continue
+		}
+		status := &marketplaceStatus{}
+		err = json.Unmarshal(data, status)
+		if err != nil {
+			continue
+		}
+		marketplaceServerMutex.Lock()
+		marketplaceServerRevoked = status.Revoked
+		marketplaceServerMutex.Unlock()
+		return
+	}
+	setMarketplaceServerDown(err)
+}
 
 // the stages an install fails at
 const (
@@ -81,12 +158,24 @@ func isOfficialMarketplace(item *MarketplaceIntegration) bool {
 }
 
 // getMarketplaceVersionMeta returns the meta of a version and the Marketplace server it came from, or nil when no
-// server could be reached (e.g. an intranet Casdoor), in which case the CDN catalog is all there is to check against
-func getMarketplaceVersionMeta(item *MarketplaceIntegration, version *MarketplaceVersion) (*MarketplaceVersionMeta, string) {
+// server could be reached (e.g. an intranet Casdoor), in which case the CDN catalog is all there is to check against.
+// For an admin who opens the integration in the Marketplace page, step is "view".
+func getMarketplaceVersionMeta(item *MarketplaceIntegration, version *MarketplaceVersion, step string) (*MarketplaceVersionMeta, string) {
+	path := metaPath(version.Url)
+	timeout := 30 * time.Second
+	if step != "" {
+		if isMarketplaceServerDown() {
+			return nil, ""
+		}
+		path += "?" + url.Values{"step": {step}}.Encode()
+		timeout = marketplacePageTimeout
+	}
+
 	var err error
 	for _, serverUrl := range getMarketplaceServerUrls() {
 		var data []byte
-		data, err = fetchMarketplaceFileWithLicense(joinMarketplaceUrl(serverUrl, metaPath(version.Url)), item.Edition != "")
+		// a paid integration opened without a license gets the meta without its checksum
+		data, err = fetchMarketplaceFileWithTimeout(joinMarketplaceUrl(serverUrl, path), item.Edition != "" && edition.GetLicenseText() != "", timeout)
 		if err != nil {
 			continue
 		}
@@ -100,6 +189,10 @@ func getMarketplaceVersionMeta(item *MarketplaceIntegration, version *Marketplac
 			continue
 		}
 		return meta, serverUrl
+	}
+	if step != "" {
+		setMarketplaceServerDown(err)
+		return nil, ""
 	}
 	logs.Warn("the Marketplace server could not check %s %s, using the CDN catalog only: %v", item.Id, version.Version, err)
 	return nil, ""
