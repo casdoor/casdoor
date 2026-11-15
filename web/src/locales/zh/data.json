@@ -2229,6 +2229,10 @@
     "Used": "已使用"
   },
   "setting": {
+    "Allowed custom HTML URLs": "自定义HTML允许的地址",
+    "Allowed custom HTML URLs - Tooltip": "组织管理员在应用的自定义HTML和CSS中可以加载图片、字体、内嵌页面等文件的地址前缀，例如https://www.youtube.com/embed/；本Casdoor、存储提供商和内置的字体与CDN地址不用填",
+    "Allowed custom HTML elements": "自定义HTML允许的元素",
+    "Allowed custom HTML elements - Tooltip": "组织管理员在应用的自定义HTML中除内置的布局和文本元素外还能使用的元素，例如iframe、video；不能添加script，这些元素的src必须以允许的地址开头",
     "Cannot be more than the max open connections": "不能超过最大打开连接数",
     "Connection max lifetime": "连接最长使用时间",
     "Connection max lifetime - Tooltip": "一条连接最多复用多久就关闭重连，0表示不限",

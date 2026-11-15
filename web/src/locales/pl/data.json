@@ -2225,6 +2225,10 @@
     "Used": "Wykorzystane"
   },
   "setting": {
+    "Allowed custom HTML URLs": "Dozwolone adresy URL w niestandardowym HTML",
+    "Allowed custom HTML URLs - Tooltip": "Prefiksy URL, np. https://www.youtube.com/embed/, z których administratorzy organizacji mogą ładować obrazy, czcionki, ramki i inne pliki w niestandardowym HTML i CSS aplikacji, oprócz tego Casdoora, jego dostawców pamięci masowej oraz wbudowanych hostów czcionek i CDN",
+    "Allowed custom HTML elements": "Dozwolone elementy w niestandardowym HTML",
+    "Allowed custom HTML elements - Tooltip": "Elementy, np. iframe i video, których administratorzy organizacji mogą używać w niestandardowym HTML aplikacji oprócz wbudowanych elementów układu i tekstu. Nie można dodać script; src tych elementów musi zaczynać się od dozwolonego adresu URL",
     "Cannot be more than the max open connections": "Nie może przekraczać maks. liczby otwartych połączeń",
     "Connection max lifetime": "Maks. czas życia połączenia",
     "Connection max lifetime - Tooltip": "Maksymalny czas ponownego użycia połączenia przed jego zamknięciem, 0 oznacza brak limitu",

@@ -2225,6 +2225,10 @@
     "Used": "Kullanıldı"
   },
   "setting": {
+    "Allowed custom HTML URLs": "Özel HTML'de izin verilen URL'ler",
+    "Allowed custom HTML URLs - Tooltip": "Kuruluş yöneticilerinin uygulamaların özel HTML ve CSS'inde resim, yazı tipi, çerçeve ve diğer dosyaları yükleyebileceği URL önekleri, ör. https://www.youtube.com/embed/; bu Casdoor, depolama sağlayıcıları ve yerleşik yazı tipi ve CDN sunucuları ayrıca eklenmez",
+    "Allowed custom HTML elements": "Özel HTML'de izin verilen öğeler",
+    "Allowed custom HTML elements - Tooltip": "Kuruluş yöneticilerinin uygulamaların özel HTML'inde yerleşik düzen ve metin öğelerine ek olarak kullanabileceği öğeler, ör. iframe ve video. script eklenemez; bu öğelerin src değeri izin verilen bir URL ile başlamalıdır",
     "Cannot be more than the max open connections": "Maks. açık bağlantı sayısından fazla olamaz",
     "Connection max lifetime": "Bağlantı maks. ömrü",
     "Connection max lifetime - Tooltip": "Bir bağlantının kapatılmadan önce yeniden kullanılabileceği en uzun süre, 0 sınırsız demektir",

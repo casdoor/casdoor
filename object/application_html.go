@@ -15,9 +15,11 @@
 package object
 
 import (
+	"fmt"
 	"io"
 	"strings"
 
+	"github.com/casdoor/casdoor/conf"
 	"golang.org/x/net/html"
 )
 
@@ -59,7 +61,7 @@ func isHtmlLinkSafe(link string) bool {
 	return scheme == "http" || scheme == "https" || scheme == "mailto" || scheme == "tel"
 }
 
-func isHtmlAttributeSafe(tag string, key string, value string, prefixes []string) bool {
+func isHtmlAttributeSafe(tag string, key string, value string, prefixes []string, extraTags map[string]bool) bool {
 	if strings.HasPrefix(key, "on") || unsafeHtmlAttributes[key] {
 		return false
 	}
@@ -69,7 +71,9 @@ func isHtmlAttributeSafe(tag string, key string, value string, prefixes []string
 	case "href":
 		return tag == "a" && isHtmlLinkSafe(value)
 	case "src":
-		return tag == "img" && isCssUrlAllowed(lowerValue, prefixes, true)
+		return (tag == "img" || extraTags[tag]) && isCssUrlAllowed(lowerValue, prefixes, true)
+	case "data":
+		return tag != "object" || isCssUrlAllowed(lowerValue, prefixes, false)
 	case "background", "poster":
 		return isCssUrlAllowed(lowerValue, prefixes, true)
 	case "style":
@@ -81,38 +85,58 @@ func isHtmlAttributeSafe(tag string, key string, value string, prefixes []string
 	return true
 }
 
+// getExtraHtmlTags returns the elements a global admin lets organization admins use besides safeHtmlTags,
+// set in the global settings
+func getExtraHtmlTags() map[string]bool {
+	res := map[string]bool{}
+	for _, tag := range conf.GetCustomHtmlAllowedTags() {
+		res[tag] = true
+	}
+	return res
+}
+
 func isHtmlSafeFor(text string, prefixes []string) bool {
+	return getUnsafeHtml(text, prefixes) == ""
+}
+
+// getUnsafeHtml names what in text an organization admin may not use, or returns "" when there is nothing
+func getUnsafeHtml(text string, prefixes []string) string {
+	extraTags := getExtraHtmlTags()
 	tokenizer := html.NewTokenizer(strings.NewReader(text))
 	inStyle := false
 	for {
 		switch tokenizer.Next() {
 		case html.ErrorToken:
-			return tokenizer.Err() == io.EOF
+			if tokenizer.Err() == io.EOF {
+				return ""
+			}
+			return "malformed HTML"
 		case html.TextToken:
 			// the browser reads a style element inside svg as markup, so its text must not hold any
 			if inStyle && !isCssSafeFor(string(tokenizer.Raw()), prefixes) {
-				return false
+				return "the CSS in <style>"
 			}
 		case html.StartTagToken, html.SelfClosingTagToken:
 			token := tokenizer.Token()
-			if !safeHtmlTags[token.Data] {
-				return false
+			if !safeHtmlTags[token.Data] && !extraTags[token.Data] {
+				return fmt.Sprintf("<%s>", token.Data)
 			}
 			for _, attribute := range token.Attr {
-				if !isHtmlAttributeSafe(token.Data, strings.ToLower(attribute.Key), attribute.Val, prefixes) {
-					return false
+				key := strings.ToLower(attribute.Key)
+				if !isHtmlAttributeSafe(token.Data, key, attribute.Val, prefixes, extraTags) {
+					return fmt.Sprintf("the %s attribute of <%s>", key, token.Data)
 				}
 			}
 			inStyle = token.Data == "style"
 		case html.EndTagToken:
 			token := tokenizer.Token()
-			if !safeHtmlTags[token.Data] {
-				return false
+			if !safeHtmlTags[token.Data] && !extraTags[token.Data] {
+				return fmt.Sprintf("</%s>", token.Data)
 			}
 			inStyle = false
 		default:
 			// comments and doctypes end at different places in different parsers, which could hide markup
-			return false
+			return "an HTML comment or doctype"
 		}
 	}
 }

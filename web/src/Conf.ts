@@ -75,6 +75,9 @@ export function isUpgradeHidden(required: string): boolean {
 // the links to Casdoor Cloud in the console, which a global admin can turn off in the global settings
 export let ShowCloudPromotion = true;
 
+// the elements a global admin lets organization admins use in the custom HTML of applications besides the default ones
+export let CustomHtmlAllowedTags: string[] = [];
+
 // setConfig updates the frontend configuration from backend
 export function setConfig(config: Record<string, any>) {
   if (!config) {
@@ -115,6 +118,9 @@ export function setConfig(config: Record<string, any>) {
   }
   if (config.hideUpgrades !== undefined) {
     HideUpgrades = config.hideUpgrades;
+  }
+  if (Array.isArray(config.customHtmlAllowedTags)) {
+    CustomHtmlAllowedTags = config.customHtmlAllowedTags;
   }
   if (config.editionDemoUrls !== undefined) {
     EditionDemoUrls = parseEditionDemoUrls(config.editionDemoUrls);

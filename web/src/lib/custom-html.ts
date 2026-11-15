@@ -1,4 +1,5 @@
 import DOMPurify from "dompurify";
+import * as Conf from "@/Conf";
 
 /**
  * Only global admins edit the custom HTML of the built-in organization's applications
@@ -19,5 +20,10 @@ DOMPurify.addHook("afterSanitizeAttributes", (node) => {
 });
 
 export function getSafeHtml(html: string, trusted: boolean): string {
-  return trusted ? html : DOMPurify.sanitize(html, {FORCE_BODY: true, ADD_ATTR: ["target"]});
+  if (trusted) {
+    return html;
+  }
+  // a global admin allows these in the global settings, and the server checks where they load from before an organization admin can save them
+  const tags = Conf.CustomHtmlAllowedTags.filter((tag) => tag !== "script");
+  return DOMPurify.sanitize(html, {FORCE_BODY: true, ADD_ATTR: ["target"], ADD_TAGS: tags});
 }

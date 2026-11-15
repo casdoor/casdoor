@@ -2225,6 +2225,10 @@
     "Used": "Utilisée"
   },
   "setting": {
+    "Allowed custom HTML URLs": "URL autorisées dans le HTML personnalisé",
+    "Allowed custom HTML URLs - Tooltip": "Préfixes d'URL, par ex. https://www.youtube.com/embed/, depuis lesquels les administrateurs d'organisation peuvent charger des images, polices, cadres et autres fichiers dans le HTML et le CSS personnalisés des applications, en plus de ce Casdoor, de ses fournisseurs de stockage et des hôtes de polices et CDN intégrés",
+    "Allowed custom HTML elements": "Éléments autorisés dans le HTML personnalisé",
+    "Allowed custom HTML elements - Tooltip": "Éléments, par ex. iframe et video, que les administrateurs d'organisation peuvent utiliser dans le HTML personnalisé des applications en plus des éléments de mise en page et de texte intégrés. script ne peut pas être ajouté ; le src de ces éléments doit commencer par une URL autorisée",
     "Cannot be more than the max open connections": "Ne peut pas dépasser le nombre max. de connexions ouvertes",
     "Connection max lifetime": "Durée de vie max. d'une connexion",
     "Connection max lifetime - Tooltip": "Durée maximale de réutilisation d'une connexion avant sa fermeture, 0 signifie sans limite",

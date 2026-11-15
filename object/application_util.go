@@ -503,8 +503,8 @@ func CheckApplicationCustomHtml(application *Application, oldApplication *Applic
 		if prefixes == nil {
 			prefixes = getCssUrlPrefixes()
 		}
-		if !isHtmlSafeFor(text, prefixes) {
-			unsafeFields = append(unsafeFields, field)
+		if unsafeHtml := getUnsafeHtml(text, prefixes); unsafeHtml != "" {
+			unsafeFields = append(unsafeFields, fmt.Sprintf("%s (%s)", field, unsafeHtml))
 		}
 	}
 	checkCss := func(field string, css string, oldCss string) {
@@ -567,7 +567,7 @@ func CheckApplicationCustomHtml(application *Application, oldApplication *Applic
 		return fmt.Errorf("the %s of the application runs as it is because custom scripts are enabled, so only a global admin can change it", strings.Join(scriptFields, ", "))
 	}
 	if len(unsafeFields) > 0 {
-		return fmt.Errorf("the %s of the application uses HTML or loads files that this Casdoor only lets a global admin set: scripts, forms and event handlers are not allowed, and images and fonts must come from this Casdoor, its storage providers or a URL in formCssAllowedUrls", strings.Join(unsafeFields, ", "))
+		return fmt.Errorf("the %s of the application uses HTML or loads files that this Casdoor only lets a global admin set: scripts, forms and event handlers are not allowed, other elements have to be allowed in the global settings, and images, fonts and frames must come from this Casdoor, its storage providers or a URL allowed in the global settings", strings.Join(unsafeFields, ", "))
 	}
 	return nil
 }
@@ -603,7 +603,7 @@ var (
 )
 
 // getCssUrlPrefixes adds the operator's own places to the built-in ones: this Casdoor's origin, the
-// global storage providers and the formCssAllowedUrls setting.
+// global storage providers, the allowed URLs of the global settings and formCssAllowedUrls in app.conf.
 func getCssUrlPrefixes() []string {
 	prefixes := append([]string{}, cssUrlPrefixes...)
 	addPrefix := func(prefix string) {
@@ -622,6 +622,9 @@ func getCssUrlPrefixes() []string {
 
 	addPrefix(conf.GetConfigString("origin"))
 	for _, prefix := range strings.Split(conf.GetConfigString("formCssAllowedUrls"), ",") {
+		addPrefix(prefix)
+	}
+	for _, prefix := range conf.GetCustomHtmlAllowedUrls() {
 		addPrefix(prefix)
 	}
 	providers, err := GetProvidersByCategory("admin", "Storage")

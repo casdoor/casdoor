@@ -2225,6 +2225,10 @@
     "Used": "Використано"
   },
   "setting": {
+    "Allowed custom HTML URLs": "Дозволені URL-адреси власного HTML",
+    "Allowed custom HTML URLs - Tooltip": "Префікси URL, напр. https://www.youtube.com/embed/, з яких адміністратори організацій можуть завантажувати зображення, шрифти, фрейми та інші файли у власному HTML і CSS застосунків, крім цього Casdoor, його постачальників сховища та вбудованих хостів шрифтів і CDN",
+    "Allowed custom HTML elements": "Дозволені елементи власного HTML",
+    "Allowed custom HTML elements - Tooltip": "Елементи, напр. iframe і video, які адміністратори організацій можуть використовувати у власному HTML застосунків, крім вбудованих елементів розмітки й тексту. script додати не можна; src цих елементів має починатися з дозволеної URL-адреси",
     "Cannot be more than the max open connections": "Не може перевищувати макс. кількість відкритих з'єднань",
     "Connection max lifetime": "Макс. час життя з'єднання",
     "Connection max lifetime - Tooltip": "Максимальний час повторного використання з'єднання до його закриття, 0 означає без обмежень",

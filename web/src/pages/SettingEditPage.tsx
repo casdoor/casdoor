@@ -12,7 +12,7 @@ export default function SettingEditPage() {
     if (res.status === "ok") {
       // the console reads this switch only when the page loads, so the Casdoor Cloud links would stay until a reload;
       // a new account object makes the header, sidebar and dashboard render again
-      Conf.setConfig({showCloudPromotion: !record.hideCloudPromotion});
+      Conf.setConfig({showCloudPromotion: !record.hideCloudPromotion, customHtmlAllowedTags: record.customHtmlAllowedTags ?? []});
       if (account) {
         setAccount({...account});
       }
@@ -41,6 +41,8 @@ export default function SettingEditPage() {
     },
     {type: "number", name: "recordRetentionDays", labelKey: "setting:Default record retention days", min: 0},
     {type: "switch", name: "hideCloudPromotion", labelKey: "setting:Hide Casdoor Cloud links"},
+    {type: "tags", name: "customHtmlAllowedTags", labelKey: "setting:Allowed custom HTML elements", placeholder: "iframe, video, source"},
+    {type: "tags", name: "customHtmlAllowedUrls", labelKey: "setting:Allowed custom HTML URLs", placeholder: "https://www.youtube.com/embed/"},
     {type: "code", name: "headHtml", labelKey: "setting:Head HTML", language: "html"},
   ];
 

@@ -16,6 +16,8 @@ package object
 
 import (
 	"fmt"
+	"regexp"
+	"strings"
 	"sync/atomic"
 	"time"
 
@@ -46,6 +48,11 @@ type Setting struct {
 
 	// hides the links to Casdoor Cloud that the console shows its admins
 	HideCloudPromotion bool `json:"hideCloudPromotion"`
+
+	// the elements (e.g. iframe, video) and the URL prefixes of the files they load that organization admins may use
+	// in the custom HTML of applications, besides the built-in layout and text elements and file hosts
+	CustomHtmlAllowedTags []string `xorm:"mediumtext" json:"customHtmlAllowedTags"`
+	CustomHtmlAllowedUrls []string `xorm:"mediumtext" json:"customHtmlAllowedUrls"`
 
 	// trusted HTML (scripts, styles, meta tags) put into the <head> of every page of every organization
 	HeadHtml string `xorm:"mediumtext" json:"headHtml"`
@@ -121,8 +128,39 @@ func (setting *Setting) check() error {
 	if setting.RecordRetentionDays < 0 {
 		return fmt.Errorf("the record retention days cannot be negative")
 	}
+
+	tags := []string{}
+	for _, tag := range setting.CustomHtmlAllowedTags {
+		tag = strings.ToLower(strings.Trim(strings.TrimSpace(tag), "<>/ "))
+		if tag == "" || util.InSlice(tags, tag) {
+			continue
+		}
+		if tag == "script" {
+			return fmt.Errorf("script cannot be allowed in custom HTML, a global admin can enable custom scripts of an application instead")
+		}
+		if !reHtmlTagName.MatchString(tag) {
+			return fmt.Errorf("%s is not an HTML element name", tag)
+		}
+		tags = append(tags, tag)
+	}
+	setting.CustomHtmlAllowedTags = tags
+
+	urls := []string{}
+	for _, prefix := range setting.CustomHtmlAllowedUrls {
+		prefix = strings.TrimSpace(prefix)
+		if prefix == "" || util.InSlice(urls, prefix) {
+			continue
+		}
+		if prefix == "*" || strings.HasPrefix(prefix, "data:") || strings.HasPrefix(prefix, "javascript:") {
+			return fmt.Errorf("%s is not a URL prefix", prefix)
+		}
+		urls = append(urls, prefix)
+	}
+	setting.CustomHtmlAllowedUrls = urls
 	return nil
 }
+
+var reHtmlTagName = regexp.MustCompile(`^[a-z][a-z0-9-]*$`)
 
 // apply only touches the main database's pool, the syncers' databases keep their own
 func (setting *Setting) apply() {
@@ -138,6 +176,7 @@ func (setting *Setting) apply() {
 	ormer.Engine.SetConnMaxLifetime(time.Duration(setting.DbConnMaxLifetime) * time.Second)
 
 	conf.SetHideCloudPromotion(setting.HideCloudPromotion)
+	conf.SetCustomHtmlAllowed(setting.CustomHtmlAllowedTags, setting.CustomHtmlAllowedUrls)
 
 	updatedTime, _ := time.Parse(time.RFC3339, setting.UpdatedTime)
 	currentHeadHtml.Store(&headHtmlState{html: setting.HeadHtml, updatedTime: updatedTime})

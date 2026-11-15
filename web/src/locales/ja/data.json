@@ -2225,6 +2225,10 @@
     "Used": "使用済み"
   },
   "setting": {
+    "Allowed custom HTML URLs": "カスタムHTMLで許可するURL",
+    "Allowed custom HTML URLs - Tooltip": "組織管理者がアプリケーションのカスタムHTMLとCSSで画像、フォント、フレームなどのファイルを読み込めるURLプレフィックス（例：https://www.youtube.com/embed/）。このCasdoor、ストレージプロバイダー、組み込みのフォント・CDNホストは不要です",
+    "Allowed custom HTML elements": "カスタムHTMLで許可する要素",
+    "Allowed custom HTML elements - Tooltip": "組織管理者がアプリケーションのカスタムHTMLで、組み込みのレイアウト・テキスト要素以外に使える要素（例：iframe、video）。scriptは追加できません。これらの要素のsrcは許可されたURLで始まる必要があります",
     "Cannot be more than the max open connections": "最大オープン接続数を超えることはできません",
     "Connection max lifetime": "接続の最大有効期間",
     "Connection max lifetime - Tooltip": "接続を閉じるまでに再利用できる最大時間。0は無制限",

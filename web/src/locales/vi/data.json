@@ -2225,6 +2225,10 @@
     "Used": "Đã dùng"
   },
   "setting": {
+    "Allowed custom HTML URLs": "URL được phép trong HTML tùy chỉnh",
+    "Allowed custom HTML URLs - Tooltip": "Các tiền tố URL, ví dụ https://www.youtube.com/embed/, mà quản trị viên tổ chức có thể tải hình ảnh, phông chữ, khung và tệp khác trong HTML và CSS tùy chỉnh của ứng dụng, ngoài Casdoor này, các nhà cung cấp lưu trữ và các máy chủ phông chữ và CDN có sẵn",
+    "Allowed custom HTML elements": "Phần tử được phép trong HTML tùy chỉnh",
+    "Allowed custom HTML elements - Tooltip": "Các phần tử, ví dụ iframe và video, mà quản trị viên tổ chức có thể dùng trong HTML tùy chỉnh của ứng dụng ngoài các phần tử bố cục và văn bản có sẵn. Không thể thêm script; src của các phần tử này phải bắt đầu bằng một URL được phép",
     "Cannot be more than the max open connections": "Không được lớn hơn số kết nối mở tối đa",
     "Connection max lifetime": "Thời gian sống tối đa của kết nối",
     "Connection max lifetime - Tooltip": "Thời gian tối đa một kết nối được dùng lại trước khi đóng, 0 nghĩa là không giới hạn",
