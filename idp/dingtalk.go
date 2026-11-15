@@ -167,12 +167,11 @@ func (idp *DingTalkIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, erro
 	}
 
 	userInfo := UserInfo{
-		Id:          dtUserInfo.OpenId,
-		Username:    dtUserInfo.Nick,
-		DisplayName: dtUserInfo.Nick,
-		UnionId:     dtUserInfo.UnionId,
-		Email:       dtUserInfo.Email,
-		// enterprise directory email
+		Id:            dtUserInfo.OpenId,
+		Username:      dtUserInfo.Nick,
+		DisplayName:   dtUserInfo.Nick,
+		UnionId:       dtUserInfo.UnionId,
+		Email:         dtUserInfo.Email,
 		EmailVerified: dtUserInfo.Email != "",
 		Phone:         dtUserInfo.Mobile,
 		PhoneVerified: dtUserInfo.Mobile != "",
@@ -196,8 +195,13 @@ func (idp *DingTalkIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, erro
 			userInfo.Phone = userDetail.Mobile
 		}
 
-		if userDetail.Email != "" {
+		// The enterprise mailbox is assigned by the org admin, the address book email may be any address
+		if userDetail.OrgEmail != "" {
+			userInfo.Email = userDetail.OrgEmail
+			userInfo.EmailVerified = true
+		} else if userDetail.Email != "" {
 			userInfo.Email = userDetail.Email
+			userInfo.EmailVerified = strings.EqualFold(userDetail.Email, dtUserInfo.Email)
 		}
 
 		if userDetail.UnionId != "" {
@@ -302,10 +306,11 @@ func (idp *DingTalkIdProvider) getUserId(unionId string, accessToken string) (st
 }
 
 type DingTalkUserDetail struct {
-	Mobile  string `json:"mobile"`
-	Email   string `json:"email"`
-	UnionId string `json:"unionid"`
-	Title   string `json:"title"`
+	Mobile   string `json:"mobile"`
+	Email    string `json:"email"`
+	OrgEmail string `json:"org_email"`
+	UnionId  string `json:"unionid"`
+	Title    string `json:"title"`
 }
 
 func (idp *DingTalkIdProvider) getUserCorpInfo(userId string, accessToken string) (*DingTalkUserDetail, error) {
