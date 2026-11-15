@@ -78,6 +78,9 @@ export let ShowCloudPromotion = true;
 // the elements a global admin lets organization admins use in the custom HTML of applications besides the default ones
 export let CustomHtmlAllowedTags: string[] = [];
 
+// the global setting names an Email provider for the applications that have none of their own
+export let HasDefaultEmailProvider = false;
+
 // setConfig updates the frontend configuration from backend
 export function setConfig(config: Record<string, any>) {
   if (!config) {
@@ -121,6 +124,9 @@ export function setConfig(config: Record<string, any>) {
   }
   if (Array.isArray(config.customHtmlAllowedTags)) {
     CustomHtmlAllowedTags = config.customHtmlAllowedTags;
+  }
+  if (config.hasDefaultEmailProvider !== undefined) {
+    HasDefaultEmailProvider = config.hasDefaultEmailProvider;
   }
   if (config.editionDemoUrls !== undefined) {
     EditionDemoUrls = parseEditionDemoUrls(config.editionDemoUrls);

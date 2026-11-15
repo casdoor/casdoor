@@ -121,7 +121,7 @@ func GetCachedSecurityPolicy(owner string) *SecurityPolicy {
 }
 
 // getOrganizationEmailProvider picks the email provider of the organization's default application, then any
-// email provider owned by the organization
+// email provider owned by the organization, then the default Email provider of the global setting
 func getOrganizationEmailProvider(organization *Organization) (*Provider, error) {
 	if organization.DefaultApplication != "" {
 		application, err := getApplication("admin", organization.DefaultApplication)
@@ -129,7 +129,7 @@ func getOrganizationEmailProvider(organization *Organization) (*Provider, error)
 			return nil, err
 		}
 		if application != nil {
-			provider, err := application.GetEmailProvider("")
+			provider, err := application.GetProviderByCategoryAndRule("Email", "", "All")
 			if err != nil {
 				return nil, err
 			}
@@ -148,6 +148,11 @@ func getOrganizationEmailProvider(organization *Organization) (*Provider, error)
 		if provider.Owner == organization.Name {
 			return provider, nil
 		}
+	}
+
+	provider, err := getDefaultEmailProvider()
+	if err != nil || provider != nil {
+		return provider, err
 	}
 	if len(providers) > 0 {
 		return providers[0], nil

@@ -2236,6 +2236,8 @@
     "Cannot be more than the max open connections": "Darf nicht größer als die max. offenen Verbindungen sein",
     "Connection max lifetime": "Maximale Verbindungslebensdauer",
     "Connection max lifetime - Tooltip": "Maximale Zeit, die eine Verbindung wiederverwendet wird, bevor sie geschlossen wird, 0 bedeutet unbegrenzt",
+    "Default Email provider": "Standard-E-Mail-Anbieter",
+    "Default Email provider - Tooltip": "Ein globaler E-Mail-Anbieter für Anwendungen, die keinen eigenen E-Mail-Anbieter haben, z. B. für Bestätigungscodes. Der eigene E-Mail-Anbieter einer Anwendung hat immer Vorrang",
     "Default record retention days": "Standard-Aufbewahrungsdauer der Protokolle (Tage)",
     "Default record retention days - Tooltip": "Tage, die Protokolle (Audit-Logs) von Organisationen ohne eigene Aufbewahrungsdauer behalten werden; ältere Protokolle werden von einem täglichen Bereinigungsjob gelöscht, 0 bedeutet dauerhaft behalten",
     "Head HTML": "Head-HTML",

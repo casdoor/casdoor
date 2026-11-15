@@ -2236,6 +2236,8 @@
     "Cannot be more than the max open connections": "Maks. açık bağlantı sayısından fazla olamaz",
     "Connection max lifetime": "Bağlantı maks. ömrü",
     "Connection max lifetime - Tooltip": "Bir bağlantının kapatılmadan önce yeniden kullanılabileceği en uzun süre, 0 sınırsız demektir",
+    "Default Email provider": "Varsayılan e-posta sağlayıcısı",
+    "Default Email provider - Tooltip": "Kendi e-posta sağlayıcısı olmayan uygulamaların doğrulama kodları gibi e-postalar için kullandığı genel e-posta sağlayıcısı. Uygulamanın kendi e-posta sağlayıcısı her zaman önceliklidir",
     "Default record retention days": "Varsayılan kayıt saklama süresi (gün)",
     "Default record retention days - Tooltip": "Kendi saklama süresini belirlemeyen kuruluşların kayıtlarının (denetim günlükleri) tutulacağı gün sayısı; daha eskileri günlük temizlik göreviyle silinir, 0 süresiz saklamak demektir",
     "Head HTML": "Head HTML",

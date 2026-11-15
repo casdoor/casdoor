@@ -2236,6 +2236,8 @@
     "Cannot be more than the max open connections": "Nie może przekraczać maks. liczby otwartych połączeń",
     "Connection max lifetime": "Maks. czas życia połączenia",
     "Connection max lifetime - Tooltip": "Maksymalny czas ponownego użycia połączenia przed jego zamknięciem, 0 oznacza brak limitu",
+    "Default Email provider": "Domyślny dostawca e-mail",
+    "Default Email provider - Tooltip": "Globalny dostawca e-mail używany przez aplikacje, które nie mają własnego dostawcy e-mail, np. do kodów weryfikacyjnych. Własny dostawca e-mail aplikacji ma zawsze pierwszeństwo",
     "Default record retention days": "Domyślny okres przechowywania logów (dni)",
     "Default record retention days - Tooltip": "Liczba dni przechowywania logów (audytu) organizacji bez własnego okresu; starsze logi usuwa codzienne zadanie czyszczenia, 0 oznacza przechowywanie bezterminowe",
     "Head HTML": "HTML nagłówka",

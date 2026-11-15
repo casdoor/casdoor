@@ -2240,6 +2240,8 @@
     "Cannot be more than the max open connections": "Cannot be more than the max open connections",
     "Connection max lifetime": "Connection max lifetime",
     "Connection max lifetime - Tooltip": "Maximum time a connection is reused before it is closed, 0 means no limit",
+    "Default Email provider": "Default Email provider",
+    "Default Email provider - Tooltip": "A global Email provider used by the applications that do not list an Email provider of their own, e.g. for their verification codes. An application's own Email provider always comes first",
     "Default record retention days": "Default record retention days",
     "Default record retention days - Tooltip": "Days to keep the records (audit logs) of the organizations that do not set their own record retention days, older records are deleted by a daily cleanup job, 0 means keeping them forever",
     "Head HTML": "Head HTML",

@@ -50,6 +50,9 @@ type Setting struct {
 	// for a self-hosted community edition; the demo sites always show them
 	ShowCloudPromotion bool `json:"showCloudPromotion"`
 
+	// a global (admin-owned) Email provider used by the applications that do not list an Email provider of their own
+	DefaultEmailProvider string `xorm:"varchar(100)" json:"defaultEmailProvider"`
+
 	// the elements (e.g. iframe, video) and the URL prefixes of the files they load that organization admins may use
 	// in the custom HTML of applications, besides the built-in layout and text elements and file hosts
 	CustomHtmlAllowedTags []string `xorm:"mediumtext" json:"customHtmlAllowedTags"`
@@ -130,6 +133,17 @@ func (setting *Setting) check() error {
 		return fmt.Errorf("the record retention days cannot be negative")
 	}
 
+	setting.DefaultEmailProvider = strings.TrimSpace(setting.DefaultEmailProvider)
+	if setting.DefaultEmailProvider != "" {
+		provider, err := getProvider("admin", setting.DefaultEmailProvider)
+		if err != nil {
+			return err
+		}
+		if provider == nil || provider.Category != "Email" {
+			return fmt.Errorf("the default Email provider must be a global Email provider")
+		}
+	}
+
 	tags := []string{}
 	for _, tag := range setting.CustomHtmlAllowedTags {
 		tag = strings.ToLower(strings.Trim(strings.TrimSpace(tag), "<>/ "))
@@ -177,10 +191,24 @@ func (setting *Setting) apply() {
 	ormer.Engine.SetConnMaxLifetime(time.Duration(setting.DbConnMaxLifetime) * time.Second)
 
 	conf.SetShowCloudPromotion(setting.ShowCloudPromotion)
+	conf.SetHasDefaultEmailProvider(setting.DefaultEmailProvider != "")
 	conf.SetCustomHtmlAllowed(setting.CustomHtmlAllowedTags, setting.CustomHtmlAllowedUrls)
 
 	updatedTime, _ := time.Parse(time.RFC3339, setting.UpdatedTime)
 	currentHeadHtml.Store(&headHtmlState{html: setting.HeadHtml, updatedTime: updatedTime})
+}
+
+func getDefaultEmailProvider() (*Provider, error) {
+	setting, err := GetSetting()
+	if err != nil || setting == nil || setting.DefaultEmailProvider == "" {
+		return nil, err
+	}
+
+	provider, err := getProvider("admin", setting.DefaultEmailProvider)
+	if err != nil || provider == nil || provider.Category != "Email" {
+		return nil, err
+	}
+	return provider, nil
 }
 
 func initBuiltInSetting() *Setting {

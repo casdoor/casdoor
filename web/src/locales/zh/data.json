@@ -2240,6 +2240,8 @@
     "Cannot be more than the max open connections": "不能超过最大打开连接数",
     "Connection max lifetime": "连接最长使用时间",
     "Connection max lifetime - Tooltip": "一条连接最多复用多久就关闭重连，0表示不限",
+    "Default Email provider": "默认邮件提供商",
+    "Default Email provider - Tooltip": "没有配置自己邮件提供商的应用用这个全局邮件提供商发验证码等邮件，应用自己配置的邮件提供商始终优先",
     "Default record retention days": "默认日志保留天数",
     "Default record retention days - Tooltip": "没有单独设置日志保留天数的组织，日志（审计记录）保留多少天，超期的日志由每天执行的清理任务自动删除，0表示永久保留",
     "Head HTML": "头部HTML",

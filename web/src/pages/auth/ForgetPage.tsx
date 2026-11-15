@@ -14,6 +14,7 @@ import {authConfig} from "@/auth/Auth";
 import * as Obfuscator from "@/auth/Obfuscator";
 import * as ApplicationBackend from "@/backend/ApplicationBackend";
 import * as AuthBackend from "@/backend/AuthBackend";
+import * as Conf from "@/Conf";
 import * as UserBackend from "@/backend/UserBackend";
 import * as Setting from "@/lib/setting";
 import {cn} from "@/lib/utils";
@@ -67,8 +68,9 @@ export default function ForgetPage() {
 
   // same matching rules as GetProviderByCategoryAndRule() in the backend, for the "forget" method
   const hasProviderOfCategory = (category: string) =>
-    application?.providers?.some((providerItem: any) => providerItem?.provider?.category === category &&
-      ["forget", "", "All", "all", "None"].includes(providerItem.rule)) ?? false;
+    (application?.providers?.some((providerItem: any) => providerItem?.provider?.category === category &&
+      ["forget", "", "All", "all", "None"].includes(providerItem.rule)) ?? false) ||
+    (category === "Email" && Conf.HasDefaultEmailProvider);
 
   // only advertise the identifiers that can be used: a lookup by email or phone is
   // a dead end when the matching provider is not configured for the application

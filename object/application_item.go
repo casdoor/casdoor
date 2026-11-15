@@ -99,7 +99,11 @@ func (application *Application) GetProviderByCategoryAndRule(category string, me
 }
 
 func (application *Application) GetEmailProvider(method string) (*Provider, error) {
-	return application.GetProviderByCategoryAndRule("Email", method, "All")
+	provider, err := application.GetProviderByCategoryAndRule("Email", method, "All")
+	if err != nil || provider != nil {
+		return provider, err
+	}
+	return getDefaultEmailProvider()
 }
 
 func (application *Application) GetSmsProvider(method string, countryCode string) (*Provider, error) {

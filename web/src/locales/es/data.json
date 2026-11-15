@@ -2236,6 +2236,8 @@
     "Cannot be more than the max open connections": "No puede superar el máximo de conexiones abiertas",
     "Connection max lifetime": "Duración máxima de la conexión",
     "Connection max lifetime - Tooltip": "Tiempo máximo que se reutiliza una conexión antes de cerrarla, 0 significa sin límite",
+    "Default Email provider": "Proveedor de correo predeterminado",
+    "Default Email provider - Tooltip": "Proveedor de correo global que usan las aplicaciones que no tienen un proveedor de correo propio, por ejemplo para los códigos de verificación. El proveedor de correo propio de una aplicación siempre tiene prioridad",
     "Default record retention days": "Días de retención de registros predeterminados",
     "Default record retention days - Tooltip": "Días que se conservan los registros (auditoría) de las organizaciones sin retención propia; los más antiguos se eliminan con una tarea de limpieza diaria, 0 significa conservarlos para siempre",
     "Head HTML": "HTML de cabecera",

@@ -37,6 +37,13 @@ func SetShowCloudPromotion(show bool) {
 	showCloudPromotion.Store(show)
 }
 
+// hasDefaultEmailProvider mirrors whether the global setting names a default Email provider
+var hasDefaultEmailProvider atomic.Bool
+
+func SetHasDefaultEmailProvider(has bool) {
+	hasDefaultEmailProvider.Store(has)
+}
+
 type customHtmlAllowed struct {
 	tags []string
 	urls []string
@@ -87,6 +94,8 @@ type WebConfig struct {
 	Edition             string `json:"edition"`
 	HideUpgrades        bool   `json:"hideUpgrades"`
 
+	HasDefaultEmailProvider bool `json:"hasDefaultEmailProvider"`
+
 	CustomHtmlAllowedTags []string `json:"customHtmlAllowedTags"`
 }
 
@@ -133,6 +142,7 @@ func GetWebConfig() *WebConfig {
 		((getHideUpgrades != nil && getHideUpgrades()) || (config.Edition == "Community" && !showCloudPromotion.Load()))
 
 	config.CustomHtmlAllowedTags = GetCustomHtmlAllowedTags()
+	config.HasDefaultEmailProvider = hasDefaultEmailProvider.Load()
 
 	config.ShowCloudPromotion = config.ThemeShowcase || (showCloudPromotion.Load() && config.Edition == "Community")
 

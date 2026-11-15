@@ -2236,6 +2236,8 @@
     "Cannot be more than the max open connections": "Không được lớn hơn số kết nối mở tối đa",
     "Connection max lifetime": "Thời gian sống tối đa của kết nối",
     "Connection max lifetime - Tooltip": "Thời gian tối đa một kết nối được dùng lại trước khi đóng, 0 nghĩa là không giới hạn",
+    "Default Email provider": "Nhà cung cấp email mặc định",
+    "Default Email provider - Tooltip": "Nhà cung cấp email toàn cục dùng cho các ứng dụng chưa có nhà cung cấp email riêng, ví dụ để gửi mã xác minh. Nhà cung cấp email riêng của ứng dụng luôn được ưu tiên",
     "Default record retention days": "Số ngày lưu nhật ký mặc định",
     "Default record retention days - Tooltip": "Số ngày lưu nhật ký (kiểm toán) của các tổ chức không tự đặt thời hạn; nhật ký cũ hơn bị xóa bởi tác vụ dọn dẹp hằng ngày, 0 nghĩa là lưu vĩnh viễn",
     "Head HTML": "HTML phần đầu",

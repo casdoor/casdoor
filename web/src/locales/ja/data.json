@@ -2236,6 +2236,8 @@
     "Cannot be more than the max open connections": "最大オープン接続数を超えることはできません",
     "Connection max lifetime": "接続の最大有効期間",
     "Connection max lifetime - Tooltip": "接続を閉じるまでに再利用できる最大時間。0は無制限",
+    "Default Email provider": "デフォルトのメールプロバイダー",
+    "Default Email provider - Tooltip": "独自のメールプロバイダーを設定していないアプリケーションが、確認コードなどの送信に使うグローバルなメールプロバイダー。アプリケーション自身のメールプロバイダーが常に優先されます",
     "Default record retention days": "既定のログ保存日数",
     "Default record retention days - Tooltip": "独自の保存日数を設定していない組織のログ（監査記録）を保存する日数。超過したログは毎日のクリーンアップで削除されます。0は無期限に保存",
     "Head HTML": "ヘッドHTML",
