@@ -107,7 +107,7 @@ type Application struct {
 	Title                        string          `xorm:"varchar(100)" json:"title"`
 	Favicon                      string          `xorm:"varchar(200)" json:"favicon"`
 	Order                        int             `json:"order"`
-	HomepageUrl                  string          `xorm:"varchar(100)" json:"homepageUrl"`
+	HomepageUrl                  string          `xorm:"text" json:"homepageUrl"`
 	Description                  string          `xorm:"mediumtext" json:"description"`
 	Organization                 string          `xorm:"varchar(100)" json:"organization"`
 	Cert                         string          `xorm:"varchar(100)" json:"cert"`
@@ -172,10 +172,10 @@ type Application struct {
 	RefreshExpireInHours    float64                `json:"refreshExpireInHours"`
 	DisableRefreshRotation  bool                   `json:"disableRefreshRotation"`
 	CookieExpireInHours     int64                  `json:"cookieExpireInHours"`
-	SignupUrl               string                 `xorm:"varchar(200)" json:"signupUrl"`
-	SigninUrl               string                 `xorm:"varchar(200)" json:"signinUrl"`
-	ForgetUrl               string                 `xorm:"varchar(200)" json:"forgetUrl"`
-	AffiliationUrl          string                 `xorm:"varchar(100)" json:"affiliationUrl"`
+	SignupUrl               string                 `xorm:"text" json:"signupUrl"`
+	SigninUrl               string                 `xorm:"text" json:"signinUrl"`
+	ForgetUrl               string                 `xorm:"text" json:"forgetUrl"`
+	AffiliationUrl          string                 `xorm:"text" json:"affiliationUrl"`
 	IpWhitelist             string                 `xorm:"varchar(200)" json:"ipWhitelist"`
 	TermsOfUse              string                 `xorm:"varchar(200)" json:"termsOfUse"`
 	PrivacyPolicy           string                 `xorm:"mediumtext" json:"privacyPolicy"`

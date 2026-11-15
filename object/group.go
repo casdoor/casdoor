@@ -206,7 +206,12 @@ func UpdateGroup(id string, group *Group, isGlobalAdmin bool, lang string) (bool
 	}
 
 	if name != group.Name {
-		err := GroupChangeTrigger(owner, name, group.Name)
+		err = checkGroupExists(group)
+		if err != nil {
+			return false, err
+		}
+
+		err = GroupChangeTrigger(owner, name, group.Name)
 		if err != nil {
 			return false, err
 		}
@@ -222,6 +227,11 @@ func UpdateGroup(id string, group *Group, isGlobalAdmin bool, lang string) (bool
 
 func AddGroup(group *Group) (bool, error) {
 	err := checkGroupName(group.Name)
+	if err != nil {
+		return false, err
+	}
+
+	err = checkGroupExists(group)
 	if err != nil {
 		return false, err
 	}
@@ -308,6 +318,17 @@ func DeleteGroup(group *Group) (bool, error) {
 	}
 
 	return deleteGroup(group)
+}
+
+func checkGroupExists(group *Group) error {
+	exist, err := ormer.Engine.Exist(&Group{Owner: group.Owner, Name: group.Name})
+	if err != nil {
+		return err
+	}
+	if exist {
+		return fmt.Errorf("the group \"%s\" already exists in organization \"%s\", please use another name", group.Name, group.Owner)
+	}
+	return nil
 }
 
 func checkGroupName(name string) error {
