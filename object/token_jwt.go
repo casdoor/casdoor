@@ -98,9 +98,6 @@ type UserWithoutThirdIdp struct {
 
 	Id                string   `xorm:"varchar(100) index" json:"id"`
 	Type              string   `xorm:"varchar(100)" json:"type"`
-	Password          string   `xorm:"varchar(150)" json:"password"`
-	PasswordSalt      string   `xorm:"varchar(100)" json:"passwordSalt"`
-	PasswordType      string   `xorm:"varchar(100)" json:"passwordType"`
 	DisplayName       string   `xorm:"varchar(100)" json:"displayName"`
 	FirstName         string   `xorm:"varchar(100)" json:"firstName"`
 	LastName          string   `xorm:"varchar(100)" json:"lastName"`
@@ -134,8 +131,6 @@ type UserWithoutThirdIdp struct {
 	IsForbidden       bool     `json:"isForbidden"`
 	IsDeleted         bool     `json:"isDeleted"`
 	SignupApplication string   `xorm:"varchar(100)" json:"signupApplication"`
-	Hash              string   `xorm:"varchar(100)" json:"hash"`
-	PreHash           string   `xorm:"varchar(100)" json:"preHash"`
 	RegisterType      string   `xorm:"varchar(100)" json:"registerType"`
 	RegisterSource    string   `xorm:"varchar(100)" json:"registerSource"`
 
@@ -157,11 +152,9 @@ type UserWithoutThirdIdp struct {
 	LastSigninIp   string `xorm:"varchar(100)" json:"lastSigninIp"`
 
 	// WebauthnCredentials []webauthn.Credential `xorm:"webauthnCredentials blob" json:"webauthnCredentials"`
-	PreferredMfaType string   `xorm:"varchar(100)" json:"preferredMfaType"`
-	RecoveryCodes    []string `xorm:"varchar(1000)" json:"recoveryCodes"`
-	TotpSecret       string   `xorm:"varchar(100)" json:"totpSecret"`
-	MfaPhoneEnabled  bool     `json:"mfaPhoneEnabled"`
-	MfaEmailEnabled  bool     `json:"mfaEmailEnabled"`
+	PreferredMfaType string `xorm:"varchar(100)" json:"preferredMfaType"`
+	MfaPhoneEnabled  bool   `json:"mfaPhoneEnabled"`
+	MfaEmailEnabled  bool   `json:"mfaEmailEnabled"`
 	// MultiFactorAuths    []*MfaProps           `xorm:"-" json:"multiFactorAuths,omitempty"`
 
 	Ldap       string            `xorm:"ldap varchar(100)" json:"ldap"`
@@ -173,8 +166,6 @@ type UserWithoutThirdIdp struct {
 
 	LastSigninWrongTime string `xorm:"varchar(100)" json:"lastSigninWrongTime"`
 	SigninWrongTimes    int    `json:"signinWrongTimes"`
-
-	ManagedAccounts []ManagedAccount `xorm:"managedAccounts blob" json:"managedAccounts"`
 }
 
 type ClaimsShort struct {
@@ -264,9 +255,6 @@ func getUserWithoutThirdIdp(user *User) *UserWithoutThirdIdp {
 
 		Id:                user.Id,
 		Type:              user.Type,
-		Password:          user.Password,
-		PasswordSalt:      user.PasswordSalt,
-		PasswordType:      user.PasswordType,
 		DisplayName:       user.DisplayName,
 		FirstName:         user.FirstName,
 		LastName:          user.LastName,
@@ -300,8 +288,6 @@ func getUserWithoutThirdIdp(user *User) *UserWithoutThirdIdp {
 		IsForbidden:       user.IsForbidden,
 		IsDeleted:         user.IsDeleted,
 		SignupApplication: user.SignupApplication,
-		Hash:              user.Hash,
-		PreHash:           user.PreHash,
 		RegisterType:      user.RegisterType,
 		RegisterSource:    user.RegisterSource,
 
@@ -323,8 +309,6 @@ func getUserWithoutThirdIdp(user *User) *UserWithoutThirdIdp {
 		LastSigninIp:   user.LastSigninIp,
 
 		PreferredMfaType: user.PreferredMfaType,
-		RecoveryCodes:    user.RecoveryCodes,
-		TotpSecret:       user.TotpSecret,
 		MfaPhoneEnabled:  user.MfaPhoneEnabled,
 		MfaEmailEnabled:  user.MfaEmailEnabled,
 
@@ -337,8 +321,6 @@ func getUserWithoutThirdIdp(user *User) *UserWithoutThirdIdp {
 
 		LastSigninWrongTime: user.LastSigninWrongTime,
 		SigninWrongTimes:    user.SigninWrongTimes,
-
-		ManagedAccounts: user.ManagedAccounts,
 	}
 
 	return res
