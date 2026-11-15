@@ -194,7 +194,15 @@ func (c *ApiController) GetUser() {
 		}
 	} else {
 		if owner == "" {
-			owner = util.GetOwnerFromId(id)
+			// The id query parameter may be malformed (e.g. missing the owner
+			// part), which would panic in GetOwnerFromId; answer with the
+			// parse error instead of letting the request panic.
+			var err error
+			owner, _, err = util.GetOwnerAndNameFromIdWithError(id)
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
 		}
 
 		switch {
