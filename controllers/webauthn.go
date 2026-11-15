@@ -237,6 +237,9 @@ func (c *ApiController) WebAuthnSigninFinish() {
 
 	var authForm form.AuthForm
 	authForm.Type = responseType
+	if responseType == ResponseTypeSaml {
+		authForm.SamlRequest = c.Ctx.Input.Query("samlRequest")
+	}
 	resp := c.HandleLoggedIn(application, user, &authForm)
 	if resp == nil {
 		return
