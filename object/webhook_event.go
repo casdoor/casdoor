@@ -151,13 +151,18 @@ func GetWebhookEventCount(owner, organization, webhook string, state WebhookEven
 	return session.Count(&WebhookEvent{})
 }
 
-func GetPendingWebhookEvents(limit int) ([]*WebhookEvent, error) {
+func GetPendingWebhookEvents(limit int, excludedWebhooks []string) ([]*WebhookEvent, error) {
 	events := []*WebhookEvent{}
 	currentTime := util.GetCurrentTime()
 
-	err := ormer.Engine.
+	session := ormer.Engine.
 		Where("state = ? OR state = ?", WebhookEventStatusPending, WebhookEventStatusRetrying).
-		And("(next_retry_time = '' OR next_retry_time <= ?)", currentTime).
+		And("(next_retry_time = '' OR next_retry_time <= ?)", currentTime)
+	if len(excludedWebhooks) > 0 {
+		session = session.NotIn("webhook", excludedWebhooks)
+	}
+
+	err := session.
 		Asc("created_time").
 		Limit(limit).
 		Find(&events)

@@ -17,6 +17,7 @@ package object
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
 	"sync"
 	"time"
 
@@ -30,6 +31,10 @@ var (
 	webhookWorkerStop      chan struct{}
 	webhookPollingInterval = 30 * time.Second // Configurable polling interval
 	webhookBatchSize       = 100              // Configurable batch size for processing events
+	webhookMaxConcurrency  = 10               // webhooks delivered to at the same time, each one gets its events one by one
+
+	webhookDeliveringMu sync.Mutex
+	webhookDelivering   = map[string]bool{}
 )
 
 // StartWebhookDeliveryWorker starts the background worker for webhook delivery
@@ -97,27 +102,70 @@ func StopWebhookDeliveryWorker() {
 	webhookWorkerRunning = false
 }
 
-// processWebhookEvents processes pending webhook events
+// processWebhookEvents processes pending webhook events, a slow or dead endpoint only delays its own events:
+// each webhook is delivered to by its own goroutine, and the webhooks still being delivered to are skipped
 func processWebhookEvents() {
-	events, err := GetPendingWebhookEvents(webhookBatchSize)
+	webhookDeliveringMu.Lock()
+	deliveringWebhooks := []string{}
+	for webhook := range webhookDelivering {
+		deliveringWebhooks = append(deliveringWebhooks, webhook)
+	}
+	webhookDeliveringMu.Unlock()
+
+	if len(deliveringWebhooks) >= webhookMaxConcurrency {
+		return
+	}
+
+	events, err := GetPendingWebhookEvents(webhookBatchSize, deliveringWebhooks)
 	if err != nil {
 		logs.Error(fmt.Sprintf("failed to get pending webhook events: %v", err))
 		return
 	}
 
+	webhooks := []string{}
+	webhookEvents := map[string][]*WebhookEvent{}
 	for _, event := range events {
-		deliverWebhookEvent(event)
+		if _, ok := webhookEvents[event.Webhook]; !ok {
+			webhooks = append(webhooks, event.Webhook)
+		}
+		webhookEvents[event.Webhook] = append(webhookEvents[event.Webhook], event)
+	}
+
+	for _, webhook := range webhooks {
+		webhookDeliveringMu.Lock()
+		if webhookDelivering[webhook] || len(webhookDelivering) >= webhookMaxConcurrency {
+			webhookDeliveringMu.Unlock()
+			continue
+		}
+		webhookDelivering[webhook] = true
+		webhookDeliveringMu.Unlock()
+
+		queue := webhookEvents[webhook]
+		util.SafeGoroutine(func() {
+			defer func() {
+				webhookDeliveringMu.Lock()
+				delete(webhookDelivering, webhook)
+				webhookDeliveringMu.Unlock()
+			}()
+
+			// in order, and the rest waits for the next poll once the endpoint is unavailable
+			for _, event := range queue {
+				if !deliverWebhookEvent(event) {
+					break
+				}
+			}
+		})
 	}
 }
 
-// deliverWebhookEvent attempts to deliver a single webhook event
-func deliverWebhookEvent(event *WebhookEvent) {
+// deliverWebhookEvent attempts to deliver a single webhook event, it returns false if the endpoint is unavailable
+func deliverWebhookEvent(event *WebhookEvent) bool {
 	// Get the webhook configuration
 	webhook, err := GetWebhook(event.Webhook)
 	if err != nil {
 		logs.Error(fmt.Sprintf("failed to get webhook %s: %v", event.Webhook, err))
 		UpdateWebhookEventState(event, WebhookEventStatusFailed, 0, "", fmt.Errorf("get webhook: %w", err))
-		return
+		return false
 	}
 
 	if webhook == nil {
@@ -125,13 +173,13 @@ func deliverWebhookEvent(event *WebhookEvent) {
 		event.State = WebhookEventStatusFailed
 		event.LastError = "Webhook not found"
 		UpdateWebhookEventState(event, WebhookEventStatusFailed, 0, "", fmt.Errorf("webhook not found"))
-		return
+		return true
 	}
 
 	if !webhook.IsEnabled {
 		// Disabled webhooks should finalize the event to avoid hot-looping forever.
 		UpdateWebhookEventState(event, WebhookEventStatusFailed, 0, "", fmt.Errorf("webhook is disabled"))
-		return
+		return true
 	}
 
 	// Parse the record from payload
@@ -141,7 +189,7 @@ func deliverWebhookEvent(event *WebhookEvent) {
 		event.State = WebhookEventStatusFailed
 		event.LastError = fmt.Sprintf("Invalid payload: %v", err)
 		UpdateWebhookEventState(event, WebhookEventStatusFailed, 0, "", err)
-		return
+		return true
 	}
 
 	// Parse extended user if present
@@ -198,6 +246,8 @@ func deliverWebhookEvent(event *WebhookEvent) {
 			UpdateWebhookEventState(event, WebhookEventStatusRetrying, statusCode, respBody, err)
 		}
 	}
+
+	return err == nil && statusCode < 500 && statusCode != http.StatusTooManyRequests
 }
 
 // calculateNextRetryTime calculates the next retry time based on attempt count and backoff strategy

@@ -204,6 +204,8 @@ func newRestrictedHttpTransport(timeout time.Duration, isRefused func(address st
 		// a proxy would be dialed instead of the target, bypassing the check
 		Proxy:       nil,
 		DialContext: dialer.DialContext,
+		// most callers create a transport per request, whose idle connections would never be closed
+		IdleConnTimeout: 90 * time.Second,
 	}
 }
 

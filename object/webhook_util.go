@@ -24,12 +24,17 @@ import (
 	"github.com/casdoor/casdoor/util"
 )
 
-func sendWebhook(webhook *Webhook, record *Record, extendedUser *User) (int, string, error) {
-	client := &http.Client{Timeout: 30 * time.Second}
+var (
+	webhookClient = &http.Client{Timeout: 30 * time.Second}
 	// only global admins manage the webhooks of "built-in", the ones of other organizations
 	// must not reach the intranet, as their responses are readable by the org admins
+	webhookInternetOnlyClient = util.NewInternetOnlyHttpClient(30 * time.Second)
+)
+
+func sendWebhook(webhook *Webhook, record *Record, extendedUser *User) (int, string, error) {
+	client := webhookClient
 	if webhook.Organization != "built-in" {
-		client = util.NewInternetOnlyHttpClient(30 * time.Second)
+		client = webhookInternetOnlyClient
 	}
 	userMap := make(map[string]interface{})
 	var body io.Reader
