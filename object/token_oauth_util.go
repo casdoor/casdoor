@@ -723,7 +723,7 @@ func RefreshToken(application *Application, grantType string, refreshToken strin
 		application = &sharedApplication
 	}
 
-	newAccessToken, newRefreshToken, newIdToken, tokenName, err := generateJwtTokenWithOptions(application, user, "", "", "", scope, resource, host, jwtTokenOptions{RefreshScope: oldTokenScope, SessionId: token.SessionId, Actor: token.GetActor()})
+	newAccessToken, newRefreshToken, newIdToken, tokenName, err := generateJwtTokenWithOptions(application, user, "", "", "", scope, resource, host, jwtTokenOptions{RefreshScope: oldTokenScope, SessionId: token.SessionId, Actor: token.GetActor(), DPoPJkt: dpopJkt})
 	if err != nil {
 		return &TokenError{
 			Error:            EndpointError,
@@ -828,11 +828,17 @@ func ValidateJwtAssertion(clientAssertion string, application *Application, host
 		return false, nil, err
 	}
 
-	if !slices.Contains(application.RedirectUris, claims.Issuer) {
+	// RFC 7523 3: the issuer is the client ID, a redirect URI of the application is still taken as before
+	if claims.Issuer != application.ClientId && !slices.Contains(application.RedirectUris, claims.Issuer) {
 		return false, nil, nil
 	}
 
-	if !slices.Contains(claims.Audience, fmt.Sprintf("%s/api/login/oauth/access_token", originBackend)) {
+	// RFC 7523 3: the audience is the token endpoint or the issuer of the authorization server
+	audiences := []string{fmt.Sprintf("%s/api/login/oauth/access_token", originBackend)}
+	if issuer, err := GetOidcIssuerByApplication(host, application); err == nil && issuer != "" {
+		audiences = append(audiences, issuer)
+	}
+	if !slices.ContainsFunc(claims.Audience, func(audience string) bool { return slices.Contains(audiences, audience) }) {
 		return false, nil, nil
 	}
 

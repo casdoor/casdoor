@@ -59,6 +59,8 @@ type Claims struct {
 	Azp      string    `json:"azp,omitempty"`
 	Provider string    `json:"provider,omitempty"`
 	Act      *ActClaim `json:"act,omitempty"`
+	// the RFC 9449 "cnf" claim of an access token bound to a DPoP key
+	Cnf *DPoPConfirmation `json:"cnf,omitempty"`
 
 	SigninMethod string `json:"signinMethod,omitempty"`
 	OidcIdTokenClaims
@@ -170,12 +172,13 @@ type UserWithoutThirdIdp struct {
 
 type ClaimsShort struct {
 	*UserShort
-	TokenType string    `json:"tokenType,omitempty"`
-	Nonce     string    `json:"nonce,omitempty"`
-	Scope     string    `json:"scope,omitempty"`
-	Azp       string    `json:"azp,omitempty"`
-	Provider  string    `json:"provider,omitempty"`
-	Act       *ActClaim `json:"act,omitempty"`
+	TokenType string            `json:"tokenType,omitempty"`
+	Nonce     string            `json:"nonce,omitempty"`
+	Scope     string            `json:"scope,omitempty"`
+	Azp       string            `json:"azp,omitempty"`
+	Provider  string            `json:"provider,omitempty"`
+	Act       *ActClaim         `json:"act,omitempty"`
+	Cnf       *DPoPConfirmation `json:"cnf,omitempty"`
 
 	SigninMethod string `json:"signinMethod,omitempty"`
 	OidcIdTokenClaims
@@ -193,13 +196,14 @@ type OIDCAddress struct {
 
 type ClaimsWithoutThirdIdp struct {
 	*UserWithoutThirdIdp
-	TokenType string    `json:"tokenType,omitempty"`
-	Nonce     string    `json:"nonce,omitempty"`
-	Tag       string    `json:"tag"`
-	Scope     string    `json:"scope,omitempty"`
-	Azp       string    `json:"azp,omitempty"`
-	Provider  string    `json:"provider,omitempty"`
-	Act       *ActClaim `json:"act,omitempty"`
+	TokenType string            `json:"tokenType,omitempty"`
+	Nonce     string            `json:"nonce,omitempty"`
+	Tag       string            `json:"tag"`
+	Scope     string            `json:"scope,omitempty"`
+	Azp       string            `json:"azp,omitempty"`
+	Provider  string            `json:"provider,omitempty"`
+	Act       *ActClaim         `json:"act,omitempty"`
+	Cnf       *DPoPConfirmation `json:"cnf,omitempty"`
 
 	SigninMethod string `json:"signinMethod,omitempty"`
 	OidcIdTokenClaims
@@ -337,6 +341,7 @@ func getShortClaims(claims Claims) ClaimsShort {
 		SigninMethod:      claims.SigninMethod,
 		Provider:          claims.Provider,
 		Act:               claims.Act,
+		Cnf:               claims.Cnf,
 		OidcIdTokenClaims: claims.OidcIdTokenClaims,
 	}
 	return res
@@ -354,6 +359,7 @@ func getClaimsWithoutThirdIdp(claims Claims) ClaimsWithoutThirdIdp {
 		SigninMethod:        claims.SigninMethod,
 		Provider:            claims.Provider,
 		Act:                 claims.Act,
+		Cnf:                 claims.Cnf,
 		OidcIdTokenClaims:   claims.OidcIdTokenClaims,
 	}
 	return res
@@ -448,6 +454,9 @@ func getClaimsCustom(claims Claims, tokenField []string, tokenAttributes []*JwtI
 	}
 	if claims.Act != nil {
 		res["act"] = claims.Act
+	}
+	if claims.Cnf != nil {
+		res["cnf"] = claims.Cnf
 	}
 
 	// Always include nonce and scope as they are built-in OAuth/OIDC fields (even if empty)
@@ -618,6 +627,8 @@ type jwtTokenOptions struct {
 	SessionId string
 	// Actor is the RFC 8693 "act" claim of the access and refresh tokens
 	Actor *ActClaim
+	// DPoPJkt is the thumbprint of the DPoP key the access token is bound to, its RFC 9449 "cnf" claim
+	DPoPJkt string
 }
 
 // getOidcHash returns the left-most half of the hash of value, base64url encoded, using the hash
@@ -717,6 +728,10 @@ func generateJwtTokenWithOptions(application *Application, user *User, provider 
 	refreshClaims.ExpiresAt = jwt.NewNumericDate(refreshExpireTime)
 	if options.RefreshScope != "" {
 		refreshClaims.Scope = options.RefreshScope
+	}
+
+	if options.DPoPJkt != "" {
+		claims.Cnf = &DPoPConfirmation{JKT: options.DPoPJkt}
 	}
 
 	var token *jwt.Token

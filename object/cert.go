@@ -272,6 +272,12 @@ func (p *Cert) populateContent() error {
 		return nil
 	}
 
+	// a certificate saved without its private key is a public key, such as the client certificate of private_key_jwt,
+	// the key pair is only generated when both are empty
+	if p.Certificate != "" {
+		return nil
+	}
+
 	if len(p.CryptoAlgorithm) < 3 {
 		err := fmt.Errorf("populateContent() error, unsupported crypto algorithm: %s", p.CryptoAlgorithm)
 		return err
@@ -379,6 +385,15 @@ func certChangeTrigger(owner string, oldName string, newName string) error {
 		appSession = appSession.And("organization=?", owner)
 	}
 	_, err = appSession.Cols("cert").Update(&Application{Cert: newName})
+	if err != nil {
+		return err
+	}
+
+	clientCertSession := session.Where("client_cert=?", oldName)
+	if owner != "admin" {
+		clientCertSession = clientCertSession.And("organization=?", owner)
+	}
+	_, err = clientCertSession.Cols("client_cert").Update(&Application{ClientCert: newName})
 	if err != nil {
 		return err
 	}

@@ -362,6 +362,11 @@ func ExpireTokensByApplication(owner string, application string) error {
 	return err
 }
 
+func updateTokenDPoPBinding(token *Token) error {
+	_, err := ormer.Engine.ID(core.PK{token.Owner, token.Name}).Cols("access_token", "access_token_hash", "id_token", "id_token_hash", "token_type", "dpop_jkt").Update(token)
+	return err
+}
+
 // updateTokenDPoP updates the token_type and dpop_jkt columns for DPoP binding (RFC 9449).
 func updateTokenDPoP(token *Token) error {
 	_, err := ormer.Engine.ID(core.PK{token.Owner, token.Name}).Cols("token_type", "dpop_jkt").Update(token)

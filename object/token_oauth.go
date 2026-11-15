@@ -82,6 +82,18 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 		}, nil
 	}
 
+	// RFC 9449: the DPoP proof is checked before the grant, so that a bad proof doesn't use up the authorization code
+	dpopJkt := ""
+	if dpopProof != "" && grantType != "refresh_token" {
+		dpopJkt, err = ValidateDPoPProof(dpopProof, "POST", GetDPoPHtu(host, "/api/login/oauth/access_token"), "")
+		if err != nil {
+			return &TokenError{
+				Error:            "invalid_dpop_proof",
+				ErrorDescription: err.Error(),
+			}, nil
+		}
+	}
+
 	var token *Token
 	var tokenError *TokenError
 	switch grantType {
@@ -90,7 +102,7 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 	case "password": // Resource Owner Password Credentials Grant
 		token, tokenError, err = GetPasswordToken(application, username, password, scope, host, clientIp, lang)
 	case "client_credentials": // Client Credentials Grant
-		token, tokenError, err = GetClientCredentialsToken(application, clientSecret, scope, host)
+		token, tokenError, err = GetClientCredentialsToken(application, clientSecret, scope, resource, host)
 	case VerificationCodeGrantType:
 		token, tokenError, err = GetVerificationCodeToken(application, username, countryCode, code, scope, host, clientIp, lang)
 	case MobileOneClickGrantType:
@@ -149,19 +161,8 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 		return tokenError, nil
 	}
 
-	// Apply DPoP binding (RFC 9449) if a DPoP proof was supplied by the client.
-	if dpopProof != "" {
-		dpopHtu := GetDPoPHtu(host, "/api/login/oauth/access_token")
-		jkt, dpopErr := ValidateDPoPProof(dpopProof, "POST", dpopHtu, "")
-		if dpopErr != nil {
-			return &TokenError{
-				Error:            "invalid_dpop_proof",
-				ErrorDescription: dpopErr.Error(),
-			}, nil
-		}
-		token.TokenType = "DPoP"
-		token.DPoPJkt = jkt
-		if err = updateTokenDPoP(token); err != nil {
+	if dpopJkt != "" {
+		if err = bindTokenToDPoPKey(application, token, dpopJkt); err != nil {
 			return nil, err
 		}
 	}
@@ -409,17 +410,24 @@ func getUserGrantToken(application *Application, user *User, scope string, host 
 }
 
 // GetClientCredentialsToken handles the Client Credentials Grant flow.
-func GetClientCredentialsToken(application *Application, clientSecret string, scope string, host string) (*Token, *TokenError, error) {
+func GetClientCredentialsToken(application *Application, clientSecret string, scope string, resource string, host string) (*Token, *TokenError, error) {
 	if application.ClientSecret != clientSecret {
 		return nil, &TokenError{
 			Error:            InvalidClient,
 			ErrorDescription: "client_secret is invalid",
 		}, nil
 	}
-	return getApplicationToken(application, scope, host, "client_credentials")
+	if err := ValidateResourceURI(resource); err != nil {
+		return nil, &TokenError{
+			Error:            InvalidTarget,
+			ErrorDescription: err.Error(),
+		}, nil
+	}
+	return getApplicationToken(application, scope, resource, host, "client_credentials")
 }
 
-func getApplicationToken(application *Application, scope string, host string, grantType string) (*Token, *TokenError, error) {
+// getApplicationToken mints the token of the application itself, resource is the RFC 8707 resource indicator to bind it to
+func getApplicationToken(application *Application, scope string, resource string, host string, grantType string) (*Token, *TokenError, error) {
 	expandedScope, ok := IsScopeValidAndExpand(scope, application)
 	if !ok {
 		return nil, &TokenError{
@@ -435,7 +443,7 @@ func getApplicationToken(application *Application, scope string, host string, gr
 		Type:  "application",
 	}
 
-	accessToken, _, _, tokenName, err := generateJwtToken(application, nullUser, "", "", "", scope, "", host)
+	accessToken, _, _, tokenName, err := generateJwtToken(application, nullUser, "", "", "", scope, resource, host)
 	if err != nil {
 		return nil, &TokenError{
 			Error:            EndpointError,
@@ -455,6 +463,7 @@ func getApplicationToken(application *Application, scope string, host string, gr
 		Scope:        scope,
 		TokenType:    "Bearer",
 		GrantType:    grantType,
+		Resource:     resource,
 		CodeIsUsed:   true,
 	}
 	_, err = AddToken(token)
@@ -580,7 +589,7 @@ func GetJwtBearerToken(application *Application, assertion string, scope string,
 			return nil, tokenError, err
 		}
 		if user == nil {
-			return getApplicationToken(application, scope, host, "urn:ietf:params:oauth:grant-type:jwt-bearer")
+			return getApplicationToken(application, scope, "", host, "urn:ietf:params:oauth:grant-type:jwt-bearer")
 		}
 		if tokenError = checkGrantUserSignin(application, user, clientIp, lang); tokenError != nil {
 			return nil, tokenError, nil

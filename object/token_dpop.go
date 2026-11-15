@@ -175,3 +175,69 @@ func getRefreshDPoPJkt(token *Token, dpopProof string, host string, path string)
 	}
 	return jkt, nil
 }
+
+// bindTokenToDPoPKey binds the issued token to the DPoP key: the access token is signed again with the RFC 9449
+// "cnf" claim, so that a resource server can check the binding without introspection. The token of an
+// authorization code is minted at the authorization, before the client shows its DPoP key.
+func bindTokenToDPoPKey(application *Application, token *Token, jkt string) error {
+	signingApplication := getSigningApplication(application, token.Organization)
+	cert, err := getCertByApplication(signingApplication)
+	if err != nil {
+		return err
+	}
+	if cert == nil {
+		return fmt.Errorf("the cert of the application: %s does not exist", signingApplication.GetId())
+	}
+
+	method := getJwtSigningMethod(signingApplication)
+	key, err := getJwtSigningKey(method, cert)
+	if err != nil {
+		return err
+	}
+
+	accessToken, err := resignJwtToken(token.AccessToken, method, key, func(claims jwt.MapClaims) {
+		claims["cnf"] = &DPoPConfirmation{JKT: jkt}
+	})
+	if err != nil {
+		return err
+	}
+
+	// the at_hash of the ID token is the hash of the access token it came with
+	idToken := token.IdToken
+	if idToken != "" {
+		idToken, err = resignJwtToken(idToken, method, key, func(claims jwt.MapClaims) {
+			if _, ok := claims["at_hash"]; ok {
+				claims["at_hash"] = getOidcHash(accessToken, method)
+			}
+		})
+		if err != nil {
+			return err
+		}
+	}
+
+	token.AccessToken = accessToken
+	token.AccessTokenHash = getTokenHash(accessToken)
+	token.IdToken = idToken
+	token.IdTokenHash = ""
+	if idToken != "" {
+		token.IdTokenHash = getTokenHash(idToken)
+	}
+	token.TokenType = "DPoP"
+	token.DPoPJkt = jkt
+	return updateTokenDPoPBinding(token)
+}
+
+func resignJwtToken(tokenString string, method jwt.SigningMethod, key interface{}, update func(claims jwt.MapClaims)) (string, error) {
+	claims := jwt.MapClaims{}
+	parsed, _, err := jwt.NewParser(jwt.WithJSONNumber()).ParseUnverified(tokenString, claims)
+	if err != nil {
+		return "", err
+	}
+
+	update(claims)
+	token := jwt.NewWithClaims(method, claims)
+	if kid, ok := parsed.Header["kid"]; ok {
+		token.Header["kid"] = kid
+	}
+	return signJwtToken(token, key)
+}

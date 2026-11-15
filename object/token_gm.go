@@ -15,6 +15,9 @@
 package object
 
 import (
+	"crypto/ed25519"
+	"crypto/x509"
+	"encoding/pem"
 	"fmt"
 
 	"github.com/casdoor/casdoor/edition"
@@ -50,13 +53,33 @@ func getJwtSigningKey(method jwt.SigningMethod, cert *Cert) (interface{}, error)
 // getJwtVerifyKey parses the certificate of a cert for the signing method of a token being verified
 func getJwtVerifyKey(token *jwt.Token, certificate string) (interface{}, error) {
 	switch token.Method.(type) {
-	case *jwt.SigningMethodRSA:
+	case *jwt.SigningMethodRSA, *jwt.SigningMethodRSAPSS:
 		return jwt.ParseRSAPublicKeyFromPEM([]byte(certificate))
 	case *jwt.SigningMethodECDSA:
 		return jwt.ParseECPublicKeyFromPEM([]byte(certificate))
+	case *jwt.SigningMethodEd25519:
+		return parseEdPublicKeyFromPem(certificate)
 	}
 	if token.Method == gm.SigningMethodSm2 {
 		return gm.ParsePublicKey(certificate)
 	}
 	return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+}
+
+// parseEdPublicKeyFromPem takes the Ed25519 public key from a certificate, or from a PEM public key
+func parseEdPublicKeyFromPem(certificate string) (interface{}, error) {
+	block, _ := pem.Decode([]byte(certificate))
+	if block == nil || block.Type != "CERTIFICATE" {
+		return jwt.ParseEdPublicKeyFromPEM([]byte(certificate))
+	}
+
+	parsedCertificate, err := x509.ParseCertificate(block.Bytes)
+	if err != nil {
+		return nil, err
+	}
+	publicKey, ok := parsedCertificate.PublicKey.(ed25519.PublicKey)
+	if !ok {
+		return nil, fmt.Errorf("the certificate has no Ed25519 public key")
+	}
+	return publicKey, nil
 }
