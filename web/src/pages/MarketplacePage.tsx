@@ -1,6 +1,6 @@
 import * as React from "react";
 import i18next from "i18next";
-import {ExternalLink, Monitor, Search, ShieldCheck, Smartphone, X} from "lucide-react";
+import {ExternalLink, Monitor, Search, ShieldCheck, Smartphone, Upload, X} from "lucide-react";
 import {Link, useNavigate, useSearchParams} from "react-router-dom";
 import {Badge} from "@/components/ui/badge";
 import {Button} from "@/components/ui/button";
@@ -34,6 +34,53 @@ export default function MarketplacePage() {
   // "?edition=Enterprise" lists only the paid entries of that edition, as linked from the editions page
   const editionFilter = searchParams.get("edition") ?? "";
   const [selected, setSelected] = React.useState<any>(null);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+
+  // an integration that isn't in the Marketplace, from the bundle.json its build wrote and, for an action, the module next to it
+  const openFiles = async(fileList: FileList | null) => {
+    const files = Array.from(fileList ?? []);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+    let bundle: any = null;
+    let text = "";
+    for (const file of files.filter((f) => f.name.toLowerCase().endsWith(".json"))) {
+      text = await file.text();
+      try {
+        bundle = JSON.parse(text);
+      } catch {
+        bundle = null;
+      }
+      if (bundle?.manifest) {
+        break;
+      }
+    }
+    const manifest = bundle?.manifest;
+    if (!manifest?.id || !IntegrationTypes.includes(manifest.type)) {
+      Setting.showMessage("error", i18next.t("integration:Not a bundle file"));
+      return;
+    }
+
+    let module = "";
+    if (manifest.type === "action") {
+      const moduleName = bundle.files?.["action.json"]?.module ?? "";
+      const moduleFile = files.find((file) => file.name === moduleName);
+      if (!moduleFile) {
+        Setting.showMessage("error", i18next.t("integration:Choose the module too").replace("{name}", moduleName || ".wasm"));
+        return;
+      }
+      module = await readBase64(moduleFile);
+    }
+
+    setSelected({
+      id: manifest.id,
+      type: manifest.type,
+      name: manifest.name,
+      description: manifest.description,
+      latest: manifest.version,
+      local: {bundle, text, module},
+    });
+  };
 
   const fetchIndex = React.useCallback((refresh: boolean) => {
     setLoading(true);
@@ -99,6 +146,15 @@ export default function MarketplacePage() {
             <Button variant="outline" onClick={() => fetchIndex(true)} disabled={loading}>
               {i18next.t("general:Refresh")}
             </Button>
+            {Setting.isAdminUser(account) ? (
+              <>
+                <Button variant="outline" className="gap-1.5" title={i18next.t("integration:Install from file help")} onClick={() => fileInputRef.current?.click()}>
+                  <Upload className="size-4" />
+                  {i18next.t("integration:Install from file")}
+                </Button>
+                <input ref={fileInputRef} type="file" accept=".json,.wasm" multiple className="hidden" onChange={(e) => openFiles(e.target.files)} />
+              </>
+            ) : null}
           </>
         }
       />
@@ -224,18 +280,25 @@ function InstallDialog({item, organizationName, installed, onClose}: {
   const [previewApplication, setPreviewApplication] = React.useState<any>(null);
 
   React.useEffect(() => {
-    IntegrationBackend.getMarketplaceBundle(organizationName, item.id).then((res: any) => {
-      if (res.status === "ok") {
-        setBundle(res.data);
-        const defaults: Record<string, string> = {};
-        for (const variable of res.data?.manifest?.variables ?? []) {
-          defaults[variable.name] = variable.type === "color" ? variable.example ?? "" : "";
-        }
-        setVariables(defaults);
-      } else {
-        setError(res.msg);
+    const applyBundle = (data: any) => {
+      setBundle(data);
+      const defaults: Record<string, string> = {};
+      for (const variable of data?.manifest?.variables ?? []) {
+        defaults[variable.name] = variable.type === "color" ? variable.example ?? "" : "";
       }
-    });
+      setVariables(defaults);
+    };
+    if (item.local) {
+      applyBundle(item.local.bundle);
+    } else {
+      IntegrationBackend.getMarketplaceBundle(organizationName, item.id).then((res: any) => {
+        if (res.status === "ok") {
+          applyBundle(res.data);
+        } else {
+          setError(res.msg);
+        }
+      });
+    }
     if (item.type !== "app") {
       ApplicationBackend.getApplicationsByOrganization("admin", organizationName).then((res: any) => {
         if (res.status === "ok") {
@@ -278,6 +341,8 @@ function InstallDialog({item, organizationName, installed, onClose}: {
       application,
       clientId,
       clientSecret,
+      bundle: item.local?.text ?? "",
+      module: item.local?.module ?? "",
     })
       .then((res: any) => {
         setInstalling(false);
@@ -320,6 +385,7 @@ function InstallDialog({item, organizationName, installed, onClose}: {
 
         <p className="text-sm text-muted-foreground">{getLocalized(item.description)}</p>
         <p className="text-sm">{getInstallSummary(item.type, itemName, actionKind)}</p>
+        {item.local ? <p className="text-sm text-warning">{i18next.t("integration:Install from file warning")}</p> : null}
 
         <div className={isTheme ? "grid gap-6 lg:grid-cols-[minmax(0,340px)_minmax(0,1fr)]" : undefined}>
           {error ? (
@@ -408,7 +474,7 @@ function InstallDialog({item, organizationName, installed, onClose}: {
                 </>
               ) : null}
 
-              {bundle?.manifest?.downloads?.length ? (
+              {bundle?.manifest?.downloads?.length && !item.local ? (
                 <FieldRow label={i18next.t("integration:Downloads")} help={i18next.t("integration:Downloads help")}>
                   <div className="flex flex-wrap gap-2">
                     {bundle.manifest.downloads.map((path: string) => (
@@ -443,6 +509,15 @@ function InstallDialog({item, organizationName, installed, onClose}: {
       </DialogContent>
     </Dialog>
   );
+}
+
+function readBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result).replace(/^data:[^,]*,/, ""));
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(file);
+  });
 }
 
 /** The sign-in page of the chosen application with the theme applied, live, in a frame of its own. */

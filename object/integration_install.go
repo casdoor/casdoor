@@ -116,6 +116,9 @@ type IntegrationBundle struct {
 	baseUrl string
 	// a paid integration, whose files are downloaded with the license
 	isPaid bool
+	// installed from a file: the other files of the version were uploaded with the bundle
+	isLocal    bool
+	localFiles map[string][]byte
 }
 
 type BundleLicense struct {
@@ -125,6 +128,13 @@ type BundleLicense struct {
 
 // fetch downloads another file of the version
 func (bundle *IntegrationBundle) fetch(path string) ([]byte, error) {
+	if bundle.isLocal {
+		data, ok := bundle.localFiles[path]
+		if !ok {
+			return nil, fmt.Errorf("choose %s together with bundle.json", path)
+		}
+		return data, nil
+	}
 	return fetchMarketplaceFileWithLicense(fmt.Sprintf("%s/%s", bundle.baseUrl, path), bundle.isPaid)
 }
 
@@ -162,6 +172,9 @@ type IntegrationInstallRequest struct {
 	// provider: the client the other identity provider issued
 	ClientId     string `json:"clientId"`
 	ClientSecret string `json:"clientSecret"`
+	// installing from a file instead of the Marketplace: the bundle.json and, for an action, its module in base64
+	Bundle string `json:"bundle"`
+	Module string `json:"module"`
 }
 
 type applicationTemplate struct {
@@ -194,9 +207,10 @@ var (
 )
 
 var (
-	variablePattern  = regexp.MustCompile(`\{\{\s*([a-zA-Z][a-zA-Z0-9]*)\s*\}\}`)
-	colorPattern     = regexp.MustCompile(`^#[0-9a-fA-F]{6}$`)
-	installNameRegex = regexp.MustCompile(`^[a-zA-Z0-9][a-zA-Z0-9_-]*$`)
+	variablePattern    = regexp.MustCompile(`\{\{\s*([a-zA-Z][a-zA-Z0-9]*)\s*\}\}`)
+	colorPattern       = regexp.MustCompile(`^#[0-9a-fA-F]{6}$`)
+	installNameRegex   = regexp.MustCompile(`^[a-zA-Z0-9][a-zA-Z0-9_-]*$`)
+	integrationIdRegex = regexp.MustCompile(`^[a-z0-9][a-z0-9-]*$`)
 )
 
 func getMarketplaceUrls() []string {
@@ -360,6 +374,82 @@ func GetMarketplaceBundle(id string, version string) (json.RawMessage, error) {
 		return nil, err
 	}
 	return json.RawMessage(bundleText), nil
+}
+
+// GetInstallIntegrationType returns the type of the integration a request installs
+func GetInstallIntegrationType(req *IntegrationInstallRequest) (string, error) {
+	if req.Bundle != "" {
+		bundle, err := parseLocalBundle(req.Bundle)
+		if err != nil {
+			return "", err
+		}
+		return bundle.Manifest.Type, nil
+	}
+
+	item, err := GetMarketplaceIntegration(req.IntegrationId)
+	if err != nil {
+		return "", err
+	}
+	return item.Type, nil
+}
+
+func parseLocalBundle(text string) (*IntegrationBundle, error) {
+	bundle := &IntegrationBundle{}
+	err := json.Unmarshal([]byte(text), bundle)
+	manifest := bundle.Manifest
+	if err != nil || manifest == nil || !integrationIdRegex.MatchString(manifest.Id) || manifest.Version == "" {
+		return nil, fmt.Errorf("the file is not the bundle.json of an integration")
+	}
+	if bundle.License != nil {
+		return nil, fmt.Errorf("the integration: %s was downloaded with the license of a Casdoor, install it from the Marketplace", manifest.Id)
+	}
+	return bundle, nil
+}
+
+// getLocalIntegration reads an integration that isn't in the Marketplace, such as one written for this Casdoor
+// alone, from the bundle.json its build wrote and, for an action, the module next to it
+func getLocalIntegration(req *IntegrationInstallRequest) (*MarketplaceIntegration, *IntegrationBundle, error) {
+	bundle, err := parseLocalBundle(req.Bundle)
+	if err != nil {
+		return nil, nil, err
+	}
+	manifest := bundle.Manifest
+
+	// the paid integrations of the Marketplace need the license however they are installed
+	index, err := GetMarketplaceIndex(false)
+	if err == nil {
+		for _, item := range index.Integrations {
+			if item.Id == manifest.Id && item.Edition != "" {
+				err = edition.Require(item.Edition, edition.FeaturePaidIntegrations)
+				if err != nil {
+					return nil, nil, fmt.Errorf("%s: %w", item.Id, err)
+				}
+			}
+		}
+	}
+
+	bundle.isLocal = true
+	bundle.localFiles = map[string][]byte{}
+	if manifest.Type == "action" && req.Module != "" {
+		file, err := getActionFile(bundle)
+		if err != nil {
+			return nil, nil, err
+		}
+		module, err := base64.StdEncoding.DecodeString(req.Module)
+		if err != nil {
+			return nil, nil, fmt.Errorf("the module of the action is not valid base64")
+		}
+		bundle.localFiles[file.Module] = module
+	}
+
+	item := &MarketplaceIntegration{
+		Id:          manifest.Id,
+		Type:        manifest.Type,
+		Name:        manifest.Name,
+		Description: map[string]string{},
+		Latest:      manifest.Version,
+	}
+	return item, bundle, nil
 }
 
 func getIntegrationVariables(bundle *IntegrationBundle, input map[string]string) (map[string]string, error) {
@@ -826,20 +916,37 @@ func InstallIntegration(req *IntegrationInstallRequest, isGlobalAdmin bool, host
 		return nil, fmt.Errorf("an integration named %s is already installed in %s", req.Name, req.Owner)
 	}
 
-	item, err := GetMarketplaceIntegration(req.IntegrationId)
-	if err != nil {
-		return nil, err
-	}
-	// e.g. the templates of Chinese office systems need a commercial edition license
-	if item.Edition != "" {
-		if err = edition.Require(item.Edition, edition.FeaturePaidIntegrations); err != nil {
-			return nil, fmt.Errorf("%s: %w", item.Id, err)
+	var item *MarketplaceIntegration
+	var bundle *IntegrationBundle
+	var bundleText string
+	source := ""
+	if req.Bundle != "" {
+		// it runs on this Casdoor without the review of the Marketplace, so only who runs Casdoor decides
+		if !isGlobalAdmin {
+			return nil, fmt.Errorf("only a global admin can install an integration from a file")
 		}
-	}
+		item, bundle, err = getLocalIntegration(req)
+		if err != nil {
+			return nil, err
+		}
+		bundleText = req.Bundle
+		source = "file"
+	} else {
+		item, err = GetMarketplaceIntegration(req.IntegrationId)
+		if err != nil {
+			return nil, err
+		}
+		// e.g. the templates of Chinese office systems need a commercial edition license
+		if item.Edition != "" {
+			if err = edition.Require(item.Edition, edition.FeaturePaidIntegrations); err != nil {
+				return nil, fmt.Errorf("%s: %w", item.Id, err)
+			}
+		}
 
-	bundle, bundleText, err := getIntegrationBundle(item, req.Version)
-	if err != nil {
-		return nil, err
+		bundle, bundleText, err = getIntegrationBundle(item, req.Version)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	variables, err := getIntegrationVariables(bundle, req.Variables)
@@ -861,6 +968,7 @@ func InstallIntegration(req *IntegrationInstallRequest, isGlobalAdmin bool, host
 		UpdatedTime:   util.GetCurrentTime(),
 		DisplayName:   displayName,
 		IntegrationId: item.Id,
+		Source:        source,
 		Type:          item.Type,
 		Version:       bundle.Manifest.Version,
 		Logo:          item.Logo,

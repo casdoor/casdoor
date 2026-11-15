@@ -21,7 +21,7 @@ import (
 	"github.com/xorm-io/core"
 )
 
-// Integration is an app integration, provider template, theme or action installed from the Marketplace.
+// Integration is an app integration, provider template, theme or action installed from the Marketplace or a file.
 type Integration struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
@@ -34,6 +34,8 @@ type Integration struct {
 	Version       string            `xorm:"varchar(100)" json:"version"`
 	Logo          string            `xorm:"varchar(500)" json:"logo"`
 	Variables     map[string]string `xorm:"mediumtext" json:"variables"`
+	// "file" when a global admin installed it from its bundle.json instead of the Marketplace
+	Source string `xorm:"varchar(100)" json:"source"`
 
 	// the application it created (app) or changed (theme), and the provider it created (provider)
 	Application string `xorm:"varchar(100)" json:"application"`
