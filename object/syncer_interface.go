@@ -87,3 +87,16 @@ func GetSyncerProvider(syncer *Syncer) SyncerProvider {
 		return &DatabaseSyncerProvider{Syncer: syncer}
 	}
 }
+
+func (syncer *Syncer) writesUsersBack() bool {
+	if syncer.IsReadOnly {
+		return false
+	}
+
+	switch GetSyncerProvider(syncer).(type) {
+	case *DatabaseSyncerProvider, *KeycloakSyncerProvider:
+		return true
+	default:
+		return false
+	}
+}

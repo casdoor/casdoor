@@ -385,7 +385,12 @@ export default function SyncerEditPage() {
         />
       ),
     },
-    {type: "switch", name: "isReadOnly", labelKey: "syncer:Is read-only"},
+    {
+      type: "switch",
+      name: "isReadOnly",
+      labelKey: "syncer:Is read-only",
+      when: (ctx) => hasDatabaseSchema(ctx.record.type),
+    },
     {type: "switch", name: "isEnabled", labelKey: "general:Is enabled"},
     {
       // the antd page gives the test its own labelled row rather than a header button
