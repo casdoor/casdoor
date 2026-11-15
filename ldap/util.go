@@ -229,7 +229,7 @@ func getNameAndOrgFromDN(DN string) (string, string, error) {
 	return params["cn"], params["ou"], nil
 }
 
-func getNameAndOrgFromFilter(baseDN, filter string) (string, string, int) {
+func getNameAndOrgFromFilter(baseDN string, filter message.Filter) (string, string, int) {
 	if !strings.Contains(strings.ToLower(baseDN), "ou=") {
 		return "", "", ldap.LDAPResultInvalidDNSyntax
 	}
@@ -242,18 +242,20 @@ func getNameAndOrgFromFilter(baseDN, filter string) (string, string, int) {
 	return name, org, ldap.LDAPResultSuccess
 }
 
-func getUsername(filter string) string {
-	for _, attr := range []string{"cn=", "uid="} {
-		for i := 0; i < len(filter); i++ {
-			if filter[i] != '(' || len(filter)-i-1 < len(attr) || !strings.EqualFold(filter[i+1:i+1+len(attr)], attr) {
-				continue
+// getUsername returns the user a filter requires by an exact cn or uid match,
+// or "*" when it can match other users (OR, NOT, wildcards).
+func getUsername(filter message.Filter) string {
+	switch f := filter.(type) {
+	case message.FilterEqualityMatch:
+		attr := string(f.AttributeDesc())
+		if strings.EqualFold(attr, "cn") || strings.EqualFold(attr, "uid") {
+			return string(f.AssertionValue())
+		}
+	case message.FilterAnd:
+		for _, child := range f {
+			if name := getUsername(child); name != "*" {
+				return name
 			}
-			start := i + 1 + len(attr)
-			end := strings.IndexByte(filter[start:], ')')
-			if end == -1 {
-				return "*"
-			}
-			return filter[start : start+end]
 		}
 	}
 	return "*"
@@ -477,7 +479,7 @@ func GetFilteredUsers(m *ldap.Message) (filteredUsers []*object.User, code int) 
 	var err error
 	r := m.GetSearchRequest()
 
-	name, org, code := getNameAndOrgFromFilter(string(r.BaseObject()), r.FilterString())
+	name, org, code := getNameAndOrgFromFilter(string(r.BaseObject()), r.Filter())
 	if code != ldap.LDAPResultSuccess {
 		return nil, code
 	}
@@ -550,8 +552,8 @@ func GetFilteredUsers(m *ldap.Message) (filteredUsers []*object.User, code int) 
 
 // GetFilteredGroups returns the groups of the organization the search is scoped
 // to. The filter itself is applied by matchGroupFilter on each candidate entry.
-func GetFilteredGroups(m *ldap.Message, baseDN string, filterStr string) ([]*object.Group, int) {
-	_, org, code := getNameAndOrgFromFilter(baseDN, filterStr)
+func GetFilteredGroups(m *ldap.Message, baseDN string, filter message.Filter) ([]*object.Group, int) {
+	_, org, code := getNameAndOrgFromFilter(baseDN, filter)
 	if code != ldap.LDAPResultSuccess {
 		return nil, code
 	}

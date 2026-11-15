@@ -194,7 +194,7 @@ func handleSearch(w ldap.ResponseWriter, m *ldap.Message) {
 	}
 
 	if isPosixGroupFilter(r.Filter()) {
-		groups, code := GetFilteredGroups(m, string(r.BaseObject()), r.FilterString())
+		groups, code := GetFilteredGroups(m, string(r.BaseObject()), r.Filter())
 		if code != ldap.LDAPResultSuccess {
 			res.SetResultCode(code)
 			w.Write(res)
