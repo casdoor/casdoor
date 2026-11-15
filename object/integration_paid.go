@@ -16,6 +16,7 @@ package object
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -128,14 +129,29 @@ func GetMarketplaceDownload(id string, path string) ([]byte, error) {
 		}
 	}
 
-	bundle, _, err := getIntegrationBundle(item, "", true)
-	if err != nil {
-		return nil, err
-	}
-	for _, download := range bundle.Manifest.Downloads {
-		if download == path {
-			return bundle.fetch(path)
+	bundle, _, checkedVersion, err := getIntegrationBundle(item, "", true)
+	if err == nil {
+		err = fmt.Errorf("the integration: %s has no download %s", id, path)
+		for _, download := range bundle.Manifest.Downloads {
+			if download == path {
+				var data []byte
+				data, err = bundle.fetch(path)
+				if err == nil {
+					if checkedVersion != "" {
+						readMarketplaceVersionMetaStep(item.Id, checkedVersion, item.Edition != "", marketplaceStepInstalled, "")
+					}
+					return data, nil
+				}
+				break
+			}
 		}
 	}
-	return nil, fmt.Errorf("the integration: %s has no download %s", id, path)
+	if checkedVersion != "" {
+		stage := installStageDownload
+		if errors.As(err, &integrationRevokedError{}) {
+			stage = installStageRevoked
+		}
+		readMarketplaceVersionMetaStep(item.Id, checkedVersion, item.Edition != "", marketplaceStepFailed, stage)
+	}
+	return nil, err
 }

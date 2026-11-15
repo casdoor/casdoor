@@ -17,10 +17,51 @@ package object
 import (
 	"encoding/json"
 	"fmt"
+	"net/url"
 
 	"github.com/beego/beego/v2/core/logs"
 	"github.com/casdoor/casdoor/conf"
 )
+
+// the steps after the check before installing at which Casdoor reads the meta of the version again
+const (
+	marketplaceStepInstalled   = "installed"
+	marketplaceStepFailed      = "failed"
+	marketplaceStepUninstalled = "uninstalled"
+)
+
+// the stages an install fails at
+const (
+	installStageRevoked   = "revoked"
+	installStageDownload  = "download"
+	installStageVariables = "variables"
+	installStageCreate    = "create"
+	installStageSave      = "save"
+)
+
+// integrationRevokedError is an install the Marketplace server refused because the version has been withdrawn
+type integrationRevokedError struct {
+	error
+}
+
+// readMarketplaceVersionMetaStep reads the meta of a version again when its install has ended or it is uninstalled,
+// so the Marketplace knows how installs end. As with the check before installing, the address has only the
+// integration, the version and the step. It runs in the background and nothing waits for it.
+func readMarketplaceVersionMetaStep(id string, version string, withLicense bool, step string, stage string) {
+	query := url.Values{"step": {step}}
+	if stage != "" {
+		query.Set("stage", stage)
+	}
+	path := fmt.Sprintf("integrations/%s/%s/meta.json?%s", url.PathEscape(id), url.PathEscape(version), query.Encode())
+	go func() {
+		for _, serverUrl := range getMarketplaceServerUrls() {
+			_, err := fetchMarketplaceFileWithLicense(joinMarketplaceUrl(serverUrl, path), withLicense)
+			if err == nil {
+				return
+			}
+		}
+	}()
+}
 
 // MarketplaceVersionMeta is what the Marketplace server says about a version right now. The catalog and bundles come
 // from the CDN, whose copy may be days old, so before installing, Casdoor checks with the server that the version
