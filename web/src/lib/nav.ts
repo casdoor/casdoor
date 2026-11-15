@@ -50,7 +50,9 @@ export function getNavGroups(account: Account | null | undefined): NavGroup[] {
       {key: "/", label: i18next.t("general:Dashboard")},
       {key: "/shortcuts", label: i18next.t("general:Shortcuts")},
       {key: "/apps", label: i18next.t("general:Apps")},
-      ...(Setting.isLocalAdminUser(account) ? [{key: "/editions", label: i18next.t("edition:Editions and features")}] : []),
+      ...(Setting.isLocalAdminUser(account) && !Conf.isUpgradeHidden("Commercial")
+        ? [{key: "/editions", label: i18next.t("edition:Editions and features")}]
+        : []),
       ...(account.pendingAccessReviews > 0 ? [{key: "/my-access-reviews", label: i18next.t("enterprise:My access reviews")}] : []),
     ],
   });

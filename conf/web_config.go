@@ -16,8 +16,8 @@ package conf
 
 import "sync/atomic"
 
-// hideCloudPromotion mirrors the global setting of the same name, which lives in the database this package cannot read
-var hideCloudPromotion atomic.Bool
+// showCloudPromotion mirrors the global setting of the same name, which lives in the database this package cannot read
+var showCloudPromotion atomic.Bool
 
 // getEdition is set by the edition package, which reads the license through this package
 var getEdition func() string
@@ -33,8 +33,8 @@ func SetHideUpgradesGetter(getter func() bool) {
 	getHideUpgrades = getter
 }
 
-func SetHideCloudPromotion(hide bool) {
-	hideCloudPromotion.Store(hide)
+func SetShowCloudPromotion(show bool) {
+	showCloudPromotion.Store(show)
 }
 
 type customHtmlAllowed struct {
@@ -128,11 +128,13 @@ func GetWebConfig() *WebConfig {
 	// a licensed deployment has already bought Casdoor, so it is not shown the hosted offering,
 	// while the demo sites keep it in every edition
 	// an on-premise license was sold by contract, its console does not offer the higher editions; the demo sites always do
-	config.HideUpgrades = getHideUpgrades != nil && getHideUpgrades() && !config.ThemeShowcase
+	// and a self-hosted community edition does not offer them until a global admin turns on the promotion
+	config.HideUpgrades = !config.ThemeShowcase &&
+		((getHideUpgrades != nil && getHideUpgrades()) || (config.Edition == "Community" && !showCloudPromotion.Load()))
 
 	config.CustomHtmlAllowedTags = GetCustomHtmlAllowedTags()
 
-	config.ShowCloudPromotion = !hideCloudPromotion.Load() && (config.Edition == "Community" || config.ThemeShowcase)
+	config.ShowCloudPromotion = config.ThemeShowcase || (showCloudPromotion.Load() && config.Edition == "Community")
 
 	return config
 }

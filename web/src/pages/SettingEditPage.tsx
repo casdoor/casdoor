@@ -10,9 +10,12 @@ export default function SettingEditPage() {
   const updateSetting = async(record) => {
     const res = await SettingBackend.updateSetting(record);
     if (res.status === "ok") {
-      // the console reads this switch only when the page loads, so the Casdoor Cloud links would stay until a reload;
-      // a new account object makes the header, sidebar and dashboard render again
-      Conf.setConfig({showCloudPromotion: !record.hideCloudPromotion, customHtmlAllowedTags: record.customHtmlAllowedTags ?? []});
+      // the console reads this switch only when the page loads, so the Casdoor Cloud links and upgrade offers would stay
+      // as they were until a reload; a new account object makes the header, sidebar and dashboard render again
+      Conf.setConfig({showCloudPromotion: Conf.ThemeShowcase || !!record.showCloudPromotion, customHtmlAllowedTags: record.customHtmlAllowedTags ?? []});
+      if (Conf.Edition === "Community" && !Conf.ThemeShowcase) {
+        Conf.setConfig({hideUpgrades: !record.showCloudPromotion});
+      }
       if (account) {
         setAccount({...account});
       }
@@ -40,7 +43,7 @@ export default function SettingEditPage() {
       suffix: i18next.t("usage:seconds"),
     },
     {type: "number", name: "recordRetentionDays", labelKey: "setting:Default record retention days", min: 0},
-    {type: "switch", name: "hideCloudPromotion", labelKey: "setting:Hide Casdoor Cloud links"},
+    {type: "switch", name: "showCloudPromotion", labelKey: "setting:Show Casdoor Cloud links and upgrade offers"},
     {type: "tags", name: "customHtmlAllowedTags", labelKey: "setting:Allowed custom HTML elements", placeholder: "iframe, video, source"},
     {type: "tags", name: "customHtmlAllowedUrls", labelKey: "setting:Allowed custom HTML URLs", placeholder: "https://www.youtube.com/embed/"},
     {type: "code", name: "headHtml", labelKey: "setting:Head HTML", language: "html"},

@@ -366,6 +366,10 @@ export function EditionHero({edition, license, data, checks, score}: {
     );
   }
 
+  if (Conf.isUpgradeHidden("Commercial")) {
+    return null;
+  }
+
   return (
     <div className="rounded-xl border bg-card p-5 sm:p-6" data-tour="edition-hero">
       <div className="flex flex-col gap-5 xl:flex-row xl:items-center">

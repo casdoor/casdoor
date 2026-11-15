@@ -564,11 +564,13 @@ function LicenseCard() {
             </a>
           </p>
         ) : null}
-        <p>
-          <Link to="/editions" className="underline underline-offset-2">
-            {i18next.t("edition:See every feature and take the tour")}
-          </Link>
-        </p>
+        {Conf.isUpgradeHidden("Commercial") ? null : (
+          <p>
+            <Link to="/editions" className="underline underline-offset-2">
+              {i18next.t("edition:See every feature and take the tour")}
+            </Link>
+          </p>
+        )}
         {isEditionPreviewEnabled() ? (
           <div className="space-y-2 border-t pt-3">
             <p className="text-muted-foreground">

@@ -31,6 +31,7 @@ import {
   SigninRisk,
   getPostureScore,
   getSecurityChecks,
+  hasEdition,
 } from "@/components/dashboard/EditionDashboard";
 import * as Setting from "@/lib/setting";
 
@@ -226,6 +227,8 @@ export default function Dashboard() {
   const edition = Conf.Edition;
   const checks = securityData ? getSecurityChecks(securityData, getDashboardOrganization(account)) : [];
   const score = securityData ? getPostureScore(securityData, checks) : 0;
+  // without the commercial edition the card is only an offer, shown blurred
+  const showSigninRisk = hasEdition(edition, "Commercial") || !Conf.isUpgradeHidden("Commercial");
 
   return (
     <div className="space-y-5">
@@ -265,9 +268,9 @@ export default function Dashboard() {
       </div>
 
       {securityData ? (
-        <div className="grid gap-4 xl:grid-cols-2 [&>*]:min-w-0">
+        <div className={`grid gap-4 [&>*]:min-w-0 ${showSigninRisk ? "xl:grid-cols-2" : ""}`}>
           <SecurityChecks edition={edition} checks={checks} />
-          <SigninRisk edition={edition} data={securityData} />
+          {showSigninRisk ? <SigninRisk edition={edition} data={securityData} /> : null}
         </div>
       ) : null}
 

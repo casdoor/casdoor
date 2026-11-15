@@ -9,9 +9,9 @@ import * as Setting from "@/lib/setting";
 import {cn} from "@/lib/utils";
 
 /**
- * The entries that point a deployment's admins at the hosted offering, unless a
- * global admin turned them off in the global settings or the deployment runs a
- * commercial or enterprise license (the demo sites keep them in every edition).
+ * The entries that point a deployment's admins at the hosted offering, when a
+ * global admin turned them on in the global settings of a community edition
+ * (off by default), and on the demo sites in every edition.
  * Each one tags its link with the place it sits in, so www.casdoor.com's
  * analytics can tell them apart.
  */

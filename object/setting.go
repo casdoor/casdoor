@@ -46,8 +46,9 @@ type Setting struct {
 	// applies to the organizations that do not set their own record retention days, 0 keeps the records forever
 	RecordRetentionDays int `json:"recordRetentionDays"`
 
-	// hides the links to Casdoor Cloud that the console shows its admins
-	HideCloudPromotion bool `json:"hideCloudPromotion"`
+	// shows the console's admins the links to Casdoor Cloud and the offers of the higher editions, off by default
+	// for a self-hosted community edition; the demo sites always show them
+	ShowCloudPromotion bool `json:"showCloudPromotion"`
 
 	// the elements (e.g. iframe, video) and the URL prefixes of the files they load that organization admins may use
 	// in the custom HTML of applications, besides the built-in layout and text elements and file hosts
@@ -175,7 +176,7 @@ func (setting *Setting) apply() {
 
 	ormer.Engine.SetConnMaxLifetime(time.Duration(setting.DbConnMaxLifetime) * time.Second)
 
-	conf.SetHideCloudPromotion(setting.HideCloudPromotion)
+	conf.SetShowCloudPromotion(setting.ShowCloudPromotion)
 	conf.SetCustomHtmlAllowed(setting.CustomHtmlAllowedTags, setting.CustomHtmlAllowedUrls)
 
 	updatedTime, _ := time.Parse(time.RFC3339, setting.UpdatedTime)
