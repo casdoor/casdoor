@@ -16,11 +16,15 @@ package routers
 
 import (
 	stdcontext "context"
+	"hash/fnv"
 	"net/http"
+	"net/url"
+	"strings"
 	"sync"
 	"time"
 
 	"github.com/beego/beego/v2/core/logs"
+	"github.com/beego/beego/v2/server/web"
 	"github.com/beego/beego/v2/server/web/context"
 	"github.com/beego/beego/v2/server/web/session"
 	_ "github.com/beego/beego/v2/server/web/session/redis"
@@ -31,20 +35,28 @@ import (
 const fileSessionGcInterval = time.Hour
 
 // lazySessionProvider wraps a beego provider ("file", "redis", "redis_cluster") so that a new session is only
-// written to the store once it holds data, instead of one entry for every request that comes without a session cookie
+// written to the store (and its cookie only sent) once it holds data, and a request only writes back the keys
+// it changed, so concurrent requests of the same browser don't overwrite each other's session data
 type lazySessionProvider struct {
 	session.Provider
 	gcInterval time.Duration
 }
 
+type deletedSessionValue struct{}
+
 type lazySessionStore struct {
-	provider  session.Provider
-	sid       string
-	lock      sync.RWMutex
-	values    map[interface{}]interface{}
-	persisted bool
-	ephemeral bool
+	provider      session.Provider
+	sid           string
+	lock          sync.RWMutex
+	base          session.Store
+	changes       map[interface{}]interface{}
+	flushed       bool
+	ephemeral     bool
+	pendingCookie string
+	header        http.Header
 }
+
+var sessionWriteLocks [64]sync.Mutex
 
 func init() {
 	registerLazySessionProvider("file", fileSessionGcInterval)
@@ -86,11 +98,15 @@ func (p *lazySessionProvider) SessionRead(ctx stdcontext.Context, sid string) (s
 	if err != nil {
 		return nil, err
 	}
-	if exists {
-		return p.Provider.SessionRead(ctx, sid)
+	if !exists {
+		return p.newLazySessionStore(sid, nil), nil
 	}
 
-	return p.newLazySessionStore(sid), nil
+	base, err := p.Provider.SessionRead(ctx, sid)
+	if err != nil {
+		return nil, err
+	}
+	return p.newLazySessionStore(sid, base), nil
 }
 
 func (p *lazySessionProvider) SessionRegenerate(ctx stdcontext.Context, oldSid, sid string) (session.Store, error) {
@@ -98,41 +114,65 @@ func (p *lazySessionProvider) SessionRegenerate(ctx stdcontext.Context, oldSid, 
 	if err != nil {
 		return nil, err
 	}
-	if exists {
-		return p.Provider.SessionRegenerate(ctx, oldSid, sid)
+	if !exists {
+		return p.newLazySessionStore(sid, nil), nil
 	}
 
-	return p.newLazySessionStore(sid), nil
+	base, err := p.Provider.SessionRegenerate(ctx, oldSid, sid)
+	if err != nil {
+		return nil, err
+	}
+	return p.newLazySessionStore(sid, base), nil
 }
 
-func (p *lazySessionProvider) newLazySessionStore(sid string) *lazySessionStore {
-	return &lazySessionStore{provider: p.Provider, sid: sid, values: map[interface{}]interface{}{}}
+func (p *lazySessionProvider) newLazySessionStore(sid string, base session.Store) *lazySessionStore {
+	return &lazySessionStore{provider: p.Provider, sid: sid, base: base, changes: map[interface{}]interface{}{}}
+}
+
+func getSessionWriteLock(sid string) *sync.Mutex {
+	hash := fnv.New32a()
+	_, _ = hash.Write([]byte(sid))
+	return &sessionWriteLocks[hash.Sum32()%uint32(len(sessionWriteLocks))]
 }
 
 func (s *lazySessionStore) Set(ctx stdcontext.Context, key, value interface{}) error {
 	s.lock.Lock()
 	defer s.lock.Unlock()
-	s.values[key] = value
+	s.changes[key] = value
+	if s.pendingCookie != "" && !s.ephemeral {
+		s.header.Add("Set-Cookie", s.pendingCookie)
+		s.pendingCookie = ""
+	}
 	return nil
 }
 
 func (s *lazySessionStore) Get(ctx stdcontext.Context, key interface{}) interface{} {
 	s.lock.RLock()
 	defer s.lock.RUnlock()
-	return s.values[key]
+	if value, ok := s.changes[key]; ok {
+		if _, ok = value.(deletedSessionValue); ok {
+			return nil
+		}
+		return value
+	}
+	if s.flushed || s.base == nil {
+		return nil
+	}
+	return s.base.Get(ctx, key)
 }
 
 func (s *lazySessionStore) Delete(ctx stdcontext.Context, key interface{}) error {
 	s.lock.Lock()
 	defer s.lock.Unlock()
-	delete(s.values, key)
+	s.changes[key] = deletedSessionValue{}
 	return nil
 }
 
 func (s *lazySessionStore) Flush(ctx stdcontext.Context) error {
 	s.lock.Lock()
 	defer s.lock.Unlock()
-	s.values = map[interface{}]interface{}{}
+	s.changes = map[interface{}]interface{}{}
+	s.flushed = true
 	return nil
 }
 
@@ -140,31 +180,58 @@ func (s *lazySessionStore) SessionID(ctx stdcontext.Context) string {
 	return s.sid
 }
 
+func (s *lazySessionStore) hasValue() bool {
+	for _, value := range s.changes {
+		if _, ok := value.(deletedSessionValue); !ok {
+			return true
+		}
+	}
+	return false
+}
+
+// SessionRelease writes only what this request changed on top of what the store holds now, instead of
+// the copy read at the start of the request, which may be outdated by then
 func (s *lazySessionStore) SessionRelease(ctx stdcontext.Context, w http.ResponseWriter) {
 	s.lock.Lock()
 	defer s.lock.Unlock()
-	if s.ephemeral || (!s.persisted && len(s.values) == 0) {
+	if s.ephemeral || (!s.flushed && len(s.changes) == 0) {
 		return
 	}
+	if s.base == nil && !s.hasValue() {
+		return
+	}
+
+	writeLock := getSessionWriteLock(s.sid)
+	writeLock.Lock()
+	defer writeLock.Unlock()
 
 	store, err := s.provider.SessionRead(ctx, s.sid)
 	if err != nil {
 		logs.Error("SessionRead failed, error: %s", err)
 		return
 	}
-	_ = store.Flush(ctx)
-	for key, value := range s.values {
-		_ = store.Set(ctx, key, value)
+	if s.flushed {
+		_ = store.Flush(ctx)
+	}
+	for key, value := range s.changes {
+		if _, ok := value.(deletedSessionValue); ok {
+			_ = store.Delete(ctx, key)
+		} else {
+			_ = store.Set(ctx, key, value)
+		}
 	}
 	store.SessionRelease(ctx, w)
-	s.persisted = true
+
+	s.base = store
+	s.changes = map[interface{}]interface{}{}
+	s.flushed = false
 }
 
 func (s *lazySessionStore) SessionReleaseIfPresent(ctx stdcontext.Context, w http.ResponseWriter) {
 	s.lock.RLock()
-	persisted := s.persisted
+	present := s.base != nil
 	s.lock.RUnlock()
-	if persisted {
+	if present {
 		s.SessionRelease(ctx, w)
 	}
 }
@@ -175,6 +242,47 @@ func skipSessionPersistence(ctx *context.Context) {
 	if store, ok := ctx.Input.CruSession.(*lazySessionStore); ok {
 		store.lock.Lock()
 		store.ephemeral = true
+		store.pendingCookie = ""
 		store.lock.Unlock()
+	}
+}
+
+// SessionCookieFilter holds back the cookie beego sends for a new, still empty session until the session gets
+// data. Otherwise a request that comes with an outdated session ID (e.g. one replaced at sign-in) answers with
+// the cookie of a new empty session, which overwrites the cookie of the signed-in session in the browser
+func SessionCookieFilter(ctx *context.Context) {
+	store, ok := ctx.Input.CruSession.(*lazySessionStore)
+	if !ok {
+		return
+	}
+
+	store.lock.Lock()
+	defer store.lock.Unlock()
+	if store.base != nil || len(store.changes) != 0 {
+		return
+	}
+
+	header := ctx.ResponseWriter.Header()
+	prefix := web.BConfig.WebConfig.Session.SessionName + "=" + url.QueryEscape(store.sid) + ";"
+	cookies := header.Values("Set-Cookie")
+	kept := make([]string, 0, len(cookies))
+	for _, cookie := range cookies {
+		if store.pendingCookie == "" && strings.HasPrefix(cookie, prefix) {
+			store.pendingCookie = cookie
+			continue
+		}
+		kept = append(kept, cookie)
+	}
+	if store.pendingCookie == "" {
+		return
+	}
+
+	header.Del("Set-Cookie")
+	for _, cookie := range kept {
+		header.Add("Set-Cookie", cookie)
+	}
+	store.header = header
+	if store.ephemeral {
+		store.pendingCookie = ""
 	}
 }
