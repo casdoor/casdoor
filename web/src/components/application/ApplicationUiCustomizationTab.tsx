@@ -9,6 +9,7 @@ import {TagsInput} from "@/components/common/TagsInput";
 import {ThemeEditor} from "@/components/common/ThemeEditor";
 import {EditableTable} from "@/components/crud/EditableTable";
 import {ApplicationPromptPreview, ApplicationSignupSigninPreview} from "@/components/application/ApplicationPreview";
+import {AGREEMENT_UNCHECKED_RULE} from "@/components/auth/AgreementModal";
 import {FormRow} from "@/components/crud/FormRow";
 import {useAccount} from "@/hooks/use-account";
 import type {ApplicationTabProps} from "@/components/application/types";
@@ -93,11 +94,6 @@ const SIGNUP_ITEM_RULES: Record<string, EnumMap> = {
     "Normal": {i18nKey: "application:Normal"},
     "No verification": {i18nKey: "application:No verification"},
   },
-  "Agreement": {
-    "None": {i18nKey: "application:Only signup"},
-    "Signin": {i18nKey: "application:Signin"},
-    "Signin (Default True)": {i18nKey: "application:Signin (Default True)"},
-  },
   "Providers": {
     "big": {i18nKey: "application:Big icon"},
     "small": {i18nKey: "application:Small icon"},
@@ -171,6 +167,20 @@ function getUnusedItemOptions(names: {name: string; labelKey: string}[], rows: a
   return names
     .filter((item) => !rows.some((other: any, i: number) => i !== index && other.name === item.name))
     .map((item) => ({id: item.name, name: i18next.t(item.labelKey)}));
+}
+
+/** The "Agreement" rule of either page: whether its checkbox starts checked. */
+function renderAgreementRuleSelect(row: any, patch: (fields: any) => void) {
+  return (
+    <SelectField
+      value={row.rule === AGREEMENT_UNCHECKED_RULE ? row.rule : "None"}
+      onChange={(v) => patch({rule: v})}
+      options={[
+        {id: "None", name: `${i18next.t("signup:Agreement")} - ${i18next.t("general:True")}`},
+        {id: AGREEMENT_UNCHECKED_RULE, name: `${i18next.t("signup:Agreement")} - ${i18next.t("general:False")}`},
+      ]}
+    />
+  );
 }
 
 /** Only a few signin items take a rule, and each has its own option set. */
@@ -371,6 +381,9 @@ export function ApplicationUiCustomizationTab({application, updateField}: Applic
               title: i18next.t("application:Rule"),
               width: 170,
               render: (row: any, _i, patch) => {
+                if (row.name === "Agreement") {
+                  return renderAgreementRuleSelect(row, patch);
+                }
                 const options = getSigninItemRuleOptions(row.name);
                 if (options.length === 0) {
                   return null;
@@ -461,6 +474,9 @@ export function ApplicationUiCustomizationTab({application, updateField}: Applic
               title: i18next.t("application:Rule"),
               width: 160,
               render: (row: any, _i, patch) => {
+                if (row.name === "Agreement") {
+                  return renderAgreementRuleSelect(row, patch);
+                }
                 const map = SIGNUP_ITEM_RULES[row.name];
                 if (!map) {
                   return null;

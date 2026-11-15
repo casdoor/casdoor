@@ -16,6 +16,13 @@ export function hasAgreementDoc(application: any) {
   return agreementDocs.some(({field}) => !!application?.[field]);
 }
 
+/** The "Agreement" rule that leaves the checkbox for the user to tick; any other rule, including web-old's "Signin" ones, starts it checked. */
+export const AGREEMENT_UNCHECKED_RULE = "Agreement - False";
+
+export function getAgreementDefaultValue(items: any[] | undefined) {
+  return items?.find((item: any) => item.name === "Agreement")?.rule !== AGREEMENT_UNCHECKED_RULE;
+}
+
 export function isSigninAgreementShown(application: any) {
   const item = application?.signinItems?.find((signinItem: any) => signinItem.name === "Agreement");
   return hasAgreementDoc(application) && !!item?.visible;
