@@ -151,7 +151,7 @@ export function ApplicationOidcOauthTab({application, updateField}: ApplicationT
         <EditableTable
           rows={application.federatedCredentials ?? []}
           onChange={(rows) => updateField("federatedCredentials", rows)}
-          newRow={() => ({issuer: "", jwksUri: "", subject: "", audience: "", user: ""})}
+          newRow={() => ({issuer: "", jwksUri: "", subject: "", audience: "", user: "", autoSignup: false})}
           columns={[
             {
               key: "issuer",
@@ -206,6 +206,18 @@ export function ApplicationOidcOauthTab({application, updateField}: ApplicationT
                   value={row.user ?? ""}
                   placeholder={i18next.t("application:The application itself if empty")}
                   onChange={(e) => patch({user: e.target.value})}
+                />
+              ),
+            },
+            {
+              key: "autoSignup",
+              title: i18next.t("application:Enable signup"),
+              width: 100,
+              render: (row: any, _i, patch) => (
+                <Switch
+                  checked={!!row.autoSignup}
+                  disabled={!(row.user ?? "").trim()}
+                  onCheckedChange={(checked) => patch({autoSignup: checked})}
                 />
               ),
             },

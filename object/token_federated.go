@@ -19,11 +19,13 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/mail"
 	"regexp"
 	"strings"
 	"sync"
 	"time"
 
+	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/proxy"
 	"github.com/casdoor/casdoor/util"
 	"github.com/go-jose/go-jose/v4"
@@ -33,11 +35,12 @@ import (
 // FederatedCredential trusts the tokens of an external OIDC issuer (GitHub Actions, Kubernetes,
 // a cloud workload identity, another IdP) as a credential of the application.
 type FederatedCredential struct {
-	Issuer   string `json:"issuer"`
-	JwksUri  string `json:"jwksUri"`
-	Subject  string `json:"subject"`
-	Audience string `json:"audience"`
-	User     string `json:"user"`
+	Issuer     string `json:"issuer"`
+	JwksUri    string `json:"jwksUri"`
+	Subject    string `json:"subject"`
+	Audience   string `json:"audience"`
+	User       string `json:"user"`
+	AutoSignup bool   `json:"autoSignup"`
 }
 
 const (
@@ -289,11 +292,103 @@ func getFederatedUser(application *Application, credential *FederatedCredential,
 	if err != nil {
 		return nil, nil, err
 	}
+	if user == nil && credential.AutoSignup && !application.IsShared {
+		return addFederatedUser(application, username, claims)
+	}
 	if user == nil {
 		return nil, &TokenError{
 			Error:            InvalidGrant,
 			ErrorDescription: fmt.Sprintf("the user: %s mapped from the token does not exist", username),
 		}, nil
+	}
+	return user, nil, nil
+}
+
+func isFederatedUsernameValid(username string) bool {
+	if util.ReUserName.MatchString(username) {
+		return true
+	}
+	address, err := mail.ParseAddress(username)
+	return err == nil && address.Address == username
+}
+
+// addFederatedUser creates the user on its first sign-in with a token of the trusted issuer. A concurrent
+// first sign-in that created the same user first is taken as it is, so the same subject never makes two users.
+func addFederatedUser(application *Application, username string, claims jwt.MapClaims) (*User, *TokenError, error) {
+	if conf.GetConfigBool("isUsernameLowered") {
+		username = strings.ToLower(username)
+	}
+	username = strings.TrimSpace(username)
+	if !isFederatedUsernameValid(username) {
+		return nil, &TokenError{
+			Error:            InvalidGrant,
+			ErrorDescription: fmt.Sprintf("the user: %s mapped from the token is not a valid username", username),
+		}, nil
+	}
+
+	organization, err := GetOrganization(util.GetId("admin", application.Organization))
+	if err != nil {
+		return nil, nil, err
+	}
+	if organization == nil {
+		return nil, nil, fmt.Errorf("the organization: %s does not exist", application.Organization)
+	}
+
+	initScore, err := organization.GetInitScore()
+	if err != nil {
+		return nil, nil, err
+	}
+
+	displayName, _ := claims["name"].(string)
+	if displayName == "" {
+		displayName = username
+	}
+	email, _ := claims["email"].(string)
+	emailVerified, _ := claims["email_verified"].(bool)
+	avatar, _ := claims["picture"].(string)
+
+	user := &User{
+		Owner:             application.Organization,
+		Name:              username,
+		CreatedTime:       util.GetCurrentTime(),
+		Type:              "normal-user",
+		DisplayName:       displayName,
+		Avatar:            avatar,
+		Address:           []string{},
+		Email:             strings.ToLower(email),
+		EmailVerified:     emailVerified,
+		Score:             initScore,
+		SignupApplication: application.Name,
+		Properties:        map[string]string{},
+		RegisterType:      "Application Signup",
+		RegisterSource:    fmt.Sprintf("%s/%s", application.Organization, application.Name),
+	}
+	if application.DefaultGroup != "" {
+		user.Groups = []string{application.DefaultGroup}
+	}
+	if application.DefaultTag != "" {
+		user.Tag = application.DefaultTag
+	}
+	application.ApplySignupApproval(user)
+
+	affected, addErr := AddUser(user, "en")
+	if addErr != nil || !affected {
+		existedUser, err := GetUserByFields(application.Organization, username)
+		if err != nil {
+			return nil, nil, err
+		}
+		if existedUser != nil {
+			return existedUser, nil, nil
+		}
+		if addErr != nil {
+			return nil, nil, addErr
+		}
+		return nil, nil, fmt.Errorf("failed to add user: %s", user.GetId())
+	}
+
+	err = AddUserToOriginalDatabase(user)
+	if err != nil {
+		return nil, nil, err
 	}
 	return user, nil, nil
 }
