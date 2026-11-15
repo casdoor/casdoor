@@ -136,7 +136,7 @@ func ParseStandardJwtToken(token string, cert *Cert) (*ClaimsStandard, error) {
 }
 
 func ParseStandardJwtTokenByApplication(token string, application *Application) (*ClaimsStandard, error) {
-	cert, err := getCertByApplication(application)
+	cert, err := getCertByApplicationOfToken(application, token)
 	if err != nil {
 		return nil, err
 	}

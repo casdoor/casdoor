@@ -203,6 +203,8 @@ func getCimdApplicationOfOrganization(application *Application, organization str
 		application.FormCss = defaultApp.FormCss
 		application.SigninItems = defaultApp.SigninItems
 		application.SigninMethods = defaultApp.SigninMethods
+		application.Cert = defaultApp.Cert
+		application.TokenSigningMethod = defaultApp.TokenSigningMethod
 		application.Providers = defaultApp.Providers
 		application.EnablePassword = defaultApp.EnablePassword
 		application.EnableCodeSignin = defaultApp.EnableCodeSignin
@@ -245,6 +247,45 @@ func GetCimdOrganization(clientId string, user *User) string {
 		return ""
 	}
 	return user.Owner
+}
+
+// getSigningApplication returns the application whose cert signs the tokens of a user of an organization: the shared
+// application of a URL client_id signs with the cert of the organization's default application, like a DCR client of it
+func getSigningApplication(application *Application, organization string) *Application {
+	if application == nil || organization == "" || !application.IsShared || !IsClientIdMetadataUrl(application.ClientId) {
+		return application
+	}
+
+	defaultApp, err := GetDefaultApplication(util.GetId("admin", organization))
+	if err != nil || defaultApp == nil {
+		return application
+	}
+
+	signingApplication := *application
+	signingApplication.Organization = organization
+	signingApplication.Cert = defaultApp.Cert
+	signingApplication.TokenSigningMethod = defaultApp.TokenSigningMethod
+	return &signingApplication
+}
+
+// getCertByApplicationOfToken returns the cert that verifies a token of an application, the shared application of a
+// URL client_id signs with the cert of the organization of the token's user
+func getCertByApplicationOfToken(application *Application, tokenString string) (*Cert, error) {
+	if application.IsShared && IsClientIdMetadataUrl(application.ClientId) {
+		getters := []func(string) (*Token, error){GetTokenByAccessToken, GetTokenByRefreshToken, GetTokenByIdToken}
+		for _, getter := range getters {
+			token, err := getter(tokenString)
+			if err != nil {
+				return nil, err
+			}
+			if token != nil {
+				application = getSigningApplication(application, token.Organization)
+				break
+			}
+		}
+	}
+
+	return getCertByApplication(application)
 }
 
 func fetchClientIdMetadataDocument(clientId string) (*ClientIdMetadataDocument, error) {

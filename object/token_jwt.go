@@ -746,7 +746,8 @@ func generateJwtTokenWithOptions(application *Application, user *User, provider 
 		application.TokenFormat = "JWT"
 	}
 
-	jwtMethod := getJwtSigningMethod(application)
+	signingApplication := getSigningApplication(application, user.Owner)
+	jwtMethod := getJwtSigningMethod(signingApplication)
 
 	// the JWT token length in "JWT-Empty" mode will be very short, as User object only has two properties: owner and name
 	if application.TokenFormat == "JWT" {
@@ -771,16 +772,16 @@ func generateJwtTokenWithOptions(application *Application, user *User, provider 
 		return "", "", "", "", fmt.Errorf("unknown application TokenFormat: %s", application.TokenFormat)
 	}
 
-	cert, err := getCertByApplication(application)
+	cert, err := getCertByApplication(signingApplication)
 	if err != nil {
 		return "", "", "", "", err
 	}
 
 	if cert == nil {
-		if application.Cert == "" {
+		if signingApplication.Cert == "" {
 			return "", "", "", "", fmt.Errorf("The cert field of the application \"%s\" should not be empty", application.GetId())
 		} else {
-			return "", "", "", "", fmt.Errorf("The cert \"%s\" does not exist", application.Cert)
+			return "", "", "", "", fmt.Errorf("The cert \"%s\" does not exist", signingApplication.Cert)
 		}
 	}
 
@@ -881,7 +882,7 @@ func ParseJwtToken(token string, cert *Cert) (*Claims, error) {
 }
 
 func ParseJwtTokenByApplication(token string, application *Application) (*Claims, error) {
-	cert, err := getCertByApplication(application)
+	cert, err := getCertByApplicationOfToken(application, token)
 	if err != nil {
 		return nil, err
 	}

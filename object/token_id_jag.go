@@ -126,7 +126,7 @@ func GetIdJagToken(application *Application, clientSecret string, subjectToken s
 		},
 	}
 
-	idJag, err := signIdJag(application, claims)
+	idJag, err := signIdJag(application, user.Owner, claims)
 	if err != nil {
 		return nil, &TokenError{
 			Error:            EndpointError,
@@ -244,8 +244,9 @@ func checkIdJagPermission(user *User, application *Application) (bool, error) {
 	return CheckLoginPermission(user.GetId(), application)
 }
 
-func signIdJag(application *Application, claims IdJagClaims) (string, error) {
-	cert, err := getCertByApplication(application)
+func signIdJag(application *Application, organization string, claims IdJagClaims) (string, error) {
+	signingApplication := getSigningApplication(application, organization)
+	cert, err := getCertByApplication(signingApplication)
 	if err != nil {
 		return "", err
 	}
@@ -254,7 +255,7 @@ func signIdJag(application *Application, claims IdJagClaims) (string, error) {
 	}
 
 	var key interface{}
-	token := jwt.NewWithClaims(getJwtSigningMethod(application), claims)
+	token := jwt.NewWithClaims(getJwtSigningMethod(signingApplication), claims)
 	key, err = getJwtSigningKey(token.Method, cert)
 	if err != nil {
 		return "", err

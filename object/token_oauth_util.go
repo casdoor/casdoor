@@ -630,14 +630,15 @@ func RefreshToken(application *Application, grantType string, refreshToken strin
 		return tokenError, nil
 	}
 
-	cert, err := getCertByApplication(application)
+	signingApplication := getSigningApplication(application, token.Organization)
+	cert, err := getCertByApplication(signingApplication)
 	if err != nil {
 		return nil, err
 	}
 	if cert == nil {
 		return &TokenError{
 			Error:            InvalidGrant,
-			ErrorDescription: fmt.Sprintf("cert: %s cannot be found", application.Cert),
+			ErrorDescription: fmt.Sprintf("cert: %s cannot be found", signingApplication.Cert),
 		}, nil
 	}
 
@@ -966,7 +967,7 @@ func parseAndValidateSubjectToken(subjectToken string, requestingClientId string
 		return "", "", "", &TokenError{Error: InvalidGrant, ErrorDescription: fmt.Sprintf("subject_token issuing application not found: %s", azp)}, nil
 	}
 
-	cert, err := getCertByApplication(issuingApp)
+	cert, err := getCertByApplicationOfToken(issuingApp, subjectToken)
 	if err != nil {
 		return "", "", "", nil, err
 	}
