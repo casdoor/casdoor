@@ -311,7 +311,10 @@ func isIntegrationRevoked(index *MarketplaceIndex, id string, version string) bo
 	return false
 }
 
-func getIntegrationBundle(item *MarketplaceIntegration, version string) (*IntegrationBundle, string, error) {
+// getIntegrationBundle downloads the bundle of a version and checks it. For an install, it first checks with the
+// Marketplace server that the version is still published and what checksum the bundle must have, and downloads the
+// bundle from the server when the CDN copy does not have it.
+func getIntegrationBundle(item *MarketplaceIntegration, version string, forInstall bool) (*IntegrationBundle, string, error) {
 	index, err := GetMarketplaceIndex(false)
 	if err != nil {
 		return nil, "", err
@@ -337,14 +340,35 @@ func getIntegrationBundle(item *MarketplaceIntegration, version string) (*Integr
 	if item.BaseUrl != "" {
 		baseUrl = item.BaseUrl
 	}
+	expectedSha256 := marketplaceVersion.Sha256
+	var meta *MarketplaceVersionMeta
+	serverUrl := ""
+	if forInstall && isOfficialMarketplace(item) {
+		meta, serverUrl = getMarketplaceVersionMeta(item, marketplaceVersion)
+		if meta != nil {
+			if meta.Status == "Revoked" {
+				if meta.Reason != "" {
+					return nil, "", fmt.Errorf("the integration: %s %s has been withdrawn from the Marketplace: %s", item.Id, version, meta.Reason)
+				}
+				return nil, "", fmt.Errorf("the integration: %s %s has been withdrawn from the Marketplace", item.Id, version)
+			}
+			if meta.Sha256 != "" {
+				expectedSha256 = meta.Sha256
+			}
+		}
+	}
+
 	bundleUrl := joinMarketplaceUrl(baseUrl, marketplaceVersion.Url)
 	data, err := fetchMarketplaceFileWithLicense(bundleUrl, item.Edition != "")
+	if err == nil && !isSha256(data, expectedSha256) && meta != nil && baseUrl != serverUrl {
+		// the CDN copy is stale or not what was published, the Marketplace server has the published one
+		bundleUrl = joinMarketplaceUrl(serverUrl, marketplaceVersion.Url)
+		data, err = fetchMarketplaceFileWithLicense(bundleUrl, item.Edition != "")
+	}
 	if err != nil {
 		return nil, "", err
 	}
-
-	hash := sha256.Sum256(data)
-	if !strings.EqualFold(hex.EncodeToString(hash[:]), marketplaceVersion.Sha256) {
+	if !isSha256(data, expectedSha256) {
 		return nil, "", fmt.Errorf("the checksum of %s %s does not match the Marketplace index", item.Id, version)
 	}
 
@@ -362,6 +386,11 @@ func getIntegrationBundle(item *MarketplaceIntegration, version string) (*Integr
 	return bundle, string(data), nil
 }
 
+func isSha256(data []byte, expected string) bool {
+	hash := sha256.Sum256(data)
+	return strings.EqualFold(hex.EncodeToString(hash[:]), expected)
+}
+
 // GetMarketplaceBundle returns the manifest and content files of an integration version, checked against the index.
 func GetMarketplaceBundle(id string, version string) (json.RawMessage, error) {
 	item, err := GetMarketplaceIntegration(id)
@@ -369,7 +398,7 @@ func GetMarketplaceBundle(id string, version string) (json.RawMessage, error) {
 		return nil, err
 	}
 
-	_, bundleText, err := getIntegrationBundle(item, version)
+	_, bundleText, err := getIntegrationBundle(item, version, false)
 	if err != nil {
 		return nil, err
 	}
@@ -943,7 +972,7 @@ func InstallIntegration(req *IntegrationInstallRequest, isGlobalAdmin bool, host
 			}
 		}
 
-		bundle, bundleText, err = getIntegrationBundle(item, req.Version)
+		bundle, bundleText, err = getIntegrationBundle(item, req.Version, true)
 		if err != nil {
 			return nil, err
 		}

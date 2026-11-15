@@ -128,7 +128,7 @@ func GetMarketplaceDownload(id string, path string) ([]byte, error) {
 		}
 	}
 
-	bundle, _, err := getIntegrationBundle(item, "")
+	bundle, _, err := getIntegrationBundle(item, "", true)
 	if err != nil {
 		return nil, err
 	}
