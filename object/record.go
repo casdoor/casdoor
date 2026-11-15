@@ -259,16 +259,20 @@ func AddRecord(record *Record) bool {
 	record.Owner = record.Organization
 	record.Object = maskSecrets(record.Object)
 
-	errWebhook := SendWebhooks(record)
-	if errWebhook == nil {
-		record.IsTriggered = true
-	} else {
-		fmt.Println(errWebhook)
-	}
-
+	record.IsTriggered = true
 	affected, err := addChainedRecord(record)
 	if err != nil {
 		panic(err)
+	}
+
+	errWebhook := SendWebhooks(record)
+	if errWebhook != nil {
+		fmt.Println(errWebhook)
+		record.IsTriggered = false
+		_, err = ormer.Engine.ID(record.Id).Cols("is_triggered").Update(record)
+		if err != nil {
+			fmt.Println(err)
+		}
 	}
 
 	sendAuditRecord(record)
