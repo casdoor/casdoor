@@ -12,7 +12,7 @@ const ranks: Record<string, number> = {Community: 0, Commercial: 1, Enterprise: 
 
 interface LicenseInfo {
   edition: string;
-  // the features the license grants on their own, e.g. "rbac" and "abac" for a community edition license,
+  // the features the license grants on their own, e.g. "abac" for a community edition license,
   // or "form-fill" for a commercial edition license
   features?: string[];
   error?: string;

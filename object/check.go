@@ -537,9 +537,6 @@ func CheckApiPermission(userId string, organization string, path string, method 
 		userHit := permission.isUserHit(userId)
 		groupHit := permission.isGroupHit(userId)
 		roleHit := permission.isRoleHit(userId)
-		if (groupHit || roleHit) && !isRbacAllowed() {
-			return false, requireRbac()
-		}
 
 		if !userHit && !groupHit && !roleHit {
 			if permission.Effect == "Allow" {
@@ -783,9 +780,6 @@ func CheckLoginPermission(userId string, application *Application) (bool, error)
 		userHit := permission.isUserHit(userId)
 		groupHit := permission.isGroupHit(userId)
 		roleHit := permission.isRoleHit(userId)
-		if (groupHit || roleHit) && !isRbacAllowed() {
-			return false, requireRbac()
-		}
 
 		if !userHit && !groupHit && !roleHit {
 			if permission.Effect == "Allow" {

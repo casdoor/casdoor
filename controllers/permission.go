@@ -163,7 +163,13 @@ func (c *ApiController) UpdatePermission() {
 		}
 	}
 
-	if err := object.CheckPermissionEdition(&permission); err != nil {
+	oldPermission, err := object.GetPermission(id)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	if err = object.CheckPermissionEdition(&permission, oldPermission); err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
@@ -188,7 +194,13 @@ func (c *ApiController) UpdatePermissions() {
 	}
 
 	for _, permission := range permissions {
-		if err = object.CheckPermissionEdition(permission); err != nil {
+		oldPermission, err := object.GetPermission(permission.GetId())
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		if err = object.CheckPermissionEdition(permission, oldPermission); err != nil {
 			c.ResponseError(err.Error())
 			return
 		}
@@ -213,7 +225,7 @@ func (c *ApiController) AddPermission() {
 		return
 	}
 
-	if err = object.CheckPermissionEdition(&permission); err != nil {
+	if err = object.CheckPermissionEdition(&permission, nil); err != nil {
 		c.ResponseError(err.Error())
 		return
 	}

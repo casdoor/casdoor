@@ -77,8 +77,6 @@ export const EditionFeatures: EditionFeature[] = [
     stop: {object: "cert", target: "[data-tour='rotate-key']"}},
   {id: "auto-rotation", edition: "Commercial", category: "edition:Keys and access control", name: "edition:Automatic rotation and expiry alerts", description: "edition:Automatic rotation and expiry alerts - Description",
     stop: org("security", "application:Security", "organization:Rotate signing keys automatically")},
-  {id: "rbac", edition: "Commercial", category: "edition:Keys and access control", name: "edition:Role-based access control", description: "edition:Role-based access control - Description",
-    stop: {object: "permission", label: "role:Sub roles"}},
   {id: "abac", edition: "Commercial", category: "edition:Keys and access control", name: "edition:Attribute-based access control", description: "edition:Attribute-based access control - Description",
     stop: {object: "model", label: "model:Model text"}},
   {id: "syncers", edition: "Commercial", category: "edition:Keys and access control", name: "edition:More syncers", description: "edition:More syncers - Description",

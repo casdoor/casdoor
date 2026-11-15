@@ -258,11 +258,6 @@ func (c *ApiController) UpdatePolicy() {
 		return
 	}
 
-	if err = object.CheckPolicyEdition(policies[1].Ptype); err != nil {
-		c.ResponseError(err.Error())
-		return
-	}
-
 	affected, err := object.UpdatePolicy(id, policies[0].Ptype, util.CasbinToSlice(policies[0]), util.CasbinToSlice(policies[1]))
 	if err != nil {
 		c.ResponseError(err.Error())
@@ -286,11 +281,6 @@ func (c *ApiController) AddPolicy() {
 	var policy xormadapter.CasbinRule
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &policy)
 	if err != nil {
-		c.ResponseError(err.Error())
-		return
-	}
-
-	if err = object.CheckPolicyEdition(policy.Ptype); err != nil {
 		c.ResponseError(err.Error())
 		return
 	}

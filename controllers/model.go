@@ -102,7 +102,13 @@ func (c *ApiController) UpdateModel() {
 		return
 	}
 
-	if err = object.CheckModelEdition(&model); err != nil {
+	oldModel, err := object.GetModel(id)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	if err = object.CheckModelEdition(&model, oldModel); err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
@@ -126,7 +132,7 @@ func (c *ApiController) AddModel() {
 		return
 	}
 
-	if err = object.CheckModelEdition(&model); err != nil {
+	if err = object.CheckModelEdition(&model, nil); err != nil {
 		c.ResponseError(err.Error())
 		return
 	}

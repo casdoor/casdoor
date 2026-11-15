@@ -53,7 +53,6 @@ const (
 	FeaturePushMfa          = "Push notification MFA"
 	FeaturePaidIntegrations = "Paid integrations"
 	FeatureTracing          = "OpenTelemetry tracing"
-	FeatureRbac             = "Role-based access control (RBAC)"
 	FeatureAbac             = "Attribute-based access control (ABAC)"
 	FeatureGuomi            = "Chinese SM cryptographic algorithms"
 	FeatureSiemFormats      = "CEF and LEEF audit log formats"
@@ -90,10 +89,9 @@ func getKind() string {
 }
 
 // The features that a license can also grant on their own, without the edition they belong to, by these keys in its
-// "features", e.g. a community edition license with "features": ["rbac", "abac"], or a commercial edition license
+// "features", e.g. a community edition license with "features": ["abac"], or a commercial edition license
 // with "features": ["form-fill"]
 var featureKeys = map[string]string{
-	FeatureRbac:     "rbac",
 	FeatureAbac:     "abac",
 	FeatureFormFill: "form-fill",
 }

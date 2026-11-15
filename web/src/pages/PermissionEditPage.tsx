@@ -35,7 +35,6 @@ import * as Setting from "@/lib/setting";
 export default function PermissionEditPage() {
   const {organizationName = "", permissionName = ""} = useParams();
   const {account} = useAccount();
-  const rbacMissing = useFeatureMissing("rbac");
   const abacMissing = useFeatureMissing("abac");
   const organizations = useOrganizationOptions();
   const users = useUserOptions(organizationName);
@@ -118,13 +117,6 @@ export default function PermissionEditPage() {
       labelKey: "role:Sub roles",
       options: () => roles,
       disabled: (ctx) => !hasRoleDefinition(ctx.record.model),
-    },
-    {
-      type: "custom",
-      name: "edition",
-      labelKey: "system:License",
-      when: (ctx) => rbacMissing && ((ctx.record.groups ?? []).length > 0 || (ctx.record.roles ?? []).length > 0),
-      render: () => <EditionNotice message={i18next.t("permission:Granting by groups and roles needs a commercial or enterprise edition license")} />,
     },
     {
       type: "multiselect",

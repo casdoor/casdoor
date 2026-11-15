@@ -82,8 +82,6 @@ func (c *ApiController) getEditionFeatureName(feature string) string {
 		return c.T("edition:Paid integrations")
 	case edition.FeatureTracing:
 		return c.T("edition:OpenTelemetry tracing")
-	case edition.FeatureRbac:
-		return c.T("edition:Role-based access control (RBAC)")
 	case edition.FeatureAbac:
 		return c.T("edition:Attribute-based access control (ABAC)")
 	case edition.FeatureGuomi:
