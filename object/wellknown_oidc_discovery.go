@@ -168,8 +168,9 @@ func GetOidcIssuerByApplication(host string, application *Application) (string, 
 func getOrganizationEndpoints(registrationEndpoint string, authorizationEndpoint string, organizationName string) (string, string) {
 	registrationEndpoint = fmt.Sprintf("%s?organization=%s", registrationEndpoint, url.QueryEscape(organizationName))
 	// Tells URL client_ids which organization to be added to, as registrationEndpoint does for DCR
+	// The organization goes in the path, because many clients append their parameters to the authorization endpoint with "?"
 	if organizationName != cimdOrganization && IsClientIdMetadataDocumentSupported(organizationName) {
-		authorizationEndpoint = fmt.Sprintf("%s?organization=%s", authorizationEndpoint, url.QueryEscape(organizationName))
+		authorizationEndpoint = strings.Replace(authorizationEndpoint, "/login/oauth/authorize", fmt.Sprintf("/orgs/%s/login/oauth/authorize", url.PathEscape(organizationName)), 1)
 	}
 	return registrationEndpoint, authorizationEndpoint
 }

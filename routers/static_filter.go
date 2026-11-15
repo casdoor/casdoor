@@ -262,6 +262,26 @@ func isSessionExpired(ctx *context.Context) bool {
 	return sessionData.ExpireTime != 0 && sessionData.ExpireTime < time.Now().Unix()
 }
 
+// serveOrganizationAuthorizeRedirect sends "/orgs/<organization>/login/oauth/authorize", the authorization endpoint in the
+// discovery document of an organization, to the login page with the organization in the query
+func serveOrganizationAuthorizeRedirect(ctx *context.Context) bool {
+	urlPath := ctx.Request.URL.Path
+	if !strings.HasPrefix(urlPath, "/orgs/") || !strings.HasSuffix(urlPath, "/login/oauth/authorize") {
+		return false
+	}
+	organization := strings.TrimSuffix(strings.TrimPrefix(urlPath, "/orgs/"), "/login/oauth/authorize")
+	if organization == "" || strings.Contains(organization, "/") {
+		return false
+	}
+
+	query := "organization=" + url.QueryEscape(organization)
+	if ctx.Request.URL.RawQuery != "" {
+		query += "&" + ctx.Request.URL.RawQuery
+	}
+	http.Redirect(ctx.ResponseWriter, ctx.Request, fmt.Sprintf("%s/login/oauth/authorize?%s", basePath, query), http.StatusFound)
+	return true
+}
+
 func StaticFilter(ctx *context.Context) {
 	urlPath := ctx.Request.URL.Path
 
@@ -273,6 +293,9 @@ func StaticFilter(ctx *context.Context) {
 		return
 	}
 	if strings.HasPrefix(urlPath, "/orgs/") && strings.Contains(urlPath, "/.well-known/") {
+		return
+	}
+	if serveOrganizationAuthorizeRedirect(ctx) {
 		return
 	}
 	if serveAuthCallbackHandlerScript(ctx) {
