@@ -55,6 +55,56 @@ func (syncer *Syncer) updateUser(user *OriginalUser) (bool, error) {
 	return provider.UpdateUser(user)
 }
 
+// getUpdateColumns returns the columns that updateUserForOriginalFields() writes
+// when it updates a user that already exists in Casdoor.
+func (syncer *Syncer) getUpdateColumns(user *OriginalUser) []string {
+	columns := syncer.getCasdoorColumns()
+	columns = append(columns, "affiliation", "hash", "pre_hash")
+
+	// Skip password-related columns when the incoming user has no password data.
+	// API-based syncers (DingTalk, WeCom, Lark, etc.) do not provide passwords,
+	// so updating these columns would wipe out locally set passwords.
+	if user.Password == "" {
+		filtered := make([]string, 0, len(columns))
+		for _, col := range columns {
+			if col != "password" && col != "password_salt" && col != "password_type" {
+				filtered = append(filtered, col)
+			}
+		}
+		columns = filtered
+	}
+
+	// Add provider-specific field for API-based syncers to enable login binding
+	// This allows synced users to login via their provider accounts.
+	//
+	// is_forbidden is part of the update for the same providers: they derive it
+	// from the account state upstream (resigned, frozen, not activated, exited,
+	// suspended, disabled...), so the value has to be written on every sync, not
+	// only when the user is created. Otherwise a user that was created while the
+	// upstream account was not activated yet stays forbidden forever, and a user
+	// that is disabled upstream is never disabled in Casdoor. Both callbacks that
+	// react to the transition - triggerUserForbiddenWebhook() and
+	// isUserAccessRevoked() (which terminates the user's sessions) - also key off
+	// is_forbidden being one of the updated columns.
+	switch GetSyncerProvider(syncer).(type) {
+	case *WecomSyncerProvider:
+		columns = append(columns, "wecom", "is_forbidden")
+	case *DingtalkSyncerProvider:
+		columns = append(columns, "dingtalk", "is_forbidden")
+	case *LarkSyncerProvider:
+		columns = append(columns, "lark", "is_forbidden")
+	case *OktaSyncerProvider, *SCIMSyncerProvider, *AzureAdSyncerProvider,
+		*GoogleWorkspaceSyncerProvider, *ActiveDirectorySyncerProvider,
+		*AwsIamSyncerProvider, *PluginSyncerProvider:
+		columns = append(columns, "is_forbidden")
+	}
+
+	// Database-backed syncers keep is_forbidden under the admin's control: it is
+	// only written when the source column is mapped explicitly, because adding it
+	// unconditionally would reset every user to "not forbidden".
+	return columns
+}
+
 func (syncer *Syncer) updateUserForOriginalFields(user *User, key string) (bool, error) {
 	var err error
 	oldUser := User{}
@@ -81,32 +131,7 @@ func (syncer *Syncer) updateUserForOriginalFields(user *User, key string) (bool,
 		}
 	}
 
-	columns := syncer.getCasdoorColumns()
-	columns = append(columns, "affiliation", "hash", "pre_hash")
-
-	// Skip password-related columns when the incoming user has no password data.
-	// API-based syncers (DingTalk, WeCom, Lark, etc.) do not provide passwords,
-	// so updating these columns would wipe out locally set passwords.
-	if user.Password == "" {
-		filtered := make([]string, 0, len(columns))
-		for _, col := range columns {
-			if col != "password" && col != "password_salt" && col != "password_type" {
-				filtered = append(filtered, col)
-			}
-		}
-		columns = filtered
-	}
-
-	// Add provider-specific field for API-based syncers to enable login binding
-	// This allows synced users to login via their provider accounts
-	switch syncer.Type {
-	case "WeCom":
-		columns = append(columns, "wecom")
-	case "DingTalk":
-		columns = append(columns, "dingtalk")
-	case "Lark":
-		columns = append(columns, "lark")
-	}
+	columns := syncer.getUpdateColumns(user)
 
 	affected, err := ormer.Engine.Where(key+" = ? and owner = ?", syncer.getUserValue(&oldUser, key), oldUser.Owner).Cols(columns...).Update(user)
 	if err != nil {

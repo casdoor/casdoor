@@ -18,6 +18,8 @@ package object
 import (
 	"fmt"
 	"testing"
+
+	"github.com/casdoor/casdoor/util"
 )
 
 func TestGetUsers(t *testing.T) {
@@ -35,4 +37,38 @@ func TestSyncUsers(t *testing.T) {
 	InitConfig()
 
 	RunSyncUsersJob()
+}
+
+func TestGetUpdateColumns(t *testing.T) {
+	newSyncer := func(syncerType string, tableColumns []*TableColumn) *Syncer {
+		return &Syncer{
+			Type:         syncerType,
+			TableColumns: tableColumns,
+		}
+	}
+
+	// Providers that derive User.IsForbidden from the upstream account state must
+	// persist it on update too, otherwise it is only written at creation time.
+	for _, syncerType := range []string{
+		"Lark", "DingTalk", "WeCom", "Okta", "SCIM",
+		"Azure AD", "Google Workspace", "Active Directory", "AWS IAM", "Plugin",
+	} {
+		columns := newSyncer(syncerType, []*TableColumn{{Name: "enterprise_email", CasdoorName: "Email"}}).getUpdateColumns(&OriginalUser{})
+		if !util.InSlice(columns, "is_forbidden") {
+			t.Errorf("%s syncer: is_forbidden must be updated, got columns %v", syncerType, columns)
+		}
+	}
+
+	// Database-backed syncers only write it when the admin maps it explicitly.
+	for _, syncerType := range []string{"Database", "Keycloak"} {
+		columns := newSyncer(syncerType, []*TableColumn{{Name: "email", CasdoorName: "Email"}}).getUpdateColumns(&OriginalUser{})
+		if util.InSlice(columns, "is_forbidden") {
+			t.Errorf("%s syncer: is_forbidden must not be updated unless mapped, got columns %v", syncerType, columns)
+		}
+
+		columns = newSyncer(syncerType, []*TableColumn{{Name: "enabled", CasdoorName: "IsForbidden"}}).getUpdateColumns(&OriginalUser{})
+		if !util.InSlice(columns, "is_forbidden") {
+			t.Errorf("%s syncer: a mapped IsForbidden column must be updated, got columns %v", syncerType, columns)
+		}
+	}
 }
