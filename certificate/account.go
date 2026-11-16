@@ -83,6 +83,9 @@ func getLegoClientAndAccount(email string, privateKey string, devMode bool) (*le
 func GetAcmeClient(email string, privateKey string, devMode bool) (*lego.Client, error) {
 	// Create a user. New accounts need an email and private key to start.
 	client, account, err := getLegoClientAndAccount(email, privateKey, devMode)
+	if err != nil {
+		return nil, err
+	}
 
 	// try to obtain an account based on the private key
 	account.Registration, err = client.Registration.ResolveAccountByKey()
