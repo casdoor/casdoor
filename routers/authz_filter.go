@@ -342,6 +342,15 @@ func getObject(ctx *context.Context) (string, string, error) {
 					return util.GetOwnerAndNameFromIdWithError(id)
 				}
 			}
+			if ctx.Input.Query("resourceId") != "" {
+				userId, _ := ctx.Input.GetData("currentUserId").(string)
+				if strings.HasPrefix(userId, "app/") {
+					appUser, err := object.GetAppUser(userId)
+					if err == nil && appUser != nil && !appUser.IsGlobalAdmin() {
+						return appUser.Owner, "", nil
+					}
+				}
+			}
 		}
 
 		isOwnerObjPath := checkIsOrgOwnerObject(path)

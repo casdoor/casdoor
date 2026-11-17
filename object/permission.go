@@ -449,6 +449,23 @@ func GetPermissionsByResource(resourceId string) ([]*Permission, error) {
 	return res, nil
 }
 
+func GetPermissionsByResourceForOwner(owner, resourceId string) ([]*Permission, error) {
+	permissions := []*Permission{}
+	err := ormer.Engine.Where("owner = ? AND resources like ?", owner, "%"+resourceId+"\"%").Find(&permissions)
+	if err != nil {
+		return permissions, err
+	}
+
+	res := []*Permission{}
+	for _, permission := range permissions {
+		if util.InSlice(permission.Resources, resourceId) {
+			res = append(res, permission)
+		}
+	}
+
+	return res, nil
+}
+
 func getPermissionsAndRolesByUser(userId string) ([]*Permission, []*Role, error) {
 	permissions, err := getPermissionsByUser(userId)
 	if err != nil {

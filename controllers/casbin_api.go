@@ -17,6 +17,7 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
@@ -132,7 +133,25 @@ func (c *ApiController) Enforce() {
 			return
 		}
 	} else if resourceId != "" {
-		permissions, err = object.GetPermissionsByResource(resourceId)
+		userId := c.GetSessionUsername()
+		if strings.HasPrefix(userId, "app/") {
+			appUser, appErr := object.GetAppUser(userId)
+			if appErr != nil {
+				c.ResponseError(appErr.Error())
+				return
+			}
+			if appUser == nil || appUser.Owner == "" {
+				c.ResponseError(c.T("auth:Unauthorized operation"))
+				return
+			}
+			if appUser.IsGlobalAdmin() {
+				permissions, err = object.GetPermissionsByResource(resourceId)
+			} else {
+				permissions, err = object.GetPermissionsByResourceForOwner(appUser.Owner, resourceId)
+			}
+		} else {
+			permissions, err = object.GetPermissionsByResource(resourceId)
+		}
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
