@@ -802,6 +802,11 @@ func (c *ApiController) Login() {
 	}
 	defer c.recordLoginMetric(&authForm)
 
+	// the callback of a third-party provider posts no organization, the authorization request it comes back to carries it
+	if authForm.Organization == "" {
+		authForm.Organization = c.Ctx.Input.Query("organization")
+	}
+
 	verificationType := ""
 
 	// a magic link posts no username, the one-time token in the link is the credential.
@@ -967,7 +972,7 @@ func (c *ApiController) Login() {
 				c.ResponseError(err.Error())
 				return
 			} else if enableCaptcha {
-				captchaProvider, err := object.GetCaptchaProviderByApplication(util.GetId(application.Owner, application.Name), "false", c.GetAcceptLanguage())
+				captchaProvider, err := object.GetCaptchaProviderByApplicationObject(application, c.GetAcceptLanguage())
 				if err != nil {
 					c.ResponseError(err.Error())
 					return

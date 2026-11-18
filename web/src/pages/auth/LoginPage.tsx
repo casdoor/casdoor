@@ -761,7 +761,13 @@ export default function LoginPage({type = "login", application: applicationProp,
 
     const clientId = searchParams.get("client_id");
     if (clientId) {
-      searchParams.set("client_id", `${clientId.split("-org-")[0]}-org-${name}`);
+      if (clientId.startsWith("https://")) {
+        // a URL client_id (client ID metadata document) is the client's own address and must stay
+        // untouched, only the organization it is added to changes
+        searchParams.set("organization", name);
+      } else {
+        searchParams.set("client_id", `${clientId.split("-org-")[0]}-org-${name}`);
+      }
       Setting.goToLink(`/login/oauth/authorize?${searchParams.toString()}`);
       return;
     }

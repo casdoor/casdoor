@@ -583,6 +583,12 @@ func GetCaptchaProviderByApplication(applicationId, isCurrentProvider, lang stri
 		return nil, err
 	}
 
+	return GetCaptchaProviderByApplicationObject(application, lang)
+}
+
+// GetCaptchaProviderByApplicationObject reads the CAPTCHA provider from an application object whose providers may be
+// the ones of its organization, which a shared application of a URL client_id takes over instead of the stored ones
+func GetCaptchaProviderByApplicationObject(application *Application, lang string) (*Provider, error) {
 	if application == nil || len(application.Providers) == 0 {
 		return nil, errors.New(i18n.Translate(lang, "provider:Invalid application id"))
 	}

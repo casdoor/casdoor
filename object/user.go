@@ -1495,6 +1495,13 @@ func GetUserInfo(user *User, scope string, aud string, host string) (*Userinfo, 
 		return nil, err
 	}
 
+	// a shared application of a URL client_id answers with the issuer and fields of the user's organization,
+	// as the ID token of that user was issued with them
+	application, err = GetApplicationOfOrganization(application, user.Owner)
+	if err != nil {
+		return nil, err
+	}
+
 	issuer, err := GetOidcIssuerByApplication(host, application)
 	if err != nil {
 		return nil, err

@@ -51,7 +51,7 @@ func (c *ApiController) getMagicLinkSessionHash() string {
 // with the user to sign in, creating that user when the application's signin method
 // lets a magic link sign up.
 func (c *ApiController) checkMagicLinkSignin(authForm *form.AuthForm) (*object.User, error) {
-	application, err := object.GetApplication(fmt.Sprintf("admin/%s", authForm.Application))
+	application, err := getSigninApplication(fmt.Sprintf("admin/%s", authForm.Application), authForm.Organization)
 	if err != nil {
 		return nil, err
 	}

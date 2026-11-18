@@ -91,6 +91,14 @@ func RegisterDynamicClient(req *DynamicClientRegistrationRequest, organization s
 		}, nil
 	}
 
+	// an organization that named a default application which cannot be loaded would register clients
+	// with hardcoded defaults instead of its own settings, so the registration fails instead
+	if org.DefaultApplication != "" {
+		if _, err = GetDefaultApplication(util.GetId(org.Owner, org.Name)); err != nil {
+			return nil, nil, err
+		}
+	}
+
 	// Validate required fields
 	if len(req.RedirectUris) == 0 {
 		return nil, &DcrError{
@@ -180,7 +188,7 @@ func newDynamicClientApplication(req *DynamicClientRegistrationRequest, org *Org
 	// so that DCR-registered apps have a working sign-in method and correct branding out of the box.
 	var inheritedProviders []*ProviderItem
 	var inheritedSigninMethods []*SigninMethod
-	var inheritedLogo, inheritedFooterHtml, inheritedFormCss, inheritedCert string
+	var inheritedLogo, inheritedFooterHtml, inheritedFormCss, inheritedCert, inheritedTokenSigningMethod string
 	var inheritedThemeData *ThemeData
 	var inheritedSigninItems []*SigninItem
 	var inheritedEnableSigninSession, inheritedEnableWebAuthn bool
@@ -189,6 +197,7 @@ func newDynamicClientApplication(req *DynamicClientRegistrationRequest, org *Org
 		inheritedProviders = defaultApp.Providers
 		inheritedSigninMethods = defaultApp.SigninMethods
 		inheritedCert = defaultApp.Cert
+		inheritedTokenSigningMethod = defaultApp.TokenSigningMethod
 		inheritedLogo = defaultApp.Logo
 		inheritedThemeData = defaultApp.ThemeData
 		inheritedFooterHtml = defaultApp.FooterHtml
@@ -230,6 +239,7 @@ func newDynamicClientApplication(req *DynamicClientRegistrationRequest, org *Org
 		EnableAutoSignin:     false,
 		EnableWebAuthn:       inheritedEnableWebAuthn,
 		Cert:                 inheritedCert,
+		TokenSigningMethod:   inheritedTokenSigningMethod,
 		TokenFormat:          org.DefaultTokenFormat,
 		TokenFields:          org.DefaultTokenFields,
 		ExpireInHours:        expireInHours,

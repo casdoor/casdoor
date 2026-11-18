@@ -183,20 +183,36 @@ func GetApplicationByClientIdMetadata(clientId string, organization string, lang
 }
 
 // getCimdApplicationOfOrganization returns the shared application of a URL client_id as the application of an organization,
-// with the sign-in settings and branding of the organization's default application, like a DCR client of the organization
+// with the sign-in settings, token policy and branding of the organization's default application, like a DCR client of the organization
 func getCimdApplicationOfOrganization(application *Application, organization string) (*Application, error) {
-	if application.Organization == organization {
+	// an application loaded through the "-org-" suffix of a shared app already carries the organization,
+	// but not its settings, so a shared CIMD application is projected again
+	if application.Organization == organization && !util.InSlice(application.Tags, cimdTag) {
 		return application, nil
 	}
 
+	org, err := getOrganization("admin", organization)
+	if err != nil {
+		return nil, err
+	}
+	if org == nil {
+		return nil, fmt.Errorf("the organization: %s does not exist", organization)
+	}
+
+	// the stored application of a URL client_id lives in built-in, its logo is the built-in default one
 	clientLogo := application.Logo
-	if builtInApp, err := GetDefaultApplication(util.GetId("admin", application.Organization)); err == nil && builtInApp != nil && builtInApp.Logo == clientLogo {
+	if builtInApp, err := GetDefaultApplication(util.GetId("admin", cimdOrganization)); err == nil && builtInApp != nil && builtInApp.Logo == clientLogo {
 		clientLogo = ""
 	}
 
 	application.Organization = organization
 	defaultApp, err := GetDefaultApplication(util.GetId("admin", organization))
-	if err == nil && defaultApp != nil {
+	if err != nil && org.DefaultApplication != "" {
+		// the organization named a default application that cannot be loaded, the shared client's own
+		// settings would silently apply the built-in policy to the organization's users
+		return nil, err
+	}
+	if defaultApp != nil {
 		application.Logo = firstNonEmpty(clientLogo, defaultApp.Logo)
 		application.ThemeData = defaultApp.ThemeData
 		application.FooterHtml = defaultApp.FooterHtml
@@ -210,6 +226,21 @@ func getCimdApplicationOfOrganization(application *Application, organization str
 		application.EnableCodeSignin = defaultApp.EnableCodeSignin
 		application.EnableWebAuthn = defaultApp.EnableWebAuthn
 		application.EnableSigninSession = defaultApp.EnableSigninSession
+		if defaultApp.ExpireInHours > 0 {
+			application.ExpireInHours = defaultApp.ExpireInHours
+		}
+		if defaultApp.RefreshExpireInHours > 0 {
+			application.RefreshExpireInHours = defaultApp.RefreshExpireInHours
+		}
+		if defaultApp.CookieExpireInHours > 0 {
+			application.CookieExpireInHours = defaultApp.CookieExpireInHours
+		}
+	}
+	if org.DefaultTokenFormat != "" {
+		application.TokenFormat = org.DefaultTokenFormat
+	}
+	if org.DefaultTokenFields != nil {
+		application.TokenFields = org.DefaultTokenFields
 	}
 
 	err = extendApplicationWithProviders(application)
@@ -234,7 +265,21 @@ func getCimdApplicationOfOrganization(application *Application, organization str
 // GetSigninApplicationOfOrganization returns the application a user signs in to: a shared application of a URL client_id
 // is the application of the organization signed in to when it accepts URL client_ids, other applications are returned as they are
 func GetSigninApplicationOfOrganization(application *Application, organization string) (*Application, error) {
+	if application != nil && organization == "" {
+		// an application loaded through the "-org-" suffix of a shared app names its organization itself
+		organization = application.Organization
+	}
 	if application == nil || organization == "" || !util.InSlice(application.Tags, cimdTag) || !IsClientIdMetadataDocumentSupported(organization) {
+		return application, nil
+	}
+	return getCimdApplicationOfOrganization(application, organization)
+}
+
+// GetApplicationOfOrganization returns the shared application of a URL client_id with the settings of an organization
+// that an already issued grant belongs to. Unlike GetSigninApplicationOfOrganization, it does not require the organization
+// to still accept new URL client_ids, so a grant keeps the policy it was issued under.
+func GetApplicationOfOrganization(application *Application, organization string) (*Application, error) {
+	if application == nil || organization == "" || !util.InSlice(application.Tags, cimdTag) {
 		return application, nil
 	}
 	return getCimdApplicationOfOrganization(application, organization)

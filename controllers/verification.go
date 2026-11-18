@@ -213,6 +213,14 @@ func (c *ApiController) SendVerificationCode() {
 		return
 	}
 
+	// the codes and magic links of a shared application of a URL client_id go out with the organization's
+	// providers and sign-in methods, as its sign-in page showed them
+	application, err = object.GetSigninApplicationOfOrganization(application, application.Organization)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
 	// Check if "Forgot password?" signin item is visible when using forget verification
 	if vform.Method == ForgetVerification {
 		isForgotPasswordEnabled := false
@@ -310,7 +318,7 @@ func (c *ApiController) SendVerificationCode() {
 
 	// Only verify CAPTCHA if it should be enabled
 	if enableCaptcha {
-		captchaProvider, err := object.GetCaptchaProviderByApplication(vform.ApplicationId, "false", c.GetAcceptLanguage())
+		captchaProvider, err := object.GetCaptchaProviderByApplicationObject(application, c.GetAcceptLanguage())
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
