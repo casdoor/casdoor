@@ -4,9 +4,9 @@ import {Link} from "react-router-dom";
 import * as SystemBackend from "@/backend/SystemInfo";
 import * as Conf from "@/Conf";
 import * as Setting from "@/lib/setting";
-import {PricingUrl} from "@/lib/setting";
+import {getPricingUrl, PricingUrl} from "@/lib/setting";
 
-export {PricingUrl};
+export {getPricingUrl, PricingUrl};
 
 const ranks: Record<string, number> = {Community: 0, Commercial: 1, Enterprise: 2};
 
@@ -88,7 +88,7 @@ export function EditionNotice({edition = "Commercial", message}: {edition?: stri
     <p className="mt-1.5 text-xs text-warning">
       {message ?? i18next.t("general:Commercial edition required")}{" "}
       {Conf.isUpgradeHidden(edition) ? null : (
-        <a href={PricingUrl} target="_blank" rel="noreferrer" className="underline underline-offset-2">
+        <a href={getPricingUrl("notice", edition)} target="_blank" rel="noreferrer" className="underline underline-offset-2">
           {i18next.t("general:View editions and pricing")}
         </a>
       )}
@@ -115,7 +115,7 @@ export function LicenseBanner() {
       <div className="border-b border-warning/40 bg-warning/10 px-4 py-2 text-sm text-warning md:px-6">
         {i18next.t("system:The license has expired, this version keeps its paid features but gets no more upgrades or new features")}
         {info.expireTime ? ` (${Setting.getFormattedDate(info.expireTime)})` : ""}{" "}
-        <a href={PricingUrl} target="_blank" rel="noreferrer" className="font-medium underline underline-offset-2">
+        <a href={getPricingUrl("license-banner")} target="_blank" rel="noreferrer" className="font-medium underline underline-offset-2">
           {i18next.t("general:View editions and pricing")}
         </a>
       </div>
@@ -128,7 +128,7 @@ export function LicenseBanner() {
   return (
     <div className="border-b border-warning/40 bg-warning/10 px-4 py-2 text-sm text-warning md:px-6">
       {i18next.t("system:The license is invalid or has expired, the paid features are turned off")}: {info.error}{" "}
-      <a href={PricingUrl} target="_blank" rel="noreferrer" className="font-medium underline underline-offset-2">
+      <a href={getPricingUrl("license-banner")} target="_blank" rel="noreferrer" className="font-medium underline underline-offset-2">
         {i18next.t("general:View editions and pricing")}
       </a>
     </div>

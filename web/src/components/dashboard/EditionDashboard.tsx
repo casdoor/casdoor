@@ -7,7 +7,7 @@ import * as Conf from "@/Conf";
 import {Badge} from "@/components/ui/badge";
 import {Button} from "@/components/ui/button";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
-import {getEditionText, PricingUrl} from "@/components/common/EditionNotice";
+import {getEditionText, getPricingUrl} from "@/components/common/EditionNotice";
 import * as Setting from "@/lib/setting";
 import {cn} from "@/lib/utils";
 
@@ -202,7 +202,7 @@ function UpgradeButton({edition, variant = "default", className}: {edition: stri
   }
   return (
     <Button asChild variant={variant} className={className}>
-      <a href={PricingUrl} target="_blank" rel="noreferrer">
+      <a href={getPricingUrl("dashboard", edition)} target="_blank" rel="noreferrer">
         {edition === "Enterprise" ? i18next.t("home:Upgrade to the enterprise edition") : i18next.t("home:Upgrade to the commercial edition")}
         <ArrowUpRight />
       </a>

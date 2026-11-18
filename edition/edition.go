@@ -37,7 +37,7 @@ const (
 	Enterprise = "Enterprise"
 )
 
-const PricingUrl = "https://casdoor.cn/pricing"
+const PricingUrl = "https://www.casdoor.com/pricing/self-hosted"
 
 // The features that need a license, as passed to Require. The API translates them by these names
 const (

@@ -6,7 +6,7 @@ import {Badge} from "@/components/ui/badge";
 import {Button} from "@/components/ui/button";
 import {Card, CardContent, CardHeader} from "@/components/ui/card";
 import {PageHeader} from "@/components/crud/PageHeader";
-import {getEditionText, PricingUrl, useEdition, useLicenseFeatures} from "@/components/common/EditionNotice";
+import {getEditionText, getPricingUrl, useEdition, useLicenseFeatures} from "@/components/common/EditionNotice";
 import {getEditionDemoUrl, startEditionTour} from "@/components/common/EditionTour";
 import {
   type EditionFeature,
@@ -250,7 +250,7 @@ export default function EditionsPage() {
             ) : null}
             {Conf.HideUpgrades ? null : (
               <Button asChild variant="outline">
-                <a href={PricingUrl} target="_blank" rel="noreferrer">
+                <a href={getPricingUrl("editions")} target="_blank" rel="noreferrer">
                   {i18next.t("general:View editions and pricing")}
                   <ArrowUpRight className="size-4" />
                 </a>

@@ -15,7 +15,7 @@ import {PageHeader} from "@/components/crud/PageHeader";
 import * as SystemBackend from "@/backend/SystemInfo";
 import * as Conf from "@/Conf";
 import * as Setting from "@/lib/setting";
-import {getEditionText, PricingUrl} from "@/components/common/EditionNotice";
+import {getEditionText, getPricingUrl} from "@/components/common/EditionNotice";
 import {EditionSwitcher, getEditionPreviewHint, isEditionPreviewEnabled} from "@/components/common/EditionPreview";
 
 const REFRESH_MS = 5000;
@@ -459,7 +459,7 @@ function TlsListenersCard() {
                   {listener.code === "edition-required" && !Conf.HideUpgrades ? (
                     <>
                       {" "}
-                      <a href={PricingUrl} target="_blank" rel="noreferrer" className="underline underline-offset-2">
+                      <a href={getPricingUrl("system-info")} target="_blank" rel="noreferrer" className="underline underline-offset-2">
                         {i18next.t("general:Learn more")}
                       </a>
                     </>
@@ -559,7 +559,7 @@ function LicenseCard() {
         {!license.id && !license.error ? (
           <p className="text-muted-foreground">
             {i18next.t("system:No license configured")}{" "}
-            <a href={PricingUrl} target="_blank" rel="noreferrer" className="underline underline-offset-2">
+            <a href={getPricingUrl("system-info")} target="_blank" rel="noreferrer" className="underline underline-offset-2">
               {i18next.t("general:Learn more")}
             </a>
           </p>

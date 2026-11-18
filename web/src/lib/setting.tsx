@@ -49,7 +49,17 @@ export const StaticBaseUrl = Conf.StaticBaseUrl;
 export const MAX_PAGE_SIZE = 25;
 export const SEARCH_DEBOUNCE_MS = 300;
 
-export const PricingUrl = "https://casdoor.cn/pricing";
+export const PricingUrl = "https://www.casdoor.com/pricing/self-hosted";
+
+// The pricing page tagged with the place the link sits in, for the analytics of www.casdoor.com. It carries only
+// that place and the edition, never this deployment's address.
+export function getPricingUrl(placement: string, edition?: string): string {
+  const params = new URLSearchParams({utm_source: "casdoor", utm_medium: "product", utm_campaign: placement});
+  if (edition && edition !== "Community") {
+    params.set("edition", edition.toLowerCase());
+  }
+  return `${PricingUrl}?${params}`;
+}
 
 // the backend ends the message of a feature that needs a higher edition with " (<pricing page>)"
 const editionRequiredSuffix = ` (${PricingUrl})`;
@@ -64,7 +74,7 @@ export function showMessage(type: "success" | "error" | "info" | "warning", text
       duration: 15000,
       action: {
         label: i18next.t("general:View editions and pricing"),
-        onClick: () => window.open(PricingUrl, "_blank", "noopener,noreferrer"),
+        onClick: () => window.open(getPricingUrl("error"), "_blank", "noopener,noreferrer"),
       },
     });
     return;
