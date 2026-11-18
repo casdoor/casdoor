@@ -1363,6 +1363,18 @@ export function isLocalAdminUser(account) {
   return account.isAdmin === true || isAdminUser(account);
 }
 
+// the ID is cleared from the user when the organization's "ID" account item hides it,
+// so fall back to the owner and name
+export function isSelfUser(account, user) {
+  if (!account || !user) {
+    return false;
+  }
+  if (user.id && account.id) {
+    return user.id === account.id;
+  }
+  return account.owner === user.owner && account.name === user.name;
+}
+
 export function deepCopy(obj) {
   return Object.assign({}, obj);
 }

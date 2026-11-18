@@ -152,7 +152,7 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
     return <Loading />;
   }
 
-  const isSelf = !!account && (user.id && account.id ? user.id === account.id : account.owner === user.owner && account.name === user.name);
+  const isSelf = Setting.isSelfUser(account, user);
   const isLocalAdmin = Setting.isLocalAdminUser(account);
   // a delegated admin edits the users of their groups like an admin, except making admins and renaming
   const isDelegated = !isLocalAdmin && !isSelf && isDelegatedAdmin(account) && (mode === "add" || isDelegatedAdminOf(account, user));
