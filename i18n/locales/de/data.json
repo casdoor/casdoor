@@ -55,6 +55,7 @@
     "The provider: %s does not exist": "Der Anbieter: %s existiert nicht",
     "The provider: %s is not enabled for the application": "Der Anbieter: %s ist nicht für die Anwendung aktiviert",
     "The subscription: %s does not exist": "Das Abonnement: %s existiert nicht",
+    "The user: %s is not allowed to sign in to the application: %s by the permissions of the organization: %s": "Der Benutzer: %s darf sich nicht bei der Anwendung: %s anmelden, die Berechtigungen der Organisation: %s erlauben es nicht",
     "Timeout for inactivity of %d minutes": "Wegen %d Minuten Inaktivität abgemeldet, bitte erneut anmelden",
     "Unauthorized operation": "Nicht autorisierte Operation",
     "Unknown authentication type (not password or provider), form = %s": "Unbekannter Authentifizierungstyp (nicht Passwort oder Anbieter), Formular = %s",

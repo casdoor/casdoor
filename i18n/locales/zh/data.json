@@ -55,6 +55,7 @@
     "The provider: %s does not exist": "提供商: %s 不存在",
     "The provider: %s is not enabled for the application": "该应用的提供商: %s未被启用",
     "The subscription: %s does not exist": "订阅：%s 不存在",
+    "The user: %s is not allowed to sign in to the application: %s by the permissions of the organization: %s": "用户: %s 不能登录应用: %s，被组织: %s 的权限拒绝",
     "Timeout for inactivity of %d minutes": "已空闲 %d 分钟，请重新登录",
     "Unauthorized operation": "未授权的操作",
     "Unknown authentication type (not password or provider), form = %s": "未知的认证类型（非密码或第三方提供商）：%s",

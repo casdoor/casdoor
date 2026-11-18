@@ -55,6 +55,7 @@
     "The provider: %s does not exist": "The provider: %s does not exist",
     "The provider: %s is not enabled for the application": "The provider: %s is not enabled for the application",
     "The subscription: %s does not exist": "The subscription: %s does not exist",
+    "The user: %s is not allowed to sign in to the application: %s by the permissions of the organization: %s": "The user: %s is not allowed to sign in to the application: %s by the permissions of the organization: %s",
     "Timeout for inactivity of %d minutes": "Timeout for inactivity of %d minutes",
     "Unauthorized operation": "Unauthorized operation",
     "Unknown authentication type (not password or provider), form = %s": "Unknown authentication type (not password or provider), form = %s",

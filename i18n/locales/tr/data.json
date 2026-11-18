@@ -55,6 +55,7 @@
     "The provider: %s does not exist": "Sağlayıcı: %s mevcut değil",
     "The provider: %s is not enabled for the application": "Provider: %s bu uygulama için etkin değil",
     "The subscription: %s does not exist": "Abonelik: %s mevcut değil",
+    "The user: %s is not allowed to sign in to the application: %s by the permissions of the organization: %s": "Kullanıcı: %s, uygulama: %s için oturum açamaz, kuruluş: %s izinleri buna izin vermiyor",
     "Timeout for inactivity of %d minutes": "%d dakika hareketsizlik nedeniyle oturum kapandı, lütfen tekrar giriş yapın",
     "Unauthorized operation": "Yetkisiz işlem",
     "Unknown authentication type (not password or provider), form = %s": "Bilinmeyen kimlik doğrulama türü (şifre veya provider değil), form = %s",

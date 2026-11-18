@@ -55,6 +55,7 @@
     "The provider: %s does not exist": "プロバイダ「%s」は存在しません",
     "The provider: %s is not enabled for the application": "プロバイダー：%sはアプリケーションでは有効化されていません",
     "The subscription: %s does not exist": "サブスクリプション：%s は存在しません",
+    "The user: %s is not allowed to sign in to the application: %s by the permissions of the organization: %s": "ユーザー: %s はアプリケーション: %s へのサインインを組織: %s の権限で許可されていません",
     "Timeout for inactivity of %d minutes": "%d 分間操作がなかったため、再度サインインしてください",
     "Unauthorized operation": "不正操作",
     "Unknown authentication type (not password or provider), form = %s": "不明な認証タイプ（パスワードまたはプロバイダーではない）フォーム=%s",

@@ -55,6 +55,7 @@
     "The provider: %s does not exist": "Провайдер: %s не існує",
     "The provider: %s is not enabled for the application": "Провайдер: %s не увімкнено для цього додатка",
     "The subscription: %s does not exist": "Підписка: %s не існує",
+    "The user: %s is not allowed to sign in to the application: %s by the permissions of the organization: %s": "Користувачу: %s не дозволено входити в додаток: %s згідно з дозволами організації: %s",
     "Timeout for inactivity of %d minutes": "Сеанс завершено через %d хвилин неактивності, увійдіть знову",
     "Unauthorized operation": "Неавторизована операція",
     "Unknown authentication type (not password or provider), form = %s": "Невідомий тип автентифікації (не пароль і не провайдер), форма = %s",

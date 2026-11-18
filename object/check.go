@@ -705,7 +705,7 @@ func CheckApplicationSignin(application *Application, user *User, clientIp strin
 		return err
 	}
 	if !allowed {
-		return errors.New(i18n.Translate(lang, "auth:Unauthorized operation"))
+		return fmt.Errorf(i18n.Translate(lang, "auth:The user: %s is not allowed to sign in to the application: %s by the permissions of the organization: %s"), user.GetId(), application.Name, getLoginPermissionOrganization(user.Owner, application))
 	}
 
 	// "dcr" and "cimd" tell how a client registered, they don't limit who may sign in
@@ -741,6 +741,13 @@ func checkUserOrganizationSignin(application *Application, user *User, clientIp 
 	return CheckEntryIp(clientIp, nil, nil, organization, lang)
 }
 
+func getLoginPermissionOrganization(userOwner string, application *Application) string {
+	if application.IsShared {
+		return userOwner
+	}
+	return application.Organization
+}
+
 func CheckLoginPermission(userId string, application *Application) (bool, error) {
 	owner, _, err := util.GetOwnerAndNameFromIdWithError(userId)
 	if err != nil {
@@ -758,12 +765,7 @@ func CheckLoginPermission(userId string, application *Application) (bool, error)
 		return true, nil
 	}
 
-	permissionOrganization := application.Organization
-	if application.IsShared {
-		permissionOrganization = owner
-	}
-
-	permissions, err := GetPermissions(permissionOrganization)
+	permissions, err := GetPermissions(getLoginPermissionOrganization(owner, application))
 	if err != nil {
 		return false, err
 	}
